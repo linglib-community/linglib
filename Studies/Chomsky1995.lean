@@ -21,7 +21,7 @@ In the bare theory sister terminals are never ordered, so the LCA fails on every
 unless traces are exempt, and then one of any two sister terminals is a trace. A specifier
 precedes its head and the head the inside of a branching complement, and a branching specifier is
 ordered consistently only because the X′ does not c-command. The LCA is stated for any tree order
-and instantiated on the positions of a linearized syntactic object, where the book's (11), *the man
+and instantiated on the positions of a planar syntactic object, where the book's (11), *the man
 saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
 
 ## Main definitions
@@ -29,11 +29,11 @@ saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
 * `PhraseStructure.Precedes`, `PhraseStructure.Linearizes`: Kayne's precedence, and the LCA.
 * `PhraseStructure.IsVisible`, `PhraseStructure.bareCCommand`: the minimal and maximal
   projections, and c-command by them, the book's (157).
-* `Chomsky1995.HeadDaughterAt`: the head relation on the positions of a linearized object.
+* `Chomsky1995.HeadDaughterAt`: the head relation on the positions of a planar object.
 
 ## Implementation notes
 
-* Positions individuate occurrences, so the LCA is read on the positions of a linearized object,
+* Positions individuate occurrences, so the LCA is read on the positions of a planar object,
   whose order it ignores by `linearizes_bareCCommand_image_iff`.
 * Dominance in Kayne's image is reflexive, so that a terminal specifier, the `j` of (154),
   precedes the head.
@@ -149,11 +149,11 @@ theorem linearizes_bareCCommand_image_iff {β : Type*} [PartialOrder β] {H' : �
 theorem isVisible_of_isMax (hH : ∀ m d, H m d → m ⋖ d) (hx : IsMax x) : IsVisible H x :=
   .inl fun d hd ↦ (hH x d hd).lt.not_ge (hx (hH x d hd).le)
 
-variable [IsLeftLinear α]
+variable [IsForestOrder α]
 
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
-  ⟨hv, not_le_of_covBy ha hb hab, not_le_of_covBy hb ha hab.symm,
+  ⟨hv, CovBy.not_le_of_ne ha hb hab, CovBy.not_le_of_ne hb ha hab.symm,
     mem_commandRelation_of_covBy ha hb.le⟩
 
 /-- A node does not precede a visible sister, so two visible sisters are unordered, as the
@@ -183,7 +183,10 @@ must weaken the LCA. -/
 theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d)
     (hb : ∀ x : α, ¬ IsMax x → IsBranching x) (hx : ¬ IsMax x) :
     ¬ Linearizes (bareCCommand H) {a | IsMax a} := fun hl ↦ by
-  obtain ⟨m, a, b, ha, hb', hab, hma, hmb⟩ := exists_cherry hb hx
+  obtain ⟨m, hm, hmax⟩ := exists_not_isMax_and_forall_gt_isMax hx
+  obtain ⟨a, ha, b, hb', hab⟩ := hb m hm
+  have hma := hmax a ha.lt
+  have hmb := hmax b hb'.lt
   exact (hl.not_mem_or_not_mem_of_covBy hH ha hb' hab hma hmb).elim (· hma) (· hmb)
 
 /-! #### The configuration (154)
@@ -195,22 +198,22 @@ theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d
 theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvJ : IsVisible H J) (hj : J ≤ j) : Precedes (bareCCommand H) j h := by
   refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, fun hJh ↦ ?_, fun hhJ ↦ ?_,
-    fun x hx ↦ (IsLeftLinear.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
-  · exact (IsLeftLinear.comparable_of_le_common hJh hh.le).elim (not_le_of_covBy hJ hL hJL)
-      (not_le_of_covBy hL hJ hJL.symm)
-  · exact not_le_of_covBy hL hJ hJL.symm (hh.le.trans hhJ)
-  · exact not_le_of_covBy hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
+    fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
+  · exact (IsForestOrder.le_total_of_le_of_le hJh hh.le).elim (CovBy.not_le_of_ne hJ hL hJL)
+      (CovBy.not_le_of_ne hL hJ hJL.symm)
+  · exact CovBy.not_le_of_ne hL hJ hJL.symm (hh.le.trans hhJ)
+  · exact CovBy.not_le_of_ne hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
 
 /-- A visible head precedes the nodes properly inside its complement but not the complement
 itself, so the order specifier-head-complement needs a branching complement. -/
 theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hvh : IsVisible H h)
     (hp : P < p) : Precedes (bareCCommand H) h p := by
   refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2 ⟨hvh, fun hhp ↦ ?_, fun hph ↦ ?_,
-    fun x hx ↦ (IsLeftLinear.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
-  · exact (IsLeftLinear.comparable_of_le_common hhp hp.le).elim (not_le_of_covBy hh hP hhP)
-      (not_le_of_covBy hP hh hhP.symm)
-  · exact not_le_of_covBy hP hh hhP.symm (hp.le.trans hph)
-  · exact not_le_of_covBy hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
+    fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
+  · exact (IsForestOrder.le_total_of_le_of_le hhp hp.le).elim (CovBy.not_le_of_ne hh hP hhP)
+      (CovBy.not_le_of_ne hP hh hhP.symm)
+  · exact CovBy.not_le_of_ne hP hh hhP.symm (hp.le.trans hph)
+  · exact CovBy.not_le_of_ne hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
 
 /-- When the X′ is invisible the head precedes nothing in the specifier. -/
 theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
@@ -218,12 +221,12 @@ theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh :
   rintro ⟨⟨x, y⟩, ⟨hxy, -⟩, hxh, hyj⟩
   obtain ⟨hvx, hn₁, hn₂, hc⟩ := mem_bareCCommand.1 hxy
   rcases hxh.eq_or_lt with rfl | hxh
-  · exact (IsLeftLinear.comparable_of_le_common (hc L hh.lt |>.trans hyj) hj).elim
-      (not_le_of_covBy hL hJ hJL.symm) (not_le_of_covBy hJ hL hJL)
-  · rcases (IsLeftLinear.le_of_lt_of_covBy hh hxh).eq_or_lt with rfl | hxL
+  · exact (IsForestOrder.le_total_of_le_of_le (hc L hh.lt |>.trans hyj) hj).elim
+      (CovBy.not_le_of_ne hL hJ hJL.symm) (CovBy.not_le_of_ne hJ hL hJL)
+  · rcases (IsForestOrder.le_of_lt_of_covBy hh hxh).eq_or_lt with rfl | hxL
     · exact hvL hvx
-    · exact (IsLeftLinear.comparable_of_le_common
-        ((IsLeftLinear.le_of_lt_of_covBy hL hxL).trans (hJ.le.trans hj)) hyj).elim hn₁ hn₂
+    · exact (IsForestOrder.le_total_of_le_of_le
+        ((IsForestOrder.le_of_lt_of_covBy hL hxL).trans (hJ.le.trans hj)) hyj).elim hn₁ hn₂
 
 /-- Under the LCA a specifier with a terminal properly inside it forces the X′ to be invisible,
 since a visible X′ would put the head before that terminal as well as after it. -/
@@ -233,12 +236,12 @@ theorem Linearizes.not_isVisible (hl : Linearizes (bareCCommand H) T) (hJ : K �
   have hah : Precedes (bareCCommand H) a h := precedes_of_spec hJ hL hJL hh hvJ hα.le
   have hha : Precedes (bareCCommand H) h a := precedes_iff.2 ⟨L, hh.le, a, le_rfl,
     mem_bareCCommand.2 ⟨hvL, fun hLa ↦ ?_, fun haL ↦ ?_,
-      fun x hx ↦ (IsLeftLinear.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
+      fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
   · exact (linearizes_iff.1 hl).2.1 a haT ((linearizes_iff.1 hl).2.2 a haT h hhT a haT hah hha)
-  · exact (IsLeftLinear.comparable_of_le_common hLa hα.le).elim (not_le_of_covBy hL hJ hJL.symm)
-      (not_le_of_covBy hJ hL hJL)
-  · exact not_le_of_covBy hJ hL hJL (hα.le.trans haL)
-  · exact not_le_of_covBy hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)
+  · exact (IsForestOrder.le_total_of_le_of_le hLa hα.le).elim (CovBy.not_le_of_ne hL hJ hJL.symm)
+      (CovBy.not_le_of_ne hJ hL hJL)
+  · exact CovBy.not_le_of_ne hJ hL hJL (hα.le.trans haL)
+  · exact CovBy.not_le_of_ne hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)
 
 end Bare
 
@@ -246,28 +249,29 @@ end PhraseStructure
 
 namespace Chomsky1995
 
-open Core.Order RoseTree PhraseStructure Minimalist
+open RoseTree PhraseStructure Minimalist
 
 /-! ### The positions of a syntactic object -/
 
-variable (t : LinearizedSyntacticObject)
+variable (t : PlanarSyntacticObject)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.val.Positions) : Prop := headDaughterRel (HeadFunction.raising t) m d
+def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising
+    t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
   inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))
 
-theorem headDaughterAt_covBy {m d : t.val.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
+theorem headDaughterAt_covBy {m d : t.toRoseTree.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
   Positions.covBy_iff.2 (headDaughterRel_covBy _ h)
 
-instance (x : t.val.Positions) : Decidable (IsMinimalProjection (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsMinimalProjection (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-instance (x : t.val.Positions) : Decidable (IsMaximalProjection (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsMaximalProjection (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-instance (x : t.val.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
+instance (x : t.toRoseTree.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
@@ -275,14 +279,14 @@ instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
 
 /-- The pronounced terminals of `t`, the positions of its heads; traces are exempt from the
 LCA. -/
-def pronounced : Set t.val.Positions := {p | t.IsHeadAt p}
+def pronounced : Set t.toRoseTree.Positions := {p | t.IsHeadAt p}
 
 instance : DecidablePred (· ∈ pronounced t) := fun p ↦ inferInstanceAs (Decidable (t.IsHeadAt p))
 
-theorem not_linearizes (ht : ¬ IsMax (⊥ : t.val.Positions)) :
+theorem not_linearizes (ht : ¬ IsMax (⊥ : t.toRoseTree.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=
   not_linearizes_of_not_isMax (fun _ _ ↦ headDaughterAt_covBy t)
-    (fun _ ↦ LinearizedSyntacticObject.isBranching_of_not_isMax) ht
+    (fun _ ↦ PlanarSyntacticObject.isBranching_of_not_isMax) ht
 
 /-! ### *The man saw it*, (11) -/
 
@@ -311,15 +315,15 @@ def saw : LexicalItem.Token :=
 def it : LexicalItem.Token := ⟨.of .D [] English.Pronouns.it.form, 0⟩
 
 /-- *The man saw it*, (11). -/
-def theManSawIt : LinearizedSyntacticObject := {{↑the, ↑man}, {↑saw, ↑it}}
+def theManSawIt : PlanarSyntacticObject := {{↑the, ↑man}, {↑saw, ↑it}}
 
 /-- (11) with *man* and *it* raised, leaving their traces. -/
-def theManSawItRaised : LinearizedSyntacticObject :=
+def theManSawItRaised : PlanarSyntacticObject :=
   {{↑the, .traceOf man}, {↑saw, .traceOf it}}
 
 /-- The position at an address. -/
-def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.val.validPaths := by exact rfl) :
-    t.val.Positions :=
+def position (l : List ℕ) (h : (⟨l⟩ : GornAddress) ∈ t.toRoseTree.validPaths := by exact rfl) :
+    t.toRoseTree.Positions :=
   ⟨⟨l⟩, h⟩
 
 -- (11)
@@ -329,7 +333,7 @@ theorem maximalProjectionAt_theManSawIt :
   decide
 
 -- (11), (10)
-theorem card_positions_theManSawIt : Fintype.card theManSawIt.val.Positions = 7 := by decide
+theorem card_positions_theManSawIt : Fintype.card theManSawIt.toRoseTree.Positions = 7 := by decide
 
 -- (9)
 theorem levels_theManSawIt :

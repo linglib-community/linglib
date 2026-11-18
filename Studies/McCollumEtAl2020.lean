@@ -9,7 +9,7 @@ public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Core.Computability.ElgotMezei
 public import Linglib.Data.Wordlist.McCollumEtAl2020
-public import Linglib.Phonology.Subregular.Docking
+public import Linglib.Phonology.Subregular.Dependence
 
 /-!
 # McCollum, Baković, Mai and Meinhardt (2020): Unbounded circumambient patterns
@@ -28,7 +28,7 @@ composition theorem the map is regular.
 
 * `Seg`: a prefix vowel with its height and ATR value, or a root with its ATR value
 * `Harmonizes`: the paper's generalization, the context in which a prefix vowel harmonizes
-* `tutrugbu`: the harmony as a docking process
+* `tutrugbu`: the harmony as a map on words
 * `markRight`, `resolveLeft`: the two passes of the mark-up analysis
 
 ## Implementation notes
@@ -92,16 +92,16 @@ def Harmonizes (w : List Seg) (i : ℕ) : Prop :=
 instance (w : List Seg) (i : ℕ) : Decidable (Harmonizes w i) := by
   unfold Harmonizes; infer_instance
 
-/-- Tutrugbu ATR harmony docks `[+ATR]` on the prefix vowels that harmonize. -/
-def tutrugbu : Docking Seg where
-  dock := Seg.raise
-  Docks := Harmonizes
-  lt_length {w i} h := by
-    by_contra hi
-    have h1 := h.1
-    rw [List.drop_eq_nil_of_le (by omega)] at h1
-    exact List.not_mem_nil h1
-  decDocks _ _ := inferInstance
+/-- Tutrugbu ATR harmony makes the prefix vowels that harmonize `[+ATR]` and keeps the rest. -/
+def tutrugbu (w : List Seg) : List Seg :=
+  w.mapIdx fun i a ↦ if Harmonizes w i then a.raise else a
+
+@[simp] theorem length_tutrugbu (w : List Seg) : (tutrugbu w).length = w.length := by
+  simp [tutrugbu]
+
+theorem getElem?_tutrugbu (w : List Seg) (i : ℕ) :
+    (tutrugbu w)[i]? = w[i]?.map fun a ↦ if Harmonizes w i then a.raise else a := by
+  simp [tutrugbu, List.getElem?_mapIdx]
 
 /-! ### The data
 
@@ -135,7 +135,7 @@ def ofAnalysis (a : Wordlist.Analysis) : Option (List Seg × List Seg) := do
 /-- The map takes the underlying form of every word of (1) to (8) and (27) to its surface
 form. -/
 theorem tutrugbu_map_forms :
-    ∀ a ∈ Wordlist.analyses, ∃ p ∈ ofAnalysis a, tutrugbu.map p.1 = p.2 := by
+    ∀ a ∈ Wordlist.analyses, ∃ p ∈ ofAnalysis a, tutrugbu p.1 = p.2 := by
   decide
 
 /-! ### Unbounded circumambience
@@ -152,20 +152,27 @@ private theorem harmonizes_flankWord_mid (x y : Seg) (d : ℕ) :
 
 /-- Tutrugbu ATR harmony is unbounded circumambient in the sense of (13). At every distance a medial
 `[−high]` vowel harmonizes, and changing either the initial vowel or the root alone undoes it. -/
-theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbu.map :=
-  tutrugbu.isUnboundedCircumambient_of_flanks (fill := .pfx false false) (xOn := .pfx false false)
+theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbu :=
+  .of_flanks (fill := .pfx false false) (xOn := .pfx false false)
     (yOn := .root true) (xOff := .pfx true false) (yOff := .root false)
-    (n := fun d ↦ 2 * d + 1) (t := fun d ↦ d + 1) (by decide) (fun _ ↦ by omega)
-    (fun _ ↦ by omega) (fun d ↦ (harmonizes_flankWord_mid _ _ d).mpr ⟨rfl, by simp⟩)
-    (fun d h ↦ ((harmonizes_flankWord_mid _ _ d).mp h).2 false rfl)
-    (fun d h ↦ by simpa using ((harmonizes_flankWord_mid _ _ d).mp h).1)
+    (n := fun d ↦ 2 * d + 1) (t := fun d ↦ d + 1) (fun _ ↦ by omega) (fun _ ↦ by omega)
+    (fun d ↦ by
+      rw [getElem?_tutrugbu, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_left ((harmonizes_flankWord_mid _ _ d).mpr ⟨rfl, by simp⟩)]
+      decide)
+    (fun d ↦ by
+      rw [getElem?_tutrugbu, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_right fun h ↦ ((harmonizes_flankWord_mid _ _ d).mp h).2 false rfl])
+    (fun d ↦ by
+      rw [getElem?_tutrugbu, getElem?_flankWord_mid (by omega) (by omega), Option.map_some,
+        ite_eq_right fun h ↦ by simpa using ((harmonizes_flankWord_mid _ _ d).mp h).1])
 
-theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbu.map :=
+theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbu :=
   tutrugbu_isUnboundedCircumambient.twoSidedUnboundedDependence
 
 /-- No subsequential transducer computes Tutrugbu ATR harmony, in either direction, (27). -/
-theorem tutrugbu_not_isSubsequential : ∀ d, ¬ IsSubsequential d tutrugbu.map :=
-  tutrugbu_twoSidedUnboundedDependence.not_isSubsequential fun _ ↦ tutrugbu.map_length
+theorem tutrugbu_not_isSubsequential : ∀ d, ¬ IsSubsequential d tutrugbu :=
+  tutrugbu_twoSidedUnboundedDependence.not_isSubsequential fun _ ↦ length_tutrugbu _
 
 /-! ### The mark-up analysis
 
@@ -245,9 +252,9 @@ private theorem head?_take_markRight_runRight (w : List Seg) (i : ℕ) :
 /-- The mark-up analysis computes Tutrugbu ATR harmony, marking right to left and then
 resolving left to right. -/
 theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
-    tutrugbu.map w = resolveLeft.run (markRight.runRight w) := by
+    tutrugbu w = resolveLeft.run (markRight.runRight w) := by
   refine List.ext_getElem? fun i ↦ ?_
-  rw [Docking.map_getElem?, Mealy.getElem?_run, Mealy.getElem?_runRight,
+  rw [getElem?_tutrugbu, Mealy.getElem?_run, Mealy.getElem?_runRight,
     resolveLeft_eval, head?_take_markRight_runRight, Mealy.eval,
     show markRight.start = (false, false) from rfl, markRight_evalFrom]
   rcases ha : w[i]? with _ | a
@@ -265,7 +272,7 @@ theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
     rintro rfl
     simp [List.head?_eq_getElem?, List.getElem?_eq_getElem hi]
   simp only [Option.map_some, Option.some_inj, Bool.false_or, List.mem_reverse, hstate,
-    tutrugbu, Harmonizes, hinit, List.drop_eq_getElem_cons hi, List.mem_cons, not_or]
+    Harmonizes, hinit, List.drop_eq_getElem_cons hi, List.mem_cons, not_or]
   revert h0
   generalize w.head?.any Seg.isHigh = IH
   by_cases hT : Seg.root true ∈ w.drop (i + 1) <;>
@@ -275,8 +282,8 @@ theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
 
 /-- Tutrugbu ATR harmony is regular. The mark-up analysis is a left-to-right Mealy pass after a
 right-to-left one, and a bimachine computes such a composite. -/
-theorem tutrugbu_isBimachineComputable : IsBimachineComputable tutrugbu.map := by
-  rw [show tutrugbu.map = resolveLeft.run ∘ markRight.runRight from
+theorem tutrugbu_isBimachineComputable : IsBimachineComputable tutrugbu := by
+  rw [show tutrugbu = resolveLeft.run ∘ markRight.runRight from
     funext tutrugbu_map_eq_resolve_mark]
   exact resolveLeft.isLeftSubsequential.isBimachineComputable.comp
     markRight.isRightSubsequential.isBimachineComputable

@@ -24,7 +24,7 @@ def fake_gun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def counterfeit_rolex : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def artificial_heart : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def fake_chanel_handbag : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("[fake [Chanel handbag]]: not from Chanel, made to pass for a Chanel handbag", .acceptable), ("[fake [Chanel handbag]]: a fake handbag made by Chanel", .acceptable), ("[[fake Chanel] handbag]: a fake handbag made by Chanel", .unacceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a midget, but a very large one", .acceptable)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a giant, but a very small one", .acceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("stone lions and rubber rabbits taken literally, lions and rabbits made of stone and rubber", .acceptable)]
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("silicon cows taken literally, cows made of silicon", .acceptable)]
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("fake guns in the default sense, which are not guns", .acceptable), ("real guns that are fakes of some other kind, such as fake paintball guns", .unacceptable)]
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a fake gun in the default sense, which is not a gun", .acceptable), ("a real gun that is a fake of some other kind, such as a fake paintball gun", .unacceptable)]
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def evil_park_owner : Datum :=
     glossedTokens := []
     context := "Mark is an evil paintball gun park owner. He really hates John. Unaware of this secret hate, John goes to Mark's park to play. Mark comes up with the plan of secretly replacing John's paintball gun with a fake paintball gun that is actually a real gun, with the intention that John kill someone. Fortunately, when John handles the fake paintball gun he notices something suspiciously off with its weight and refuses to use it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def evil_partygoer : Datum :=
     glossedTokens := []
     context := "Peter is a clever terrorist who wants to cause havoc at a Halloween party. To evade the security measures, he designs a gun that is intended to look like a toy gun but is actually a very powerful gun. Fortunately the security personnel are suspicious of Peter and his fake toy gun, so he gets caught and his plot is averted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "suppose")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "suppose")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "suppose")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "conditional antecedent")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "conditional antecedent")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "suppose")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "suppose")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "conditional antecedent")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "conditional antecedent")] }
 
@@ -167,7 +167,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "conditional antecedent")] }
 
@@ -180,7 +180,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the modal quantifies over Vann's belief worlds", .acceptable)]
     paperFeatures := [("embedding", "believe")] }
 
@@ -193,7 +193,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("embedding", "think")] }
 
@@ -206,7 +206,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "expert information")] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "target information state")] }
 
@@ -232,7 +232,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "must"), ("embedding", "suppose")] }
 
@@ -245,7 +245,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "probability"), ("embedding", "suppose")] }
 
@@ -258,7 +258,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "probability"), ("embedding", "suppose")] }
 
@@ -271,7 +271,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "probability"), ("embedding", "conditional antecedent")] }
 
@@ -284,7 +284,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := "Either the butler or the gardener did it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("consequent", "plain")] }
 
@@ -297,7 +297,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := "Either the butler or the gardener did it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("consequent", "must")] }
 

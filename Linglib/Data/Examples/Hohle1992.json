@@ -12,7 +12,7 @@
     "translation": "",
     "context": "ich habe Hanna gefragt, was Karl grade macht, und sie hat die alberne Behauptung aufgestellt, daß er ein DREHbuch schreibt",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -44,7 +44,7 @@
     "translation": "",
     "context": "ich habe Hanna gefragt, was Karl grade macht, und sie hat die alberne Behauptung aufgestellt, daß er ein DREHbuch schreibt",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -80,7 +80,7 @@
     "translation": "",
     "context": "Karl hat BESTIMMT nicht gelogen",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "hörst du denn NIE auf?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -160,7 +160,7 @@
     "translation": "",
     "context": "ich kann mir nicht vorstellen, daß sie ihn wirklich umbringen will",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -200,7 +200,7 @@
     "translation": "",
     "context": "ich habe Hanna gebeten, damit AUFzuhören",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "es heißt, daß Karl den HUND getreten hat",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -272,7 +272,7 @@
     "translation": "",
     "context": "ich habe Karl gedroht, daß ich ihm die LEVITEN lesen werde",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -308,7 +308,7 @@
     "translation": "",
     "context": "ich habe Hanna gebeten, damit AUFzuhören",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -344,7 +344,7 @@
     "translation": "",
     "context": "ich habe den Hund nicht getreten, und Karl hat es auch nicht getan",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -380,7 +380,7 @@
     "translation": "",
     "context": "daß Karl nicht teilnimmt, hat nichts mit seiner Kurzsichtigkeit zu tun",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -420,7 +420,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -452,7 +452,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -488,7 +488,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -524,7 +524,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -560,7 +560,7 @@
     "translation": "",
     "context": "weißt du, ob Hanna kürzlich in ROM war?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -596,7 +596,7 @@
     "translation": "",
     "context": "weißt du, ob Hanna kürzlich in ROM war?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -632,7 +632,7 @@
     "translation": "",
     "context": "vielleicht hört Karl damit AUF",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -668,7 +668,7 @@
     "translation": "",
     "context": "vielleicht hört Karl damit AUF",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -704,7 +704,7 @@
     "translation": "",
     "context": "Karl hat BESTIMMT nicht gelogen",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -740,7 +740,7 @@
     "translation": "",
     "context": "Karl hat BESTIMMT nicht gelogen",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -776,7 +776,7 @@
     "translation": "",
     "context": "weißt du, ob Hanna kürzlich in ROM war?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -812,7 +812,7 @@
     "translation": "",
     "context": "ich hoffe, daß Karl ihr ZUhört",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -856,7 +856,7 @@
     "translation": "",
     "context": "ich hoffe, daß Karl ihr ZUhört",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -900,7 +900,7 @@
     "translation": "",
     "context": "es heißt, daß Karl ein DREHBUCH geschrieben hat",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -944,7 +944,7 @@
     "translation": "",
     "context": "Hanna macht dir bestimmt den GARAUS",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -988,7 +988,7 @@
     "translation": "",
     "context": "Karl hat die lächerliche Behauptung aufgestellt, daß sie damit AUFhört",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1036,7 +1036,7 @@
     "translation": "",
     "context": "ich hoffe, daß Karl ihr ZUhört",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1068,7 +1068,7 @@
     "translation": "",
     "context": "ich hoffe, er hört ihr ZU",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1100,7 +1100,7 @@
     "translation": "",
     "context": "ich hoffe, er hört ihr ZU",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1132,7 +1132,7 @@
     "translation": "",
     "context": "ich hoffe, er hört ihr ZU",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1168,7 +1168,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1204,7 +1204,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1240,7 +1240,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1276,7 +1276,7 @@
     "translation": "",
     "context": "ich kann mir nicht vorstellen, daß er Hanna die LEVITEN liest",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1312,7 +1312,7 @@
     "translation": "",
     "context": "ich kann mir nicht vorstellen, daß er Hanna die LEVITEN liest",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1348,7 +1348,7 @@
     "translation": "",
     "context": "ich möchte wissen, ob sie in ROM ist",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1384,7 +1384,7 @@
     "translation": "",
     "context": "ich möchte wissen, ob sie in ROM ist",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1420,7 +1420,7 @@
     "translation": "",
     "context": "ich möchte wissen, ob Karl ein DREHBUCH schreibt",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1456,7 +1456,7 @@
     "translation": "",
     "context": "ich möchte wissen, ob Karl ein DREHBUCH schreibt",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1492,7 +1492,7 @@
     "translation": "",
     "context": "ich kenne nur wenige Leute, die (wo) dieses Buch gelesen haben",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1532,7 +1532,7 @@
     "translation": "",
     "context": "du hast mir erzählt, mit wem (daß) du NICHT getanzt hast",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1572,7 +1572,7 @@
     "translation": "",
     "context": "du hast mir erzählt, wen (daß) du NICHT reingelegt hast",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1612,7 +1612,7 @@
     "translation": "",
     "context": "ich kenne nur wenige Leute, die (wo) dieses Buch gelesen haben",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1648,7 +1648,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1684,7 +1684,7 @@
     "translation": "",
     "context": "ich kenne nur wenige Leute, die dieses Buch gelesen haben",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1720,7 +1720,7 @@
     "translation": "",
     "context": "du hast mir erzählt, wen du NICHT reingelegt hast",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1756,7 +1756,7 @@
     "translation": "",
     "context": "Hanna tanzt nur ganz selten",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1792,7 +1792,7 @@
     "translation": "",
     "context": "du hast mir erzählt, mit wem du NICHT getanzt hast",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1828,7 +1828,7 @@
     "translation": "",
     "context": "ich habe von den meisten Schriftstellern so gut wie nichts gelesen",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1864,7 +1864,7 @@
     "translation": "",
     "context": "du hast also weder Karls noch Hannas Aufsatz gelesen",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

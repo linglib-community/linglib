@@ -24,7 +24,7 @@ def gj2004_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hammer"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected")] }
 
@@ -37,7 +37,7 @@ def gj2004_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "laugh"), ("subconstruction", "causative path"), ("rpCat", "PP"), ("selection", "unselected")] }
 
@@ -50,7 +50,7 @@ def gj2004_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "freeze"), ("subconstruction", "noncausative property"), ("rpCat", "AP")] }
 
@@ -63,7 +63,7 @@ def gj2004_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "roll"), ("subconstruction", "noncausative path"), ("rpCat", "PP")] }
 
@@ -76,7 +76,7 @@ def gj2004_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "water"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected")] }
 
@@ -89,7 +89,7 @@ def gj2004_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "break"), ("subconstruction", "causative property"), ("rpCat", "PP"), ("selection", "selected")] }
 
@@ -102,7 +102,7 @@ def gj2004_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("They drank the pub.", .ungrammatical)]
+    contrasts := [("They drank the pub.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "drink"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "unselected")] }
 
@@ -115,7 +115,7 @@ def gj2004_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The professor talked us.", .ungrammatical)]
+    contrasts := [("The professor talked us.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "talk"), ("subconstruction", "causative property"), ("rpCat", "PP"), ("selection", "unselected")] }
 
@@ -128,7 +128,7 @@ def gj2004_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("We yelled ourselves.", .ungrammatical), ("We yelled Harry hoarse.", .ungrammatical)]
+    contrasts := [("We yelled ourselves.", .ungrammatical), ("We yelled Harry hoarse.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "yell"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "fake reflexive")] }
 
@@ -141,7 +141,7 @@ def gj2004_23a : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "heat"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("endBounded", "false")] }
 
@@ -154,7 +154,7 @@ def gj2004_23b : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hammer"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("endBounded", "false")] }
 
@@ -167,7 +167,7 @@ def gj2004_23c : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "weave"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("endBounded", "false")] }
 
@@ -180,7 +180,7 @@ def gj2004_24a : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "float"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("endBounded", "true")] }
 
@@ -193,7 +193,7 @@ def gj2004_24b : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("subconstruction", "causative path"), ("rpCat", "PP"), ("endBounded", "true")] }
 
@@ -206,7 +206,7 @@ def gj2004_24c : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "float"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("endBounded", "false")] }
 
@@ -219,7 +219,7 @@ def gj2004_24d : Datum :=
     glossedTokens := []
     context := "Nonrepetitive reading."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "push"), ("subconstruction", "causative path"), ("rpCat", "PP"), ("endBounded", "false")] }
 
@@ -232,7 +232,7 @@ def gj2004_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "yell"), ("subconstruction", "noncausative property"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
@@ -245,7 +245,7 @@ def gj2004_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cry"), ("subconstruction", "noncausative property"), ("rpCat", "PP"), ("subjectRole", "agent")] }
 
@@ -258,7 +258,7 @@ def gj2004_45c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "bleed"), ("subconstruction", "noncausative property"), ("rpCat", "PP"), ("subjectRole", "patient")] }
 
@@ -271,7 +271,7 @@ def gj2004_46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cough"), ("subconstruction", "noncausative property"), ("rpCat", "AP"), ("subjectRole", "agent or patient")] }
 
@@ -284,7 +284,7 @@ def gj2004_47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cough"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "fake reflexive"), ("subjectRole", "agent or patient")] }
 
@@ -297,7 +297,7 @@ def gj2004_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wriggle"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subjectRole", "agent")] }
 
@@ -310,7 +310,7 @@ def gj2004_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "melt"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subjectRole", "patient")] }
 
@@ -323,7 +323,7 @@ def gj2004_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
@@ -336,7 +336,7 @@ def gj2004_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
@@ -349,7 +349,7 @@ def gj2004_49c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
@@ -362,7 +362,7 @@ def gj2004_49e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "patient")] }
 
@@ -375,7 +375,7 @@ def gj2004_wipe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "wipe"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected"), ("objectRole", "patient")] }
 
@@ -388,7 +388,7 @@ def gj2004_97c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "rumble"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subeventRelation", "result")] }
 

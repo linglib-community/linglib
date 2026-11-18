@@ -5,36 +5,25 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 /-!
 # Fusion
 
-Fusion merges two adjacent terminal nodes into a single terminal bearing
-both feature bundles, which a single Vocabulary Item then spells out — the
-Tns+Agr fusion of English finite verbs; French *du* = P[de] fused with
-D[le] is the portmanteau case. It is the inverse misalignment from Fission:
-fission yields more positions of exponence than syntactic terminals, fusion
-fewer. The fused bundle is the union of the two bundles; a rule contributes only
-the condition under which the two terminals fuse.
-
-## Main definitions
-
-* `FusionRule`: the licensing condition on two adjacent bundles.
-* `FusionRule.apply`: the fused bundle when the condition holds.
-
-## Main results
-
-* `portmanteau_needs_fusion`: an exponent whose items all draw on both
-  bundles is insertable at neither unfused node.
+Fusion merges two adjacent terminal nodes into one terminal bearing both feature bundles, which a
+single Vocabulary Item then spells out, as Tns and Agr fuse in the English finite verb. It is the
+inverse of Fission: Fission yields more positions of exponence than the syntax has terminals,
+Fusion fewer. The fused bundle is the union of the two, so a rule contributes only the condition
+under which two terminals fuse. Fusion is one analysis of a portmanteau among several: an exponent
+that seems to span two terminals may instead be an item of one of them whose site mentions the
+other, or the exponent of a span.
 
 ## References
 
-* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
-  inflection*][halle-marantz-1993]
-* [L. Kalin, B. Bjorkman et al.][kalin-bjorkman-etal-2026] §4.4
+* [halle-marantz-1993]
+* [kalin-bjorkman-etal-2026]
 -/
 
 @[expose] public section
 
 namespace DistributedMorphology
 
-variable {F E : Type*}
+variable {F : Type*}
 
 /-- A Fusion rule fuses two adjacent terminals, the structurally higher first, into one bearing
 both bundles when its decidable condition holds of them. -/
@@ -69,23 +58,5 @@ theorem isSome_apply : (rule.apply p q).isSome ↔ rule.condition p q := by
   unfold apply; split <;> simp_all
 
 end FusionRule
-
-section Portmanteau
-
-variable [DecidableEq F]
-
-/-- A portmanteau exponent needs fusion. When every item carrying the exponent draws on features
-missing from each unfused bundle, the Subset Principle selects it at neither unfused node, since
-only the fused bundle contains its item's features (`subsetPrinciple_winner_mem`). -/
-theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)}
-    {p q : Neighborhood (Finset F)} {e : E}
-    (he : ∀ i ∈ items, i.exponent = e → ¬ Morphology.Applies i p ∧
-      ¬ Morphology.Applies i q) :
-    subsetPrinciple items p ≠ some e ∧ subsetPrinciple items q ≠ some e := by
-  refine ⟨fun h => ?_, fun h => ?_⟩ <;> obtain ⟨i, hi, rfl, happ⟩ := subsetPrinciple_winner_mem h
-  · exact (he i hi rfl).1 happ
-  · exact (he i hi rfl).2 happ
-
-end Portmanteau
 
 end DistributedMorphology

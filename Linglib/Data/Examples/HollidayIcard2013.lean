@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("axiom", "A"), ("form", "(φ ∨ χ) ⩾ (ψ ∨ χ)")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("axiom", "A"), ("form", "φ ⩾ ψ")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{a, e} ≻ {c, d}")] }
 
@@ -63,7 +63,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{b, c} ≻ {a, d}")] }
 
@@ -76,7 +76,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{d} ≻ {a, c}")] }
 
@@ -89,7 +89,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{a, c, d} ≻ {b, e}")] }
 

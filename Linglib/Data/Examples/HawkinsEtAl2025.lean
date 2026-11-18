@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2a"), ("response", "safe")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2a"), ("response", "unsafe")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3a"), ("question", "specific"), ("target", "available"), ("response", "exhaustive")] }
 
@@ -63,7 +63,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3a"), ("question", "specific"), ("target", "unavailable"), ("response", "exhaustive")] }
 
@@ -76,7 +76,7 @@ def ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3a"), ("question", "general"), ("response", "exhaustive")] }
 
@@ -89,7 +89,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3b"), ("competitor", "iced coffee"), ("sameCategory", "soda"), ("otherCategory", "Chardonnay")] }
 
@@ -102,7 +102,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3c"), ("competitor", "sleeping bag"), ("mostSimilar", "pillow"), ("otherCategory", "carpet")] }
 
@@ -115,7 +115,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3c"), ("competitor", "bubble wrap"), ("mostSimilar", "pillow"), ("otherCategory", "carpet")] }
 
@@ -128,7 +128,7 @@ def icedtea : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("response", "competitor")] }
 
@@ -141,7 +141,7 @@ def bbq : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("response", "relevant, non-resolving")] }
 

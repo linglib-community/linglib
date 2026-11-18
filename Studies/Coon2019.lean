@@ -45,11 +45,6 @@ conditions; the locus of Existential Closure that separates the two antipassives
 -aj predicate. Status suffixes, derived transitives in -ej, word order, stative -an stems, the
 inanimate causer of (70a) and the isolated -j form (71) are recorded as data only.
 
-## Errata
-
-The template (56a) marks the agent of the transitive stem with Set B. Transitive subjects are
-cross-referenced with Set A (ergative) prefixes, as §2.2 states and (10) shows.
-
 ## References
 
 * [J. Coon, *Building verbs in Chuj: Consequences for the nature of roots* (2019)][coon-2019]

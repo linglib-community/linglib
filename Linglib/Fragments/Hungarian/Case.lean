@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Hungarian case
@@ -21,6 +21,7 @@ genitive as a superficial exception to the case hierarchy.
 ## Main definitions
 
 * `Hungarian.Case`, `Hungarian.Case.label`: the cases with a comparative label, and that label.
+* `Hungarian.Case.functions`: the functions a case marks.
 
 ## Main results
 
@@ -111,5 +112,16 @@ theorem Case.cells_image_label : _root_.Case.cells (Finset.univ.image Case.label
     (.univ : Finset Spatial.Localization) ×ˢ
       ({.place, .source, .goal} : Finset Spatial.Path.Direction) := by
   decide
+
+/-- The functions a case marks: the dative also marks the possessor. -/
+def Case.functions : Case → Finset _root_.Case.Function
+  | dat => {.argument .R, .possessor}
+  | all => {.spatial (some .exterior) .goal}
+  | abl => {.spatial (some .exterior) .source}
+  | c => c.label.functions
+
+theorem Case.label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
+  cases c <;> decide
 
 end Hungarian

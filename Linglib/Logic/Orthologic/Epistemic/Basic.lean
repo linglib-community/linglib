@@ -228,6 +228,19 @@ variable (bx : InfTopHom L L) (v : Var → L)
 
 end eval
 
+/-- An ortholattice homomorphism that commutes with the necessity operators commutes with
+evaluation. -/
+theorem map_eval {M F : Type*} [Lattice M] [BoundedOrder M] [InvolutiveCompl M] [FunLike F L M]
+    [OrtholatticeHomClass F L M] (f : F) {bx : InfTopHom L L} {bx' : InfTopHom M M}
+    (hbox : ∀ a, f (bx a) = bx' (f a)) (v : Var → L) (φ : ModalFormula Var) :
+    f (eval bx v φ) = eval bx' (fun p ↦ f (v p)) φ := by
+  induction φ with
+  | top => exact map_top f
+  | var p => rfl
+  | neg φ ih => rw [eval, eval, OrtholatticeHomClass.map_compl, ih]
+  | and φ ψ ihφ ihψ => rw [eval, eval, map_inf, ihφ, ihψ]
+  | box φ ih => rw [eval, eval, hbox, ih]
+
 /-- EO-consequences hold in every epistemic ortholattice under every valuation
 ([holliday-mandelkern-2024] Theorem 3.26, soundness). -/
 theorem sound [IsOrtholattice L] {bx : InfTopHom L L} (hE : IsEpistemic bx) (h : EDerivable φ ψ)

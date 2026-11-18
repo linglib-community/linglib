@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "epistemic", "judgment": "acceptable"}
     ],
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic",
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic",
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "epistemic",
@@ -133,7 +133,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "teleological", "judgment": "acceptable"}
     ],
@@ -156,7 +156,7 @@
     "translation": "John thinks that Mary must have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -177,7 +177,7 @@
     "translation": "John said that Mary must have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jean a conclu que Marie devait avoir connu son tueur.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -200,7 +200,7 @@
     "translation": "John realized that Mary must have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "semifactive", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -221,7 +221,7 @@
     "translation": "John wants that Mary must have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -242,7 +242,7 @@
     "translation": "John demanded that Mary must have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "directive", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -263,7 +263,7 @@
     "translation": "John fears that Mary may have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -284,7 +284,7 @@
     "translation": "John fears that Mary must have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -305,7 +305,7 @@
     "translation": "John doubts that Mary may have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "possibility", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -326,7 +326,7 @@
     "translation": "John doubts that Mary must have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -347,7 +347,7 @@
     "translation": "John wants that in the world of the mystery novel Mary must have known her killer.",
     "context": "John is reading a mystery novel and wants certain facts to obtain according to its author.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "third_party"},
     "comment": "Escape-hatch reading: the modal targets the novel's information state, not John's desires.",
@@ -364,7 +364,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"second_conjunct": "belief_predicate"},
     "comment": "A&H's adaptation of Yalcin's contrast: Yalcin (2007) prints '(14) Suppose it is raining and I do not know that it is raining' (p. 986) and '(7) # Suppose it is raining and it might not be raining' (p. 985); the imagine sentences are A&H's own.",
@@ -381,7 +381,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"second_conjunct": "epistemic_modal", "modal_force": "possibility"},
     "comment": "Contradictory once the modal's information state is the imagination state itself. A&H's adaptation of Yalcin's contrast: Yalcin (2007) prints '(14) Suppose it is raining and I do not know that it is raining' (p. 986) and '(7) # Suppose it is raining and it might not be raining' (p. 985); the imagine sentences are A&H's own.",
@@ -398,7 +398,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John is home, Mary wanted.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -420,7 +420,7 @@
     "translation": "I think that he is coming today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ich will, dass er heute kommt.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -442,7 +442,7 @@
     "translation": "I think that he is coming today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ich will, dass er kommt heute.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -461,7 +461,7 @@
     "translation": "John prefers that in all worlds compatible with the police report Paul is the murderer to other contextual alternatives.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "third_party"},
     "comment": "The *according to* phrase supplies the information state the epistemic is anaphoric to.",
@@ -478,7 +478,7 @@
     "translation": "",
     "context": "Nobody among us has had access to the information in this filing cabinet, but we know that it contains the complete evidence (including possibly forged evidence) about the murder of Philip Boyes and narrows down the set of suspects. We are betting on who might have killed Boyes according to the information in the filing cabinet. Harriet, who is innocent, says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "third_party"},
     "comment": "The epistemic quantifies over the filing cabinet's information, not Harriet's beliefs. The paper cites the scenario from Kratzer (2009), pg. 33, which its references list as 'Modals and context-dependency', colloquium, Harvard University, February 20, 2009 (not Kratzer's Making a Pronoun).",
@@ -498,7 +498,7 @@
     "translation": "I hope that he is coming today.",
     "context": "A asks: Kommt Peter heute? ('Is Peter coming today?')",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ich will, dass er heute kommt.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -517,7 +517,7 @@
     "translation": "",
     "context": "It is raining.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "That is what I hope.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -536,7 +536,7 @@
     "translation": "",
     "context": "It is raining.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "That is what I want.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -555,7 +555,7 @@
     "translation": "",
     "context": "It isn't raining.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "That is not what I hope.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -574,7 +574,7 @@
     "translation": "",
     "context": "It isn't raining.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "That is not what I want.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -596,7 +596,7 @@
     "translation": "I want to take some flight to Paris.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "epistemic_indefinite", "indefinite": "vreun"},
     "comment": "",
@@ -616,7 +616,7 @@
     "translation": "I hope to find some flight to Paris.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "epistemic_indefinite", "indefinite": "vreun"},
     "comment": "",
@@ -633,7 +633,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "test": "uncertainty_cancellation", "suspender": "in fact"},
     "comment": "Read as a retraction rather than an implicature suspension.",
@@ -650,7 +650,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "test": "uncertainty_cancellation", "suspender": "because"},
     "comment": "",
@@ -667,7 +667,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"test": "uncertainty_cancellation", "suspender": "because"},
     "comment": "*Because* suspends the exhaustivity inference of *some* but not the uncertainty inference of *doubt*.",
@@ -684,7 +684,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John thinks that it's possible that she's the murderer, but that it's very unlikely. He's certain she's innocent.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -707,7 +707,7 @@
     "translation": "Gianni thinks that Maria must have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "Italian *pensare* selects the subjunctive yet licenses epistemics: subjunctive is not what blocks them.",
@@ -728,7 +728,7 @@
     "translation": "John thinks that Maria must have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -749,7 +749,7 @@
     "translation": "John thinks that Maria may have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -770,7 +770,7 @@
     "translation": "John wants that Maria must have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -791,7 +791,7 @@
     "translation": "John wants that Maria may have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -812,7 +812,7 @@
     "translation": "John hopes that Maria may have known her killer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -833,7 +833,7 @@
     "translation": "John hopes that Maria must have known her killer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
     "comment": "",
@@ -853,7 +853,7 @@
     "translation": "Marie thinks she deontically must be pregnant.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "deontic", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "acceptable"}
@@ -876,7 +876,7 @@
     "translation": "Marie thinks she deontically must be pregnant.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "deontic", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
@@ -896,7 +896,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John hopes that Mary can't be the killer.", "judgment": "unacceptable"},
       {"form": "John hopes that Mary must be the killer.", "judgment": "unacceptable"}
     ],
@@ -916,7 +916,7 @@
     "translation": "",
     "context": "A has just asserted: Mary must be the murderer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "metalinguistic", "focus": "contrastive"},
     "comment": "Necessity under *doubt* only with contrastive focus on the modal and a prior assertion of the prejacent — metalinguistic.",
@@ -933,7 +933,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "negation": "over_modal"},
     "comment": "Marked % by the authors: predicted licensed (negated necessity is possibility), but *have to* under negation disprefers epistemic readings.",

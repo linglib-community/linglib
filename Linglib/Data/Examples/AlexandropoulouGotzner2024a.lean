@@ -25,7 +25,7 @@ def ag2024a_t2_anna : Datum :=
     glossedTokens := []
     context := "A group of friends goes on vacation. One friend named Tim writes a review for each person's room on booking.com. Please decide which rating the room receives in terms of its size based on Tim's statement. 1 = tiny; 5 = gigantic. Tim writes:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "tiny"), ("strength", "strong"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative strong")] }
 
@@ -39,7 +39,7 @@ def ag2024a_t2_david : Datum :=
     glossedTokens := []
     context := "A group of friends goes on vacation. One friend named Tim writes a review for each person's room on booking.com. Please decide which rating the room receives in terms of its size based on Tim's statement. 1 = tiny; 5 = gigantic. Tim writes:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "small"), ("strength", "weak"), ("polarity", "negative"), ("negation", "nonNegated"), ("condition", "non-negated negative weak")] }
 
@@ -53,7 +53,7 @@ def ag2024a_t2_brian : Datum :=
     glossedTokens := []
     context := "A group of friends goes on vacation. One friend named Tim writes a review for each person's room on booking.com. Please decide which rating the room receives in terms of its size based on Tim's statement. 1 = tiny; 5 = gigantic. Tim writes:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "gigantic"), ("strength", "strong"), ("polarity", "positive"), ("negation", "nonNegated"), ("condition", "non-negated positive strong")] }
 
@@ -67,7 +67,7 @@ def ag2024a_t3_anthony : Datum :=
     glossedTokens := []
     context := "The government examines the hospitals of a big city for their hygiene standards. The examiner writes a review. Please decide which rating each hospital gets for its hygiene standards based on the examiner's statements. 1 = filthy; 5 = pristine. The examiner says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "filthy"), ("strength", "strong"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative strong")] }
 
@@ -81,7 +81,7 @@ def ag2024a_t3_joseph : Datum :=
     glossedTokens := []
     context := "The government examines the hospitals of a big city for their hygiene standards. The examiner writes a review. Please decide which rating each hospital gets for its hygiene standards based on the examiner's statements. 1 = filthy; 5 = pristine. The examiner says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "dirty"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative weak")] }
 
@@ -95,7 +95,7 @@ def ag2024a_t3_mary : Datum :=
     glossedTokens := []
     context := "The government examines the hospitals of a big city for their hygiene standards. The examiner writes a review. Please decide which rating each hospital gets for its hygiene standards based on the examiner's statements. 1 = filthy; 5 = pristine. The examiner says:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "pristine"), ("strength", "strong"), ("polarity", "positive"), ("negation", "nonNegated"), ("condition", "non-negated positive strong")] }
 

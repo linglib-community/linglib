@@ -13,7 +13,7 @@
     "translation": "",
     "context": "The speaker has exactly one rich relative who has put the speaker in her will, though the speaker may not know who she is.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃ > if",
@@ -37,7 +37,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∀ > if",
@@ -61,7 +61,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∀ > ∃ > 3",
@@ -85,7 +85,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "2 > if, both deaths in the antecedent",
@@ -113,7 +113,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃lawyer > if > ∃relative",
@@ -145,7 +145,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃syntactician > ∀ > ∃condition > 3",
@@ -169,7 +169,7 @@
     "translation": "",
     "context": "Every grad is taking the semantics seminar, and the grads like different papers on indefinites.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃seminar > ∀ > ∃paper > if",
@@ -193,7 +193,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃ > ∀, pronoun bound by everybody",
@@ -220,7 +220,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃ > ∀, pronoun bound by every boy",
@@ -244,7 +244,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "∃ > no, pronoun bound by no candidate",

@@ -24,7 +24,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "abundance"), ("response", "denial")] }
 
@@ -37,7 +37,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "abundance"), ("response", "denial")] }
 
@@ -50,7 +50,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "abundance"), ("response", "denial")] }
 
@@ -63,7 +63,7 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := "There are normally a few fish swimming in the pond."
     judgment := .acceptable
-    alternatives := [("Der Teich schwamm heute nur so vor Fischen!", .acceptable)]
+    contrasts := [("Der Teich schwamm heute nur so vor Fischen!", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("diagnostic", "nur so")] }
 
@@ -76,7 +76,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := "There are normally a few cockroaches crawling on the underground tracks."
     judgment := .acceptable
-    alternatives := [("Das Gleisbett krabbelte heute nur so vor Kakerlaken!", .acceptable)]
+    contrasts := [("Das Gleisbett krabbelte heute nur so vor Kakerlaken!", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("diagnostic", "nur so")] }
 
@@ -89,7 +89,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := "There's usually a subdued sound of industriousness in the factory."
     judgment := .acceptable
-    alternatives := [("Die Werkshalle hat heute vor Maschinen nur so gesummt!", .acceptable)]
+    contrasts := [("Die Werkshalle hat heute vor Maschinen nur so gesummt!", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("diagnostic", "nur so")] }
 
@@ -102,7 +102,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "base"), ("diagnostic", "not even")] }
 
@@ -115,7 +115,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("The pool isn't swimming with turtles, let alone infested by them.", .acceptable)]
+    contrasts := [("The pool isn't swimming with turtles, let alone infested by them.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("diagnostic", "not even")] }
 
@@ -128,7 +128,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "base"), ("diagnostic", "not even")] }
 
@@ -141,7 +141,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("The metro isn't crawling with rats, let alone infested by them.", .acceptable)]
+    contrasts := [("The metro isn't crawling with rats, let alone infested by them.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("diagnostic", "not even")] }
 
@@ -154,7 +154,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "base"), ("diagnostic", "not even")] }
 
@@ -167,7 +167,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("The pan isn't simmering with steaks, let alone sizzling.", .acceptable)]
+    contrasts := [("The pan isn't simmering with steaks, let alone sizzling.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("diagnostic", "not even")] }
 
@@ -180,7 +180,7 @@ def ex_45B_mirativity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("response", "denial")] }
 
@@ -193,7 +193,7 @@ def ex_45Bprime_mirativity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("response", "wait a minute")] }
 
@@ -206,7 +206,7 @@ def ex_45B_scalarity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("response", "denial")] }
 
@@ -219,7 +219,7 @@ def ex_45Bprime_scalarity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("response", "wait a minute")] }
 
@@ -232,7 +232,7 @@ def ex_46B_mirativity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("response", "denial")] }
 
@@ -245,7 +245,7 @@ def ex_46Bprime_mirativity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("response", "wait a minute")] }
 
@@ -258,7 +258,7 @@ def ex_46B_scalarity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("response", "denial")] }
 
@@ -271,7 +271,7 @@ def ex_46Bprime_scalarity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("response", "wait a minute")] }
 
@@ -284,7 +284,7 @@ def ex_47B_mirativity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("response", "denial")] }
 
@@ -297,7 +297,7 @@ def ex_47Bprime_mirativity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("response", "wait a minute")] }
 
@@ -310,7 +310,7 @@ def ex_47B_scalarity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("response", "denial")] }
 
@@ -323,7 +323,7 @@ def ex_47Bprime_scalarity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("response", "wait a minute")] }
 
@@ -336,7 +336,7 @@ def ex_49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "base"), ("content", "scalarity"), ("diagnostic", "obligatory local effect"), ("holder", "negative")] }
 
@@ -349,7 +349,7 @@ def ex_49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "base"), ("content", "mirativity"), ("diagnostic", "obligatory local effect"), ("holder", "negative")] }
 
@@ -362,7 +362,7 @@ def ex_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "scalarity"), ("diagnostic", "obligatory local effect"), ("holder", "negative")] }
 
@@ -375,7 +375,7 @@ def ex_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("content", "mirativity"), ("diagnostic", "obligatory local effect"), ("holder", "negative")] }
 
@@ -388,7 +388,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "speech-act")] }
 
@@ -401,7 +401,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "speech-act")] }
 
@@ -414,7 +414,7 @@ def ex_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "evaluation")] }
 
@@ -427,7 +427,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "evaluation")] }
 
@@ -440,7 +440,7 @@ def ex_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "mirativity")] }
 
@@ -453,7 +453,7 @@ def ex_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "mirativity")] }
 
@@ -466,7 +466,7 @@ def ex_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "epistemic modality")] }
 
@@ -479,7 +479,7 @@ def ex_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "epistemic modality")] }
 
@@ -492,7 +492,7 @@ def ex_55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "scalar evaluation")] }
 
@@ -505,7 +505,7 @@ def ex_55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "scalar evaluation")] }
 
@@ -518,7 +518,7 @@ def ex_56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "deictic tense")] }
 
@@ -531,7 +531,7 @@ def ex_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "deictic tense")] }
 
@@ -544,7 +544,7 @@ def ex_57a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "habitual aspect")] }
 
@@ -557,7 +557,7 @@ def ex_57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "habitual aspect")] }
 
@@ -570,7 +570,7 @@ def ex_58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "continuative aspect I")] }
 
@@ -583,7 +583,7 @@ def ex_58b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "continuative aspect I")] }
 
@@ -596,7 +596,7 @@ def ex_59a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "durative aspect")] }
 
@@ -609,7 +609,7 @@ def ex_59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "durative aspect")] }
 
@@ -622,7 +622,7 @@ def ex_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember ants crawling on the sidewalk.", .acceptable)]
+    contrasts := [("I remember ants crawling on the sidewalk.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "base"), ("projection", "prospective aspect")] }
 
@@ -635,7 +635,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I remember the sidewalk crawling with ants.", .acceptable)]
+    contrasts := [("I remember the sidewalk crawling with ants.", .acceptable)]
     readings := []
     paperFeatures := [("alternant", "nonBase"), ("projection", "prospective aspect")] }
 

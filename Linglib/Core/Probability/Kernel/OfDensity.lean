@@ -58,6 +58,28 @@ noncomputable def ofDensity (μ : Measure β) (f : α → β → ℝ≥0∞) : K
 theorem ofDensity_apply (μ : Measure β) (f : α → β → ℝ≥0∞) (a : α) :
     ofDensity μ f a = (μ.withDensity (f a))[|Set.univ] := rfl
 
+/-- Reweighting by a density leaves the measure conditioned on an event of positive finite mass
+unchanged exactly when the density is almost everywhere a positive finite constant on the
+event. -/
+theorem _root_.ProbabilityTheory.cond_withDensity_eq_cond_iff {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [SigmaFinite μ] {f : Ω → ℝ≥0∞} {s : Set Ω}
+    (hs : MeasurableSet s) (hf : AEMeasurable f (μ.restrict s)) (h0 : μ s ≠ 0) (htop : μ s ≠ ∞) :
+    (μ.withDensity f)[|s] = μ[|s] ↔ ∃ c, c ≠ 0 ∧ c ≠ ∞ ∧ ∀ᵐ ω ∂μ.restrict s, f ω = c := by
+  refine ⟨fun h ↦ ?_, fun ⟨c, hc0, hc, hc'⟩ ↦ cond_withDensity_of_ae_eq μ hs hc0 hc hc'⟩
+  have h1 : (μ.withDensity f s)⁻¹ * μ.withDensity f s = 1 := by
+    have := congrArg (· s) h
+    simpa only [cond, Measure.smul_apply, Measure.restrict_apply_self, smul_eq_mul,
+      ENNReal.inv_mul_cancel h0 htop] using this
+  have hν0 : μ.withDensity f s ≠ 0 := fun h' ↦ by simp [h'] at h1
+  have hνtop : μ.withDensity f s ≠ ∞ := fun h' ↦ by simp [h'] at h1
+  refine ⟨μ.withDensity f s * (μ s)⁻¹, mul_ne_zero hν0 (ENNReal.inv_ne_zero.2 htop),
+    ENNReal.mul_ne_top hνtop (ENNReal.inv_ne_top.2 h0), ?_⟩
+  have hr : (μ.withDensity f).restrict s = (μ.withDensity f s * (μ s)⁻¹) • μ.restrict s := by
+    have := congrArg (μ.withDensity f s • ·) h
+    simpa only [cond, smul_smul, ENNReal.mul_inv_cancel hν0 hνtop, one_smul] using this
+  rw [restrict_withDensity hs, ← withDensity_const] at hr
+  exact (withDensity_eq_iff_of_sigmaFinite hf aemeasurable_const).1 hr
+
 instance (μ : Measure β) (f : α → β → ℝ≥0∞) (a : α) :
     IsZeroOrProbabilityMeasure (ofDensity μ f a) :=
   inferInstanceAs (IsZeroOrProbabilityMeasure (μ.withDensity (f a))[|Set.univ])

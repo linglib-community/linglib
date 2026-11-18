@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inherent relation", .acceptable)]
     paperFeatures := [("headNoun", "relational"), ("relationType", "inherent")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("part-whole relation", .acceptable)]
     paperFeatures := [("headNoun", "sortal"), ("relationType", "partWhole"), ("quale", "constitutive")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("control relation", .acceptable)]
     paperFeatures := [("headNoun", "sortal"), ("relationType", "control")] }
 
@@ -63,7 +63,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the person who is the teacher of the girl", .acceptable), ("the teacher she has married, is going to interview, is blackmailing, is dreaming of", .acceptable)]
     paperFeatures := [("headNoun", "relational"), ("interpretation", "lexical and pragmatic")] }
 
@@ -76,7 +76,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the poem that the girl has written", .acceptable), ("the poem she holds in her hand, has discovered, is going to analyze, is always talking about", .acceptable)]
     paperFeatures := [("headNoun", "sortal"), ("interpretation", "lexical and pragmatic")] }
 
@@ -89,7 +89,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := "No knowledge of the background of the utterance situation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a poem that the girl has written", .acceptable)]
     paperFeatures := [("interpretation", "lexical"), ("relationType", "agentive")] }
 
@@ -102,7 +102,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the person who is the teacher of the girl", .acceptable)]
     paperFeatures := [("interpretation", "lexical"), ("relationType", "inherent")] }
 
@@ -115,7 +115,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the nose which is a part of the girl", .acceptable)]
     paperFeatures := [("interpretation", "lexical"), ("relationType", "partWhole")] }
 
@@ -128,7 +128,7 @@ def ex_5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the poem that the girl has written", .acceptable)]
     paperFeatures := [("interpretation", "lexical"), ("relationType", "agentive")] }
 
@@ -141,7 +141,7 @@ def ex_5d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the car which the girl has at her disposal", .acceptable)]
     paperFeatures := [("interpretation", "lexical"), ("relationType", "control")] }
 
@@ -154,7 +154,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := "A supporting context."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the teacher whom the girl has married", .acceptable), ("the teacher she is dreaming of", .acceptable)]
     paperFeatures := [("interpretation", "pragmatic")] }
 
@@ -167,7 +167,7 @@ def ex_6d : Datum :=
     glossedTokens := []
     context := "A supporting context."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the car which the girl has ordered", .acceptable), ("the car she has smashed to pieces", .acceptable)]
     paperFeatures := [("interpretation", "pragmatic")] }
 
@@ -180,7 +180,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lexical", .unacceptable), ("pragmatic", .acceptable)]
     paperFeatures := [("interpretation", "no lexical interpretation")] }
 
@@ -193,7 +193,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lexical", .unacceptable), ("pragmatic", .acceptable)]
     paperFeatures := [("interpretation", "no lexical interpretation")] }
 
@@ -206,7 +206,7 @@ def ex_7d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lexical", .unacceptable), ("pragmatic", .acceptable)]
     paperFeatures := [("interpretation", "no lexical interpretation")] }
 
@@ -219,7 +219,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some girl has exactly one teacher, who is P", .acceptable)]
     paperFeatures := [("construction", "quantified possessor"), ("definite", "narrow scope")] }
 
@@ -232,7 +232,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("each girl has exactly one teacher, who is P", .acceptable)]
     paperFeatures := [("construction", "quantified possessor"), ("definite", "narrow scope")] }
 
@@ -245,7 +245,7 @@ def ex_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("headNoun", "relational"), ("test", "isolation")] }
 
@@ -258,7 +258,7 @@ def ex_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("headNoun", "dependent part"), ("test", "isolation")] }
 
@@ -271,7 +271,7 @@ def ex_29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("headNoun", "sortal"), ("test", "isolation")] }
 
@@ -284,7 +284,7 @@ def ex_29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("headNoun", "autonomous part"), ("test", "isolation")] }
 
@@ -297,7 +297,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "referent-introducing"), ("relationType", "inherent")] }
 
@@ -310,7 +310,7 @@ def ex_39a : Datum :=
     glossedTokens := []
     context := "The car is a novel referent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "referent-introducing"), ("relationType", "control")] }
 
@@ -324,7 +324,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := "The bus is a novel referent."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "referent-introducing"), ("relationType", "control")] }
 
@@ -338,7 +338,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := "The stick is a novel referent."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "referent-introducing"), ("relationType", "control")] }
 
@@ -351,7 +351,7 @@ def ex_41b : Datum :=
     glossedTokens := []
     context := "Paul Auster, The New York Trilogy."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "referent-introducing"), ("relationType", "control"), ("source", "fiction")] }
 
@@ -364,7 +364,7 @@ def ex_42c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("use", "referent-introducing"), ("relationType", "agentive")] }
 
@@ -377,7 +377,7 @@ def s4_favourite_sister : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the sister of Mary's that Mary prefers to have as her sister out of all of her sisters", .acceptable)]
     paperFeatures := [("construction", "favourite"), ("headNoun", "relational")] }
 
@@ -390,7 +390,7 @@ def s4_favourite_chair : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the chair that Mary prefers to sit in out of all chairs", .acceptable)]
     paperFeatures := [("construction", "favourite"), ("headNoun", "sortal"), ("quale", "telic")] }
 
@@ -403,7 +403,7 @@ def s4_favourite_movie : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the movie that Mary prefers to watch out of all the movies she has watched", .acceptable)]
     paperFeatures := [("construction", "favourite"), ("headNoun", "sortal"), ("quale", "telic")] }
 
@@ -416,7 +416,7 @@ def s4_favourite_sky : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lexical", .unacceptable), ("sky when it looks a certain way that Anne especially likes", .acceptable), ("sky-representation the way Anne prefers to paint it in her landscapes", .acceptable)]
     paperFeatures := [("construction", "favourite"), ("headNoun", "sortal"), ("quale", "none")] }
 
@@ -429,7 +429,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lexical", .unacceptable), ("the breed of rabbit that John prefers to hunt", .acceptable), ("the rabbit John prefers to have as a pet", .acceptable)]
     paperFeatures := [("construction", "favourite"), ("headNoun", "sortal"), ("quale", "none")] }
 
@@ -442,7 +442,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lexical", .unacceptable), ("blue is the colour which Anne prefers to look at", .acceptable), ("blue is the colour which Anne prefers to wear", .acceptable)]
     paperFeatures := [("construction", "favourite"), ("headNoun", "sortal"), ("quale", "none")] }
 

@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "acceptable"}
     ],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "unacceptable"}
     ],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["any", "npi"],
@@ -69,7 +69,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["any", "npi"],
@@ -88,7 +88,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["any", "fci"],
@@ -107,7 +107,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["any", "fci"],
@@ -126,7 +126,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["any", "fci"],
@@ -145,7 +145,7 @@
     "translation": "",
     "context": "One of the rules of the card game Canasta is: When a player has two cards that match the top card of the discard pile, she has two options: (i) take all the cards in the discard pile and (ii) take no card from the discard pile (but take the top card of the regular pile instead). Those are her two only options.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "literal", "judgment": "acceptable"},
       {"name": "exclusiveness", "judgment": "unacceptable"}
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "The local animal shelter has a strict policy of not separating animals from their siblings. Annie goes to the shelter to adopt a cat, and walks into one room with three cats inside.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "literal", "judgment": "acceptable"},
       {"name": "exclusiveness", "judgment": "unacceptable"}
@@ -187,7 +187,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "unacceptable"}
     ],
@@ -208,7 +208,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "unacceptable"}
     ],
@@ -229,7 +229,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "unacceptable"}
     ],
@@ -250,7 +250,7 @@
     "translation": "",
     "context": "You are a graduate student only required to take one class per semester. You ask: What classes are we allowed to take in our first year?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "acceptable"}
     ],
@@ -268,7 +268,7 @@
     "translation": "",
     "context": "You are an undergraduate student required to take four classes per semester. You ask: What classes are we allowed to take in our first year?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "unacceptable"}
     ],
@@ -288,7 +288,7 @@
     "translation": "",
     "context": "Annie goes to the shelter to adopt a cat; the shelter employee speaks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "unacceptable"}
     ],
@@ -309,7 +309,7 @@
     "translation": "",
     "context": "Out of the blue.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not every", "judgment": "questionable"}
     ],
@@ -329,7 +329,7 @@
     "translation": "",
     "context": "You are a part-time student who is forbidden from taking more than one class in a semester. Your university offers hundreds of classes each semester. You ask: What classes are we allowed to take in our first year?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not two", "judgment": "acceptable"},
       {"name": "not three", "judgment": "acceptable"},
@@ -351,7 +351,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "anyAndEvery"]
@@ -369,7 +369,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "anyAndEvery"]
@@ -387,7 +387,7 @@
     "translation": "",
     "context": "A restaurant sign.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "We reserve the right to refuse to serve anyone and everyone.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -405,7 +405,7 @@
     "translation": "",
     "context": "You are one of three siblings. Your mother returns from a business trip with three souvenirs and presents them to just you first.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not every", "judgment": "unacceptable"}
     ],
@@ -425,7 +425,7 @@
     "translation": "",
     "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["utterance", "mayS"],
@@ -444,7 +444,7 @@
     "translation": "",
     "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["utterance", "mayP"],
@@ -463,7 +463,7 @@
     "translation": "",
     "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "exclusiveness", "judgment": "acceptable"},
       {"name": "not every", "judgment": "questionable"}
@@ -486,7 +486,7 @@
     "translation": "",
     "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["utterance", "mayEvery"],
@@ -505,7 +505,7 @@
     "translation": "",
     "context": "This year, Chris decides to spend the summer at his grandmother's house. His first day there, his grandmother pulls him aside to discuss his responsibilities for the summer. She shows him a list of chores she has written down.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "literal", "judgment": "acceptable"},
       {"name": "exclusiveness", "judgment": "unacceptable"},

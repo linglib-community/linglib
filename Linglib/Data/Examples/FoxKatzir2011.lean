@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John did all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John did the reading and the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
@@ -50,7 +50,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John has four children", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
@@ -63,7 +63,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John read four books", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
@@ -76,7 +76,7 @@ def ex33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John read exactly three books", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
@@ -89,7 +89,7 @@ def ex38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John did all of the homework", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
@@ -102,7 +102,7 @@ def ex40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John is determined to do all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
@@ -115,7 +115,7 @@ def ex41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: Each of my students did all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
@@ -128,7 +128,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John did just some of the homework yesterday", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
@@ -141,7 +141,7 @@ def ex44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: John was required to do just some of the homework yesterday", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
@@ -154,7 +154,7 @@ def ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: Last week, every student got just some of the questions right", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
@@ -167,7 +167,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: In last week's robbery they stole the books but not the jewelry", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
@@ -180,7 +180,7 @@ def ex49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: Detective A concluded that the robbers stole the books but not the jewelry", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
@@ -193,7 +193,7 @@ def ex53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not: Yesterday, John talked to Mary", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "no"), ("universal", "no"), ("compatible", "yes")] }
 

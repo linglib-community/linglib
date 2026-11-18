@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
+public import Linglib.Pragmatics.Probabilistic.Parse
 
 /-!
 # Spector (2017): The pragmatics of plural predication: Homogeneity and non-maximality within the Rational Speech Act model
@@ -115,10 +116,10 @@ variable (μ : Measure World) (ρ : Measure QUD) (ν : Measure Interp) (α : ℝ
 /-- The literal listener of an interpretation conditions the prior over worlds and questions on
 the message. -/
 noncomputable def L0 (i : Interp) : Kernel Message (World × QUD) :=
-  listener (μ.prod ρ) (truthful fun u ↦ Prod.fst ⁻¹' meaning i u)
+  literalListener (μ.prod ρ) (fun u ↦ Prod.fst ⁻¹' meaning i u)
 
 instance (i : Interp) : IsFiniteKernel (L0 μ ρ i) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The first speaker is uncertain about the interpretation of the literal listener and weighs a
 message by its expected utility across interpretations, the utility of each being the literal
@@ -152,7 +153,7 @@ include hμ hρ
 theorem L0_map_answer_eq_zero_iff (u : Message) (i : Interp) (w : World) (Q : QUD) :
     (L0 μ ρ i).map answer u {answer (w, Q)} = 0 ↔
       ∀ v, Q.answer v = Q.answer w → v ∉ meaning i u := by
-  rw [L0, listener_truthful_map_apply_singleton,
+  rw [L0, literalListener_map_apply_singleton,
     ENNReal.div_eq_zero_iff, or_iff_left (measure_ne_top _ _),
     measure_null_iff_singleton (Set.to_countable _)]
   have hprod (p : World × QUD) : (μ.prod ρ) {p} ≠ 0 := by

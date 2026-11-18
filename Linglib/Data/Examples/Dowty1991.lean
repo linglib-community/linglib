@@ -24,7 +24,7 @@ def buildSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "build"), ("argument", "subject"), ("participant", "the builder"), ("entails", "volition"), ("entails", "sentience"), ("entails", "causation"), ("entails", "movement"), ("entails", "independentExistence")] }
 
@@ -37,7 +37,7 @@ def buildObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "build"), ("argument", "object"), ("participant", "the thing built (a house)"), ("entails", "changeOfState"), ("entails", "incrementalTheme"), ("entails", "causallyAffected"), ("entails", "stationary"), ("entails", "dependentExistence")] }
 
@@ -50,7 +50,7 @@ def bePoliteSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "be polite to"), ("argument", "subject"), ("participant", "the polite party"), ("entails", "volition")] }
 
@@ -63,7 +63,7 @@ def ignoreSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "ignore"), ("argument", "subject"), ("participant", "the ignorer"), ("entails", "volition")] }
 
@@ -76,7 +76,7 @@ def notEatSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "not eat"), ("argument", "subject"), ("participant", "the abstainer"), ("entails", "volition")] }
 
@@ -89,7 +89,7 @@ def knowSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "know"), ("argument", "subject"), ("participant", "the knower"), ("entails", "sentience")] }
 
@@ -102,7 +102,7 @@ def believeSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "believe"), ("argument", "subject"), ("participant", "the believer"), ("entails", "sentience")] }
 
@@ -115,7 +115,7 @@ def seeSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "see"), ("argument", "subject"), ("participant", "the perceiver"), ("entails", "sentience")] }
 
@@ -128,7 +128,7 @@ def fearSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fear"), ("argument", "subject"), ("participant", "the fearer"), ("entails", "sentience")] }
 
@@ -141,7 +141,7 @@ def causeSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "cause"), ("argument", "subject"), ("participant", "the causing state (his loneliness)"), ("entails", "causation"), ("denies", "movement")] }
 
@@ -154,7 +154,7 @@ def passSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "pass"), ("argument", "subject"), ("participant", "the mover (the rolling tumbleweed)"), ("entails", "movement"), ("denies", "volition"), ("denies", "causation")] }
 
@@ -167,7 +167,7 @@ def overtakeSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "overtake"), ("argument", "subject"), ("participant", "the faster mover (the bullet)"), ("entails", "movement"), ("denies", "volition"), ("denies", "causation")] }
 
@@ -180,7 +180,7 @@ def fillSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fill"), ("argument", "subject"), ("participant", "the filling substance (water)"), ("entails", "movement"), ("denies", "volition"), ("denies", "causation")] }
 
@@ -193,7 +193,7 @@ def fallSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fall"), ("argument", "subject"), ("participant", "the faller"), ("entails", "movement"), ("denies", "volition"), ("denies", "causation")] }
 
@@ -206,7 +206,7 @@ def needSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "need"), ("argument", "subject"), ("participant", "the needer"), ("entails", "independentExistence"), ("denies", "volition"), ("denies", "sentience"), ("denies", "causation"), ("denies", "movement")] }
 
@@ -219,7 +219,7 @@ def makeObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "make"), ("argument", "object"), ("participant", "the thing made (a mistake)"), ("entails", "changeOfState"), ("entails", "dependentExistence")] }
 
@@ -232,7 +232,7 @@ def moveObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "move"), ("argument", "object"), ("participant", "the thing moved (the rock)"), ("entails", "changeOfState")] }
 
@@ -245,7 +245,7 @@ def eraseObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "erase"), ("argument", "object"), ("participant", "the thing erased (the error)"), ("entails", "changeOfState"), ("entails", "dependentExistence")] }
 
@@ -258,7 +258,7 @@ def crossObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "cross"), ("argument", "object"), ("participant", "the path crossed (the driveway)"), ("entails", "incrementalTheme"), ("entails", "stationary")] }
 
@@ -271,7 +271,7 @@ def fillObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "fill"), ("argument", "object"), ("participant", "the container filled (the glass)"), ("entails", "incrementalTheme"), ("entails", "stationary")] }
 
@@ -284,7 +284,7 @@ def causeObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "cause"), ("argument", "object"), ("participant", "the caused condition (cancer)"), ("entails", "causallyAffected")] }
 
@@ -297,7 +297,7 @@ def enterObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "enter"), ("argument", "object"), ("participant", "the target entered"), ("entails", "stationary")] }
 
@@ -310,7 +310,7 @@ def overtakeObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "overtake"), ("argument", "object"), ("participant", "the slower mover (the arrow)"), ("entails", "stationary")] }
 
@@ -323,7 +323,7 @@ def constituteObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "constitute"), ("argument", "object"), ("participant", "the constituted state (a major dilemma)"), ("entails", "dependentExistence")] }
 
@@ -336,7 +336,7 @@ def needObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "need"), ("argument", "object"), ("participant", "the thing needed (a car, de dicto)"), ("entails", "dependentExistence")] }
 
@@ -349,7 +349,7 @@ def seekObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "seek"), ("argument", "object"), ("participant", "the thing sought (a unicorn, de dicto)"), ("entails", "dependentExistence")] }
 
@@ -362,7 +362,7 @@ def lackObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "lack"), ("argument", "object"), ("participant", "the thing lacked (de dicto)"), ("entails", "dependentExistence")] }
 
@@ -375,7 +375,7 @@ def writeSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "write"), ("argument", "subject"), ("participant", "the writer"), ("entails", "volition"), ("entails", "sentience"), ("entails", "causation"), ("entails", "movement"), ("denies", "changeOfState"), ("denies", "incrementalTheme"), ("denies", "causallyAffected"), ("denies", "stationary"), ("denies", "dependentExistence")] }
 
@@ -388,7 +388,7 @@ def murderSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "murder"), ("argument", "subject"), ("participant", "the murderer"), ("entails", "volition"), ("entails", "sentience"), ("entails", "causation"), ("entails", "movement"), ("denies", "changeOfState"), ("denies", "incrementalTheme"), ("denies", "causallyAffected"), ("denies", "stationary"), ("denies", "dependentExistence")] }
 
@@ -401,7 +401,7 @@ def eatSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "eat"), ("argument", "subject"), ("participant", "the eater"), ("entails", "volition"), ("entails", "sentience"), ("entails", "causation"), ("entails", "movement"), ("denies", "changeOfState"), ("denies", "incrementalTheme"), ("denies", "causallyAffected"), ("denies", "stationary"), ("denies", "dependentExistence")] }
 
@@ -414,7 +414,7 @@ def washSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wash"), ("argument", "subject"), ("participant", "the washer"), ("entails", "volition"), ("entails", "sentience"), ("entails", "causation"), ("entails", "movement"), ("denies", "changeOfState"), ("denies", "incrementalTheme"), ("denies", "causallyAffected"), ("denies", "stationary"), ("denies", "dependentExistence")] }
 
@@ -427,7 +427,7 @@ def writeObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "write"), ("argument", "object"), ("participant", "the thing written (a letter)"), ("entails", "changeOfState"), ("entails", "causallyAffected")] }
 
@@ -440,7 +440,7 @@ def murderObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "murder"), ("argument", "object"), ("participant", "the victim"), ("entails", "changeOfState"), ("entails", "causallyAffected")] }
 
@@ -453,7 +453,7 @@ def eatObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "eat"), ("argument", "object"), ("participant", "the thing eaten"), ("entails", "changeOfState"), ("entails", "causallyAffected")] }
 
@@ -466,7 +466,7 @@ def washObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "wash"), ("argument", "object"), ("participant", "the thing washed (a plate)"), ("entails", "changeOfState"), ("entails", "causallyAffected")] }
 
@@ -479,7 +479,7 @@ def buySubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "buy"), ("argument", "subject"), ("participant", "the buyer"), ("entails", "volition")] }
 
@@ -492,7 +492,7 @@ def buySeller : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "buy"), ("argument", "oblique"), ("participant", "the seller (from-phrase)"), ("entails", "volition")] }
 
@@ -505,7 +505,7 @@ def sellSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sell"), ("argument", "subject"), ("participant", "the seller"), ("entails", "volition")] }
 
@@ -518,7 +518,7 @@ def sellBuyer : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "sell"), ("argument", "oblique"), ("participant", "the buyer (to-phrase)"), ("entails", "volition")] }
 
@@ -531,7 +531,7 @@ def likeSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "like"), ("argument", "subject"), ("participant", "the experiencer"), ("entails", "sentience")] }
 
@@ -544,7 +544,7 @@ def likeObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "like"), ("argument", "object"), ("participant", "the stimulus"), ("entails", "causation"), ("denies", "sentience")] }
 
@@ -557,7 +557,7 @@ def pleaseSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "please"), ("argument", "subject"), ("participant", "the stimulus"), ("entails", "causation"), ("denies", "sentience")] }
 
@@ -570,7 +570,7 @@ def pleaseObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "please"), ("argument", "object"), ("participant", "the experiencer"), ("entails", "sentience")] }
 
@@ -583,7 +583,7 @@ def surpriseObjectInchoative : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "surprise (inchoative)"), ("argument", "object"), ("participant", "the experiencer (coming to be surprised)"), ("entails", "sentience"), ("entails", "changeOfState")] }
 
@@ -596,7 +596,7 @@ def hitObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hit"), ("argument", "object"), ("participant", "the location (the fence)"), ("denies", "movement"), ("denies", "changeOfState"), ("denies", "incrementalTheme")] }
 
@@ -609,7 +609,7 @@ def hitInstrument : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "hit"), ("argument", "oblique"), ("participant", "the instrument (the stick)"), ("entails", "movement"), ("denies", "changeOfState"), ("denies", "incrementalTheme")] }
 
@@ -622,7 +622,7 @@ def breakObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "break"), ("argument", "object"), ("participant", "the thing broken"), ("entails", "changeOfState"), ("entails", "incrementalTheme")] }
 
@@ -635,7 +635,7 @@ def loadTheme : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "load"), ("argument", "nonsubject"), ("participant", "the locatum (the hay)"), ("entails", "changeOfState")] }
 
@@ -648,7 +648,7 @@ def loadLocation : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "load"), ("argument", "nonsubject"), ("participant", "the location (the truck)"), ("entails", "changeOfState")] }
 
@@ -661,7 +661,7 @@ def kissSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kiss"), ("argument", "subject"), ("participant", "the kisser"), ("entails", "volition")] }
 
@@ -674,7 +674,7 @@ def kissObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "kiss"), ("argument", "object"), ("participant", "the one kissed"), ("denies", "volition")] }
 
@@ -687,7 +687,7 @@ def collideSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "collide with"), ("argument", "subject"), ("participant", "the moving body (the truck)"), ("entails", "movement")] }
 
@@ -700,7 +700,7 @@ def collideObject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "collide with"), ("argument", "oblique"), ("participant", "the body collided with (the lamppost)"), ("denies", "movement")] }
 
@@ -713,7 +713,7 @@ def surpriseSubject : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "surprise"), ("argument", "subject"), ("participant", "the stimulus"), ("entails", "causation"), ("denies", "sentience")] }
 
@@ -726,7 +726,7 @@ def breakInstrument : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "break"), ("argument", "oblique"), ("participant", "the instrument (the stick in 63a)"), ("denies", "changeOfState"), ("denies", "incrementalTheme")] }
 
@@ -739,7 +739,7 @@ def putTheme : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "put"), ("argument", "object"), ("participant", "the lamp"), ("entails", "changeOfState"), ("entails", "causallyAffected")] }
 
@@ -752,7 +752,7 @@ def putGoal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "put"), ("argument", "oblique"), ("participant", "the table"), ("entails", "stationary")] }
 
@@ -765,7 +765,7 @@ def removeTheme : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "remove"), ("argument", "object"), ("participant", "the lamp"), ("entails", "changeOfState"), ("entails", "causallyAffected")] }
 
@@ -778,7 +778,7 @@ def removeSource : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "remove"), ("argument", "oblique"), ("participant", "the box"), ("entails", "stationary")] }
 

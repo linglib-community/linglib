@@ -24,7 +24,7 @@ def cl2016_ex1 : Datum :=
     glossedTokens := []
     context := "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -37,7 +37,7 @@ def cl2016_ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -50,7 +50,7 @@ def cl2016_ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -63,7 +63,7 @@ def cl2016_ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -76,7 +76,7 @@ def cl2016_ex5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "mere"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -90,7 +90,7 @@ def cl2016_ex14 : Datum :=
     context := "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "hoboken")] }
 
@@ -103,7 +103,7 @@ def cl2016_ex15 : Datum :=
     glossedTokens := []
     context := "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -116,7 +116,7 @@ def cl2016_ex19a : Datum :=
     glossedTokens := []
     context := "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "unconditional")] }
 
@@ -129,7 +129,7 @@ def cl2016_ex19b : Datum :=
     glossedTokens := []
     context := "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "unconditional")] }
 
@@ -142,7 +142,7 @@ def cl2016_ex20a : Datum :=
     glossedTokens := []
     context := "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "conditional")] }
 
@@ -155,7 +155,7 @@ def cl2016_ex20b : Datum :=
     glossedTokens := []
     context := "John and Bill are playing chess. John is by far the superior player, but Bill is good enough to draw out the game for a considerable amount of time, and competitive enough to not accept a draw. John hates to resign a game to an inferior player, but it is 3am, and he needs to go to bed. The only way to get out of the game quickly is to resign. The only way to win, of course, is to keep playing. He cannot make up his mind."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "conditional")] }
 
@@ -168,7 +168,7 @@ def cl2016_ex21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "strong")] }
 
@@ -181,7 +181,7 @@ def cl2016_ex28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition")] }
 
@@ -194,7 +194,7 @@ def cl2016_ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "nearAnankastic"), ("implication", "strengthenedGoal")] }
 
@@ -207,7 +207,7 @@ def cl2016_ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "nearAnankastic"), ("implication", "strengthenedGoal")] }
 
@@ -220,7 +220,7 @@ def cl2016_ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "means")] }
 
@@ -233,7 +233,7 @@ def cl2016_ex31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("implication", "consequence"), ("interpretation", "nearAnankastic")] }
 
@@ -246,7 +246,7 @@ def cl2016_ex35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "consequence")] }
 
@@ -260,7 +260,7 @@ def cl2016_ex37 : Datum :=
     context := "You can only take three days off work, and this is mutually known."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "counterfactual")] }
 
@@ -273,7 +273,7 @@ def cl2016_ex38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "deontic"), ("interpretation", "nearAnankastic"), ("implication", "consequence")] }
 
@@ -286,7 +286,7 @@ def cl2016_ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("implication", "specialization"), ("interpretation", "nearAnankastic")] }
 
@@ -299,7 +299,7 @@ def cl2016_ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "specialization")] }
 
@@ -312,7 +312,7 @@ def cl2016_ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("implication", "specialization"), ("interpretation", "nearAnankastic")] }
 
@@ -325,7 +325,7 @@ def cl2016_ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "specialization")] }
 
@@ -338,7 +338,7 @@ def cl2016_ex42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "counterfactual")] }
 
@@ -351,7 +351,7 @@ def cl2016_ex43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "vacuity")] }
 
@@ -364,7 +364,7 @@ def cl2016_ex44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "vacuity")] }
 
@@ -377,7 +377,7 @@ def cl2016_ex46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "negation")] }
 
@@ -390,7 +390,7 @@ def cl2016_ex47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "effective")] }
 
@@ -403,7 +403,7 @@ def cl2016_ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "mere")] }
 
@@ -416,7 +416,7 @@ def cl2016_ex49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "mere")] }
 
@@ -429,7 +429,7 @@ def cl2016_ex49b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "effective")] }
 
@@ -442,7 +442,7 @@ def cl2016_ex52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "mere")] }
 
@@ -455,7 +455,7 @@ def cl2016_ex53 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "mere")] }
 
@@ -468,7 +468,7 @@ def cl2016_ex54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "mere")] }
 
@@ -481,7 +481,7 @@ def cl2016_ex55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "effective"), ("felicity", "infelicitous")] }
 
@@ -494,7 +494,7 @@ def cl2016_ex56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "levinson")] }
 
@@ -507,7 +507,7 @@ def cl2016_ex56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "levinson")] }
 
@@ -520,7 +520,7 @@ def cl2016_ex58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "levinson")] }
 
@@ -533,7 +533,7 @@ def cl2016_ex61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "mere")] }
 
@@ -546,7 +546,7 @@ def cl2016_ex62a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
@@ -559,7 +559,7 @@ def cl2016_ex62b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
@@ -572,7 +572,7 @@ def cl2016_ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
@@ -585,7 +585,7 @@ def cl2016_ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
@@ -598,7 +598,7 @@ def cl2016_ex74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "normsAntecedent")] }
 
@@ -611,7 +611,7 @@ def cl2016_ex81a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "first")] }
 
@@ -624,7 +624,7 @@ def cl2016_ex81b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "second")] }
 
@@ -637,7 +637,7 @@ def cl2016_ex82a : Datum :=
     glossedTokens := []
     context := "Dog owners have to pay a special dog tax, but service dogs for the blind are exempt; John's eyesight is currently perfect and he does not currently have a dog."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "first")] }
 
@@ -650,7 +650,7 @@ def cl2016_ex82b : Datum :=
     glossedTokens := []
     context := "Dog owners have to pay a special dog tax, but service dogs for the blind are exempt; John's eyesight is currently perfect and he does not currently have a dog."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "second")] }
 
@@ -663,7 +663,7 @@ def cl2016_ex83a : Datum :=
     glossedTokens := []
     context := "Getting a ride is the most preferable way to get to the airport."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "first")] }
 
@@ -676,7 +676,7 @@ def cl2016_ex83b : Datum :=
     glossedTokens := []
     context := "Getting a ride is the most preferable way to get to the airport."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "second")] }
 
@@ -689,7 +689,7 @@ def cl2016_ex84 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "sequence")] }
 
@@ -702,7 +702,7 @@ def cl2016_ex85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "reverse")] }
 
@@ -715,7 +715,7 @@ def cl2016_ex86 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "reverse")] }
 
@@ -728,7 +728,7 @@ def cl2016_ex91a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "indicative")] }
 
@@ -741,7 +741,7 @@ def cl2016_ex91b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "subjunctive")] }
 
@@ -754,7 +754,7 @@ def cl2016_ex92 : Datum :=
     glossedTokens := []
     context := "There are two trains to Vladivostok, one Russian and one Chinese. The Chinese train is much more comfortable."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -768,7 +768,7 @@ def cl2016_ex96 : Datum :=
     context := "Two trains go to Harlem, and Ruud van Nistelrooij is on one of them; the addressee wants to meet him."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "strength"), ("modal", "strong")] }
 
@@ -781,7 +781,7 @@ def cl2016_ex97 : Datum :=
     glossedTokens := []
     context := "Two trains go to Harlem, and Ruud van Nistelrooij is on one of them; the addressee wants to meet him."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "strength"), ("modal", "weak")] }
 
@@ -794,7 +794,7 @@ def cl2016_ex98a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "indicative")] }
 
@@ -807,7 +807,7 @@ def cl2016_ex98b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "subjunctive")] }
 
@@ -820,7 +820,7 @@ def cl2016_ex99 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "consequence")] }
 
@@ -833,7 +833,7 @@ def cl2016_ex100a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "precondition")] }
 
@@ -846,7 +846,7 @@ def cl2016_ex100b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "precondition")] }
 
@@ -859,7 +859,7 @@ def cl2016_ex101 : Datum :=
     glossedTokens := []
     context := "The speaker knows that a deadly virus has just been set free in Harlem, and that anyone who goes there is likely to be infected. As far as the speaker knows, the addressee is unaware of this."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "asymmetry")] }
 
@@ -872,7 +872,7 @@ def cl2016_ex103 : Datum :=
     glossedTokens := []
     context := "A and B are watching a disaster movie in which a virus is set free in Harlem. After a scene of people dropping dead in the street, the movie cuts to the hero, C, who is going about his day in Manhattan, oblivious to the outbreak. C is studying the schedule for the A train."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "asymmetry")] }
 
@@ -885,7 +885,7 @@ def cl2016_ex106a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -898,7 +898,7 @@ def cl2016_ex106b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "mere"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -911,7 +911,7 @@ def cl2016_ex106c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "speakerTeleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -924,7 +924,7 @@ def cl2016_ex107 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "consequence")] }
 
@@ -937,7 +937,7 @@ def cl2016_ex108 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "vacuity")] }
 
@@ -950,7 +950,7 @@ def cl2016_ex109 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
@@ -963,7 +963,7 @@ def cl2016_ex110a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition"), ("felicity", "infelicitous")] }
 
@@ -976,7 +976,7 @@ def cl2016_ex110b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition"), ("felicity", "infelicitous")] }
 
@@ -989,7 +989,7 @@ def cl2016_ex111 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition")] }
 
@@ -1003,7 +1003,7 @@ def cl2016_ex112a : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -1017,7 +1017,7 @@ def cl2016_ex112b : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -1031,7 +1031,7 @@ def cl2016_ex112c : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -1045,7 +1045,7 @@ def cl2016_ex112d : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
@@ -1059,7 +1059,7 @@ def cl2016_ex112e : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 

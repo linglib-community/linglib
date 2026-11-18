@@ -13,7 +13,7 @@
     "translation": "Zhangsan also had dinner at the airport.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "ye"],
@@ -36,7 +36,7 @@
     "translation": "Zhangsan didn't come. Lisi came instead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "fan'er"],
@@ -59,7 +59,7 @@
     "translation": "Lisi didn't go to the park. He went to school instead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "fan'er"],
@@ -83,7 +83,7 @@
     "translation": "Either Zhangsan ate a cookie or a cake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "yaome-yaome"]
@@ -105,7 +105,7 @@
     "translation": "You either can eat a cookie or can eat a cake.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "yaome-yaome"],
@@ -128,7 +128,7 @@
     "translation": "You can either eat a cookie or eat a cake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "yaome-yaome"],
@@ -151,7 +151,7 @@
     "translation": "Zhangsan maybe went. Lisi went.",
     "context": "A: Who went skiing? Did Zhangsan go?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "positive evidence"],
@@ -174,7 +174,7 @@
     "translation": "Zhangsan possibly went. Lisi went.",
     "context": "A: Who went skiing? Did Zhangsan go?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "positive evidence"],
@@ -198,7 +198,7 @@
     "translation": "Zhangsan possibly went on business trips frequently in the past. Now he does not often go on business trips anymore.",
     "context": "A: Did Zhangsan often go on business trips?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["trigger", "buzai"],

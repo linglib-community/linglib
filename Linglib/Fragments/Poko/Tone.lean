@@ -7,7 +7,7 @@ module
 
 public import Linglib.Fragments.Poko.Phonology
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Autosegmental.Form
+public import Linglib.Phonology.Autosegmental.Morph
 
 /-!
 # Poko tone
@@ -52,9 +52,11 @@ namespace Poko
 
 /-- A Poko form has syllables of Poko segments on its lower tier and tonal root nodes on its
 upper tier, each element sponsored by a morpheme in `M`. -/
-abbrev Form (M : Type*) := Autosegmental.Form (List Segment) TRN M
+abbrev Form (M : Type) :=
+  Autosegmental.AR (Autosegmental.TwoTier (Autosegmental.Sponsored TRN M)
+    (Autosegmental.Sponsored (List Segment) M))
 
-variable {M : Type*} (x : M)
+variable {M : Type} (x : M)
 
 /-! ### `M^H` stems -/
 

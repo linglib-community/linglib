@@ -24,7 +24,7 @@ def s20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "full-ω"), ("violates", "FtBin")] }
 
@@ -37,7 +37,7 @@ def s20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "amalgamated"), ("violates", "Lex-to-ω")] }
 
@@ -50,7 +50,7 @@ def s20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "ω-adjoined"), ("violates", "No-Recursion")] }
 
@@ -63,7 +63,7 @@ def s20d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "φ-attached"), ("violates", "Parse-into-ω")] }
 
@@ -76,7 +76,7 @@ def s24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -89,7 +89,7 @@ def s24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -102,7 +102,7 @@ def s24c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -115,7 +115,7 @@ def s24d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -128,7 +128,7 @@ def s24e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -141,7 +141,7 @@ def s24f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -154,7 +154,7 @@ def s24g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -167,7 +167,7 @@ def s24h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -180,7 +180,7 @@ def s24i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
@@ -193,7 +193,7 @@ def s26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("tableau", "the four sites, unranked")] }
 
@@ -206,7 +206,7 @@ def s28a1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
@@ -219,7 +219,7 @@ def s28a2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
@@ -232,7 +232,7 @@ def s28b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
@@ -245,7 +245,7 @@ def s28b2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
@@ -258,7 +258,7 @@ def s30a1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. allege")] }
 
@@ -271,7 +271,7 @@ def s30a2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. phonetics")] }
 
@@ -284,7 +284,7 @@ def s30b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. Adresse")] }
 
@@ -297,7 +297,7 @@ def s30b2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. Protest")] }
 
@@ -310,7 +310,7 @@ def s32a1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -323,7 +323,7 @@ def s32a2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -336,7 +336,7 @@ def s32a3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -349,7 +349,7 @@ def s32a4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -362,7 +362,7 @@ def s32b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -375,7 +375,7 @@ def s32b2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -388,7 +388,7 @@ def s32b3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -401,7 +401,7 @@ def s32b4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
@@ -414,7 +414,7 @@ def s33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("tableau", "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie")] }
 
@@ -427,7 +427,7 @@ def s34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("tableau", "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie")] }
 
@@ -440,7 +440,7 @@ def s36a1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- appears before main stress")] }
 
@@ -453,7 +453,7 @@ def s36a2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- appears before main stress")] }
 
@@ -466,7 +466,7 @@ def s36b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- absent before an unstressed syllable")] }
 
@@ -479,7 +479,7 @@ def s36b2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- absent before an unstressed syllable")] }
 
@@ -492,7 +492,7 @@ def s36c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- tracks the location of main stress")] }
 
@@ -505,7 +505,7 @@ def s37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("site", "ω-adjoined"), ("violates", "No-Recursion")] }
 
@@ -518,7 +518,7 @@ def s37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("site", "φ-attached"), ("violates", "Parse-into-ω")] }
 
@@ -531,7 +531,7 @@ def s39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "function-word initial t flapped: Selkirk's argument for φ-attachment")] }
 
@@ -544,7 +544,7 @@ def s40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "aspiration at the left edge of an initial function-word complex")] }
 

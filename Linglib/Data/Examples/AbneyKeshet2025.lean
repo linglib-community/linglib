@@ -24,7 +24,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "simple"), ("phenomenon", "cross-sentential anaphora")] }
 
@@ -37,7 +37,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "donkey")] }
 
@@ -50,7 +50,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most")] }
 
@@ -63,7 +63,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "donkey")] }
 
@@ -76,7 +76,7 @@ def ex_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "simple")] }
 
@@ -89,7 +89,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "indefinite")] }
 
@@ -102,7 +102,7 @@ def ex_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "every")] }
 
@@ -115,7 +115,7 @@ def ex_80a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("them = the girls (the restriction set)", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "restriction set")] }
 
@@ -128,7 +128,7 @@ def ex_80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("them = the girls that wrote a paper (the reference set)", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "reference set")] }
 
@@ -141,7 +141,7 @@ def ex_80c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = the individuals that wrote a paper (the scope set)", .unacceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "scope set")] }
 
@@ -154,7 +154,7 @@ def ex_98 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = the papers the girls wrote", .acceptable)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
@@ -167,7 +167,7 @@ def ex_101 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = the dogs that bark", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation")] }
 
@@ -180,7 +180,7 @@ def ex_105 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive: each student sent in their own two papers", .acceptable), ("collective over the papers: each student sent all six papers", .acceptable)]
     paperFeatures := [("operator", "each"), ("pronoun", "summation")] }
 
@@ -193,7 +193,7 @@ def ex_106 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("collective: all the boys, all the balloons", .marginal)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
@@ -206,7 +206,7 @@ def ex_107a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("collective: all the children", .acceptable)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
@@ -219,7 +219,7 @@ def ex_107b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("collective: all the drinks", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "summation")] }
 
@@ -232,7 +232,7 @@ def ex_108 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Some girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.", .acceptable)]
+    contrasts := [("Some girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.", .acceptable)]
     readings := []
     paperFeatures := [("operator", "some"), ("pronoun", "simple")] }
 
@@ -245,7 +245,7 @@ def ex_109 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Most girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.", .unacceptable)]
+    contrasts := [("Most girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.", .unacceptable)]
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "summation")] }
 
@@ -258,7 +258,7 @@ def ex_110 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "paycheck")] }
 
@@ -271,7 +271,7 @@ def ex_111 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the diorama made by each of the few", .acceptable)]
     paperFeatures := [("operator", "almost every"), ("pronoun", "paycheck")] }
 
@@ -284,7 +284,7 @@ def ex_113 : Datum :=
     glossedTokens := []
     context := "Some people own more than one umbrella; each brought only one, or a few brought more than one."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("weak: one umbrella per owner suffices", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "donkey")] }
 
@@ -297,7 +297,7 @@ def ex_114 : Datum :=
     glossedTokens := []
     context := "At least one person brought more than one umbrella."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = all the umbrellas actually brought, not one per owner", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "summation")] }
 
@@ -310,7 +310,7 @@ def ex_115 : Datum :=
     glossedTokens := []
     context := "A few people brought more than one valuable item."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strong: each locked up all their valuables", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "donkey")] }
 
@@ -323,7 +323,7 @@ def ex_117a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "donkey"), ("phenomenon", "quantificational subordination")] }
 
@@ -336,7 +336,7 @@ def ex_117b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "donkey"), ("phenomenon", "quantificational subordination")] }
 
@@ -349,7 +349,7 @@ def ex_130a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "must"), ("pronoun", "donkey")] }
 
@@ -362,7 +362,7 @@ def ex_131a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "might")] }
 
@@ -375,7 +375,7 @@ def ex_132 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "might"), ("pronoun", "donkey"), ("phenomenon", "modal subordination")] }
 
@@ -388,7 +388,7 @@ def ex_134 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "negation")] }
 
@@ -401,7 +401,7 @@ def ex_135 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "negation"), ("phenomenon", "modal subordination")] }
 
@@ -414,7 +414,7 @@ def ex_138a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the car he owns", .acceptable)]
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
@@ -427,7 +427,7 @@ def ex_139 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
@@ -440,7 +440,7 @@ def ex_140 : Datum :=
     glossedTokens := []
     context := "Suggested by Matthew Mandelkern as a possible overgeneration."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
@@ -453,7 +453,7 @@ def ex_141a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
@@ -466,7 +466,7 @@ def ex_141b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
@@ -479,7 +479,7 @@ def ex_142 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "disjunction"), ("pronoun", "summation")] }
 
@@ -492,7 +492,7 @@ def ex_146a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "every"), ("phenomenon", "presupposition projection")] }
 
@@ -505,7 +505,7 @@ def ex_146b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "some"), ("phenomenon", "presupposition projection")] }
 
@@ -518,7 +518,7 @@ def ex_146c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection")] }
 
@@ -531,7 +531,7 @@ def ex_147 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "believe"), ("phenomenon", "presupposition projection")] }
 
@@ -544,7 +544,7 @@ def ex_150a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")] }
 
@@ -557,7 +557,7 @@ def ex_150b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "some"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")] }
 
@@ -570,7 +570,7 @@ def ex_150c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")] }
 

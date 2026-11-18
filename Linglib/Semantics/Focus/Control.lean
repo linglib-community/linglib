@@ -26,9 +26,7 @@ alternatives make it selective, and a phrase in contrast makes it contrastive. Q
 offers supply a set, assertions and contrasting phrases an individual. Whether an antecedent
 admits a focus depends only on the set it supplies, and
 [the use cannot be read off that set](##Antecedent.use_not_factorsThrough_contrastSet): the four
-uses are one semantic focus. [roberts-2012]'s congruence of an answer to a question asks for more
-than containment, that the focus alternatives be exactly the answers
-(`congruent_iff_admits_and_subset`).
+uses are one semantic focus.
 
 ## Implementation notes
 
@@ -42,7 +40,6 @@ value, so the node it closes is `WithAlternatives.unfeatured` and is not a defin
 * [rooth-1992]
 * [hartmann-zimmermann-2007]
 * [uhmann-1991]
-* [roberts-2012]
 -/
 
 @[expose] public section
@@ -74,6 +71,8 @@ theorem squiggleSet_iff_nontrivial : SquiggleSet o fv Γ ↔ Γ ⊆ fv ∧ o ∈
 theorem squiggleInd_iff_mem_diff : SquiggleInd o fv γ ↔ γ ∈ fv \ {o} := Iff.rfl
 
 theorem SquiggleSet.subset (h : SquiggleSet o fv Γ) : Γ ⊆ fv := h.1
+
+theorem SquiggleSet.mem (h : SquiggleSet o fv Γ) : o ∈ Γ := h.2.1
 
 theorem SquiggleSet.nontrivial (h : SquiggleSet o fv Γ) : Γ.Nontrivial :=
   (squiggleSet_iff_nontrivial.1 h).2.2
@@ -199,17 +198,5 @@ theorem use_not_factorsThrough_contrastSet :
   fun h ↦ absurd (h (a := question ∅) (b := offer ∅) rfl) nofun
 
 end Antecedent
-
-/-! ### Congruence -/
-
-/-- [roberts-2012]'s congruence (25) of a phrase with focus semantic value `fv` to a question whose
-answers are `q`: the focus alternatives are exactly the answers. -/
-def Congruent (q fv : Set α) : Prop := fv = q
-
-/-- Congruence is the containment of the first version of the focus interpretation principle
-together with its converse, which excludes alternatives that answer no part of the question. -/
-theorem congruent_iff_admits_and_subset {q fv : Set α} :
-    Congruent q fv ↔ (Antecedent.question q).Admits fv ∧ fv ⊆ q :=
-  ⟨fun h ↦ ⟨h.ge, h.le⟩, fun ⟨h₁, h₂⟩ ↦ h₂.antisymm h₁⟩
 
 end Focus

@@ -11,7 +11,7 @@
     "translation": "They have (i.e. own) a big book.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "concrete"],
@@ -33,7 +33,7 @@
     "translation": "They have (i.e. own) a big book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "concrete"],
@@ -55,7 +55,7 @@
     "translation": "They have a sister.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "kinship"],
@@ -77,7 +77,7 @@
     "translation": "They have a sister.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "kinship"],
@@ -99,7 +99,7 @@
     "translation": "They have eyes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "bodyPart"],
@@ -121,7 +121,7 @@
     "translation": "They have eyes.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "bodyPart"],
@@ -143,7 +143,7 @@
     "translation": "They have no idea.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "abstract"],
@@ -165,7 +165,7 @@
     "translation": "They have no idea.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "abstract"],
@@ -187,7 +187,7 @@
     "translation": "my book",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "concrete"],
@@ -208,7 +208,7 @@
     "translation": "my book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "concrete"],
@@ -229,7 +229,7 @@
     "translation": "my book",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "concrete"],
@@ -250,7 +250,7 @@
     "translation": "my sister",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "kinship"],
@@ -271,7 +271,7 @@
     "translation": "my sister",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "kinship"],
@@ -292,7 +292,7 @@
     "translation": "my sister",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "kinship"],
@@ -313,7 +313,7 @@
     "translation": "my eyes",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "bodyPart"],
@@ -334,7 +334,7 @@
     "translation": "my eyes",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "bodyPart"],
@@ -355,7 +355,7 @@
     "translation": "my eyes",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "bodyPart"],
@@ -376,7 +376,7 @@
     "translation": "my idea",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "abstract"],
@@ -397,7 +397,7 @@
     "translation": "my idea",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "abstract"],
@@ -418,7 +418,7 @@
     "translation": "my idea",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "abstract"],

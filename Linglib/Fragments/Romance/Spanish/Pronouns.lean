@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Demonstrative
+public import Linglib.Fragments.Romance.Spanish.Determiners
 
 /-!
 # Spanish pronouns
@@ -109,7 +110,7 @@ def addresseePl : Grade → Finset PersonalPronoun
   | .polite => {ustedes}
 
 /-- The subject pronouns. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {yo, tu, vos, usted, el, ella, nosotros, nosotras, vosotros, vosotras, ustedes, ellos, ellas}
 
 /-! ### Demonstrative pronouns -/
@@ -117,19 +118,19 @@ def pronouns : Finset PersonalPronoun :=
 /-- *éste* 'this one', near to or associated with the speaker ([butt-benjamin-2019] §7.4.1). -/
 def este : DemonstrativePronoun :=
   { form := "éste", person := some .third, number := some .singular, gender := some .Masc,
-    deixis := Person.first.participantSets }
+    deixis := Determiners.este.deixis }
 
 /-- *ése* 'that one', at any distance from the speaker, so that it can replace *aquél*
 ([butt-benjamin-2019] §7.4.1). -/
 def ese : DemonstrativePronoun :=
   { form := "ése", person := some .third, number := some .singular, gender := some .Masc,
-    deixis := Person.first.participantSetsᶜ }
+    deixis := Determiners.ese.deixis }
 
 /-- *aquél* 'that one over there', not used for things close to the hearer or the speaker
 ([butt-benjamin-2019] §7.4.1). -/
 def aquel : DemonstrativePronoun :=
   { form := "aquél", person := some .third, number := some .singular, gender := some .Masc,
-    deixis := Person.third.participantSets }
+    deixis := Determiners.aquel.deixis }
 
 /-- The demonstrative pronouns, masculine singular. -/
 def demonstratives : List DemonstrativePronoun := [este, ese, aquel]

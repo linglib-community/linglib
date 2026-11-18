@@ -43,16 +43,6 @@ Case Containment excludes ABA, but
 * A row of a table gives each case's winner, two alternatives where the table parenthesizes a
   feature, so its rules A, B, C are its distinct winners.
 
-## Errata
-
-* Table 11, said on p. 885 to list "all the possible derivations", and the "nine ways of deriving
-  ABC" of pp. 885-887, [omit four rows](##derivations_ncc), all with rule B for $\{k_1, k_3\}$;
-  there are thirteen. The argument is unaffected, the omission understating the overgeneration.
-* The reason p. 895 gives for excluding ABA under Weak Case Containment, the accusative's
-  containment in the dative, excludes only a rule for the accusative alone. A rule for nominative
-  and dative together is excluded because they share no feature, a separate condition
-  (`acc_ssubset_dat_derives_aba`).
-
 ## TODO
 
 * The surface containment predictions of Table 37, from hypothesis (10) (§6.2).

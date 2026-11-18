@@ -9,7 +9,7 @@
     "translation": "",
     "context": "Doctor to patient, handing him a prescription.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "Doctor to patient, handing him a prescription.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -53,7 +53,7 @@
     "translation": "",
     "context": "Doctor to patient, handing him a prescription.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -75,7 +75,7 @@
     "translation": "",
     "context": "Doctor to patient, handing him a prescription.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "Doctor to patient, handing him a prescription.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -119,7 +119,7 @@
     "translation": "",
     "context": "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -141,7 +141,7 @@
     "translation": "",
     "context": "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -163,7 +163,7 @@
     "translation": "",
     "context": "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -185,7 +185,7 @@
     "translation": "",
     "context": "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -207,7 +207,7 @@
     "translation": "",
     "context": "Robin is sitting in a windowless computer room with no information about current weather conditions when another person enters from outdoors. Robin to newcomer.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -229,7 +229,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a sunset. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -251,7 +251,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a sunset. Belinda says to Chris.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -273,7 +273,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a sunset. Belinda says to Chris.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -295,7 +295,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a sunset. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -317,7 +317,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a sunset. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -339,7 +339,7 @@
     "translation": "",
     "context": "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -361,7 +361,7 @@
     "translation": "",
     "context": "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -383,7 +383,7 @@
     "translation": "",
     "context": "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -405,7 +405,7 @@
     "translation": "",
     "context": "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -427,7 +427,7 @@
     "translation": "",
     "context": "Amalia and Bert have a colleague, Carla, admired by everyone for her problem solving skills; at a meeting Carla immediately finds a solution that makes everyone happy. Amalia to Bert.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -449,7 +449,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -471,7 +471,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -493,7 +493,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -515,7 +515,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -537,7 +537,7 @@
     "translation": "",
     "context": "Belinda and Chris are looking at a painting depicting a sunset; Chris has been teaching his daughter Belinda to distinguish real art from kitsch. Belinda says to Chris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -559,7 +559,7 @@
     "translation": "",
     "context": "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -581,7 +581,7 @@
     "translation": "",
     "context": "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -603,7 +603,7 @@
     "translation": "",
     "context": "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -625,7 +625,7 @@
     "translation": "",
     "context": "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -647,7 +647,7 @@
     "translation": "",
     "context": "Belinda is going through a pile of job applications; Chris has not seen any of them yet. Belinda hands Chris the application she just finished reading and tells him to have a look. Chris to Belinda.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -669,7 +669,7 @@
     "translation": "",
     "context": "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingDeclarative"],
@@ -691,7 +691,7 @@
     "translation": "",
     "context": "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingInterrogative"],
@@ -713,7 +713,7 @@
     "translation": "",
     "context": "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -735,7 +735,7 @@
     "translation": "",
     "context": "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -757,7 +757,7 @@
     "translation": "",
     "context": "Student: The answer to this problem is 5 because the square root of 9 is 2 and 2 + 3 is 5. Teacher:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -779,7 +779,7 @@
     "translation": "",
     "context": "Amalia walks in and Bert is struck by her new hairstyle. Bert:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -801,7 +801,7 @@
     "translation": "",
     "context": "Bert to Amalia, about himself.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -823,7 +823,7 @@
     "translation": "",
     "context": "Mother sees child putting on cleats. Mother: What? You are going to play soccer? No way!",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -845,7 +845,7 @@
     "translation": "",
     "context": "Mother asks her child to set the table and he does a particularly bad job of it but appears to consider the chore finished.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -867,7 +867,7 @@
     "translation": "",
     "context": "Chris is writing his dissertation and, on a sunny Sunday morning, Belinda sees him putting on his running shoes. Belinda: You are going jogging? I thought you would spend the morning writing.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -889,7 +889,7 @@
     "translation": "",
     "context": "Belinda: I went to see Amalia. Chris reacts to what Belinda asserted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -911,7 +911,7 @@
     "translation": "",
     "context": "Belinda: I went to see Amalia. Chris reacts to what Belinda asserted.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -933,7 +933,7 @@
     "translation": "",
     "context": "Belinda: I went to see Amalia. Chris reacts to what Belinda asserted.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -955,7 +955,7 @@
     "translation": "",
     "context": "Belinda: My sister will be in town next week. Chris reacts to what Belinda presupposed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -977,7 +977,7 @@
     "translation": "",
     "context": "Belinda: My sister will be in town next week. Chris reacts to what Belinda presupposed.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -999,7 +999,7 @@
     "translation": "",
     "context": "Belinda: My sister will be in town next week. Chris reacts to what Belinda presupposed.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -1021,7 +1021,7 @@
     "translation": "",
     "context": "Chris to Belinda: You could ask your sister to help with this translation. Still Chris, seeking ratification of his own presupposition.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -1043,7 +1043,7 @@
     "translation": "",
     "context": "Chris to Belinda: You could ask your sister to help with this translation. Still Chris, seeking ratification of his own presupposition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -1065,7 +1065,7 @@
     "translation": "",
     "context": "Chris to Belinda: You could ask your sister to help with this translation. Still Chris, seeking ratification of his own presupposition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -1087,7 +1087,7 @@
     "translation": "",
     "context": "Chris to Belinda: You should tell Amanda to be more polite when talking to customers. Still Chris, seeking ratification of the ground of his advice.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -1109,7 +1109,7 @@
     "translation": "",
     "context": "Chris to Belinda: You should tell Amanda to be more polite when talking to customers. Still Chris, seeking ratification of the ground of his advice.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -1131,7 +1131,7 @@
     "translation": "",
     "context": "Chris to Belinda: You should tell Amanda to be more polite when talking to customers. Still Chris, seeking ratification of the ground of his advice.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -1153,7 +1153,7 @@
     "translation": "",
     "context": "Chris to Belinda: I suspect Bill has a special announcement to make tonight. Still Chris, seeking ratification of an implicit assumption.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -1175,7 +1175,7 @@
     "translation": "",
     "context": "Chris to Belinda: I suspect Bill has a special announcement to make tonight. Still Chris, seeking ratification of an implicit assumption.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -1197,7 +1197,7 @@
     "translation": "",
     "context": "Chris to Belinda: I suspect Bill has a special announcement to make tonight. Still Chris, seeking ratification of an implicit assumption.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -1219,7 +1219,7 @@
     "translation": "",
     "context": "Caller to Schiphol Information, after being told the flight times to Helsinki.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -1241,7 +1241,7 @@
     "translation": "",
     "context": "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -1263,7 +1263,7 @@
     "translation": "",
     "context": "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -1285,7 +1285,7 @@
     "translation": "",
     "context": "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],
@@ -1307,7 +1307,7 @@
     "translation": "",
     "context": "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingTag"],
@@ -1329,7 +1329,7 @@
     "translation": "",
     "context": "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "fallingTag"],
@@ -1351,7 +1351,7 @@
     "translation": "",
     "context": "Bill is talking to his therapist about his son Sam, who has high student loans; Bill is well-off and has been agonising about whether to help. Bill: Should I help him pay his loans? Therapist:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "risingDeclarative"],

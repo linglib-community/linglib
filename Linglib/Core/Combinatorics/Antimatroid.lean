@@ -15,7 +15,7 @@ An antimatroid is uniquely determined by its *rooted circuits* ([dietrich-1987])
 
 This file develops the framework-agnostic theory; the Optimality-Theory
 specialization (the ERC–antimatroid isomorphism of [merchant-riggle-2016]) lives
-in `Linglib.Phonology.OptimalityTheory.Antimatroid`.
+in `Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition.Antimatroid`.
 
 **[UPSTREAM]**: mathlib has `Matroid` but no `Antimatroid`/`Greedoid`. The design
 mirrors mathlib's `Matroid`: a bundled structure (not a typeclass) with a `Set α`

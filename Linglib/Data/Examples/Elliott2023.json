@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.2"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "We're wondering how Gabe paid for dinner.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true if Gabe paid with one credit card and not with another", "judgment": "acceptable"}
     ],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "It has been raining all day. We're wondering whether Gabe got wet on the way here.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Gabe remembered to bring some umbrella of his", "judgment": "acceptable"}
     ],
@@ -71,7 +71,7 @@
     "translation": "",
     "context": "It has been raining all day. We're wondering whether Gabe got wet on the way here.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Gabe forgot to bring every umbrella of his", "judgment": "acceptable"}
     ],
@@ -92,7 +92,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "false as soon as there is a bathroom in this house in a funny place", "judgment": "acceptable"}
     ],
@@ -113,7 +113,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.3"]

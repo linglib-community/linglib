@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def exp1_antecedent : Datum :=
     glossedTokens := []
     context := "Mary has tested all three buttons. Which of these buttons will play a dog sound?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "all"), ("response", "no")] }
 
@@ -154,7 +154,7 @@ def exp1_consequent : Datum :=
     glossedTokens := []
     context := "Mary has tested all three buttons. What will happen if I press the blue button?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("qud", "consequentFocused"), ("tested", "all"), ("response", "cantTell")] }
 
@@ -167,7 +167,7 @@ def exp1_neutral : Datum :=
     glossedTokens := []
     context := "Mary has tested all three buttons. What will happen if I press the buttons?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("qud", "neutral"), ("tested", "all"), ("response", "cantTell")] }
 
@@ -180,7 +180,7 @@ def exp3_full : Datum :=
     glossedTokens := []
     context := "Mary has tested all three buttons. Which of these buttons will play a dog sound?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "all"), ("response", "no")] }
 
@@ -193,7 +193,7 @@ def exp3_partial : Datum :=
     glossedTokens := []
     context := "Mary has tested the red and blue buttons only. Which of these buttons will play a dog sound?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "two"), ("response", "cantTell")] }
 
@@ -206,7 +206,7 @@ def exp2_optimal : Datum :=
     glossedTokens := []
     context := "Which of these shapes, triangles or squares, will play a dog barking?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answerType", "optimallyInformative"), ("response", "no")] }
 
@@ -219,7 +219,7 @@ def exp2_overly : Datum :=
     glossedTokens := []
     context := "Which of these shapes, triangles or squares, will play a dog barking?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("answerType", "overlyInformative"), ("response", "no")] }
 

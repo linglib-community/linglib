@@ -150,7 +150,7 @@ theorem IsProjectionOf.le {h p : α} (hp : IsProjectionOf H h p) : p ≤ h := by
   | refl => exact le_rfl
   | tail _ hbc ih => exact ih.trans (hH _ _ hbc).le
 
-theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjectionOf H h p)
+theorem IsProjectionOf.of_le_of_le [IsForestOrder α] {h p x : α} (hp : IsProjectionOf H h p)
     (hpx : p ≤ x) (hxh : x ≤ h) : IsProjectionOf H h x := by
   induction hp using Relation.ReflTransGen.head_induction_on with
   | refl => exact (le_antisymm hxh hpx) ▸ .refl _
@@ -158,13 +158,13 @@ theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjec
     rcases eq_or_lt_of_le hpx with rfl | hlt
     · exact .head hpd hdh
     · have hdx : d ≤ x := by
-        rcases IsLeftLinear.comparable_of_le_common (IsProjectionOf.le hH hdh) hxh with h | h
+        rcases IsForestOrder.le_total_of_le_of_le (IsProjectionOf.le hH hdh) hxh with h | h
         · exact h
         · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hxd ↦
             absurd hxd ((hH _ _ hpd).2 hlt)
       exact ih hdx
 
-theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
+theorem IsProjectionOf.reflTransGen_of_le [IsForestOrder α] {h p q : α}
     (hp : IsProjectionOf H h p) (hq : IsProjectionOf H h q) (hpq : p ≤ q) :
     Relation.ReflTransGen H p q := by
   induction hp using Relation.ReflTransGen.head_induction_on with
@@ -173,12 +173,12 @@ theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
     rcases eq_or_lt_of_le hpq with rfl | hlt
     · exact .refl
     · refine .head hpd (ih ?_)
-      rcases IsLeftLinear.comparable_of_le_common (IsProjectionOf.le hH hdh) (hq.le hH) with h | h
+      rcases IsForestOrder.le_total_of_le_of_le (IsProjectionOf.le hH hdh) (hq.le hH) with h | h
       · exact h
       · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hqd ↦
           absurd hqd ((hH _ _ hpd).2 hlt)
 
-theorem IsProjectionOf.exists_of_lt [IsLeftLinear α] {h p q : α} (hp : IsProjectionOf H h p)
+theorem IsProjectionOf.exists_of_lt [IsForestOrder α] {h p q : α} (hp : IsProjectionOf H h p)
     (hq : IsProjectionOf H h q) (hpq : p < q) : ∃ m, H m q := by
   rcases Relation.ReflTransGen.cases_tail (hp.reflTransGen_of_le hH hq hpq.le) with
     rfl | ⟨m, _, hm⟩
@@ -186,14 +186,14 @@ theorem IsProjectionOf.exists_of_lt [IsLeftLinear α] {h p q : α} (hp : IsProje
   · exact ⟨m, hm⟩
 
 /-- The maximal projection of `h` is the least of its projections. -/
-theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
+theorem isLeast_projections_iff [IsForestOrder α] {h m : α} :
     IsLeast {p | IsProjectionOf H h p} m ↔ IsProjectionOf H h m ∧ IsMaximalProjection H m := by
   constructor
   · rintro ⟨hm, hmin⟩
     exact ⟨hm, fun x hxm ↦ (hH _ _ hxm).lt.not_ge (hmin (hm.head hxm))⟩
   · rintro ⟨hm, hmax⟩
     refine ⟨hm, fun p hp ↦ ?_⟩
-    rcases IsLeftLinear.comparable_of_le_common (hp.le hH) (hm.le hH) with h | h
+    rcases IsForestOrder.le_total_of_le_of_le (hp.le hH) (hm.le hH) with h | h
     · rcases eq_or_lt_of_le h with rfl | hlt
       · exact le_rfl
       · obtain ⟨x, hx⟩ := hp.exists_of_lt hH hm hlt
@@ -201,12 +201,12 @@ theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
     · exact h
 
 /-- Every node has a maximal projection. -/
-theorem exists_isLeast_projections [IsLeftLinear α] [WellFoundedLT α] (h : α) :
+theorem exists_isLeast_projections [IsForestOrder α] [WellFoundedLT α] (h : α) :
     ∃ m, IsLeast {p | IsProjectionOf H h p} m := by
   obtain ⟨m, hm, hmin⟩ := WellFounded.has_min wellFounded_lt {p | IsProjectionOf H h p}
     ⟨h, .refl h⟩
   refine ⟨m, hm, fun p hp ↦ ?_⟩
-  rcases IsLeftLinear.comparable_of_le_common (hp.le hH) (hm.le hH) with h' | h'
+  rcases IsForestOrder.le_total_of_le_of_le (hp.le hH) (hm.le hH) with h' | h'
   · exact (eq_or_lt_of_le h').elim (fun e ↦ e.symm.le) fun hlt ↦ absurd hlt (hmin p hp)
   · exact h'
 
@@ -289,22 +289,13 @@ theorem excludes_congr {x x' y : α} (h : x' ∈ segments A x) :
 theorem contains_of_covBy {m a : α} (ha : m ⋖ a) : Contains A m a :=
   ⟨m, mem_segments_self m, ha.lt.le⟩
 
-theorem eq_of_covBy_covBy [IsLeftLinear α] {m m' d : α} (hm : m ⋖ d) (hm' : m' ⋖ d) :
-    m = m' := by
-  rcases IsLeftLinear.comparable_of_le_common hm.le hm'.le with h | h
-  · exact (eq_or_lt_of_le h).elim id fun hlt ↦ absurd hm'.lt (hm.2 hlt).elim
-  · exact ((eq_or_lt_of_le h).elim Eq.symm fun hlt ↦ absurd hm.lt (hm'.2 hlt).elim)
-
-theorem not_le_of_covBy {m a d : α} (ha : m ⋖ a) (hd : m ⋖ d) (had : a ≠ d) : ¬ a ≤ d :=
-  fun h ↦ had ((hd.eq_or_eq ha.lt.le h).resolve_left (ne_of_gt ha.lt))
-
 variable (hA : ∀ m d, A m d → m ⋖ d)
 include hA
 
-theorem leftUnique_of_covBy [IsLeftLinear α] : Relator.LeftUnique A :=
-  fun _ _ _ hm hm' ↦ eq_of_covBy_covBy (hA _ _ hm) (hA _ _ hm')
+theorem leftUnique_of_covBy [IsForestOrder α] : Relator.LeftUnique A :=
+  fun _ _ _ hm hm' ↦ IsForestOrder.covBy_unique_left (hA _ _ hm) (hA _ _ hm')
 
-theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem mem_segments_iff [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     y ∈ segments A x ↔ Relation.ReflTransGen A x y ∨ Relation.ReflTransGen A y x := by
   have hL : Relator.RightUnique (Function.swap A) := fun _ _ _ h h' ↦
     leftUnique_of_covBy hA h h'
@@ -328,7 +319,7 @@ theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : �
     · exact mem_segments_comm.1 (mem_segments_of_reflTransGen h)
 
 /-- The segments of a category form a chain. -/
-theorem isChain_segments [IsLeftLinear α] (hU : Relator.RightUnique A) (x : α) :
+theorem isChain_segments [IsForestOrder α] (hU : Relator.RightUnique A) (x : α) :
     IsChain (· ≤ ·) (segments A x) := by
   have hL : Relator.RightUnique (Function.swap A) := fun _ _ _ h h' ↦
     leftUnique_of_covBy hA h h'
@@ -346,7 +337,7 @@ theorem isChain_segments [IsLeftLinear α] (hU : Relator.RightUnique A) (x : α)
 
 /-- A category includes what the segments at or below `x` dominate, since those above dominate
 whatever `x` does. -/
-theorem includes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem includes_iff [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     Includes A x y ↔ ∀ s, Relation.ReflTransGen A x s → s ≤ y := by
   refine ⟨fun h s hs ↦ h s (mem_segments_of_reflTransGen hs), fun h s hs ↦ ?_⟩
   rcases (mem_segments_iff hA hU).1 hs with hs | hs
@@ -354,7 +345,7 @@ theorem includes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
   · exact (IsProjectionOf.le hA hs).trans (h x .refl)
 
 /-- A category excludes what no segment at or above `x` dominates. -/
-theorem excludes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem excludes_iff [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     Excludes A x y ↔ ∀ s, Relation.ReflTransGen A s x → ¬ s ≤ y := by
   refine ⟨fun h s hs ↦ h s (mem_segments_comm.1 (mem_segments_of_reflTransGen hs)),
     fun h s hs hsy ↦ ?_⟩
@@ -362,7 +353,7 @@ theorem excludes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
   · exact h x .refl ((IsProjectionOf.le hA hs).trans hsy)
   · exact h s hs hsy
 
-theorem includes_iff_forall_le [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem includes_iff_forall_le [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     Includes A x y ↔ x ≤ y ∧ ∀ q, Relation.ReflTransGen A x q → q ≤ y → ∀ d, A q d → d ≤ y := by
   rw [includes_iff hA hU]
   refine ⟨fun h ↦ ⟨h x .refl, fun q hq _ d hqd ↦ h d (hq.tail hqd)⟩, fun ⟨hxy, h⟩ s hs ↦ ?_⟩
@@ -374,7 +365,7 @@ theorem includes_iff_forall_le [IsLeftLinear α] (hU : Relator.RightUnique A) {x
 dominate it. -/
 theorem not_includes_of_covBy {m d a : α} (hmd : A m d) (ha : m ⋖ a) (had : a ≠ d) :
     ¬ Includes A m a := fun h ↦
-  not_le_of_covBy (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
+  CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
 
 end Segments
 
@@ -435,13 +426,13 @@ include hA
 
 /-- An adjunct to a maximal category MAX-commands out of it, while what the category dominates
 does not MAX-command the adjunct. -/
-theorem maxCommand_adjunct [IsLeftLinear α] {m d a b : α} (hmd : A m d) (ha : m ⋖ a)
+theorem maxCommand_adjunct [IsForestOrder α] {m d a b : α} (hmd : A m d) (ha : m ⋖ a)
     (had : a ≠ d) (hd : d ∈ maximalProjections P A) (hdb : d < b) :
     (a, b) ∈ maxCommand P A ∧ (b, a) ∉ maxCommand P A :=
   ⟨mem_commandRelation_of_covBy ha ((hA _ _ hmd).lt.le.trans hdb.le), fun h ↦
-    not_le_of_covBy (hA _ _ hmd) ha had.symm (h hd hdb)⟩
+    CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h hd hdb)⟩
 
-theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d)
+theorem isMaximalCategory_iff_forall_above [IsForestOrder α] (hP : ∀ m d, P m d → m ⋖ d)
     (hU : Relator.RightUnique A) (hdisj : ∀ m d, A m d → ¬ P m d) {x : α} :
     IsMaximalCategory P A x ↔ ∀ s, Relation.ReflTransGen A s x → IsMaximalProjection P s := by
   refine ⟨fun h s hs ↦ h s (mem_segments_comm.1 (mem_segments_of_reflTransGen hs)),
@@ -449,17 +440,17 @@ theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m 
   rcases (mem_segments_iff hA hU).1 hs with hs | hs
   · rcases Relation.ReflTransGen.cases_tail hs with rfl | ⟨c, -, hcs⟩
     · exact h s .refl
-    · exact fun m hm ↦ hdisj c s hcs (eq_of_covBy_covBy (hP _ _ hm) (hA _ _ hcs) ▸ hm)
+    · exact fun m hm ↦ hdisj c s hcs (IsForestOrder.covBy_unique_left (hP _ _ hm) (hA _ _ hcs) ▸ hm)
   · exact h s hs
 
 /-- A node that projects to the lowest segment `b` of a maximal category MAX-commands exactly what
 `b` dominates. -/
-theorem mem_maxCommand_iff_le [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d) {h b x : α}
+theorem mem_maxCommand_iff_le [IsForestOrder α] (hP : ∀ m d, P m d → m ⋖ d) {h b x : α}
     (hb : IsProjectionOf (P ⊔ A) h b) (hmax : b ∈ maximalProjections P A) (hne : b ≠ h) :
     (h, x) ∈ maxCommand P A ↔ b ≤ x := by
   have hH : ∀ m d, (P ⊔ A) m d → m ⋖ d := fun m d hmd ↦ hmd.elim (hP m d) (hA m d)
   refine mem_commandRelation_iff_le ⟨⟨hmax, lt_of_le_of_ne (hb.le hH) hne⟩, fun x ⟨hx, hxh⟩ ↦ ?_⟩
-  rcases IsLeftLinear.comparable_of_le_common hxh.le (hb.le hH) with h' | h'
+  rcases IsForestOrder.le_total_of_le_of_le hxh.le (hb.le hH) with h' | h'
   · exact h'
   · rcases eq_or_lt_of_le h' with rfl | hlt
     · exact le_rfl
@@ -472,12 +463,11 @@ end Categories
 
 section Positions
 
-open Core.Order
 
-variable (hd : TreePath → Option ℕ)
+variable (hd : GornAddress → Option ℕ)
 
 /-- `headDaughterRel hd m d` says that `d` is the daughter of `m` at the index `hd m`. -/
-def headDaughterRel (m d : TreePath) : Prop := ∃ i, hd m = some i ∧ d.toList = m.toList ++ [i]
+def headDaughterRel (m d : GornAddress) : Prop := ∃ i, hd m = some i ∧ d.toList = m.toList ++ [i]
 
 instance : DecidableRel (headDaughterRel hd) := fun m d ↦
   match h : hd m with
@@ -485,62 +475,62 @@ instance : DecidableRel (headDaughterRel hd) := fun m d ↦
   | some i => decidable_of_iff (d.toList = m.toList ++ [i])
       ⟨fun hd' ↦ ⟨i, h, hd'⟩, fun ⟨j, hj, hd'⟩ ↦ by rw [h] at hj; cases hj; exact hd'⟩
 
-theorem headDaughterRel_covBy {m d : TreePath} (h : headDaughterRel hd m d) : m ⋖ d :=
-  TreePath.covBy_iff.2 ⟨h.choose, h.choose_spec.2⟩
+theorem headDaughterRel_covBy {m d : GornAddress} (h : headDaughterRel hd m d) : m ⋖ d :=
+  GornAddress.covBy_iff.2 ⟨h.choose, GornAddress.ext h.choose_spec.2⟩
 
 theorem headDaughterRel_rightUnique : Relator.RightUnique (headDaughterRel hd) := by
   rintro m d d' ⟨i, hi, hd⟩ ⟨j, hj, hd'⟩
   rw [hi] at hj
   cases hj
-  exact TreePath.ext (hd.trans hd'.symm)
+  exact GornAddress.ext (hd.trans hd'.symm)
 
-theorem isMinimalProjection_headDaughterRel_iff {p : TreePath} :
+theorem isMinimalProjection_headDaughterRel_iff {p : GornAddress} :
     IsMinimalProjection (headDaughterRel hd) p ↔ hd p = none := by
   constructor
   · intro h
     cases hp : hd p with
     | none => rfl
-    | some i => exact absurd ⟨i, hp, rfl⟩ (h ⟨p.toList ++ [i]⟩)
+    | some i => exact absurd ⟨i, hp, rfl⟩ (h (p * .of i))
   · rintro h d ⟨i, hi, -⟩
     rw [h] at hi
     cases hi
 
-instance (p : TreePath) : Decidable (IsMinimalProjection (headDaughterRel hd) p) :=
+instance (p : GornAddress) : Decidable (IsMinimalProjection (headDaughterRel hd) p) :=
   decidable_of_iff _ (isMinimalProjection_headDaughterRel_iff hd).symm
 
-theorem isMaximalProjection_headDaughterRel_iff {p : TreePath} :
+theorem isMaximalProjection_headDaughterRel_iff {p : GornAddress} :
     IsMaximalProjection (headDaughterRel hd) p ↔ ¬ headDaughterRel hd p.parent p := by
   refine ⟨fun h ↦ h _, fun h m hm ↦ h ?_⟩
   obtain rfl : m = p.parent := by
     obtain ⟨i, -, hi⟩ := hm
-    exact TreePath.ext (by simp [hi])
+    exact GornAddress.ext (by simp [hi])
   exact hm
 
-instance (p : TreePath) : Decidable (IsMaximalProjection (headDaughterRel hd) p) :=
+instance (p : GornAddress) : Decidable (IsMaximalProjection (headDaughterRel hd) p) :=
   decidable_of_iff _ (isMaximalProjection_headDaughterRel_iff hd).symm
 
-theorem isProjectionOf_headDaughterRel_iff {h p : TreePath} :
+theorem isProjectionOf_headDaughterRel_iff {h p : GornAddress} :
     IsProjectionOf (headDaughterRel hd) h p ↔
-      p ≤ h ∧ ∀ q ∈ h.toList.inits.map TreePath.mk, p < q → headDaughterRel hd q.parent q := by
+      p ≤ h ∧ ∀ q ∈ h.inits, p < q → headDaughterRel hd q.parent q := by
   have hH : ∀ m d, headDaughterRel hd m d → m ⋖ d := fun _ _ ↦ headDaughterRel_covBy hd
   constructor
   · intro hp
     refine ⟨hp.le hH, fun q hq hpq ↦ ?_⟩
     obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hq
-    have hqh : (⟨l⟩ : TreePath) ≤ h := TreePath.le_def.mpr ((List.mem_inits _ _).mp hl)
+    have hqh : (⟨l⟩ : GornAddress) ≤ h := GornAddress.le_def.mpr ((List.mem_inits _ _).mp hl)
     obtain ⟨m, hm⟩ := hp.exists_of_lt hH (hp.of_le_of_le hH hpq.le hqh) hpq
-    have : m = TreePath.parent ⟨l⟩ := by
+    have : m = GornAddress.parent ⟨l⟩ := by
       obtain ⟨i, -, hi⟩ := hm
       have hi' : l = m.toList ++ [i] := hi
-      exact TreePath.ext (by rw [TreePath.parent_toList, hi', List.dropLast_concat])
+      exact GornAddress.ext (by rw [GornAddress.parent_toList, hi', List.dropLast_concat])
     exact this ▸ hm
   · rintro ⟨hph, hall⟩
-    obtain ⟨s, hs⟩ := TreePath.le_def.mp hph
+    obtain ⟨s, hs⟩ := GornAddress.le_def.mp hph
     obtain ⟨p⟩ := p
     obtain ⟨h⟩ := h
     simp only at hs
     subst hs
-    suffices key : ∀ s, (∀ q ∈ (p ++ s).inits.map TreePath.mk, (⟨p⟩ : TreePath) < q →
+    suffices key : ∀ s, (∀ q ∈ (p ++ s).inits.map GornAddress.mk, (⟨p⟩ : GornAddress) < q →
         headDaughterRel hd q.parent q) → IsProjectionOf (headDaughterRel hd) ⟨p ++ s⟩ ⟨p⟩ from
       key s hall
     intro s
@@ -553,35 +543,34 @@ theorem isProjectionOf_headDaughterRel_iff {h p : TreePath} :
       · obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hq
         exact List.mem_map.mpr ⟨l, (List.mem_inits _ _).mpr
           (((List.mem_inits _ _).mp hl).trans (List.prefix_append _ _)), rfl⟩
-      · have hlt : (⟨p⟩ : TreePath) < ⟨p ++ s ++ [i]⟩ :=
-          lt_of_le_of_ne (TreePath.le_def.mpr (by simp)) fun e ↦ by
-            simpa using congrArg (fun q : TreePath ↦ q.toList.length) e
+      · have hlt : (⟨p⟩ : GornAddress) < ⟨p ++ s ++ [i]⟩ :=
+          lt_of_le_of_ne (GornAddress.le_def.mpr (by simp)) fun e ↦ by
+            simpa using congrArg (fun q : GornAddress ↦ q.toList.length) e
         have := hall ⟨p ++ s ++ [i]⟩
           (List.mem_map.mpr ⟨_, (List.mem_inits _ _).mpr List.prefix_rfl, rfl⟩) hlt
-        have hpar : (⟨p ++ s ++ [i]⟩ : TreePath).parent = ⟨p ++ s⟩ := TreePath.ext (by simp)
+        have hpar : (⟨p ++ s ++ [i]⟩ : GornAddress).parent = ⟨p ++ s⟩ := GornAddress.ext (by simp)
         rwa [hpar] at this
 
-instance (h p : TreePath) : Decidable (IsProjectionOf (headDaughterRel hd) h p) :=
+instance (h p : GornAddress) : Decidable (IsProjectionOf (headDaughterRel hd) h p) :=
   decidable_of_iff _ (isProjectionOf_headDaughterRel_iff hd).symm
 
-instance (h p : TreePath) : Decidable (IsLexicalHeadOf (headDaughterRel hd) h p) :=
+instance (h p : GornAddress) : Decidable (IsLexicalHeadOf (headDaughterRel hd) h p) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The maximal projection of `h` is the lowest maximal projection dominating it. -/
-def maximalProjectionAt (h : TreePath) : TreePath :=
-  ⟨h.toList.take (Nat.findGreatest
-    (fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩) h.toList.length)⟩
+def maximalProjectionAt (h : GornAddress) : GornAddress :=
+  h.take (Nat.findGreatest (fun n ↦ IsMaximalProjection (headDaughterRel hd) (h.take n)) h.depth)
 
-theorem maximalProjectionAt_le (h : TreePath) : maximalProjectionAt hd h ≤ h :=
-  List.take_prefix _ _
+theorem maximalProjectionAt_le (h : GornAddress) : maximalProjectionAt hd h ≤ h :=
+  GornAddress.take_le _ h
 
-theorem isMaximalProjection_maximalProjectionAt (h : TreePath) :
+theorem isMaximalProjection_maximalProjectionAt (h : GornAddress) :
     IsMaximalProjection (headDaughterRel hd) (maximalProjectionAt hd h) :=
-  Nat.findGreatest_spec (P := fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩)
+  Nat.findGreatest_spec (P := fun n ↦ IsMaximalProjection (headDaughterRel hd) (h.take n))
     (Nat.zero_le _) fun _ ⟨_, _, hi⟩ ↦ by simp at hi
 
 /-- `maximalProjectionAt hd h` is the least projection of `h`. -/
-theorem isLeast_maximalProjectionAt (h : TreePath) :
+theorem isLeast_maximalProjectionAt (h : GornAddress) :
     IsLeast {p | IsProjectionOf (headDaughterRel hd) h p} (maximalProjectionAt hd h) := by
   refine (isLeast_projections_iff fun _ _ ↦ headDaughterRel_covBy hd).2
     ⟨(isProjectionOf_headDaughterRel_iff hd).2 ⟨maximalProjectionAt_le hd h, ?_⟩,
@@ -590,25 +579,26 @@ theorem isLeast_maximalProjectionAt (h : TreePath) :
   obtain ⟨l, hl, rfl⟩ := List.mem_map.1 hq
   have hl' := List.prefix_iff_eq_take.1 ((List.mem_inits _ _).1 hl)
   have hfg := Nat.findGreatest_is_greatest (k := l.length)
-    (by simpa [maximalProjectionAt, Nat.findGreatest_le] using TreePath.length_strictMono hlt)
+    (by simpa [maximalProjectionAt, Nat.findGreatest_le, GornAddress.depth] using
+      GornAddress.depth_strictMono hlt)
     ((List.mem_inits _ _).1 hl).length_le
-  rw [← hl'] at hfg
+  rw [show h.take l.length = ⟨l⟩ from GornAddress.ext hl'.symm] at hfg
   by_contra hne
   exact hfg ((isMaximalProjection_headDaughterRel_iff hd).2 hne)
 
-theorem isProjectionOf_maximalProjectionAt (h : TreePath) :
+theorem isProjectionOf_maximalProjectionAt (h : GornAddress) :
     IsProjectionOf (headDaughterRel hd) h (maximalProjectionAt hd h) :=
   (isLeast_maximalProjectionAt hd h).1
 
 /-! #### Projection and adjunction at positions -/
 
-variable (seg : TreePath → Prop) [DecidablePred seg]
+variable (seg : GornAddress → Prop) [DecidablePred seg]
 
 /-- The head daughter of a position that is not a segment, a projection step. -/
-def projectionIndex (p : TreePath) : Option ℕ := if seg p then none else hd p
+def projectionIndex (p : GornAddress) : Option ℕ := if seg p then none else hd p
 
 /-- The head daughter of a segment, its host. -/
-def adjunctionIndex (p : TreePath) : Option ℕ := if seg p then hd p else none
+def adjunctionIndex (p : GornAddress) : Option ℕ := if seg p then hd p else none
 
 theorem headDaughterRel_eq_sup :
     headDaughterRel hd =
@@ -617,7 +607,7 @@ theorem headDaughterRel_eq_sup :
   simp only [headDaughterRel, projectionIndex, adjunctionIndex, Pi.sup_apply]
   by_cases h : seg m <;> simp [h]
 
-theorem not_projection_of_adjunction {m d : TreePath}
+theorem not_projection_of_adjunction {m d : GornAddress}
     (h : headDaughterRel (adjunctionIndex hd seg) m d) :
     ¬ headDaughterRel (projectionIndex hd seg) m d := by
   obtain ⟨i, hi, -⟩ := h
@@ -625,10 +615,10 @@ theorem not_projection_of_adjunction {m d : TreePath}
   simp only [adjunctionIndex, projectionIndex] at hi hj
   split at hi <;> simp_all
 
-theorem isMaximalCategory_iff_inits (x : TreePath) :
+theorem isMaximalCategory_iff_inits (x : GornAddress) :
     IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
         (headDaughterRel (adjunctionIndex hd seg)) x ↔
-      ∀ s ∈ x.toList.inits.map TreePath.mk,
+      ∀ s ∈ x.inits,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) x s →
           IsMaximalProjection (headDaughterRel (projectionIndex hd seg)) s := by
   rw [isMaximalCategory_iff_forall_above (fun _ _ ↦ headDaughterRel_covBy _)
@@ -637,16 +627,17 @@ theorem isMaximalCategory_iff_inits (x : TreePath) :
   constructor
   · exact fun h s _ hs ↦ h s hs
   · exact fun h s hs ↦ h s (List.mem_map.2 ⟨_, (List.mem_inits _ _).2
-      (TreePath.le_def.1 (IsProjectionOf.le (fun _ _ ↦ headDaughterRel_covBy _) hs)), rfl⟩) hs
+      (GornAddress.le_def.1 (IsProjectionOf.le (fun _ _ ↦ headDaughterRel_covBy _) hs)), rfl⟩) hs
 
 /-- A daughter other than the head of a mother that is no segment is a maximal category. -/
-theorem isMaximalCategory_append_singleton {m : TreePath} {i : ℕ} (hm : ¬ seg m)
+theorem isMaximalCategory_append_singleton {m : GornAddress} {i : ℕ} (hm : ¬ seg m)
     (hi : hd m ≠ some i) :
     IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
-      (headDaughterRel (adjunctionIndex hd seg)) ⟨m.toList ++ [i]⟩ := by
-  have hmother {c : TreePath} {j : ℕ} (h : m.toList ++ [i] = c.toList ++ [j]) : c = m ∧ j = i := by
+      (headDaughterRel (adjunctionIndex hd seg)) (m * .of i) := by
+  have hmother {c : GornAddress} {j : ℕ} (h : m.toList ++ [i] = c.toList ++ [j]) : c = m ∧ j = i :=
+      by
     obtain ⟨h₁, h₂⟩ := List.append_inj' h rfl
-    exact ⟨TreePath.ext h₁.symm, (List.singleton_inj.mp h₂).symm⟩
+    exact ⟨GornAddress.ext h₁.symm, (List.singleton_inj.mp h₂).symm⟩
   rw [isMaximalCategory_iff_forall_above (fun _ _ ↦ headDaughterRel_covBy _)
     (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)
     (fun _ _ ↦ not_projection_of_adjunction hd seg)]
@@ -658,43 +649,46 @@ theorem isMaximalCategory_append_singleton {m : TreePath} {i : ℕ} (hm : ¬ seg
   · obtain ⟨rfl, rfl⟩ := hmother hc
     simp [adjunctionIndex, hm] at hj
 
-instance (x : TreePath) : Decidable (IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
+instance (x : GornAddress) : Decidable (IsMaximalCategory (headDaughterRel (projectionIndex hd seg))
     (headDaughterRel (adjunctionIndex hd seg)) x) :=
   decidable_of_iff _ (isMaximalCategory_iff_inits hd seg x).symm
 
-instance (x : TreePath) :
+instance (x : GornAddress) :
     Decidable (x ∈ maximalProjections (headDaughterRel (projectionIndex hd seg))
       (headDaughterRel (adjunctionIndex hd seg))) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-theorem includes_iff_inits (x y : TreePath) :
+theorem includes_iff_inits (x y : GornAddress) :
     Includes (headDaughterRel (adjunctionIndex hd seg)) x y ↔
-      x ≤ y ∧ ∀ q ∈ y.toList.inits.map TreePath.mk,
+      x ≤ y ∧ ∀ q ∈ y.inits,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) q x →
-          ∀ i, adjunctionIndex hd seg q = some i → (⟨q.toList ++ [i]⟩ : TreePath) ≤ y := by
+          ∀ i, adjunctionIndex hd seg q = some i → q * .of i ≤ y := by
   rw [includes_iff_forall_le (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)]
   refine and_congr_right fun _ ↦ ⟨fun h q hqy hq i hi ↦ h q hq ?_ _ ⟨i, hi, rfl⟩,
     fun h q hq hqy d ⟨i, hi, hd'⟩ ↦ ?_⟩
   · obtain ⟨l, hl, rfl⟩ := List.mem_map.1 hqy
-    exact TreePath.le_def.2 ((List.mem_inits _ _).1 hl)
-  · have := h q (List.mem_map.2 ⟨_, (List.mem_inits _ _).2 (TreePath.le_def.1 hqy), rfl⟩) hq i hi
-    exact TreePath.ext hd' ▸ this
+    exact GornAddress.le_def.2 ((List.mem_inits _ _).1 hl)
+  · have := h q (List.mem_map.2 ⟨_, (List.mem_inits _ _).2 (GornAddress.le_def.1 hqy), rfl⟩) hq i hi
+    exact GornAddress.ext hd' ▸ this
 
-instance (x y : TreePath) : Decidable (Includes (headDaughterRel (adjunctionIndex hd seg)) x y) :=
+instance (x y : GornAddress) : Decidable (Includes (headDaughterRel (adjunctionIndex hd seg)) x y)
+    :=
   decidable_of_iff _ (includes_iff_inits hd seg x y).symm
 
-theorem excludes_iff_inits (x y : TreePath) :
+theorem excludes_iff_inits (x y : GornAddress) :
     Excludes (headDaughterRel (adjunctionIndex hd seg)) x y ↔
-      ∀ s ∈ x.toList.inits.map TreePath.mk,
+      ∀ s ∈ x.inits,
         IsProjectionOf (headDaughterRel (adjunctionIndex hd seg)) x s → ¬ s ≤ y := by
   rw [excludes_iff (fun _ _ ↦ headDaughterRel_covBy _) (headDaughterRel_rightUnique _)]
   exact ⟨fun h s _ hs ↦ h s hs, fun h s hs ↦ h s (List.mem_map.2 ⟨_, (List.mem_inits _ _).2
-    (TreePath.le_def.1 (IsProjectionOf.le (fun _ _ ↦ headDaughterRel_covBy _) hs)), rfl⟩) hs⟩
+    (GornAddress.le_def.1 (IsProjectionOf.le (fun _ _ ↦ headDaughterRel_covBy _) hs)), rfl⟩) hs⟩
 
-instance (x y : TreePath) : Decidable (Excludes (headDaughterRel (adjunctionIndex hd seg)) x y) :=
+instance (x y : GornAddress) : Decidable (Excludes (headDaughterRel (adjunctionIndex hd seg)) x y)
+    :=
   decidable_of_iff _ (excludes_iff_inits hd seg x y).symm
 
-instance (x y : TreePath) : Decidable (Contains (headDaughterRel (adjunctionIndex hd seg)) x y) :=
+instance (x y : GornAddress) : Decidable (Contains (headDaughterRel (adjunctionIndex hd seg)) x y)
+    :=
   decidable_of_iff _ not_excludes_iff_contains
 
 end Positions

@@ -12,7 +12,7 @@
     "translation": "I do not play with my cat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "root"]
@@ -35,7 +35,7 @@
     "translation": "The books that I do not read are in the cabinet.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ʔɨt-om ʔanɛ z-ɨ-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", "judgment": "ungrammatical"},
       {"form": "ʔɨt-om ʔanɛ z-ɛj-nbɨb-om-n mɛts'ħafti ʔab-t-i ʔarmadyo ʔall-ɛwo", "judgment": "ungrammatical"}
     ],
@@ -60,7 +60,7 @@
     "translation": "Kidane seems to not read books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "seem"]
@@ -82,7 +82,7 @@
     "translation": "If he doesn't leave, I'll cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "conditional"]
@@ -104,7 +104,7 @@
     "translation": "Aman asked me what I don't like.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "complement"],
@@ -128,7 +128,7 @@
     "translation": "I tried not to cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "subjunctive"],
@@ -153,7 +153,7 @@
     "translation": "He ordered the chicken not to fly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "subjunctive"],
@@ -178,7 +178,7 @@
     "translation": "We wanted the woman not to leave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "subjunctive"],
@@ -204,7 +204,7 @@
     "translation": "I walked slowly to not wake up the lion.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "purpose"]
@@ -226,7 +226,7 @@
     "translation": "Tewelde will not eat vegetables.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "future"]
@@ -248,7 +248,7 @@
     "translation": "I explained that a chicken does not fly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "dɛrho ʔaj-nɨfɨrɨ ʔɨl-ɛ gɛlits'-ɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -275,7 +275,7 @@
     "translation": "I know that he often goes to the cinema.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "factive"],
@@ -299,7 +299,7 @@
     "translation": "I forgot that he comes at noon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "factive"],
@@ -322,7 +322,7 @@
     "translation": "He admits that he likes her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "factive"],
@@ -346,7 +346,7 @@
     "translation": "I accept that he likes spiders.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "factive"],
@@ -370,7 +370,7 @@
     "translation": "Aman thinks that Tesfay sells books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "cognitive_non_factive"],
@@ -394,7 +394,7 @@
     "translation": "Aman believes that Tesfay sells books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "cognitive_non_factive"],
@@ -418,7 +418,7 @@
     "translation": "I suspect that he steals money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "cognitive_non_factive"],
@@ -442,7 +442,7 @@
     "translation": "I heard that she became a painter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "perception"],
@@ -466,7 +466,7 @@
     "translation": "I saw that they got married.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "nɨsatom kɛm-zɨ-tɛmɛrʕa-wu ʔɨl-ɛ rɨʔɛy-ɛ", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -492,7 +492,7 @@
     "translation": "I suspect that he steals money.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "cognitive_non_factive"],
@@ -516,7 +516,7 @@
     "translation": "Tesfay dreamt that Aman bought a dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "fiction"],
@@ -540,7 +540,7 @@
     "translation": "I read that cats eat mice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["verb_class", "utterance"],

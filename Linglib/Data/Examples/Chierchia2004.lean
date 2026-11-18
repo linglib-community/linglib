@@ -24,7 +24,7 @@ def ex128a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "and")] }
 
@@ -37,7 +37,7 @@ def ex130a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "or")] }
 

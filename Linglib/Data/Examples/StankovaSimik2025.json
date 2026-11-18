@@ -186,7 +186,7 @@
     "translation": "And as for Petr, did he buy a book, too, by any chance?",
     "context": "Hanka si koupila knihu. ('Hanka bought a book.')",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "A Petr si náhodou nekoupil žádnou knihu?",
         "judgment": "ungrammatical"

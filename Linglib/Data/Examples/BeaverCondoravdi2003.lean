@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "Cleo's stay starts before David's; their stays overlap."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "antisymmetry")] }
 
@@ -63,7 +63,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := "Cleo's stay starts before David's; their stays overlap."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "antisymmetry")] }
 
@@ -76,7 +76,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := "Ginger dances continuously; Fred dances in the middle; Delores does a quick routine after Fred stops, while Ginger still dances."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "transitivity")] }
 
@@ -89,7 +89,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := "Same situation (8)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "transitivity")] }
 
@@ -102,7 +102,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "Same situation (8)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "transitivity")] }
 
@@ -115,7 +115,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "Same situation (8)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "converseness")] }
 
@@ -128,7 +128,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "npi-licensing")] }
 
@@ -141,7 +141,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "npi-licensing")] }
 
@@ -154,7 +154,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
@@ -167,7 +167,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
@@ -180,7 +180,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
@@ -193,7 +193,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "veridicality")] }
 
@@ -206,7 +206,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "veridicality")] }
 
@@ -219,7 +219,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := "David never won a gold medal at anything."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "overgeneration")] }
 
@@ -232,7 +232,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "measure-phrase")] }
 
@@ -245,7 +245,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := "It is taken for granted that there was a bomb ticking which ended up not exploding."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
@@ -258,7 +258,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "non-committal")] }
 

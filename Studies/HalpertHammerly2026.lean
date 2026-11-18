@@ -247,7 +247,7 @@ end Core
 /-- The person features [±Participant, ±Author] as a specification of (3). -/
 def personSpec (pf : Person.Features) : Spec := fun q ↦
   if q = .addressee then some (decide (.participant ∈ pf))
-  else if q = .author then some (decide (.author ∈ pf)) else none
+  else if q = .author then some (decide (.speaker ∈ pf)) else none
 
 -- (8), (10)
 theorem category_personSpec_subset {pf : Person.Features} (h : .participant ∈ pf) :

@@ -72,14 +72,9 @@ finite. A candidate interpretation is presented by its domain; `reading D P` is 
 existential quantifier over `D` applied to the predicate `P` on pluralities. Sentence
 frames take the domain as an argument (`TrueOnAll x φ`), which covers negation and
 non-monotonic embeddings such as the paper's (22). Strong relevance is the substrate's
-`Homogeneity.isStronglyRelevantProp`, constancy on the cells of the issue, the paper's
+`Setoid.Determines`, constancy on the cells of the issue, the paper's
 gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 `0 < lo ≤ hi ≤ |books|` in place of the paper's 3, 8, and 10.
-
-## Errata
-
-* The prose under (100) assigns the pronoun the index `j`, but in (100) the verb is `like⟨j,k⟩`,
-  whose object index is `k` by the convention of (53b).
 
 ## TODO
 
@@ -389,14 +384,14 @@ variable (q : Setoid W) (x : Finset Atom) (φ : Finset (Finset Atom) → W → P
 
 /-- The sentence is judged true when every strongly relevant candidate is true. -/
 def TrueOnRelevant (w : W) : Prop :=
-  ∀ D ∈ Cand x, isStronglyRelevantProp q (φ D) → φ D w
+  ∀ D ∈ Cand x, q.Determines {w | φ D w} → φ D w
 
 /-- The sentence is judged false when every strongly relevant candidate is false. -/
 def FalseOnRelevant (w : W) : Prop :=
-  ∀ D ∈ Cand x, isStronglyRelevantProp q (φ D) → ¬ φ D w
+  ∀ D ∈ Cand x, q.Determines {w | φ D w} → ¬ φ D w
 
 /-- Felicity requires some strongly relevant candidate (the paper's fn. 17). -/
-def Felicitous : Prop := ∃ D ∈ Cand x, isStronglyRelevantProp q (φ D)
+def Felicitous : Prop := ∃ D ∈ Cand x, q.Determines {w | φ D w}
 
 theorem trueOnRelevant_and_falseOnRelevant_iff (w : W) :
     TrueOnRelevant q x φ w ∧ FalseOnRelevant q x φ w ↔ ¬ Felicitous q x φ := by
@@ -471,10 +466,10 @@ theorem reading_powersetCard {n : ℕ} (hn₀ : 0 < n) (hn : n ≤ Fintype.card 
 
 theorem stronglyRelevant_powersetCard {lo hi n : ℕ} (hn₀ : 0 < n) (hn : n ≤ Fintype.card Book)
     (h : n = lo ∨ n = hi) :
-    isStronglyRelevantProp (issue lo hi)
-      (reading (conv (insert Finset.univ (Finset.powersetCard n (Finset.univ : Finset Book))))
-        readP) := by
-  refine Setoid.decides_iff.2 fun w v hwv ↦ ?_
+    (issue lo hi).Determines {w |
+      reading (conv (insert Finset.univ (Finset.powersetCard n (Finset.univ : Finset Book))))
+        readP w} := by
+  refine Setoid.determines_iff.2 fun w v hwv ↦ ?_
   show reading _ readP w ↔ reading _ readP v
   rw [reading_powersetCard hn₀ hn, reading_powersetCard hn₀ hn]
   rcases h with rfl | rfl
@@ -508,7 +503,7 @@ theorem trueOnRelevant_not_reading {lo hi : ℕ} (h₀ : 0 < lo) (hlh : lo ≤ h
   · intro h
     rw [← not_le, ← reading_powersetCard h₀ hlo]
     exact h _ (mem_Cand.2 ⟨_, powersetCard_subset_parts h₀, rfl⟩)
-      (Setoid.decides_iff.2 fun _ _ hwv ↦
+      (Setoid.determines_iff.2 fun _ _ hwv ↦
         not_congr ((stronglyRelevant_powersetCard h₀ hlo (Or.inl rfl)).iff hwv))
   · intro h
     have hne : (Finset.univ : Finset Book).Nonempty :=
@@ -530,10 +525,10 @@ end ReadingList
 on bivalent propositions. -/
 theorem addressesIssue_iff_stronglyRelevant {S : W → Trivalent}
     (hbiv : Trivalent.IsBivalent S) (q : Setoid W) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ Trivalent.posExt S) := by
+    addressesIssue q S ↔ q.Determines (Trivalent.posExt S) := by
   constructor
   · intro h
-    refine Setoid.decides_iff.2 fun w₁ w₂ hr ↦ ?_
+    refine Setoid.determines_iff.2 fun w₁ w₂ hr ↦ ?_
     show S w₁ = .true ↔ S w₂ = .true
     constructor
     · intro h₁
@@ -541,7 +536,7 @@ theorem addressesIssue_iff_stronglyRelevant {S : W → Trivalent}
     · intro h₂
       exact (hbiv w₁).resolve_right fun h₁ ↦ h ⟨w₂, w₁, q.symm' hr, h₂, h₁⟩
   · rintro h ⟨w₁, w₂, hr, h₁, h₂⟩
-    have h₂' : S w₂ = .true := (Setoid.decides_iff.1 h w₁ w₂ hr).1 h₁
+    have h₂' : S w₂ = .true := (Setoid.determines_iff.1 h w₁ w₂ hr).1 h₁
     simp [h₂] at h₂'
 
 /-! The paper's (36): to pass, Mary must solve all of the math problems, or some of them and
@@ -1279,8 +1274,8 @@ theorem exists_issue_iff {w : List (Fin 6 × Fin 6)} :
     obtain ⟨a, -, b, -, hne, hR⟩ := exists_related_of_reciprocated hr
     exact ⟨a, b, hne, hR⟩
   · rintro ⟨a, b, hne, hR⟩
-    have hdec : (Setoid.ker (Pirates partsParam)).Decides {v | Pirates partsParam v} :=
-      Setoid.decides_iff.2 fun v v' h ↦
+    have hdec : (Setoid.ker (Pirates partsParam)).Determines {v | Pirates partsParam v} :=
+      Setoid.determines_iff.2 fun v v' h ↦
         iff_of_eq (show Pirates partsParam v = Pirates partsParam v' from h)
     have hp : Pirates partsParam w := ⟨{a}, singleton_mem_partsParam (Finset.mem_univ a) 0, {b},
       singleton_mem_partsParam (Finset.mem_univ b) 1, reciprocated_singleton_singleton hR hne⟩

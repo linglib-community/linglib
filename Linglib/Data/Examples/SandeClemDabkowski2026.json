@@ -11,7 +11,7 @@
     "translation": "I will see Djatchi.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "S Aux O Part V"],
@@ -33,7 +33,7 @@
     "translation": "I saw Djatchi.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "S V O Part"],
@@ -55,7 +55,7 @@
     "translation": "I saw Djatchi.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "S Part V O"]
@@ -76,7 +76,7 @@
     "translation": "Djatchi will scrape his leg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "S Aux O Part V"],
@@ -99,7 +99,7 @@
     "translation": "Djatchi scraped his leg.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "S V O Part"],
@@ -121,7 +121,7 @@
     "translation": "He SAW him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "Part S V O"],
@@ -144,7 +144,7 @@
     "translation": "He SAW him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "Part V S V O"]
@@ -164,7 +164,7 @@
     "translation": "He SAW him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "V S V O Part"]
@@ -184,7 +184,7 @@
     "translation": "He SAW him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "V S O Part"]
@@ -204,7 +204,7 @@
     "translation": "He SAW him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "Part S V O Part"]
@@ -225,7 +225,7 @@
     "translation": "He will SEE Djatchi.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "Part S Aux O V"],
@@ -248,7 +248,7 @@
     "translation": "He will SEE Djatchi.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "jɔkʊ².³ ɔ³ ji³ ɟaci²³.¹ ni⁴",
         "judgment": "ungrammatical"
@@ -276,7 +276,7 @@
     "translation": "He will SEE birds.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "Part S Aux O V"],
@@ -299,7 +299,7 @@
     "translation": "that horse",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["shape", "localDP"],
@@ -321,7 +321,7 @@
     "translation": "that goat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["shape", "localDP"],
@@ -343,7 +343,7 @@
     "translation": "that white dog",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["shape", "relClause"],
@@ -366,7 +366,7 @@
     "translation": "that big goat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["shape", "relClause"],
@@ -389,7 +389,7 @@
     "translation": "that big dog",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["shape", "relClause"],
@@ -412,7 +412,7 @@
     "translation": "that white goat",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["shape", "relClause"],

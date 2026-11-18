@@ -6,62 +6,51 @@ public import Linglib.Morphology.DistributedMorphology.Impoverishment
 /-!
 # The spell-out pipeline
 
-The PF branch of the Y-model at the domain level: a spell-out domain is
-the sequence of terminals the syntax hands over, the postsyntactic modules
-transform it, and Vocabulary Insertion realizes what survives, each
-position in its neighborhood; the module inventory and its ordering follow
-the Basque morphotactics. The focus-level rule types
-(`ImpoverishmentRule` and kin) rewrite one terminal inside
-its `Neighborhood`; the operations here move, remove, and merge the
-terminals themselves, which no focus-level rule can express. Each is a
-rewrite of the domain at the first of its neighborhoods (`Neighborhood.along`)
-that satisfies the rule's condition.
+The PF branch at the level of the word: the syntax hands over a string of terminals, the
+postsyntactic operations rewrite it, and Vocabulary Insertion realizes each surviving terminal in
+its neighborhood. The focus-level rules (`ImpoverishmentRule` and kin) rewrite one terminal; the
+operations here remove, merge, move and copy terminals, each [at the first
+neighborhood](##DistributedMorphology.rewriteFirst) where it
+[fires](##DistributedMorphology.Fires). Obliteration [leaves a
+sublist](##DistributedMorphology.ObliterationRule.apply_sublist) of the string and Fusion [never
+lengthens it](##DistributedMorphology.FusionRule.length_applyFirstAdjacent_le). The linear
+operations are stated in Generalized Reduplication: brackets copy a stretch of the string, less
+its left part in the first copy and its right part in the second, so that Metathesis [permutes the
+terminals](##DistributedMorphology.Reduplication.apply_perm), Doubling [adds
+some](##DistributedMorphology.Reduplication.sublist_apply), and the two differ by one bracket.
+Insertion has [one position for each terminal the operations
+leave](##DistributedMorphology.Spellout.length_pf).
 
-Each operation carries its position-count law, so terminal/exponent
-misalignment is arithmetic: terminal metathesis preserves the count,
-obliteration and fusion never increase it, and
-`Spellout.length_pf` says insertion positions equal terminals after the
-modules — Fission multiplies exponents within a position (`scansion`),
-not positions. `winner?_retreat` (`VocabularyInsertion/Basic.lean`) supplies the
-insertion-side ordering law.
+A focus-level rule can be timed against insertion: applied to the string before insertion, where
+the terminals beside a rewritten one see it rewritten, or to each terminal at its own insertion
+only, where they see it as it was. [The two timings give the same exponents where insertion reads
+the focus alone](##DistributedMorphology.Spellout.pf_rewriteBefore_eq_pf_rewriteAt).
 
-A focus-level rule can also be timed against insertion: applied to the
-domain before insertion, where the terminals beside a rewritten one see it
-rewritten, or to each terminal at its own insertion only, where they see it
-as it was. The two timings differ only for insertion that reads the context.
+## Implementation notes
 
-## Main definitions
-
-* `SpelloutDomain`, `rewriteFirst`: the domain, and rewriting it at its first neighborhood
-  satisfying a condition.
-* `ObliterationRule`, `TerminalMetathesisRule`: whole-terminal deletion and adjacent-terminal
-  swap, each a decidable condition on a neighborhood.
-* `FusionRule.applyFirstAdjacent`: the domain lift of Fusion.
-* `Spellout`, `Spellout.run`, `Spellout.pf`: the module sequence, then insertion in context.
-* `Spellout.rewriteBefore`, `Spellout.rewriteAt`: a focus-level rule applied before insertion,
-  and at each terminal's own insertion.
-
-## Main results
-
-* `length_rewriteFirst_le`, `length_rewriteFirst`: the count laws, which hold because each
-  neighborhood reassembles to the domain (`Neighborhood.toList_of_mem_along`).
-* `Spellout.length_pf`: insertion positions equal terminals after the modules.
-* `Spellout.pf_rewriteBefore_eq_pf_rewriteAt`: the two timings of a focus-level rule give the
-  same exponents where insertion reads the focus alone.
+* Every operation here applies to the linearized string. [arregi-nevins-2012] order Linearization
+  after Feature Markedness, where Obliteration applies, and [halle-marantz-1993] fuse sister
+  nodes; on a string these are stated over a neighborhood and over adjacent terminals.
+* The brackets of Generalized Reduplication are given by the lengths of the three stretches they
+  delimit. [harris-halle-2005] call the operation metathesis only where the two angled brackets
+  are contiguous; with a stretch between them that stretch is in both copies.
+* `Spellout.postsyntax` is one map, the modules composed in their order.
 
 ## TODO
 
-* The LF branch: an `Interpreted` extension whose interpretation reads
-  the input domain (the Y-model separation by type), seeded by the
-  domain-level allosemy licensing of `Studies/Benz2025.lean`.
-* Stratifying the module list by linearization — Lowering before,
+* The operations before Linearization as maps of the hierarchical object, composed before the
+  handover of `LateInsertion.lean`.
+* The place of Linearization: [arregi-nevins-2012] linearize before the linear operations, which
+  precede insertion, and [embick-noyer-2001] linearize at insertion, with Lowering before it and
   Local Dislocation after.
+* The LF branch: an interpretation that reads the string the syntax hands over.
 
 ## References
 
 * [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
   inflection*][halle-marantz-1993]
 * [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
+* [J. Harris and M. Halle, *Unexpected plural inflections in Spanish*][harris-halle-2005]
 * [D. Embick and R. Noyer, *Movement operations after syntax*][embick-noyer-2001]
 -/
 
@@ -79,38 +68,61 @@ open Neighborhood
 
 /-! ### Rewriting at the first neighborhood -/
 
-/-- `rewriteFirst p f d` replaces the domain `d` by `f n` for its first neighborhood `n`
-satisfying `p`, scanning left to right, and leaves it unchanged if there is none. Obliteration,
-terminal metathesis, and the domain lift of Fusion are its instances. -/
-def rewriteFirst (p : Neighborhood Bundle → Prop) [DecidablePred p]
-    (f : Neighborhood Bundle → SpelloutDomain Bundle) (d : SpelloutDomain Bundle) :
-    SpelloutDomain Bundle :=
-  ((along d).find? fun n ↦ decide (p n)).elim d f
+/-- `rewriteFirst f d` replaces the domain `d` by the value of `f` at its first neighborhood,
+scanning left to right, where `f` has one, and leaves it unchanged if there is none. Obliteration,
+Generalized Reduplication, and the domain lift of Fusion are its instances. -/
+def rewriteFirst (f : Neighborhood Bundle → Option (SpelloutDomain Bundle))
+    (d : SpelloutDomain Bundle) : SpelloutDomain Bundle :=
+  ((along d).findSome? f).getD d
 
 section RewriteFirst
 
-variable {p : Neighborhood Bundle → Prop} [DecidablePred p]
-  {f : Neighborhood Bundle → SpelloutDomain Bundle}
+variable {f : Neighborhood Bundle → Option (SpelloutDomain Bundle)} {d : SpelloutDomain Bundle}
 
-/-- A rewrite that never lengthens a neighborhood's string never lengthens the
-domain. -/
-theorem length_rewriteFirst_le (hf : ∀ n, (f n).length ≤ n.toList.length)
-    (d : SpelloutDomain Bundle) : (rewriteFirst p f d).length ≤ d.length := by
+/-- What holds of a domain, and of every rewrite of a neighborhood that reassembles to it, holds
+of the rewritten domain. -/
+theorem rewriteFirst_induction {C : SpelloutDomain Bundle → Prop} (self : C d)
+    (step : ∀ n l, n.toList = d → f n = some l → C l) : C (rewriteFirst f d) := by
   unfold rewriteFirst
-  cases h : (along d).find? fun n ↦ decide (p n) with
-  | none => exact le_rfl
-  | some n => simpa [toList_of_mem_along d (List.mem_of_find?_eq_some h)] using hf n
+  cases h : (along d).findSome? f with
+  | none => exact self
+  | some l =>
+    obtain ⟨n, hn, hf⟩ := List.exists_of_findSome?_eq_some h
+    exact step n l (toList_of_mem_along d hn) hf
 
-/-- A rewrite that preserves the length of each neighborhood's string preserves
-the number of terminals. -/
-theorem length_rewriteFirst (hf : ∀ n, (f n).length = n.toList.length)
-    (d : SpelloutDomain Bundle) : (rewriteFirst p f d).length = d.length := by
-  unfold rewriteFirst
-  cases h : (along d).find? fun n ↦ decide (p n) with
-  | none => rfl
-  | some n => simpa [toList_of_mem_along d (List.mem_of_find?_eq_some h)] using hf n
+@[simp] theorem rewriteFirst_nil : rewriteFirst f [] = [] := rfl
 
 end RewriteFirst
+
+/-- A rule, as a partial map on neighborhoods, fires on a domain when it has a value at one of the
+domain's neighborhoods. -/
+def Fires {β : Type*} (f : Neighborhood Bundle → Option β) (d : SpelloutDomain Bundle) : Prop :=
+  ∃ n ∈ along d, (f n).isSome
+
+section Fires
+
+variable {β : Type*} {f : Neighborhood Bundle → Option β} {d : SpelloutDomain Bundle}
+
+instance : Decidable (Fires f d) := inferInstanceAs (Decidable (∃ n ∈ along d, (f n).isSome))
+
+theorem not_fires_iff : ¬ Fires f d ↔ ∀ n ∈ along d, f n = none := by
+  simp [Fires]
+
+@[simp] theorem not_fires_nil : ¬ Fires f ([] : SpelloutDomain Bundle) := by
+  simp [Fires, along]
+
+theorem fires_map_iff {γ : Type*} {g : Neighborhood Bundle → β → γ} :
+    Fires (fun n ↦ (f n).map (g n)) d ↔ Fires f d := by
+  simp [Fires]
+
+/-- A rule that does not fire leaves the domain as it is. -/
+theorem rewriteFirst_of_not_fires {f : Neighborhood Bundle → Option (SpelloutDomain Bundle)}
+    (h : ¬ Fires f d) : rewriteFirst f d = d := by
+  rw [rewriteFirst, List.findSome?_eq_none_iff.2 (not_fires_iff.1 h), Option.getD_none]
+
+end Fires
+
+/-! ### Obliteration -/
 
 /-- An obliteration rule, in the sense of [arregi-nevins-2012], removes outright the terminal
 whose neighborhood satisfies `condition`. The focus-level `ImpoverishmentRule` deletes a feature
@@ -127,41 +139,98 @@ instance (rule : ObliterationRule Bundle) : DecidablePred rule.condition := rule
 /-- Applying the rule drops the first terminal whose neighborhood satisfies its condition, and
 otherwise leaves the domain unchanged. -/
 def apply (rule : ObliterationRule Bundle) : SpelloutDomain Bundle → SpelloutDomain Bundle :=
-  rewriteFirst rule.condition fun n ↦ n.leftCtx.reverse ++ n.rightCtx
+  rewriteFirst fun n ↦ if rule.condition n then some (n.leftCtx.reverse ++ n.rightCtx) else none
 
-theorem length_apply_le (rule : ObliterationRule Bundle)
-    (d : SpelloutDomain Bundle) : (rule.apply d).length ≤ d.length :=
-  length_rewriteFirst_le (fun n ↦ by simp [Neighborhood.toList]) d
+/-- Obliteration only removes terminals. -/
+theorem apply_sublist (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) :
+    (rule.apply d).Sublist d :=
+  rewriteFirst_induction (C := (·.Sublist d)) (.refl d) fun n l hn hl ↦ by
+    obtain ⟨-, ⟨⟩⟩ := Option.ite_none_right_eq_some.1 hl
+    exact hn ▸ (List.sublist_cons_self _ _).append_left _
+
+theorem length_apply_le (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) :
+    (rule.apply d).length ≤ d.length :=
+  (rule.apply_sublist d).length_le
 
 end ObliterationRule
 
-/-- A terminal metathesis rule, the terminal-order metathesis of [arregi-nevins-2012]'s
-Metathesis module, swaps the focus of a neighborhood satisfying `condition` with the terminal to
-its right. -/
-structure TerminalMetathesisRule (Bundle : Type*) where
-  /-- The neighborhoods whose focus swaps with the terminal to its right. -/
-  condition : Neighborhood Bundle → Prop
-  [decCond : DecidablePred condition]
+/-! ### Generalized Reduplication -/
 
-namespace TerminalMetathesisRule
+/-- The brackets of Generalized Reduplication, the formalism of [harris-halle-2005] in which
+[arregi-nevins-2012] state the linear operations. Double brackets enclose the stretch of the
+string that is copied; a right angled bracket inside them deletes what is to its left from the
+first copy, and a left angled bracket deletes what is to its right from the second. The brackets
+are given by the lengths of the three stretches they delimit, from the opening double bracket. -/
+structure Reduplication where
+  /-- The length of the stretch missing from the first copy. -/
+  left : ℕ
+  /-- The length of the stretch in both copies. -/
+  mid : ℕ
+  /-- The length of the stretch missing from the second copy. -/
+  right : ℕ
+  deriving DecidableEq, Repr
 
-instance (rule : TerminalMetathesisRule Bundle) : DecidablePred rule.condition := rule.decCond
+namespace Reduplication
 
-/-- Applying the rule swaps the first focus that has a terminal to its right and whose
-neighborhood satisfies its condition with that terminal, and otherwise leaves the domain
-unchanged. -/
-def apply (rule : TerminalMetathesisRule Bundle) :
+variable {α : Type*} (b : Reduplication) (s : List α)
+
+/-- Metathesis: the two angled brackets contiguous, so that neither copy keeps what the other
+has and the two stretches change places. -/
+abbrev metathesis (left right : ℕ) : Reduplication := ⟨left, 0, right⟩
+
+/-- Doubling: the right angled bracket alone, so that the stretch after it is pronounced before
+the copied stretch and again inside it. -/
+abbrev doubling (left mid : ℕ) : Reduplication := ⟨left, mid, 0⟩
+
+/-- The string with the brackets opening at its left edge: the first copy, without the left
+stretch, then the second, without the right stretch, then what follows the brackets. -/
+def apply : List α :=
+  (s.drop b.left).take (b.mid + b.right) ++ s.take (b.left + b.mid) ++
+    s.drop (b.left + b.mid + b.right)
+
+/-- Metathesis permutes the terminals. -/
+theorem apply_perm (h : b.mid = 0) : (b.apply s).Perm s := by
+  have hs : s.take b.left ++ (s.drop b.left).take b.right ++ s.drop (b.left + b.right) = s := by
+    rw [← List.take_add, List.take_append_drop]
+  simpa [apply, h] using (List.perm_append_comm.append_right _).trans (.of_eq hs)
+
+/-- Doubling keeps every terminal where it was and adds the copies. -/
+theorem sublist_apply (h : b.right = 0) : s.Sublist (b.apply s) := by
+  simp [apply, h]
+
+/-- Brackets within the string add the terminals in both copies. -/
+theorem length_apply (h : b.left + b.mid + b.right ≤ s.length) :
+    (b.apply s).length = s.length + b.mid := by
+  simp only [apply, List.length_append, List.length_take, List.length_drop]
+  omega
+
+end Reduplication
+
+/-- `reduplicateFirst sd` applies Generalized Reduplication at the first neighborhood for which
+the structural description `sd` gives brackets, the opening double bracket standing before the
+focus, and otherwise leaves the domain unchanged. -/
+def reduplicateFirst (sd : Neighborhood Bundle → Option Reduplication) :
     SpelloutDomain Bundle → SpelloutDomain Bundle :=
-  rewriteFirst (fun n ↦ n.rightCtx ≠ [] ∧ rule.condition n) fun
-    | ⟨t₁, l, t₂ :: r⟩ => l.reverse ++ t₂ :: t₁ :: r
-    | n => n.toList
+  rewriteFirst fun n ↦ (sd n).map fun b ↦ n.leftCtx.reverse ++ b.apply (n.focus :: n.rightCtx)
 
-@[simp] theorem length_apply (rule : TerminalMetathesisRule Bundle)
-    (d : SpelloutDomain Bundle) : (rule.apply d).length = d.length :=
-  length_rewriteFirst (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
-                           | ⟨_, _, []⟩ => rfl) d
+theorem reduplicateFirst_of_not_fires {sd : Neighborhood Bundle → Option Reduplication}
+    {d : SpelloutDomain Bundle} (h : ¬ Fires sd d) : reduplicateFirst sd d = d :=
+  rewriteFirst_of_not_fires (mt fires_map_iff.1 h)
 
-end TerminalMetathesisRule
+/-- A rule of Metathesis permutes the terminals of the domain. -/
+theorem reduplicateFirst_perm {sd : Neighborhood Bundle → Option Reduplication}
+    (h : ∀ n, ∀ b ∈ sd n, b.mid = 0) (d : SpelloutDomain Bundle) :
+    (reduplicateFirst sd d).Perm d :=
+  rewriteFirst_induction (C := (·.Perm d)) (.refl d) fun n l hn hl ↦ by
+    obtain ⟨b, hb, rfl⟩ := Option.map_eq_some_iff.1 hl
+    exact hn ▸ (b.apply_perm _ (h n b hb)).append_left _
+
+theorem length_reduplicateFirst {sd : Neighborhood Bundle → Option Reduplication}
+    (h : ∀ n, ∀ b ∈ sd n, b.mid = 0) (d : SpelloutDomain Bundle) :
+    (reduplicateFirst sd d).length = d.length :=
+  (reduplicateFirst_perm h d).length_eq
+
+/-! ### Fusion -/
 
 namespace FusionRule
 
@@ -171,40 +240,27 @@ variable {F : Type*} [DecidableEq F]
 and otherwise leaves the domain unchanged. -/
 def applyFirstAdjacent (rule : FusionRule F) :
     SpelloutDomain (Finset F) → SpelloutDomain (Finset F) :=
-  rewriteFirst (fun n ↦ ∃ q ∈ n.rightCtx.head?, rule.condition n.focus q) fun
-    | ⟨p, l, q :: r⟩ => l.reverse ++ (p ∪ q) :: r
-    | n => n.toList
+  rewriteFirst fun
+    | ⟨p, l, q :: r⟩ => (rule.apply p q).map fun pq ↦ l.reverse ++ pq :: r
+    | _ => none
 
 theorem length_applyFirstAdjacent_le (rule : FusionRule F) (d : SpelloutDomain (Finset F)) :
     (rule.applyFirstAdjacent d).length ≤ d.length :=
-  length_rewriteFirst_le (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
-                              | ⟨_, _, []⟩ => le_rfl) d
+  rewriteFirst_induction (C := (·.length ≤ d.length)) le_rfl fun n l hn hl ↦ by
+    obtain ⟨p, lc, _ | ⟨q, r⟩⟩ := n
+    · exact absurd hl nofun
+    · obtain ⟨pq, -, rfl⟩ := Option.map_eq_some_iff.1 hl
+      simp [← hn, Neighborhood.toList]
 
 end FusionRule
 
-/-- Run an ordered module sequence over a domain. The order of the list
-is the theory's architectural claim ([arregi-nevins-2012]'s strict
-sequence; the Basque ordering witness in `Studies/Middleton2026.lean`
-shows reordering it has empirical content). -/
-def runModules (modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle))
-    (d : SpelloutDomain Bundle) : SpelloutDomain Bundle :=
-  modules.foldl (fun d m ↦ m d) d
+/-! ### The pipeline -/
 
-theorem runModules_append
-    (m₁ m₂ : List (SpelloutDomain Bundle → SpelloutDomain Bundle))
-    (d : SpelloutDomain Bundle) :
-    runModules (m₁ ++ m₂) d = runModules m₂ (runModules m₁ d) := by
-  simp [runModules, List.foldl_append]
-
-@[simp] theorem runModules_nil (d : SpelloutDomain Bundle) :
-    runModules ([] : List (SpelloutDomain Bundle → SpelloutDomain Bundle)) d
-      = d := rfl
-
-/-- A PF-branch pipeline runs the ordered postsyntactic modules over a spell-out domain, then
-Vocabulary Insertion at each surviving position in its neighborhood. -/
+/-- A PF-branch pipeline runs the postsyntactic modules over a spell-out domain, then Vocabulary
+Insertion at each surviving position in its neighborhood. -/
 structure Spellout (Bundle F : Type*) where
-  /-- The ordered postsyntactic module sequence. -/
-  modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle)
+  /-- The postsyntactic modules, composed in their order. -/
+  postsyntax : SpelloutDomain Bundle → SpelloutDomain Bundle := id
   /-- The exponents inserted at a position, which sees its neighbors. There is one, several
   under Fission, or none at a position that licenses none. -/
   insert : Neighborhood Bundle → List F
@@ -213,20 +269,14 @@ namespace Spellout
 
 variable {F : Type*}
 
-/-- The domain after the module sequence. -/
-def run (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
-    SpelloutDomain Bundle :=
-  runModules s.modules d
-
 /-- The PF output has one insertion slot per surviving position. -/
-def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
-    List (List F) :=
-  (along (s.run d)).map s.insert
+def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) : List (List F) :=
+  (along (s.postsyntax d)).map s.insert
 
 /-- Exponent slots equal terminals after the modules, so the exponent count diverges from the
 syntactic terminal count only through the modules. -/
 @[simp] theorem length_pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
-    (s.pf d).length = (s.run d).length := by
+    (s.pf d).length = (s.postsyntax d).length := by
   simp [pf]
 
 /-! ### The timing of a focus-level rule -/
@@ -236,18 +286,17 @@ variable (r : Neighborhood Bundle → Bundle) (s : Spellout Bundle F)
 /-- `s.rewriteBefore r` applies the focus-level rule `r` to every terminal after the modules of
 `s` and before insertion, so that a terminal beside a rewritten one sees it rewritten. -/
 def rewriteBefore : Spellout Bundle F :=
-  { s with modules := s.modules ++ [fun d ↦ (along d).map r] }
+  { s with postsyntax := fun d ↦ (along (s.postsyntax d)).map r }
 
 /-- `s.rewriteAt r` applies the focus-level rule `r` to each terminal at its own insertion only,
 so that a terminal beside it sees it as it was. -/
 def rewriteAt : Spellout Bundle F :=
   { s with insert := fun n ↦ s.insert { n with focus := r n } }
 
-@[simp] theorem run_rewriteBefore (d : SpelloutDomain Bundle) :
-    (s.rewriteBefore r).run d = (along (s.run d)).map r := by
-  simp [run, rewriteBefore, runModules]
+@[simp] theorem postsyntax_rewriteBefore (d : SpelloutDomain Bundle) :
+    (s.rewriteBefore r).postsyntax d = (along (s.postsyntax d)).map r := rfl
 
-@[simp] theorem run_rewriteAt (d : SpelloutDomain Bundle) : (s.rewriteAt r).run d = s.run d := rfl
+@[simp] theorem postsyntax_rewriteAt : (s.rewriteAt r).postsyntax = s.postsyntax := rfl
 
 @[simp] theorem insert_rewriteBefore : (s.rewriteBefore r).insert = s.insert := rfl
 
@@ -257,17 +306,11 @@ def rewriteAt : Spellout Bundle F :=
 /-- The timing of a focus-level rule matters only to insertion that reads the context. Where
 insertion reads the focus alone, the rule yields the same exponents applied before insertion and
 at insertion. -/
-theorem pf_rewriteBefore_eq_pf_rewriteAt
-    (hs : ∀ n n' : Neighborhood Bundle, n.focus = n'.focus → s.insert n = s.insert n')
+theorem pf_rewriteBefore_eq_pf_rewriteAt (hs : s.insert.FactorsThrough focus)
     (d : SpelloutDomain Bundle) : (s.rewriteBefore r).pf d = (s.rewriteAt r).pf d := by
-  have key (e : SpelloutDomain Bundle) :
-      (along e).map s.insert = e.map fun b ↦ s.insert (ofBundle b) :=
-    calc (along e).map s.insert
-        = ((along e).map focus).map fun b ↦ s.insert (ofBundle b) := by
-          rw [List.map_map]; exact List.map_congr_left fun n _ ↦ hs _ _ rfl
-      _ = e.map fun b ↦ s.insert (ofBundle b) := by rw [map_focus_along]
-  rw [pf, pf, run_rewriteBefore, run_rewriteAt, insert_rewriteBefore, key, List.map_map]
-  exact List.map_congr_left fun n _ ↦ hs _ _ rfl
+  rw [pf, pf, postsyntax_rewriteBefore, postsyntax_rewriteAt, insert_rewriteBefore,
+    map_along_of_factorsThrough _ hs, List.map_map]
+  exact List.map_congr_left fun _ _ ↦ hs rfl
 
 end Spellout
 

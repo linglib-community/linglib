@@ -24,7 +24,7 @@ def t1_cv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "0"), ("frequency", "44.81"), ("permyriad", "4481")] }
 
@@ -37,7 +37,7 @@ def t1_cvc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "1"), ("frequency", "32.05"), ("permyriad", "3205")] }
 
@@ -50,7 +50,7 @@ def t1_vc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "1"), ("frequency", "11.99"), ("permyriad", "1199")] }
 
@@ -63,7 +63,7 @@ def t1_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "0"), ("frequency", "3.85"), ("permyriad", "385")] }
 
@@ -76,7 +76,7 @@ def t1_cvcc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "2"), ("frequency", "3.25"), ("permyriad", "325")] }
 
@@ -89,7 +89,7 @@ def t1_ccvc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "1"), ("frequency", "1.98"), ("permyriad", "198")] }
 
@@ -102,7 +102,7 @@ def t1_ccv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "0"), ("frequency", "1.38"), ("permyriad", "138")] }
 
@@ -115,7 +115,7 @@ def t1_vcc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "2"), ("frequency", "0.42"), ("permyriad", "42")] }
 
@@ -128,7 +128,7 @@ def t1_ccvcc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "2"), ("frequency", "0.26"), ("permyriad", "26")] }
 

@@ -24,7 +24,7 @@ def squid_t : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "⊑ t'"), ("derivation", "three substitutions and two compositions")] }
 
@@ -37,7 +37,7 @@ def squid_t2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "⊒ t")] }
 
@@ -50,7 +50,7 @@ def mono : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "a monotonicity inference from giant squid ⊑ cephalopod under ◇")] }
 
@@ -63,7 +63,7 @@ def no_notevery : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "derived from no | every and every ^ not every, | ⋈ ^ = ⊑")] }
 
@@ -76,7 +76,7 @@ def confluence : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("relation", "derivable in one substitution; lost after substituting octopus for squid, which yields #")] }
 
@@ -89,7 +89,7 @@ def s4_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "yet, weak"), ("context", "not every, antitone")] }
 
@@ -102,7 +102,7 @@ def s4_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "yet, weak"), ("context", "few, antitone")] }
 
@@ -115,7 +115,7 @@ def s4_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "in years, strong"), ("context", "few, not anti-additive")] }
 
@@ -128,7 +128,7 @@ def s4_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "in years, strong"), ("context", "no, anti-additive in its second argument")] }
 
@@ -141,7 +141,7 @@ def s4_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "a tad bit, superstrong"), ("context", "no, not anti-multiplicative")] }
 
@@ -154,7 +154,7 @@ def s4_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "a tad bit, superstrong"), ("context", "not, anti-additive and anti-multiplicative")] }
 

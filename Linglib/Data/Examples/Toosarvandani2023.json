@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Paul is by himself at his town's small zoo, visiting the lion's cage. After seeing a picture of Paul with the lion on Instagram, his friend Josie decides to come meet him. She has never been to the zoo before and does not know where any animals are located. Josie calls Paul, saying: 'I saw you in a picture with the lion. Where are you?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "1pl"],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "Paul is by himself at his town's small zoo, visiting the lion's cage. After seeing a picture of Paul with the lion on Instagram, his friend Josie decides to come meet him. She has never been to the zoo before and does not know where any animals are located. Josie asks a zoo ranger: 'I saw my friend in a picture with the lion. Where are they?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "3pl"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "Sam is at the dog park with his beloved Doberman Pinscher Franz. His friend Leslie is supposed to meet him somewhere inside. Leslie calls Sam, saying: 'Are you here with Franz? Where are you?'",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "1pl"],
@@ -73,7 +73,7 @@
     "translation": "",
     "context": "Maria is an avid skydiver. One day after a jump, she is blown off course. She calls the skydiving company to come pick her up. The receptionist who answers the phone says: 'We will come pick you up. We will also pick up your parachute at the same time. Where are you?'",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "1pl"],
@@ -94,7 +94,7 @@
     "translation": "I killed [them].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1sg"],
@@ -116,7 +116,7 @@
     "translation": "It followed me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.an"],
@@ -138,7 +138,7 @@
     "translation": "You killed [it].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2sg"],
@@ -160,7 +160,7 @@
     "translation": "[It] killed you.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.an"],
@@ -182,7 +182,7 @@
     "translation": "S/he (an elder) made her/him (a nonelder) cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.el"],
@@ -204,7 +204,7 @@
     "translation": "S/he (a nonelder) made her/him (an elder) cry.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.hu"],
@@ -226,7 +226,7 @@
     "translation": "S/he kicked it (an animal).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.hu"],
@@ -248,7 +248,7 @@
     "translation": "It (an animal) bit her/him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.an"],
@@ -270,7 +270,7 @@
     "translation": "It (an animal) hit it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.an"],
@@ -292,7 +292,7 @@
     "translation": "It hit it (an animal).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3.in"],

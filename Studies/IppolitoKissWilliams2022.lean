@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Discourse.QUD.Basic
 
 /-!
 # Ippolito, Kiss and Williams (2022): The Discourse Function of Adversative Conjunction

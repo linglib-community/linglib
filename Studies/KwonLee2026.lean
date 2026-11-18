@@ -39,18 +39,6 @@ unlike two studies of Chinese and Korean](##overt_objectBiased_iff).
   the share of object antecedents for an overt pronoun, the share of subject antecedents is its
   complement.
 
-## Errata
-
-* With 52 participants and 36 items in six conditions, a condition of Experiment 2 has 312
-  trials. The error counts printed for the null pronoun give the printed error rates, and those
-  printed for the other two forms [do not](##errorRate_rounds_iff): 65 of 312 is 20.8%, printed
-  as 20.6%. Each printed accuracy is [the complement of the printed error
-  rate](##accuracy_add_errorRate).
-* The p-value of the contrast between the overt pronoun and the full noun phrase in the
-  antecedent choices of Experiment 3 is printed as below .015 and, in the next sentence, as .012.
-* The legends of the two figures of Experiment 2 label the subject-biased and object-biased
-  contexts as subject choice and object choice.
-
 ## TODO
 
 * The stimuli the paper prints are not encoded as examples.

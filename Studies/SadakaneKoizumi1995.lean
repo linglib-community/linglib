@@ -52,7 +52,7 @@ paper ties the choice between the two to how affected the referent of the noun p
 
 namespace SadakaneKoizumi1995
 
-open PhraseStructure PhraseStructure.Tree Core.Order
+open PhraseStructure PhraseStructure.Tree
 open RoseTree (CCommands)
 
 /-! ### Case markers and postpositions -/
@@ -85,7 +85,7 @@ def quantifierTree (a : Attachment) : Tree Cat Unit :=
   .node .V [a.phrase, .terminal .Num (), .terminal .V ()]
 
 /-- `a.host` is the position of the noun phrase in `a.quantifierTree`. -/
-def host : Attachment → TreePath
+def host : Attachment → GornAddress
   | clitic => ⟨[0]⟩
   | head _ => ⟨[0, 0]⟩
 
@@ -103,8 +103,8 @@ theorem hostsQuantifier_iff {a : Attachment} : a.HostsQuantifier ↔ a = clitic 
   | head u =>
     refine iff_of_false (fun h ↦ ?_) nofun
     exact absurd (mem_commandRelation.1 h.1.1 ⟨[0]⟩ ⟨_, rfl, le_rfl⟩
-        (show (⟨[0]⟩ : TreePath) < ⟨[0, 0]⟩ by decide))
-      (show ¬ (⟨[0]⟩ : TreePath) ≤ ⟨[1]⟩ by decide)
+        (show (⟨[0]⟩ : GornAddress) < ⟨[0, 0]⟩ by decide))
+      (show ¬ (⟨[0]⟩ : GornAddress) ≤ ⟨[1]⟩ by decide)
 
 /-- A particle's phrase can be the focus of a cleft when it can bear Case and bears none yet. On
 [nakayama-1989]'s account the copula *da* assigns Case to its complement, so a case-marked NP
@@ -273,7 +273,7 @@ def tree44 : Tree Unit Unit :=
 
 /-- `p.site?` is the position of the argument `p` in `tree44`; the noun phrase in a PP, which the
 paper adds to Koizumi's hierarchy, has none. -/
-def site? : Position → Option TreePath
+def site? : Position → Option GornAddress
   | npInPP => none
   | dative => some ⟨[0]⟩
   | upperAccusative => some ⟨[1, 0, 0]⟩

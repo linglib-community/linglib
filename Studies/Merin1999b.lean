@@ -15,7 +15,7 @@ Merin argues that attribute spaces are partitions for decision-theoretic reasons
 characterizes negative attributes epistemically, as proper coarsenings, rather than by their
 form. The complements of a partition's cells form a partition, and their probabilities a
 distribution, only when the partition has two cells. The partition of a cell and its complement
-is the coarsest coarsening that decides the cell, and an attribute is negative when its
+is the coarsest coarsening that determines the cell, and an attribute is negative when its
 complement is a cell and its two-cell partition properly coarsens the partition.
 
 ## Implementation notes
@@ -156,10 +156,10 @@ a finite domain means coarsening with strictly fewer cells ([merin-1999]). -/
 def IsProperCoarsening {M : Type*} (q q' : Setoid M) : Prop := q' < q
 
 /-- For a cell `P` of a partition, the partition `{P, ¬P}` is its coarsest coarsening that
-decides `P` (FACT 4 of [merin-1999]). -/
+determines `P` (FACT 4 of [merin-1999]). -/
 theorem isGreatest_polar_cell {M : Type*} (q : Setoid M) (w : M) :
-    IsGreatest {q' | q ≤ q' ∧ q'.Decides (q.cell w)} (Setoid.polar (q.cell w)) :=
-  ⟨⟨Setoid.decides_cell w, Setoid.polar_decides⟩, fun _ h ↦ h.2⟩
+    IsGreatest {q' | q ≤ q' ∧ q'.Determines (q.cell w)} (Setoid.polar (q.cell w)) :=
+  ⟨⟨Setoid.determines_cell w, Setoid.polar_determines⟩, fun _ h ↦ h.2⟩
 
 /-- An attribute `R` is negative with respect to `q` when the complement of `R` is a cell of `q`
 and the partition `{R, ¬R}` properly coarsens `q` ([merin-1999]). -/

@@ -57,24 +57,6 @@ does not separate a rejected preposition from an accepted postposition.
 * `pathLengths` measures the part of the path inside the object, which is what (22) draws and what
   a modifier measures in (27), and is positive since (21b) says `|v_Δl| ≠ 0`.
 
-## Errata
-
-* *via* is extended locative in (32c) of chapter 1 and point locative in Appendix I.1.2; (19b,c)
-  give it both kinds of object. It has no postpositional use, so this file follows the appendix.
-* P. 104 says a phrase closed under lengthening has restricted space; p. 106 and (13), (17) say the
-  reverse, and the sentence that follows on p. 104 presupposes the reverse.
-* "Fixed |v|" covers bounds as well as values: (11b,c) are `|v| < r` and `|v| ≤ r`. A modifier
-  below the bound is [neither contradictory nor uninformative](##not_subsingleton_norm_image_ball),
-  so the rationale of (18) only [covers a length that really is fixed](##forall_inter_sphere_iff).
-* (26b) calls the path of a narrow locative postposition not fixed, but (22a) confines it to the
-  object, so it [is bounded as (11c) is](##pathLengths_narrow_subset). (29) therefore needs a
-  different notion of restriction for prepositions than for postpositions.
-* (11c) gives *tussen* `|v| ≤ r` and footnote 9 of chapter 4 gives it `0 < |v| < r`.
-* The generalisation of p. 109, that *vlak* is possible unless `|v| = 0`, does not cover (20b,c),
-  which p. 108 attributes to other causes; *in* and *binnen* share (11c) and differ under *vlak*.
-* (25) of chapter 1 prints a twice, (37) of chapter 2 prints b for d, and (42) of chapter 3 prints b
-  twice.
-
 ## References
 
 * [helmantel-2002]

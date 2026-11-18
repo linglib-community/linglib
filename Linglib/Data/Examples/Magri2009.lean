@@ -22,9 +22,11 @@ def ex_8a : Datum :=
     language := "stan1295"
     primaryText := "weil ja doch Feuerwehrmänner verfügbar sind."
     glossedTokens := [("weil", "since"), ("ja doch", "PARTS"), ("Feuerwehrmänner", "firemen"), ("verfügbar", "available"), ("sind", "are")]
+    glossedWords := [⟨['w', 'e', 'i', 'l'], ['s', 'i', 'n', 'c', 'e'], [⟨['w', 'e', 'i', 'l'], ['s', 'i', 'n', 'c', 'e'], none⟩]⟩, ⟨['j', 'a', ' ', 'd', 'o', 'c', 'h'], ['P', 'A', 'R', 'T', 'S'], [⟨['j', 'a', ' ', 'd', 'o', 'c', 'h'], ['P', 'A', 'R', 'T', 'S'], none⟩]⟩, ⟨['F', 'e', 'u', 'e', 'r', 'w', 'e', 'h', 'r', 'm', 'ä', 'n', 'n', 'e', 'r'], ['f', 'i', 'r', 'e', 'm', 'e', 'n'], [⟨['F', 'e', 'u', 'e', 'r', 'w', 'e', 'h', 'r', 'm', 'ä', 'n', 'n', 'e', 'r'], ['f', 'i', 'r', 'e', 'm', 'e', 'n'], none⟩]⟩, ⟨['v', 'e', 'r', 'f', 'ü', 'g', 'b', 'a', 'r'], ['a', 'v', 'a', 'i', 'l', 'a', 'b', 'l', 'e'], [⟨['v', 'e', 'r', 'f', 'ü', 'g', 'b', 'a', 'r'], ['a', 'v', 'a', 'i', 'l', 'a', 'b', 'l', 'e'], none⟩]⟩, ⟨['s', 'i', 'n', 'd'], ['a', 'r', 'e'], [⟨['s', 'i', 'n', 'd'], ['a', 'r', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("generic", .unacceptable)]
     paperFeatures := [("predicate_level", "stage"), ("position", "right")] }
 
@@ -37,7 +39,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate_level", "stage"), ("position", "left")] }
 
@@ -48,9 +50,11 @@ def ex_8c : Datum :=
     language := "stan1295"
     primaryText := "weil ja doch Feuerwehrmänner intelligent sind."
     glossedTokens := [("weil", "since"), ("ja doch", "PARTS"), ("Feuerwehrmänner", "firemen"), ("intelligent", "intelligent"), ("sind", "are")]
+    glossedWords := [⟨['w', 'e', 'i', 'l'], ['s', 'i', 'n', 'c', 'e'], [⟨['w', 'e', 'i', 'l'], ['s', 'i', 'n', 'c', 'e'], none⟩]⟩, ⟨['j', 'a', ' ', 'd', 'o', 'c', 'h'], ['P', 'A', 'R', 'T', 'S'], [⟨['j', 'a', ' ', 'd', 'o', 'c', 'h'], ['P', 'A', 'R', 'T', 'S'], none⟩]⟩, ⟨['F', 'e', 'u', 'e', 'r', 'w', 'e', 'h', 'r', 'm', 'ä', 'n', 'n', 'e', 'r'], ['f', 'i', 'r', 'e', 'm', 'e', 'n'], [⟨['F', 'e', 'u', 'e', 'r', 'w', 'e', 'h', 'r', 'm', 'ä', 'n', 'n', 'e', 'r'], ['f', 'i', 'r', 'e', 'm', 'e', 'n'], none⟩]⟩, ⟨['i', 'n', 't', 'e', 'l', 'l', 'i', 'g', 'e', 'n', 't'], ['i', 'n', 't', 'e', 'l', 'l', 'i', 'g', 'e', 'n', 't'], [⟨['i', 'n', 't', 'e', 'l', 'l', 'i', 'g', 'e', 'n', 't'], ['i', 'n', 't', 'e', 'l', 'l', 'i', 'g', 'e', 'n', 't'], none⟩]⟩, ⟨['s', 'i', 'n', 'd'], ['a', 'r', 'e'], [⟨['s', 'i', 'n', 'd'], ['a', 'r', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "right")] }
 
@@ -63,7 +67,7 @@ def ex_8d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "left")] }
 

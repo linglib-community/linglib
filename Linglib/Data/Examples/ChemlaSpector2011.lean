@@ -25,7 +25,7 @@ def exp1_universal_some_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "universal"), ("condition", "false"), ("rating", "120"), ("figure", "5")] }
 
@@ -39,7 +39,7 @@ def exp1_universal_or_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "universal"), ("condition", "false"), ("rating", "110"), ("figure", "5")] }
 
@@ -53,7 +53,7 @@ def exp1_universal_some_literal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "universal"), ("condition", "literal"), ("rating", "440"), ("figure", "5")] }
 
@@ -67,7 +67,7 @@ def exp1_universal_or_literal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "universal"), ("condition", "literal"), ("rating", "350"), ("figure", "5")] }
 
@@ -81,7 +81,7 @@ def exp1_universal_some_weak : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "universal"), ("condition", "weak"), ("rating", "680"), ("figure", "5")] }
 
@@ -95,7 +95,7 @@ def exp1_universal_or_weak : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "universal"), ("condition", "weak"), ("rating", "540"), ("figure", "5")] }
 
@@ -109,7 +109,7 @@ def exp1_universal_some_strong : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "universal"), ("condition", "strong"), ("rating", "990"), ("figure", "5")] }
 
@@ -123,7 +123,7 @@ def exp1_universal_or_strong : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "universal"), ("condition", "strong"), ("rating", "860"), ("figure", "5")] }
 
@@ -137,7 +137,7 @@ def exp1_de_some_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "de"), ("condition", "false"), ("rating", "65"), ("figure", "6")] }
 
@@ -151,7 +151,7 @@ def exp1_de_or_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "de"), ("condition", "false"), ("rating", "90"), ("figure", "6")] }
 
@@ -165,7 +165,7 @@ def exp1_de_some_qlocal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "de"), ("condition", "qlocal"), ("rating", "250"), ("figure", "6")] }
 
@@ -179,7 +179,7 @@ def exp1_de_or_qlocal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "de"), ("condition", "qlocal"), ("rating", "140"), ("figure", "6")] }
 
@@ -193,7 +193,7 @@ def exp1_de_some_both : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "some"), ("environment", "de"), ("condition", "both"), ("rating", "920"), ("figure", "6")] }
 
@@ -207,7 +207,7 @@ def exp1_de_or_both : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "or"), ("environment", "de"), ("condition", "both"), ("rating", "930"), ("figure", "6")] }
 
@@ -221,7 +221,7 @@ def exp2_exactlyOne_some_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "exactlyOne"), ("condition", "false"), ("rating", "67"), ("figure", "12")] }
 
@@ -235,7 +235,7 @@ def exp2_exactlyOne_or_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "exactlyOne"), ("condition", "false"), ("rating", "91"), ("figure", "12")] }
 
@@ -249,7 +249,7 @@ def exp2_exactlyOne_some_literal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "exactlyOne"), ("condition", "literal"), ("rating", "370"), ("figure", "12")] }
 
@@ -263,7 +263,7 @@ def exp2_exactlyOne_or_literal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "exactlyOne"), ("condition", "literal"), ("rating", "370"), ("figure", "12")] }
 
@@ -277,7 +277,7 @@ def exp2_exactlyOne_some_local : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "exactlyOne"), ("condition", "local"), ("rating", "730"), ("figure", "12")] }
 
@@ -291,7 +291,7 @@ def exp2_exactlyOne_or_local : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "exactlyOne"), ("condition", "local"), ("rating", "580"), ("figure", "12")] }
 
@@ -305,7 +305,7 @@ def exp2_exactlyOne_some_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "exactlyOne"), ("condition", "all"), ("rating", "980"), ("figure", "12")] }
 
@@ -319,7 +319,7 @@ def exp2_exactlyOne_or_all : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "exactlyOne"), ("condition", "all"), ("rating", "900"), ("figure", "12")] }
 
@@ -333,7 +333,7 @@ def exp2_de_some_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "de"), ("condition", "false"), ("rating", "33"), ("figure", "13")] }
 
@@ -347,7 +347,7 @@ def exp2_de_or_false : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "de"), ("condition", "false"), ("rating", "45"), ("figure", "13")] }
 
@@ -361,7 +361,7 @@ def exp2_de_some_qlocal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "de"), ("condition", "qlocal"), ("rating", "510"), ("figure", "13")] }
 
@@ -375,7 +375,7 @@ def exp2_de_or_qlocal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "de"), ("condition", "qlocal"), ("rating", "220"), ("figure", "13")] }
 
@@ -389,7 +389,7 @@ def exp2_de_some_both : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "some"), ("environment", "de"), ("condition", "both"), ("rating", "970"), ("figure", "13")] }
 
@@ -403,7 +403,7 @@ def exp2_de_or_both : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "or"), ("environment", "de"), ("condition", "both"), ("rating", "950"), ("figure", "13")] }
 

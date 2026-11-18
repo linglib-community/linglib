@@ -24,7 +24,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not both", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not both", .unacceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not all", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not all", .unacceptable)]
     paperFeatures := [] }
 

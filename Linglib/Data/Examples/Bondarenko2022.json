@@ -13,7 +13,7 @@
     "translation": "An idea / a situation that reforms are coming is true / mistaken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Situacija čto grjadut reformy javljaetsja vernoj.", "judgment": "ungrammatical"},
       {"form": "Ideja čto grjadut reformy javljaetsja ošibočnoj.", "judgment": "acceptable"}
     ],
@@ -40,7 +40,7 @@
     "translation": "The claim that Swuna solved the problem is false/true.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-i cham-i-ta.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -65,7 +65,7 @@
     "translation": "The situation that Swuna solved the problem is false/true.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Swuna-ka mwuncey-lul phwul-un sanghwang-i cham-i-ta.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -90,7 +90,7 @@
     "translation": "Yesterday a situation/idea that my order was delayed happened/occurred.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Včera proizošla ideja čto moj zakaz zaderžali.", "judgment": "ungrammatical"},
       {"form": "Včera slučilas’ situacija čto moj zakaz zaderžali.", "judgment": "acceptable"}
     ],
@@ -117,7 +117,7 @@
     "translation": "A claim that Swuna solved the problem occured.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "occurrence-predicates"],
@@ -140,7 +140,7 @@
     "translation": "A situation that Swuna solved the problem occured.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "occurrence-predicates"],
@@ -165,7 +165,7 @@
     "translation": "Mina noticed the claim that Swuna solved the problem.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "situation-only-predicate-notice"],
@@ -189,7 +189,7 @@
     "translation": "Mina noticed the situation that Swuna solved the problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "situation-only-predicate-notice"],
@@ -213,7 +213,7 @@
     "translation": "Lena noticed a rumor /an event that this woman arrived on a horse.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Lena zametila slučaj čto èta ženščina priexala na kone.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -238,7 +238,7 @@
     "translation": "This woman is the queen of Great Britain.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -262,7 +262,7 @@
     "translation": "Lena noticed a rumor /an event that the queen of Great Britain arrived on a horse.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Lena zametila slučaj čto koroleva Velikobritanii priexala na kone.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -288,7 +288,7 @@
     "translation": "Mina remembers that Swuna solved the problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -312,7 +312,7 @@
     "translation": "Swuna is the tallest in the class.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -337,7 +337,7 @@
     "translation": "Mina remembers that the tallest girl in the class solved the problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -363,7 +363,7 @@
     "translation": "Mina remembers that Swuna solved the problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -387,7 +387,7 @@
     "translation": "Swuna is the tallest girl in the class.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -412,7 +412,7 @@
     "translation": "Mina remembers that the tallest girl in the class solved the problem.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "substitution"],
@@ -437,7 +437,7 @@
     "translation": "Dugar thought that the cat ate the fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "Cont-CP"],
@@ -460,7 +460,7 @@
     "translation": "Dugar remembered (an event of) the cat’s eating the fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "Sit-CP"],
@@ -483,7 +483,7 @@
     "translation": "Dugar remembers (a claim) that the cat ate the fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "Cont-CP"],

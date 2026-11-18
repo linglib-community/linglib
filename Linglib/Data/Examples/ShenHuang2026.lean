@@ -24,7 +24,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("object", "indefinite"), ("creation", "yes")] }
 
@@ -37,7 +37,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "fronted"), ("object", "definite"), ("creation", "yes")] }
 
@@ -48,9 +48,11 @@ def ex28_indefinite : Datum :=
     language := "mand1415"
     primaryText := "Wǒ yǐwéi tā ná-le shénme rén de xiàngpiàn"
     glossedTokens := [("Wǒ", "I"), ("yǐwéi", "mistakenly.believe"), ("tā", "he"), ("ná-le", "take.away-PERF"), ("shénme", "what"), ("rén", "man"), ("de", "DE"), ("xiàngpiàn", "picture")]
+    glossedWords := [⟨['W', 'ǒ'], ['I'], [⟨['W', 'ǒ'], ['I'], none⟩]⟩, ⟨['y', 'ǐ', 'w', 'é', 'i'], ['m', 'i', 's', 't', 'a', 'k', 'e', 'n', 'l', 'y', '.', 'b', 'e', 'l', 'i', 'e', 'v', 'e'], [⟨['y', 'ǐ', 'w', 'é', 'i'], ['m', 'i', 's', 't', 'a', 'k', 'e', 'n', 'l', 'y', '.', 'b', 'e', 'l', 'i', 'e', 'v', 'e'], none⟩]⟩, ⟨['t', 'ā'], ['h', 'e'], [⟨['t', 'ā'], ['h', 'e'], none⟩]⟩, ⟨['n', 'á', '-', 'l', 'e'], ['t', 'a', 'k', 'e', '.', 'a', 'w', 'a', 'y', '-', 'P', 'E', 'R', 'F'], [⟨['n', 'á'], ['t', 'a', 'k', 'e', '.', 'a', 'w', 'a', 'y'], none⟩, ⟨['l', 'e'], ['P', 'E', 'R', 'F'], some '-'⟩]⟩, ⟨['s', 'h', 'é', 'n', 'm', 'e'], ['w', 'h', 'a', 't'], [⟨['s', 'h', 'é', 'n', 'm', 'e'], ['w', 'h', 'a', 't'], none⟩]⟩, ⟨['r', 'é', 'n'], ['m', 'a', 'n'], [⟨['r', 'é', 'n'], ['m', 'a', 'n'], none⟩]⟩, ⟨['d', 'e'], ['D', 'E'], [⟨['d', 'e'], ['D', 'E'], none⟩]⟩, ⟨['x', 'i', 'à', 'n', 'g', 'p', 'i', 'à', 'n'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], [⟨['x', 'i', 'à', 'n', 'g', 'p', 'i', 'à', 'n'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "inSitu"), ("object", "indefinite"), ("creation", "no")] }
 
@@ -61,9 +63,11 @@ def ex28_definite : Datum :=
     language := "mand1415"
     primaryText := "Wǒ yǐwéi tā ná-le nà-zhāng shénme rén de xiàngpiàn"
     glossedTokens := [("Wǒ", "I"), ("yǐwéi", "mistakenly.believe"), ("tā", "he"), ("ná-le", "take.away-PERF"), ("nà-zhāng", "that-CL"), ("shénme", "what"), ("rén", "man"), ("de", "DE"), ("xiàngpiàn", "picture")]
+    glossedWords := [⟨['W', 'ǒ'], ['I'], [⟨['W', 'ǒ'], ['I'], none⟩]⟩, ⟨['y', 'ǐ', 'w', 'é', 'i'], ['m', 'i', 's', 't', 'a', 'k', 'e', 'n', 'l', 'y', '.', 'b', 'e', 'l', 'i', 'e', 'v', 'e'], [⟨['y', 'ǐ', 'w', 'é', 'i'], ['m', 'i', 's', 't', 'a', 'k', 'e', 'n', 'l', 'y', '.', 'b', 'e', 'l', 'i', 'e', 'v', 'e'], none⟩]⟩, ⟨['t', 'ā'], ['h', 'e'], [⟨['t', 'ā'], ['h', 'e'], none⟩]⟩, ⟨['n', 'á', '-', 'l', 'e'], ['t', 'a', 'k', 'e', '.', 'a', 'w', 'a', 'y', '-', 'P', 'E', 'R', 'F'], [⟨['n', 'á'], ['t', 'a', 'k', 'e', '.', 'a', 'w', 'a', 'y'], none⟩, ⟨['l', 'e'], ['P', 'E', 'R', 'F'], some '-'⟩]⟩, ⟨['n', 'à', '-', 'z', 'h', 'ā', 'n', 'g'], ['t', 'h', 'a', 't', '-', 'C', 'L'], [⟨['n', 'à'], ['t', 'h', 'a', 't'], none⟩, ⟨['z', 'h', 'ā', 'n', 'g'], ['C', 'L'], some '-'⟩]⟩, ⟨['s', 'h', 'é', 'n', 'm', 'e'], ['w', 'h', 'a', 't'], [⟨['s', 'h', 'é', 'n', 'm', 'e'], ['w', 'h', 'a', 't'], none⟩]⟩, ⟨['r', 'é', 'n'], ['m', 'a', 'n'], [⟨['r', 'é', 'n'], ['m', 'a', 'n'], none⟩]⟩, ⟨['d', 'e'], ['D', 'E'], [⟨['d', 'e'], ['D', 'E'], none⟩]⟩, ⟨['x', 'i', 'à', 'n', 'g', 'p', 'i', 'à', 'n'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], [⟨['x', 'i', 'à', 'n', 'g', 'p', 'i', 'à', 'n'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("wh", "inSitu"), ("object", "definite"), ("creation", "no")] }
 

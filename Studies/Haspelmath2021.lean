@@ -89,7 +89,7 @@ explanation the paper argues for.
 
 namespace Haspelmath2021
 
-open Discourse
+open SpeechAct
 open Focus (Mark)
 open OrderDual (toDual)
 
@@ -635,7 +635,7 @@ theorem greekT_ternary_violates :
 /-! ### Relative scenario splits (§8) -/
 
 /-- Kashmiri puts P in the dative unless A outranks P on the person hierarchy, as in (47). -/
-def kashmiriP : Scenario (WithBot Person.Feature) → ℕ := below .downstream ∘ Scenario.kind
+def kashmiriP : Scenario ℕ → ℕ := below .downstream ∘ Scenario.kind
 
 /-- Fore flags A with the ergative only when P outranks A in animacy (§8). -/
 def foreA : Scenario Animacy → ℕ := below .balanced ∘ Scenario.kind
@@ -647,26 +647,19 @@ def awtuwP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 (49). -/
 def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 
-/-- The person features up to a prominence, one for each step of the hierarchy. -/
-private def featuresUpTo (r : WithBot Person.Feature) : ℕ :=
-  (Finset.univ.filter fun f : Person.Feature ↦ (f : WithBot Person.Feature) ≤ r).card
-
-theorem kashmiri_rank (p : Person) : BejarRezac2009.kashmiri.rank p = p.toFeatures.card + 1 := by
-  cases p <;> decide
-
 private theorem kashmiri_rank_eq :
-    BejarRezac2009.kashmiri.rank = (featuresUpTo · + 1) ∘ Person.prominence := by
-  funext p; cases p <;> decide
+    Minimalist.CyclicAgree.rank BejarRezac2009.kashmiri = (· + 1) ∘ Person.prominence :=
+  funext Minimalist.CyclicAgree.rank_Iic_speaker
 
 open Minimalist.CyclicAgree in
 -- (47), Table 11 [bejar-rezac-2009]
 theorem kashmiriP_iff_isInverse (s : Scenario Person) :
-    kashmiriP (s.map Person.prominence) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
-  have hm : StrictMono (featuresUpTo · + 1) := by decide
-  have hs : s.map ((featuresUpTo · + 1) ∘ Person.prominence) =
-      (s.map Person.prominence).map (featuresUpTo · + 1) := rfl
-  rw [AgreementSystem.IsInverse, AgreementSystem.isDirect_iff_kind_eq_downstream _ _
-    PersonGeometry.standard_isChain, kashmiri_rank_eq, hs, Scenario.kind_map hm]
+    kashmiriP (s.map Person.prominence) = 1 ↔ IsInverse BejarRezac2009.kashmiri s := by
+  have hm : StrictMono (· + 1 : ℕ → ℕ) := fun _ _ h ↦ Nat.succ_lt_succ h
+  have hs : s.map ((· + 1) ∘ Person.prominence) =
+      (s.map Person.prominence).map (· + 1) := rfl
+  rw [← not_isDirect, isDirect_iff_kind_eq_downstream (P := BejarRezac2009.kashmiri)
+    (Person.Segment.isChain_Iic _), kashmiri_rank_eq, hs, Scenario.kind_map hm]
   simp only [kashmiriP, Function.comp_apply]
   generalize (s.map Person.prominence).kind = k
   revert k; decide
@@ -829,7 +822,7 @@ def Person.Class.table : List (String × Person.Class) :=
     ("1", .participant), ("2", .participant), ("3", .nonParticipant)]
 
 /-- The person tags of the rows, as the person hierarchy. -/
-def prominenceTable : List (String × WithBot Person.Feature) :=
+def prominenceTable : List (String × ℕ) :=
   [("1", Person.prominence .first), ("2", Person.prominence .second),
     ("3", Person.prominence .third)]
 

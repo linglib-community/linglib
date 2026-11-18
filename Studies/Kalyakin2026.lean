@@ -41,13 +41,6 @@ Identity Requirement](##persian_verbalIdentity) rather than a larger site.
 * Bangla fails the restitutive half of the *again* test (94), which `eq_vpEllipsis_iff` turns into
   [E] on Voice.
 
-## Errata
-
-* The paper infers from the larger size of Bangla's ellipsis that its missing adjuncts are
-  recovered (95), but on the attachment it assumes for low adjuncts, vP or VoiceP (p. 24), the
-  vP ellipsis of (50) spares them as it spares repetitive *again*
-  (`vpEllipsis_spares_low_adjuncts`); (95) needs the adjunct below vP.
-
 ## TODO
 
 * The identity condition, E-GIVENness (61) with the denotations (65)–(71), and the surface

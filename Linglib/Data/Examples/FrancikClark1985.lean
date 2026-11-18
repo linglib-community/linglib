@@ -24,7 +24,7 @@ def read_newspaper : Datum :=
     glossedTokens := []
     context := "Anne wants to know the time of a lecture announced in that morning's newspaper and thinks Bernard would tell her if only he had seen the announcement."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "source"), ("obstacle", "source"), ("appropriate", "yes")] }
 
@@ -37,7 +37,7 @@ def want_to_tell : Datum :=
     glossedTokens := []
     context := "Anne wants to know the time of a lecture announced in that morning's newspaper and thinks Bernard would tell her if only he had seen the announcement."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "willingness"), ("obstacle", "source"), ("appropriate", "no")] }
 
@@ -50,7 +50,7 @@ def willing_middle_name : Datum :=
     glossedTokens := []
     context := "Anne asks Bernard for his middle name."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "willingness"), ("obstacle", "willingness"), ("appropriate", "yes")] }
 
@@ -63,7 +63,7 @@ def know_middle_name : Datum :=
     glossedTokens := []
     context := "Anne asks Bernard for his middle name."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "willingness"), ("appropriate", "no")] }
 
@@ -76,7 +76,7 @@ def can_unsure : Datum :=
     glossedTokens := []
     context := "Anne is unsure whether the obstacle is Bernard's finding out the time, remembering it, or being allowed to tell it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "ability"), ("appropriate", "yes")] }
 
@@ -89,7 +89,7 @@ def gradient1 : Datum :=
     glossedTokens := []
     context := "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "source"), ("appropriate", "yes"), ("gradient", "yes")] }
 
@@ -102,7 +102,7 @@ def gradient2 : Datum :=
     glossedTokens := []
     context := "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "source"), ("appropriate", "yes"), ("gradient", "yes")] }
 
@@ -115,7 +115,7 @@ def gradient3 : Datum :=
     glossedTokens := []
     context := "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "source"), ("appropriate", "yes"), ("gradient", "yes")] }
 
@@ -128,7 +128,7 @@ def gradient4 : Datum :=
     glossedTokens := []
     context := "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "source"), ("obstacle", "source"), ("appropriate", "yes"), ("gradient", "yes")] }
 
@@ -141,7 +141,7 @@ def gradient5 : Datum :=
     glossedTokens := []
     context := "Anne has narrowed the obstacle down to Bernard's perhaps not having read the morning's newspaper."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "source"), ("obstacle", "source"), ("appropriate", "yes"), ("gradient", "yes")] }
 
@@ -154,7 +154,7 @@ def remember_concert : Datum :=
     glossedTokens := []
     context := "The speaker thinks the addressee might not remember the time of the concert."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "memory"), ("obstacle", "memory"), ("appropriate", "yes")] }
 
@@ -167,7 +167,7 @@ def know_concert : Datum :=
     glossedTokens := []
     context := "At breakfast you are talking with your roommate and want to find out the time of the next orchestra concert; the roommate may not know about it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "knowledge"), ("appropriate", "yes")] }
 
@@ -180,7 +180,7 @@ def have_asked : Datum :=
     glossedTokens := []
     context := "You are making conversation with your sister's boyfriend and decide to ask about his schoolwork, but you have forgotten whether that has already come up."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "speakerMemory"), ("obstacle", "speakerMemory"), ("appropriate", "yes")] }
 
@@ -193,7 +193,7 @@ def could_give : Datum :=
     glossedTokens := []
     context := "The addressee has the information but may not be allowed to divulge it, as doing so would violate a set policy (scenarios 11 and 12)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "permission"), ("appropriate", "yes")] }
 
@@ -206,7 +206,7 @@ def see_concert : Datum :=
     glossedTokens := []
     context := "Anne asks Bernard the time of the concert; he may not have seen it announced."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "source"), ("obstacle", "source"), ("appropriate", "yes")] }
 
@@ -219,7 +219,7 @@ def want_concert : Datum :=
     glossedTokens := []
     context := "Anne asks Bernard the time of the concert; he may not have seen it announced."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "willingness"), ("obstacle", "source"), ("appropriate", "no")] }
 
@@ -233,7 +233,7 @@ def time1 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "direct"), ("directness", "10"), ("producedHigh", "0"), ("producedLow", "2")] }
 
@@ -247,7 +247,7 @@ def time2 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("directness", "30"), ("producedHigh", "4"), ("producedLow", "2")] }
 
@@ -261,7 +261,7 @@ def time3 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("directness", "34"), ("producedHigh", "0"), ("producedLow", "5")] }
 
@@ -275,7 +275,7 @@ def time4 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "source"), ("directness", "42"), ("producedHigh", "1"), ("producedLow", "6")] }
 
@@ -289,7 +289,7 @@ def time5 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("directness", "45"), ("producedHigh", "4"), ("producedLow", "0")] }
 
@@ -303,7 +303,7 @@ def time6 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("directness", "60"), ("producedHigh", "2"), ("producedLow", "0")] }
 
@@ -317,7 +317,7 @@ def time7 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("directness", "67"), ("producedHigh", "2"), ("producedLow", "0")] }
 
@@ -331,7 +331,7 @@ def time8 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("directness", "73"), ("producedHigh", "1"), ("producedLow", "0")] }
 
@@ -345,7 +345,7 @@ def time9 : Datum :=
     glossedTokens := []
     context := "You see a student sitting at a table outside Tresidder, and you notice that he is clearly not wearing a watch [high obstacle] / he is wearing a watch [low obstacle]. You want to ask him the time."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "source"), ("directness", "88"), ("producedHigh", "1"), ("producedLow", "0")] }
 
@@ -358,7 +358,7 @@ def rating_ability_1 : Datum :=
     glossedTokens := []
     context := "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "knowledge"), ("ratingHigh", "552"), ("ratingLow", "485")] }
 
@@ -371,7 +371,7 @@ def rating_willingness_1 : Datum :=
     glossedTokens := []
     context := "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "willingness"), ("ratingHigh", "246"), ("ratingLow", "279")] }
 
@@ -384,7 +384,7 @@ def rating_memory_1 : Datum :=
     glossedTokens := []
     context := "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "knowledge"), ("obstacle", "speakerMemory"), ("ratingHigh", "350"), ("ratingLow", "361")] }
 
@@ -397,7 +397,7 @@ def rating_ability_2 : Datum :=
     glossedTokens := []
     context := "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "knowledge"), ("ratingHigh", "526"), ("ratingLow", "533")] }
 
@@ -410,7 +410,7 @@ def rating_willingness_2 : Datum :=
     glossedTokens := []
     context := "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "willingness"), ("ratingHigh", "419"), ("ratingLow", "503")] }
 
@@ -423,7 +423,7 @@ def rating_memory_2 : Datum :=
     glossedTokens := []
     context := "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "speakerMemory"), ("ratingHigh", "458"), ("ratingLow", "475")] }
 
@@ -436,7 +436,7 @@ def rating_ability_3 : Datum :=
     glossedTokens := []
     context := "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "knowledge"), ("ratingHigh", "512"), ("ratingLow", "549")] }
 
@@ -449,7 +449,7 @@ def rating_willingness_3 : Datum :=
     glossedTokens := []
     context := "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "willingness"), ("ratingHigh", "456"), ("ratingLow", "514")] }
 
@@ -462,7 +462,7 @@ def rating_memory_3 : Datum :=
     glossedTokens := []
     context := "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "general"), ("obstacle", "speakerMemory"), ("ratingHigh", "472"), ("ratingLow", "481")] }
 
@@ -475,7 +475,7 @@ def rating_ability_4 : Datum :=
     glossedTokens := []
     context := "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "willingness"), ("obstacle", "knowledge"), ("ratingHigh", "429"), ("ratingLow", "507")] }
 
@@ -488,7 +488,7 @@ def rating_willingness_4 : Datum :=
     glossedTokens := []
     context := "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "willingness"), ("obstacle", "willingness"), ("ratingHigh", "550"), ("ratingLow", "572")] }
 
@@ -501,7 +501,7 @@ def rating_memory_4 : Datum :=
     glossedTokens := []
     context := "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "willingness"), ("obstacle", "speakerMemory"), ("ratingHigh", "330"), ("ratingLow", "356")] }
 
@@ -514,7 +514,7 @@ def rating_ability_5 : Datum :=
     glossedTokens := []
     context := "An ability scenario of Experiment 1, such as asking the roommate the time of the next orchestra concert: the addressee may not know the information, remember it, be able to find it out, or be allowed to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "speakerMemory"), ("obstacle", "knowledge"), ("ratingHigh", "178"), ("ratingLow", "197")] }
 
@@ -527,7 +527,7 @@ def rating_willingness_5 : Datum :=
     glossedTokens := []
     context := "A willingness scenario of Experiment 1, such as asking a friend whether his parents were divorced: the addressee has the information but may be reluctant to give it."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "speakerMemory"), ("obstacle", "willingness"), ("ratingHigh", "215"), ("ratingLow", "235")] }
 
@@ -540,7 +540,7 @@ def rating_memory_5 : Datum :=
     glossedTokens := []
     context := "A speaker-memory scenario of Experiment 1, such as asking your sister's boyfriend about his schoolwork: you may already have asked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("query", "speakerMemory"), ("obstacle", "speakerMemory"), ("ratingHigh", "525"), ("ratingLow", "306")] }
 

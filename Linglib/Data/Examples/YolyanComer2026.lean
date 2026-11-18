@@ -24,7 +24,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nasal_spreading", "none")] }
 
@@ -37,7 +37,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nasal_spreading", "to word end")] }
 
@@ -50,7 +50,7 @@ def ex_5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nasal_spreading", "blocked by voiceless stop"), ("underlying_form", "/naote/")] }
 
@@ -63,7 +63,7 @@ def ex_5d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nasal_spreading", "blocked by voiceless stop")] }
 
@@ -76,7 +76,7 @@ def ex_5e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nasal_spreading", "blocked by voiceless stop")] }
 

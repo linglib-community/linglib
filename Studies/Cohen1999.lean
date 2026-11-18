@@ -1,359 +1,388 @@
 module
 
+public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Cohen (1999): Think Generic!
 
-Cohen's inductivist semantics makes a generic sentence a probability judgment: gen(ψ, φ) is
-true iff the conditional probability of the scope, given the restrictor and the disjunction
-of a set of alternatives to the scope, exceeds one half (definition 1, p. 37). "Mammals
-bear live young" is evaluated over the mammals that procreate in some way, so no majority
-among all mammals is required, and Thomason's "People have a hard time finding CMU" is
-evaluated over the people who sought it. Generics are further ambiguous between this
-absolute reading and a relative one whose threshold is the average probability of the scope
-over the alternatives; the relative reading verifies "Bulgarians are good weightlifters"
-and, since its threshold depends on individuals outside the restrictor, it is not
-conservative (definition 3, pp. 55–56). The probability is a relative frequency in the
-limit, which imposes two constraints. The reference class may not be explicitly bounded
-(§4.4.2), and it must be homogeneous: unrestricted homogeneity is degenerate, since
-partitioning by the scope itself separates any mixed reference class (definition 4 and
-Salmon's argument, pp. 81–82), so the final truth conditions demand the majority within
-every inhabited cell of every salient partition of the restrictor (definition 5, p. 83).
-"Mammals are female" then fails under the sex partition however many mammals are female
-(§4.4.6). Frequency adverbs apply other thresholds to the same conditional probability —
-always 1, never 0, sometimes non-zero, usually the same one half as gen — and respect only
-the temporal partition, which is why "Primary school teachers are usually female" is true
-while the bare generic is not (definition 10, p. 128; §6.2.3).
-
-We state the three definitions over finite models, derive the degeneracy of unrestricted
-homogeneity, the conservativity of the absolute reading and a non-conservativity witness
-for the relative one, the recovery of the relativized classical quantifiers at the
-frequency-adverb thresholds, and the paper's key examples.
+Cohen's inductivist semantics makes a generic sentence a probability judgment within the
+alternatives to its scope: on the absolute reading the probability of the scope given the
+restrictor exceeds one half, on the relative reading it exceeds the probability of the scope. The
+absolute reading is [conservative](##Cohen1999.conservative_freq) and, on a uniform measure,
+[is *most*](##Cohen1999.gen_uniformOn_univ); the relative one is
+[positive correlation](##Cohen1999.genRelative_iff_mul_lt), hence symmetric and not conservative.
+Unrestricted homogeneity [admits only the exceptionless cases](##Cohen1999.homogeneous_iff), so
+the final truth conditions ask for the threshold in the cells of salient partitions, which
+[strengthens the absolute reading](##Cohen1999.gen_of_salient).
 
 ## Implementation notes
 
-Page and definition numbers follow the CSLI edition, a light revision of the 1996
-dissertation that renames its independent and dependent readings absolute and relative.
-The alternative set enters the truth conditions only through its extensional disjunction
-and the relative threshold, so it is carried as a single predicate. A conditional
-probability is the uniform measure on the reference class at the scope; with an empty reference
-class it is undefined in the paper (p. 37, §5.6) and `0` here, so gen is false there and
-decidable through its count form, and a salient cell with an empty reference class imposes no
-condition.
+* Page and definition numbers follow the 1996 Carnegie Mellon dissertation, whose independent and
+  dependent readings are the absolute and relative readings here.
+* The alternatives and the salient cells both enter by conditioning the measure: with $A$ the
+  disjunction of the alternatives, $P(\phi \mid \psi \wedge A)$ is `μ[|A][φ | ψ]`, and the finite
+  models are the uniform measures `uniformOn A`. The alternatives to the restrictor and to the
+  scope are conjoined into `A`.
+* A conditional probability on a null reference class is undefined in the source and `0` here, so
+  **gen** is false there, and a salient cell with a null reference class imposes no condition.
 
 ## TODO
 
-* The unboundedness constraint (§4.4.2) and lawlikeness (§4.4.3) restrict which sentences
-  express generics at all — a matter of reference classes conceivable as unlimited, with no
-  content over a fixed finite model — and are not stated.
-* Chapter 5's calculus of alternatives (absolute determinables, focus, the connectives) and
-  chapter 7's default reasoning are not formalized; the alternative set is taken as given,
-  as in §3.2.
+* The unboundedness constraint and lawlikeness restrict which sentences express generics at all
+  and are not stated.
+* The calculus of alternatives, the quantification over cases and the default reasoning of the
+  later chapters are not formalized; the alternatives are taken as given.
 
 ## References
 
-* [A. Cohen, *Think Generic! The Meaning and Use of Generic Sentences* (1999)][cohen-1999a]
-* [W. C. Salmon, *Objectively Homogeneous Reference Classes* (1977)][salmon-1977]
-* [R. Thomason, *Theories of Nonmonotonicity and Natural Language Generics*
-  (1988)][thomason-1988]
-* [G. N. Carlson, *Reference to Kinds in English* (1977)][carlson-1977a]
+* [cohen-1999a]
+* [salmon-1977]
+* [thomason-1988]
+* [carlson-1977a]
 -/
 
 @[expose] public section
 
 namespace Cohen1999
 
-open Quantifier Quantifier.Det MeasureTheory ProbabilityTheory
+open Quantifier Quantifier.Det MeasureTheory ProbabilityTheory Set Function
 open scoped ENNReal Finset
 
-variable {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] (domain : Finset α)
-  (ψ alt φ : α → Prop) [DecidablePred ψ] [DecidablePred alt] [DecidablePred φ]
+variable {α ι : Type*} [MeasurableSpace α] (μ : Measure α)
 
-/-- Cohen's generic quantifier on its absolute reading (definition 1, p. 37) holds when the
-conditional probability of the scope `φ`, given the restrictor `ψ` and the disjunction `alt` of
-the alternatives to the scope, exceeds one half. -/
-def gen : Prop := 2⁻¹ < uniformOn (domain.filter fun x ↦ ψ x ∧ alt x : Set α) {x | φ x}
+/-- A frequency adverb puts its lexical requirement `R` on the conditional probability of the
+scope `φ` given the restrictor `ψ` (definition 10, p. 138). -/
+def freq (R : ℝ≥0∞ → Prop) : Det α := fun ψ φ ↦ R (μ[φ | ψ])
 
-/-- The relative reading (definition 3, p. 56) holds when the restrictor raises the probability
-of the scope above its average over the alternatives. -/
-def genRelative : Prop :=
-  uniformOn (domain.filter alt : Set α) {x | φ x} <
-    uniformOn (domain.filter fun x ↦ ψ x ∧ alt x : Set α) {x | φ x}
+/-- The generic quantifier on its absolute reading (definition 1, p. 39) holds when the
+conditional probability of the scope given the restrictor exceeds one half. -/
+def gen : Det α := freq μ (2⁻¹ < ·)
 
-/-- The final truth conditions (definition 5, p. 83) ask for the absolute threshold within every
-salient cell whose reference class is inhabited. -/
-def genSalient {ι : Type*} (cells : ι → α → Prop) [∀ i, DecidablePred (cells i)] : Prop :=
-  ∀ i, (domain.filter fun x ↦ (ψ x ∧ cells i x) ∧ alt x).Nonempty →
-    gen domain (fun x ↦ ψ x ∧ cells i x) alt φ
+/-- The relative reading (definition 3, p. 60) holds when the restrictor raises the probability of
+the scope. -/
+def genRelative : Det α := fun ψ φ ↦ μ φ < μ[φ | ψ]
 
-/-- A frequency adverb applies its lexical requirement to the same conditional probability
-(definition 10, p. 128); gen carries the requirement `(2⁻¹ < ·)`, synonymous with usually. -/
-def freq (R : ℝ≥0∞ → Prop) : Prop :=
-  R (uniformOn (domain.filter fun x ↦ ψ x ∧ alt x : Set α) {x | φ x})
+/-- The final truth conditions (definition 5, p. 90; definition 11, p. 142) ask for a reading `Q`
+within every salient cell whose reference class is not null. -/
+def salient (Q : Measure α → Det α) (cells : ι → Set α) : Det α := fun ψ φ ↦
+  ∀ i, μ (cells i ∩ ψ) ≠ 0 → Q μ[|cells i] ψ φ
 
-/-- Unrestricted homogeneity (definition 4, p. 81, after Salmon) holds when every inhabited
-sub-reference class preserves the conditional probability of the scope. -/
-def Homogeneous : Prop :=
-  ∀ (part : α → Prop) [DecidablePred part], (domain.filter fun x ↦ ψ x ∧ part x).Nonempty →
-    uniformOn (domain.filter fun x ↦ ψ x ∧ part x : Set α) {x | φ x} =
-      uniformOn (domain.filter ψ : Set α) {x | φ x}
+/-- A reference class `ψ` is homogeneous with respect to `φ` (definition 4, pp. 88–89, after
+Salmon) when no subclass of positive probability changes the probability of `φ`. -/
+def Homogeneous (ψ φ : Set α) : Prop :=
+  ∀ ω, MeasurableSet ω → μ (ψ ∩ ω) ≠ 0 → μ[φ | ψ ∩ ω] = μ[φ | ψ]
 
-variable {domain ψ alt φ}
+variable {μ} {A ψ φ ω : Set α} {cells : ι → Set α} {R : ℝ≥0∞ → Prop}
 
-/-! ### Probabilities on a finite reference class -/
+/-! ### The absolute reading -/
 
-private theorem inv_two_lt_iff (F : Finset α) :
-    2⁻¹ < uniformOn (F : Set α) {x | φ x} ↔ #F < 2 * #(F.filter φ) := by
-  rcases F.eq_empty_or_nonempty with rfl | hF
-  · simp
-  rw [uniformOn_finset_setOf, ENNReal.lt_div_iff_mul_lt (.inl (by simpa using hF.ne_empty))
-    (.inl (by simp)), ← ENNReal.div_eq_inv_mul, ENNReal.div_lt_iff (by simp) (by simp)]
+theorem scopeMonotone_freq (hR : Monotone R) : (freq μ R).ScopeMonotone :=
+  fun _ _ _ h ↦ hR (measure_mono h)
+
+theorem scopeMonotone_gen : (gen μ).ScopeMonotone :=
+  scopeMonotone_freq fun _ _ h h' ↦ h'.trans_le h
+
+theorem freq_inter_left (hψ : MeasurableSet ψ) : freq μ R ψ (ψ ∩ φ) ↔ freq μ R ψ φ := by
+  rw [freq, freq, cond_inter_self hψ]
+
+/-- Whatever its requirement, a frequency adverb on the absolute reading is conservative: the
+scope matters only within the restrictor (§3.4.2, p. 57; §6.2.2, p. 139). -/
+theorem conservative_freq [DiscreteMeasurableSpace α] (R : ℝ≥0∞ → Prop) :
+    (freq μ R).Conservative :=
+  fun _ _ ↦ (freq_inter_left .of_discrete).symm
+
+theorem conservative_gen [DiscreteMeasurableSpace α] : (gen μ).Conservative :=
+  conservative_freq _
+
+section IsFiniteMeasure
+
+variable [IsFiniteMeasure μ]
+
+theorem freq_cond (hω : MeasurableSet ω) (hψ : MeasurableSet ψ) :
+    freq μ[|ω] R ψ φ ↔ freq μ R (ω ∩ ψ) φ := by
+  rw [freq, freq, cond_cond_eq_cond_inter hω hψ]
+
+theorem gen_cond (hω : MeasurableSet ω) (hψ : MeasurableSet ψ) :
+    gen μ[|ω] ψ φ ↔ gen μ (ω ∩ ψ) φ :=
+  freq_cond hω hψ
+
+theorem gen_iff_lt (hψ : MeasurableSet ψ) : gen μ ψ φ ↔ μ ψ < 2 * μ (ψ ∩ φ) := by
+  rw [gen, freq, lt_cond_iff_mul_lt hψ, ← ENNReal.div_eq_inv_mul,
+    ENNReal.div_lt_iff (by simp) (by simp), mul_comm]
+
+-- §5.7, pp. 131–132
+theorem gen_cond_self (hψ : MeasurableSet ψ) (hφ : MeasurableSet φ) :
+    gen μ[|φ] ψ φ ↔ μ (φ ∩ ψ) ≠ 0 := by
+  rw [gen_cond hφ hψ, gen_iff_lt (hφ.inter hψ), inter_right_comm, inter_self, two_mul]
+  exact ⟨fun h h0 ↦ by simp [h0] at h, ENNReal.lt_add_right (measure_ne_top _ _)⟩
+
+/-! ### The relative reading -/
+
+/-- The relative reading is positive correlation of restrictor and scope. -/
+theorem genRelative_iff_mul_lt (hψ : MeasurableSet ψ) :
+    genRelative μ ψ φ ↔ μ φ * μ ψ < μ (ψ ∩ φ) :=
+  lt_cond_iff_mul_lt hψ
+
+-- (124b), p. 57
+theorem genRelative_comm (hψ : MeasurableSet ψ) (hφ : MeasurableSet φ) :
+    genRelative μ ψ φ ↔ genRelative μ φ ψ := by
+  rw [genRelative_iff_mul_lt hψ, genRelative_iff_mul_lt hφ, mul_comm, inter_comm]
+
+theorem genRelative_cond_iff_mul_lt (hA : MeasurableSet A) (hψ : MeasurableSet ψ) :
+    genRelative μ[|A] ψ φ ↔ μ (A ∩ φ) * μ (A ∩ ψ) < μ (A ∩ ψ ∩ φ) * μ A := by
+  rw [genRelative, cond_cond_eq_cond_inter hA hψ, lt_cond_iff_mul_lt (hA.inter hψ), cond_apply hA]
+  rcases eq_or_ne (μ A) 0 with h0 | h0
+  · simp [h0, measure_mono_null (inter_subset_left : A ∩ ψ ⊆ A) h0,
+      measure_mono_null (inter_subset_left.trans inter_subset_left : A ∩ ψ ∩ φ ⊆ A) h0]
+  · rw [mul_assoc, ← ENNReal.div_eq_inv_mul,
+      ENNReal.div_lt_iff (.inl h0) (.inl (measure_ne_top _ _))]
+
+-- (128), p. 58
+theorem genRelative_inter_left_iff [IsProbabilityMeasure μ] (hψ : MeasurableSet ψ) :
+    genRelative μ ψ (ψ ∩ φ) ↔ μ (ψ ∩ φ) ≠ 0 ∧ μ ψ < 1 := by
+  rw [genRelative, cond_inter_self hψ, lt_cond_iff_mul_lt hψ]
+  rcases eq_or_ne (μ (ψ ∩ φ)) 0 with h0 | h0
+  · simp [h0]
+  · conv_lhs => rhs; rw [← mul_one (μ (ψ ∩ φ))]
+    rw [ENNReal.mul_lt_mul_iff_right h0 (measure_ne_top _ _), and_iff_right h0]
+
+/-! ### Homogeneity -/
+
+/-- Unrestricted homogeneity holds only in the two exceptionless cases, since the scope itself
+cuts a subclass out of any mixed reference class (p. 89). -/
+theorem homogeneous_iff (hψ : MeasurableSet ψ) (hφ : MeasurableSet φ) :
+    Homogeneous μ ψ φ ↔ μ[φ | ψ] = 0 ∨ μ[φ | ψ] = 1 := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · by_cases h0 : μ (ψ ∩ φ) = 0
+    · exact .inl (by rw [cond_apply hψ, h0, mul_zero])
+    · rw [← h φ hφ h0]
+      exact .inr ((cond_apply_eq_one_iff (hψ.inter hφ) hφ h0).2 inter_subset_right.eventuallyLE)
+  · rintro (h | h) ω hω hc
+    · rw [h, cond_apply_eq_zero_iff (hψ.inter hω)]
+      exact inter_subset_left.eventuallyLE.trans ((cond_apply_eq_zero_iff hψ).1 h)
+    · have hc' : μ ψ ≠ 0 := fun h0 ↦ hc (measure_mono_null inter_subset_left h0)
+      rw [h, cond_apply_eq_one_iff (hψ.inter hω) hφ hc]
+      exact inter_subset_left.eventuallyLE.trans ((cond_apply_eq_one_iff hψ hφ hc').1 h)
+
+/-! ### Salient partitions -/
+
+/-- A generic true within every cell of a partition of its restrictor is true on the absolute
+reading: the final truth conditions strengthen the first (p. 90). -/
+theorem gen_of_salient [Countable ι] (hd : Pairwise (Disjoint on cells))
+    (hm : ∀ i, MeasurableSet (cells i)) (hcover : ψ ⊆ ⋃ i, cells i) (hψ : MeasurableSet ψ)
+    (hφ : MeasurableSet φ) (hc : μ ψ ≠ 0) (h : salient μ gen cells ψ φ) : gen μ ψ φ := by
+  have key : ∀ t, MeasurableSet t → t ⊆ ψ → μ t = ∑' i, μ (t ∩ cells i) := fun t ht hsub ↦ by
+    have h₁ := Measure.restrict_iUnion_apply (μ := μ) hd hm ht
+    simp only [Measure.restrict_apply ht] at h₁
+    rwa [inter_eq_left.2 (hsub.trans hcover)] at h₁
+  have cell : ∀ j, μ (ψ ∩ cells j) ≠ 0 → μ (ψ ∩ cells j) < 2 * μ (ψ ∩ φ ∩ cells j) :=
+    fun j hj ↦ by
+      rw [inter_comm] at hj
+      have h₁ := (gen_iff_lt ((hm j).inter hψ)).1 ((gen_cond (hm j) hψ).1 (h j hj))
+      rwa [inter_comm (cells j) ψ, inter_right_comm] at h₁
+  obtain ⟨i, hi⟩ : ∃ i, μ (ψ ∩ cells i) ≠ 0 := by
+    by_contra hall
+    push Not at hall
+    exact hc (by rw [key _ hψ subset_rfl]; simp [hall])
+  rw [gen_iff_lt hψ, key _ hψ subset_rfl, key _ (hψ.inter hφ) inter_subset_left,
+    ← ENNReal.tsum_mul_left]
+  refine ENNReal.tsum_lt_tsum (i := i) ?_ (fun j ↦ ?_) (cell i hi)
+  · rw [← key _ hψ subset_rfl]
+    exact measure_ne_top _ _
+  · by_cases hj : μ (ψ ∩ cells j) = 0
+    · simp [hj]
+    · exact (cell j hj).le
+
+/-! ### Frequency adverbs
+
+*Never* and *always* (p. 137) ask that almost all of the restrictor lie outside the scope and
+inside it, and *sometimes* denies the first. -/
+
+theorem freq_eq_zero_iff (hψ : MeasurableSet ψ) : freq μ (· = 0) ψ φ ↔ ψ ≤ᵐ[μ] φᶜ :=
+  cond_apply_eq_zero_iff hψ
+
+theorem freq_pos_iff (hψ : MeasurableSet ψ) : freq μ (0 < ·) ψ φ ↔ ¬ ψ ≤ᵐ[μ] φᶜ :=
+  pos_iff_ne_zero.trans (cond_apply_eq_zero_iff hψ).not
+
+theorem freq_eq_one_iff (hψ : MeasurableSet ψ) (hφ : MeasurableSet φ) (hc : μ ψ ≠ 0) :
+    freq μ (· = 1) ψ φ ↔ ψ ≤ᵐ[μ] φ :=
+  cond_apply_eq_one_iff hψ hφ hc
+
+end IsFiniteMeasure
+
+/-! ### Uniform measures
+
+On the uniform measure over finitely many alternatives the probabilities are proportions, and the
+classical determiners reappear, restricted to the alternatives. -/
+
+section UniformOn
+
+variable [MeasurableSingletonClass α]
+
+section Finite
+
+variable [Finite α]
+
+-- p. 137
+theorem freq_uniformOn_eq_zero_iff : freq (uniformOn A) (· = 0) ψ φ ↔ no (A ∩ ψ) φ :=
+  (freq_eq_zero_iff .of_discrete).trans (ae_le_uniformOn_iff (toFinite _))
+
+theorem freq_uniformOn_pos_iff : freq (uniformOn A) (0 < ·) ψ φ ↔ Det.some (A ∩ ψ) φ :=
+  (freq_pos_iff .of_discrete).trans <|
+    (ae_le_uniformOn_iff (toFinite _)).not.trans no_iff_not_some.not_left
+
+theorem freq_uniformOn_eq_one_iff (h : (A ∩ ψ).Nonempty) :
+    freq (uniformOn A) (· = 1) ψ φ ↔ every (A ∩ ψ) φ :=
+  (freq_eq_one_iff .of_discrete .of_discrete ((uniformOn_ne_zero_iff (toFinite _)).2 h)).trans
+    (ae_le_uniformOn_iff (toFinite _))
+
+theorem gen_uniformOn_iff_most : gen (uniformOn A) ψ φ ↔ most (A ∩ ψ) φ := by
+  have h := ncard_inter_add_ncard_sdiff_eq_ncard (A ∩ ψ) φ (toFinite _)
+  rw [uniformOn, gen_cond .of_discrete .of_discrete, gen_iff_lt .of_discrete,
+    Measure.count_apply .of_discrete, Measure.count_apply .of_discrete,
+    ← (toFinite (A ∩ ψ)).cast_ncard_eq, ← (toFinite (A ∩ ψ ∩ φ)).cast_ncard_eq, most_apply]
+  simp only [ENat.toENNReal_coe]
   norm_cast
   omega
 
-private theorem uniformOn_lt_iff {F G : Finset α} (hF : F.Nonempty) (hG : G.Nonempty) :
-    uniformOn (F : Set α) {x | φ x} < uniformOn (G : Set α) {x | φ x} ↔
-      #(F.filter φ) * #G < #(G.filter φ) * #F := by
-  rw [uniformOn_finset_setOf, uniformOn_finset_setOf,
-    ← ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (by simp) (by simpa using hF.ne_empty))
-      (ENNReal.div_ne_top (by simp) (by simpa using hG.ne_empty)),
-    ENNReal.toReal_div, ENNReal.toReal_div]
-  simp only [ENNReal.toReal_natCast]
-  rw [div_lt_div_iff₀ (by exact_mod_cast hF.card_pos) (by exact_mod_cast hG.card_pos)]
+/-- On the uniform measure of a finite universe, where the alternatives exclude nothing, the
+absolute reading is the determiner *most*. -/
+theorem gen_uniformOn_univ : gen (uniformOn (univ : Set α)) = most :=
+  funext fun ψ ↦ funext fun φ ↦ propext (by rw [gen_uniformOn_iff_most, univ_inter])
+
+-- p. 89
+theorem homogeneous_uniformOn_iff :
+    Homogeneous (uniformOn A) ψ φ ↔ no (A ∩ ψ) φ ∨ every (A ∩ ψ) φ := by
+  rw [homogeneous_iff .of_discrete .of_discrete]
+  rcases (A ∩ ψ).eq_empty_or_nonempty with h | h
+  · exact iff_of_true (.inl (freq_uniformOn_eq_zero_iff.2 (by simp [h, no])))
+      (.inl (by simp [h, no]))
+  · exact or_congr freq_uniformOn_eq_zero_iff (freq_uniformOn_eq_one_iff h)
+
+theorem salient_uniformOn_iff (Q : Measure α → Det α) :
+    salient (uniformOn A) Q cells ψ φ ↔
+      ∀ i, (∃ x, x ∈ A ∩ (cells i ∩ ψ)) → Q (uniformOn (A ∩ cells i)) ψ φ := by
+  unfold salient
+  exact forall_congr' fun i ↦ by
+    rw [uniformOn_cond (toFinite _) .of_discrete, uniformOn_ne_zero_iff (toFinite _)]
+    rfl
+
+end Finite
+
+variable [Fintype α] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ ψ)] [DecidablePred (· ∈ φ)]
+
+instance : Decidable (gen (uniformOn A) ψ φ) := decidable_of_iff _ gen_uniformOn_iff_most.symm
+
+private theorem count_eq_card (s : Set α) [DecidablePred (· ∈ s)] :
+    Measure.count s = #{x | x ∈ s} := by
+  rw [← Measure.count_apply_finset]
+  congr 1
+  ext
+  simp
+
+theorem genRelative_uniformOn_iff_card :
+    genRelative (uniformOn A) ψ φ ↔
+      #{x | x ∈ A ∩ φ} * #{x | x ∈ A ∩ ψ} < #{x | x ∈ A ∩ ψ ∩ φ} * #{x | x ∈ A} := by
+  rw [uniformOn, genRelative_cond_iff_mul_lt .of_discrete .of_discrete, count_eq_card (A ∩ φ),
+    count_eq_card (A ∩ ψ), count_eq_card (A ∩ ψ ∩ φ), count_eq_card A]
   norm_cast
 
-omit [DecidablePred φ] in
-private theorem uniformOn_eq_one_iff' {F : Finset α} (hF : F.Nonempty) :
-    uniformOn (F : Set α) {x | φ x} = 1 ↔ ∀ x ∈ F, φ x := by
-  rw [uniformOn_eq_one_iff F.finite_toSet (Finset.coe_nonempty.2 hF)]
-  exact ⟨fun h x hx ↦ h hx, fun h x hx ↦ h x hx⟩
+instance : Decidable (genRelative (uniformOn A) ψ φ) :=
+  decidable_of_iff _ genRelative_uniformOn_iff_card.symm
 
-omit [DecidablePred φ] in
-private theorem uniformOn_eq_zero_iff' (F : Finset α) :
-    uniformOn (F : Set α) {x | φ x} = 0 ↔ ∀ x ∈ F, ¬ φ x := by
-  rw [uniformOn_eq_zero_iff F.finite_toSet, Set.eq_empty_iff_forall_notMem]
-  exact ⟨fun h x hx hφ ↦ h x ⟨hx, hφ⟩, fun h x hx ↦ h x hx.1 hx.2⟩
+variable [Fintype ι] [∀ i, DecidablePred (· ∈ cells i)]
 
-/-! ### The absolute reading and the majority quantifier -/
+instance : Decidable (salient (uniformOn A) gen cells ψ φ) :=
+  decidable_of_iff _ (salient_uniformOn_iff gen).symm
 
-theorem gen_iff_card :
-    gen domain ψ alt φ ↔
-      #(domain.filter fun x ↦ ψ x ∧ alt x) < 2 * #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) :=
-  inv_two_lt_iff _
+instance : Decidable (salient (uniformOn A) genRelative cells ψ φ) :=
+  decidable_of_iff _ (salient_uniformOn_iff genRelative).symm
 
-instance : Decidable (gen domain ψ alt φ) := decidable_of_iff _ gen_iff_card.symm
+end UniformOn
 
-theorem genRelative_iff_card (hA : (domain.filter alt).Nonempty)
-    (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
-    genRelative domain ψ alt φ ↔
-      #((domain.filter alt).filter φ) * #(domain.filter fun x ↦ ψ x ∧ alt x) <
-        #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) * #(domain.filter alt) :=
-  uniformOn_lt_iff hA hR
-
-theorem gen_iff_most :
-    gen domain ψ alt φ ↔ most {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} := by
-  have h₁ : ({x | x ∈ domain ∧ ψ x ∧ alt x} ∩ {x | φ x}).ncard =
-      #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) := by
-    rw [← Set.ncard_coe_finset]; congr 1; ext; simp
-  have h₂ : ({x | x ∈ domain ∧ ψ x ∧ alt x} \ {x | φ x}).ncard =
-      #((domain.filter fun x ↦ ψ x ∧ alt x).filter fun x ↦ ¬ φ x) := by
-    rw [← Set.ncard_coe_finset]; congr 1; ext; simp
-  have h₃ := Finset.card_filter_add_card_filter_not (s := domain.filter fun x ↦ ψ x ∧ alt x) φ
-  rw [gen_iff_card, most_apply, h₁, h₂]
-  omega
-
-omit [MeasurableSingletonClass α] [DecidablePred φ] in
--- p. 128, p. 131
-theorem gen_iff_freq : gen domain ψ alt φ ↔ freq domain ψ alt φ (2⁻¹ < ·) :=
-  Iff.rfl
-
--- p. 54
-theorem gen_conservativity :
-    gen domain ψ alt (fun x ↦ ψ x ∧ φ x) ↔ gen domain ψ alt φ := by
-  have : (domain.filter fun x ↦ ψ x ∧ alt x).filter (fun x ↦ ψ x ∧ φ x) =
-      (domain.filter fun x ↦ ψ x ∧ alt x).filter φ :=
-    Finset.filter_congr fun x hx ↦ and_iff_right (Finset.mem_filter.1 hx).2.1
-  unfold gen
-  rw [uniformOn_finset_setOf, uniformOn_finset_setOf, this]
-
-theorem monotone_gen : Monotone fun φ ↦ gen domain ψ alt φ := fun φ φ' h hg ↦ by
-  classical
-  beta_reduce at hg ⊢
-  rw [gen_iff_card] at hg ⊢
-  exact hg.trans_le <| Nat.mul_le_mul_left 2 <|
-    Finset.card_le_card <| Finset.monotone_filter_right _ fun x _ ↦ h x
-
--- §5.7
-theorem gen_self_iff : gen domain ψ φ φ ↔ (domain.filter fun x ↦ ψ x ∧ φ x).Nonempty := by
-  rw [gen_iff_card, Finset.filter_true_of_mem (s := domain.filter fun x ↦ ψ x ∧ φ x) (p := φ)
-    fun x hx ↦ (Finset.mem_filter.1 hx).2.2, ← Finset.card_pos]
-  omega
-
-/-! ### The generalized-quantifier interface
-
-Over the whole carrier with trivial alternatives the absolute reading is the majority
-determiner `most`, hence proportional: its truth depends only on the two cell counts.
-The relativized readings are exactly what departs from this. -/
-
-theorem gen_univ_iff_most {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β]
-    (R S : Set β) [DecidablePred (· ∈ R)] [DecidablePred (· ∈ S)] :
-    gen Finset.univ (· ∈ R) (fun _ ↦ True) (· ∈ S) ↔ most R S := by
-  simp only [gen_iff_most, Finset.mem_univ, true_and, and_true, Set.ofPred_mem_eq]
-
-open Classical in
-theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β] :
-    Proportional fun R S : Set β ↦ gen Finset.univ (· ∈ R) (fun _ ↦ True) (· ∈ S) :=
-  fun R₁ S₁ R₂ S₂ ↦ by
-  simpa only [gen_univ_iff_most] using proportional_most R₁ S₁ R₂ S₂
-
-/-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/
-
--- p. 82
-theorem homogeneous_iff (hR : (domain.filter ψ).Nonempty) :
-    Homogeneous domain ψ φ ↔
-      no {x | x ∈ domain ∧ ψ x} {x | φ x} ∨ every {x | x ∈ domain ∧ ψ x} {x | φ x} := by
-  constructor
-  · intro h
-    by_cases hno : no {x | x ∈ domain ∧ ψ x} {x | φ x}
-    · exact Or.inl hno
-    · refine Or.inr ?_
-      obtain ⟨x, ⟨hx, hψx⟩, hφx⟩ : ∃ x, (x ∈ domain ∧ ψ x) ∧ φ x := by
-        by_contra hc
-        exact hno fun y hy hφ ↦ hc ⟨y, hy, hφ⟩
-      have hpart : (domain.filter fun y ↦ ψ y ∧ φ y).Nonempty :=
-        ⟨x, Finset.mem_filter.2 ⟨hx, hψx, hφx⟩⟩
-      have h1 := (uniformOn_eq_one_iff' hpart).2 fun y hy ↦ (Finset.mem_filter.1 hy).2.2
-      rw [h φ hpart, uniformOn_eq_one_iff' hR] at h1
-      exact fun y hy ↦ h1 y (Finset.mem_filter.2 hy)
-  · rintro (hno | hall) part _ hpart
-    · rw [(uniformOn_eq_zero_iff' (φ := φ) _).2 fun y hy ↦ hno ⟨(Finset.mem_filter.1 hy).1,
-          (Finset.mem_filter.1 hy).2.1⟩,
-        (uniformOn_eq_zero_iff' (φ := φ) _).2 fun y hy ↦ hno (Finset.mem_filter.1 hy)]
-    · rw [(uniformOn_eq_one_iff' (φ := φ) hpart).2 fun y hy ↦ hall ⟨(Finset.mem_filter.1 hy).1,
-          (Finset.mem_filter.1 hy).2.1⟩,
-        (uniformOn_eq_one_iff' (φ := φ) hR).2 fun y hy ↦ hall (Finset.mem_filter.1 hy)]
-
-/-! ### Frequency adverbs (definition 10, p. 128)
-
-At the extreme thresholds the restricted classical quantifiers reappear; sometimes is the
-existential, so a generic over an empty reference class entails nothing (§5.6). -/
-
-omit [DecidablePred φ] in
-theorem freq_eq_one_iff (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
-    freq domain ψ alt φ (· = 1) ↔ every {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} :=
-  (uniformOn_eq_one_iff' hR).trans
-    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h _ hx ↦ h (Finset.mem_filter.1 hx)⟩
-
-omit [DecidablePred φ] in
-theorem freq_eq_zero_iff :
-    freq domain ψ alt φ (· = 0) ↔ no {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} :=
-  (uniformOn_eq_zero_iff' _).trans
-    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h _ hx ↦ h (Finset.mem_filter.1 hx)⟩
-
-omit [DecidablePred φ] in
-theorem freq_pos_iff :
-    freq domain ψ alt φ (0 < ·) ↔ Det.some {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} := by
-  have h := freq_eq_zero_iff (domain := domain) (ψ := ψ) (alt := alt) (φ := φ)
-  unfold freq at h ⊢
-  beta_reduce at h ⊢
-  rw [pos_iff_ne_zero, Ne, h]
-  exact no_iff_not_some.not_left
-
-/-! ### People have a hard time finding CMU (§3.2.1, after Thomason)
+/-! ### People have a hard time finding CMU ((65), pp. 32–33, after Thomason)
 
 Twenty people, five of whom sought the university: four found it with difficulty, one with
-ease. The alternatives — the levels of difficulty of the search — restrict the reference
-class to the seekers, so the generic holds with no majority among people. -/
+ease. The alternatives, the levels of difficulty of the search, restrict the reference class to
+the seekers, so the generic holds with no majority among people. -/
 
 section Examples
 
-abbrev soughtCMU : Fin 20 → Prop := (·.val < 5)
-abbrev hardTime : Fin 20 → Prop := (·.val < 4)
+abbrev soughtCMU : Set (Fin 20) := {x | x.val < 5}
+abbrev hardTime : Set (Fin 20) := {x | x.val < 4}
 
-theorem cmu_gen : gen Finset.univ (fun _ ↦ True) soughtCMU hardTime := by
-  decide
+example : gen (uniformOn soughtCMU) univ hardTime := by decide
 
-theorem cmu_no_majority : ¬ gen Finset.univ (fun _ ↦ True) (fun _ ↦ True) hardTime := by
-  decide
+example : ¬ gen (uniformOn univ) univ hardTime := by decide
 
-/-! ### Mammals bear live young; mammals are not female (§3.2.1 p. 33, §4.4.6 p. 91)
+/-! ### Mammals bear live young; mammals are not female ((66), p. 34; (192), p. 99)
 
 Twenty mammals, eight of which procreate: six bear live young, two lay eggs. Eleven are
 female, among them every procreator. Relativized to the forms of procreation, the first
-generic is true though bearers are a minority of all mammals, and the male cell of the sex
-partition is empty of procreators, so definition 5 agrees. The second clears definition 1
-on the female majority alone but fails definition 5, since the male cell is inhabited and
-contains no female — the paper's resolution of the contrast with different alternatives and
-the sex partition. By definition 10 the same threshold read as the adverb usually ignores
-the non-temporal partition (§6.2.3), so "usually female" stays true. -/
+generic is true though bearers are a minority of all mammals, and it holds in each cell of the
+sex partition that has procreators. The second clears the first definition on the female majority
+alone and fails the final one, since the male cell contains no female. The adverb *usually*
+carries the same threshold and answers only to temporal partitions (§6.2.3, pp. 141–142), so
+"usually female" stays true. -/
 
-abbrev procreates : Fin 20 → Prop := (·.val < 8)
-abbrev bearsLive : Fin 20 → Prop := (·.val < 6)
-abbrev female : Fin 20 → Prop := (·.val < 11)
+abbrev procreates : Set (Fin 20) := {x | x.val < 8}
+abbrev bearsLive : Set (Fin 20) := {x | x.val < 6}
+abbrev female : Set (Fin 20) := {x | x.val < 11}
 
 /-- The sex partition divides the females from the males. -/
-abbrev sexCell : Bool → Fin 20 → Prop := fun b x ↦ if b then female x else ¬ female x
+abbrev sexCell (b : Bool) : Set (Fin 20) := {x | x ∈ female ↔ b}
 
-theorem bearsLive_gen : gen Finset.univ (fun _ ↦ True) procreates bearsLive := by
+example : gen (uniformOn procreates) univ bearsLive := by decide
+
+example : ¬ gen (uniformOn univ) univ bearsLive := by decide
+
+example : salient (uniformOn procreates) gen sexCell univ bearsLive := by decide
+
+example : gen (uniformOn univ) univ female := by decide
+
+-- (192b), p. 99
+theorem female_not_salient : ¬ salient (uniformOn univ) gen sexCell univ female := by
   decide
 
-theorem bearsLive_no_majority :
-    ¬ gen Finset.univ (fun _ ↦ True) (fun _ ↦ True) bearsLive := by
-  decide
-
-theorem bearsLive_genSalient :
-    genSalient Finset.univ (fun _ ↦ True) procreates bearsLive sexCell := by
-  intro i hi
-  cases i
-  · exact absurd hi (by decide)
-  · decide
-
-theorem female_gen : gen Finset.univ (fun _ ↦ True) (fun _ ↦ True) female := by
-  decide
-
-theorem female_not_genSalient :
-    ¬ genSalient Finset.univ (fun _ ↦ True) (fun _ ↦ True) female sexCell := by
-  intro h
-  exact absurd (h false (by decide)) (by decide)
-
-/-! ### Relative readings (§3.4.3–3.4.4, pp. 54–56)
+/-! ### Relative readings (§3.4.3, pp. 58–59; (179), p. 94)
 
 Twenty people, fifteen of them weightlifters: the five Bulgarians all lift, two of them
 well; one of the ten other lifters is good. A Bulgarian lifter is likelier than an
-arbitrary one to be good, though no majority of Bulgarian lifters is. In the soccer
-variant, where the lousy players concentrate outside Brazil, the relative reading correctly
-rejects "Brazilians are lousy soccer players" yet accepts the sentence with its scope
-intersected with the restrictor, whose average is lower — so the reading is not
-conservative. -/
+arbitrary one to be good, though no majority of Bulgarian lifters is. Of sixteen soccer players
+eight are Brazilian, one of them lousy, and six of the others are: the relative reading rejects
+"Brazilians are lousy soccer players" and accepts the sentence with its scope intersected with
+the restrictor. Of twenty women four are Dutch and one of those is the only queen: a Dutch
+woman is likelier than an arbitrary one to be a queen, and the generic still fails, since the
+Dutch women outside the capital include no queen. -/
 
-abbrev bulgarian : Fin 20 → Prop := (·.val < 5)
-abbrev lifter : Fin 20 → Prop := (·.val < 15)
-abbrev goodLifter : Fin 20 → Prop := fun x ↦ x.val < 2 ∨ x.val = 5
+abbrev bulgarian : Set (Fin 20) := {x | x.val < 5}
+abbrev lifter : Set (Fin 20) := {x | x.val < 15}
+abbrev goodLifter : Set (Fin 20) := {x | x.val < 2 ∨ x.val = 5}
 
-theorem bulgarians_relative : genRelative Finset.univ bulgarian lifter goodLifter := by
-  rw [genRelative_iff_card (by decide) (by decide)]
-  decide
+example : genRelative (uniformOn lifter) bulgarian goodLifter := by decide
 
-theorem bulgarians_not_absolute : ¬ gen Finset.univ bulgarian lifter goodLifter := by
-  decide
+example : ¬ gen (uniformOn lifter) bulgarian goodLifter := by decide
 
-abbrev brazilian : Fin 20 → Prop := (·.val < 5)
-abbrev soccerPlayer : Fin 20 → Prop := (·.val < 15)
-abbrev lousy : Fin 20 → Prop := fun x ↦ x.val = 0 ∨ (5 ≤ x.val ∧ x.val < 13)
+abbrev brazilian : Set (Fin 20) := {x | x.val < 8}
+abbrev soccerPlayer : Set (Fin 20) := {x | x.val < 16}
+abbrev lousy : Set (Fin 20) := {x | x.val = 0 ∨ (8 ≤ x.val ∧ x.val < 14)}
 
-theorem brazilians_relative_rejected :
-    ¬ genRelative Finset.univ brazilian soccerPlayer lousy := by
-  rw [genRelative_iff_card (by decide) (by decide)]
-  decide
+-- (130), p. 59
+theorem not_conservative_genRelative : ¬ (genRelative (uniformOn soccerPlayer)).Conservative :=
+  fun h ↦ absurd (h brazilian lousy) (by decide)
 
--- p. 55
-theorem genRelative_not_conservative :
-    ¬ (genRelative Finset.univ brazilian soccerPlayer (fun x ↦ brazilian x ∧ lousy x) ↔
-        genRelative Finset.univ brazilian soccerPlayer lousy) := by
-  rw [genRelative_iff_card (by decide) (by decide), genRelative_iff_card (by decide) (by decide)]
-  decide
+abbrev dutch : Set (Fin 20) := {x | x.val < 4}
+abbrev queen : Set (Fin 20) := {x | x.val = 0}
+abbrev capital : Set (Fin 20) := {x | x.val < 2 ∨ x.val = 10}
+
+/-- The partition by region divides the residents of the capital from the rest. -/
+abbrev regionCell (b : Bool) : Set (Fin 20) := {x | x ∈ capital ↔ b}
+
+example : genRelative (uniformOn univ) dutch queen := by decide
+
+example : ¬ salient (uniformOn univ) genRelative regionCell dutch queen := by decide
 
 end Examples
 

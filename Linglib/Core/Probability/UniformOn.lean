@@ -84,6 +84,11 @@ theorem ae_uniformOn (hs : s.Finite) : ae (uniformOn s) = 𝓟 s := by
   ext t
   rw [mem_ae_iff, mem_principal, uniformOn_eq_zero_iff hs, ← sdiff_eq, sdiff_eq_empty]
 
+theorem ae_le_uniformOn_iff (hs : s.Finite) {t u : Set Ω} : t ≤ᵐ[uniformOn s] u ↔ s ∩ t ⊆ u := by
+  change (∀ᶠ ω in ae (uniformOn s), ω ∈ t → ω ∈ u) ↔ _
+  rw [ae_uniformOn hs, eventually_principal]
+  exact ⟨fun h ω hω ↦ h ω hω.1 hω.2, fun h ω hs ht ↦ h ⟨hs, ht⟩⟩
+
 theorem uniformOn_absolutelyContinuous_of_subset (ht : t.Finite) (hst : s ⊆ t) :
     uniformOn s ≪ uniformOn t := by
   rw [← Measure.ae_le_iff_absolutelyContinuous, ae_uniformOn ht, ae_uniformOn (ht.subset hst)]

@@ -40,11 +40,13 @@ namespace SagEtAl2020
 open HPSG.RSRL HPSG.Construction
 
 /-- The aux-initial construction requires the head daughter to be an inverted verb. -/
-def auxInitialPrinciple : Constraint sig :=
-  ⟨.auxInitialCxt, .sortAssign (.path [.HDDTR, .CAT, .INV]) .plus⟩
+def auxInitialPrinciple : Constraint sig where
+  sort := .auxInitialCxt
+  body := .sortAssign (.path [.HDDTR, .CAT, .INV]) .plus
 
 /-- The filler-gap grammar extended with the aux-initial construction. -/
-def saiGrammar : Grammar sig := (constraints ++ [auxInitialPrinciple]).map Constraint.toDesc
+abbrev saiGrammar : Grammar sig :=
+  .ofList ((constraints ++ [auxInitialPrinciple]).map Constraint.toDescription)
 
 theorem sai_cross_classify :
     (Srt.auxInitialCxt ≤ .headedCxt ∧ Srt.fillerHeadCxt ≤ .headedCxt) ∧

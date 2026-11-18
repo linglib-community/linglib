@@ -37,7 +37,7 @@ shared toy model, with the habitats as the alternative set.
 
 namespace Nickel2009
 
-open Quantifier.Det (every)
+open Quantifier.Det ProbabilityTheory
 
 /-! ### Ways of Being Normal -/
 
@@ -160,20 +160,20 @@ directly, with the habitats as the alternative set. The majority view fails on t
 because the Asia conjunct has prevalence 4/10 < 1/2, while Nickel's view succeeds. -/
 
 theorem cohen_fails_elephant_asia :
-    ¬ Cohen1999.gen .univ (· ∈ isElephant) (· ∈ livesInAfrica ∪ livesInAsia) (· ∈ livesInAsia) := by
+    ¬ Cohen1999.gen (uniformOn (livesInAfrica ∪ livesInAsia)) isElephant livesInAsia := by
   decide
 
 theorem cohen_fails_nickel_succeeds_on_conjunction :
-    ¬ Cohen1999.gen .univ (· ∈ isElephant) (· ∈ livesInAfrica ∪ livesInAsia) (· ∈ livesInAsia) ∧
+    ¬ Cohen1999.gen (uniformOn (livesInAfrica ∪ livesInAsia)) isElephant livesInAsia ∧
     nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia :=
   ⟨cohen_fails_elephant_asia, nickel_handles_elephant_conjunction⟩
 
 -- (2a)
 theorem cohen_fails_all_bear_habitats :
-    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearNA) ∧
-    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearSA) ∧
-    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearEU) ∧
-    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearAS) := by
+    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearNA ∧
+    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearSA ∧
+    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearEU ∧
+    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearAS := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ### Connection to Traditional GEN -/

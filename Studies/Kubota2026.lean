@@ -101,13 +101,13 @@ theorem toTwoDim_neg_notAtIssue (m : Outlook W O) (o : O) :
     (m.toTwoDim o).neg.notAtIssue = m.evaluation o := rfl
 
 /-- A meaning is rigid when its stance layer does not depend on the outlook. -/
-def IsRigid (m : Outlook W O) : Prop := _root_.IsRigid m.evaluation
+def IsRigid (m : Outlook W O) : Prop := Function.IsConst m.evaluation
 
 /-- The expressive projection varies with the outlook iff the stance layer does, so perspective
 shift is non-rigidity ((42)). -/
 theorem isRigid_iff (m : Outlook W O) :
     m.IsRigid ↔ ∀ o o', m.toTwoDim o = m.toTwoDim o' := by
-  simp only [IsRigid, _root_.IsRigid, toTwoDim, TwoDim.mk.injEq, true_and]
+  simp only [IsRigid, Function.isConst_iff, toTwoDim, TwoDim.mk.injEq, true_and]
 
 /-- The outlook-marked meaning of a pure expressive, whose conventional implicature is the same
 at every outlook and which presupposes nothing. -/
@@ -115,7 +115,7 @@ def ofTwoDim (t : TwoDim W (W → Prop)) : Outlook W O :=
   ⟨t.atIssue, fun _ ↦ True, fun _ ↦ t.notAtIssue⟩
 
 theorem ofTwoDim_isRigid (t : TwoDim W (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
-  isRigid_const t.notAtIssue
+  Function.IsConst.const t.notAtIssue
 
 end Outlook
 

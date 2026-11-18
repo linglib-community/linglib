@@ -28,6 +28,7 @@ conditional or not.
 ## References
 
 * [cover-thomas-2006], chapter 2.
+* [theil-1970], the uncertainty coefficient.
 * The PFR project, `PFR/ForMathlib/Entropy/Basic.lean`.
 -/
 
@@ -242,6 +243,25 @@ theorem condEntropy_le_entropy (hX : Measurable X) (hY : Measurable Y) :
     H[X | Y ; μ] ≤ H[X ; μ] :=
   sub_nonneg.mp (mutualInfo_eq_entropy_sub_condEntropy μ hX hY ▸ mutualInfo_nonneg μ hX hY)
 
+/-- The uncertainty coefficient of `X` given `Y` is the share `I[X : Y] / H[X]` of the entropy of
+`X` that knowing `Y` removes ([theil-1970]). It is `0` when `X` has no entropy. -/
+noncomputable def uncertaintyCoeff (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : ℝ :=
+  I[X : Y ; μ] / H[X ; μ]
+
+theorem uncertaintyCoeff_nonneg (hX : Measurable X) (hY : Measurable Y) :
+    0 ≤ uncertaintyCoeff X Y μ :=
+  div_nonneg (mutualInfo_nonneg μ hX hY) (entropy_nonneg X μ)
+
+theorem uncertaintyCoeff_eq_one_sub (hX : Measurable X) (hY : Measurable Y)
+    (h : H[X ; μ] ≠ 0) : uncertaintyCoeff X Y μ = 1 - H[X | Y ; μ] / H[X ; μ] := by
+  rw [uncertaintyCoeff, mutualInfo_eq_entropy_sub_condEntropy μ hX hY, sub_div, div_self h]
+
+/-- A variable with entropy has uncertainty coefficient `1` given another exactly when the other
+leaves it no entropy. -/
+theorem uncertaintyCoeff_eq_one_iff (hX : Measurable X) (hY : Measurable Y) (h : H[X ; μ] ≠ 0) :
+    uncertaintyCoeff X Y μ = 1 ↔ H[X | Y ; μ] = 0 := by
+  rw [uncertaintyCoeff_eq_one_sub μ hX hY h, sub_eq_self, div_eq_zero_iff, or_iff_left h]
+
 /-- On finite types, mutual information is the expected logarithm of the ratio of the joint mass to
 the product of the marginal masses. -/
 theorem mutualInfo_eq_sum_log (hX : Measurable X) (hY : Measurable Y) :
@@ -269,6 +289,19 @@ theorem mutualInfo_eq_zero_iff (hX : Measurable X) (hY : Measurable Y) :
       ⟨(μ.map fun ω ↦ (X ω, Y ω)).absolutelyContinuous_fst_prod_snd, .of_finite⟩),
     klDiv_eq_zero_iff, Measure.fst_map_prodMk hX hY, Measure.snd_map_prodMk hX hY,
     indepFun_iff_map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable]
+
+/-- A variable with entropy has uncertainty coefficient `0` given another exactly when the two
+are independent. -/
+theorem uncertaintyCoeff_eq_zero_iff (hX : Measurable X) (hY : Measurable Y) (h : H[X ; μ] ≠ 0) :
+    uncertaintyCoeff X Y μ = 0 ↔ X ⟂ᵢ[μ] Y := by
+  rw [uncertaintyCoeff, div_eq_zero_iff, or_iff_left h, mutualInfo_eq_zero_iff μ hX hY]
+
+theorem mutualInfo_const (hX : Measurable X) (c : T) : I[X : fun _ ↦ c ; μ] = 0 :=
+  (mutualInfo_eq_zero_iff μ hX measurable_const).2 (indepFun_const_right X c)
+
+theorem uncertaintyCoeff_const (hX : Measurable X) (c : T) :
+    uncertaintyCoeff X (fun _ ↦ c) μ = 0 := by
+  rw [uncertaintyCoeff, mutualInfo_const μ hX, zero_div]
 
 variable {μ} in
 /-- The entropy of a pair of independent random variables is the sum of their entropies. -/
@@ -432,6 +465,13 @@ theorem entropy_comp_le (hX : Measurable X) (f : S → U) : H[f ∘ X ; μ] ≤ 
   have h₅ := condEntropy_nonneg X (f ∘ X) μ
   linarith
 
+/-- The information a function of a random variable carries about it is the entropy of the
+function. -/
+theorem mutualInfo_comp_self (hX : Measurable X) (f : S → U) :
+    I[f ∘ X : X ; μ] = H[f ∘ X ; μ] := by
+  rw [mutualInfo_eq_entropy_sub_condEntropy μ ((measurable_of_finite f).comp hX) hX,
+    condEntropy_comp_self μ hX f, sub_zero]
+
 /-- A random variable has at most the entropy of its sample-space measure. -/
 theorem entropy_le_measureEntropy [Fintype Ω] [MeasurableSingletonClass Ω] (X : Ω → S) :
     H[X ; μ] ≤ Hm[μ] := by
@@ -489,6 +529,44 @@ theorem condEntropy_eq_zero_iff [Nonempty S] (hX : Measurable X) (hY : Measurabl
       ⟨(hX.prodMk hY).aemeasurable, (hfY.prodMk hY).aemeasurable, Measure.map_congr hpair⟩
     rw [hid.condEntropy_eq hX hY hfY hY]
     exact condEntropy_comp_self μ hY f
+
+section fullSupport
+
+variable {μ}
+
+/-- Under a measure of full support, conditional entropy vanishes exactly when `X` is a function
+of `Y`. -/
+theorem condEntropy_eq_zero_iff_factorsThrough (hμ : ∀ ω, μ {ω} ≠ 0) (hX : Measurable X)
+    (hY : Measurable Y) : H[X | Y ; μ] = 0 ↔ X.FactorsThrough Y := by
+  have : Nonempty S := (nonempty_of_isProbabilityMeasure μ).map X
+  rw [condEntropy_eq_zero_iff μ hX hY, Function.factorsThrough_iff]
+  simp only [ae_eq_top.2 hμ, Filter.eventually_top, funext_iff, Function.comp_apply]
+
+/-- Under a measure of full support, a random variable that takes two values has entropy. -/
+theorem entropy_ne_zero_of_ne (hμ : ∀ ω, μ {ω} ≠ 0) (hX : Measurable X) {a b : Ω}
+    (h : X a ≠ X b) : H[X ; μ] ≠ 0 := fun h0 ↦ by
+  obtain ⟨x, hx⟩ := (entropy_eq_zero_iff hX μ).1 h0
+  simp only [ae_eq_top.2 hμ, Filter.eventually_top] at hx
+  exact h ((hx a).trans (hx b).symm)
+
+/-- Under a measure of full support, an event determines a smaller one exactly when the smaller
+one is empty or the two coincide. -/
+theorem condEntropy_mem_mem_eq_zero_iff_of_subset {s t : Set Ω} (hμ : ∀ ω, μ {ω} ≠ 0)
+    (hs : MeasurableSet s) (ht : MeasurableSet t) (hst : s ⊆ t) :
+    H[(· ∈ s) | (· ∈ t) ; μ] = 0 ↔ s = ∅ ∨ s = t := by
+  rw [condEntropy_eq_zero_iff_factorsThrough hμ (measurable_mem.2 hs) (measurable_mem.2 ht)]
+  refine ⟨fun h ↦ s.eq_empty_or_nonempty.imp_right fun ⟨a, ha⟩ ↦ hst.antisymm fun ω hω ↦
+    (@h a ω (by simp [hst ha, hω])).mp ha, ?_⟩
+  rintro (rfl | rfl) <;> simp [Function.FactorsThrough]
+
+/-- Under a measure of full support, a random variable is determined by its composite with an
+idempotent map exactly when the map leaves it unchanged. -/
+theorem condEntropy_self_comp_eq_zero_iff (hμ : ∀ ω, μ {ω} ≠ 0) (hX : Measurable X) {r : Ω → Ω}
+    (hr : Measurable r) (hrr : ∀ ω, r (r ω) = r ω) : H[X | X ∘ r ; μ] = 0 ↔ X ∘ r = X := by
+  rw [condEntropy_eq_zero_iff_factorsThrough hμ hX (hX.comp hr)]
+  exact ⟨fun h ↦ funext fun ω ↦ h (by simp [hrr]), fun h a b hab ↦ by rw [← h]; exact hab⟩
+
+end fullSupport
 
 /-- On a joint law, the conditional entropy of the first coordinate given the second is the
 entropy of the first marginal less the mutual information. -/

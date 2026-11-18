@@ -10,7 +10,7 @@
     "translation": "[This inn]_i gives shade to its_i own garden and that of the neighboring house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["animacy", "inanimate"]
@@ -29,7 +29,7 @@
     "translation": "[This inn]_i benefits from the fact that its_i own garden is more spacious than that of the neighboring inns.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Cette auberge bénéficie du fait que son jardin est plus spacieux que celui des auberges voisines.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -50,7 +50,7 @@
     "translation": "Mary_i benefits from the fact that her_i own hotel is more spacious than that of her competitors.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 33, after Charnavel and Sportiche (2016a:65). 'animate son propre is grammatical in the same configuration that made inanimate son propre deviant in (2)b; son propre in (8)b is therefore an instance of exempt anaphor' (p. 32). The book runs none of its tests for logophoric centers on this sentence.",
@@ -67,7 +67,7 @@
     "translation": "[The earth]_i spins on itself_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["animacy", "inanimate"]
@@ -86,7 +86,7 @@
     "translation": "[The earth]_i benefited from the fact that pictures of itself_i and its satellite showed the harmful effects of pollution.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "La Terre a bénéficié du fait que des photos d'elle et de son satellite ont montré les effets néfastes de la pollution.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -107,7 +107,7 @@
     "translation": "Robert_i says that his rival voted for his_i own project.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "attitude holder"]
@@ -126,7 +126,7 @@
     "translation": "Paul_i's courage saved from the fire his_i own house and his neighbors'.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "empathy locus"]
@@ -145,7 +145,7 @@
     "translation": "The net surfers' comments about herself_i have affected Lucy_i's morale.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "empathy locus"]
@@ -164,7 +164,7 @@
     "translation": "Irene learned from Paul_i that yesterday, several newspapers talked about himself_i.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Irène tient de Paul qu'hier, plusieurs journaux ont parlé de lui.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -185,7 +185,7 @@
     "translation": "The painting on the left of [the virginal]_i could contain a representation of itself_i.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Le tableau à la gauche de l'épinette pourrait contenir une représentation d'elle.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -207,7 +207,7 @@
     "translation": "On this painting by your dear ancestor maybe completed by one of his students, [the music teacher]_i is placed on the right of his_i own student bent over the beautiful virginal.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 220; (163) of chapter 3. Printed with the silent pronoun indexed k and the trace of the subject, indexed i, in the vP: 'plain sa propre in (21)a is acceptable because it is bound by (the trace of) the subject of its spellout domain'.",
@@ -224,7 +224,7 @@
     "translation": "On this painting by your dear ancestor maybe completed by one of his students, it seems that to the right of [the music teacher]_i, his_i own student plays the virginal.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sur ce tableau de ton cher ancêtre peut-être fini par un de ses élèves, il semble qu'à la droite du professeur de musique, son élève joue de l'épinette.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -245,7 +245,7 @@
     "translation": "Julie_i thinks that my_k mother and her_i own mother should talk.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 222. Printed 'ma_k (*propre) mère et sa_i propre mère' with the silent pronoun indexed i at the edge of the embedded TP; this row is the variant without the first propre.",
@@ -262,7 +262,7 @@
     "translation": "Julie_i thinks that my_k own mother and her_i own mother should talk.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 222. The starred variant of (25a) and of (25b), with both anaphors.",
@@ -279,7 +279,7 @@
     "translation": "Julie_i thinks that my_k own mother and her_i mother should talk.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 222. Printed 'ma_k propre mère et sa_i (*propre) mère' with the silent pronoun indexed k; this row is the variant without the second propre.",
@@ -296,7 +296,7 @@
     "translation": "Solange_i thinks that Cyril_k is proud of herself_i and his_k own daughter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 222. Printed with the silent pronoun, indexed i, and the trace of Cyril in the embedded vP.",
@@ -313,7 +313,7 @@
     "translation": "The net surfers' comments about herself_i and her_i sister have affected Lucy_i's morale.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP: 'co-valuation with pro_log can never violate Condition B'.",
@@ -330,7 +330,7 @@
     "translation": "The net surfers' comments about her_i and her_i own sister have affected Lucy_i's morale.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP.",
@@ -347,7 +347,7 @@
     "translation": "The net surfers' comments about herself_i posted on Lucy_i's blog have affected her_i morale.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP; 'a Condition C violation due to covaluation between pro_log and Lucie'.",
@@ -364,7 +364,7 @@
     "translation": "[The earth]_i spins on it_i.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "La Terre tourne sur elle-même.", "judgment": "acceptable"}
     ],
     "readings": [],

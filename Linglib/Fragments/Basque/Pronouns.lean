@@ -65,7 +65,7 @@ def addressee : Grade → PersonalPronoun
   | .polite => zu
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
+def personal : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
 
 theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
 

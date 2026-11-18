@@ -79,22 +79,22 @@ open RoseTree UnorderedTree
 /-- The value of the head function in its two descriptions: the projecting head with its residual
     stack, and the linearized object it determines; `0` off `Dom(h)`. The head side is phantom in
     the carrier; the multiplication reads it. -/
-structure LinearizationState (side : Edge) : Type where
-  toOption : Option ((LexicalItem.Token × List Cat) × LinearizedSyntacticObject)
+structure LinearizationState (side : Edge) (ι : Type := LexicalItem.Token) : Type where
+  toOption : Option ((LexicalItem.Token × List Cat) × PlanarSyntacticObject (ι := ι))
 deriving DecidableEq
 
 namespace LinearizationState
 
-variable {side : Edge}
+variable {side : Edge} {ι : Type}
 
 /-- A defined state: projecting head `tok`, residual stack `stack`, linearized object `p`. -/
-def of (tok : LexicalItem.Token) (stack : List Cat) (p : LinearizedSyntacticObject) :
-    LinearizationState side :=
+def of (tok : LexicalItem.Token) (stack : List Cat) (p : PlanarSyntacticObject (ι := ι)) :
+    LinearizationState side ι :=
   ⟨some ((tok, stack), p)⟩
 
 /-- Merge-local externalization: the `selCombine` decision attaches the projecting daughter on
     the head side; `0` is absorbing. -/
-instance : MulZeroClass (LinearizationState side) where
+instance : MulZeroClass (LinearizationState side ι) where
   mul x y :=
     match x, y with
     | ⟨some (s₁, p₁)⟩, ⟨some (s₂, p₂)⟩ =>
@@ -105,12 +105,13 @@ instance : MulZeroClass (LinearizationState side) where
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
-theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (p₁ p₂ : LinearizedSyntacticObject) :
-    (⟨some (s₁, p₁)⟩ * ⟨some (s₂, p₂)⟩ : LinearizationState side) =
+theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat)
+    (p₁ p₂ : PlanarSyntacticObject (ι := ι)) :
+    (⟨some (s₁, p₁)⟩ * ⟨some (s₂, p₂)⟩ : LinearizationState side ι) =
       ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
           (d.2, (bif d.1 then p₂ else p₁).attach side (bif d.1 then p₁ else p₂))⟩ := rfl
 
-instance : CommMagma (LinearizationState side) where
+instance : CommMagma (LinearizationState side ι) where
   mul_comm x y := by
     match x, y with
     | ⟨none⟩, ⟨none⟩ | ⟨none⟩, ⟨some _⟩ | ⟨some _⟩, ⟨none⟩ => rfl
@@ -119,7 +120,7 @@ instance : CommMagma (LinearizationState side) where
       rcases selCombine ⟨some s₂⟩ ⟨some s₁⟩ with _ | ⟨_ | _, _, _⟩ <;> rfl
 
 /-- The projection to the selection state: forgetting the order description. -/
-def sel : LinearizationState side →ₙ* SelectionState where
+def sel : LinearizationState side ι →ₙ* SelectionState where
   toFun x := ⟨x.toOption.map (·.1)⟩
   map_mul' x y := by
     match x, y with
@@ -131,23 +132,24 @@ def sel : LinearizationState side →ₙ* SelectionState where
       rfl
 
 @[simp] theorem sel_of (tok : LexicalItem.Token) (stack : List Cat)
-    (p : LinearizedSyntacticObject) :
-    sel (of tok stack p : LinearizationState side) = .of tok stack := rfl
+    (p : PlanarSyntacticObject (ι := ι)) :
+    sel (of tok stack p : LinearizationState side ι) = .of tok stack := rfl
 
-@[simp] theorem sel_zero : sel (0 : LinearizationState side) = 0 := rfl
+@[simp] theorem sel_zero : sel (0 : LinearizationState side ι) = 0 := rfl
 
 /-- The linearized component, the order the head function determines; `none` off `Dom(h)`. -/
-def linearized? (x : LinearizationState side) : Option LinearizedSyntacticObject :=
+def linearized? (x : LinearizationState side ι) : Option (PlanarSyntacticObject (ι := ι)) :=
   x.toOption.map (·.2)
 
 @[simp] theorem linearized?_of (tok : LexicalItem.Token) (stack : List Cat)
-    (p : LinearizedSyntacticObject) :
-    (of tok stack p : LinearizationState side).linearized? = some p :=
+    (p : PlanarSyntacticObject (ι := ι)) :
+    (of tok stack p : LinearizationState side ι).linearized? = some p :=
   rfl
 
-@[simp] theorem linearized?_zero : (0 : LinearizationState side).linearized? = none := rfl
+@[simp] theorem linearized?_zero : (0 : LinearizationState side ι).linearized? = none := rfl
 
-theorem linearized?_mul_eq_some {x y : LinearizationState side} {p : LinearizedSyntacticObject}
+theorem linearized?_mul_eq_some {x y : LinearizationState side ι}
+    {p : PlanarSyntacticObject (ι := ι)}
     (h : (x * y).linearized? = some p) :
     ∃ px py, x.linearized? = some px ∧ y.linearized? = some py ∧
       (p = py.attach side px ∨ p = px.attach side py) := by
@@ -162,6 +164,107 @@ theorem linearized?_mul_eq_some {x y : LinearizationState side} {p : LinearizedS
 
 end LinearizationState
 
+/-! ### Linearizations
+
+A morphism of magmas into the linearization states linearizes when the state of a leaf, where it
+is defined, holds that leaf. Its value on an object is then an order of that object, the
+projecting daughter on the head side at every node. -/
+
+section Linearizes
+
+open SyntacticObject
+
+variable {side : Edge} {ι : Type}
+  {φ : SyntacticObject (ι := ι) →ₙ* LinearizationState side ι}
+
+/-- A morphism into the linearization states linearizes when the state of a leaf, where it is
+defined, holds that leaf. -/
+def LinearizationState.Linearizes (φ : SyntacticObject (ι := ι) →ₙ* LinearizationState side ι) :
+    Prop :=
+  ∀ ℓ p, (φ (FreeCommMagma.of ℓ)).linearized? = some p → p = FreeMagma.of ℓ
+
+namespace LinearizationState.Linearizes
+
+variable (hφ : Linearizes φ)
+include hφ
+
+/-- A linearization is a section of forgetting the order on its domain. -/
+theorem toSyntacticObject_eq {s : SyntacticObject (ι := ι)} {p : PlanarSyntacticObject (ι := ι)}
+    (h : (φ s).linearized? = some p) : p.toSyntacticObject = s := by
+  induction s using ind generalizing p with
+  | leaf tok | trace | traceOf tok => obtain rfl := hφ _ _ h; rfl
+  | merge l r ihl ihr =>
+    rw [show merge l r = l * r from rfl, map_mul] at h
+    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := linearized?_mul_eq_some h
+    · rw [PlanarSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr]
+    · rw [PlanarSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr, merge_comm]
+
+omit hφ in
+theorem eq_of_linearized? {s : SyntacticObject (ι := ι)} {p : PlanarSyntacticObject (ι := ι)}
+    (h : (φ s).linearized? = some p) : ∃ σ, sel (φ s) = ⟨some σ⟩ ∧ φ s = ⟨some (σ, p)⟩ := by
+  rcases hx : φ s with ⟨_ | ⟨σ, q⟩⟩
+  · simp [hx, linearized?] at h
+  · simp only [hx, linearized?, Option.map_some, Option.some.injEq] at h
+    subst h
+    exact ⟨σ, rfl, rfl⟩
+
+omit hφ in
+/-- Merging `d` on edge `e` of `l` is harmonic when `d` projects exactly if `e` is the head
+side. -/
+theorem linearized?_merge {d l : SyntacticObject (ι := ι)}
+    {pd pl : PlanarSyntacticObject (ι := ι)} {e : Edge}
+    (hd : (φ d).linearized? = some pd) (hl : (φ l).linearized? = some pl)
+    (h : selSide (sel (φ d)) (sel (φ l)) = some (decide (e = side))) :
+    (φ (merge d l)).linearized? = some (pl.attach e pd) := by
+  obtain ⟨σd, hσd, hsd⟩ := eq_of_linearized? hd
+  obtain ⟨σl, hσl, hsl⟩ := eq_of_linearized? hl
+  rw [hσd, hσl, selSide] at h
+  obtain ⟨⟨_, x⟩, hc, rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [show merge d l = d * l from rfl, map_mul, hsd, hsl, some_mul_some, hc]
+  cases e <;> cases side <;> rfl
+
+/-- The subtrees of a linearized object are the linearizations of its terms. -/
+theorem linearized?_of_mem_subtrees {cur : SyntacticObject (ι := ι)}
+    {pc : PlanarSyntacticObject (ι := ι)} (hc : (φ cur).linearized? = some pc)
+    {q : RoseTree (Vertex LexicalItem.Token ι)} (hq : q ∈ pc.toRoseTree.subtrees)
+    (hqs : IsSyntacticObject (UnorderedTree.mk q)) :
+    (φ (ofUnorderedTree (UnorderedTree.mk q) hqs)).linearized? =
+      some (PlanarSyntacticObject.ofRoseTree q hqs) := by
+  have root : ∀ {cur : SyntacticObject (ι := ι)} {pc : PlanarSyntacticObject (ι := ι)},
+      (φ cur).linearized? = some pc → ∀ hqs : IsSyntacticObject (UnorderedTree.mk pc.toRoseTree),
+      (φ (ofUnorderedTree (UnorderedTree.mk pc.toRoseTree) hqs)).linearized? =
+          some (PlanarSyntacticObject.ofRoseTree pc.toRoseTree hqs) :=
+    fun hc _ ↦ by
+      rw [← PlanarSyntacticObject.toSyntacticObject_ofRoseTree,
+        PlanarSyntacticObject.ofRoseTree_toRoseTree, hφ.toSyntacticObject_eq hc, hc]
+  induction cur using ind generalizing pc with
+  | leaf tok | trace | traceOf tok =>
+    obtain rfl := hφ _ _ hc
+    simp only [show ∀ ℓ : Leaf LexicalItem.Token ι,
+        (PlanarSyntacticObject.toRoseTree (FreeMagma.of ℓ)).subtrees =
+          [PlanarSyntacticObject.toRoseTree (FreeMagma.of ℓ)] from fun ℓ ↦ by cases ℓ <;> rfl,
+      List.mem_singleton] at hq
+    subst hq
+    exact root hc hqs
+  | merge l r ihl ihr =>
+    have hc' := hc
+    rw [show merge l r = l * r from rfl, map_mul] at hc'
+    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := linearized?_mul_eq_some hc' <;>
+      cases side <;>
+      simp only [PlanarSyntacticObject.attach, PlanarSyntacticObject.toRoseTree_merge,
+        RoseTree.subtrees_node,
+        List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_cons,
+        List.mem_append] at hq <;>
+      rcases hq with rfl | hq | hq
+    all_goals first
+      | exact root hc hqs
+      | exact ihl hl hq
+      | exact ihr hr hq
+
+end LinearizationState.Linearizes
+
+end Linearizes
+
 /-! ### Harmonic linearization -/
 
 namespace SyntacticObject
@@ -174,10 +277,15 @@ def traceLinearizationState : Option LexicalItem.Token → LinearizationState si
   | some tok => .of tok [] (.traceOf tok)
   | none => .of .bareTrace [] .trace
 
-/-- The head function's value on a syntactic object: the `liftFun` of the lexical leaves and the
-    silent, saturated traces. -/
-def linearizationState (s : SyntacticObject) : LinearizationState side :=
-  liftFun (fun tok => .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side) s
+/-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
+    §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
+def headHom : SyntacticObject →ₙ* LinearizationState side :=
+  FreeCommMagma.lift
+    (Leaf.elim (fun tok ↦ .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side))
+
+/-- The head function's value on a syntactic object, the extension of the states of the lexical
+    leaves and the silent, saturated traces. -/
+def linearizationState (s : SyntacticObject) : LinearizationState side := headHom side s
 
 @[simp] theorem linearizationState_leaf (tok : LexicalItem.Token) :
     (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.sel (.leaf tok) := rfl
@@ -191,12 +299,7 @@ def linearizationState (s : SyntacticObject) : LinearizationState side :=
 @[simp] theorem linearizationState_node (l r : SyntacticObject) :
     (merge l r).linearizationState side =
       l.linearizationState side * r.linearizationState side :=
-  liftFun_merge _ _ l r
-
-/-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
-    §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
-noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
-  lift (fun tok => .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side)
+  map_mul (headHom side) l r
 
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl
@@ -205,7 +308,7 @@ noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
     check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
-  hom_ext (fun _ => rfl) rfl (fun _ => rfl)
+  FreeCommMagma.hom_ext fun x ↦ by cases x <;> rfl
 
 @[simp] theorem sel_linearizationState (s : SyntacticObject) :
     LinearizationState.sel (s.linearizationState side) = s.selCheck :=
@@ -213,76 +316,14 @@ theorem sel_comp_headHom :
 
 /-- The harmonic linearization, the projecting daughter on the head side at every node
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.5); `none` off `Dom(h)`. -/
-def linearize? (s : SyntacticObject) : Option LinearizedSyntacticObject :=
+def linearize? (s : SyntacticObject) : Option PlanarSyntacticObject :=
   (s.linearizationState side).linearized?
 
 variable {side}
 
-/-- The harmonic linearization is a section of forgetting the order on its domain. -/
-theorem toSyntacticObject_of_linearize? {s : SyntacticObject} {p : LinearizedSyntacticObject}
-    (h : s.linearize? side = some p) : p.toSyntacticObject = s := by
-  induction s using ind generalizing p with
-  | leaf tok | trace | traceOf tok => obtain rfl := Option.some.inj h; rfl
-  | merge l r ihl ihr =>
-    rw [linearize?, linearizationState_node] at h
-    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.linearized?_mul_eq_some h
-    · rw [LinearizedSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr]
-    · rw [LinearizedSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr, merge_comm]
-
-theorem linearizationState_eq_of_linearize? {s : SyntacticObject} {p : LinearizedSyntacticObject}
-    (h : s.linearize? side = some p) :
-    ∃ σ, s.selCheck = ⟨some σ⟩ ∧ s.linearizationState side = ⟨some (σ, p)⟩ := by
-  rcases hx : s.linearizationState side with ⟨_ | ⟨σ, q⟩⟩
-  · simp [linearize?, hx, LinearizationState.linearized?] at h
-  · simp only [linearize?, hx, LinearizationState.linearized?, Option.map_some,
-      Option.some.injEq] at h
-    subst h
-    exact ⟨σ, by rw [← sel_linearizationState side s, hx]; rfl, rfl⟩
-
-/-- Merging `d` on edge `e` of `l` is harmonic when `d` projects exactly if `e` is the head
-side. -/
-theorem linearize?_merge {d l : SyntacticObject} {pd pl : LinearizedSyntacticObject} {e : Edge}
-    (hd : d.linearize? side = some pd) (hl : l.linearize? side = some pl)
-    (h : selSide d.selCheck l.selCheck = some (decide (e = side))) :
-    (merge d l).linearize? side = some (pl.attach e pd) := by
-  obtain ⟨σd, hσd, hsd⟩ := linearizationState_eq_of_linearize? hd
-  obtain ⟨σl, hσl, hsl⟩ := linearizationState_eq_of_linearize? hl
-  rw [hσd, hσl, selSide] at h
-  obtain ⟨⟨_, x⟩, hc, rfl⟩ := Option.map_eq_some_iff.1 h
-  rw [linearize?, linearizationState_node, hsd, hsl, LinearizationState.some_mul_some, hc]
-  cases e <;> cases side <;> rfl
-
-theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : LinearizedSyntacticObject}
-    (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
-    (hqs : IsSyntacticObject (mk q)) :
-    linearize? side ⟨mk q, hqs⟩ = some (⟨q, hqs⟩ : LinearizedSyntacticObject) := by
-  have root : ∀ {cur : SyntacticObject} {pc : LinearizedSyntacticObject},
-      cur.linearize? side = some pc → ∀ hqs : IsSyntacticObject (mk pc.val),
-      linearize? side ⟨mk pc.val, hqs⟩ = some (⟨pc.val, hqs⟩ : LinearizedSyntacticObject) :=
-    fun hc _ ↦ by
-      rw [show (⟨_, _⟩ : SyntacticObject) = _ from toSyntacticObject_of_linearize? hc, hc]; rfl
-  induction cur using ind generalizing pc with
-  | leaf tok | trace | traceOf tok =>
-    obtain rfl := Option.some.inj hc
-    simp only [LinearizedSyntacticObject.leaf_val, LinearizedSyntacticObject.trace_val,
-      LinearizedSyntacticObject.traceOf_val, RoseTree.subtrees_node, List.flatMap_nil,
-      List.mem_cons, List.not_mem_nil, or_false] at hq
-    subst hq
-    exact root hc hqs
-  | merge l r ihl ihr =>
-    have hc' := hc
-    rw [linearize?, linearizationState_node] at hc'
-    obtain ⟨pl, pr, hl, hr, rfl | rfl⟩ := LinearizationState.linearized?_mul_eq_some hc' <;>
-      cases side <;>
-      simp only [LinearizedSyntacticObject.attach, LinearizedSyntacticObject.merge_val,
-        RoseTree.subtrees_node,
-        List.flatMap_cons, List.flatMap_nil, List.append_nil, List.mem_cons,
-        List.mem_append] at hq <;>
-      rcases hq with rfl | hq | hq
-    all_goals first
-      | exact root hc hqs
-      | exact ihl hl hq
-      | exact ihr hr hq
+/-- The head function linearizes. -/
+theorem headHom_linearizes : LinearizationState.Linearizes (headHom side) := fun ℓ p h ↦ by
+  cases ℓ <;> exact (Option.some.inj h).symm
 
 end SyntacticObject
 

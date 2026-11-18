@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "1"), ("antecedent", "plural pronoun")] }
 
@@ -35,9 +35,11 @@ def ex_10 : Datum :=
     language := "hung1274"
     primaryText := "Péter és Éva az-t gondolja, hogy szereti egymás-t."
     glossedTokens := [("Péter", "Péter"), ("és", "and"), ("Éva", "Éva"), ("az-t", "that-ACC"), ("gondolja,", "think.3SG"), ("hogy", "that"), ("szereti", "love.3SG"), ("egymás-t.", "RECIP-ACC")]
+    glossedWords := [⟨['P', 'é', 't', 'e', 'r'], ['P', 'é', 't', 'e', 'r'], [⟨['P', 'é', 't', 'e', 'r'], ['P', 'é', 't', 'e', 'r'], none⟩]⟩, ⟨['é', 's'], ['a', 'n', 'd'], [⟨['é', 's'], ['a', 'n', 'd'], none⟩]⟩, ⟨['É', 'v', 'a'], ['É', 'v', 'a'], [⟨['É', 'v', 'a'], ['É', 'v', 'a'], none⟩]⟩, ⟨['a', 'z', '-', 't'], ['t', 'h', 'a', 't', '-', 'A', 'C', 'C'], [⟨['a', 'z'], ['t', 'h', 'a', 't'], none⟩, ⟨['t'], ['A', 'C', 'C'], some '-'⟩]⟩, ⟨['g', 'o', 'n', 'd', 'o', 'l', 'j', 'a', ','], ['t', 'h', 'i', 'n', 'k', '.', '3', 'S', 'G'], [⟨['g', 'o', 'n', 'd', 'o', 'l', 'j', 'a'], ['t', 'h', 'i', 'n', 'k', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['h', 'o', 'g', 'y'], ['t', 'h', 'a', 't'], [⟨['h', 'o', 'g', 'y'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['s', 'z', 'e', 'r', 'e', 't', 'i'], ['l', 'o', 'v', 'e', '.', '3', 'S', 'G'], [⟨['s', 'z', 'e', 'r', 'e', 't', 'i'], ['l', 'o', 'v', 'e', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['e', 'g', 'y', 'm', 'á', 's', '-', 't', '.'], ['R', 'E', 'C', 'I', 'P', '-', 'A', 'C', 'C'], [⟨['e', 'g', 'y', 'm', 'á', 's'], ['R', 'E', 'C', 'I', 'P'], none⟩, ⟨['t'], ['A', 'C', 'C'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "bound singular null pronoun")] }
 
@@ -48,9 +50,11 @@ def ex_11 : Datum :=
     language := "nucl1643"
     primaryText := "John to Mary ga zibun-tati ga otagai o mi-ta to omow-ta."
     glossedTokens := [("John", "John"), ("to", "and"), ("Mary", "Mary"), ("ga", "NOM"), ("zibun-tati", "self-PL"), ("ga", "NOM"), ("otagai", "RECIP"), ("o", "ACC"), ("mi-ta", "see-PST"), ("to", "that"), ("omow-ta.", "think-PST")]
+    glossedWords := [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], [⟨['J', 'o', 'h', 'n'], ['J', 'o', 'h', 'n'], none⟩]⟩, ⟨['t', 'o'], ['a', 'n', 'd'], [⟨['t', 'o'], ['a', 'n', 'd'], none⟩]⟩, ⟨['M', 'a', 'r', 'y'], ['M', 'a', 'r', 'y'], [⟨['M', 'a', 'r', 'y'], ['M', 'a', 'r', 'y'], none⟩]⟩, ⟨['g', 'a'], ['N', 'O', 'M'], [⟨['g', 'a'], ['N', 'O', 'M'], none⟩]⟩, ⟨['z', 'i', 'b', 'u', 'n', '-', 't', 'a', 't', 'i'], ['s', 'e', 'l', 'f', '-', 'P', 'L'], [⟨['z', 'i', 'b', 'u', 'n'], ['s', 'e', 'l', 'f'], none⟩, ⟨['t', 'a', 't', 'i'], ['P', 'L'], some '-'⟩]⟩, ⟨['g', 'a'], ['N', 'O', 'M'], [⟨['g', 'a'], ['N', 'O', 'M'], none⟩]⟩, ⟨['o', 't', 'a', 'g', 'a', 'i'], ['R', 'E', 'C', 'I', 'P'], [⟨['o', 't', 'a', 'g', 'a', 'i'], ['R', 'E', 'C', 'I', 'P'], none⟩]⟩, ⟨['o'], ['A', 'C', 'C'], [⟨['o'], ['A', 'C', 'C'], none⟩]⟩, ⟨['m', 'i', '-', 't', 'a'], ['s', 'e', 'e', '-', 'P', 'S', 'T'], [⟨['m', 'i'], ['s', 'e', 'e'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'a', 't'], [⟨['t', 'o'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['o', 'm', 'o', 'w', '-', 't', 'a', '.'], ['t', 'h', 'i', 'n', 'k', '-', 'P', 'S', 'T'], [⟨['o', 'm', 'o', 'w'], ['t', 'h', 'i', 'n', 'k'], none⟩, ⟨['t', 'a'], ['P', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "plural reflexive")] }
 
@@ -63,7 +67,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "3"), ("antecedent", "collective conjunct")] }
 
@@ -76,7 +80,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial-control verb")] }
 
@@ -89,7 +93,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, collective controller")] }
 
@@ -102,7 +106,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
 
@@ -115,7 +119,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
 
@@ -128,7 +132,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive-control verb")] }
 
@@ -141,7 +145,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive-control verb")] }
 
@@ -154,7 +158,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive control, distributive controller")] }
 
@@ -167,7 +171,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor")] }
 
@@ -180,7 +184,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence")] }
 
@@ -193,7 +197,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
 
@@ -206,7 +210,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
 
@@ -219,7 +223,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
 
@@ -232,7 +236,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
 
@@ -245,7 +249,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable), ("external", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
@@ -258,7 +262,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .unacceptable), ("external", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
@@ -271,7 +275,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
@@ -284,7 +288,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
 
@@ -297,7 +301,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
 
@@ -310,7 +314,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
@@ -323,7 +327,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
@@ -336,7 +340,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
@@ -349,7 +353,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor"), ("attested", "web")] }
 
@@ -362,7 +366,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor 'neither of them'"), ("attested", "web")] }
 
@@ -373,9 +377,11 @@ def ex_28 : Datum :=
     language := "wann1242"
     primaryText := "wì mù tɛ̄ŋ̄ gé mɔ̄ á ē ɔ̄ŋ̄ lɔ̄ lé"
     glossedTokens := [("wì", "animal"), ("mù", "PL"), ("tɛ̄ŋ̄", "all"), ("gé", "say"), ("mɔ̄", "LOG.PL"), ("á", "COP"), ("ē", "REFL"), ("ɔ̄ŋ̄", "RECIP"), ("lɔ̄", "eat"), ("lé", "PROG")]
+    glossedWords := [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], none⟩]⟩, ⟨['m', 'ù'], ['P', 'L'], [⟨['m', 'ù'], ['P', 'L'], none⟩]⟩, ⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], [⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], none⟩]⟩, ⟨['g', 'é'], ['s', 'a', 'y'], [⟨['g', 'é'], ['s', 'a', 'y'], none⟩]⟩, ⟨['m', 'ɔ', '̄'], ['L', 'O', 'G', '.', 'P', 'L'], [⟨['m', 'ɔ', '̄'], ['L', 'O', 'G', '.', 'P', 'L'], none⟩]⟩, ⟨['á'], ['C', 'O', 'P'], [⟨['á'], ['C', 'O', 'P'], none⟩]⟩, ⟨['ē'], ['R', 'E', 'F', 'L'], [⟨['ē'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['ɔ', '̄', 'ŋ', '̄'], ['R', 'E', 'C', 'I', 'P'], [⟨['ɔ', '̄', 'ŋ', '̄'], ['R', 'E', 'C', 'I', 'P'], none⟩]⟩, ⟨['l', 'ɔ', '̄'], ['e', 'a', 't'], [⟨['l', 'ɔ', '̄'], ['e', 'a', 't'], none⟩]⟩, ⟨['l', 'é'], ['P', 'R', 'O', 'G'], [⟨['l', 'é'], ['P', 'R', 'O', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "A hare visits the animals of a forest one by one; worried about infighting, each says to the hare 'We will eat each other'. Back home the hare reports what they said."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "logophor")] }
 
@@ -386,9 +392,11 @@ def ex_31 : Datum :=
     language := "wann1242"
     primaryText := "wì mù é tɛ̄ŋ̄ gé dóō mɔ̄ á wì dɛ̀ŋ̀ mù é tɛ̄ŋ̄ lɔ̄ lé"
     glossedTokens := [("wì", "animal"), ("mù", "PL"), ("é", "DEF"), ("tɛ̄ŋ̄", "all"), ("gé", "say"), ("dóō", "QUOT"), ("mɔ̄", "LOG.PL"), ("á", "COP"), ("wì", "animal"), ("dɛ̀ŋ̀", "rest"), ("mù", "PL"), ("é", "DEF"), ("tɛ̄ŋ̄", "all"), ("lɔ̄", "eat"), ("lé", "PROG")]
+    glossedWords := [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], none⟩]⟩, ⟨['m', 'ù'], ['P', 'L'], [⟨['m', 'ù'], ['P', 'L'], none⟩]⟩, ⟨['é'], ['D', 'E', 'F'], [⟨['é'], ['D', 'E', 'F'], none⟩]⟩, ⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], [⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], none⟩]⟩, ⟨['g', 'é'], ['s', 'a', 'y'], [⟨['g', 'é'], ['s', 'a', 'y'], none⟩]⟩, ⟨['d', 'ó', 'ō'], ['Q', 'U', 'O', 'T'], [⟨['d', 'ó', 'ō'], ['Q', 'U', 'O', 'T'], none⟩]⟩, ⟨['m', 'ɔ', '̄'], ['L', 'O', 'G', '.', 'P', 'L'], [⟨['m', 'ɔ', '̄'], ['L', 'O', 'G', '.', 'P', 'L'], none⟩]⟩, ⟨['á'], ['C', 'O', 'P'], [⟨['á'], ['C', 'O', 'P'], none⟩]⟩, ⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], none⟩]⟩, ⟨['d', 'ɛ', '̀', 'ŋ', '̀'], ['r', 'e', 's', 't'], [⟨['d', 'ɛ', '̀', 'ŋ', '̀'], ['r', 'e', 's', 't'], none⟩]⟩, ⟨['m', 'ù'], ['P', 'L'], [⟨['m', 'ù'], ['P', 'L'], none⟩]⟩, ⟨['é'], ['D', 'E', 'F'], [⟨['é'], ['D', 'E', 'F'], none⟩]⟩, ⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], [⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], none⟩]⟩, ⟨['l', 'ɔ', '̄'], ['e', 'a', 't'], [⟨['l', 'ɔ', '̄'], ['e', 'a', 't'], none⟩]⟩, ⟨['l', 'é'], ['P', 'R', 'O', 'G'], [⟨['l', 'é'], ['P', 'R', 'O', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Each animal says 'I will eat the others'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("bound logophor", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "logophor, no reciprocal")] }
 
@@ -399,9 +407,11 @@ def ex_32 : Datum :=
     language := "wann1242"
     primaryText := "wì mù tɛ̄ŋ̄ tú gé à̰ ɔ̄ŋ̄ lɔ̄ lé"
     glossedTokens := [("wì", "animal"), ("mù", "PL"), ("tɛ̄ŋ̄", "all"), ("tú", "completely"), ("gé", "say"), ("à̰", "3PL"), ("ɔ̄ŋ̄", "RECIP"), ("lɔ̄", "eat"), ("lé", "PROG")]
+    glossedWords := [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], [⟨['w', 'ì'], ['a', 'n', 'i', 'm', 'a', 'l'], none⟩]⟩, ⟨['m', 'ù'], ['P', 'L'], [⟨['m', 'ù'], ['P', 'L'], none⟩]⟩, ⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], [⟨['t', 'ɛ', '̄', 'ŋ', '̄'], ['a', 'l', 'l'], none⟩]⟩, ⟨['t', 'ú'], ['c', 'o', 'm', 'p', 'l', 'e', 't', 'e', 'l', 'y'], [⟨['t', 'ú'], ['c', 'o', 'm', 'p', 'l', 'e', 't', 'e', 'l', 'y'], none⟩]⟩, ⟨['g', 'é'], ['s', 'a', 'y'], [⟨['g', 'é'], ['s', 'a', 'y'], none⟩]⟩, ⟨['à', '̰'], ['3', 'P', 'L'], [⟨['à', '̰'], ['3', 'P', 'L'], none⟩]⟩, ⟨['ɔ', '̄', 'ŋ', '̄'], ['R', 'E', 'C', 'I', 'P'], [⟨['ɔ', '̄', 'ŋ', '̄'], ['R', 'E', 'C', 'I', 'P'], none⟩]⟩, ⟨['l', 'ɔ', '̄'], ['e', 'a', 't'], [⟨['l', 'ɔ', '̄'], ['e', 'a', 't'], none⟩]⟩, ⟨['l', 'é'], ['P', 'R', 'O', 'G'], [⟨['l', 'é'], ['P', 'R', 'O', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Each animal says 'I will eat the others'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "ordinary plural pronoun")] }
 

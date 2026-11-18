@@ -24,7 +24,7 @@ def bp2004_22 : Datum :=
     glossedTokens := []
     context := "John is 4 feet tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1"), ("claim", "the reading (22b), -er over every, is unavailable")] }
 
@@ -37,7 +37,7 @@ def bp2004_23a : Datum :=
     glossedTokens := []
     context := "The frostline is 3½ feet deep."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1")] }
 
@@ -50,7 +50,7 @@ def bp2004_23b : Datum :=
     glossedTokens := []
     context := "John gave every candidate an A."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1")] }
 
@@ -63,7 +63,7 @@ def bp2004_27a : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages long."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require")] }
 
@@ -76,7 +76,7 @@ def bp2004_27b : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages long."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow")] }
 
@@ -89,7 +89,7 @@ def bp2004_27c : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages long."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require")] }
 
@@ -102,7 +102,7 @@ def bp2004_27d : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages long."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow")] }
 
@@ -115,7 +115,7 @@ def bp2004_30a : Datum :=
     glossedTokens := []
     context := "The draft is 10 pages long."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require"), ("claim", "the two scopes are truth-conditionally equivalent")] }
 
@@ -128,7 +128,7 @@ def bp2004_30b : Datum :=
     glossedTokens := []
     context := "The draft is 10 pages long."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow"), ("claim", "the two scopes are truth-conditionally equivalent")] }
 
@@ -141,7 +141,7 @@ def bp2004_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "string-vacuous high attachment is blocked by minimal attachment")] }
 
@@ -154,7 +154,7 @@ def bp2004_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "the degree clause is merged late outside the pronoun's c-command domain")] }
 
@@ -167,7 +167,7 @@ def bp2004_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "the complement of a nominal cannot be merged late")] }
 
@@ -180,7 +180,7 @@ def bp2004_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before > every", .acceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2")] }
 
@@ -193,7 +193,7 @@ def bp2004_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before > every", .acceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP")] }
 
@@ -206,7 +206,7 @@ def bp2004_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before > every", .unacceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP")] }
 
@@ -219,7 +219,7 @@ def bp2004_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before > -er", .acceptable), ("-er > before", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP")] }
 
@@ -232,7 +232,7 @@ def bp2004_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("claim", "the position of the degree clause presupposes high scope for -er, which the Heim-Kennedy Constraint excludes")] }
 
@@ -245,7 +245,7 @@ def bp2004_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before > -er d-many books", .acceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP")] }
 
@@ -258,7 +258,7 @@ def bp2004_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("before > -er d-many books", .unacceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP")] }
 
@@ -271,7 +271,7 @@ def bp2004_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "the two degree abstractions need not cross")] }
 
@@ -284,7 +284,7 @@ def bp2004_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "result clauses follow comparative clauses")] }
 
@@ -297,7 +297,7 @@ def bp2004_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "crossing degree abstractions, excluded by the Heim-Kennedy Constraint"), ("alsoJudged", "ungrammatical")] }
 
@@ -310,7 +310,7 @@ def bp2004_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "result clauses follow comparative clauses")] }
 
@@ -323,7 +323,7 @@ def bp2004_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > fewer", .acceptable), ("fewer > required", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP")] }
 
@@ -336,7 +336,7 @@ def bp2004_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > fewer", .unacceptable), ("fewer > required", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP")] }
 
@@ -349,7 +349,7 @@ def bp2004_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > exactly 5 more", .acceptable), ("exactly 5 more > required", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP")] }
 
@@ -362,7 +362,7 @@ def bp2004_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > exactly 5 more", .unacceptable), ("exactly 5 more > required", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP")] }
 
@@ -375,7 +375,7 @@ def bp2004_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("tell > -er, elided VP: work d-hard", .acceptable), ("tell > -er, elided VP: tell her to work d-hard", .unacceptable), ("-er > tell, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: tell her to work d-hard", .acceptable)]
     paperFeatures := [("section", "6.1")] }
 
@@ -388,7 +388,7 @@ def bp2004_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("tell > -er, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: work d-hard", .acceptable)]
     paperFeatures := [("section", "6.1")] }
 
@@ -401,7 +401,7 @@ def bp2004_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("tell > -er, elided VP: work d-hard", .unacceptable), ("tell > -er, elided VP: tell her to work d-hard", .unacceptable), ("-er > tell, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: tell her to work d-hard", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")] }
 
@@ -414,7 +414,7 @@ def bp2004_64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("tell > -er", .unacceptable), ("-er > tell", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")] }
 
@@ -427,7 +427,7 @@ def bp2004_64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("tell > -er", .acceptable), ("-er > tell", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")] }
 
@@ -440,7 +440,7 @@ def bp2004_85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.2"), ("claim", "the set of degrees to which Bill is tall is a proper subset of the set to which John is tall")] }
 
@@ -453,7 +453,7 @@ def bp2004_91a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4"), ("coreference", "he = John"), ("claim", "the complement of rumor cannot be merged late")] }
 
@@ -466,7 +466,7 @@ def bp2004_91b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7.4"), ("coreference", "him = John"), ("claim", "the complement of -er can be merged late")] }
 
@@ -479,7 +479,7 @@ def bp2004_93a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8")] }
 
@@ -492,7 +492,7 @@ def bp2004_93b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8")] }
 

@@ -24,7 +24,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("there is a time before the speech time at which John calls", .acceptable)]
     paperFeatures := [("tense", "past"), ("lf", "[P N] λ1 John called t1")] }
 
@@ -37,7 +37,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a past time before a past time", .acceptable)]
     paperFeatures := [("tense", "pluperfect"), ("auxiliary", "had")] }
 
@@ -50,7 +50,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("tense", "future"), ("auxiliary", "will")] }
 
@@ -63,7 +63,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adverbial", "frame"), ("composition", "predicate modification")] }
 
@@ -76,7 +76,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "present perfect puzzle"), ("auxiliary", "extended now")] }
 
@@ -89,7 +89,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("reference-time modification: the leaving is before six", .acceptable), ("event-time modification: the leaving is at six", .acceptable)]
     paperFeatures := [("adverbial", "at"), ("scope", "perfect auxiliary")] }
 
@@ -102,7 +102,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("quantifier under the Past: a past time on every Sunday", .unacceptable), ("quantifier over the Past: every Sunday contains a past time", .unacceptable), ("every past Sunday contains a working time", .acceptable)]
     paperFeatures := [("adverbial", "quantified"), ("restriction", "domain variable")] }
 
@@ -115,7 +115,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("some past time at which I do not turn off the stove", .unacceptable), ("no past time at which I turn off the stove", .unacceptable), ("no time in the contextually given past interval at which I turn off the stove", .acceptable)]
     paperFeatures := [("tense", "referential vs indefinite"), ("scope", "negation")] }
 
@@ -128,7 +128,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the leaving is after the speech time", .acceptable)]
     paperFeatures := [("tense", "future perfect"), ("restriction", "superordinate tense")] }
 
@@ -141,7 +141,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("no past time in today at which it rains", .acceptable)]
     paperFeatures := [("scope", "negation over tense")] }
 
@@ -154,7 +154,7 @@ def ex_60 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("for every boot a past polishing time", .acceptable)]
     paperFeatures := [("scope", "quantifier over tense")] }
 
@@ -167,7 +167,7 @@ def ex_62 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous: alive at the buying time", .acceptable), ("deictic: alive at the speech time", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "present under future")] }
 
@@ -180,7 +180,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted: alive before the buying time", .acceptable), ("deictic perfect: alive before the speech time", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "perfect under future")] }
 
@@ -193,7 +193,7 @@ def ex_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deictic: alive before the speech time", .acceptable), ("shifted: alive before the buying time", .marginal)]
     paperFeatures := [("clause", "relative"), ("tense", "past under future")] }
 
@@ -206,7 +206,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deictic", .acceptable), ("simultaneous", .ungrammatical)]
     paperFeatures := [("clause", "relative"), ("feature", "uN")] }
 
@@ -219,7 +219,7 @@ def ex_69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("backward shifted", .acceptable), ("independent, forward shifted", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "past under past")] }
 
@@ -232,7 +232,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("forward shifted", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "past under past")] }
 
@@ -245,7 +245,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the fish is alive at the future buying time", .acceptable)]
     paperFeatures := [("clause", "relative under attitude"), ("tense", "bound")] }
 
@@ -258,7 +258,7 @@ def ex_76 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a belief John would word as it is raining", .acceptable)]
     paperFeatures := [("clause", "attitude complement"), ("tense", "subjective now")] }
 
@@ -271,7 +271,7 @@ def ex_77 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("anaphoric: Mary believes that 5 o'clock is 6 o'clock", .unacceptable), ("Mary locates her time at 6 o'clock", .acceptable)]
     paperFeatures := [("clause", "attitude complement"), ("complement", "property of times")] }
 
@@ -284,7 +284,7 @@ def ex_80 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted: the leaving before Mary's subjective now", .acceptable)]
     paperFeatures := [("clause", "attitude complement"), ("tense", "past over PRO")] }
 
@@ -297,7 +297,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("John will enter the room after Mary has left.", .acceptable), ("John will enter the room after Mary leaves.", .acceptable)]
+    contrasts := [("John will enter the room after Mary has left.", .acceptable), ("John will enter the room after Mary leaves.", .acceptable)]
     readings := [("before the earliest future time at which Mary leaves", .acceptable)]
     paperFeatures := [("clause", "before/after"), ("tense", "present under future")] }
 
@@ -310,7 +310,7 @@ def ex_84d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("John will enter the room before Mary will leave.", .ungrammatical)]
+    contrasts := [("John will enter the room before Mary will leave.", .ungrammatical)]
     readings := []
     paperFeatures := [("clause", "before/after"), ("tense", "future under future")] }
 
@@ -323,7 +323,7 @@ def ex_85 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Mary left after John arrived.", .acceptable)]
+    contrasts := [("Mary left after John arrived.", .acceptable)]
     readings := [("before the earliest past time at which John arrives", .acceptable)]
     paperFeatures := [("clause", "before/after"), ("tense", "past under past")] }
 
@@ -336,7 +336,7 @@ def ex_86 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Mary arrived before 6.", .acceptable)]
+    contrasts := [("Mary arrived before 6.", .acceptable)]
     readings := []
     paperFeatures := [("preposition", "temporal"), ("meaning", "precedence")] }
 

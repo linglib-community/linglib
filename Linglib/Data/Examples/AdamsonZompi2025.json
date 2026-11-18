@@ -13,7 +13,7 @@
     "translation": "They have entrusted her to you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -46,7 +46,7 @@
     "translation": "They have entrusted her to her/him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -79,7 +79,7 @@
     "translation": "Intended: They have entrusted you to her/him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -112,7 +112,7 @@
     "translation": "I intend to entrust her to her/him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -149,7 +149,7 @@
     "translation": "Intended: I intend to entrust you to him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -186,7 +186,7 @@
     "translation": "They have entrusted you to her/him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -219,7 +219,7 @@
     "translation": "They have entrusted you to her/him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -252,7 +252,7 @@
     "translation": "They have entrusted you to me / me to you.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -285,7 +285,7 @@
     "translation": "You (polite) are here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Lei sei qui.",
         "judgment": "ungrammatical"
@@ -319,7 +319,7 @@
     "translation": "You see yourself.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "(Lei) ti vede.",
         "judgment": "unacceptable"
@@ -353,7 +353,7 @@
     "translation": "They have brought you (polite) there.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "La ci hanno portata.",
         "judgment": "ungrammatical"
@@ -387,7 +387,7 @@
     "translation": "Doctor Biagi, I saw you on TV yesterday.",
     "context": "Addressed to Dottor Biagi.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "La ho vist-o ieri in TV.",
         "judgment": "ungrammatical"
@@ -421,7 +421,7 @@
     "translation": "They have entrusted her to her/him/you (polite).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -454,7 +454,7 @@
     "translation": "Intended: They have entrusted you (polite) to her/him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -487,7 +487,7 @@
     "translation": "Intended: I entrusted you to him hoping that he would take proper care of you (and instead ...)",
     "context": "Oh avvocato, come sta? Non sa quanto mi è dispiaciuto che il mio medico L'abbia trattata male. Quello lì è proprio un cretino, sa?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -520,7 +520,7 @@
     "translation": "They have recommended her to you (polite).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -553,7 +553,7 @@
     "translation": "Intended: They have recommended you (polite) to her/him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -586,7 +586,7 @@
     "translation": "I intend to entrust her to her/him/you (polite).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -619,7 +619,7 @@
     "translation": "Intended: I intend to entrust you (polite) to her/him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -652,7 +652,7 @@
     "translation": "They have entrusted you (polite) to him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -685,7 +685,7 @@
     "translation": "They have entrusted you (polite) to him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -718,7 +718,7 @@
     "translation": "Micol is making Carlo comb her hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Micol ti fa pettinare a Carlo.",
         "judgment": "ungrammatical"
@@ -756,7 +756,7 @@
     "translation": "Intended: Signor Biagi, Micol is making Carlo comb your hair.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -789,7 +789,7 @@
     "translation": "Micol makes Carlo comb your (polite) hair.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -822,7 +822,7 @@
     "translation": "Have they already introduced Your Honor to the ambassador?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -855,7 +855,7 @@
     "translation": "Have they already introduced the duke (you) to the ambassador?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -888,7 +888,7 @@
     "translation": "You (polite) and the ambassador from Sweden will meet tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Lei e l'ambasciatore di Svezia si incontreranno domani.",
         "judgment": "ungrammatical"
@@ -922,7 +922,7 @@
     "translation": "Your Honor and the ambassador from Sweden will meet tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Vostro Onore e l'ambasciatore di Svezia vi incontrerete domani.",
         "judgment": "ungrammatical"
@@ -956,7 +956,7 @@
     "translation": "The duke (you) and the ambassador from Sweden will meet tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Il signor Duca e l'ambasciatore di Svezia vi incontrerete domani.",
         "judgment": "ungrammatical"
@@ -977,6 +977,93 @@
     "verified": "page-image"
   },
   {
+    "id": "adamsonzompi2025_37",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(37)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Maria credeva che qualcuno glie la avrebbe raccommandata (al capo) per la promozione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Maria believed that someone would recommend her to the boss for the promotion.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3 attitude holder"
+      ]
+    ],
+    "comment": "Adapted from Charnavel and Mateu 2015; the accusative clitic refers to the attitude holder Maria.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adamsonzompi2025_38",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Maria credeva che qualcuno te la avrebbe raccommandata per la promozione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Maria believed that someone would recommend her to you for the promotion.",
+    "context": "",
+    "judgment": "marginal",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "2"
+      ],
+      [
+        "accusative",
+        "3 attitude holder"
+      ]
+    ],
+    "comment": "Marked %: accepted by some of the speakers consulted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adamsonzompi2025_39",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(39)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Maria credeva che qualcuno Glie la avrebbe raccommandata per la promozione.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria believed that someone would recommend her to you (polite) for the promotion.",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "LEI"
+      ],
+      [
+        "accusative",
+        "3 attitude holder"
+      ]
+    ],
+    "comment": "Tested with a speaker who accepts (38).",
+    "verified": "page-image"
+  },
+  {
     "id": "adamsonzompi2025_42",
     "source": {
       "bibkey": "adamson-zompi-2025",
@@ -990,7 +1077,7 @@
     "translation": "I respect you (polite).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1022,7 +1109,7 @@
     "translation": "I will introduce her/*you (polite) to the students.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "accusative 3SG.F",
@@ -1060,7 +1147,7 @@
     "translation": "I entrusted him to you (in the hope that you would take good care of him).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1093,7 +1180,7 @@
     "translation": "Intended: I entrusted you (polite) to her/him (in the hope that she/he would take good care of you).",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1126,7 +1213,7 @@
     "translation": "You (SG/PL polite) are nice.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Sie bist nett.",
         "judgment": "ungrammatical"
@@ -1160,7 +1247,7 @@
     "translation": "Intended: because someone introduced you to him",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1197,7 +1284,7 @@
     "translation": "Whoever loves Maria and Johanna is also afraid that someone could take them away from him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1230,7 +1317,7 @@
     "translation": "Intended: Whoever loves you (polite) is also afraid that someone could take you away from him.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1270,7 +1357,7 @@
     "translation": "You are Martin.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1306,7 +1393,7 @@
     "translation": "Intended: Martin is you.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1342,7 +1429,7 @@
     "translation": "The children are the tree.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1378,7 +1465,7 @@
     "translation": "Intended: Maria is the trees.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1411,7 +1498,7 @@
     "translation": "The twins are them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Die Zwillinge sind ihr.",
         "judgment": "ungrammatical"
@@ -1449,7 +1536,7 @@
     "translation": "The twins are you (SG/PL).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1482,7 +1569,7 @@
     "translation": "Intended: Maria is you (SG/PL).",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1515,7 +1602,7 @@
     "translation": "They have entrusted her to me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1548,7 +1635,7 @@
     "translation": "Doctor Biagi, they have entrusted you to me.",
     "context": "Addressed to Dottor Biagi.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

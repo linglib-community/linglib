@@ -9,7 +9,7 @@
     "translation": "",
     "context": "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ambiguity", "ambiguous"]
@@ -27,7 +27,7 @@
     "translation": "",
     "context": "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ambiguity", "unambiguous"]
@@ -45,7 +45,7 @@
     "translation": "",
     "context": "The apple is on a towel and is to be moved to the other towel.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["target", "bare"],
@@ -64,7 +64,7 @@
     "translation": "",
     "context": "The apple is on a towel and is to be moved to the box.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["target", "bare"],
@@ -83,7 +83,7 @@
     "translation": "",
     "context": "The apple is on a towel and is to be moved to the other towel.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["target", "modified"],
@@ -102,7 +102,7 @@
     "translation": "",
     "context": "The apple is on a towel and is to be moved to the box.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["target", "modified"],
@@ -121,7 +121,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6).",

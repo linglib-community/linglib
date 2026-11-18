@@ -46,27 +46,28 @@ open Quantifier Quantifier.Det
 on the passenger model of [zimmermann-2008]. -/
 theorem wani_scopings_diverge :
     ¬ ((¬ ∃ x : Zimmermann2008.Faasinjee, Zimmermann2008.Daura x) ↔
-      Det.some (fun _ : Zimmermann2008.Faasinjee ↦ True) (¬ Zimmermann2008.Daura ·)) :=
+      Det.some Set.univ {x : Zimmermann2008.Faasinjee | ¬ Zimmermann2008.Daura x}) :=
   fun h ↦ Zimmermann2008.wani_narrow_scope_false (h.mpr Zimmermann2008.wani_wide_scope)
 
 /-- Under the choice-function analysis (16a), *bí* under negation, as in (15), is not the narrow
 reading when the restrictor has two members. -/
 theorem bi_reading_not_narrow {S E : Type*} (f : S → ChoiceFunction E) {s : S}
-    {P : S → E → Prop} {a b : E} (ha : P s a) (hb : P s b) (hab : a ≠ b) :
-    ¬ ∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ Det.some (P s) VP := fun h ↦
+    {P : S → Set E} {a b : E} (ha : a ∈ P s) (hb : b ∈ P s) (hab : a ≠ b) :
+    ¬ ∀ VP : Set E, f s (P s) ∉ VP ↔ ¬ Det.some (P s) VP := fun h ↦ by
   have h' := (Owusu2022.negation_narrow_iff f ⟨a, ha⟩).mp h
-  hab ((h' a ha).trans (h' b hb).symm)
+  rw [h'] at ha hb
+  exact hab ((Set.mem_singleton_iff.1 ha).trans (Set.mem_singleton_iff.1 hb).symm)
 
 /-- Under an operator that is not intensional, such as negation, the bound and free construals of
 the situation argument of *bí* (16a) coincide, so that the operator cannot shift it, as the
 explanation of (15) requires (p. 7). -/
 theorem bi_construals_collapse {S E : Type*} {O : (S → Prop) → S → Prop} {s₀ : S}
-    (hO : IsExtensionalAt O s₀) (f : S → ChoiceFunction E) (P : S → E → Prop)
+    (hO : IsExtensionalAt O s₀) (f : S → ChoiceFunction E) (P : S → Set E)
     (VP : E → S → Prop) :
     smallScope O VP (fun s ↦ f s (P s)) s₀ = largeScope O VP (fun s ↦ f s (P s)) s₀ :=
   (hO.largeScope_eq_smallScope VP _).symm
 
-example {S E : Type*} (f : S → ChoiceFunction E) (s₀ : S) (P : S → E → Prop)
+example {S E : Type*} (f : S → ChoiceFunction E) (s₀ : S) (P : S → Set E)
     (VP : E → S → Prop) :
     smallScope (fun p s ↦ ¬ p s) VP (fun s ↦ f s (P s)) s₀ =
       largeScope (fun p s ↦ ¬ p s) VP (fun s ↦ f s (P s)) s₀ :=

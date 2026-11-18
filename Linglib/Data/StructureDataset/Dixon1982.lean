@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.StructureDataset.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Dixon1982`: language samples
@@ -50,25 +51,30 @@ inductive PartOfSpeech where
   | nounAdverb
   deriving DecidableEq, Repr
 
+/-- semantic type: The seven semantic types which make up the word class Adjective, each with its English members (p. 16), and the columns of Table 2 (p. 35). Dixon omits position (*high*, *low*, *right*, *left*, *near*, *far*), a further type of the English class which other languages most often express by adverbs (fn. 11). -/
+inductive SemanticType where
+  /-- `SPEED`: *fast*, *quick*, *slow* and just a few more items (p. 16). -/
+  | speed
+  /-- `DIMENSION`: *big*, *large*, *little*, *small*, *long*, *short*, *wide*, *narrow*, *thick*, *fat*, *thin*, and just a few more items (p. 16). -/
+  | dimension
+  /-- `PHYSICAL PROPERTY`: *hard*, *soft*, *heavy*, *light*, *rough*, *smooth*, *hot*, *cold*, *sweet*, *sour* and many more items (p. 16). -/
+  | physicalProperty
+  /-- `COLOUR`: *black*, *white*, *red*, and so on (p. 16). -/
+  | color
+  /-- `HUMAN PROPENSITY`: *jealous*, *happy*, *kind*, *clever*, *generous*, *gay*, *cruel*, *rude*, *proud*, *wicked*, and very many more items (p. 16). -/
+  | humanPropensity
+  /-- `VALUE`: *good*, *bad* and a few more items, including *proper*, *perfect* and perhaps *pure*, and hyponyms of *good* and *bad* such as *excellent*, *fine*, *delicious*, *atrocious* and *poor* (p. 16). -/
+  | value
+  /-- `AGE`: *new*, *young*, *old* (p. 16). -/
+  | age
+  deriving DecidableEq, Repr, Fintype
+
 /-- A row of a sample: a language with its codes for each parameter. -/
 structure Row where
   /-- The language. -/
   language : Language
-  /-- The codes for SPEED. -/
-  speed : List (Coded PartOfSpeech)
-  /-- The codes for DIMENSION. -/
-  dimension : List (Coded PartOfSpeech)
-  /-- The codes for PHYSICAL PROPERTY. -/
-  physicalProperty : List (Coded PartOfSpeech)
-  /-- The codes for COLOUR. -/
-  color : List (Coded PartOfSpeech)
-  /-- The codes for HUMAN PROPENSITY. -/
-  humanPropensity : List (Coded PartOfSpeech)
-  /-- The codes for VALUE. -/
-  value : List (Coded PartOfSpeech)
-  /-- The codes for AGE. -/
-  age : List (Coded PartOfSpeech)
-  deriving DecidableEq, Repr
+  /-- The codes for semantic type. -/
+  semanticType : SemanticType → List (Coded PartOfSpeech)
 
 def swahili : Language :=
   { id := "swahili", name := "Swahili", glottocode := some "swah1253" }
@@ -124,140 +130,157 @@ def dyirbal : Language :=
 /-- The part-of-speech membership of the seven types, from the basic part of speech of the roots expressing three dozen representative concepts in each language (§1.4.1). The rows of Table 2, in the order of the source (dixon-1982, Table 2, p. 35). -/
 def table2 : List Row := [
   { language := swahili,
-    speed := [⟨.adjective, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adjective, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := luganda,
-    speed := [⟨.adjectiveAdverb, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.noun, false, false, true⟩, ⟨.verb, false, false, true⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adjectiveAdverb, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.noun, false, false, true⟩, ⟨.verb, false, false, true⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := bemba,
-    speed := [⟨.adverb, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.verb, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    color := [⟨.verb, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adverb, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.verb, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .color => [⟨.verb, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := japanese,
-    speed := [⟨.adjective, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩, ⟨.noun, false, false, true⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adjective, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩, ⟨.noun, false, false, true⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := sango,
-    speed := [⟨.adjunctiveV, false, false, false⟩],
-    dimension := [⟨.adjunctiveNVS, false, false, false⟩, ⟨.verb, false, false, false⟩],
-    physicalProperty := [⟨.verb, false, false, false⟩, ⟨.noun, false, false, true⟩],
-    color := [⟨.adjunctiveN, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjunctiveNS, false, false, true⟩],
-    value := [⟨.adjunctiveNVS, false, false, false⟩],
-    age := [⟨.adjunctiveN, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adjunctiveV, false, false, false⟩]
+      | .dimension => [⟨.adjunctiveNVS, false, false, false⟩, ⟨.verb, false, false, false⟩]
+      | .physicalProperty => [⟨.verb, false, false, false⟩, ⟨.noun, false, false, true⟩]
+      | .color => [⟨.adjunctiveN, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjunctiveNS, false, false, true⟩]
+      | .value => [⟨.adjunctiveNVS, false, false, false⟩]
+      | .age => [⟨.adjunctiveN, false, false, false⟩] },
   { language := hausa,
-    speed := [⟨.nounAdverb, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩, ⟨.nounVerb, false, false, false⟩],
-    physicalProperty := [⟨.verb, false, false, false⟩, ⟨.noun, false, false, false⟩, ⟨.nounVerb, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩],
-    value := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.nounAdverb, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩, ⟨.nounVerb, false, false, false⟩]
+      | .physicalProperty => [⟨.verb, false, false, false⟩, ⟨.noun, false, false, false⟩, ⟨.nounVerb, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩]
+      | .value => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := acooli,
-    speed := [⟨.adverb, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, false⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adverb, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, false⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := hua,
-    speed := [⟨.verbalisedNoun, false, false, false⟩],
-    dimension := [⟨.verbalisedNoun, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    physicalProperty := [⟨.verbalisedNoun, false, false, false⟩, ⟨.adjective, false, false, true⟩, ⟨.verb, false, false, true⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.verbalisedNoun, false, false, false⟩, ⟨.adjective, false, false, true⟩, ⟨.verb, false, false, true⟩],
-    value := [⟨.verbalisedNoun, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.verbalisedNoun, false, false, false⟩]
+      | .dimension => [⟨.verbalisedNoun, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .physicalProperty => [⟨.verbalisedNoun, false, false, false⟩, ⟨.adjective, false, false, true⟩, ⟨.verb, false, false, true⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.verbalisedNoun, false, false, false⟩, ⟨.adjective, false, false, true⟩, ⟨.verb, false, false, true⟩]
+      | .value => [⟨.verbalisedNoun, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := alamblak,
-    speed := [⟨.adverb, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, false⟩, ⟨.adjectiveVerb, false, false, false⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.verb, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adverb, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, false⟩, ⟨.adjectiveVerb, false, false, false⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.verb, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := telugu,
-    speed := [⟨.nounAdjective, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩, ⟨.nounAdjective, false, false, false⟩, ⟨.adjective, false, false, true⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.adjective, false, false, false⟩, ⟨.nounAdjective, false, false, false⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.nounAdjective, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩, ⟨.nounAdjective, false, false, false⟩, ⟨.adjective, false, false, true⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.adjective, false, false, false⟩, ⟨.nounAdjective, false, false, false⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := kiriwinian,
-    speed := [⟨.adverb, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩, ⟨.adjective, false, false, false⟩, ⟨.verb, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.adjective, false, false, false⟩],
-    color := [⟨.noun, false, false, false⟩],
-    humanPropensity := [⟨.verb, false, false, false⟩, ⟨.noun, false, false, true⟩, ⟨.adjective, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adverb, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩, ⟨.adjective, false, false, false⟩, ⟨.verb, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.adjective, false, false, false⟩]
+      | .color => [⟨.noun, false, false, false⟩]
+      | .humanPropensity => [⟨.verb, false, false, false⟩, ⟨.noun, false, false, true⟩, ⟨.adjective, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := tzotzil,
-    speed := [⟨.adjective, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩, ⟨.verb, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adjective, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.adjective, false, false, true⟩, ⟨.verb, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := chinook,
-    speed := [⟨.particle, false, false, false⟩],
-    dimension := [⟨.noun, false, false, false⟩],
-    physicalProperty := [⟨.particle, false, false, false⟩, ⟨.noun, false, false, true⟩, ⟨.verb, false, false, true⟩],
-    color := [⟨.particle, false, false, false⟩],
-    humanPropensity := [⟨.noun, false, false, false⟩, ⟨.verb, false, false, true⟩, ⟨.particle, false, false, true⟩],
-    value := [⟨.noun, false, false, false⟩],
-    age := [⟨.verb, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.particle, false, false, false⟩]
+      | .dimension => [⟨.noun, false, false, false⟩]
+      | .physicalProperty => [⟨.particle, false, false, false⟩, ⟨.noun, false, false, true⟩, ⟨.verb, false, false, true⟩]
+      | .color => [⟨.particle, false, false, false⟩]
+      | .humanPropensity => [⟨.noun, false, false, false⟩, ⟨.verb, false, false, true⟩, ⟨.particle, false, false, true⟩]
+      | .value => [⟨.noun, false, false, false⟩]
+      | .age => [⟨.verb, false, false, false⟩] },
   { language := yurok,
-    speed := [⟨.verb, false, false, false⟩],
-    dimension := [⟨.verb, false, false, false⟩],
-    physicalProperty := [⟨.verb, false, false, false⟩],
-    color := [⟨.verb, false, false, false⟩],
-    humanPropensity := [⟨.verb, false, false, false⟩],
-    value := [⟨.verb, false, false, false⟩],
-    age := [⟨.verb, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.verb, false, false, false⟩]
+      | .dimension => [⟨.verb, false, false, false⟩]
+      | .physicalProperty => [⟨.verb, false, false, false⟩]
+      | .color => [⟨.verb, false, false, false⟩]
+      | .humanPropensity => [⟨.verb, false, false, false⟩]
+      | .value => [⟨.verb, false, false, false⟩]
+      | .age => [⟨.verb, false, false, false⟩] },
   { language := samoan,
-    speed := [⟨.verb, false, false, false⟩],
-    dimension := [⟨.verb, false, false, false⟩],
-    physicalProperty := [⟨.verb, false, false, false⟩],
-    color := [⟨.verb, false, false, false⟩],
-    humanPropensity := [⟨.verb, false, false, false⟩, ⟨.noun, false, false, true⟩],
-    value := [⟨.verb, false, false, false⟩],
-    age := [⟨.verb, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.verb, false, false, false⟩]
+      | .dimension => [⟨.verb, false, false, false⟩]
+      | .physicalProperty => [⟨.verb, false, false, false⟩]
+      | .color => [⟨.verb, false, false, false⟩]
+      | .humanPropensity => [⟨.verb, false, false, false⟩, ⟨.noun, false, false, true⟩]
+      | .value => [⟨.verb, false, false, false⟩]
+      | .age => [⟨.verb, false, false, false⟩] },
   { language := english,
-    speed := [⟨.adjective, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.adjective, false, false, false⟩, ⟨.noun, false, false, true⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] },
+    semanticType := fun
+      | .speed => [⟨.adjective, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩, ⟨.verb, false, false, true⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.adjective, false, false, false⟩, ⟨.noun, false, false, true⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] },
   { language := dyirbal,
-    speed := [⟨.adjective, false, false, false⟩],
-    dimension := [⟨.adjective, false, false, false⟩],
-    physicalProperty := [⟨.adjective, false, false, false⟩],
-    color := [⟨.adjective, false, false, false⟩],
-    humanPropensity := [⟨.adjective, false, false, false⟩],
-    value := [⟨.adjective, false, false, false⟩],
-    age := [⟨.adjective, false, false, false⟩] }]
+    semanticType := fun
+      | .speed => [⟨.adjective, false, false, false⟩]
+      | .dimension => [⟨.adjective, false, false, false⟩]
+      | .physicalProperty => [⟨.adjective, false, false, false⟩]
+      | .color => [⟨.adjective, false, false, false⟩]
+      | .humanPropensity => [⟨.adjective, false, false, false⟩]
+      | .value => [⟨.adjective, false, false, false⟩]
+      | .age => [⟨.adjective, false, false, false⟩] }]
 
 end Dixon1982.StructureDataset

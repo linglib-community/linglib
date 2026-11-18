@@ -37,15 +37,6 @@ distribution](##tendsto_pow_comp_real_one) from any start.
   chain's stationary distribution assumes `0 < ε`, which makes `q₁₂ + q₂₁ = s + 2 (1 - s) ε`
   positive.
 
-## Errata
-
-* The display for `q₂₁` under MAP estimation (§5.2) is `R(ε(1-α)/(ε(1-α)+(1-ε)α))(1-s)(1-ε)`, the
-  chance of moving to `L₂` on data favouring `L₁`. Since `ε < 1/2 < α` its argument is below `1/2`,
-  so it gives `q₂₁ = 0`, against Table 1. The data favouring `L₂` have chance `(1-s)ε` and move the
-  learner to `L₂` exactly when `ε < 1 - α`, which gives Table 1's
-  [`(1-s)ε`](##mapLearner_comp_real_one_two).
-* The first denominator of eq. (38) prints `εp` for `εα`.
-
 ## TODO
 
 * Eq. (8), convergence of an ergodic finite chain to its stationary distribution from any start,

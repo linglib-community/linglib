@@ -291,8 +291,8 @@ theorem not_pEntails_of_falsify {d : Formula Ω} {v w : Ω} (hv : v ∈ d.ante) 
     · rw [hμ]; simp [hwa, hvc]
   have hd := h μ this hX' hp
   rw [hμ, hμ, Set.indicator_of_mem (show v ∈ d.ante ∩ d.consᶜ from ⟨hv, hvd⟩),
-    Set.indicator_of_notMem (fun h ↦ hw h.1), Set.indicator_of_mem hv, Set.indicator_of_notMem hw]
-    at hd
+    Set.indicator_of_notMem (show w ∉ d.ante ∩ d.consᶜ from fun h ↦ hw h.1),
+    Set.indicator_of_mem hv, Set.indicator_of_notMem hw] at hd
   simp only [Pi.one_apply, mul_one, mul_zero, add_zero] at hd
   exact absurd hd (not_le.mpr (by
     rw [one_div, ← ENNReal.div_eq_inv_mul]; exact ENNReal.half_lt_self hη0 hηt))

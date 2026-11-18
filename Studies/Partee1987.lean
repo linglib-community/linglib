@@ -27,19 +27,7 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
 * The general results are stated where their objects live: the lift and `lower` in
   `Quantification/Individual.lean`, `BE` and its sections in `Quantification/Predicative.lean`,
   ∩ and ∪ in `Reference/Kind.lean`. This file keeps the paper's comparison of `A` with *exactly
-  one* and its errata.
-
-## Errata
-
-* Fact 2 is stated for homomorphisms of the Boolean structures. On an infinite domain a Boolean
-  homomorphism can [agree with `BE` on the lifts and differ
-  elsewhere](##exists_boundedLatticeHom_ne_BE); the argument from Keenan and Faltz's generation
-  result needs complete homomorphisms.
-* *Most men* is said never to contain a singleton, so that *be most men* is always empty; with
-  exactly one man [it is the singleton of that man](##BE_most), the degenerate
-  case the paper grants for *every man*.
-* *Exactly one* is said to be neither symmetric nor monotone; it is symmetric
-  (`Quantifier.Det.symm_exactly`), as every intersective determiner is.
+  one*, *most* under `BE`, and Fact 2 on an infinite domain.
 
 ## TODO
 

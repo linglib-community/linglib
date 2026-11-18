@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licenser", "only John"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "Iatridou (p.c.) example relayed by von Fintel.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licenser", "since"],
@@ -47,7 +47,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sandy is surprised that Robin ever ate kale.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -68,7 +68,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sandy regrets that Robin bought any car.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "If he has ever told a lie, he must go to confession.", "judgment": "acceptable"},
       {"form": "If you had left any later, you would have missed the plane.", "judgment": "acceptable"}
     ],
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["licenser", "superlative"],

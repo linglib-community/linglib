@@ -37,9 +37,9 @@ chart entry, so the values are PHOIBLE's.
 The transcription is Hayes's, with plain /p t k/. PHOIBLE's English inventories write the
 voiceless stops aspirated, so no inventory contains these glyphs, and membership in one is not
 stated. English /ɹ/ is the chart's `ɹ`, which is [−consonantal] and so a glide in sonority.
-The chart has no entries for diphthongs. Hayes writes a diphthong as the two vowels of its
-beginning and end, so the diphthongs /aɪ aʊ ɔɪ/ of Table 2.2 are transcribed as two segments, and
-/eɪ/, which the table lists among the vowels, is left out; /oʊ/ is the monophthong /o/.
+Hayes writes a diphthong as the two vowels of its beginning and end, so the diphthongs
+/aɪ aʊ ɔɪ/ of Table 2.2 are transcribed as two segments, and /eɪ/, which the table lists among
+the vowels, is left out; /oʊ/ is the monophthong /o/.
 
 ## References
 
@@ -197,7 +197,7 @@ def transcribe (xs : List String) : Option (List Segment) :=
 
 /-- The nasals are the complete set of [+nasal] sounds. -/
 theorem naturalClass_nasal :
-    (Segment.ofSpecs [(.nasal, true)]).naturalClass inventory = {m, n, ŋ} := by
+    naturalClass [+nasal] inventory = {m, n, ŋ} := by
   decide
 
 /-- The voiceless stops /p t k/ are a natural class. -/
@@ -220,20 +220,17 @@ theorem not_isNaturalClass_stops_liquids :
 /-- Preglottalization glottalizes a voiceless stop word-finally,
 `[−cont, −voice] → [+c.g.] / __ ]word`. -/
 def preglottalization : Rule where
-  target := Segment.ofSpecs
-    [(Phonology.Feature.continuant, false), (Phonology.Feature.voice, false)]
-  effect := .changeFeatures (Segment.ofSpecs [(Phonology.Feature.constrGlottis, true)])
+  target := [−continuant, −voice]
+  effect := .changeFeatures [+constrGlottis]
   rightContext := [.wordBoundary]
 
 /-- Postnasal /t/ deletion removes a voiceless coronal stop between a nasal and a vowel,
 `[−cont, +cor, +ant, −voice] → ∅ / [+nasal] __ [+syll]`. -/
 def postnasalDeletion : Rule where
-  target := Segment.ofSpecs
-    [(Phonology.Feature.continuant, false), (Phonology.Feature.coronal, true),
-     (Phonology.Feature.anterior, true), (Phonology.Feature.voice, false)]
+  target := [−continuant, +coronal, +anterior, −voice]
   effect := .delete
-  leftContext := [.seg (Segment.ofSpecs [(Phonology.Feature.nasal, true)])]
-  rightContext := [.seg (Segment.ofSpecs [(Phonology.Feature.syllabic, true)])]
+  leftContext := [.seg [+nasal]]
+  rightContext := [.seg [+syllabic]]
 
 /-! ### The beginnings of words -/
 

@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
@@ -63,7 +63,7 @@ def ex_1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
@@ -76,7 +76,7 @@ def ex_1e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
@@ -89,7 +89,7 @@ def ex_2a_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -102,7 +102,7 @@ def ex_2a_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -115,7 +115,7 @@ def ex_2b_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -128,7 +128,7 @@ def ex_2b_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -141,7 +141,7 @@ def ex_2c_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -154,7 +154,7 @@ def ex_2c_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -167,7 +167,7 @@ def ex_2d_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -180,7 +180,7 @@ def ex_2d_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -193,7 +193,7 @@ def ex_2e_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -206,7 +206,7 @@ def ex_2e_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -219,7 +219,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "faultless disagreement")] }
 
@@ -232,7 +232,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "indexical")] }
 
@@ -245,7 +245,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "indexical")] }
 
@@ -258,7 +258,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "indexical")] }
 
@@ -271,7 +271,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "objective")] }
 
@@ -284,7 +284,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "discretionary")] }
 
@@ -297,7 +297,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("complement", "hybrid")] }
 
@@ -310,7 +310,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "faultless disagreement")] }
 
@@ -323,7 +323,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "disagreement")] }
 
@@ -336,7 +336,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -349,7 +349,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -362,7 +362,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "hybrid"), ("commonGround", "objectiveGiven")] }
 
@@ -375,7 +375,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "hybrid"), ("commonGround", "objectiveGiven")] }
 
@@ -388,7 +388,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "hybrid"), ("commonGround", "objectiveGiven")] }
 
@@ -401,7 +401,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
@@ -414,7 +414,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "find")] }
 
@@ -427,7 +427,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "presupposed conjunct")] }
 
@@ -440,7 +440,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "presupposed conjunct")] }
 
@@ -453,7 +453,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
@@ -466,7 +466,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
@@ -479,7 +479,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "find")] }
 
@@ -492,7 +492,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "find")] }
 
@@ -505,7 +505,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -518,7 +518,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
@@ -531,7 +531,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "presupObjective"), ("commonGround", "objectiveGiven")] }
 
@@ -544,7 +544,7 @@ def ex_34_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "presupDiscretionary"), ("commonGround", "discretionaryGiven")] }
 
@@ -557,7 +557,7 @@ def ex_34_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "presupDiscretionary"), ("commonGround", "discretionaryGiven")] }
 
@@ -570,7 +570,7 @@ def ex_35_find : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "find"), ("complement", "objective")] }
 
@@ -583,7 +583,7 @@ def ex_36_find : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "find"), ("complement", "discretionary")] }
 
@@ -596,7 +596,7 @@ def ex_35_consider : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "objective")] }
 
@@ -609,7 +609,7 @@ def ex_36_consider : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "discretionary")] }
 
@@ -622,7 +622,7 @@ def ex_37_find : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "find"), ("complement", "hybrid")] }
 
@@ -635,7 +635,7 @@ def ex_37_consider : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "hybrid")] }
 
@@ -648,7 +648,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
@@ -661,7 +661,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "relevance of tastes")] }
 
@@ -674,7 +674,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "relevance of tastes")] }
 
@@ -687,7 +687,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "think")] }
 
@@ -700,7 +700,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but does not, of course, enjoy eating the cat food himself."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "think")] }
 
@@ -713,7 +713,7 @@ def ex_46a : Datum :=
     glossedTokens := []
     context := "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but does not, of course, enjoy eating the cat food himself."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
@@ -726,7 +726,7 @@ def ex_46b : Datum :=
     glossedTokens := []
     context := "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but does not, of course, enjoy eating the cat food himself."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
@@ -739,7 +739,7 @@ def fn14_1_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro")] }
 
@@ -752,7 +752,7 @@ def fn14_2_tro : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tro")] }
 
@@ -765,7 +765,7 @@ def fn14_1_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
@@ -778,7 +778,7 @@ def fn14_2_tycka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "tycka")] }
 

@@ -62,12 +62,6 @@ of position the causative/inchoative also covers are not mapped. Where neither i
 causee meets no condition, so a verb shows the causative/inchoative or the induced action
 alternation only where Levin's condition is verified.
 
-## Errata
-
-* Part One lists the verbs of modes of being involving motion among those showing the *swarm*
-  alternation (p. 54), and their class page stars the locative alternation with *The fort
-  fluttered with many flags* (p. 251). `LevinClass.Participates` reads the class pages.
-
 ## References
 
 * [levin-1993]
@@ -222,30 +216,31 @@ def schema? : DiathesisAlternation → Option Voice
     some (of .spatialPP .np_spatialPP [some (complement 0), some (complement 1), some external])
   | .conative => some (of .np (.pp (some at_)) [some external, some (complement 0)])
   | .substanceSource =>
-    some (of (.pp (some from_) (some .abl)) .np [some (complement 0), some external])
+    some (of (.pp (some from_) (some (.spatial (some .exterior) .source))) .np
+      [some (complement 0), some external])
   | .unspecifiedObject => some (leaveImplicit .np 0 (some .indef))
   | .understoodBodyPartObject => some (leaveImplicit .np 0 (some .bodyPart))
   | .understoodReflexiveObject => some reflexive
   | .understoodReciprocalObject => some reciprocal
-  | .dative => some (toDoubleObject (.np_pp (some to_) (some .dat)))
-  | .benefactive => some (toDoubleObject (.np_pp (some for_) (some .ben)))
+  | .dative => some (toDoubleObject (.np_pp (some to_) (some (.argument .R))))
+  | .benefactive => some (toDoubleObject (.np_pp (some for_) (some .beneficiary)))
   | .locative => some <|
       of .np_spatialPP (.np_pp (some with_))
         [some external, some (complement 1), some (complement 0)]
   | .bodyPartPossessorAscension => some <|
-      of .np (.np_pp (some on) (some .sup))
+      of .np (.np_pp (some on) (some (.spatial (some .surface) .place)))
         [some external, some (complement 1), some (complement 0)]
   | .swarm => some (of .spatialPP (.pp (some with_)) [some (complement 0), some external])
   | .materialProduct => some <|
-      of (.np_pp (some out)) (.np_pp (some into) (some .transl))
+      of (.np_pp (some out)) (.np_pp (some into) (some .translative))
         [some external, some (complement 1), some (complement 0)]
   | .totalTransformation => some <|
-      of (.np_pp (some into) (some .transl))
+      of (.np_pp (some into) (some .translative))
         ⟨some .nominal,
-          [.nominal, .adposition (some from_), .adposition (some into) (some .transl)]⟩
+          [.nominal, .adposition (some from_), .adposition (some into) (some .translative)]⟩
         [some external, some (complement 0), some (complement 2), some (complement 1)]
   | .instrumentSubject => some
-      (of (.np_pp (some with_) (some .inst)) .np [none, some (complement 0), some external])
+      (of (.np_pp (some with_) (some .instrumental)) .np [none, some (complement 0), some external])
   | _ => none
 where
   /-- The dative and benefactive alternations, in which the phrase of `fr` becomes the first

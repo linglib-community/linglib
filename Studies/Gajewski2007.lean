@@ -1,14 +1,9 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Presupposition.Strawson
-public import Linglib.Semantics.Attitudes.Preference.BestWorlds
-public import Linglib.Semantics.Conditionals.Horizon
-public import Linglib.Semantics.Degree.Superlative
-public import Linglib.Semantics.Focus.Particles
-public import Linglib.Semantics.Tense.Since
 public import Linglib.Data.Examples.Gajewski2007
 public import Linglib.Data.Examples.Readers
 
@@ -17,32 +12,42 @@ public import Linglib.Data.Examples.Readers
 
 Gajewski gives a presuppositional account of neg-raising and argues for it from the licensing of
 strict negative polarity items. Following Bartsch, a neg-raising predicate such as *think*
-presupposes that its subject is settled about the complement, so its negation entails the negated
-complement: *Bill doesn't think Mary is here* entails *Bill thinks Mary is not here*. Strict NPIs
-such as punctual *until* and *in years* need an anti-additive environment, as Zwarts proposes, and
-the presupposition makes a negated neg-raising predicate anti-additive where a negated universal is
-not. Since the presupposition of a complement projects into the subject's beliefs whatever the
-attitude, the negation lowers through *think* into the complement of *want* but not through *want*
-into the complement of *think*, the asymmetry of stacked neg-raising predicates that Horn reports.
+presupposes that its subject is settled about the complement, so its negation
+[is the predicate over the negated complement](##NegRaising.posExt_negation). Strict NPIs such as
+punctual *until* and *in years* need an anti-additive environment, as Zwarts proposes, and the
+presupposition makes a negated neg-raising predicate
+[anti-additive](##NegRaising.isAntiAdditive_posExt_negation) where a negated universal is not.
+Since the presupposition of a complement projects into the subject's beliefs whatever the
+attitude, the negation lowers through *think* into the complement of *want* [but not through
+*want* into the complement of *think*](##Gajewski2007.not_isAntiAdditive_posExt_notStack), the
+asymmetry of stacked neg-raising predicates that Horn reports. With each environment read as a
+licenser of the library's licensing theory, the theory [admits the strict NPI of each example
+exactly where the paper accepts it](##Gajewski2007.judgments_predicted), superlatives aside.
 
 ## Implementation notes
 
-* `nrp` is the neg-raising predicate of Appendix 2, over a modal base and a heritage base, and
-  `Env` lists the environments of the paper's strict NPIs.
-* Propositions are sets of worlds and attitudes relational boxes (`ModalLogic.Box`). An
-  environment is the truth set of its sentence, presupposition included, as a function of the
-  proposition in the NPI's clause, and its anti-additivity is `IsAntiAdditive` of
-  that function: standard entailment, which Appendix 1 argues is the relevant notion.
-* Sentences are trivalent propositions `W → Trivalent`. The excluded middle of `nrp` is stated
-  with the complement's full meaning, `φ u ≠ .true` rather than `φ u = .false`, as in Appendix 2,
-  so that a complement's own presupposition is cancelled inside it and projects only through the
-  heritage base.
+* The neg-raising predicate of Appendix 2 is the library's `NegRaising.box`, over a modal base
+  and the worlds into which the complement's presupposition projects. Its negation over a
+  presuppositionless complement is `NegRaising.negation`, the licenser of
+  `LicensingContext.superordinateNegation`.
+* An environment is a sentence as a function of the proposition in the NPI's clause, and its
+  anti-additivity is `IsAntiAdditive` of the truth set (`Trivalent.posExt`): standard entailment,
+  which Appendix 1 argues is the relevant notion. This is how `PolarityItem.Licenser.Holds` reads a
+  presupposing licenser, so each environment is a `Licenser` and licensing is the library's
+  `Licenser.Admits`.
+* The schematic environments NOT(SOME(_)) and NOT(EVERY(_)) are the operators the library gives
+  *nobody* and *doubt*, and `Environment.licenser` cites those. *Only DP*, adversatives,
+  conditional antecedents and superlatives are the library's named contexts.
 * The stressed reading without neg-raising cancels the presupposition with Beaver and Krahmer's
   assertion operator, so it negates `fun w ↦ Trivalent.ofProp (p w = .true)`.
+* The model (7) of Appendix 2 lists no belief worlds for the higher subject. The frame here adds
+  one, at which the lower subject is opinionated, so that the projected presupposition is not
+  vacuous.
 * *No one thinks* is the negated Weak Kleene existential `Trivalent.existsWeak` over the subtype
   of people, which projects the excluded middle universally, and negated *know* is the substrate's
   two-dimensional `ConventionalImplicature.TwoDim.negFactive` over a presuppositionless
   complement.
+* The complement in the NPI's clause is presuppositionless, a set of worlds.
 
 ## TODO
 
@@ -69,139 +74,92 @@ into the complement of *think*, the asymmetry of stacked neg-raising predicates 
 
 namespace Gajewski2007
 
-open ModalLogic Presupposition Desire.BestWorlds ConventionalImplicature
-open SetRel
+open ModalLogic Presupposition ConventionalImplicature NaturalLogic PolarityItem NegRaising SetRel
 
 variable {W : Type*}
 
-/-! ### Neg-raising predicates ((59)–(61), Appendix 2) -/
+variable {R H : SetRel W W} {w : W}
 
-open Classical in
-/-- A neg-raising predicate over the modal base `R` ((59), Appendix 2 (1)–(2)) presupposes that
-the complement is settled throughout the modal base and that the complement's presupposition holds
-throughout the heritage base `H`, and asserts the complement throughout the modal base. *Think*
-has its beliefs as both bases, *want* its desires as modal base and its beliefs as heritage
-base. -/
-noncomputable def nrp (R H : SetRel W W) (φ : W → Trivalent) : W → Trivalent :=
-  Trivalent.condEvent
-    (fun w ↦ □[H] (φ · ≠ .undefined) w ∧ (□[R] (φ · = .true) w ∨ □[R] (φ · ≠ .true) w))
-    (□[R] (φ · = .true))
-
-variable {R H : SetRel W W} {φ : W → Trivalent} {w : W}
-
-/-- A neg-raising predicate is false exactly when the complement's presupposition holds throughout
-the heritage base and the complement fails throughout the nonempty modal base ((60)–(61)). -/
-theorem nrp_eq_false_iff :
-    nrp R H φ w = .false ↔ □[H] (φ · ≠ .undefined) w ∧ (∃ u, w ~[R] u) ∧ □[R] (φ · ≠ .true) w := by
-  simp only [nrp, Trivalent.condEvent_eq_false_iff]
-  refine ⟨fun ⟨⟨hH, hEM⟩, hna⟩ ↦ ⟨hH, ?_, hEM.resolve_left hna⟩,
-    fun ⟨hH, ⟨u, hu⟩, hbox⟩ ↦ ⟨⟨hH, .inr hbox⟩, fun hall ↦ hbox u hu (hall u hu)⟩⟩
-  by_contra hne
-  push Not at hne
-  exact hna fun u hu ↦ absurd hu (hne u)
-
-/-- When the complement's presupposition projects into the predicate's own modal base, as with
-*think*, the negation passes through the predicate onto the complement (§3.3.1). -/
-theorem nrp_self_eq_false_iff :
-    nrp R R φ w = .false ↔ (∃ u, w ~[R] u) ∧ □[R] (φ · = .false) w := by
-  rw [nrp_eq_false_iff]
-  refine ⟨fun ⟨hH, hne, hb⟩ ↦ ⟨hne, fun u hu ↦ ?_⟩,
-    fun ⟨hne, hb⟩ ↦ ⟨fun u hu ↦ by simp [hb u hu], hne, fun u hu ↦ by simp [hb u hu]⟩⟩
-  have := hH u hu
-  have := hb u hu
-  cases h : φ u <;> simp_all
-
-/-! ### Anti-additivity ((50)–(56)) -/
+/-! ### The environments EVERY(NOT(_)) and NOT(EVERY(_)) ((48)–(56)) -/
 
 /-- The EVERY of (92) and (110) is universal quantification with existential import over the
 successors of a world, as a function on propositions. -/
-def every (R : SetRel W W) (s : Set W) : Set W := {w | (∃ u, w ~[R] u) ∧ □[R] (· ∈ s) w}
+def every (R : SetRel W W) (s : Set W) : Set W := R.dom ∩ R.core s
+
+@[simp] theorem mem_every {s : Set W} :
+    w ∈ every R s ↔ (∃ u, w ~[R] u) ∧ ∀ ⦃u⦄, w ~[R] u → u ∈ s := .rfl
 
 theorem every_inter (R : SetRel W W) (p q : Set W) : every R (p ∩ q) = every R p ∩ every R q := by
-  ext w
-  simp only [every, Set.mem_ofPred_eq, Set.mem_inter_iff, box_and]
-  tauto
+  rw [every, every, every, core_inter, Set.inter_inter_distrib_left]
+
+@[simp] theorem every_empty (R : SetRel W W) : every R ∅ = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, hu⟩, h⟩ ↦ h hu
 
 -- (92a)
 theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W} (hg : IsAntiAdditive g) :
     IsAntiAdditive (every R ∘ g) :=
   hg.map_inf_comp (every_inter R)
 
-open Classical in
-/-- The environment of a negated neg-raising predicate. -/
-def negNR (R H : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt (nrp R H fun u ↦ Trivalent.ofProp (u ∈ p))ᶜ
-
--- (61)
-theorem negNR_eq (R H : SetRel W W) (p : Set W) : negNR R H p = every R pᶜ := by
-  ext w
-  simp [negNR, nrp_eq_false_iff, every, Box]
-
--- (1)
-theorem negNR_subset (R H : SetRel W W) (p : Set W) : negNR R H p ⊆ {w | □[R] (· ∉ p) w} :=
-  fun _ hw ↦ ((negNR_eq R H p).subset hw).2
-
-/-- A negated neg-raising predicate is anti-additive ((62)–(64)). -/
-theorem isAntiAdditive_negNR (R H : SetRel W W) : IsAntiAdditive (negNR R H) := by
-  rw [show negNR R H = every R ∘ compl from funext (negNR_eq R H)]
-  exact isAntiAdditive_every isAntiAdditive_compl
-
-/-- The environment of a negated universal without neg-raising, as in *didn't claim*, *not every*,
-*not required* and *not certain*. -/
-def negUniversal (R : SetRel W W) (p : Set W) : Set W := {w | ¬ □[R] (· ∈ p) w}
-
 -- (2)
-theorem not_negUniversal_subset :
-    ¬ ∀ (W : Type) (R : SetRel W W) (p : Set W), negUniversal R p ⊆ {w | □[R] (· ∉ p) w} :=
-  fun h ↦ h Bool .univ {true}
-    (show true ∈ negUniversal .univ {true} from fun hb ↦ by simpa using hb false trivial)
-    true trivial rfl
+theorem not_compl_core_subset :
+    ¬ ∀ (W : Type) (R : SetRel W W) (p : Set W), (R.core p)ᶜ ⊆ R.core pᶜ :=
+  fun h ↦ h Bool .univ {true} (fun hb ↦ by simpa using @hb false trivial)
+    (Set.mem_univ (true, true)) rfl
 
-/-- A negated universal is not anti-additive ((51b), (53), (65)). -/
-theorem not_isAntiAdditive_negUniversal :
-    ¬ IsAntiAdditive (negUniversal (.univ : SetRel Bool Bool)) := by
+-- (51b), (53), (65)
+theorem not_isAntiAdditive_compl_core :
+    ¬ IsAntiAdditive fun p : Set Bool ↦ (SetRel.core (.univ : SetRel Bool Bool) p)ᶜ := by
   rw [isAntiAdditive_iff_mem]
   intro h
-  refine (h {true} {false} true).2 ⟨fun hb ↦ by simpa using hb false trivial,
-    fun hb ↦ by simpa using hb true trivial⟩ fun v _ ↦ ?_
+  refine (h {true} {false} true).2 ⟨fun hb ↦ by simpa using @hb false trivial,
+    fun hb ↦ by simpa using @hb true trivial⟩ fun v _ ↦ ?_
   cases v <;> simp
 
-/-- The environment of a negated existential, as in *not a single*, *not allowed* and *can't*. -/
-def negExistential (R : SetRel W W) (p : Set W) : Set W := {w | ¬ ◇[R] (· ∈ p) w}
+/-! ### Negated neg-raising predicates ((57)–(65))
 
--- (51a), (52), (71)
-theorem isAntiAdditive_negExistential (R : SetRel W W) :
-    IsAntiAdditive (negExistential R) :=
-  isAntiAdditive_compl.comp_map_sup (g := fun p : Set W ↦ {w | ◇[R] (· ∈ p) w})
-    fun _ _ ↦ diamond_sup R
+The neg-raising predicate (59) is `NegRaising.box`. Its negation (60) is true exactly where
+the predicate holds of the negated complement (61), `NegRaising.posExt_negation`, which is
+EVERY(NOT(_)), and so it is anti-additive ((62)–(64)),
+`NegRaising.isAntiAdditive_posExt_negation`. -/
+
+-- (61)
+theorem posExt_negation_eq_every (R H : SetRel W W) (p : Set W) :
+    Trivalent.posExt (negation R H p) = every R pᶜ :=
+  posExt_negation R H p
+
+-- (1)
+theorem posExt_negation_subset (R H : SetRel W W) (p : Set W) :
+    Trivalent.posExt (negation R H p) ⊆ R.core pᶜ :=
+  (posExt_negation R H p).trans_subset Set.inter_subset_right
 
 open Classical in
-/-- The environment of a neg-raising predicate under stressed negation, where the assertion
-operator cancels the excluded middle (fn. 7 (ii)). -/
-def negNRStressed (R : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt fun w ↦
-    (Trivalent.ofProp (nrp R R (fun u ↦ Trivalent.ofProp (u ∈ p)) w = .true))ᶜ
+/-- A neg-raising predicate under stressed negation, where the assertion operator cancels the
+excluded middle (fn. 7 (ii)). -/
+noncomputable def notNRStressed (R : SetRel W W) (p : Set W) : W → Trivalent := fun w ↦
+  (Trivalent.ofProp (box R R (fun u ↦ Trivalent.ofProp (u ∈ p)) w = .true))ᶜ
 
 -- §2.1.3
-theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := by
-  ext p w
-  simp only [negNRStressed, negUniversal, nrp, Trivalent.mem_posExt, Trivalent.compl_eq_true_iff,
-    Trivalent.ofProp_eq_false_iff, Trivalent.condEvent_eq_true_iff, Set.mem_ofPred_eq,
+theorem posExt_notNRStressed (R : SetRel W W) (p : Set W) :
+    Trivalent.posExt (notNRStressed R p) = (R.core p)ᶜ := by
+  ext w
+  simp only [notNRStressed, box, Trivalent.mem_posExt, Trivalent.compl_eq_true_iff,
+    Trivalent.ofProp_eq_false_iff, Trivalent.condEvent_eq_true_iff,
     Trivalent.ofProp_eq_true_iff, ne_eq, Trivalent.ofProp_ne_undefined, not_false_eq_true, Box,
-    implies_true, true_and, not_and]
+    implies_true, true_and, not_and, Set.mem_compl_iff, mem_core]
   exact ⟨fun h hall ↦ h (.inl hall) hall, fun h _ ↦ h⟩
 
-/-- The environment of negated *know*, a factive universal without neg-raising, built from the
-substrate's negated factive. -/
-def negKnow (R : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt (TwoDim.negFactive (pure (· ∈ p) : TwoDim W (W → Prop)) (Box R)).toTrivalent
+/-- Negated *know*, a factive universal without neg-raising, built from the substrate's negated
+factive. -/
+noncomputable def notKnow (R : SetRel W W) (p : Set W) : W → Trivalent :=
+  (TwoDim.negFactive (pure (· ∈ p) : TwoDim W (W → Prop)) (Box R)).toTrivalent
 
 -- (58b)
-theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .univ) := by
+theorem not_isAntiAdditive_posExt_notKnow :
+    ¬ IsAntiAdditive fun p : Set (Fin 3) ↦ Trivalent.posExt (notKnow .univ p) := by
   rw [isAntiAdditive_iff_mem]
   intro h
   have := (h {0, 1} {0, 2} 0).2
-  simp only [negKnow, Trivalent.mem_posExt, TwoDim.toTrivalent_eq_true_iff,
+  simp only [notKnow, Trivalent.mem_posExt, TwoDim.toTrivalent_eq_true_iff,
     TwoDim.negFactive_atIssue, TwoDim.negFactive_notAtIssue,
     TwoDim.pure_atIssue, TwoDim.pure_notAtIssue, Pi.top_apply, Prop.top_eq_true, true_and, Box,
     Set.mem_insert_iff,
@@ -214,134 +172,149 @@ theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .un
 open Classical in
 /-- *No one thinks p* (83) has the excluded middle projecting universally from the scope of the
 quantifier ([heim-1983]). -/
-def noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt fun w ↦
-    (Trivalent.existsWeak fun x : O ↦ nrp (B x) (B x) (fun u ↦ Trivalent.ofProp (u ∈ p)) w)ᶜ
+noncomputable def noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
+    W → Trivalent := fun w ↦
+  (Trivalent.existsWeak fun x : O ↦ box (B x) (B x) (fun u ↦ Trivalent.ofProp (u ∈ p)) w)ᶜ
 
 -- (87), (89)
-theorem noOneNR_eq {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
-    noOneNR O B p = {w | ∀ x ∈ O, w ∈ every (B x) pᶜ} := by
+theorem posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
+    Trivalent.posExt (noOneNR O B p) = ⋂ x ∈ O, every (B x) pᶜ := by
   ext w
-  simp [noOneNR, nrp_eq_false_iff, every, Box]
+  simp [noOneNR, box_eq_false_iff, Box]
 
-/-- *No one thinks* is anti-additive (90). -/
-theorem isAntiAdditive_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
-    IsAntiAdditive (noOneNR O B) := by
-  rw [show noOneNR O B = fun p ↦ ⋂ x ∈ O, every (B x) pᶜ from
-    funext fun p ↦ by rw [noOneNR_eq]; ext; simp]
+-- (90)
+theorem isAntiAdditive_posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
+    IsAntiAdditive fun p ↦ Trivalent.posExt (noOneNR O B p) := by
+  rw [show (fun p ↦ Trivalent.posExt (noOneNR O B p)) = fun p ↦ ⋂ x ∈ O, every (B x) pᶜ from
+    funext (posExt_noOneNR O B)]
   exact isAntiAdditive_iInf fun _ ↦ isAntiAdditive_iInf fun _ ↦
     isAntiAdditive_every isAntiAdditive_compl
 
-/-! ### Stacked neg-raising predicates (§3.2–3.3) -/
+/-! ### Stacked neg-raising predicates (§3.2–3.3, Appendix 2) -/
 
 open Classical in
-/-- The environment of a negated neg-raising predicate over another. -/
-def negStack (R₁ H₁ R₂ H₂ : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt ((nrp R₁ H₁ (nrp R₂ H₂ fun u ↦ Trivalent.ofProp (u ∈ p)))ᶜ)
+/-- Negation over a neg-raising predicate over another. -/
+noncomputable def notStack (R₁ H₁ R₂ H₂ : SetRel W W) (p : Set W) : W → Trivalent :=
+  (box R₁ H₁ (box R₂ H₂ fun u ↦ Trivalent.ofProp (u ∈ p)))ᶜ
 
 open Classical in
--- (107), (110)
-theorem negStack_self_eq (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
-    negStack R₁ R₁ R₂ H₂ p = every R₁ (every R₂ pᶜ) := by
+-- (107), (110), Appendix 2, (9), (13)
+theorem posExt_notStack_self (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
+    Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p) = every R₁ (every R₂ pᶜ) := by
   ext w
-  have h u : nrp R₂ H₂ (fun u ↦ Trivalent.ofProp (u ∈ p)) u = .false ↔ u ∈ every R₂ pᶜ := by
-    rw [← negNR_eq R₂ H₂]
-    simp [negNR]
-  simp only [negStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
-    nrp_self_eq_false_iff, h, every, Box, Set.mem_ofPred_eq]
+  have h u : box R₂ H₂ (fun u ↦ Trivalent.ofProp (u ∈ p)) u = .false ↔ u ∈ every R₂ pᶜ := by
+    rw [← posExt_negation_eq_every R₂ H₂]
+    simp [negation]
+  simp only [notStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
+    box_self_eq_false_iff, h, mem_every, Box]
 
 -- (95)
-theorem negStack_self_subset (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
-    negStack R₁ R₁ R₂ H₂ p ⊆ {w | □[R₁] (□[R₂] (· ∉ p)) w} := fun _ hw ↦
-  fun u hu ↦ (((negStack_self_eq R₁ R₂ H₂ p).subset hw).2 u hu).2
+theorem posExt_notStack_self_subset (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
+    Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p) ⊆ R₁.core (R₂.core pᶜ) :=
+  (posExt_notStack_self R₁ R₂ H₂ p).trans_subset fun _ hw _ hu ↦ (hw.2 hu).2
 
-/-- *Not think want* is anti-additive (97a). -/
-theorem isAntiAdditive_negStack_self (R₁ R₂ H₂ : SetRel W W) :
-    IsAntiAdditive (negStack R₁ R₁ R₂ H₂) := by
-  rw [show negStack R₁ R₁ R₂ H₂ = every R₁ ∘ (every R₂ ∘ compl) from
-    funext (negStack_self_eq R₁ R₂ H₂)]
+-- (97a)
+theorem isAntiAdditive_posExt_notStack_self (R₁ R₂ H₂ : SetRel W W) :
+    IsAntiAdditive fun p ↦ Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p) := by
+  rw [show (fun p ↦ Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p)) = every R₁ ∘ (every R₂ ∘ compl) from
+    funext (posExt_notStack_self R₁ R₂ H₂)]
   exact isAntiAdditive_every (isAntiAdditive_every isAntiAdditive_compl)
 
--- (111), (113)
-theorem negStack_eq (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
-    negStack R₁ H₁ R₂ R₂ p = {w | (∀ u, w ~[H₁] u → □[R₂] (· ∈ p) u ∨ □[R₂] (· ∉ p) u) ∧
-      (∃ u, w ~[R₁] u) ∧ □[R₁] (fun u ↦ ¬ □[R₂] (· ∈ p) u) w} := by
+-- (111), (113), Appendix 2, (3)
+theorem posExt_notStack (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
+    Trivalent.posExt (notStack R₁ H₁ R₂ R₂ p) =
+      H₁.core (R₂.core p ∪ R₂.core pᶜ) ∩ every R₁ (R₂.core p)ᶜ := by
   ext w
-  simp only [negStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
-    nrp_eq_false_iff, Set.mem_ofPred_eq]
-  simp only [ne_eq, nrp, Trivalent.condEvent_eq_undefined_iff, Trivalent.condEvent_eq_true_iff,
+  simp only [notStack, Trivalent.mem_posExt, Pi.compl_apply, Trivalent.compl_eq_true_iff,
+    box_eq_false_iff, Set.mem_inter_iff, mem_every, mem_core, Set.mem_union, Set.mem_compl_iff]
+  simp only [ne_eq, box, Trivalent.condEvent_eq_undefined_iff, Trivalent.condEvent_eq_true_iff,
     Trivalent.ofProp_eq_true_iff, Trivalent.ofProp_ne_undefined, not_false_eq_true, Box,
     implies_true, true_and, not_not, not_and]
   exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun u _ ↦
     ⟨fun h hall ↦ h (.inl hall) hall, fun h _ ↦ h⟩
 
-/-! A frame for *John doesn't want Fred to think*: John's desire world `0` has Fred considering the
-worlds `2` and `3` possible, and at John's belief world `1` Fred is settled, considering only
-`4`. -/
+/-! The model (7) of Appendix 2 for *c doesn't want a to believe that p*. The evaluation world is
+`0`, c's desire worlds are `1` and `2`, a believes `3` and `4` possible at `1` and `5` and `6` at
+`2`, and `p` holds at `3` and `5`, `q` at `4` and `6`. World `7` is a belief world of c at which a
+is opinionated. -/
 
-/-- John's desire alternatives in the frame. -/
-abbrev desJohn : SetRel (Fin 5) (Fin 5) := {p | p.1 = 0 ∧ p.2 = 0}
+/-- c's desire alternatives (7a). -/
+abbrev desC : SetRel (Fin 8) (Fin 8) := {x | x.1 = 0 ∧ (x.2 = 1 ∨ x.2 = 2)}
 
-/-- John's belief alternatives in the frame. -/
-abbrev belJohn : SetRel (Fin 5) (Fin 5) := {p | p.1 = 0 ∧ p.2 = 1}
+/-- c's belief alternatives. -/
+abbrev belC : SetRel (Fin 8) (Fin 8) := {x | x.1 = 0 ∧ x.2 = 7}
 
-/-- Fred's belief alternatives in the frame. -/
-abbrev belFred : SetRel (Fin 5) (Fin 5) :=
-  {p | (p.1 = 0 ∧ (p.2 = 2 ∨ p.2 = 3)) ∨ (p.1 = 1 ∧ p.2 = 4)}
+/-- a's belief alternatives (7b). -/
+abbrev belA : SetRel (Fin 8) (Fin 8) :=
+  {x | (x.1 = 1 ∧ (x.2 = 3 ∨ x.2 = 4)) ∨ (x.1 = 2 ∧ (x.2 = 5 ∨ x.2 = 6)) ∨ (x.1 = 7 ∧ x.2 = 7)}
 
-private theorem belFred_settled (s : Set (Fin 5)) :
-    ∀ u, 0 ~[belJohn] u → □[belFred] (· ∈ s) u ∨ □[belFred] (· ∉ s) u := by
-  rintro u ⟨-, rfl⟩
-  by_cases h : (4 : Fin 5) ∈ s
-  · refine .inl fun v hv ↦ ?_
-    rcases hv with ⟨h', -⟩ | ⟨-, rfl⟩
-    exacts [by simp at h', h]
-  · refine .inr fun v hv ↦ ?_
-    rcases hv with ⟨h', -⟩ | ⟨-, rfl⟩
-    exacts [by simp at h', h]
-
-private theorem belFred_not_box {s : Set (Fin 5)} {x : Fin 5} (hx : x = 2 ∨ x = 3) (hxs : x ∉ s) :
-    □[desJohn] (fun u ↦ ¬ □[belFred] (· ∈ s) u) 0 := by
-  rintro u ⟨-, rfl⟩ hall
-  exact hxs (hall x (.inl ⟨rfl, hx⟩))
+-- In each of c's desire worlds a has a belief world outside the proposition.
+private theorem mem_posExt_notStack_iff (s : Set (Fin 8)) :
+    0 ∈ Trivalent.posExt (notStack desC belC belA belA s) ↔
+      (3 ∉ s ∨ 4 ∉ s) ∧ (5 ∉ s ∨ 6 ∉ s) := by
+  rw [posExt_notStack]
+  simp [em]
 
 -- (96), (114)
-theorem not_negStack_subset :
-    ¬ negStack desJohn belJohn belFred belFred {2} ⊆
-      {w | □[desJohn] (□[belFred] (· ∉ ({2} : Set (Fin 5)))) w} :=
-  fun h ↦ h ((negStack_eq _ _ _ _).superset ⟨belFred_settled _, ⟨0, rfl, rfl⟩,
-    belFred_not_box (.inr rfl) (by simp)⟩) 0 ⟨rfl, rfl⟩ 2 (.inl ⟨rfl, .inl rfl⟩) rfl
+theorem not_posExt_notStack_subset :
+    ¬ Trivalent.posExt (notStack desC belC belA belA {3, 5}) ⊆ desC.core (belA.core {3, 5}ᶜ) :=
+  fun h ↦ h ((mem_posExt_notStack_iff _).2 ⟨.inr (by simp), .inr (by simp)⟩)
+    (show (0, 1) ∈ desC from ⟨rfl, .inl rfl⟩) (show (1, 3) ∈ belA from .inl ⟨rfl, .inl rfl⟩)
+    (Set.mem_insert 3 _)
 
-/-- *Not want think* is not anti-additive (97b). -/
-theorem not_isAntiAdditive_negStack :
-    ¬ IsAntiAdditive (negStack desJohn belJohn belFred belFred) := by
+/-- *Not want think* is not anti-additive ((97b), Appendix 2 (6)–(8)): c wants a not to believe
+`p` and not to believe `q`, while a believes `p ∨ q` in each of c's desire worlds. -/
+theorem not_isAntiAdditive_posExt_notStack :
+    ¬ IsAntiAdditive fun p ↦ Trivalent.posExt (notStack desC belC belA belA p) := by
   rw [isAntiAdditive_iff_mem]
   intro h
-  obtain ⟨-, -, hna⟩ := (negStack_eq _ _ _ _).subset ((h {2, 4} {3, 4} 0).2
-    ⟨(negStack_eq _ _ _ _).superset ⟨belFred_settled _, ⟨0, rfl, rfl⟩,
-      belFred_not_box (.inr rfl) (by simp)⟩,
-    (negStack_eq _ _ _ _).superset ⟨belFred_settled _, ⟨0, rfl, rfl⟩,
-      belFred_not_box (.inl rfl) (by simp)⟩⟩)
-  refine hna 0 ⟨rfl, rfl⟩ fun v hv ↦ ?_
-  rcases hv with ⟨-, rfl | rfl⟩ | ⟨h', -⟩
-  · simp
-  · simp
-  · simp at h'
+  have := (mem_posExt_notStack_iff _).1 ((h {3, 5} {4, 6} 0).2
+    ⟨(mem_posExt_notStack_iff _).2 ⟨.inr (by simp), .inr (by simp)⟩,
+      (mem_posExt_notStack_iff _).2 ⟨.inl (by simp), .inl (by simp)⟩⟩)
+  simp at this
 
-/-! ### The environments of the paper's strict NPIs -/
+/-! ### The environments as licensers
+
+Each environment of the paper is a licenser of the library's licensing theory. A presupposing
+licenser holds a strength of negation on its truth sets, which is the standard entailment that
+Appendix 1 argues for. -/
+
+/-- The beliefs of each of a nonempty set of people. -/
+structure People where
+  /-- The worlds. -/
+  W : Type
+  /-- The individuals. -/
+  E : Type
+  /-- The people. -/
+  O : Set E
+  /-- The belief alternatives of each individual. -/
+  B : E → SetRel W W
+  nonempty : O.Nonempty
+
+/-- Two stacked neg-raising predicates, of which one is doxastic and the other projects the
+presupposition of its complement into its subject's beliefs. -/
+structure Stack where
+  /-- The worlds. -/
+  W : Type
+  /-- The modal base of the higher predicate. -/
+  upper : SetRel W W
+  /-- The modal base of the lower predicate. -/
+  lower : SetRel W W
+  /-- The belief alternatives of the subject of the predicate that is not doxastic. -/
+  beliefs : SetRel W W
 
 /-- The environments in which the paper places a strict NPI. -/
-inductive Env
+inductive Environment
+  /-- A context that the library names: sentential negation (12b), a negated neg-raising predicate
+  as in *doesn't think* (15), *only DP* (123), an adversative (126), a conditional antecedent
+  (127), the relative clause of a superlative (132). -/
+  | named (c : LicensingContext)
   /-- No licenser, (12a), (13a). -/
   | positive
-  /-- Sentential negation, (12b), (13b). -/
-  | negation
-  /-- A negated existential, as in *not a single*, *not allowed*, *can't* and *not possible*. -/
+  /-- NOT(SOME(_)), as in *not a single*, *not allowed*, *can't* and *not possible*. -/
   | notSome
-  /-- A negated universal, as in *not every*, *didn't claim*, *not required* and *not certain*. -/
+  /-- NOT(EVERY(_)), as in *not every*, *didn't claim*, *not required* and *not certain*. -/
   | notEvery
-  /-- A negated neg-raising predicate, as in *doesn't think* and *doesn't believe*. -/
-  | notThink
   /-- A neg-raising predicate under stressed negation, fn. 7 (ii). -/
   | notThinkStressed
   /-- Negated *know*, (58b). -/
@@ -353,137 +326,148 @@ inductive Env
   /-- A negated bouletic or deontic neg-raising predicate over a doxastic one, as in *don't want …
   believe* and *shouldn't think*. -/
   | notWantThink
-  /-- *Only DP*, (123). -/
-  | only
-  /-- An adversative attitude, (126). -/
-  | adversative
-  /-- A conditional antecedent, (127). -/
-  | conditional
-  /-- The relative clause of a superlative, (132). -/
-  | superlative
   deriving DecidableEq, Repr
 
-/-- An environment is anti-additive in every frame. -/
-def Env.AntiAdditive : Env → Prop
-  | .positive => ∀ W : Type, IsAntiAdditive (id : Set W → Set W)
-  | .negation => ∀ W : Type, IsAntiAdditive (compl : Set W → Set W)
-  | .notSome => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negExistential R)
-  | .notEvery => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negUniversal R)
-  | .notThink => ∀ (W : Type) (R H : SetRel W W), IsAntiAdditive (negNR R H)
-  | .notThinkStressed => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negNRStressed R)
-  | .notKnow => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negKnow R)
-  | .noOneThinks =>
-      ∀ (W E : Type) (O : Set E) (B : E → SetRel W W), IsAntiAdditive (noOneNR O B)
-  | .notThinkWant => ∀ (W : Type) (B R H : SetRel W W), IsAntiAdditive (negStack B B R H)
-  | .notWantThink => ∀ (W : Type) (D B R : SetRel W W), IsAntiAdditive (negStack D B R R)
-  | .only => ∀ (W ι : Type) (x : ι),
-      IsAntiAdditive fun P : ι → Set W ↦ Trivalent.posExt (Focus.only (· = ·) Set.univ P x)
-  | .adversative =>
-      ∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
-        IsAntiAdditive fun p ↦ Trivalent.posExt (regret dox base g p)
-  | .conditional => ∀ (W : Type) (horizon : W → Set W) (q : Set W),
-      IsAntiAdditive fun p ↦ Trivalent.posExt (Conditional.horizonCounterfactual horizon p q)
-  | .superlative => ∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-      IsAntiAdditive fun C : W → Set ι ↦ Trivalent.posExt (trivalentSuperlative μ C a)
+open LicensingContext in
+/-- The licenser of an environment. NOT(SOME(_)) is the operator the library gives *nobody* and
+NOT(EVERY(_)) the one it gives *doubt*, over individuals or accessible worlds alike (48). -/
+noncomputable def Environment.licenser : Environment → Licenser
+  | .named c => c.licenser
+  | .positive => .ofOperator (id : Prop → Prop)
+  | .notSome => nobody.licenser
+  | .notEvery => doubtVerb.licenser
+  | .notThinkStressed => .strawson ⟨Frame, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notNRStressed p.R⟩
+  | .notKnow => .strawson ⟨Frame, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ Gajewski2007.notKnow p.R⟩
+  | .noOneThinks => .strawson ⟨People, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ noOneNR p.O p.B⟩
+  | .notThinkWant => .strawson
+      ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.upper p.lower p.beliefs⟩
+  | .notWantThink => .strawson
+      ⟨Stack, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ notStack p.upper p.beliefs p.lower p.lower⟩
 
-private theorem not_isAntiAdditive_id : ¬ IsAntiAdditive (id : Set Bool → Set Bool) := by
-  rw [isAntiAdditive_iff_mem]
-  intro h
-  exact absurd ((h {true} {false} true).1 (.inl rfl)).2 (by simp)
+theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAdditive :=
+  Licenser.carries_strawson_antiAdditive (fun p ↦ isAntiAdditive_posExt_noOneNR p.O p.B)
+    (fun p ↦ by
+      obtain ⟨x, hx⟩ := p.nonempty
+      exact Set.eq_empty_of_forall_notMem fun w hw ↦ by
+        rw [posExt_noOneNR] at hw
+        simpa using Set.mem_iInter₂.1 hw x hx)
+    ⟨⟨Unit, Unit, .univ, fun _ ↦ .univ, ⟨(), trivial⟩⟩,
+      not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
+        (by simp [noOneNR, box_eq_false_iff, Box]) (by simp [noOneNR, box, Box])⟩
 
-theorem Env.antiAdditive_iff (e : Env) :
-    e.AntiAdditive ↔ e ∈ [.negation, .notSome, .notThink, .noOneThinks, .notThinkWant] := by
-  cases e with
-  | positive => exact iff_of_false (fun h ↦ not_isAntiAdditive_id (h Bool)) (by decide)
-  | negation => exact iff_of_true (fun _ ↦ isAntiAdditive_compl) (by decide)
-  | notSome => exact iff_of_true (fun _ ↦ isAntiAdditive_negExistential) (by decide)
-  | notEvery => exact iff_of_false (fun h ↦ not_isAntiAdditive_negUniversal (h _ _)) (by decide)
-  | notThink => exact iff_of_true (fun _ ↦ isAntiAdditive_negNR) (by decide)
-  | notThinkStressed =>
-    exact iff_of_false (fun h ↦ not_isAntiAdditive_negUniversal
-      (negNRStressed_eq (W := Bool) _ ▸ h _ _)) (by decide)
-  | notKnow => exact iff_of_false (fun h ↦ not_isAntiAdditive_negKnow (h _ _)) (by decide)
-  | noOneThinks => exact iff_of_true (fun _ _ ↦ isAntiAdditive_noOneNR) (by decide)
-  | notThinkWant => exact iff_of_true (fun _ ↦ isAntiAdditive_negStack_self) (by decide)
-  | notWantThink =>
-    exact iff_of_false (fun h ↦ not_isAntiAdditive_negStack (h _ _ _ _)) (by decide)
-  | only =>
-    exact iff_of_false (fun h ↦ Focus.not_antitone_posExt_only_eq (h Unit Bool true).antitone)
-      (by decide)
-  | adversative =>
-    exact iff_of_false (fun h ↦ not_antitone_posExt_regret (h _ _ _ _).antitone) (by decide)
-  | conditional =>
-    exact iff_of_false
-      (fun h ↦ Conditional.not_antitone_posExt_horizonCounterfactual (h _ _ _).antitone)
-      (by decide)
-  | superlative =>
-    exact iff_of_false
-      (fun h ↦ not_antitone_posExt_trivalentSuperlative (h Unit Unit ℕ _ _).antitone)
-      (by decide)
+theorem carries_notThinkWant : Environment.notThinkWant.licenser.Carries .antiAdditive :=
+  Licenser.carries_strawson_antiAdditive
+    (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.beliefs)
+    (fun p ↦ by simp [posExt_notStack_self])
+    ⟨⟨Unit, .univ, .univ, .univ⟩, not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
+      (by simp [notStack, box, Box]) (by simp [notStack, box, Box])⟩
 
-instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.antiAdditive_iff.symm
+theorem not_carries_notThinkStressed :
+    ¬ Environment.notThinkStressed.licenser.Carries .antiAdditive :=
+  Licenser.not_carries_strawson_antiAdditive ⟨⟨Bool, .univ⟩, by
+    simpa only [posExt_notNRStressed] using not_isAntiAdditive_compl_core⟩
 
-/-- *Only DP*, the adversatives, conditional antecedents and superlatives are all Strawson
-anti-additive, and none is anti-additive ((122)–(131)). -/
-theorem strawsonAntiAdditive_not_sufficient :
-    (∀ (W ι : Type) (x : ι),
-        IsStrawsonAntiAdditive fun P : ι → Set W ↦ Focus.only (· = ·) Set.univ P x) ∧
-      (∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
-        IsStrawsonAntiAdditive (regret dox base g)) ∧
-      (∀ (W : Type) (horizon : W → Set W) (q : Set W),
-        IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧
-      (∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-        IsStrawsonAntiAdditive (trivalentSuperlative (W := W) μ · a)) ∧
-      ∀ e ∈ [Env.only, .adversative, .conditional, .superlative], ¬ e.AntiAdditive :=
-  ⟨fun _ _ ↦ Focus.isStrawsonAntiAdditive_only_eq, fun _ ↦ isStrawsonAntiAdditive_regret,
-    fun _ ↦ Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
-    fun _ _ _ _ ↦ isStrawsonAntiAdditive_trivalentSuperlative,
-    by decide⟩
+theorem not_carries_notKnow : ¬ Environment.notKnow.licenser.Carries .antiAdditive :=
+  Licenser.not_carries_strawson_antiAdditive ⟨⟨Fin 3, .univ⟩, not_isAntiAdditive_posExt_notKnow⟩
+
+theorem not_carries_notWantThink : ¬ Environment.notWantThink.licenser.Carries .antiAdditive :=
+  Licenser.not_carries_strawson_antiAdditive
+    ⟨⟨Fin 8, desC, belA, belC⟩, not_isAntiAdditive_posExt_notStack⟩
+
+instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
+  match e with
+  | .named c => inferInstanceAs (Decidable (c.licenser.Carries .antiAdditive))
+  | .positive => isFalse fun h ↦ h.weak.2 fun _ ↦ monotone_id
+  | .notSome => inferInstanceAs (Decidable (LicensingContext.nobody.licenser.Carries _))
+  | .notEvery => inferInstanceAs (Decidable (LicensingContext.doubtVerb.licenser.Carries _))
+  | .notThinkStressed => isFalse not_carries_notThinkStressed
+  | .notKnow => isFalse not_carries_notKnow
+  | .noOneThinks => isTrue carries_noOneThinks
+  | .notThinkWant => isTrue carries_notThinkWant
+  | .notWantThink => isFalse not_carries_notWantThink
 
 /-! ### The paper's judgments -/
 
-/-- The environments of the rows, keyed as in `Data/Examples/Gajewski2007.json`. -/
-def envTable : List (String × Env) :=
-  [("positive", .positive), ("negation", .negation), ("notSome", .notSome),
-    ("notEvery", .notEvery), ("notThink", .notThink), ("notThinkStressed", .notThinkStressed),
-    ("notKnow", .notKnow), ("noOneThinks", .noOneThinks), ("notThinkWant", .notThinkWant),
-    ("notWantThink", .notWantThink), ("only", .only), ("adversative", .adversative),
-    ("conditional", .conditional), ("superlative", .superlative)]
+open Examples
 
-/-- A sentence with a strict NPI records its environment and its judgment. -/
-structure Row where
-  /-- The environment of the strict NPI. -/
-  env : Env
-  /-- The paper's judgment. -/
-  judgment : Judgment
-  deriving DecidableEq, Repr
+/-- A link from an example to the lexical entry of its strict NPI and to the environment in which
+the item stands. -/
+structure Link where
+  /-- The polarity item. -/
+  item : PolarityItem
+  /-- The environment of the item. -/
+  environment : Environment
 
-/-- The row of an example. -/
-def Row.ofDatum (ex : Datum) : Option Row := do
-  pure ⟨← ex.parse? "environment" envTable, ex.judgment⟩
+open English.PolarityItems in
+/-- The links of the examples. Stress cancels neg-raising in fn. 7 (ii), *claim* and *know* do not
+neg-raise, and in (98)–(99) *should* and *ought* take the place of *want*. -/
+def links : List (Datum × Link) :=
+  [(ex_12a, ⟨until_, .positive⟩), (ex_12b, ⟨until_, .named .negation⟩),
+    (ex_13a, ⟨inYears, .positive⟩), (ex_13b, ⟨inYears, .named .negation⟩),
+    (ex_14a, ⟨until_, .notEvery⟩), (ex_14b, ⟨inYears, .notEvery⟩),
+    (ex_15a, ⟨until_, .named .superordinateNegation⟩),
+    (ex_15b, ⟨inYears, .named .superordinateNegation⟩),
+    (ex_54a, ⟨inYears, .notSome⟩), (ex_54b, ⟨inYears, .notEvery⟩),
+    (ex_57, ⟨until_, .named .superordinateNegation⟩),
+    (ex_58a, ⟨inYears, .named .superordinateNegation⟩), (ex_58b, ⟨inYears, .notKnow⟩),
+    (ex_68a, ⟨until_, .notEvery⟩), (ex_68b, ⟨until_, .notSome⟩),
+    (ex_69a, ⟨inYears, .notEvery⟩), (ex_69b, ⟨inYears, .notSome⟩),
+    (ex_71a, ⟨inYears, .notSome⟩), (ex_71b, ⟨inYears, .notSome⟩),
+    (ex_72a, ⟨inYears, .notEvery⟩), (ex_72b, ⟨inYears, .notEvery⟩),
+    (ex_73, ⟨inYears, .notEvery⟩), (ex_74, ⟨inYears, .notSome⟩),
+    (ex_83, ⟨until_, .noOneThinks⟩),
+    (ex_97a, ⟨until_, .notThinkWant⟩), (ex_97b, ⟨until_, .notWantThink⟩),
+    (ex_98a, ⟨until_, .notThinkWant⟩), (ex_98b, ⟨until_, .notWantThink⟩),
+    (ex_99a, ⟨until_, .notThinkWant⟩), (ex_99b, ⟨until_, .notWantThink⟩),
+    (ex_123a, ⟨until_, .named .onlyFocus⟩), (ex_123b, ⟨inYears, .named .onlyFocus⟩),
+    (ex_123c, ⟨either, .named .onlyFocus⟩),
+    (ex_126a, ⟨until_, .named .adversative⟩), (ex_126b, ⟨inYears, .named .adversative⟩),
+    (ex_127a, ⟨until_, .named .conditionalAntecedent⟩),
+    (ex_127b, ⟨inYears, .named .conditionalAntecedent⟩),
+    (ex_132a, ⟨inYears, .named .superlative⟩), (ex_132b, ⟨until_, .named .superlative⟩),
+    (fn7ii, ⟨inYears, .notThinkStressed⟩)]
 
-theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
+-- Every example is linked, and the words of each link's item occur in its example, so a link to
+-- the wrong item fails.
+theorem links_attested :
+    links.map (·.1) = Examples.all ∧ ∀ p ∈ links, ∀ w ∈ Datum.wordsOf p.2.item.form,
+      w ∈ Datum.wordsOf p.1.primaryText := by
+  decide +kernel
 
-/-- The paper's sentences with strict NPIs. -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+private theorem links_strict :
+    ∀ p ∈ links, p.2.item.licensor = some .antiAdditive ∧ p.2.item.antiLicensor = none ∧
+      ¬ p.2.item.IsFCI := by
+  decide +kernel
 
-/-- A strict NPI is acceptable in an anti-additive environment and unacceptable elsewhere, the
-superlatives aside (55). -/
-theorem rows_licensed : ∀ r ∈ rows, r.env ≠ .superlative →
-    (r.judgment = .acceptable → r.env.AntiAdditive) ∧
-      (r.judgment = .ungrammatical → ¬ r.env.AntiAdditive) := by
-  decide
+private theorem links_carries :
+    ∀ p ∈ links, p.2.environment ≠ .named .superlative → p.1 ≠ ex_74 →
+      (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Carries .antiAdditive) := by
+  decide +kernel
 
-/-- Strict NPIs are acceptable in superlative relative clauses, which are Strawson anti-additive
-but not anti-additive, the exception the paper leaves open (132). -/
+/-- The licensing theory admits the strict NPI of each example in its environment exactly when the
+paper judges the example acceptable (55), the superlatives of (132) and the finite clause boundary
+of (74) aside. -/
+theorem judgments_predicted :
+    ∀ p ∈ links, p.2.environment ≠ .named .superlative → p.1 ≠ ex_74 →
+      (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits p.2.item) :=
+  fun p hp hs h74 ↦
+    have ⟨hl, ha, hf⟩ := links_strict p hp
+    (links_carries p hp hs h74).trans (Licenser.admits_iff_carries hl (by decide) ha hf).symm
+
+/-- Strict NPIs are acceptable in superlative relative clauses, which are Strawson downward
+entailing and not anti-additive, the exception the paper leaves open (132). -/
 theorem superlative_exception :
-    ∀ r ∈ rows, r.env = .superlative → r.judgment = .acceptable ∧ ¬ r.env.AntiAdditive := by
-  decide
+    ∀ p ∈ links, p.2.environment = .named .superlative →
+      p.1.judgment = .acceptable ∧ LicensingContext.superlative.licenser.IsStrawsonDE ∧
+        ¬ p.2.environment.licenser.Carries .antiAdditive := by
+  have h : ∀ p ∈ links, p.2.environment = .named .superlative →
+      p.1.judgment = .acceptable ∧ ¬ p.2.environment.licenser.Carries .antiAdditive := by
+    decide +kernel
+  exact fun p hp he ↦ ⟨(h p hp he).1, LicensingContext.isStrawsonDE_superlative, (h p hp he).2⟩
 
-/-- Where a strict NPI in an anti-additive environment is unacceptable, a finite clause boundary
-separates it from its licenser ((73)–(74)). -/
-theorem finite_boundary : ∀ ex ∈ Examples.all, ∀ e ∈ ex.parse? "environment" envTable,
-    e.AntiAdditive → ex.judgment ≠ .acceptable → ex.feature? "clause" = some "finite" := by
-  decide
+-- (74), (73)
+theorem finite_boundary :
+    ex_74.judgment = .questionable ∧ Environment.notSome.licenser.Carries .antiAdditive := by
+  decide +kernel
 
 end Gajewski2007

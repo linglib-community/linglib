@@ -34,15 +34,6 @@ Jeff](##D9.he_jeff), and [the focus of D35 moves](##D35.movement) to the ice cre
   a definite noun phrase mentioning the focus is vacuous. Possessives, plural pronouns and the
   potential actor ambiguity condition are outside the model.
 
-## Errata
-
-* The trace of the focusing algorithm at D35-2 prints the alternate focus list as just the verb
-  phrase, dropping the agent, although the algorithm initializes the list to the default
-  expected focus list and the traces of D26 and D14 keep their agents.
-* The traces' step numbers disagree with the algorithm and each other: retention is reported at
-  step 4 for D25-2 but at step 3 for D35-2, and the movement at D14-2a at step 5 in the figure
-  but at step 3 in the facing prose.
-
 ## References
 
 * [sidner-1979]

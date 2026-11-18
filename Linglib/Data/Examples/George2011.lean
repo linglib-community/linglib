@@ -24,7 +24,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := "Three applicants, Riley, Adam and Robin; Riley and Adam were admitted and Robin rejected. Maggie, not on the admissions committee, was sent the complete list of admitted applicants and had never heard of any applicant before, so for all she knows Robin did not apply, or Wesley did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence", "admittedKnown"), ("holds", "yes")] }
 
@@ -37,7 +37,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := "Three applicants, Riley, Adam and Robin; Riley and Adam were admitted and Robin rejected. Maggie, not on the admissions committee, was sent the complete list of admitted applicants and had never heard of any applicant before, so for all she knows Robin did not apply, or Wesley did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence", "notAdmittedKnown"), ("holds", "no")] }
 
@@ -50,7 +50,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := "Three applicants, Riley, Adam and Robin; Riley and Adam were admitted and Robin rejected. Maggie, not on the admissions committee, was sent the complete list of admitted applicants and had never heard of any applicant before, so for all she knows Robin did not apply, or Wesley did."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence", "admittedButNot"), ("holds", "yes")] }
 
@@ -63,7 +63,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := "Rupert's four students are Anne, Red, Alex and Jonathan; Anne and Red were admitted, Jonathan rejected, and Alex falls into some other category, such as being waitlisted. Rupert has the complete list of admitted students but does not know, for Jonathan and Alex, whether they were rejected or fall into another category."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence", "fourStudents"), ("holds", "yes")] }
 
@@ -76,7 +76,7 @@ def ex33 : Datum :=
     glossedTokens := []
     context := "Rupert can buy a newspaper at PaperWorld and not at Newstopia. Janna and Red both know the former and know the same propositions; Red falsely believes Rupert can buy one at Newstopia, Janna has no opinion about Newstopia."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence", "jannaNewspaper"), ("holds", "yes")] }
 
@@ -89,7 +89,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := "Rupert can buy a newspaper at PaperWorld and not at Newstopia. Janna and Red both know the former and know the same propositions; Red falsely believes Rupert can buy one at Newstopia, Janna has no opinion about Newstopia."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence", "redNewspaper"), ("holds", "no")] }
 

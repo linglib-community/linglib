@@ -22,9 +22,11 @@ def s89 : Datum :=
     language := "mode1248"
     primaryText := "i katastrofi tis polis apo tus varvarus mesa se tris meres"
     glossedTokens := [("i", "the"), ("katastrofi", "destruction"), ("tis", "the"), ("polis", "city-GEN"), ("apo", "by"), ("tus", "the"), ("varvarus", "barbarians"), ("mesa se", "within"), ("tris", "three"), ("meres", "days")]
+    glossedWords := [⟨['i'], ['t', 'h', 'e'], [⟨['i'], ['t', 'h', 'e'], none⟩]⟩, ⟨['k', 'a', 't', 'a', 's', 't', 'r', 'o', 'f', 'i'], ['d', 'e', 's', 't', 'r', 'u', 'c', 't', 'i', 'o', 'n'], [⟨['k', 'a', 't', 'a', 's', 't', 'r', 'o', 'f', 'i'], ['d', 'e', 's', 't', 'r', 'u', 'c', 't', 'i', 'o', 'n'], none⟩]⟩, ⟨['t', 'i', 's'], ['t', 'h', 'e'], [⟨['t', 'i', 's'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'o', 'l', 'i', 's'], ['c', 'i', 't', 'y', '-', 'G', 'E', 'N'], []⟩, ⟨['a', 'p', 'o'], ['b', 'y'], [⟨['a', 'p', 'o'], ['b', 'y'], none⟩]⟩, ⟨['t', 'u', 's'], ['t', 'h', 'e'], [⟨['t', 'u', 's'], ['t', 'h', 'e'], none⟩]⟩, ⟨['v', 'a', 'r', 'v', 'a', 'r', 'u', 's'], ['b', 'a', 'r', 'b', 'a', 'r', 'i', 'a', 'n', 's'], [⟨['v', 'a', 'r', 'v', 'a', 'r', 'u', 's'], ['b', 'a', 'r', 'b', 'a', 'r', 'i', 'a', 'n', 's'], none⟩]⟩, ⟨['m', 'e', 's', 'a', ' ', 's', 'e'], ['w', 'i', 't', 'h', 'i', 'n'], [⟨['m', 'e', 's', 'a', ' ', 's', 'e'], ['w', 'i', 't', 'h', 'i', 'n'], none⟩]⟩, ⟨['t', 'r', 'i', 's'], ['t', 'h', 'r', 'e', 'e'], [⟨['t', 'r', 'i', 's'], ['t', 'h', 'r', 'e', 'e'], none⟩]⟩, ⟨['m', 'e', 'r', 'e', 's'], ['d', 'a', 'y', 's'], [⟨['m', 'e', 'r', 'e', 's'], ['d', 'a', 'y', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "external argument introduced by a preposition")] }
 
@@ -35,9 +37,11 @@ def s91 : Datum :=
     language := "kaqc1270"
     primaryText := "ri ru-k'at-ïk ri tinamït [ri x-ø-b'en ri a Juan] x-ø-xib'i-n."
     glossedTokens := [("ri", "DET"), ("ru-k'at-ïk", "ERG3S-burn-NOML"), ("ri", "DET"), ("tinamït", "city"), ("ri", "DET"), ("x-ø-b'en", "PRFV-ABS3S-do"), ("ri", "DET"), ("a", "CL"), ("Juan", "Juan"), ("x-ø-xib'i-n", "PRFV-ABS3S-scare-AP")]
+    glossedWords := [⟨['r', 'i'], ['D', 'E', 'T'], [⟨['r', 'i'], ['D', 'E', 'T'], none⟩]⟩, ⟨['r', 'u', '-', 'k', '\'', 'a', 't', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'S', '-', 'b', 'u', 'r', 'n', '-', 'N', 'O', 'M', 'L'], [⟨['r', 'u'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['k', '\'', 'a', 't'], ['b', 'u', 'r', 'n'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['r', 'i'], ['D', 'E', 'T'], [⟨['r', 'i'], ['D', 'E', 'T'], none⟩]⟩, ⟨['t', 'i', 'n', 'a', 'm', 'ï', 't'], ['c', 'i', 't', 'y'], [⟨['t', 'i', 'n', 'a', 'm', 'ï', 't'], ['c', 'i', 't', 'y'], none⟩]⟩, ⟨['r', 'i'], ['D', 'E', 'T'], [⟨['r', 'i'], ['D', 'E', 'T'], none⟩]⟩, ⟨['x', '-', 'ø', '-', 'b', '\'', 'e', 'n'], ['P', 'R', 'F', 'V', '-', 'A', 'B', 'S', '3', 'S', '-', 'd', 'o'], [⟨['x'], ['P', 'R', 'F', 'V'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩, ⟨['b', '\'', 'e', 'n'], ['d', 'o'], some '-'⟩]⟩, ⟨['r', 'i'], ['D', 'E', 'T'], [⟨['r', 'i'], ['D', 'E', 'T'], none⟩]⟩, ⟨['a'], ['C', 'L'], [⟨['a'], ['C', 'L'], none⟩]⟩, ⟨['J', 'u', 'a', 'n'], ['J', 'u', 'a', 'n'], [⟨['J', 'u', 'a', 'n'], ['J', 'u', 'a', 'n'], none⟩]⟩, ⟨['x', '-', 'ø', '-', 'x', 'i', 'b', '\'', 'i', '-', 'n'], ['P', 'R', 'F', 'V', '-', 'A', 'B', 'S', '3', 'S', '-', 's', 'c', 'a', 'r', 'e', '-', 'A', 'P'], [⟨['x'], ['P', 'R', 'F', 'V'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩, ⟨['x', 'i', 'b', '\'', 'i'], ['s', 'c', 'a', 'r', 'e'], some '-'⟩, ⟨['n'], ['A', 'P'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "only the internal argument inside; the agent in a relative clause")] }
 
@@ -48,9 +52,11 @@ def s92 : Datum :=
     language := "kaqc1270"
     primaryText := "ru-k'at-ïk ri a Juan x-ø-xib'i-n."
     glossedTokens := [("ru-k'at-ïk", "ERG3S-burn-NOML"), ("ri", "DET"), ("a", "CL"), ("Juan", "Juan"), ("x-ø-xib'i-n", "PRFV-ABS3S-scare-AP")]
+    glossedWords := [⟨['r', 'u', '-', 'k', '\'', 'a', 't', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'S', '-', 'b', 'u', 'r', 'n', '-', 'N', 'O', 'M', 'L'], [⟨['r', 'u'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['k', '\'', 'a', 't'], ['b', 'u', 'r', 'n'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['r', 'i'], ['D', 'E', 'T'], [⟨['r', 'i'], ['D', 'E', 'T'], none⟩]⟩, ⟨['a'], ['C', 'L'], [⟨['a'], ['C', 'L'], none⟩]⟩, ⟨['J', 'u', 'a', 'n'], ['J', 'u', 'a', 'n'], [⟨['J', 'u', 'a', 'n'], ['J', 'u', 'a', 'n'], none⟩]⟩, ⟨['x', '-', 'ø', '-', 'x', 'i', 'b', '\'', 'i', '-', 'n'], ['P', 'R', 'F', 'V', '-', 'A', 'B', 'S', '3', 'S', '-', 's', 'c', 'a', 'r', 'e', '-', 'A', 'P'], [⟨['x'], ['P', 'R', 'F', 'V'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩, ⟨['x', 'i', 'b', '\'', 'i'], ['s', 'c', 'a', 'r', 'e'], some '-'⟩, ⟨['n'], ['A', 'P'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "a sole argument is the internal argument")] }
 
@@ -61,9 +67,11 @@ def s93a : Datum :=
     language := "kaqc1270"
     primaryText := "y-in-ajin che [ki-k'ul-ïk ak'wal-a']."
     glossedTokens := [("y-in-ajin", "IMPF-ABS1S-PROG"), ("che", "PREP"), ("ki-k'ul-ïk", "ERG3P-meet.PAS-NOML"), ("ak'wal-a'", "child-PL")]
+    glossedWords := [⟨['y', '-', 'i', 'n', '-', 'a', 'j', 'i', 'n'], ['I', 'M', 'P', 'F', '-', 'A', 'B', 'S', '1', 'S', '-', 'P', 'R', 'O', 'G'], [⟨['y'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'n'], ['A', 'B', 'S', '1', 'S'], some '-'⟩, ⟨['a', 'j', 'i', 'n'], ['P', 'R', 'O', 'G'], some '-'⟩]⟩, ⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], [⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], none⟩]⟩, ⟨['k', 'i', '-', 'k', '\'', 'u', 'l', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'P', '-', 'm', 'e', 'e', 't', '.', 'P', 'A', 'S', '-', 'N', 'O', 'M', 'L'], [⟨['k', 'i'], ['E', 'R', 'G', '3', 'P'], none⟩, ⟨['k', '\'', 'u', 'l'], ['m', 'e', 'e', 't', '.', 'P', 'A', 'S'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['a', 'k', '\'', 'w', 'a', 'l', '-', 'a', '\''], ['c', 'h', 'i', 'l', 'd', '-', 'P', 'L'], [⟨['a', 'k', '\'', 'w', 'a', 'l'], ['c', 'h', 'i', 'l', 'd'], none⟩, ⟨['a', '\''], ['P', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S/A=ABS on ajin, O=ERG on the nominalized verb")] }
 
@@ -74,9 +82,11 @@ def s93b : Datum :=
     language := "kaqc1270"
     primaryText := "y-in-ajin che [atin-ïk]."
     glossedTokens := [("y-in-ajin", "IMPF-ABS1S-PROG"), ("che", "PREP"), ("atin-ïk", "bathe-NOML")]
+    glossedWords := [⟨['y', '-', 'i', 'n', '-', 'a', 'j', 'i', 'n'], ['I', 'M', 'P', 'F', '-', 'A', 'B', 'S', '1', 'S', '-', 'P', 'R', 'O', 'G'], [⟨['y'], ['I', 'M', 'P', 'F'], none⟩, ⟨['i', 'n'], ['A', 'B', 'S', '1', 'S'], some '-'⟩, ⟨['a', 'j', 'i', 'n'], ['P', 'R', 'O', 'G'], some '-'⟩]⟩, ⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], [⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], none⟩]⟩, ⟨['a', 't', 'i', 'n', '-', 'ï', 'k'], ['b', 'a', 't', 'h', 'e', '-', 'N', 'O', 'M', 'L'], [⟨['a', 't', 'i', 'n'], ['b', 'a', 't', 'h', 'e'], none⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S=ABS on ajin")] }
 
@@ -87,9 +97,11 @@ def s94a : Datum :=
     language := "kaqc1270"
     primaryText := "röj x-ø-qa-chäp [ki-k'ul-ïk rje']."
     glossedTokens := [("röj", "we"), ("x-ø-qa-chäp", "PRFV-ABS3S-ERG1P-begin"), ("ki-k'ul-ïk", "ERG3P-meet.PAS-NOML"), ("rje'", "they")]
+    glossedWords := [⟨['r', 'ö', 'j'], ['w', 'e'], [⟨['r', 'ö', 'j'], ['w', 'e'], none⟩]⟩, ⟨['x', '-', 'ø', '-', 'q', 'a', '-', 'c', 'h', 'ä', 'p'], ['P', 'R', 'F', 'V', '-', 'A', 'B', 'S', '3', 'S', '-', 'E', 'R', 'G', '1', 'P', '-', 'b', 'e', 'g', 'i', 'n'], [⟨['x'], ['P', 'R', 'F', 'V'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩, ⟨['q', 'a'], ['E', 'R', 'G', '1', 'P'], some '-'⟩, ⟨['c', 'h', 'ä', 'p'], ['b', 'e', 'g', 'i', 'n'], some '-'⟩]⟩, ⟨['k', 'i', '-', 'k', '\'', 'u', 'l', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'P', '-', 'm', 'e', 'e', 't', '.', 'P', 'A', 'S', '-', 'N', 'O', 'M', 'L'], [⟨['k', 'i'], ['E', 'R', 'G', '3', 'P'], none⟩, ⟨['k', '\'', 'u', 'l'], ['m', 'e', 'e', 't', '.', 'P', 'A', 'S'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['r', 'j', 'e', '\''], ['t', 'h', 'e', 'y'], [⟨['r', 'j', 'e', '\''], ['t', 'h', 'e', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("construction", "embedding verb chäp 'begin'")] }
 
@@ -100,9 +112,11 @@ def s99b : Datum :=
     language := "kaqc1270"
     primaryText := "y-oj-ajin che ru-tik-ïk jun k'otz'i'j."
     glossedTokens := [("y-oj-ajin", "IMPF-ABS1P-PROG"), ("che", "PREP"), ("ru-tik-ïk", "ERG3S-plant.PAS-NOML"), ("jun", "one"), ("k'otz'i'j", "flower")]
+    glossedWords := [⟨['y', '-', 'o', 'j', '-', 'a', 'j', 'i', 'n'], ['I', 'M', 'P', 'F', '-', 'A', 'B', 'S', '1', 'P', '-', 'P', 'R', 'O', 'G'], [⟨['y'], ['I', 'M', 'P', 'F'], none⟩, ⟨['o', 'j'], ['A', 'B', 'S', '1', 'P'], some '-'⟩, ⟨['a', 'j', 'i', 'n'], ['P', 'R', 'O', 'G'], some '-'⟩]⟩, ⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], [⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], none⟩]⟩, ⟨['r', 'u', '-', 't', 'i', 'k', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'S', '-', 'p', 'l', 'a', 'n', 't', '.', 'P', 'A', 'S', '-', 'N', 'O', 'M', 'L'], [⟨['r', 'u'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['t', 'i', 'k'], ['p', 'l', 'a', 'n', 't', '.', 'P', 'A', 'S'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['j', 'u', 'n'], ['o', 'n', 'e'], [⟨['j', 'u', 'n'], ['o', 'n', 'e'], none⟩]⟩, ⟨['k', '\'', 'o', 't', 'z', '\'', 'i', '\'', 'j'], ['f', 'l', 'o', 'w', 'e', 'r'], [⟨['k', '\'', 'o', 't', 'z', '\'', 'i', '\'', 'j'], ['f', 'l', 'o', 'w', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")] }
 
@@ -113,9 +127,11 @@ def s100b : Datum :=
     language := "kaqc1270"
     primaryText := "rje' y-e-ajin che ru-tuk-ïk sopa."
     glossedTokens := [("rje'", "they"), ("y-e-ajin", "IMPF-ABS3P-PROG"), ("che", "PREP"), ("ru-tuk-ïk", "ERG3S-stir.PAS-NOML"), ("sopa", "soup")]
+    glossedWords := [⟨['r', 'j', 'e', '\''], ['t', 'h', 'e', 'y'], [⟨['r', 'j', 'e', '\''], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['y', '-', 'e', '-', 'a', 'j', 'i', 'n'], ['I', 'M', 'P', 'F', '-', 'A', 'B', 'S', '3', 'P', '-', 'P', 'R', 'O', 'G'], [⟨['y'], ['I', 'M', 'P', 'F'], none⟩, ⟨['e'], ['A', 'B', 'S', '3', 'P'], some '-'⟩, ⟨['a', 'j', 'i', 'n'], ['P', 'R', 'O', 'G'], some '-'⟩]⟩, ⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], [⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], none⟩]⟩, ⟨['r', 'u', '-', 't', 'u', 'k', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'S', '-', 's', 't', 'i', 'r', '.', 'P', 'A', 'S', '-', 'N', 'O', 'M', 'L'], [⟨['r', 'u'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['t', 'u', 'k'], ['s', 't', 'i', 'r', '.', 'P', 'A', 'S'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['s', 'o', 'p', 'a'], ['s', 'o', 'u', 'p'], [⟨['s', 'o', 'p', 'a'], ['s', 'o', 'u', 'p'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")] }
 
@@ -126,9 +142,11 @@ def s102b : Datum :=
     language := "kaqc1270"
     primaryText := "röj y-oj-ajin che ki-q'ete-x-ïk ri ak'wal-a'."
     glossedTokens := [("röj", "we"), ("y-oj-ajin", "IMPF-ABS1P-PROG"), ("che", "PREP"), ("ki-q'ete-x-ïk", "ERG3P-hug-PAS-NOML"), ("ri", "DET"), ("ak'wal-a'", "child-PL")]
+    glossedWords := [⟨['r', 'ö', 'j'], ['w', 'e'], [⟨['r', 'ö', 'j'], ['w', 'e'], none⟩]⟩, ⟨['y', '-', 'o', 'j', '-', 'a', 'j', 'i', 'n'], ['I', 'M', 'P', 'F', '-', 'A', 'B', 'S', '1', 'P', '-', 'P', 'R', 'O', 'G'], [⟨['y'], ['I', 'M', 'P', 'F'], none⟩, ⟨['o', 'j'], ['A', 'B', 'S', '1', 'P'], some '-'⟩, ⟨['a', 'j', 'i', 'n'], ['P', 'R', 'O', 'G'], some '-'⟩]⟩, ⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], [⟨['c', 'h', 'e'], ['P', 'R', 'E', 'P'], none⟩]⟩, ⟨['k', 'i', '-', 'q', '\'', 'e', 't', 'e', '-', 'x', '-', 'ï', 'k'], ['E', 'R', 'G', '3', 'P', '-', 'h', 'u', 'g', '-', 'P', 'A', 'S', '-', 'N', 'O', 'M', 'L'], [⟨['k', 'i'], ['E', 'R', 'G', '3', 'P'], none⟩, ⟨['q', '\'', 'e', 't', 'e'], ['h', 'u', 'g'], some '-'⟩, ⟨['x'], ['P', 'A', 'S'], some '-'⟩, ⟨['ï', 'k'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩, ⟨['r', 'i'], ['D', 'E', 'T'], [⟨['r', 'i'], ['D', 'E', 'T'], none⟩]⟩, ⟨['a', 'k', '\'', 'w', 'a', 'l', '-', 'a', '\''], ['c', 'h', 'i', 'l', 'd', '-', 'P', 'L'], [⟨['a', 'k', '\'', 'w', 'a', 'l'], ['c', 'h', 'i', 'l', 'd'], none⟩, ⟨['a', '\''], ['P', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "the passive suffix -x on the derived transitive under nominalization")] }
 
@@ -139,9 +157,11 @@ def s137a : Datum :=
     language := "chol1282"
     primaryText := "Choñkol-ø [i-jats'-oñ]."
     glossedTokens := [("Choñkol-ø", "PROG-ABS3S"), ("i-jats'-oñ", "ERG3S-hit-ABS1S")]
+    glossedWords := [⟨['C', 'h', 'o', 'ñ', 'k', 'o', 'l', '-', 'ø'], ['P', 'R', 'O', 'G', '-', 'A', 'B', 'S', '3', 'S'], [⟨['C', 'h', 'o', 'ñ', 'k', 'o', 'l'], ['P', 'R', 'O', 'G'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩]⟩, ⟨['i', '-', 'j', 'a', 't', 's', '\'', '-', 'o', 'ñ'], ['E', 'R', 'G', '3', 'S', '-', 'h', 'i', 't', '-', 'A', 'B', 'S', '1', 'S'], [⟨['i'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['j', 'a', 't', 's', '\''], ['h', 'i', 't'], some '-'⟩, ⟨['o', 'ñ'], ['A', 'B', 'S', '1', 'S'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "A=ERG, O=ABS inside the nominalized clause")] }
 
@@ -152,9 +172,11 @@ def s137b : Datum :=
     language := "chol1282"
     primaryText := "Choñkol-ø [i-majl-el]."
     glossedTokens := [("Choñkol-ø", "PROG-ABS3S"), ("i-majl-el", "ERG3S-go-NOML")]
+    glossedWords := [⟨['C', 'h', 'o', 'ñ', 'k', 'o', 'l', '-', 'ø'], ['P', 'R', 'O', 'G', '-', 'A', 'B', 'S', '3', 'S'], [⟨['C', 'h', 'o', 'ñ', 'k', 'o', 'l'], ['P', 'R', 'O', 'G'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩]⟩, ⟨['i', '-', 'm', 'a', 'j', 'l', '-', 'e', 'l'], ['E', 'R', 'G', '3', 'S', '-', 'g', 'o', '-', 'N', 'O', 'M', 'L'], [⟨['i'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['m', 'a', 'j', 'l'], ['g', 'o'], some '-'⟩, ⟨['e', 'l'], ['N', 'O', 'M', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "S=ERG")] }
 
@@ -165,9 +187,11 @@ def s138a : Datum :=
     language := "qanj1241"
     primaryText := "lanan-ø [hach w-il-on-i]."
     glossedTokens := [("lanan-ø", "PROG-ABS3S"), ("hach", "ABS2S"), ("w-il-on-i", "ERG1S-see-DM-ITV")]
+    glossedWords := [⟨['l', 'a', 'n', 'a', 'n', '-', 'ø'], ['P', 'R', 'O', 'G', '-', 'A', 'B', 'S', '3', 'S'], [⟨['l', 'a', 'n', 'a', 'n'], ['P', 'R', 'O', 'G'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩]⟩, ⟨['h', 'a', 'c', 'h'], ['A', 'B', 'S', '2', 'S'], [⟨['h', 'a', 'c', 'h'], ['A', 'B', 'S', '2', 'S'], none⟩]⟩, ⟨['w', '-', 'i', 'l', '-', 'o', 'n', '-', 'i'], ['E', 'R', 'G', '1', 'S', '-', 's', 'e', 'e', '-', 'D', 'M', '-', 'I', 'T', 'V'], [⟨['w'], ['E', 'R', 'G', '1', 'S'], none⟩, ⟨['i', 'l'], ['s', 'e', 'e'], some '-'⟩, ⟨['o', 'n'], ['D', 'M'], some '-'⟩, ⟨['i'], ['I', 'T', 'V'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "A=ERG, O=ABS, the suffix -on supplying object Case")] }
 
@@ -178,9 +202,11 @@ def s138b : Datum :=
     language := "qanj1241"
     primaryText := "lanan-ø [ha-way-i]."
     glossedTokens := [("lanan-ø", "PROG-ABS3S"), ("ha-way-i", "ERG2S-sleep-ITV")]
+    glossedWords := [⟨['l', 'a', 'n', 'a', 'n', '-', 'ø'], ['P', 'R', 'O', 'G', '-', 'A', 'B', 'S', '3', 'S'], [⟨['l', 'a', 'n', 'a', 'n'], ['P', 'R', 'O', 'G'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩]⟩, ⟨['h', 'a', '-', 'w', 'a', 'y', '-', 'i'], ['E', 'R', 'G', '2', 'S', '-', 's', 'l', 'e', 'e', 'p', '-', 'I', 'T', 'V'], [⟨['h', 'a'], ['E', 'R', 'G', '2', 'S'], none⟩, ⟨['w', 'a', 'y'], ['s', 'l', 'e', 'e', 'p'], some '-'⟩, ⟨['i'], ['I', 'T', 'V'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "S=ERG")] }
 
@@ -191,9 +217,11 @@ def s181 : Datum :=
     language := "mamm1241"
     primaryText := "at-ø txab'an siich' ok q-ook-a juu7n priim."
     glossedTokens := [("at-ø", "LOC-ABS3S"), ("txab'an", "bit"), ("siich'", "cigarette"), ("ok", "when"), ("q-ook-a", "ERG1P-enter-1P"), ("juu7n", "each"), ("priim", "early")]
+    glossedWords := [⟨['a', 't', '-', 'ø'], ['L', 'O', 'C', '-', 'A', 'B', 'S', '3', 'S'], [⟨['a', 't'], ['L', 'O', 'C'], none⟩, ⟨['ø'], ['A', 'B', 'S', '3', 'S'], some '-'⟩]⟩, ⟨['t', 'x', 'a', 'b', '\'', 'a', 'n'], ['b', 'i', 't'], [⟨['t', 'x', 'a', 'b', '\'', 'a', 'n'], ['b', 'i', 't'], none⟩]⟩, ⟨['s', 'i', 'i', 'c', 'h', '\''], ['c', 'i', 'g', 'a', 'r', 'e', 't', 't', 'e'], [⟨['s', 'i', 'i', 'c', 'h', '\''], ['c', 'i', 'g', 'a', 'r', 'e', 't', 't', 'e'], none⟩]⟩, ⟨['o', 'k'], ['w', 'h', 'e', 'n'], [⟨['o', 'k'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['q', '-', 'o', 'o', 'k', '-', 'a'], ['E', 'R', 'G', '1', 'P', '-', 'e', 'n', 't', 'e', 'r', '-', '1', 'P'], [⟨['q'], ['E', 'R', 'G', '1', 'P'], none⟩, ⟨['o', 'o', 'k'], ['e', 'n', 't', 'e', 'r'], some '-'⟩, ⟨['a'], ['1', 'P'], some '-'⟩]⟩, ⟨['j', 'u', 'u', '7', 'n'], ['e', 'a', 'c', 'h'], [⟨['j', 'u', 'u', '7', 'n'], ['e', 'a', 'c', 'h'], none⟩]⟩, ⟨['p', 'r', 'i', 'i', 'm'], ['e', 'a', 'r', 'l', 'y'], [⟨['p', 'r', 'i', 'i', 'm'], ['e', 'a', 'r', 'l', 'y'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:265"), ("alignment", "S=ERG in an aspectless temporal clause")] }
 
@@ -204,9 +232,11 @@ def s182 : Datum :=
     language := "mamm1241"
     primaryText := "ok qo tzaalaj-al ok t-q-il u7j t-e yool t-e l7tzal"
     glossedTokens := [("ok", "POT"), ("qo", "ABS1P"), ("tzaalaj-al", "be.happy-POT"), ("ok", "when"), ("t-q-il", "ERG3S-ERG1P-see"), ("u7j", "book"), ("t-e", "ERG3S-RN"), ("yool", "word"), ("t-e", "ERG3S-RN"), ("l7tzal", "Ixtahuacán")]
+    glossedWords := [⟨['o', 'k'], ['P', 'O', 'T'], [⟨['o', 'k'], ['P', 'O', 'T'], none⟩]⟩, ⟨['q', 'o'], ['A', 'B', 'S', '1', 'P'], [⟨['q', 'o'], ['A', 'B', 'S', '1', 'P'], none⟩]⟩, ⟨['t', 'z', 'a', 'a', 'l', 'a', 'j', '-', 'a', 'l'], ['b', 'e', '.', 'h', 'a', 'p', 'p', 'y', '-', 'P', 'O', 'T'], [⟨['t', 'z', 'a', 'a', 'l', 'a', 'j'], ['b', 'e', '.', 'h', 'a', 'p', 'p', 'y'], none⟩, ⟨['a', 'l'], ['P', 'O', 'T'], some '-'⟩]⟩, ⟨['o', 'k'], ['w', 'h', 'e', 'n'], [⟨['o', 'k'], ['w', 'h', 'e', 'n'], none⟩]⟩, ⟨['t', '-', 'q', '-', 'i', 'l'], ['E', 'R', 'G', '3', 'S', '-', 'E', 'R', 'G', '1', 'P', '-', 's', 'e', 'e'], [⟨['t'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['q'], ['E', 'R', 'G', '1', 'P'], some '-'⟩, ⟨['i', 'l'], ['s', 'e', 'e'], some '-'⟩]⟩, ⟨['u', '7', 'j'], ['b', 'o', 'o', 'k'], [⟨['u', '7', 'j'], ['b', 'o', 'o', 'k'], none⟩]⟩, ⟨['t', '-', 'e'], ['E', 'R', 'G', '3', 'S', '-', 'R', 'N'], [⟨['t'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['e'], ['R', 'N'], some '-'⟩]⟩, ⟨['y', 'o', 'o', 'l'], ['w', 'o', 'r', 'd'], [⟨['y', 'o', 'o', 'l'], ['w', 'o', 'r', 'd'], none⟩]⟩, ⟨['t', '-', 'e'], ['E', 'R', 'G', '3', 'S', '-', 'R', 'N'], [⟨['t'], ['E', 'R', 'G', '3', 'S'], none⟩, ⟨['e'], ['R', 'N'], some '-'⟩]⟩, ⟨['l', '7', 't', 'z', 'a', 'l'], ['I', 'x', 't', 'a', 'h', 'u', 'a', 'c', 'á', 'n'], [⟨['l', '7', 't', 'z', 'a', 'l'], ['I', 'x', 't', 'a', 'h', 'u', 'a', 'c', 'á', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:260"), ("alignment", "double ergative: A and O both ERG")] }
 
@@ -219,7 +249,7 @@ def t178_kaqchikel : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")] }
 
@@ -232,7 +262,7 @@ def t178_tojolabal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")] }
 
@@ -245,7 +275,7 @@ def t178_chol : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -258,7 +288,7 @@ def t178_qanjobal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -271,7 +301,7 @@ def t178_chuj : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -284,7 +314,7 @@ def t178_ixil : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
@@ -297,7 +327,7 @@ def t178_yucatec : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 

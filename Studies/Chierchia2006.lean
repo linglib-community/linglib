@@ -39,14 +39,6 @@ sentence judged as a whole](##judgedSentences_predicted).
   available, so its milder dispreferences are not derived. Rows rescued by a covert modal or
   explained by intervention carry a `device` feature and are set aside.
 
-## Errata
-
-* The paper glosses σ over a necessity modal as some member being necessarily a witness and each
-  possibly one. Its enrichment [entails the
-  gloss](##Exhaustification.antiExh_core_biUnion_inter_dom_subset) but not conversely: where one
-  doughnut is tasted in every accessible world and the other in only some, the gloss holds and
-  [the enrichment fails](##notMem_antiExh_core_tasted).
-
 ## TODO
 
 * The intervention effect, a DP between σ and the item, is a syntactic stipulation in the paper

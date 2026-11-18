@@ -12,7 +12,7 @@
     "translation": "I swim.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -35,7 +35,7 @@
     "translation": "I swim.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -60,7 +60,7 @@
     "translation": "My son got lost in the forest.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -83,7 +83,7 @@
     "translation": "My son got lost in the forest.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -108,7 +108,7 @@
     "translation": "I called you yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I'wara ka-ri-nke pera-ra-nke.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -139,7 +139,7 @@
     "translation": "We hit you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1excl"],
@@ -168,7 +168,7 @@
     "translation": "We hit you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1excl"],
@@ -196,7 +196,7 @@
     "translation": "You told me off yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -221,7 +221,7 @@
     "translation": "You told me off yesterday.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -248,7 +248,7 @@
     "translation": "Snakes bit us.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ya'wan-usa kete-r-in-kui.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -275,7 +275,7 @@
     "translation": "Snakes bit us.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -302,7 +302,7 @@
     "translation": "Peter trusts you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Pitru nate-r-in-nke.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -329,7 +329,7 @@
     "translation": "Peter trusts you.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -356,7 +356,7 @@
     "translation": "We miss Peter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kiya na'wan-a-i Pitru.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -383,7 +383,7 @@
     "translation": "We miss Peter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kiya-ri na'wan-a-i Pitru.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -412,7 +412,7 @@
     "translation": "You broke the mocahua.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -437,7 +437,7 @@
     "translation": "You broke the mocahua.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -464,7 +464,7 @@
     "translation": "Peter stole a necklace.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -489,7 +489,7 @@
     "translation": "Peter stole a necklace.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -516,7 +516,7 @@
     "translation": "Pedro hit Jose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -541,7 +541,7 @@
     "translation": "Pedro hit Jose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -568,7 +568,7 @@
     "translation": "Pedro hit Jose.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -593,7 +593,7 @@
     "translation": "Pedro hit Jose.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -621,7 +621,7 @@
     "translation": "You told me off yesterday.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -647,7 +647,7 @@
     "translation": "The woman told someone.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -672,7 +672,7 @@
     "translation": "The woman told someone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -699,7 +699,7 @@
     "translation": "Someone told the woman.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -724,7 +724,7 @@
     "translation": "Peter misses his wife.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -749,7 +749,7 @@
     "translation": "Peter misses his wife.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -777,7 +777,7 @@
     "translation": "I received three eggs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -803,7 +803,7 @@
     "translation": "I received three eggs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -831,7 +831,7 @@
     "translation": "Masha ate the porridge quickly.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -857,7 +857,7 @@
     "translation": "Masha ate the porridge quickly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -885,7 +885,7 @@
     "translation": "Masha ate the porridge quickly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -911,7 +911,7 @@
     "translation": "Masha ate the porridge quickly.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -938,7 +938,7 @@
     "translation": "I raised you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -963,7 +963,7 @@
     "translation": "Why did you (plural) laugh at me?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "2"],
@@ -989,7 +989,7 @@
     "translation": "We (exclusive) did not share the fishing with them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1excl"],
@@ -1016,7 +1016,7 @@
     "translation": "Jesús ate the paujil (a species of curassow).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -1042,7 +1042,7 @@
     "translation": "Jesús ate the paujil (a species of curassow).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -1069,7 +1069,7 @@
     "translation": "Your whip has killed me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "3"],
@@ -1096,7 +1096,7 @@
     "translation": "I will kill you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],
@@ -1123,7 +1123,7 @@
     "translation": "I am afraid of the bear.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["subject", "1"],

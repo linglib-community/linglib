@@ -143,19 +143,19 @@ def P : Segment := p ⊓ f
 /-- The archisegments leave continuancy unspecified, and every consonant and vowel specifies
 it. -/
 theorem unspecified_continuant :
-    (∀ x ∈ [B, K, P], x.Unspecified .continuant) ∧
-      ∀ x ∈ consonants ∪ vowels, ¬x.Unspecified .continuant := by
+    (∀ x ∈ [B, K, P], x .continuant = none) ∧
+      ∀ x ∈ consonants ∪ vowels, ¬x .continuant = none := by
   decide +kernel
 
 /-- Each archisegment has one stop and one fricative among the consonants, since with continuancy
 set `B`, `K` and `P` pick out /b/ and /v/, /k/ and /x/, /p/ and /f/. -/
 theorem naturalClass_setFeature_continuant :
-    (B.setFeature .continuant false).naturalClass consonants = {b} ∧
-      (B.setFeature .continuant true).naturalClass consonants = {v} ∧
-      (K.setFeature .continuant false).naturalClass consonants = {k} ∧
-      (K.setFeature .continuant true).naturalClass consonants = {x} ∧
-      (P.setFeature .continuant false).naturalClass consonants = {p} ∧
-      (P.setFeature .continuant true).naturalClass consonants = {f} := by
+    naturalClass (B.setFeature .continuant false) consonants = {b} ∧
+      naturalClass (B.setFeature .continuant true) consonants = {v} ∧
+      naturalClass (K.setFeature .continuant false) consonants = {k} ∧
+      naturalClass (K.setFeature .continuant true) consonants = {x} ∧
+      naturalClass (P.setFeature .continuant false) consonants = {p} ∧
+      naturalClass (P.setFeature .continuant true) consonants = {f} := by
   decide +kernel
 
 end Hebrew.Phonology

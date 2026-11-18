@@ -9,7 +9,7 @@
     "translation": "",
     "context": "They said he didn't have a lot of patients, but …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "A: Is he a good doctor?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "I can't imagine that Bill has a lot of patients, but..",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -68,7 +68,7 @@
     "translation": "",
     "context": "A: Sue didn't leave her husband.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -87,7 +87,7 @@
     "translation": "",
     "context": "A: Sue might have left her husband.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -106,7 +106,7 @@
     "translation": "",
     "context": "A: We are surprised that Sue didn't leave her husband.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -125,7 +125,7 @@
     "translation": "",
     "context": "Bill doesn't have a lot of patients, but …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -144,7 +144,7 @@
     "translation": "",
     "context": "Although you say that your doctor doesn't treat his patients politely, …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -163,7 +163,7 @@
     "translation": "",
     "context": "Is he good doctor? …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -183,7 +183,7 @@
     "translation": "",
     "context": "Do the doctors in this hospital treat their patients politely? …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -203,7 +203,7 @@
     "translation": "",
     "context": "Nobody expected that France would win their first game.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -222,7 +222,7 @@
     "translation": "",
     "context": "Is the French team doing well this time?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -242,7 +242,7 @@
     "translation": "",
     "context": "Did the French beat the Italians?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -262,7 +262,7 @@
     "translation": "",
     "context": "A: We heard that your doctor doesn't treat his patients politely.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -281,7 +281,7 @@
     "translation": "",
     "context": "Is he good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -301,7 +301,7 @@
     "translation": "",
     "context": "Do the doctors in this hospital treat their patients politely?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -321,7 +321,7 @@
     "translation": "",
     "context": "When she heard that your doctor doesn't treat his patients politely,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -340,7 +340,7 @@
     "translation": "",
     "context": "Is he good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -360,7 +360,7 @@
     "translation": "",
     "context": "Paul would be horrified if he wouldn't treat his patients politely, while",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -379,7 +379,7 @@
     "translation": "",
     "context": "Is he a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -399,7 +399,7 @@
     "translation": "",
     "context": "Do the doctors in this hospital treat their patients politely? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -419,7 +419,7 @@
     "translation": "",
     "context": "Sue claimed that Dr. Smith doesn't treat his patients politely, but",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -438,7 +438,7 @@
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -458,7 +458,7 @@
     "translation": "",
     "context": "Although Sue claimed that he doesn't treat his patients politely,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -477,7 +477,7 @@
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -497,7 +497,7 @@
     "translation": "",
     "context": "Dr. Smith doesn't treat his patients politely, so",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -516,7 +516,7 @@
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -536,7 +536,7 @@
     "translation": "",
     "context": "Although Sue claimed that Dr. Smith doesn't treat patients politely,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -555,7 +555,7 @@
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -575,7 +575,7 @@
     "translation": "",
     "context": "She claimed that he doesn't treat his patients politely, but …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -594,7 +594,7 @@
     "translation": "",
     "context": "Is he a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -614,7 +614,7 @@
     "translation": "",
     "context": "She told me that he didn't treat her politely, so …",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -633,7 +633,7 @@
     "translation": "",
     "context": "Is he a good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -653,7 +653,7 @@
     "translation": "",
     "context": "We heard that your doctor doesn't treat his patients politely.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -672,7 +672,7 @@
     "translation": "",
     "context": "Is he good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -692,7 +692,7 @@
     "translation": "",
     "context": "We heard that your doctor doesn't treat his patients politely.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "VF"],
@@ -711,7 +711,7 @@
     "translation": "",
     "context": "Is he good doctor? …",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -731,7 +731,7 @@
     "translation": "",
     "context": "What about Fred? What did he eat?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -751,7 +751,7 @@
     "translation": "",
     "context": "What about the beans? Who ate those?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pattern", "CT"],
@@ -771,7 +771,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "believeComplement"]
@@ -789,7 +789,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "believeComplement"]
@@ -807,7 +807,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "interrogativeComplement"]
@@ -825,7 +825,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "interrogativeComplement"]
@@ -843,7 +843,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "factiveComplement"]
@@ -861,7 +861,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "itCleft"]
@@ -879,7 +879,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "restrictiveRelative"]
@@ -897,7 +897,7 @@
     "translation": "",
     "context": "Does he treat his patients politely?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "adverbialClause"]
@@ -915,7 +915,7 @@
     "translation": "",
     "context": "Does he work hard?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["environment", "root"]

@@ -94,11 +94,11 @@ end Classes
 
 section Modals
 
-variable {W : Type*} (R : W → Prop) (count : W → ℕ) (m : ℕ)
+variable {W : Type*} (R : Set W) (count : W → ℕ) (m : ℕ)
 
 -- (33a), (34a)
 theorem narrow_scope_two_sided (Q : Quantifier W) :
-    LowScope (MaxIn {m}) Q (Iic ∘ count) ↔ Q fun w ↦ count w = m :=
+    LowScope (MaxIn {m}) Q (Iic ∘ count) ↔ Q {w | count w = m} :=
   lowScope_maxIn
 
 private theorem isGLB_iff_isLeast {s : Set ℕ} : IsGLB s m ↔ IsLeast s m :=
@@ -110,13 +110,13 @@ private theorem isGLB_iff_isLeast {s : Set ℕ} : IsGLB s m ↔ IsLeast s m :=
 /-- Over a necessity modal the bare numeral is lower-bounded (33b), `m` being the least count the
 modal requires. -/
 theorem necessity_wide_iff :
-    HighScope (MaxIn {m}) (every R) (Iic ∘ count) ↔ IsLeast (count '' {w | R w}) m :=
+    HighScope (MaxIn {m}) (every R) (Iic ∘ count) ↔ IsLeast (count '' R) m :=
   highScope_maxIn_singleton_every.trans (isGLB_iff_isLeast m)
 
 /-- Over a possibility modal the bare numeral is upper-bounded (34b), `m` being the greatest count
 the modal allows. -/
 theorem possibility_wide_iff :
-    HighScope (MaxIn {m}) (Det.some R) (Iic ∘ count) ↔ IsGreatest (count '' {w | R w}) m :=
+    HighScope (MaxIn {m}) (Det.some R) (Iic ∘ count) ↔ IsGreatest (count '' R) m :=
   highScope_maxIn_singleton_some
 
 end Modals

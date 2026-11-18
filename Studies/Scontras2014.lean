@@ -27,8 +27,8 @@ measure term by lexical reinterpretation as the class of containers of a unit qu
 
 Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
 parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
-self-connection ((74), `Mereology.SelfConnected`), and a partition returns such units ((75),
-(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred Overlap`) does not stop the water
+self-connection ((74), `Mereology.IsSelfConnected`), and a partition returns such units ((75),
+(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred`) does not stop the water
 in a glass from counting as two. Either way the members of a partition form an antichain, so
 each of them measures one relative atom under the relative-atom measure of (68)
 (`pAtomMeasure_eq_one`), which is what lets cardinal numerals count them.
@@ -47,7 +47,7 @@ each of them measures one relative atom under the relative-atom measure of (68)
 * Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
   reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
   `IsConnection.of_overlap`). Overlap (71) carries the library's non-null clause, with which it
-  agrees on carriers without a null individual (`IsClassicalMereology.overlap_iff`); on a carrier
+  agrees on carriers without a null individual (`Mereology.overlap_iff_exists_le`); on a carrier
   with one, the clause-free version holds of any two individuals and makes self-connection
   trivial. The maximality of (75) is mathlib's `Maximal`.
 
@@ -140,7 +140,7 @@ variable [PartialOrder E] (C : E → E → Prop)
 /-- A partition of the kind `k` ((75), (76)) returns maximally self-connected instances of it,
 instances of `k` maximal among its self-connected instances. -/
 def IsMSCPartition (k : E → Prop) (Q : E → Prop) : Prop :=
-  ∀ y, Q y → Maximal (fun x ↦ SelfConnected C x ∧ k x) y
+  ∀ y, Q y → Maximal (fun x ↦ IsSelfConnected C x ∧ k x) y
 
 /-- The relative-atom measure of `Q` (68) counts the `Q`-atoms, members of `Q` with no member of
 `Q` as a proper part, that are parts of `y`. -/
@@ -155,8 +155,8 @@ theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k
 
 -- (66)
 theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
-    (h : DisjointPred Overlap {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
-  fun x hx y hy hxy hle ↦ h ⟨x, hx, y, hy, hxy, .of_le (not_isBot x) hle⟩
+    (h : DisjointPred {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
+  fun x hx _ hy hxy hle ↦ h hx hy hxy (.of_le (not_isBot x) hle)
 
 theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x} = {y} := by

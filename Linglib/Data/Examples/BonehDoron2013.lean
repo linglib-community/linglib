@@ -24,7 +24,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := "(At the opera). Look at how sloppily people are dressed."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "would")] }
 
@@ -37,7 +37,7 @@ def ex2d : Datum :=
     glossedTokens := []
     context := "(At the opera). Look at how sloppily people are dressed."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "would")] }
 
@@ -50,7 +50,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple")] }
 
@@ -63,7 +63,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple")] }
 
@@ -76,7 +76,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple")] }
 
@@ -89,7 +89,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple")] }
 
@@ -103,7 +103,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "usedTo")] }
 
@@ -116,7 +116,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := "Ruti sold her car in 1990."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "perfect")] }
 
@@ -129,7 +129,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := "Ruti sold her car in 1990."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "usedTo")] }
 
@@ -142,7 +142,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "simple")] }
 
@@ -155,7 +155,7 @@ def ex35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "usedTo")] }
 
@@ -168,9 +168,10 @@ def ex42a : Datum :=
     glossedTokens := []
     context := "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:"
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("form", "simple"), ("truthValue", "true")] }
+    paperFeatures := [("form", "simple")] }
 
 def ex42b : Datum :=
   { id := "bonehdoron2013_ex42b"
@@ -181,9 +182,10 @@ def ex42b : Datum :=
     glossedTokens := []
     context := "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:"
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("form", "would"), ("truthValue", "true")] }
+    paperFeatures := [("form", "would")] }
 
 def ex42c : Datum :=
   { id := "bonehdoron2013_ex42c"
@@ -194,9 +196,10 @@ def ex42c : Datum :=
     glossedTokens := []
     context := "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:"
     judgment := .acceptable
-    alternatives := []
+    verdict := some false
+    contrasts := []
     readings := []
-    paperFeatures := [("form", "usedTo"), ("truthValue", "false")] }
+    paperFeatures := [("form", "usedTo")] }
 
 def ex47a_barePlural : Datum :=
   { id := "bonehdoron2013_ex47a_barePlural"
@@ -207,7 +210,7 @@ def ex47a_barePlural : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "would"), ("subject", "barePlural")] }
 
@@ -220,7 +223,7 @@ def ex47a_indefinite : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "would"), ("subject", "indefiniteSingular")] }
 
@@ -233,7 +236,7 @@ def ex47b_barePlural : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "usedTo"), ("subject", "barePlural")] }
 
@@ -246,7 +249,7 @@ def ex47b_indefinite : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "usedTo"), ("subject", "indefiniteSingular")] }
 
@@ -259,7 +262,7 @@ def ex48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "usedTo")] }
 
@@ -272,7 +275,7 @@ def ex48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "would")] }
 

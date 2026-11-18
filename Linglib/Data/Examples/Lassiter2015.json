@@ -9,12 +9,12 @@
     "translation": "",
     "context": "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ ¬φ"],
-      ["truthValue", "false"]
+      ["form", "φ ⪰ ¬φ"]
     ],
     "comment": "The conclusion of the invalid inference (2), restated as (14): each customer is overwhelmingly less likely to win than not to win.",
     "verified": "page-image"
@@ -29,12 +29,12 @@
     "translation": "",
     "context": "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": true,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ ψ_i for each i"],
-      ["truthValue", "true"]
+      ["form", "φ ⪰ ψ_i for each i"]
     ],
     "comment": "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle.",
     "verified": "page-image"
@@ -49,12 +49,12 @@
     "translation": "",
     "context": "The same lottery.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": true,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ ψ ∧ φ ⪰ χ"],
-      ["truthValue", "true"]
+      ["form", "φ ⪰ ψ ∧ φ ⪰ χ"]
     ],
     "comment": "True because the disjunction in the comparative complement is read as a wide-scope conjunction, as in (6)-(7).",
     "verified": "page-image"
@@ -69,12 +69,12 @@
     "translation": "",
     "context": "The same lottery.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ (ψ ∨ χ)"],
-      ["truthValue", "false"]
+      ["form", "φ ⪰ (ψ ∨ χ)"]
     ],
     "comment": "False on the prominent reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two. The wide-scope conjunctive reading of the disjunction is (5)'s.",
     "verified": "page-image"
@@ -89,12 +89,12 @@
     "translation": "",
     "context": "The same lottery.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ (ψ ∨ χ)"],
-      ["truthValue", "false"]
+      ["form", "φ ⪰ (ψ ∨ χ)"]
     ],
     "comment": "Unambiguously false; the reading (8) shares.",
     "verified": "page-image"
@@ -109,12 +109,12 @@
     "translation": "",
     "context": "The lottery, with five more people holding two tickets each.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"],
-      ["truthValue", "false"]
+      ["form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"]
     ],
     "comment": "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not.",
     "verified": "page-image"
@@ -129,12 +129,12 @@
     "translation": "",
     "context": "The lottery with three siblings.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.4"],
-      ["form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"],
-      ["truthValue", "false"]
+      ["form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"]
     ],
     "comment": "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint.",
     "verified": "page-image"
@@ -149,7 +149,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "1.5"],
@@ -168,12 +168,12 @@
     "translation": "",
     "context": "Sam might go to school, but he is somewhat more likely to cut class and go to the movies.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
-      ["measure", "symmetric fuzzy"],
-      ["truthValue", "false"]
+      ["measure", "symmetric fuzzy"]
     ],
     "comment": "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces.",
     "verified": "page-image"
@@ -188,7 +188,7 @@
     "translation": "",
     "context": "You are about to throw a fair die.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -207,7 +207,7 @@
     "translation": "",
     "context": "You are about to draw a card at random from a well-shuffled pack.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -226,7 +226,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
@@ -266,7 +266,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3"],
@@ -285,7 +285,7 @@
     "translation": "",
     "context": "An online genealogy discussion; David is the father.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -304,7 +304,7 @@
     "translation": "",
     "context": "A year in which Yale is a much better team than Harvard, and the odds against either winning are astronomical.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],
@@ -323,7 +323,7 @@
     "translation": "",
     "context": "The same year.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "4"],

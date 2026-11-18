@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("expression", "probably")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("expression", "not certain")] }
 
@@ -50,7 +50,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("expression", "certainly")] }
 
@@ -63,7 +63,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := "Eric has seen Liem wear green on 500 of 800 consecutive days."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "definitely likely")] }
 
@@ -76,7 +76,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := "Madeleine has seen Liem wear green on 5 of 8 consecutive days."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "might be probable")] }
 
@@ -89,7 +89,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "probable")] }
 
@@ -102,7 +102,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "certainly probable")] }
 
@@ -115,7 +115,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("expression", "frame")] }
 

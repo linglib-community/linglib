@@ -1,0 +1,908 @@
+{
+  "description": "The Yukatek verb stems of Bohnemeyer (2004) and the transitivized stems of its examples, with the stem class and the causation type the paper assigns each base. A relation is named by the paper's gloss of the suffix, APP or CAUS.",
+  "Types": {
+    "StemClass": [
+      {"Value": "active", "Lean": "active", "Description": "an active intransitive stem, unmarked in the incompletive"},
+      {"Value": "inactive", "Lean": "inactive", "Description": "an inactive intransitive stem, unmarked in the completive"},
+      {"Value": "inchoative", "Lean": "inchoative", "Description": "an inchoative stem, derived from a stative root"},
+      {"Value": "positional", "Lean": "positional", "Description": "a positional stem"},
+      {"Value": "transitive", "Lean": "transitive", "Description": "a transitive active stem"}
+    ],
+    "Causation": [
+      {"Value": "internal", "Lean": "internal", "Description": "the base entails internal causation"},
+      {"Value": "external", "Lean": "external", "Description": "the base denotes an externally-caused event"}
+    ]
+  },
+  "ParameterTable": [
+    {
+      "ID": "work",
+      "Name": "work",
+      "Description": ""
+    },
+    {
+      "ID": "play",
+      "Name": "play",
+      "Description": ""
+    },
+    {
+      "ID": "eat",
+      "Name": "eat",
+      "Description": ""
+    },
+    {
+      "ID": "roll",
+      "Name": "roll",
+      "Description": ""
+    },
+    {
+      "ID": "move",
+      "Name": "move, wiggle",
+      "Description": ""
+    },
+    {
+      "ID": "buzz",
+      "Name": "buzz",
+      "Description": ""
+    },
+    {
+      "ID": "squeak",
+      "Name": "squeak",
+      "Description": ""
+    },
+    {
+      "ID": "shake",
+      "Name": "shake, rattle",
+      "Description": ""
+    },
+    {
+      "ID": "slide",
+      "Name": "slide",
+      "Description": ""
+    },
+    {
+      "ID": "stir",
+      "Name": "stir, agitate",
+      "Description": ""
+    },
+    {
+      "ID": "whirl",
+      "Name": "whirl, revolve",
+      "Description": ""
+    },
+    {
+      "ID": "flick",
+      "Name": "flick",
+      "Description": ""
+    },
+    {
+      "ID": "turn",
+      "Name": "turn, revolve",
+      "Description": ""
+    },
+    {
+      "ID": "die",
+      "Name": "die",
+      "Description": ""
+    },
+    {
+      "ID": "fall",
+      "Name": "fall",
+      "Description": ""
+    },
+    {
+      "ID": "get-tired",
+      "Name": "get tired",
+      "Description": ""
+    },
+    {
+      "ID": "deteriorate",
+      "Name": "deteriorate",
+      "Description": ""
+    },
+    {
+      "ID": "ascend",
+      "Name": "ascend",
+      "Description": ""
+    },
+    {
+      "ID": "last",
+      "Name": "last, drag on",
+      "Description": ""
+    },
+    {
+      "ID": "rot",
+      "Name": "rot",
+      "Description": ""
+    },
+    {
+      "ID": "blacken",
+      "Name": "blacken",
+      "Description": ""
+    },
+    {
+      "ID": "shrink",
+      "Name": "shrink",
+      "Description": ""
+    },
+    {
+      "ID": "stand-up",
+      "Name": "stand up",
+      "Description": ""
+    },
+    {
+      "ID": "sit-down",
+      "Name": "sit down",
+      "Description": ""
+    },
+    {
+      "ID": "lie-down",
+      "Name": "lie down",
+      "Description": ""
+    },
+    {
+      "ID": "kneel",
+      "Name": "kneel",
+      "Description": ""
+    },
+    {
+      "ID": "make",
+      "Name": "make",
+      "Description": ""
+    },
+    {
+      "ID": "play-with",
+      "Name": "play (something)",
+      "Description": ""
+    },
+    {
+      "ID": "kill",
+      "Name": "kill",
+      "Description": ""
+    },
+    {
+      "ID": "fell",
+      "Name": "fell",
+      "Description": ""
+    },
+    {
+      "ID": "cause-to-move",
+      "Name": "move (something)",
+      "Description": ""
+    },
+    {
+      "ID": "eat-something",
+      "Name": "eat (something)",
+      "Description": ""
+    },
+    {
+      "ID": "cause-to-roll",
+      "Name": "roll (something)",
+      "Description": ""
+    },
+    {
+      "ID": "cause-to-buzz",
+      "Name": "buzz (something)",
+      "Description": ""
+    },
+    {
+      "ID": "erect",
+      "Name": "erect",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "work",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "work",
+      "Name": "meyah",
+      "POS": "VERB"
+    },
+    {
+      "ID": "play",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "play",
+      "Name": "bàaxal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "eat",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "eat",
+      "Name": "hàan",
+      "POS": "VERB"
+    },
+    {
+      "ID": "roll",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "roll",
+      "Name": "balak'",
+      "POS": "VERB"
+    },
+    {
+      "ID": "move",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "move",
+      "Name": "péek",
+      "POS": "VERB"
+    },
+    {
+      "ID": "buzz",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "buzz",
+      "Name": "tsíirin",
+      "POS": "VERB"
+    },
+    {
+      "ID": "squeak",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "squeak",
+      "Name": "nik'ich",
+      "POS": "VERB"
+    },
+    {
+      "ID": "shake",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "shake",
+      "Name": "chíik",
+      "POS": "VERB"
+    },
+    {
+      "ID": "slide",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "slide",
+      "Name": "háarax",
+      "POS": "VERB"
+    },
+    {
+      "ID": "stir",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "stir",
+      "Name": "húuy",
+      "POS": "VERB"
+    },
+    {
+      "ID": "whirl",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "whirl",
+      "Name": "mosòon",
+      "POS": "VERB"
+    },
+    {
+      "ID": "flick",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "flick",
+      "Name": "pirix",
+      "POS": "VERB"
+    },
+    {
+      "ID": "turn",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "turn",
+      "Name": "walak'",
+      "POS": "VERB"
+    },
+    {
+      "ID": "die",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "die",
+      "Name": "kim",
+      "POS": "VERB"
+    },
+    {
+      "ID": "fall",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "fall",
+      "Name": "lúub",
+      "POS": "VERB"
+    },
+    {
+      "ID": "get_tired",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "get-tired",
+      "Name": "ka'n",
+      "POS": "VERB"
+    },
+    {
+      "ID": "deteriorate",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "deteriorate",
+      "Name": "la'b",
+      "POS": "VERB"
+    },
+    {
+      "ID": "ascend",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "ascend",
+      "Name": "na'k",
+      "POS": "VERB"
+    },
+    {
+      "ID": "last",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "last",
+      "Name": "t'íil",
+      "POS": "VERB"
+    },
+    {
+      "ID": "rot",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "rot",
+      "Name": "ts'u'k",
+      "POS": "VERB"
+    },
+    {
+      "ID": "blacken",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "blacken",
+      "Name": "bòox-tal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "shrink",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "shrink",
+      "Name": "chichan-tal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "stand_up",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "stand-up",
+      "Name": "wa'l-tal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "sit_down",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "sit-down",
+      "Name": "kul-tal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "lie_down",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "lie-down",
+      "Name": "chil-tal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "kneel",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "kneel",
+      "Name": "xol-tal",
+      "POS": "VERB"
+    },
+    {
+      "ID": "make",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "make",
+      "Name": "meyah-t",
+      "POS": "VERB"
+    },
+    {
+      "ID": "play_with",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "play-with",
+      "Name": "bàax-t",
+      "POS": "VERB"
+    },
+    {
+      "ID": "kill",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "kill",
+      "Name": "kim-s",
+      "POS": "VERB"
+    },
+    {
+      "ID": "fell",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "fell",
+      "Name": "lúub-s",
+      "POS": "VERB"
+    },
+    {
+      "ID": "cause_to_move",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-move",
+      "Name": "péek-s",
+      "POS": "VERB"
+    },
+    {
+      "ID": "eat_something",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "eat-something",
+      "Name": "hàan-t",
+      "POS": "VERB"
+    },
+    {
+      "ID": "cause_to_roll",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-roll",
+      "Name": "balak'-t",
+      "POS": "VERB"
+    },
+    {
+      "ID": "cause_to_buzz",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-buzz",
+      "Name": "tsíirin-t",
+      "POS": "VERB"
+    },
+    {
+      "ID": "erect",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "erect",
+      "Name": "wa'l-kunt",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "bohnemeyer2004_meyah",
+      "Lexeme_ID": "work",
+      "Form": "meyah",
+      "Source": ["bohnemeyer-2004[(4)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_baaxal",
+      "Lexeme_ID": "play",
+      "Form": "bàaxal",
+      "Source": ["bohnemeyer-2004[(5)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_haan",
+      "Lexeme_ID": "eat",
+      "Form": "hàan",
+      "Source": ["bohnemeyer-2004[(9)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_balak",
+      "Lexeme_ID": "roll",
+      "Form": "balak'",
+      "Source": ["bohnemeyer-2004[(10)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_peek",
+      "Lexeme_ID": "move",
+      "Form": "péek",
+      "Source": ["bohnemeyer-2004[(8)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_tsiirin",
+      "Lexeme_ID": "buzz",
+      "Form": "tsíirin",
+      "Source": ["bohnemeyer-2004[(11)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_nikich",
+      "Lexeme_ID": "squeak",
+      "Form": "nik'ich",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_chiik",
+      "Lexeme_ID": "shake",
+      "Form": "chíik",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_haarax",
+      "Lexeme_ID": "slide",
+      "Form": "háarax",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_huuy",
+      "Lexeme_ID": "stir",
+      "Form": "húuy",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_mosoon",
+      "Lexeme_ID": "whirl",
+      "Form": "mosòon",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_pirix",
+      "Lexeme_ID": "flick",
+      "Form": "pirix",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_walak",
+      "Lexeme_ID": "turn",
+      "Form": "walak'",
+      "Source": ["bohnemeyer-2004[p. 92]"]
+    },
+    {
+      "ID": "bohnemeyer2004_kim",
+      "Lexeme_ID": "die",
+      "Form": "kim",
+      "Source": ["bohnemeyer-2004[(6)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_luub",
+      "Lexeme_ID": "fall",
+      "Form": "lúub",
+      "Source": ["bohnemeyer-2004[(7)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_kan",
+      "Lexeme_ID": "get_tired",
+      "Form": "ka'n",
+      "Source": ["bohnemeyer-2004[(17)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_lab",
+      "Lexeme_ID": "deteriorate",
+      "Form": "la'b",
+      "Source": ["bohnemeyer-2004[(17)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_nak",
+      "Lexeme_ID": "ascend",
+      "Form": "na'k",
+      "Source": ["bohnemeyer-2004[(17)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_tiil",
+      "Lexeme_ID": "last",
+      "Form": "t'íil",
+      "Source": ["bohnemeyer-2004[(17)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_tsuk",
+      "Lexeme_ID": "rot",
+      "Form": "ts'u'k",
+      "Source": ["bohnemeyer-2004[(17)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_booxtal",
+      "Lexeme_ID": "blacken",
+      "Form": "bòox-tal",
+      "Source": ["bohnemeyer-2004[(18)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_chichantal",
+      "Lexeme_ID": "shrink",
+      "Form": "chichan-tal",
+      "Source": ["bohnemeyer-2004[(18)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_waltal",
+      "Lexeme_ID": "stand_up",
+      "Form": "wa'l-tal",
+      "Source": ["bohnemeyer-2004[(24)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_kultal",
+      "Lexeme_ID": "sit_down",
+      "Form": "kul-tal",
+      "Source": ["bohnemeyer-2004[(24)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_chiltal",
+      "Lexeme_ID": "lie_down",
+      "Form": "chil-tal",
+      "Source": ["bohnemeyer-2004[(24)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_xoltal",
+      "Lexeme_ID": "kneel",
+      "Form": "xol-tal",
+      "Source": ["bohnemeyer-2004[(24)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_meyah_t",
+      "Lexeme_ID": "make",
+      "Form": "meyah-t",
+      "Morphs": ["meyah", "t"],
+      "Source": ["bohnemeyer-2004[(4b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_baax_t",
+      "Lexeme_ID": "play_with",
+      "Form": "bàax-t",
+      "Morphs": ["bàax", "t"],
+      "Source": ["bohnemeyer-2004[(5b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_kim_s",
+      "Lexeme_ID": "kill",
+      "Form": "kim-s",
+      "Morphs": ["kim", "s"],
+      "Source": ["bohnemeyer-2004[(6b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_luub_s",
+      "Lexeme_ID": "fell",
+      "Form": "lúub-s",
+      "Morphs": ["lúub", "s"],
+      "Source": ["bohnemeyer-2004[(7b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_peek_s",
+      "Lexeme_ID": "cause_to_move",
+      "Form": "péek-s",
+      "Morphs": ["péek", "s"],
+      "Source": ["bohnemeyer-2004[(8b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_haan_t",
+      "Lexeme_ID": "eat_something",
+      "Form": "hàan-t",
+      "Morphs": ["hàan", "t"],
+      "Source": ["bohnemeyer-2004[(9b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_balak_t",
+      "Lexeme_ID": "cause_to_roll",
+      "Form": "balak'-t",
+      "Morphs": ["balak'", "t"],
+      "Source": ["bohnemeyer-2004[(10b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_tsiirin_t",
+      "Lexeme_ID": "cause_to_buzz",
+      "Form": "tsíirin-t",
+      "Morphs": ["tsíirin", "t"],
+      "Source": ["bohnemeyer-2004[(11b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_wal_kunt",
+      "Lexeme_ID": "erect",
+      "Form": "wa'l-kunt",
+      "Morphs": ["wa'l", "kunt"],
+      "Source": ["bohnemeyer-2004[(25)]"]
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "bohnemeyer2004_r_meyah_t",
+      "Form_ID": "bohnemeyer2004_meyah",
+      "Target_ID": "bohnemeyer2004_meyah_t",
+      "Relation": "applicative",
+      "Source": ["bohnemeyer-2004[(4b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_baax_t",
+      "Form_ID": "bohnemeyer2004_baaxal",
+      "Target_ID": "bohnemeyer2004_baax_t",
+      "Relation": "applicative",
+      "Source": ["bohnemeyer-2004[(5b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_kim_s",
+      "Form_ID": "bohnemeyer2004_kim",
+      "Target_ID": "bohnemeyer2004_kim_s",
+      "Relation": "causative",
+      "Source": ["bohnemeyer-2004[(6b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_luub_s",
+      "Form_ID": "bohnemeyer2004_luub",
+      "Target_ID": "bohnemeyer2004_luub_s",
+      "Relation": "causative",
+      "Source": ["bohnemeyer-2004[(7b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_peek_s",
+      "Form_ID": "bohnemeyer2004_peek",
+      "Target_ID": "bohnemeyer2004_peek_s",
+      "Relation": "causative",
+      "Source": ["bohnemeyer-2004[(8b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_haan_t",
+      "Form_ID": "bohnemeyer2004_haan",
+      "Target_ID": "bohnemeyer2004_haan_t",
+      "Relation": "applicative",
+      "Source": ["bohnemeyer-2004[(9b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_balak_t",
+      "Form_ID": "bohnemeyer2004_balak",
+      "Target_ID": "bohnemeyer2004_balak_t",
+      "Relation": "applicative",
+      "Source": ["bohnemeyer-2004[(10b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_tsiirin_t",
+      "Form_ID": "bohnemeyer2004_tsiirin",
+      "Target_ID": "bohnemeyer2004_tsiirin_t",
+      "Relation": "applicative",
+      "Source": ["bohnemeyer-2004[(11b)]"]
+    },
+    {
+      "ID": "bohnemeyer2004_r_wal_kunt",
+      "Form_ID": "bohnemeyer2004_waltal",
+      "Target_ID": "bohnemeyer2004_wal_kunt",
+      "Relation": "causative",
+      "Source": ["bohnemeyer-2004[(25)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Class",
+      "Lean": "stemClass",
+      "Type": "StemClass",
+      "Description": "the stem class, by status pattern"
+    },
+    {
+      "Name": "Causation",
+      "Lean": "causation",
+      "Type": "Causation",
+      "Description": "the causation type the paper assigns an intransitive base"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "bohnemeyer2004_meyah",
+      "Class": "active",
+      "Causation": "internal"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_baaxal",
+      "Class": "active",
+      "Causation": "internal"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_haan",
+      "Class": "inactive",
+      "Causation": "internal"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_balak",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_peek",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_tsiirin",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_nikich",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_chiik",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_haarax",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_huuy",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_mosoon",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_pirix",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_walak",
+      "Class": "active",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_kim",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_luub",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_kan",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_lab",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_nak",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_tiil",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_tsuk",
+      "Class": "inactive",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_booxtal",
+      "Class": "inchoative",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_chichantal",
+      "Class": "inchoative",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_waltal",
+      "Class": "positional",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_kultal",
+      "Class": "positional",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_chiltal",
+      "Class": "positional",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_xoltal",
+      "Class": "positional",
+      "Causation": "external"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_meyah_t",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_baax_t",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_kim_s",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_luub_s",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_peek_s",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_haan_t",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_balak_t",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_tsiirin_t",
+      "Class": "transitive"
+    },
+    {
+      "Form_ID": "bohnemeyer2004_wal_kunt",
+      "Class": "transitive"
+    }
+  ]
+}

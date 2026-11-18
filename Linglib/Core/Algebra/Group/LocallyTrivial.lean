@@ -16,29 +16,18 @@ public import Mathlib.Algebra.Group.Prod
 
 A semigroup is *definite* when each of its idempotents is a right zero, *reverse definite* when
 each is a left zero, and *locally trivial* when every idempotent `e` satisfies `e * s * e = e` for
-every `s`. In a finite semigroup each condition is equivalent to an equation on all sufficiently
-long products, which is the form in which these semigroups recognize the definite, reverse definite
-and generalized definite languages.
-
-## Main definitions
-
-* `Semigroup.IsDefinite`, `Semigroup.IsReverseDefinite`, `Semigroup.IsLocallyTrivial`: the three
-  conditions.
-
-## Main results
-
-* `Semigroup.IsDefinite.of_injective`, `.of_surjective`, `.prod` and their mirrors: closure under
-  subsemigroups, quotients and products.
-* `Semigroup.IsDefinite.isRightZero_map`, `Semigroup.IsReverseDefinite.isLeftZero_map`,
-  `Semigroup.IsLocallyTrivial.map_mul_map_eq`: in a finite semigroup satisfying the condition,
-  every product of at least `|S|` elements is a right zero, a left zero, respectively absorbs
-  anything placed between two copies of it.
-* `Semigroup.IsDefinite.of_isRightZero_map` and its two mirrors: the converse, for any bound.
+every `s`. Each class is closed under [subsemigroups](##Semigroup.IsDefinite.of_injective),
+[quotients](##Semigroup.IsDefinite.of_surjective) and [products](##Semigroup.IsDefinite.prod). In a
+finite semigroup each condition is equivalent to an equation on long products: a product of at
+least `|S|` elements is [a right zero](##Semigroup.IsDefinite.isRightZero_map),
+[a left zero](##Semigroup.IsReverseDefinite.isLeftZero_map), or
+[absorbs anything placed between two copies of it](##Semigroup.IsLocallyTrivial.map_mul_map_eq),
+and [conversely](##Semigroup.IsDefinite.of_isRightZero_map) for any bound. In this form the three
+classes recognize the definite, reverse definite and generalized definite languages.
 
 ## Implementation notes
 
-Pin calls definite semigroups *righty trivial* and reverse definite ones *lefty trivial*. The
-long-product characterizations are Propositions XI.4.15–XI.4.17 of Pin's lecture notes.
+Pin calls definite semigroups *righty trivial* and reverse definite ones *lefty trivial*.
 
 ## References
 
@@ -152,15 +141,16 @@ theorem IsLocallyTrivial.of_map_mul_map_eq (hf : Function.Surjective f)
 
 variable [Finite S] (f)
 
-/-- In a finite definite semigroup, a product of at least `|S|` elements is a right zero. -/
+/-- In a finite definite semigroup, a product of at least `|S|` elements is a right zero
+([pin-mfa], Proposition XI.4.16). -/
 theorem IsDefinite.isRightZero_map (h : IsDefinite S) (hw : Nat.card S ≤ w.length) :
     IsRightZero (f w) := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw
   rw [hw, h e he x]
   exact (h e he).mul_right y
 
-/-- In a finite reverse definite semigroup, a product of at least `|S|` elements is a left
-zero. -/
+/-- In a finite reverse definite semigroup, a product of at least `|S|` elements is a left zero
+([pin-mfa], Proposition XI.4.15). -/
 theorem IsReverseDefinite.isLeftZero_map (h : IsReverseDefinite S) (hw : Nat.card S ≤ w.length) :
     IsLeftZero (f w) := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw
@@ -168,7 +158,7 @@ theorem IsReverseDefinite.isLeftZero_map (h : IsReverseDefinite S) (hw : Nat.car
   exact (h e he).mul_left x
 
 /-- In a finite locally trivial semigroup, a product of at least `|S|` elements absorbs anything
-placed between two copies of it. -/
+placed between two copies of it ([pin-mfa], Proposition XI.4.17). -/
 theorem IsLocallyTrivial.map_mul_map_eq (h : IsLocallyTrivial S) (hw : Nat.card S ≤ w.length)
     (s : S) : f w * s * f w = f w := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw

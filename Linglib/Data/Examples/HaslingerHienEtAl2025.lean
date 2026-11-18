@@ -24,7 +24,7 @@ def ex_71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")] }
 
@@ -35,9 +35,11 @@ def ex_71b : Datum :=
     language := "stan1295"
     primaryText := "Alle zehn Minuten kommt ein Zug."
     glossedTokens := [("Alle", "UQ"), ("zehn", "ten"), ("Minuten", "minute.PL"), ("kommt", "come.3SG"), ("ein", "a"), ("Zug.", "train")]
+    glossedWords := [⟨['A', 'l', 'l', 'e'], ['U', 'Q'], [⟨['A', 'l', 'l', 'e'], ['U', 'Q'], none⟩]⟩, ⟨['z', 'e', 'h', 'n'], ['t', 'e', 'n'], [⟨['z', 'e', 'h', 'n'], ['t', 'e', 'n'], none⟩]⟩, ⟨['M', 'i', 'n', 'u', 't', 'e', 'n'], ['m', 'i', 'n', 'u', 't', 'e', '.', 'P', 'L'], [⟨['M', 'i', 'n', 'u', 't', 'e', 'n'], ['m', 'i', 'n', 'u', 't', 'e', '.', 'P', 'L'], none⟩]⟩, ⟨['k', 'o', 'm', 'm', 't'], ['c', 'o', 'm', 'e', '.', '3', 'S', 'G'], [⟨['k', 'o', 'm', 'm', 't'], ['c', 'o', 'm', 'e', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['e', 'i', 'n'], ['a'], [⟨['e', 'i', 'n'], ['a'], none⟩]⟩, ⟨['Z', 'u', 'g', '.'], ['t', 'r', 'a', 'i', 'n'], [⟨['Z', 'u', 'g'], ['t', 'r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")] }
 
@@ -50,7 +52,7 @@ def ex_73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")] }
 
@@ -63,7 +65,7 @@ def ex_73b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "atomic"), ("form", "each")] }
 
@@ -76,7 +78,7 @@ def ex_74a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")] }
 
@@ -89,7 +91,7 @@ def ex_74b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "atomicOnly"), ("form", "jeder")] }
 

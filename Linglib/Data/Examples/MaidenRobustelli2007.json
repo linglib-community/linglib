@@ -10,7 +10,7 @@
     "translation": "Have you forgotten anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "8.10"]
@@ -29,7 +29,7 @@
     "translation": "Is there anybody in there?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "8.10"]
@@ -48,7 +48,7 @@
     "translation": "Is there anything to eat?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "8.10"]
@@ -67,7 +67,7 @@
     "translation": "I don't think anybody knew.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "9.11"]
@@ -86,7 +86,7 @@
     "translation": "I found myself alone without anything to help me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "9.11"]
@@ -105,7 +105,7 @@
     "translation": "He comes back and sees the shop open without anybody in it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "9.11"]
@@ -124,7 +124,7 @@
     "translation": "He does not at present have any contract.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "9.11"]
@@ -143,7 +143,7 @@
     "translation": "I didn't see anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "9.11"]
@@ -162,7 +162,7 @@
     "translation": "without having seen anyone",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "9.11"]
@@ -181,7 +181,7 @@
     "translation": "I'll never give it to him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "13.16"]
@@ -200,7 +200,7 @@
     "translation": "Have you ever read The Betrothed?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "13.16"]
@@ -219,7 +219,7 @@
     "translation": "And there I met the sweetest and greatest man I have ever encountered.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "13.16"]
@@ -238,7 +238,7 @@
     "translation": "I haven't disappeared at all.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "13.17"]
@@ -257,7 +257,7 @@
     "translation": "And I'm telling you that C was not a fascist at all.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "13.17"]
@@ -276,7 +276,7 @@
     "translation": "It rains more than ever.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "16.7"]
@@ -295,7 +295,7 @@
     "translation": "Nobody arrived on time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -314,7 +314,7 @@
     "translation": "I loved nobody more than him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -333,7 +333,7 @@
     "translation": "I didn't see anything and I don't want to know anything about it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -352,7 +352,7 @@
     "translation": "I've never seen him hatless.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -371,7 +371,7 @@
     "translation": "He doesn't behave well even at school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -390,7 +390,7 @@
     "translation": "You strike me as someone who couldn't score a goal even in his dreams.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -409,7 +409,7 @@
     "translation": "Nobody has ever arrived on time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "18.5"]
@@ -428,7 +428,7 @@
     "translation": "I travelled kilometres and kilometres without meeting anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "19.1"]

@@ -59,10 +59,10 @@ attribute [instance] Perspective.decSalient Perspective.decNovel
 
 /-- A use of a tense cell is true when the relation of the event to the speech time lies in
 the cell: the past, present, future, and nonpast table. -/
-def IsTrueUse [LinearOrder T] (cell : Finset Ordering) (f : Perspective T) : Prop :=
+def IsTrueUse [LinearOrder T] (cell : PointAlgebra) (f : Perspective T) : Prop :=
   compare f.eventTime f.speechTime ∈ cell
 
-instance [LinearOrder T] (cell : Finset Ordering) (f : Perspective T) :
+instance [LinearOrder T] (cell : PointAlgebra) (f : Perspective T) :
     Decidable (IsTrueUse cell f) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
@@ -111,7 +111,7 @@ inductive Form where
 
 /-- An English tense form: the cell it realizes and its morphology. -/
 structure TenseForm where
-  cell : Finset Ordering
+  cell : PointAlgebra
   form : Form
 
 /-- The simple past. -/

@@ -55,7 +55,6 @@ open BrueningAlKhalaf2020 (Conjunct Admits Satisfies Licensed checkedOnce phrase
 open Agreement (ConjunctAgreement)
 open PhraseStructure (Cat IsMaximalCategory)
 open PhraseStructure.Cat (N V Adj Adv)
-open Core.Order (TreePath)
 
 /-! ### Categorial selection -/
 
@@ -99,7 +98,7 @@ inductive Selected where
 /-- What a coordination of modifiers merges with is a position in a tree or a degree head. -/
 inductive Site where
   /-- `at t p` is the position `p` of the tree `t`. -/
-  | at (t : PhraseStructure.Tree Cat String) (p : TreePath)
+  | at (t : PhraseStructure.Tree Cat String) (p : GornAddress)
   /-- `degree d` is a degree head. -/
   | degree (d : Degree)
   deriving DecidableEq

@@ -24,7 +24,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -37,7 +37,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -50,7 +50,7 @@ def ex_21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -63,7 +63,7 @@ def ex_21d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -74,9 +74,11 @@ def ex_22a : Datum :=
     language := "ital1282"
     primaryText := "Gli LLM usano il Deep Learning."
     glossedTokens := [("Gli", "the"), ("LLM", "LLMs"), ("usano", "use"), ("il", "the"), ("Deep", "Deep"), ("Learning.", "Learning.")]
+    glossedWords := [⟨['G', 'l', 'i'], ['t', 'h', 'e'], [⟨['G', 'l', 'i'], ['t', 'h', 'e'], none⟩]⟩, ⟨['L', 'L', 'M'], ['L', 'L', 'M', 's'], [⟨['L', 'L', 'M'], ['L', 'L', 'M', 's'], none⟩]⟩, ⟨['u', 's', 'a', 'n', 'o'], ['u', 's', 'e'], [⟨['u', 's', 'a', 'n', 'o'], ['u', 's', 'e'], none⟩]⟩, ⟨['i', 'l'], ['t', 'h', 'e'], [⟨['i', 'l'], ['t', 'h', 'e'], none⟩]⟩, ⟨['D', 'e', 'e', 'p'], ['D', 'e', 'e', 'p'], [⟨['D', 'e', 'e', 'p'], ['D', 'e', 'e', 'p'], none⟩]⟩, ⟨['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g', '.'], ['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g', '.'], [⟨['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g'], ['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -87,9 +89,11 @@ def ex_22b : Datum :=
     language := "ital1282"
     primaryText := "Un LLM usa il Deep Learning."
     glossedTokens := [("Un", "a"), ("LLM", "LLM"), ("usa", "uses"), ("il", "the"), ("Deep", "Deep"), ("Learning.", "Learning.")]
+    glossedWords := [⟨['U', 'n'], ['a'], [⟨['U', 'n'], ['a'], none⟩]⟩, ⟨['L', 'L', 'M'], ['L', 'L', 'M'], [⟨['L', 'L', 'M'], ['L', 'L', 'M'], none⟩]⟩, ⟨['u', 's', 'a'], ['u', 's', 'e', 's'], [⟨['u', 's', 'a'], ['u', 's', 'e', 's'], none⟩]⟩, ⟨['i', 'l'], ['t', 'h', 'e'], [⟨['i', 'l'], ['t', 'h', 'e'], none⟩]⟩, ⟨['D', 'e', 'e', 'p'], ['D', 'e', 'e', 'p'], [⟨['D', 'e', 'e', 'p'], ['D', 'e', 'e', 'p'], none⟩]⟩, ⟨['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g', '.'], ['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g', '.'], [⟨['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g'], ['L', 'e', 'a', 'r', 'n', 'i', 'n', 'g', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -100,9 +104,11 @@ def ex_22c : Datum :=
     language := "ital1282"
     primaryText := "Gli LLM sono popolari."
     glossedTokens := [("Gli", "the"), ("LLM", "LLMs"), ("sono", "are"), ("popolari.", "popular.")]
+    glossedWords := [⟨['G', 'l', 'i'], ['t', 'h', 'e'], [⟨['G', 'l', 'i'], ['t', 'h', 'e'], none⟩]⟩, ⟨['L', 'L', 'M'], ['L', 'L', 'M', 's'], [⟨['L', 'L', 'M'], ['L', 'L', 'M', 's'], none⟩]⟩, ⟨['s', 'o', 'n', 'o'], ['a', 'r', 'e'], [⟨['s', 'o', 'n', 'o'], ['a', 'r', 'e'], none⟩]⟩, ⟨['p', 'o', 'p', 'o', 'l', 'a', 'r', 'i', '.'], ['p', 'o', 'p', 'u', 'l', 'a', 'r', '.'], [⟨['p', 'o', 'p', 'o', 'l', 'a', 'r', 'i'], ['p', 'o', 'p', 'u', 'l', 'a', 'r', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -113,9 +119,11 @@ def ex_22d : Datum :=
     language := "ital1282"
     primaryText := "Un LLM è popolare."
     glossedTokens := [("Un", "a"), ("LLM", "LLM"), ("è", "is"), ("popolare.", "popular.")]
+    glossedWords := [⟨['U', 'n'], ['a'], [⟨['U', 'n'], ['a'], none⟩]⟩, ⟨['L', 'L', 'M'], ['L', 'L', 'M'], [⟨['L', 'L', 'M'], ['L', 'L', 'M'], none⟩]⟩, ⟨['è'], ['i', 's'], [⟨['è'], ['i', 's'], none⟩]⟩, ⟨['p', 'o', 'p', 'o', 'l', 'a', 'r', 'e', '.'], ['p', 'o', 'p', 'u', 'l', 'a', 'r', '.'], [⟨['p', 'o', 'p', 'o', 'l', 'a', 'r', 'e'], ['p', 'o', 'p', 'u', 'l', 'a', 'r', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -128,7 +136,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -141,7 +149,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "cumulativity"), ("nominal", "singularIndefinite")] }
 
@@ -154,7 +162,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -167,7 +175,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "singularIndefinite")] }
 
@@ -180,7 +188,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := "Stage level: There is a ghost on campus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -193,7 +201,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := "Stage level: There is a ghost on campus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "singularIndefinite")] }
 
@@ -206,7 +214,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
@@ -219,7 +227,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("fewBirdsFly", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
@@ -232,7 +240,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("fewBirdsMigrating", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
@@ -245,7 +253,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "qadv"), ("nominal", "kindDenotingPlural")] }
 
@@ -258,7 +266,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "qadv"), ("nominal", "kindDenotingPlural")] }
 
@@ -271,7 +279,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "none")] }
 
@@ -284,7 +292,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "none")] }
 
@@ -297,7 +305,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "all")] }
 
@@ -310,7 +318,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "all")] }
 
@@ -323,7 +331,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "none")] }
 
@@ -336,7 +344,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "none")] }
 
@@ -349,7 +357,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -362,7 +370,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -375,7 +383,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "none")] }
 
@@ -388,7 +396,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "none")] }
 
@@ -401,7 +409,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -414,7 +422,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -427,7 +435,7 @@ def ex_38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "always")] }
 
@@ -440,7 +448,7 @@ def ex_38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "always")] }
 
@@ -453,7 +461,7 @@ def ex_38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "all")] }
 
@@ -466,7 +474,7 @@ def ex_38d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "all")] }
 
@@ -477,9 +485,11 @@ def ex_44 : Datum :=
     language := "ital1282"
     primaryText := "Un cane che abbia fame abbaia."
     glossedTokens := [("Un", "a"), ("cane", "dog"), ("che", "that"), ("abbia", "have-SUBJ"), ("fame", "hunger"), ("abbaia.", "barks.")]
+    glossedWords := [⟨['U', 'n'], ['a'], [⟨['U', 'n'], ['a'], none⟩]⟩, ⟨['c', 'a', 'n', 'e'], ['d', 'o', 'g'], [⟨['c', 'a', 'n', 'e'], ['d', 'o', 'g'], none⟩]⟩, ⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], [⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['a', 'b', 'b', 'i', 'a'], ['h', 'a', 'v', 'e', '-', 'S', 'U', 'B', 'J'], []⟩, ⟨['f', 'a', 'm', 'e'], ['h', 'u', 'n', 'g', 'e', 'r'], [⟨['f', 'a', 'm', 'e'], ['h', 'u', 'n', 'g', 'e', 'r'], none⟩]⟩, ⟨['a', 'b', 'b', 'a', 'i', 'a', '.'], ['b', 'a', 'r', 'k', 's', '.'], [⟨['a', 'b', 'b', 'a', 'i', 'a'], ['b', 'a', 'r', 'k', 's', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "singularIndefinite")] }
 
@@ -490,9 +500,11 @@ def ex_45_indicative : Datum :=
     language := "ital1282"
     primaryText := "I candidati che si presentano con molto anticipo non vengono assunti."
     glossedTokens := [("I", "the"), ("candidati", "candidates"), ("che", "that"), ("si", "REFL"), ("presentano", "present-IND"), ("con", "with"), ("molto", "much"), ("anticipo", "advance"), ("non", "not"), ("vengono", "get-IND"), ("assunti.", "hired.")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], [⟨['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], none⟩]⟩, ⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], [⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['s', 'i'], ['R', 'E', 'F', 'L'], [⟨['s', 'i'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['p', 'r', 'e', 's', 'e', 'n', 't', 'a', 'n', 'o'], ['p', 'r', 'e', 's', 'e', 'n', 't', '-', 'I', 'N', 'D'], []⟩, ⟨['c', 'o', 'n'], ['w', 'i', 't', 'h'], [⟨['c', 'o', 'n'], ['w', 'i', 't', 'h'], none⟩]⟩, ⟨['m', 'o', 'l', 't', 'o'], ['m', 'u', 'c', 'h'], [⟨['m', 'o', 'l', 't', 'o'], ['m', 'u', 'c', 'h'], none⟩]⟩, ⟨['a', 'n', 't', 'i', 'c', 'i', 'p', 'o'], ['a', 'd', 'v', 'a', 'n', 'c', 'e'], [⟨['a', 'n', 't', 'i', 'c', 'i', 'p', 'o'], ['a', 'd', 'v', 'a', 'n', 'c', 'e'], none⟩]⟩, ⟨['n', 'o', 'n'], ['n', 'o', 't'], [⟨['n', 'o', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['v', 'e', 'n', 'g', 'o', 'n', 'o'], ['g', 'e', 't', '-', 'I', 'N', 'D'], []⟩, ⟨['a', 's', 's', 'u', 'n', 't', 'i', '.'], ['h', 'i', 'r', 'e', 'd', '.'], [⟨['a', 's', 's', 'u', 'n', 't', 'i'], ['h', 'i', 'r', 'e', 'd', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .acceptable)]
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "kindDenotingPlural"), ("mood", "indicative")] }
 
@@ -503,9 +515,11 @@ def ex_45_subjunctive : Datum :=
     language := "ital1282"
     primaryText := "I candidati che si presentino con molto anticipo non vengono assunti."
     glossedTokens := [("I", "the"), ("candidati", "candidates"), ("che", "that"), ("si", "REFL"), ("presentino", "present-SUBJ"), ("con", "with"), ("molto", "much"), ("anticipo", "advance"), ("non", "not"), ("vengono", "get-IND"), ("assunti.", "hired.")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], [⟨['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], none⟩]⟩, ⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], [⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['s', 'i'], ['R', 'E', 'F', 'L'], [⟨['s', 'i'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['p', 'r', 'e', 's', 'e', 'n', 't', 'i', 'n', 'o'], ['p', 'r', 'e', 's', 'e', 'n', 't', '-', 'S', 'U', 'B', 'J'], []⟩, ⟨['c', 'o', 'n'], ['w', 'i', 't', 'h'], [⟨['c', 'o', 'n'], ['w', 'i', 't', 'h'], none⟩]⟩, ⟨['m', 'o', 'l', 't', 'o'], ['m', 'u', 'c', 'h'], [⟨['m', 'o', 'l', 't', 'o'], ['m', 'u', 'c', 'h'], none⟩]⟩, ⟨['a', 'n', 't', 'i', 'c', 'i', 'p', 'o'], ['a', 'd', 'v', 'a', 'n', 'c', 'e'], [⟨['a', 'n', 't', 'i', 'c', 'i', 'p', 'o'], ['a', 'd', 'v', 'a', 'n', 'c', 'e'], none⟩]⟩, ⟨['n', 'o', 'n'], ['n', 'o', 't'], [⟨['n', 'o', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['v', 'e', 'n', 'g', 'o', 'n', 'o'], ['g', 'e', 't', '-', 'I', 'N', 'D'], []⟩, ⟨['a', 's', 's', 'u', 'n', 't', 'i', '.'], ['h', 'i', 'r', 'e', 'd', '.'], [⟨['a', 's', 's', 'u', 'n', 't', 'i'], ['h', 'i', 'r', 'e', 'd', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .unacceptable)]
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "kindDenotingPlural"), ("mood", "subjunctive")] }
 
@@ -518,7 +532,7 @@ def ex_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .acceptable), ("lawLike", .acceptable)]
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -531,7 +545,7 @@ def ex_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable), ("lawLike", .acceptable)]
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -544,7 +558,7 @@ def ex_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
@@ -557,7 +571,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
@@ -570,7 +584,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -581,9 +595,11 @@ def ex_59 : Datum :=
     language := "ital1282"
     primaryText := "Gli elefanti vivono in Africa e in Asia."
     glossedTokens := [("Gli", "the"), ("elefanti", "elephants"), ("vivono", "live"), ("in", "in"), ("Africa", "Africa"), ("e", "and"), ("in", "in"), ("Asia.", "Asia.")]
+    glossedWords := [⟨['G', 'l', 'i'], ['t', 'h', 'e'], [⟨['G', 'l', 'i'], ['t', 'h', 'e'], none⟩]⟩, ⟨['e', 'l', 'e', 'f', 'a', 'n', 't', 'i'], ['e', 'l', 'e', 'p', 'h', 'a', 'n', 't', 's'], [⟨['e', 'l', 'e', 'f', 'a', 'n', 't', 'i'], ['e', 'l', 'e', 'p', 'h', 'a', 'n', 't', 's'], none⟩]⟩, ⟨['v', 'i', 'v', 'o', 'n', 'o'], ['l', 'i', 'v', 'e'], [⟨['v', 'i', 'v', 'o', 'n', 'o'], ['l', 'i', 'v', 'e'], none⟩]⟩, ⟨['i', 'n'], ['i', 'n'], [⟨['i', 'n'], ['i', 'n'], none⟩]⟩, ⟨['A', 'f', 'r', 'i', 'c', 'a'], ['A', 'f', 'r', 'i', 'c', 'a'], [⟨['A', 'f', 'r', 'i', 'c', 'a'], ['A', 'f', 'r', 'i', 'c', 'a'], none⟩]⟩, ⟨['e'], ['a', 'n', 'd'], [⟨['e'], ['a', 'n', 'd'], none⟩]⟩, ⟨['i', 'n'], ['i', 'n'], [⟨['i', 'n'], ['i', 'n'], none⟩]⟩, ⟨['A', 's', 'i', 'a', '.'], ['A', 's', 'i', 'a', '.'], [⟨['A', 's', 'i', 'a'], ['A', 's', 'i', 'a', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -596,7 +612,7 @@ def ex_69a : Datum :=
     glossedTokens := []
     context := "We are exploring a new planet. I discover a kind of animal that lives on this planet, called wugs. I tell you:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable), ("atTheSameTime", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -609,7 +625,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := "We are exploring a new planet. I discover a kind of animal that lives on this planet, called wugs. I tell you:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .unacceptable), ("atTheSameTime", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -620,9 +636,11 @@ def ex_71 : Datum :=
     language := "ital1282"
     primaryText := "I linguisti che si occupano di semantica scrivono 1000 articoli all'anno."
     glossedTokens := [("I", "the"), ("linguisti", "linguists"), ("che", "that"), ("si", "REFL"), ("occupano", "deal-IND"), ("di", "of"), ("semantica", "semantics"), ("scrivono", "write"), ("1000", "1000"), ("articoli", "papers"), ("all'anno.", "a'year.")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 'i'], ['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 's'], [⟨['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 'i'], ['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 's'], none⟩]⟩, ⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], [⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['s', 'i'], ['R', 'E', 'F', 'L'], [⟨['s', 'i'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['o', 'c', 'c', 'u', 'p', 'a', 'n', 'o'], ['d', 'e', 'a', 'l', '-', 'I', 'N', 'D'], []⟩, ⟨['d', 'i'], ['o', 'f'], [⟨['d', 'i'], ['o', 'f'], none⟩]⟩, ⟨['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 'a'], ['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], [⟨['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 'a'], ['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], none⟩]⟩, ⟨['s', 'c', 'r', 'i', 'v', 'o', 'n', 'o'], ['w', 'r', 'i', 't', 'e'], [⟨['s', 'c', 'r', 'i', 'v', 'o', 'n', 'o'], ['w', 'r', 'i', 't', 'e'], none⟩]⟩, ⟨['1', '0', '0', '0'], ['1', '0', '0', '0'], [⟨['1', '0', '0', '0'], ['1', '0', '0', '0'], none⟩]⟩, ⟨['a', 'r', 't', 'i', 'c', 'o', 'l', 'i'], ['p', 'a', 'p', 'e', 'r', 's'], [⟨['a', 'r', 't', 'i', 'c', 'o', 'l', 'i'], ['p', 'a', 'p', 'e', 'r', 's'], none⟩]⟩, ⟨['a', 'l', 'l', '\'', 'a', 'n', 'n', 'o', '.'], ['a', '\'', 'y', 'e', 'a', 'r', '.'], [⟨['a', 'l', 'l', '\'', 'a', 'n', 'n', 'o'], ['a', '\'', 'y', 'e', 'a', 'r', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural"), ("mood", "indicative")] }
 
@@ -633,9 +651,11 @@ def ex_72 : Datum :=
     language := "ital1282"
     primaryText := "I linguisti che si occupino di semantica scrivono 1000 articoli all'anno."
     glossedTokens := [("I", "the"), ("linguisti", "linguists"), ("che", "that"), ("si", "REFL"), ("occupino", "deal-SUBJ"), ("di", "of"), ("semantica", "semantics"), ("scrivono", "write"), ("1000", "1000"), ("articoli", "papers"), ("all'anno.", "a'year.")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 'i'], ['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 's'], [⟨['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 'i'], ['l', 'i', 'n', 'g', 'u', 'i', 's', 't', 's'], none⟩]⟩, ⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], [⟨['c', 'h', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['s', 'i'], ['R', 'E', 'F', 'L'], [⟨['s', 'i'], ['R', 'E', 'F', 'L'], none⟩]⟩, ⟨['o', 'c', 'c', 'u', 'p', 'i', 'n', 'o'], ['d', 'e', 'a', 'l', '-', 'S', 'U', 'B', 'J'], []⟩, ⟨['d', 'i'], ['o', 'f'], [⟨['d', 'i'], ['o', 'f'], none⟩]⟩, ⟨['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 'a'], ['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], [⟨['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 'a'], ['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], none⟩]⟩, ⟨['s', 'c', 'r', 'i', 'v', 'o', 'n', 'o'], ['w', 'r', 'i', 't', 'e'], [⟨['s', 'c', 'r', 'i', 'v', 'o', 'n', 'o'], ['w', 'r', 'i', 't', 'e'], none⟩]⟩, ⟨['1', '0', '0', '0'], ['1', '0', '0', '0'], [⟨['1', '0', '0', '0'], ['1', '0', '0', '0'], none⟩]⟩, ⟨['a', 'r', 't', 'i', 'c', 'o', 'l', 'i'], ['p', 'a', 'p', 'e', 'r', 's'], [⟨['a', 'r', 't', 'i', 'c', 'o', 'l', 'i'], ['p', 'a', 'p', 'e', 'r', 's'], none⟩]⟩, ⟨['a', 'l', 'l', '\'', 'a', 'n', 'n', 'o', '.'], ['a', '\'', 'y', 'e', 'a', 'r', '.'], [⟨['a', 'l', 'l', '\'', 'a', 'n', 'n', 'o'], ['a', '\'', 'y', 'e', 'a', 'r', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural"), ("mood", "subjunctive")] }
 
@@ -648,7 +668,7 @@ def ex_84a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -661,7 +681,7 @@ def ex_84b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .unacceptable)]
     paperFeatures := [("section", "4.3.2"), ("phenomenon", "cumulativity"), ("nominal", "singularIndefinite")] }
 
@@ -674,7 +694,7 @@ def ex_89a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -687,7 +707,7 @@ def ex_89b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
@@ -700,7 +720,7 @@ def ex_90a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -713,7 +733,7 @@ def ex_90b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
@@ -726,7 +746,7 @@ def ex_99a : Datum :=
     glossedTokens := []
     context := "There was a press conference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -739,7 +759,7 @@ def ex_99b : Datum :=
     glossedTokens := []
     context := "There was a press conference."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -752,7 +772,7 @@ def ex_100a : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -765,7 +785,7 @@ def ex_100b : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -778,7 +798,7 @@ def ex_101a : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -791,7 +811,7 @@ def ex_101b : Datum :=
     glossedTokens := []
     context := "Due to a bureaucratic glitch, about 300 Americans with a confidential, randomly assigned voter ID pattern must vote a day early. No one, including officials, can link these numbers to identities. Affected voters discover this only by checking their ID and are confirmed upon ballot submission."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -804,7 +824,7 @@ def ex_102a : Datum :=
     glossedTokens := []
     context := "When it comes to elections, it's important to consider the wide range of perspectives that influence voting behavior, as..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -817,7 +837,7 @@ def ex_102b : Datum :=
     glossedTokens := []
     context := "When it comes to elections, it's important to consider the wide range of perspectives that influence voting behavior, as..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -830,7 +850,7 @@ def ex_103a : Datum :=
     glossedTokens := []
     context := "In the modern media world..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
@@ -843,7 +863,7 @@ def ex_103b : Datum :=
     glossedTokens := []
     context := "In the modern media world..."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
@@ -856,7 +876,7 @@ def ex_107 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("kind", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "kindDenotingPlural")] }
 
@@ -867,9 +887,11 @@ def ex_109 : Datum :=
     language := "ital1282"
     primaryText := "Giornalisti investigativi hanno posto domande."
     glossedTokens := [("Giornalisti", "journalists"), ("investigativi", "investigative"), ("hanno", "have"), ("posto", "asked"), ("domande.", "questions.")]
+    glossedWords := [⟨['G', 'i', 'o', 'r', 'n', 'a', 'l', 'i', 's', 't', 'i'], ['j', 'o', 'u', 'r', 'n', 'a', 'l', 'i', 's', 't', 's'], [⟨['G', 'i', 'o', 'r', 'n', 'a', 'l', 'i', 's', 't', 'i'], ['j', 'o', 'u', 'r', 'n', 'a', 'l', 'i', 's', 't', 's'], none⟩]⟩, ⟨['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'i'], ['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'e'], [⟨['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'i'], ['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'e'], none⟩]⟩, ⟨['h', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], [⟨['h', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], none⟩]⟩, ⟨['p', 'o', 's', 't', 'o'], ['a', 's', 'k', 'e', 'd'], [⟨['p', 'o', 's', 't', 'o'], ['a', 's', 'k', 'e', 'd'], none⟩]⟩, ⟨['d', 'o', 'm', 'a', 'n', 'd', 'e', '.'], ['q', 'u', 'e', 's', 't', 'i', 'o', 'n', 's', '.'], [⟨['d', 'o', 'm', 'a', 'n', 'd', 'e'], ['q', 'u', 'e', 's', 't', 'i', 'o', 'n', 's', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "italianBarePlural")] }
 
@@ -880,9 +902,11 @@ def ex_110 : Datum :=
     language := "ital1282"
     primaryText := "I giornalisti investigativi hanno posto domande."
     glossedTokens := [("I", "the"), ("giornalisti", "journalists"), ("investigativi", "investigative"), ("hanno", "have"), ("posto", "asked"), ("domande.", "questions.")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['g', 'i', 'o', 'r', 'n', 'a', 'l', 'i', 's', 't', 'i'], ['j', 'o', 'u', 'r', 'n', 'a', 'l', 'i', 's', 't', 's'], [⟨['g', 'i', 'o', 'r', 'n', 'a', 'l', 'i', 's', 't', 'i'], ['j', 'o', 'u', 'r', 'n', 'a', 'l', 'i', 's', 't', 's'], none⟩]⟩, ⟨['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'i'], ['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'e'], [⟨['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'i'], ['i', 'n', 'v', 'e', 's', 't', 'i', 'g', 'a', 't', 'i', 'v', 'e'], none⟩]⟩, ⟨['h', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], [⟨['h', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], none⟩]⟩, ⟨['p', 'o', 's', 't', 'o'], ['a', 's', 'k', 'e', 'd'], [⟨['p', 'o', 's', 't', 'o'], ['a', 's', 'k', 'e', 'd'], none⟩]⟩, ⟨['d', 'o', 'm', 'a', 'n', 'd', 'e', '.'], ['q', 'u', 'e', 's', 't', 'i', 'o', 'n', 's', '.'], [⟨['d', 'o', 'm', 'a', 'n', 'd', 'e'], ['q', 'u', 'e', 's', 't', 'i', 'o', 'n', 's', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .unacceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "italianDefinitePlural")] }
 
@@ -893,9 +917,11 @@ def ex_113 : Datum :=
     language := "ital1282"
     primaryText := "I candidati puntuali non vengono assunti."
     glossedTokens := [("I", "the"), ("candidati", "candidates"), ("puntuali", "punctual"), ("non", "not"), ("vengono", "get"), ("assunti.", "hired.")]
+    glossedWords := [⟨['I'], ['t', 'h', 'e'], [⟨['I'], ['t', 'h', 'e'], none⟩]⟩, ⟨['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], [⟨['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], none⟩]⟩, ⟨['p', 'u', 'n', 't', 'u', 'a', 'l', 'i'], ['p', 'u', 'n', 'c', 't', 'u', 'a', 'l'], [⟨['p', 'u', 'n', 't', 'u', 'a', 'l', 'i'], ['p', 'u', 'n', 'c', 't', 'u', 'a', 'l'], none⟩]⟩, ⟨['n', 'o', 'n'], ['n', 'o', 't'], [⟨['n', 'o', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['v', 'e', 'n', 'g', 'o', 'n', 'o'], ['g', 'e', 't'], [⟨['v', 'e', 'n', 'g', 'o', 'n', 'o'], ['g', 'e', 't'], none⟩]⟩, ⟨['a', 's', 's', 'u', 'n', 't', 'i', '.'], ['h', 'i', 'r', 'e', 'd', '.'], [⟨['a', 's', 's', 'u', 'n', 't', 'i'], ['h', 'i', 'r', 'e', 'd', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "flavor"), ("nominal", "italianDefinitePlural")] }
 
@@ -906,9 +932,11 @@ def ex_114 : Datum :=
     language := "ital1282"
     primaryText := "Candidati puntuali non vengono assunti."
     glossedTokens := [("Candidati", "candidates"), ("puntuali", "punctual"), ("non", "not"), ("vengono", "get"), ("assunti.", "hired.")]
+    glossedWords := [⟨['C', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], [⟨['C', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'i'], ['c', 'a', 'n', 'd', 'i', 'd', 'a', 't', 'e', 's'], none⟩]⟩, ⟨['p', 'u', 'n', 't', 'u', 'a', 'l', 'i'], ['p', 'u', 'n', 'c', 't', 'u', 'a', 'l'], [⟨['p', 'u', 'n', 't', 'u', 'a', 'l', 'i'], ['p', 'u', 'n', 'c', 't', 'u', 'a', 'l'], none⟩]⟩, ⟨['n', 'o', 'n'], ['n', 'o', 't'], [⟨['n', 'o', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['v', 'e', 'n', 'g', 'o', 'n', 'o'], ['g', 'e', 't'], [⟨['v', 'e', 'n', 'g', 'o', 'n', 'o'], ['g', 'e', 't'], none⟩]⟩, ⟨['a', 's', 's', 'u', 'n', 't', 'i', '.'], ['h', 'i', 'r', 'e', 'd', '.'], [⟨['a', 's', 's', 'u', 'n', 't', 'i'], ['h', 'i', 'r', 'e', 'd', '.'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable), ("accidental", .unacceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "flavor"), ("nominal", "italianBarePlural")] }
 
@@ -921,7 +949,7 @@ def ex_115a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wideScope", .acceptable), ("lowScope", .unacceptable)]
     paperFeatures := [("section", "5.5"), ("phenomenon", "durativeScope"), ("nominal", "singularIndefinite")] }
 
@@ -934,7 +962,7 @@ def ex_115b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wideScope", .unacceptable), ("lowScope", .acceptable)]
     paperFeatures := [("section", "5.5"), ("phenomenon", "durativeScope"), ("nominal", "kindDenotingPlural")] }
 
@@ -947,7 +975,7 @@ def ex_133c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "flavor"), ("nominal", "singularDefinite")] }
 
@@ -960,7 +988,7 @@ def ex_133d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "flavor"), ("nominal", "singularDefinite")] }
 
@@ -973,7 +1001,7 @@ def ex_135a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -986,7 +1014,7 @@ def ex_135a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "singularDefinite")] }
 
@@ -999,7 +1027,7 @@ def ex_135b_i : Datum :=
     glossedTokens := []
     context := "There is a ghost on campus."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
@@ -1012,7 +1040,7 @@ def ex_135b_ii : Datum :=
     glossedTokens := []
     context := "There is a ghost on campus."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "singularDefinite")] }
 
@@ -1025,7 +1053,7 @@ def ex_136a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
@@ -1038,7 +1066,7 @@ def ex_136b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("cumulative", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "cumulativity"), ("nominal", "singularDefinite")] }
 

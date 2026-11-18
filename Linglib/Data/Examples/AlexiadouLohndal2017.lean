@@ -24,7 +24,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("stranded", "argument")] }
 
@@ -37,7 +37,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1"), ("stranded", "adjunct")] }
 
@@ -50,7 +50,7 @@ def ex_56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "color"), ("rootClass", "manner")] }
 
@@ -63,7 +63,7 @@ def ex_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "black"), ("rootClass", "result")] }
 

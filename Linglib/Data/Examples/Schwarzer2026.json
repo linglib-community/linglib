@@ -14,7 +14,7 @@
     "translation": "The city stops its scheme of planting trees for newborn children at the turn of the year.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -42,7 +42,7 @@
     "translation": "At the turn of the year, the city completes its revision of the local transport plan and stops the scheme of planting a tree for every newborn child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -70,7 +70,7 @@
     "translation": "The city starts its scheme of planting trees for newborn children at the turn of the year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -98,7 +98,7 @@
     "translation": "At the turn of the year, the city starts its revision of the local transport plan and the scheme of planting a tree for every newborn child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],

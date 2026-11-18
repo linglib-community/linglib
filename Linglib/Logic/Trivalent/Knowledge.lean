@@ -22,6 +22,8 @@ top: Kleene's values lack the glut of Belnap's four values, of which they are th
 ## Main definitions
 
 * the `PartialOrder`, `OrderBot` and `SemilatticeInf` instances on `Know Trivalent`.
+* `Trivalent.IsExtensionOf`, `Trivalent.IsRegular`: a trivalent quantifier that agrees with a
+  classical one on classical predicates, and one that is monotone for the knowledge order.
 
 ## Main results
 
@@ -85,6 +87,12 @@ theorem kLE_iff {a b : Trivalent} : a ≤ₖ b ↔ a = .undefined ∨ a = b := b
 
 @[simp] theorem undefined_kLE (a : Trivalent) : .undefined ≤ₖ a := KLE.undefined a
 
+/-- A value has at most the information of another when the other is true if it is and false if
+it is. -/
+theorem kLE_iff_eq_true_imp_eq_false_imp {a b : Trivalent} :
+    a ≤ₖ b ↔ (a = .true → b = .true) ∧ (a = .false → b = .false) := by
+  rw [kLE_iff]; cases a <;> cases b <;> decide
+
 /-- The truth order and the knowledge order differ: `false` is below `undefined` in the truth
 order but not in the knowledge order. -/
 theorem truthOrder_ne_knowledgeOrder :
@@ -144,5 +152,24 @@ theorem supervaluation_kLE_supervaluation {α : Type*} {s t : Finset α} (P : α
     supervaluation t P ≤ₖ supervaluation s P := by
   rw [kLE_def, toKnow_supervaluation P hs, toKnow_supervaluation P (hs.mono h)]
   exact Finset.inf'_mono _ h hs
+
+/-! ### Regular extensions of a quantifier -/
+
+section Regular
+
+variable {U : Type*}
+
+open Classical in
+/-- A trivalent quantifier is an extension of `Q` when it has the value of `Q` at every classical
+predicate. -/
+def IsExtensionOf (Q : Set U → Prop) (T : (U → Trivalent) → Trivalent) : Prop :=
+  ∀ R : Set U, T (fun u ↦ ofProp (u ∈ R)) = ofProp (Q R)
+
+/-- A trivalent quantifier is regular when more information about its argument gives more
+information about its value ([kleene-1952]). -/
+def IsRegular (T : (U → Trivalent) → Trivalent) : Prop :=
+  ∀ ⦃A A' : U → Trivalent⦄, (∀ u, A u ≤ₖ A' u) → T A ≤ₖ T A'
+
+end Regular
 
 end Trivalent

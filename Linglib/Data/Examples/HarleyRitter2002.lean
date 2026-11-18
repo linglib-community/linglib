@@ -24,7 +24,7 @@ def hr2002_daga_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
@@ -37,7 +37,7 @@ def hr2002_daga_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "pl")] }
 
@@ -50,7 +50,7 @@ def hr2002_daga_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
@@ -63,7 +63,7 @@ def hr2002_daga_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
@@ -76,7 +76,7 @@ def hr2002_daga_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
@@ -89,7 +89,7 @@ def hr2002_daga_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
@@ -102,7 +102,7 @@ def hr2002_gali_1exsg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "sg")] }
 
@@ -115,7 +115,7 @@ def hr2002_gali_1expl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
@@ -128,7 +128,7 @@ def hr2002_gali_1insg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "sg")] }
 
@@ -141,7 +141,7 @@ def hr2002_gali_1inpl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pl")] }
 
@@ -154,7 +154,7 @@ def hr2002_gali_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
@@ -167,7 +167,7 @@ def hr2002_gali_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
@@ -180,7 +180,7 @@ def hr2002_gali_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
@@ -193,7 +193,7 @@ def hr2002_gali_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
@@ -206,7 +206,7 @@ def hr2002_tonk_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
@@ -219,7 +219,7 @@ def hr2002_tonk_1du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "du")] }
 
@@ -232,7 +232,7 @@ def hr2002_tonk_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "pl")] }
 
@@ -245,7 +245,7 @@ def hr2002_tonk_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
@@ -258,7 +258,7 @@ def hr2002_tonk_2du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
@@ -271,7 +271,7 @@ def hr2002_tonk_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
@@ -284,7 +284,7 @@ def hr2002_tonk_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
@@ -297,7 +297,7 @@ def hr2002_tonk_3du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
@@ -310,7 +310,7 @@ def hr2002_tonk_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
@@ -323,7 +323,7 @@ def hr2002_chin_1exsg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "sg")] }
 
@@ -336,7 +336,7 @@ def hr2002_chin_1exdu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "du")] }
 
@@ -349,7 +349,7 @@ def hr2002_chin_1expl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
@@ -362,7 +362,7 @@ def hr2002_chin_1indu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "du")] }
 
@@ -375,7 +375,7 @@ def hr2002_chin_1inpl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pl")] }
 
@@ -388,7 +388,7 @@ def hr2002_chin_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
@@ -401,7 +401,7 @@ def hr2002_chin_2du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
@@ -414,7 +414,7 @@ def hr2002_chin_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
@@ -427,7 +427,7 @@ def hr2002_chin_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
@@ -440,7 +440,7 @@ def hr2002_chin_3du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
@@ -453,7 +453,7 @@ def hr2002_chin_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
@@ -466,7 +466,7 @@ def hr2002_yima_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
@@ -479,7 +479,7 @@ def hr2002_yima_1du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "du")] }
 
@@ -492,7 +492,7 @@ def hr2002_yima_1pc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "pc")] }
 
@@ -505,7 +505,7 @@ def hr2002_yima_1pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "pl")] }
 
@@ -518,7 +518,7 @@ def hr2002_yima_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
@@ -531,7 +531,7 @@ def hr2002_yima_2du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
@@ -544,7 +544,7 @@ def hr2002_yima_2pc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pc")] }
 
@@ -557,7 +557,7 @@ def hr2002_yima_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
@@ -570,7 +570,7 @@ def hr2002_yima_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
@@ -583,7 +583,7 @@ def hr2002_yima_3du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
@@ -596,7 +596,7 @@ def hr2002_yima_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
@@ -609,7 +609,7 @@ def hr2002_fiji_1exsg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "sg")] }
 
@@ -622,7 +622,7 @@ def hr2002_fiji_1expl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
@@ -635,7 +635,7 @@ def hr2002_fiji_1exdu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "du")] }
 
@@ -648,7 +648,7 @@ def hr2002_fiji_1expc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pc")] }
 
@@ -661,7 +661,7 @@ def hr2002_fiji_1inpl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pl")] }
 
@@ -674,7 +674,7 @@ def hr2002_fiji_1indu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "du")] }
 
@@ -687,7 +687,7 @@ def hr2002_fiji_1inpc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pc")] }
 
@@ -700,7 +700,7 @@ def hr2002_fiji_2sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
@@ -713,7 +713,7 @@ def hr2002_fiji_2pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
@@ -726,7 +726,7 @@ def hr2002_fiji_2du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
@@ -739,7 +739,7 @@ def hr2002_fiji_2pc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "pc")] }
 
@@ -752,7 +752,7 @@ def hr2002_fiji_3sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
@@ -765,7 +765,7 @@ def hr2002_fiji_3pl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
@@ -778,7 +778,7 @@ def hr2002_fiji_3du : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
@@ -791,7 +791,7 @@ def hr2002_fiji_3pc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "pc")] }
 
@@ -804,7 +804,7 @@ def hr2002_pira_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "none")] }
 
@@ -817,7 +817,7 @@ def hr2002_pira_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "none")] }
 
@@ -830,7 +830,7 @@ def hr2002_pira_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "none")] }
 
@@ -843,7 +843,7 @@ def hr2002_maxa_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
@@ -856,7 +856,7 @@ def hr2002_maxa_1expl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
@@ -869,7 +869,7 @@ def hr2002_maxa_1in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "none")] }
 
@@ -882,7 +882,7 @@ def hr2002_maxa_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "none")] }
 
@@ -895,7 +895,7 @@ def hr2002_maxa_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "none")] }
 
@@ -908,7 +908,7 @@ def hr2002_kwak_1sg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
@@ -921,7 +921,7 @@ def hr2002_kwak_1expl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
@@ -934,7 +934,7 @@ def hr2002_kwak_1in : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "1in"), ("number", "none")] }
 
@@ -947,7 +947,7 @@ def hr2002_kwak_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "2"), ("number", "none")] }
 
@@ -960,7 +960,7 @@ def hr2002_kwak_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("person", "3"), ("number", "none")] }
 

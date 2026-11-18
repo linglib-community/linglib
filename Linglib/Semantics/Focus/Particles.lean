@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.Monotone.Basic
 public import Linglib.Semantics.Exhaustification.Basic
+public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Logic.Trivalent.Pointwise
 
@@ -20,7 +21,10 @@ and von Fintel's *only x is P* over individuals on the identity scale; the two
 additive asserts its prejacent and presupposes what *only* asserts to be false, and the
 presupposition of *even*, after Karttunen and Peters, is that the prejacent is less likely than
 every alternative. On a partial order of alternatives, *only* says that the prejacent is [the
-strongest true alternative](##Focus.only_ge_eq_true_iff). On a scale refining entailment *only* is
+strongest true alternative](##Focus.only_ge_eq_true_iff), and on the entailment scale that is
+[what exhaustification says](##Focus.only_subset_eq_true_iff_isLeast), so *only* over an
+antecedent that resolves the focus of its prejacent [asserts the exhaustification against that
+antecedent](##Focus.SquiggleSet.posExt_only). On a scale refining entailment *only* is
 [Strawson downward entailing](##Focus.isStrawsonDE_only) in its prejacent, and over individuals
 [in its predicate](##Focus.isStrawsonDE_only_eq).
 
@@ -143,6 +147,33 @@ theorem only_subset_eq (hp : p ∈ C) :
 `Exhaustification.exh` is. -/
 theorem posExt_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C id p) = exh C p := by
   ext w; simp [only_subset_eq hp, exh]
+
+/-- On the entailment scale *only* is true exactly where the prejacent is the least true
+alternative, which is what `Exhaustification.mem_exh_iff_isLeast_of_mem` says of `exh`. -/
+theorem only_subset_eq_true_iff_isLeast (hp : p ∈ C) {w : W} :
+    only (· ⊆ ·) C id p w = .true ↔ IsLeast {q ∈ C | w ∈ q} p := by
+  rw [← mem_exh_iff_isLeast_of_mem hp, ← posExt_only_subset hp, Trivalent.mem_posExt]
+
+/-! #### Association with focus
+
+The squiggle resolves the focus of the prejacent `o` to an antecedent `Γ` inside its focus
+semantic value `fv`, and *only* quantifies over `Γ`. -/
+
+/-- *Only* over an antecedent that resolves the focus of its prejacent is true exactly where
+the exhaustification of the prejacent against that antecedent is. -/
+theorem SquiggleSet.posExt_only {o : Set W} {fv Γ : Set (Set W)} (h : SquiggleSet o fv Γ) :
+    Trivalent.posExt (only (· ⊆ ·) Γ id o) = exh Γ o :=
+  posExt_only_subset h.mem
+
+/-- *Only* over an antecedent that resolves the focus of its prejacent is true exactly where
+the prejacent is the least of the true members of its focus semantic value that the antecedent
+keeps. -/
+theorem SquiggleSet.only_eq_true_iff {o : Set W} {fv Γ : Set (Set W)} (h : SquiggleSet o fv Γ)
+    {w : W} : only (· ⊆ ·) Γ id o w = .true ↔ IsLeast ({q ∈ fv | w ∈ q} ∩ Γ) o := by
+  rw [only_subset_eq_true_iff_isLeast h.mem]
+  suffices {q ∈ Γ | w ∈ q} = {q ∈ fv | w ∈ q} ∩ Γ by rw [this]
+  ext q
+  exact ⟨fun ⟨hq, hw⟩ ↦ ⟨⟨h.subset hq, hw⟩, hq⟩, fun ⟨⟨_, hw⟩, hq⟩ ↦ ⟨hq, hw⟩⟩
 
 end Entailment
 

@@ -227,12 +227,12 @@ private theorem threshold_nine (ctx : AugurzkyEtAl2023.Context) :
   cases ctx <;> simp [AugurzkyEtAl2023.Context.threshold, nine]
 
 theorem isReading_alternatives (ctx : AugurzkyEtAl2023.Context) :
-    BarLev2021.IsReading nine nine BarLev2021.holds (ctx.question nine)
+    Exhaustification.IsPrunedReading (supClosure (atom BarLev2021.holds '' ↑nine))
+      (⋃ b ∈ nine, atom BarLev2021.holds b) (ctx.question nine)
       (Exhaustification.exhIEII (alternatives ctx) (⋃ b ∈ nine, atom BarLev2021.holds b)) := by
   have hk := threshold_nine ctx
-  have h := BarLev2021.exhIEII_pruned_eq_atLeast (BarLev2021.separating_holds nine nine)
-    (m := nine.card + 1 - ctx.threshold nine) (by omega) (by rw [Finset.inter_self]; omega)
-  rw [Finset.inter_self] at h
+  have h := Exhaustification.exhIEII_subDisjsOfCard (BarLev2021.separating_holds nine)
+    (m := nine.card + 1 - ctx.threshold nine) (by omega) (by omega)
   rw [alternatives, h, show nine.card + 1 - (nine.card + 1 - ctx.threshold nine) =
     ctx.threshold nine by omega]
   exact AugurzkyEtAl2023.isReading_question ⟨0, by simp [nine]⟩ ctx
@@ -260,9 +260,9 @@ theorem pexPlural_alternatives (ctx : AugurzkyEtAl2023.Context) (w : Finset ℕ)
     pexPlural nine nine BarLev2021.holds (alternatives ctx) w = pexCell ctx (nine ∩ w).card := by
   have hk := threshold_nine ctx
   have h1 := GuerriniWehbe2025.pexPlural_subDisjsOfCard_eq_true_iff (w := w)
-    (BarLev2021.separating_holds nine nine) (m := nine.card + 1 - ctx.threshold nine) (by omega)
+    (BarLev2021.separating_holds (nine ∩ nine)) (m := nine.card + 1 - ctx.threshold nine) (by omega)
     (by rw [Finset.inter_self]; omega)
-  simp only [Finset.inter_self, BarLev2021.mem_atLeast, BarLev2021.count_holds] at h1
+  simp only [Finset.inter_self, Exhaustification.mem_atLeastTrue, BarLev2021.trueCount_holds] at h1
   rw [show nine.card + 1 - (nine.card + 1 - ctx.threshold nine) = ctx.threshold nine by omega]
     at h1
   have h2 : pexPlural nine nine BarLev2021.holds (alternatives ctx) w = .false ↔

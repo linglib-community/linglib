@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "referential: that man over there", "judgment": "acceptable"},
       {"name": "descriptive: the greatest boxer ever", "judgment": "acceptable"}
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "The questioner wants a newspaper and can walk to the station or to the palace; in one world both sell it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "mention-some: at least at the station", "judgment": "acceptable"}
     ],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "explicitly non-exhaustive"]
@@ -73,7 +73,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "embedded mention-some"]
@@ -92,7 +92,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "contextual domain"]
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "contextual domain"]
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "degree question"],
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "degree question"],
@@ -170,7 +170,7 @@
     "translation": "",
     "context": "The newspaper is sold at the station and at the palace; the best place is the station in one world, the palace in another, and either in a third.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "mention-some: {u,w},{v,w}", "judgment": "acceptable"}
     ],
@@ -191,7 +191,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complete address, to send a letter", "judgment": "acceptable"},
       {"name": "the city, to decide on a visit", "judgment": "acceptable"}
@@ -213,7 +213,7 @@
     "translation": "",
     "context": "Either John or Bill did it, and the killer wears a blue or a green mask; who wears which is unknown.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "by name: {{u,v},{w,x}}", "judgment": "acceptable"},
       {"name": "by mask: {{u,w},{v,x}}", "judgment": "acceptable"}
@@ -235,7 +235,7 @@
     "translation": "",
     "context": "The spiderman scenario of (22).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "conceptual cover"]
@@ -254,7 +254,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["type", "degree question"],
@@ -275,7 +275,7 @@
     "translation": "",
     "context": "Asked by an artist making a life-size sculpture of a polar bear.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "mention-some", "judgment": "acceptable"}
     ],
@@ -297,7 +297,7 @@
     "translation": "",
     "context": "A Lennon autograph makes the others irrelevant, and a Harrison autograph makes a Starr autograph irrelevant.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "scalar: one resolving answer per Beatle", "judgment": "acceptable"}
     ],

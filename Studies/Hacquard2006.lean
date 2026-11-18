@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Modality.EventRelativity
-public import Linglib.Semantics.Mood.SpeechEvent
 public import Studies.Condoravdi2002
 public import Linglib.Fragments.Romance.Italian.Modals
 public import Linglib.Data.Examples.Hacquard2006
@@ -30,11 +29,12 @@ complement, `not_aspectBoundEpistemic_of_eq_none`, and its reading (248) is an e
 necessity for the attitude holder, `aspectBoundEpistemic_iff`. The starting point of the
 account is that one modal verb has root and epistemic readings alike, as Italian *potere* and
 *dovere* do, `italian_modals_one_entry`, so the contrast in actuality entailments cannot be
-lexical. In a matrix clause the speech event binds the modal, and its content is the speaker's
-beliefs in a declarative and the addressee's To-Do List in an imperative (`Mood.SpeechEvent`), so
-one possibility modal over one prejacent can be false over the first and true over the second,
-`leave_possible_by_event`. The dissertation's examples are the rows of
-`Data.Examples.Hacquard2006`.
+lexical. In a matrix clause the speech event binds the modal. Its content is the speaker's
+beliefs, which the epistemic relation reads (222), and the deontic relation reads the To-Do List
+of its addressee (231), `deonticAccessible`, so an event without an addressee binds no deontic
+modal (236), `not_diamond_deonticAccessible`, and one possibility modal over one prejacent can be
+false along the first relation and true along the second, `leave_possible_by_relation`. The
+dissertation's examples are the rows of `Data.Examples.Hacquard2006`.
 
 ## Implementation notes
 
@@ -47,12 +47,11 @@ and (309) are syntactic and enter only through which event a modal is anchored t
 progressive (124) and the counterfactual modal of chapter 2, Italian *volere* (chapter 4), and
 the interaction with negation (84) are not formalized.
 
-The deontic reading of `leave_possible_by_event` is read off an imperative speech event, whose
-content `Mood.SpeechEvent` takes to be the addressee's To-Do List, after the content assumption.
-Hacquard's own deontic accessibility relation, (231) and (235c), reads the To-Do List of the
-addressee of whatever event binds the modal, a matrix declarative's included, so the imperative
-event is the substrate's simplification. English *can* has no plain epistemic reading, so the
-epistemic case is glossed with the *might* of (222).
+A To-Do List is a set of propositions and the deontic relation keeps the worlds in all of them,
+as in (232). The relation is stated for any partial assignment of a participant to an event, so
+the speaker-oriented relation (234) is the same definition at the speaker. English *can* has no
+plain epistemic reading, so the epistemic case of `leave_possible_by_relation` is glossed with
+the *might* of (222).
 
 ## References
 
@@ -66,6 +65,7 @@ epistemic case is glossed with the *might* of (222).
 namespace Hacquard2006
 
 open Modality ModalLogic
+open scoped SetRel
 
 variable {W E T : Type*}
 
@@ -210,38 +210,58 @@ theorem not_aspectBoundEpistemic_of_eq_none (h : ∀ e, occurs e w → con e = n
     ¬ aspectBoundEpistemic occurs τ con think w t P :=
   fun ⟨e, he, _, _, hp⟩ ↦ not_diamond_contentAccessible (h e he) hp
 
-/-! ### The content of the speech event, chapter 3
+/-! ### The deontic relation, chapter 3
 
-The speech event `e*` has content (assumption 4), the speaker's beliefs in a declarative and the
-addressee's To-Do List in an imperative. The possibility modal it licenses is the dual of the
-necessity modal of `Mood.SpeechEvent.modal`, so over a declarative event it is the epistemic
-*might* of (222), and over an imperative event it ranges over the worlds compatible with the
-To-Do List (`Mood.SpeechEvent.optimal_toContext_imperative`). -/
+The speech event has content, the speaker's beliefs in a declarative (assumption 4, p. 144), so
+the matrix epistemic *might* of (222) is possibility along `contentAccessible` at the speech
+event. The deontic relation is keyed to the same event through its addressee. -/
+
+section Deontic
+
+variable {X : Type*} {addr : E → Option X} {todo : X → Set (Set W)} {e : E} {a : X} {w : W}
+  {q : W → Prop}
+
+/-- The deontic accessibility relation relates an event to the worlds compatible with the To-Do
+List of its addressee (231), (235c), and an event without an addressee to no world. -/
+def deonticAccessible (addr : E → Option X) (todo : X → Set (Set W)) : SetRel E W :=
+  contentAccessible fun e ↦ (addr e).map fun a ↦ ⋂₀ todo a
+
+theorem mem_deonticAccessible :
+    e ~[deonticAccessible addr todo] w ↔ ∃ a ∈ addr e, ∀ p ∈ todo a, w ∈ p := by
+  simp [deonticAccessible]
+
+/-- Deontic necessity at an event with an addressee holds when the prejacent holds in every
+world compatible with the requests on the addressee, the truth conditions of (232). -/
+theorem box_deonticAccessible_iff (h : addr e = some a) :
+    □[deonticAccessible addr todo] q e ↔ ∀ w ∈ ⋂₀ todo a, q w :=
+  box_contentAccessible_iff (by rw [h, Option.map_some])
+
+theorem diamond_deonticAccessible_iff (h : addr e = some a) :
+    ◇[deonticAccessible addr todo] q e ↔ ∃ w ∈ ⋂₀ todo a, q w :=
+  diamond_contentAccessible_iff (by rw [h, Option.map_some])
+
+/-- An event without an addressee binds no deontic modal: the oddness of a deontic *must* under
+*believe* and *hope* (236). -/
+theorem not_diamond_deonticAccessible (h : addr e = none) :
+    ¬ ◇[deonticAccessible addr todo] q e :=
+  not_diamond_contentAccessible (by rw [h, Option.map_none])
+
+end Deontic
 
 /-- The addressee leaves or stays. -/
 inductive LeaveWorld where
   | leave
   | stay
 
-/-- A declarative speech event whose speaker believes the addressee is staying. -/
-def believesStay : Mood.SpeechEvent LeaveWorld := .declarative fun _ ↦ [(· = .stay)]
-
-/-- An imperative speech event with leaving on the addressee's To-Do List. -/
-def todoLeave : Mood.SpeechEvent LeaveWorld := .imperative fun _ ↦ [(· = .leave)]
-
-/-- The possibility of leaving, the dual of necessity applied to staying, is false over the
-declarative event, whose speaker believes the addressee is staying, and true over the imperative
-event, whose To-Do List contains leaving: the epistemic *might* of (222) and the deontic reading
-come apart over one prejacent. -/
-theorem leave_possible_by_event :
-    believesStay.modal .leave (· ≠ .leave) ∧ ¬ todoLeave.modal .leave (· ≠ .leave) := by
-  refine ⟨(Mood.SpeechEvent.modal_declarative_iff _ _ _).2 fun v hv h ↦ ?_, fun h ↦ ?_⟩
-  · subst h
-    cases hv _ (List.mem_singleton_self _)
-  · have hopt := Mood.SpeechEvent.optimal_toContext_imperative
-      (todo := fun _ ↦ [(· = LeaveWorld.leave)]) (w₀ := .leave) ⟨.leave, by simp⟩
-    refine (Mood.SpeechEvent.modal_imperative _ _ _).1 h .leave ?_ rfl
-    rw [hopt]
-    simp
+/-- At a speech event whose speaker believes the addressee is staying and whose addressee has
+leaving on the To-Do List, the possibility of leaving is false along the epistemic relation and
+true along the deontic one: the readings come apart over one prejacent. -/
+theorem leave_possible_by_relation :
+    ¬ ◇[contentAccessible fun _ : Unit ↦ some {LeaveWorld.stay}] (· = .leave) () ∧
+      ◇[deonticAccessible (fun _ : Unit ↦ some ()) fun _ ↦ {{LeaveWorld.leave}}]
+        (· = .leave) () := by
+  refine ⟨fun h ↦ ?_, (diamond_deonticAccessible_iff rfl).2 ⟨.leave, by simp, rfl⟩⟩
+  obtain ⟨w, hw, rfl⟩ := (diamond_contentAccessible_iff rfl).1 h
+  cases hw
 
 end Hacquard2006

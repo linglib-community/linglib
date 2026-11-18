@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Coercion
+public import Linglib.Semantics.Modification.NonVacuity
 public import Studies.Pustejovsky1995
 public import Mathlib.Order.CompleteLattice.Basic
 
@@ -262,23 +262,24 @@ domain. The trigger it reports for the head shift of [partee-2010] concerns anot
 fake things that are Ns, believed to be none (p. 7:27). -/
 theorem fake_vacuous_in_head {lex : (W → E → Prop) → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) (P : W → E → Prop) (w : W) :
-    ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=
+    ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P w) (P w) :=
   Modifier.IsPrivative.not_isNonVacuous (fake_isPrivative hlex) P w
 
 /-- In any domain with a fake N and an N, the value of (16) is non-vacuous, so no shift is needed
 (§5). By `fake_vacuous_in_head` that domain is never the extension of the head itself. -/
 theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
     (hfake : ∃ x, d x ∧ (fake made N).extension w x) (hN : ∃ x, d x ∧ N.extension w x) :
-    IsNonVacuous (fake made N).extension w d :=
-  isNonVacuous_of_disjoint (disjoint_privativeE N) hfake hN
+    IsNonVacuous ((fake made N).extension w) d :=
+  isNonVacuous_iff_exists.2 ⟨hfake, hN.imp fun x hx ↦
+    ⟨hx.1, fun h ↦ (disjoint_privativeE N).le_bot w x ⟨h, hx.2⟩⟩⟩
 
 /-- If attributive *fake* is the predicate (33), a world with fake and non-fake guns blocks head
 shifting, so every fake gun would wrongly be a gun (§6). -/
 theorem shifting_heads_evil_park_owner {fake gun : W → E → Prop} {w : W}
     (hfake : ∃ x, gun w x ∧ fake w x) (hreal : ∃ x, gun w x ∧ ¬ fake w x) :
     ¬ Modifier.ShiftsHead (intersective fake) gun w ∧ intersective fake gun ≤ gun :=
-  ⟨Modifier.not_shiftsHead_of_isNonVacuous
-      ⟨hfake.imp fun _ h ↦ ⟨h.1, h.2, h.1⟩, hreal.imp fun _ h ↦ ⟨h.1, fun h' ↦ h.2 h'.1⟩⟩,
+  ⟨Modifier.not_shiftsHead_of_isNonVacuous (isNonVacuous_iff_exists.2
+      ⟨hfake.imp fun _ h ↦ ⟨h.1, h.2, h.1⟩, hreal.imp fun _ h ↦ ⟨h.1, fun h' ↦ h.2 h'.1⟩⟩),
     fun _ _ h ↦ h.2⟩
 
 end Contrasts

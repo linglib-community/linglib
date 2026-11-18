@@ -127,14 +127,10 @@ theorem softmax_eq_of_add {score' : α → β → EReal} {k : α → ℝ}
       rw [h, EReal.exp_add]
 
 /-- Row preference of the softmax kernel is score comparison, since the normalization cancels. -/
-theorem softmax_real_singleton_lt_iff {w : α} (htop : ∀ u, score w u ≠ ⊤)
-    (h0 : ∃ u, score w u ≠ ⊥) {u u' : β} :
+theorem softmax_real_singleton_lt_iff {w : α} (htop : ∀ u, score w u ≠ ⊤) {u u' : β} :
     (softmax score w).real {u} < (softmax score w).real {u'} ↔
       score w u < score w u' := by
-  rw [softmax, ofWeights_real_singleton_lt_iff w
-      (fun h ↦ let ⟨u₀, hu₀⟩ := h0
-        hu₀ (EReal.exp_eq_zero_iff.mp (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _))))
-      (ENNReal.sum_ne_top.mpr fun u _ ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
+  rw [softmax, ofWeights_real_singleton_lt_iff w fun u ↦ mt EReal.exp_eq_top_iff.mp (htop u),
     EReal.exp_lt_exp_iff]
 
 /-- When exactly two points of a row have score above `⊥`, the share of one is the logistic

@@ -13,26 +13,19 @@ natural gender and uninterpretable for arbitrary gender. A categorizing head may
 selectional feature {D}, which licenses an inalienable possessor.
 
 Agreement in gender is a probe relativized to gender, searching the heads of a nominal from the
-top; when it finds none, Agree fails and the default gender is spelled out. When several n's are
-stacked, Kramer's Highest Gender Hypothesis makes the gender of the highest n the agreeing
+top, and the gender it agrees in is that of the first head bearing one; when no head does, Agree
+fails, and the probe is spelled out by whatever Vocabulary Item mentions no gender. When several
+n's are stacked, Kramer's Highest Gender Hypothesis makes the gender of the highest n the agreeing
 gender. Kramer derives it from cyclicity: each n is a cyclic head that sends the nPs below it to
-spell-out, so the probe searches the last cycle of the word alone. A plain highest n then leaves
-the default gender, where a probe searching every n would find the gender of a lower one, and a
-diminutive that is not an n, bearing no gender, leaves the gender of the n below it.
-
-## Main definitions
-
-* `GenderValue`: a binary gender dimension with a sign.
-* `GenderFeature`: a gender value with its interpretability.
-* `Categorizer`: a categorizer with its gender feature and {D}.
-* `agreeingGender`: the gender a gender probe agrees in, or the default on failed Agree.
-
-## Main results
-
-* `agreeingGender_lastCycle`: the Highest Gender Hypothesis, the agreeing gender of a word being
-  that of its highest cyclic head.
-* `agreeingGender_lastCycle_plain`: a plain highest n gives the default, where a search of every
-  n would not.
+spell-out, so the probe searches the last cycle of the word alone, where
+[it finds the highest cyclic
+head](##DistributedMorphology.agreeingGender_lastCycle_concat_of_cyclic) and
+[sees through a noncyclic head bearing no
+gender](##DistributedMorphology.agreeingGender_lastCycle_concat_of_not_cyclic). A probe searching
+every head [finds whatever the cyclic probe
+finds](##DistributedMorphology.agreeingGender_reverse_of_lastCycle), so the two
+[differ only where the cyclic probe fails above a gendered
+head](##DistributedMorphology.agreeingGender_lastCycle_ne_iff), as under a plain highest n.
 
 ## References
 
@@ -92,6 +85,8 @@ structure Categorizer where
   gender : Option GenderFeature := none
   /-- The selectional feature {D}. -/
   selectsD : Bool := false
+  /-- The category is n, v or a. -/
+  isCategorizer : cat.IsCategorizer := by decide
   deriving DecidableEq, Repr
 
 namespace Categorizer
@@ -114,6 +109,9 @@ def n_iMasc : Categorizer := gendered .interpretable ⟨.fem, .neg⟩
 /-- The n bearing uninterpretable [+FEM], the arbitrary feminine. -/
 def n_uFem : Categorizer := gendered .uninterpretable ⟨.fem, .pos⟩
 
+/-- The n bearing uninterpretable [−FEM], the arbitrary masculine. -/
+def n_uMasc : Categorizer := gendered .uninterpretable ⟨.fem, .neg⟩
+
 /-- The n bearing uninterpretable [+ANIM], the nominalizer of Teop body-part roots. -/
 def n_uAnim : Categorizer := gendered .uninterpretable ⟨.anim, .pos⟩
 
@@ -123,66 +121,60 @@ end Categorizer
 
 section HighestGender
 
-open Minimalist
+open Minimalist ComplexHead
 
-variable {R H G : Type*} (gender : H → Option G) (default : G)
+variable {R H G : Type*} (gender : H → Option G)
 
 /-- The probe for gender, relativized to the heads that bear one. -/
 def genderProbe : Probe H := Probe.relativized fun h ↦ (gender h).isSome
 
-/-- The gender a gender probe agrees in when it searches `goals`, nearest first, or `default`
+/-- The gender a gender probe agrees in when it searches `goals`, nearest first, which is `none`
 when Agree fails. -/
-def agreeingGender (goals : List H) : G :=
-  (((genderProbe gender).search goals).bind gender).getD default
+def agreeingGender (goals : List H) : Option G :=
+  ((genderProbe gender).search goals).bind gender
 
-variable {gender default} {h h' : H} {hs : List H} {g : G}
-
-@[simp] theorem agreeingGender_nil : agreeingGender gender default [] = default := rfl
-
-theorem agreeingGender_cons_of_eq_some (hg : gender h = some g) :
-    agreeingGender gender default (h :: hs) = g := by
-  simp [agreeingGender, genderProbe, Probe.search, hg]
-
-theorem agreeingGender_cons_of_eq_none (hh : gender h = none) :
-    agreeingGender gender default (h :: hs) = agreeingGender gender default hs := by
-  simp [agreeingGender, genderProbe, Probe.search, hh]
-
-theorem agreeingGender_singleton : agreeingGender gender default [h] = (gender h).getD default := by
-  cases hg : gender h <;> simp [agreeingGender, genderProbe, Probe.search, hg]
-
-theorem agreeingGender_append_of_forall_eq_none {l l' : List H}
-    (hl : ∀ a ∈ l, gender a = none) :
-    agreeingGender gender default (l ++ l') = agreeingGender gender default l' := by
-  induction l with
+/-- The agreeing gender is the gender of the first goal that bears one. -/
+@[simp]
+theorem agreeingGender_eq_findSome? (goals : List H) :
+    agreeingGender gender goals = goals.findSome? gender := by
+  induction goals with
   | nil => rfl
   | cons a l ih =>
-    rw [List.cons_append, agreeingGender_cons_of_eq_none (hl a (by simp))]
-    exact ih fun b hb ↦ hl b (by simp [hb])
+    cases hg : gender a <;>
+      simp_all [agreeingGender, genderProbe, Probe.search]
 
-variable {cyclic : H → Prop} [DecidablePred cyclic]
+variable {gender} {h : H} {hs : List H} {g : G} {cyclic : H → Prop} [DecidablePred cyclic] {r : R}
+  {s : ComplexHead R H}
 
-/-- The Highest Gender Hypothesis. A probe above a word whose highest cyclic head is `h`, with only
-noncyclic heads bearing no gender over it, agrees in the gender `h` gives alone. -/
-theorem agreeingGender_lastCycle {r : R} {above : List H} (hc : cyclic h)
-    (ha : ∀ a ∈ above, ¬ cyclic a ∧ gender a = none) :
-    agreeingGender gender default ((⟨r, hs ++ h :: above⟩ : ComplexHead R H).lastCycle cyclic) =
-      (gender h).getD default := by
-  rw [ComplexHead.lastCycle_mk_append hc fun a ha' ↦ (ha a ha').1,
-    agreeingGender_append_of_forall_eq_none fun a ha' ↦ (ha a (by simpa using ha')).2,
-    agreeingGender_singleton]
+/-- The Highest Gender Hypothesis. A probe above a word whose highest head is cyclic agrees in the
+gender of that head, whatever lies below it. -/
+theorem agreeingGender_lastCycle_concat_of_cyclic (hc : cyclic h) :
+    agreeingGender gender ((⟨r, hs ++ [h]⟩ : ComplexHead R H).lastCycle cyclic) = gender h := by
+  simp [hc]
 
-/-- A plain highest n over an n of gender `g` gives the default, where a probe searching every
-head would find `g`. -/
-theorem agreeingGender_lastCycle_plain {r : R} (hc : cyclic h) (hh : gender h = none)
-    (hg : gender h' = some g) :
-    agreeingGender gender default ((⟨r, hs ++ [h', h]⟩ : ComplexHead R H).lastCycle cyclic) =
-        default ∧
-      agreeingGender gender default (hs ++ [h', h]).reverse = g := by
-  constructor
-  · rw [show hs ++ [h', h] = (hs ++ [h']) ++ h :: [] by simp,
-      agreeingGender_lastCycle (above := []) hc (by simp), hh]
-    rfl
-  · simp [agreeingGender_cons_of_eq_none hh, agreeingGender_cons_of_eq_some hg]
+/-- A noncyclic head bearing no gender leaves the agreeing gender of the word it merges with. -/
+theorem agreeingGender_lastCycle_concat_of_not_cyclic (hc : ¬ cyclic h) (hh : gender h = none) :
+    agreeingGender gender ((⟨r, hs ++ [h]⟩ : ComplexHead R H).lastCycle cyclic) =
+      agreeingGender gender ((⟨r, hs⟩ : ComplexHead R H).lastCycle cyclic) := by
+  simp [hc, hh]
+
+/-- A probe confined to the last cycle that finds a gender finds the one a probe searching every
+head finds. -/
+theorem agreeingGender_reverse_of_lastCycle
+    (hg : agreeingGender gender (s.lastCycle cyclic) = some g) :
+    agreeingGender gender s.heads.reverse = some g := by
+  rw [agreeingGender_eq_findSome?] at hg ⊢
+  exact (lastCycle_prefix s cyclic).findSome?_eq_some hg
+
+/-- The probe confined to the last cycle and the probe searching every head differ exactly when
+the first fails over a head that bears a gender. -/
+theorem agreeingGender_lastCycle_ne_iff :
+    agreeingGender gender (s.lastCycle cyclic) ≠ agreeingGender gender s.heads.reverse ↔
+      agreeingGender gender (s.lastCycle cyclic) = none ∧
+        ∃ a ∈ s.heads, (gender a).isSome := by
+  cases hc : agreeingGender gender (s.lastCycle cyclic) with
+  | none => simp [eq_comm (a := none), ← Option.isSome_iff_ne_none]
+  | some g => simp [(agreeingGender_reverse_of_lastCycle hc).symm]
 
 end HighestGender
 

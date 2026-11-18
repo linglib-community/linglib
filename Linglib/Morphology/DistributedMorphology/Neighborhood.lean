@@ -217,6 +217,12 @@ theorem nth_around [Inhabited Bundle] {k : ℕ} (hi : i ≤ d.length) (hk : k �
 @[simp] theorem map_focus_along : (along d).map focus = d :=
   List.ext_getElem (by simp) fun _ _ _ ↦ by simp
 
+/-- A map that reads the focus alone sees each terminal of a string as it would see it bare. -/
+theorem map_along_of_factorsThrough {β : Type*} {g : Neighborhood Bundle → β}
+    (hg : g.FactorsThrough focus) : (along d).map g = d.map fun b ↦ g (ofBundle b) := by
+  conv_rhs => rw [← map_focus_along d, List.map_map]
+  exact List.map_congr_left fun _ _ ↦ hg rfl
+
 /-- Each neighborhood of a string reassembles to the string. -/
 theorem toList_of_mem_along {n : Neighborhood Bundle} (h : n ∈ along d) : n.toList = d := by
   obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp h

@@ -39,6 +39,10 @@ inductive Prominence where
   | soleSegment
   deriving DecidableEq, Fintype, Repr
 
+theorem Prominence.forall {P : Prominence → Prop} :
+    (∀ p, P p) ↔ P .wordInitial ∧ P .lexical ∧ P .morphemeInitial ∧ P .soleSegment :=
+  ⟨fun h ↦ ⟨h _, h _, h _, h _⟩, by rintro ⟨h₁, h₂, h₃, h₄⟩ (_ | _ | _ | _) <;> assumption⟩
+
 /-- A context is a juncture whose two forms are those of two adjacent morphs, together with the
 kinds of the two morphs and of the morph before them, if there is one. -/
 structure Context extends Juncture where

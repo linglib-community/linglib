@@ -24,7 +24,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := "Contrasted with 'All of Kiki's friends are metalheads' (5)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("general epistemic: speaker does not believe all (6a)", .acceptable), ("strong epistemic: speaker believes not all (6b)", .acceptable), ("weak epistemic: speaker uncertain about all (6c)", .acceptable), ("base-level: not all (6d)", .acceptable)]
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := "Alternatives (9): Alf; Bert; Alf and Bert."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("ignorance: speaker uncertain about each disjunct (10)", .acceptable), ("exclusivity: not both (11)", .acceptable)]
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := "Alternatives (17): may take an apple; may take a pear; may take both."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("free choice: may take an apple and may take a pear (12b)", .acceptable), ("exclusivity: may not take both (15d)", .acceptable)]
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := "The speaker's authority over the permission is suspended."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("ignorance: speaker uncertain whether the hearer may take an apple (14a)", .acceptable)]
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := "Alternatives (19): if you eat an apple ...; if you eat a pear ..."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simplification of disjunctive antecedents (19a) and (19b)", .acceptable)]
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simplification to (30b): if John had taken a pear, he would have taken an apple", .unacceptable)]
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex95a : Datum :=
     glossedTokens := []
     context := "Answer to 'Who (of John and Mary) came to the party?' (93)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("speaker knows John came and considers it possible that Mary came (95b)", .acceptable)]
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex99 : Datum :=
     glossedTokens := []
     context := "Alternatives (100): everybody is allowed to take an apple; ... a pear."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal free choice: everybody may take an apple and everybody may take a pear", .acceptable)]
     paperFeatures := [] }
 

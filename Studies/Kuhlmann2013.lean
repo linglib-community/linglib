@@ -39,13 +39,6 @@ that of its rules, a correspondence the paper states for canonical grammars. A p
 text is compared with the counts by `Decimal.RoundsPercent`, at the precision the text prints
 it. The lexicalized LCFRS machinery, canonical grammars, the parsing algorithm, and the
 NP-hardness result are not formalized.
-
-## Errata
-
-* Table 3 prints 5,839 rules for Arabic, of which the 411 lost at fan-out 1 are 7.04%; the
-  text's 0.74%, the least of the rule losses, is [411 of 55,839](##ruleLoss_fanOutOne).
-* The text gives Turkish's well-nested rule-loss reduction as 92.65%; the counts give
-  [92.64%](##reduction_wellNested).
 -/
 
 @[expose] public section

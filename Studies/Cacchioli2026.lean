@@ -181,7 +181,7 @@ theorem suffix_iff_polP :
 
 /-- The negated variants the thesis judges beside its examples, in the same clause. -/
 def variantData : List (NegationDatum × Judgment) :=
-  Examples.all.flatMap fun e ↦ e.alternatives.filterMap fun (f, j) ↦ do
+  Examples.all.flatMap fun e ↦ e.contrasts.filterMap fun (f, j) ↦ do
     let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
     let w ← negativeWord (Morphology.Morph.wordsOf f)
     some (⟨c, w⟩, j)

@@ -145,34 +145,34 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 iff it is local and every head between them is phonologically null. -/
 theorem allomorphy_rows :
     ∀ r ∈ rows, ∀ c, r.allomorphy = some c →
-      (r.spine.SeesRoot cyclic phonNull r.trigger ↔ c = .attested) := by
+      (r.spine.Sees cyclic phonNull r.trigger ⊥ ↔ c = .attested) := by
   decide
 
 /-- A trigger fixes a special root meaning iff it is local and every intervening head is
 semantically null (§6.2–6.4). -/
 theorem allosemy_rows :
     ∀ r ∈ rows, ∀ c, r.allosemy = some c →
-      (r.spine.SeesRoot cyclic semNull r.trigger ↔ c = .attested) := by
+      (r.spine.Sees cyclic semNull r.trigger ⊥ ↔ c = .attested) := by
   decide
 
 /-- **Idiom** (§6.3): the idiomatic *nationalize* lies below any external
 argument, though its v is not local to the root. -/
 theorem idiom_rows :
     ∀ r ∈ rows, r.idiom = some .attested →
-      r.spine.IdiomLocal agentive r.trigger ∧ ¬ r.spine.RootLocal cyclic r.trigger := by
+      r.spine.level agentive r.trigger = 0 ∧ ¬ r.spine.Active cyclic r.trigger ⊥ := by
   decide
 
 theorem domains_cross_cut :
-    (∃ r ∈ rows, r.spine.RootLocal cyclic r.trigger ∧ ¬ r.spine.IdiomLocal agentive r.trigger) ∧
-      ∃ r ∈ rows, r.spine.IdiomLocal agentive r.trigger ∧ ¬ r.spine.RootLocal cyclic r.trigger := by
+    (∃ r ∈ rows, r.spine.Active cyclic r.trigger ⊥ ∧ r.spine.level agentive r.trigger ≠ 0) ∧
+      ∃ r ∈ rows, r.spine.level agentive r.trigger = 0 ∧ ¬ r.spine.Active cyclic r.trigger ⊥ := by
   decide
 
 /-- Whatever conditions the root across an intervening head sees only null heads below it, and is
 the first category head if it is one (§6.5). -/
 theorem strong_prediction {s : ComplexHead Root Morpheme} {null : Morpheme → Prop}
     {i : Fin s.heads.length}
-    (h : s.SeesRoot cyclic null i) :
+    (h : s.Sees cyclic null i ⊥) :
     (∀ j < i, null s.heads[j]) ∧ (cyclic s.heads[i] → ∀ j < i, ¬ cyclic s.heads[j]) :=
-  ⟨h.2, h.rootLocal.cyclic_first⟩
+  ⟨(ComplexHead.sees_bot_iff.1 h).2, h.active.cyclic_first⟩
 
 end Marantz2013

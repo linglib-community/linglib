@@ -24,7 +24,7 @@ def ex1a_tomorrow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "future")] }
 
@@ -37,7 +37,7 @@ def ex1a_now : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "present")] }
 
@@ -50,7 +50,7 @@ def ex1a_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "past")] }
 
@@ -63,7 +63,7 @@ def ex1b_now : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "present")] }
 
@@ -76,7 +76,7 @@ def ex1b_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -89,7 +89,7 @@ def ex1c_now : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "present")] }
 
@@ -102,7 +102,7 @@ def ex1c_tomorrow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "future")] }
 
@@ -115,7 +115,7 @@ def ex1c_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -128,7 +128,7 @@ def ex2a_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "eventive"), ("adverb", "past")] }
 
@@ -141,7 +141,7 @@ def ex2a_tomorrow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "eventive"), ("adverb", "future")] }
 
@@ -154,7 +154,7 @@ def ex2b_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -167,7 +167,7 @@ def ex2b_tomorrow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "future")] }
 
@@ -180,7 +180,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "eventive"), ("adverb", "past")] }
 
@@ -193,7 +193,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "past")] }
 
@@ -206,7 +206,7 @@ def ex34a_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -219,7 +219,7 @@ def ex34a_nextMonth : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "future")] }
 
@@ -232,7 +232,7 @@ def ex34b_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -245,7 +245,7 @@ def ex34b_now : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "present")] }
 
@@ -258,7 +258,7 @@ def ex35a_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -271,7 +271,7 @@ def ex35a_nextMonth : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "future")] }
 
@@ -284,7 +284,7 @@ def ex35b_yesterday : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "past")] }
 
@@ -297,7 +297,7 @@ def ex35b_now : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "present")] }
 
@@ -310,7 +310,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "none"), ("metaphysical", "available")] }
 
@@ -323,7 +323,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modalPerf"), ("sort", "eventive"), ("reference", "past"), ("context", "none"), ("metaphysical", "unavailable")] }
 
@@ -336,7 +336,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "perfModal"), ("sort", "eventive"), ("reference", "future"), ("context", "none"), ("metaphysical", "available")] }
 
@@ -349,7 +349,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "stative"), ("reference", "present"), ("context", "none"), ("metaphysical", "unavailable")] }
 
@@ -362,7 +362,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "none"), ("metaphysical", "available")] }
 
@@ -375,7 +375,7 @@ def ex42b : Datum :=
     glossedTokens := []
     context := "He will meet with one senior administrator."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "open"), ("metaphysical", "available")] }
 
@@ -388,7 +388,7 @@ def ex42c : Datum :=
     glossedTokens := []
     context := "He will meet with one senior administrator."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "settled"), ("metaphysical", "unavailable")] }
 
@@ -401,7 +401,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "eventive")] }
 
@@ -414,7 +414,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "eventive")] }
 
@@ -427,7 +427,7 @@ def ex14c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "perfect")] }
 
@@ -440,7 +440,7 @@ def ex14d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "perfect")] }
 
@@ -453,7 +453,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "perfect")] }
 
@@ -466,7 +466,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "perfect")] }
 
@@ -479,7 +479,7 @@ def ex15c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "eventive")] }
 
@@ -492,7 +492,7 @@ def ex15d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "eventive")] }
 
@@ -505,7 +505,7 @@ def ex36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "still"), ("scope", "modal")] }
 
@@ -518,7 +518,7 @@ def ex37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "still"), ("scope", "perfModal")] }
 
@@ -531,7 +531,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "still"), ("scope", "modal")] }
 
@@ -544,7 +544,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "already"), ("scope", "modal")] }
 
@@ -555,9 +555,11 @@ def ex38a : Datum :=
     language := "stan1295"
     primaryText := "Er könnte (schon) gewonnen haben."
     glossedTokens := [("Er", "he"), ("könnte", "could"), ("(schon)", "already"), ("gewonnen", "won"), ("haben", "have")]
+    glossedWords := [⟨['E', 'r'], ['h', 'e'], [⟨['E', 'r'], ['h', 'e'], none⟩]⟩, ⟨['k', 'ö', 'n', 'n', 't', 'e'], ['c', 'o', 'u', 'l', 'd'], [⟨['k', 'ö', 'n', 'n', 't', 'e'], ['c', 'o', 'u', 'l', 'd'], none⟩]⟩, ⟨['(', 's', 'c', 'h', 'o', 'n', ')'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], [⟨['s', 'c', 'h', 'o', 'n'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], none⟩]⟩, ⟨['g', 'e', 'w', 'o', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], [⟨['g', 'e', 'w', 'o', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], none⟩]⟩, ⟨['h', 'a', 'b', 'e', 'n'], ['h', 'a', 'v', 'e'], [⟨['h', 'a', 'b', 'e', 'n'], ['h', 'a', 'v', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "german"), ("order", "modalHave"), ("adverb", "schon")] }
 
@@ -568,9 +570,11 @@ def ex38b : Datum :=
     language := "stan1295"
     primaryText := "Er hätte schon gewinnen können."
     glossedTokens := [("Er", "he"), ("hätte", "had"), ("schon", "already"), ("gewinnen", "won"), ("können", "could")]
+    glossedWords := [⟨['E', 'r'], ['h', 'e'], [⟨['E', 'r'], ['h', 'e'], none⟩]⟩, ⟨['h', 'ä', 't', 't', 'e'], ['h', 'a', 'd'], [⟨['h', 'ä', 't', 't', 'e'], ['h', 'a', 'd'], none⟩]⟩, ⟨['s', 'c', 'h', 'o', 'n'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], [⟨['s', 'c', 'h', 'o', 'n'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], none⟩]⟩, ⟨['g', 'e', 'w', 'i', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], [⟨['g', 'e', 'w', 'i', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], none⟩]⟩, ⟨['k', 'ö', 'n', 'n', 'e', 'n'], ['c', 'o', 'u', 'l', 'd'], [⟨['k', 'ö', 'n', 'n', 'e', 'n'], ['c', 'o', 'u', 'l', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "german"), ("order", "hadModal"), ("adverb", "schon")] }
 
@@ -581,9 +585,11 @@ def ex38c : Datum :=
     language := "stan1295"
     primaryText := "Er hätte (noch) gewinnen können."
     glossedTokens := [("Er", "he"), ("hätte", "had"), ("(noch)", "still"), ("gewinnen", "won"), ("können", "could")]
+    glossedWords := [⟨['E', 'r'], ['h', 'e'], [⟨['E', 'r'], ['h', 'e'], none⟩]⟩, ⟨['h', 'ä', 't', 't', 'e'], ['h', 'a', 'd'], [⟨['h', 'ä', 't', 't', 'e'], ['h', 'a', 'd'], none⟩]⟩, ⟨['(', 'n', 'o', 'c', 'h', ')'], ['s', 't', 'i', 'l', 'l'], [⟨['n', 'o', 'c', 'h'], ['s', 't', 'i', 'l', 'l'], none⟩]⟩, ⟨['g', 'e', 'w', 'i', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], [⟨['g', 'e', 'w', 'i', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], none⟩]⟩, ⟨['k', 'ö', 'n', 'n', 'e', 'n'], ['c', 'o', 'u', 'l', 'd'], [⟨['k', 'ö', 'n', 'n', 'e', 'n'], ['c', 'o', 'u', 'l', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "german"), ("order", "hadModal"), ("adverb", "noch")] }
 
@@ -594,9 +600,11 @@ def ex38d : Datum :=
     language := "stan1295"
     primaryText := "Er könnte noch gewonnen haben."
     glossedTokens := [("Er", "he"), ("könnte", "could"), ("noch", "still"), ("gewonnen", "won"), ("haben", "have")]
+    glossedWords := [⟨['E', 'r'], ['h', 'e'], [⟨['E', 'r'], ['h', 'e'], none⟩]⟩, ⟨['k', 'ö', 'n', 'n', 't', 'e'], ['c', 'o', 'u', 'l', 'd'], [⟨['k', 'ö', 'n', 'n', 't', 'e'], ['c', 'o', 'u', 'l', 'd'], none⟩]⟩, ⟨['n', 'o', 'c', 'h'], ['s', 't', 'i', 'l', 'l'], [⟨['n', 'o', 'c', 'h'], ['s', 't', 'i', 'l', 'l'], none⟩]⟩, ⟨['g', 'e', 'w', 'o', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], [⟨['g', 'e', 'w', 'o', 'n', 'n', 'e', 'n'], ['w', 'o', 'n'], none⟩]⟩, ⟨['h', 'a', 'b', 'e', 'n'], ['h', 'a', 'v', 'e'], [⟨['h', 'a', 'b', 'e', 'n'], ['h', 'a', 'v', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "german"), ("order", "modalHave"), ("adverb", "noch")] }
 

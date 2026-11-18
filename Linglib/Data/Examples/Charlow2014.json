@@ -9,7 +9,7 @@
     "translation": "",
     "context": "A single rich relative has put the speaker in her will, though the speaker may not know who.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∃ > if", "judgment": "acceptable"}
     ],
@@ -26,7 +26,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∀ > if", "judgment": "unacceptable"}
     ],
@@ -43,7 +43,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "¬∃ > if", "judgment": "unacceptable"}
     ],
@@ -60,7 +60,7 @@
     "translation": "",
     "context": "Teachers vary with students but not with books.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "no > ∃ > every (intermediate)", "judgment": "acceptable"}
     ],
@@ -78,7 +78,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "∃ > no (pronoun bound)", "judgment": "unacceptable"}
     ],
@@ -95,7 +95,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "a book > not > a famous linguist", "judgment": "unacceptable"}
     ],
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "For some relative of mine, if some persuasive lawyer or other visits them, I'll inherit a house; continue with 'she lives in Highland Park'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "a relative > if > a lawyer", "judgment": "acceptable"}
     ],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "Bill either hopes de dicto that someone hires a maid, or hopes de dicto that someone hires a cook.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "or > hopes, indefinites de dicto", "judgment": "acceptable"}
     ],
@@ -148,7 +148,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "and > hopes", "judgment": "unacceptable"}
     ],
@@ -165,7 +165,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "either everyone ate a steak, or everyone ate a hamburger (or > every > a)", "judgment": "acceptable"}
     ],
@@ -182,7 +182,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "every farmer beats every donkey or horse he owns", "judgment": "acceptable"}
     ],
@@ -202,7 +202,7 @@
     "translation": "",
     "context": "Sloppy reading of the elided pronoun: we won't have to invite Bill.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "sloppy (him = Bill)", "judgment": "acceptable"}
     ],
@@ -222,7 +222,7 @@
     "translation": "",
     "context": "'they' refers to the senators who supported the filibuster.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "they = maximal refset", "judgment": "acceptable"}
     ],
@@ -242,7 +242,7 @@
     "translation": "",
     "context": "'they' refers to the senators who admire Cruz.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "they = maximal refset", "judgment": "acceptable"}
     ],
@@ -259,7 +259,7 @@
     "translation": "",
     "context": "Reply to 'John only introduced BILL to Mary' at a party where Mary met only Bill and Sue also met only Bill.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "also > SUE > only > BILL", "judgment": "acceptable"}
     ],

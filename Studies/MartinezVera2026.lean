@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.MartinezVera2026
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Evidential.Basic
@@ -321,7 +321,7 @@ are the scope, its negation and the variants, named by `Answer`; `miDefined_iff`
 presupposition of *=mi* in each example's context to a check on these names, and
 `judgment_eq_acceptable_iff_miDefined` compares it with the paper's judgments. -/
 
-open Discourse (Role)
+open SpeechAct (Role)
 
 /-- A `Site` is a constituent that *=mi* marks or a correction contrasts in the examples. -/
 inductive Site
@@ -478,7 +478,8 @@ end MiExample
 /-! #### The model's propositions -/
 
 theorem happened_subset_happened {e e' : Event} : happened e ⊆ happened e' ↔ e = e' := by
-  refine ⟨fun h ↦ (Set.mem_singleton_iff.1 (h (Set.mem_singleton e))).symm, fun h ↦ h ▸ subset_rfl⟩
+  refine ⟨fun h ↦ (Set.mem_singleton_iff.1 (h (a := {e}) (Set.mem_singleton e))).symm,
+    fun h ↦ h ▸ subset_rfl⟩
 
 theorem vary_true (k : Site) : vary k true = fun _ ↦ true := Function.update_eq_self k _
 
@@ -535,8 +536,10 @@ theorem partiallyAnsweredBy_polar_iff (a : Answer) :
   | variant k =>
     simp only [ne_eq, Answer.variant.injEq, forall_eq', iff_false, not_or]
     refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · exact vary_false_ne k (Set.mem_singleton_iff.1 (h (Set.mem_singleton _)))
-    · exact h (show _ ∈ ({vary k false, fun _ ↦ true} : Set Event) from .inl rfl) (.inr rfl)
+    · exact vary_false_ne k (Set.eq_of_mem_singleton (y := vary k false)
+        (h (a := {vary k false}) (Set.mem_singleton _))).symm
+    · exact h (a := {vary k false, fun _ ↦ true}) (Set.mem_insert _ _)
+        (Set.mem_insert_of_mem _ rfl)
 
 theorem finite_alternatives (k : Site) : (alternatives (some k)).Finite := Set.finite_range _
 

@@ -209,7 +209,6 @@ Heads are numbered from the root, `0`, and a head's category is its number. -/
 section Locality
 
 open PhraseStructure PhraseStructure.Tree DistributedMorphology
-open Core.Order (TreePath)
 
 /-- The word that Merger builds by adjoining heads `1, …, m` in turn to the root, as in (37). -/
 def word : ℕ → Tree ℕ Unit
@@ -232,10 +231,10 @@ def spine (m : ℕ) : ℕ → Tree ℕ Unit
   | j + 1 => .node (m + j + 1) [.terminal (m + j + 1) (), spine m j]
 
 /-- The position of the root in `spine m j`. -/
-def rootPos (m j : ℕ) : TreePath := ⟨List.replicate j 1 ++ List.replicate (m + 1) 0⟩
+def rootPos (m j : ℕ) : GornAddress := ⟨List.replicate j 1 ++ List.replicate (m + 1) 0⟩
 
 /-- The position of head `k`, for `0 < k`, in `spine m j`. -/
-def headPos (m j k : ℕ) : TreePath :=
+def headPos (m j k : ℕ) : GornAddress :=
   if k ≤ m then ⟨List.replicate j 1 ++ List.replicate (m - k + 1) 0 ++ [1]⟩
   else ⟨List.replicate (m + j - k) 1 ++ [0]⟩
 
@@ -257,7 +256,7 @@ theorem not_isHead_spine (m j : ℕ) : ¬ (spine m j).IsHead := by
 
 theorem isHeadAt_spine_word (m j : ℕ) :
     IsHeadAt (spine m j) ⟨List.replicate j 1 ++ [0]⟩ := fun s hs ↦ by
-  rw [RoseTree.getElem?_treePath, RoseTree.getElem?_append, getElem?_spine le_rfl,
+  rw [RoseTree.getElem?_gornAddress, RoseTree.getElem?_append, getElem?_spine le_rfl,
     Nat.sub_self] at hs
   cases hs
   exact isHead_word m
@@ -279,21 +278,21 @@ theorem mayCondition_spine_iff {m j k : ℕ} (hk : 0 < k) (hkj : k ≤ m + j) :
     have hp := mayCondition_iff.mp h ⟨List.replicate l 1 ++ [1]⟩ ?_ ?_
     · refine hp.elim (fun hh ↦ ?_) fun hmax ↦ hmax ?_
       · refine not_isHead_spine m i (hh _ ?_)
-        rw [RoseTree.getElem?_treePath, RoseTree.getElem?_append, hmother]
+        rw [RoseTree.getElem?_gornAddress, RoseTree.getElem?_append, hmother]
         rfl
       · refine isMaximalCategory_append_singleton _ _ (m := ⟨_⟩) ?_ ?_
         · simp [IsSegmentAt, RoseTree.mem_positionsWhere, hmother, Tree.Label.IsSegment]
         · simp [Tree.headIndexAt, hmother, headIndex?, List.zipIdx, cat_spine]
-    · rw [TreePath.le_def, rootPos, List.replicate_add, List.replicate_succ, List.append_assoc]
+    · rw [GornAddress.le_def, rootPos, List.replicate_add, List.replicate_succ, List.append_assoc]
       exact (List.prefix_append_right_inj _).mpr (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩)
-    · simp only [TreePath.le_def, headPos, hkm, ↓reduceIte, hl]
+    · simp only [GornAddress.le_def, headPos, hkm, ↓reduceIte, hl]
       intro hpre
       simpa using hpre.eq_of_length (by simp)
   · simp only [headPos, h, ↓reduceIte]
     refine (mayCondition'_of_isHeadAt (isHeadAt_spine_word m j) ?_ ?_).mayCondition
-    · rw [TreePath.le_def, rootPos, List.replicate_succ]
+    · rw [GornAddress.le_def, rootPos, List.replicate_succ]
       exact (List.prefix_append_right_inj _).mpr (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩)
-    · rw [TreePath.le_def, List.replicate_succ, List.append_assoc]
+    · rw [GornAddress.le_def, List.replicate_succ, List.append_assoc]
       exact (List.prefix_append_right_inj _).mpr (List.cons_prefix_cons.mpr ⟨rfl, List.nil_prefix⟩)
 
 end Locality

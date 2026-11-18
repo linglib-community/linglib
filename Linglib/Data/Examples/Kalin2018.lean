@@ -24,7 +24,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "none"), ("subject_suffix", "S"), ("object_suffix", "none")] }
 
@@ -37,7 +37,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "none"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
@@ -50,7 +50,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "none"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
@@ -63,7 +63,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
@@ -76,7 +76,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
@@ -89,7 +89,7 @@ def ex_10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
@@ -102,7 +102,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "nonspecific"), ("subject_suffix", "S"), ("object_suffix", "none")] }
 
@@ -115,7 +115,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "nonspecific"), ("subject_suffix", "S"), ("object_suffix", "none")] }
 
@@ -128,7 +128,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "specific"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
@@ -141,7 +141,7 @@ def ex_12c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "nonspecific"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
@@ -154,7 +154,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 

@@ -24,7 +24,7 @@ def ex_3_89 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("chapter", "3"), ("phenomenon", "predication")] }
 
@@ -37,7 +37,7 @@ def ex_6_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("deontic", .acceptable), ("bouletic", .acceptable)]
     paperFeatures := [("chapter", "6"), ("phenomenon", "modality")] }
 
@@ -50,7 +50,7 @@ def ex_7_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "every")] }
 
@@ -63,7 +63,7 @@ def ex_7_64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a")] }
 
@@ -76,7 +76,7 @@ def ex_7_66 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "some")] }
 
@@ -89,7 +89,7 @@ def ex_7_71 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "no")] }
 
@@ -102,7 +102,7 @@ def ex_7_73 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "every")] }
 
@@ -115,7 +115,7 @@ def ex_7_75 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable), ("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "most")] }
 
@@ -128,7 +128,7 @@ def ex_7_76 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("compset", .unacceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "most")] }
 
@@ -141,7 +141,7 @@ def ex_7_87 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")] }
 
@@ -154,7 +154,7 @@ def ex_7_88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")] }
 
@@ -167,7 +167,7 @@ def ex_7_91 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a few")] }
 
@@ -180,7 +180,7 @@ def ex_7_92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("compset", .unacceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a few")] }
 
@@ -193,7 +193,7 @@ def ex_7_103a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a")] }
 
@@ -206,7 +206,7 @@ def ex_7_103d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a")] }
 
@@ -219,7 +219,7 @@ def ex_7_108a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "no")] }
 
@@ -232,7 +232,7 @@ def ex_7_108d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "no")] }
 
@@ -245,7 +245,7 @@ def ex_7_113a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")] }
 
@@ -258,7 +258,7 @@ def ex_7_113d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")] }
 
@@ -271,7 +271,7 @@ def ex_8_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("every > a", .acceptable), ("a > every", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "scope")] }
 
@@ -284,7 +284,7 @@ def ex_8_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a > every", .acceptable), ("every > a", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "scope")] }
 
@@ -297,7 +297,7 @@ def ex_8_46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = a cat", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")] }
 
@@ -310,7 +310,7 @@ def ex_8_46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = every cat", .questionable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")] }
 
@@ -323,7 +323,7 @@ def ex_8_46c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("them = every cat", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")] }
 
@@ -336,7 +336,7 @@ def ex_8_46d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = every cat", .questionable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "discourse anaphora")] }
 
@@ -349,7 +349,7 @@ def ex_8_46e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "8"), ("quantifier", "every")] }
 
@@ -362,7 +362,7 @@ def ex_8_56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("weak", .acceptable), ("strong", .unacceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")] }
 
@@ -375,7 +375,7 @@ def ex_8_56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("weak", .acceptable), ("strong", .unacceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")] }
 
@@ -388,7 +388,7 @@ def ex_8_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("strong", .acceptable), ("weak", .questionable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")] }
 
@@ -401,7 +401,7 @@ def ex_8_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("him = Sam", .unacceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "binding")] }
 
@@ -414,7 +414,7 @@ def ex_8_man_walked : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "8"), ("quantifier", "a")] }
 
@@ -427,7 +427,7 @@ def ex_8_no_girl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she bound by no girl", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "binding")] }
 

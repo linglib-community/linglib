@@ -24,7 +24,7 @@ def s1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("use", "exclusive only, focus on Paris")] }
 
@@ -37,7 +37,7 @@ def s2 : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("clauseType", "declarative"), ("position", "right"), ("particle", "only")] }
 
@@ -50,7 +50,7 @@ def s3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Jespersen 1954"), ("clauseType", "declarative"), ("position", "right"), ("particle", "only")] }
 
@@ -63,7 +63,7 @@ def s3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "von Fintel and Iatridou 2019"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "only")] }
 
@@ -76,7 +76,7 @@ def s3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "von Fintel and Iatridou 2019"), ("clauseType", "imperative"), ("position", "right"), ("particle", "only")] }
 
@@ -89,7 +89,7 @@ def s3d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "only")] }
 
@@ -102,7 +102,7 @@ def s5a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "only")] }
 
@@ -115,7 +115,7 @@ def s5b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "only")] }
 
@@ -128,7 +128,7 @@ def s5c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "only")] }
 
@@ -141,7 +141,7 @@ def s5d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "only")] }
 
@@ -154,7 +154,7 @@ def s5e : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "posRhetoricalWhQ"), ("position", "right"), ("particle", "only")] }
 
@@ -167,7 +167,7 @@ def s6a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalPolarQ"), ("position", "left"), ("particle", "only")] }
 
@@ -180,7 +180,7 @@ def s6b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "highNegPolarQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
@@ -193,7 +193,7 @@ def s6c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalWhQ"), ("position", "left"), ("particle", "only")] }
 
@@ -206,7 +206,7 @@ def s6d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "negRhetoricalWhQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
@@ -219,7 +219,7 @@ def s6e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "posRhetoricalWhQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
@@ -232,7 +232,7 @@ def s7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "imperative"), ("position", "right"), ("particle", "only")] }
 
@@ -245,7 +245,7 @@ def s7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "imperative"), ("position", "left"), ("particle", "only")] }
 
@@ -258,7 +258,7 @@ def s7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "imperative"), ("position", "both"), ("particle", "only")] }
 
@@ -271,7 +271,7 @@ def s8a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "only")] }
 
@@ -284,7 +284,7 @@ def s8b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "exclamative"), ("position", "left"), ("particle", "only")] }
 
@@ -297,7 +297,7 @@ def s8c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "exclamative"), ("position", "both"), ("particle", "only")] }
 
@@ -310,7 +310,7 @@ def s9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("particle", "but")] }
 
@@ -323,7 +323,7 @@ def s9b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("particle", "but")] }
 
@@ -336,7 +336,7 @@ def s17 : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.1"), ("clauseType", "declarative"), ("position", "right"), ("particle", "only")] }
 
@@ -349,7 +349,7 @@ def s18 : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "only")] }
 
@@ -362,7 +362,7 @@ def s19a : Datum :=
     glossedTokens := []
     context := "Will you hire Tea?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "only")] }
 
@@ -375,7 +375,7 @@ def s19b : Datum :=
     glossedTokens := []
     context := "Will you hire Tea?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "canonicalPolarQ"), ("position", "left"), ("particle", "only")] }
 
@@ -388,7 +388,7 @@ def s20 : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy this house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "negRhetoricalWhQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
@@ -401,7 +401,7 @@ def s21 : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "highNegPolarQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
@@ -414,7 +414,7 @@ def s22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "highNegPolarQ"), ("position", "left"), ("particle", "only"), ("interpretation", "infoSeeking")] }
 
@@ -427,7 +427,7 @@ def s23a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Is the addressee allowed to take the speaker's metro pass?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("clauseType", "imperative"), ("position", "right"), ("particle", "only")] }
 
@@ -440,7 +440,7 @@ def s23b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5.3"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "only")] }
 
@@ -453,7 +453,7 @@ def s24a : Datum :=
     glossedTokens := []
     context := "Fiore and Agata are looking for a house."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
@@ -466,7 +466,7 @@ def s24b : Datum :=
     glossedTokens := []
     context := "Fiore and Agata are looking for a house."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
@@ -479,7 +479,7 @@ def s25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "only")] }
 
@@ -492,7 +492,7 @@ def s26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "only")] }
 
@@ -505,7 +505,7 @@ def s27a : Datum :=
     glossedTokens := []
     context := "Fiore and Agata found a house to buy. Fiore, who really wants to buy it, tries to convince Agata:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
@@ -518,7 +518,7 @@ def s27b : Datum :=
     glossedTokens := []
     context := "Fiore and Agata found a house to buy. Fiore, who really wants to buy it, tries to convince Agata:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
@@ -531,7 +531,7 @@ def s28a : Datum :=
     glossedTokens := []
     context := "Fiore and Agata found a house to buy. Agata, who really doesn't want to buy it, tries to convince Fiore:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
@@ -544,7 +544,7 @@ def s28b : Datum :=
     glossedTokens := []
     context := "Fiore and Agata found a house to buy. Agata, who really doesn't want to buy it, tries to convince Fiore:"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
@@ -557,7 +557,7 @@ def s29a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "solo che")] }
 
@@ -570,7 +570,7 @@ def s29b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -583,7 +583,7 @@ def s29c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "csak")] }
 
@@ -596,7 +596,7 @@ def s29d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -609,7 +609,7 @@ def s30a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -622,7 +622,7 @@ def s30b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -635,7 +635,7 @@ def s30c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -648,7 +648,7 @@ def s30d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -661,7 +661,7 @@ def s30e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -674,7 +674,7 @@ def s30f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "tol'ko")] }
 
@@ -687,7 +687,7 @@ def s31a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "csak")] }
 
@@ -700,7 +700,7 @@ def s31b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "csak")] }
 
@@ -713,7 +713,7 @@ def s31c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "csak")] }
 
@@ -726,7 +726,7 @@ def s31d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "csak")] }
 
@@ -739,7 +739,7 @@ def s31e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "csak")] }
 
@@ -752,7 +752,7 @@ def s31f : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "csak")] }
 
@@ -765,7 +765,7 @@ def s32a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -778,7 +778,7 @@ def s32b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -791,7 +791,7 @@ def s32c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -804,7 +804,7 @@ def s32d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -817,7 +817,7 @@ def s32e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -830,7 +830,7 @@ def s32f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "zhǐshì")] }
 
@@ -843,7 +843,7 @@ def s33a : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "solo che")] }
 
@@ -856,7 +856,7 @@ def s33b : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "solo che")] }
 
@@ -869,7 +869,7 @@ def s33c : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "solo che")] }
 
@@ -882,7 +882,7 @@ def s33d : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "solo che")] }
 
@@ -895,7 +895,7 @@ def s33e : Datum :=
     glossedTokens := []
     context := "Plausible QUD: Should we buy the house?"
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "solo che")] }
 

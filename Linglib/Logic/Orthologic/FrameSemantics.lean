@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Orthologic.Basic
 public import Linglib.Logic.Orthologic.Compatibility
 public import Linglib.Core.Order.Ortholattice.Representation
+public import Linglib.Logic.Consequence.Basic
 
 /-!
 # Frame semantics and completeness for orthologic
@@ -35,7 +36,7 @@ algebraic completeness.
 
 @[expose] public section
 
-open Order Set OrthoConcept
+open Order Set OrthoConcept Consequence
 
 universe u
 
@@ -62,7 +63,7 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (V : Var → F.Regular)
   | var p => rfl
   | neg φ ih =>
     rw [show Formula.eval V φ.neg = (Formula.eval V φ)ᶜ from rfl, Concept.coe_compl, ← ih]
-    exact Set.ext fun _ ↦ F.mem_upperPolar_ortho.symm
+    exact Set.ext fun _ ↦ (F.mem_upperPolar_ortho (A := {s | Support _ _ s φ})).symm
   | and φ ψ ihφ ihψ =>
     rw [show Formula.eval V (φ.and ψ) = Formula.eval V φ ⊓ Formula.eval V ψ from rfl,
       Concept.coe_inf, ← ihφ, ← ihψ]
@@ -72,18 +73,39 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (V : Var → F.Regular)
 
 variable {φ ψ : Formula Var}
 
+/-- A compatibility model with a distinguished possibility. -/
+structure PointedModel (Var : Type u) where
+  /-- The possibilities of the frame. -/
+  Possibility : Type u
+  /-- The compatibility frame. -/
+  frame : Compatibility Possibility
+  /-- The valuation, into the regular propositions of the frame. -/
+  val : Var → frame.Regular
+  /-- The possibility at which formulas are evaluated. -/
+  point : Possibility
+
+/-- A pointed model supports a formula when its distinguished possibility does. -/
+def PointedModel.Supports (M : PointedModel Var) (φ : Formula Var) : Prop :=
+  Support M.frame M.val M.point φ
+
 variable (φ ψ) in
 /-- `ψ` is a semantic consequence of `φ` over compatibility frames when in every model every
 possibility supporting `φ` supports `ψ` ([holliday-mandelkern-2024] Definition 4.18). -/
 def FrameConsequence : Prop :=
-  ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular) (s : S),
-    Support F V s φ → Support F V s ψ
+  {φ} ⊨[PointedModel.Supports] ψ
 
 @[inherit_doc] scoped infix:50 " ⊨ᶠ " => FrameConsequence
+
+theorem frameConsequence_iff :
+    (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular) (s : S),
+      Support F V s φ → Support F V s ψ :=
+  ⟨fun h _ F V s hs ↦ h ⟨_, F, V, s⟩ (Set.forall_mem_singleton.2 hs),
+    fun h M hM ↦ h M.frame M.val M.point (hM φ rfl)⟩
 
 theorem frameConsequence_iff_eval :
     (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular),
       Formula.eval V φ ≤ Formula.eval V ψ := by
+  rw [frameConsequence_iff]
   refine ⟨fun h S F V ↦ ?_, fun h S F V s hs ↦ ?_⟩
   · rw [← SetLike.coe_subset_coe, ← support_setOf_eq_coe_eval, ← support_setOf_eq_coe_eval]
     exact fun s hs ↦ h F V s hs
@@ -108,16 +130,12 @@ def Compatibility.ofOrtholattice (V : Set L) : Compatibility (Point V) where
   ortho_iff _ _ := not_not.symm
 
 @[simp] theorem Compatibility.ofOrtholattice_compat {V : Set L} {a b : Point V} :
-    (Compatibility.ofOrtholattice V).compat a b ↔ ¬ a.1 ≤ b.1ᶜ := Iff.rfl
+    (Compatibility.ofOrtholattice V).compat a b ↔ ¬ (a : L) ≤ b.1ᶜ := Iff.rfl
 
 omit [IsOrtholattice L] in
 theorem eval_map {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
-    Formula.eval (fun p ↦ principal V₀ (v p)) φ = principal V₀ (Formula.eval v φ) := by
-  induction φ with
-  | top => simp only [Formula.eval, principal_top hV]
-  | var p => rfl
-  | neg φ ih => simp only [Formula.eval, ih, principal_compl hV]
-  | and φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, principal_inf hV]
+    Formula.eval (fun p ↦ principal V₀ (v p)) φ = principal V₀ (Formula.eval v φ) :=
+  (Formula.map_eval (principalHom hV) v φ).symm
 
 /-- Frame consequence implies derivability ([holliday-mandelkern-2024] Theorem 4.19). -/
 theorem frame_complete (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by

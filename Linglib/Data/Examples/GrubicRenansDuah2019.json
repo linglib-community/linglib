@@ -12,7 +12,7 @@
     "translation": "Njelu didn't phone Sama yesterday. He also phoned Hawwa.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -35,7 +35,7 @@
     "translation": "Njelu didn't only phone Sama yesterday. He also phoned Hawwa.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -57,7 +57,7 @@
     "translation": "It wasn't Fred she invited. She also invited Gord.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -79,7 +79,7 @@
     "translation": "She didn't only invite Fred. She also invited Gord.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -102,7 +102,7 @@
     "translation": "It was not shoes that Owura bought, he also bought a watch.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -124,7 +124,7 @@
     "translation": "Arko did not buy only earrings, she bought beads too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -146,7 +146,7 @@
     "translation": "because only Kule passed.",
     "context": "The teacher had to repeat the exam,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -168,7 +168,7 @@
     "translation": "because Kule passed",
     "context": "The teacher had to repeat the exam,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -190,7 +190,7 @@
     "translation": "because only Kofi passed",
     "context": "The teacher will repeat the exam,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -212,7 +212,7 @@
     "translation": "because it was Kofi who passed",
     "context": "The teacher will repeat the exam,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -235,7 +235,7 @@
     "translation": "because only Yaw passed the exam",
     "context": "The teacher will repeat the exam,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -258,7 +258,7 @@
     "translation": "because it was Yaw who passed the exam",
     "context": "The teacher will repeat the exam,",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -280,7 +280,7 @@
     "translation": "She bought a watermelon in the village, and she also bought a banana.",
     "context": "What did Burba buy in the village?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -303,7 +303,7 @@
     "translation": "It was banku that Kofi ate yesterday. And he also ate plantain yesterday.",
     "context": "What did Kofi eat yesterday?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -326,7 +326,7 @@
     "translation": "Kofi ate banku yesterday. And Kofi ate also plantain yesterday.",
     "context": "What did Kofi eat yesterday?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "unmarked"],
@@ -348,7 +348,7 @@
     "translation": "It was a shirt that I bought and I bought shoes also.",
     "context": "What did you buy?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -370,7 +370,7 @@
     "translation": "I bought a shirt and I bought shoes also.",
     "context": "What did you buy?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "unmarked"],
@@ -392,7 +392,7 @@
     "translation": "Dimza built a house, and Umar built a house, too.",
     "context": "Who built a house?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -415,7 +415,7 @@
     "translation": "It was Felix who read a book yesterday. And Kofi also read a book yesterday.",
     "context": "Who read a book?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -438,7 +438,7 @@
     "translation": "It was Nti who went to school. And Yaw also went to school.",
     "context": "Who went to school yesterday?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -460,7 +460,7 @@
     "translation": "That man sells newspapers.",
     "context": "The person asking the question wants to know the closest place to buy a newspaper. Who sells newspapers?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -482,7 +482,7 @@
     "translation": "It is Kofi who sells newspapers.",
     "context": "We're at Makola market. There are many people who sell newspapers here but I want to find the closest one. Who sells newspapers?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -503,7 +503,7 @@
     "translation": "Ama sells some (mangoes).",
     "context": "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "unmarked"],
@@ -525,7 +525,7 @@
     "translation": "It is Ama who sells some (mangoes).",
     "context": "The person asking the question wants to know the closest place to buy mangoes. Who sells mangoes?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -547,7 +547,7 @@
     "translation": "It was Fred she invited.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -570,7 +570,7 @@
     "translation": "It wasn't Fred she invited.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -592,7 +592,7 @@
     "translation": "It was Amo that he invited.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -615,7 +615,7 @@
     "translation": "It wasn't Amo he invited.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -637,7 +637,7 @@
     "translation": "He called nobody yesterday.",
     "context": "Who did Njelu call yesterday?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -658,7 +658,7 @@
     "translation": "He called nobody yesterday.",
     "context": "Who did Njelu call yesterday?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -680,7 +680,7 @@
     "translation": "The one that Njelu called was nobody.",
     "context": "Who did Njelu call yesterday?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "pseudocleft"],
@@ -701,7 +701,7 @@
     "translation": "He did not invite anybody.",
     "context": "Who did Kofi invite to the party?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "unmarked"],
@@ -723,7 +723,7 @@
     "translation": "It was nobody that he invited.",
     "context": "Who did Kofi invite to the party?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -744,7 +744,7 @@
     "translation": "Kofi called nobody.",
     "context": "Who did Kofi call yesterday?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "unmarked"],
@@ -766,7 +766,7 @@
     "translation": "It was nobody that Kofi called.",
     "context": "Who did Kofi call yesterday?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -788,7 +788,7 @@
     "translation": "because he didn't call Sama yesterday,...",
     "context": "Njelu hates calling, but his father forces him to call one family member per day. Sometimes, his father is not around, so Njelu doesn't call anybody. Did Njelu call somebody yesterday? I don't think so...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "unmarked"],
@@ -810,7 +810,7 @@
     "translation": "because he didn't call Sama yesterday,...",
     "context": "Njelu hates calling, but his father forces him to call one family member per day. Sometimes, his father is not around, so Njelu doesn't call anybody. Did Njelu call somebody yesterday? I don't think so...",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -831,7 +831,7 @@
     "translation": "It is Kofi who swam",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -855,7 +855,7 @@
     "translation": "It was Ama who slept.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -879,7 +879,7 @@
     "translation": "It was banku that Kofi ate yesterday.",
     "context": "It was banku and plantain that Kofi ate yesterday.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],
@@ -901,7 +901,7 @@
     "translation": "Mammadi gave a watch to Dimza.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "marked"],

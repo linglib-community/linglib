@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("puzzle", "Hart's vehicle rule")] }
 
@@ -37,7 +37,7 @@ def rule : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("rule", "prohibition"), ("artifactNoun", "electronic device")] }
 
@@ -50,7 +50,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("This tree is a pine in most respects.", .unacceptable), ("This tree is a pine in every respect.", .unacceptable)]
+    contrasts := [("This tree is a pine in most respects.", .unacceptable), ("This tree is a pine in every respect.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "dimensional"), ("nounType", "natural kind")] }
 
@@ -63,7 +63,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "dimensional"), ("nounType", "artifact")] }
 
@@ -76,7 +76,7 @@ def ex_4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "dimensional"), ("nounType", "multidimensional adjective")] }
 
@@ -89,7 +89,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("This tree is more a pine than an oak.", .unacceptable)]
+    contrasts := [("This tree is more a pine than an oak.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "natural kind")] }
 
@@ -102,7 +102,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := [("This place is more a church than an art gallery.", .marginal)]
+    contrasts := [("This place is more a church than an art gallery.", .marginal)]
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "artifact")] }
 
@@ -115,7 +115,7 @@ def ex_5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "multidimensional adjective")] }
 
@@ -128,7 +128,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("This tree is taller than it is wide.", .acceptable)]
+    contrasts := [("This tree is taller than it is wide.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "single-dimensional adjective")] }
 
@@ -141,7 +141,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "quantificational"), ("parameters", "F, W, s")] }
 
@@ -154,7 +154,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "degree"), ("parameters", "F, W project")] }
 
@@ -167,7 +167,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "meta-linguistic negotiation")] }
 
@@ -180,7 +180,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "meta-linguistic negotiation")] }
 
@@ -193,7 +193,7 @@ def ex_16c : Datum :=
     glossedTokens := []
     context := "Planning a party."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "meta-linguistic negotiation"), ("analysis", "domain restriction")] }
 

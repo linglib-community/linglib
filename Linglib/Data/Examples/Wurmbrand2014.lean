@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Leo believed Julia to be bringing the toys right then.", .acceptable)]
+    contrasts := [("Leo believed Julia to be bringing the toys right then.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("syntax", "control")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Leo claimed to eat dinner.", .acceptable)]
+    contrasts := [("Leo claimed to eat dinner.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Yesterday, John tried to leave.", .acceptable)]
+    contrasts := [("Yesterday, John tried to leave.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("scheduled future", .acceptable)]
     paperFeatures := [("class", "propositional")] }
 
@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("syntax", "ECM")] }
 
@@ -167,7 +167,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Leo decided a week ago that he will go to the party.", .acceptable)]
+    contrasts := [("Leo decided a week ago that he will go to the party.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .acceptable)]
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .acceptable)]
     paperFeatures := [] }
 
@@ -271,7 +271,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .acceptable), ("shifted past", .unacceptable)]
     paperFeatures := [] }
 
@@ -284,7 +284,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
     paperFeatures := [] }
 
@@ -310,7 +310,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Leo sings in the shower.", .acceptable)]
+    contrasts := [("Leo sings in the shower.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -323,7 +323,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -336,7 +336,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -349,7 +349,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("John was singing in the shower when the mailman arrived.", .acceptable)]
+    contrasts := [("John was singing in the shower when the mailman arrived.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -362,7 +362,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .acceptable), ("shifted past", .acceptable)]
     paperFeatures := [] }
 
@@ -375,7 +375,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
     paperFeatures := [] }
 
@@ -388,7 +388,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := "Is John available tomorrow at 5 p.m.?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -401,7 +401,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := "Is John available tomorrow at 5 p.m.?"
     judgment := .ungrammatical
-    alternatives := [("I don't think so. He expects to be working at 5 p.m. tomorrow.", .acceptable)]
+    contrasts := [("I don't think so. He expects to be working at 5 p.m. tomorrow.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -414,7 +414,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -427,7 +427,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -440,7 +440,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -453,7 +453,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -466,7 +466,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("syntax", "control")] }
 
@@ -479,7 +479,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -492,7 +492,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -505,7 +505,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -518,7 +518,7 @@ def ex_39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -531,7 +531,7 @@ def ex_40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "double access")] }
 
@@ -544,7 +544,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "propositional")] }
 
@@ -557,7 +557,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous (SOT)", .acceptable)]
     paperFeatures := [] }
 
@@ -570,7 +570,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("near future", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
@@ -583,7 +583,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
@@ -596,7 +596,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Yesterday, John managed to sing.", .acceptable)]
+    contrasts := [("Yesterday, John managed to sing.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -609,7 +609,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The bridge began to tremble.", .acceptable)]
+    contrasts := [("The bridge began to tremble.", .acceptable)]
     readings := []
     paperFeatures := [("syntax", "raising")] }
 
@@ -622,7 +622,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The bridge seems to be trembling right now.", .acceptable)]
+    contrasts := [("The bridge seems to be trembling right now.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -635,7 +635,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -648,7 +648,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Leo seemed to be singing at 5 p.m. yesterday.", .acceptable)]
+    contrasts := [("Leo seemed to be singing at 5 p.m. yesterday.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -661,7 +661,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -674,7 +674,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("John is trying to eat his breakfast right now.", .acceptable)]
+    contrasts := [("John is trying to eat his breakfast right now.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -687,7 +687,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := "John had an exam scheduled for yesterday, taken online at home. His parents knew the exam was yesterday but not its time. At 2:00 the music in John's room stopped and they thought he might be doing the exam. At 2:30 their clock stopped for exactly one hour, unnoticed. When it showed 3:00 the music came back on, so they thought he did the exam from 2:00 to 3:00. In fact he did the exam from 2:00 to 3:00 and then played computer games with headphones until 4:00."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -700,7 +700,7 @@ def ex_53 : Datum :=
     glossedTokens := []
     context := "John had an exam scheduled for yesterday, taken online at home. His parents knew the exam was yesterday but not its time. At 2:00 the music in John's room stopped and they thought he might be doing the exam. At 2:30 their clock stopped for exactly one hour, unnoticed. When it showed 3:00 the music came back on, so they thought he did the exam from 2:00 to 3:00. In fact he did the exam from 2:00 to 3:00 and then played computer games with headphones until 4:00."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -713,7 +713,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := "John had an exam scheduled for yesterday, taken online at home. His parents knew the exam was yesterday but not its time. At 2:00 the music in John's room stopped and they thought he might be doing the exam. At 2:30 their clock stopped for exactly one hour, unnoticed. When it showed 3:00 the music came back on, so they thought he did the exam from 2:00 to 3:00. In fact he did the exam from 2:00 to 3:00 and then played computer games with headphones until 4:00."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

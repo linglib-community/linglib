@@ -24,7 +24,7 @@ def baig1kia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("baigɨk-chuda’", .acceptable)]
+    contrasts := [("baigɨk-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -37,7 +37,7 @@ def bamgia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bamii’ñ-dha’", .acceptable)]
+    contrasts := [("bamii’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -50,7 +50,7 @@ def batbia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("batbi-chdha’", .acceptable)]
+    contrasts := [("batbi-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -63,7 +63,7 @@ def bannia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ba’nni-dha’", .acceptable)]
+    contrasts := [("ba’nni-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -76,7 +76,7 @@ def bhaimu_bhaiku : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhai’m-tuda’ ∼ bhai’k-tuda’", .acceptable)]
+    contrasts := [("bhai’m-tuda’ ∼ bhai’k-tuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -89,7 +89,7 @@ def bhaya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhai-dha’", .acceptable)]
+    contrasts := [("bhai-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -102,7 +102,7 @@ def bhiikchia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhiik-chuda’", .acceptable)]
+    contrasts := [("bhiik-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -115,7 +115,7 @@ def daya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("dai-chdha’", .acceptable)]
+    contrasts := [("dai-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -128,7 +128,7 @@ def dodhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("dua’ñ-dha’", .acceptable)]
+    contrasts := [("dua’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -141,7 +141,7 @@ def gakia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("gakii’ñ-dha’", .acceptable)]
+    contrasts := [("gakii’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -154,7 +154,7 @@ def gisaru : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("gisalh-dha’", .acceptable)]
+    contrasts := [("gisalh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -167,7 +167,7 @@ def g1lhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("gɨ’lh-dha’", .acceptable)]
+    contrasts := [("gɨ’lh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -180,7 +180,7 @@ def g1mda : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("gɨ’m-chuda’", .acceptable)]
+    contrasts := [("gɨ’m-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -193,7 +193,7 @@ def imu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("i’mu-tda’", .acceptable)]
+    contrasts := [("i’mu-tda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -206,7 +206,7 @@ def jibua : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jibai-dha’", .acceptable)]
+    contrasts := [("jibai-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -219,7 +219,7 @@ def jidhoora : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jidhoolh-dha’", .acceptable)]
+    contrasts := [("jidhoolh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -232,7 +232,7 @@ def j1kgia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jɨkgɨ-tda’", .acceptable)]
+    contrasts := [("jɨkgɨ-tda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -245,7 +245,7 @@ def j1lhbia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jɨlhbi-dha’", .acceptable)]
+    contrasts := [("jɨlhbi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -258,7 +258,7 @@ def j11mia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jɨm-chuda’", .acceptable)]
+    contrasts := [("jɨm-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -271,7 +271,7 @@ def j1plhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jɨp-dha’", .acceptable)]
+    contrasts := [("jɨp-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -284,7 +284,7 @@ def jonia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("joiñ-dha’", .acceptable)]
+    contrasts := [("joiñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -297,7 +297,7 @@ def juukgia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jukañ-dha’", .acceptable)]
+    contrasts := [("jukañ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -310,7 +310,7 @@ def k1kbo : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kɨkbui-chdha’", .acceptable)]
+    contrasts := [("kɨkbui-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -323,7 +323,7 @@ def kokda : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kokdhi-chdha’", .acceptable)]
+    contrasts := [("kokdhi-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -336,7 +336,7 @@ def koxia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kox-chuda’", .acceptable)]
+    contrasts := [("kox-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "unergative"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -349,7 +349,7 @@ def kubhabnia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kubha’bi-dha’", .acceptable)]
+    contrasts := [("kubha’bi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -362,7 +362,7 @@ def maimu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("maim-tuda", .acceptable)]
+    contrasts := [("maim-tuda", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -375,7 +375,7 @@ def m11ya_burn : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("mɨi-dha’", .acceptable)]
+    contrasts := [("mɨi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -388,7 +388,7 @@ def m11ya_ignite : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("mɨi-chdha’", .acceptable)]
+    contrasts := [("mɨi-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -401,7 +401,7 @@ def m1lhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("mɨlh-chuda’", .acceptable)]
+    contrasts := [("mɨlh-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -414,7 +414,7 @@ def sasbak : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("sasbak-chuda’", .acceptable)]
+    contrasts := [("sasbak-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -427,7 +427,7 @@ def ninia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ñiñii-chdha’", .acceptable)]
+    contrasts := [("ñiñii-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -440,7 +440,7 @@ def oilhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("oilhi-chdha’", .acceptable)]
+    contrasts := [("oilhi-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -453,7 +453,7 @@ def suuduya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("suudui-dha’", .acceptable)]
+    contrasts := [("suudui-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -466,7 +466,7 @@ def t1biapu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tɨbaip-tuda’", .acceptable)]
+    contrasts := [("tɨbaip-tuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -479,7 +479,7 @@ def t1sdia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tɨsaa’ñ-dha’", .acceptable)]
+    contrasts := [("tɨsaa’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -492,7 +492,7 @@ def toindhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tonii’ñ-chuda’", .acceptable)]
+    contrasts := [("tonii’ñ-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -505,7 +505,7 @@ def toksolhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("toksolh-dha’", .acceptable)]
+    contrasts := [("toksolh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -518,7 +518,7 @@ def torkia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("torki-dha’", .acceptable)]
+    contrasts := [("torki-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -531,7 +531,7 @@ def totpokia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("totpox-dha", .acceptable)]
+    contrasts := [("totpox-dha", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -544,7 +544,7 @@ def tuklhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tuk-chuda’", .acceptable)]
+    contrasts := [("tuk-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "unaccusative"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -557,7 +557,7 @@ def yaaa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ya’-tda’", .acceptable)]
+    contrasts := [("ya’-tda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -570,7 +570,7 @@ def se : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("sai’-chdha’", .acceptable)]
+    contrasts := [("sai’-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -583,7 +583,7 @@ def iimchu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ii’m-chuda’", .acceptable)]
+    contrasts := [("ii’m-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
@@ -596,7 +596,7 @@ def aaya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ai-chdha’", .acceptable)]
+    contrasts := [("ai-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "motion"), ("objects", "0"), ("entailed", "animateLocative"), ("function", "agent"), ("role", "goal")] }
 
@@ -609,7 +609,7 @@ def bh11ya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhɨi-chdha’", .acceptable)]
+    contrasts := [("bhɨi-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "motion"), ("objects", "0"), ("entailed", "animateLocative"), ("function", "agent"), ("role", "location")] }
 
@@ -622,7 +622,7 @@ def bhaya_swallow : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhai’-chdha’", .acceptable)]
+    contrasts := [("bhai’-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "ingestion"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -635,7 +635,7 @@ def iya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ii-chdha’", .acceptable)]
+    contrasts := [("ii-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "ingestion"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -648,7 +648,7 @@ def kaaya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kai-dha’", .acceptable)]
+    contrasts := [("kai-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "perception"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -661,7 +661,7 @@ def namkia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("namki-chdha’", .acceptable)]
+    contrasts := [("namki-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -674,7 +674,7 @@ def oncho : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("o’ñxi-dha’", .acceptable)]
+    contrasts := [("o’ñxi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -687,7 +687,7 @@ def saabu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("saab-tuda’", .acceptable)]
+    contrasts := [("saab-tuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -700,7 +700,7 @@ def t1gia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tɨiñxi-dha’", .acceptable)]
+    contrasts := [("tɨiñxi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "perception"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -713,7 +713,7 @@ def tulhiina : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tulhiiñ-chuda’", .acceptable)]
+    contrasts := [("tulhiiñ-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
@@ -726,7 +726,7 @@ def gara : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ga’lhi-dha’", .acceptable)]
+    contrasts := [("ga’lhi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "recipient")] }
 
@@ -739,7 +739,7 @@ def abiaru : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("abialh-dha’", .acceptable)]
+    contrasts := [("abialh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "recipient")] }
 
@@ -752,7 +752,7 @@ def sopkia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("sopki-dha’", .acceptable)]
+    contrasts := [("sopki-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "hearer")] }
 
@@ -765,7 +765,7 @@ def iata : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("iatgi-dha’", .acceptable)]
+    contrasts := [("iatgi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "hearer")] }
 
@@ -778,7 +778,7 @@ def ex_1xcho : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ɨxchoi-dha’", .acceptable)]
+    contrasts := [("ɨxchoi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "possessor")] }
 
@@ -791,7 +791,7 @@ def jotsa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jotxi-dha’", .acceptable)]
+    contrasts := [("jotxi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "goal")] }
 
@@ -804,7 +804,7 @@ def bua_iabu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bui-dha’∼iabui-dha’", .acceptable)]
+    contrasts := [("bui-dha’∼iabui-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "goal")] }
 
@@ -817,7 +817,7 @@ def baabu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("baabui-dha’", .acceptable)]
+    contrasts := [("baabui-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "source")] }
 
@@ -830,7 +830,7 @@ def nuina_nuyasa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("nui’ñ-dha’", .acceptable)]
+    contrasts := [("nui’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "target")] }
 
@@ -843,7 +843,7 @@ def makia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("maki-dha’", .unacceptable), ("maki-chdha’", .unacceptable)]
+    contrasts := [("maki-dha’", .unacceptable), ("maki-chdha’", .unacceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "2"), ("entailed", "none"), ("function", "blocked")] }
 
@@ -856,7 +856,7 @@ def t1kka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tɨkki-dha’", .unacceptable), ("tɨk-tuda’", .unacceptable)]
+    contrasts := [("tɨkki-dha’", .unacceptable), ("tɨk-tuda’", .unacceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "2"), ("entailed", "none"), ("function", "blocked")] }
 
@@ -869,7 +869,7 @@ def bakcha : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ba’k-chuda’", .acceptable)]
+    contrasts := [("ba’k-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -882,7 +882,7 @@ def boikta : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("boik-dha’", .acceptable)]
+    contrasts := [("boik-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -895,7 +895,7 @@ def asakta : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("aski-chdha’", .acceptable)]
+    contrasts := [("aski-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -908,7 +908,7 @@ def t1maichcha : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tɨmaich-chuda’", .acceptable)]
+    contrasts := [("tɨmaich-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -921,7 +921,7 @@ def baiss1na : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("baissɨñ-dha’", .acceptable)]
+    contrasts := [("baissɨñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -934,7 +934,7 @@ def bakchia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bakchi-dha’", .acceptable)]
+    contrasts := [("bakchi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -947,7 +947,7 @@ def bakuana : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bakuañ-dha’", .acceptable)]
+    contrasts := [("bakuañ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -960,7 +960,7 @@ def bakta : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bakxi-dha’", .acceptable)]
+    contrasts := [("bakxi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "basic"), ("role", "location")] }
 
@@ -973,7 +973,7 @@ def biaa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bi’-dha’", .acceptable)]
+    contrasts := [("bi’-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -986,7 +986,7 @@ def bulhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bulh-dha’", .acceptable)]
+    contrasts := [("bulh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
@@ -999,7 +999,7 @@ def bulhkada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bulhkax-dha’", .acceptable)]
+    contrasts := [("bulhkax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1012,7 +1012,7 @@ def bhippioka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhippio’k-dha’", .acceptable)]
+    contrasts := [("bhippio’k-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1025,7 +1025,7 @@ def bh1ika_uika : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhɨix-dha’∼ui’x-dha’", .acceptable)]
+    contrasts := [("bhɨix-dha’∼ui’x-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1038,7 +1038,7 @@ def bh11ya_uya : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("bhɨi-dha’∼ui’-dha’", .acceptable)]
+    contrasts := [("bhɨi-dha’∼ui’-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1051,7 +1051,7 @@ def dagia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("daa’ñ-dha’", .acceptable)]
+    contrasts := [("daa’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1064,7 +1064,7 @@ def dabina : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("da’biñ-dha’", .acceptable)]
+    contrasts := [("da’biñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
@@ -1077,7 +1077,7 @@ def damuna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("da’mux-dha’", .acceptable)]
+    contrasts := [("da’mux-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1090,7 +1090,7 @@ def d11nnia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("d11nki-dha’", .acceptable)]
+    contrasts := [("d11nki-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1103,7 +1103,7 @@ def dunia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("duiñ-dha’", .acceptable)]
+    contrasts := [("duiñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1116,7 +1116,7 @@ def echkada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("echkax-dha’", .acceptable)]
+    contrasts := [("echkax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1129,7 +1129,7 @@ def gaaga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("gaa’ñ-dha’", .acceptable)]
+    contrasts := [("gaa’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1142,7 +1142,7 @@ def gaamu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("gaam-dha’", .acceptable)]
+    contrasts := [("gaam-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "basic"), ("role", "location")] }
 
@@ -1155,7 +1155,7 @@ def ikora : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ikorgi-chuda’", .acceptable)]
+    contrasts := [("ikorgi-chuda’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1168,7 +1168,7 @@ def jaina_jaisa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jaiñ-dha’∼jaix-dha’", .acceptable)]
+    contrasts := [("jaiñ-dha’∼jaix-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1181,7 +1181,7 @@ def jikpata : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jikpax-dha’", .acceptable)]
+    contrasts := [("jikpax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1194,7 +1194,7 @@ def jugia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jugii’ñ-dha’", .acceptable)]
+    contrasts := [("jugii’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1207,7 +1207,7 @@ def junmada : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("junmax-dha", .acceptable)]
+    contrasts := [("junmax-dha", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1220,7 +1220,7 @@ def jupna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("jupñi-dha’", .acceptable)]
+    contrasts := [("jupñi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "source"), ("paradigm", "1")] }
 
@@ -1233,7 +1233,7 @@ def juulhia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("juulh-dha’", .acceptable)]
+    contrasts := [("juulh-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "recipient"), ("role", "location")] }
 
@@ -1246,7 +1246,7 @@ def kispa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ki’spi-dha’", .acceptable)]
+    contrasts := [("ki’spi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1259,7 +1259,7 @@ def k11sa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("k11x-dha’", .acceptable)]
+    contrasts := [("k11x-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "goal"), ("paradigm", "4")] }
 
@@ -1272,7 +1272,7 @@ def k11mpiga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("k11’mpix-dha’", .acceptable)]
+    contrasts := [("k11’mpix-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1285,7 +1285,7 @@ def k1kbo_tr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kɨkbui-chdha’", .acceptable)]
+    contrasts := [("kɨkbui-chdha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1298,7 +1298,7 @@ def kuana : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kuañ-dha’", .acceptable)]
+    contrasts := [("kuañ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1311,7 +1311,7 @@ def kuagia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kua’ñ-dha’", .acceptable)]
+    contrasts := [("kua’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "recipient"), ("role", "instrument")] }
 
@@ -1324,7 +1324,7 @@ def kupioka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kupio’k-dha’", .acceptable)]
+    contrasts := [("kupio’k-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1337,7 +1337,7 @@ def kuupa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("kuup-dha’", .acceptable)]
+    contrasts := [("kuup-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1350,7 +1350,7 @@ def mukda : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("mu’kxi-dha’", .acceptable)]
+    contrasts := [("mu’kxi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1363,7 +1363,7 @@ def muaa_kooda : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("mui-dha’∼koo’ñ-dha’", .acceptable)]
+    contrasts := [("mui-dha’∼koo’ñ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1376,7 +1376,7 @@ def saasbia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("saasbi-dha’", .acceptable)]
+    contrasts := [("saasbi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "recipient"), ("role", "instrument")] }
 
@@ -1389,7 +1389,7 @@ def saibhioka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("sai’bhio’k-dha’", .acceptable)]
+    contrasts := [("sai’bhio’k-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "source")] }
 
@@ -1402,7 +1402,7 @@ def sarna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("sarni-dha’", .acceptable)]
+    contrasts := [("sarni-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1415,7 +1415,7 @@ def s11ssa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("s11xi-dha’", .acceptable)]
+    contrasts := [("s11xi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1428,7 +1428,7 @@ def sooma : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("soom-dha’", .acceptable)]
+    contrasts := [("soom-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
@@ -1441,7 +1441,7 @@ def suulhga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("suulhgi-dha’", .acceptable)]
+    contrasts := [("suulhgi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
@@ -1454,7 +1454,7 @@ def t1bgata : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("tɨbgax-dha’", .acceptable)]
+    contrasts := [("tɨbgax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1467,7 +1467,7 @@ def uana : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("uañ-dha’", .acceptable)]
+    contrasts := [("uañ-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1480,7 +1480,7 @@ def uana_write : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ua’ñxi-dha’", .acceptable)]
+    contrasts := [("ua’ñxi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
@@ -1493,7 +1493,7 @@ def umga : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("umgax-dha’", .acceptable)]
+    contrasts := [("umgax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
@@ -1506,7 +1506,7 @@ def xiopna : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("xio’pñi-dha’", .acceptable)]
+    contrasts := [("xio’pñi-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
@@ -1519,7 +1519,7 @@ def jupania_jupakia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "1")] }
 
@@ -1532,7 +1532,7 @@ def baax : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "2")] }
 
@@ -1545,7 +1545,7 @@ def baasa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("baax-dha’", .acceptable)]
+    contrasts := [("baax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("paradigm", "2")] }
 
@@ -1558,7 +1558,7 @@ def daa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "3")] }
 
@@ -1571,7 +1571,7 @@ def daibu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "3")] }
 
@@ -1584,7 +1584,7 @@ def daasa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("daax-dha’", .acceptable)]
+    contrasts := [("daax-dha’", .acceptable)]
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("paradigm", "3")] }
 
@@ -1597,7 +1597,7 @@ def k11k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "4")] }
 
@@ -1610,7 +1610,7 @@ def k11ka : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "4")] }
 

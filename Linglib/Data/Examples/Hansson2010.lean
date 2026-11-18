@@ -24,7 +24,7 @@ def ex3a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-lĩ́ːʔ"), ("directionality", "anticipatory")] }
 
@@ -37,7 +37,7 @@ def ex3a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-taːʔ"), ("directionality", "anticipatory")] }
 
@@ -50,7 +50,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃí-tʃĩ́ːh"), ("directionality", "anticipatory")] }
 
@@ -63,7 +63,7 @@ def ex3c_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-tsʼaːʔ"), ("directionality", "anticipatory")] }
 
@@ -76,7 +76,7 @@ def ex3c_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃi-zid"), ("directionality", "anticipatory")] }
 
@@ -89,7 +89,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒi-di-báːh"), ("directionality", "anticipatory")] }
 
@@ -102,7 +102,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒi-s-tĩ́"), ("directionality", "anticipatory")] }
 
@@ -115,7 +115,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒi-s-ɣiːʃ"), ("directionality", "anticipatory")] }
 
@@ -128,7 +128,7 @@ def ex6a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "j-iʃ-mas"), ("directionality", "anticipatory")] }
 
@@ -141,7 +141,7 @@ def ex6a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "si-dʒéːʔ"), ("directionality", "anticipatory")] }
 
@@ -154,7 +154,7 @@ def ex6b_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "ʃ-is-ná"), ("directionality", "anticipatory")] }
 
@@ -167,7 +167,7 @@ def ex6b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-l-taːl"), ("directionality", "anticipatory")] }
 
@@ -180,7 +180,7 @@ def ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.1.1"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-l-tsʼin"), ("directionality", "anticipatory")] }
 
@@ -193,7 +193,7 @@ def ex11a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "dʒ-i-z-dá"), ("directionality", "anticipatory")] }
 
@@ -206,7 +206,7 @@ def ex11a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-ɬ-haːl"), ("directionality", "anticipatory")] }
 
@@ -219,7 +219,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "dz-iʃ-ɬ-tsʼin"), ("directionality", "anticipatory")] }
 
@@ -232,7 +232,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("ʃiʃ-", .ungrammatical)]
+    contrasts := [("ʃiʃ-", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-"), ("directionality", "perseveratory")] }
 
@@ -245,7 +245,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-"), ("directionality", "anticipatory")] }
 
@@ -258,7 +258,7 @@ def ex14_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-ɬ-jé"), ("directionality", "perseveratory")] }
 
@@ -271,7 +271,7 @@ def ex14_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-dlí"), ("directionality", "perseveratory")] }
 
@@ -284,7 +284,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("phenomenon", "sibilantHarmony"), ("underlying", "s-iʃ-l-ʒeːʔ"), ("directionality", "anticipatory")] }
 

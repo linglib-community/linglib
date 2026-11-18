@@ -7,6 +7,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Core.Data.List.Matching
+public import Mathlib.Order.Interval.Basic
 
 /-!
 # Alignment constraints
@@ -63,17 +64,22 @@ theorem align_eq_zero_iff {x : List β × List γ} : align R x = 0 ↔ ∀ a ∈
 
 /-- **Align-L** over spans, `Align(Cat₁, L, Cat₂, L)` ([mccarthy-prince-1993b]): one violation for
 each span of the first family whose left cut begins no span of the second. -/
-abbrev alignLeft : Constraint (List (ℕ × ℕ) × List (ℕ × ℕ)) := align fun a b ↦ a.1 = b.1
+abbrev alignLeft : Constraint (List (NonemptyInterval ℕ) × List (NonemptyInterval ℕ)) :=
+  align fun a b ↦ a.fst = b.fst
 
 /-- **Align-R** over spans, `Align(Cat₁, R, Cat₂, R)` ([mccarthy-prince-1993b]): one violation for
 each span of the first family whose right cut ends no span of the second. -/
-abbrev alignRight : Constraint (List (ℕ × ℕ) × List (ℕ × ℕ)) := align fun a b ↦ a.2 = b.2
+abbrev alignRight : Constraint (List (NonemptyInterval ℕ) × List (NonemptyInterval ℕ)) :=
+  align fun a b ↦ a.snd = b.snd
 
 -- A phrase over two words is right-aligned with the second word, not left-aligned with it, and
 -- matches neither.
-example : alignRight ([(0, 2)], [(0, 1), (1, 2)]) = 0 := by decide
-example : alignLeft ([(1, 2)], [(0, 2)]) = 1 := by decide
-example : align Eq ([(0, 2)], [(0, 1), (1, 2)]) = 1 := by decide
+example : alignRight ([⟨(0, 2), by decide⟩], [⟨(0, 1), by decide⟩, ⟨(1, 2), by decide⟩]) = 0 := by
+  decide
+example : alignLeft ([⟨(1, 2), by decide⟩], [⟨(0, 2), by decide⟩]) = 1 := by decide
+example : align Eq ([(⟨(0, 2), by decide⟩ : NonemptyInterval ℕ)],
+    [⟨(0, 1), by decide⟩, ⟨(1, 2), by decide⟩]) = 1 := by
+  decide
 
 /-! ### One-to-one correspondence -/
 
@@ -105,10 +111,11 @@ theorem deficiency_le_align {S : β → γ → Prop} [DecidableRel S] {x : List 
 end Deficiency
 
 -- Two words inside one phrase both align to it, but only one can have it as correspondent.
-example : align (fun a p : ℕ × ℕ ↦ p.1 ≤ a.1 ∧ a.2 ≤ p.2) ([(0, 1), (1, 2)], [(0, 2)]) = 0 := by
+example : align (· ≤ ·) ([(⟨(0, 1), by decide⟩ : NonemptyInterval ℕ), ⟨(1, 2), by decide⟩],
+    [⟨(0, 2), by decide⟩]) = 0 := by
   decide
-example : deficiency (fun a p : ℕ × ℕ ↦ p.1 ≤ a.1 ∧ a.2 ≤ p.2) ([(0, 1), (1, 2)], [(0, 2)])
-    = 1 := by
+example : deficiency (· ≤ ·) ([(⟨(0, 1), by decide⟩ : NonemptyInterval ℕ), ⟨(1, 2), by decide⟩],
+    [⟨(0, 2), by decide⟩]) = 1 := by
   decide
 
 end OptimalityTheory.Constraint

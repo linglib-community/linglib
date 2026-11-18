@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "TEACH"],
@@ -36,7 +36,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "QUANTUM"],
@@ -60,7 +60,7 @@
     "translation": "worker",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "WORK"],
@@ -84,7 +84,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "ROTATE"],
@@ -106,7 +106,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "ROTATE"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "CURIOUS"],
@@ -152,7 +152,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "GLORY"],
@@ -176,7 +176,7 @@
     "translation": "to house",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "HOUSE"],
@@ -199,7 +199,7 @@
     "translation": "filled the room with the houses",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "HOUSE"],
@@ -224,7 +224,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "GLOBE"],
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "GLOBE"],
@@ -270,7 +270,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "NOVEL"],
@@ -292,7 +292,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "NOVEL"],
@@ -316,7 +316,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "NATION"],
@@ -341,7 +341,7 @@
     "translation": "manure",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "ko(y)"],
@@ -367,7 +367,7 @@
     "translation": "a sink",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "nag"],
@@ -393,7 +393,7 @@
     "translation": "soup stock",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "d"],
@@ -419,7 +419,7 @@
     "translation": "hand-me-downs",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "sag"],
@@ -445,7 +445,7 @@
     "translation": "a topknot, chignon",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "mag"],
@@ -471,7 +471,7 @@
     "translation": "steaming hot",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "axn"],
@@ -497,7 +497,7 @@
     "translation": "ringing",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "koudoun"],
@@ -523,7 +523,7 @@
     "translation": "cooked",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "magir"],
@@ -549,7 +549,7 @@
     "translation": "close friend",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "kol"],
@@ -575,7 +575,7 @@
     "translation": "striking",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "xtip"],
@@ -601,7 +601,7 @@
     "translation": "inside the wall",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "xon"],
@@ -627,7 +627,7 @@
     "translation": "energy in quantum units",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "QUANTUM"],
@@ -653,7 +653,7 @@
     "translation": "lime in powder form",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "PULVER"],
@@ -679,7 +679,7 @@
     "translation": "individual separated from society",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "ATOM"],
@@ -705,7 +705,7 @@
     "translation": "a universe that has been made global",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "GLOBE"],
@@ -733,7 +733,7 @@
     "translation": "an island that has been nationalized",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "NATION"],
@@ -761,7 +761,7 @@
     "translation": "an account transformed into fiction",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "FICTION"],

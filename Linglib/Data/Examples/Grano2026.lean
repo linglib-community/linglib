@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "a"), ("interpretation", "weak")] }
 
@@ -37,7 +37,7 @@ def ex_2_the : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "the"), ("interpretation", "strong")] }
 
@@ -50,7 +50,7 @@ def ex_2_each : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "each"), ("interpretation", "strong")] }
 
@@ -63,7 +63,7 @@ def ex_2_every : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "every"), ("interpretation", "strong")] }
 
@@ -76,7 +76,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could"), ("determiner", "bare plural"), ("interpretation", "weak")] }
 
@@ -89,7 +89,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could"), ("determiner", "several"), ("interpretation", "weak")] }
 
@@ -102,7 +102,7 @@ def ex_8c : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could"), ("determiner", "several"), ("interpretation", "either")] }
 
@@ -115,7 +115,7 @@ def ex_8d : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could"), ("determiner", "several of the"), ("interpretation", "strong")] }
 
@@ -128,7 +128,7 @@ def ex_8e : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "could"), ("determiner", "every"), ("interpretation", "strong")] }
 
@@ -141,7 +141,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("determiner", "bare plural"), ("interpretation", "weak")] }
 
@@ -154,7 +154,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("determiner", "several"), ("interpretation", "weak")] }
 
@@ -167,7 +167,7 @@ def ex_9c : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("determiner", "several"), ("interpretation", "either")] }
 
@@ -180,7 +180,7 @@ def ex_9d : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("determiner", "several of the"), ("interpretation", "strong")] }
 
@@ -193,7 +193,7 @@ def ex_9e : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "should"), ("determiner", "every"), ("interpretation", "strong")] }
 
@@ -206,7 +206,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "weak")] }
 
@@ -219,7 +219,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "for"), ("determiner", "several"), ("interpretation", "weak")] }
 
@@ -232,7 +232,7 @@ def ex_10c : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .variable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "for"), ("determiner", "several"), ("interpretation", "either")] }
 
@@ -245,7 +245,7 @@ def ex_10d : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "for"), ("determiner", "several of the"), ("interpretation", "strong")] }
 
@@ -258,7 +258,7 @@ def ex_10e : Datum :=
     glossedTokens := []
     context := "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "for"), ("determiner", "every"), ("interpretation", "strong")] }
 
@@ -271,7 +271,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "generic")] }
 
@@ -284,7 +284,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "generic")] }
 
@@ -297,7 +297,7 @@ def ex_66_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "adverb")] }
 
@@ -310,7 +310,7 @@ def ex_66_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "adverb")] }
 
@@ -323,7 +323,7 @@ def ex_66_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "adverb")] }
 
@@ -336,7 +336,7 @@ def ex_66_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "bare plural"), ("interpretation", "adverb")] }
 
@@ -349,7 +349,7 @@ def ex_67_the : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "the"), ("interpretation", "strong")] }
 
@@ -362,7 +362,7 @@ def ex_67_each : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "each"), ("interpretation", "strong")] }
 
@@ -375,7 +375,7 @@ def ex_67_every : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("weakNecessity", .acceptable)]
     paperFeatures := [("modal", "for"), ("determiner", "every"), ("interpretation", "strong")] }
 

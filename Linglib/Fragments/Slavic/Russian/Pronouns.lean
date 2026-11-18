@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Demonstrative
+public import Linglib.Fragments.Slavic.Russian.Determiners
 
 /-!
 # Russian pronouns
@@ -50,12 +51,12 @@ def interrogatives : Finset InterrogativePronoun := {kto, čto, gde, kogda, kak,
 /-- *ètot* (этот) 'this' refers to something close to hand ([wade-2020] §126). -/
 def ètot : DemonstrativePronoun :=
   { form := "ètot", person := some .third, number := some .singular, gender := some .Masc,
-    deixis := Person.first.participantSets }
+    deixis := Determiners.ètot.deixis }
 
 /-- *tot* (тот) 'that' refers to something further removed ([wade-2020] §126). -/
 def tot : DemonstrativePronoun :=
   { form := "tot", person := some .third, number := some .singular, gender := some .Masc,
-    deixis := Person.first.participantSetsᶜ }
+    deixis := Determiners.tot.deixis }
 
 /-- The demonstrative pronouns, masculine singular. -/
 def demonstratives : List DemonstrativePronoun := [ètot, tot]

@@ -377,7 +377,7 @@ theorem rows_felicity :
     ∀ e ∈ Examples.all, ∀ c ∈ constructionOf e, ∀ m ∈ strategyOf e,
       ∀ κ ∈ counterfactuality e.language,
         (e.JudgedFelicitous ↔ Felicitous κ c m) ∧
-          ∀ a ∈ e.alternatives, (a.2 = .acceptable ↔ Felicitous κ c m.other) := by
+          ∀ a ∈ e.contrasts, (a.2 = .acceptable ↔ Felicitous κ c m.other) := by
   decide
 
 /-! ### The inventory (§3.1)

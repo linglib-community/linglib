@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Pragmatics.Probabilistic.Uniform
+public import Linglib.Logic.Aristotelian.Triangle
 
 /-!
 # Potts, Lassiter, Levy and Frank (2016): Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty
@@ -59,16 +59,16 @@ instance : MeasurableSpace World := ⊤
 
 /-- The outcomes of a state. -/
 def World.outcomes : World → Multiset Triangle
-  | .NNN => {.E, .E, .E}
-  | .NNS => {.E, .E, .IO}
-  | .NNA => {.E, .E, .A}
-  | .NSS => {.E, .IO, .IO}
-  | .NSA => {.E, .IO, .A}
-  | .NAA => {.E, .A, .A}
-  | .SSS => {.IO, .IO, .IO}
-  | .SSA => {.IO, .IO, .A}
-  | .SAA => {.IO, .A, .A}
-  | .AAA => {.A, .A, .A}
+  | .NNN => {.none, .none, .none}
+  | .NNS => {.none, .none, .someNotAll}
+  | .NNA => {.none, .none, .all}
+  | .NSS => {.none, .someNotAll, .someNotAll}
+  | .NSA => {.none, .someNotAll, .all}
+  | .NAA => {.none, .all, .all}
+  | .SSS => {.someNotAll, .someNotAll, .someNotAll}
+  | .SSA => {.someNotAll, .someNotAll, .all}
+  | .SAA => {.someNotAll, .all, .all}
+  | .AAA => {.all, .all, .all}
 
 /-- The quantifiers over a player's shots are *every*, *no* and *some*. -/
 inductive ShotQ where
@@ -95,8 +95,8 @@ instance : MeasurableSpace Lex := ⊤
 
 /-- Under a lexicon *some* covers the outcomes with any hit, or those with some but not all. -/
 def Lex.someDen : Lex → Finset Triangle
-  | .weak => {.IO, .A}
-  | .strong => {.IO}
+  | .weak => {.someNotAll, .all}
+  | .strong => {.someNotAll}
 
 -- (11)
 theorem lex_refines : ∀ l : Lex, l.someDen.Nonempty ∧ l.someDen ⊆ Lex.weak.someDen := by
@@ -170,7 +170,7 @@ def cost (m : Msg) : ℝ := m.elim k fun _ ↦ 0
 
 /-- The literal listener (13a) conditions a flat prior on the message's extension. -/
 noncomputable def L0 (l : Lex) : Kernel Msg World :=
-  listener (uniformOn Set.univ) (truthful fun m ↦ (sem l m : Set World))
+  literalListener (uniformOn Set.univ) (fun m ↦ (sem l m : Set World))
 
 instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
@@ -250,7 +250,7 @@ theorem S1_real (l : Lex) (w : World) (s : Stmt) :
         / ((∑ s', if w ∈ stmtSem l s' then (((stmtSem l s').card : ℝ))⁻¹ ^ α else 0)
             + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α) := by
   rw [S1, speaker_dirac_real_singleton hα.le, Fintype.sum_option]
-  simp only [L0, listener_uniformOn_truthful_apply_singleton, sem, cost, Option.elim_some,
+  simp only [L0, literalListener_uniformOn_apply_singleton, sem, cost, Option.elim_some,
     Option.elim_none,
     Finset.mem_univ, ↓reduceIte, Finset.card_univ, (by decide : Fintype.card World = 10),
     mul_zero, neg_zero, Real.exp_zero, mul_one, apply_ite (· ^ α),

@@ -13,7 +13,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "short answer: Does Bo admire Bo?", "judgment": "acceptable"},
       {"name": "clausal confirmation: Are you asking who Bo (of all people) admires?", "judgment": "acceptable"},
@@ -39,7 +39,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "short answer: Does Bo admire Bo?", "judgment": "acceptable"},
       {"name": "self-correction: Did I say 'Bo'?", "judgment": "acceptable"}
@@ -64,7 +64,7 @@
     "translation": "",
     "context": "A keeps the turn.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Why own a parakeet?", "judgment": "acceptable"},
       {"name": "Why are you asking which members of this audience own a parakeet?", "judgment": "unacceptable"}
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "B takes the turn.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Why are you asking which members of this audience own a parakeet?", "judgment": "acceptable"},
       {"name": "Why own a parakeet?", "judgment": "unacceptable"}
@@ -114,7 +114,7 @@
     "translation": "",
     "context": "A keeps the turn.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["turn", "kept"]
@@ -140,7 +140,7 @@
     "translation": "",
     "context": "Taking place conversation-initially.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Traced in (55)–(62) through greeting, counter-greeting, Free Speech, Ask QUD-incrementation, QSPEC, Assert QUD-incrementation, Accept and Fact update/QUD-downdate.",
@@ -163,7 +163,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Traced in (66): B's question influences A's; A's answer resolves B's question and is accepted, leaving A's question QUD-maximal.",
@@ -183,7 +183,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Traced in (68): the asserter checks their own assertion; the addressee confirms.",
@@ -205,7 +205,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Traced in (79): successive questions by one speaker; the second does not influence the first, which stays QUD-maximal and is answered first.",
@@ -227,7 +227,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["genre", "CasualChat"]
@@ -251,7 +251,7 @@
     "translation": "",
     "context": "B is unsure about the intended reference of 'George'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["ccur", "Parameter Focussing"]
@@ -274,7 +274,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["repair", "other-initiated"]
@@ -293,7 +293,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["repair", "self-initiated"]

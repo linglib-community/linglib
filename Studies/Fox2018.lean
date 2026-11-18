@@ -42,15 +42,6 @@ their denotations are admissible.
   three books (`Book`), one French book standing for the French books of (47b). Sections 5–7 on
   the distribution of mention-some are not formalized.
 
-## Errata
-
-* Section 1.3.2 repeats the title of Section 1.3.1, "Inferences of admissible questions", though it
-  presents the evidence from acceptability, the negative islands.
-* Footnote 24 prints an unresolved cross-reference, "(Error! Bookmark not defined.)".
-* The type shift of fn. 48 admits an empty set of parts `A'`, which yields the contradictory
-  quantifier that fn. 25 says the rule eliminates; requiring `A'` nonempty would. `shift` follows
-  the print, and the contradictory quantifier changes no prediction here.
-
 ## References
 
 * [fox-2018]

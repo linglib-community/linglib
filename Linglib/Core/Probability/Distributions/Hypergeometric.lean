@@ -86,16 +86,18 @@ instance (N n : ℕ) : IsFiniteKernel (hypergeometric N n) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
 /-- Drawing every object reveals the number of marked ones. -/
-theorem hypergeometric_self : hypergeometric N N = Kernel.id :=
-  Kernel.ext fun K ↦ (Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun k ↦ by
-    simp [hypergeometricCount_self (Nat.lt_succ_iff.1 K.isLt), Fin.ext_iff]).trans
-      (Kernel.id_apply K).symm
+theorem hypergeometric_self : hypergeometric N N = Kernel.id := by
+  ext1 K
+  rw [Kernel.id_apply, hypergeometric]
+  exact Kernel.ofWeights_apply_eq_dirac
+    (by simp [hypergeometricCount_self (Nat.lt_succ_iff.1 K.isLt)]) (ENNReal.natCast_ne_top _)
+    fun k hk ↦ by simpa [hypergeometricCount_self (Nat.lt_succ_iff.1 K.isLt), Fin.ext_iff] using hk
 
 theorem hypergeometric_last (hn : n ≤ N) :
     hypergeometric N n (Fin.last N) = Measure.dirac ⟨n, Nat.lt_succ_of_le hn⟩ :=
-  Kernel.ofWeights_apply_eq_dirac (c := (N.choose n : ℝ≥0∞))
-    (Nat.cast_ne_zero.2 (Nat.choose_ne_zero hn)) (ENNReal.natCast_ne_top _) fun k ↦ by
-    simp [hypergeometricCount_top, Fin.ext_iff]
+  Kernel.ofWeights_apply_eq_dirac
+    (by simpa [hypergeometricCount_top] using Nat.choose_ne_zero hn) (ENNReal.natCast_ne_top _)
+    fun k hk ↦ by simp [hypergeometricCount_top, Fin.val_ne_of_ne hk]
 
 section Kernel
 

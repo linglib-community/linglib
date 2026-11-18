@@ -70,7 +70,7 @@ instance : LinearOrder Sonority := LinearOrder.lift' Sonority.rank (by decide)
 /-- The sonority of a vowel by its height: the low vowels are A, the high vowels I, and the
 others O. -/
 def Sonority.ofVowel (v : Phonology.Segment) : Sonority :=
-  if v.HasValue .low true then .a else if v.HasValue .high true then .i else .o
+  if v .low = true then .a else if v .high = true then .i else .o
 
 -- §2.2
 theorem Sonority.ofVowel_finnish :
@@ -276,30 +276,34 @@ def tableauCon : ConstraintSet (Shape × List Syllable) (Fin 20) :=
   fun c x ↦ (constraint c).violations x.2
 
 /-- The total rankings consistent with the Finnish grammar. -/
-def rankings : Finset (Ranking (Fin 20) 20) := consistentTotalOrders finnishGrammar
+def rankings : Finset (Ranking (Fin 20)) := Ranking.Enumeration.linearExtensions finnishGrammar
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
-  ∀ σ ∈ rankings, PicksAt ⟨Shape.cands, tableauCon⟩ σ s cand
+  ∀ σ ∈ rankings, ConstraintSystem.PicksAt ⟨Shape.cands, fun i o k ↦ tableauCon k (i, o)⟩ σ s cand
 
 -- (32), (33)
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (34), (35)
 theorem kala_weak : Shape.Categorical .kala [X', L, H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (38), (40)
 theorem margariini_weak : Shape.Categorical .margariini [X', X, H', L, H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (41), (44)
 theorem italiaano_weak : Shape.Categorical .italiaano [X', X, L, H', L, H] := fun _ hσ =>
-  picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
+  picksAt_stratified_of_dominates (Ranking.Enumeration.mem_linearExtensions.mp hσ)
+      (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
 -- (36), (38), (41)
@@ -345,8 +349,9 @@ def con : ConstraintSet (Motif × Variant) (Fin 20) :=
   fun c x ↦ (constraint c).violations (word x.1 x.2)
 
 /-- The rankings under which variant `v` wins motif `m`. -/
-def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
-  rankings.filter fun σ ↦ PicksAt ⟨fun _ ↦ Finset.univ, con⟩ σ m v
+def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20)) :=
+  rankings.filter fun σ ↦
+    ConstraintSystem.PicksAt ⟨fun _ ↦ Finset.univ, fun i o k ↦ con k (i, o)⟩ σ m v
 
 theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
@@ -44,7 +44,7 @@ where the sister of a probe on C⁰ is TP and of one on T⁰ is vP.
 
 namespace Keine2019
 
-open Minimalist SyntacticObject LinearizedSyntacticObject
+open Minimalist SyntacticObject PlanarSyntacticObject
 
 /-! ### Horizons and Upward Entailment (Section 4.1) -/
 
@@ -102,31 +102,31 @@ A matrix clause over a finite, a large nonfinite and a small nonfinite complemen
 the edge of each. A probe's search space is cut at every node it c-commands that inherits its
 horizon (`HorizonSetting.cut`), so the edge of an opaque clause is out of reach with the rest. -/
 
-def C₀ : LinearizedSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
-def T₀ : LinearizedSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
-def V₀ (c : Cat) : LinearizedSyntacticObject := .leaf ⟨.of .V [c], 3⟩
-def XP : LinearizedSyntacticObject := .leaf ⟨.of .D [], 4⟩
-def C₁ : LinearizedSyntacticObject := .leaf ⟨.of .C [.T], 5⟩
-def Subj : LinearizedSyntacticObject := .leaf ⟨.of .D [], 6⟩
-def T₁ : LinearizedSyntacticObject := .leaf ⟨.of .T [.v], 7⟩
-def v₁ : LinearizedSyntacticObject := .leaf ⟨.of .v [.D], 8⟩
-def Obj : LinearizedSyntacticObject := .leaf ⟨.of .D [], 9⟩
+def C₀ : PlanarSyntacticObject := .leaf ⟨.of .C [.T], 1⟩
+def T₀ : PlanarSyntacticObject := .leaf ⟨.of .T [.V], 2⟩
+def V₀ (c : Cat) : PlanarSyntacticObject := .leaf ⟨.of .V [c], 3⟩
+def XP : PlanarSyntacticObject := .leaf ⟨.of .D [], 4⟩
+def C₁ : PlanarSyntacticObject := .leaf ⟨.of .C [.T], 5⟩
+def Subj : PlanarSyntacticObject := .leaf ⟨.of .D [], 6⟩
+def T₁ : PlanarSyntacticObject := .leaf ⟨.of .T [.v], 7⟩
+def v₁ : PlanarSyntacticObject := .leaf ⟨.of .v [.D], 8⟩
+def Obj : PlanarSyntacticObject := .leaf ⟨.of .D [], 9⟩
 
 /-- The small nonfinite complement, `[vP v DP]`. -/
-def embVP : LinearizedSyntacticObject := {v₁, Obj}
+def embVP : PlanarSyntacticObject := {v₁, Obj}
 
 /-- The large nonfinite complement, `[TP DP [T vP]]`. -/
-def embTP : LinearizedSyntacticObject := {Subj, {T₁, embVP}}
+def embTP : PlanarSyntacticObject := {Subj, {T₁, embVP}}
 
 /-- The finite complement, `[CP XP [C TP]]`. -/
-def embCP : LinearizedSyntacticObject := {XP, {C₁, embTP}}
+def embCP : PlanarSyntacticObject := {XP, {C₁, embTP}}
 
 /-- The matrix clause over a complement of category `c`. -/
-def matrix (c : Cat) (emb : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+def matrix (c : Cat) (emb : PlanarSyntacticObject) : PlanarSyntacticObject :=
   {C₀, {T₀, {V₀ c, emb}}}
 
 /-- The DPs a probe with setting `p` on `host` finds in `t`, searching short of its horizon. -/
-def found (p : HorizonSetting) (host t : LinearizedSyntacticObject) : Finset SyntacticObject :=
+def found (p : HorizonSetting) (host t : PlanarSyntacticObject) : Finset SyntacticObject :=
   t.goalsUnder (t.leafProbe .D) host (p.cut headIndex? t)
 
 /-- (47), (58): the A-probe reaches into a vP complement only, wh-licensing into TP and vP, and

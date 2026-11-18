@@ -12,7 +12,7 @@
     "translation": "",
     "context": "Albert, one of the best chemistry students in the school's history, passed; Marie, the very best, was even more likely to pass.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -44,7 +44,7 @@
     "translation": "",
     "context": "Everyone in the class failed, Albert's failure being very surprising, and Marie's would be more so.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -112,7 +112,7 @@
     "translation": "",
     "context": "Andre is by far the tallest person in the reference class.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -144,7 +144,7 @@
     "translation": "",
     "context": "Andre is the tallest person in the reference class, but only by a small margin.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -176,7 +176,7 @@
     "translation": "",
     "context": "Half of the group is over six foot five, the other half under five foot, and Andre is barely in the taller half.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

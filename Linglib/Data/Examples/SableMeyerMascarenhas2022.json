@@ -14,7 +14,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: does the conclusion follow? Adapted from Walsh and Johnson-Laird's items.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -47,7 +47,7 @@
     "glossedTokens": [],
     "context": "Reasoning task: the hint does not match any conjunct of the first premise; it is causally connected to 'the car slowed down'.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -84,7 +84,7 @@
     "glossedTokens": [],
     "context": "The original four-proposition items.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -117,7 +117,7 @@
     "glossedTokens": [],
     "context": "Experiment 2: the hint matches a conjunct exactly; the causal link does its work at the conclusion step.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -146,7 +146,7 @@
     "glossedTokens": [],
     "context": "The asymmetry between the two candidate conclusions: the revised mental model theory's weak necessity certifies both.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Bill speaks German. (Ccl. 2)",
         "judgment": "acceptable"
@@ -183,7 +183,7 @@
     "glossedTokens": [],
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Linda is a bank teller.",
         "judgment": "acceptable"
@@ -222,7 +222,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -256,7 +256,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -286,7 +286,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -316,7 +316,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block; also the (8i) exemplar.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -346,7 +346,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -376,7 +376,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -406,7 +406,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -436,7 +436,7 @@
     "glossedTokens": [],
     "context": "Norming study, d-to-a block.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -465,7 +465,7 @@
     "glossedTokens": [],
     "context": "The instructions' example of an invalid but inductively attractive conclusion; the paper's printed correct answer is no.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -491,7 +491,7 @@
     "glossedTokens": [],
     "context": "Norming block (i), the crucial d-to-a dependence; ratings are not printed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -513,7 +513,7 @@
     "glossedTokens": [],
     "context": "Norming block (ii), the a-to-b control; ratings are not printed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -535,7 +535,7 @@
     "glossedTokens": [],
     "context": "Norming block (iii), the d-to-b control; ratings are not printed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

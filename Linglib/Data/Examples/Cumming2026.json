@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Alma is about to eat a meal the speaker has good grounds for thinking she will enjoy: she enjoyed it when the speaker prepared it before, the speaker has sampled it, and it tastes good.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "future (will)"],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "The next day, with only the prior inferential grounds of (1).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple past"],
@@ -55,7 +55,7 @@
     "translation": "",
     "context": "Alma told the speaker after the meal that she enjoyed it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple past"],
@@ -77,7 +77,7 @@
     "translation": "",
     "context": "The next day, with only the prior inferential grounds of (1).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "will have V-ed"],
@@ -99,7 +99,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "will now be V-ing"],
@@ -121,7 +121,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "present progressive"],
@@ -144,7 +144,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "will have V-ed"],
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "After the meeting, having just read in the evening paper that the rates were raised.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "will have V-ed"],
@@ -191,7 +191,7 @@
     "translation": "[I made a sensory observation that] it was raining.",
     "context": "Yenghi saw it raining yesterday; now she says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-te PRES"],
@@ -215,7 +215,7 @@
     "translation": "[I inferred (from the acquired sensory evidence) that] it had rained.",
     "context": "Yenghi saw yesterday that the ground was wet; now she says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-te PAST"],
@@ -239,7 +239,7 @@
     "translation": "[I inferred (from the acquired sensory evidence) that] it would rain.",
     "context": "Yenghi saw the overcast sky yesterday; now she says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-te FUT"],
@@ -263,7 +263,7 @@
     "translation": "[I see that] it is raining now.",
     "context": "Chelswu sees it raining now and says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-ney PRES"],
@@ -288,7 +288,7 @@
     "translation": "[I infer that] it rained a minute ago.",
     "context": "Chelswu sees the wet ground now and says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-ney PAST"],
@@ -313,7 +313,7 @@
     "translation": "[I infer that] it will rain tonight.",
     "context": "Chelswu sees the cloudy sky now and says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-ney FUT"],
@@ -338,7 +338,7 @@
     "translation": "Yesterday, it rained in Paris, I inferred/heard.",
     "context": "You learned earlier today that it had rained yesterday in Paris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "NFUT + -l"],
@@ -363,7 +363,7 @@
     "translation": "Yesterday, it rained in Paris, I inferred/heard.",
     "context": "You learned earlier today that it had rained yesterday in Paris.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "FUT + -l"],
@@ -388,7 +388,7 @@
     "translation": "Yesterday, it was going to rain in Paris, I inferred/heard.",
     "context": "The day before yesterday you watched the weather forecast and learned that it was going to rain yesterday in Paris.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "FUT + -l"],
@@ -413,7 +413,7 @@
     "translation": "Yesterday, it was going to rain in Paris, I inferred/heard.",
     "context": "The day before yesterday you watched the weather forecast and learned that it was going to rain yesterday in Paris.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "NFUT + -l"],
@@ -437,7 +437,7 @@
     "translation": "Tomorrow it rains in Sofia, I gather.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "NFUT + -l"],
@@ -462,7 +462,7 @@
     "translation": "Tomorrow he is in Sofia, I gather.",
     "context": "The speaker knows only of the plan.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "NFUT + -l"],
@@ -488,7 +488,7 @@
     "translation": "[I inferred (from the acquired sensory evidence) that] Obama is coming to Korea next week.",
     "context": "Yenghi read the newspaper yesterday, which mentioned Obama's visit to Korea next week; now she says.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "-te PRES"],
@@ -511,7 +511,7 @@
     "translation": "",
     "context": "Jack told the speaker on Thursday that he was leaving the next day for a weekend in New York; on Monday, without having heard from him, the speaker is asked how Jack is doing.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple past"],
@@ -534,7 +534,7 @@
     "translation": "",
     "context": "At 1 p.m. Simona told Akari she would be at the library at 2 p.m. to return some books; at 2:30 p.m. Jess asks Akari whether the books were returned.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple past"],
@@ -557,7 +557,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "present progressive"],
@@ -579,7 +579,7 @@
     "translation": "",
     "context": "The scenario of (28).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "present progressive"],
@@ -602,7 +602,7 @@
     "translation": "",
     "context": "The scenario of (29).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "present progressive"],

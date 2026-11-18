@@ -30,33 +30,6 @@ it](##Fagen2026.preservesRestriction_ltDefault_iff), which positive skew does no
 * A proposition of Spector's question-relative language, a set of valuations of the atoms, is a
   quantifier over the atoms, `quantifierOf`.
 
-## Errata
-
-* The hybrid order (31) is not transitive once an answer's positive and negative restrictions
-  each have three members, as in *some of the linguists but not all of the computer scientists*
-  with three of each (`not_transitive_ltHybrid`); Fagen calls it an order and notes only that it is
-  antisymmetric. Exhaustive interpretation is defined from the relation itself, so his predictions
-  stand.
-* The proof that a quantifier lives on its restriction (A4) ends by claiming the result for any
-  countable family of live-on sets; it holds only for finitely many, and fails for the cofinite
-  sets of numbers (`not_livesOn_restriction_cofinite`). The appendix assumes a finite model, where
-  the result holds (`Quantifier.livesOn_restriction`).
-* Order selection (12) gives every positively skewed answer the default order, and §3.2 derives
-  it from Preserve Restriction (26), but positive skew does not ensure that the default order
-  preserves the restriction. *All or none of the linguists* is positively skewed, (12) makes it say
-  that nobody attended (`exh_selectedOrder_allOrNone`), and once anyone else is present the
-  default order fails (26) for it (`not_preservesRestriction_allOrNone`), while the hybrid order
-  leaves it as it is (`exh_ltHybrid_allOrNone`). Fagen notes one exception, (31), and finds no
-  natural extensional answer that expresses it.
-* The orders distinguish exact quantities, so the default order makes *some of the cats* say that
-  exactly one cat, and nothing else, has the property (`exh_ltDefault_some`), the reading §1.1.5
-  calls impossible. Table 3.2 gives *some but not all of the cats* instead, and its entries for
-  *many*, *not all* and *not many* rest on the same coarser granularity, which the orders do not
-  provide; its default entry for *many cats* also omits that no non-cat has the property.
-* §3.1.2 states that a nonmonotonic quantifier is skewed both ways or not at all, but *Charmian and
-  exactly one of Agnes and Beatrice* is skewed positively and not negatively
-  (`positivelySkewed_not_negativelySkewed_oneOf`).
-
 ## TODO
 
 * Reduce Markedness, and the choice of an order that preserves the restriction in any domain the

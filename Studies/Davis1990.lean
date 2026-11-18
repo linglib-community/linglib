@@ -51,11 +51,11 @@ def sonority (x : Segment) : Option ℕ :=
   match Sonority.ofSegment x with
   | .vowel => some 8
   | .liquid => some 7
-  | .nasal => some (if x.HasValue .labial true then 6 else 5)
+  | .nasal => some (if x .labial = true then 6 else 5)
   | .glide => none
   | .obstruent =>
-    if ¬ x.HasValue .delayedRelease true then some (if x.HasValue .voice true then 2 else 1)
-    else if x.HasValue .continuant true then some (if x.HasValue .coronal true then 4 else 3)
+    if ¬ x .delayedRelease = true then some (if x .voice = true then 2 else 1)
+    else if x .continuant = true then some (if x .coronal = true then 4 else 3)
     else none
 
 /-- The onset rule (5b) under the condition on minimal sonority distance: the first of two

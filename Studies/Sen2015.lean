@@ -135,8 +135,8 @@ def spec : Position → Segment
 /-- The surface contrast (19), (23) is ternary, with plus, minus and unspecified `[back]`, all
 `[+high]`. -/
 theorem spec_ternary :
-    (spec .coda).HasValue .back true ∧ (spec .geminate).HasValue .back false ∧
-      (spec .onset).Unspecified .back ∧ ∀ p, (spec p).HasValue .high true := by
+    spec .coda .back = true ∧ spec .geminate .back = false ∧
+      spec .onset .back = none ∧ ∀ p, spec p .high = true := by
   refine ⟨by decide, by decide, by decide, ?_⟩
   intro p
   cases p <;> decide

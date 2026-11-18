@@ -15,7 +15,7 @@
     "translation": "Green tea with sugar is indeed impeccable, but I never drink such a thing.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -39,7 +39,7 @@
     "translation": "Unexpectedly, honestly admitting one's mistake leads (rather/#as expected) to a better outcome.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Igai-na koto-ni, sunao-ni misu-o mitome-ta hō-ga yahari yoi kekka-ni tsunagaru.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -66,7 +66,7 @@
     "translation": "Nothing surprising; frankly admitting your mistake leads (#rather/as expected) to better results.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Igai-na koto-wa nani-mo na-ku, sunao-ni misu-o mitome-ta hō-ga mushiro yoi kekka-ni tsunagaru.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -91,7 +91,7 @@
     "translation": "Sweetened green tea is tasty, isn't it? — Ugh, I do like sweets, but sweetened green tea is absolutely not tasty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -114,7 +114,7 @@
     "translation": "I wonder what kind of drink tastes good with sugar in it. — Sweetened green tea is not tasty (at all).",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [
+    "contrasts": [
       {"form": "A: Donna nomimono-ni satō-o ireru-no-ga oishii-ka-na? B: Satō-iri-no ryokucha-wa oishiku-nai-yo.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -139,7 +139,7 @@
     "translation": "I wonder if sweetened green tea is tasty. — Sweetened green tea is untasty anyway.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "dōse"],
@@ -162,7 +162,7 @@
     "translation": "I wonder what kind of drink tastes good with sugar in it. — Sweetened green tea is untasty anyway.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "dōse"],
@@ -185,7 +185,7 @@
     "translation": "I won't drink green tea with sugar or anything like that. — No, that can't be true.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -208,7 +208,7 @@
     "translation": "I can't win a gold medal anyway. — No, that can't be true.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "dōse"],
@@ -232,7 +232,7 @@
     "translation": "My advisor seems to have thought I wouldn't possibly get accepted at SALT.",
     "context": "The speaker was confident their paper would be accepted; the advisor held a pessimistic view.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "dōse+nanka"],
@@ -255,7 +255,7 @@
     "translation": "There shouldn't be any Japanese people in a place like this.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -280,7 +280,7 @@
     "translation": "There's no way I can win a gold medal.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -305,7 +305,7 @@
     "translation": "It would have been better not to go to Tokyo (of all places).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -329,7 +329,7 @@
     "translation": "I don't want such a thing as ice cream.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "nanka"],
@@ -354,7 +354,7 @@
     "translation": "In a place like this, there should at least be some Japanese people.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "semete"],
@@ -378,7 +378,7 @@
     "translation": "As for me, I can at least win a bronze medal.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "semete"],
@@ -401,7 +401,7 @@
     "translation": "One should at least get vaccinated.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "semete"],
@@ -425,7 +425,7 @@
     "translation": "At least we should cover the travel expenses.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["marker", "semete"],

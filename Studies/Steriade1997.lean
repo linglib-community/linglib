@@ -4,7 +4,7 @@ public import Linglib.Data.Statistics.Steriade1997
 public import Linglib.Data.Wordlist.Steriade1997
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Hiatus
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Segmental.PHOIBLE
 public import Mathlib.Data.List.SplitBy
 
@@ -212,8 +212,9 @@ def lexSyllable (L : Finset Allomorph) : Constraint Allomorph := lexP L fun a �
 
 /-- The tableau of an adjective's liaison form under a ranking of conditions on its listed
 allomorphs. -/
-def tableau (x : Lexeme) (cs : Finset Allomorph → List (Constraint Allomorph)) :=
-  Tableau.ofList (candidates x) (cs (listed x))
+def optimal (x : Lexeme) (cs : Finset Allomorph → List (Constraint Allomorph)) :
+    Finset Allomorph :=
+  Constraint.eval (candidates x) (cs (listed x))
 
 variable (n : List Segment) (L : Finset Allomorph)
 
@@ -234,13 +235,13 @@ def espoir : List Segment := following Wordlist.vain_espoir
 
 /-- Under Lex C] ≫ \*Hiatus (8), a recorded liaison form wins iff the sources accept it. -/
 theorem mem_optimal_iff : ∀ f ∈ Wordlist.all ++ Wordlist.marked, f.cell = Wordlist.masc_liaison →
-    (Allomorph.ofForm f ∈ (tableau f.lexeme (hiatusRanking (following f))).optimal ↔
+    (Allomorph.ofForm f ∈ optimal f.lexeme (hiatusRanking (following f)) ↔
       f ∈ Wordlist.all) := by
   decide +kernel
 
 -- (8b)
 theorem vain_optimal :
-    (tableau Wordlist.Lexemes.vain (hiatusRanking espoir)).optimal =
+    optimal Wordlist.Lexemes.vain (hiatusRanking espoir) =
       {.ofForm Wordlist.vain_espoir, .ofForm Wordlist.vain_espoir_fem} := by
   decide +kernel
 
@@ -254,13 +255,13 @@ theorem split_base :
 
 /-- Speakers ranking Lex 'V-gender above Lex σ' say the split-base *[vɛ̃n] espoir* (10). -/
 theorem vain_split :
-    (tableau Wordlist.Lexemes.vain (genderRanking espoir)).optimal =
+    optimal Wordlist.Lexemes.vain (genderRanking espoir) =
       {.ofForm Wordlist.vain_espoir} := by
   decide +kernel
 
 /-- Speakers ranking Lex σ' above Lex 'V-gender say the feminine *[vɛn] espoir* (p. 10). -/
 theorem vain_feminine :
-    (tableau Wordlist.Lexemes.vain (syllableRanking espoir)).optimal =
+    optimal Wordlist.Lexemes.vain (syllableRanking espoir) =
       {.ofForm Wordlist.vain_espoir_fem} := by
   decide +kernel
 
@@ -327,9 +328,9 @@ def candidate (r : FormRelation (Form Wordlist.Cell)) : Pattern → Allomorph
 
 /-- The tableau of a derivation's *-able* form under a ranking of conditions on the verb's listed
 allomorphs, its candidates those of (14). -/
-def tableau (r : FormRelation (Form Wordlist.Cell))
-    (cs : Finset Allomorph → List (Constraint Allomorph)) :=
-  Tableau.ofList (Finset.univ.image (candidate r)) (cs (listed r.form.lexeme))
+def optimal (r : FormRelation (Form Wordlist.Cell))
+    (cs : Finset Allomorph → List (Constraint Allomorph)) : Finset Allomorph :=
+  Constraint.eval (Finset.univ.image (candidate r)) (cs (listed r.form.lexeme))
 
 variable (L : Finset Allomorph)
 
@@ -355,21 +356,21 @@ theorem lexStress_firstThird : ∀ r ∈ Wordlist.relations,
 /-- Under the first ranking of (18) *remédiable* wins (16a), and under the second
 *rémediable*. -/
 theorem remediable : ∀ r ∈ derivations .remedy,
-    (tableau r lapseRanking).optimal = {candidate r .second} ∧
-      (tableau r verbRanking).optimal = {candidate r .sameAsBase} := by
+    optimal r lapseRanking = {candidate r .second} ∧
+      optimal r verbRanking = {candidate r .sameAsBase} := by
   decide +kernel
 
 /-- With no stem stressed on its second syllable listed, *paródiable* violates Lex [±stress],
 and *párodiable* wins under either ranking despite its lapse (16b). -/
 theorem parodiable : ∀ r ∈ derivations .parody,
-    (tableau r lapseRanking).optimal = {candidate r .sameAsBase} ∧
-      (tableau r verbRanking).optimal = {candidate r .sameAsBase} := by
+    optimal r lapseRanking = {candidate r .sameAsBase} ∧
+      optimal r verbRanking = {candidate r .sameAsBase} := by
   decide +kernel
 
 /-- The winners under the first ranking of (18) are the stress patterns with the most responses
 in the survey (14). -/
 theorem mem_optimal_iff_most_responses : ∀ b, ∀ r ∈ derivations b, ∀ p,
-    candidate r p ∈ (tableau r lapseRanking).optimal ↔
+    candidate r p ∈ optimal r lapseRanking ↔
       ∀ q, (responses b q).count ≤ (responses b p).count := by
   decide +kernel
 

@@ -60,7 +60,7 @@ of `Data/Examples/Harley2014.json`.
 namespace Harley2014
 
 open DistributedMorphology
-open DistributedMorphology.Allosemy (toInterpreted embedding)
+open DistributedMorphology.Allosemy (embedding)
 open Morphology
 open Clause Clause.Arguments
 
@@ -201,9 +201,8 @@ theorem cahoot_no_elsewhere : winner? cahootLF ∅ = none := by decide
 /-! ### Both flanks on the `Realization` carrier
 
 Form varies across contexts (`IsProperlySuppletive`), meaning does not vary
-but gaps (an empty `interp` fiber outside the frame, via
-`Allosemy.toInterpreted`): `vocabulary` is the List-2 map, `cahootLF` the
-List-3 map. -/
+but gaps (an empty fiber outside the frame): `vocabulary` is the List-2 map,
+`cahootLF` the List-3 map. -/
 
 /-- List 2 is the `Realization` by Vocabulary Insertion, whose fiber at a root is its
 Elsewhere-selected exponent, and `∅` at an index with no item. -/
@@ -224,45 +223,50 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
     by simp [Morphology.Realization.IsLicensed, hpl], ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
 
-/-- √548 as a List-3 `Realization.Interpreted` view. -/
-def cahootHead :
-    Morphology.Realization.Interpreted Unit (Neighborhood (Finset Allosemy.Feature)) Unit String :=
-  toInterpreted cahootLF
+/-- The List-3 realization of √548, its interpretation in each neighborhood. -/
+def cahootHead : Morphology.Realization Unit (Neighborhood (Finset Allosemy.Feature)) String :=
+  toRealization cahootLF fun _ n ↦ n
 
 /-- The idiom's root is interpreted only inside its frame, so elsewhere it fails licensing rather
 than showing allosemy (§2.3). -/
 theorem cahoot_interp_gap :
-    cahootHead.interp.realize () (embedding {.cat .n}) = {"a conspiracy"} ∧
-      cahootHead.interp.realize () ∅ = ∅ := by
+    cahootHead.realize () (embedding {.cat .n}) = {"a conspiracy"} ∧
+      cahootHead.realize () ∅ = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-! ### One-replacement and the selection of objects -/
 
 section OneReplacement
 
-open RootCategorization (Lexicon Attachment rootPos selector)
+open RootCategorization (Lexicon Attachment Configuration selector)
 
 /-- The root √STUD of *student*, nominalized by *-ent*, with the argument *chemistry*. -/
 def student : Lexicon String := { x := .n, root := "stud", head := "ent", arg := "chemistry" }
 
+/-- A configuration with an adjunct adjoined to its phrase, a PP of word `w` to a phrase of
+category `x`. -/
+def withAdjunct {W : Type*} (x : Minimalist.Cat) (w : W) (k : Configuration W) :
+    Configuration W :=
+  k.adjoin (.head x) [] [.terminal (.head .P) w]
+
 /-- *student of chemistry with long hair*, the nP of (22) with the adjunct of (23) adjoined to
 it. -/
-def studentWithHair (a : Attachment) : PhraseStructure.Tree Cat String :=
-  .adjoin (.head .n) [a.tree student, .terminal (.head .P) "with long hair"]
+def studentWithHair (a : Attachment) : Configuration String :=
+  withAdjunct .n "with long hair" (a.configuration student)
 
 /-- The dependents of a noun that *one* replaces. -/
 inductive Dependent
   | argument | adjunct
   deriving DecidableEq, Repr
 
-/-- The position of a dependent in `studentWithHair`. -/
-def Dependent.pos (a : Attachment) : Dependent → Core.Order.TreePath
-  | .argument => ⟨0 :: a.argPos.toList⟩
+/-- The position of a dependent in a configuration with an adjunct adjoined to it. -/
+def Dependent.pos {W : Type*} (k : Configuration W) : Dependent → GornAddress
+  | .argument => k.arg
   | .adjunct => ⟨[1]⟩
 
 /-- *one*, an nP anaphor, strands the dependent from the root. -/
 def OneStrands (a : Attachment) (d : Dependent) : Prop :=
-  Strands (.head .n) (studentWithHair a) ⟨0 :: rootPos.toList⟩ (d.pos a)
+  Strands (.head .n) (studentWithHair a).tree (studentWithHair a).root (d.pos (studentWithHair a))
 
 instance (a : Attachment) (d : Dependent) : Decidable (OneStrands a d) :=
   inferInstanceAs (Decidable (Strands _ _ _ _))
@@ -291,8 +295,9 @@ def studentOfPhysics : Lexicon String :=
 /-- The verb and the noun of (21) merge their object with the same head iff the root takes the
 object as complement. -/
 theorem selector_eq_iff (a : Attachment) :
-    selector (a.tree study) a.argPos = selector (a.tree studentOfPhysics) a.argPos ↔
-      a = .complement := by
+    selector (a.configuration study).tree (a.configuration study).arg =
+      selector (a.configuration studentOfPhysics).tree (a.configuration studentOfPhysics).arg ↔
+        a = .complement := by
   cases a <;> decide
 
 end OneReplacement

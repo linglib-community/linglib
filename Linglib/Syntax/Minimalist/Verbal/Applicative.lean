@@ -14,13 +14,15 @@ This file defines the applicative heads, which introduce applied arguments such 
 recipients and affected datives, and the sites in an event structure where they merge. Pylkkänen
 distinguishes a high applicative, relating the applied argument to the event, from a low one,
 relating it to the theme; Cuervo adds a low applicative of static possession and the affected
-applicative, which takes a result state as its complement. A site is a position in the chain of
-little v heads, and its type is read off its two neighbours: the head that takes ApplP as its
-complement, and the head of Appl's own complement.
+applicative, a head of the high kind that takes a result state as its complement under the
+dynamic event that embeds it. A head is thus high or low by what it relates the applied argument
+to, and affected by where it merges: a site is a position in the chain of little v heads, and
+its type is read off its two neighbours, the head that takes ApplP as its complement and the head
+of Appl's own complement.
 
 ## Main definitions
 
-* `Minimalist.Appl.Head`: the high, affected and low applicative heads.
+* `Minimalist.Appl.Head`: the high and low applicative heads.
 * `Minimalist.Appl.Site`: a position in an event structure, with neighbours `selector` and
   `complementHead`.
 * `Minimalist.Appl.Site.Low`, `Minimalist.Appl.Site.Affected`, `Minimalist.Appl.Site.High`: the
@@ -59,11 +61,10 @@ inductive LowRelation where
   | possessor
   deriving DecidableEq, Repr
 
-/-- An applicative head is high, relating the applied argument to the event; affected, relating
-it to a result state under the dynamic event that embeds it; or low, relating it to the theme. -/
+/-- An applicative head is high, relating the applied argument to the eventuality its complement
+describes, or low, relating it to the theme. -/
 inductive Head where
   | high
-  | affected
   | low (relation : LowRelation)
   deriving DecidableEq, Repr
 
@@ -104,7 +105,7 @@ instance : DecidablePred High := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred Affected := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The head that merges at the site, given the relation a low one establishes. -/
-def head (r : LowRelation) : Head := if s.Low then .low r else if s.High then .high else .affected
+def head (r : LowRelation) : Head := if s.Low then .low r else .high
 
 /-- The sites in the structure `l`, from the highest. -/
 def all (l : List LittleV) : List Site :=
@@ -123,11 +124,8 @@ theorem Affected.not_high (h : s.Affected) : ¬ s.High := h.1
 theorem head_eq_low_iff : s.head r = .low r ↔ s.Low := by
   unfold head; split_ifs <;> simp_all
 
-theorem head_eq_high_iff : s.head r = .high ↔ s.High ∧ ¬ s.Low := by
+theorem head_eq_high_iff : s.head r = .high ↔ ¬ s.Low := by
   unfold head; split_ifs <;> simp_all
-
-theorem head_eq_affected_iff : s.head r = .affected ↔ s.Affected := by
-  unfold head Affected; split_ifs <;> simp_all [Low, High]
 
 /-- The types exhaust the sites in a nonempty structure. -/
 theorem low_or_affected_or_high (h : s.heads ≠ []) : s.Low ∨ s.Affected ∨ s.High := by

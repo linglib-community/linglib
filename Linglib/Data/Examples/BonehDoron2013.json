@@ -10,7 +10,7 @@
     "translation": "",
     "context": "(At the opera). Look at how sloppily people are dressed.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "would"]
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "(At the opera). Look at how sloppily people are dressed.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "would"]
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple"]
@@ -67,7 +67,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple"]
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple"]
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple"]
@@ -128,7 +128,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "usedTo"]
@@ -147,7 +147,7 @@
     "translation": "",
     "context": "Ruti sold her car in 1990.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "perfect"]
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "Ruti sold her car in 1990.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "usedTo"]
@@ -188,7 +188,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "simple"]
@@ -210,7 +210,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "usedTo"]
@@ -232,11 +232,11 @@
     "translation": "",
     "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": true,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
-      ["form", "simple"],
-      ["truthValue", "true"]
+      ["form", "simple"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -255,11 +255,11 @@
     "translation": "",
     "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": true,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
-      ["form", "would"],
-      ["truthValue", "true"]
+      ["form", "would"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -278,11 +278,11 @@
     "translation": "",
     "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "verdict": false,
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
-      ["form", "usedTo"],
-      ["truthValue", "false"]
+      ["form", "usedTo"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -298,7 +298,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "would"],
@@ -318,7 +318,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "would"],
@@ -338,7 +338,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "usedTo"],
@@ -358,7 +358,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "usedTo"],
@@ -378,7 +378,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "usedTo"]
@@ -397,7 +397,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["form", "would"]

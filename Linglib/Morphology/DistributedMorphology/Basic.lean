@@ -2,6 +2,7 @@ module
 
 public import Linglib.Morphology.Word.Tree
 public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Skeleton
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Finset.Basic
@@ -146,6 +147,33 @@ theorem heads_word_isPrefix (k : ℕ) : (s.word k).heads <+: s.heads := List.tak
 
 theorem mem_word_of_le {k : ℕ} {i j : Fin s.heads.length} (hji : j ≤ i)
     (hi : (i : ℕ) < k) : (j : ℕ) < k := lt_of_le_of_lt hji hi
+
+section Skeleton
+
+variable {P : Type*} (zero : H → Prop) [DecidablePred zero]
+
+/-- The bare structure of a complex head, read for meaning: the root under its heads, each a
+sister of what is below it, with the heads `zero` holds of pruned. There is none when every head
+is pruned. -/
+def skeleton : Option (Interpreter.Skeleton Unit (R ⊕ H)) :=
+  match s.heads.filter (¬ zero ·) with
+  | [] => none
+  | hs => some (hs.foldl (fun t h ↦ .binary () t (.leaf (.inr h))) (.leaf (.inl s.root)))
+
+/-- The bare structure of a complex head with `p` adjoined to its `k`th head. There is none when
+that head is pruned, the adjunct then having no host. -/
+def adjoinedSkeleton (k : ℕ) (p : P) : Option (Interpreter.Skeleton Unit (P ⊕ R ⊕ H)) :=
+  match (s.heads.take k).getLast? with
+  | none => none
+  | some h =>
+    if zero h then none
+    else some <| ((s.heads.drop k).filter (¬ zero ·)).foldl
+      (fun t h ↦ .binary () t (.leaf (.inr (.inr h))))
+      (.binary () (.leaf (.inl p))
+        (((s.heads.take k).filter (¬ zero ·)).foldl
+          (fun t h ↦ .binary () t (.leaf (.inr (.inr h)))) (.leaf (.inr (.inl s.root)))))
+
+end Skeleton
 
 /-- The word tree, each head attached on the side its exponent takes, innermost first. -/
 def toTree (side : H → Morph.Side) : Morphology.Word.Tree (R ⊕ H) :=

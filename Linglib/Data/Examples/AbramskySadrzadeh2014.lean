@@ -24,7 +24,7 @@ def donkey : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "donkey anaphora")] }
 
@@ -37,7 +37,7 @@ def drt_resolved : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("resolution", "full"), ("unification", "v = x, w = y")] }
 
@@ -50,7 +50,7 @@ def drt_partial : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the donkey", .unacceptable)]
     paperFeatures := [("resolution", "partial"), ("unification", "v = x")] }
 
@@ -63,7 +63,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cover", "x ↦ z ↤ y"), ("gluing", "{John(z), sleeps(z), snores(z)}")] }
 
@@ -76,7 +76,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"), ("gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}")] }
 
@@ -89,7 +89,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the donkey", .acceptable), ("it = John", .unacceptable)]
     paperFeatures := [("resolution", "agreement"), ("cover", "x ↦ a, y ↦ b, z ↦ b")] }
 
@@ -102,7 +102,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the cup", .acceptable), ("it = the plate", .acceptable)]
     paperFeatures := [("resolution", "ambiguous"), ("covers", "v ↦ y; v ↦ z")] }
 
@@ -115,7 +115,7 @@ def brother_happy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("preferred", "he = John")] }
 
@@ -128,7 +128,7 @@ def brother_nice : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("preferred", "he = the brother")] }
 
@@ -141,7 +141,7 @@ def cd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("resolution", "preferential")] }
 
@@ -154,7 +154,7 @@ def jim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("resolution", "preferential")] }
 
@@ -167,7 +167,7 @@ def bananas : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("ripe bananas, cheeky bananas", .acceptable), ("ripe bananas, cheeky monkeys", .acceptable), ("ripe monkeys, cheeky bananas", .acceptable), ("ripe monkeys, cheeky monkeys", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("corpus", "British News, 200 million words"), ("selected", "ripe bananas, cheeky monkeys")] }
 

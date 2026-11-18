@@ -35,19 +35,6 @@ privative](##forall_nondistinct_iff_subsingleton).
 * (49d) as printed compares all the material in the ellipsis site. The condition here compares only
   the argument domain of [anand-hardt-mccloskey-2025], which their stranded prepositions require.
 
-## Errata
-
-* P. 27 takes (65) as causativization, but its source, [burukina-polinsky-2025] footnote 14, gives
-  it as no causative; it is [all that separates the paper's analysis from
-  Ranero's](##ranero_mispredicts_iff).
-* P. 25 needs a clash between [v:TV] and [v:ITV] only for (53), which that source did not replicate
-  (its p. 717); its own selection, read privatively, [mispredicts nothing
-  else](##table_mispredicts_iff).
-* The conclusion that one label covers different structures rests on these two rows alone: [one
-  analysis of all the languages mispredicts nothing else](##uniform_mispredicts_iff).
-* Misprints: (11) lacks the star p. 6 implies, footnote 2 reverses its direction, p. 25 prints vITV
-  for vTV, (12) glosses 'I' as ABS3SG, and (53) glosses 'sell' as 'buy'.
-
 ## TODO
 
 * Merchant's *plain* in (40b), (41b) and (45a) should reduce to the root clause, as (48b) does.

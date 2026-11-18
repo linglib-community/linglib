@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "atomic"), ("projective", "yes"), ("person", "3")] }
 
@@ -37,7 +37,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
@@ -50,7 +50,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "3")] }
 
@@ -63,7 +63,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
@@ -76,7 +76,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
@@ -89,7 +89,7 @@ def ex_22c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
@@ -102,7 +102,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "An emphatic denial of somebody else's previous assertion; continued 'How could he have done that when he knew that what he had said was true?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "denial"), ("environment", "negation"), ("projective", "no"), ("person", "3")] }
 
@@ -116,7 +116,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "2")] }
 
@@ -129,7 +129,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "question"), ("person", "2")] }
 
@@ -142,7 +142,7 @@ def ex_24c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "no"), ("person", "2")] }
 
@@ -155,7 +155,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "yes"), ("person", "1")] }
 
@@ -168,7 +168,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "no"), ("person", "1")] }
 
@@ -181,7 +181,7 @@ def ex_25c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "no"), ("person", "1")] }
 
@@ -194,7 +194,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("projective", "yes"), ("person", "1")] }
 
@@ -207,7 +207,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("projective", "no"), ("person", "1")] }
 
@@ -220,7 +220,7 @@ def ex_26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("projective", "no"), ("person", "1")] }
 

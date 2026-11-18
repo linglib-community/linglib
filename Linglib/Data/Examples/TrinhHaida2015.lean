@@ -24,7 +24,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John went for a run and didn't smoke], so John smoked", .acceptable)]
     paperFeatures := [("case", "symmetry breaking"), ("prejacent", "run"), ("contextual alternative", "run and not smoke")] }
 
@@ -37,7 +37,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John passed some and failed some], so John passed all", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "pass some"), ("contextual alternative", "pass some and fail some"), ("felicity", "infelicitous")] }
 
@@ -50,7 +50,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John does not have four chairs", .acceptable)]
     paperFeatures := [("case", "symmetry problem"), ("symmetric alternatives", "four; exactly three")] }
 
@@ -63,7 +63,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: John did not do all of the homework", .acceptable)]
     paperFeatures := [("case", "symmetry problem"), ("symmetric alternatives", "all; some but not all")] }
 
@@ -76,7 +76,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John works hard and doesn't watch TV]", .acceptable)]
     paperFeatures := [("case", "symmetry breaking"), ("prejacent", "work hard"), ("contextual alternative", "work hard and not watch TV")] }
 
@@ -89,7 +89,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John is tall and not bald]", .acceptable)]
     paperFeatures := [("case", "symmetry breaking"), ("prejacent", "tall"), ("contextual alternative", "tall and not bald")] }
 
@@ -102,7 +102,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John ate exactly three cookies]", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "three"), ("contextual alternative", "exactly three"), ("lexical alternative", "four")] }
 
@@ -115,7 +115,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John fathered children and no twins]", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "children"), ("contextual alternative", "children and no twins"), ("lexical alternative", "twins")] }
 
@@ -128,7 +128,7 @@ def ex_21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [John passed some of the fitness tests and failed some]", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "pass some"), ("contextual alternative", "pass some and fail some"), ("lexical alternative", "pass all")] }
 
@@ -141,7 +141,7 @@ def ex_50 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: Detective B did not conclude that they stole the book and not the jewelry", .acceptable), ("inference: Detective B did not conclude that they stole the book and the jewelry", .acceptable)]
     paperFeatures := [("case", "apparent problem"), ("prejacent", "concluded book")] }
 
@@ -154,7 +154,7 @@ def ex_54 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: the committee passed some of my students", .acceptable)]
     paperFeatures := [("case", "indirect implicature"), ("prejacent", "not all")] }
 
@@ -167,7 +167,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: not [all of my students did some of the readings]", .unacceptable)]
     paperFeatures := [("case", "switching problem"), ("prejacent", "some all")] }
 
@@ -180,7 +180,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("inference: all of my students did some of the readings", .acceptable)]
     paperFeatures := [("case", "switching problem"), ("prejacent", "not some all")] }
 

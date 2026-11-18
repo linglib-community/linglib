@@ -45,7 +45,7 @@ classifier phrases is represented by stating ∩ relative to the classifier's so
 `PredicateOf` rather than as rules with domain conditions, and the paper's observation that
 English numerals fail in some predicative constructions is not modelled. The witnesses use
 the set-based ontology of the plural algebra, an individual being its singleton and sum
-union, on which the atom count of a plurality is its cardinality (`atomCount_finset`).
+union, on which the atom count of a plurality is its cardinality (`count_singletonSortal`).
 
 ## References
 
@@ -73,10 +73,7 @@ variable {W E : Type*} [SemilatticeSup E]
 def numeral (n : ℕ) : W → ℕ := fun _ ↦ n
 
 theorem numeral_isRigid (n : ℕ) : IsRigid (numeral (W := W) n) :=
-  isRigid_const n
-
-/-- The number of atomic `P`-parts of `x` at a world. -/
-noncomputable def atomCount (P : W → E → Prop) (w : W) (x : E) : ℕ := {y | y ≤ x ∧ P w y}.ncard
+  Function.IsConst.const n
 
 /-- A sortal predicate of atoms, indexed by worlds, such as the metalanguage predicates *flower*
 and *human* of the paper's (4) and (8). -/
@@ -87,11 +84,11 @@ open Classical in
 trivalent property presupposing the plural closure of the sortal and asserting that the
 argument has the numeral's number of sortal atoms. -/
 noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → Trivalent :=
-  Trivalent.condEvent (AlgClosure (c w)) (fun x ↦ atomCount c w x = n w)
+  Trivalent.condEvent (AlgClosure (c w)) (fun x ↦ count {y | c w y} x = n w)
 
 /-- The ∪-operator of the paper's (10) maps a numeral to its property correlate, having that
 many atomic parts. -/
-def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := fun w x ↦ atomCount atomic w x = n w
+def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := fun w x ↦ count {y | atomic w y} x = n w
 
 @[simp] theorem Sortal.apply_eq_undefined_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
     c.apply n w x = .undefined ↔ ¬ AlgClosure (c w) x := by
@@ -121,14 +118,14 @@ theorem modify_sortal_ne_undefined (c : Sortal W E) (n : W → ℕ) (w : W) {x :
 /-- The property `P` is the ∪-correlate of the numeral `n`, so that ∩ maps it back to `n`, the
 paper's (24). -/
 def IsDown (atomic : Sortal W E) (P : W → E → Prop) (n : W → ℕ) : Prop :=
-  ∀ w x, P w x ↔ atomCount atomic w x = n w
+  ∀ w x, P w x ↔ count {y | atomic w y} x = n w
 
 theorem isDown_up (atomic : Sortal W E) (n : W → ℕ) : IsDown atomic (up atomic n) n :=
   fun _ _ ↦ Iff.rfl
 
 theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → ℕ}
     (hn : IsDown atomic P n) (hm : IsDown atomic P m)
-    (hsurj : ∀ w, ∃ x, atomCount atomic w x = n w) : n = m := by
+    (hsurj : ∀ w, ∃ x, count {y | atomic w y} x = n w) : n = m := by
   funext w
   obtain ⟨x, hx⟩ := hsurj w
   exact hx.symm.trans ((hm w x).mp ((hn w x).mpr hx))
@@ -136,7 +133,7 @@ theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → 
 /-- On the plural closure of its sortal, a numeral-classifier phrase holds of exactly the sums with
 the numeral's number of atoms (25). -/
 theorem isDown_sortal (c : Sortal W E) (n : W → ℕ) :
-    ∀ w x, AlgClosure (c w) x → (c.apply n w x = .true ↔ atomCount c w x = n w) :=
+    ∀ w x, AlgClosure (c w) x → (c.apply n w x = .true ↔ count {y | c w y} x = n w) :=
   fun _ _ hx ↦ by simp [hx, up]
 
 /-! ### Blocking -/
@@ -191,19 +188,19 @@ variable {α : Type*} [DecidableEq α]
 def singletonSortal (P : α → Prop) : Sortal Unit (Finset α) :=
   fun _ y ↦ ∃ a, y = {a} ∧ P a
 
-theorem atomCount_finset (P : α → Prop) [DecidablePred P] (x : Finset α) :
-    atomCount (singletonSortal P) () x = (x.filter P).card := by
-  have : {y : Finset α | y ≤ x ∧ singletonSortal P () y} =
+theorem count_singletonSortal (P : α → Prop) [DecidablePred P] (x : Finset α) :
+    count {y | singletonSortal P () y} x = (x.filter P).card := by
+  have : Set.Iic x ∩ {y | singletonSortal P () y} =
       ↑((x.filter P).image ({·} : α → Finset α)) := by
     ext y
-    simp only [Set.mem_ofPred_eq, singletonSortal, Finset.coe_image, Finset.coe_filter,
-      Set.mem_image]
+    simp only [Set.mem_inter_iff, Set.mem_Iic, Set.mem_ofPred_eq, singletonSortal,
+      Finset.coe_image, Finset.coe_filter, Set.mem_image]
     constructor
     · rintro ⟨hle, a, rfl, hP⟩
       exact ⟨a, ⟨Finset.singleton_subset_iff.mp hle, hP⟩, rfl⟩
     · rintro ⟨a, ⟨ha, hP⟩, rfl⟩
       exact ⟨Finset.singleton_subset_iff.mpr ha, a, rfl, hP⟩
-  rw [atomCount, this, Set.ncard_coe_finset,
+  rw [count, this, Set.ncard_coe_finset,
     Finset.card_image_of_injective _ Finset.singleton_injective]
 
 theorem singletonSortal_apply_ne_undefined_iff (P : α → Prop) (n : Unit → ℕ) (x : Finset α) :
@@ -247,7 +244,7 @@ theorem rin_three :
   simp only [ne_eq, Sortal.apply_eq_undefined_iff, not_not] at h
   refine ⟨Sortal.apply_eq_true_iff.2 ⟨(h _).2 (by decide), ?_⟩,
     Sortal.apply_eq_false_iff.2 ⟨(h _).2 (by decide), ?_⟩⟩ <;>
-    simp only [up, rin, atomCount_finset, numeral] <;> decide
+    simp only [up, rin, count_singletonSortal, numeral] <;> decide
 
 theorem rin_not_human : rin.apply (numeral 1) () {.h1} = .undefined := by
   rw [← not_ne_iff, rin, singletonSortal_apply_ne_undefined_iff]; decide

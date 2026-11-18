@@ -1,11 +1,11 @@
 module
 
 public import Linglib.Semantics.Composition.Sorts
+public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Semantics.Quantification.Exceptive
 public import Linglib.Semantics.Quantification.Lindstrom
 public import Studies.BarwiseCooper1981
 public import Studies.VonFintel1993
-public import Linglib.Core.GroupTheory.GroupAction.Blocks
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Data.Examples.Gajewski2002
 public import Mathlib.Algebra.Group.Action.End
@@ -22,14 +22,14 @@ halves of the paper.
 The logical items are the denotations invariant under permutations of the domain, the
 criterion of van Benthem: a permutation of the entity domain lifts through the
 type hierarchy (`permLift`), and an item is logical when every lifted permutation
-fixes it (`PermutationInvariant`). Truth-functional conjunction is fixed because the lift is
-the identity at type `t` (`permutationInvariant_and`), expletive *there*, which denotes the
+fixes it (`IsPermutationInvariant`). Truth-functional conjunction is fixed because the lift is
+the identity at type `t` (`isPermutationInvariant_and`), expletive *there*, which denotes the
 whole domain, is fixed, and the domain and the empty set are the only invariant properties
-(`permutationInvariant_et_iff`), so a contingent predicate like *new-student* is not a logical
+(`isPermutationInvariant_et_iff`), so a contingent predicate like *new-student* is not a logical
 item. Invariance at the determiner type is exactly the quantity invariance the Quantification
-substrate states on `Det` (`permutationInvariant_det_iff`), so the logicality of *every*, *some*
+substrate states on `Det` (`isPermutationInvariant_det_iff`), so the logicality of *every*, *some*
 and *no* follows from the isomorphism invariance of their Lindström classes rather than being
-stipulated. Von Fintel's *but* is a logical item too (`permutationInvariant_but`).
+stipulated. Von Fintel's *but* is a logical item too (`isPermutationInvariant_but`).
 
 The logical skeleton of a sentence replaces each maximal constituent without logical items by
 a distinct variable of its semantic type; a skeleton is a predicate on type-sorted assignments
@@ -105,97 +105,110 @@ variable {E : Type}
 /-! ### Logical items by permutation invariance (§3.1) -/
 
 /-- A permutation of the entity domain lifts to every type (17), as the permutation itself at
-`e`, the identity at `t`, and conjugation at `⟨a,b⟩`. -/
-def permLift (π : Equiv.Perm E) : ∀ ty : Ty Base, Equiv.Perm (Ty.Domain E Unit ty)
-  | .base .e => π
-  | .t | .base .d | .base .n | .base .v | .base .s => Equiv.refl _
-  | .fn a b => (permLift π a).arrowCongr (permLift π b)
-  | .comp _ _ => Equiv.refl _
+`e`, the identity at `t`, and conjugation at `⟨a,b⟩`; the lift is a group homomorphism. -/
+def permLift : ∀ ty : Ty Base, Equiv.Perm E →* Equiv.Perm (Ty.Domain E Unit ty)
+  | .base .e => .id _
+  | .t | .base .d | .base .n | .base .v | .base .s | .comp _ _ => 1
+  | .fn a b => .mk' (fun π ↦ (permLift a π).arrowCongr (permLift b π)) fun π σ ↦ by
+      rw [map_mul, map_mul]; rfl
+
+@[simp] theorem permLift_fn_apply (π : Equiv.Perm E) {a b : Ty Base}
+    (f : Ty.Domain E Unit (a ⇒ b)) (x : Ty.Domain E Unit a) :
+    permLift (a ⇒ b) π f x = permLift b π (f ((permLift a π).symm x)) :=
+  rfl
 
 @[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
-    permLift π Ty.et P = P ∘ ⇑π.symm :=
+    permLift Ty.et π P = P ∘ ⇑π.symm :=
   rfl
 
-@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : Det E) (A B : Set E) :
-    permLift π Ty.det Q A B = Q (π ⁻¹' A) (π ⁻¹' B) :=
+@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : Ty.Domain E Unit Ty.det)
+    (A B : E → Prop) : permLift Ty.det π Q A B = Q (A ∘ ⇑π) (B ∘ ⇑π) :=
   rfl
+
+-- lifting commutes with function application
+theorem permLift_apply_apply (π : Equiv.Perm E) {a b : Ty Base}
+    (f : Ty.Domain E Unit (a ⇒ b)) (x : Ty.Domain E Unit a) :
+    permLift (a ⇒ b) π f (permLift a π x) = permLift b π (f x) := by
+  rw [permLift_fn_apply, Equiv.symm_apply_apply]
 
 /-- An item is permutation invariant (18) when every lifted permutation fixes it, van
 Benthem's criterion for the logical items. -/
-def PermutationInvariant (ty : Ty Base) (x : Ty.Domain E Unit ty) : Prop :=
-  ∀ π : Equiv.Perm E, permLift π ty x = x
+def IsPermutationInvariant (ty : Ty Base) (x : Ty.Domain E Unit ty) : Prop :=
+  ∀ π : Equiv.Perm E, permLift ty π x = x
+
+-- a logical item applied to a logical item is a logical item
+theorem IsPermutationInvariant.app {a b : Ty Base} {f : Ty.Domain E Unit (a ⇒ b)}
+    {x : Ty.Domain E Unit a} (hf : IsPermutationInvariant (a ⇒ b) f)
+    (hx : IsPermutationInvariant a x) : IsPermutationInvariant b (f x) := fun π ↦ by
+  rw [← permLift_apply_apply, hf π, hx π]
 
 /-- Truth-functional conjunction is a logical item (20), preserved because the lift is the
 identity at type `t`. -/
-theorem permutationInvariant_and :
-    PermutationInvariant (E := E) (.t ⇒ .t ⇒ .t) fun u v : Prop ↦ u ∧ v :=
+theorem isPermutationInvariant_and :
+    IsPermutationInvariant (E := E) (.t ⇒ .t ⇒ .t) fun u v : Prop ↦ u ∧ v :=
   fun _ ↦ rfl
 
 -- (36)
-theorem permutationInvariant_not : PermutationInvariant (E := E) (.t ⇒ .t) Not :=
+theorem isPermutationInvariant_not : IsPermutationInvariant (E := E) (.t ⇒ .t) Not :=
   fun _ ↦ rfl
 
 -- (23c)
-theorem permutationInvariant_there : PermutationInvariant Ty.et fun _ : E ↦ True :=
+theorem isPermutationInvariant_there : IsPermutationInvariant Ty.et fun _ : E ↦ True :=
   fun _ ↦ rfl
 
 /-- The whole domain and the empty set are the only permutation-invariant properties (25). -/
-theorem permutationInvariant_et_iff {P : E → Prop} :
-    PermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
-  constructor
-  · intro h
-    have hB : MulAction.IsFixedBlock (Equiv.Perm E) {x | P x} := fun π ↦ Set.ext fun x ↦ by
-      simp only [Set.mem_smul_set_iff_inv_smul_mem, Equiv.Perm.smul_def, Set.mem_ofPred_eq]
-      exact iff_of_eq (congrFun (h π) x)
-    rcases hB.eq_empty_or_univ with h0 | hu
-    · exact Or.inr (funext fun x ↦ eq_false fun hx ↦
-        Set.eq_empty_iff_forall_notMem.1 h0 x hx)
-    · exact Or.inl (funext fun x ↦ eq_true (Set.eq_univ_iff_forall.1 hu x))
-  · rintro (rfl | rfl) π <;> rfl
+theorem isPermutationInvariant_et_iff {P : E → Prop} :
+    IsPermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
+  refine ⟨fun h ↦ ?_, by rintro (rfl | rfl) π <;> rfl⟩
+  by_cases hP : ∃ a, P a
+  · obtain ⟨a, ha⟩ := hP
+    refine .inl (funext fun x ↦ eq_true ?_)
+    obtain ⟨π, rfl⟩ := MulAction.exists_smul_eq (Equiv.Perm E) a x
+    exact (congrFun (h π⁻¹) a).mpr ha
+  · exact .inr (funext fun x ↦ eq_false fun hx ↦ hP ⟨x, hx⟩)
 
-theorem permutationInvariant_det_iff {Q : Det E} :
-    PermutationInvariant Ty.det Q ↔ QuantityInvariant Q :=
-  ⟨fun h π A B ↦ iff_of_eq (congr_fun₂ (h π) A B),
-    fun h π ↦ funext₂ fun A B ↦ propext (h π A B)⟩
+theorem isPermutationInvariant_det_iff {Q : Det E} :
+    IsPermutationInvariant Ty.det (fun A ↦ toCont (Q {x | A x})) ↔ QuantityInvariant Q :=
+  ⟨fun h π A B ↦ iff_of_eq (congr_fun₂ (h π) (· ∈ A) (· ∈ B)),
+    fun h π ↦ funext₂ fun A B ↦ propext (h π {x | A x} {x | B x})⟩
 
 -- (25)
-theorem permutationInvariant_some : PermutationInvariant Ty.det (Det.some : Det E) :=
-  permutationInvariant_det_iff.2
+theorem isPermutationInvariant_some :
+    IsPermutationInvariant Ty.det fun A ↦ toCont ((Det.some : Det E) {x | A x}) :=
+  isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.someDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (35), (34a)
-theorem permutationInvariant_every : PermutationInvariant Ty.det (every : Det E) :=
-  permutationInvariant_det_iff.2
+theorem isPermutationInvariant_every :
+    IsPermutationInvariant Ty.det fun A ↦ toCont ((every : Det E) {x | A x}) :=
+  isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.everyDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (11a)
-theorem permutationInvariant_no : PermutationInvariant Ty.det (no : Det E) :=
-  permutationInvariant_det_iff.2
+theorem isPermutationInvariant_no :
+    IsPermutationInvariant Ty.det fun A ↦ toCont ((no : Det E) {x | A x}) :=
+  isPermutationInvariant_det_iff.2
     (by rw [← Lindstrom.noDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 /-- Von Fintel's ||but|| (31) factors the least-exception schema compositionally; the
 exception `f` is the least set whose subtraction from the restrictor `g` makes the
 quantification `D _ h` true. -/
 def but : Ty.Domain E Unit (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) :=
-  fun f g D h ↦ IsExceptionSet D g f h
+  fun f g D h ↦ IsExceptionSet (fun A ↦ toCont.symm (D (· ∈ A))) {x | g x} {x | f x} {x | h x}
 
 /-- ||but|| is a permutation-invariant element of its type (31), a logical constant, so it is
 not replaced by a variable in the skeletons (32)–(33). -/
-theorem permutationInvariant_but :
-    PermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
+theorem isPermutationInvariant_but :
+    IsPermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
   intro π
   funext f g D h
-  show IsExceptionSet (fun A B ↦ D (π.symm ⁻¹' A) (π.symm ⁻¹' B)) (π ⁻¹' g) (π ⁻¹' f) (π ⁻¹' h) =
-    IsExceptionSet D g f h
-  have key (S : Set E) :
-      D (π.symm ⁻¹' (π ⁻¹' g \ S)) (π.symm ⁻¹' (π ⁻¹' h)) ↔ D (g \ π.symm ⁻¹' S) h := by
-    rw [Set.preimage_sdiff, π.symm_preimage_preimage, π.symm_preimage_preimage]
-  refine propext ⟨fun hb ↦ ⟨?_, fun j hj ↦ ?_⟩, fun hb ↦ ⟨?_, fun j hj ↦ ?_⟩⟩
-  · simpa only [Set.mem_ofPred_eq, π.symm_preimage_preimage] using (key _).1 hb.1
-  · refine (π.preimage_subset f j).1 (hb.2 ((key _).2 ?_))
-    rwa [π.symm_preimage_preimage]
-  · exact (key _).2 (by rw [π.symm_preimage_preimage]; exact hb.1)
-  · simpa only [π.preimage_symm_preimage] using Set.preimage_mono (f := π) (hb.2 ((key j).1 hj))
+  show IsExceptionSet (fun A B ↦ D (· ∈ π.symm ⁻¹' A) (· ∈ π.symm ⁻¹' B)) (π ⁻¹' {x | g x})
+      (π ⁻¹' {x | f x}) (π ⁻¹' {x | h x}) =
+    IsExceptionSet (fun A B ↦ D (· ∈ A) (· ∈ B)) {x | g x} {x | f x} {x | h x}
+  simp only [IsExceptionSet, IsLeast, lowerBounds, Set.mem_ofPred_eq]
+  rw [π.injective.preimage_surjective.forall]
+  simp only [← Set.preimage_sdiff, π.symm_preimage_preimage, π.preimage_subset]
+  rfl
 
 /-! ### Logical skeletons and L-analyticity (§3.2) -/
 
@@ -234,14 +247,14 @@ end Skeleton
 /-- The skeleton (25) of a *there*-sentence applies the determiner to a property variable and
 to *there*, which denotes the domain (23c). -/
 def thereSkeleton (Q : Det E) : Skeleton E fun _ : Unit ↦ Ty.et :=
-  ⟨fun g ↦ Q (g ()) Set.univ⟩
+  ⟨fun g ↦ Q {x | g () x} Set.univ⟩
 
 /-- With a conservative positive strong determiner the *there*-skeleton is an L-tautology
 (30), [barwise-cooper-1981]'s consequence that the domain belongs to every strong
 quantifier. -/
 theorem thereSkeleton_isLTautology {Q : Det E} (hc : Conservative Q) (hs : PositiveStrong Q) :
     (thereSkeleton Q).IsLTautology :=
-  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs (g ())
+  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs _
 
 -- (25)
 theorem thereSkeleton_some_not_isLAnalytic (a : E) :
@@ -255,9 +268,9 @@ theorem thereSkeleton_some_not_isLAnalytic (a : E) :
 theorem thereSkeleton_atLeast_two_not_isLAnalytic :
     ¬ (thereSkeleton (atLeast 2 : Det Bool)).IsLAnalytic := by
   rintro (h | h)
-  · have ht : (atLeast 2 : Det Bool) ∅ Set.univ := h fun _ ↦ (∅ : Set Bool)
+  · have ht : (atLeast 2 : Det Bool) ∅ Set.univ := h fun _ _ ↦ False
     exact absurd ht (by decide)
-  · refine h (fun _ ↦ Set.univ) ?_
+  · refine h (fun _ _ ↦ True) ?_
     show (atLeast 2 : Det Bool) Set.univ Set.univ
     decide
 
@@ -267,7 +280,7 @@ theorem thereSkeleton_atLeast_two_not_isLAnalytic :
 and scope variables around the logical determiner, with the exception set nonempty as the
 paper's footnote requires. -/
 def exceptiveSkeleton (Q : Det E) : Skeleton E fun _ : Fin 3 ↦ Ty.et :=
-  ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) Q (g 2)⟩
+  ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) (fun A ↦ toCont (Q {x | A x})) (g 2)⟩
 
 -- (33)
 theorem exceptiveSkeleton_isLContradiction {Q : Det E} (h : RestrictorMonotone Q) :
@@ -301,7 +314,7 @@ theorem exceptiveSkeleton_most_not_isLAnalytic :
 /-- The skeleton (35) of *every woman is a woman*, with distinct variables for the two
 occurrences. -/
 def everyIsSkeleton (E : Type) : Skeleton E fun _ : Fin 2 ↦ Ty.et :=
-  ⟨fun g ↦ every (g 0) (g 1)⟩
+  ⟨fun g ↦ every {x | g 0 x} {x | g 1 x}⟩
 
 theorem everyIsSkeleton_not_isLAnalytic (a : E) : ¬ (everyIsSkeleton E).IsLAnalytic := by
   rintro (h | h)

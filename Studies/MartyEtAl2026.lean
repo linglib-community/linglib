@@ -28,20 +28,6 @@ and local accommodation [fits best](##MartyEtAl2026.modelFits_best).
 * Intermediate projection is George's 2008 deployment with concern for disappointment, the theory
   note 5 credits with it alone.
 
-## Errata
-
-* Table 2 prints ∃:1 for nm-neg with the Target-2 picture in both experiments, as the released
-  analysis codes the predictor. Existential projection as (7b) states it, at the trigger's
-  standard, [rejects that picture](##MartyEtAl2026.exist_accepts_nmNeg); the printed column reads
-  the scope at [either standard](##MartyEtAl2026.mem_predictions_exist_iff). So ∃-proj too tells
-  the nm-neg targets apart, against §3.2, it predicts Exp. 1's nm-neg below nm-pos at Target-2,
-  against §3.6, and the two ∃ models of Table 3 were fitted with the printed cell.
-* [Three rates of §3.6](##MartyEtAl2026.reportedRates_mismatch) disagree with the released counts:
-  20% for m-neg at Target-1 in Exp. 2 (19.0%), 13% for m-pos at Target-1 in Exp. 1 (1.4%) and 73%
-  for nm-neg at Target-2 in Exp. 2 (75.4%); the section later prints the first and third as 19%
-  and 75%.
-* Table 1 labels the m-neg sentence of Experiment 1 n-neg.
-
 ## References
 
 * [marty-etal-2026]
@@ -59,21 +45,14 @@ and local accommodation [fits best](##MartyEtAl2026.modelFits_best).
 namespace MartyEtAl2026
 
 open Quantifier Presupposition
-open Trivalent (Designation deployQuantifier ofProp posExt gapExt posExt_subset repairs_eq_Icc
+open Trivalent (Designation deployQuantifier ofProp posExt gapExt posExt_subset
   UniversalEntailment UniversalPresupposition)
 
 /-! ### The interpretive options of §2 -/
 
 section Readings
 
-variable {E : Type*} (Q : Set E → Prop) (A : E → Trivalent)
-
-open Classical in
-/-- Universal projection, as Heim's and Schlenker's accounts predict: the quantifier holds of the
-individuals of which the scope is true, and the sentence is defined only where the scope is
-defined of every individual. -/
-noncomputable def universalProjection : Trivalent :=
-  if ∀ e, A e ≠ .undefined then ofProp (Q (posExt A)) else .undefined
+variable {E : Type*} (Q : Quantifier E) (A : E → Trivalent)
 
 open Classical in
 /-- Local accommodation at a site of standard `d`: the quantifier holds of the individuals of which
@@ -100,14 +79,10 @@ noncomputable def enrichedAccommodation : Trivalent :=
 /-- The value of a sentence under an interpretive option, `d` the standard at which accommodating
 the trigger where it is reads the scope. -/
 noncomputable def Reading.value (d : Designation) : Reading → Trivalent
-  | .univ => universalProjection Q A
+  | .univ => Q.universalProjection Set.univ A
   | .exist => existentialProjection Q A d
   | .intermediate => George2008.deployWithConcern Q A
   | .locA => localAccommodation Q A .k3 ⊔ localAccommodation Q A d
-
-theorem universalProjection_eq_true_iff :
-    universalProjection Q A = .true ↔ (∀ e, A e ≠ .undefined) ∧ Q (posExt A) := by
-  unfold universalProjection; split_ifs with h <;> simp [h]
 
 theorem localAccommodation_eq_true_iff {d : Designation} :
     localAccommodation Q A d = .true ↔ Q {e | d.threshold ≤ A e} := by
@@ -123,38 +98,15 @@ theorem enrichedAccommodation_eq_true_iff :
       Q {e | Designation.k3.threshold ≤ A e} ∧ ¬ Q (gapExt A)ᶜ := by
   simp [enrichedAccommodation, localAccommodation_eq_true_iff]
 
-theorem universalPresupposition_universalProjection :
-    UniversalPresupposition Set.univ (universalProjection Q) := by
-  refine ⟨fun A h e _ he ↦ ?_, fun A h e _ he ↦ ?_⟩ <;>
-    simp [universalProjection, show ¬ ∀ e, A e ≠ .undefined from fun h' ↦ h' e he] at h
-
 variable {Q A}
 
 theorem deployQuantifier_eq_true_iff (hQ : UniversalEntailment Set.univ (deployQuantifier Q)) :
-    deployQuantifier Q A = .true ↔ universalProjection Q A = .true := by
-  have hrep : posExt A ∈ Trivalent.repairs A := repairs_eq_Icc A ▸ ⟨le_rfl, posExt_subset A⟩
-  constructor
-  · intro h
-    have hdef : ∀ e, A e ≠ .undefined := fun e ↦ hQ A h e trivial
-    rw [Trivalent.deployQuantifier_eq_supervaluationOn,
-      Trivalent.supervaluationOn_eq_true_iff] at h
-    simp [universalProjection, hdef, h _ hrep]
-  · intro h
-    simp only [universalProjection] at h
-    split_ifs at h with hdef
-    rw [Trivalent.deployQuantifier_eq_supervaluationOn, Trivalent.supervaluationOn_eq_true_iff]
-    intro X hX
-    rw [repairs_eq_Icc] at hX
-    have hX' : X = posExt A := by
-      refine le_antisymm (fun u hu ↦ ?_) hX.1
-      have := hX.2 hu
-      simp only [Set.mem_compl_iff, Trivalent.mem_negExt] at this
-      rcases Trivalent.trichotomy (A u) with h' | h' | h'
-      · exact absurd h' this
-      · exact absurd h' (hdef u)
-      · exact h'
-    rw [hX']
-    simpa using h
+    deployQuantifier Q A = .true ↔ Q.universalProjection Set.univ A = .true := by
+  have hle := Quantifier.universalProjection_kLE_deployQuantifier (A := A) Q.livesOn_univ
+  refine ⟨fun h ↦ ?_, fun h ↦ (Trivalent.kLE_iff_eq_true_imp_eq_false_imp.1 hle).1 h⟩
+  rcases Trivalent.kLE_iff.1 hle with hu | he
+  · exact absurd (hQ A h) (Quantifier.universalProjection_eq_undefined_iff.1 hu)
+  · exact he.trans h
 
 end Readings
 
@@ -268,7 +220,8 @@ theorem universalEntailment_quantifier (s : Sentence) :
 -- Note 2: Strong Kleene, George's deployment, groups with universal projection here.
 theorem deployQuantifier_eq_true_iff_universalProjection (s : Sentence)
     (A : Fin children → Trivalent) :
-    deployQuantifier s.quantifier A = .true ↔ universalProjection s.quantifier A = .true :=
+    deployQuantifier s.quantifier A = .true ↔
+      Quantifier.universalProjection s.quantifier Set.univ A = .true :=
   deployQuantifier_eq_true_iff (universalEntailment_quantifier s)
 
 /-! ### The pictures -/
@@ -322,7 +275,7 @@ theorem Reading.accepts_iff (r : Reading) (e : Experiment) (s : Sentence) (p : P
     r.Accepts e s p ↔
       r ∈ (predictions e s p).accepting ∧ ¬ (s = .nmNeg ∧ p = .target2 ∧ r = .exist) := by
   cases e <;> cases s <;> cases p <;> cases r <;>
-  simp [Reading.Accepts, Reading.value, universalProjection_eq_true_iff,
+  simp [Reading.Accepts, Reading.value, Quantifier.universalProjection_eq_true_iff,
     existentialProjection_eq_true_iff, localAccommodation_eq_true_iff,
     deployWithConcern_quantifier_eq_true_iff, scopeValue, Sentence.scopeAt_apply,
     Sentence.triggerStandard, Trivalent.posExt, Sentence.quantifier_apply, Sentence.tree] <;>

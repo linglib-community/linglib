@@ -15,7 +15,7 @@
     "translation": "Petr didn't buy any magazine?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "inner"],
@@ -39,7 +39,7 @@
     "translation": "Didn't Petr buy a magazine?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "outer"],
@@ -63,7 +63,7 @@
     "translation": "Eva didn't order some burger?",
     "context": "Eva and her colleagues from the office ordered take-out food for lunch. The delivery guy brings only pizzas. One of the colleagues asks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "medial"],
@@ -87,7 +87,7 @@
     "translation": "Didn't Eva order some burger?",
     "context": "Eva and her colleagues from the office ordered take-out food for lunch. The delivery guy brings only pizzas. One of the colleagues asks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "outer"],
@@ -113,7 +113,7 @@
     "translation": "Didn't Eva borrow some encyclopedia, by any chance?",
     "context": "Eva is doing research for a school presentation. Yesterday she went to the school library. The speaker knows all this from before and asks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "outer"],
@@ -138,7 +138,7 @@
     "translation": "Eva really hasn't seen any film by Tarantino?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "inner"],
@@ -163,7 +163,7 @@
     "translation": "Is it really not the case that Eva has seen a film by Tarantino?",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negation", "outer"],

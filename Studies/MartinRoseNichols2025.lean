@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.ArgumentStructure.Root.Basic
 public import Linglib.Fragments.English.Verbs.Inventory

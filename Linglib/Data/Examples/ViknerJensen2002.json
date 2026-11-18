@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "inherent relation", "judgment": "acceptable"}
     ],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "part-whole relation", "judgment": "acceptable"}
     ],
@@ -55,7 +55,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "control relation", "judgment": "acceptable"}
     ],
@@ -77,7 +77,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "the person who is the teacher of the girl",
@@ -106,7 +106,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "the poem that the girl has written",
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "No knowledge of the background of the utterance situation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "a poem that the girl has written",
@@ -160,7 +160,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the person who is the teacher of the girl", "judgment": "acceptable"}
     ],
@@ -182,7 +182,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the nose which is a part of the girl", "judgment": "acceptable"}
     ],
@@ -204,7 +204,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the poem that the girl has written", "judgment": "acceptable"}
     ],
@@ -226,7 +226,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the car which the girl has at her disposal", "judgment": "acceptable"}
     ],
@@ -248,7 +248,7 @@
     "translation": "",
     "context": "A supporting context.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the teacher whom the girl has married", "judgment": "acceptable"},
       {"name": "the teacher she is dreaming of", "judgment": "acceptable"}
@@ -270,7 +270,7 @@
     "translation": "",
     "context": "A supporting context.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the car which the girl has ordered", "judgment": "acceptable"},
       {"name": "the car she has smashed to pieces", "judgment": "acceptable"}
@@ -292,7 +292,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lexical", "judgment": "unacceptable"},
       {"name": "pragmatic", "judgment": "acceptable"}
@@ -314,7 +314,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lexical", "judgment": "unacceptable"},
       {"name": "pragmatic", "judgment": "acceptable"}
@@ -336,7 +336,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lexical", "judgment": "unacceptable"},
       {"name": "pragmatic", "judgment": "acceptable"}
@@ -358,7 +358,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "some girl has exactly one teacher, who is P", "judgment": "acceptable"}
     ],
@@ -380,7 +380,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "each girl has exactly one teacher, who is P", "judgment": "acceptable"}
     ],
@@ -402,7 +402,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["headNoun", "relational"],
@@ -422,7 +422,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["headNoun", "dependent part"],
@@ -442,7 +442,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["headNoun", "sortal"],
@@ -462,7 +462,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["headNoun", "autonomous part"],
@@ -485,7 +485,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
@@ -505,7 +505,7 @@
     "translation": "",
     "context": "The car is a novel referent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
@@ -526,7 +526,7 @@
     "translation": "",
     "context": "The bus is a novel referent.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
@@ -547,7 +547,7 @@
     "translation": "",
     "context": "The stick is a novel referent.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
@@ -567,7 +567,7 @@
     "translation": "",
     "context": "Paul Auster, The New York Trilogy.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
@@ -591,7 +591,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["use", "referent-introducing"],
@@ -611,7 +611,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the sister of Mary's that Mary prefers to have as her sister out of all of her sisters", "judgment": "acceptable"}
     ],
@@ -633,7 +633,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the chair that Mary prefers to sit in out of all chairs", "judgment": "acceptable"}
     ],
@@ -656,7 +656,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the movie that Mary prefers to watch out of all the movies she has watched", "judgment": "acceptable"}
     ],
@@ -679,7 +679,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "lexical",
@@ -713,7 +713,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "lexical", "judgment": "unacceptable"},
       {"name": "the breed of rabbit that John prefers to hunt", "judgment": "acceptable"},
@@ -738,7 +738,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {
         "name": "lexical",

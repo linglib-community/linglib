@@ -76,12 +76,12 @@ theorem sibilantClass_of_onTier {x : Segment} (h : OnTier x) : sibilantClass x =
 
 theorem setFeature_anterior_isSibilant (x : Segment) (v : Bool) :
     (x.setFeature .anterior v).IsSibilant ↔ x.IsSibilant := by
-  simp [Segment.IsSibilant, Segment.HasValue]
+  simp [Segment.IsSibilant]
 
 theorem sibilantClass_setFeature {x : Segment} (h : OnTier x) (v : Bool) :
     sibilantClass (x.setFeature .anterior v) = some v := by
   rw [sibilantClass, ite_eq_left ((setFeature_anterior_isSibilant x v).2 (isSibilant_of_onTier h))]
-  exact Segment.setFeature_hasValue x .anterior v
+  exact Segment.setFeature_apply_self x .anterior v
 
 theorem onTier_setFeature {x : Segment} (h : OnTier x) (v : Bool) :
     OnTier (x.setFeature .anterior v) := by
@@ -157,8 +157,9 @@ abbrev navajoSibilantHarmony : TierStrictlyLocalGrammar Segment :=
 theorem isTierStrictlyLocal : (navajoSibilantHarmony.language 2).IsTierStrictlyLocal 2 :=
   ⟨_, rfl⟩
 
-theorem isBTSL : Language.IsBTSL 2 (navajoSibilantHarmony.language 2) :=
-  isTierStrictlyLocal.toIsBTSL
+theorem mem_multitierLocallyTestable :
+    navajoSibilantHarmony.language 2 ∈ Language.multitierLocallyTestable 2 :=
+  isTierStrictlyLocal.mem_multitierLocallyTestable
 
 theorem mem_language_iff (w : List Segment) :
     w ∈ navajoSibilantHarmony.language 2 ↔
@@ -257,7 +258,7 @@ theorem anticipatory_eq_self_of_mem {w : List Segment}
     have hxv : x .anterior = some v := by
       rw [h x hxs y hys, ← sibilantClass_of_onTier (onTier_of_mem_sibilants hys), hv]
     rw [htr, harmonize_some hon, id]
-    exact Function.update_eq_self_iff.mpr hxv.symm
+    exact Segment.ext (Function.update_eq_self_iff.mpr hxv.symm)
   · exact harmonize_of_not_onTier hon
 
 theorem mem_language_iff_anticipatory_eq (w : List Segment) :
@@ -277,7 +278,7 @@ theorem anticipatory_cons_eq {a b : Segment} {w : List Segment} (ha : OnTier a) 
   obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.mp ((trigger_eq_none_iff w).not.mpr hw)
   simp only [anticipatory, List.map_cons, htr a ha, htr b hb, hv, harmonize_some ha,
     harmonize_some hb]
-  refine congrArg₂ _ (funext fun f ↦ ?_) rfl
+  refine congrArg₂ _ (Segment.ext' fun f ↦ ?_) rfl
   obtain rfl | hf := eq_or_ne f .anterior
   · simp [Segment.setFeature]
   · simp [Segment.setFeature, Function.update_of_ne hf, hab f hf]

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "sequence of tense"]
@@ -32,7 +32,7 @@
     "translation": "John said Mary was ill",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "sequence of tense"]
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "tense scope"]
@@ -73,7 +73,7 @@
     "translation": "Gianni didn't say anything to anybody",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "negative concord"],
@@ -95,7 +95,7 @@
     "translation": "Today nobody is calling anybody",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "negative concord"],
@@ -118,7 +118,7 @@
     "translation": "John didn't say that he called anybody",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["phenomenon", "negative concord"],

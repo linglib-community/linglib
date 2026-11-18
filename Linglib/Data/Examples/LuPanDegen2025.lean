@@ -24,7 +24,7 @@ def exp1_verbfocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("focus_condition", "verbFocus"), ("verb_type", "mos")] }
 
@@ -37,7 +37,7 @@ def exp1_embeddedfocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "1"), ("focus_condition", "embeddedFocus"), ("verb_type", "mos")] }
 
@@ -50,7 +50,7 @@ def exp2a_say_verbfocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2a"), ("focus_condition", "verbFocus"), ("verb_type", "say")] }
 
@@ -63,7 +63,7 @@ def exp2a_say_embeddedfocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "2a"), ("focus_condition", "embeddedFocus"), ("verb_type", "say")] }
 
@@ -76,7 +76,7 @@ def exp3a_say : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3a"), ("focus_condition", "none"), ("verb_type", "say")] }
 
@@ -89,7 +89,7 @@ def exp3a_sayadverb : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3a"), ("focus_condition", "none"), ("verb_type", "sayAdverb")] }
 
@@ -102,7 +102,7 @@ def exp3b_adverbfocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3b"), ("focus_condition", "adverbFocus"), ("verb_type", "sayAdverb")] }
 
@@ -115,7 +115,7 @@ def exp3b_embeddedfocus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("experiment", "3b"), ("focus_condition", "embeddedFocus"), ("verb_type", "sayAdverb")] }
 

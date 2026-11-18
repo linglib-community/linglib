@@ -96,17 +96,17 @@ inductive MedialMarker where
 
 /-- The cell of a time begun before the next clause's and overlapping it. -/
 @[irreducible]
-def cotemporaneous : Finset Allen.Relation :=
-  Finset.univ.filter fun r ↦ r.fstFst = .lt ∧ r.sndFst = .gt
+def cotemporaneous : IntervalAlgebra :=
+  IntervalAlgebra.ofPred fun r ↦ r.fstFst = .lt ∧ r.sndFst = .gt
 
 /-- The cell of a time ending where the next clause's begins. -/
 @[irreducible]
-def immediateSequence : Finset Allen.Relation := Finset.univ.filter (·.sndFst = .eq)
+def immediateSequence : IntervalAlgebra := IntervalAlgebra.ofPred (·.sndFst = .eq)
 
 /-- The cell of a time begun before the next clause's and ending as it begins or within it. -/
 @[irreducible]
-def asSoonAs : Finset Allen.Relation :=
-  Finset.univ.filter fun r ↦ r.fstFst = .lt ∧ r.sndFst ≠ .lt ∧ r.sndSnd = .lt
+def asSoonAs : IntervalAlgebra :=
+  IntervalAlgebra.ofPred fun r ↦ r.fstFst = .lt ∧ r.sndFst ≠ .lt ∧ r.sndSnd = .lt
 
 section
 
@@ -114,17 +114,17 @@ variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
 
 @[simp] theorem relation_mem_cotemporaneous :
     Allen.relation i j ∈ cotemporaneous ↔ i.fst < j.fst ∧ j.fst < i.snd := by
-  rw [cotemporaneous, Allen.relation_mem_filter]
+  rw [cotemporaneous, IntervalAlgebra.mem_ofPred]
   simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt, compare_gt_iff_gt]
 
 @[simp] theorem relation_mem_immediateSequence :
     Allen.relation i j ∈ immediateSequence ↔ i.snd = j.fst := by
-  rw [immediateSequence, Allen.relation_mem_filter]
+  rw [immediateSequence, IntervalAlgebra.mem_ofPred]
   simp [Allen.relation, Allen.ofEndpoints]
 
 @[simp] theorem relation_mem_asSoonAs :
     Allen.relation i j ∈ asSoonAs ↔ i.fst < j.fst ∧ j.fst ≤ i.snd ∧ i.snd < j.snd := by
-  rw [asSoonAs, Allen.relation_mem_filter]
+  rw [asSoonAs, IntervalAlgebra.mem_ofPred]
   simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt]
 
 end
@@ -161,13 +161,13 @@ def relations : MedialMarker → Finset InterclauseRelation
   | n => {.sequential, .simultaneous, .manner}
 
 /-- The cell in which a marker places the time of its clause relative to the next clause's. -/
-def timing : MedialMarker → Finset Allen.Relation
-  | ku | k => Allen.precedes
+def timing : MedialMarker → IntervalAlgebra
+  | ku | k => IntervalAlgebra.precedes
   | tay => cotemporaneous
   | taka => immediateSequence
   | keb => asSoonAs
-  | taykeb => cotemporaneous ∩ asSoonAs
-  | n => Allen.ofPosition {.lt, .eq}
+  | taykeb => cotemporaneous ⊓ asSoonAs
+  | n => IntervalAlgebra.ofPosition {.lt, .eq}
   | lek | gay => ⊤
 
 /-- The inflection of the verb before a marker. -/

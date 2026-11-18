@@ -3,7 +3,7 @@ module
 public import Linglib.Discourse.Centering.Transition
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Data.Examples.Beaver2004
 public import Linglib.Data.UD.Features
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
@@ -46,12 +46,6 @@ FAM-DEF > COHERE > ALIGN. Between two fully anaphoric interpretations that pass 
 * Both readings of (12c) violate FAM-DEF (`d12_famDef`), *Mary* being new, so (12) lies outside
   `Filtered` and Proposition (20); (1) instantiates them.
 
-## Errata
-
-* Tableau (13) marks no FAM-DEF violation, though *Mary* in (12c) is a proper name new to the
-  discourse, which FAM-DEF counts (fn. 14, and the tableaux for (5c) and (8c)). Both
-  candidates incur it (`d12_famDef`), so the winner is unaffected.
-
 ## References
 
 * [beaver-2004]
@@ -88,19 +82,15 @@ instance : DecidablePred (· ∈ (pronouns : Set (Form Φ N)))
   | .name _ => isFalse fun h ↦ by simp [pronouns] at h
   | .indefinite => isFalse fun h ↦ by simp [pronouns] at h
 
-/-- A candidate interpretation of a sentence: its noun phrases, each with its role, its form and
-the referent the interpretation gives it. -/
-abbrev Candidate (E R Φ N : Type*) := Utterance E R (Form Φ N)
-
 /-- The noun phrases of a candidate in role and form, which the interpretations of one sentence
 share. -/
-def sentence (c : Candidate E R Φ N) : List (R × Form Φ N) :=
+def sentence (c : Utterance E R (Form Φ N)) : List (R × Form Φ N) :=
   c.realizations.map fun r ↦ (r.role, r.form)
 
 /-- A noun phrase is familiar after the previous sentence `prev` in the discourse `ctx` when it
 is no definite, or its referent is mentioned in `prev` and, for a proper name, has been called by
 that name in the discourse, so that the definite gives no new information about it. -/
-def Familiar (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N)
+def Familiar (ctx : List (Utterance E R (Form Φ N))) (prev : Utterance E R (Form Φ N))
     (r : Realization E R (Form Φ N)) : Prop :=
   match r.form with
   | .pronoun _ => r.entity ∈ prev
@@ -110,13 +100,14 @@ def Familiar (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N)
 
 /-- A pronoun whose referent the previous sentence mentions disagrees with its antecedent when
 its gender is not its referent's. -/
-def Disagrees (feat : E → Φ) (prev : Candidate E R Φ N) (r : Realization E R (Form Φ N)) :
+def Disagrees (feat : E → Φ) (prev : Utterance E R (Form Φ N)) (r : Realization E R (Form Φ N)) :
     Prop :=
   match r.form with
   | .pronoun φ => r.entity ∈ prev ∧ φ ≠ feat r.entity
   | _ => False
 
-theorem Disagrees.mem {feat : E → Φ} {prev : Candidate E R Φ N} {r : Realization E R (Form Φ N)}
+theorem Disagrees.mem {feat : E → Φ} {prev : Utterance E R (Form Φ N)}
+    {r : Realization E R (Form Φ N)}
     (h : Disagrees feat prev r) : r.entity ∈ prev := by
   unfold Disagrees at h
   split at h
@@ -125,25 +116,26 @@ theorem Disagrees.mem {feat : E → Φ} {prev : Candidate E R Φ N} {r : Realiza
 
 /-- The interpretations of the sentence `s` in the discourse `ctx`: its noun phrases with a
 referent each, the indefinites new ones (fn. 20). -/
-def interpretations (ctx : List (Candidate E R Φ N)) (s : List (R × Form Φ N)) :
-    Set (Candidate E R Φ N) :=
+def interpretations (ctx : List (Utterance E R (Form Φ N))) (s : List (R × Form Φ N)) :
+    Set (Utterance E R (Form Φ N)) :=
   {c | sentence c = s ∧ ∀ r ∈ c.realizations, r.form = .indefinite → ∀ u ∈ ctx, r.entity ∉ u}
 
 /-! ### Reassigning referents -/
 
 section Reassign
 
-variable {ctx : List (Candidate E R Φ N)} {c : Candidate E R Φ N} {s : List (R × Form Φ N)}
+variable {ctx : List (Utterance E R (Form Φ N))} {c : Utterance E R (Form Φ N)}
+  {s : List (R × Form Φ N)}
 
 /-- The interpretation of the sentence of `c` that gives its `i`-th noun phrase the referent
 `ent i`. -/
-private def reassign (c : Candidate E R Φ N) (ent : Fin c.realizations.length → E) :
-    Candidate E R Φ N :=
+private def reassign (c : Utterance E R (Form Φ N)) (ent : Fin c.realizations.length → E) :
+    Utterance E R (Form Φ N) :=
   ⟨List.ofFn fun i ↦ ⟨ent i, c.realizations[i].role, c.realizations[i].form⟩⟩
 
 /-- The referents keeping that of the `k`-th noun phrase of `c` and drawing the others from
 `g`. -/
-private def keepOne (c : Candidate E R Φ N) (g : ℕ → E) (k : ℕ)
+private def keepOne (c : Utterance E R (Form Φ N)) (g : ℕ → E) (k : ℕ)
     (i : Fin c.realizations.length) : E :=
   if i.val = k then c.realizations[i].entity else g i
 
@@ -186,14 +178,14 @@ variable [DecidableEq E]
 /-! ### The six constraints (4) -/
 
 /-- DISJOINT: co-arguments of a predicate are disjoint. -/
-def disjoint : Constraint (Candidate E R Φ N) :=
+def disjoint : Constraint (Utterance E R (Form Φ N)) :=
   Constraint.binary fun c ↦ ¬ (c.realizations.map (·.entity)).Nodup
 
-theorem disjoint_eq_zero_iff {c : Candidate E R Φ N} :
+theorem disjoint_eq_zero_iff {c : Utterance E R (Form Φ N)} :
     disjoint c = 0 ↔ (c.realizations.map (·.entity)).Nodup := by
   simp [disjoint]
 
-private theorem disjoint_reassign {c : Candidate E R Φ N} {g : ℕ → E} {k : ℕ}
+private theorem disjoint_reassign {c : Utterance E R (Form Φ N)} {g : ℕ → E} {k : ℕ}
     (hg : Function.Injective g) (hgc : ∀ n, g n ∉ c) :
     disjoint (reassign c (keepOne c g k)) = 0 := by
   refine disjoint_eq_zero_iff.2 ?_
@@ -201,25 +193,26 @@ private theorem disjoint_reassign {c : Candidate E R Φ N} {g : ℕ → E} {k : 
 
 section Order
 
-variable [LinearOrder R] {prev c : Candidate E R Φ N} {x : E}
+variable [LinearOrder R] {prev c : Utterance E R (Form Φ N)} {x : E}
 
 /-- PRO-TOP: the topic is pronominalized. A candidate with no topic violates it (p. 16), as does
 one with no pronoun, so it needs none of Rule 1's if-clause. -/
-def proTop (prev : Candidate E R Φ N) : Constraint (Candidate E R Φ N) :=
+def proTop (prev : Utterance E R (Form Φ N)) : Constraint (Utterance E R (Form Φ N)) :=
   Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c, c.Pronominalizes pronouns t
 
 /-- COHERE: the topic of the current sentence is the topic of the previous one, so that a
 candidate with no topic violates it, as does every candidate when there is no prior topic
 (p. 17). -/
-def cohere (prev : Candidate E R Φ N) (priorTopic : Option E) : Constraint (Candidate E R Φ N) :=
+def cohere (prev : Utterance E R (Form Φ N)) (priorTopic : Option E) :
+    Constraint (Utterance E R (Form Φ N)) :=
   Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c, priorTopic = some t
 
 /-- ALIGN: the topic is in subject position, for canonical sentences the preferred center
 (p. 18); a candidate with no topic violates it. -/
-def align (prev : Candidate E R Φ N) : Constraint (Candidate E R Φ N) :=
+def align (prev : Utterance E R (Form Φ N)) : Constraint (Utterance E R (Form Φ N)) :=
   Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c, c.cp = some t
 
-theorem cohere_none (prev c : Candidate E R Φ N) : cohere prev none c = 1 := by
+theorem cohere_none (prev c : Utterance E R (Form Φ N)) : cohere prev none c = 1 := by
   simp [cohere]
 
 theorem cohere_of_cb_eq_none (priorTopic : Option E) (h : cb prev c = none) :
@@ -243,7 +236,8 @@ private theorem proTop_eq_one (h : ¬ ∃ x ∈ sentence c, x.2 ∈ pronouns) : 
 /-- BFP's transition into a candidate, from the prior topic, its backward-looking center and its
 preferred center; `⊥` when it has no backward-looking center, which the transitions do not
 classify. -/
-def bfpTransition (prev : Candidate E R Φ N) (priorTopic : Option E) (c : Candidate E R Φ N) :
+def bfpTransition (prev : Utterance E R (Form Φ N)) (priorTopic : Option E)
+    (c : Utterance E R (Form Φ N)) :
     WithBot ExtendedTransition :=
   match cb prev c with
   | some x => ExtendedTransition.ofCenters priorTopic x c.cp
@@ -276,15 +270,17 @@ end Order
 
 variable [DecidableEq Φ]
 
-instance (feat : E → Φ) (prev : Candidate E R Φ N) (r : Realization E R (Form Φ N)) :
+instance (feat : E → Φ) (prev : Utterance E R (Form Φ N)) (r : Realization E R (Form Φ N)) :
     Decidable (Disagrees feat prev r) := by
   unfold Disagrees; split <;> infer_instance
 
 /-- AGREE: anaphoric pronouns agree with their antecedents in gender. -/
-def agree (feat : E → Φ) (prev : Candidate E R Φ N) : Constraint (Candidate E R Φ N) :=
+def agree (feat : E → Φ) (prev : Utterance E R (Form Φ N)) :
+    Constraint (Utterance E R (Form Φ N)) :=
   fun c ↦ c.realizations.countP fun r ↦ decide (Disagrees feat prev r)
 
-private theorem agree_reassign {feat : E → Φ} {prev c : Candidate E R Φ N} {g : ℕ → E} {k : ℕ}
+private theorem agree_reassign {feat : E → Φ} {prev c : Utterance E R (Form Φ N)} {g : ℕ → E}
+    {k : ℕ}
     (hgp : ∀ n, g n ∉ prev)
     (hk : ∀ i : Fin c.realizations.length, i.val = k → ¬ Disagrees feat prev c.realizations[i]) :
     agree feat prev (reassign c (keepOne c g k)) = 0 := by
@@ -297,34 +293,38 @@ private theorem agree_reassign {feat : E → Φ} {prev c : Candidate E R Φ N} {
 
 variable [DecidableEq N]
 
-instance (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N)
+instance (ctx : List (Utterance E R (Form Φ N))) (prev : Utterance E R (Form Φ N))
     (r : Realization E R (Form Φ N)) : Decidable (Familiar ctx prev r) := by
   unfold Familiar; split <;> infer_instance
 
 /-- FAM-DEF: each definite NP is familiar. -/
-def famDef (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N) :
-    Constraint (Candidate E R Φ N) :=
+def famDef (ctx : List (Utterance E R (Form Φ N))) (prev : Utterance E R (Form Φ N)) :
+    Constraint (Utterance E R (Form Φ N)) :=
   fun c ↦ c.realizations.countP fun r ↦ decide (¬ Familiar ctx prev r)
 
-theorem famDef_eq_zero_iff {ctx : List (Candidate E R Φ N)} {prev c : Candidate E R Φ N} :
+theorem famDef_eq_zero_iff {ctx : List (Utterance E R (Form Φ N))}
+    {prev c : Utterance E R (Form Φ N)} :
     famDef ctx prev c = 0 ↔ ∀ r ∈ c.realizations, Familiar ctx prev r := by
   simp [famDef, List.countP_eq_zero]
 
 variable [LinearOrder R]
 
 /-- The COT ranking (4): AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE > ALIGN. -/
-def cotRanking (feat : E → Φ) (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N)
-    (priorTopic : Option E) : List (Constraint (Candidate E R Φ N)) :=
+def cotRanking (feat : E → Φ) (ctx : List (Utterance E R (Form Φ N)))
+    (prev : Utterance E R (Form Φ N))
+    (priorTopic : Option E) : List (Constraint (Utterance E R (Form Φ N))) :=
   [agree feat prev, disjoint, proTop prev, famDef ctx prev, cohere prev priorTopic, align prev]
 
 /-- The reranking of §4.1, PRO-TOP below FAM-DEF. -/
-def cotRankingDemoted (feat : E → Φ) (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N)
-    (priorTopic : Option E) : List (Constraint (Candidate E R Φ N)) :=
+def cotRankingDemoted (feat : E → Φ) (ctx : List (Utterance E R (Form Φ N)))
+    (prev : Utterance E R (Form Φ N))
+    (priorTopic : Option E) : List (Constraint (Utterance E R (Form Φ N))) :=
   [agree feat prev, disjoint, famDef ctx prev, proTop prev, cohere prev priorTopic, align prev]
 
 /-- The violation profile of a candidate under the COT ranking (4). -/
-def cotProfile (feat : E → Φ) (ctx : List (Candidate E R Φ N)) (prev : Candidate E R Φ N)
-    (priorTopic : Option E) (c : Candidate E R Φ N) : ViolationProfile 6 :=
+def cotProfile (feat : E → Φ) (ctx : List (Utterance E R (Form Φ N)))
+    (prev : Utterance E R (Form Φ N))
+    (priorTopic : Option E) (c : Utterance E R (Form Φ N)) : ViolationProfile 6 :=
   toLex ((cotRanking feat ctx prev priorTopic).get · c)
 
 private theorem toLex_lt_toLex_iff_six {a b : Fin 6 → ℕ} : toLex a < toLex b ↔
@@ -336,7 +336,8 @@ private theorem toLex_lt_toLex_iff_six {a b : Fin 6 → ℕ} : toLex a < toLex b
 
 section Prediction
 
-variable {feat : E → Φ} {ctx : List (Candidate E R Φ N)} {prev c d c₁ c₂ : Candidate E R Φ N}
+variable {feat : E → Φ} {ctx : List (Utterance E R (Form Φ N))}
+  {prev c d c₁ c₂ : Utterance E R (Form Φ N)}
   {priorTopic : Option E} {s : List (R × Form Φ N)}
 
 theorem cotProfile_lt_iff :
@@ -354,7 +355,8 @@ theorem cotProfile_lt_iff :
 /-- An interpretation survives the construction and filtering stages of BFP's algorithm: it is
 fully anaphoric, its pronouns agree with their antecedents, its co-arguments are disjoint, and it
 satisfies Rule 1. -/
-structure Filtered (feat : E → Φ) (ctx : List (Candidate E R Φ N)) (prev c : Candidate E R Φ N) :
+structure Filtered (feat : E → Φ) (ctx : List (Utterance E R (Form Φ N)))
+    (prev c : Utterance E R (Form Φ N)) :
     Prop where
   agree_eq : agree feat prev c = 0
   disjoint_eq : disjoint c = 0
@@ -598,8 +600,9 @@ def Entity.gender : Entity → UD.Gender
   | .jim => .Masc
   | .flowers | .present | .tennis | .other _ => .Neut
 
-/-- An interpretation of a sentence of the examples. -/
-abbrev Interpretation := Candidate Entity GrammaticalRole UD.Gender Name
+/-- An interpretation of a sentence of the examples: a centering utterance giving each noun
+phrase its role, its form and a referent. -/
+abbrev Interpretation := Utterance Entity GrammaticalRole (Form UD.Gender Name)
 
 namespace D1
 

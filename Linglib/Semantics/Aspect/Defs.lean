@@ -3,31 +3,18 @@ module
 /-!
 # Aspect: basic definitions
 
-This file defines the classificatory vocabulary of aspect, following the two components of
-Smith's theory. Situation type classifies an eventuality by three binary features: whether it
-has a natural endpoint (`Telicity`), whether it takes time (`Duration`) and whether it involves
-change (`Dynamicity`). The situation types are the four classes of Vendler together with
-Smith's semelfactives (`VendlerClass`), each determined by its features
-(`VendlerClass.eq_of_features`). The aspectual shifts of compositional coercion change one
-feature of a situation type (`VendlerClass.telicize` and its siblings), and Dowty's adverbial
-and progressive diagnostics are functions of the features (`forXPrediction`, `inXPrediction`,
-`progressivePrediction`), and the two tests for the Slavic perfective and imperfective are a
-function of the viewpoint (`viewpointPrediction`). Viewpoint is the
-presentation of a situation, Klein's four relations between the topic time and the situation
-time together with Smith's neutral viewpoint (`ViewpointType`), and at its coarsest the
-opposition of perfective and imperfective (`Perfectivity`). A language's aspect morphemes are
-entered with the viewpoint each marks in `Semantics/Aspect/Marker.lean`, and the operators that
+The classificatory vocabulary of aspect follows the two components of Smith's theory. An
+aspectual class, Smith's situation type, is one of Vendler's four classes or her semelfactive,
+and is determined by three features: whether the situation has a natural endpoint, whether it
+takes time and whether it involves change. Viewpoint is the presentation of a situation: Klein's
+four relations between the topic time and the situation time together with Smith's neutral
+viewpoint, and at its coarsest the opposition of perfective and imperfective. The operators that
 viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
 
-## Main definitions
+## Implementation notes
 
-* `Aspect.VendlerClass`: the five situation types, with their features and shifts.
-* `Aspect.Incrementality`: the incrementality classes of a verb's theme relation.
-* `Aspect.DiagnosticResult`: the outcome of a diagnostic, with the *for*-adverbial,
-  *in*-adverbial and progressive tests as functions of a situation type.
-* `Aspect.ViewpointType`, `Aspect.Perfectivity`: the viewpoints.
-* `Aspect.viewpointPrediction`: the phase-verb and present-tense tests as a function of the
-  opposition of perfective and imperfective.
+* Smith's table of features marks states as lacking telicity and notes that the feature is
+  irrelevant to static situations; `AspectualClass.telicity` gives states the value `atelic`.
 
 ## References
 
@@ -36,16 +23,16 @@ viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
 * [dowty-1979]
 * [krifka-1998]
 * [klein-1994]
-* [borik-2006]
 -/
 
 @[expose] public section
 
 namespace Aspect
 
-/-! ### Situation type -/
+/-! ### Aspectual class -/
 
-/-- Whether an eventuality has a natural endpoint. -/
+/-- Whether an eventuality has a natural endpoint. An *in*-adverbial such as *in an hour* is
+acceptable with the telic classes and with no other ([dowty-1979]). -/
 inductive Telicity
   | telic
   | atelic
@@ -63,9 +50,9 @@ inductive Dynamicity
   | stative
   deriving DecidableEq, Repr, Inhabited
 
-/-- The five situation types are the four classes of [vendler-1957] and the semelfactives of
-[smith-1997]. -/
-inductive VendlerClass
+/-- The aspectual classes ([dowty-1979]) are the four classes of [vendler-1957] and the
+semelfactives of [smith-1997], who calls the five situation types. -/
+inductive AspectualClass
   | state
   | activity
   | achievement
@@ -73,84 +60,31 @@ inductive VendlerClass
   | semelfactive
   deriving DecidableEq, Repr, Inhabited
 
-namespace VendlerClass
+namespace AspectualClass
 
-/-- The telicity of a situation type. -/
-def telicity : VendlerClass → Telicity
+/-- The telicity of an aspectual class. -/
+def telicity : AspectualClass → Telicity
   | state | activity | semelfactive => .atelic
   | achievement | accomplishment => .telic
 
-/-- The duration of a situation type. -/
-def duration : VendlerClass → Duration
+/-- The duration of an aspectual class. -/
+def duration : AspectualClass → Duration
   | state | activity | accomplishment => .durative
   | achievement | semelfactive => .punctual
 
-/-- The dynamicity of a situation type. -/
-def dynamicity : VendlerClass → Dynamicity
+/-- The dynamicity of an aspectual class. -/
+def dynamicity : AspectualClass → Dynamicity
   | state => .stative
   | activity | achievement | accomplishment | semelfactive => .dynamic
 
-end VendlerClass
-
-namespace VendlerClass
-
-variable {c d : VendlerClass}
+variable {c d : AspectualClass}
 
 theorem eq_of_features (ht : c.telicity = d.telicity) (hd : c.duration = d.duration)
     (hy : c.dynamicity = d.dynamicity) : c = d := by
   revert ht hd hy
   cases c <;> cases d <;> decide
 
-/-- Add a natural endpoint, by which an activity becomes an accomplishment and a semelfactive
-an achievement. -/
-def telicize : VendlerClass → VendlerClass
-  | activity => accomplishment
-  | semelfactive => achievement
-  | c => c
-
-/-- Remove the natural endpoint, the effect of the progressive. -/
-def atelicize : VendlerClass → VendlerClass
-  | accomplishment => activity
-  | achievement => semelfactive
-  | c => c
-
-/-- Stretch a punctual eventuality over time, the iterative reading. -/
-def duratize : VendlerClass → VendlerClass
-  | achievement => accomplishment
-  | semelfactive => activity
-  | c => c
-
-theorem telicity_telicize (h : c.dynamicity = .dynamic) : c.telicize.telicity = .telic := by
-  cases c <;> first | rfl | cases h
-
-@[simp] theorem duration_telicize (c : VendlerClass) : c.telicize.duration = c.duration := by
-  cases c <;> rfl
-
-@[simp] theorem dynamicity_telicize (c : VendlerClass) :
-    c.telicize.dynamicity = c.dynamicity := by
-  cases c <;> rfl
-
-@[simp] theorem telicity_atelicize (c : VendlerClass) : c.atelicize.telicity = .atelic := by
-  cases c <;> rfl
-
-@[simp] theorem duration_atelicize (c : VendlerClass) : c.atelicize.duration = c.duration := by
-  cases c <;> rfl
-
-@[simp] theorem dynamicity_atelicize (c : VendlerClass) :
-    c.atelicize.dynamicity = c.dynamicity := by
-  cases c <;> rfl
-
-@[simp] theorem duration_duratize (c : VendlerClass) : c.duratize.duration = .durative := by
-  cases c <;> rfl
-
-@[simp] theorem telicity_duratize (c : VendlerClass) : c.duratize.telicity = c.telicity := by
-  cases c <;> rfl
-
-@[simp] theorem dynamicity_duratize (c : VendlerClass) :
-    c.duratize.dynamicity = c.dynamicity := by
-  cases c <;> rfl
-
-end VendlerClass
+end AspectualClass
 
 /-- The incrementality of a verb's theme relation is the strongest of [krifka-1998]'s properties
 it has, strictly incremental (*eat*, *draw*), incremental (*read*), or cumulative without
@@ -160,53 +94,6 @@ inductive Incrementality
   | incremental
   | cumulative
   deriving DecidableEq, Repr
-
-/-! ### Diagnostics
-
-The adverbial and progressive tests of [dowty-1979], as functions of the three features: a
-*for*-adverbial measures an atelic durative eventuality and coerces a telic or punctual one into
-repetition or iteration; an *in*-adverbial needs a culmination; the progressive needs internal
-stages, reads an achievement through its preliminary stages and a semelfactive as iterated. -/
-
-/-- The outcome of a diagnostic is acceptable, unacceptable, degraded, or acceptable under a
-meaning shift. -/
-inductive DiagnosticResult
-  | accept
-  | reject
-  | marginal
-  | coerced
-  deriving DecidableEq, Repr
-
-/-- The *for*-adverbial test. -/
-def forXPrediction (c : VendlerClass) : DiagnosticResult :=
-  match c.telicity, c.duration with
-  | .atelic, .durative => .accept
-  | .telic, .punctual => .reject
-  | _, _ => .coerced
-
-/-- The *in*-adverbial test. -/
-def inXPrediction (c : VendlerClass) : DiagnosticResult :=
-  if c.telicity = .telic then .accept else .reject
-
-/-- The English progressive test. -/
-def progressivePrediction (c : VendlerClass) : DiagnosticResult :=
-  match c.dynamicity, c.duration, c.telicity with
-  | .stative, _, _ => .reject
-  | .dynamic, .durative, _ => .accept
-  | .dynamic, .punctual, .telic => .marginal
-  | .dynamic, .punctual, .atelic => .coerced
-
-theorem inXPrediction_eq_accept_iff (c : VendlerClass) :
-    inXPrediction c = .accept ↔ c.telicity = .telic := by
-  cases c <;> decide
-
-theorem forXPrediction_eq_accept_iff (c : VendlerClass) :
-    forXPrediction c = .accept ↔ c.telicity = .atelic ∧ c.duration = .durative := by
-  cases c <;> decide
-
-theorem progressivePrediction_eq_accept_iff (c : VendlerClass) :
-    progressivePrediction c = .accept ↔ c.duration = .durative ∧ c.dynamicity = .dynamic := by
-  cases c <;> decide
 
 /-! ### Viewpoint -/
 
@@ -228,17 +115,5 @@ inductive Perfectivity
   | perfective
   | imperfective
   deriving DecidableEq, Repr, Inhabited
-
-/-- The tests for the Slavic perfective and imperfective [borik-2006]: the infinitival complement
-of a phase verb such as *begin*, *continue* or *finish* is imperfective, and the present-tense
-form of a perfective has no actual present reading, referring to a later time. Both tests accept
-an imperfective form and reject a perfective one. -/
-def viewpointPrediction : Perfectivity → DiagnosticResult
-  | .imperfective => .accept
-  | .perfective => .reject
-
-theorem viewpointPrediction_eq_accept_iff (p : Perfectivity) :
-    viewpointPrediction p = .accept ↔ p = .imperfective := by
-  cases p <;> decide
 
 end Aspect

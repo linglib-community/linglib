@@ -25,7 +25,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ambiguity", "ambiguous")] }
 
@@ -39,7 +39,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "An apple on a towel, a distractor of another kind, an empty towel and an empty box (Fig. 1A)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ambiguity", "unambiguous")] }
 
@@ -53,7 +53,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "The apple is on a towel and is to be moved to the other towel."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("target", "bare"), ("destination", "towel")] }
 
@@ -67,7 +67,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := "The apple is on a towel and is to be moved to the box."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("target", "bare"), ("destination", "box")] }
 
@@ -81,7 +81,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := "The apple is on a towel and is to be moved to the other towel."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("target", "modified"), ("destination", "otherTowel")] }
 
@@ -95,7 +95,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "The apple is on a towel and is to be moved to the box."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("target", "modified"), ("destination", "box")] }
 
@@ -109,7 +109,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

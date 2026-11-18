@@ -18,7 +18,6 @@ assignments](##DRT.DRS.exists_extends_verifiesTotal_iff_exists_verifies).
 
 * `DRT.DRS.Verifies`, `DRT.Condition.Holds`: verification of DRSs and conditions.
 * `DRT.DRS.IsTrue`: truth in a model.
-* `DRT.DRS.ReuseFreeAt`: no referent declared twice along a nesting path.
 
 ## Main statements
 
@@ -399,100 +398,6 @@ theorem DRS.verifies_merge [DecidableEq V] (K₁ K₂ : DRS L V)
           exact hxh hxd
     exact ⟨hle₁.trans hle₂, by rw [hdom₂, hdom₁, Set.union_assoc],
       (Condition.holdsAll_congr cs₁ heq).mp hh₁, hh₂⟩
-
-/-! ### Reuse-freeness
-
-No discourse referent is declared twice along a nesting path: each universe is
-fresh for the ambient declarations, threaded through sub-boxes the way
-verification threads the base (the antecedent of a `⇒` feeds its referents
-into the consequent). This is the hypothesis under which the total
-agree-off-universe semantics and the partial semantics coincide
-(`DRS.exists_extends_verifiesTotal_iff_exists_verifies`). -/
-
-section ReuseFree
-
-variable [DecidableEq V]
-
-mutual
-/-- A DRS is *reuse-free* at ambient declarations `X` when its universe avoids `X` and its
-conditions are reuse-free at the grown set. -/
-def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
-  | ⟨U, cs⟩ => Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) cs
-/-- A condition is reuse-free at ambient declarations `X` when each sub-box is, the
-consequent of a `⇒` at the declarations grown by the antecedent's universe. -/
-def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
-  | .atom _ => True
-  | .eq _ _ => True
-  | .neg K => DRS.ReuseFreeAt X K
-  | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
-  | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
-/-- Every condition of the list is reuse-free at `X`. -/
-def Condition.ReuseFreeAllAt (X : Finset V) : List (Condition L V) → Prop
-  | [] => True
-  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs
-end
-
-namespace Condition
-
-@[simp] theorem reuseFreeAt_atom (X : Finset V) (a : L.Atom V) : ReuseFreeAt X (.atom a) :=
-  trivial
-
-@[simp] theorem reuseFreeAt_eq (X : Finset V) (u v : V) :
-    ReuseFreeAt X (.eq u v : Condition L V) := trivial
-
-@[simp] theorem reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
-    ReuseFreeAt X (.neg K) ↔ K.ReuseFreeAt X := Iff.rfl
-
-@[simp] theorem reuseFreeAt_imp (X : Finset V) (a c : DRS L V) :
-    ReuseFreeAt X (.imp a c) ↔ a.ReuseFreeAt X ∧ c.ReuseFreeAt (X ∪ a.referents) := Iff.rfl
-
-@[simp] theorem reuseFreeAt_dis (X : Finset V) (l r : DRS L V) :
-    ReuseFreeAt X (.dis l r) ↔ l.ReuseFreeAt X ∧ r.ReuseFreeAt X := Iff.rfl
-
-@[simp] theorem reuseFreeAllAt_nil (X : Finset V) :
-    ReuseFreeAllAt X ([] : List (Condition L V)) := trivial
-
-@[simp] theorem reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
-    (cs : List (Condition L V)) :
-    ReuseFreeAllAt X (c :: cs) ↔ ReuseFreeAt X c ∧ ReuseFreeAllAt X cs := Iff.rfl
-
-end Condition
-
-@[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
-    DRS.ReuseFreeAt X (.mk U conds) ↔ Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds :=
-  Iff.rfl
-
-mutual
-/-- Reuse-freeness of a DRS is decidable. -/
-@[instance_reducible]
-def DRS.decidableReuseFreeAt (X : Finset V) : (K : DRS L V) → Decidable (K.ReuseFreeAt X)
-  | ⟨U, cs⟩ => @instDecidableAnd _ _ inferInstance (Condition.decidableReuseFreeAllAt (X ∪ U) cs)
-/-- Reuse-freeness of a condition is decidable. -/
-@[instance_reducible]
-def Condition.decidableReuseFreeAt (X : Finset V) :
-    (c : Condition L V) → Decidable (c.ReuseFreeAt X)
-  | .atom _ => instDecidableTrue
-  | .eq _ _ => instDecidableTrue
-  | .neg K => DRS.decidableReuseFreeAt X K
-  | .imp a c =>
-      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X a)
-        (DRS.decidableReuseFreeAt (X ∪ a.referents) c)
-  | .dis l r =>
-      @instDecidableAnd _ _ (DRS.decidableReuseFreeAt X l) (DRS.decidableReuseFreeAt X r)
-/-- Reuse-freeness of a list of conditions is decidable. -/
-@[instance_reducible]
-def Condition.decidableReuseFreeAllAt (X : Finset V) :
-    (cs : List (Condition L V)) → Decidable (Condition.ReuseFreeAllAt X cs)
-  | [] => instDecidableTrue
-  | c :: cs =>
-      @instDecidableAnd _ _ (Condition.decidableReuseFreeAt X c)
-        (Condition.decidableReuseFreeAllAt X cs)
-end
-
-attribute [instance] DRS.decidableReuseFreeAt Condition.decidableReuseFreeAt
-  Condition.decidableReuseFreeAllAt
-
-end ReuseFree
 
 /-! ### Agreement with total assignments
 

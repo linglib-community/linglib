@@ -109,8 +109,9 @@ theorem exists_snoc {j : ℕ} (h : L.MonadicMatch v w)
   by_cases ha : a ∈ Set.range v
   · obtain ⟨i, rfl⟩ := ha
     refine ⟨w i, h.snoc (fun _ => h.eq_iff _ _) (h.unaryType_eq i), fun S => ?_⟩
-    rw [sdiff_range_snoc, sdiff_range_snoc, Set.sdiff_singleton_eq_self fun hx => hx.2 ⟨i, rfl⟩,
-      Set.sdiff_singleton_eq_self fun hx => hx.2 ⟨i, rfl⟩]
+    rw [sdiff_range_snoc, sdiff_range_snoc,
+      Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range v) fun hx => hx.2 ⟨i, rfl⟩,
+      Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range w) fun hx => hx.2 ⟨i, rfl⟩]
     exact min_eq_of_succ (hc S)
   · have haf : a ∈ L.unaryType ⁻¹' {L.unaryType a} \ Set.range v := ⟨rfl, ha⟩
     obtain ⟨b, hbf⟩ : (L.unaryType ⁻¹' {L.unaryType a} \ Set.range w).Nonempty := by
@@ -129,25 +130,24 @@ theorem exists_snoc {j : ℕ} (h : L.MonadicMatch v w)
       rw [← Set.encard_sdiff_singleton_add_one haf,
         ← Set.encard_sdiff_singleton_add_one hbf] at this
       exact min_eq_of_succ_add_one this
-    · rw [Set.sdiff_singleton_eq_self fun hx => hS (hx.1 : _ = S).symm,
-        Set.sdiff_singleton_eq_self fun hx => hS ((hx.1 : _ = S).symm.trans hb)]
+    · rw [Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range v) fun hx =>
+          hS (hx.1 : _ = S).symm,
+        Set.sdiff_singleton_eq_self (s := L.unaryType ⁻¹' {S} \ Set.range w) fun hx =>
+          hS ((hx.1 : _ = S).symm.trans hb)]
       exact min_eq_of_succ (hc S)
 
 variable [L.IsMonadic]
 
 theorem realize_iff_of_isAtomic (h : L.MonadicMatch v w) {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : φ.Realize default v ↔ φ.Realize default w := by
-  have hvar : ∀ t : L.Term (Empty ⊕ Fin n), ∃ i, t = &i := by
-    rintro (⟨x | i⟩ | ⟨f, _⟩)
-    exacts [x.elim, ⟨i, rfl⟩, isEmptyElim f]
   cases hφ with
   | equal t₁ t₂ =>
-    obtain ⟨i, rfl⟩ := hvar t₁
-    obtain ⟨j, rfl⟩ := hvar t₂
+    obtain ⟨i, rfl⟩ := t₁.exists_eq_var
+    obtain ⟨j, rfl⟩ := t₂.exists_eq_var
     exact h.eq_iff i j
   | @rel l R ts =>
     obtain rfl : l = 1 := by_contra fun hl => (IsMonadic.isEmpty_relations l hl).elim R
-    obtain ⟨i, hi⟩ := hvar (ts 0)
+    obtain ⟨i, hi⟩ := (ts 0).exists_eq_var
     have hv : (fun k => (ts k).realize (Sum.elim default v)) = ![v i] := by
       funext k; obtain rfl := Subsingleton.elim k 0; simp [hi]
     have hw : (fun k => (ts k).realize (Sum.elim default w)) = ![w i] := by
@@ -270,7 +270,8 @@ theorem exists_finite_realize [L.IsMonadic] [Finite L.Symbols] {φ : L.Sentence}
   have hfin : Finite (L.Relations 1) :=
     Finite.of_injective (fun R ↦ (Sum.inr ⟨1, R⟩ : L.Symbols)) fun R S e ↦ by simpa using e
   choose T hTsub hTcard using fun S : L.Relations 1 → Prop ↦
-    Set.exists_subset_encard_eq (min_le_right (φ.qr : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard)
+    Set.exists_subset_encard_eq
+      (min_le_right (φ.quantifierRank : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard)
   let U : L.Substructure M := ⟨⋃ S, T S, fun f ↦ isEmptyElim f⟩
   have htype (x : U) : L.unaryType x = L.unaryType (x : M) := funext fun R ↦ by
     change Structure.RelMap R (fun i ↦ ((![x] i : U) : M)) = Structure.RelMap R ![(x : M)]
@@ -285,7 +286,8 @@ theorem exists_finite_realize [L.IsMonadic] [Finite L.Symbols] {φ : L.Sentence}
       have : S' = S := (hmem hS').symm.trans ((htype y).symm.trans hy)
       exact this ▸ hS'
     · exact fun hx ↦ ⟨⟨x, Set.mem_iUnion.2 ⟨S, hx⟩⟩, (htype _).trans (hmem hx), rfl⟩
-  have hequiv : M ≅[L, φ.qr] U := elementarilyEquivalentUpTo_iff_min_encard_eq.2 fun S ↦ by
+  have hequiv : M ≅[L, φ.quantifierRank] U :=
+      elementarilyEquivalentUpTo_iff_min_encard_eq.2 fun S ↦ by
     rw [← Subtype.val_injective.encard_image (L.unaryType ⁻¹' {S} : Set U), hfib, hTcard]
     simp
   have hU : (U : Set M).Finite := Set.finite_iUnion fun S ↦

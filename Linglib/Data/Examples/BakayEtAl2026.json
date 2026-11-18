@@ -15,7 +15,7 @@
     "translation": "Ayşe said that the directors' new cameramen severely criticized each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "distractor", "judgment": "unacceptable"},
@@ -47,7 +47,7 @@
     "translation": "Ayşe said that the director's new cameramen severely criticized each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "distractor", "judgment": "unacceptable"},
@@ -79,7 +79,7 @@
     "translation": "Ayşe said that the cameramen, with the directors' permission, severely criticized each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -111,7 +111,7 @@
     "translation": "Ayşe said that the cameramen, with the director's permission, severely criticized each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -143,7 +143,7 @@
     "translation": "Ayşe noticed that the cameramen openly asked the directors about each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -174,7 +174,7 @@
     "translation": "Ayşe noticed that the cameramen openly asked the director about each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -206,7 +206,7 @@
     "translation": "Ayşe noticed that the cameramen, according to the directors, openly asked about each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -237,7 +237,7 @@
     "translation": "Ayşe noticed that the cameramen, according to the director, openly asked about each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -268,7 +268,7 @@
     "translation": "Ayşe noticed that the cameraman openly asked the directors about each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -300,7 +300,7 @@
     "translation": "Ayşe knows that the chefs badmouthed each other to the waiters for no reason.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -331,7 +331,7 @@
     "translation": "Ayşe knows that the chefs, despite the waiters, badmouthed each other for no reason.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},
@@ -363,7 +363,7 @@
     "translation": "Ayşe knows that the chefs, with the waiters' influence, badmouthed each other for no reason.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix subject", "judgment": "unacceptable"},
       {"name": "embedded subject", "judgment": "acceptable"},

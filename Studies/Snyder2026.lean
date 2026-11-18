@@ -2,34 +2,26 @@ module
 
 public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Order.Setoid.Basic
+public import Mathlib.Data.Set.Card
+public import Linglib.Semantics.Reference.Iota
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.Composition.Sorts
 
 /-!
 # Snyder (2026): Numbers as Kinds
 
-This file formalizes [snyder-2026]'s Polymorphic Contextualism: the lexical meaning of *two* is
-an atomic predicate applying to different countable entities in different contexts, numeral
-tokens, subkinds of the kind TWO, or TWO itself, and every other meaning of the word derives
-from it by type-shifting. The rival polymorphic analyses take the lexical meaning to be a
-numeral, an entity from which the cardinality predicate derives by CARD (Substantivalism), or
-the cardinality predicate itself, from which the numeral derives by NOM and Rothstein's
-schematic equation (Adjectivalism). The three analyses are derivation maps from a lexical
-type through the type-shifters CARD, PM, A, NOM, IOTA and IDENT to the semantic functions of
-(1) and (76) (`PolymorphicAnalysis.path`), each of which composes to the function's type
-(`analyses_well_typed`); Contextualism derives every function while the two rivals derive
-none of the token, kind and taxonomic uses (`contextualism_covers_all`,
-`substantivalism_gap`, `adjectivalism_gap`, `contextualism_strictly_extends`). Numbers are
-kinds formed as in [mendia-2020] by a salient equivalence relation on their tokens, here the
-number system a token belongs to (`kfTWO`), so distinct subkinds of TWO are disjoint
-(`subkinds_distinct`); a close appositive is the Sharvy definite over the conjunction of its
-two nouns (`closeAppositive`), and definites over disjoint restrictions of the extension of
-*two* refer to distinct subkinds, which dissolves Benacerraf's Identification Problem for (20)
-(`closeAppositive_ne_of_disjoint`, `identification_problem_resolved`). Section 6 extends the
-analysis to colour words, RED having subkinds such as crimson and maroon (`kfRed`,
-`red_subkinds_distinct`). The examples are rows of `Data/Examples/Snyder2026`, each of which
-carries its semantic function, and every function is attested (`functions_attested`).
+Polymorphic Contextualism takes the lexical meaning of *two* to be an atomic predicate, true of
+whatever falls under the kind TWO, whether a numeral token, a subkind such as the two of the
+naturals, or TWO itself, and derives every other meaning by type-shifting. Its rivals start from a
+numeral (Substantivalism) or from a cardinality predicate (Adjectivalism). The three are derivation
+maps through the type-shifters CARD, PM, A, NOM, IOTA and IDENT, each of which [composes to the type
+of the function it derives](##analyses_well_typed), and only Contextualism [reaches the token, kind
+and taxonomic uses](##contextualism_strictly_extends). The numeral is the definite of the lexical
+predicate among the atoms a context makes salient. A close appositive whose modifier names a number
+system [refers to the subkind of that system](##subkind_mem_iota_lex_inter_system), appositives
+naming different systems [refer to different subkinds](##ne_of_mem_iota_lex_inter_system), so that
+both answers to Benacerraf's question can be true, and with no system in play [nothing is referred
+to](##iota_lex_inter_range_subkind_eq_none).
 
 ## Implementation notes
 
@@ -41,12 +33,21 @@ carries its semantic function, and every function is attested (`functions_attest
   the lexical predicate itself, applied to tokens or kinds, and the numeral, kind-referring
   and token-referring uses (76e), (76i) and (76g) are IOTA over it; the taxonomic use is
   predicate-typed, the others entity-typed.
-* Sharvy's definite is a partial operation over a finite domain, undefined when no or more
-  than one entity satisfies the restriction; the Identification Problem is worked on a domain
-  with one token per number system.
-* Tokens of *two* are classified by their number system (`kfTWO`), which on these tokens agrees
-  with section 4.3's partition by the number a token represents; the subkinds of TWO are the
-  classes, as kind individuals in the quotient.
+* The atoms are the tokens, subkinds and kinds of any three types, with a map `inst` from a
+  token to the subkind it instantiates and a map `sup` from a subkind to its kind. A context is
+  the set of atoms it makes salient, and the definite of (16) and (74) is `iota`, undefined when
+  no atom or several are salient.
+* The partitions of section 4.3, of tokens by the number they represent and of numbers by their
+  system, are the kernels of `inst` and of the system map. On the board a number is a pair of a
+  system and a value, so a system and a kind determine a subkind.
+* The colour words of the conclusion are the same theorems at other types, the shades of red in
+  place of the subkinds of TWO.
+
+## TODO
+
+* The derivation maps transcribe the paper's diagrams, and the rivals' gaps are read off them.
+  Deriving the gaps from the context-invariant referent the rivals assign to the numeral is not
+  done.
 
 ## References
 
@@ -185,119 +186,107 @@ theorem adjectivalism_gap :
 theorem contextualism_strictly_extends (a : PolymorphicAnalysis) :
     (∀ sf, a.Covers sf → PolymorphicAnalysis.contextualism.Covers sf) ∧
       (a ≠ .contextualism → ∃ sf, PolymorphicAnalysis.contextualism.Covers sf ∧ ¬ a.Covers sf) :=
-  ⟨λ sf _ => contextualism_covers_all sf, λ h => ⟨.taxonomic, contextualism_covers_all _,
+  ⟨fun sf _ ↦ contextualism_covers_all sf, fun h ↦ ⟨.taxonomic, contextualism_covers_all _,
     by cases a <;> first | exact absurd rfl h | decide⟩⟩
 
-/-! ### Numbers as kinds, sections 4 and 5
+/-! ### Numbers as kinds (sections 4 and 5) -/
 
-A kind is formed by partitioning a domain by a salient equivalence relation; TWO is
-partitioned into the subkinds two-of-the-naturals, two-of-the-integers, two-of-the-rationals
-and two-of-the-reals by the number system a numeral token belongs to (section 4.3). -/
+section Kinds
 
-/-- The number systems of the paper's board. -/
+variable {T N V σ : Type*}
+
+/-- The atoms of relativized atomicity: a token, the subkind it instantiates, and the kind that
+subkind falls under each count as one. -/
+inductive Atom (T N V : Type*)
+  | token (t : T)
+  | subkind (n : N)
+  | kind (v : V)
+
+variable (inst : T → N) (sup : N → V) {v : V}
+
+/-- The kind an atom falls under: that of the subkind a token instantiates, that of a subkind, or
+the kind itself. -/
+def Atom.kindOf : Atom T N V → V
+  | .token t => sup (inst t)
+  | .subkind n => sup n
+  | .kind v => v
+
+/-- (73): the lexical extension of a number word is the atoms that fall under its kind, whether
+tokens, subkinds, or the kind itself. -/
+def lex (v : V) : Set (Atom T N V) := Atom.kindOf inst sup ⁻¹' {v}
+
+-- (86), `snyder2026_76g`: a context with one salient atom
+theorem iota_lex_inter_singleton {a : Atom T N V} (ha : a ∈ lex inst sup v) :
+    iota (lex inst sup v ∩ {a}) = Part.some a := by
+  rw [Set.inter_eq_right.2 (Set.singleton_subset_iff.2 ha), iota_singleton]
+
+-- (47d), `snyder2026_4b`: a context of kinds
+theorem iota_lex_inter_range_kind (v : V) :
+    iota (lex inst sup v ∩ Set.range Atom.kind) = Part.some (.kind v) := by
+  have : lex inst sup v ∩ Set.range Atom.kind = {.kind v} := by
+    ext a
+    cases a <;> simp [lex, Atom.kindOf, eq_comm]
+  rw [this, iota_singleton]
+
+theorem subkind_mem_iota_lex_inter_image {M : Set N} {n : N} :
+    Atom.subkind n ∈ iota (lex inst sup v ∩ Atom.subkind '' M) ↔ n ∈ iota (M ∩ sup ⁻¹' {v}) := by
+  simp only [mem_iota, Set.mem_inter_iff, Set.mem_image, Atom.subkind.injEq, exists_eq_right,
+    Set.mem_preimage, Set.mem_singleton_iff, lex, Atom.kindOf, and_imp, forall_exists_index]
+  exact ⟨fun ⟨⟨hv, hn⟩, hu⟩ ↦ ⟨⟨hn, hv⟩, fun m hm hmv ↦ Atom.subkind.inj (hu _ hmv m hm rfl)⟩,
+    fun ⟨⟨hn, hv⟩, hu⟩ ↦ ⟨⟨hv, hn⟩, fun _ hmv m hm e ↦ by subst e; exact congrArg _ (hu m hm hmv)⟩⟩
+
+/-- When a system and a kind together determine a subkind, the close appositive whose modifier
+names the system of `n` refers to `n`, as *the natural number two* refers to the two of the
+naturals (87). -/
+theorem subkind_mem_iota_lex_inter_system (sys : N → σ)
+    (h : Function.Injective fun n ↦ (sys n, sup n)) (n : N) :
+    Atom.subkind n ∈ iota (lex inst sup (sup n) ∩ Atom.subkind '' (sys ⁻¹' {sys n})) :=
+  (subkind_mem_iota_lex_inter_image inst sup).2 <| mem_iota.2
+    ⟨⟨rfl, rfl⟩, fun _ hm ↦ h (Prod.ext hm.1 hm.2)⟩
+
+/-- Close appositives whose modifiers name different systems refer to different subkinds, so
+*the von Neumann ordinal two* and *the Zermelo ordinal two* need not corefer ((20), (83)). -/
+theorem ne_of_mem_iota_lex_inter_system (sys : N → σ) {s₁ s₂ : σ} (h : s₁ ≠ s₂)
+    {a₁ a₂ : Atom T N V}
+    (h₁ : a₁ ∈ iota (lex inst sup v ∩ Atom.subkind '' (sys ⁻¹' {s₁})))
+    (h₂ : a₂ ∈ iota (lex inst sup v ∩ Atom.subkind '' (sys ⁻¹' {s₂}))) : a₁ ≠ a₂ := by
+  obtain ⟨n₁, hn₁, rfl⟩ := (mem_iota.1 h₁).1.2
+  obtain ⟨n₂, hn₂, rfl⟩ := (mem_iota.1 h₂).1.2
+  exact fun e ↦ h (hn₁.symm.trans ((congrArg sys (Atom.subkind.inj e)).trans hn₂))
+
+/-- Without a modifier or a salient system, *the number two* has no referent when two subkinds
+fall under the kind (87). -/
+theorem iota_lex_inter_range_subkind_eq_none {n m : N} (hn : sup n = v) (hm : sup m = v)
+    (hne : n ≠ m) : iota (lex inst sup v ∩ Set.range Atom.subkind) = Part.none :=
+  iota_eq_none_of_ne (e := .subkind n) (e' := .subkind m) ⟨hn, n, rfl⟩ ⟨hm, m, rfl⟩
+    fun e ↦ hne (Atom.subkind.inj e)
+
+-- (85b), (85c): the tokens of one subkind are several tokens and one type
+theorem ncard_image_inst_eq_one {X : Set T} (hX : X.Nonempty)
+    (h : ∀ x ∈ X, ∀ y ∈ X, inst x = inst y) : (inst '' X).ncard = 1 :=
+  let ⟨a, ha⟩ := hX
+  Set.ncard_eq_one.2 ⟨inst a, Set.eq_singleton_iff_unique_mem.2
+    ⟨⟨a, ha, rfl⟩, by rintro _ ⟨x, hx, rfl⟩; exact h x hx a ha⟩⟩
+
+end Kinds
+
+/-! ### The numbers of the board (section 4.3) -/
+
+/-- The number systems of the board. -/
 inductive MathSystem
-  | nat | int | rat | real
-  deriving DecidableEq, Fintype
-
-/-- A numeral token: the number system it belongs to and an index distinguishing tokens of the
-same system. -/
-structure TwoToken where
-  system : MathSystem
-  idx : ℕ
+  | nat | rat | real
   deriving DecidableEq
 
-/-- The kind formation for TWO: tokens are equivalent when they belong to the same number
-system, and each class is a subkind of TWO. -/
-abbrev kfTWO : Setoid TwoToken := Setoid.ker TwoToken.system
-
-theorem subkinds_distinct {t₁ t₂ : TwoToken} (h : t₁.system ≠ t₂.system) :
-    (⟦t₁⟧ : Quotient kfTWO) ≠ ⟦t₂⟧ :=
-  fun e ↦ h (Quotient.exact e)
-
-section Sharvy
-
-variable {α : Type*}
-
-/-- Sharvy's definite (16a) over a finite domain: the unique satisfier of the restriction, if
-there is exactly one. -/
-def sharvyIota (domain : List α) (P : α → Bool) : Option α :=
-  match domain.filter P with
-  | [j] => some j
-  | _ => none
-
-/-- A close appositive (16b): the definite over the conjunction of its two nouns. -/
-def closeAppositive (domain : List α) (n₁ n₂ : α → Bool) : Option α :=
-  sharvyIota domain λ x => n₁ x && n₂ x
-
-theorem sharvyIota_eq_some_iff {domain : List α} {P : α → Bool} {j : α} :
-    sharvyIota domain P = some j ↔ domain.filter P = [j] := by
-  unfold sharvyIota
-  refine ⟨λ h => ?_, λ h => by rw [h]⟩
-  cases hf : domain.filter P with
-  | nil => rw [hf] at h; cases h
-  | cons hd tl =>
-    cases tl with
-    | nil => rw [hf] at h; injection h with hj; rw [hj]
-    | cons _ _ => rw [hf] at h; cases h
-
-theorem closeAppositive_ne_of_disjoint {domain : List α} {m₁ m₂ n : α → Bool} {j₁ j₂ : α}
-    (hDisj : ∀ x, ¬ (m₁ x = true ∧ m₂ x = true)) (h₁ : closeAppositive domain m₁ n = some j₁)
-    (h₂ : closeAppositive domain m₂ n = some j₂) : j₁ ≠ j₂ := by
-  intro hEq
-  have h1mem : j₁ ∈ domain.filter (λ x => m₁ x && n x) := by
-    rw [sharvyIota_eq_some_iff.mp h₁]; simp
-  have h2mem : j₂ ∈ domain.filter (λ x => m₂ x && n x) := by
-    rw [sharvyIota_eq_some_iff.mp h₂]; simp
-  have h1 := (List.mem_filter.mp h1mem).2
-  have h2 := (List.mem_filter.mp h2mem).2
-  rw [Bool.and_eq_true] at h1 h2
-  exact hDisj j₁ ⟨h1.1, hEq ▸ h2.1⟩
-
-end Sharvy
-
-/-- Membership in the subkind of TWO of a number system. -/
-def inSubkind (s : MathSystem) (t : TwoToken) : Bool := decide (t.system = s)
-
-/-- The board of section 1: one token of two per number system. -/
-def board : List TwoToken := [⟨.nat, 0⟩, ⟨.int, 0⟩, ⟨.rat, 0⟩, ⟨.real, 0⟩]
-
-theorem closeAppositive_board (s : MathSystem) :
-    closeAppositive board (inSubkind s) (λ _ => true) = some ⟨s, 0⟩ := by
-  cases s <;> rfl
-
-/-- Close appositives with the modifiers of two number systems refer to distinct subkinds, so (20a)
-and (20b) are jointly coherent (section 5.2). -/
-theorem identification_problem_resolved {s₁ s₂ : MathSystem} (h : s₁ ≠ s₂) :
-    ∃ j₁ j₂, closeAppositive board (inSubkind s₁) (λ _ => true) = some j₁ ∧
-      closeAppositive board (inSubkind s₂) (λ _ => true) = some j₂ ∧ j₁ ≠ j₂ :=
-  ⟨_, _, closeAppositive_board s₁, closeAppositive_board s₂,
-    closeAppositive_ne_of_disjoint (λ t ⟨h₁, h₂⟩ => h (by
-      simp only [inSubkind, decide_eq_true_eq] at h₁ h₂; exact h₁.symm.trans h₂))
-      (closeAppositive_board s₁) (closeAppositive_board s₂)⟩
-
-/-! ### Colour words, section 6
-
-The kind RED has the shades of the paint swatches as subkinds, and the colour word is an
-atomic predicate over them and their tokens (97). -/
-
-/-- The shades of red on the swatches. -/
-inductive Shade
-  | crimson | maroon | scarlet
+/-- The numbers a token on the board may represent. -/
+inductive Value
+  | one | two
   deriving DecidableEq
 
-/-- A colour token, a swatch of a shade. -/
-structure RedToken where
-  shade : Shade
-  idx : ℕ
-  deriving DecidableEq
-
-/-- The kind formation for RED: tokens are equivalent when they are of the same shade. -/
-abbrev kfRed : Setoid RedToken := Setoid.ker RedToken.shade
-
-/-- Tokens of distinct shades instantiate distinct subkinds of RED, the taxonomy under (94). -/
-theorem red_subkinds_distinct {t₁ t₂ : RedToken} (h : t₁.shade ≠ t₂.shade) :
-    (⟦t₁⟧ : Quotient kfRed) ≠ ⟦t₂⟧ :=
-  fun e ↦ h (Quotient.exact e)
+-- (81), (82), `snyder2026_1e`
+theorem subkind_mem_iota_lex_inter_system_board (s : MathSystem) :
+    (Atom.subkind (s, Value.two) : Atom ((MathSystem × Value) × ℕ) (MathSystem × Value) Value) ∈
+      iota (lex Prod.fst Prod.snd Value.two ∩ Atom.subkind '' (Prod.fst ⁻¹' {s})) :=
+  subkind_mem_iota_lex_inter_system Prod.fst Prod.snd Prod.fst (fun _ _ h ↦ h) (s, Value.two)
 
 /-! ### The examples -/
 

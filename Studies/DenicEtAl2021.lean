@@ -206,18 +206,18 @@ variable {ι ε : Type*}
 
 /-- On the wide-scope reading of *some N* in an environment `f`, (9b) and (27), some member of `N`
 is such that `f` holds of seeing it. -/
-def wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) (N : Set ε) : Prop :=
-  ∃ y ∈ N, f (saw y)
+def wideSome (f : Set ι → Prop) (saw : ε → ι → Prop) (N : Set ε) : Prop :=
+  ∃ y ∈ N, f {i | saw y i}
 
 /-- On its wide-scope reading *some* sits in an upward-entailing position, whatever the
 environment, (9) ((27)). -/
-theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) :
+theorem monotone_wideSome (f : Set ι → Prop) (saw : ε → ι → Prop) :
     Monotone (wideSome f saw) := fun _ _ hN ⟨y, hy, h⟩ ↦ ⟨y, hN hy, h⟩
 
 -- (27), (26a), (26b)
-theorem narrow_of_wideSome {f : (ι → Prop) → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
+theorem narrow_of_wideSome {f : Set ι → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
     {N N' : Set ε} (hN : N ⊆ N') (h : wideSome f saw N) :
-    f (⋃ x ∈ N', saw x) :=
+    f (⋃ x ∈ N', {i | saw x i}) :=
   let ⟨_, hy, hf'⟩ := h; hf (fun _ hx ↦ Set.mem_biUnion (hN hy) hx) hf'
 
 end WideScope

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.NonAssoc.PreLie.OudomGuin
 public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCutDuality
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
@@ -13,25 +14,21 @@ public import Mathlib.Algebra.Lie.UniversalEnveloping
 /-!
 # The Grossman–Larson algebra
 
-This file proves that the Grossman–Larson product is associative, makes `GrossmanLarson R α` an
-`R`-algebra, and maps the pre-Lie algebra of trees into it as a Lie algebra.
-
-## Main results
-
-* `UnorderedTree.productMultiset_assoc`: the product is associative on basis forests.
-* `GrossmanLarson.product_assoc`: `(x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)`.
-* `GrossmanLarson.instSemiring`, `GrossmanLarson.instAlgebra`, `GrossmanLarson.instRing`.
-* `GrossmanLarson.ιLie`: the one-tree forests as a map of Lie algebras from the commutator of the
-  grafting product to the commutator of the Grossman–Larson product. It extends to the map
-  `UniversalEnvelopingAlgebra.lift R ιLie` from the enveloping algebra.
+The Grossman–Larson product is [associative](##GrossmanLarson.product_assoc), which makes
+`GrossmanLarson R α` an `R`-algebra, and the one-tree forests are
+[a map of Lie algebras](##GrossmanLarson.ιLie) from the commutator of the grafting product to the
+commutator of the Grossman–Larson product; it extends to the map
+`UniversalEnvelopingAlgebra.lift R ιLie` from the enveloping algebra. The product is
+[the product of Oudom and Guin](##GrossmanLarson.product_eq_oudomGuin) on the symmetric algebra
+of the pre-Lie algebra of trees.
 
 ## Implementation notes
 
-Associativity is proved over `ℤ` by duality: the product is the transpose of the Connes–Kreimer
+Associativity is proved over `ℕ` by duality: the product is the transpose of the Connes–Kreimer
 coproduct under the symmetry-weighted pairing (`Coproduct/AdmissibleCutDuality.lean`), which is
-coassociative, and over `ℤ` the pairing separates points. The structure constants are natural
-numbers, so the `ℤ` case is an identity of multisets of forests, which gives associativity over
-every commutative semiring.
+coassociative, and over `ℕ` an element is determined by its pairings. The structure constants are
+natural numbers, so the `ℕ` case is an identity of multisets of forests, which gives associativity
+over every commutative semiring.
 
 ## TODO
 
@@ -55,9 +52,9 @@ open ConnesKreimer
 
 variable {α : Type*}
 
-private theorem product_assoc_int [DecidableEq α] (x y z : ConnesKreimer ℤ (UnorderedTree α)) :
+private theorem product_assoc_nat [DecidableEq α] (x y z : ConnesKreimer ℕ (UnorderedTree α)) :
     product (product x y) z = product x (product y z) :=
-  ext_pairing_right fun w ↦ congr($(pairing_product_assoc x y z) w)
+  pairing_injective (pairing_product_assoc x y z)
 
 variable {R : Type*} [CommSemiring R]
 
@@ -85,10 +82,10 @@ theorem productMultiset_assoc (F G H : Multiset (UnorderedTree α)) :
     (productMultiset F G).bind (productMultiset · H) =
       (productMultiset G H).bind (productMultiset F ·) := by
   classical
-  refine ConnesKreimer.sum_map_of'_injective (R := ℤ) ?_
+  refine ConnesKreimer.sum_map_of'_injective (R := ℕ) ?_
   simp only
   rw [← GrossmanLarson.product_product_of', ← GrossmanLarson.product_of'_product,
-    GrossmanLarson.product_assoc_int]
+    GrossmanLarson.product_assoc_nat]
 
 end UnorderedTree
 
@@ -140,6 +137,78 @@ noncomputable instance instAddCommGroup : AddCommGroup (GrossmanLarson R α) :=
 
 noncomputable instance instRing : Ring (GrossmanLarson R α) where
 
+/-! ### The Grossman–Larson product as the product of Oudom and Guin -/
+
+/-- Grafting one tree onto a forest is the derivation of the forests that grafts it onto one
+tree. -/
+theorem insertion_ofTree (y : ConnesKreimer R (UnorderedTree α)) (X : UnorderedTree α) :
+    insertion y (ofTree X) =
+      OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) y := by
+  refine LinearMap.congr_fun (lhom_ext' (f := insertion.flip (ofTree X))
+    (g := (OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) :
+      ConnesKreimer R (UnorderedTree α) →ₗ[R] _)) fun F ↦ ?_) y
+  rw [LinearMap.flip_apply, Derivation.coeFn_coe, ← of'_singleton, insertion_of'_of']
+  induction F using Multiset.induction_on with
+  | empty =>
+    rw [insertionMultiset_zero_left_of_ne_zero _ (Multiset.singleton_ne_zero X), of'_zero,
+      Derivation.map_one_eq_zero]
+    rfl
+  | cons T F ih =>
+    rw [insertionMultiset_cons_singleton, Multiset.map_add, Multiset.sum_add, Multiset.map_map,
+      Multiset.map_map, of'_cons, Derivation.leibniz, ← ih, OudomGuin.derivation_ofTree,
+      ChapotonLivernet.basis_apply, ChapotonLivernet.of_mul_of, map_multiset_sum,
+      Multiset.map_map, smul_eq_mul, smul_eq_mul, ← Multiset.sum_map_mul_left,
+      ← Multiset.sum_map_mul_left, add_comm]
+    refine congrArg₂ _ (congrArg _ (Multiset.map_congr rfl fun G _ ↦ ?_))
+      (congrArg _ (Multiset.map_congr rfl fun T' _ ↦ ?_))
+    · rw [Function.comp_apply, of'_cons]
+    · rw [Function.comp_apply, Function.comp_apply, ← ChapotonLivernet.basis_apply,
+        OudomGuin.incl_basis, of'_cons, mul_comm]
+
+/-- The Grossman–Larson product is the product of Oudom and Guin on the symmetric algebra of the
+pre-Lie algebra of rooted trees. -/
+theorem product_eq_oudomGuin :
+    (product : LinearMap.BilinMap R (ConnesKreimer R (UnorderedTree α)) _) =
+      OudomGuin.product (ChapotonLivernet.basis R α) := by
+  refine LinearMap.ext fun x ↦ ?_
+  have hstep (w : ConnesKreimer R (UnorderedTree α)) (X : UnorderedTree α) :
+      product w (ofTree X) = OudomGuin.product (ChapotonLivernet.basis R α) w (ofTree X) := by
+    rw [OudomGuin.product_ofTree, ChapotonLivernet.basis_apply, ← insertion_ofTree,
+      product_apply, comulPrim_ofTree]
+    simp [mul_comm, add_comm]
+  suffices h : ∀ n (E : Forest (UnorderedTree α)), Multiset.card E = n →
+      product x (of' E) = OudomGuin.product (ChapotonLivernet.basis R α) x (of' E) from
+    lhom_ext' fun E ↦ h _ E rfl
+  intro n
+  induction n with
+  | zero =>
+    intro E hE
+    obtain rfl := Multiset.card_eq_zero.mp hE
+    simp [product_one_right]
+  | succ n ih =>
+    intro E hE
+    obtain ⟨X, hX⟩ := (Multiset.card_pos_iff_exists_mem (s := E)).mp (by omega)
+    obtain ⟨E, rfl⟩ := Multiset.exists_cons_of_mem hX
+    have hE' : Multiset.card E = n := by simpa using hE
+    have hD := OudomGuin.eqOn_derivation_of' (ChapotonLivernet.basis R α) ih (.of X) E hE'
+    have hGL : product x (of' E * ofTree X) =
+        product (product x (of' E)) (ofTree X) -
+          product x (OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) (of' E)) := by
+      rw [product_assoc, eq_sub_iff_add_eq, ← map_add, ← insertion_ofTree, product_apply (of' E),
+        comulPrim_ofTree]
+      simp [mul_comm, add_comm]
+    rw [of'_cons, mul_comm, hGL, OudomGuin.product_mul_ofTree, ChapotonLivernet.basis_apply,
+      ih E hE', hD, hstep]
+
+/-- The one-tree forests are the pre-Lie algebra of trees in its symmetric algebra. -/
+theorem toConnesKreimer_ι (x : ChapotonLivernet R α) :
+    (ι x).toConnesKreimer = OudomGuin.incl (ChapotonLivernet.basis R α) x := by
+  have h : linearEquiv.toLinearMap ∘ₗ ι = OudomGuin.incl (ChapotonLivernet.basis R α) :=
+    (ChapotonLivernet.basis R α).ext fun T ↦ by
+      rw [OudomGuin.incl_basis, LinearMap.comp_apply, ChapotonLivernet.basis_apply, ι_of]
+      rfl
+  exact LinearMap.congr_fun h x
+
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 /-- The one-tree forests as a map of Lie algebras: the commutator of two trees in the
@@ -148,10 +217,9 @@ noncomputable def ιLie : ChapotonLivernet R α →ₗ⁅R⁆ GrossmanLarson R �
   { ι with
     map_lie' := fun {x y} ↦ ext <| by
       change (ι (x * y - y * x)).toConnesKreimer = (ι x * ι y - ι y * ι x).toConnesKreimer
-      rw [map_sub, toConnesKreimer_sub, toConnesKreimer_sub, toConnesKreimer_ι_mul,
-        toConnesKreimer_ι_mul, toConnesKreimer_ι_mul_ι, toConnesKreimer_ι_mul_ι,
-        mul_comm (ι y).toConnesKreimer]
-      abel }
+      rw [toConnesKreimer_sub, toConnesKreimer_mul, toConnesKreimer_mul, toConnesKreimer_ι,
+        toConnesKreimer_ι, toConnesKreimer_ι, product_eq_oudomGuin,
+        OudomGuin.product_incl_incl_sub] }
 
 @[simp] theorem ιLie_apply (x : ChapotonLivernet R α) : ιLie x = ι x := rfl
 

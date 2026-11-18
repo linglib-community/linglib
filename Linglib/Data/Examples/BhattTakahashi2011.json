@@ -9,7 +9,7 @@
     "translation": "More people introduced him to Mary than to John's mother.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -28,7 +28,7 @@
     "translation": "Mary introduced him to more people than John's mother.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -47,7 +47,7 @@
     "translation": "More people talked to him about Sally than about Peter's sister.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -66,7 +66,7 @@
     "translation": "More people talked to Sally about him than to Peter's sister.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -85,7 +85,7 @@
     "translation": "More people expect him to overtake Sally than Peter's sister.",
     "context": "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -104,7 +104,7 @@
     "translation": "More people expect Sally to overtake him than Peter's sister.",
     "context": "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -128,7 +128,7 @@
     "translation": "Atif showed Mohan's sister's picture to him more times than Ravi's sister's picture.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "binding"],
@@ -147,7 +147,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "scope"],
@@ -167,7 +167,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "scope"],
@@ -191,7 +191,7 @@
     "translation": "More people read every syntax paper than every semantics paper.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "scope"],

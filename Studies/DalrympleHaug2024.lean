@@ -209,7 +209,7 @@ theorem wide_of_individual {A : Analysis} {a : Antecedent} (h : a.grain = some .
 /-- The Hungarian complement subject, a null pronoun whose number is the agreement on its verb,
     Rákosi's bound-variable construction ((10)), his (17). -/
 def hungarian : Antecedent :=
-  .ofNumber <| (Rakosi2020.verbAgr? Rakosi2020.Examples.ex_17).map Prod.snd
+  .ofNumber <| Rakosi2020.verbNumber? Rakosi2020.Examples.ex_17
 
 -- (10)
 theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=

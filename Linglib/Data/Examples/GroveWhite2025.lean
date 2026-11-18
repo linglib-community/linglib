@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "none"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "negation"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
@@ -50,7 +50,7 @@ def ex_1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "question"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
@@ -63,7 +63,7 @@ def ex_1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "modal"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
@@ -76,7 +76,7 @@ def ex_1e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "conditional"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
@@ -89,7 +89,7 @@ def ex_17_belief : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "be annoyed"), ("operator", "question"), ("inference", "(18a) Jo believed that Mo left."), ("projects", "true")] }
 
@@ -102,7 +102,7 @@ def ex_17_truth : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "be annoyed"), ("operator", "question"), ("inference", "(18b) Mo left."), ("projects", "true")] }
 
@@ -115,7 +115,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "find out"), ("operator", "negation"), ("inference", "Harry is having a graduation party."), ("projects", "false")] }
 

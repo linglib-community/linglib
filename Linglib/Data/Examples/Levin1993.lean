@@ -24,7 +24,7 @@ def ci_break : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The window broke.", .acceptable)]
+    contrasts := [("The window broke.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "causativeInchoative")] }
 
@@ -37,7 +37,7 @@ def mid_break : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "middle")] }
 
@@ -50,7 +50,7 @@ def con_break : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "conative")] }
 
@@ -63,7 +63,7 @@ def bppa_break : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Janet broke Bill's finger.", .acceptable)]
+    contrasts := [("Janet broke Bill's finger.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "bodyPartPossessorAscension")] }
 
@@ -76,7 +76,7 @@ def ci_cut : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Margaret cut the string.", .acceptable)]
+    contrasts := [("Margaret cut the string.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "causativeInchoative")] }
 
@@ -89,7 +89,7 @@ def mid_cut : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "middle")] }
 
@@ -102,7 +102,7 @@ def con_cut : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "conative")] }
 
@@ -115,7 +115,7 @@ def bppa_cut : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Margaret cut Bill's arm.", .acceptable)]
+    contrasts := [("Margaret cut Bill's arm.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "bodyPartPossessorAscension")] }
 
@@ -128,7 +128,7 @@ def ci_hit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Carla hit the door.", .acceptable)]
+    contrasts := [("Carla hit the door.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "causativeInchoative")] }
 
@@ -141,7 +141,7 @@ def mid_hit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "middle")] }
 
@@ -154,7 +154,7 @@ def con_hit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "conative")] }
 
@@ -167,7 +167,7 @@ def bppa_hit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Carla hit Bill's back.", .acceptable)]
+    contrasts := [("Carla hit Bill's back.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "bodyPartPossessorAscension")] }
 
@@ -180,7 +180,7 @@ def ci_touch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Terry touched the cat.", .acceptable)]
+    contrasts := [("Terry touched the cat.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "causativeInchoative")] }
 
@@ -193,7 +193,7 @@ def mid_touch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "middle")] }
 
@@ -206,7 +206,7 @@ def con_touch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "conative")] }
 
@@ -219,7 +219,7 @@ def bppa_touch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Terry touched Bill's shoulder.", .acceptable)]
+    contrasts := [("Terry touched Bill's shoulder.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "bodyPartPossessorAscension")] }
 
@@ -232,7 +232,7 @@ def con_push : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("I pushed the table.", .acceptable)]
+    contrasts := [("I pushed the table.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "push"), ("levin_class", "12"), ("alternation", "conative")] }
 
@@ -245,7 +245,7 @@ def loc_spray : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Jack sprayed the wall with paint.", .acceptable)]
+    contrasts := [("Jack sprayed the wall with paint.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "spray"), ("levin_class", "9.7"), ("alternation", "locative")] }
 
@@ -258,7 +258,7 @@ def loc_load : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Jessica loaded the wagon with boxes.", .acceptable)]
+    contrasts := [("Jessica loaded the wagon with boxes.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "load"), ("levin_class", "9.7"), ("alternation", "locative")] }
 
@@ -271,7 +271,7 @@ def dat_send : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Nora sent Peter the book.", .acceptable)]
+    contrasts := [("Nora sent Peter the book.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "send"), ("levin_class", "11.1"), ("alternation", "dative")] }
 
@@ -284,7 +284,7 @@ def ben_carve : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Martha carved the baby a toy.", .acceptable)]
+    contrasts := [("Martha carved the baby a toy.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "carve"), ("levin_class", "26.1"), ("alternation", "benefactive")] }
 
@@ -297,7 +297,7 @@ def ss_radiate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The sun radiates heat.", .acceptable)]
+    contrasts := [("The sun radiates heat.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "radiate"), ("levin_class", "43.4"), ("alternation", "substanceSource")] }
 
@@ -310,7 +310,7 @@ def mp_carve : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Martha carved the piece of wood into a toy.", .acceptable)]
+    contrasts := [("Martha carved the piece of wood into a toy.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "carve"), ("levin_class", "26.1"), ("alternation", "materialProduct")] }
 
@@ -323,7 +323,7 @@ def uo_eat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Mike ate.", .acceptable)]
+    contrasts := [("Mike ate.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "eat"), ("levin_class", "39.1"), ("alternation", "unspecifiedObject")] }
 
@@ -336,7 +336,7 @@ def uo_devour : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Cynthia devoured the pizza.", .acceptable)]
+    contrasts := [("Cynthia devoured the pizza.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "devour"), ("levin_class", "39.4"), ("alternation", "unspecifiedObject")] }
 
@@ -349,7 +349,7 @@ def uro_meet : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Anne and Cathy met.", .acceptable)]
+    contrasts := [("Anne and Cathy met.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "meet"), ("levin_class", "36.3"), ("alternation", "understoodReciprocalObject")] }
 
@@ -362,7 +362,7 @@ def ti_develop : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("There developed a problem.", .acceptable)]
+    contrasts := [("There developed a problem.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "develop"), ("levin_class", "48.1.1"), ("alternation", "thereInsertion")] }
 
@@ -375,7 +375,7 @@ def ti_appear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("There appeared a ship on the horizon.", .acceptable)]
+    contrasts := [("There appeared a ship on the horizon.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "appear"), ("levin_class", "48.1.1"), ("alternation", "thereInsertion")] }
 
@@ -388,7 +388,7 @@ def li_live : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("In the woods lives an old woman.", .acceptable)]
+    contrasts := [("In the woods lives an old woman.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "live"), ("levin_class", "47.1"), ("alternation", "locativeInversion")] }
 
@@ -401,7 +401,7 @@ def is_break : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The hammer broke the window.", .acceptable)]
+    contrasts := [("The hammer broke the window.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "instrumentSubject")] }
 
@@ -414,7 +414,7 @@ def is_eat : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Doug ate the ice cream with a spoon.", .acceptable)]
+    contrasts := [("Doug ate the ice cream with a spoon.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "eat"), ("levin_class", "39.1"), ("alternation", "instrumentSubject")] }
 
@@ -427,7 +427,7 @@ def is_murder : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("Brutus murdered Julius Caesar with a dagger.", .acceptable)]
+    contrasts := [("Brutus murdered Julius Caesar with a dagger.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "murder"), ("levin_class", "42.1"), ("alternation", "instrumentSubject")] }
 
@@ -440,7 +440,7 @@ def is_kill : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The exterminators killed the insects with DDT.", .acceptable)]
+    contrasts := [("The exterminators killed the insects with DDT.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "kill"), ("levin_class", "42.1"), ("alternation", "instrumentSubject")] }
 
@@ -453,7 +453,7 @@ def ia_run : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The rats ran through the maze.", .acceptable)]
+    contrasts := [("The rats ran through the maze.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "run"), ("levin_class", "51.3.2"), ("alternation", "inducedAction")] }
 
@@ -466,7 +466,7 @@ def ia_appear : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("A rabbit appeared out of the magician's hat.", .acceptable)]
+    contrasts := [("A rabbit appeared out of the magician's hat.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "appear"), ("levin_class", "48.1.1"), ("alternation", "inducedAction")] }
 
@@ -479,7 +479,7 @@ def ubpo_wave : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The departing passenger waved at the crowd.", .acceptable)]
+    contrasts := [("The departing passenger waved at the crowd.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "wave"), ("levin_class", "40.3.1"), ("alternation", "understoodBodyPartObject")] }
 
@@ -492,7 +492,7 @@ def tt_turn : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The witch turned him from a prince into a frog.", .acceptable)]
+    contrasts := [("The witch turned him from a prince into a frog.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "turn"), ("levin_class", "26.6"), ("alternation", "totalTransformation")] }
 
@@ -505,7 +505,7 @@ def co_laugh : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Paul laughed.", .acceptable)]
+    contrasts := [("Paul laughed.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "laugh"), ("levin_class", "40.2"), ("alternation", "cognateObject")] }
 
@@ -518,7 +518,7 @@ def co_grunt : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := [("Heather grunted.", .acceptable)]
+    contrasts := [("Heather grunted.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "grunt"), ("levin_class", "37.3"), ("alternation", "cognateObject")] }
 
@@ -531,7 +531,7 @@ def co_jump : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "jump"), ("levin_class", "51.3.2"), ("alternation", "cognateObject")] }
 
@@ -544,7 +544,7 @@ def vp_measure : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("The package weighed ten pounds.", .acceptable)]
+    contrasts := [("The package weighed ten pounds.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "weigh"), ("levin_class", "54.1"), ("alternation", "verbalPassive")] }
 
@@ -557,7 +557,7 @@ def pp_sleep : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("George Washington slept in this bed.", .acceptable)]
+    contrasts := [("George Washington slept in this bed.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "sleep"), ("levin_class", "40.4"), ("alternation", "prepositionalPassive")] }
 
@@ -570,7 +570,7 @@ def sw_swarm : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The garden is swarming with bees.", .acceptable)]
+    contrasts := [("The garden is swarming with bees.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "swarm"), ("levin_class", "47.5.1"), ("alternation", "swarm")] }
 

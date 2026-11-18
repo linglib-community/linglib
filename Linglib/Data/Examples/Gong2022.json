@@ -33,7 +33,7 @@
     "translation": "(The) teacher gave Čemeg's book (to) her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -90,7 +90,7 @@
     "translation": "Čemeg's book, (the) teacher gave (to) her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -143,7 +143,7 @@
     "translation": "Čemeg's book, she tore.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -200,7 +200,7 @@
     "translation": "Čemeg's book, she gave to Bat.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -269,7 +269,7 @@
     "translation": "I said to him that Bat's mother is a good person.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -334,7 +334,7 @@
     "translation": "Baatar's article, he said was very good.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -399,7 +399,7 @@
     "translation": "Bat's essay, he said that the teacher read.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -468,7 +468,7 @@
     "translation": "Bat's essay, Zaya said to him that the teacher read.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -537,7 +537,7 @@
     "translation": "I, Bat's mother, said to him that is a good person. (= I said to him that Bat's mother is a good person.)",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -606,7 +606,7 @@
     "translation": "Zaya, Bat's essay, said to him that her teacher read. (= Zaya said to him that her teacher read Bat's essay.)",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -671,7 +671,7 @@
     "translation": "Bat's medicine, the doctor became angry that he did not drink.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -728,7 +728,7 @@
     "translation": "(To) Čemeg's mother, she gave (a) book/books.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -785,7 +785,7 @@
     "translation": "Bat's book was given to him by the teacher.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -858,7 +858,7 @@
     "translation": "Zorig's grandmother, I am thinking that he had been helping.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -951,7 +951,7 @@
     "translation": "Against Bat's addiction, the doctor said that he has been fighting for years.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1040,7 +1040,7 @@
     "translation": "Against Zorig's disease, Zaya said to him that the doctors will do their best to fight.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1101,7 +1101,7 @@
     "translation": "The doctor became angry that Bat did not drink his medicine.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1158,7 +1158,7 @@
     "translation": "I believe that Čang is alive.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1211,7 +1211,7 @@
     "translation": "It is important that Bat does his homework.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1268,7 +1268,7 @@
     "translation": "Saruul became angry that Jon bought a new car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1329,7 +1329,7 @@
     "translation": "It seemed to Saruul that Jon bought a new car.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

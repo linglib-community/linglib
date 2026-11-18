@@ -16,7 +16,7 @@ followed by `FeatureBundle.agreement` is [unification of agreement
 bundles](##Minimalist.FeatureBundle.map_agreement_valueAt). Agree with a goal that has no value at
 the dimension leaves the probe unchanged, so Agree can fail without causing a crash
 ([preminger-2014]). The goal a probe agrees with is found by search
-(`Minimalist.LinearizedSyntacticObject.goals`).
+(`Minimalist.PlanarSyntacticObject.goals`).
 
 The items of a derivation carry their bundles in a `FeatureState`, and Agree over it is the one
 Agree of `Probe/Agree.lean`, `Probe.agree`, with the probe of an item at a dimension and valuation

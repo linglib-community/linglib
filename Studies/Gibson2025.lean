@@ -36,13 +36,6 @@ raw-count dominance over atlas rows is not a theorem of the theory. The full mir
 costs the same as the English order (`Graph.totalLength_mirror`); the book's head-final orders
 cost more only because they keep subjects before their verbs.
 
-## Errata
-
-* The book cites [dryer-1992] among the sources of the head-direction generalization, but Dryer
-  states the head-dependent account only to argue against it, and proposes in its place that the
-  correlated pairs are a nonphrasal and a phrasal category, which is where `single_word_free`
-  points.
-
 ## References
 
 * [gibson-2025]

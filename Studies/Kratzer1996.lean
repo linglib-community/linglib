@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
-public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
+public import Linglib.Syntax.Minimalist.SyntacticObject.Constituency
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Denotation
 public import Mathlib.Data.PFun
 
@@ -44,11 +44,6 @@ one](##Kratzer1996.holder_owns_defined), defined at the states.
 * With total predicates Event Identification is total, and an agent head with a stative verb
   phrase gives the empty relation (`agent_stative_eq_bot`).
 
-## Errata
-
-* (26) gives *Holder* as $\lambda x_e \lambda s_s[\mathrm{holder}(x)(e)]$, binding $s$ and using
-  $e$. The study reads $\mathrm{holder}(x)(s)$.
-
 ## References
 
 * [kratzer-1996]
@@ -82,23 +77,23 @@ def mittie : LexicalItem.Token := ⟨.of .D [] "Mittie", 204⟩
 def theDog : LexicalItem.Token := ⟨.of .D [] "the dog", 205⟩
 
 /-- (21): `[VoiceP Mittie [Voice′ Agent [VP the dog feed]]]`. -/
-def tree : LinearizedSyntacticObject := mittie * (agentVoice * (theDog * feed))
+def tree : PlanarSyntacticObject := mittie * (agentVoice * (theDog * feed))
 
 /-- (25): the Voice′ of *Mittie owns the dog*, the Voice head `h` merged with *own the dog*. -/
-def ownsBar (h : LexicalItem.Token) : LinearizedSyntacticObject := h * (theDog * own)
+def ownsBar (h : LexicalItem.Token) : PlanarSyntacticObject := h * (theDog * own)
 
 section Syntax
 
 open SyntacticObject
 
 theorem mittie_cCommands_theDog :
-    CCommands tree (leaf mittie) (leaf theDog) ∧
-      ¬ CCommands tree (leaf theDog) (leaf mittie) := by
+    CCommands tree.toSyntacticObject (leaf mittie) (leaf theDog) ∧
+      ¬ CCommands tree.toSyntacticObject (leaf theDog) (leaf mittie) := by
   constructor <;> decide
 
 theorem voice_between :
-    CCommands tree (leaf agentVoice) (leaf feed) ∧
-      CCommands tree (leaf mittie) (leaf agentVoice) := by
+    CCommands tree.toSyntacticObject (leaf agentVoice) (leaf feed) ∧
+      CCommands tree.toSyntacticObject (leaf mittie) (leaf agentVoice) := by
   constructor <;> decide
 
 end Syntax
@@ -138,9 +133,9 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 
 /-- The meanings of a syntactic object by Functional Application, Predicate Modification and
 Event Identification. -/
-def meanings (t : LinearizedSyntacticObject) :
+def meanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  (t.toTree (·.id)).values (typeDriven Voice.grammar)
+  (t.toTree traceIndex).values (typeDriven Voice.grammar)
     (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
     (Word.val ρ feedRel m d) (entries lexicon)
 
@@ -235,9 +230,9 @@ def PWord.val : {a : Ty Base} → PWord a → a.Domain Entity Unit { eventuality
 
 /-- The meanings of a syntactic object by Functional Application and Kratzer's Event
 Identification, over partial predicates. -/
-def partialMeanings (t : LinearizedSyntacticObject) :
+def partialMeanings (t : PlanarSyntacticObject) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  (t.toTree (·.id)).values (typeDriven partialGrammar)
+  (t.toTree traceIndex).values (typeDriven partialGrammar)
     (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
     (PWord.val IsAction IsState ρ ownRel d) (entries partialLexicon)
 

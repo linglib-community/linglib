@@ -13,7 +13,7 @@
     "translation": "The farmer who used no pesticide was ever amazed by the crop yield.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -39,7 +39,7 @@
     "translation": "No farmer who used the pesticide was ever amazed by the crop yield.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -65,7 +65,7 @@
     "translation": "The farmer who used the pesticide was ever amazed by the crop yield.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -91,7 +91,7 @@
     "translation": "The farmer who used no pesticide was really amazed by the crop yield.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -117,7 +117,7 @@
     "translation": "No farmer who used the pesticide was really amazed by the crop yield.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -143,7 +143,7 @@
     "translation": "The farmer who used the pesticide was really amazed by the crop yield.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -169,7 +169,7 @@
     "translation": "The singer whom no label supported was ever successful in the music business.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -195,7 +195,7 @@
     "translation": "No singer whom the label supported was ever successful in the music business.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -221,7 +221,7 @@
     "translation": "The singer whom the label supported was ever successful in the music business.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -247,7 +247,7 @@
     "translation": "The singer whom no label supported was really successful in the music business.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -273,7 +273,7 @@
     "translation": "No singer whom the label supported was really successful in the music business.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -299,7 +299,7 @@
     "translation": "The singer whom the label supported was really successful in the music business.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],

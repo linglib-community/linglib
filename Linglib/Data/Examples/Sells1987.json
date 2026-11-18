@@ -12,7 +12,7 @@
     "translation": "Kofi_i said that he_i left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "yè"],
@@ -35,7 +35,7 @@
     "translation": "Ana_i was happy that she_i bore a child.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "yè"],
@@ -58,7 +58,7 @@
     "translation": "He_i said that he_i lacked ability.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "sig"],
@@ -78,7 +78,7 @@
     "translation": "Taroo_i said that Yosiko loved self_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -98,7 +98,7 @@
     "translation": "That Yosiko ignored self_i distressed Taroo_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -123,7 +123,7 @@
     "translation": "Takasi_i told Taroo that that fool Yosiko was following him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"},
       {"name": "external speaker", "judgment": "marginal"}
@@ -151,7 +151,7 @@
     "translation": "Taroo heard from Takasi_i that that fool Yosiko was following him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"},
       {"name": "external speaker", "judgment": "acceptable"}
@@ -180,7 +180,7 @@
     "translation": "That that fool Yosiko was following her_i drove Mitiko_i to desperation.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "unacceptable"},
       {"name": "external speaker", "judgment": "acceptable"}
@@ -209,7 +209,7 @@
     "translation": "Taroo_i got wet because that fool Yosiko spilled water on him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "unacceptable"},
       {"name": "external speaker", "judgment": "acceptable"}
@@ -237,7 +237,7 @@
     "translation": "Takasi_i said that Yosiko was mysteriously following him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -263,7 +263,7 @@
     "translation": "Taroo heard from Takasi_i that Yosiko was mysteriously following him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -289,7 +289,7 @@
     "translation": "That Yosiko is mysteriously following him_i bothers Takasi_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -315,7 +315,7 @@
     "translation": "Takasi_i doesn't mind though Yosiko is mysteriously following him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "unacceptable"},
       {"name": "external speaker", "judgment": "acceptable"}
@@ -342,7 +342,7 @@
     "translation": "Takasi_i told Taroo that his beloved Yosiko hated him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -369,7 +369,7 @@
     "translation": "Taroo heard from Takasi_i that his beloved Yosiko hated him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -396,7 +396,7 @@
     "translation": "That her beloved Yosiko hated her_i drove Mitiko_i to desperation.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -424,7 +424,7 @@
     "translation": "Takasi_i got wet because his beloved Yosiko spilled water on him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "internal protagonist", "judgment": "acceptable"}
     ],
@@ -451,7 +451,7 @@
     "translation": "Takasi_i got wet because Yosiko spilled water on him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -475,7 +475,7 @@
     "translation": "Takasi_i got wet when Yosiko spilled water on him_i.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -500,7 +500,7 @@
     "translation": "Oedipus_i now lives happily with his children in the house where Jocasta bore him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -524,7 +524,7 @@
     "translation": "Takasi_i didn't tell Taroo that Yosiko hated him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -548,7 +548,7 @@
     "translation": "Taroo didn't hear from Takasi_i that Yosiko hated him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -572,7 +572,7 @@
     "translation": "That Yosiko hated her_i didn't bother Mitiko_i at all.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -596,7 +596,7 @@
     "translation": "Takasi_i was not sad because Yosiko came to visit him_i.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "zibun"],
@@ -619,7 +619,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "sig"],
@@ -643,7 +643,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "sig"],

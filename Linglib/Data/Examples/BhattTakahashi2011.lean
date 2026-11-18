@@ -24,7 +24,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -37,7 +37,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
@@ -50,7 +50,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -63,7 +63,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
@@ -76,7 +76,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -89,7 +89,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := "Peter, Peter's sister, and Sally are taking part in a race; people are betting on their prospects."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
@@ -100,9 +100,11 @@ def ex35 : Datum :=
     language := "hind1269"
     primaryText := "Atif-ne Ravi-kii behen-kii foto-se us-ko Mohan-kii behen-kii foto zyaadaa baar dikhaa-ii."
     glossedTokens := [("Atif-ne", "Atif-ERG"), ("Ravi-kii", "Ravi-GEN"), ("behen-kii", "sister-GEN"), ("foto-se", "picture-than"), ("us-ko", "he-DAT"), ("Mohan-kii", "Mohan-GEN"), ("behen-kii", "sister-GEN"), ("foto", "picture"), ("zyaadaa", "more"), ("baar", "times"), ("dikhaa-ii", "show-PFV.F")]
+    glossedWords := [⟨['A', 't', 'i', 'f', '-', 'n', 'e'], ['A', 't', 'i', 'f', '-', 'E', 'R', 'G'], [⟨['A', 't', 'i', 'f'], ['A', 't', 'i', 'f'], none⟩, ⟨['n', 'e'], ['E', 'R', 'G'], some '-'⟩]⟩, ⟨['R', 'a', 'v', 'i', '-', 'k', 'i', 'i'], ['R', 'a', 'v', 'i', '-', 'G', 'E', 'N'], [⟨['R', 'a', 'v', 'i'], ['R', 'a', 'v', 'i'], none⟩, ⟨['k', 'i', 'i'], ['G', 'E', 'N'], some '-'⟩]⟩, ⟨['b', 'e', 'h', 'e', 'n', '-', 'k', 'i', 'i'], ['s', 'i', 's', 't', 'e', 'r', '-', 'G', 'E', 'N'], [⟨['b', 'e', 'h', 'e', 'n'], ['s', 'i', 's', 't', 'e', 'r'], none⟩, ⟨['k', 'i', 'i'], ['G', 'E', 'N'], some '-'⟩]⟩, ⟨['f', 'o', 't', 'o', '-', 's', 'e'], ['p', 'i', 'c', 't', 'u', 'r', 'e', '-', 't', 'h', 'a', 'n'], [⟨['f', 'o', 't', 'o'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], none⟩, ⟨['s', 'e'], ['t', 'h', 'a', 'n'], some '-'⟩]⟩, ⟨['u', 's', '-', 'k', 'o'], ['h', 'e', '-', 'D', 'A', 'T'], [⟨['u', 's'], ['h', 'e'], none⟩, ⟨['k', 'o'], ['D', 'A', 'T'], some '-'⟩]⟩, ⟨['M', 'o', 'h', 'a', 'n', '-', 'k', 'i', 'i'], ['M', 'o', 'h', 'a', 'n', '-', 'G', 'E', 'N'], [⟨['M', 'o', 'h', 'a', 'n'], ['M', 'o', 'h', 'a', 'n'], none⟩, ⟨['k', 'i', 'i'], ['G', 'E', 'N'], some '-'⟩]⟩, ⟨['b', 'e', 'h', 'e', 'n', '-', 'k', 'i', 'i'], ['s', 'i', 's', 't', 'e', 'r', '-', 'G', 'E', 'N'], [⟨['b', 'e', 'h', 'e', 'n'], ['s', 'i', 's', 't', 'e', 'r'], none⟩, ⟨['k', 'i', 'i'], ['G', 'E', 'N'], some '-'⟩]⟩, ⟨['f', 'o', 't', 'o'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], [⟨['f', 'o', 't', 'o'], ['p', 'i', 'c', 't', 'u', 'r', 'e'], none⟩]⟩, ⟨['z', 'y', 'a', 'a', 'd', 'a', 'a'], ['m', 'o', 'r', 'e'], [⟨['z', 'y', 'a', 'a', 'd', 'a', 'a'], ['m', 'o', 'r', 'e'], none⟩]⟩, ⟨['b', 'a', 'a', 'r'], ['t', 'i', 'm', 'e', 's'], [⟨['b', 'a', 'a', 'r'], ['t', 'i', 'm', 'e', 's'], none⟩]⟩, ⟨['d', 'i', 'k', 'h', 'a', 'a', '-', 'i', 'i'], ['s', 'h', 'o', 'w', '-', 'P', 'F', 'V', '.', 'F'], [⟨['d', 'i', 'k', 'h', 'a', 'a'], ['s', 'h', 'o', 'w'], none⟩, ⟨['i', 'i'], ['P', 'F', 'V', '.', 'F'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
@@ -115,7 +117,7 @@ def ex43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "yes"), ("than_internal_scope", "unavailable")] }
 
@@ -128,7 +130,7 @@ def ex43b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "available")] }
 
@@ -139,9 +141,11 @@ def ex40 : Datum :=
     language := "hind1269"
     primaryText := "har syntax paper har semantics paper-se zyaadaa logõ-ne paṛh-aa."
     glossedTokens := [("har", "every"), ("syntax", "syntax"), ("paper", "paper"), ("har", "every"), ("semantics", "semantics"), ("paper-se", "paper-than"), ("zyaadaa", "more"), ("logõ-ne", "people-ERG"), ("paṛh-aa", "read-PFV")]
+    glossedWords := [⟨['h', 'a', 'r'], ['e', 'v', 'e', 'r', 'y'], [⟨['h', 'a', 'r'], ['e', 'v', 'e', 'r', 'y'], none⟩]⟩, ⟨['s', 'y', 'n', 't', 'a', 'x'], ['s', 'y', 'n', 't', 'a', 'x'], [⟨['s', 'y', 'n', 't', 'a', 'x'], ['s', 'y', 'n', 't', 'a', 'x'], none⟩]⟩, ⟨['p', 'a', 'p', 'e', 'r'], ['p', 'a', 'p', 'e', 'r'], [⟨['p', 'a', 'p', 'e', 'r'], ['p', 'a', 'p', 'e', 'r'], none⟩]⟩, ⟨['h', 'a', 'r'], ['e', 'v', 'e', 'r', 'y'], [⟨['h', 'a', 'r'], ['e', 'v', 'e', 'r', 'y'], none⟩]⟩, ⟨['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], ['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], [⟨['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], ['s', 'e', 'm', 'a', 'n', 't', 'i', 'c', 's'], none⟩]⟩, ⟨['p', 'a', 'p', 'e', 'r', '-', 's', 'e'], ['p', 'a', 'p', 'e', 'r', '-', 't', 'h', 'a', 'n'], [⟨['p', 'a', 'p', 'e', 'r'], ['p', 'a', 'p', 'e', 'r'], none⟩, ⟨['s', 'e'], ['t', 'h', 'a', 'n'], some '-'⟩]⟩, ⟨['z', 'y', 'a', 'a', 'd', 'a', 'a'], ['m', 'o', 'r', 'e'], [⟨['z', 'y', 'a', 'a', 'd', 'a', 'a'], ['m', 'o', 'r', 'e'], none⟩]⟩, ⟨['l', 'o', 'g', 'õ', '-', 'n', 'e'], ['p', 'e', 'o', 'p', 'l', 'e', '-', 'E', 'R', 'G'], [⟨['l', 'o', 'g', 'õ'], ['p', 'e', 'o', 'p', 'l', 'e'], none⟩, ⟨['n', 'e'], ['E', 'R', 'G'], some '-'⟩]⟩, ⟨['p', 'a', 'ṛ', 'h', '-', 'a', 'a'], ['r', 'e', 'a', 'd', '-', 'P', 'F', 'V'], [⟨['p', 'a', 'ṛ', 'h'], ['r', 'e', 'a', 'd'], none⟩, ⟨['a', 'a'], ['P', 'F', 'V'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "unavailable")] }
 

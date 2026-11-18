@@ -1,0 +1,424 @@
+[
+ {
+  "id": "feinmann2026_1B1",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(1B1)"
+  },
+  "language": "stan1293",
+  "primaryText": "She is (coming).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_1B2",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(1B2)"
+  },
+  "language": "stan1293",
+  "primaryText": "Jeff Bezos hates Bill Gates.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_2B1",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(2B1)"
+  },
+  "language": "stan1293",
+  "primaryText": "She has an exam tomorrow morning.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_2B2",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(2B2)"
+  },
+  "language": "stan1293",
+  "primaryText": "Jeff Bezos hates Bill Gates.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_3B1",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(3B1)"
+  },
+  "language": "stan1293",
+  "primaryText": "Mary's father told me she's coming, but Mary's mother said the opposite.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_3B2",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(3B2)"
+  },
+  "language": "stan1293",
+  "primaryText": "Jeff Bezos hates Bill Gates.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_4B1",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(4B1)"
+  },
+  "language": "stan1293",
+  "primaryText": "Mary's parents gave me conflicting reports.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_4B2",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(4B2)"
+  },
+  "language": "stan1293",
+  "primaryText": "Jeff Bezos hates Bill Gates.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_5",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(5)"
+  },
+  "language": "stan1293",
+  "primaryText": "And what does that have to do with anything?",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party? B: Mary's parents gave me conflicting reports.",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "The judged utterance is A's follow-up, printed with #.",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_6",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(6)"
+  },
+  "language": "stan1293",
+  "primaryText": "And what does that have to do with anything?",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party? B: Jeff Bezos hates Bill Gates.",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "The judged utterance is A's follow-up, printed with a check mark.",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_16",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(16)"
+  },
+  "language": "stan1293",
+  "primaryText": "Is there a ball inside the box? Some people think there is, while some people think there isn't. Keep voting—we'll open the box at 5 p.m.!",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A TV game show host, who is there to build suspense and not to reveal the answer, addresses the audience voting on whether there is a ball inside the box.",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "The prose calls the second sentence relevant to the question and says it triggers no ignorance inference.",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_17",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(17)"
+  },
+  "language": "stan1293",
+  "primaryText": "'Is there a ball inside the box?' Jeff Bezos hates Bill Gates. Keep voting—we'll open the box at 5 p.m.!",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A TV game show host, who is there to build suspense and not to reveal the answer, addresses the audience voting on whether there is a ball inside the box.",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_20",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(20)"
+  },
+  "language": "stan1293",
+  "primaryText": "She has a difficult exam tomorrow.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "Printed unmarked; the prose calls the answer relevant to the question asked.",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_21",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(21)"
+  },
+  "language": "stan1293",
+  "primaryText": "The roads are piled high with snow.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary driving to the party?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "Printed unmarked; the prose calls the answer relevant to the question asked.",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_22B1",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(22B1)"
+  },
+  "language": "stan1293",
+  "primaryText": "Her father told me she's in a party mood, but her mother told me she isn't.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_22B2",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(22B2)"
+  },
+  "language": "stan1293",
+  "primaryText": "Her parents can't agree on whether she is in a party mood tonight.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "acceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "yes"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_22B3",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(22B3)"
+  },
+  "language": "stan1293",
+  "primaryText": "Jeff Bezos hates Bill Gates.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "unacceptable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "",
+  "verified": "page-image"
+ },
+ {
+  "id": "feinmann2026_23",
+  "source": {
+   "bibkey": "feinmann-2026",
+   "paperLabel": "(23)"
+  },
+  "language": "stan1293",
+  "primaryText": "On the assumption Mary is not coming to the party tonight, setting off fireworks may not be a bad idea.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "A: Is Mary coming to the party tonight?",
+  "judgment": "questionable",
+  "contrasts": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "relevant",
+    "no"
+   ]
+  ],
+  "comment": "Printed with ??; the prose says the sentence is not perceived as relevant.",
+  "verified": "page-image"
+ }
+]

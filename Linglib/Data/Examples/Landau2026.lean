@@ -24,7 +24,7 @@ def hebrewEN : Datum :=
     glossedTokens := []
     context := "Empty noun (EN), deep anaphor: a bare n head with no internal structure to host the resumptive pronoun bound by the Ā-operator."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "nP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
@@ -37,7 +37,7 @@ def hebrewENP : Datum :=
     glossedTokens := []
     context := "Elided noun phrase (ENP), surface anaphor: full nP structure deleted under identity, licensed by [E] on Num."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "nP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, maximizing relative")] }
 
@@ -50,7 +50,7 @@ def hebrewNCA_DP : Datum :=
     glossedTokens := []
     context := "Null complement anaphora (NCA) / pro, deep anaphor in the DP domain."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
@@ -63,7 +63,7 @@ def hebrewAE : Datum :=
     glossedTokens := []
     context := "Argument ellipsis (AE) / DP-ellipsis, surface anaphor: full DP structure deleted under identity."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
@@ -76,7 +76,7 @@ def hebrewNCA_PP : Datum :=
     glossedTokens := []
     context := "Null PP via NCA, deep anaphor: PP argument omitted, content recovered pragmatically."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "PP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
@@ -89,7 +89,7 @@ def hebrewPPE : Datum :=
     glossedTokens := []
     context := "PP-ellipsis (PPE), surface anaphor: full PP structure deleted under identity. Data are Landau's own (first documented in Vardi 2022)."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "PP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
@@ -102,7 +102,7 @@ def englishVPE : Datum :=
     glossedTokens := []
     context := "VP-ellipsis, surface anaphor: left-dislocated constituent binds a resumptive possessive inside the elided VP. Contrastive baseline for do so."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "surface"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
@@ -115,7 +115,7 @@ def englishDoSo : Datum :=
     glossedTokens := []
     context := "do so, deep VP anaphor: left-dislocation with resumptive binding into do so is ungrammatical."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
@@ -128,7 +128,7 @@ def dutchDatDoen : Datum :=
     glossedTokens := []
     context := "dat doen 'do that', deep VP anaphor: blocks most Ā-extractions and fails EIR."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
@@ -141,7 +141,7 @@ def danishDet : Datum :=
     glossedTokens := []
     context := "det 'it', deep VP anaphor: allows A-dependencies but not Ā-dependencies, so it fails EIR."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
@@ -154,7 +154,7 @@ def koreanNullObj : Datum :=
     glossedTokens := []
     context := "Korean null object, deep anaphor (pro): left-dislocation mandates a resumptive, but the null object fails to host one."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 

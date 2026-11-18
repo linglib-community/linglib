@@ -8,6 +8,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.Edge
+public import Linglib.Core.Data.List.Infix
 public import Linglib.Core.Computability.MyhillNerode
 public import Mathlib.Data.Fintype.Order
 public import Mathlib.Data.Set.Finite.Lemmas
@@ -111,7 +112,7 @@ theorem IsGeneralizedDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsGener
 /-! ### Affix languages -/
 
 /-- The words beginning with `xs`. -/
-def ofPrefix (xs : List α) : Language α := {w | xs <+: w}
+def ofPrefix (xs : List α) : Language α := xs.cylinder
 
 /-- The words ending in `xs`. -/
 def ofSuffix (xs : List α) : Language α := {w | xs <:+ w}

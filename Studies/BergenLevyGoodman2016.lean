@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.Recursion
+public import Linglib.Pragmatics.Probabilistic.Recursion
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.Calculus.Deriv.Inv
@@ -94,7 +93,7 @@ def scalarSem : ScalarUtt → Set ScalarWorld
 /-- The listener at recursion level `n`. -/
 noncomputable abbrev scalarListener (α : ℝ) (n : ℕ) : Kernel ScalarUtt ScalarWorld :=
   (recurse (uniformOn Set.univ) Kernel.id Measure.dirac α 0)^[n]
-    (listener (uniformOn Set.univ) (truthful scalarSem))
+    (literalListener (uniformOn Set.univ) scalarSem)
 
 private theorem sum_world (f : ScalarWorld → ℝ) : ∑ w, f w = f .all + f .someNotAll :=
   Fintype.sum_eq_add _ _ (by decide) (by rintro (_ | _) h <;> simp at h)
@@ -111,13 +110,13 @@ include hα
 
 private theorem all_someNotAll_eq_zero : scalarListener α n .all {.someNotAll} = 0 :=
   not_not.1 fun h ↦ by
-    simpa [scalarSem] using (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff hα n).1 h
+    simpa [scalarSem] using (iterate_recurse_literalListener_apply_singleton_ne_zero_iff hα n).1 h
 
 private theorem all_someNotAll_real : (scalarListener α n .all).real {.someNotAll} = 0 := by
   rw [measureReal_def, all_someNotAll_eq_zero hα n, ENNReal.toReal_zero]
 
 private theorem some_ne_zero (w : ScalarWorld) : scalarListener α n .some {w} ≠ 0 :=
-  (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff hα n).2
+  (iterate_recurse_literalListener_apply_singleton_ne_zero_iff hα n).2
     ⟨Set.mem_univ w, uniform_ne_zero w⟩
 
 private theorem isProbabilityMeasure_some : IsProbabilityMeasure (scalarListener α n .some) :=
@@ -127,7 +126,7 @@ private theorem isProbabilityMeasure_some : IsProbabilityMeasure (scalarListener
 private theorem some_someNotAll : (scalarListener α n .some).real {.someNotAll} =
     1 - (scalarListener α n .some).real {.all} := by
   have := isProbabilityMeasure_some hα n
-  have h := sum_measureReal_singleton_eq_one (scalarListener α n .some)
+  have h : ∑ w, (scalarListener α n .some).real {w} = 1 := by simp
   rw [sum_world] at h
   linarith
 
@@ -142,9 +141,9 @@ private theorem some_all_lt_one : (scalarListener α n .some).real {.all} < 1 :=
 private theorem all_all : (scalarListener α n .all).real {.all} = 1 := by
   have : IsProbabilityMeasure (scalarListener α n .all) :=
     (eq_zero_or_isProbabilityMeasure _).resolve_left fun h ↦
-      (iterate_recurse_listener_truthful_apply_singleton_ne_zero_iff (C := 0) (sem := scalarSem)
+      (iterate_recurse_literalListener_apply_singleton_ne_zero_iff (C := 0) (sem := scalarSem)
         (u := .all) (w := .all) hα n).2 ⟨rfl, uniform_ne_zero _⟩ (by rw [h]; rfl)
-  have h := sum_measureReal_singleton_eq_one (scalarListener α n .all)
+  have h : ∑ w, (scalarListener α n .all).real {w} = 1 := by simp
   rwa [sum_world, all_someNotAll_real hα n, add_zero] at h
 
 -- the table of (8)–(11), p. 20:16, at any rationality
@@ -180,8 +179,8 @@ omit hα in
 private theorem scalarListener_zero_some_all : (scalarListener α 0 .some).real {.all} = 1 / 2 := by
   have : IsProbabilityMeasure (uniformOn (Set.univ : Set ScalarWorld)) :=
     isProbabilityMeasure_uniformOn Set.finite_univ ⟨.all, trivial⟩
-  rw [show scalarListener α 0 = listener (uniformOn Set.univ) (truthful scalarSem) from rfl,
-    listener_truthful_real_singleton (uniformOn Set.univ) scalarSem (u := .some) (w := .all)
+  rw [show scalarListener α 0 = literalListener (uniformOn Set.univ) scalarSem from rfl,
+    literalListener_real_singleton (uniformOn Set.univ) scalarSem (u := .some) (w := .all)
       (Set.mem_univ _), uniformOn_univ_real_singleton, show scalarSem .some = Set.univ from rfl,
     probReal_univ, show Fintype.card ScalarWorld = 2 from rfl]
   norm_num
@@ -293,7 +292,7 @@ variable (α : ℝ) (C : Utterance → ℝ) (μ : Measure Meaning)
 
 /-- The literal listener (26) conditions the prior on the meaning of the utterance in a
 lexicon. -/
-noncomputable def L0 (ℒ : Lexicon) : Kernel Utterance Meaning := listener μ (truthful (sem ℒ))
+noncomputable def L0 (ℒ : Lexicon) : Kernel Utterance Meaning := literalListener μ (sem ℒ)
 
 instance (ℒ : Lexicon) : IsFiniteKernel (L0 μ ℒ) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
@@ -353,10 +352,10 @@ noncomputable def weight (w : Meaning) (D : Set Meaning) : ℝ :=
 private theorem toReal_L0_rpow (hα : 0 < α) [IsFiniteMeasure μ] (ℒ : Lexicon) (u : Utterance)
     (w : Meaning) : (L0 μ ℒ u {w} ^ α).toReal = weight α μ w (sem ℒ u) := by
   by_cases h : w ∈ sem ℒ u
-  · rw [L0, listener_truthful_apply_singleton μ _ h, weight, Set.indicator_of_mem h,
+  · rw [L0, literalListener_apply_singleton μ _ h, weight, Set.indicator_of_mem h,
       ← ENNReal.toReal_rpow, ENNReal.toReal_mul, ENNReal.toReal_inv, div_eq_inv_mul,
       measureReal_def, measureReal_def]
-  · rw [L0, listener_truthful_apply_singleton_of_notMem μ _ h, ENNReal.zero_rpow_of_pos hα,
+  · rw [L0, literalListener_apply_singleton_of_notMem μ _ h, ENNReal.zero_rpow_of_pos hα,
       weight, Set.indicator_of_notMem h, ENNReal.toReal_zero]
 
 theorem S1_real_singleton (hα : 0 < α) [IsFiniteMeasure μ] (ℒ : Lexicon) (w : Meaning)
@@ -407,7 +406,7 @@ private theorem sum_meaning (f : Meaning → ℝ) : ∑ m, f m = f .freq + f .ra
 theorem production_pos (hα : 0 < α) [IsFiniteMeasure μ] {w : Meaning} (hw : μ {w} ≠ 0)
     (u : Utterance) : 0 < production α C μ w u :=
   Finset.sum_pos' (fun _ _ ↦ measureReal_nonneg) ⟨base, Finset.mem_univ _, ENNReal.toReal_pos
-    ((speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα C μ _ _ _).2
+    ((speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα C μ _ _ _).2
       ⟨by cases u <;> exact Set.mem_univ w, hw⟩) (measure_ne_top _ _)⟩
 
 theorem L1_fst_rare_lt_iff (hα : 0 < α) [IsFiniteMeasure μ] (hf : μ {.freq} ≠ 0)
@@ -931,9 +930,9 @@ private theorem L1_fst_real_freq_add_rare (hα : 0 < α) [IsFiniteMeasure μ] (h
     isProbabilityMeasure_listener_of_ne_zero _ _ (w := (.freq, base))
       (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]
           exact mul_ne_zero hf (uniformOn_univ_singleton_ne_zero _))
-      ((speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα C μ _ _ _).2
+      ((speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα C μ _ _ _).2
         ⟨by cases u <;> simp [sem, base, Refinement.den, Form.toUtterance], hf⟩)
-  have h := sum_measureReal_singleton_eq_one (L1 α C μ u.toUtterance).fst
+  have h : ∑ m, (L1 α C μ u.toUtterance).fst.real {m} = 1 := by simp
   rwa [Fintype.sum_eq_add Meaning.freq Meaning.rare (by decide)
     fun m hm ↦ by cases m <;> simp at hm] at h
 

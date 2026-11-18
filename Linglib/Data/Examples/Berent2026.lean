@@ -19,13 +19,12 @@ def dideb : Datum :=
   { id := "berent2026_dideb"
     source := ⟨"berent-2026", "p. 11"⟩
     reportedIn := none
-    method := some .introspection
     language := "hebr1245"
     primaryText := "dideb"
     glossedTokens := []
     context := "A form on the root d-d-b, which begins with two identical consonants."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -39,7 +38,7 @@ def bided : Datum :=
     glossedTokens := []
     context := "A form on the root b-d-d, which ends with two identical consonants."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

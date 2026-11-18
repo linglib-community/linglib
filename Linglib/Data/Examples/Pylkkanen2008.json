@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -30,7 +30,7 @@
     "translation": "Taro wrote Hanako a letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -51,7 +51,7 @@
     "translation": "John wrote Mary a letter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -72,7 +72,7 @@
     "translation": "Mukasa read Katonga a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -90,7 +90,7 @@
     "translation": "I surveyed the field for the old woman.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -112,7 +112,7 @@
     "translation": "Drita baked Agim a cake.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
@@ -147,7 +147,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
@@ -166,7 +166,7 @@
     "translation": "Taro ran for Hanako.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
@@ -186,7 +186,7 @@
     "translation": "Taro held Hanako her bag.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
@@ -205,7 +205,7 @@
     "translation": "Mary ran to/from John.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
@@ -225,7 +225,7 @@
     "translation": "John held Mary her bag.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
@@ -244,7 +244,7 @@
     "translation": "Mukasa walked for Katonga.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
@@ -264,7 +264,7 @@
     "translation": "Katonga held the bag for Mukasa.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
@@ -283,7 +283,7 @@
     "translation": "I will work for the lady.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
@@ -302,7 +302,7 @@
     "translation": "I held the pot for Mukasa.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
@@ -321,7 +321,7 @@
     "translation": "I ran for him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
@@ -341,7 +341,7 @@
     "translation": "Agim holds my bag for Drita.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
@@ -358,7 +358,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "depictiveObject"]
@@ -376,7 +376,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "depictiveApplied"]
@@ -397,7 +397,7 @@
     "translation": "Taro read Hanako a book while she was naked.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "depictiveApplied"]
@@ -418,7 +418,7 @@
     "translation": "Mustafa worked for Katonga while Katonga was sick.",
     "context": "Mustafa is healthy and Katonga is sick.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "depictiveApplied"]
@@ -438,7 +438,7 @@
     "translation": "The thief stole a ring from Mary.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -460,7 +460,7 @@
     "translation": "The girl broke Dan's radio on him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -483,7 +483,7 @@
     "translation": "Hanako was affected by the thief stealing her ring.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -505,7 +505,7 @@
     "translation": "Taro was adversely affected by Hanako starting a new religion on him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "baseline"],
@@ -524,7 +524,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "rootCausativeUnergative"]
@@ -543,7 +543,7 @@
     "translation": "John made the child cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["test", "rootCausativeUnergative"]

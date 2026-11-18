@@ -27,7 +27,7 @@ open scoped Denotes
 universe u
 
 /-- *Quisque* is 'each'. -/
-def quisque : IndeterminateQuantifier := ⟨Pronouns.quis, Coordination.que, none⟩
+def quisque : IndeterminateQuantifier := ⟨Pronouns.quis.toProForm, Coordination.que, none⟩
 
 theorem denote_quisque : ⟦quisque⟧ = ({Det.Family.every} : Set Det.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_conjunctive (q := quisque) rfl]; rfl

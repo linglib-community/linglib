@@ -60,7 +60,7 @@ the reader reads, so that the fit cannot go silently vacuous.
   channel. Is it acceptable? — the mark in `judgment`, fitted through `Judgment.band`. Is it true
   in this context? — `verdict`, fitted through `FitsVerdict`. Can it mean this? — that reading's
   entry in `readings`. Is this variant acceptable in the same frame? — its entry in
-  `alternatives`. Is it felicitous, though well formed? — the `felicity` feature that
+  `contrasts`. Is it felicitous, though well formed? — the `felicity` feature that
   `JudgedFelicitous` reads. A study fits its prediction against the channel whose question the
   paper asked. Implication judgments, whether an utterance conveys an inference, and relational
   judgments, whether two sentences are equivalent or contradictory, have no channel yet and sit

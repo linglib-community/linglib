@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("form", "p ∧ ◇¬p"), ("environment", "matrix")] }
 
@@ -37,7 +37,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("form", "p ∧ ◇¬p"), ("environment", "suppose")] }
 
@@ -50,7 +50,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("form", "p ∧ ◇¬p"), ("environment", "quantifier restrictor")] }
 
@@ -63,7 +63,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
@@ -76,7 +76,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
@@ -89,7 +89,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
@@ -102,7 +102,7 @@ def ex2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
@@ -115,7 +115,7 @@ def ex2e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
@@ -128,7 +128,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "suppose")] }
 
@@ -141,7 +141,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "suppose")] }
 
@@ -154,7 +154,7 @@ def ex3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "suppose")] }
 
@@ -167,7 +167,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "conditional antecedent")] }
 
@@ -180,7 +180,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "conditional antecedent")] }
 
@@ -193,7 +193,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "conditional antecedent")] }
 
@@ -206,7 +206,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "could")] }
 
@@ -219,7 +219,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "could")] }
 
@@ -232,7 +232,7 @@ def ex5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "could")] }
 
@@ -245,7 +245,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "disjunction")] }
 
@@ -258,7 +258,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "disjunction")] }
 
@@ -271,7 +271,7 @@ def ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "disjunction")] }
 
@@ -284,7 +284,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "definite description")] }
 
@@ -297,7 +297,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "definite description")] }
 
@@ -310,7 +310,7 @@ def ex7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "definite description")] }
 
@@ -323,7 +323,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "existential quantifier")] }
 
@@ -336,7 +336,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "existential quantifier")] }
 
@@ -349,7 +349,7 @@ def ex8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "existential quantifier")] }
 
@@ -362,7 +362,7 @@ def ex9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "distributed attitude ascriptions")] }
 
@@ -375,7 +375,7 @@ def ex9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "distributed suppositions")] }
 
@@ -388,7 +388,7 @@ def ex9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "distributed attitude ascriptions")] }
 
@@ -401,7 +401,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "(◇p ∧ ◇¬p) ∧ (p ∨ ¬p)")] }
 
@@ -414,7 +414,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "(◇¬p ∧ p) ∨ (◇p ∧ ¬p)")] }
 
@@ -427,7 +427,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "∧ᵢ ◇¬W(tᵢ)")] }
 
@@ -440,7 +440,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "∨ᵢ (W(tᵢ) ∧ ◇¬W(tᵢ))")] }
 
@@ -453,7 +453,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p ∨ □¬p"), ("role", "premise")] }
 
@@ -466,7 +466,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "¬□¬p"), ("role", "premise")] }
 
@@ -479,7 +479,7 @@ def ex13c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p"), ("role", "conclusion")] }
 
@@ -492,7 +492,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p ∨ ¬p")] }
 
@@ -505,7 +505,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p ∨ □¬p")] }
 
@@ -518,7 +518,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "□p ∨ ¬p")] }
 
@@ -531,7 +531,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "p ∨ q ⊨ ◇p ∨ ◇q"), ("evidence", "p entails ◇p")] }
 
@@ -544,7 +544,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "p ∧ ¬K◇p"), ("evidence", "p entails ◇p")] }
 
@@ -557,7 +557,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("type", "retraction")] }
 
@@ -570,7 +570,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("type", "retraction")] }
 
@@ -583,7 +583,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("environment", "know")] }
 
@@ -596,7 +596,7 @@ def ex20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("environment", "conditional antecedent")] }
 
@@ -609,7 +609,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "(¬p ∧ ◇p) ∨ p"), ("felicity", "infelicitous")] }
 
@@ -622,7 +622,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "p")] }
 
@@ -635,7 +635,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "◇◇p"), ("evidence", "against 4")] }
 
@@ -648,7 +648,7 @@ def ex22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "◇p")] }
 
@@ -661,7 +661,7 @@ def ex22c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "□◇p")] }
 
@@ -674,7 +674,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "□p ∧ ¬□□p"), ("evidence", "violation of 4 inconsistent")] }
 
@@ -687,7 +687,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "◇p ∧ ¬□◇p"), ("evidence", "violation of 5 inconsistent")] }
 
@@ -700,7 +700,7 @@ def ex23c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "p ∧ ¬□◇p"), ("evidence", "violation of B inconsistent")] }
 
@@ -713,7 +713,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("form", "(U₁ ∨ U₂) ∧ ◇V"), ("principle", "restricted diamond distributivity")] }
 
@@ -726,7 +726,7 @@ def ex24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("form", "(U₁ ∧ ◇V) ∨ (U₂ ∧ ◇V)"), ("principle", "restricted diamond distributivity")] }
 
@@ -739,7 +739,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("environment", "believe"), ("type", "classical contradiction")] }
 
@@ -752,7 +752,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("environment", "believe"), ("type", "disjoined Wittgenstein sentence")] }
 
@@ -765,7 +765,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("environment", "believe"), ("type", "modalized Wittgenstein sentence")] }
 
@@ -778,7 +778,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "(◇p ∧ ¬p) → q"), ("comparison", "dynamic semantics")] }
 
@@ -791,7 +791,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "◇p ∧ (¬p → q)"), ("comparison", "dynamic semantics")] }
 
@@ -804,7 +804,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "◇p ∧ ◇¬p"), ("comparison", "state-based semantics")] }
 
@@ -817,7 +817,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "¬(□¬p ∨ □p)"), ("comparison", "state-based semantics")] }
 
@@ -830,7 +830,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "□¬p ∨ □p"), ("comparison", "state-based semantics")] }
 
@@ -843,7 +843,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "□p"), ("topic", "probability")] }
 
@@ -856,7 +856,7 @@ def ex31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("topic", "probability")] }
 
@@ -869,7 +869,7 @@ def ex32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("topic", "probability")] }
 
@@ -882,7 +882,7 @@ def ex33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("form", "p ∧ ¬K◇p"), ("comparison", "expressivism")] }
 

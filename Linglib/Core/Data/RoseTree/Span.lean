@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Positions
+public import Mathlib.Order.Interval.Basic
 
 /-!
 # Spans of subtrees in the frontier
@@ -17,15 +18,18 @@ left, and the slice has as many entries as the subtree has leaves. These are the
 of mathlib one level up: a list of lists is a tree of height two, and the index of its `i`th
 member in the flattened list is the sum of the lengths before it.
 
-Dominance and precedence of positions become containment and order of spans. A position below
-another begins no earlier and ends no later, a position that precedes another ends before the
-other begins, and two positions are left-aligned (`TreePath.LeftAligned`) exactly when they
-begin at the same leaf.
+The span of a subtree is the interval of cuts of the frontier from where its slice begins to
+where it ends, a `NonemptyInterval ℕ`, so that containment of spans is mathlib's order on
+intervals. Dominance and precedence of positions become containment and order of spans. A
+position below another begins no earlier and ends no later, a position that precedes another
+ends before the other begins, so the spans of a tree are nested or disjoint, and two positions
+are left-aligned (`GornAddress.LeftAligned`) exactly when they begin at the same leaf.
 
 ## Main definitions
 
 * `RoseTree.leafIndex`: the number of leaves left of the subtree at an address.
-* `RoseTree.spans`: the slices of the frontier that the subtrees satisfying a predicate cover.
+* `RoseTree.spanAt`: the span of the subtree at an address.
+* `RoseTree.spans`: the spans of the subtrees satisfying a predicate.
 
 ## Main results
 
@@ -34,7 +38,8 @@ begin at the same leaf.
 * `RoseTree.leafList_replaceAt`: replacing a subtree replaces its slice.
 * `RoseTree.leafIndex_add_numLeaves_le_of_precedes`: a subtree ends before one it precedes begins.
 * `RoseTree.leftAligned_iff_leafIndex_eq`: left-aligned positions are those with one index.
-* `RoseTree.mem_spans`: the spans are the slices of the subtrees satisfying the predicate.
+* `RoseTree.spanAt_le_or_le_or_snd_le_fst`: two spans of a tree are nested or disjoint.
+* `RoseTree.mem_spans`: the spans are those of the subtrees satisfying the predicate.
 * `RoseTree.spans_node`: the spans of a node are its own and those of its children, each shifted
   past the leaves of the children before it.
 -/
@@ -43,7 +48,6 @@ begin at the same leaf.
 
 namespace RoseTree
 
-open Core.Order
 
 variable {α : Type*} {t s : RoseTree α} {p q : List ℕ}
 
@@ -191,11 +195,12 @@ private theorem sum_take_add_numLeaves_le {cs : List (RoseTree α)} {i j : ℕ} 
     fun _ _ ↦ Nat.zero_le _
 
 /-- The frontier of a subtree ends before the frontier of any subtree it precedes begins. -/
-theorem leafIndex_add_numLeaves_le_of_precedes {p q : TreePath} (hpq : p.Precedes q)
+theorem leafIndex_add_numLeaves_le_of_precedes {p q : GornAddress} (hpq : p.Precedes q)
     (hp : t[p.toList]? = some s) (hq : t[q.toList]?.isSome) :
     t.leafIndex p.toList + s.numLeaves ≤ t.leafIndex q.toList := by
   obtain ⟨r, i, j, hij, ⟨p', hp'⟩, ⟨q', hq'⟩⟩ := hpq
-  rw [List.append_assoc, List.singleton_append] at hp' hq'
+  rw [GornAddress.toList_mul, GornAddress.toList_of, List.append_assoc,
+    List.singleton_append] at hp' hq'
   rw [← hp', getElem?_append] at hp
   rw [← hq', getElem?_append] at hq
   obtain ⟨u, hu, hs⟩ := Option.bind_eq_some_iff.mp hp
@@ -239,19 +244,19 @@ theorem leafIndex_eq_zero_iff (h : t[p]?.isSome) :
 
 /-- Two positions of a tree are left-aligned exactly when their frontiers begin at the same
 leaf. -/
-theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : t[p.toList]?.isSome)
+theorem leftAligned_iff_leafIndex_eq {p q : GornAddress} (hp : t[p.toList]?.isSome)
     (hq : t[q.toList]?.isSome) :
     p.LeftAligned q ↔ t.leafIndex p.toList = t.leafIndex q.toList := by
   obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hp
   obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp hq
   constructor
   · intro h
-    obtain ⟨j, k, h⟩ := TreePath.leftAligned_iff_exists.1 h
+    obtain ⟨j, k, h⟩ := GornAddress.leftAligned_iff_exists.1 h
     have := congrArg t.leafIndex h
     rwa [leafIndex_append hs, leafIndex_append hu, leafIndex_replicate_zero,
       leafIndex_replicate_zero] at this
   · intro h
-    have key : ∀ {p q : TreePath} {s : RoseTree α}, t[p.toList]? = some s →
+    have key : ∀ {p q : GornAddress} {s : RoseTree α}, t[p.toList]? = some s →
         t[q.toList]?.isSome → t.leafIndex p.toList = t.leafIndex q.toList → p ≤ q →
         p.LeftAligned q := by
       rintro p q s hs hq h ⟨r, hr⟩
@@ -259,9 +264,9 @@ theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : t[p.toList]?.isSome)
       rw [← hr, getElem?_append, hs, Option.bind_some] at hq
       have hr0 : r = List.replicate r.length 0 :=
         List.eq_replicate_iff.2 ⟨rfl, (leafIndex_eq_zero_iff hq).1 (by omega)⟩
-      exact TreePath.leftAligned_iff_exists.2
+      exact GornAddress.leftAligned_iff_exists.2
         ⟨r.length, 0, by rw [← hr, List.replicate_zero, List.append_nil, ← hr0]⟩
-    rcases TreePath.Precedes.trichotomy p q with hpq | hqp | hpq | hqp
+    rcases GornAddress.Precedes.trichotomy p q with hpq | hqp | hpq | hqp
     · exact key hs hq h hpq
     · exact (key hu hp h.symm hqp).symm
     · have := leafIndex_add_numLeaves_le_of_precedes hpq hs hq
@@ -275,69 +280,119 @@ theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : t[p.toList]?.isSome)
 
 section Spans
 
-variable (P : RoseTree α → Prop) [DecidablePred P] (t) {x : ℕ × ℕ}
+variable (t) in
+/-- The span of the subtree `s` of `t` at the address `p`: the cut of the frontier at which its
+slice begins and the cut at which it ends. -/
+def spanAt (p : List ℕ) (s : RoseTree α) : NonemptyInterval ℕ :=
+  ⟨(t.leafIndex p, t.leafIndex p + s.numLeaves), Nat.le_add_right ..⟩
 
-/-- The spans of the subtrees of `t` satisfying `P`, in preorder: for the subtree at an address,
-the index in the frontier at which its slice begins and the index at which it ends. -/
-def spans : List (ℕ × ℕ) :=
-  t.vertices.filterMap fun p ↦ t[p]?.bind fun s ↦
-    if P s then some (t.leafIndex p, t.leafIndex p + s.numLeaves) else none
+@[simp] theorem fst_spanAt (p : List ℕ) (s : RoseTree α) : (t.spanAt p s).fst = t.leafIndex p :=
+  rfl
+
+@[simp] theorem snd_spanAt (p : List ℕ) (s : RoseTree α) :
+    (t.spanAt p s).snd = t.leafIndex p + s.numLeaves := rfl
+
+/-- The span of a subtree lies within the span of a subtree that dominates it. -/
+theorem spanAt_append_le {u : RoseTree α} (h : t[p]? = some s) (hu : s[q]? = some u) :
+    t.spanAt (p ++ q) u ≤ t.spanAt p s :=
+  ⟨leafIndex_le_leafIndex_append h q, leafIndex_append_add_numLeaves_le h hu⟩
+
+/-- The spans of two subtrees of a tree are nested or disjoint: one subtree dominates the other,
+or one ends before the other begins. -/
+theorem spanAt_le_or_le_or_snd_le_fst {u : RoseTree α} (hs : t[p]? = some s)
+    (hu : t[q]? = some u) :
+    t.spanAt p s ≤ t.spanAt q u ∨ t.spanAt q u ≤ t.spanAt p s ∨
+      (t.spanAt p s).snd ≤ (t.spanAt q u).fst ∨ (t.spanAt q u).snd ≤ (t.spanAt p s).fst := by
+  rcases GornAddress.Precedes.trichotomy ⟨p⟩ ⟨q⟩ with ⟨r, rfl⟩ | ⟨r, rfl⟩ | hpq | hqp
+  · rw [getElem?_append, hs, Option.bind_some] at hu
+    exact .inr (.inl (spanAt_append_le hs hu))
+  · rw [getElem?_append, hu, Option.bind_some] at hs
+    exact .inl (spanAt_append_le hu hs)
+  · exact .inr (.inr (.inl (leafIndex_add_numLeaves_le_of_precedes hpq hs (hu ▸ rfl))))
+  · exact .inr (.inr (.inr (leafIndex_add_numLeaves_le_of_precedes hqp hu (hs ▸ rfl))))
+
+variable (P : RoseTree α → Prop) [DecidablePred P] (t) {x : NonemptyInterval ℕ}
+
+/-- The spans of the subtrees of `t` satisfying `P`, in preorder. -/
+def spans : List (NonemptyInterval ℕ) :=
+  t.vertices.filterMap fun p ↦ t[p]?.bind fun s ↦ if P s then some (t.spanAt p s) else none
 
 variable {P t}
 
-theorem mem_spans : x ∈ t.spans P ↔
-    ∃ p s, t[p]? = some s ∧ P s ∧ (t.leafIndex p, t.leafIndex p + s.numLeaves) = x := by
+theorem mem_spans : x ∈ t.spans P ↔ ∃ p s, t[p]? = some s ∧ P s ∧ t.spanAt p s = x := by
   simp only [spans, List.mem_filterMap, mem_vertices, Option.bind_eq_some_iff,
     Option.ite_none_right_eq_some, Option.some.injEq]
   exact ⟨fun ⟨p, _, s, hs, hP, hx⟩ ↦ ⟨p, s, hs, hP, hx⟩,
     fun ⟨p, s, hs, hP, hx⟩ ↦ ⟨p, by simp [hs], s, hs, hP, hx⟩⟩
 
+/-- The spans of a tree are nested or disjoint: constituents do not straddle one another. -/
+theorem le_or_le_or_snd_le_fst_of_mem_spans {Q : RoseTree α → Prop} [DecidablePred Q]
+    {y : NonemptyInterval ℕ} (hx : x ∈ t.spans P) (hy : y ∈ t.spans Q) :
+    x ≤ y ∨ y ≤ x ∨ x.snd ≤ y.fst ∨ y.snd ≤ x.fst := by
+  obtain ⟨p, s, hs, -, rfl⟩ := mem_spans.1 hx
+  obtain ⟨q, u, hu, -, rfl⟩ := mem_spans.1 hy
+  exact spanAt_le_or_le_or_snd_le_fst hs hu
+
+@[simp] theorem _root_.NonemptyInterval.map_mk {α β : Type*} [Preorder α] [Preorder β]
+    (f : α →o β) (x : α × α) (h : x.1 ≤ x.2) :
+    NonemptyInterval.map f ⟨x, h⟩ = ⟨x.map f f, f.mono h⟩ := rfl
+
+/-- Translation of the cuts of a frontier past `n` leaves. -/
+def shift (n : ℕ) : ℕ →o ℕ := ⟨(n + ·), fun _ _ h ↦ Nat.add_le_add_left h n⟩
+
+@[simp] theorem shift_apply (n i : ℕ) : shift n i = n + i := rfl
+
+@[simp] theorem shift_zero : shift 0 = OrderHom.id := OrderHom.ext _ _ (funext Nat.zero_add)
+
+@[simp] theorem shift_comp_shift (m n : ℕ) : (shift n).comp (shift m) = shift (n + m) :=
+  OrderHom.ext _ _ (funext fun i ↦ (Nat.add_assoc n m i).symm)
+
 variable (P) in
 /-- The spans of a forest, each tree's shifted past the leaves of the trees before it. -/
-def spansList : List (RoseTree α) → List (ℕ × ℕ)
+def spansList : List (RoseTree α) → List (NonemptyInterval ℕ)
   | [] => []
-  | c :: cs => c.spans P ++ (spansList cs).map fun x ↦ (c.numLeaves + x.1, c.numLeaves + x.2)
+  | c :: cs => c.spans P ++ (spansList cs).map (.map (shift c.numLeaves))
 
 @[simp] theorem spansList_nil : spansList P ([] : List (RoseTree α)) = [] := rfl
 
 @[simp] theorem spansList_cons (c : RoseTree α) (cs : List (RoseTree α)) :
-    spansList P (c :: cs) =
-      c.spans P ++ (spansList P cs).map fun x ↦ (c.numLeaves + x.1, c.numLeaves + x.2) :=
+    spansList P (c :: cs) = c.spans P ++ (spansList P cs).map (.map (shift c.numLeaves)) :=
   rfl
 
 private theorem filterMap_verticesList (a : α) (cs : List (RoseTree α)) :
     (verticesList cs).filterMap (fun p ↦ (node a cs)[p]?.bind fun s ↦
-      if P s then some ((node a cs).leafIndex p, (node a cs).leafIndex p + s.numLeaves)
-      else none) = spansList P cs := by
+      if P s then some ((node a cs).spanAt p s) else none) = spansList P cs := by
   induction cs with
   | nil => rfl
   | cons c cs ih =>
     rw [verticesList_cons, List.filterMap_append, List.filterMap_map, List.filterMap_map,
       spansList_cons, ← ih, List.map_filterMap]
     congr 1
-    · exact List.filterMap_congr fun p _ ↦ by simp [leafIndex_cons]
+    · exact List.filterMap_congr fun p _ ↦ by simp [spanAt, leafIndex_cons]
     refine List.filterMap_congr fun p hp ↦ ?_
     obtain ⟨j, q, rfl⟩ := exists_cons_of_mem_verticesList hp
     simp only [Function.comp_apply, List.modifyHead_cons, getElem?_cons, children_node,
-      List.getElem?_cons_succ, leafIndex_cons, List.take_succ_cons, List.map_cons, List.sum_cons]
+      List.getElem?_cons_succ, spanAt, leafIndex_cons, List.take_succ_cons, List.map_cons,
+      List.sum_cons]
     cases cs[j]?.bind (·[q]?) with
     | none => rfl
-    | some s => by_cases hP : P s <;> simp [hP, Nat.add_assoc]
+    | some s => by_cases hP : P s <;> simp [hP, NonemptyInterval.map, Nat.add_assoc]
 
 /-- The spans of a node are its own, if it satisfies `P`, and those of its forest of
 children. -/
 @[simp] theorem spans_node (a : α) (cs : List (RoseTree α)) :
     (node a cs).spans P =
-      (if P (node a cs) then [(0, (node a cs).numLeaves)] else []) ++ spansList P cs := by
+      (if P (node a cs) then [⟨(0, (node a cs).numLeaves), Nat.zero_le _⟩] else []) ++
+        spansList P cs := by
   rw [spans, vertices_node, List.filterMap_cons, filterMap_verticesList]
-  by_cases hP : P (node a cs) <;> simp [hP]
+  by_cases hP : P (node a cs) <;> simp [hP, spanAt]
 
 theorem spansList_append (l₁ l₂ : List (RoseTree α)) :
-    spansList P (l₁ ++ l₂) = spansList P l₁ ++ (spansList P l₂).map
-      fun x ↦ ((l₁.map numLeaves).sum + x.1, (l₁.map numLeaves).sum + x.2) := by
+    spansList P (l₁ ++ l₂) =
+      spansList P l₁ ++ (spansList P l₂).map (.map (shift (l₁.map numLeaves).sum)) := by
   induction l₁ with
-  | nil => simp
-  | cons c l ih => simp [ih, Nat.add_assoc]
+  | nil => simp [show NonemptyInterval.map (OrderHom.id : ℕ →o ℕ) = id from rfl]
+  | cons c l ih => simp [ih]
 
 theorem spansList_replicate (n : ℕ) (h : t.spans P = []) : spansList P (.replicate n t) = [] := by
   induction n with

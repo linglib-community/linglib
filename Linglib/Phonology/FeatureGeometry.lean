@@ -1,39 +1,37 @@
 module
 
-public import Mathlib.Order.Comparable
-public import Mathlib.Order.SuccPred.Archimedean
-public import Mathlib.Data.Finset.Piecewise
+public import Linglib.Core.Order.Laminar
+public import Linglib.Core.Data.Finset.Piecewise
+public import Mathlib.Data.Fintype.Defs
 
 /-!
 # Feature geometry
 
-A feature geometry over a feature type `F` places each feature below at most one node of a
-rooted tree of class nodes, a map `node : F → Option N`, and the feature class of a node is
-the set of features placed at or below it. The tree is mathlib's, a partial order with a
-bottom, a predecessor and archimedean descent, so feature classes are the preimages of
-principal upper sets: they shrink along dominance and are disjoint across incomparable nodes.
-Spreading a class from one segment onto another is `Finset.piecewise` on it, and agreement on
-a class is `Set.EqOn`. The trees of Clements, Sagey and Halle, Vaux and Wolfe are built in
-their studies.
-
-## Main definitions
-
-* `FeatureGeometry.featureClass` — the features a placement puts at or below a node.
-
-## Main results
-
-* `antitone_featureClass`, `disjoint_featureClass` — feature classes shrink along dominance
-  and are disjoint across incomparable nodes.
-* `eqOn_piecewise_of_le`, `eqOn_piecewise_of_incompRel` — spreading a node carries every
-  class it dominates and leaves every incomparable class untouched.
+A feature geometry over a feature type `F` hangs each feature from at most one node of a tree of
+class nodes, a map `node : F → Option N`, where `a ≤ b` when node `a` dominates node `b`. The
+[feature class](##Phonology.FeatureGeometry.featureClass) of a node is the set of features hanging
+at or below it, [the preimage](##Phonology.FeatureGeometry.coe_featureClass) of the subtree
+`Set.Ici a` under the node. Feature classes therefore
+[shrink along dominance](##Phonology.FeatureGeometry.antitone_featureClass) and, in a tree, are
+[disjoint across incomparable nodes](##Phonology.FeatureGeometry.disjoint_featureClass), so that
+[no two overlap](##Phonology.FeatureGeometry.isLaminar_range_featureClass) unless one contains
+the other, the condition Padgett carries over to classes taken as bare sets of features.
+Assimilation spreads a class from one segment onto another, `Finset.piecewise` on the class, and
+when classes do not overlap it [carries or leaves whole](##IsLaminar.subset_or_eqOn_piecewise)
+every class that does not properly contain the one spread.
 
 ## Implementation notes
 
 The placement is `Option`-valued so that a geometry may leave features of the inventory
-unplaced. A study orders its tree by the parent map, `a ≤ b` when `a` lies on the walk from `b`
-up to the root, the root as `⊥` and the parent as `Order.pred`, every axiom decided. Spreading
-any set of terminals, Halle, Vaux and Wolfe's partial spreading, is `Finset.piecewise` on that
-set, and single-feature spreading is `Function.update`.
+unplaced. A tree is a forest order, which mathlib's rooted trees are. A set of features is
+exhaustively dominated by a node, in Halle, Vaux and Wolfe's sense, when it is the node's feature
+class; single-feature spreading is `Function.update`.
+
+## TODO
+
+Spreading here acts on each feature of a class separately. Whether a rule moves a class node as a
+unit, so that blocking one feature blocks the class, or targets the features one by one, the
+point on which Clements differs from Padgett and from Halle, Vaux and Wolfe, is not represented.
 
 ## References
 
@@ -41,7 +39,6 @@ set, and single-feature spreading is `Function.update`.
 * [M. Halle, B. Vaux and A. Wolfe, *On Feature Spreading and the Representation of Place of
   Articulation* (2000)][halle-vaux-wolfe-2000]
 * [J. Padgett, *Feature Classes in Phonology* (2002)][padgett-2002]
-* [J. Brown and J. Meyer, *Assimilation and Morpheme Boundaries in Mgira* (2024)][brown-meyer-2024]
 * [E. C. Sagey, *The Representation of Features and Relations in Non-Linear Phonology*
   (1986)][sagey-1986]
 -/
@@ -50,7 +47,11 @@ set, and single-feature spreading is `Function.update`.
 
 namespace Phonology.FeatureGeometry
 
-variable {F N : Type*} [Fintype F] [Preorder N] [DecidableLE N] (node : F → Option N)
+variable {F N : Type*} [Fintype F]
+
+section Preorder
+
+variable [Preorder N] [DecidableLE N] (node : F → Option N)
 
 /-! ### Feature classes -/
 
@@ -63,46 +64,54 @@ variable {node} {a b : N} {f : F}
 theorem mem_featureClass : f ∈ featureClass node a ↔ ∃ m ∈ node f, a ≤ m := by
   simp [featureClass]
 
+/-- The feature class of a node is the preimage of the subtree under it. -/
+theorem coe_featureClass : (featureClass node a : Set F) = node ⁻¹' (some '' Set.Ici a) := by
+  ext f
+  simp [mem_featureClass, and_comm, eq_comm]
+
 theorem le_of_mem_featureClass {m : N} (h : f ∈ featureClass node a) (hf : node f = some m) :
     a ≤ m := by
   simpa [mem_featureClass, hf] using h
 
-theorem mem_featureClass_bot [OrderBot N] : f ∈ featureClass node ⊥ ↔ (node f).isSome := by
-  simp [mem_featureClass, Option.isSome_iff_exists]
-
 /-- Feature classes shrink along dominance. -/
-theorem antitone_featureClass : Antitone (featureClass node) := fun _ _ h _ hg ↦ by
-  rw [mem_featureClass] at hg ⊢
-  obtain ⟨m, hm, hbm⟩ := hg
-  exact ⟨m, hm, h.trans hbm⟩
+theorem antitone_featureClass : Antitone (featureClass node) := fun _ _ h ↦
+  Finset.coe_subset.1 <| by
+    simpa only [coe_featureClass] using
+      Set.preimage_mono (Set.image_mono (Set.Ici_subset_Ici.2 h))
 
-/-- Incomparable nodes have disjoint feature classes, since their subtrees are disjoint. -/
-theorem disjoint_featureClass [PredOrder N] [IsPredArchimedean N] (h : IncompRel (· ≤ ·) a b) :
-    Disjoint (featureClass node a) (featureClass node b) := by
-  rw [Finset.disjoint_left]
-  intro g hga hgb
-  rw [mem_featureClass] at hga hgb
-  obtain ⟨m, hm, ham⟩ := hga
-  obtain ⟨m', hm', hbm⟩ := hgb
-  rw [Option.mem_def] at hm hm'
-  rw [hm, Option.some.injEq] at hm'
-  subst hm'
-  exact (le_total_of_directed ham hbm).elim h.2 h.1
+end Preorder
+
+section ForestOrder
+
+variable [PartialOrder N] [IsForestOrder N] [DecidableLE N] {node : F → Option N} {a b : N}
+
+/-- Incomparable nodes of a tree have disjoint feature classes, since their subtrees are
+disjoint. -/
+theorem disjoint_featureClass (h : IncompRel (· ≤ ·) a b) :
+    Disjoint (featureClass node a) (featureClass node b) :=
+  Finset.disjoint_coe.1 <| by
+    simpa only [coe_featureClass] using ((Set.disjoint_image_iff (Option.some_injective N)).2
+      (IsForestOrder.disjoint_Ici_iff.2 h)).preimage node
+
+variable (node) in
+/-- The feature classes of a tree do not overlap: any two are nested or disjoint. -/
+theorem isLaminar_range_featureClass : IsLaminar (Set.range (featureClass node)) := by
+  rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩
+  by_cases hab : a ≤ b
+  · exact .inr (.inl (antitone_featureClass hab))
+  by_cases hba : b ≤ a
+  · exact .inl (antitone_featureClass hba)
+  · exact .inr (.inr (disjoint_featureClass ⟨hab, hba⟩))
+
+end ForestOrder
+
+end Phonology.FeatureGeometry
 
 /-! ### Spreading -/
 
-variable [DecidableEq F] {β : Type*} (src tgt : F → β)
-
-/-- Spreading node `a` from `src` onto `tgt` carries every class `a` dominates. -/
-theorem eqOn_piecewise_of_le (h : a ≤ b) :
-    Set.EqOn ((featureClass node a).piecewise src tgt) src ↑(featureClass node b) :=
-  fun _ hg ↦ Finset.piecewise_eq_of_mem _ _ _ (antitone_featureClass h hg)
-
-/-- Spreading node `a` leaves every class incomparable with `a` untouched. -/
-theorem eqOn_piecewise_of_incompRel [PredOrder N] [IsPredArchimedean N]
-    (h : IncompRel (· ≤ ·) a b) :
-    Set.EqOn ((featureClass node a).piecewise src tgt) tgt ↑(featureClass node b) :=
-  fun _ hg ↦
-    Finset.piecewise_eq_of_notMem _ _ _ (Finset.disjoint_right.1 (disjoint_featureClass h) hg)
-
-end Phonology.FeatureGeometry
+/-- Spreading a class `s` of a family whose classes do not overlap carries a class `t` whole or
+leaves it whole, unless `t` contains `s`. -/
+theorem IsLaminar.subset_or_eqOn_piecewise {F β : Type*} [DecidableEq F] {S : Set (Finset F)}
+    (hS : IsLaminar S) {s t : Finset F} (hs : s ∈ S) (ht : t ∈ S) (src tgt : F → β) :
+    s ⊆ t ∨ Set.EqOn (s.piecewise src tgt) src ↑t ∨ Set.EqOn (s.piecewise src tgt) tgt ↑t :=
+  (hS hs ht).imp_right <| .imp Finset.eqOn_piecewise_of_subset Finset.eqOn_piecewise_of_disjoint

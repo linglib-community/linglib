@@ -135,9 +135,9 @@ def Licensed : Licenser → Strength → Prop
       IsStrawsonDE (Conditional.horizonCounterfactual horizon · q)
   | .conditional, .strong => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
       Antitone fun p ↦ Trivalent.posExt (Conditional.horizonCounterfactual horizon p q)
-  | .sorryThat, .weak => ∀ {W : Type} (dox base : W → Set W) (g : W → Set (W → Prop)),
+  | .sorryThat, .weak => ∀ {W : Type} (dox base : W → Set W) (g : W → Set (Set W)),
       IsStrawsonDE (regret dox base g)
-  | .sorryThat, .strong => ∀ {W : Type} (dox base : W → Set W) (g : W → Set (W → Prop)),
+  | .sorryThat, .strong => ∀ {W : Type} (dox base : W → Set W) (g : W → Set (Set W)),
       Antitone fun p ↦ Trivalent.posExt (regret dox base g p)
 
 /-- The puzzle is that *only*, *would* and *sorry* are Strawson anti-additive, the Strawson form
@@ -147,7 +147,7 @@ theorem strawsonAA_not_sufficient :
         IsStrawsonAntiAdditive fun P : ι → Set W ↦ Focus.only (· = ·) Set.univ P x) ∧
       (∀ {W : Type} (horizon : W → Set W) (q : Set W),
         IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧
-      (∀ {W : Type} (dox base : W → Set W) (g : W → Set (W → Prop)),
+      (∀ {W : Type} (dox base : W → Set W) (g : W → Set (Set W)),
         IsStrawsonAntiAdditive (regret dox base g)) ∧
       ¬ Licensed .only .strong ∧ ¬ Licensed .conditional .strong ∧
         ¬ Licensed .sorryThat .strong :=

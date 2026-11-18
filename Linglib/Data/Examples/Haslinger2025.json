@@ -12,7 +12,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -48,7 +48,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -84,7 +84,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -156,7 +156,7 @@
     "translation": "The doors are open.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -196,7 +196,7 @@
     "translation": "All the doors are open.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -236,7 +236,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -272,7 +272,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -308,7 +308,7 @@
     "translation": "",
     "context": "A new tax was introduced to discourage rich people from collecting cars. The tax rate per car increases if someone owns 10 or more cars, and increases yet again for people who own 100 or more. Ann is looking at the tax paperwork of someone who claims to own 98 cars.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -344,7 +344,7 @@
     "translation": "",
     "context": "Ann just read a newspaper report on how insanely rich Sam Bankman-Fried is. Among other things, the report claims that he owns 98 Teslas for his personal use.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -381,7 +381,7 @@
     "translation": "In this game, everyone collected 200 coins today.",
     "context": "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200—195, 198, 203, 205, 199 etc.—and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -413,7 +413,7 @@
     "translation": "In this game, nobody collected 200 coins today.",
     "context": "On a TV game show, there is a game in which participants have to collect 200 coins in a very brief time interval. Participants that achieve a count of exactly 200 win €250. Participants that come very close to that number, but do not meet the goal exactly, receive €50. Today all ten participants managed to collect amounts that come close to 200—195, 198, 203, 205, 199 etc.—and therefore won €50. After the show, the producer wants to know how the individual games went. Her assistant points at the coins and says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -445,7 +445,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -477,7 +477,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -509,7 +509,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -541,7 +541,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -573,7 +573,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Bert was there.",
         "judgment": "acceptable"

@@ -9,7 +9,7 @@
     "translation": "",
     "context": "Declerck's example of three situations simultaneous within one temporal domain. `left` is an absolute past establishing a past domain; the two `was`-progressives are relative tenses expressing simultaneity with the central situation. All three are in the same temporal domain.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -27,7 +27,7 @@
     "translation": "",
     "context": "Declerck's example of domain shift via absolute preterites. Each clause uses an absolute past tense — no relative tense forms like past perfect (anteriority) or conditional (posteriority). Temporal ordering recovered from clause order alone, not from tense composition.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -45,7 +45,7 @@
     "translation": "",
     "context": "Declerck's example (3a): domain shift with `died` as absolute preterite. Temporal posteriority of dying relative to wounding comes from the adverbial `shortly afterwards`, not from any relative tense form.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -60,7 +60,7 @@
     "translation": "",
     "context": "Declerck's example of modal past: `didn't know` is past in form but simultaneous in interpretation (the not-knowing is at the wishing time, which is now, not in the past). Contrasts with `He says I didn't know his number` (nonmodal past, true past reference).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 1 §1.9 (Tense, c). Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -75,7 +75,7 @@
     "translation": "",
     "context": "Declerck's example of modal past in conditional: `was` is past in form but the reference is to the present (the hypothetical speaker now), not to the past.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 1 §1.9 (Tense, c). Modal past in conditional protasis — the reference is non-past despite past morphology. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "Declerck's example of the future perfect form. The leaving event precedes a reference point `by then` which is itself future relative to utterance.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 1 §1.9 (Tense, a). Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -105,7 +105,7 @@
     "translation": "",
     "context": "Declerck's example of adverbial time clause with present-tense morphology referring to future. `when he comes home` uses present `comes` despite future reference — typical of when-/before-/after-clauses with future reference.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 1 §1.6. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "Declerck's basic present perfect example. The coming event is in the pre-present sector; the reference frame is present (R = P at TU). Contrasts with a past-tense counterpart that would locate the event in the past time-sphere proper.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "comment": "Declerck 1991 ch. 1 §1.9 (Tense, a). Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory. Labels follow the author's preliminary version (the only PDF); the published book's page and section numbers may differ.",
     "verified": "page-image"
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "Declerck's example showing the present-perfect time-sphere effect: `I have overslept this morning` REQUIRES that the morning is not yet over (present time-sphere). Its preterit counterpart `I overslept this morning` does not require that the morning is over: it can be used in the morning if the speaker is concerned not with the structure of the world at TU but with the situation itself, which is completely over.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "I overslept this morning.", "judgment": "acceptable"}
     ],
     "readings": [],

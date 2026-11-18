@@ -9,7 +9,7 @@
     "translation": "",
     "context": "A: Who went to the movies?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["fragment", "Bob"],
@@ -28,7 +28,7 @@
     "translation": "",
     "context": "Q: Who went to the movies? (CAPS = prosodic stress)",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["stress", "subject"],
@@ -47,7 +47,7 @@
     "translation": "",
     "context": "Q: Who went to the movies?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["stress", "none"],

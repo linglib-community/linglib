@@ -25,7 +25,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "distal demonstrative (-NP)"), ("marker", "unstressed pronoun"), ("marker", "distal demonstrative (-NP)"), ("marker", "distal demonstrative+NP")] }
 
@@ -39,7 +39,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("source", "Haaretz"), ("perspective", "victim"), ("victim", "zero"), ("rapists", "last name")] }
 
@@ -53,7 +53,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("source", "Maariv"), ("perspective", "rapists"), ("victim", "proximate demonstrative (-NP)"), ("rapists", "zero")] }
 
@@ -67,7 +67,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("speaker", "self")] }
 
@@ -75,13 +75,12 @@ def ex_6 : Datum :=
   { id := "ariel2001_6"
     source := ⟨"ariel-2001", "(6)"⟩
     reportedIn := none
-    method := some .introspection
     language := "stan1293"
     primaryText := "In the garden, I saw a young girl kicking a tree. I looked at them for a while."
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("antecedent", "girl and tree"), ("marker", "unstressed pronoun")] }
 
@@ -95,7 +94,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "stressed pronoun")] }
 
@@ -109,7 +108,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "headline"), ("marker", "last name"), ("marker", "last name"), ("marker", "full name"), ("marker", "zero")] }
 
@@ -123,7 +122,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("position", "opening sentence"), ("marker", "full name+modifier"), ("marker", "full name+modifier"), ("marker", "full name+modifier"), ("marker", "proximate demonstrative (-NP)")] }
 
@@ -137,7 +136,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("marker", "stressed pronoun")] }
 
@@ -151,7 +150,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the paper coreferent with the newspaper", .acceptable)]
     paperFeatures := [("marker", "short definite description"), ("marker", "short definite description")] }
 
@@ -165,7 +164,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("topicMarker", "unstressed pronoun"), ("subjectMarker", "short definite description")] }
 
@@ -173,13 +172,12 @@ def maya_rachel : Datum :=
   { id := "ariel2001_maya_rachel"
     source := ⟨"ariel-2001", "§1.2"⟩
     reportedIn := none
-    method := some .introspection
     language := "stan1293"
     primaryText := "Maya kissed Rachel. And then she/SHE …"
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("she = Maya", .acceptable), ("SHE = Rachel", .acceptable)]
     paperFeatures := [("maya", "unstressed pronoun"), ("rachel", "stressed pronoun")] }
 

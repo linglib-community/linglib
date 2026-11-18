@@ -24,7 +24,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -37,7 +37,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj wh"), ("moved", "right"), ("same", "no"), ("coordinator", "and")] }
 
@@ -50,7 +50,7 @@ def ex3c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "or")] }
 
@@ -63,7 +63,7 @@ def ex3d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj wh"), ("moved", "right"), ("same", "no"), ("coordinator", "or")] }
 
@@ -76,7 +76,7 @@ def ex3e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
@@ -89,7 +89,7 @@ def ex3f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj wh"), ("moved", "right"), ("same", "no"), ("coordinator", "but")] }
 
@@ -102,7 +102,7 @@ def ex7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "C"), ("right", "C"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -115,7 +115,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -128,7 +128,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D focus"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -141,7 +141,7 @@ def ex26c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -154,7 +154,7 @@ def ex27a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
@@ -167,7 +167,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj focus"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
@@ -180,7 +180,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj topic"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
@@ -193,7 +193,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -206,7 +206,7 @@ def ex31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -219,7 +219,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D wh"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -232,7 +232,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -245,7 +245,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D wh"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -258,7 +258,7 @@ def ex46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
@@ -271,7 +271,7 @@ def ex46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D wh"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
@@ -284,7 +284,7 @@ def ex47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D focus"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
@@ -297,7 +297,7 @@ def ex51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
@@ -310,7 +310,7 @@ def ex52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
@@ -323,7 +323,7 @@ def ex59a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D uC"), ("right", "D uC"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -336,7 +336,7 @@ def ex59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D uC"), ("right", "D uC"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
@@ -349,7 +349,7 @@ def ex61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D uC"), ("right", "D uC"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
@@ -362,7 +362,7 @@ def ex63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
@@ -375,7 +375,7 @@ def ex63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D topic"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
@@ -388,7 +388,7 @@ def ex64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
@@ -401,7 +401,7 @@ def ex64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D topic"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
@@ -414,7 +414,7 @@ def ex67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "C"), ("right", "C"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -427,7 +427,7 @@ def ex68a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "yes"), ("coordinator", "and")] }
 
@@ -440,7 +440,7 @@ def ex68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D topic"), ("moved", "whole"), ("same", "yes"), ("coordinator", "and")] }
 
@@ -453,7 +453,7 @@ def ex69 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "yes"), ("coordinator", "and")] }
 
@@ -466,7 +466,7 @@ def ex70a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "yes"), ("coordinator", "and")] }
 
@@ -479,7 +479,7 @@ def ex70b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "and")] }
 
@@ -492,7 +492,7 @@ def ex70c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "and")] }
 
@@ -505,7 +505,7 @@ def ex72a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "yes"), ("coordinator", "or")] }
 
@@ -518,7 +518,7 @@ def ex72b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "or")] }
 
@@ -531,7 +531,7 @@ def ex72c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "or")] }
 
@@ -544,7 +544,7 @@ def ex73a_same : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "yes"), ("coordinator", "but")] }
 
@@ -557,7 +557,7 @@ def ex73a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "but")] }
 
@@ -570,7 +570,7 @@ def ex74_same : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj"), ("moved", "none"), ("same", "yes"), ("coordinator", "but")] }
 
@@ -583,7 +583,7 @@ def ex74 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj"), ("moved", "none"), ("same", "no"), ("coordinator", "but")] }
 
@@ -596,7 +596,7 @@ def ex75a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -609,7 +609,7 @@ def ex75b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
@@ -622,7 +622,7 @@ def ex76 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 

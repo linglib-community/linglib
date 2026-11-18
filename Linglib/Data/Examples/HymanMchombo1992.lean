@@ -24,7 +24,7 @@ def ex_1b_caus : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "C"), ("suffixes", "C")] }
 
@@ -37,7 +37,7 @@ def ex_1b_appl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "A"), ("suffixes", "A")] }
 
@@ -50,7 +50,7 @@ def ex_1b_recip : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "R"), ("suffixes", "R")] }
 
@@ -63,7 +63,7 @@ def ex_1b_pass : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "P"), ("suffixes", "P")] }
 
@@ -76,7 +76,7 @@ def ex_1b_int : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "I"), ("suffixes", "I")] }
 
@@ -89,7 +89,7 @@ def ex_3a_rc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RC"), ("suffixes", "RC")] }
 
@@ -102,7 +102,7 @@ def ex_3a_cr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CR"), ("suffixes", "CR")] }
 
@@ -115,7 +115,7 @@ def ex_3b_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AP"), ("suffixes", "AP")] }
 
@@ -128,7 +128,7 @@ def ex_3b_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PA"), ("suffixes", "PA")] }
 
@@ -141,7 +141,7 @@ def ex_3c_ar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AR"), ("suffixes", "AR")] }
 
@@ -154,7 +154,7 @@ def ex_3c_ra : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RA")] }
 
@@ -167,7 +167,7 @@ def ex_3c_ra_doubled : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RA(R)")] }
 
@@ -180,7 +180,7 @@ def ex_3d_ri : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RI"), ("suffixes", "RI")] }
 
@@ -193,7 +193,7 @@ def ex_3d_ir : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RI"), ("suffixes", "IR")] }
 
@@ -206,7 +206,7 @@ def ex_4a_rp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RP"), ("suffixes", "RP")] }
 
@@ -219,7 +219,7 @@ def ex_4a_pr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PR"), ("suffixes", "PR")] }
 
@@ -232,7 +232,7 @@ def ex_4b_ci : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CI"), ("suffixes", "CI")] }
 
@@ -245,7 +245,7 @@ def ex_4b_ic : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "IC"), ("suffixes", "IC")] }
 
@@ -258,7 +258,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AA"), ("suffixes", "AA")] }
 
@@ -271,7 +271,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "ARA"), ("suffixes", "ARA(R)")] }
 
@@ -284,7 +284,7 @@ def ex_6c_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AP"), ("suffixes", "AP")] }
 
@@ -297,7 +297,7 @@ def ex_6c_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PA"), ("suffixes", "PA")] }
 
@@ -310,7 +310,7 @@ def ex_6d_aap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AAP"), ("suffixes", "AAP")] }
 
@@ -323,7 +323,7 @@ def ex_6d_apa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "APA"), ("suffixes", "APA")] }
 
@@ -336,7 +336,7 @@ def ex_7a_ca : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CA"), ("suffixes", "CA")] }
 
@@ -349,7 +349,7 @@ def ex_7a_ac : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AC"), ("suffixes", "AC")] }
 
@@ -362,7 +362,7 @@ def ex_7b_cp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CP"), ("suffixes", "CP")] }
 
@@ -375,7 +375,7 @@ def ex_7b_pc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PC"), ("suffixes", "PC")] }
 
@@ -388,7 +388,7 @@ def ex_7c_ia : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AI"), ("suffixes", "IA")] }
 
@@ -401,7 +401,7 @@ def ex_7c_ai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AI"), ("suffixes", "AI")] }
 
@@ -414,7 +414,7 @@ def ex_7d_ip : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PI"), ("suffixes", "IP")] }
 
@@ -427,7 +427,7 @@ def ex_7d_pi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PI"), ("suffixes", "PI")] }
 
@@ -440,7 +440,7 @@ def ex_11a_ac : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AC"), ("suffixes", "AC")] }
 
@@ -453,7 +453,7 @@ def ex_11a_arc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "ARC"), ("suffixes", "ARC")] }
 
@@ -466,7 +466,7 @@ def ex_11b_ai : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AI"), ("suffixes", "AI")] }
 
@@ -479,7 +479,7 @@ def ex_11b_ari : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "ARI"), ("suffixes", "ARI")] }
 
@@ -492,7 +492,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PI"), ("suffixes", "PI")] }
 
@@ -505,7 +505,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PAI"), ("suffixes", "PAI")] }
 
@@ -518,7 +518,7 @@ def ex_12c_rc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RC"), ("suffixes", "RC")] }
 
@@ -531,7 +531,7 @@ def ex_12c_rcp : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCP"), ("suffixes", "RCP")] }
 
@@ -544,7 +544,7 @@ def ex_12c_rcpa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPA(R)")] }
 
@@ -557,7 +557,7 @@ def ex_12d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCPAI"), ("suffixes", "RCPA(R)I")] }
 
@@ -570,7 +570,7 @@ def ex_16_ac : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "AC"), ("suffixes", "CA")] }
 
@@ -583,7 +583,7 @@ def ex_16_pc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PC"), ("suffixes", "CP")] }
 
@@ -596,7 +596,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "PAC"), ("suffixes", "CPA")] }
 
@@ -609,7 +609,7 @@ def ex_21c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "AR")] }
 
@@ -622,7 +622,7 @@ def ex_23a_bad : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCA"), ("suffixes", "RCA")] }
 
@@ -635,7 +635,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCA"), ("suffixes", "RCA(R)")] }
 
@@ -648,7 +648,7 @@ def ex_23b_bad : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPA")] }
 
@@ -661,7 +661,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCPA"), ("suffixes", "RCPA(R)")] }
 
@@ -674,7 +674,7 @@ def ex_25a_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RA"), ("suffixes", "RA(R)")] }
 
@@ -687,7 +687,7 @@ def ex_25a_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAA"), ("suffixes", "RA(R)A(R)")] }
 
@@ -700,7 +700,7 @@ def ex_25a_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAAA"), ("suffixes", "RA(R)A(R)A(R)")] }
 
@@ -713,7 +713,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RACA"), ("suffixes", "RA(R)CA(R)")] }
 
@@ -726,7 +726,7 @@ def ex_27a_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "benefactive"), ("subject", "applied"), ("suffixes", "AP")] }
 
@@ -739,7 +739,7 @@ def ex_27a_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "benefactive"), ("subject", "applied"), ("suffixes", "PA")] }
 
@@ -752,7 +752,7 @@ def ex_27b_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "benefactive"), ("subject", "patient"), ("suffixes", "AP")] }
 
@@ -765,7 +765,7 @@ def ex_27b_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "benefactive"), ("subject", "patient"), ("suffixes", "PA")] }
 
@@ -778,7 +778,7 @@ def ex_28a_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "instrument"), ("subject", "applied"), ("suffixes", "AP")] }
 
@@ -791,7 +791,7 @@ def ex_28a_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "instrument"), ("subject", "applied"), ("suffixes", "PA")] }
 
@@ -804,7 +804,7 @@ def ex_28b_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "instrument"), ("subject", "patient"), ("suffixes", "AP")] }
 
@@ -817,7 +817,7 @@ def ex_28b_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "instrument"), ("subject", "patient"), ("suffixes", "PA")] }
 
@@ -830,7 +830,7 @@ def ex_29a_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "locative"), ("subject", "applied"), ("suffixes", "AP")] }
 
@@ -843,7 +843,7 @@ def ex_29a_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "locative"), ("subject", "applied"), ("suffixes", "PA")] }
 
@@ -856,7 +856,7 @@ def ex_29b_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "locative"), ("subject", "patient"), ("suffixes", "AP")] }
 
@@ -869,7 +869,7 @@ def ex_29b_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "locative"), ("subject", "patient"), ("suffixes", "PA")] }
 
@@ -882,7 +882,7 @@ def ex_30a_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "circumstantial"), ("subject", "patient"), ("suffixes", "AP")] }
 
@@ -895,7 +895,7 @@ def ex_30a_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "circumstantial"), ("subject", "patient"), ("suffixes", "PA")] }
 
@@ -908,7 +908,7 @@ def ex_30b_ap : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "circumstantial"), ("subject", "applied"), ("suffixes", "AP")] }
 
@@ -921,7 +921,7 @@ def ex_30b_pa : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("role", "circumstantial"), ("subject", "applied"), ("suffixes", "PA")] }
 
@@ -934,7 +934,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "uk"), ("scope", "A"), ("suffixes", "A")] }
 
@@ -947,7 +947,7 @@ def ex_32c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "uk"), ("scope", "AC"), ("suffixes", "AC")] }
 
@@ -960,7 +960,7 @@ def ex_32d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "uk"), ("scope", "AC"), ("suffixes", "CA")] }
 
@@ -973,7 +973,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RAC")] }
 
@@ -986,7 +986,7 @@ def ex_34c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "ARC")] }
 
@@ -999,7 +999,7 @@ def ex_34d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RA(R)C")] }
 
@@ -1012,7 +1012,7 @@ def ex_34e_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "RCA(R)")] }
 
@@ -1025,7 +1025,7 @@ def ex_34e_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "CRA(R)")] }
 
@@ -1038,7 +1038,7 @@ def ex_34e_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RAC"), ("suffixes", "CAR")] }
 
@@ -1051,7 +1051,7 @@ def ex_35a_cr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CR"), ("suffixes", "CR")] }
 
@@ -1064,7 +1064,7 @@ def ex_35a_rc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RC"), ("suffixes", "CR")] }
 
@@ -1077,7 +1077,7 @@ def ex_35b_rc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RC"), ("suffixes", "RC")] }
 
@@ -1090,7 +1090,7 @@ def ex_35b_cr : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CR"), ("suffixes", "RC")] }
 
@@ -1103,7 +1103,7 @@ def fn16_a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "RCI"), ("suffixes", "IRC")] }
 
@@ -1116,7 +1116,7 @@ def fn16_b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "CRI"), ("suffixes", "CRI")] }
 
@@ -1129,7 +1129,7 @@ def fn16_c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mang"), ("scope", "API"), ("suffixes", "IAP")] }
 

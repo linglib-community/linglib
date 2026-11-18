@@ -754,7 +754,7 @@ theorem explicitness_rungs :
 /-- The English subject forms by referential category are the paradigm of the fragment's
 nominative pronouns. -/
 def englishSubject : Category → Finset String :=
-  PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (.nom ∈ ·.cases))
+  PersonalPronoun.paradigm (English.Pronouns.personal.filter (.nom ∈ ·.cases))
 
 theorem english_pronouns :
     ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ Setoid.ker englishSubject = r.syncretism := by
@@ -763,10 +763,10 @@ theorem english_pronouns :
 theorem english_not_respectsHorizontalHierarchy :
     ¬ Structure.RespectsHorizontalHierarchy (Setoid.ker englishSubject) := by decide +kernel
 
-theorem tagalog_maranao : Setoid.ker Tagalog.ang = Kind.maranao.pattern := by decide +kernel
+theorem tagalog_maranao : Setoid.ker Tagalog.Pronouns.ang = Kind.maranao.pattern := by decide +kernel
 
 theorem tagalog_minimalAugmented :
-    Structure.HasClusivity (Setoid.ker Tagalog.ang) .minimalAugmented := by
+    Structure.HasClusivity (Setoid.ker Tagalog.Pronouns.ang) .minimalAugmented := by
   decide +kernel
 
 end Cysouw2003

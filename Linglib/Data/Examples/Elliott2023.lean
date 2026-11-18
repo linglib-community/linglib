@@ -24,7 +24,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2")] }
 
@@ -37,7 +37,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := "We're wondering how Gabe paid for dinner."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("true if Gabe paid with one credit card and not with another", .acceptable)]
     paperFeatures := [("section", "1.2")] }
 
@@ -50,7 +50,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := "It has been raining all day. We're wondering whether Gabe got wet on the way here."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gabe remembered to bring some umbrella of his", .acceptable)]
     paperFeatures := [("section", "1.2")] }
 
@@ -63,7 +63,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := "It has been raining all day. We're wondering whether Gabe got wet on the way here."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gabe forgot to bring every umbrella of his", .acceptable)]
     paperFeatures := [("section", "1.2")] }
 
@@ -76,7 +76,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("false as soon as there is a bathroom in this house in a funny place", .acceptable)]
     paperFeatures := [("section", "1.2")] }
 
@@ -89,7 +89,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3")] }
 

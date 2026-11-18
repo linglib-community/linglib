@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004
@@ -145,7 +145,7 @@ section Aspect
 open Mereology Spatial
 open Event (σ)
 
-variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] [Event.SpatialTrace E Loc]
+variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] [SpatialTrace E Loc]
   {V : E → Prop} {R : Path Loc → Prop}
 
 /-- `resultative V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the
@@ -250,9 +250,9 @@ theorem rows_coherence :
   decide +kernel
 
 -- (48b)
-theorem rows_thetaLabel :
-    ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?, ∀ ρ ∈ r.verb.thetaLabel s,
-      ρ ∈ ρs := by
+theorem rows_thetaLabels :
+    ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?,
+      (r.verb.thetaLabels s).Nonempty → ¬ Disjoint ρs (r.verb.thetaLabels s) := by
   decide +kernel
 
 end GoldbergJackendoff2004

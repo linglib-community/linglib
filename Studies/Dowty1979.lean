@@ -44,17 +44,6 @@ them.
 * Dowty's branching-time progressive (p. 152) is stated over histories, which p. 153 lets take the
   role of worlds; `branchingProg` reads it so.
 
-## Errata
-
-* The branching-time progressive (p. 152) takes, for each inertia history, some longer interval of
-  the sentence's truth, while (25) fixes one longer interval for every inertia world. The first is
-  strictly weaker ([they differ](##not_branchingProg_subset_prog)): when the inertia worlds
-  complete a circle at different times, it makes *John is drawing a circle* true and (25) false.
-  So the choice between the two formalizations matters for the progressive, contrary to p. 154.
-  The branching definition also drops (25)'s requirement that the interval not be a final
-  subinterval of the longer one, which its own gloss on p. 151 ("extending into some ... possible
-  future") presupposes.
-
 ## TODO
 
 * BECOME (11), (11'), Cresswell's AND (19), the futurate progressive of §3.7 and the stative
@@ -235,15 +224,15 @@ theorem prog_waltz_not_past :
 coin right where (24) does not. -/
 theorem truthValue_rows :
     (iv 0 0 ∈ prog (fun _ _ ↦ Set.univ) heads true ↔
-        Examples.coin_heads.feature? "truthValue" = some "true") ∧
+        Examples.coin_heads.verdict = some true) ∧
       (iv 0 0 ∈ prog (fun _ _ ↦ Set.univ) tails true ↔
-        Examples.coin_tails.feature? "truthValue" = some "true") ∧
+        Examples.coin_tails.verdict = some true) ∧
       (iv 1 1 ∈ possibleProg splitAfterOne watch true ↔
-        Examples.ex28.feature? "truthValue" = some "true") ∧
+        Examples.ex28.verdict = some true) ∧
       ¬ (iv 0 0 ∈ possibleProg splitAfterZero heads true ↔
-        Examples.coin_heads.feature? "truthValue" = some "true") ∧
+        Examples.coin_heads.verdict = some true) ∧
       ¬ (iv 1 1 ∈ bennettPartee watch true ↔
-        Examples.ex28.feature? "truthValue" = some "true") :=
+        Examples.ex28.verdict = some true) :=
   ⟨iff_of_false (not_prog_heads true) (by decide), iff_of_false (not_prog_tails true) (by decide),
     iff_of_true possibleProg_watch (by decide),
     fun h ↦ absurd (h.1 (possibleProg_heads true)) (by decide),

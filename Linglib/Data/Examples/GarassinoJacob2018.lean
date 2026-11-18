@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "A: John did not read 'War and Peace'."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "emphaticDo"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -37,7 +37,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := "A: Ich habe Hanna gefragt, was Karl gerade macht, und sie hat die alberne Behauptung aufgestellt, dass er ein Drehbuch schreibt."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verumAccent"), ("antecedent", "positive"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -50,7 +50,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "verumAccent"), ("antecedent", "inferredNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -63,7 +63,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "embedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -76,7 +76,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "embedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -89,7 +89,7 @@ def ex6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "embedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -102,7 +102,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "juxtaposed"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -115,7 +115,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "juxtaposed"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -128,7 +128,7 @@ def ex7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "juxtaposed"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -141,7 +141,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "ellipticEmbedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -154,7 +154,7 @@ def ex9 : Datum :=
     glossedTokens := []
     context := "A: No me escuchas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "ellipticEmbedding"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -167,7 +167,7 @@ def ex10 : Datum :=
     glossedTokens := []
     context := "A: Non mi ascolti."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "ellipticEmbedding"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -180,7 +180,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "fronting"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -193,7 +193,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "fronting"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -206,7 +206,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "fronting"), ("antecedent", "modal"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -219,7 +219,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := "A: Marie devrait passer son permis de conduire."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "faireCleft"), ("antecedent", "modal"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -233,7 +233,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "rightDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -247,7 +247,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := "A: no, niente, eh, trovare una soluzione."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "openQuestion"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -260,7 +260,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := "A: È poi arrivato Gianni?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siChe"), ("antecedent", "explicitQuestion"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -273,7 +273,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := "A: No ha cantado la soprano."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -286,7 +286,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "positive"), ("dislocated", "subject"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -299,7 +299,7 @@ def fn11 : Datum :=
     glossedTokens := []
     context := "A: Il ne fait pas beau."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siParticle"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -312,7 +312,7 @@ def ex21 : Datum :=
     glossedTokens := []
     context := "A: Non hai preso le pastiglie."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "rightDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -325,7 +325,7 @@ def ex22 : Datum :=
     glossedTokens := []
     context := "A: Non hai preso le pastiglie."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
@@ -338,7 +338,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := "Monsieur le Président, (…) il faut rendre honneur à la présidence française, il faut rendre honneur au président Chirac, qui a été au charbon, qui a combattu et qui a vaincu sur sa vision de l'Europe,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "no")] }
 
@@ -351,7 +351,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := "Señor Presidente, (…) hay que rendir honores a la Presidencia francesa, hay que rendir honores al Presidente Chirac, que se ha dejado la piel, que ha luchido y que ha vencido con su visión de Europa,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siOnly"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "no")] }
 
@@ -364,7 +364,7 @@ def ex23c : Datum :=
     glossedTokens := []
     context := "Signor Presidente, (…) occorre rendere omaggio alla Presidenza francese, occorre rendere omaggio al Presidente Chirac che, costretto a un'opera improba, ha combattuto e ha vinto con la sua visione dell'Europa,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siChe"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "no")] }
 
@@ -377,7 +377,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := "Dovremmo, credo, dare maggiore informazione sugli strumenti a disposizione, valutare le cose positive che sono state fatte – anche se noi non siamo contente fino in fondo, perché ancora resta molto da fare – ma non dobbiamo abbatterci per il fatto che non abbiamo strumenti a disposizione:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "identity"), ("subquestion", "no")] }
 
@@ -390,7 +390,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := "Onorevole Maes, lei ha sollevato problemi di importanza fondamentale, il primo dei quali sulla tolleranza zero. (…) E' di solito un lavoro che nessuno vuole affrontare, (…)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "inferredNegation"), ("dislocated", "object"), ("relation", "identity"), ("subquestion", "no")] }
 
@@ -403,7 +403,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := "È chiaro allora che diventa indispensabile mettere assieme i tre processi. Purtroppo la nostra terminologia è orrenda,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "modal"), ("dislocated", "object"), ("relation", "analogy"), ("subquestion", "no")] }
 
@@ -416,7 +416,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := "Per riuscirci è indispensabile tener fede a un principio che è alla base del nostro stare nell'Unione europea. (…) È quello secondo il quale nello sviluppo della costruzione europea occorre sempre fare uno sforzo per comprendere le ragioni degli altri, farsene in qualche modo carico."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "modal"), ("dislocated", "both"), ("relation", "analogy"), ("subquestion", "no")] }
 
@@ -429,7 +429,7 @@ def ex28 : Datum :=
     glossedTokens := []
     context := "Pienso que el Sr. Ramón de Miguel puede manifestar que consultará al Consejo y que más tarde dará una respuesta más detallada, que ahora no está en disposición de dar. Pero pienso que manifestar simplemente que no puede dar una respuesta no forma parte de las reglas del juego. Considero que puede someter a la Presidencia, al Consejo, las preguntas que se le han formulado, y que puede declarar que, con respecto a algunas de ellas, ahora no está en disposición de dar una respuesta. Pero considero que, por regla general, corresponde al Consejo responder a todas las preguntas."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "identity"), ("subquestion", "no")] }
 
@@ -442,7 +442,7 @@ def ex29 : Datum :=
     glossedTokens := []
     context := "(…) sigue habiendo detenciones arbitrarias y violaciones de los derechos humanos. (…) se sigue poniendo en dificultades a los defensores de los derechos humanos (…) permanece todavía en la cárcel una Premio Sajarov, como la Sra. Leyla Zana. (…) Turquía, en el lugar estratégico que ocupa, es el único Estado completamente laico (…)"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "inferredNegation"), ("dislocated", "adverbial"), ("relation", "identity"), ("subquestion", "no")] }
 
@@ -455,7 +455,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := "Sí quisiera decirle a mi buen amigo, el diputado Jacques Poos, que creo que aquí alguien se ha podido quedar con las manos cruzadas. Sus Señorías saben muy bien que quien les habla nunca ha estado con las manos cruzadas, ni cuando era ministro representando a su país –cuando era colega suyo y tuvimos muchos momentos para hablar –; por lo tanto, seamos también respetuosos con las palabras que utilizamos. Si su Señoría piensa que yo he estado con las manos cruzadas en este conflicto, creo que se equivoca y, si me lo permite, podría hasta echar la vista atrás para ver"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "yes")] }
 
@@ -468,7 +468,7 @@ def ex32 : Datum :=
     glossedTokens := []
     context := "No podemos evitar el acqua alta – eso es un fenómeno de la naturaleza –"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "analogy"), ("subquestion", "yes")] }
 
@@ -481,7 +481,7 @@ def ex33 : Datum :=
     glossedTokens := []
     context := "Con ello no quiero decirles que el acuerdo alcanzado sea óptimo en todos sus aspectos,"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "analogy"), ("subquestion", "yes")] }
 
@@ -494,7 +494,7 @@ def ex35 : Datum :=
     glossedTokens := []
     context := "Esto es escandaloso, esto merecería un titular: sólo seis Estados miembros nos dicen qué hacen con la recuperación de los fondos que han usado mal."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "positive"), ("dislocated", "subject"), ("relation", "unstated"), ("subquestion", "no")] }
 

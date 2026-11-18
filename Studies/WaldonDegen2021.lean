@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Incremental
+public import Linglib.Pragmatics.Probabilistic.Incremental
 public import Studies.DegenEtAl2020
 public import Linglib.Data.Examples.WaldonDegen2021
 
@@ -263,7 +263,6 @@ private theorem step_apply_eq_one (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1)
     (hpos : 0 < meaning vs vc s u target) :
     step α cost vs vc L s ctx target {o} = 1 :=
   (ENNReal.toReal_eq_one_iff _).1 <| S1_real_eq_one hα
-    (incrementalMeaning_nonneg hs0 hs1 hc0 hc1 L s ctx)
     (stringMeaning_pos (fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s _ target) hu
       (by simpa using hpos))
     fun v hv ↦ stringMeaning_of_continuations_eq_nil (h v hv) _

@@ -102,19 +102,19 @@ def possessorPrefix : Speaker → Gender → Option String
 /-! ### Body-part nouns -/
 
 /-- *malidji* 'finger'. -/
-def malidji : Noun := ⟨"malidji", "finger"⟩
+def malidji : Noun := ⟨"malidji", "finger", none⟩
 
 /-- *maṇḍa* 'foot'. -/
-def «maṇḍa» : Noun := ⟨"maṇḍa", "foot"⟩
+def «maṇḍa» : Noun := ⟨"maṇḍa", "foot", none⟩
 
 /-- *liřbi* 'scales'. -/
-def «liřbi» : Noun := ⟨"liřbi", "scales"⟩
+def «liřbi» : Noun := ⟨"liřbi", "scales", none⟩
 
 /-- *mulu* 'mouth'. -/
-def mulu : Noun := ⟨"mulu", "mouth"⟩
+def mulu : Noun := ⟨"mulu", "mouth", none⟩
 
 /-- *wini* 'name'. -/
-def wini : Noun := ⟨"wini", "name"⟩
+def wini : Noun := ⟨"wini", "name", none⟩
 
 /-- The body-part nouns, which take a possessor prefix, and *wini* 'name', which does too. -/
 def bodyPartNouns : List Noun := [malidji, «maṇḍa», «liřbi», mulu, wini]

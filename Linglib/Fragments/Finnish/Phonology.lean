@@ -58,11 +58,11 @@ with two, and only a short vowel stands between the stop and the ending, so that
 * `Finnish.isNeutral_iff`, `Finnish.isBackVowel_iff`: the neutral vowels are /e i/ and the
   back vowels /ɑ o u/.
 * `Finnish.naturalClass_A`: the natural class of the suffix vowel is /ɑ æ/.
-* `Finnish.unspecified_back_A`, `Finnish.setFeature_back_A`: the suffix vowel has no [back],
+* `Finnish.back_A`, `Finnish.setFeature_back_A`: the suffix vowel has no [back],
   and with [back] filled in it is /ɑ/ or /æ/.
 * `Finnish.sourceValue_back`: a back stem vowel is the source across a neutral one, and a
   stem of neutral vowels has no source.
-* `Finnish.unspecified_round_iff`, `Finnish.hasValue_syllabic_consonants`: `V` is the only
+* `Finnish.round_eq_bot_iff`, `Finnish.syllabic_eq_false_of_mem_consonants`: `V` is the only
   vowel without [round], and every consonant is [−syllabic], as vowel copy requires.
 * `Finnish.surface_suffix`: the suffix vowel after back, front and neutral stems, and `V`
   after a vowel and after the suffix vowel.
@@ -81,7 +81,7 @@ Consonant gradation belongs to the lexicon, since many words do not undergo it (
 'in the car'), so `surface` leaves it out and a stem is given in the grade its ending
 selects, as in Karlsson's segmentations *pöydä-llä* and *käde-ssä*. A search copies one
 feature, so vowel copy is four searches. `V` is the only vowel without [round]
-(`unspecified_round_iff`), so the targets of each search are the vowels without it and [round]
+(`round_eq_bot_iff`), so the targets of each search are the vowels without it and [round]
 is copied last.
 
 A rule has one right context, so each alternation is two rules, one for an ending of a
@@ -203,16 +203,16 @@ is any vowel. -/
 def V : Segment := Sonority.vowel.toSegment
 
 /-- `C`, as a rule context, is any consonant. -/
-def C : Segment := Segment.ofSpecs [(.syllabic, false)]
+def C : Segment := [−syllabic]
 
 /-! ### Harmonic classification -/
 
 /-- A back vowel is [+syllabic, +back]. -/
-def IsBackVowel (s : Segment) : Prop := s.IsVowel ∧ s.HasValue .back true
+def IsBackVowel (s : Segment) : Prop := s.IsVowel ∧ s .back = true
 
 /-- A neutral vowel is front, unrounded and non-low, and is transparent to harmony. -/
 def IsNeutral (s : Segment) : Prop :=
-  s.IsVowel ∧ s.HasValue .back false ∧ s.HasValue .round false ∧ s.HasValue .low false
+  s.IsVowel ∧ s .back = false ∧ s .round = false ∧ s .low = false
 
 instance : DecidablePred IsBackVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -230,7 +230,7 @@ vowels unspecified for it, and a stem with no harmonic vowel takes front suffixe
 Consonants and the neutral vowels /e i/ are off the tier. -/
 def palatalHarmony : System Segment :=
   System.mk' (feature := .back)
-    (IsTarget := fun s ↦ s.IsVowel ∧ s.Unspecified .back)
+    (IsTarget := fun s ↦ s.IsVowel ∧ s .back = none)
     (IsTransparent := fun s ↦ ¬ s.IsVowel ∨ IsNeutral s)
     (direction := .rightward)
     (default := some false)
@@ -239,16 +239,16 @@ def palatalHarmony : System Segment :=
 off the tier, and the targets are the vowels without [round], which `V` alone is. -/
 def copyToV (f : Phonology.Feature) : System Segment :=
   System.mk' (feature := f)
-    (IsTarget := fun s ↦ s.IsVowel ∧ s.Unspecified .round)
+    (IsTarget := fun s ↦ s.IsVowel ∧ s .round = none)
     (IsTransparent := fun s ↦ ¬ s.IsVowel)
 
 /-- `V` is the only vowel without [round], so the vowels copying targets are `V` alone. -/
-theorem unspecified_round_iff : ∀ x ∈ vowels ∪ {A, O, V}, x.Unspecified .round ↔ x = V := by
+theorem round_eq_bot_iff : ∀ x ∈ vowels ∪ {A, O, V}, x .round = none ↔ x = V := by
   decide
 
 /-- Every consonant is [−syllabic], so it is off the tier of copying and harmony and matches
 the context `C`. -/
-theorem hasValue_syllabic_consonants : ∀ x ∈ consonants, x.HasValue .syllabic false := by
+theorem syllabic_eq_false_of_mem_consonants : ∀ x ∈ consonants, x .syllabic = false := by
   decide
 
 /-- Vowel copy gives `V` the quality of the nearest vowel before it, [round] last. -/
@@ -260,10 +260,10 @@ harmony fill the suffix vowels. -/
 def surface (w : List Segment) : List Segment := palatalHarmony.searchCopy.apply (vowelCopy w)
 
 /-- The natural class of the suffix vowel among the vowels is its two alternants. -/
-theorem naturalClass_A : A.naturalClass vowels = {a, ä} := by decide
+theorem naturalClass_A : naturalClass A vowels = {a, ä} := by decide
 
 /-- The suffix vowel has no value for [back], so it is a target of harmony. -/
-theorem unspecified_back_A : A.Unspecified .back := by decide
+theorem back_A : A .back = none := by decide
 
 /-- The suffix vowel with [back] filled in is /ɑ/ or /æ/. -/
 theorem setFeature_back_A : A.setFeature .back true = a ∧ A.setFeature .back false = ä := by
@@ -316,7 +316,7 @@ def gradation (target : Segment) (effect : Effect) (left : ContextElem) : List R
 /-- In qualitative gradation /p/ becomes /v/ and /k/ is lost after a vowel, and /t/ becomes
 /d/ after a vowel and after /h/. -/
 def qualitativeGradation : List Rule :=
-  let voice : Effect := .changeFeatures (Segment.ofSpecs [(.voice, true)])
+  let voice : Effect := .changeFeatures [+voice]
   gradation p (.replace v) (.seg V) ++ gradation t voice (.seg V) ++ gradation t voice (.seg h) ++
     gradation k .delete (.seg V)
 

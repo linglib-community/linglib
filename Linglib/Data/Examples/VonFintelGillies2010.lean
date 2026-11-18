@@ -24,7 +24,7 @@ def keys_drawer : Datum :=
     glossedTokens := []
     context := "Answer to: Where are the keys? The speaker infers the location rather than seeing it."
     judgment := .acceptable
-    alternatives := [("They are in the kitchen drawer.", .acceptable)]
+    contrasts := [("They are in the kitchen drawer.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -37,7 +37,7 @@ def john_left : Datum :=
     glossedTokens := []
     context := "General epistemic context; the speaker infers John's departure."
     judgment := .acceptable
-    alternatives := [("John left.", .acceptable)]
+    contrasts := [("John left.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -50,7 +50,7 @@ def john_home : Datum :=
     glossedTokens := []
     context := "General epistemic context; the speaker infers John's whereabouts."
     judgment := .acceptable
-    alternatives := [("John is at home.", .acceptable)]
+    contrasts := [("John is at home.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -63,7 +63,7 @@ def mount_toby : Datum :=
     glossedTokens := []
     context := "General epistemic context; the speaker infers the climb."
     judgment := .acceptable
-    alternatives := [("She climbed Mount Toby.", .acceptable)]
+    contrasts := [("She climbed Mount Toby.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -76,7 +76,7 @@ def billy_sees_rain : Datum :=
     glossedTokens := []
     context := "Billy sees the pouring rain through the window."
     judgment := .questionable
-    alternatives := [("It's raining.", .acceptable)]
+    contrasts := [("It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
@@ -89,7 +89,7 @@ def billy_wet_gear : Datum :=
     glossedTokens := []
     context := "Billy sees people coming in with wet umbrellas, slickers, and galoshes, and knows for sure that rain is the only possible cause."
     judgment := .acceptable
-    alternatives := [("It's raining.", .acceptable)]
+    contrasts := [("It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -102,7 +102,7 @@ def chris_ball : Datum :=
     glossedTokens := []
     context := "Chris has lost her ball, but she knows with full certainty that it is either in Box A or B or C."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "elimination"), ("must_entails_prejacent", "true")] }
 
@@ -115,7 +115,7 @@ def cant_mastermind : Datum :=
     glossedTokens := []
     context := "Mastermind game: the conclusion is inferred from the clues, not directly observed."
     judgment := .acceptable
-    alternatives := [("There aren't two reds.", .acceptable)]
+    contrasts := [("There aren't two reds.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -128,7 +128,7 @@ def cant_sunshine : Datum :=
     glossedTokens := []
     context := "Billy sees brilliant sunshine."
     judgment := .questionable
-    alternatives := [("It's not raining.", .acceptable)]
+    contrasts := [("It's not raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
@@ -141,7 +141,7 @@ def cant_sun_gear : Datum :=
     glossedTokens := []
     context := "Billy sees people coming in with sun gear and knows sunshine is the only possible explanation."
     judgment := .acceptable
-    alternatives := [("It's not raining.", .acceptable)]
+    contrasts := [("It's not raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -154,7 +154,7 @@ def must_be_hungry : Datum :=
     glossedTokens := []
     context := "Speaker reflecting on their own internal state."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
@@ -167,7 +167,7 @@ def modus_ponens : Datum :=
     glossedTokens := []
     context := "Assessing the validity of the argument form: if phi, must psi; phi; therefore psi."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "modus_ponens")] }
 
@@ -180,7 +180,7 @@ def must_perhaps : Datum :=
     glossedTokens := []
     context := "Flat-footed conjunction of must phi with perhaps not-phi."
     judgment := .unacceptable
-    alternatives := [("Perhaps it isn't raining but it must be.", .unacceptable)]
+    contrasts := [("Perhaps it isn't raining but it must be.", .unacceptable)]
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "epistemic_contradiction")] }
 
@@ -193,7 +193,7 @@ def might_retraction : Datum :=
     glossedTokens := []
     context := "Alex asserted a might-claim; the prejacent turns out false; Alex retracts commitment to the prejacent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "retraction"), ("modal", "might")] }
 
@@ -206,7 +206,7 @@ def must_no_retraction : Datum :=
     glossedTokens := []
     context := "Alex asserted a must-claim; the prejacent turns out false; Alex attempts the might-style retraction."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "retraction"), ("modal", "must")] }
 
@@ -219,7 +219,7 @@ def hedging : Datum :=
     glossedTokens := []
     context := "Speaker is pretty sure rain explains the wet gear but feels a twinge of doubt and wants to hedge."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "hedging")] }
 
@@ -232,7 +232,7 @@ def hey_wait_a_minute : Datum :=
     glossedTokens := []
     context := "Billy challenges Alex's use of must while Alex is looking out the window."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "hwam_test")] }
 

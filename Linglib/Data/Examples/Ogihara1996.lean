@@ -22,9 +22,11 @@ def ex2a : Datum :=
     language := "nucl1643"
     primaryText := "Taroo-wa Hanako-ga byooki-da-to it-ta."
     glossedTokens := [("Taroo-wa", "Taro-TOP"), ("Hanako-ga", "Hanako-NOM"), ("byooki-da", "be-sick-PRES"), ("-to", "that"), ("it-ta", "say-PAST")]
+    glossedWords := [⟨['T', 'a', 'r', 'o', 'o', '-', 'w', 'a'], ['T', 'a', 'r', 'o', '-', 'T', 'O', 'P'], [⟨['T', 'a', 'r', 'o', 'o'], ['T', 'a', 'r', 'o'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['H', 'a', 'n', 'a', 'k', 'o', '-', 'g', 'a'], ['H', 'a', 'n', 'a', 'k', 'o', '-', 'N', 'O', 'M'], [⟨['H', 'a', 'n', 'a', 'k', 'o'], ['H', 'a', 'n', 'a', 'k', 'o'], none⟩, ⟨['g', 'a'], ['N', 'O', 'M'], some '-'⟩]⟩, ⟨['b', 'y', 'o', 'o', 'k', 'i', '-', 'd', 'a'], ['b', 'e', '-', 's', 'i', 'c', 'k', '-', 'P', 'R', 'E', 'S'], []⟩, ⟨['-', 't', 'o'], ['t', 'h', 'a', 't'], []⟩, ⟨['i', 't', '-', 't', 'a'], ['s', 'a', 'y', '-', 'P', 'A', 'S', 'T'], [⟨['i', 't'], ['s', 'a', 'y'], none⟩, ⟨['t', 'a'], ['P', 'A', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePresent")] }
 
@@ -35,9 +37,11 @@ def ex2b : Datum :=
     language := "nucl1643"
     primaryText := "Taroo-wa Hanako-ga byookidat-ta-to it-ta."
     glossedTokens := [("Taroo-wa", "Taro-TOP"), ("Hanako-ga", "Hanako-NOM"), ("byookidat-ta", "be-sick-PAST"), ("-to", "that"), ("it-ta", "say-PAST")]
+    glossedWords := [⟨['T', 'a', 'r', 'o', 'o', '-', 'w', 'a'], ['T', 'a', 'r', 'o', '-', 'T', 'O', 'P'], [⟨['T', 'a', 'r', 'o', 'o'], ['T', 'a', 'r', 'o'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['H', 'a', 'n', 'a', 'k', 'o', '-', 'g', 'a'], ['H', 'a', 'n', 'a', 'k', 'o', '-', 'N', 'O', 'M'], [⟨['H', 'a', 'n', 'a', 'k', 'o'], ['H', 'a', 'n', 'a', 'k', 'o'], none⟩, ⟨['g', 'a'], ['N', 'O', 'M'], some '-'⟩]⟩, ⟨['b', 'y', 'o', 'o', 'k', 'i', 'd', 'a', 't', '-', 't', 'a'], ['b', 'e', '-', 's', 'i', 'c', 'k', '-', 'P', 'A', 'S', 'T'], []⟩, ⟨['-', 't', 'o'], ['t', 'h', 'a', 't'], []⟩, ⟨['i', 't', '-', 't', 'a'], ['s', 'a', 'y', '-', 'P', 'A', 'S', 'T'], [⟨['i', 't'], ['s', 'a', 'y'], none⟩, ⟨['t', 'a'], ['P', 'A', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePast")] }
 
@@ -50,7 +54,7 @@ def ex19d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "pastPerfectProgressive")] }
 
@@ -63,7 +67,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePast")] }
 
@@ -74,9 +78,11 @@ def ex10b : Datum :=
     language := "nucl1643"
     primaryText := "Taroo-wa Hanako-ga Siatoru-ni i-ru to it-ta."
     glossedTokens := [("Taroo-wa", "Taro-TOP"), ("Hanako-ga", "Hanako-NOM"), ("Siatoru-ni", "Seattle-in"), ("i-ru", "be-PRES"), ("to", "that"), ("it-ta", "say-PAST")]
+    glossedWords := [⟨['T', 'a', 'r', 'o', 'o', '-', 'w', 'a'], ['T', 'a', 'r', 'o', '-', 'T', 'O', 'P'], [⟨['T', 'a', 'r', 'o', 'o'], ['T', 'a', 'r', 'o'], none⟩, ⟨['w', 'a'], ['T', 'O', 'P'], some '-'⟩]⟩, ⟨['H', 'a', 'n', 'a', 'k', 'o', '-', 'g', 'a'], ['H', 'a', 'n', 'a', 'k', 'o', '-', 'N', 'O', 'M'], [⟨['H', 'a', 'n', 'a', 'k', 'o'], ['H', 'a', 'n', 'a', 'k', 'o'], none⟩, ⟨['g', 'a'], ['N', 'O', 'M'], some '-'⟩]⟩, ⟨['S', 'i', 'a', 't', 'o', 'r', 'u', '-', 'n', 'i'], ['S', 'e', 'a', 't', 't', 'l', 'e', '-', 'i', 'n'], [⟨['S', 'i', 'a', 't', 'o', 'r', 'u'], ['S', 'e', 'a', 't', 't', 'l', 'e'], none⟩, ⟨['n', 'i'], ['i', 'n'], some '-'⟩]⟩, ⟨['i', '-', 'r', 'u'], ['b', 'e', '-', 'P', 'R', 'E', 'S'], [⟨['i'], ['b', 'e'], none⟩, ⟨['r', 'u'], ['P', 'R', 'E', 'S'], some '-'⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'a', 't'], [⟨['t', 'o'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['i', 't', '-', 't', 'a'], ['s', 'a', 'y', '-', 'P', 'A', 'S', 'T'], [⟨['i', 't'], ['s', 'a', 'y'], none⟩, ⟨['t', 'a'], ['P', 'A', 'S', 'T'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "simplePresent")] }
 
@@ -89,7 +95,7 @@ def ex4_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
     paperFeatures := [("form", "simplePast"), ("form", "future"), ("form", "simplePast")] }
 

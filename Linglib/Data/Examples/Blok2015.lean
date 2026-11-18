@@ -24,7 +24,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "ifAny"), ("numeral", "3"), ("scaleBottom", "1")] }
 
@@ -37,7 +37,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "ifAny"), ("numeral", "3"), ("scaleBottom", "1")] }
 
@@ -50,7 +50,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "butNone"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -63,7 +63,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "butNone"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -76,7 +76,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "evenMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -89,7 +89,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "evenMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -102,7 +102,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "noMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -115,7 +115,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "noMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -128,7 +128,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "precise"), ("numeral", "14"), ("precise", "10"), ("scaleBottom", "1")] }
 
@@ -141,7 +141,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "precise"), ("numeral", "100"), ("precise", "90"), ("scaleBottom", "1")] }
 
@@ -154,7 +154,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -167,7 +167,7 @@ def ex_22b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
 
@@ -180,7 +180,7 @@ def ex_23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "10"), ("scaleBottom", "1")] }
 
@@ -193,7 +193,7 @@ def ex_23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
 
@@ -206,7 +206,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := "Eggs can be bought in half-dozen cartons only."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "6")] }
 
@@ -219,7 +219,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := "Eggs can be bought in half-dozen cartons only."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "6"), ("scaleBottom", "6")] }
 
@@ -232,7 +232,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := "Eggs can be bought in half-dozen cartons only."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "6")] }
 
@@ -245,7 +245,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := "Eggs can be bought in half-dozen cartons only."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "6"), ("scaleBottom", "6")] }
 
@@ -258,7 +258,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := "Cakes are sold per slice, with 12 slices in a cake."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "1")] }
 
@@ -271,7 +271,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := "Cakes are sold per slice, with 12 slices in a cake."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
 
@@ -284,7 +284,7 @@ def ex_27a : Datum :=
     glossedTokens := []
     context := "Cakes are sold per slice, with 12 slices in a cake."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "1")] }
 
@@ -297,7 +297,7 @@ def ex_27b : Datum :=
     glossedTokens := []
     context := "Cakes are sold per slice, with 12 slices in a cake."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
 
@@ -310,7 +310,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "0"), ("scaleBottom", "1")] }
 
@@ -321,9 +321,11 @@ def ex_34a : Datum :=
     language := "dutc1256"
     primaryText := "Er hoeven maximaal vijf studenten te komen."
     glossedTokens := [("Er", "there"), ("hoeven", "must-NPI"), ("maximaal", "maximally"), ("vijf", "five"), ("studenten", "students"), ("te", "to"), ("komen", "come")]
+    glossedWords := [⟨['E', 'r'], ['t', 'h', 'e', 'r', 'e'], [⟨['E', 'r'], ['t', 'h', 'e', 'r', 'e'], none⟩]⟩, ⟨['h', 'o', 'e', 'v', 'e', 'n'], ['m', 'u', 's', 't', '-', 'N', 'P', 'I'], []⟩, ⟨['m', 'a', 'x', 'i', 'm', 'a', 'a', 'l'], ['m', 'a', 'x', 'i', 'm', 'a', 'l', 'l', 'y'], [⟨['m', 'a', 'x', 'i', 'm', 'a', 'a', 'l'], ['m', 'a', 'x', 'i', 'm', 'a', 'l', 'l', 'y'], none⟩]⟩, ⟨['v', 'i', 'j', 'f'], ['f', 'i', 'v', 'e'], [⟨['v', 'i', 'j', 'f'], ['f', 'i', 'v', 'e'], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'e', 'n'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], [⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'e', 'n'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], none⟩]⟩, ⟨['t', 'e'], ['t', 'o'], [⟨['t', 'e'], ['t', 'o'], none⟩]⟩, ⟨['k', 'o', 'm', 'e', 'n'], ['c', 'o', 'm', 'e'], [⟨['k', 'o', 'm', 'e', 'n'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "maximaal"), ("test", "npi"), ("npi", "hoeven"), ("numeral", "5"), ("scaleBottom", "1")] }
 
@@ -334,9 +336,11 @@ def ex_34b : Datum :=
     language := "dutc1256"
     primaryText := "Er hoeven tot vijf studenten te komen."
     glossedTokens := [("Er", "there"), ("hoeven", "must-NPI"), ("tot", "TOT"), ("vijf", "five"), ("studenten", "students"), ("te", "to"), ("komen", "come")]
+    glossedWords := [⟨['E', 'r'], ['t', 'h', 'e', 'r', 'e'], [⟨['E', 'r'], ['t', 'h', 'e', 'r', 'e'], none⟩]⟩, ⟨['h', 'o', 'e', 'v', 'e', 'n'], ['m', 'u', 's', 't', '-', 'N', 'P', 'I'], []⟩, ⟨['t', 'o', 't'], ['T', 'O', 'T'], [⟨['t', 'o', 't'], ['T', 'O', 'T'], none⟩]⟩, ⟨['v', 'i', 'j', 'f'], ['f', 'i', 'v', 'e'], [⟨['v', 'i', 'j', 'f'], ['f', 'i', 'v', 'e'], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'e', 'n'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], [⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'e', 'n'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], none⟩]⟩, ⟨['t', 'e'], ['t', 'o'], [⟨['t', 'e'], ['t', 'o'], none⟩]⟩, ⟨['k', 'o', 'm', 'e', 'n'], ['c', 'o', 'm', 'e'], [⟨['k', 'o', 'm', 'e', 'n'], ['c', 'o', 'm', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modifier", "tot"), ("test", "npi"), ("npi", "hoeven"), ("numeral", "5"), ("scaleBottom", "1")] }
 

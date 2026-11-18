@@ -24,7 +24,7 @@ a distal form in each number.
 
 ## Main definitions
 
-* `English.Pronouns.pronouns` — the personal pronoun inventory
+* `English.Pronouns.personal` — the personal pronoun inventory
 * `English.Pronouns.paradigm` — its forms for each referential category
 * `English.Pronouns.reflexives`, `English.Pronouns.reciprocals`,
   `English.Pronouns.interrogatives`, `English.Pronouns.demonstratives` — the other series
@@ -120,16 +120,16 @@ def them_sg : PersonalPronoun :=
   { form := "them", person := some .third, number := some .singular, cases := {.acc} }
 
 /-- The personal pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {i, me, we, us, you, you_pl, he, him, she, her, it, they, them, they_sg, them_sg}
 
 /-- Gender is marked in the third person singular only. -/
 theorem third_singular_of_gender :
-    ∀ p ∈ pronouns, p.gender.isSome → p.person = some .third ∧ p.number = some .singular := by
+    ∀ p ∈ personal, p.gender.isSome → p.person = some .third ∧ p.number = some .singular := by
   decide
 
 /-- The forms of each referential category. -/
-def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
+def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm personal
 
 /-- *You* does not distinguish one addressee from several. -/
 theorem paradigm_addressee : paradigm .addressee = paradigm .addresseeOthers := by
@@ -200,7 +200,7 @@ def reflexives : Finset ReflexivePronoun :=
 
 /-- Every personal pronoun has a reflexive with its person, number and gender. -/
 theorem exists_reflexive :
-    ∀ p ∈ pronouns, ∃ r ∈ reflexives,
+    ∀ p ∈ personal, ∃ r ∈ reflexives,
       r.person = p.person ∧ r.number = p.number ∧ r.gender = p.gender := by
   decide
 

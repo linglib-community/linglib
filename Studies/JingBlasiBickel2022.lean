@@ -38,14 +38,6 @@ sees direction, such as [a penalty on final over initial](##cond_harmonic).
   in his chapter of the book of Sheehan, Biberauer, Roberts and Holmberg, whose chapter by
   Sheehan weighs the parsing accounts of the condition.
 
-## Errata
-
-* Fig. 2b, the free-word-order baseline, attaches *into* and *certain* to *article*, so it is
-  not the dependency-preserving linearization of Figure 1 that §2.3 describes; with the heads of
-  Figure 1 its order puts *into* after *parts*, reversing a dependency the baseline keeps.
-* The reference list credits "Harmony, symmetry, and dominance in word order universals" to
-  Biberauer, Holmberg, Roberts and Sheehan; the chapter is Roberts's alone.
-
 ## TODO
 
 * The paper's three baselines as laws on projective linearizations, which needs the

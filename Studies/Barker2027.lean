@@ -4,6 +4,7 @@ public import Linglib.Syntax.Tree.QuantifierRaising
 public import Linglib.Semantics.Composition.Extension
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Syntax.Cat
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.Barker2027
@@ -108,7 +109,7 @@ structure Model (E : Type) where
   /-- Amy. -/
   amy : E
   /-- The people. -/
-  person : E → Prop
+  person : Set E
   /-- `saw x y`: `y` saw `x`, the object first as in the article's `saw x amy`. -/
   saw : E → E → Prop
   /-- An individual's mother. -/
@@ -121,8 +122,8 @@ people. -/
 def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom E Unit)
   | _, .amy => M.amy
   | _, .saw => M.saw
-  | _, .someone => fun P ↦ Det.some M.person P
-  | _, .everyone => fun P ↦ Det.every M.person P
+  | _, .someone => toCont (Det.some M.person)
+  | _, .everyone => toCont (Det.every M.person)
   | _, .mother => M.mother
 
 /-- The meanings of a logical form whose indices have the types `Γ`, by Function Application
@@ -152,7 +153,7 @@ theorem derive_amySawEveryoneLF :
           (.binary (.inl .fa) (.leaf (.word .saw)) (.leaf (.trace 1)))))⟩] := rfl
 
 theorem meanings_amySawEveryone :
-    meanings M ind amySawEveryoneLF = [⟨.t, fun _ ↦ Det.every M.person fun x ↦ M.saw x M.amy⟩] :=
+    meanings M ind amySawEveryoneLF = [⟨.t, fun _ ↦ Det.every M.person {x | M.saw x M.amy}⟩] :=
   rfl
 
 theorem uninterpretable_amySawEveryone :
@@ -177,14 +178,14 @@ def inverse : Tree Unit Lexeme :=
 each person may have been seen by another. -/
 theorem meanings_linear_inverse :
     meanings M ind linear =
-        [⟨.t, fun _ ↦ Det.some M.person fun y ↦ Det.every M.person fun x ↦ M.saw x y⟩] ∧
+        [⟨.t, fun _ ↦ Det.some M.person {y | Det.every M.person {x | M.saw x y}}⟩] ∧
       meanings M ind inverse =
-        [⟨.t, fun _ ↦ Det.every M.person fun x ↦ Det.some M.person fun y ↦ M.saw x y⟩] :=
+        [⟨.t, fun _ ↦ Det.every M.person {x | Det.some M.person {y | M.saw x y}}⟩] :=
   ⟨rfl, rfl⟩
 
 theorem meanings_objectRaised :
     meanings M ind (someoneSawEveryone.raiseOf 1 (.leaf .everyone)) =
-      [⟨.t, fun _ ↦ Det.every M.person fun x ↦ Det.some M.person fun y ↦ M.saw x y⟩] :=
+      [⟨.t, fun _ ↦ Det.every M.person {x | Det.some M.person {y | M.saw x y}}⟩] :=
   rfl
 
 /-- Type coherence is a constraint of its own: raising the subject of (5) alone is a step of

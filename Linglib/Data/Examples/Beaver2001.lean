@@ -24,7 +24,7 @@ def e52 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "definite (my sister)"), ("embedding", "consequent of conditional")] }
 
@@ -37,7 +37,7 @@ def e154 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "consequent of conditional")] }
 
@@ -50,7 +50,7 @@ def e155 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "conditional under unlikely")] }
 
@@ -63,7 +63,7 @@ def e156 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "second conjunct of conditional antecedent")] }
 
@@ -76,7 +76,7 @@ def e168 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "none"), ("translation", "∂bih AND cb_a_bih"), ("entails", "bih")] }
 
@@ -89,7 +89,7 @@ def e169 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "negation"), ("translation", "NOT (∂bih AND cb_a_bih)"), ("entails", "bih")] }
 
@@ -102,7 +102,7 @@ def e172 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "antecedent of conditional"), ("translation", "(∂bih AND cb_a_bih) IMPLIES awfb"), ("entails", "bih")] }
 
@@ -115,7 +115,7 @@ def e173 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "might"), ("translation", "MIGHT(∂bih AND cb_a_bih)"), ("entails", "bih")] }
 
@@ -128,7 +128,7 @@ def e174 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive regret over factive realise"), ("embedding", "complement of a factive"), ("translation", "∂(∂bih AND cb_a_bih) AND NVB_B_(∂_bih&cb_a_bih)"), ("entails", "bih AND cb_a_bih")] }
 
@@ -141,7 +141,7 @@ def e175 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional"), ("translation", "(NOT bc) IMPLIES (∂ba AND cb_a_ba)"), ("doesNotEntail", "ba"), ("entails", "(NOT bc) IMPLIES ba")] }
 
@@ -154,7 +154,7 @@ def e176 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional"), ("translation", "bih IMPLIES (∂bih AND cb_a_bih)"), ("doesNotEntail", "bih")] }
 
@@ -167,7 +167,7 @@ def e177 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "second conjunct under might"), ("translation", "MIGHT(bih AND ∂bih AND cb_a_bih)"), ("doesNotEntail", "bih")] }
 
@@ -180,7 +180,7 @@ def e206 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "might phi and might not phi")] }
 
@@ -193,7 +193,7 @@ def e207 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "plain assertion")] }
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Zwarts2005
 public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Mathlib.Tactic.FinCases
 
 /-!
@@ -27,16 +27,6 @@ the phrase to the verb phrase, so [*walk to the house* is bounded](##Zwarts2005.
   intervals are proper and nonempty, as his glosses of them say.
 * The paper's trace function respects Rothstein's partial event concatenation, not an
   unrestricted mereological sum.
-
-## Errata
-
-* The definition of divisive reference quantifies over all paths where it needs $p \in X$: as
-  printed, a divisive set contains every proper subpath of every path.
-* The appendix calls constant paths the least elements of the subpath order. They are
-  [only minimal](##Spatial.Path.isMin_const), since
-  [constant paths at different points are incomparable](##Zwarts2005.const_le_const_iff).
-* The title of the appendix announces an event algebra that it does not define; the event
-  operation appears only in the discussion of how aspect is transferred.
 
 ## TODO
 
@@ -298,7 +288,7 @@ section Transfer
 
 open Event (σ)
 
-variable {E : Type*} [Event.SpatialTrace E Loc] (C : E → E → E → Prop)
+variable {E : Type*} [SpatialTrace E Loc] (C : E → E → E → Prop)
 
 /-- The spatial trace is a homomorphism for concatenation when the trace of a fused event is the
 concatenation of the traces. -/

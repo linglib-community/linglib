@@ -42,11 +42,6 @@ through `B⁺` and `B⁻` (their Proposition 4.1), by `B⁺_a(x) ∘ y = B⁺_a(
 `AddMonoidAlgebra.divOf` pulls them back along `d ↦ g + d`. Oudom and Guin define `B⁻` on trees
 only, as the inverse of `B⁺`; sending the other forests to `0` makes it the transpose of `B⁺`.
 
-## Errata
-
-* In the proof of Foissy's Proposition 5.2, `⟨1 ⋆ T, T⟩` is printed as `1`. Since `1 ⋆ T = T`,
-  it is the number of symmetries of `T`, which is `2` for a root with two identical leaves.
-
 ## References
 
 * [oudom-guin-2008]

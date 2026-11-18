@@ -193,6 +193,18 @@ def PositiveStandard.standards (s : PositiveStandard) (D : Type*) [Preorder D] :
 
 namespace PositiveStandard
 
+/-- On a scale with a least degree the minimum standard is the degrees above it. -/
+theorem standards_minEndpoint {D : Type*} [PartialOrder D] [OrderBot D] :
+    minEndpoint.standards D = {UpperSet.Ioi ⊥} := by
+  ext U
+  simp [standards, isBot_iff_eq_bot]
+
+/-- On a scale with a greatest degree the maximum standard is that degree alone. -/
+theorem standards_maxEndpoint {D : Type*} [PartialOrder D] [OrderTop D] :
+    maxEndpoint.standards D = {UpperSet.Ici ⊤} := by
+  ext U
+  simp [standards, isTop_iff_eq_top]
+
 /-- A kind of standard requires a comparison class when the scale does not fix its standards, an
 automorphism of some scale moving one of them. [kennedy-2007] argues against a comparison-class
 argument of the positive form, as in [klein-1980], and states the positive form with a
@@ -370,6 +382,14 @@ theorem admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard :=
 theorem defaultStandard_eq_maxEndpoint_iff {b : Boundedness} :
     b.defaultStandard = .maxEndpoint ↔ b.HasMax := by
   cases b <;> decide
+
+/-- On degrees with a greatest one, the standard Interpretive Economy selects is the maximum
+standard `UpperSet.Ici ⊤`, whether or not there is a least degree: the tag of the order and the
+truth conditions of the positive form agree. -/
+theorem standards_defaultStandard_ofOrder {D : Type*} [PartialOrder D] [OrderTop D] :
+    (ofOrder D).defaultStandard.standards D = {UpperSet.Ici ⊤} := by
+  rw [defaultStandard_eq_maxEndpoint_iff.2 hasMax_ofOrder_of_orderTop,
+    PositiveStandard.standards_maxEndpoint]
 
 /-- The default standards of a scale and its dual are complementary exactly when the scale has one
 endpoint. An open scale gives both poles a contextual standard and a totally closed one gives both

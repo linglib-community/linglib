@@ -2,30 +2,41 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Core.Order.UpperLower.Finset
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
-# Theta roles as proto-role clusters
+# Theta roles as classes of entailment profiles
 
-This file defines the traditional thematic-role labels and, for each, the set of proto-role
-entailments it stands for. The label of an argument is computed from the entailments the verb
-imposes on it (`EntailmentProfile.toRole`), so a role is a derived classification and never a
-stored primitive.
+A traditional thematic-role label names a class of arguments, and [dowty-1991] says which: each
+label stands for a combination of proto-role entailments, an Experiencer being sentient without
+volition or causation and an Instrument a moving cause without volition or sentience. A label is
+therefore the set of entailment profiles it applies to, `ThetaRole.profiles`, and the labels of a
+profile, `EntailmentProfile.roles`, are derived from the entailments a verb imposes and never
+stored.
 
-## Main declarations
-
-* `ArgumentStructure.ThetaRole`: the nine traditional labels.
-* `ThetaRole.canonicalProfile`: the entailments a label stands for.
-* `ThetaRole.IsDefined`: the label stands for some entailments.
-* `EntailmentProfile.toRole`: the label of a profile, if any.
-* `toRole_eq_some_agent_iff` and its siblings: the profiles that receive each label.
-* `ThetaRole.toRole_canonicalProfile`: a defined label is the label of its own profile.
+The classes are not the disjoint roles of the tradition but broader and narrower ones. The four
+labels defined by Proto-Agent entailments
+[exclude one another](##ArgumentStructure.ThetaRole.pairwiseDisjoint_profiles), whereas a Patient
+is a Theme that is causally affected, so that
+[every Patient is a Theme](##ArgumentStructure.ThetaRole.profiles_patient_subset_theme), and an
+argument that acts volitionally and changes state is both an Agent and a Theme. Every class is
+[convex](##ArgumentStructure.ThetaRole.ordConnected_profiles) in the order of profiles by
+inclusion. Source, Goal and Recipient are not defined by proto-role entailments and apply to no
+profile.
 
 ## Implementation notes
 
-The classifier tests volition, then sentience, then causation, then causal affectedness, so a
-profile with sentience and causation but no volition, which Dowty's definitions do not name, has
-no label. Independent existence, which Dowty parenthesizes, never decides a label. Dowty's role
-hierarchies follow from the selection principle over these profiles in `Studies/Dowty1991.lean`.
+A label is a set of profiles and not the value of a function from profiles to labels, because such
+a function makes the classes disjoint and has to order its tests, which the source does not.
+A class that requires some entailments and excludes others is the interval `Set.Icc s tᶜ` of
+profiles between the required `s` and the complement of the excluded `t`.
+
+Of Dowty's four senses of Agent the class is that of volition alone; the typical profile
+`ThetaRole.canonicalProfile` is the fullest sense. Dowty gives Theme no criterion and treats it as
+a cluster concept, so its class is the profiles with at least one of the entailments he lists for
+it, and movement, a Proto-Agent entailment that Agents and Instruments share, is not one of them.
+Independent existence, which Dowty parenthesizes, decides no label. Dowty's role hierarchies follow
+from the selection principle over the typical profiles in `Studies/Dowty1991.lean`.
 
 ## References
 
@@ -38,7 +49,7 @@ hierarchies follow from the selection principle over these profiles in `Studies/
 
 namespace ArgumentStructure
 
-/-- The traditional thematic-role labels, read as clusters of proto-role entailments. -/
+/-- The traditional thematic-role labels, read as classes of proto-role entailment profiles. -/
 inductive ThetaRole where
   | agent
   | patient
@@ -55,8 +66,12 @@ inductive ThetaRole where
 
 namespace ThetaRole
 
-/-- The proto-role entailments a label stands for in Dowty's reading of the traditional roles;
-empty for source, goal and recipient. -/
+variable {r : ThetaRole} {p : EntailmentProfile}
+
+/-! ### Typical profiles -/
+
+/-- The entailments an argument bearing the label most typically has ([dowty-1991] p. 577); empty
+for source, goal and recipient. -/
 def canonicalProfile : ThetaRole → EntailmentProfile
   | .agent => {.volition, .sentience, .causation, .movement}
   | .experiencer => {.sentience}
@@ -66,23 +81,13 @@ def canonicalProfile : ThetaRole → EntailmentProfile
   | .patient => {.changeOfState, .incrementalTheme, .causallyAffected, .dependentExistence}
   | .goal | .source | .recipient => ∅
 
-/-- A label is defined by proto-role entailments; source, goal and recipient are not. -/
-def IsDefined (r : ThetaRole) : Prop := r ≠ .source ∧ r ≠ .goal ∧ r ≠ .recipient
-
-instance : DecidablePred IsDefined := fun r ↦
-  inferInstanceAs (Decidable (r ≠ .source ∧ r ≠ .goal ∧ r ≠ .recipient))
-
 @[simp] theorem canonicalProfile_source : canonicalProfile .source = ∅ := rfl
 
 @[simp] theorem canonicalProfile_goal : canonicalProfile .goal = ∅ := rfl
 
 @[simp] theorem canonicalProfile_recipient : canonicalProfile .recipient = ∅ := rfl
 
-theorem isDefined_iff_canonicalProfile_nonempty (r : ThetaRole) :
-    r.IsDefined ↔ r.canonicalProfile.Nonempty := by
-  cases r <;> decide
-
-theorem canonicalProfile_theme_le_patient :
+theorem canonicalProfile_theme_subset_patient :
     canonicalProfile .theme ⊆ canonicalProfile .patient := by
   decide
 
@@ -90,81 +95,108 @@ theorem isLowerSet_canonicalProfile (r : ThetaRole) :
     IsLowerSet (r.canonicalProfile : Set ProtoRoleFeature) := by
   cases r <;> decide
 
+/-! ### The class of a label -/
+
+/-- The entailment profiles a label applies to ([dowty-1991] pp. 577–579). An Agent is volitional;
+an Experiencer is sentient without volition or causation; an Instrument is a moving cause without
+volition or sentience; a Stimulus causes and has no other Proto-Agent entailment; a Patient is
+causally affected; a Theme has one of the Proto-Patient entailments of the typical Patient. -/
+def profiles : ThetaRole → Set EntailmentProfile
+  | .agent => Set.Ici {.volition}
+  | .experiencer => Set.Icc {.sentience} {.volition, .causation}ᶜ
+  | .instrument => Set.Icc {.causation, .movement} {.volition, .sentience}ᶜ
+  | .stimulus => Set.Icc {.causation} {.volition, .sentience, .movement}ᶜ
+  | .patient => Set.Ici {.causallyAffected}
+  | .theme => {p | ¬ Disjoint p (canonicalProfile .patient)}
+  | .goal | .source | .recipient => ∅
+
+instance (r : ThetaRole) (p : EntailmentProfile) : Decidable (p ∈ r.profiles) := by
+  cases r <;> unfold profiles <;> infer_instance
+
+@[simp] theorem profiles_source : profiles .source = ∅ := rfl
+
+@[simp] theorem profiles_goal : profiles .goal = ∅ := rfl
+
+@[simp] theorem profiles_recipient : profiles .recipient = ∅ := rfl
+
+theorem mem_profiles_agent : p ∈ profiles .agent ↔ .volition ∈ p := by
+  simp [profiles]
+
+theorem mem_profiles_experiencer :
+    p ∈ profiles .experiencer ↔ .sentience ∈ p ∧ .volition ∉ p ∧ .causation ∉ p := by
+  simp only [profiles, Set.mem_Icc, Finset.subset_compl_iff_disjoint_right,
+    Finset.singleton_subset_iff, Finset.disjoint_insert_right, Finset.disjoint_singleton_right]
+
+theorem mem_profiles_instrument : p ∈ profiles .instrument ↔
+    (.causation ∈ p ∧ .movement ∈ p) ∧ .volition ∉ p ∧ .sentience ∉ p := by
+  simp only [profiles, Set.mem_Icc, Finset.subset_compl_iff_disjoint_right,
+    Finset.singleton_subset_iff, Finset.insert_subset_iff, Finset.disjoint_insert_right,
+    Finset.disjoint_singleton_right]
+
+theorem mem_profiles_stimulus : p ∈ profiles .stimulus ↔
+    .causation ∈ p ∧ .volition ∉ p ∧ .sentience ∉ p ∧ .movement ∉ p := by
+  simp only [profiles, Set.mem_Icc, Finset.subset_compl_iff_disjoint_right,
+    Finset.singleton_subset_iff, Finset.disjoint_insert_right, Finset.disjoint_singleton_right]
+
+theorem mem_profiles_patient : p ∈ profiles .patient ↔ .causallyAffected ∈ p := by
+  simp [profiles]
+
+theorem mem_profiles_theme : p ∈ profiles .theme ↔ ¬ Disjoint p (canonicalProfile .patient) :=
+  .rfl
+
+theorem canonicalProfile_mem_profiles (h : r.canonicalProfile.Nonempty) :
+    r.canonicalProfile ∈ r.profiles := by
+  cases r <;> first | decide | simp at h
+
+theorem profiles_nonempty_iff : r.profiles.Nonempty ↔ r.canonicalProfile.Nonempty := by
+  refine ⟨fun ⟨p, hp⟩ ↦ ?_, fun h ↦ ⟨_, canonicalProfile_mem_profiles h⟩⟩
+  cases r <;> first | decide | exact hp.elim
+
+theorem canonicalProfile_injOn :
+    Set.InjOn canonicalProfile {r | r.canonicalProfile.Nonempty} :=
+  fun r hr s _ ↦ (by decide : ∀ r s : ThetaRole,
+    r.canonicalProfile.Nonempty → r.canonicalProfile = s.canonicalProfile → r = s) r s hr
+
+/-! ### Broader and narrower classes -/
+
+/-- A Patient is a Theme: the Patients are the Themes that are causally affected. -/
+theorem profiles_patient_subset_theme : profiles .patient ⊆ profiles .theme := fun _ hp h ↦
+  Finset.disjoint_left.1 h (Finset.singleton_subset_iff.1 hp) (by decide)
+
+theorem isUpperSet_profiles_theme : IsUpperSet (profiles .theme) := fun _ _ hpq hp hq ↦
+  hp (hq.mono_left hpq)
+
+/-- A profile between two profiles of a class is in the class. -/
+instance ordConnected_profiles (r : ThetaRole) : r.profiles.OrdConnected := by
+  cases r
+  case theme => exact isUpperSet_profiles_theme.ordConnected
+  all_goals unfold profiles; infer_instance
+
+/-- The labels defined by Proto-Agent entailments apply to no common profile. -/
+theorem pairwiseDisjoint_profiles :
+    ({.agent, .experiencer, .instrument, .stimulus} : Set ThetaRole).PairwiseDisjoint
+      profiles := by
+  intro r hr s hs hrs
+  refine Set.disjoint_left.2 fun p hp hq ↦ hrs ?_
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hr hs
+  rcases hr with rfl | rfl | rfl | rfl <;> rcases hs with rfl | rfl | rfl | rfl <;>
+    first
+    | rfl
+    | (simp only [mem_profiles_agent, mem_profiles_experiencer, mem_profiles_instrument,
+        mem_profiles_stimulus] at hp hq
+       tauto)
+
 end ThetaRole
 
 namespace EntailmentProfile
 
-/-- The label of the profile `p` is agent if it is volitional; otherwise experiencer if it is
-sentient and not causing (no label if causing); otherwise instrument or stimulus if it is causing,
-as it moves or not; otherwise patient if it is causally affected; otherwise theme if it has some
-other Proto-Patient entailment or movement. -/
-def toRole (p : EntailmentProfile) : Option ThetaRole :=
-  if .volition ∈ p then some .agent
-  else if .sentience ∈ p then if .causation ∈ p then none else some .experiencer
-  else if .causation ∈ p then some (if .movement ∈ p then .instrument else .stimulus)
-  else if .causallyAffected ∈ p then some .patient
-  else if .changeOfState ∈ p ∨ .incrementalTheme ∈ p ∨ .dependentExistence ∈ p ∨ .movement ∈ p
-  then some .theme
-  else none
+variable {r : ThetaRole} {p : EntailmentProfile}
 
-variable {p : EntailmentProfile}
+/-- The labels that apply to a profile. -/
+def roles (p : EntailmentProfile) : Finset ThetaRole := {r | p ∈ r.profiles}
 
-theorem toRole_eq_some_agent_iff : p.toRole = some .agent ↔ .volition ∈ p := by
-  unfold toRole; split_ifs <;> simp_all
-
-theorem toRole_eq_some_experiencer_iff : p.toRole = some .experiencer ↔
-    .volition ∉ p ∧ .sentience ∈ p ∧ .causation ∉ p := by
-  unfold toRole; split_ifs <;> simp_all
-
-theorem toRole_eq_some_instrument_iff : p.toRole = some .instrument ↔
-    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∈ p ∧ .movement ∈ p := by
-  unfold toRole; split_ifs <;> simp_all
-
-theorem toRole_eq_some_stimulus_iff : p.toRole = some .stimulus ↔
-    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∈ p ∧ .movement ∉ p := by
-  unfold toRole; split_ifs <;> simp_all
-
-theorem toRole_eq_some_patient_iff : p.toRole = some .patient ↔
-    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∉ p ∧ .causallyAffected ∈ p := by
-  unfold toRole; split_ifs <;> simp_all
-
-theorem toRole_eq_some_theme_iff : p.toRole = some .theme ↔
-    .volition ∉ p ∧ .sentience ∉ p ∧ .causation ∉ p ∧ .causallyAffected ∉ p ∧
-      (.changeOfState ∈ p ∨ .incrementalTheme ∈ p ∨ .dependentExistence ∈ p ∨ .movement ∈ p) := by
-  unfold toRole; split_ifs <;> simp_all
-
-theorem toRole_ne_some_source : p.toRole ≠ some .source := by
-  unfold toRole; split_ifs <;> simp
-
-theorem toRole_ne_some_goal : p.toRole ≠ some .goal := by
-  unfold toRole; split_ifs <;> simp
-
-theorem toRole_ne_some_recipient : p.toRole ≠ some .recipient := by
-  unfold toRole; split_ifs <;> simp
-
-theorem isDefined_of_toRole_eq_some {r : ThetaRole} (h : p.toRole = some r) : r.IsDefined :=
-  ⟨fun hr ↦ toRole_ne_some_source (hr ▸ h), fun hr ↦ toRole_ne_some_goal (hr ▸ h),
-    fun hr ↦ toRole_ne_some_recipient (hr ▸ h)⟩
-
-theorem causation_mem_of_toRole_eq_some_stimulus (h : p.toRole = some .stimulus) :
-    .causation ∈ p :=
-  (toRole_eq_some_stimulus_iff.mp h).2.2.1
+@[simp] theorem mem_roles : r ∈ p.roles ↔ p ∈ r.profiles := by simp [roles]
 
 end EntailmentProfile
-
-namespace ThetaRole
-
-/-- The classifier recovers every defined label from its canonical profile. -/
-theorem toRole_canonicalProfile {r : ThetaRole} (h : r.IsDefined) :
-    r.canonicalProfile.toRole = some r := by
-  cases r <;> first | rfl | exact absurd rfl h.1 | exact absurd rfl h.2.1 | exact absurd rfl h.2.2
-
-theorem canonicalProfile_injOn : Set.InjOn canonicalProfile {r | r.IsDefined} := by
-  intro r hr s hs h
-  have hr' := toRole_canonicalProfile hr
-  rw [h, toRole_canonicalProfile hs] at hr'
-  exact (Option.some.inj hr').symm
-
-end ThetaRole
 
 end ArgumentStructure

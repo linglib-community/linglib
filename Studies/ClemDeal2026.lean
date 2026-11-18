@@ -43,15 +43,6 @@ forward hierarchy](##directionality).
   assumes for Shiwilu.
 * The paper's v is `Cat.Voice` and its categorizing v is `Cat.v`, the labels note 19 offers.
 
-## Errata
-
-* Generalizations (5) and (10) and table 7 give dependent case when the subject is at least as high
-  as the object, but (15) rules out every first-person object, so [the mechanism gives no ergative
-  at 1→1 and does give it at 2→2](##diagonal). The tables have no reflexive rows.
-* (6b) prints the subject's object agreement as *-nke(ma)*, but (36d) spells out [PART, AUG, v] as a
-  whole and none of the routes to its absence in §3.3 deletes [AUG] alone, so [bare *-nke* on the
-  subject of a 2PL object is not derived](##not_predicted_bare_nke).
-
 ## TODO
 
 * `positions` stipulates that fronting and pro-drop require the high position; `clause .low` can
@@ -80,7 +71,7 @@ forward hierarchy](##directionality).
 
 namespace ClemDeal2026
 
-open Deal2024 Phi.PersonSegment DistributedMorphology Morphology
+open Deal2024 Person.Segment DistributedMorphology Morphology
 open Clause (Scenario)
 open Baker2015 (Arg)
 open Minimalist (Derivation LexicalItem CaseAssigners HeadFunction)
@@ -97,7 +88,7 @@ inductive Locus
 /-- The features of a nominal and of a flag: a person segment, [AUG], the category feature of a
 head, and [D]. -/
 inductive Feature
-  | person (s : Phi.PersonSegment)
+  | person (s : Person.Segment)
   | aug
   | head (l : Locus)
   | d
@@ -179,7 +170,7 @@ theorem dependentCase_sd_iff (a b : Arg) :
       .speaker ∉ spec (nom a).1 ∧
         (.participant ∈ spec (nom a).1 → .participant ∈ spec (nom b).1) := by
   by_cases h : .participant ∈ spec (nom a).1 <;>
-    simp [dependentCase_pair_iff, licit_iff, strictlyDescending, h]
+    simp [dependentCase_pair_iff, licit_iff, Minimalist.specLE_iff, strictlyDescending, h]
 
 end Flags
 
@@ -248,17 +239,17 @@ def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat = .v ∨ a.item.cat
 instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The phase heads of an object, by position. -/
-def phaseSet (t : Minimalist.LinearizedSyntacticObject) : Finset Core.Order.TreePath :=
+def phaseSet (t : Minimalist.PlanarSyntacticObject) : Finset GornAddress :=
   ((Minimalist.phaseHeads .raising t IsPhaseHead).map (·.1)).toFinset
 
 /-- The arguments a probe at `l` meets in a derivation, by the cyclic expansion of
 [bejar-rezac-2009] ((13)), the complement of a phase below it closed to it. -/
 def goalsIn (d : Derivation) (l : Locus) : List Arg :=
   d.externalize?.elim [] fun t ↦
-    ((Minimalist.tokenList t.val).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
+    ((Minimalist.tokenList t.toRoseTree).find? (·.2.item.cat == l.cat)).elim [] fun a ↦
       (Minimalist.cyclicGoals .raising t (·.item.cat = .D)
-        (Minimalist.sealed (phaseSet t) (Minimalist.complementDomain .raising t ∅)
-          (Minimalist.Pic1 .raising t) a.1.parent) a.1).filterMap argOf
+        (Minimalist.sealed (phaseSet t) Minimalist.complementDomain
+          (Minimalist.Schedule.atCompletion .raising t) a.1.parent) a.1).filterMap argOf
 
 /-- The goals a probe at `l` meets in the clause (30) with its object in position `pos`. -/
 def goals (l : Locus) (pos : ObjectPosition) : List Arg := goalsIn (clause pos) l
@@ -362,7 +353,7 @@ theorem applies_caseItem {e : String} {m : Finset Feature} {a : Nominal} :
 private theorem objectItems_site :
     ∀ i ∈ objectItems, ∀ y ∈ i.site, y.1 = 0 ∧ y.2 ≠ Feature.person .pi := by
   simp [objectItems]
-  grind
+  grind [WithBot.coe_ne_bot]
 
 theorem insertions_objectItems (env : Neighborhood (Finset Feature)) (ms : List (Finset Feature)) :
     insertions objectItems env ms = insertions objectItems ∅ ms :=
@@ -581,7 +572,7 @@ def assigners (a : Alignment.AlignmentType) : CaseAssigners where
 def ruleCase (a : Alignment.AlignmentType) (d : Derivation) (x : Arg) :
     Option (Case × Case.Mechanism) :=
   d.externalize?.bind fun t ↦
-    ((assigners a).assignOn .raising t (Minimalist.complementDomain .raising t ∅) IsPhaseHead
+    ((assigners a).assignOn .raising t Minimalist.complementDomain IsPhaseHead
       (fun _ ↦ .unvalued) [subjD, objD] (tokenOf x)).value?
 
 -- (1), (7a–c) [baker-2015]
@@ -690,29 +681,29 @@ theorem not_forall_agree_iff_swap (g : Grammar) {t : PCCType} (ht : ¬ t.Licit �
 /-! ### Cyclic Agree (§3.1) -/
 
 /-- The cyclic probes of [bejar-rezac-2009] compared with Deal's, on the six cells only: every
-reflexive cell is inverse (`AgreementSystem.isInverse_self`), where a third-person first goal lets
-Deal's probes go on, as Table 4's row g and the Kolyma Yukaghir 3→3 require. -/
-example : (BejarRezac2009.kashmiri).IsInverse ⟨.third, .third⟩ ∧
+reflexive cell is inverse (`Minimalist.CyclicAgree.isInverse_self`), where a third-person first
+goal lets Deal's probes go on, as Table 4's row g and the Kolyma Yukaghir 3→3 require. -/
+example : Minimalist.CyclicAgree.IsInverse BejarRezac2009.kashmiri ⟨.third, .third⟩ ∧
     Licit strictlyDescending ⟨.third, .third⟩ ∧ Licit weak ⟨.third, .third⟩ :=
-  ⟨Minimalist.CyclicAgree.AgreementSystem.isInverse_self _ _, by decide, by decide⟩
+  ⟨Minimalist.CyclicAgree.isInverse_self _ _, by decide, by decide⟩
 
 -- §3.1
 theorem kashmiri_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPairs) :
-    BejarRezac2009.kashmiri.IsDirect s ↔ Licit strictlyDescending s := by
+    Minimalist.CyclicAgree.IsDirect BejarRezac2009.kashmiri s ↔ Licit strictlyDescending s := by
   revert s; decide +kernel
 
 -- §3.1
-theorem not_isDirect_of_isChain (sys : Minimalist.CyclicAgree.AgreementSystem)
-    (h : sys.geometry.IsChain) :
-    ¬ (sys.IsDirect ⟨.first, .second⟩ ∧ sys.IsDirect ⟨.second, .first⟩) :=
-  fun ⟨h₁, h₂⟩ ↦ lt_asymm
-    ((Minimalist.CyclicAgree.AgreementSystem.isDirect_iff_rank_lt sys ⟨.first, .second⟩ h).1 h₁)
-    ((Minimalist.CyclicAgree.AgreementSystem.isDirect_iff_rank_lt sys ⟨.second, .first⟩ h).1 h₂)
+open Minimalist.CyclicAgree in
+theorem not_isDirect_of_isChain (P : Finset Person.Segment)
+    (h : IsChain (· ≤ ·) (P : Set Person.Segment)) :
+    ¬ (IsDirect P ⟨.first, .second⟩ ∧ IsDirect P ⟨.second, .first⟩) :=
+  fun ⟨h₁, h₂⟩ ↦ by
+    rw [isDirect_iff_rank_lt h] at h₁ h₂
+    exact lt_asymm h₁ h₂
 
 -- §3.1 [harley-ritter-2002]
 theorem branching_isDirect_iff (s : Scenario Person) (hs : s ∈ PCC.distinctPairs) :
-    (⟨.branching, Minimalist.CyclicAgree.fullProbe .branching⟩ :
-      Minimalist.CyclicAgree.AgreementSystem).IsDirect s ↔ Licit weak s := by
+    Minimalist.CyclicAgree.IsDirect Finset.univ s ↔ Licit weak s := by
   revert s; decide +kernel
 
 end ClemDeal2026

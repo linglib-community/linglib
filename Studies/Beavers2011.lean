@@ -58,7 +58,7 @@ open Event (τ)
 
 open ArgumentStructure HayKennedyLevin1999 Set
 
-variable {α S D T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+variable {α S D T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-! ### Scalar change (§4.1) -/
 

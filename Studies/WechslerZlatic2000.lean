@@ -569,7 +569,7 @@ def starred : List RowTarget :=
 /-- Each starred alternant fails to agree, and its row records the mark. -/
 theorem starred_fail :
     ∀ r ∈ starred, ¬ r.Agrees ∧
-      (r.ex.judgment = .unacceptable ∨ .unacceptable ∈ r.ex.alternatives.map Prod.snd) := by
+      (r.ex.judgment = .unacceptable ∨ .unacceptable ∈ r.ex.contrasts.map Prod.snd) := by
   decide
 
 -- (11b), §3.1

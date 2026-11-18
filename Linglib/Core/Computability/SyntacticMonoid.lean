@@ -13,7 +13,6 @@ public import Mathlib.Computability.MyhillNerode
 public import Mathlib.GroupTheory.Congruence.Basic
 public import Mathlib.Data.Set.Finite.Range
 public import Linglib.Core.Computability.TransitionMonoid
-public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Linglib.Core.GroupTheory.Congruence.Syntactic
 public import Linglib.Core.Algebra.Group.Subquotient
 public import Linglib.Core.Algebra.FreeMonoid.Basic
@@ -23,31 +22,14 @@ public import Linglib.Core.Logic.Function.FactorsThrough
 # The syntactic monoid of a language
 
 The *syntactic monoid* of a language `L : Language α` is the quotient of the free monoid
-`FreeMonoid α` by the *syntactic congruence* `Con.syntactic` of `L`: two words are identified when
-no two-sided context distinguishes them as `L`-members, `∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L`.
-
-It is the coarsest congruence saturating `L`, so the syntactic morphism factors through every
-recognizing homomorphism, and the quotient is finite exactly when `L` is regular. This is the
-two-sided refinement of the one-sided right-Nerode quotient `Language.leftQuotient`, carrying a
-monoid structure rather than a bare set of states.
-
-## Main definitions
-
-* `Language.syntacticCon`: the syntactic congruence of `L` as a subset of the free monoid.
-* `Language.SyntacticMonoid`: the quotient monoid `(syntacticCon L).Quotient`.
-* `Language.toSyntacticMonoid`: the projection `FreeMonoid α →* L.SyntacticMonoid`.
-* `Language.syntacticClass`: the syntactic class of a word.
-* `Language.Recognizes`: `φ` recognizes `L` when `L` is a union of `φ`-fibres.
-* `Language.rightQuotient`: the right-quotient dual of `Language.leftQuotient`.
-
-## Main results
-
-* `Language.recognizes_iff_ker_le`: a homomorphism recognizes `L` exactly when its kernel refines
-  the syntactic congruence.
-* `Language.syntacticMonoidEquivTransitionMonoid`: the syntactic monoid is the transition monoid
-  of the minimal DFA `L.toDFA`.
-* `Language.isRegular_iff_finite_syntacticMonoid`: a language is regular exactly when its
-  syntactic monoid is finite.
+`FreeMonoid α` by the *syntactic congruence* `Con.syntactic` of `L`, which identifies two words
+when [no two-sided context distinguishes them](##Language.syntacticCon_iff) as members of `L`. It
+is the coarsest congruence saturating `L`: a homomorphism recognizes `L` exactly when
+[its kernel refines the syntactic congruence](##Language.recognizes_iff_ker_le), so the syntactic
+monoid [divides every recognizer](##Language.Recognizes.syntacticMonoid_isSubquotient). The
+syntactic monoid is
+[the transition monoid of the minimal automaton](##Language.syntacticMonoidEquivTransitionMonoid),
+and it is finite [exactly when `L` is regular](##Language.isRegular_iff_finite_syntacticMonoid).
 
 ## References
 
@@ -75,7 +57,8 @@ theorem syntacticCon_iff {u v : FreeMonoid α} :
 theorem syntacticCon_iff_leftQuotient {u v : FreeMonoid α} :
     L.syntacticCon u v ↔
       ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) :=
-  syntacticCon_iff.trans <| forall_congr' fun _ ↦ Set.ext_iff.symm
+  syntacticCon_iff.trans <| forall_congr' fun _ ↦
+    (Set.ext_iff (a := L.leftQuotient _) (b := L.leftQuotient _)).symm
 
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev SyntacticMonoid (L : Language α) := (syntacticCon L).Quotient
@@ -136,6 +119,25 @@ theorem syntacticClass_reverse_eq_iff {u v : List α} :
       L.syntacticClass u.reverse = L.syntacticClass v.reverse := by
   rw [syntacticClass_eq_iff, syntacticClass_eq_iff]
   refine ⟨fun h x y ↦ ?_, fun h x y ↦ ?_⟩ <;> simpa using h y.reverse x.reverse
+
+/-- Sending a word to the syntactic class of its reversal is a homomorphism to the opposite of the
+syntactic monoid. -/
+def reverseSyntacticHom (L : Language α) : FreeMonoid α →* L.SyntacticMonoidᵐᵒᵖ where
+  toFun w := .op (L.syntacticClass w.toList.reverse)
+  map_one' := by simp
+  map_mul' u v := by simp [FreeMonoid.toList_mul, List.reverse_append]
+
+/-- The syntactic monoid of the reversal of a language is the opposite of its syntactic monoid. -/
+noncomputable def syntacticMonoidReverseEquiv (L : Language α) :
+    L.reverse.SyntacticMonoid ≃* L.SyntacticMonoidᵐᵒᵖ :=
+  (Con.congr (d := Con.ker L.reverseSyntacticHom) (MulEquiv.refl _) <| Con.ext fun u v ↦ by
+    change L.reverse.syntacticCon u v ↔
+      MulOpposite.op (L.syntacticClass u.toList.reverse) = .op (L.syntacticClass v.toList.reverse)
+    rw [MulOpposite.op_inj, ← syntacticClass_reverse_eq_iff, ← toSyntacticMonoid_eq_iff]
+    rfl).trans <|
+  Con.quotientKerEquivOfSurjective L.reverseSyntacticHom fun x ↦ by
+    obtain ⟨u, hu⟩ := L.syntacticClass_surjective x.unop
+    exact ⟨FreeMonoid.ofList u.reverse, by simp [reverseSyntacticHom, hu]⟩
 
 /-! ### Universal property -/
 

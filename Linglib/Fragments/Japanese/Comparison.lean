@@ -33,7 +33,8 @@ def yori : Comparative :=
   , fixedEncoding := some .adverbial
   , standardCase := some .abl }
 
-theorem standardCase_mem_functions : ∀ k ∈ yori.standardCase, k ∈ Adpositions.yori.functions := by
+theorem standardCase_functions_inter_nonempty :
+    ∀ k ∈ yori.standardCase, (k.functions ∩ Adpositions.yori.functions).Nonempty := by
   decide
 
 end Japanese.Comparison

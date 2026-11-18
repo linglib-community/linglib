@@ -24,7 +24,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "DESTROY"), ("rootClass", "agentive"), ("construction", "derivedNominal"), ("h1", "n"), ("h1exp", "-tion")] }
 
@@ -37,7 +37,7 @@ def ex_6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "DESTROY"), ("rootClass", "agentive"), ("construction", "gerund"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "n"), ("h3exp", "-ing")] }
 
@@ -50,7 +50,7 @@ def ex_7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "GROW"), ("rootClass", "nonagentive"), ("construction", "derivedNominal"), ("h1", "n"), ("h1exp", "-th")] }
 
@@ -63,7 +63,7 @@ def ex_7d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "GROW"), ("rootClass", "nonagentive"), ("construction", "gerund"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "n"), ("h3exp", "-ing")] }
 
@@ -76,7 +76,7 @@ def bent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "BEND"), ("construction", "inflected"), ("h1", "v"), ("h1exp", ""), ("h2", "T"), ("h2exp", "-t")] }
 
@@ -89,7 +89,7 @@ def broken : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "BREAK"), ("construction", "inflected"), ("h1", "v"), ("h1exp", ""), ("h2", "aspect"), ("h2exp", "-en")] }
 

@@ -219,7 +219,7 @@ theorem japanese_to_isAlsoComitative :
 suffix *-LĪn*. -/
 theorem yakut_lin_isAlsoComitative :
     Yakut.Coordination.lin.IsAlsoComitative (Yakut.Case.exponents .com)
-      {Yakut.Case.label .com} := by
+      (Yakut.Case.functions .com) := by
   decide
 
 /-! ### Pattern schemes -/

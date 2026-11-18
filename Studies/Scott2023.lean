@@ -119,7 +119,7 @@ def PronCell.bundle : PronCell → Agreement.Bundle
 /-- The person features of a cell (Table 4.4) are Harbour's sign of its category, [±author] and
 [±participant], the latter an addressee feature under which the first person singular and
 exclusive are [−participant]. -/
-def PronCell.sign (c : PronCell) : Person.Feature → Bool := Harbour2016.signOf c.category
+def PronCell.sign (c : PronCell) : Harbour2016.Sign := Harbour2016.signOf c.category
 
 /-- Whether a cell is singular. -/
 def PronCell.singular (c : PronCell) : Bool := c.number = .singular
@@ -145,7 +145,7 @@ inductive Feat
 
 /-- The features of a pronoun in a paradigm cell (Table 4.4). -/
 def cellFeats (c : PronCell) : List Feat :=
-  [.author (c.sign .author), .participant (c.sign .participant), .singular c.singular]
+  [.author c.sign.author, .participant c.sign.participant, .singular c.singular]
 
 /-- A Vocabulary Item, as the dissertation writes them, has the features it realizes, its contextual
 specification, and its exponent. -/
@@ -254,7 +254,7 @@ theorem agreedBy_A : agreedBy .A = some .vn := rfl
 theorem agreedBy_P : agreedBy .P = none := rfl
 
 /-- A probe copies author and number (73a). -/
-def copied (c : PronCell) : List Feat := [.author (c.sign .author), .singular c.singular]
+def copied (c : PronCell) : List Feat := [.author (c.sign.author), .singular c.singular]
 
 /-- The Set B terminal on Infl in the clause of an argument in a cell carries the copied features if
 Infl agreed with the argument, at the Infl locus. -/
@@ -370,12 +370,12 @@ theorem formAt_eq (c : PronCell) :
 
 -- §4.3.3 [noyer-1992]
 theorem encl_mem_independent_iff (c : PronCell) :
-    Morph.encl "i" ∈ morphemes (independentOf c) ↔ c.sign .author ≠ c.sign .participant := by
+    Morph.encl "i" ∈ morphemes (independentOf c) ↔ c.sign.author ≠ c.sign.participant := by
   cases c <;> decide
 
 -- Table 4.1
 theorem reduced_iff_author (c : PronCell) :
-    subjPossOf c ≠ independentOf c ↔ c.sign .author = true := by
+    subjPossOf c ≠ independentOf c ↔ c.sign.author = true := by
   cases c <;> decide
 
 /-! ### The judgments -/

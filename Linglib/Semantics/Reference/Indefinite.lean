@@ -21,8 +21,9 @@ theory. The series themselves are `IndefinitePronoun.Series`.
 
 * `Indefinite.HaspelmathFunction`: the nine functions, with the book's numbering `number`.
 * `Indefinite.implicationalMap`: the map as a `SimpleGraph`, from the ten edges `mapEdges` of
-  the book's figure. The map carries nothing beyond the regions it admits
-  (`adj_iff_connected_pair`).
+  the book's figure. A map carries nothing beyond the regions it admits, two functions being
+  adjacent exactly when the pair of them is a connected region
+  (`SimpleGraph.induce_pair_connected_iff`).
 * `Indefinite.SpecificityFunction`: the specific known, specific unknown and non-specific
   functions in the order the map chains them, with their embedding `toFunction` in the map and
   the ones a region covers, `specificityFunctions`. A set of them is an interval unless it has
@@ -122,15 +123,6 @@ theorem implicationalMap_adj {f g : HaspelmathFunction} :
 /-- The ten pairs of `mapEdges` are exactly the map's edges: none is a loop and none repeats. -/
 theorem edgeFinset_implicationalMap : implicationalMap.edgeFinset = mapEdges := by
   decide
-
-/-- The map carries nothing beyond the regions it admits: two functions are adjacent exactly
-when the pair of them is a connected region, so the graph and its family of regions determine
-each other. -/
-theorem adj_iff_connected_pair {f g : HaspelmathFunction} :
-    implicationalMap.Adj f g ↔ f ≠ g ∧ (implicationalMap.induce {f, g}).Connected := by
-  simp only [SimpleGraph.connected_iff_exists_forall_reachable]
-  revert f g
-  decide +kernel
 
 /-! ### The specificity functions -/
 

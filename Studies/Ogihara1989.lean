@@ -57,31 +57,7 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 * The second fragment is stated at its translations (64') and (69), which are premises here. The
   interval a state occupies depends on the world, which rule 16 (p. 334) allows and p. 332 does not
   settle; [with a rigid interval (64') cannot separate the cases of (24)](##doubleAccess_rigid_iff),
-  and `Event.TemporalTrace`, which has no world, gives the times of events only.
-
-## Errata
-
-* The rule for a noun phrase raised to S (13a) gives the sentence a truth value, to which the
-  matrix rule (1) and the complementizer (9), which close a property of times, do not apply;
-  `Model.Holds` takes such a sentence as it is.
-* Rule 14 on p. 273 translates the empty tense as PRES or as a future; p. 255, p. 274 and (40) give
-  PRES alone, and the future translation would give (28) the subsequent reading p. 97 denies it.
-* (44) line 4 and (45) line 4 are said to be equivalent (p. 116), and the wide scope reading to
-  cover the narrow ones (pp. 101-102, 119; p. 107 hedges). Both compare a noun at different times,
-  which p. 148 tentatively reads at the temporal index, so [they need a noun stable over
-  time](##Model.metNarrow_not_metWide), an assumption left unstated.
-* The # of (61) on p. 132 does not follow from the fragment: [the undeleted past on *would* allows a
-  winning after the speech time](##Model.would_undeleted_any_future).
-* [The rule generates the LF (70')](##rule_generates_metBuyer) of a sentence the consultants reject.
-  pp. 141-142 call the data murky, cite (73) against the alternative, and keep the rule knowingly.
-* The explanation of (29) on pp. 267-268 reads c-command as "the first NP or S node" and locality as
-  "no other tense feature that α dominates", where p. 253 has the first branching node and
-  c-command.
-* The second line of (25c') prints *John Past say*, for *John Pres woll say*. The note on p. 261
-  gives PRES as the choice for *want* and *promise*, for the future. (59') and (59'') have *say*
-  for the *claim* of (59). The example on p. 137 is numbered (71), the number of the example on
-  p. 140, where (65) is due. On pp. 326-327 *(63)* stands for (64'), and (65) has *pregnant* for
-  the *in the room* of (64).
+  and `TemporalTrace`, which has no world, gives the times of events only.
 
 ## TODO
 
@@ -108,7 +84,7 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 namespace Ogihara1989
 
 open Interpreter ModalLogic Tense Partee1973 PhraseStructure
-  PhraseStructure.Tree Core.Order
+  PhraseStructure.Tree
 open scoped Assignment Denotes SetRel
 
 section ReferenceInterval
@@ -121,7 +97,7 @@ subinterval of `K`, as *Yes, I saw her* (`Examples.ex_1_57`) says of the day, (5
 is Partee's past tense with its index bound by an existential quantifier over the subintervals of
 `K`. -/
 theorem restricted_iff_exists_past :
-    ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
+    ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
       ∃ t ≤ K, Λ[n] (Past n P σ) g t := by
   simp [Past, Diamond, and_left_comm]
 
@@ -134,11 +110,11 @@ interval is past and has no subinterval at which the speaker turned off the stov
 -- (56): the salient interval is past, and the past restricted to it is denied
 theorem no_subinterval_iff_not_restricted :
     Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ↔
-      Perspective.Presup Allen.precedes σ (g n) ∧
-        ¬ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
+      σ ~[IntervalAlgebra.toSetRel .precedes] g n ∧
+        ¬ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
   ⟨fun h ↦ ⟨h.1, fun ⟨t, _, hle, hP⟩ ↦ h.2 ⟨t, hle, hP⟩⟩, fun h ↦ ⟨h.1, fun ⟨t, hle, hP⟩ ↦
-    h.2 ⟨t, Perspective.presup_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
-      (Perspective.presup_precedes.1 h.1)), hle, hP⟩⟩⟩
+    h.2 ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
+      (IntervalAlgebra.mem_toSetRel_precedes.1 h.1)), hle, hP⟩⟩⟩
 
 -- p. 49: a speaker who turned off the stove at no subinterval did not at the interval
 theorem no_subinterval_entails_deictic (h : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g) :
@@ -152,22 +128,22 @@ theorem deictic_too_weak :
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ¬ Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3),
-    ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
+    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide⟩,
     fun h ↦ h.2 ⟨.pure 3, by decide, rfl⟩⟩
 
 -- (46b) entails (56)
-theorem never_entails_no_subinterval (hn : Perspective.Presup Allen.precedes σ (g n))
-    (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
+theorem never_entails_no_subinterval (hn : σ ~[IntervalAlgebra.toSetRel .precedes] g n)
+    (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   no_subinterval_iff_not_restricted.2 ⟨hn, fun ⟨t, ht, _, hP⟩ ↦ h ⟨t, ht, hP⟩⟩
 
 -- p. 41: the sentence is true of a speaker who turned off the stove before the interval
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
-      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ := by
+      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[IntervalAlgebra.toSetRel .precedes] P σ := by
   refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1),
-    ⟨Perspective.presup_precedes.2 (by decide), ?_⟩, .pure 1,
-    Perspective.presup_precedes.2 (by decide), rfl⟩
+    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), ?_⟩, .pure 1,
+    IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), rfl⟩
   rintro ⟨t, ht, rfl⟩
   exact absurd ht (by decide)
 
@@ -244,7 +220,7 @@ namespace Word
 
 /-- The tense feature of a word, as the cell it denotes (p. 178): [+past] on the past, the perfect
 and *earlier*, [-past] on the present. -/
-def feature? : Word → Option (Finset Ordering)
+def feature? : Word → Option PointAlgebra
   | past _ | perf _ | earlier _ => some ⟦Tense.past⟧
   | pres | ru => some nonpast
   | _ => none
@@ -258,7 +234,7 @@ instance : DecidablePred IsTense := fun w ↦ by cases w <;> unfold IsTense <;> 
 
 /-- The cell of a word: where it places a time against the time at which it is evaluated. The
 English present has none, since it denotes the speech time wherever it is evaluated. -/
-def cell : Word → Finset Ordering
+def cell : Word → PointAlgebra
   | past _ | perf _ | earlier _ => ⟦Tense.past⟧
   | null | ru | current => ⟦Tense.present⟧
   | woll _ | inf _ => ⟦Tense.future⟧
@@ -275,45 +251,46 @@ end Word
 abbrev LF := Tree Cat Word
 
 /-- The positions of the words of an LF that satisfy a predicate, in the order of the yield. -/
-def wordPositions (t : LF) (P : Word → Prop) [DecidablePred P] : List TreePath :=
+def wordPositions (t : LF) (P : Word → Prop) [DecidablePred P] : List GornAddress :=
   (t.positionedTerminals.filter (P ·.2.2)).map (·.1)
 
 /-- The word at a position of an LF. -/
-def wordAt? (t : LF) (p : TreePath) : Option Word := (t.positionedTerminals.lookup p).map (·.2)
+def wordAt? (t : LF) (p : GornAddress) : Option Word := (t.positionedTerminals.lookup p).map (·.2)
 
 /-- The deepest position of a word in an LF, the lowest of the occurrences of a tense. -/
-def lowestOf? (t : LF) (w : Word) : Option TreePath :=
-  (wordPositions t (· = w)).argmax (·.toList.length)
+def lowestOf? (t : LF) (w : Word) : Option GornAddress :=
+  (wordPositions t (· = w)).argmax (·.depth)
 
 /-- The tense feature at a position of an LF. -/
-def featureAt? (t : LF) (p : TreePath) : Option (Finset Ordering) :=
+def featureAt? (t : LF) (p : GornAddress) : Option PointAlgebra :=
   (wordAt? t p).bind Word.feature?
 
 /-- The positions of the tense morphemes of an LF. -/
-def tenses (t : LF) : Finset TreePath := (wordPositions t Word.IsTense).toFinset
+def tenses (t : LF) : Finset GornAddress := (wordPositions t Word.IsTense).toFinset
 
 /-- The positions of the tense features of an LF. -/
-def features (t : LF) : Finset TreePath := (wordPositions t (·.feature?.isSome)).toFinset
+def features (t : LF) : Finset GornAddress := (wordPositions t (·.feature?.isSome)).toFinset
 
 /-- A tense `b` can be deleted when something in `F` is local for it and has the value of its
 feature: it commands `b` under `R`, and no other member of `F` that it commands commands `b`. A
 node commands itself on the reflexive relations of `Syntax/Command.lean`, so *other* excludes `b`
 as well as the commander. -/
-def Deletable (R : SetRel TreePath TreePath) (F : Finset TreePath) (t : LF) (b : TreePath) : Prop :=
+def Deletable (R : SetRel GornAddress GornAddress) (F : Finset GornAddress) (t : LF) (b :
+    GornAddress) : Prop :=
   b ∈ tenses t ∧ ∃ a ∈ F, a ≠ b ∧ a ~[R] b ∧ featureAt? t a = featureAt? t b ∧
     ∀ c ∈ F, c ≠ a → c ≠ b → a ~[R] c → ¬ c ~[R] b
 
-instance {R : SetRel TreePath TreePath} [∀ a b, Decidable (a ~[R] b)] {F : Finset TreePath}
-    {t : LF} {b : TreePath} : Decidable (Deletable R F t b) :=
+instance {R : SetRel GornAddress GornAddress} [∀ a b, Decidable (a ~[R] b)] {F : Finset GornAddress}
+    {t : LF} {b : GornAddress} : Decidable (Deletable R F t b) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The rule of chapter 2: delete a tense under an occurrence of the same morpheme that is local for
 it, where a tense commands what the first S above it dominates. -/
-abbrev TenseDeletable (t : LF) : TreePath → Prop := Deletable (sCommand t) (tenses t) t
+abbrev TenseDeletable (t : LF) : GornAddress → Prop := Deletable (sCommand t) (tenses t) t
 
 /-- The rule of chapter 3: delete a tense morpheme whose feature has the value of its local tense
 feature, where a feature c-commands what the first branching node above it dominates. -/
-abbrev TenseFeatureDeletable (t : LF) : TreePath → Prop :=
+abbrev TenseFeatureDeletable (t : LF) : GornAddress → Prop :=
   Deletable (RoseTree.cCommand t) (features t) t
 
 /-- The LFs one application of the rule of chapter 3 gives, each with an empty tense. -/
@@ -568,11 +545,11 @@ variable (M : Model E W T) (g : ℕ → E) {i : Index W T}
 /-- The past restricted to the reference interval `n`: a time before the evaluation time within
 that interval at which `p` holds. -/
 def past (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
+  fun i ↦ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
 
 /-- The future restricted to the reference interval `n`. -/
 def fut (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[Allen.toSetRel (Allen.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
+  fun i ↦ ◇[IntervalAlgebra.toSetRel (.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
 
 /-- The English present, $\exists t[\mathrm{NOW}(t) \wedge \mathrm{AT}(t, p)]$: `p` at the speech
 time, wherever it is evaluated. -/
@@ -834,26 +811,26 @@ abbrev HasDeletion (g : Glottocode) : Prop := g = Glottocode.english
 def lfsOf (L : Glottocode) (t : LF) : List LF := if HasDeletion L then lfsFrom 3 t else [t]
 
 /-- The words above a position that introduce a time, top down: the ones that c-command it. -/
-def timesAbove (t : LF) (b : TreePath) : List TreePath :=
+def timesAbove (t : LF) (b : GornAddress) : List GornAddress :=
   (wordPositions t Word.IsTime).filter fun a ↦ a ≠ b ∧ a ~[RoseTree.cCommand t] b
 
 /-- The cell of a time against the speech time: the cells of the words above it and its own,
 composed from the top, the English present returning to the speech time. -/
-def speechCell (t : LF) (b : TreePath) : Finset Ordering :=
+def speechCell (t : LF) (b : GornAddress) : PointAlgebra :=
   ((timesAbove t b ++ [b]).filterMap (wordAt? t)).foldl
-    (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else comp w.cell C) ⟦Tense.present⟧
+    (fun C w ↦ if w = .pres then ⟦Tense.present⟧ else C * w.cell) ⟦Tense.present⟧
 
 /-- The cell of a time against the time `r`: the cell of its word when `r` is the time at which the
 word is evaluated, and otherwise as the two times stand to the speech time. -/
-def cellAgainst (t : LF) (b r : TreePath) : Finset Ordering :=
+def cellAgainst (t : LF) (b r : GornAddress) : PointAlgebra :=
   match wordAt? t b with
   | some w =>
     if w ≠ .pres ∧ (timesAbove t b).getLast? = some r then w.cell
-    else comp (speechCell t b) ((speechCell t r).image Ordering.swap)
+    else (speechCell t r)⁻¹ * speechCell t b
   | none => ⊥
 
 /-- The cell of a time against `r` over several LFs. -/
-def cellIn (lfs : List LF) (b r : TreePath) : Finset Ordering :=
+def cellIn (lfs : List LF) (b r : GornAddress) : PointAlgebra :=
   (lfs.map (cellAgainst · b r)).foldr (· ⊔ ·) ⊥
 
 -- the parameter of `pastUnderPast`, read off the tree
@@ -965,7 +942,7 @@ theorem permanence_excludes_simultaneous (f₂ f₃ : ReichenbachFrame T)
 /-- A tense operator of the three-index system of chapter 2, with the cell of its past feature
 against the quasi-speech time `j` and the cell of its future feature against the evaluation time
 `i`. The operator [-past][+fut], which also updates `j`, is not needed for (126). -/
-def tns (C D : Finset Ordering) (φ : W → NonemptyInterval T → NonemptyInterval T → Prop)
+def tns (C D : PointAlgebra) (φ : W → NonemptyInterval T → NonemptyInterval T → Prop)
     (w : W) (i j : NonemptyInterval T) : Prop :=
   ∃ t, t.position j ∈ C ∧ t.position i ∈ D ∧ φ w t j
 
@@ -1033,7 +1010,7 @@ def Hypothesis2 (att : (Index W T → Prop) → E → Index W T → Prop) (p : I
     (σ R : NonemptyInterval T) (w : W) : Prop :=
   ∃ t, t.Precedes σ ∧ t ≤ R ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ att (fun i ↦ p (i.1, t')) x (w, t)
 
-variable [Event.TemporalTrace Ev T]
+variable [TemporalTrace Ev T]
 
 open Event (τ)
 

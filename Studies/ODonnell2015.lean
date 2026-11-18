@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
-public import Linglib.Core.Probability.Distributions.PitmanYor
+public import Linglib.Core.Probability.Combinatorics.PitmanYor.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Statistics.ODonnell2015
 public import Linglib.Morphology.Exponence.DomainRule
@@ -115,7 +115,7 @@ def suffixGrammar : ContextFreeGrammar (Sym ι) where
   rules := {rNess, rIon, rAte} ∪ Finset.univ.image rAdj ∪ Finset.univ.image rV ∪
     Finset.univ.image rBnd
 
-/-- `DecidableEq` for the grammar's `NT` projection, which `ContextFreeGrammar.RulesWithLHS`
+/-- `DecidableEq` for the grammar's `NT` projection, which `ContextFreeGrammar.rulesWithInput`
 needs. Not synthesised automatically because `(suffixGrammar ι).NT` is a structure projection that
 the typeclass solver does not reduce to `SuffixNT`. -/
 instance : DecidableEq (suffixGrammar ι).NT :=
@@ -137,10 +137,10 @@ theorem nonterminal_N_not_mem_output :
     simp [rNess, rIon, rAte, rAdj, rV, rBnd]
 
 theorem Suffix.rule_mem (s : Suffix) :
-    s.rule ∈ (suffixGrammar ι).rules.filter (·.input = SuffixNT.N) := by
+    s.rule ∈ (suffixGrammar ι).rulesWithInput SuffixNT.N := by
   cases s
-  · exact Finset.mem_filter.mpr ⟨mem_rules.mpr (.inl rfl), rfl⟩
-  · exact Finset.mem_filter.mpr ⟨mem_rules.mpr (.inr (.inl rfl)), rfl⟩
+  · exact ContextFreeGrammar.mem_rulesWithInput.mpr ⟨mem_rules.mpr (.inl rfl), rfl⟩
+  · exact ContextFreeGrammar.mem_rulesWithInput.mpr ⟨mem_rules.mpr (.inr (.inl rfl)), rfl⟩
 
 /-- The word a nominalizer forms on stem `i`, by `N → Adj -ness` over `Adj → adj i` or by
 `N → V -ion` over `V → v i`. -/
@@ -184,10 +184,10 @@ abbrev Corpus : Type :=
 def dmpcfg : DirichletPCFG (suffixGrammar ι) :=
   ⟨fun _ ↦ 1, fun _ _ ↦ one_pos⟩
 
-theorem dmpcfg_derivProb_word (x : ContextFreeRule (Sym ι) (suffixGrammar ι).NT → ℕ) (s : Suffix)
-    (i : ι) : (dmpcfg.update x).mean.derivProb (s.word i) =
+theorem dmpcfg_ruleWeight_word (x : ContextFreeRule (Sym ι) (suffixGrammar ι).NT → ℕ) (s : Suffix)
+    (i : ι) : (s.word i).ruleWeight (dmpcfg.update x).mean.weight =
       .ofReal ((dmpcfg.update x).countsProb (RoseTree.ruleCounts {s.word i})) :=
-  (dmpcfg.update x).derivProb_mean (s.licensed_word i)
+  (dmpcfg.update x).ruleWeight_mean (s.licensed_word i)
     fun a ↦ by cases s <;> cases a <;> simp [Suffix.word]
 
 /-! ## Adaptor and fragment grammars (§3.1.7, §3.1.8)
@@ -239,7 +239,7 @@ theorem pypFactor_nonneg (a : G.NT) (y : Multiset ℕ) : 0 ≤ M.pypFactor a y :
 
 @[simp]
 theorem pypFactor_zero (a : G.NT) : M.pypFactor a 0 = 1 := by
-  simp [pypFactor, pitmanYorEPPF]
+  simp [pypFactor]
 
 variable [DecidableEq G.NT]
 
@@ -249,7 +249,7 @@ Pitman–Yor probability of the seating at each nonterminal. The counts and the 
 each nonterminal has as many tables as rule uses, as in the full-listing analysis
 (`FullListing.card_seating`). -/
 noncomputable def prob (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset ℕ) : ℝ :=
-  M.countsProb X * ∏ a ∈ G.rules.image (·.input), M.pypFactor a (Y a)
+  M.countsProb X * ∏ a ∈ G.inputs, M.pypFactor a (Y a)
 
 theorem prob_nonneg (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset ℕ) : 0 ≤ M.prob X Y :=
   mul_nonneg (M.countsProb_pos X).le (Finset.prod_nonneg fun a _ ↦ M.pypFactor_nonneg a _)
@@ -348,9 +348,9 @@ def seating (a : G.NT) : Multiset ℕ :=
   ((subtrees D).filter (·.value = .nonterminal a)).val.map (customers D)
 
 theorem card_seating (hD : ∀ t ∈ D, t.Licensed G.Licenses) (a : G.NT) :
-    Multiset.card (seating D a) = ∑ r ∈ G.rules.filter (·.input = a), counts D r := by
+    Multiset.card (seating D a) = ∑ r ∈ G.rulesWithInput a, counts D r := by
   rw [seating, Multiset.card_map, ← Finset.card_def,
-    Finset.card_eq_sum_card_fiberwise (t := G.rules.filter (·.input = a))
+    Finset.card_eq_sum_card_fiberwise (t := G.rulesWithInput a)
       (f := fun s ↦ (⟨a, s.children.map RoseTree.value⟩ : ContextFreeRule T G.NT)) fun s hs ↦ ?_]
   · refine Finset.sum_congr rfl fun r hr ↦ congrArg Finset.card (Finset.ext fun s ↦ ?_)
     obtain ⟨A, w⟩ := r
@@ -416,9 +416,10 @@ variable {D : Corpus ι}
 /-- With unit pseudo-counts, the DMPCFG ranks *-ion* above *-ness* on a corpus with the book's
 counts (§3.5.5, §3.3, p. 74). -/
 theorem dmpcfg_ness_lt_ion (h : Realizes D) :
-    (PCFG.relFreq D).weight Suffix.ness.rule < (PCFG.relFreq D).weight Suffix.ion.rule := by
-  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff (r := ⟨_, Suffix.ness.rule_mem⟩)
-    (r' := ⟨_, Suffix.ion.rule_mem⟩)).mpr ?_
+    (PCFG.ofCounts (RoseTree.ruleCounts D)).weight Suffix.ness.rule <
+      (PCFG.ofCounts (RoseTree.ruleCounts D)).weight Suffix.ion.rule := by
+  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff ⟨_, Suffix.ness.rule_mem⟩
+    ⟨_, Suffix.ion.rule_mem⟩).mpr ?_
   change tokens D .ness < tokens D .ion
   rw [h.tokens_eq, h.tokens_eq]
   decide
@@ -429,8 +430,8 @@ theorem mag_ness_lt_ion (hD : ∀ t ∈ D, t.Licensed (suffixGrammar ι).License
     (h : Realizes D) :
     (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ness.rule <
       (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ion.rule := by
-  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff (r := ⟨_, Suffix.ness.rule_mem⟩)
-    (r' := ⟨_, Suffix.ion.rule_mem⟩)).mpr ?_
+  refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff ⟨_, Suffix.ness.rule_mem⟩
+    ⟨_, Suffix.ion.rule_mem⟩).mpr ?_
   rw [FullListing.counts_eq_card_filter_toFinset D hD nonterminal_N_not_mem_output,
     FullListing.counts_eq_card_filter_toFinset D hD nonterminal_N_not_mem_output]
   change (wordTypes D .ness).card < (wordTypes D .ion).card

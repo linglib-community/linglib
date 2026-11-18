@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["condition", "semantic independence"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "port as a drink", "judgment": "acceptable"},
       {"name": "port as a harbour", "judgment": "questionable"}
@@ -53,7 +53,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["condition", "semantic independence"],
@@ -73,7 +73,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["condition", "common integrator"],
@@ -93,7 +93,7 @@
     "translation": "",
     "context": "A: Mary made the salad, and Anna made the hamburgers.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "contrastive"],
@@ -113,7 +113,7 @@
     "translation": "",
     "context": "Things have changed at the Miller family.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "contrastive"],
@@ -134,7 +134,7 @@
     "translation": "",
     "context": "Things have changed at the Miller family.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "only-phrase"],
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "verb phrase"],
@@ -175,7 +175,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "subject"],
@@ -195,7 +195,7 @@
     "translation": "",
     "context": "Adam: Did John clean up his room and wash the dishes?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "and"],
@@ -215,7 +215,7 @@
     "translation": "",
     "context": "Adam: Did John clean up his room and wash the dishes?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "but"],
@@ -235,7 +235,7 @@
     "translation": "",
     "context": "Adam: Did John clean up his room and wash the dishes?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "but"],
@@ -255,7 +255,7 @@
     "translation": "",
     "context": "Adam: Did John clean up his room and wash the dishes?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "but"],
@@ -275,7 +275,7 @@
     "translation": "",
     "context": "Adam: Did John clean up his room and wash the dishes?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "but"],
@@ -296,7 +296,7 @@
     "translation": "",
     "context": "Adam: Did John clean up his room and wash the dishes?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "but"],
@@ -316,7 +316,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["connective", "but"],
@@ -337,7 +337,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["focus", "only-phrase"],
@@ -357,7 +357,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["contrast", "simple"],
@@ -377,7 +377,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["contrast", "double"]
@@ -396,7 +396,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "correction"],
@@ -416,7 +416,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "correction"],
@@ -436,7 +436,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "contrast"]
@@ -455,7 +455,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "correction"],
@@ -475,7 +475,7 @@
     "translation": "",
     "context": "Did John go to Berlin and also to Paris?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "contrast"],
@@ -495,7 +495,7 @@
     "translation": "",
     "context": "Did John go to Berlin?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "correction"],
@@ -515,7 +515,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "correction"],
@@ -535,7 +535,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["relation", "contrast"],

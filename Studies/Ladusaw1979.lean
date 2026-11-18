@@ -47,18 +47,6 @@ concedes.
   intuitions of likelihood rather than entailment. The rows that are denials are marked, and
   [the convention filters their plain reading](##rows_denial_filtered).
 
-## Errata
-
-* The theorem that a modifier whose value entails its argument is upward entailing is false:
-  [a function can shrink every argument without being monotone](##not_forall_monotone_of_le). The
-  paper uses it for *still*, *yet*, *anymore* and *without* NP.
-* *Few* NP licenses in its restrictor, which [is neither downward nor upward
-  entailing](##not_restrictorAntitone_few), the paper's own counterexample to its condition. Its
-  repair, to read *few* as *at most n* with `n` a proportion and so as downward entailing since *at
-  most n* is, fails for the reason it gives a page earlier, that the restrictor fixes the base of
-  the proportion. `Det.few` is that proportional reading.
-* The informal theorem is cited on p. 163 as (61) and is (63), and p. 154's (60a) is (62a).
-
 ## References
 
 * [ladusaw-1979]

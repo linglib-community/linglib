@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("In (1c), she = Jane and her = Mary", .acceptable)]
     paperFeatures := [("transition", "continue")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("He = Jim and the two Marys corefer", .marginal)]
     paperFeatures := [("phenomenon", "rule 1 violation"), ("felicity", "infelicitous")] }
 
@@ -50,7 +50,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("She = Jane, her = Mary; the woman = Jane", .acceptable)]
     paperFeatures := [("phenomenon", "definite description resolution")] }
 
@@ -63,7 +63,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("She = Jane, the young woman = Mary", .acceptable)]
     paperFeatures := [("transition", "continue")] }
 
@@ -76,7 +76,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("She = Jane, the topic, not the previous subject Mary", .acceptable)]
     paperFeatures := [("transition", "continue")] }
 
@@ -89,7 +89,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("her = Jane", .acceptable)]
     paperFeatures := [("transition", "retain")] }
 
@@ -102,7 +102,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("She = Mary, her = Jane", .acceptable)]
     paperFeatures := [("transition", "smooth shift")] }
 
@@ -115,7 +115,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the present", .acceptable)]
     paperFeatures := [("transition", "rough shift")] }
 
@@ -128,7 +128,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "Corpus example from museum-object descriptions."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "rule 1 violation")] }
 
@@ -141,7 +141,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "text coherence")] }
 
@@ -154,7 +154,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "text coherence"), ("felicity", "infelicitous")] }
 
@@ -167,7 +167,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := "The speaker wants to convey that Jim winked."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Stressed HE = Jim (switch reference)", .acceptable)]
     paperFeatures := [("phenomenon", "stressed pronoun")] }
 
