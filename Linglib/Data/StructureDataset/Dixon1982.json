@@ -107,53 +107,66 @@
    "Description": "The part of speech of the items of a semantic type in a language, in the abbreviations of Table 2 (p. 35)."
   },
   {
+   "ID": "semantic_type",
+   "Name": "semantic type",
+   "Lean": "SemanticType",
+   "Description": "The seven semantic types which make up the word class Adjective, each with its English members (p. 16), and the columns of Table 2 (p. 35). Dixon omits position (*high*, *low*, *right*, *left*, *near*, *far*), a further type of the English class which other languages most often express by adverbs (fn. 11)."
+  },
+  {
    "ID": "speed",
    "Name": "SPEED",
    "Lean": "Speed",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the SPEED items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*fast*, *quick*, *slow* and just a few more items (p. 16)."
   },
   {
    "ID": "dimension",
    "Name": "DIMENSION",
    "Lean": "Dimension",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the DIMENSION items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*big*, *large*, *little*, *small*, *long*, *short*, *wide*, *narrow*, *thick*, *fat*, *thin*, and just a few more items (p. 16)."
   },
   {
    "ID": "physical_property",
    "Name": "PHYSICAL PROPERTY",
    "Lean": "PhysicalProperty",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the PHYSICAL PROPERTY items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*hard*, *soft*, *heavy*, *light*, *rough*, *smooth*, *hot*, *cold*, *sweet*, *sour* and many more items (p. 16)."
   },
   {
    "ID": "colour",
    "Name": "COLOUR",
    "Lean": "Color",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the COLOUR items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*black*, *white*, *red*, and so on (p. 16)."
   },
   {
    "ID": "human_propensity",
    "Name": "HUMAN PROPENSITY",
    "Lean": "HumanPropensity",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the HUMAN PROPENSITY items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*jealous*, *happy*, *kind*, *clever*, *generous*, *gay*, *cruel*, *rude*, *proud*, *wicked*, and very many more items (p. 16)."
   },
   {
    "ID": "value",
    "Name": "VALUE",
    "Lean": "Value",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the VALUE items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*good*, *bad* and a few more items, including *proper*, *perfect* and perhaps *pure*, and hyponyms of *good* and *bad* such as *excellent*, *fine*, *delicious*, *atrocious* and *poor* (p. 16)."
   },
   {
    "ID": "age",
    "Name": "AGE",
    "Lean": "Age",
    "Codes": "part_of_speech",
-   "Description": "The parts of speech of the AGE items (p. 35)."
+   "Index": "semantic_type",
+   "Description": "*new*, *young*, *old* (p. 16)."
   }
  ],
  "CodeTable": [
