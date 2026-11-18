@@ -134,7 +134,7 @@ def categories : Finset Person.Category :=
 
 /-- A pronoun bears the bundle of its person, number, gender and case. -/
 def phi : Agreement.Bundle
-  | .person => p.person
+  | .person => Agreement.Dimension.Slot.ofFlat .person p.person
   | .number => p.number
   | .gender => p.gender
   | .case => p.case

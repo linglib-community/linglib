@@ -68,7 +68,7 @@ variable {c : Agreement.Bundle} {k : FeatureSlot Case}
   simp [IsActive]
 
 @[simp] theorem agreement_nominal : (nominal c k).agreement = Function.update c .case k.toFlat := by
-  rw [nominal, agreement_update_agr, agreement_ofAgreement]
+  rw [nominal, agreement_update_agr, agreement_ofAgreement]; rfl
 
 theorem update_case_nominal (k' : FeatureSlot Case) :
     Function.update (nominal c k) .case k' = nominal c k' :=
@@ -78,6 +78,6 @@ end FeatureBundle
 
 @[simp] theorem _root_.Agreement.Bundle.isSAP_update_case {c : Agreement.Bundle}
     {x : Flat Case} : Agreement.Bundle.IsSAP (Function.update c .case x) ↔ c.IsSAP := by
-  simp [Agreement.Bundle.IsSAP, Agreement.Bundle.person]
+  simp [Agreement.Bundle.IsSAP]
 
 end Minimalist

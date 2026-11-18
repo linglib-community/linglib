@@ -11,8 +11,8 @@ into a probe ([chomsky-2000]), from the valuation of a single slot (`FeatureSlot
 absent slot is unchanged, since an item that lacks a dimension is not a probe for it.
 
 Valuing a bundle at a dimension it bears is [unification with the bundle that bears only the
-value](##Minimalist.FeatureBundle.valueAt_eq_unify). At an agreement dimension, valuation
-followed by `FeatureBundle.agreement` is [unification of agreement
+value](##Minimalist.FeatureBundle.valueAt_eq_unify). At an agreement dimension other than
+person, valuation followed by `FeatureBundle.agreement` is [unification of agreement
 bundles](##Minimalist.FeatureBundle.map_agreement_valueAt). Agree with a goal that has no value at
 the dimension leaves the probe unchanged, so Agree can fail without causing a crash
 ([preminger-2014]). The goal a probe agrees with is found by search
@@ -50,6 +50,13 @@ producing what [chomsky-2000] calls modified lexical items. The bundles of a der
 therefore kept outside the tree: a `FeatureState` assigns a bundle to each item, and valuation
 changes that assignment, not the tree.
 
+## TODO
+
+Valuation of the person slot is not yet unification of agreement bundles: a checking slot
+compares two valued persons by equality, while two person specifications unify to what both
+cover. State `map_agreement_valueAt` at the person dimension once the person slot is valued by
+unifying specifications.
+
 ## References
 
 * [chomsky-2000]
@@ -81,17 +88,23 @@ theorem valueAt_eq_unify (hb : b t ≠ .absent) :
     b.valueAt t v = PartialUnify.unify b (single t v) := by
   rw [valueAt, FeatureSlot.valueWith_of_ne_absent hb, single, PartialUnify.unify_update_bot]
 
-theorem map_agreement_valueAt {d : Agreement.Dimension} {v : d.Value} {b : FeatureBundle}
-    (hb : b (.agr d) ≠ .absent) :
-    (b.valueAt (.agr d) v).map agreement = PartialUnify.unify b.agreement (.set d v ⊥) := by
-  rw [show (Agreement.Bundle.set d v ⊥) = Function.update (⊥ : Agreement.Bundle) d ↑v from rfl,
-    PartialUnify.unify_update_bot, agreement_apply,
-    ← FeatureSlot.map_toFlat_valueWith (v := v) hb, valueAt]
-  induction (b (.agr d)).valueWith v using WithTop.recTopCoe with
-  | top => rfl
-  | coe s' =>
-    simp only [WithTop.map_coe]
-    exact congrArg _ (agreement_update_agr b d s')
+/-- Outside the person dimension, valuing a checking bundle is unifying its agreement bundle
+with the value. -/
+theorem map_agreement_valueAt {d : Agreement.Dimension} (hd : d ≠ .person)
+    {v : (FeatureType.agr d).Value} {b : FeatureBundle} (hb : b (.agr d) ≠ .absent) :
+    (b.valueAt (.agr d) v).map agreement =
+      PartialUnify.unify b.agreement (Function.update ⊥ d (slotOfFlat d (v : Flat _))) := by
+  cases d
+  · exact absurd rfl hd
+  all_goals
+    rw [PartialUnify.unify_update_bot, agreement_apply, valueAt]
+    simp only [slotOfFlat]
+    rw [← FeatureSlot.map_toFlat_valueWith (v := v) hb]
+    induction (b (.agr _)).valueWith v using WithTop.recTopCoe with
+    | top => rfl
+    | coe s' =>
+      simp only [WithTop.map_coe]
+      exact congrArg _ (agreement_update_agr b _ s')
 
 variable (t)
 

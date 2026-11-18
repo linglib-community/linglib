@@ -141,8 +141,9 @@ theorem ergative_second_singular : ergative.realize (.personNumber .second .sing
 /-- The dative and ergative markers of the first and second persons coincide. -/
 theorem dative_eq_ergative {c : Bundle} (h : c.IsSAP) : dative.realize c = ergative.realize c := by
   have h3 (n : Number) : ¬ Bundle.personNumber .third n ≤ c := fun hle ↦ by
-    have : c.person = .third := by simp [Bundle.person, (Bundle.personNumber_le_iff.1 hle).1]
-    exact absurd h (by rw [Bundle.IsSAP, this]; decide)
+    obtain ⟨s, hs⟩ := (OrderDual.ofDual (c .person)).2
+    have hs' : s ∈ Person.third.participantSets := (Bundle.personNumber_le_iff.1 hle).1 hs
+    exact (h s hs).ne_empty (by simpa [Person.participantSets] using hs')
   rw [dative, ergative, Paradigm.realize_append_of_forall_not_le (by simp [h3]),
     Paradigm.realize_append_of_forall_not_le (by simp [h3])]
 

@@ -10,14 +10,17 @@ public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Syntax.Person.Basic
 
 /-!
-# The lattice of persons
+# Person resolution
 
-As Zwicky proposes, a coordination refers to the union of its conjuncts' referents, so
-[its participant sets are the pairwise unions of theirs](##Person.participantSets_sup). Distinct
-values have distinct participant sets, so this makes `Person` a join-semilattice whose join is
-person resolution, with the third person at the bottom. Dalrymple and Kaplan's marker sets are the
-participant sets of the quadripartition, and
-[the person of their union is the join of their persons](##Person.ofParticipants_union).
+*Person resolution* gives the person of a coordination: *you and I* is first person inclusive,
+and *you and she* is second person. A coordination refers to the referents of its conjuncts
+together, so, as Zwicky proposes,
+[its participant sets are the unions of theirs](##Person.participantSets_sup).
+
+This makes `Person` a join-semilattice, with resolution as the join and the third person at the
+bottom. [The person of a union of participant sets is the join of their
+persons](##Person.ofParticipants_union), which is how Dalrymple and Kaplan resolve their marker
+sets.
 
 ## References
 

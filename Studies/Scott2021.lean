@@ -110,7 +110,7 @@ def spellout (t : Tree DPCat String) : Option String :=
 /-- The person of a cell as the structures' person, third person being the absence of
 PersP. -/
 def cellPerson (c : Agreement.Bundle) : Option Person :=
-  if c.IsSAP then some c.person else none
+  if c.IsSAP then (c .person).toPerson? else none
 
 /-- The number of a cell. -/
 def cellNumber (c : Agreement.Bundle) : Number := if c.IsPlural then .plural else .singular
