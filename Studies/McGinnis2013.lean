@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Geometry
+public import Linglib.Morphology.FeatureGeometry
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Morphology.DistributedMorphology.Fission
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
@@ -43,7 +43,7 @@ leaves no [#] for the default *-s*.
 
 namespace McGinnis2013
 
-open DistributedMorphology Phi.Geometry Georgian Morphology
+open DistributedMorphology Morphology.FeatureGeometry Georgian Morphology
 
 /-! ### Features -/
 

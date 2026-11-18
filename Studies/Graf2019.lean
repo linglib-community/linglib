@@ -4,7 +4,7 @@ public import Studies.Bobaljik2012
 public import Linglib.Morphology.Exponence.Containment.SupersetRule
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Mathlib.Tactic.TFAE
 
 /-!

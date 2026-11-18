@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Agreement.Hierarchy
-public import Linglib.Syntax.Agreement.Resolution
+public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Gender.Assignment
 public import Linglib.Syntax.Number.Resolve

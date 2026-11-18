@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Cyclic
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Morphology.Exponence.Select
 public import Studies.BejarRezac2003
 public import Linglib.Data.Examples.CoonKeine2021
@@ -31,7 +31,7 @@ absence of the effects there follows without the caveats a Person Licensing Cond
 Goals are position-indexed so that two DPs with the same features stay distinct, and a
 segment's Agree is the relativized search of the probe substrate over that list, so the
 two-goal characterization of gluttony rests on the substrate's search. Person geometries are
-the specifications of `Phi.PersonSegment.spec`, probes are sets of segments as in the cyclic-Agree
+the specifications of `PersonSegment.spec`, probes are sets of segments as in the cyclic-Agree
 substrate, and number is the two-segment geometry of the paper; the model pairs a number probe
 with every person probe, one direction of the paper's probe-specification hierarchy. A
 K-encapsulated dative exposes its person node and no number:
@@ -88,7 +88,7 @@ no configuration and enter no theorem.
 
 namespace CoonKeine2021
 
-open Minimalist Minimalist.CyclicAgree Morphology Phi Phi.PersonSegment
+open Minimalist Minimalist.CyclicAgree Morphology PersonSegment
 
 /-! ### Goals and their visible geometries -/
 
