@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AlonsoOvalleRoyer2024` — typed example data
@@ -1138,5 +1139,177 @@ def fn20 : Datum :=
     paperFeatures := [] }
 
 def all : List Datum := [ex_22_23a, ex_22_23b, ex_22_24, ex_26_27a, ex_26_27b, ex_26_27c, ex_28_29a, ex_28_29b, ex_28_29c, ex_34, ex_30b, ex_31_32a, ex_31_32b, ex_31_33, ex_35_36a, ex_35_36b, ex_35_36c, ex_37_38a, ex_37_38b, ex_39_40a, ex_39_40b, ex_39_40c, ex_41_42a, ex_41_42b, ex_43_44, ex_45_44, ex_46_47, ex_48_47, ex_50b, ex_51b, ex_52a, ex_53b, ex_54, ex_55, ex_57, ex_58, ex_60a, ex_60b, ex_67, ex_68, ex_82_49, ex_82_85, ex_86, ex_90_89, ex_93, ex_95, ex_96, ex_99, ex_100, ex_102a, ex_102b, ex_103a, ex_103b, ex_105, ex_106a, ex_106b, ex_107a, ex_107b, ex_108a, ex_108b, ex_109, ex_110, ex_111, ex_112, ex_113, ex_115_116, ex_117, ex_118, ex_119, ex_120, ex_121, ex_122, ex_123, fn10, fn20]
+
+/-- The examples of the file. -/
+inductive Example where
+  | ex_22_23a
+  | ex_22_23b
+  | ex_22_24
+  | ex_26_27a
+  | ex_26_27b
+  | ex_26_27c
+  | ex_28_29a
+  | ex_28_29b
+  | ex_28_29c
+  | ex_34
+  | ex_30b
+  | ex_31_32a
+  | ex_31_32b
+  | ex_31_33
+  | ex_35_36a
+  | ex_35_36b
+  | ex_35_36c
+  | ex_37_38a
+  | ex_37_38b
+  | ex_39_40a
+  | ex_39_40b
+  | ex_39_40c
+  | ex_41_42a
+  | ex_41_42b
+  | ex_43_44
+  | ex_45_44
+  | ex_46_47
+  | ex_48_47
+  | ex_50b
+  | ex_51b
+  | ex_52a
+  | ex_53b
+  | ex_54
+  | ex_55
+  | ex_57
+  | ex_58
+  | ex_60a
+  | ex_60b
+  | ex_67
+  | ex_68
+  | ex_82_49
+  | ex_82_85
+  | ex_86
+  | ex_90_89
+  | ex_93
+  | ex_95
+  | ex_96
+  | ex_99
+  | ex_100
+  | ex_102a
+  | ex_102b
+  | ex_103a
+  | ex_103b
+  | ex_105
+  | ex_106a
+  | ex_106b
+  | ex_107a
+  | ex_107b
+  | ex_108a
+  | ex_108b
+  | ex_109
+  | ex_110
+  | ex_111
+  | ex_112
+  | ex_113
+  | ex_115_116
+  | ex_117
+  | ex_118
+  | ex_119
+  | ex_120
+  | ex_121
+  | ex_122
+  | ex_123
+  | fn10
+  | fn20
+  deriving DecidableEq, Repr, Fintype
+
+/-- Every example of the file, in its order. -/
+def Example.all : List Example :=
+  [.ex_22_23a, .ex_22_23b, .ex_22_24, .ex_26_27a, .ex_26_27b, .ex_26_27c, .ex_28_29a, .ex_28_29b,
+    .ex_28_29c, .ex_34, .ex_30b, .ex_31_32a, .ex_31_32b, .ex_31_33, .ex_35_36a, .ex_35_36b,
+    .ex_35_36c, .ex_37_38a, .ex_37_38b, .ex_39_40a, .ex_39_40b, .ex_39_40c, .ex_41_42a,
+    .ex_41_42b, .ex_43_44, .ex_45_44, .ex_46_47, .ex_48_47, .ex_50b, .ex_51b, .ex_52a, .ex_53b,
+    .ex_54, .ex_55, .ex_57, .ex_58, .ex_60a, .ex_60b, .ex_67, .ex_68, .ex_82_49, .ex_82_85,
+    .ex_86, .ex_90_89, .ex_93, .ex_95, .ex_96, .ex_99, .ex_100, .ex_102a, .ex_102b, .ex_103a,
+    .ex_103b, .ex_105, .ex_106a, .ex_106b, .ex_107a, .ex_107b, .ex_108a, .ex_108b, .ex_109,
+    .ex_110, .ex_111, .ex_112, .ex_113, .ex_115_116, .ex_117, .ex_118, .ex_119, .ex_120, .ex_121,
+    .ex_122, .ex_123, .fn10, .fn20]
+
+/-- The row of an example. -/
+def Example.datum : Example → Datum
+  | .ex_22_23a => _root_.AlonsoOvalleRoyer2024.Examples.ex_22_23a
+  | .ex_22_23b => _root_.AlonsoOvalleRoyer2024.Examples.ex_22_23b
+  | .ex_22_24 => _root_.AlonsoOvalleRoyer2024.Examples.ex_22_24
+  | .ex_26_27a => _root_.AlonsoOvalleRoyer2024.Examples.ex_26_27a
+  | .ex_26_27b => _root_.AlonsoOvalleRoyer2024.Examples.ex_26_27b
+  | .ex_26_27c => _root_.AlonsoOvalleRoyer2024.Examples.ex_26_27c
+  | .ex_28_29a => _root_.AlonsoOvalleRoyer2024.Examples.ex_28_29a
+  | .ex_28_29b => _root_.AlonsoOvalleRoyer2024.Examples.ex_28_29b
+  | .ex_28_29c => _root_.AlonsoOvalleRoyer2024.Examples.ex_28_29c
+  | .ex_34 => _root_.AlonsoOvalleRoyer2024.Examples.ex_34
+  | .ex_30b => _root_.AlonsoOvalleRoyer2024.Examples.ex_30b
+  | .ex_31_32a => _root_.AlonsoOvalleRoyer2024.Examples.ex_31_32a
+  | .ex_31_32b => _root_.AlonsoOvalleRoyer2024.Examples.ex_31_32b
+  | .ex_31_33 => _root_.AlonsoOvalleRoyer2024.Examples.ex_31_33
+  | .ex_35_36a => _root_.AlonsoOvalleRoyer2024.Examples.ex_35_36a
+  | .ex_35_36b => _root_.AlonsoOvalleRoyer2024.Examples.ex_35_36b
+  | .ex_35_36c => _root_.AlonsoOvalleRoyer2024.Examples.ex_35_36c
+  | .ex_37_38a => _root_.AlonsoOvalleRoyer2024.Examples.ex_37_38a
+  | .ex_37_38b => _root_.AlonsoOvalleRoyer2024.Examples.ex_37_38b
+  | .ex_39_40a => _root_.AlonsoOvalleRoyer2024.Examples.ex_39_40a
+  | .ex_39_40b => _root_.AlonsoOvalleRoyer2024.Examples.ex_39_40b
+  | .ex_39_40c => _root_.AlonsoOvalleRoyer2024.Examples.ex_39_40c
+  | .ex_41_42a => _root_.AlonsoOvalleRoyer2024.Examples.ex_41_42a
+  | .ex_41_42b => _root_.AlonsoOvalleRoyer2024.Examples.ex_41_42b
+  | .ex_43_44 => _root_.AlonsoOvalleRoyer2024.Examples.ex_43_44
+  | .ex_45_44 => _root_.AlonsoOvalleRoyer2024.Examples.ex_45_44
+  | .ex_46_47 => _root_.AlonsoOvalleRoyer2024.Examples.ex_46_47
+  | .ex_48_47 => _root_.AlonsoOvalleRoyer2024.Examples.ex_48_47
+  | .ex_50b => _root_.AlonsoOvalleRoyer2024.Examples.ex_50b
+  | .ex_51b => _root_.AlonsoOvalleRoyer2024.Examples.ex_51b
+  | .ex_52a => _root_.AlonsoOvalleRoyer2024.Examples.ex_52a
+  | .ex_53b => _root_.AlonsoOvalleRoyer2024.Examples.ex_53b
+  | .ex_54 => _root_.AlonsoOvalleRoyer2024.Examples.ex_54
+  | .ex_55 => _root_.AlonsoOvalleRoyer2024.Examples.ex_55
+  | .ex_57 => _root_.AlonsoOvalleRoyer2024.Examples.ex_57
+  | .ex_58 => _root_.AlonsoOvalleRoyer2024.Examples.ex_58
+  | .ex_60a => _root_.AlonsoOvalleRoyer2024.Examples.ex_60a
+  | .ex_60b => _root_.AlonsoOvalleRoyer2024.Examples.ex_60b
+  | .ex_67 => _root_.AlonsoOvalleRoyer2024.Examples.ex_67
+  | .ex_68 => _root_.AlonsoOvalleRoyer2024.Examples.ex_68
+  | .ex_82_49 => _root_.AlonsoOvalleRoyer2024.Examples.ex_82_49
+  | .ex_82_85 => _root_.AlonsoOvalleRoyer2024.Examples.ex_82_85
+  | .ex_86 => _root_.AlonsoOvalleRoyer2024.Examples.ex_86
+  | .ex_90_89 => _root_.AlonsoOvalleRoyer2024.Examples.ex_90_89
+  | .ex_93 => _root_.AlonsoOvalleRoyer2024.Examples.ex_93
+  | .ex_95 => _root_.AlonsoOvalleRoyer2024.Examples.ex_95
+  | .ex_96 => _root_.AlonsoOvalleRoyer2024.Examples.ex_96
+  | .ex_99 => _root_.AlonsoOvalleRoyer2024.Examples.ex_99
+  | .ex_100 => _root_.AlonsoOvalleRoyer2024.Examples.ex_100
+  | .ex_102a => _root_.AlonsoOvalleRoyer2024.Examples.ex_102a
+  | .ex_102b => _root_.AlonsoOvalleRoyer2024.Examples.ex_102b
+  | .ex_103a => _root_.AlonsoOvalleRoyer2024.Examples.ex_103a
+  | .ex_103b => _root_.AlonsoOvalleRoyer2024.Examples.ex_103b
+  | .ex_105 => _root_.AlonsoOvalleRoyer2024.Examples.ex_105
+  | .ex_106a => _root_.AlonsoOvalleRoyer2024.Examples.ex_106a
+  | .ex_106b => _root_.AlonsoOvalleRoyer2024.Examples.ex_106b
+  | .ex_107a => _root_.AlonsoOvalleRoyer2024.Examples.ex_107a
+  | .ex_107b => _root_.AlonsoOvalleRoyer2024.Examples.ex_107b
+  | .ex_108a => _root_.AlonsoOvalleRoyer2024.Examples.ex_108a
+  | .ex_108b => _root_.AlonsoOvalleRoyer2024.Examples.ex_108b
+  | .ex_109 => _root_.AlonsoOvalleRoyer2024.Examples.ex_109
+  | .ex_110 => _root_.AlonsoOvalleRoyer2024.Examples.ex_110
+  | .ex_111 => _root_.AlonsoOvalleRoyer2024.Examples.ex_111
+  | .ex_112 => _root_.AlonsoOvalleRoyer2024.Examples.ex_112
+  | .ex_113 => _root_.AlonsoOvalleRoyer2024.Examples.ex_113
+  | .ex_115_116 => _root_.AlonsoOvalleRoyer2024.Examples.ex_115_116
+  | .ex_117 => _root_.AlonsoOvalleRoyer2024.Examples.ex_117
+  | .ex_118 => _root_.AlonsoOvalleRoyer2024.Examples.ex_118
+  | .ex_119 => _root_.AlonsoOvalleRoyer2024.Examples.ex_119
+  | .ex_120 => _root_.AlonsoOvalleRoyer2024.Examples.ex_120
+  | .ex_121 => _root_.AlonsoOvalleRoyer2024.Examples.ex_121
+  | .ex_122 => _root_.AlonsoOvalleRoyer2024.Examples.ex_122
+  | .ex_123 => _root_.AlonsoOvalleRoyer2024.Examples.ex_123
+  | .fn10 => _root_.AlonsoOvalleRoyer2024.Examples.fn10
+  | .fn20 => _root_.AlonsoOvalleRoyer2024.Examples.fn20
+
+theorem Example.map_datum_all :
+    Example.all.map Example.datum = _root_.AlonsoOvalleRoyer2024.Examples.all := rfl
 
 end AlonsoOvalleRoyer2024.Examples

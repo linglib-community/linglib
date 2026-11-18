@@ -30,7 +30,8 @@ def ex_1a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "plural"), ("anaphor", "egymás")] }
+    spans := [⟨3, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "plural")] }
 
 def ex_1b : Datum :=
   { id := "rakosi2020_1b"
@@ -45,7 +46,8 @@ def ex_1b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "plural"), ("anaphor", "maguk")] }
+    spans := [⟨3, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "plural")] }
 
 def ex_2a : Datum :=
   { id := "rakosi2020_2a"
@@ -60,7 +62,8 @@ def ex_2a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "atomic"), ("anaphor", "egymás")] }
+    spans := [⟨3, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "atomic")] }
 
 def ex_2b : Datum :=
   { id := "rakosi2020_2b"
@@ -75,7 +78,8 @@ def ex_2b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "atomic"), ("anaphor", "maga")] }
+    spans := [⟨3, 1, "anaphor", some "maga"⟩]
+    paperFeatures := [("antecedent", "atomic")] }
 
 def ex_3a : Datum :=
   { id := "rakosi2020_3a"
@@ -91,7 +95,8 @@ def ex_3a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
+    spans := [⟨1, 1, "anaphor", some "magunk"⟩]
+    paperFeatures := [("antecedent", "inclusive")] }
 
 def ex_3b : Datum :=
   { id := "rakosi2020_3b"
@@ -107,7 +112,8 @@ def ex_3b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
+    spans := [⟨2, 1, "anaphor", some "magunk"⟩]
+    paperFeatures := [("antecedent", "inclusive")] }
 
 def ex_4a : Datum :=
   { id := "rakosi2020_4a"
@@ -122,7 +128,8 @@ def ex_4a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("referential", .acceptable), ("bound variable", .ungrammatical)]
-    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "magunk")] }
+    spans := [⟨3, 1, "anaphor", some "magunk"⟩]
+    paperFeatures := [("antecedent", "inclusive")] }
 
 def ex_4b : Datum :=
   { id := "rakosi2020_4b"
@@ -137,7 +144,8 @@ def ex_4b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("bound variable", .acceptable)]
-    paperFeatures := [("antecedent", "plural"), ("anaphor", "magunk")] }
+    spans := [⟨3, 1, "anaphor", some "magunk"⟩]
+    paperFeatures := [("antecedent", "plural")] }
 
 def ex_4c : Datum :=
   { id := "rakosi2020_4c"
@@ -152,7 +160,8 @@ def ex_4c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("bound variable", .acceptable)]
-    paperFeatures := [("antecedent", "plural"), ("anaphor", "egymás")] }
+    spans := [⟨3, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "plural")] }
 
 def ex_5a : Datum :=
   { id := "rakosi2020_5a"
@@ -167,7 +176,8 @@ def ex_5a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "plural"), ("anaphor", "maguk")] }
+    spans := [⟨4, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "plural")] }
 
 def ex_5b : Datum :=
   { id := "rakosi2020_5b"
@@ -182,7 +192,8 @@ def ex_5b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "atomic"), ("anaphor", "maguk")] }
+    spans := [⟨4, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "atomic")] }
 
 def ex_6 : Datum :=
   { id := "rakosi2020_6"
@@ -197,7 +208,8 @@ def ex_6 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "inclusive"), ("anaphor", "egymás")] }
+    spans := [⟨2, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "inclusive")] }
 
 def ex_7a : Datum :=
   { id := "rakosi2020_7a"
@@ -272,7 +284,8 @@ def ex_8a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maga")] }
+    spans := [⟨5, 1, "anaphor", some "maga"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_8a_ : Datum :=
   { id := "rakosi2020_8a_"
@@ -287,7 +300,8 @@ def ex_8a_ : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maguk")] }
+    spans := [⟨5, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_8b : Datum :=
   { id := "rakosi2020_8b"
@@ -302,7 +316,8 @@ def ex_8b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maga")] }
+    spans := [⟨4, 1, "anaphor", some "maga"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_8b_ : Datum :=
   { id := "rakosi2020_8b_"
@@ -317,7 +332,8 @@ def ex_8b_ : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "maguk")] }
+    spans := [⟨4, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_9a : Datum :=
   { id := "rakosi2020_9a"
@@ -333,7 +349,8 @@ def ex_9a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
+    spans := [⟨5, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_9b : Datum :=
   { id := "rakosi2020_9b"
@@ -348,7 +365,8 @@ def ex_9b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
+    spans := [⟨5, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_9c : Datum :=
   { id := "rakosi2020_9c"
@@ -364,7 +382,8 @@ def ex_9c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
+    spans := [⟨3, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_9d : Datum :=
   { id := "rakosi2020_9d"
@@ -380,7 +399,8 @@ def ex_9d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "quantified"), ("anaphor", "egymás")] }
+    spans := [⟨5, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "quantified")] }
 
 def ex_10 : Datum :=
   { id := "rakosi2020_10"
@@ -425,7 +445,8 @@ def ex_11a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maga")] }
+    spans := [⟨4, 1, "anaphor", some "maga"⟩]
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_11a_ : Datum :=
   { id := "rakosi2020_11a_"
@@ -440,7 +461,8 @@ def ex_11a_ : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maguk")] }
+    spans := [⟨4, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_11b : Datum :=
   { id := "rakosi2020_11b"
@@ -455,7 +477,8 @@ def ex_11b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maguk")] }
+    spans := [⟨4, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_11b_ : Datum :=
   { id := "rakosi2020_11b_"
@@ -470,7 +493,8 @@ def ex_11b_ : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "maga")] }
+    spans := [⟨4, 1, "anaphor", some "maga"⟩]
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_12 : Datum :=
   { id := "rakosi2020_12"
@@ -485,7 +509,8 @@ def ex_12 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "egymás")] }
+    spans := [⟨4, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_12_ : Datum :=
   { id := "rakosi2020_12_"
@@ -500,7 +525,8 @@ def ex_12_ : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "coordinate"), ("anaphor", "egymás")] }
+    spans := [⟨4, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "coordinate")] }
 
 def ex_13 : Datum :=
   { id := "rakosi2020_13"
@@ -561,7 +587,8 @@ def ex_15a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
+    spans := [⟨4, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "collective")] }
 
 def ex_15b : Datum :=
   { id := "rakosi2020_15b"
@@ -577,7 +604,8 @@ def ex_15b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
+    spans := [⟨3, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "collective")] }
 
 def ex_15c : Datum :=
   { id := "rakosi2020_15c"
@@ -593,7 +621,8 @@ def ex_15c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "collective"), ("anaphor", "egymás")] }
+    spans := [⟨6, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "collective")] }
 
 def ex_16 : Datum :=
   { id := "rakosi2020_16"
@@ -608,7 +637,8 @@ def ex_16 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "collective"), ("anaphor", "maga")] }
+    spans := [⟨5, 1, "anaphor", some "maga"⟩]
+    paperFeatures := [("antecedent", "collective")] }
 
 def ex_16_ : Datum :=
   { id := "rakosi2020_16_"
@@ -623,7 +653,8 @@ def ex_16_ : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("antecedent", "collective"), ("anaphor", "maguk")] }
+    spans := [⟨5, 1, "anaphor", some "maguk"⟩]
+    paperFeatures := [("antecedent", "collective")] }
 
 def ex_17 : Datum :=
   { id := "rakosi2020_17"
@@ -638,7 +669,8 @@ def ex_17 : Datum :=
     judgment := .acceptable
     contrasts := [("Péter és Éva az-t gondolja, hogy ő szereti egymás-t.", .ungrammatical)]
     readings := [("broad scope", .acceptable)]
-    paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
+    spans := [⟨7, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "boundPro")] }
 
 def ex_18 : Datum :=
   { id := "rakosi2020_18"
@@ -654,7 +686,8 @@ def ex_18 : Datum :=
     judgment := .acceptable
     contrasts := [("Álmomban két macska voltam, és én játszottam egymás-sal.", .ungrammatical)]
     readings := []
-    paperFeatures := [("antecedent", "boundPro"), ("anaphor", "egymás")] }
+    spans := [⟨6, 1, "anaphor", some "egymas"⟩]
+    paperFeatures := [("antecedent", "boundPro")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_7a, ex_7a_, ex_7b, ex_7b_, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_10, ex_10_, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_13, ex_14, ex_14_, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
 
@@ -701,5 +734,31 @@ def Reading.label : Reading → String
 /-- The judgment a row records for the reading, if it records one. -/
 def reading (e : Datum) (r : Reading) : Option Judgment :=
   e.readings.lookup r.label
+
+/-- The labels of the spans the rows mark. -/
+inductive SpanLabel where
+  /-- anaphor: the reflexive or reciprocal anaphor under test -/
+  | anaphor
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("anaphor", .anaphor)]
+
+/-- The anaphors under test. -/
+inductive Lexeme where
+  /-- egymas: the reciprocal egymás 'each other' -/
+  | egymas
+  /-- maga: the third person singular reflexive maga -/
+  | maga
+  /-- maguk: the third person plural reflexive maguk -/
+  | maguk
+  /-- magunk: the first person plural reflexive magunk -/
+  | magunk
+  deriving DecidableEq, Repr, Fintype
+
+/-- The lexeme a span is a form of, where it names a declared one. -/
+def lexeme? (p : Datum.Span) : Option Lexeme :=
+  p.lexeme.bind (List.lookup · [("egymas", .egymas), ("maga", .maga), ("maguk", .maguk), ("magunk", .magunk)])
 
 end Rakosi2020.Examples

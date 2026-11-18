@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Egressy2026` — typed example data
@@ -28,6 +29,7 @@ def ex_4 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
+    spans := [⟨4, 1, "matrix", some "lat"⟩, ⟨5, 1, "correlate", some "az"⟩]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
 def ex_5 : Datum :=
@@ -43,6 +45,7 @@ def ex_5 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
+    spans := [⟨4, 1, "matrix", some "hall"⟩, ⟨5, 1, "correlate", some "az"⟩]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
 def ex_6 : Datum :=
@@ -58,6 +61,7 @@ def ex_6 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "almodik"⟩]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
 def ex_7 : Datum :=
@@ -73,6 +77,7 @@ def ex_7 : Datum :=
     judgment := .acceptable
     contrasts := [("Peti az-t hit-t-e, hogy Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "gondol"⟩]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
 def ex_8 : Datum :=
@@ -88,6 +93,7 @@ def ex_8 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
+    spans := [⟨0, 1, "correlate", some "az"⟩, ⟨1, 1, "matrix", some "aggaszt"⟩]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
 def ex_9 : Datum :=
@@ -103,6 +109,7 @@ def ex_9 : Datum :=
     judgment := .acceptable
     contrasts := [("Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", .acceptable)]
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
+    spans := [⟨0, 1, "matrix", some "morog"⟩, ⟨1, 1, "correlate", some "amiatt"⟩]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
 def ex_10 : Datum :=
@@ -118,7 +125,8 @@ def ex_10 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
-    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "yes")] }
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "almodik"⟩, ⟨8, 1, "intermediate", some "lat"⟩, ⟨9, 1, "correlate", some "az"⟩]
+    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "yes")] }
 
 def ex_11a : Datum :=
   { id := "egressy2026_11a"
@@ -133,6 +141,7 @@ def ex_11a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "mond"⟩]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_11b : Datum :=
@@ -148,6 +157,7 @@ def ex_11b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "rikolt"⟩]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_11c : Datum :=
@@ -163,6 +173,7 @@ def ex_11c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "morog"⟩]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_12 : Datum :=
@@ -178,6 +189,7 @@ def ex_12 : Datum :=
     judgment := .acceptable
     contrasts := [("Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
+    spans := [⟨0, 1, "matrix", some "telefonal"⟩, ⟨1, 1, "correlate", some "az"⟩]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_13 : Datum :=
@@ -193,6 +205,7 @@ def ex_13 : Datum :=
     judgment := .acceptable
     contrasts := [("Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", .acceptable), ("Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
+    spans := [⟨2, 1, "correlate", some "az"⟩, ⟨3, 1, "matrix", some "hall"⟩]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_14 : Datum :=
@@ -208,6 +221,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     contrasts := [("Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
+    spans := [⟨4, 1, "matrix", some "lat"⟩, ⟨5, 1, "correlate", some "az"⟩]
     paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_15 : Datum :=
@@ -223,7 +237,8 @@ def ex_15 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
-    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateVerb", "morog"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "no")] }
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "rikolt"⟩, ⟨5, 1, "correlate", some "az"⟩, ⟨6, 1, "intermediate", some "morog"⟩]
+    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "no")] }
 
 def ex_16 : Datum :=
   { id := "egressy2026_16"
@@ -238,7 +253,8 @@ def ex_16 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
-    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "yes")] }
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "rikolt"⟩, ⟨8, 1, "intermediate", some "lat"⟩, ⟨9, 1, "correlate", some "az"⟩]
+    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "yes")] }
 
 def ex_17 : Datum :=
   { id := "egressy2026_17"
@@ -253,7 +269,8 @@ def ex_17 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
-    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateVerb", "rikolt"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "no")] }
+    spans := [⟨4, 1, "matrix", some "hall"⟩, ⟨5, 1, "correlate", some "az"⟩, ⟨8, 1, "correlate", some "az"⟩, ⟨9, 1, "intermediate", some "rikolt"⟩]
+    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "no")] }
 
 def ex_18 : Datum :=
   { id := "egressy2026_18"
@@ -294,6 +311,7 @@ def ex_23 : Datum :=
     judgment := .acceptable
     contrasts := [("Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", .unacceptable)]
     readings := []
+    spans := [⟨1, 1, "correlate", some "az"⟩, ⟨2, 1, "matrix", some "mond"⟩]
     paperFeatures := [("diagnostic", "evaluativeAdverb")] }
 
 def ex_24 : Datum :=
@@ -309,6 +327,7 @@ def ex_24 : Datum :=
     judgment := .acceptable
     contrasts := [("Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", .questionable), ("Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", .questionable)]
     readings := []
+    spans := [⟨4, 1, "matrix", some "hall"⟩]
     paperFeatures := [("diagnostic", "focusMovement"), ("embeddedAdverb", "no")] }
 
 def ex_25 : Datum :=
@@ -324,6 +343,7 @@ def ex_25 : Datum :=
     judgment := .acceptable
     contrasts := [("Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", .questionable)]
     readings := []
+    spans := [⟨2, 1, "matrix", some "lat"⟩]
     paperFeatures := [("diagnostic", "whMovement")] }
 
 def ex_27 : Datum :=
@@ -353,5 +373,49 @@ def ex_28 : Datum :=
     paperFeatures := [("diagnostic", "raising"), ("crossed", "cP")] }
 
 def all : List Datum := [ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11a, ex_11b, ex_11c, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_23, ex_24, ex_25, ex_27, ex_28]
+
+/-- The labels of the spans the rows mark. -/
+inductive SpanLabel where
+  /-- matrix: the verb of the matrix clause -/
+  | matrix
+  /-- intermediate: the verb of the intermediate clause of a double embedding -/
+  | intermediate
+  /-- correlate: the expletive correlate of an embedded clause -/
+  | correlate
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("matrix", .matrix), ("intermediate", .intermediate), ("correlate", .correlate)]
+
+/-- The verbs and the correlates the rows mark. -/
+inductive Lexeme where
+  /-- lat: lát 'see' -/
+  | lat
+  /-- hall: hall 'hear' -/
+  | hall
+  /-- almodik: álmodik 'dream' -/
+  | almodik
+  /-- gondol: gondol 'think' -/
+  | gondol
+  /-- aggaszt: aggaszt 'worry' -/
+  | aggaszt
+  /-- mond: mond 'say' -/
+  | mond
+  /-- rikolt: rikolt 'shout' -/
+  | rikolt
+  /-- morog: morog 'growl' -/
+  | morog
+  /-- telefonal: telefonál 'be on the phone' -/
+  | telefonal
+  /-- az: the demonstrative az 'that' in its expletive use -/
+  | az
+  /-- amiatt: amiatt 'because of that' -/
+  | amiatt
+  deriving DecidableEq, Repr, Fintype
+
+/-- The lexeme a span is a form of, where it names a declared one. -/
+def lexeme? (p : Datum.Span) : Option Lexeme :=
+  p.lexeme.bind (List.lookup · [("lat", .lat), ("hall", .hall), ("almodik", .almodik), ("gondol", .gondol), ("aggaszt", .aggaszt), ("mond", .mond), ("rikolt", .rikolt), ("morog", .morog), ("telefonal", .telefonal), ("az", .az), ("amiatt", .amiatt)])
 
 end Egressy2026.Examples

@@ -66,6 +66,45 @@
       }
     ]
   },
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "anaphor",
+          "label": "anaphor",
+          "doc": "the reflexive or reciprocal anaphor under test"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The anaphors under test.",
+      "levels": [
+        {
+          "name": "egymas",
+          "label": "egymas",
+          "doc": "the reciprocal egymás 'each other'"
+        },
+        {
+          "name": "maga",
+          "label": "maga",
+          "doc": "the third person singular reflexive maga"
+        },
+        {
+          "name": "maguk",
+          "label": "maguk",
+          "doc": "the third person plural reflexive maguk"
+        },
+        {
+          "name": "magunk",
+          "label": "magunk",
+          "doc": "the first person plural reflexive magunk"
+        }
+      ]
+    }
+  },
   "examples": [
     {
       "id": "rakosi2020_1a",
@@ -107,14 +146,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "plural"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "",
@@ -160,14 +202,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "plural"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
@@ -213,14 +258,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "atomic"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "",
@@ -266,14 +314,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "maga"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "atomic"
-        ],
-        [
-          "anaphor",
-          "maga"
         ]
       ],
       "comment": "The paper labels this sub-example \"a.\" (misprint for b.). The prose calls it (2b).",
@@ -316,14 +367,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 1,
+          "label": "anaphor",
+          "lexeme": "magunk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "inclusive"
-        ],
-        [
-          "anaphor",
-          "magunk"
         ]
       ],
       "comment": "Inclusive reference anaphora; Hungarian National Corpus.",
@@ -358,14 +412,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 2,
+          "label": "anaphor",
+          "lexeme": "magunk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "inclusive"
-        ],
-        [
-          "anaphor",
-          "magunk"
         ]
       ],
       "comment": "Inclusive reference anaphora (den Dikken et al. 2001): the 1SG subject is included in the denotation of the 1PL reflexive; Hungarian National Corpus.",
@@ -412,14 +469,17 @@
           "judgment": "ungrammatical"
         }
       ],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "magunk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "inclusive"
-        ],
-        [
-          "anaphor",
-          "magunk"
         ]
       ],
       "comment": "Under *csak* the inclusive reflexive is only referential: no other people feel sorry for us, not for themselves.",
@@ -462,14 +522,17 @@
           "judgment": "acceptable"
         }
       ],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "magunk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "plural"
-        ],
-        [
-          "anaphor",
-          "magunk"
         ]
       ],
       "comment": "",
@@ -512,14 +575,17 @@
           "judgment": "acceptable"
         }
       ],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "plural"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "",
@@ -561,14 +627,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "plural"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "Inherently reflexive verb: the object can only be a reflexive anaphor.",
@@ -610,14 +679,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "atomic"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "No collective construal of the object is available, so the inclusive reading is out.",
@@ -651,14 +723,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 2,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "inclusive"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "",
@@ -897,14 +972,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "maga"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "maga"
         ]
       ],
       "comment": "",
@@ -950,14 +1028,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "",
@@ -999,14 +1080,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maga"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "maga"
         ]
       ],
       "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
@@ -1048,14 +1132,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "The paper labels this sub-example \"a.\" (misprint for b.).",
@@ -1102,14 +1189,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Hungarian National Corpus.",
@@ -1155,14 +1245,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "",
@@ -1201,14 +1294,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
@@ -1255,14 +1351,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "quantified"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Pronominal quantifier antecedent; Hungarian National Corpus.",
@@ -1402,14 +1501,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maga"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "coordinate"
-        ],
-        [
-          "anaphor",
-          "maga"
         ]
       ],
       "comment": "",
@@ -1451,14 +1553,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "coordinate"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "",
@@ -1500,14 +1605,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "coordinate"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "",
@@ -1549,14 +1657,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "maga"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "coordinate"
-        ],
-        [
-          "anaphor",
-          "maga"
         ]
       ],
       "comment": "",
@@ -1606,14 +1717,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "coordinate"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
@@ -1663,14 +1777,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "coordinate"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "The paper glosses tükörben as \"picture-ACC\" (copied from (10)) and prints \"mirorr\" in the translation.",
@@ -1851,14 +1968,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 4,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "collective"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Hungarian National Corpus, abbreviated. The gloss line prints \"frigthened\".",
@@ -1905,14 +2025,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 3,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "collective"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Hungarian National Corpus, abbreviated.",
@@ -1963,14 +2086,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 6,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "collective"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Hungarian National Corpus, abbreviated.",
@@ -2016,14 +2142,17 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "maga"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "collective"
-        ],
-        [
-          "anaphor",
-          "maga"
         ]
       ],
       "comment": "",
@@ -2069,14 +2198,17 @@
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
+      "spans": [
+        {
+          "start": 5,
+          "label": "anaphor",
+          "lexeme": "maguk"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "collective"
-        ],
-        [
-          "anaphor",
-          "maguk"
         ]
       ],
       "comment": "",
@@ -2140,14 +2272,17 @@
           "judgment": "acceptable"
         }
       ],
+      "spans": [
+        {
+          "start": 7,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "boundPro"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "The pro-dropped singular embedded subject is the local antecedent; an overt pronoun is out, and only the broad-scope reading (Péter thinks he loves Éva and Éva thinks she loves Péter) is available. Expands the printed hogy (*ő) szereti: the row is the variant without ő, the alternative the starred one.",
@@ -2203,14 +2338,17 @@
         }
       ],
       "readings": [],
+      "spans": [
+        {
+          "start": 6,
+          "label": "anaphor",
+          "lexeme": "egymas"
+        }
+      ],
       "paperFeatures": [
         [
           "antecedent",
           "boundPro"
-        ],
-        [
-          "anaphor",
-          "egymás"
         ]
       ],
       "comment": "Frigyes Karinthy; an anecdotal, creative use, with obligatory pro-drop of the 1SG antecedent as in (17). Expands the printed és (*én) játszottam: the row is the variant without én, the alternative the starred one.",

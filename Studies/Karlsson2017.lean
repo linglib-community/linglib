@@ -23,6 +23,10 @@ printed object of each of the grammar's examples in the case the rules assign](#
 
 * Resultativity is the grammar's own notion, whether the action leads to a result, and is not
   identified with telicity.
+* A row records its sentence as the grammar segments it and marks the object, which the grammar
+  prints in italics. The data declares the grammar's boundary symbols, and the object's stem is
+  its morphs before the first inflectional boundary, compound and derivational boundaries lying
+  within the stem.
 * The Fragment's phonemes do not write the *g* of *digi=kamera-n*, so one example goes unread.
 * A form of the tables is read in the Finnish case whose comparative label is its cell's case.
 
@@ -150,6 +154,10 @@ instance (r : Row) (c : Finnish.Case) : Decidable (r.Realizes c) :=
   inferInstanceAs
     (Decidable (r.form ∈ Finnish.Nominal.realization.realize r.stem (r.object.number, c)))
 
+/-- The object of a row, the word the row marks as the grammar prints it in italics. -/
+def object? (e : Datum) : Option GlossedWord :=
+  (e.spans.find? (Examples.label? · = some .object)).bind fun s ↦ (s.words e).head?
+
 /-- A row read through the grammar's terms, failing on a term it does not use. -/
 def Row.ofDatum (e : Datum) : Option Row := do
   let p ← e.parse? "negated" [("yes", Polarity.negative), ("no", .positive)]
@@ -162,8 +170,11 @@ def Row.ofDatum (e : Datum) : Option Row := do
     ("plural", ⟨.plural, by decide⟩)]
   let cl ← e.parse? "clause" [("finite", Clause.finite), ("imperative", .imperative),
     ("passive", .passive), ("obligation", .obligation), ("infinitival", .infinitival)]
-  let w := (← e.feature? "object").toList
-  some ⟨⟨p, t, q, n, num, cl⟩, ← spell (w.takeWhile (· ≠ '-')), ← spell w⟩
+  let w ← object? e
+  some ⟨⟨p, t, q, n, num, cl⟩,
+    ← spell ((w.glossedMorphemes.takeWhile
+        (Examples.boundary? · ≠ some .inflection)).flatMap (·.morpheme)),
+    ← spell (w.glossedMorphemes.flatMap (·.morpheme))⟩
 
 /-- The printed object of each example of sections 12.2.2 and 13.3 is a form, in its number, of
 the case the grammar's rules assign, and a form of the partitive exactly under a partitive
