@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Pragmatics.Probabilistic.QUD
@@ -467,21 +467,21 @@ theorem expectedProduction_anti {μ' : Measure (World n)} [IsProbabilityMeasure 
 theorem production_le_one (w : World n) : production D n α ν w ≤ 1 :=
   (Finset.sum_le_sum fun l _ ↦
     mul_le_of_le_one_right measureReal_nonneg (share_le_one D n α l w)).trans_eq
-    (sum_measureReal_singleton_eq_one ν)
+    (by simp)
 
 theorem production_lt_one (hα : 0 ≤ α) (w : World n) : production D n α ν w < 1 := by
   obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    ((sum_measureReal_singleton_eq_one ν).trans_ne one_ne_zero)
+    (show ∑ l, ν.real {l} ≠ 0 by simp)
   refine (Finset.sum_lt_sum (fun l _ ↦ mul_le_of_le_one_right measureReal_nonneg
     (share_le_one D n α l w)) ⟨l, Finset.mem_univ l, ?_⟩).trans_eq
-    (sum_measureReal_singleton_eq_one ν)
+    (by simp)
   exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
     (share_lt_one D n α hα l w)
 
 theorem production_pos (hα : 0 ≤ α) {w : World n} (h : ∀ l : Scope × QUD, w ∈ ext D n l.1 .amb) :
     0 < production D n α ν w := by
   obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    ((sum_measureReal_singleton_eq_one ν).trans_ne one_ne_zero)
+    (show ∑ l, ν.real {l} ≠ 0 by simp)
   exact Finset.sum_pos' (fun l _ ↦ mul_nonneg measureReal_nonneg (share_nonneg D n α l w))
     ⟨l, Finset.mem_univ l, mul_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
       (share_pos D n α hα (h l))⟩
@@ -489,10 +489,10 @@ theorem production_pos (hα : 0 ≤ α) {w : World n} (h : ∀ l : Scope × QUD,
 theorem expectedProduction_lt_one (hα : 0 ≤ α) : expectedProduction D n α μ ν < 1 := by
   rw [expectedProduction_eq_sum]
   obtain ⟨w, -, hw⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    ((sum_measureReal_singleton_eq_one μ).trans_ne one_ne_zero)
+    (show ∑ w, μ.real {w} ≠ 0 by simp)
   refine (Finset.sum_lt_sum (fun w _ ↦ mul_le_of_le_one_right measureReal_nonneg
     (production_le_one D n α ν w)) ⟨w, Finset.mem_univ w, ?_⟩).trans_eq
-    (sum_measureReal_singleton_eq_one μ)
+    (by simp)
   exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hw))
     (production_lt_one D n α ν hα w)
 
@@ -556,7 +556,7 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
     linarith
   have hnull : ∑ l, ν.real {l} * (S1 D n α (w, l)).real {.null} = 1 - m := by
     simp only [S1_real_null D n α hα.le, mul_sub, mul_one, Finset.sum_sub_distrib,
-      sum_measureReal_singleton_eq_one ν]
+      sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
     rfl
   have hF (u : Utt) : (Kernel.fst (L1 D n α μ ν) u).real {w}
       = a * (∑ l, ν.real {l} * (S1 D n α (w, l)).real {u}) / (S1 D n α ∘ₘ μ.prod ν).real {u} := by
@@ -657,7 +657,7 @@ theorem production_all (hn : 0 < n) (w : World n) :
     Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hscope : ∀ f : Scope → ℝ, ∑ i, f i = f .surface + f .inverse := fun f ↦
     Fintype.sum_eq_add Scope.surface Scope.inverse (by decide) (fun i h ↦ by cases i <;> simp at h)
-  have hsum := sum_measureReal_singleton_eq_one ρ
+  have hsum : ∑ s, ρ.real {s} = 1 := by simp
   rw [hscope] at hsum
   rw [hscope, ← share_all_scope α hn w, ← add_mul, hsum, one_mul]
 

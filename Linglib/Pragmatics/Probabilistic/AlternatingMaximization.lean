@@ -78,7 +78,8 @@ private theorem toReal_klDiv_ofWeights_add_measureEntropy {S ι : Type*} [Measur
       rw [Kernel.ofWeights_real_singleton w i hw] at hp ⊢
       rw [log_div (fun h0 ↦ hp (by rw [h0, zero_div])) fun h0 ↦ hp (by rw [h0, div_zero]), mul_sub]
   rw [toReal_klDiv_add_measureEntropy hμ, Finset.sum_congr rfl fun s _ ↦ hterm s,
-    Finset.sum_sub_distrib, ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul, neg_sub]
+    Finset.sum_sub_distrib, ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ,
+    probReal_univ, one_mul, neg_sub]
 
 variable {W O U : Type*} [MeasurableSpace W] [MeasurableSpace O] [MeasurableSpace U]
 
@@ -291,11 +292,11 @@ private theorem realFreeEnergy_le [IsProbabilityMeasure μ] [IsMarkovKernel κ] 
       _ ≤ ∑ o, (κ ∘ₘ μ).real {o} * log (Fintype.card U) := Finset.sum_le_sum fun o _ ↦
           mul_le_mul_of_nonneg_left (measureEntropy_le_log_card _) measureReal_nonneg
       _ = log (Fintype.card U) := by
-          rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+          simp [← Finset.sum_mul]
   · calc ∑ w, μ.real {w} * ∫ u, (log ((L u).real {w}) - C u) ∂((S ∘ₖ κ) w)
       _ ≤ ∑ w, μ.real {w} * ∑ u, |C u| := Finset.sum_le_sum fun w _ ↦
           mul_le_mul_of_nonneg_left (hV w) measureReal_nonneg
-      _ = ∑ u, |C u| := by rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+      _ = ∑ u, |C u| := by simp [← Finset.sum_mul]
 
 /-- The free energy is bounded above. -/
 theorem freeEnergy_le [IsProbabilityMeasure μ] [IsMarkovKernel κ] (hα : 0 ≤ α) (S : Kernel O U)

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 public import Linglib.Pragmatics.Probabilistic.Latent
@@ -269,7 +269,7 @@ variable {W : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 theorem expectedPrevalence_eq_half_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hμ : ∀ w, μ {σ w} = μ {w}) :
     expectedPrevalence μ prev = 1 / 2 := by
-  have h1 : ∑ w, μ.real {w} = 1 := sum_measureReal_singleton_eq_one μ
+  have h1 : ∑ w, μ.real {w} = 1 := by simp
   have key : expectedPrevalence μ prev = ∑ w, μ.real {w} * (1 - prev w) := by
     rw [expectedPrevalence_eq_sum, ← Equiv.sum_comp σ]
     refine Finset.sum_congr rfl fun w _ => ?_

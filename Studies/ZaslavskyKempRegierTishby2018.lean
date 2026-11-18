@@ -189,7 +189,7 @@ theorem distortion_eq :
     rw [sourceInfo, measureMutualInfo_compProd, integral_compProd]
     refine sum_congr rfl fun m _ => ?_
     dsimp only
-    rw [← sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+    rw [← sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
   rw [eq_sub_iff_add_eq, distortion, hsrc, accuracy, measureMutualInfo_compProd, decoder_comp,
     integral_compProd_eq_sum_posterior, integral_compProd_eq_sum_posterior, ← sum_add_distrib]
   refine sum_congr rfl fun w _ => ?_

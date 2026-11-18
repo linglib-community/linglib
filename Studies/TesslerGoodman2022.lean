@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Studies.TesslerGoodman2019
 
 /-!
@@ -191,7 +191,7 @@ private theorem exists_real_pos (μ : Measure X) [IsProbabilityMeasure μ] : ∃
   by_contra h
   push Not at h
   have := Finset.sum_nonpos (s := Finset.univ) fun x _ => h x
-  rw [sum_measureReal_singleton_eq_one] at this
+  rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ] at this
   linarith
 
 theorem mean_pos (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
@@ -204,14 +204,14 @@ theorem mean_pos (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
 theorem mean_lt_one (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     mean deg classPrior c < 1 := by
   obtain ⟨x, hx⟩ := exists_real_pos (classPrior c)
-  have h1 : ∑ y, (classPrior c).real {y} = 1 := sum_measureReal_singleton_eq_one _
+  have h1 : ∑ y, (classPrior c).real {y} = 1 := by simp
   rw [mean, expectedPrevalence_eq_sum, ← h1]
   exact Finset.sum_lt_sum (fun y _ => mul_le_of_le_one_right measureReal_nonneg (hdeg y).2.le)
     ⟨x, Finset.mem_univ _, mul_lt_of_lt_one_right hx (hdeg x).2⟩
 
 theorem sum_meaning_short (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     ∑ x, meaning deg .short x * classPrior c {x} = ENNReal.ofReal (1 - mean deg classPrior c) := by
-  have h1 : ∑ y, (classPrior c).real {y} = 1 := sum_measureReal_singleton_eq_one _
+  have h1 : ∑ y, (classPrior c).real {y} = 1 := by simp
   rw [mean, expectedPrevalence_eq_sum, ← h1, ← Finset.sum_sub_distrib,
     ENNReal.ofReal_sum_of_nonneg fun x _ => by
       nlinarith [(hdeg x).2, measureReal_nonneg (μ := classPrior c) (s := {x})]]

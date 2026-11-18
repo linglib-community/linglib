@@ -565,7 +565,7 @@ theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)}
   have hnd : ¬ IsWeaklyPayoffDominated U (Measure.dirac s) := by
     rintro ⟨ν, hν, hle, r₀, hlt⟩
     obtain ⟨μ, hμ⟩ := exists_weights_eq (p := fun x ↦ ν.real {x}) (fun _ ↦ measureReal_nonneg)
-      (sum_measureReal_singleton_eq_one ν)
+      (by simp)
     have hmix (r : R) : mixedPayoff U ν r = ∑ x, μ.weights x * g.senderPayoff default x r := by
       rw [mixedPayoff_eq_sum, hμ]
     have heq := h μ (fun r hr ↦ by simpa only [hdirac, hmix] using hle ⟨r, hr⟩) r₀ r₀.2
@@ -581,7 +581,7 @@ theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)}
     (fun r ↦ by split_ifs <;> simp [measureReal_nonneg]) (by
       have := hsum fun _ ↦ 1
       simp only [mul_one] at this
-      rw [this, sum_measureReal_singleton_eq_one])
+      rw [this, sum_measureReal_singleton, Finset.coe_univ, probReal_univ])
   refine ⟨ρ, .single default, Set.ext fun r ↦ ?_, ?_, g.mem_senderBR_iff.2 fun c w ↦ ?_⟩
   · rw [Finset.mem_coe, Finsupp.mem_support_iff, hρ]
     by_cases hr : r ∈ R
