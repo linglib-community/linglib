@@ -596,7 +596,7 @@ theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
         refine Finset.sum_congr rfl fun q _ ↦ ?_
         rw [listener]
         simp_rw [RSA.comp_real_mul_listener_real]
-        rw [← Finset.mul_sum, sum_measureReal_singleton_eq_one, mul_one]
+        rw [← Finset.mul_sum, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, mul_one]
     _ = 0 := hsym
 
 end Balance
