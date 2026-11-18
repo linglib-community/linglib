@@ -2,7 +2,7 @@ import Lake
 open Lake DSL
 
 package linglib where
-  version := v!"4.35.0"
+  version := v!"4.36.0"
   description := "A Lean 4 library for formal linguistics: semantics, syntax, pragmatics, morphology, phonology, and processing — formalized across competing frameworks for high interconnection density."
   homepage := "https://linglib.io/"
   keywords := #["linguistics", "formal-semantics", "formal-syntax", "phonology", "pragmatics", "morphology", "lean4", "mathlib"]
@@ -14,7 +14,7 @@ package linglib where
   -- do not depend on the operating system. Revisit if linglib adds native code.
   buildArchive := "linglib.tar.gz"
   leanOptions := #[⟨`autoImplicit, false⟩,
-    -- TODO: remove once mathlib's strict-defeq transition completes; mathlib v4.35.0 still
+    -- TODO: remove once mathlib's strict-defeq transition completes; mathlib v4.36.0 still
     -- turns it off declaration by declaration (`DeriveFintype` enum path and simp
     -- defeq-matching break without it).
     ⟨`backward.isDefEq.respectTransparency, false⟩]
@@ -22,11 +22,11 @@ package linglib where
 -- Documentation generator; pin must match lean-toolchain version
 -- Find the right commit at: https://github.com/leanprover/doc-gen4/commits/main
 require «doc-gen4» from git
-  "https://github.com/leanprover/doc-gen4" @ "0e1ffe2e4ba5ecfdfaf15c65b8d3805dbb7134ae"
+  "https://github.com/leanprover/doc-gen4" @ "b3ed25bf7905565f793c47f2a13737d742d96f14"
 
 -- Mathlib last so its dependency versions take precedence
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "ba9c63d0fefca8bc3961f7f6e7a30ec6988a4338"
+  "https://github.com/leanprover-community/mathlib4" @ "fc4f59e577feb1a4956671bc04ac18aaaf8cd842"
 
 @[default_target]
 lean_lib Linglib where
