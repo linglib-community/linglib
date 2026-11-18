@@ -482,13 +482,13 @@ def pluralRules : RuleSet (SubsetRule (Multiset Feature × Bool) (Fin 4)) :=
 -- without impoverishment the plural paradigm is the quadripartition
 theorem pluralGraph_pluralRules :
     pluralGraph (pluralRules.realize size ∘ Pronoun.bundle) =
-      Harbour2016.graph {.author, .hearer} := by
+      Harbour2016.graph {.speaker, .addressee} := by
   decide
 
 -- with it, Zwicky's tripartition: the inclusive with the second person, the exclusive apart
 theorem pluralGraph_pluralRules_impoverishDist :
     pluralGraph (pluralRules.realize size ∘ Pronoun.bundle ∘ impoverishDist) =
-      Harbour2016.graph {.hearer, .participant} := by
+      Harbour2016.graph {.addressee, .participant} := by
   decide
 
 /-- Impoverishing `DIST` under `PROX` in the plural turns a plural paradigm that Harbour's

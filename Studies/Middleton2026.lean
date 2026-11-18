@@ -202,7 +202,7 @@ abbrev Arg := List Feat
 `[−F]` for the others. -/
 def personFeats (p : Person) : Arg :=
   [.participant (decide (.participant ∈ p.toFeatures Finset.univ)),
-    .author (decide (.author ∈ p.toFeatures Finset.univ))]
+    .author (decide (.speaker ∈ p.toFeatures Finset.univ))]
 
 /-- A bundle bears Harbour's number features (2), each with the values it carries. -/
 def bundleFeats (b : Bundle) : Arg :=

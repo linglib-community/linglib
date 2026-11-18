@@ -255,11 +255,11 @@ open SpeechAct
 open Person (Feature Features Bears bundle generated generated_r_iff)
 
 theorem generated_hearer {s t : Finset Role} :
-    (generated {.hearer}).r s t ↔ (.addressee ∈ s ↔ .addressee ∈ t) := by
+    (generated {.addressee}).r s t ↔ (.addressee ∈ s ↔ .addressee ∈ t) := by
   rw [generated_r_iff]; revert s t; decide
 
 theorem generated_hearer_participant {s t : Finset Role} :
-    (generated {.hearer, .participant}).r s t ↔
+    (generated {.addressee, .participant}).r s t ↔
       (s.Nonempty ↔ t.Nonempty) ∧ (.addressee ∈ s ↔ .addressee ∈ t) := by
   rw [generated_r_iff]; revert s t; decide
 
@@ -270,7 +270,7 @@ def graph (F : Features) : Finset (Finset Role × Finset Role) :=
 theorem card_image_graph : (univ.image graph).card = 7 := by decide
 
 /-- Geometry (9) admits [±hearer] only with [±author]. -/
-def Admissible (F : Features) : Prop := .hearer ∈ F → .author ∈ F
+def Admissible (F : Features) : Prop := .addressee ∈ F → .speaker ∈ F
 
 instance : DecidablePred Admissible := fun _ ↦ by unfold Admissible; infer_instance
 
@@ -278,7 +278,8 @@ theorem card_image_graph_admissible : ((univ.filter Admissible).image graph).car
   decide
 
 theorem graph_not_admissible :
-    ∀ F, ¬ Admissible F → graph F = graph {.hearer} ∨ graph F = graph {.hearer, .participant} := by
+    ∀ F, ¬ Admissible F →
+      graph F = graph {.addressee} ∨ graph F = graph {.addressee, .participant} := by
   decide
 
 /-! ### The parameter space and its yield
@@ -298,10 +299,10 @@ def Setting.graph (σ : Setting) : Finset (Finset Role × Finset Role) :=
 -- the author feature composing first, and the quadripartition with the participant feature first
 theorem graph_setting (b : Bool) :
     (⟨false, false, b⟩ : Setting).graph = graph ∅ ∧
-      (⟨true, false, b⟩ : Setting).graph = graph {.author} ∧
+      (⟨true, false, b⟩ : Setting).graph = graph {.speaker} ∧
       (⟨false, true, b⟩ : Setting).graph = graph {.participant} ∧
-      (⟨true, true, true⟩ : Setting).graph = graph {.participant, .author} ∧
-      (⟨true, true, false⟩ : Setting).graph = graph {.author, .hearer} := by
+      (⟨true, true, true⟩ : Setting).graph = graph {.participant, .speaker} ∧
+      (⟨true, true, false⟩ : Setting).graph = graph {.speaker, .addressee} := by
   revert b; decide
 
 -- p. 193: the systems of the bivalent geometry
@@ -317,7 +318,7 @@ theorem graph_mem_image_iff (F : Features) :
 
 -- Zwicky's tripartition, inclusive with second person, is no setting's yield
 theorem graph_hearer_participant_not_mem :
-    graph {.hearer, .participant} ∉ univ.image Setting.graph := by
+    graph {.addressee, .participant} ∉ univ.image Setting.graph := by
   rw [graph_mem_image_iff]; decide
 
 theorem card_image_graph_setting : (univ.image Setting.graph).card = 5 := by
@@ -334,7 +335,7 @@ denotes the vicinity of the first person's referents. -/
 -- p. 171
 theorem english_demonstratives_author_bipartition :
     English.Determiners.that.deixis = English.Determiners.this.deixisᶜ ∧
-      ∀ s t, (generated {.author}).r s t ↔
+      ∀ s t, (generated {.speaker}).r s t ↔
         (s ∈ English.Determiners.this.deixis ↔ t ∈ English.Determiners.this.deixis) := by
   refine ⟨rfl, fun s t ↦ ?_⟩
   rw [generated_r_iff]; revert s t; decide
@@ -488,8 +489,8 @@ theorem tamil_clusivity_distinguished :
     harbourSign naam.toPronoun ≠ harbourSign naanŋgæ.toPronoun := by decide
 
 theorem tamil_clusivity_collapsed_by_toFeatures :
-    naam.toPronoun.categories.image (Category.toFeatures {.participant, .author}) =
-      naanŋgæ.toPronoun.categories.image (Category.toFeatures {.participant, .author}) := by
+    naam.toPronoun.categories.image (Category.toFeatures {.participant, .speaker}) =
+      naanŋgæ.toPronoun.categories.image (Category.toFeatures {.participant, .speaker}) := by
   decide
 
 theorem signOf_speakerOthers : signOf .speakerOthers = ⟨true, false⟩ := by decide +kernel

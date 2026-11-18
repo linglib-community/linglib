@@ -101,9 +101,9 @@ theorem exists_generated (c : SupCon (Finset Role)) :
   · simp only [hf, not_iff_not] at ha ⊢
     exact h f (Finset.mem_filter.mpr ⟨Finset.mem_univ f, ha⟩)
 
-/-- The standard tripartition is the system [participant] and [author] generate. -/
-theorem generated_participant_author :
-    (generated {.participant, .author}).toSetoid = standardTripartition.toSetoid := by
+/-- The standard tripartition is the system [participant] and [speaker] generate. -/
+theorem generated_participant_speaker :
+    (generated {.participant, .speaker}).toSetoid = standardTripartition.toSetoid := by
   refine Setoid.ext fun s t ↦ ?_
   show (generated _).r s t ↔ standardTripartition.r s t
   rw [generated_r_iff, standardTripartition_r_iff]

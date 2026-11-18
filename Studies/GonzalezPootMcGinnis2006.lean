@@ -72,7 +72,7 @@ abbrev Argument := Person × numberSystem
 decomposition of a person. -/
 def personFeatures (p : Person) : Finset FeatureVal :=
   {⟨.participant, decide (.participant ∈ p.toFeatures Finset.univ)⟩,
-    ⟨.author, decide (.author ∈ p.toFeatures Finset.univ)⟩}
+    ⟨.author, decide (.speaker ∈ p.toFeatures Finset.univ)⟩}
 
 /-- Number as the feature [±Pl]. -/
 def number (n : numberSystem) : FeatureVal := ⟨.number, n.1⟩

@@ -81,11 +81,11 @@ namespace Person
 
 variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x : E)
 
-/-- At a context of utterance, [author] is defined of the referents including the agent, [hearer]
-of those including the addressee, and [participant] of those including either. -/
+/-- At a context of utterance, [speaker] is defined of the referents including the agent,
+[addressee] of those including the addressee, and [participant] of those including either. -/
 def Feature.dom : Feature → Set E
-  | .author => Set.Ici c.agent
-  | .hearer => Set.Ici c.addressee
+  | .speaker => Set.Ici c.agent
+  | .addressee => Set.Ici c.addressee
   | .participant => Set.Ici c.agent ∪ Set.Ici c.addressee
 
 /-- At a context of utterance, the first person is defined of the referents including the agent,
@@ -94,7 +94,7 @@ the agent or the addressee; the third person and an absent value, the impersonal
 nothing. -/
 def dom : Option Person → Set E
   | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
-  | p => (p.map (toFeatures {.participant, .author})).elim Set.univ (·.inf (Feature.dom c))
+  | p => (p.map (toFeatures {.participant, .speaker})).elim Set.univ (·.inf (Feature.dom c))
 
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
@@ -159,12 +159,12 @@ theorem preimage_participants_lowerPolar (F : Set Feature) :
   ext x; simp [mem_lowerPolar_iff, mem_dom_feature_iff]
 
 /-- The domain of a person holds the referents whose participants bear every feature of its
-bundle of [participant] and [author]. The inclusive is not of this form on those two features,
+bundle of [participant] and [speaker]. The inclusive is not of this form on those two features,
 on which its bundle is the exclusive's. -/
 theorem dom_eq_preimage_lowerPolar {p : Person} (hp : p ≠ .firstInclusive) :
     dom c (some p) =
-      c.participants ⁻¹' lowerPolar Bears ↑(p.toFeatures {.participant, .author}) := by
-  have h : dom c (some p) = (p.toFeatures {.participant, .author}).inf (Feature.dom c) := by
+      c.participants ⁻¹' lowerPolar Bears ↑(p.toFeatures {.participant, .speaker}) := by
+  have h : dom c (some p) = (p.toFeatures {.participant, .speaker}).inf (Feature.dom c) := by
     cases p <;> first | rfl | exact absurd rfl hp
   rw [h, preimage_participants_lowerPolar]
   ext x; simp [Finset.inf_set_eq_iInter]
@@ -180,17 +180,17 @@ theorem dom_firstInclusive_eq_preimage_lowerPolar :
   simp only [mem_dom_firstInclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
     Set.mem_iInter]
   exact ⟨fun h f ↦ by cases f <;> simp [Feature.dom, h.1, h.2],
-    fun h ↦ ⟨h .author, h .hearer⟩⟩
+    fun h ↦ ⟨h .speaker, h .addressee⟩⟩
 
 /-- A referent is of a person of the standard tripartition exactly when the features of
-[participant] and [author] defined of it are that person's. -/
+[participant] and [speaker] defined of it are that person's. -/
 theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
-    c.participants x ∈ p.participantSets ↔ ∀ f ∈ ({.participant, .author} : Features),
-      (x ∈ Feature.dom c f ↔ f ∈ p.toFeatures {.participant, .author}) := by
+    c.participants x ∈ p.participantSets ↔ ∀ f ∈ ({.participant, .speaker} : Features),
+      (x ∈ Feature.dom c f ↔ f ∈ p.toFeatures {.participant, .speaker}) := by
   rw [mem_participantSets_iff hp, Finset.ext_iff]
   refine forall_congr' fun f ↦ ?_
   simp only [mem_bundle, mem_dom_feature_iff]
-  by_cases hf : f ∈ ({.participant, .author} : Features)
+  by_cases hf : f ∈ ({.participant, .speaker} : Features)
   · simp [hf, mem_toFeatures]
   · simp [hf, mem_toFeatures]
 
@@ -198,7 +198,7 @@ theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
   rw [participants_mem_participantSets_iff c x rfl]
-  refine ⟨fun h ↦ (h .author (by simp)).2 (by simp), fun h f hf ↦ ?_⟩
+  refine ⟨fun h ↦ (h .speaker (by simp)).2 (by simp), fun h f hf ↦ ?_⟩
   cases f <;> simp [Feature.dom, h] at hf ⊢
 
 end Person

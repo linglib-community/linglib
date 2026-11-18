@@ -42,22 +42,22 @@ open SpeechAct Finset Harbour2016
 /-- The feature hierarchy (4): AUTHOR depends on +PARTICIPANT and ADDRESSEE on AUTHOR, so the
 active features form an initial segment of participant, author, addressee. -/
 def Active (F : Person.Features) : Prop :=
-  (.author ∈ F → .participant ∈ F) ∧ (.hearer ∈ F → .author ∈ F)
+  (.speaker ∈ F → .participant ∈ F) ∧ (.addressee ∈ F → .speaker ∈ F)
 
 instance : DecidablePred Active := fun _ ↦ by unfold Active; infer_instance
 
 /-- The active feature sets generate four person systems (p. 402). -/
 theorem image_graph_active :
     (univ.filter Active).image graph =
-      {graph ∅, graph {.participant}, graph {.participant, .author},
-        graph {.participant, .author, .hearer}} := by
+      {graph ∅, graph {.participant}, graph {.participant, .speaker},
+        graph {.participant, .speaker, .addressee}} := by
   decide
 
 theorem card_image_graph_active : ((univ.filter Active).image graph).card = 4 := by decide
 
 /-- Harbour's author bipartition, which [±author] alone generates, is not among them. -/
 theorem graph_active_ne_authorBipartition (F : Person.Features) (hF : Active F) :
-    graph F ≠ graph {.author} := by
+    graph F ≠ graph {.speaker} := by
   revert F; decide
 
 /-- Under active features, inclusive conflates with second person only if exclusive does, and
@@ -71,6 +71,6 @@ theorem no_partial_conflation (F : Person.Features) (hF : Active F) :
   revert F; decide
 
 -- (9), (4)
-theorem admissible_authorBipartition : Admissible {.author} ∧ ¬ Active {.author} := by decide
+theorem admissible_authorBipartition : Admissible {.speaker} ∧ ¬ Active {.speaker} := by decide
 
 end Pertsova2022

@@ -83,7 +83,7 @@ namespace FeatureType
 /-- Harbour's [±participant]. -/
 @[match_pattern] abbrev participant : FeatureType := personFeature .participant
 /-- Harbour's [±author]. -/
-@[match_pattern] abbrev author : FeatureType := personFeature .author
+@[match_pattern] abbrev author : FeatureType := personFeature .speaker
 /-- Harbour's [±atomic]. -/
 @[match_pattern] abbrev atomic : FeatureType := numberFeature .atomic
 /-- Harbour's [±minimal]. -/
@@ -93,7 +93,7 @@ namespace FeatureType
 
 /-- The dimensions as a list, since `Finset.univ.toList` is noncomputable. -/
 def all : List FeatureType :=
-  [person, number, gender, case, agr .definiteness, participant, author, personFeature .hearer,
+  [person, number, gender, case, agr .definiteness, participant, author, personFeature .addressee,
    atomic, minimal, additive, wh, tense, infl, oblique, ellipsis]
 
 theorem mem_all (t : FeatureType) : t ∈ all := by
