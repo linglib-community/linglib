@@ -9,58 +9,41 @@ public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Mathlib.MeasureTheory.Measure.Real
-public import Linglib.Core.InformationTheory.KullbackLeibler.Tilted
-public import Linglib.Core.MeasureTheory.Measure.Tilted
+public import Linglib.Core.InformationTheory.Entropy.Tilted
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
 /-!
 # Channel capacity
 
-A channel from inputs `C` to outputs `W` is a Markov kernel `κ : Kernel C W`. An input
-distribution `μ` induces the joint law `μ ⊗ₘ κ` and the output marginal `κ ∘ₘ μ`, and the
-capacity of the channel is the supremum over input distributions of the mutual information
-`Im[μ ⊗ₘ κ]`.
+A channel from inputs `C` to outputs `W` is a Markov kernel `κ : Kernel C W`. An input distribution
+`μ` induces the joint law `μ ⊗ₘ κ` and the output marginal `κ ∘ₘ μ`, and the capacity
+`InformationTheory.channelCapacity` of the channel is the supremum over input distributions of the
+mutual information `Im[μ ⊗ₘ κ]`.
 
-Over finite alphabets the mutual information is the input average of the divergence of each row
-`κ c` from the output marginal, and averaging the divergence from any other reference measure
-overshoots it by the divergence of the output marginal from that reference (the compensation
-identity). An input distribution achieves capacity when no row lies farther from its output
-marginal than the information it conveys.
+Over finite alphabets the mutual information [is the input
+average](##InformationTheory.measureMutualInfo_compProd) of the divergence of each row `κ c` from
+the output marginal, and averaging the divergence from any other reference measure [overshoots
+it](##InformationTheory.sum_mul_toReal_klDiv) by the divergence of the output marginal from that
+reference (the compensation identity). An input distribution [achieves
+capacity](##InformationTheory.measureMutualInfo_compProd_eq_channelCapacity) when no row lies
+farther from its output marginal than the information it conveys.
 
 Each row's divergence is also the row's expected log posterior of its input less the input's log
-prior, and the Bayesian decoder maximizes that expected log posterior. Hence, taking a fixed input
-distribution's expected log posteriors as the exponent, the free energy relative to the uniform
-distribution of every input distribution is at most its mutual information less `log |C|`, with
-equality at the fixed distribution. The Blahut–Arimoto update gives each input mass proportional
-to the geometric mean of its posterior under its row, which on an input distribution of positive
-mass everywhere is the uniform distribution tilted by that exponent. By the Gibbs variational
-principle the capacity-achieving input distributions of positive mass everywhere are exactly the
-fixed points of the update among them, and at such a fixed point every row lies at divergence
-exactly the capacity from the output marginal. An input of mass zero that shares an output with
-the inputs in use keeps mass zero, so the characterization of the fixed points is confined to
-input distributions of positive mass everywhere.
-
-## Main definitions
-
-* `InformationTheory.channelCapacity`: `⨆ μ, Im[μ ⊗ₘ κ]` over probability measures `μ`.
-* `InformationTheory.blahutArimoto`: each input weighted by the geometric mean, under its row, of
-  its posterior.
-
-## Main results
-
-* `InformationTheory.measureMutualInfo_compProd`, `InformationTheory.sum_mul_toReal_klDiv`:
-  `Im[μ ⊗ₘ κ]` is the `μ`-average of the divergences `klDiv (κ c) (κ ∘ₘ μ)`, and the
-  compensation identity.
-* `InformationTheory.sum_mul_integral_log_le`: the Bayesian decoder maximizes the expected log
-  posterior of the input.
-* `InformationTheory.eq_channelCapacity_iff_eq_tilted`: the capacity-achieving input
-  distributions of positive mass everywhere are the uniform distribution tilted by their own
-  expected log posteriors.
-* `InformationTheory.blahutArimoto_eq_tilted`: on input distributions of positive mass
-  everywhere the update is that tilt.
-* `InformationTheory.eq_blahutArimoto_iff`: an input distribution of positive mass everywhere
-  achieves capacity exactly when it is a Blahut–Arimoto fixed point.
+prior, and the Bayesian decoder [maximizes](##InformationTheory.sum_mul_integral_log_le) that
+expected log posterior. Hence, taking a fixed input distribution's expected log posteriors as the
+exponent, the expected exponent plus the entropy of every input distribution is at most its mutual
+information, with equality at the fixed distribution. The Blahut–Arimoto update
+`InformationTheory.blahutArimoto` gives each input mass proportional to the geometric mean of its
+posterior under its row, which on an input distribution of positive mass everywhere [is the counting
+measure tilted](##InformationTheory.blahutArimoto_eq_tilted) by that exponent. By the Gibbs
+variational principle the capacity-achieving input distributions of positive mass everywhere [are
+exactly](##InformationTheory.eq_channelCapacity_iff_eq_tilted) these tilts, that is, [the fixed
+points](##InformationTheory.eq_blahutArimoto_iff) of the update among them, and at such a fixed
+point every row lies at divergence exactly the capacity from the output marginal. An input of mass
+zero that shares an output with the inputs in use [keeps mass
+zero](##InformationTheory.blahutArimoto_apply_singleton_eq_zero), so the characterization of the
+fixed points is confined to input distributions of positive mass everywhere.
 
 ## References
 
@@ -93,23 +76,6 @@ geometric mean, under its row of the channel, of its posterior given the output,
 noncomputable def blahutArimoto [Nonempty C] (κ : Kernel C W) [IsFiniteKernel κ] (μ : Measure C)
     [IsFiniteMeasure μ] : Measure C :=
   Kernel.ofWeights (fun (_ : Unit) c ↦ (κ c).geomMean fun w ↦ (κ†μ) w {c}) ()
-
-private theorem integral_sub_toReal_klDiv_uniformOn [Nonempty C] (ν : Measure C)
-    [IsProbabilityMeasure ν] (f : C → ℝ) :
-    ∫ c, f c ∂ν - (klDiv ν (uniformOn Set.univ)).toReal
-      = ∑ c, ν.real {c} * (f c - log (ν.real {c})) - log (Fintype.card C) := by
-  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
-  rw [integral_fintype .of_finite,
-    toReal_klDiv_eq_sum_log_div (absolutelyContinuous_uniformOn_univ ν),
-    show log (Fintype.card C : ℝ) = ∑ c, ν.real {c} * log (Fintype.card C) by
-      rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul],
-    ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl fun c _ ↦ ?_
-  obtain hc | hc := eq_or_ne (ν.real {c}) 0
-  · simp [hc]
-  rw [uniformOn_univ_real_singleton, div_inv_eq_mul,
-    log_mul hc (Nat.cast_ne_zero.2 Fintype.card_ne_zero), smul_eq_mul]
-  ring
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
@@ -304,11 +270,10 @@ theorem blahutArimoto_apply_singleton_eq_zero {c : C} (hc : μ {c} = 0) {w : W}
     ⟨w, hw, by rw [posterior_apply_singleton κ μ hμw, hc, zero_mul, ENNReal.zero_div]⟩)
 
 /-- On an input distribution of positive mass everywhere, the Blahut–Arimoto update is the
-uniform distribution tilted by each input's expected log posterior. -/
+counting measure tilted by each input's expected log posterior. -/
 theorem blahutArimoto_eq_tilted (hμ : ∀ c, μ {c} ≠ 0) :
     blahutArimoto κ μ =
-      (uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
-  rw [uniformOn_univ_tilted]
+      Measure.count.tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
   unfold blahutArimoto
   refine Kernel.ofWeights_apply_eq_tilted Measure.count fun c ↦ ?_
   rw [Measure.count_singleton, one_mul, Measure.geomMean_eq_ofReal_exp_sum_log
@@ -327,12 +292,12 @@ private theorem measureMutualInfo_compProd_eq_sum_log :
   rw [toReal_klDiv_eq_integral_log_sub κ μ hc]
 
 private theorem toReal_klDiv_of_eq_tilted
-    (h : μ = (uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) (c : C) :
+    (h : μ = Measure.count.tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) (c : C) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal
       = log (∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c'))) := by
   have hreal (c : C) :
       μ.real {c} = softmax (fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) c := by
-    rw [congrArg (·.real {c}) h, uniformOn_univ_tilted, count_tilted_real_singleton]
+    rw [congrArg (·.real {c}) h, count_tilted_real_singleton]
   have hc : μ {c} ≠ 0 := by
     rw [← measureReal_ne_zero_iff (measure_ne_top _ _), hreal]
     exact (softmax_pos _ c).ne'
@@ -340,20 +305,17 @@ private theorem toReal_klDiv_of_eq_tilted
   ring
 
 /-- An input distribution achieves capacity with positive mass everywhere exactly when it is the
-uniform distribution tilted by each input's expected log posterior. -/
+counting measure tilted by each input's expected log posterior. -/
 theorem eq_channelCapacity_iff_eq_tilted :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔
-      μ = (uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
-  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
+      μ = Measure.count.tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
   constructor
   · rintro ⟨h, hμ⟩
-    -- the free energy of every input distribution, tilted by `μ`'s expected log posterior,
+    -- every input distribution's expected value of `μ`'s expected log posterior, plus its entropy,
     -- is at most its mutual information, with equality at `μ`
     have hfe (ν : Measure C) [IsProbabilityMeasure ν] :
-        ∫ c, ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) ∂ν - (klDiv ν (uniformOn Set.univ)).toReal
-          + log (Fintype.card C) ≤ Im[ν ⊗ₘ κ] := by
-      rw [integral_sub_toReal_klDiv_uniformOn, measureMutualInfo_compProd_eq_sum_log,
-        sub_add_cancel]
+        ∫ c, ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) ∂ν + Hm[ν] ≤ Im[ν ⊗ₘ κ] := by
+      rw [integral_add_measureEntropy_eq_sum, measureMutualInfo_compProd_eq_sum_log]
       simp only [mul_sub, Finset.sum_sub_distrib, sub_le_sub_iff_right]
       refine sum_mul_integral_log_le κ ν (κ†μ) fun w hw ↦ ?_
       refine Measure.absolutelyContinuous_of_forall_singleton fun c hc ↦ ?_
@@ -369,22 +331,16 @@ theorem eq_channelCapacity_iff_eq_tilted :
       by_contra hne
       exact (posterior_apply_singleton_ne_zero_iff κ μ hμw c).2
         ⟨hμ c, ((posterior_apply_singleton_ne_zero_iff κ ν hw c).1 hne).2⟩ hc
-    have hμeq :
-        ∫ c, ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) ∂μ - (klDiv μ (uniformOn Set.univ)).toReal
-          + log (Fintype.card C) = Im[μ ⊗ₘ κ] := by
-      rw [integral_sub_toReal_klDiv_uniformOn, measureMutualInfo_compProd_eq_sum_log,
-        sub_add_cancel]
-    have : IsProbabilityMeasure ((uniformOn Set.univ).tilted
+    have hμeq : ∫ c, ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) ∂μ + Hm[μ] = Im[μ ⊗ₘ κ] := by
+      rw [integral_add_measureEntropy_eq_sum, measureMutualInfo_compProd_eq_sum_log]
+    have : IsProbabilityMeasure (Measure.count.tilted
         fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) := isProbabilityMeasure_tilted .of_finite
-    refine (integral_sub_toReal_klDiv_eq_log_integral_exp_iff
-      (absolutelyContinuous_uniformOn_univ μ) .of_finite .of_finite .of_finite).1
-      (le_antisymm (integral_sub_toReal_klDiv_le_log_integral_exp
-        (absolutelyContinuous_uniformOn_univ μ) .of_finite .of_finite .of_finite) ?_)
-    linarith [toReal_klDiv_tilted_left_self (μ := uniformOn Set.univ)
-        (f := fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) .of_finite .of_finite,
-      hfe ((uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)),
+    refine (integral_add_measureEntropy_eq_log_sum_exp_iff μ _).1
+      (le_antisymm (integral_add_measureEntropy_le_log_sum_exp μ _) ?_)
+    linarith [measureEntropy_count_tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c),
+      hfe (Measure.count.tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)),
       measureMutualInfo_compProd_le_channelCapacity κ
-        ((uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c))]
+        (Measure.count.tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c))]
   · intro h
     have hD := toReal_klDiv_of_eq_tilted κ μ h
     have hI : Im[μ ⊗ₘ κ] = log (∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c'))) := by
@@ -392,7 +348,7 @@ theorem eq_channelCapacity_iff_eq_tilted :
         ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
     have hμ (c : C) : μ {c} ≠ 0 := by
       rw [h]
-      exact fun h0 ↦ uniformOn_univ_singleton_ne_zero c (absolutelyContinuous_tilted .of_finite h0)
+      exact fun h0 ↦ by simpa using absolutelyContinuous_tilted (μ := Measure.count) .of_finite h0
     refine ⟨measureMutualInfo_compProd_eq_channelCapacity κ μ fun c ↦ ?_, hμ⟩
     rw [hI, ← hD c, ENNReal.ofReal_toReal]
     exact klDiv_ne_top (κ.absolutelyContinuous_comp μ (hμ c)) .of_finite
