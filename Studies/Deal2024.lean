@@ -152,11 +152,14 @@ def aDescending : Grammar := ⟨some .addressee, {.participant}⟩
 
 /-! ### The typology -/
 
-/-- The rank of a person on the hierarchy 2 > 1 > 3 of the A-descending PCC. -/
-def addresseeRank : Person → ℕ
-  | .second => 2
-  | .first | .firstInclusive | .firstExclusive => 1
-  | .third => 0
+/-- The rank of a person on the hierarchy 2 > 1 > 3 of the A-descending PCC, the number of
+[PART] and [ADDR] it bears, so that an inclusive first person ranks with the second. -/
+def addresseeRank (p : Person) : ℕ := (p.toFeatures {.participant, .addressee}).card
+
+/-- The hierarchy ranks a participant set by its highest role, the addressee above the speaker. -/
+theorem addresseeRank_ofParticipants (s : Finset SpeechAct.Role) :
+    addresseeRank (.ofParticipants s) = s.sup fun | .addressee => 2 | .speaker => 1 := by
+  revert s; decide
 
 /-- The PCC varieties are the four of table (1), the two the feature [ADDR] adds, and none. -/
 inductive PCCType where
@@ -285,6 +288,12 @@ theorem licit_of_sat_part (d : Finset PersonSegment) (s : Scenario Person) :
 theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
     (h : s.high.prominence ≠ s.low.prominence) :
     Licit strictlyDescending s ↔ s.low.prominence < s.high.prominence := by
+  revert s
+  decide +kernel
+
+theorem ad_off_diagonal_iff_outranks (s : Scenario Person)
+    (h : addresseeRank s.high ≠ addresseeRank s.low) :
+    Licit aDescending s ↔ addresseeRank s.low < addresseeRank s.high := by
   revert s
   decide +kernel
 
