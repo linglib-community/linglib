@@ -152,9 +152,11 @@ pass as an unmarked word:
 * within a marked phrase, no word written as an entry of the inventory goes unmarked.
 
 Spelling confirms a named entry and does not find one: transcriptions differ between sources and
-lose distinctions, as pinyin without tone marks writes several words alike. `Jenks2018.json` and
-`Studies/Jenks2018.lean` are the example. Most data files instead name the item under test in a
-column by its form; such a column becomes a span when its study is next audited.
+lose distinctions, as pinyin without tone marks writes several words alike. `Jenks2018.json`
+with `Studies/Jenks2018.lean`, and `Rakosi2020.json` with `Studies/Rakosi2020.lean`, where the
+check compares the phonemes the words write, are the examples. Most data files instead name the
+item under test in a column by its form; such a column becomes a span when its study is next
+audited.
 
 ## Languages
 
