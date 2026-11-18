@@ -39,6 +39,7 @@ of two referents depends on the others they share, which a configuration does no
 
 * [cysouw-2003]
 * [corbett-2000]
+* [bickel-nichols-2005]
 -/
 
 @[expose] public section
@@ -257,6 +258,34 @@ theorem exactCard_eq_card_of_mem_ofPersonNumber :
 /-- No category of a region is both minimal and augmented in it. -/
 theorem disjoint_ofNumber_minimal_augmented :
     ∀ S, Disjoint (ofNumber S .minimal) (ofNumber S .augmented) := by
+  decide
+
+/-- The inclusive has no singular, its smallest referent being the speaker with the addressee:
+the gap of the systems [bickel-nichols-2005] call the Belhare type. -/
+theorem ofPersonNumber_inclusive_singular :
+    ofPersonNumber .first (some .inclusive) .singular = ∅ := by
+  decide
+
+/-- The singular of an exclusive is the speaker alone, the referent of a first person singular
+without a clusivity: the systems that give the exclusive a singular and those that divide only
+the first person non-singular differ in their categories and not in what is referred to. -/
+theorem ofPersonNumber_exclusive_singular :
+    ofPersonNumber .first (some .exclusive) .singular = ofPersonNumber .first none .singular := by
+  decide
+
+/-- The minimal inclusive is the speaker with the addressee, a referent of two, and the minimal
+exclusive the speaker alone. -/
+theorem ofPersonNumber_minimal :
+    ofPersonNumber .first (some .inclusive) .minimal = {.speakerAddressee} ∧
+      ofPersonNumber .first (some .exclusive) .minimal = {.speaker} := by
+  decide
+
+/-- The unit augmented is the trial of the inclusive and the dual of the other persons. -/
+theorem covered_unitAugmented :
+    Configuration.covered {{.speaker, .addressee}} .unitAugmented =
+        Configuration.covered {{.speaker, .addressee}} .trial ∧
+      ∀ S ∈ ({{{.speaker}}, {{.addressee}}, {∅}} : Finset (Finset (Finset SpeechAct.Role))),
+        Configuration.covered S .unitAugmented = Configuration.covered S .dual := by
   decide
 
 theorem sharedPerson_ofPersonNumber (p : Person) (cl : Option Clusivity) (n : Number)
