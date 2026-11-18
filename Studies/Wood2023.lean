@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.DistributedMorphology.Nominalization
+public import Linglib.Semantics.Composition.Rules
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Fragments.Icelandic.Nouns
@@ -41,9 +42,9 @@ as a prefix, while one with its own meaning heads a PP, and one that does both i
 across v (`nominal_n_local`) and forbids it in *-væðing* nominals, where *-væða* is a compound
 head attaching to a categorized word, so that two categorizers separate the root from the
 outer n (`vaeda_n_not_local`). The prefixes *marg-* and *endur-* are event modifiers: *marg-*
-adjoins to v, *endur-* to v or to n, and each needs an event variable at its host, which
-licenses *marg-* exactly on nominals whose v is eventive and *endur-* also on simple event and
-result nominals but not on simple entities (`Licensed`); the book's judgments on the prefixed
+adjoins to v and takes a predicate of eventualities, so it composes exactly on eventive v under
+the zero and result allosemes of n (`margComposes_iff`), and *endur-*, which adjoins to v or to
+n, is licensed also on simple event nominals (`Licensed`); the book's judgments on the prefixed
 readings of *þvottur* and *prentun* are the rows of `Data.Examples.Wood2023`, checked one by one
 (`rows_licensed`). Allosemy is contextual as allomorphy is: *aðdáun* and *viðvörun* share the
 nominalizer *-un*, and only the second has a concrete entity reading
@@ -51,16 +52,20 @@ nominalizer *-un*, and only the second has a concrete entity reading
 
 ## Implementation notes
 
+*marg-* is licensed where the complex head with the prefix composes. That includes a result noun
+built on eventive v, on which the book prints no judgment. *endur-* is licensed by a stated
+condition: a simple event noun and a simple entity noun have the same type, so composition does
+not tell them apart.
+
 The exponents of the roots and affixes are the surface morphs of the fragment, so the u-umlaut
 of *söfn-un* and *vönt-un* is not undone and the theme vowel *-a* of the verb is absent, as
 the book's own segmentation has it. The roots are identified by their forms. The prefixed
 preposition of *við-ger-ð* adjoins to n and is not inserted by the vocabulary; the derivation
 covers the root, v, and n. Wood's bound for allosemy, one intervening categorizer, is one
-phase looser than `ComplexHead.RootLocal`, the bound the book keeps for root suppletion; the study
-states the strict one through the substrate. A preposition adjoined to a complex head has no
-spine position, since a head does not c-command its own adjunct, so the heads between a
-preposition and the root are read off its attachment. The event-modifier account licenses
-*marg-* on a result nominal built on eventive v, a case the book does not test.
+phase looser than `ComplexHead.Active` of the root, the bound the book keeps for root suppletion;
+the study states the strict one through the substrate. A preposition adjoined to a complex head
+has no spine position, since a head does not c-command its own adjunct, so the heads between a
+preposition and the root are read off its attachment.
 
 ## References
 
@@ -242,16 +247,10 @@ end Allomorphy
 
 /-! ### The complex head and its readings -/
 
-/-- A head of the complex head is a categorizer with its alloseme. -/
-inductive Head where
-  | v (a : Verbalizer.Alloseme)
-  | n (a : Nominalizer.Alloseme)
-  deriving DecidableEq, Repr
-
 /-- Every head of the complex head is a categorizer, hence a phase head. -/
-def Head.Cyclic : Head → Prop := fun _ ↦ True
+def Categorizer.Cyclic : Categorizer → Prop := fun _ ↦ True
 
-instance : DecidablePred Head.Cyclic := fun _ ↦ inferInstanceAs (Decidable True)
+instance : DecidablePred Categorizer.Cyclic := fun _ ↦ inferInstanceAs (Decidable True)
 
 /-- A choice of allosemes for the v and n of a nominalization. -/
 structure Derivation where
@@ -261,74 +260,67 @@ structure Derivation where
 
 namespace Derivation
 
-/-- The reading the allosemes yield. -/
-def reading (d : Derivation) : Option NominalizationReading := readingFromAllosemes d.v d.n
+/-- The reading of the noun, that of its alloseme of n. -/
+def reading (d : Derivation) : NominalizationReading := d.n.reading
 
 /-- The heads of the nominalization, innermost first. -/
-def heads (d : Derivation) : List Head := [.v d.v, .n d.n]
+def heads (d : Derivation) : List Categorizer := [.v d.v, .n d.n]
 
 /-- The complex event derivation has eventive v and zero n. -/
-def cen : Derivation := ⟨.eventive, .zero⟩
+def cen : Derivation := ⟨.eventive, 0⟩
 
 /-- The simple event derivation has zero v and the simple event alloseme of n. -/
-def sen : Derivation := ⟨.zero, .simpleEvent⟩
+def sen : Derivation := ⟨0, .simpleEvent⟩
 
 /-- The simple entity derivation has zero v and the entity alloseme of n. -/
-def simpleEntity : Derivation := ⟨.zero, .entity⟩
+def simpleEntity : Derivation := ⟨0, .entity⟩
 
 /-- The result derivation has eventive v and the result alloseme of n. -/
 def result : Derivation := ⟨.eventive, .result⟩
 
-theorem reading_cen : cen.reading = some .complexEvent := rfl
+theorem reading_cen : cen.reading = .complexEvent := rfl
 
-theorem reading_sen : sen.reading = some .simpleEvent := rfl
+theorem reading_sen : sen.reading = .simpleEvent := rfl
 
-theorem reading_simpleEntity : simpleEntity.reading = some .simpleEntity := rfl
+theorem reading_simpleEntity : simpleEntity.reading = .simpleEntity := rfl
 
-theorem reading_result : result.reading = some .result := rfl
+theorem reading_result : result.reading = .result := rfl
 
 /-- The nP denotes an event when v is eventive and n passes its meaning up unchanged. -/
-def Eventive (d : Derivation) : Prop := d.v = .eventive ∧ d.n = .zero
+def Eventive (d : Derivation) : Prop := d.v = .eventive ∧ d.n = 0
 
 instance : DecidablePred Eventive := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-theorem eventive_iff (d : Derivation) : d.Eventive ↔ d.reading = some .complexEvent := by
-  revert d; decide
-
-theorem exists_reading (rd : NominalizationReading) : ∃ d : Derivation, d.reading = some rd := by
-  cases rd
-  exacts [⟨cen, rfl⟩, ⟨sen, rfl⟩, ⟨result, rfl⟩, ⟨⟨.zero, .state⟩, rfl⟩, ⟨simpleEntity, rfl⟩,
-    ⟨⟨.zero, .content⟩, rfl⟩]
+theorem Eventive.reading_eq {d : Derivation} (h : d.Eventive) : d.reading = .complexEvent :=
+  congrArg Nominalizer.Alloseme.reading h.2
 
 end Derivation
 
 /-! ### Complex heads -/
 
 /-- The verb is the root categorized by eventive v. -/
-def verb (r : Root) : ComplexHead Root Head := ⟨r, [.v .eventive]⟩
+def verb (r : Root) : ComplexHead Root Categorizer := ⟨r, [.v .eventive]⟩
 
 /-- The nominalization is the root categorized by v and then by n. -/
-def nominal (r : Root) (d : Derivation) : ComplexHead Root Head := ⟨r, d.heads⟩
+def nominal (r : Root) (d : Derivation) : ComplexHead Root Categorizer := ⟨r, d.heads⟩
 
 /-- A *-væða* verb is the root categorized by n, compounded with the v of *-væða*. -/
-def vaedaVerb (r : Root) (a : Nominalizer.Alloseme) : ComplexHead Root Head :=
+def vaedaVerb (r : Root) (a : Nominalizer.Alloseme) : ComplexHead Root Categorizer :=
   ⟨r, [.n a, .v .eventive]⟩
 
 /-- A *-væðing* nominal is the *-væða* verb categorized by n. -/
-def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : ComplexHead Root Head :=
+def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : ComplexHead Root Categorizer :=
   ⟨r, (vaedaVerb r a).heads ++ [.n c]⟩
 
 /-! ### Borer's Generalization -/
 
-theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
-    ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
-  ComplexHead.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
-    (Fin.mk_lt_mk.2 Nat.zero_lt_one) trivial trivial
+/-- The position of n in the nominalization. -/
+def nIdx (r : Root) (d : Derivation) : Fin (nominal r d).heads.length := ⟨1, Nat.one_lt_two⟩
 
-theorem borers_generalization (r : Root) {d : Derivation}
-    (h : d.reading = some .complexEvent) :
-    d.v = .eventive ∧ ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
-  ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_rootLocal r d⟩
+theorem nominal_n_not_active_bot (r : Root) (d : Derivation) :
+    ¬ (nominal r d).Active Categorizer.Cyclic (nIdx r d) ⊥ :=
+  ComplexHead.not_active_bot_of_cyclic_of_cyclic (k := (⟨0, Nat.two_pos⟩ : Fin d.heads.length))
+    (l := nIdx r d) (Fin.lt_def.2 Nat.zero_lt_one) trivial trivial
 
 /-! ### The external argument -/
 
@@ -340,13 +332,13 @@ inductive IStar.Contentful where
   deriving DecidableEq, Repr, Fintype
 
 /-- The allosemes of i*. -/
-abbrev IStar.Alloseme := Allosemy.Alloseme IStar.Contentful
+abbrev IStar.Alloseme := WithZero IStar.Contentful
 
 namespace IStar.Alloseme
 
-@[match_pattern] def agent : IStar.Alloseme := Allosemy.Alloseme.of .agent
+@[match_pattern] def agent : IStar.Alloseme := WithZero.coe .agent
 
-@[match_pattern] def possessor : IStar.Alloseme := Allosemy.Alloseme.of .possessor
+@[match_pattern] def possessor : IStar.Alloseme := WithZero.coe .possessor
 
 end IStar.Alloseme
 
@@ -363,8 +355,7 @@ def Derivation.features (d : Derivation) : Finset Feature :=
   if d.Eventive then {.cat .n, .eventive} else {.cat .n}
 
 theorem iStar_agent_iff (d : Derivation) :
-    IStar.alloseme d.features = .agent ↔ d.reading = some .complexEvent := by
-  rw [← Derivation.eventive_iff]
+    IStar.alloseme d.features = .agent ↔ d.Eventive := by
   by_cases h : d.Eventive
   · rw [Derivation.features, ite_eq_left h]; exact iff_of_true (by decide) h
   · rw [Derivation.features, ite_eq_right h]; exact iff_of_false (by decide) h
@@ -373,7 +364,7 @@ theorem iStar_agent_iff (d : Derivation) :
 
 /-- Wood's phase locality lets a dependency conditioning special meaning cross at most one
 categorizer. -/
-def Local (between : List Head) : Prop := between.length ≤ 1
+def Local (between : List Categorizer) : Prop := between.length ≤ 1
 
 /-- A preposition attaches to a complex head either adjoined to it or heading its complement
 PP. -/
@@ -385,11 +376,11 @@ inductive Attachment where
 /-- The heads between a preposition and the root are every head of the complex head when the
 preposition heads its complement, and all but the outermost when it adjoins to the complex head,
 since a head does not c-command its own adjunct. -/
-def interveners (s : ComplexHead Root Head) : Attachment → List Head
+def interveners (s : ComplexHead Root Categorizer) : Attachment → List Categorizer
   | .complement => s.heads
   | .adjunct => s.heads.dropLast
 
-theorem Local.adjunct_of_complement {s : ComplexHead Root Head}
+theorem Local.adjunct_of_complement {s : ComplexHead Root Categorizer}
     (h : Local (interveners s .complement)) : Local (interveners s .adjunct) := by
   simp only [Local, interveners, List.length_dropLast] at h ⊢; omega
 
@@ -423,37 +414,168 @@ inductive Prefix where
   | endur
   deriving DecidableEq, Repr
 
-/-- At the complex head *marg-* adjoins to v, and *endur-* to v or n. -/
-def Prefix.AdjoinsTo : Prefix → Head → Prop
-  | .marg, .v _ => True
-  | .marg, .n _ => False
-  | .endur, _ => True
+/-! #### The meanings of the complex head -/
 
-/-- A head's alloseme carries an event variable for eventive v and for the simple event and
-result allosemes of n. -/
-def Head.HasEvent : Head → Prop
-  | .v a => a = .eventive
-  | .n a => a = .simpleEvent ∨ a = .result
+/-- The rules of the complex head: Functional Application and Predicate Conjunction. -/
+abbrev grammar : ManySorted.Language (Interpreter.Ty Interpreter.Base) :=
+  Interpreter.application.sum Interpreter.predicateModification
 
-/-- A prefix is licensed on a nominalization when some head it adjoins to there carries an
-event variable. -/
-def Licensed (p : Prefix) (d : Derivation) : Prop :=
-  ∃ h ∈ d.heads, p.AdjoinsTo h ∧ h.HasEvent
+/-- The items a terminal of a complex head may be: the root is a predicate of entities or of
+eventualities, as the head next to it requires, and eventive v is an activity. -/
+def items {R : Type} : R ⊕ Categorizer → List (Σ a, Item a)
+  | .inl _ => [⟨_, .rootEntity⟩, ⟨_, .rootEvent⟩]
+  | .inr (.v .eventive) => [⟨_, .activity⟩]
+  | .inr (.v _) => []
+  | .inr (.n a) => a.items
 
-theorem licensed_marg_iff (d : Derivation) : Licensed .marg d ↔ d.v = .eventive := by
-  simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
+/-- The types of the derivations of a nominalization, whatever its root. -/
+def Derivation.types (d : Derivation) : List (Interpreter.Ty Interpreter.Base) :=
+  ((⟨(), d.heads⟩ : ComplexHead Unit Categorizer).skeleton Categorizer.IsZero).elim [] fun s ↦
+    ((Interpreter.typeDriven grammar).derivs items s).map (·.1)
 
-theorem licensed_endur_iff (d : Derivation) :
-    Licensed .endur d ↔ d.v = .eventive ∨ d.n = .simpleEvent ∨ d.n = .result := by
-  simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
+-- The root's identity plays no part in which derivations there are.
+theorem types_nominal (r : Root) (d : Derivation) :
+    (((nominal r d).skeleton Categorizer.IsZero).elim [] fun s ↦
+      ((Interpreter.typeDriven grammar).derivs items s).map (·.1)) = d.types := by
+  rcases d with ⟨_ | ⟨⟨⟩⟩, _ | cn⟩ <;> (try cases cn) <;> rfl
 
-theorem Licensed.endur {d : Derivation} (h : Licensed .marg d) : Licensed .endur d :=
-  (licensed_endur_iff d).2 (Or.inl ((licensed_marg_iff d).1 h))
+/-- The allosemes of a nominalization compose on some construal of the root. -/
+def Derivation.Composes (d : Derivation) : Prop := d.types ≠ []
+
+instance : DecidablePred Derivation.Composes := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- Eventive v gives a predicate of eventualities, which among the allosemes of n only the
+result alloseme takes, and which the noun keeps when n is pruned; with v pruned the root meets n
+and takes the type it needs. -/
+theorem Derivation.composes_iff (d : Derivation) :
+    d.Composes ↔ (d.v = .eventive ∧ (d.n = 0 ∨ d.n = .result)) ∨
+      (d.v = 0 ∧ (d.n = .simpleEvent ∨ d.n = .state ∨ d.n = .entity ∨ d.n = .result)) := by
+  revert d
+  decide
+
+-- Among the derivations that compose, the complex event reading is that of eventive v under
+-- the zero alloseme of n.
+theorem Derivation.eventive_iff_reading {d : Derivation} (hc : d.Composes) :
+    d.Eventive ↔ d.reading = .complexEvent := by
+  revert d
+  decide
+
+-- Every reading but the content one has a derivation that composes.
+theorem Derivation.exists_composes_reading {rd : NominalizationReading} (h : rd ≠ .content) :
+    ∃ d : Derivation, d.Composes ∧ d.reading = rd := by
+  revert rd
+  decide
+
+theorem borers_generalization (r : Root) {d : Derivation} (hc : d.Composes)
+    (h : d.reading = .complexEvent) :
+    d.v = .eventive ∧ ¬ (nominal r d).Active Categorizer.Cyclic (nIdx r d) ⊥ :=
+  ⟨((Derivation.eventive_iff_reading hc).2 h).1, nominal_n_not_active_bot r d⟩
+
+section Denotations
+
+variable {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
+
+/-- The denotations of a nominalization, one for each of its derivations. -/
+def Derivation.denotations (d : Derivation) :
+    List (Interpreter.Denotation E Unit { eventuality := V }) :=
+  ((⟨(), d.heads⟩ : ComplexHead Unit Categorizer).skeleton Categorizer.IsZero).elim [] <|
+    (Interpreter.typeDriven grammar).values
+      (D := Interpreter.Ty.Dom (Interpreter.Base.Dom E Unit { eventuality := V })) inferInstance
+      (Item.val m ρ) items
+
+/-- The complex event noun has the meaning of the verb, a predicate of eventualities. -/
+theorem denotations_cen :
+    Derivation.cen.denotations m ρ = [⟨.vt, fun e ↦ ρ.onEvents e ∧ m.activity e⟩] :=
+  rfl
+
+-- The simple event noun: the entities the root holds of that are events.
+theorem denotations_sen :
+    Derivation.sen.denotations m ρ =
+      [⟨.et, fun x ↦ ρ.onEntities x ∧ ∃ e, x = m.ev e ∧ ¬ m.stative e⟩] :=
+  rfl
+
+-- The simple entity noun.
+theorem denotations_simpleEntity :
+    Derivation.simpleEntity.denotations m ρ = [⟨.et, ρ.onEntities⟩] :=
+  rfl
+
+/-- The result noun built on the interpreted verb: what an activity of the root's kind
+produced. -/
+theorem denotations_result :
+    Derivation.result.denotations m ρ =
+      [⟨.et, fun x ↦ ∃ e, (ρ.onEvents e ∧ m.activity e) ∧ m.result x e⟩] :=
+  rfl
+
+end Denotations
+
+/-! #### *marg-* by composition -/
+
+/-- The meaning of *marg-*: a modifier of a predicate of eventualities. -/
+inductive MargItem : Interpreter.Ty Interpreter.Base → Type
+  | marg : MargItem (.fn .vt .vt)
+
+/-- The items of a *marg-* nominalization: those of the complex head, and the prefix. -/
+def margItems {R : Type} : Unit ⊕ R ⊕ Categorizer → List (Σ a, Item a ⊕ MargItem a)
+  | .inl () => [⟨_, .inr .marg⟩]
+  | .inr x => (items x).map fun ⟨a, i⟩ ↦ ⟨a, .inl i⟩
+
+/-- The complex head of a *marg-* nominalization, the prefix adjoined to v. -/
+def margNominal {R : Type} (s : ComplexHead R Categorizer) :
+    Option (Interpreter.Skeleton Unit (Unit ⊕ R ⊕ Categorizer)) :=
+  s.adjoinedSkeleton Categorizer.IsZero 1 ()
+
+/-- *marg-* composes on a nominalization: the complex head with the prefix has a derivation,
+whatever the root. -/
+def MargComposes (d : Derivation) : Prop :=
+  ((margNominal (⟨(), d.heads⟩ : ComplexHead Unit Categorizer)).elim []
+    ((Interpreter.typeDriven grammar).derivs margItems)) ≠ []
+
+instance : DecidablePred MargComposes := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- *marg-* needs an interpreted v to adjoin to and a predicate of eventualities below it, so
+it composes exactly on eventive v under the allosemes of n that keep or take such a predicate,
+the zero and the result allosemes. -/
+theorem margComposes_iff (d : Derivation) :
+    MargComposes d ↔ d.v = .eventive ∧ (d.n = 0 ∨ d.n = .result) := by
+  revert d
+  decide
+
+/-- The meaning of *marg-* in a model whose iterated eventualities are `iter`, and of the other
+terminals. -/
+def margVal {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V) (iter : V → Prop) :
+    {a : Interpreter.Ty Interpreter.Base} → Item a ⊕ MargItem a →
+      a.Domain E Unit { eventuality := V }
+  | _, .inl i => i.val m ρ
+  | _, .inr .marg => fun P e ↦ P e ∧ iter e
+
+-- (6.44c): the complex event reading of a *marg-* noun, iterated activities of the root's kind.
+theorem values_margNominal_cen {E V : Type} (m : NominalizationModel E V) (ρ : RootMeaning E V)
+    (iter : V → Prop) (r : Root) :
+    (margNominal (nominal r .cen)).elim [] ((Interpreter.typeDriven grammar).values
+        (D := Interpreter.Ty.Dom (Interpreter.Base.Dom E Unit { eventuality := V })) inferInstance
+        (margVal m ρ iter) margItems) =
+      [⟨.vt, fun e ↦ (ρ.onEvents e ∧ m.activity e) ∧ iter e⟩] :=
+  rfl
+
+/-! #### *endur-* -/
+
+/-- *endur-* is licensed on a nominalization where v or n carries an event variable: under
+eventive v, and under the simple event and result allosemes of n. -/
+def EndurLicensed (d : Derivation) : Prop :=
+  d.v = .eventive ∨ d.n = .simpleEvent ∨ d.n = .result
+
+instance : DecidablePred EndurLicensed := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- A prefix is licensed on a nominalization: *marg-* where it composes, *endur-* where an event
+variable is present. -/
+def Licensed : Prefix → Derivation → Prop
+  | .marg, d => MargComposes d
+  | .endur, d => EndurLicensed d
 
 instance (p : Prefix) (d : Derivation) : Decidable (Licensed p d) :=
   match p with
-  | .marg => decidable_of_iff _ (licensed_marg_iff d).symm
-  | .endur => decidable_of_iff _ (licensed_endur_iff d).symm
+  | .marg => inferInstanceAs (Decidable (MargComposes d))
+  | .endur => inferInstanceAs (Decidable (EndurLicensed d))
 
 /-- The prefixes as the rows name them. -/
 def prefixTable : List (String × Prefix) := [("marg-", .marg), ("endur-", .endur)]

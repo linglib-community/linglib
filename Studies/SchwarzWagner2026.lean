@@ -1,12 +1,15 @@
 module
 
+public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.SchwarzWagner2026
+public import Linglib.Logic.Aristotelian.Square.Hom
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Continuation
 public import Studies.Fox2007
 public import Studies.Katzir2007
 public import Studies.TrinhHaida2015
@@ -51,16 +54,6 @@ the paper does not discuss.
 * What is not simplex comes from a table of what each category can denote
   (`meanings_mem_of_licensed`), not from listing the trees.
 
-## Errata
-
-Section 4.1 says that under strict symmetry the complexity filter and blocking "are necessarily
-aligned", reasoning from the equalities (70) that blocking prohibits a strengthening only if the
-other alternative is simplex. That holds of the first version (14), not of the revised (67) the
-section quotes, which [also reads every simplex meaning strictly
-between](##IsSymmetric.blocked_sdiff_iff), and [the alignment fails](##exists_isSymmetric_blocked).
-Section 4.3's extension to entailment symmetry, whose proof the paper omits, inherits this. The
-paper offers no example with such a meaning.
-
 ## TODO
 
 The contextual cases (23), (58), (59), the disjunction (29), the embedding (79), the question
@@ -86,7 +79,7 @@ theory of questions here.
 
 namespace SchwarzWagner2026
 
-open Set Exhaustification Alternatives NeoGricean Aristotelian PhraseStructure Tree
+open Set Exhaustification NeoGricean Aristotelian PhraseStructure Tree
 
 /-! ### The blocking constraint -/
 
@@ -177,19 +170,9 @@ theorem exists_isSymmetric_blocked : ∃ (F : Set (Set (Fin 4))) (p a b : Set (F
 -- (14)
 theorem exhIE_eq_self_of_mem {A G : Set (Set W)} {S : Set W} (hA : TrinhHaida2015.IsDomain G S A)
     (hfin : A.Finite) (h : exhIE A S ∈ G) : exhIE A S = S := by
-  have hIE : {a | IsInnocentlyExcludable A S a}.Finite := hfin.subset fun _ ha ↦ ha.1
-  have hsup : ⋃₀ {a | IsInnocentlyExcludable A S a} ∈ BooleanSubalgebra.closure A := by
-    refine hIE.induction_on_subset _ (by rw [sUnion_empty]; exact BooleanSubalgebra.bot_mem)
-      fun {a X} ha _ _ ih ↦ ?_
-    rw [sUnion_insert]
-    exact BooleanSubalgebra.sup_mem (BooleanSubalgebra.subset_closure ha.1) ih
-  have heq : exhIE A S = S \ ⋃₀ {a | IsInnocentlyExcludable A S a} := by
-    ext w
-    simp only [mem_exhIE_iff, mem_sdiff, mem_sUnion, mem_ofPred_eq, not_exists, not_and]
-  have hcl : exhIE A S ∈ BooleanSubalgebra.closure A :=
-    heq ▸ BooleanSubalgebra.sdiff_mem (BooleanSubalgebra.subset_closure hA.self_mem) hsup
   refine (exhIE_subset A S).eq_of_not_ssubset fun hlt ↦ ?_
-  exact exhIE_notMem_lowerClosure hfin (mem_lowerClosure.2 ⟨_, ⟨hA.closed _ h hcl, hlt⟩, le_rfl⟩)
+  exact exhIE_notMem_lowerClosure hfin (mem_lowerClosure.2
+    ⟨_, ⟨hA.closed _ h (exhIE_mem_closure hfin hA.self_mem), hlt⟩, le_rfl⟩)
 
 end Sets
 
@@ -259,8 +242,8 @@ variable {α : Type*} [BooleanAlgebra α] {sq : Square α} {F : Set α} {s : α}
 
 theorem lt_I_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) {q : α}
     (hq : q ∈ ({sq.A, sq.E, sq.I, sq.O} : Set α)) : q < sq.I ↔ q = sq.A := by
-  have hE : ¬ sq.E ≤ sq.I := fun hle ↦ hne .E (h.contradEI.disjoint.eq_bot_of_le hle)
-  have hIA : ¬ sq.I ≤ sq.A := fun hle ↦ hne .IO <| le_bot_iff.1 <|
+  have hE : ¬ sq.E ≤ sq.I := fun hle ↦ hne .none (h.contradEI.disjoint.eq_bot_of_le hle)
+  have hIA : ¬ sq.I ≤ sq.A := fun hle ↦ hne .someNotAll <| le_bot_iff.1 <|
     (inf_le_inf_right _ hle).trans h.contradAO.disjoint.le_bot
   simp only [mem_insert_iff, mem_singleton_iff] at hq
   rcases hq with rfl | rfl | rfl | rfl
@@ -280,53 +263,48 @@ theorem blocked_I_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ �
   · rintro ⟨hA, hs⟩
     exact ⟨sq.A, hA, hs, (lt_I_iff h hne (by simp)).2 rfl⟩
 
-theorem I_sdiff_O (h : SquareRelations sq) : sq.I \ sq.O = sq.A := by
-  rw [_root_.sdiff_eq, ← h.contradAO.eq_compl, inf_eq_right.2 h.subalternAI]
-
-theorem I_sdiff_A (h : SquareRelations sq) : sq.I \ sq.A = sq.I ⊓ sq.O := by
-  rw [_root_.sdiff_eq, h.contradAO.compl_eq]
-
 theorem blocked_I_sdiff_O_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
     (hF : F ⊆ {sq.A, sq.E, sq.I, sq.O}) : Blocked F (sq.I \ sq.O) sq.I ↔ sq.A ∈ F := by
-  rw [blocked_I_iff h hne hF, I_sdiff_O h]
+  rw [blocked_I_iff h hne hF, h.I_sdiff_O]
   simp
 
 theorem not_blocked_I_sdiff_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥)
     (hF : F ⊆ {sq.A, sq.E, sq.I, sq.O}) : ¬ Blocked F (sq.I \ sq.A) sq.I := by
-  rw [blocked_I_iff h hne hF, I_sdiff_A h]
+  rw [blocked_I_iff h hne hF, h.I_sdiff_A]
   rintro ⟨-, hle⟩
-  exact hne .IO <| le_bot_iff.1 <| (le_inf hle inf_le_right).trans h.contradAO.disjoint.le_bot
+  exact hne .someNotAll <| le_bot_iff.1 <|
+    (le_inf hle inf_le_right).trans h.contradAO.disjoint.le_bot
 
 theorem exhIE_I_eq_self {W : Type*} {sq : Square (Set W)} (h : SquareRelations sq)
     (hne : ∀ t, sq.triangle t ≠ ⊥) : exhIE {sq.I, sq.A, sq.O} sq.I = sq.I := by
   have hcov : sq.I ⊆ sq.A ∪ sq.O := fun w _ ↦
     show w ∈ sq.A ⊔ sq.O from h.contradAO.sup_eq_top ▸ mem_univ w
   refine exhIE_eq_self_of_subset_union hcov ?_ ?_
-  · have heq : sq.I \ sq.A = sq.I ⊓ sq.O := I_sdiff_A h
-    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
-  · have heq : sq.I \ sq.O = sq.A := I_sdiff_O h
-    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.A ≠ ∅ from hne .A)
+  · have heq : sq.I \ sq.A = sq.I ⊓ sq.O := h.I_sdiff_A
+    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .someNotAll)
+  · have heq : sq.I \ sq.O = sq.A := h.I_sdiff_O
+    exact heq ▸ nonempty_iff_ne_empty.2 (show sq.A ≠ ∅ from hne .all)
 
 -- Section 2.5: if *optional* is `I \ A`, blocking rules out both readings of (52).
 theorem blocked_of_sdiff_mem {W : Type*} {sq : Square (Set W)} {F : Set (Set W)}
     (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) (hA : sq.A ∈ F)
     (hO : sq.I \ sq.A ∈ F) : Blocked F (sq.I \ sq.A) sq.I ∧ Blocked F sq.A sq.I := by
   have hs : IsSymmetric sq.I sq.A (sq.I \ sq.A) := isSymmetric_sdiff h.subalternAI
-  refine ⟨IsSymmetric.blocked_sdiff hs hO (nonempty_iff_ne_empty.2 (hne .A)), ?_⟩
+  refine ⟨IsSymmetric.blocked_sdiff hs hO (nonempty_iff_ne_empty.2 (hne .all)), ?_⟩
   have hO' : (sq.I \ sq.A).Nonempty :=
-    I_sdiff_A h ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .IO)
+    h.I_sdiff_A ▸ nonempty_iff_ne_empty.2 (show sq.I ⊓ sq.O ≠ ∅ from hne .someNotAll)
   simpa only [hs.symm.sdiff_eq] using IsSymmetric.blocked_sdiff hs.symm hA hO'
 
 -- Section 4.1: at the O corner the partners of (52) are no longer strictly symmetric.
 theorem not_isSymmetric_O {W : Type*} {sq : Square (Set W)} (h : SquareRelations sq)
     (hne : ∀ t, sq.triangle t ≠ ⊥) : ¬ IsSymmetric sq.I sq.A sq.O := fun hs ↦
-  hne .E (h.contradEI.disjoint.eq_bot_of_le (h.subalternEO.trans hs.subset_right))
+  hne .none (h.contradEI.disjoint.eq_bot_of_le (h.subalternEO.trans hs.subset_right))
 
 -- (54): at the O corner only (54b) is contradictory.
 theorem O_inf_eq_bot_iff (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
     (sq.O ⊓ sq.E = ⊥ ↔ Examples.ex_54a.judgment = .unacceptable) ∧
       (sq.O ⊓ sq.A = ⊥ ↔ Examples.ex_54b.judgment = .unacceptable) :=
-  ⟨iff_of_false (fun hE ↦ hne .E ((inf_eq_right.2 h.subalternEO).symm.trans hE)) (by decide),
+  ⟨iff_of_false (fun hE ↦ hne .none ((inf_eq_right.2 h.subalternEO).symm.trans hE)) (by decide),
     iff_of_true h.contradAO.disjoint.symm.eq_bot rfl⟩
 
 -- (54): at `I \ A` both are, where the paper finds a contrast.
@@ -337,7 +315,7 @@ theorem sdiff_inf_eq_bot (h : SquareRelations sq) :
 -- (55): negating the O corner gives *required*, the preferred reading; negating `I \ A` does not.
 theorem compl_O_eq_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle t ≠ ⊥) :
     sq.Oᶜ = sq.A ∧ ¬ (sq.I \ sq.A)ᶜ ≤ sq.A :=
-  ⟨h.contradAO.symm.compl_eq, fun hle ↦ hne .E <| h.contraryAE.symm.eq_bot_of_le <|
+  ⟨h.contradAO.symm.compl_eq, fun hle ↦ hne .none <| h.contraryAE.symm.eq_bot_of_le <|
     (le_compl_iff_disjoint_right.2 (h.contradEI.disjoint.mono_right sdiff_le)).trans hle⟩
 
 end Square
@@ -437,13 +415,13 @@ abbrev Denotation (E W : Type) : Type := Σ a : Ty Unit, W → a.Dom (Dom E)
 /-- Word meanings relative to a world: a predicate's extension varies with the world, and the
 determiners are the hub's. -/
 def denotes : Word → Option (Denotation E W)
-  | .some_ => some ⟨det, fun _ ↦ Det.some⟩
-  | .all_ => some ⟨det, fun _ ↦ Det.every⟩
-  | .nall => some ⟨det, fun _ ↦ nallDet⟩
-  | .noun => some ⟨et, fun _ ↦ A⟩
-  | .pred => some ⟨et, X⟩
-  | .antonym => some ⟨et, fun w ↦ ((X w)ᶜ : Set E)⟩
-  | .not_ => some ⟨et ⇒ et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩
+  | .some_ => some ⟨det, fun _ P ↦ toCont (Det.some {x | P x})⟩
+  | .all_ => some ⟨det, fun _ P ↦ toCont (Det.every {x | P x})⟩
+  | .nall => some ⟨det, fun _ P ↦ toCont (nallDet {x | P x})⟩
+  | .noun => some ⟨et, fun _ ↦ (· ∈ A)⟩
+  | .pred => some ⟨et, fun w ↦ (· ∈ X w)⟩
+  | .antonym => some ⟨et, fun w ↦ (· ∈ (X w)ᶜ)⟩
+  | .not_ => some ⟨et ⇒ et, fun _ P x ↦ ¬ P x⟩
 
 /-- The meanings of a tree, by Functional Application at each world. -/
 def meanings (t : Tree Cat Word) : List (Denotation E W) :=
@@ -455,7 +433,8 @@ def meanings (t : Tree Cat Word) : List (Denotation E W) :=
 /-- The paper's simplex meanings: those of the sentences no more complex than the assertion, in its
 plain sense of deleting constituents and replacing them by lexical items. -/
 def simplex (c : Case) : Set (Set W) :=
-  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧ (⟨.t, q⟩ : Denotation E W) ∈ meanings A X ψ}
+  {q | ∃ ψ, atMostAsComplex ↑(lex c) ψ (prejacent c) ∧
+    (⟨.t, (· ∈ q)⟩ : Denotation E W) ∈ meanings A X ψ}
 
 /-- The determiners' square at the restrictor, at the predicate's extension in each world. -/
 def sqAt : Square (Set W) where
@@ -466,9 +445,13 @@ def sqAt : Square (Set W) where
 
 variable {A X}
 
-theorem sqAt_relations (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  .of_disjoint (Set.ext fun _ ↦ by simp [sqAt, Det.no_iff_not_some]) rfl
-    (Set.disjoint_left.2 fun _ hE hN ↦ hA.ne_empty (Det.a_e_contrary hE hN))
+theorem squareRelations_sqAt (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
+  (Det.squareRelations_square hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+    { toFun Q := {w | Q (X w)}
+      map_sup' _ _ := rfl
+      map_inf' _ _ := rfl
+      map_top' := rfl
+      map_bot' := rfl }
 
 -- Two members of the restrictor make the square nondegenerate over the possible extensions.
 example {a b : E} (ha : a ∈ A) (hb : b ∈ A) (hab : a ≠ b) (t : Triangle) :
@@ -485,18 +468,18 @@ def squareOf (sq : Square (Set W)) : Case → Square (Set W)
   | _ => sq
 
 /-- What each category can denote, for determiners `Ds`, predicates `Fs`, and negation if `N`. -/
-def Table (A : Set E) (N : Prop) (Fs : Set (W → E → Prop)) (Ds : Set (Det E)) :
+def Table (A : Set E) (N : Prop) (Fs : Set (W → Set E)) (Ds : Set (Det E)) :
     Cat → Set (Denotation E W)
   | .S => {d | d.1 ≠ .t ∨ ∃ D ∈ Ds, ∃ f ∈ Fs, d = ⟨.t, fun w ↦ D A (f w)⟩}
-  | .N => {d | (∃ D ∈ Ds, d = ⟨det, fun _ ↦ D⟩) ∨ (∃ D ∈ Ds, d = ⟨ett, fun _ ↦ D A⟩) ∨
-      d = ⟨et, fun _ ↦ A⟩}
-  | .Det => {d | ∃ D ∈ Ds, d = ⟨det, fun _ ↦ D⟩}
-  | .V => {d | (∃ f ∈ Fs, d = ⟨et, f⟩) ∨
-      (N ∧ d = ⟨et ⇒ et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩)}
-  | .Neg => {d | N ∧ d = ⟨et ⇒ et, fun _ (P : Set E) ↦ (Pᶜ : Set E)⟩}
+  | .N => {d | (∃ D ∈ Ds, d = ⟨det, fun _ P ↦ toCont (D {x | P x})⟩) ∨
+      (∃ D ∈ Ds, d = ⟨ett, fun _ ↦ toCont (D A)⟩) ∨ d = ⟨et, fun _ ↦ (· ∈ A)⟩}
+  | .Det => {d | ∃ D ∈ Ds, d = ⟨det, fun _ P ↦ toCont (D {x | P x})⟩}
+  | .V => {d | (∃ f ∈ Fs, d = ⟨et, fun w ↦ (· ∈ f w)⟩) ∨
+      (N ∧ d = ⟨et ⇒ et, fun _ P x ↦ ¬ P x⟩)}
+  | .Neg => {d | N ∧ d = ⟨et ⇒ et, fun _ P x ↦ ¬ P x⟩}
   | _ => ∅
 
-variable {N : Prop} {Fs : Set (W → E → Prop)} {Ds : Set (Det E)} {Ws : Finset Word}
+variable {N : Prop} {Fs : Set (W → Set E)} {Ds : Set (Det E)} {Ws : Finset Word}
   {c : Case} {q : Set W}
 
 theorem table_unary {c a : Cat} (ha : a ∈ pat c) : Table A N Fs Ds a ⊆ Table A N Fs Ds c := by
@@ -513,7 +496,7 @@ theorem table_unary {c a : Cat} (ha : a ∈ pat c) : Table A N Fs Ds a ⊆ Table
     · exact Or.inr hd
     · exact hd
 
-theorem table_binary (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w : Set E)ᶜ) ∈ Fs) {c a b : Cat}
+theorem table_binary (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w)ᶜ) ∈ Fs) {c a b : Cat}
     (hab : [a, b].Sublist (pat c)) : ∀ x ∈ Table A N Fs Ds a, ∀ y ∈ Table A N Fs Ds b,
       ∀ (u : Ty Unit) (m : Application x.1 y.1 u),
         (⟨u, fun w ↦ m.eval (Dom E) (x.2 w) (y.2 w)⟩ : Denotation E W) ∈ Table A N Fs Ds c := by
@@ -575,24 +558,23 @@ theorem meanings_mem_of_licensed {R : Tree.Label Cat Word → List (Tree.Label C
 theorem licensed_of_alt {source : Set (Tree Cat Word)} {φ ψ : Tree Cat Word}
     (hs : ∀ s ∈ source, s.Licensed (Licit Ws)) (hφ : φ.Licensed (Licit Ws))
     (h : atMostAsComplex source ψ φ) : ψ.Licensed (Licit Ws) := by
-  refine licensed_of_atMostAsComplex hs (fun l ks i hl hr ↦ ?_) (fun l ks i k hi hl hc hr ↦ ?_)
-    (fun _ _ _ _ _ h ↦ h) hφ h
+  refine licensed_of_atMostAsComplex hs (fun l ks i hl hr ↦ ?_) (fun l ks₁ k k' ks₂ hc hr ↦ ?_)
+    hφ h
   · cases l with
     | phrase c k => exact ((List.eraseIdx_sublist ks i).map _).trans hr
     | _ => exact hl.elim
   · cases l with
-    | phrase c k =>
-      have hi' : Label.cat ks[i] = (ks.map Label.cat)[i]'(by simpa using hi) := by simp
-      simpa only [Licit, List.map_set, hc, hi', List.set_getElem_self] using hr
-    | _ => exact hl.elim
+    | terminal c w => simp [Licit] at hr
+    | phrase c k => simpa only [Licit, List.map_append, List.map_cons, hc] using hr
+    | _ => exact hr.elim
 
 theorem simplex_subset (hs : ∀ s ∈ (↑(lex c) : Set (Tree Cat Word)), s.Licensed (Licit Ws))
     (hφ : (prejacent c).Licensed (Licit Ws))
-    (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w : Set E)ᶜ) ∈ Fs)
+    (hneg : N → ∀ f ∈ Fs, (fun w ↦ (f w)ᶜ) ∈ Fs)
     (hsome : .some_ ∈ Ws → Det.some ∈ Ds) (hall : .all_ ∈ Ws → Det.every ∈ Ds)
     (hnall : .nall ∈ Ws → nallDet ∈ Ds) (hpred : .pred ∈ Ws → X ∈ Fs)
     (hant : .antonym ∈ Ws → (fun w ↦ (X w)ᶜ) ∈ Fs) (hnot : .not_ ∈ Ws → N)
-    (hq : q ∈ simplex A X c) : ∃ D ∈ Ds, ∃ f ∈ Fs, q = fun w ↦ D A (f w) := by
+    (hq : q ∈ simplex A X c) : ∃ D ∈ Ds, ∃ f ∈ Fs, q = {w | D A (f w)} := by
   obtain ⟨ψ, hψ, h⟩ := hq
   have hcat : Tree.cat ψ = .S := hψ.cat_eq.trans (by cases c <;> rfl)
   have hT (c : Cat) (w d) (hw : Licit Ws (.terminal c w) List.nil) (hd : denotes A X w = some d) :
@@ -613,7 +595,8 @@ theorem simplex_subset (hs : ∀ s ∈ (↑(lex c) : Set (Tree Cat Word)), s.Lic
   rw [hcat] at hm
   rcases hm with h0 | ⟨D, hD, f, hf, he⟩
   · exact absurd rfl h0
-  · exact ⟨D, hD, f, hf, eq_of_heq (Sigma.mk.inj_iff.1 he).2⟩
+  · exact ⟨D, hD, f, hf,
+      Set.ext fun w ↦ iff_of_eq (congrFun (eq_of_heq (Sigma.mk.inj_iff.1 he).2) w)⟩
 
 theorem nall_compl_iff {B : Set E} : nallDet A Bᶜ ↔ Det.some A B :=
   (not_congr Det.no_iff_not_some).trans not_not
@@ -664,7 +647,7 @@ theorem sentence_mem {d d' : Word} {v : Tree Cat Word} (hφ : prejacent c = sent
     (h : Tree.terminal .Det d' ∈ lex c) :
     atMostAsComplex ↑(lex c) (sentence d' v) (prejacent c) := by
   rw [hφ]
-  exact .single (.inChild ⟨0, by simp⟩ (.inChild ⟨0, by simp⟩ (.subst rfl h)))
+  exact .single (.set _ ⟨0, by simp⟩ (.set _ ⟨0, by simp⟩ (.here (.subst rfl h))))
 
 theorem A_mem_simplex (hc : c ≠ .minimal) : (squareOf (sqAt A X) c).A ∈ simplex A X c := by
   cases c <;> first
@@ -675,13 +658,13 @@ theorem O_mem_simplex (hc : c = .negated ∨ c = .antonym ∨ c = .lexicalized) 
     (squareOf (sqAt A X) c).O ∈ simplex A X c := by
   rcases hc with rfl | rfl | rfl
   · refine ⟨sentence .some_ (.terminal .V .pred), .single ?_, List.mem_cons_self⟩
-    exact .inChild ⟨1, by simp⟩ (ψ_child := Tree.terminal Cat.V Word.pred)
-      (.contract (by simp) rfl trivial)
-  · have hO : (squareOf (sqAt A X) .antonym).O = fun w ↦ Det.some A (X w)ᶜ :=
+    exact .set _ ⟨1, by simp⟩ (c' := Tree.terminal Cat.V Word.pred)
+      (.here (.contract (by simp) rfl trivial))
+  · have hO : (squareOf (sqAt A X) .antonym).O = {w | Det.some A (X w)ᶜ} :=
       Set.ext fun _ ↦ some_compl_iff.symm
     rw [hO]
     exact ⟨sentence .some_ (.terminal .V .antonym),
-      .single (.inChild ⟨1, by simp⟩ (.subst rfl (by decide))), List.mem_cons_self⟩
+      .single (.set _ ⟨1, by simp⟩ (.here (.subst rfl (by decide)))), List.mem_cons_self⟩
   · exact ⟨_, sentence_mem (d' := .nall) rfl (by decide), List.mem_cons_self⟩
 
 theorem simplex_subset_squareOf (c : Case) : simplex A X c ⊆ {(squareOf (sqAt A X) c).A,
@@ -692,7 +675,7 @@ theorem simplex_subset_squareOf (c : Case) : simplex A X c ⊆ {(squareOf (sqAt 
       simp only [mem_insert_iff, mem_singleton_iff, squareOf, Square.inner] at hq ⊢
       tauto
 
-theorem squareOf_relations (h : SquareRelations (sqAt A X)) (c : Case) :
+theorem squareRelations_squareOf (h : SquareRelations (sqAt A X)) (c : Case) :
     SquareRelations (squareOf (sqAt A X) c) := by
   cases c <;> first | exact h | exact h.inner
 
@@ -701,18 +684,18 @@ theorem squareOf_triangle_ne (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) (c : C
   cases c <;> first
     | exact hne t
     | cases t
-      · exact hne .A
-      · exact fun h0 ↦ hne .IO ((inf_comm _ _).trans h0)
-      · exact hne .E
+      · exact hne .all
+      · exact fun h0 ↦ hne .someNotAll ((inf_comm _ _).trans h0)
+      · exact hne .none
 
 theorem O_ne_I (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
     (sqAt A X).O ≠ (sqAt A X).I := fun heq ↦
-  hne .A (h.contraryAE.eq_bot_of_le (by
+  hne .all (h.contraryAE.eq_bot_of_le (by
     rw [← h.contradEI.symm.compl_eq, ← heq, ← h.contradAO.compl_eq, compl_compl]))
 
 theorem O_ne_A (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) :
     (sqAt A X).O ≠ (sqAt A X).A := fun heq ↦
-  hne .A (h.contradAO.disjoint.eq_bot_of_le heq.ge)
+  hne .all (h.contradAO.disjoint.eq_bot_of_le heq.ge)
 
 theorem A_notMem_simplex_minimal (h : SquareRelations (sqAt A X))
     (hne : ∀ t, (sqAt A X).triangle t ≠ ⊥) : (sqAt A X).A ∉ simplex A X .minimal := fun hA ↦
@@ -748,7 +731,7 @@ theorem not_blocked_iff (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A X
     (c : Case) (e : Excluded) :
     ¬ Blocked (simplex A X c) ((squareOf (sqAt A X) c).I \ excl (sqAt A X) c e)
       (squareOf (sqAt A X) c).I ↔ e = .scalar ∨ c = .minimal := by
-  have hr := squareOf_relations h c
+  have hr := squareRelations_squareOf h c
   have hn := squareOf_triangle_ne hne c
   cases e
   · simpa [excl] using not_blocked_I_sdiff_A hr hn (simplex_subset_squareOf c)

@@ -12,17 +12,17 @@ public import Linglib.Syntax.Minimalist.Linearization.Spellout
 # Late insertion
 
 The syntax hands PF a spell-out domain: the pronounced terminals of a linearized syntactic
-object, left to right, each read as a feature bundle (`SpelloutDomain.ofLinearized`). The
+object, left to right, each read as a feature bundle (`SpelloutDomain.ofPlanar`). The
 postsyntactic pipeline then runs on it and Vocabulary Insertion realizes each surviving position
 in its neighborhood: late insertion, on which no phonological content travels through the syntax.
 Early insertion is the degenerate case: over the vocabulary whose items each spell out one
-terminal's own token as its lexically listed form, the empty-module pipeline returns exactly the
-carrier's `pfPhon`, so terminals carrying their forms compute what one context-free item per
-token computes, and contextual allomorphy is precisely what such a vocabulary cannot state.
+terminal's own token as its lexically listed form, the pipeline with no postsyntactic operation
+returns exactly the carrier's `pfPhon`, so terminals carrying their forms compute what one
+context-free item per token computes, and contextual allomorphy is precisely what such a vocabulary cannot state.
 
 ## Main definitions
 
-* `DistributedMorphology.SpelloutDomain.ofLinearized`: the handover.
+* `DistributedMorphology.SpelloutDomain.ofPlanar`: the handover.
 * `DistributedMorphology.earlyItems`, `DistributedMorphology.earlySpellout`: one context-free
   item per token, spelling out its lexically listed form, and the pipeline it drives.
 
@@ -45,10 +45,10 @@ open Morphology Minimalist
 
 variable {Bundle : Type*}
 
-/-- The spell-out domain of a linearized syntactic object: its pronounced terminals, left to
+/-- The spell-out domain of a planar syntactic object: its pronounced terminals, left to
 right, each read as a feature bundle. -/
-def SpelloutDomain.ofLinearized (feats : LexicalItem.Token → Bundle)
-    (t : LinearizedSyntacticObject) : SpelloutDomain Bundle :=
+def SpelloutDomain.ofPlanar (feats : LexicalItem.Token → Bundle)
+    (t : PlanarSyntacticObject) : SpelloutDomain Bundle :=
   (pfYield t).map feats
 
 /-! ### Early insertion -/
@@ -59,11 +59,11 @@ def earlyItems (toks : List LexicalItem.Token) :
     RuleSet (VocabularyItem LexicalItem.Token String) :=
   toks.map fun tok ↦ {tok} ⟷ tok.item.phonForm
 
-/-- Early insertion: no postsyntactic modules, each position realizing the Subset Principle's
+/-- Early insertion: no postsyntactic operation, each position realizing the Subset Principle's
 exponent for the early vocabulary. -/
 def earlySpellout (toks : List LexicalItem.Token) :
     Spellout (Finset LexicalItem.Token) String :=
-  ⟨[], fun n ↦ (subsetPrinciple (earlyItems toks) n).toList⟩
+  { insert := fun n ↦ (subsetPrinciple (earlyItems toks) n).toList }
 
 theorem applicable_earlyItems {toks : List LexicalItem.Token} (hnd : toks.Nodup)
     {tok : LexicalItem.Token} (h : tok ∈ toks) {n : Neighborhood (Finset LexicalItem.Token)}
@@ -83,10 +83,10 @@ theorem applicable_earlyItems {toks : List LexicalItem.Token} (hnd : toks.Nodup)
 theorem pf_earlySpellout {toks : List LexicalItem.Token} (hnd : toks.Nodup) :
     (earlySpellout toks).pf (toks.map ({·})) = toks.map fun tok ↦ [tok.item.phonForm] := by
   refine List.ext_getElem
-    (by simp [Spellout.pf, Neighborhood.along, earlySpellout, Spellout.run]) ?_
+    (by simp [Spellout.pf, Neighborhood.along, earlySpellout]) ?_
   intro i h1 h2
   have hi : i < toks.length := by simpa using h2
-  simp only [Spellout.pf, Spellout.run, earlySpellout, runModules_nil, Neighborhood.along,
+  simp only [Spellout.pf, earlySpellout, id_eq, Neighborhood.along,
     List.getElem_map, List.getElem_mapIdx]
   rw [subsetPrinciple, RuleSet.realize, RuleSet.selectBy,
     applicable_earlyItems hnd (tok := toks[i]) (List.getElem_mem _)
@@ -97,10 +97,10 @@ theorem pf_earlySpellout {toks : List LexicalItem.Token} (hnd : toks.Nodup) :
 /-- `pfPhon` is the early-insertion pipeline: handing the pronounced terminals over as atomic
 features and inserting each token's lexically listed form returns the carrier's own
 pronunciation, silent tokens dropped. -/
-theorem pfPhon_eq_earlyInsertion (t : LinearizedSyntacticObject) :
+theorem pfPhon_eq_earlyInsertion (t : PlanarSyntacticObject) :
     pfPhon t = ((earlySpellout (pfYield t)).pf
-      (SpelloutDomain.ofLinearized ({·}) t)).flatten.filter (· ≠ "") := by
-  rw [SpelloutDomain.ofLinearized, pf_earlySpellout (nodup_pfYield t), pfPhon]
+      (SpelloutDomain.ofPlanar ({·}) t)).flatten.filter (· ≠ "") := by
+  rw [SpelloutDomain.ofPlanar, pf_earlySpellout (nodup_pfYield t), pfPhon]
   induction pfYield t with
   | nil => rfl
   | cons tok l ih =>

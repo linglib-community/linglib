@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -37,7 +37,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := "Two Annas: A and B know exactly two people called Anna, one in Munich and one in Berlin. A: Earlier today, Anna called."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := "Two Annas: A and B know exactly two people called Anna, one in Munich and one in Berlin. A: Earlier today, Anna called."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "A approaches a stranger on the street."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "Garbage is collected on Mondays. A: Can you put out the garbage later today?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := "Early waking 1: A wakes B in the middle of the night and asks."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := "Early waking 2: B wakes A in the middle of the night, and A asks."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -141,7 +141,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "Party: Peter only goes to a party if Sophie goes, not conversely; commonly known. A: Sophie is over there!"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -154,7 +154,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "Party: Peter only goes to a party if Sophie goes, not conversely; commonly known. A: Peter is over there!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -167,7 +167,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := "Frozen Lake: A and B walk by a lake that usually does not freeze; A notices it is frozen."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -180,7 +180,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := "Frozen Lake: A and B walk by a lake that usually does not freeze; A notices it is frozen."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +193,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := "A: an arbitrary assertion."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -206,7 +206,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := "A: This afternoon, please pick up Karl from the station!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -219,7 +219,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "A: Which tax bracket am I in?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -232,7 +232,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := "Only people younger than eighteen can buy discounted tickets. A: Am I eligible for the discount?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -245,7 +245,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := "A: I'm just gonna look up how to get to Lisa's party. [Takes out his phone.]"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -258,7 +258,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := "A: Is Anton's girlfriend also coming?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -271,7 +271,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := "Night Bus: a night bus, which runs only after midnight, drives by A and B."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -284,7 +284,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := "Opening doors: only A has keys. A: You go on and open the door! I'm coming in a minute."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -297,7 +297,7 @@ def ex_31b : Datum :=
     glossedTokens := []
     context := "Opening doors: only A has keys. A: You go on and open the door! I'm coming in a minute."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -310,7 +310,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := "A: Did you hear? Sarah is going on a world trip next week!"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -323,7 +323,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := "A: Did you hear? Sarah is going on a world trip next week!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -336,7 +336,7 @@ def ex_32c : Datum :=
     glossedTokens := []
     context := "A: Did you hear? Sarah is going on a world trip next week!"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -349,7 +349,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := "A: Can you pick me up from the station?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -362,7 +362,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := "At the ticket counter. A: One discounted ticket please."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -375,7 +375,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := "Host asking guest at a dinner party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -388,7 +388,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := "A: Caro can win."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -401,7 +401,7 @@ def ex_47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -414,7 +414,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -427,7 +427,7 @@ def ex_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -440,7 +440,7 @@ def ex_52 : Datum :=
     glossedTokens := []
     context := "Tina asks whether Grandpa Erich can become president; her father knows the answer but wants her to work it out."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -453,7 +453,7 @@ def ex_61a : Datum :=
     glossedTokens := []
     context := "A offered wine, then beer; B declined both. QUD: what alcohol does B want?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("with überhaupt", .acceptable), ("with denn", .unacceptable)]
     paperFeatures := [] }
 
@@ -466,7 +466,7 @@ def ex_61b : Datum :=
     glossedTokens := []
     context := "A offered wine, then beer; B declined both. QUD: what alcohol does B want?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("with überhaupt", .unacceptable), ("with denn", .acceptable)]
     paperFeatures := [] }
 
@@ -479,7 +479,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -492,7 +492,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := "A: Karl has to go to jail."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -505,7 +505,7 @@ def ex_72 : Datum :=
     glossedTokens := []
     context := "A: Karl has to go to jail."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

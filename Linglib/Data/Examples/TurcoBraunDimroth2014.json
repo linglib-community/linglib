@@ -10,7 +10,7 @@
     "translation": "In my picture the child did not cry.",
     "context": "Polarity contrast: speaker A describes their own picture; B will describe a different picture.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "contrast"],
@@ -31,7 +31,7 @@
     "translation": "In my picture the child DID cry.",
     "context": "Reply to (1) A about a different picture.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "contrast"],
@@ -52,7 +52,7 @@
     "translation": "In my picture the child did INDEED cry.",
     "context": "Reply to (1) A about a different picture.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "contrast"],
@@ -73,7 +73,7 @@
     "translation": "The child did not cry.",
     "context": "Polarity correction: A and B talk about the same situation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "correction"],
@@ -94,7 +94,7 @@
     "translation": "The child DID cry.",
     "context": "Reply to (2) A about the same situation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "correction"],
@@ -115,7 +115,7 @@
     "translation": "The child did INDEED cry.",
     "context": "Reply to (2) A about the same situation.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "correction"],
@@ -139,7 +139,7 @@
     "translation": "Mr Red does not dare to jump. Mr Blue is indeed jumping because there is already fire in his room.",
     "context": "A house is on fire; a native speaker of Dutch retells the Finite Story film.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "contrast"],
@@ -161,7 +161,7 @@
     "translation": "The child DID not cry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],
@@ -181,7 +181,7 @@
     "translation": "The child DID not cry.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],

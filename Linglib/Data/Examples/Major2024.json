@@ -13,7 +13,7 @@
     "translation": "Mahinur thinks that Tursun made meatbread.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "dep"],
@@ -40,7 +40,7 @@
     "translation": "Ahmat flattened the metal by pounding it, and I flattened [=metal by pounding] like this, too.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "proform"],
@@ -67,7 +67,7 @@
     "translation": "Tursun, having made pilaf, ate it and I ate [pilaf having cooked it] like this too.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "proform"],
@@ -91,7 +91,7 @@
     "translation": "Mahinur didn't cook anything and eat half of it.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "nci"],
@@ -115,7 +115,7 @@
     "translation": "We didn't make anyone sleep by giving them drugs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "nci"],
@@ -139,7 +139,7 @@
     "translation": "Mahinur screamed, saying that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "dep"],
@@ -161,7 +161,7 @@
     "translation": "Mahinur said something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -185,7 +185,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -209,7 +209,7 @@
     "translation": "Mahinur screamed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -234,7 +234,7 @@
     "translation": "Mahinur screamed something.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -259,7 +259,7 @@
     "translation": "Mahinur said that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -284,7 +284,7 @@
     "translation": "Mahinur screamed that Tursun left.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -309,7 +309,7 @@
     "translation": "Mahinur screamed, saying something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -333,7 +333,7 @@
     "translation": "Mahinur screamed, saying.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -359,7 +359,7 @@
     "translation": "Mahinur screamed, saying that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -384,7 +384,7 @@
     "translation": "Mahinur screamed, thinking something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -408,7 +408,7 @@
     "translation": "Mahinur screamed, thinking.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -434,7 +434,7 @@
     "translation": "Mahinur screamed, thinking that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
@@ -460,7 +460,7 @@
     "translation": "The news that Tursun left surprised me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Tursun-ning ket-ken-lik-i méni hayran qal-dur-d-i.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -486,7 +486,7 @@
     "translation": "The news that Tursun left surprised me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Tursun-ni ket-t-i de-p méni hayran qal-dur-d-i.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -511,7 +511,7 @@
     "translation": "Mahinur screamed, saying nobody left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "nci"],
@@ -536,7 +536,7 @@
     "translation": "Mahinur said nobody will come, and left.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "nci"],
@@ -565,7 +565,7 @@
     "translation": "Mahinur thought (something), saying Tursun left, but I didn't think like that.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "proform"],
@@ -594,7 +594,7 @@
     "translation": "Mahinur left, saying Tursun would come, but I didn't leave like this.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "proform"],
@@ -623,7 +623,7 @@
     "translation": "Mahinur knows that Tursun left, but he didn't leave.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "denial"],
@@ -651,7 +651,7 @@
     "translation": "Mahinur knows (something), saying that Tursun left, but he didn't leave.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "denial"],
@@ -675,7 +675,7 @@
     "translation": "Mahinur forgot that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "forgot that", "judgment": "acceptable"}
     ],
@@ -700,7 +700,7 @@
     "translation": "Mahinur forgot something, saying Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "forgot that", "judgment": "unacceptable"},
       {"name": "forgot something, saying", "judgment": "acceptable"}
@@ -725,7 +725,7 @@
     "translation": "Mahinur quickly ate pilaf.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -751,7 +751,7 @@
     "translation": "Mahinur quickly ate pilaf.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -777,7 +777,7 @@
     "translation": "Mahinur quickly ate the pilaf.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -802,7 +802,7 @@
     "translation": "Mahinur quickly ate the pilaf.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -827,7 +827,7 @@
     "translation": "Mahinur became Ziba.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -851,7 +851,7 @@
     "translation": "Mahinur became Ziba.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -875,7 +875,7 @@
     "translation": "Mahinur spoke.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -900,7 +900,7 @@
     "translation": "Mahinur said that you left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -928,7 +928,7 @@
     "translation": "Mahinur screamed that you left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -956,7 +956,7 @@
     "translation": "Mahinur left, saying you left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -984,7 +984,7 @@
     "translation": "Mahinur told that I won.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1011,7 +1011,7 @@
     "translation": "Mahinur told that I won.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1038,7 +1038,7 @@
     "translation": "Something was said to me, saying you left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1068,7 +1068,7 @@
     "translation": "Mahinur, having said Tursun left, left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1097,7 +1097,7 @@
     "translation": "Mahinur told me this news, saying Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1128,7 +1128,7 @@
     "translation": "It became clear at the meeting that Mahinur would go to Kashgar next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1158,7 +1158,7 @@
     "translation": "It became clear at the meeting that Mahinur would go to Kashgar next year.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1188,7 +1188,7 @@
     "translation": "The news became clear at the meeting today, saying Mahinur would go to Kashgar next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1218,7 +1218,7 @@
     "translation": "The news became clear at the meeting today, saying Mahinur would go to Kashgar next year.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1248,7 +1248,7 @@
     "translation": "It became clear in the news that Tursun told me, (he) said Mahinur will go to Kashgar next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1278,7 +1278,7 @@
     "translation": "Her boss made the news clear at the meeting today that Mahinur would go to Kashgar next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],
@@ -1309,7 +1309,7 @@
     "translation": "The news was intentionally made clear at the meeting today that Mahinur would go to Kashgar next year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "case"],

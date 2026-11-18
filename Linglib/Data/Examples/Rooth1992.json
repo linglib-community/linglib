@@ -11,7 +11,7 @@
     "context": "Mary introduced Bill and Tom to Sue, and there were no other introductions.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -32,7 +32,7 @@
     "context": "Mary introduced Bill and Tom to Sue, and there were no other introductions.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -72,7 +72,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "contrast"]
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "The speaker and roommates Steve and Paul took a quiz; George asks how it went.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the speaker did not ace the quiz", "judgment": "acceptable"}
     ],
@@ -113,7 +113,7 @@
     "translation": "",
     "context": "The speaker and roommates Steve and Paul took a quiz; George asks how it went.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the roommates did not pass", "judgment": "acceptable"}
     ],
@@ -135,7 +135,7 @@
     "translation": "",
     "context": "Who cut Bill down to size?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qa"],
@@ -156,7 +156,7 @@
     "translation": "",
     "context": "Who cut Bill down to size?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qa"],
@@ -177,7 +177,7 @@
     "translation": "",
     "context": "Who did Mary cut down to size?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qa"],
@@ -198,7 +198,7 @@
     "translation": "",
     "context": "Who did Mary cut down to size?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "qa"],
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "than she beats Sue", "judgment": "acceptable"},
       {"name": "than Sue beats me", "judgment": "unacceptable"}
@@ -242,7 +242,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "than she beats Sue", "judgment": "unacceptable"},
       {"name": "than Sue beats me", "judgment": "acceptable"}
@@ -265,7 +265,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "only"],
@@ -285,7 +285,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "contrast"]

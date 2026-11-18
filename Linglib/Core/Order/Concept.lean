@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Order.Concept
+public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Core.Order.Ortholattice
 
@@ -10,39 +11,31 @@ public import Linglib.Core.Order.Ortholattice
 
 [UPSTREAM] candidate for `Mathlib/Order/Concept.lean`.
 
-The formal concepts of a symmetric, irreflexive relation `r`, an *orthogonality* relation, form an
-ortholattice. The lattice structure is mathlib's concept lattice; the new content is the
-orthocomplement `Aᶜ = upperPolar r A = {x | ∀ y ∈ A, r x y}`, which for a symmetric relation is an
-order-reversing involution on extents.
+The formal concepts of a symmetric, irreflexive relation `r`, an *orthogonality* relation, form
+[an ortholattice](##Concept.instIsOrtholattice). The lattice structure is mathlib's concept
+lattice. The orthocomplement [exchanges the extent and the intent](##Concept.intent_compl) of a
+concept, as mathlib's `Concept.swap` does between a relation and its converse; for a symmetric
+relation the two coincide, which makes it [an order-reversing
+involution](##Concept.instInvolutiveCompl).
 
 A concept of a single-sorted relation is determined by its extent, so concepts coerce to sets:
-meets are intersections, joins are extent closures of unions, and the object concept of `a` is
-the least concept containing `a`, whose members are the `b` related to everything `a` is.
+meets are intersections, [joins are extent closures of unions](##Concept.coe_sup), and the object
+concept of `a` is the least concept containing `a`.
 
-For any relation, the attribute concept of `b` lies below that of `a` exactly when every object
-with `b` has `a`, the attribute implication from `b` to `a`. A preorder on the attributes reverses
-along the attribute concepts exactly when each object's attributes form a lower set of it.
-
-## Main definitions
-
-* `Concept.instCompl`: the orthocomplement of a concept, whose extent is the concept's intent.
-* `Concept.instSetLike`: a concept of a single-sorted relation is determined by its extent.
-
-## Main results
-
-* `Concept.instInvolutiveCompl`: for a symmetric relation the orthocomplement is an involution.
-* `Concept.instIsOrtholattice`: for a symmetric, irreflexive relation the concepts form
-  an ortholattice.
-* `Concept.coe_sup`, `Concept.coe_compl`: joins and orthocomplements as sets.
-* `Concept.mem_ofObject_iff`: the members of an object concept.
-* `Concept.ofAttribute_le_ofAttribute_iff`: attribute concepts are ordered by attribute
-  implication.
-* `Concept.antitone_ofAttribute_iff`: the attribute concepts reverse a preorder exactly when every
-  object's attributes form a lower set.
+For any relation, the object concept of `a` lies below that of `a'` exactly when [every attribute
+of `a'` is one of `a`](##Concept.ofObject_le_ofObject_iff), and the attribute concept of `b` lies
+below that of `a` exactly when [every object with `b` has
+`a`](##Concept.ofAttribute_le_ofAttribute_iff), the attribute implication from `b` to `a`. A
+preorder on the attributes [reverses along the attribute
+concepts](##Concept.antitone_ofAttribute_iff) exactly when each object's attributes form a lower
+set of it. A map into the objects pulls concepts back to those of the restricted context,
+[preserving meets](##Concept.comap), and [every concept of the restricted context arises this
+way](##Concept.comap_surjective).
 
 ## References
 
 * [holliday-mandelkern-2024]
+* [birkhoff-1940]
 -/
 
 @[expose] public section
@@ -57,8 +50,12 @@ theorem upperPolar_eq_lowerPolar [Std.Symm r] (s : Set S) :
     upperPolar r s = lowerPolar r s := by
   rw [← upperPolar_swap, Std.Symm.swap_eq]
 
-theorem isExtent_upperPolar [Std.Symm r] (s : Set S) : IsExtent r (upperPolar r s) := by
-  rw [upperPolar_eq_lowerPolar r]; exact isExtent_lowerPolar
+/-- For a symmetric relation the intents are the extents. -/
+theorem isIntent_iff_isExtent [Std.Symm r] {s : Set S} : IsIntent r s ↔ IsExtent r s := by
+  rw [IsIntent, IsExtent, funext (upperPolar_eq_lowerPolar r)]
+
+theorem isExtent_upperPolar [Std.Symm r] (s : Set S) : IsExtent r (upperPolar r s) :=
+  (isIntent_iff_isExtent r).1 isIntent_upperPolar
 
 variable {r} in
 theorem IsExtent.upperPolar_upperPolar [Std.Symm r] {s : Set S} (hs : IsExtent r s) :
@@ -98,15 +95,18 @@ namespace Concept
 
 variable {S : Type*} (r : S → S → Prop)
 
-/-- The orthocomplement of a concept is the concept whose extent is its intent, well defined
-because `r` is symmetric. -/
+/-- The orthocomplement of a concept exchanges its extent and its intent, as `Concept.swap` does;
+for a symmetric relation the result is again a concept of `r`. -/
 instance instCompl [Std.Symm r] : Compl (Concept S S r) where
-  compl c := .ofIsExtent r c.intent <| c.upperPolar_extent ▸ Order.isExtent_upperPolar r c.extent
+  compl c :=
+    { extent := c.intent
+      intent := c.extent
+      upperPolar_extent := (Order.upperPolar_eq_lowerPolar r _).trans c.lowerPolar_intent
+      lowerPolar_intent := (Order.upperPolar_eq_lowerPolar r _).symm.trans c.upperPolar_extent }
 
 @[simp] theorem extent_compl [Std.Symm r] (c : Concept S S r) : cᶜ.extent = c.intent := rfl
 
-@[simp] theorem intent_compl [Std.Symm r] (c : Concept S S r) :
-    cᶜ.intent = upperPolar r c.intent := rfl
+@[simp] theorem intent_compl [Std.Symm r] (c : Concept S S r) : cᶜ.intent = c.extent := rfl
 
 /-- A concept of a single-sorted relation is determined by its extent, so concepts
 form a `SetLike` family with `↑c = c.extent`. (No `PartialOrder` diamond: `SetLike`
@@ -140,6 +140,10 @@ variable {r}
 @[simp] theorem coe_compl [Std.Symm r] (c : Concept S S r) :
     ((cᶜ : Concept S S r) : Set S) = upperPolar r c :=
   c.upperPolar_extent.symm
+
+theorem mem_compl_iff [Std.Symm r] {c : Concept S S r} {a : S} : a ∈ cᶜ ↔ ∀ ⦃b⦄, b ∈ c → r b a := by
+  rw [← SetLike.mem_coe, coe_compl]
+  rfl
 
 /-- The join of two concepts is the extent closure of the union of their extents. -/
 @[simp] theorem coe_sup (c d : Concept S S r) :
@@ -187,32 +191,53 @@ theorem _root_.Order.IsExtent.mem_of_mem_ofObject {s : Set S} (hs : IsExtent r s
 end SetLike
 
 /-- For a symmetric relation the orthocomplement is an involution of the concept lattice
-([holliday-mandelkern-2024] Proposition 4.8). -/
+([holliday-mandelkern-2024] Proposition 4.8, where the result is credited to [birkhoff-1940]). -/
 instance instInvolutiveCompl [Std.Symm r] : InvolutiveCompl (Concept S S r) where
-  compl_compl c := Concept.ext <| by simp [Order.upperPolar_eq_lowerPolar]
-  compl_le_compl {c d} h := by
-    show d.intent ⊆ c.intent
-    rw [← c.upperPolar_extent, ← d.upperPolar_extent]; exact upperPolar_anti r h
+  compl_compl _ := Concept.ext rfl
+  compl_le_compl h := intent_subset_intent_iff.2 h
 
 /-- The concepts of a symmetric, irreflexive relation form an orthocomplemented
-lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
+lattice ([holliday-mandelkern-2024] Proposition 4.8, where the result is credited to
+[birkhoff-1940]). The lattice structure
 is mathlib's concept lattice; only the orthocomplement and its axioms are new. -/
 instance instIsOrtholattice [Std.Symm r] [Std.Irrefl r] :
     IsOrtholattice (Concept S S r) where
   inf_compl_le_bot _ := fun x hx ↦ absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
 
-/-! ### Attribute implication -/
+/-! ### Object and attribute concepts of any relation -/
 
 section Implication
 
-variable {α β : Type*} {r : α → β → Prop} {a b : β}
+variable {α β : Type*} {r : α → β → Prop}
+
+/-- The extent of the object concept of `a` is the objects with every attribute of `a`. -/
+theorem mem_extent_ofObject_iff {a a' : α} :
+    a' ∈ (ofObject r a).extent ↔ ∀ ⦃b⦄, r a b → r a' b := by
+  simp [mem_lowerPolar_iff, mem_upperPolar_iff]
+
+/-- The intent of the attribute concept of `b` is the attributes of every object with `b`. -/
+theorem mem_intent_ofAttribute_iff {b b' : β} :
+    b' ∈ (ofAttribute r b).intent ↔ ∀ ⦃a⦄, r a b → r a b' := by
+  simp [mem_lowerPolar_iff, mem_upperPolar_iff]
+
+/-- The object concept of `a` lies below that of `a'` exactly when every attribute of `a'` is
+one of `a`. -/
+theorem ofObject_le_ofObject_iff {a a' : α} :
+    ofObject r a ≤ ofObject r a' ↔ ∀ ⦃b⦄, r a' b → r a b := by
+  rw [ofObjects_le_iff, singleton_subset_iff, mem_extent_ofObject_iff]
 
 /-- The attribute concept of `b` lies below that of `a` exactly when every object with `b`
 has `a`. -/
-theorem ofAttribute_le_ofAttribute_iff :
+theorem ofAttribute_le_ofAttribute_iff {a b : β} :
     ofAttribute r b ≤ ofAttribute r a ↔ ∀ ⦃x⦄, r x b → r x a := by
-  rw [← extent_subset_extent_iff]
-  simp [ofAttribute, ofAttributes, Set.subset_def, mem_lowerPolar_iff]
+  rw [le_ofAttributes_iff, singleton_subset_iff, mem_intent_ofAttribute_iff]
+
+/-- The object concepts follow a preorder on the objects exactly when the objects with each
+attribute form a lower set of it. -/
+theorem monotone_ofObject_iff [Preorder α] :
+    Monotone (ofObject r) ↔ ∀ b, IsLowerSet {a | r a b} := by
+  simp only [Monotone, ofObject_le_ofObject_iff, IsLowerSet, Set.mem_ofPred_eq]
+  exact ⟨fun h _ _ _ hab hb ↦ h hab hb, fun h _ _ hab _ hb ↦ h _ hab hb⟩
 
 /-- The attribute concepts reverse a preorder on the attributes exactly when the attributes of
 every object form a lower set of it. -/
@@ -222,5 +247,62 @@ theorem antitone_ofAttribute_iff [Preorder β] :
   exact ⟨fun h _ _ _ hab hb ↦ h hab hb, fun h _ _ hab _ hb ↦ h _ hab hb⟩
 
 end Implication
+
+/-! ### Restricting the objects -/
+
+section Comap
+
+variable {α α' β : Type*} {r : α → β → Prop} (f : α' → α)
+
+/-- Pulling the concepts of `r` back along a map `f` of objects, to the concepts of the context
+whose objects are those of `f`'s domain: a concept goes to the one with the same attributes. The
+map preserves all meets. -/
+def comap : sInfHom (Concept α β r) (Concept α' β fun a ↦ r (f a)) where
+  toFun c := ofAttributes _ c.intent
+  map_sInf' S := by
+    ext a
+    simp only [extent_ofAttributes, extent_sInf, Set.biInter_image, mem_lowerPolar_iff,
+      Set.mem_iInter₂]
+    rw [← mem_lowerPolar_iff, lowerPolar_intent, extent_sInf, Set.mem_iInter₂]
+    exact forall₂_congr fun c _ ↦ by rw [← c.lowerPolar_intent]; rfl
+
+variable {f}
+
+@[simp] theorem extent_comap (c : Concept α β r) : (comap f c).extent = f ⁻¹' c.extent := by
+  rw [← c.lowerPolar_intent]; rfl
+
+@[simp] theorem comap_ofAttributes (t : Set β) :
+    comap f (ofAttributes r t) = ofAttributes _ t :=
+  ext (by rw [extent_comap]; rfl)
+
+variable (r f) in
+/-- Every concept of the restricted context is the restriction of one of the whole context. -/
+theorem comap_surjective : Function.Surjective (comap (r := r) f) :=
+  fun c ↦ ⟨ofAttributes r c.intent, (comap_ofAttributes _).trans ofAttributes_intent⟩
+
+end Comap
+
+section Generated
+
+variable {α β : Type*} {r : α → β → Prop}
+
+/-- The join of the concepts two sets of objects generate is the concept their union generates. -/
+theorem ofObjects_sup_ofObjects (s s' : Set α) :
+    ofObjects r s ⊔ ofObjects r s' = ofObjects r (s ∪ s') :=
+  ext' (upperPolar_union r s s').symm
+
+/-- The meet of the concepts two sets of attributes generate is the concept their union
+generates. -/
+theorem ofAttributes_inf_ofAttributes (t t' : Set β) :
+    ofAttributes r t ⊓ ofAttributes r t' = ofAttributes r (t ∪ t') :=
+  ext (lowerPolar_union r t t').symm
+
+/-- Adding an attribute to a description leaves its concept unchanged exactly when the
+description implies the attribute. -/
+theorem ofAttributes_pair_eq_left_iff {b b' : β} :
+    ofAttributes r {b, b'} = ofAttribute r b ↔ ofAttribute r b ≤ ofAttribute r b' := by
+  rw [← Set.singleton_union, ← ofAttributes_inf_ofAttributes, inf_eq_left]
+
+end Generated
 
 end Concept

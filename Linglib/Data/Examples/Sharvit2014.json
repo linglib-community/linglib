@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -53,7 +53,7 @@
     "translation": "Taro phoned before (he) met Hanako",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -76,7 +76,7 @@
     "translation": "Taro phoned before (he) meets Hanako",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -99,7 +99,7 @@
     "translation": "Ania came to the party before Marcin came",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -122,7 +122,7 @@
     "translation": "Ania came to the party before Marcin comes",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -142,7 +142,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "back-shifted", "judgment": "acceptable"}
@@ -168,7 +168,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -193,7 +193,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "back-shifted", "judgment": "acceptable"}
@@ -219,7 +219,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -244,7 +244,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "back-shifted", "judgment": "acceptable"}
@@ -267,7 +267,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "double access", "judgment": "acceptable"}
@@ -290,7 +290,7 @@
     "translation": "",
     "context": "John's leaving and Sally's arrival are independent of each other.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -311,7 +311,7 @@
     "translation": "",
     "context": "John's leaving and Sally's arrival are independent of each other.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -341,7 +341,7 @@
     "translation": "Mary is scheduled to arrive tomorrow; so it is true that John departed before Mary's arrival",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"],
@@ -365,7 +365,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "O Janis efige prin na efige i Maria.", "judgment": "ungrammatical"},
       {"form": "O Janis efige prin efevge i Maria.", "judgment": "ungrammatical"},
       {"form": "O Janis efige prin na efevge i Maria.", "judgment": "ungrammatical"}
@@ -393,7 +393,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],

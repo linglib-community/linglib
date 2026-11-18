@@ -24,7 +24,7 @@ def die_p1 : Datum :=
     glossedTokens := []
     context := "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "8/12")] }
 
@@ -37,7 +37,7 @@ def die_p2 : Datum :=
     glossedTokens := []
     context := "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "8/12")] }
 
@@ -50,7 +50,7 @@ def die_c : Datum :=
     glossedTokens := []
     context := "A fair twelve-sided die, with the sides numbered one to twelve, has been rolled."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "4/12")] }
 
@@ -63,7 +63,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := "A fair coin has been biased with a thin piece of tape, so that it is just slightly more likely to land heads than tails, and flipped."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("reading", "appreciably more likely than not"), ("felicity", "infelicitous")] }
 
@@ -76,7 +76,7 @@ def ex9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("probably > everyone", .acceptable), ("everyone > probably", .unacceptable)]
     paperFeatures := [("section", "7"), ("principle", "epistemic containment")] }
 
@@ -89,7 +89,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8"), ("embedding", "imagine")] }
 
@@ -102,7 +102,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8"), ("embedding", "imagine")] }
 
@@ -115,7 +115,7 @@ def ex19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "modal concord")] }
 

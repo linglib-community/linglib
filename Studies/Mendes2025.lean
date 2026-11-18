@@ -35,7 +35,7 @@ namespace Mendes2025
 
 open scoped Denotes
 
-open HistoricalAlternatives DynamicSemantics Update SetRel Kaplan
+open HistoricalAlternatives DynamicSemantics Update SetRel AntidomainMonoid
 open RegisterStructure
 
 variable {W T : Type*}
@@ -74,7 +74,7 @@ variable [LinearOrder T] (history : HistoricalAlternatives W T)
 
 /-- A temporal morpheme `λ𝒫.λs.λs'.[ | τ(s) ⋈ τ(s')]; 𝒫(s)` tests that the running times of `s`
 and `s'` compare within the cell, then runs the radical at `s`. -/
-def temporal (cell : Finset Ordering) (P : Radical W T) (s s' : Sit W T) :
+def temporal (cell : PointAlgebra) (P : Radical W T) (s s' : Sit W T) :
     Update (State W T) :=
   test {i | compare (s i).time (s' i).time ∈ cell} ○ P s
 
@@ -94,7 +94,7 @@ def subj (s₁ : ℕ) (s₀ : Sit W T) (ℙ : Tensed W T) : Update (State W T) :
 
 /-! ### Unpacking the entries -/
 
-variable {cell : Finset Ordering} {P : Index W T → Prop} {s₁ : ℕ}
+variable {cell : PointAlgebra} {P : Index W T → Prop} {s₁ : ℕ}
 
 theorem temporal_radical_apply :
     i ~[temporal cell (radical P) s s'] o ↔
@@ -108,7 +108,7 @@ theorem subj_apply :
     i ~[subj history s₁ s ℙ] o ↔
       ∃ e, e ∈ historicalBase history (s (Function.update i s₁ e)) ∧
         Function.update i s₁ e ~[ℙ (val s₁) s] o := by
-  simp only [subj, box_singleton, dexists, mem_comp, mem_randomAssign, mem_test]
+  simp only [subj, box_singleton, mem_comp, mem_randomAssign, mem_test]
   constructor
   · rintro ⟨_, ⟨_, ⟨e, rfl⟩, rfl, he⟩, hℙ⟩
     exact ⟨e, by simpa using he, hℙ⟩
@@ -128,9 +128,9 @@ variable (A C : Index W T → Prop)
 /-- A subordinate clause carrying the Subordinate Future and a main clause with the tense `cell`
 form a dynamic implication, as in the conditional and the relative-clause quantification of the
 paper's derivations. -/
-def sfForm (cell : Finset Ordering) : Update (State W T) :=
-  test (impl (subj history 1 (val 0) (fut (radical A)))
-    (ind (val 2) (val 1) (temporal cell (radical C))))
+def sfForm (cell : PointAlgebra) : Update (State W T) :=
+  dimp (subj history 1 (val 0) (fut (radical A)))
+    (ind (val 2) (val 1) (temporal cell (radical C)))
 
 /-- *If Ivan leaves the room smiling, the interview went well* has the Subordinate Future in the
 antecedent and the past in the consequent. -/
@@ -149,9 +149,9 @@ theorem sfForm_true_at :
     i ∈ (sfForm history A C cell).dom ↔
       ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → A e →
         (i 2).world = e.world ∧ compare (i 2).time e.time ∈ cell ∧ C (i 2) := by
-  rw [sfForm, dom_test]
-  simp only [mem_impl, subj_apply, temporal_radical_apply, ind_apply, RegisterStructure.val_apply,
-    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, exists_and_left, exists_eq_left']
+  rw [sfForm, dimp_eq, dom_test]
+  simp only [mem_core, mem_dom, subj_apply, temporal_radical_apply, ind_apply,
+    RegisterStructure.val_apply, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, exists_and_left, exists_eq_left']
   simp
 
 theorem conditional_true_at (leaves wentWell : Index W T → Prop) :

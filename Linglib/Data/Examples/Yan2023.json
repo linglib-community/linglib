@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Nicholas is not willing to pay the 3,000 dollars he believes a trip would cost.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Asher"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "As in (1b).",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Asher"],
@@ -51,7 +51,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Heim"],
@@ -71,7 +71,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Heim"],
@@ -91,7 +91,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
@@ -111,7 +111,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
@@ -131,7 +131,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John is ok with a Ferrari and he is ok with a Porsche", "judgment": "acceptable"}
     ],
@@ -152,7 +152,7 @@
     "translation": "",
     "context": "John wants to send the letter.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
@@ -172,7 +172,7 @@
     "translation": "",
     "context": "John wants to send the letter.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
@@ -192,7 +192,7 @@
     "translation": "",
     "context": "Nicholas wants a free trip on the Concorde.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Asher"],
@@ -212,7 +212,7 @@
     "translation": "",
     "context": "Nicholas wants a free trip on the Concorde.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Asher"],
@@ -232,7 +232,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidence", "monotonicity"],
@@ -252,7 +252,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidence", "monotonicity"],
@@ -273,7 +273,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Ross"],
@@ -293,7 +293,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Heim"],
@@ -313,7 +313,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Good Samaritan under desire"],
@@ -333,7 +333,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["puzzle", "Good Samaritan under desire"],

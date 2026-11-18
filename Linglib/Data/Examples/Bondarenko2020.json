@@ -13,7 +13,7 @@
     "translation": "Dugar thought that a cat ate the fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Dugar mi:sgɘi zagaha ɘdi-xɘ gɘžɘ han-a:", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -39,7 +39,7 @@
     "translation": "Dugar thought that a cat ate the fish, but a cat didn't eat the fish.",
     "context": "The fish was missing. Dugar was wrong about who ate it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "CP"],
@@ -62,7 +62,7 @@
     "translation": "Dugar remembered a cat's eating the fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -86,7 +86,7 @@
     "translation": "Dugar remembered a cat's eating the fish, but a cat didn't eat the fish.",
     "context": "The fish was missing. Dugar is wrong about who ate it.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -111,7 +111,7 @@
     "translation": "I don't know whether Badma broke the cart, but Sajana remembered that Badma broke the cart.",
     "context": "The speaker is ignorant about the issue, but wants to report Sajana's opinion/memory.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -136,7 +136,7 @@
     "translation": "I don't know whether Badma broke the cart, but Sajana thought that Badma broke the cart.",
     "context": "The speaker is ignorant about the issue, but wants to report Sajana's opinion/memory.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "CP"],
@@ -164,7 +164,7 @@
     "translation": "On Tuesday Sajana remembered Badma's breaking the cart. Badma began to break the cart on Monday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -192,7 +192,7 @@
     "translation": "On Tuesday Sajana remembered Badma's breaking the cart. Badma began to break the cart on Wednesday.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -215,7 +215,7 @@
     "translation": "Seseg remembered her future child.",
     "context": "Currently Seseg has a child. The speaker is talking about some time 7 years ago. 7 years ago, Seseg was pregnant with a baby, she has seen her/him during an ultrasound.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["argument", "noun phrase"],
@@ -238,7 +238,7 @@
     "translation": "Seseg remembered her future child.",
     "context": "Currently Seseg has a child. The speaker is talking about some time 7 years ago. 7 years ago, Seseg was not pregnant. But she really wanted a baby and was planning to have one.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["argument", "noun phrase"],
@@ -261,7 +261,7 @@
     "translation": "Badma is remembering an eight-headed cat.",
     "context": "Children at school are asked to imagine a magical animal that does not exist and draw it.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["argument", "noun phrase"],
@@ -284,7 +284,7 @@
     "translation": "Badma thought of an eight-headed cat.",
     "context": "Children at school are asked to imagine a magical animal that does not exist and draw it.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "came into head"]
@@ -306,7 +306,7 @@
     "translation": "Seseg is thinking about her future child.",
     "context": "Seseg is not pregnant.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["argument", "tuxai phrase"],
@@ -329,7 +329,7 @@
     "translation": "Badma is thinking about an eight-headed cat.",
     "context": "Badma is imagining a non-existing magical animal.",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["argument", "tuxai phrase"],
@@ -351,7 +351,7 @@
     "translation": "Sajana remembered Badma.",
     "context": "Badma is currently alive.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["argument", "noun phrase"]
@@ -375,7 +375,7 @@
     "translation": "I don't know whether Badma broke the cart or not. Does Sajana think/remember that Badma broke the cart?",
     "context": "The speaker is ignorant about whether Badma broke the cart or not, and is wondering whether Sajana might have thoughts on the matter.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -399,7 +399,7 @@
     "translation": "Sajana didn't think/remember that Badma broke the cart, (and) Badma didn't break the cart.",
     "context": "The speaker wants to convey that Sajana's thoughts are consistent with reality.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -424,7 +424,7 @@
     "translation": "Darima thinks that a thief entered the house, but it was her brother coming back from Kurumkan.",
     "context": "Darima recalled a situation that happened recently. She heard some unexpected noise in the back yard while she was alone at home. She was afraid to look who it was. Now she is convinced that it was a thief entering the house, but I know for a fact that it was just her brother coming home earlier than expected from Kurumkan.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "CP"],
@@ -449,7 +449,7 @@
     "translation": "Darima thinks that a thief entered the house, but it was her brother coming back from Kurumkan.",
     "context": "Darima recalled a situation that happened recently. She heard some unexpected noise in the back yard while she was alone at home. She was afraid to look who it was. Now she is convinced that it was a thief entering the house, but I know for a fact that it was just her brother coming home earlier than expected from Kurumkan.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "NMN"],
@@ -473,7 +473,7 @@
     "translation": "Dugar remembered (the claim) that the cat ate the fish, but the cat didn't eat the fish.",
     "context": "The cat didn't eat the fish, but someone made a false claim that it did.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "nominalized CP"],
@@ -498,7 +498,7 @@
     "translation": "Noone has ever thought that the cat ate the fish, (but) Dugar remembered (the claim) that the cat ate the fish.",
     "context": "Dugar was the first person to think that the cat ate the fish.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["complement", "nominalized CP"],

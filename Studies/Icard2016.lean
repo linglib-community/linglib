@@ -4,7 +4,7 @@ public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Logic.ComparativeProbability.Completeness
 public import Studies.HollidayIcard2013
 public import Linglib.Core.MeasureTheory.Measure.Dirac
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 public import Mathlib.Data.Fintype.Pi
@@ -267,7 +267,7 @@ open scoped Classical in
 private theorem sum_mu_ite (A : Set Ω) (a b : ℝ) :
     ∑ ω, P.real {ω} * (if ω ∈ A then a else b) = P.real A * a + (1 - P.real A) * b := by
   classical
-  have h1 : ∑ ω, P.real {ω} = 1 := sum_measureReal_singleton_eq_one P
+  have h1 : ∑ ω, P.real {ω} = 1 := by simp
   have h2 : ∑ ω, (if ω ∈ A then P.real {ω} else 0) = P.real A := by
     rw [← Finset.sum_filter, sum_measureReal_singleton]
     congr 1
@@ -294,7 +294,7 @@ theorem sum_mu_utility (c : ℝ) (φ : Act ι) :
       rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun ω _ ↦ by ring]
     rw [sum_mu_ite]
     rfl
-  · rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+  · rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
 
 theorem expectedUtility_eq_sum_sideValue (c : ℝ) (μ : Measure (Act ι)) [IsFiniteMeasure μ] :
     expectedPayoff (J.utility s c) P μ =
@@ -392,7 +392,7 @@ theorem expectedUtility_le_of_represents (hP : J.Represents P) (hX : J.strict.No
         · rw [ite_eq_right hφ, sub_zero]
           linarith [J.pureValue_le_of_not_preferred s P hP hX hφ]
     _ = J.preferredValue s P - c := by
-        rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+        rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
 
 theorem expectedUtility_uniformPreferred_of_represents (hP : J.Represents P) (c : ℝ) :
     expectedPayoff (J.utility s c) P J.uniformPreferred = J.preferredValue s P - c := by

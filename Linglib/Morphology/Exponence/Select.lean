@@ -118,6 +118,20 @@ theorem realize_congr (h : v.applicable c = v.applicable c') :
     v.realize f c = v.realize f c' :=
   congrArg (Option.map exponent) (selectBy_congr h)
 
+/-- A rule set sensitive only to what `A` sees selects the same rule by score in contexts that `A`
+identifies. -/
+theorem selectBy_factorsThrough {V : Type*} {A : Ctx → V}
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    (v.selectBy f).FactorsThrough A :=
+  fun _ _ hA ↦ selectBy_congr <| List.filter_congr fun r hr ↦ by simp [h r hr hA]
+
+/-- A rule set sensitive only to what `A` sees realizes the same exponent by score in contexts
+that `A` identifies. -/
+theorem realize_factorsThrough {V : Type*} {A : Ctx → V}
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    (v.realize f).FactorsThrough A :=
+  fun _ _ hA ↦ congrArg (Option.map exponent) (selectBy_factorsThrough h hA)
+
 theorem le_of_selectBy_eq_some (h : v.selectBy f c = some r) (hs : s ∈ v) (hsc : Applies s c) :
     f s ≤ f r :=
   List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h

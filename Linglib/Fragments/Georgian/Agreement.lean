@@ -45,6 +45,9 @@ as *c'on* 'like', have the third in every series.
   exactly in the transitive and medial classes.
 * `Georgian.subject_affixes_eq_A_iff`, `Georgian.directObject_affixes_eq_A_iff`: Set A marks the
   subject unless it is dative, and the direct object exactly when the subject is dative.
+* `Georgian.nom_marker`, `Georgian.dat_marker`: by [haspelmath-2022]'s definitions the nominative
+  is a nominative marker in the first series and an absolutive marker in the others, and the
+  dative an accusative marker in the first series and an ergative marker in the third.
 
 ## Implementation notes
 
@@ -57,6 +60,7 @@ stative verbs, which pattern with the intransitives.
 
 * [hewitt-1995]
 * [harris-1981]
+* [haspelmath-2022]
 -/
 
 @[expose] public section
@@ -210,5 +214,53 @@ theorem subject_affixes_eq_A_iff (v : VerbClass) (s : Series) :
 theorem directObject_affixes_eq_A_iff (v : VerbClass) (s : Series) :
     (pattern v s).directObject.affixes = some .A ↔ (pattern v s).subject.case = .dat := by
   cases v <;> cases s <;> decide
+
+/-! ### The marking of the core arguments -/
+
+/-- The case of each argument role in a series ([hewitt-1995] pp. 549–550): S is the subject of
+an intransitive verb, A and P the subject and the direct object of a transitive one, the theme of
+a ditransitive with P, and R its indirect object. Hewitt calls the first series
+nominative-accusative and the second ergative-absolutive, its nominative a
+nominative(-absolutive) (p. 145). -/
+def marking (s : Series) : ArgumentRole → Case
+  | .S => (pattern .intransitive s).subject.case
+  | .A => (pattern .transitive s).subject.case
+  | .P | .T => (pattern .transitive s).directObject.case
+  | .R => (pattern .transitive s).indirectObject.case
+
+theorem isAccusative_marking_present : Alignment.IsAccusative (marking .present) := by decide
+
+theorem isErgative_marking_aorist : Alignment.IsErgative (marking .aorist) := by decide
+
+theorem isErgative_marking_perfect : Alignment.IsErgative (marking .perfect) := by decide
+
+/-- The case called nominative is a nominative marker in the first series and an absolutive
+marker in the second and third. -/
+theorem nom_marker :
+    Alignment.IsNominativeMarker (marking .present ⁻¹' {.nom}) ∧
+      Alignment.IsAbsolutiveMarker (marking .aorist ⁻¹' {.nom}) ∧
+      Alignment.IsAbsolutiveMarker (marking .perfect ⁻¹' {.nom}) :=
+  ⟨Alignment.isAccusative_iff_isNominativeMarker.1 isAccusative_marking_present,
+    Alignment.isErgative_iff_isAbsolutiveMarker.1 isErgative_marking_aorist,
+    Alignment.isErgative_iff_isAbsolutiveMarker.1 isErgative_marking_perfect⟩
+
+/-- The dative is an accusative marker in the first series and an ergative marker in the
+third. -/
+theorem dat_marker :
+    Alignment.IsAccusativeMarker (marking .present ⁻¹' {.dat}) ∧
+      Alignment.IsErgativeMarker (marking .perfect ⁻¹' {.dat}) :=
+  ⟨isAccusative_marking_present.isAccusativeMarker, isErgative_marking_perfect.isErgativeMarker⟩
+
+/-- The sole argument of a medial verb is ergative in the second series, with A and unlike
+S. -/
+theorem medial_subject_aorist :
+    (pattern .medial .aorist).subject.case = marking .aorist .A ∧
+      (pattern .medial .aorist).subject.case ≠ marking .aorist .S := by
+  decide
+
+/-- The core roles among the functions of a case are those it marks in some series. -/
+theorem argument_mem_functions_iff (c : Case) :
+    ∀ r ∈ ArgumentRole.core, .argument r ∈ c.functions ↔ ∃ s, marking s r = c := by
+  cases c <;> decide
 
 end Georgian

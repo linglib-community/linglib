@@ -232,10 +232,10 @@ def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
 /-- The determiner condition `DET{u, u'}` ((76)): the static determiner `q` relates the values of
 `u` and `u'`. -/
 def det (q : Quantifier.Det E) (u u' : R) : Condition (Set S) :=
-  {I | q (· ∈ value u I) (· ∈ value u' I)}
+  {I | q (value u I) (value u' I)}
 
 @[simp] theorem mem_det {q : Quantifier.Det E} :
-    I ∈ det q u u' ↔ q (· ∈ value u I) (· ∈ value u' I) :=
+    I ∈ det q u u' ↔ q (value u I) (value u' I) :=
   Iff.rfl
 
 /-! ### Preservation -/
@@ -651,7 +651,7 @@ private theorem nonDummy_eq_empty_of_distribOrId {C : Condition (Set S)}
 (77) can be replaced by `_·` (p. 470) when the static determiner is false of an empty nuclear scope,
 as `EVERY` is. -/
 theorem mem_determiner_iff {q : Quantifier.Det E} {P P' : R → Update (Set S)}
-    (hq : ∀ A : Set E, A.Nonempty → ¬q (· ∈ A) (· ∈ (∅ : Set E))) (huu' : u ≠ u')
+    (hq : ∀ A : Set E, A.Nonempty → ¬q A ∅) (huu' : u ≠ u')
     (hI : ∃ K, I ~[intro u ○ distrib u (P u)] K) :
     I ~[determiner q u u' P P'] J ↔
       I ~[max u (distrib u (P u)) ○ maxSub u' u (distrib u' (P' u')) ○ test (det q u u')] J := by

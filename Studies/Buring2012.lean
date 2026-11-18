@@ -31,57 +31,54 @@ namespace Buring2012
 open English.Pronouns
 
 variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g : ℕ → E)
-  (n : ℕ) (c : Kaplan.Context PUnit E P T) (scope : E → PUnit → Prop)
+  (n : ℕ) (c : SpeechAct.Context PUnit E P T)
 
-/-- A pronoun denotes the value of its index under the assignment. Its selector is the canonical
-variable lookup, the same one for the bound, anaphoric and deictic uses. -/
-theorem selector_eq_assignment :
-    (e.denote n c).selector g ⟨⟩
-      = some (g n) := rfl
+/-- A pronoun denotes the value of its index under the assignment, by the same variable lookup
+for the bound, anaphoric and deictic uses. -/
+theorem eq_assignment_of_mem {x : E} (h : x ∈ e.denote n c g ⟨⟩) : x = g n :=
+  (PersonalPronoun.mem_denote e n c |>.1 h).2.symm
 
-/-- A feminine pronoun is undefined of a referent gendered masculine. The feature does not assert
-the referent's gender but presupposes it, so the denotation has no value at all when it fails. -/
-theorem undefined_of_masculine (hfem : e.gender = some .Fem) (h : g n ∈ Gendered.masculine) :
-    (e.denote n c).toTrivalent scope g ⟨⟩ = .undefined := by
+/-- A feminine pronoun denotes nothing at a referent gendered masculine. The feature does not
+assert the referent's gender but presupposes it, so the pronoun has no value at all when it
+fails. -/
+theorem not_dom_of_masculine (hfem : e.gender = some .Fem) (h : g n ∈ Gendered.masculine) :
+    ¬ (e.denote n c g ⟨⟩).Dom := by
   simp [hfem, h]
 
-theorem she_undefined_of_masculine (h : g n ∈ Gendered.masculine) :
-    (she.denote n c).toTrivalent scope g ⟨⟩ = .undefined :=
-  undefined_of_masculine she g n c scope rfl h
+theorem she_not_dom_of_masculine (h : g n ∈ Gendered.masculine) :
+    ¬ (she.denote n c g ⟨⟩).Dom :=
+  not_dom_of_masculine she g n c rfl h
 
-/-- A first-person pronoun is undefined of a referent that does not include the agent. -/
-theorem undefined_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
-    (e.denote n c).toTrivalent scope g ⟨⟩ = .undefined := by
+/-- A first-person pronoun denotes nothing at a referent that does not include the agent. -/
+theorem not_dom_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
+    ¬ (e.denote n c g ⟨⟩).Dom := by
   simp [hp, h]
 
-theorem i_undefined_of_not_agent (h : ¬ c.agent ≤ g n) :
-    (i.denote n c).toTrivalent scope g ⟨⟩ = .undefined :=
-  undefined_of_not_agent i g n c scope (by decide) h
+theorem i_not_dom_of_not_agent (h : ¬ c.agent ≤ g n) : ¬ (i.denote n c g ⟨⟩).Dom :=
+  not_dom_of_not_agent i g n c (by decide) h
 
 /-- An entry carrying only unmarked values — third person, plural, no gender — restricts the
-referent to nothing, so it is defined wherever any pronoun is. Unmarked values are the absence of
+referent to nothing, so it denotes wherever any pronoun does. Unmarked values are the absence of
 a feature rather than a feature of their own, which is why the underspecified form can be used to
 avoid a gender specification. -/
-theorem defined_of_unmarked_features (hp : e.referentialPerson = some .third)
+theorem mem_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
-    (e.denote n c).toTrivalent scope g ⟨⟩ ≠ .undefined := by
+    g n ∈ e.denote n c g ⟨⟩ := by
   simp [hp, hn, hg]
 
-theorem they_defined_regardless_of_gender :
-    (they.denote n c).toTrivalent scope g ⟨⟩ ≠ .undefined :=
-  defined_of_unmarked_features they g n c scope (by decide) (by decide) rfl
+theorem they_mem_regardless_of_gender : g n ∈ they.denote n c g ⟨⟩ :=
+  mem_of_unmarked_features they g n c (by decide) (by decide) rfl
 
 /-- The two entries come apart exactly at the referents the gender feature excludes, where *she*
 has no value and *they* has one. -/
-theorem they_defined_where_she_undefined (h : g n ∈ Gendered.masculine) :
-    (she.denote n c).toTrivalent scope g ⟨⟩ = .undefined ∧ (they.denote n c).toTrivalent scope g ⟨⟩ ≠ .undefined :=
-  ⟨she_undefined_of_masculine g n c scope h,
-    they_defined_regardless_of_gender g n c scope⟩
+theorem they_mem_where_she_not_dom (h : g n ∈ Gendered.masculine) :
+    ¬ (she.denote n c g ⟨⟩).Dom ∧ g n ∈ they.denote n c g ⟨⟩ :=
+  ⟨she_not_dom_of_masculine g n c h, they_mem_regardless_of_gender g n c⟩
 
 /-- Binding leaves the pronoun alone. The binding operator updates the assignment at the pronoun's
 index, and the unchanged denotation then returns the binder. There is no bound-pronoun lexeme. -/
-theorem bound_reading (b : E) :
-    (e.denote n c).selector (Function.update g n b) ⟨⟩ = some b := by
-  simp
+theorem bound_reading (b : E) {x : E} (h : x ∈ e.denote n c (Function.update g n b) ⟨⟩) :
+    x = b := by
+  simpa using eq_assignment_of_mem e (Function.update g n b) n c h
 
 end Buring2012

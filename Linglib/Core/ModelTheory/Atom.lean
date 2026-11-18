@@ -16,7 +16,9 @@ its canonical structure, in which a relation holds of exactly the tuples its ato
 assignments realizing a set of atoms in a structure are the homomorphisms out of its canonical
 structure, so one set of atoms entails another along a map of variables in every structure
 exactly when the map carries the atoms of the second into the first. This is Chandra and Merlin's
-theorem on the containment of conjunctive queries.
+theorem on the containment of conjunctive queries. In the other direction a structure has a
+positive diagram, the atoms true of its elements, and the assignments realizing it are the
+homomorphisms out of the structure.
 
 ## Main definitions
 
@@ -24,11 +26,14 @@ theorem on the containment of conjunctive queries.
   atomic formulas by `Atom.toFormula`.
 * `FirstOrder.Language.Atom.realizers`: the assignments realizing a set of atoms.
 * `FirstOrder.Language.Atom.Canonical`: the structure a set of atoms presents on its variables.
+* `FirstOrder.Language.Atom.diagram`: the positive diagram of a structure.
 
 ## Main statements
 
 * `FirstOrder.Language.Atom.Canonical.homEquiv`: the homomorphisms out of the canonical structure
   are the realizing assignments.
+* `FirstOrder.Language.Atom.diagramHomEquiv`: the homomorphisms out of a structure are the
+  assignments realizing its diagram.
 * `FirstOrder.Language.Atom.forall_realizers_subset_preimage_iff`: entailment along a map in every
   structure is inclusion of the renamed atoms.
 
@@ -130,6 +135,27 @@ theorem mem_realizers_smul {σ : Equiv.Perm α} : v ∈ realizers M (σ • T) �
 theorem comp_mem_realizers {N : Type*} [L.Structure N] (φ : M →[L] N) (hv : v ∈ realizers M T) :
     φ ∘ v ∈ realizers N T :=
   mem_realizers.2 fun a ha ↦ φ.map_rel a.rel _ (mem_realizers.1 hv a ha)
+
+variable (M) in
+/-- The positive diagram of a structure: the atoms true of its elements. -/
+def diagram : Set (L.Atom M) := {a | a.Realize id}
+
+@[simp] theorem mem_diagram {a : L.Atom M} : a ∈ diagram M ↔ a.Realize id := .rfl
+
+/-- The homomorphisms out of a relational structure are the assignments realizing its positive
+diagram. -/
+def diagramHomEquiv [L.IsRelational] {N : Type*} [L.Structure N] :
+    (M →[L] N) ≃ realizers N (diagram M : Set (L.Atom M)) where
+  toFun φ := ⟨φ, fun a h ↦ φ.map_rel a.rel _ h⟩
+  invFun v := ⟨v.1, fun f ↦ isEmptyElim f, fun r x h ↦ v.2 (a := ⟨r, x⟩) h⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+@[simp] theorem coe_diagramHomEquiv [L.IsRelational] {N : Type*} [L.Structure N] (φ : M →[L] N) :
+    (diagramHomEquiv φ : M → N) = φ := rfl
+
+@[simp] theorem coe_diagramHomEquiv_symm [L.IsRelational] {N : Type*} [L.Structure N]
+    (v : realizers N (diagram M : Set (L.Atom M))) : ⇑(diagramHomEquiv.symm v) = v := rfl
 
 /-- The structure a set of atoms presents on its variables. -/
 def Canonical (_ : Set (L.Atom α)) : Type w := α

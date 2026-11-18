@@ -170,7 +170,7 @@ theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
     fromSetoid r₁ ≤ fromSetoid r₂ :=
   (fromSetoid_le_iff r₁ r₂).mpr h
 
-/-! ### Polar questions and decided propositions -/
+/-! ### Polar questions and determined propositions -/
 
 /-- The partition issue of the polar question whether `p` is the inquisitive polar
 question. -/
@@ -191,9 +191,31 @@ theorem fromSetoid_polar (p : Set W) : fromSetoid (Setoid.polar p) = polar p := 
       · exact Or.inl rfl
       · exact Or.inr ⟨_, ⟨y, rfl⟩, λ x hx => Setoid.polar_iff.2 (iff_of_false (h hx) (h hy))⟩
 
-theorem decides_iff_fromSetoid_le (r : Setoid W) (p : Set W) :
-    r.Decides p ↔ fromSetoid r ≤ polar p := by
+theorem determines_iff_fromSetoid_le (r : Setoid W) (p : Set W) :
+    r.Determines p ↔ fromSetoid r ≤ polar p := by
   rw [← fromSetoid_polar, fromSetoid_le_iff]; rfl
+
+/-- A partition determines `p` on `c` exactly when its issue entails the polar question whether
+`p` relative to `c`. -/
+theorem determinesOn_iff_fromSetoid_le_relativeTo (r : Setoid W) (p c : Set W) :
+    r.DeterminesOn p c ↔ fromSetoid r ≤ (polar p).relativeTo c := by
+  rw [le_def]
+  refine ⟨fun h s hs ↦ ?_, fun h w hw v hv hwv ↦ ?_⟩
+  · rw [mem_props, mem_fromSetoid] at hs
+    rw [mem_props, mem_relativeTo, mem_polar]
+    by_cases hp : ∃ x ∈ c ∩ s, x ∈ p
+    · obtain ⟨x, hx, hpx⟩ := hp
+      exact Or.inl fun y hy ↦ (h hx.1 hy.1 (hs x hx.2 y hy.2)).1 hpx
+    · exact Or.inr fun y hy hpy ↦ hp ⟨y, hy, hpy⟩
+  · have hs : ({w, v} : Set W) ∈ fromSetoid r := by
+      rw [mem_fromSetoid]
+      rintro x (rfl | rfl) y (rfl | rfl)
+      exacts [r.refl' _, hwv, r.symm' hwv, r.refl' _]
+    have := h hs
+    rw [mem_props, mem_relativeTo, mem_polar] at this
+    rcases this with hsub | hsub
+    · exact iff_of_true (hsub ⟨hw, Or.inl rfl⟩) (hsub ⟨hv, Or.inr rfl⟩)
+    · exact iff_of_false (hsub ⟨hw, Or.inl rfl⟩) (hsub ⟨hv, Or.inr rfl⟩)
 
 /-! ### `IsPartition` predicate -/
 

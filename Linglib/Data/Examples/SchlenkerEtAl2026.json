@@ -9,7 +9,7 @@
     "translation": "My house has a pole that cars sometimes hit. Yesterday, Ann was drunk, and she nearly hit my pole on her right while driving.",
     "context": "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -31,7 +31,7 @@
     "translation": "My house has a pole that cars sometimes hit. Yesterday, Ann was drunk, and she nearly hit my pole on her left while driving.",
     "context": "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -53,7 +53,7 @@
     "translation": "Yesterday, I saw my house, and nearby Ann, who was drunk. She drove toward my house and took a left, nearly missing my house on her right.",
     "context": "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -75,7 +75,7 @@
     "translation": "Yesterday, I saw my house, and nearby Ann, who was drunk. She drove toward my house and took a left, nearly missing my house on her right.",
     "context": "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "67"],
@@ -97,7 +97,7 @@
     "translation": "Yesterday, I saw my house, and nearby Ann, who was drunk. She drove toward my house and took a left, nearly missing the corner of my house on her right.",
     "context": "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -119,7 +119,7 @@
     "translation": "Yesterday, I saw my house, and nearby Ann, who was drunk. She drove toward my house and took a left, nearly missing my house on her left.",
     "context": "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "60"],
@@ -141,7 +141,7 @@
     "translation": "Yesterday, I saw my house, and nearby Ann, who was drunk. She drove toward my house and took a left, nearly missing my house on her left.",
     "context": "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "63"],
@@ -163,7 +163,7 @@
     "translation": "Yesterday, I saw my house, and nearby Ann, who was drunk. She drove toward my house and took a left, nearly missing the corner of my house on her left.",
     "context": "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "63"],
@@ -185,7 +185,7 @@
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She jogged, passing the tree on her left.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -208,7 +208,7 @@
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She ran toward the tree, passing it on her left.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "63"],
@@ -231,7 +231,7 @@
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She hurried toward the tree, passing it on her left.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "50"],
@@ -255,7 +255,7 @@
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She jogged, passing the tree on her right.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "63"],
@@ -278,7 +278,7 @@
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She ran toward the tree, passing it on her right.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "53"],
@@ -301,7 +301,7 @@
     "translation": "Yesterday, I saw a tree. Ann was standing farther away. She hurried toward the tree, passing it on her right.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "50"],
@@ -324,7 +324,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She jogged toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "63"],
@@ -346,7 +346,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "57"],
@@ -368,7 +368,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "63"],
@@ -391,7 +391,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "53"],
@@ -414,7 +414,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "57"],
@@ -436,7 +436,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "60"],
@@ -459,7 +459,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "53"],
@@ -482,7 +482,7 @@
     "translation": "My house has a pole that cars sometimes hit. Yesterday, Ann was drunk, and she nearly hit the pole on her right while driving.",
     "context": "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -504,7 +504,7 @@
     "translation": "My house has a pole that cars sometimes hit. Yesterday, Ann was drunk, and she nearly hit the pole on her left while driving.",
     "context": "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -526,7 +526,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She jogged toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -549,7 +549,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "57"],
@@ -571,7 +571,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -594,7 +594,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She ran toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "67"],
@@ -617,7 +617,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "53"],
@@ -639,7 +639,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "67"],
@@ -662,7 +662,7 @@
     "translation": "Yesterday, I saw a tree I had planted myself. Ann was drunk. She hurried toward the tree and hit her head against it.",
     "context": "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "60"],
@@ -685,7 +685,7 @@
     "translation": "Yesterday, I saw Ann; she had to run away from the police. She passed several trees.",
     "context": "YESTERDAY ANN IX-b WOW ESCAPE POLICE. FOREST AREA-a IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -707,7 +707,7 @@
     "translation": "Yesterday, I saw Ann; she had to run away from the police. She passed several trees.",
     "context": "YESTERDAY ANN IX-b WOW ESCAPE POLICE. FOREST AREA-a IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "67"],
@@ -729,7 +729,7 @@
     "translation": "Yesterday, Ann took part in a car race. She had to drive past telephone poles. She passed several poles.",
     "context": "YESTERDAY ANN(-b) CAR RACE. IX-b MUST DRIVE PAST TELEPHONE POLE POLE-cl POLE-cl. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "70"],
@@ -751,7 +751,7 @@
     "translation": "Yesterday, Ann took part in a car race. She had to drive past telephone poles. She passed several poles.",
     "context": "YESTERDAY ANN(-b) CAR RACE. IX-b MUST DRIVE PAST TELEPHONE POLE POLE-cl POLE-cl. IX-b",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["score", "67"],

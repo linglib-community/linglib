@@ -1,0 +1,804 @@
+{
+  "features": [
+    {
+      "key": "determiner",
+      "lean": "determiners",
+      "type": "Determiner",
+      "doc": "The determiners, cardinals and quantifiers of the nominal, the definite article apart.",
+      "multiple": true,
+      "levels": [
+        {
+          "name": "much",
+          "label": "much",
+          "doc": "(40a)"
+        },
+        {
+          "name": "two",
+          "label": "two",
+          "doc": "a cardinal other than one (40d)"
+        },
+        {
+          "name": "three",
+          "label": "three",
+          "doc": "a cardinal other than one (40d)"
+        },
+        {
+          "name": "zero",
+          "label": "zero",
+          "doc": "the cardinal zero (31)"
+        },
+        {
+          "name": "decimal",
+          "label": "decimal",
+          "doc": "a decimalized number such as 0.2 or 1.0 (33)"
+        },
+        {
+          "name": "several",
+          "label": "several",
+          "doc": "(40d)"
+        },
+        {
+          "name": "many",
+          "label": "many",
+          "doc": "(40d)"
+        },
+        {
+          "name": "aFew",
+          "label": "a few",
+          "doc": "(40d)"
+        },
+        {
+          "name": "both",
+          "label": "both",
+          "doc": "(40d)"
+        },
+        {
+          "name": "a",
+          "label": "a",
+          "doc": "the indefinite article (40c)"
+        },
+        {
+          "name": "one",
+          "label": "one",
+          "doc": "the cardinal one (40c)"
+        },
+        {
+          "name": "every",
+          "label": "every",
+          "doc": "(40b)"
+        },
+        {
+          "name": "each",
+          "label": "each",
+          "doc": "(40b)"
+        },
+        {
+          "name": "all",
+          "label": "all",
+          "doc": "(40e)"
+        },
+        {
+          "name": "egy",
+          "label": "egy",
+          "doc": "Hungarian 'a, one' (36)"
+        },
+        {
+          "name": "ket",
+          "label": "két",
+          "doc": "Hungarian 'two' (37)"
+        },
+        {
+          "name": "minden",
+          "label": "minden",
+          "doc": "Hungarian 'every' (37)"
+        }
+      ]
+    },
+    {
+      "key": "stem",
+      "lean": "stem",
+      "type": "Stem",
+      "doc": "The inflection of the noun stem.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "bare",
+          "label": "bare",
+          "doc": "an uninflected stem"
+        },
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "a stem with plural inflection"
+        }
+      ]
+    },
+    {
+      "key": "reading",
+      "lean": "construal",
+      "type": "Construal",
+      "doc": "The reading of the stem the judgment is restricted to.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "singular",
+          "label": "singular",
+          "doc": "the stem read as a singular count noun"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "borer2005_28",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "much salt",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "much"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29a_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "two meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "two"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29a_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "two boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "two"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29b_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "several meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "several"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29b_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "several boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "several"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29c_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "many meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "many"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29c_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "many boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "many"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29d_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "a few meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "a few"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29d_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "a few boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "a few"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29e_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29e)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "both meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "both"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_29e_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(29e)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "both boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "both"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_30a_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(30a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "a boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "a"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_30a_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(30a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "one meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "one"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_30b_boys",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(30b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "three boys",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "three"],
+        ["stem", "plural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_30b_meats",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(30b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "several meats",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "several"],
+        ["stem", "plural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_30c_boy",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(30c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "every boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "every"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_30c_meat",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(30c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "each meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "each"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_31a",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(31a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "zero boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "zero"],
+        ["stem", "bare"],
+        ["reading", "singular"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_31b",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(31b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "zero boys",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "zero"],
+        ["stem", "plural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_31c",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(31c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "zero meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "zero"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_33a_apples",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(33)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "0.2 apples",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "decimal"],
+        ["stem", "plural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_33a_apple",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(33)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "0.2 apple",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "decimal"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_33d_apples",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(33)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "1.0 apples",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "decimal"],
+        ["stem", "plural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_33d_apple",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(33)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "1.0 apple",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "decimal"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_34",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(34)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "zero a cat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "zero"],
+        ["determiner", "a"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_35a",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(35a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "all meat",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "all"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_35b",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(35b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "all boys",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "all"],
+        ["stem", "plural"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_35c",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(35c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "all boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "all"],
+        ["stem", "bare"],
+        ["reading", "singular"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_p112",
+      "source": {"bibkey": "borer-2005", "paperLabel": "p. 112"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "several a boy",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "several"],
+        ["determiner", "a"],
+        ["stem", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_36b",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(36b)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "egy kalap",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["egy", "a"], ["kalap", "hat"]
+      ],
+      "translation": "a hat",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "egy"],
+        ["stem", "bare"]
+      ],
+      "comment": "The book prints the noun with an optional accusative suffix, kalap(-ot) or kalap.ok(-at); the bare form is recorded.",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_36c",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(36c)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "kalap-ok",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kalap-ok", "hat-PL"]
+      ],
+      "translation": "hats",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["stem", "plural"]
+      ],
+      "comment": "The book prints the noun with an optional accusative suffix, kalap(-ot) or kalap.ok(-at); the bare form is recorded.",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_37a",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(37a)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "a két fekete kalap",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", "the"], ["két", "two"], ["fekete", "black"], ["kalap", "hat"]
+      ],
+      "translation": "the two black hats",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "két"],
+        ["stem", "bare"]
+      ],
+      "comment": "The book prints the noun with an optional accusative suffix, kalap(-ot) or kalap.ok(-at); the bare form is recorded.",
+      "verified": "page-image"
+    },
+    {
+      "id": "borer2005_37b",
+      "source": {"bibkey": "borer-2005", "paperLabel": "(37b)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "minden kalap",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["minden", "every"], ["kalap", "hat"]
+      ],
+      "translation": "every hat",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["determiner", "minden"],
+        ["stem", "bare"]
+      ],
+      "comment": "The book prints the noun with an optional accusative suffix, kalap(-ot) or kalap.ok(-at); the bare form is recorded.",
+      "verified": "page-image"
+    }
+  ]
+}

@@ -3,8 +3,8 @@ module
 public import Linglib.Data.Examples.Erlewine2016
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Phonology.OptimalityTheory.Filtration
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Studies.CoonMateoPedroPreminger2014
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers
@@ -60,7 +60,7 @@ Popti', Akatek and Ch'ol.
 namespace Erlewine2016
 
 open OptimalityTheory Erlewine2016.Examples
-open Minimalist (Cat LexicalItem LinearizedSyntacticObject chainTop links projectionAt SpecToSpec)
+open Minimalist (Cat LexicalItem PlanarSyntacticObject chainTop links projectionAt SpecToSpec)
 
 /-- The arguments of a verb. -/
 inductive Arg
@@ -149,12 +149,12 @@ instance (c : Candidate) (a : Arg) : Decidable (CrossRef c a) := by unfold Cross
 /-- The clause a derivation builds (§4.1), with a copy of each argument at each position it
 occupies: the subject in Spec,vP and, when the Set A probe attracts it, in Spec,TP; the object as
 the complement of V; and an extracted argument in the specifier of the layer it lands in. -/
-def Input.clause (i : Input) (c : Candidate) : LinearizedSyntacticObject :=
-  let vP : LinearizedSyntacticObject := Arg.subj.token * (littleV *
-    (if i.transitive then (verb true * Arg.obj.token : LinearizedSyntacticObject) else verb false))
-  let tP : LinearizedSyntacticObject :=
+def Input.clause (i : Input) (c : Candidate) : PlanarSyntacticObject :=
+  let vP : PlanarSyntacticObject := Arg.subj.token * (littleV *
+    (if i.transitive then (verb true * Arg.obj.token : PlanarSyntacticObject) else verb false))
+  let tP : PlanarSyntacticObject :=
     if c.aProbe then Arg.subj.token * (tense * vP) else tense * vP
-  (i.layers.zipIdx.foldl (fun (x : LinearizedSyntacticObject × Cat) (l, j) ↦
+  (i.layers.zipIdx.foldl (fun (x : PlanarSyntacticObject × Cat) (l, j) ↦
     let y := l.head j x.2 * x.1
     (match i.extracted with
       | some (a, k) => if k = j then a.token * y else y
@@ -162,11 +162,11 @@ def Input.clause (i : Input) (c : Candidate) : LinearizedSyntacticObject :=
 
 /-- The step that extracts `a` is too close: the link landing at the top of its chain moves a
 specifier across no maximal projection but its own, Spec-to-Spec Anti-Locality (42). -/
-def ExtractionTooClose (t : LinearizedSyntacticObject) (a : Arg) : Prop :=
+def ExtractionTooClose (t : PlanarSyntacticObject) (a : Arg) : Prop :=
   ∃ p ∈ chainTop .raising t a.token, ∃ x ∈ links .raising t a.token,
     x.1 = projectionAt .raising t p ∧ SpecToSpec .raising t x
 
-instance (t : LinearizedSyntacticObject) (a : Arg) : Decidable (ExtractionTooClose t a) := by
+instance (t : PlanarSyntacticObject) (a : Arg) : Decidable (ExtractionTooClose t a) := by
   unfold ExtractionTooClose; infer_instance
 
 /-- Spec-to-Spec Anti-Locality as a violable constraint: one violation for an extraction that is
@@ -191,9 +191,9 @@ structure Grammar where
   ranking : List (Input → Constraint Candidate)
   objectOnly : Bool
 
-/-- The competition of a clause under a grammar. -/
-def Grammar.tableau (g : Grammar) (i : Input) :=
-  Tableau.ofList (candidates i g.objectOnly) (g.ranking.map (· i))
+/-- The optimal candidates of a clause under a grammar. -/
+def Grammar.optimal (g : Grammar) (i : Input) : Finset Candidate :=
+  Constraint.eval (candidates i g.objectOnly) (g.ranking.map (· i))
 
 /-- Kaqchikel ranks XRef-Participant ≫ SSAL ≫ XRef, Set B free to target either argument. -/
 def kaqchikel : Grammar := ⟨[xrefP, ssal, xref], false⟩
@@ -292,14 +292,14 @@ theorem extractionTooClose_iff :
 it. -/
 theorem rows_optimal :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
-      ∃ c ∈ (r.grammar.tableau r.input).optimal, c.form r.input.args = r.form := by
+      ∃ c ∈ r.grammar.optimal r.input, c.form r.input.args = r.form := by
   decide
 
 /-- With at most one participant argument, AF is optimal in Kaqchikel exactly when the subject moves
 to the layer immediately above TP (§3). -/
 theorem af_iff_immediately_preverbal :
     ∀ r ∈ kaqchikelRows, ¬ (r.input.subj.IsSAP ∧ r.input.obj.IsSAP) →
-      ((∃ c ∈ (kaqchikel.tableau r.input).optimal, c.AFSuffix r.input.args) ↔
+      ((∃ c ∈ kaqchikel.optimal r.input, c.AFSuffix r.input.args) ↔
         r.input.extracted = some (.subj, 0)) := by
   decide
 
@@ -310,30 +310,30 @@ def subjectExtraction (s o : Person) : Input := ⟨true, [.cP], some (.subj, 0),
 
 -- §5.1, §5.3
 theorem no_extraction_full (s o : Person) :
-    (kaqchikel.tableau ⟨true, [.cP], none, s, o⟩).optimal = {⟨true, .obj⟩} := by
+    kaqchikel.optimal ⟨true, [.cP], none, s, o⟩ = {⟨true, .obj⟩} := by
   cases s <;> cases o <;> decide
 
 -- §5.1
 theorem subject_extraction_af :
-    (kaqchikel.tableau (subjectExtraction .third .third)).optimal =
+    kaqchikel.optimal (subjectExtraction .third .third) =
       {⟨false, .subj⟩, ⟨false, .obj⟩} := by
   decide
 
 -- §5.2
 theorem participant_breaks_tie :
-    (kaqchikel.tableau (subjectExtraction .second .third)).optimal = {⟨false, .subj⟩} ∧
-      (kaqchikel.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} := by
+    kaqchikel.optimal (subjectExtraction .second .third) = {⟨false, .subj⟩} ∧
+      kaqchikel.optimal (subjectExtraction .third .second) = {⟨false, .obj⟩} := by
   decide
 
 -- §5.2
 theorem participant_exception :
-    (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
+    kaqchikel.optimal (subjectExtraction .first .second) = {⟨true, .obj⟩} := by
   decide
 
 /-- Subject extraction to Spec,CP has an optimal AF derivation exactly when the arguments are not
 both participants, which is when the Kaqchikel fragment records the Agent Focus reflex. -/
 theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
-    (∃ d ∈ (kaqchikel.tableau (subjectExtraction s o)).optimal,
+    (∃ d ∈ kaqchikel.optimal (subjectExtraction s o),
         d.form (argsOf true) = .agentFocus) ↔
       (Kaqchikel.Extraction.realize c s o (.argument .A)).Nonempty := by
   have h :
@@ -345,18 +345,18 @@ theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
 
 -- §4.2
 theorem no_af_without_short_step :
-    (kaqchikel.tableau ⟨true, [.cP], some (.obj, 0), .third, .third⟩).optimal =
+    kaqchikel.optimal ⟨true, [.cP], some (.obj, 0), .third, .third⟩ =
         {⟨true, .obj⟩} ∧
-      ∀ c ∈ (kaqchikel.tableau ⟨false, [.cP], some (.subj, 0), .third, .third⟩).optimal,
+      ∀ c ∈ kaqchikel.optimal ⟨false, [.cP], some (.subj, 0), .third, .third⟩,
         ¬ c.AFSuffix (argsOf false) := by
   decide
 
 -- §6.1
 theorem typology :
-    (popti.tableau (subjectExtraction .second .third)).optimal = {⟨true, .obj⟩} ∧
-      (popti.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} ∧
-      (akatek.tableau (subjectExtraction .first .third)).optimal = {⟨false, .obj⟩} ∧
-      (chol.tableau (subjectExtraction .third .second)).optimal = {⟨true, .obj⟩} := by
+    popti.optimal (subjectExtraction .second .third) = {⟨true, .obj⟩} ∧
+      popti.optimal (subjectExtraction .third .second) = {⟨false, .obj⟩} ∧
+      akatek.optimal (subjectExtraction .first .third) = {⟨false, .obj⟩} ∧
+      chol.optimal (subjectExtraction .third .second) = {⟨true, .obj⟩} := by
   decide
 
 /-! ### The last-resort alternative -/

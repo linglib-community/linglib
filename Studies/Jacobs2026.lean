@@ -4,7 +4,7 @@ public import Linglib.Data.Statistics.Jacobs2026
 public import Linglib.Data.Wordlist.Jacobs2026
 public import Linglib.Fragments.Latin.Phonology
 public import Linglib.Phonology.FeatureGeometry
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.SearchCopy
 public import Studies.Belth2026
 
@@ -42,20 +42,6 @@ dissimilation](##dissimilate_glide).
   *stellaris*, whose geminate puts [l l] on the tier. The rule here changes only the suffix liquid.
 * `dissimilate_glide` applies to every stem whose last LINGUAL segment is [l], so it also predicts
   later -alis forms of *tricliniaris* and of Cser's *Saliaris*, which the paper does not check.
-
-## Errata
-
-* The paper predicts that the -alis forms of the hiatus pairs "did not occur prior to 200AD", but
-  its own table of counts has *Latialis* [three times before 200 AD](##latialis_before200).
-* The variation is said to occur "only … with intervening coronal consonants" and a front vowel in
-  hiatus, but *fulminalis* and *fulminaris* both occur in the 5th century, with [m] and no hiatus,
-  and [the rule derives only *fulminaris*](##fulminalis_variant).
-* [j] is described as [CORONAL] and [DORSAL], as "lingual [dorsal]", and in a diagram as [lingual]
-  over [coronal]. With CORONAL never specified, the diagram's [j] [is off the
-  tier](##not_onLingualTier_coronalGlide) and could not block; the account needs [DORSAL], as in
-  PHOIBLE.
-* One representation is captioned *pluvialis* but spells *fluvialis*, the list of dorsal blockers
-  is cited under the wrong example number, and Cser's counts for *Latialis* are cited a page late.
 
 ## TODO
 
@@ -126,11 +112,11 @@ theorem lateral_mem_featureClass_lingual : Feature.lateral ∈ featureClass node
 
 /-- §4, p. 134: Jacobs's underlying representation of a segment, with [lateral] only on a liquid,
 CORONAL never, and LABIAL and DORSAL where present. -/
-def underlying (s : Segment) : Segment
+def underlying (s : Segment) : Segment := ⟨fun
   | .lateral => if Sonority.ofSegment s = .liquid then s .lateral else none
-  | .labial => if s.HasValue .labial true then some true else none
-  | .dorsal => if s.HasValue .dorsal true then some true else none
-  | _ => none
+  | .labial => if s .labial = true then some true else none
+  | .dorsal => if s .dorsal = true then some true else none
+  | _ => none⟩
 
 /-- A segment bears a node when it specifies a feature of the node's class. -/
 def Bears (s : Segment) (a : Node) : Prop := ∃ f ∈ featureClass node a, (s f).isSome
@@ -139,14 +125,14 @@ instance (s : Segment) (a : Node) : Decidable (Bears s a) := by unfold Bears; in
 
 /-- The LINGUAL tier: the C-place segments whose underlying representation bears LINGUAL. -/
 def OnLingualTier (s : Segment) : Prop :=
-  s.HasValue .syllabic false ∧ Bears (underlying s) .lingual
+  s .syllabic = false ∧ Bears (underlying s) .lingual
 
 instance : DecidablePred OnLingualTier := fun s ↦ by unfold OnLingualTier; infer_instance
 
 /-- Steriade's tier: the C-place segments whose underlying representation specifies
 [lateral]. -/
 def OnLateralTier (s : Segment) : Prop :=
-  s.HasValue .syllabic false ∧ (underlying s .lateral).isSome
+  s .syllabic = false ∧ (underlying s .lateral).isSome
 
 instance : DecidablePred OnLateralTier := fun s ↦ by unfold OnLateralTier; infer_instance
 
@@ -360,10 +346,10 @@ def identBase (c : Candidate base.length) : ℕ :=
 /-- (18b): the suffix liquid changes from the [+lateral] of the input -alis. -/
 def identSuffix (c : Candidate base.length) : ℕ := if c.2 then 0 else 1
 
-/-- The tableau of (19) and (20) for a stem: *LINGUAL[+LAT]–LINGUAL[+LAT] ≫ IDENT-IO-[LAT]/BASE ≫
-IDENT-IO-[LAT]/SUFFIX over every candidate. -/
-def tableau : Tableau (Candidate base.length) 3 :=
-  .ofList Finset.univ [ocp base, identBase base, identSuffix base]
+/-- The optimal candidates of (19) and (20) for a stem: *LINGUAL[+LAT]–LINGUAL[+LAT] ≫
+IDENT-IO-[LAT]/BASE ≫ IDENT-IO-[LAT]/SUFFIX over every candidate. -/
+def optimal : Finset (Candidate base.length) :=
+  Constraint.eval Finset.univ [ocp base, identBase base, identSuffix base]
 
 variable {base}
 
@@ -393,7 +379,7 @@ private theorem runFrom_suffix (st : Option Segment) :
 
 /-- The ranking of (18) selects the output of dissimilation on the LINGUAL tier, for every stem. -/
 theorem optimal_image_output (hL : L ∉ base) :
-    (tableau base).optimal.image (output base) =
+    (optimal base).image (output base) =
       {(dissimilate OnLingualTier).apply (base ++ [Latin.a, L, Latin.i, Latin.s])} := by
   set b := decide (lastLateral base ≠ some true) with hb
   let d : Candidate base.length := (fun _ ↦ false, b)
@@ -437,8 +423,8 @@ theorem optimal_image_output (hL : L ∉ base) :
       · rintro ⟨hc0, hcb⟩
         refine ⟨⟨(hocp c hc0).2 (by simp [hl]), hc0⟩, fun _ _ ↦ ?_⟩
         simp [identSuffix, hcb, hb']
-  rw [tableau, Tableau.optimal_ofList_cons, Tableau.optimal_ofList_cons,
-    Tableau.optimal_ofList_cons, Tableau.optimal_ofList_nil, h1, h2, apply_append hL,
+  rw [optimal, Constraint.eval_cons, Constraint.eval_cons,
+    Constraint.eval_cons, Constraint.eval_nil, h1, h2, apply_append hL,
     runFrom_suffix]
   have hout (c : Candidate base.length) (hc : identBase base c = 0 ∧ c.2 = b) :
       output base c = base ++ [Latin.a, if lastLateral base = some true then Latin.r else Latin.l,

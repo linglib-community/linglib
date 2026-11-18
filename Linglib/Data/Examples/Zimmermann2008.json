@@ -13,7 +13,7 @@
     "translation": "Audu didn't buy a cap in the market.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "bare"],
@@ -35,7 +35,7 @@
     "translation": "Farmers didn't come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "bare"],
@@ -58,7 +58,7 @@
     "translation": "People didn't go to the market.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "bare"],
@@ -80,7 +80,7 @@
     "translation": "then a/some boy said …",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "wani"],
@@ -103,7 +103,7 @@
     "translation": "Some came, others didn't.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "wasu"],
@@ -125,7 +125,7 @@
     "translation": "Did someone come? / Did anyone come?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "wani"],
@@ -147,7 +147,7 @@
     "translation": "I didn't see anyone. / There is someone I didn't see (but I saw others).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "wani"],
@@ -171,7 +171,7 @@
     "translation": "Musa did not invite any friends. / There is some friend that Musa didn't invite (but he invited others).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "wani"],
@@ -194,7 +194,7 @@
     "translation": "Some did not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["indefinite", "wasu"],
@@ -218,7 +218,7 @@
     "translation": "Nobody came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negative existential relative"]
@@ -239,7 +239,7 @@
     "translation": "I didn't see anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "koo+wh"],
@@ -263,7 +263,7 @@
     "translation": "Not everyone likes this newspaper.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "koo+wh"],
@@ -287,7 +287,7 @@
     "translation": "Intended: Everybody did not pass the test.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "koo+wh"],
@@ -310,7 +310,7 @@
     "translation": "EACH/EVERY student didn't pass the exam.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "koo+wh"],
@@ -333,7 +333,7 @@
     "translation": "all the passengers",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "duk"],
@@ -355,7 +355,7 @@
     "translation": "I saw all the students.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "duk"],
@@ -378,7 +378,7 @@
     "translation": "Each student gathered in front of the school.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "koo+wh"],
@@ -401,7 +401,7 @@
     "translation": "All the students gathered in front of the school.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "duk"],
@@ -424,7 +424,7 @@
     "translation": "I didn't read all the books.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "duk"],
@@ -448,7 +448,7 @@
     "translation": "Not all the guests have come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["quantifier", "duk"],

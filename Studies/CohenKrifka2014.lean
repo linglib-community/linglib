@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Space
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Semantics.Degree.Comparison
 
 /-!
@@ -22,8 +22,8 @@ that the sentence's falsity is semantic and its truth an implicature.
 ## Implementation notes
 
 * A commitment state is a set of propositions and the speaker's commitment to `φ` is the
-  proposition `Commitment.committed O a φ`. The paper's derived truth conditions are the content
-  of the commitment the root entails, by `Commitment.committed_iInter`.
+  proposition `a ⊢[O] φ`. The paper's derived truth conditions are the content
+  of the commitment the root entails, by `SetRel.core_iInter`.
 * The strength comparisons across different count scales ((87), denying *n ever* against
   denying *n last year*) are stated on what the updated roots entail rather than as (86)'s
   inclusion of spaces, which needs states closed under entailment, a consistency requirement the
@@ -74,7 +74,7 @@ def grant : Space (Set (Set W)) := C.denegate (C.assert O a φᶜ)
 
 @[simp] theorem root_grant : (grant O C a φ).root = C.root := rfl
 
-theorem mem_grant : d ∈ grant O C a φ ↔ d = C.root ∨ d ∈ C ∧ committed O a φᶜ ∉ d := by
+theorem mem_grant : d ∈ grant O C a φ ↔ d = C.root ∨ d ∈ C ∧ (a ⊢[O] φᶜ) ∉ d := by
   rw [grant, mem_denegate, SetLike.mem_coe, mem_assert]
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h hk ↦ h (Or.inr ⟨hd, hk⟩), fun h ↦ ?_⟩)
   rintro (rfl | ⟨-, hk⟩)
@@ -83,7 +83,7 @@ theorem mem_grant : d ∈ grant O C a φ ↔ d = C.root ∨ d ∈ C ∧ committe
 /-- On a space with no state carrying a commitment and its denial, the grant of `φ` includes its
 assertion ((39)). -/
 theorem assert_le_grant (hmem : (C.assert O a φ).root ∈ C)
-    (hcons : ∀ d ∈ C, committed O a φ ∈ d → committed O a φᶜ ∉ d) :
+    (hcons : ∀ d ∈ C, (a ⊢[O] φ) ∈ d → (a ⊢[O] φᶜ) ∉ d) :
     C.assert O a φ ≤ grant O C a φ := by
   intro d hd
   rw [mem_grant]
@@ -93,7 +93,7 @@ theorem assert_le_grant (hmem : (C.assert O a φ).root ∈ C)
 
 /-- Denegating the GRANT of `φ` is asserting `¬φ` ((40)), for an assertion the space admits
 that is not redundant. -/
-theorem sdiff_coe_grant (hmem : (C.assert O a φᶜ).root ∈ C) (h : committed O a φᶜ ∉ C.root) :
+theorem sdiff_coe_grant (hmem : (C.assert O a φᶜ).root ∈ C) (h : (a ⊢[O] φᶜ) ∉ C.root) :
     (C : Set (Set (Set W))) \ ↑(grant O C a φ) = C.assert O a φᶜ :=
   C.sdiff_coe_denegate (C.update_le hmem) (mt (C.root_mem_assert_iff O a φᶜ).1 h)
 
@@ -107,7 +107,7 @@ variable {A W ι : Type*} (O : A → SetRel W W) (C : Space (Set (Set W))) (a : 
   (s : Set ι)
 
 /-- The denials by `a` of the values of `φ` in `s` are the commitments to `¬φ(m)` for `m ∈ s`. -/
-def denials : Set (Set W) := (fun m ↦ committed O a (φ m)ᶜ) '' s
+def denials : Set (Set W) := (fun m ↦ (a ⊢[O] (φ m)ᶜ)) '' s
 
 /-- In the meta-speech act excluding the values of `φ` in `s`, `a` asserts `¬φ(m)` for every
 `m ∈ s` at once ((46), (51)). -/
@@ -121,18 +121,18 @@ theorem root_exclude_mem (hK : denials O a φ s ∪ C.root ∈ C) : (exclude O C
   (root_exclude O C a φ s hK).symm ▸ hK
 
 theorem denials_eq_sSup :
-    denials O a φ s = sSup ((fun m ↦ ({committed O a (φ m)ᶜ} : Set (Set W))) '' s) := by
+    denials O a φ s = sSup ((fun m ↦ ({a ⊢[O] (φ m)ᶜ} : Set (Set W))) '' s) := by
   rw [Set.sSup_eq_sUnion, Set.sUnion_image, denials, Set.image_eq_iUnion]
 
 theorem committed_mem_root_exclude_iff (hK : denials O a φ s ∪ C.root ∈ C)
-    (hroot : ∀ m, committed O a (φ m)ᶜ ∉ C.root)
-    (hinj : Function.Injective fun m ↦ committed O a (φ m)ᶜ) {m : ι} :
-    committed O a (φ m)ᶜ ∈ (exclude O C a φ s).root ↔ m ∈ s := by
+    (hroot : ∀ m, (a ⊢[O] (φ m)ᶜ) ∉ C.root)
+    (hinj : Function.Injective fun m ↦ (a ⊢[O] (φ m)ᶜ)) {m : ι} :
+    (a ⊢[O] (φ m)ᶜ) ∈ (exclude O C a φ s).root ↔ m ∈ s := by
   rw [root_exclude O C a φ s hK]
   exact (or_iff_left (hroot m)).trans hinj.mem_set_image
 
 -- §5.2.2
-theorem root_notMem_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, committed O a (φ m)ᶜ ∉ C.root) :
+theorem root_notMem_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, (a ⊢[O] (φ m)ᶜ) ∉ C.root) :
     C.root ∉ exclude O C a φ s :=
   let ⟨m, hm⟩ := hne
   fun h ↦ hroot m hm (C.root_mem_update_iff.1 h ⟨m, hm, rfl⟩)
@@ -148,8 +148,8 @@ theorem coe_exclude (hne : s.Nonempty) (hK : denials O a φ s ∪ C.root ∈ C) 
 
 -- (44), (49), (40)
 theorem coe_exclude_eq_iInter_sdiff_grant (hne : s.Nonempty)
-    (hroot : ∀ m ∈ s, committed O a (φ m)ᶜ ∉ C.root) (hK : denials O a φ s ∪ C.root ∈ C)
-    (hmem : ∀ m ∈ s, insert (committed O a (φ m)ᶜ) C.root ∈ C) :
+    (hroot : ∀ m ∈ s, (a ⊢[O] (φ m)ᶜ) ∉ C.root) (hK : denials O a φ s ∪ C.root ∈ C)
+    (hmem : ∀ m ∈ s, insert (a ⊢[O] (φ m)ᶜ) C.root ∈ C) :
     (exclude O C a φ s : Set (Set (Set W))) = ⋂ m ∈ s, ↑C \ ↑(grant O C a (φ m)) := by
   rw [coe_exclude O C a φ s hne hK]
   exact Set.iInter₂_congr fun m hm ↦ (sdiff_coe_grant O C a (φ m)
@@ -157,7 +157,7 @@ theorem coe_exclude_eq_iInter_sdiff_grant (hne : s.Nonempty)
 
 /-- The denegation of the superlative is the disjunction of the GRANTs it denied
 ((97)–(98), by (34)). -/
-theorem sdiff_coe_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, committed O a (φ m)ᶜ ∉ C.root)
+theorem sdiff_coe_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, (a ⊢[O] (φ m)ᶜ) ∉ C.root)
     (hK : denials O a φ s ∪ C.root ∈ C) :
     (C : Set (Set (Set W))) \ ↑(exclude O C a φ s) = ⋃ m ∈ s, ↑(grant O C a (φ m)) := by
   simp_rw [coe_exclude O C a φ s hne hK, Set.sdiff_iInter]
@@ -171,9 +171,9 @@ theorem exclude_anti {s t : Set ι} (hst : s ⊆ t) (hK : denials O a φ t ∪ C
 
 -- §3.2, (52)
 theorem sInter_root_exclude (hK : denials O a φ s ∪ C.root ∈ C) :
-    ⋂₀ (exclude O C a φ s).root = committed O a (⋂ m ∈ s, (φ m)ᶜ) ∩ ⋂₀ C.root := by
+    ⋂₀ (exclude O C a φ s).root = (a ⊢[O] (⋂ m ∈ s, (φ m)ᶜ)) ∩ ⋂₀ C.root := by
   rw [root_exclude O C a φ s hK, Set.sInter_union, denials, Set.sInter_image]
-  simp only [committed_iInter]
+  simp only [SetRel.core_iInter]
 
 end Scale
 
@@ -202,10 +202,10 @@ theorem atLeast_anti {n n' : ι} (hnn : n ≤ n') (hK : denials O a φ (Set.Iio 
 
 -- (43), (60b)
 theorem atMost_isGreatest (hK : denials O a φ (Set.Ioi n) ∪ C.root ∈ C)
-    (hroot : ∀ m, committed O a (φ m)ᶜ ∉ C.root)
-    (hinj : Function.Injective fun m ↦ committed O a (φ m)ᶜ) :
-    IsGreatest {m | committed O a (φ m)ᶜ ∉ (atMost O C a φ n).root} n := by
-  have hs : {m | committed O a (φ m)ᶜ ∉ (atMost O C a φ n).root} = Set.Iic n := by
+    (hroot : ∀ m, (a ⊢[O] (φ m)ᶜ) ∉ C.root)
+    (hinj : Function.Injective fun m ↦ (a ⊢[O] (φ m)ᶜ)) :
+    IsGreatest {m | (a ⊢[O] (φ m)ᶜ) ∉ (atMost O C a φ n).root} n := by
+  have hs : {m | (a ⊢[O] (φ m)ᶜ) ∉ (atMost O C a φ n).root} = Set.Iic n := by
     ext m
     rw [Set.mem_ofPred_eq, atMost, committed_mem_root_exclude_iff O C a φ _ hK hroot hinj,
       Set.mem_Ioi, not_lt, Set.mem_Iic]
@@ -213,10 +213,10 @@ theorem atMost_isGreatest (hK : denials O a φ (Set.Ioi n) ∪ C.root ∈ C)
 
 -- (48), (60a)
 theorem atLeast_isLeast (hK : denials O a φ (Set.Iio n) ∪ C.root ∈ C)
-    (hroot : ∀ m, committed O a (φ m)ᶜ ∉ C.root)
-    (hinj : Function.Injective fun m ↦ committed O a (φ m)ᶜ) :
-    IsLeast {m | committed O a (φ m)ᶜ ∉ (atLeast O C a φ n).root} n := by
-  have hs : {m | committed O a (φ m)ᶜ ∉ (atLeast O C a φ n).root} = Set.Ici n := by
+    (hroot : ∀ m, (a ⊢[O] (φ m)ᶜ) ∉ C.root)
+    (hinj : Function.Injective fun m ↦ (a ⊢[O] (φ m)ᶜ)) :
+    IsLeast {m | (a ⊢[O] (φ m)ᶜ) ∉ (atLeast O C a φ n).root} n := by
+  have hs : {m | (a ⊢[O] (φ m)ᶜ) ∉ (atLeast O C a φ n).root} = Set.Ici n := by
     ext m
     rw [Set.mem_ofPred_eq, atLeast, committed_mem_root_exclude_iff O C a φ _ hK hroot hinj,
       Set.mem_Iio, not_lt, Set.mem_Ici]
@@ -238,7 +238,7 @@ def exactly (f : W → ℕ) : ℕ → Set W := (fun n ↦ f ⁻¹' {n})
 quantifier ((82)). -/
 theorem sInter_root_atMost_exactly (f : W → ℕ)
     (hK : denials O a (exactly f) (Set.Ioi n) ∪ C.root ∈ C) :
-    ⋂₀ (atMost O C a (exactly f) n).root = committed O a (f ⁻¹' Set.Iic n) ∩ ⋂₀ C.root := by
+    ⋂₀ (atMost O C a (exactly f) n).root = (a ⊢[O] (f ⁻¹' Set.Iic n)) ∩ ⋂₀ C.root := by
   rw [atMost, sInter_root_exclude _ _ _ _ _ hK]
   congr 2
   ext w
@@ -251,7 +251,7 @@ theorem sInter_root_atMost_exactly (f : W → ℕ)
 quantifier ((82)). -/
 theorem sInter_root_atLeast_exactly (f : W → ℕ)
     (hK : denials O a (exactly f) (Set.Iio n) ∪ C.root ∈ C) :
-    ⋂₀ (atLeast O C a (exactly f) n).root = committed O a (f ⁻¹' Set.Ici n) ∩ ⋂₀ C.root := by
+    ⋂₀ (atLeast O C a (exactly f) n).root = (a ⊢[O] (f ⁻¹' Set.Ici n)) ∩ ⋂₀ C.root := by
   rw [atLeast, sInter_root_exclude _ _ _ _ _ hK]
   congr 2
   ext w
@@ -266,7 +266,7 @@ theorem sInter_root_atMost_exactly_anti {f g : W → ℕ} (hfg : ∀ w, g w ≤ 
     (hg : denials O a (exactly g) (Set.Ioi n) ∪ C.root ∈ C) :
     ⋂₀ (atMost O C a (exactly f) n).root ⊆ ⋂₀ (atMost O C a (exactly g) n).root := by
   rw [sInter_root_atMost_exactly O C a n f hf, sInter_root_atMost_exactly O C a n g hg]
-  exact Set.inter_subset_inter_left _ (committed_mono fun w hw ↦ le_trans (hfg w) hw)
+  exact Set.inter_subset_inter_left _ (SetRel.core_subset_core fun w hw ↦ le_trans (hfg w) hw)
 
 /-- A pointwise larger count weakens *at least*, the asymmetry behind NPI licensing ((84a),
 (88)). -/
@@ -275,7 +275,7 @@ theorem sInter_root_atLeast_exactly_mono {f g : W → ℕ} (hfg : ∀ w, g w ≤
     (hg : denials O a (exactly g) (Set.Iio n) ∪ C.root ∈ C) :
     ⋂₀ (atLeast O C a (exactly g) n).root ⊆ ⋂₀ (atLeast O C a (exactly f) n).root := by
   rw [sInter_root_atLeast_exactly O C a n g hg, sInter_root_atLeast_exactly O C a n f hf]
-  exact Set.inter_subset_inter_left _ (committed_mono fun w hw ↦ le_trans hw (hfg w))
+  exact Set.inter_subset_inter_left _ (SetRel.core_subset_core fun w hw ↦ le_trans hw (hfg w))
 
 end Numeral
 
@@ -292,7 +292,7 @@ section Model
 
 /-- An index fixes a count of petted rabbits and what the participants' commitments leave open
 about it. -/
-abbrev Count := Index Discourse.Role ℕ
+abbrev Count := Index SpeechAct.Role ℕ
 
 /-- The free space over the indices, with no prior commitments. -/
 def rabbits : Space (Set (Set Count)) := Space.Ici ∅
@@ -301,17 +301,17 @@ def rabbits : Space (Set (Set Count)) := Space.Ici ∅
 def only (n m : ℕ) : Count := ⟨n, fun _ ↦ {m}, fun _ ↦ ⟨m, rfl⟩⟩
 
 theorem mem_committed_preimage {X : Set ℕ} {w : Count} :
-    w ∈ committed Index.access Discourse.Role.speaker (Index.fact ⁻¹' X) ↔
+    w ∈ (SpeechAct.Role.speaker ⊢[Index.access] (Index.fact ⁻¹' X)) ↔
       w.commitmentSet .speaker ⊆ X := by
   rw [Index.committed_access_preimage]
   rfl
 
 theorem denial_injective : Function.Injective fun m ↦
-    committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ := by
+    (SpeechAct.Role.speaker ⊢[Index.access] (exactly Index.fact m)ᶜ) := by
   intro m k h
   simp only at h
   by_contra hmk
-  have hk : only 0 m ∈ committed Index.access .speaker (exactly Index.fact k)ᶜ :=
+  have hk : only 0 m ∈ (.speaker ⊢[Index.access] (exactly Index.fact k)ᶜ) :=
     (mem_committed_preimage (X := {k}ᶜ)).2 fun x hx e ↦
       hmk ((Set.mem_singleton_iff.1 hx).symm.trans e)
   rw [← h] at hk
@@ -319,31 +319,30 @@ theorem denial_injective : Function.Injective fun m ↦
     (show m ∈ (only 0 m).commitmentSet .speaker from rfl) rfl
 
 theorem rabbits_root_fresh (m : ℕ) :
-    committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ ∉ rabbits.root :=
+    (SpeechAct.Role.speaker ⊢[Index.access] (exactly Index.fact m)ᶜ) ∉ rabbits.root :=
   Set.notMem_empty _
 
 -- (1a), (82)
 theorem sInter_root_rabbits_atLeast :
     ⋂₀ (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root =
-      committed Index.access .speaker (Index.fact ⁻¹' Comparison.ge.interval 3) := by
+      (.speaker ⊢[Index.access] (Index.fact ⁻¹' Comparison.ge.interval 3)) := by
   rw [sInter_root_atLeast_exactly _ _ _ _ _ (Set.empty_subset _)]
   simp [rabbits]
 
 -- (1a), (52a)
 theorem rabbits_atLeast_committed_two :
     ⋂₀ (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root ⊆
-      committed Index.access .speaker (exactly Index.fact 2)ᶜ := by
+      (.speaker ⊢[Index.access] (exactly Index.fact 2)ᶜ) := by
   rw [sInter_root_rabbits_atLeast]
-  exact committed_mono fun w hw e ↦ absurd hw (by simp [exactly] at e; simp [e])
+  exact SetRel.core_subset_core fun w hw e ↦ absurd hw (by simp [exactly] at e; simp [e])
 
 -- (1a), (53)
 theorem rabbits_atLeast_not_committed_four :
     ¬ ⋂₀ (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root ⊆
-      committed Index.access .speaker (exactly Index.fact 4)ᶜ := by
+      (.speaker ⊢[Index.access] (exactly Index.fact 4)ᶜ) := by
   rw [sInter_root_rabbits_atLeast]
   intro h
-  have h4 : only 4 4 ∈ committed Index.access .speaker
-      (Index.fact ⁻¹' Comparison.ge.interval 3) :=
+  have h4 : only 4 4 ∈ (.speaker ⊢[Index.access] (Index.fact ⁻¹' Comparison.ge.interval 3)) :=
     mem_committed_preimage.2 fun x hx ↦ by
       rw [Set.mem_singleton_iff.1 hx]
       simp
@@ -352,7 +351,7 @@ theorem rabbits_atLeast_not_committed_four :
 
 -- (53)
 theorem rabbits_atLeast_grant_four :
-    committed Index.access Discourse.Role.speaker (exactly Index.fact 4)ᶜ ∉
+    (SpeechAct.Role.speaker ⊢[Index.access] (exactly Index.fact 4)ᶜ) ∉
       (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root := by
   rw [atLeast, committed_mem_root_exclude_iff Index.access rabbits .speaker (exactly Index.fact)
     _ (Set.empty_subset _) rabbits_root_fresh denial_injective]
@@ -360,7 +359,7 @@ theorem rabbits_atLeast_grant_four :
 
 -- (48), (60a)
 theorem rabbits_atLeast_isLeast :
-    IsLeast {m | committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ ∉
+    IsLeast {m | (SpeechAct.Role.speaker ⊢[Index.access] (exactly Index.fact m)ᶜ) ∉
       (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root} 3 :=
   atLeast_isLeast Index.access rabbits .speaker (exactly Index.fact) 3 (Set.empty_subset _)
     rabbits_root_fresh denial_injective
@@ -389,29 +388,29 @@ neither state, while asserting `φ` leaves only the second. -/
 section Granting
 
 /-- An index fixes whether it rains and what the participants' commitments leave open about it. -/
-abbrev Weather := Index Discourse.Role Bool
+abbrev Weather := Index SpeechAct.Role Bool
 
 /-- It is raining. -/
 def raining : Set Weather := Index.fact ⁻¹' {true}
 
 /-- The two-state space holds no commitments or the speaker's assertion of `raining`. -/
 def granting : Space (Set (Set Weather)) :=
-  ⟨{∅, insert (committed Index.access .speaker raining) ∅}, ∅, Or.inl rfl,
+  ⟨{∅, insert (.speaker ⊢[Index.access] raining) ∅}, ∅, Or.inl rfl,
     by rintro d (rfl | rfl) <;> simp⟩
 
 theorem committed_raining_ne_compl :
-    committed Index.access Discourse.Role.speaker raining ≠
-      committed Index.access .speaker rainingᶜ := fun h ↦ by
+    (SpeechAct.Role.speaker ⊢[Index.access] raining) ≠
+      (.speaker ⊢[Index.access] rainingᶜ) := fun h ↦ by
   have hw : (⟨true, fun _ ↦ {true}, fun _ ↦ ⟨true, rfl⟩⟩ : Weather) ∈
-      committed Index.access .speaker raining := by
+      (.speaker ⊢[Index.access] raining) := by
     rw [raining, Index.committed_access_preimage]
     exact (subset_rfl : ({true} : Set Bool) ⊆ {true})
   rw [h] at hw
   exact hw (b := ⟨true, fun _ ↦ {true}, fun _ ↦ ⟨true, rfl⟩⟩) ⟨rfl, rfl⟩ rfl
 
 theorem granting_consistent : ∀ d ∈ granting,
-    committed Index.access .speaker raining ∈ d →
-      committed Index.access .speaker rainingᶜ ∉ d := by
+    (.speaker ⊢[Index.access] raining) ∈ d →
+      (.speaker ⊢[Index.access] rainingᶜ) ∉ d := by
   rintro d (rfl | rfl) h₁ h₂
   · exact Set.notMem_empty _ h₁
   · rcases Set.mem_insert_iff.1 h₂ with h₂ | h₂

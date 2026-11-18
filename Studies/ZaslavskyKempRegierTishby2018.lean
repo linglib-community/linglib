@@ -75,15 +75,6 @@ eq. S13).
   a numerical optimization outside the formalization. The empirical encoders of the World Color
   Survey are not in the library.
 
-## Errata
-
-* SI eq. S10 glosses the conditional entropy as `H_q(C|W) = −∑ p(c) q(w|c) log (q(c|w) / p(c))`,
-  which is `−I_q(W;C)`; the conditional entropy has `log q(c|w)`. `IsLeastInformative` uses the
-  conditional entropy, which the surrounding text and eq. S11 require.
-* SI eq. S11 writes `I_q(W;C) = argmax_{p(c)} H(C) − H_q(C|W)`, equating a number with a
-  distribution; the identity meant is `I_q(W;C) = H(C) − H_q(C|W)`
-  (`measureEntropy_sub_condEntropy`), whence the least informative prior maximizes `I_q(W;C)`.
-
 ## References
 
 * [N. Zaslavsky, C. Kemp, T. Regier and N. Tishby, *Efficient compression in color naming and
@@ -156,6 +147,12 @@ theorem complexity_const (ν : Measure W) [IsProbabilityMeasure ν] :
   rw [complexity, Measure.compProd_const, measureMutualInfo_prod]
 
 omit [Nonempty M] in
+-- A lexicon naming each meaning by one word is as complex as its words are uncertain.
+theorem complexity_deterministic {f : M → W} (hf : Measurable f) :
+    complexity source (Kernel.deterministic f hf) = H[f ; source] :=
+  measureMutualInfo_compProd_deterministic source hf
+
+omit [Nonempty M] in
 private theorem integral_compProd (f : M × W → ℝ) :
     ∫ p, f p ∂(source ⊗ₘ encoder)
       = ∑ m, source.real {m} * ∑ w, (encoder m).real {w} * f (m, w) := by
@@ -192,7 +189,7 @@ theorem distortion_eq :
     rw [sourceInfo, measureMutualInfo_compProd, integral_compProd]
     refine sum_congr rfl fun m _ => ?_
     dsimp only
-    rw [← sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+    rw [← sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
   rw [eq_sub_iff_add_eq, distortion, hsrc, accuracy, measureMutualInfo_compProd, decoder_comp,
     integral_compProd_eq_sum_posterior, integral_compProd_eq_sum_posterior, ← sum_add_distrib]
   refine sum_congr rfl fun w _ => ?_
@@ -425,16 +422,14 @@ theorem isIBOptimum_id (hρ : ∀ a, ρ {a} ≠ 0) {β : ℝ} (hβ : 0 < β) :
   refine Kernel.ext fun m => ?_
   rw [Kernel.id_apply]
   unfold ibUpdate
-  refine (Kernel.ofWeights_apply_eq_dirac (b₀ := m) (hρ m) (measure_ne_top _ _)
-    fun w => ?_).symm
-  rw [Measure.id_comp, hdec, Kernel.id_apply]
-  by_cases hwm : w = m
-  · subst hwm
-    simp
+  refine (Kernel.ofWeights_apply_eq_dirac (b₀ := m) ?_ ?_ fun w hwm => ?_).symm <;>
+    rw [Measure.id_comp, hdec, Kernel.id_apply]
+  · simpa using hρ m
+  · simp
   · have hac : ¬ Measure.dirac m ≪ Measure.dirac w := fun h => one_ne_zero <|
       (Measure.dirac_apply_of_mem (Set.mem_singleton m)).symm.trans <| h <| by
         rw [Measure.dirac_apply, Set.indicator_of_notMem (by simpa using hwm)]
-    simp [hwm, klDiv_of_not_ac hac, EReal.coe_mul_top_of_pos hβ]
+    simp [klDiv_of_not_ac hac, EReal.coe_mul_top_of_pos hβ]
 
 end Hard
 

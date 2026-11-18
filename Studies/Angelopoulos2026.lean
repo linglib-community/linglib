@@ -29,7 +29,7 @@ against the transparent syntax–semantics mapping.
 
 * `clauseSort`: the sort a complementizer imposes; `selectsClause` the aspectual heads'
   selection (§4.1).
-* `Predicted`: a verb–complementizer pairing derived from the verb's sort and Vendler class,
+* `Predicted`: a verb–complementizer pairing derived from the verb's sort and aspectual head,
   with the sample verbs' sorts in `verbEntry`.
 * `licensedIn`: incorporation licensing by clause position (§3.1).
 
@@ -65,12 +65,6 @@ inductive AspectualHead
   | vEvent
   deriving DecidableEq
 
-/-- The aspectual head a verb's Vendler class determines. -/
-def AspectualHead.ofVendler (vc : VendlerClass) : AspectualHead :=
-  match vc.dynamicity with
-  | .stative => .vState
-  | .dynamic => .vEvent
-
 /-- vState selects otiP or puP, vEvent only otiP — the stativity restriction as a selectional
 feature (§4.1, fn. 19). -/
 def selectsClause : AspectualHead → Complementizer → Prop
@@ -86,32 +80,33 @@ theorem pu_requires_stative {h : AspectualHead} (hp : selectsClause h pu) : h = 
   · rfl
   · exact absurd (show pu = oti from hp) (by decide)
 
-/-- A verb of sort `s` takes complementizer `c` iff `c` imposes `s` and the verb's aspectual
-head selects `c`'s clause. -/
-def Predicted (v : Verb) (s : NominalSort) (c : Complementizer) : Prop :=
-  clauseSort c = some s ∧
-    ∀ h ∈ (v.vendlerClass.map AspectualHead.ofVendler).toList, selectsClause h c
+/-- A verb of sort `s` under the aspectual head `h` takes complementizer `c` iff `c` imposes `s`
+and `h` selects `c`'s clause. -/
+def Predicted (s : NominalSort) (h : AspectualHead) (c : Complementizer) : Prop :=
+  clauseSort c = some s ∧ selectsClause h c
 
-instance (v : Verb) (s : NominalSort) (c : Complementizer) : Decidable (Predicted v s c) :=
+instance (s : NominalSort) (h : AspectualHead) (c : Complementizer) :
+    Decidable (Predicted s h c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The sample verbs with the sort of noun each verbalizes (§3.2, where saying, belief, and
 knowledge verbs are content-denoting like *rumor*, emotive factives situation-denoting like
-*sadness*), as the example rows name them; *thimame* splits into its attitude and perception
+*sadness*) and the aspectual head of the reading the rows use, stative or eventive by the
+manner-adverb test of §2.3, as the example rows name them; *thimame* splits into its attitude and perception
 senses (fn. 16), *simveni* 'happen' is a situation verb (fn. 14), and *δjafono* 'disagree', which
 the rows use only for the ban on prepositions (31), is not among them. -/
-def verbEntry : Examples.Verb → Option (Verb × NominalSort)
-  | .leo => some (leo, .content)
-  | .pistevo => some (pistevo, .content)
-  | .ksero => some (ksero, .content)
-  | .sinidhitopio => some (sinidhitopio, .content)
-  | .eksigo => some (eksigo, .content)
-  | .thimame => some (thimame, .content)
-  | .metaniono => some (metaniono, .situation)
-  | .areso => some (areso, .situation)
-  | .thimamePerception => some (thimameStat, .situation)
-  | .thimonoStative => some (thimonoStat, .situation)
-  | .simveni => some (simveni, .situation)
+def verbEntry : Examples.Verb → Option (NominalSort × AspectualHead)
+  | .leo => some (.content, .vEvent)
+  | .pistevo => some (.content, .vState)
+  | .ksero => some (.content, .vState)
+  | .sinidhitopio => some (.content, .vEvent)
+  | .eksigo => some (.content, .vEvent)
+  | .thimame => some (.content, .vEvent)
+  | .metaniono => some (.situation, .vState)
+  | .areso => some (.situation, .vState)
+  | .thimamePerception => some (.situation, .vState)
+  | .thimonoStative => some (.situation, .vState)
+  | .simveni => some (.situation, .vEvent)
   | .djafono => none
 
 /-- The complementizer a row names. -/

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("focus", "John")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative"), ("focus", "John")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive")] }
 
@@ -63,7 +63,7 @@ def ex_5_too : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("antecedent", "positive")] }
 
@@ -76,7 +76,7 @@ def ex_5_either : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative"), ("antecedent", "positive")] }
 
@@ -89,7 +89,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative")] }
 
@@ -102,7 +102,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive")] }
 
@@ -115,7 +115,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive"), ("operator", "almost")] }
 
@@ -128,7 +128,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "Uttered out of the blue; it is common knowledge that many people dine in New York every night."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("focus", "John"), ("felicity", "infelicitous")] }
 
@@ -141,7 +141,7 @@ def ex_15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("distinctness", "John and the boss must be distinct")] }
 
@@ -154,7 +154,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "negative"), ("scope", "negation below too")] }
 
@@ -167,7 +167,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "negative"), ("scope", "negation above too")] }
 
@@ -180,7 +180,7 @@ def ex_26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "none"), ("test", "Abrusán entailment")] }
 
@@ -193,7 +193,7 @@ def ex_26b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "as well"), ("test", "Abrusán entailment")] }
 
@@ -206,7 +206,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("antecedent", "not presupposed")] }
 
@@ -219,7 +219,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := "Discourse antecedent or context entailing that Bill didn't leave."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative"), ("focus", "John")] }
 
@@ -232,7 +232,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive")] }
 
@@ -245,7 +245,7 @@ def ex_43 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative")] }
 
@@ -258,7 +258,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive"), ("operator", "almost")] }
 

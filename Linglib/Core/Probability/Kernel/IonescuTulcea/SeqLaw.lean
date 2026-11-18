@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Probability.Kernel.IonescuTulcea.Maps
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fin.Tuple.Take
@@ -37,7 +38,9 @@ form of the Ionescu–Tulcea partial trajectory: after the first draw, the law o
 
 * `ProbabilityTheory.isProbabilityMeasure_seqLaw`: a Markov prediction rule gives probability
   laws.
-* `ProbabilityTheory.seqLaw_succ_singleton_snoc`, `ProbabilityTheory.seqLaw_singleton`: the chain
+* `ProbabilityTheory.seqLaw_succ_map_init`: forgetting the last draw leaves the law of the draws
+  before it.
+* `ProbabilityTheory.seqLaw_succ_singleton_snoc`,`ProbabilityTheory.seqLaw_singleton`: the chain
   rule on a countable space.
 * `ProbabilityTheory.integral_seqLaw_succ`: the chain rule for expectations.
 * `ProbabilityTheory.seqLaw_succ_eq_map_partialTraj`: the law as a partial trajectory.
@@ -98,6 +101,15 @@ theorem isProbabilityMeasure_seqLaw [∀ n, IsMarkovKernel (κ n)] :
 instance [∀ n, IsMarkovKernel (κ n)] (n : ℕ) : IsProbabilityMeasure (seqLaw κ n) :=
   isProbabilityMeasure_seqLaw n
 
+/-- Forgetting the last draw leaves the law of the draws before it. -/
+theorem seqLaw_succ_map_init [∀ n, IsMarkovKernel (κ n)] (n : ℕ) :
+    (seqLaw κ (n + 1)).map Fin.init = seqLaw κ n := by
+  have hinit : Measurable (Fin.init : (Fin (n + 1) → α) → Fin n → α) :=
+    .of_eval fun i ↦ measurable_pi_apply i.castSucc
+  rw [seqLaw_succ, Measure.map_map hinit measurable_snoc_prod,
+    show (Fin.init ∘ fun p : (Fin n → α) × α ↦ (Fin.snoc p.1 p.2 : Fin (n + 1) → α)) = Prod.fst
+      from funext fun p ↦ Fin.init_snoc .., ← Measure.fst, Measure.fst_compProd]
+
 /-- The chain rule for expectations: integrating over the first `n + 1` draws integrates the next
 draw against the prediction rule, then the first `n`. -/
 theorem integral_seqLaw_succ [∀ n, IsSFiniteKernel (κ n)] {n : ℕ} {E : Type*}
@@ -139,22 +151,6 @@ end Singleton
 /-! ### The law as a partial trajectory -/
 
 section Traj
-
-/-- The times `0, …, n` are the indices of the first `n + 1` draws. -/
-def _root_.Nat.iicEquivFin (n : ℕ) : (Iic n : Finset ℕ) ≃ Fin (n + 1) where
-  toFun i := ⟨i, Nat.lt_succ_of_le (mem_Iic.1 i.2)⟩
-  invFun j := ⟨j, mem_Iic.2 (Nat.le_of_lt_succ j.2)⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-/-- A trajectory up to time `n` as the sequence of its first `n + 1` draws. -/
-noncomputable def trajEquivFin (n : ℕ) : (Π _ : Iic n, α) ≃ᵐ (Fin (n + 1) → α) :=
-  MeasurableEquiv.piCongrLeft (fun _ ↦ α) (Nat.iicEquivFin n)
-
-@[simp] theorem trajEquivFin_apply (n : ℕ) (x : Π _ : Iic n, α) (j : Fin (n + 1)) :
-    trajEquivFin n x j = x ⟨j, mem_Iic.2 (Nat.le_of_lt_succ j.2)⟩ := by
-  simp [trajEquivFin, MeasurableEquiv.coe_piCongrLeft, Equiv.piCongrLeft_apply_eq_cast]
-  rfl
 
 variable (κ) in
 /-- The prediction rule read on trajectories: after the draws at times `0, …, n`, the law of the

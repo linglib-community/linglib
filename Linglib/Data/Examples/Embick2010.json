@@ -10,7 +10,7 @@
     "translation": "I loved",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "AM"],
@@ -42,7 +42,7 @@
     "translation": "you loved",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "AM"],
@@ -74,7 +74,7 @@
     "translation": "I had loved",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "AM"],
@@ -106,7 +106,7 @@
     "translation": "I have loved (subjunctive)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "AM"],
@@ -138,7 +138,7 @@
     "translation": "I will have loved",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "AM"],
@@ -170,7 +170,7 @@
     "translation": "we take",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "CAP"],
@@ -196,7 +196,7 @@
     "translation": "we take eagerly",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "CAP"],
@@ -222,7 +222,7 @@
     "translation": "we take eagerly",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "CAP"],
@@ -248,7 +248,7 @@
     "translation": "marriage",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "MARRY"],
@@ -272,7 +272,7 @@
     "translation": "marrying",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "MARRY"],
@@ -298,7 +298,7 @@
     "translation": "bent",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "BEND"],
@@ -324,7 +324,7 @@
     "translation": "breakability",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "BREAK"],
@@ -350,7 +350,7 @@
     "translation": "colorization",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "COLOR"],
@@ -376,7 +376,7 @@
     "translation": "colorization",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "COLOR"],
@@ -402,7 +402,7 @@
     "translation": "save",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "BACH"],
@@ -428,7 +428,7 @@
     "translation": "have saved",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["root", "BACH"],

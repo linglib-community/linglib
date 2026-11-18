@@ -24,7 +24,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "pos_notp")] }
 
@@ -37,7 +37,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "pos_notp")] }
 
@@ -50,7 +50,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "pos_notp")] }
 
@@ -63,7 +63,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_wn_p")] }
 
@@ -76,7 +76,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")] }
 
@@ -89,7 +89,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_pos_p")] }
 
@@ -102,7 +102,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "not_wn_p")] }
 
@@ -115,7 +115,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "wn_notp")] }
 
@@ -128,7 +128,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := "A criminal investigator announces his findings about a man's body found in a dark alley."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "sn_notp")] }
 
@@ -141,7 +141,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := "Concerning the COVID-19 protocol of this establishment."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")] }
 
@@ -154,7 +154,7 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := "Concerning the COVID-19 protocol of this establishment."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "sn_p")] }
 
@@ -167,7 +167,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_sn_p")] }
 
@@ -180,7 +180,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")] }
 
@@ -193,7 +193,7 @@ def ex_80 : Datum :=
     glossedTokens := []
     context := "A: Where is Peter? B: Probably in his office. A: But today is a holiday! B: Oh, I didn't know it was …"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("base", "holiday")] }
 
@@ -206,7 +206,7 @@ def ex_81 : Datum :=
     glossedTokens := []
     context := "A: Where is Peter? B: Probably in his office. A: I have just checked and he isn't there."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("base", "checked")] }
 

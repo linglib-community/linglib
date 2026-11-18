@@ -14,7 +14,7 @@
     "translation": "Peti saw the following with his own eyes: “Mari is sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "backshifted", "judgment": "unacceptable"}
@@ -41,7 +41,7 @@
     "translation": "Peti heard the following with his own ears: “Mari is crying”.",
     "context": "Peti heard the noise of crying.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "backshifted", "judgment": "unacceptable"}
@@ -67,7 +67,7 @@
     "translation": "Peti saw the following in his dream: “Mari is sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "backshifted", "judgment": "unacceptable"}
@@ -93,7 +93,7 @@
     "translation": "Peti thought the following: “Mari is/was sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Peti az-t hit-t-e, hogy Mari szomorú vol-t.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -121,7 +121,7 @@
     "translation": "The following worried Peti: “Mari is/was sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"},
       {"name": "backshifted", "judgment": "acceptable"}
@@ -147,7 +147,7 @@
     "translation": "You growled because of the following: “Mari is/was sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", "judgment": "acceptable"}
     ],
     "readings": [
@@ -177,7 +177,7 @@
     "translation": "Peti dreamed the following: “Mari sees the following: ‘Zsuzsi is sad’”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "intermediate simultaneous", "judgment": "acceptable"},
       {"name": "intermediate backshifted", "judgment": "unacceptable"},
@@ -208,7 +208,7 @@
     "translation": "Peti said the following: “(Unfortunately,) Mari was/#is sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "backshifted", "judgment": "acceptable"}
@@ -234,7 +234,7 @@
     "translation": "Peti shouted the following: “(Unfortunately,) Mari was/#is sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "backshifted", "judgment": "acceptable"}
@@ -260,7 +260,7 @@
     "translation": "Peti growled the following: “(Unfortunately,) Mari was/#is sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "unacceptable"},
       {"name": "backshifted", "judgment": "acceptable"}
@@ -287,7 +287,7 @@
     "translation": "You called (with the words: “(Unfortunately,) Mari was/#is sad”).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", "judgment": "acceptable"}
     ],
     "readings": [
@@ -316,7 +316,7 @@
     "translation": "Zsuzsi heard from Peti: “Unfortunately, Mari was/#is sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", "judgment": "acceptable"},
       {"form": "Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", "judgment": "acceptable"}
     ],
@@ -347,7 +347,7 @@
     "translation": "From the used handkerchiefs, Peti saw: “Mari was/#is sad (earlier)”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -376,7 +376,7 @@
     "translation": "Peti shouted, saying: “Mari growled/#growls, saying: ‘Zsuzsi was/#is sad’”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "intermediate simultaneous", "judgment": "unacceptable"},
       {"name": "intermediate backshifted", "judgment": "acceptable"},
@@ -409,7 +409,7 @@
     "translation": "Peti shouted, saying: “Mari saw the following with her own eyes: ‘Zsuzsi is sad’”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "intermediate simultaneous", "judgment": "unacceptable"},
       {"name": "intermediate backshifted", "judgment": "acceptable"},
@@ -442,7 +442,7 @@
     "translation": "Mari heard with her own ears: “Peti shouts the following: ‘Zsuzsi was sad’”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "intermediate simultaneous", "judgment": "acceptable"},
       {"name": "intermediate backshifted", "judgment": "unacceptable"},
@@ -470,7 +470,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "deepest simultaneous", "judgment": "unacceptable"},
       {"name": "deepest backshifted", "judgment": "acceptable"}
@@ -493,7 +493,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
@@ -519,7 +519,7 @@
     "translation": "Pál said: “Unfortunately, Ili is/#was sad”.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", "judgment": "acceptable"},
       {"form": "Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", "judgment": "acceptable"},
       {"form": "Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", "judgment": "unacceptable"}
@@ -546,7 +546,7 @@
     "translation": "Unfortunately, I heard that they ran across ONLY THE CITY.",
     "context": "The focused phrase is extracted from the embedded clause to the matrix Spec,FocP.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", "judgment": "questionable"},
       {"form": "Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", "judgment": "questionable"}
     ],
@@ -572,7 +572,7 @@
     "translation": "Which city did you see that they ran across?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", "judgment": "questionable"}
     ],
     "readings": [],
@@ -593,7 +593,7 @@
     "translation": "",
     "context": "[TP Ed seems [TP __ to be sad]]",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "raising"],
@@ -613,7 +613,7 @@
     "translation": "",
     "context": "[TP Ed seems [CP __ is sad]]",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "raising"],

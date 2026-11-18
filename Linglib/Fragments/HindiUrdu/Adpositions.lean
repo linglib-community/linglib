@@ -39,37 +39,38 @@ namespace HindiUrdu.Adpositions
 
 /-- *ne*, marking the agent of a perfective verb. -/
 def ne : Adposition :=
-  { morphs := [.encl "ne"], linearization := {.post}, functions := {.erg},
+  { morphs := [.encl "ne"], linearization := {.post}, functions := {.argument .A},
     complements := {some .np} }
 
 /-- *ko*, marking the goal and the object. -/
 def ko : Adposition :=
-  { morphs := [.encl "ko"], linearization := {.post}, functions := {.dat, .acc},
+  { morphs := [.encl "ko"], linearization := {.post}, functions := {.argument .R, .argument .P},
     complements := {some .np} }
 
 /-- *se*, marking the instrument, the source and the companion. -/
 def se : Adposition :=
-  { morphs := [.encl "se"], linearization := {.post}, functions := {.inst, .abl, .com},
+  { morphs := [.encl "se"], linearization := {.post},
+    functions := {.instrumental, .spatial none .source, .comitative},
     complements := {some .np} }
 
 /-- *kaa*, marking the possessor. -/
 def kaa : Adposition :=
-  { morphs := [.encl "kaa"], linearization := {.post}, functions := {.gen},
+  { morphs := [.encl "kaa"], linearization := {.post}, functions := {.possessor},
     complements := {some .np} }
 
 /-- *mẽ* 'in'. -/
 def me : Adposition :=
-  { morphs := [.encl "mẽ"], linearization := {.post}, functions := {.loc},
+  { morphs := [.encl "mẽ"], linearization := {.post}, functions := {.spatial none .place},
     complements := {some .np} }
 
 /-- *par* 'on, at'. -/
 def par : Adposition :=
-  { morphs := [.encl "par"], linearization := {.post}, functions := {.loc},
+  { morphs := [.encl "par"], linearization := {.post}, functions := {.spatial none .place},
     complements := {some .np} }
 
 /-- *tak* 'until', as in *kal-tak* 'until yesterday'. -/
 def tak : Adposition :=
-  { morphs := [.encl "tak"], linearization := {.post}, functions := {.ter},
+  { morphs := [.encl "tak"], linearization := {.post}, functions := {.terminative},
     complements := {some .np} }
 
 /-- The simple postpositions. -/

@@ -24,7 +24,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "my sister")] }
 
@@ -37,7 +37,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "thereInsertion"), ("expectedFocus", "an old man")] }
 
@@ -50,7 +50,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "her dog")] }
 
@@ -63,7 +63,7 @@ def d2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = Hilda's house", .acceptable)]
     paperFeatures := [("phenomenon", "recencyRule")] }
 
@@ -76,7 +76,7 @@ def d7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it = the necklace", .acceptable)]
     paperFeatures := [("phenomenon", "nonAgentPronoun")] }
 
@@ -89,7 +89,7 @@ def d8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = Max", .acceptable)]
     paperFeatures := [("phenomenon", "agentPronoun")] }
 
@@ -102,7 +102,7 @@ def d9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = Jeff throughout", .acceptable)]
     paperFeatures := [("phenomenon", "animateDiscourseFocusRule")] }
 
@@ -115,7 +115,7 @@ def d10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = John", .acceptable)]
     paperFeatures := [("phenomenon", "agentPronoun")] }
 
@@ -128,7 +128,7 @@ def d14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = my dog, him = the vet", .acceptable)]
     paperFeatures := [("phenomenon", "actorAndDiscourseFocus")] }
 
@@ -141,7 +141,7 @@ def d14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("he = the vet, him = my dog", .acceptable)]
     paperFeatures := [("phenomenon", "actorAndDiscourseFocus")] }
 
@@ -154,7 +154,7 @@ def d25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they = the strawberries", .acceptable)]
     paperFeatures := [("phenomenon", "focusConfirmation")] }
 
@@ -167,7 +167,7 @@ def d31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("it in the eighth sentence = the book", .acceptable)]
     paperFeatures := [("phenomenon", "focusPopping")] }
 
@@ -180,7 +180,7 @@ def d35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("they in the fourth sentence = the ice cream cones", .acceptable)]
     paperFeatures := [("phenomenon", "focusMovement")] }
 

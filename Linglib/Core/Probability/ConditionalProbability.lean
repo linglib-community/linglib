@@ -13,8 +13,8 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 
 Lemmas on mathlib's conditional measure `μ[|s]` that mathlib does not state: the real-valued
 form of `cond_apply`, pushforwards and products, invariance under scaling with the composition
-of two Bayesian updates, and nested events: ratios, the chain rule, and conditioning up to null
-sets.
+of two Bayesian updates, nested events (ratios, the chain rule, and conditioning up to null
+sets), and thresholds on a conditional probability.
 
 ## Implementation notes
 
@@ -38,6 +38,10 @@ variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) {s : Set Ω}
 theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
     μ[|s].real e = μ.real (s ∩ e) / μ.real s := by
   simp only [measureReal_def, cond_apply hs, ENNReal.toReal_mul, ENNReal.toReal_inv, inv_mul_eq_div]
+
+/-- Conditioning on a point of positive finite mass gives the point mass. -/
+theorem cond_singleton {a : Ω} (h₀ : μ {a} ≠ 0) (h : μ {a} ≠ ∞) : μ[|{a}] = Measure.dirac a := by
+  rw [cond, Measure.restrict_singleton, smul_smul, ENNReal.inv_mul_cancel h₀ h, one_smul]
 
 end ProbabilityTheory
 
@@ -74,6 +78,23 @@ theorem cond_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (μ : Measur
   simp only [cond, Measure.smul_apply, smul_eq_mul, Measure.restrict_smul, smul_smul]
   rw [ENNReal.mul_inv (Or.inl hc0) (Or.inl hc), mul_right_comm, ENNReal.inv_mul_cancel hc0 hc,
     one_mul]
+
+theorem cond_eq_of_restrict_eq {μ ν : Measure Ω} {s : Set Ω} (h : μ.restrict s = ν.restrict s) :
+    μ[|s] = ν[|s] := by
+  rw [cond, cond, ← Measure.restrict_apply_self μ, ← Measure.restrict_apply_self ν, h]
+
+/-- Reweighting by a density that is almost everywhere a positive finite constant on an event does
+not change the measure conditioned on the event. -/
+theorem cond_withDensity_of_ae_eq (μ : Measure Ω) {f : Ω → ℝ≥0∞} {s : Set Ω}
+    (hs : MeasurableSet s) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞)
+    (h : ∀ᵐ ω ∂μ.restrict s, f ω = c) : (μ.withDensity f)[|s] = μ[|s] := by
+  refine (cond_eq_of_restrict_eq ?_).trans (cond_smul hc0 hc μ s)
+  rw [restrict_withDensity hs, withDensity_congr_ae h, withDensity_const, Measure.restrict_smul]
+
+theorem cond_withDensity_of_forall_mem_eq (μ : Measure Ω) {f : Ω → ℝ≥0∞} {s : Set Ω}
+    (hs : MeasurableSet s) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ ω ∈ s, f ω = c) :
+    (μ.withDensity f)[|s] = μ[|s] :=
+  cond_withDensity_of_ae_eq μ hs hc0 hc (ae_restrict_of_forall_mem hs h)
 
 theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (hf : Measurable f)
     (hg : Measurable g) (hfin : μ.withDensity f Set.univ ≠ ∞) :
@@ -133,5 +154,26 @@ theorem cond_absolutelyContinuous_cond_iff (hs : MeasurableSet s) (ht : Measurab
     μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t :=
   ⟨fun h ↦ (ae_cond_mem_iff hs).1 (h.ae_le (ae_cond_mem ht)), fun h ↦
     cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩
+
+/-! ### Thresholds
+
+A conditional probability clears a threshold when the joint mass clears that share of the
+conditioning event, and it is `0` or `1` when the conditioning event lies almost surely outside
+or inside the event. -/
+
+theorem lt_cond_iff_mul_lt (hs : MeasurableSet s) {c : ℝ≥0∞} :
+    c < μ[t | s] ↔ c * μ s < μ (s ∩ t) := by
+  rcases eq_or_ne (μ s) 0 with h0 | h0
+  · simp [cond_eq_zero_of_meas_eq_zero h0, h0, measure_mono_null Set.inter_subset_left h0]
+  · rw [cond_apply hs, ← ENNReal.div_eq_inv_mul,
+      ENNReal.lt_div_iff_mul_lt (.inl h0) (.inl (measure_ne_top _ _))]
+
+theorem cond_apply_eq_zero_iff (hs : MeasurableSet s) : μ[t | s] = 0 ↔ s ≤ᵐ[μ] tᶜ :=
+  measure_eq_zero_iff_ae_notMem.trans (ae_cond_mem_iff (t := tᶜ) hs)
+
+theorem cond_apply_eq_one_iff (hs : MeasurableSet s) (ht : MeasurableSet t) (hcs : μ s ≠ 0) :
+    μ[t | s] = 1 ↔ s ≤ᵐ[μ] t :=
+  have := cond_isProbabilityMeasure (μ := μ) hcs
+  (mem_ae_iff_prob_eq_one ht).symm.trans (ae_cond_mem_iff hs)
 
 end ProbabilityTheory

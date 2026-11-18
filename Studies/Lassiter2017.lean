@@ -72,13 +72,6 @@ sets `{φ, ¬φ}` being the book's weakest choice. The counter-model instantiate
 expected value over an equiprobable domain of four worlds indexed by the truth values of `A` and
 `B`.
 
-## Errata
-
-On p. 164 the conclusion that $θ_{might} > θ_{must}$ is said to imply, under the dualities of
-*must* with *might* and of *certain* with *possible*, that $θ_{certain} > θ_{must}$. The premise
-that yields it is the preceding conclusion $θ_{possible} < θ_{might}$
-(`must_lt_certain_iff_possible_lt_might`).
-
 ## TODO
 
 * The measurement-theoretic representation of p. 82 and p. 97, and its generalization to sets of
@@ -217,6 +210,11 @@ variable [IsProbabilityMeasure P]
 
 theorem mem_certain_iff : A ∈ certain P ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
+
+/-- A measurable proposition is certain exactly when it holds almost surely, so the certainties are
+closed under conjunction and consequence as the sets of a filter are. -/
+theorem mem_certain_iff_mem_ae (hA : MeasurableSet A) : A ∈ certain P ↔ A ∈ ae P := by
+  rw [mem_certain_iff, measureReal_def, ENNReal.toReal_eq_one_iff, mem_ae_iff_prob_eq_one hA]
 
 theorem likely_eq_preimage (θ : Probability) : likely P θ = likelihood P ⁻¹' Set.Ioi θ :=
   rfl

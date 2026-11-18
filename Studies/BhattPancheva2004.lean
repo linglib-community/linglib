@@ -74,7 +74,7 @@ where it is merged](##rows_ellipsis).
 
 namespace BhattPancheva2004
 
-open Core.Order Quantifier Quantifier.Det Set PhraseStructure PhraseStructure.Tree
+open Quantifier Quantifier.Det Set PhraseStructure PhraseStructure.Tree
 open RoseTree (cCommand)
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
@@ -373,13 +373,13 @@ theorem lateMergerBleeds_iff {D : Type*} [Nonempty D] {chain : List ℕ} {h s b 
 subject and object, the verb *tells*, and the matrix and embedded VPs. -/
 structure TellLF where
   tree : Tree Unit String
-  degP : TreePath
-  clause : TreePath
-  subject : TreePath
-  object : TreePath
-  tells : TreePath
-  matrixVP : TreePath
-  embeddedVP : TreePath
+  degP : GornAddress
+  clause : GornAddress
+  subject : GornAddress
+  object : GornAddress
+  tells : GornAddress
+  matrixVP : GornAddress
+  embeddedVP : GornAddress
 
 /-- With the clause merged at the embedded clause, the LF is (69a),
 `[her father [tells [her [[λd PRO to work d-hard] [-er than Mary's boss does]]]]]`, with the
@@ -420,7 +420,8 @@ elided VP resolved to `antecedent`: some LF with that scope has the antecedent c
 DegP, the Ellipsis-Scope Generalization (59), and no `pronoun` c-commanding the `name` it corefers
 with, Condition C. C-command is [reinhart-1976]'s, without dominance, so an antecedent inside the
 DegP is not in its scope. -/
-def TellLF.Reading (lfs : List TellLF) (wide : Prop) (antecedent pronoun name : TellLF → TreePath) :
+def TellLF.Reading (lfs : List TellLF) (wide : Prop) (antecedent pronoun name : TellLF →
+    GornAddress) :
     Prop :=
   ∃ lf ∈ lfs, (lf.tree.CCommands lf.degP lf.tells ↔ wide) ∧
     lf.tree.CCommands lf.degP (antecedent lf) ∧ ¬ lf.tree.CCommands (pronoun lf) (name lf)

@@ -24,7 +24,7 @@ def ex44a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
@@ -37,7 +37,7 @@ def ex44a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
@@ -50,7 +50,7 @@ def ex44b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
@@ -63,7 +63,7 @@ def ex44b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 

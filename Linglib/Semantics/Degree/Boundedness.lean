@@ -8,6 +8,7 @@ public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.LatticeIntervals
 public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Negation.Polarity
 
 /-!
 # Scale boundedness
@@ -131,6 +132,14 @@ def dual : Boundedness → Boundedness
 theorem dual_involutive : Function.Involutive dual := fun b ↦ by cases b <;> rfl
 
 @[simp] theorem dual_dual (b : Boundedness) : b.dual.dual = b := dual_involutive b
+
+/-- The negative member of an antonym pair measures on the dual scale; two inversions restore the
+ordering, so the antonym of *short* is *tall*. Markedness is a separate matter, since equipollent
+pairs like *hot* and *cold* have no unmarked member. -/
+instance : MulAction Polarity Boundedness :=
+  .ofEndHom (Polarity.lift ⟨dual, dual_involutive.comp_self⟩)
+
+@[simp] theorem negative_smul (b : Boundedness) : Polarity.negative • b = b.dual := rfl
 
 /-- The negative antonym, measuring on the order dual, has the dual boundedness ([kennedy-2007]
 (60), [kennedy-mcnally-2005]). -/

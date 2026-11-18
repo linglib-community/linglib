@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 public import Linglib.Core.MeasureTheory.Measure.Prod
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
@@ -148,7 +148,7 @@ theorem measureEntropy_eq_zero_iff [Fintype S] (μ : Measure S) [IsProbabilityMe
   obtain ⟨x, hx⟩ : ∃ x : S, μ.real {x} = 1 := by
     by_contra hno
     refine zero_ne_one (α := ℝ) ?_
-    rw [← sum_measureReal_singleton_eq_one μ]
+    rw [← probReal_univ (μ := μ), ← Finset.coe_univ, ← sum_measureReal_singleton]
     exact (Finset.sum_eq_zero fun s _ ↦
       (hmass s).resolve_right fun h1 ↦ hno ⟨s, h1⟩).symm
   have hμx : μ {x} = 1 := by rwa [measureReal_def, ENNReal.toReal_eq_one_iff] at hx
@@ -182,7 +182,7 @@ theorem toReal_klDiv_uniformOn_add_measureEntropy [Fintype S] [Nonempty S] (μ :
     isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
   rw [toReal_klDiv_add_measureEntropy (absolutelyContinuous_uniformOn_univ μ)]
   simp_rw [uniformOn_univ_real_singleton, log_inv, mul_neg, Finset.sum_neg_distrib, neg_neg,
-    ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+    ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul]
 
 /-- Entropy is at most the logarithm of the cardinality of the type. -/
 theorem measureEntropy_le_log_card [Fintype S] (μ : Measure S) :

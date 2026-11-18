@@ -502,7 +502,7 @@
     "translation": "I prohibited Rames from talking to anyone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa", "judgment": "marginal"}
     ],
     "paperFeatures": [
@@ -524,7 +524,7 @@
     "translation": "I prohibited anyone from talking to Rames.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se rokaa", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [
@@ -546,7 +546,7 @@
     "translation": "I prohibited/prevented even one person from talking to Rames.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "maiN-ne ek bhii aadmii-ko rameS-se baat-ciit karne-se rokaa", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [
@@ -568,7 +568,7 @@
     "translation": "I prohibited/prevented Rames from talking to even one person.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "maiN-ne rameS-ko ek bhii aadmii-se baat-ciit karne-se rokaa", "judgment": "acceptable"}
     ],
     "paperFeatures": [

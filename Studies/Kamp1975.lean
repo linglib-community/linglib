@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 public import Linglib.Logic.Trivalent.Basic
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Algebra.Order.Ring.Rat
@@ -27,14 +27,6 @@ two agree. Before this, Kamp argues that no many-valued logic handles borderline
 * The Smith and Jones witness is symmetric, one criterion each; the paper's scenario is
   asymmetric, and the witness shows the incomparability and the forced verdict, not the
   paper's specific outcome.
-
-## Errata
-
-* Definition (7) asks for a single function $F'$ on extensions with $F(P)(w) = F'(P(w))$ at
-  every world, while the gloss after it and the claim that every predicative adjective is
-  extensional need $F'$ to vary with the world. A predicative adjective whose property differs
-  between worlds, such as `grayAdj`, satisfies (4) and the gloss but not (7) as printed. The
-  study reads (7) by its gloss, `IsExtensional`.
 
 ## References
 
@@ -214,7 +206,7 @@ end MeasuredComparative
 /-! ### A member of each class
 
 Each class in the hierarchy is non-empty: explicit denotations that
-provably satisfy each definition from `Classification.lean`, modeling
+provably satisfy each definition, modeling
 the classic examples from the literature — "gray" (intersective), "fake"
 (privative), "skillful" (subsective but not extensional), "alleged"
 (non-subsective/modal).

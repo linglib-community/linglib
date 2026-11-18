@@ -39,13 +39,13 @@ structure Noun extends GenderedNoun Value where
   deriving DecidableEq, Repr
 
 /-- *pater* 'father'. -/
-def pater : Noun := ⟨⟨⟨"pater", "father"⟩, .masc, some .male⟩, .human⟩
+def pater : Noun := ⟨⟨⟨"pater", "father", some .male⟩, .masc⟩, .human⟩
 /-- *mater* 'mother'. -/
-def mater : Noun := ⟨⟨⟨"mater", "mother"⟩, .fem, some .female⟩, .human⟩
+def mater : Noun := ⟨⟨⟨"mater", "mother", some .female⟩, .fem⟩, .human⟩
 /-- *murus* 'wall'. -/
-def murus : Noun := ⟨⟨⟨"murus", "wall"⟩, .masc, none⟩, .inanimate⟩
+def murus : Noun := ⟨⟨⟨"murus", "wall", none⟩, .masc⟩, .inanimate⟩
 /-- *porta* 'gate'. -/
-def porta : Noun := ⟨⟨⟨"porta", "gate"⟩, .fem, none⟩, .inanimate⟩
+def porta : Noun := ⟨⟨⟨"porta", "gate", none⟩, .fem⟩, .inanimate⟩
 
 /-- The nouns of the file. -/
 def allNouns : List Noun := [pater, mater, murus, porta]

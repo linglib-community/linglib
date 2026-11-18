@@ -26,7 +26,7 @@ acceptable where *not 95% certain* is not.
 
 `Felicitous f φ` states the constraint for a question that sorts the worlds by an ordered
 value `f`, the how-many question by the count and the polar question by the indicator; a
-felicitous assertion is one the question decides (`Felicitous.decides`), and for a polar
+felicitous assertion is one the question determines (`Felicitous.determines`), and for a polar
 question the converse holds (`felicitous_of_polar`). Every numeral form is felicitous
 (`felicitous_over`), and so is the negation of every form but the two-sided one
 (`felicitous_compl_over`). `not_felicitous_compl` is the general form of the infelicity:
@@ -75,10 +75,10 @@ cells. -/
 def Felicitous (f : W → ι) (φ : Set W) : Prop :=
   ∃ I : Set ι, I.OrdConnected ∧ φ = f ⁻¹' I
 
-theorem Felicitous.decides {f : W → ι} {φ : Set W} (h : Felicitous f φ) :
-    (Setoid.ker f).Decides φ := by
+theorem Felicitous.determines {f : W → ι} {φ : Set W} (h : Felicitous f φ) :
+    (Setoid.ker f).Determines φ := by
   obtain ⟨I, -, rfl⟩ := h
-  exact Setoid.decides_iff.2 fun w v hwv ↦ by simp [Setoid.ker_def.1 hwv]
+  exact Setoid.determines_iff.2 fun w v hwv ↦ by simp [Setoid.ker_def.1 hwv]
 
 theorem ordConnected_prop (I : Set Prop) : I.OrdConnected := by
   refine ⟨fun x hx y hy z ⟨hxz, hzy⟩ ↦ ?_⟩
@@ -86,14 +86,14 @@ theorem ordConnected_prop (I : Set Prop) : I.OrdConnected := by
   · exact (propext ⟨fun _ ↦ hzy hz, fun _ ↦ hz⟩ : z = y) ▸ hy
   · exact (propext ⟨fun h ↦ absurd h hz, fun h ↦ absurd (hxz h) hz⟩ : z = x) ▸ hx
 
-theorem felicitous_of_polar {p φ : Set W} (h : (Setoid.polar p).Decides φ) :
+theorem felicitous_of_polar {p φ : Set W} (h : (Setoid.polar p).Determines φ) :
     Felicitous (· ∈ p) φ := by
   refine ⟨(· ∈ p) '' φ, ordConnected_prop _, ?_⟩
   ext w
   constructor
   · exact fun hw ↦ ⟨w, hw, rfl⟩
   · rintro ⟨v, hv, hvw⟩
-    exact (Setoid.decides_iff.1 h v w (Setoid.polar_iff.2 (eq_iff_iff.1 hvw))).1 hv
+    exact (Setoid.determines_iff.1 h v w (Setoid.polar_iff.2 (eq_iff_iff.1 hvw))).1 hv
 
 /-! ### The how-many question
 
@@ -153,6 +153,6 @@ theorem felicitous_not_bare_of_max {m : ℕ} (hmax : ∀ w, count w ≤ m) :
 
 theorem felicitous_denial (m : ℕ) :
     Felicitous (· ∈ count ⁻¹' {m}) (count ⁻¹' {m})ᶜ :=
-  felicitous_of_polar Setoid.polar_decides.compl
+  felicitous_of_polar Setoid.polar_determines.compl
 
 end SoltWaldon2019

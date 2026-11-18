@@ -10,7 +10,7 @@
     "translation": "The professor is not a historian.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "ryding2005_642b"]
@@ -29,7 +29,7 @@
     "translation": "The professor is a historian.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -46,7 +46,7 @@
     "translation": "I am not Lebanese.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "ryding2005_643a"]
@@ -65,7 +65,7 @@
     "translation": "I [am] Lebanese (f.).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",

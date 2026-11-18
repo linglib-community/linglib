@@ -111,12 +111,6 @@ for on the strength of the map (Yakut *da* and Mandarin bare interrogatives unde
 the Swahili comparative). For those cells `sample_connected` restates the map; it tests the
 adjacency requirement on the others. Every language's series are those of its Fragment.
 
-## Errata
-
-* The book counts 95 geometrically possible combinations under the adjacency requirement, against
-  37 attested; the map of Fig. 4.4 has 108 connected regions, and no variant of the figure
-  dropping up to three of its edges, or adding any, has 95.
-
 ## References
 
 * [haspelmath-1997]

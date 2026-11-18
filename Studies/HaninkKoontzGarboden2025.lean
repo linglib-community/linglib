@@ -5,6 +5,7 @@ public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Fragments.Washo.PropertyConcepts
 public import Linglib.Data.Examples.HaninkKoontzGarboden2025
+public import Linglib.Data.StructureDataset.Dixon1982
 
 /-!
 # Hanink and Koontz-Garboden (2025): Variation in the Lexical Semantics of Property Concept Roots
@@ -27,10 +28,10 @@ well-typed verbalization, `derivation_minimal`, and the bipartite gap for the su
 (49), `isSome_output?_become_iff`. The change-of-state head is Beavers and Koontz-Garboden's
 inchoative operator, and the resultative entails the result state of its theme (46). The
 seventy stems of the appendix are the rows of `Washo.propertyConcepts`, whose class is read off
-their affixes, `Washo.PropertyConcept.shape`. Dixon's categories predict neither the class nor
-the meaning of a root, `not_factorsThrough_rootType`, and color is the only category whose stems
-share a class, `exists_shape_iff`. The examples are the rows of
-`Data.Examples.HaninkKoontzGarboden2025`.
+their affixes, `Washo.shape`, and the appendix sorts them by Dixon's semantic types, `stems`.
+The types predict neither the class nor the meaning of a root, `not_exists_forall_rootType_eq`,
+and color is the only one whose stems share a class, `exists_shape_iff`. The examples are the
+rows of `Data.Examples.HaninkKoontzGarboden2025`.
 
 ## Implementation notes
 
@@ -87,7 +88,7 @@ def RootType.ofShape : Shape → RootType
 
 theorem exists_rootType_ne :
     ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
-      RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
+      RootType.ofShape (shape e₁) ≠ RootType.ofShape (shape e₂) :=
   ⟨ihuk, by simp [propertyConcepts], iyel, by simp [propertyConcepts], by decide⟩
 
 /-! ### The verbalizing heads and their types -/
@@ -190,29 +191,45 @@ theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop}
 
 /-! ### Dixon's categories, appendix -/
 
-/-- The stems of the appendix. -/
-def sample : Set PropertyConcept := {e | e ∈ propertyConcepts}
+/-- The stems of the appendix under each of Dixon's semantic types, in the order of Table A1. -/
+def stems : Dixon1982.StructureDataset.SemanticType → List Verb
+  | .age => [MiLe, ešlut]
+  | .color => [leleg, pilpil, popo, šošoŋ, yiŋyiŋ]
+  | .dimension => [beheziŋ, wgohat, lupdep, udaw, iyel, hamham, šišiš]
+  | .humanPropensity =>
+    [bišapu, gumbiis, gumyol, kiwil, Lokaš, meleyik, melotik, šašiw, tesu, yaha, yomuŋ, yumil,
+      gumsutim, musiw, tamugayl]
+  | .value => [aŋaw, muaŋ, nuš, umbiic]
+  | .physicalProperty =>
+    [golgoš, ibik, ihuk, keše, metu, mipil, mosot, mucucu, wihl, yakaš, yasaŋ, yayaŋ, gucu,
+      gumbeyécik, kakt, Loyaw, nuuš, wkuli, yacim, babab, huhu, kawkaw, kunkun, kaykay, kuškuš,
+      lotlot, mukmuk, naynay, pepel, pipi, šapšap, šišip, sinsin, siwsiw, tetep, tintin, witwit]
+  | .speed => []
+
+theorem propertyConcepts_eq :
+    propertyConcepts = stems .age ++ stems .color ++ stems .dimension ++ stems .humanPropensity ++
+      stems .value ++ stems .physicalProperty :=
+  rfl
 
 -- (74)
-theorem category_ne_speed : ∀ e ∈ propertyConcepts, e.category ≠ .speed := by
+theorem stems_speed : stems .speed = [] :=
+  rfl
+
+theorem not_exists_forall_rootType_eq :
+    ¬ ∃ f : Dixon1982.StructureDataset.SemanticType → RootType,
+      ∀ c, ∀ e ∈ stems c, RootType.ofShape (shape e) = f c := fun ⟨_, h⟩ ↦
+  absurd ((h .age MiLe (by simp [stems])).trans (h .age ešlut (by simp [stems])).symm) (by decide)
+
+theorem not_exists_forall_shape_eq :
+    ¬ ∃ f : Dixon1982.StructureDataset.SemanticType → Shape, ∀ c, ∀ e ∈ stems c, shape e = f c :=
+  fun ⟨f, h⟩ ↦ not_exists_forall_rootType_eq
+    ⟨fun c ↦ .ofShape (f c), fun c e he ↦ congrArg RootType.ofShape (h c e he)⟩
+
+theorem color_prefixed : ∀ e ∈ stems .color, shape e = .prefixed := by
   decide
 
-theorem not_factorsThrough_rootType :
-    ¬ (sample.domRestrict fun e ↦ RootType.ofShape e.shape).FactorsThrough
-      (sample.domRestrict (·.category)) := fun h ↦
-  absurd (@h ⟨MiLe, by simp [sample, propertyConcepts]⟩
-    ⟨ešlut, by simp [sample, propertyConcepts]⟩ rfl) (by decide)
-
-theorem not_factorsThrough_shape :
-    ¬ (sample.domRestrict PropertyConcept.shape).FactorsThrough
-      (sample.domRestrict (·.category)) :=
-  fun h ↦ not_factorsThrough_rootType fun _ _ hab ↦ congrArg RootType.ofShape (h hab)
-
-theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by
-  decide
-
-theorem exists_shape_iff {c : PropertyConcept.Class} (hc : c ≠ .speed) :
-    (∃ s, ∀ e ∈ propertyConcepts, e.category = c → e.shape = s) ↔ c = .color := by
+theorem exists_shape_iff {c : Dixon1982.StructureDataset.SemanticType} (hc : c ≠ .speed) :
+    (∃ s, ∀ e ∈ stems c, shape e = s) ↔ c = .color := by
   revert hc
   cases c <;> decide
 

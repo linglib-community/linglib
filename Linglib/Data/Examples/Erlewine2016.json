@@ -11,7 +11,7 @@
     "translation": "They saw you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -36,7 +36,7 @@
     "translation": "You slept.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "intransitive"],
@@ -60,7 +60,7 @@
     "translation": "Who ate the tortilla?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -86,7 +86,7 @@
     "translation": "What did Juan eat?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -113,7 +113,7 @@
     "translation": "Who do you say saw us?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -140,7 +140,7 @@
     "translation": "Who do you say saw us?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -192,7 +192,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -219,7 +219,7 @@
     "translation": "Who actually ate the tortilla?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -273,7 +273,7 @@
     "translation": "the man who eats tortillas",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -300,7 +300,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -327,7 +327,7 @@
     "translation": "the man who always eats tortillas",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -354,7 +354,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -380,7 +380,7 @@
     "translation": "Who did someone see?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -406,7 +406,7 @@
     "translation": "Who saw someone?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -432,7 +432,7 @@
     "translation": "Who saw someone?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -458,7 +458,7 @@
     "translation": "Who did someone see?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -484,7 +484,7 @@
     "translation": "Who saw you?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -511,7 +511,7 @@
     "translation": "Pedro won the prize.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -538,7 +538,7 @@
     "translation": "It's Pedro that won the prize.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -565,7 +565,7 @@
     "translation": "It was YOU that heard the man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ja rat x-∅-axa-n ri achin.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -593,7 +593,7 @@
     "translation": "It was THE MAN that heard you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ja ri achin x-∅-axa-n rat.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -621,7 +621,7 @@
     "translation": "It was ME that saw you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -647,7 +647,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -673,7 +673,7 @@
     "translation": "It was JUAN that saw you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -699,7 +699,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -725,7 +725,7 @@
     "translation": "It was ME that saw Juan.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -751,7 +751,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -777,7 +777,7 @@
     "translation": "Who saw you?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -803,7 +803,7 @@
     "translation": "It is YOU that saw him.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -829,7 +829,7 @@
     "translation": "It is YOU that saw him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -855,7 +855,7 @@
     "translation": "It's I who carried the boy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -881,7 +881,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -907,7 +907,7 @@
     "translation": "Who saw you?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],

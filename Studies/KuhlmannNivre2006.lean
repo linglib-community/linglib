@@ -42,13 +42,6 @@ proved of the reconstructions. A treebank is a multiset of graphs, each on the p
 own sentence, and a dash in Table 1 is a count of zero. A percentage of the text is compared with
 the counts by `Decimal.RoundsPercent`, at the precision the text prints it.
 
-## Errata
-
-* The text gives the coverage of edge degree at most one on DDT as 98.24%, the sum of the
-  rounded 84.95% and 13.29%; [the counts give 98.25%](##edgeDegree_atMost_one_ddt).
-* The text gives the 7 structures of DDT at gap degree 2 as 0.17%; they are 0.16%, as Table 1
-  prints.
-
 ## References
 
 * [kuhlmann-nivre-2006]
@@ -124,7 +117,7 @@ theorem fig1_isForest_not_isTree :
 
 -- Figure 1
 theorem fig1_not_isProjective :
-    fig1.projection 0 = [0, 2, 3, 4, 5, 6] ∧ ¬ fig1.IsProjective := by
+    (fig1.yield 0).toFinset = {0, 2, 3, 4, 5, 6} ∧ ¬ fig1.IsProjective := by
   decide
 
 /-! ### Figure 2: planarity

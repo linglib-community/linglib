@@ -210,6 +210,11 @@ theorem intervene_eqn_of_notMem (h : v ∉ X) (u : U) (y : ∀ v, α v) :
     (M.intervene X x).eqn v u y = M.eqn v u y := by
   simp [intervene, Function.updateFinset, h, step]
 
+/-- Intervening on no variables leaves the model as it is. -/
+@[simp] theorem intervene_empty (x : ∀ v : (∅ : Finset V), α v) : M.intervene ∅ x = M := by
+  obtain ⟨g, eqn, h⟩ := M
+  simp [intervene, step, Function.updateFinset]
+
 /-- `M[c ← x]` is the submodel holding `c` at `x`, and `M[c ← x, d ← y]` intervenes on `c` and
 then on `d`. -/
 scoped syntax:max (name := interveneNotation) term noWs "[" (term " ← " term),+ "]" : term

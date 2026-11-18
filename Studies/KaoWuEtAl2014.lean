@@ -1,8 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
-public import Linglib.Pragmatics.RSA.LexicalUncertainty
-public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Data.Rat.Floor
 
@@ -117,10 +116,10 @@ theorem mem_sem {u : Price} {m : Meaning} : m ∈ sem u ↔ m.1 = u := Iff.rfl
 
 /-- The literal listener conditions the prior on the price named, eq. 9. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Price Meaning :=
-  listener μ (truthful sem)
+  literalListener μ sem
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
-  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The cost `C(u)` of eq. 7 is one at a round price and the fitted parameter `c` at a sharp
 one. -/
@@ -130,16 +129,25 @@ def cost (c : ℝ) (u : Price) : ℝ := if u.IsRound then 1 else c
 the literal listener's distribution over the topical subspace (eq. 6), at unit rationality, less
 the cost. -/
 noncomputable def S1 (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : Measure Price :=
-  speaker 1 (cost c) ((L0 μ).map (project p.2)) Measure.dirac (project p.2 p.1)
+  qudSpeaker 1 (cost c) (L0 μ) (project p.2) p.1
 
 instance (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : IsFiniteMeasure (S1 μ c p) :=
-  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
+  inferInstanceAs (IsFiniteMeasure (qudSpeaker _ _ _ _ _))
 
 /-- The pragmatic listener over meaning and goal, eq. 10, inverts the speaker against the product
 of the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) (ν : Measure Goal) (c : ℝ) :
     Kernel Price (Meaning × Goal) :=
   listener (μ.prod ν) (S1 μ c)
+
+-- The speaker does not depend on the price prior: priors that leave every price possible and
+-- share the affect prior have the same speaker.
+theorem S1_compProd_congr (π π' : Measure Price) [IsProbabilityMeasure π] [IsProbabilityMeasure π']
+    (κ : Kernel Price Bool) [IsMarkovKernel κ] (hπ : ∀ s, π {s} ≠ 0) (hπ' : ∀ s, π' {s} ≠ 0)
+    (c : ℝ) (p : Meaning × Goal) : S1 (π ⊗ₘ κ) c p = S1 (π' ⊗ₘ κ) c p := by
+  have h : L0 (π ⊗ₘ κ) = L0 (π' ⊗ₘ κ) :=
+    literalListener_preimage_fst_compProd_congr π π' κ hπ hπ'
+  rw [S1, S1, h]
 
 section Support
 
@@ -151,10 +159,9 @@ prior and, under some goal of positive prior, shares its answer with a meaning o
 at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
-      ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, listener_prod_fst_apply_singleton_ne_zero_iff]
-  simp only [S1, L0, speaker_listener_truthful_map_dirac_apply_singleton_ne_zero_iff one_pos,
-    mem_sem]
+      ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 :=
+  listener_prod_fst_qudSpeaker_literalListener_apply_singleton_ne_zero_iff one_pos
+    (cost c) μ ν sem project u m
 
 /-- A low price with affect is a possible meaning of a high price under the affect goal whenever the
 prior gives mass to both meanings with affect, which is hyperbole. -/
@@ -195,7 +202,7 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (c : ℝ)
 theorem map_L0_approximate {u p : Price} (hμ : μ (sem u) ≠ 0) (hp : u.round = p.round)
     (a : Bool) : (L0 μ).map (project (.approximate, .price)) u
       {project (.approximate, .price) (p, a)} = 1 := by
-  rw [L0, listener_truthful_map_apply_singleton,
+  rw [L0, literalListener_map_apply_singleton,
     Set.inter_eq_self_of_subset_left (fun m hm ↦ by
       simp only [Set.mem_preimage, Set.mem_singleton_iff, project, Price.project, mem_sem.mp hm, hp]
       rfl),
@@ -207,8 +214,7 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
-  rw [S1, speaker_dirac_real_singleton_lt_iff zero_le_one
-    ⟨p, by rw [map_L0_approximate μ h₁ rfl]; simp⟩,
+  rw [S1, qudSpeaker, speaker_dirac_real_singleton_lt_iff zero_le_one,
     map_L0_approximate μ h₁ rfl, map_L0_approximate μ h₂ (Price.round_round p),
     ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]
   simp only [one_mul]

@@ -12,17 +12,18 @@ This file formalizes the logical facts of Groenendijk and Stokhof's "Dynamic pre
 logic", in which a formula denotes a relation between assignments. The paper's semantics is
 the update algebra of `Semantics/Dynamic/Update.lean`: conjunction is relational composition, the
 existential is a random reset followed by its scope, and negation, implication, disjunction,
-the universal, and closure are the tests of the conditions `neg`, `impl`, `disj`, `dforall`,
-and `SetRel.dom`, which is the content of the paper's translation of discourse representation
-theory. Only the quantifiers mention assignments, so the propositional laws are proved of
-updates over any state type and the quantifier laws over any register structure.
+the universal, and closure are tests: the antidomain, the dynamic implication and disjunction
+of the antidomain monoid of updates, and the test of `SetRel.dom`, which is the content of the
+paper's translation of discourse representation theory. Only the quantifiers mention
+assignments, so the propositional laws are proved of updates over any state type and the
+quantifier laws over any register structure.
 
 The notions of section 3.2 come first: s-equivalence and p-equivalence, which equivalence
 implies but which together do not imply it, and the tests, on which all three coincide.
 Section 3.4 then supplies the laws. The connectives are definable from negation, conjunction,
 and the existential but not conversely, since a negation is a test and an existential is one
-only over a contradictory scope (`isTest_dexists_iff`); double negation, commutativity, and
-idempotency of conjunction hold exactly of tests, while contraposition, currying, and the de
+only over a contradictory scope (`isTest_randomAssign_comp_iff`); double negation,
+commutativity, and idempotency of conjunction hold exactly of tests, while contraposition, currying, and the de
 Morgan laws hold outright. An existential binds without limit to its right because composition
 is associative (`scope_extension`), and it has universal force in an antecedent because
 implication curries (`donkey_equivalence`). Section 3.5's dynamic entailment (`Entails`)
@@ -31,7 +32,7 @@ premiss, and it is neither reflexive nor transitive (`not_entails_self`, `not_en
 the paper's own counterexamples: `¬¬∃x Px` entails `∃x Px`, which entails `Px`, but the first does
 not entail the third. The satisfaction set of an existential computed in the proof of Fact 19
 is the cylindrification of its scope's, in the cylindric set algebra of Henkin, Monk and Tarski;
-that is the substrate's `dom_dexists`. The laws are then read off
+that is the substrate's `dom_randomAssign_comp`. The laws are then read off
 for the formulas of `DPL/Syntax.lean` under their interpretation `DPL.Formula.eval`, and the
 paper's opening contrast is computed: `∃x Px ∧ Qx` binds the last occurrence of `x`, while its
 double negation and its alphabetic variant `∃y Py ∧ Qx` do not. Section 4.1's normal binding form
@@ -78,17 +79,16 @@ the translated conditions, and the translation to quantificational dynamic logic
 
 namespace GroenendijkStokhof1991
 
-open DynamicSemantics Update SetRel
+open DynamicSemantics Update SetRel AntidomainMonoid
 
-/-- The test connectives of Definition 2 and the closure of Definition 17, as tests of the
-substrate's conditions; conjunction is `○`. -/
-local notation:max "∼" φ:max => test (neg φ)
-
+/-- Negation is the antidomain `∼` of the monoid of updates, implication and disjunction its
+dynamic implication and disjunction, and the closure of Definition 17 the test of the domain;
+conjunction is `○`. -/
 local notation:max "◇" φ:max => test (dom φ)
 
-local notation:25 φ:26 " ⇒ " ψ:25 => test (impl φ ψ)
+local notation:25 φ:26 " ⇒ " ψ:25 => dimp φ ψ
 
-local notation:30 φ:31 " ⋎ " ψ:30 => test (disj φ ψ)
+local notation:30 φ:31 " ⋎ " ψ:30 => dor φ ψ
 
 variable {S : Type*} (φ ψ χ : Update S)
 
@@ -115,13 +115,13 @@ theorem PEquiv.of_eq (h : φ = ψ) : PEquiv φ ψ := h ▸ rfl
 -- Fact 3
 theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
     ∃ φ ψ : Update (ℕ → E), SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
-  have hself (g : ℕ → E) : g ~[dexists 0 (test Set.univ)] g :=
+  have hself (g : ℕ → E) : g ~[(randomAssign 0 ○ test Set.univ)] g :=
     ⟨g, ⟨g 0, (Function.update_eq_self 0 g).symm⟩, rfl, trivial⟩
-  refine ⟨test Set.univ, dexists 0 (test Set.univ), ?_, ?_, fun h ↦ ?_⟩
+  refine ⟨test Set.univ, (randomAssign 0 ○ test Set.univ), ?_, ?_, fun h ↦ ?_⟩
   · exact Set.ext fun g ↦ ⟨fun _ ↦ ⟨g, hself g⟩, fun _ ↦ ⟨g, rfl, trivial⟩⟩
   · exact Set.ext fun g ↦ ⟨fun _ ↦ ⟨g, hself g⟩, fun _ ↦ ⟨g, rfl, trivial⟩⟩
   · obtain ⟨a, b, hab⟩ := exists_pair_ne E
-    have hb : (fun _ ↦ a) ~[dexists 0 (test Set.univ)] Function.update (fun _ ↦ a) 0 b :=
+    have hb : (fun _ ↦ a) ~[(randomAssign 0 ○ test Set.univ)] Function.update (fun _ ↦ a) 0 b :=
       ⟨_, ⟨b, rfl⟩, rfl, trivial⟩
     rw [← h] at hb
     exact hab (by simpa using congr_fun hb.1 0)
@@ -138,36 +138,32 @@ theorem pEquiv_iff_eq_of_isTest (hφ : IsTest φ) (hψ : IsTest ψ) : PEquiv φ 
 
 variable (φ ψ)
 
-/-! ### Some logical facts, section 3.4 -/
+/-! ### Some logical facts, section 3.4
 
-theorem impl_eq_neg_comp_neg : (φ ⇒ ψ) = ∼(φ ○ ∼ψ) :=
-  congrArg test (impl_eq_neg_comp_test_neg φ ψ)
+The laws that mention only negation, conjunction and the connectives defined from them hold in
+every antidomain monoid, and are read off here for the updates. -/
 
-theorem disj_eq_neg_comp_neg_neg : (φ ⋎ ψ) = ∼(∼φ ○ ∼ψ) := by
-  rw [test_comp_test, neg_test, neg_eq_compl_dom, neg_eq_compl_dom, Set.compl_inter,
-    compl_compl, compl_compl, disj_eq_dom_union_dom]
+theorem impl_eq_neg_comp_neg : (φ ⇒ ψ) = ∼(φ ○ ∼ψ) := rfl
 
-theorem disj_eq_neg_impl : (φ ⋎ ψ) = (∼φ ⇒ ψ) := by
-  simp only [impl_eq_core_dom, core_test, neg_eq_compl_dom, compl_compl, disj_eq_dom_union_dom]
+theorem disj_eq_neg_comp_neg_neg : (φ ⋎ ψ) = ∼(∼φ ○ ∼ψ) := rfl
 
-theorem neg_comp : ∼(φ ○ ψ) = (φ ⇒ ∼ψ) := by
-  simp only [impl_eq_core_dom, dom_test, neg_eq_compl_dom, core_compl, dom_comp]
+theorem disj_eq_neg_impl : (φ ⋎ ψ) = (∼φ ⇒ ψ) := rfl
+
+theorem neg_comp : ∼(φ ○ ψ) = (φ ⇒ ∼ψ) := antidomain_mul φ ψ
 
 /-! #### Closure and double negation, Definition 17 -/
 
-theorem close_eq_neg_neg : ◇φ = ∼∼φ := by
-  rw [neg_test, neg_eq_compl_dom, compl_compl]
+theorem close_eq_neg_neg : ◇φ = ∼∼φ := (antidomain_antidomain φ).symm
 
 theorem close_eq_self_iff_isTest : ◇φ = φ ↔ IsTest φ :=
   ⟨fun h ↦ h ▸ isTest_test _, fun h ↦ h.eq_test_dom.symm⟩
 
 theorem neg_neg_eq_self_iff_isTest : ∼∼φ = φ ↔ IsTest φ :=
-  close_eq_neg_neg φ ▸ close_eq_self_iff_isTest φ
+  isTest_iff_antidomain_antidomain.symm
 
 theorem close_eq_close_iff_sEquiv : ◇φ = ◇ψ ↔ SEquiv φ ψ := test_inj
 
-theorem neg_close : ∼◇φ = ∼φ := by
-  rw [neg_test, neg_eq_compl_dom]
+theorem neg_close : ∼◇φ = ∼φ := antidomain_test _
 
 theorem sEquiv_neg_neg : SEquiv φ ∼∼φ := by
   rw [SEquiv, ← close_eq_neg_neg, dom_test]
@@ -176,11 +172,12 @@ theorem close_comp : ◇(φ ○ ψ) = ∼(φ ⇒ ∼ψ) := by
   rw [← neg_comp, ← close_eq_neg_neg]
 
 theorem close_comp_close : (◇φ ○ ◇ψ) = ∼(∼φ ⋎ ∼ψ) := by
-  rw [disj_eq_neg_comp_neg_neg, ← close_eq_neg_neg, ← close_eq_neg_neg, ← close_eq_neg_neg]
-  exact ((close_eq_self_iff_isTest _).mpr ((isTest_test _).comp (isTest_test _))).symm
+  rw [close_eq_neg_neg, close_eq_neg_neg]
+  exact (antidomain_dor ∼φ ∼ψ).symm
 
 theorem close_impl : (◇φ ⇒ ψ) = (∼φ ⋎ ψ) := by
-  rw [disj_eq_neg_impl, ← close_eq_neg_neg]
+  rw [close_eq_neg_neg]
+  rfl
 
 /-! #### Conjunction and disjunction -/
 
@@ -192,35 +189,32 @@ variable {φ} in
 theorem comp_self_of_isTest (hφ : IsTest φ) : φ ○ φ = φ := by
   rw [hφ.eq_test_dom, test_comp_test, Set.inter_self]
 
-theorem disj_self : (φ ⋎ φ) = ◇φ := by
-  rw [disj_eq_dom_union_dom, Set.union_self]
+theorem disj_self : (φ ⋎ φ) = ◇φ := (dor_self φ).trans (close_eq_neg_neg φ).symm
 
-theorem disj_comm : (φ ⋎ ψ) = (ψ ⋎ φ) := by
-  rw [disj_eq_dom_union_dom, disj_eq_dom_union_dom, Set.union_comm]
+theorem disj_comm : (φ ⋎ ψ) = (ψ ⋎ φ) := dor_comm φ ψ
 
-theorem disj_assoc : ((φ ⋎ ψ) ⋎ χ) = (φ ⋎ (ψ ⋎ χ)) := by
-  simp only [disj_eq_dom_union_dom, dom_test, Set.union_assoc]
+theorem disj_assoc : ((φ ⋎ ψ) ⋎ χ) = (φ ⋎ (ψ ⋎ χ)) := dor_assoc φ ψ χ
 
 theorem close_comp_disj : ◇(φ ○ (ψ ⋎ χ)) = ((φ ○ ψ) ⋎ (φ ○ χ)) := by
-  simp only [dom_comp, dom_test, disj_eq_dom_union_dom, preimage_union]
+  rw [close_eq_neg_neg]
+  exact antidomain_antidomain_mul_dor φ ψ χ
 
 theorem disj_close_comp : (φ ⋎ (◇ψ ○ χ)) = ((φ ⋎ ψ) ○ (φ ⋎ χ)) := by
-  simp only [test_comp_test, disj_eq_dom_union_dom, dom_comp, preimage_test,
-    Set.union_inter_distrib_left]
+  rw [close_eq_neg_neg]
+  exact dor_antidomain_antidomain_mul φ ψ χ
 
 /-! #### Implication -/
 
-theorem neg_impl_comm : (∼φ ⇒ ψ) = (∼ψ ⇒ φ) := by
-  rw [← disj_eq_neg_impl, ← disj_eq_neg_impl, disj_comm]
+theorem neg_impl_comm : (∼φ ⇒ ψ) = (∼ψ ⇒ φ) := dimp_antidomain_comm φ ψ
 
 theorem close_impl_eq_neg_impl_neg : (◇φ ⇒ ψ) = (∼ψ ⇒ ∼φ) := by
   rw [close_impl, disj_comm, disj_eq_neg_impl]
 
 theorem impl_close_right : (φ ⇒ ◇ψ) = (φ ⇒ ψ) := by
-  rw [impl_eq_neg_comp_neg, neg_close, ← impl_eq_neg_comp_neg]
+  rw [close_eq_neg_neg]
+  exact dimp_antidomain_antidomain φ ψ
 
-theorem impl_impl : (φ ⇒ (ψ ⇒ χ)) = ((φ ○ ψ) ⇒ χ) :=
-  congrArg test (impl_comp φ ψ χ).symm
+theorem impl_impl : (φ ⇒ (ψ ⇒ χ)) = ((φ ○ ψ) ⇒ χ) := dimp_dimp φ ψ χ
 
 /-! #### Quantifiers and connectives
 
@@ -232,19 +226,18 @@ section Quantifiers
 
 variable {R S E : Type*} [RegisterStructure R S E] (x : R) (φ ψ : Update S)
 
-theorem forall_eq_neg_exists_neg : test (dforall x φ) = ∼(dexists x ∼φ) :=
-  impl_eq_neg_comp_neg _ _
+theorem forall_eq_neg_exists_neg : (randomAssign x ⇒ φ) = ∼(randomAssign x ○ ∼φ) := rfl
 
-theorem neg_exists_eq_forall_neg : ∼(dexists x φ) = test (dforall x ∼φ) :=
+theorem neg_exists_eq_forall_neg : ∼(randomAssign x ○ φ) = (randomAssign x ⇒ ∼φ) :=
   neg_comp _ _
 
-theorem close_exists : ◇(dexists x φ) = ∼(test (dforall x ∼φ)) := by
+theorem close_exists : ◇(randomAssign x ○ φ) = ∼(randomAssign x ⇒ ∼φ) := by
   rw [close_eq_neg_neg, neg_exists_eq_forall_neg]
 
-theorem scope_extension : dexists x φ ○ ψ = dexists x (φ ○ ψ) :=
+theorem scope_extension : randomAssign x ○ φ ○ ψ = randomAssign x ○ (φ ○ ψ) :=
   comp_assoc ..
 
-theorem donkey_equivalence : (dexists x φ ⇒ ψ) = test (dforall x (φ ⇒ ψ)) :=
+theorem donkey_equivalence : (randomAssign x ○ φ ⇒ ψ) = (randomAssign x ⇒ (φ ⇒ ψ)) :=
   (impl_impl _ _ _).symm
 
 end Quantifiers
@@ -255,17 +248,18 @@ section Assignments
 
 variable {E : Type*} (x : ℕ) (φ ψ : Update (ℕ → E))
 
-theorem isTest_dexists_iff [Nontrivial E] : IsTest (dexists x φ) ↔ Contradiction φ := by
+theorem isTest_randomAssign_comp_iff [Nontrivial E] :
+    IsTest (randomAssign x ○ φ) ↔ Contradiction φ := by
   refine ⟨fun h g ⟨k, hφ⟩ ↦ ?_, fun hc ⟨_, _⟩ ⟨_, _, hφ⟩ ↦ (hc _ ⟨_, hφ⟩).elim⟩
   obtain ⟨e, he⟩ := exists_ne (g x)
   have hg (e' : E) : Function.update g x e' = k := h.eq ⟨g, ⟨g x, by simp⟩, hφ⟩
   exact he (by simpa using congr_fun ((hg e).trans (hg (g x)).symm) x)
 
 theorem exists_eq_neg_forall_neg_iff [Nontrivial E] :
-    dexists x φ = ∼(test (dforall x ∼φ)) ↔ Contradiction φ := by
-  rw [← isTest_dexists_iff, ← close_exists, eq_comm, close_eq_self_iff_isTest]
+    (randomAssign x ○ φ) = ∼(randomAssign x ⇒ ∼φ) ↔ Contradiction φ := by
+  rw [← isTest_randomAssign_comp_iff, ← close_exists, eq_comm, close_eq_self_iff_isTest]
 
-theorem sEquiv_exists_neg_forall_neg : SEquiv (dexists x φ) ∼(test (dforall x ∼φ)) := by
+theorem sEquiv_exists_neg_forall_neg : SEquiv (randomAssign x ○ φ) ∼(randomAssign x ⇒ ∼φ) := by
   rw [SEquiv, ← close_exists, dom_test]
 
 theorem comp_eq_neg_impl_neg_iff {S : Type*} (φ ψ : Update S) :
@@ -277,40 +271,40 @@ theorem sEquiv_comp_neg_impl_neg {S : Type*} (φ ψ : Update S) :
   rw [SEquiv, ← close_comp, dom_test]
 
 theorem neg_neg_exists_eq_iff [Nontrivial E] :
-    ∼∼(dexists x φ) = dexists x φ ↔ Contradiction φ :=
-  (neg_neg_eq_self_iff_isTest _).trans (isTest_dexists_iff x φ)
+    ∼∼(randomAssign x ○ φ) = (randomAssign x ○ φ) ↔ Contradiction φ :=
+  (neg_neg_eq_self_iff_isTest _).trans (isTest_randomAssign_comp_iff x φ)
 
 theorem dne_fails_anaphora [Nontrivial E] :
-    ∃ (x : ℕ) (φ : Update (ℕ → E)), ∼∼(dexists x φ) ≠ dexists x φ :=
+    ∃ (x : ℕ) (φ : Update (ℕ → E)), ∼∼(randomAssign x ○ φ) ≠ (randomAssign x ○ φ) :=
   ⟨0, test Set.univ, fun h ↦
     (neg_neg_exists_eq_iff 0 _).mp h (fun _ ↦ Classical.arbitrary E) ⟨_, rfl, trivial⟩⟩
 
 theorem not_sEquiv_comp_neg_disj_neg [Nontrivial E] :
     ∃ φ ψ : Update (ℕ → E), ¬ SEquiv (φ ○ ψ) ∼(∼φ ⋎ ∼ψ) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  refine ⟨dexists 0 (test {g | g 0 = a}), test {g | g 0 = a}, fun h ↦ ?_⟩
-  have hb : (fun _ ↦ b) ∈ (dexists 0 (test {g | g 0 = a}) ○ test {g | g 0 = a}).dom :=
+  refine ⟨(randomAssign 0 ○ test {g | g 0 = a}), test {g | g 0 = a}, fun h ↦ ?_⟩
+  have hb : (fun _ ↦ b) ∈ ((randomAssign 0 ○ test {g | g 0 = a}) ○ test {g | g 0 = a}).dom :=
     ⟨_, _, ⟨_, ⟨a, rfl⟩, rfl, by simp⟩, rfl, by simp⟩
-  rw [h, dom_test, neg_test, disj_eq_dom_union_dom, dom_test, dom_test, neg_test] at hb
+  rw [h, dor_eq, antidomain_test, dom_test, dom_antidomain, dom_antidomain, dom_test] at hb
   exact hb (.inr fun hba ↦ hab (by simpa using hba.symm))
 
 theorem not_sEquiv_impl_neg_disj [Nontrivial E] :
     ∃ φ ψ : Update (ℕ → E), ¬ SEquiv (φ ⇒ ψ) (∼φ ⋎ ψ) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  refine ⟨dexists 0 (test {g | g 0 = a}), test {g | g 0 = a}, fun h ↦ ?_⟩
-  have hb : (fun _ ↦ b) ∈ (dexists 0 (test {g | g 0 = a}) ⇒ test {g | g 0 = a}).dom := by
-    rw [dom_test]
+  refine ⟨(randomAssign 0 ○ test {g | g 0 = a}), test {g | g 0 = a}, fun h ↦ ?_⟩
+  have hb : (fun _ ↦ b) ∈ ((randomAssign 0 ○ test {g | g 0 = a}) ⇒ test {g | g 0 = a}).dom := by
+    rw [dimp_eq, dom_test]
     rintro _ ⟨_, -, rfl, hd⟩
     exact ⟨_, rfl, hd⟩
-  rw [h, dom_test] at hb
+  rw [h, dor_eq, dom_test] at hb
   obtain ⟨_, -, hn⟩ | ⟨_, rfl, hb⟩ := hb
   · exact hn ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   · exact hab (by simpa using hb.symm)
 
 theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (ℕ → E), φ ○ ψ ≠ ψ ○ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  refine ⟨dexists 0 (test Set.univ), test {g | g 0 = a}, fun h ↦ ?_⟩
-  have hb : (fun _ ↦ b) ~[dexists 0 (test Set.univ) ○ test {g | g 0 = a}]
+  refine ⟨(randomAssign 0 ○ test Set.univ), test {g | g 0 = a}, fun h ↦ ?_⟩
+  have hb : (fun _ ↦ b) ~[(randomAssign 0 ○ test Set.univ) ○ test {g | g 0 = a}]
       Function.update (fun _ ↦ b) 0 a :=
     ⟨_, ⟨_, ⟨a, rfl⟩, rfl, trivial⟩, rfl, by simp⟩
   rw [h] at hb
@@ -319,8 +313,8 @@ theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (ℕ → E), φ ○ ψ
 
 theorem comp_not_idem [Nontrivial E] : ∃ φ : Update (ℕ → E), φ ○ φ ≠ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  refine ⟨test {g | g 0 = a} ○ dexists 0 (test {g | g 0 = b}), fun h ↦ ?_⟩
-  have hb : (fun _ ↦ a) ~[test {g | g 0 = a} ○ dexists 0 (test {g | g 0 = b})]
+  refine ⟨test {g | g 0 = a} ○ (randomAssign 0 ○ test {g | g 0 = b}), fun h ↦ ?_⟩
+  have hb : (fun _ ↦ a) ~[test {g | g 0 = a} ○ (randomAssign 0 ○ test {g | g 0 = b})]
       Function.update (fun _ ↦ a) 0 b :=
     ⟨_, ⟨rfl, rfl⟩, _, ⟨b, rfl⟩, rfl, by simp⟩
   rw [← h] at hb
@@ -346,7 +340,7 @@ theorem SEntails.of_subset (h : φ ⊆ ψ) : SEntails φ ψ :=
 
 -- Fact 11
 theorem entails_iff_valid_impl : Entails φ ψ ↔ Valid (φ ⇒ ψ) := by
-  simp only [Valid, dom_test]
+  simp only [Valid, dimp_eq, dom_test]
   exact ⟨fun h _ _ hk ↦ h ⟨_, hk⟩, fun h _ ⟨g, hk⟩ ↦ h g hk⟩
 
 -- Fact 12
@@ -364,17 +358,17 @@ section Assignments
 variable {E : Type*} (x : ℕ)
 
 theorem entails_exists_atom (p : E → Prop) :
-    Entails (dexists x (test {g : (ℕ → E) | p (g x)})) (test {g | p (g x)}) := by
+    Entails (randomAssign x ○ test {g : (ℕ → E) | p (g x)}) (test {g | p (g x)}) := by
   rintro _ ⟨_, _, -, rfl, hp⟩
   exact ⟨_, rfl, hp⟩
 
 theorem entails_atom_exists (p : E → Prop) :
-    Entails (test {g : (ℕ → E) | p (g x)}) (dexists x (test {g | p (g x)})) := by
+    Entails (test {g : (ℕ → E) | p (g x)}) (randomAssign x ○ test {g | p (g x)}) := by
   rintro _ ⟨h, rfl, hp⟩
   exact ⟨h, h, ⟨h x, (Function.update_eq_self x h).symm⟩, rfl, hp⟩
 
 theorem not_sEntails_exists_atom [Nontrivial E] :
-    ∃ p : E → Prop, ¬ SEntails (dexists 0 (test {g : (ℕ → E) | p (g 0)}))
+    ∃ p : E → Prop, ¬ SEntails (randomAssign 0 ○ test {g : (ℕ → E) | p (g 0)})
       (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨(· = a), fun h ↦ ?_⟩
@@ -384,8 +378,8 @@ theorem not_sEntails_exists_atom [Nontrivial E] :
 -- p. 68, the counterexample to reflexivity before Fact 15
 theorem not_entails_self [Nontrivial E] : ∃ φ : Update (ℕ → E), ¬ Entails φ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
-  refine ⟨test {g | g 0 = a} ○ dexists 0 (test Set.univ), fun h ↦ ?_⟩
-  have hb : (fun _ ↦ a) ~[test {g | g 0 = a} ○ dexists 0 (test Set.univ)]
+  refine ⟨test {g | g 0 = a} ○ (randomAssign 0 ○ test Set.univ), fun h ↦ ?_⟩
+  have hb : (fun _ ↦ a) ~[test {g | g 0 = a} ○ (randomAssign 0 ○ test Set.univ)]
       Function.update (fun _ ↦ a) 0 b :=
     ⟨_, ⟨rfl, rfl⟩, _, ⟨b, rfl⟩, rfl, trivial⟩
   obtain ⟨_, _, ⟨rfl, hb⟩, -⟩ := h ⟨_, hb⟩
@@ -393,7 +387,7 @@ theorem not_entails_self [Nontrivial E] : ∃ φ : Update (ℕ → E), ¬ Entail
 
 -- p. 69
 theorem not_entails_neg_neg_exists_atom [Nontrivial E] :
-    ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : (ℕ → E) | p (g 0)}))
+    ∃ p : E → Prop, ¬ Entails ∼∼(randomAssign 0 ○ test {g : (ℕ → E) | p (g 0)})
       (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨(· = a), fun h ↦ ?_⟩
@@ -410,12 +404,12 @@ theorem not_entails_trans [Nontrivial E] :
   ⟨_, _, _, entails_neg_neg_self _, entails_exists_atom 0 p, h⟩
 
 theorem not_entails_comp_exists [Nontrivial E] :
-    ∃ p : E → Prop, ¬ Entails (dexists 0 (test {g : (ℕ → E) | p (g 0)}) ○
-      dexists 0 (test Set.univ)) (test {g | p (g 0)}) := by
+    ∃ p : E → Prop, ¬ Entails ((randomAssign 0 ○ test {g : (ℕ → E) | p (g 0)}) ○
+      (randomAssign 0 ○ test Set.univ)) (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨(· = a), fun h ↦ ?_⟩
-  have hc : (fun _ ↦ b) ~[dexists 0 (test {g : (ℕ → E) | g 0 = a}) ○
-      dexists 0 (test Set.univ)] fun _ ↦ b :=
+  have hc : (fun _ ↦ b) ~[(randomAssign 0 ○ test {g : (ℕ → E) | g 0 = a}) ○
+      (randomAssign 0 ○ test Set.univ)] fun _ ↦ b :=
     ⟨_, ⟨_, ⟨a, rfl⟩, rfl, by simp⟩, _, ⟨b, by simp⟩, rfl, trivial⟩
   obtain ⟨_, rfl, hb⟩ := h ⟨_, hc⟩
   exact hab (by simpa using hb.symm)
@@ -526,13 +520,13 @@ variable {L : Language.{u, v}} {V : Type w} [DecidableEq V] (M : Type x) [L.Stru
   (φ ψ χ : Formula L V) (x y : V)
 
 theorem eval_imp_eq : (φ ⟿ ψ).eval M = (¬ᵈ(φ ⋏ ¬ᵈψ)).eval M :=
-  impl_eq_neg_comp_neg _ _
+  eval_imp_eq_dimp M φ ψ
 
 theorem eval_disj_eq : (φ ⋎ ψ).eval M = (¬ᵈ(¬ᵈφ ⋏ ¬ᵈψ)).eval M :=
-  disj_eq_neg_comp_neg_neg _ _
+  eval_disj_eq_dor M φ ψ
 
 theorem eval_all_eq : (∀[x] φ).eval M = (¬ᵈ∃[x] ¬ᵈφ).eval M :=
-  forall_eq_neg_exists_neg x _
+  eval_all_eq_dimp M φ x
 
 theorem eval_neg_neg_eq_iff : (¬ᵈ¬ᵈφ).eval M = φ.eval M ↔ IsTest (φ.eval M) :=
   neg_neg_eq_self_iff_isTest _
@@ -540,27 +534,18 @@ theorem eval_neg_neg_eq_iff : (¬ᵈ¬ᵈφ).eval M = φ.eval M ↔ IsTest (φ.e
 theorem eval_ex_conj : ((∃[x] φ) ⋏ ψ).eval M = (∃[x] (φ ⋏ ψ)).eval M :=
   scope_extension x _ _
 
-theorem eval_ex_imp : ((∃[x] φ) ⟿ ψ).eval M = (∀[x] (φ ⟿ ψ)).eval M :=
-  donkey_equivalence x _ _
+theorem eval_ex_imp : ((∃[x] φ) ⟿ ψ).eval M = (∀[x] (φ ⟿ ψ)).eval M := by
+  rw [eval_imp_eq_dimp, eval_all_eq_dimp, eval_imp_eq_dimp]
+  exact donkey_equivalence x _ _
 
 /-! #### Free variables, active quantifiers, and entailment
 
-Facts 8 and 9 are the two halves of the typing of a formula by its context
-(`DPL.Formula.hasContext_eval`): truth depends only on the free variables, and only the active
-quantifier variables change. With them the properties entailment lacks in general are restored
-under conditions on the two sets. -/
+Facts 8 and 9 are the two halves of the typing of a formula by its context, the substrate's
+`DPL.Formula.dependsOn_dom_eval` and `DPL.Formula.eqOn_of_eval`: truth depends only on the free
+variables, and only the active quantifier variables change. With them the properties entailment
+lacks in general are restored under conditions on the two sets. -/
 
 variable {M φ ψ χ} {g h : V → M}
-
--- Fact 8
-theorem dependsOn_dom_eval : DependsOn (· ∈ (φ.eval M).dom) (↑φ.fv : Set V) := by
-  rw [← context_I]
-  exact (φ.hasContext_eval M).dependsOn_dom
-
--- Fact 9
-theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)ᶜ := by
-  rw [← context_B]
-  exact (φ.hasContext_eval M).blocks hgh
 
 theorem mem_dom_eval_iff (hd : Disjoint φ.aqv ψ.fv) (hgh : g ~[φ.eval M] h) :
     g ∈ (ψ.eval M).dom ↔ h ∈ (ψ.eval M).dom :=
@@ -607,10 +592,11 @@ formula are the first-order ones of its normal binding form, and those of a form
 the static constants alone are its own. -/
 
 theorem eval_conjNbf : (conjNbf φ ψ).eval M = φ.eval M ○ ψ.eval M := by
-  induction φ generalizing ψ <;> simp_all [conjNbf, dexists, comp_assoc]
+  induction φ generalizing ψ <;> simp_all [conjNbf, comp_assoc]
 
-theorem eval_impNbf : (impNbf φ ψ).eval M = test (impl (φ.eval M) (ψ.eval M)) := by
-  induction φ generalizing ψ <;> simp_all [impNbf, dexists, dforall, impl_comp]
+theorem eval_impNbf :
+    (impNbf φ ψ).eval M = test ((φ.eval M).core (ψ.eval M).dom) := by
+  induction φ generalizing ψ <;> simp_all [impNbf, core_comp]
 
 -- Fact 17
 theorem eval_nbf : (nbf φ).eval M = φ.eval M := by
@@ -670,8 +656,8 @@ abbrev atom (P : L.Relations 1) (x : V) : Formula L V := rel P fun _ ↦ .var x
 theorem mem_dom_eval_ex_conj_atom :
     g ∈ (((∃[x] (atom P x)) ⋏ atom Q x).eval M).dom ↔
       ∃ d : M, Language.Structure.RelMap P (fun _ ↦ d) ∧ Language.Structure.RelMap Q fun _ ↦ d := by
-  simp only [eval_conj, eval_ex, eval_rel, dom_comp, dom_test, mem_preimage, mem_dexists,
-    mem_test]
+  simp only [eval_conj, eval_ex, eval_rel, dom_comp, dom_test, mem_preimage,
+    mem_randomAssign_comp, mem_test]
   constructor
   · rintro ⟨_, hQ, d, rfl, hP⟩
     exact ⟨d, by simpa using hP, by simpa using hQ⟩
@@ -682,16 +668,16 @@ theorem mem_dom_eval_neg_neg_ex_conj_atom :
     g ∈ (((¬ᵈ¬ᵈ∃[x] (atom P x)) ⋏ atom Q x).eval M).dom ↔
       (∃ d : M, Language.Structure.RelMap P fun _ ↦ d) ∧
         Language.Structure.RelMap Q fun _ ↦ g x := by
-  simp only [eval_conj, eval_neg, eval_ex, eval_rel, neg_eq_compl_dom, compl_compl,
-    dom_comp, preimage_test, dom_test, dom_dexists, Set.mem_inter_iff, mem_cyl]
+  rw [eval_conj, eval_neg, eval_neg, eval_ex, dom_test, compl_compl, dom_randomAssign_comp]
+  simp only [eval_rel, dom_comp, preimage_test, dom_test, Set.mem_inter_iff, mem_cyl]
   simp
 
 theorem mem_dom_eval_ex_conj_atom_of_ne (hxy : x ≠ y) :
     g ∈ (((∃[y] (atom P y)) ⋏ atom Q x).eval M).dom ↔
       (∃ d : M, Language.Structure.RelMap P fun _ ↦ d) ∧
         Language.Structure.RelMap Q fun _ ↦ g x := by
-  simp only [eval_conj, eval_ex, eval_rel, dom_comp, dom_test, mem_preimage, mem_dexists,
-    mem_test]
+  simp only [eval_conj, eval_ex, eval_rel, dom_comp, dom_test, mem_preimage,
+    mem_randomAssign_comp, mem_test]
   constructor
   · rintro ⟨_, hQ, d, rfl, hP⟩
     exact ⟨⟨d, by simpa using hP⟩, by simpa [Function.update_of_ne hxy] using hQ⟩
@@ -708,7 +694,7 @@ theorem isScopeBound_ex_conj_atom_of_ne (hxy : x ≠ y) :
 theorem isTest_eval_equal_conj_ex_equal (hxy : x ≠ y) :
     IsTest (((.var x ≐ .var y) ⋏ ∃[x] (.var x ≐ .var y) : Formula L V).eval M) := by
   rintro ⟨g, h⟩ ⟨_, ⟨rfl, hg⟩, hex⟩
-  obtain ⟨e, rfl, he⟩ := mem_dexists.mp hex
+  obtain ⟨e, rfl, he⟩ := mem_randomAssign_comp.mp hex
   simp only [Set.mem_ofPred_eq, Language.Term.realize_var, RegisterStructure.extend_eq_update,
     Function.update_self, Function.update_of_ne hxy.symm] at he hg
   show g = Function.update g x e
@@ -780,10 +766,10 @@ variable [DecidableEq V] (M : Type x) [L.Structure M]
 private theorem eval_toDPL_of_conditions (K : DRS L V)
     (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c}) :
     K.toDPL.eval M = K.toRel := by
-  ext ⟨g, k⟩
-  rw [DRS.toDPL_eq, mem_eval_exs, eval_conjs_map M _ _ _ h]
-  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifiesTotal_iff, Set.mem_ofPred_eq]
-  exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
+  rw [DRS.toDPL_eq, eval_exs, eval_conjs, List.map_map,
+    (List.map_congr_left h : K.conditions.map (eval M ∘ Condition.toDPL) = _), prod_map_test,
+    ← box_toFinset, Finset.toList_toFinset, DRS.toRel]
+  exact congrArg _ (Set.ext fun f ↦ by simp [verifiesTotal_iff])
 
 -- Fact 25
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :

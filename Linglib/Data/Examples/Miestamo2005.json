@@ -12,7 +12,7 @@
     "translation": "I am sleeping.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -31,7 +31,7 @@
     "translation": "I am not sleeping.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p3_2a"]
@@ -52,7 +52,7 @@
     "translation": "You sing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -71,7 +71,7 @@
     "translation": "You do not sing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p43_1a"]
@@ -92,7 +92,7 @@
     "translation": "I run. / I am running.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -111,7 +111,7 @@
     "translation": "I do not run. / I am not running.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p43_2a"]
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -147,7 +147,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p53_3a_1sg_aff"]
@@ -166,7 +166,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -183,7 +183,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p53_3b_1sg_aff"]
@@ -204,7 +204,7 @@
     "translation": "He ran.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -223,7 +223,7 @@
     "translation": "He did not run (semelfactive).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p54_5a"]
@@ -244,7 +244,7 @@
     "translation": "He runs.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -263,7 +263,7 @@
     "translation": "He does not run. (habitual)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p55_5c"]
@@ -284,7 +284,7 @@
     "translation": "(S)he came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Miestamo cites van Schaaik 1994: 38, 39 and Halman 1981: 64 for (6).",
@@ -303,7 +303,7 @@
     "translation": "(S)he did not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p58_6a"]
@@ -324,7 +324,7 @@
     "translation": "(S)he will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Miestamo cites van Schaaik 1994: 38, 39 and Halman 1981: 64 for (6).",
@@ -343,7 +343,7 @@
     "translation": "(S)he will not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p58_6c"]
@@ -364,7 +364,7 @@
     "translation": "Jean comes / is coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -383,7 +383,7 @@
     "translation": "Jean does not come / is not coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p62_13a"]
@@ -404,7 +404,7 @@
     "translation": "Jean came / has come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -423,7 +423,7 @@
     "translation": "Jean didn't/hasn't come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p62_13c"]
@@ -442,7 +442,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -459,7 +459,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p64_15a_1sg_aff"]
@@ -478,7 +478,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -495,7 +495,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p64_15b_1sg_aff"]
@@ -514,7 +514,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -531,7 +531,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p64_15c_1sg_aff"]
@@ -550,7 +550,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -567,7 +567,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p64_15d_1sg_aff"]
@@ -588,7 +588,7 @@
     "translation": "I went hunting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -607,7 +607,7 @@
     "translation": "I did not go hunting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p76_28a"]
@@ -628,7 +628,7 @@
     "translation": "I ate the deer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -647,7 +647,7 @@
     "translation": "I didn't eat the deer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p76_28c"]
@@ -666,7 +666,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -683,7 +683,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p110_77a"]
@@ -702,7 +702,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -719,7 +719,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p110_77c"]
@@ -738,7 +738,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -755,7 +755,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p110_77e"]
@@ -774,7 +774,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -791,7 +791,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p110_77g"]
@@ -810,7 +810,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -827,7 +827,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -844,7 +844,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p110_77i"],
@@ -864,7 +864,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -881,7 +881,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -898,7 +898,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p110_77l"],
@@ -920,7 +920,7 @@
     "translation": "(he) goes, went",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -939,7 +939,7 @@
     "translation": "(he) will go",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -958,7 +958,7 @@
     "translation": "(he) has gone",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -977,7 +977,7 @@
     "translation": "(he) does/did/will not go, has not gone",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p123_89a"],
@@ -1000,7 +1000,7 @@
     "translation": "I/you/[...] eat(s).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1019,7 +1019,7 @@
     "translation": "I/you/[...] do(es) not eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p294_112a"]
@@ -1040,7 +1040,7 @@
     "translation": "I/you/[...] ate.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1059,7 +1059,7 @@
     "translation": "I/you/[...] did not eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p294_112c"]
@@ -1080,7 +1080,7 @@
     "translation": "I/you/[...] eat(s).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1099,7 +1099,7 @@
     "translation": "I/you/[...] do(es) not eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p294_112e"]
@@ -1120,7 +1120,7 @@
     "translation": "I/you/[...] ate.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1139,7 +1139,7 @@
     "translation": "I/you/[...] did not eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p294_112g"]
@@ -1160,7 +1160,7 @@
     "translation": "He is going.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1179,7 +1179,7 @@
     "translation": "He is not going.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p318_170a"]
@@ -1200,7 +1200,7 @@
     "translation": "He went.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1219,7 +1219,7 @@
     "translation": "He did not go.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p318_170c"]
@@ -1240,7 +1240,7 @@
     "translation": "He has gone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1259,7 +1259,7 @@
     "translation": "He has not gone (yet).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p318_170e"]
@@ -1280,7 +1280,7 @@
     "translation": "I speak Russian.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1299,7 +1299,7 @@
     "translation": "I don't speak Russian.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p341_224a"]
@@ -1320,7 +1320,7 @@
     "translation": "(S)he comes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1339,7 +1339,7 @@
     "translation": "I come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1358,7 +1358,7 @@
     "translation": "They come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -1377,7 +1377,7 @@
     "translation": "(S)he does not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p353_260a"]
@@ -1398,7 +1398,7 @@
     "translation": "I do not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p353_260b"]
@@ -1419,7 +1419,7 @@
     "translation": "They do not come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["affirmative", "miestamo2005_p353_260c"]

@@ -119,7 +119,8 @@ stratum `{x}`. -/
 def atomVar (pred : M → Prop) (x : V) : FCP W V M := ofState (State.atomAt x fun _ ↦ pred)
 
 theorem atomW_eq (pred : W → Prop) : atomW pred F = Part.some {p ∈ F | pred p.world} := by
-  rw [atomW, ofState_apply, State.mul_eq_sep_of_uniformAt fun _ h ↦ h.1, State.mul_stratum_empty]
+  rw [atomW, ofState_apply, State.mul_eq_sep_of_uniformAt (Set.sep_subset _ _),
+    State.mul_stratum_empty]
   congr 1
   ext r
   refine and_congr_right fun _ ↦ ?_

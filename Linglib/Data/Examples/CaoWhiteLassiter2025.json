@@ -20,6 +20,7 @@
   {
     "id": "cwl2025_ex3b",
     "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(3b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "A CAT [...] made himself look as much as possible like a doctor...",
     "glossedTokens": [],

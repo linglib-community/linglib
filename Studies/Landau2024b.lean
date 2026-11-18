@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
-public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Binding.Valuation
 public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Studies.Landau2013
@@ -25,7 +25,7 @@ assigns (`not_isExhaustive_pcReading`). The theory derives partial control inste
 the subject of a *for*-infinitive, an operation on pronunciation that leaves the readings of its
 source in place. But the *for*-subject may exclude its antecedent and has a strict reading under
 *only*, refuting both clauses of the signature of obligatory control, while the partially
-controlled subject has neither (`profile_pro_ne_profile_forNP`); and *persuade* takes no
+controlled subject refutes neither (`refutes_forNP`, `refutes_pro`); and *persuade* takes no
 *for*-subject yet allows partial control (`exists_pro_without_forNP_source`). Nor can Form Copy
 supply the partial reading itself: a partial reading of its relation needs a repetition
 (`exists_isRepetition_of_isPartial`), which Internal Merge never leaves, so raising has none
@@ -36,7 +36,7 @@ blind to.
 
 The controlled subject of (46c) is the feminine clitic of the San Martín Peras Mixtec fragment.
 The semantic clause of Form Copy, copies interpreted in exactly the same way, is exhaustive
-control over the copy relation (`Control.IsExhaustive`). The example rows are read as
+control over the copy relation (`Binding.IsExhaustive`). The example rows are read as
 diagnostics by `Landau2013.attests`: a reading on which the embedded subject
 excludes its antecedent ((56), (57)) is a free reading, refuting co-dependence, and a strict
 reading under *only* ((58), (59)) refutes variable binding. Every row with a silent subject is
@@ -61,7 +61,7 @@ across languages ((53)) and the collective plurality of the partially controlled
 
 namespace Landau2024b
 
-open Minimalist SyntacticObject Control
+open Minimalist SyntacticObject Binding
 
 /-! ### Controlled pronouns (46) -/
 
@@ -85,7 +85,7 @@ theorem naJuana_mem_copyRel : (naJuana, naJuana') ∈ forgotToWash.copyRel :=
     (structurallyIdentical_renumber 2 naJuana)
 
 /-- The controlled subject of (46c), the feminine clitic *=ñá*. -/
-def nya : SyntacticObject := leaf ⟨.of .D [] (Mixtec.SMPM.cl3 .feminine).form, 6⟩
+def nya : SyntacticObject := leaf ⟨.of .D [] (Mixtec.SMPM.Pronouns.cl3 .feminine).form, 6⟩
 
 /-- The pronoun that (46c) requires is a copy of its controller in no object, since the two are
 not structurally identical. -/
@@ -115,11 +115,23 @@ theorem john_mem_copyRel : (john, john') ∈ arrangedToMeet.copyRel :=
 and an associate, `1`. -/
 def pcReading (x : SyntacticObject) : Set ℕ := if x = john' then {0, 1} else {0}
 
-theorem isPartial_pcReading : IsPartial pcReading arrangedToMeet.copyRel :=
-  ⟨john, john', john_mem_copyRel, by
-    have hne : john ≠ john' := by simp [john, john', renumber]
-    simp only [pcReading, hne, ↓reduceIte]
-    exact (Set.ssubset_iff_of_subset (by simp)).2 ⟨1, by simp, by simp⟩⟩
+theorem john'_not_mem_copyRel : (john', john') ∉ arrangedToMeet.copyRel := by
+  rintro ⟨⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hz⟩, -⟩
+  simp only [arrangedToMeet, john, john', renumber, map_leaf, terms_merge, terms_leaf,
+    Multiset.mem_cons, Multiset.mem_add, Multiset.mem_singleton] at hw
+  rcases hw with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [john, john', renumber, LexicalItem.of]
+  rcases hwz with rfl | rfl
+  · exact hne rfl
+  · simp [containsOrEq_leaf] at hz
+
+theorem isPartial_pcReading : IsPartial pcReading arrangedToMeet.copyRel := by
+  refine ⟨john', ⟨john, john_mem_copyRel⟩, {0}, ?_, ?_⟩
+  · rintro _ ⟨x, ⟨_, rfl, hx⟩, rfl⟩
+    have hne : x ≠ john' := fun h ↦ john'_not_mem_copyRel (h ▸ hx)
+    simp [pcReading, hne]
+  · simp only [pcReading, ↓reduceIte]
+    exact (Set.ssubset_iff_of_subset (by simp)).2 ⟨1, by simp, by simp⟩
 
 theorem not_isExhaustive_pcReading : ¬ IsExhaustive pcReading arrangedToMeet.copyRel :=
   fun h ↦ h.not_isPartial isPartial_pcReading
@@ -127,7 +139,7 @@ theorem not_isExhaustive_pcReading : ¬ IsExhaustive pcReading arrangedToMeet.co
 theorem exists_isRepetition_of_isPartial {Ref : Type*} [Preorder Ref]
     {val : SyntacticObject → Ref} {s : SyntacticObject} (h : IsPartial val s.copyRel) :
     ∃ x y, (x, y) ∈ s.copyRel ∧ IsRepetition x y ∧ val x < val y :=
-  let ⟨x, y, hxy, hlt⟩ := h
+  let ⟨x, y, hxy, hlt⟩ := h.exists_lt
   ⟨x, y, hxy, ⟨hxy.2, ne_of_apply_ne val hlt.ne⟩, hlt⟩
 
 /-- *the chair*, raised in Landau's example of the missing partial raising. -/
@@ -145,8 +157,8 @@ theorem chair_mem_copyRel : (chair, chair) ∈ appearedToGather.copyRel :=
 theorem hasDistinctItems_appearedToGather : appearedToGather.HasDistinctItems := by
   intro a b ha hb hab
   simp only [appearedToGather, chair, terms_merge, terms_leaf, Multiset.mem_cons, Multiset.mem_add,
-    Multiset.mem_singleton, leaf_inj, leaf_ne_merge, traceOf_ne_merge, traceOf_ne_leaf, false_or,
-    or_false] at ha hb
+    Multiset.mem_singleton, leaf_inj, leaf_ne_merge, labelledTrace_ne_merge,
+    labelledTrace_ne_leaf, false_or, or_false] at ha hb
   rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
     first | rfl | simp [LexicalItem.of] at hab
 
@@ -172,27 +184,23 @@ def subjectOf (row : Datum) : Option Subject :=
   row.parse? "embeddedSubject" [("PRO", .pro), ("for", .forNP)]
 
 /-- The diagnostics the rows attest for a kind of subject. -/
-def attested (s : Subject) : Set Diagnostic :=
+def attested (s : Subject) : Set Landau2013.Diagnostic :=
   {d | ∃ row ∈ Examples.all, subjectOf row = some s ∧ Landau2013.attests row d}
 
 instance (s : Subject) : DecidablePred (· ∈ attested s) := fun d ↦ by
   unfold attested; infer_instance
 
-/-- The profile of a kind of subject in the signature of obligatory control, the clauses no
-attested diagnostic refutes. -/
-def profile (s : Subject) : Set Landau2013.Clause74 := ofAttested (attested s)
-
 -- (56b), (57d), (58b), (59b)
-theorem profile_pro_eq_univ : profile .pro = Set.univ :=
-  ofAttested_eq_univ_iff.2 <| Set.eq_empty_iff_forall_notMem.2 <| by decide +kernel
+/-- A silent controlled subject refutes no clause of the signature of obligatory control. -/
+theorem refutes_pro : Landau2013.refutes '' attested .pro = ∅ :=
+  Set.image_eq_empty.2 <| Set.eq_empty_iff_forall_notMem.2 <| by decide +kernel
 
 -- (56a), (57c), (58a), (59a)
-theorem profile_forNP_eq_empty : profile .forNP = ∅ :=
-  ofAttested_eq_empty_iff.2 <| by decide +kernel
-
-theorem profile_pro_ne_profile_forNP : profile .pro ≠ profile .forNP := by
-  rw [profile_pro_eq_univ, profile_forNP_eq_empty]
-  exact (Set.nonempty_of_mem (Set.mem_univ Landau2013.Clause74.codependent)).ne_empty
+/-- The subject of a *for*-infinitive refutes both clauses. -/
+theorem refutes_forNP : Landau2013.refutes '' attested .forNP = Set.univ :=
+  Set.eq_univ_of_forall fun c ↦ by
+    cases c
+    exacts [⟨.arbitraryControl, by decide +kernel, rfl⟩, ⟨.strictUnderOnly, by decide +kernel, rfl⟩]
 
 /-- Partial control without a *for*-subject source: (52c) under *persuade*, which takes no
 *for*-subject ((15a), (15b)). -/

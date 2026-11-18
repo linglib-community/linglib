@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Mathlib.MeasureTheory.Measure.Tilted
 public import Mathlib.Probability.UniformOn
@@ -89,7 +89,7 @@ theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMe
     exact ⟨_, hZ, tilted_real_singleton ν f⟩
   · rintro ⟨Z, hZ0, h⟩
     have hZeq : Z = ∑ b, ν.real {b} * Real.exp (f b) := by
-      have := sum_measureReal_singleton_eq_one μ
+      have : ∑ a, μ.real {a} = 1 := by simp
       simp_rw [h, ← Finset.sum_div] at this
       exact ((div_eq_one_iff_eq hZ0.ne').1 this).symm
     have : IsProbabilityMeasure (ν.tilted f) := isProbabilityMeasure_tilted .of_finite

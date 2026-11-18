@@ -565,7 +565,7 @@ theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)}
   have hnd : ¬ IsWeaklyPayoffDominated U (Measure.dirac s) := by
     rintro ⟨ν, hν, hle, r₀, hlt⟩
     obtain ⟨μ, hμ⟩ := exists_weights_eq (p := fun x ↦ ν.real {x}) (fun _ ↦ measureReal_nonneg)
-      (sum_measureReal_singleton_eq_one ν)
+      (by simp)
     have hmix (r : R) : mixedPayoff U ν r = ∑ x, μ.weights x * g.senderPayoff default x r := by
       rw [mixedPayoff_eq_sum, hμ]
     have heq := h μ (fun r hr ↦ by simpa only [hdirac, hmix] using hle ⟨r, hr⟩) r₀ r₀.2
@@ -581,7 +581,7 @@ theorem mem_senderCR_of_not_weaklyDominated [Unique C] {R : Set (C → F → A)}
     (fun r ↦ by split_ifs <;> simp [measureReal_nonneg]) (by
       have := hsum fun _ ↦ 1
       simp only [mul_one] at this
-      rw [this, sum_measureReal_singleton_eq_one])
+      rw [this, sum_measureReal_singleton, Finset.coe_univ, probReal_univ])
   refine ⟨ρ, .single default, Set.ext fun r ↦ ?_, ?_, g.mem_senderBR_iff.2 fun c w ↦ ?_⟩
   · rw [Finset.mem_coe, Finsupp.mem_support_iff, hρ]
     by_cases hr : r ∈ R
@@ -1378,13 +1378,13 @@ private theorem icrR_one : game.icrR 1 = {r | r () 0 = 0} := by
   ext r
   rw [SemanticGame.icrR_succ, icrR_zero, SemanticGame.receiverStep,
     show game.senderCR {fun _ _ ↦ 0} = {fun _ _ ↦ 0} from icrR_zero ▸ icrS_zero,
-    Set.mem_ofPred_eq, Set.mem_ofPred_eq, SemanticGame.mem_receiverCR_iff]
+    Set.mem_ofPred_eq, SemanticGame.mem_receiverCR_iff]
   constructor
   · rintro ⟨⟨σ, q, hσ, -, hBR⟩, -⟩
     rw [coe_support_eq_singleton] at hσ
     subst hσ
     simpa [e0] using hBR () 0
-  · intro hr
+  · intro (hr : r () 0 = 0)
     refine ⟨⟨.single _, .single (), coe_support_eq_singleton.2 rfl, by simp, fun c ↦ ?_⟩,
       fun f _ c ↦ ?_⟩
     · cases c; rw [Fin.forall_fin_two]

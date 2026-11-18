@@ -15,7 +15,8 @@ manage to leave* implies *didn't leave*; *force* is `+/◦`, *refuse* `−/◦`,
 *want* `◦/◦`. Each slot is a flat value, `◦` being `⊥`, so signatures are ordered by how much they
 imply.
 
-Each implication is [an atomic constraint](##NaturalLogic.ImplicationSignature.holds_atom_iff) of
+Each implication is [an atomic
+constraint](##NaturalLogic.ImplicationSignature.holds_ofPolarities_iff) of
 natural logic between the claim and its complement, and a signature implies more exactly when it
 [constrains more](##NaturalLogic.ImplicationSignature.constraints_subset_constraints). Its
 constraints are those of one of the seven relations [unless both slots imply the same
@@ -82,21 +83,13 @@ instance : OrderBot ImplicationSignature where
 
 /-! ### Implications as constraints -/
 
-/-- The constraint between a claim and its complement that a context of polarity `m` implying the
-complement of polarity `q` makes: `≤` and disjointness in a positive context, codisjointness and
-`≥` in a negative one. -/
-def atom : Polarity → Polarity → Relation.Atom
-  | .positive, .positive => .le
-  | .positive, .negative => .disjoint
-  | .negative, .positive => .codisjoint
-  | .negative, .negative => .ge
+open Relation.Atom (ofPolarities ofPolarities_injective)
 
-theorem atom_injective : Function.Injective2 atom := by
-  unfold Function.Injective2; decide
-
-/-- Over propositions, `atom m q` says that the claim of polarity `m` entails the complement of
-polarity `q`. -/
-theorem holds_atom_iff {W : Type*} {x y : Set W} : (atom m q).Holds x y ↔ m • x ⊆ q • y := by
+/-- A context of polarity `m` implying the complement of polarity `q` constrains the claim and its
+complement by `Relation.Atom.ofPolarities m q`: over propositions, the claim of polarity `m` entails
+the complement of polarity `q`. -/
+theorem holds_ofPolarities_iff {W : Type*} {x y : Set W} :
+    (ofPolarities m q).Holds x y ↔ m • x ⊆ q • y := by
   cases m <;> cases q
   · exact Iff.rfl
   · exact Set.subset_compl_iff_disjoint_right.symm
@@ -106,23 +99,25 @@ theorem holds_atom_iff {W : Type*} {x y : Set W} : (atom m q).Holds x y ↔ m �
 /-- The constraints a signature puts on a claim and its complement, one for each context in which
 it implies something. -/
 def constraints (s : ImplicationSignature) : Finset Relation.Atom :=
-  {a | ∃ m q : Polarity, s.implied m = q ∧ atom m q = a}
+  {a | ∃ m q : Polarity, s.implied m = q ∧ ofPolarities m q = a}
 
 theorem mem_constraints {a : Relation.Atom} :
-    a ∈ s.constraints ↔ ∃ m q : Polarity, s.implied m = q ∧ atom m q = a := by
+    a ∈ s.constraints ↔ ∃ m q : Polarity, s.implied m = q ∧ ofPolarities m q = a := by
   simp [constraints]
 
-theorem atom_mem_constraints : atom m q ∈ s.constraints ↔ s.implied m = q := by
-  simp [mem_constraints, atom_injective.eq_iff]
+theorem ofPolarities_mem_constraints : ofPolarities m q ∈ s.constraints ↔ s.implied m = q := by
+  simp [mem_constraints, ofPolarities_injective.eq_iff]
 
 /-- A signature implies more than another exactly when it constrains more. -/
 theorem constraints_subset_constraints : s.constraints ⊆ t.constraints ↔ s ≤ t := by
   refine ⟨fun h m ↦ ?_, fun h a ha ↦ ?_⟩
   · cases hs : s.implied m with
     | bot => exact bot_le
-    | coe q => exact Flat.coe_le_iff.2 (atom_mem_constraints.1 (h (atom_mem_constraints.2 hs)))
+    | coe q =>
+      exact Flat.coe_le_iff.2
+        (ofPolarities_mem_constraints.1 (h (ofPolarities_mem_constraints.2 hs)))
   · obtain ⟨m, q, hs, rfl⟩ := mem_constraints.1 ha
-    exact atom_mem_constraints.2 (Flat.coe_le_iff.1 (hs ▸ h m))
+    exact ofPolarities_mem_constraints.2 (Flat.coe_le_iff.1 (hs ▸ h m))
 
 /-- The constraints of a signature are those of one of the seven relations exactly when its two
 slots do not imply the same polarity. -/

@@ -11,6 +11,7 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
 
@@ -215,7 +216,7 @@ noncomputable def Item.val : {a : Ty Base} → Item a → (ℕ → ToyEntity) �
   | _, .name c => fun _ ↦ toyStructure.funMap c ![]
   | _, .pred r => fun _ x ↦ toyStructure.RelMap r ![x]
   | _, .verb r => fun _ y x ↦ toyStructure.RelMap r ![x, y]
-  | _, .det s => fun _ ↦ s.denote ToyEntity
+  | _, .det s => fun _ P ↦ Quantifier.toCont (s.denote ToyEntity {x | P x})
   | _, .trace n => fun g ↦ g n
 
 /-- The denotation of an item under a partial assignment, a partial function at every function
@@ -364,12 +365,11 @@ theorem rel_val : ∀ {a : Ty Base} (i : Item a), Rel a i.val i.pval
       ⟨_, by cases hx; rfl, rfl⟩⟩⟩
   | _, .det s => fun _ _ _ ↦ ⟨_, rfl, fun A f hf ↦ ⟨_, rfl, fun B f' hf' ↦ ⟨_, rfl, by
       have key {P : ToyEntity → Prop} {p : ToyEntity → Part Prop}
-          (h : Ty.CbvRel (D := Dom) .et P p) : {x | True ∈ p x} = P := by
+          (h : Ty.CbvRel (D := Dom) .et P p) : {x | True ∈ p x} = {x | P x} := by
         ext x
         obtain ⟨y, hy, hyr⟩ := h x x rfl
         cases hyr
         simp [hy]
-        rfl
       show _ = s.denote ToyEntity {x | True ∈ f x} {x | True ∈ f' x}
       rw [key hf, key hf']
       rfl⟩⟩⟩
@@ -604,19 +604,19 @@ by *every person*; raising `t₂` under that binder with the index 1 again captu
 trace, and the quantifier's variable no longer occurs in its scope. -/
 theorem meanings_raise_captures :
     meanings (.bin everyPerson (.binder 1 (.bin (.tr 2) (.bin (verb .see) (.tr 1))))) =
-        [⟨.t, fun g ↦ every person fun x ↦ Toy.sees x (g 2)⟩] ∧
+        [⟨.t, fun g ↦ every {x | person x} {x | Toy.sees x (g 2)}⟩] ∧
       meanings (.bin everyPerson (.binder 1
         ((.bin (.tr 2) (.bin (verb .see) (.tr 1)) : Tree Unit Word).raise 1 [0]))) =
-        [⟨.t, fun g ↦ every person fun _ ↦ Toy.sees (g 2) (g 2)⟩] :=
+        [⟨.t, fun g ↦ every {x | person x} {_x | Toy.sees (g 2) (g 2)}⟩] :=
   ⟨rfl, rfl⟩
 
 /-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  iterate every Det.some person person fun x y ↦ Toy.sees y x
+  iterate every Det.some {x | person x} {x | person x} fun x y ↦ Toy.sees y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  iterate Det.some every person person fun y x ↦ Toy.sees y x
+  iterate Det.some every {x | person x} {x | person x} fun y x ↦ Toy.sees y x
 
 theorem surface_scope_true : surfaceScopeProp := by
   rintro x (rfl | rfl)
@@ -660,10 +660,10 @@ end QuantifierRaising
 rule (§7.2.1) derives from the basic one. It takes an object-first two-place predicate and the
 subject and quantifies over the object. -/
 def objectShift {E : Type*} (D : Det E) : (E → Prop) → (E → E → Prop) → E → Prop :=
-  fun P R x ↦ D P fun y ↦ R y x
+  fun P R x ↦ D {y | P y} {y | R y x}
 
 @[simp] theorem objectShift_apply {E : Type*} (D : Det E) (P : E → Prop) (R : E → E → Prop)
-    (x : E) : objectShift D P R x = D P fun y ↦ R y x := rfl
+    (x : E) : objectShift D P R x = D {y | P y} {y | R y x} := rfl
 
 
 /-! ### Quantifiers in situ

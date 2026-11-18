@@ -24,7 +24,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := "Successive-cyclic wh-movement through the edges of vP1, CP1, vP2 and CP2."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "successiveCyclic")] }
 

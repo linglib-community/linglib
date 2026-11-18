@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Sincerity
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Data.Examples.Deo2025
 
 /-!
@@ -67,7 +67,7 @@ compound *bərə ka*, §4, are outside the paper's analysis.
 
 namespace Deo2025
 
-open Commitment Desire.Preferential Discourse
+open Commitment Desire.Preferential SpeechAct
 open PreferenceStructure (mem_maximals_discrete)
 
 variable {W : Type*}

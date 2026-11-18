@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.UpperLower.Closure
+public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Semantics.Quantification.Witness
@@ -40,14 +41,6 @@ excludes](##not_closureBelowNo_lf61). [*Or* is never collective](##minimal_some_
 * Heycock and Zamparelli's common nouns denote sets of singletons. Their counterexamples are stated
   for the individuals those singletons contain, which the singleton map carries over since it
   preserves unions.
-
-## Errata
-
-* (83c) and the prose after it swap the Americans and Russians of (82a) and (83b).
-* (99a) prints `MIN(ER(cat)) or MIN(ER(dog))` for the `MIN(ER(cat) or ER(dog))` of its prose and
-  (99b). [The two logical forms agree](##holds_lf99Printed_iff), so the slip is harmless.
-* (95b) and (96b) are equivalent only when both nouns are nonempty: without dogs, (95b) holds
-  vacuously while (96b) still requires every cat to be licensed.
 
 ## TODO
 
@@ -245,7 +238,7 @@ theorem determinerFitting_every_singletons_iff (M V : Set E) :
 theorem determinerFitting_some_pairs_iff (N N' V : Set E) :
     determinerFitting Det.some {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} (𝒫 V \ {∅}) ↔
       Det.some N V ∧ Det.some N' V := by
-  rw [determinerFitting_some_iff fun h ↦ h.2 rfl]
+  rw [determinerFitting_some_iff (B := 𝒫 V \ {∅}) fun h ↦ h.2 rfl]
   constructor
   · rintro ⟨_, ⟨x, hx, y, hy, rfl⟩, hV, -⟩
     exact ⟨⟨x, hx, hV (mem_insert x _)⟩, y, hy, hV (mem_insert_of_mem x rfl)⟩
@@ -299,30 +292,32 @@ Choice Closure over choice functions on `σ`, at a property of pluralities (49) 
 (50). -/
 noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word →
     Option (Σ a : Ty Unit, a.Dom (Dom E))
-  | .noun₁ => some ⟨et, N⟩
-  | .noun₂ => some ⟨et, N'⟩
-  | .atom => some ⟨et, V⟩
-  | .relative => some ⟨ett, R⟩
-  | .vp => some ⟨ett, S⟩
-  | .numeral n => some ⟨ett, {P : Set E | P.ncard = n}⟩
-  | .a σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.some : Det (σ.Dom (Dom E)))⟩
-  | .no σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.no : Det (σ.Dom (Dom E)))⟩
-  | .every σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.every : Det (σ.Dom (Dom E)))⟩
+  | .noun₁ => some ⟨et, (· ∈ N)⟩
+  | .noun₂ => some ⟨et, (· ∈ N')⟩
+  | .atom => some ⟨et, (· ∈ V)⟩
+  | .relative => some ⟨ett, toCont (· ∈ R)⟩
+  | .vp => some ⟨ett, toCont (· ∈ S)⟩
+  | .numeral n => some ⟨ett, toCont fun P : Set E ↦ P.ncard = n⟩
+  | .a σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t,
+      fun A ↦ toCont (Det.some {x : σ.Dom (Dom E) | A x})⟩
+  | .no σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t,
+      fun A ↦ toCont (Det.no {x : σ.Dom (Dom E) | A x})⟩
+  | .every σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t,
+      fun A ↦ toCont (Det.every {x : σ.Dom (Dom E) | A x})⟩
   | .and τ => if h : τ.Conjoinable then some (and_.reading τ h) else none
   | .or τ => if h : τ.Conjoinable then some (or_.reading τ h) else none
-  | .dfit => some ⟨(et ⇒ ett) ⇒ ett ⇒ ett ⇒ .t,
-      fun (D : Det E) (A B : Set (Set E)) ↦ determinerFitting D A B⟩
-  | .min => some ⟨ett ⇒ ett, fun (Q : Quantifier E) ↦ Minimal Q⟩
-  | .cr => some ⟨(et ⇒ e) ⇒ et ⇒ ett, fun (f : Set E → E) (N : Set E) ↦ individual (f N)⟩
-  | .dcr => some ⟨(ett ⇒ et) ⇒ ett ⇒ ett,
-      fun (f : Set (Set E) → Set E) (N : Set (Set E)) ↦ Det.every (f N)⟩
-  | .pdist => some ⟨et ⇒ ett, fun (P : Set E) ↦ (𝒫 P \ {∅} : Set (Set E))⟩
+  | .dfit => some ⟨(et ⇒ ett) ⇒ ett ⇒ ett ⇒ .t, fun D A B ↦
+      determinerFitting (fun X ↦ toCont.symm (D (· ∈ X))) {P | A (· ∈ P)} {P | B (· ∈ P)}⟩
+  | .min => some ⟨ett ⇒ ett, fun Q ↦ toCont (Minimal (toCont.symm Q))⟩
+  | .cr => some ⟨(et ⇒ e) ⇒ et ⇒ ett, fun f N ↦ toCont (individual (f N))⟩
+  | .dcr => some ⟨(ett ⇒ et) ⇒ ett ⇒ ett, fun f N ↦ toCont (Det.every {x | f N x})⟩
+  | .pdist => some ⟨et ⇒ ett, fun P ↦ toCont (· ∈ 𝒫 {x | P x} \ {∅})⟩
   | .choiceClosure σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ ett) ⇒ ett,
-      fun (A : ((σ.Dom (Dom E) → Prop) → σ.Dom (Dom E)) → Set E → Prop) (P : Set E) ↦
-        ∃ f : ChoiceFunction (σ.Dom (Dom E)), A f P⟩
+      fun (A : ((σ.Dom (Dom E) → Prop) → σ.Dom (Dom E)) → (E → Prop) → Prop) P ↦
+        ∃ f : ChoiceFunction (σ.Dom (Dom E)), A (fun X ↦ f {x | X x}) P⟩
   | .choiceClosureSentence σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ .t) ⇒ .t,
       fun (A : ((σ.Dom (Dom E) → Prop) → σ.Dom (Dom E)) → Prop) ↦
-        ∃ f : ChoiceFunction (σ.Dom (Dom E)), A f⟩
+        ∃ f : ChoiceFunction (σ.Dom (Dom E)), A fun X ↦ f {x | X x}⟩
 
 /-- The rules: Functional Application, Predicate Modification, which intersects two properties
 of pluralities, and abstraction over an index. -/
@@ -445,6 +440,23 @@ private theorem some_setOf_iff {φ : Set E → Prop} (h : ∀ P, φ P ↔ ∃ x 
   · rintro ⟨x, hx, y, hy, hB⟩
     exact ⟨_, ⟨x, hx, y, hy, rfl⟩, hB⟩
 
+private theorem toCont_some_toCont (A B : Quantifier E) :
+    toCont (Det.some {P | toCont A P}) (toCont B) ↔ Det.some {P | A P} {P | B P} :=
+  ⟨fun ⟨_, hA, hB⟩ ↦ ⟨_, hA, hB⟩, fun ⟨P, hA, hB⟩ ↦ ⟨(· ∈ P), hA, hB⟩⟩
+
+private theorem toCont_no_toCont (A B : Quantifier E) :
+    toCont (Det.no {P | toCont A P}) (toCont B) ↔ Det.no {P | A P} {P | B P} :=
+  Det.no_iff_not_some.trans <| (toCont_some_toCont A B).not.trans Det.no_iff_not_some.symm
+
+private theorem exists₂_apply_ofPred_iff {A B : Set (Set E)} (hA : A.Nonempty) (hB : B.Nonempty)
+    (p : Set E → Set E → Prop) :
+    (∃ f₁ f₂ : ChoiceFunction (E → Prop),
+      p {x | f₁ {q | {x | q x} ∈ A} x} {x | f₂ {q | {x | q x} ∈ B} x}) ↔ ∃ M ∈ A, ∃ W ∈ B, p M W :=
+  (ChoiceFunction.exists₂_apply_iff (A := {q | {x | q x} ∈ A}) (A' := {q | {x | q x} ∈ B})
+    ⟨(· ∈ hA.some), hA.some_mem⟩ ⟨(· ∈ hB.some), hB.some_mem⟩ fun m w ↦ p {x | m x} {x | w x}).trans
+    ⟨fun ⟨_, hm, _, hw, h⟩ ↦ ⟨_, hm, _, hw, h⟩,
+      fun ⟨M, hM, W, hW, h⟩ ↦ ⟨(· ∈ M), hM, (· ∈ W), hW, h⟩⟩
+
 private theorem determinerFitting_congr {D : Det E} {A A' : Set (Set E)} (h : ∀ P, P ∈ A ↔ P ∈ A')
     (B : Set (Set E)) : determinerFitting D A B ↔ determinerFitting D A' B := by
   rw [Set.ext h]
@@ -452,6 +464,8 @@ private theorem determinerFitting_congr {D : Det E} {A A' : Set (Set E)} (h : �
 -- (21)–(24)
 theorem holds_lf24 (h : Disjoint N N') : ⟦lf24⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', {x, y} ∈ R ∧ {x, y} ∈ S := by
   simp [lf24, raised]
+  refine (Set.ofPred_bijective.surjective.exists
+    (p := fun P ↦ (Minimal (Det.some N ⊓ Det.some N') P ∧ P ∈ R) ∧ P ∈ S)).symm.trans ?_
   constructor
   · rintro ⟨P, ⟨hP, hR⟩, hS⟩
     obtain ⟨x, hx, y, hy, rfl⟩ := (minimal_some_inf_some_iff_of_disjoint h).1 hP
@@ -462,25 +476,28 @@ theorem holds_lf24 (h : Disjoint N N') : ⟦lf24⟧ ↔ ∃ x ∈ N, ∃ y ∈ N
 -- (29)
 theorem holds_lf29 (h : Disjoint N N') : ⟦lf29⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', x ∈ V ∧ y ∈ V := by
   simp [lf29, raised, plural]
-  refine (some_setOf_iff (fun _ ↦ minimal_some_inf_some_iff_of_disjoint h) _).trans ?_
+  refine (toCont_some_toCont _ _).trans <|
+    (some_setOf_iff (fun _ ↦ minimal_some_inf_some_iff_of_disjoint h) _).trans ?_
   simp [insert_subset_iff, ← nonempty_iff_ne_empty]
 
 /-- With Choice Closure above Minimization, *a doctor and lawyer met* (56) holds when a doctor and
 a lawyer met, whatever professions they share (58). -/
 theorem holds_lf56 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf56⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', {x, y} ∈ S := by
-  simp [lf56, closedAbove, crAnd]
-  exact some_setOf_iff (fun _ ↦ exists₂_minimal_individual_inf_individual_iff hN hN') S
+  simp [lf56, closedAbove, crAnd, -toCont_individual]
+  exact (toCont_some_toCont _ _).trans
+    (some_setOf_iff (fun _ ↦ exists₂_minimal_individual_inf_individual_iff hN hN') S)
 
 -- p. 587
 theorem holds_lfLocal (hN : N.Nonempty) (hN' : N'.Nonempty) :
-    ⟦lfLocal⟧ ↔ Det.some (Minimal (Det.some N ⊓ Det.some N')) S := by
+    ⟦lfLocal⟧ ↔ Det.some {P | Minimal (Det.some N ⊓ Det.some N') P} S := by
   have h {N : Set E} (hN : N.Nonempty) :
       (fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) = Det.some N :=
-    funext fun Q ↦ propext (ChoiceFunction.exists_apply_iff_some hN Q)
-  simp [lfLocal]
-  show Det.some (Minimal ((fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) ⊓
-    fun Q ↦ ∃ f : ChoiceFunction E, individual (f N') Q)) S ↔ _
+    funext fun Q ↦ propext (ChoiceFunction.exists_apply_mem_iff hN)
+  simp [lfLocal, -toCont_individual]
+  refine (toCont_some_toCont _ _).trans ?_
+  show Det.some {P | Minimal ((fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) ⊓
+    fun Q ↦ ∃ f : ChoiceFunction E, individual (f N') Q) P} S ↔ _
   rw [h hN, h hN']
 
 /- A doctor who is also a lawyer meets another lawyer: (56) holds and the LF with local Choice
@@ -501,19 +518,20 @@ example {x y : E} (hx : x ∈ N ∩ N') (hy : y ∈ N') (hxy : x ≠ y) :
 -- (60a)
 theorem holds_lf60 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf60⟧ ↔ ∀ x ∈ N, ∀ y ∈ N', {x, y} ∉ S := by
-  simp [lf60, closedAbove, crAnd]
-  exact Det.no_iff_not_some.trans <| (not_congr (some_setOf_iff
+  simp [lf60, closedAbove, crAnd, -toCont_individual]
+  exact (toCont_no_toCont _ _).trans <| Det.no_iff_not_some.trans <| (not_congr (some_setOf_iff
     (fun _ ↦ exists₂_minimal_individual_inf_individual_iff hN hN') S)).trans (by simp)
 
 -- (60b), (61)
 theorem holds_lf61 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf61⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', {x, y} ∉ S := by
-  have h (a b : E) : Det.no (Minimal (individual a ⊓ individual b)) S ↔ {a, b} ∉ S := by
-    rw [show Minimal (individual a ⊓ individual b) = (· = {a, b}) from
-      funext fun _ ↦ propext minimal_individual_inf_individual_iff]
+  have h (a b : E) : Det.no {P | Minimal (individual a ⊓ individual b) P} S ↔ {a, b} ∉ S := by
+    rw [show {P | Minimal (individual a ⊓ individual b) P} = {{a, b}} from
+      Set.ext fun _ ↦ minimal_individual_inf_individual_iff]
     exact ⟨fun h ↦ h rfl, fun h P (hP : P = {a, b}) ↦ hP ▸ h⟩
-  simp [lf61, crAnd]
-  exact (exists₂_congr fun (f₁ f₂ : ChoiceFunction E) ↦ h (f₁ N) (f₂ N')).trans
+  simp [lf61, crAnd, -toCont_individual]
+  exact (exists₂_congr fun (f₁ f₂ : ChoiceFunction E) ↦
+    (toCont_no_toCont _ _).trans (h (f₁ N) (f₂ N'))).trans
     (ChoiceFunction.exists₂_apply_iff hN hN' fun a b ↦ {a, b} ∉ S)
 
 -- p. 588
@@ -528,20 +546,24 @@ theorem holds_lf81 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf81⟧ ↔ ∃ P ∈ S, P.ncard = 10 ∧ P ⊆ N ∪ N' ∧ (P ∩ N).Nonempty ∧ (P ∩ N').Nonempty := by
   have hp (N : Set E) (hN : N.Nonempty) : (𝒫 N \ {∅} : Set (Set E)).Nonempty :=
     ⟨N, Subset.rfl, hN.ne_empty⟩
-  have hmix (P : Set E) := exists₂_minimal_every_inf_every_iff (P := P) (hp N hN) (hp N' hN')
+  have hmix (P : Set E) :=
+    (exists₂_apply_ofPred_iff (hp N hN) (hp N' hN') fun M W ↦
+      Minimal (Det.every M ⊓ Det.every W) P).trans <|
+      (ChoiceFunction.exists₂_apply_iff (hp N hN) (hp N' hN') _).symm.trans
+        (exists₂_minimal_every_inf_every_iff (hp N hN) (hp N' hN'))
   simp [lf81, dcrAnd, plural]
   constructor
   · rintro ⟨P, ⟨h10, hP⟩, hS⟩
-    exact ⟨P, hS, h10, mem_sups_powerset_iff.1 ((hmix P).1 hP)⟩
+    exact ⟨_, hS, h10, mem_sups_powerset_iff.1 ((hmix _).1 hP)⟩
   · rintro ⟨P, hS, h10, hP⟩
-    exact ⟨P, ⟨h10, (hmix P).2 (mem_sups_powerset_iff.2 hP)⟩, hS⟩
+    exact ⟨(· ∈ P), ⟨h10, (hmix P).2 (mem_sups_powerset_iff.2 hP)⟩, hS⟩
 
 -- (83)
 theorem holds_lf83 (hN : ∃ A ⊆ N, A.ncard = 2) (hN' : ∃ B ⊆ N', B.ncard = 3) :
     ⟦lf83⟧ ↔ ∃ A ⊆ N, ∃ B ⊆ N', A.ncard = 2 ∧ B.ncard = 3 ∧ A ∪ B ∈ S := by
-  have h (a b : Set E) : Det.some (Minimal (Det.every a ⊓ Det.every b)) S ↔ a ∪ b ∈ S := by
-    rw [← Det.every_union, show Minimal (Det.every (a ∪ b)) = (· = a ∪ b) from
-      funext fun _ ↦ propext Det.minimal_every_iff]
+  have h (a b : Set E) : Det.some {P | Minimal (Det.every a ⊓ Det.every b) P} S ↔ a ∪ b ∈ S := by
+    rw [← Det.every_union, show {P | Minimal (Det.every (a ∪ b)) P} = {a ∪ b} from
+      Set.ext fun _ ↦ Det.minimal_every_iff]
     exact ⟨fun ⟨_, (hP : _ = a ∪ b), hS⟩ ↦ hP ▸ hS, fun h ↦ ⟨_, rfl, h⟩⟩
   have hX {N : Set E} {n : ℕ} (hN : ∃ A ⊆ N, A.ncard = n) (hn : n ≠ 0) :
       ({P : Set E | P.ncard = n} ∩ (𝒫 N \ {∅}) : Set (Set E)).Nonempty := by
@@ -549,8 +571,9 @@ theorem holds_lf83 (hN : ∃ A ⊆ N, A.ncard = 2) (hN' : ∃ B ⊆ N', B.ncard 
     refine ⟨A, hAn, hA, fun h ↦ hn ?_⟩
     rw [← hAn, show A = ∅ from h, ncard_empty]
   simp [lf83, dcrAnd, plural]
-  refine (exists₂_congr fun (f₁ f₂ : ChoiceFunction (Set E)) ↦ h _ _).trans <|
-    (ChoiceFunction.exists₂_apply_iff (hX hN two_ne_zero) (hX hN' three_ne_zero)
+  refine (exists₂_congr fun (f₁ f₂ : ChoiceFunction (E → Prop)) ↦
+    (toCont_some_toCont _ _).trans (h _ _)).trans <|
+    (exists₂_apply_ofPred_iff (hX hN two_ne_zero) (hX hN' three_ne_zero)
       fun M W ↦ M ∪ W ∈ S).trans ?_
   constructor
   · rintro ⟨A, ⟨hA2, hAN, -⟩, B, ⟨hB3, hBN', -⟩, hS⟩

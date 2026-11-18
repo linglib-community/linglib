@@ -41,20 +41,24 @@ def eräsSeries : IndefinitePronoun.Series := ⟨"eräs", {eräs}⟩
 
 /-- The *-kin*-series. -/
 def kinSeries : IndefinitePronoun.Series :=
-  ⟨"-kin", {joku, ⟨{ form := "jokin" }, .thing⟩, ⟨{ form := "jotakin" }, .thing⟩,
-    ⟨{ form := "jossakin" }, .place⟩, ⟨{ form := "jolloinkin" }, .time⟩,
-    ⟨{ form := "jotenkin" }, .manner⟩, ⟨{ form := "jompikumpi" }, .determiner⟩}⟩
+  ⟨"-kin", {joku, { form := "jokin", ontology := .thing },
+    { form := "jotakin", ontology := .thing },
+    { form := "jossakin", ontology := .place }, { form := "jolloinkin", ontology := .time },
+    { form := "jotenkin", ontology := .manner }, { form := "jompikumpi", ontology := .determiner }}⟩
 
 /-- The *-kaan*-series. -/
 def kaanSeries : IndefinitePronoun.Series :=
-  ⟨"-kaan", {kukaan, ⟨{ form := "mikään" }, .thing⟩, ⟨{ form := "missään" }, .place⟩,
-    ⟨{ form := "milloinkaan" }, .time⟩, ⟨{ form := "mitenkään" }, .manner⟩,
-    ⟨{ form := "kumpikaan" }, .determiner⟩}⟩
+  ⟨"-kaan", {kukaan, { form := "mikään", ontology := .thing },
+    { form := "missään", ontology := .place },
+    { form := "milloinkaan", ontology := .time }, { form := "mitenkään", ontology := .manner },
+    { form := "kumpikaan", ontology := .determiner }}⟩
 
 /-- The *hyvänsä*-series. -/
 def hyvänsäSeries : IndefinitePronoun.Series :=
-  ⟨"hyvänsä", {kukaHyvänsä, ⟨{ form := "mikä hyvänsä" }, .thing⟩,
-    ⟨{ form := "missä hyvänsä" }, .place⟩, ⟨{ form := "milloin hyvänsä" }, .time⟩,
-    ⟨{ form := "miten hyvänsä" }, .manner⟩, ⟨{ form := "kumpi hyvänsä" }, .determiner⟩}⟩
+  ⟨"hyvänsä", {kukaHyvänsä, { form := "mikä hyvänsä", ontology := .thing },
+    { form := "missä hyvänsä", ontology := .place },
+    { form := "milloin hyvänsä", ontology := .time },
+    { form := "miten hyvänsä", ontology := .manner },
+    { form := "kumpi hyvänsä", ontology := .determiner }}⟩
 
 end Finnish.Indefinites

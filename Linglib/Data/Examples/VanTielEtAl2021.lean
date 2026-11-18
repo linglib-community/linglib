@@ -24,7 +24,7 @@ def frame : Datum :=
     glossedTokens := []
     context := "A display of 432 red or black circles; the participant completes the frame with a quantity word, numerals discouraged."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("task", "production"), ("words", "17 quantity words, 87% of the data")] }
 
@@ -37,7 +37,7 @@ def all_inference : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("monotonicity", "increasing"), ("inference", "sets to supersets")] }
 
@@ -50,7 +50,7 @@ def no_inference : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("monotonicity", "decreasing"), ("inference", "sets to subsets")] }
 
@@ -63,7 +63,7 @@ def some_good : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("word", "some"), ("argumentative direction", "positive")] }
 
@@ -76,7 +76,7 @@ def some_bad : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("word", "some"), ("argumentative direction", "positive")] }
 
@@ -89,7 +89,7 @@ def few_bad : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("word", "few"), ("argumentative direction", "negative")] }
 
@@ -102,7 +102,7 @@ def few_good : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("word", "few"), ("argumentative direction", "negative")] }
 

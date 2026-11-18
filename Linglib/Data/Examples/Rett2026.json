@@ -10,7 +10,7 @@
     "translation": "Olga will have lunch before she watches TV.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -29,7 +29,7 @@
     "translation": "Before the doctor came, Zhangsan died.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -48,7 +48,7 @@
     "translation": "You will stop him before he does anything silly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -67,7 +67,7 @@
     "translation": "I will write an answer before I forget it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -86,7 +86,7 @@
     "translation": "Before I got married I lived with my parents.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -105,7 +105,7 @@
     "translation": "I'll stay until somebody arrives.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "until"]
@@ -124,7 +124,7 @@
     "translation": "I will stay until they throw me out.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "until"]
@@ -143,7 +143,7 @@
     "translation": "It has been a long time since Maria sang a song.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "since"]
@@ -162,7 +162,7 @@
     "translation": "(S)he must have told so many lies since we got married!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "since"]
@@ -181,7 +181,7 @@
     "translation": "Maria is taller than Carlo.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "comparative"]
@@ -200,7 +200,7 @@
     "translation": "Marie is taller than Sylvie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "comparative"]
@@ -219,7 +219,7 @@
     "translation": "I would rather go out with you than be working.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "preference"]
@@ -238,7 +238,7 @@
     "translation": "9 netizens were busy persuading but they forgot to call the police.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negativeVerb"]
@@ -257,7 +257,7 @@
     "translation": "I doubt that he eats.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negativeVerb"]
@@ -276,7 +276,7 @@
     "translation": "He delayed graduating last year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negativeVerb"]
@@ -295,7 +295,7 @@
     "translation": "I am afraid that a new director would be elected.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negativeVerb"]
@@ -314,7 +314,7 @@
     "translation": "I fear that it will rain tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "negativeVerb"]
@@ -333,7 +333,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "exclamative"]
@@ -352,7 +352,7 @@
     "translation": "Which nonsenses she must have said!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "exclamative"]
@@ -371,7 +371,7 @@
     "translation": "What things John has read!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "exclamative"]
@@ -390,7 +390,7 @@
     "translation": "János has read a book!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "surpriseNegation"]
@@ -409,7 +409,7 @@
     "translation": "It is research that is as important as serodiagnosis.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "equative"]
@@ -428,7 +428,7 @@
     "translation": "Maria is as intelligent as Carlo is.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "equative"]
@@ -447,7 +447,7 @@
     "translation": "Maria is two meters taller than Carlo.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "differentialComparative"]
@@ -466,7 +466,7 @@
     "translation": "Carlo is taller than Luigi.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "comparative"]
@@ -485,7 +485,7 @@
     "translation": "This glass is more full than the other one.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "closedScaleComparative"]
@@ -504,7 +504,7 @@
     "translation": "Olga will have lunch before she watches TV.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -523,7 +523,7 @@
     "translation": "Before they see you, you should go.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "before"]
@@ -542,7 +542,7 @@
     "translation": "The children cried until their mom walked away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "until"]
@@ -561,7 +561,7 @@
     "translation": "You will stay here until you have lifted a finger to help me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "until"]
@@ -580,7 +580,7 @@
     "translation": "I'm not sure if I shouldn't see him Monday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "notSure"]

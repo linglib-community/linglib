@@ -14,7 +14,7 @@
     "translation": "This old book keeps falling. Please pick it up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["concord", "determiner adjective"],
@@ -38,7 +38,7 @@
     "translation": "This little girl came in. She wanted to use the telephone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "neuter singular"],
@@ -62,7 +62,7 @@
     "translation": "This little girl came in. She wanted to use the telephone.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["pronoun", "feminine singular"],
@@ -84,7 +84,7 @@
     "translation": "this old book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agreement", "concord"]
@@ -106,7 +106,7 @@
     "translation": "This old book fell.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["target", "participle"]
@@ -128,7 +128,7 @@
     "translation": "That old (male) judge judged well. He ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "sudija"],
@@ -152,7 +152,7 @@
     "translation": "That old (female) judge judged well. She ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "sudija"],
@@ -175,7 +175,7 @@
     "translation": "that (male or female) whale",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "kit"],
@@ -198,7 +198,7 @@
     "translation": "The whale nursed her young.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "kit"],
@@ -220,7 +220,7 @@
     "translation": "These calves were grazing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ova telad su pasla.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -245,7 +245,7 @@
     "translation": "These calves have two horns each.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ova telad ima po dva roga.", "judgment": "ungrammatical"},
       {"form": "Ova telad ima po dva roga.", "judgment": "unacceptable"}
     ],
@@ -272,7 +272,7 @@
     "translation": "This crazy Steve returned to me the violin which I loaned him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "Steva"],
@@ -295,7 +295,7 @@
     "translation": "That (male or female) customer came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "mušterija"],
@@ -317,7 +317,7 @@
     "translation": "That (male) customer came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "mušterija"],
@@ -339,7 +339,7 @@
     "translation": "Those (male and/or female) judges came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "sudije"],
@@ -362,7 +362,7 @@
     "translation": "These glasses are new. They ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "naočare"],
@@ -385,7 +385,7 @@
     "translation": "I met the brothers. They came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "braća"],
@@ -407,7 +407,7 @@
     "translation": "these good brothers",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "braća"],
@@ -429,7 +429,7 @@
     "translation": "with these good brothers",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "braća"],
@@ -452,7 +452,7 @@
     "translation": "I met the gentlemen. They were very kind.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sreo sam gospodu. Ona su bila jako ljubazna.", "judgment": "ungrammatical"},
       {"form": "Sreo sam gospodu. Ona su bila jako ljubazna.", "judgment": "unacceptable"}
     ],
@@ -479,7 +479,7 @@
     "translation": "We watched those good children. They slept.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "deca"],
@@ -503,7 +503,7 @@
     "translation": "The children slept. We saw them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "deca"],
@@ -526,7 +526,7 @@
     "translation": "Those good children came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "deca"],
@@ -549,7 +549,7 @@
     "translation": "Those good children came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "deca"],
@@ -572,7 +572,7 @@
     "translation": "I consider the children hungry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ja smatram decu gladnim.", "judgment": "ungrammatical"},
       {"form": "Ja smatram decu gladnim.", "judgment": "unacceptable"}
     ],
@@ -598,7 +598,7 @@
     "translation": "Yelena and the children came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jelena i deca su došle.", "judgment": "ungrammatical"},
       {"form": "Jelena i deca su došle.", "judgment": "unacceptable"}
     ],
@@ -624,7 +624,7 @@
     "translation": "Yelena and the children are hungry.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jelena i deca su gladne.", "judgment": "ungrammatical"},
       {"form": "Jelena i deca su gladne.", "judgment": "unacceptable"}
     ],
@@ -651,7 +651,7 @@
     "translation": "Those children and those monsters played well.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ta deca i ta čudovišta su se lepo igrali.", "judgment": "marginal"},
       {"form": "Ta deca i ta čudovišta su se lepo igrali.", "judgment": "marginal"}
     ],
@@ -677,7 +677,7 @@
     "translation": "the children who were",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "deca koja je tada bila", "judgment": "ungrammatical"},
       {"form": "deca koja je tada bila", "judgment": "unacceptable"}
     ],
@@ -702,7 +702,7 @@
     "translation": "the children whom I saw",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "deca"],
@@ -725,7 +725,7 @@
     "translation": "children whom everyone fears",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "deca kojih se svi plaše", "judgment": "acceptable"},
       {"form": "deca kojih se svi plaše", "judgment": "acceptable"}
     ],
@@ -751,7 +751,7 @@
     "translation": "my children, whom nothing worries",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "moja deca, što je nije briga nizašta", "judgment": "ungrammatical"},
       {"form": "moja deca, što je nije briga nizašta", "judgment": "unacceptable"}
     ],
@@ -777,7 +777,7 @@
     "translation": "my children, whom everyone fears",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "moja deca, što je se svi plaše", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -802,7 +802,7 @@
     "translation": "His supreme majesty is happy. He ...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "Majestad"],
@@ -826,7 +826,7 @@
     "translation": "my children, whom everyone fears",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["noun", "deca"],

@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John is the only student who did not attend", "judgment": "acceptable"}
     ],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John is the only student who attended", "judgment": "acceptable"}
     ],
@@ -77,7 +77,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -100,7 +100,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the speaker noticed that every other student attended and that John did not", "judgment": "acceptable"}
     ],
@@ -142,7 +142,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -162,7 +162,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -182,7 +182,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -202,7 +202,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -222,7 +222,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "anywhere but here", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -244,7 +244,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "none of my friends but Chris", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -266,7 +266,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "many of my friends but Chris", "judgment": "ungrammatical"},
       {"form": "three of my friends but Chris", "judgment": "ungrammatical"},
       {"form": "some of my friends but Chris", "judgment": "ungrammatical"}
@@ -290,7 +290,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -310,7 +310,7 @@
     "translation": "",
     "context": "Dryden.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -333,7 +333,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "No human being is mortal. Therefore no male human being is mortal.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -358,7 +358,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "No student but John attended the meeting. Therefore no student but John and Jill attended the meeting.", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -380,7 +380,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -403,7 +403,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["inference", "valid"],
@@ -423,7 +423,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John and Mary are the students who did not attend", "judgment": "acceptable"}
     ],
@@ -446,7 +446,7 @@
     "context": "Tom, John and Harry did not attend; Bill and Mary did.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["determiner", "most"]
@@ -465,7 +465,7 @@
     "translation": "",
     "context": "Tom, John and Harry did not attend; Bill and Mary did.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -485,7 +485,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "rhetorical: nobody but a total idiot would have", "judgment": "acceptable"}
     ],
@@ -507,7 +507,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -527,7 +527,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {"form": "Everybody but John and Mary attended the meeting.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -549,7 +549,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "No one, except for the famous detective, suspected the cook.", "judgment": "acceptable"},
       {"form": "No one suspected the cook, except for the famous detective.", "judgment": "acceptable"}
     ],
@@ -575,7 +575,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -595,7 +595,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Except for John, few employees accepted the pay cut.", "judgment": "acceptable"}
     ],
     "readings": [
@@ -620,7 +620,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -641,7 +641,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -662,7 +662,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -683,7 +683,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Who but John would say a thing like that?", "judgment": "acceptable"}
     ],
     "readings": [
@@ -707,7 +707,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -727,7 +727,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "but"],
@@ -747,7 +747,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "except for"],
@@ -767,7 +767,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["exceptive", "besides"],

@@ -11,7 +11,7 @@
     "translation": "I don't go",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -35,7 +35,7 @@
     "translation": "I didn't go",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -59,7 +59,7 @@
     "translation": "I don't know",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -82,7 +82,7 @@
     "translation": "don't punch him",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -106,7 +106,7 @@
     "translation": "but I didn't bring the child",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -129,7 +129,7 @@
     "translation": "I will not cut it",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -150,7 +150,7 @@
     "translation": "I did not cut it",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["strategy", "negVerb"],
@@ -172,7 +172,7 @@
     "translation": "I'm going to pour",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "lexHeaded"],
@@ -196,7 +196,7 @@
     "translation": "they might come bite you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "splitDoubled"],
@@ -221,7 +221,7 @@
     "translation": "when I see the tiger, I'll be afraid",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "doubled"],
@@ -248,7 +248,7 @@
     "translation": "I ate vigorously",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "doubled"],
@@ -273,7 +273,7 @@
     "translation": "we were cutting the tree",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "splitDoubled"],
@@ -298,7 +298,7 @@
     "translation": "I can walk far",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "lexHeaded"],
@@ -320,7 +320,7 @@
     "translation": "I'm going to show you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "splitDoubled"],
@@ -344,7 +344,7 @@
     "translation": "I saw you",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["infl_pattern", "split"],

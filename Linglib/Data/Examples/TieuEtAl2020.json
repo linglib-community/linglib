@@ -9,7 +9,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "more than one giraffe", "judgment": "acceptable"}
     ],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not more than one giraffe", "judgment": "unacceptable"},
       {"name": "not a single giraffe", "judgment": "acceptable"}
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "downward"]
@@ -68,7 +68,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "downward"]
@@ -86,7 +86,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"]
@@ -104,7 +104,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "positive"]
@@ -122,7 +122,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"]
@@ -140,7 +140,7 @@
     "translation": "",
     "context": "Emily fed exactly one giraffe.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "positive"],
@@ -159,7 +159,7 @@
     "translation": "",
     "context": "Emily fed exactly one giraffe.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["polarity", "negative"],
@@ -178,7 +178,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not all of the giraffes", "judgment": "acceptable"}
     ],
@@ -198,7 +198,7 @@
     "translation": "",
     "context": "Emily is visiting the pig farm and feeds exactly one pig.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -218,7 +218,7 @@
     "translation": "",
     "context": "Emily feeds exactly one giraffe.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "1"],
@@ -238,7 +238,7 @@
     "translation": "",
     "context": "Lion carried all of the apples.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "2"],
@@ -258,7 +258,7 @@
     "translation": "",
     "context": "Koala bought exactly one pear.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "3"],
@@ -280,7 +280,7 @@
     "translation": "",
     "context": "Koala bought exactly one pear.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["experiment", "3"],

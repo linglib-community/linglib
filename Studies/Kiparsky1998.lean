@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Kiparsky1998
 public import Linglib.Data.Examples.Readers
 public import Linglib.Fragments.Finnish.Case
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 
 /-!
 # Kiparsky (1998): Partitive Case and Aspect
@@ -26,14 +26,6 @@ the verbs by resultativity fails](##not_fits_resultativity).
   model of four individuals, whose null individual no predicate contains.
 * 'Few' and 'many' are pluralities of at most two and at least three individuals.
 * The paradigm does not separate unboundedness from non-quantization, which fits it as well.
-
-## Errata
-
-* The text cites the definitions of divisive, cumulative and diverse reference under the number
-  of the definition of unboundedness.
-* 'A bomb' and 'the food' are said to be neither divisive nor cumulative; [the first is divisive
-  and the second cumulative](##aBear_isDivisive_theBears_isCumulative), vacuously, and both are
-  bounded by diversity, as the paper's remark on *Fred* has it.
 
 ## TODO
 

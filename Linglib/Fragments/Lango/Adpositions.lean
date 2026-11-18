@@ -30,7 +30,7 @@ namespace Lango.Adpositions
 
 /-- *kèdè* 'with', marking a companion or an instrument. -/
 def kede : Adposition :=
-  { morphs := [.free "kèdè"], linearization := {.pre}, functions := {.com, .inst},
+  { morphs := [.free "kèdè"], linearization := {.pre}, functions := {.comitative, .instrumental},
     complements := {some .np} }
 
 end Lango.Adpositions

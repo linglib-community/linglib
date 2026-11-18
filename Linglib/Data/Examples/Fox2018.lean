@@ -24,7 +24,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("family", "degree"), ("negation", "no"), ("modal", "no"), ("number", "na")] }
 
@@ -37,7 +37,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("family", "degree"), ("negation", "yes"), ("modal", "no"), ("number", "na")] }
 
@@ -50,7 +50,7 @@ def ex16c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("family", "degree"), ("negation", "yes"), ("modal", "yes"), ("number", "na")] }
 
@@ -63,7 +63,7 @@ def ex24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > or", .acceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "neutral")] }
 
@@ -76,7 +76,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not > or", .ungrammatical), ("or > not", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "yes"), ("modal", "no"), ("number", "neutral")] }
 
@@ -89,7 +89,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not > or", .marginal), ("or > not", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "yes"), ("modal", "yes"), ("number", "neutral")] }
 
@@ -102,7 +102,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > or", .acceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "neutral")] }
 
@@ -115,7 +115,7 @@ def ex47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > or", .acceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "plural")] }
 
@@ -128,7 +128,7 @@ def ex48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("required > or", .ungrammatical), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "singular")] }
 

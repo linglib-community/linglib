@@ -24,7 +24,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := "1604, Shakespeare, Measure for Measure III.iii."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "motion with intent"), ("level", "nonSubjective"), ("century", "16")] }
 
@@ -37,7 +37,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := "1663, Cowley, Cutter of Coleman Street V.ii."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "intention without motion"), ("level", "nonSubjective"), ("century", "17")] }
 
@@ -50,7 +50,7 @@ def ex_5c : Datum :=
     glossedTokens := []
     context := "1725, Odingsells, The Bath Unmask'd V.iii."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "raising"), ("level", "subjective"), ("century", "18")] }
 
@@ -63,7 +63,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Old Japanese: wait in a specific location (non-honorific)", .acceptable), ("Late Old Japanese: humble subject be in the vicinity of respected referent (referent honorific, subjectified)", .acceptable), ("Early Middle Japanese -saburau/-soorau: be-polite (addressee honorific, intersubjectified)", .acceptable)]
     paperFeatures := [("item", "saburahu"), ("stage", "non-honorific > referent honorific > addressee honorific"), ("level", "nonSubjective > subjective > intersubjective")] }
 
@@ -76,7 +76,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := "c1325, Gloucester Chronicle A 11590."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a piece of"), ("stage", "I Partitive"), ("level", "nonSubjective")] }
 
@@ -89,7 +89,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := "a1393, Gower, Confessio Amantis V. 1338; note the preposed *of infortune*."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a piece of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")] }
 
@@ -102,7 +102,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := "1586, Sidney, Apologie for Poetrie."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("partitive: a small part or exemplar of a logician", .acceptable), ("quantifier: a logician to a certain degree, somewhat of a logician", .acceptable)]
     paperFeatures := [("item", "a piece of"), ("stage", "III Quantifier"), ("level", "subjective")] }
 
@@ -115,7 +115,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := "c1400, Ancrene Riwle 22/25."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "0 Pre-Partitive"), ("level", "nonSubjective")] }
 
@@ -128,7 +128,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := "c1200, Ormulum 8640; still with the genitive."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "I Partitive"), ("level", "nonSubjective")] }
 
@@ -141,7 +141,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := "1606, Shakespeare, Troilus and Cressida V.ii.159; a metaphorical context."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")] }
 
@@ -154,7 +154,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := "1771, Foote, Maid of Bath."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "III Quantifier"), ("level", "subjective"), ("pragmatic", "intersubjective hedge")] }
 
@@ -167,7 +167,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := "1723, Steele, The Conscious Lovers III.i."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "IV Adverb Degree Modifier"), ("level", "subjective")] }
 
@@ -180,7 +180,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := "1739, Baker, The Cit Turn'd Gentleman."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "V Adjunct"), ("level", "subjective"), ("polarity", "negative")] }
 
@@ -193,7 +193,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "III Quantifier"), ("head", "positively evaluated")] }
 
@@ -206,7 +206,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := "c1300, Arthour and Merlin 1540; note the preposing."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "I Partitive"), ("level", "nonSubjective")] }
 
@@ -219,7 +219,7 @@ def ex_24b : Datum :=
     glossedTokens := []
     context := "1645, G. Daniel, Poems."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")] }
 
@@ -232,7 +232,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := "1867, Ouida, Under Two Flags."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "III Quantifier"), ("level", "subjective"), ("polarity", "negative")] }
 

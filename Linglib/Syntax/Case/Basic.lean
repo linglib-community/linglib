@@ -21,14 +21,15 @@ it expresses ([haspelmath-2010], [blake-2001] ch. 2). Where the grammar gives it
 `L.Case.exponents` lists the morphs that mark it, allomorphs and register variants among them. A
 language has a case when some word distinguishes it by form, and the other words may realize it
 with the form of another case ([corbett-2008]), so a fragment with paradigms proves that they
-separate its cases. The hierarchies the literature places on the values are each stated where they are used, as
-Blake's in `Studies/Blake1994.lean`.
+separate its cases. The hierarchies the literature places on the values are each stated where
+they are used, as Blake's in `Studies/Blake1994.lean`.
 
 The Universal Dependencies case tags are the corpus vocabulary, reached through
 `Morphology/Word/UD.lean` ([de-marneffe-zeman-2021]). Every value realizes as a tag, and every tag
-but the comparative, considerative, distributive, equative, additive and lative ingests as a
-value. The oblique realizes as `Acc`, the tag UD's guidelines give the oblique of a
-language with only a direct and an oblique case, and so ingests back as the accusative.
+but the considerative, distributive, equative, additive and lative ingests as a value. The oblique
+realizes as `Acc`, the tag UD's guidelines give the oblique of a language with only a direct and
+an oblique case, and so ingests back as the accusative. The purposive realizes as `Cau`, UD's tag
+for the causative, motivative and purposive, and so ingests back as the causal.
 
 Blake names the nominative, accusative, ergative, genitive and dative as grammatical cases;
 `Case.kind` adds the absolutive, the oblique, the partitive and the vocative to them.
@@ -108,6 +109,10 @@ inductive Case where
   | perl
   /-- Abessive/privative: without X. -/
   | abess
+  /-- Purposive: the purpose of an action ("for X"). -/
+  | purp
+  /-- Comparative: the standard of comparison ("than X"). -/
+  | cmpr
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 namespace Case
@@ -129,6 +134,6 @@ def kind : Case → Kind
   | .nom | .acc | .gen | .dat | .erg | .abs | .obl | .part | .voc => .grammatical
   | .loc | .ine | .ade | .sup | .ill | .all | .sub | .ela | .abl | .del | .perl | .ter =>
     .spatial
-  | .inst | .com | .ben | .abess | .caus | .tem | .ess | .transl => .semantic
+  | .inst | .com | .ben | .abess | .caus | .tem | .ess | .transl | .purp | .cmpr => .semantic
 
 end Case

@@ -80,7 +80,7 @@ def addresseePl : Grade → PersonalPronoun
   | .formal => vostedes
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas}
 
 /-- The familiar dative clitic *che*, for a single addressee. -/

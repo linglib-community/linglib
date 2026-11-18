@@ -24,7 +24,7 @@ def healthy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "54"), ("disj", "11"), ("polarity", "660"), ("positive", "true"), ("totality", "87"), ("standard", "total"), ("antonym", "sick")] }
 
@@ -37,7 +37,7 @@ def normal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "69"), ("disj", "10"), ("polarity", "565"), ("positive", "true"), ("totality", "98"), ("standard", "total"), ("antonym", "abnormal")] }
 
@@ -50,7 +50,7 @@ def typical : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "54"), ("disj", "9"), ("polarity", "420"), ("positive", "true"), ("totality", "92"), ("standard", "total"), ("antonym", "atypical")] }
 
@@ -63,7 +63,7 @@ def similar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "80"), ("disj", "67"), ("polarity", "450"), ("positive", "true"), ("totality", "50"), ("standard", "partial"), ("antonym", "dissimilar")] }
 
@@ -76,7 +76,7 @@ def identical : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "86"), ("disj", "49"), ("polarity", "415"), ("positive", "true"), ("totality", "89"), ("standard", "total"), ("antonym", "different")] }
 
@@ -89,7 +89,7 @@ def good : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "24"), ("disj", "21"), ("polarity", "645"), ("positive", "true"), ("totality", "90"), ("standard", "total"), ("antonym", "bad")] }
 
@@ -102,7 +102,7 @@ def familiar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "45"), ("disj", "9"), ("polarity", "580"), ("positive", "true"), ("totality", "68"), ("standard", "partial"), ("antonym", "unfamiliar")] }
 
@@ -115,7 +115,7 @@ def intelligent : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "37"), ("disj", "41"), ("polarity", "670"), ("positive", "true"), ("totality", "71"), ("standard", "relative")] }
 
@@ -128,7 +128,7 @@ def healthier : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "35"), ("disj", "9"), ("polarity", "605"), ("positive", "true"), ("totality", "3"), ("standard", "partial"), ("base", "healthy")] }
 
@@ -141,7 +141,7 @@ def better : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "25"), ("disj", "25"), ("polarity", "630"), ("positive", "true"), ("totality", "3"), ("standard", "partial"), ("antonym", "worse"), ("base", "good")] }
 
@@ -154,7 +154,7 @@ def sick : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "2"), ("disj", "26"), ("polarity", "150"), ("positive", "false"), ("totality", "49"), ("standard", "partial")] }
 
@@ -167,7 +167,7 @@ def abnormal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "6"), ("disj", "20"), ("polarity", "180"), ("positive", "false"), ("totality", "35"), ("standard", "partial")] }
 
@@ -180,7 +180,7 @@ def atypical : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "19"), ("disj", "68"), ("polarity", "320"), ("positive", "false"), ("totality", "19"), ("standard", "partial")] }
 
@@ -193,7 +193,7 @@ def dissimilar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "58"), ("disj", "83"), ("polarity", "280"), ("positive", "false"), ("totality", "89"), ("standard", "total")] }
 
@@ -206,7 +206,7 @@ def different : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "13"), ("disj", "40"), ("polarity", "340"), ("positive", "false"), ("totality", "38"), ("standard", "partial")] }
 
@@ -219,7 +219,7 @@ def bad : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "3"), ("disj", "55"), ("polarity", "110"), ("positive", "false"), ("totality", "73"), ("standard", "partial")] }
 
@@ -232,7 +232,7 @@ def unfamiliar : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "15"), ("disj", "27"), ("polarity", "260"), ("positive", "false"), ("totality", "85"), ("standard", "total")] }
 
@@ -245,7 +245,7 @@ def worse : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("conj", "20"), ("disj", "32"), ("polarity", "140"), ("positive", "false"), ("totality", "2"), ("standard", "partial"), ("base", "bad")] }
 

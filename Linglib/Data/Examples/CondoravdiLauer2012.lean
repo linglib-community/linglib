@@ -24,7 +24,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "command")] }
 
@@ -37,7 +37,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "warning")] }
 
@@ -50,7 +50,7 @@ def ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "request")] }
 
@@ -63,7 +63,7 @@ def ex6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "advice")] }
 
@@ -76,7 +76,7 @@ def ex6e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "plea")] }
 
@@ -89,7 +89,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "well-wish")] }
 
@@ -102,7 +102,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "curse")] }
 
@@ -115,7 +115,7 @@ def ex7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "addressee-less wish")] }
 
@@ -128,7 +128,7 @@ def ex7d : Datum :=
     glossedTokens := []
     context := "On the way to a blind date."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "absent wish")] }
 
@@ -141,7 +141,7 @@ def ex8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "permission/concession")] }
 
@@ -154,7 +154,7 @@ def ex8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "offer")] }
 
@@ -167,7 +167,7 @@ def ex8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "invitation")] }
 
@@ -180,7 +180,7 @@ def ex9 : Datum :=
     glossedTokens := []
     context := "Strangers in the streets of Palo Alto; B points to the train station."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "advice"), ("use", "disinterested advice")] }
 
@@ -193,7 +193,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exclusion"), ("description", "promise")] }
 
@@ -206,7 +206,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exclusion"), ("description", "claim")] }
 
@@ -219,7 +219,7 @@ def ex10c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exclusion"), ("description", "claim")] }
 
@@ -232,7 +232,7 @@ def ex11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "conflicting")] }
 
@@ -245,7 +245,7 @@ def ex12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "revising")] }
 
@@ -258,7 +258,7 @@ def ex13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "revising")] }
 
@@ -271,7 +271,7 @@ def ex14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "revising")] }
 
@@ -284,7 +284,7 @@ def ex15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "conflicting"), ("felicity", "infelicitous")] }
 
@@ -297,7 +297,7 @@ def ex16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "assertion"), ("continuation", "conflicting")] }
 
@@ -310,7 +310,7 @@ def ex17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "directive"), ("denial", "want")] }
 
@@ -323,7 +323,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "deontic")] }
 
@@ -336,7 +336,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "want")] }
 
@@ -349,7 +349,7 @@ def ex18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("The only way is through this door. But you are not allowed to go through this door.", .acceptable)]
+    contrasts := [("The only way is through this door. But you are not allowed to go through this door.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "assertion"), ("denial", "want")] }
 
@@ -362,7 +362,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "concession"), ("denial", "want")] }
 
@@ -375,7 +375,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "concession"), ("denial", "pastWant")] }
 
@@ -388,7 +388,7 @@ def ex22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "concession"), ("denial", "wish")] }
 
@@ -401,7 +401,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "assertion")] }
 
@@ -414,7 +414,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "imperative")] }
 
@@ -427,7 +427,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "assertion")] }
 
@@ -440,7 +440,7 @@ def ex24b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "imperative")] }
 
@@ -453,7 +453,7 @@ def ex25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := [("A: I order you to administer this drug. B: You are lying, you didn't just order me to administer the drug.", .unacceptable)]
+    contrasts := [("A: I order you to administer this drug. B: You are lying, you didn't just order me to administer the drug.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "performative")] }
 
@@ -466,7 +466,7 @@ def ex26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "involvement"), ("speaker", "enabling")] }
 
@@ -479,7 +479,7 @@ def ex27 : Datum :=
     glossedTokens := []
     context := "Uttered in order to get the addressee to sit still so that the speaker can carry them to the conference room."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "involvement"), ("speaker", "fulfilling"), ("felicity", "infelicitous")] }
 
@@ -492,7 +492,7 @@ def ex37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "well-wish and exhortation")] }
 
@@ -505,7 +505,7 @@ def ex38a : Datum :=
     glossedTokens := []
     context := "Uttered by magicians, gods, and other agents of supernatural powers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "magical"), ("use", "magical imperative")] }
 
@@ -518,7 +518,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := "Uttered by magicians, gods, and other agents of supernatural powers."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "magical"), ("use", "magical imperative")] }
 
@@ -531,7 +531,7 @@ def ex41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "offer")] }
 
@@ -544,7 +544,7 @@ def ex40_want : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "want")] }
 
@@ -557,7 +557,7 @@ def ex40_wish : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "wish")] }
 

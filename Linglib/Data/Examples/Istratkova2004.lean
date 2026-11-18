@@ -24,7 +24,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "a homogeneous verb heads a non-quantized VP whatever its object")] }
 
@@ -35,9 +35,11 @@ def ex_17a : Datum :=
     language := "bulg1262"
     primaryText := "Započna da raz-proda-va."
     glossedTokens := [("Započna", "started.F.SG"), ("da", "to"), ("raz-proda-va", "raz-sell-IMPF")]
+    glossedWords := [⟨['Z', 'a', 'p', 'o', 'č', 'n', 'a'], ['s', 't', 'a', 'r', 't', 'e', 'd', '.', 'F', '.', 'S', 'G'], [⟨['Z', 'a', 'p', 'o', 'č', 'n', 'a'], ['s', 't', 'a', 'r', 't', 'e', 'd', '.', 'F', '.', 'S', 'G'], none⟩]⟩, ⟨['d', 'a'], ['t', 'o'], [⟨['d', 'a'], ['t', 'o'], none⟩]⟩, ⟨['r', 'a', 'z', '-', 'p', 'r', 'o', 'd', 'a', '-', 'v', 'a'], ['r', 'a', 'z', '-', 's', 'e', 'l', 'l', '-', 'I', 'M', 'P', 'F'], [⟨['r', 'a', 'z'], ['r', 'a', 'z'], none⟩, ⟨['p', 'r', 'o', 'd', 'a'], ['s', 'e', 'l', 'l'], some '-'⟩, ⟨['v', 'a'], ['I', 'M', 'P', 'F'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "raz- 'in excess' embeds under a phase verb")] }
 
@@ -48,9 +50,11 @@ def ex_17b : Datum :=
     language := "bulg1262"
     primaryText := "Započna da iz-proda-va."
     glossedTokens := [("Započna", "started.F.SG"), ("da", "to"), ("iz-proda-va", "iz-sell-IMPF")]
+    glossedWords := [⟨['Z', 'a', 'p', 'o', 'č', 'n', 'a'], ['s', 't', 'a', 'r', 't', 'e', 'd', '.', 'F', '.', 'S', 'G'], [⟨['Z', 'a', 'p', 'o', 'č', 'n', 'a'], ['s', 't', 'a', 'r', 't', 'e', 'd', '.', 'F', '.', 'S', 'G'], none⟩]⟩, ⟨['d', 'a'], ['t', 'o'], [⟨['d', 'a'], ['t', 'o'], none⟩]⟩, ⟨['i', 'z', '-', 'p', 'r', 'o', 'd', 'a', '-', 'v', 'a'], ['i', 'z', '-', 's', 'e', 'l', 'l', '-', 'I', 'M', 'P', 'F'], [⟨['i', 'z'], ['i', 'z'], none⟩, ⟨['p', 'r', 'o', 'd', 'a'], ['s', 'e', 'l', 'l'], some '-'⟩, ⟨['v', 'a'], ['I', 'M', 'P', 'F'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "iz- 'completely' is incompatible with beginning")] }
 
@@ -63,7 +67,7 @@ def ex_20g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("claim", "na- means 'a lot', not 'all': no definite object")] }
 

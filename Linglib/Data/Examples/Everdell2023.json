@@ -9,7 +9,7 @@
     "translation": "swell",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "baigɨk-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -32,7 +32,7 @@
     "translation": "wake up.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bamii’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -55,7 +55,7 @@
     "translation": "bathe",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "batbi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -78,7 +78,7 @@
     "translation": "get wet",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ba’nni-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -101,7 +101,7 @@
     "translation": "drown.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhai’m-tuda’ ∼ bhai’k-tuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -124,7 +124,7 @@
     "translation": "cook.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhai-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -147,7 +147,7 @@
     "translation": "hang oneself",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhiik-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -170,7 +170,7 @@
     "translation": "fly",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "dai-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -193,7 +193,7 @@
     "translation": "recover (from illness)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "dua’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -216,7 +216,7 @@
     "translation": "dry.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "gakii’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -239,7 +239,7 @@
     "translation": "cook stew.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "gisalh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -262,7 +262,7 @@
     "translation": "grow, develop",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "gɨ’lh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -285,7 +285,7 @@
     "translation": "calm down",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "gɨ’m-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -308,7 +308,7 @@
     "translation": "sunbathe, get sun",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "i’mu-tda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -331,7 +331,7 @@
     "translation": "drop",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jibai-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -354,7 +354,7 @@
     "translation": "cook in water.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jidhoolh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -377,7 +377,7 @@
     "translation": "become content, become happy",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jɨkgɨ-tda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -400,7 +400,7 @@
     "translation": "make air.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jɨlhbi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -423,7 +423,7 @@
     "translation": "laugh",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jɨm-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -446,7 +446,7 @@
     "translation": "become cool",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jɨp-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -469,7 +469,7 @@
     "translation": "move.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "joiñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -492,7 +492,7 @@
     "translation": "heat up.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jukañ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -515,7 +515,7 @@
     "translation": "stand up",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kɨkbui-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -538,7 +538,7 @@
     "translation": "fight.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kokdhi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -561,7 +561,7 @@
     "translation": "sleep",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kox-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -584,7 +584,7 @@
     "translation": "tarnish.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kubha’bi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -607,7 +607,7 @@
     "translation": "get drunk, get poisoned",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "maim-tuda", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -630,7 +630,7 @@
     "translation": "burn.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "mɨi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -653,7 +653,7 @@
     "translation": "ignite.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "mɨi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -676,7 +676,7 @@
     "translation": "run",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "mɨlh-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -699,7 +699,7 @@
     "translation": "gurgle",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "sasbak-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -722,7 +722,7 @@
     "translation": "wake up.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ñiñii-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -745,7 +745,7 @@
     "translation": "walk",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "oilhi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -768,7 +768,7 @@
     "translation": "fill.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "suudui-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -791,7 +791,7 @@
     "translation": "stay (the night)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tɨbaip-tuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -814,7 +814,7 @@
     "translation": "climb",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tɨsaa’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -837,7 +837,7 @@
     "translation": "have a fever",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tonii’ñ-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -860,7 +860,7 @@
     "translation": "foam",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "toksolh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -883,7 +883,7 @@
     "translation": "bark",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "torki-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -906,7 +906,7 @@
     "translation": "boil.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "totpox-dha", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -929,7 +929,7 @@
     "translation": "blacken, darken.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tuk-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -952,7 +952,7 @@
     "translation": "urinate",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ya’-tda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -975,7 +975,7 @@
     "translation": "be hanging",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "sai’-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -998,7 +998,7 @@
     "translation": "suffocate.INTR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ii’m-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1021,7 +1021,7 @@
     "translation": "arrive",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ai-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1045,7 +1045,7 @@
     "translation": "pass by",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhɨi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1069,7 +1069,7 @@
     "translation": "swallow",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhai’-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1092,7 +1092,7 @@
     "translation": "drink",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ii-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1115,7 +1115,7 @@
     "translation": "hear",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kai-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1138,7 +1138,7 @@
     "translation": "meet",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "namki-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1161,7 +1161,7 @@
     "translation": "hide (animate subject)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "o’ñxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1184,7 +1184,7 @@
     "translation": "fast",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "saab-tuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1207,7 +1207,7 @@
     "translation": "see",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tɨiñxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1230,7 +1230,7 @@
     "translation": "suffer",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tulhiiñ-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1253,7 +1253,7 @@
     "translation": "sell",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ga’lhi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1277,7 +1277,7 @@
     "translation": "sell on credit",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "abialh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1301,7 +1301,7 @@
     "translation": "tell a story",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "sopki-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1325,7 +1325,7 @@
     "translation": "lie",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "iatgi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1349,7 +1349,7 @@
     "translation": "hide (inanimate object)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ɨxchoi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1373,7 +1373,7 @@
     "translation": "send (to location)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jotxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1397,7 +1397,7 @@
     "translation": "throw.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bui-dha’∼iabui-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1421,7 +1421,7 @@
     "translation": "take out (from under)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "baabui-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1445,7 +1445,7 @@
     "translation": "push.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "nui’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1469,7 +1469,7 @@
     "translation": "give",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "maki-dha’", "judgment": "unacceptable"},
       {"form": "maki-chdha’", "judgment": "unacceptable"}
     ],
@@ -1493,7 +1493,7 @@
     "translation": "ask",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tɨkki-dha’", "judgment": "unacceptable"},
       {"form": "tɨk-tuda’", "judgment": "unacceptable"}
     ],
@@ -1517,7 +1517,7 @@
     "translation": "build houses",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ba’k-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1541,7 +1541,7 @@
     "translation": "make chuales",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "boik-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1565,7 +1565,7 @@
     "translation": "make asaks",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "aski-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1589,7 +1589,7 @@
     "translation": "make tamales",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tɨmaich-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1613,7 +1613,7 @@
     "translation": "stretch.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "baissɨñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1637,7 +1637,7 @@
     "translation": "soak (hide)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bakchi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1661,7 +1661,7 @@
     "translation": "wash",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bakuañ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1685,7 +1685,7 @@
     "translation": "hang up (to dry)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bakxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1710,7 +1710,7 @@
     "translation": "guard, graze on",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bi’-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1734,7 +1734,7 @@
     "translation": "tie, fasten",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bulh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1759,7 +1759,7 @@
     "translation": "shrink.TR (clothes)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bulhkax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1783,7 +1783,7 @@
     "translation": "untie, untangle.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhippio’k-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1807,7 +1807,7 @@
     "translation": "bring, take.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhɨix-dha’∼ui’x-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1831,7 +1831,7 @@
     "translation": "bring.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "bhɨi-dha’∼ui’-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1855,7 +1855,7 @@
     "translation": "grab",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "daa’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1879,7 +1879,7 @@
     "translation": "knead, mix with water",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "da’biñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1904,7 +1904,7 @@
     "translation": "knead, mix, shake",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "da’mux-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1928,7 +1928,7 @@
     "translation": "smoke (pipe)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "d11nki-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1952,7 +1952,7 @@
     "translation": "do, make",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "duiñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -1976,7 +1976,7 @@
     "translation": "get ready (reflexive), fix",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "echkax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2000,7 +2000,7 @@
     "translation": "search for, find",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "gaa’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2024,7 +2024,7 @@
     "translation": "put inside (sack or bag)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "gaam-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2049,7 +2049,7 @@
     "translation": "dirty.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ikorgi-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2073,7 +2073,7 @@
     "translation": "break, rip, split.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jaiñ-dha’∼jaix-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2097,7 +2097,7 @@
     "translation": "braid",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jikpax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2121,7 +2121,7 @@
     "translation": "eat, finish",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jugii’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2145,7 +2145,7 @@
     "translation": "make mole out of something.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "junmax-dha", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2169,7 +2169,7 @@
     "translation": "take out (from tight space)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "jupñi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2195,7 +2195,7 @@
     "translation": "spread",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "juulh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2220,7 +2220,7 @@
     "translation": "squeeze, crush, make taco",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ki’spi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2244,7 +2244,7 @@
     "translation": "put (vertically), stand",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "k11x-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2270,7 +2270,7 @@
     "translation": "fix, arrange",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "k11’mpix-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2294,7 +2294,7 @@
     "translation": "stand up, put on feet",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kɨkbui-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2318,7 +2318,7 @@
     "translation": "remove (cover), take out/off (clothes)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kuañ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2342,7 +2342,7 @@
     "translation": "cut firewood",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kua’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2367,7 +2367,7 @@
     "translation": "open.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kupio’k-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2391,7 +2391,7 @@
     "translation": "close.TR, enclose.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "kuup-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2415,7 +2415,7 @@
     "translation": "sharpen.TR",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "mu’kxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2439,7 +2439,7 @@
     "translation": "kill.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "mui-dha’∼koo’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2463,7 +2463,7 @@
     "translation": "play music",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "saasbi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2488,7 +2488,7 @@
     "translation": "unstick",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "sai’bhio’k-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2513,7 +2513,7 @@
     "translation": "rip, tear",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "sarni-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2537,7 +2537,7 @@
     "translation": "straighten (plant)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "s11xi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2561,7 +2561,7 @@
     "translation": "sew",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "soom-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2586,7 +2586,7 @@
     "translation": "make tortillas",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "suulhgi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2611,7 +2611,7 @@
     "translation": "start, begin",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "tɨbgax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2635,7 +2635,7 @@
     "translation": "clean",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "uañ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2659,7 +2659,7 @@
     "translation": "write",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ua’ñxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2683,7 +2683,7 @@
     "translation": "cut palms",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "umgax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2707,7 +2707,7 @@
     "translation": "suck, cure",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "xio’pñi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2731,7 +2731,7 @@
     "translation": "get released.SG/PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "plain"],
@@ -2753,7 +2753,7 @@
     "translation": "be inside (animate)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "plain"],
@@ -2775,7 +2775,7 @@
     "translation": "put inside",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "baax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2799,7 +2799,7 @@
     "translation": "be sitting",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "plain"],
@@ -2821,7 +2821,7 @@
     "translation": "sit down",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "plain"],
@@ -2843,7 +2843,7 @@
     "translation": "sit someone/thing down",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "daax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -2867,7 +2867,7 @@
     "translation": "be standing",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "plain"],
@@ -2889,7 +2889,7 @@
     "translation": "stand",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["class", "plain"],

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1")] }
 
@@ -50,7 +50,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -63,7 +63,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -76,7 +76,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -89,7 +89,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -102,7 +102,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -115,7 +115,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -128,7 +128,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -141,7 +141,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -154,7 +154,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.1")] }
 
@@ -167,7 +167,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2")] }
 
@@ -180,7 +180,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1.2")] }
 
@@ -193,7 +193,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4.4")] }
 
@@ -206,7 +206,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.7")] }
 
@@ -219,7 +219,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal: everyone outside is happy", .acceptable)]
     paperFeatures := [("section", "2.9")] }
 
@@ -232,7 +232,7 @@ def ex_44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1")] }
 
@@ -245,7 +245,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1")] }
 
@@ -258,7 +258,7 @@ def ex_46 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.1")] }
 
@@ -271,7 +271,7 @@ def ex_47 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2")] }
 
@@ -284,7 +284,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := "A director who has lost track of the day is certain that different critics attend on Saturday and Sunday; the assistant knows the day."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3")] }
 
@@ -297,7 +297,7 @@ def ex_49 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3")] }
 
@@ -310,7 +310,7 @@ def ex_51 : Datum :=
     glossedTokens := []
     context := "It is common ground that someone was in the audience."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6")] }
 
@@ -323,7 +323,7 @@ def ex_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6")] }
 
@@ -336,7 +336,7 @@ def ex_55 : Datum :=
     glossedTokens := []
     context := "total ignorance"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6")] }
 
@@ -349,7 +349,7 @@ def ex_56 : Datum :=
     glossedTokens := []
     context := "total ignorance"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.6")] }
 
@@ -362,7 +362,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7")] }
 
@@ -375,7 +375,7 @@ def ex_61 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.7")] }
 
@@ -388,7 +388,7 @@ def ex_65 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.8")] }
 
@@ -401,7 +401,7 @@ def ex_67 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.8")] }
 
@@ -414,7 +414,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.8")] }
 
@@ -427,7 +427,7 @@ def ex_71a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9")] }
 
@@ -440,7 +440,7 @@ def ex_78 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9")] }
 
@@ -453,7 +453,7 @@ def ex_79 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9")] }
 
@@ -466,7 +466,7 @@ def ex_80 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.9")] }
 
@@ -479,7 +479,7 @@ def ex_81 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential: anyone with a credit card they paid with has left", .acceptable)]
     paperFeatures := [("section", "4.1")] }
 
@@ -492,7 +492,7 @@ def ex_82 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1")] }
 
@@ -505,7 +505,7 @@ def ex_92 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal: everyone here is unhappy", .acceptable)]
     paperFeatures := [("section", "B")] }
 
@@ -518,7 +518,7 @@ def ex_93 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "B")] }
 
@@ -531,7 +531,7 @@ def ex_94a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("universal: every boy played chess", .acceptable), ("existential: some boy played chess", .unacceptable)]
     paperFeatures := [("section", "B")] }
 
@@ -544,7 +544,7 @@ def ex_94b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("negated universal: not every boy played chess", .unacceptable), ("negated existential: no boy played chess", .acceptable)]
     paperFeatures := [("section", "B")] }
 
@@ -557,7 +557,7 @@ def ex_98 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "B")] }
 
@@ -570,7 +570,7 @@ def ex_100 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "B")] }
 
@@ -583,7 +583,7 @@ def ex_101 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "B")] }
 

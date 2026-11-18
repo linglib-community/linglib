@@ -33,9 +33,9 @@ The book states each lemma for the term that extracts the matching objects. With
 occurrences Merge sums over them, as (1.3.11) does, so the results are sums over the cuts with
 the matching crown, and a workspace without one is sent to `0`.
 
-The lemmas hold over enumerations admitting Merge (`IsMergeCuts`), which the deletion cuts of the
-book's `mergeOp` are not; on objects without unary vertices
-`mergeOp_eq_rename_contractUnary_comp` carries them to `mergeOp`, contracting the trunks.
+The lemmas hold over enumerations admitting Merge (`IsMergeCuts`), which the deletion coproduct of
+the book's `mergeOp` is not; on objects that are their own remainders
+`mergeOp_eq_deletionProj_comp` carries them to `mergeOp`, projecting the trunks.
 
 ## References
 
@@ -69,13 +69,13 @@ private theorem mergeOpOfCuts_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree 
     mergeOpOfCuts (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
       (((treeCuts cuts T).filter (·.1 = A)).map fun p ↦ of' (R := R) p.2).sum *
       (((treeCuts cuts T').filter (·.1 = B)).map fun p ↦ of' (R := R) p.2).sum := by
-  rw [mergeOpOfCuts_apply_of', forestCuts_pair, Multiset.conv, Multiset.filter_map,
+  rw [mergeOpOfCuts_apply_of', forestCuts_pair, Multiset.filter_map,
     Multiset.filter_congr (q := fun x : (Forest _ × Forest _) × (Forest _ × Forest _) ↦
       x.1.1 = A ∧ x.2.1 = B) fun ⟨a, b⟩ hx ↦ h a (Multiset.mem_product.mp hx).1 b
         (Multiset.mem_product.mp hx).2,
     Multiset.filter_product (fun a : Forest (UnorderedTree α) × Forest (UnorderedTree α) ↦ a.1 = A)
       (fun b : Forest (UnorderedTree α) × Forest (UnorderedTree α) ↦ b.1 = B),
-    Multiset.map_map, mul_assoc, ← Multiset.sum_map_product_mul]
+    Multiset.map_map, mul_assoc, Multiset.sum_map_mul_sum_map]
   simp only [Function.comp_def, Prod.snd_add, of'_add]
 
 /-- Merge on a one-tree workspace is Sideward Merge of type 3(a) ([marcolli-chomsky-berwick-2025]

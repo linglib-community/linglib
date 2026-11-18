@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Epistemic.Basic
 public import Linglib.Data.Examples.Hintikka1962
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct.Role
 public import Mathlib.Logic.Relation
 
 /-!
@@ -29,11 +29,6 @@ sentences by the indefensibility of their believed and known forms
   book's finite set of statements.
 * The judged sentences are formulas in one atom `𝐩` whose agents are the discourse roles, `none`
   being a third person.
-
-## Errata
-
-* Section 1.5 (pp. 10–11) glosses `C a` as "it is compatible with everything a knows that"; (7)
-  of Section 1.1 and the conditions of Section 3.5 make it the dual of belief.
 
 ## TODO
 
@@ -444,7 +439,7 @@ theorem virtuallyImplies_iff_indefensible : VirtuallyImplies p q ↔ Indefensibl
 The countermodels have one atomic sentence `𝐩` and the agents `𝐈`, the speaker, `𝐲`, the
 addressee, and `𝐡`, a third person. -/
 
-open Discourse
+open SpeechAct
 
 /-- The atomic sentence of the countermodels. -/
 local notation "𝐩" => (Formula.atom () : Formula Unit (Option Role))

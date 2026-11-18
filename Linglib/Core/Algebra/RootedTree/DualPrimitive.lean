@@ -182,9 +182,9 @@ theorem isDualPrimitive_pairing {x : GrossmanLarson R α} (hx : IsPrimitiveElem 
     IsDualPrimitive R (pairing (R := R) x.toConnesKreimer) := by
   have h (z : ConnesKreimer R (UnorderedTree α)) :
       (pairing (R := R) ∘ₗ linearEquiv.toLinearMap).flip z = pairing z ∘ₗ linearEquiv.toLinearMap :=
-    LinearMap.ext fun _ ↦ pairing_symm _ _
+    LinearMap.ext fun _ ↦ pairing_comm _ _
   exact hx.isDualPrimitive (p := pairing ∘ₗ linearEquiv.toLinearMap)
-    (fun a ↦ (pairing_symm 1 a).trans (pairing_one_right a)) (fun _ ↦ pairing_one_right _)
+    (fun a ↦ pairing_one_left a) (fun _ ↦ pairing_one_right _)
     fun z w ↦ by simp only [h, toConv_pairing_mul]
 
 theorem isPrimitiveElem_of_iff [CharZero R] {F : Forest (UnorderedTree α)} :
@@ -234,15 +234,15 @@ the first factor is grafted onto the second, to the dual primitives of the Conne
 bialgebra. It sends a tree `T` to `|Aut T| • δ_T`. -/
 noncomputable def pairingLie :
     (ChapotonLivernet R α)ᵐᵒᵖ →ₗ⁅R⁆ dualPrimitives R (ConnesKreimer R (UnorderedTree α)) where
-  toFun x := ⟨toConv (pairing (R := R) (ι x.unop).toConnesKreimer),
-    isDualPrimitive_pairing (isPrimitiveElem_ι _)⟩
+  toFun x := ⟨pairingAlgHom (op (ι x.unop)), isDualPrimitive_pairing (isPrimitiveElem_ι _)⟩
   map_add' x y := Subtype.ext <| by simp
   map_smul' r x := Subtype.ext <| by simp
   map_lie' {x y} := Subtype.ext <| by
-    change toConv (pairing (R := R) (ι ⁅y.unop, x.unop⁆).toConnesKreimer) =
-      ⁅toConv (pairing (ι x.unop).toConnesKreimer), toConv (pairing (ι y.unop).toConnesKreimer)⁆
-    rw [← ιLie_apply ⁅y.unop, x.unop⁆, LieHom.map_lie, Ring.lie_def, Ring.lie_def]
-    simp [← toConv_pairing_product]
+    change pairingAlgHom (op (ι ⁅y.unop, x.unop⁆)) =
+      ⁅pairingAlgHom (op (ι x.unop)), pairingAlgHom (op (ι y.unop))⁆
+    rw [← ιLie_apply ⁅y.unop, x.unop⁆, LieHom.map_lie, Ring.lie_def, Ring.lie_def, op_sub, op_mul,
+      op_mul, map_sub, map_mul, map_mul]
+    rfl
 
 @[simp] theorem coe_pairingLie (x : (ChapotonLivernet R α)ᵐᵒᵖ) :
     (pairingLie x : WithConv (ConnesKreimer R (UnorderedTree α) →ₗ[R] R)) =
@@ -258,8 +258,8 @@ theorem coe_pairingLie_op_of (T : UnorderedTree α) :
 embeds in the dual primitives. -/
 theorem pairingLie_injective [CharZero R] [NoZeroDivisors R] :
     Function.Injective (pairingLie (R := R) (α := α)) := fun _ _ h ↦
-  unop_injective <| ι_injective <| GrossmanLarson.ext <|
-    ext_pairing_right fun z ↦ congr($(congrArg Subtype.val h) z)
+  unop_injective <| ι_injective <| GrossmanLarson.ext <| pairing_injective <|
+    toConv_injective <| congrArg Subtype.val h
 
 end CommRing
 

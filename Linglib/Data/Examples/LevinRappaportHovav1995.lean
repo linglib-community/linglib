@@ -24,7 +24,7 @@ def ex4_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "flare"), ("class", "43.1")] }
 
@@ -38,7 +38,7 @@ def ex4_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "ring"), ("class", "43.2")] }
 
@@ -52,7 +52,7 @@ def ex4_9c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "gurgle"), ("class", "43.2")] }
 
@@ -65,7 +65,7 @@ def ex4_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "stink"), ("class", "43.3")] }
 
@@ -78,7 +78,7 @@ def ex4_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "stink"), ("class", "43.3")] }
 
@@ -91,7 +91,7 @@ def ex4_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "break"), ("class", "45.1")] }
 
@@ -104,7 +104,7 @@ def ex4_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "burn"), ("class", "45.4")] }
 
@@ -117,7 +117,7 @@ def ex4_25c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "freeze"), ("class", "45.4")] }
 
@@ -130,7 +130,7 @@ def ex4_28a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "cognateObject"), ("verb", "break"), ("class", "45.1")] }
 
@@ -143,7 +143,7 @@ def ex4_28b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "burn"), ("class", "45.4")] }
 
@@ -156,7 +156,7 @@ def ex4_31a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "cognateObject"), ("verb", "arrive"), ("class", "51.1"), ("agentive", "yes")] }
 
@@ -169,7 +169,7 @@ def ex4_31b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "cognateObject"), ("verb", "fall"), ("class", "51.1"), ("agentive", "no")] }
 
@@ -182,7 +182,7 @@ def ex4_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "rise"), ("class", "51.1"), ("agentive", "no")] }
 
@@ -195,7 +195,7 @@ def ex4_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "fall"), ("class", "51.1"), ("agentive", "no")] }
 
@@ -208,7 +208,7 @@ def ex4_32c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "arrive"), ("class", "51.1"), ("agentive", "yes")] }
 
@@ -221,7 +221,7 @@ def ex4_45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "cognateObject"), ("verb", "stand"), ("class", "47.6"), ("agentive", "no")] }
 
@@ -234,7 +234,7 @@ def ex4_45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "cognateObject"), ("verb", "sprawl"), ("class", "47.6"), ("agentive", "no")] }
 
@@ -247,7 +247,7 @@ def ex4_50a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "run"), ("class", "51.3.2"), ("agentive", "yes")] }
 
@@ -260,7 +260,7 @@ def ex4_50b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "swim"), ("class", "51.3.2"), ("agentive", "yes")] }
 
@@ -273,7 +273,7 @@ def ex4_51a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "run"), ("class", "51.3.2"), ("agentive", "yes")] }
 
@@ -286,7 +286,7 @@ def ex4_51b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "swim"), ("class", "51.3.2"), ("agentive", "yes")] }
 
@@ -299,7 +299,7 @@ def ex4_52a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "roll"), ("class", "51.3.1"), ("agentive", "no")] }
 
@@ -312,7 +312,7 @@ def ex4_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "swing"), ("class", "51.3.1"), ("agentive", "no")] }
 
@@ -325,7 +325,7 @@ def ex4_53a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "roll"), ("class", "51.3.1"), ("agentive", "no")] }
 
@@ -338,7 +338,7 @@ def ex4_53b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "swing"), ("class", "51.3.1"), ("agentive", "no")] }
 
@@ -351,7 +351,7 @@ def ex4_54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "run"), ("class", "51.3.2"), ("agentive", "yes")] }
 
@@ -364,7 +364,7 @@ def ex4_54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "swim"), ("class", "51.3.2"), ("agentive", "yes")] }
 
@@ -377,7 +377,7 @@ def ex4_55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "roll"), ("class", "51.3.1"), ("agentive", "no")] }
 
@@ -390,7 +390,7 @@ def ex4_55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "bounce"), ("class", "51.3.1"), ("agentive", "no")] }
 
@@ -403,7 +403,7 @@ def ex6_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "locativeInversion"), ("verb", "appear"), ("class", "48.1.1")] }
 
@@ -416,7 +416,7 @@ def ex6_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "thereInsertion"), ("verb", "appear"), ("class", "48.1.1")] }
 
@@ -429,7 +429,7 @@ def ex6_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "locativeInversion"), ("verb", "break"), ("class", "45.1")] }
 
@@ -443,7 +443,7 @@ def ex6_22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "locativeInversion"), ("verb", "tick"), ("class", "43.2")] }
 

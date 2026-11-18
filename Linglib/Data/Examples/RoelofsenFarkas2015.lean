@@ -24,7 +24,7 @@ def ex_6a_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "yes")] }
 
@@ -37,7 +37,7 @@ def ex_6a_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "no")] }
 
@@ -50,7 +50,7 @@ def ex_6b_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "yes")] }
 
@@ -63,7 +63,7 @@ def ex_6b_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "no")] }
 
@@ -76,7 +76,7 @@ def ex_7a_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "yes")] }
 
@@ -89,7 +89,7 @@ def ex_7a_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "no")] }
 
@@ -102,7 +102,7 @@ def ex_7b_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "yes")] }
 
@@ -115,7 +115,7 @@ def ex_7b_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "no")] }
 
@@ -128,7 +128,7 @@ def ex_119_oui : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "oui")] }
 
@@ -141,7 +141,7 @@ def ex_119_non : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "non")] }
 
@@ -154,7 +154,7 @@ def ex_119_si : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "si")] }
 
@@ -167,7 +167,7 @@ def ex_120_oui : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "oui")] }
 
@@ -180,7 +180,7 @@ def ex_120_non : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "non")] }
 
@@ -193,7 +193,7 @@ def ex_120_si : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "si")] }
 
@@ -206,7 +206,7 @@ def ex_121_oui : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "oui")] }
 
@@ -219,7 +219,7 @@ def ex_121_non : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "non")] }
 
@@ -232,7 +232,7 @@ def ex_121_si : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "si")] }
 
@@ -245,7 +245,7 @@ def ex_122_oui : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "oui")] }
 
@@ -258,7 +258,7 @@ def ex_122_non : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "non")] }
 
@@ -271,7 +271,7 @@ def ex_122_si : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "si")] }
 
@@ -284,7 +284,7 @@ def ex_124_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "ja")] }
 
@@ -297,7 +297,7 @@ def ex_124_nein : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "nein")] }
 
@@ -310,7 +310,7 @@ def ex_124_doch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "doch")] }
 
@@ -323,7 +323,7 @@ def ex_125_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "ja")] }
 
@@ -336,7 +336,7 @@ def ex_125_nein : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "nein")] }
 
@@ -349,7 +349,7 @@ def ex_125_doch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "doch")] }
 
@@ -362,7 +362,7 @@ def ex_126_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "ja")] }
 
@@ -375,7 +375,7 @@ def ex_126_nein : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "nein")] }
 
@@ -388,7 +388,7 @@ def ex_126_doch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "doch")] }
 
@@ -401,7 +401,7 @@ def ex_127_ja : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "ja")] }
 
@@ -414,7 +414,7 @@ def ex_127_nein : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "nein")] }
 
@@ -427,7 +427,7 @@ def ex_127_doch : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "doch")] }
 
@@ -440,7 +440,7 @@ def ex_49_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "even"), ("antecedent", "positive"), ("response", "positive"), ("particle", "yes"), ("conveys", "even")] }
 
@@ -453,7 +453,7 @@ def ex_49_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "even"), ("antecedent", "positive"), ("response", "negative"), ("particle", "no"), ("conveys", "odd")] }
 
@@ -466,7 +466,7 @@ def ex_50_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "odd"), ("antecedent", "positive"), ("response", "positive"), ("particle", "yes"), ("conveys", "odd")] }
 
@@ -479,7 +479,7 @@ def ex_50_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "odd"), ("antecedent", "positive"), ("response", "negative"), ("particle", "no"), ("conveys", "even")] }
 
@@ -492,7 +492,7 @@ def ex_51_yes : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "alternativeQuestion"), ("response", "positive"), ("particle", "yes")] }
 
@@ -505,7 +505,7 @@ def ex_51_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "alternativeQuestion"), ("response", "negative"), ("particle", "no")] }
 
@@ -518,7 +518,7 @@ def ex_52_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "odd"), ("antecedent", "positive"), ("response", "negative"), ("particle", "no"), ("conveys", "not odd")] }
 
@@ -531,7 +531,7 @@ def ex_53_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "even"), ("antecedent", "negative"), ("response", "negative"), ("particle", "no"), ("conveys", "not even")] }
 

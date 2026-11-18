@@ -19,12 +19,6 @@ strict *later than*: [it refutes `CFpFFp` when discrete](##not_den_int), and
 [falls short of trichotomy](##cmnmpnmp_not_trichotomous), and `CFPpAApPpFp` and `CPFpAApPpFp`
 [come apart on a fork](##fork_asymmetry).
 
-## Errata
-
-* Prior reports (p. 38) that `CMNMpNMp` is shown to require trichotomy, but it holds on two
-  unconnected lines (`cmnmpnmp_not_trichotomous`). It requires trichotomy only among the times
-  connected to a given one.
-
 ## TODO
 
 * The metric tense logic of Chapter VI, the Ockhamist and Peircean formalizations of Chapter VII
@@ -39,7 +33,7 @@ strict *later than*: [it refutes `CFpFFp` when discrete](##not_den_int), and
 
 namespace Prior1967
 
-open ModalLogic Tense
+open ModalLogic Tense PointAlgebra
 open scoped Denotes SetRel
 
 -- `CFpFFp` on discrete time, p. 39: something can be the case for the last time at the next
@@ -54,7 +48,7 @@ theorem den_rat : (◇[toSetRel ⟦Tense.future⟧] : (ℚ → Prop) → ℚ →
   diamond_future_den_iff.2 inferInstance
 
 /-- If *later than* were reflexive, `CFpFFp` would be verified even if time were not dense (p. 39).
-The reflexive *later than* is the relation of the nonpast cell. -/
+The reflexive *later than* is the relation of the nonpast. -/
 theorem den_nonpast {T : Type*} [LinearOrder T] :
     (◇[toSetRel nonpast] : (T → Prop) → T → Prop) ≤ ◇[toSetRel nonpast] ∘ ◇[toSetRel nonpast] :=
   have : (toSetRel nonpast : SetRel T T).IsRefl :=
@@ -74,12 +68,12 @@ theorem mirror_image_fails :
 
 variable {T : Type*} [PartialOrder T]
 
-/-- `CMNMpNMp` (p. 38), with `M` the possibility of the unconstrained cell (`diamond_toSetRel_top`),
+/-- `CMNMpNMp` (p. 38), with `M` the possibility of the top element (`diamond_toSetRel_top`),
 holds exactly when time branches neither way. -/
 theorem cmnmpnmp_iff :
     (∀ (p : T → Prop) (t : T),
       ◇[toSetRel ⊤] (fun u ↦ ¬ ◇[toSetRel ⊤] p u) t → ¬ ◇[toSetRel ⊤] p t) ↔
-        IsLeftLinear T ∧ IsLeftLinear Tᵒᵈ := by
+        IsForestOrder T ∧ IsForestOrder Tᵒᵈ := by
   rw [← isEuclidean_toSetRel_top_iff, ← box_five_iff]
   refine ⟨fun h p t hp ↦ ?_, fun h p t hn hp ↦ ?_⟩
   · by_contra hb
@@ -92,7 +86,7 @@ theorem cmnmpnmp_not_trichotomous :
     (∀ (p : ℕ ⊕ ℕ → Prop) (t : ℕ ⊕ ℕ),
       ◇[toSetRel ⊤] (fun u ↦ ¬ ◇[toSetRel ⊤] p u) t → ¬ ◇[toSetRel ⊤] p t) ∧
       ¬ ∀ a b : ℕ ⊕ ℕ, a < b ∨ a = b ∨ b < a := by
-  refine ⟨cmnmpnmp_iff.2 ⟨⟨?_⟩, isLeftLinear_orderDual_iff.2 ?_⟩, fun h ↦ ?_⟩
+  refine ⟨cmnmpnmp_iff.2 ⟨⟨?_⟩, isForestOrder_orderDual_iff.2 ?_⟩, fun h ↦ ?_⟩
   · rintro (a | a) (b | b) (c | c) ha hb <;> simp_all [le_total]
   · rintro (a | a) (b | b) (c | c) ha hb <;> simp_all [le_total]
   · simpa using h (.inl 0) (.inr 0)

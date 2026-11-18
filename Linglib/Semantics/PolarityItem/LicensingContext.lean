@@ -7,6 +7,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
+public import Linglib.Semantics.Attitudes.NegRaising
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
@@ -56,7 +57,8 @@ constructions are the shared inventory that lexical entries cite.
   classically, is a function of the name. Distinct constructions can share a licenser. The
   necessity modal, the imperative, the generic, and the free relative are all necessities. The
   clausal comparative and *too … to* both place the compared individual above the degrees of the
-  clause, and *deny* and negation over a neg-raising attitude both assert that the attitude holds
+  clause, and *deny* asserts, as negation over a neg-raising attitude presupposes and asserts,
+  that the attitude holds
   of the negated complement.
 * The inventory consists of the contexts to which the library gives a semantics, and it is not an
   exhaustive list. It realizes seven of Haspelmath's nine functions, with the necessity modal and
@@ -104,7 +106,7 @@ the scopes at which `Q` holds and every scale-mate that holds there is entailed 
 is evaluated with the restrictor fixed and quantifies over scopes ([gajewski-2011]'s `O` with
 `ALT-1`). -/
 def exhaustified (Q : Det α) (C : Set (Det α)) : Det α :=
-  fun A ↦ Exhaustification.exh ((· A) '' C) (Q A)
+  fun A P ↦ P ∈ Exhaustification.exh ((fun Q' : Det α ↦ {P | Q' A P}) '' C) {P | Q A P}
 
 theorem exhaustified_iff : exhaustified Q C A P ↔ Q A P ∧ ∀ Q' ∈ C, Q' A P → Q A ≤ Q' A :=
   ⟨fun ⟨h, h'⟩ ↦ ⟨h, fun Q' hQ' hP ↦ h' _ ⟨Q', hQ', rfl⟩ hP⟩,
@@ -116,7 +118,8 @@ theorem not_exhaustified_of_not_le (hQ' : Q' ∈ C) (hP : Q' A P) (h : ¬ Q A �
 
 theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A ≤ Q' A) :
     exhaustified Q C A = Q A :=
-  Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
+  funext fun P ↦ congrArg (P ∈ ·) (Exhaustification.exh_eq_self_iff.2
+    (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP))
 
 open NaturalLogic in
 /-- The scope of a universal over a nonempty restrictor is multiplicative. -/
@@ -189,8 +192,8 @@ inductive LicensingContext where
   complement. -/
   | denyVerb
   /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*.
-  With the excluded middle of the attitude, it is read as the attitude toward the negated
-  complement ([gajewski-2007]). -/
+  The attitude presupposes the excluded middle, so its negation is true where the attitude holds
+  of the negated complement ([gajewski-2007]). -/
   | superordinateNegation
   /-- The scope of focus *only*, in von Fintel's analysis. -/
   | onlyFocus
@@ -302,6 +305,16 @@ structure Accessibility where
 structure SerialAccessibility extends Accessibility where
   serial : ∃ v, (w, v) ∈ R
 
+/-- The modal base of a neg-raising attitude and the alternatives into which the presupposition
+of its complement projects. -/
+structure Bases where
+  /-- The worlds. -/
+  W : Type
+  /-- The modal base. -/
+  R : SetRel W W
+  /-- The alternatives into which the presupposition of the complement projects. -/
+  H : SetRel W W
+
 /-- An accessibility relation over worlds. -/
 structure Frame where
   /-- The worlds. -/
@@ -327,7 +340,7 @@ structure Attitude where
   /-- The domain. -/
   base : W → Set W
   /-- The ordering source. -/
-  g : W → Set (W → Prop)
+  g : W → Set (Set W)
 
 /-- A measure of the members of a comparison class, and the individual described. -/
 structure Superlative where
@@ -398,8 +411,10 @@ noncomputable def licenser : LicensingContext → Licenser
   | clausalComparative | tooTo => .classical exceedsFamily
   | doubtVerb => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
-  | denyVerb | superordinateNegation => .classical
+  | denyVerb => .classical
       ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
+  | superordinateNegation => .strawson
+      ⟨Bases, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ NegRaising.negation p.R p.H⟩
   | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
       fun p P ↦ Focus.only (· = ·) Set.univ P p.x⟩
   | adversative => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
@@ -527,8 +542,7 @@ theorem holds_withoutClause_iff {s : Negation.Strength} :
 theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
   refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
-    ⟨fun _ _ ↦ propext beforeEver_union_right,
-    eq_bot_iff.2 fun ⟨t, _, h⟩ ↦ lt_irrefl t (h t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩)
+    ⟨isAntiAdditive_beforeEver p.A, eq_bot_iff.2 not_beforeEver_univ⟩)
     fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
   have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ∅⟩)).2.2
@@ -566,6 +580,19 @@ theorem holds_denyVerb_iff {s : Negation.Strength} :
     (g := fun p : SerialAccessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
     (fun p ↦ holdsFor_mult_mem_core p.serial)
     ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, not_holdsFor_additive_mem_core⟩
+
+/-- Negation over a neg-raising attitude is anti-additive. It is not anti-morphic, since it is
+false of every complement where the modal base is empty. -/
+theorem holds_superordinateNegation_iff {s : Negation.Strength} :
+    superordinateNegation.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
+  holds_toProjectivitySignature_iff
+    (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.2
+      ⟨NegRaising.isAntiAdditive_posExt_negation p.R p.H,
+        NegRaising.posExt_negation_univ p.R p.H⟩)
+    fun s hs h ↦ by
+      obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
+      have := (ProjectivitySignature.holdsFor_antiAddMult_iff.1 (h ⟨Unit, ∅, ∅⟩)).2.2
+      simpa [NegRaising.posExt_negation] using congrArg (() ∈ ·) this
 
 /-! ### Non-triviality
 
@@ -618,11 +645,18 @@ theorem not_isStrawsonUE_denyVerb : ¬ denyVerb.licenser.IsStrawsonUE :=
     h (bot_le (a := ⊤)) (fun _ _ ↦ Set.notMem_empty _) (Set.mem_univ (true, true))
       (Set.mem_univ true)⟩
 
+theorem not_isStrawsonUE_superordinateNegation :
+    ¬ superordinateNegation.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Unit, .univ, .univ⟩, Presupposition.not_isStrawsonUE (w := ())
+    (Set.empty_subset Set.univ)
+    (by simp [NegRaising.negation, NegRaising.box_eq_false_iff, ModalLogic.Box])
+    (by simp [NegRaising.negation, NegRaising.box, ModalLogic.Box])⟩
+
 theorem not_isStrawsonUE_onlyFocus : ¬ onlyFocus.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨Bool, Unit, true⟩, Focus.not_isStrawsonUE_only_eq⟩
 
 theorem not_isStrawsonUE_adversative : ¬ adversative.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {(· = 1)}⟩,
+  not_forall.2 ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {{1}}⟩,
     Desire.BestWorlds.not_isStrawsonUE_regret⟩
 
 theorem not_isStrawsonUE_superlative : ¬ superlative.licenser.IsStrawsonUE :=
@@ -675,7 +709,7 @@ theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p �
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
   Desire.BestWorlds.not_antitone_posExt_regret (ProjectivitySignature.holdsFor_anti_iff.mp
-    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
+    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {{false}}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_trivalentSuperlative p.μ p.x
@@ -769,8 +803,11 @@ instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
       not_isStrawsonUE_exceedsFamily fun _ ↦ holds_exceedsFamily_iff)
   | doubtVerb => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_doubtVerb fun _ ↦ holds_doubtVerb_iff)
-  | denyVerb | superordinateNegation => decidable_of_iff' _ (carries_classical_iff_le
+  | denyVerb => decidable_of_iff' _ (carries_classical_iff_le
       not_isStrawsonUE_denyVerb fun _ ↦ holds_denyVerb_iff)
+  | superordinateNegation => decidable_of_iff' _ (carries_iff_le
+      (isStrawsonDE_of_holds_anti (holds_superordinateNegation_iff.2 bot_le))
+      not_isStrawsonUE_superordinateNegation fun _ ↦ holds_superordinateNegation_iff)
   | onlyFocus => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_onlyFocus
       not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
   | adversative => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_adversative
@@ -800,7 +837,8 @@ instance (c : LicensingContext) (s : Negation.Strength) :
   | beforeClause => decidable_of_iff' _ holds_beforeClause_iff
   | clausalComparative | tooTo => decidable_of_iff' _ holds_exceedsFamily_iff
   | doubtVerb => decidable_of_iff' _ holds_doubtVerb_iff
-  | denyVerb | superordinateNegation => decidable_of_iff' _ holds_denyVerb_iff
+  | denyVerb => decidable_of_iff' _ holds_denyVerb_iff
+  | superordinateNegation => decidable_of_iff' _ holds_superordinateNegation_iff
   | onlyFocus => isFalse (not_holds_toProjectivitySignature not_holds_onlyFocus)
   | adversative => isFalse (not_holds_toProjectivitySignature not_holds_adversative)
   | superlative => isFalse (not_holds_toProjectivitySignature not_holds_superlative)

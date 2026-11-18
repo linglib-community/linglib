@@ -24,7 +24,7 @@ def s1a : Datum :=
     glossedTokens := []
     context := "A friend walks in and shakes off a wet umbrella. You say:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "epistemic")] }
 
@@ -37,7 +37,7 @@ def s1b : Datum :=
     glossedTokens := []
     context := "You are reading the specifications of a homework assignment. It partially reads:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "deontic")] }
 
@@ -50,7 +50,7 @@ def s2a : Datum :=
     glossedTokens := []
     context := "A friend is leaving and grabs an umbrella on the way out, saying:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "epistemic")] }
 
@@ -63,7 +63,7 @@ def s2b : Datum :=
     glossedTokens := []
     context := "A mother offers a treat to a child for finishing an assignment:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "deontic")] }
 
@@ -74,9 +74,11 @@ def s3a : Datum :=
     language := "lill1248"
     primaryText := "nilh k'a lh(el)-(t)-en-s-wá(7)-(a) ptinus-em-sút"
     glossedTokens := [("nilh", "FOC"), ("k'a", "INFER"), ("lh(el)-(t)-en-s-wá(7)-(a)", "from-DET-1SG.POSS-NOM-IMPF-DET"), ("ptinus-em-sút", "think-MID-OOC")]
+    glossedWords := [⟨['n', 'i', 'l', 'h'], ['F', 'O', 'C'], [⟨['n', 'i', 'l', 'h'], ['F', 'O', 'C'], none⟩]⟩, ⟨['k', '\'', 'a'], ['I', 'N', 'F', 'E', 'R'], [⟨['k', '\'', 'a'], ['I', 'N', 'F', 'E', 'R'], none⟩]⟩, ⟨['l', 'h', '(', 'e', 'l', ')', '-', '(', 't', ')', '-', 'e', 'n', '-', 's', '-', 'w', 'á', '(', '7', ')', '-', '(', 'a', ')'], ['f', 'r', 'o', 'm', '-', 'D', 'E', 'T', '-', '1', 'S', 'G', '.', 'P', 'O', 'S', 'S', '-', 'N', 'O', 'M', '-', 'I', 'M', 'P', 'F', '-', 'D', 'E', 'T'], [⟨['l', 'h', 'e', 'l'], ['f', 'r', 'o', 'm'], none⟩, ⟨['t'], ['D', 'E', 'T'], some '-'⟩, ⟨['e', 'n'], ['1', 'S', 'G', '.', 'P', 'O', 'S', 'S'], some '-'⟩, ⟨['s'], ['N', 'O', 'M'], some '-'⟩, ⟨['w', 'á', '7'], ['I', 'M', 'P', 'F'], some '-'⟩, ⟨['a'], ['D', 'E', 'T'], some '-'⟩]⟩, ⟨['p', 't', 'i', 'n', 'u', 's', '-', 'e', 'm', '-', 's', 'ú', 't'], ['t', 'h', 'i', 'n', 'k', '-', 'M', 'I', 'D', '-', 'O', 'O', 'C'], [⟨['p', 't', 'i', 'n', 'u', 's'], ['t', 'h', 'i', 'n', 'k'], none⟩, ⟨['e', 'm'], ['M', 'I', 'D'], some '-'⟩, ⟨['s', 'ú', 't'], ['O', 'O', 'C'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You have a headache that won't go away, so you go to the doctor. All the tests show negative. There is nothing wrong, so it must just be tension."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5c)"), ("force", "strong"), ("flavor", "epistemic")] }
 
@@ -87,9 +89,11 @@ def s3b : Datum :=
     language := "lill1248"
     primaryText := "plan k'a qwatsáts"
     glossedTokens := [("plan", "already"), ("k'a", "INFER"), ("qwatsáts", "leave")]
+    glossedWords := [⟨['p', 'l', 'a', 'n'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], [⟨['p', 'l', 'a', 'n'], ['a', 'l', 'r', 'e', 'a', 'd', 'y'], none⟩]⟩, ⟨['k', '\'', 'a'], ['I', 'N', 'F', 'E', 'R'], [⟨['k', '\'', 'a'], ['I', 'N', 'F', 'E', 'R'], none⟩]⟩, ⟨['q', 'w', 'a', 't', 's', 'á', 't', 's'], ['l', 'e', 'a', 'v', 'e'], [⟨['q', 'w', 'a', 't', 's', 'á', 't', 's'], ['l', 'e', 'a', 'v', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "His car isn't there."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5e)"), ("force", "weak"), ("flavor", "epistemic")] }
 

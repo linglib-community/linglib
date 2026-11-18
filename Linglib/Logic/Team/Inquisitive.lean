@@ -599,7 +599,7 @@ variable [Fintype W]
 
 /-- The inquisitive proposition `[φ]_M` expressed by `φ` is the support set carried along
 `Finset W ≃o Set W`, as a `Question`. -/
-def proposition : Question W :=
+noncomputable def proposition : Question W :=
   .ofLowerSet (Fintype.finsetOrderIsoSet '' (support M φ : Set (Finset W)))
     ⟨∅, empty_mem_support M φ, Finset.coe_empty⟩ ((support M φ).lower.image _)
 

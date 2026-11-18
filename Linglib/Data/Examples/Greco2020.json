@@ -12,7 +12,7 @@
     "translation": "Mary got off the train!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -36,7 +36,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -60,7 +60,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -84,7 +84,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -109,7 +109,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -134,7 +134,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -157,7 +157,7 @@
     "translation": "John already finished the homework!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -180,7 +180,7 @@
     "translation": "The book, John gave it to Luke!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -204,7 +204,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -228,7 +228,7 @@
     "translation": "The book, John gave it to Luke!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -252,7 +252,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -276,7 +276,7 @@
     "translation": "John, his friends played a bad joke on him!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -299,7 +299,7 @@
     "translation": "Tomorrow John is coming to see me!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -323,7 +323,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -346,7 +346,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -369,7 +369,7 @@
     "translation": "",
     "context": "A: Gianni è andato al bar invece di andare a scuola.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -392,7 +392,7 @@
     "translation": "John only ate pizza!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -416,7 +416,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -439,7 +439,7 @@
     "translation": "Mary got off the train!",
     "context": "A: Che cosa è successo?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -462,7 +462,7 @@
     "translation": "",
     "context": "A: Chi è sceso dal treno?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -485,7 +485,7 @@
     "translation": "Mary got off the train!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -508,7 +508,7 @@
     "translation": "Mary got off the train!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -531,7 +531,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -554,7 +554,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -577,7 +577,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -600,7 +600,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -623,7 +623,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -647,7 +647,7 @@
     "translation": "Luke thinks that Mary got off the train!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "Luke thinks that Mary did not get off the train!", "judgment": "unacceptable"},
       {"name": "Luke thinks that Mary got off the train!", "judgment": "acceptable"}
@@ -675,7 +675,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -699,7 +699,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -722,7 +722,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -746,7 +746,7 @@
     "translation": "I wonder whether tourists think that ROME is beautiful (non Firenze).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedded focus"],
@@ -771,7 +771,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedded focus"],
@@ -795,7 +795,7 @@
     "translation": "I'm sorry that tourists think Rome is ugly (not Firenze).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedded focus"],
@@ -820,7 +820,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedded focus"],
@@ -844,7 +844,7 @@
     "translation": "Luca says that the tourists think ROME is beautiful (not Firenze).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedded focus"],
@@ -868,7 +868,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedded focus"],
@@ -888,7 +888,7 @@
     "translation": "Mary got off the train!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -908,7 +908,7 @@
     "translation": "Mary got off the train!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -928,7 +928,7 @@
     "translation": "Mary got off the train!",
     "context": "A: Sembri sconvolto. Cos'è successo?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -951,7 +951,7 @@
     "translation": "",
     "context": "A: Sembri sconvolto. Cos'è successo?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "NRQ"],
@@ -974,7 +974,7 @@
     "translation": "After all, hasn't John come in first?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "NRQ"],
@@ -997,7 +997,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -1020,7 +1020,7 @@
     "translation": "After all, what hasn't Mary done for John?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "NRQ"],
@@ -1043,7 +1043,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -1066,7 +1066,7 @@
     "translation": "It is incredible what John ate!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ENE"],
@@ -1090,7 +1090,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "Sneg"],
@@ -1113,7 +1113,7 @@
     "translation": "",
     "context": "A: Sembri sconvolto. Cos'è successo?",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ENE"],
@@ -1136,7 +1136,7 @@
     "translation": "What has Mary done for John!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "ENE"],

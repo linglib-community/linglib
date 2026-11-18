@@ -444,10 +444,11 @@ variable {B : Entity → Ev → Prop} {holder : Entity → Ev → Prop} {c x : E
 
 /-- Under Event Identification (55) with unique holders (56), the individual in the change-of-state
 root's state is the holder of the result. -/
-theorem holder_eq_of_up (hU : Mereology.UP holder) (hB : B ≤ holder) (hL : L ≤ holder c)
+theorem holder_eq_of_up (hU : Mereology.UP {(x, s) | holder x s}) (hB : B ≤ holder)
+    (hL : L ≤ holder c)
     (h : eventIdentification (Analysis.beaversKoontzGarboden.denote M .changeOfState B) L x s) :
     x = c :=
-  hU (hB x s h.1.1.1) (hL s h.2)
+  hU.eq (hB x s h.1.1.1) (hL s h.2)
 
 end Resultative
 
@@ -488,7 +489,8 @@ def broken (x : Participant) (s : Eventuality) : Prop := holder x s ∧ s = .bro
 /-- *The corpse loose from the deck*. -/
 def looseFromDeck (s : Eventuality) : Prop := holder .corpse s ∧ s = .loose
 
-theorem up_holder : Mereology.UP holder := by
+theorem up_holder : Mereology.UP {(x, s) | holder x s} := by
+  refine Mereology.up_iff.2 ?_
   rintro x y v (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) (⟨rfl, hv⟩ | ⟨rfl, hv⟩) <;> first | rfl | cases hv
 
 /-- Sentence (34) makes the monks the agent of the deck's becoming broken, which causes the corpse

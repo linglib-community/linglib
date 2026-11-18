@@ -9,7 +9,7 @@
     "translation": "",
     "context": "Q: Who did Avery invite?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -29,7 +29,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "either"],
@@ -89,7 +89,7 @@
     "translation": "",
     "context": "RQ: What is Sam's emotional state?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -109,7 +109,7 @@
     "translation": "",
     "context": "Q: Who loves whom?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -129,7 +129,7 @@
     "translation": "",
     "context": "Q: Who ate what?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -148,7 +148,7 @@
     "translation": "",
     "context": "A and some traveling companions are looking for a place to stay during their upcoming vacation. A is searching for a hotel room on the internet. Q: What would be a good hotel to stay at?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -168,7 +168,7 @@
     "translation": "",
     "context": "A and companions are looking for a nice hotel room to stay in.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -188,7 +188,7 @@
     "translation": "",
     "context": "A's band is looking for a dingy hotel room in which to shoot a music video. Q: Where would be a good place to shoot our music video?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -208,7 +208,7 @@
     "translation": "",
     "context": "RQ: What foods do you like?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -228,7 +228,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -248,7 +248,7 @@
     "translation": "",
     "context": "RQ: Who stole the cookies?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -268,7 +268,7 @@
     "translation": "",
     "context": "RQ: Who stole the cookies?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -288,7 +288,7 @@
     "translation": "",
     "context": "RQ: Who plays an instrument?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -308,7 +308,7 @@
     "translation": "",
     "context": "RQ: Who plays an instrument?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -328,7 +328,7 @@
     "translation": "",
     "context": "Q: Who are some people Avery invited?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -348,7 +348,7 @@
     "translation": "",
     "context": "Q: Who all did Avery invite?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -368,7 +368,7 @@
     "translation": "",
     "context": "Q: Who are some people Avery invited?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],
@@ -388,7 +388,7 @@
     "translation": "",
     "context": "Q: Who are some people Avery invited?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "too"],

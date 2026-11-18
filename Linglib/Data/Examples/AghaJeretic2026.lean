@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AghaJeretic2026` — typed example data
@@ -24,7 +25,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -37,7 +38,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -50,7 +51,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -63,7 +64,7 @@ def ex_6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "strong"), ("second", "strong")] }
 
@@ -76,7 +77,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "weak"), ("second", "strong")] }
 
@@ -89,7 +90,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "weak"), ("second", "strong")] }
 
@@ -102,7 +103,7 @@ def ex_8c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "contradiction"), ("first", "weak"), ("second", "strong")] }
 
@@ -115,7 +116,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "strong"), ("second", "strong")] }
 
@@ -128,7 +129,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "strong"), ("second", "strong")] }
 
@@ -141,7 +142,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "weak"), ("second", "strong")] }
 
@@ -154,7 +155,7 @@ def ex_12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("test", "triviality"), ("first", "weak"), ("second", "strong")] }
 
@@ -165,9 +166,11 @@ def ex_15a : Datum :=
     language := "mode1248"
     primaryText := "prepi na plinis ta piata ala dhen ise ipexreomenos na to kanis"
     glossedTokens := [("prepi", "must"), ("na", "NA"), ("plinis", "wash"), ("ta", "the"), ("piata", "dishes"), ("ala", "but"), ("dhen", "NEG"), ("ise", "are"), ("ipexreomenos", "obliged"), ("na", "NA"), ("to", "it"), ("kanis", "do")]
+    glossedWords := [⟨['p', 'r', 'e', 'p', 'i'], ['m', 'u', 's', 't'], [⟨['p', 'r', 'e', 'p', 'i'], ['m', 'u', 's', 't'], none⟩]⟩, ⟨['n', 'a'], ['N', 'A'], [⟨['n', 'a'], ['N', 'A'], none⟩]⟩, ⟨['p', 'l', 'i', 'n', 'i', 's'], ['w', 'a', 's', 'h'], [⟨['p', 'l', 'i', 'n', 'i', 's'], ['w', 'a', 's', 'h'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'i', 'a', 't', 'a'], ['d', 'i', 's', 'h', 'e', 's'], [⟨['p', 'i', 'a', 't', 'a'], ['d', 'i', 's', 'h', 'e', 's'], none⟩]⟩, ⟨['a', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['i', 's', 'e'], ['a', 'r', 'e'], [⟨['i', 's', 'e'], ['a', 'r', 'e'], none⟩]⟩, ⟨['i', 'p', 'e', 'x', 'r', 'e', 'o', 'm', 'e', 'n', 'o', 's'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], [⟨['i', 'p', 'e', 'x', 'r', 'e', 'o', 'm', 'e', 'n', 'o', 's'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], none⟩]⟩, ⟨['n', 'a'], ['N', 'A'], [⟨['n', 'a'], ['N', 'A'], none⟩]⟩, ⟨['t', 'o'], ['i', 't'], [⟨['t', 'o'], ['i', 't'], none⟩]⟩, ⟨['k', 'a', 'n', 'i', 's'], ['d', 'o'], [⟨['k', 'a', 'n', 'i', 's'], ['d', 'o'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "prepi"), ("force", "strong"), ("test", "contradiction")] }
 
@@ -178,9 +181,11 @@ def ex_15b : Datum :=
     language := "mode1248"
     primaryText := "tha eprepe na plinis ta piata ala dhen ise ipexreomenos na to kanis"
     glossedTokens := [("tha", "FUT"), ("eprepe", "must.PST"), ("na", "NA"), ("plinis", "wash"), ("ta", "the"), ("piata", "dishes"), ("ala", "but"), ("dhen", "NEG"), ("ise", "are"), ("ipexreomenos", "obliged"), ("na", "NA"), ("to", "it"), ("kanis", "do")]
+    glossedWords := [⟨['t', 'h', 'a'], ['F', 'U', 'T'], [⟨['t', 'h', 'a'], ['F', 'U', 'T'], none⟩]⟩, ⟨['e', 'p', 'r', 'e', 'p', 'e'], ['m', 'u', 's', 't', '.', 'P', 'S', 'T'], [⟨['e', 'p', 'r', 'e', 'p', 'e'], ['m', 'u', 's', 't', '.', 'P', 'S', 'T'], none⟩]⟩, ⟨['n', 'a'], ['N', 'A'], [⟨['n', 'a'], ['N', 'A'], none⟩]⟩, ⟨['p', 'l', 'i', 'n', 'i', 's'], ['w', 'a', 's', 'h'], [⟨['p', 'l', 'i', 'n', 'i', 's'], ['w', 'a', 's', 'h'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'i', 'a', 't', 'a'], ['d', 'i', 's', 'h', 'e', 's'], [⟨['p', 'i', 'a', 't', 'a'], ['d', 'i', 's', 'h', 'e', 's'], none⟩]⟩, ⟨['a', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G'], none⟩]⟩, ⟨['i', 's', 'e'], ['a', 'r', 'e'], [⟨['i', 's', 'e'], ['a', 'r', 'e'], none⟩]⟩, ⟨['i', 'p', 'e', 'x', 'r', 'e', 'o', 'm', 'e', 'n', 'o', 's'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], [⟨['i', 'p', 'e', 'x', 'r', 'e', 'o', 'm', 'e', 'n', 'o', 's'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], none⟩]⟩, ⟨['n', 'a'], ['N', 'A'], [⟨['n', 'a'], ['N', 'A'], none⟩]⟩, ⟨['t', 'o'], ['i', 't'], [⟨['t', 'o'], ['i', 't'], none⟩]⟩, ⟨['k', 'a', 'n', 'i', 's'], ['d', 'o'], [⟨['k', 'a', 'n', 'i', 's'], ['d', 'o'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "prepi+CF"), ("force", "weak"), ("derivation", "CF"), ("test", "contradiction")] }
 
@@ -191,9 +196,11 @@ def ex_16a : Datum :=
     language := "stan1290"
     primaryText := "tu dois faire la vaisselle, mais tu n'es pas obligé"
     glossedTokens := [("tu", "you"), ("dois", "must"), ("faire", "do"), ("la", "the"), ("vaisselle", "dishes"), ("mais", "but"), ("tu", "you"), ("n'es", "NEG.are"), ("pas", "NEG"), ("obligé", "obliged")]
+    glossedWords := [⟨['t', 'u'], ['y', 'o', 'u'], [⟨['t', 'u'], ['y', 'o', 'u'], none⟩]⟩, ⟨['d', 'o', 'i', 's'], ['m', 'u', 's', 't'], [⟨['d', 'o', 'i', 's'], ['m', 'u', 's', 't'], none⟩]⟩, ⟨['f', 'a', 'i', 'r', 'e'], ['d', 'o'], [⟨['f', 'a', 'i', 'r', 'e'], ['d', 'o'], none⟩]⟩, ⟨['l', 'a'], ['t', 'h', 'e'], [⟨['l', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['v', 'a', 'i', 's', 's', 'e', 'l', 'l', 'e'], ['d', 'i', 's', 'h', 'e', 's'], [⟨['v', 'a', 'i', 's', 's', 'e', 'l', 'l', 'e'], ['d', 'i', 's', 'h', 'e', 's'], none⟩]⟩, ⟨['m', 'a', 'i', 's'], ['b', 'u', 't'], [⟨['m', 'a', 'i', 's'], ['b', 'u', 't'], none⟩]⟩, ⟨['t', 'u'], ['y', 'o', 'u'], [⟨['t', 'u'], ['y', 'o', 'u'], none⟩]⟩, ⟨['n', '\'', 'e', 's'], ['N', 'E', 'G', '.', 'a', 'r', 'e'], [⟨['n', '\'', 'e', 's'], ['N', 'E', 'G', '.', 'a', 'r', 'e'], none⟩]⟩, ⟨['p', 'a', 's'], ['N', 'E', 'G'], [⟨['p', 'a', 's'], ['N', 'E', 'G'], none⟩]⟩, ⟨['o', 'b', 'l', 'i', 'g', 'é'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], [⟨['o', 'b', 'l', 'i', 'g', 'é'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir"), ("force", "strong"), ("test", "contradiction")] }
 
@@ -204,9 +211,11 @@ def ex_16b : Datum :=
     language := "stan1290"
     primaryText := "tu devrais faire la vaisselle, mais tu n'es pas obligé"
     glossedTokens := [("tu", "you"), ("devrais", "must.COND"), ("faire", "do"), ("la", "the"), ("vaisselle", "dishes"), ("mais", "but"), ("tu", "you"), ("n'es", "NEG.are"), ("pas", "NEG"), ("obligé", "obliged")]
+    glossedWords := [⟨['t', 'u'], ['y', 'o', 'u'], [⟨['t', 'u'], ['y', 'o', 'u'], none⟩]⟩, ⟨['d', 'e', 'v', 'r', 'a', 'i', 's'], ['m', 'u', 's', 't', '.', 'C', 'O', 'N', 'D'], [⟨['d', 'e', 'v', 'r', 'a', 'i', 's'], ['m', 'u', 's', 't', '.', 'C', 'O', 'N', 'D'], none⟩]⟩, ⟨['f', 'a', 'i', 'r', 'e'], ['d', 'o'], [⟨['f', 'a', 'i', 'r', 'e'], ['d', 'o'], none⟩]⟩, ⟨['l', 'a'], ['t', 'h', 'e'], [⟨['l', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['v', 'a', 'i', 's', 's', 'e', 'l', 'l', 'e'], ['d', 'i', 's', 'h', 'e', 's'], [⟨['v', 'a', 'i', 's', 's', 'e', 'l', 'l', 'e'], ['d', 'i', 's', 'h', 'e', 's'], none⟩]⟩, ⟨['m', 'a', 'i', 's'], ['b', 'u', 't'], [⟨['m', 'a', 'i', 's'], ['b', 'u', 't'], none⟩]⟩, ⟨['t', 'u'], ['y', 'o', 'u'], [⟨['t', 'u'], ['y', 'o', 'u'], none⟩]⟩, ⟨['n', '\'', 'e', 's'], ['N', 'E', 'G', '.', 'a', 'r', 'e'], [⟨['n', '\'', 'e', 's'], ['N', 'E', 'G', '.', 'a', 'r', 'e'], none⟩]⟩, ⟨['p', 'a', 's'], ['N', 'E', 'G'], [⟨['p', 'a', 's'], ['N', 'E', 'G'], none⟩]⟩, ⟨['o', 'b', 'l', 'i', 'g', 'é'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], [⟨['o', 'b', 'l', 'i', 'g', 'é'], ['o', 'b', 'l', 'i', 'g', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "devoir+CF"), ("force", "weak"), ("derivation", "CF"), ("test", "contradiction")] }
 
@@ -217,9 +226,11 @@ def ex_17 : Datum :=
     language := "hebr1245"
     primaryText := "yoter/haxi tov še-hu yitpater, aval hu lo xayav lehitpater"
     glossedTokens := [("yoter/haxi", "more/most"), ("tov", "good"), ("še-hu", "that-he"), ("yitpater", "will.resign"), ("aval", "but"), ("hu", "he"), ("lo", "NEG"), ("xayav", "must"), ("lehitpater", "resign")]
+    glossedWords := [⟨['y', 'o', 't', 'e', 'r', '/', 'h', 'a', 'x', 'i'], ['m', 'o', 'r', 'e', '/', 'm', 'o', 's', 't'], [⟨['y', 'o', 't', 'e', 'r', '/', 'h', 'a', 'x', 'i'], ['m', 'o', 'r', 'e', '/', 'm', 'o', 's', 't'], none⟩]⟩, ⟨['t', 'o', 'v'], ['g', 'o', 'o', 'd'], [⟨['t', 'o', 'v'], ['g', 'o', 'o', 'd'], none⟩]⟩, ⟨['š', 'e', '-', 'h', 'u'], ['t', 'h', 'a', 't', '-', 'h', 'e'], [⟨['š', 'e'], ['t', 'h', 'a', 't'], none⟩, ⟨['h', 'u'], ['h', 'e'], some '-'⟩]⟩, ⟨['y', 'i', 't', 'p', 'a', 't', 'e', 'r'], ['w', 'i', 'l', 'l', '.', 'r', 'e', 's', 'i', 'g', 'n'], [⟨['y', 'i', 't', 'p', 'a', 't', 'e', 'r'], ['w', 'i', 'l', 'l', '.', 'r', 'e', 's', 'i', 'g', 'n'], none⟩]⟩, ⟨['a', 'v', 'a', 'l'], ['b', 'u', 't'], [⟨['a', 'v', 'a', 'l'], ['b', 'u', 't'], none⟩]⟩, ⟨['h', 'u'], ['h', 'e'], [⟨['h', 'u'], ['h', 'e'], none⟩]⟩, ⟨['l', 'o'], ['N', 'E', 'G'], [⟨['l', 'o'], ['N', 'E', 'G'], none⟩]⟩, ⟨['x', 'a', 'y', 'a', 'v'], ['m', 'u', 's', 't'], [⟨['x', 'a', 'y', 'a', 'v'], ['m', 'u', 's', 't'], none⟩]⟩, ⟨['l', 'e', 'h', 'i', 't', 'p', 'a', 't', 'e', 'r'], ['r', 'e', 's', 'i', 'g', 'n'], [⟨['l', 'e', 'h', 'i', 't', 'p', 'a', 't', 'e', 'r'], ['r', 'e', 's', 'i', 'g', 'n'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "yoter tov"), ("force", "weak"), ("derivation", "comparative"), ("test", "contradiction")] }
 
@@ -230,9 +241,11 @@ def ex_23 : Datum :=
     language := "java1254"
     primaryText := "wong wong jawa kudu-ne iso ngomong kromo, terus anak-e rojo yo kudu iso"
     glossedTokens := [("wong", "person"), ("wong", "person"), ("jawa", "java"), ("kudu-ne", "ROOT.NEC-NE"), ("iso", "CIRC.POS"), ("ngomong", "AV.talk"), ("kromo", "high.speech"), ("terus", "then"), ("anak-e", "child-DEF"), ("rojo", "king"), ("yo", "PRT.YES"), ("kudu", "ROOT.NEC"), ("iso", "CIRC.POS")]
+    glossedWords := [⟨['w', 'o', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], [⟨['w', 'o', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], none⟩]⟩, ⟨['w', 'o', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], [⟨['w', 'o', 'n', 'g'], ['p', 'e', 'r', 's', 'o', 'n'], none⟩]⟩, ⟨['j', 'a', 'w', 'a'], ['j', 'a', 'v', 'a'], [⟨['j', 'a', 'w', 'a'], ['j', 'a', 'v', 'a'], none⟩]⟩, ⟨['k', 'u', 'd', 'u', '-', 'n', 'e'], ['R', 'O', 'O', 'T', '.', 'N', 'E', 'C', '-', 'N', 'E'], [⟨['k', 'u', 'd', 'u'], ['R', 'O', 'O', 'T', '.', 'N', 'E', 'C'], none⟩, ⟨['n', 'e'], ['N', 'E'], some '-'⟩]⟩, ⟨['i', 's', 'o'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S'], [⟨['i', 's', 'o'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S'], none⟩]⟩, ⟨['n', 'g', 'o', 'm', 'o', 'n', 'g'], ['A', 'V', '.', 't', 'a', 'l', 'k'], [⟨['n', 'g', 'o', 'm', 'o', 'n', 'g'], ['A', 'V', '.', 't', 'a', 'l', 'k'], none⟩]⟩, ⟨['k', 'r', 'o', 'm', 'o'], ['h', 'i', 'g', 'h', '.', 's', 'p', 'e', 'e', 'c', 'h'], [⟨['k', 'r', 'o', 'm', 'o'], ['h', 'i', 'g', 'h', '.', 's', 'p', 'e', 'e', 'c', 'h'], none⟩]⟩, ⟨['t', 'e', 'r', 'u', 's'], ['t', 'h', 'e', 'n'], [⟨['t', 'e', 'r', 'u', 's'], ['t', 'h', 'e', 'n'], none⟩]⟩, ⟨['a', 'n', 'a', 'k', '-', 'e'], ['c', 'h', 'i', 'l', 'd', '-', 'D', 'E', 'F'], [⟨['a', 'n', 'a', 'k'], ['c', 'h', 'i', 'l', 'd'], none⟩, ⟨['e'], ['D', 'E', 'F'], some '-'⟩]⟩, ⟨['r', 'o', 'j', 'o'], ['k', 'i', 'n', 'g'], [⟨['r', 'o', 'j', 'o'], ['k', 'i', 'n', 'g'], none⟩]⟩, ⟨['y', 'o'], ['P', 'R', 'T', '.', 'Y', 'E', 'S'], [⟨['y', 'o'], ['P', 'R', 'T', '.', 'Y', 'E', 'S'], none⟩]⟩, ⟨['k', 'u', 'd', 'u'], ['R', 'O', 'O', 'T', '.', 'N', 'E', 'C'], [⟨['k', 'u', 'd', 'u'], ['R', 'O', 'O', 'T', '.', 'N', 'E', 'C'], none⟩]⟩, ⟨['i', 's', 'o'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S'], [⟨['i', 's', 'o'], ['C', 'I', 'R', 'C', '.', 'P', 'O', 'S'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "kudu+NE"), ("force", "weak"), ("derivation", "NE"), ("test", "triviality"), ("first", "weak"), ("second", "strong")] }
 
@@ -245,7 +258,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "clausemate")] }
 
@@ -258,7 +271,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "clausemate")] }
 
@@ -271,7 +284,7 @@ def ex_18c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "clausemate")] }
 
@@ -284,7 +297,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "higher")] }
 
@@ -297,7 +310,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "higher")] }
 
@@ -310,7 +323,7 @@ def ex_19c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "higher")] }
 
@@ -323,7 +336,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "higher")] }
 
@@ -336,7 +349,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "higher")] }
 
@@ -349,7 +362,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .unacceptable), ("narrow", .acceptable)]
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "higher")] }
 
@@ -360,9 +373,11 @@ def ex_26a : Datum :=
     language := "afri1274"
     primaryText := "Ek moet nog na die partyjie toe gaan!"
     glossedTokens := [("Ek", "I"), ("moet", "NEC"), ("nog", "still"), ("na", "to"), ("die", "the"), ("partyjie", "party"), ("toe", "to"), ("gaan", "go")]
+    glossedWords := [⟨['E', 'k'], ['I'], [⟨['E', 'k'], ['I'], none⟩]⟩, ⟨['m', 'o', 'e', 't'], ['N', 'E', 'C'], [⟨['m', 'o', 'e', 't'], ['N', 'E', 'C'], none⟩]⟩, ⟨['n', 'o', 'g'], ['s', 't', 'i', 'l', 'l'], [⟨['n', 'o', 'g'], ['s', 't', 'i', 'l', 'l'], none⟩]⟩, ⟨['n', 'a'], ['t', 'o'], [⟨['n', 'a'], ['t', 'o'], none⟩]⟩, ⟨['d', 'i', 'e'], ['t', 'h', 'e'], [⟨['d', 'i', 'e'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'a', 'r', 't', 'y', 'j', 'i', 'e'], ['p', 'a', 'r', 't', 'y'], [⟨['p', 'a', 'r', 't', 'y', 'j', 'i', 'e'], ['p', 'a', 'r', 't', 'y'], none⟩]⟩, ⟨['t', 'o', 'e'], ['t', 'o'], [⟨['t', 'o', 'e'], ['t', 'o'], none⟩]⟩, ⟨['g', 'a', 'a', 'n'], ['g', 'o'], [⟨['g', 'a', 'a', 'n'], ['g', 'o'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "moet"), ("force", "weak"), ("test", "contradiction")] }
 
@@ -373,9 +388,11 @@ def ex_28a : Datum :=
     language := "samo1305"
     primaryText := "E tatau ona ou alu i le pātī."
     glossedTokens := [("E", "TAM"), ("tatau", "NEC"), ("ona", "that"), ("ou", "I"), ("alu", "go"), ("i", "to"), ("le", "the"), ("pātī", "party")]
+    glossedWords := [⟨['E'], ['T', 'A', 'M'], [⟨['E'], ['T', 'A', 'M'], none⟩]⟩, ⟨['t', 'a', 't', 'a', 'u'], ['N', 'E', 'C'], [⟨['t', 'a', 't', 'a', 'u'], ['N', 'E', 'C'], none⟩]⟩, ⟨['o', 'n', 'a'], ['t', 'h', 'a', 't'], [⟨['o', 'n', 'a'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['o', 'u'], ['I'], [⟨['o', 'u'], ['I'], none⟩]⟩, ⟨['a', 'l', 'u'], ['g', 'o'], [⟨['a', 'l', 'u'], ['g', 'o'], none⟩]⟩, ⟨['i'], ['t', 'o'], [⟨['i'], ['t', 'o'], none⟩]⟩, ⟨['l', 'e'], ['t', 'h', 'e'], [⟨['l', 'e'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'ā', 't', 'ī'], ['p', 'a', 'r', 't', 'y'], [⟨['p', 'ā', 't', 'ī'], ['p', 'a', 'r', 't', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("modal", "tatau"), ("force", "weak"), ("test", "contradiction")] }
 
@@ -386,9 +403,11 @@ def ex_43 : Datum :=
     language := "nezp1238"
     primaryText := "'inéhne-no'qa 'ee kii lepít cíickan"
     glossedTokens := [("'inéhne-no'qa", "take-MODAL"), ("'ee", "you"), ("kii", "DEM"), ("lepít", "two"), ("cíickan", "blanket")]
+    glossedWords := [⟨['\'', 'i', 'n', 'é', 'h', 'n', 'e', '-', 'n', 'o', '\'', 'q', 'a'], ['t', 'a', 'k', 'e', '-', 'M', 'O', 'D', 'A', 'L'], [⟨['\'', 'i', 'n', 'é', 'h', 'n', 'e'], ['t', 'a', 'k', 'e'], none⟩, ⟨['n', 'o', '\'', 'q', 'a'], ['M', 'O', 'D', 'A', 'L'], some '-'⟩]⟩, ⟨['\'', 'e', 'e'], ['y', 'o', 'u'], [⟨['\'', 'e', 'e'], ['y', 'o', 'u'], none⟩]⟩, ⟨['k', 'i', 'i'], ['D', 'E', 'M'], [⟨['k', 'i', 'i'], ['D', 'E', 'M'], none⟩]⟩, ⟨['l', 'e', 'p', 'í', 't'], ['t', 'w', 'o'], [⟨['l', 'e', 'p', 'í', 't'], ['t', 'w', 'o'], none⟩]⟩, ⟨['c', 'í', 'i', 'c', 'k', 'a', 'n'], ['b', 'l', 'a', 'n', 'k', 'e', 't'], [⟨['c', 'í', 'i', 'c', 'k', 'a', 'n'], ['b', 'l', 'a', 'n', 'k', 'e', 't'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded")] }
 
@@ -399,9 +418,11 @@ def ex_44 : Datum :=
     language := "nezp1238"
     primaryText := "wéet'u 'ee kiy-ó'qa"
     glossedTokens := [("wéet'u", "not"), ("'ee", "you"), ("kiy-ó'qa", "go-MODAL")]
+    glossedWords := [⟨['w', 'é', 'e', 't', '\'', 'u'], ['n', 'o', 't'], [⟨['w', 'é', 'e', 't', '\'', 'u'], ['n', 'o', 't'], none⟩]⟩, ⟨['\'', 'e', 'e'], ['y', 'o', 'u'], [⟨['\'', 'e', 'e'], ['y', 'o', 'u'], none⟩]⟩, ⟨['k', 'i', 'y', '-', 'ó', '\'', 'q', 'a'], ['g', 'o', '-', 'M', 'O', 'D', 'A', 'L'], [⟨['k', 'i', 'y'], ['g', 'o'], none⟩, ⟨['ó', '\'', 'q', 'a'], ['M', 'O', 'D', 'A', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "clausemate negation")] }
 
@@ -412,9 +433,11 @@ def ex_45 : Datum :=
     language := "nezp1238"
     primaryText := "c'alawi 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'"
     glossedTokens := [("c'alawi", "if"), ("'a-múu-no'qa", "3OBJ-call-MODAL"), ("saykiptaw'atóo-na", "doctor-OBJ"), ("kaa", "then"), ("'e-múu-nu'", "3OBJ-call-PR")]
+    glossedWords := [⟨['c', '\'', 'a', 'l', 'a', 'w', 'i'], ['i', 'f'], [⟨['c', '\'', 'a', 'l', 'a', 'w', 'i'], ['i', 'f'], none⟩]⟩, ⟨['\'', 'a', '-', 'm', 'ú', 'u', '-', 'n', 'o', '\'', 'q', 'a'], ['3', 'O', 'B', 'J', '-', 'c', 'a', 'l', 'l', '-', 'M', 'O', 'D', 'A', 'L'], [⟨['\'', 'a'], ['3', 'O', 'B', 'J'], none⟩, ⟨['m', 'ú', 'u'], ['c', 'a', 'l', 'l'], some '-'⟩, ⟨['n', 'o', '\'', 'q', 'a'], ['M', 'O', 'D', 'A', 'L'], some '-'⟩]⟩, ⟨['s', 'a', 'y', 'k', 'i', 'p', 't', 'a', 'w', '\'', 'a', 't', 'ó', 'o', '-', 'n', 'a'], ['d', 'o', 'c', 't', 'o', 'r', '-', 'O', 'B', 'J'], [⟨['s', 'a', 'y', 'k', 'i', 'p', 't', 'a', 'w', '\'', 'a', 't', 'ó', 'o'], ['d', 'o', 'c', 't', 'o', 'r'], none⟩, ⟨['n', 'a'], ['O', 'B', 'J'], some '-'⟩]⟩, ⟨['k', 'a', 'a'], ['t', 'h', 'e', 'n'], [⟨['k', 'a', 'a'], ['t', 'h', 'e', 'n'], none⟩]⟩, ⟨['\'', 'e', '-', 'm', 'ú', 'u', '-', 'n', 'u', '\''], ['3', 'O', 'B', 'J', '-', 'c', 'a', 'l', 'l', '-', 'P', 'R'], [⟨['\'', 'e'], ['3', 'O', 'B', 'J'], none⟩, ⟨['m', 'ú', 'u'], ['c', 'a', 'l', 'l'], some '-'⟩, ⟨['n', 'u', '\''], ['P', 'R'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "Prompt: If I have to call the doctor, I will."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "other DE")] }
 
@@ -425,9 +448,11 @@ def ex_46 : Datum :=
     language := "sion1247"
     primaryText := "Tsiaya-jã'ã je'e-ñe ba-'i-ji."
     glossedTokens := [("Tsiaya-jã'ã", "river-PATH"), ("je'e-ñe", "cross-INF"), ("ba-'i-ji", "be-ASRT")]
+    glossedWords := [⟨['T', 's', 'i', 'a', 'y', 'a', '-', 'j', 'ã', '\'', 'ã'], ['r', 'i', 'v', 'e', 'r', '-', 'P', 'A', 'T', 'H'], [⟨['T', 's', 'i', 'a', 'y', 'a'], ['r', 'i', 'v', 'e', 'r'], none⟩, ⟨['j', 'ã', '\'', 'ã'], ['P', 'A', 'T', 'H'], some '-'⟩]⟩, ⟨['j', 'e', '\'', 'e', '-', 'ñ', 'e'], ['c', 'r', 'o', 's', 's', '-', 'I', 'N', 'F'], [⟨['j', 'e', '\'', 'e'], ['c', 'r', 'o', 's', 's'], none⟩, ⟨['ñ', 'e'], ['I', 'N', 'F'], some '-'⟩]⟩, ⟨['b', 'a', '-', '\'', 'i', '-', 'j', 'i'], ['b', 'e', '-', 'A', 'S', 'R', 'T'], []⟩]
+    lgrConformance := some .wordAligned
     context := "San Pablo is on the other side of the river. A asks a stranger, B, how to get there. B answers:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "unembedded")] }
 
@@ -438,9 +463,11 @@ def ex_48 : Datum :=
     language := "sion1247"
     primaryText := "Sai-ye beo-ji."
     glossedTokens := [("Sai-ye", "go-INF"), ("beo-ji", "NEG.be-3S")]
+    glossedWords := [⟨['S', 'a', 'i', '-', 'y', 'e'], ['g', 'o', '-', 'I', 'N', 'F'], [⟨['S', 'a', 'i'], ['g', 'o'], none⟩, ⟨['y', 'e'], ['I', 'N', 'F'], some '-'⟩]⟩, ⟨['b', 'e', 'o', '-', 'j', 'i'], ['N', 'E', 'G', '.', 'b', 'e', '-', '3', 'S'], [⟨['b', 'e', 'o'], ['N', 'E', 'G', '.', 'b', 'e'], none⟩, ⟨['j', 'i'], ['3', 'S'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "clausemate negation")] }
 
@@ -451,9 +478,11 @@ def ex_49 : Datum :=
     language := "sion1247"
     primaryText := "Sai-ye ba-'i-to, sa-si-'i."
     glossedTokens := [("Sai-ye", "go-INF"), ("ba-'i-to", "be-IPF-COND"), ("sa-si-'i", "go-FUT-OTH")]
+    glossedWords := [⟨['S', 'a', 'i', '-', 'y', 'e'], ['g', 'o', '-', 'I', 'N', 'F'], [⟨['S', 'a', 'i'], ['g', 'o'], none⟩, ⟨['y', 'e'], ['I', 'N', 'F'], some '-'⟩]⟩, ⟨['b', 'a', '-', '\'', 'i', '-', 't', 'o'], ['b', 'e', '-', 'I', 'P', 'F', '-', 'C', 'O', 'N', 'D'], [⟨['b', 'a'], ['b', 'e'], none⟩, ⟨['\'', 'i'], ['I', 'P', 'F'], some '-'⟩, ⟨['t', 'o'], ['C', 'O', 'N', 'D'], some '-'⟩]⟩, ⟨['s', 'a', '-', 's', 'i', '-', '\'', 'i'], ['g', 'o', '-', 'F', 'U', 'T', '-', 'O', 'T', 'H'], [⟨['s', 'a'], ['g', 'o'], none⟩, ⟨['s', 'i'], ['F', 'U', 'T'], some '-'⟩, ⟨['\'', 'i'], ['O', 'T', 'H'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "I am waiting to see if there is going to be a spot for me in the boat. My friend asks me if I want to go."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "other DE")] }
 
@@ -464,9 +493,11 @@ def ex_51 : Datum :=
     language := "swed1254"
     primaryText := "Alice får gå ut, men hon får också stanna."
     glossedTokens := [("Alice", "Alice"), ("får", "fa"), ("gå", "go"), ("ut", "out"), ("men", "but"), ("hon", "she"), ("får", "fa"), ("också", "also"), ("stanna", "stay")]
+    glossedWords := [⟨['A', 'l', 'i', 'c', 'e'], ['A', 'l', 'i', 'c', 'e'], [⟨['A', 'l', 'i', 'c', 'e'], ['A', 'l', 'i', 'c', 'e'], none⟩]⟩, ⟨['f', 'å', 'r'], ['f', 'a'], [⟨['f', 'å', 'r'], ['f', 'a'], none⟩]⟩, ⟨['g', 'å'], ['g', 'o'], [⟨['g', 'å'], ['g', 'o'], none⟩]⟩, ⟨['u', 't'], ['o', 'u', 't'], [⟨['u', 't'], ['o', 'u', 't'], none⟩]⟩, ⟨['m', 'e', 'n'], ['b', 'u', 't'], [⟨['m', 'e', 'n'], ['b', 'u', 't'], none⟩]⟩, ⟨['h', 'o', 'n'], ['s', 'h', 'e'], [⟨['h', 'o', 'n'], ['s', 'h', 'e'], none⟩]⟩, ⟨['f', 'å', 'r'], ['f', 'a'], [⟨['f', 'å', 'r'], ['f', 'a'], none⟩]⟩, ⟨['o', 'c', 'k', 's', 'å'], ['a', 'l', 's', 'o'], [⟨['o', 'c', 'k', 's', 'å'], ['a', 'l', 's', 'o'], none⟩]⟩, ⟨['s', 't', 'a', 'n', 'n', 'a'], ['s', 't', 'a', 'y'], [⟨['s', 't', 'a', 'n', 'n', 'a'], ['s', 't', 'a', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "unembedded")] }
 
@@ -477,9 +508,11 @@ def ex_52 : Datum :=
     language := "swed1254"
     primaryText := "Isac får betala en bot."
     glossedTokens := [("Isac", "Isac"), ("får", "MOD"), ("betala", "pay"), ("en", "a"), ("bot", "fine")]
+    glossedWords := [⟨['I', 's', 'a', 'c'], ['I', 's', 'a', 'c'], [⟨['I', 's', 'a', 'c'], ['I', 's', 'a', 'c'], none⟩]⟩, ⟨['f', 'å', 'r'], ['M', 'O', 'D'], [⟨['f', 'å', 'r'], ['M', 'O', 'D'], none⟩]⟩, ⟨['b', 'e', 't', 'a', 'l', 'a'], ['p', 'a', 'y'], [⟨['b', 'e', 't', 'a', 'l', 'a'], ['p', 'a', 'y'], none⟩]⟩, ⟨['e', 'n'], ['a'], [⟨['e', 'n'], ['a'], none⟩]⟩, ⟨['b', 'o', 't'], ['f', 'i', 'n', 'e'], [⟨['b', 'o', 't'], ['f', 'i', 'n', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "I'm telling a story in which Isac illegally parked the car, and the police caught him."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("necessity", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "unembedded")] }
 
@@ -490,9 +523,11 @@ def ex_53 : Datum :=
     language := "swed1254"
     primaryText := "Peter får inte lämna fängelset."
     glossedTokens := [("Peter", "Peter"), ("får", "MOD"), ("inte", "not"), ("lämna", "leave"), ("fängelset", "prison")]
+    glossedWords := [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], none⟩]⟩, ⟨['f', 'å', 'r'], ['M', 'O', 'D'], [⟨['f', 'å', 'r'], ['M', 'O', 'D'], none⟩]⟩, ⟨['i', 'n', 't', 'e'], ['n', 'o', 't'], [⟨['i', 'n', 't', 'e'], ['n', 'o', 't'], none⟩]⟩, ⟨['l', 'ä', 'm', 'n', 'a'], ['l', 'e', 'a', 'v', 'e'], [⟨['l', 'ä', 'm', 'n', 'a'], ['l', 'e', 'a', 'v', 'e'], none⟩]⟩, ⟨['f', 'ä', 'n', 'g', 'e', 'l', 's', 'e', 't'], ['p', 'r', 'i', 's', 'o', 'n'], [⟨['f', 'ä', 'n', 'g', 'e', 'l', 's', 'e', 't'], ['p', 'r', 'i', 's', 'o', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Peter is a prisoner."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "clausemate negation")] }
 
@@ -503,9 +538,11 @@ def ex_55 : Datum :=
     language := "swed1254"
     primaryText := "Om Lucas får äta glass blir han glad."
     glossedTokens := [("Om", "if"), ("Lucas", "Lucas"), ("får", "MOD"), ("äta", "eat"), ("glass", "ice.cream"), ("blir", "be.fut"), ("han", "he"), ("glad", "happy")]
+    glossedWords := [⟨['O', 'm'], ['i', 'f'], [⟨['O', 'm'], ['i', 'f'], none⟩]⟩, ⟨['L', 'u', 'c', 'a', 's'], ['L', 'u', 'c', 'a', 's'], [⟨['L', 'u', 'c', 'a', 's'], ['L', 'u', 'c', 'a', 's'], none⟩]⟩, ⟨['f', 'å', 'r'], ['M', 'O', 'D'], [⟨['f', 'å', 'r'], ['M', 'O', 'D'], none⟩]⟩, ⟨['ä', 't', 'a'], ['e', 'a', 't'], [⟨['ä', 't', 'a'], ['e', 'a', 't'], none⟩]⟩, ⟨['g', 'l', 'a', 's', 's'], ['i', 'c', 'e', '.', 'c', 'r', 'e', 'a', 'm'], [⟨['g', 'l', 'a', 's', 's'], ['i', 'c', 'e', '.', 'c', 'r', 'e', 'a', 'm'], none⟩]⟩, ⟨['b', 'l', 'i', 'r'], ['b', 'e', '.', 'f', 'u', 't'], [⟨['b', 'l', 'i', 'r'], ['b', 'e', '.', 'f', 'u', 't'], none⟩]⟩, ⟨['h', 'a', 'n'], ['h', 'e'], [⟨['h', 'a', 'n'], ['h', 'e'], none⟩]⟩, ⟨['g', 'l', 'a', 'd'], ['h', 'a', 'p', 'p', 'y'], [⟨['g', 'l', 'a', 'd'], ['h', 'a', 'p', 'p', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Lucas loves ice cream, but only eats it when his mom gives him permission."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "other DE")] }
 
@@ -516,9 +553,11 @@ def ex_56 : Datum :=
     language := "swed1254"
     primaryText := "Om Maria får betala en böter blir hon olycklig."
     glossedTokens := [("Om", "if"), ("Maria", "Maria"), ("får", "MOD"), ("betala", "pay"), ("en", "a"), ("böter", "fine"), ("blir", "be.fut"), ("hon", "she"), ("olycklig", "unhappy")]
+    glossedWords := [⟨['O', 'm'], ['i', 'f'], [⟨['O', 'm'], ['i', 'f'], none⟩]⟩, ⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a'], none⟩]⟩, ⟨['f', 'å', 'r'], ['M', 'O', 'D'], [⟨['f', 'å', 'r'], ['M', 'O', 'D'], none⟩]⟩, ⟨['b', 'e', 't', 'a', 'l', 'a'], ['p', 'a', 'y'], [⟨['b', 'e', 't', 'a', 'l', 'a'], ['p', 'a', 'y'], none⟩]⟩, ⟨['e', 'n'], ['a'], [⟨['e', 'n'], ['a'], none⟩]⟩, ⟨['b', 'ö', 't', 'e', 'r'], ['f', 'i', 'n', 'e'], [⟨['b', 'ö', 't', 'e', 'r'], ['f', 'i', 'n', 'e'], none⟩]⟩, ⟨['b', 'l', 'i', 'r'], ['b', 'e', '.', 'f', 'u', 't'], [⟨['b', 'l', 'i', 'r'], ['b', 'e', '.', 'f', 'u', 't'], none⟩]⟩, ⟨['h', 'o', 'n'], ['s', 'h', 'e'], [⟨['h', 'o', 'n'], ['s', 'h', 'e'], none⟩]⟩, ⟨['o', 'l', 'y', 'c', 'k', 'l', 'i', 'g'], ['u', 'n', 'h', 'a', 'p', 'p', 'y'], [⟨['o', 'l', 'y', 'c', 'k', 'l', 'i', 'g'], ['u', 'n', 'h', 'a', 'p', 'p', 'y'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "Maria took the train without paying and is worried about getting caught."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("necessity", .acceptable)]
     paperFeatures := [("modal", "får"), ("environment", "other DE")] }
 
@@ -531,7 +570,7 @@ def ex_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("weak necessity", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "unembedded")] }
 
@@ -542,9 +581,11 @@ def ex_58 : Datum :=
     language := "nand1264"
     primaryText := "nga-oko reglema yi-ka-bug-a, si-u-anga-sat-a"
     glossedTokens := [("nga-oko", "COMP-COMP"), ("reglema", "c9.rules"), ("yi-ka-bug-a", "SM.c9-TM-say-FV"), ("si-u-anga-sat-a", "NEG-SM.2sg-MOD-dance-FV")]
+    glossedWords := [⟨['n', 'g', 'a', '-', 'o', 'k', 'o'], ['C', 'O', 'M', 'P', '-', 'C', 'O', 'M', 'P'], [⟨['n', 'g', 'a'], ['C', 'O', 'M', 'P'], none⟩, ⟨['o', 'k', 'o'], ['C', 'O', 'M', 'P'], some '-'⟩]⟩, ⟨['r', 'e', 'g', 'l', 'e', 'm', 'a'], ['c', '9', '.', 'r', 'u', 'l', 'e', 's'], [⟨['r', 'e', 'g', 'l', 'e', 'm', 'a'], ['c', '9', '.', 'r', 'u', 'l', 'e', 's'], none⟩]⟩, ⟨['y', 'i', '-', 'k', 'a', '-', 'b', 'u', 'g', '-', 'a'], ['S', 'M', '.', 'c', '9', '-', 'T', 'M', '-', 's', 'a', 'y', '-', 'F', 'V'], [⟨['y', 'i'], ['S', 'M', '.', 'c', '9'], none⟩, ⟨['k', 'a'], ['T', 'M'], some '-'⟩, ⟨['b', 'u', 'g'], ['s', 'a', 'y'], some '-'⟩, ⟨['a'], ['F', 'V'], some '-'⟩]⟩, ⟨['s', 'i', '-', 'u', '-', 'a', 'n', 'g', 'a', '-', 's', 'a', 't', '-', 'a'], ['N', 'E', 'G', '-', 'S', 'M', '.', '2', 's', 'g', '-', 'M', 'O', 'D', '-', 'd', 'a', 'n', 'c', 'e', '-', 'F', 'V'], [⟨['s', 'i'], ['N', 'E', 'G'], none⟩, ⟨['u'], ['S', 'M', '.', '2', 's', 'g'], some '-'⟩, ⟨['a', 'n', 'g', 'a'], ['M', 'O', 'D'], some '-'⟩, ⟨['s', 'a', 't'], ['d', 'a', 'n', 'c', 'e'], some '-'⟩, ⟨['a'], ['F', 'V'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
     context := "A player has been hurt in a football match, and the ref is speaking to them, and saying:"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("weak necessity", .unacceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "clausemate negation")] }
 
@@ -557,7 +598,7 @@ def table_oqa_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -570,7 +611,7 @@ def table_oqa_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -583,7 +624,7 @@ def table_oqa_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "other DE"), ("table", "true")] }
 
@@ -596,7 +637,7 @@ def table_baiji_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .unacceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -609,7 +650,7 @@ def table_baiji_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -622,7 +663,7 @@ def table_baiji_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "ba'iji"), ("environment", "other DE"), ("table", "true")] }
 
@@ -635,7 +676,7 @@ def table_far_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -648,7 +689,7 @@ def table_far_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -661,7 +702,7 @@ def table_far_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "får"), ("environment", "other DE"), ("table", "true")] }
 
@@ -674,7 +715,7 @@ def table_anga_unembedded : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .acceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "unembedded"), ("table", "true")] }
 
@@ -687,7 +728,7 @@ def table_anga_clausemate : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .unacceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "clausemate negation"), ("table", "true")] }
 
@@ -700,7 +741,7 @@ def table_anga_other : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable), ("weak necessity", .acceptable)]
     paperFeatures := [("modal", "anga"), ("environment", "other DE"), ("table", "true")] }
 
@@ -713,7 +754,7 @@ def ex_79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .marginal)]
     paperFeatures := [("construction", "bare conditional"), ("negation", "clausemate")] }
 
@@ -726,7 +767,7 @@ def ex_85a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("wide", .acceptable), ("narrow", .unacceptable)]
     paperFeatures := [("construction", "generic"), ("negation", "clausemate")] }
 
@@ -739,7 +780,7 @@ def ex_91a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .acceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "weak")] }
 
@@ -752,7 +793,7 @@ def ex_91b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .acceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "weak")] }
 
@@ -765,7 +806,7 @@ def ex_92a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .unacceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "strong")] }
 
@@ -778,10 +819,42 @@ def ex_92b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("could", .unacceptable), ("should", .acceptable)]
     paperFeatures := [("construction", "infinitival relative"), ("determiner", "strong")] }
 
 def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_6d, ex_8a, ex_8b, ex_8c, ex_11a, ex_11b, ex_12a, ex_12b, ex_15a, ex_15b, ex_16a, ex_16b, ex_17, ex_23, ex_18a, ex_18b, ex_18c, ex_19a, ex_19b, ex_19c, ex_20a, ex_20b, ex_20c, ex_26a, ex_28a, ex_43, ex_44, ex_45, ex_46, ex_48, ex_49, ex_51, ex_52, ex_53, ex_55, ex_56, ex_57, ex_58, table_oqa_unembedded, table_oqa_clausemate, table_oqa_other, table_baiji_unembedded, table_baiji_clausemate, table_baiji_other, table_far_unembedded, table_far_clausemate, table_far_other, table_anga_unembedded, table_anga_clausemate, table_anga_other, ex_79a, ex_85a, ex_91a, ex_91b, ex_92a, ex_92b]
+
+/-- The readings the chapter judges a modal sentence for. -/
+inductive Reading where
+  /-- wide: the modal takes scope over negation -/
+  | wide
+  /-- narrow: the modal takes scope under negation -/
+  | narrow
+  /-- possibility: the modal is read as a possibility -/
+  | possibility
+  /-- necessity: the modal is read as a strong necessity -/
+  | necessity
+  /-- weak necessity: the modal is read as a weak necessity -/
+  | weakNecessity
+  /-- could: the sentence is paraphrased with *could* -/
+  | could
+  /-- should: the sentence is paraphrased with *should* -/
+  | should
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .wide => "wide"
+  | .narrow => "narrow"
+  | .possibility => "possibility"
+  | .necessity => "necessity"
+  | .weakNecessity => "weak necessity"
+  | .could => "could"
+  | .should => "should"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end AghaJeretic2026.Examples

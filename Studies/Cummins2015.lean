@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Semantics.Quantification.Numerals.Roundness
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Perm
@@ -186,13 +186,13 @@ def qpri (ctx : Context) : Constraint Candidate := fun c ↦
 
 /-- The six constraints, in the book's order, are informativeness, granularity, quantifier
 simplicity, numeral salience, numeral priming and quantifier priming. -/
-def con (ctx : Context) : ConstraintSet Candidate (Fin 6) :=
-  ![info ctx, gran ctx, qsimp, nsal, npri ctx, qpri ctx]
+def con (ctx : Context) (c : Candidate) : Fin 6 → ℕ :=
+  ![info ctx c, gran ctx c, qsimp c, nsal c, npri ctx c, qpri ctx c]
 
 /-! ### Constraint interaction in the toy system (§3.1, Tables 3.1–3.3) -/
 
 /-- The toy system ranks informativeness, numeral salience and numeral priming. -/
-def toy (ctx : Context) : ConstraintSet Candidate (Fin 3) := ![info ctx, nsal, npri ctx]
+def toy (ctx : Context) (c : Candidate) : Fin 3 → ℕ := ![info ctx c, nsal c, npri ctx c]
 
 /-- The speaker knows the value to be at least 22. -/
 def atLeast22 : Context := { lo := some 22 }
@@ -201,24 +201,24 @@ def atLeast22 : Context := { lo := some 22 }
 def atLeast22Primed : Context := { atLeast22 with primedNumeral := some 21 }
 
 -- Table 3.1, Table 3.3
-theorem atLeast22_optimal (r : Ranking (Fin 3) 3) :
-    (Tableau.ofRanking (toy atLeast22) r {moreThan 21, moreThan 20}).optimal =
+theorem atLeast22_optimal (r : Ranking (Fin 3)) :
+    r.optimal (toy atLeast22) {moreThan 21, moreThan 20} =
       if r.Dominates 0 1 then {moreThan 21} else {moreThan 20} := by
   revert r; decide
 
 -- Table 3.2, Table 3.3
-theorem atLeast22Primed_optimal (r : Ranking (Fin 3) 3) :
-    (Tableau.ofRanking (toy atLeast22Primed) r {moreThan 21, moreThan 20}).optimal =
+theorem atLeast22Primed_optimal (r : Ranking (Fin 3)) :
+    r.optimal (toy atLeast22Primed) {moreThan 21, moreThan 20} =
       if r.Dominates 1 0 ∧ r.Dominates 1 2 then {moreThan 20} else {moreThan 21} := by
   revert r; decide
 
 /-- Priming over salience over informativeness, the last ranking of Table 3.3. -/
-def primingFirst : Ranking (Fin 3) 3 := Equiv.swap 0 2
+def primingFirst : Ranking (Fin 3) := Equiv.swap 0 2
 
 theorem primingFirst_optimal :
-    (Tableau.ofRanking (toy atLeast22) primingFirst {moreThan 21, moreThan 20}).optimal =
+    primingFirst.optimal (toy atLeast22) {moreThan 21, moreThan 20} =
         {moreThan 20} ∧
-      (Tableau.ofRanking (toy atLeast22Primed) primingFirst {moreThan 21, moreThan 20}).optimal =
+      primingFirst.optimal (toy atLeast22Primed) {moreThan 21, moreThan 20} =
         {moreThan 21} := by
   decide
 
@@ -243,14 +243,14 @@ def Situation.info : Situation → Constraint Candidate
 
 /-- The approximation system ranks informativeness, numeral salience and quantifier
 simplicity. -/
-def approx (s : Situation) : ConstraintSet Candidate (Fin 3) := ![s.info, nsal, qsimp]
+def approx (s : Situation) (c : Candidate) : Fin 3 → ℕ := ![s.info c, nsal c, qsimp c]
 
 -- Table 3.4
 theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < roundness n)
-    (r : Ranking (Fin 3) 3) {cands : Finset Candidate} (hc : bare n ∈ cands) :
-    bare m ∉ (Tableau.ofRanking (approx (.exact n)) r cands).optimal := by
+    (r : Ranking (Fin 3)) {cands : Finset Candidate} (hc : bare n ∈ cands) :
+    bare m ∉ r.optimal (approx (.exact n)) cands := by
   have hne : m ≠ n := ne_of_apply_ne roundness hmn.ne
-  refine Tableau.ofRanking_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 1, ?_⟩)
+  refine Ranking.Enumeration.notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 1, ?_⟩)
   · match i with
     | 0 =>
       show (Situation.exact n).info (bare n) ≤ (Situation.exact n).info (bare m)
@@ -263,26 +263,26 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
     have := roundness_le_four n; omega
 
 -- Table 3.5
-theorem exact51_optimal (r : Ranking (Fin 3) 3) :
-    (Tableau.ofRanking (approx (.exact 51)) r {bare 50, bare 51}).optimal =
+theorem exact51_optimal (r : Ranking (Fin 3)) :
+    r.optimal (approx (.exact 51)) {bare 50, bare 51} =
       if r.Dominates 0 1 then {bare 51} else {bare 50} := by
   revert r; decide
 
 -- Table 3.6
-theorem exact100_optimal (r : Ranking (Fin 3) 3) :
-    (Tableau.ofRanking (approx (.exact 100)) r {bare 100, exactly 100, about 100, about 99}).optimal
+theorem exact100_optimal (r : Ranking (Fin 3)) :
+    r.optimal (approx (.exact 100)) {bare 100, exactly 100, about 100, about 99}
       = if r.Dominates 0 2 then {exactly 100} else {bare 100} := by
   revert r; decide
 
 -- Table 3.7
-theorem about100_optimal (r : Ranking (Fin 3) 3) :
-    (Tableau.ofRanking (approx (.about 100)) r {bare 100, about 100}).optimal =
+theorem about100_optimal (r : Ranking (Fin 3)) :
+    r.optimal (approx (.about 100)) {bare 100, about 100} =
       if r.Dominates 0 2 then {about 100} else {bare 100} := by
   revert r; decide
 
 -- Table 3.8
-theorem exact99_optimal (r : Ranking (Fin 3) 3) :
-    (Tableau.ofRanking (approx (.exact 99)) r {bare 99, exactly 99, bare 100, about 100}).optimal
+theorem exact99_optimal (r : Ranking (Fin 3)) :
+    r.optimal (approx (.exact 99)) {bare 99, exactly 99, bare 100, about 100}
       = if r.Dominates 0 1 then {bare 99}
         else if r.Dominates 2 0 then {bare 100} else {about 100} := by
   revert r; decide
@@ -320,22 +320,22 @@ def correctionContext (n : ℕ) (form : Form) (numeral : ℕ) : Context :=
 
 /-- The correction system ranks quantifier priming, numeral priming, quantifier simplicity and
 informativeness. -/
-def corr (ctx : Context) : ConstraintSet Candidate (Fin 4) := ![qpri ctx, npri ctx, qsimp, info ctx]
+def corr (ctx : Context) (c : Candidate) : Fin 4 → ℕ :=
+  ![qpri ctx c, npri ctx c, qsimp c, info ctx c]
 
 /-- The correction system on the four corrections. -/
-def corrOn (ctx : Context) (n : ℕ) : ConstraintSet Correction (Fin 4) :=
-  (corr ctx).comap (Correction.candidate n)
+def corrOn (ctx : Context) (n : ℕ) (c : Correction) : Fin 4 → ℕ := corr ctx (c.candidate n)
 
 /-- The printed marks of Table 3.9, after *more than n*, set quantifier and numeral priming
 against the corrections that change them and simplicity against the superlatives. -/
-def table3_9 : ConstraintSet Correction (Fin 4) :=
-  ![Constraint.binary (· ≠ .moreThan), Constraint.binary (· ≠ .atLeast),
-    Constraint.binary (fun c ↦ c = .atLeast ∨ c = .atMost), 0]
+def table3_9 (c : Correction) : Fin 4 → ℕ :=
+  ![Constraint.binary (· ≠ .moreThan) c, Constraint.binary (· ≠ .atLeast) c,
+    Constraint.binary (fun c ↦ c = .atLeast ∨ c = .atMost) c, 0]
 
 /-- The printed marks of Table 3.10, after *at least n − 1*. -/
-def table3_10 : ConstraintSet Correction (Fin 4) :=
-  ![Constraint.binary (· ≠ .atLeast), Constraint.binary (· ≠ .moreThan),
-    Constraint.binary (fun c ↦ c = .atLeast ∨ c = .atMost), 0]
+def table3_10 (c : Correction) : Fin 4 → ℕ :=
+  ![Constraint.binary (· ≠ .atLeast) c, Constraint.binary (· ≠ .moreThan) c,
+    Constraint.binary (fun c ↦ c = .atLeast ∨ c = .atMost) c, 0]
 
 -- `Matrix.cons_val_two`/`three` are named because the `Matrix.cons_val` simproc panics on an
 -- over-applied vector at a literal index of two or more.
@@ -343,7 +343,7 @@ def table3_10 : ConstraintSet Correction (Fin 4) :=
 theorem corrOn_moreThan {n : ℕ} (hn : 1 ≤ n) :
     corrOn (correctionContext n .moreThan n) n = table3_9 := by
   obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
-  funext i c
+  funext c i
   match i with
   | 0 | 1 | 2 | 3 => cases c <;>
     simp [corrOn, corr, table3_9, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
@@ -353,27 +353,26 @@ theorem corrOn_moreThan {n : ℕ} (hn : 1 ≤ n) :
 theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
     corrOn (correctionContext n .atLeast (n - 1)) n = table3_10 := by
   obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
-  funext i c
+  funext c i
   match i with
   | 0 | 1 | 2 | 3 => cases c <;>
     simp [corrOn, corr, table3_10, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
       Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
 
-theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
-    (Tableau.ofRanking (corrOn (correctionContext n .moreThan n) n) r Correction.all).optimal =
+theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)) :
+    r.optimal (corrOn (correctionContext n .moreThan n) n) Correction.all =
       if r.Dominates 0 1 ∨ r.Dominates 2 1 then {.moreThan} else {.atLeast} := by
   rw [corrOn_moreThan hn]; revert r; decide +kernel
 
-theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
-    (Tableau.ofRanking (corrOn (correctionContext n .atLeast (n - 1)) n) r
-      Correction.all).optimal =
+theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)) :
+    r.optimal (corrOn (correctionContext n .atLeast (n - 1)) n) Correction.all =
       if r.Dominates 1 0 ∨ r.Dominates 2 0 then {.moreThan} else {.atLeast} := by
   rw [corrOn_atLeast hn]; revert r; decide +kernel
 
 /-! ### The hearer, and the implicature of *more than n* (§3.4, §5.3, §5.4) -/
 
-theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3) 3) :
-    about 100 ∉ (Tableau.ofRanking (approx (.exact 100)) r {bare 100, about 100}).optimal := by
+theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3)) :
+    about 100 ∉ r.optimal (approx (.exact 100)) {bare 100, about 100} := by
   revert r; decide
 
 /-- In a context, *more than m* is a stronger alternative to *more than n* when `n < m` and `m`
@@ -388,10 +387,10 @@ instance (ctx : Context) (n m : ℕ) : Decidable (StrongerAlternative ctx n m) :
 -- [cummins-sauerland-solt-2012]
 theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral ≠ some n)
-    (r : Ranking (Fin 6) 6) {cands : Finset Candidate} (hc : moreThan m ∈ cands) :
-    moreThan n ∉ (Tableau.ofRanking (con ctx) r cands).optimal := by
+    (r : Ranking (Fin 6)) {cands : Finset Candidate} (hc : moreThan m ∈ cands) :
+    moreThan n ∉ r.optimal (con ctx) cands := by
   obtain ⟨hnm, hsal, hgran⟩ := halt
-  refine Tableau.ofRanking_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 0, ?_⟩)
+  refine Ranking.Enumeration.notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨fun i ↦ ?_, 0, ?_⟩)
   · match i with
     | 0 =>
       show info ctx (moreThan m) ≤ info ctx (moreThan n)
@@ -418,25 +417,25 @@ theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = so
 -- §5.4
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral = some n)
-    (r : Ranking (Fin 6) 6) :
-    (Tableau.ofRanking (con ctx) r {moreThan n, moreThan m}).optimal = {moreThan n} ↔
+    (r : Ranking (Fin 6)) :
+    r.optimal (con ctx) {moreThan n, moreThan m} = {moreThan n} ↔
       r.Dominates 4 0 ∧ (roundness n < roundness m → r.Dominates 4 3) := by
   obtain ⟨hnm, hsal, hgran⟩ := halt
-  have h0 : con ctx 0 (moreThan m) < con ctx 0 (moreThan n) := by
+  have h0 : con ctx (moreThan m) 0 < con ctx (moreThan n) 0 := by
     show info ctx (moreThan m) < info ctx (moreThan n); simp only [info, moreThan, hlo]; omega
-  have h1 : con ctx 1 (moreThan n) = con ctx 1 (moreThan m) := by
+  have h1 : con ctx (moreThan n) 1 = con ctx (moreThan m) 1 := by
     show gran ctx (moreThan n) = gran ctx (moreThan m)
     rcases hgran with hg | hg
     · simp only [gran, hg, Option.elim_none]
     · simp only [gran, moreThan, hg]
-  have h3 : con ctx 3 (moreThan m) < con ctx 3 (moreThan n) ↔ roundness n < roundness m := by
+  have h3 : con ctx (moreThan m) 3 < con ctx (moreThan n) 3 ↔ roundness n < roundness m := by
     show 4 - roundness m < 4 - roundness n ↔ _; have := roundness_le_four m; omega
-  have h4 : con ctx 4 (moreThan n) < con ctx 4 (moreThan m) := by
+  have h4 : con ctx (moreThan n) 4 < con ctx (moreThan m) 4 := by
     show npri ctx (moreThan n) < npri ctx (moreThan m)
     simp only [npri, moreThan, hp, ite_eq_right hnm.ne']; exact Nat.zero_lt_one
   have hne : moreThan n ≠ moreThan m := by simp [moreThan, hnm.ne]
-  refine (Tableau.optimal_eq_singleton_iff_pair (by simp) hne).trans ?_
-  rw [Tableau.ofRanking_profile_lt_iff_exists_dominates]
+  refine (Ranking.Enumeration.optimal_eq_singleton_iff_pair rfl hne).trans ?_
+  rw [Ranking.Enumeration.profile_lt_iff_exists_dominates]
   constructor
   · rintro ⟨i, hi, hd⟩
     obtain rfl : i = 4 := by

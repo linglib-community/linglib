@@ -12,7 +12,7 @@
     "translation": "What language do you speak/are you speaking?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "wh-question"],
@@ -32,7 +32,7 @@
     "translation": "Sometimes we speak German.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "non-subject-initial declarative"],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "wh-question"],
@@ -72,7 +72,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "yes/no-question"],
@@ -92,7 +92,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Belfast English"],
@@ -114,7 +114,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Belfast English"],
@@ -138,7 +138,7 @@
     "translation": "He said that he isn't coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Han sa at han kommer ikke.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -163,7 +163,7 @@
     "translation": "He said he isn't coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Han sa han kommer ikke.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -189,7 +189,7 @@
     "translation": "Which car did you buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ka slags bil du kjøpte?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -214,7 +214,7 @@
     "translation": "Why did she go?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Korfor ho gikk?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -239,7 +239,7 @@
     "translation": "How are the kids doing?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Korsen ungan har det?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -264,7 +264,7 @@
     "translation": "Have you been to town?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "yes/no-question"],
@@ -286,7 +286,7 @@
     "translation": "How nice he is!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "exclamative"],
@@ -308,7 +308,7 @@
     "translation": "Maybe the king is coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kanskje kommer kongen.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -333,7 +333,7 @@
     "translation": "Who do you like best?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hvem du liker best?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -358,7 +358,7 @@
     "translation": "Which car did you buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Hvilken bil du kjøpte?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -383,7 +383,7 @@
     "translation": "Who do you like best?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kem du like best?", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -408,7 +408,7 @@
     "translation": "Which car did you buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Korsen bil du kjøpte?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -433,7 +433,7 @@
     "translation": "Who do you like best?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kåin lika du best?", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -458,7 +458,7 @@
     "translation": "Which car did you buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kåles bil kjøpte du?", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -484,7 +484,7 @@
     "translation": "Where is my plane?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Tromsø"],
@@ -508,7 +508,7 @@
     "translation": "Where should we land?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Tromsø"],
@@ -532,7 +532,7 @@
     "translation": "Who doesn't get to drive?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Tromsø"],
@@ -555,7 +555,7 @@
     "translation": "He simply didn't answer.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "subject-initial declarative"],
@@ -578,7 +578,7 @@
     "translation": "Which book do you like best?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Standard Norwegian"],
@@ -601,7 +601,7 @@
     "translation": "This book I don't like.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["variety", "Standard Norwegian"],
@@ -625,7 +625,7 @@
     "translation": "Who is not coming to the party?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Kem kommer ikkje til festen?", "judgment": "ungrammatical"}
     ],
     "readings": [],

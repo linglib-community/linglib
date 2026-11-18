@@ -3,9 +3,9 @@ module
 public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Linglib.Core.InformationTheory.BinaryEntropy
 public import Linglib.Core.Topology.UnitInterval
-public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Data.Examples.BergenGoodman2015
 public import Linglib.Data.Examples.Readers
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Bergen and Goodman (2015): The Strategic Use of Noise in Pragmatic Reasoning
@@ -236,10 +236,8 @@ theorem geomPool_N_L0 : geomPool (N δ) (L0 δ) = Measure.dirac := by
 theorem S1_eq_id : S1 δ = Kernel.id := by
   ext1 w
   rw [S1, geomPool_N_L0 hδ₀ hδ₁, speaker_dirac_eq_ofWeights, Kernel.id_apply]
-  refine Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun m ↦ ?_
-  by_cases h : m = w
-  · simp [h]
-  · simp [h, Measure.dirac_apply']
+  exact Kernel.ofWeights_apply_eq_dirac (by simp) (by simp) fun m h ↦ by
+    simp [h, Measure.dirac_apply']
 
 theorem L1_eq_L0 : L1 δ = L0 δ := by
   rw [L1, S1_eq_id hδ₀ hδ₁, Kernel.comp_id, L0_eq_listener]

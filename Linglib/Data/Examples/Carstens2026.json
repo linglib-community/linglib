@@ -12,7 +12,7 @@
     "translation": "The citizen and the president are chatting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "ummi"],
@@ -35,7 +35,7 @@
     "translation": "The (letters) L and M are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "uL"],
@@ -58,7 +58,7 @@
     "translation": "The diviner and the scientist are working.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isanuse"],
@@ -80,7 +80,7 @@
     "translation": "The egg and the spoon fell.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "iqanda"],
@@ -103,7 +103,7 @@
     "translation": "The medium and the girl are working.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isanuse"],
@@ -125,7 +125,7 @@
     "translation": "The backpack and the book are outside.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "ubhaka"],
@@ -148,7 +148,7 @@
     "translation": "A criminal and a sick person are working in one place.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umgewu"],
@@ -175,7 +175,7 @@
     "translation": "A hat and a gun are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umnqwazi"],
@@ -202,7 +202,7 @@
     "translation": "The Wormwood tree and the wild olive tree are growing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umhlonyane"],
@@ -225,7 +225,7 @@
     "translation": "The spear and the pipe are rusty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umkhonto"],
@@ -248,7 +248,7 @@
     "translation": "The lawyer and the thief left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "igqwetha"],
@@ -274,7 +274,7 @@
     "translation": "The hero and the slave left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "igorha"],
@@ -297,7 +297,7 @@
     "translation": "The stone and the egg disappeared.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "ilitye"],
@@ -323,7 +323,7 @@
     "translation": "The spoon and the earring were stolen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "icepe"],
@@ -346,7 +346,7 @@
     "translation": "The child and the woman are playing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umntwana"],
@@ -371,7 +371,7 @@
     "translation": "The L and the M are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "uL"],
@@ -397,7 +397,7 @@
     "translation": "The train and the machine are moving.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "uloliwe"],
@@ -419,7 +419,7 @@
     "translation": "The lamp and the dish have disappeared.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isibane"],
@@ -445,7 +445,7 @@
     "translation": "Xhosa and Zulu are spoken in South Africa.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isiXhosa"],
@@ -468,7 +468,7 @@
     "translation": "The diviner and the healer work together.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isanuse"],
@@ -494,7 +494,7 @@
     "translation": "The fool and the scholar are studying.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isibhanxa"],
@@ -517,7 +517,7 @@
     "translation": "The girl and the poet are singing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "intombi"],
@@ -544,7 +544,7 @@
     "translation": "The expert and the specialist disagree.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "ingcaphephe"],
@@ -568,7 +568,7 @@
     "translation": "The book and the pen are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "incwadi"],
@@ -595,7 +595,7 @@
     "translation": "The elephant and the leopard are fighting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "indlovu"],
@@ -617,7 +617,7 @@
     "translation": "The rabbit and the rooster are drunk.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umvundla"],
@@ -640,7 +640,7 @@
     "translation": "The owl and the dove can fly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isikhova"],
@@ -662,7 +662,7 @@
     "translation": "The L and the M are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "uL"],
@@ -684,7 +684,7 @@
     "translation": "The fool and the scholar are studying.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "isibhanxa"],
@@ -707,7 +707,7 @@
     "translation": "The crab and the shark are fighting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "unonkala"],
@@ -731,7 +731,7 @@
     "translation": "The criminal and the policeman are working together.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umgulukudu"],
@@ -754,7 +754,7 @@
     "translation": "The carrot and the egg are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umnqathe"],
@@ -776,7 +776,7 @@
     "translation": "The child and the train are moving.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umntwana"],
@@ -798,7 +798,7 @@
     "translation": "Intended: The girl and the train collided.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "intombi"],
@@ -822,7 +822,7 @@
     "translation": "The child and the elephant are playing.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "umntwana"],
@@ -846,7 +846,7 @@
     "translation": "The man and the woman are outside.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "murume"],
@@ -869,7 +869,7 @@
     "translation": "The mouth and the finger are infected.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "munwe"],
@@ -892,7 +892,7 @@
     "translation": "The stone and the egg are outside.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "dombo"],
@@ -916,7 +916,7 @@
     "translation": "The fool and the dimwit are missing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "benzi"],
@@ -940,7 +940,7 @@
     "translation": "The bread and the maize are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "chingwa"],
@@ -963,7 +963,7 @@
     "translation": "The drunkard and the small boy argued.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "chidhakwa"],
@@ -987,7 +987,7 @@
     "translation": "The orphan and the expert saw each other.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "nherera"],
@@ -1011,7 +1011,7 @@
     "translation": "The black dog and the white cow fell.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "imbwa"],
@@ -1035,7 +1035,7 @@
     "translation": "This nose and this ear are infected.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "mhuno"],
@@ -1059,7 +1059,7 @@
     "translation": "This bowl and that hammer are rusty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "mbiya"],
@@ -1083,7 +1083,7 @@
     "translation": "Hunger and thirst afflicted the travelers.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "nyota"],
@@ -1107,7 +1107,7 @@
     "translation": "This stream and that stream are polluted.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "rukova"],
@@ -1131,7 +1131,7 @@
     "translation": "The bow and the ladder are outside.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "uta"],
@@ -1155,7 +1155,7 @@
     "translation": "The tiny girl and the tiny boy disappeared.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "kasikana"],
@@ -1179,7 +1179,7 @@
     "translation": "The tiny house and the tiny car disappeared.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["conjunct1", "kamba"],

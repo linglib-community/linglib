@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Erlewine2020
-public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Syntax.Minimalist.Copy.AntiLocality
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers
 
@@ -41,7 +41,7 @@ subject position (`ex18`), since anti-locality looks at configurations, not at s
 
 namespace Erlewine2020
 
-open Minimalist Minimalist.LinearizedSyntacticObject
+open Minimalist Minimalist.PlanarSyntacticObject
 
 /-! ### The clause -/
 
@@ -82,18 +82,18 @@ def there : LexicalItem.Token := ⟨.of .D [] "there", 8⟩
 through: the edge of the embedded clause, then the edge of the matrix vP. A subject not
 extracted raises to Spec,TP unless *there* fills it; with CT, Spec,CTP takes the extracted
 phrase. -/
-def Clause.build (c : Clause) (k : Comp) : LinearizedSyntacticObject :=
+def Clause.build (c : Clause) (k : Comp) : PlanarSyntacticObject :=
   let x := if c.subjectExtracted then c.subject else c.object
-  let vP : LinearizedSyntacticObject := c.subject * (littleV * (c.verb * c.object))
-  let aspP : LinearizedSyntacticObject := match c.adverb with
+  let vP : PlanarSyntacticObject := c.subject * (littleV * (c.verb * c.object))
+  let aspP : PlanarSyntacticObject := match c.adverb with
     | some (.low, a) => a * (asp * vP)
     | _ => asp * vP
-  let edge : LinearizedSyntacticObject := match k with
+  let edge : PlanarSyntacticObject := match k with
     | .bundled => x * (ct * aspP)
     | .that | .null =>
       let spec := if c.expletive then there else c.subject
-      let tP : LinearizedSyntacticObject := spec * (tense * aspP)
-      let tP' : LinearizedSyntacticObject := match c.adverb with
+      let tP : PlanarSyntacticObject := spec * (tense * aspP)
+      let tP' : PlanarSyntacticObject := match c.adverb with
         | some (.high, a) => a * tP
         | _ => tP
       x * ((if k = .that then that else nullC) * tP')

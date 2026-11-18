@@ -24,7 +24,7 @@ def ag2024b_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("My apartment is small", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "implicates")] }
 
@@ -37,7 +37,7 @@ def ag2024b_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("My apartment is large", .unacceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "does_not_implicate")] }
 
@@ -50,7 +50,7 @@ def ag2024b_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is dirty", .acceptable)]
     paperFeatures := [("adjective", "clean"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "entails")] }
 
@@ -63,7 +63,7 @@ def ag2024b_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is clean", .acceptable)]
     paperFeatures := [("adjective", "dirty"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "entails")] }
 
@@ -76,7 +76,7 @@ def ag2024b_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is small", .unacceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
@@ -89,7 +89,7 @@ def ag2024b_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is large", .unacceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
@@ -102,7 +102,7 @@ def ag2024b_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is dirty", .unacceptable)]
     paperFeatures := [("adjective", "clean"), ("modifier", "very"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
@@ -115,7 +115,7 @@ def ag2024b_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is filthy", .unacceptable), ("The apartment is dirty", .unacceptable)]
     paperFeatures := [("adjective", "pristine"), ("adjectiveType", "absolute"), ("strength", "strong"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
@@ -128,7 +128,7 @@ def ag2024b_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The apartment is large but not gigantic", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "nonNegated"), ("relation", "implicates")] }
 
@@ -141,7 +141,7 @@ def ag2024b_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("My apartment is small", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "implicates"), ("inference", "negative_strengthening")] }
 
@@ -154,7 +154,7 @@ def ag2024b_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("My apartment is neither large nor small", .acceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "implicates"), ("inference", "middling")] }
 

@@ -32,13 +32,6 @@ are its epistemic coordinate, the paper not counting the default state as episte
 reads the closed-question condition relative to the speaker's doxastic state, as §5.1
 paraphrases it.
 
-## Errata
-
-* Footnote 9 calls a closed polar question unresolved in the common ground impossible, since
-  `p` and `¬p` would both be doxastically inconsistent with it. That holds for consistency with a
-  doxastic state (`resolved_of_closed_polar`) but not for Farkas's d-consistency (12), which is
-  stronger than consistency (13), and under which such an issue is unresolvable (15).
-
 ## TODO
 
 * Farkas's projection (52c) requires d-consistency where `Commitment.Table.project` requires

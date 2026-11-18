@@ -24,7 +24,7 @@ def ex_1A : Datum :=
     glossedTokens := []
     context := "Polarity contrast: speaker A describes their own picture; B will describe a different picture."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "negative"), ("turn", "A")] }
 
@@ -37,7 +37,7 @@ def ex_1B1 : Datum :=
     glossedTokens := []
     context := "Reply to (1) A about a different picture."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "verumFocus")] }
 
@@ -50,7 +50,7 @@ def ex_1B2 : Datum :=
     glossedTokens := []
     context := "Reply to (1) A about a different picture."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "particle")] }
 
@@ -63,7 +63,7 @@ def ex_2A : Datum :=
     glossedTokens := []
     context := "Polarity correction: A and B talk about the same situation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "negative"), ("turn", "A")] }
 
@@ -76,7 +76,7 @@ def ex_2B1 : Datum :=
     glossedTokens := []
     context := "Reply to (2) A about the same situation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "positive"), ("marking", "verumFocus")] }
 
@@ -89,7 +89,7 @@ def ex_2B2 : Datum :=
     glossedTokens := []
     context := "Reply to (2) A about the same situation."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "positive"), ("marking", "particle")] }
 
@@ -102,7 +102,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := "A house is on fire; a native speaker of Dutch retells the Finite Story film."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "particle"), ("genre", "monologue")] }
 
@@ -115,7 +115,7 @@ def vf_negated : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("marking", "verumFocus")] }
 
@@ -128,7 +128,7 @@ def wel_negated : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("marking", "particle")] }
 

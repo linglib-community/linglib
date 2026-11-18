@@ -2,9 +2,9 @@ module
 
 public import Studies.Fox2018
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Pragmatics.RSA.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.TFAE
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Enguehard (2025): Upward monotonicity and the strongest answer condition
@@ -35,7 +35,7 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
   where nothing is true this holds vacuously.
 * The theorem relating strong stability to exhaustification assumes finitely many alternatives,
   which the appendix assumes for innocent exclusion and minimal worlds; its basic form needs the
-  assumption too (see Errata).
+  assumption too.
 * The paper compares strong stability with the condition of a 2020 manuscript of Fox's, that
   exhaustification yield exactly the induced partition rather than contain it. Fox's 2018 paper
   states the same condition, Question Partition Matching, so the comparison runs through
@@ -54,37 +54,10 @@ communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
   negation express every proposition, and the two constants with any non-monotone function
   compose to negation.
 * Optimality in the probabilistic model of the appendix compares the literal listener's mass at
-  the world, `RSA.listener μ (RSA.truthful sem)`, strictly across the true messages with other
+  the world, `RSA.literalListener μ sem`, strictly across the true messages with other
   meanings, which is the paper's assumption that no two messages tie; the utility is its
   logarithm, which the comparison drops. A prior is a probability measure giving every world
   positive mass, and the worlds are finitely many, where the paper also allows countably many.
-
-## Errata
-
-* The result on two-place connectives fails when its condition that the atoms are not dominated
-  is read among the alternatives alone: [six propositions over two
-  atoms](##Enguehard2025.exists_not_isUpperSet_of_bilaterallyStronglyStable), among them
-  *if q then p*, are bilaterally strongly stable with neither atom dominated, yet *if q then p* is
-  not monotone. The result holds when the negated atoms are not dominated among the negations
-  either ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
-* The theorem relating strong stability to exhaustification is stated for any set of
-  alternatives, and the appendix assumes them finite only for innocent exclusion and minimal
-  worlds, but its omitted lemma, that exhaustifying against the non-dominated alternatives changes
-  nothing, fails for infinitely many: [over `ℕ ∪ {∞}` the non-dominated
-  alternatives](##Enguehard2025.exists_image_exh_eq_classes_not_stronglyStable) exhaustify to
-  exactly the induced partition, yet none is strongest at `∞`.
-* The results on symmetric and on projectively symmetric functions, and their proofs, assume at
-  least two atoms: [*p* and *not p*](##Enguehard2025.exists_quantityInvariant_not_isUpperSet)
-  over one atom are bilaterally strongly stable and symmetric, and *not p*, the negated
-  existential, is not monotone.
-* Weak stability as defined holds vacuously at a world where no alternative is true, whereas the
-  proof of the clone result for weak stability assumes that every world has a true and a false
-  alternative, the coverage the paper asks of the strongest answer condition and assumes in its
-  probabilistic model. Under the definition as printed that result fails: [the falsity-preserving
-  functions](##Enguehard2025.exists_isClone_bilaterallyWeaklyStable_not_isUpperSet) form a proper
-  clone that contains exclusive disjunction and is bilaterally weakly stable,
-  vacuously so where no atom holds. With the coverage the result
-  [holds](##Enguehard2025.isUpperSet_of_isClone).
 
 ## TODO
 
@@ -221,7 +194,7 @@ theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
       (isStrongestTrueAnswer_of_exhMW_subset hA' hp hw (he.le.trans (hsub w)))⟩
   tfae_finish
 
--- (26) for infinitely many alternatives (Errata): over `ℕ ∪ {∞}`, the alternatives `[n, ∞]`, `{n}`
+-- (26) for infinitely many alternatives: over `ℕ ∪ {∞}`, the alternatives `[n, ∞]`, `{n}`
 -- and `{0, ∞}`; the `[n, ∞]` are dominated, the others exhaustify to the singletons, the induced
 -- partition, yet none is strongest at `∞`
 theorem exists_image_exh_eq_classes_not_stronglyStable :
@@ -424,7 +397,7 @@ private theorem isUpperSet_fin_two {φ : Set (Set (Fin 2))} (hφ : IsUpperSet φ
     · refine ⟨univ, .inr <| ext fun J ↦ ?_⟩
       rcases fin_two_cases J with rfl | rfl | rfl | rfl <;> simp [hE, h0, h1, hU]
 
--- (32b), with the negated atoms also not dominated among the negations (Errata)
+-- (32b), with the negated atoms also not dominated among the negations
 theorem eq_setOf_isUpperSet_of_bilaterallyStronglyStable {A : Set (Set (Set (Fin 2)))}
     (hat : ∀ i, {I | i ∈ I} ∈ A) (h : BilaterallyStronglyStable A)
     (hdom : ∀ i, ¬ Dominated A {I | i ∈ I})
@@ -453,7 +426,8 @@ theorem eq_setOf_isUpperSet_of_bilaterallyStronglyStable {A : Set (Set (Set (Fin
   obtain ⟨I, rfl | rfl⟩ := isUpperSet_fin_two hφ
   exacts [Ici_mem hat hup h.1 I, compl_Iic_mem hat hup h.2 I]
 
--- (32b) as printed: neither atom is dominated, yet *if q then p* is not monotone (Errata)
+-- (32b) without that condition on the negations: neither atom is dominated, yet *if q then p*
+-- is not monotone
 theorem exists_not_isUpperSet_of_bilaterallyStronglyStable :
     ∃ A : Set (Set (Set (Fin 2))), (∀ i, {I | i ∈ I} ∈ A) ∧ BilaterallyStronglyStable A ∧
       (∀ i, ¬ Dominated A {I | i ∈ I}) ∧ ∃ φ ∈ A, ¬ IsUpperSet φ := by
@@ -548,8 +522,8 @@ theorem not_stronglyStable_of_isSymmetric [Finite ι] (h3 : 2 < Nat.card ι)
   have hσb : σ ⊆ {I | b ∈ I} := hmin ⟨hat b, by simp⟩
   have hna : σ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) := by
     rintro ⟨k, rfl⟩
-    have ha : a ∈ ({k} : Set ι) := hσa rfl
-    have hb : b ∈ ({k} : Set ι) := hσb rfl
+    have ha : a ∈ ({k} : Set ι) := hσa (a := {k}) rfl
+    have hb : b ∈ ({k} : Set ι) := hσb (a := {k}) rfl
     exact hab (ha.trans hb.symm)
   exact not_subset_atom (hsym σ hσ hna) hI a (show c ∉ ({a, b} : Set ι) by
     simp [hac.symm, hbc.symm]) hσa
@@ -726,7 +700,7 @@ theorem weaklyStable_and_not_bilaterallyWeaklyStable_no [Finite ι] [Nontrivial 
     · exact quantityInvariant_mem_singleton_univ
     · exact quantityInvariant_mem_singleton_empty.compl
     · exact quantityInvariant_mem_singleton_empty
-  have hN := mem_every_some_of_bilaterallyWeaklyStable (fun i ↦ .inl ⟨i, rfl⟩) hsym h
+  have hN := mem_every_some_of_bilaterallyWeaklyStable (fun i ↦ Or.inl ⟨i, rfl⟩) hsym h
     (φ := {B | Det.no univ B}) (by simp) (by
       rintro ⟨k, hk⟩
       simpa [setOf_no_univ] using (congrArg (∅ ∈ ·) hk))
@@ -838,7 +812,7 @@ private theorem inter_eq_empty_of_atom_subset (hJ : LivesOn (· ∈ φ) J)
 
 end Projective
 
--- (37b), for at least two atoms (Errata): the conjunctions and disjunctions of atoms are
+-- (37b), for at least two atoms: the conjunctions and disjunctions of atoms are
 -- alternatives, and every alternative is upward monotone
 theorem isUpperSet_of_bilaterallyStronglyStable [Nontrivial ι] {A : Set (Set (Set ι))}
     (hat : ∀ i, {I | i ∈ I} ∈ A) (hps : ∀ φ ∈ A, IsProjectivelySymmetric φ)
@@ -896,7 +870,7 @@ theorem isUpperSet_of_bilaterallyStronglyStable [Nontrivial ι] {A : Set (Set (S
     rw [hu, show (Iic (univ : Set ι))ᶜ = ∅ from (congrArg compl Iic_top).trans compl_univ, ← hχ0]
     exact hχ
 
--- (34c) and (37b) at a single atom: `p` and `¬p` (Errata)
+-- (34c) and (37b) at a single atom: `p` and `¬p`
 theorem exists_quantityInvariant_not_isUpperSet :
     ∃ A : Set (Set (Set Unit)), (∀ i, {I | i ∈ I} ∈ A) ∧
       (∀ φ ∈ A, QuantityInvariant (· ∈ φ) ∧ IsProjectivelySymmetric φ) ∧
@@ -912,7 +886,7 @@ theorem exists_quantityInvariant_not_isUpperSet :
     · exact ⟨_, ⟨⟨_, .inr rfl, compl_compl _⟩, h⟩, by
         rintro _ ⟨⟨_, rfl | rfl, rfl⟩, hw⟩ <;> simp_all⟩
     · exact ⟨_, ⟨⟨_, .inl rfl, rfl⟩, h⟩, by rintro _ ⟨⟨_, rfl | rfl, rfl⟩, hw⟩ <;> simp_all⟩
-  refine ⟨_, fun _ ↦ .inl rfl,
+  refine ⟨_, fun _ ↦ Or.inl rfl,
     fun φ _ ↦ ⟨hsym φ, univ, fun B ↦ by rw [univ_inter], fun σ _ ↦ hsym φ σ⟩, hA,
     ⟨hA.1.weaklyStable _, hA.2.weaklyStable _⟩, _, .inr rfl, fun ⟨_, h⟩ ↦ ?_,
     fun h ↦ h (empty_subset univ) (notMem_empty ()) (mem_univ ())⟩
@@ -927,7 +901,7 @@ theorem scopeMonotone_of_bilaterallyStronglyStable [Nontrivial ι] {D : Set (Det
       (range (fun i ↦ {B : Set ι | individual i B}) ∪ ⋃ d ∈ D, range fun A ↦ {B | d A B})) :
     ∀ d ∈ D, d.ScopeMonotone := by
   refine fun d hd ↦ Det.scopeMonotone_iff_isUpperSet.2 fun A ↦
-    (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ .inl ⟨i, rfl⟩) ?_ h).2.2 _
+    (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ Or.inl ⟨i, rfl⟩) ?_ h).2.2 _
       (.inr (mem_biUnion hd ⟨A, rfl⟩))
   rintro φ (⟨i, rfl⟩ | hφ)
   · exact exists_det_apply_eq_iff_livesOn.1 ⟨Det.every, Det.conservative_every,
@@ -992,8 +966,8 @@ theorem stronglyStable_and_not_bilaterallyStronglyStable_nobody [Nontrivial ι] 
       · exact hwψ.mono (inter_subset_inter_right _ (mem_Ici.1 hB))
     · rw [mem_singleton_iff.1 hψ, hN] at hwψ
       exact absurd (mem_singleton_iff.1 hwψ) hne.ne_empty
-  · have hup := (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ .inl (.inl ⟨i, rfl⟩)) ?_ h).2.2
-      _ (.inr rfl)
+  · have hup := (isUpperSet_of_bilaterallyStronglyStable
+      (fun i ↦ Or.inl (Or.inl ⟨i, rfl⟩)) ?_ h).2.2 _ (.inr rfl)
     · obtain ⟨i⟩ := (inferInstance : Nonempty ι)
       rw [hN] at hup
       exact absurd (mem_singleton_iff.1 (hup (empty_subset univ) rfl)) (nonempty_iff_ne_empty.1
@@ -1066,8 +1040,7 @@ include hF
 
 theorem compl_mem (hneg : {J : Set (Fin 1) | 0 ∉ J} ∈ F 1) {n : ℕ} {φ : Set (Set (Fin n))}
     (hφ : φ ∈ F n) : φᶜ ∈ F n := by
-  convert hF.comp_mem n 1 _ (fun _ ↦ φ) hneg fun _ ↦ hφ using 1
-  ext I; simp
+  exact hF.comp_mem n 1 _ (fun _ ↦ φ) hneg fun _ ↦ hφ
 
 -- a clone with both constants that holds a function not monotone holds negation
 theorem neg_mem (htop : univ ∈ F 1) (hbot : ∅ ∈ F 1) {n : ℕ} {φ : Set (Set (Fin n))}
@@ -1103,7 +1076,7 @@ end IsClone
 theorem isClone_isUpperSet : IsClone (fun n ↦ {φ : Set (Set (Fin n)) | IsUpperSet φ}) ∧
     ∀ n, 0 < n → {φ : Set (Set (Fin n)) | IsUpperSet φ} ≠ univ := by
   refine ⟨⟨fun n i I J hIJ (hI : i ∈ I) ↦ hIJ hI, fun n k g f hg hf I J hIJ hI ↦
-    hg (fun j (hj : I ∈ f j) ↦ hf j hIJ hj) hI⟩, fun n hn h ↦ ?_⟩
+    hg (a := {j | I ∈ f j}) (fun j hj ↦ hf j hIJ hj) hI⟩, fun n hn h ↦ ?_⟩
   have : {I : Set (Fin n) | ⟨0, hn⟩ ∈ I}ᶜ ∈ {φ : Set (Set (Fin n)) | IsUpperSet φ} := h ▸ mem_univ _
   exact this (empty_subset {(⟨0, hn⟩ : Fin n)}) (notMem_empty (⟨0, hn⟩ : Fin n)) (mem_singleton _)
 
@@ -1113,7 +1086,7 @@ theorem bilaterallyStronglyStable_univ : BilaterallyStronglyStable (univ : Set (
   refine ⟨fun w ↦ ⟨{w}, ⟨trivial, rfl⟩, fun ψ ⟨_, hw⟩ ↦ singleton_subset_iff.2 hw⟩,
     fun w ↦ ⟨{w}, ⟨⟨{w}ᶜ, trivial, compl_compl _⟩, rfl⟩, fun ψ ⟨_, hw⟩ ↦ singleton_subset_iff.2 hw⟩⟩
 
--- (40a), with a true and a false member at every world (Errata)
+-- (40a), with a true and a false member at every world
 theorem isUpperSet_of_isClone {F : ∀ n : ℕ, Set (Set (Set (Fin n)))} (hF : IsClone F)
     (hL : ∃ n, 0 < n ∧ F n ≠ univ) (hT : ∀ n, 0 < n → ∀ w, ∃ φ ∈ F n, w ∈ φ)
     (hF' : ∀ n, 0 < n → ∀ w, ∃ φ ∈ F n, w ∉ φ)
@@ -1199,14 +1172,14 @@ theorem bilaterallyStronglyStable_iff_eq_isUpperSet {F : ∀ n : ℕ, Set (Set (
   exact sUnion_mem h0 hu (toFinite _) (image_subset_iff.2 fun I _ ↦
     Ici_mem (hF.atom_mem n) (hup n hn) (h n hn).1 I)
 
--- (40a) as printed: the falsity-preserving functions form a proper clone, bilaterally weakly
--- stable, vacuously where no atom holds, that holds exclusive disjunction (Errata)
+-- (40a) without that coverage: the falsity-preserving functions form a proper clone,
+-- bilaterally weakly stable, vacuously where no atom holds, that holds exclusive disjunction
 theorem exists_isClone_bilaterallyWeaklyStable_not_isUpperSet :
     ∃ F : ∀ n : ℕ, Set (Set (Set (Fin n))), IsClone F ∧ (∀ n, F n ≠ univ) ∧
       (∀ n, BilaterallyWeaklyStable (range fun i : Fin n ↦ {I | i ∈ I}) (F n)) ∧
       ({{0}, {1}} : Set (Set (Fin 2))) ∈ F 2 ∧ ¬ IsUpperSet ({{0}, {1}} : Set (Set (Fin 2))) := by
   refine ⟨fun n ↦ {φ | ∅ ∉ φ}, ⟨fun n i ↦ notMem_empty i, fun n k g f hg hf h0 ↦
-    hg (eq_empty_of_forall_notMem (fun j hj ↦ hf j hj) ▸ h0)⟩, fun n h ↦ ?_,
+    hg (eq_empty_of_forall_notMem (s := {j | ∅ ∈ f j}) (fun j hj ↦ hf j hj) ▸ h0)⟩, fun n h ↦ ?_,
     fun n ↦ ⟨fun w ↦ ?_, fun w ↦ ?_⟩, by simp, fun h ↦ ?_⟩
   · have h' : {φ : Set (Set (Fin n)) | ∅ ∉ φ} = univ := h
     exact (show (univ : Set (Set (Fin n))) ∈ {φ : Set (Set (Fin n)) | ∅ ∉ φ} by
@@ -1238,7 +1211,7 @@ variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {U : Type*} [Measurable
 listener gives `w` more mass than that of any true message with another meaning. -/
 def IsOptimal (μ : Measure W) (w : W) (u : U) : Prop :=
   w ∈ sem u ∧ ∀ u', w ∈ sem u' → sem u' ≠ sem u →
-    RSA.listener μ (RSA.truthful sem) u' {w} < RSA.listener μ (RSA.truthful sem) u {w}
+    RSA.literalListener μ sem u' {w} < RSA.literalListener μ sem u {w}
 
 /-- A.3: a message is optimal at `w` for some prior giving every world positive mass iff its
 meaning is minimal among the meanings true at `w`, so that which message the pragmatic speaker
@@ -1248,11 +1221,11 @@ theorem exists_prior_iff_minimal [Fintype W] {w : W} {u : U} :
       Minimal (· ∈ trueAnswers (range sem) w) (sem u) := by
   -- the literal listener's mass at `w` falls as the prior mass of the meaning rises
   have key : ∀ (μ : Measure W) [IsFiniteMeasure μ], μ {w} ≠ 0 → ∀ {u u' : U}, w ∈ sem u →
-      w ∈ sem u' → (RSA.listener μ (RSA.truthful sem) u' {w} <
-        RSA.listener μ (RSA.truthful sem) u {w} ↔ μ (sem u) < μ (sem u')) := by
+      w ∈ sem u' → (RSA.literalListener μ sem u' {w} <
+        RSA.literalListener μ sem u {w} ↔ μ (sem u) < μ (sem u')) := by
     intro μ _ hw u u' hu hu'
-    rw [RSA.listener_truthful_apply_singleton μ sem hu,
-      RSA.listener_truthful_apply_singleton μ sem hu',
+    rw [RSA.literalListener_apply_singleton μ sem hu,
+      RSA.literalListener_apply_singleton μ sem hu',
       ENNReal.mul_lt_mul_iff_left hw (measure_ne_top μ _), ENNReal.inv_lt_inv]
   constructor
   · rintro ⟨μ, _, hpos, hu, hopt⟩

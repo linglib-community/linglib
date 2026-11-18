@@ -24,7 +24,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := "What is being discussed is where Mary's friends are from."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive", .acceptable), ("ignorance", .marginal)]
     paperFeatures := [("name", "all-20-or"), ("restrictor", "20"), ("disjuncts", "2"), ("preferred", "distributive")] }
 
@@ -37,7 +37,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := "What is being discussed is where Mary's friends are from."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive", .marginal), ("ignorance", .acceptable)]
     paperFeatures := [("name", "all-2-or"), ("restrictor", "2"), ("disjuncts", "2"), ("preferred", "ignorance")] }
 
@@ -50,7 +50,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := "What is being discussed is where Mary's friends are from."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive", .acceptable), ("ignorance", .marginal)]
     paperFeatures := [("name", "simple-disj"), ("restrictor", "4"), ("disjuncts", "2"), ("preferred", "distributive")] }
 
@@ -63,7 +63,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := "What is being discussed is where Mary's friends are from."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive", .marginal), ("ignorance", .acceptable)]
     paperFeatures := [("name", "complex-disj"), ("restrictor", "4"), ("disjuncts", "4"), ("preferred", "ignorance")] }
 
@@ -76,7 +76,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("name", "unembedded"), ("disjuncts", "2")] }
 
@@ -89,7 +89,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := "Peter invited three girls to the party."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("name", "deviant-be"), ("predicate", "identityCopula"), ("singletonDenoting", "yes")] }
 
@@ -102,7 +102,7 @@ def ex_32 : Datum :=
     glossedTokens := []
     context := "Peter invited three girls to the party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("name", "non-deviant-called"), ("predicate", "beCalled"), ("singletonDenoting", "no")] }
 
@@ -115,7 +115,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := "Tolstoy, Zola and Rowling are great writers."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("name", "deviant-write"), ("predicate", "write"), ("singletonDenoting", "yes")] }
 
@@ -128,7 +128,7 @@ def ex_34 : Datum :=
     glossedTokens := []
     context := "Ann, John, and Bob are great students."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("name", "non-deviant-read"), ("predicate", "read"), ("singletonDenoting", "no")] }
 
@@ -141,7 +141,7 @@ def ex_35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("name", "paraphrase-of-deviant-be")] }
 
@@ -154,7 +154,7 @@ def ex_37a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "identityCopula")] }
 
@@ -167,7 +167,7 @@ def ex_37b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "beCalled")] }
 
@@ -180,7 +180,7 @@ def ex_37c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "write")] }
 
@@ -193,7 +193,7 @@ def ex_37d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "read")] }
 
@@ -206,7 +206,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "write"), ("singletonDenoting", "no")] }
 
@@ -219,7 +219,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "blindImplicature")] }
 
@@ -232,7 +232,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := "Ann played a card game in which, given the rules, the final score is always an even number of points. Bob knows this, and reports to Carl."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "blindIgnorance")] }
 
@@ -245,7 +245,7 @@ def ex_43b : Datum :=
     glossedTokens := []
     context := "Ann played a card game in which, given the rules, the final score is always an even number of points. Bob knows this, and reports to Carl."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "blindIgnorance")] }
 
@@ -258,7 +258,7 @@ def ex_48 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not all of her 20 friends are French", .unacceptable)]
     paperFeatures := [("diagnostic", "symmetry")] }
 
@@ -271,7 +271,7 @@ def ex_55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "modalContrast"), ("modal", "necessity")] }
 
@@ -284,7 +284,7 @@ def ex_55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "modalContrast"), ("modal", "possibility")] }
 
@@ -297,7 +297,7 @@ def ex_57 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "largerDomain"), ("restrictor", "20")] }
 
@@ -310,7 +310,7 @@ def ex_59 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("diagnostic", "downwardEntailing")] }
 
@@ -323,7 +323,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := "Mary works in the US, so her office-mates are very likely American."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("distributive", .marginal), ("ignorance", .acceptable)]
     paperFeatures := [("diagnostic", "priorKnowledge"), ("restrictor", "2"), ("disjuncts", "2"), ("preferred", "ignorance")] }
 

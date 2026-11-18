@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.Multiset.Antidiagonal
-public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Data.Multiset.Antidiagonal

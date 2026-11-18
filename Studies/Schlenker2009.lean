@@ -850,15 +850,15 @@ section Quantified
 
 open Quantifier
 
-variable {E : Type*} {q : NumberTree} {A : W → E → Prop} {C : Set W} {P : Set (W × E)}
+variable {E : Type*} {q : NumberTree} {A : W → Set E} {C : Set W} {P : Set (W × E)}
 
 /-- Where `q` is non-constant on the restrictor's size, a nuclear-scope presupposition is
 transparent iff every restrictor individual satisfies it, universal projection. The right side is
 where the dynamic semantics of C.6 defines the update of the clause, and Non-Triviality with
 Constancy (C.9) implies the hypothesis on rows. -/
 theorem transparent_scope_iff_universal [Finite E]
-    (hNT : ∀ w ∈ C, ¬ q.ConstantOnRow {x | A w x}.ncard) :
-    Transparent C {scopeTruth q A} P ↔ ∀ w ∈ C, ∀ e, A w e → (w, e) ∈ P := by
+    (hNT : ∀ w ∈ C, ¬ q.ConstantOnRow (A w).ncard) :
+    Transparent C {scopeTruth q A} P ↔ ∀ w ∈ C, ∀ e ∈ A w, (w, e) ∈ P := by
   rw [transparent_scopeTruth_iff]
   exact ⟨fun h w hw ↦ h w hw (hNT w hw), fun h w hw _ ↦ h w hw⟩
 
@@ -870,8 +870,8 @@ theorem transparent_infinitelyMany_of_finite {P : Set (Unit × ℕ)}
     (hP : {n | ((), n) ∉ P}.Finite) : Transparent Set.univ {infinitelyMany} P := by
   rintro f rfl d ⟨⟩ -
   change {n | ((), n) ∈ P ∩ d}.Infinite ↔ {n | ((), n) ∈ d}.Infinite
-  exact ⟨fun h ↦ h.mono fun _ hn ↦ hn.2,
-    fun h ↦ (h.sdiff hP).mono fun _ hn ↦ ⟨by simpa using hn.2, hn.1⟩⟩
+  exact ⟨fun h ↦ h.mono (s := {n | ((), n) ∈ P ∩ d}) fun _ hn ↦ hn.2,
+    fun h ↦ (h.sdiff hP).mono (s := _ \ _) fun _ hn ↦ ⟨by simpa using hn.2, hn.1⟩⟩
 
 /-- The scope of *infinitely many* has no local context. Leaving out any one individual is
 transparent, so a least transparent restriction would contain no individual, but the empty
@@ -892,13 +892,13 @@ its assertion and the sentence is Strong Kleene and supervaluation acceptable
 scope false of the second individual the first decides (Theorems 38b and 39b; the trigger is final,
 so the incremental and symmetric versions coincide). -/
 theorem transparentAt_not_transparent_no :
-    TransparentAt {()} {scopeTruth NumberTree.no fun (_ : Unit) (_ : Fin 2) ↦ True}
+    TransparentAt {()} {scopeTruth NumberTree.no fun _ : Unit ↦ (Set.univ : Set (Fin 2))}
         {p | p.2 = 1} Set.univ ∧
-      ¬ Transparent {()} {scopeTruth NumberTree.no fun (_ : Unit) (_ : Fin 2) ↦ True}
+      ¬ Transparent {()} {scopeTruth NumberTree.no fun _ : Unit ↦ (Set.univ : Set (Fin 2))}
         {p | p.2 = 1} := by
   refine ⟨transparentAt_scopeTruth_iff.2 fun _ _ D D' hD hD' ↦ ?_, fun h ↦ ?_⟩
-  · have h1 : D 1 := (hD 1 rfl).2 trivial
-    have h1' : D' 1 := (hD' 1 rfl).2 trivial
+  · have h1 : 1 ∈ D := (hD 1 rfl).2 trivial
+    have h1' : 1 ∈ D' := (hD' 1 rfl).2 trivial
     simp only [NumberTree.toDet_apply, NumberTree.no]
     refine iff_of_false (fun h ↦ ?_) fun h ↦ ?_
     · exact (Set.ncard_eq_zero (s := Set.univ ∩ D)).1 h |>.subset ⟨trivial, h1⟩ |>.elim
@@ -940,8 +940,8 @@ fails of an individual takes the value `ρR` gives it for that individual, and e
 scope the value `ρS` gives it (items 24–25, individual by individual). -/
 def resolve (w : W) (ρR ρS : E → SyntacticEnvironment Atom → Atom → Atom → Prop)
     (c : QuantifiedClause Atom) : Prop :=
-  c.quantifier.toDet (fun e ↦ Schlenker2009.resolve J (w, e) (ρR e) [] c.restrictor)
-    fun e ↦ Schlenker2009.resolve J (w, e) (ρS e) [] c.scope
+  c.quantifier.toDet {e | Schlenker2009.resolve J (w, e) (ρR e) [] c.restrictor}
+    {e | Schlenker2009.resolve J (w, e) (ρS e) [] c.scope}
 
 /-- A clause is Kleene-defined at `w` when every resolution of its trigger tokens gives it the same
 value (items 27–28). -/
@@ -996,24 +996,25 @@ private theorem resolve_iff_of_triggers {F : Formula Atom} (hF : F.triggers = []
   resolve_of_middleKleene_ne_undefined J (middleKleene_ne_undefined_of_triggers J hF) ρ []
 
 private theorem resolve_trigger_iff (hR : R.triggers = []) {w : W} {ρR ρS} :
-    resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toDet (fun e ↦ (w, e) ∈ R.truth J)
-      fun e ↦ (w, e) ∈ J p ∧ (w, e) ∈ J a ∨ (w, e) ∉ J p ∧ ρS e [] p a := by
+    resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toDet (Prod.mk w ⁻¹' R.truth J)
+      {e | (w, e) ∈ J p ∧ (w, e) ∈ J a ∨ (w, e) ∉ J p ∧ ρS e [] p a} := by
   simp only [resolve, Schlenker2009.resolve, resolve_iff_of_triggers J hR]
+  rfl
 
-private theorem forall_resolution_iff {P A : E → Prop} (G : (E → Prop) → Prop) :
+private theorem forall_resolution_iff {P A : Set E} (G : Set E → Prop) :
     (∀ ρ ρ' : E → Prop,
-      G (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ ρ e) ↔ G (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ ρ' e)) ↔
-    ∀ D D' : E → Prop, (∀ e, P e → (D e ↔ A e)) → (∀ e, P e → (D' e ↔ A e)) →
+      G {e | e ∈ P ∧ e ∈ A ∨ e ∉ P ∧ ρ e} ↔ G {e | e ∈ P ∧ e ∈ A ∨ e ∉ P ∧ ρ' e}) ↔
+    ∀ D D' : Set E, (∀ e ∈ P, (e ∈ D ↔ e ∈ A)) → (∀ e ∈ P, (e ∈ D' ↔ e ∈ A)) →
       (G D ↔ G D') := by
-  have key {D : E → Prop} (hD : ∀ e, P e → (D e ↔ A e)) :
-      (fun e ↦ P e ∧ A e ∨ ¬ P e ∧ D e) = D := funext fun e ↦ propext <| by
-    by_cases h : P e
+  have key {D : Set E} (hD : ∀ e ∈ P, (e ∈ D ↔ e ∈ A)) :
+      {e | e ∈ P ∧ e ∈ A ∨ e ∉ P ∧ e ∈ D} = D := Set.ext fun e ↦ by
+    by_cases h : e ∈ P
     · simp [h, hD e h]
     · simp [h]
   refine ⟨fun h D D' hD hD' ↦ ?_, fun h ρ ρ' ↦ h _ _ (fun e he ↦ by simp [he])
     fun e he ↦ by simp [he]⟩
   rw [← key hD, ← key hD']
-  exact h D D'
+  exact h (· ∈ D) (· ∈ D')
 
 theorem completions_trigger (hR : R.triggers = []) (r : Version) :
     completions r ⟨q, R, .trigger p a⟩ = {⟨q, R, .trigger p a⟩} := by
@@ -1037,20 +1038,22 @@ theorem completions_trigger (hR : R.triggers = []) (r : Version) :
 on either version, iff the trigger is transparent at its assertion. -/
 theorem strongKleeneAcceptable_trigger_iff (hR : R.triggers = []) (r : Version) :
     StrongKleeneAcceptable J r C ⟨q, R, .trigger p a⟩ ↔
-      TransparentAt C {scopeTruth q fun w e ↦ (w, e) ∈ R.truth J} (J p) (J a) := by
+      TransparentAt C {scopeTruth q fun w ↦ Prod.mk w ⁻¹' R.truth J} (J p) (J a) := by
   simp only [StrongKleeneAcceptable, completions_trigger hR, Set.mem_singleton_iff, forall_eq]
   rw [transparentAt_scopeTruth_iff]
-  refine forall₂_congr fun w _ ↦ Iff.trans ?_ (forall_resolution_iff _)
+  refine forall₂_congr fun w _ ↦ Iff.trans ?_
+    (forall_resolution_iff (P := Prod.mk w ⁻¹' J p) (A := Prod.mk w ⁻¹' J a) _)
   simp only [TokenDefined, resolve_trigger_iff J hR]
   exact ⟨fun h ρ ρ' ↦ h (fun _ _ _ _ ↦ True) (fun e _ _ _ ↦ ρ e) (fun _ _ _ _ ↦ True)
     (fun e _ _ _ ↦ ρ' e), fun h _ ρS _ ρS' ↦ h (ρS · [] p a) (ρS' · [] p a)⟩
 
 theorem supervaluationAcceptable_trigger_iff (hR : R.triggers = []) (r : Version) :
     SupervaluationAcceptable J r C ⟨q, R, .trigger p a⟩ ↔
-      TransparentAt C {scopeTruth q fun w e ↦ (w, e) ∈ R.truth J} (J p) (J a) := by
+      TransparentAt C {scopeTruth q fun w ↦ Prod.mk w ⁻¹' R.truth J} (J p) (J a) := by
   simp only [SupervaluationAcceptable, completions_trigger hR, Set.mem_singleton_iff, forall_eq]
   rw [transparentAt_scopeTruth_iff]
-  refine forall₂_congr fun w _ ↦ Iff.trans ?_ (forall_resolution_iff _)
+  refine forall₂_congr fun w _ ↦ Iff.trans ?_
+    (forall_resolution_iff (P := Prod.mk w ⁻¹' J p) (A := Prod.mk w ⁻¹' J a) _)
   simp only [SupervaluationDefined, resolve_trigger_iff J hR]
   exact ⟨fun h ρ ρ' ↦ h (fun e _ _ ↦ ρ e) (fun e _ _ ↦ ρ' e),
     fun h σ σ' ↦ h (σ · p a) (σ' · p a)⟩

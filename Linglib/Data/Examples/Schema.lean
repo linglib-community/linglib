@@ -22,8 +22,11 @@ sentence-level counterpart of `Data/Wordlist/`.
 ## Main definitions
 
 * `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
-  `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
+  `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
+* `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its
+  morphemes and their glosses, as `pyigt` models them, and the conformance of an example with the
+  Leipzig Glossing Rules.
 
 ## Implementation notes
 
@@ -86,8 +89,6 @@ structure SourceRef where
 
 /-- How an example and its judgment were obtained. -/
 inductive Datum.Method where
-  /-- Constructed and judged by the author. -/
-  | introspection
   /-- Elicited from, or judged by, native-speaker consultants. -/
   | elicitation
   /-- Attested in a text, a corpus or on the web. -/
@@ -96,6 +97,39 @@ inductive Datum.Method where
   | experiment
   /-- Cited from a grammar or dictionary that does not say how it was obtained. -/
   | description
+  deriving DecidableEq, Repr
+
+/-- The conformance of an example with the Leipzig Glossing Rules, CLDF's `LGR_Conformance`. -/
+inductive LGRConformance where
+  /-- `WORD_ALIGNED`: each word has its gloss (Rule 1). -/
+  | wordAligned
+  /-- `MORPHEME_ALIGNED`: every word is segmented as its gloss is, and some word is segmented
+  (Rule 2). -/
+  | morphemeAligned
+  deriving DecidableEq, Repr
+
+/-- A morpheme of a word with its gloss, `pyigt`'s `GlossedMorpheme`. -/
+structure GlossedMorpheme where
+  /-- The form of the morpheme, without the punctuation written around it. -/
+  morpheme : List Char
+  /-- The gloss of the morpheme. -/
+  gloss : List Char
+  /-- The separator before the morpheme: `-` for an affix, `=` for a clitic and `~` for a
+  reduplicant; `none` for the first morpheme of the word. -/
+  sep : Option Char := none
+  deriving DecidableEq, Repr
+
+/-- A word of the gloss line with its gloss, `pyigt`'s `GlossedWord`: the word and the gloss as
+the source prints them, and the pairs of a morpheme and its gloss, which the word has when it and
+its gloss are segmented alike, by the same separators in the same order (Rule 2). -/
+structure GlossedWord where
+  /-- The word, as printed. -/
+  word : List Char
+  /-- Its gloss, as printed. -/
+  gloss : List Char
+  /-- Its morphemes with their glosses; empty when the word and the gloss are segmented
+  differently. -/
+  glossedMorphemes : List GlossedMorpheme := []
   deriving DecidableEq, Repr
 
 /-- A `Datum` is a piece of data a paper reports with one of its examples
@@ -119,6 +153,11 @@ structure Datum where
   /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
   source gives no gloss. -/
   glossedTokens : List (String × String)
+  /-- The words of `glossedTokens` with their morphemes, which the generator derives. -/
+  glossedWords : List GlossedWord := []
+  /-- The `LGR_Conformance` column, which the generator derives from `glossedTokens`; `none`
+  when the source gives no gloss. -/
+  lgrConformance : Option LGRConformance := none
   /-- The scenario the source gives for the judgment; empty when it gives none. -/
   context : String
   /-- The judgment the source reports for the expression in the context. -/
@@ -128,7 +167,7 @@ structure Datum where
   verdict : Option Bool := none
   /-- The other forms the source judges in the same frame, each a whole sentence, with their
   judgments. -/
-  alternatives : List (String × Judgment) := []
+  contrasts : List (String × Judgment) := []
   /-- The readings the source distinguishes for the expression, each with its judgment. -/
   readings : List (String × Judgment) := []
   /-- The paper's own columns, as key-value pairs. -/

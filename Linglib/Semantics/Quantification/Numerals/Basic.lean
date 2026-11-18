@@ -7,6 +7,7 @@ module
 
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
+public import Linglib.Core.Order.Cover
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Quantification.Predicative
 
@@ -17,11 +18,12 @@ A bare numeral and its modifications *more than*, *fewer than*, *at least* and *
 five comparisons of `Comparison`. On Kennedy's de-Fregean semantics the form with comparison
 `c` and number `m` is the degree quantifier `Quantifier.MaxIn (c.interval m)`, so the bare numeral
 `MaxIn {m}` is two-sided; in the tradition of Horn it is the lower-bounded
-`Quantifier.individual m`. Each reading derives the other: [Partee's `BE` lowers a de-Fregean form to its interval](##BE_maxIn) and
-[existential closure then gives the lower-bounded numeral](##some_BE_maxIn_singleton), which the
-two-sided one [asymmetrically entails](##maxIn_singleton_lt_individual), while [exhaustifying the
-lower-bounded numeral against the higher ones restores the de-Fregean
-one](##maxIn_singleton_iff_exhAgainst), on counts [the exact reading](##exhAgainst_ge_iff).
+`Quantifier.individual m`. Each reading derives the other: [Partee's `BE` lowers a de-Fregean form
+to its interval](##BE_maxIn) and [existential closure then gives the lower-bounded
+numeral](##some_BE_maxIn_singleton), which the two-sided one [asymmetrically
+entails](##maxIn_singleton_lt_individual), while the two-sided one holds of a degree property
+[whose greatest degree is the number](##Quantifier.maxIn_singleton), the lower-bounded one
+exhaustified against the higher numerals, on counts [the exact reading](##isGreatest_ge_iff).
 Exhaustified against its forms at the other numbers, a form that keeps its number is
 [exact](##mem_exh_range_interval_iff_of_not_isStrict) and *more than* [holds only of an amount
 covering the number](##mem_exh_range_interval_gt_iff), which a dense scale lacks. A numeral
@@ -74,20 +76,15 @@ theorem maxIn_singleton_lt_individual [Preorder D] [NoMaxOrder D] (m : D) :
     let ⟨a, ha⟩ := exists_gt m
     ha.not_ge ((maxIn_singleton.1 (h (Set.Iic a) ha.le)).2 le_rfl)
 
-/-- Exhaustified against the higher numerals, the lower-bounded bare numeral is the de-Fregean
-one, on any degree property: exhaustification is the meaning-changing operation that
-[kennedy-2015] (p. 10:20) says the two-sided reading needs if the singular term is basic. -/
-theorem maxIn_singleton_iff_exhAgainst [LinearOrder D] {X : Set D} {m : D} :
-    MaxIn {m} X ↔ exhAgainst (· < ·) (· ∈ X) m :=
-  maxIn_singleton.trans <| and_congr_right' ⟨fun h _ hm hmX ↦ (h hmX).not_gt hm,
-    fun h n hnX ↦ not_lt.1 fun hn ↦ h n hn hnX⟩
-
 /-- Exhaustified against the higher numerals, *at least `m`* is true of `a` exactly when `a` is
-`m`, the two-sided reading of the bare numeral, on any partially ordered scale. -/
-theorem exhAgainst_ge_iff [PartialOrder D] {a m : D} :
-    exhAgainst (· < ·) (fun j ↦ a ∈ Comparison.ge.interval j) m ↔
-      a ∈ Comparison.eq.interval m :=
-  exhAgainst_lt_iff_maximal.trans <| by simp [eq_comm]
+`m`, the two-sided reading of the bare numeral, on any partially ordered scale. The exhaustified
+lower-bounded numeral holds of a degree property whose greatest degree is `m`, which is the
+de-Fregean `MaxIn {m}` (`Quantifier.maxIn_singleton`): exhaustification is the meaning-changing
+operation that [kennedy-2015] (p. 10:20) says the two-sided reading needs if the singular term is
+basic. -/
+theorem isGreatest_ge_iff [PartialOrder D] {a m : D} :
+    IsGreatest {j | a ∈ Comparison.ge.interval j} m ↔ a ∈ Comparison.eq.interval m :=
+  ⟨fun h ↦ le_antisymm (h.2 (le_refl a)) h.1, by rintro rfl; exact ⟨le_rfl, fun _ h ↦ h⟩⟩
 
 end Readings
 
@@ -102,44 +99,38 @@ section Scale
 
 variable {D : Type*} {a m : D}
 
-/-- Exhaustified against the higher numerals, *more than `m`* is true of `a` exactly when `a`
-covers `m`. -/
-theorem exhAgainst_gt_iff [Preorder D] :
-    exhAgainst (· < ·) (fun j ↦ a ∈ Comparison.gt.interval j) m ↔ m ⋖ a :=
-  Iff.rfl
-
 variable [LinearOrder D]
 
 /-- Exhaustified against its forms at the other numbers, a form that keeps its number, the bare
 numeral, *at least* or *at most*, is true only of that number. -/
 theorem mem_exh_range_interval_iff_of_not_isStrict {c : Comparison} (hc : ¬ c.IsStrict) :
     a ∈ exh (Set.range c.interval) (c.interval m) ↔ a = m := by
-  rw [mem_exh_range_iff_exhAgainst]
+  rw [mem_exh_range_iff]
   cases c
   · simp only [Comparison.interval_eq, Set.singleton_subset_singleton, Set.mem_singleton_iff]
-    exact ⟨And.left, fun h ↦ ⟨h, fun _ hmj haj ↦ hmj (h.symm.trans haj)⟩⟩
-  · simp only [Comparison.interval_ge, Set.Ici_subset_Ici, not_le]
-    exact exhAgainst_ge_iff
+    exact ⟨And.left, fun h ↦ ⟨h, fun _ hi ↦ h.symm.trans hi⟩⟩
+  · simp only [Comparison.interval_ge, Set.Ici_subset_Ici]
+    exact isGreatest_ge_iff
   · exact absurd trivial hc
-  · simp only [Comparison.interval_le, Set.Iic_subset_Iic, not_le, Set.mem_Iic]
-    exact exhAgainst_gt_iff_minimal.trans <| minimal_ge_iff.trans eq_comm
+  · simp only [Comparison.interval_le, Set.Iic_subset_Iic, Set.mem_Iic]
+    exact ⟨fun h ↦ le_antisymm h.1 (h.2 a le_rfl), by rintro rfl; exact ⟨le_rfl, fun _ h ↦ h⟩⟩
   · exact absurd trivial hc
 
 /-- Exhaustified against its forms at the other numbers, *more than `m`* is true of `a` exactly
 when `a` covers `m`. -/
 theorem mem_exh_range_interval_gt_iff :
     a ∈ exh (Set.range Comparison.gt.interval) (Comparison.gt.interval m) ↔ m ⋖ a := by
-  rw [mem_exh_range_iff_exhAgainst]
-  simp only [Comparison.interval_gt, Set.Ioi_subset_Ioi_iff, not_le]
-  exact exhAgainst_gt_iff
+  rw [mem_exh_range_iff]
+  simp only [Comparison.interval_gt, Set.Ioi_subset_Ioi_iff]
+  exact isGreatest_Iio_iff_covBy
 
 /-- Exhaustified against its forms at the other numbers, *fewer than `m`* is true of `a` exactly
 when `m` covers `a`. -/
 theorem mem_exh_range_interval_lt_iff :
     a ∈ exh (Set.range Comparison.lt.interval) (Comparison.lt.interval m) ↔ a ⋖ m := by
-  rw [mem_exh_range_iff_exhAgainst]
-  simp only [Comparison.interval_lt, Set.Iio_subset_Iio_iff, not_le, Set.mem_Iio]
-  exact and_congr_right' (forall_congr' fun _ ↦ imp_not_comm)
+  rw [mem_exh_range_iff]
+  simp only [Comparison.interval_lt, Set.Iio_subset_Iio_iff]
+  exact isLeast_Ioi_iff_covBy
 
 end Scale
 

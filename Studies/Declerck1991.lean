@@ -67,14 +67,14 @@ namespace Link
 (p. 338); anteriority is lying wholly before or up to it, the final point coinciding (45);
 posteriority is lying wholly after it or from it onwards (92); and the present's TO includes the
 one before it (p. 317). The links of a chain connect only neighbouring times (p. 391), as
-`Allen.HoldsAlong` relates them. -/
-def cell : Link → Finset Allen.Relation
-  | .past => Allen.precedes
-  | .anterior => Allen.isBefore
-  | .posterior => Allen.inv Allen.isBefore
-  | .around => Allen.inv Allen.le
+`IntervalAlgebra.HoldsAlong` relates them. -/
+def cell : Link → IntervalAlgebra
+  | .past => IntervalAlgebra.precedes
+  | .anterior => IntervalAlgebra.isBefore
+  | .posterior => IntervalAlgebra.isBefore⁻¹
+  | .around => IntervalAlgebra.le⁻¹
 
-theorem anterior_cell : anterior.cell = Allen.inv Aspect.ViewpointType.perfect.cell := by
+theorem anterior_cell : anterior.cell = Aspect.ViewpointType.perfect.cell⁻¹ := by
   simp [cell, Aspect.ViewpointType.cell]
 
 /-- The link an inflection contributes: the preterit's, and posteriority for an inflectional
@@ -168,28 +168,30 @@ variable {T : Type*} [LinearOrder T]
 its chain, the last being the situation-TO. The basic TO is t₀ in an absolute use and, in the
 Present Perspective System, a TO of a post-present domain that behaves as t₀. -/
 def Realizes (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) : Prop :=
-  Allen.HoldsAlong ((chain f).map Link.cell) b tos
+  IntervalAlgebra.HoldsAlong ((chain f).map Link.cell) b tos
 
 instance (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) :
     Decidable (Realizes f b tos) :=
-  inferInstanceAs (Decidable (Allen.HoldsAlong _ _ _))
+  inferInstanceAs (Decidable (IntervalAlgebra.HoldsAlong _ _ _))
 
 variable {t₀ : T} {x : NonemptyInterval T}
 
 /-- The preterit places its situation-TO wholly before t₀. -/
 theorem realizes_simplePast_iff : Realizes .simplePast (.pure t₀) [x] ↔ x.snd < t₀ := by
-  simp [Realizes, show chain .simplePast = [.past] from rfl, Allen.HoldsAlong, Link.cell,
+  simp [Realizes, show chain .simplePast = [.past] from rfl, IntervalAlgebra.HoldsAlong, Link.cell,
     NonemptyInterval.Precedes]
 
 theorem realizes_presentPerfect_iff : Realizes .presentPerfect (.pure t₀) [x] ↔ x.snd ≤ t₀ := by
-  simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, Allen.HoldsAlong, Link.cell]
+  simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, IntervalAlgebra.HoldsAlong,
+    Link.cell]
 
 theorem realizes_simplePresent_iff : Realizes .simplePresent (.pure t₀) [x] ↔ t₀ ∈ x := by
-  simp [Realizes, show chain .simplePresent = [.around] from rfl, Allen.HoldsAlong, Link.cell,
+  simp [Realizes, show chain .simplePresent = [.around] from rfl, IntervalAlgebra.HoldsAlong,
+    Link.cell,
     NonemptyInterval.le_def, NonemptyInterval.mem_def]
 
 theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.fst := by
-  simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell]
+  simp [Realizes, show chain .future = [.posterior] from rfl, IntervalAlgebra.HoldsAlong, Link.cell]
 
 -- p. 338
 theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
@@ -200,8 +202,9 @@ theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
 theorem Realizes.precedes_of_pastPerfect {b to₂ ts : NonemptyInterval T}
     (h : Realizes .pastPerfect b [to₂, ts]) : ts.Precedes b := by
   simp only [Realizes, show chain .pastPerfect = [.past, .anterior] from rfl, List.map,
-    Link.cell, Allen.HoldsAlong, Allen.mem_toSetRel, Allen.relation_mem_precedes,
-    Allen.relation_mem_isBefore, NonemptyInterval.Precedes] at h
+    Link.cell, IntervalAlgebra.HoldsAlong, IntervalAlgebra.mem_toSetRel,
+      IntervalAlgebra.relation_mem_precedes,
+    IntervalAlgebra.relation_mem_isBefore, NonemptyInterval.Precedes] at h
   exact (h.2.1.trans to₂.fst_le_snd).trans_lt h.1
 
 

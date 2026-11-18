@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Fintype.Flat
 public import Linglib.Data.Examples.Elliott2025
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Quantification.Lattice
 public import Linglib.Semantics.Quantification.Individual
 public import Studies.GroenendijkStokhof1984
@@ -567,11 +567,11 @@ theorem none_inf_noun : Det.none ⊓ noun N = (· = polarize N ⊥) := by
 group, so it is scopeless and the universal force stays with the ∆-operator. -/
 theorem all_scopeless :
     Quantifier.Det.some (Set.ofPred (Det.all ⊓ noun N)) = individual (polarize N ⊤) :=
-  some_eq_individual_iff.2 (all_inf_noun N)
+  some_eq_individual_iff.2 (by rw [all_inf_noun N]; rfl)
 
 theorem none_scopeless :
     Quantifier.Det.some (Set.ofPred (Det.none ⊓ noun N)) = individual (polarize N ⊥) :=
-  some_eq_individual_iff.2 (none_inf_noun N)
+  some_eq_individual_iff.2 (by rw [none_inf_noun N]; rfl)
 
 /-- *Exactly two* of three individuals holds of several groups, so its existential raising is no
 individual and an exceptional scope reading is predicted. -/
@@ -633,14 +633,14 @@ theorem whichDeRe_eq_ker :
   rfl
 
 theorem sentence_relevant (D : Det E) :
-    (whichDeRe G P w).Decides {v | sentence D (extension G w) (extension P v)} := by
-  rw [whichDeRe_eq_ker, Setoid.decides_iff]
+    (whichDeRe G P w).Determines {v | sentence D (extension G w) (extension P v)} := by
+  rw [whichDeRe_eq_ker, Setoid.determines_iff]
   intro v u h
   simp only [Set.mem_ofPred_eq, sentence_iff, Setoid.ker_def.1 h]
 
 /-- Every conservative determiner is relevant to the question. -/
 theorem relevant_of_conservative {Q : Quantifier.Det E} (hQ : Conservative Q) :
-    (whichDeRe G P w).Decides {v | Q (extension G w) (extension P v)} := by
+    (whichDeRe G P w).Determines {v | Q (extension G w) (extension P v)} := by
   simpa only [sentence_ofGQ hQ] using sentence_relevant G P w (Det.ofGQ Q)
 
 end Questions

@@ -23,9 +23,10 @@ found the same illusion with *might*, whose attentive content is the alternative
 [ciardelli-groenendijk-roelofsen-2009], so *might (a and b)* is the schema's first premise with
 `c` the tautology (`Erotetic.mightProblem_eq_disjunction`, by `rfl`); indefinites instantiate it
 with one alternative per witness, under the weaker `Overlaps` rule. The second route is
-exhaustification ((4), after [spector-2007]): innocent exclusion against the substitution
-alternatives strengthens the disjunction to its exclusive reading
-(`Exhaustification.exhIE_conjDisjAlternatives`), from which the conclusion follows classically;
+exhaustification ((4), after [spector-2007]): innocent exclusion against the positive
+propositions strengthens the disjunction to its strongly exhaustive reading
+(`Exhaustification.exhIE_latticeClosure_inter_union`), from which the conclusion follows
+classically;
 posterior-based accounts, by contrast, cannot separate the conclusions *b* and *c* without a
 prior asymmetry (`Erotetic.posterior_eq_iff`). The shared apparatus lives in
 `Processing.Reasoning.Erotetic`; this file keeps what is specific to the paper. Footnote 6's
@@ -51,8 +52,9 @@ ordering source, reflexivity alone does not make best-worlds possibility veridic
   avoids.
 * The indefinite instance uses the `Overlaps` selection rule: its match is on the witness,
   which bare propositions cannot see, and the paper gives no criterion beyond "related to".
-* (4b) is `Exhaustification.exhIE_conjDisjAlternatives`; the four-member Sauerland set
-  provably does not yield it.
+* (4b) is `Exhaustification.exhIE_latticeClosure_inter_union`, against the closure of the atoms
+  under conjunction and disjunction; `Exhaustification.exhIE_eq_exhMW_of_infClosure_subset`
+  gives it for any part of that closure containing the conjunctions of the atoms.
 * Criteria A–C of the anatomy are derived from the paper's own contrast verdicts, with the
   marginal order contrast counting as a difference, as the paper's classification requires; D
   and the full classification are the paper's marks in the `anatomy` rows.

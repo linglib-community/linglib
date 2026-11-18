@@ -55,13 +55,13 @@ variable {α : Type*}
 C]'s A are B* holds iff `Q₁` relates the `C`s that possess some `A` to the `x` with `Q₂ (π A R x) B`
 ([peters-westerstahl-2006], (7.30)). -/
 def Poss (Q₁ : Det α) (C : Set α) (Q₂ : Det α) (R : α → α → Prop) : Det α :=
-  fun A B ↦ Q₁ (C ∩ {x | dom A R x}) {x | Q₂ (π A R x) B}
+  fun A B ↦ Q₁ (C ∩ {x | dom (· ∈ A) R x}) {x | Q₂ (π A (fun x ↦ {y | R x y}) x) B}
 
 /-- The possessive quantifier of a possessor noun phrase `Q`, under which *[Q]'s A are B* holds iff
 `Q` holds of the `x` that possess some `A` and satisfy `Q₂ (π A R x) B` ([peters-westerstahl-2006],
 (7.45)). -/
 def PossNP (Q : Quantifier α) (Q₂ : Det α) (R : α → α → Prop) : Det α :=
-  fun A B ↦ Q {a | dom A R a ∧ Q₂ (π A R a) B}
+  fun A B ↦ Q {a | dom (· ∈ A) R a ∧ Q₂ (π A (fun x ↦ {y | R x y}) a) B}
 
 /-! ### Conservativity -/
 
@@ -113,15 +113,16 @@ theorem poss_eq_possNP_restrict {Q₁ : Det α} (hSym : Std.Symm Q₁) (hCons : 
 /-! ### Individual possessors -/
 
 theorem possNP_individual_iff {Q₂ : Det α} {R : α → α → Prop} {a : α} {A B : Set α} :
-    PossNP (individual a) Q₂ R A B ↔ dom A R a ∧ Q₂ (π A R a) B :=
+    PossNP (individual a) Q₂ R A B ↔
+      dom (· ∈ A) R a ∧ Q₂ (π A (fun x ↦ {y | R x y}) a) B :=
   Iff.rfl
 
 theorem possNP_individual_existential_import {Q₂ : Det α} {R : α → α → Prop}
-    {a : α} {A B : Set α} (h : PossNP (individual a) Q₂ R A B) : dom A R a :=
+    {a : α} {A B : Set α} (h : PossNP (individual a) Q₂ R A B) : dom (· ∈ A) R a :=
   h.1
 
 theorem possNP_individual_the {R : α → α → Prop} {a : α} {A B : Set α} :
-    PossNP (individual a) the R A B ↔ the (π A R a) B :=
+    PossNP (individual a) the R A B ↔ the (π A (fun x ↦ {y | R x y}) a) B :=
   ⟨And.right, fun h ↦ ⟨h.elim fun x hx ↦ ⟨x, (hx.1 x).2 rfl⟩, h⟩⟩
 
 /-! ### Quantity invariance -/

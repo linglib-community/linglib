@@ -29,17 +29,6 @@ conjunction is [modal disjunction under de Morgan's laws](##ElliottSudo2025.neg_
   updates (70) and (66) of the bathroom disjunction his (33) and (35), and the failure (62) of
   Egli's theorem in the negative dimension his (41b), all in `Elliott2023`.
 
-## Errata
-
-* Descent (Defs. 3.3, 3.4) requires only a larger domain, though the prose glosses a descendant as
-  identical except for more anaphoric information. So read, [`◇P(x)` passes both positively and
-  negatively](##ElliottSudo2025.possible_and_domSubsists_negative) at a state where `x` is `P` at
-  one point of a world and not at another; the substrate takes extension.
-* (45) compares worlds, so at the state `s[ε_y]` of (121), [where one student read a novel and
-  another read none, it retains no point](##ElliottSudo2025.existsNegative_misses_reader), against
-  the gloss that (121) requires some student to have read no novel, which the subsistence-based
-  negative update meets.
-
 ## TODO
 
 * The flavour-neutral modals (89), simplification of disjunctive antecedents (127) and wide free
@@ -290,11 +279,11 @@ end Bathroom
 /-! ### Double negation (§2.1, §3.3) -/
 
 -- (49) [groenendijk-stokhof-1991]
+open Update SetRel AntidomainMonoid in
 theorem dne_bus_not_dpl [Nontrivial E] :
     (∀ φ : BilateralUpdate W V E, ~~φ = φ) ∧
       ∃ (x : ℕ) (φ : Update (ℕ → E)),
-        Update.test (Update.neg (Update.test (Update.neg (Update.dexists x φ)))) ≠
-          Update.dexists x φ :=
+        ∼∼(Update.randomAssign x ○ φ) ≠ Update.randomAssign x ○ φ :=
   ⟨BilateralUpdate.neg_neg, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
 /-! ### Partial familiarity (§3.3, (56)–(57)) -/

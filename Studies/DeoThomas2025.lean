@@ -275,7 +275,7 @@ theorem widerThan_mentionAll [Nontrivial A] :
       rw [Set.singleton_subset_singleton.1 h]
   have hsome : alt (mentionSome (A := A)) = (fun a ↦ {E | a ∈ E}) '' Set.univ :=
     alt_which_of_forall_subset_eq ⟨a, Set.mem_univ a⟩ fun a _ b _ h ↦ by
-      have hba : b = a := h (Set.mem_singleton a)
+      have hba : b = a := h (a := {a}) (Set.mem_singleton a)
       rw [hba]
   refine ⟨?_, ?_, {{a}}, hall ▸ ⟨{a}, Set.singleton_nonempty a, rfl⟩, {E | a ∈ E},
     hsome ▸ ⟨a, Set.mem_univ a, rfl⟩, Set.singleton_subset_iff.2 (Set.mem_singleton a),

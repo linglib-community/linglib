@@ -46,7 +46,7 @@ variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : N
 `σ` and that the clause holds at it. -/
 def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
     (ℕ → NonemptyInterval T) → Prop :=
-  fun g ↦ Perspective.Presup Allen.precedes σ (g n) ∧ P (g n)
+  fun g ↦ σ ~[IntervalAlgebra.toSetRel .precedes] g n ∧ P (g n)
 
 theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
   simp [Past]
@@ -54,12 +54,12 @@ theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
 theorem dependsOn_past : DependsOn (Past n P σ) {n} := fun g g' h ↦ by
   simp only [Past, h n rfl]
 
-theorem Past.sometime (h : Past n P σ g) : ◇[Allen.toSetRel Allen.precedes] P σ :=
+theorem Past.sometime (h : Past n P σ g) : ◇[IntervalAlgebra.toSetRel .precedes] P σ :=
   ⟨_, h.1, h.2⟩
 
 /-- With its index bound by an existential quantifier, the past tense is Prior's past. -/
 theorem exists_past_iff_sometime :
-    (∃ t, Λ[n] (Past n P σ) g t) ↔ ◇[Allen.toSetRel Allen.precedes] P σ := by
+    (∃ t, Λ[n] (Past n P σ) g t) ↔ ◇[IntervalAlgebra.toSetRel .precedes] P σ := by
   simp [Past, Diamond]
 
 /-! ### The stove
@@ -67,14 +67,14 @@ theorem exists_past_iff_sometime :
 *I didn't turn off the stove*, with `P` the times at which the speaker turns off the stove. -/
 
 /-- A speaker who never turned off the stove did not turn it off at the salient time. -/
-theorem never_entails_deictic (hn : Perspective.Presup Allen.precedes σ (g n))
-    (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ P t) σ g :=
+theorem never_entails_deictic (hn : σ ~[IntervalAlgebra.toSetRel .precedes] g n)
+    (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes] P σ) : Past n (fun t ↦ ¬ P t) σ g :=
   ⟨hn, fun hP ↦ h (Past.sometime ⟨hn, hP⟩)⟩
 
 /-- A speaker who did not turn off the stove at the salient time did not turn it off at some
 past time. -/
 theorem deictic_entails_sometime_not (h : Past n (fun t ↦ ¬ P t) σ g) :
-    ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ :=
+    ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ ¬ P t) σ :=
   h.sometime
 
 /-- The sentence is true of a speaker who turned off the stove on an earlier occasion and not at
@@ -82,20 +82,21 @@ the salient time, so the reading on which the speaker never turned it off is too
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
-      Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ :=
-  ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
-    .pure 1, Perspective.presup_precedes.2 (by decide), rfl⟩
+      Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[IntervalAlgebra.toSetRel .precedes] P σ :=
+  ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide),
+    by decide⟩,
+    .pure 1, IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), rfl⟩
 
 /-- The sentence is false of a speaker who turned off the stove at the salient time, although
 there are past times at which the speaker did not, so that reading is too weak. -/
 theorem sometime_not_too_weak :
     ∃ (σ : NonemptyInterval ℤ) (g : ℕ → NonemptyInterval ℤ)
       (P : NonemptyInterval ℤ → Prop),
-      ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ ∧
-        Perspective.Presup Allen.precedes σ (g 0) ∧ ¬ Past 0 (fun t ↦ ¬ P t) σ g :=
+      ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ ¬ P t) σ ∧
+        σ ~[IntervalAlgebra.toSetRel .precedes] g 0 ∧ ¬ Past 0 (fun t ↦ ¬ P t) σ g :=
   ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 5),
-    ⟨.pure 1, Perspective.presup_precedes.2 (by decide), by decide⟩,
-    Perspective.presup_precedes.2 (by decide), fun h ↦ h.2 rfl⟩
+    ⟨.pure 1, IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide⟩,
+    IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), fun h ↦ h.2 rfl⟩
 
 /-! ### Anaphora
 
@@ -111,10 +112,11 @@ theorem anaphoric_iff :
 /-- Two existential pasts may be true of different times and of no common one. -/
 theorem existential_pasts_not_anaphoric :
     ∃ (σ : NonemptyInterval ℤ) (P Q : NonemptyInterval ℤ → Prop),
-      ◇[Allen.toSetRel Allen.precedes] P σ ∧ ◇[Allen.toSetRel Allen.precedes] Q σ ∧
+      ◇[IntervalAlgebra.toSetRel .precedes] P σ ∧ ◇[IntervalAlgebra.toSetRel .precedes] Q σ ∧
         ∀ t, ¬ (P t ∧ Q t) :=
-  ⟨.pure 10, (· = .pure 1), (· = .pure 2), ⟨_, Perspective.presup_precedes.2 (by decide), rfl⟩,
-    ⟨_, Perspective.presup_precedes.2 (by decide), rfl⟩,
+  ⟨.pure 10, (· = .pure 1), (· = .pure 2), ⟨_,
+    IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), rfl⟩,
+    ⟨_, IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), rfl⟩,
     fun _ ⟨h₁, h₂⟩ ↦ absurd (h₁.symm.trans h₂) (by decide)⟩
 
 end Partee1973

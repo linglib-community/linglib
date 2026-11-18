@@ -25,6 +25,9 @@ such subalgebras [are isomorphic iff they have equally many atoms](##nonempty_or
 and two families whose minterms vanish at the same polarity assignments [generate isomorphic
 subalgebras](##closureOrderIsoOfMintermEqBot), by an isomorphism matching the families.
 
+In a Boolean algebra of sets, the subalgebra a family generates [separates no more points than the
+family does](##mem_iff_of_mem_closure).
+
 [UPSTREAM] candidates for `Mathlib.Order.BooleanSubalgebra`.
 -/
 
@@ -88,6 +91,22 @@ noncomputable def orderIsoMapOfInjective (L : BooleanSubalgebra α) (hf : Functi
     rw [← inf_eq_left, ← InfHomClass.map_inf, hf.eq_iff, inf_eq_left]
 
 end Map
+
+section Set
+
+variable {X : Type*} {S : Set (Set X)} {s : Set X} {x y : X}
+
+/-- Two points that no set of a family separates are separated by no set of the Boolean subalgebra
+the family generates. -/
+theorem mem_iff_of_mem_closure (hs : s ∈ closure S) (h : ∀ t ∈ S, x ∈ t ↔ y ∈ t) :
+    x ∈ s ↔ y ∈ s := by
+  induction hs using closure_bot_sup_induction with
+  | mem t ht => exact h t ht
+  | bot => exact Iff.rfl
+  | sup _ _ _ _ ih₁ ih₂ => exact or_congr ih₁ ih₂
+  | compl _ _ ih => exact not_congr ih
+
+end Set
 
 variable {α ι : Type*} [BooleanAlgebra α] [Fintype ι] {φ : ι → α}
 

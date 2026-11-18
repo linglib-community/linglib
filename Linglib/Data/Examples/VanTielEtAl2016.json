@@ -10,7 +10,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not free?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "cheap, free"],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not always?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "sometimes, always"],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not all?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "some, all"],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not certain?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "possible, certain"],
@@ -98,7 +98,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not will?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "may, will"],
@@ -120,7 +120,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not impossible?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "difficult, impossible"],
@@ -142,7 +142,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not extinct?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "rare, extinct"],
@@ -164,7 +164,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not have to?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "may, have to"],
@@ -186,7 +186,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not hot?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "warm, hot"],
@@ -208,7 +208,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not none?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "few, none"],
@@ -230,7 +230,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not depleted?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "low, depleted"],
@@ -252,7 +252,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unsolvable?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "hard, unsolvable"],
@@ -274,7 +274,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not obligatory?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "allowed, obligatory"],
@@ -296,7 +296,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unavailable?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "scarce, unavailable"],
@@ -318,7 +318,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not succeed?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "try, succeed"],
@@ -340,7 +340,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not delicious?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "palatable, delicious"],
@@ -362,7 +362,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unforgettable?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "memorable, unforgettable"],
@@ -384,7 +384,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not love?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "like, love"],
@@ -406,7 +406,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not perfect?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "good, perfect"],
@@ -428,7 +428,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not excellent?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "good, excellent"],
@@ -450,7 +450,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not cold?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "cool, cold"],
@@ -472,7 +472,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not starving?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "hungry, starving"],
@@ -494,7 +494,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not good?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "adequate, good"],
@@ -516,7 +516,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not horrific?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "unsettling, horrific"],
@@ -538,7 +538,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not loathe?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "dislike, loathe"],
@@ -560,7 +560,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not know?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "believe, know"],
@@ -582,7 +582,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not finish?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "start, finish"],
@@ -604,7 +604,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not win?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "participate, win"],
@@ -626,7 +626,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not scared?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "wary, scared"],
@@ -648,7 +648,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not ancient?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "old, ancient"],
@@ -670,7 +670,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not enormous?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "big, enormous"],
@@ -692,7 +692,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not tight?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "snug, tight"],
@@ -714,7 +714,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not stunning?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "attractive, stunning"],
@@ -736,7 +736,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not unique?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "special, unique"],
@@ -758,7 +758,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not beautiful?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "pretty, beautiful"],
@@ -780,7 +780,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not brilliant?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "intelligent, brilliant"],
@@ -802,7 +802,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not hilarious?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "funny, hilarious"],
@@ -824,7 +824,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not black?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "dark, black"],
@@ -846,7 +846,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not tiny?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "small, tiny"],
@@ -868,7 +868,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not hideous?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "ugly, hideous"],
@@ -890,7 +890,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not ridiculous?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "silly, ridiculous"],
@@ -912,7 +912,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not exhausted?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "tired, exhausted"],
@@ -934,7 +934,7 @@
     "translation": "",
     "context": "Experiment 1: Mary or John says the sentence; would you conclude that, according to the speaker, it is not happy?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["scale", "content, happy"],

@@ -11,7 +11,7 @@
     "translation": "The child hit the dog.",
     "context": "Active clause in SVO order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dakdanak-an"],
@@ -32,7 +32,7 @@
     "translation": "The child hit the dog.",
     "context": "Active clause in VOS order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dakdanak-an"],
@@ -53,7 +53,7 @@
     "translation": "The dog was hit by John.",
     "context": "Passive clause in SVO order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -74,7 +74,7 @@
     "translation": "The dog was hit by John.",
     "context": "Passive clause in VOS order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -96,7 +96,7 @@
     "translation": "What did John give to Mary?",
     "context": "The wh-object of an active ditransitive fronted; the subject precedes the verb.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -118,7 +118,7 @@
     "translation": "What did the child eat?",
     "context": "The wh-object of an active clause in situ, immediately after the verb.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dakdanak-i"],
@@ -140,7 +140,7 @@
     "translation": "Who was a book given to Mary by?",
     "context": "The wh-agent of a passive ditransitive fronted.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "ise"],
@@ -163,7 +163,7 @@
     "translation": "Who were some flowers given to Mary by?",
     "context": "The wh-agent of a passive ditransitive in situ, immediately after the verb.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "ise"],
@@ -186,7 +186,7 @@
     "translation": "To whom did John give a book?",
     "context": "The wh-goal PP of an active ditransitive fronted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -209,7 +209,7 @@
     "translation": "To whom was the book given by John?",
     "context": "The wh-goal PP of a passive ditransitive fronted.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -232,7 +232,7 @@
     "translation": "One book was given to Mary by John.",
     "context": "Passive ditransitive with the indirect object after the subject.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -255,7 +255,7 @@
     "translation": "The book was given to Mary by John.",
     "context": "Passive ditransitive with the indirect object before the subject.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -277,7 +277,7 @@
     "translation": "Bunga saw herself.",
     "context": "Active clause in SVO order; the subject antecedes a reflexive direct object.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-Bunga"],
@@ -300,7 +300,7 @@
     "translation": "Himself cleaned the child.",
     "context": "Active clause in SVO order; the direct object would antecede a reflexive subject.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dirina sandiri"],
@@ -323,7 +323,7 @@
     "translation": "Bunga was seen by herself.",
     "context": "Passive clause in SVO order; the passive subject antecedes a reflexive passive agent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dirina sandiri"],
@@ -346,7 +346,7 @@
     "translation": "What did John hit?",
     "context": "The wh-object of an active monotransitive fronted.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -367,7 +367,7 @@
     "translation": "What did John hit?",
     "context": "The wh-object of an active monotransitive in situ.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -388,7 +388,7 @@
     "translation": "John saw Mary.",
     "context": "Active monotransitive clause in VOS order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -410,7 +410,7 @@
     "translation": "John gave a book to Mary.",
     "context": "Active ditransitive clause in VOS order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -432,7 +432,7 @@
     "translation": "Bunga saw herself.",
     "context": "Active clause in VOS order; the subject antecedes a reflexive direct object.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-Bunga"],
@@ -455,7 +455,7 @@
     "translation": "Herself saw si Bunga.",
     "context": "Active clause in SVO order; the direct object would antecede a reflexive subject.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dirina sandiri"],
@@ -478,7 +478,7 @@
     "translation": "Himself was seen by Torus.",
     "context": "Passive clause in VOS order; the passive agent antecedes a reflexive passive subject.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-Torus"],
@@ -501,7 +501,7 @@
     "translation": "John was seen by himself.",
     "context": "Passive clause in VOS order; the passive subject antecedes a reflexive passive agent.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dirina sandiri"],
@@ -524,7 +524,7 @@
     "translation": "This boy hit the dog.",
     "context": "Active clause in SVO order.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "dakdanak-on"],
@@ -546,7 +546,7 @@
     "translation": "What did John give to Mary?",
     "context": "The wh-object of an active ditransitive in SVO order in situ.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "si-John"],
@@ -568,7 +568,7 @@
     "translation": "Who was the dog hit by?",
     "context": "The wh-agent of a passive clause in SVO order in situ.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "ise"],
@@ -589,7 +589,7 @@
     "translation": "Who was the dog hit by?",
     "context": "The wh-agent of a passive clause in SVO order fronted.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["agent", "ise"],
@@ -608,7 +608,7 @@
     "translation": "",
     "context": "English passive; the passive subject antecedes a reflexive in the by-phrase.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "patient"]
@@ -626,7 +626,7 @@
     "translation": "",
     "context": "English passive; the by-phrase agent would antecede a reflexive passive subject.",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["antecedent", "agent"]

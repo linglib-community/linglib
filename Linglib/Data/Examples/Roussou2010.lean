@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti")] }
 
@@ -37,7 +37,7 @@ def ex1a_an : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an")] }
 
@@ -50,7 +50,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "anarotjeme"), ("complementizer", "an")] }
 
@@ -63,7 +63,7 @@ def ex1b_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "anarotjeme"), ("complementizer", "oti")] }
 
@@ -76,7 +76,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "pu")] }
 
@@ -89,7 +89,7 @@ def ex1c_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "oti")] }
 
@@ -102,7 +102,7 @@ def ex1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thelo"), ("complementizer", "na")] }
 
@@ -115,7 +115,7 @@ def ex1d_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thelo"), ("complementizer", "oti")] }
 
@@ -128,7 +128,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "na")] }
 
@@ -141,7 +141,7 @@ def ex2b_an : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an"), ("negation", "yes")] }
 
@@ -154,7 +154,7 @@ def ex2b_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("negation", "yes")] }
 
@@ -167,7 +167,7 @@ def ex2c_an : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an"), ("question", "yes")] }
 
@@ -180,7 +180,7 @@ def ex2c_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("question", "yes")] }
 
@@ -193,7 +193,7 @@ def ex3a_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti")] }
 
@@ -206,7 +206,7 @@ def ex3a_na : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "na")] }
 
@@ -219,7 +219,7 @@ def ex3b_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("tense", "past")] }
 
@@ -232,7 +232,7 @@ def ex3b_na : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "na"), ("tense", "past")] }
 
@@ -245,7 +245,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("negation", "yes")] }
 
@@ -258,7 +258,7 @@ def ex17_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti")] }
 
@@ -271,7 +271,7 @@ def ex17_pu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimameStat"), ("complementizer", "pu")] }
 
@@ -284,7 +284,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "paradhexome"), ("complementizer", "oti"), ("tense", "past")] }
 
@@ -297,7 +297,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "pu")] }
 
@@ -310,7 +310,7 @@ def ex20a_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "oti")] }
 
@@ -323,7 +323,7 @@ def ex20b_pu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "anisixo"), ("complementizer", "pu")] }
 
@@ -336,7 +336,7 @@ def ex20b_oti : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "anisixo"), ("complementizer", "oti")] }
 
@@ -349,7 +349,7 @@ def ex22a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "leo"), ("complementizer", "pu"), ("question", "yes"), ("focus", "yes"), ("tense", "past")] }
 
@@ -362,7 +362,7 @@ def ex23c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nomizo"), ("complementizer", "na"), ("negation", "yes")] }
 
@@ -375,7 +375,7 @@ def ex23c_star : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "nomizo"), ("complementizer", "na")] }
 
@@ -388,7 +388,7 @@ def ex23d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "na"), ("tense", "past")] }
 
@@ -401,7 +401,7 @@ def ex25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti")] }
 
@@ -414,7 +414,7 @@ def ex25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "na")] }
 
@@ -427,7 +427,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "na"), ("tense", "past")] }
 
@@ -440,7 +440,7 @@ def ex26a_star : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "na"), ("tense", "past"), ("embeddedTense", "past")] }
 
@@ -453,7 +453,7 @@ def ex34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an"), ("negation", "yes")] }
 
@@ -466,7 +466,7 @@ def ex34_star : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an")] }
 

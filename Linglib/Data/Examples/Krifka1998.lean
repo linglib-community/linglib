@@ -24,7 +24,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := "Nominal measure construction with an extensive measure function."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measureFunction", "extensive")] }
 
@@ -37,7 +37,7 @@ def ex11b : Datum :=
     glossedTokens := []
     context := "A container used as an extensive measure function."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measureFunction", "extensive")] }
 
@@ -50,7 +50,7 @@ def ex11c : Datum :=
     glossedTokens := []
     context := "Nominal measure construction with a non-extensive measure function."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measureFunction", "nonExtensive")] }
 
@@ -63,7 +63,7 @@ def ex11d : Datum :=
     glossedTokens := []
     context := "Nominal measure construction with a non-extensive measure function."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measureFunction", "nonExtensive")] }
 
@@ -76,7 +76,7 @@ def ex12c : Datum :=
     glossedTokens := []
     context := "A measure phrase applied to a predicate that is already quantized; contrast (12a) hundred grams of wool and (12b) five hundred meters of wool."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("measureFunction", "extensive")] }
 
@@ -89,7 +89,7 @@ def ex58 : Datum :=
     glossedTokens := []
     context := "An interval adverbial with a non-quantized but temporally atomic predicate."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
@@ -102,7 +102,7 @@ def ex60a : Datum :=
     glossedTokens := []
     context := "A non-quantized object that nevertheless yields a telic predicate; the paper gives the indefinite wide scope over the adverbial."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
@@ -115,7 +115,7 @@ def ex60b : Datum :=
     glossedTokens := []
     context := "A non-quantized, cumulative object that nevertheless yields a telic predicate."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
@@ -128,7 +128,7 @@ def ex60c : Datum :=
     glossedTokens := []
     context := "A non-quantized, cumulative object that nevertheless yields a telic predicate."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
@@ -141,7 +141,7 @@ def ex66a : Datum :=
     glossedTokens := []
     context := "The reflexive clitic se with a telic predicate."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clitic", "se")] }
 
@@ -154,7 +154,7 @@ def ex66b : Datum :=
     glossedTokens := []
     context := "The reflexive clitic se with an atelic predicate; without se the sentence is fine."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("clitic", "se")] }
 
@@ -167,7 +167,7 @@ def ex74 : Datum :=
     glossedTokens := []
     context := "A movement with a specified source and goal; telic, so it takes in an hour."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("path", "sourceGoal")] }
 
@@ -180,7 +180,7 @@ def ex75 : Datum :=
     glossedTokens := []
     context := "A movement with a specified source and direction, read as an initial part of a movement to the goal; not telic."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("path", "sourceDirection")] }
 
@@ -193,7 +193,7 @@ def ex75_in : Datum :=
     glossedTokens := []
     context := "An interval adverbial with a directed but goalless movement."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("path", "sourceDirection"), ("adverbial", "in")] }
 
@@ -206,7 +206,7 @@ def ex77a_in : Datum :=
     glossedTokens := []
     context := "A change on the scale of doneness with an explicitly specified goal."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "in")] }
 
@@ -219,7 +219,7 @@ def ex77a_for : Datum :=
     glossedTokens := []
     context := "A change on the scale of doneness with an explicitly specified goal."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "for")] }
 
@@ -232,7 +232,7 @@ def ex77b_in : Datum :=
     glossedTokens := []
     context := "A resultative adjective specifying the goal of the change."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "in")] }
 
@@ -245,7 +245,7 @@ def ex77b_for : Datum :=
     glossedTokens := []
     context := "A resultative adjective specifying the goal of the change."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "for")] }
 
@@ -258,7 +258,7 @@ def ex77c : Datum :=
     glossedTokens := []
     context := "Ambiguous between a change to the natural end state, which takes in an hour, and the bare process, which takes for an hour."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("goal reached (in an hour)", .acceptable), ("process only (for an hour)", .acceptable)]
     paperFeatures := [("goal", "implicit")] }
 
@@ -271,7 +271,7 @@ def ex78 : Datum :=
     glossedTokens := []
     context := "An achievement, read as the minimal final part of a movement to London."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("path", "goal")] }
 

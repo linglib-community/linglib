@@ -24,7 +24,7 @@ def ruytenbeek2017_ex17 : Datum :=
     glossedTokens := []
     context := "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "imperative")] }
 
@@ -37,7 +37,7 @@ def ruytenbeek2017_ex18 : Datum :=
     glossedTokens := []
     context := "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "controlInterrogative")] }
 
@@ -50,7 +50,7 @@ def ruytenbeek2017_ex19 : Datum :=
     glossedTokens := []
     context := "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "canYou")] }
 
@@ -63,7 +63,7 @@ def ruytenbeek2017_ex20 : Datum :=
     glossedTokens := []
     context := "Study 1: a grid of coloured shapes with yes and no buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "isItPossible")] }
 
@@ -76,7 +76,7 @@ def ruytenbeek2017_ex23 : Datum :=
     glossedTokens := []
     context := "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "youMust")] }
 
@@ -89,7 +89,7 @@ def ruytenbeek2017_ex24 : Datum :=
     glossedTokens := []
     context := "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "imperative")] }
 
@@ -102,7 +102,7 @@ def ruytenbeek2017_ex25 : Datum :=
     glossedTokens := []
     context := "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "youCan")] }
 
@@ -115,7 +115,7 @@ def ruytenbeek2017_ex26 : Datum :=
     glossedTokens := []
     context := "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "itIsPossible")] }
 
@@ -128,7 +128,7 @@ def ruytenbeek2017_ex27 : Datum :=
     glossedTokens := []
     context := "Study 2: a grid of coloured shapes with true and false buttons beneath it; the sentence is heard through headphones and answered either by moving a shape or by clicking a button."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "controlDeclarative")] }
 
@@ -141,7 +141,7 @@ def ruytenbeek2017_corpus_pouvezvous : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "canYou")] }
 
@@ -154,7 +154,7 @@ def ruytenbeek2017_corpus_estilpossible : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "isItPossible")] }
 

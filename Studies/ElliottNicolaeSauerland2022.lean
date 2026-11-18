@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.SupClosed
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Questions.Number
 public import Linglib.Data.Examples.ElliottNicolaeSauerland2022
 public import Linglib.Data.Examples.Readers
@@ -43,14 +43,6 @@ presupposition](##avoidsIneffability_a_iff).
 * (24c) has a plural antecedent. With one *quiénes_e* can also drop EXH where existence is
   presupposed, which the paper does not test. (68) has none, and the paper leaves it open: [both
   phrases are predicted usable](##usable_ex_68), against the judgment on *quiénes*.
-
-## Errata
-
-Table 1 prints a cross for the anti-singleton inference of plural *which* phrases, and (15) tags a
-plural *which* question as carrying uniqueness, against (3), (16), (17) and the surrounding text.
-The proposition said to answer (76) prints `B ⊕ C` where (76) and the sentences before it have
-`A ⊕ C`. The text before (55) calls *quién_e* acceptable in `≥ 1` contexts, against (51); it should
-be the ambiguous *quién*.
 
 ## TODO
 
@@ -827,7 +819,7 @@ def starred (x : E) : Set (Set E) := {v | AlgClosure (· ∈ v) x}
 
 theorem singleton_mem_starred_iff : {g} ∈ starred x ↔ x = g := by
   refine ⟨fun h ↦ ?_, fun h ↦ .base h⟩
-  induction h with
+  induction h using AlgClosure.induction with
   | base h => exact h
   | sum _ _ ih₁ ih₂ => rw [ih₁, ih₂, sup_idem]
 
@@ -835,13 +827,13 @@ theorem starred_subset_of_pair_mem (h : {g₁, g₂} ∈ starred x) :
     starred g₁ ∩ starred g₂ ⊆ starred x := by
   rintro v ⟨h₁, h₂⟩
   change AlgClosure _ x at h
-  induction h with
+  induction h using AlgClosure.induction with
   | base h => rcases h with rfl | rfl <;> assumption
   | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
 
 theorem starred_ne_univ : starred g ≠ univ := fun h ↦ by
   have hemp {x : E} : ¬ AlgClosure (· ∈ (∅ : Set E)) x := fun hx ↦ by
-    induction hx with
+    induction hx using AlgClosure.induction with
     | base h => exact h
     | sum _ _ ih _ => exact ih
   exact hemp (h ▸ mem_univ _ : (∅ : Set E) ∈ starred g)
@@ -943,7 +935,7 @@ theorem context_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     ∀ e ∈ Examples.all, ∀ κ ∈ ctx? e,
       (∀ i ∈ item? "form" e,
         (i.Usable (HasPluralAntecedent e) (κ.set a b) ↔ e.judgment = .acceptable)) ∧
-      (∀ i ∈ item? "rival" e, ∀ j ∈ e.alternatives.head?.map Prod.snd,
+      (∀ i ∈ item? "rival" e, ∀ j ∈ e.contrasts.head?.map Prod.snd,
         (i.Usable (HasPluralAntecedent e) (κ.set a b) ↔ j = .acceptable)) := by
   simp only [Item.usable_set_iff ha hb hab]
   decide +kernel
@@ -953,7 +945,7 @@ theorem context_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
 theorem usable_ex_68 (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     Item.quien.Usable False (Ctx.several.set a b) ∧
       Item.quienes.Usable False (Ctx.several.set a b) ∧
-        Examples.ex_68.alternatives.head?.map Prod.snd = some .unacceptable :=
+        Examples.ex_68.contrasts.head?.map Prod.snd = some .unacceptable :=
   ⟨(Item.usable_set_iff ha hb hab _ _).2 (.inl not_false),
     (Item.usable_set_iff ha hb hab _ _).2 (.inl rfl), by decide⟩
 

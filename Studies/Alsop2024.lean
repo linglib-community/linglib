@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Probabilistic.Uniform
 public import Linglib.Data.Examples.Alsop2024
 public import Linglib.Data.Examples.Readers
 
@@ -122,7 +122,7 @@ theorem literallyTrue_iff (s : State) : LiterallyTrue s ↔ meaning .anyA s := b
 
 /-- The literal listener (36) conditions the state prior on the meaning of the parse. -/
 noncomputable abbrev literal (μ : Measure State) : Kernel Parse State :=
-  RSA.listener μ (truthful fun p ↦ (sem p : Set State))
+  RSA.literalListener μ (fun p ↦ (sem p : Set State))
 
 /-- The speaker (37)–(38) knows the state and chooses an utterance together with a parse, at
 equal costs. -/
@@ -151,14 +151,14 @@ theorem mayAny_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener υ α .mayAny {(.onlyS, p)} = 0 := by
   by_contra h
   obtain ⟨hp, -, hs⟩ := (listener_compProd_dirac_apply_singleton_ne_zero_iff _ _ _ _ _ _).1 h
-  exact hs (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _
+  exact hs (speaker_literalListener_dirac_apply_singleton_eq_zero hα _ _ _
     (by revert hp; cases p <;> decide))
 
 theorem mayEvery_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener υ α .mayEvery {(.onlyS, p)} = 0 := by
   by_contra h
   obtain ⟨hp, -, hs⟩ := (listener_compProd_dirac_apply_singleton_ne_zero_iff _ _ _ _ _ _).1 h
-  exact hs (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _
+  exact hs (speaker_literalListener_dirac_apply_singleton_eq_zero hα _ _ _
     (by revert hp; cases p <;> decide))
 
 /-- Hearing *may any*, the listener prefers each exclusiveness state to each non-exclusive one at

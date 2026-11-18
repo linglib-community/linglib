@@ -24,7 +24,7 @@ def ex_16a : Datum :=
     glossedTokens := []
     context := "Paul is by himself at his town's small zoo, visiting the lion's cage. After seeing a picture of Paul with the lion on Instagram, his friend Josie decides to come meet him. She has never been to the zoo before and does not know where any animals are located. Josie calls Paul, saying: 'I saw you in a picture with the lion. Where are you?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and lion"), ("property", "context-dependence")] }
 
@@ -37,7 +37,7 @@ def ex_16b : Datum :=
     glossedTokens := []
     context := "Paul is by himself at his town's small zoo, visiting the lion's cage. After seeing a picture of Paul with the lion on Instagram, his friend Josie decides to come meet him. She has never been to the zoo before and does not know where any animals are located. Josie asks a zoo ranger: 'I saw my friend in a picture with the lion. Where are they?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "3pl"), ("group", "Paul and lion"), ("property", "context-dependence")] }
 
@@ -50,7 +50,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := "Sam is at the dog park with his beloved Doberman Pinscher Franz. His friend Leslie is supposed to meet him somewhere inside. Leslie calls Sam, saying: 'Are you here with Franz? Where are you?'"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and pet dog"), ("property", "context-dependence")] }
 
@@ -63,7 +63,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := "Maria is an avid skydiver. One day after a jump, she is blown off course. She calls the skydiving company to come pick her up. The receptionist who answers the phone says: 'We will come pick you up. We will also pick up your parachute at the same time. Where are you?'"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and parachute"), ("property", "context-dependence")] }
 
@@ -76,7 +76,7 @@ def ex_77a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "1sg"), ("object", "3.an"), ("configuration", "1 > 3"), ("cliticization", "both")] }
 
@@ -89,7 +89,7 @@ def ex_77b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "1sg"), ("configuration", "3 > 1"), ("cliticization", "object blocked")] }
 
@@ -102,7 +102,7 @@ def ex_78a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "2sg"), ("object", "3.an"), ("configuration", "2 > 3"), ("cliticization", "both")] }
 
@@ -115,7 +115,7 @@ def ex_78b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "2sg"), ("configuration", "3 > 2"), ("cliticization", "object blocked")] }
 
@@ -128,7 +128,7 @@ def ex_79a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.el"), ("object", "3.hu"), ("configuration", "3.el > 3.hu"), ("cliticization", "both")] }
 
@@ -141,7 +141,7 @@ def ex_79b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.hu"), ("object", "3.el"), ("configuration", "3.hu > 3.el"), ("cliticization", "object blocked")] }
 
@@ -154,7 +154,7 @@ def ex_80a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.hu"), ("object", "3.an"), ("configuration", "3.hu > 3.an"), ("cliticization", "both")] }
 
@@ -167,7 +167,7 @@ def ex_80b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "3.hu"), ("configuration", "3.an > 3.hu"), ("cliticization", "object blocked")] }
 
@@ -180,7 +180,7 @@ def ex_81a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "3.in"), ("configuration", "3.an > 3.in"), ("cliticization", "both")] }
 
@@ -193,7 +193,7 @@ def ex_81b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("subject", "3.in"), ("object", "3.an"), ("configuration", "3.in > 3.an"), ("cliticization", "object blocked")] }
 

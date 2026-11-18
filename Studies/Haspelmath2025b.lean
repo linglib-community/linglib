@@ -1,9 +1,14 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Mathlib.Order.WithBot
+public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.UD.UPOS
-public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Root.Basic
 public import Linglib.Morphology.Root.Consonantal
@@ -269,95 +274,44 @@ inductive Value where
   | meaning (m : String)
   | category (c : RootClass)
   | shape (s : String)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Inhabited, Repr
 
-/-- Tier values are discrete, each dominated only by itself. -/
-instance : PartialOrder Value where
-  le a b := a = b
-  le_refl _ := rfl
-  le_trans _ _ _ h h' := h.trans h'
-  le_antisymm _ _ h _ := h
-
-instance : DecidableLE Value := fun a b ↦ inferInstanceAs (Decidable (a = b))
-
-/-- A tier description is a value, or `⊥` for an open variable. -/
-abbrev Slot := WithBot Value
-
-/-- The variables of the sister schemas (21) are the meaning and the category of each root, and
-the shape `Y` they share (index 2). -/
-inductive RootVar
-  | nounMeaning
-  | nounCategory
-  | verbMeaning
-  | verbCategory
-  | shape
-  deriving DecidableEq
-
-/-- The sister schemas `X (noun)` and `X (verb)` of (21) form one description over their
-variables, with the categories pinned and the meanings and the shared shape open. -/
-def nounVerb : ConstructionMorphology.Schema RootVar Slot where
-  body
-    | .nounCategory => ↑(Value.category .object)
-    | .verbCategory => ↑(Value.category .action)
-    | _ => ⊥
-  opens := {.nounMeaning, .verbMeaning, .shape}
-  opens_subset := by rintro _ (rfl | rfl | rfl) <;> rfl
-
-/-- The subscripting of the tiers of the noun schema by the variables of (21). -/
-def nounSub : Tier → RootVar
-  | .semantics => .nounMeaning
-  | .morphosyntax => .nounCategory
-  | .phonology => .shape
-
-/-- The subscripting of the tiers of the verb schema by the variables of (21). -/
-def verbSub : Tier → RootVar
-  | .semantics => .verbMeaning
-  | .morphosyntax => .verbCategory
-  | .phonology => .shape
-
-/-- Schema (21a), `X (noun)`, pairs an object meaning related to `X` with a noun and the open
-shape `Y`. -/
-def nounSchema : ConstructionMorphology.Schema Tier Slot := nounVerb.comap nounSub
-
-/-- Schema (21b), `X (verb)`, pairs doing in relation to `X` with a verb and the open shape
-`Y`. -/
-def verbSchema : ConstructionMorphology.Schema Tier Slot := nounVerb.comap verbSub
+/-- (21): The sister schemas `X (noun)` and `X (verb)` are one pattern over the tiers of both.
+The categories are constants, the two meanings are variables, and the shape `Y` is one
+variable of both schemas (index 2). -/
+abbrev nounVerb : ConstructionMorphology.Pattern (Tier ⊕ Tier) (Flat Value) :=
+  .ofTerms (X := Fin 3) (Sum.elim
+    (fun | .semantics => .inr 0 | .morphosyntax => .inl (.category .object) | .phonology => .inr 2)
+    (fun | .semantics => .inr 1 | .morphosyntax => .inl (.category .action) | .phonology => .inr 2))
 
 /-- `hammerNoun` is the noun `hammer` of (20a). -/
-def hammerNoun : Tier → Slot
-  | .semantics => ↑(Value.meaning "HAMMER")
-  | .morphosyntax => ↑(Value.category .object)
-  | .phonology => ↑(Value.shape "hæmər")
+def hammerNoun : Tier → Value
+  | .semantics => .meaning "HAMMER"
+  | .morphosyntax => .category .object
+  | .phonology => .shape "hæmər"
 
 /-- `hammerVerb` is the verb `hammer` of (20b). -/
-def hammerVerb : Tier → Slot
-  | .semantics => ↑(Value.meaning "HIT (WITH SOMETHING LIKE HAMMER)")
-  | .morphosyntax => ↑(Value.category .action)
-  | .phonology => ↑(Value.shape "hæmər")
+def hammerVerb : Tier → Value
+  | .semantics => .meaning "HIT (WITH SOMETHING LIKE HAMMER)"
+  | .morphosyntax => .category .action
+  | .phonology => .shape "hæmər"
 
 /-- `dance` (verb), whose shape differs from `hammer`'s. -/
-def danceVerb : Tier → Slot
-  | .semantics => ↑(Value.meaning "DANCE")
-  | .morphosyntax => ↑(Value.category .action)
-  | .phonology => ↑(Value.shape "dæns")
+def danceVerb : Tier → Value
+  | .semantics => .meaning "DANCE"
+  | .morphosyntax => .category .action
+  | .phonology => .shape "dæns"
 
-/-- The variables of (21) filled by the two *hammer* roots. -/
-def hammerRoots : RootVar → Slot
-  | .nounMeaning => hammerNoun .semantics
-  | .nounCategory => hammerNoun .morphosyntax
-  | .verbMeaning => hammerVerb .semantics
-  | .verbCategory => hammerVerb .morphosyntax
-  | .shape => hammerNoun .phonology
-
+open ConstructionMorphology.Pattern in
 /-- The two *hammer* roots of (20) instantiate the sister schemas of (21) as a pair, neither derived
 from the other. -/
 theorem hammer_sisters :
-    nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun hammerVerb) :=
-  ⟨hammerRoots, fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
-    funext fun t ↦ by rcases t with t | t <;> cases t <;> rfl⟩
+    nounVerb ≤ ofItem (Sum.elim (Flat.some ∘ hammerNoun) (Flat.some ∘ hammerVerb)) := by
+  decide
 
+open ConstructionMorphology.Pattern in
 theorem hammer_dance_not_sisters :
-    ¬ nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun danceVerb) :=
-  fun h ↦ by simpa [hammerNoun, danceVerb] using h.sumElim_apply_eq .phonology .phonology rfl
+    ¬ nounVerb ≤ ofItem (Sum.elim (Flat.some ∘ hammerNoun) (Flat.some ∘ danceVerb)) := by
+  decide
 
 end Haspelmath2025b

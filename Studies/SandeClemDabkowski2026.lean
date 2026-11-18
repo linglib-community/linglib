@@ -2,8 +2,8 @@ module
 
 public import Linglib.Fragments.Guebie.ParticleVerbs
 public import Linglib.Phonology.Harmony.Basic
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
+public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
@@ -172,7 +172,7 @@ def atrHarm : Constraint (List Phonology.Segment) := .binary fun out ↦ ¬ atrP
 /-- IDENT-IO(ATR) (46) is violated once by each vowel whose [ATR] value departs from its
 input. -/
 def identIO (input : List Phonology.Segment) : Constraint (List Phonology.Segment) := fun out ↦
-  (Correspondence.parallel input out).identViolFeature atr .lhs .rhs
+  (Correspondence.Coindexation.parallel input out).identViolFeature atr .lhs .rhs
 
 /-- A revaluation of a string of vowels gives each vowel either [ATR] value. -/
 def revaluations (l : List Phonology.Segment) : List (List Phonology.Segment) :=
@@ -180,17 +180,17 @@ def revaluations (l : List Phonology.Segment) : List (List Phonology.Segment) :=
 
 /-- The vP tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of the particle,
 followed by the root vowels the vP Spell-out holds. -/
-def vPTableau (part : Morpheme) (root : List Phonology.Segment) :
-    Tableau (List Phonology.Segment) 2 :=
-  Tableau.ofList ((revaluations part.vowels).map (· ++ root)).toFinset
+def vPOptimal (part : Morpheme) (root : List Phonology.Segment) :
+    Finset (List Phonology.Segment) :=
+  Constraint.eval ((revaluations part.vowels).map (· ++ root)).toFinset
     [atrHarm, identIO (part.vowels ++ root)]
 
 /-- Over the particle verbs of (10)–(12), the particle takes the root's value when the root is in
 the vP Spell-out and stays faithful otherwise. -/
-theorem vPTableau_optimal : ∀ pv ∈ particleVerbs,
-    (vPTableau pv.particle pv.verb.vowels).optimal =
+theorem vPOptimal_eq : ∀ pv ∈ particleVerbs,
+    vPOptimal pv.particle pv.verb.vowels =
         {pv.particle.vowels.map (withATR · pv.verb.atr) ++ pv.verb.vowels} ∧
-      (vPTableau pv.particle []).optimal = {pv.particle.vowels} := by
+      vPOptimal pv.particle [] = {pv.particle.vowels} := by
   decide +kernel
 
 namespace Clause
@@ -205,11 +205,11 @@ def rootVowels : List Phonology.Segment := if c.Harmony then verb.vowels else []
 def particleATR : Bool := if c.Harmony then verb.atr else part.atr
 
 /-- In every clause the vP tableau gives each particle vowel the value harmony assigns. -/
-theorem vPTableau_optimal {pv : ParticleVerb} (hpv : pv ∈ particleVerbs) :
-    (vPTableau pv.particle (c.rootVowels pv.verb)).optimal =
+theorem vPOptimal_eq {pv : ParticleVerb} (hpv : pv ∈ particleVerbs) :
+    vPOptimal pv.particle (c.rootVowels pv.verb) =
       {pv.particle.vowels.map (withATR · (c.particleATR pv.particle pv.verb)) ++
         c.rootVowels pv.verb} := by
-  obtain ⟨h₁, h₂⟩ := SandeClemDabkowski2026.vPTableau_optimal pv hpv
+  obtain ⟨h₁, h₂⟩ := SandeClemDabkowski2026.vPOptimal_eq pv hpv
   unfold rootVowels particleATR
   split
   · exact h₁
@@ -219,13 +219,13 @@ end Clause
 
 /-- This tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of an input, the root's
 vowels included. -/
-def rootFreeTableau (input : List Phonology.Segment) : Tableau (List Phonology.Segment) 2 :=
-  Tableau.ofList (revaluations input).toFinset [atrHarm, identIO input]
+def rootFreeOptimal (input : List Phonology.Segment) : Finset (List Phonology.Segment) :=
+  Constraint.eval (revaluations input).toFinset [atrHarm, identIO input]
 
 -- (12a), (10e)
 theorem optimal_rootFree :
-    (rootFreeTableau (jOkU.vowels ++ ni.vowels)).optimal = {[openO, upsilon, smallCapitalI]} ∧
-      (rootFreeTableau (mE.vowels ++ nu.vowels)).optimal = {[e, u], [epsilon, upsilon]} := by
+    rootFreeOptimal (jOkU.vowels ++ ni.vowels) = {[openO, upsilon, smallCapitalI]} ∧
+      rootFreeOptimal (mE.vowels ++ nu.vowels) = {[e, u], [epsilon, upsilon]} := by
   decide
 
 /-! ### The derivations -/
@@ -254,7 +254,7 @@ def C₀ : LexicalItem.Token := ⟨.of .C [], 8⟩
 
 /-- The remnant VP that fronts holds the particle between the traces of the object and the
 verb. -/
-def remnant : LinearizedSyntacticObject :=
+def remnant : PlanarSyntacticObject :=
   {.traceOf Terminal.object.token, {.leaf Terminal.particle.token, .traceOf Terminal.verb.token}}
 
 

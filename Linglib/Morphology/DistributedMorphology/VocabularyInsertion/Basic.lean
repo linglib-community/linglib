@@ -44,6 +44,8 @@ pattern across nested neighborhoods.
   the winner less specific, retreat to the general case.
 * `DistributedMorphology.isContiguous_subsetPrinciple`: an antihomophonous vocabulary realizes
   contiguous patterns over neighborhoods ordered by inclusion.
+* `DistributedMorphology.exists_not_isContextFree_of_subsetPrinciple_ne`: a terminal that gets
+  different exponents in two environments is realized by a Vocabulary with a contextual item.
 * `DistributedMorphology.toRealization_isUnivalent`: Vocabulary Insertion, as a
   `Morphology.Realization`, realizes no cell overabundantly.
 
@@ -144,6 +146,22 @@ theorem elsewhere_applies (e : E) (n : Neighborhood (Finset F)) :
     Applies ((∅ : Finset F) ⟷ e) n := by
   simp [applies_iff]
 
+/-- An item is context-free when its site mentions its own terminal only, so that it has no
+context of insertion. -/
+def IsContextFree (i : VocabularyItem F E) : Prop := ∀ x ∈ i.site, x.1 = 0
+
+theorem isContextFree_ofFeatures (fs : Finset F) (e : E) : (fs ⟷ e).IsContextFree :=
+  fun _ hx ↦ (mem_site_ofFeatures.1 hx).1
+
+/-- A context-free item applies by the terminal alone. -/
+theorem IsContextFree.applies_congr {n' : Neighborhood (Finset F)} (hi : i.IsContextFree)
+    (h : n.focus = n'.focus) : Applies i n ↔ Applies i n' := by
+  simp only [applies_iff]
+  refine forall₂_congr fun x hx ↦ ?_
+  obtain ⟨o, f⟩ := x
+  obtain rfl : o = 0 := hi _ hx
+  simp [Neighborhood.mem_def, h]
+
 theorem applies_mono {n' : Neighborhood (Finset F)} (h : Applies i n) (hn : n ⊆ n') :
     Applies i n' :=
   fun _ hx ↦ Neighborhood.mem_of_subset hn (h _ hx)
@@ -230,6 +248,19 @@ theorem subsetPrinciple_eq_head?_applicable
     (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
     subsetPrinciple items n = ((items.applicable n).head?).map (·.exponent) := by
   rw [subsetPrinciple_eq_map_winner?, winner?_eq_head?_applicable h]
+
+/-- A Vocabulary of context-free items inserts by the terminal alone. -/
+theorem subsetPrinciple_factorsThrough_focus (h : ∀ i ∈ items, i.IsContextFree) :
+    (subsetPrinciple items).FactorsThrough Neighborhood.focus :=
+  RuleSet.realize_factorsThrough fun i hi _ _ hf ↦ (h i hi).applies_congr hf
+
+/-- Contextual allomorphy needs a contextual item: where one terminal gets different exponents in
+two environments, some item's site mentions another terminal. -/
+theorem exists_not_isContextFree_of_subsetPrinciple_ne (hf : n.focus = n'.focus)
+    (hne : subsetPrinciple items n ≠ subsetPrinciple items n') :
+    ∃ i ∈ items, ¬ i.IsContextFree := by
+  by_contra! h
+  exact hne (subsetPrinciple_factorsThrough_focus h hf)
 
 /-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
 `VocabularyItem.specificity` is strictly antitone outright. -/

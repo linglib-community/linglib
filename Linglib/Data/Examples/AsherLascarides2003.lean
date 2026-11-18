@@ -24,7 +24,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "(17)")] }
 
@@ -37,7 +37,7 @@ def ex_18_pink : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "(17)"), ("antecedent", "salmon"), ("antecedentLabel", "3")] }
 
@@ -50,7 +50,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relations", "Contrast, Narration")] }
 
@@ -63,7 +63,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relations", "Background"), ("antecedent", "car")] }
 
@@ -76,7 +76,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("relations", "Consequence"), ("antecedent", "car")] }
 

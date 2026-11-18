@@ -1,5 +1,8 @@
 module
 
+public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Semantics.Reference.Nominality
 public import Linglib.Data.Examples.KampanarouAlexiadou2026
 public import Linglib.Data.Examples.Readers
 
@@ -7,37 +10,37 @@ public import Linglib.Data.Examples.Readers
 # Kampanarou and Alexiadou (2026): Genitive Alternation in Possessives and Beyond
 
 This file formalizes [kampanarou-alexiadou-2026], on the Standard Modern Greek alternation
-between an inflectional genitive and a prepositional *apo*-phrase, with adnominal possessors and
-with the arguments of derived nominals. The paper argues that the alternation is structural rather
-than morphological: the *apo*-PP is not an alternative spell-out of the genitive but a complement
-with a partitive semantics, through which a possessive reading is coerced.
-
-The possessive data of Sections 2, 3 and 5 are rows carrying the paper's classification of the
-relation and of the possessor nominal (`Possessor`). Part-whole and source relations alternate
-with a common-noun possessor, pronouns and proper names never do, and acceptability is monotone in
-the facilitation order on possessors, which adds plural marking, modification, or a paradigm gap
-of the genitive (`facilitation_mono`); a gap is neither sufficient nor necessary for the
-alternation.
-
-For derived nominals (Sections 2 and 6), the complex-event reading of [grimshaw-1990] survives
-only under a genitive theme, an *apo* agent is a by-phrase only under that reading, and the
-nominal otherwise admits at most one argument (`Nominal.WellFormed`): the single argument
-restriction of Section 8, extending the single genitive restriction of [horrocks-stavrou-1987] to
-PPs. Grevena Greek, which has lost the inflectional genitive
-([michelioudakis-chatzikyriakidis-spathas-2024]), stacks two *apo*-PPs. The scope data of
-Section 7 follow from the merge site of the possessor (`Site`): the genitive of an inalienable
-possessor and every *apo*-PP are complements ([alexiadou-2003]), and only a complement possessor
-admits surface scope (`scope_rows_agree`).
+between an inflectional genitive and a prepositional *apo*-phrase. The paper argues that the
+*apo*-PP is not a second spell-out of the genitive but a complement with a partitive meaning,
+through which a possessive reading is coerced. With possessors, the *apo*-PP is accepted for
+parts and sources and resisted by pronouns and proper names; plural marking, modification and a
+paradigm gap of the genitive [only raise its acceptability](##facilitation_mono), and a gap is
+[not sufficient](##gap_not_sufficient) for it. With derived nominals, a theme realized as an
+*apo*-PP excludes the complex-event reading of [grimshaw-1990], so a nominal with two arguments
+[has a genitive theme and a by-phrase](##Nominal.WellFormed.genitive_and_apo): the single
+genitive restriction of [horrocks-stavrou-1987], extended to PPs, which the Grevena Greek of
+[michelioudakis-chatzikyriakidis-spathas-2024] does not obey; the Grevena *apo*-PP also
+[fronts and extracts](##displacement_rows_agree) as the standard genitive does. A possessor
+[takes surface scope exactly when it is a complement](##scope_rows_agree), as the inalienable
+genitive of [alexiadou-2003] and every *apo*-PP are.
 
 ## Implementation notes
 
-The paper's markers are read on the `Judgment` scale, `?` as `marginal`, `??` and `???` as
-`questionable`, `#` as `unacceptable` and `*` as `ungrammatical`; a row is `Acceptable` from
-`marginal` up, since `?` marks speaker variation. The three syntactic analyses of Section 7
-(selection by the possessee, a predicative small clause, a light *p*) share the consequence
-formalized here, that the *apo*-PP is a complement, and are not distinguished. The recursive
-possessives (25) to (27) record, as the paper does, that only the innermost possessor alternates;
-its footnote 14 offers no account.
+* The paper marks variation among speakers with `?`, so a row counts as accepted from that mark
+  up, `.marginal ≤ r.judgment`.
+* The readings of a derived nominal are the library's `NominalizationReading`; the paper
+  contrasts the complex-event reading with the rest, and `Nominal.Licenses` treats the rest
+  alike. The paper pluralizes only nominals with an *apo* theme and no modifier, so its rows do
+  not separate `Nominal.Licenses.plural` from the other conditions.
+* The three analyses of the *apo*-PP (selection by the possessee, a predicative small clause, a
+  light *p*) agree that it is a complement, which is all `Marking.site` records.
+* The recursive possessives are recorded as the paper reports them, with only the innermost
+  possessor alternating; the paper derives the pattern from none of its analyses.
+
+## TODO
+
+* Of the paper's table of properties of the three expressions, the range of relations each
+  expresses and its unmarked position are not encoded.
 
 ## References
 
@@ -50,13 +53,26 @@ its footnote 14 offers no account.
 
 namespace KampanarouAlexiadou2026
 
+open DistributedMorphology.Allosemy
 
-/-- Acceptable from `marginal`, the paper's `?`, up. -/
-def Acceptable (j : Judgment) : Prop := .marginal ≤ j
+/-- The realization of a possessor or of an argument. -/
+inductive Marking
+  | genitive | apo
+  deriving DecidableEq, Repr
 
-instance : DecidablePred Acceptable := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+def markingOf : List (String × Marking) := [("genitive", .genitive), ("apo", .apo)]
 
-/-! ### Possessive apo-PPs (Sections 2, 3 and 5) -/
+def nominalityOf : List (String × Nominality) :=
+  [("common", .commonNoun), ("pronoun", .pronoun), ("properName", .properName)]
+
+def animacyOf : List (String × Animacy) :=
+  [("inanimate", .inanimate), ("animate", .animate), ("human", .human)]
+
+/-- The rows of the group `g` of the paper's examples, as `f` reads them. -/
+def groupRows {α : Type} (g : String) (f : Datum → Option α) : List α :=
+  Examples.all.filterMap fun e ↦ if e.feature? "group" = some g then f e else none
+
+/-! ### Possessive apo-PPs -/
 
 /-- The paper's classification of the relation between possessee and possessor: part-whole (5a),
 source (5b), kinship (6a), ownership (6b), and the mere association of a mat with its door (11). -/
@@ -68,47 +84,36 @@ inductive Relation
 possessor. -/
 def Relation.IsPartitive (r : Relation) : Prop := r = .partWhole ∨ r = .source
 
-instance : DecidablePred Relation.IsPartitive := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred Relation.IsPartitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Inalienable relations in the sense of [alexiadou-2003]: parts, body parts, and kin. -/
 def Relation.IsInalienable (r : Relation) : Prop := r = .partWhole ∨ r = .kinship
 
-instance : DecidablePred Relation.IsInalienable := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred Relation.IsInalienable := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- How the possessor is presented. -/
-inductive Form
-  | common | pronoun | properName
+/-- The conditions the paper reports to raise the acceptability of the apo-PP: plural marking and
+modification of the possessor, and a paradigm gap of its genitive. -/
+inductive Facilitator
+  | plural | modified | gap
   deriving DecidableEq, Repr
 
-/-- The possessor nominal: its form, animacy, plural marking and modification, and whether its
-genitive is a paradigm gap (Section 3). -/
+/-- The possessor nominal: its nominality, its animacy, and the facilitating conditions it
+meets. -/
 structure Possessor where
-  form : Form
-  animate : Bool
-  plural : Bool
-  modified : Bool
-  gap : Bool
-  deriving DecidableEq, Repr
+  nominality : Nominality
+  animacy : Animacy
+  facilitators : Finset Facilitator
 
-/-- The facilitation order: `p ≤ q` when `q` is the same kind of nominal as `p` with plural
-marking, modification, or a paradigm gap only added, each of which the paper reports to raise the
-acceptability of the apo-PP. -/
-instance : PartialOrder Possessor where
-  le p q := p.form = q.form ∧ p.animate = q.animate ∧ p.plural ≤ q.plural ∧
-    p.modified ≤ q.modified ∧ p.gap ≤ q.gap
-  le_refl _ := ⟨rfl, rfl, le_rfl, le_rfl, le_rfl⟩
-  le_trans _ _ _ h h' := ⟨h.1.trans h'.1, h.2.1.trans h'.2.1, h.2.2.1.trans h'.2.2.1,
-    h.2.2.2.1.trans h'.2.2.2.1, h.2.2.2.2.trans h'.2.2.2.2⟩
-  le_antisymm p q h h' := by
-    obtain ⟨hf, ha, hp, hm, hg⟩ := h
-    obtain ⟨-, -, hp', hm', hg'⟩ := h'
-    cases p; cases q
-    dsimp only at hf ha hp hm hg hp' hm' hg'
-    subst hf ha
-    rw [le_antisymm hp hp', le_antisymm hm hm', le_antisymm hg hg']
+/-- The facilitation order: `p ≤ q` when `q` is the same kind of nominal as `p` and meets every
+facilitating condition `p` does. -/
+instance : Preorder Possessor where
+  le p q := p.nominality = q.nominality ∧ p.animacy = q.animacy ∧
+    p.facilitators ⊆ q.facilitators
+  le_refl _ := ⟨rfl, rfl, subset_rfl⟩
+  le_trans _ _ _ h h' := ⟨h.1.trans h'.1, h.2.1.trans h'.2.1, h.2.2.trans h'.2.2⟩
 
 instance : DecidableRel (α := Possessor) (· ≤ ·) :=
-  λ _ _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _))
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- A possessive row: the relation, the possessor, and the judgment on the apo-PP. -/
 structure Row where
@@ -120,65 +125,62 @@ def relationOf : List (String × Relation) :=
   [("partWhole", .partWhole), ("source", .source), ("kinship", .kinship),
     ("ownership", .ownership), ("association", .association)]
 
-def formOf : List (String × Form) :=
-  [("common", .common), ("pronoun", .pronoun), ("properName", .properName)]
+/-- The feature value under which a row meets each facilitating condition. -/
+def facilitatorOf : List (String × String × Facilitator) :=
+  [("number", "pl", .plural), ("modified", "yes", .modified), ("gap", "yes", .gap)]
 
-/-- A row of the `possessive` group, from the paper's features. -/
-def Row.ofDatum (e : Datum) : Option Row := do
-  guard (e.feature? "group" = some "possessive")
-  let rel ← e.parse? "relation" relationOf
-  let form ← e.parse? "possessor" formOf
-  let yes k := e.feature? k == some "yes"
-  some ⟨rel, ⟨form, yes "animate", e.feature? "number" == some "pl", yes "modified", yes "gap"⟩,
-    e.judgment⟩
-
-/-- The possessive data of Sections 2, 3 and 5. -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+/-- The possessive rows. -/
+def rows : List Row := groupRows "possessive" fun e ↦ do
+  let fs := facilitatorOf.filterMap fun (k, v, f) ↦ if e.feature? k = some v then some f else none
+  some ⟨← e.parse? "relation" relationOf, ⟨← e.parse? "possessor" nominalityOf,
+    ← e.parse? "animacy" animacyOf, fs.toFinset⟩, e.judgment⟩
 
 -- (5), (14)
 theorem partitive_alternates :
-    ∀ r ∈ rows, r.relation.IsPartitive → r.possessor.form = .common → Acceptable r.judgment := by
+    ∀ r ∈ rows, r.relation.IsPartitive → r.possessor.nominality = .commonNoun →
+      .marginal ≤ r.judgment := by
   decide
 
--- (9), (10)
+-- (9a), (10a)
 theorem individual_resists :
-    ∀ r ∈ rows, r.possessor.form ≠ .common → r.judgment = .unacceptable := by
+    ∀ r ∈ rows, r.possessor.nominality ≠ .commonNoun → ¬ .marginal ≤ r.judgment := by
   decide
 
 -- (6), (11a), (15)
 theorem nonpartitive_resists :
-    ∀ r ∈ rows, ¬ r.relation.IsPartitive → ¬ r.possessor.plural → ¬ r.possessor.modified →
-      ¬ Acceptable r.judgment := by
+    ∀ r ∈ rows, ¬ r.relation.IsPartitive → .plural ∉ r.possessor.facilitators →
+      .modified ∉ r.possessor.facilitators → ¬ .marginal ≤ r.judgment := by
   decide
 
-/-- Acceptability is monotone in the facilitation order: plural marking (11), modification
-(fn. 5, (28)) and a paradigm gap (14) only raise the judgment. -/
+/-- Within a relation, acceptability is monotone in the facilitation order: plural marking (11),
+modification (fn. 5, (28)) and a paradigm gap (14) only raise the judgment. -/
 theorem facilitation_mono :
     ∀ r ∈ rows, ∀ s ∈ rows, r.relation = s.relation → r.possessor ≤ s.possessor →
       r.judgment ≤ s.judgment := by
   decide
 
--- (15)
-theorem gap_not_sufficient : ∃ r ∈ rows, r.possessor.gap ∧ r.judgment = .unacceptable := by
+-- (5a), (11a): the order does not carry across relations.
+theorem relation_matters :
+    ∃ r ∈ rows, ∃ s ∈ rows, r.possessor ≤ s.possessor ∧ ¬ r.judgment ≤ s.judgment := by
+  decide
+
+/-- A paradigm gap of the genitive does not suffice for the apo-PP: the owner and the kin of
+(15) have no genitive and still resist it. -/
+theorem gap_not_sufficient :
+    ∃ r ∈ rows, .gap ∈ r.possessor.facilitators ∧ ¬ .marginal ≤ r.judgment := by
   decide
 
 -- (5)
-theorem gap_not_necessary : ∃ r ∈ rows, ¬ r.possessor.gap ∧ Acceptable r.judgment := by
+theorem gap_not_necessary :
+    ∃ r ∈ rows, .gap ∉ r.possessor.facilitators ∧ .marginal ≤ r.judgment := by
   decide
 
--- (5a), (11a)
-theorem relation_matters :
-    ∃ r ∈ rows, ∃ s ∈ rows, r.possessor = s.possessor ∧ r.judgment ≠ s.judgment := by
+-- (5c), (14b): animacy does not block the apo-PP.
+theorem animate_alternates :
+    ∃ r ∈ rows, r.possessor.animacy ≠ .inanimate ∧ .marginal ≤ r.judgment := by
   decide
 
-/-! ### Recursive possessives (Section 5) -/
-
-/-- The realization of a possessor or of an argument. -/
-inductive Marking
-  | genitive | apo
-  deriving DecidableEq, Repr
-
-def markingOf : List (String × Marking) := [("genitive", .genitive), ("apo", .apo)]
+/-! ### Recursive possessives -/
 
 /-- A recursive possessive, (25) to (27): the inner possessor, closest to the head, and the outer
 one it embeds. -/
@@ -187,66 +189,86 @@ structure Stacked where
   outer : Marking
   judgment : Judgment
 
-/-- A row of the `stacking` group. -/
-def Stacked.ofDatum (e : Datum) : Option Stacked := do
-  guard (e.feature? "group" = some "stacking")
-  let i ← e.parse? "inner" markingOf
-  let o ← e.parse? "outer" markingOf
-  some ⟨i, o, e.judgment⟩
+/-- The recursive possessives. -/
+def stacked : List Stacked := groupRows "stacking" fun e ↦ do
+  some ⟨← e.parse? "inner" markingOf, ← e.parse? "outer" markingOf, e.judgment⟩
 
-/-- The recursive possessives of Section 5. -/
-def stacked : List Stacked := Examples.all.filterMap Stacked.ofDatum
-
-theorem innermost_alternates : ∀ s ∈ stacked, Acceptable s.judgment ↔ s.outer = .genitive := by
+-- (25), (27)
+theorem innermost_alternates : ∀ s ∈ stacked, .marginal ≤ s.judgment ↔ s.outer = .genitive := by
   decide
 
-/-! ### Derived nominals (Sections 2 and 6) and the single argument restriction (Section 8) -/
+/-! ### Derived nominals and the single argument restriction -/
 
-/-- A derived nominal with its theme and its agent, each genitive, apo-PP, or absent, and whether
-an aspectual modifier (*for x time*) is present. -/
+/-- An argument of a derived nominal: its realization and its nominality. -/
+structure Argument where
+  marking : Marking
+  nominality : Nominality
+  deriving DecidableEq, Repr
+
+/-- A derived nominal: its theme and its agent, if realized, whether an aspectual modifier
+(*for x time*) is present, and whether the nominal is plural. -/
 structure Nominal where
-  theme : Option Marking
-  agent : Option Marking
+  theme : Option Argument
+  agent : Option Argument
   aspectual : Bool
+  plural : Bool
   deriving DecidableEq, Repr
 
 namespace Nominal
 
-/-- The complex-event reading of [grimshaw-1990], with verbal argument structure, is available
-only under a genitive theme; an apo theme forces the result reading, diagnosed by the aspectual
-modifier (34), (35) and by pluralization (36). -/
-def IsComplexEvent (n : Nominal) : Prop := n.theme = some .genitive
+variable {n : Nominal} {r : NominalizationReading} {t a : Argument}
 
-instance : DecidablePred IsComplexEvent := λ _ => inferInstanceAs (Decidable (_ = _))
+/-- The arguments of `n` inside the DP under the reading `r`: the theme, and the agent unless it
+is a by-phrase, an apo-PP adjoined to the verbal structure of the complex-event reading (31). -/
+def arguments (n : Nominal) (r : NominalizationReading) : List Argument :=
+  n.theme.toList ++ n.agent.toList.filter fun a ↦ ¬ (r = .complexEvent ∧ a.marking = .apo)
 
-/-- An apo agent is a by-phrase, adjoined to the verbal structure, only under the complex-event
-reading, (30). -/
-def IsByPhrase (n : Nominal) : Prop := n.agent = some .apo ∧ n.IsComplexEvent
+/-- The reading `r` is available to the nominal `n`. -/
+@[mk_iff]
+structure Licenses (n : Nominal) (r : NominalizationReading) : Prop where
+  /-- An aspectual modifier diagnoses the complex-event reading. -/
+  aspectual : n.aspectual → r = .complexEvent
+  /-- A complex-event nominal does not pluralize. -/
+  plural : n.plural → r ≠ .complexEvent
+  /-- The paper's claim: a theme realized as an apo-PP is not an argument of verbal structure,
+  so the nominal patterns with result nominals. -/
+  theme : ∀ t ∈ n.theme, t.marking = .apo → r ≠ .complexEvent
+  /-- The single argument restriction: the DP has one position for an argument. -/
+  single : (n.arguments r).length ≤ 1
+  /-- An apo-PP inside the DP is the possessive one, which resists pronouns and proper names. -/
+  common : ∀ a ∈ n.arguments r, a.marking = .apo → a.nominality = .commonNoun
 
-instance : DecidablePred IsByPhrase := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (n.Licenses r) := decidable_of_iff _ (licenses_iff n r).symm
 
-/-- The DP-internal arguments: the theme, and the agent unless it is a by-phrase. -/
-def arguments (n : Nominal) : List Marking :=
-  n.theme.toList ++ if n.IsByPhrase then [] else n.agent.toList
+/-- Some reading is available to the nominal. -/
+def WellFormed (n : Nominal) : Prop := ∃ r, n.Licenses r
 
-/-- The single argument restriction: at most one argument inside the DP. -/
-def SingleArgument (n : Nominal) : Prop := n.arguments.length ≤ 1
+instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
 
-instance : DecidablePred SingleArgument := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+-- (34)
+theorem Licenses.not_aspectual (h : n.Licenses r) (ht : n.theme = some t)
+    (hm : t.marking = .apo) : ¬ n.aspectual :=
+  fun hasp ↦ h.theme t ht hm (h.aspectual hasp)
 
-/-- A single argument, and an aspectual modifier only under the complex-event reading. -/
-def WellFormed (n : Nominal) : Prop := n.SingleArgument ∧ (n.aspectual → n.IsComplexEvent)
+-- (30): beside a theme, the agent is a by-phrase.
+theorem Licenses.byPhrase (h : n.Licenses r) (ht : n.theme = some t) (ha : n.agent = some a) :
+    r = .complexEvent ∧ a.marking = .apo := by
+  by_contra hr
+  have := h.single
+  simp [arguments, ht, ha, hr] at this
 
-instance : DecidablePred WellFormed := λ _ => inferInstanceAs (Decidable (_ ∧ (_ → _)))
-
-theorem not_isComplexEvent_of_theme_apo {n : Nominal} (h : n.theme = some .apo) :
-    ¬ n.IsComplexEvent := by
-  simp [IsComplexEvent, h]
-
--- (8d)
-theorem not_singleArgument_of_apo_apo {n : Nominal} (ht : n.theme = some .apo)
-    (ha : n.agent = some .apo) : ¬ n.SingleArgument := by
-  simp [SingleArgument, arguments, IsByPhrase, IsComplexEvent, ht, ha]
+/-- A nominal with both arguments has a genitive theme and an apo agent, the by-phrase of the
+complex-event reading. Two genitives, two apo-PPs, and an apo theme beside a genitive agent are
+all excluded: an apo theme leaves no verbal structure for a by-phrase to adjoin to, and the DP
+holds one argument. -/
+theorem WellFormed.genitive_and_apo (h : n.WellFormed) (ht : n.theme = some t)
+    (ha : n.agent = some a) : t.marking = .genitive ∧ a.marking = .apo := by
+  obtain ⟨r, h⟩ := h
+  have hr := h.byPhrase ht ha
+  refine ⟨?_, hr.2⟩
+  cases hm : t.marking
+  · rfl
+  · exact absurd hr.1 (h.theme t ht hm)
 
 end Nominal
 
@@ -263,28 +285,47 @@ structure DerivedRow where
 
 def varietyOf : List (String × Variety) := [("smg", .smg), ("grevena", .grevena)]
 
-/-- A row of the `derived` group. -/
-def DerivedRow.ofDatum (e : Datum) : Option DerivedRow := do
-  guard (e.feature? "group" = some "derived")
-  let v ← e.parse? "variety" varietyOf
-  some ⟨v, ⟨e.parse? "theme" markingOf, e.parse? "agent" markingOf,
-    e.feature? "aspectual" == some "yes"⟩, e.judgment⟩
+/-- The argument a row records under the keys `role` and `form`, if it has one. -/
+def argument? (e : Datum) (role form : String) : Option Argument := do
+  some ⟨← e.parse? role markingOf, ← e.parse? form nominalityOf⟩
 
-/-- The derived nominals of Sections 2, 4 and 6. -/
-def derivedRows : List DerivedRow := Examples.all.filterMap DerivedRow.ofDatum
+/-- The derived-nominal rows. -/
+def derivedRows : List DerivedRow := groupRows "derived" fun e ↦ do
+  some ⟨← e.parse? "variety" varietyOf,
+    ⟨argument? e "theme" "themeForm", argument? e "agent" "agentForm",
+      e.feature? "aspectual" == some "yes", e.feature? "head" == some "pl"⟩, e.judgment⟩
 
--- (7), (8), (30), (33), (36)
+/-- In Standard Modern Greek a derived nominal is accepted exactly when some reading is
+available to it. -/
 theorem derived_rows_agree :
-    ∀ r ∈ derivedRows, r.variety = .smg → (Acceptable r.judgment ↔ r.nominal.WellFormed) := by
+    ∀ r ∈ derivedRows, r.variety = .smg → (.marginal ≤ r.judgment ↔ r.nominal.WellFormed) := by
   decide
 
 -- (12)
 theorem grevena_stacks :
-    ∃ r ∈ derivedRows, r.variety = .grevena ∧ ¬ r.nominal.SingleArgument ∧
-      Acceptable r.judgment := by
+    ∃ r ∈ derivedRows, r.variety = .grevena ∧ ¬ r.nominal.WellFormed ∧ .marginal ≤ r.judgment := by
   decide
 
-/-! ### Scope and the merge site of the possessor (Section 7) -/
+/-! ### Fronting and sub-extraction -/
+
+/-- A possessor fronted with its head noun or extracted out of its DP, (22) to (24): the variety,
+the realization of the possessor, and the judgment. -/
+structure Displaced where
+  variety : Variety
+  marking : Marking
+  judgment : Judgment
+
+/-- The fronting and sub-extraction rows. -/
+def displaced : List Displaced := groupRows "displacement" fun e ↦ do
+  some ⟨← e.parse? "variety" varietyOf, ← e.parse? "marking" markingOf, e.judgment⟩
+
+-- (22) to (24): the Grevena apo-PP moves as the standard genitive does; the standard apo-PP
+-- does not.
+theorem displacement_rows_agree :
+    ∀ r ∈ displaced, ¬ .marginal ≤ r.judgment ↔ r.variety = .smg ∧ r.marking = .apo := by
+  decide
+
+/-! ### Scope and the merge site of the possessor -/
 
 /-- The merge site of a possessor: the complement of the possessee, or external to it. -/
 inductive Site
@@ -302,27 +343,29 @@ def Marking.site : Marking → Relation → Site
   | .genitive, r => r.genitiveSite
   | .apo, _ => .complement
 
-/-- A scope row, (38) and (39): an indefinite possessee under a universal possessor, and whether the
-surface-scope reading, one leg for all the tables, is available; the inverse reading always is. -/
+/-- A scope row, (38) and (39): an indefinite possessee under a universal possessor, and the
+judgment on its surface-scope reading, one leg for all the tables; the inverse reading is always
+available. -/
 structure ScopeRow where
   marking : Marking
   relation : Relation
-  surface : Bool
+  surface : Judgment
 
-/-- A row of the `scope` group. -/
-def ScopeRow.ofDatum (e : Datum) : Option ScopeRow := do
-  guard (e.feature? "group" = some "scope")
-  let m ← e.parse? "marking" markingOf
-  let r ← e.parse? "relation" relationOf
-  some ⟨m, r, decide (e.readings.lookup "surface" = some .acceptable)⟩
+/-- The scope rows. -/
+def scopeRows : List ScopeRow := groupRows "scope" fun e ↦ do
+  some ⟨← e.parse? "marking" markingOf, ← e.parse? "relation" relationOf,
+    ← e.readings.lookup "surface"⟩
 
-/-- The scope data of Section 7. -/
-def scopeRows : List ScopeRow := Examples.all.filterMap ScopeRow.ofDatum
+-- Every example of the paper is a row of one of the five groups.
+theorem rows_exhaustive :
+    rows.length + stacked.length + derivedRows.length + displaced.length + scopeRows.length =
+      Examples.all.length := by
+  decide
 
 /-- Surface scope is available exactly for a complement possessor: the inalienable genitive (38a)
 and both apo-PPs (39), not the alienable genitive (38b). -/
 theorem scope_rows_agree :
-    ∀ r ∈ scopeRows, r.surface = true ↔ r.marking.site r.relation = .complement := by
+    ∀ r ∈ scopeRows, .marginal ≤ r.surface ↔ r.marking.site r.relation = .complement := by
   decide
 
 end KampanarouAlexiadou2026

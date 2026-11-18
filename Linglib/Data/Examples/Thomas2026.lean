@@ -24,7 +24,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := "Q: Who did Avery invite?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -37,7 +37,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "antecedent_violation"), ("felicity", "infelicitous")] }
 
@@ -50,7 +50,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -63,7 +63,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "either"), ("use_type", "standard")] }
 
@@ -76,7 +76,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := "RQ: What is Sam's emotional state?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "prejacent_violation_i")] }
 
@@ -89,7 +89,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "Q: Who loves whom?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -102,7 +102,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := "Q: Who ate what?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard")] }
 
@@ -115,7 +115,7 @@ def ex_18c : Datum :=
     glossedTokens := []
     context := "A and some traveling companions are looking for a place to stay during their upcoming vacation. A is searching for a hotel room on the internet. Q: What would be a good hotel to stay at?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "satisfied")] }
 
@@ -128,7 +128,7 @@ def ex_19c : Datum :=
     glossedTokens := []
     context := "A and companions are looking for a nice hotel room to stay in."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "conjunction_violation")] }
 
@@ -141,7 +141,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := "A's band is looking for a dingy hotel room in which to shoot a music video. Q: Where would be a good place to shoot our music video?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "satisfied")] }
 
@@ -154,7 +154,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := "RQ: What foods do you like?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -167,7 +167,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "conjunction_violation")] }
 
@@ -180,7 +180,7 @@ def ex_29bA : Datum :=
     glossedTokens := []
     context := "RQ: Who stole the cookies?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "prejacent_violation_i")] }
 
@@ -193,7 +193,7 @@ def ex_29bA2 : Datum :=
     glossedTokens := []
     context := "RQ: Who stole the cookies?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "satisfied")] }
 
@@ -206,7 +206,7 @@ def ex_30A : Datum :=
     glossedTokens := []
     context := "RQ: Who plays an instrument?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "prejacent_violation_ii")] }
 
@@ -219,7 +219,7 @@ def ex_30A2 : Datum :=
     glossedTokens := []
     context := "RQ: Who plays an instrument?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -232,7 +232,7 @@ def ex_68 : Datum :=
     glossedTokens := []
     context := "Q: Who are some people Avery invited?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -245,7 +245,7 @@ def ex_70 : Datum :=
     glossedTokens := []
     context := "Q: Who all did Avery invite?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -258,7 +258,7 @@ def ex_71 : Datum :=
     glossedTokens := []
     context := "Q: Who are some people Avery invited?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
@@ -271,7 +271,7 @@ def ex_72 : Datum :=
     glossedTokens := []
     context := "Q: Who are some people Avery invited?"
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "conjunction_violation")] }
 

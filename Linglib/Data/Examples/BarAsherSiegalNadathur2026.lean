@@ -25,7 +25,7 @@ def basn2026_40_switchedOn : Datum :=
     context := "The door is known to be unlocked, and Nur has just flipped the switch in the electrical cabinet, allowing electricity to flow, but has not yet pressed the button that opens the door."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "open the door"), ("aspect", "progressive")] }
 
@@ -39,7 +39,7 @@ def basn2026_40_realistic : Datum :=
     context := "The door is known to be unlocked and the electricity is flowing, and Nur has neither turned the door handle nor pressed the button, so the door is closed."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "open the door"), ("aspect", "progressive")] }
 
@@ -52,7 +52,7 @@ def basn2026_43a_handle : Datum :=
     glossedTokens := []
     context := "The status of the lock is unknown, and Nur has turned the door handle."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "open the door"), ("aspect", "progressive")] }
 
@@ -65,7 +65,7 @@ def basn2026_43a_button : Datum :=
     glossedTokens := []
     context := "The status of the lock is unknown, and Nur has pressed the door-open button."
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "open the door"), ("aspect", "progressive")] }
 
@@ -79,7 +79,7 @@ def basn2026_43b : Datum :=
     context := "The status of the lock is unknown, and Nur has either turned the door handle or pressed the door-open button."
     judgment := .acceptable
     verdict := some true
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "try to open the door"), ("aspect", "progressive")] }
 

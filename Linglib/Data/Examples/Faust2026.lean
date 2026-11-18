@@ -24,7 +24,7 @@ def ex_3a_pst3msg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "klt"), ("cell", "pst3msg")] }
 
@@ -37,7 +37,7 @@ def ex_3a_actionNoun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "klt"), ("cell", "actionNoun")] }
 
@@ -50,7 +50,7 @@ def ex_3a_passPrtc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "klt"), ("cell", "passPrtc")] }
 
@@ -63,7 +63,7 @@ def ex_3b_pst3msg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "kl"), ("cell", "pst3msg")] }
 
@@ -76,7 +76,7 @@ def ex_3b_actionNoun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "kl"), ("cell", "actionNoun")] }
 
@@ -89,7 +89,7 @@ def ex_3b_passPrtc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "kl"), ("cell", "passPrtc")] }
 
@@ -102,7 +102,7 @@ def ex_3c_pst3msg : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "klj"), ("cell", "pst3msg")] }
 
@@ -115,7 +115,7 @@ def ex_3c_actionNoun : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "klj"), ("cell", "actionNoun")] }
 
@@ -128,7 +128,7 @@ def ex_3c_passPrtc : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "klj"), ("cell", "passPrtc")] }
 
@@ -141,7 +141,7 @@ def ex_5a_pfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "pfv")] }
 
@@ -154,7 +154,7 @@ def ex_5a_ipfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "ipfv")] }
 
@@ -167,7 +167,7 @@ def ex_5a_juss : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "juss")] }
 
@@ -180,7 +180,7 @@ def ex_5a_grnd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "grnd")] }
 
@@ -193,7 +193,7 @@ def ex_5a_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "inf")] }
 
@@ -206,7 +206,7 @@ def ex_5b_pfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "pfv")] }
 
@@ -219,7 +219,7 @@ def ex_5b_ipfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "ipfv")] }
 
@@ -232,7 +232,7 @@ def ex_5b_juss : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "juss")] }
 
@@ -245,7 +245,7 @@ def ex_5b_grnd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "grnd")] }
 
@@ -258,7 +258,7 @@ def ex_5b_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "inf")] }
 
@@ -271,7 +271,7 @@ def ex_5c_pfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "pfv")] }
 
@@ -284,7 +284,7 @@ def ex_5c_ipfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "ipfv")] }
 
@@ -297,7 +297,7 @@ def ex_5c_juss : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "juss")] }
 
@@ -310,7 +310,7 @@ def ex_5c_grnd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "grnd")] }
 
@@ -323,7 +323,7 @@ def ex_5c_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "inf")] }
 
@@ -336,7 +336,7 @@ def ex_12c_pfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "pfv")] }
 
@@ -349,7 +349,7 @@ def ex_12c_ipfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "ipfv")] }
 
@@ -362,7 +362,7 @@ def ex_12c_juss : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "juss")] }
 
@@ -375,7 +375,7 @@ def ex_12c_grnd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "grnd")] }
 
@@ -388,7 +388,7 @@ def ex_12c_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "inf")] }
 
@@ -401,7 +401,7 @@ def ex_12d_pfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "pfv")] }
 
@@ -414,7 +414,7 @@ def ex_12d_ipfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "ipfv")] }
 
@@ -427,7 +427,7 @@ def ex_12d_juss : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "juss")] }
 
@@ -440,7 +440,7 @@ def ex_12d_grnd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "grnd")] }
 
@@ -453,7 +453,7 @@ def ex_12d_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "inf")] }
 
@@ -466,7 +466,7 @@ def ex_12e_pfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "pfv")] }
 
@@ -479,7 +479,7 @@ def ex_12e_ipfv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "ipfv")] }
 
@@ -492,7 +492,7 @@ def ex_12e_juss : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "juss")] }
 
@@ -505,7 +505,7 @@ def ex_12e_grnd : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "grnd")] }
 
@@ -518,7 +518,7 @@ def ex_12e_inf : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "inf")] }
 
@@ -531,7 +531,7 @@ def ex_9a_tavshil : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -544,7 +544,7 @@ def ex_9a_tadrix : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -557,7 +557,7 @@ def ex_9a_tadpis : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -570,7 +570,7 @@ def ex_9a_taxbiv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -583,7 +583,7 @@ def ex_9a_tazkir : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -596,7 +596,7 @@ def ex_9a_tazkik : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -609,7 +609,7 @@ def ex_9a_tazrim : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -622,7 +622,7 @@ def ex_9a_taxkir : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
@@ -635,7 +635,7 @@ def ex_9a_taskit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "masculine"), ("root", "skt")] }
 
@@ -648,7 +648,7 @@ def ex_9b_tavnit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
@@ -661,7 +661,7 @@ def ex_9b_taglit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine"), ("root", "glj")] }
 
@@ -674,7 +674,7 @@ def ex_9b_tadmit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine"), ("root", "dmj")] }
 
@@ -687,7 +687,7 @@ def ex_9b_tarmit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine"), ("root", "rmj")] }
 
@@ -700,7 +700,7 @@ def ex_9b_taxlit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
@@ -713,7 +713,7 @@ def ex_9b_tamtsit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
@@ -726,7 +726,7 @@ def ex_9b_taanit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
@@ -739,7 +739,7 @@ def ex_9b_tafnit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
@@ -752,7 +752,7 @@ def ex_9b_tatspit : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("gender", "feminine")] }
 

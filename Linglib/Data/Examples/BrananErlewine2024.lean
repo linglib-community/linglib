@@ -24,7 +24,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := "Subject relative with the SR form."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -37,7 +37,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := "Object relative across a high subject, with the NSR form."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NSR")] }
 
@@ -50,7 +50,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := "Object relative with the SR form; the subject is a low indefinite."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -63,7 +63,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := "Temporal relative with the SR form; the subject is a low indefinite."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -76,7 +76,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := "Temporal relative with the SR form; the subject is a low indefinite."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -89,7 +89,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := "Possessor-of-subject relative with the SR form."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -102,7 +102,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := "Possessor-of-subject relative with the NSR form."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NSR")] }
 
@@ -115,7 +115,7 @@ def ex18 : Datum :=
     glossedTokens := []
     context := "Possessor-of-object relative with the SR form; the subject is a low indefinite."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -128,7 +128,7 @@ def ex18_nsr : Datum :=
     glossedTokens := []
     context := "Possessor-of-object relative with the NSR form; the subject is a low indefinite."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NSR")] }
 
@@ -141,7 +141,7 @@ def ex20a : Datum :=
     glossedTokens := []
     context := "Possessor-of-object relative across a high subject, with the NSR form."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "NSR")] }
 
@@ -154,7 +154,7 @@ def ex20b : Datum :=
     glossedTokens := []
     context := "Possessor-of-object relative across a high subject, with the SR form."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("form", "SR")] }
 
@@ -167,7 +167,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := "Theme relative of an active verb across a full subject."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 
@@ -180,7 +180,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := "Theme relative of a passive verb."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "passive")] }
 
@@ -193,7 +193,7 @@ def ex22 : Datum :=
     glossedTokens := []
     context := "Active theme wh-question across a pronominal subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 
@@ -206,7 +206,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := "Active theme relative across an immediately preverbal pronominal agent."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 
@@ -219,7 +219,7 @@ def ex26a : Datum :=
     glossedTokens := []
     context := "Long-distance subject relative with the complementizer bawo and a resumptive pronoun; the higher clause is passive."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "passive")] }
 
@@ -232,7 +232,7 @@ def ex26b : Datum :=
     glossedTokens := []
     context := "Long-distance subject relative with the complementizer gi and a gap; the higher clause is passive."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "passive")] }
 
@@ -245,7 +245,7 @@ def ex28a : Datum :=
     glossedTokens := []
     context := "Long-distance subject relative over an active verb with a pronominal subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 
@@ -258,7 +258,7 @@ def ex28b : Datum :=
     glossedTokens := []
     context := "Long-distance theme relative over active verbs with pronominal subjects."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 
@@ -271,7 +271,7 @@ def ex29a : Datum :=
     glossedTokens := []
     context := "Possessor-of-subject relative with a resumptive pronoun."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -284,7 +284,7 @@ def ex29b : Datum :=
     glossedTokens := []
     context := "Possessor-of-object relative across a full subject."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 
@@ -297,7 +297,7 @@ def ex30 : Datum :=
     glossedTokens := []
     context := "Possessor-of-object relative over a pronominal subject."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("voice", "active")] }
 

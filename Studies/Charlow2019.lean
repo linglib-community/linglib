@@ -1,6 +1,6 @@
 module
 
-public import Studies.GroenendijkStokhof1991
+public import Linglib.Semantics.Dynamic.DPL.Context
 
 /-!
 # Charlow (2019): Where is the destructive update problem?
@@ -63,7 +63,7 @@ variable {E : Type*} {P Q : E → Prop} {g h : ℕ → E}
 /-- *A linguist⁶ entered the room. A linguist⁶ was already there*: the outputs map the index to
 a witness of the second indefinite, the value the first gave it being overwritten. -/
 theorem mem_indefinites_iff (n : ℕ) :
-    g ~[dexists n (test {k | P (k n)}) ○ dexists n (test {k | Q (k n)})] h ↔
+    g ~[(randomAssign n ○ (test {k | P (k n)})) ○ (randomAssign n ○ (test {k | Q (k n)}))] h ↔
       (∃ x, P x) ∧ ∃ y, Q y ∧ h = Function.update g n y := by
   constructor
   · rintro ⟨_, ⟨_, ⟨x, rfl⟩, rfl, hP⟩, _, ⟨y, rfl⟩, rfl, hQ⟩
@@ -72,7 +72,7 @@ theorem mem_indefinites_iff (n : ℕ) :
     exact ⟨_, ⟨_, ⟨x, rfl⟩, rfl, by simpa using hP⟩, _, ⟨y, rfl⟩, by simp, by simpa using hQ⟩
 
 theorem mem_dom_indefinites_iff (n : ℕ) :
-    g ∈ (dexists n (test {k | P (k n)}) ○ dexists n (test {k | Q (k n)})).dom ↔
+    g ∈ ((randomAssign n ○ (test {k | P (k n)})) ○ (randomAssign n ○ (test {k | Q (k n)}))).dom ↔
       (∃ x, P x) ∧ ∃ y, Q y :=
   ⟨fun ⟨_, hh⟩ ↦ let ⟨hP, y, hQ, _⟩ := (mem_indefinites_iff n).mp hh; ⟨hP, y, hQ⟩,
     fun ⟨hP, y, hQ⟩ ↦ ⟨_, (mem_indefinites_iff n).mpr ⟨hP, y, hQ, rfl⟩⟩⟩
@@ -173,7 +173,7 @@ theorem reachable_iff_finite : reachable L g h ↔ {x | g x ≠ h x}.Finite := b
   · rintro ⟨φ, hφ⟩
     refine φ.aqv.finite_toSet.subset fun x hx ↦ ?_
     by_contra hxφ
-    exact hx (GroenendijkStokhof1991.eqOn_of_eval hφ hxφ)
+    exact hx (eqOn_of_eval hφ hxφ)
   · intro hfin
     refine ⟨exs hfin.toFinset.toList .top, (mem_eval_exs E _).mpr ⟨h, fun y hy ↦ ?_, rfl⟩⟩
     by_contra hne
@@ -190,7 +190,7 @@ theorem antisymmetry_fails [Nontrivial E] :
     ∃ g h : (ℕ → E), g ≠ h ∧ reachable L g h ∧ reachable L h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   have hr : reachable L (fun _ ↦ e₁) (Function.update (fun _ ↦ e₁) 0 e₂) :=
-    ⟨∃[0] .top, mem_dexists.mpr ⟨e₂, rfl⟩⟩
+    ⟨∃[0] .top, mem_randomAssign_comp.mpr ⟨e₂, rfl⟩⟩
   exact ⟨_, _, fun heq ↦ hne (by simpa using congr_fun heq 0), hr, reachable_symm hr⟩
 
 end Reachability
@@ -209,7 +209,7 @@ variable {S : Type*} {φ : CCP S} {s : Set S}
 def distNeg (φ : CCP S) : CCP S :=
   fun s ↦ {i ∈ s | φ {i} = ∅}
 
-theorem distNeg_eq_image (φ : CCP S) : distNeg φ = (test (Update.neg (CCP.lower φ))).image := by
+theorem distNeg_eq_image (φ : CCP S) : distNeg φ = (test (CCP.lower φ).domᶜ).image := by
   funext s
   rw [image_test]
   ext i

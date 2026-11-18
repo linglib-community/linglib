@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Regularity.Equitabilise
-public import Linglib.Syntax.Category.Numeral.Composition
+public import Linglib.Syntax.Category.Numeral.Grammar
 
 /-!
 # Ionin and Matushansky (2006): The Composition of Complex Cardinals
@@ -111,12 +111,12 @@ theorem cardMod_cardMod_atoms {m : ℕ} (hm : m ≠ 0) (n : ℕ) (S : Set α) (x
   exact ((cardMod_atoms_iff m S t).1 (hQ t ht)).2 hat
 
 /-- Iterated modification computes Hurford's PHRASE projection rule, so `[n m] books` counts
-`(Phrase.mk n m).value` members. -/
-theorem iterated_matches_phrase (n : Numeral.Number) (m : Numeral.M) (S : Set α)
-    (x : Finset α) :
-    cardMod n.value (cardMod m.value (· ∈ ({·} : α → Finset α) '' S)) x ↔
-      #x = (Numeral.Phrase.mk n m).value ∧ ↑x ⊆ S :=
-  cardMod_cardMod_atoms m.value_pos.ne' n.value S x
+`(Phrase.mul n m).value` members. -/
+theorem iterated_matches_phrase {β : Type*} (v : β → ℕ) (n : Numeral.Number β) {m : β}
+    (hm : v m ≠ 0) (S : Set α) (x : Finset α) :
+    cardMod (n.value v) (cardMod (v m) (· ∈ ({·} : α → Finset α) '' S)) x ↔
+      #x = (Numeral.Phrase.mul n m).value v ∧ ↑x ⊆ S :=
+  cardMod_cardMod_atoms hm (n.value v) S x
 
 /-- Under conjoined partition-based predicates (13), scaled to *two four*, a plurality of four
 satisfies both conjuncts, where the modifier reading demands eight. -/

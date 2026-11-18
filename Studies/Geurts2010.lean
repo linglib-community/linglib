@@ -35,21 +35,6 @@ upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no 
   set and the whole space.
 * (61b, c) are read through the quantifiers of (62).
 
-## Errata
-
-* pp. 63–64: with three disjuncts (35) gives only non-belief in `x`, since [believing it false stays
-  consistent](##isSecondaryImplicature_Ici).
-* p. 64: closure under disjunction does not repeat the trouble of (32): [only alternatives false
-  wherever just one disjunct holds pass](##isSecondaryImplicature_upperSets_iff), and it [gives
-  ignorance](##notMem_polar_Ici_of_mem_primaryImplicatures).
-* p. 115: "American" for British.
-* p. 143: (25) should end *or we love it*.
-* p. 149: (42b) is *some but not many*, as the computation there gives, not "many but not all".
-* p. 168: (9a) for (9).
-* pp. 169–170: (11) and (16) put the disjunction outside the belief, where the prose has it inside.
-* p. 188: (46) omits *not*.
-* p. 189: O reaches RICH₂ given the alternative RICH₁, so "out of reach" overstates.
-
 ## TODO
 
 * §8.3 presupposition implicatures, §6.6 open alternatives, Spector's route (pp. 169–170,

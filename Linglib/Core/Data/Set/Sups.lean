@@ -140,6 +140,10 @@ theorem mem_iSups : a ∈ iSups s ↔ ∃ f : ι → α, (∀ i, f i ∈ s i) �
 theorem iSup_mem_iSups {f : ι → α} (hf : ∀ i, f i ∈ s i) : ⨆ i, f i ∈ iSups s :=
   mem_iSups.2 ⟨f, hf, rfl⟩
 
+@[simp]
+theorem iSups_nonempty : (iSups s).Nonempty ↔ ∀ i, (s i).Nonempty := by
+  simp [iSups, univ_pi_nonempty_iff]
+
 theorem exists_mem_iSups_ge (hs : ∀ j, (s j).Nonempty) {i : ι} (ha : a ∈ s i) :
     ∃ b ∈ iSups s, a ≤ b := by
   classical

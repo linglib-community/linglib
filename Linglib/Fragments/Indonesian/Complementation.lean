@@ -5,12 +5,23 @@ public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Indonesian clause embedding
-[arka-2013] [sneddon-1996] [noonan-2007]
 
-The complement-taking verbs and subordinators of [arka-2013]'s finiteness paradigm. *ingin*
-'want', *belajar* 'learn', *menyuruh* 'order', and *mendorong* 'push' take bare complements
-whose subject is controlled, coded as reduced in [noonan-2007]'s terms; *tahu* 'know' takes a
-*bahwa* clause. *bahwa* 'that' and *agar* 'so that' type full clauses with their own subjects.
+This file enters the complement-taking verbs and the subordinators of Arka's study of
+finiteness. *Ingin* 'want', *belajar* 'learn', *menyuruh* 'order' and *mendorong* 'push' take a
+bare complement whose subject is controlled, and *tahu* 'know' takes a *bahwa* clause. *Bahwa*
+'that' and *agar* 'so that' introduce full clauses with subjects of their own, and *sambil*
+'while' a clause whose subject is that of the main clause and is not expressed.
+
+## Implementation notes
+
+*Menyuruh*, *mendorong* and *belajar* are entered with their prefixes, *meN-* on *suruh* and
+*dorong* and *ber-* on *ajar*, and `Indonesian.Phonology` gives the sound of each prefix.
+
+## References
+
+* [arka-2013]
+* [sneddon-1996]
+* [noonan-2007]
 -/
 
 @[expose] public section
@@ -33,23 +44,25 @@ def objectControlledFrame : ArgumentFrame := controlledFrame.withObject
 def ingin : Verb :=
   { morphs := [.root "ingin"], valency := .ofFrame controlledFrame (controller := some 0) }
 
-/-- *belajar* 'learn, study' takes a controlled complement, *Saya belajar menembak*. -/
+/-- *belajar* 'learn, study', *ber-* on *ajar*, takes a controlled complement, *Saya belajar
+menembak*. -/
 def belajar : Verb :=
-  { morphs := [.root "belajar"], valency := .ofFrame controlledFrame (controller := some 0) }
+  { morphs := [.pref "ber", .root "ajar"],
+    valency := .ofFrame controlledFrame (controller := some 0) }
 
-/-- *menyuruh* 'order, ask' takes an object and a complement it controls, *Saya menyuruh dia
-makan*. -/
+/-- *menyuruh* 'order, ask', *meN-* on *suruh*, takes an object and a complement it controls,
+*Saya menyuruh dia makan*. -/
 def menyuruh : Verb :=
-  { morphs := [.root "menyuruh"],
+  { morphs := [.pref "meN", .root "suruh"],
     valency := .ofFrame objectControlledFrame (controller := some 1) }
 
-/-- *mendorong* 'push' takes an object and a resultative complement it controls, *Orang itu
-mendorong saya jatuh*. -/
+/-- *mendorong* 'push', *meN-* on *dorong*, takes an object and a resultative complement it
+controls, *Orang itu mendorong saya jatuh*. -/
 def mendorong : Verb :=
-  { morphs := [.root "mendorong"],
+  { morphs := [.pref "meN", .root "dorong"],
     valency := .ofFrame objectControlledFrame (controller := some 1) }
 
-/-- *tahu* 'know' takes a finite *bahwa* clause, *Saya tahu bahwa mereka akan datang*. -/
+/-- *tahu* 'know' takes a *bahwa* clause, *Saya tahu bahwa mereka akan datang*. -/
 def tahu : Verb := { morphs := [.root "tahu"], valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *bahwa* 'that' is the declarative complementizer of a full clause. -/
@@ -58,9 +71,14 @@ def bahwa : Complementizer where
   coding := some .indicative
   types := .only .declarative
 
-/-- *agar* 'so that' is the purposive subordinator of a full, irrealis clause. -/
+/-- *agar* 'so that' introduces a purpose clause, which may have a subject of its own. -/
 def agar : Complementizer where
   morphs := [.free "agar"]
-  coding := some .subjunctive
+
+/-- *sambil* 'while' joins a clause for a second action of the same person: the two clauses
+have the same subject, and that of the second is not expressed ([sneddon-1996] p. 338). -/
+def sambil : Complementizer where
+  morphs := [.free "sambil"]
+  subject := some .null
 
 end Indonesian.Complementation

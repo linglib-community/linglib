@@ -321,7 +321,7 @@ theorem roothPartee_notAtIssue_strengthens (mia sue : E)
       (forallOverIf EP sim (penniless hasMoney) (proudOfMoney hasMoney proudOf) mia
         sue).notAtIssue w) :
     ∀ w ∈ EP ∩ {w | hasMoney w mia}, hasMoney w sue :=
-  presup_strengthens EP sim hlaw fun w hw ↦
+  presup_strengthens EP sim (Q := {w | hasMoney w sue}) hlaw fun w hw ↦
     (roothPartee_notAtIssue EP sim hasMoney proudOf mia sue w).mp (h w hw.1)
 
 end Sharvit2025

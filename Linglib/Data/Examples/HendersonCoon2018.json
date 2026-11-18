@@ -11,7 +11,7 @@
     "translation": "Who bought the chicken?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -36,7 +36,7 @@
     "translation": "Who bought the chicken?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -62,7 +62,7 @@
     "translation": "What did the teacher buy?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -88,7 +88,7 @@
     "translation": "It's the woman who hit herself.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -114,7 +114,7 @@
     "translation": "Who brought his (own) wife to the party?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -141,7 +141,7 @@
     "translation": "... the other half of the people who say that they do one thing and...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -167,7 +167,7 @@
     "translation": "Who protested in the street?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -193,7 +193,7 @@
     "translation": "Who truly ate the tortilla?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -221,7 +221,7 @@
     "translation": "Those who truly valorize his word must also be good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -249,7 +249,7 @@
     "translation": "... because the person who truly valorizes God...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -277,7 +277,7 @@
     "translation": "... the pastors who truly preach the word of God to y'all.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -305,7 +305,7 @@
     "translation": "He is truly a man that truly makes visible my word.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -333,7 +333,7 @@
     "translation": "Who truly does my work then, he will then be blessed by the Father.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -360,7 +360,7 @@
     "translation": "Who then showed this word here to us?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -389,7 +389,7 @@
     "translation": "He who then hears the word of God the Father and learns it...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -415,7 +415,7 @@
     "translation": "Who then hit you?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -443,7 +443,7 @@
     "translation": "Whoever then will believe in Jesus will truly find then a life that...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -470,7 +470,7 @@
     "translation": "Who among them didn't eat the tamale?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -497,7 +497,7 @@
     "translation": "Who among them didn't eat the tamale?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -525,7 +525,7 @@
     "translation": "We have family that truly they valorize it.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -555,7 +555,7 @@
     "translation": "We have family that truly they bought him food.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -585,7 +585,7 @@
     "translation": "We have family that truly they valorize it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -615,7 +615,7 @@
     "translation": "We have family that truly they bought him food.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -645,7 +645,7 @@
     "translation": "We have family that truly they valorize it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -674,7 +674,7 @@
     "translation": "Who truly ate the tortilla?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -701,7 +701,7 @@
     "translation": "Who sometimes eats the chicken?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -728,7 +728,7 @@
     "translation": "Who sometimes eats the chicken?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject extraction", "judgment": "ungrammatical"},
       {"name": "object extraction", "judgment": "acceptable"}
@@ -758,7 +758,7 @@
     "translation": "Who always eats the chicken?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "extraction"],
@@ -785,7 +785,7 @@
     "translation": "Who always eats the chicken?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "subject extraction", "judgment": "ungrammatical"},
       {"name": "object extraction", "judgment": "acceptable"}
@@ -815,7 +815,7 @@
     "translation": "It was then that it was cured by him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedding"],
@@ -839,7 +839,7 @@
     "translation": "... neither did I use language that truly (who knows) what (lit. how) its form is...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedding"],
@@ -861,7 +861,7 @@
     "translation": "It's true that you worked.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedding"],
@@ -883,7 +883,7 @@
     "translation": "It's sometimes that you worked.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedding"],
@@ -905,7 +905,7 @@
     "translation": "It's always that you worked.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "embedding"],

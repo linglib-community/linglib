@@ -100,7 +100,7 @@ theorem not_inferentialPresup_empty (p : T → W → Prop) (w : W) :
 
 /-- The modal base at a reference time, as the world-propositions of the untensed ones. -/
 def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : Background W :=
-  fun _ ↦ (fun q w ↦ q t w) '' mb
+  fun _ ↦ (fun q ↦ {w | q t w}) '' mb
 
 /-- The at-issue content of *səm* and *will*, (62), is that the prejacent holds at or after the
 reference time in every best world. -/

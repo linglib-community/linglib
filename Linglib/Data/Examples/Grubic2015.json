@@ -11,7 +11,7 @@
     "translation": "I'm only a secretary.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "complement exclusion: I am nothing else in addition", "judgment": "acceptable"},
       {"name": "rank order: I am nothing better", "judgment": "acceptable"}
@@ -36,7 +36,7 @@
     "translation": "Only Dimza built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -60,7 +60,7 @@
     "translation": "Not only Dimza built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -85,7 +85,7 @@
     "translation": "Did only Dimza build a house?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -108,7 +108,7 @@
     "translation": "He only called Sama yesterday, and he also called Hawwa yesterday.",
     "context": "Who did Njelu call yesterday?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -130,7 +130,7 @@
     "translation": "I didn't only get a good harvest.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -152,7 +152,7 @@
     "translation": "Kule only built a house last year.",
     "context": "Kule wanted to build a house and a granary last year.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -174,7 +174,7 @@
     "translation": "No, Kule only gave a watch to her.",
     "context": "Did Kule give a watch to Dimza and Jajei?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -196,7 +196,7 @@
     "translation": "No, Kule only gave a watch to her.",
     "context": "Did Kule give a watch to Dimza and Jajei?",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -218,7 +218,7 @@
     "translation": "Hawwa, I think Daho only calls her (nobody else).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the only person that Daho calls is Hawwa", "judgment": "acceptable"}
     ],
@@ -242,7 +242,7 @@
     "translation": "Hawwa, I think Daho only calls (she doesn't do anything else).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "the only person that Daho calls is Hawwa", "judgment": "unacceptable"},
       {"name": "Daho does nothing but call", "judgment": "acceptable"}
@@ -267,7 +267,7 @@
     "translation": "Hawwa, I think Daho always calls (nobody else).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "whenever Daho calls somebody, she calls Hawwa", "judgment": "acceptable"}
     ],
@@ -293,7 +293,7 @@
     "translation": "Hasha sometimes calls Lakka, and Gambo only calls her.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -316,7 +316,7 @@
     "translation": "Hasha sometimes calls Lakka, and Gambo only calls her.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -339,7 +339,7 @@
     "translation": "Hasha sometimes calls Lakka, and Gambo always does.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "leiKiTomiya"],
@@ -361,7 +361,7 @@
     "translation": "People that grow rice only eat it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "they don't sell it or give it out", "judgment": "acceptable"},
       {"name": "they eat nothing else", "judgment": "unacceptable"}
@@ -386,7 +386,7 @@
     "translation": "Samaye only managed to pass her exams.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -409,7 +409,7 @@
     "translation": "Samaye always manages to pass her exams.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "whenever she tries, she passes", "judgment": "acceptable"}
     ],
@@ -433,7 +433,7 @@
     "translation": "He gave a watch to Shuwa, and he also gave it to me.",
     "context": "Whom did Kule give a watch?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -455,7 +455,7 @@
     "translation": "Kule called Dimza and he also called me.",
     "context": "Whom did Kule call?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -477,7 +477,7 @@
     "translation": "Kule called Dimza and he also called me.",
     "context": "Whom did Kule call?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -498,7 +498,7 @@
     "translation": "He also built a house.",
     "context": "I know that Hawwa built a house, but what about Kule? What did he build?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -520,7 +520,7 @@
     "translation": "Kule gave a watch to Shuwa, and he even gave one to me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "har"],
@@ -542,7 +542,7 @@
     "translation": "Hawwa built a house, and Kule also built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -563,7 +563,7 @@
     "translation": "Dimza only built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -587,7 +587,7 @@
     "translation": "Dimza also built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -610,7 +610,7 @@
     "translation": "Dimza even built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "har"],
@@ -634,7 +634,7 @@
     "translation": "I'm only a secretary.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "yak"],
@@ -657,7 +657,7 @@
     "translation": "Bah is even a teacher.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "har"],
@@ -681,7 +681,7 @@
     "translation": "Hawwa bought a car, Kule built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -703,7 +703,7 @@
     "translation": "Kule built a house, and Kule also bought a car.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -726,7 +726,7 @@
     "translation": "Kule built a school last year, and Kule also built a house last year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -748,7 +748,7 @@
     "translation": "Hawwa built a house, and Kule built a house, too.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -771,7 +771,7 @@
     "translation": "It is possible that it will rain tomorrow, and it will also rain the day after tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -793,7 +793,7 @@
     "translation": "Hawwa built a house and Kule also built a house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
@@ -815,7 +815,7 @@
     "translation": "Hawwa built a house, and Kule also built a house.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],

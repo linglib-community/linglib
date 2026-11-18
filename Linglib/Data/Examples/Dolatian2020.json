@@ -13,7 +13,7 @@
     "translation": "work; worker; workers; with workers",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -35,7 +35,7 @@
     "translation": "old, oldness; yellow, yellowish",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -59,7 +59,7 @@
     "translation": "frequent, to frequent; different, to distinguish",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "had͡ʒχ-él",
         "judgment": "ungrammatical"
@@ -92,7 +92,7 @@
     "translation": "husband, marriage; evening, evening (adj.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "amsin-utjún", "judgment": "ungrammatical"},
       {"form": "irgun-ajín", "judgment": "ungrammatical"}
     ],
@@ -118,7 +118,7 @@
     "translation": "birth; birth; generative",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -141,7 +141,7 @@
     "translation": "handwriting; pen; box; pencil-box",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -164,7 +164,7 @@
     "translation": "husband; marriage; husband-INST",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -188,7 +188,7 @@
     "translation": "conversation; to converse; conversation-INST",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -211,7 +211,7 @@
     "translation": "husband-INST",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "eastern"],
@@ -234,7 +234,7 @@
     "translation": "husband-PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "eastern"],
@@ -258,7 +258,7 @@
     "translation": "conversation; to converse; conversation-INST",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "eastern"],
@@ -282,7 +282,7 @@
     "translation": "year, age; secret (adj), secret (n); good, charity",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -306,7 +306,7 @@
     "translation": "husband, marriage; honest, honesty",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "amusən-utjún", "judgment": "ungrammatical"},
       {"form": "aznv-utjún", "judgment": "ungrammatical"}
     ],
@@ -333,7 +333,7 @@
     "translation": "sick, to become sick; relaxed, to relax; husband, to marry",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "həvant-anál", "judgment": "ungrammatical"},
       {"form": "hankist-anál", "judgment": "ungrammatical"},
       {"form": "amsin-anál", "judgment": "ungrammatical"}
@@ -360,7 +360,7 @@
     "translation": "nation; national; nationalist",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "western"],
@@ -384,7 +384,7 @@
     "translation": "paper and its case forms; husband and its case forms",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "eastern"],
@@ -408,7 +408,7 @@
     "translation": "papers, with papers; husbands, with husbands",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "eastern"],
@@ -434,7 +434,7 @@
     "translation": "child, childish, child-GEN (irreg.), child-GEN (reg.); serious, to get serious, serious-GEN; film, cinematic, film-PL",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["dialect", "eastern"],

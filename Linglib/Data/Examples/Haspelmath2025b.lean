@@ -24,7 +24,7 @@ def yomaseru : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2"), ("form", "ase"), ("contentful", "yes"), ("root", "no")] }
 
@@ -37,7 +37,7 @@ def hello : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("form", "hello"), ("contentful", "no"), ("root", "no")] }
 
@@ -50,7 +50,7 @@ def zona : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("form", "žon"), ("contentful", "yes"), ("root", "yes"), ("bound", "yes")] }
 
@@ -63,7 +63,7 @@ def zony : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("form", "žon"), ("contentful", "yes"), ("root", "yes"), ("bound", "yes")] }
 
@@ -76,7 +76,7 @@ def zonu : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("form", "žon"), ("contentful", "yes"), ("root", "yes"), ("bound", "yes")] }
 
@@ -89,7 +89,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
@@ -102,7 +102,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
@@ -115,7 +115,7 @@ def ex5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
@@ -128,7 +128,7 @@ def ex5d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
@@ -141,7 +141,7 @@ def ex5e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "lief")] }
 
@@ -154,7 +154,7 @@ def ex6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "katab"), ("skeleton", "k-t-b")] }
 
@@ -167,7 +167,7 @@ def ex6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "ktub"), ("skeleton", "k-t-b")] }
 
@@ -180,7 +180,7 @@ def ex6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "kaatib"), ("skeleton", "k-t-b")] }
 
@@ -193,7 +193,7 @@ def ex6d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4"), ("root", "kitaab"), ("skeleton", "k-t-b")] }
 
@@ -206,7 +206,7 @@ def ex8a1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "action")] }
 
@@ -219,7 +219,7 @@ def ex8a2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "action")] }
 
@@ -232,7 +232,7 @@ def ex8a3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "action")] }
 
@@ -245,7 +245,7 @@ def ex8b1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "object")] }
 
@@ -258,7 +258,7 @@ def ex8b2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "object")] }
 
@@ -271,7 +271,7 @@ def ex8b3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "object")] }
 
@@ -284,7 +284,7 @@ def ex8c1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "property")] }
 
@@ -297,7 +297,7 @@ def ex8c2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "property")] }
 
@@ -310,7 +310,7 @@ def ex8c3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "property")] }
 
@@ -323,7 +323,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
@@ -336,7 +336,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
@@ -349,7 +349,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
@@ -362,7 +362,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
@@ -375,7 +375,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
@@ -388,7 +388,7 @@ def ex14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
@@ -401,7 +401,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
@@ -414,7 +414,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
@@ -427,7 +427,7 @@ def ex18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("semantics", "DESIRE"), ("morphosyntax", "N-aff")] }
 
@@ -440,7 +440,7 @@ def ex18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "6"), ("semantics", "HAVING (DESIRE)"), ("morphosyntax", "A-aff")] }
 
@@ -453,7 +453,7 @@ def laudab : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3"), ("stem", "yes")] }
 

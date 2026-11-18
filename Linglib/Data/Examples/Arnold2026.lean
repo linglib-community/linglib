@@ -24,7 +24,7 @@ def homework : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("representation", "underspecified")] }
 
@@ -37,7 +37,7 @@ def lovato : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them")] }
 
@@ -50,7 +50,7 @@ def bed : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("representation", "underspecified")] }
 
@@ -63,7 +63,7 @@ def teacher : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "indefinite"), ("referentGender", "unknown"), ("representation", "underspecified")] }
 
@@ -76,7 +76,7 @@ def clerk : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "unknown"), ("representation", "underspecified")] }
 
@@ -89,7 +89,7 @@ def neighbor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "underspecified")] }
 
@@ -102,7 +102,7 @@ def shakespeare : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("referentGender", "known"), ("representation", "underspecified")] }
 
@@ -115,7 +115,7 @@ def landlord : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "indefinite"), ("referentGender", "known"), ("representation", "underspecified")] }
 
@@ -128,7 +128,7 @@ def son : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "underspecified")] }
 
@@ -141,7 +141,7 @@ def alex : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Alex broke some plates", .acceptable), ("Alex and Will broke some plates", .acceptable)]
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("ambiguity", "singular or plural")] }
 
@@ -154,7 +154,7 @@ def dillon : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated")] }
 
@@ -167,7 +167,7 @@ def mother : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "elaborated"), ("counterexample", "true")] }
 
@@ -180,7 +180,7 @@ def butler : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("pronounsIntroduced", "true")] }
 

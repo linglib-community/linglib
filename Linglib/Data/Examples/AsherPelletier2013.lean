@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing")] }
 
@@ -37,7 +37,7 @@ def ex_4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("problem", "restricted subkind")] }
 
@@ -50,7 +50,7 @@ def ex_4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("problem", "restricted subkind")] }
 
@@ -63,7 +63,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("problem", "weak existential")] }
 
@@ -76,7 +76,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing")] }
 
@@ -89,7 +89,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("problem", "no actual instances")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("teleological", .acceptable), ("statistical", .acceptable)]
     paperFeatures := [("type", "characterizing")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "generic comparison")] }
 
@@ -154,7 +154,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("problem", "no actual instances")] }
 
@@ -167,7 +167,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "embedded generic"), ("embedding", "antecedent")] }
 
@@ -180,7 +180,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "embedded generic"), ("embedding", "consequent")] }
 
@@ -193,7 +193,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "kind predication")] }
 
@@ -206,7 +206,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "kind predication")] }
 
@@ -219,7 +219,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "individual, kind")] }
 
@@ -232,7 +232,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("characterizing", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("type", "characterizing")] }
 
@@ -245,7 +245,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential", .acceptable)]
     paperFeatures := [("type", "existential"), ("restrictor", "tautologous")] }
 
@@ -258,7 +258,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "beer")] }
 
@@ -271,7 +271,7 @@ def ex_20c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "drinks")] }
 
@@ -284,7 +284,7 @@ def ex_20e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "drinks beer")] }
 
@@ -297,7 +297,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "adverb of quantification")] }
 
@@ -310,7 +310,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "adverb of quantification")] }
 
@@ -323,7 +323,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "poisonous")] }
 
@@ -336,7 +336,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "Australian, South American")] }
 
@@ -349,7 +349,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "Australian, Asian"), ("discourse", "parallelism")] }
 
@@ -362,7 +362,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "Frenchmen")] }
 
@@ -375,7 +375,7 @@ def ex_31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("focus", "French, horsemeat")] }
 
@@ -388,7 +388,7 @@ def ex_33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("accommodated", "restrictor")] }
 
@@ -401,7 +401,7 @@ def ex_33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("accommodated", "restrictor")] }
 
@@ -415,7 +415,7 @@ def ex_34 : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing")] }
 
@@ -428,7 +428,7 @@ def ex_36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("discourse", "Elaboration")] }
 
@@ -441,7 +441,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("discourse", "Correction")] }
 
@@ -454,7 +454,7 @@ def ex_39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "kind, individual")] }
 
@@ -467,7 +467,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "disjoint subkinds")] }
 
@@ -480,7 +480,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "disjoint subkinds")] }
 
@@ -493,7 +493,7 @@ def ex_40c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "disjoint subkinds")] }
 
@@ -506,7 +506,7 @@ def ex_40d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "disjoint subkinds")] }
 
@@ -519,7 +519,7 @@ def ex_40e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "copredication"), ("aspects", "disjoint subkinds")] }
 
@@ -532,7 +532,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("problem", "weak existential")] }
 
@@ -546,7 +546,7 @@ def ex_42a : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("relativeAccount", "true")] }
 
@@ -560,7 +560,7 @@ def ex_42b : Datum :=
     context := "There are only 50 governors and Schwarzenegger is a body builder; this is a much larger percentage of bodybuilders than the percentage of bodybuilders planet-wide."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("relativeAccount", "true")] }
 
@@ -574,7 +574,7 @@ def ex_42c : Datum :=
     context := "Supposing that there are 1000 philosophers and 1 or 2 manage to leave their armchairs to go do sport, whereas the vast majority of the 6 billion inhabitants of the planet are just couch potatoes or too poor to be able to afford to do sports."
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("relativeAccount", "true")] }
 
@@ -587,7 +587,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("genericity", "events")] }
 
@@ -600,7 +600,7 @@ def ex_43c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("genericity", "individuals, events")] }
 
@@ -613,7 +613,7 @@ def ex_45 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "characterizing"), ("genericity", "individuals, circumstances")] }
 
@@ -626,7 +626,7 @@ def ex_46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("existential over kinds", .acceptable)]
     paperFeatures := [("type", "focus-sensitive adverb")] }
 
@@ -640,7 +640,7 @@ def ex_46b : Datum :=
     context := ""
     judgment := .acceptable
     verdict := some false
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("type", "focus-sensitive adverb")] }
 
@@ -653,7 +653,7 @@ def ex_46c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := [("For instance body builders can become important politicians.", .acceptable), ("For instance body builders have become important politicians.", .acceptable)]
+    contrasts := [("For instance body builders can become important politicians.", .acceptable), ("For instance body builders have become important politicians.", .acceptable)]
     readings := []
     paperFeatures := [("type", "focus-sensitive adverb")] }
 

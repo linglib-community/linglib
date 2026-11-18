@@ -258,7 +258,6 @@ def obliteration : ObliterationRule (Finset Feat) := ⟨fun n ↦ .T ∈ n.focus
 
 /-- Vocabulary Insertion at each terminal of a word, with no rule before it. -/
 def insertion : Spellout (Finset Feat) Piece where
-  modules := []
   insert n := (subsetPrinciple vocabulary n).toList
 
 /-- The spell-out of a word under each fate of an orphan T. Impoverishment applies before
@@ -268,7 +267,7 @@ def OrphanFate.spellout : OrphanFate → Spellout (Finset Feat) Piece
   | .ignored => insertion
   | .elsewhere => insertion.rewriteAt impoverish
   | .impoverished => insertion.rewriteBefore impoverish
-  | .obliterated => { insertion with modules := [obliteration.apply] }
+  | .obliterated => { insertion with postsyntax := obliteration.apply }
 
 /-- The features of a terminal that has an exponent in a verbal word. -/
 def feats : Cat → Option (Finset Feat)

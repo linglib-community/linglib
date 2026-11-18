@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "non-veridical preferential"],
@@ -30,7 +30,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "veridical preferential"],
@@ -50,7 +50,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "veridical preferential"],
@@ -70,7 +70,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "veridical preferential"],
@@ -90,7 +90,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "non-veridical preferential"],
@@ -110,7 +110,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "non-veridical preferential"],
@@ -130,7 +130,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "veridical preferential"],
@@ -150,7 +150,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John's preference for Alice's jumping is compared to alternatives false at the evaluation world", "judgment": "acceptable"}
     ],
@@ -172,7 +172,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "John's preference for Alice's jumping is compared only to alternatives he considers possible", "judgment": "acceptable"}
     ],
@@ -194,7 +194,7 @@
     "translation": "",
     "context": "There is no particular student John wants to sing. John knows which student will sing.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "veridical preferential"],
@@ -215,7 +215,7 @@
     "translation": "",
     "context": "There is no particular student John wants to sing.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "be indifferent"],
@@ -235,7 +235,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "be indifferent"],

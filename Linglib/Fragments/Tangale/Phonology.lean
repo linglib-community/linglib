@@ -54,39 +54,39 @@ inductive Tone where
 
 /-- High Tone Spread ([kidda-1985] (31)) spreads the toneme at `i`, an H linked to TBU `j`
 at a morpheme or word boundary, onto the following TBU. -/
-def hts (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (p q : ℕ) : Prop :=
-  L b b' p q ∨ b = true ∧ b' = false ∧ p = i ∧ q = j + 1
+def hts (L : Tier → Tier → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Tier) (p q : ℕ) : Prop :=
+  L b b' p q ∨ b = .upper ∧ b' = .lower ∧ p = i ∧ q = j + 1
 
 /-- Left Line Delinking ([kidda-1985] (35a)) erases the original (left) line
     after the toneme has spread rightward. -/
-def lld (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (p q : ℕ) : Prop :=
-  L b b' p q ∧ ¬ (b = true ∧ b' = false ∧ p = i ∧ q = j)
+def lld (L : Tier → Tier → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Tier) (p q : ℕ) : Prop :=
+  L b b' p q ∧ ¬ (b = .upper ∧ b' = .lower ∧ p = i ∧ q = j)
 
-instance (L : Bool → Bool → ℕ → ℕ → Prop) [∀ b b', DecidableRel (L b b')] (i j : ℕ)
-    (b b' : Bool) : DecidableRel (hts L i j b b') :=
+instance (L : Tier → Tier → ℕ → ℕ → Prop) [∀ b b', DecidableRel (L b b')] (i j : ℕ)
+    (b b' : Tier) : DecidableRel (hts L i j b b') :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-instance (L : Bool → Bool → ℕ → ℕ → Prop) [∀ b b', DecidableRel (L b b')] (i j : ℕ)
-    (b b' : Bool) : DecidableRel (lld L i j b b') :=
+instance (L : Tier → Tier → ℕ → ℕ → Prop) [∀ b b', DecidableRel (L b b')] (i j : ℕ)
+    (b b' : Tier) : DecidableRel (lld L i j b b') :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-variable {ws : ∀ b, List (TwoTier Tone Unit b)} {L : Bool → Bool → ℕ → ℕ → Prop}
+variable {ws : ∀ b, List (TwoTier Tone Unit b)} {L : Tier → Tier → ℕ → ℕ → Prop}
   [∀ b b', DecidableRel (L b b')]
 
 /-- Spread creates the falling contour (§4.6), since the docked TBU surfaces with H
     on top of whatever it already bore. -/
-theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
-    (hj : j + 1 < (ws false).length) :
+theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws .upper)[i]? = some Tone.H)
+    (hj : j + 1 < (ws .lower).length) :
     (AR.fromRel ws (hts L i j)).SurfacesWith Tone.H (j + 1) := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   exact ⟨i, AR.link_fromRel.mpr ⟨by decide, hi, hj, .inl (.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, hH⟩
 
 /-- Spread followed by Left Line Delinking shifts the H one TBU rightward ((34)). -/
-theorem lld_hts_shift {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
-    (hj : j + 1 < (ws false).length) (hne : j + 1 ≠ j)
-    (hor : ∀ p q, ¬ L false true p q) :
+theorem lld_hts_shift {i j : ℕ} (hH : (ws .upper)[i]? = some Tone.H)
+    (hj : j + 1 < (ws .lower).length) (hne : j + 1 ≠ j)
+    (hor : ∀ p q, ¬ L .lower .upper p q) :
     (AR.fromRel ws (lld (hts L i j) i j)).SurfacesWith Tone.H (j + 1) ∧
-      ¬ (AR.fromRel ws (lld (hts L i j) i j)).Link true false i j := by
+      ¬ (AR.fromRel ws (lld (hts L i j) i j)).Link .upper .lower i j := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   constructor
   · refine ⟨i, AR.link_fromRel.mpr

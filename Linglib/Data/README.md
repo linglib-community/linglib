@@ -82,6 +82,10 @@ and a `ValueTable` (a language's codes, marked questionable, optional or minor
 as the source marks them). Each parameter with codes of its own becomes an
 inductive type; the long `ValueTable` is emitted as one row per language with
 a list-valued field per parameter, so a theorem reads each language once.
+Parameters a source tabulates side by side, as the seven semantic types head
+the columns of one table, may name a common `Index`: they become the
+constructors of its type, and a row has one field for the index, a function
+from that type to the lists of codes.
 
 - **Schema**: `Linglib/Data/StructureDataset/Schema.lean`
 - **Generator**: `scripts/gen_structure_dataset.py` (`--check` verifies sync)
@@ -186,7 +190,7 @@ clauses recording the order of object and verb with text type, object length, an
 - **Citation**: Moran, Steven & McCloy, Daniel (eds.) 2019. *PHOIBLE 2.0*. Jena: Max Planck Institute for the Science of Human History. <http://phoible.org>. DOI: 10.5281/zenodo.2626687
 - **Download**: <https://github.com/phoible/dev/blob/master/data/phoible.csv> (`PHOIBLE/raw/phoible.csv`)
 - **Generator**: `scripts/gen_phoible.py`
-- **Output**: `Linglib/Data/PHOIBLE/Inventories/{Lang}.lean`, and `Linglib/Data/PHOIBLE/Chart.lean`, the feature matrix of each glyph. A glyph has the same feature values in every PHOIBLE inventory, so the chart is language-independent; it leaves out tones and the glyphs with contour values such as `-,+`.
+- **Output**: `Linglib/Data/PHOIBLE/Inventories/{Lang}.lean`, and `Linglib/Data/PHOIBLE/Chart.lean`, the feature matrix of each glyph. A glyph has the same feature values in every PHOIBLE inventory, so the chart is language-independent. It covers every glyph, tones included, and leaves a feature unspecified where a complex segment has a contour such as `-,+`; `FeatureMatrix.first.«g»` and `FeatureMatrix.last.«g»` give a complex segment at the first and the last phase of its contours.
 - **Coverage**: 23 languages (Akan, Arabic, Czech, English, Finnish, French, Georgian, German, Hindi-Urdu, Hungarian, Indonesian, Japanese, Korean, Mandarin, Maori, Persian, Russian, Spanish, Swahili, Tagalog, Turkish, Yoruba, Zulu); the first inventory per ISO unless `ISO=ID` names another. A phoneme's feature matrix is its chart entry, written inline only for tones and contour-valued glyphs, where a contour such as `-,+` leaves the feature unspecified. PHOIBLE's `NA` is `none`; the sources differ in whether they record allophones, tones and marginal phonemes (15 of the 23 inventories are from SPA, which does not mark marginal phonemes, and Yoruba's is from UPSID, which records no tones).
 
 #### Regenerating

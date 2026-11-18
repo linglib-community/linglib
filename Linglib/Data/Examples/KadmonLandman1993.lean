@@ -24,7 +24,7 @@ def kl1993_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("context", "negation"), ("widening", "cooking potatoes to any potatoes")] }
 
@@ -37,7 +37,7 @@ def kl1993_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("local_signature", "mono")] }
 
@@ -50,7 +50,7 @@ def kl1993_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("context", "generic"), ("widening", "healthy owls to any owl")] }
 
@@ -63,7 +63,7 @@ def kl1993_27b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("context", "universalRestrictor"), ("widening", "dry matches to any matches")] }
 
@@ -76,7 +76,7 @@ def kl1993_55 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("local_signature", "mult")] }
 
@@ -89,7 +89,7 @@ def kl1993_56 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.6"), ("local_signature", "mult")] }
 
@@ -102,7 +102,7 @@ def kl1993_72 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("context", "adversative")] }
 
@@ -115,7 +115,7 @@ def kl1993_73 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono")] }
 
@@ -128,7 +128,7 @@ def kl1993_76B : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono"), ("settle_for_less", "yes")] }
 
@@ -141,7 +141,7 @@ def kl1993_82 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("context", "adversative"), ("widening", "phonologists who hate me to linguists who hate me")] }
 
@@ -154,7 +154,7 @@ def kl1993_88 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono"), ("settle_for_less", "yes")] }
 
@@ -167,7 +167,7 @@ def kl1993_95 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono")] }
 
@@ -180,7 +180,7 @@ def kl1993_105 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all"), ("metalinguistic_denial", "yes")] }
 
@@ -193,7 +193,7 @@ def kl1993_106 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all")] }
 
@@ -206,7 +206,7 @@ def kl1993_109 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all")] }
 
@@ -219,7 +219,7 @@ def kl1993_122 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "anti")] }
 
@@ -232,7 +232,7 @@ def kl1993_123 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "anti")] }
 
@@ -245,7 +245,7 @@ def kl1993_125 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all"), ("metalinguistic_denial", "yes")] }
 
@@ -258,7 +258,7 @@ def kl1993_132 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all")] }
 
@@ -271,7 +271,7 @@ def kl1993_143 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.5"), ("context", "conditionalAntecedent"), ("widening", "important newspapers to any newspaper")] }
 
@@ -284,7 +284,7 @@ def kl1993_almost_every : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.1"), ("np", "every owl"), ("precision", "precise"), ("universal", "yes"), ("dimensionally_universal", "no")] }
 
@@ -297,7 +297,7 @@ def kl1993_almost_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.1"), ("np", "no owl"), ("precision", "precise"), ("universal", "yes"), ("dimensionally_universal", "no")] }
 
@@ -310,7 +310,7 @@ def kl1993_almost_some : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.1"), ("np", "some owl"), ("precision", "precise"), ("universal", "no"), ("dimensionally_universal", "no")] }
 
@@ -323,7 +323,7 @@ def kl1993_almost_an : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.1.1"), ("np", "an owl"), ("precision", "vague"), ("universal", "yes"), ("dimensionally_universal", "no")] }
 
@@ -336,7 +336,7 @@ def kl1993_almost_any : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "4.3"), ("np", "any owl"), ("precision", "vague"), ("universal", "yes"), ("dimensionally_universal", "yes")] }
 

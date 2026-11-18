@@ -38,16 +38,11 @@ Table 1 (`german_no_cutoff`). The paper reports the German motion verbs (§4.3) 
 language to merge types or to divide them more finely (fn. 17, §6); a German cutoff needs the
 types from continuation of a state to motional process merged into one.
 
-The examples are linked by their verb to the entries of the four fragments. `ofVerb` places each
-linked verb on the type the paper gives it, except where the entries draw a finer line than
-Table 1 (`ofVerb_entry`). Each fragment records the auxiliaries its reference grammar gives a
-verb, [maiden-robustelli-2007] §14.20 for Italian, [broekhuis-corver-2026e] §§2.1–2.2 for Dutch,
-[durrell-2011] §12.3.2 for German and the lists of [grevisse-goosse-2008] §§811–813 for French,
-and each linked verb with one auxiliary has the one the paper's judgments prefer
-(`entry_aux_of_prefers`). With
-the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where the judgments do
-(`entries_cut_iff_cutoff`), and the Italian rule is that cut for every verb
-(`italian_perfect_eq_be_iff`).
+The examples are linked by their verb to the entries of the four fragments. Each fragment records
+the auxiliaries its reference grammar gives a verb, [maiden-robustelli-2007] §14.20 for Italian,
+[broekhuis-corver-2026e] §§2.1–2.2 for Dutch, [durrell-2011] §12.3.2 for German and the lists of
+[grevisse-goosse-2008] §§811–813 for French, and each linked verb with one auxiliary has the one
+the paper's judgments prefer (`entry_aux_of_prefers`).
 
 ## Implementation notes
 
@@ -83,12 +78,6 @@ the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where th
   *appartenere* 'belong' printed with *avere* alone, express none; the Italian grammar gives
   *bastare* *essere*, as (20b) does, and *appartenere* either.
 
-## TODO
-
-* The entries of *tossire* 'cough' and *squillare* 'ring' record no subject entailments, so
-  `ofVerb` places neither. A profile without volition would put (46) and (47) among the
-  uncontrolled processes.
-
 ## References
 
 * [sorace-2000]
@@ -103,7 +92,6 @@ the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where th
 namespace Sorace2000
 
 open ArgumentStructure
-open AuxiliarySelectionHierarchy (ofVerb)
 open Verb (PerfectAuxiliary)
 
 /-- The four languages of the paper. -/
@@ -152,7 +140,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
       subject := ex.parse? "subject" [("agentive", SubjectShift.agentive),
         ("nonagentive", .nonagentive)]
       judgment := fun a ↦
-        if a = aux then some ex.judgment else ex.alternatives.head?.map (·.2) }
+        if a = aux then some ex.judgment else ex.contrasts.head?.map (·.2) }
 
 /-- The paper's examples. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
@@ -284,36 +272,10 @@ def Language.entries (l : Language) : List (Verb × PerfectAuxiliary) :=
 def Row.entry? (r : Row) : Option (Verb × PerfectAuxiliary) :=
   r.language.entries.find? (·.1.form == r.verb)
 
-/-- `ofVerb` places each example's verb on the paper's type, except that *survivre* (16) and *duren*
-(18b) are states of existence, not continuation (Table 1). -/
-theorem ofVerb_entry : ∀ r ∈ rows, ∀ e ∈ r.entry?, ∀ t ∈ ofVerb e.1, t = r.position ∨
-    r.position = .continuationOfState ∧ t = .existenceOfState := by
-  decide
-
-/-- Of the paper's examples, 46 name a verb with a monadic entry whose grammar gives it one
-auxiliary, and `ofVerb` places 43 of them, all but those of *tossire* and *squillare*. -/
-example : (rows.filter (·.entry?.isSome)).length = 46 ∧
-    (rows.filter fun r ↦ (r.entry?.bind (ofVerb ·.1)).isSome).length = 43 := by
-  decide
-
 /-- Each language's grammar gives the verb of an example the auxiliary its judgments prefer,
 where the example departs from the default of its type in neither predicate nor subject. -/
 theorem entry_aux_of_prefers (l : Language) :
     ∀ r ∈ baseRows l, ∀ e ∈ r.entry?, ∀ a b, r.Prefers a b → e.2 = a := by
   revert l; decide
-
-/-- Each language's grammar cuts the hierarchy exactly where the paper's judgments do (§6). -/
-theorem entries_cut_iff_cutoff (l : Language) (k : AuxiliarySelectionHierarchy) :
-    (∀ e ∈ l.entries, ∀ t ∈ ofVerb e.1, e.2 = .be ↔ t ≤ k) ↔ Cutoff l k := by
-  revert l k; decide
-
-theorem italian_perfect_eq_be_iff {v : Italian.Verb} {fr : ArgumentFrame}
-    (hfr : ¬ fr.HasNominal) {t : AuxiliarySelectionHierarchy}
-    (ht : ofVerb v.toVerb = some t) :
-    Italian.Verbs.perfectAuxiliary v fr = .be ↔ t ≤ .existenceOfState := by
-  simp only [Italian.Verbs.perfectAuxiliary, hfr, ite_false]
-  rcases hc : v.vendlerClass with _ | c <;> simp_all [ofVerb]
-  split_ifs at ht <;> simp_all [Option.isSome_iff_ne_none]
-  all_goals first | (subst ht; decide) | (obtain ⟨a, -, rfl⟩ := ht; split_ifs <;> decide)
 
 end Sorace2000

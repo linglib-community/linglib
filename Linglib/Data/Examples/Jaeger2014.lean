@@ -24,7 +24,7 @@ def ex_1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("not all boys came in", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "Q"), ("implicature", "Not all boys came in."), ("signal", "f12"), ("world", "w2")] }
 
@@ -37,7 +37,7 @@ def ex_1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("exactly three boys came in", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "Q"), ("implicature", "Exactly three boys came in.")] }
 
@@ -50,7 +50,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("the book that John is reading or that he has written is good", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")] }
 
@@ -63,7 +63,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("a female secretary", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")] }
 
@@ -76,7 +76,7 @@ def ex_2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("hard-surfaced road", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")] }
 
@@ -89,7 +89,7 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John stopped the car in a regular way, like using the foot brake", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M"), ("signal", "f"), ("cost", "0"), ("world", "w1")] }
 
@@ -102,7 +102,7 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John stopped the car in an abnormal way", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M"), ("signal", "f'"), ("cost", "1"), ("world", "w2")] }
 
@@ -115,7 +115,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John stopped the car in a non-stereotypical way", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M")] }
 
@@ -128,7 +128,7 @@ def ex_5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("vague, between 90 and 110 meter", .acceptable), ("precise", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "low")] }
 
@@ -141,7 +141,7 @@ def ex_5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("precise, with a slack of at most 50 cm", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "high")] }
 
@@ -154,7 +154,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("precise", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "high")] }
 

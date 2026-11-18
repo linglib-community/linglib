@@ -31,16 +31,6 @@ quantificational subordination](##felicitous_discourse150a_iff).
   function into terms drops the restricted variable's assertion.
 * Label definitions nested in another's body are floated to the top of the discourse.
 
-## Errata
-
-* Summation abstracts over every set, and `w ∉ ψ` holds of every plurality that is not a world,
-  so the translation of "It's not like he doesn't own a car. It is just in the shop" is [false in
-  every model with an entity](##judgment_138a), though the paper judges it acceptable.
-* "Everyone who brought something valuable locked it up" gets the strong reading only with a
-  singular restriction: as printed, [a plurality of people who brought the same valuable and
-  locked it verifies it](##realize_valuables116_not_strong) where one of them left another
-  valuable unlocked.
-
 ## TODO
 
 * Of the paper's applications, only the paycheck and negated-indefinite pronouns, the bathroom
@@ -757,10 +747,14 @@ theorem realize_valuables116_sgIndef_iff (hw : h .w = world w₀) :
     fun hg => (hg ⟨by decide, by decide⟩).trans hw
   rw [expandSelf_valuables116_sgIndef]
   simp only [Formula.realize_conj, Formula.realize_subset, Formula.realize_labelDef, and_true,
-    Term.realize_sigma_eq_image S.model h (f := Sum.inr) fun g hg =>
-      realize_valuablesA_sgIndef S g (hl hg),
-    Term.realize_sigma_eq_image S.model h (f := Sum.inr) fun g hg =>
-      realize_valuablesL_sgIndef S g (hl hg),
+    Term.realize_sigma_eq_image S.model h (f := Sum.inr)
+      (s := {p | S.rel .person w₀ ![p] ∧ ∃ v, S.rel .valuable w₀ ![v] ∧ S.rel .bring w₀ ![p, v]})
+      fun g hg => realize_valuablesA_sgIndef S g (hl hg),
+    Term.realize_sigma_eq_image S.model h (f := Sum.inr)
+      (s := {p | S.rel .person w₀ ![p] ∧
+        (∃ v, S.rel .valuable w₀ ![v] ∧ S.rel .bring w₀ ![p, v]) ∧
+          ∀ v, S.rel .valuable w₀ ![v] → S.rel .bring w₀ ![p, v] → S.rel .lock w₀ ![p, v]})
+      fun g hg => realize_valuablesL_sgIndef S g (hl hg),
     Set.image_subset_image_iff Sum.inr_injective]
   exact ⟨fun H p hp hv => (@H p ⟨hp, hv⟩).2.2, fun H p ⟨hp, hv⟩ => ⟨hp, hv, H p hp hv⟩⟩
 

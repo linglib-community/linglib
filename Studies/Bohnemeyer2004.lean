@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Wordlist.Bohnemeyer2004
 public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
@@ -10,42 +11,36 @@ public import Linglib.Syntax.Voice.Basic
 /-!
 # Bohnemeyer 2004: split intransitivity, linking, and lexical representation
 
-Bohnemeyer accounts for split intransitivity in Yukatek Maya. Kraemer and Wunderlich derive the
-language's argument linking from lexical aspect alone; Bohnemeyer argues that what the linking
-rules see is event structure, specifically whether the intransitive base entails internal
-causation. Transitivizing an internally-caused base gives
-applicative linking, the added applied object realized as U with the original S left as A;
-transitivizing an externally-caused base gives causative linking, the added instigator realized as
-A with the original S demoted to U (rules (26)–(27)). Which overt suffix appears, *-t* or *-s*, is
-lexically idiosyncratic and can dissociate from the linking, as *balak'* 'roll' and *péek* 'move'
-show in opposite directions.
+Bohnemeyer accounts for argument linking in Yukatek Maya from event structure. Transitivizing an
+intransitive base puts its event into a causal chain of two subevents, as the causing subevent
+when the base is internally caused in the sense of [levin-hovav-1995] and as the caused one
+otherwise, and the participant of a causing subevent outranks that of the subevent it causes. So
+[the base's participant outranks the added one exactly when the base is internally
+caused](##Bohnemeyer2004.baseSubevent_lt_other_iff): an internally-caused base gains an applied
+object, an externally-caused one an instigator. [Stem class, and with it the inherent aspect on
+which Krämer and Wunderlich's rule rests](##Bohnemeyer2004.underdetermines_stemClass), and [the
+transitivizing suffix](##Bohnemeyer2004.underdetermines_suffix) each leave the linking open. The
+same hierarchy [derives the aspect-conditioned split](##Bohnemeyer2004.linking_derives_split): an
+imperfective viewpoint aligns with the initial subevent and a perfective one with the final, and
+the sole argument of an intransitive follows the role at that end. Detransitivization keeps one
+subevent of a transitive's chain, and [a passive stem keeps the causing process
+too](##Bohnemeyer2004.Detransitivization.passive_template_bind_caused).
 
-The aspect-conditioned split itself follows from the same causal chain: the participant of a
-causing subevent outranks that of the caused subevent (31), and an imperfective viewpoint aligns
-with the initial subevent while a perfective one aligns with the final subevent or the chain as a
-whole (32) — accusative and ergative defaults respectively.
+## Implementation notes
 
-The verbs and their stem classes are the Yukatek fragment's; the event type the paper reads into
-each class, the causation type of each base and the transitivizing suffixes are the paper's and
-are recorded here.
+* The paper's event structures have a state-change predicate that covers change without a
+  discrete end state, a process predicate, and a process predicate for internally-caused
+  processes. `Template` has `BECOME` and one activity; both process predicates are read as `act`,
+  and causation type is recorded apart from the template.
+* The transitivization rules are represented by the place of the base's event in the derived
+  chain. The event an internally-caused base gains is generic, and `Template` has no term for it.
+* The verbs, their stem classes and the causation type of each intransitive base are rows of
+  `Data/Wordlist/Bohnemeyer2004.json`, with each transitivized stem of the examples related to
+  its base; the suffix of a base is read from the morphs of that stem.
 
-## Main definitions
+## TODO
 
-* `Verb`, `CausationType`, `stemTemplate`: the fragment's verbs with the paper's causation
-  type, and the event-structure template of each stem class (§5).
-* `Subevent`, `Subevent.Causes`, `linkingDefault`, `sMarkerFromViewpoint`: the thematic
-  hierarchy of (31) as causal precedence along the CAUSE edge, the linking-by-viewpoint rule of
-  (32), and the linking of (33).
-* `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole`: the two
-  transitivizations as `Voice`s, and the role their added participant takes.
-* `TransitivizerSuffix`, `transitivizerSuffix`: the overt suffix, kept apart from the linking.
-* `DetransitivizationType`, `DetransitivizationType.retained`: the antipassive, anticausative
-  and passive of (28)–(30), and the subevent each denotes, a projection of the base's template
-  (`Subevent.of`).
-
-* `causation_determines_linking` against `template_underdetermines_linking`,
-  `stemClass_underdetermines_linking`, `suffix_underdetermines_linking`: what fixes the linking
-  and what does not.
+* The example sentences of the paper are not yet rows of `Data/Examples`.
 
 ## References
 
@@ -60,116 +55,17 @@ are recorded here.
 namespace Bohnemeyer2004
 
 open ArgumentStructure.EventStructure Aspect Mayan Voice
-open Yukatek (markerSet StatusCategory VerbStemClass)
+open Yukatek
 
-/-! ### The verbs and their event structure
+/-! ### Stem classes -/
 
-The stem classes are the fragment's. The paper reads the active stems as processes and the
-inactive, inchoative and positional stems as state changes, degree achievements included (§5),
-so the template of an intransitive stem class has `BECOME` exactly when the class is one of
-state change. Each documented intransitive base is classified by whether it entails internal
-causation (§6). -/
-
-/-- The event-structure template of a stem class, the activity for actives, the achievement for
-the three state-change classes and the accomplishment for transitives. -/
-def stemTemplate : VerbStemClass → Template .event
-  | .active => .act
-  | .inactive | .inchoative | .positional => .achievement
-  | .transitiveActive => .accomplishment
-
-/-- Whether an event is internally caused in the sense of [levin-hovav-1995], brought about by
-its instigator, a participant of the first event of a causal chain (§2). -/
-inductive CausationType where
-  | internal
-  | external
-  deriving DecidableEq, Repr
-
-/-- A verb of the paper's examples with the causation type of its intransitive base. -/
-structure Verb extends Yukatek.Verb where
-  /-- Whether the base entails internal causation. -/
-  causationType : CausationType
-  deriving DecidableEq, Repr
-
-/-- *meyah* 'work', internally caused. -/
-def meyah : Verb := { toVerb := Yukatek.meyah, causationType := .internal }
-
-/-- *bàaxal* 'play', internally caused. -/
-def bàaxal : Verb := { toVerb := Yukatek.bàaxal, causationType := .internal }
-
-/-- *hàan* 'eat', internally caused though inactive by stem class ((9)). -/
-def hàan : Verb := { toVerb := Yukatek.hàan, causationType := .internal }
-
-/-- *hats'* 'hit', internally caused. -/
-def hats' : Verb := { toVerb := Yukatek.hats', causationType := .internal }
-
-/-- *balak'* 'roll', externally caused. -/
-def balak' : Verb := { toVerb := Yukatek.balak', causationType := .external }
-
-/-- *péek* 'move', externally caused. -/
-def péek : Verb := { toVerb := Yukatek.péek, causationType := .external }
-
-/-- *tsíirin* 'buzz', externally caused. -/
-def tsíirin : Verb := { toVerb := Yukatek.tsíirin, causationType := .external }
-
-/-- *chíik* 'shake', externally caused. -/
-def chíik : Verb := { toVerb := Yukatek.chíik, causationType := .external }
-
-/-- *háarax* 'slide', externally caused. -/
-def háarax : Verb := { toVerb := Yukatek.háarax, causationType := .external }
-
-/-- *húuy* 'stir', externally caused. -/
-def húuy : Verb := { toVerb := Yukatek.húuy, causationType := .external }
-
-/-- *mosòon* 'whirl', externally caused. -/
-def mosòon : Verb := { toVerb := Yukatek.mosòon, causationType := .external }
-
-/-- *pirix* 'flick', externally caused. -/
-def pirix : Verb := { toVerb := Yukatek.pirix, causationType := .external }
-
-/-- *walak'* 'turn', externally caused. -/
-def walak' : Verb := { toVerb := Yukatek.walak', causationType := .external }
-
-/-- *nik'ich* 'squeak', externally caused. -/
-def nik'ich : Verb := { toVerb := Yukatek.nik'ich, causationType := .external }
-
-/-- *kim* 'die', externally caused. -/
-def kim : Verb := { toVerb := Yukatek.kim, causationType := .external }
-
-/-- *lúub* 'fall', externally caused. -/
-def lúub : Verb := { toVerb := Yukatek.lúub, causationType := .external }
-
-/-- *ka'n* 'get tired', externally caused. -/
-def ka'n : Verb := { toVerb := Yukatek.ka'n, causationType := .external }
-
-/-- *na'k* 'ascend', externally caused. -/
-def na'k : Verb := { toVerb := Yukatek.na'k, causationType := .external }
-
-/-- *la'b* 'deteriorate', externally caused. -/
-def la'b : Verb := { toVerb := Yukatek.la'b, causationType := .external }
-
-/-- *t'íil* 'last', externally caused. -/
-def t'íil : Verb := { toVerb := Yukatek.t'íil, causationType := .external }
-
-/-- *ts'u'k* 'rot', externally caused. -/
-def ts'u'k : Verb := { toVerb := Yukatek.ts'u'k, causationType := .external }
-
-/-- *bòox-tal* 'blacken', externally caused. -/
-def bòoxtal : Verb := { toVerb := Yukatek.bòoxtal, causationType := .external }
-
-/-- *chichan-tal* 'shrink', externally caused. -/
-def chichantal : Verb := { toVerb := Yukatek.chichantal, causationType := .external }
-
-/-- *kul-tal* 'sit down', externally caused. -/
-def kultal : Verb := { toVerb := Yukatek.kultal, causationType := .external }
-
-/-- *wa'l-tal* 'stand up', externally caused. -/
-def wa'ltal : Verb := { toVerb := Yukatek.wa'ltal, causationType := .external }
-
-/-- *chil-tal* 'lie down', externally caused. -/
-def chiltal : Verb := { toVerb := Yukatek.chiltal, causationType := .external }
-
-/-- *xol-tal* 'kneel', externally caused. -/
-def xoltal : Verb := { toVerb := Yukatek.xoltal, causationType := .external }
+/-- The stem class of the fragment that a class of the paper's word list names. -/
+def stemClass : Wordlist.StemClass → VerbStemClass
+  | .active => .active
+  | .inactive => .inactive
+  | .inchoative => .inchoative
+  | .positional => .positional
+  | .transitive => .transitiveActive
 
 /-! ### Causal chain and thematic hierarchy -/
 
@@ -199,27 +95,20 @@ instance : BoundedOrder Subevent where
   top := .caused
   le_top := by decide
 
+/-- The other subevent of the chain. -/
+def Subevent.other : Subevent → Subevent
+  | .causing => .caused
+  | .caused => .causing
+
 /-- `termRole e` is the core term role of the participant of `e` (33a–b). The highest-ranking
 role is the A of a transitive clause and the lowest-ranking role its P. -/
 def termRole : Subevent → TermRole
   | .causing => .A
   | .caused => .P
 
-/-- The other subevent of the chain. -/
-def Subevent.other : Subevent → Subevent
-  | .causing => .caused
-  | .caused => .causing
-
-/-- `e.of t` is the subevent `e` of the causative template `t`, its causing or its caused
-subevent, and `none` when `t` is not causative. -/
-def Subevent.of : Subevent → Template .event → Option (Template .event)
-  | .causing => Template.causing
-  | .caused => Template.caused
-
 /-- `markerOf r` is the marker set the core term role `r` takes in Yukatek (33), set A for A and
-set B for P. The sole
-argument of an intransitive takes whichever the viewpoint selects, which is the split
-(`sMarkerFromViewpoint`). -/
+set B for P. The sole argument of an intransitive takes whichever the viewpoint selects, which is
+the split (`sMarkerFromViewpoint`). -/
 def markerOf : TermRole → Option MarkerSet
   | .A => some .setA
   | .P => some .setB
@@ -228,6 +117,142 @@ def markerOf : TermRole → Option MarkerSet
 theorem markerOf_termRole_of_lt {a b : Subevent} (h : a < b) :
     markerOf (termRole a) = some .setA ∧ markerOf (termRole b) = some .setB := by
   revert a b; decide
+
+/-! ### Transitivization -/
+
+/-- The subevent of the derived causal chain that the base's event is. By (26) an
+internally-caused process gains an event it causes, and by (27) an externally-caused event gains
+an internally-caused process causing it. -/
+def Wordlist.Causation.baseSubevent : Wordlist.Causation → Subevent
+  | .internal => .causing
+  | .external => .caused
+
+/-- The role of the base's participant in the derived transitive. -/
+def baseRole (c : Wordlist.Causation) : TermRole := termRole c.baseSubevent
+
+/-- The role of the participant transitivization adds. -/
+def addedRole (c : Wordlist.Causation) : TermRole := termRole c.baseSubevent.other
+
+/-- The base's participant outranks the participant transitivization adds exactly when the base is
+internally caused ((26)–(27) with (31)). -/
+theorem baseSubevent_lt_other_iff (c : Wordlist.Causation) :
+    c.baseSubevent < c.baseSubevent.other ↔ c = .internal := by
+  cases c <;> decide
+
+-- (33a–b): the base's participant is marked by set A when the base is internally caused and by
+-- set B otherwise, and the added participant by the other set
+theorem markerOf_baseRole (c : Wordlist.Causation) :
+    markerOf (baseRole c) = some (if c = .internal then .setA else .setB) ∧
+      markerOf (addedRole c) = some (if c = .internal then .setB else .setA) := by
+  cases c <;> decide
+
+/-- Transitivizing an internally-caused base nucleativizes an applied object as P while the
+base's S is maintained, surfacing as the A of the derived transitive clause, a P-applicative over
+an intransitive base. -/
+def applicativeLinking : Voice := .of .intransitive .np [some .external, some (.complement 0)]
+
+/-- The voice of the transitivization of a base, the applicative for an internally-caused base
+and the causative for an externally-caused one. -/
+def Wordlist.Causation.voice : Wordlist.Causation → Voice
+  | .internal => applicativeLinking
+  | .external => causative
+
+/-- The base's S receives the role of the derived slot its participant occupies. -/
+def originalRole (va : Voice) : Option TermRole :=
+  (va.image .external).bind fun t ↦ (va.derived.status t).role
+
+-- the applicative and the causative voice assign the roles the hierarchy derives
+theorem voice_roles (c : Wordlist.Causation) :
+    originalRole c.voice = some (baseRole c) ∧ c.voice.newParticipant = some (addedRole c) := by
+  cases c <;> decide
+
+/-! ### What does not fix the linking
+
+The paper's argument is that the properties rival accounts appeal to leave the linking open:
+stem class, the inherent aspect [kraemer-wunderlich-1999] read from it, the overt suffix, and
+control. -/
+
+/-- A property of verbs underdetermines the linking when an internally-caused and an
+externally-caused base share a value of it. -/
+def Underdetermines {α : Type*} (f : Wordlist.Analysis → Option α) : Prop :=
+  ∃ v ∈ Wordlist.analyses, ∃ w ∈ Wordlist.analyses, v.causation = some .internal ∧
+    w.causation = some .external ∧ ∃ x, f v = some x ∧ f w = some x
+
+/-- Stem class underdetermines the linking, and so does anything read from it: *hàan* 'eat' and
+*kim* 'die' are both inactive, and transitivization adds an applied object to the one (9) and an
+instigator to the other (6). -/
+theorem underdetermines_stemClass {α : Type*} (g : VerbStemClass → α) :
+    Underdetermines fun a ↦ some (g (stemClass a.stemClass)) :=
+  ⟨Wordlist.haan.analysis, by decide, Wordlist.kim.analysis, by decide, rfl, rfl, _, rfl, rfl⟩
+
+/-- The inherent aspect [kraemer-wunderlich-1999] assign a stem class, imperfective for the active
+class and perfective for the inactive, inchoative and positional classes. -/
+def inherentAspect : VerbStemClass → Option Perfectivity
+  | .active => some .imperfective
+  | .inactive | .inchoative | .positional => some .perfective
+  | .transitiveActive => none
+
+-- pp. 80, 83: the inherent aspect of the active and of the inactive class is the viewpoint of
+-- the status that leaves the class unmarked; the inchoative and positional classes, which are
+-- also inherently perfective, are marked in every status
+theorem exists_unmarked_viewpointAspect_iff (k : VerbStemClass) :
+    (∃ s, statusSuffix k s = some [] ∧ s.viewpointAspect = inherentAspect k) ↔
+      k = .active ∨ k = .inactive := by
+  cases k <;> decide
+
+/-- The place of the base's participant by rule (14) of [kraemer-wunderlich-1999]. An inherently
+imperfective verb gains an affected object, an inherently perfective one a causer. -/
+def kwBaseSubevent : Perfectivity → Subevent
+  | .imperfective => .causing
+  | .perfective => .caused
+
+-- (14) agrees with (26)–(27) on a base exactly when active stem class and internal causation
+-- coincide; *balak'* 'roll' (10), *tsíirin* 'buzz' (11) and *péek* 'move' (8) are active and
+-- externally caused, *hàan* 'eat' (9) is inactive and internally caused
+theorem kwBaseSubevent_eq_iff {k : VerbStemClass} {a : Perfectivity}
+    (h : inherentAspect k = some a) (c : Wordlist.Causation) :
+    kwBaseSubevent a = c.baseSubevent ↔ (k = .active ↔ c = .internal) := by
+  cases k <;> cases c <;> cases h <;> decide
+
+/-- The degree achievements of (17)–(18) among the paper's classified verbs, which behave
+atelically in the test of realization under cessation (15). -/
+def degreeAchievements : List Wordlist.Analysis :=
+  [Wordlist.kan.analysis, Wordlist.lab.analysis, Wordlist.luub.analysis, Wordlist.nak.analysis,
+    Wordlist.tiil.analysis, Wordlist.tsuk.analysis, Wordlist.booxtal.analysis,
+    Wordlist.chichantal.analysis]
+
+-- §5, (21): degree achievements are externally caused, so they gain an instigator, where (14)
+-- applied to their atelicity adds an affected object
+theorem degreeAchievements_external :
+    ∀ a ∈ degreeAchievements, a.causation = some .external := by
+  decide
+
+/-- The positional stems of (24), which pass the control test (23). -/
+def controlledPositionals : List Wordlist.Analysis :=
+  [Wordlist.waltal.analysis, Wordlist.kultal.analysis, Wordlist.chiltal.analysis,
+    Wordlist.xoltal.analysis]
+
+-- (24)–(25): controlled bases that are externally caused, so control does not fix the linking
+theorem controlledPositionals_external :
+    ∀ a ∈ controlledPositionals, a.causation = some .external := by
+  decide
+
+/-- The suffix of the transitivized stem the paper gives a base, its last morph. -/
+def transitivizer (a : Wordlist.Analysis) : Option String :=
+  (Wordlist.analysisRelations.find? (·.form = a)).bind (·.target.form.morphs.getLast?)
+
+/-- The suffix underdetermines the linking: *meyah* 'work' (4) and *balak'* 'roll' (10) both take
+*-t*, which adds an applied object to the one and an instigator to the other. -/
+theorem underdetermines_suffix : Underdetermines transitivizer :=
+  ⟨Wordlist.meyah.analysis, by decide, Wordlist.balak.analysis, by decide, rfl, rfl, "t",
+    by decide, by decide⟩
+
+-- (8), (10): nor is the suffix fixed by stem class and causation type together
+theorem transitivizer_balak_ne_peek :
+    Wordlist.balak.analysis.stemClass = Wordlist.peek.analysis.stemClass ∧
+      Wordlist.balak.analysis.causation = Wordlist.peek.analysis.causation ∧
+      transitivizer Wordlist.balak.analysis ≠ transitivizer Wordlist.peek.analysis := by
+  decide
 
 /-! ### Linking by viewpoint -/
 
@@ -251,273 +276,98 @@ theorem linking_derives_split {s : StatusCategory} {v : Perfectivity}
     (h : s.viewpointAspect = some v) : markerSet s .S = sMarkerFromViewpoint v := by
   cases s <;> cases v <;> first | rfl | cases h
 
-/-! ### Linking pattern under transitivization -/
+-- §4, §7: under each status with a viewpoint, the marking has the alignment Hindi case has
+-- under that viewpoint
+theorem aspect_conditioned_split_family {s : StatusCategory} {v : Perfectivity}
+    (h : s.viewpointAspect = some v) : (HindiUrdu.alignment v).Classifies (markerSet s) := by
+  cases s <;> cases v <;> first | decide | cases h
 
-/-- By rule (26), transitivizing an internally-caused base nucleativizes an applied object as P
-while the base's S is maintained, surfacing as the A of the derived transitive clause. This is
-Creissels' P-applicativization over an intransitive base. -/
-def applicativeLinking : Voice := .of .intransitive .np [some .external, some (.complement 0)]
+/-! ### Detransitivization
 
-/-- By rule (27), transitivizing an externally-caused base nucleativizes an instigator as A, the
-base's S surfacing as P. This is the causative unchanged. -/
-def causativeLinking : Voice := causative
+Only transitive verbs that encode a causal relation between two subevents detransitivize. An
+antipassive stem denotes the causing event, an anticausative stem the caused event, and a passive
+stem the caused event with an internally-caused process causing it, whose instigator is not a
+core argument ((28)–(30)). -/
 
-/-- The causation type of the intransitive base selects the alternation (rules 26–27). -/
-def predictLinking : CausationType → Voice
-  | .internal => applicativeLinking
-  | .external => causativeLinking
-
-/-- The alternation a Yukatek verb undergoes under transitivization. -/
-def verbLinking (v : Verb) : Voice :=
-  predictLinking v.causationType
-
-/-- The role the added participant receives, read off the alternation. -/
-def addedRole (va : Voice) : Option TermRole := va.newParticipant
-
-/-- The base's S receives the role of the derived slot its participant occupies. -/
-def originalRole (va : Voice) : Option TermRole :=
-  (va.image .external).bind fun t ↦ (va.derived.status t).role
-
-/-- Under transitivization the participant of an internally-caused base occupies the causing
-process (26), and that of an externally-caused base the caused event (27). -/
-def CausationType.baseSubevent : CausationType → Subevent
-  | .internal => .causing
-  | .external => .caused
-
-/-- Under transitivization (26)–(27) and the hierarchy (31), the base participant takes the role of
-its subevent and the added participant that of the other. -/
-theorem predictLinking_roles (c : CausationType) :
-    originalRole (predictLinking c) = some (termRole c.baseSubevent) ∧
-      addedRole (predictLinking c) = some (termRole c.baseSubevent.other) := by
-  cases c <;> decide
-
-/-- Applicative and causative linking are mirror images, and not by stipulation: each alternation
-adds a participant in the role the other leaves to the base's S, so the marker one assigns to the
-added argument is the marker the other assigns to the original S. -/
-theorem linking_patterns_swap_roles :
-    addedRole applicativeLinking = originalRole causativeLinking ∧
-    originalRole applicativeLinking = addedRole causativeLinking := by decide
-
-/-- The marker each participant receives follows from its role by `markerOf`: the applicative adds
-a set-B argument and keeps the base's S as set A, the causative the reverse. -/
-theorem linking_markers :
-    (addedRole applicativeLinking).bind markerOf = some .setB ∧
-    (originalRole applicativeLinking).bind markerOf = some .setA ∧
-    (addedRole causativeLinking).bind markerOf = some .setA ∧
-    (originalRole causativeLinking).bind markerOf = some .setB := by decide
-
--- (28), (30)
-theorem transitivizations_increase_valency :
-    applicativeLinking.IsValencyIncreasing ∧ causativeLinking.IsValencyIncreasing := by decide
-
-/-- The added participant of a verb takes P under applicative linking and A under causative
-linking. -/
-def addedTermRole (v : Verb) : Option TermRole := addedRole (verbLinking v)
-
-/-! ### Transitivizing suffix vs linking
-
-The overt transitivizing suffix is lexically specified and *usually* tracks the linking pattern,
-but the two can dissociate — the paper's central argument against aspect-based linking. The suffix
-is paper-specific lexical data, so it is recorded here against the Fragment's entries rather than
-in the Fragment. -/
-
-/-- A transitivizing suffix is the applicative *-t* or the causative *-s*. -/
-inductive TransitivizerSuffix where
-  | applicativeT
-  | causativeS
+/-- The detransitivizations of Yukatek, (12). -/
+inductive Detransitivization where
+  | antipassive
+  | anticausative
+  | passive
   deriving DecidableEq, Repr
 
-/-- The suffix each verb the paper documents takes under transitivization (4), (5), (6), (7), (8),
-(9), (10), (11). The suffix is lexically idiosyncratic, since *balak'* and *péek* are both
-active and externally caused yet take *-t* and *-s* respectively. -/
-def suffixTable : List (Verb × TransitivizerSuffix) :=
-  [(meyah, .applicativeT), (bàaxal, .applicativeT), (hàan, .applicativeT),
-   (balak', .applicativeT), (tsíirin, .applicativeT),
-   (kim, .causativeS), (lúub, .causativeS), (péek, .causativeS)]
+namespace Detransitivization
 
-/-- The suffix of a documented verb; `none` for verbs the paper does not exemplify. -/
-def transitivizerSuffix (v : Verb) : Option TransitivizerSuffix :=
-  suffixTable.lookup v
+/-- The template of a stem detransitivized from one of template `t`. The antipassive (28) keeps
+the causing subevent, which it requires to be a process. The anticausative (29) keeps the caused
+subevent. The passive (30) keeps the caused subevent and a process causing it. -/
+def template : Detransitivization → Template .event → Option (Template .event)
+  | .antipassive, .cause .act _ => some .act
+  | .anticausative, .cause _ e => some e
+  | .passive, .cause _ e => some (.cause .act e)
+  | _, _ => none
 
-/-- The verbs whose transitivization the paper exemplifies. -/
-def documented : List Verb := suffixTable.map (·.1)
+-- (28)–(30) presuppose a causal relation between two subevents
+theorem exists_cause_of_template_isSome {d : Detransitivization} {t : Template .event}
+    (h : (d.template t).isSome) : ∃ c e, t = .cause c e := by
+  cases t with
+  | cause c e => exact ⟨c, e, rfl⟩
+  | _ => cases d <;> simp [template] at h
 
-/-! ### What determines the linking
+/-- A passive stem denotes the event its anticausative denotes together with a process causing
+it (30). -/
+theorem passive_template_bind_caused (t : Template .event) :
+    (passive.template t).bind Template.caused = anticausative.template t := by
+  cases t <;> rfl
 
-Causation type determines the alternation by rules (26)–(27). The paper's argument is that the
-properties competing accounts appeal to do not: each of lexical aspect (which is what
-[kraemer-wunderlich-1999]'s rule (14) reads), stem class, and the overt suffix leaves the linking
-open, witnessed by a minimal pair of documented verbs. -/
+-- (12): on *p'eh* 'chip', the antipassive denotes the chipping process, the anticausative the
+-- change, and the passive the whole chain
+example : antipassive.template .accomplishment = some .act ∧
+    anticausative.template .accomplishment = some .achievement ∧
+    passive.template .accomplishment = some .accomplishment := ⟨rfl, rfl, rfl⟩
 
-/-- Causation type settles the alternation. -/
-theorem causation_determines_linking (v w : Verb)
-    (h : v.causationType = w.causationType) : verbLinking v = verbLinking w := by
-  simp [verbLinking, h]
+/-- The subevent whose participant is the sole argument of the detransitivized stem, the causing
+event for the antipassive and the caused event for the anticausative and the passive. -/
+def retained : Detransitivization → Subevent
+  | .antipassive => .causing
+  | .anticausative | .passive => .caused
 
-/-- *Meyah* 'work' and *balak'* 'roll' share a template but link differently, against the
-aspect-based rule (14) ((4) vs (10)). -/
-theorem template_underdetermines_linking :
-    stemTemplate meyah.stemClass = stemTemplate balak'.stemClass ∧
-    addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
-
-/-- Stem class does not settle it either. *Hàan* 'eat' and *kim* 'die' are both inactive, and
-they link differently ((9) vs (6)). -/
-theorem stemClass_underdetermines_linking :
-    hàan.stemClass = kim.stemClass ∧
-    addedTermRole hàan ≠ addedTermRole kim := ⟨rfl, by decide⟩
-
-/-- *Meyah* and *balak'* take the same suffix *-t* but link differently (§6). -/
-theorem suffix_underdetermines_linking :
-    transitivizerSuffix meyah = transitivizerSuffix balak' ∧
-    addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
-
--- (8), (10)
-theorem suffix_not_predictable :
-    balak'.stemClass = péek.stemClass ∧ balak'.causationType = péek.causationType ∧
-    transitivizerSuffix balak' ≠ transitivizerSuffix péek := ⟨rfl, rfl, by decide⟩
-
-theorem documented_linking :
-    documented.all (fun v ↦
-      addedTermRole v == some (if v.causationType == .internal then .P else .A)) = true := by
-  decide
-
-/-! ### Degree achievements: event type vs aspect -/
-
--- (19), (20), (15), §5
-theorem kaan_is_state_change : (stemTemplate ka'n.stemClass).HasResultState := by decide
-
-theorem naak_is_state_change : (stemTemplate na'k.stemClass).HasResultState := by decide
-
-/-- Degree achievements causativize like state-change verbs, adding an A, against rule (14) ((17),
-(21)). -/
-theorem degree_achievements_causativize :
-    addedTermRole ka'n = some .A ∧ addedTermRole na'k = some .A := ⟨rfl, rfl⟩
-
-/-- *hàan* 'eat' is inactive by stem class yet internally caused, and it applicativizes ((9)): if
-stem class determined transitivization it would causativize like *kim* 'die'. -/
-theorem haanEat_applicative_despite_inactive :
-    hàan.stemClass = .inactive ∧ addedTermRole hàan = some .P := ⟨rfl, rfl⟩
-
-/-! ### Bridge to detransitivization
-
-The three Yukatek detransitivizations are instances of the cross-linguistic
-valency-alternation typology (`Syntax/Voice/Alternation.lean`).
-That substrate keeps passive and anticausative distinct by the fate of the
-initial A — passive *denucleativizes* it (retained in participant structure as
-a possible oblique agent), anticausative *suppresses* it (removed entirely). -/
-
-/-- The detransitivizations of Yukatek are those of rules (28)–(30). The antipassive (28) removes
-the caused event and retains the causing process, and active intransitives inflect like
-antipassive stems. The anticausative (29) removes the causing event and retains the caused one,
-and inactive intransitives inflect like anticausative stems. The passive (30) is like the
-anticausative but adds PROC_C and an instigator to the caused event. -/
-inductive DetransitivizationType where
-  | antipassive   -- retain causing process, remove caused event
-  | anticausative -- retain caused event, remove causing process
-  | passive       -- retain caused event, add instigator
-  deriving DecidableEq, Repr
-
-/-- Each Yukatek detransitivization is a cross-linguistic valency alternation. The antipassive
-denucleativizes P and makes A the S, the anticausative suppresses A and makes P the S, and the
-passive denucleativizes A but retains it and makes P the S. -/
-def DetransitivizationType.toVoice : DetransitivizationType → Voice
+/-- Each Yukatek detransitivization as a voice. The antipassive denucleativizes P and makes A the
+S, the anticausative suppresses A and makes P the S, and the passive denucleativizes A, which
+stays in participant structure, and makes P the S. -/
+def toVoice : Detransitivization → Voice
   | .antipassive => Voice.antipassive
   | .anticausative => Voice.anticausative
   | .passive => Voice.passive
 
--- (12)
-theorem detransitivizations_decrease_valency :
-    (DetransitivizationType.toVoice .antipassive).IsValencyDecreasing ∧
-    (DetransitivizationType.toVoice .anticausative).IsValencyDecreasing ∧
-    (DetransitivizationType.toVoice .passive).IsValencyDecreasing := by decide
-
-/-- The fate of the initial A separates the passive from the anticausative, a distinction the
-coarser intransitivization typology collapses. The passive denucleativizes A, which stays in
-participant structure, and the anticausative suppresses it. -/
-theorem passive_anticausative_distinct_by_A_fate :
-    (DetransitivizationType.toVoice .passive).fateOfRole .A = .denucleativized ∧
-    (DetransitivizationType.toVoice .anticausative).fateOfRole .A = .suppressed := by
-  decide
-
-/-! ### The subevent a detransitivized stem denotes
-
-"Antipassives denote the causing event, while anticausatives and passives denote the caused
-event" (§6): each detransitivization keeps one subevent of its base's causal chain, whose
-participant is the derived stem's sole argument. (29) and (30) leave open whether the caused
-event is a state change, and the contact verbs that passivize and anticausativize may not
-entail one. -/
-
-/-- A stem detransitivized by `d` denotes the subevent `d.retained`, the causing event for the
-antipassive (28) and the caused event for the anticausative and the passive ((29)–(30)). The
-passive differs from the
-anticausative in participant structure, not in the subevent it denotes. -/
-def DetransitivizationType.retained : DetransitivizationType → Subevent
-  | .antipassive => .causing
-  | .anticausative | .passive => .caused
-
-/-- The template a detransitivized stem denotes, the retained subevent of its base's
-template. -/
-def DetransitivizationType.template (d : DetransitivizationType) :
-    Template .event → Option (Template .event) :=
-  d.retained.of
-
--- (28), (30)
-theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
-    (t : Template .event) :
-    (d.template t).isSome ↔ ∃ c e, t = .cause c e := by
-  cases d <;> cases t <;>
-    simp [DetransitivizationType.template, DetransitivizationType.retained, Subevent.of,
-      Template.causing, Template.caused]
+end Detransitivization
 
 /-- The initial role of the participant that a voice's derived construction privileges. -/
 def pivotSourceRole (va : Voice) : Option TermRole :=
   (va.pivot.bind fun p ↦ (va.preimages p).head?).bind fun s ↦
     (va.initial.argumentRole s).map TermRole.ofArgumentRole
 
-/-- The sole argument of a detransitivized stem bears the role (33) assigns its subevent, the A for
-an antipassive and the P otherwise. -/
-theorem pivotSourceRole_toVoice (d : DetransitivizationType) :
+-- the sole argument of a detransitivized stem bears the role (33) assigns its subevent
+theorem pivotSourceRole_toVoice (d : Detransitivization) :
     pivotSourceRole d.toVoice = some (termRole d.retained) := by
   cases d <;> decide
 
-/-- On a transitive stem, the antipassive denotes the causing process and the anticausative the
-caused change. -/
-example : DetransitivizationType.antipassive.template (stemTemplate .transitiveActive) = some .act ∧
-    DetransitivizationType.anticausative.template (stemTemplate .transitiveActive) =
-      some .achievement := ⟨rfl, rfl⟩
+-- the instigator a passive stem entails stays in participant structure; the anticausative has
+-- none
+theorem fateOfRole_passive_anticausative :
+    (Detransitivization.toVoice .passive).fateOfRole .A = .denucleativized ∧
+      (Detransitivization.toVoice .anticausative).fateOfRole .A = .suppressed := by
+  decide
 
-/-! ### The rest of the inventory -/
+/-! ### Stem classes and Lucy's root classes
 
-/-- The Fragment's externally-caused verbs span three stem classes, the manner-of-motion and
-sound-emission actives, the positionals ((25)) and the inactive degree achievements ((17)). -/
-def externallyCaused : List Verb :=
-  [chíik, háarax, húuy, mosòon, pirix, walak', chiltal, xoltal, la'b, t'íil, ts'u'k, ka'n, na'k]
+[lucy-1994] classifies underived Yukatek roots by the transitivizer they require, where the stem
+classes here are those of status inflection (§3). A root of Lucy's sample and a stem of this
+paper are compared where their rows name one concept. -/
 
-theorem externally_caused_causativize :
-    externallyCaused.all (fun v ↦
-      v.causationType == .external && addedTermRole v == some .A) = true := by decide
-
-/-! ### Bridge to split ergativity -/
-
-/-- Under each status with a viewpoint, the marking has the alignment Hindi case has under that
-viewpoint, the relation to Hindi of §4 (p. 84). -/
-theorem aspect_conditioned_split_family {s : StatusCategory} {v : Perfectivity}
-    (h : s.viewpointAspect = some v) : (HindiUrdu.alignment v).Classifies (markerSet s) := by
-  cases s <;> cases v <;> first | decide | cases h
-
-/-! ### Stem classes vs Lucy's root classes
-
-[lucy-1994] classifies underived Yukatek roots by required transitiviser;
-this paper's five stem classes cut the same lexicon by status inflection.
-The comparison lives here because the paper engages Lucy's analysis
-directly — §5 argues degree achievements defeat its Vendlerian construal
-of these classes. -/
-
-/-- `salienceClassOf c` is the salience class of Lucy's that the stem class `c` corresponds to.
-The map is partial. `inchoative` stems derive from adjectival roots (completive *-chah*), which
-Lucy holds outside the predicate-root cut, and `positional` roots form Lucy's separate
-cross-cutting class (completive *-lah*); the two stem classes share only the anomalous
-incompletive *-tal*. -/
+/-- The salience class of [lucy-1994] to which a stem class corresponds. Inchoative stems derive
+from adjectival roots, which Lucy holds outside the predicate-root cut, and positional roots form
+a separate cross-cutting class. -/
 def salienceClassOf : VerbStemClass → Option ArgumentStructure.SalienceClass
   | .active => some .agent
   | .inactive => some .patient
@@ -525,23 +375,13 @@ def salienceClassOf : VerbStemClass → Option ArgumentStructure.SalienceClass
   | .inchoative => none
   | .positional => none
 
-/-- Where the two samples share a lexeme, stem class and Lucy's derived root class agree, for
-*kim* ~ *kíim* 'die', *lúub* ~ *lúub'* 'fall' and *na'k* ~ *ná'ak* 'ascend'. -/
-theorem salience_agrees_on_shared_roots :
-    salienceClassOf kim.stemClass = Lucy1994.predictedClass Lucy1994.kiim ∧
-    salienceClassOf lúub.stemClass = Lucy1994.predictedClass Lucy1994.luub ∧
-    salienceClassOf na'k.stemClass = Lucy1994.predictedClass Lucy1994.naak :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- *Hàan* 'eat' is patient salient by stem class yet takes applicative *-t*, so the suffix tracks
-internal causation (9). -/
-theorem haanEat_defies_transitiviser_diagnostic :
-    transitivizerSuffix hàan = some .applicativeT ∧
-    salienceClassOf hàan.stemClass = some .patient := ⟨rfl, rfl⟩
-
--- (4)
-theorem peek_stem_vs_root_class_divergence :
-    salienceClassOf péek.stemClass = some .agent ∧
-    Lucy1994.predictedClass Lucy1994.peek = some .patient := ⟨rfl, rfl⟩
+-- (8): where a root of Lucy's sample and a stem here express one concept, the classes
+-- correspond, except for *péek* 'move', active by its status pattern and taking *-s*
+theorem salienceClassOf_eq_predictedClass_iff :
+    ∀ a ∈ Wordlist.analyses, ∀ r ∈ Lucy1994.sampledRoots,
+      a.form.parameterId = r.form.parameterId →
+        (salienceClassOf (stemClass a.stemClass) = Lucy1994.predictedClass r ↔
+          a ≠ Wordlist.peek.analysis) := by
+  decide
 
 end Bohnemeyer2004

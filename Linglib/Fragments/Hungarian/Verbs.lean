@@ -54,7 +54,6 @@ def lat : Verb where
   morphs := [.root "lát"]
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
-  vendlerClass := some .state
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
@@ -63,7 +62,6 @@ def hall : Verb where
   morphs := [.root "hall"]
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
-  vendlerClass := some .state
 
 /-- *álmodik* 'dream'. -/
 def almodik : Verb where
@@ -76,7 +74,6 @@ def almodik : Verb where
 def gondol : Verb where
   morphs := [.root "gondol"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
   complementSig := some .mono
@@ -85,7 +82,6 @@ def gondol : Verb where
 def hisz : Verb where
   morphs := [.root "hisz"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .state
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
   complementSig := some .mono
@@ -96,20 +92,17 @@ accusative experiencer: *Az aggasztotta Petit, hogy ...* 'It worried Peti that .
 def aggaszt : Verb where
   morphs := [.root "aggaszt"]
   valency := .ofFrame ArgumentFrame.clausalSubject
-  vendlerClass := some .state
 
 /-- *mond* 'say'. -/
 def mond : Verb where
   morphs := [.root "mond"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .achievement
   speechActVerb := true
 
 /-- *rikolt* 'shout', a manner-of-speaking verb. -/
 def rikolt : Verb where
   morphs := [.root "rikolt"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  vendlerClass := some .activity
   speechActVerb := true
 
 /-- *morog* 'growl', a manner-of-speaking verb, basically an intransitive that hosts a reason
@@ -117,7 +110,6 @@ adjunct and derivedly complement-taking with the accusative expletive *azt*. -/
 def morog : Verb where
   morphs := [.root "morog"]
   valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.finiteClause]
-  vendlerClass := some .activity
   speechActVerb := true
 
 /-- *telefonál* 'call on the phone', an intransitive; a speech-reporting *hogy*-clause attaches
@@ -125,13 +117,11 @@ only as an adjunct with the instrumental expletive *azzal*. -/
 def telefonal : Verb where
   morphs := [.root "telefonál"]
   valency := .ofFrame ArgumentFrame.intransitive
-  vendlerClass := some .activity
 
 /-- *irigykedik* 'be jealous', an intransitive with a reason-adjunct *hogy*-clause. -/
 def irigykedik : Verb where
   morphs := [.root "irigykedik"]
   valency := .ofFrame ArgumentFrame.intransitive
-  vendlerClass := some .state
   pastStem := some "irigyked"
 
 /-- The entries. -/

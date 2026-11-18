@@ -52,6 +52,15 @@ theorem Setoid.card_quotient_strictAnti {α : Type*} [Finite α] :
   refine lt_of_le_of_ne (Nat.card_le_card_of_surjective f hf) fun he ↦ h.not_ge fun a b hab ↦ ?_
   exact Quotient.exact ((hf.bijective_of_nat_card_le he.ge).1 (Quotient.sound hab))
 
+theorem Setoid.inter_mem_classes_inf {α : Type*} {r s : Setoid α} {a b : Set α}
+    (ha : a ∈ r.classes) (hb : b ∈ s.classes) (h : (a ∩ b).Nonempty) :
+    a ∩ b ∈ (r ⊓ s).classes := by
+  obtain ⟨y, hya, hyb⟩ := h
+  obtain ⟨x, rfl⟩ := ha
+  obtain ⟨z, rfl⟩ := hb
+  exact ⟨y, Set.ext fun _ ↦ ⟨fun ⟨h₁, h₂⟩ ↦ ⟨r.trans' h₁ (r.symm' hya), s.trans' h₂ (s.symm' hyb)⟩,
+    fun ⟨h₁, h₂⟩ ↦ ⟨r.trans' h₁ hya, s.trans' h₂ hyb⟩⟩⟩
+
 theorem Setoid.classes_inf {α : Type*} (r s : Setoid α) :
     (r ⊓ s).classes = {c | ∃ a ∈ r.classes, ∃ b ∈ s.classes, c = a ∩ b ∧ c.Nonempty} := by
   ext c

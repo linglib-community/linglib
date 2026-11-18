@@ -24,7 +24,7 @@ def ex4a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "the"), ("strength", "strong"), ("grammatical", "no")] }
 
@@ -37,7 +37,7 @@ def ex4b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "none"), ("strength", "strong"), ("grammatical", "no")] }
 
@@ -50,7 +50,7 @@ def ex4c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("strength", "strong"), ("grammatical", "no")] }
 
@@ -63,7 +63,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "some"), ("strength", "weak"), ("grammatical", "yes")] }
 
@@ -76,7 +76,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "two"), ("strength", "weak"), ("grammatical", "yes")] }
 
@@ -89,7 +89,7 @@ def ex5c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "some"), ("strength", "weak"), ("grammatical", "yes")] }
 
@@ -102,7 +102,7 @@ def ex11a_every : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "every"), ("grammatical", "yes")] }
 
@@ -115,7 +115,7 @@ def ex11a_no : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "no"), ("grammatical", "yes")] }
 
@@ -128,7 +128,7 @@ def ex11b_some : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "some"), ("grammatical", "no")] }
 
@@ -141,7 +141,7 @@ def ex11b_three : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "three"), ("grammatical", "no")] }
 
@@ -154,7 +154,7 @@ def ex11b_many : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "many"), ("grammatical", "no")] }
 
@@ -167,7 +167,7 @@ def ex11c_most : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "most"), ("grammatical", "no")] }
 
@@ -180,7 +180,7 @@ def ex11c_exactly_two : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "exactly two"), ("grammatical", "no")] }
 
@@ -193,7 +193,7 @@ def ex11c_fewer_than_three : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "fewer than three"), ("grammatical", "no")] }
 
@@ -206,7 +206,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")] }
 
@@ -219,7 +219,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "everyIs"), ("determiner", "every"), ("grammatical", "yes")] }
 
@@ -232,7 +232,7 @@ def ex34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("construction", "andNot"), ("determiner", "none"), ("grammatical", "yes")] }
 

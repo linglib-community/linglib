@@ -196,22 +196,17 @@ theorem discharge_singleton (i : VocabularyItem F E) (m : Finset F) :
   simp [discharge]
 
 /-- An item with no context of insertion discharges the same features in every environment. -/
-theorem discharge_congr (hi : ∀ x ∈ i.site, x.1 = 0) (env env' : Neighborhood (Finset F)) :
+theorem discharge_congr (hi : i.IsContextFree) (env env' : Neighborhood (Finset F)) :
     ∀ ms, discharge i env ms = discharge i env' ms
   | [] => rfl
   | m :: ms => by
     have h : Applies i ({ env with focus := m } : Neighborhood (Finset F)) ↔
-        Applies i ({ env' with focus := m } : Neighborhood (Finset F)) := by
-      simp only [VocabularyItem.applies_iff]
-      refine forall₂_congr fun x hx ↦ ?_
-      obtain ⟨o, f⟩ := x
-      obtain rfl : o = 0 := hi _ hx
-      simp [Neighborhood.mem_def]
+        Applies i ({ env' with focus := m } : Neighborhood (Finset F)) := hi.applies_congr rfl
     simp only [discharge, h, discharge_congr hi env env' ms]
 
 /-- A Vocabulary with no contexts of insertion scans the same way in every environment. -/
 theorem scan_congr (env env' : Neighborhood (Finset F)) :
-    ∀ items : RuleSet (VocabularyItem F E), (∀ i ∈ items, ∀ x ∈ i.site, x.1 = 0) →
+    ∀ items : RuleSet (VocabularyItem F E), (∀ i ∈ items, i.IsContextFree) →
       ∀ ms, scan items env ms = scan items env' ms
   | [], _, _ => rfl
   | i :: rest, h, ms => by

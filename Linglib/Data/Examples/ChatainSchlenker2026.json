@@ -13,7 +13,7 @@
     "translation": "",
     "context": "We’re supposed to take the lab rat out of its cage once a day. Otherwise, it feels stressed. Bill has been unreliable in performing this task.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Ann's sentence licenses the inference that last Monday the rat was initially in its cage; Sue's stripped clause is read without that presupposition for Wednesday.",
@@ -35,7 +35,7 @@
     "translation": "None of these ten public figures realize that they are unpopular, because they are all dead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodated", "alive"],
@@ -60,7 +60,7 @@
     "translation": "None of these ten public figures realize that they are unpopular, because none of them is!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodated", "unpopular"],
@@ -80,7 +80,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The source prints that the sentence implies that the book is with Josh and that the book belongs to the library.",
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodated", "possession"],
@@ -117,7 +117,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodated", "ownership"],
@@ -145,7 +145,7 @@
     "translation": "In my country, the king does not notice that he is unpopular. In mine too: he is dead.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodated", "alive"],
@@ -174,7 +174,7 @@
     "translation": "In my country, the king does not notice that he is unpopular. In mine too: our king is very popular.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["accommodated", "unpopular"],

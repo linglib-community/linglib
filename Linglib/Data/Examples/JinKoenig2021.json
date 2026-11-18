@@ -12,7 +12,7 @@
     "translation": "I fear that it will rain tomorrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -30,14 +30,11 @@
       [
         "negator_kind",
         "dedicated"
-      ],
-      [
-        "entrenched",
-        "high"
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "unclassified"
   },
   {
     "id": "jk2021_3",
@@ -52,7 +49,7 @@
     "translation": "Intended: I wish it that it will rain tomorrow.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -61,7 +58,8 @@
       ]
     ],
     "comment": "wish is not a trigger: the negator is licensed by the meaning of fear.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "unclassified"
   },
   {
     "id": "jk2021_4",
@@ -76,7 +74,7 @@
     "translation": "9 netizens were busy persuading (her not to commit suicide) but they forgot to call the police.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -112,7 +110,7 @@
     "translation": "I also fear that he will take it too hard and do stupid things.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -148,7 +146,7 @@
     "translation": "How can I avoid being a liar anymore?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -184,7 +182,7 @@
     "translation": "I regret that it often should take years before history judges tyrants.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -224,7 +222,7 @@
     "translation": "...and furthermore, he regretted having listened to Su Lu's opinion...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -260,7 +258,7 @@
     "translation": "Everyone secretly complained that Keming had driven the woman away.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -296,7 +294,7 @@
     "translation": "Do you deny that he is a great artist?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -314,14 +312,11 @@
       [
         "negator_kind",
         "dedicated"
-      ],
-      [
-        "entrenched",
-        "high"
       ]
     ],
     "comment": "French DENY-class predicates must be questioned or negated for EN.",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "unclassified"
   },
   {
     "id": "jk2021_20",
@@ -336,7 +331,7 @@
     "translation": "She hid from me that she was HIV positive.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -357,7 +352,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_21",
@@ -372,7 +368,7 @@
     "translation": "This officer forgot to take into account the warnings that his superiors had given him at the time.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -412,7 +408,7 @@
     "translation": "He delayed graduating last year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -433,7 +429,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_23",
@@ -448,7 +445,7 @@
     "translation": "We talked to him all night, and he really barely agreed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -469,7 +466,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_24",
@@ -484,7 +482,7 @@
     "translation": "Before I got married I lived with my parents.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -505,7 +503,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_25",
@@ -520,7 +519,7 @@
     "translation": "I cannot wait for him to come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -541,7 +540,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "elicitation"
   },
   {
     "id": "jk2021_26",
@@ -556,7 +556,7 @@
     "translation": "...Dairy products do not cause asthma and rarely trigger symptoms of asthma...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -592,7 +592,7 @@
     "translation": "Whether or not he is satisfied only depends on me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -613,7 +613,8 @@
       ]
     ],
     "comment": "",
-    "verified": "page-image"
+    "verified": "page-image",
+    "method": "unclassified"
   },
   {
     "id": "jk2021_28",
@@ -628,7 +629,7 @@
     "translation": "The question came out of my lips differently than I would have liked.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -646,14 +647,11 @@
       [
         "negator_kind",
         "dedicated"
-      ],
-      [
-        "entrenched",
-        "high"
       ]
     ],
-    "comment": "",
-    "verified": "page-image"
+    "comment": "Cited from Muller (1991: 435).",
+    "verified": "page-image",
+    "method": "description"
   },
   {
     "id": "jk2021_29",
@@ -668,7 +666,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

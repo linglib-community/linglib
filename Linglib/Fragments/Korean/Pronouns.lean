@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
@@ -26,7 +27,7 @@ are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*,
 
 ## Main definitions
 
-* `Korean.Pronouns.pronouns` — the personal pronouns
+* `Korean.Pronouns.personal` — the personal pronouns
 * `Korean.Pronouns.addressee` — the second person singular at each grade
 * `Korean.Pronouns.allocutiveParticles` — the speech-style particles
 
@@ -126,7 +127,7 @@ def addressee : Grade → PersonalPronoun
   | .deferential => taek
 
 /-- The personal pronouns. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {na, jeo, uri, jeohui, neo, jane, dangsin, taek, geu, geunyeo, gyae, geudeul}
 
 /-- The polite speech-style particle *-yo*, of informal discourse. -/
@@ -137,6 +138,35 @@ def supnida : Morphology.Morph := .suff "(seu)mnida"
 
 /-- The speech-style particles. -/
 def allocutiveParticles : List Morphology.Morph := [yo, supnida]
+
+/-! ### Quexistentials
+
+The interrogative words, which are used bare as indefinites, *nwukwu* 'who' for 'someone'. The
+forms are those of Haspelmath's table, in his Yale romanization. -/
+
+/-- 누구 *nwukwu* 'who, someone'. -/
+def nwukwu : ProForm := { form := "nwukwu", script := some "누구", ontology := .person }
+
+/-- *mues* 'what, something'. -/
+def mues : ProForm := { form := "mues", ontology := .thing }
+
+/-- *etten* 'what kind of, some kind of'. -/
+def etten : ProForm := { form := "etten", ontology := .property }
+
+/-- *eti* 'where, somewhere'. -/
+def eti : ProForm := { form := "eti", ontology := .place }
+
+/-- *encey* 'when, sometime'. -/
+def encey : ProForm := { form := "encey", ontology := .time }
+
+/-- *enu* 'which, some'. -/
+def enu : ProForm := { form := "enu", ontology := .determiner }
+
+/-- The quexistentials. -/
+def quexistentials : Finset ProForm := {nwukwu, mues, etten, eti, encey, enu}
+
+/-- The interrogative pronouns, the quexistentials in their interrogative use. -/
+def interrogatives : Finset InterrogativePronoun := quexistentials.image (⟨·⟩)
 
 end Pronouns
 

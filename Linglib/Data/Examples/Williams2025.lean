@@ -25,7 +25,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "cognition"), ("presupposition", "John stopped by the flower shop")] }
 
@@ -39,7 +39,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("reading", "psych-action"), ("presupposition", "John was supposed to stop by the flower shop"), ("presupposition", "If John stopped by the flowershop, it is because he remembered to do it.")] }
 
@@ -53,7 +53,7 @@ def ex_7a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -67,7 +67,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -81,7 +81,7 @@ def ex_9a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -95,7 +95,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -107,9 +107,11 @@ def ex_11a : Datum :=
     language := "stan1288"
     primaryText := "Juan olvidó que pasó por la floristería pero no tenía por qué pasar por la floristería"
     glossedTokens := [("Juan", "Juan"), ("olvidó", "forgot"), ("que", "that"), ("pasó", "he.passed"), ("por", "by"), ("la", "the"), ("floristería", "flowershop"), ("pero", "but"), ("no", "NEG"), ("tenía", "have.to"), ("por", "for"), ("qué", "that"), ("pasar", "to.pass"), ("por", "by"), ("la", "the"), ("floristería", "flowershop")]
+    glossedWords := [⟨['J', 'u', 'a', 'n'], ['J', 'u', 'a', 'n'], [⟨['J', 'u', 'a', 'n'], ['J', 'u', 'a', 'n'], none⟩]⟩, ⟨['o', 'l', 'v', 'i', 'd', 'ó'], ['f', 'o', 'r', 'g', 'o', 't'], [⟨['o', 'l', 'v', 'i', 'd', 'ó'], ['f', 'o', 'r', 'g', 'o', 't'], none⟩]⟩, ⟨['q', 'u', 'e'], ['t', 'h', 'a', 't'], [⟨['q', 'u', 'e'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['p', 'a', 's', 'ó'], ['h', 'e', '.', 'p', 'a', 's', 's', 'e', 'd'], [⟨['p', 'a', 's', 'ó'], ['h', 'e', '.', 'p', 'a', 's', 's', 'e', 'd'], none⟩]⟩, ⟨['p', 'o', 'r'], ['b', 'y'], [⟨['p', 'o', 'r'], ['b', 'y'], none⟩]⟩, ⟨['l', 'a'], ['t', 'h', 'e'], [⟨['l', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['f', 'l', 'o', 'r', 'i', 's', 't', 'e', 'r', 'í', 'a'], ['f', 'l', 'o', 'w', 'e', 'r', 's', 'h', 'o', 'p'], [⟨['f', 'l', 'o', 'r', 'i', 's', 't', 'e', 'r', 'í', 'a'], ['f', 'l', 'o', 'w', 'e', 'r', 's', 'h', 'o', 'p'], none⟩]⟩, ⟨['p', 'e', 'r', 'o'], ['b', 'u', 't'], [⟨['p', 'e', 'r', 'o'], ['b', 'u', 't'], none⟩]⟩, ⟨['n', 'o'], ['N', 'E', 'G'], [⟨['n', 'o'], ['N', 'E', 'G'], none⟩]⟩, ⟨['t', 'e', 'n', 'í', 'a'], ['h', 'a', 'v', 'e', '.', 't', 'o'], [⟨['t', 'e', 'n', 'í', 'a'], ['h', 'a', 'v', 'e', '.', 't', 'o'], none⟩]⟩, ⟨['p', 'o', 'r'], ['f', 'o', 'r'], [⟨['p', 'o', 'r'], ['f', 'o', 'r'], none⟩]⟩, ⟨['q', 'u', 'é'], ['t', 'h', 'a', 't'], [⟨['q', 'u', 'é'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['p', 'a', 's', 'a', 'r'], ['t', 'o', '.', 'p', 'a', 's', 's'], [⟨['p', 'a', 's', 'a', 'r'], ['t', 'o', '.', 'p', 'a', 's', 's'], none⟩]⟩, ⟨['p', 'o', 'r'], ['b', 'y'], [⟨['p', 'o', 'r'], ['b', 'y'], none⟩]⟩, ⟨['l', 'a'], ['t', 'h', 'e'], [⟨['l', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['f', 'l', 'o', 'r', 'i', 's', 't', 'e', 'r', 'í', 'a'], ['f', 'l', 'o', 'w', 'e', 'r', 's', 'h', 'o', 'p'], [⟨['f', 'l', 'o', 'r', 'i', 's', 't', 'e', 'r', 'í', 'a'], ['f', 'l', 'o', 'w', 'e', 'r', 's', 'h', 'o', 'p'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -123,7 +125,7 @@ def ex_12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -137,7 +139,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -151,7 +153,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -165,7 +167,7 @@ def fn5_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := [("John claimed to have stopped by the flower shop.", .acceptable)]
+    contrasts := [("John claimed to have stopped by the flower shop.", .acceptable)]
     readings := []
     paperFeatures := [] }
 
@@ -179,7 +181,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -193,7 +195,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -207,7 +209,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -221,7 +223,7 @@ def ex_19b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -235,7 +237,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -249,7 +251,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -263,7 +265,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -277,7 +279,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 

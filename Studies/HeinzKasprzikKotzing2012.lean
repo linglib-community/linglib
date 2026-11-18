@@ -40,26 +40,6 @@ A lattice space has a least element: the paper's learner needs one on the empty 
 Theorem 4.7(iii) asks for a least language containing the empty set. The words form an arbitrary
 type `W`, of which the paper's `Σ*` is an instance.
 
-## Errata
-
-* pp. 117 and 126: the product of two lattice spaces is not a lattice space in general, since a pair
-  of nodes need not be a finite join of pairs of nodes of single words as Definition 2.3 and its
-  n. 2 require (`not_isLatticeSpace_prod`). The elementwise intersections of two lattice classes
-  need not be learnable, contrary to the statement on p. 117 that they are and to the Conclusions'
-  claim that lattice classes are modular (`not_identifiable_inter`). The claims hold under a chain
-  condition (`isLatticeClass_inter`), which `Pow_fin(Σᵏ)`, whose down-sets are finite, satisfies.
-* p. 117: `V_kSP`, the sets of subsequences of length at most `k` of single words, is not a lattice
-  under inclusion for `k ≥ 2`, since the sets of `a` and of `b` have the two minimal upper bounds of
-  `ab` and of `ba` (`not_exists_isLUB_subseqSet`). It has to be closed under finite unions, as the
-  finite grammars of `isLatticeClass_strictlyPiecewise` are.
-* p. 121, Theorem 4.7: conditions (ii) and (iv) hold of any class contained in a lattice class, such
-  as a single language other than `Σ*` (`not_isLatticeClass_singleton`, `exists_learner_singleton`),
-  since a learner may learn more than the class. They characterize lattice classes when the class
-  is exactly what the learner learns (`isLatticeClass_iff_exists_learner`). Condition (iii) holds of
-  the finite languages together with `Σ*` (`forall_exists_isLeast_finite_union_univ`), which is not
-  learnable (`not_identifiable_finite_union_univ`), since it does not require each language to be
-  the least containing some finite set, as `isLatticeClass_iff` does.
-
 ## TODO
 
 The pattern languages, monomials and function-distinguishable classes of §5, the query complexity
@@ -375,7 +355,7 @@ theorem isLatticeClass_iff_exists_learner [Countable W] {𝓛 : Set (Set W)} :
       rw [hn, ← hD] at hlst
       exact hlst
 
-/-! ### Errata to Theorem 4.7 -/
+/-! ### The conditions of Theorem 4.7 -/
 
 theorem not_isLatticeClass_singleton {K : Set W} (hK : K ≠ univ) : ¬IsLatticeClass {K} := by
   obtain ⟨x, hx⟩ := (ne_univ_iff_exists_notMem K).mp hK

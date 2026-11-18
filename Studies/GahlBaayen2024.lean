@@ -24,12 +24,6 @@ examples are.
 * The paper estimates the corpus-scale word-to-word map with the Rescorla–Wagner rule, which is
   not formalized; `W` is the pseudoinverse solution it uses for the toy corpus.
 
-## Errata
-
-* The third line of (A2) prints the right-hand side as `(CᵀS)⁻¹SᵀC` and the sentence after (A2)
-  speaks of calculating `(CᵀC)⁻¹`; the derivation requires `(SᵀS)⁻¹` in both places, as the
-  remaining lines of (A2) show.
-
 ## References
 
 * [gahl-baayen-2024]

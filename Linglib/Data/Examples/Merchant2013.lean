@@ -24,7 +24,7 @@ def ex1a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -38,7 +38,7 @@ def ex1b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -52,7 +52,7 @@ def ex1c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -66,7 +66,7 @@ def ex1d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -79,7 +79,7 @@ def ex1e : Datum :=
     glossedTokens := []
     context := "Prison guards deserve their good salaries."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -92,7 +92,7 @@ def ex1f : Datum :=
     glossedTokens := []
     context := "it = a computer system"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -105,7 +105,7 @@ def ex1g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -119,7 +119,7 @@ def ex1h : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -133,7 +133,7 @@ def ex1i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -146,7 +146,7 @@ def ex1j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -159,7 +159,7 @@ def ex2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -172,7 +172,7 @@ def ex2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -186,7 +186,7 @@ def ex2c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -200,7 +200,7 @@ def ex2d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -214,7 +214,7 @@ def ex2e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -228,7 +228,7 @@ def ex2f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -242,7 +242,7 @@ def ex2g : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -256,7 +256,7 @@ def ex2h : Datum :=
     glossedTokens := []
     context := "The Watch was"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -269,7 +269,7 @@ def ex2i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -282,7 +282,7 @@ def ex2j : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -295,7 +295,7 @@ def ex2k : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -308,7 +308,7 @@ def ex3a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -321,7 +321,7 @@ def ex3b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -334,7 +334,7 @@ def ex5a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -347,7 +347,7 @@ def ex5b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -360,7 +360,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -371,9 +371,11 @@ def ex6a : Datum :=
     language := "stan1295"
     primaryText := "Erika hat jemanden ermordet, aber sie wissen nicht, wer."
     glossedTokens := [("Erika", "Erika"), ("hat", "has"), ("jemanden", "someone"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("wer.", "who.NOM")]
+    glossedWords := [⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], [⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'n'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'n'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['w', 'e', 'r', '.'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['w', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -384,9 +386,11 @@ def ex6b : Datum :=
     language := "stan1295"
     primaryText := "Peter wurde von jemandem ermordet, aber sie wissen nicht, wer."
     glossedTokens := [("Peter", "Peter"), ("wurde", "was"), ("von", "by"), ("jemandem", "someone"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("wer.", "who.NOM")]
+    glossedWords := [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'm'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'm'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['w', 'e', 'r', '.'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['w', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -397,9 +401,11 @@ def ex7a : Datum :=
     language := "stan1295"
     primaryText := "Jemand hat Peter ermordet, aber sie wissen nicht, von wem."
     glossedTokens := [("Jemand", "someone"), ("hat", "has"), ("Peter", "Peter"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("von", "by"), ("wem.", "who.DAT")]
+    glossedWords := [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['w', 'e', 'm', '.'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], [⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -410,9 +416,11 @@ def ex7b : Datum :=
     language := "stan1295"
     primaryText := "Jemand wurde von Erika ermordet, aber sie wissen nicht, wen."
     glossedTokens := [("Jemand", "someone"), ("wurde", "was"), ("von", "by"), ("Erika", "Erika"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("wen.", "who.ACC")]
+    glossedWords := [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], [⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['w', 'e', 'n', '.'], ['w', 'h', 'o', '.', 'A', 'C', 'C'], [⟨['w', 'e', 'n'], ['w', 'h', 'o', '.', 'A', 'C', 'C'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -423,9 +431,11 @@ def ex25a : Datum :=
     language := "mode1248"
     primaryText := "O Jannis skotose kapjon, ala ðen kserume pjos."
     glossedTokens := [("O", "the"), ("Jannis", "Giannis.NOM"), ("skotose", "killed.ACT"), ("kapjon,", "someone.ACC"), ("ala", "but"), ("ðen", "not"), ("kserume", "we.know"), ("pjos.", "who.NOM")]
+    glossedWords := [⟨['O'], ['t', 'h', 'e'], [⟨['O'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], [⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['s', 'k', 'o', 't', 'o', 's', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'A', 'C', 'T'], [⟨['s', 'k', 'o', 't', 'o', 's', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'A', 'C', 'T'], none⟩]⟩, ⟨['k', 'a', 'p', 'j', 'o', 'n', ','], ['s', 'o', 'm', 'e', 'o', 'n', 'e', '.', 'A', 'C', 'C'], [⟨['k', 'a', 'p', 'j', 'o', 'n'], ['s', 'o', 'm', 'e', 'o', 'n', 'e', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['a', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['ð', 'e', 'n'], ['n', 'o', 't'], [⟨['ð', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], [⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], none⟩]⟩, ⟨['p', 'j', 'o', 's', '.'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['p', 'j', 'o', 's'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -436,9 +446,11 @@ def ex25b : Datum :=
     language := "mode1248"
     primaryText := "O Jannis skotoθike, ala ðen kserume pjos."
     glossedTokens := [("O", "the"), ("Jannis", "Giannis.NOM"), ("skotoθike,", "killed.PASS"), ("ala", "but"), ("ðen", "not"), ("kserume", "we.know"), ("pjos.", "who.NOM")]
+    glossedWords := [⟨['O'], ['t', 'h', 'e'], [⟨['O'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], [⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['s', 'k', 'o', 't', 'o', 'θ', 'i', 'k', 'e', ','], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'P', 'A', 'S', 'S'], [⟨['s', 'k', 'o', 't', 'o', 'θ', 'i', 'k', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'P', 'A', 'S', 'S'], none⟩]⟩, ⟨['a', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['ð', 'e', 'n'], ['n', 'o', 't'], [⟨['ð', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], [⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], none⟩]⟩, ⟨['p', 'j', 'o', 's', '.'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['p', 'j', 'o', 's'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -451,7 +463,7 @@ def ex8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "fragmentAnswer"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -462,9 +474,11 @@ def ex9a : Datum :=
     language := "stan1295"
     primaryText := "Wer hat den Jungen untersucht? Von einer Psychologin."
     glossedTokens := [("Wer", "who.NOM"), ("hat", "has"), ("den", "the"), ("Jungen", "boy"), ("untersucht?", "examined"), ("Von", "by"), ("einer", "a"), ("Psychologin.", "psychologist.DAT")]
+    glossedWords := [⟨['W', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['W', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['d', 'e', 'n'], ['t', 'h', 'e'], [⟨['d', 'e', 'n'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'u', 'n', 'g', 'e', 'n'], ['b', 'o', 'y'], [⟨['J', 'u', 'n', 'g', 'e', 'n'], ['b', 'o', 'y'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '?'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩, ⟨['V', 'o', 'n'], ['b', 'y'], [⟨['V', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['e', 'i', 'n', 'e', 'r'], ['a'], [⟨['e', 'i', 'n', 'e', 'r'], ['a'], none⟩]⟩, ⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n', '.'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], [⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "fragmentAnswer"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -475,9 +489,11 @@ def ex9b : Datum :=
     language := "stan1295"
     primaryText := "Von wem wurde der Junge untersucht? Eine Psychologin."
     glossedTokens := [("Von", "by"), ("wem", "who.DAT"), ("wurde", "was"), ("der", "the"), ("Junge", "boy"), ("untersucht?", "examined"), ("Eine", "a"), ("Psychologin.", "psychologist.NOM")]
+    glossedWords := [⟨['V', 'o', 'n'], ['b', 'y'], [⟨['V', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], [⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['d', 'e', 'r'], ['t', 'h', 'e'], [⟨['d', 'e', 'r'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], [⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '?'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩, ⟨['E', 'i', 'n', 'e'], ['a'], [⟨['E', 'i', 'n', 'e'], ['a'], none⟩]⟩, ⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n', '.'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'N', 'O', 'M'], [⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "fragmentAnswer"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -490,7 +506,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "gapping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -503,7 +519,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "gapping"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -516,7 +532,7 @@ def ex11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "stripping"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -527,9 +543,11 @@ def ex11b : Datum :=
     language := "stan1295"
     primaryText := "Der Junge wurde von einer Psychologin untersucht, und ein Kinderarzt auch."
     glossedTokens := [("Der", "the"), ("Junge", "boy"), ("wurde", "was"), ("von", "by"), ("einer", "a"), ("Psychologin", "psychologist.DAT"), ("untersucht,", "examined"), ("und", "and"), ("ein", "a"), ("Kinderarzt", "pediatrician.NOM"), ("auch.", "too")]
+    glossedWords := [⟨['D', 'e', 'r'], ['t', 'h', 'e'], [⟨['D', 'e', 'r'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], [⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['e', 'i', 'n', 'e', 'r'], ['a'], [⟨['e', 'i', 'n', 'e', 'r'], ['a'], none⟩]⟩, ⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], [⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', ','], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩, ⟨['u', 'n', 'd'], ['a', 'n', 'd'], [⟨['u', 'n', 'd'], ['a', 'n', 'd'], none⟩]⟩, ⟨['e', 'i', 'n'], ['a'], [⟨['e', 'i', 'n'], ['a'], none⟩]⟩, ⟨['K', 'i', 'n', 'd', 'e', 'r', 'a', 'r', 'z', 't'], ['p', 'e', 'd', 'i', 'a', 't', 'r', 'i', 'c', 'i', 'a', 'n', '.', 'N', 'O', 'M'], [⟨['K', 'i', 'n', 'd', 'e', 'r', 'a', 'r', 'z', 't'], ['p', 'e', 'd', 'i', 'a', 't', 'r', 'i', 'c', 'i', 'a', 'n', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['a', 'u', 'c', 'h', '.'], ['t', 'o', 'o'], [⟨['a', 'u', 'c', 'h'], ['t', 'o', 'o'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "stripping"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -542,7 +560,7 @@ def ex12a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -555,7 +573,7 @@ def ex12b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -566,9 +584,11 @@ def ex13a : Datum :=
     language := "stan1295"
     primaryText := "Erika hat jemanden ermordet, aber sie wissen nicht, wer von ihr ermordet wurde."
     glossedTokens := [("Erika", "Erika"), ("hat", "has"), ("jemanden", "someone"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("wer", "who.NOM"), ("von", "by"), ("ihr", "her"), ("ermordet", "murdered"), ("wurde.", "was")]
+    glossedWords := [⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], [⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'n'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'n'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['w', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['w', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['i', 'h', 'r'], ['h', 'e', 'r'], [⟨['i', 'h', 'r'], ['h', 'e', 'r'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e', '.'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -579,9 +599,11 @@ def ex13b : Datum :=
     language := "stan1295"
     primaryText := "Peter wurde von jemandem ermordet, aber sie wissen nicht, wer ihn ermordet hat."
     glossedTokens := [("Peter", "Peter"), ("wurde", "was"), ("von", "by"), ("jemandem", "someone"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("wer", "who.NOM"), ("ihn", "him"), ("ermordet", "murdered"), ("hat.", "has")]
+    glossedWords := [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'm'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['j', 'e', 'm', 'a', 'n', 'd', 'e', 'm'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['w', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['w', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['i', 'h', 'n'], ['h', 'i', 'm'], [⟨['i', 'h', 'n'], ['h', 'i', 'm'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['h', 'a', 't', '.'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -592,9 +614,11 @@ def ex13c : Datum :=
     language := "stan1295"
     primaryText := "Jemand hat Peter ermordet, aber sie wissen nicht, von wem er ermordet wurde."
     glossedTokens := [("Jemand", "someone"), ("hat", "has"), ("Peter", "Peter"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("von", "by"), ("wem", "who.DAT"), ("er", "he"), ("ermordet", "murdered"), ("wurde.", "was")]
+    glossedWords := [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], [⟨['P', 'e', 't', 'e', 'r'], ['P', 'e', 't', 'e', 'r'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], [⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], none⟩]⟩, ⟨['e', 'r'], ['h', 'e'], [⟨['e', 'r'], ['h', 'e'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e', '.'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -605,9 +629,11 @@ def ex13d : Datum :=
     language := "stan1295"
     primaryText := "Jemand wurde von Erika ermordet, aber sie wissen nicht, wen sie ermordet hat."
     glossedTokens := [("Jemand", "someone"), ("wurde", "was"), ("von", "by"), ("Erika", "Erika"), ("ermordet,", "murdered"), ("aber", "but"), ("sie", "they"), ("wissen", "know"), ("nicht,", "not"), ("wen", "who.ACC"), ("sie", "she"), ("ermordet", "murdered"), ("hat.", "has")]
+    glossedWords := [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], [⟨['J', 'e', 'm', 'a', 'n', 'd'], ['s', 'o', 'm', 'e', 'o', 'n', 'e'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], [⟨['E', 'r', 'i', 'k', 'a'], ['E', 'r', 'i', 'k', 'a'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't', ','], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], [⟨['a', 'b', 'e', 'r'], ['b', 'u', 't'], none⟩]⟩, ⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], [⟨['s', 'i', 'e'], ['t', 'h', 'e', 'y'], none⟩]⟩, ⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], [⟨['w', 'i', 's', 's', 'e', 'n'], ['k', 'n', 'o', 'w'], none⟩]⟩, ⟨['n', 'i', 'c', 'h', 't', ','], ['n', 'o', 't'], [⟨['n', 'i', 'c', 'h', 't'], ['n', 'o', 't'], none⟩]⟩, ⟨['w', 'e', 'n'], ['w', 'h', 'o', '.', 'A', 'C', 'C'], [⟨['w', 'e', 'n'], ['w', 'h', 'o', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['s', 'i', 'e'], ['s', 'h', 'e'], [⟨['s', 'i', 'e'], ['s', 'h', 'e'], none⟩]⟩, ⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], [⟨['e', 'r', 'm', 'o', 'r', 'd', 'e', 't'], ['m', 'u', 'r', 'd', 'e', 'r', 'e', 'd'], none⟩]⟩, ⟨['h', 'a', 't', '.'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -620,7 +646,7 @@ def ex14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -631,9 +657,11 @@ def ex14b_i : Datum :=
     language := "stan1295"
     primaryText := "Wer hat den Jungen untersucht? Er wurde von einer Psychologin untersucht."
     glossedTokens := [("Wer", "who.NOM"), ("hat", "has"), ("den", "the"), ("Jungen", "boy"), ("untersucht?", "examined"), ("Er", "he"), ("wurde", "was"), ("von", "by"), ("einer", "a"), ("Psychologin", "psychologist.DAT"), ("untersucht.", "examined")]
+    glossedWords := [⟨['W', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['W', 'e', 'r'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['d', 'e', 'n'], ['t', 'h', 'e'], [⟨['d', 'e', 'n'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'u', 'n', 'g', 'e', 'n'], ['b', 'o', 'y'], [⟨['J', 'u', 'n', 'g', 'e', 'n'], ['b', 'o', 'y'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '?'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩, ⟨['E', 'r'], ['h', 'e'], [⟨['E', 'r'], ['h', 'e'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['e', 'i', 'n', 'e', 'r'], ['a'], [⟨['e', 'i', 'n', 'e', 'r'], ['a'], none⟩]⟩, ⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], [⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '.'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -644,9 +672,11 @@ def ex14b_ii : Datum :=
     language := "stan1295"
     primaryText := "Von wem wurde der Junge untersucht? Eine Psychologin hat ihn untersucht."
     glossedTokens := [("Von", "by"), ("wem", "who.DAT"), ("wurde", "was"), ("der", "the"), ("Junge", "boy"), ("untersucht?", "examined"), ("Eine", "a"), ("Psychologin", "psychologist.NOM"), ("hat", "has"), ("ihn", "him"), ("untersucht.", "examined")]
+    glossedWords := [⟨['V', 'o', 'n'], ['b', 'y'], [⟨['V', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], [⟨['w', 'e', 'm'], ['w', 'h', 'o', '.', 'D', 'A', 'T'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['d', 'e', 'r'], ['t', 'h', 'e'], [⟨['d', 'e', 'r'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], [⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '?'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩, ⟨['E', 'i', 'n', 'e'], ['a'], [⟨['E', 'i', 'n', 'e'], ['a'], none⟩]⟩, ⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'N', 'O', 'M'], [⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['i', 'h', 'n'], ['h', 'i', 'm'], [⟨['i', 'h', 'n'], ['h', 'i', 'm'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '.'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -659,7 +689,7 @@ def ex15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -672,7 +702,7 @@ def ex15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -685,7 +715,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -696,9 +726,11 @@ def ex16b : Datum :=
     language := "stan1295"
     primaryText := "Der Junge wurde von einer Psychologin untersucht, und ein Kinderarzt hat ihn auch untersucht."
     glossedTokens := [("Der", "the"), ("Junge", "boy"), ("wurde", "was"), ("von", "by"), ("einer", "a"), ("Psychologin", "psychologist.DAT"), ("untersucht,", "examined"), ("und", "and"), ("ein", "a"), ("Kinderarzt", "pediatrician.NOM"), ("hat", "has"), ("ihn", "him"), ("auch", "too"), ("untersucht.", "examined")]
+    glossedWords := [⟨['D', 'e', 'r'], ['t', 'h', 'e'], [⟨['D', 'e', 'r'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], [⟨['J', 'u', 'n', 'g', 'e'], ['b', 'o', 'y'], none⟩]⟩, ⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], [⟨['w', 'u', 'r', 'd', 'e'], ['w', 'a', 's'], none⟩]⟩, ⟨['v', 'o', 'n'], ['b', 'y'], [⟨['v', 'o', 'n'], ['b', 'y'], none⟩]⟩, ⟨['e', 'i', 'n', 'e', 'r'], ['a'], [⟨['e', 'i', 'n', 'e', 'r'], ['a'], none⟩]⟩, ⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], [⟨['P', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 'n'], ['p', 's', 'y', 'c', 'h', 'o', 'l', 'o', 'g', 'i', 's', 't', '.', 'D', 'A', 'T'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', ','], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩, ⟨['u', 'n', 'd'], ['a', 'n', 'd'], [⟨['u', 'n', 'd'], ['a', 'n', 'd'], none⟩]⟩, ⟨['e', 'i', 'n'], ['a'], [⟨['e', 'i', 'n'], ['a'], none⟩]⟩, ⟨['K', 'i', 'n', 'd', 'e', 'r', 'a', 'r', 'z', 't'], ['p', 'e', 'd', 'i', 'a', 't', 'r', 'i', 'c', 'i', 'a', 'n', '.', 'N', 'O', 'M'], [⟨['K', 'i', 'n', 'd', 'e', 'r', 'a', 'r', 'z', 't'], ['p', 'e', 'd', 'i', 'a', 't', 'r', 'i', 'c', 'i', 'a', 'n', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['h', 'a', 't'], ['h', 'a', 's'], [⟨['h', 'a', 't'], ['h', 'a', 's'], none⟩]⟩, ⟨['i', 'h', 'n'], ['h', 'i', 'm'], [⟨['i', 'h', 'n'], ['h', 'i', 'm'], none⟩]⟩, ⟨['a', 'u', 'c', 'h'], ['t', 'o', 'o'], [⟨['a', 'u', 'c', 'h'], ['t', 'o', 'o'], none⟩]⟩, ⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't', '.'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], [⟨['u', 'n', 't', 'e', 'r', 's', 'u', 'c', 'h', 't'], ['e', 'x', 'a', 'm', 'i', 'n', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -709,9 +741,11 @@ def ex26a : Datum :=
     language := "mode1248"
     primaryText := "O Jannis skotose kapjon, ala ðen kserume pjos skotoθike."
     glossedTokens := [("O", "the"), ("Jannis", "Giannis.NOM"), ("skotose", "killed.ACT"), ("kapjon,", "someone.ACC"), ("ala", "but"), ("ðen", "not"), ("kserume", "we.know"), ("pjos", "who.NOM"), ("skotoθike.", "killed.PASS")]
+    glossedWords := [⟨['O'], ['t', 'h', 'e'], [⟨['O'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], [⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['s', 'k', 'o', 't', 'o', 's', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'A', 'C', 'T'], [⟨['s', 'k', 'o', 't', 'o', 's', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'A', 'C', 'T'], none⟩]⟩, ⟨['k', 'a', 'p', 'j', 'o', 'n', ','], ['s', 'o', 'm', 'e', 'o', 'n', 'e', '.', 'A', 'C', 'C'], [⟨['k', 'a', 'p', 'j', 'o', 'n'], ['s', 'o', 'm', 'e', 'o', 'n', 'e', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['a', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['ð', 'e', 'n'], ['n', 'o', 't'], [⟨['ð', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], [⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], none⟩]⟩, ⟨['p', 'j', 'o', 's'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['p', 'j', 'o', 's'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['s', 'k', 'o', 't', 'o', 'θ', 'i', 'k', 'e', '.'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'P', 'A', 'S', 'S'], [⟨['s', 'k', 'o', 't', 'o', 'θ', 'i', 'k', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'P', 'A', 'S', 'S'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "active"), ("targetVoice", "passive")] }
 
@@ -722,9 +756,11 @@ def ex26b : Datum :=
     language := "mode1248"
     primaryText := "O Jannis skotoθike, ala ðen kserume pjos ton skotose."
     glossedTokens := [("O", "the"), ("Jannis", "Giannis.NOM"), ("skotoθike,", "killed.PASS"), ("ala", "but"), ("ðen", "not"), ("kserume", "we.know"), ("pjos", "who.NOM"), ("ton", "him.ACC"), ("skotose.", "killed.ACT")]
+    glossedWords := [⟨['O'], ['t', 'h', 'e'], [⟨['O'], ['t', 'h', 'e'], none⟩]⟩, ⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], [⟨['J', 'a', 'n', 'n', 'i', 's'], ['G', 'i', 'a', 'n', 'n', 'i', 's', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['s', 'k', 'o', 't', 'o', 'θ', 'i', 'k', 'e', ','], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'P', 'A', 'S', 'S'], [⟨['s', 'k', 'o', 't', 'o', 'θ', 'i', 'k', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'P', 'A', 'S', 'S'], none⟩]⟩, ⟨['a', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['ð', 'e', 'n'], ['n', 'o', 't'], [⟨['ð', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], [⟨['k', 's', 'e', 'r', 'u', 'm', 'e'], ['w', 'e', '.', 'k', 'n', 'o', 'w'], none⟩]⟩, ⟨['p', 'j', 'o', 's'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], [⟨['p', 'j', 'o', 's'], ['w', 'h', 'o', '.', 'N', 'O', 'M'], none⟩]⟩, ⟨['t', 'o', 'n'], ['h', 'i', 'm', '.', 'A', 'C', 'C'], [⟨['t', 'o', 'n'], ['h', 'i', 'm', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['s', 'k', 'o', 't', 'o', 's', 'e', '.'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'A', 'C', 'T'], [⟨['s', 'k', 'o', 't', 'o', 's', 'e'], ['k', 'i', 'l', 'l', 'e', 'd', '.', 'A', 'C', 'T'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "none"), ("antecedentVoice", "passive"), ("targetVoice", "active")] }
 
@@ -737,7 +773,7 @@ def ex30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "unaccusative"), ("targetV", "transitive")] }
 
@@ -750,7 +786,7 @@ def ex30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "unaccusative")] }
 
@@ -763,7 +799,7 @@ def ex30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "unaccusative")] }
 
@@ -774,9 +810,11 @@ def ex31a : Datum :=
     language := "mode1248"
     primaryText := "Eklisan ena ðromo, alla ðen ksero pjos."
     glossedTokens := [("Eklisan", "closed.3PL"), ("ena", "a.ACC"), ("ðromo,", "road.ACC"), ("alla", "but"), ("ðen", "not"), ("ksero", "know.1SG"), ("pjos.", "which.NOM")]
+    glossedWords := [⟨['E', 'k', 'l', 'i', 's', 'a', 'n'], ['c', 'l', 'o', 's', 'e', 'd', '.', '3', 'P', 'L'], [⟨['E', 'k', 'l', 'i', 's', 'a', 'n'], ['c', 'l', 'o', 's', 'e', 'd', '.', '3', 'P', 'L'], none⟩]⟩, ⟨['e', 'n', 'a'], ['a', '.', 'A', 'C', 'C'], [⟨['e', 'n', 'a'], ['a', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['ð', 'r', 'o', 'm', 'o', ','], ['r', 'o', 'a', 'd', '.', 'A', 'C', 'C'], [⟨['ð', 'r', 'o', 'm', 'o'], ['r', 'o', 'a', 'd', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['a', 'l', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['ð', 'e', 'n'], ['n', 'o', 't'], [⟨['ð', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 's', 'e', 'r', 'o'], ['k', 'n', 'o', 'w', '.', '1', 'S', 'G'], [⟨['k', 's', 'e', 'r', 'o'], ['k', 'n', 'o', 'w', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['p', 'j', 'o', 's', '.'], ['w', 'h', 'i', 'c', 'h', '.', 'N', 'O', 'M'], [⟨['p', 'j', 'o', 's'], ['w', 'h', 'i', 'c', 'h', '.', 'N', 'O', 'M'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "transitive"), ("targetV", "unaccusative")] }
 
@@ -787,9 +825,11 @@ def ex31b : Datum :=
     language := "mode1248"
     primaryText := "Eklisan ena ðromo, alla ðen ksero pjon."
     glossedTokens := [("Eklisan", "closed.3PL"), ("ena", "a.ACC"), ("ðromo,", "road.ACC"), ("alla", "but"), ("ðen", "not"), ("ksero", "know.1SG"), ("pjon.", "which.ACC")]
+    glossedWords := [⟨['E', 'k', 'l', 'i', 's', 'a', 'n'], ['c', 'l', 'o', 's', 'e', 'd', '.', '3', 'P', 'L'], [⟨['E', 'k', 'l', 'i', 's', 'a', 'n'], ['c', 'l', 'o', 's', 'e', 'd', '.', '3', 'P', 'L'], none⟩]⟩, ⟨['e', 'n', 'a'], ['a', '.', 'A', 'C', 'C'], [⟨['e', 'n', 'a'], ['a', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['ð', 'r', 'o', 'm', 'o', ','], ['r', 'o', 'a', 'd', '.', 'A', 'C', 'C'], [⟨['ð', 'r', 'o', 'm', 'o'], ['r', 'o', 'a', 'd', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['a', 'l', 'l', 'a'], ['b', 'u', 't'], [⟨['a', 'l', 'l', 'a'], ['b', 'u', 't'], none⟩]⟩, ⟨['ð', 'e', 'n'], ['n', 'o', 't'], [⟨['ð', 'e', 'n'], ['n', 'o', 't'], none⟩]⟩, ⟨['k', 's', 'e', 'r', 'o'], ['k', 'n', 'o', 'w', '.', '1', 'S', 'G'], [⟨['k', 's', 'e', 'r', 'o'], ['k', 'n', 'o', 'w', '.', '1', 'S', 'G'], none⟩]⟩, ⟨['p', 'j', 'o', 'n', '.'], ['w', 'h', 'i', 'c', 'h', '.', 'A', 'C', 'C'], [⟨['p', 'j', 'o', 'n'], ['w', 'h', 'i', 'c', 'h', '.', 'A', 'C', 'C'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "transitive"), ("targetV", "transitive")] }
 
@@ -802,7 +842,7 @@ def ex35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "middle")] }
 
@@ -815,7 +855,7 @@ def ex35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "middle")] }
 
@@ -828,7 +868,7 @@ def ex35c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "transitive"), ("targetV", "middle")] }
 
@@ -841,7 +881,7 @@ def ex36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "middle"), ("targetV", "transitive")] }
 
@@ -854,7 +894,7 @@ def ex36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "middle"), ("targetV", "transitive")] }
 
@@ -867,7 +907,7 @@ def ex36c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "vpEllipsis"), ("antecedentV", "middle"), ("targetV", "transitive")] }
 
@@ -880,7 +920,7 @@ def ex38a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "doubleObject"), ("targetV", "doubleObject")] }
 
@@ -893,7 +933,7 @@ def ex38b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "applicativeTo"), ("targetV", "applicativeTo")] }
 
@@ -906,7 +946,7 @@ def ex38c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "doubleObject"), ("targetV", "doubleObject")] }
 
@@ -919,7 +959,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "doubleObject"), ("targetV", "applicativeTo")] }
 
@@ -932,7 +972,7 @@ def ex40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "plain")] }
 
@@ -945,7 +985,7 @@ def ex40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "applicativeWith")] }
 
@@ -958,7 +998,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "plain")] }
 
@@ -971,7 +1011,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "plain"), ("targetV", "applicativeTo")] }
 
@@ -984,7 +1024,7 @@ def ex43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "applicativeWith"), ("targetV", "applicativeOn")] }
 
@@ -997,7 +1037,7 @@ def ex43b : Datum :=
     glossedTokens := []
     context := "On the image impression reading of with what, not the manner reading."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "sluicing"), ("antecedentV", "applicativeOn"), ("targetV", "applicativeWith")] }
 
@@ -1010,7 +1050,7 @@ def ex44 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "applicativeOn"), ("targetV", "applicativeWith")] }
 
@@ -1023,7 +1063,7 @@ def ex45a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "plain"), ("targetV", "applicativeWith")] }
 
@@ -1036,7 +1076,7 @@ def ex45b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "applicativeWith"), ("targetV", "applicativeWith")] }
 
@@ -1049,7 +1089,7 @@ def ex46a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "doubleObject"), ("targetV", "applicativeTo")] }
 
@@ -1062,7 +1102,7 @@ def ex46b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("ellipsis", "pseudogapping"), ("antecedentV", "applicativeTo"), ("targetV", "applicativeTo")] }
 
@@ -1075,7 +1115,7 @@ def ex49a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("restitutive", .ungrammatical)]
     paperFeatures := [("ellipsis", "vpEllipsis")] }
 

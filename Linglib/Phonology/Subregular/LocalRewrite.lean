@@ -95,19 +95,17 @@ open Phonology
 
 /-! ### Context elements and effects -/
 
-/-- An element of a rule's structural description. Context positions
-hold either a segment pattern (a natural class via `Segment` partial
-specification) or a word boundary marker. -/
+/-- An element of a rule's structural description: a feature matrix that the segment in that
+position includes, or a word boundary. -/
 inductive ContextElem where
-  /-- A segment matching a natural-class pattern. -/
+  /-- A segment that includes a feature matrix. -/
   | seg : Segment → ContextElem
   /-- A word boundary, `]word` or `#` in Hayes's notation. -/
   | wordBoundary : ContextElem
 
 /-- The structural change effected by a rule. -/
 inductive Effect where
-  /-- Merging a feature bundle into the target segment, `A → B` in SPE notation with `B` a
-      partial specification. -/
+  /-- Giving the target segment the values of a feature matrix, `A → B` in SPE notation. -/
   | changeFeatures : Segment → Effect
   /-- Deleting the target segment, `A → ∅` in SPE notation. -/
   | delete : Effect
@@ -137,11 +135,11 @@ leaving the target unchanged at a word edge. -/
 def Effect.apply (e : Effect) (w : List Segment) (s : Segment) (d : List Segment) :
     Option Segment :=
   match e with
-  | .changeFeatures change => some fun f ↦ (change f).or (s f)
+  | .changeFeatures change => some (change.or s)
   | .delete => none
   | .replace t => some t
-  | .copyRight C => some (d.head?.elim s fun t ↦ C.piecewise t s)
-  | .copyLeft C => some (w.getLast?.elim s fun t ↦ C.piecewise t s)
+  | .copyRight C => some (d.head?.elim s fun t ↦ Segment.piecewise C t s)
+  | .copyLeft C => some (w.getLast?.elim s fun t ↦ Segment.piecewise C t s)
 
 /-- An effect reads at most `leftReach` symbols of the prefix. -/
 theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : List Segment)
@@ -171,7 +169,7 @@ theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' 
 
 /-- A **local rewrite rule** in SPE notation `A → B / C __ D`.
 
-* `target` — natural class `A` matched by the affected segment.
+* `target` — the feature matrix `A` that the affected segment includes.
 * `effect` — the structural change `B`.
 * `leftContext` — preceding context `C`, ordered left-to-right (so the
   rightmost element is closest to the target).
@@ -194,7 +192,7 @@ def Rule.rightReach (r : Rule) : ℕ := max r.rightContext.length r.effect.right
 
 /-- The right context `ctx` matches the suffix `right` to the right of the current position
 when, scanning both from the segment immediately following the target, each segment pattern
-lies below its segment and a word boundary stands at the end of the word. -/
+is included in its segment and a word boundary stands at the end of the word. -/
 def MatchesRight : List ContextElem → List Segment → Prop
   | [], _ => True
   | .wordBoundary :: rest, [] => MatchesRight rest []
@@ -472,7 +470,7 @@ theorem Rule.run_toSubsequentialTransducer (r : Rule) :
 
 /-- **Every local rewrite rule is Left-Subsequential.** `Segment` is a partial
 valuation of the 26 features of Hayes, so it is finite but carries no
-`Fintype` instance (its `Flat` slots are deliberately opaque), and the hypothesis
+`Fintype` instance (it is a `def`, so that none is derived), and the hypothesis
 supplies the finite alphabet Mohri assumes without forcing a
 `3 ^ 26`-element enumeration on every consumer of this file. -/
 theorem Rule.isLeftSubsequential [Fintype Segment] (r : Rule) :

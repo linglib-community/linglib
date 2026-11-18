@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "not > some", "judgment": "ungrammatical"}
     ],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "no one > some", "judgment": "ungrammatical"}
     ],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "without > some", "judgment": "ungrammatical"}
     ],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "at most 5 > some", "judgment": "acceptable"}
     ],

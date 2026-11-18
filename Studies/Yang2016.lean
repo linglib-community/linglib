@@ -44,14 +44,6 @@ feminine *-(e)n* plural is [tolerated and productive](##tolerates_productive_fem
 * The counts of the German feminine plurals are the book's (`Data.Statistics.Yang2016`); the
   exceptions are the items whose plural does not take *-(e)n*.
 
-## Errata
-
-* The table of thresholds for rules of varying sizes prints `θ_100 = 23` (23.0%), though
-  `100 / ln 100 < 22` (`threshold_100_lt`), against its other rows, which are `N / ln N`
-  rounded. Twenty-three is the count the cost itself allows at `N = 100`: a rule over 100 items
-  is productive with 23 exceptions and not with 24 (`productive_100_23`,
-  `not_productive_100_24`).
-
 ## References
 
 * [yang-2016]

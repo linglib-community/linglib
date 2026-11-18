@@ -24,7 +24,7 @@ def ex41a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -37,7 +37,7 @@ def ex41a_star : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -50,7 +50,7 @@ def ex41b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -63,7 +63,7 @@ def ex41b_star : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -76,7 +76,7 @@ def ex42a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -89,7 +89,7 @@ def ex42b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -102,7 +102,7 @@ def ex42c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -115,7 +115,7 @@ def ex42d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement")] }
 
@@ -128,7 +128,7 @@ def ex43a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "bud-idi"), ("underlying", "bud-idi")] }
 
@@ -141,7 +141,7 @@ def ex43a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "suk-idi"), ("underlying", "suk-idi")] }
 
@@ -154,7 +154,7 @@ def ex43a_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "sos-ele"), ("underlying", "sos-ele")] }
 
@@ -167,7 +167,7 @@ def ex43a_iv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "kun-ini"), ("underlying", "kun-idi")] }
 
@@ -180,7 +180,7 @@ def ex43a_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "nik-ini"), ("underlying", "nik-idi")] }
 
@@ -193,7 +193,7 @@ def ex43a_vi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "sim-ini"), ("underlying", "sim-idi")] }
 
@@ -206,7 +206,7 @@ def ex43a_vii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "leem-ene"), ("underlying", "leem-ele")] }
 
@@ -219,7 +219,7 @@ def ex43a_viii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "futumuk-ini"), ("underlying", "futumuk-idi")] }
 
@@ -232,7 +232,7 @@ def ex43b_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "bul-ulu"), ("underlying", "bul-ulu")] }
 
@@ -245,7 +245,7 @@ def ex43b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "nik-unu"), ("underlying", "nik-ulu")] }
 
@@ -258,7 +258,7 @@ def ex43c_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "toot-ila"), ("underlying", "toot-ila")] }
 
@@ -271,7 +271,7 @@ def ex43c_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "sakid-ila"), ("underlying", "sakid-ila")] }
 
@@ -284,7 +284,7 @@ def ex43c_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "kin-ina"), ("underlying", "kin-ila")] }
 
@@ -297,7 +297,7 @@ def ex43c_iv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "non-ena"), ("underlying", "non-ela")] }
 
@@ -310,7 +310,7 @@ def ex43c_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "dumuk-ina"), ("underlying", "dumuk-ila")] }
 
@@ -323,7 +323,7 @@ def ex43c_vi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "kin-is-ina"), ("underlying", "kin-is-ila")] }
 
@@ -336,7 +336,7 @@ def ex43c_vii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "dumuk-is-ina"), ("underlying", "dumuk-is-ila")] }
 
@@ -349,7 +349,7 @@ def ex44a_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "bantik-idi"), ("underlying", "bantik-idi")] }
 
@@ -362,7 +362,7 @@ def ex44a_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "biŋg-idi"), ("underlying", "biŋg-idi")] }
 
@@ -375,7 +375,7 @@ def ex44a_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "kemb-ele"), ("underlying", "kemb-ele")] }
 
@@ -388,7 +388,7 @@ def ex44a_iv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "tond-ele"), ("underlying", "tond-ele")] }
 
@@ -401,7 +401,7 @@ def ex44a_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "dimb-ulu"), ("underlying", "dimb-ulu")] }
 
@@ -414,7 +414,7 @@ def ex44a_vi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "koŋg-olo"), ("underlying", "koŋg-olo")] }
 
@@ -427,7 +427,7 @@ def ex44a_vii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "biŋg-ulu"), ("underlying", "biŋg-ulu")] }
 
@@ -440,7 +440,7 @@ def ex44a_viii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "somp-ela"), ("underlying", "somp-ela")] }
 
@@ -453,7 +453,7 @@ def ex44b_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "mant-ini"), ("underlying", "mant-idi")] }
 
@@ -466,7 +466,7 @@ def ex44b_ii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "meŋg-ini"), ("underlying", "meŋg-idi")] }
 
@@ -479,7 +479,7 @@ def ex44b_iii : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "mant-unu"), ("underlying", "mant-ulu")] }
 
@@ -492,7 +492,7 @@ def ex44b_iv : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nasalAgreement"), ("stem", "meŋg-ono"), ("underlying", "meŋg-olo")] }
 

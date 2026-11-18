@@ -60,7 +60,7 @@ excludes](##judgment_92v), as the book observes.
 namespace Chomsky1981
 
 open Morphology (Word)
-open Core.Order PhraseStructure PhraseStructure.Tree Binding
+open PhraseStructure PhraseStructure.Tree Binding
 open RoseTree (CCommands)
 
 /-! ### Representations -/
@@ -107,22 +107,23 @@ def token? : Rep → Option Token
 variable {t : Rep}
 
 /-- A position is finite, and so bears agreement, when the form of its word is finite. -/
-def IsFiniteAt (t : Rep) (p : TreePath) : Prop :=
+def IsFiniteAt (t : Rep) (p : GornAddress) : Prop :=
   ∃ w ∈ t[p]?.bind token?, w.word.features .verbForm = some .Fin
 
-instance (p : TreePath) : Decidable (IsFiniteAt t p) :=
+instance (p : GornAddress) : Decidable (IsFiniteAt t p) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The first daughter of the node `m` whose category lies in `L`. -/
-def daughter? (t : Rep) (m : TreePath) (L : Set Cat) [DecidablePred (· ∈ L)] : Option TreePath :=
+def daughter? (t : Rep) (m : GornAddress) (L : Set Cat) [DecidablePred (· ∈ L)] : Option
+    GornAddress :=
   ((t[m]?.map RoseTree.children).getD []).zipIdx.findSome? fun x ↦
-    if Tree.cat x.1 ∈ L then some ⟨m.toList ++ [x.2]⟩ else none
+    if Tree.cat x.1 ∈ L then some (m * .of x.2) else none
 
 /-! ### Noun phrases -/
 
 /-- The noun phrases of `t` with their positions: the maximal projections labelled `N` and the
 phrases labelled `Det`, which have subjects. -/
-def nominals (t : Rep) : List (TreePath × Rep) :=
+def nominals (t : Rep) : List (GornAddress × Rep) :=
   t.positionedSubtrees.filter fun x ↦
     x.1 ∈ maximalProjectionsAt t ∧ (Tree.cat x.2 = .N ∨ Tree.cat x.2 = .Det ∧ x.2.children ≠ [])
 
@@ -144,14 +145,14 @@ instance (a b : Nominal t) : Decidable (Coindexed a b) :=
 
 /-- The SUBJECT of a node: the agreement of the finite inflection of a clause, else its subject,
 and the subject of a noun phrase that has one. -/
-def subject (t : Rep) (m : TreePath) : Option TreePath :=
+def subject (t : Rep) (m : GornAddress) : Option GornAddress :=
   if m ∈ labeled t {.S} then
     ((daughter? t m {.Aux}).filter fun i ↦ IsFiniteAt t i).or (daughter? t m {.N, .Det})
   else if m ∈ labeled t {.Det} then daughter? t m {.N, .Det} else none
 
 /-- Agreement shares the index of the subject it governs: a finite inflection bears the index of
 its clause's subject. -/
-def agreement (t : Rep) (s : TreePath) : Option TreePath :=
+def agreement (t : Rep) (s : GornAddress) : Option GornAddress :=
   if s ∈ labeled t {.Aux} ∧ IsFiniteAt t s ∧ s.parent ∈ labeled t {.S} then
     daughter? t s.parent {.N, .Det}
   else none
@@ -163,18 +164,18 @@ abbrev configuration (t : Rep) : Configuration (Nominal t) :=
 
 /-- The book's c-command, for a noun phrase `a`, whose projection line is `a` alone: `a` does not
 contain `b`, and every node properly dominating `a` dominates `b`. -/
-def CCommands12 (a b : TreePath) : Prop := ¬ a ≤ b ∧ ∀ d < a, d ≤ b
+def CCommands12 (a b : GornAddress) : Prop := ¬ a ≤ b ∧ ∀ d < a, d ≤ b
 
 /-- The book's c-command of a noun phrase is c-command, save that it also relates the noun phrase
 to its mother ((12), p. 166). -/
-theorem cCommands12_iff {a b : TreePath} (ha : a ≠ ⊥) (hp : t.IsBranchingAt a.parent) :
+theorem cCommands12_iff {a b : GornAddress} (ha : a ≠ ⊥) (hp : t.IsBranchingAt a.parent) :
     CCommands12 a b ↔ t.CCommands a b ∨ b = a.parent := by
   have hlt : a.parent < a := by
-    rw [← TreePath.pred_eq_parent]
+    rw [← GornAddress.pred_eq_parent]
     exact Order.pred_lt_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha)
   have hall : (∀ d < a, d ≤ b) ↔ a.parent ≤ b := by
     refine ⟨fun h ↦ h _ hlt, fun h d hd ↦ le_trans ?_ h⟩
-    rw [← TreePath.pred_eq_parent]
+    rw [← GornAddress.pred_eq_parent]
     exact Order.le_pred_of_lt hd
   rw [CCommands12, hall, RoseTree.cCommands_iff_parent_lt ha hp]
   constructor
@@ -215,7 +216,7 @@ theorem condition_iff_not_condition_pronoun {b : Nominal t} {c : BindingClass} (
 
 -- For two noun phrases related to each other alone, Principle C is Reinhart's restriction (10b)
 -- [reinhart-1976].
-theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List TreePath) :
+theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List GornAddress) :
     Reinhart1976.Permits (CCommands t) pron a.1.1 b.1.1 ↔
       (b.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) b) ∧
         (a.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) a) := by

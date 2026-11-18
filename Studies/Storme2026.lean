@@ -127,18 +127,20 @@ def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 /-- `corr o j` is the correspondence between the unrepaired concatenation and the candidate
 `o`, which is the identity for faithful hiatus, the insertion of a glottal stop before the
 suffix vowel for epenthesis, and the deletion of the suffix vowel for elision. -/
-def corr : Resolution → Hiatus.Juncture → Correspondence BinaryRole Segment
-  | .hiatus, j => Correspondence.identity j.input
+def corr : Resolution → Hiatus.Juncture → Correspondence.Coindexation BinaryRole Segment
+  | .hiatus, j => Correspondence.Coindexation.identity j.input
   | .epenthesis, j =>
-    Correspondence.insertIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input.trans (by omega)⟩ glottalStop
-  | .deletion, j => Correspondence.eraseIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input⟩
+    Correspondence.Coindexation.insertIdx j.input
+      ⟨j.v2Idx, j.v2Idx_lt_length_input.trans (by omega)⟩ glottalStop
+  | .deletion, j => Correspondence.Coindexation.eraseIdx j.input ⟨j.v2Idx, j.v2Idx_lt_length_input⟩
 
 theorem corr_form_rhs (o : Resolution) (j : Hiatus.Juncture) :
-    (corr o j).form .rhs = resolve o j := by
+    (corr o j).string .rhs = resolve o j := by
   cases o
-  · rfl
-  · exact (j.epenthesize_eq_insertIdx glottalStop).symm
-  · exact j.elideV2_eq_eraseIdx.symm
+  · exact Correspondence.Coindexation.string_identity _ _
+  · exact Correspondence.Coindexation.insertIdx_string_rhs.trans
+      (j.epenthesize_eq_insertIdx glottalStop).symm
+  · exact Correspondence.Coindexation.eraseIdx_string_rhs.trans j.elideV2_eq_eraseIdx.symm
 
 /-- DEP counts the output segments that have no correspondent in the input. -/
 def depConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
@@ -151,16 +153,16 @@ def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
   cases o
-  · exact Correspondence.depViol_identity _
-  · exact Correspondence.depViol_insertIdx
-  · exact Correspondence.depViol_eraseIdx
+  · exact Correspondence.Coindexation.depViol_identity _
+  · exact Correspondence.Coindexation.depViol_insertIdx
+  · exact Correspondence.Coindexation.depViol_eraseIdx
 
 theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
   cases o
-  · exact Correspondence.maxViol_identity _
-  · exact Correspondence.maxViol_insertIdx
-  · exact Correspondence.maxViol_eraseIdx
+  · exact Correspondence.Coindexation.maxViol_identity _
+  · exact Correspondence.Coindexation.maxViol_insertIdx
+  · exact Correspondence.Coindexation.maxViol_eraseIdx
 
 theorem starHiatus_eq (k : Fin 2) (o : Resolution) :
     starHiatus (inputs k, o) = if o = .hiatus then 1 else 0 := by

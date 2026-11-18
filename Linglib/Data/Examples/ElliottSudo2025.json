@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "implies: you may have coffee and you may have tea", "judgment": "acceptable"}
     ],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "implies: it might be here and it might be there", "judgment": "acceptable"}
     ],
@@ -52,7 +52,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "existential: either no bathroom, or a bathroom in a funny place", "judgment": "acceptable"}
     ],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "It is known that if Ethan is married, he is married to a man.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"]
@@ -98,7 +98,7 @@
     "translation": "",
     "context": "It is known that if Ethan is married, he is married to a man.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"]
@@ -117,7 +117,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"]
@@ -136,7 +136,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"]
@@ -155,7 +155,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"]
@@ -174,7 +174,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [
+    "contrasts": [
       {"form": "John owns a shirt, and it's in the wardrobe.", "judgment": "questionable"}
     ],
     "readings": [],
@@ -195,7 +195,7 @@
     "translation": "",
     "context": "Wondering how Gennaro paid for dinner.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "existential: consistent with a credit card he did not pay with", "judgment": "acceptable"},
       {"name": "universal: every credit card was used to pay", "judgment": "unacceptable"}
@@ -217,7 +217,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: it's possible that there's no bathroom in this house", "judgment": "acceptable"},
       {"name": "entails: it's possible that there's a bathroom in this house in a surprising place", "judgment": "acceptable"}
@@ -239,7 +239,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: you may include no appendix", "judgment": "acceptable"},
       {"name": "entails: you may include an appendix kept to a single page", "judgment": "acceptable"},
@@ -262,7 +262,7 @@
     "translation": "",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"]
@@ -281,7 +281,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"]
@@ -300,7 +300,7 @@
     "translation": "",
     "context": "Answering: Does Kafuku own no car?",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"]
@@ -319,7 +319,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.4.2"]
@@ -338,7 +338,7 @@
     "translation": "",
     "context": "Gennaro has a credit card that he paid with and another that he did not.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "true in the context", "judgment": "acceptable"}
     ],
@@ -359,7 +359,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"]
@@ -378,7 +378,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.5"]
@@ -397,7 +397,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: there might be coffee and there might be tea", "judgment": "acceptable"}
     ],
@@ -418,7 +418,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: no coffee is possible and no tea is possible", "judgment": "acceptable"}
     ],
@@ -439,7 +439,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: it's possible there's no bathroom, and it's possible there's a bathroom upstairs", "judgment": "acceptable"}
     ],
@@ -460,7 +460,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: some student read The Master and Margarita", "judgment": "acceptable"},
       {"name": "entails: some student read The White Guard", "judgment": "acceptable"}
@@ -482,7 +482,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: some student didn't read a novel", "judgment": "acceptable"},
       {"name": "entails: some student read a novel and wrote a report on it", "judgment": "acceptable"}
@@ -507,7 +507,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.2"]
@@ -526,7 +526,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "entails: if there's no bathroom, this house needs to be renovated", "judgment": "acceptable"},
       {"name": "entails: if there's a bathroom upstairs, this house needs to be renovated", "judgment": "acceptable"}
@@ -548,7 +548,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "negative free choice with anaphora", "judgment": "acceptable"}
     ],

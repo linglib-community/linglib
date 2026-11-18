@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Pragmatics.Bidirectional
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod

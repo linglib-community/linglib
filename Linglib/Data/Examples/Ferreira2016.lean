@@ -24,9 +24,10 @@ def ex45 : Datum :=
     glossedTokens := []
     context := "John started walking toward the other side of the street, but a bus hit him and he never actually made it."
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex46 : Datum :=
   { id := "ferreira2016_ex46"
@@ -37,9 +38,10 @@ def ex46 : Datum :=
     glossedTokens := []
     context := "Uttered half an hour after John, a normal human being, started swimming from the west coast of Africa towards the Brazilian coast."
     judgment := .acceptable
-    alternatives := []
+    verdict := some false
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def ex54 : Datum :=
   { id := "ferreira2016_ex54"
@@ -50,9 +52,10 @@ def ex54 : Datum :=
     glossedTokens := []
     context := "John, who loves soccer, does not live far from a local college campus where the only soccer field in the neighborhood is located, and goes there regularly to play with his friends."
     judgment := .acceptable
-    alternatives := []
+    verdict := some true
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "true")] }
+    paperFeatures := [] }
 
 def ex54_accident : Datum :=
   { id := "ferreira2016_ex54_accident"
@@ -63,9 +66,10 @@ def ex54_accident : Datum :=
     glossedTokens := []
     context := "Due to a tragic car accident, John cannot control the movements of his legs anymore, and the sentence is uttered after these facts became known to the speaker."
     judgment := .acceptable
-    alternatives := []
+    verdict := some false
+    contrasts := []
     readings := []
-    paperFeatures := [("truthValue", "false")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex45, ex46, ex54, ex54_accident]
 

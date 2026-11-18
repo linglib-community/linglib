@@ -1,9 +1,10 @@
 module
 
-public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Linglib.Pragmatics.Probabilistic.Latent
+public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
 # Tessler and Goodman (2019): The Language of Generalization
@@ -152,7 +153,7 @@ prior expectation, the comparison of Figure 1C. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
   rw [Endorsed, endorser, speaker_dirac_real_singleton_lt_iff (L := listener μ ν prev) (w := w)
-    hlam.le ⟨.silent, by rwa [listener_silent]⟩]
+    hlam.le]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent, listener_generic_apply,
     ENNReal.lt_div_iff_mul_lt (Or.inl hZ) (Or.inl (expectedMeaning_ne_top μ ν prev)), mul_comm,
@@ -268,7 +269,7 @@ variable {W : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 theorem expectedPrevalence_eq_half_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hμ : ∀ w, μ {σ w} = μ {w}) :
     expectedPrevalence μ prev = 1 / 2 := by
-  have h1 : ∑ w, μ.real {w} = 1 := sum_measureReal_singleton_eq_one μ
+  have h1 : ∑ w, μ.real {w} = 1 := by simp
   have key : expectedPrevalence μ prev = ∑ w, μ.real {w} * (1 - prev w) := by
     rw [expectedPrevalence_eq_sum, ← Equiv.sum_comp σ]
     refine Finset.sum_congr rfl fun w _ => ?_
@@ -299,7 +300,7 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
       (endorser lam μ uniformThreshold prev w).real {.silent} := by
     rw [endorser,
       speaker_dirac_real_singleton_lt_iff (L := listener μ uniformThreshold prev) (w := w)
-      hlam.le ⟨.silent, by rwa [listener_silent]⟩]
+      hlam.le]
     simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
     rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent, listener_generic_apply,
       expectedMeaning_uniformThreshold prev μ hp, meaning_uniformThreshold prev hp, hE, hhalf,

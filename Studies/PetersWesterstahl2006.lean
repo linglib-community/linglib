@@ -198,30 +198,32 @@ cardinal numbers, holding of `|M - A|` and `|A|`. -/
 theorem existsUnique_cardinal_relation
     (Q : LindstromQuantifier.{0, 0, u} (Language.monadic (Fin 1))) :
     ∃! R : Cardinal.{u} → Cardinal.{u} → Prop, ∀ (M : Type u) (A : Set M),
-      ⟦(⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
+      ⟦(⟨M, monadic.structure ![(· ∈ A)]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
         R #↥Aᶜ #↥A := by
   classical
   let c (k m : Cardinal.{u}) (S : (Language.monadic (Fin 1)).Relations 1 → Prop) : Cardinal.{u} :=
     if S (.pred 0) then m else k
   have hc (M : Type u) (A : Set M) :
-      LindstromQuantifier.typeCount (⟨M, monadic.structure ![A]⟩ :
+      LindstromQuantifier.typeCount (⟨M, monadic.structure ![(· ∈ A)]⟩ :
         Bundled.{u} (Language.monadic (Fin 1)).Structure) = c #↥Aᶜ #↥A := funext fun S ↦ by
-    have hcell : @unaryType _ M (monadic.structure ![A]) ⁻¹' {S} = {x | x ∈ A ↔ S (.pred 0)} :=
+    have hcell : @unaryType _ M (monadic.structure ![(· ∈ A)]) ⁻¹' {S} =
+        {x | x ∈ A ↔ S (.pred 0)} :=
       Set.ext fun x ↦ (unaryType_monadic_structure_eq_iff x S).trans Fin.forall_fin_one
     rw [LindstromQuantifier.typeCount]
-    change #↥(@unaryType _ M (monadic.structure ![A]) ⁻¹' {S}) = _
+    change #↥(@unaryType _ M (monadic.structure ![(· ∈ A)]) ⁻¹' {S}) = _
     rw [hcell]
     by_cases hS : S (.pred 0) <;> simp [c, hS, Set.compl_def]
   have key (M : Type u) (A : Set M) :
-      ⟦(⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
+      ⟦(⟨M, monadic.structure ![(· ∈ A)]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
         LindstromQuantifier.typeCountEquiv.symm (c #↥Aᶜ #↥A) ∈ Q := by
     rw [← hc]
     exact iff_of_eq (congrArg (· ∈ Q) (LindstromQuantifier.typeCountEquiv.symm_apply_apply _).symm)
   refine ⟨fun k m ↦ LindstromQuantifier.typeCountEquiv.symm (c k m) ∈ Q, key, fun R' hR' ↦ ?_⟩
   funext k m
   obtain ⟨⟨M, S⟩, hM⟩ := LindstromQuantifier.typeCount_surjective (c k m)
-  obtain ⟨A, rfl⟩ : ∃ A : Set M, S = monadic.structure ![A] :=
-    ⟨_, (monadic.eq_structure S).trans (by congr 1; exact funext (Fin.forall_fin_one.2 rfl))⟩
+  obtain ⟨A, rfl⟩ : ∃ A : Set M, S = monadic.structure ![(· ∈ A)] :=
+    ⟨{a | S.RelMap (.pred 0) ![a]},
+      (monadic.eq_structure S).trans (by congr 1; exact funext (Fin.forall_fin_one.2 rfl))⟩
   rw [hc] at hM
   obtain rfl : #↥Aᶜ = k := by simpa [c] using congrFun hM fun _ ↦ False
   obtain rfl : #↥A = m := by simpa [c] using congrFun hM fun _ ↦ True

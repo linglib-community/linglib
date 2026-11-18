@@ -6,33 +6,38 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.FreeMonoid.Basic
-public import Mathlib.Logic.Equiv.Fin.Basic
-public import Linglib.Core.Combinatorics.SimpleGraph.Sum
+public import Mathlib.Algebra.Group.Embedding
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Fin.Embedding
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Pi
 public import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # Autosegmental representations
 
 An autosegmental representation has a word on each tier and association lines joining positions
-on distinct tiers. Representations concatenate tier by tier, appending the words and keeping the
-lines of both factors, and form a monoid.
+on distinct tiers. The lines between two tiers are a finite set of pairs of positions, so a
+representation is finite data: its lines can be listed, counted and edited, and equality and the
+No-Crossing Constraint are decidable. Association is also
+[a simple graph on the positions](##Autosegmental.AR.assoc), the form in which the graph-theoretic
+statements read it. Representations concatenate tier by tier, appending the words and keeping
+[the lines of both factors](##Autosegmental.AR.link_mul), and form a monoid in which
+representations on disjoint tiers [commute](##Autosegmental.AR.commute_of_disjoint_support).
+Concatenation and monotone moves of the positions preserve
+[the No-Crossing Constraint](##Autosegmental.AR.NoCrossing.mul).
 
-## Main definitions
+## Implementation notes
 
-* `AR τ`: a representation with alphabet `τ i` on tier `i`.
-* `AR.Link`: association of two positions given in `ℕ` coordinates.
-* `AR.NoCrossing`: the No-Crossing Constraint.
-* `AR.fromRel`: the representation with given words and the lines a relation specifies.
-* `AR.map`: a representation with its positions moved along maps of each tier.
-* `AR.wordHom`: the word on one tier, as a monoid hom.
-
-## Main results
-
-* `AR.link_mul`: the lines of a concatenation are those of its factors, the right factor's
-  shifted past the left one.
-* `AR.commute_of_disjoint_support`: representations on disjoint tiers commute.
-* `AR.NoCrossing.mul`, `AR.NoCrossing.map`: concatenation and monotone moves preserve the
-  No-Crossing Constraint.
+The lines from tier `i` to tier `j` are stored as pairs of natural numbers with a proof that they
+are in range, as a `Finset` stores a multiset with a proof that it has no duplicates, so
+concatenation is a union and a shift, with no cast along the length of an appended word. Both
+orientations of a pair of tiers are stored, tied by `AR.swap_mem_lines`, as `SimpleGraph` stores
+a symmetric adjacency relation: the No-Crossing Constraint reads the lines of one ordered pair of
+tiers, and no operation needs to decide equality of tiers. The alternative of a `SimpleGraph` on
+the positions with a decidability instance cannot be enumerated, and its instance does not
+survive `List.prod`.
 
 ## References
 
@@ -49,20 +54,19 @@ namespace Autosegmental
 
 variable {ι : Type*} {τ : ι → Type*}
 
-/-- An autosegmental representation: a word on each tier, and association lines between
-positions on distinct tiers. -/
+/-- An autosegmental representation: a word on each tier, and for each pair of tiers the finite
+set of association lines between their positions. -/
 structure AR (τ : ι → Type*) where
   /-- The word on tier `i`. -/
   word : ∀ i, List (τ i)
-  /-- The association lines, a graph on the positions. -/
-  assoc : SimpleGraph ((i : ι) × Fin (word i).length)
-  /-- Lines join distinct tiers: association lies in the complete multipartite graph on the
-  tiers. -/
-  assoc_le : assoc ≤ SimpleGraph.completeMultipartiteGraph fun i ↦ Fin (word i).length
-  /-- Association is decidable. -/
-  decidableAdj : DecidableRel assoc.Adj := by infer_instance
-
-attribute [instance] AR.decidableAdj
+  /-- The lines from tier `i` to tier `j`, each a position of `i` and a position of `j`. -/
+  lines : ι → ι → Finset (ℕ × ℕ)
+  /-- No line joins two positions of one tier. -/
+  lines_self (i : ι) : lines i i = ∅
+  /-- A line from `i` to `j` is a line from `j` to `i`. -/
+  swap_mem_lines ⦃i j : ι⦄ ⦃p q : ℕ⦄ : (p, q) ∈ lines i j → (q, p) ∈ lines j i
+  /-- Lines start at positions of the word. -/
+  fst_lt_of_mem_lines ⦃i j : ι⦄ ⦃p q : ℕ⦄ : (p, q) ∈ lines i j → p < (word i).length
 
 namespace AR
 
@@ -74,158 +78,214 @@ abbrev Pos : Type _ := (i : ι) × Fin (X.word i).length
 /-- The label at a position. -/
 def label (v : X.Pos) : τ v.1 := (X.word v.1)[v.2]
 
-instance : Inhabited (AR τ) := ⟨⟨fun _ ↦ [], ⊥, bot_le, inferInstance⟩⟩
-
-variable {X} in
-theorem fst_ne_of_adj {v w : X.Pos} (h : X.assoc.Adj v w) : v.1 ≠ w.1 := X.assoc_le h
-
-/-! ### Lines in `ℕ` coordinates -/
+/-! ### Lines -/
 
 /-- Position `p` of tier `i` is associated with position `q` of tier `j`; positions beyond the
 end of a word are associated with nothing. -/
-def Link (i j : ι) (p q : ℕ) : Prop :=
-  ∃ (hp : p < (X.word i).length) (hq : q < (X.word j).length),
-    X.assoc.Adj ⟨i, ⟨p, hp⟩⟩ ⟨j, ⟨q, hq⟩⟩
+def Link (i j : ι) (p q : ℕ) : Prop := (p, q) ∈ X.lines i j
 
 instance (i j : ι) (p q : ℕ) : Decidable (X.Link i j p q) :=
-  inferInstanceAs (Decidable (∃ _ _, _))
+  inferInstanceAs (Decidable (_ ∈ _))
 
 variable {X Y Z}
 
-theorem link_iff_adj {v w : X.Pos} : X.Link v.1 w.1 v.2 w.2 ↔ X.assoc.Adj v w :=
-  ⟨fun ⟨_, _, h⟩ ↦ h, fun h ↦ ⟨v.2.2, w.2.2, h⟩⟩
+theorem mem_lines {i j : ι} {p q : ℕ} : (p, q) ∈ X.lines i j ↔ X.Link i j p q := .rfl
 
-theorem Link.lt_left {i j : ι} {p q : ℕ} (h : X.Link i j p q) : p < (X.word i).length := h.1
-
-theorem Link.lt_right {i j : ι} {p q : ℕ} (h : X.Link i j p q) : q < (X.word j).length := h.2.1
+theorem Link.lt_left {i j : ι} {p q : ℕ} (h : X.Link i j p q) : p < (X.word i).length :=
+  X.fst_lt_of_mem_lines h
 
 theorem Link.symm {i j : ι} {p q : ℕ} (h : X.Link i j p q) : X.Link j i q p :=
-  ⟨h.2.1, h.1, h.2.2.symm⟩
+  X.swap_mem_lines h
 
-theorem Link.ne {i j : ι} {p q : ℕ} (h : X.Link i j p q) : i ≠ j := fst_ne_of_adj h.2.2
+theorem Link.lt_right {i j : ι} {p q : ℕ} (h : X.Link i j p q) : q < (X.word j).length :=
+  h.symm.lt_left
+
+theorem Link.ne {i j : ι} {p q : ℕ} (h : X.Link i j p q) : i ≠ j := by
+  rintro rfl
+  simp [Link, X.lines_self] at h
 
 theorem link_comm {i j : ι} {p q : ℕ} : X.Link i j p q ↔ X.Link j i q p := ⟨.symm, .symm⟩
 
-theorem mk_inj {w : ∀ i, List (τ i)} {G G' : SimpleGraph ((i : ι) × Fin (w i).length)}
-    {hG hG'} {d : DecidableRel G.Adj} {d' : DecidableRel G'.Adj} :
-    (⟨w, G, hG, d⟩ : AR τ) = ⟨w, G', hG', d'⟩ ↔ G = G' := by
-  refine ⟨fun h ↦ eq_of_heq (AR.mk.inj h).2.1, ?_⟩
-  rintro rfl
-  congr
-  exact Subsingleton.elim _ _
+theorem lines_injective : Function.Injective fun X : AR τ ↦ (X.word, X.lines) := by
+  rintro ⟨_, _, _, _, _⟩ ⟨_, _, _, _, _⟩ h
+  cases h
+  rfl
 
 @[ext] theorem ext (hw : X.word = Y.word) (hl : ∀ i j p q, X.Link i j p q ↔ Y.Link i j p q) :
-    X = Y := by
-  cases X
-  cases Y
-  obtain rfl := hw
-  exact mk_inj.2 <| SimpleGraph.ext <| funext₂ fun v v' ↦ propext <|
-    link_iff_adj.symm.trans <| (hl v.1 v'.1 v.2 v'.2).trans link_iff_adj
-
-theorem ext_iff_bounded : X = Y ↔ (∀ i, X.word i = Y.word i) ∧
-    ∀ i j, ∀ p < (X.word i).length, ∀ q < (X.word j).length, X.Link i j p q ↔ Y.Link i j p q := by
-  refine ⟨by rintro rfl; exact ⟨fun _ ↦ rfl, fun _ _ _ _ _ _ ↦ .rfl⟩, fun ⟨hw, hl⟩ ↦
-    ext (funext hw) fun i j p q ↦ ⟨fun h ↦ (hl i j p h.lt_left q h.lt_right).1 h, fun h ↦ ?_⟩⟩
-  have hp := h.lt_left
-  have hq := h.lt_right
-  rw [← hw] at hp hq
-  exact (hl i j p hp q hq).2 h
+    X = Y :=
+  lines_injective <| Prod.ext hw <| funext₂ fun i j ↦ Finset.ext fun ⟨p, q⟩ ↦ hl i j p q
 
 instance [Fintype ι] [∀ i, DecidableEq (τ i)] : DecidableEq (AR τ) :=
-  fun _ _ ↦ decidable_of_iff _ ext_iff_bounded.symm
+  fun X Y ↦ decidable_of_iff (X.word = Y.word ∧ X.lines = Y.lines)
+    ⟨fun h ↦ lines_injective (Prod.ext h.1 h.2), fun h ↦ h ▸ ⟨rfl, rfl⟩⟩
+
+/-! ### The graph on the positions -/
+
+variable (X) in
+/-- Association as a simple graph on the positions. -/
+def assoc : SimpleGraph X.Pos where
+  Adj v w := X.Link v.1 w.1 v.2 w.2
+  symm := ⟨fun _ _ h ↦ h.symm⟩
+  loopless := ⟨fun _ h ↦ h.ne rfl⟩
+
+instance : DecidableRel X.assoc.Adj :=
+  fun v w ↦ inferInstanceAs (Decidable (X.Link v.1 w.1 v.2 w.2))
+
+theorem link_iff_adj {v w : X.Pos} : X.Link v.1 w.1 v.2 w.2 ↔ X.assoc.Adj v w := .rfl
+
+theorem Link.adj {i j : ι} {p q : ℕ} (h : X.Link i j p q) :
+    X.assoc.Adj ⟨i, ⟨p, h.lt_left⟩⟩ ⟨j, ⟨q, h.lt_right⟩⟩ := h
+
+theorem fst_ne_of_adj {v w : X.Pos} (h : X.assoc.Adj v w) : v.1 ≠ w.1 := Link.ne h
+
+/-! ### Lines as pairs of positions -/
+
+section Links
+
+variable (X) (i j : ι)
+
+/-- The lines from tier `i` to tier `j` as pairs of positions of the two words, the view that
+candidates edit. -/
+def links : Finset (Fin (X.word i).length × Fin (X.word j).length) :=
+  Finset.univ.filter fun x ↦ (x.1.val, x.2.val) ∈ X.lines i j
+
+variable {X i j}
+
+@[simp] theorem mem_links {x : Fin (X.word i).length × Fin (X.word j).length} :
+    x ∈ X.links i j ↔ (x.1.val, x.2.val) ∈ X.lines i j := by
+  simp [links]
+
+variable (X i j) in
+theorem map_links :
+    (X.links i j).map (Fin.valEmbedding.prodMap Fin.valEmbedding) = X.lines i j := by
+  ext ⟨a, b⟩
+  simp only [Finset.mem_map, mem_links, Function.Embedding.prodMap, Prod.exists,
+    Function.Embedding.coeFn_mk, Prod.map, Fin.valEmbedding_apply, Prod.mk.injEq]
+  constructor
+  · rintro ⟨k, l, h, rfl, rfl⟩
+    exact h
+  · intro h
+    exact ⟨⟨a, Link.lt_left h⟩, ⟨b, Link.lt_right h⟩, h, rfl, rfl⟩
+
+theorem isNonCrossing_lines_iff_links :
+    IsNonCrossing (X.lines i j : SetRel ℕ ℕ) ↔
+      IsNonCrossing (X.links i j : SetRel (Fin (X.word i).length) (Fin (X.word j).length)) := by
+  rw [← map_links, Finset.coe_map, isNonCrossing_image]
+  rfl
+
+end Links
+
+/-! ### Representations from words and a graph -/
+
+section OfAssoc
+
+variable (w : ∀ i, List (τ i)) (G : SimpleGraph ((i : ι) × Fin (w i).length))
+  [DecidableRel G.Adj] (hG : ∀ ⦃v v'⦄, G.Adj v v' → v.1 ≠ v'.1)
+
+/-- The representation with words `w` whose association is a given graph on the positions that
+joins only distinct tiers. -/
+def ofAssoc : AR τ where
+  word := w
+  lines i j := (Finset.univ.filter fun x : Fin (w i).length × Fin (w j).length ↦
+    G.Adj ⟨i, x.1⟩ ⟨j, x.2⟩).map (Fin.valEmbedding.prodMap Fin.valEmbedding)
+  lines_self i := Finset.eq_empty_of_forall_notMem fun _ h ↦ by
+    obtain ⟨x, hx, -⟩ := Finset.mem_map.1 h
+    exact hG (Finset.mem_filter.1 hx).2 rfl
+  swap_mem_lines i j p q h := by
+    obtain ⟨x, hx, he⟩ := Finset.mem_map.1 h
+    cases he
+    exact Finset.mem_map.2 ⟨(x.2, x.1), Finset.mem_filter.2
+      ⟨Finset.mem_univ _, (Finset.mem_filter.1 hx).2.symm⟩, rfl⟩
+  fst_lt_of_mem_lines i j p q h := by
+    obtain ⟨x, -, he⟩ := Finset.mem_map.1 h
+    cases he
+    exact x.1.2
+
+@[simp] theorem word_ofAssoc : (ofAssoc w G hG).word = w := rfl
+
+/-- The graph of `ofAssoc` is the given graph. -/
+@[simp] theorem assoc_ofAssoc : (ofAssoc w G hG).assoc = G :=
+  SimpleGraph.ext <| funext₂ fun v v' ↦ propext
+    ⟨fun h ↦ by
+      obtain ⟨x, hx, he⟩ := Finset.mem_map.1 h
+      obtain ⟨h₁, h₂⟩ := Prod.ext_iff.1 he
+      rw [← Sigma.eta v, ← Sigma.eta v', ← Fin.ext h₁, ← Fin.ext h₂]
+      exact (Finset.mem_filter.1 hx).2,
+    fun h ↦ Finset.mem_map.2 ⟨(v.2, v'.2), Finset.mem_filter.2 ⟨Finset.mem_univ _, h⟩, rfl⟩⟩
+
+/-- A representation is determined by its words and its graph. -/
+theorem ofAssoc_assoc (X : AR τ) : ofAssoc X.word X.assoc (fun _ _ ↦ fst_ne_of_adj) = X :=
+  ext rfl fun i j p q ↦
+    ⟨fun h ↦ by
+      obtain ⟨x, hx, he⟩ := Finset.mem_map.1 h
+      cases he
+      exact (Finset.mem_filter.1 hx).2,
+    fun h ↦ Finset.mem_map.2
+      ⟨(⟨p, h.lt_left⟩, ⟨q, h.lt_right⟩), Finset.mem_filter.2 ⟨Finset.mem_univ _, h⟩, rfl⟩⟩
+
+end OfAssoc
 
 /-! ### Concatenation -/
 
 section Monoid
 
-variable (X Y) in
-/-- The positions of a concatenation split into the positions of its factors. -/
-def posMulEquiv : ((i : ι) × Fin (X.word i ++ Y.word i).length) ≃ X.Pos ⊕ Y.Pos :=
-  (Equiv.sigmaCongrRight fun _ ↦ (finCongr List.length_append).trans finSumFinEquiv.symm).trans
-    (Equiv.sigmaSumDistrib _ _)
+/-- `shift a b` moves a line `a` positions along its first tier and `b` along its second. -/
+def shift (a b : ℕ) : ℕ × ℕ ↪ ℕ × ℕ := (addLeftEmbedding a).prodMap (addLeftEmbedding b)
 
-private theorem elim_fst_posMulEquiv (v : (i : ι) × Fin (X.word i ++ Y.word i).length) :
-    Sum.elim Sigma.fst Sigma.fst (posMulEquiv X Y v) = v.1 := by
-  obtain ⟨i, p⟩ := v
-  simp only [posMulEquiv, Equiv.trans_apply, Equiv.sigmaCongrRight_apply,
-    Equiv.sigmaSumDistrib_apply]
-  cases finSumFinEquiv.symm (finCongr List.length_append p) <;> rfl
+@[simp] theorem shift_apply (a b : ℕ) (p : ℕ × ℕ) : shift a b p = (a + p.1, b + p.2) := rfl
 
-theorem posMulEquiv_of_lt {i : ι} {p : ℕ} (hp : p < (X.word i ++ Y.word i).length)
-    (h : p < (X.word i).length) : posMulEquiv X Y ⟨i, ⟨p, hp⟩⟩ = .inl ⟨i, ⟨p, h⟩⟩ := by
-  simp only [posMulEquiv, Equiv.trans_apply, Equiv.sigmaCongrRight_apply,
-    Equiv.sigmaSumDistrib_apply]
-  rw [show finCongr List.length_append ⟨p, hp⟩ = Fin.castAdd (Y.word i).length ⟨p, h⟩ from rfl,
-    finSumFinEquiv_symm_apply_castAdd]
-  rfl
-
-theorem posMulEquiv_of_le {i : ι} {p : ℕ} (hp : p < (X.word i ++ Y.word i).length)
-    (h : (X.word i).length ≤ p) :
-    posMulEquiv X Y ⟨i, ⟨p, hp⟩⟩ =
-      .inr ⟨i, ⟨p - (X.word i).length, by rw [List.length_append] at hp; omega⟩⟩ := by
-  simp only [posMulEquiv, Equiv.trans_apply, Equiv.sigmaCongrRight_apply,
-    Equiv.sigmaSumDistrib_apply]
-  rw [show finCongr List.length_append ⟨p, hp⟩ = Fin.natAdd (X.word i).length
-      ⟨p - (X.word i).length, by rw [List.length_append] at hp; omega⟩ from
-        Fin.ext (by simp; omega), finSumFinEquiv_symm_apply_natAdd]
-  rfl
-
-/-- Concatenation appends the words tier by tier and keeps the lines of both factors. -/
+/-- Concatenation appends the words tier by tier and keeps the lines of both factors, those of
+the right factor shifted past the words of the left one. -/
 instance : Mul (AR τ) where
   mul X Y :=
     { word i := X.word i ++ Y.word i
-      assoc := (X.assoc ⊕g Y.assoc).comap (posMulEquiv X Y)
-      assoc_le v w h := by
-        change v.1 ≠ w.1
-        rw [← elim_fst_posMulEquiv v, ← elim_fst_posMulEquiv w]
-        revert h
-        change (X.assoc ⊕g Y.assoc).Adj (posMulEquiv X Y v) (posMulEquiv X Y w) → _
-        generalize posMulEquiv X Y v = a
-        generalize posMulEquiv X Y w = b
-        rcases a with a | a <;> rcases b with b | b <;> intro h
-        exacts [fst_ne_of_adj h, (Bool.false_ne_true h).elim, (Bool.false_ne_true h).elim,
-          fst_ne_of_adj h] }
+      lines i j := X.lines i j ∪ (Y.lines i j).map (shift (X.word i).length (X.word j).length)
+      lines_self i := by simp [X.lines_self, Y.lines_self]
+      swap_mem_lines i j p q h := by
+        simp only [Finset.mem_union, Finset.mem_map, shift_apply, Prod.mk.injEq,
+          Prod.exists] at h ⊢
+        rcases h with h | ⟨a, b, h, rfl, rfl⟩
+        · exact .inl (X.swap_mem_lines h)
+        · exact .inr ⟨b, a, Y.swap_mem_lines h, rfl, rfl⟩
+      fst_lt_of_mem_lines i j p q h := by
+        simp only [Finset.mem_union, Finset.mem_map, shift_apply, Prod.mk.injEq, Prod.exists] at h
+        rcases h with h | ⟨a, b, h, rfl, rfl⟩
+        · have := X.fst_lt_of_mem_lines h
+          simp only [List.length_append]
+          omega
+        · have := Y.fst_lt_of_mem_lines h
+          simp only [List.length_append]
+          omega }
 
 /-- The empty representation. -/
-instance : One (AR τ) := ⟨default⟩
+instance : One (AR τ) := ⟨⟨fun _ ↦ [], fun _ _ ↦ ∅, fun _ ↦ rfl, nofun, nofun⟩⟩
+
+instance : Inhabited (AR τ) := ⟨1⟩
 
 @[simp] theorem word_mul (i : ι) : (X * Y).word i = X.word i ++ Y.word i := rfl
 
+@[simp] theorem lines_mul (i j : ι) : (X * Y).lines i j =
+    X.lines i j ∪ (Y.lines i j).map (shift (X.word i).length (X.word j).length) := rfl
+
 @[simp] theorem word_one (i : ι) : (1 : AR τ).word i = [] := rfl
 
-@[simp] theorem not_link_one (i j : ι) (p q : ℕ) : ¬ (1 : AR τ).Link i j p q :=
-  fun h ↦ Nat.not_lt_zero _ h.lt_left
+@[simp] theorem lines_one (i j : ι) : (1 : AR τ).lines i j = ∅ := rfl
 
-@[simp] theorem assoc_one : (1 : AR τ).assoc = ⊥ := rfl
+@[simp] theorem not_link_one (i j : ι) (p q : ℕ) : ¬ (1 : AR τ).Link i j p q :=
+  Finset.notMem_empty _
+
+@[simp] theorem assoc_one : (1 : AR τ).assoc = ⊥ :=
+  SimpleGraph.ext <| funext₂ fun _ _ ↦ propext ⟨fun h ↦ (not_link_one _ _ _ _ h).elim, False.elim⟩
 
 theorem link_mul (i j : ι) (p q : ℕ) :
     (X * Y).Link i j p q ↔ X.Link i j p q ∨
       (X.word i).length ≤ p ∧ (X.word j).length ≤ q ∧
         Y.Link i j (p - (X.word i).length) (q - (X.word j).length) := by
-  constructor
-  · rintro ⟨hp, hq, h⟩
-    change (X.assoc ⊕g Y.assoc).Adj _ _ at h
-    rcases lt_or_ge p (X.word i).length with hpi | hpi <;>
-      rcases lt_or_ge q (X.word j).length with hqj | hqj
-    · rw [posMulEquiv_of_lt hp hpi, posMulEquiv_of_lt hq hqj] at h
-      exact .inl ⟨hpi, hqj, h⟩
-    · rw [posMulEquiv_of_lt hp hpi, posMulEquiv_of_le hq hqj] at h
-      simp at h
-    · rw [posMulEquiv_of_le hp hpi, posMulEquiv_of_lt hq hqj] at h
-      simp at h
-    · rw [posMulEquiv_of_le hp hpi, posMulEquiv_of_le hq hqj] at h
-      exact .inr ⟨hpi, hqj, _, _, h⟩
-  · rintro (⟨hp, hq, h⟩ | ⟨hpi, hqj, hp, hq, h⟩)
-    · have hp' : p < (X.word i ++ Y.word i).length := by simp; omega
-      have hq' : q < (X.word j ++ Y.word j).length := by simp; omega
-      refine ⟨hp', hq', ?_⟩
-      change (X.assoc ⊕g Y.assoc).Adj _ _
-      rwa [posMulEquiv_of_lt hp' hp, posMulEquiv_of_lt hq' hq]
-    · have hp' : p < (X.word i ++ Y.word i).length := by simp; omega
-      have hq' : q < (X.word j ++ Y.word j).length := by simp; omega
-      refine ⟨hp', hq', ?_⟩
-      change (X.assoc ⊕g Y.assoc).Adj _ _
-      rwa [posMulEquiv_of_le hp' hpi, posMulEquiv_of_le hq' hqj]
+  simp only [Link, lines_mul, Finset.mem_union, Finset.mem_map, shift_apply, Prod.mk.injEq,
+    Prod.exists]
+  refine or_congr_right ⟨?_, fun ⟨hp, hq, h⟩ ↦ ⟨_, _, h, by omega, by omega⟩⟩
+  rintro ⟨a, b, h, rfl, rfl⟩
+  exact ⟨by omega, by omega, by simpa using h⟩
 
 instance : Monoid (AR τ) where
   mul_assoc X Y Z := by
@@ -304,117 +364,103 @@ end Monoid
 /-! ### The No-Crossing Constraint -/
 
 variable (X) in
-/-- The lines between tiers `i` and `j`, a relation between their positions. -/
-def lines (i j : ι) : SetRel (Fin (X.word i).length) (Fin (X.word j).length) :=
-  {x | X.assoc.Adj ⟨i, x.1⟩ ⟨j, x.2⟩}
-
-theorem mem_lines {i j : ι} {x : Fin (X.word i).length × Fin (X.word j).length} :
-    x ∈ X.lines i j ↔ X.Link i j x.1 x.2 :=
-  ⟨fun h ↦ ⟨_, _, h⟩, fun ⟨_, _, h⟩ ↦ h⟩
-
-variable (X) in
 /-- The No-Crossing Constraint: between any two tiers, no two lines cross. -/
-def NoCrossing : Prop := ∀ i j, IsNonCrossing (X.lines i j)
-
-instance (i j : ι) : DecidablePred (· ∈ X.lines i j) :=
-  fun _ ↦ inferInstanceAs (Decidable (X.assoc.Adj _ _))
+def NoCrossing : Prop := ∀ i j, IsNonCrossing (X.lines i j : SetRel ℕ ℕ)
 
 instance [Fintype ι] : Decidable X.NoCrossing :=
-  decidable_of_iff (∀ i j, IsNonCrossing (X.lines i j)) Iff.rfl
+  inferInstanceAs (Decidable (∀ i j, IsNonCrossing (X.lines i j : SetRel ℕ ℕ)))
 
-@[simp] theorem NoCrossing.one : (1 : AR τ).NoCrossing := fun _ _ _ h ↦ h.elim
+@[simp] theorem NoCrossing.one : (1 : AR τ).NoCrossing := fun _ _ _ h ↦ by simp at h
 
-theorem isNonCrossing_lines_iff {i j : ι} : IsNonCrossing (X.lines i j) ↔
+theorem isNonCrossing_lines_iff {i j : ι} : IsNonCrossing (X.lines i j : SetRel ℕ ℕ) ↔
     ∀ ⦃p q p' q'⦄, X.Link i j p q → X.Link i j p' q' → p < p' → q ≤ q' :=
-  ⟨fun h _ _ _ _ ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦
-      @h (⟨_, hp⟩, ⟨_, hq⟩) h₁ (⟨_, hp'⟩, ⟨_, hq'⟩) h₂ hlt,
-    fun h a ha b hb hlt ↦ h ⟨a.1.2, a.2.2, ha⟩ ⟨b.1.2, b.2.2, hb⟩ hlt⟩
+  ⟨fun h _ _ _ _ h₁ h₂ ↦ h h₁ h₂, fun h _ ha _ hb ↦ h ha hb⟩
 
-theorem isNonCrossing_lines_iff_link {i j : ι} :
-    IsNonCrossing (X.lines i j) ↔ IsNonCrossing {x : ℕ × ℕ | X.Link i j x.1 x.2} :=
-  isNonCrossing_lines_iff.trans
-    ⟨fun h _ ha _ hb ↦ h ha hb, fun h _ _ _ _ h₁ h₂ ↦ @h (_, _) h₁ (_, _) h₂⟩
-
-theorem isNonCrossing_lines_self (i : ι) : IsNonCrossing (X.lines i i) :=
+theorem isNonCrossing_lines_self (i : ι) : IsNonCrossing (X.lines i i : SetRel ℕ ℕ) :=
   isNonCrossing_lines_iff.2 fun _ _ _ _ h ↦ absurd rfl h.ne
 
 theorem isNonCrossing_lines_comm {i j : ι} :
-    IsNonCrossing (X.lines i j) ↔ IsNonCrossing (X.lines j i) := by
+    IsNonCrossing (X.lines i j : SetRel ℕ ℕ) ↔ IsNonCrossing (X.lines j i : SetRel ℕ ℕ) := by
   simp only [isNonCrossing_lines_iff]
   exact ⟨fun h _ _ _ _ h₁ h₂ hlt ↦ le_of_not_gt fun hgt ↦ (h h₂.symm h₁.symm hgt).not_gt hlt,
     fun h _ _ _ _ h₁ h₂ hlt ↦ le_of_not_gt fun hgt ↦ (h h₂.symm h₁.symm hgt).not_gt hlt⟩
+
+/-- Concatenation keeps the lines between two tiers non-crossing. -/
+theorem isNonCrossing_lines_mul {i j : ι} (hX : IsNonCrossing (X.lines i j : SetRel ℕ ℕ))
+    (hY : IsNonCrossing (Y.lines i j : SetRel ℕ ℕ)) :
+    IsNonCrossing ((X * Y).lines i j : SetRel ℕ ℕ) :=
+  isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
+    replace hX := isNonCrossing_lines_iff.1 hX
+    replace hY := isNonCrossing_lines_iff.1 hY
+    rcases (link_mul i j p q).1 h₁ with h₁ | ⟨hp, hq, h₁⟩ <;>
+      rcases (link_mul i j p' q').1 h₂ with h₂ | ⟨hp', hq', h₂⟩
+    · exact hX h₁ h₂ hlt
+    · exact (h₁.lt_right.trans_le hq').le
+    · exact absurd (h₂.lt_left.trans_le hp) (by omega)
+    · have := hY h₁ h₂ (by omega)
+      omega
 
 /-- Concatenation preserves the No-Crossing Constraint. With `NoCrossing.repoint` under the
 merge this gives the inductive step of [jardine-heinz-2015]'s Theorem 4 for their merging
 concatenation, `MergeAR.noCrossing_toAR_mul`. -/
 theorem NoCrossing.mul (hX : X.NoCrossing) (hY : Y.NoCrossing) : (X * Y).NoCrossing :=
-    fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
-  replace hX := isNonCrossing_lines_iff.1 (hX i j)
-  replace hY := isNonCrossing_lines_iff.1 (hY i j)
-  rcases (link_mul i j p q).1 h₁ with h₁ | ⟨hp, hq, h₁⟩ <;>
-    rcases (link_mul i j p' q').1 h₂ with h₂ | ⟨hp', hq', h₂⟩
-  · exact hX h₁ h₂ hlt
-  · exact (h₁.lt_right.trans_le hq').le
-  · exact absurd (h₂.lt_left.trans_le hp) (by omega)
-  · have := hY h₁ h₂ (by omega)
-    omega
+  fun i j ↦ isNonCrossing_lines_mul (hX i j) (hY i j)
 
 /-! ### Moving positions -/
 
 section Map
 
-variable [Fintype ι] [DecidableEq ι] (w : ∀ i, List (τ i))
-  (f : ∀ i, Fin (X.word i).length → Fin (w i).length)
+variable (w : ∀ i, List (τ i)) (f g : ι → ℕ → ℕ)
+  (hf : ∀ i, ∀ p < (X.word i).length, f i p < (w i).length)
 
 variable (X) in
 /-- The representation with words `w` whose lines are those of `X`, each position moved
 along `f` on its tier; positions merged by `f` keep the lines of all of them. -/
 def map : AR τ where
   word := w
-  assoc := X.assoc.map (Sigma.map id f)
-  assoc_le := by
-    rintro _ _ ⟨-, v, v', h, rfl, rfl⟩
-    exact X.assoc_le h
+  lines i j := (X.lines i j).image (Prod.map (f i) (f j))
+  lines_self i := by simp [X.lines_self]
+  swap_mem_lines i j p q h := by
+    simp only [Finset.mem_image, Prod.map, Prod.mk.injEq, Prod.exists] at h ⊢
+    obtain ⟨a, b, h, rfl, rfl⟩ := h
+    exact ⟨b, a, X.swap_mem_lines h, rfl, rfl⟩
+  fst_lt_of_mem_lines i j p q h := by
+    simp only [Finset.mem_image, Prod.map, Prod.mk.injEq, Prod.exists] at h
+    obtain ⟨a, b, h, rfl, rfl⟩ := h
+    exact hf i a (X.fst_lt_of_mem_lines h)
 
-theorem lines_map (i j : ι) : (X.map w f).lines i j = Prod.map (f i) (f j) '' X.lines i j := by
-  ext ⟨p, q⟩
-  simp only [lines, map, Set.mem_ofPred_eq, SimpleGraph.map_adj', Set.mem_image, Prod.exists,
-    Prod.map, Prod.mk.injEq]
-  constructor
-  · rintro ⟨-, ⟨i', p'⟩, ⟨j', q'⟩, h, he₁, he₂⟩
-    simp only [Sigma.map, id, Sigma.mk.injEq] at he₁ he₂
-    obtain ⟨rfl, he₁⟩ := he₁
-    obtain ⟨rfl, he₂⟩ := he₂
-    exact ⟨p', q', h, eq_of_heq he₁, eq_of_heq he₂⟩
-  · rintro ⟨p', q', h, rfl, rfl⟩
-    exact ⟨fun he ↦ fst_ne_of_adj h (Sigma.mk.inj_iff.1 he).1, ⟨i, p'⟩, ⟨j, q'⟩, h, rfl, rfl⟩
+@[simp] theorem word_map : (X.map w f hf).word = w := rfl
 
+theorem lines_map (i j : ι) :
+    (X.map w f hf).lines i j = (X.lines i j).image (Prod.map (f i) (f j)) := rfl
+
+variable {w f hf} in
 theorem link_map {i j : ι} {r s : ℕ} :
-    (X.map w f).Link i j r s ↔ ∃ x ∈ X.lines i j, (f i x.1 : ℕ) = r ∧ (f j x.2 : ℕ) = s := by
-  constructor
-  · rintro ⟨hr, hs, h⟩
-    have : ((⟨r, hr⟩, ⟨s, hs⟩) : Fin _ × Fin _) ∈ (X.map w f).lines i j := h
-    rw [lines_map] at this
-    obtain ⟨x, hx, he⟩ := this
-    exact ⟨x, hx, congrArg (Fin.val ∘ Prod.fst) he, congrArg (Fin.val ∘ Prod.snd) he⟩
-  · rintro ⟨x, hx, rfl, rfl⟩
-    have : (f i x.1, f j x.2) ∈ (X.map w f).lines i j := by rw [lines_map]; exact ⟨x, hx, rfl⟩
-    exact mem_lines.1 this
+    (X.map w f hf).Link i j r s ↔ ∃ p q, X.Link i j p q ∧ f i p = r ∧ f j q = s := by
+  simp [Link, map]
+
+/-- A move depends only on where it sends the positions of the words. -/
+theorem map_congr (hg : ∀ i, ∀ p < (X.word i).length, g i p < (w i).length)
+    (h : ∀ i, ∀ p < (X.word i).length, f i p = g i p) : X.map w f hf = X.map w g hg :=
+  ext rfl fun i j r s ↦ by
+    simp only [link_map]
+    constructor <;> rintro ⟨p, q, hl, rfl, rfl⟩
+    · exact ⟨p, q, hl, (h i p hl.lt_left).symm, (h j q hl.lt_right).symm⟩
+    · exact ⟨p, q, hl, h i p hl.lt_left, h j q hl.lt_right⟩
 
 /-- Moving positions monotonically preserves the No-Crossing Constraint. -/
-theorem NoCrossing.map (hf : ∀ i, Monotone (f i)) (h : X.NoCrossing) :
-    (X.map w f).NoCrossing := fun i j ↦ by
-  rw [lines_map, isNonCrossing_image]
-  exact fun a ha b hb hab ↦ hf j (h i j ha hb ((hf i).reflect_lt hab))
+theorem NoCrossing.map (hmono : ∀ i, MonotoneOn (f i) (Set.Iio (X.word i).length))
+    (h : X.NoCrossing) : (X.map w f hf).NoCrossing := fun i j ↦
+  isNonCrossing_lines_iff.2 fun r s r' s' h₁ h₂ hlt ↦ by
+    obtain ⟨p, q, hl, rfl, rfl⟩ := link_map.1 h₁
+    obtain ⟨p', q', hl', rfl, rfl⟩ := link_map.1 h₂
+    have hpp' : p < p' := lt_of_not_ge fun hge ↦
+      (hmono i hl'.lt_left hl.lt_left hge).not_gt hlt
+    exact hmono j hl.lt_right hl'.lt_right (isNonCrossing_lines_iff.1 (h i j) hl hl' hpp')
 
 variable (X) in
-@[simp] theorem map_id : X.map X.word (fun _ ↦ id) = X :=
-  mk_inj.2 <|
-    (congrArg (SimpleGraph.map · X.assoc) (funext fun _ ↦ rfl)).trans (SimpleGraph.map_id _)
-
-theorem map_map (w' : ∀ i, List (τ i)) (g : ∀ i, Fin (w i).length → Fin (w' i).length) :
-    (X.map w f).map w' g = X.map w' fun i ↦ g i ∘ f i :=
-  mk_inj.2 <| SimpleGraph.map_map _ _ _
+@[simp] theorem map_id : X.map X.word (fun _ ↦ id) (fun _ _ h ↦ h) = X :=
+  ext rfl fun i j p q ↦ by simp [link_map]
 
 end Map
 
@@ -426,12 +472,25 @@ variable [DecidableEq ι] (w : ∀ i, List (τ i)) (L : ι → ι → ℕ → �
   [∀ i j, DecidableRel (L i j)]
 
 /-- The representation with words `w` and a line between positions on distinct tiers wherever
-`L` holds in either direction: the symmetric closure `SimpleGraph.fromRel`, restricted to the
-complete multipartite graph on the tiers. -/
+`L` holds in either direction. -/
 def fromRel : AR τ where
   word := w
-  assoc := .fromRel (fun v v' ↦ L v.1 v'.1 v.2 v'.2) ⊓ .completeMultipartiteGraph _
-  assoc_le := inf_le_right
+  lines i j := if i = j then ∅ else
+    (Finset.range (w i).length ×ˢ Finset.range (w j).length).filter
+      fun x ↦ L i j x.1 x.2 ∨ L j i x.2 x.1
+  lines_self i := by simp
+  swap_mem_lines i j p q h := by
+    split_ifs at h ⊢ with hij hji hji
+    · simp at h
+    · exact absurd hij.symm hji
+    · exact absurd hji.symm hij
+    · simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at h ⊢
+      tauto
+  fst_lt_of_mem_lines i j p q h := by
+    split_ifs at h
+    · simp at h
+    · simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at h
+      exact h.1.1
 
 @[simp] theorem word_fromRel : (fromRel w L).word = w := rfl
 
@@ -439,13 +498,10 @@ variable {w L} in
 @[simp] theorem link_fromRel {i j : ι} {p q : ℕ} :
     (fromRel w L).Link i j p q ↔
       i ≠ j ∧ p < (w i).length ∧ q < (w j).length ∧ (L i j p q ∨ L j i q p) := by
-  simp only [Link, fromRel, SimpleGraph.inf_adj, SimpleGraph.fromRel_adj,
-    SimpleGraph.comap_adj, SimpleGraph.top_adj]
-  constructor
-  · rintro ⟨hp, hq, ⟨-, h⟩, hij⟩
-    exact ⟨hij, hp, hq, h⟩
-  · rintro ⟨hij, hp, hq, h⟩
-    exact ⟨hp, hq, ⟨fun h' ↦ hij (Sigma.mk.inj_iff.1 h').1, h⟩, hij⟩
+  simp only [Link, fromRel]
+  split_ifs with h
+  · simp [h]
+  · simp [h, and_assoc]
 
 end FromRel
 

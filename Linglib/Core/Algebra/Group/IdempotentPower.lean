@@ -16,31 +16,19 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Idempotents in finite semigroups
 
-This file proves the basic facts about idempotents in finite monoids and semigroups. In a finite
-monoid the powers of an element must repeat, so some positive power of every element is
-idempotent; adjoining an identity transfers this to semigroups, and in particular every nonempty
-finite semigroup contains an idempotent.
+In a finite monoid the powers of an element repeat, so
+[some positive power of every element is idempotent](##Monoid.exists_pos_pow_isIdempotent).
+Adjoining an identity transfers this to semigroups: a nonempty finite semigroup
+[contains an idempotent](##Semigroup.exists_isIdempotentElem), and a surjective homomorphism of
+finite semigroups [lifts idempotents to idempotents](##Semigroup.exists_isIdempotentElem_map_eq).
 
-The main result is the factorization of long products: if `S` is a finite semigroup with `n`
-elements, every product `s₁ ⋯ sₙ` has a prefix `s₁ ⋯ sᵢ` fixed on the right by an idempotent `e`,
-and so lies in `S e S`.
-
-## Main results
-
-* `Monoid.exists_pos_pow_isIdempotent`: every element of a finite monoid has an idempotent
-  positive power.
-* `Semigroup.exists_isIdempotentElem`: a nonempty finite semigroup contains an idempotent.
-* `Semigroup.exists_isIdempotentElem_map_eq`: a surjective homomorphism of finite semigroups lifts
-  idempotents to idempotents.
-* `Semigroup.exists_lt_card_isIdempotentElem_mul_eq`: among the first `|S|` terms of a sequence in
-  which each term is a right multiple of the previous one, some term is fixed on the right by an
-  idempotent.
-* `FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul`: a homomorphism out of the free semigroup
-  sends every word of length at least `|S|` into `S e S` for an idempotent `e`.
+The main result factorizes long products. If `S` is a finite semigroup with `n` elements, every
+product `s₁ ⋯ sₙ` has a prefix `s₁ ⋯ sᵢ`
+[fixed on the right by an idempotent](##Semigroup.exists_lt_card_isIdempotentElem_mul_eq) `e`, and
+so [lies in `S e S`](##FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul).
 
 ## Implementation notes
 
-The last two results are Proposition II.6.34 and Corollary II.6.35 of Pin's lecture notes.
 Products of sequences are expressed through a homomorphism out of `FreeSemigroup α`, which covers
 products of arbitrary elements by taking `α = S` and `FreeSemigroup.lift id`.
 
@@ -168,7 +156,7 @@ theorem exists_isIdempotentElem_mul_eq {p u : S} (h : p * u = p) :
 
 /-- Let `p` be a sequence in a finite nonempty semigroup `S` in which each of the first `|S|` terms
 is a right multiple of the previous one. Then one of these terms is fixed on the right by an
-idempotent. -/
+idempotent ([pin-mfa], Proposition II.6.34). -/
 theorem exists_lt_card_isIdempotentElem_mul_eq [Nonempty S] {p : ℕ → S}
     (hp : ∀ k, k + 1 < Nat.card S → ∃ s, p (k + 1) = p k * s) :
     ∃ i < Nat.card S, ∃ e, IsIdempotentElem e ∧ p i * e = p i := by
@@ -212,7 +200,8 @@ theorem exists_le_length_map_eq {u : FreeSemigroup α} (hu : IsIdempotentElem (f
     have : 0 < u.length := Nat.succ_pos _
     rw [length_mul]; omega
 
-/-- A word of length at least `|S|` is sent into `S e S` for an idempotent `e`. -/
+/-- A word of length at least `|S|` is sent into `S e S` for an idempotent `e` ([pin-mfa],
+Corollary II.6.35). -/
 theorem exists_isIdempotentElem_map_eq_mul_mul [Finite S] {w : FreeSemigroup α}
     (hw : Nat.card S ≤ w.length) : ∃ x e y, IsIdempotentElem e ∧ f w = x * e * y := by
   obtain ⟨a, t⟩ := w

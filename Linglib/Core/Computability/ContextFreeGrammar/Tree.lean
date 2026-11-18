@@ -60,9 +60,8 @@ def yield (t : RoseTree (Symbol T N)) : List T := t.leafList.filterMap Symbol.te
   yield_node_nil s
 
 theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))} (h : cs ≠ []) :
-    yield (node s cs) = (cs.map yield).flatten := by
-  rw [yield, leafList_node_of_ne_nil _ h, List.filterMap_flatten, List.map_map]
-  rfl
+    yield (node s cs) = (cs.map yield).flatten :=
+  filterMap_leafList_node_of_ne_nil _ s h
 
 @[simp] theorem yield_node_cons (s : Symbol T N) (c : RoseTree (Symbol T N))
     (cs : List (RoseTree (Symbol T N))) :
@@ -70,10 +69,8 @@ theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))
   yield_node_of_ne_nil s (List.cons_ne_nil c cs)
 
 @[simp] theorem yield_node_nonterminal (A : N) (cs : List (RoseTree (Symbol T N))) :
-    yield (node (.nonterminal A) cs) = (cs.map yield).flatten := by
-  cases cs with
-  | nil => simp
-  | cons c cs => exact yield_node_cons _ c cs
+    yield (node (.nonterminal A) cs) = (cs.map yield).flatten :=
+  filterMap_leafList_node_of_eq_none rfl cs
 
 @[simp] theorem yield_map {N' : Type*} (f : N → N') (t : RoseTree (Symbol T N)) :
     (t.map (Symbol.mapNonterminal f)).yield = t.yield := by
@@ -227,12 +224,12 @@ theorem Licensed.exists_mem_output_of_isSubtree {g : ContextFreeGrammar T}
 
 theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeGrammar T}
     [DecidableEq g.NT] {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (A : g.NT) :
-    ∑ r ∈ g.rules.filter (·.input = A), ruleCount r t = t.values.count (.nonterminal A) := by
+    ∑ r ∈ g.rulesWithInput A, ruleCount r t = t.values.count (.nonterminal A) := by
   induction ht using Licensed.grammar_induction with
   | terminal a => simp [leaf, ruleCount_node_terminal]
   | nonterminal B cs hrule hcs ih =>
     have hsum (cs' : List (RoseTree (Symbol T g.NT))) (hcs' : ∀ c ∈ cs', c ∈ cs) :
-        ∑ r ∈ g.rules.filter (·.input = A), (cs'.map (ruleCount r)).sum =
+        ∑ r ∈ g.rulesWithInput A, (cs'.map (ruleCount r)).sum =
           (cs'.map fun c ↦ c.values.count (.nonterminal A)).sum := by
       induction cs' with
       | nil => simp
@@ -242,11 +239,52 @@ theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeG
           ihc fun c' hc' ↦ hcs' c' (List.mem_cons_of_mem _ hc')]
     simp only [ruleCount_node_nonterminal, Finset.sum_add_distrib, hsum cs fun _ h ↦ h,
       values_node, List.count_cons, List.count_flatten, List.map_map, Function.comp_def,
-      Finset.sum_ite_eq', Finset.mem_filter, beq_iff_eq, Symbol.nonterminal.injEq]
+      Finset.sum_ite_eq', beq_iff_eq, Symbol.nonterminal.injEq]
     by_cases hB : B = A
     · subst hB
       simp [hrule, add_comm]
     · simp [hB]
+
+/-- A total over the local trees of a licensed tree is a total over the rules by their counts,
+for a quantity that vanishes at terminal leaves. -/
+theorem Licensed.sum_map_localTrees {M : Type*} [AddCommMonoid M] [DecidableEq T]
+    {g : ContextFreeGrammar T} [DecidableEq g.NT] {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) {F : Symbol T g.NT × List (Symbol T g.NT) → M}
+    (hF : ∀ a, F (.terminal a, []) = 0) :
+    (t.localTrees.map F).sum =
+      ∑ r ∈ g.rules, ruleCount r t • F (.nonterminal r.input, r.output) := by
+  induction ht using Licensed.grammar_induction with
+  | terminal a => simp [leaf, ruleCount_node_terminal, hF]
+  | nonterminal A cs hrule hcs ih =>
+    have hsum (f : ContextFreeRule T g.NT → M) :
+        ∑ r ∈ g.rules, (cs.map (ruleCount r)).sum • f r =
+          (cs.map fun c ↦ ∑ r ∈ g.rules, ruleCount r c • f r).sum := by
+      clear ih hcs hrule
+      induction cs with
+      | nil => simp
+      | cons c cs ihl => simp [add_nsmul, Finset.sum_add_distrib, ihl]
+    simp only [localTrees_node, List.map_cons, List.sum_cons, List.map_flatten, List.sum_flatten,
+      List.map_map, Function.comp_def, ruleCount_node_nonterminal, add_nsmul,
+      Finset.sum_add_distrib, ite_smul, one_nsmul, zero_nsmul, Finset.sum_ite_eq',
+      ite_eq_left hrule, hsum]
+    rw [List.map_congr_left ih]
+
+/-- A total over the local trees of a corpus of licensed trees is a total over the rules by their
+counts, for a quantity that vanishes at terminal leaves. -/
+theorem sum_map_localTrees_eq_sum_ruleCounts {M : Type*} [AddCommMonoid M] [DecidableEq T]
+    {g : ContextFreeGrammar T} [DecidableEq g.NT] {D : Multiset (RoseTree (Symbol T g.NT))}
+    (hD : ∀ t ∈ D, t.Licensed g.Licenses) {F : Symbol T g.NT × List (Symbol T g.NT) → M}
+    (hF : ∀ a, F (.terminal a, []) = 0) :
+    (D.map fun t ↦ (t.localTrees.map F).sum).sum =
+      ∑ r ∈ g.rules, ruleCounts D r • F (.nonterminal r.input, r.output) := by
+  induction D using Multiset.induction_on with
+  | empty => simp
+  | cons t D ih =>
+    rw [← Multiset.singleton_add, map_add]
+    simp only [Pi.add_apply, add_nsmul, Finset.sum_add_distrib, ruleCounts_singleton,
+      Multiset.map_add, Multiset.map_singleton, Multiset.sum_add, Multiset.sum_singleton,
+      ih fun t' ht' ↦ hD t' (Multiset.mem_cons_of_mem ht'),
+      (hD t (Multiset.mem_cons_self t D)).sum_map_localTrees hF]
 
 theorem Licensed.exists_getElem?_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
@@ -394,5 +432,14 @@ theorem exists_licensed_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈
     rcases ts with _ | ⟨t, _ | ⟨_, _⟩⟩ <;> simp at hroot
     exact ⟨t, rfl⟩
   exact ⟨t, hvalid t (List.mem_singleton_self t), by simpa using hyield, by simpa using hroot⟩
+
+/-- A product over the rules of a grammar is a product over the nonterminals it has a rule for
+of the products over the rules at each. -/
+@[to_additive /-- A sum over the rules of a grammar is a sum over the nonterminals it has a rule
+for of the sums over the rules at each. -/]
+theorem prod_inputs_prod_rulesWithInput {M : Type*} [CommMonoid M]
+    (g : ContextFreeGrammar T) [DecidableEq g.NT] (f : ContextFreeRule T g.NT → M) :
+    ∏ a ∈ g.inputs, ∏ r ∈ g.rulesWithInput a, f r = ∏ r ∈ g.rules, f r :=
+  Finset.prod_fiberwise_of_maps_to (fun _ hr ↦ g.input_mem_inputs hr) f
 
 end ContextFreeGrammar

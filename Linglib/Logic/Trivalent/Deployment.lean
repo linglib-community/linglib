@@ -8,6 +8,8 @@ module
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Logic.Trivalent.Powerset
 public import Linglib.Logic.Trivalent.Supervaluation
+public import Mathlib.Order.Interval.Basic
+public import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Peters-Kleene deployment
@@ -20,9 +22,13 @@ arguments are a `Part.bind`, and on a last argument reduction [is
 supervaluation](##Trivalent.ofPart_pkReduce).
 Deploying the classical connectives gives [the Middle Kleene tables of
 Peters](##Trivalent.Connectives.middleKleene_eq_deploy), also called the Kleene-Peters tables. The
-repairs of a trivalent predicate are [an interval of sets](##Trivalent.repairs_eq_Icc), got by
-[reading each instance at a standard of its own](##Trivalent.repairs_eq_range), and deploying `∀`
-gives [the Strong Kleene universal](##Trivalent.deployQuantifier_eq_forallStrong).
+repairs of a trivalent predicate are [an interval of sets](##Trivalent.interval), got by
+[reading each instance at a standard of its own](##Trivalent.coe_interval_eq_range), and
+deploying `∀` gives [the Strong Kleene universal](##Trivalent.deployQuantifier_eq_forallStrong).
+A deployed quantifier is [the greatest regular
+extension](##Trivalent.IsRegular.kLE_deployQuantifier) of the classical one, and one that lives on
+a set [takes its classical value](##Trivalent.deployQuantifier_of_livesOn) at a predicate defined
+throughout the set.
 
 ## Implementation notes
 
@@ -257,30 +263,44 @@ theorem Connectives.middleKleene_eq_deploy :
 
 end Connectives
 
-/-! ### Repairs of a predicate -/
+/-! ### The interval of a predicate -/
 
 variable {U : Type*}
 
-/-- The repairs of a trivalent predicate are the sets that agree with it wherever it is classical
-and are free wherever it is undefined (Definition 19 of [george-2014]). -/
-def repairs (A : U → Trivalent) : Set (Set U) :=
-  {X | ∀ u, (u ∈ X) ∈ (A u).repairSet}
+theorem posExt_subset (A : U → Trivalent) : posExt A ⊆ (negExt A)ᶜ := fun u hu hn ↦ by
+  simp only [mem_posExt, mem_negExt] at hu hn; rw [hu] at hn; exact absurd hn (by decide)
 
-theorem mem_repairs {A : U → Trivalent} {X : Set U} :
-    X ∈ repairs A ↔ ∀ u, (u ∈ X) ∈ (A u).repairSet :=
+/-- The interval of sets that a trivalent predicate leaves open, from where it is true to where it
+is not false. Its members are the repairs of the predicate (Definition 19 of [george-2014]). -/
+def interval (A : U → Trivalent) : NonemptyInterval (Set U) :=
+  ⟨(posExt A, (negExt A)ᶜ), posExt_subset A⟩
+
+@[simp] theorem fst_interval (A : U → Trivalent) : (interval A).fst = posExt A := rfl
+
+@[simp] theorem snd_interval (A : U → Trivalent) : (interval A).snd = (negExt A)ᶜ := rfl
+
+@[simp] theorem mem_interval {A : U → Trivalent} {X : Set U} :
+    X ∈ interval A ↔ posExt A ⊆ X ∧ X ⊆ (negExt A)ᶜ :=
   Iff.rfl
 
-/-- The repairs of a predicate are the interval from where it is true to where it is not false. -/
-theorem repairs_eq_Icc (A : U → Trivalent) : repairs A = Set.Icc (posExt A) (negExt A)ᶜ := by
-  ext X
-  simp only [mem_repairs, mem_repairSet_iff]
-  exact ⟨fun h ↦ ⟨fun u hu ↦ (h u).1 hu, fun u hu ↦ (h u).2 hu⟩,
-    fun h u ↦ ⟨fun e ↦ h.1 e, fun hu ↦ h.2 hu⟩⟩
+@[simp, norm_cast] theorem coe_interval (A : U → Trivalent) :
+    (interval A : Set (Set U)) = Set.Icc (posExt A) (negExt A)ᶜ :=
+  rfl
 
-/-- The repairs of a predicate are got by reading each instance at a standard of its own. -/
-theorem repairs_eq_range (A : U → Trivalent) :
-    repairs A = Set.range fun c : U → Designation ↦ {u | (c u).threshold ≤ A u} := by
+/-- A set is in the interval of a predicate iff it agrees with the predicate wherever it is
+classical and is free wherever it is undefined. -/
+theorem mem_interval_iff_forall_mem_repairSet {A : U → Trivalent} {X : Set U} :
+    X ∈ interval A ↔ ∀ u, (u ∈ X) ∈ (A u).repairSet := by
+  simp only [mem_interval, mem_repairSet_iff]
+  exact ⟨fun h u ↦ ⟨fun e ↦ h.1 e, fun hu ↦ h.2 hu⟩,
+    fun h ↦ ⟨fun u hu ↦ (h u).1 hu, fun u hu ↦ (h u).2 hu⟩⟩
+
+/-- The interval of a predicate is got by reading each instance at a standard of its own. -/
+theorem coe_interval_eq_range (A : U → Trivalent) :
+    (interval A : Set (Set U)) =
+      Set.range fun c : U → Designation ↦ {u | (c u).threshold ≤ A u} := by
   ext X
+  rw [SetLike.mem_coe, mem_interval_iff_forall_mem_repairSet]
   constructor
   · intro h
     choose c hc using h
@@ -288,26 +308,18 @@ theorem repairs_eq_range (A : U → Trivalent) :
   · rintro ⟨c, rfl⟩ u
     exact ⟨c u, rfl⟩
 
-theorem posExt_subset (A : U → Trivalent) : posExt A ⊆ (negExt A)ᶜ := fun u hu hn ↦ by
-  simp only [mem_posExt, mem_negExt] at hu hn; rw [hu] at hn; exact absurd hn (by decide)
-
-theorem repairs_nonempty (A : U → Trivalent) : (repairs A).Nonempty :=
-  repairs_eq_Icc A ▸ ⟨_, le_rfl, posExt_subset A⟩
-
-/-- A classical predicate is its own only repair. -/
-theorem repairs_ofProp (R : Set U) [DecidablePred (· ∈ R)] :
-    repairs (fun u ↦ ofProp (u ∈ R)) = {R} := by
-  ext X
-  simp only [mem_repairs, repairSet_ofProp, Set.mem_singleton_iff]
-  exact ⟨fun h ↦ Set.ext fun u ↦ iff_of_eq (h u), fun h _ ↦ h ▸ rfl⟩
+/-- A classical predicate leaves only itself open. -/
+@[simp] theorem interval_ofProp (R : Set U) [DecidablePred (· ∈ R)] :
+    interval (fun u ↦ ofProp (u ∈ R)) = NonemptyInterval.pure R := by
+  refine NonemptyInterval.toProd_injective (Prod.ext ?_ ?_) <;> ext u <;> simp [interval]
 
 open Classical in
 /-- The predicate true on `B`, undefined on the rest of `C` and false elsewhere. -/
 noncomputable def ofIcc (B C : Set U) : U → Trivalent :=
   fun u ↦ if u ∈ B then .true else if u ∈ C then .undefined else .false
 
-/-- Every interval of sets is the repairs of a predicate. -/
-theorem repairs_ofIcc {B C : Set U} (h : B ⊆ C) : repairs (ofIcc B C) = Set.Icc B C := by
+/-- Every interval of sets is the interval of a predicate. -/
+theorem interval_ofIcc {B C : Set U} (h : B ⊆ C) : interval (ofIcc B C) = ⟨(B, C), h⟩ := by
   have e₁ : posExt (ofIcc B C) = B := by
     ext u
     by_cases hu : u ∈ B
@@ -318,7 +330,7 @@ theorem repairs_ofIcc {B C : Set U} (h : B ⊆ C) : repairs (ofIcc B C) = Set.Ic
     by_cases hu : u ∈ B
     · simp [ofIcc, hu, h hu]
     · by_cases hc : u ∈ C <;> simp [ofIcc, hu, hc]
-  rw [repairs_eq_Icc, e₁, e₂]
+  exact NonemptyInterval.toProd_injective (Prod.ext e₁ e₂)
 
 /-! ### Deployed quantifiers -/
 
@@ -326,19 +338,19 @@ variable {Q : Set U → Prop}
 
 /-- The Peters-Kleene deployment `Q[A]` of a generalised quantifier on a trivalent predicate. -/
 noncomputable def deployQuantifier (Q : Set U → Prop) (A : U → Trivalent) : Trivalent :=
-  ofPart (pkReduce Q (repairs A))
+  ofPart (pkReduce Q (interval A))
 
-/-- A deployed quantifier is the supervaluation over the repairs of its argument. -/
+/-- A deployed quantifier is the supervaluation over the interval of its argument. -/
 theorem deployQuantifier_eq_supervaluationOn (Q : Set U → Prop) (A : U → Trivalent) :
-    deployQuantifier Q A = supervaluationOn (repairs A) Q :=
-  ofPart_pkReduce Q (repairs_nonempty A)
+    deployQuantifier Q A = supervaluationOn (interval A) Q :=
+  ofPart_pkReduce Q (interval A).coe_nonempty
 
 /-- A deployed quantifier is the supervaluation over the readings of its instances, each at a
 standard of its own. -/
 theorem deployQuantifier_eq_supervaluationOn_standards (Q : Set U → Prop) (A : U → Trivalent) :
     deployQuantifier Q A =
       supervaluationOn Set.univ fun c : U → Designation ↦ Q {u | (c u).threshold ≤ A u} := by
-  rw [deployQuantifier_eq_supervaluationOn, repairs_eq_range, ← Set.image_univ,
+  rw [deployQuantifier_eq_supervaluationOn, coe_interval_eq_range, ← Set.image_univ,
     supervaluationOn_image]
   rfl
 
@@ -347,25 +359,25 @@ theorem deployQuantifier_of_monotone (hQ : Monotone Q) (A : U → Trivalent) :
     deployQuantifier Q A =
       supervaluationOn Set.univ fun d : Designation ↦ Q {u | d.threshold ≤ A u} :=
   (deployQuantifier_eq_supervaluationOn_standards Q A).trans
-    (supervaluationOn_pi_eq_const_of_monotone (Q := Q) A fun _ _ h ↦ hQ h)
+    (supervaluationOn_pi_eq_const_of_monotone (Q := fun p ↦ Q {u | p u}) A fun _ _ h ↦ hQ h)
 
 /-- An antitone quantifier deployed on a predicate is settled by its K3 and LP readings. -/
 theorem deployQuantifier_of_antitone (hQ : Antitone Q) (A : U → Trivalent) :
     deployQuantifier Q A =
       supervaluationOn Set.univ fun d : Designation ↦ Q {u | d.threshold ≤ A u} :=
   (deployQuantifier_eq_supervaluationOn_standards Q A).trans
-    (supervaluationOn_pi_eq_const_of_antitone (Q := Q) A fun _ _ h ↦ hQ h)
+    (supervaluationOn_pi_eq_const_of_antitone (Q := fun p ↦ Q {u | p u}) A fun _ _ h ↦ hQ h)
 
 /-- On a classical predicate, a deployed quantifier is the quantifier. -/
 @[simp] theorem deployQuantifier_ofProp (Q : Set U → Prop) (R : Set U) [DecidablePred (· ∈ R)]
     [Decidable (Q R)] : deployQuantifier Q (fun u ↦ ofProp (u ∈ R)) = ofProp (Q R) := by
-  simp [deployQuantifier, repairs_ofProp]
+  simp [deployQuantifier]
 
 /-- Deploying `∀`, the quantifier true only of `Set.univ` (Definition 16 of [george-2014]), gives
 the Strong Kleene universal, as George computes in §4.1. -/
 theorem deployQuantifier_eq_forallStrong (A : U → Trivalent) :
     deployQuantifier (· = Set.univ) A = forallStrong A := by
-  rw [deployQuantifier_eq_supervaluationOn, repairs_eq_Icc]
+  rw [deployQuantifier_eq_supervaluationOn, coe_interval]
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
   · rw [supervaluationOn_eq_true_iff, forallStrong_eq_true_iff]
     refine ⟨fun h u ↦ ?_, fun h X hX ↦ Set.eq_univ_of_forall fun u ↦ hX.1 (mem_posExt.2 (h u))⟩
@@ -380,7 +392,7 @@ theorem deployQuantifier_eq_forallStrong (A : U → Trivalent) :
 gives the Strong Kleene existential, by the computation George calls analogous in §4.1. -/
 theorem deployQuantifier_eq_existsStrong (A : U → Trivalent) :
     deployQuantifier Set.Nonempty A = existsStrong A := by
-  rw [deployQuantifier_eq_supervaluationOn, repairs_eq_Icc]
+  rw [deployQuantifier_eq_supervaluationOn, coe_interval]
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
   · rw [supervaluationOn_eq_true_iff, existsStrong_eq_true_iff]
     refine ⟨fun h ↦ ?_, fun ⟨u, hu⟩ X hX ↦ ⟨u, hX.1 (mem_posExt.2 hu)⟩⟩
@@ -392,30 +404,174 @@ theorem deployQuantifier_eq_existsStrong (A : U → Trivalent) :
     by_contra hu
     exact h _ ⟨posExt_subset A, le_rfl⟩ ⟨u, hu⟩
 
+/-! ### Regular extensions -/
+
+section Regular
+
+open Bilattice
+
+variable {T : (U → Trivalent) → Trivalent}
+
+/-- A predicate with more information leaves a smaller interval open. -/
+theorem interval_le_interval {A A' : U → Trivalent} :
+    interval A' ≤ interval A ↔ ∀ u, A u ≤ₖ A' u := by
+  simp only [NonemptyInterval.le_def, fst_interval, snd_interval,
+    kLE_iff_eq_true_imp_eq_false_imp]
+  exact ⟨fun h u ↦ ⟨fun ht ↦ h.1 ht, fun hf ↦ by_contra fun hn ↦ h.2 hn hf⟩,
+    fun h ↦ ⟨fun u hu ↦ (h u).1 hu, fun u hu hn ↦ hu ((h u).2 hn)⟩⟩
+
+/-- Supervaluation over a smaller nonempty set has at least as much information. -/
+theorem supervaluationOn_kLE_supervaluationOn {α : Type*} {s t : Set α} {P : α → Prop}
+    (h : t ⊆ s) (ht : t.Nonempty) : supervaluationOn s P ≤ₖ supervaluationOn t P := by
+  simp only [kLE_iff_eq_true_imp_eq_false_imp, supervaluationOn_eq_true_iff,
+    supervaluationOn_eq_false_iff]
+  exact ⟨fun hs a ha ↦ hs a (h ha), fun hs ↦ ⟨ht, fun a ha ↦ hs.2 a (h ha)⟩⟩
+
+theorem isExtensionOf_deployQuantifier (Q : Set U → Prop) : IsExtensionOf Q (deployQuantifier Q) :=
+  fun R ↦ by classical exact deployQuantifier_ofProp Q R
+
+theorem isRegular_deployQuantifier (Q : Set U → Prop) : IsRegular (deployQuantifier Q) :=
+  fun A A' h ↦ by
+    rw [deployQuantifier_eq_supervaluationOn, deployQuantifier_eq_supervaluationOn]
+    exact supervaluationOn_kLE_supervaluationOn
+      (NonemptyInterval.coe_subset_coe.2 (interval_le_interval.2 h)) (interval A').coe_nonempty
+
+/-- The deployment of a quantifier is its greatest regular extension: a regular extension has
+the deployed value wherever it is defined. -/
+theorem IsRegular.kLE_deployQuantifier (hT : IsRegular T) (hQ : IsExtensionOf Q T)
+    (A : U → Trivalent) : T A ≤ₖ deployQuantifier Q A := by
+  classical
+  have key (X : Set U) (hX : X ∈ interval A) : T A ≤ₖ ofProp (Q X) := by
+    have h := hT (A := A) (A' := fun u ↦ ofProp (u ∈ X))
+      (interval_le_interval.1 (by rw [interval_ofProp]; exact hX))
+    rwa [hQ X] at h
+  simp only [kLE_iff_eq_true_imp_eq_false_imp] at key ⊢
+  rw [deployQuantifier_eq_supervaluationOn, supervaluationOn_eq_true_iff,
+    supervaluationOn_eq_false_iff]
+  exact ⟨fun ht X hX ↦ ofProp_eq_true_iff.1 ((key X hX).1 ht), fun hf ↦
+    ⟨(interval A).coe_nonempty, fun X hX ↦ ofProp_eq_false_iff.1 ((key X hX).2 hf)⟩⟩
+
+theorem isRegular_forallWeak : IsRegular (forallWeak (ι := U)) := fun A A' h ↦ by
+  rw [kLE_iff]
+  by_cases hd : ∀ u, A u ≠ .undefined
+  · exact .inr (congrArg _ (funext fun u ↦ (kLE_iff.1 (h u)).resolve_left (hd u)))
+  · exact .inl (by simpa using hd)
+
+theorem isExtensionOf_forallWeak : IsExtensionOf (· = Set.univ) (forallWeak (ι := U)) := fun R ↦ by
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_ <;> simp [Set.eq_univ_iff_forall]
+
+/-- Haug's universal is not regular: a gap filled by `false` turns `true` into `false`. -/
+theorem not_isRegular_forallHaug [Nontrivial U] : ¬ IsRegular (forallHaug (W := U)) := by
+  classical
+  obtain ⟨a, b, hab⟩ := exists_pair_ne U
+  intro h
+  have := h (A := fun u ↦ if u = a then .undefined else .true)
+    (A' := fun u ↦ if u = a then .false else .true) fun u ↦ by
+      split_ifs
+      exacts [undefined_kLE _, kLE_iff.2 (.inr rfl)]
+  have h₁ : forallHaug (fun u ↦ if u = a then Trivalent.undefined else .true) = .true := by
+    rw [forallHaug_eq_true_iff]
+    exact ⟨⟨b, by simp [hab.symm]⟩, fun w ↦ by split_ifs <;> decide⟩
+  have h₂ : forallHaug (fun u ↦ if u = a then Trivalent.false else .true) = .false := by
+    rw [forallHaug_eq_false_iff]
+    exact ⟨a, by simp⟩
+  rw [h₁, h₂] at this
+  exact absurd this (by decide)
+
+end Regular
+
+/-! ### Quantifiers that live on a set -/
+
+section LivesOn
+
+open Quantifier
+
+variable {R : Set U} {A A' : U → Trivalent}
+
+/-- A deployed quantifier is defined iff it gives one value throughout the interval of its
+argument. -/
+theorem deployQuantifier_ne_undefined_iff :
+    deployQuantifier Q A ≠ .undefined ↔ ∀ X ∈ interval A, ∀ Y ∈ interval A, (Q X ↔ Q Y) := by
+  rw [deployQuantifier_eq_supervaluationOn, supervaluationOn_ne_undefined_iff]
+  rfl
+
+/-- Intersecting the sets in the interval of a predicate with `R` gives the interval between the
+intersections of its ends. -/
+theorem image_inter_interval (R : Set U) (A : U → Trivalent) :
+    (R ∩ ·) '' (interval A : Set (Set U)) = Set.Icc (R ∩ posExt A) (R ∩ (negExt A)ᶜ) := by
+  refine Set.Subset.antisymm ?_ fun X hX ↦ ⟨X ∪ posExt A, ⟨Set.subset_union_right,
+    Set.union_subset (hX.2.trans Set.inter_subset_right) (posExt_subset A)⟩, ?_⟩
+  · rintro _ ⟨Y, hY, rfl⟩
+    exact ⟨Set.inter_subset_inter_right _ hY.1, Set.inter_subset_inter_right _ hY.2⟩
+  · change R ∩ (X ∪ posExt A) = X
+    rw [Set.inter_union_distrib_left, Set.inter_eq_right.2 (hX.2.trans Set.inter_subset_left),
+      Set.union_eq_left.2 hX.1]
+
+/-- A quantifier that lives on `R` is deployed on the part of its argument inside `R`. -/
+theorem deployQuantifier_eq_supervaluationOn_inter {Q : Quantifier U} (hQ : Q.LivesOn R)
+    (A : U → Trivalent) : deployQuantifier Q A =
+      supervaluationOn (Set.Icc (R ∩ posExt A) (R ∩ (negExt A)ᶜ)) Q := by
+  rw [deployQuantifier_eq_supervaluationOn, supervaluationOn_congr fun X _ ↦ hQ X,
+    ← image_inter_interval, supervaluationOn_image]
+  rfl
+
+/-- A quantifier that lives on `R` is deployed on what its argument does on `R`. -/
+theorem deployQuantifier_congr_of_livesOn {Q : Quantifier U} (hQ : Q.LivesOn R)
+    (h : Set.EqOn A A' R) : deployQuantifier Q A = deployQuantifier Q A' := by
+  rw [deployQuantifier_eq_supervaluationOn_inter hQ, deployQuantifier_eq_supervaluationOn_inter hQ]
+  exact congrArg₂ (fun B C ↦ supervaluationOn (Set.Icc B C) Q)
+    (h.inter_preimage_eq {Trivalent.true}) (h.inter_preimage_eq {Trivalent.false}ᶜ)
+
+open Classical in
+/-- A quantifier that lives on `R`, deployed on a predicate defined throughout `R`, has its
+classical value: the gaps of the argument outside `R` are filtered. -/
+theorem deployQuantifier_of_livesOn {Q : Quantifier U} (hQ : Q.LivesOn R)
+    (h : ∀ u ∈ R, A u ≠ .undefined) : deployQuantifier Q A = ofProp (Q (posExt A)) := by
+  have e : R ∩ (negExt A)ᶜ = R ∩ posExt A := Set.ext fun u ↦ and_congr_right fun hu ↦ by
+    have := h u hu
+    cases hA : A u <;> simp_all
+  rw [deployQuantifier_eq_supervaluationOn_inter hQ, e, Set.Icc_self, supervaluationOn_singleton]
+  exact ofProp_congr (hQ _).symm
+
+end LivesOn
+
 /-! ### Deployed determiners -/
 
 /-- The Peters-Kleene deployment `D[B, A]` of a determiner on a trivalent restrictor `B` and nuclear
 scope `A`, the restrictor first. -/
 noncomputable def deployDeterminer (D : Set U → Set U → Prop) (B A : U → Trivalent) : Trivalent :=
-  ofPart ((pkReduce D (repairs B)).bind (pkReduce · (repairs A)))
+  ofPart ((pkReduce D (interval B)).bind (pkReduce · (interval A)))
 
 /-- If every repair of the restrictor makes the same quantifier of the determiner, the deployed
 determiner is that quantifier deployed on the nuclear scope. -/
 theorem deployDeterminer_of_forall {D : Set U → Set U → Prop} {B A : U → Trivalent}
-    (h : ∀ R ∈ repairs B, D R = Q) : deployDeterminer D B A = deployQuantifier Q A := by
-  rw [deployDeterminer, pkReduce_of_forall (repairs_nonempty B) h, Part.bind_some, deployQuantifier]
+    (h : ∀ R ∈ interval B, D R = Q) : deployDeterminer D B A = deployQuantifier Q A := by
+  rw [deployDeterminer,
+    pkReduce_of_forall (X := (interval B : Set (Set U))) (interval B).coe_nonempty h,
+    Part.bind_some, deployQuantifier]
 
 /-- Two repairs of the restrictor that the determiner tells apart make it undefined. -/
 theorem deployDeterminer_eq_undefined_of_ne {D : Set U → Set U → Prop} {B A : U → Trivalent}
-    {R S : Set U} (hR : R ∈ repairs B) (hS : S ∈ repairs B) (h : D R ≠ D S) :
+    {R S : Set U} (hR : R ∈ interval B) (hS : S ∈ interval B) (h : D R ≠ D S) :
     deployDeterminer D B A = .undefined := by
-  simp [deployDeterminer, pkReduce_eq_none hR hS h, Part.bind_none]
+  rw [deployDeterminer, pkReduce_eq_none (X := (interval B : Set (Set U))) hR hS h,
+    Part.bind_none, ofPart_none]
 
 /-- With a classical restrictor, a deployed determiner is the deployed quantifier it makes of the
 restrictor. -/
 @[simp] theorem deployDeterminer_ofProp_left (D : Set U → Set U → Prop) (R : Set U)
     [DecidablePred (· ∈ R)] (A : U → Trivalent) :
     deployDeterminer D (fun u ↦ ofProp (u ∈ R)) A = deployQuantifier (D R) A :=
-  deployDeterminer_of_forall fun S hS ↦ by rw [repairs_ofProp, Set.mem_singleton_iff] at hS; rw [hS]
+  deployDeterminer_of_forall fun S hS ↦ by
+    rw [interval_ofProp, NonemptyInterval.mem_pure] at hS; rw [hS]
+
+open Classical in
+/-- A conservative determiner with a classical restrictor, deployed on a scope defined throughout
+the restrictor, has its classical value: the restrictor filters the gaps of the scope. -/
+theorem deployDeterminer_of_conservative {D : Quantifier.Det U} (hD : D.Conservative) {R : Set U}
+    {A : U → Trivalent} (h : ∀ u ∈ R, A u ≠ .undefined) :
+    deployDeterminer D (fun u ↦ ofProp (u ∈ R)) A = ofProp (D R (posExt A)) := by
+  rw [deployDeterminer_ofProp_left]
+  exact deployQuantifier_of_livesOn (fun B ↦ hD R B) h
 
 end Trivalent

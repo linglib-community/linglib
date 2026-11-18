@@ -10,7 +10,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
@@ -31,7 +31,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "hope that p", "judgment": "acceptable"},
       {"name": "hope that not p", "judgment": "unacceptable"}
@@ -55,7 +55,7 @@
     "translation": "",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
@@ -76,7 +76,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -97,7 +97,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -118,7 +118,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -139,7 +139,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -160,7 +160,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -182,7 +182,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -204,7 +204,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -225,7 +225,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -246,7 +246,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -267,7 +267,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -288,7 +288,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -310,7 +310,7 @@
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -332,7 +332,7 @@
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "worry"],
@@ -353,7 +353,7 @@
     "translation": "",
     "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "like"],
@@ -374,7 +374,7 @@
     "translation": "",
     "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "happy"],
@@ -395,7 +395,7 @@
     "translation": "",
     "context": "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hate"],
@@ -416,7 +416,7 @@
     "translation": "",
     "context": "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "upset"],
@@ -437,7 +437,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -458,7 +458,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -479,7 +479,7 @@
     "translation": "",
     "context": "No one in particular is such that the women fear that they might be riding the bus.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "fear"],
@@ -502,7 +502,7 @@
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "marginal",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
@@ -525,7 +525,7 @@
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "marginal",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
@@ -547,7 +547,7 @@
     "translation": "",
     "context": "Alex and Sam are at a party together. Alex says to Sam.",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
@@ -569,7 +569,7 @@
     "translation": "",
     "context": "Alex and Sam are at a party together. Alex says to Sam.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "hope"],
@@ -592,7 +592,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "unacceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -617,7 +617,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -642,7 +642,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -667,7 +667,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "unacceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -692,7 +692,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -718,7 +718,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "marginal",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -744,7 +744,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "marginal",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -769,7 +769,7 @@
     "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "wonder"],
@@ -796,7 +796,7 @@
     "translation": "I (very much) look forward to (seeing) how he will interpret this new character.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "qidai"],
@@ -821,7 +821,7 @@
     "translation": "I also look forward to him being able to let more people know him well through this piece of work.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "qidai"],
@@ -847,7 +847,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "danxin"],
@@ -873,7 +873,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "danxin"],
@@ -898,7 +898,7 @@
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "danxin"],
@@ -922,7 +922,7 @@
     "translation": "John fears (very much) whether his neighbor will be at home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "haipa"],
@@ -946,7 +946,7 @@
     "translation": "Intended: John fears which player will win the match.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "constituent question", "judgment": "unacceptable"},
       {"name": "wh-indefinite: John fears that some player will win the match", "judgment": "acceptable"}
@@ -973,7 +973,7 @@
     "translation": "Intended: John fears which kinds of beverage they serve.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "haipa"],
@@ -997,7 +997,7 @@
     "translation": "Intended: John hopes whether his neighbor will be at home then.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "xiwang"],
@@ -1021,7 +1021,7 @@
     "translation": "Intended: John hopes whether his neighbor can help him.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "hope that p", "judgment": "acceptable"},
       {"name": "hope that not p", "judgment": "unacceptable"}
@@ -1048,7 +1048,7 @@
     "translation": "I look forward to who will win the MVP this year.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "tanosimi"],
@@ -1072,7 +1072,7 @@
     "translation": "I look forward to what Pattinson will do in The Batman.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "tanosimi"],
@@ -1097,7 +1097,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "sinpai"],
@@ -1122,7 +1122,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "sinpai"],
@@ -1147,7 +1147,7 @@
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "sinpai"],
@@ -1172,7 +1172,7 @@
     "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "osore"],
@@ -1198,7 +1198,7 @@
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "osore"],
@@ -1223,7 +1223,7 @@
     "translation": "John fears which player will win the match.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "osore"],
@@ -1247,7 +1247,7 @@
     "translation": "John does not fear which player will win the match.",
     "context": "No player in particular is such that John fears that they will win the match.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "osore"],
@@ -1272,7 +1272,7 @@
     "translation": "Intended: Taro hopes whether his friend will be at home then.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "nozomu"],
@@ -1296,7 +1296,7 @@
     "translation": "Intended: Taro hopes whether his friend can solve the problem.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "nozomu"],
@@ -1322,7 +1322,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "preocupar"],
@@ -1348,7 +1348,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "preocupar"],
@@ -1373,7 +1373,7 @@
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "preocupar"],
@@ -1398,7 +1398,7 @@
     "translation": "Juan fears what can happen if his neighbor is at home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "temer"],
@@ -1422,7 +1422,7 @@
     "translation": "Juan fears whether his neighbor will be at home.",
     "context": "",
     "judgment": "questionable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "temer"],
@@ -1446,7 +1446,7 @@
     "translation": "Intended: I hope / was hoping whether the neighbor can help me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "esperar"],
@@ -1470,7 +1470,7 @@
     "translation": "Intended: I hope / was hoping whether the neighbor can help me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "esperar"],
@@ -1495,7 +1495,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "endiselen"],
@@ -1520,7 +1520,7 @@
     "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "endiselen"],
@@ -1545,7 +1545,7 @@
     "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "endiselen"],
@@ -1571,7 +1571,7 @@
     "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
@@ -1598,7 +1598,7 @@
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
@@ -1623,7 +1623,7 @@
     "translation": "John fears which player will win the match.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
@@ -1647,7 +1647,7 @@
     "translation": "John does not fear which player will win the match.",
     "context": "No player in particular is such that John fears that they will win the match.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
@@ -1672,7 +1672,7 @@
     "translation": "Intended: I was hoping whether you could help me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1697,7 +1697,7 @@
     "translation": "Intended: I was hoping whether someone could confirm what I wrote.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1721,7 +1721,7 @@
     "translation": "John hopes whether his neighbor will be home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1746,7 +1746,7 @@
     "translation": "I was hoping whether someone could help me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1771,7 +1771,7 @@
     "translation": "That's why I hoped whether it [=a Turkish translation] would be available in Hitman too, but I was disappointed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1796,7 +1796,7 @@
     "translation": "Intended: I was hoping whether someone could help me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1821,7 +1821,7 @@
     "translation": "Intended: That's why I hoped whether it would be available in Hitman too.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1846,7 +1846,7 @@
     "translation": "I walked around wondering whether someone could help me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "dolan"],
@@ -1871,7 +1871,7 @@
     "translation": "Intended: I walked around wondering whether someone could help me.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "dolan"],
@@ -1896,7 +1896,7 @@
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1922,7 +1922,7 @@
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": false,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "um"],
@@ -1948,7 +1948,7 @@
     "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],
@@ -1974,7 +1974,7 @@
     "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
     "judgment": "acceptable",
     "verdict": true,
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "kork"],

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Mary read at least some of the books.", .acceptable), ("Mary read some, but not all, of the books.", .acceptable)]
     paperFeatures := [("scale", "some/all"), ("environment", "unembedded")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Not every student read all of the books.", .acceptable), ("No student read all of the books.", .acceptable)]
     paperFeatures := [("scale", "some/all"), ("environment", "every")] }
 
@@ -50,7 +50,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("scale", "some/all"), ("role", "alternative")] }
 
@@ -63,7 +63,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("The soup is warm, but not hot.", .acceptable)]
     paperFeatures := [("scale", "warm/hot"), ("environment", "unembedded")] }
 
@@ -77,7 +77,7 @@ def ex_11a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "11"), ("condition", "weak"), ("inference", "Not every soup was hot."), ("mean", "42")] }
 
@@ -91,7 +91,7 @@ def ex_11b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "11"), ("condition", "strong"), ("inference", "No soup was hot."), ("mean", "30")] }
 
@@ -105,7 +105,7 @@ def ex_11c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "11"), ("condition", "true"), ("inference", "At least one soup was warm."), ("mean", "85")] }
 
@@ -119,7 +119,7 @@ def ex_11d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "11"), ("condition", "false"), ("inference", "Not every soup was warm."), ("mean", "4")] }
 
@@ -133,7 +133,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := "Mary says the sentence; the question is: Would you conclude from this that, according to Mary, no soup was hot?"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("example", "12"), ("condition", "strong"), ("inference", "No soup was hot.")] }
 
@@ -147,7 +147,7 @@ def item1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "1"), ("scale", "adequate/good"), ("condition", "strong"), ("inference", "No solution was good."), ("exp1", "34"), ("exp2", "7")] }
 
@@ -161,7 +161,7 @@ def item2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "2"), ("scale", "allowed/obligatory"), ("condition", "strong"), ("inference", "No move was obligatory."), ("exp1", "54"), ("exp2", "49")] }
 
@@ -175,7 +175,7 @@ def item3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "3"), ("scale", "attractive/stunning"), ("condition", "strong"), ("inference", "No model was stunning."), ("exp1", "26"), ("exp2", "0")] }
 
@@ -189,7 +189,7 @@ def item4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "4"), ("scale", "believe/know"), ("condition", "strong"), ("inference", "No mother knew it would happen."), ("exp1", "29"), ("exp2", "9")] }
 
@@ -203,7 +203,7 @@ def item5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "5"), ("scale", "big/enormous"), ("condition", "strong"), ("inference", "No elephant was enormous."), ("exp1", "21"), ("exp2", "2")] }
 
@@ -217,7 +217,7 @@ def item6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "6"), ("scale", "cheap/free"), ("condition", "strong"), ("inference", "No meal was free."), ("exp1", "74"), ("exp2", "49")] }
 
@@ -231,7 +231,7 @@ def item7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "7"), ("scale", "content/happy"), ("condition", "strong"), ("inference", "No child was happy."), ("exp1", "12"), ("exp2", "4")] }
 
@@ -245,7 +245,7 @@ def item8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "8"), ("scale", "cool/cold"), ("condition", "strong"), ("inference", "No room was cold."), ("exp1", "25"), ("exp2", "9")] }
 
@@ -259,7 +259,7 @@ def item9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "9"), ("scale", "dark/black"), ("condition", "strong"), ("inference", "No fabric was black."), ("exp1", "9"), ("exp2", "0")] }
 
@@ -273,7 +273,7 @@ def item10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "10"), ("scale", "difficult/impossible"), ("condition", "strong"), ("inference", "No problem was impossible."), ("exp1", "43"), ("exp2", "31")] }
 
@@ -287,7 +287,7 @@ def item11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "11"), ("scale", "dislike/loathe"), ("condition", "strong"), ("inference", "No teacher loathed fighting."), ("exp1", "14"), ("exp2", "13")] }
 
@@ -301,7 +301,7 @@ def item12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "12"), ("scale", "funny/hilarious"), ("condition", "strong"), ("inference", "No movie was hilarious."), ("exp1", "15"), ("exp2", "4")] }
 
@@ -315,7 +315,7 @@ def item13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "13"), ("scale", "good/perfect"), ("condition", "strong"), ("inference", "No layout was perfect."), ("exp1", "45"), ("exp2", "18")] }
 
@@ -329,7 +329,7 @@ def item14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "14"), ("scale", "good/excellent"), ("condition", "strong"), ("inference", "No movie was excellent."), ("exp1", "39"), ("exp2", "13")] }
 
@@ -343,7 +343,7 @@ def item15 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "15"), ("scale", "hard/unsolvable"), ("condition", "strong"), ("inference", "No puzzle was unsolvable."), ("exp1", "49"), ("exp2", "22")] }
 
@@ -357,7 +357,7 @@ def item16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "16"), ("scale", "hungry/starving"), ("condition", "strong"), ("inference", "No dog was starving."), ("exp1", "14"), ("exp2", "4")] }
 
@@ -371,7 +371,7 @@ def item17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "17"), ("scale", "intelligent/brilliant"), ("condition", "strong"), ("inference", "No professor was brilliant."), ("exp1", "15"), ("exp2", "7")] }
 
@@ -385,7 +385,7 @@ def item18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "18"), ("scale", "like/love"), ("condition", "strong"), ("inference", "No princess loved dancing."), ("exp1", "14"), ("exp2", "9")] }
 
@@ -399,7 +399,7 @@ def item19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "19"), ("scale", "low/depleted"), ("condition", "strong"), ("inference", "No battery was depleted."), ("exp1", "46"), ("exp2", "29")] }
 
@@ -413,7 +413,7 @@ def item20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "20"), ("scale", "may/will"), ("condition", "strong"), ("inference", "No lawyer will appear in person."), ("exp1", "7"), ("exp2", "4")] }
 
@@ -427,7 +427,7 @@ def item21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "21"), ("scale", "may/have to"), ("condition", "strong"), ("inference", "No child has to eat an apple."), ("exp1", "67"), ("exp2", "53")] }
 
@@ -441,7 +441,7 @@ def item22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "22"), ("scale", "memorable/unforgettable"), ("condition", "strong"), ("inference", "No party was unforgettable."), ("exp1", "41"), ("exp2", "44")] }
 
@@ -455,7 +455,7 @@ def item23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "23"), ("scale", "old/ancient"), ("condition", "strong"), ("inference", "No house was ancient."), ("exp1", "16"), ("exp2", "7")] }
 
@@ -469,7 +469,7 @@ def item24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "24"), ("scale", "palatable/delicious"), ("condition", "strong"), ("inference", "No wine was delicious."), ("exp1", "35"), ("exp2", "18")] }
 
@@ -483,7 +483,7 @@ def item25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "25"), ("scale", "participate/win"), ("condition", "strong"), ("inference", "No freshman won."), ("exp1", "24"), ("exp2", "0")] }
 
@@ -497,7 +497,7 @@ def item26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "26"), ("scale", "possible/certain"), ("condition", "strong"), ("inference", "No outcome was certain."), ("exp1", "67"), ("exp2", "62")] }
 
@@ -511,7 +511,7 @@ def item27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "27"), ("scale", "pretty/beautiful"), ("condition", "strong"), ("inference", "No girl was beautiful."), ("exp1", "21"), ("exp2", "7")] }
 
@@ -525,7 +525,7 @@ def item28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "28"), ("scale", "rare/extinct"), ("condition", "strong"), ("inference", "No bird was extinct."), ("exp1", "50"), ("exp2", "33")] }
 
@@ -539,7 +539,7 @@ def item29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "29"), ("scale", "scarce/unavailable"), ("condition", "strong"), ("inference", "No resource was unavailable."), ("exp1", "37"), ("exp2", "20")] }
 
@@ -553,7 +553,7 @@ def item30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "30"), ("scale", "silly/ridiculous"), ("condition", "strong"), ("inference", "No song was ridiculous."), ("exp1", "19"), ("exp2", "7")] }
 
@@ -567,7 +567,7 @@ def item31 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "31"), ("scale", "small/tiny"), ("condition", "strong"), ("inference", "No fish was tiny."), ("exp1", "17"), ("exp2", "7")] }
 
@@ -581,7 +581,7 @@ def item32 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "32"), ("scale", "snug/tight"), ("condition", "strong"), ("inference", "No shirt was tight."), ("exp1", "13"), ("exp2", "7")] }
 
@@ -595,7 +595,7 @@ def item33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "33"), ("scale", "some/all"), ("condition", "strong"), ("inference", "No bartender saw all of the cars."), ("exp1", "46"), ("exp2", "40")] }
 
@@ -609,7 +609,7 @@ def item34 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "34"), ("scale", "sometimes/always"), ("condition", "strong"), ("inference", "No doctor was always irritable."), ("exp1", "40"), ("exp2", "33")] }
 
@@ -623,7 +623,7 @@ def item35 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "35"), ("scale", "special/unique"), ("condition", "strong"), ("inference", "No dress was unique."), ("exp1", "17"), ("exp2", "2")] }
 
@@ -637,7 +637,7 @@ def item36 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "36"), ("scale", "start/finish"), ("condition", "strong"), ("inference", "No runner finished."), ("exp1", "22"), ("exp2", "7")] }
 
@@ -651,7 +651,7 @@ def item37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "37"), ("scale", "tired/exhausted"), ("condition", "strong"), ("inference", "No worker was exhausted."), ("exp1", "12"), ("exp2", "7")] }
 
@@ -665,7 +665,7 @@ def item38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "38"), ("scale", "try/succeed"), ("condition", "strong"), ("inference", "No athlete succeeded."), ("exp1", "34"), ("exp2", "13")] }
 
@@ -679,7 +679,7 @@ def item39 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "39"), ("scale", "ugly/hideous"), ("condition", "strong"), ("inference", "No wallpaper was hideous."), ("exp1", "17"), ("exp2", "7")] }
 
@@ -693,7 +693,7 @@ def item40 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "40"), ("scale", "unsettling/horrific"), ("condition", "strong"), ("inference", "No movie was horrific."), ("exp1", "28"), ("exp2", "4")] }
 
@@ -707,7 +707,7 @@ def item41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "41"), ("scale", "warm/hot"), ("condition", "strong"), ("inference", "No soup was hot."), ("exp1", "45"), ("exp2", "31")] }
 
@@ -721,7 +721,7 @@ def item42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("item", "42"), ("scale", "wary/scared"), ("condition", "strong"), ("inference", "No victim was scared."), ("exp1", "16"), ("exp2", "4")] }
 

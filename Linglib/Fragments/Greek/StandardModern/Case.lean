@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Function
 
 /-!
 # Modern Greek case
@@ -15,7 +15,7 @@ cases are in `Greek.StandardModern.Declension`.
 
 * `Greek.StandardModern.Case`: the four cases.
 * `Greek.StandardModern.Case.label`, `Greek.StandardModern.Case.functions`: the comparative value
-  each case is named for, and the values it expresses.
+  each case is named for, and the functions it marks.
 
 ## References
 
@@ -50,18 +50,15 @@ def label : Case → _root_.Case
   | gen => .gen
   | voc => .voc
 
-/-- The comparative values a case expresses: the genitive also expresses the indirect object
+/-- The functions a case marks: the genitive also expresses the indirect object
 ([michelioudakis-sitaridou-2010] (1a)). -/
-def functions : Case → Finset _root_.Case
-  | gen => {.gen, .dat}
-  | c => {c.label}
+def functions : Case → Finset _root_.Case.Function
+  | gen => {.possessor, .argument .R}
+  | c => c.label.functions
 
-theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+theorem label_functions_inter_nonempty (c : Case) :
+    (c.label.functions ∩ c.functions).Nonempty := by
   cases c <;> decide
-
-theorem biUnion_functions_eq_insert_dat :
-    Finset.univ.biUnion functions = insert .dat (Finset.univ.image label) := by
-  decide
 
 end Case
 

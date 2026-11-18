@@ -12,7 +12,7 @@
     "translation": "Who died?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -35,7 +35,7 @@
     "translation": "What did María open?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -59,7 +59,7 @@
     "translation": "Who opened the door?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.1"],
@@ -83,7 +83,7 @@
     "translation": "María cleaned the window with a rag.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "El tsu'na' Li'y spik'b'il tu'n xb'uy.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -109,7 +109,7 @@
     "translation": "With what did María clean the window?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Alqu'n el tsu'na' Li'y spik'b'il?", "judgment": "acceptable"},
       {"form": "Alqu'n el tsu'n Li'y spik'b'il?", "judgment": "acceptable"}
     ],
@@ -136,7 +136,7 @@
     "translation": "For whom did you open the door?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.2"],
@@ -160,7 +160,7 @@
     "translation": "To whom did you give the toys?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.2"],
@@ -184,7 +184,7 @@
     "translation": "Where did the dogs bark?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.3"],
@@ -209,7 +209,7 @@
     "translation": "Why did María clean the window with a rag?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.4"],
@@ -233,7 +233,7 @@
     "translation": "Why did Juan look for mushrooms in the forest?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.4"],
@@ -257,7 +257,7 @@
     "translation": "How did María break the bottle?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "2.2.5"],
@@ -281,7 +281,7 @@
     "translation": "When will Juan steal the turkey?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jtoj kxe'l telq'a'na' Xwan chmek'?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -307,7 +307,7 @@
     "translation": "When did Juan steal the turkey?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jtoje xi' telq'a'na' Xwan chmek'?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -333,7 +333,7 @@
     "translation": "Where did Pedro shout?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.1"],
@@ -359,7 +359,7 @@
     "translation": "How did María say that Juan insulted me?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -387,7 +387,7 @@
     "translation": "I don't know how María repaired the bicycle.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -416,7 +416,7 @@
     "translation": "Where did Juan steal the turkey that the women bought?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "matrix locative (where Juan stole it)", "judgment": "acceptable"},
       {"name": "relative-clause locative (where the women bought it)", "judgment": "unacceptable"}
@@ -444,7 +444,7 @@
     "translation": "Where did Juan steal the turkey that the women bought?",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.2"],
@@ -467,7 +467,7 @@
     "translation": "Where is it difficult to sell turkeys?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.3"],
@@ -495,7 +495,7 @@
     "translation": "For whom did y'all make Pablo open windows?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.4"],
@@ -521,7 +521,7 @@
     "translation": "Yes, there he bought them.",
     "context": "Answering: Did Juan buy the jocotes in the market?",
     "judgment": "ungrammatical",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Iku', atzu tzaj tlq'o'na'",
         "judgment": "acceptable"
@@ -550,7 +550,7 @@
     "translation": "Where were the tortillas sold by Juan?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.6"],
@@ -576,7 +576,7 @@
     "translation": "Who did you say cleaned the window with a rag?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "3.6"],
@@ -600,7 +600,7 @@
     "translation": "Where did the fireworks go off?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.2"],
@@ -625,7 +625,7 @@
     "translation": "At what time (lit. what hour of the clock) did y'all cut the meat?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jni' hor kub' kjonae' chib'j?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -650,7 +650,7 @@
     "translation": "Where did you go yesterday?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Jawi xatb'ee iwiir?",
         "judgment": "ungrammatical"
@@ -679,7 +679,7 @@
     "translation": "Where did they say that they would go?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -707,7 +707,7 @@
     "translation": "With what do you desire to eat the food?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["section", "5.1"],
@@ -734,7 +734,7 @@
     "translation": "Why did Juan work?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Achike ruma xsamäj wi ri a Juan?", "judgment": "ungrammatical"}
     ],
     "readings": [],

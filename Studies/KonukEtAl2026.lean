@@ -12,7 +12,7 @@ Knobe from single causes to plural ones, conjunctions of events judged as causes
 right. Counterfactual worlds are sampled urn by urn, each urn keeping its actual draw with
 probability `s`, the stability, and otherwise redrawn from its prior; a cause's score weights its
 sufficiency by its probability and its necessity by the probability of its absence, the
-substrate's `CausalStrength.score` over plural causes.
+substrate's `causalStrength` over plural causes.
 
 Experiment 1 is a game won with two colored balls out of three urns, Experiment 2 one won with
 (A ∧ B) ∨ (C ∧ D). Losses in Experiment 2 are scored against the classical negation of the rule or
@@ -50,7 +50,6 @@ open scoped ENNReal
 
 namespace KonukEtAl2026
 
-open CausalStrength
 
 /-! ### Counterfactual sampling -/
 
@@ -91,16 +90,14 @@ noncomputable def sampling (s : I) (p : ι → I) (w₀ : ι → Bool) : Measure
 instance (s : I) (p : ι → I) (w₀ : ι → Bool) : IsProbabilityMeasure (sampling s p w₀) := by
   unfold sampling; infer_instance
 
-/-- The actual causal strength of the plural `S` for the outcome `E` in the round `w₀` is its score
-with the counterfactuals sampled at stability `s` from the priors `p`. -/
-noncomputable def causalStrength [DecidableEq ι] (s : I) (p : ι → I) (w₀ : ι → Bool)
-    (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
-  score (sampling s p w₀) w₀ E S
+/-- The Necessity-Sufficiency Model rates the plural `S` for the outcome `E` in the round `w₀` by
+its causal strength with the counterfactuals sampled at stability `s` from the priors `p`. -/
+noncomputable def nsm [DecidableEq ι] (s : I) (p : ι → I) (w₀ : ι → Bool)
+    (E : Set (ι → Bool)) (S : Finset ι) : ℝ :=
+  causalStrength (sampling s p w₀) w₀ E S
 
 variable {s : I} {p : ι → I} {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
   {w₀ v : ι → Bool} {S T : Finset ι} {E : Set (ι → Bool)}
-
-theorem causalStrength_ne_top [DecidableEq ι] : causalStrength s p w₀ E S ≠ ∞ := score_ne_top
 
 theorem sampling_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
     {A : Set (ι → Bool)} (hA : A.Nonempty) : sampling s p w₀ A ≠ 0 := by
@@ -112,33 +109,35 @@ theorem sampling_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p
 
 variable [DecidableEq ι]
 
-theorem sampling_cause_lt_one (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
-    (hS : S.Nonempty) : sampling s p w₀ (cause v S) < 1 := by
+theorem sampling_pluralCause_lt_one (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
+    (hS : S.Nonempty) : sampling s p w₀ (pluralCause v S) < 1 := by
   obtain ⟨i, hi⟩ := hS
-  have := sampling_ne_zero (w₀ := w₀) hs hp₀ hp₁ (A := (cause v S)ᶜ)
-    ⟨Function.update v i (!v i), fun h ↦ by simpa using mem_cause.1 h i hi⟩
+  have := sampling_ne_zero (w₀ := w₀) hs hp₀ hp₁ (A := (pluralCause v S)ᶜ)
+    ⟨Function.update v i (!v i), fun h ↦ by simpa using mem_pluralCause.1 h i hi⟩
   rw [prob_compl_eq_one_sub .of_discrete] at this
   exact lt_of_le_of_ne prob_le_one fun h ↦ this (by rw [h, tsub_self])
 
-theorem sampling_compl_cause_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
-    (hS : S.Nonempty) : sampling s p w₀ (cause v S)ᶜ ≠ 0 := by
+theorem sampling_compl_pluralCause_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
+    (hS : S.Nonempty) : sampling s p w₀ (pluralCause v S)ᶜ ≠ 0 := by
   rw [prob_compl_eq_one_sub .of_discrete]
-  exact (tsub_pos_of_lt (sampling_cause_lt_one hs hp₀ hp₁ hS)).ne'
+  exact (tsub_pos_of_lt (sampling_pluralCause_lt_one hs hp₀ hp₁ hS)).ne'
 
-theorem causalStrength_cause_lt_of_ssubset (hs : s < 1) (hp₀ : ∀ i, 0 < p i)
+theorem nsm_pluralCause_lt_of_ssubset (hs : s < 1) (hp₀ : ∀ i, 0 < p i)
     (hp₁ : ∀ i, p i < 1) {S' : Finset ι} (hS : S.Nonempty) (h : S ⊂ S') (hS' : S' ⊆ T) :
-    causalStrength s p w₀ (cause w₀ T) S < causalStrength s p w₀ (cause w₀ T) S' := by
-  have hc {U : Finset ι} (hU : U.Nonempty) : sampling s p w₀ (cause w₀ U)ᶜ ≠ 0 :=
-    sampling_compl_cause_ne_zero hs hp₀ hp₁ hU
-  have hpos : sampling s p w₀ (cause w₀ S) ≠ 0 :=
-    sampling_ne_zero hs hp₀ hp₁ ⟨w₀, mem_cause.2 fun _ _ ↦ rfl⟩
-  have hlt := sampling_cause_lt_one (w₀ := w₀) (v := w₀) hs hp₀ hp₁
+    nsm s p w₀ (pluralCause w₀ T) S < nsm s p w₀ (pluralCause w₀ T) S' := by
+  have hc {U : Finset ι} (hU : U.Nonempty) : sampling s p w₀ (pluralCause w₀ U)ᶜ ≠ 0 :=
+    sampling_compl_pluralCause_ne_zero hs hp₀ hp₁ hU
+  have hpos : sampling s p w₀ (pluralCause w₀ S) ≠ 0 :=
+    sampling_ne_zero hs hp₀ hp₁ ⟨w₀, mem_pluralCause.2 fun _ _ ↦ rfl⟩
+  have hlt := sampling_pluralCause_lt_one (w₀ := w₀) (v := w₀) hs hp₀ hp₁
     (Finset.sdiff_nonempty.2 h.not_subset)
-  unfold causalStrength sampling at *
-  rw [score_pi_cause_lt_iff (h.subset.trans hS') hS' (hc hS) (hc (hS.mono h.subset)),
-    ← cause_inter_cause_sdiff h.subset, (indepSet_pi_of_dependsOn dependsOn_cause
-      dependsOn_cause Finset.disjoint_sdiff).measure_inter_eq_mul]
-  simpa using (ENNReal.mul_lt_mul_iff_right hpos (measure_ne_top _ _)).2 hlt
+  unfold nsm sampling at *
+  rw [causalStrength_pi_pluralCause_lt_iff (h.subset.trans hS') hS' (hc hS) (hc (hS.mono h.subset)),
+    ← pluralCause_inter_pluralCause_sdiff h.subset, (indepSet_pi_of_dependsOn dependsOn_pluralCause
+      dependsOn_pluralCause Finset.disjoint_sdiff).measureReal_inter_eq_mul]
+  exact mul_lt_of_lt_one_right (ENNReal.toReal_pos hpos (measure_ne_top _ _))
+    (by simpa [measureReal_def] using
+      (ENNReal.toReal_lt_toReal (measure_ne_top _ _) ENNReal.one_ne_top).2 hlt)
 
 end Sampling
 
@@ -174,10 +173,10 @@ theorem piecewise_mem_twoOrMore_iff (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) (
 
 end
 
-theorem setOf_eq_eq_cause_union : {w : ι → Bool | w X = w Y} =
-    cause (fun _ ↦ true) {X, Y} ∪ cause (fun _ ↦ false) {X, Y} := by
+theorem setOf_eq_eq_pluralCause_union : {w : ι → Bool | w X = w Y} =
+    pluralCause (fun _ ↦ true) {X, Y} ∪ pluralCause (fun _ ↦ false) {X, Y} := by
   ext w
-  simp only [mem_ofPred_eq, mem_union, mem_cause, Finset.mem_insert, Finset.mem_singleton,
+  simp only [mem_ofPred_eq, mem_union, mem_pluralCause, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq]
   cases w X <;> cases w Y <;> simp
 
@@ -186,38 +185,40 @@ variable [Fintype ι] {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (�
 /-- In a two-of-three threshold game won with all three causes, a pair scores the probability that
 its two causes agree, since it is fully sufficient and is necessary where both its causes are
 absent. -/
-theorem score_twoOrMore_pair (h3 : Fintype.card ι = 3) (hXY : X ≠ Y)
-    (hc : Measure.pi ν ((cause (fun _ ↦ true) {X, Y})ᶜ ∩ twoOrMoreᶜ) ≠ 0) :
-    score (Measure.pi ν) (fun _ ↦ true) twoOrMore {X, Y} = Measure.pi ν {w | w X = w Y} := by
+theorem causalStrength_twoOrMore_pair (h3 : Fintype.card ι = 3) (hXY : X ≠ Y)
+    (hc : Measure.pi ν ((pluralCause (fun _ ↦ true) {X, Y})ᶜ ∩ twoOrMoreᶜ) ≠ 0) :
+    causalStrength (Measure.pi ν) (fun _ ↦ true) twoOrMore {X, Y} =
+    (Measure.pi ν).real {w | w X = w Y} := by
   have hforce (w : ι → Bool) : ({X, Y} : Finset ι).piecewise (fun _ ↦ true) w ∈ twoOrMore :=
     le_trans (Finset.card_pair hXY).ge (Finset.card_le_card fun i hi ↦ by
       simp [Finset.piecewise_eq_of_mem _ _ _ hi])
-  have hnec : (cause (fun _ ↦ true) {X, Y})ᶜ ∩
+  have hnec : (pluralCause (fun _ ↦ true) {X, Y})ᶜ ∩
       {w | ({X, Y} : Finset ι).piecewise w (fun _ ↦ true) ∉ twoOrMore} =
-      cause (fun _ ↦ false) {X, Y} := by
+      pluralCause (fun _ ↦ false) {X, Y} := by
     ext w
     simp only [mem_inter_iff, mem_compl_iff, mem_ofPred_eq, piecewise_mem_twoOrMore_iff h3 hXY,
-      mem_cause, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+      mem_pluralCause, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
     cases w X <;> cases w Y <;> simp
-  have hdisj : Disjoint (cause (fun _ ↦ true) {X, Y}) (cause (fun _ ↦ false) {X, Y}) :=
+  have hdisj : Disjoint (pluralCause (fun _ ↦ true) {X, Y}) (pluralCause (fun _ ↦ false) {X, Y}) :=
     Set.disjoint_left.2 fun _ h₁ h₂ ↦ by
-      simpa using (mem_cause.1 h₁ X (by simp)).symm.trans (mem_cause.1 h₂ X (by simp))
-  rw [score, sufficiency_eq_one hforce hc, mul_one, mul_necessity, hnec, setOf_eq_eq_cause_union,
-    measure_union hdisj .of_discrete]
+      simpa using (mem_pluralCause.1 h₁ X (by simp)).symm.trans (mem_pluralCause.1 h₂ X (by simp))
+  rw [causalStrength, sufficiencyStrength_eq_one hforce hc, mul_one, mul_necessityStrength, hnec,
+      setOf_eq_eq_pluralCause_union,
+    measureReal_union hdisj .of_discrete]
 
-theorem causalStrength_twoOrMore_pair_toReal (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) {s : I}
+theorem nsm_twoOrMore_pair (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) {s : I}
     (hs : s < 1) {p : ι → I} (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1) :
-    (causalStrength s p (fun _ ↦ true) twoOrMore {X, Y}).toReal =
+    nsm s p (fun _ ↦ true) twoOrMore {X, Y} =
       (s + (1 - s) * p X) * (s + (1 - s) * p Y) +
         (1 - s) * (1 - p X) * ((1 - s) * (1 - p Y)) := by
   have hc := sampling_ne_zero (w₀ := fun _ ↦ true) hs hp₀ hp₁
-    (A := (cause (fun _ ↦ true) {X, Y})ᶜ ∩ twoOrMoreᶜ) ⟨fun _ ↦ false,
-      fun h ↦ by simpa using mem_cause.1 h X (by simp), by simp [twoOrMore]⟩
-  unfold causalStrength sampling at *
-  rw [score_twoOrMore_pair h3 hXY hc, ← measureReal_def, setOf_eq_eq_cause_union,
+    (A := (pluralCause (fun _ ↦ true) {X, Y})ᶜ ∩ twoOrMoreᶜ) ⟨fun _ ↦ false,
+      fun h ↦ by simpa using mem_pluralCause.1 h X (by simp), by simp [twoOrMore]⟩
+  unfold nsm sampling at *
+  rw [causalStrength_twoOrMore_pair h3 hXY hc, setOf_eq_eq_pluralCause_union,
     measureReal_union (Set.disjoint_left.2 fun _ h₁ h₂ ↦ by
-      simpa using (mem_cause.1 h₁ X (by simp)).symm.trans (mem_cause.1 h₂ X (by simp)))
-      .of_discrete, measureReal_pi_cause, measureReal_pi_cause, Finset.prod_pair hXY,
+      simpa using (mem_pluralCause.1 h₁ X (by simp)).symm.trans (mem_pluralCause.1 h₂ X (by simp)))
+      .of_discrete, measureReal_pi_pluralCause, measureReal_pi_pluralCause, Finset.prod_pair hXY,
     Finset.prod_pair hXY]
   simp [propensity_real_singleton]
 
@@ -235,8 +236,8 @@ noncomputable def dishPrior : Dish → I
 
 /-- In the paper's running example, at `s = 0`, eating the cake and the pie scores
 0.08 · 1 + 0.92 · 0.18/0.92 = 0.26 for a stomachache from two desserts or more (p. 448). -/
-example : (causalStrength 0 dishPrior (fun _ ↦ true) twoOrMore {.cake, .pie}).toReal = 13 / 50 := by
-  rw [causalStrength_twoOrMore_pair_toReal rfl (by decide) zero_lt_one
+example : nsm 0 dishPrior (fun _ ↦ true) twoOrMore {.cake, .pie} = 13 / 50 := by
+  rw [nsm_twoOrMore_pair rfl (by decide) zero_lt_one
     (fun i ↦ Subtype.coe_lt_coe.1 (by cases i <;> norm_num [dishPrior]))
     (fun i ↦ Subtype.coe_lt_coe.1 (by cases i <;> norm_num [dishPrior]))]
   norm_num [dishPrior]
@@ -257,24 +258,23 @@ section Experiment1
 
 variable {s : I}
 
-private theorem causalStrength_pair₁_toReal (hs : s < 1) {X Y : Urn₁} (hXY : X ≠ Y) :
-    (causalStrength s prior₁ (fun _ ↦ true) twoOrMore {X, Y}).toReal =
+private theorem nsm_pair₁ (hs : s < 1) {X Y : Urn₁} (hXY : X ≠ Y) :
+    nsm s prior₁ (fun _ ↦ true) twoOrMore {X, Y} =
       (s + (1 - s) * prior₁ X) * (s + (1 - s) * prior₁ Y) +
         (1 - s) * (1 - prior₁ X) * ((1 - s) * (1 - prior₁ Y)) :=
-  causalStrength_twoOrMore_pair_toReal rfl hXY hs
+  nsm_twoOrMore_pair rfl hXY hs
     (fun i ↦ Subtype.coe_lt_coe.1 (by cases i <;> norm_num [prior₁]))
     (fun i ↦ Subtype.coe_lt_coe.1 (by cases i <;> norm_num [prior₁]))
 
 /-- The NSM rates the intermediate and high pair highest, beating the low and intermediate pair by
 `9/10 · s(1 - s)` exactly when `0 < s` (p. 451). -/
 theorem intermediate_high_ranked_highest (hs : s < 1) :
-    (causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} <
-        causalStrength s prior₁ (fun _ ↦ true) twoOrMore {intermediate, high} ↔ 0 < s) ∧
-      causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, high} <
-        causalStrength s prior₁ (fun _ ↦ true) twoOrMore {intermediate, high} := by
-  simp only [← ENNReal.toReal_lt_toReal causalStrength_ne_top causalStrength_ne_top]
-  rw [causalStrength_pair₁_toReal hs (by decide), causalStrength_pair₁_toReal hs (by decide),
-    causalStrength_pair₁_toReal hs (by decide), ← Subtype.coe_lt_coe (x := (0 : I))]
+    (nsm s prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} <
+        nsm s prior₁ (fun _ ↦ true) twoOrMore {intermediate, high} ↔ 0 < s) ∧
+      nsm s prior₁ (fun _ ↦ true) twoOrMore {low, high} <
+        nsm s prior₁ (fun _ ↦ true) twoOrMore {intermediate, high} := by
+  rw [nsm_pair₁ hs (by decide), nsm_pair₁ hs (by decide),
+    nsm_pair₁ hs (by decide), ← Subtype.coe_lt_coe (x := (0 : I))]
   have h₁ : (s : ℝ) < 1 := hs
   have h₀ : (0 : ℝ) ≤ s := s.2.1
   simp only [prior₁, Set.Icc.coe_zero]
@@ -283,19 +283,17 @@ theorem intermediate_high_ranked_highest (hs : s < 1) :
 
 /-- At the stability `s = 0` of the paper's exposition, the low and intermediate pair and the
 intermediate and high pair both score one half. -/
-example : (causalStrength 0 prior₁ (fun _ ↦ true) twoOrMore {low, intermediate}).toReal = 1 / 2 ∧
-    (causalStrength 0 prior₁ (fun _ ↦ true) twoOrMore {intermediate, high}).toReal = 1 / 2 := by
-  rw [causalStrength_pair₁_toReal zero_lt_one (by decide),
-    causalStrength_pair₁_toReal zero_lt_one (by decide)]
+example : nsm 0 prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} = 1 / 2 ∧
+    nsm 0 prior₁ (fun _ ↦ true) twoOrMore {intermediate, high} = 1 / 2 := by
+  rw [nsm_pair₁ zero_lt_one (by decide), nsm_pair₁ zero_lt_one (by decide)]
   norm_num [prior₁]
 
 /-- The NSM rates the low and high pair above the low and intermediate pair only for stabilities
 above `9/19` (p. 453). -/
 theorem low_high_outscores_low_intermediate_iff (hs : s < 1) :
-    causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} <
-        causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, high} ↔ 9 / 19 < (s : ℝ) := by
-  rw [← ENNReal.toReal_lt_toReal causalStrength_ne_top causalStrength_ne_top,
-    causalStrength_pair₁_toReal hs (by decide), causalStrength_pair₁_toReal hs (by decide)]
+    nsm s prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} <
+        nsm s prior₁ (fun _ ↦ true) twoOrMore {low, high} ↔ 9 / 19 < (s : ℝ) := by
+  rw [nsm_pair₁ hs (by decide), nsm_pair₁ hs (by decide)]
   have : (0 : ℝ) < 1 - s := sub_pos.2 hs
   simp only [prior₁]
   constructor <;> intro h <;> nlinarith
@@ -363,10 +361,10 @@ theorem homogeneousLoss_subset_compl_win (h : w₀ ∉ win rule) :
   by_contra h'
   simpa [hall i hi] using hw D hD i hi (by simpa using h')
 
-theorem homogeneousLoss_eq_cause [Fintype ι] (hcover : ∀ i, ∃ D ∈ rule, i ∈ D) :
-    homogeneousLoss rule w₀ = cause w₀ (Finset.univ.filter (w₀ · = false)) := by
+theorem homogeneousLoss_eq_pluralCause [Fintype ι] (hcover : ∀ i, ∃ D ∈ rule, i ∈ D) :
+    homogeneousLoss rule w₀ = pluralCause w₀ (Finset.univ.filter (w₀ · = false)) := by
   ext w
-  simp only [homogeneousLoss, mem_ofPred_eq, mem_cause, Finset.mem_filter, Finset.mem_univ,
+  simp only [homogeneousLoss, mem_ofPred_eq, mem_pluralCause, Finset.mem_filter, Finset.mem_univ,
     true_and]
   refine ⟨fun h i hi ↦ ?_, fun h D _ i _ hi ↦ by rw [h i hi, hi]⟩
   obtain ⟨D, hD, hiD⟩ := hcover i
@@ -382,48 +380,50 @@ variable {ι : Type*} [DecidableEq ι] {rule : Finset (Finset ι)} {X Y : ι} {R
   {w₀ : ι → Bool}
 
 theorem mem_win_pair_iff (hrule : rule = {{X, Y}, R}) {w : ι → Bool} :
-    w ∈ win rule ↔ (w X = true ∧ w Y = true) ∨ w ∈ cause (fun _ ↦ true) R := by
+    w ∈ win rule ↔ (w X = true ∧ w Y = true) ∨ w ∈ pluralCause (fun _ ↦ true) R := by
   subst hrule
-  simp [win, mem_cause]
+  simp [win, mem_pluralCause]
 
 theorem preimage_update_true_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R) :
     (Function.update · X true) ⁻¹' win rule =
-      cause (fun _ ↦ true) {Y} ∪ cause (fun _ ↦ true) R := by
+      pluralCause (fun _ ↦ true) {Y} ∪ pluralCause (fun _ ↦ true) R := by
   ext w
-  simp [mem_win_pair_iff hrule, update_mem_cause_iff hXR, mem_cause,
+  simp [mem_win_pair_iff hrule, update_mem_pluralCause_iff hXR, mem_pluralCause,
     Function.update_of_ne hXY.symm]
 
 theorem preimage_update_false_win (hrule : rule = {{X, Y}, R}) (hXR : X ∉ R) :
-    (Function.update · X false) ⁻¹' win rule = cause (fun _ ↦ true) R := by
+    (Function.update · X false) ⁻¹' win rule = pluralCause (fun _ ↦ true) R := by
   ext w
-  simp [mem_win_pair_iff hrule, update_mem_cause_iff hXR]
+  simp [mem_win_pair_iff hrule, update_mem_pluralCause_iff hXR]
 
 variable [Fintype ι] {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
 
-theorem sufficiency_singleton_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R)
+theorem sufficiencyStrength_singleton_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R)
     (hYR : Y ∉ R) (hX : w₀ X = true) (hX' : ν X {false} ≠ 0)
-    (hR : Measure.pi ν (cause (fun _ ↦ true) R)ᶜ ≠ 0) :
-    sufficiency (Measure.pi ν) w₀ (win rule) {X} = ν Y {true} := by
-  rw [sufficiency_singleton (by rwa [hX]), hX, Bool.not_true,
+    (hR : Measure.pi ν (pluralCause (fun _ ↦ true) R)ᶜ ≠ 0) :
+    sufficiencyStrength (Measure.pi ν) w₀ (win rule) {X} = (ν Y).real {true} := by
+  have hR' : (Measure.pi ν).real (pluralCause (fun _ ↦ true) R)ᶜ ≠ 0 :=
+    ENNReal.toReal_ne_zero.2 ⟨hR, measure_ne_top _ _⟩
+  rw [sufficiencyStrength_singleton (by rwa [hX]), hX, Bool.not_true,
     preimage_update_true_win hrule hXY hXR,
     preimage_update_false_win hrule hXR, union_sdiff_right, sdiff_eq,
-    (indepSet_pi_of_dependsOn dependsOn_cause (fun _ _ h ↦ by
-      simp only [mem_compl_iff, dependsOn_cause h])
-      (Finset.disjoint_singleton_left.2 hYR)).measure_inter_eq_mul,
-    measure_pi_cause, Finset.prod_singleton, ENNReal.mul_div_cancel_right hR (measure_ne_top _ _)]
+    (indepSet_pi_of_dependsOn dependsOn_pluralCause dependsOn_compl_pluralCause
+      (Finset.disjoint_singleton_left.2 hYR)).measureReal_inter_eq_mul,
+    measureReal_pi_pluralCause, Finset.prod_singleton, mul_div_cancel_right₀ _ hR']
 
-theorem sufficiency_singleton_compl_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R)
+theorem sufficiencyStrength_singleton_compl_win (hrule : rule = {{X, Y},
+    R}) (hXY : X ≠ Y) (hXR : X ∉ R)
     (hYR : Y ∉ R) (hX : w₀ X = false) (hX' : ν X {true} ≠ 0) :
-    sufficiency (Measure.pi ν) w₀ (win rule)ᶜ {X} =
-      ν Y {true} * Measure.pi ν (cause (fun _ ↦ true) R)ᶜ /
-        Measure.pi ν (cause (fun _ ↦ true) {Y} ∪ cause (fun _ ↦ true) R) := by
-  rw [sufficiency_singleton (by rwa [hX]), hX, Bool.not_false, preimage_compl, preimage_compl,
+    sufficiencyStrength (Measure.pi ν) w₀ (win rule)ᶜ {X} =
+      (ν Y).real {true} * (Measure.pi ν).real (pluralCause (fun _ ↦ true) R)ᶜ /
+        (Measure.pi ν).real (pluralCause (fun _ ↦ true) {Y} ∪ pluralCause (fun _ ↦ true) R) := by
+  rw [sufficiencyStrength_singleton (by rwa [hX]), hX, Bool.not_false,
+      preimage_compl, preimage_compl,
     preimage_update_true_win hrule hXY hXR, preimage_update_false_win hrule hXR, compl_compl,
     sdiff_eq, compl_compl, inter_union_distrib_left, compl_inter_self, union_empty, inter_comm,
-    (indepSet_pi_of_dependsOn dependsOn_cause (fun _ _ h ↦ by
-      simp only [mem_compl_iff, dependsOn_cause h])
-      (Finset.disjoint_singleton_left.2 hYR)).measure_inter_eq_mul,
-    measure_pi_cause, Finset.prod_singleton]
+    (indepSet_pi_of_dependsOn dependsOn_pluralCause dependsOn_compl_pluralCause
+      (Finset.disjoint_singleton_left.2 hYR)).measureReal_inter_eq_mul,
+    measureReal_pi_pluralCause, Finset.prod_singleton]
 
 end TwoConditions
 
@@ -486,21 +486,22 @@ section Experiment2
 
 variable {s : I}
 
-theorem causalStrength_singleton_win (hs : s < 1) (X : Urn₂) {w₀ : Urn₂ → Bool}
+theorem nsm_singleton_win (hs : s < 1) (X : Urn₂) {w₀ : Urn₂ → Bool}
     (hX : w₀ X = true) :
-    causalStrength s prior₂ w₀ (win conditions) {X} =
-      propensity s (prior₂ X) true {true} *
-          propensity s (prior₂ (partner X)) (w₀ (partner X)) {true} +
+    nsm s prior₂ w₀ (win conditions) {X} =
+      (propensity s (prior₂ X) true).real {true} *
+          (propensity s (prior₂ (partner X)) (w₀ (partner X))).real {true} +
         if Function.update w₀ X false ∈ win conditions then 0
-        else propensity s (prior₂ X) true {false} := by
+        else (propensity s (prior₂ X) true).real {false} := by
   obtain ⟨hrule, hXY, hXR, hYR⟩ := conditions_eq_partner X
   have hX' := propensity_singleton_ne_zero hs (prior₂_pos X) (prior₂_lt_one X) true false
   have hR := sampling_ne_zero (w₀ := w₀) hs prior₂_pos prior₂_lt_one
-    (A := (cause (fun _ ↦ true) (otherColor X))ᶜ) ⟨fun _ ↦ false, fun h ↦ by
+    (A := (pluralCause (fun _ ↦ true) (otherColor X))ᶜ) ⟨fun _ ↦ false, fun h ↦ by
       obtain ⟨i, hi⟩ : (otherColor X).Nonempty := by cases X <;> decide
-      simpa using mem_cause.1 h i hi⟩
-  unfold causalStrength sampling at *
-  rw [score_singleton (by rw [hX]; exact hX'), sufficiency_singleton_win hrule hXY hXR hYR hX
+      simpa using mem_pluralCause.1 h i hi⟩
+  unfold nsm sampling at *
+  rw [causalStrength_singleton (by rw [hX]; exact hX'),
+      sufficiencyStrength_singleton_win hrule hXY hXR hYR hX
     (by rw [hX]; exact hX') hR, hX]
   rfl
 
@@ -509,16 +510,19 @@ theorem causalStrength_singleton_win (hs : s < 1) (X : Urn₂) {w₀ : Urn₂ �
 /-- In the round where every urn gave a colored ball, neither winning condition is necessary,
 since the other still holds (p. 462). -/
 theorem same_condition_pair_not_necessary (μ : Measure (Urn₂ → Bool)) :
-    necessity μ (fun _ ↦ true) (win conditions) {a, b} = 0 ∧
-      necessity μ (fun _ ↦ true) (win conditions) {c, d} = 0 :=
-  ⟨necessity_eq_zero (by decide), necessity_eq_zero (by decide)⟩
+    necessityStrength μ (fun _ ↦ true) (win conditions) {a, b} = 0 ∧
+      necessityStrength μ (fun _ ↦ true) (win conditions) {c, d} = 0 :=
+  ⟨necessityStrength_eq_zero (by decide), necessityStrength_eq_zero (by decide)⟩
 
 /-- When every urn gives a colored ball, any pair across the two conditions is necessary to a
 positive degree (p. 462). -/
 theorem crossing_pair_necessary (hs : s < 1) {X Y : Urn₂} (hX : X ∈ ({a, b} : Finset Urn₂))
     (hY : Y ∈ ({c, d} : Finset Urn₂)) :
-    0 < necessity (sampling s prior₂ fun _ ↦ true) (fun _ ↦ true) (win conditions) {X, Y} := by
-  rw [necessity, cond_apply .of_discrete]
+    0 < necessityStrength (sampling s prior₂ fun _ ↦ true) (fun _ ↦ true) (win conditions)
+      {X, Y} := by
+  rw [necessityStrength, measureReal_def]
+  refine ENNReal.toReal_pos (ne_of_gt ?_) (measure_ne_top _ _)
+  rw [cond_apply .of_discrete]
   refine ENNReal.mul_pos (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))
     (sampling_ne_zero hs prior₂_pos prior₂_lt_one ⟨fun _ ↦ false, ?_⟩)
   simp only [mem_inter_iff, mem_compl_iff, mem_ofPred_eq]
@@ -527,12 +531,12 @@ theorem crossing_pair_necessary (hs : s < 1) {X Y : Urn₂} (hX : X ∈ ({a, b} 
 /-- When every urn gives a colored ball, the model scores the two urns of a color alike, contrary to
 the reported abnormal deflation (p. 463). -/
 theorem partners_scored_alike (hs : s < 1) :
-    causalStrength s prior₂ (fun _ ↦ true) (win conditions) {a} =
-        causalStrength s prior₂ (fun _ ↦ true) (win conditions) {b} ∧
-      causalStrength s prior₂ (fun _ ↦ true) (win conditions) {c} =
-        causalStrength s prior₂ (fun _ ↦ true) (win conditions) {d} := by
-  rw [causalStrength_singleton_win hs a rfl, causalStrength_singleton_win hs b rfl,
-    causalStrength_singleton_win hs c rfl, causalStrength_singleton_win hs d rfl]
+    nsm s prior₂ (fun _ ↦ true) (win conditions) {a} =
+        nsm s prior₂ (fun _ ↦ true) (win conditions) {b} ∧
+      nsm s prior₂ (fun _ ↦ true) (win conditions) {c} =
+        nsm s prior₂ (fun _ ↦ true) (win conditions) {d} := by
+  rw [nsm_singleton_win hs a rfl, nsm_singleton_win hs b rfl,
+    nsm_singleton_win hs c rfl, nsm_singleton_win hs d rfl]
   simp only [partner,
     show ∀ X, Function.update (fun _ : Urn₂ ↦ true) X false ∈ win conditions by decide, ite_true,
     add_zero]
@@ -540,28 +544,26 @@ theorem partners_scored_alike (hs : s < 1) :
 
 /-- In the round won through `a` and `b`, the pair of `a` and `b` scores one (p. 465). -/
 theorem pair_scores_one (hs : s < 1) :
-    causalStrength s prior₂ triplePositive (win conditions) {a, b} = 1 :=
-  score_eq_one (by decide) (by decide)
+    nsm s prior₂ triplePositive (win conditions) {a, b} = 1 :=
+  causalStrength_eq_one (by decide) (by decide)
     (sampling_ne_zero hs prior₂_pos prior₂_lt_one ⟨fun _ ↦ false, by decide⟩)
 
 /-- In the round won through `a` and `b`, the colored ball from `d` is idle, since removing it
 never removes the win (p. 464). -/
 theorem idle_urn_not_necessary (μ : Measure (Urn₂ → Bool)) :
-    necessity μ triplePositive (win conditions) {d} = 0 :=
-  necessity_eq_zero (by decide)
+    necessityStrength μ triplePositive (win conditions) {d} = 0 :=
+  necessityStrength_eq_zero (by decide)
 
 /-- In the round won through `a` and `b`, the rarer colored ball from `b` outscores the one from `a`
 (p. 465). -/
 theorem triple_positive_abnormal_inflation (hs : s < 1) :
-    causalStrength s prior₂ triplePositive (win conditions) {a} <
-      causalStrength s prior₂ triplePositive (win conditions) {b} := by
-  rw [causalStrength_singleton_win hs a rfl, causalStrength_singleton_win hs b rfl,
+    nsm s prior₂ triplePositive (win conditions) {a} <
+      nsm s prior₂ triplePositive (win conditions) {b} := by
+  rw [nsm_singleton_win hs a rfl, nsm_singleton_win hs b rfl,
     ite_eq_right (by decide), ite_eq_right (by decide), show partner a = b from rfl,
     show partner b = a from rfl, show triplePositive b = true from rfl,
-    show triplePositive a = true from rfl, mul_comm,
-    ENNReal.add_lt_add_iff_left (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
-    ← ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
-    ← measureReal_def, propensity_real_singleton, propensity_real_singleton]
+    show triplePositive a = true from rfl, mul_comm, add_lt_add_iff_left,
+    propensity_real_singleton, propensity_real_singleton]
   have : (s : ℝ) < 1 := hs
   norm_num [prior₂]
   linarith
@@ -570,14 +572,14 @@ theorem triple_positive_abnormal_inflation (hs : s < 1) :
 
 -- p. 467
 theorem white_ball_redundant (μ : Measure (Urn₂ → Bool)) (i : Urn₂) :
-    necessity μ (fun _ ↦ false) (win conditions)ᶜ {i} = 0 :=
-  necessity_eq_zero (by revert i; decide)
+    necessityStrength μ (fun _ ↦ false) (win conditions)ᶜ {i} = 0 :=
+  necessityStrength_eq_zero (by revert i; decide)
 
 -- p. 467
 theorem white_ball_indispensable (hs : s < 1) (i : Urn₂) :
-    necessity (sampling s prior₂ fun _ ↦ false) (fun _ ↦ false)
+    necessityStrength (sampling s prior₂ fun _ ↦ false) (fun _ ↦ false)
       (homogeneousLoss conditions fun _ ↦ false) {i} = 1 :=
-  necessity_eq_one (by revert i; decide)
+  necessityStrength_eq_one (by revert i; decide)
     (sampling_ne_zero hs prior₂_pos prior₂_lt_one ⟨fun _ ↦ true, by revert i; decide⟩)
 
 private theorem deflation_aux {x y K : ℝ} (hy : 0 < y) (hyx : y < x) (hx : x < 1) (hK₀ : 0 ≤ K)
@@ -594,48 +596,44 @@ private theorem deflation_aux {x y K : ℝ} (hy : 0 < y) (hyx : y < x) (hx : x <
     positivity
   linarith
 
-theorem causalStrength_singleton_compl_win_toReal (hs : s < 1) (X : Urn₂) :
+theorem nsm_singleton_compl_win (hs : s < 1) (X : Urn₂) :
     let q i := (propensity s (prior₂ i) false).real {true}
     let K := ∏ i ∈ otherColor X, q i
-    (causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {X}).toReal =
+    nsm s prior₂ (fun _ ↦ false) (win conditions)ᶜ {X} =
       (1 - q X) * (q (partner X) * (1 - K) / (q (partner X) + K - q (partner X) * K)) := by
   intro q K
   obtain ⟨hrule, hXY, hXR, hYR⟩ := conditions_eq_partner X
   set μ := Measure.pi fun i ↦ propensity s (prior₂ i) false
-  have hK : μ.real (cause (fun _ ↦ true) (otherColor X)) = K := measureReal_pi_cause
-  have hYK : μ.real (cause (fun _ ↦ true) {partner X} ∪ cause (fun _ ↦ true) (otherColor X)) =
+  have hK : μ.real (pluralCause (fun _ ↦ true) (otherColor X)) = K := measureReal_pi_pluralCause
+  have hYK : μ.real (pluralCause (fun _ ↦ true) {partner X} ∪
+      pluralCause (fun _ ↦ true) (otherColor X)) =
       q (partner X) + K - q (partner X) * K := by
-    rw [(indepSet_pi_of_dependsOn dependsOn_cause dependsOn_cause
+    rw [(indepSet_pi_of_dependsOn dependsOn_pluralCause dependsOn_pluralCause
       (Finset.disjoint_singleton_left.2 hYR)).measureReal_union .of_discrete, hK,
-      measureReal_pi_cause, Finset.prod_singleton]
+      measureReal_pi_pluralCause, Finset.prod_singleton]
   have hX₀ := propensity_singleton_ne_zero hs (prior₂_pos X) (prior₂_lt_one X) false true
   have hflip : Function.update (fun _ ↦ false) X true ∈ (win conditions)ᶜ := by
     cases X <;> decide
   have hqX : (propensity s (prior₂ X) false).real {false} = 1 - q X := by
     simp only [q, propensity_real_singleton]; simp; ring
-  unfold causalStrength sampling
-  rw [score_singleton (w₀ := fun _ ↦ false) (by exact hX₀)]
+  unfold nsm sampling
+  rw [causalStrength_singleton (w₀ := fun _ ↦ false) (by exact hX₀)]
   simp only [Bool.not_false, hflip, ite_true, add_zero]
-  rw [sufficiency_singleton_compl_win hrule hXY hXR hYR rfl hX₀, ENNReal.toReal_mul,
-    ENNReal.toReal_div, ENNReal.toReal_mul]
-  simp only [← measureReal_def]
-  rw [hYK, probReal_compl_eq_one_sub .of_discrete, hK, hqX]
+  rw [sufficiencyStrength_singleton_compl_win hrule hXY hXR hYR rfl hX₀, hYK,
+    probReal_compl_eq_one_sub .of_discrete, hK, hqX]
 
 /-- Under the classical loss, the likelier white ball scores higher (`b` over `a`, `c` over `d`), an
 abnormal deflation contrary to the participants (p. 466). -/
 theorem classical_abnormal_deflation (hs : s < 1) :
-    causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {a} <
-        causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {b} ∧
-      causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {d} <
-        causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {c} := by
+    nsm s prior₂ (fun _ ↦ false) (win conditions)ᶜ {a} <
+        nsm s prior₂ (fun _ ↦ false) (win conditions)ᶜ {b} ∧
+      nsm s prior₂ (fun _ ↦ false) (win conditions)ᶜ {d} <
+        nsm s prior₂ (fun _ ↦ false) (win conditions)ᶜ {c} := by
   have hs' : (s : ℝ) < 1 := hs
   have hq (i : Urn₂) : (propensity s (prior₂ i) false).real {true} = (1 - s) * prior₂ i := by
     simp [propensity_real_singleton]
-  simp only [← ENNReal.toReal_lt_toReal causalStrength_ne_top causalStrength_ne_top]
-  rw [causalStrength_singleton_compl_win_toReal hs a,
-    causalStrength_singleton_compl_win_toReal hs b,
-    causalStrength_singleton_compl_win_toReal hs c,
-    causalStrength_singleton_compl_win_toReal hs d]
+  rw [nsm_singleton_compl_win hs a, nsm_singleton_compl_win hs b,
+    nsm_singleton_compl_win hs c, nsm_singleton_compl_win hs d]
   simp only [partner, otherColor, Finset.prod_pair (show a ≠ b by decide),
     Finset.prod_pair (show c ≠ d by decide)]
   simp only [hq]
@@ -645,53 +643,53 @@ theorem classical_abnormal_deflation (hs : s < 1) :
     nlinarith [mul_pos (sub_pos.2 hs') (sub_pos.2 hs'), mul_nonneg hs₀ (sub_pos.2 hs').le]
 
 theorem homogeneousLoss_conditions (w₀ : Urn₂ → Bool) :
-    homogeneousLoss conditions w₀ = cause w₀ (Finset.univ.filter (w₀ · = false)) :=
-  homogeneousLoss_eq_cause (by decide)
+    homogeneousLoss conditions w₀ = pluralCause w₀ (Finset.univ.filter (w₀ · = false)) :=
+  homogeneousLoss_eq_pluralCause (by decide)
 
 /-- Under the homogeneous loss, of two pluralities of white balls the less likely scores higher. -/
 theorem homogeneous_lt_iff (hs : s < 1) {w₀ : Urn₂ → Bool} {S S' : Finset Urn₂}
     (hS : ∀ i ∈ S, w₀ i = false) (hS' : ∀ i ∈ S', w₀ i = false) (hne : S.Nonempty)
     (hne' : S'.Nonempty) :
-    causalStrength s prior₂ w₀ (homogeneousLoss conditions w₀) S <
-        causalStrength s prior₂ w₀ (homogeneousLoss conditions w₀) S' ↔
+    nsm s prior₂ w₀ (homogeneousLoss conditions w₀) S <
+        nsm s prior₂ w₀ (homogeneousLoss conditions w₀) S' ↔
       ∏ i ∈ S', (propensity s (prior₂ i) false).real {false} <
         ∏ i ∈ S, (propensity s (prior₂ i) false).real {false} := by
   have hc {U : Finset Urn₂} (hU : U.Nonempty) :=
-    sampling_compl_cause_ne_zero (w₀ := w₀) (v := w₀) hs prior₂_pos prior₂_lt_one hU
+    sampling_compl_pluralCause_ne_zero (w₀ := w₀) (v := w₀) hs prior₂_pos prior₂_lt_one hU
   have hprod {U : Finset Urn₂} (hU : ∀ i ∈ U, w₀ i = false) :
       ∏ i ∈ U, (propensity s (prior₂ i) (w₀ i)).real {w₀ i} =
         ∏ i ∈ U, (propensity s (prior₂ i) false).real {false} :=
     Finset.prod_congr rfl fun i hi ↦ by rw [hU i hi]
   have hsub {U : Finset Urn₂} (hU : ∀ i ∈ U, w₀ i = false) :
       U ⊆ Finset.univ.filter (w₀ · = false) := fun i hi ↦ by simpa using hU i hi
-  unfold causalStrength
+  unfold nsm
   rw [homogeneousLoss_conditions]
   unfold sampling at hc ⊢
-  rw [score_pi_cause_lt_iff (hsub hS) (hsub hS') (hc hne) (hc hne'),
-    ← ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
-    ← measureReal_def, measureReal_pi_cause, measureReal_pi_cause, hprod hS, hprod hS']
+  rw [causalStrength_pi_pluralCause_lt_iff (hsub hS) (hsub hS') (hc hne) (hc hne'),
+      measureReal_pi_pluralCause,
+    measureReal_pi_pluralCause, hprod hS, hprod hS']
 
 /-- Under the homogeneous loss, a plurality of white balls scores higher than any proper part of it
 (pp. 467, 469). -/
 theorem homogeneous_lt_of_ssubset (hs : s < 1) {w₀ : Urn₂ → Bool} {S S' : Finset Urn₂}
     (hS : S.Nonempty) (h : S ⊂ S') (hS' : ∀ i ∈ S', w₀ i = false) :
-    causalStrength s prior₂ w₀ (homogeneousLoss conditions w₀) S <
-      causalStrength s prior₂ w₀ (homogeneousLoss conditions w₀) S' := by
+    nsm s prior₂ w₀ (homogeneousLoss conditions w₀) S <
+      nsm s prior₂ w₀ (homogeneousLoss conditions w₀) S' := by
   rw [homogeneousLoss_conditions]
-  exact causalStrength_cause_lt_of_ssubset hs prior₂_pos prior₂_lt_one hS h
+  exact nsm_pluralCause_lt_of_ssubset hs prior₂_pos prior₂_lt_one hS h
     fun i hi ↦ by simpa using hS' i hi
 
 /-- Under the homogeneous loss, the less likely white ball scores higher, in the all-white round (p.
 466) and when `c` gave a colored ball (p. 468). -/
 theorem homogeneous_abnormal_inflation (hs : s < 1) :
-    (causalStrength s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {b} <
-        causalStrength s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {a} ∧
-      causalStrength s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {c} <
-        causalStrength s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {d}) ∧
-    (causalStrength s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative) {b} <
-        causalStrength s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative) {a} ∧
-      causalStrength s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative) {b, d} <
-        causalStrength s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative)
+    (nsm s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {b} <
+        nsm s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {a} ∧
+      nsm s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {c} <
+        nsm s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {d}) ∧
+    (nsm s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative) {b} <
+        nsm s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative) {a} ∧
+      nsm s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative) {b, d} <
+        nsm s prior₂ tripleNegative (homogeneousLoss conditions tripleNegative)
           {a, d}) := by
   have hs' : (s : ℝ) < 1 := hs
   rw [homogeneous_lt_iff hs (by decide) (by decide) (by decide) (by decide),
@@ -705,12 +703,13 @@ theorem homogeneous_abnormal_inflation (hs : s < 1) :
 /-- When only `c` gives a colored ball, the white ball from `d` is indispensable for the classical
 loss and those from `a` and `b` are redundant (p. 468). -/
 theorem classical_triple_negative (hs : s < 1) :
-    necessity (sampling s prior₂ tripleNegative) tripleNegative (win conditions)ᶜ {d} = 1 ∧
-      necessity (sampling s prior₂ tripleNegative) tripleNegative (win conditions)ᶜ {a} = 0 ∧
-      necessity (sampling s prior₂ tripleNegative) tripleNegative (win conditions)ᶜ {b} = 0 :=
-  ⟨necessity_eq_one (by decide)
+    let ν := sampling s prior₂ tripleNegative
+    necessityStrength ν tripleNegative (win conditions)ᶜ {d} = 1 ∧
+      necessityStrength ν tripleNegative (win conditions)ᶜ {a} = 0 ∧
+      necessityStrength ν tripleNegative (win conditions)ᶜ {b} = 0 :=
+  ⟨necessityStrength_eq_one (by decide)
       (sampling_ne_zero hs prior₂_pos prior₂_lt_one ⟨fun _ ↦ true, by decide⟩),
-    necessity_eq_zero (by decide), necessity_eq_zero (by decide)⟩
+    necessityStrength_eq_zero (by decide), necessityStrength_eq_zero (by decide)⟩
 
 /-- When only `c` gives a colored ball, the homogeneous loss is ¬A ∧ ¬B ∧ ¬D (p. 468). -/
 theorem homogeneousLoss_tripleNegative :

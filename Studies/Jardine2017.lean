@@ -46,8 +46,9 @@ abbrev σ : TBUKind := .syllable
 
 /-- A representation drawn as the paper does: a melody over a syllable string, with the
 association lines given as pairs of positions. -/
-abbrev ar (tones : List TRN) (tbus : List TBUKind) (lines : List (ℕ × ℕ)) :=
-  AR.ofWords tones tbus fun p q => (p, q) ∈ lines
+abbrev ar (tones : List TRN) (tbus : List TBUKind) (lines : List (ℕ × ℕ)) :
+    AR (TwoTier TRN TBUKind) :=
+  AR.ofLines tones tbus lines.toFinset
 
 /-- The grammar of forbidden subgraphs `¬r₁ ∧ … ∧ ¬rₙ` of (3a), as the list of factors. -/
 abbrev Grammar := List (AR (TwoTier TRN TBUKind))
@@ -77,15 +78,6 @@ abbrev nonfinalLH := ar [L, H] [σ, σ] [(0, 0), (1, 0)]
 /-- The Mende grammar (21). -/
 def grammar : Grammar :=
   [nonfinalH, nonfinalL, nonfinalHL, nonfinalLH]
-
-theorem free_grammar_iff (X : AR (TwoTier TRN TBUKind)) :
-    X.Free grammar ↔ ¬ nonfinalH.FactorEmbeds X ∧ ¬ nonfinalL.FactorEmbeds X ∧
-      ¬ nonfinalHL.FactorEmbeds X ∧ ¬ nonfinalLH.FactorEmbeds X := by
-  simp only [grammar, AR.free_cons, AR.free_nil, and_true]
-
-instance (tones : List TRN) (tbus : List TBUKind) (lines : List (ℕ × ℕ)) :
-    Decidable ((ar tones tbus lines).Free grammar) :=
-  decidable_of_iff _ (free_grammar_iff _).symm
 
 /-- Every word of (4) is well-formed under (21). -/
 theorem free : ∀ f ∈ forms, (ar f.1 f.2.1 f.2.2).Free grammar := by decide
@@ -118,15 +110,6 @@ abbrev noninitialLH := ar [L, H] [σ, σ] [(0, 1), (1, 1)]
 /-- The Hausa grammar (22). -/
 def grammar : Grammar :=
   [noninitialH, noninitialL, noninitialHL, noninitialLH]
-
-theorem free_grammar_iff (X : AR (TwoTier TRN TBUKind)) :
-    X.Free grammar ↔ ¬ noninitialH.FactorEmbeds X ∧ ¬ noninitialL.FactorEmbeds X ∧
-      ¬ noninitialHL.FactorEmbeds X ∧ ¬ noninitialLH.FactorEmbeds X := by
-  simp only [grammar, AR.free_cons, AR.free_nil, and_true]
-
-instance (tones : List TRN) (tbus : List TBUKind) (lines : List (ℕ × ℕ)) :
-    Decidable ((ar tones tbus lines).Free grammar) :=
-  decidable_of_iff _ (free_grammar_iff _).symm
 
 /-- Every word of (6) is well-formed under (22). -/
 theorem free : ∀ f ∈ forms, (ar f.1 f.2.1 f.2.2).Free grammar := by decide

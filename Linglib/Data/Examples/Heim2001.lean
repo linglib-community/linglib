@@ -24,7 +24,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "1"), ("claim", "max{d : tall(j, d)} > 4 feet")] }
 
@@ -37,7 +37,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "universal"), ("claim", "the two LFs (9) are equivalent, (10)")] }
 
@@ -50,7 +50,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "existential"), ("claim", "the two LFs are equivalent, (12)")] }
 
@@ -63,7 +63,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "universal"), ("claim", "the equivalence extends to equatives")] }
 
@@ -76,7 +76,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "existential")] }
 
@@ -89,7 +89,7 @@ def ex_14a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "monotone increasing")] }
 
@@ -102,7 +102,7 @@ def ex_14b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "monotone increasing")] }
 
@@ -115,7 +115,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "necessity"), ("claim", "the two LFs (16) are equivalent")] }
 
@@ -128,7 +128,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "possibility")] }
 
@@ -141,7 +141,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "negation"), ("claim", "the high-DegP LF (17c) refers to an undefined maximum")] }
 
@@ -154,7 +154,7 @@ def ex_18a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "monotone decreasing")] }
 
@@ -167,7 +167,7 @@ def ex_19a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "implicitly negative")] }
 
@@ -180,7 +180,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.1"), ("operator", "non-monotone"), ("claim", "the high-DegP LF (20c) has a defined maximum and means at least two girls are taller")] }
 
@@ -193,7 +193,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := "John is 4' tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.2"), ("operator", "existential"), ("differential", "exactly")] }
 
@@ -206,7 +206,7 @@ def ex_22a : Datum :=
     glossedTokens := []
     context := "John is 4' tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.2"), ("operator", "universal"), ("differential", "exactly"), ("claim", "(22c) is true and the sentence false when the shortest girl is exactly 4'1'' and others are taller")] }
 
@@ -219,7 +219,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := "John is 4' tall."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.2"), ("operator", "universal"), ("comparative", "less"), ("claim", "(24c) says the shortest girl is less than 4' tall, not an available reading")] }
 
@@ -232,7 +232,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := "The frostline is 3 and a half feet deep."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.2"), ("operator", "universal object"), ("differential", "exactly")] }
 
@@ -245,7 +245,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := "John gave every candidate an A."
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .unacceptable)]
     paperFeatures := [("section", "2.2"), ("operator", "universal internal argument"), ("comparative", "less")] }
 
@@ -258,7 +258,7 @@ def ex_28a : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.3"), ("verb", "require"), ("class", "deontic"), ("highDegP", "yes")] }
 
@@ -271,7 +271,7 @@ def ex_29a : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.3"), ("verb", "allow"), ("class", "possibility"), ("highDegP", "yes")] }
 
@@ -284,7 +284,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.3"), ("verb", "require"), ("class", "deontic"), ("highDegP", "yes")] }
 
@@ -297,7 +297,7 @@ def ex_31a : Datum :=
     glossedTokens := []
     context := "This draft is 10 pages."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.3"), ("verb", "allow"), ("class", "possibility"), ("highDegP", "yes")] }
 
@@ -310,7 +310,7 @@ def ex_32a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.3"), ("verb", "be able"), ("class", "possibility"), ("highDegP", "yes")] }
 
@@ -323,7 +323,7 @@ def ex_32b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "2.3"), ("verb", "need"), ("class", "deontic"), ("highDegP", "yes")] }
 
@@ -336,7 +336,7 @@ def ex_33 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "might"), ("class", "epistemic"), ("highDegP", "no")] }
 
@@ -349,7 +349,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "should"), ("class", "negRaising"), ("highDegP", "no")] }
 
@@ -362,7 +362,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "be supposed to"), ("class", "negRaising"), ("highDegP", "no")] }
 
@@ -375,7 +375,7 @@ def ex_34c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .ungrammatical)]
     paperFeatures := [("section", "2.3"), ("verb", "want"), ("class", "negRaising"), ("highDegP", "no")] }
 
@@ -388,7 +388,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("de dicto", .acceptable), ("de re", .acceptable)]
     paperFeatures := [("section", "2.4"), ("claim", "the Russell ambiguity is de re versus de dicto, not DegP scope, (40)")] }
 
@@ -401,7 +401,7 @@ def ex_38 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("claim", "a high-DegP LF would misrepresent the truth conditions")] }
 
@@ -414,7 +414,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("claim", "three readings: low DegP de dicto, low DegP de re, high DegP de re")] }
 
@@ -427,7 +427,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("claim", "adds a de dicto reading (41) lacks")] }
 
@@ -440,7 +440,7 @@ def ex_58 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "the complement of -est is used twice, (59)")] }
 
@@ -453,7 +453,7 @@ def ex_60a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "3.2"), ("claim", "two readings by the size of the ellipsis antecedent")] }
 
@@ -466,7 +466,7 @@ def ex_60b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "3.2"), ("claim", "the same two readings by scoping -est, (61)")] }
 
@@ -479,7 +479,7 @@ def ex_63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("low DegP", .acceptable), ("high DegP", .acceptable)]
     paperFeatures := [("section", "3.2"), ("claim", "two readings by scoping too, (62)")] }
 

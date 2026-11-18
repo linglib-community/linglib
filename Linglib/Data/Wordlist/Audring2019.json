@@ -34,6 +34,21 @@
       "ID": "clueless",
       "Name": "clueless",
       "Description": ""
+    },
+    {
+      "ID": "childless",
+      "Name": "childless",
+      "Description": ""
+    },
+    {
+      "ID": "helpful",
+      "Name": "helpful",
+      "Description": ""
+    },
+    {
+      "ID": "helpless",
+      "Name": "helpless",
+      "Description": ""
     }
   ],
   "LexemeTable": [
@@ -71,6 +86,21 @@
       "ID": "clueless",
       "Language_ID": "stan1293",
       "Parameter_ID": "clueless"
+    },
+    {
+      "ID": "childless",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "childless"
+    },
+    {
+      "ID": "helpful",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "helpful"
+    },
+    {
+      "ID": "helpless",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "helpless"
     }
   ],
   "FormTable": [
@@ -129,6 +159,30 @@
       "Morphs": ["clue", "less"],
       "Comment": "an [N -less]A word with no [N -ful]A sister",
       "Source": ["audring-2019[4.2.2]"]
+    },
+    {
+      "ID": "audring2019_childless",
+      "Lexeme_ID": "childless",
+      "Form": "childless",
+      "Morphs": ["child", "less"],
+      "Comment": "daughter of the lexical mother child (10)",
+      "Source": ["audring-2019[(10)]"]
+    },
+    {
+      "ID": "audring2019_helpful",
+      "Lexeme_ID": "helpful",
+      "Form": "helpful",
+      "Morphs": ["help", "ful"],
+      "Comment": "the [N -ful]A word of (12)",
+      "Source": ["audring-2019[(12)]"]
+    },
+    {
+      "ID": "audring2019_helpless",
+      "Lexeme_ID": "helpless",
+      "Form": "helpless",
+      "Morphs": ["help", "less"],
+      "Comment": "the [N -less]A word of (12)",
+      "Source": ["audring-2019[(12)]"]
     }
   ],
   "FormRelationTable": [
@@ -158,7 +212,21 @@
       "Form_ID": "audring2019_careful",
       "Target_ID": "audring2019_careless",
       "Relation": "second_order_schema",
-      "Source": ["audring-2019[(14)]"]
+      "Source": ["audring-2019[5]"]
+    },
+    {
+      "ID": "audring2019_childish_childless",
+      "Form_ID": "audring2019_childish",
+      "Target_ID": "audring2019_childless",
+      "Relation": "same_stem",
+      "Source": ["audring-2019[(10)]"]
+    },
+    {
+      "ID": "audring2019_helpful_helpless",
+      "Form_ID": "audring2019_helpful",
+      "Target_ID": "audring2019_helpless",
+      "Relation": "second_order_schema",
+      "Source": ["audring-2019[(12)]"]
     }
   ]
 }

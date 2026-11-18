@@ -78,7 +78,8 @@ theorem self_mem_spheres {r : Preorder W} : A ∈ spheres A r :=
   ⟨subset_rfl, fun _ _ _ hk hkA ↦ absurd hk hkA⟩
 
 theorem sUnion_spheres {r : Preorder W} : ⋃₀ spheres A r = A :=
-  (sUnion_subset fun _ hS ↦ hS.1).antisymm (subset_sUnion_of_mem self_mem_spheres)
+  (sUnion_subset (S := spheres A r) fun _ hS ↦ hS.1).antisymm
+    (subset_sUnion_of_mem self_mem_spheres)
 
 theorem setOf_le_mem_spheres {r : Preorder W} [Std.Total r.le] (j : W) :
     {x ∈ A | r.le x j} ∈ spheres A r :=

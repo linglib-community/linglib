@@ -64,6 +64,11 @@ its coda's mora as its only one ([vasquez-aguilar-etal-2026]).
 
 ## TODO
 
+* `MoraicForm.NoCrossing` sets a syllable and its own morae on one row of slots, so a consonant
+  linked to its syllable after a mora headed later than the nucleus counts as a crossing. No
+  Crossing on the prosodic structure of the form (`MoraicForm.toStructure`) does not count it,
+  and agrees with this condition on the forms of [hayes-1989]; the condition here should be
+  restated through it.
 * Correspondence of morae, for faithfulness to underlying morae and for the length of a segment
   under an underlying mora ([topintzi-zimmermann-2025]).
 

@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.Probe.Phi
 public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 public import Linglib.Fragments.Mayan.Kiche.Agreement
+public import Linglib.Fragments.Mayan.Kiche.Pronouns
 public import Studies.BejarRezac2003
 
 /-!
@@ -196,10 +197,10 @@ theorem hierarchy_silent_on_restriction :
 /-- The K'ichee' formal addressee *laal* agrees as a third person singular and does not outrank the
 third person (§7.1, quoting Stiebels). -/
 theorem formal_addressee :
-    afTarget (phi Kiche.laal) (.personNumber .first .singular) =
+    afTarget (phi Kiche.Pronouns.laal) (.personNumber .first .singular) =
         some (.personNumber .first .singular) ∧
-      ¬ PersonRestriction (phi Kiche.at_) (.personNumber .first .singular) ∧
-      afTarget (phi Kiche.laal) (.personNumber .third .plural) =
+      ¬ PersonRestriction (phi Kiche.Pronouns.at_) (.personNumber .first .singular) ∧
+      afTarget (phi Kiche.Pronouns.laal) (.personNumber .third .plural) =
         some (.personNumber .third .plural) := by
   decide
 

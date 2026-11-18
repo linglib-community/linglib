@@ -10,7 +10,7 @@
     "translation": "It is not raining in Lisbon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "dhen"],
@@ -31,7 +31,7 @@
     "translation": "Don't go to Lisbon.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min"],
@@ -52,7 +52,7 @@
     "translation": "How many people he cheated in his youth!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "dhen"],
@@ -74,7 +74,7 @@
     "translation": "Didn't Yanis drink coffee?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "dhen"],
@@ -96,7 +96,7 @@
     "translation": "After all, isn't rain useful?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "dhen"],
@@ -118,7 +118,7 @@
     "translation": "Q: Who didn't eat their food? A: Who doesn't like meatball soup?",
     "context": "It is shared knowledge that dad does not like meatball soup.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "dhen"],
@@ -139,7 +139,7 @@
     "translation": "I fear dad maybe ate the meatball soup.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min"],
@@ -161,7 +161,7 @@
     "translation": "I fear dad maybe didn't eat the meatball soup.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min dhen"],
@@ -183,7 +183,7 @@
     "translation": "I fear dad maybe ate nothing.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min"],
@@ -205,7 +205,7 @@
     "translation": "I fear dad maybe ate meatball soup.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min"],
@@ -227,7 +227,7 @@
     "translation": "If I forget something, you will immediately mock me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min"],
@@ -249,7 +249,7 @@
     "translation": "If you hear about some gossip, you will immediately run.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["host", "conditional"],
@@ -269,7 +269,7 @@
     "translation": "Did dad maybe eat the meatball soup?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min"],
@@ -291,7 +291,7 @@
     "translation": "Did dad maybe not eat the meatball soup?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "min dhen"],
@@ -313,7 +313,7 @@
     "translation": "I fear you might get stung by a jellyfish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "ne"],
@@ -335,7 +335,7 @@
     "translation": "I was scared that there would be nothing left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "lo"],
@@ -357,7 +357,7 @@
     "translation": "But you forbid him from being humiliated, he who says what he knows and does what he can.",
     "context": "Benedeit, Le voyage de Saint Brendan, 1121.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "ne"],
@@ -379,7 +379,7 @@
     "translation": "Does anybody doubt the falsehood of such stories?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "no"],
@@ -401,7 +401,7 @@
     "translation": "You doubt that virtue is knowledge.",
     "context": "Plato, Meno, 89d.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "me: ouk"],
@@ -423,7 +423,7 @@
     "translation": "I stay here until you talk.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "non"],
@@ -445,7 +445,7 @@
     "translation": "I did it without him seeing me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "ne"],
@@ -467,7 +467,7 @@
     "translation": "I will go away unless you eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "non"],
@@ -489,7 +489,7 @@
     "translation": "Gianni is taller than Peter.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "non"],
@@ -511,7 +511,7 @@
     "translation": "Don't you observe?",
     "context": "Cicero, De Natura Deorum, 3,89.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "non -ne"],
@@ -533,7 +533,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["host", "rhetorical question"],
@@ -553,7 +553,7 @@
     "translation": "The things Gianni did!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "non"],
@@ -575,7 +575,7 @@
     "translation": "Whatever Dani wrote was published in the newspaper.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["negator", "lo"],

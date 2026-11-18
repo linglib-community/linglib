@@ -10,7 +10,7 @@
     "translation": "Jean often kisses Marie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jean souvent embrasse Marie.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -32,7 +32,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sue eats often fish.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -54,7 +54,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "negation"],
@@ -78,7 +78,7 @@
     "translation": "He has not understood.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "negation"],
@@ -101,7 +101,7 @@
     "translation": "The lion will run.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "declarative"]
@@ -121,7 +121,7 @@
     "translation": "the lion that will run",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "relative"]
@@ -141,7 +141,7 @@
     "translation": "the meat that the lion ate",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "relative"],
@@ -164,7 +164,7 @@
     "translation": "Peter often drinks coffee in the morning.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "v2"],
@@ -189,7 +189,7 @@
     "translation": "We know that Peter often drinks coffee in the morning.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "declarative"],
@@ -211,7 +211,7 @@
     "translation": "Call us!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "imperativeAff"],
@@ -234,7 +234,7 @@
     "translation": "Don't call us!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "imperativeNeg"],
@@ -258,7 +258,7 @@
     "translation": "Call us!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "imperativeAff"],
@@ -282,7 +282,7 @@
     "translation": "Don't call us!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "imperativeNeg"],
@@ -303,7 +303,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sue doesn't eat fish.", "judgment": "acceptable"},
       {"form": "Sue not eats fish.", "judgment": "ungrammatical"},
       {"form": "Sue eats not fish.", "judgment": "ungrammatical"}
@@ -329,7 +329,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sue so eats fish.", "judgment": "ungrammatical"},
       {"form": "Sue eats so fish.", "judgment": "ungrammatical"}
     ],
@@ -354,7 +354,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Where Sue eats fish?", "judgment": "ungrammatical"},
       {"form": "Where eats Sue fish?", "judgment": "ungrammatical"}
     ],
@@ -379,7 +379,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sue isn't eating fish.", "judgment": "acceptable"},
       {"form": "Sue does not be eating fish.", "judgment": "ungrammatical"},
       {"form": "Sue doesn't be eating fish.", "judgment": "ungrammatical"}
@@ -404,7 +404,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Sue DOES (so) be eating fish.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -427,7 +427,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Where does Sue be eating fish?", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -450,7 +450,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "subjectWh"],
@@ -475,7 +475,7 @@
     "translation": "I believe that Johan didn't buy the book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "negation"],
@@ -497,7 +497,7 @@
     "translation": "Peter often drinks coffee in the morning.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "v2"],
@@ -521,7 +521,7 @@
     "translation": "He always speaks.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "declarative"],
@@ -544,7 +544,7 @@
     "translation": "He doesn't speak.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "negation"],
@@ -568,7 +568,7 @@
     "translation": "He has always spoken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "declarative"],
@@ -591,7 +591,7 @@
     "translation": "Has he eaten?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "inversion"],
@@ -615,7 +615,7 @@
     "translation": "Does he eat?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "maja-l", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -643,7 +643,7 @@
     "translation": "Do you not eat the apple?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "inversion"],
@@ -665,7 +665,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "ellipsis"],
@@ -689,7 +689,7 @@
     "translation": "I wanted to give him a book and I did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Chciałam mu dać książkę i ją dałam.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -717,7 +717,7 @@
     "translation": "Mona and Jasper washed the car, or rather Mona did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mona og Jasper vaskede bilen, eller rettere Mona vaskede.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -742,7 +742,7 @@
     "translation": "Watch the game, I did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "fronting"],
@@ -763,7 +763,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "fronting"],
@@ -786,7 +786,7 @@
     "translation": "Sing, maybe I will.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "fronting"],
@@ -811,7 +811,7 @@
     "translation": "As for dancing, Gil will never dance.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "fronting"],
@@ -836,7 +836,7 @@
     "translation": "… and drive the car he did.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "… och köra bilen gjorde han.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -862,7 +862,7 @@
     "translation": "I know.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "frontingV2"],
@@ -887,7 +887,7 @@
     "translation": "It is Mr. Yikhezkl's home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "frontingV2"],
@@ -912,7 +912,7 @@
     "translation": "As for being, I am in America.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["context", "frontingV2"],
@@ -935,7 +935,7 @@
     "translation": "As for being at home, we are.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [
+    "contrasts": [
       {"form": "Jesteć w domu, jesteśmy.", "judgment": "ungrammatical"}
     ],
     "readings": [],
@@ -958,7 +958,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Went, he did.", "judgment": "ungrammatical"}
     ],
     "readings": [],

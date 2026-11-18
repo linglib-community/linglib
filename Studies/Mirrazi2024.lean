@@ -12,8 +12,8 @@ indefinite scopes above the negation but below *think*: Rodica believes that the
 did not read, without believing of any particular book that he did not read it. No syntactic
 position is at once above the negation and below the attitude, so Mirrazi derives the reading
 from a choice function closed above the negation whose world argument the attitude binds,
-(44), and likewise for a modal, (48). An intensional choice function, applied to the intension
-of its restrictor but not skolemized to a world, gives only the de re reading when the
+(44), and likewise for a modal, (48). A choice function with no world argument, applied to the
+extension of its restrictor at each belief world, gives only the de re reading when the
 restrictor is the same set in every belief world, (41)–(42): the fixed-set problem.
 
 ## Implementation notes
@@ -39,9 +39,9 @@ variable {W E : Type*} {R : SetRel W W} {w₀ : W} {VP : E → W → Prop}
 
 /-- A world-skolemized choice function closed above negation makes the sentence true iff every
 accessible world has a restrictor member failing the predicate ((44), (48)). -/
-theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
+theorem skolemized_iff {N : W → Set E} (hN : ∀ w, (N w).Nonempty) :
     (∃ F : W → ChoiceFunction E, Box R (fun w ↦ ¬ VP (F w (N w)) w) w₀) ↔
-      Box R (fun w ↦ Det.some {x | N w x} {x | ¬ VP x w}) w₀ := by
+      Box R (fun w ↦ Det.some (N w) {x | ¬ VP x w}) w₀ := by
   refine (ChoiceFunction.exists_pi_apply_iff hN fun w x ↦ w₀ ~[R] w → ¬ VP x w).trans <|
     forall_congr' fun w ↦ ?_
   obtain ⟨b, hb⟩ := hN w
@@ -51,13 +51,13 @@ theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
     exact ⟨x, hx, fun _ ↦ h'⟩
   · exact ⟨b, hb, (absurd · hw)⟩
 
-/-- On a restrictor fixed across accessible worlds, an intensional choice function gives the de re
-reading ((41), (42)). -/
-theorem intensional_iff_of_fixed {N : W → E → Prop} {B : E → Prop} (hB : ∃ x, B x)
+/-- On a restrictor fixed across accessible worlds, a choice function with no world argument gives
+the de re reading ((41), (42)). -/
+theorem intensional_iff_of_fixed {N : W → Set E} {B : Set E} (hB : B.Nonempty)
     (hN : ∀ w, w₀ ~[R] w → N w = B) :
     (∃ f : ChoiceFunction E, Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
-      Det.some {x | B x} {x | Box R (¬ VP x ·) w₀} := by
-  refine Iff.trans ?_ (ChoiceFunction.exists_apply_iff_some hB fun x ↦ Box R (¬ VP x ·) w₀)
+      Det.some B {x | Box R (¬ VP x ·) w₀} := by
+  refine Iff.trans ?_ (ChoiceFunction.exists_apply_iff_of_nonempty hB fun x ↦ Box R (¬ VP x ·) w₀)
   exact exists_congr fun f ↦ forall₂_congr fun w hw ↦
     iff_of_eq (congrArg (fun N' ↦ ¬ VP (f N') w) (hN w hw))
 
@@ -98,17 +98,19 @@ def Read (x : Book) (w : World) : Prop := ¬ unread w x
 /-- Some world-skolemized function makes (40) true in its context. -/
 theorem skolemized :
     ∃ F : World → ChoiceFunction Book,
-      Box beliefs (fun w ↦ ¬ Read (F w fun _ ↦ True) w) .actual :=
-  (skolemized_iff (N := fun _ _ ↦ True) fun _ ↦ ⟨.a, trivial⟩).mpr <| by
-    simp only [Box, Det.some, Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Read, not_not]
+      Box beliefs (fun w ↦ ¬ Read (F w Set.univ) w) .actual :=
+  (skolemized_iff (N := fun _ ↦ Set.univ) fun _ ↦ ⟨.a, trivial⟩).mpr <| by
+    simp only [Box, Det.some, Set.Nonempty, Set.mem_inter_iff, Set.mem_univ, true_and,
+      Set.mem_ofPred_eq, Read, not_not]
     decide
 
 /-- No intensional choice function makes (40) true in its context. -/
 theorem not_intensional :
-    ¬ ∃ f : ChoiceFunction Book, Box beliefs (fun w ↦ ¬ Read (f fun _ ↦ True) w) .actual := by
-  rw [intensional_iff_of_fixed (N := fun _ _ ↦ True) (B := fun _ ↦ True) ⟨.a, trivial⟩
+    ¬ ∃ f : ChoiceFunction Book, Box beliefs (fun w ↦ ¬ Read (f Set.univ) w) .actual := by
+  rw [intensional_iff_of_fixed (N := fun _ ↦ Set.univ) (B := Set.univ) ⟨.a, trivial⟩
     fun _ _ ↦ rfl]
-  simp only [Box, Det.some, Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Read, not_not]
+  simp only [Box, Det.some, Set.Nonempty, Set.mem_inter_iff, Set.mem_univ, true_and,
+      Set.mem_ofPred_eq, Read, not_not]
   decide
 
 /-- The reading with the indefinite below the negation, that Rodica thinks Carl read none of the

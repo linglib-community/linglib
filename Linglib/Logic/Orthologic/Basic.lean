@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Antisymmetrization
-public import Linglib.Core.Order.Ortholattice
+public import Linglib.Core.Order.Ortholattice.Hom
 
 /-!
 # Orthologic
@@ -236,6 +236,16 @@ def Formula.eval (v : Var → L) : Formula Var → L
 
 @[simp] theorem Formula.eval_inf (v : Var → L) (φ ψ : Formula Var) :
     Formula.eval v (φ ⊓ ψ) = Formula.eval v φ ⊓ Formula.eval v ψ := rfl
+
+/-- An ortholattice homomorphism commutes with evaluation. -/
+theorem Formula.map_eval {M F : Type*} [Lattice M] [BoundedOrder M] [InvolutiveCompl M]
+    [FunLike F L M] [OrtholatticeHomClass F L M] (f : F) (v : Var → L) (φ : Formula Var) :
+    f (Formula.eval v φ) = Formula.eval (fun p ↦ f (v p)) φ := by
+  induction φ with
+  | top => exact map_top f
+  | var p => rfl
+  | neg φ ih => rw [Formula.eval, Formula.eval, OrtholatticeHomClass.map_compl, ih]
+  | and φ ψ ihφ ihψ => rw [Formula.eval, Formula.eval, map_inf, ihφ, ihψ]
 
 /-- Derivable consequences hold in every ortholattice under every valuation
 ([holliday-mandelkern-2024] Theorem 3.13, soundness). -/

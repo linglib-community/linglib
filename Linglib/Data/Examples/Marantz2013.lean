@@ -24,7 +24,7 @@ def taught : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "TEACH"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "T"), ("h3exp", "-t"), ("trigger", "3"), ("allomorphy", "attested"), ("allosemy", "blocked")] }
 
@@ -37,7 +37,7 @@ def quantized : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "QUANTUM"), ("h1", "v"), ("h1exp", "-ize"), ("h2", "T"), ("h2exp", "-d"), ("trigger", "2"), ("allomorphy", "blocked")] }
 
@@ -50,7 +50,7 @@ def worker : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "WORK"), ("h1", "v"), ("h1exp", ""), ("h2", "n"), ("h2exp", "-er"), ("trigger", "2"), ("allomorphy", "blocked")] }
 
@@ -63,7 +63,7 @@ def rotor : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ROTATE"), ("h1", "n"), ("h1exp", "-or"), ("trigger", "1"), ("allomorphy", "attested")] }
 
@@ -76,7 +76,7 @@ def rotater : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ROTATE"), ("h1", "v"), ("h1exp", ""), ("h2", "n"), ("h2exp", "-er"), ("trigger", "2"), ("allomorphy", "blocked")] }
 
@@ -89,7 +89,7 @@ def curiosity : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "CURIOUS"), ("h1", "n"), ("h1exp", "-ity"), ("trigger", "1"), ("allomorphy", "attested")] }
 
@@ -102,7 +102,7 @@ def gloriousness : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "GLORY"), ("h1", "a"), ("h1exp", "-ous"), ("h2", "n"), ("h2exp", "-ness"), ("trigger", "2"), ("allomorphy", "blocked")] }
 
@@ -115,7 +115,7 @@ def house_v : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "HOUSE"), ("h1", "v"), ("h1exp", ""), ("trigger", "1"), ("allomorphy", "attested"), ("allosemy", "attested")] }
 
@@ -128,7 +128,7 @@ def housed_denominal : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "HOUSE"), ("h1", "n"), ("h1exp", ""), ("h2", "v"), ("h2exp", ""), ("trigger", "2"), ("allomorphy", "blocked"), ("allosemy", "blocked")] }
 
@@ -141,7 +141,7 @@ def global : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "GLOBE"), ("h1", "a"), ("h1exp", "-al"), ("trigger", "1"), ("allosemy", "attested")] }
 
@@ -154,7 +154,7 @@ def globalize : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "GLOBE"), ("h1", "a"), ("h1exp", "-al"), ("h2", "v"), ("h2exp", "-ize"), ("trigger", "2"), ("allosemy", "blocked")] }
 
@@ -167,7 +167,7 @@ def novelize : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "NOVEL"), ("h1", "v"), ("h1exp", "-ize"), ("trigger", "1"), ("allosemy", "attested")] }
 
@@ -180,7 +180,7 @@ def novelization : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "NOVEL"), ("h1", "v"), ("h1exp", "-ize"), ("h2", "n"), ("h2exp", "-ation"), ("trigger", "2"), ("allosemy", "blocked")] }
 
@@ -193,7 +193,7 @@ def nationalize : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "NATION"), ("h1", "a"), ("h1exp", "-al"), ("h2", "v"), ("h2exp", "-ize"), ("trigger", "2"), ("allosemy", "blocked"), ("idiom", "attested")] }
 
@@ -206,7 +206,7 @@ def jp_koe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ko(y)"), ("h1", "v0"), ("h1exp", "-e"), ("h2", "cont"), ("h2exp", ""), ("h3", "n"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -219,7 +219,7 @@ def jp_nagashi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "nag"), ("h1", "v0"), ("h1exp", "-as"), ("h2", "cont"), ("h2exp", "-i"), ("h3", "n"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -232,7 +232,7 @@ def jp_dashi : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "d"), ("h1", "v0"), ("h1exp", "-as"), ("h2", "cont"), ("h2exp", "-i"), ("h3", "n"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -245,7 +245,7 @@ def jp_sagari : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "sag"), ("h1", "v0"), ("h1exp", "-ar"), ("h2", "cont"), ("h2exp", "-i"), ("h3", "n"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -258,7 +258,7 @@ def jp_mage : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "mag"), ("h1", "v0"), ("h1exp", "-e"), ("h2", "cont"), ("h2exp", ""), ("h3", "n"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -271,7 +271,7 @@ def gr_axnistos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "axn"), ("h1", "v0"), ("h1exp", "-is"), ("h2", "ptcp"), ("h2exp", "-t"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -284,7 +284,7 @@ def gr_koudounistos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "koudoun"), ("h1", "v0"), ("h1exp", "-is"), ("h2", "ptcp"), ("h2exp", "-t"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -297,7 +297,7 @@ def gr_magireftos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "magir"), ("h1", "v0"), ("h1exp", "-ef"), ("h2", "ptcp"), ("h2exp", "-t"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -310,7 +310,7 @@ def gr_kolitos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "kol"), ("h1", "v0"), ("h1exp", "-i"), ("h2", "ptcp"), ("h2exp", "-t"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -323,7 +323,7 @@ def gr_xtiplitos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "xtip"), ("h1", "v0"), ("h1exp", "-i"), ("h2", "ptcp"), ("h2exp", "-t"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -336,7 +336,7 @@ def gr_xoneftos : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "xon"), ("h1", "v0"), ("h1exp", "-ef"), ("h2", "ptcp"), ("h2exp", "-t"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -349,7 +349,7 @@ def en_quantized_energy : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "QUANTUM"), ("h1", "v0"), ("h1exp", "-ize"), ("h2", "ptcp"), ("h2exp", "-ed"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -362,7 +362,7 @@ def en_pulverized_lime : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "PULVER"), ("h1", "v0"), ("h1exp", "-ize"), ("h2", "ptcp"), ("h2exp", "-ed"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -375,7 +375,7 @@ def en_atomized_individual : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "ATOM"), ("h1", "v0"), ("h1exp", "-ize"), ("h2", "ptcp"), ("h2exp", "-ed"), ("h3", "a"), ("h3exp", ""), ("trigger", "2"), ("allosemy", "attested")] }
 
@@ -388,7 +388,7 @@ def en_globalized_universe : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "GLOBE"), ("h1", "a"), ("h1exp", "-al"), ("h2", "v"), ("h2exp", "-ize"), ("h3", "ptcp"), ("h3exp", "-ed"), ("h4", "a"), ("h4exp", ""), ("trigger", "3"), ("allosemy", "blocked")] }
 
@@ -401,7 +401,7 @@ def en_nationalized_island : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "NATION"), ("h1", "a"), ("h1exp", "-al"), ("h2", "v"), ("h2exp", "-ize"), ("h3", "ptcp"), ("h3exp", "-ed"), ("h4", "a"), ("h4exp", ""), ("trigger", "3"), ("allosemy", "blocked")] }
 
@@ -414,7 +414,7 @@ def en_fictionalized_account : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("root", "FICTION"), ("h1", "a"), ("h1exp", "-al"), ("h2", "v"), ("h2exp", "-ize"), ("h3", "ptcp"), ("h3exp", "-ed"), ("h4", "a"), ("h4exp", ""), ("trigger", "3"), ("allosemy", "blocked")] }
 

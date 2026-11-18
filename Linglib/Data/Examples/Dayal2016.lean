@@ -24,7 +24,7 @@ def ex33a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "sequence")] }
 
@@ -37,7 +37,7 @@ def ex33b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "scopeMarking")] }
 
@@ -50,7 +50,7 @@ def ex33c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "extraction")] }
 
@@ -63,7 +63,7 @@ def ex34a : Datum :=
     glossedTokens := []
     context := "Mary is in Paris; John thinks she is in London."
     judgment := .acceptable
-    alternatives := [("John thinks Mary is in London.", .acceptable)]
+    contrasts := [("John thinks Mary is in London.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "scopeMarking")] }
 
@@ -76,7 +76,7 @@ def ex39a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.3"), ("veridical", "false")] }
 
@@ -89,7 +89,7 @@ def ex39b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.2.3"), ("veridical", "false")] }
 
@@ -102,7 +102,7 @@ def ex41a_42a : Datum :=
     glossedTokens := []
     context := "John likes exactly one woman, Mary."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "singular"), ("situation", "one")] }
 
@@ -115,7 +115,7 @@ def ex41a_42b : Datum :=
     glossedTokens := []
     context := "John likes two women, Mary and Sue."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "singular"), ("situation", "two")] }
 
@@ -128,7 +128,7 @@ def ex41b_42a : Datum :=
     glossedTokens := []
     context := "John likes exactly one woman, Mary."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "plural"), ("situation", "one")] }
 
@@ -141,7 +141,7 @@ def ex41b_42b : Datum :=
     glossedTokens := []
     context := "John likes two women, Mary and Sue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "plural"), ("situation", "two")] }
 
@@ -154,7 +154,7 @@ def ex41c_42a : Datum :=
     glossedTokens := []
     context := "John likes exactly one woman, Mary."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "neutral"), ("situation", "one")] }
 
@@ -167,7 +167,7 @@ def ex41c_42b : Datum :=
     glossedTokens := []
     context := "John likes two women, Mary and Sue."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "neutral"), ("situation", "two")] }
 
@@ -180,7 +180,7 @@ def ex47a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "negativeIsland")] }
 
@@ -193,7 +193,7 @@ def ex47b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "negativeIsland")] }
 
@@ -206,7 +206,7 @@ def ex51a_singular : Datum :=
     glossedTokens := []
     context := "Two women in the domain, Mary and Sue."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "singular"), ("construction", "polarWh")] }
 
@@ -219,7 +219,7 @@ def ex51a_plural : Datum :=
     glossedTokens := []
     context := "Two women in the domain, Mary and Sue."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "plural"), ("construction", "polarWh")] }
 
@@ -232,7 +232,7 @@ def ex53a : Datum :=
     glossedTokens := []
     context := "Two eggs are sufficient."
     judgment := .acceptable
-    alternatives := [("Two eggs are sufficient.", .acceptable)]
+    contrasts := [("Two eggs are sufficient.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.3.3"), ("scale", "upward")] }
 
@@ -245,7 +245,7 @@ def ex53c : Datum :=
     glossedTokens := []
     context := "Three people left."
     judgment := .acceptable
-    alternatives := [("Three people left.", .acceptable)]
+    contrasts := [("Three people left.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.3.3"), ("scale", "downward")] }
 
@@ -258,7 +258,7 @@ def ex54a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "plural"), ("construction", "answerNoun")] }
 
@@ -271,7 +271,7 @@ def ex54b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "singular"), ("construction", "answerNoun")] }
 
@@ -284,7 +284,7 @@ def ex55a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Bill loves Mary and John loves Sue.", .acceptable)]
+    contrasts := [("Bill loves Mary and John loves Sue.", .acceptable)]
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("quantifier", "universal")] }
 
@@ -297,7 +297,7 @@ def ex55b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Bill loves Mary and John loves Sue.", .acceptable)]
+    contrasts := [("Bill loves Mary and John loves Sue.", .acceptable)]
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("quantifier", "definitePlural")] }
 
@@ -310,7 +310,7 @@ def ex56a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Bill knows where Mary bought Emma and John knows where she bought Persuasion.", .acceptable)]
+    contrasts := [("Bill knows where Mary bought Emma and John knows where she bought Persuasion.", .acceptable)]
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("embedded", "whInSitu")] }
 
@@ -323,7 +323,7 @@ def ex56b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("Bill knows where Mary bought Emma and John knows where she bought Persuasion.", .acceptable)]
+    contrasts := [("Bill knows where Mary bought Emma and John knows where she bought Persuasion.", .acceptable)]
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("embedded", "definitePlural")] }
 
@@ -336,7 +336,7 @@ def ex57a : Datum :=
     glossedTokens := []
     context := "No one left the party."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "other"), ("cleft", "false")] }
 
@@ -349,7 +349,7 @@ def ex57b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "doubted"), ("speaker", "same"), ("cleft", "false")] }
 
@@ -362,7 +362,7 @@ def ex58a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "suspended"), ("speaker", "same"), ("cleft", "false")] }
 
@@ -375,7 +375,7 @@ def ex58b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "suspended"), ("speaker", "same"), ("cleft", "false")] }
 
@@ -388,7 +388,7 @@ def ex59a : Datum :=
     glossedTokens := []
     context := "No one left the party."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "other"), ("cleft", "true")] }
 
@@ -401,7 +401,7 @@ def ex59b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "suspended"), ("speaker", "same"), ("cleft", "true")] }
 
@@ -414,7 +414,7 @@ def ex61a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("phenomenon", "strongExhaustiveness")] }
 
@@ -427,7 +427,7 @@ def ex61b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "same"), ("cleft", "false")] }
 
@@ -440,7 +440,7 @@ def ex65a_one : Datum :=
     glossedTokens := []
     context := "Bill saw Alice but not Betty or Cal."
     judgment := .acceptable
-    alternatives := [("Bill saw Alice.", .acceptable), ("Bill saw only Alice.", .acceptable)]
+    contrasts := [("Bill saw Alice.", .acceptable), ("Bill saw only Alice.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "singular"), ("situation", "one")] }
 
@@ -453,7 +453,7 @@ def ex65a_two : Datum :=
     glossedTokens := []
     context := "Bill saw Alice and Betty but not Cal."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "singular"), ("situation", "two")] }
 
@@ -466,7 +466,7 @@ def ex65a_none : Datum :=
     glossedTokens := []
     context := "Bill saw no one."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "singular"), ("situation", "none")] }
 
@@ -479,7 +479,7 @@ def ex66a_two : Datum :=
     glossedTokens := []
     context := "Bill saw Alice and Betty but not Cal."
     judgment := .acceptable
-    alternatives := [("Bill saw Alice and Betty.", .acceptable), ("Bill saw only Alice and Betty.", .acceptable)]
+    contrasts := [("Bill saw Alice and Betty.", .acceptable), ("Bill saw only Alice and Betty.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "two")] }
 
@@ -492,7 +492,7 @@ def ex66a_one : Datum :=
     glossedTokens := []
     context := "Bill saw Alice but not Betty or Cal."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "one")] }
 
@@ -505,7 +505,7 @@ def ex66a_none : Datum :=
     glossedTokens := []
     context := "Bill saw no one."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "none")] }
 

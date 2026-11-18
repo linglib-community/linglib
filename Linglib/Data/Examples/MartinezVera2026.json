@@ -17,7 +17,7 @@
     "translation": "Maria didn't go to the river. No, Maria did go to the river.",
     "context": "Two individuals are discussing Maria's whereabouts.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "assertedNegation"],
@@ -39,7 +39,7 @@
     "translation": "Juan bought sheep.",
     "context": "A couple is on its house entrance seeing people passing by. One individual says (7).",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Juanchu-ka oveja-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -68,7 +68,7 @@
     "translation": "Did Maria buy a cow? Yes, Maria bought a cow.",
     "context": "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ari, Maria-ka wakra-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -98,7 +98,7 @@
     "translation": "Did Maria buy a cow? No, Maria didn't buy a cow.",
     "context": "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mana, Maria-ka mana wakra-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -128,7 +128,7 @@
     "translation": "What's up with Maria? Maria bought a cow.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Maria-ka wakra-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -158,7 +158,7 @@
     "translation": "Did Maria in fact buy a cow? Yes, Maria did buy a cow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "debate"],
@@ -186,7 +186,7 @@
     "translation": "Maria didn't go to the river? Yes, Maria did go to the river.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "none"],
@@ -214,7 +214,7 @@
     "translation": "Did Maria in fact buy a cow? Yes, Maria did buy a cow.",
     "context": "One individual asks a question about Maria's whereabouts and another individual replies. There has been some discussion about Maria's whereabouts, with it being suggested that Maria didn't buy a cow in addition to it being suggested that she did buy one, but the discussion is still open. The individual wants to settle the matter, so they ask the second individual to do so.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "debate"],
@@ -241,7 +241,7 @@
     "translation": "Pedro went to the river, but that's not the case.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidential", "direct"],
@@ -267,7 +267,7 @@
     "translation": "Pedro went to the river, but I didn't see it.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidential", "direct"],
@@ -293,7 +293,7 @@
     "translation": "Pedro went to the river, but that's not the case.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidential", "reportative"],
@@ -320,7 +320,7 @@
     "translation": "Pedro went to the river, but nobody said that to me.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidential", "reportative"],
@@ -346,7 +346,7 @@
     "translation": "Juan stole a cow; it's like that.",
     "context": "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They saw Juan doing so, but could not intervene.",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "directEvidential"],
@@ -372,7 +372,7 @@
     "translation": "Juan stole a cow; it's like that.",
     "context": "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They were told that Juan did so, and they trust the source.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "reportativeEvidential"],
@@ -398,7 +398,7 @@
     "translation": "Juan went to the river, but that's not the case.",
     "context": "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan went to the river. They were told that Juan did so, but they don't trust the source.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "reportativeEvidential"],
@@ -427,7 +427,7 @@
     "translation": "Juan stole a cow; it's like that, but that's not the case.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["evidential", "reportative"],
@@ -453,7 +453,7 @@
     "translation": "Juan bought a cow. No, he bought a pig.",
     "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "correction"],
@@ -480,7 +480,7 @@
     "translation": "Juan bought a sheep. No, Maria bought a sheep.",
     "context": "Two discourse participants are discussing the issue of who bought a sheep at the Sunday market.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "correction"],
@@ -507,7 +507,7 @@
     "translation": "Pedro went to the mine. No, Pedro went to the river.",
     "context": "Two discourse participants are discussing Pedro's whereabouts, in particular, where he went for the day.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "correction"],
@@ -535,7 +535,7 @@
     "translation": "Pedro went to the mine. No, Pedro sold food in the market.",
     "context": "Two individuals are discussing Pedro's whereabouts. Since heading to the mine is an activity that takes all day, it excludes any other activity.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "correction"],
@@ -562,7 +562,7 @@
     "translation": "Segundo bought a pig. No, Segundo bought a cow.",
     "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["prior", "correction"],
@@ -590,7 +590,7 @@
     "translation": "Segundo bought a pig. No, Segundo bought a cow.",
     "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mana, Segundo wakra-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -619,7 +619,7 @@
     "translation": "Segundo bought a pig. No, Segundo bought a cow.",
     "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Mana, Segundo wakra-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -646,7 +646,7 @@
     "translation": "An American farmer met a Canadian farmer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -672,7 +672,7 @@
     "translation": "An American farmer met a Canadian farmer.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -700,7 +700,7 @@
     "translation": "What did Pedro buy? Pedro bought a sheep.",
     "context": "An individual asks another one about the farm animal that Pedro bought at the Sunday market.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Pedro-ka oveja-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -729,7 +729,7 @@
     "translation": "What did Pedro buy? Pedro bought a sheep.",
     "context": "An individual asks another one about the farm animal that Pedro bought at the Sunday market.",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Oveja-ta Pedro-ka ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -759,7 +759,7 @@
     "translation": "Pedro didn't buy a sheep; he bought a cow.",
     "context": "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],
@@ -789,7 +789,7 @@
     "translation": "Pedro didn't buy a sheep; he bought a cow.",
     "context": "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Pedro-ka mana oveja-ta ranti-rka; wakra-ta Pedro-ka ranti-rka.", "judgment": "acceptable"}
     ],
     "readings": [],

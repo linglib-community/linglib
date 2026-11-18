@@ -24,7 +24,7 @@ def ex7a : Datum :=
     glossedTokens := []
     context := "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -37,7 +37,7 @@ def ex7b : Datum :=
     glossedTokens := []
     context := "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -50,7 +50,7 @@ def ex10a : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "WALL-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -63,7 +63,7 @@ def ex10b : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "RECTANGLE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -76,7 +76,7 @@ def ex10c : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "CORNER-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -89,7 +89,7 @@ def ex10d : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "60"), ("classifier", "WALL-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -102,7 +102,7 @@ def ex10e : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "RECTANGLE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -115,7 +115,7 @@ def ex10f : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE POSS-1 HOUSE-a. ANN SELF-b DRUNK. IX-b DRIVE b-VEHICLE-cl-mid POSS-1 HOUSE-a mid-VEHICLE-cl-a-afront"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "CORNER-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
@@ -128,7 +128,7 @@ def ex13a : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "JOG"), ("pathDisplayed", "none")] }
 
@@ -141,7 +141,7 @@ def ex13b : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "RUN-agreeing"), ("pathDisplayed", "forward")] }
 
@@ -154,7 +154,7 @@ def ex13c : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "50"), ("classifier", "TREE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "PERSON-cl-agreeing"), ("pathDisplayed", "forward")] }
 
@@ -168,7 +168,7 @@ def ex13d : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "JOG"), ("pathDisplayed", "none")] }
 
@@ -181,7 +181,7 @@ def ex13e : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "RUN-agreeing"), ("pathDisplayed", "forward")] }
 
@@ -194,7 +194,7 @@ def ex13f : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-b. ANN PERSON-cl-a, IX-a"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "50"), ("classifier", "TREE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "PERSON-cl-agreeing"), ("pathDisplayed", "forward")] }
 
@@ -207,7 +207,7 @@ def ex16a : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "JOG")] }
 
@@ -220,7 +220,7 @@ def ex16b : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "57"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "RUN-agreeing")] }
 
@@ -233,7 +233,7 @@ def ex16c : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "RUN-neutral"), ("signerMoves", "yes")] }
 
@@ -246,7 +246,7 @@ def ex16d : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "RUN-neutral"), ("signerMoves", "no")] }
 
@@ -259,7 +259,7 @@ def ex16e : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "57"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "PERSON-cl-agreeing")] }
 
@@ -272,7 +272,7 @@ def ex16f : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "60"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "yes")] }
 
@@ -285,7 +285,7 @@ def ex16g : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "no")] }
 
@@ -298,7 +298,7 @@ def ex19a : Datum :=
     glossedTokens := []
     context := "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_right"), ("roleShift", "strict"), ("verb", "DRIVE")] }
 
@@ -311,7 +311,7 @@ def ex19b : Datum :=
     glossedTokens := []
     context := "POSS-1 HOUSE HAVE POLE-a. SOMETIME CAR HIT-a. YESTERDAY ANN-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_left"), ("roleShift", "strict"), ("verb", "DRIVE")] }
 
@@ -324,7 +324,7 @@ def ex21a : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "JOG")] }
 
@@ -338,7 +338,7 @@ def ex21b : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "57"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "RUN-agreeing")] }
 
@@ -351,7 +351,7 @@ def ex21c : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "RUN-neutral"), ("signerMoves", "yes")] }
 
@@ -364,7 +364,7 @@ def ex21d : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "RUN-neutral"), ("signerMoves", "no")] }
 
@@ -377,7 +377,7 @@ def ex21e : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "PERSON-cl-agreeing")] }
 
@@ -390,7 +390,7 @@ def ex21f : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "yes")] }
 
@@ -403,7 +403,7 @@ def ex21g : Datum :=
     glossedTokens := []
     context := "YESTERDAY IX-1 SEE TREE TREE-cl-a, SELF PLANT TREE GROW. ANN PERSON-cl-b SELF-b DRUNK. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "60"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "no")] }
 
@@ -416,7 +416,7 @@ def ex23a : Datum :=
     glossedTokens := []
     context := "YESTERDAY ANN IX-b WOW ESCAPE POLICE. FOREST AREA-a IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl"), ("direction", "passing_rep"), ("roleShift", "strict"), ("figure", "PERSON-cl")] }
 
@@ -429,7 +429,7 @@ def ex23b : Datum :=
     glossedTokens := []
     context := "YESTERDAY ANN IX-b WOW ESCAPE POLICE. FOREST AREA-a IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "TREE-cl"), ("direction", "passing_rep"), ("roleShift", "broad"), ("figure", "PERSON-cl")] }
 
@@ -442,7 +442,7 @@ def ex24a : Datum :=
     glossedTokens := []
     context := "YESTERDAY ANN(-b) CAR RACE. IX-b MUST DRIVE PAST TELEPHONE POLE POLE-cl POLE-cl. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_rep"), ("roleShift", "strict"), ("figure", "VEHICLE-cl")] }
 
@@ -455,7 +455,7 @@ def ex24b : Datum :=
     glossedTokens := []
     context := "YESTERDAY ANN(-b) CAR RACE. IX-b MUST DRIVE PAST TELEPHONE POLE POLE-cl POLE-cl. IX-b"
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "POLE-cl"), ("direction", "passing_rep"), ("roleShift", "broad"), ("figure", "VEHICLE-cl")] }
 

@@ -22,7 +22,7 @@
     "translation": "of this little town",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The diminutive suffix moves gorod 'town' into declension II without changing its masculine gender: the assignment rules disregard affective suffixes.",
@@ -59,7 +59,7 @@
     "translation": "One large basket fell.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -105,7 +105,7 @@
     "translation": "Three large baskets fell.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -143,7 +143,7 @@
     "translation": "A person is missing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -189,7 +189,7 @@
     "translation": "A small rhinoceros was here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -231,7 +231,7 @@
     "translation": "The big hippopotamus has fallen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -273,7 +273,7 @@
     "translation": "The big hippopotamus has fallen.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -315,7 +315,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "une grande garçon",
         "judgment": "ungrammatical"
@@ -353,7 +353,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "une grande jardin",
         "judgment": "ungrammatical"
@@ -391,7 +391,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "un grand femme",
         "judgment": "ungrammatical"
@@ -429,7 +429,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "un grand fleur",
         "judgment": "ungrammatical"
@@ -467,7 +467,7 @@
     "translation": "The man is good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -505,7 +505,7 @@
     "translation": "The chair is good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -543,7 +543,7 @@
     "translation": "The girl is good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -581,7 +581,7 @@
     "translation": "The men are good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -619,7 +619,7 @@
     "translation": "The chairs are good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -657,7 +657,7 @@
     "translation": "The girls are good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -699,7 +699,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Surselvan; predicative adjectives take -s for masculine, -a for feminine controllers. The book cites Haiman 1974: 130-4.",
@@ -736,7 +736,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Haiman 1974: 130-4.",
@@ -777,7 +777,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The -Ø form occurs with controllers unspecified for gender and number and never with a noun-headed controller: a neutral target gender, one of the two non-lexical genders. The book cites Haiman 1974: 130-4.",
@@ -806,7 +806,7 @@
     "translation": "It is hot in the house.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Chichewa: the locative prefix mu- on the verb is a minor target gender with no nouns regularly assigned to a corresponding controller gender.",
@@ -826,7 +826,7 @@
     "translation": "my uncle",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "moj djadja",
         "judgment": "acceptable"
@@ -864,7 +864,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Kolami: the numerals 'two', 'three' and 'four' have a form for female humans beside the male-human and other forms, but they alone do: overdifferentiated targets, which do not induce a third gender. The book cites Emeneau 1955: 56.",
@@ -893,7 +893,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Emeneau 1955: 56.",
@@ -922,7 +922,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Emeneau 1955: 56.",
@@ -951,7 +951,7 @@
     "translation": "the new doctor",
     "context": "The doctor is a woman.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -993,7 +993,7 @@
     "translation": "the new doctor",
     "context": "The doctor is a woman.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1035,7 +1035,7 @@
     "translation": "the doctor worked",
     "context": "The doctor is a woman.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1077,7 +1077,7 @@
     "translation": "the doctor worked",
     "context": "The doctor is a woman.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1123,7 +1123,7 @@
     "translation": "",
     "context": "The doctor is a woman.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Masculine and feminine agreement with one and the same noun at once: only the notion of consistent agreement pattern separates the two. The book prints nas-Ø, a misprint for naš-Ø.",
@@ -1146,7 +1146,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1182,7 +1182,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1215,7 +1215,7 @@
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1261,7 +1261,7 @@
     "translation": "one woman",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Mba: the optional animate marker beside class 1 agreement. UNVERIFIED: the grave accents render a short, steep tone mark that differs from the book's grave elsewhere.",
@@ -1290,7 +1290,7 @@
     "translation": "one song",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "For an inanimate taking the same numeral form the optional element is not available. UNVERIFIED: the grave accents render a short, steep tone mark that differs from the book's grave elsewhere.",
@@ -1323,7 +1323,7 @@
     "translation": "one snake",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "UNVERIFIED: the grave accents render a short, steep tone mark that differs from the book's grave elsewhere.",
@@ -1352,7 +1352,7 @@
     "translation": "one leaf",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Class 5 agreement as in (29), but no animate marker: attributive agreement and the optional marker together yield eleven agreement classes. UNVERIFIED: the grave accents render a short, steep tone mark that differs from the book's grave elsewhere.",
@@ -1409,7 +1409,7 @@
     "translation": "His Holiness is not so touchy as to take offence.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1477,7 +1477,7 @@
     "translation": "His Holiness, with whom I have just been speaking...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1535,7 +1535,7 @@
     "translation": "Your Majesty will leave when he (literally 'she') wishes.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1626,7 +1626,7 @@
     "translation": "His Majesty was worried, and again he sent La Varenne to his minister.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1685,7 +1685,7 @@
     "translation": "the girl I saw...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1759,7 +1759,7 @@
     "translation": "Do look at this girl, see how well she plays tennis.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "Schau dir dieses Mädchen an, wie gut es Tennis spielt",
         "judgment": "acceptable"
@@ -1810,7 +1810,7 @@
     "translation": "His Supreme Majesty.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1861,7 +1861,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1964,7 +1964,7 @@
     "translation": "His Supreme Majesty, who is very happy here in Valencia, was received with much applause.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2019,7 +2019,7 @@
     "translation": "He showed himself very moved.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2066,7 +2066,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2112,7 +2112,7 @@
     "translation": "Ivanova is a good doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2159,7 +2159,7 @@
     "translation": "Ivanova is a good doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2202,7 +2202,7 @@
     "translation": "The doctor came.",
     "context": "A woman doctor is intended.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2245,7 +2245,7 @@
     "translation": "The doctor came.",
     "context": "A woman doctor is intended.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2307,7 +2307,7 @@
     "translation": "Your guide is in front of you. He has lifted his hand.",
     "context": "Red Square, May 1988: the guide and the speaker were both women.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2361,7 +2361,7 @@
     "translation": "The young journeymen became serious...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2424,7 +2424,7 @@
     "translation": "Powerful pashas goaded both of them.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2479,7 +2479,7 @@
     "translation": "Those wretches have cheated me again!",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2534,7 +2534,7 @@
     "translation": "those wretches who cheated me...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2624,7 +2624,7 @@
     "translation": "Those wretches have ruined my radio! They have already damaged your television.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2671,7 +2671,7 @@
     "translation": "She is a good doctor.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "ona xoroš-ij vrač",
         "judgment": "acceptable"
@@ -2722,7 +2722,7 @@
     "translation": "to a good doctor",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2768,7 +2768,7 @@
     "translation": "their foreign leaders",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2807,7 +2807,7 @@
     "translation": "our first hero",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2846,7 +2846,7 @@
     "translation": "our first hero",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2885,7 +2885,7 @@
     "translation": "our first hero",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2924,7 +2924,7 @@
     "translation": "our first hero",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2987,7 +2987,7 @@
     "translation": "The Sarajevans played better and dominated the field almost completely.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3054,7 +3054,7 @@
     "translation": "You'll never get it into the car.",
     "context": "John is trying to get a large table into the boot of his car; Mary speaks.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "tu n'arriveras jamais à le faire entrer dans la voiture",
         "judgment": "unacceptable"
@@ -3120,7 +3120,7 @@
     "translation": "You'll never get it into the car.",
     "context": "John is trying to get a desk into the boot of his car; Mary speaks.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "bureau 'desk' is masculine. The book's source is Tasmowski-De Ryck & Verluyten 1981, 1982.",
@@ -3213,7 +3213,7 @@
     "translation": "If you want to loosen the nut from the bolt you must hold IT and turn IT to the right.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Bosch 1988: 225: stressed pronouns must denote male and female, so the sentence is out with the nut and the bolt. The book stars IHN and SIE inside the example.",
@@ -3318,7 +3318,7 @@
     "translation": "The man had a row with his girl friend, because SHE wanted to go on to another pub and HE didn't feel like it any more.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -3351,7 +3351,7 @@
     "translation": "The pretty small child is sleeping.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3397,7 +3397,7 @@
     "translation": "The pretty small child is sleeping.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3443,7 +3443,7 @@
     "translation": "The small child who is sleeping.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3489,7 +3489,7 @@
     "translation": "The small child who is sleeping.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3583,7 +3583,7 @@
     "translation": "The small child who sleeps in this house who goes to school in London – its mother loves it.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "kamwana ka-mene ka-ma-gona mu-nyumba umu ka-mene ka-ma-pita ku sukulu ku London, mai ake a-ma-ka-konda iko(ko)",
         "judgment": "acceptable"
@@ -3682,7 +3682,7 @@
     "translation": "The fool who sleeps in this house who goes to school in London – his dog loves him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "chitsilu chi-mene chi-ma-gona mu-nyumba umu chi-mene chi-ma-pita ku sukulu ku London, galu wa-ke a-ma-mu-konda iye(yo)",
         "judgment": "ungrammatical"
@@ -3808,7 +3808,7 @@
     "translation": "The fool who sleeps in this house, who goes to school in London – his dog loves him and indeed his mother agrees that she saw him walking his dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "chitsilu chi-mene chi-ma-gona mu-nyumba umu chi-mene chi-ma-pita ku sukulu ku London, galu wa-ke a-ma-chi-konda ndipo mai a-ke a-ma-bvomera-di kuti a-na-mu-ona iye(yo) a-ku-yenda ndi galu yo",
         "judgment": "acceptable"
@@ -3846,7 +3846,7 @@
     "translation": "My friend has arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3892,7 +3892,7 @@
     "translation": "My friends have arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3938,7 +3938,7 @@
     "translation": "my good friend",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3976,7 +3976,7 @@
     "translation": "my good friend",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4014,7 +4014,7 @@
     "translation": "My cows arrived.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Acceptable but not preferred in urban Swahili, where w-angu is preferred: for those speakers ng'ombe is in gender 1/2, for the others a hybrid. The book cites Wald 1975.",
@@ -4043,7 +4043,7 @@
     "translation": "that girl",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4085,7 +4085,7 @@
     "translation": "that girl",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4131,7 +4131,7 @@
     "translation": "That girl is coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4177,7 +4177,7 @@
     "translation": "That girl is coming.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4231,7 +4231,7 @@
     "translation": "My goats attacked your cows.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4264,7 +4264,7 @@
     "translation": "My goats attacked your cows.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4310,7 +4310,7 @@
     "translation": "my big cows",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "ng'ombe dz-angu wa-kulu",
         "judgment": "acceptable"
@@ -4357,7 +4357,7 @@
     "translation": "these cows",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Makonde, Mawia dialect: nouns formerly in 9/10 take the class 2 prefix in the plural, morphological adjustment to the new gender. The book cites Wald 1975: 277-9.",
@@ -4398,7 +4398,7 @@
     "translation": "You and I will stay at home.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4460,7 +4460,7 @@
     "translation": "My brother and I are learning to play the piano.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4518,7 +4518,7 @@
     "translation": "Your father and you are alike.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4568,7 +4568,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Two singulars conjoined take the dual. The book cites Lenček 1972.",
@@ -4613,7 +4613,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -4658,7 +4658,7 @@
     "translation": "Marta and his (Igor's) two brothers will come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -4703,7 +4703,7 @@
     "translation": "The chair and the leg of the table are broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The verb agrees with the nearer conjunct only: no resolution. The book cites Bokamba 1985: 45.",
@@ -4748,7 +4748,7 @@
     "translation": "The leg of the table and the chair are broken.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Reversing the conjuncts changes the agreement: again the nearer conjunct. The book cites Bokamba 1985: 45.",
@@ -4809,7 +4809,7 @@
     "translation": "To this job were devoted her thoughts and her feelings.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: with the target preceding, the verb agrees with the nearer feminine conjunct; the resolved form would be masculine.",
@@ -4859,7 +4859,7 @@
     "translation": "Horror and fear seized the whole village.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Quoted by Lenček 1972: 59. Agreement with the first conjunct, not the nearer; the resolved form would be the masculine dual.",
@@ -4892,7 +4892,7 @@
     "translation": "Raman and Murugan came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
@@ -4933,7 +4933,7 @@
     "translation": "Elder sister and younger sister are going to the temple today.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
@@ -4970,7 +4970,7 @@
     "translation": "Elder sister and elder brother came yesterday.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
@@ -5003,7 +5003,7 @@
     "translation": "The dog and the cat came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Asher 1985: 67, 69, 72-3.",
@@ -5036,7 +5036,7 @@
     "translation": "Raman and the dog came.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "A rational conjoined with a non-rational: an alternative construction must be used, though some speakers allow the rational plural colloquially. The book cites Arden 1942: 184-5 and Asher 1985: 73, 185 for the judgment.",
@@ -5069,7 +5069,7 @@
     "translation": "Mother and daughter came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Telugu: the rational plural, as in Tamil. The book's Telugu data are from Malathi Rao (personal communication).",
@@ -5103,7 +5103,7 @@
     "translation": "A dog and a cat came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book's Telugu data are from Malathi Rao (personal communication).",
@@ -5137,7 +5137,7 @@
     "translation": "She and the dog came.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Not uncommon colloquially, though a different construction is more common. The book's Telugu data are from Malathi Rao (personal communication).",
@@ -5175,7 +5175,7 @@
     "translation": "Father and mother are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5221,7 +5221,7 @@
     "translation": "Father and the donkey are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5267,7 +5267,7 @@
     "translation": "Father and the kid are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5313,7 +5313,7 @@
     "translation": "Father and the loom are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5359,7 +5359,7 @@
     "translation": "The donkey and the kid are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5405,7 +5405,7 @@
     "translation": "The donkey and the loom are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5451,7 +5451,7 @@
     "translation": "The people and the donkey are near.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5501,7 +5501,7 @@
     "translation": "The woman, the fat man and the thin child were seen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5555,7 +5555,7 @@
     "translation": "The fat woman, the small child and the tall man were seen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5613,7 +5613,7 @@
     "translation": "The cow, the wild cat, the jackal and the canoe were seen.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5667,7 +5667,7 @@
     "translation": "The man and his dog fell down.",
     "context": "",
     "judgment": "marginal",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Human and non-human conjoined with the class 8 form: unnatural; the comitative construction (36) is preferred. The book cites Givón 1970: 253-4; 1971: 38-9.",
@@ -5704,7 +5704,7 @@
     "translation": "The man and his dog fell down.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -5750,7 +5750,7 @@
     "translation": "The man fell down with his dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The comitative: a simple subject, and resolution is avoided. The book cites Givón 1970: 253-4; 1971: 38-9.",
@@ -5787,7 +5787,7 @@
     "translation": "The chief and the lunatic left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Chibemba: the same rules. The book cites Givón 1972: 82.",
@@ -5832,7 +5832,7 @@
     "translation": "The book, the bed and the peanut are here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Givón 1972: 82.",
@@ -5869,7 +5869,7 @@
     "translation": "The oranges and leaves are rotting.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Two plural nouns of gender 5/6 with the plural form of that gender: no number resolution and so no gender resolution, agreement with the nearest conjunct.",
@@ -5906,7 +5906,7 @@
     "translation": "The cats and dogs are running.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "",
@@ -5947,7 +5947,7 @@
     "translation": "The cats and the oranges are there.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Plural nouns of different genders taking the same target gender form: that form is used, so the rule refers to target genders.",
@@ -5984,7 +5984,7 @@
     "translation": "The children and the oranges are missing.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Even a human and a non-human conjoined.",
@@ -6029,7 +6029,7 @@
     "translation": "a new book and exercise book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Grevisse 1964: 306-7.",
@@ -6074,7 +6074,7 @@
     "translation": "the general poverty and ruin",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Grevisse 1964: 306-7.",
@@ -6119,7 +6119,7 @@
     "translation": "an excellent father and mother",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Grevisse 1964: 306-7.",
@@ -6164,7 +6164,7 @@
     "translation": "a marvellous knowledge and skill",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The rules apply alike to animates and inanimates. The book cites Grevisse 1964: 306-7.",
@@ -6205,7 +6205,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -6250,7 +6250,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -6315,7 +6315,7 @@
     "translation": "That roof and the nest on it will remain in my memory.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -6380,7 +6380,7 @@
     "translation": "That tree and the nest on it will remain in my memory.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Two neuter singulars take a masculine dual. The book cites Lenček 1972.",
@@ -6421,7 +6421,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -6490,7 +6490,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "All conjuncts neuter, yet the masculine plural: number resolution, triggered by the singular conjuncts, brings gender resolution with it. The book cites Lenček 1972.",
@@ -6535,7 +6535,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Lenček 1972.",
@@ -6600,7 +6600,7 @@
     "translation": "Those memories and reflections increasingly gave way to new impressions.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: neuter plurals only, so no number resolution and no gender resolution; the neuter plural is agreement with the nearer conjunct. The book glosses ustupal-a 'yielded-NEUT-PL'.",
@@ -6654,7 +6654,7 @@
     "translation": "All his prayers and assurances did not help at all.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Anikina Vremena: feminine and neuter plurals with a masculine predicate: conjuncts requiring different target gender forms trigger gender resolution on their own.",
@@ -6700,7 +6700,7 @@
     "translation": "They (the boy and the girl) are tired.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Icelandic: the neuter plural for any mixture of genders. The book cites Jónsson 1927: 14.",
@@ -6749,7 +6749,7 @@
     "translation": "I saw a ewe and a lamb, both black.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book prints bœði svort. The book cites Einarsson 1949: 133.",
@@ -6786,7 +6786,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6836,7 +6836,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -6895,7 +6895,7 @@
     "translation": "Hania and Rex were playing with a ball.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Rex is a dog: no masculine personal conjunct, yet the masculine personal form for almost all of Zieniukowa's informants, by the optional rules. The book cites Doroszewski 1962: 237.",
@@ -6941,7 +6941,7 @@
     "translation": "The dog and the cat were eating in the yard.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Two masculine animates: the masculine personal form for the majority, the non-masculine personal for seven informants.",
@@ -6991,7 +6991,7 @@
     "translation": "The mother, daughter and pram appeared suddenly.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "mama, córeczka i wózek ukazały się nagle",
         "judgment": "acceptable"
@@ -7049,7 +7049,7 @@
     "translation": "How long ago my father and mother had died.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Persons of mixed gender take the masculine. The book cites Kühner & Stegmann 1955: 44-52.",
@@ -7098,7 +7098,7 @@
     "translation": "The wall and the gate have been struck by lightning.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Mixed gender without persons takes the neuter. The book cites Kühner & Stegmann 1955: 44-52.",
@@ -7139,7 +7139,7 @@
     "translation": "The girl and the woman are happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Mallinson 1984: 445-6.",
@@ -7180,7 +7180,7 @@
     "translation": "The boy and the man are happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Mallinson 1984: 445-6.",
@@ -7229,7 +7229,7 @@
     "translation": "This boy and this girl are happy.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book glosses frumoşi 'happy.MASC.PL' and translates accordingly; frumoşi is 'beautiful'. The book cites Mallinson 1984: 445-6.",
@@ -7266,7 +7266,7 @@
     "translation": "The door and the wall... they...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Examples with personal pronouns: for mixed genders of inanimates the feminine. The book cites Gruiţă 1981: 26-7.",
@@ -7303,7 +7303,7 @@
     "translation": "The wall and the chair... they...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
@@ -7340,7 +7340,7 @@
     "translation": "The chair and the table... they...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
@@ -7377,7 +7377,7 @@
     "translation": "The walnut tree and the plum tree... they...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
@@ -7414,7 +7414,7 @@
     "translation": "The refrigerator and the television... they...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
@@ -7451,7 +7451,7 @@
     "translation": "The door and the table... they...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Gruiţă 1981: 26-7.",
@@ -7512,7 +7512,7 @@
     "translation": "Knowledge and intuition worked together in him and supplemented each other...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: feminine and neuter conjoined take the masculine.",
@@ -7614,7 +7614,7 @@
     "translation": "His place in the development of the town and his importance in the life of the inhabitants were such as we described them briefly before.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: neuters conjoined take the masculine plural.",
@@ -7676,7 +7676,7 @@
     "translation": "The discretion, subtlety and pedantry of these innumerable assignments perplexed the young man...",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika: all conjuncts feminine: feminine agreement, as in Slovene.",
@@ -7726,7 +7726,7 @@
     "translation": "Tahir-beg's carelessness and capriciousness offended him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Andrić, Travnička Hronika. Following Gudkov 1965, a masculine predicate with feminine conjuncts, one of the -Ø declension; all such examples denote inanimates, so the condition is semantic.",
@@ -7804,7 +7804,7 @@
     "translation": "A wooden leg and a crutch were all that medical science of that time could offer him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Popović, cited from Gudkov 1974: 61: feminine nouns in -a with masculine agreement, inanimates again.",
@@ -7842,7 +7842,7 @@
     "translation": "I have a pail and an arrow.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Grammatically animate nouns conjoined take animate agreement. The book cites Delisle 1972: 130.",
@@ -7879,7 +7879,7 @@
     "translation": "I have a boat and a paddle.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Delisle 1972: 130.",
@@ -7916,7 +7916,7 @@
     "translation": "I have a pail and a boat.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "Animate and inanimate may not be conjoined, whatever the verb form. The book cites Delisle 1972: 130.",
@@ -7953,7 +7953,7 @@
     "translation": "I have a pail and a boat.",
     "context": "",
     "judgment": "ungrammatical",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [],
     "comment": "The book cites Delisle 1972: 130.",
@@ -7994,7 +7994,7 @@
     "translation": "The knife and the pipe are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -8040,7 +8040,7 @@
     "translation": "The pipe and the tobacco are on the table.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

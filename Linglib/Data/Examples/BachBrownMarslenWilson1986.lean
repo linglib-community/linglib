@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "2")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "2")] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "2")] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "3")] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "3")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "3")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "4")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "4")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "4")] }
 
@@ -141,7 +141,7 @@ def level1_nl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "1")] }
 
@@ -154,7 +154,7 @@ def level1_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "1")] }
 
@@ -167,7 +167,7 @@ def level2_nl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "2"), ("dependency", "crossed")] }
 
@@ -180,7 +180,7 @@ def level2_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "2"), ("dependency", "nested")] }
 
@@ -193,7 +193,7 @@ def level3_nl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "3"), ("dependency", "crossed")] }
 
@@ -206,7 +206,7 @@ def level3_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "3"), ("dependency", "nested")] }
 
@@ -219,7 +219,7 @@ def level4_nl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "4"), ("dependency", "crossed")] }
 
@@ -232,7 +232,7 @@ def level4_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "4"), ("dependency", "nested")] }
 
@@ -245,7 +245,7 @@ def para2_nl : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "2"), ("dependency", "right-branching")] }
 
@@ -258,7 +258,7 @@ def para2_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "2"), ("dependency", "right-branching")] }
 
@@ -271,7 +271,7 @@ def para3_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "3"), ("dependency", "right-branching")] }
 
@@ -284,7 +284,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "3")] }
 
@@ -297,7 +297,7 @@ def ex_11 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "3")] }
 
@@ -310,7 +310,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("construction", "long-distance filler-gap")] }
 
@@ -323,7 +323,7 @@ def ex_14 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("construction", "long-distance filler-gap")] }
 
@@ -336,7 +336,7 @@ def filler1_de : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("sentence_type", "filler"), ("embedding_level", "1")] }
 

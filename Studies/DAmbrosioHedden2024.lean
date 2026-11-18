@@ -38,18 +38,6 @@ comparative is vague.
 * `Acyclic` is the paper's three-term condition, not Sen's acyclicity, which forbids strict cycles
   of every length; the Condorcet cycle violates both.
 
-## Errata
-
-* The paper offers utilitarian aggregation with non-negative weights as meeting Arrow's conditions
-  under cardinal unit comparability, but zero weights fail weak Pareto
-  (`Aggregation.not_weakPareto_utilitarian_zero`) and one positive weight makes a dictator
-  (`Aggregation.isDictator_utilitarian_single`).
-* Footnote 24 glosses Sen's Pareto extension rule (`Aggregation.paretoExtension`) as ranking `x` at
-  least as high as `y` when `x` is F-er on some dimension, which no object is than itself, though
-  the footnote calls the rule's outputs reflexive.
-* The quantificational comparative cited to Sassoon's 2013 book is on p. 368 of
-  [sassoon-2013], the paper's Sassoon 2013b.
-
 ## TODO
 
 * The sharp branch, May's and Weymark's characterizations of majority rule and the Pareto rule.
@@ -71,7 +59,7 @@ comparative is vague.
 
 namespace DAmbrosioHedden2024
 
-open Aggregation Finset Quantifier Sassoon2013 Trivalent
+open Aggregation Finset MeasurementTheory Quantifier Sassoon2013 Trivalent
 
 variable {ι O K : Type*}
 
@@ -194,7 +182,8 @@ transitive, and the Pareto rule, transitive but not complete, so an adjective th
 theorem nontrivial_ordinal_weakPareto_independent_nonDictatorial [Fintype ι] [LinearOrder K]
     [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
     Set.Nontrivial
-      {a : Rule ι O K | Invariant ordinal a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a} :=
+      {a : Rule ι O K |
+        Invariant (ordinal ι K) a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a} :=
   Set.nontrivial_of_mem_mem_ne
     ⟨majority_ordinalInvariant, majority_weakPareto, majority_independent, majority_nonDictatorial⟩
     ⟨paretoRule_ordinalInvariant, paretoRule_strongPareto.weakPareto, paretoRule_independent,
@@ -240,7 +229,7 @@ theorem supervaluationOn_utilitarian_eq_undefined_iff :
 admit every positively weighted utilitarian rule, so an adjective they govern is vague
 (p. 268). -/
 theorem nontrivial_arrovian_cardinalUnit [Nontrivial ι] [Nontrivial O] :
-    {a : Rule ι O K | Arrovian cardinalUnit a}.Nontrivial := by
+    {a : Rule ι O K | Arrovian (cardinalUnit ι K) a}.Nontrivial := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne O
   obtain ⟨v, -, hv⟩ := exists_incompRel_paretoRule (K := K) hxy (Classical.arbitrary ι)
   refine (nontrivial_of_supervaluationOn_eq_undefined

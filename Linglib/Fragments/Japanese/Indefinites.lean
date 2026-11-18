@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Japanese.Coordination
 public import Linglib.Fragments.Japanese.Pronouns
-public import Linglib.Syntax.Category.Pronoun.Indefinite
+public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 
 /-!
 # Japanese indefinite pronouns
@@ -10,7 +10,7 @@ public import Linglib.Syntax.Category.Pronoun.Indefinite
 Japanese builds its indefinite series on the indeterminate pronouns with a particle: *-ka*
 (*dare-ka* 'someone'), *-mo* (*dare-mo* 'nobody' with clausemate negation, and without negation the
 universal 'everyone') and *-demo* (*dare-demo* 'anyone'). A member of a series is its marker applied
-to an interrogative of `Japanese.Pronouns`, which derives its form and category; the particles *ka*
+to an indeterminate of `Japanese.Pronouns`, which derives its form and category; the particles *ka*
 and *mo* are the coordinators of `Japanese.Coordination`. The members are those of Haspelmath's
 table, in the Hepburn spelling of the interrogatives where he writes *itu*, *doo* and *ikutu*.
 
@@ -28,17 +28,18 @@ open Pronouns
 
 /-! ### The markers -/
 
-/-- The *-ka* marker puts the particle `Japanese.Coordination.ka` after the indeterminate. -/
-def ka : InterrogativePronoun → IndefinitePronoun :=
-  IndefinitePronoun.ofInterrogative (· ++ "-" ++ Coordination.ka.morph.form)
+/-- The *-ka* marker puts the particle `Japanese.Coordination.ka` after the indeterminate: the
+member is the indeterminate quantifier of the two. -/
+def ka (p : ProForm) : IndefinitePronoun :=
+  (IndeterminateQuantifier.mk p Coordination.ka none).toIndefinite
 
 /-- The *-mo* marker puts the particle `Japanese.Coordination.mo` after the indeterminate. -/
-def mo : InterrogativePronoun → IndefinitePronoun :=
-  IndefinitePronoun.ofInterrogative (· ++ "-" ++ Coordination.mo.morph.form)
+def mo (p : ProForm) : IndefinitePronoun :=
+  (IndeterminateQuantifier.mk p Coordination.mo none).toIndefinite
 
 /-- The *-demo* marker puts *-demo* after the indeterminate. -/
-def demo : InterrogativePronoun → IndefinitePronoun :=
-  IndefinitePronoun.ofInterrogative (· ++ "-demo")
+def demo : ProForm → IndefinitePronoun :=
+  IndefinitePronoun.ofProForm (· ++ "-demo")
 
 /-! ### The person row -/
 

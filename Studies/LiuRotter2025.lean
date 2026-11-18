@@ -97,10 +97,10 @@ theorem warmth_ne_spread : warmthEffect ≠ spreadEffect :=
 /-- Two modal items share a concord class when a meaning of each has forces of one class,
 both universal or both existential. -/
 def SharesConcordForce (a b : ModalItem) : Prop :=
-  ∃ x ∈ a.meaning, ∃ y ∈ b.meaning, (x.force.IsUniversal ↔ y.force.IsUniversal)
+  ∃ x ∈ a.meaning, ∃ y ∈ b.meaning, x.force.quantificational = y.force.quantificational
 
 instance : DecidableRel SharesConcordForce :=
-  λ _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, (_ ↔ _)))
+  fun _ _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _ = _))
 
 theorem must_certainly_share :
     SharesConcordForce must.toModalItem certainly := by decide

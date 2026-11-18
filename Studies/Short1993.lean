@@ -35,7 +35,7 @@ theorem card_consonants : consonants.card = 25 := by decide +kernel
 
 /-- Every voiceless obstruent but *c*, *č* and *ch* has a phonemic counterpart in [voice] (pp.
 457–458). -/
-theorem voiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false → x.HasValue .voice false →
+theorem voiced_mem_iff : ∀ x ∈ inventory, x .sonorant = false → x .voice = false →
     (x.setFeature .voice true ∈ inventory ↔ x ≠ c ∧ x ≠ č ∧ x ≠ ch) := by
   decide +kernel
 
@@ -48,8 +48,8 @@ theorem setFeature_voice_c_č_ch :
 /-- The voiced obstruents whose counterpart in [voice] is a phoneme are all but *h*, whose
 counterpart is the voiceless glottal [h]. Where voice is neutralized Short gives /x/ as the
 voiceless counterpart of /h/ (p. 458), which differs from it in more than [voice]. -/
-theorem devoiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false →
-    x.HasValue .voice true → (x.setFeature .voice false ∈ inventory ↔ x ≠ h) := by
+theorem devoiced_mem_iff : ∀ x ∈ inventory, x .sonorant = false →
+    x .voice = true → (x.setFeature .voice false ∈ inventory ↔ x ≠ h) := by
   decide +kernel
 
 -- p. 462
@@ -66,9 +66,9 @@ theorem image_secondPalatalization : palatalizing.image secondPalatalization = {
 /-- The reflex of a palatalizing segment is a phoneme, a coronal strident that is not dorsal,
 and has its voicing. -/
 theorem secondPalatalization_mem : ∀ x ∈ palatalizing,
-    secondPalatalization x ∈ inventory ∧ (secondPalatalization x).HasValue .coronal true ∧
-      (secondPalatalization x).HasValue .strident true ∧
-      (secondPalatalization x).HasValue .dorsal false ∧
+    secondPalatalization x ∈ inventory ∧ secondPalatalization x .coronal = true ∧
+      secondPalatalization x .strident = true ∧
+      secondPalatalization x .dorsal = false ∧
       secondPalatalization x .voice = x .voice := by
   decide +kernel
 

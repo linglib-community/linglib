@@ -8,7 +8,7 @@ public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Linglib.Syntax.Minimalist.Locality.Horizon
+public import Linglib.Syntax.Minimalist.Probe.Horizon
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -43,12 +43,11 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
   feature; its matrix verb and the clause's grammatical role are read off its gloss line
   (`Data/Examples/Gloss.lean`), the verb by its declared past stem in `Hungarian.Verbs` and the
-  role by the case cell of `Hungarian.Pronouns.az` its expletive realizes. Direct perception,
-  which the paper says removes the backshifted reading pragmatically, is its `directPerception`
-  feature. Each single-embedding
-  row also carries a linearized witness over a study lexicon that pronounces the row's gloss
-  line (`Minimalist.SpellsOut`) and shows the same matrix verb and expletive cell the readers
-  find.
+  role by the case cell of `Hungarian.Pronouns.azRealization` its expletive fills. Direct
+  perception, which the paper says removes the backshifted reading pragmatically, is its
+  `directPerception` feature. Each single-embedding row also carries a linearized witness over a
+  study lexicon that pronounces the row's gloss line (`Minimalist.SpellsOut`) and shows the same
+  matrix verb and expletive cell the readers find.
 * Footnote 9 allows the complement of *mond* to be an XP with Say > Foc > X > T, which movement
   to Spec,FocP escapes but Agree from T does not; the shared sequence has no such head, so those
   complements are SayPs here.
@@ -179,7 +178,7 @@ theorem applicable_vpInternal_cP :
 
 /-- The readings of a past clause under a past matrix, where backshift is the default and the
 simultaneous reading arises only through the rule. -/
-def readings (a : Attachment) (cs : ComplementSize) : Finset Ordering :=
+def readings (a : Attachment) (cs : ComplementSize) : PointAlgebra :=
   pastUnderPast (SOTRule.Applicable a cs)
 
 theorem applicable_nonSpeech :
@@ -209,10 +208,10 @@ theorem english_simultaneous :
 
 /-- One can only perceive directly what happens now: the readings the paper reports are the
 grammatical ones, narrowed to the simultaneous reading under direct perception. -/
-def observed (direct : Prop) [Decidable direct] (rs : Finset Ordering) : Finset Ordering :=
+def observed (direct : Prop) [Decidable direct] (rs : PointAlgebra) : PointAlgebra :=
   if direct then rs ⊓ ⟦present⟧ else rs
 
-theorem observed_le (direct : Prop) [Decidable direct] (rs : Finset Ordering) :
+theorem observed_le (direct : Prop) [Decidable direct] (rs : PointAlgebra) :
     observed direct rs ≤ rs := by
   unfold observed
   split
@@ -241,15 +240,15 @@ def readingTable : List (String × Ordering) := [("simultaneous", .eq), ("backsh
 
 /-- A row's reported readings at embedding level `lvl` agree with a predicted reading set when
 each named reading is judged acceptable exactly if predicted. -/
-def Agrees (e : Datum) (lvl : String) (rs : Finset Ordering) : Prop :=
+def Agrees (e : Datum) (lvl : String) (rs : PointAlgebra) : Prop :=
   ∀ r ∈ e.readings, ∀ x ∈ readingTable, r.1 = lvl ++ x.1 → (r.2 = .acceptable ↔ x.2 ∈ rs)
 
-instance (e : Datum) (lvl : String) (rs : Finset Ordering) : Decidable (Agrees e lvl rs) :=
+instance (e : Datum) (lvl : String) (rs : PointAlgebra) : Decidable (Agrees e lvl rs) :=
   inferInstanceAs (Decidable (∀ r ∈ e.readings, ∀ x ∈ readingTable, _ → _))
 
 /-- The predicted readings of a single-embedding Hungarian row: the grammar at its clause
 type, narrowed by direct perception. -/
-def predicted (e : Datum) (ct : ClauseType) : Finset Ordering :=
+def predicted (e : Datum) (ct : ClauseType) : PointAlgebra :=
   observed (DirectPerceptionAt e "directPerception") (readings .sizeDependent ct.size)
 
 /-- The single-embedding rows of §2.1–2.2: object, subject and adjunct clauses of both types. -/
@@ -268,7 +267,7 @@ material precedes the *hogy*-clause, finiteness is the `PST` gloss label, every 
 paper being past, and the stem matches `Hungarian.Verbs.Verb.stem` exactly. -/
 def matrixWord? (e : Datum) : Option (GlossedWord × Hungarian.Verbs.Verb) :=
   (e.glossedWords.takeWhile fun w ↦ w.lexicalGloss? != some "that".toList).findSome? fun w ↦
-    if Morphology.Features.ofLabels w.labels .tense == (UD.Tense.Past : Flat _) then
+    if w.features .tense == (UD.Tense.Past : Flat _) then
       (verbs.find? fun v ↦ w.stem == v.stem.toList).map (w, ·)
     else none
 
@@ -282,21 +281,26 @@ inductive ClauseRole where
   | adjunct
   deriving DecidableEq, Repr
 
-/-- The case cells of the expletive paradigm with the clause role each diagnoses (§2.1–2.2):
-accusative *azt* for an object clause, nominative *az* for the subject clause, and instrumental
-*azzal* or *amiatt* 'because of that' for an adjunct. -/
-def roleTable : List (Option String × ClauseRole) :=
-  [(Hungarian.Pronouns.az .acc, .object), (Hungarian.Pronouns.az .nom, .subject),
-    (Hungarian.Pronouns.az .inst, .adjunct), (some Hungarian.Pronouns.amiatt, .adjunct)]
+/-- The clause role that a case of the expletive correlate diagnoses (§2.1–2.2): the accusative
+an object clause, the nominative the subject clause and the instrumental an adjunct. -/
+def ClauseRole.ofCase : Hungarian.Case → Option ClauseRole
+  | .acc => some .object
+  | .nom => some .subject
+  | .inst => some .adjunct
+  | _ => none
 
-/-- The clause's role, read off its expletive correlate: the word glossed *it* — the gloss
-setting the demonstrative apart from its article homograph — realizes a case cell of
-`Hungarian.Pronouns.az`, and `roleTable` names the cell's role. -/
+/-- The clause role a correlate's form diagnoses: an adjunct for *amiatt* 'because of that', and
+otherwise the role of a case cell of *az* that the form fills. -/
+def roleOfForm? (f : List Char) : Option ClauseRole :=
+  if f = Hungarian.Pronouns.amiatt.toList then some .adjunct
+  else [ClauseRole.object, .subject, .adjunct].find? fun r ↦
+    ∃ c ∈ Hungarian.Pronouns.azRealization.cells () f, ClauseRole.ofCase c = some r
+
+/-- The clause's role, read off its expletive correlate: the word glossed *it*, the gloss setting
+the demonstrative apart from its article homograph. -/
 def clauseRole? (e : Datum) : Option ClauseRole :=
   e.glossedWords.findSome? fun w ↦
-    if w.lexicalGloss? = some "it".toList then
-      (roleTable.find? fun x ↦ x.1.map (·.toList) == some w.wordform).map (·.2)
-    else none
+    if w.lexicalGloss? = some "it".toList then roleOfForm? w.wordform else none
 
 /-- The frame shape a clause role demands of the matrix verb: a clausal complement for an object
 clause, a clausal subject for a subject clause, and for an adjunct a frame with no clausal
@@ -334,7 +338,7 @@ theorem clauseType_not_of_verb :
 /-- An embedded clause carries its morphological tense and its size. -/
 structure Clause where
   /-- The clause's tense as a comparison cell, `⟦Tense.past⟧` or `⟦Tense.future⟧`. -/
-  tense : Finset Ordering
+  tense : PointAlgebra
   /-- The clause's size. -/
   size : ComplementSize
 
@@ -342,14 +346,14 @@ structure Clause where
 clause under a past clause is read by the rule; a past clause under any other tense is
 backshifted only, since the rule needs an agreeing PAST above; a non-past clause has no
 past-under-past reading. -/
-def linkReadings (a : Attachment) (matrix : Finset Ordering) (c : Clause) : Finset Ordering :=
+def linkReadings (a : Attachment) (matrix : PointAlgebra) (c : Clause) : PointAlgebra :=
   if c.tense = ⟦past⟧ then (if matrix = ⟦past⟧ then readings a c.size else ⟦past⟧) else ⊥
 
 /-- The readings at each level of a chain of embedded clauses under a matrix tense, matrix first.
 Each clause is read against the clause immediately containing it: by (41) every clause attaches
 at its own size, so a SayP is never inside a TP of any higher clause while a TP is inside the TP
 of the clause containing it, and only structurally adjacent clauses interact (§2.3, §4). -/
-def profile (a : Attachment) : Finset Ordering → List Clause → List (Finset Ordering)
+def profile (a : Attachment) : PointAlgebra → List Clause → List (PointAlgebra)
   | _, [] => []
   | m, c :: rest => linkReadings a m c :: profile a c.tense rest
 
@@ -404,7 +408,7 @@ theorem horizon_admits_FocP :
 
 /-! ### Recognition by witness
 
-A linearized syntactic object over a study lexicon pronounces each single-embedding row's gloss
+A planar syntactic object over a study lexicon pronounces each single-embedding row's gloss
 line (`Minimalist.SpellsOut`), and its pre-complementizer verb and its expletive cell are the
 matrix verb and clause role the gloss readers find, so the readers run against derived
 structure. The witnesses are right-branching linearizations, each *hogy*-clause a constituent;
@@ -467,71 +471,70 @@ def lexicon : List LexicalItem :=
     liSzomorú, liTelesírt, liSajnos, liKorábban] : List LexicalItem.Token).map (·.item)
 
 /-- The embedded clause the rows share, *Mari szomorú volt*. -/
-def wSad : LinearizedSyntacticObject := liMari * (liSzomorú * liVolt)
+def wSad : PlanarSyntacticObject := liMari * (liSzomorú * liVolt)
 
 /-- (4): *Peti saw with his own eyes that Mari was sad*. -/
-def w4 : LinearizedSyntacticObject :=
+def w4 : PlanarSyntacticObject :=
   liPeti * (liA * (liSaját * (liSzemével * (liLátta * (liAzt * (liHogy * wSad))))))
 
 /-- (5): the heard variant of (4), *that Mari cried*. -/
-def w5 : LinearizedSyntacticObject :=
+def w5 : PlanarSyntacticObject :=
   liPeti * (liA * (liSaját * (liFülével * (liHallotta * (liAzt * (liHogy * (liMari * liSírt)))))))
 
 /-- (6): *Peti dreamt it that Mari was sad*. -/
-def w6 : LinearizedSyntacticObject :=
+def w6 : PlanarSyntacticObject :=
   liPeti * (liAzt * (liÁlmodta * (liHogy * wSad)))
 
 /-- (7): the *think* variant of (6). -/
-def w7 : LinearizedSyntacticObject :=
+def w7 : PlanarSyntacticObject :=
   liPeti * (liAzt * (liGondolta * (liHogy * wSad)))
 
 /-- (8): *It worried Peti that Mari was sad*, the subject clause. -/
-def w8 : LinearizedSyntacticObject :=
+def w8 : PlanarSyntacticObject :=
   liAz * (liAggasztotta * (liPetit * (liHogy * wSad)))
 
 /-- (9): *You growled because of it that Mari was sad*, the adjunct clause. -/
-def w9 : LinearizedSyntacticObject :=
+def w9 : PlanarSyntacticObject :=
   liMorogtál * (liAmiatt * (liHogy * wSad))
 
 /-- (11a): *Peti said it that (unfortunately) Mari was sad*. -/
-def w11a : LinearizedSyntacticObject :=
+def w11a : PlanarSyntacticObject :=
   liPeti * (liAzt * (liMondta * (liHogy * (liSajnos * wSad))))
 
 /-- (11b): the *shout* variant of (11a). -/
-def w11b : LinearizedSyntacticObject :=
+def w11b : PlanarSyntacticObject :=
   liPeti * (liAzt * (liRikoltotta * (liHogy * (liSajnos * wSad))))
 
 /-- (11c): the *growl* variant of (11a). -/
-def w11c : LinearizedSyntacticObject :=
+def w11c : PlanarSyntacticObject :=
   liPeti * (liAzt * (liMorogta * (liHogy * (liSajnos * wSad))))
 
 /-- (12): *You phoned with it that (unfortunately) Mari was sad*, the adjunct clause. -/
-def w12 : LinearizedSyntacticObject :=
+def w12 : PlanarSyntacticObject :=
   liTelefonáltál * (liAzzal * (liHogy * (liSajnos * wSad)))
 
 /-- (13): *Zsuzsi heard it from Peti that unfortunately Mari was sad*. -/
-def w13 : LinearizedSyntacticObject :=
+def w13 : PlanarSyntacticObject :=
   liZsuzsi * (liPetitől * (liAzt * (liHallotta * (liHogy * (liSajnos * wSad)))))
 
 /-- (14): *Peti saw from the cried-in handkerchiefs that (earlier) Mari was sad*. -/
-def w14 : LinearizedSyntacticObject :=
+def w14 : PlanarSyntacticObject :=
   liPeti * (liA * (liTelesírt * (liZsebkendőkből *
     (liLátta * (liAzt * (liHogy * (liKorábban * wSad)))))))
 
 /-- The matrix verb token of a witness: the verb-category token pronounced before the
 complementizer. -/
-def matrixToken? (t : LinearizedSyntacticObject) : Option LexicalItem.Token :=
+def matrixToken? (t : PlanarSyntacticObject) : Option LexicalItem.Token :=
   ((Minimalist.pfYield t).takeWhile fun tok ↦ tok.item.cat ≠ .C).find? fun tok ↦
     tok.item.cat = .V
 
-/-- The clause role a witness shows: the role `roleTable` gives the paradigm cell its pronounced
-expletive realizes. -/
-def roleOf (t : LinearizedSyntacticObject) : Option ClauseRole :=
+/-- The clause role a witness shows: the role its pronounced expletive diagnoses. -/
+def roleOf (t : PlanarSyntacticObject) : Option ClauseRole :=
   (Minimalist.pfYield t).findSome? fun tok ↦
-    (roleTable.find? fun x ↦ x.1 == tok.item.phonForm?).map (·.2)
+    tok.item.phonForm?.bind fun f ↦ roleOfForm? f.toList
 
 /-- The single-embedding rows with their witnesses. -/
-def witnessRows : List (Datum × LinearizedSyntacticObject) :=
+def witnessRows : List (Datum × PlanarSyntacticObject) :=
   [(ex_4, w4), (ex_5, w5), (ex_6, w6), (ex_7, w7), (ex_8, w8), (ex_9, w9), (ex_11a, w11a),
     (ex_11b, w11b), (ex_11c, w11c), (ex_12, w12), (ex_13, w13), (ex_14, w14)]
 

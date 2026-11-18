@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Data.Examples.Ferreira2016
 public import Linglib.Data.Examples.Readers
 
@@ -43,12 +43,6 @@ the run time of an actual event.
 * The run time of a sum is the convex hull of the run times of its parts, so Ferreira's inclusion
   of an interval in a plural interval (31) is inclusion in the hull, and (33) holds. The habitual
   scenario takes its events to be sets of games ordered by inclusion.
-
-## Errata
-
-* (111) applies `MOD` to its arguments in the order `MOD(w)(i)(…)`, though it defines `MOD` as
-  `λ℘.λi.λw`; read in its defined order it computes `BEST` from the composite predicate, where (52)
-  and (58) compute it from the description `℘`, which `IMP` follows.
 
 ## TODO
 
@@ -319,13 +313,13 @@ theorem not_mem_IMP_accident :
 true, the Atlantic and the habit after the accident false. -/
 theorem truthValue_rows :
     (now ∈ IMP atomize streetBase notInterrupted cross .stopped ↔
-        Examples.ex45.feature? "truthValue" = some "true") ∧
+        Examples.ex45.verdict = some true) ∧
       (now ∈ IMP atomize atlanticBase notInterrupted cross .stopped ↔
-        Examples.ex46.feature? "truthValue" = some "true") ∧
+        Examples.ex46.verdict = some true) ∧
       (utterance ∈ IMP PL soccerBase keepsPlaying playSoccer .plays ↔
-        Examples.ex54.feature? "truthValue" = some "true") ∧
+        Examples.ex54.verdict = some true) ∧
       (utterance ∈ IMP PL accidentBase keepsPlaying playSoccer .plays ↔
-        Examples.ex54_accident.feature? "truthValue" = some "true") :=
+        Examples.ex54_accident.verdict = some true) :=
   ⟨iff_of_true mem_IMP_street (by decide), iff_of_false not_mem_IMP_atlantic (by decide),
     iff_of_true mem_IMP_soccer (by decide), iff_of_false not_mem_IMP_accident (by decide)⟩
 

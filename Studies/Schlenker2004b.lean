@@ -55,7 +55,7 @@ the actual one.
 
 namespace Schlenker2004b
 
-open Tense Kaplan
+open Tense SpeechAct
 
 variable {W E P T : Type*}
 
@@ -320,7 +320,7 @@ theorem ulc_world_iff (e : Context W E P T → Set W) (c : Context W E P T) :
   simp [ULC]
 
 theorem ulc_singleton_iff [LinearOrder T] (r : T) (c : Context W E P T) :
-    ULC (· < ·) Context.time (λ _ => {r}) c ↔ compare r c.time ∈ upperLimitConstraint := by
+    ULC (· < ·) Context.time (λ _ => {r}) c ↔ compare r c.time ∈ nonfuture := by
   simp [ULC, not_lt]
 
 /-- (39): a present tense under a past attitude denotes the utterance time (i'), the

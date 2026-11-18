@@ -24,7 +24,7 @@ def ex_2a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
@@ -37,7 +37,7 @@ def ex_2b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
@@ -50,7 +50,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := "John discovers he has a winning lottery ticket and talks to himself."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("roles", "i and u co-incide")] }
 
@@ -63,7 +63,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := "John discovers he has a winning lottery ticket and talks to himself."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("person", "first plural")] }
 
@@ -76,7 +76,7 @@ def ex_24a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := [("It seem that Vitesse won.", .ungrammatical)]
+    contrasts := [("It seem that Vitesse won.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
@@ -89,7 +89,7 @@ def ex_24b_i : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "first")] }
 
@@ -102,7 +102,7 @@ def ex_24b_you : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "second")] }
 
@@ -113,9 +113,11 @@ def ex_25 : Datum :=
     language := "dutc1256"
     primaryText := "Nog jaren is naar een oplossing gezocht."
     glossedTokens := [("Nog", "still"), ("jaren", "years"), ("is", "be.3SG"), ("naar", "for"), ("een", "a"), ("oplossing", "solution"), ("gezocht", "searched")]
+    glossedWords := [⟨['N', 'o', 'g'], ['s', 't', 'i', 'l', 'l'], [⟨['N', 'o', 'g'], ['s', 't', 'i', 'l', 'l'], none⟩]⟩, ⟨['j', 'a', 'r', 'e', 'n'], ['y', 'e', 'a', 'r', 's'], [⟨['j', 'a', 'r', 'e', 'n'], ['y', 'e', 'a', 'r', 's'], none⟩]⟩, ⟨['i', 's'], ['b', 'e', '.', '3', 'S', 'G'], [⟨['i', 's'], ['b', 'e', '.', '3', 'S', 'G'], none⟩]⟩, ⟨['n', 'a', 'a', 'r'], ['f', 'o', 'r'], [⟨['n', 'a', 'a', 'r'], ['f', 'o', 'r'], none⟩]⟩, ⟨['e', 'e', 'n'], ['a'], [⟨['e', 'e', 'n'], ['a'], none⟩]⟩, ⟨['o', 'p', 'l', 'o', 's', 's', 'i', 'n', 'g'], ['s', 'o', 'l', 'u', 't', 'i', 'o', 'n'], [⟨['o', 'p', 'l', 'o', 's', 's', 'i', 'n', 'g'], ['s', 'o', 'l', 'u', 't', 'i', 'o', 'n'], none⟩]⟩, ⟨['g', 'e', 'z', 'o', 'c', 'h', 't'], ['s', 'e', 'a', 'r', 'c', 'h', 'e', 'd'], [⟨['g', 'e', 'z', 'o', 'c', 'h', 't'], ['s', 'e', 'a', 'r', 'c', 'h', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    alternatives := [("Nog jaren ben naar een oplossing gezocht.", .ungrammatical), ("Nog jaren bent naar een oplossing gezocht.", .ungrammatical), ("Nog jaren zijn naar een oplossing gezocht.", .ungrammatical)]
+    contrasts := [("Nog jaren ben naar een oplossing gezocht.", .ungrammatical), ("Nog jaren bent naar een oplossing gezocht.", .ungrammatical), ("Nog jaren zijn naar een oplossing gezocht.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "default agreement"), ("construction", "impersonal passive")] }
 
@@ -126,9 +128,11 @@ def ex_30 : Datum :=
     language := "dutc1256"
     primaryText := "Men schijnt dat men regent."
     glossedTokens := [("Men", "one"), ("schijnt", "seems"), ("dat", "that"), ("men", "one"), ("regent", "rains")]
+    glossedWords := [⟨['M', 'e', 'n'], ['o', 'n', 'e'], [⟨['M', 'e', 'n'], ['o', 'n', 'e'], none⟩]⟩, ⟨['s', 'c', 'h', 'i', 'j', 'n', 't'], ['s', 'e', 'e', 'm', 's'], [⟨['s', 'c', 'h', 'i', 'j', 'n', 't'], ['s', 'e', 'e', 'm', 's'], none⟩]⟩, ⟨['d', 'a', 't'], ['t', 'h', 'a', 't'], [⟨['d', 'a', 't'], ['t', 'h', 'a', 't'], none⟩]⟩, ⟨['m', 'e', 'n'], ['o', 'n', 'e'], [⟨['m', 'e', 'n'], ['o', 'n', 'e'], none⟩]⟩, ⟨['r', 'e', 'g', 'e', 'n', 't'], ['r', 'a', 'i', 'n', 's'], [⟨['r', 'e', 'g', 'e', 'n', 't'], ['r', 'a', 'i', 'n', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "featureless")] }
 

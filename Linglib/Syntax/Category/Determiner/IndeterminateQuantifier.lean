@@ -3,15 +3,15 @@ module
 public import Linglib.Syntax.Category.Classifier.Basic
 public import Linglib.Syntax.Category.Coordinator
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Category.Pronoun.Interrogative
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Indeterminate quantifiers
 
-An indeterminate quantifier is built from an indeterminate pronoun, an interrogative, and a
-particle that is also a coordinator of the language. Japanese *dare-ka* 'someone' and *dare-mo*
-'everyone' combine *dare* 'who' with *ka* 'or' and *mo* 'and', and Latin *quisque* 'each'
-combines *quis* 'who' with the enclitic *-que* 'and'. A coordinator has a quantifier use when an
+An indeterminate quantifier is built from an indeterminate pronoun, a proform that is an
+interrogative in a question, and a particle that is also a coordinator of the language.
+Japanese *dare-ka* 'someone' and *dare-mo* 'everyone' combine *dare* 'who' with *ka* 'or' and
+*mo* 'and', and Latin *quisque* 'each' combines *quis* 'who' with the enclitic *-que* 'and'. A coordinator has a quantifier use when an
 indeterminate quantifier of its language has it as its particle. What the quantifier denotes is
 `IndeterminateQuantifier.reading`, in `Semantics/Quantification/IndeterminateQuantifier.lean`.
 
@@ -19,8 +19,9 @@ indeterminate quantifier of its language has it as its particle. What the quanti
 
 * `IndeterminateQuantifier`: an indeterminate and a particle, with the classifier between them
   where there is one.
-* `IndeterminateQuantifier.form`, `IndeterminateQuantifier.toQuantifier`: its citation form and
-  its determiner record.
+* `IndeterminateQuantifier.form`, `IndeterminateQuantifier.toQuantifier`,
+  `IndeterminateQuantifier.toIndefinite`: its citation form, its determiner record and the
+  indefinite pronoun it is.
 
 ## References
 
@@ -34,7 +35,7 @@ indeterminate quantifier of its language has it as its particle. What the quanti
 of the language, and the classifier between them where there is one. -/
 structure IndeterminateQuantifier where
   /-- The indeterminate pronoun. -/
-  indeterminate : InterrogativePronoun
+  indeterminate : ProForm
   /-- The particle, a coordinator of the language. -/
   particle : Coordinator
   /-- The classifier after the indeterminate, as in Japanese *nan-nin-ka*. -/
@@ -50,8 +51,12 @@ puts the particle of a determiner, such as Japanese *dono* 'which', after the no
 determiner takes. -/
 def form : String :=
   let p := q.particle.morph.form
-  if q.indeterminate.ontology = .determiner then q.indeterminate.form ++ " … " ++ p
+  if q.indeterminate.cat = .DET then q.indeterminate.form ++ " … " ++ p
   else q.indeterminate.form ++ (q.classifier.elim "" ("-" ++ ·.form)) ++ "-" ++ p
+
+/-- The indefinite pronoun an indeterminate quantifier is, a member of the series its particle
+marks: its indeterminate's features, category and word class under its citation form. -/
+def toIndefinite : IndefinitePronoun := .ofProForm (fun _ ↦ q.form) q.indeterminate
 
 /-- An indeterminate quantifier's determiner record carries its form. -/
 def toQuantifier : QuantificationalDeterminer := { form := q.form }

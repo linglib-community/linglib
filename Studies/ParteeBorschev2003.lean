@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Intensional
 public import Linglib.Semantics.Possession.Relationalizer
 
 /-!

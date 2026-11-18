@@ -6,10 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.UnorderedTree.Basic
-public import Linglib.Core.Data.UnorderedTree.Count
-public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Core.Data.UnorderedTree.Leaves
+public import Linglib.Core.Algebra.MonoidAlgebra.Multiset
 public import Linglib.Core.Data.Multiset.Bind
-public import Linglib.Core.Data.Multiset.Convolution
+public import Linglib.Core.Data.Multiset.Sections
 public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Multiset.Antidiagonal
@@ -152,20 +152,28 @@ example (a : α) : rootCuts extract (RoseTree.leaf a) = {(0, RoseTree.leaf a)} :
     Multiset.product_zero, add_zero, Multiset.map_map]
   exact (Multiset.map_congr rfl fun _ _ ↦ by simp).trans (Multiset.map_id _)
 
+/-- The cuts of a list of children are the product of the cuts at each child in the monoid
+semiring, where a product adds crowns and appends remainders. -/
+theorem ofMultiset_childrenCuts (l : List (RoseTree α)) :
+    AddMonoidAlgebra.ofMultiset ℕ (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α))
+        (childrenCuts extract l) =
+      (l.map fun t ↦ AddMonoidAlgebra.ofMultiset ℕ
+        (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) (childCuts extract t)).prod := by
+  induction l with
+  | nil => rw [childrenCuts_nil, AddMonoidAlgebra.ofMultiset_singleton]; rfl
+  | cons t ts ih =>
+    rw [childrenCuts_cons, List.map_cons, List.prod_cons, ← ih]
+    exact AddMonoidAlgebra.ofMultiset_map_add_product _ _
+
 theorem childrenCuts_append (l₁ l₂ : List (RoseTree α)) :
     childrenCuts extract (l₁ ++ l₂) =
       ((childrenCuts extract l₁ ×ˢ childrenCuts extract l₂) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
-  change _ = Multiset.conv (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _ _
-  induction l₁ with
-  | nil =>
-    rw [List.nil_append, childrenCuts_nil]
-    exact (Multiset.singleton_zero_conv
-      (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _).symm
-  | cons t ts ih =>
-    rw [List.cons_append, childrenCuts_cons, childrenCuts_cons]
-    exact (congrArg (Multiset.conv (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) _)
-      ih).trans (Multiset.conv_assoc _ _ _).symm
+  refine AddMonoidAlgebra.ofMultiset_injective ℕ
+    (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α))
+    (.trans ?_ (AddMonoidAlgebra.ofMultiset_map_add_product _ _).symm)
+  rw [ofMultiset_childrenCuts, ofMultiset_childrenCuts, ofMultiset_childrenCuts, List.map_append,
+    List.prod_append]
 
 /-! ### Induction over cuts
 
@@ -262,8 +270,8 @@ theorem rootCuts_numNodes {k : ℕ}
 /-! ### Projection to unordered trees
 
 A cut of a rose tree projects to `UnorderedTree` componentwise. On children the remainder list
-becomes a multiset, and the combination of the cuts of two children becomes their convolution
-`Multiset.conv`. -/
+becomes a multiset, and the combination of the cuts of two children becomes their product in the
+monoid semiring. -/
 
 /-- Project the crown and the trunk of a cut to unordered trees. -/
 def projCut (p : Multiset (RoseTree α) × RoseTree α) :
@@ -286,11 +294,11 @@ private theorem projChildrenCut_combine
   simp [projChildrenCut]
 
 private theorem childrenCuts_cons_proj (t : RoseTree α) (ts : List (RoseTree α)) :
-    (childrenCuts extract (t :: ts)).map projChildrenCut =
-      ((childCuts extract t).map projChildrenCut).conv
-        ((childrenCuts extract ts).map projChildrenCut) := by
-  rw [childrenCuts_cons]
-  exact Multiset.map_map_product_distrib projChildrenCut_combine _ _
+    AddMonoidAlgebra.ofMultiset ℕ ((childrenCuts extract (t :: ts)).map projChildrenCut) =
+      .ofMultiset ℕ ((childCuts extract t).map projChildrenCut) *
+        .ofMultiset ℕ ((childrenCuts extract ts).map projChildrenCut) := by
+  rw [childrenCuts_cons, ← AddMonoidAlgebra.ofMultiset_map_add_product]
+  exact congrArg _ (Multiset.map_map_product_distrib projChildrenCut_combine _ _)
 
 /-! ### Policies that descend to unordered trees -/
 
@@ -319,47 +327,42 @@ private theorem childrenCuts_proj_perm (extract : RoseTree α → Option (List (
     {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
     (childrenCuts extract cs).map projChildrenCut =
       (childrenCuts extract ds).map projChildrenCut := by
+  refine AddMonoidAlgebra.ofMultiset_injective ℕ ?_
   induction h with
   | nil => rfl
   | cons c _ ih => rw [childrenCuts_cons_proj, childrenCuts_cons_proj, ih]
-  | swap c d cs =>
-    simp only [childrenCuts_cons_proj]
-    exact (Multiset.conv_left_comm _ _ _).symm
+  | swap c d cs => simp only [childrenCuts_cons_proj]; exact mul_left_comm ..
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-mutual
 /-- For an invariant policy, the projected cuts of a tree depend only on the unordered tree. -/
-theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) :
-    ∀ {t s : RoseTree α}, RoseTree.Perm t s →
-      (rootCuts extract t).map projCut = (rootCuts extract s).map projCut
-  | _, _, @RoseTree.Perm.node _ a cs ds h => by
-    have hL := congrArg (Multiset.map fun pf : Multiset (UnorderedTree α) ×
-      Multiset (UnorderedTree α) ↦ (pf.1, UnorderedTree.node a pf.2))
-      (childrenCuts_proj_permList hExt h)
-    simpa [Multiset.map_map, Function.comp_def, projCut_node] using hL
-  | _, _, .trans h₁ h₂ =>
-    (rootCuts_proj_perm hExt h₁).trans (rootCuts_proj_perm hExt h₂)
-
-private theorem childrenCuts_proj_permList (hExt : ExtractInvariant extract) :
-    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
-      (childrenCuts extract cs).map projChildrenCut = (childrenCuts extract ds).map projChildrenCut
-  | _, _, .nil => rfl
-  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    rw [childrenCuts_cons_proj, childrenCuts_cons_proj,
-      childCuts_proj_congr hExt (UnorderedTree.mk_eq_mk_iff.mpr hcd)
-        (rootCuts_proj_perm hExt hcd),
-      childrenCuts_proj_permList hExt hs]
-  | _, _, .swap c d cs => childrenCuts_proj_perm extract (List.Perm.swap c d cs)
-  | _, _, .trans h₁ h₂ =>
-    (childrenCuts_proj_permList hExt h₁).trans (childrenCuts_proj_permList hExt h₂)
-end
+theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) {t s : RoseTree α}
+    (h : RoseTree.Perm t s) : (rootCuts extract t).map projCut = (rootCuts extract s).map projCut := by
+  refine h.induction_on fun a cs ds ih ↦ ?_
+  have hL : (childrenCuts extract cs).map projChildrenCut =
+      (childrenCuts extract ds).map projChildrenCut := by
+    induction cs generalizing ds with
+    | nil => rw [Multiset.coe_nil, Multiset.rel_zero_left, Multiset.coe_eq_zero] at ih; rw [ih]
+    | cons c cs ihcs =>
+      rw [← Multiset.cons_coe] at ih
+      obtain ⟨d, G, hcd, hG, he⟩ := Multiset.rel_cons_left.1 ih
+      induction G using Quotient.inductionOn with
+      | h ds' =>
+        rw [childrenCuts_proj_perm extract (Multiset.coe_eq_coe.1 he)]
+        refine AddMonoidAlgebra.ofMultiset_injective ℕ ?_
+        rw [childrenCuts_cons_proj, childrenCuts_cons_proj,
+          childCuts_proj_congr hExt (UnorderedTree.mk_eq_mk_iff.mpr hcd.1) hcd.2, ihcs ds' hG]
+  have hL' := congrArg (Multiset.map fun pf : Multiset (UnorderedTree α) ×
+    Multiset (UnorderedTree α) ↦ (pf.1, UnorderedTree.node a pf.2)) hL
+  simpa [Multiset.map_map, Function.comp_def, projCut_node] using hL'
 
 variable (extract)
 
 /-! ### Cut convolution
 
 `treeCuts cuts t` lists the cuts of the tree `t` as a forest, including the cut that takes all
-of `t`, and `forestCuts cuts F` combines them over the trees of a forest. Nothing here reads a
+of `t`, and `forestCuts cuts F` chooses one for each tree of a forest and adds up the crowns and
+the trunks, which makes it [their product](##ofMultiset_forestCuts) in the monoid semiring of
+pairs of forests. Nothing here reads a
 tree, so rose trees and unordered trees share these definitions, and
 [a map between the enumerations carries the cuts along](##forestCuts_map). The admissible-cut
 coproduct is a sum over these (`comulForestOfCuts_eq_sum` in `Coproduct/WithCuts.lean`). -/
@@ -373,32 +376,41 @@ variable {γ δ : Type*} (cuts : γ → Multiset (Multiset γ × γ))
 def treeCuts (t : γ) : Multiset (Multiset γ × Multiset γ) :=
   ({t}, 0) ::ₘ (cuts t).map fun p ↦ (p.1, {p.2})
 
-/-- The cuts of a forest combine one choice from `treeCuts cuts t` for each tree `t`. -/
+/-- The cuts of a forest choose a cut in `treeCuts cuts t` for each tree `t` and add up the crowns
+    and the trunks. -/
 def forestCuts (F : Multiset γ) : Multiset (Multiset γ × Multiset γ) :=
-  (F.map (treeCuts cuts)).foldr Multiset.conv {(0, 0)}
+  (F.map (treeCuts cuts)).Sections.map Multiset.sum
 
 theorem forestCuts_zero : forestCuts cuts (0 : Multiset γ) = {(0, 0)} := by
-  simp [forestCuts]
+  simp [forestCuts]; rfl
 
 theorem forestCuts_cons (t : γ) (F : Multiset γ) :
-    forestCuts cuts (t ::ₘ F) = (treeCuts cuts t).conv (forestCuts cuts F) := by
-  rw [forestCuts, Multiset.map_cons, Multiset.foldr_cons, forestCuts]
+    forestCuts cuts (t ::ₘ F) =
+      (treeCuts cuts t ×ˢ forestCuts cuts F).map fun x ↦ x.1 + x.2 := by
+  simp only [forestCuts, Multiset.map_cons, Multiset.sections_cons, Multiset.map_bind,
+    Multiset.map_map, SProd.sprod, Multiset.product, Function.comp_def, Multiset.sum_cons]
 
 theorem forestCuts_singleton (t : γ) : forestCuts cuts {t} = treeCuts cuts t := by
-  rw [← Multiset.cons_zero, forestCuts_cons, forestCuts_zero]
-  exact Multiset.conv_singleton_zero _
+  simp [← Multiset.cons_zero, forestCuts_cons, forestCuts_zero,
+    show ((0, 0) : Multiset γ × Multiset γ) = 0 from rfl]
 
 theorem forestCuts_pair (t t' : γ) :
-    forestCuts cuts {t, t'} = (treeCuts cuts t).conv (treeCuts cuts t') := by
+    forestCuts cuts {t, t'} = (treeCuts cuts t ×ˢ treeCuts cuts t').map fun x ↦ x.1 + x.2 := by
   rw [Multiset.insert_eq_cons, forestCuts_cons, forestCuts_singleton]
 
+/-- The cuts of a forest are the product of the cuts of its trees in the monoid semiring, where a
+product adds crowns and trunks. -/
+theorem ofMultiset_forestCuts (F : Multiset γ) :
+    AddMonoidAlgebra.ofMultiset ℕ (forestCuts cuts F) =
+      (F.map fun t ↦ AddMonoidAlgebra.ofMultiset ℕ (treeCuts cuts t)).prod := by
+  rw [forestCuts, AddMonoidAlgebra.ofMultiset_map_sum_sections, Multiset.map_map]; rfl
+
 theorem forestCuts_add (F G : Multiset γ) :
-    forestCuts cuts (F + G) = (forestCuts cuts F).conv (forestCuts cuts G) := by
-  induction F using Multiset.induction with
-  | empty => rw [zero_add, forestCuts_zero]; exact (Multiset.singleton_zero_conv _).symm
-  | cons t F ih =>
-    rw [Multiset.cons_add, forestCuts_cons, forestCuts_cons, ih]
-    exact (Multiset.conv_assoc _ _ _).symm
+    forestCuts cuts (F + G) =
+      (forestCuts cuts F ×ˢ forestCuts cuts G).map fun x ↦ x.1 + x.2 :=
+  AddMonoidAlgebra.ofMultiset_injective ℕ <| by
+    rw [AddMonoidAlgebra.ofMultiset_map_add_product, ofMultiset_forestCuts, ofMultiset_forestCuts,
+      ofMultiset_forestCuts, Multiset.map_add, Multiset.prod_add]
 
 variable {cuts} {cuts' : δ → Multiset (Multiset δ × δ)} {f : γ → δ}
 
@@ -413,12 +425,13 @@ theorem forestCuts_map (h : ∀ t, cuts' (f t) = (cuts t).map (Prod.map (Multise
     (F : Multiset γ) :
     forestCuts cuts' (F.map f) =
       (forestCuts cuts F).map (Prod.map (Multiset.map f) (Multiset.map f)) := by
-  induction F using Multiset.induction with
-  | empty => simp [forestCuts_zero]
-  | cons t F ih =>
-    rw [Multiset.map_cons, forestCuts_cons, treeCuts_map h, ih, forestCuts_cons]
-    exact (Multiset.map_conv _ _ fun _ _ ↦
-      Prod.ext (Multiset.map_add ..) (Multiset.map_add ..)).symm
+  have hF : (F.map f).map (treeCuts cuts') = (F.map (treeCuts cuts)).map
+      (Multiset.map (Prod.map (Multiset.map f) (Multiset.map f))) := by
+    rw [Multiset.map_map, Multiset.map_map]
+    exact Multiset.map_congr rfl fun t _ ↦ treeCuts_map h t
+  rw [forestCuts, hF, Multiset.sections_map, Multiset.map_map, forestCuts, Multiset.map_map]
+  exact Multiset.map_congr rfl fun s _ ↦ (map_multiset_sum
+    ((Multiset.mapAddMonoidHom f).prodMap (Multiset.mapAddMonoidHom f)) s).symm
 
 end Convolution
 
@@ -527,11 +540,12 @@ theorem forestCutChoices_cons (T : UnorderedTree α) (F : Multiset (UnorderedTre
 theorem forestCuts_eq_map_forestCutChoices (F : Multiset (UnorderedTree α)) :
     forestCuts cuts F = (forestCutChoices cuts F).map fun s ↦ (s.crown, s.trunk) := by
   change _ = (forestCutChoices cuts F).map fun s ↦ (s.map Prod.snd).sum
-  induction F using Multiset.induction with
-  | empty => simp [forestCuts_zero, forestCutChoices_zero]
-  | cons T F ih =>
-    rw [forestCuts_cons, ih, forestCutChoices_cons, Multiset.map_bind, Multiset.conv_eq_bind]
-    simp only [Multiset.map_map, Function.comp_def, Multiset.map_cons, Multiset.sum_cons]
+  have hF : F.map (treeCuts cuts) =
+      (F.map fun T ↦ (treeCuts cuts T).map (Prod.mk T)).map (Multiset.map Prod.snd) := by
+    rw [Multiset.map_map]
+    exact Multiset.map_congr rfl fun T _ ↦ by simp [Multiset.map_map]
+  rw [forestCuts, hF, Multiset.sections_map, Multiset.map_map]
+  rfl
 
 variable {cuts} {F G : Multiset (UnorderedTree α)} {s t : CutChoice α}
   {x : UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))}
@@ -795,7 +809,9 @@ private theorem forestCuts_admissibleCuts_coe (ps : List (RoseTree α)) :
   induction ps with
   | nil => rw [childrenCuts_nil, Multiset.map_singleton]; exact forestCuts_zero _
   | cons p ps ih =>
-    rw [List.map_cons, ← Multiset.cons_coe, forestCuts_cons, ih, treeCuts_admissibleCuts_mk,
+    refine AddMonoidAlgebra.ofMultiset_injective ℕ ?_
+    rw [List.map_cons, ← Multiset.cons_coe, forestCuts_cons,
+      AddMonoidAlgebra.ofMultiset_map_add_product, ih, treeCuts_admissibleCuts_mk,
       childrenCuts_cons_proj]
 
 /-- The admissible cuts of a node choose, for each child, to cut it whole or to cut inside it. -/
@@ -817,7 +833,7 @@ theorem forestCuts_emptyCuts (F : Multiset (UnorderedTree α)) :
   induction F using Multiset.induction with
   | empty => rw [forestCuts_zero, Multiset.antidiagonal_zero]
   | cons T F ih =>
-    rw [forestCuts_cons, ih, Multiset.antidiagonal_cons, treeCuts, emptyCuts, Multiset.conv,
+    rw [forestCuts_cons, ih, Multiset.antidiagonal_cons, treeCuts, emptyCuts,
       Multiset.map_singleton, ← Multiset.cons_zero (0, _), Multiset.cons_product,
       Multiset.cons_product, Multiset.zero_product, add_zero, Multiset.map_add, Multiset.map_map,
       Multiset.map_map, add_comm]

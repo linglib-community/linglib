@@ -139,7 +139,7 @@ theorem run_eq_inter (ss : List (C → W → Prop)) (h : ∀ w ∈ cs, (I w).Non
     ext w
     exact ⟨fun hw => ⟨hw, (h w hw).imp fun _ hc => ⟨hc, by simp⟩⟩, And.left⟩
   | cons s rest ih =>
-    rw [run, ih _ _ fun w hw => prune_nonempty_iff I s w |>.2 hw.2]
+    rw [run, ih (cs ∩ disjunctiveDiagonal I s) _ fun w hw => prune_nonempty_iff I s w |>.2 hw.2]
     ext w
     refine ⟨fun ⟨⟨hcs, _⟩, c, ⟨hc, hs⟩, hrest⟩ => ⟨hcs, c, hc, by simpa using ⟨hs, hrest⟩⟩,
       fun ⟨hcs, c, hc, hall⟩ => ?_⟩

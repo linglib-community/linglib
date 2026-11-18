@@ -31,7 +31,8 @@ as features, which drops them.
 ## Main results
 
 * `Person.fromUD_toUD`: ingestion after realization is the identity, clusivity included.
-* `Case.fromUD_toUD`: ingestion after realization is the identity except on the oblique.
+* `Case.fromUD_toUD`: ingestion after realization is the identity except on the oblique and the
+  purposive.
 * `Morphology.Features.ofUD_toUD`: for a token, ingestion after realization is the identity
   except at case and number.
 
@@ -154,9 +155,11 @@ def toUD : Case → UD.Case
   | .ben => .Ben
   | .perl => .Per
   | .abess => .Abe
+  | .purp => .Cau
+  | .cmpr => .Cmp
 
-/-- Ingest an annotation; the comparative, considerative, distributive, equative, additive and
-lative tags have no value. -/
+/-- Ingest an annotation; the considerative, distributive, equative, additive and lative tags
+have no value. -/
 def fromUD : UD.Case → Option Case
   | .Abs => some .abs
   | .Acc => some .acc
@@ -186,12 +189,15 @@ def fromUD : UD.Case → Option Case
   | .Sub => some .sub
   | .Sup => some .sup
   | .Ter => some .ter
-  | .Cmp | .Cns | .Dis | .Equ | .Add | .Lat => none
+  | .Cmp => some .cmpr
+  | .Cns | .Dis | .Equ | .Add | .Lat => none
 
 /-- Ingestion after realization is the identity but on the oblique, which realizes as `Acc`, the
 tag UD's guidelines give the oblique of a language with a direct and an oblique case only, and
-ingests as the accusative. -/
-theorem fromUD_toUD (c : Case) : fromUD c.toUD = some (if c = .obl then .acc else c) := by
+ingests as the accusative, and on the purposive, which realizes as `Cau`, the tag for the
+causative, motivative and purposive, and ingests as the causal. -/
+theorem fromUD_toUD (c : Case) :
+    fromUD c.toUD = some (if c = .obl then .acc else if c = .purp then .caus else c) := by
   cases c <;> rfl
 
 theorem toUD_fromUD {u : UD.Case} {c : Case} (h : fromUD u = some c) : c.toUD = u := by
@@ -250,11 +256,11 @@ def ofUD (m : UD.MorphFeatures) : Features
   | .polite => m.polite
 
 /-- Ingestion inverts realization except at case and number: the oblique case returns as the
-accusative, and a number value without a tag returns as `none`. -/
+accusative and the purposive as the causal, and a number value without a tag returns as `none`. -/
 theorem ofUD_toUD (f : Features) (t : Feature) :
     ofUD (toUD f) t =
       match t with
-      | .case => (f .case).map fun c ↦ if c = .obl then .acc else c
+      | .case => (f .case).map fun c ↦ if c = .obl then .acc else if c = .purp then .caus else c
       | .number => (f .number).bind fun n ↦ if n.toUD = none then none else some n
       | t => f t := by
   cases t

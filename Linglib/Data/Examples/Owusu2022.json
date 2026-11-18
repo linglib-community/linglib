@@ -12,7 +12,7 @@
     "translation": "A certain person didn't sing (There was a person who didn't sing.)",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"}
     ],
@@ -36,7 +36,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "unacceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -62,7 +62,7 @@
     "translation": "A (certain) soldier is standing in front of every door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "acceptable"},
       {"name": "narrow", "judgment": "unacceptable"}
@@ -88,7 +88,7 @@
     "translation": "Every woman read a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "acceptable"}
@@ -113,7 +113,7 @@
     "translation": "There is no house here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"}
     ],
@@ -137,7 +137,7 @@
     "translation": "I don't eat fish.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -162,7 +162,7 @@
     "translation": "Every woman read a book.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "acceptable"},
       {"name": "wide", "judgment": "unacceptable"}
@@ -188,7 +188,7 @@
     "translation": "A soldier is standing in front of every door.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "wide", "judgment": "unacceptable"},
       {"name": "narrow", "judgment": "acceptable"}
@@ -214,7 +214,7 @@
     "translation": "No student sent a (certain) paper they wrote.",
     "context": "There are three students, Alan, Bob and Carl. They all have three published papers. For their job application, they all submitted only two of their papers.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [
       {"name": "narrow", "judgment": "unacceptable"}
     ],

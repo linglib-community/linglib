@@ -32,12 +32,12 @@ marked familiarity](##isUpperSet_marked) and no language marks uniqueness alone.
   uniqueness and a demonstrative blocks nothing. No definite article selects a number, so ι is
   blocked for a bare noun of any number exactly when it is lexicalized
   (`Determiner.Inventory.blocks_iff_lexicalizes`).
-* The environments are the paper's six, read as `DefiniteDescription.Use`s, the donkey environment
+* The environments are the paper's six, read as `Definite.Use`s, the donkey environment
   being an anaphoric use under quantification, and mapped to Schwarz's presupposition types by
-  `DefiniteDescription.Use.strength`. The marked form is the language's form for the
+  `Definite.Use.strength`. The marked form is the language's form for the
   environment's presupposition: an article marking it or, for familiarity, a demonstrative, whose
   description is the strong article's. Cantonese's restricted demonstrative (57) is not modelled.
-* Jenks types the index of ι^x as a property (Section 4.4); `DefiniteDescription.anaphoric` carries
+* Jenks types the index of ι^x as a property (Section 4.4); `Definite.anaphoric` carries
   an individual index, so Section 4.4 is not formalized.
 
 ## References
@@ -54,7 +54,6 @@ namespace Jenks2018
 
 open Determiner
 open scoped Denotes
-open DefiniteDescription (Restrictor)
 
 /-! ### Environments and principles -/
 
@@ -67,12 +66,12 @@ inductive Topic
 
 /-- An index is available exactly in the environments licensed by familiarity, Section 5.1:
 prior mention of the referent or, in producer-product bridging, of its argument. -/
-def IndexAvailable (env : DefiniteDescription.Use) : Prop := env.strength = .familiarity
+def IndexAvailable (env : Definite.Use) : Prop := env.strength = .familiarity
 
 /-- An inventory has a form for a presupposition when an article marks it or, for familiarity,
 when it has a demonstrative, whose description is the strong article's
-(`DemonstrativeDeterminer.denote_selector_eq_anaphoric`) and so supplies the index of ι^x. -/
-def HasForm (inv : Inventory) : DefiniteDescription.Strength → Prop
+(`DemonstrativeDeterminer.mem_denote`) and so supplies the index of ι^x. -/
+def HasForm (inv : Inventory) : Definite.Strength → Prop
   | .uniqueness => inv.Marks .uniqueness
   | .familiarity => inv.Marks .familiarity ∨ inv.Realizes .demonstrative
 
@@ -82,23 +81,23 @@ instance (inv : Inventory) : DecidablePred (HasForm inv) := fun p ↦ by
 /-- The bare noun is licit when the Blocking Principle (23) leaves ι available, no overt determiner
 marking uniqueness, and, by Index! (50), no indexed form competes, or when the description is a
 continuing topic (Section 5.3). -/
-def BareLicit (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) : Prop :=
+def BareLicit (inv : Inventory) (env : Definite.Use) (t : Topic) : Prop :=
   ¬ inv.Lexicalizes .iota ∧ (¬ (IndexAvailable env ∧ HasForm inv .familiarity) ∨ t = .continuing)
 
 /-- The marked form is licit when the inventory has a form for the environment's presupposition. -/
-def MarkedLicit (inv : Inventory) (env : DefiniteDescription.Use) : Prop := HasForm inv env.strength
+def MarkedLicit (inv : Inventory) (env : Definite.Use) : Prop := HasForm inv env.strength
 
-instance (env : DefiniteDescription.Use) : Decidable (IndexAvailable env) := by
+instance (env : Definite.Use) : Decidable (IndexAvailable env) := by
   unfold IndexAvailable; infer_instance
 
-instance (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) :
+instance (inv : Inventory) (env : Definite.Use) (t : Topic) :
     Decidable (BareLicit inv env t) := by
   unfold BareLicit; infer_instance
 
-instance (inv : Inventory) (env : DefiniteDescription.Use) : Decidable (MarkedLicit inv env) := by
+instance (inv : Inventory) (env : Definite.Use) : Decidable (MarkedLicit inv env) := by
   unfold MarkedLicit; infer_instance
 
-theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescription.Use}
+theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Definite.Use}
     {t : Topic}
     (h : IndexAvailable env) (hm : HasForm inv .familiarity) (ht : t ≠ .continuing) :
     ¬ BareLicit inv env t :=
@@ -121,12 +120,12 @@ theorem lexicalizes_iota_cantonese : Cantonese.Determiners.inventory.Lexicalizes
 judgments on the bare and the marked form where the paper gives them. -/
 structure Row where
   inventory : Inventory
-  env : DefiniteDescription.Use
+  env : Definite.Use
   topic : Topic
   bare : Option Bool
   marked : Option Bool
 
-def envOf : String → Option DefiniteDescription.Use
+def envOf : String → Option Definite.Use
   | "largerSituation" => some .largerSituation
   | "immediateSituation" => some .immediateSituation
   | "partWholeBridging" => some (.bridging .partWhole)
@@ -171,34 +170,34 @@ theorem rows_agree :
 /-! ### Demonstratives are strict (Section 4.3) -/
 
 -- (27), (30)
-theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : ℕ → E)
+theorem demonstrative_eq_some_iff {E W : Type} (R : (ℕ → E) → W → Set E) (d : ℕ) (g : ℕ → E)
     (s : W) (x : E) :
-    ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ g d ∈ R g s ∧ x = g d :=
-  DefiniteDescription.denote_anaphoric_eq_some_iff R d g s
+    x ∈ Definite.anaphoric R d g s ↔ g d ∈ R g s ∧ x = g d :=
+  Definite.mem_anaphoric
 
 /-- A demonstrative cannot covary through the situation pronoun, its referents at any two situations
 coinciding. -/
-theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (d : ℕ) (g : ℕ → E)
-    {s s' : W} {x x' : E} (h : ⟦DefiniteDescription.demonstrative R d⟧ g s = some x)
-    (h' : ⟦DefiniteDescription.demonstrative R d⟧ g s' = some x') : x = x' :=
-  DefiniteDescription.denote_anaphoric_rigid R d g s h h'
+theorem demonstrative_rigid {E W : Type} (R : (ℕ → E) → W → Set E) (d : ℕ) (g : ℕ → E)
+    {s s' : W} {x x' : E} (h : x ∈ Definite.anaphoric R d g s)
+    (h' : x' ∈ Definite.anaphoric R d g s') : x = x' :=
+  Definite.anaphoric_rigid h h'
 
 /-- The bare noun's covert ι does covary. Over the restrictor true of the situation itself, the bare
 noun denotes each situation at that situation, so distinct situations give distinct referents. -/
 theorem bare_covaries {W : Type} (g : ℕ → W) (s : W) :
-    ⟦DefiniteDescription.bare fun _ s ↦ {s}⟧ g s = some s :=
-  (DefiniteDescription.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩
+    s ∈ (Definite.unique fun _ s ↦ {s}) g s :=
+  Definite.mem_unique.2 ⟨rfl, fun _ h ↦ h⟩
 
 /-! ### The typology (Table 2) -/
 
 section Typology
 
-open DefiniteDescription (Strength)
+open Definite (Strength)
 
 /-- A presupposition is marked when, outside a topic, the bare noun cannot express it in the
 environments that call for it. -/
 def Marked (inv : Inventory) (p : Strength) : Prop :=
-  ∀ env : DefiniteDescription.Use, env.strength = p → ¬ BareLicit inv env .none
+  ∀ env : Definite.Use, env.strength = p → ¬ BareLicit inv env .none
 
 theorem marked_uniqueness_iff (inv : Inventory) :
     Marked inv .uniqueness ↔ inv.Lexicalizes .iota := by

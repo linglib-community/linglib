@@ -13,7 +13,7 @@
     "translation": "The roads have become very slippery, (keep this in mind).",
     "context": "Anu is going to Mumbai and says to Bilal: I think it will be faster to drive. Bilal: Are you sure? There have been heavy rains...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -36,7 +36,7 @@
     "translation": "Go to Mumbai tomorrow, (just do as I say).",
     "context": "Same as (1). Bilal: I absolutely don't want you to be driving in this weather...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -59,7 +59,7 @@
     "translation": "Where did you keep my key? (you better answer right away!)",
     "context": "Anu is annoyed because Bilal has hidden her bike key and she needs to get to work urgently. Anu: This is ridiculous...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "constituent"],
@@ -82,7 +82,7 @@
     "translation": "I am going to the office now (alright?/ok?).",
     "context": "Anu needs Bilal to stay at home because the plumber will be coming and someone needs to be in the house to meet him. Anu:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -105,7 +105,7 @@
     "translation": "It is raining hard today (bear in mind).",
     "context": "Anu is planning to go to Mumbai today by car. It is raining heavily along the route, impacting road conditions, but the weather will significantly improve tomorrow, making the drive much safer. Bilal says:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -128,7 +128,7 @@
     "translation": "Tomorrow, it will be quite sunny (#bear in mind).",
     "context": "Anu is planning to go to Mumbai today by car. It is raining heavily along the route, impacting road conditions, but the weather will significantly improve tomorrow, making the drive much safer. Bilal says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -152,7 +152,7 @@
     "translation": "This medicine will lower your fever, (alright?/ok?).",
     "context": "Anu has been sick and goes to the doctor, who diagnoses a viral infection. Doctor: Don't worry, the infection will run its course. Meanwhile...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -175,7 +175,7 @@
     "translation": "Niśa is bringing her sister with her.",
     "context": "Anu and Bilal are hosting three friends for dinner and they both have been told that one of them will also bring her sister along. Bilal is setting the table. Bilal: Let's see, how many place settings do we need?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -199,7 +199,7 @@
     "translation": "Niśa is bringing her sister with her.",
     "context": "Anu and Bilal are hosting three friends for dinner and they both have been told that one of them will also bring her sister along. It's almost time for the guests and Bilal has laid the table with settings for only five people. Anu: We need six place settings...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -222,7 +222,7 @@
     "translation": "You suffer from asthma, (don't forget).",
     "context": "Anu has been offered a new job assignment, which requires her to move to a hilly, high-altitude location with steep roads for a year. She is excited about it and is considering it seriously. Bilal prefers that she not make the move for health reasons. Bilal: This could be really difficult for you health-wise...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -245,7 +245,7 @@
     "translation": "Sure, I'll pick her up!",
     "context": "Anu and Bilal take turns picking up their daughter Deepa from after-school. It is Bilal's turn today. Bilal tells Anu that he is really busy that day and asks if Anu can pick Deepa up instead. Anu: I understand...",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "declarative"],
@@ -269,7 +269,7 @@
     "translation": "Please (sir), give me a thousand rupees.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -293,7 +293,7 @@
     "translation": "Someone (please) help me come out from this well!",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -317,7 +317,7 @@
     "translation": "Try (lit. eat) this rabadi (milk-based dessert)!",
     "context": "Anu has made a dessert and is offering it to Bilal to taste. She says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -341,7 +341,7 @@
     "translation": "Sure, go and have fun!",
     "context": "Deepa and her friends are planning to go to the park and Deepa comes and asks her mother: Mom, can I go play in the park with my friends?",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -364,7 +364,7 @@
     "translation": "Alright! Go and play (if you aren't going to listen!)",
     "context": "Anu has asked Deepa to finish her homework before going out to play. Deepa is badgering Anu because she wants to go play without finishing her homework. Anu gets exasperated and says:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -387,7 +387,7 @@
     "translation": "Go to hell (lit. into a ditch)!",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "ʣa məsəɳa=t bərə", "judgment": "unacceptable"}
     ],
     "readings": [],
@@ -413,7 +413,7 @@
     "translation": "Get into bed immediately now! (just do as I say)",
     "context": "Deepa has stayed up way past her bedtime playing a video game. Anu gets annoyed because Deepa has school tomorrow and needs to be up early. She has already told Deepa several times to go to bed. Anu: You are stretching my patience now...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -436,7 +436,7 @@
     "translation": "Don't pour the oil into the pan just yet! (or it will go up in flames)",
     "context": "Deepa is making dal for the first time with Anu's help and has let the pan get too hot on the stove. She is about to put in some oil to start sautéing the onions. Anu:",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -459,7 +459,7 @@
     "translation": "(Come) now, write a letter to grandma!",
     "context": "Deepa got a lovely doll in the mail from Anu's mother and has been playing with it. Anu wants Deepa to thank her grandma before she forgets. Anu: Alright, you have played enough now...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -482,7 +482,7 @@
     "translation": "Then, (go ahead and) take the car today.",
     "context": "Bilal needs to be at a work meeting soon and he has missed the bus that he takes to work. Anu is the one who usually takes the car to work but Bilal would love to be able to drive to work today. Bilal tells Anu he missed the bus. Anu: Ok, so we need to figure out a solution...",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -505,7 +505,7 @@
     "translation": "Then, (go ahead and) take the car today.",
     "context": "Bilal needs to be at a work meeting soon and he has missed the bus that he takes to work. Anu is the one who usually takes the car to work but Bilal would love to be able to drive to work today. Bilal tells Anu he missed the bus and adds: I would really like to drive to work today so I don't miss my meeting. Anu:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -529,7 +529,7 @@
     "translation": "Great, you pick her up and get her (home)!",
     "context": "Anu and Bilal take turns picking up their daughter Deepa from after-school. It is Bilal's turn today. Bilal tells Anu that he is really busy that day and doesn't know whether he will make it to the school in time. Anu: No worries, I am working from home today. I will pick her up! Bilal:",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["clauseType", "imperative"],
@@ -553,7 +553,7 @@
     "translation": "",
     "context": "Anu and her secretary Nina, after a sensitive meeting with a small subset of Anu's team.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ok", "judgment": "acceptable"},
       {"form": "Yes", "judgment": "acceptable"}
     ],
@@ -579,7 +579,7 @@
     "translation": "",
     "context": "Anu and her secretary Nina, after a sensitive meeting with a small subset of Anu's team.",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {"form": "Ok", "judgment": "acceptable"},
       {"form": "Yes", "judgment": "unacceptable"}
     ],

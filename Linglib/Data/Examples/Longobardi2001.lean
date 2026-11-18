@@ -24,7 +24,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -37,7 +37,7 @@ def ex_6b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "habitual"), ("position", "subject")] }
 
@@ -50,7 +50,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "adverbial"), ("position", "subject")] }
 
@@ -63,7 +63,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "subject")] }
 
@@ -76,7 +76,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "subject")] }
 
@@ -89,7 +89,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -102,7 +102,7 @@ def ex_9b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -115,7 +115,7 @@ def ex_10a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "subject")] }
 
@@ -128,7 +128,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -141,7 +141,7 @@ def ex_12 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "habitual"), ("position", "subject")] }
 
@@ -154,7 +154,7 @@ def ex_13a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -167,7 +167,7 @@ def ex_13b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -180,7 +180,7 @@ def ex_13c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -193,7 +193,7 @@ def ex_21a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -206,7 +206,7 @@ def ex_21b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -219,7 +219,7 @@ def ex_15a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -232,7 +232,7 @@ def ex_15b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "habitual"), ("position", "subject")] }
 
@@ -245,7 +245,7 @@ def ex_15c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "adverbial"), ("position", "subject")] }
 
@@ -258,7 +258,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelA"), ("position", "subject")] }
 
@@ -271,7 +271,7 @@ def ex_17a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelA"), ("position", "subject")] }
 
@@ -284,7 +284,7 @@ def ex_17b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -297,7 +297,7 @@ def ex_18b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -310,7 +310,7 @@ def ex_20a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -323,7 +323,7 @@ def ex_20b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -336,7 +336,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "object")] }
 
@@ -349,7 +349,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "habitual"), ("position", "object")] }
 
@@ -362,7 +362,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "object")] }
 
@@ -375,7 +375,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "object")] }
 
@@ -388,7 +388,7 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "episodic"), ("position", "object")] }
 
@@ -401,7 +401,7 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "habitual"), ("position", "object")] }
 
@@ -414,7 +414,7 @@ def ex_30c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelA"), ("position", "object")] }
 
@@ -427,7 +427,7 @@ def ex_30d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindLevel"), ("position", "object")] }
 
@@ -440,7 +440,7 @@ def ex_48a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -453,7 +453,7 @@ def ex_21a_en : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -466,7 +466,7 @@ def ex_48b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -479,7 +479,7 @@ def ex_48c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -492,7 +492,7 @@ def ex_48d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "object")] }
 
@@ -505,7 +505,7 @@ def ex_48e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "object")] }
 
@@ -518,7 +518,7 @@ def ex_34a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -531,7 +531,7 @@ def ex_34b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -544,7 +544,7 @@ def ex_34c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -557,7 +557,7 @@ def ex_34d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -570,7 +570,7 @@ def ex_34e : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -583,7 +583,7 @@ def ex_34f : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -596,7 +596,7 @@ def ex_35a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -609,7 +609,7 @@ def ex_35b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "iLevelB"), ("position", "subject")] }
 
@@ -622,7 +622,7 @@ def ex_36a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "object")] }
 
@@ -635,7 +635,7 @@ def ex_36b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "habitual"), ("position", "object")] }
 
@@ -648,7 +648,7 @@ def ex_36c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "iLevelA"), ("position", "object")] }
 
@@ -661,7 +661,7 @@ def ex_36d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "object")] }
 
@@ -674,7 +674,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("species", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
@@ -687,7 +687,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("species", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
@@ -700,7 +700,7 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("species", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
@@ -713,7 +713,7 @@ def ex_25b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("species", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
@@ -726,7 +726,7 @@ def ex_37 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("species", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
@@ -739,7 +739,7 @@ def ex_63a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -752,7 +752,7 @@ def ex_63b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -765,7 +765,7 @@ def ex_64a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
@@ -778,7 +778,7 @@ def ex_64b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := [("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
@@ -791,7 +791,7 @@ def ex_65a : Datum :=
     glossedTokens := []
     context := "The name without the article; with the article Ē the sentence is grammatical."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "properName"), ("article", "absent")] }
 
@@ -804,7 +804,7 @@ def ex_65b : Datum :=
     glossedTokens := []
     context := "The name without the article; with the article tē the sentence is grammatical."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("nominal", "properName"), ("article", "absent")] }
 

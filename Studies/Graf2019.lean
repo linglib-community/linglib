@@ -4,7 +4,7 @@ public import Studies.Bobaljik2012
 public import Linglib.Morphology.Exponence.Containment.SupersetRule
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.CaseConstraint
 public import Mathlib.Tactic.TFAE
 
 /-!
@@ -50,7 +50,6 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 * [zwicky-1977b]
 * [caha-2009]
 * [nevins-2007]
-* [pancheva-zubizarreta-2018]
 -/
 
 @[expose] public section
@@ -195,20 +194,22 @@ abbrev PCC := Combination → Bool
 
 theorem card_pcc : Fintype.card PCC = 64 := by decide
 
-/-- `PCC.ofGrammar g` is the constraint a grammar of the P-Constraint family predicts. -/
-def PCC.ofGrammar (g : _root_.PCC.Grammar) : PCC := fun p ↦ decide (_root_.PCC.IsLicit g p.1)
+/-- `PCC.ofRestriction R` is the constraint whose well-formed combinations are those `R`
+licenses. -/
+def PCC.ofRestriction (R : Scenario Person → Prop) [DecidablePred R] : PCC :=
+  fun p ↦ decide (R p.1)
 
 /-- `sPCC` is the Strong constraint (19a). -/
-def sPCC : PCC := .ofGrammar _root_.PCC.strongGrammar
+def sPCC : PCC := .ofRestriction _root_.PCC.Strong
 
 /-- `uPCC` is the Ultrastrong constraint (19b). -/
-def uPCC : PCC := .ofGrammar _root_.PCC.ultraStrongGrammar
+def uPCC : PCC := .ofRestriction _root_.PCC.Ultrastrong
 
 /-- `wPCC` is the Weak constraint (19c). -/
-def wPCC : PCC := .ofGrammar _root_.PCC.weakGrammar
+def wPCC : PCC := .ofRestriction _root_.PCC.Weak
 
 /-- `mPCC` is the Me-first constraint (19d). -/
-def mPCC : PCC := .ofGrammar _root_.PCC.meFirstGrammar
+def mPCC : PCC := .ofRestriction _root_.PCC.MeFirst
 
 /-- Table 4 gives the strong, ultrastrong, weak and me-first PCCs as stated in (19). -/
 theorem table4 :

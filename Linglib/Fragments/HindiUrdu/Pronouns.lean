@@ -61,7 +61,7 @@ def addressee : Grade → PersonalPronoun
   | .highHonorific => aap
 
 /-- The pronoun inventory. -/
-def pronouns : Finset PersonalPronoun := {maiN, ham, tuu, tum, aap, vah, ve}
+def personal : Finset PersonalPronoun := {maiN, ham, tuu, tum, aap, vah, ve}
 
 end Pronouns
 

@@ -60,11 +60,11 @@ open scoped Denotes
 
 /-- Linear symmetric *was* (p. 8): `A` held at some earlier time. -/
 def linearWas {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=
-  ◇[Tense.toSetRel ⟦Tense.past⟧] A
+  ◇[PointAlgebra.toSetRel ⟦Tense.past⟧] A
 
 /-- Linear symmetric *will* (p. 8): `A` holds at some later time. -/
 def linearWill {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=
-  ◇[Tense.toSetRel ⟦Tense.future⟧] A
+  ◇[PointAlgebra.toSetRel ⟦Tense.future⟧] A
 
 variable {T : Type*} [LinearOrder T] {A : T → Prop} {t : T}
 
@@ -112,11 +112,11 @@ theorem linearWas_linearWill (hA : A t) (h : linearWas (fun _ ↦ True) t) :
 
 /-- The `K_t` axiom FB, *A ⊃ always in the future, was A*, is the unit of the past-future adjunction
 (p. 17). -/
-theorem kt_fb : A ≤ □[Tense.toSetRel ⟦Tense.future⟧] (linearWas A) :=
+theorem kt_fb : A ≤ □[PointAlgebra.toSetRel ⟦Tense.future⟧] (linearWas A) :=
   Tense.diamond_past_box_future_gc.le_u_l A
 
 /-- `K_t`'s BF, *A ⊃ always in the past, will A* (p. 17). -/
-theorem kt_bf : A ≤ □[Tense.toSetRel ⟦Tense.past⟧] (linearWill A) :=
+theorem kt_bf : A ≤ □[PointAlgebra.toSetRel ⟦Tense.past⟧] (linearWill A) :=
   Tense.diamond_future_box_past_gc.le_u_l A
 
 end Symmetric
@@ -305,7 +305,7 @@ theorem fmc_point_consistent (s : SelectionFunction CarianiSantorio2018.W) :
       s.modal (CarianiSantorio2018.frame.alt 0) CarianiSantorio2018.warriorsCap ∩
         (CarianiSantorio2018.frame.alt 0).preimage CarianiSantorio2018.warriorsCapᶜ := by
   refine ⟨by rw [modal_eq_id]; rfl, .cg, by simp [CarianiSantorio2018.warriorsCap], ?_⟩
-  change CarianiSantorio2018.W.cg ∈ CarianiSantorio2018.frame.alternatives (.cw, 0)
+  change CarianiSantorio2018.W.cg ∈ CarianiSantorio2018.frame.alternatives ⟨.cw, 0⟩
   simp
 
 /-! ### Kissine's argument
@@ -364,7 +364,7 @@ open Aspect
 open Condoravdi2002 (PRES WOLL frame)
 open Event (τ)
 
-variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T] (s : SelectionFunction W)
+variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T] (s : SelectionFunction W)
   (MB : W → T → Set W) (Q : SortedProperty W E T) {w : W} {now : T}
 
 /-- Selectional WOLL instantiates the property throughout the forward interval from the start of
@@ -531,7 +531,7 @@ theorem indeterminate_sat (cloud : Set C) {cu : C} {holds asserts sat : C → Pr
 
 /-- A thin red line assigning each moment a history cannot be both convergent and centered once
 two incomparable moments follow a common one (Figure 11.4). -/
-theorem not_exists_convergent_centered_trl {M : Type*} [PartialOrder M] [IsLeftLinear M]
+theorem not_exists_convergent_centered_trl {M : Type*} [PartialOrder M] [IsForestOrder M]
     {m₁ m₂ m₃ : M} (h₂ : m₁ ≤ m₂) (h₃ : m₁ ≤ m₃) (h₂₃ : ¬ (m₂ ≤ m₃ ∨ m₃ ≤ m₂)) :
     ¬ ∃ trl : M → Flag M, (∀ m, m ∈ trl m) ∧
       ∀ m m' (h : Flag M), m ∈ h → m' ∈ h → trl m = trl m' := by

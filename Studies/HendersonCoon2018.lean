@@ -145,11 +145,11 @@ def erlewineInput : Erlewine2016.Input :=
 
 /-- Erlewine's grammar realizes the attested form in an optimal derivation. -/
 def AntiLocality : Prop :=
-  ∃ c ∈ (Erlewine2016.kaqchikel.tableau e.erlewineInput).optimal,
+  ∃ c ∈ Erlewine2016.kaqchikel.optimal e.erlewineInput,
     c.form e.erlewineInput.args = e.form
 
 instance : Decidable e.AntiLocality :=
-  inferInstanceAs (Decidable (∃ c ∈ (Erlewine2016.kaqchikel.tableau e.erlewineInput).optimal, _))
+  inferInstanceAs (Decidable (∃ c ∈ Erlewine2016.kaqchikel.optimal e.erlewineInput, _))
 
 end Example
 

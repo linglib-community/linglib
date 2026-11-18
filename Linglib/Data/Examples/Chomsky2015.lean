@@ -24,7 +24,7 @@ def ex1 : Datum :=
     glossedTokens := []
     context := "The wh-phrase raised out of its criterial position, the specifier of the interrogative C."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "criterialRaised")] }
 
@@ -37,7 +37,7 @@ def ex2 : Datum :=
     glossedTokens := []
     context := "The subject raised from the specifier of v*P to the specifier of T."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "subject")] }
 
@@ -50,7 +50,7 @@ def ex2prime : Datum :=
     glossedTokens := []
     context := "The subject moved on from the specifier of T to the matrix clause, with the complementizer present."
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "subjectExtracted")] }
 
@@ -63,7 +63,7 @@ def ex3 : Datum :=
     glossedTokens := []
     context := "Raising to object: the embedded subject raised to the specifier of the root expect."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "objectRaised")] }
 
@@ -76,7 +76,7 @@ def ex3prime : Datum :=
     glossedTokens := []
     context := "The raised object extracted further to the matrix clause."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "objectExtracted")] }
 
@@ -89,7 +89,7 @@ def ex4 : Datum :=
     glossedTokens := []
     context := "The subject extracted with the complementizer deleted."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("structure", "subjectExtractedNoC")] }
 

@@ -21,7 +21,7 @@ them.
 
 ## Main definitions
 
-* `Tamil.Pronouns.pronouns`: the personal pronouns.
+* `Tamil.Pronouns.personal`: the personal pronouns.
 * `Tamil.Pronouns.addressee`, `Tamil.Pronouns.thirdSg`: the singular pronouns at each grade.
 * `Tamil.Pronouns.ŋgæ`: the plural suffix, which is also the allocutive marker.
 
@@ -95,7 +95,7 @@ def thirdSg : Grade → Finset PersonalPronoun
   | .polite => {avar}
 
 /-- The personal pronouns. -/
-def pronouns : Finset PersonalPronoun :=
+def personal : Finset PersonalPronoun :=
   {naan, naam, naanŋgæ, nii, niiŋgæ, avan, avaL, avar, avanŋgæ}
 
 /-! ### The plural suffix and the allocutive marker -/

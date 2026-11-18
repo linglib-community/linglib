@@ -25,7 +25,7 @@
     "translation": "He's eating the jackrabbit.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -74,7 +74,7 @@
     "translation": "That jackrabbit ran.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -131,7 +131,7 @@
     "translation": "The girl that the man saw yesterday is here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -176,7 +176,7 @@
     "translation": "A bear was about to go gathering food.",
     "context": "First line of the story, setting the scene.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -217,7 +217,7 @@
     "translation": "The sun is shining bright.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -274,7 +274,7 @@
     "translation": "One man is here. The man came to eat.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -339,7 +339,7 @@
     "translation": "I saw a dog yesterday. Adele also saw the dog.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -396,7 +396,7 @@
     "translation": "That mountain is small.",
     "context": "Pointing at the mountain.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -437,7 +437,7 @@
     "translation": "That jackrabbit came running.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -482,7 +482,7 @@
     "translation": "This jackrabbit came running.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -543,7 +543,7 @@
     "translation": "Eddy isn't here but I need to see him.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -596,7 +596,7 @@
     "translation": "I also saw the movie that you saw.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -653,7 +653,7 @@
     "translation": "I also saw the coyote that the boy saw.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -698,7 +698,7 @@
     "translation": "I'm scratching myself with my finger.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -739,7 +739,7 @@
     "translation": "With all the coffee I drank, I keep going out.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -792,7 +792,7 @@
     "translation": "The food I'm looking at the people who brought smells good.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -845,7 +845,7 @@
     "translation": "I also want to drink the coffee the woman I saw drank.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -890,7 +890,7 @@
     "translation": "She spoke to a heron who was sitting there.",
     "context": "A bear is looking for her cubs, and comes to a river.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -947,7 +947,7 @@
     "translation": "The dog that was outside that the woman called came in.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -992,7 +992,7 @@
     "translation": "The horse Adele likes is running away.",
     "context": "You ask what is going on. Someone responds.",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1033,7 +1033,7 @@
     "translation": "I'm looking at the women who came in.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
+    "contrasts": [
       {
         "form": "daʔmoʔmóʔmoʔ p'á:š-ug-i-š-ge-w di-sú:dɨm-i",
         "judgment": "ungrammatical"
@@ -1095,7 +1095,7 @@
     "translation": "That boy that Adele saw yesterday is here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1148,7 +1148,7 @@
     "translation": "We're looking at all the horses that the cowboy brought outside.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1197,7 +1197,7 @@
     "translation": "... but he didn't take all the horses outside.",
     "context": "Uttered after (98).",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1250,7 +1250,7 @@
     "translation": "We're looking at all the horses that the cowboy brought outside.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1287,7 +1287,7 @@
     "translation": "I hear you talking.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1324,7 +1324,7 @@
     "translation": "I see it (=the sun) shining.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1361,7 +1361,7 @@
     "translation": "I saw them [= two ducks].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1402,7 +1402,7 @@
     "translation": "I saw them [= a plurality of ducks].",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1443,7 +1443,7 @@
     "translation": "both men",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1484,7 +1484,7 @@
     "translation": "my two older sisters",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1525,7 +1525,7 @@
     "translation": "many ducks",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1566,7 +1566,7 @@
     "translation": "my three younger sisters",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "contrasts": [],
     "readings": [],
     "paperFeatures": [
       [

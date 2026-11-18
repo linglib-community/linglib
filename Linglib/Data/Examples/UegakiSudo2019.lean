@@ -24,7 +24,7 @@ def ex_6a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "declarative")] }
 
@@ -37,7 +37,7 @@ def ex_6c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "declarative")] }
 
@@ -50,7 +50,7 @@ def ex_7b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative")] }
 
@@ -63,7 +63,7 @@ def ex_7c : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative")] }
 
@@ -76,7 +76,7 @@ def ex_8a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "wh-interrogative")] }
 
@@ -89,7 +89,7 @@ def ex_8b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "wh-interrogative")] }
 
@@ -102,7 +102,7 @@ def ex_10b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .ungrammatical
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "whether-interrogative")] }
 
@@ -115,7 +115,7 @@ def ex_40a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John's preference for Alice's jumping is compared to alternatives false at the evaluation world", .acceptable)]
     paperFeatures := [("predicate", "veridical preferential"), ("focus", "subject")] }
 
@@ -128,7 +128,7 @@ def ex_40b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := [("John's preference for Alice's jumping is compared only to alternatives he considers possible", .acceptable)]
     paperFeatures := [("predicate", "non-veridical preferential"), ("focus", "subject")] }
 
@@ -141,7 +141,7 @@ def ex_41 : Datum :=
     glossedTokens := []
     context := "There is no particular student John wants to sing. John knows which student will sing."
     judgment := .unacceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative"), ("evidence", "Threshold Significance")] }
 
@@ -154,7 +154,7 @@ def ex_42 : Datum :=
     glossedTokens := []
     context := "There is no particular student John wants to sing."
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "be indifferent"), ("complement", "wh-interrogative")] }
 
@@ -167,7 +167,7 @@ def ex_43a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .questionable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicate", "be indifferent"), ("complement", "declarative")] }
 

@@ -24,7 +24,7 @@ def ex_1 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "quantified presupposition trigger")] }
 
@@ -37,7 +37,7 @@ def ex_2 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -50,7 +50,7 @@ def ex_3 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -63,7 +63,7 @@ def ex_4 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [] }
 
@@ -76,7 +76,7 @@ def ex_5 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "q<p>"), ("intuitive", "p"), ("strongPredicts", "p")] }
 
@@ -89,7 +89,7 @@ def ex_6 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "nested elementary presupposition")] }
 
@@ -102,7 +102,7 @@ def ex_7 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "~q<p>"), ("intuitive", "p"), ("strongPredicts", "p"), ("strongVerdict", "correct")] }
 
@@ -115,7 +115,7 @@ def ex_8 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "q<p> -> r"), ("intuitive", "p"), ("strongPredicts", "p | r"), ("strongVerdict", "incorrect"), ("middlePredicts", "p"), ("middleVerdict", "correct")] }
 
@@ -128,7 +128,7 @@ def ex_9 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "p -> q<p>"), ("intuitive", "none"), ("weakPredicts", "p"), ("weakVerdict", "incorrect")] }
 
@@ -141,7 +141,7 @@ def ex_10 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "quantified presupposition trigger")] }
 
@@ -154,7 +154,7 @@ def ex_13 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("predicted", "disjunctive")] }
 
@@ -167,7 +167,7 @@ def ex_16 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "cancellation under negation")] }
 
@@ -180,7 +180,7 @@ def ex_17 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "cancellation in a conditional")] }
 
@@ -193,7 +193,7 @@ def ex_18 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "q<p> | r"), ("intuitive", "p"), ("projection", "leftProjects")] }
 
@@ -206,7 +206,7 @@ def ex_19 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "r | q<p>"), ("intuitive", "p"), ("projection", "rightProjects")] }
 
@@ -219,7 +219,7 @@ def ex_20 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("projection", "bothProject")] }
 
@@ -232,7 +232,7 @@ def ex_21 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "q<p> | ~p"), ("intuitive", "none"), ("projection", "cancelLeft")] }
 
@@ -245,7 +245,7 @@ def ex_22 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("projection", "cancelRight")] }
 
@@ -258,7 +258,7 @@ def ex_23 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("projection", "cancelBothAssertions")] }
 
@@ -271,7 +271,7 @@ def ex_24 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "q<p> | r<~p>"), ("intuitive", "none"), ("projection", "cancelBothInconsistent")] }
 
@@ -284,7 +284,7 @@ def ex_25 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "p -> q<r>"), ("intuitive", "r"), ("strongPredicts", "p -> r"), ("strongVerdict", "incorrect"), ("middlePredicts", "p -> r"), ("middleVerdict", "incorrect")] }
 
@@ -297,7 +297,7 @@ def ex_26 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("schema", "p -> q<r>"), ("intuitive", "p -> r"), ("strongPredicts", "p -> r"), ("strongVerdict", "correct"), ("middlePredicts", "p -> r"), ("middleVerdict", "correct")] }
 
@@ -310,7 +310,7 @@ def ex_27 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("basic", "~(q<p>) &w ~p"), ("preferred", "~A(q<p>) &w ~p"), ("presupposes", "none")] }
 
@@ -323,7 +323,7 @@ def ex_28 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("basic", "q<p> |w r<~p>"), ("preferred", "A(q<p>) |w A(r<~p>)")] }
 
@@ -336,7 +336,7 @@ def ex_29 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("basic", "p ->w q<p>"), ("preferred", "p ->w A(q<p>)"), ("presupposes", "none")] }
 
@@ -349,7 +349,7 @@ def ex_30 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    alternatives := []
+    contrasts := []
     readings := []
     paperFeatures := [("phenomenon", "unconditional accommodation")] }
 

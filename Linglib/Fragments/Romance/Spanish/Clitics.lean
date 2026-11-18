@@ -34,6 +34,12 @@ the first person singular, and a clitic cluster's position, not the entry, decid
 clitic bears. Dative and reflexive *se* fill third-person cells of both numbers, so their number
 is general (`Person.Category.sharedNumber`) and their categories those of both numbers.
 
+The third person follows the scheme the grammar gives for the written language and for most of
+the Spanish-speaking world (§15.2, p. 160), *lo*, *la*, *los* and *las* for direct and *le* and
+*les* for indirect objects. The *le* that central and northern European Spanish prefers for a
+singular human male direct object (§15.2 note 1) is not recorded, so
+`Spanish.Clitics.isSome_gender_iff` holds of that scheme.
+
 ## References
 
 * [J. Butt, C. Benjamin and A. Moreira Rodríguez, *A New Reference Grammar of Modern Spanish*
@@ -81,7 +87,8 @@ def Case.label : Case → _root_.Case
   | acc => .acc
   | dat => .dat
 
-/-- The object clitics of each cell ([butt-benjamin-2019] §14.1, pp. 143–144). A third-person
+/-- The object clitics of each cell ([butt-benjamin-2019] §14.1, pp. 143–144), the third person
+divided between direct and indirect object as in the table of §15.2 (p. 160). A third-person
 dative also has *se*, the form it takes before a third-person accusative (§14.9.1, p. 155). -/
 def table : Row × Case → Finset String
   | (.sg1, _) => {"me"}
