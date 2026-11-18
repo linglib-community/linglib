@@ -11,32 +11,34 @@ public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Data.Set.Finite.Lattice
 
 /-!
-# The least set a function depends on
+# The essential variables of a function
 
-Lemmas on mathlib's `DependsOn`. The sets a function depends on are closed under binary
-intersection, so a function that depends on a finite set depends on a least one: the coordinates
-it does not ignore, those at which changing the argument alone can change the value.
+Lemmas on mathlib's `DependsOn`. The essential variables of a function of several variables are
+the coordinates it does not ignore, [those at which changing the argument alone can change the
+value](##Function.mem_essentialVars_iff_exists_update). Every set the function depends on
+[contains them](##DependsOn.essentialVars_subset), and such sets are [closed under binary
+intersection](##DependsOn.inter), so a function that depends on a finite set [depends on its
+essential variables](##isLeast_dependsOn), the least set it depends on. Closure under infinite
+intersections fails: whether a set of natural numbers is infinite depends exactly on the cofinite
+sets, which have no least element.
 
-Closure under infinite intersections fails. A function of a set of natural numbers that says
-whether the set is infinite depends exactly on the cofinite sets, and they have no least element.
-
-## Main results
-
-* `DependsOn.inter`: a function that depends on `s` and on `t` depends on `s ∩ t`.
-* `dependsOn_compl_singleton_iff`: a function ignores a coordinate when updating it never changes
-  the value.
-* `isLeast_dependsOn`: a function that depends on a finite set depends on the coordinates it does
-  not ignore, and these lie in every set it depends on.
-* `Set.DependsOn`: a function of a set depends on `s` when its value at a set is its value at the
-  part of the set in `s`. This is [dependence of the function of the set's
-  predicate](##Set.dependsOn_iff_dependsOn_ofPred), stated without taking a set for a predicate.
+A function of a set [depends on `s`](##Set.DependsOn) when its value at a set is its value at the
+part of the set in `s`, which is [dependence of the function of the set's
+predicate](##Set.dependsOn_iff_dependsOn_ofPred) stated without taking a set for a predicate.
 -/
 
 public section
 
 open Function Set
 
-variable {ι : Type*} {α : ι → Type*} {β : Type*} {f : (Π i, α i) → β} {s t : Set ι}
+variable {ι : Type*} {α : ι → Type*} {β γ : Type*} {f : (Π i, α i) → β} {g : (Π i, α i) → γ}
+  {s t : Set ι} {i : ι}
+
+/-- A function that distinguishes only arguments that `f` distinguishes depends on every set `f`
+depends on. -/
+theorem Function.FactorsThrough.dependsOn (h : FactorsThrough g f) (hf : DependsOn f s) :
+    DependsOn g s :=
+  fun _ _ hxy ↦ h (hf hxy)
 
 /-- A function that depends on `s` and on `t` depends on `s ∩ t`. -/
 theorem DependsOn.inter (hs : DependsOn f s) (ht : DependsOn f t) : DependsOn f (s ∩ t) := by
@@ -67,19 +69,43 @@ theorem dependsOn_compl_singleton_iff [DecidableEq ι] {i : ι} :
   · subst hj; simp
   · simp [update_of_ne hj, hxy j hj]
 
-/-- A function that depends on a finite set depends on the coordinates it does not ignore, and
-every set it depends on contains them. -/
+/-! ### Essential variables -/
+
+/-- The essential variables of a function are the coordinates it does not ignore. -/
+@[expose] def Function.essentialVars (f : (Π i, α i) → β) : Set ι :=
+  {i | ¬ DependsOn f {i}ᶜ}
+
+theorem Function.mem_essentialVars : i ∈ essentialVars f ↔ ¬ DependsOn f {i}ᶜ :=
+  Iff.rfl
+
+/-- A coordinate is essential when updating it changes the value somewhere. -/
+theorem Function.mem_essentialVars_iff_exists_update [DecidableEq ι] :
+    i ∈ essentialVars f ↔ ∃ x a, f (update x i a) ≠ f x := by
+  simp [essentialVars, dependsOn_compl_singleton_iff]
+
+/-- Every set a function depends on contains its essential variables. -/
+theorem DependsOn.essentialVars_subset (hf : DependsOn f s) : essentialVars f ⊆ s :=
+  fun _ hi ↦ by_contra fun his ↦ hi (hf.mono (subset_compl_singleton_iff.2 his))
+
+theorem Function.FactorsThrough.essentialVars_subset (h : FactorsThrough g f) :
+    essentialVars g ⊆ essentialVars f :=
+  fun _ hi hf ↦ hi (h.dependsOn hf)
+
+/-- A function that depends on a finite set depends on its essential variables, which every set
+it depends on contains. -/
 theorem isLeast_dependsOn (hs : s.Finite) (hf : DependsOn f s) :
-    IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} := by
+    IsLeast {t | DependsOn f t} (essentialVars f) := by
   refine ⟨(hf.inter (DependsOn.biInter (hs.inter_of_left {i | DependsOn f {i}ᶜ})
-    fun i hi ↦ hi.2)).mono ?_, fun t ht i hi ↦ by_contra fun hit ↦ hi (ht.mono ?_)⟩
-  · rintro i ⟨his, hi⟩ hdep
-    exact (mem_iInter₂.1 hi i ⟨his, hdep⟩) rfl
-  · simpa using hit
+    fun i hi ↦ hi.2)).mono ?_, fun t ht ↦ ht.essentialVars_subset⟩
+  rintro i ⟨his, hi⟩ hdep
+  exact (mem_iInter₂.1 hi i ⟨his, hdep⟩) rfl
 
 theorem isLeast_dependsOn_of_finite [Finite ι] (f : (Π i, α i) → β) :
-    IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} :=
+    IsLeast {t | DependsOn f t} (essentialVars f) :=
   isLeast_dependsOn finite_univ (dependsOn_univ f)
+
+theorem dependsOn_iff_essentialVars_subset [Finite ι] : DependsOn f s ↔ essentialVars f ⊆ s :=
+  ⟨DependsOn.essentialVars_subset, (isLeast_dependsOn_of_finite f).1.mono⟩
 
 /-! ### Functions of a set -/
 
