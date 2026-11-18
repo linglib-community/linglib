@@ -76,7 +76,6 @@ import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
 import Linglib.Logic.BeliefRevision.Iterated
 import Linglib.Logic.ComparativeProbability.Defs
-import Linglib.Logic.Consequence
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 import Linglib.Core.MeasureTheory.Measure.Prod

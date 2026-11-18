@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Pragmatics.Probabilistic.Decision
 public import Studies.KirbyDowmanGriffiths2007
 
@@ -243,8 +243,6 @@ noncomputable def selfSuccess (lam : ℝ) (L : Msg → Set Triangle) (n : ℕ) :
 instance : IsProbabilityMeasure pr :=
   isProbabilityMeasure_uniformOn (finite_toSet _) ⟨.someNotAll, by decide⟩
 
-private theorem triangle_univ : (univ : Finset Triangle) = {.none, .someNotAll, .all} := by decide
-
 private theorem msg_univ : (univ : Finset Msg) = {.some, .all} := by decide
 
 private theorem pr_real (t : Triangle) :
@@ -257,7 +255,7 @@ private theorem success_eq {σ : Kernel Triangle Msg} {η : Kernel Msg Triangle}
       (σ .someNotAll).real {.all} * (η .all).real {.someNotAll} +
       (σ .all).real {.some} * (η .some).real {.all} +
       (σ .all).real {.all} * (η .all).real {.all}) / 2 := by
-  simp only [success, triangle_univ, msg_univ, sum_insert, mem_insert, mem_singleton,
+  simp only [success, Triangle.univ_eq, msg_univ, sum_insert, mem_insert, mem_singleton,
     reduceCtorEq, or_self, not_false_eq_true, sum_singleton, pr_real, ↓reduceIte]
   ring
 
@@ -269,7 +267,7 @@ private theorem pragmatic_hearer_real (L : Msg → Set Triangle) (m : Msg) (s : 
         ((agents pr lam L 0).1 .all).real {m} / 2) := by
   rw [agents_succ_snd, listener_real_singleton]
   congr 1
-  simp only [triangle_univ, sum_insert, mem_insert, mem_singleton, reduceCtorEq, or_self,
+  simp only [Triangle.univ_eq, sum_insert, mem_insert, mem_singleton, reduceCtorEq, or_self,
     not_false_eq_true, sum_singleton, pr_real, ↓reduceIte]
   ring
 

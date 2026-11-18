@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Semantics.Quantification.Numerals.Basic
 
 /-!

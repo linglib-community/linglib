@@ -68,21 +68,21 @@ theorem disj_must_iff (p q : Set W) (s : Set W) (w : W) :
   simp [disj, Sentence.must, Sentence.ofProp, update]
 
 theorem disjunctive_syllogism (p q : Set W) :
-    StandardConsequence [disj (Sentence.ofProp p) (Sentence.ofProp q), (Sentence.ofProp q)ᶜ]
+    StandardConsequence {disj (Sentence.ofProp p) (Sentence.ofProp q), (Sentence.ofProp q)ᶜ}
       (Sentence.ofProp p) := by
-  intro s w h
-  rcases h _ List.mem_cons_self with hp | hq
+  refine standardConsequence_iff.2 fun s w h ↦ ?_
+  rcases h _ (.inl rfl) with hp | hq
   · exact hp
-  · exact absurd hq (h _ (List.mem_cons_of_mem _ List.mem_cons_self))
+  · exact absurd hq (h _ (.inr rfl))
 
 /-- Disjunctive syllogism fails with a modal disjunct ((38)–(40)). -/
 theorem not_disjunctive_syllogism :
     ¬ StandardConsequence
-      [disj (Sentence.ofProp {true}) (Sentence.ofProp {false}).must,
-        (Sentence.ofProp {false}).mustᶜ]
+      {disj (Sentence.ofProp {true}) (Sentence.ofProp {false}).must,
+        (Sentence.ofProp {false}).mustᶜ}
       (Sentence.ofProp ({true} : Set Bool)) := by
   intro h
-  have := h Set.univ false
+  have := standardConsequence_iff.1 h Set.univ false
     (by simp [disj, Sentence.must, Sentence.ofProp, update, Set.mem_singleton_iff])
   simp [Sentence.ofProp, Set.mem_singleton_iff] at this
 

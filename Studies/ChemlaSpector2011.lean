@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.ChemlaSpector2011
 public import Linglib.Pragmatics.Implicature.Diagnostics
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Triangle
 public import Studies.GeurtsPouscoulous2009
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Pi

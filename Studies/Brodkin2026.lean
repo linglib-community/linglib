@@ -209,7 +209,7 @@ theorem spans_penultimate_isTrochee :
     (penultimate (n + 2)).spans IsTrochee = [⟨(n, n + 2), Nat.le_add_right ..⟩] := by
   simp [penultimate, RoseTree.spansList_append, RoseTree.spansList_replicate, IsTrochee,
     IsConstituent, Foot.childHeadFlags, RoseTree.licensed_node_iff, Constituent.Licenses,
-    Level.Licenses, Constituent.isHead]
+    Level.Licenses, Constituent.isHead, show Level.syl ≤ Level.ft by decide]
 
 end Penultimate
 

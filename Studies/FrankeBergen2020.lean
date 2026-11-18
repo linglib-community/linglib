@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Probabilistic.Uniform
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Mathlib.Data.List.ProdSigma
 public import Mathlib.Tactic.DeriveFintype

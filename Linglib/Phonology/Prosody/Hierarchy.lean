@@ -76,15 +76,15 @@ instance : OrderBot Level where
 instance : WellFoundedLT Level := InvImage.wf toNat Nat.lt_wfRel.wf
 
 /-- What a node of a level may dominate: a syllable nothing, a foot a non-empty list of
-syllables, and ω, φ and ι any nodes at or below their level. -/
+syllables and feet, and ω, φ and ι any nodes at or below their level. -/
 def Licenses : Level → List Level → Prop
   | syl, ks => ks = []
-  | ft, ks => ks ≠ [] ∧ ∀ k ∈ ks, k = syl
+  | ft, ks => ks ≠ [] ∧ ∀ k ∈ ks, k ≤ ft
   | a, ks => ∀ k ∈ ks, k ≤ a
 
 instance : ∀ (a : Level) (ks : List Level), Decidable (Licenses a ks)
   | syl, ks => inferInstanceAs (Decidable (ks = []))
-  | ft, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k = syl))
+  | ft, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k ≤ ft))
   | om, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k ≤ om))
   | ph, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k ≤ ph))
   | iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k ≤ iota))
@@ -92,7 +92,7 @@ instance : ∀ (a : Level) (ks : List Level), Decidable (Licenses a ks)
 theorem Licenses.le {a : Level} {ks : List Level} (h : Licenses a ks) : ∀ k ∈ ks, k ≤ a := by
   cases a with
   | syl => rintro k hk; rw [show ks = [] from h] at hk; simp at hk
-  | ft => intro k hk; rw [h.2 k hk]; decide
+  | ft => exact h.2
   | om => exact h
   | ph => exact h
   | iota => exact h
