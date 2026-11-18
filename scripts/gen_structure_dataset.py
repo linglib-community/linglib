@@ -20,7 +20,8 @@ JSON file format, the CLDF StructureDataset tables under CLDF column names:
                        "Lineage": "Afro-Asiatic, Berber"}],
     "ParameterTable": [{"ID": "cmpr_typ", "Name": "CMPR TYP", "Lean": "CmprTyp",
                         "Description": "..."}],
-                       # a parameter may add "Codes": "<parameter ID>" to take that one's codes
+                       # a parameter may add "Codes": "<parameter ID>" to take that one's codes,
+                       # and "Index": "<parameter ID>" to be a constructor of that one's type
     "CodeTable": [{"ID": "cmpr_typ_ex", "Parameter_ID": "cmpr_typ", "Name": "EX",
                    "Lean": "exceed", "Description": "..."}],
     "ValueTable": [{"Language_ID": "tamashek", "Parameter_ID": "cmpr_typ",
@@ -34,7 +35,12 @@ name of its generated type, a code's `Lean` the name of its constructor, and a c
 `Lean` the name of its list of rows. A parameter with `Codes` declares no codes of its own: its
 values take the codes of the parameter it names, which declares none of its own `Codes`, and its
 field has that parameter's type; a parameter whose codes others take and which has no values is
-emitted as a type with no field. `Minor` marks a code the source qualifies as holding of only
+emitted as a type with no field. A parameter with `Index` is one of a family the source tabulates
+side by side, as the columns of a table are: it names an earlier parameter with no codes and no
+values, whose type gets a constructor for each member, named by the member's `Lean` with a lower
+first letter and documented by its `Name` and `Description`. The members of an index take the
+codes of one parameter, and a row has one field for the index, a function from its type to the
+lists of codes, in place of a field for each member. `Minor` marks a code the source qualifies as holding of only
 some of the language's items. Within a contribution each language becomes one row with a
 list-valued field per parameter, the rows in the order of the language's first value and the
 values in the order of the `ValueTable`. `Value` (the printed form, where it differs from the
@@ -65,7 +71,7 @@ KEYWORDS = {"def", "if", "then", "else", "do", "fun", "let", "in", "at", "by", "
 
 TABLES = {"ContributionTable": {"ID", "Name", "Lean", "Source", "Description", "comment"},
           "LanguageTable": {"ID", "Name", "Glottocode", "Lineage", "comment"},
-          "ParameterTable": {"ID", "Name", "Lean", "Description", "Codes", "comment"},
+          "ParameterTable": {"ID", "Name", "Lean", "Description", "Codes", "Index", "comment"},
           "CodeTable": {"ID", "Parameter_ID", "Name", "Lean", "Description", "comment"},
           "ValueTable": {"Language_ID", "Parameter_ID", "Code_ID", "Contribution_ID", "Value",
                          "Questionable", "Optional", "Minor", "comment"}}
@@ -146,8 +152,23 @@ def emit_module(paper: str, data: dict) -> str:
         req(r, "Name", where)
         if "Codes" in r and (r["Codes"] not in params or "Codes" in params[r["Codes"]]):
             fail(f"{where}: Codes must name an earlier parameter with codes of its own")
-        params[pid] = {**r, "codes": []}
+        if "Index" in r:
+            ix = params.get(r["Index"])
+            if ix is None or "Codes" in ix or "Index" in ix:
+                fail(f"{where}: Index must name an earlier parameter with no Codes or Index")
+            if "Codes" not in r:
+                fail(f"{where}: a member of an index takes its codes from another parameter")
+            if any(params[m]["Codes"] != r["Codes"] for m in ix["members"]):
+                fail(f"{where}: the members of an index take the codes of one parameter")
+            ctor = lower_first(r["Lean"])
+            if ctor in KEYWORDS or ctor in [lower_first(params[m]["Lean"]) for m in ix["members"]]:
+                fail(f"{where}: Lean {r['Lean']!r} does not give a fresh constructor name")
+            ix["members"].append(pid)
+        params[pid] = {**r, "codes": [], "members": []}
     owner = {pid: p.get("Codes", pid) for pid, p in params.items()}
+    for pid, p in params.items():
+        if p["members"] and any(owner[q] == pid for q in params if q != pid):
+            fail(f"parameter {pid!r}: an index has no codes for another parameter to take")
     codes = {}
     for r in data.get("CodeTable") or []:
         where = f"code {r.get('ID')!r}"
@@ -160,6 +181,8 @@ def emit_module(paper: str, data: dict) -> str:
             fail(f"{where}: parameter {pid!r} not in ParameterTable")
         if owner[pid] != pid:
             fail(f"{where}: parameter {pid!r} takes the codes of {owner[pid]!r}")
+        if params[pid]["members"]:
+            fail(f"{where}: parameter {pid!r} is an index and has no codes")
         ctor = req(r, "Lean", where)
         if not CTOR_RE.match(ctor) or ctor in KEYWORDS:
             fail(f"{where}: Lean {ctor!r} is not a constructor name")
@@ -197,6 +220,8 @@ def emit_module(paper: str, data: dict) -> str:
             fail(f"{where}: language {lid!r} not in LanguageTable")
         if pid not in params:
             fail(f"{where}: parameter {pid!r} not in ParameterTable")
+        if params[pid]["members"]:
+            fail(f"{where}: parameter {pid!r} is an index and has no values")
         if cid not in codes or codes[cid]["Parameter_ID"] != owner[pid]:
             fail(f"{where}: code {cid!r} is not a code of {pid!r}")
         if con not in contribs:
@@ -214,21 +239,35 @@ def emit_module(paper: str, data: dict) -> str:
         fail(f"languages without values: {sorted(unused)}")
 
     taken = {owner[q] for q in params if owner[q] != q}
-    fielded = [pid for pid in params if pid in valued or pid not in taken]
+    fielded = [pid for pid, p in params.items()
+               if "Index" not in p and (p["members"] or pid in valued or pid not in taken)]
     out = []
     for p in params.values():
         if "Codes" in p:
+            continue
+        if p["members"]:
+            ctors = "\n".join(
+                f"  /-- `{doc(params[m]['Name'], m)}`: {doc(params[m].get('Description', ''), m)} -/\n"
+                f"  | {lower_first(params[m]['Lean'])}" for m in p["members"])
+            out.append(f"/-- {p['Name']}: {doc(p.get('Description', ''), p['ID'])} -/\n"
+                       f"inductive {p['Lean']} where\n{ctors}\n"
+                       f"  deriving DecidableEq, Repr, Fintype")
             continue
         ctors = "\n".join(f"  /-- `{doc(c['Name'], c['ID'])}`: {doc(c.get('Description', ''), c['ID'])} -/\n"
                           f"  | {c['Lean']}" for c in p["codes"])
         out.append(f"/-- {p['Name']}: {doc(p.get('Description', ''), p['ID'])} -/\n"
                    f"inductive {p['Lean']} where\n{ctors}\n  deriving DecidableEq, Repr")
+    def field_type(pid):
+        p = params[pid]
+        if p["members"]:
+            return f"{p['Lean']} → List (Coded {params[owner[p['members'][0]]]['Lean']})"
+        return f"List (Coded {params[owner[pid]]['Lean']})"
     fields = "\n".join(f"  /-- The codes for {params[pid]['Name']}. -/\n  "
-                       f"{lower_first(params[pid]['Lean'])} : "
-                       f"List (Coded {params[owner[pid]]['Lean']})" for pid in fielded)
+                       f"{lower_first(params[pid]['Lean'])} : {field_type(pid)}" for pid in fielded)
+    indexed = any(p["members"] for p in params.values())
     out.append(f"/-- A row of a sample: a language with its codes for each parameter. -/\n"
-               f"structure Row where\n  /-- The language. -/\n  language : Language\n{fields}\n"
-               f"  deriving DecidableEq, Repr")
+               f"structure Row where\n  /-- The language. -/\n  language : Language\n{fields}"
+               + ("" if indexed else "\n  deriving DecidableEq, Repr"))
     for lid, r in langs.items():
         g = f"some {lean_string(r['Glottocode'])}" if r.get("Glottocode") else "none"
         out.append(f"def {lid} : Language :=\n  {{ id := {lean_string(lid)}, "
@@ -236,15 +275,20 @@ def emit_module(paper: str, data: dict) -> str:
     for c in contribs.values():
         rows = []
         for lid, vals in c["rows"].items():
-            vs = ",\n    ".join(f"{lower_first(params[p]['Lean'])} := [{', '.join(vals[p])}]"
-                                for p in fielded)
+            def value(p):
+                if not params[p]["members"]:
+                    return f"[{', '.join(vals[p])}]"
+                return "fun" + "".join(f"\n      | .{lower_first(params[m]['Lean'])} => "
+                                       f"[{', '.join(vals[m])}]" for m in params[p]["members"])
+            vs = ",\n    ".join(f"{lower_first(params[p]['Lean'])} := {value(p)}" for p in fielded)
             rows.append(f"  {{ language := {lid},\n    {vs} }}")
         out.append(f"/-- {doc(c['Description'], c['ID'])} The rows of {c['Name']}, in the order "
                    f"of the source ({c['source']}). -/\n"
                    f"def {c['Lean']} : List Row := [\n" + ",\n".join(rows) + "]")
     body = "\n\n".join(out)
-    return f"""import Linglib.Data.StructureDataset.Schema
-
+    imports = "import Linglib.Data.StructureDataset.Schema\n" + (
+        "import Mathlib.Tactic.DeriveFintype\n" if indexed else "")
+    return f"""{imports}
 /-!
 # `{paper}`: language samples
 
