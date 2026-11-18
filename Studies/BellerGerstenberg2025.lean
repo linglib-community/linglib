@@ -1,29 +1,34 @@
 module
 
-public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Pragmatics.Probabilistic.Uniform
-public import Linglib.Semantics.Causation.CausalModel.Defs
+public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Semantics.Causation.CausalModel.Basic
 public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Beller and Gerstenberg (2025): Causation, Meaning, and Communication
 
-Beller and Gerstenberg model causal language by counterfactual simulation. A causal knowledge
-module computes three aspects of causation, namely whether-causation (counterfactual necessity),
-how-causation (a difference to the fine-grained outcome) and sufficient-causation
-(whether-causation with the alternative causes removed). A semantics module defines "affected",
-"enabled", "caused" and "made no difference" as logical combinations of the aspects, and a
-pragmatics module chooses among the true expressions by informativity, as a rational speech act
-speaker and listener after Frank and Goodman.
+Beller and Gerstenberg model causal language by counterfactual simulation. A candidate cause is a
+whether-cause when the outcome would have been different without it, a how-cause when the
+fine-grained outcome would have been different had it been changed, and a sufficient-cause when
+it is a whether-cause once the alternative causes are removed, so that a preempting ball [counts
+as a cause](##BellerGerstenberg2025.caused_preemption). "Affected", "enabled" and "caused" are
+increasingly specific combinations of the aspects, and "made no difference" denies all three,
+the denial of how-causation holding to a degree $\nu$. A speaker who saw the scenario [prefers
+the most specific true expression](##BellerGerstenberg2025.speaker_s1_lt), and her listener
+[takes "enabled" to mean that "caused" is false](##BellerGerstenberg2025.listener_enabled_lt).
 
 ## Implementation notes
 
-* The speaker is the paper's first-level pragmatic speaker over Boolean aspects. The fitted
-  model uses a second-level speaker over graded aspects from noisy simulations, with fitted
-  noise, softening and optimality parameters.
-* `listener_affected_prefers_howOnly` is the model's prediction for "affected", which the
-  listener experiment did not bear out.
+* The aspects of the sample scenarios are Boolean and the speaker is the first-level speaker. The
+  fitted model has graded whether- and sufficient-causation from noisy simulations, a second-level
+  speaker, and softened movement and uniqueness conjuncts in "caused", which are left out.
+* Sufficient-causation is whether-causation under an intervention that removes the alternative
+  causes. The search for the alternatives and the requirement that the events of the contingency
+  match the actual ones are left out.
+* The two structural models are the launching and preemption scenarios as the paper describes
+  them, with one equation for the ball's passage; the paper computes its aspects by physical
+  simulation.
 
 ## References
 
@@ -40,80 +45,79 @@ namespace BellerGerstenberg2025
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
-/-! ### Expressions and aspects -/
+/-! ### Aspects and expressions -/
+
+/-- The three aspects of causation. -/
+inductive Aspect
+  | whether
+  | how
+  | sufficient
+  deriving DecidableEq, Repr, Fintype
 
 /-- The four causal expressions offered to participants. -/
-inductive CausalExpression
-  | caused
-  | enabled
+inductive Expression
+  | noDifference
   | affected
-  | madeNoDifference
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | enabled
+  | caused
+  deriving DecidableEq, Repr, Fintype
 
-instance : Nonempty CausalExpression := ⟨.caused⟩
-instance : MeasurableSpace CausalExpression := ⊤
-instance : DiscreteMeasurableSpace CausalExpression := ⟨fun _ ↦ trivial⟩
+instance : MeasurableSpace Expression := ⊤
+instance : DiscreteMeasurableSpace Expression := ⟨fun _ ↦ trivial⟩
 
-/-- An aspect profile records whether-causation `W` (1), how-causation `H` (2) and
-sufficient-causation `S` (3), at Boolean values. -/
-structure CausalWorld where
-  whether : Bool
-  how : Bool
-  sufficient : Bool
-  deriving DecidableEq, Repr
+variable {p : Aspect → Prop}
 
-/-! ### Semantics -/
+/-- An expression holds of the aspects `p` of a candidate cause: "affected" is `W ∨ H ∨ S` (4),
+"enabled" is `W ∨ S` (5), "caused" is `H ∧ (W ∨ S)` (6), and "made no difference" is
+`¬W ∧ ¬H ∧ ¬S` (7). -/
+def Expression.Holds (p : Aspect → Prop) : Expression → Prop
+  | .noDifference => ¬ p .whether ∧ ¬ p .how ∧ ¬ p .sufficient
+  | .affected => p .whether ∨ p .how ∨ p .sufficient
+  | .enabled => p .whether ∨ p .sufficient
+  | .caused => p .how ∧ (p .whether ∨ p .sufficient)
 
-/-- The Boolean core of the semantics is `affected = W ∨ H ∨ S` (4), `enabled = W ∨ S` (5),
-`caused = H ∧ (W ∨ S)` (6) without the softened movement and uniqueness conjuncts, and
-`made no difference = ¬W ∧ ¬H ∧ ¬S` (7) with a hard negation. -/
-def expressionMeaning (cw : CausalWorld) : CausalExpression → Prop
-  | .affected => cw.whether ∨ cw.how ∨ cw.sufficient
-  | .enabled => cw.whether ∨ cw.sufficient
-  | .caused => cw.how ∧ (cw.whether ∨ cw.sufficient)
-  | .madeNoDifference => ¬ cw.whether ∧ ¬ cw.how ∧ ¬ cw.sufficient
-
-instance (cw : CausalWorld) : ∀ u, Decidable (expressionMeaning cw u)
+instance [DecidablePred p] : DecidablePred (Expression.Holds p)
+  | .noDifference => inferInstanceAs (Decidable (_ ∧ _))
   | .affected => inferInstanceAs (Decidable (_ ∨ _))
   | .enabled => inferInstanceAs (Decidable (_ ∨ _))
   | .caused => inferInstanceAs (Decidable (_ ∧ _))
-  | .madeNoDifference => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The expressions are ordered by specificity, the hierarchy behind the scale `causalScale`. -/
-theorem caused_implies_enabled (cw : CausalWorld) :
-    expressionMeaning cw .caused → expressionMeaning cw .enabled :=
-  And.right
+-- the scale of implication: "caused" implies "enabled", which implies "affected"
+theorem Expression.Holds.enabled (h : Expression.caused.Holds p) : Expression.enabled.Holds p :=
+  h.2
 
-theorem enabled_implies_affected (cw : CausalWorld) :
-    expressionMeaning cw .enabled → expressionMeaning cw .affected :=
-  Or.imp_right Or.inr
+theorem Expression.Holds.affected (h : Expression.enabled.Holds p) :
+    Expression.affected.Holds p :=
+  h.imp_right Or.inr
 
-theorem caused_implies_affected (cw : CausalWorld) :
-    expressionMeaning cw .caused → expressionMeaning cw .affected :=
-  enabled_implies_affected cw ∘ caused_implies_enabled cw
+theorem holds_noDifference_iff :
+    Expression.noDifference.Holds p ↔ ¬ Expression.affected.Holds p := by
+  simp only [Expression.Holds, not_or]
 
-theorem madeNoDifference_iff_not_affected (cw : CausalWorld) :
-    expressionMeaning cw .madeNoDifference ↔ ¬ expressionMeaning cw .affected := by
-  simp only [expressionMeaning, not_or]
+-- each expression of the scale is true of strictly fewer aspect profiles than the one below it
+theorem setOf_holds_ssubset :
+    {p | Expression.caused.Holds p} ⊂ {p | Expression.enabled.Holds p} ∧
+      {p | Expression.enabled.Holds p} ⊂ {p | Expression.affected.Holds p} :=
+  ⟨Set.ssubset_iff_exists.2 ⟨fun _ h ↦ h.enabled, (· = .whether), by simp [Expression.Holds]⟩,
+    Set.ssubset_iff_exists.2 ⟨fun _ h ↦ h.affected, (· = .how), by simp [Expression.Holds]⟩⟩
 
-/-- The graded semantics softens the negation of how-causation in "made no difference", which a
-how-cause that is neither a whether- nor a sufficient-cause satisfies to degree `ν` (7). -/
-def gradedMeaning (cw : CausalWorld) (ν : ℚ) : CausalExpression → ℚ
-  | .affected => if cw.whether || cw.how || cw.sufficient then 1 else 0
-  | .enabled => if cw.whether || cw.sufficient then 1 else 0
-  | .caused => if cw.how && (cw.whether || cw.sufficient) then 1 else 0
-  | .madeNoDifference =>
-    (if cw.whether then 0 else 1) * (if cw.how then ν else 1) * (if cw.sufficient then 0 else 1)
+/-- The semantic value of an expression at the aspects `p`. The denial of how-causation in "made
+no difference" is soft (7): a how-cause satisfies it to the degree `ν`. -/
+def meaning (ν : ℝ) (p : Aspect → Prop) [DecidablePred p] : Expression → ℝ
+  | .noDifference =>
+    (if p .whether then 0 else 1) * (if p .how then ν else 1) * (if p .sufficient then 0 else 1)
+  | u => if u.Holds p then 1 else 0
 
-theorem gradedMeaning_zero (cw : CausalWorld) (u : CausalExpression) :
-    gradedMeaning cw 0 u = if expressionMeaning cw u then 1 else 0 := by
-  obtain ⟨w, h, s⟩ := cw
-  cases u <;> cases w <;> cases h <;> cases s <;> simp [gradedMeaning, expressionMeaning]
+theorem meaning_zero [DecidablePred p] (u : Expression) :
+    meaning 0 p u = if u.Holds p then 1 else 0 := by
+  cases u <;> try rfl
+  by_cases hw : p .whether <;> by_cases hh : p .how <;> by_cases hs : p .sufficient <;>
+    simp [meaning, Expression.Holds, hw, hh, hs]
 
 /-! ### The sample scenarios -/
 
-/-- The paper's four sample scenarios are Michottean launching, double prevention, a how-cause
-pushing a ball already headed for the gate, and no interaction. -/
+/-- The paper's four sample scenarios: Michottean launching (1), double prevention (2), a ball
+pushed along that was already headed for the gate (3), and a candidate that plays no part (4). -/
 inductive Scenario
   | s1
   | s2
@@ -125,178 +129,346 @@ instance : Nonempty Scenario := ⟨.s1⟩
 instance : MeasurableSpace Scenario := ⊤
 instance : DiscreteMeasurableSpace Scenario := ⟨fun _ ↦ trivial⟩
 
-/-- The aspect values of the sample scenarios (Table 1a). -/
-def Scenario.aspects : Scenario → CausalWorld
-  | .s1 => ⟨true, true, true⟩
-  | .s2 => ⟨true, false, true⟩
-  | .s3 => ⟨false, true, false⟩
-  | .s4 => ⟨false, false, false⟩
+/-- The aspects the simulations compute for the candidate cause of each scenario (Table 1a). -/
+def Scenario.aspects : Scenario → Finset Aspect
+  | .s1 => {.whether, .how, .sufficient}
+  | .s2 => {.whether, .sufficient}
+  | .s3 => {.how}
+  | .s4 => ∅
 
-/-- Each expression's extension over the sample scenarios under the Boolean core. -/
-def sem (u : CausalExpression) : Finset Scenario :=
-  Finset.univ.filter fun s => expressionMeaning s.aspects u
+/-- The semantic value of an expression in a sample scenario (Table 1b). -/
+def value (ν : ℝ) (u : Expression) (s : Scenario) : ℝ :=
+  meaning ν (· ∈ s.aspects) u
 
--- Table 1b, Boolean columns: the extensions.
+-- Table 1b: "caused" is true of the first scenario alone, "enabled" of the first two, "affected"
+-- of the first three, and the third satisfies "made no difference" to the degree ν.
 example :
-    sem .caused = {.s1} ∧ sem .enabled = {.s1, .s2} ∧ sem .affected = {.s1, .s2, .s3} ∧
-      sem .madeNoDifference = {.s4} := by
+    (∀ s : Scenario, Expression.caused.Holds (· ∈ s.aspects) ↔ s = .s1) ∧
+      (∀ s : Scenario, Expression.enabled.Holds (· ∈ s.aspects) ↔ s = .s1 ∨ s = .s2) ∧
+      (∀ s : Scenario, Expression.affected.Holds (· ∈ s.aspects) ↔ s ≠ .s4) ∧
+      ∀ s : Scenario, Expression.noDifference.Holds (· ∈ s.aspects) ↔ s = .s4 := by
   decide
 
--- Table 1b, the softened cell: at ν = 0.2 the how-cause-only scenario weakly satisfies
--- "made no difference".
-example : gradedMeaning Scenario.s3.aspects (1 / 5) .madeNoDifference = 1 / 5 := by
-  norm_num [gradedMeaning, Scenario.aspects]
+example (ν : ℝ) : value ν .noDifference .s3 = ν ∧ value ν .noDifference .s4 = 1 := by
+  simp [value, meaning, Scenario.aspects]
+
+variable {ν α : ℝ}
+
+private theorem sum_scenario (f : Scenario → ℝ) : ∑ s, f s = f .s1 + f .s2 + f .s3 + f .s4 := by
+  rw [show (Finset.univ : Finset Scenario) = {.s1, .s2, .s3, .s4} from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem sum_expression (f : Expression → ℝ) :
+    ∑ u, f u = f .noDifference + f .affected + f .enabled + f .caused := by
+  rw [show (Finset.univ : Finset Expression) = {.noDifference, .affected, .enabled, .caused}
+      from rfl,
+    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  ring
+
+private theorem value_nonneg (hν : 0 ≤ ν) (u : Expression) (s : Scenario) : 0 ≤ value ν u s := by
+  cases u <;> cases s <;> simp [value, meaning, Expression.Holds, Scenario.aspects, hν]
+
+/-- The total semantic value of an expression over the sample scenarios. -/
+def mass (ν : ℝ) : Expression → ℝ
+  | .noDifference => ν + 1
+  | .affected => 3
+  | .enabled => 2
+  | .caused => 1
+
+theorem sum_value (ν : ℝ) (u : Expression) : ∑ s, value ν u s = mass ν u := by
+  rw [sum_scenario]
+  cases u <;> norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass]
+
+theorem mass_pos (hν : 0 ≤ ν) (u : Expression) : 0 < mass ν u := by
+  cases u <;> simp only [mass] <;> linarith
 
 /-! ### The pragmatics module -/
 
-/-- The literal listener is uniform on the scenarios an expression is true of. -/
-noncomputable abbrev literal : Kernel CausalExpression Scenario :=
-  RSA.literalListener (uniformOn Set.univ) (fun u ↦ (sem u : Set Scenario))
+/-- The literal listener (8) normalizes the semantic values of an expression over the
+scenarios. -/
+noncomputable abbrev literal (ν : ℝ) : Kernel Expression Scenario :=
+  gradedListener (uniformOn Set.univ) (value ν)
 
-/-- The first-level speaker knows the scenario and addresses the literal listener at
-rationality `α`. -/
-noncomputable abbrev speaker (α : ℝ) : Kernel Scenario CausalExpression :=
-  RSA.speaker α 0 literal Measure.dirac
+/-- The first-level speaker (9) saw the scenario and chooses an expression in proportion to the
+literal listener's probability of that scenario to the power `α`. -/
+noncomputable abbrev speaker (ν α : ℝ) : Kernel Scenario Expression :=
+  RSA.speaker α 0 (literal ν) Measure.dirac
 
 /-- The pragmatic listener inverts the speaker at a uniform prior over the scenarios. -/
-noncomputable abbrev listener (α : ℝ) : Kernel CausalExpression Scenario :=
-  RSA.listener (uniformOn Set.univ) (speaker α)
+noncomputable abbrev listener (ν α : ℝ) : Kernel Expression Scenario :=
+  RSA.listener (uniformOn Set.univ) (speaker ν α)
+
+-- without the softening the literal listener is the one of the Boolean semantics
+theorem literal_zero :
+    literal 0 = literalListener (uniformOn Set.univ)
+      fun u ↦ {s : Scenario | u.Holds (· ∈ s.aspects)} := by
+  have h : value 0 = fun u ↦ {s : Scenario | u.Holds (· ∈ s.aspects)}.indicator 1 := by
+    funext u s
+    rw [value, meaning_zero]
+    by_cases h : u.Holds (· ∈ s.aspects) <;> simp [h]
+  rw [literal, h, gradedListener_indicator]
+
+theorem literal_real (hν : 0 ≤ ν) (u : Expression) (s : Scenario) :
+    (literal ν u).real {s} = value ν u s / mass ν u := by
+  rw [← sum_value]
+  exact gradedListener_uniformOn_real_singleton (value_nonneg hν u)
+    (sum_value ν u ▸ mass_pos hν u) s
+
+theorem speaker_real (hν : 0 ≤ ν) (hα : 0 ≤ α) (s : Scenario) (u : Expression) :
+    (speaker ν α s).real {u} =
+      (value ν u s / mass ν u) ^ α / ∑ u', (value ν u' s / mass ν u') ^ α := by
+  rw [speaker_dirac_zero_real_singleton hα]
+  simp_rw [← ENNReal.toReal_rpow, ← measureReal_def, literal_real hν]
+
+-- at a fixed scenario the speaker ranks expressions by the literal listener's probability
+theorem speaker_real_lt_iff (hν : 0 ≤ ν) (hα : 0 < α) (s : Scenario) (u u' : Expression) :
+    (speaker ν α s).real {u} < (speaker ν α s).real {u'} ↔
+      value ν u s / mass ν u < value ν u' s / mass ν u' := by
+  have h (v : Expression) : 0 ≤ value ν v s / mass ν v :=
+    div_nonneg (value_nonneg hν v s) (mass_pos hν v).le
+  rw [speaker_dirac_real_singleton_lt_iff hα.le]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
+  rw [ENNReal.rpow_lt_rpow_iff hα, ← ENNReal.toReal_lt_toReal (measure_ne_top _ _)
+    (measure_ne_top _ _), ← measureReal_def, ← measureReal_def, literal_real hν, literal_real hν]
+
+theorem listener_real_lt_iff (u : Expression) (s s' : Scenario) :
+    (listener ν α u).real {s} < (listener ν α u).real {s'} ↔
+      (speaker ν α s).real {u} < (speaker ν α s').real {u} :=
+  listener_uniformOn_real_lt_iff _ u s s'
+
+/-! ### Table 1 -/
+
+-- Table 1c at ν = 0.2: hearing "made no difference" the literal listener mostly infers the fourth
+-- scenario and keeps some probability on the third.
+theorem literal_noDifference :
+    (literal (1 / 5) .noDifference).real {.s3} = 1 / 6 ∧
+      (literal (1 / 5) .noDifference).real {.s4} = 5 / 6 := by
+  rw [literal_real (by norm_num), literal_real (by norm_num)]
+  norm_num [value, meaning, Scenario.aspects, mass]
 
 -- Table 1c
-theorem literal_enabled : literal .enabled {.s1} = 2⁻¹ ∧ literal .enabled {.s3} = 0 := by
-  rw [literalListener_uniformOn_apply_singleton, literalListener_uniformOn_apply_singleton,
-    ite_eq_left (by decide), ite_eq_right (by decide), show (sem .enabled).card = 2 from by decide]
-  norm_num
+theorem literal_enabled (hν : 0 ≤ ν) :
+    (literal ν .enabled).real {.s1} = 1 / 2 ∧ (literal ν .enabled).real {.s3} = 0 := by
+  rw [literal_real hν, literal_real hν]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass]
 
--- Table 1d
-theorem speaker_s1 :
-    (speaker 1 .s1).real {.caused} = 6 / 11 ∧ (speaker 1 .s1).real {.enabled} = 3 / 11 ∧
-      (speaker 1 .s1).real {.affected} = 2 / 11 := by
-  have h (u : CausalExpression) := speaker_uniformOn_dirac_real_singleton_divPowSum sem (k := 1)
-    (D := 6) (w := .s1) (by decide +kernel) u
-  simp only [Nat.cast_one] at h
-  rw [h, h, h, show (profile sem Finset.univ .s1).divPowSum 6 1 = 11 from by decide +kernel,
-    show (if Scenario.s1 ∈ sem .caused then (6 / (sem .caused).card) ^ 1 else 0) = 6 by decide,
-    show (if Scenario.s1 ∈ sem .enabled then (6 / (sem .enabled).card) ^ 1 else 0) = 3 by decide,
-    show (if Scenario.s1 ∈ sem .affected then (6 / (sem .affected).card) ^ 1 else 0) = 2 by decide]
-  norm_num
+-- Table 1d, the first scenario
+theorem speaker_s1 (hν : 0 ≤ ν) :
+    (speaker ν 1 .s1).real {.caused} = 6 / 11 ∧ (speaker ν 1 .s1).real {.enabled} = 3 / 11 ∧
+      (speaker ν 1 .s1).real {.affected} = 2 / 11 := by
+  simp only [speaker_real hν zero_le_one, sum_expression, Real.rpow_one]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass]
 
--- Table 1d
-theorem speaker_s2 :
-    (speaker 1 .s2).real {.enabled} = 3 / 5 ∧ (speaker 1 .s2).real {.affected} = 2 / 5 ∧
-      (speaker 1 .s2).real {.caused} = 0 := by
-  have h (u : CausalExpression) := speaker_uniformOn_dirac_real_singleton_divPowSum sem (k := 1)
-    (D := 6) (w := .s2) (by decide +kernel) u
-  simp only [Nat.cast_one] at h
-  rw [h, h, h, show (profile sem Finset.univ .s2).divPowSum 6 1 = 5 from by decide +kernel,
-    show (if Scenario.s2 ∈ sem .enabled then (6 / (sem .enabled).card) ^ 1 else 0) = 3 by decide,
-    show (if Scenario.s2 ∈ sem .affected then (6 / (sem .affected).card) ^ 1 else 0) = 2 by decide,
-    show (if Scenario.s2 ∈ sem .caused then (6 / (sem .caused).card) ^ 1 else 0) = 0 by decide]
-  norm_num
+-- Table 1d, the third scenario at ν = 0.2
+theorem speaker_s3 :
+    (speaker (1 / 5) 1 .s3).real {.affected} = 2 / 3 ∧
+      (speaker (1 / 5) 1 .s3).real {.noDifference} = 1 / 3 := by
+  simp only [speaker_real (ν := 1 / 5) (by norm_num) zero_le_one, sum_expression, Real.rpow_one]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass]
 
 /-! ### Informativity and implicature -/
 
-/-- At Michottean launching the speaker prefers "caused" to "enabled" and "enabled" to
-"affected", at every positive rationality. -/
-theorem speaker_prefers_caused {α : ℝ} (hα : 0 < α) :
-    (speaker α .s1).real {.enabled} < (speaker α .s1).real {.caused} ∧
-      (speaker α .s1).real {.affected} < (speaker α .s1).real {.enabled} :=
-  ⟨speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem hα (by decide) (by decide) (by decide),
-    speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem hα (by decide) (by decide)
-      (by decide)⟩
+/-- At Michottean launching, where "caused", "enabled" and "affected" are all true, the speaker
+prefers "caused" to "enabled" and "enabled" to "affected", at every positive rationality. -/
+theorem speaker_s1_lt (hν : 0 ≤ ν) (hα : 0 < α) :
+    (speaker ν α .s1).real {.enabled} < (speaker ν α .s1).real {.caused} ∧
+      (speaker ν α .s1).real {.affected} < (speaker ν α .s1).real {.enabled} := by
+  rw [speaker_real_lt_iff hν hα, speaker_real_lt_iff hν hα]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass]
 
-/-- At double prevention, where "caused" is false, the speaker prefers "enabled" to
-"affected" at every positive rationality. -/
-theorem speaker_prefers_enabled {α : ℝ} (hα : 0 < α) :
-    (speaker α .s2).real {.affected} < (speaker α .s2).real {.enabled} :=
-  speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem hα (by decide) (by decide) (by decide)
-
-theorem listener_caused_identifies {α : ℝ} (hα : 0 < α) :
-    (listener α .caused).real {.s2} < (listener α .caused).real {.s1} :=
-  listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
+/-- The softening is what lets the speaker call a how-cause that is neither a whether-cause nor a
+sufficient-cause one that "made no difference". -/
+theorem speaker_s3_noDifference_pos_iff (hν : 0 ≤ ν) (hα : 0 < α) :
+    0 < (speaker ν α .s3).real {.noDifference} ↔ 0 < ν := by
+  simp only [speaker_real hν hα.le, sum_expression]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass, Real.zero_rpow hα.ne']
+  refine ⟨fun h ↦ hν.lt_of_ne fun h0 ↦ ?_, fun h ↦ ?_⟩
+  · simp [← h0, Real.zero_rpow hα.ne'] at h
+  · have hx := Real.rpow_pos_of_pos (div_pos h (by linarith : 0 < ν + 1)) α
+    exact div_pos hx (add_pos hx (Real.rpow_pos_of_pos (by norm_num) α))
 
 /-- Hearing "enabled", the pragmatic listener favours double prevention over Michottean
-launching, where the speaker would have said "caused". This is the scalar implicature. -/
-theorem listener_enabled_implicature {α : ℝ} (hα : 0 < α) :
-    (listener α .enabled).real {.s1} < (listener α .enabled).real {.s2} :=
-  listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
+launching, where the speaker would have said "caused": the scalar implicature. -/
+theorem listener_enabled_lt (hν : 0 ≤ ν) (hα : 0 < α) :
+    (listener ν α .enabled).real {.s1} < (listener ν α .enabled).real {.s2} := by
+  rw [listener_real_lt_iff]
+  simp only [speaker_real hν hα.le, sum_expression]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass, Real.zero_rpow hα.ne']
+  have h3 : (0 : ℝ) < (1 / 3) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have h2 : (0 : ℝ) < (1 / 2) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  exact div_lt_div_of_pos_left h2 (add_pos h3 h2) (by linarith)
 
-theorem listener_affected_prefers_howOnly {α : ℝ} (hα : 0 < α) :
-    (listener α .affected).real {.s1} < (listener α .affected).real {.s3} :=
-  listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
+/-- Hearing "affected", the pragmatic listener favours the scenario of which no stronger
+expression is true. In the listener experiment participants favoured instead a scenario of which
+"enabled" and "caused" were also true. -/
+theorem listener_affected_lt (hν : 0 ≤ ν) (hν1 : ν < 1) (hα : 0 < α) :
+    (listener ν α .affected).real {.s1} < (listener ν α .affected).real {.s3} ∧
+      (listener ν α .affected).real {.s2} < (listener ν α .affected).real {.s3} := by
+  simp only [listener_real_lt_iff, speaker_real hν hα.le, sum_expression]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass, Real.zero_rpow hα.ne']
+  have h3 : (0 : ℝ) < (1 / 3) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have h2 : (0 : ℝ) < (1 / 2) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have h0 : 0 ≤ ν / (ν + 1) := div_nonneg hν (by linarith)
+  have hlt : ν / (ν + 1) < 1 / 2 := by rw [div_lt_iff₀ (by linarith)]; linarith
+  have hx : (ν / (ν + 1)) ^ α < (1 / 2) ^ α := Real.rpow_lt_rpow h0 hlt hα
+  have hpos := add_pos_of_nonneg_of_pos (Real.rpow_nonneg h0 α) h3
+  exact ⟨div_lt_div_of_pos_left h3 hpos (by linarith),
+    div_lt_div_of_pos_left h3 hpos (by linarith)⟩
 
-theorem listener_noDifference_identifies {α : ℝ} (hα : 0 < α) :
-    (listener α .madeNoDifference).real {.s3} < (listener α .madeNoDifference).real {.s4} :=
-  listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
+theorem listener_caused_lt (hν : 0 ≤ ν) (hα : 0 < α) :
+    (listener ν α .caused).real {.s2} < (listener ν α .caused).real {.s1} := by
+  rw [listener_real_lt_iff]
+  simp only [speaker_real hν hα.le, sum_expression]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass, Real.zero_rpow hα.ne']
+  positivity
 
-/-! ### The Horn scale -/
+theorem listener_noDifference_lt (hν : 0 ≤ ν) (hα : 0 < α) :
+    (listener ν α .noDifference).real {.s3} < (listener ν α .noDifference).real {.s4} := by
+  rw [listener_real_lt_iff]
+  simp only [speaker_real hν hα.le, sum_expression]
+  norm_num [value, meaning, Expression.Holds, Scenario.aspects, mass, Real.zero_rpow hα.ne']
+  have h3 : (0 : ℝ) < (1 / 3) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have hx : 0 ≤ (ν / (ν + 1)) ^ α := Real.rpow_nonneg (div_nonneg hν (by linarith)) α
+  rw [div_self (Real.rpow_pos_of_pos (inv_pos.2 (by linarith)) α).ne', div_lt_one (by linarith)]
+  linarith
 
-/-- The scale ⟨affected, enabled, caused⟩, weakest to strongest. -/
-def causalScale : Fin 3 → CausalExpression := ![.affected, .enabled, .caused]
-
-theorem causalScale_strictAnti :
-    StrictAnti λ i => {cw | expressionMeaning cw (causalScale i)} := by
-  rw [Fin.strictAnti_iff_succ_lt]
-  intro i
-  fin_cases i
-  · show ({cw | expressionMeaning cw .enabled} : Set CausalWorld) <
-      {cw | expressionMeaning cw .affected}
-    exact LE.le.ssubset_of_not_superset (λ cw h => enabled_implies_affected cw h)
-      (Set.not_subset.2 ⟨⟨false, true, false⟩, by decide, by decide⟩)
-  · show ({cw | expressionMeaning cw .caused} : Set CausalWorld) <
-      {cw | expressionMeaning cw .enabled}
-    exact LE.le.ssubset_of_not_superset (λ cw h => caused_implies_enabled cw h)
-      (Set.not_subset.2 ⟨⟨true, false, false⟩, by decide, by decide⟩)
-
-/-! ### Aspects from a structural model -/
+/-! ### Aspects in a structural model -/
 
 section Structural
 
-/-- The variables of a two-event structural model are the candidate cause and the outcome. -/
-inductive Var
-  | cause
-  | effect
-  deriving DecidableEq, Fintype, Repr
-
-/-- The outcome depends on the candidate cause alone. -/
-def launchEdges : Finset (Var × Var) := {(.cause, .effect)}
-
-/-- The context settles whether the candidate cause occurs. -/
-structure LaunchContext where
-  cause : Bool
-
-/-- In Michottean launching the outcome takes the candidate cause's value. -/
-def launch : CausalModel LaunchContext Var fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w, v) ∈ launchEdges⟩
-  eqn
-    | .cause => fun u _ ↦ u.cause
-    | .effect => fun _ x ↦ x .cause
-
-instance : DecidableRel launch.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w, v) ∈ launchEdges))
-
-instance : launch.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
-
 open CausalModel
 
-variable {U V : Type*} [Fintype V] [DecidableEq V]
+section Aspects
 
-/-- The aspect profile of `cause → effect` in the context `u` of a deterministic model. `W` is
-whether-causation (1), that had the cause been absent the effect would not have been present. `H` is
-a direct law, and `S` is sufficient-causation (3), whether-causation under the intervention
-holding the alternative causes `R` at the values `r` that take them away. -/
-noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
-    [DecidableRel M.graph.Adj] (R : Finset V) (r : ∀ v : R, Bool) (u : U) (cause effect : V) :
-    CausalWorld where
-  whether := decide (M[cause ← false].solve u effect ≠ true)
-  how := decide (M.graph.Adj cause effect)
-  sufficient := decide ((M.intervene R r)[cause ← false].solve u effect ≠ true)
+variable {U V β : Type*} [DecidableEq V] {γ : V → Type*} [∀ v, Nonempty (γ v)]
+  (M : CausalModel U V γ) [M.IsAcyclic] (R : Finset V) (r : ∀ v : R, γ v) (u : U) (c : V)
+  (removed changed : γ c) (e : V) (outcome : γ e → β)
 
-/-- Michottean launching, in the context where the cause occurs, computes the profile of the
-first scenario, since with no alternative causes to remove sufficient-causation is
-whether-causation. -/
-theorem launch_ofModel :
-    CausalWorld.ofModel launch ∅ isEmptyElim ⟨true⟩ .cause .effect = Scenario.s1.aspects := by
+/-- The cause `c` is a whether-cause of the outcome at `e` (1) when holding it at its `removed`
+value gives a different outcome. -/
+def IsWhetherCause : Prop :=
+  outcome (M[c ← removed].solve u e) ≠ outcome (M.solve u e)
+
+/-- The cause `c` is a how-cause (2) when holding it at a `changed` value gives `e` a different
+value, the fine-grained outcome. -/
+def IsHowCause : Prop :=
+  M[c ← changed].solve u e ≠ M.solve u e
+
+/-- The cause `c` is a sufficient-cause (3) when it is a whether-cause in the contingency that
+holds the alternative causes `R` at the values `r` that remove them. -/
+def IsSufficientCause : Prop :=
+  IsWhetherCause (M.intervene R r) u c removed e outcome
+
+-- with no alternative causes to remove, sufficient-causation is whether-causation
+theorem isSufficientCause_empty (r : ∀ v : (∅ : Finset V), γ v) :
+    IsSufficientCause M ∅ r u c removed e outcome ↔ IsWhetherCause M u c removed e outcome := by
+  simp only [IsSufficientCause, intervene_empty]
+
+/-- The aspects of `c` as a cause of the outcome at `e`. -/
+def aspects : Aspect → Prop
+  | .whether => IsWhetherCause M u c removed e outcome
+  | .how => IsHowCause M u c changed e
+  | .sufficient => IsSufficientCause M R r u c removed e outcome
+
+end Aspects
+
+/-- A ball of the scene as it was, removed from the scene, or changed by a small perturbation of
+its initial position. -/
+inductive Ball
+  | actual
+  | removed
+  | changed
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The scene holds the candidate cause, Ball A, a blue ball that may also reach the target, and
+the target, Ball B. -/
+inductive Object
+  | ballA
+  | blueBall
+  | ballB
+  deriving DecidableEq, Fintype, Repr
+
+/-- The cause balls are in one of three states; the target's fine-grained outcome is the time at
+which it passes through the gate, if it does. -/
+abbrev Outcome : Object → Type
+  | .ballA => Ball
+  | .blueBall => Ball
+  | .ballB => Option ℕ
+
+instance : ∀ v, Inhabited (Outcome v)
+  | .ballA => inferInstanceAs (Inhabited Ball)
+  | .blueBall => inferInstanceAs (Inhabited Ball)
+  | .ballB => inferInstanceAs (Inhabited (Option ℕ))
+
+instance : ∀ v, DecidableEq (Outcome v)
+  | .ballA => inferInstanceAs (DecidableEq Ball)
+  | .blueBall => inferInstanceAs (DecidableEq Ball)
+  | .ballB => inferInstanceAs (DecidableEq (Option ℕ))
+
+/-- Ball A knocks Ball B through the gate, at a slightly different time if it is perturbed.
+Without Ball A the blue ball knocks Ball B through shortly afterwards, and without either Ball B
+stays where it is. -/
+def passage : Ball → Ball → Option ℕ
+  | .actual, _ => some 1
+  | .changed, _ => some 2
+  | .removed, .removed => none
+  | .removed, _ => some 3
+
+/-- Ball B's passage depends on both balls. -/
+def sceneEdges : Finset (Object × Object) := {(.ballA, .ballB), (.blueBall, .ballB)}
+
+/-- The scene of the launching and preemption scenarios. The context settles whether the blue
+ball is there. -/
+def scene : CausalModel Ball Object Outcome where
+  graph := ⟨fun w v ↦ (w, v) ∈ sceneEdges⟩
+  eqn
+    | .ballA => fun _ _ ↦ .actual
+    | .blueBall => fun u _ ↦ u
+    | .ballB => fun _ x ↦ passage (x .ballA) (x .blueBall)
+
+instance : DecidableRel scene.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ sceneEdges))
+
+instance : scene.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+/-- The aspects of Ball A as a cause of Ball B's going through the gate when the blue ball is in
+the state `u`, the alternative cause to remove being the blue ball. -/
+abbrev sceneAspects (u : Ball) : Aspect → Prop :=
+  aspects scene {.blueBall} (uniqueElim Ball.removed) u .ballA .removed .changed .ballB
+    Option.isSome
+
+private theorem solve_scene (u : Ball) : scene.solve u .ballB = passage .actual u := by
+  cases u <;> decide
+
+private theorem solve_scene_ballA (a u : Ball) :
+    scene[.ballA ← a].solve u .ballB = passage a u := by
+  cases a <;> cases u <;> decide
+
+private theorem solve_contingency (u : Ball) :
+    scene[.blueBall ← Ball.removed].solve u .ballB = passage .actual .removed := by
+  cases u <;> decide
+
+private theorem solve_contingency_ballA (a u : Ball) :
+    scene[.blueBall ← Ball.removed, .ballA ← a].solve u .ballB = passage a .removed := by
+  cases a <;> cases u <;> decide
+
+-- without the blue ball the scene is Michottean launching, with the aspects of Table 1a
+theorem sceneAspects_removed (a : Aspect) : sceneAspects .removed a ↔ a ∈ Scenario.s1.aspects := by
+  cases a <;>
+    simp only [sceneAspects, aspects, IsWhetherCause, IsHowCause, IsSufficientCause, solve_scene,
+      solve_scene_ballA, solve_contingency, solve_contingency_ballA] <;>
+    decide
+
+/-- Under preemption Ball A is not a whether-cause, since the blue ball would have knocked Ball B
+through the gate, but it is a how-cause and a sufficient-cause, so it "caused" Ball B to go
+through the gate. -/
+theorem caused_preemption :
+    ¬ sceneAspects .actual .whether ∧ Expression.caused.Holds (sceneAspects .actual) := by
+  simp only [Expression.Holds, sceneAspects, aspects, IsWhetherCause, IsHowCause,
+    IsSufficientCause, solve_scene, solve_scene_ballA, solve_contingency, solve_contingency_ballA]
   decide
 
 end Structural
