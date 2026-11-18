@@ -93,8 +93,8 @@ namespace FeatureType
 
 /-- The dimensions as a list, since `Finset.univ.toList` is noncomputable. -/
 def all : List FeatureType :=
-  [person, number, gender, case, agr .definiteness, participant, author, atomic, minimal, additive,
-   wh, tense, infl, oblique, ellipsis]
+  [person, number, gender, case, agr .definiteness, participant, author, personFeature .hearer,
+   atomic, minimal, additive, wh, tense, infl, oblique, ellipsis]
 
 theorem mem_all (t : FeatureType) : t ∈ all := by
   revert t; decide

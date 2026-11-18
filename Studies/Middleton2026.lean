@@ -201,7 +201,8 @@ abbrev Arg := List Feat
 /-- A person bears Harbour's bivalent features (3), `[+F]` for each feature of its bundle and
 `[−F]` for the others. -/
 def personFeats (p : Person) : Arg :=
-  [.participant (decide (.participant ∈ p.toFeatures)), .author (decide (.author ∈ p.toFeatures))]
+  [.participant (decide (.participant ∈ p.toFeatures Finset.univ)),
+    .author (decide (.author ∈ p.toFeatures Finset.univ))]
 
 /-- A bundle bears Harbour's number features (2), each with the values it carries. -/
 def bundleFeats (b : Bundle) : Arg :=
