@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Probabilistic.Uniform
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Triangle
 
 /-!
 # Potts, Lassiter, Levy and Frank (2016): Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty
