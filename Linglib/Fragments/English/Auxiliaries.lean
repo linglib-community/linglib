@@ -72,10 +72,10 @@ def finite (tense : UD.Tense) (person : Option Person := none) (number : Option 
 A finite verb agrees with its subject in person and number ([huddleston-pullum-2002] ch. 3
 §1.1). -/
 
-/-- The values of a cell of an English finite verb: a person of the standard tripartition and one
+/-- The values of a cell of an English finite verb: a person and one
 of the two numbers, and a single value in the dimensions no English verb agrees in. -/
 abbrev Value : Dimension → Type
-  | .person => {p : Person // ¬ p.MarksClusivity}
+  | .person => Person
   | .number => Nouns.numberSystem
   | .gender => Unit
   | .case => Unit
@@ -85,9 +85,8 @@ abbrev Value : Dimension → Type
 abbrev Cell := (d : Dimension) → Value d
 
 /-- The cell of a subject of a person and a number. -/
-def cell (p : Person) (n : Number) (hp : ¬ p.MarksClusivity := by decide)
-    (hn : n ∈ Nouns.numberSystem := by decide) : Cell
-  | .person => ⟨p, hp⟩
+def cell (p : Person) (n : Number) (hn : n ∈ Nouns.numberSystem := by decide) : Cell
+  | .person => p
   | .number => ⟨n, hn⟩
   | .gender => ()
   | .case => ()
@@ -95,12 +94,12 @@ def cell (p : Person) (n : Number) (hp : ¬ p.MarksClusivity := by decide)
 
 /-- The predicate target whose form is `f` of the subject's person and number, given a person
 and the plural that each change the form of the third person singular. -/
-def ofForm (f : {p : Person // ¬ p.MarksClusivity} → Nouns.numberSystem → String)
-    (p : {p : Person // ¬ p.MarksClusivity})
+def ofForm (f : Person → Nouns.numberSystem → String)
+    (p : Person)
     (hp : f p ⟨.singular, by decide⟩ ≠
-      f ⟨.third, by decide⟩ ⟨.singular, by decide⟩)
-    (hn : f ⟨.third, by decide⟩ ⟨.plural, by decide⟩ ≠
-      f ⟨.third, by decide⟩ ⟨.singular, by decide⟩) :
+      f .third ⟨.singular, by decide⟩)
+    (hn : f .third ⟨.plural, by decide⟩ ≠
+      f .third ⟨.singular, by decide⟩) :
     Target Value String :=
   .ofDependsOn {.predicate} (fun x ↦ f (x .person) (x .number)) {.person, .number}
     (fun x y h ↦ by simp only [h .person (by simp), h .number (by simp)])
@@ -110,40 +109,40 @@ def ofForm (f : {p : Person // ¬ p.MarksClusivity} → Nouns.numberSystem → S
 
 /-- The present of *be*: *am* in the first person singular, *is* in the third, and *are*
 elsewhere ([huddleston-pullum-2002] ch. 3 §1.1). -/
-def bePresentForm (p : {p : Person // ¬ p.MarksClusivity}) :
+def bePresentForm (p : Person) :
     Nouns.numberSystem → String :=
   Number.elim Nouns.numberSystem
-    (match p.1 with | .first => "am" | .third => "is" | _ => "are") "are"
+    (match p with | .first => "am" | .third => "is" | _ => "are") "are"
 
 /-- The preterite of *be*: *was* in the first and the third person singular, and *were*
 elsewhere ([huddleston-pullum-2002] ch. 3 §1.1). -/
-def bePreteriteForm (p : {p : Person // ¬ p.MarksClusivity}) :
+def bePreteriteForm (p : Person) :
     Nouns.numberSystem → String :=
-  Number.elim Nouns.numberSystem (match p.1 with | .second => "were" | _ => "was") "were"
+  Number.elim Nouns.numberSystem (match p with | .second => "were" | _ => "was") "were"
 
 /-- The present of a verb with a third person singular form `third` and a plain present form
 `plain`, which serves every other subject ([huddleston-pullum-2002] ch. 3 §1.1). -/
-def presentForm (third plain : String) (p : {p : Person // ¬ p.MarksClusivity}) :
+def presentForm (third plain : String) (p : Person) :
     Nouns.numberSystem → String :=
-  Number.elim Nouns.numberSystem (match p.1 with | .third => third | _ => plain) plain
+  Number.elim Nouns.numberSystem (match p with | .third => third | _ => plain) plain
 
 /-- The present of *be* inflects for person and number. -/
 def bePresent : Target Value String :=
-  ofForm bePresentForm ⟨.first, by decide⟩ (by decide) (by decide)
+  ofForm bePresentForm .first (by decide) (by decide)
 
 /-- The preterite of *be* inflects for person and number. -/
 def bePreterite : Target Value String :=
-  ofForm bePreteriteForm ⟨.second, by decide⟩ (by decide) (by decide)
+  ofForm bePreteriteForm .second (by decide) (by decide)
 
 /-- The present of *have* inflects for person and number. -/
 def havePresent : Target Value String :=
-  ofForm (presentForm "has" "have") ⟨.first, by decide⟩ (by decide) (by decide)
+  ofForm (presentForm "has" "have") .first (by decide) (by decide)
 
 /-- The present of *do* inflects for person and number. -/
 def doPresent : Target Value String :=
-  ofForm (presentForm "does" "do") ⟨.first, by decide⟩ (by decide) (by decide)
+  ofForm (presentForm "does" "do") .first (by decide) (by decide)
 
-private theorem factorsThrough_ofForm {f g : {p : Person // ¬ p.MarksClusivity} →
+private theorem factorsThrough_ofForm {f g : Person →
       Nouns.numberSystem → String}
     (h : ∀ p n q m, f p n = f q m → g p n = g q m) :
     FactorsThrough (fun x : Cell ↦ g (x .person) (x .number))

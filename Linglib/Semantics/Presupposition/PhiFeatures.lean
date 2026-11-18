@@ -171,12 +171,12 @@ theorem dom_first_inclusive_eq_preimage_lowerPolar :
     fun h ↦ ⟨(Feature.mem_dom_speaker c).1 (h .speaker),
       (Feature.mem_dom_addressee c).1 (h .addressee)⟩⟩
 
-/-- A referent is of a person of the standard tripartition exactly when the features of
-[participant] and [speaker] defined of it are that person's. -/
-theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
+/-- A referent is of a person exactly when the features of [participant] and [speaker] defined of
+it are that person's. -/
+theorem participants_mem_participantSets_iff {p : Person} :
     c.participants x ∈ p.participantSets ↔ ∀ f ∈ ({.participant, .speaker} : Features),
       (x ∈ Feature.dom c f ↔ f ∈ p.toFeatures {.participant, .speaker}) := by
-  rw [mem_participantSets_iff hp, Finset.ext_iff]
+  rw [mem_participantSets_iff, Finset.ext_iff]
   refine forall_congr' fun f ↦ ?_
   simp only [mem_bundle, mem_dom_feature_iff]
   by_cases hf : f ∈ ({.participant, .speaker} : Features)
@@ -186,7 +186,7 @@ theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
 /-- The first person's participant sets are those of the referents including the agent. -/
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
-  rw [participants_mem_participantSets_iff c x rfl]
+  rw [participants_mem_participantSets_iff c x]
   refine ⟨fun h ↦ (Feature.mem_dom_speaker c).1 ((h .speaker (by simp)).2 (by decide)),
     fun h f hf ↦ ?_⟩
   cases f <;> simp [h] at hf ⊢

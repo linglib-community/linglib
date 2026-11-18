@@ -12,13 +12,13 @@ public import Linglib.Syntax.Person.Basic
 /-!
 # Person resolution
 
-*Person resolution* gives the person of a coordination: *you and I* is first person inclusive,
-and *you and she* is second person. A coordination refers to the referents of its conjuncts
-together, so, as Zwicky proposes,
-[its participant sets are the unions of theirs](##Person.participantSets_sup).
+*Person resolution* gives the person of a coordination: *you and I* is first person, and *you
+and she* is second person. A coordination refers to the referents of its conjuncts together,
+so, as Zwicky proposes, [the unions of their participant sets are among
+its own](##Person.participantSets_sups_subset).
 
-This makes `Person` a join-semilattice, with resolution as the join and the third person at the
-bottom. [The person of a union of participant sets is the join of their
+Resolution makes `Person` a chain, third below second below first, with resolution as the
+larger of two persons. [The person of a union of participant sets is the larger of their
 persons](##Person.ofParticipants_union), which is how Dalrymple and Kaplan resolve their marker
 sets.
 
@@ -42,36 +42,35 @@ theorem supClosed_participantSets (p : Person) :
     SupClosed (p.participantSets : Set (Finset Role)) := by
   rw [← sups_eq_self]; cases p <;> decide
 
+/-- A participant set is covered by its person, and by no other. -/
+theorem mem_participantSets_iff_eq_ofParticipants {p : Person} {s : Finset Role} :
+    s ∈ p.participantSets ↔ p = ofParticipants s := by
+  revert p s; decide
+
+theorem mem_participantSets_ofParticipants_self (s : Finset Role) :
+    s ∈ (ofParticipants s).participantSets :=
+  mem_participantSets_iff_eq_ofParticipants.2 rfl
+
+theorem ofParticipants_surjective : Function.Surjective ofParticipants := by decide
+
 /-! ### Resolution -/
 
-/-- In person resolution third person is neutral, the first person unmarked for clusivity
-absorbs the exclusive, and any other two distinct values together cover both the speaker and the
-addressee. -/
-instance : Max Person where
-  max
-    | .third, p | p, .third => p
-    | .first, .firstExclusive | .firstExclusive, .first => .first
-    | p, q => if p = q then p else .firstInclusive
-
-/-- The participant sets of a coordination are the unions of its conjuncts'. -/
-@[simp] theorem participantSets_sup (p q : Person) :
-    (p ⊔ q).participantSets = p.participantSets ⊻ q.participantSets := by
-  revert p q; decide
-
-instance : SemilatticeSup Person :=
-  SemilatticeSup.mk'
-    (fun _ _ ↦ participantSets_injective <| by simp only [participantSets_sup, sups_comm])
-    (fun _ _ _ ↦ participantSets_injective <| by simp only [participantSets_sup, sups_assoc])
-    (fun p ↦ participantSets_injective <| by
-      rw [participantSets_sup, sups_eq_self]; exact supClosed_participantSets p)
-
-instance : DecidableLE Person := fun p q ↦ inferInstanceAs (Decidable (p ⊔ q = q))
+/-- Persons are ordered by resolution: a coordination of a first person with anything is first
+person, and of a second with a third is second. -/
+instance : LinearOrder Person :=
+  LinearOrder.lift' (fun p ↦ OrderDual.toDual p.ctorIdx) (by decide)
 
 instance : OrderBot Person where
   bot := .third
-  bot_le p := show .third ⊔ p = p by cases p <;> rfl
+  bot_le := by decide
 
 @[simp] theorem bot_eq_third : (⊥ : Person) = .third := rfl
+
+/-- The unions of the participant sets of two conjuncts are among those of their
+coordination. -/
+theorem participantSets_sups_subset (p q : Person) :
+    p.participantSets ⊻ q.participantSets ⊆ (p ⊔ q).participantSets := by
+  revert p q; decide
 
 theorem IsSAP.mono {p q : Person} (hp : p.IsSAP) (h : p ≤ q) : q.IsSAP := by
   revert p q; decide
@@ -84,24 +83,9 @@ theorem IncludesSpeaker.mono {p q : Person} (hp : p.IncludesSpeaker) (h : p ≤ 
 
 @[simp] theorem ofParticipants_empty : ofParticipants ∅ = ⊥ := rfl
 
-/-- The person of a union of participant sets is the join of their persons. -/
+/-- The person of a union of participant sets is the larger of their persons. -/
 theorem ofParticipants_union (s t : Finset Role) :
-    ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t :=
-  participantSets_injective <| by simp
-
-/-! ### Coarsening -/
-
-theorem participantSets_subset_coarsen (p : Person) :
-    p.participantSets ⊆ p.coarsen.participantSets := by
-  cases p <;> decide
-
-/-- Coarsening sends a value to the value of the standard tripartition covering its participant
-sets. -/
-theorem coarsen_eq_iff (p q : Person) :
-    p.coarsen = q ↔ q.coarsen = q ∧ p.participantSets ⊆ q.participantSets := by
-  revert p q; decide
-
-theorem coarsen_sup (p q : Person) : (p ⊔ q).coarsen = (p.coarsen ⊔ q.coarsen).coarsen := by
-  revert p q; decide
+    ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t := by
+  revert s t; decide
 
 end Person

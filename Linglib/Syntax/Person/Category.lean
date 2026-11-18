@@ -148,7 +148,7 @@ theorem IsInclusive.includesSpeaker (h : c.IsInclusive) : c.IncludesSpeaker := h
 
 /-- The person of a category: first with the speaker, otherwise second with the addressee,
 otherwise third. -/
-def person (c : Category) : Person := (Person.ofParticipants c.participants).coarsen
+def person (c : Category) : Person := Person.ofParticipants c.participants
 
 /-- The clusivity of a category: a group with the speaker includes or excludes the addressee,
 clusivity being a property of groups. -/

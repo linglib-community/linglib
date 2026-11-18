@@ -41,11 +41,11 @@ open _root_.Agreement Function
 
 /-! ### Cells -/
 
-/-- The values Russian distinguishes in each dimension are the persons of the standard
-tripartition, the singular and the plural, the genders with their subgenders, and the six cases,
+/-- The values Russian distinguishes in each dimension are the three persons,
+the singular and the plural, the genders with their subgenders, and the six cases,
 and it distinguishes no definiteness. -/
 abbrev Value : Dimension → Type
-  | .person => {p : Person // ¬ p.MarksClusivity}
+  | .person => Person
   | .number => Gender.numberSystem
   | .gender => Gender.Value × Gender.Animacy
   | .case => Case
@@ -57,7 +57,7 @@ abbrev Cell := (d : Dimension) → Value d
 /-- The third person masculine inanimate nominative singular, the cell from which the witnesses of
 inflection depart. -/
 private def base : Cell
-  | .person => ⟨.third, by decide⟩
+  | .person => .third
   | .number => ⟨.singular, by decide⟩
   | .gender => (.masc, .inanimate)
   | .case => .nom
@@ -223,8 +223,7 @@ inductive NonpastEnding where
   | at
   deriving DecidableEq, Repr, Fintype
 
-/-- The nonpast ending by conjugation, person and number ([wade-2020] §213). Clusivity is not
-distinguished, so both first persons take the first person's ending. -/
+/-- The nonpast ending by conjugation, person and number ([wade-2020] §213). -/
 def nonpastEnding (k : Conjugation) (p : Person) : Gender.numberSystem → NonpastEnding :=
   Number.elim Gender.numberSystem
     (match k, p with
@@ -244,11 +243,11 @@ def nonpastEnding (k : Conjugation) (p : Person) : Gender.numberSystem → Nonpa
 /-- The nonpast finite verb of each conjugation is predicative and inflects for person and
 number. -/
 def nonpastVerb (k : Conjugation) : Target Value NonpastEnding :=
-  .ofDependsOn {.predicate} (fun x ↦ nonpastEnding k (x .person).1 (x .number)) {.person, .number}
+  .ofDependsOn {.predicate} (fun x ↦ nonpastEnding k (x .person) (x .number)) {.person, .number}
     (fun x y h ↦ by simp only [h .person (by simp), h .number (by simp)])
     (by
       simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
-      exact ⟨⟨base, ⟨.first, by decide⟩, by cases k <;> decide⟩,
+      exact ⟨⟨base, .first, by cases k <;> decide⟩,
         ⟨base, ⟨.plural, by decide⟩, by cases k <;> decide⟩⟩)
 
 /-- The endings of the past tense, added to its *-l-*. -/

@@ -825,7 +825,7 @@ def personRules : List (ResolutionRule Person Person) :=
 
 theorem resolve_personRules_pair :
     ∀ a ∈ [Person.first, .second, .third], ∀ b ∈ [Person.first, .second, .third],
-      resolve personRules [a, b] = some (a ⊔ b).coarsen := by
+      resolve personRules [a, b] = some (a ⊔ b) := by
   decide
 
 /-- By the number resolution rules of §9.1.2, two singular conjuncts alone take the dual where

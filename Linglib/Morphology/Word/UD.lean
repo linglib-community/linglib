@@ -49,9 +49,9 @@ namespace Person
 
 /-- Realization as a person tag. -/
 def toUD : Person → UD.Person
+  | .first => .first
   | .second => .second
   | .third => .third
-  | _ => .first
 
 /-- Ingest a person tag; the zero and the fourth person have no value. -/
 def fromUD : UD.Person → Option Person
@@ -60,9 +60,14 @@ def fromUD : UD.Person → Option Person
   | .third => some .third
   | _ => none
 
--- TODO: once `Person` is first, second and third alone, `toUD` and `fromUD` are a partial
--- equivalence `Person ≃. UD.Person` and `coarsen` goes.
-theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> rfl
+/-- Realization and ingestion of person are a partial equivalence: a person has its tag exactly
+when the tag ingests as it. -/
+def toUDPEquiv : Person ≃. UD.Person where
+  toFun p := some p.toUD
+  invFun := fromUD
+  inv p u := by cases u <;> cases p <;> decide
+
+theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p := by cases p <;> rfl
 
 end Person
 
@@ -268,15 +273,13 @@ def ofUD (m : UD.MorphFeatures) : Features
   | .polarity => m.polarity
   | .polite => m.polite
 
-/-- Ingestion inverts realization except at case, number and person: the oblique case returns as
-the accusative and the purposive as the causal, a number value without a tag returns as `none`,
-and a person returns without its clusivity, which is a feature of its own. -/
+/-- Ingestion inverts realization except at case and number: the oblique case returns as the
+accusative and the purposive as the causal, and a number value without a tag returns as `none`. -/
 theorem ofUD_toUD (f : Features) (t : Feature) :
     ofUD (toUD f) t =
       match t with
       | .case => (f .case).map fun c ↦ if c = .obl then .acc else if c = .purp then .caus else c
       | .number => (f .number).bind fun n ↦ if n.toUD = none then none else some n
-      | .person => (f .person).map Person.coarsen
       | t => f t := by
   cases t
   case person => rcases h : f .person with - | p <;> simp only [ofUD, toUD, h] <;>

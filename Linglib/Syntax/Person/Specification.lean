@@ -85,7 +85,7 @@ theorem ofPerson_injective : Function.Injective ofPerson := fun _ _ h ↦
 
 /-- The person value a specification is that of, if any. -/
 def toPerson? (x : Specification) : Option Person :=
-  [Person.first, .firstInclusive, .firstExclusive, .second, .third].find? fun p ↦ ofPerson p = x
+  [Person.first, .second, .third].find? fun p ↦ ofPerson p = x
 
 @[simp] theorem toPerson?_ofPerson (p : Person) : (ofPerson p).toPerson? = some p := by
   revert p; decide
@@ -183,7 +183,7 @@ namespace Clusivity
 of the inclusive first person. -/
 theorem restrict_inclusive_univ :
     restrict (some inclusive) Finset.univ =
-      Person.second.participantSets ∪ Person.firstInclusive.participantSets := by
+      Person.second.participantSets ∪ {{.speaker, .addressee}} := by
   decide
 
 end Clusivity

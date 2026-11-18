@@ -16,8 +16,10 @@ every participant set it covers does.
 
 On [participant] and [speaker], the second person bears one feature and the first person two.
 [The number of them a value bears](##Person.prominence_le_iff) is the person hierarchy, first
-over second over third. These two features
-[do not tell the inclusive from the exclusive](##Person.toFeatures_coarsen).
+over second over third, and it is the order of resolution. These two features
+[do not tell the inclusive from the exclusive](##Person.toFeatures_ofParticipants), and the
+persons are [the classes of the standard
+tripartition](##Person.mem_participantSets_ofParticipants).
 
 ## Main definitions
 
@@ -53,10 +55,6 @@ theorem mem_toFeatures {F : Features} {p : Person} {f : Feature} :
 
 @[simp] theorem toFeatures_first :
     toFeatures {.participant, .speaker} .first = {.participant, .speaker} := by decide
-@[simp] theorem toFeatures_firstInclusive :
-    toFeatures {.participant, .speaker} .firstInclusive = {.participant, .speaker} := by decide
-@[simp] theorem toFeatures_firstExclusive :
-    toFeatures {.participant, .speaker} .firstExclusive = {.participant, .speaker} := by decide
 @[simp] theorem toFeatures_second :
     toFeatures {.participant, .speaker} .second = {.participant} := by decide
 @[simp] theorem toFeatures_third (F : Features) : toFeatures F .third = ∅ := by
@@ -71,13 +69,14 @@ theorem toFeatures_eq_inter (F : Features) (p : Person) :
     p.toFeatures F = F ∩ p.toFeatures univ := by
   ext f; simp [mem_toFeatures]
 
-/-- A value with one participant set bears what that set bears. -/
-theorem toFeatures_ofParticipants (F : Features) (s : Finset Role) :
+/-- Without [addressee], the person of a participant set bears what the set bears: the features
+do not tell the inclusive from the exclusive. -/
+theorem toFeatures_ofParticipants {F : Features} (hF : .addressee ∉ F) (s : Finset Role) :
     (ofParticipants s).toFeatures F = bundle F s := by
   revert F s; decide
 
-/-- The bundle of a coordination is the union of its conjuncts' bundles. -/
-theorem toFeatures_sup (F : Features) (p q : Person) :
+/-- Without [addressee], the bundle of a coordination is the union of its conjuncts' bundles. -/
+theorem toFeatures_sup {F : Features} (hF : .addressee ∉ F) (p q : Person) :
     (p ⊔ q).toFeatures F = p.toFeatures F ∪ q.toFeatures F := by
   revert F p q; decide
 
@@ -92,14 +91,9 @@ theorem includesSpeaker_iff_speaker {p : Person} :
     p.IncludesSpeaker ↔ .speaker ∈ p.toFeatures univ := by
   revert p; decide
 
-/-- Without [addressee] the features do not see clusivity. -/
-theorem toFeatures_coarsen {F : Features} (hF : .addressee ∉ F) (p : Person) :
-    p.coarsen.toFeatures F = p.toFeatures F := by
-  revert F p; decide
-
-/-- A value of the standard tripartition covers exactly the participant sets whose [participant]
-and [speaker] features are its bundle. -/
-theorem mem_participantSets_iff {p : Person} (hp : p.coarsen = p) (s : Finset Role) :
+/-- A person covers exactly the participant sets whose [participant] and [speaker] features are
+its bundle. -/
+theorem mem_participantSets_iff {p : Person} (s : Finset Role) :
     s ∈ p.participantSets ↔
       bundle {.participant, .speaker} s = p.toFeatures {.participant, .speaker} := by
   revert p s; decide
@@ -120,8 +114,6 @@ two for the first person, one for the second, none for the third. -/
 def prominence (p : Person) : ℕ := (p.toFeatures {.participant, .speaker}).card
 
 @[simp] theorem prominence_first : prominence .first = 2 := by decide
-@[simp] theorem prominence_firstInclusive : prominence .firstInclusive = 2 := by decide
-@[simp] theorem prominence_firstExclusive : prominence .firstExclusive = 2 := by decide
 @[simp] theorem prominence_second : prominence .second = 1 := by decide
 @[simp] theorem prominence_third : prominence .third = 0 := by decide
 
@@ -131,16 +123,14 @@ theorem prominence_le_iff_subset {p q : Person} :
       p.toFeatures {.participant, .speaker} ⊆ q.toFeatures {.participant, .speaker} := by
   revert p q; decide
 
-/-- Prominence is the order resolution induces up to clusivity, `p` being at most as prominent as
-`q` iff coordinating them gives `q`'s value in the standard tripartition. -/
-theorem prominence_le_iff {p q : Person} :
-    p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
+/-- Prominence is the order of resolution: `p` is at most as prominent as `q` iff coordinating
+them gives `q`. -/
+theorem prominence_le_iff {p q : Person} : p.prominence ≤ q.prominence ↔ p ≤ q := by
   revert p q; decide
 
-theorem prominence_mono : Monotone prominence := fun p q h ↦
-  prominence_le_iff.2 (by rw [sup_eq_right.2 h])
+theorem prominence_mono : Monotone prominence := fun _ _ h ↦ prominence_le_iff.2 h
 
-/-! ### The values as cells of two systems -/
+/-! ### The persons as the standard tripartition -/
 
 section
 
@@ -153,30 +143,17 @@ theorem prominence_ofParticipants (s : Finset Role) :
 
 /-- Each class of the standard tripartition is the family of participant sets its person
 covers. -/
-theorem mem_participantSets_coarsen_ofParticipants :
-    t ∈ (ofParticipants s).coarsen.participantSets ↔
+theorem mem_participantSets_ofParticipants :
+    t ∈ (ofParticipants s).participantSets ↔
       standardTripartition s = standardTripartition t := by
   revert s t; decide
 
-/-- In the standard tripartition, resolution selects the more prominent conjunct. -/
-theorem coarsen_ofParticipants_union (s t : Finset Role) :
-    (ofParticipants (s ∪ t)).coarsen =
+/-- Resolution selects the more prominent conjunct. -/
+theorem ofParticipants_union_eq (s t : Finset Role) :
+    ofParticipants (s ∪ t) =
       if (ofParticipants t).prominence ≤ (ofParticipants s).prominence
-      then (ofParticipants s).coarsen else (ofParticipants t).coarsen := by
+      then ofParticipants s else ofParticipants t := by
   revert s t; decide
-
-/-- Each class of the system the three features generate is a single participant set, the one
-its person of the quadripartition covers. -/
-theorem mem_participantSets_ofParticipants {s t : Finset Role} :
-    t ∈ (ofParticipants s).participantSets ↔ bundle univ s = bundle univ t := by
-  rw [participantSets_ofParticipants, mem_singleton]
-  exact ⟨fun h ↦ h ▸ rfl, fun h ↦ (bundle_univ_injective h).symm⟩
-
-/-- Every person value is a cell of one of the two systems: a person of the quadripartition or
-the general first person of the standard tripartition. -/
-theorem exists_eq_ofParticipants_or_eq_coarsen (p : Person) :
-    ∃ s, p = ofParticipants s ∨ p = (ofParticipants s).coarsen := by
-  revert p; decide
 
 end
 
