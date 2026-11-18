@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Geometry
+public import Linglib.Morphology.FeatureGeometry
 public import Linglib.Data.Examples.HarleyRitter2002
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -43,7 +43,7 @@ so the Daga first singular is less marked than the first plural.
 
 namespace HarleyRitter2002
 
-open Phi.Geometry
+open Morphology.FeatureGeometry
 
 /-! ### Languages and their inventories -/
 
@@ -124,7 +124,8 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 def Lang.rows (l : Lang) : List Row := HarleyRitter2002.rows.filter (·.lang = l)
 
 /-- The geometry of a row's cell in its language. -/
-def Row.cell (r : Row) : Option (Finset Node) := Phi.Geometry.cell r.lang.active r.person r.number
+def Row.cell (r : Row) : Option (Finset Node) :=
+  Morphology.FeatureGeometry.cell r.lang.active r.person r.number
 
 theorem licenses_rows : ∀ r ∈ rows, Licenses r.lang.active r.person r.number := by decide
 

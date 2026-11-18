@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.PersonSegment
+public import Linglib.Syntax.Person.Segment
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Minimalist.Probe.Agree
 
@@ -12,7 +12,7 @@ together with the segments it entails, `Finset.Iic x`. A probe on v first meets 
 argument, which checks every segment it bears; the segments left over, the residue, probe again
 from the next projection of v, where the external argument is the closest goal. A context, the
 scenario of the external over the internal argument, is inverse when the internal argument is at
-least as specified as the external one relative to the probe (`Phi.SpecLE`) and
+least as specified as the external one relative to the probe (`Minimalist.SpecLE`) and
 direct otherwise, and [the core probe licenses the external argument exactly in direct
 contexts](##eaLicensed_iff_isDirect). When the segments of the probe form a chain of entailments,
 [a context is direct exactly when it is downstream](##isDirect_iff_kind_eq_downstream) on the
@@ -20,7 +20,7 @@ number of probe segments each person bears, the person hierarchy of the language
 
 ## Implementation notes
 
-A person bears its whole specification `Phi.PersonSegment.spec`, and a probe sees of it the
+A person bears its whole specification `PersonSegment.spec`, and a probe sees of it the
 segments the probe has. Whether a language tells first from second person by [speaker] or by
 [addressee] is therefore carried by its probe, `Finset.Iic .speaker` or `Finset.Iic .addressee`,
 and not by a second parameter for the specifications of its nominals.
@@ -29,13 +29,78 @@ and not by a second parameter for the specifications of its nominals.
 
 * [bejar-rezac-2009]
 * [harley-ritter-2002]
+* [coon-keine-2021]
 -/
 
 @[expose] public section
 
+namespace Minimalist
+
+/-! ### Specification relative to a set of features -/
+
+section SpecLE
+
+variable {F : Type*} [DecidableEq F] {P Q s t u : Finset F}
+
+/-- Relative to the features `P`, the feature set `t` is at least as specified as `s`: it has
+every feature of `P` that `s` has. With `P` the segments of a probe, this compares two goals
+"relative to the specification of the probe" ([coon-keine-2021]). -/
+def SpecLE (P s t : Finset F) : Prop := P ∩ s ⊆ t
+
+instance : Decidable (SpecLE P s t) := inferInstanceAs (Decidable (P ∩ s ⊆ t))
+
+theorem specLE_iff : SpecLE P s t ↔ ∀ x ∈ P, x ∈ s → x ∈ t := by
+  simp [SpecLE, Finset.subset_iff]
+
+@[refl] theorem SpecLE.refl (P s : Finset F) : SpecLE P s s := Finset.inter_subset_right
+
+@[trans] theorem SpecLE.trans (h₁ : SpecLE P s t) (h₂ : SpecLE P t u) : SpecLE P s u :=
+  fun _ hx ↦ h₂ (Finset.mem_inter.2 ⟨(Finset.mem_inter.1 hx).1, h₁ hx⟩)
+
+/-- Fewer features tell fewer feature sets apart. -/
+theorem SpecLE.anti (h : P ⊆ Q) (hQ : SpecLE Q s t) : SpecLE P s t :=
+  (Finset.inter_subset_inter_right h).trans hQ
+
+theorem SpecLE.of_subset (h : s ⊆ t) : SpecLE P s t := Finset.inter_subset_right.trans h
+
+@[simp] theorem specLE_univ [Fintype F] : SpecLE Finset.univ s t ↔ s ⊆ t := by simp [SpecLE]
+
+theorem SpecLE.card_le (h : SpecLE P s t) : (P ∩ s).card ≤ (P ∩ t).card :=
+  Finset.card_le_card (Finset.subset_inter Finset.inter_subset_left h)
+
+variable [Preorder F]
+
+/-- On a chain of features any two lower sets are comparable. -/
+theorem specLE_total (hP : IsChain (· ≤ ·) (P : Set F)) (hs : IsLowerSet (s : Set F))
+    (ht : IsLowerSet (t : Set F)) : SpecLE P s t ∨ SpecLE P t s := by
+  by_contra! h
+  simp only [SpecLE, Finset.not_subset, Finset.mem_inter] at h
+  obtain ⟨⟨x, ⟨hx, hxs⟩, hxt⟩, y, ⟨hy, hyt⟩, hys⟩ := h
+  rcases hP.total hx hy with hxy | hyx
+  · exact hxt (ht hxy hyt)
+  · exact hys (hs hyx hxs)
+
+/-- On a chain of features lower sets are compared by how many of the features they have. -/
+theorem specLE_iff_card_le (hP : IsChain (· ≤ ·) (P : Set F)) (hs : IsLowerSet (s : Set F))
+    (ht : IsLowerSet (t : Set F)) : SpecLE P s t ↔ (P ∩ s).card ≤ (P ∩ t).card := by
+  refine ⟨SpecLE.card_le, fun h ↦ (specLE_total hP hs ht).elim id fun hts ↦ ?_⟩
+  rw [SpecLE, ← Finset.eq_of_subset_of_card_le (Finset.subset_inter Finset.inter_subset_left hts) h]
+  exact Finset.inter_subset_right
+
+end SpecLE
+
+/-- The third person, bearing the root alone, is the least specified person on any segments. -/
+theorem specLE_third (P : Finset PersonSegment) (q : Person) :
+    SpecLE P (PersonSegment.spec .third) (PersonSegment.spec q) :=
+  .of_subset fun x hx ↦ by
+    rw [show PersonSegment.spec Person.third = {.pi} by decide, Finset.mem_singleton] at hx
+    exact hx ▸ PersonSegment.pi_mem_spec q
+
+end Minimalist
+
 namespace Minimalist.CyclicAgree
 
-open Phi PersonSegment
+open PersonSegment
 open Clause (Scenario)
 
 variable (P : Finset PersonSegment) (s : Scenario Person) (p q : Person) {x : PersonSegment}
