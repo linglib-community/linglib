@@ -263,7 +263,7 @@ noncomputable def Item.val [LinearOrder D] [Nonempty D] [Nonempty Ent] (M : Mode
 /-- The rules: Functional Application, Predicate Modification, Event Identification, and
 abstraction over an index. -/
 abbrev rules : Interpreter (((application.sum predicateModification).sum
-    (eventIdentification .e .v)).withAbstraction indexTy) Node :=
+    (eventIdentification .e .v)).withAbstraction indexTy) ℕ :=
   (typeDriven ((application.sum predicateModification).sum
     (eventIdentification .e .v))).withAbstraction indexTy
 

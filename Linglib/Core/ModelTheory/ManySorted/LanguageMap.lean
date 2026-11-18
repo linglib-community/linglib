@@ -143,6 +143,20 @@ def sumMap : L.sum L₁ →ᴸ L'.sum L₂ where
 
 end SumMap
 
+/-- The map of a language into the language with its binary symbols replaced, from a map of the
+binary symbols: every other symbol is itself. -/
+def withBinary {B : S → S → S → Type v} (f : ∀ {a b c : S}, L.Binary a b c → B a b c) :
+    L →ᴸ L.withBinary B where
+  onFunction σ _ g :=
+    match σ, g with
+    | .prod (.of _) (.of _), g => f g
+    | .nil, g => g
+    | .of _, g => g
+    | .prod .nil _, g => g
+    | .prod (.prod _ _) _, g => g
+    | .prod (.of _) .nil, g => g
+    | .prod (.of _) (.prod _ _), g => g
+
 /-! ### Expansions -/
 
 /-- A language homomorphism is an expansion on a pair of structures if it commutes with the

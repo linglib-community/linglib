@@ -74,7 +74,7 @@ abbrev grammar : ManySorted.Language (Ty Base) :=
 /-- A thematic head with its variable saturated and a predicate of eventualities combine by Event
 Identification and no other rule. -/
 theorem binary_thematic (i : Instruction) :
-    (typeDriven grammar).binary () (tyOf (some i) false) .vt = [⟨.evt, .inr .left⟩] :=
+    (typeDriven (N := Unit) grammar).binary (tyOf (some i) false) .vt = [⟨.evt, .inr .left⟩] :=
   rfl
 
 /-- Event Identification gives the head's relation conjoined with the verb phrase's predicate at
@@ -87,13 +87,13 @@ theorem funMap_thematic (i : Instruction) (P : S.eventuality → Prop) :
 /-- A thematic head with its variable implicit and a predicate of eventualities combine by
 Predicate Modification and no other rule. -/
 theorem binary_implicit (i : Instruction) :
-    (typeDriven grammar).binary () (tyOf (some i) true) .vt = [⟨.vt, .inl (.inr .pm)⟩] :=
+    (typeDriven (N := Unit) grammar).binary (tyOf (some i) true) .vt = [⟨.vt, .inl (.inr .pm)⟩] :=
   rfl
 
 /-- An expletive head takes a predicate of eventualities by Functional Application and no other
 rule. -/
 theorem binary_expletive (b : Bool) :
-    (typeDriven grammar).binary () (tyOf none b) .vt = [⟨.vt, .inl (.inl .fa)⟩] := by
+    (typeDriven (N := Unit) grammar).binary (tyOf none b) .vt = [⟨.vt, .inl (.inl .fa)⟩] := by
   cases b <;> rfl
 
 end Minimalist.Voice

@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.DistributedMorphology.Nominalization
+public import Linglib.Semantics.Composition.BareStructure
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Data.Examples.Benz2025
 public import Linglib.Fragments.German.Verbs

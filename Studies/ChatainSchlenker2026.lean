@@ -302,8 +302,8 @@ theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
 /-- `A` (7) maps the value 1 to 1 and the other two values to 0, so it is a function from partial
 truth values to truth values, and a word of that type takes a partial truth value by functional
 application: `A` is a possible word meaning, as the paper has it. -/
-example : (typeDriven (application (B := Atom))).binary () (.comp .M .t ⇒ .t) (.comp .M .t) =
-    [⟨.t, .fa⟩] :=
+example : (typeDriven (N := Unit) (application (B := Atom))).binary (.comp .M .t ⇒ .t)
+    (.comp .M .t) = [⟨.t, .fa⟩] :=
   rfl
 
 end Composition

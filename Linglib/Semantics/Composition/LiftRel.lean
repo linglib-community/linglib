@@ -244,7 +244,7 @@ lexicons give every derivation related values. -/
 theorem effectGrammar.isLogicalRel (h : M.IsLogicalRel M' (Ty.LiftRel r)) :
     (effectGrammar.structure (G := G) (M := M)).IsLogicalRel
       (effectGrammar.structure (G := G) (M := M')) (Ty.LiftRel r) :=
-  .mk₂ (fun s _ _ hx ↦ h.funMap s hx) fun m _ _ _ _ hx hy ↦
+  h.withBinary fun m _ _ _ _ hx hy ↦
     Mode.rel_eval (fun b _ _ hx _ _ hy ↦ h.funMap b ⟨hx, hy⟩) m hx hy
 
 end Interpreter

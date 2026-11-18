@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Composition.Effect
 public import Linglib.Semantics.Composition.Basic
+public import Linglib.Core.ModelTheory.ManySorted.LanguageMap
 
 /-!
 # The effect-driven grammar
@@ -16,9 +17,9 @@ continuation at its own result type.
 
 * `Interpreter.Mode`: the basic modes closed under the meta-modes.
 * `Interpreter.Mode.eval`: the meaning of a mode, by the operations of the effects.
-* `Interpreter.Ty.Evaluated`: the types with no continuation still to be closed.
 * `Interpreter.effectGrammar`: the grammar whose binary rules are the modes over a grammar's
-  rules, with its structure.
+  rules, with its structure, and `Interpreter.effectGrammar.basic`, the map of the grammar into
+  it.
 
 ## References
 
@@ -88,26 +89,33 @@ def eval {G : Language (Ty B)} (D : B → Type) [M : G.Structure (Ty.Dom D)] :
 
 end Mode
 
-/-- A type is evaluated when no continuation in it is still to be closed. -/
-def Ty.Evaluated : Ty B → Prop
-  | .comp (.C _) _ => False
-  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => a.Evaluated
-  | .fn _ b => b.Evaluated
-  | .t | .base _ => True
-
-instance Ty.decidableEvaluated : (a : Ty B) → Decidable a.Evaluated
-  | .comp (.C _) _ => isFalse id
-  | .comp .S a | .comp (.R _) a | .comp (.W _) a | .comp .M a => decidableEvaluated a
-  | .fn _ b => decidableEvaluated b
-  | .t | .base _ => isTrue trivial
-
-/-- The effect-driven grammar over a grammar: its type shifts, and the modes over its rules. -/
-def effectGrammar (G : Language (Ty B)) : Language (Ty B) := .mk₂ G.Unary (Mode G.Binary)
+/-- The effect-driven grammar over a grammar: its binary rules are replaced by the modes over
+them, and its other symbols are kept. -/
+def effectGrammar (G : Language (Ty B)) : Language (Ty B) := G.withBinary (Mode G.Binary)
 
 /-- The structure of the effect-driven grammar over a grammar, from a structure for the
-grammar: a type shift means what it does there, and a mode what the effects make of the rules. -/
+grammar: a mode means what the effects make of the rules, and any other symbol what it does
+there. -/
 instance effectGrammar.structure {G : Language (Ty B)} {D : B → Type}
     [M : G.Structure (Ty.Dom D)] : (effectGrammar G).Structure (Ty.Dom D) :=
-  .mk₂ (fun s x ↦ M.funMap s x) fun m ↦ m.eval D
+  M.withBinary fun m ↦ m.eval D
+
+/-- The map of a grammar into its effect-driven grammar: a rule is its basic mode. -/
+def effectGrammar.basic (G : Language (Ty B)) : G →ᴸ effectGrammar G := .withBinary .basic
+
+/-- A basic mode means what its rule means: the structure of the effect-driven grammar expands
+that of the grammar. -/
+theorem effectGrammar.basic_isExpansionOn {G : Language (Ty B)} {D : B → Type}
+    [M : G.Structure (Ty.Dom D)] :
+    (effectGrammar.basic G).IsExpansionOn M effectGrammar.structure where
+  map_onFunction σ _ f _ :=
+    match σ, f with
+    | .prod (.of _) (.of _), _ => rfl
+    | .nil, _ => rfl
+    | .of _, _ => rfl
+    | .prod .nil _, _ => rfl
+    | .prod (.prod _ _) _, _ => rfl
+    | .prod (.of _) .nil, _ => rfl
+    | .prod (.of _) (.prod _ _), _ => rfl
 
 end Interpreter

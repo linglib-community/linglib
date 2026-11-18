@@ -13,8 +13,6 @@ the other's definitions.
 ## Main definitions
 
 * `Interpreter.Skeleton`: a bare structure over node labels and leaves.
-* `Interpreter.Node`: the labels a constituency tree gives its nodes, a plain node, an island,
-  or the index of a moved phrase.
 
 ## References
 
@@ -37,16 +35,5 @@ inductive Skeleton (N : Type v) (L : Type w) : Type (max v w)
   | unary (n : N) (s : Skeleton N L) : Skeleton N L
   /-- A binary node. -/
   | binary (n : N) (s₁ s₂ : Skeleton N L) : Skeleton N L
-
-/-- What the semantics reads off a node of the syntax: a plain branching node, an island, or the
-index a moved phrase leaves. -/
-inductive Node where
-  /-- A plain node. -/
-  | branch
-  /-- An island for continuations. -/
-  | island
-  /-- The index `n` of a moved phrase. -/
-  | index (n : ℕ)
-  deriving DecidableEq, Repr
 
 end Interpreter

@@ -189,11 +189,11 @@ def partialValued [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : T
     Interpreter (effectGrammar G) N where
   unary _ _ := []
   binary
-    | _, .comp .M l, .comp .M r =>
+    | .comp .M l, .comp .M r =>
       (Language.LocallyFinite.binaryRules (L := G) l r).map fun
         | ⟨.comp .M u, p⟩ => ⟨.comp .M u, .join trivial (.ap trivial (.basic p))⟩
         | ⟨u, p⟩ => ⟨.comp .M u, .ap trivial (.basic p)⟩
-    | _, _, _ => []
+    | _, _ => []
 
 section PartialValued
 

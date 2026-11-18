@@ -9,8 +9,7 @@ The types of two daughters decide which modes of the effect-driven grammar combi
 `Ty.combine` lists them: each way of peeling effects off the two types down to a basic rule,
 with every Join and Lower the result allows. [It lists every mode of the
 grammar](##Interpreter.Ty.mem_combine), so the effect-driven interpreter [admits every mode at a
-node, and at an island those whose result is
-evaluated](##Interpreter.mem_binary_effectDriven).
+node](##Interpreter.mem_binary_effectDriven).
 
 ## Main definitions
 
@@ -53,7 +52,7 @@ section Combine
 variable [DecidableEq B] {Rule : Ty B → Ty B → Ty B → Type}
 
 /-- The Join of a mode whose result has two layers of one monadic effect. -/
-def Mode.joins {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
+def Mode.joins {l r : Ty B} : (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))
   | ⟨.comp f (.comp g a), m⟩ =>
     if h : g = f then
       if ha : f.IsApplicative then [⟨.comp f a, .join ha (h ▸ m)⟩] else []
@@ -61,31 +60,31 @@ def Mode.joins {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule 
   | _ => []
 
 /-- The Lower of a mode whose result is a continuation at its own result type. -/
-def Mode.lowers {l r : Ty B} : (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
+def Mode.lowers {l r : Ty B} : (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))
   | ⟨.comp (.C o) a, m⟩ => if h : o = a then [⟨a, .lower (h ▸ m)⟩] else []
   | _ => []
 
 /-- A mode with the Joins and Lowers its result allows, and those theirs allow, to a bound on how
 many are stacked. -/
-def Mode.closureAux {l r : Ty B} : ℕ → (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u)
+def Mode.closureAux {l r : Ty B} : ℕ → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r))
   | 0, p => [p]
   | k + 1, p => p :: (Mode.joins p ++ Mode.lowers p).flatMap (Mode.closureAux k)
 
 /-- A mode with every Join and Lower its result allows, and every one theirs allow. Each makes
 the result smaller, so its size bounds how many are stacked. -/
-def Mode.closure {l r : Ty B} (p : Σ u, Mode Rule l r u) : List (Σ u, Mode Rule l r u) :=
+def Mode.closure {l r : Ty B} (p : Sigma (Mode Rule l r)) : List (Sigma (Mode Rule l r)) :=
   Mode.closureAux p.1.size p
 
-variable (find : (l r : Ty B) → List (Σ u, Rule l r u))
-  (close : {l r : Ty B} → (Σ u, Mode Rule l r u) → List (Σ u, Mode Rule l r u))
+variable (find : (l r : Ty B) → List (Sigma (Rule l r)))
+  (close : {l r : Ty B} → (Sigma (Mode Rule l r)) → List (Sigma (Mode Rule l r)))
 
 /-- `Ty.combineWith` to a bound on the depth of its recursion. Every rule but the two Ejects
 recurses on smaller types, and an Eject turns an arrow into a computation, so at most one Eject
 on each daughter comes between two rules that shrink a type. -/
-def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode Rule l r u)
+def Ty.combineAux : ℕ → (l r : Ty B) → List (Sigma (Mode Rule l r))
   | 0, _, _ => []
   | k + 1, l, r =>
-    (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Σ u, Mode Rule l r u)) ++
+    (((find l r).map fun p ↦ (⟨p.1, .basic p.2⟩ : Sigma (Mode Rule l r))) ++
       (match r with
         | .comp f y => (Ty.combineAux k l y).map fun p ↦ ⟨.comp f p.1, .mapR p.2⟩
         | _ => []) ++
@@ -127,12 +126,12 @@ def Ty.combineAux : ℕ → (l r : Ty B) → List (Σ u, Mode Rule l r u)
 
 /-- The modes for a left daughter of type `l` and a right daughter of type `r`: each way of
 peeling effects off the two types down to a basic rule, with the results `close` gives each. -/
-def Ty.combineWith (l r : Ty B) : List (Σ u, Mode Rule l r u) :=
+def Ty.combineWith (l r : Ty B) : List (Sigma (Mode Rule l r)) :=
   Ty.combineAux find close (3 * (l.size + r.size) + 3) l r
 
 /-- The modes that combine a left daughter of type `l` and a right daughter of type `r`: each way
 of peeling effects off the two types down to a basic rule, with every Join and Lower. -/
-def Ty.combine (l r : Ty B) : List (Σ u, Mode Rule l r u) :=
+def Ty.combine (l r : Ty B) : List (Sigma (Mode Rule l r)) :=
   Ty.combineWith find Mode.closure l r
 
 end Combine
@@ -148,20 +147,20 @@ theorem Ty.size_pos : ∀ a : Ty B, 0 < a.size
   | .t | .base _ => Nat.one_pos
   | .fn _ _ | .comp _ _ => Nat.succ_pos _
 
-theorem Mode.mem_closureAux_self (k : ℕ) (p : Σ u, Mode Rule l r u) :
+theorem Mode.mem_closureAux_self (k : ℕ) (p : Sigma (Mode Rule l r)) :
     p ∈ Mode.closureAux k p := by
   cases k <;> simp [Mode.closureAux]
 
 theorem Mode.mem_joins {f : Eff B} {u : Ty B} (h : f.IsApplicative)
     (m : Mode Rule l r (.comp f (.comp f u))) :
-    (⟨.comp f u, .join h m⟩ : Σ u, Mode Rule l r u) ∈ Mode.joins ⟨_, m⟩ := by
+    (⟨.comp f u, .join h m⟩ : Sigma (Mode Rule l r)) ∈ Mode.joins ⟨_, m⟩ := by
   simp [Mode.joins, h]
 
 theorem Mode.mem_lowers {u : Ty B} (m : Mode Rule l r (.comp (.C u) u)) :
-    (⟨u, .lower m⟩ : Σ u, Mode Rule l r u) ∈ Mode.lowers ⟨_, m⟩ := by
+    (⟨u, .lower m⟩ : Sigma (Mode Rule l r)) ∈ Mode.lowers ⟨_, m⟩ := by
   simp [Mode.lowers]
 
-theorem Mode.size_lt_of_mem_joins {p q : Σ u, Mode Rule l r u} (h : q ∈ Mode.joins p) :
+theorem Mode.size_lt_of_mem_joins {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.joins p) :
     q.1.size < p.1.size := by
   obtain ⟨u, m⟩ := p
   rcases u with _ | _ | _ | ⟨f, _ | _ | _ | ⟨g, a⟩⟩ <;> simp [Mode.joins] at h
@@ -169,7 +168,7 @@ theorem Mode.size_lt_of_mem_joins {p q : Σ u, Mode Rule l r u} (h : q ∈ Mode.
   simp only [Ty.size]
   omega
 
-theorem Mode.size_lt_of_mem_lowers {p q : Σ u, Mode Rule l r u} (h : q ∈ Mode.lowers p) :
+theorem Mode.size_lt_of_mem_lowers {p q : Sigma (Mode Rule l r)} (h : q ∈ Mode.lowers p) :
     q.1.size < p.1.size := by
   obtain ⟨u, m⟩ := p
   rcases u with _ | _ | _ | ⟨_ | _ | _ | o | _, a⟩ <;> simp [Mode.lowers] at h
@@ -178,7 +177,7 @@ theorem Mode.size_lt_of_mem_lowers {p q : Σ u, Mode Rule l r u} (h : q ∈ Mode
   omega
 
 /-- The closure of a mode has the Joins and Lowers of each mode in it. -/
-theorem Mode.mem_closureAux_of_mem : ∀ (k : ℕ) {q p p' : Σ u, Mode Rule l r u},
+theorem Mode.mem_closureAux_of_mem : ∀ (k : ℕ) {q p p' : Sigma (Mode Rule l r)},
     q.1.size ≤ k → p ∈ Mode.closureAux k q → p' ∈ Mode.joins p ++ Mode.lowers p →
     p' ∈ Mode.closureAux k q
   | 0, q, _, _, hk, _, _ => absurd (Ty.size_pos q.1) (by omega)
@@ -193,7 +192,7 @@ theorem Mode.mem_closureAux_of_mem : ∀ (k : ℕ) {q p p' : Σ u, Mode Rule l r
       exact List.mem_cons_of_mem _ (List.mem_flatMap.2
         ⟨q', hq', Mode.mem_closureAux_of_mem k (by omega) hp hp'⟩)
 
-theorem Mode.mem_closure_self (p : Σ u, Mode Rule l r u) : p ∈ Mode.closure p :=
+theorem Mode.mem_closure_self (p : Sigma (Mode Rule l r)) : p ∈ Mode.closure p :=
   Mode.mem_closureAux_self _ p
 
 /-- The number of meta-modes other than Join and Lower stacked on a basic mode. -/
@@ -262,13 +261,13 @@ theorem Mode.depth_le {l r u : Ty B} (m : Mode Rule l r u) :
   | join h m ih => exact ih
   | lower m ih => exact ih
 
-variable {find : (l r : Ty B) → List (Σ u, Rule l r u)}
+variable {find : (l r : Ty B) → List (Sigma (Rule l r))}
 
 /-- A mode is found once the bound exceeds its depth. -/
 theorem Ty.mem_combineAux
-    (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Σ u, Rule l r u) ∈ find l r)
+    (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
     {l r u : Ty B} (m : Mode Rule l r u) : ∀ {k : ℕ}, m.depth < k →
-      (⟨u, m⟩ : Σ u, Mode Rule l r u) ∈ Ty.combineAux find Mode.closure k l r := by
+      (⟨u, m⟩ : Sigma (Mode Rule l r)) ∈ Ty.combineAux find Mode.closure k l r := by
   induction m with
   | basic b =>
     intro k hk
@@ -364,9 +363,9 @@ theorem Ty.mem_combineAux
 /-- **The search is complete.** Every mode of the grammar that combines two daughters is among
 those `Ty.combine` lists for their types, given every basic rule is among those listed. -/
 theorem Ty.mem_combine
-    (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Σ u, Rule l r u) ∈ find l r)
+    (hfind : ∀ {l r u : Ty B} (b : Rule l r u), (⟨u, b⟩ : Sigma (Rule l r)) ∈ find l r)
     {l r u : Ty B} (m : Mode Rule l r u) :
-    (⟨u, m⟩ : Σ u, Mode Rule l r u) ∈ Ty.combine find l r := by
+    (⟨u, m⟩ : Sigma (Mode Rule l r)) ∈ Ty.combine find l r := by
   have := m.depth_le
   have := l.ejectable_le_one
   have := r.ejectable_le_one
@@ -376,26 +375,17 @@ theorem Ty.mem_combine
 end Complete
 
 /-- Bumford and Charlow's effect-driven interpreter over a grammar: a node admits the type
-shifts of the grammar and every mode that `Ty.combine` finds for its daughters, and an island
-only the modes whose result is evaluated. -/
-def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] :
-    Interpreter (effectGrammar G) Node where
+shifts of the grammar and every mode that `Ty.combine` finds for its daughters. -/
+def effectDriven [DecidableEq B] (G : Language (Ty B)) [G.LocallyFinite] {N : Type} :
+    Interpreter (effectGrammar G) N where
   unary _ := Language.LocallyFinite.unaryRules (L := G)
-  binary
-    | .island, l, r =>
-      (Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r).filter (·.1.Evaluated)
-    | _, l, r => Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r
+  binary := Ty.combine (Language.LocallyFinite.binaryRules (L := G))
 
-/-- A node admits every mode of the grammar that combines its daughters, and an island those
-whose result is evaluated. -/
+/-- A node admits every mode of the grammar that combines its daughters. -/
 theorem mem_binary_effectDriven [DecidableEq B] {G : Language (Ty B)} [G.LocallyFinite]
-    {n : Node} {l r : Ty B} (m : Σ u, Mode G.Binary l r u) :
-    m ∈ (effectDriven G).binary n l r ↔ (n = .island → m.1.Evaluated) := by
-  obtain ⟨u, m⟩ := m
-  have hm : (⟨u, m⟩ : Σ u, Mode G.Binary l r u) ∈
-      Ty.combine (Language.LocallyFinite.binaryRules (L := G)) l r :=
-    Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
-      (fun b ↦ Language.LocallyFinite.mem_symbols b) m
-  cases n <;> simp [effectDriven, hm]
+    {N : Type} {l r : Ty B} (m : Sigma (Mode G.Binary l r)) :
+    m ∈ (effectDriven G : Interpreter (effectGrammar G) N).binary l r :=
+  Ty.mem_combine (find := Language.LocallyFinite.binaryRules (L := G))
+    (fun b ↦ Language.LocallyFinite.mem_symbols b) m.2
 
 end Interpreter
