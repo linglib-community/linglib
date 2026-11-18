@@ -28,6 +28,7 @@ addressee and one otherwise.
 * `Person.Configuration.card`: the number of members.
 * `Person.Configuration.minimum`: the fewest others beside given participants.
 * `Person.Configuration.category`: the referential category of a configuration.
+* `Person.Category.ofNumber`: the categories a number label covers in a person's region.
 
 ## Implementation notes
 
@@ -161,6 +162,65 @@ theorem category_eq_some_iff {c : Category} :
     rw [h1, h2, h3]
     exact key 2 s c
 
+/-! ### The categories a number label covers -/
+
+/-- The region of the referents whose participants are among `S`. -/
+def InRegion (S : Finset (Finset Role)) (x : Configuration) : Prop := x.participants ∈ S ∧ x ≠ ⊥
+
+instance (S : Finset (Finset Role)) : DecidablePred (InRegion S) := fun _ ↦
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The configurations of the region of `S` with at most three others, enough to hold the
+referents of each category and of each exact number. -/
+def bounded (S : Finset (Finset Role)) : Finset Configuration :=
+  ((S ×ˢ Finset.range 4).image fun p ↦ (⟨p.1, p.2⟩ : Configuration)).filter (· ≠ ⊥)
+
+theorem mem_bounded_iff {S : Finset (Finset Role)} :
+    x ∈ bounded S ↔ InRegion S x ∧ x.others < 4 := by
+  obtain ⟨s, n⟩ := x
+  simp only [bounded, Finset.mem_filter, Finset.mem_image, Finset.mem_product, Finset.mem_range,
+    Prod.exists, mk.injEq, InRegion]
+  exact ⟨fun ⟨⟨_, _, ⟨hs, hn⟩, rfl, rfl⟩, hx⟩ ↦ ⟨⟨hs, hx⟩, hn⟩,
+    fun ⟨⟨hs, hx⟩, hn⟩ ↦ ⟨⟨s, n, ⟨hs, hn⟩, rfl, rfl⟩, hx⟩⟩
+
+/-- The minimal elements of a finite set of configurations. -/
+def minimals (T : Finset Configuration) : Finset Configuration :=
+  T.filter fun x ↦ ∀ y ∈ T, y ≤ x → x ≤ y
+
+/-- The minimal configurations with at most three others are the minimal ones of the region,
+which have the fewest others their participants allow. -/
+theorem mem_minimals_bounded_iff {S : Finset (Finset Role)} :
+    x ∈ minimals (bounded S) ↔ Minimal (InRegion S) x := by
+  simp only [minimals, Finset.mem_filter, mem_bounded_iff]
+  constructor
+  · rintro ⟨⟨hx, hlt⟩, hmin⟩
+    exact ⟨hx, fun y hy hyx ↦ hmin y ⟨hy, lt_of_le_of_lt hyx.2 hlt⟩ hyx⟩
+  · rintro ⟨hx, hmin⟩
+    have hle := hmin (y := ⟨x.participants, minimum x.participants⟩)
+      ⟨hx.1, ne_bot_iff_minimum_le.2 le_rfl⟩ ⟨subset_rfl, ne_bot_iff_minimum_le.1 hx.2⟩
+    have h1 : minimum x.participants ≤ 1 := by unfold minimum; split_ifs <;> omega
+    exact ⟨⟨hx, lt_of_le_of_lt (hle.2.trans h1) (by omega)⟩, fun y hy hyx ↦ hmin hy.1 hyx⟩
+
+/-- The configurations of the region of `S` that a number label covers at the least: the exact
+numbers by the count of members, the minimal as the smallest referents of the region, the
+augmented as the rest and the unit augmented as the smallest of the rest, and the plural and
+the approximative numbers as the groups. A system narrows a label further by its other
+labels, as the plural excludes two where there is a dual. -/
+def covered (S : Finset (Finset Role)) : Number → Finset Configuration
+  | .general => bounded S
+  | .singular => (bounded S).filter (·.card = 1)
+  | .dual => (bounded S).filter (·.card = 2)
+  | .trial => (bounded S).filter (·.card = 3)
+  | .minimal => minimals (bounded S)
+  | .augmented => bounded S \ minimals (bounded S)
+  | .unitAugmented => minimals (bounded S \ minimals (bounded S))
+  | .plural | .paucal | .greaterPaucal | .greaterPlural | .globalPlural =>
+    (bounded S).filter (2 ≤ ·.card)
+
 end Configuration
+
+/-- The categories of the referents in the region of `S` that a number label covers. -/
+def Category.ofNumber (S : Finset (Finset Role)) (n : Number) : Finset Category :=
+  (Configuration.covered S n).biUnion fun x ↦ x.category.toFinset
 
 end Person
