@@ -3,10 +3,9 @@ module
 public import Mathlib.Order.Interval.Set.Defs
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Mereology.Basic
-public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Reference.Context.Participants
 public import Linglib.Semantics.Reference.Gender
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Core.Order.SupCon
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Gender.Decomposition
@@ -30,8 +29,6 @@ no stronger one.
 ## Main definitions
 
 * `Person.dom`, `Number.dom`, `Gender.dom`: the domain of an optional value.
-* `SpeechAct.Context.participants`: the discourse roles whose holders are part of a referent.
-* `SpeechAct.Context.personCon`: person as a congruence for the sum of referents.
 
 ## Main results
 
@@ -123,71 +120,6 @@ theorem dom_firstInclusive_subset_dom_first :
 
 end Person
 
-namespace SpeechAct.Context
-
-variable {W E P T : Type*} [PartialOrder E] (c : Context W E P T) (x : E)
-
-open Classical in
-/-- The participants of a referent at a context are the discourse roles whose holders are part of
-it. -/
-noncomputable def participants : Finset SpeechAct.Role :=
-  Finset.univ.filter fun r ↦ c.holder r ≤ x
-
-variable {c x} in
-theorem mem_participants {r : SpeechAct.Role} : r ∈ c.participants x ↔ c.holder r ≤ x := by
-  simp [participants]
-
-@[simp] theorem speaker_mem_participants : .speaker ∈ c.participants x ↔ c.agent ≤ x :=
-  mem_participants
-
-@[simp] theorem addressee_mem_participants :
-    .addressee ∈ c.participants x ↔ c.addressee ≤ x :=
-  mem_participants
-
-/-! ### Group formation
-
-Forming a group from two referents is their sum. Person is a congruence for it and atomicity is
-not, so the person of a coordination is a function of its conjuncts' persons while its number is
-not a function of their numbers. -/
-
-section SemilatticeSup
-
-variable {W E P T : Type*} [SemilatticeSup E] (c : Context W E P T)
-
-/-- A larger referent has at least the participants of a smaller one. -/
-theorem monotone_participants : Monotone c.participants :=
-  fun _ _ h _ hr ↦ mem_participants.2 ((mem_participants.1 hr).trans h)
-
-/-- Forming a group is union on participants exactly when each role's holder is part of a sum
-only by being part of a summand. -/
-theorem participants_sup_iff :
-    (∀ x y, c.participants (x ⊔ y) = c.participants x ∪ c.participants y) ↔
-      ∀ r ⦃x y⦄, c.holder r ≤ x ⊔ y → c.holder r ≤ x ∨ c.holder r ≤ y := by
-  refine ⟨fun h r x y hr ↦ ?_, fun h x y ↦ ?_⟩
-  · have := mem_participants.2 hr
-    rw [h, Finset.mem_union] at this
-    exact this.imp mem_participants.1 mem_participants.1
-  · ext r
-    simp only [mem_participants, Finset.mem_union]
-    exact ⟨fun hr ↦ h r hr, fun hr ↦ hr.elim le_sup_of_le_left le_sup_of_le_right⟩
-
-variable (h : ∀ r ⦃x y⦄, c.holder r ≤ x ⊔ y → c.holder r ≤ x ∨ c.holder r ≤ y)
-
-/-- The participants of a referent, as a map preserving sums. It is noncomputable as
-`participants` is. -/
-noncomputable def participantsHom : SupHom E (Finset SpeechAct.Role) where
-  toFun := c.participants
-  map_sup' := c.participants_sup_iff.2 h
-
-@[simp] theorem participantsHom_apply (x : E) : c.participantsHom h x = c.participants x := rfl
-
-/-- Person as a congruence for group formation: the referents with the same participants. -/
-noncomputable def personCon : SupCon E := SupCon.ker (c.participantsHom h)
-
-end SemilatticeSup
-
-end SpeechAct.Context
-
 namespace Person
 
 variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x : E)
@@ -246,25 +178,6 @@ theorem participants_mem_participantSets_first :
   cases f <;> simp [Feature.dom, h] at hf ⊢
 
 end Person
-
-/-! ### Atomicity is not a congruence -/
-
-section
-
-variable {E : Type*} [SemilatticeSup E] {a b : E}
-
-/-- No congruence for sums relates two distinct atoms while keeping atoms apart from
-non-atoms: an atom summed with itself is an atom, and summed with another is not. -/
-theorem Mereology.not_exists_supCon_atom (hab : a ≠ b) (ha : Atom a) (hb : Atom b) :
-    ¬ ∃ k : SupCon E, k.r a b ∧ ∀ x y, k.r x y → (Atom x ↔ Atom y) := by
-  rintro ⟨k, hk, hat⟩
-  have h₁ : k.r (a ⊔ a) (b ⊔ a) := k.sup hk (k.refl a)
-  rw [sup_idem] at h₁
-  have hsum : Atom (b ⊔ a) := (hat _ _ h₁).1 ha
-  have h₂ : b ⊔ a ≤ a := hsum.2 ha.1 le_sup_right
-  exact hab (le_antisymm (ha.2 hb.1 (le_sup_left.trans h₂)) (le_sup_left.trans h₂))
-
-end
 
 /-! ### Number -/
 
