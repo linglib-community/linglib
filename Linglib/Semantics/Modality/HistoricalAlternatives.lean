@@ -19,9 +19,10 @@ equivalence gets finer as time advances, the alternatives of a world
 admits they give the oriented modal bases of [klecha-2016], whose doxastic base carries
 [the Upper Limit Constraint](##Temporal.TWFrame.time_le_of_mem_actualHistoryBase) of
 [abusch-1997]. A property is settled over a common ground when the alternatives of each of its
-worlds agree on it, that is, when the property or its negation is
-[historically necessary](##Temporal.TWFrame.isSettled_iff) there, and what is settled
-[stays settled](##Temporal.TWFrame.IsSettled.mono).
+worlds agree on it ([kaufmann-condoravdi-harizanov-2006]), that is, when the property or its
+negation is [historically necessary](##Temporal.TWFrame.isSettled_iff) there; what is settled
+[stays settled](##Temporal.TWFrame.IsSettled.mono), and there
+[possibility is truth](##Temporal.TWFrame.IsSettled.diamond_iff).
 
 ## References
 
@@ -29,6 +30,7 @@ worlds agree on it, that is, when the property or its negation is
 * [thomason-1984]
 * [von-kutschera-1997]
 * [condoravdi-2002]
+* [kaufmann-condoravdi-harizanov-2006]
 * [cariani-santorio-2018]
 * [klecha-2016]
 * [abusch-1997]
@@ -195,6 +197,33 @@ theorem isSettled_iff :
 /-- What is settled at a time is settled at every later time. -/
 theorem IsSettled.mono (h : F.IsSettled cg t P) (htt' : t ≤ t') : F.IsSettled cg t' P :=
   fun w hw v hv ↦ h w hw v (alternatives_anti htt' hv)
+
+/-- A property is settled over all worlds when historically equivalent worlds agree on it: it is
+a union of classes of historical equivalence. This is the condition of
+[kaufmann-condoravdi-harizanov-2006] on the truth of atomic sentences, and of [condoravdi-2002]
+on common grounds. -/
+theorem isSettled_univ_iff :
+    F.IsSettled univ t P ↔ ∀ ⦃w v⦄, F.sim t w v → (P w ↔ P v) :=
+  ⟨fun h _ _ hv ↦ h _ trivial _ hv, fun h _ _ _ hv ↦ h hv⟩
+
+/-- At a world of a common ground over which a property is settled, the property is
+historically possible exactly when it is true. -/
+theorem IsSettled.diamond_iff {w : W} (h : F.IsSettled cg t P) (hw : w ∈ cg) :
+    ◇[F.alt t] P w ↔ P w :=
+  ⟨fun ⟨v, hv, hP⟩ ↦ (h w hw v hv).2 hP, fun hP ↦ ⟨w, (F.sim t).refl' w, hP⟩⟩
+
+/-- Over a common ground that is a union of classes of historical equivalence, a property is
+settled exactly when its restriction to the common ground is such a union too: each class
+resolves the issue uniformly ([condoravdi-2002]). -/
+theorem isSettled_iff_isSettled_univ_and (hcg : F.IsSettled univ t (· ∈ cg)) :
+    F.IsSettled cg t P ↔ F.IsSettled univ t (fun w ↦ w ∈ cg ∧ P w) := by
+  refine ⟨fun h w _ v hv ↦ ?_, fun h w hw v hv ↦ ?_⟩
+  · have hc := hcg w trivial v hv
+    by_cases hw : w ∈ cg
+    · exact and_congr hc (h w hw v hv)
+    · exact iff_of_false (fun h' ↦ hw h'.1) fun h' ↦ hw (hc.2 h'.1)
+  · have hP := h w trivial v hv
+    exact ⟨fun hw' ↦ (hP.1 ⟨hw, hw'⟩).2, fun hv' ↦ (hP.2 ⟨(hcg w trivial v hv).1 hw, hv'⟩).2⟩
 
 end Settled
 

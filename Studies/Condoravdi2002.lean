@@ -248,6 +248,15 @@ theorem isSettled_present (h : FixesPast F Q) (cg : Set W) (t : T) :
     F.IsSettled cg t (fun w ↦ At (Interval.Ici ↑t) w (frame (Interval.pure ↑t) Q)) :=
   fun w _ w' hw' ↦ h t w w' hw' _ fun _ hx ↦ (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
 
+/-- Over a common ground satisfying settledness, a possibility modal with the metaphysical modal
+base is equivalent to its prejacent without the modal (p. 83), the equivalence the diversity
+condition is there to avoid. -/
+theorem pres_may_iff_of_isSettled {cg : Set W}
+    (h : F.IsSettled cg now (fun w ↦ At (Interval.Ici ↑now) w Q)) (hw : w ∈ cg) :
+    PRES now (MAY (metaphysicalBase F) Q) w ↔ At (Interval.Ici ↑now) w Q := by
+  rw [pres_may_iff]
+  exact h.diamond_iff hw
+
 /-- A modal base meets the diversity condition (45) for a property when some common-ground world
 sees worlds disagreeing on it. -/
 def Diverse (MB : W → T → Set W) (cg : Set W) (t : T) (R : W → Prop) : Prop :=

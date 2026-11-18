@@ -57,6 +57,11 @@ theorem isAssignment_iff_sim_le :
         (fun w (f : Atom × T) ↦ V f.1 f.2 w)).sim t :=
   ⟨fun h _ _ _ hww f hf ↦ h f.1 hf hww, fun h p t₁ _ _ _ hle hww ↦ h _ hww (p, t₁) hle⟩
 
+theorem isAssignment_iff_isSettled :
+    IsAssignment F V ↔ ∀ p t, F.IsSettled Set.univ t (V p t) :=
+  ⟨fun h p _ ↦ isSettled_univ_iff.2 fun _ _ hv ↦ h p le_rfl hv,
+    fun h p t₁ _ _ _ hle hs ↦ isSettled_univ_iff.1 (h p t₁) (F.antitone_sim hle hs)⟩
+
 /-- A formula contains no occurrences of `F` when it has no `G`, the primitive of which `F` is the
 dual in `Formula`. -/
 def ContainsNoF : Formula Atom → Prop
