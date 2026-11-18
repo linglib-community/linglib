@@ -20,7 +20,10 @@ one before it as in Harley and Ritter's geometry. A segment is thus
 [a person feature or the root](##PersonSegment.ofFeature), and the segments a person bears are
 the root and [its features](##PersonSegment.ofFeature_mem_spec) in the full inventory, so that
 the second person bears [addressee] and the general first person [speaker] alone. They form a
-tree, [a segment and those it depends on a chain](##PersonSegment.isChain_Iic).
+tree, [a segment and those it depends on a chain](##PersonSegment.isChain_Iic). A language
+specifies its persons on one such chain, [speaker] or [addressee], and
+[what a probe over an inventory sees of a person](##PersonSegment.inter_spec) is the person's
+bundle in that inventory.
 
 ## Implementation notes
 
@@ -102,6 +105,15 @@ def spec (p : Person) : Finset PersonSegment :=
 @[simp] theorem ofFeature_mem_spec {p : Person} {f : Person.Feature} :
     ofFeature f ∈ spec p ↔ f ∈ p.toFeatures Finset.univ := by
   revert p f; decide
+
+/-- The segments of a probe over the features `F` that a person bears are the root and the
+person's bundle in `F`. A probe articulated to [speaker] thus sees a second person as [participant]
+alone, and one articulated to [addressee] sees a first person so, the two person specifications
+of [bejar-rezac-2009]. -/
+theorem inter_spec (F : Person.Features) (p : Person) :
+    insert pi (F.map ofFeature.toEmbedding) ∩ spec p =
+      insert pi ((p.toFeatures F).map ofFeature.toEmbedding) := by
+  revert F p; decide
 
 /-- A person bears whatever its segments depend on. -/
 theorem spec_isLowerSet (p : Person) : IsLowerSet (↑(spec p) : Set PersonSegment) := by

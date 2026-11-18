@@ -20,10 +20,12 @@ number of probe segments each person bears, the person hierarchy of the language
 
 ## Implementation notes
 
-A person bears its whole specification `PersonSegment.spec`, and a probe sees of it the
-segments the probe has. Whether a language tells first from second person by [speaker] or by
-[addressee] is therefore carried by its probe, `Finset.Iic .speaker` or `Finset.Iic .addressee`,
-and not by a second parameter for the specifications of its nominals.
+Béjar and Rezac specify persons per language, a second person as [participant] alone where
+the first bears [speaker] and a first person so where the second bears [addressee]. Here a
+person bears its whole specification `PersonSegment.spec`, and a probe sees of it the segments
+the probe has, which are the person's specification in the probe's features
+(`PersonSegment.inter_spec`). The language's choice is therefore carried by its probe,
+`Finset.Iic .speaker` or `Finset.Iic .addressee`, and not by a second parameter.
 
 ## References
 
