@@ -60,13 +60,28 @@ namespace Configuration
 
 variable {x y : Configuration} {s : Finset Role}
 
-instance : PartialOrder Configuration :=
-  PartialOrder.lift (fun x ↦ (x.participants, x.others)) fun _ _ h ↦
-    Configuration.ext (congrArg Prod.fst h) (congrArg Prod.snd h)
+/-- The pair of the participants and the number of others, the injection that induces the
+order. -/
+def toProd (x : Configuration) : Finset Role × ℕ := (x.participants, x.others)
+
+theorem toProd_injective : Function.Injective toProd := fun _ _ h ↦
+  Configuration.ext (congrArg Prod.fst h) (congrArg Prod.snd h)
+
+instance : LE Configuration := ⟨fun x y ↦ x.participants ⊆ y.participants ∧ x.others ≤ y.others⟩
 
 theorem le_def : x ≤ y ↔ x.participants ⊆ y.participants ∧ x.others ≤ y.others := Iff.rfl
 
-instance : DecidableLE Configuration := fun _ _ ↦ decidable_of_iff _ le_def.symm
+instance : DecidableLE Configuration := fun _ _ ↦ decidable_of_iff' _ le_def
+
+instance : PartialOrder Configuration := { PartialOrder.lift toProd toProd_injective with
+  le := (· ≤ ·) }
+
+/-- `toProd` as an order embedding. -/
+@[simps]
+def toProdHom : Configuration ↪o Finset Role × ℕ where
+  toFun := toProd
+  inj' := toProd_injective
+  map_rel_iff' := Iff.rfl
 
 /-- The empty configuration, of no referent, lies below every other. -/
 instance : OrderBot Configuration where
