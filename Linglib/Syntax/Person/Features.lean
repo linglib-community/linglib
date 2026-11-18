@@ -11,17 +11,19 @@ public import Linglib.Syntax.Person.System
 /-!
 # The features of the person values
 
-A person value bears [the features all its participant sets bear](##Person.toFeatures), so the
-second person bears [participant] alone on the inventory of [participant] and [speaker], and that
-inventory [does not see clusivity](##Person.toFeatures_coarsen).
-[Counting the features of [participant] and [speaker] a value bears](##Person.prominence_le_iff)
-is the person hierarchy, [the value of the standard
-tripartition](##Person.prominence_ofParticipants), so
-[resolution in it selects the more prominent conjunct](##Person.coarsen_ofParticipants_union), as
-Corbett's resolution rules state. The values of `Person` are the cells of two systems:
-[the three features](##Person.mem_participantSets_ofParticipants) give the quadripartition and
-[participant] and [speaker] the standard tripartition, whose general first person
-[covers the two clusives](##Person.participantSets_first).
+This file relates the values of `Person` to the person features. A value bears a feature when
+every participant set it covers does.
+
+On [participant] and [speaker], the second person bears one feature and the first person two.
+[The number of them a value bears](##Person.prominence_le_iff) is the person hierarchy, first
+over second over third. These two features
+[do not tell the inclusive from the exclusive](##Person.toFeatures_coarsen).
+
+## Main definitions
+
+* `Person.toFeatures`: the features of an inventory that a value bears.
+* `Person.prominence`: the number of [participant] and [speaker] a value bears.
+* `Person.Category.toFeatures`: the features a person-number category bears.
 
 ## References
 

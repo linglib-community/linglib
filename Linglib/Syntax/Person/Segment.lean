@@ -17,16 +17,23 @@ public import Mathlib.Data.Fintype.Option
 /-!
 # Person segments
 
-Béjar and Rezac articulate the person probe into segments: the root `π`, which every nominal
-bears, and the person features [participant], [speaker] and [addressee], each depending on the
-one before it as in Harley and Ritter's geometry. A segment is thus
-[a person feature or the root](##Person.Segment.ofFeature), and the segments a person bears are
-the root and [its features](##Person.Segment.ofFeature_mem_spec) in the full inventory, so that
-the second person bears [addressee] and the general first person [speaker] alone. They form a
-tree, [a segment and those it depends on a chain](##Person.Segment.isChain_Iic). A language
-specifies its persons on one such chain, [speaker] or [addressee], and
-[what a probe over an inventory sees of a person](##Person.Segment.inter_spec) is the person's
-bundle in that inventory.
+A *person segment* is the root `π`, which every nominal bears, or a person feature. Béjar and
+Rezac build a person probe from segments. A nominal bears the segments of its person: a third
+person the root alone, a second person the root, [participant] and [addressee], and a first
+person the root, [participant] and [speaker].
+
+[speaker] and [addressee] depend on [participant], and every segment depends on the root. The
+segments therefore form a tree, in which
+[a segment and those it depends on form a chain](##Person.Segment.isChain_Iic).
+[What a probe sees of a person](##Person.Segment.inter_spec) is the segments they share.
+
+## Main definitions
+
+* `Person.Segment`: the root or a person feature, ordered by dependency.
+* `Person.Segment.ofFeature`: a person feature as a segment.
+* `Person.Segment.spec`: the segments a person bears.
+* `Person.Specification.segments`: the segments a person specification bears.
+* `Person.Segment.casesOn'`: case analysis on the four segments.
 
 ## Implementation notes
 

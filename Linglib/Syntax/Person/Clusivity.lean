@@ -11,16 +11,22 @@ public import Mathlib.Data.Fintype.Powerset
 /-!
 # Clusivity
 
-Clusivity says of a form whether its referents include the addressee: an inclusive form's do and
-an exclusive form's do not. It combines with person. Restricting the first person's participant
-sets to those satisfying a clusivity gives [the inclusive](##Clusivity.restrict_inclusive_first)
-and [the exclusive](##Clusivity.restrict_exclusive_first) first persons, and a form with no
-clusivity [covers what its person covers](##Clusivity.restrict_none). Since a group includes the
-addressee as soon as one of its members does,
-[a coordination is inclusive exactly when a conjunct is](##Clusivity.holds_inclusive_union). With
-no person specified, the inclusive participant sets are
-[those of the second person and of the inclusive first
-person](##Clusivity.restrict_inclusive_univ), the forms that include the addressee.
+*Clusivity* is the distinction between an *inclusive* form, whose referents include the
+addressee, and an *exclusive* form, whose referents do not. Languages with the distinction have
+two forms where English has *we*.
+
+A clusivity narrows a person. The first person with the inclusive is
+[the inclusive first person](##Clusivity.restrict_inclusive_first), and with the exclusive
+[the exclusive first person](##Clusivity.restrict_exclusive_first). A coordination is inclusive
+[exactly when one of its conjuncts is](##Clusivity.holds_inclusive_union).
+
+## Main definitions
+
+* `Clusivity`: inclusive or exclusive.
+* `Clusivity.Holds`: a participant set satisfies the inclusive when it contains the addressee,
+  and the exclusive when it does not.
+* `Clusivity.restrict`: the participant sets of a family that satisfy a clusivity, or all of
+  them when no clusivity is given.
 
 ## Implementation notes
 

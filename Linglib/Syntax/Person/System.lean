@@ -11,18 +11,24 @@ public import Linglib.Syntax.Person.Feature
 /-!
 # Person systems
 
-A person system gives each role a value in a join-semilattice with a bottom and each participant
-set the join of its roles' values, `Finset.supBotLift`; its persons are the values it takes, and
-the person of a coordination is the join of its conjuncts' persons. Which participant sets a
-system identifies [depends only](##Person.forall_sup_eq_iff) on which role's value is the bottom and
-on how the two values compare, so the systems number seven, and a linearly ordered one
-[identifies the inclusive](##Person.not_injective_sup_of_linearOrder) with the exclusive or with
-the second person. Harbour's [standard tripartition](##Person.standardTripartition) ranks the
-speaker above the addressee, first with the speaker, otherwise second with the addressee,
-otherwise third, Zwicky's correspondence principle. An inventory of person features generates the
-system whose person is the bundle, [participant] and [speaker]
-[the standard tripartition](##Person.bundle_participant_speaker_eq_iff), and
-[every system is so generated](##Person.exists_bundle_eq_iff).
+A *person system* sorts the four participant sets into persons. English has three persons: the
+speaker alone and the speaker with the addressee are both first person. A language with an
+inclusive has four.
+
+A system gives each role a value, and the person of a participant set is the join of the values
+of its roles (`Finset.supBotLift`). The person of a coordination is then the join of the persons
+of its conjuncts. Two assignments of values [give the same
+system](##Person.forall_sup_eq_iff) exactly when they agree on which values are least and on how
+the two values compare, so there are seven systems, and
+[each is the system of some inventory of person features](##Person.exists_bundle_eq_iff). A
+linearly ordered system [gives the inclusive the person of the exclusive or of the second
+person](##Person.not_injective_sup_of_linearOrder).
+
+## Main definitions
+
+* `Person.speakerRank`: the ranking of the speaker above the addressee.
+* `Person.standardTripartition`: Harbour's three-person system, first person with the speaker,
+  otherwise second with the addressee, otherwise third.
 
 ## References
 

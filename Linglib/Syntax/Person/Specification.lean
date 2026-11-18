@@ -12,16 +12,25 @@ public import Mathlib.Data.Fintype.Powerset
 /-!
 # Person specifications
 
-A form is specified in person for the participant sets its referents may have. A referent has
-one participant set; a form may cover several, as a first person form with no clusivity covers
-the speaker alone and the speaker with the addressee. A specification is thus a nonempty family
-of participant sets, and one is more specific than another when it covers fewer. The
-unspecified form covers them all and is the least specification. Two specifications
-[unify to what both cover](##Person.Specification.unify_ofPerson_first_inclusive) and are
-[incompatible when they share nothing](##Person.Specification.not_compat_first_second), so a
-form with no clusivity [agrees with an inclusive
-referent](##Person.Specification.ofPerson_first_le_inclusive) and a first person form with no
-second.
+A *person specification* is the set of participant sets a form can be used for. A referent has
+one participant set, but a form may cover several: English *we* covers the speaker alone and
+the speaker with the addressee, while an inclusive pronoun covers only the second.
+
+A specification that covers fewer participant sets is more specific, so
+[the first person is less specific than the
+inclusive](##Person.Specification.ofPerson_first_le_inclusive). Two specifications are
+compatible when some participant set is covered by both;
+[the first and the second person are not](##Person.Specification.not_compat_first_second). The
+person slot of an agreement bundle is a specification (`Syntax/Agreement/Bundle.lean`).
+
+## Main definitions
+
+* `Person.Specification`: a nonempty set of participant sets, more specific when smaller.
+* `Person.Specification.sets`: the participant sets a specification covers.
+* `Person.Specification.ofPerson`: the specification of a person value.
+* `Person.Specification.ofParticipants`: the specification of a single referent.
+* `Person.Specification.toPerson?`: the person value a specification is that of, if any.
+* `Person.Specification.IsSAP`: every participant set it covers includes a participant.
 
 ## Implementation notes
 
