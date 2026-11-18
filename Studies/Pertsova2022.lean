@@ -20,7 +20,7 @@ speakers (p. 426).
 
 ## Implementation notes
 
-The features are those of `Harbour2016.ThreeFeature` on participant sets, ADDRESSEE being
+The features are those of `Person.Feature` on participant sets, ADDRESSEE being
 [hearer]. With no feature active the hierarchy gives the monopartition, which the paper does not
 discuss; it is included as the empty initial segment. Number is not modeled, so the referent sets
 of (5) appear as their participant sets, *me+other(s)* as `{speaker}`. Pertsova's argument from
@@ -41,36 +41,36 @@ open SpeechAct Finset Harbour2016
 
 /-- The feature hierarchy (4): AUTHOR depends on +PARTICIPANT and ADDRESSEE on AUTHOR, so the
 active features form an initial segment of participant, author, addressee. -/
-def Active (F : Finset ThreeFeature) : Prop :=
-  (.author ∈ F → .participant ∈ F) ∧ (.hearer ∈ F → .author ∈ F)
+def Active (F : Person.Features) : Prop :=
+  (.speaker ∈ F → .participant ∈ F) ∧ (.addressee ∈ F → .speaker ∈ F)
 
 instance : DecidablePred Active := fun _ ↦ by unfold Active; infer_instance
 
 /-- The active feature sets generate four person systems (p. 402). -/
 theorem image_graph_active :
     (univ.filter Active).image graph =
-      {graph ∅, graph {.participant}, graph {.participant, .author},
-        graph {.participant, .author, .hearer}} := by
+      {graph ∅, graph {.participant}, graph {.participant, .speaker},
+        graph {.participant, .speaker, .addressee}} := by
   decide
 
 theorem card_image_graph_active : ((univ.filter Active).image graph).card = 4 := by decide
 
 /-- Harbour's author bipartition, which [±author] alone generates, is not among them. -/
-theorem graph_active_ne_authorBipartition (F : Finset ThreeFeature) (hF : Active F) :
-    graph F ≠ graph {.author} := by
+theorem graph_active_ne_authorBipartition (F : Person.Features) (hF : Active F) :
+    graph F ≠ graph {.speaker} := by
   revert F; decide
 
 /-- Under active features, inclusive conflates with second person only if exclusive does, and
 likewise for the other pairs (pp. 402–403). -/
-theorem no_partial_conflation (F : Finset ThreeFeature) (hF : Active F) :
-    ((generated F).r {.speaker, .addressee} {.addressee} →
-        (generated F).r {.speaker, .addressee} {.speaker}) ∧
-      ((generated F).r {.addressee} ∅ → (generated F).r {.addressee} {.speaker}) ∧
-      ((generated F).r {.speaker} ∅ → (generated F).r {.speaker} {.addressee}) := by
-  simp only [generated_r_iff]
+theorem no_partial_conflation (F : Person.Features) (hF : Active F) :
+    ((Person.generated F).r {.speaker, .addressee} {.addressee} →
+        (Person.generated F).r {.speaker, .addressee} {.speaker}) ∧
+      ((Person.generated F).r {.addressee} ∅ → (Person.generated F).r {.addressee} {.speaker}) ∧
+      ((Person.generated F).r {.speaker} ∅ → (Person.generated F).r {.speaker} {.addressee}) := by
+  simp only [Person.generated_r_iff]
   revert F; decide
 
 -- (9), (4)
-theorem admissible_authorBipartition : Admissible {.author} ∧ ¬ Active {.author} := by decide
+theorem admissible_authorBipartition : Admissible {.speaker} ∧ ¬ Active {.speaker} := by decide
 
 end Pertsova2022

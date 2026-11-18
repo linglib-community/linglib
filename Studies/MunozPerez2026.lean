@@ -110,7 +110,7 @@ theorem not_hasSemantics (a : Option Category) :
 /-- The bundle condition of the fission rule holds of an applicative head that is
 [+PART, +SING]. -/
 def IsFissionApplicable (c : Category) : Prop :=
-  .participant ∈ c.toFeatures ∧ c.IsSingular
+  .participant ∈ c.toFeatures Finset.univ ∧ c.IsSingular
 
 instance : DecidablePred IsFissionApplicable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 

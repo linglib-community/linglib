@@ -8,22 +8,29 @@ module
 public import Linglib.Syntax.Person.Category
 public import Linglib.Core.Order.UpperLower.Finset
 public import Mathlib.Order.Concept
+public import Mathlib.Order.Hom.Lattice
 
 /-!
-# Bivalent person features
+# Person features
 
-Person decomposes into two features, [participant] and [author], the bivalent system Ackema and
-Neeleman trace to Halle. [participant] holds of the nonempty participant sets and [author] of those
-containing the speaker, a formal context (`Person.Bears`) in which a value's bundle is its intent.
-[The bundles passing the containment filter are exactly the closed sets of the
-context](##Person.wellFormed_iff_isIntent), the lower sets of the chain participant < author.
-Harley and Ritter caution that a geometry encodes morphological dependency, not logical
-implication, so the chain stays a stipulated order and its coincidence with the closure is a
-theorem about person. The features see the standard tripartition and not clusivity:
-[its values cover exactly the participant sets whose features are their
-bundle](##Person.mem_participantSets_iff), and
-[ordering values by the tops of their bundles](##Person.prominence_le_iff) is the person
-hierarchy.
+A person feature is a property of participant sets preserved by union: [participant] holds of the
+nonempty sets, [speaker] of those containing the speaker and [addressee] of those containing the
+addressee. A theory of person selects an inventory of them, and
+[the features of an inventory that a participant set bears](##Person.bundle) are its bundle there;
+the two-feature system Ackema and Neeleman trace to Halle is the inventory of [participant] and
+[speaker], on which the second person bears [participant] alone, and Harley and Ritter's geometry
+adds [addressee]. The three features tell
+[every participant set from every other](##Person.bundle_univ_injective), so the full inventory
+sees clusivity and the two-feature one [does not](##Person.toFeatures_coarsen).
+
+[speaker] and [addressee] depend on [participant], and
+[the bundles closed under that dependency are exactly the closed sets of the
+context](##Person.wellFormed_iff_isIntent) of participant sets and features. Harley and Ritter
+caution that a geometry encodes morphological dependency, not logical implication, so the
+dependency stays a stipulated order and [its coincidence with
+entailment](##Person.Feature.le_iff_forall_bears) is a theorem about person.
+[Counting the features of [participant] and [speaker] a value bears](##Person.prominence_le_iff)
+is the person hierarchy.
 
 ## References
 
@@ -42,142 +49,180 @@ open Finset SpeechAct Order
 
 namespace Person
 
-/-- Person has two features, the author feature depending on the participant feature. -/
+/-- A person feature. -/
 inductive Feature where
   /-- [participant] holds of a referent including a speech-act participant. -/
   | participant
-  /-- [author] holds of a referent including the speaker. -/
-  | author
+  /-- [speaker] holds of a referent including the speaker, [author] in other inventories. -/
+  | speaker
+  /-- [addressee] holds of a referent including the addressee, [hearer] in other inventories. -/
+  | addressee
   deriving DecidableEq, Repr, Fintype
 
-/-- `Feature.rank` places participant below author on the dependency chain. -/
-def Feature.rank : Feature → Fin 2
-  | .participant => 0
-  | .author => 1
+namespace Feature
 
-instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
+/-- [speaker] and [addressee] depend on [participant]: `f ≤ g` when `g` depends on `f`. -/
+instance : PartialOrder Feature where
+  le f g := f = g ∨ f = participant
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
 
-instance : LocallyFiniteOrderBot Feature := Fintype.toLocallyFiniteOrderBot
+instance : DecidableLE Feature := fun f g ↦ inferInstanceAs (Decidable (f = g ∨ f = participant))
 
-/-- A person feature bundle is the set of its positive features. -/
+instance : OrderBot Feature where
+  bot := participant
+  bot_le := by decide
+
+end Feature
+
+/-- A set of person features, an inventory or a bundle. -/
 abbrev Features := Finset Feature
 
 /-! ### The context of participant sets and features -/
 
-/-- A participant set bears [participant] when it is nonempty and [author] when it contains the
-speaker. -/
+/-- A participant set bears [participant] when it is nonempty, [speaker] when it contains the
+speaker and [addressee] when it contains the addressee. -/
 def Bears (s : Finset Role) : Feature → Prop
   | .participant => s.Nonempty
-  | .author => .speaker ∈ s
+  | .speaker => .speaker ∈ s
+  | .addressee => .addressee ∈ s
 
 instance (s : Finset Role) : DecidablePred (Bears s) := fun f ↦ by
   cases f <;> unfold Bears <;> infer_instance
 
-theorem Bears.participant {s : Finset Role} (h : Bears s .author) : Bears s .participant :=
-  ⟨_, h⟩
+theorem Bears.participant {s : Finset Role} {f : Feature} (h : Bears s f) :
+    Bears s .participant := by
+  cases f
+  · exact h
+  · exact ⟨_, h⟩
+  · exact ⟨_, h⟩
+
+/-- A feature depends on another exactly when bearing it entails bearing the other. -/
+theorem Feature.le_iff_forall_bears {f g : Feature} : f ≤ g ↔ ∀ s, Bears s g → Bears s f := by
+  revert f g; decide
+
+/-- The features of the inventory `F` a participant set bears. The bundle of a union is the
+union of the bundles. -/
+def bundle (F : Features) : SupHom (Finset Role) Features where
+  toFun s := F.filter (Bears s)
+  map_sup' s t := by
+    ext f
+    cases f <;> simp [Bears, Finset.union_nonempty, and_or_left]
+
+@[simp] theorem mem_bundle {F : Features} {s : Finset Role} {f : Feature} :
+    f ∈ bundle F s ↔ f ∈ F ∧ Bears s f :=
+  Finset.mem_filter
+
+/-- The three features tell every participant set from every other. -/
+theorem bundle_univ_injective : Function.Injective (bundle univ) := by decide
 
 private theorem mem_upperPolar_lowerPolar (t : Features) (f : Feature) :
     f ∈ upperPolar Bears (lowerPolar Bears (t : Set Feature)) ↔
       ∀ s : Finset Role, (∀ g ∈ t, Bears s g) → Bears s f := by
   simp [mem_upperPolar_iff, mem_lowerPolar_iff]
 
-/-- The bundles passing the containment filter, the lower sets of the chain, are exactly the
-closed sets of features of the context. -/
+/-- The bundles closed under dependency are exactly the closed sets of features of the
+context. -/
 theorem wellFormed_iff_isIntent (t : Features) :
     IsLowerSet (↑t : Set Feature) ↔ IsIntent Bears (t : Set Feature) := by
   rw [isIntent_iff, Set.ext_iff]
   simp only [mem_upperPolar_lowerPolar, Finset.mem_coe]
   revert t; decide
 
-theorem intentClosure_singleton_author :
-    intentClosure Bears {Feature.author} = Set.univ := by
-  ext f; cases f
-  · simp [intentClosure, mem_upperPolar_iff, mem_lowerPolar_iff, Bears]
-    exact fun _ h ↦ ⟨_, h⟩
-  · simp [intentClosure, mem_upperPolar_iff, mem_lowerPolar_iff, Bears]
-
-theorem not_wellFormed_singleton_author :
-    ¬ IsLowerSet (↑({.author} : Features) : Set Feature) := by
+theorem not_wellFormed_singleton_speaker :
+    ¬ IsLowerSet (↑({.speaker} : Features) : Set Feature) := by
   decide
-
-/-- Exactly three bundles pass the containment filter. -/
-theorem card_wellFormed : Fintype.card {pf : Features // IsLowerSet (↑pf : Set Feature)} = 3 := by
-  rw [Fintype.card_subtype_isLowerSet]; rfl
 
 /-! ### The bundle of a person value -/
 
-/-- The bundle of a person value is the set of features its participant sets all bear. -/
-def toFeatures (p : Person) : Features :=
-  univ.filter fun f ↦ ∀ s ∈ p.participantSets, Bears s f
+/-- The bundle of a person value in the inventory `F` is the set of features of `F` its
+participant sets all bear. -/
+def toFeatures (F : Features) (p : Person) : Features :=
+  F.filter fun f ↦ ∀ s ∈ p.participantSets, Bears s f
 
-theorem coe_toFeatures (p : Person) :
-    (p.toFeatures : Set Feature) = upperPolar Bears (p.participantSets : Set (Finset Role)) := by
-  ext f; simp [toFeatures, mem_upperPolar_iff]
+theorem mem_toFeatures {F : Features} {p : Person} {f : Feature} :
+    f ∈ p.toFeatures F ↔ f ∈ F ∧ ∀ s ∈ p.participantSets, Bears s f :=
+  Finset.mem_filter
 
-@[simp] theorem toFeatures_first : toFeatures .first = {.participant, .author} := by decide
+@[simp] theorem toFeatures_first :
+    toFeatures {.participant, .speaker} .first = {.participant, .speaker} := by decide
 @[simp] theorem toFeatures_firstInclusive :
-    toFeatures .firstInclusive = {.participant, .author} := by decide
+    toFeatures {.participant, .speaker} .firstInclusive = {.participant, .speaker} := by decide
 @[simp] theorem toFeatures_firstExclusive :
-    toFeatures .firstExclusive = {.participant, .author} := by decide
-@[simp] theorem toFeatures_second : toFeatures .second = {.participant} := by decide
-@[simp] theorem toFeatures_third : toFeatures .third = ∅ := by decide
+    toFeatures {.participant, .speaker} .firstExclusive = {.participant, .speaker} := by decide
+@[simp] theorem toFeatures_second :
+    toFeatures {.participant, .speaker} .second = {.participant} := by decide
+@[simp] theorem toFeatures_third (F : Features) : toFeatures F .third = ∅ := by
+  revert F; decide
 
-@[simp] theorem toFeatures_coarsen (p : Person) : p.coarsen.toFeatures = p.toFeatures := by
-  cases p <;> decide
+theorem coe_toFeatures (F : Features) (p : Person) :
+    (p.toFeatures F : Set Feature) =
+      ↑F ∩ upperPolar Bears (p.participantSets : Set (Finset Role)) := by
+  ext f; simp [mem_toFeatures, mem_upperPolar_iff]
+
+theorem toFeatures_eq_inter (F : Features) (p : Person) :
+    p.toFeatures F = F ∩ p.toFeatures univ := by
+  ext f; simp [mem_toFeatures]
+
+/-- A value with one participant set bears what that set bears. -/
+theorem toFeatures_ofParticipants (F : Features) (s : Finset Role) :
+    (ofParticipants s).toFeatures F = bundle F s := by
+  revert F s; decide
 
 /-- The bundle of a coordination is the union of its conjuncts' bundles. -/
-theorem toFeatures_sup (p q : Person) : (p ⊔ q).toFeatures = p.toFeatures ∪ q.toFeatures := by
-  revert p q; decide
+theorem toFeatures_sup (F : Features) (p q : Person) :
+    (p ⊔ q).toFeatures F = p.toFeatures F ∪ q.toFeatures F := by
+  revert F p q; decide
 
-theorem toFeatures_wellFormed (p : Person) : IsLowerSet (↑p.toFeatures : Set Feature) := by
+theorem toFeatures_wellFormed {F : Features} (hF : IsLowerSet (↑F : Set Feature)) (p : Person) :
+    IsLowerSet (↑(p.toFeatures F) : Set Feature) := by
+  revert F p; decide
+
+theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFeatures univ := by
   revert p; decide
 
-theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFeatures := by
+theorem includesSpeaker_iff_speaker {p : Person} :
+    p.IncludesSpeaker ↔ .speaker ∈ p.toFeatures univ := by
   revert p; decide
 
-theorem includesSpeaker_iff_author {p : Person} : p.IncludesSpeaker ↔ .author ∈ p.toFeatures := by
-  revert p; decide
+/-- Without [addressee] the features do not see clusivity. -/
+theorem toFeatures_coarsen {F : Features} (hF : .addressee ∉ F) (p : Person) :
+    p.coarsen.toFeatures F = p.toFeatures F := by
+  revert F p; decide
 
-/-- A value of the standard tripartition covers exactly the participant sets whose features are
-its bundle, the sets in the domain of its bundle and in no domain of a more specified one. -/
+/-- A value of the standard tripartition covers exactly the participant sets whose [participant]
+and [speaker] features are its bundle. -/
 theorem mem_participantSets_iff {p : Person} (hp : p.coarsen = p) (s : Finset Role) :
-    s ∈ p.participantSets ↔ univ.filter (Bears s) = p.toFeatures := by
+    s ∈ p.participantSets ↔
+      bundle {.participant, .speaker} s = p.toFeatures {.participant, .speaker} := by
   revert p s; decide
-
-theorem coarsen_ofParticipants_eq_iff (s t : Finset Role) :
-    (ofParticipants s).coarsen = (ofParticipants t).coarsen ↔
-      univ.filter (Bears s) = univ.filter (Bears t) := by
-  revert s t; decide
 
 /-! ### Prominence
 
-A bundle is a lower set of the chain participant < author, so it is determined by its top
-feature, and ordering values by their tops is the person hierarchy 1 > 2 > 3. It is the order
-coordination induces up to clusivity: a coordination takes the person of its most prominent
-conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules state. It is not the
-only person scale: Zwicky's morphosyntactic hierarchies can order the participants otherwise, as
-Algonquian ranks the second person above the first, and the person scale of Haspelmath's argument
-coding splits is the binary cut between participants and the rest (`Person.Class`). -/
+On the features [participant] and [speaker] a bundle is a lower set of a chain, so it is
+determined by how many of them it has, and ordering values by that number is the person hierarchy
+1 > 2 > 3. It is the order coordination induces up to clusivity: a coordination takes the person
+of its most prominent conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules
+state. It is not the only person scale: Zwicky's morphosyntactic hierarchies can order the
+participants otherwise, as Algonquian ranks the second person above the first, and the person
+scale of Haspelmath's argument coding splits is the binary cut between participants and the rest
+(`Person.Class`). -/
 
-/-- The prominence of a value is the top feature of its bundle: [author] for the first person,
-[participant] for the second, none for the third. -/
-def prominence (p : Person) : WithBot Feature := p.toFeatures.max
+/-- The prominence of a value is the number of the features [participant] and [speaker] it bears:
+two for the first person, one for the second, none for the third. -/
+def prominence (p : Person) : ℕ := (p.toFeatures {.participant, .speaker}).card
 
-@[simp] theorem prominence_first : prominence .first = Feature.author := by decide
-@[simp] theorem prominence_firstInclusive : prominence .firstInclusive = Feature.author := by
-  decide
-@[simp] theorem prominence_firstExclusive : prominence .firstExclusive = Feature.author := by
-  decide
-@[simp] theorem prominence_second : prominence .second = Feature.participant := by decide
-@[simp] theorem prominence_third : prominence .third = ⊥ := by decide
-
-/-- A value bears exactly the features up to its prominence. -/
-theorem mem_toFeatures_iff {p : Person} {f : Feature} : f ∈ p.toFeatures ↔ ↑f ≤ p.prominence := by
-  revert p f; decide
+@[simp] theorem prominence_first : prominence .first = 2 := by decide
+@[simp] theorem prominence_firstInclusive : prominence .firstInclusive = 2 := by decide
+@[simp] theorem prominence_firstExclusive : prominence .firstExclusive = 2 := by decide
+@[simp] theorem prominence_second : prominence .second = 1 := by decide
+@[simp] theorem prominence_third : prominence .third = 0 := by decide
 
 /-- Prominence orders values by inclusion of their bundles. -/
 theorem prominence_le_iff_subset {p q : Person} :
-    p.prominence ≤ q.prominence ↔ p.toFeatures ⊆ q.toFeatures := by
+    p.prominence ≤ q.prominence ↔
+      p.toFeatures {.participant, .speaker} ⊆ q.toFeatures {.participant, .speaker} := by
   revert p q; decide
 
 /-- Prominence is the order resolution induces up to clusivity, `p` being at most as prominent as
@@ -193,32 +238,38 @@ theorem prominence_mono : Monotone prominence := fun p q h ↦
 
 namespace Category
 
-variable {c : Category}
+variable {c : Category} {F : Features}
 
-/-- The bundle of a category is the set of features its participants bear. The features
-underdetermine the first person complex, whose three categories share a bundle; the
-decomposition that distinguishes the exclusive is Harbour's (`Harbour2016.signOf`). -/
-def toFeatures (c : Category) : Features := univ.filter (Bears c.participants)
+/-- The bundle of a category in the inventory `F` is the set of features of `F` its participants
+bear. Without [addressee] the features underdetermine the first person complex, whose three
+categories share a bundle; the decomposition that distinguishes the exclusive is Harbour's
+(`Harbour2016.signOf`). -/
+def toFeatures (F : Features) (c : Category) : Features := bundle F c.participants
 
-@[simp] theorem mem_toFeatures {f : Feature} : f ∈ c.toFeatures ↔ Bears c.participants f := by
-  simp [toFeatures]
+@[simp] theorem mem_toFeatures {f : Feature} :
+    f ∈ c.toFeatures F ↔ f ∈ F ∧ Bears c.participants f :=
+  mem_bundle
 
-@[simp] theorem author_mem_toFeatures : .author ∈ c.toFeatures ↔ c.IncludesSpeaker := by
+theorem speaker_mem_toFeatures : .speaker ∈ c.toFeatures univ ↔ c.IncludesSpeaker := by
   simp [Bears, IncludesSpeaker]
 
-@[simp] theorem participant_mem_toFeatures :
-    .participant ∈ c.toFeatures ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
+theorem participant_mem_toFeatures :
+    .participant ∈ c.toFeatures univ ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
   cases c <;> decide +kernel
 
-theorem toFeatures_person (c : Category) : c.person.toFeatures = c.toFeatures := by
-  cases c <;> decide
+theorem toFeatures_person (F : Features) (c : Category) :
+    c.person.toFeatures F = c.toFeatures F := by
+  revert F; cases c <;> decide
 
-theorem toFeatures_wellFormed (c : Category) : IsLowerSet (↑c.toFeatures : Set Feature) := by
-  cases c <;> decide +kernel
+theorem toFeatures_wellFormed (hF : IsLowerSet (↑F : Set Feature)) (c : Category) :
+    IsLowerSet (↑(c.toFeatures F) : Set Feature) := by
+  revert F; cases c <;> decide +kernel
 
-/-- A set of categories has a person iff the categories share a bundle. -/
+/-- A set of categories has a person iff the categories share a bundle of [participant] and
+[speaker]. -/
 theorem sharedPerson_isSome_iff (s : Finset Category) :
-    (sharedPerson s).isSome ↔ s.Nonempty ∧ ∀ c ∈ s, ∀ d ∈ s, c.toFeatures = d.toFeatures := by
+    (sharedPerson s).isSome ↔ s.Nonempty ∧ ∀ c ∈ s, ∀ d ∈ s,
+      c.toFeatures {.participant, .speaker} = d.toFeatures {.participant, .speaker} := by
   revert s; decide +kernel
 
 end Category

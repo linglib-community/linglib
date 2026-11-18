@@ -34,8 +34,8 @@ no stronger one.
 ## Main results
 
 * `Person.mem_dom_feature_iff`: a person feature's domain is the pullback of `Person.Bears`.
-* `Person.dom_eq_preimage_extentClosure`: a person's domain holds the referents whose participants
-  bear every feature its participant sets share.
+* `Person.dom_eq_preimage_lowerPolar`: a person's domain holds the referents whose participants
+  bear every feature of its bundle.
 * `Person.participants_mem_participantSets_iff`: a referent is of a person of the standard
   tripartition exactly when the features defined of it are that person's.
 * `Gender.dom_neuter_subset_dom_feminine`: the neuter domain lies inside the feminine one.
@@ -81,10 +81,11 @@ namespace Person
 
 variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x : E)
 
-/-- At a context of utterance, [author] is defined of the referents including the agent and
-[participant] of those including the agent or the addressee. -/
+/-- At a context of utterance, [speaker] is defined of the referents including the agent,
+[addressee] of those including the addressee, and [participant] of those including either. -/
 def Feature.dom : Feature → Set E
-  | .author => Set.Ici c.agent
+  | .speaker => Set.Ici c.agent
+  | .addressee => Set.Ici c.addressee
   | .participant => Set.Ici c.agent ∪ Set.Ici c.addressee
 
 /-- At a context of utterance, the first person is defined of the referents including the agent,
@@ -93,7 +94,7 @@ the agent or the addressee; the third person and an absent value, the impersonal
 nothing. -/
 def dom : Option Person → Set E
   | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
-  | p => (p.map toFeatures).elim Set.univ (·.inf (Feature.dom c))
+  | p => (p.map (toFeatures {.participant, .speaker})).elim Set.univ (·.inf (Feature.dom c))
 
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
@@ -157,32 +158,48 @@ theorem preimage_participants_lowerPolar (F : Set Feature) :
     c.participants ⁻¹' lowerPolar Bears F = ⋂ f ∈ F, Feature.dom c f := by
   ext x; simp [mem_lowerPolar_iff, mem_dom_feature_iff]
 
-/-- The domain of a person holds the referents whose participants bear every feature its own
-participant sets share, the extent closure of those sets. The inclusive is not of this form, its
-features being the exclusive's. -/
-theorem dom_eq_preimage_extentClosure {p : Person} (hp : p ≠ .firstInclusive) :
+/-- The domain of a person holds the referents whose participants bear every feature of its
+bundle of [participant] and [speaker]. The inclusive is not of this form on those two features,
+on which its bundle is the exclusive's. -/
+theorem dom_eq_preimage_lowerPolar {p : Person} (hp : p ≠ .firstInclusive) :
     dom c (some p) =
-      c.participants ⁻¹' extentClosure Bears (p.participantSets : Set (Finset SpeechAct.Role)) := by
-  have h : dom c (some p) = p.toFeatures.inf (Feature.dom c) := by
+      c.participants ⁻¹' lowerPolar Bears ↑(p.toFeatures {.participant, .speaker}) := by
+  have h : dom c (some p) = (p.toFeatures {.participant, .speaker}).inf (Feature.dom c) := by
     cases p <;> first | rfl | exact absurd rfl hp
-  rw [h, show extentClosure Bears (p.participantSets : Set (Finset SpeechAct.Role)) =
-    lowerPolar Bears (upperPolar Bears (p.participantSets : Set (Finset SpeechAct.Role))) from rfl,
-    ← coe_toFeatures, preimage_participants_lowerPolar]
+  rw [h, preimage_participants_lowerPolar]
   ext x; simp [Finset.inf_set_eq_iInter]
 
-/-- A referent is of a person of the standard tripartition exactly when the features defined of
-it are that person's. -/
+/-- The domain of the inclusive holds the referents whose participants bear every feature of its
+bundle of all three features. -/
+theorem dom_firstInclusive_eq_preimage_lowerPolar :
+    dom c (some .firstInclusive) =
+      c.participants ⁻¹' lowerPolar Bears ↑(Person.firstInclusive.toFeatures Finset.univ) := by
+  rw [preimage_participants_lowerPolar,
+    show Person.firstInclusive.toFeatures Finset.univ = Finset.univ by decide]
+  ext x
+  simp only [mem_dom_firstInclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
+    Set.mem_iInter]
+  exact ⟨fun h f ↦ by cases f <;> simp [Feature.dom, h.1, h.2],
+    fun h ↦ ⟨h .speaker, h .addressee⟩⟩
+
+/-- A referent is of a person of the standard tripartition exactly when the features of
+[participant] and [speaker] defined of it are that person's. -/
 theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
-    c.participants x ∈ p.participantSets ↔ ∀ f, x ∈ Feature.dom c f ↔ f ∈ p.toFeatures := by
-  rw [mem_participantSets_iff hp]
-  simp [Finset.ext_iff, mem_dom_feature_iff]
+    c.participants x ∈ p.participantSets ↔ ∀ f ∈ ({.participant, .speaker} : Features),
+      (x ∈ Feature.dom c f ↔ f ∈ p.toFeatures {.participant, .speaker}) := by
+  rw [mem_participantSets_iff hp, Finset.ext_iff]
+  refine forall_congr' fun f ↦ ?_
+  simp only [mem_bundle, mem_dom_feature_iff]
+  by_cases hf : f ∈ ({.participant, .speaker} : Features)
+  · simp [hf, mem_toFeatures]
+  · simp [hf, mem_toFeatures]
 
 /-- The first person's participant sets are those of the referents including the agent. -/
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
   rw [participants_mem_participantSets_iff c x rfl]
-  refine ⟨fun h ↦ (h .author).2 (by simp), fun h f ↦ ?_⟩
-  cases f <;> simp [Feature.dom, h]
+  refine ⟨fun h ↦ (h .speaker (by simp)).2 (by simp), fun h f hf ↦ ?_⟩
+  cases f <;> simp [Feature.dom, h] at hf ⊢
 
 end Person
 
