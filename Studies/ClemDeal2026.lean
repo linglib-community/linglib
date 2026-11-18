@@ -37,6 +37,9 @@ forward hierarchy](##directionality).
   entails [PART], so `objectItems` gives it both. (36a) then outranks (36c) on a first person by
   size, and scansion reads the items by specificity, `objectItems_ranked`. The inclusive items,
   absent from (36), are not encoded.
+* A nominal has one of three persons. The first person of Shawi is the exclusive, the paper's
+  `1EXCL`, and since the inclusive is not encoded it is the first person here; the object
+  markers are those of the exclusive (`objectAgreement_eq_objectMarker`).
 * `objectAgreement` states v after Kinyalolo's Constraint (35) has removed the subject's features;
   the impoverishment itself is not encoded.
 * The rows of (42), (45), (46) and (49) are read with the object positions of Shawi, as note 38
@@ -422,14 +425,16 @@ theorem forms_of_licit (h : Licit strictlyDescending ⟨s.1, o.1⟩) :
 
 -- (12)
 example :
-    shawi.forms (.firstExclusive, .augmented) (.second, .augmented) .high .subject =
+    shawi.forms (.first, .augmented) (.second, .augmented) .high .subject =
       ["-ri", "-((n)ke)ma'"] := by
   decide +kernel
 
 -- (36) [clem-deal-2026]
 theorem objectAgreement_eq_objectMarker :
-    ∀ p ∈ [Person.firstExclusive, .second, .third], ∀ n ∈ [Number.minimal, .augmented],
-      objectAgreement (p, n) = (Kawapanan.Shawi.objectMarker p n).toList := by
+    ∀ p ∈ [Person.first, .second, .third], ∀ n ∈ [Number.minimal, .augmented],
+      objectAgreement (p, n) =
+        (Kawapanan.Shawi.objectMarker p (if p = .first then some .exclusive else none)
+          n).toList := by
   decide +kernel
 
 -- §2, fn. 7, §3.3
@@ -503,7 +508,7 @@ example :
 
 /-- The persons a row names. -/
 def personTable : List (String × Person) :=
-  [("1", .first), ("1excl", .firstExclusive), ("2", .second), ("3", .third)]
+  [("1", .first), ("1excl", .first), ("2", .second), ("3", .third)]
 
 /-- The numbers a row names, the Shawi glosses read as minimal and augmented by note 4. -/
 def numberTable : List (String × Number) :=
