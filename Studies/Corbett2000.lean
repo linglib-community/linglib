@@ -8,6 +8,7 @@ public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Number.Resolve
+public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement
 public import Linglib.Syntax.Agreement.HasPhi
 public import Linglib.Fragments.Bayso.Number
@@ -522,22 +523,69 @@ theorem teop_inverse :
 
 namespace Rembarrnga
 
-/-- The logical minimum of referents of a person, given as the participants it includes: two for
-the inclusive, the speaker with the addressee, and one otherwise. Beside the inclusive, the
-first person of Rembarrnga is the exclusive. -/
-def minimum (s : Finset SpeechAct.Role) : ℕ := max 1 s.card
+open Person (Configuration)
 
-/-- In the minimal-augmented analysis of Table 5.18, the form for at least the minimum of
-referents counts those beyond it. -/
-def relative (s : Finset SpeechAct.Role) (n : ℕ) : Number :=
-  match n - minimum s with
-  | 0 => .minimal
-  | 1 => .unitAugmented
-  | _ => .augmented
+/-- The traditional analysis of Table 5.17 counts the members of a referent. -/
+def traditional (x : Configuration) : Number :=
+  if x.card ≤ 1 then .singular else if x.card = 2 then .dual
+  else if x.card = 3 then .trial else .plural
 
+/-- The minimal-augmented analysis of Table 5.18 counts the others beyond the logical minimum
+of the referent's person, two members for the speaker with the addressee and one otherwise. -/
+def relative (x : Configuration) : Number :=
+  if x.others ≤ Configuration.minimum x.participants then .minimal
+  else if x.others = Configuration.minimum x.participants + 1 then .unitAugmented
+  else .augmented
+
+/-- The marker *-bbarrah* is for one more than the minimum: three with the speaker and the
+addressee and two with the speaker alone, a trial and a dual in the traditional analysis. -/
 theorem unitAugmented_one_more :
-    relative {.speaker, .addressee} 3 = relative {.speaker} 2 ∧
-      Number.fromCard? 3 ≠ Number.fromCard? 2 := by
+    relative ⟨{.speaker, .addressee}, 1⟩ = relative ⟨{.speaker}, 1⟩ ∧
+      traditional ⟨{.speaker, .addressee}, 1⟩ ≠ traditional ⟨{.speaker}, 1⟩ := by
+  decide
+
+/-- The minimal form is for the smallest referent of its person, `[+minimal]` of the person's
+region. -/
+theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
+    relative x = .minimal ↔ Mereology.atomize (Configuration.OfParticipants x.participants) x := by
+  have h := Configuration.ne_bot_iff_minimum_le.1 hx
+  rw [Configuration.atomize_ofParticipants_iff, Configuration.ext_iff]
+  simp only [relative, true_and]
+  split_ifs <;> simp <;> omega
+
+/-- The unit augmented form is for the smallest of the rest, `[+minimal]` of `[−minimal]`. -/
+theorem relative_eq_unitAugmented_iff {x : Configuration} (hx : x ≠ ⊥) :
+    relative x = .unitAugmented ↔
+      Mereology.atomize (Number.nonMinimalOf (Configuration.OfParticipants x.participants)) x := by
+  have h := Configuration.ne_bot_iff_minimum_le.1 hx
+  rw [Configuration.atomize_nonMinimalOf_ofParticipants_iff, Configuration.ext_iff]
+  simp only [relative, true_and]
+  split_ifs <;> simp <;> omega
+
+/-- Within a person the traditional values determine the minimal-augmented ones: the second
+analysis draws no distinction the first lacks. -/
+theorem relative_eq_of_traditional_eq {x y : Configuration} (hx : x ≠ ⊥) (hy : y ≠ ⊥)
+    (hp : x.participants = y.participants) (h : traditional x = traditional y) :
+    relative x = relative y := by
+  obtain ⟨s, n⟩ := x
+  obtain ⟨t, m⟩ := y
+  obtain rfl : s = t := hp
+  have hs : s.card ≤ 2 := s.card_le_univ
+  have hn := Configuration.ne_bot_iff_minimum_le.1 hx
+  have hm := Configuration.ne_bot_iff_minimum_le.1 hy
+  have hmin : (Configuration.minimum s = 1 ∧ s.card = 0) ∨
+      (Configuration.minimum s = 0 ∧ 1 ≤ s.card) := by
+    rcases s.eq_empty_or_nonempty with rfl | hne
+    · simp
+    · exact Or.inr ⟨Configuration.minimum_of_nonempty hne, Finset.card_pos.2 hne⟩
+  simp only [traditional, relative, Configuration.card] at h ⊢
+  split_ifs at h ⊢ <;> first | rfl | (exfalso; omega) | cases h
+
+/-- The traditional analysis draws a distinction the minimal-augmented one lacks, between a
+trial and a plural outside the inclusive, where Table 5.17 has one form for both. -/
+theorem traditional_ne_of_relative_eq :
+    relative ⟨{.speaker}, 2⟩ = relative ⟨{.speaker}, 3⟩ ∧
+      traditional ⟨{.speaker}, 2⟩ ≠ traditional ⟨{.speaker}, 3⟩ := by
   decide
 
 end Rembarrnga
@@ -561,6 +609,14 @@ theorem constructed :
     ¬ (sgDuPl.map pronounNumber).Nodup ∧ ¬ (sgDuPl.map verbNumber).Nodup ∧
       (sgDuPl.map fun n ↦ (pronounNumber n, verbNumber n)).Nodup := by
   decide
+
+/-- A referent the pronoun counts as more than one and the verb as at most two is one of two
+members, the `[−atomic, +minimal]` region of its person: the two markers construct the dual. -/
+theorem constructed_iff_dualOf {x : Person.Configuration} :
+    1 < x.card ∧ x.card ≤ 2 ↔
+      Number.dualOf (Person.Configuration.OfParticipants x.participants) x := by
+  rw [Person.Configuration.dualOf_ofParticipants_iff]
+  exact ⟨fun h ↦ ⟨rfl, by omega⟩, fun h ↦ by omega⟩
 
 end Hopi
 
