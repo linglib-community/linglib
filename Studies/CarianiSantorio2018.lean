@@ -51,7 +51,7 @@ of pairs of a world and a selection function.
 
 namespace CarianiSantorio2018
 
-open Conditional Modality HistoricalAlternatives MeasureTheory ModalLogic ProbabilityTheory
+open Conditional Modality MeasureTheory ModalLogic ProbabilityTheory
 
 section General
 

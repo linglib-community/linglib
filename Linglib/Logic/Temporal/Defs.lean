@@ -9,24 +9,23 @@ public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Tense.Defs
+public import Linglib.Semantics.Index.Rel
 
 /-!
 # T × W tense-modal logic: frames, language and satisfaction
 
-A T × W frame has worlds sharing one time order and, at each time, historical equivalence, an
-equivalence relation on worlds, agreement up to that time, that gets finer as time advances. Its
-object language has the linear tenses `G` and `H`, historical necessity `N` along historical
-equivalence and `box` over all worlds. Each of the four is necessity along a relation, so the
-logic is a multimodal Kripke logic by construction.
+A *T × W frame* is a family of equivalence relations on worlds indexed by times, *historical
+equivalence*, that is antitone in the time. This file defines frames (`TWFrame`), the formulas
+of T × W logic (`Formula`), with the tenses `G` and `H`, historical necessity `N` and necessity
+over all worlds `box`, and satisfaction at a world–time index (`TWFrame.sat`), where each
+operator is necessity along a relation between indices.
 
-## Main definitions
+## Implementation notes
 
-* `TWFrame`: a frame, with historical equivalence an antitone family of setoids.
-* `TWFrame.alt`: historical equivalence at a time as an accessibility relation.
-* `TWFrame.ofDatedFacts`: the frame of worlds agreeing on the facts dated by each time.
-* `Formula`, `TWFrame.sat`: the object language and satisfaction.
-* `Formula.M`, `Formula.Fut`, `Formula.Pst`, `Formula.dia`, `Formula.imp`, `Formula.or`: the derived
-  connectives.
+* [von-kutschera-1997] takes negation and material implication as the primitive connectives;
+  `Formula` takes negation and conjunction, with `Formula.imp` and `Formula.or` derived.
+* The sources order time linearly. A frame here is over any preorder, and the theorems that
+  need linearity assume it.
 
 ## References
 
@@ -38,8 +37,8 @@ logic is a multimodal Kripke logic by construction.
 
 namespace Temporal
 
-/-- A T × W frame ([thomason-1984], [von-kutschera-1997]) has, at each time, historical
-equivalence on worlds, which gets finer as time advances. -/
+/-- A *T × W frame* on worlds `World` and times `T` is an antitone family of equivalence relations
+on `World` indexed by `T` ([thomason-1984], [von-kutschera-1997]). -/
 structure TWFrame (World T : Type*) [Preorder T] where
   /-- Historical equivalence `∼ₜ`, relating worlds that share their history up to `t`. -/
   sim : T → Setoid World
@@ -50,11 +49,11 @@ namespace TWFrame
 
 variable {T World : Type*} [Preorder T]
 
-/-- Historical equivalence at `t` as an accessibility relation. -/
-def alt (F : TWFrame World T) (t : T) : SetRel World World := {p | F.sim t p.1 p.2}
+/-- `F.alt t` is historical equivalence at `t` as a relation between worlds. -/
+def alt (F : TWFrame World T) (t : T) : SetRel World World := {(w, v) | F.sim t w v}
 
-/-- Over a stock of dated facts, worlds are historically equivalent up to a time when they agree
-on every fact dated at or before it. -/
+/-- The frame in which two worlds are historically equivalent at `t` when they agree on every
+fact dated at or before `t`. -/
 def ofDatedFacts {Fact : Type*} (time : Fact → T) (holds : World → Fact → Prop) :
     TWFrame World T where
   sim t := ⟨fun w w' ↦ ∀ f, time f ≤ t → (holds w f ↔ holds w' f),
@@ -63,7 +62,7 @@ def ofDatedFacts {Fact : Type*} (time : Fact → T) (holds : World → Fact → 
 
 end TWFrame
 
-/-- The object language `L` of T × W logic ([von-kutschera-1997] §1). -/
+/-- The formulas of T × W logic ([von-kutschera-1997] §1). -/
 inductive Formula (Atom : Type*) where
   /-- A sentential constant. -/
   | atom : Atom → Formula Atom
@@ -85,20 +84,48 @@ namespace TWFrame
 
 variable {T World Atom : Type*} [Preorder T]
 
+/-- `F.historical` relates an index `⟨w, t⟩` to the indices `⟨v, t⟩` with `v` historically
+equivalent to `w` at `t`. -/
+abbrev historical (F : TWFrame World T) : SetRel (Index World T) (Index World T) :=
+  Index.modal F.alt
+
+end TWFrame
+
+open scoped Denotes in
+/-- `Index.future` relates an index `⟨w, t⟩` to the indices `⟨w, u⟩` with `t < u`. -/
+abbrev _root_.Index.future {World T : Type*} [LT T] : SetRel (Index World T) (Index World T) :=
+  Index.temporal (PointAlgebra.toSetRel ⟦Tense.future⟧)
+
+open scoped Denotes in
+/-- `Index.past` relates an index `⟨w, t⟩` to the indices `⟨w, u⟩` with `u < t`. -/
+abbrev _root_.Index.past {World T : Type*} [LT T] : SetRel (Index World T) (Index World T) :=
+  Index.temporal (PointAlgebra.toSetRel ⟦Tense.past⟧)
+
+@[simp] theorem _root_.Index.inv_past {World T : Type*} [LT T] :
+    (Index.past : SetRel (Index World T) (Index World T)).inv = Index.future := by
+  rw [Index.inv_temporal, Tense.inv_toSetRel_past]
+
+@[simp] theorem _root_.Index.inv_future {World T : Type*} [LT T] :
+    (Index.future : SetRel (Index World T) (Index World T)).inv = Index.past := by
+  rw [Index.inv_temporal, Tense.inv_toSetRel_future]
+
+namespace TWFrame
+
+variable {T World Atom : Type*} [Preorder T]
+
 open scoped ModalLogic Denotes in
-/-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
-    `G`/`H`/`N`/`box` are the Kripke boxes `□` along, respectively, the relations of the future
-    and past tense cells, historical equivalence `sim t`, and the universal relation — making the
-    object logic a multimodal Kripke logic by construction. -/
+/-- `F.sat V a i` is the truth of the formula `a` at the index `i` under the valuation `V`. The
+operators `G`, `H`, `N` and `box` are necessity along `Index.future`, `Index.past`,
+`F.historical` and the relation between all indices at one time. -/
 def sat (F : TWFrame World T) (V : Atom → T → World → Prop) :
-    Formula Atom → T → World → Prop
-  | .atom p,  t, w => V p t w
-  | .neg a,   t, w => ¬ F.sat V a t w
-  | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
-  | .G a,     t, w => □[PointAlgebra.toSetRel ⟦Tense.future⟧] (fun t' ↦ F.sat V a t' w) t
-  | .H a,     t, w => □[PointAlgebra.toSetRel ⟦Tense.past⟧] (fun t' ↦ F.sat V a t' w) t
-  | .N a,     t, w => □[F.alt t] (fun w' ↦ F.sat V a t w') w
-  | .box a,   t, w => □[.univ] (fun w' ↦ F.sat V a t w') w
+    Formula Atom → Index World T → Prop
+  | .atom p,  i => V p i.time i.world
+  | .neg a,   i => ¬ F.sat V a i
+  | .and a b, i => F.sat V a i ∧ F.sat V b i
+  | .G a,     i => □[Index.future] (F.sat V a) i
+  | .H a,     i => □[Index.past] (F.sat V a) i
+  | .N a,     i => □[F.historical] (F.sat V a) i
+  | .box a,   i => □[Index.modal fun _ ↦ .univ] (F.sat V a) i
 
 end TWFrame
 
@@ -106,22 +133,22 @@ end TWFrame
 
 variable {Atom : Type*}
 
-/-- Historical possibility `M = ¬N¬` (the Ockhamist `◇`). -/
+/-- Historical possibility, `¬N¬`. -/
 def Formula.M (a : Formula Atom) : Formula Atom := .neg (.N (.neg a))
 
-/-- Tense `F` — "it will at some point be that" (`¬G¬`). -/
+/-- The future tense `F`, `¬G¬`. -/
 def Formula.Fut (a : Formula Atom) : Formula Atom := .neg (.G (.neg a))
 
-/-- Tense `P` — "it was at some point that" (`¬H¬`). -/
+/-- The past tense `P`, `¬H¬`. -/
 def Formula.Pst (a : Formula Atom) : Formula Atom := .neg (.H (.neg a))
 
-/-- Possibility in all worlds `◇ = ¬□¬`. -/
+/-- Possibility over all worlds, `¬□¬`. -/
 def Formula.dia (a : Formula Atom) : Formula Atom := .neg (.box (.neg a))
 
-/-- Material implication `a ⊃ b := ¬(a ∧ ¬b)`. -/
+/-- Material implication, `¬(a ∧ ¬b)`. -/
 def Formula.imp (a b : Formula Atom) : Formula Atom := .neg (.and a (.neg b))
 
-/-- Disjunction `a ∨ b := ¬(¬a ∧ ¬b)`. -/
+/-- Disjunction, `¬(¬a ∧ ¬b)`. -/
 def Formula.or (a b : Formula Atom) : Formula Atom := .neg (.and (.neg a) (.neg b))
 
 end Temporal

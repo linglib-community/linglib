@@ -37,7 +37,7 @@ them.
 * Sentences are sets of intervals at each world, the interval properties the aspect operators of
   the event semantics produce. Time is a linear order; the scenarios use the natural numbers, where
   Dowty takes the reals.
-* *Exactly like up to a time* is `HistoricalAlternatives`. Inertia worlds are an arbitrary
+* *Exactly like up to a time* is `Temporal.TWFrame.alternatives`. Inertia worlds are an arbitrary
   function of a world and an interval; the theorems that need them to be historical alternatives
   take that as a hypothesis, together with the agreement of the sentence on intervals up to the
   time.
@@ -76,8 +76,8 @@ def bennettPartee (φ : Sentence W T) : Sentence W T :=
 
 /-- The progressive (24): the sentence is true at a longer interval of some world exactly like the
 actual one up to the interval. -/
-def possibleProg (history : HistoricalAlternatives W T) (φ : Sentence W T) : Sentence W T :=
-  fun w ↦ {I | ∃ I', I.NonfinalSubinterval I' ∧ ∃ w' ∈ history.metaphysicalBase w I.snd, I' ∈ φ w'}
+def possibleProg (F : Temporal.TWFrame W T) (φ : Sentence W T) : Sentence W T :=
+  fun w ↦ {I | ∃ I', I.NonfinalSubinterval I' ∧ ∃ w' ∈ F.alternatives ⟨w, I.snd⟩, I' ∈ φ w'}
 
 /-- The progressive (25): some longer interval is one of the sentence's truth in every inertia
 world for the world and the interval. -/
@@ -110,10 +110,10 @@ theorem prog_subset_branchingProg (inertia : W → NonemptyInterval T → Set W)
 (57), p. 166). When the inertia worlds are exactly like the actual one up to an interval larger
 than a moment, and the activity's truth at that interval is a fact of history, the progressive of
 the activity there entails the activity. -/
-theorem mem_of_mem_prog {history : HistoricalAlternatives W T}
+theorem mem_of_mem_prog {F : Temporal.TWFrame W T}
     {inertia : W → NonemptyInterval T → Set W}
-    (hInr : ∀ w I, inertia w I ⊆ history.metaphysicalBase w I.snd)
-    (hagree : ∀ v ∈ history.metaphysicalBase w I.snd, I ∈ φ v ↔ I ∈ φ w)
+    (hInr : ∀ w I, inertia w I ⊆ F.alternatives ⟨w, I.snd⟩)
+    (hagree : ∀ v ∈ F.alternatives ⟨w, I.snd⟩, I ∈ φ v ↔ I ∈ φ w)
     (hsub : ∀ v J J', J ≤ J' → ¬ J.IsPoint → J' ∈ φ v → J ∈ φ v)
     (hne : (inertia w I).Nonempty) (hI : ¬ I.IsPoint) (h : I ∈ prog inertia φ w) : I ∈ φ w :=
   let ⟨v, hv⟩ := hne
@@ -137,9 +137,19 @@ theorem nonfinalSubinterval_iv {a b c d : ℕ} (h₁ : a ≤ b) (h₂ : c ≤ d)
     (hbd : b < d) : (iv a b h₁).NonfinalSubinterval (iv c d h₂) :=
   ⟨hca, hbd⟩
 
-/-- Worlds alike up to time `0` and different afterwards. -/
-def splitAfterZero : HistoricalAlternatives Bool ℕ :=
-  fun i ↦ if i.2 = 0 then Set.univ else {i.1}
+/-- The frame whose worlds are alike up to time `n` and different afterwards. -/
+def splitAfter (n : ℕ) : Temporal.TWFrame Bool ℕ where
+  sim t := if t ≤ n then ⊤ else ⊥
+  antitone_sim s t hst := by
+    by_cases ht : t ≤ n
+    · simp [ht, hst.trans ht]
+    · simp [ht]
+
+theorem splitAfter_alternatives_of_le {n t : ℕ} (h : t ≤ n) (w : Bool) :
+    (splitAfter n).alternatives ⟨w, t⟩ = Set.univ :=
+  Set.eq_univ_of_forall fun v ↦ by
+    rw [Temporal.TWFrame.mem_alternatives, show (splitAfter n).sim t = ⊤ from ite_eq_left h]
+    trivial
 
 /-! #### A coin in the air (pp. 147–148)
 
@@ -152,9 +162,9 @@ def heads : Sentence Bool ℕ := fun w ↦ {I | w = true ∧ I = iv 0 1}
 /-- *The coin comes up tails* is true of `[0, 1]` in the tails world. -/
 def tails : Sentence Bool ℕ := fun w ↦ {I | w = false ∧ I = iv 0 1}
 
-theorem possibleProg_heads (w : Bool) : iv 0 0 ∈ possibleProg splitAfterZero heads w :=
+theorem possibleProg_heads (w : Bool) : iv 0 0 ∈ possibleProg (splitAfter 0) heads w :=
   ⟨iv 0 1, nonfinalSubinterval_iv _ _ le_rfl (by decide), true,
-    by simp [HistoricalAlternatives.metaphysicalBase, splitAfterZero], rfl, rfl⟩
+    by simp [splitAfter_alternatives_of_le], rfl, rfl⟩
 
 theorem not_prog_heads (w : Bool) : iv 0 0 ∉ prog (fun _ _ ↦ Set.univ) heads w :=
   fun ⟨_, _, h⟩ ↦ absurd (h false trivial).1 (by decide)
@@ -171,16 +181,12 @@ watching. -/
 /-- *John watches television* is true at the intervals within the watching. -/
 def watch : Sentence Bool ℕ := fun w ↦ {I | I.snd ≤ if w then 1 else 3}
 
-/-- Worlds alike up to time `1`. -/
-def splitAfterOne : HistoricalAlternatives Bool ℕ :=
-  fun i ↦ if i.2 ≤ 1 then Set.univ else {i.1}
-
 theorem not_bennettPartee_watch : iv 1 1 ∉ bennettPartee watch true :=
   fun ⟨_, hI', h⟩ ↦ absurd (hI'.2.trans_le h) (by simp)
 
-theorem possibleProg_watch : iv 1 1 ∈ possibleProg splitAfterOne watch true :=
+theorem possibleProg_watch : iv 1 1 ∈ possibleProg (splitAfter 1) watch true :=
   ⟨iv 0 3, nonfinalSubinterval_iv _ _ (by decide) (by decide), false, by
-    simp [HistoricalAlternatives.metaphysicalBase, splitAfterOne], by simp [watch]⟩
+    simp [splitAfter_alternatives_of_le], by simp [watch]⟩
 
 /-! #### A circle completed at different times
 
@@ -227,9 +233,9 @@ theorem truthValue_rows :
         Examples.coin_heads.verdict = some true) ∧
       (iv 0 0 ∈ prog (fun _ _ ↦ Set.univ) tails true ↔
         Examples.coin_tails.verdict = some true) ∧
-      (iv 1 1 ∈ possibleProg splitAfterOne watch true ↔
+      (iv 1 1 ∈ possibleProg (splitAfter 1) watch true ↔
         Examples.ex28.verdict = some true) ∧
-      ¬ (iv 0 0 ∈ possibleProg splitAfterZero heads true ↔
+      ¬ (iv 0 0 ∈ possibleProg (splitAfter 0) heads true ↔
         Examples.coin_heads.verdict = some true) ∧
       ¬ (iv 1 1 ∈ bennettPartee watch true ↔
         Examples.ex28.verdict = some true) :=

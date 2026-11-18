@@ -386,7 +386,7 @@ section Before
 variable {W : Type*} (leave arrive : T → Prop)
 
 -- (92) [beaver-condoravdi-2003]
-theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
+theorem before_iff_earliest (alt : Index W T → Set W) (w : W)
     (h : ∀ t, alt ⟨w, t⟩ = {w}) :
     BeaverCondoravdi2003.before {i : Index W T | i.time < s ∧ leave i.time}
         {i : Index W T | i.time < s ∧ arrive i.time} alt w ↔

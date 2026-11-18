@@ -56,7 +56,7 @@ A formula's truth at a point depends only on the valuation of the atoms it menti
 theorem sat_iff_of_agree {T World : Type*} [LinearOrder T] (F : TWFrame World T)
     (V₁ V₂ : Atom → T → World → Prop) :
     ∀ (a : Formula Atom), (∀ p, mentions a p → ∀ t w, V₁ p t w ↔ V₂ p t w) →
-      ∀ t w, (F.sat V₁ a t w ↔ F.sat V₂ a t w)
+      ∀ t w, (F.sat V₁ a ⟨w, t⟩ ↔ F.sat V₂ a ⟨w, t⟩)
   | .atom p,  h, t, w => h p rfl t w
   | .neg a,   h, t, w => by
       simp only [TWFrame.sat_neg]; rw [sat_iff_of_agree F V₁ V₂ a h t w]
@@ -81,7 +81,7 @@ theorem sat_iff_of_agree {T World : Type*} [LinearOrder T] (F : TWFrame World T)
 def Valid (a : Formula Atom) : Prop :=
   ∀ {T : Type u} {World : Type v} [LinearOrder T]
     (F : TWFrame World T) (V : Atom → T → World → Prop) (t : T) (w : World),
-    F.sat V a t w
+    F.sat V a ⟨w, t⟩
 
 open Formula in
 /-- The Hilbert calculus `TW` of [von-kutschera-1997] has propositional axioms, the tense axioms
@@ -185,7 +185,7 @@ theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
   | a4c _ =>
       simp only [sat_imp, sat_N, sat_M]
       rintro ⟨w₀, hw₀, ha⟩ w' hw'
-      exact ⟨w₀, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm hw') hw₀, ha⟩
+      exact ⟨w₀, (F.sim t).trans' ((F.sim t).symm' hw') hw₀, ha⟩
   | a5b _ => simp only [sat_imp, sat_box, sat_dia]; exact fun ⟨w₀, ha⟩ _ ↦ ⟨w₀, ha⟩
   | a7 _ => simp only [sat_imp, sat_box, sat_N]; exact fun h w' _ ↦ h w'
   | a6 _ =>
@@ -196,15 +196,15 @@ theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
       simp only [sat_imp, sat_box, sat_Pst, sat_Fut]
       rintro ⟨t', ht', hbox⟩ w'; exact ⟨t', ht', hbox w'⟩
   | mp _ _ ihab iha => exact (TWFrame.sat_imp F V _ _ t w).1 (ihab V t w) (iha V t w)
-  | necH _ ih => exact fun t' _ ↦ ih V t' w
-  | necN _ ih => exact fun w' _ ↦ ih V t w'
-  | necBox _ ih => exact fun w' _ ↦ ih V t w'
+  | necH _ ih => exact (sat_H F V _ t w).2 fun t' _ ↦ ih V t' w
+  | necN _ ih => exact (sat_N F V _ t w).2 fun w' _ ↦ ih V t w'
+  | necBox _ ih => exact (sat_box F V _ t w).2 fun w' ↦ ih V t w'
   | @ir a q _ hq ih =>
       classical
       let V' : Atom → T → World → Prop := fun p t'' w'' ↦ if p = q then t < t'' else V p t'' w''
-      have hbox : F.sat V' (Formula.and (.neg (.atom q)) (.G (.atom q))).box t w := by
-        intro w' _; refine ⟨?_, fun t' ht' ↦ ?_⟩ <;> simp only [sat_neg, sat_atom, V']
-        exacts [lt_irrefl t, Tense.mem_toSetRel_future.1 ht']
+      have hbox : F.sat V' (Formula.and (.neg (.atom q)) (.G (.atom q))).box ⟨w, t⟩ := by
+        simp only [sat_box, sat_and, sat_neg, sat_G, sat_atom, V', ite_true]
+        exact fun _ ↦ ⟨lt_irrefl t, fun _ ht' ↦ ht'⟩
       have hagree : ∀ p, mentions a p → ∀ tt ww, V p tt ww ↔ V' p tt ww := by
         intro p hp tt ww
         have hpq : p ≠ q := fun e ↦ hq (e ▸ hp)
@@ -224,13 +224,13 @@ theorem completeness [Countable Atom] [Infinite Atom] {a : Formula Atom} (h : Va
 theorem not_provable_imp_N (p : Atom) :
     (∀ {T World : Type} [LinearOrder T] (F : TWFrame World T) (V : Atom → T → World → Prop),
       Thomason1984.IsAssignment F V → ∀ t w,
-        F.sat V ((Formula.atom p).imp (Formula.atom p).N) t w) ∧
+        F.sat V ((Formula.atom p).imp (Formula.atom p).N) ⟨w, t⟩) ∧
     ¬ Provable ((Formula.atom p).imp (Formula.atom p).N) := by
   refine ⟨fun F V hV t w ↦ (sat_imp F V _ _ t w).2 fun h ↦
     (Thomason1984.sat_N_iff hV (a := .atom p) trivial).2 h, fun h ↦ ?_⟩
   have hv : Valid.{0, 0} ((Formula.atom p).imp (Formula.atom p).N) := soundness h
   have hs := hv (T := Unit) (World := Bool) ⟨fun _ ↦ ⊤, fun _ _ _ ↦ le_rfl⟩
     (fun _ _ w ↦ w = true) () true
-  exact Bool.false_ne_true ((sat_imp _ _ _ _ _ _).1 hs rfl false trivial)
+  exact Bool.false_ne_true ((sat_N _ _ _ _ _).1 ((sat_imp _ _ _ _ _ _).1 hs rfl) false trivial)
 
 end VonKutschera1997
