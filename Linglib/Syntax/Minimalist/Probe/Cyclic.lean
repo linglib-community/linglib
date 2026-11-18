@@ -170,6 +170,11 @@ def rank : ℕ := (P ∩ spec p).card
 
 variable {P s}
 
+/-- On the probe with [speaker] and what it depends on, a person's rank is its prominence, one
+higher for the root: the probe's hierarchy is the person hierarchy 1 > 2 > 3. -/
+theorem rank_Iic_speaker (p : Person) : rank (Finset.Iic .speaker) p = p.prominence + 1 := by
+  cases p <;> decide
+
 theorem isDirect_of_rank_lt (h : rank P s.low < rank P s.high) : IsDirect P s :=
   fun hi ↦ h.not_ge hi.card_le
 
