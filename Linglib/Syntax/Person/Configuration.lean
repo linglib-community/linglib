@@ -248,13 +248,6 @@ theorem ofPersonNumber_person (c : Category) :
   · exact ⟨.plural, by decide⟩
   · exact ⟨.plural, by decide⟩
 
-/-- A category without others has exactly its participants, so a number label of fixed
-cardinality covers it only at that cardinality. -/
-theorem exactCard_eq_card_of_mem_ofPersonNumber :
-    ∀ p cl n c, c ∈ ofPersonNumber p cl n → c.otherCount = 0 →
-      ∀ k ∈ n.exactCard, (k : ℕ) = c.card := by
-  decide
-
 /-- No category of a region is both minimal and augmented in it. -/
 theorem disjoint_ofNumber_minimal_augmented :
     ∀ S, Disjoint (ofNumber S .minimal) (ofNumber S .augmented) := by
