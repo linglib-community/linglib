@@ -28,7 +28,7 @@ the lines are in `Morphology/Morphotactics/Association.lean`.
   melodic element linked to it.
 * `AR.NoManyToOne`: no slot has two lines.
 * `AR.spellout`: the surface segments of a match.
-* `AR.unfilledCSlots`, `AR.linkCount`: the C-slots no line reaches, and
+* `AR.freeBearers`, `AR.linkCount`: the slots of a class that no line reaches, and
   the lines from one melody element.
 
 ## Main results
@@ -55,6 +55,13 @@ def template : Skeleton := (f.word none).map Sponsored.value
 
 @[simp] theorem template_mapMelody (φ : α → β) : (f.mapMelody φ).template = f.template := rfl
 
+/-- The slots of class `b`, which bear the melody of a tier that takes them ([mccarthy-1981],
+p. 383). -/
+def bearers (b : Slot) : List ℕ := f.template.idxsOf b
+
+@[simp] theorem bearers_mapMelody (φ : α → β) (b : Slot) :
+    (f.mapMelody φ).bearers b = f.bearers b := rfl
+
 /-- The number of lines from element `k` of plane `i`; a geminate is an element with two. -/
 def linkCount (i : ι) (k : ℕ) : ℕ := (((f.lines (some i) none)).filter (·.1 = k)).card
 
@@ -68,11 +75,12 @@ variable [Fintype ι]
 
 instance (s : ℕ) : Decidable (f.IsFilled s) := inferInstanceAs (Decidable (∃ _, _))
 
-/-- The C-slots that no line reaches. -/
-def unfilledCSlots : List ℕ := f.template.cSlots.filter (¬ f.IsFilled ·)
+/-- The free slots of class `b`, left to right. A slot with a line from any plane is
+unavailable. -/
+def freeBearers (b : Slot) : List ℕ := (f.bearers b).filter (¬ f.IsFilled ·)
 
-/-- `f.allCSlotsFilled` says that a line reaches every C-slot. -/
-abbrev allCSlotsFilled : Prop := f.unfilledCSlots = []
+@[simp] theorem freeBearers_mapMelody (φ : α → β) (b : Slot) :
+    (f.mapMelody φ).freeBearers b = f.freeBearers b := rfl
 
 /-- The lines that reach slot `s`, each as its plane and the position on that plane. -/
 def linesAt (s : ℕ) : Multiset (ι × ℕ) :=

@@ -315,7 +315,7 @@ def elideMatch (m : AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored 
 def vowelAssociation (mel : List Vowel) (m :
     AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme))) :
     AR (Multiplanar Morpheme (Sponsored α Morpheme) (Sponsored Slot Morpheme)) :=
-  match mel.getLast?, m.template.vSlots.getLast? with
+  match mel.getLast?, (m.bearers .V).getLast? with
   | some .i, some s => m.link .vocalism [(mel.length - 1, s)]
   | _, _ => m
 
@@ -389,7 +389,7 @@ theorem elideMatch_map : elideMatch (m.mapMelody f) = (elideMatch m).mapMelody f
 theorem vowelAssociation_map (mel : List Vowel) :
     vowelAssociation mel (m.mapMelody f) = (vowelAssociation mel m).mapMelody f := by
   unfold vowelAssociation
-  rw [template_mapMelody]
+  rw [bearers_mapMelody]
   split
   · exact link_mapMelody ..
   · rfl
