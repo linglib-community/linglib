@@ -537,15 +537,11 @@ def relative (x : Configuration) : Number :=
   else if x.others = Configuration.minimum x.participants + 1 then .unitAugmented
   else .augmented
 
-/-- The marker *-bbarrah* is for one more than the minimum: three with the speaker and the
-addressee and two with the speaker alone, a trial and a dual in the traditional analysis. -/
 theorem unitAugmented_one_more :
     relative ⟨{.speaker, .addressee}, 1⟩ = relative ⟨{.speaker}, 1⟩ ∧
       traditional ⟨{.speaker, .addressee}, 1⟩ ≠ traditional ⟨{.speaker}, 1⟩ := by
   decide
 
-/-- The minimal form is for the smallest referent of its person, `[+minimal]` of the person's
-region. -/
 theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
     relative x = .minimal ↔ Mereology.atomize (Configuration.OfParticipants x.participants) x := by
   have h := Configuration.ne_bot_iff_minimum_le.1 hx
@@ -553,7 +549,6 @@ theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
   simp only [relative, true_and]
   split_ifs <;> simp <;> omega
 
-/-- The unit augmented form is for the smallest of the rest, `[+minimal]` of `[−minimal]`. -/
 theorem relative_eq_unitAugmented_iff {x : Configuration} (hx : x ≠ ⊥) :
     relative x = .unitAugmented ↔
       Mereology.atomize (Number.nonMinimalOf (Configuration.OfParticipants x.participants)) x := by
@@ -581,8 +576,7 @@ theorem relative_eq_of_traditional_eq {x y : Configuration} (hx : x ≠ ⊥) (hy
   simp only [traditional, relative, Configuration.card] at h ⊢
   split_ifs at h ⊢ <;> first | rfl | (exfalso; omega) | cases h
 
-/-- The traditional analysis draws a distinction the minimal-augmented one lacks, between a
-trial and a plural outside the inclusive, where Table 5.17 has one form for both. -/
+-- Table 5.17
 theorem traditional_ne_of_relative_eq :
     relative ⟨{.speaker}, 2⟩ = relative ⟨{.speaker}, 3⟩ ∧
       traditional ⟨{.speaker}, 2⟩ ≠ traditional ⟨{.speaker}, 3⟩ := by
