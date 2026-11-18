@@ -118,7 +118,6 @@ import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
-import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Ortholattice

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Order.ForestOrder
 public import Linglib.Morphology.FeatureGeometry
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Order.Preorder.Chain
@@ -90,12 +91,12 @@ instance : LocallyFiniteOrderBot PersonSegment :=
   .ofIic' PersonSegment (fun a ↦ Finset.univ.filter (· ≤ a)) fun _ _ ↦ by simp
 
 /-- The geometry is a tree: the segments a segment depends on are comparable. -/
-theorem le_total_of_le {a b c : PersonSegment} : a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a := by
-  decide +revert
+instance : IsForestOrder PersonSegment := ⟨by decide⟩
 
 /-- A segment and the segments it depends on form a chain. -/
 theorem isChain_Iic (a : PersonSegment) : IsChain (· ≤ ·) (↑(Finset.Iic a) : Set PersonSegment) :=
-  fun _ hb _ hc _ ↦ le_total_of_le (Finset.mem_Iic.1 hb) (Finset.mem_Iic.1 hc)
+  fun _ hb _ hc _ ↦
+    IsForestOrder.le_total_of_le_of_le (Finset.mem_Iic.1 hb) (Finset.mem_Iic.1 hc)
 
 /-- The segments a person bears, the nodes of its geometry. -/
 def spec (p : Person) : Finset PersonSegment := Finset.univ.filter (·.toNode ∈ personFeatures p)

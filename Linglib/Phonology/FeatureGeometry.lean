@@ -23,7 +23,7 @@ every class that does not properly contain the one spread.
 ## Implementation notes
 
 The placement is `Option`-valued so that a geometry may leave features of the inventory
-unplaced. A tree is a left-linear order, which mathlib's rooted trees are. A set of features is
+unplaced. A tree is a forest order, which mathlib's rooted trees are. A set of features is
 exhaustively dominated by a node, in Halle, Vaux and Wolfe's sense, when it is the node's feature
 class; single-feature spreading is `Function.update`.
 
@@ -81,9 +81,9 @@ theorem antitone_featureClass : Antitone (featureClass node) := fun _ _ h ↦
 
 end Preorder
 
-section LeftLinear
+section ForestOrder
 
-variable [PartialOrder N] [IsLeftLinear N] [DecidableLE N] {node : F → Option N} {a b : N}
+variable [PartialOrder N] [IsForestOrder N] [DecidableLE N] {node : F → Option N} {a b : N}
 
 /-- Incomparable nodes of a tree have disjoint feature classes, since their subtrees are
 disjoint. -/
@@ -91,7 +91,7 @@ theorem disjoint_featureClass (h : IncompRel (· ≤ ·) a b) :
     Disjoint (featureClass node a) (featureClass node b) :=
   Finset.disjoint_coe.1 <| by
     simpa only [coe_featureClass] using ((Set.disjoint_image_iff (Option.some_injective N)).2
-      (IsLeftLinear.disjoint_Ici_iff.2 h)).preimage node
+      (IsForestOrder.disjoint_Ici_iff.2 h)).preimage node
 
 variable (node) in
 /-- The feature classes of a tree do not overlap: any two are nested or disjoint. -/
@@ -103,7 +103,7 @@ theorem isLaminar_range_featureClass : IsLaminar (Set.range (featureClass node))
   · exact .inl (antitone_featureClass hba)
   · exact .inr (.inr (disjoint_featureClass ⟨hab, hba⟩))
 
-end LeftLinear
+end ForestOrder
 
 end Phonology.FeatureGeometry
 

@@ -73,7 +73,7 @@ holds exactly when time branches neither way. -/
 theorem cmnmpnmp_iff :
     (∀ (p : T → Prop) (t : T),
       ◇[toSetRel ⊤] (fun u ↦ ¬ ◇[toSetRel ⊤] p u) t → ¬ ◇[toSetRel ⊤] p t) ↔
-        IsLeftLinear T ∧ IsLeftLinear Tᵒᵈ := by
+        IsForestOrder T ∧ IsForestOrder Tᵒᵈ := by
   rw [← isEuclidean_toSetRel_top_iff, ← box_five_iff]
   refine ⟨fun h p t hp ↦ ?_, fun h p t hn hp ↦ ?_⟩
   · by_contra hb
@@ -86,7 +86,7 @@ theorem cmnmpnmp_not_trichotomous :
     (∀ (p : ℕ ⊕ ℕ → Prop) (t : ℕ ⊕ ℕ),
       ◇[toSetRel ⊤] (fun u ↦ ¬ ◇[toSetRel ⊤] p u) t → ¬ ◇[toSetRel ⊤] p t) ∧
       ¬ ∀ a b : ℕ ⊕ ℕ, a < b ∨ a = b ∨ b < a := by
-  refine ⟨cmnmpnmp_iff.2 ⟨⟨?_⟩, isLeftLinear_orderDual_iff.2 ?_⟩, fun h ↦ ?_⟩
+  refine ⟨cmnmpnmp_iff.2 ⟨⟨?_⟩, isForestOrder_orderDual_iff.2 ?_⟩, fun h ↦ ?_⟩
   · rintro (a | a) (b | b) (c | c) ha hb <;> simp_all [le_total]
   · rintro (a | a) (b | b) (c | c) ha hb <;> simp_all [le_total]
   · simpa using h (.inl 0) (.inr 0)

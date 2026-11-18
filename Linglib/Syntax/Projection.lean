@@ -150,7 +150,7 @@ theorem IsProjectionOf.le {h p : α} (hp : IsProjectionOf H h p) : p ≤ h := by
   | refl => exact le_rfl
   | tail _ hbc ih => exact ih.trans (hH _ _ hbc).le
 
-theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjectionOf H h p)
+theorem IsProjectionOf.of_le_of_le [IsForestOrder α] {h p x : α} (hp : IsProjectionOf H h p)
     (hpx : p ≤ x) (hxh : x ≤ h) : IsProjectionOf H h x := by
   induction hp using Relation.ReflTransGen.head_induction_on with
   | refl => exact (le_antisymm hxh hpx) ▸ .refl _
@@ -158,13 +158,13 @@ theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjec
     rcases eq_or_lt_of_le hpx with rfl | hlt
     · exact .head hpd hdh
     · have hdx : d ≤ x := by
-        rcases IsLeftLinear.comparable_of_le_common (IsProjectionOf.le hH hdh) hxh with h | h
+        rcases IsForestOrder.le_total_of_le_of_le (IsProjectionOf.le hH hdh) hxh with h | h
         · exact h
         · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hxd ↦
             absurd hxd ((hH _ _ hpd).2 hlt)
       exact ih hdx
 
-theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
+theorem IsProjectionOf.reflTransGen_of_le [IsForestOrder α] {h p q : α}
     (hp : IsProjectionOf H h p) (hq : IsProjectionOf H h q) (hpq : p ≤ q) :
     Relation.ReflTransGen H p q := by
   induction hp using Relation.ReflTransGen.head_induction_on with
@@ -173,12 +173,12 @@ theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
     rcases eq_or_lt_of_le hpq with rfl | hlt
     · exact .refl
     · refine .head hpd (ih ?_)
-      rcases IsLeftLinear.comparable_of_le_common (IsProjectionOf.le hH hdh) (hq.le hH) with h | h
+      rcases IsForestOrder.le_total_of_le_of_le (IsProjectionOf.le hH hdh) (hq.le hH) with h | h
       · exact h
       · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hqd ↦
           absurd hqd ((hH _ _ hpd).2 hlt)
 
-theorem IsProjectionOf.exists_of_lt [IsLeftLinear α] {h p q : α} (hp : IsProjectionOf H h p)
+theorem IsProjectionOf.exists_of_lt [IsForestOrder α] {h p q : α} (hp : IsProjectionOf H h p)
     (hq : IsProjectionOf H h q) (hpq : p < q) : ∃ m, H m q := by
   rcases Relation.ReflTransGen.cases_tail (hp.reflTransGen_of_le hH hq hpq.le) with
     rfl | ⟨m, _, hm⟩
@@ -186,14 +186,14 @@ theorem IsProjectionOf.exists_of_lt [IsLeftLinear α] {h p q : α} (hp : IsProje
   · exact ⟨m, hm⟩
 
 /-- The maximal projection of `h` is the least of its projections. -/
-theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
+theorem isLeast_projections_iff [IsForestOrder α] {h m : α} :
     IsLeast {p | IsProjectionOf H h p} m ↔ IsProjectionOf H h m ∧ IsMaximalProjection H m := by
   constructor
   · rintro ⟨hm, hmin⟩
     exact ⟨hm, fun x hxm ↦ (hH _ _ hxm).lt.not_ge (hmin (hm.head hxm))⟩
   · rintro ⟨hm, hmax⟩
     refine ⟨hm, fun p hp ↦ ?_⟩
-    rcases IsLeftLinear.comparable_of_le_common (hp.le hH) (hm.le hH) with h | h
+    rcases IsForestOrder.le_total_of_le_of_le (hp.le hH) (hm.le hH) with h | h
     · rcases eq_or_lt_of_le h with rfl | hlt
       · exact le_rfl
       · obtain ⟨x, hx⟩ := hp.exists_of_lt hH hm hlt
@@ -201,12 +201,12 @@ theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
     · exact h
 
 /-- Every node has a maximal projection. -/
-theorem exists_isLeast_projections [IsLeftLinear α] [WellFoundedLT α] (h : α) :
+theorem exists_isLeast_projections [IsForestOrder α] [WellFoundedLT α] (h : α) :
     ∃ m, IsLeast {p | IsProjectionOf H h p} m := by
   obtain ⟨m, hm, hmin⟩ := WellFounded.has_min wellFounded_lt {p | IsProjectionOf H h p}
     ⟨h, .refl h⟩
   refine ⟨m, hm, fun p hp ↦ ?_⟩
-  rcases IsLeftLinear.comparable_of_le_common (hp.le hH) (hm.le hH) with h' | h'
+  rcases IsForestOrder.le_total_of_le_of_le (hp.le hH) (hm.le hH) with h' | h'
   · exact (eq_or_lt_of_le h').elim (fun e ↦ e.symm.le) fun hlt ↦ absurd hlt (hmin p hp)
   · exact h'
 
@@ -289,22 +289,13 @@ theorem excludes_congr {x x' y : α} (h : x' ∈ segments A x) :
 theorem contains_of_covBy {m a : α} (ha : m ⋖ a) : Contains A m a :=
   ⟨m, mem_segments_self m, ha.lt.le⟩
 
-theorem eq_of_covBy_covBy [IsLeftLinear α] {m m' d : α} (hm : m ⋖ d) (hm' : m' ⋖ d) :
-    m = m' := by
-  rcases IsLeftLinear.comparable_of_le_common hm.le hm'.le with h | h
-  · exact (eq_or_lt_of_le h).elim id fun hlt ↦ absurd hm'.lt (hm.2 hlt).elim
-  · exact ((eq_or_lt_of_le h).elim Eq.symm fun hlt ↦ absurd hm.lt (hm'.2 hlt).elim)
-
-theorem not_le_of_covBy {m a d : α} (ha : m ⋖ a) (hd : m ⋖ d) (had : a ≠ d) : ¬ a ≤ d :=
-  fun h ↦ had ((hd.eq_or_eq ha.lt.le h).resolve_left (ne_of_gt ha.lt))
-
 variable (hA : ∀ m d, A m d → m ⋖ d)
 include hA
 
-theorem leftUnique_of_covBy [IsLeftLinear α] : Relator.LeftUnique A :=
-  fun _ _ _ hm hm' ↦ eq_of_covBy_covBy (hA _ _ hm) (hA _ _ hm')
+theorem leftUnique_of_covBy [IsForestOrder α] : Relator.LeftUnique A :=
+  fun _ _ _ hm hm' ↦ IsForestOrder.covBy_unique_left (hA _ _ hm) (hA _ _ hm')
 
-theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem mem_segments_iff [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     y ∈ segments A x ↔ Relation.ReflTransGen A x y ∨ Relation.ReflTransGen A y x := by
   have hL : Relator.RightUnique (Function.swap A) := fun _ _ _ h h' ↦
     leftUnique_of_covBy hA h h'
@@ -328,7 +319,7 @@ theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : �
     · exact mem_segments_comm.1 (mem_segments_of_reflTransGen h)
 
 /-- The segments of a category form a chain. -/
-theorem isChain_segments [IsLeftLinear α] (hU : Relator.RightUnique A) (x : α) :
+theorem isChain_segments [IsForestOrder α] (hU : Relator.RightUnique A) (x : α) :
     IsChain (· ≤ ·) (segments A x) := by
   have hL : Relator.RightUnique (Function.swap A) := fun _ _ _ h h' ↦
     leftUnique_of_covBy hA h h'
@@ -346,7 +337,7 @@ theorem isChain_segments [IsLeftLinear α] (hU : Relator.RightUnique A) (x : α)
 
 /-- A category includes what the segments at or below `x` dominate, since those above dominate
 whatever `x` does. -/
-theorem includes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem includes_iff [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     Includes A x y ↔ ∀ s, Relation.ReflTransGen A x s → s ≤ y := by
   refine ⟨fun h s hs ↦ h s (mem_segments_of_reflTransGen hs), fun h s hs ↦ ?_⟩
   rcases (mem_segments_iff hA hU).1 hs with hs | hs
@@ -354,7 +345,7 @@ theorem includes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
   · exact (IsProjectionOf.le hA hs).trans (h x .refl)
 
 /-- A category excludes what no segment at or above `x` dominates. -/
-theorem excludes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem excludes_iff [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     Excludes A x y ↔ ∀ s, Relation.ReflTransGen A s x → ¬ s ≤ y := by
   refine ⟨fun h s hs ↦ h s (mem_segments_comm.1 (mem_segments_of_reflTransGen hs)),
     fun h s hs hsy ↦ ?_⟩
@@ -362,7 +353,7 @@ theorem excludes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
   · exact h x .refl ((IsProjectionOf.le hA hs).trans hsy)
   · exact h s hs hsy
 
-theorem includes_iff_forall_le [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
+theorem includes_iff_forall_le [IsForestOrder α] (hU : Relator.RightUnique A) {x y : α} :
     Includes A x y ↔ x ≤ y ∧ ∀ q, Relation.ReflTransGen A x q → q ≤ y → ∀ d, A q d → d ≤ y := by
   rw [includes_iff hA hU]
   refine ⟨fun h ↦ ⟨h x .refl, fun q hq _ d hqd ↦ h d (hq.tail hqd)⟩, fun ⟨hxy, h⟩ s hs ↦ ?_⟩
@@ -374,7 +365,7 @@ theorem includes_iff_forall_le [IsLeftLinear α] (hU : Relator.RightUnique A) {x
 dominate it. -/
 theorem not_includes_of_covBy {m d a : α} (hmd : A m d) (ha : m ⋖ a) (had : a ≠ d) :
     ¬ Includes A m a := fun h ↦
-  not_le_of_covBy (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
+  CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
 
 end Segments
 
@@ -435,13 +426,13 @@ include hA
 
 /-- An adjunct to a maximal category MAX-commands out of it, while what the category dominates
 does not MAX-command the adjunct. -/
-theorem maxCommand_adjunct [IsLeftLinear α] {m d a b : α} (hmd : A m d) (ha : m ⋖ a)
+theorem maxCommand_adjunct [IsForestOrder α] {m d a b : α} (hmd : A m d) (ha : m ⋖ a)
     (had : a ≠ d) (hd : d ∈ maximalProjections P A) (hdb : d < b) :
     (a, b) ∈ maxCommand P A ∧ (b, a) ∉ maxCommand P A :=
   ⟨mem_commandRelation_of_covBy ha ((hA _ _ hmd).lt.le.trans hdb.le), fun h ↦
-    not_le_of_covBy (hA _ _ hmd) ha had.symm (h hd hdb)⟩
+    CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h hd hdb)⟩
 
-theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d)
+theorem isMaximalCategory_iff_forall_above [IsForestOrder α] (hP : ∀ m d, P m d → m ⋖ d)
     (hU : Relator.RightUnique A) (hdisj : ∀ m d, A m d → ¬ P m d) {x : α} :
     IsMaximalCategory P A x ↔ ∀ s, Relation.ReflTransGen A s x → IsMaximalProjection P s := by
   refine ⟨fun h s hs ↦ h s (mem_segments_comm.1 (mem_segments_of_reflTransGen hs)),
@@ -449,17 +440,17 @@ theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m 
   rcases (mem_segments_iff hA hU).1 hs with hs | hs
   · rcases Relation.ReflTransGen.cases_tail hs with rfl | ⟨c, -, hcs⟩
     · exact h s .refl
-    · exact fun m hm ↦ hdisj c s hcs (eq_of_covBy_covBy (hP _ _ hm) (hA _ _ hcs) ▸ hm)
+    · exact fun m hm ↦ hdisj c s hcs (IsForestOrder.covBy_unique_left (hP _ _ hm) (hA _ _ hcs) ▸ hm)
   · exact h s hs
 
 /-- A node that projects to the lowest segment `b` of a maximal category MAX-commands exactly what
 `b` dominates. -/
-theorem mem_maxCommand_iff_le [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d) {h b x : α}
+theorem mem_maxCommand_iff_le [IsForestOrder α] (hP : ∀ m d, P m d → m ⋖ d) {h b x : α}
     (hb : IsProjectionOf (P ⊔ A) h b) (hmax : b ∈ maximalProjections P A) (hne : b ≠ h) :
     (h, x) ∈ maxCommand P A ↔ b ≤ x := by
   have hH : ∀ m d, (P ⊔ A) m d → m ⋖ d := fun m d hmd ↦ hmd.elim (hP m d) (hA m d)
   refine mem_commandRelation_iff_le ⟨⟨hmax, lt_of_le_of_ne (hb.le hH) hne⟩, fun x ⟨hx, hxh⟩ ↦ ?_⟩
-  rcases IsLeftLinear.comparable_of_le_common hxh.le (hb.le hH) with h' | h'
+  rcases IsForestOrder.le_total_of_le_of_le hxh.le (hb.le hH) with h' | h'
   · exact h'
   · rcases eq_or_lt_of_le h' with rfl | hlt
     · exact le_rfl

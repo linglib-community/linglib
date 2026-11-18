@@ -77,7 +77,7 @@ instance : PartialOrder Node where
 instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
 
 /-- Each node of (3) has a single mother. -/
-instance : IsLeftLinear Node := ⟨by decide⟩
+instance : IsForestOrder Node := ⟨by decide⟩
 
 end Node
 

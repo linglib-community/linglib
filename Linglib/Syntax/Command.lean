@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Cover
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
@@ -135,29 +136,29 @@ end Preorder
 On an order whose ancestors are linearly ordered a node's command domain is fixed by its mother,
 the node it covers. -/
 
-section LeftLinear
+section ForestOrder
 
-variable [PartialOrder α] [IsLeftLinear α] {P : Set α} {a b c m : α}
+variable [PartialOrder α] [IsForestOrder α] {P : Set α} {a b c m : α}
 
 theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
     a ~[commandRelation P] b ↔ a ~[commandRelation P] c :=
-  ⟨fun h _ hx hxa ↦ (IsLeftLinear.comparable_of_le_common (h hx hxa) hcb).resolve_right
+  ⟨fun h _ hx hxa ↦ (IsForestOrder.le_total_of_le_of_le (h hx hxa) hcb).resolve_right
       fun hcx ↦ hca (hcx.trans_lt hxa),
     fun h ↦ mem_commandRelation_of_le h hcb⟩
 
 theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[commandRelation P] b :=
-  fun _ _ hxa ↦ (IsLeftLinear.le_of_lt_of_covBy ha hxa).trans hb
+  fun _ _ hxa ↦ (IsForestOrder.le_of_lt_of_covBy ha hxa).trans hb
 
 /-- A node whose mother is a generator commands exactly what its mother dominates. -/
 theorem mem_commandRelation_iff_le_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
     a ~[commandRelation P] b ↔ m ≤ b :=
-  mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsLeftLinear.le_of_lt_of_covBy ha hx.2⟩
+  mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsForestOrder.le_of_lt_of_covBy ha hx.2⟩
 
 /-- A node whose mother is not a generator commands exactly what its mother commands. -/
 theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
     a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
   ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
-    h hx ((IsLeftLinear.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
+    h hx ((IsForestOrder.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
 
 /-- The command relation of `P` is the only relation in which the root commands every node and a
 node commands what its mother dominates or what its mother commands, according as the mother is
@@ -176,7 +177,7 @@ theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsS
     · exact (hnot hm hP b).trans <|
         (ih m hm.lt b).trans (mem_commandRelation_iff_of_covBy hm hP).symm
 
-end LeftLinear
+end ForestOrder
 
 /-! ### Mates -/
 
@@ -291,7 +292,7 @@ end DominanceImage
 
 section DominanceImageTree
 
-variable [PartialOrder α] [IsLeftLinear α] {R : SetRel α α} {a b m : α}
+variable [PartialOrder α] [IsForestOrder α] {R : SetRel α α} {a b m : α}
 
 /-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
 relation between disconnected nodes that relates them both ways. -/
@@ -303,10 +304,10 @@ theorem not_mem_dominanceImage_asymmetrize_of_covBy
   obtain ⟨hn₁, hn₂⟩ := hR hxy
   rcases hxa.eq_or_lt with rfl | hx <;> rcases hyb.eq_or_lt with rfl | hy
   · exact hyx (hab hxy)
-  · exact hn₂ ((IsLeftLinear.le_of_lt_of_covBy hb hy).trans ha.le)
-  · exact hn₁ ((IsLeftLinear.le_of_lt_of_covBy ha hx).trans hb.le)
-  · exact (IsLeftLinear.comparable_of_le_common (IsLeftLinear.le_of_lt_of_covBy ha hx)
-      (IsLeftLinear.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
+  · exact hn₂ ((IsForestOrder.le_of_lt_of_covBy hb hy).trans ha.le)
+  · exact hn₁ ((IsForestOrder.le_of_lt_of_covBy ha hx).trans hb.le)
+  · exact (IsForestOrder.le_total_of_le_of_le (IsForestOrder.le_of_lt_of_covBy ha hx)
+      (IsForestOrder.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
 
 end DominanceImageTree
 
@@ -477,7 +478,7 @@ theorem mem_cCommand_replaceAt (h : ¬ c < a) :
 theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a ≤ c) :
     CCommands (t.replaceAt c new) a b ↔ CCommands t a c := by
   have hlt : ¬ c < a := fun h ↦ hca h.le
-  have hab : ¬ a ≤ b := fun h ↦ (IsLeftLinear.comparable_of_le_common h hcb).elim hac hca
+  have hab : ¬ a ≤ b := fun h ↦ (IsForestOrder.le_total_of_le_of_le h hcb).elim hac hca
   have hba : ¬ b ≤ a := fun h ↦ hca (hcb.trans h)
   simp only [CCommands, mem_commandRelation_iff_of_le hcb hlt, mem_cCommand_replaceAt hlt, hab,
     hba, hac, hca, not_false_eq_true, and_true]

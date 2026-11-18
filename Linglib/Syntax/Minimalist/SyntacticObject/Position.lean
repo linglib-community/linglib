@@ -187,7 +187,7 @@ theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands 
   have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
   refine ⟨c, q, (cCommands_iff_parent_lt (fun h ↦ hc (Subtype.ext h)) (isBranchingAt_parent hc)).2
     ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl, rfl⟩
-  rw [Subtype.ext (IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hmc)
+  rw [Subtype.ext (IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hmc)
     (Positions.covBy_iff.1 hmd) hcq (Subtype.coe_le_coe.2 hdq))]
 
 /-- C-command between occurrences is c-command between their terms when the commander's term differs
@@ -266,7 +266,7 @@ theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hc
   rw [cCommands_iff_parent_lt (fun h0 ↦ hq0 (Subtype.ext h0)) (isBranchingAt_parent hq0)] at h
   have hcq' : c.val ≤ q'.val := (Subtype.coe_le_coe.2 (Order.le_pred_of_lt hcq)).trans
     ((Positions.pred_val q).symm ▸ h.1.le)
-  exact hcd (Subtype.ext (IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hc)
+  exact hcd (Subtype.ext (IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hc)
     (Positions.covBy_iff.1 hd) hcq' (Subtype.coe_le_coe.2 hdq')))
 
 theorem termAt_eq_or_eq_of_covBy {y : SyntacticObject L ι}
@@ -422,7 +422,7 @@ theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.t
     · exact heq
   · intro hcq
     refine ⟨(parent_covBy_complement h).lt.trans_le hcq, fun hhq ↦ hhc (Subtype.ext ?_)⟩
-    exact IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hm) (Positions.covBy_iff.1 hmc)
+    exact IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hm) (Positions.covBy_iff.1 hmc)
       hhq hcq
 
 end Complement
