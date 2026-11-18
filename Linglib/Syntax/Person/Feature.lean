@@ -14,23 +14,25 @@ public import Mathlib.Order.Concept
 /-!
 # Person features
 
-A person feature is a nonempty set of roles, [those it is about](##Person.Feature.roles), and a
-participant set bears it when it includes one of them, a property preserved by union:
-[participant] holds of the nonempty sets, [speaker] of those containing the speaker and
-[addressee] of those containing the addressee. A theory of person selects an inventory of them, and
-[the features of an inventory that a participant set bears](##Person.bundle) are its bundle there;
-the two features Béjar and Rezac cite from Halle, [participant] and [author], are the inventory
-of [participant] and [speaker], and Harley and Ritter's geometry adds [addressee]. The three
-features tell [every participant set from every other](##Person.bundle_univ_injective).
+Grammatical person classifies a referent by the speech-act roles it includes, the speaker, the
+addressee, both or neither: its participant set. A person feature is about one or both of the
+roles, [the roles of the feature](##Person.Feature.roles), and a participant set bears it when it
+includes one of them. There are three: [participant] is about both roles, [speaker] about the
+speaker and [addressee] about the addressee. A group includes a role as soon as one of its members
+does, so [a union bears a feature exactly when one of its parts does](##Person.bears_union).
 
-[speaker] and [addressee] depend on [participant], being about fewer roles, and
-[the bundles closed under that dependency are exactly the closed sets of the
-context](##Person.wellFormed_iff_isIntent) of participant sets and features,
-[five in all](##Person.card_wellFormed): the empty bundle and Harley and Ritter's four
-possibilities under Participant. In a feature geometry dependence generally captures logical
-implication, though, as they note of the inclusive and the plural, not every implication is a
-dependence; among the person features [the two
-coincide](##Person.Feature.le_iff_forall_bears).
+Theories of person differ in the features they use. Béjar and Rezac, citing Halle, use
+[participant] and [author], here [speaker]; Harley and Ritter add [addressee].
+[The features of an inventory that a participant set bears](##Person.bundle) are its bundle, and
+with all three features [no two participant sets share a bundle](##Person.bundle_univ_injective).
+
+[speaker] and [addressee] each entail [participant], which a feature geometry records as
+dependence: a bundle is well formed when it contains [participant] whenever it contains either of
+the others. [The well-formed bundles are exactly those that some family of participant sets has
+in common](##Person.wellFormed_iff_isIntent), and [there are five](##Person.card_wellFormed), the
+empty bundle and Harley and Ritter's four possibilities under Participant. They note that in a
+geometry not every entailment is a dependence; among the person features
+[the two coincide](##Person.Feature.le_iff_forall_bears).
 
 ## References
 
