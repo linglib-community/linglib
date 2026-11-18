@@ -149,7 +149,7 @@ theorem linearizes_bareCCommand_image_iff {β : Type*} [PartialOrder β] {H' : �
 theorem isVisible_of_isMax (hH : ∀ m d, H m d → m ⋖ d) (hx : IsMax x) : IsVisible H x :=
   .inl fun d hd ↦ (hH x d hd).lt.not_ge (hx (hH x d hd).le)
 
-variable [IsLeftLinear α]
+variable [IsForestOrder α]
 
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
@@ -195,8 +195,8 @@ theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d
 theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvJ : IsVisible H J) (hj : J ≤ j) : Precedes (bareCCommand H) j h := by
   refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, fun hJh ↦ ?_, fun hhJ ↦ ?_,
-    fun x hx ↦ (IsLeftLinear.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
-  · exact (IsLeftLinear.le_total_of_le_of_le hJh hh.le).elim (not_le_of_covBy hJ hL hJL)
+    fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
+  · exact (IsForestOrder.le_total_of_le_of_le hJh hh.le).elim (not_le_of_covBy hJ hL hJL)
       (not_le_of_covBy hL hJ hJL.symm)
   · exact not_le_of_covBy hL hJ hJL.symm (hh.le.trans hhJ)
   · exact not_le_of_covBy hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
@@ -206,8 +206,8 @@ itself, so the order specifier-head-complement needs a branching complement. -/
 theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hvh : IsVisible H h)
     (hp : P < p) : Precedes (bareCCommand H) h p := by
   refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2 ⟨hvh, fun hhp ↦ ?_, fun hph ↦ ?_,
-    fun x hx ↦ (IsLeftLinear.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
-  · exact (IsLeftLinear.le_total_of_le_of_le hhp hp.le).elim (not_le_of_covBy hh hP hhP)
+    fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
+  · exact (IsForestOrder.le_total_of_le_of_le hhp hp.le).elim (not_le_of_covBy hh hP hhP)
       (not_le_of_covBy hP hh hhP.symm)
   · exact not_le_of_covBy hP hh hhP.symm (hp.le.trans hph)
   · exact not_le_of_covBy hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
@@ -218,12 +218,12 @@ theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh :
   rintro ⟨⟨x, y⟩, ⟨hxy, -⟩, hxh, hyj⟩
   obtain ⟨hvx, hn₁, hn₂, hc⟩ := mem_bareCCommand.1 hxy
   rcases hxh.eq_or_lt with rfl | hxh
-  · exact (IsLeftLinear.le_total_of_le_of_le (hc L hh.lt |>.trans hyj) hj).elim
+  · exact (IsForestOrder.le_total_of_le_of_le (hc L hh.lt |>.trans hyj) hj).elim
       (not_le_of_covBy hL hJ hJL.symm) (not_le_of_covBy hJ hL hJL)
-  · rcases (IsLeftLinear.le_of_lt_of_covBy hh hxh).eq_or_lt with rfl | hxL
+  · rcases (IsForestOrder.le_of_lt_of_covBy hh hxh).eq_or_lt with rfl | hxL
     · exact hvL hvx
-    · exact (IsLeftLinear.le_total_of_le_of_le
-        ((IsLeftLinear.le_of_lt_of_covBy hL hxL).trans (hJ.le.trans hj)) hyj).elim hn₁ hn₂
+    · exact (IsForestOrder.le_total_of_le_of_le
+        ((IsForestOrder.le_of_lt_of_covBy hL hxL).trans (hJ.le.trans hj)) hyj).elim hn₁ hn₂
 
 /-- Under the LCA a specifier with a terminal properly inside it forces the X′ to be invisible,
 since a visible X′ would put the head before that terminal as well as after it. -/
@@ -233,9 +233,9 @@ theorem Linearizes.not_isVisible (hl : Linearizes (bareCCommand H) T) (hJ : K �
   have hah : Precedes (bareCCommand H) a h := precedes_of_spec hJ hL hJL hh hvJ hα.le
   have hha : Precedes (bareCCommand H) h a := precedes_iff.2 ⟨L, hh.le, a, le_rfl,
     mem_bareCCommand.2 ⟨hvL, fun hLa ↦ ?_, fun haL ↦ ?_,
-      fun x hx ↦ (IsLeftLinear.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
+      fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
   · exact (linearizes_iff.1 hl).2.1 a haT ((linearizes_iff.1 hl).2.2 a haT h hhT a haT hah hha)
-  · exact (IsLeftLinear.le_total_of_le_of_le hLa hα.le).elim (not_le_of_covBy hL hJ hJL.symm)
+  · exact (IsForestOrder.le_total_of_le_of_le hLa hα.le).elim (not_le_of_covBy hL hJ hJL.symm)
       (not_le_of_covBy hJ hL hJL)
   · exact not_le_of_covBy hJ hL hJL (hα.le.trans haL)
   · exact not_le_of_covBy hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)

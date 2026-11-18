@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.LeftLinear
+public import Linglib.Core.Order.ForestOrder
 public import Linglib.Logic.Temporal.IntervalAlgebra
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Modal.Defs
@@ -118,7 +118,7 @@ variable [PartialOrder T] {p r : T}
 the *trees* of [burgess-1984], with no branching to the left. -/
 theorem diamond_future_diamond_past_le_iff :
     (◇[toSetRel ⟦future⟧] ∘ ◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⊤] ↔
-      IsLeftLinear T := by
+      IsForestOrder T := by
   rw [show (◇[toSetRel ⟦future⟧] ∘ ◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) = _ from
     (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff]
   refine ⟨fun h ↦ ⟨fun a b c ha hb ↦ ?_⟩, fun h ⟨a, b⟩ ⟨c, h₁, h₂⟩ ↦ ?_⟩
@@ -135,9 +135,9 @@ theorem diamond_future_diamond_past_le_iff :
 with no branching to the right. -/
 theorem diamond_past_diamond_future_le_iff :
     (◇[toSetRel ⟦past⟧] ∘ ◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) ≤ ◇[toSetRel ⊤] ↔
-      IsLeftLinear Tᵒᵈ := by
+      IsForestOrder Tᵒᵈ := by
   rw [show (◇[toSetRel ⟦past⟧] ∘ ◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) = _ from
-    (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff, isLeftLinear_orderDual_iff]
+    (funext (diamond_comp _ _)).symm, diamond_le_diamond_iff, isForestOrder_orderDual_iff]
   refine ⟨fun h a b c ha hb ↦ ?_, fun h ⟨a, b⟩ ⟨c, h₁, h₂⟩ ↦ ?_⟩
   · obtain rfl | hac := ha.eq_or_lt
     · exact .inl hb
@@ -149,8 +149,8 @@ theorem diamond_past_diamond_future_le_iff :
 /-- Axiom 5 along the top element, the law `CMNMpNMp` of [prior-1967] read through
 `ModalLogic.box_five_iff`, holds exactly when time branches neither way. -/
 theorem isEuclidean_toSetRel_top_iff :
-    IsEuclidean (toSetRel ⊤ : SetRel T T) ↔ IsLeftLinear T ∧ IsLeftLinear Tᵒᵈ := by
-  rw [isLeftLinear_orderDual_iff]
+    IsEuclidean (toSetRel ⊤ : SetRel T T) ↔ IsForestOrder T ∧ IsForestOrder Tᵒᵈ := by
+  rw [isForestOrder_orderDual_iff]
   refine ⟨fun h ↦ ⟨⟨fun a b c ha hb ↦ ?_⟩, fun a b c ha hb ↦ ?_⟩,
     fun ⟨hl, hr⟩ ↦ ⟨fun w v u hv hu ↦ ?_⟩⟩
   · exact mem_toSetRel_top_iff_le.1 (h.eucl c a b (mem_toSetRel_top_iff_le.2 (.inr ha))

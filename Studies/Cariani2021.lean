@@ -531,7 +531,7 @@ theorem indeterminate_sat (cloud : Set C) {cu : C} {holds asserts sat : C → Pr
 
 /-- A thin red line assigning each moment a history cannot be both convergent and centered once
 two incomparable moments follow a common one (Figure 11.4). -/
-theorem not_exists_convergent_centered_trl {M : Type*} [PartialOrder M] [IsLeftLinear M]
+theorem not_exists_convergent_centered_trl {M : Type*} [PartialOrder M] [IsForestOrder M]
     {m₁ m₂ m₃ : M} (h₂ : m₁ ≤ m₂) (h₃ : m₁ ≤ m₃) (h₂₃ : ¬ (m₂ ≤ m₃ ∨ m₃ ≤ m₂)) :
     ¬ ∃ trl : M → Flag M, (∀ m, m ∈ trl m) ∧
       ∀ m m' (h : Flag M), m ∈ h → m' ∈ h → trl m = trl m' := by

@@ -157,8 +157,8 @@ theorem not_le ⦃a b : X.Node⦄ (hab : X.Precedes a b) : ¬a ≤ b := fun hle 
 theorem not_ge ⦃a b : X.Node⦄ (hab : X.Precedes a b) : ¬b ≤ a := fun hle ↦
   h.irrefl a (h.mono hab le_rfl hle)
 
-/-- A tree-shaped structure is left-linear: a node has at most one mother. -/
-theorem isLeftLinear : IsLeftLinear X.Node := ⟨fun b c a hb hc ↦ by
+/-- A tree-shaped structure is a forest order: a node has at most one mother. -/
+theorem isForestOrder : IsForestOrder X.Node := ⟨fun b c a hb hc ↦ by
   rcases h.le_or_precedes b c with hbc | hcb | hp | hp
   · exact .inl hbc
   · exact .inr hcb

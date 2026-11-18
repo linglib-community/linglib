@@ -12,7 +12,7 @@ public import Mathlib.Logic.Function.Basic
 This file defines a *possibility*, a world paired with an assignment of discourse referents, and
 the structure of its partial points, whose assignments are families of partial values
 `V → Part M`: the descent order, compatibility and joins, restriction, and the classification of
-each stratum as world–assignment pairs. Partial values are left-linear, so two compatible points
+each stratum as world–assignment pairs. Partial values form a forest, so two compatible points
 have a join, the point that extends both and is defined only where one of them is
 ([the join](##DynamicSemantics.Possibility.isLUB_pair_iff)).
 
@@ -226,7 +226,7 @@ theorem isLUB_pair_iff : IsLUB {p, q} u ↔ p ≤ u ∧ q ≤ u ∧ u.domain ⊆
     · exact hq'.2 v e ((Part.eq_of_le (hq.2 v) fun _ ↦ hv).symm ▸ he)
 
 /-- Compatible points have a join: at each referent their values are comparable, since partial
-values are left-linear, and the join takes the larger. -/
+values form a forest, and the join takes the larger. -/
 theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
   classical
   obtain ⟨hw, hc⟩ := compat_iff_forall.mp h
@@ -239,7 +239,7 @@ theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
     split_ifs with hv
     · obtain ⟨b, hb⟩ := hc v
       obtain ⟨hpb, hqb⟩ := mem_upperBounds_pair.mp hb
-      exact (IsLeftLinear.le_total_of_le_of_le hpb hqb).elim
+      exact (IsForestOrder.le_total_of_le_of_le hpb hqb).elim
         (fun hle ↦ (Part.eq_of_le hle fun _ ↦ hv).ge) id
     · exact le_rfl
   · simp only [mem_domain] at hv

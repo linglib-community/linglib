@@ -6,14 +6,14 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.PFun
-public import Linglib.Core.Order.LeftLinear
+public import Linglib.Core.Order.ForestOrder
 
 /-!
 # Partial values
 
 Supplements to `Mathlib/Data/Part.lean`. The domain and value of `Part.restrict` and `Part.bind`
-are `simp` lemmas, so `simp` rewrites under a restriction. Partial values are left-linear
-(`Part.isLeftLinear`): below a defined value lie only itself and `⊥`, so compatible values are
+are `simp` lemmas, so `simp` rewrites under a restriction. Partial values form a forest
+(`Part.isForestOrder`): below a defined value lie only itself and `⊥`, so compatible values are
 comparable; a partial function `α → Part β` extends another iff the two agree on its domain
 (`PFun.le_iff_eqOn_dom`). Equality and order are decidable where domains are
 (`Part.decidableEqOfDom`, `Part.decidableLEOfDom`); a type-level `DecidableEq (Part α)` cannot be
@@ -86,8 +86,8 @@ theorem bddAbove_pair_iff : BddAbove ({o, o'} : Set (Part α)) ↔ ∀ a ∈ o, 
     rintro _ (rfl | rfl)
     exacts [fun a ha ↦ absurd ha.fst ho, le_rfl]
 
-/-- Partial values are left-linear: below a defined value lie only itself and `⊥`. -/
-instance isLeftLinear : IsLeftLinear (Part α) :=
+/-- Partial values form a forest: below a defined value lie only itself and `⊥`. -/
+instance isForestOrder : IsForestOrder (Part α) :=
   ⟨fun _ _ c ↦ le_total_of_le_of_le c⟩
 
 end Order

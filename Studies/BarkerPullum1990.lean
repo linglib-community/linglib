@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Syntax.Tree.Command
 public import Linglib.Syntax.Tree.Projection
 public import Mathlib.Order.Atoms
@@ -20,7 +21,7 @@ instead, they are [closed under union](##intent_inf_admitsAt) on a tree, a distr
 
 ## Implementation notes
 
-* A tree is a left-linear order with a least element that is well founded and in which every node
+* A tree is a forest order with a least element that is well founded and in which every node
   but the root covers a mother; finite trees and the positions `GornAddress` are instances.
 * A relation is one that some property generates exactly when it is an intent of `Admits`,
   mathlib's `Order.IsIntent`; the upper bounds of a node are the substrate's `ancestors`.
@@ -85,7 +86,7 @@ theorem treePath_isTree :
 
 -- The ancestors of a position are linearly ordered: the Connected Ancestor Condition of
 -- Definition 15, under which command relations obey Constituency.
-example : IsLeftLinear GornAddress := inferInstance
+example : IsForestOrder GornAddress := inferInstance
 
 variable {Node : Type*} [PartialOrder Node] {P Q : Set Node} {a b c d m : Node}
 
@@ -108,7 +109,7 @@ theorem commandRelation_univ_subset (P : Set Node) :
   upperPolar_anti _ (Set.subset_univ P)
 
 -- (21)
-theorem mem_commandRelation_univ_iff [IsLeftLinear Node] (ha : m ⋖ a) :
+theorem mem_commandRelation_univ_iff [IsForestOrder Node] (ha : m ⋖ a) :
     a ~[commandRelation Set.univ] b ↔ m ≤ b :=
   mem_commandRelation_iff_le_of_covBy ha (Set.mem_univ m)
 
@@ -149,7 +150,7 @@ theorem mem_commandRelation_iff_le_of_not_mem (hab : a ~[commandRelation P] b)
   mem_commandRelation_iff_le (isGreatest_ancestors hab hbc hac)
 
 -- Theorem 7
-theorem exists_forall_mem_commandRelation_iff_le [OrderBot Node] [IsLeftLinear Node]
+theorem exists_forall_mem_commandRelation_iff_le [OrderBot Node] [IsForestOrder Node]
     [WellFoundedLT Node] [IsStronglyCoatomic Node] (P : Set Node) (a : Node) :
     ∃ x, ∀ b, a ~[commandRelation P] b ↔ x ≤ b := by
   induction a using WellFoundedLT.induction with | ind a ih
@@ -162,11 +163,11 @@ theorem exists_forall_mem_commandRelation_iff_le [OrderBot Node] [IsLeftLinear N
       exact ⟨x, fun b ↦ (mem_commandRelation_iff_of_covBy hm hP).trans (hx b)⟩
 
 -- Theorem 8: a rooted graph embedded with Integrity is the set of nodes its root dominates.
-theorem mem_commandRelation_Ici_iff [IsLeftLinear Node] (r : Node) (P : Set Node)
+theorem mem_commandRelation_Ici_iff [IsForestOrder Node] (r : Node) (P : Set Node)
     (a b : Set.Ici r) :
     a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
   mem_commandRelation_subtype_iff (fun _ ha _ hxa ↦
-    (IsLeftLinear.le_total_of_le_of_le hxa.le ha).symm.imp id fun hxr _ hy ↦ hxr.trans hy) P a b
+    (IsForestOrder.le_total_of_le_of_le hxa.le ha).symm.imp id fun hxr _ hy ↦ hxr.trans hy) P a b
 
 /-! ### Characterizing command relations
 
@@ -187,7 +188,7 @@ theorem fair_iff {R : SetRel Node Node} :
 fair. Fairness makes a daughter command no more than her mother, hence either what her mother
 dominates or all her mother commands, and makes sisters agree on which; so the relation obeys the
 rules that fix the command relation of the mothers that bound a daughter. -/
-theorem isIntent_admits_iff [OrderBot Node] [IsLeftLinear Node] [WellFoundedLT Node]
+theorem isIntent_admits_iff [OrderBot Node] [IsForestOrder Node] [WellFoundedLT Node]
     [IsStronglyCoatomic Node] {R : SetRel Node Node} :
     Order.IsIntent Admits R ↔ commandRelation Set.univ ⊆ R ∧ Fair R := by
   refine ⟨?_, fun ⟨hI, hF⟩ ↦ ?_⟩
@@ -210,7 +211,7 @@ theorem isIntent_admits_iff [OrderBot Node] [IsLeftLinear Node] [WellFoundedLT N
       fun h' ↦ absurd (h' m ((h₀ m).2 le_rfl)) hm.lt.not_ge
   · exact fun m a hm hP b ↦ (hedge hm).elim (fun h ↦ absurd ⟨a, hm, h⟩ hP) fun h ↦ h b
 
-theorem descent_and_constituency_of_fair [OrderBot Node] [IsLeftLinear Node] [WellFoundedLT Node]
+theorem descent_and_constituency_of_fair [OrderBot Node] [IsForestOrder Node] [WellFoundedLT Node]
     [IsStronglyCoatomic Node] {R : SetRel Node Node} (hI : commandRelation Set.univ ⊆ R)
     (hF : Fair R) :
     (∀ a b c, a ~[R] b → b ≤ c → a ~[R] c) ∧ ∀ a, ∃ x, ∀ b, a ~[R] b ↔ x ≤ b := by
@@ -223,7 +224,7 @@ theorem Fair.of_forall_trans {R : SetRel Node Node}
 
 -- On a tree with an edge no property generates dominance, since a node commands its mother and
 -- does not dominate her.
-theorem not_isIntent_le [IsLeftLinear Node] (h : m ⋖ a) :
+theorem not_isIntent_le [IsForestOrder Node] (h : m ⋖ a) :
     ¬ Order.IsIntent Admits {(a, b) : Node × Node | a ≤ b} := by
   rintro ⟨P, hP⟩
   exact h.lt.not_ge (hP ▸ mem_commandRelation_of_covBy (P := P) h le_rfl :
@@ -448,7 +449,7 @@ theorem mem_extentClosure_admitsAt {x : Node} :
   ⟨fun h hxa _ hb ↦ h hb rfl hxa, by rintro h ⟨_, b⟩ hb rfl hxa; exact h hxa b hb⟩
 
 -- Theorem 9
-theorem commandByRelation_union [IsLeftLinear Node] (R S : SetRel Node Node) :
+theorem commandByRelation_union [IsForestOrder Node] (R S : SetRel Node Node) :
     commandByRelation R ∪ commandByRelation S =
       commandByRelation (extentClosure AdmitsAt R ∩ extentClosure AdmitsAt S) := by
   refine Set.Subset.antisymm ?_ fun ⟨a, b⟩ h ↦ ?_
@@ -457,7 +458,7 @@ theorem commandByRelation_union [IsLeftLinear Node] (R S : SetRel Node Node) :
   · by_contra hn
     simp only [Set.mem_union, mem_commandByRelation, not_or, not_forall, exists_prop] at hn
     obtain ⟨⟨c, hRc, hca, hcb⟩, d, hSd, hda, hdb⟩ := hn
-    rcases IsLeftLinear.le_total_of_le_of_le hca.le hda.le with hcd | hdc
+    rcases IsForestOrder.le_total_of_le_of_le hca.le hda.le with hcd | hdc
     · exact hcb (h (a := (c, a)) ⟨subset_lowerPolar_upperPolar _ R hRc,
         mem_extentClosure_admitsAt.2 fun _ _ he ↦ hcd.trans (mem_commandByRelation.1 he d hSd hda)⟩
         rfl hca)
@@ -467,7 +468,7 @@ theorem commandByRelation_union [IsLeftLinear Node] (R S : SetRel Node Node) :
 
 /-- Theorem 9 in the concept lattice of `AdmitsAt`, ordered by generators: on a tree the relation
 of a meet is the union of the relations, as that of a join is their intersection. -/
-theorem intent_inf_admitsAt [IsLeftLinear Node]
+theorem intent_inf_admitsAt [IsForestOrder Node]
     (c d : Concept (Node × Node) (Node × Node) AdmitsAt) :
     (c ⊓ d).intent = c.intent ∪ d.intent :=
   (congrArg (upperPolar AdmitsAt)
@@ -477,7 +478,7 @@ theorem intent_inf_admitsAt [IsLeftLinear Node]
 
 /-- On a tree the command relations that relations generate form a distributive lattice, with
 intersection and union for its operations. -/
-instance [IsLeftLinear Node] : DistribLattice (Concept (Node × Node) (Node × Node) AdmitsAt) :=
+instance [IsForestOrder Node] : DistribLattice (Concept (Node × Node) (Node × Node) AdmitsAt) :=
   .ofInfSupLe fun a b c ↦ Concept.intent_subset_intent_iff.1 <| by
     rw [Concept.intent_sup, intent_inf_admitsAt, intent_inf_admitsAt, intent_inf_admitsAt,
       Concept.intent_sup, Set.union_inter_distrib_left]
@@ -519,7 +520,7 @@ variable (Node) in
 /-- The internal nodes are those that are neither the root nor a leaf. -/
 def internalNodes : Set Node := {x | x ≠ ⊥ ∧ ¬ IsMax x}
 
-variable [IsLeftLinear Node] [WellFoundedLT Node] [IsStronglyCoatomic Node]
+variable [IsForestOrder Node] [WellFoundedLT Node] [IsStronglyCoatomic Node]
 
 /-- On a tree the largest property generating a command relation adds the root and the leaves to
 any property generating it. -/

@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Data.List.Chain
 public import Mathlib.Order.Cover
+public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
@@ -16,7 +17,8 @@ public import Mathlib.Order.UpperLower.Basic
 `[UPSTREAM]` In a linear order the greatest element strictly below `b` is the one `b` covers, and a
 lower set has greatest element `a` exactly when it contains `a` and not the element covering it. A
 list in which each element is weakly covered by the next moves up a linear order one step at a
-time, so it cannot pass over a value.
+time, so it cannot pass over a value. An element is branching when two elements cover it, and a
+finite order whose non-maximal elements all branch [has a cherry](##exists_cherry).
 -/
 
 public section
@@ -59,3 +61,27 @@ theorem List.IsChain.mem_of_le_of_le [LinearOrder α] {x m : α} :
       · exact absurd (hlt.trans_le hxm) (lt_irrefl _)
       · exact List.mem_cons_of_mem _
           (mem_of_le_of_le hc.2 (not_lt.1 fun hxb ↦ hc.1.2 hlt hxb) hm' hxm)
+
+/-! ### Branching
+
+A node branches when it has two daughters. In a finite order in which every node with a daughter
+branches, a topmost node with daughters has only maximal daughters, so some node has two maximal
+daughters, a cherry in the language of phylogenetic trees. -/
+
+section Branching
+
+variable {M : Type*} [PartialOrder M]
+
+/-- A node is branching when it has at least two covers. -/
+@[expose] def IsBranching (x : M) : Prop := {a | x ⋖ a}.Nontrivial
+
+/-- In a finite order in which every non-maximal node branches, a non-maximal node yields a node
+covered by two distinct maximal ones. -/
+theorem exists_cherry [Finite M] (hb : ∀ x : M, ¬ IsMax x → IsBranching x) {x : M}
+    (hx : ¬ IsMax x) : ∃ m a b : M, m ⋖ a ∧ m ⋖ b ∧ a ≠ b ∧ IsMax a ∧ IsMax b := by
+  obtain ⟨m, hm, hmax⟩ := (Set.toFinite {y : M | ¬ IsMax y}).exists_maximal ⟨x, hx⟩
+  obtain ⟨a, ha, b, hb', hab⟩ := hb m hm
+  have key : ∀ c, m ⋖ c → IsMax c := fun c hc ↦ of_not_not fun h ↦ hc.lt.not_ge (hmax h hc.le)
+  exact ⟨m, a, b, ha, hb', hab, key a ha, key b hb'⟩
+
+end Branching
