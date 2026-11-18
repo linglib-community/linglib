@@ -21,7 +21,7 @@ bundle with the bundle it reads, which on *deca* puts feminine singular on the m
 neuter plural on the pronoun at once, while a relative pronoun reads concord and index both,
 through the features its form is marked for (57). Since only the index touches the semantics,
 semantic agreement can surface on a concord reader only if it surfaces on the pronouns: the
-index readers form a lower set of [corbett-1991]'s Agreement Hierarchy however the open
+index readers form an upper set of [corbett-1991]'s Agreement Hierarchy however the open
 predicate position is resolved.
 
 ## Implementation notes
@@ -593,7 +593,7 @@ def readsIndex (predicate : Bool) : Position → Prop
 instance (p : Bool) : DecidablePred (readsIndex p) := fun t ↦ by
   cases t <;> simp only [readsIndex] <;> infer_instance
 
-theorem indexReaders_lowerSet (p : Bool) : IsLowerSet {t | readsIndex p t} := by
+theorem indexReaders_upperSet (p : Bool) : IsUpperSet {t | readsIndex p t} := by
   intro t u hle hmem
   revert t u
   cases p <;> decide

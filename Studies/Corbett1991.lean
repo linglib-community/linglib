@@ -30,9 +30,10 @@ public import Linglib.Data.Examples.Languages
 
 A language's genders are its agreement classes, assigned to nouns by ordered rules that read
 meaning or form, never form alone; German diminutives put [a formal rule before the semantic
-one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily down the
-Agreement Hierarchy ([Table 8.1](##hybrids_respectHierarchy)), and in coastal Bantu [semantic
-agreement spreads up it stage by stage](##BantuStage.respectsHierarchy). Coordinations resolve
+one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily rightwards
+along the Agreement Hierarchy ([Table 8.1](##hybrids_respectHierarchy)), and in coastal Bantu
+[semantic agreement spreads leftwards along it stage by
+stage](##BantuStage.respectsHierarchy). Coordinations resolve
 by ordered rules reading the conjuncts' person, meaning or gender, and Serbo-Croat moves from
 syntactic to semantic resolution through [a stage varying between the
 two](##SerboCroat.stage2_map_resolve), [conditioned by meaning, not
@@ -513,45 +514,45 @@ semantic agreement at the positions for which the book has data. -/
 
 /-- French titles such as *Sa Sainteté*: feminine throughout, a masculine personal pronoun
 less often. -/
-def frenchTitles : Hybrid Position := fun
+def frenchTitles : Position → Option Availability := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
 
 /-- German *Mädchen* 'girl': neuter, the personal pronoun neuter or feminine; the predicate
 shows no gender. -/
-def madchen : Hybrid Position := fun
+def madchen : Position → Option Availability := fun
   | .attributive | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | .predicate => none
 
 /-- Spoken Polish *łajdaki* 'wretches': non-masculine personal except for a masculine personal
 personal pronoun. -/
-def lajdaki : Hybrid Position := fun
+def lajdaki : Position → Option Availability := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .semanticOnly
 
 /-- Spanish titles: a feminine attributive, masculine elsewhere. -/
-def spanishTitles : Hybrid Position := fun
+def spanishTitles : Position → Option Availability := fun
   | .attributive => some .syntacticOnly
   | .predicate | .relativePronoun | .personalPronoun => some .semanticOnly
 
 /-- Konkani nouns denoting young females: a feminine attributive, neuter elsewhere; the relative
 pronoun is not available. -/
-def konkani : Hybrid Position := fun
+def konkani : Position → Option Availability := fun
   | .attributive => some .syntacticOnly
   | .predicate | .personalPronoun => some .semanticOnly
   | .relativePronoun => none
 
 /-- Russian *vrač* 'doctor' denoting a woman: the attributive masculine and less often feminine,
 the predicate either, the pronouns feminine and less often masculine. -/
-def vrac : Hybrid Position := fun
+def vrac : Position → Option Availability := fun
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun | .personalPronoun => some .mostlySemantic
 
 /-- Serbo-Croat plural *gazde* 'landlords': the attributive feminine and less often masculine,
 the predicate either, the relative pronoun mostly and the personal pronoun only masculine. -/
-def gazde : Hybrid Position := fun
+def gazde : Position → Option Availability := fun
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun => some .mostlySemantic
@@ -559,13 +560,13 @@ def gazde : Hybrid Position := fun
 
 /-- English boat nouns (§6.4.5): the relative pronoun *which*, the personal pronoun *she* or
 *it*. -/
-def boat : Hybrid Position := fun
+def boat : Position → Option Availability := fun
   | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | _ => none
 
 /-- The hybrids by the names the rows use. -/
-def hybridNames : List (String × Hybrid Position) :=
+def hybridNames : List (String × (Position → Option Availability)) :=
   [("frenchTitles", frenchTitles),
     ("mädchen", madchen),
     ("łajdaki", lajdaki),
@@ -594,7 +595,7 @@ attested side by side in neighbouring languages, and the last stages treat the a
 possessive apart from the other attributive modifiers, a finer division of the hierarchy. -/
 
 /-- The positions of the hierarchy with the attributive divided into the possessive and the
-other attributive modifiers, the possessive above them. -/
+other attributive modifiers, the possessive before them. -/
 inductive FinePosition where
   | possessive
   | attributive
@@ -605,17 +606,7 @@ inductive FinePosition where
 
 namespace FinePosition
 
-/-- The rank of a fine position, the possessive on top. -/
-def rank : FinePosition → ℕ
-  | .possessive => 4
-  | .attributive => 3
-  | .predicate => 2
-  | .relativePronoun => 1
-  | .personalPronoun => 0
-
-theorem rank_injective : Function.Injective rank := by decide
-
-instance : LinearOrder FinePosition := LinearOrder.lift' rank rank_injective
+instance : LinearOrder FinePosition := LinearOrder.lift' FinePosition.ctorIdx (by decide)
 
 /-- The position of the hierarchy a fine position divides. -/
 def toPosition : FinePosition → Position
@@ -650,7 +641,7 @@ instance : LinearOrder BantuStage := LinearOrder.lift' BantuStage.ctorIdx (by de
 *kamwana* in Chichewa, (40) to (44); *kilumba* 'girl' in Kimbundu, (52) and (53); Kami
 *ng'ombe* 'cows' and *mbudzi* 'goats', (54) and (55), the possessive reported with class 10
 agreement only; Swahili *rafiki* 'friend', (47) to (49). -/
-def hybrid : BantuStage → Hybrid FinePosition
+def hybrid : BantuStage → FinePosition → Option Availability
   | chichewa => fun
     | .possessive => none
     | .personalPronoun => some .mostlySyntactic
@@ -672,21 +663,15 @@ def hybrid : BantuStage → Hybrid FinePosition
     | _ => some .semanticOnly
   | bondei => fun _ ↦ some .semanticOnly
 
-open OrderDual in
-/-- Semantic agreement spreads up the Agreement Hierarchy: of two positions at two stages, the
-higher position at the earlier stage is never the more open to semantic agreement. -/
-theorem respectsHierarchy :
-    RespectsHierarchy fun p : BantuStageᵒᵈ × FinePosition ↦ (ofDual p.1).hybrid p.2 := by
-  decide
+/-- Semantic agreement spreads leftwards along the Agreement Hierarchy: of two positions at two
+stages, the later position at the later stage is never the less open to semantic agreement. -/
+theorem respectsHierarchy : RespectsHierarchy (Function.uncurry hybrid) := by decide
 
-open OrderDual in
 theorem hybrid_respectsHierarchy (s : BantuStage) : RespectsHierarchy s.hybrid :=
-  respectsHierarchy.comp_monotone (g := fun i ↦ (toDual s, i)) fun _ _ h ↦ ⟨le_rfl, h⟩
+  respectsHierarchy.comp_monotone (g := Prod.mk s) fun _ _ h ↦ ⟨le_rfl, h⟩
 
-open OrderDual in
-theorem hybrid_monotone (i : FinePosition) :
-    RespectsHierarchy fun s : BantuStageᵒᵈ ↦ (ofDual s).hybrid i :=
-  respectsHierarchy.comp_monotone (g := fun s ↦ (s, i)) fun _ _ h ↦ ⟨h, le_rfl⟩
+theorem hybrid_monotone (i : FinePosition) : RespectsHierarchy (hybrid · i) :=
+  respectsHierarchy.comp_monotone (g := (·, i)) fun _ _ h ↦ ⟨h, le_rfl⟩
 
 end BantuStage
 
@@ -756,8 +741,9 @@ def stageNames : List (String × BantuStage) :=
 def kindNames : List (String × Kind) := [("syntactic", .syntactic), ("semantic", .semantic)]
 
 /-- A use of a hybrid of `hybrids` at a position of `positions`, with the agreement it shows. -/
-def hybridUse? {ι : Type} (hybrids : List (String × Hybrid ι)) (positions : List (String × ι))
-    (row : Datum) : Option (Hybrid ι × ι × Kind) := do
+def hybridUse? {ι : Type} (hybrids : List (String × (ι → Option Availability)))
+    (positions : List (String × ι)) (row : Datum) :
+    Option ((ι → Option Availability) × ι × Kind) := do
   let h ← row.parse? "hybrid" hybrids
   let t ← row.parse? "target" positions
   let k ← row.parse? "agreement" kindNames
