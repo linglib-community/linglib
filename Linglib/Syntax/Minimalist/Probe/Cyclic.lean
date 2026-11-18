@@ -20,10 +20,12 @@ number of probe segments each person bears, the person hierarchy of the language
 
 ## Implementation notes
 
-A person bears its whole specification `PersonSegment.spec`, and a probe sees of it the
-segments the probe has. Whether a language tells first from second person by [speaker] or by
-[addressee] is therefore carried by its probe, `Finset.Iic .speaker` or `Finset.Iic .addressee`,
-and not by a second parameter for the specifications of its nominals.
+Béjar and Rezac specify persons per language, a second person as [participant] alone where
+the first bears [speaker] and a first person so where the second bears [addressee]. Here a
+person bears its whole specification `PersonSegment.spec`, and a probe sees of it the segments
+the probe has, which are the person's specification in the probe's features
+(`PersonSegment.inter_spec`). The language's choice is therefore carried by its probe,
+`Finset.Iic .speaker` or `Finset.Iic .addressee`, and not by a second parameter.
 
 ## References
 
@@ -169,6 +171,11 @@ def value : Person := if IsDirect P s then s.high else s.low
 def rank : ℕ := (P ∩ spec p).card
 
 variable {P s}
+
+/-- On the probe with [speaker] and what it depends on, a person's rank is its prominence, one
+higher for the root: the probe's hierarchy is the person hierarchy 1 > 2 > 3. -/
+theorem rank_Iic_speaker (p : Person) : rank (Finset.Iic .speaker) p = p.prominence + 1 := by
+  cases p <;> decide
 
 theorem isDirect_of_rank_lt (h : rank P s.low < rank P s.high) : IsDirect P s :=
   fun hi ↦ h.not_ge hi.card_le

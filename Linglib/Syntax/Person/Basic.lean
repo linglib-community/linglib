@@ -58,7 +58,9 @@ person and a single set for each person of the quadripartition. -/
 
 open SpeechAct
 
-/-- `p.participantSets` is the family of participant sets of the referents `p` covers. -/
+/-- `p.participantSets` is the family of participant sets of the referents `p` covers. This is
+what the value means, not what every form bearing it refers to: a third person form may be used
+of the addressee. -/
 def participantSets : Person → Finset (Finset Role)
   | .first => {{.speaker}, {.speaker, .addressee}}
   | .firstInclusive => {{.speaker, .addressee}}
@@ -67,6 +69,12 @@ def participantSets : Person → Finset (Finset Role)
   | .third => {∅}
 
 theorem participantSets_injective : Function.Injective participantSets := by decide
+
+/-- The general first person covers what the exclusive and the inclusive cover between them. -/
+theorem participantSets_first :
+    participantSets .first =
+      participantSets .firstExclusive ∪ participantSets .firstInclusive := by
+  decide
 
 @[simp] theorem participantSets_inj {p q : Person} :
     p.participantSets = q.participantSets ↔ p = q :=
