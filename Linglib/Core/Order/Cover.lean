@@ -62,6 +62,11 @@ theorem List.IsChain.mem_of_le_of_le [LinearOrder α] {x m : α} :
       · exact List.mem_cons_of_mem _
           (mem_of_le_of_le hc.2 (not_lt.1 fun hxb ↦ hc.1.2 hlt hxb) hm' hxm)
 
+/-- Two distinct elements covering the same element are incomparable. -/
+theorem CovBy.not_le_of_ne [PartialOrder α] {a b c : α} (hab : a ⋖ b) (hac : a ⋖ c)
+    (hbc : b ≠ c) : ¬ b ≤ c :=
+  fun h ↦ hbc ((hac.eq_or_eq hab.le h).resolve_left hab.ne')
+
 /-- When `>` is well-founded, as on a finite order, an order with a non-maximal element has one
 all of whose strict successors are maximal. -/
 theorem exists_not_isMax_and_forall_gt_isMax [Preorder α] [WellFoundedGT α] {a : α}

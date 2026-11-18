@@ -289,9 +289,6 @@ theorem excludes_congr {x x' y : α} (h : x' ∈ segments A x) :
 theorem contains_of_covBy {m a : α} (ha : m ⋖ a) : Contains A m a :=
   ⟨m, mem_segments_self m, ha.lt.le⟩
 
-theorem not_le_of_covBy {m a d : α} (ha : m ⋖ a) (hd : m ⋖ d) (had : a ≠ d) : ¬ a ≤ d :=
-  fun h ↦ had ((hd.eq_or_eq ha.lt.le h).resolve_left (ne_of_gt ha.lt))
-
 variable (hA : ∀ m d, A m d → m ⋖ d)
 include hA
 
@@ -368,7 +365,7 @@ theorem includes_iff_forall_le [IsForestOrder α] (hU : Relator.RightUnique A) {
 dominate it. -/
 theorem not_includes_of_covBy {m d a : α} (hmd : A m d) (ha : m ⋖ a) (had : a ≠ d) :
     ¬ Includes A m a := fun h ↦
-  not_le_of_covBy (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
+  CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
 
 end Segments
 
@@ -433,7 +430,7 @@ theorem maxCommand_adjunct [IsForestOrder α] {m d a b : α} (hmd : A m d) (ha :
     (had : a ≠ d) (hd : d ∈ maximalProjections P A) (hdb : d < b) :
     (a, b) ∈ maxCommand P A ∧ (b, a) ∉ maxCommand P A :=
   ⟨mem_commandRelation_of_covBy ha ((hA _ _ hmd).lt.le.trans hdb.le), fun h ↦
-    not_le_of_covBy (hA _ _ hmd) ha had.symm (h hd hdb)⟩
+    CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h hd hdb)⟩
 
 theorem isMaximalCategory_iff_forall_above [IsForestOrder α] (hP : ∀ m d, P m d → m ⋖ d)
     (hU : Relator.RightUnique A) (hdisj : ∀ m d, A m d → ¬ P m d) {x : α} :

@@ -153,7 +153,7 @@ variable [IsForestOrder α]
 
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
-  ⟨hv, not_le_of_covBy ha hb hab, not_le_of_covBy hb ha hab.symm,
+  ⟨hv, CovBy.not_le_of_ne ha hb hab, CovBy.not_le_of_ne hb ha hab.symm,
     mem_commandRelation_of_covBy ha hb.le⟩
 
 /-- A node does not precede a visible sister, so two visible sisters are unordered, as the
@@ -199,10 +199,10 @@ theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L �
     (hvJ : IsVisible H J) (hj : J ≤ j) : Precedes (bareCCommand H) j h := by
   refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, fun hJh ↦ ?_, fun hhJ ↦ ?_,
     fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
-  · exact (IsForestOrder.le_total_of_le_of_le hJh hh.le).elim (not_le_of_covBy hJ hL hJL)
-      (not_le_of_covBy hL hJ hJL.symm)
-  · exact not_le_of_covBy hL hJ hJL.symm (hh.le.trans hhJ)
-  · exact not_le_of_covBy hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
+  · exact (IsForestOrder.le_total_of_le_of_le hJh hh.le).elim (CovBy.not_le_of_ne hJ hL hJL)
+      (CovBy.not_le_of_ne hL hJ hJL.symm)
+  · exact CovBy.not_le_of_ne hL hJ hJL.symm (hh.le.trans hhJ)
+  · exact CovBy.not_le_of_ne hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
 
 /-- A visible head precedes the nodes properly inside its complement but not the complement
 itself, so the order specifier-head-complement needs a branching complement. -/
@@ -210,10 +210,10 @@ theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hv
     (hp : P < p) : Precedes (bareCCommand H) h p := by
   refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2 ⟨hvh, fun hhp ↦ ?_, fun hph ↦ ?_,
     fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
-  · exact (IsForestOrder.le_total_of_le_of_le hhp hp.le).elim (not_le_of_covBy hh hP hhP)
-      (not_le_of_covBy hP hh hhP.symm)
-  · exact not_le_of_covBy hP hh hhP.symm (hp.le.trans hph)
-  · exact not_le_of_covBy hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
+  · exact (IsForestOrder.le_total_of_le_of_le hhp hp.le).elim (CovBy.not_le_of_ne hh hP hhP)
+      (CovBy.not_le_of_ne hP hh hhP.symm)
+  · exact CovBy.not_le_of_ne hP hh hhP.symm (hp.le.trans hph)
+  · exact CovBy.not_le_of_ne hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
 
 /-- When the X′ is invisible the head precedes nothing in the specifier. -/
 theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
@@ -222,7 +222,7 @@ theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh :
   obtain ⟨hvx, hn₁, hn₂, hc⟩ := mem_bareCCommand.1 hxy
   rcases hxh.eq_or_lt with rfl | hxh
   · exact (IsForestOrder.le_total_of_le_of_le (hc L hh.lt |>.trans hyj) hj).elim
-      (not_le_of_covBy hL hJ hJL.symm) (not_le_of_covBy hJ hL hJL)
+      (CovBy.not_le_of_ne hL hJ hJL.symm) (CovBy.not_le_of_ne hJ hL hJL)
   · rcases (IsForestOrder.le_of_lt_of_covBy hh hxh).eq_or_lt with rfl | hxL
     · exact hvL hvx
     · exact (IsForestOrder.le_total_of_le_of_le
@@ -238,10 +238,10 @@ theorem Linearizes.not_isVisible (hl : Linearizes (bareCCommand H) T) (hJ : K �
     mem_bareCCommand.2 ⟨hvL, fun hLa ↦ ?_, fun haL ↦ ?_,
       fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
   · exact (linearizes_iff.1 hl).2.1 a haT ((linearizes_iff.1 hl).2.2 a haT h hhT a haT hah hha)
-  · exact (IsForestOrder.le_total_of_le_of_le hLa hα.le).elim (not_le_of_covBy hL hJ hJL.symm)
-      (not_le_of_covBy hJ hL hJL)
-  · exact not_le_of_covBy hJ hL hJL (hα.le.trans haL)
-  · exact not_le_of_covBy hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)
+  · exact (IsForestOrder.le_total_of_le_of_le hLa hα.le).elim (CovBy.not_le_of_ne hL hJ hJL.symm)
+      (CovBy.not_le_of_ne hJ hL hJL)
+  · exact CovBy.not_le_of_ne hJ hL hJL (hα.le.trans haL)
+  · exact CovBy.not_le_of_ne hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)
 
 end Bare
 
