@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.Paradigm.Basic
 public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Clusivity
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -28,13 +28,18 @@ inductive Row where
   | sg1 | sg2 | third | incl | pl1 | pl2
   deriving DecidableEq, Fintype, Repr
 
-/-- The person of a row. The first plural is exclusive, the inclusive being a row of its own. -/
+/-- The person of a row. -/
 def Row.person : Row → Person
-  | .sg1 => .first
+  | .sg1 | .incl | .pl1 => .first
   | .sg2 | .pl2 => .second
   | .third => .third
-  | .incl => .firstInclusive
-  | .pl1 => .firstExclusive
+
+/-- The clusivity of a row. The first plural is exclusive, the inclusive being a row of its
+own. -/
+def Row.clusivity : Row → Option Clusivity
+  | .incl => some .inclusive
+  | .pl1 => some .exclusive
+  | _ => none
 
 /-- The number of a row, none where the paper's label gives none. -/
 def Row.number : Row → Option Number

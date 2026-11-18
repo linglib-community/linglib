@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Clusivity
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -84,27 +85,12 @@ theorem ofPerson_injective : Function.Injective ofPerson := fun _ _ h ↦
 
 /-- The person value a specification is that of, if any. -/
 def toPerson? (x : Specification) : Option Person :=
-  [Person.first, .firstInclusive, .firstExclusive, .second, .third].find? fun p ↦ ofPerson p = x
+  [Person.first, .second, .third].find? fun p ↦ ofPerson p = x
 
 @[simp] theorem toPerson?_ofPerson (p : Person) : (ofPerson p).toPerson? = some p := by
   revert p; decide
 
 theorem toPerson?_bot : (⊥ : Specification).toPerson? = none := by decide
-
-/-- The specification of the general first person. -/
-abbrev first : Specification := ofPerson .first
-
-/-- The specification of the inclusive first person. -/
-abbrev firstInclusive : Specification := ofPerson .firstInclusive
-
-/-- The specification of the exclusive first person. -/
-abbrev firstExclusive : Specification := ofPerson .firstExclusive
-
-/-- The specification of the second person. -/
-abbrev second : Specification := ofPerson .second
-
-/-- The specification of the third person. -/
-abbrev third : Specification := ofPerson .third
 
 /-- The specification of a referent with the participants `s`. -/
 def ofParticipants (s : Finset Role) : Specification :=
@@ -112,10 +98,47 @@ def ofParticipants (s : Finset Role) : Specification :=
 
 @[simp] theorem sets_ofParticipants (s : Finset Role) : (ofParticipants s).sets = {s} := rfl
 
+/-- The specification of the general first person. -/
+abbrev first : Specification := ofPerson .first
+
+/-- The specification of the inclusive first person: the speaker with the addressee. -/
+abbrev firstInclusive : Specification := ofParticipants {.speaker, .addressee}
+
+/-- The specification of the exclusive first person: the speaker without the addressee. -/
+abbrev firstExclusive : Specification := ofParticipants {.speaker}
+
+/-- The specification of the second person. -/
+abbrev second : Specification := ofPerson .second
+
+/-- The specification of the third person. -/
+abbrev third : Specification := ofPerson .third
+
 /-- A specification covers a referent exactly when it covers the referent's participants. -/
 theorem le_ofParticipants_iff {x : Specification} {s : Finset Role} :
     x ≤ ofParticipants s ↔ s ∈ x.sets :=
   Finset.singleton_subset_iff
+
+/-- The specification of an optional person narrowed by an optional clusivity: the participant
+sets of the person, all of them where there is none, that satisfy the clusivity. It is
+unspecified where no participant set does, as for the second person with the exclusive. -/
+def ofPersonClusivity (p : Option Person) (c : Option Clusivity) : Specification :=
+  if h : (Clusivity.restrict c (p.elim Finset.univ participantSets)).Nonempty then
+    OrderDual.toDual ⟨_, h⟩
+  else ⊥
+
+@[simp] theorem ofPersonClusivity_none_none : ofPersonClusivity none none = ⊥ := by decide
+
+@[simp] theorem ofPersonClusivity_some_none (p : Person) :
+    ofPersonClusivity (some p) none = ofPerson p := by
+  revert p; decide
+
+theorem ofPersonClusivity_first_inclusive :
+    ofPersonClusivity (some .first) (some .inclusive) = firstInclusive := by
+  decide
+
+theorem ofPersonClusivity_first_exclusive :
+    ofPersonClusivity (some .first) (some .exclusive) = firstExclusive := by
+  decide
 
 /-- A specification is printed as the participant sets it covers. -/
 instance : Repr Specification where
@@ -135,23 +158,32 @@ theorem isSAP_ofPerson {p : Person} : IsSAP (ofPerson p) ↔ p.IsSAP := Iff.rfl
 theorem not_isSAP_bot : ¬ IsSAP ⊥ := by decide
 
 /-- A first person form with no clusivity covers an inclusive referent. -/
-theorem ofPerson_first_le_inclusive : ofPerson .first ≤ ofPerson .firstInclusive := by decide
+theorem ofPerson_first_le_inclusive : first ≤ firstInclusive := by decide
 
-theorem ofPerson_first_le_exclusive : ofPerson .first ≤ ofPerson .firstExclusive := by decide
+theorem ofPerson_first_le_exclusive : first ≤ firstExclusive := by decide
 
-theorem not_exclusive_le_inclusive : ¬ ofPerson .firstExclusive ≤ ofPerson .firstInclusive := by
-  decide
+theorem not_exclusive_le_inclusive : ¬ firstExclusive ≤ firstInclusive := by decide
 
 /-- The first person with no clusivity and the inclusive unify to the inclusive. -/
 theorem unify_ofPerson_first_inclusive :
-    PartialUnify.unify (ofPerson .first) (ofPerson .firstInclusive) =
-      ↑(ofPerson .firstInclusive) := by
+    PartialUnify.unify first firstInclusive = ↑firstInclusive := by
   decide
 
 /-- The first and the second person have no common extension. -/
-theorem not_compat_first_second : ¬ Compat (ofPerson .first) (ofPerson .second) := by
+theorem not_compat_first_second : ¬ Compat first second := by
   decide
 
 end Specification
 
 end Person
+
+namespace Clusivity
+
+/-- With no person specified, the inclusive participant sets are those of the second person and
+of the inclusive first person. -/
+theorem restrict_inclusive_univ :
+    restrict (some inclusive) Finset.univ =
+      Person.second.participantSets ∪ {{.speaker, .addressee}} := by
+  decide
+
+end Clusivity

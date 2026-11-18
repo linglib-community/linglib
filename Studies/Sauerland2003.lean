@@ -228,6 +228,6 @@ theorem czech_gender :
 
 theorem politeness_unmarked {W P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) :
     Number.dom (E := E) (some .plural) = Set.univ ∧ Person.dom c (some .third) = Set.univ :=
-  ⟨rfl, rfl⟩
+  ⟨rfl, Person.dom_third c⟩
 
 end Sauerland2003

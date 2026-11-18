@@ -522,22 +522,21 @@ theorem teop_inverse :
 
 namespace Rembarrnga
 
-/-- The logical minimum of referents is two for the inclusive and one otherwise. Beside the
-inclusive, the first person of Rembarrnga is the exclusive. -/
-def minimum : Person → ℕ
-  | .firstInclusive => 2
-  | _ => 1
+/-- The logical minimum of referents of a person, given as the participants it includes: two for
+the inclusive, the speaker with the addressee, and one otherwise. Beside the inclusive, the
+first person of Rembarrnga is the exclusive. -/
+def minimum (s : Finset SpeechAct.Role) : ℕ := max 1 s.card
 
 /-- In the minimal-augmented analysis of Table 5.18, the form for at least the minimum of
 referents counts those beyond it. -/
-def relative (p : Person) (n : ℕ) : Number :=
-  match n - minimum p with
+def relative (s : Finset SpeechAct.Role) (n : ℕ) : Number :=
+  match n - minimum s with
   | 0 => .minimal
   | 1 => .unitAugmented
   | _ => .augmented
 
 theorem unitAugmented_one_more :
-    relative .firstInclusive 3 = relative .firstExclusive 2 ∧
+    relative {.speaker, .addressee} 3 = relative {.speaker} 2 ∧
       Number.fromCard? 3 ≠ Number.fromCard? 2 := by
   decide
 

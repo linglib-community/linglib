@@ -51,8 +51,8 @@ theorem she_not_dom_of_masculine (h : g n ∈ Gendered.masculine) :
 
 /-- A first-person pronoun denotes nothing at a referent that does not include the agent. -/
 theorem not_dom_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
-    ¬ (e.denote n c g ⟨⟩).Dom := by
-  simp [hp, h]
+    ¬ (e.denote n c g ⟨⟩).Dom := fun hd ↦
+  h ((Person.mem_dom_first c _).1 (Person.dom_subset_dom c _ _ (hp ▸ hd.1.1)))
 
 theorem i_not_dom_of_not_agent (h : ¬ c.agent ≤ g n) : ¬ (i.denote n c g ⟨⟩).Dom :=
   not_dom_of_not_agent i g n c (by decide) h
@@ -64,7 +64,9 @@ avoid a gender specification. -/
 theorem mem_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
     g n ∈ e.denote n c g ⟨⟩ := by
-  simp [hp, hn, hg]
+  have hc : e.referentialClusivity = none :=
+    Person.Category.sharedClusivity_eq_none_of_sharedPerson_eq_third hp
+  simp [hp, hc, hn, hg]
 
 theorem they_mem_regardless_of_gender : g n ∈ they.denote n c g ⟨⟩ :=
   mem_of_unmarked_features they g n c (by decide) (by decide) rfl

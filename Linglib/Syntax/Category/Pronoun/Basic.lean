@@ -101,9 +101,11 @@ end Pronoun.Strength
 structure Pronoun where
   /-- The surface form, romanized or orthographic. -/
   form : String
-  /-- The grammatical person. Clusivity is a person value: Tagalog *tayo* is
-  `firstInclusive` and *kami* `firstExclusive`, English *we* plain `first` ([cysouw-2003]). -/
+  /-- The grammatical person. -/
   person : Option Person := none
+  /-- The clusivity of a form that marks it: Tagalog *tayo* is inclusive and *kami* exclusive,
+  English *we* neither ([cysouw-2003]). -/
+  clusivity : Option Clusivity := none
   /-- The grammatical number. -/
   number : Option Number := none
   /-- The cases the form fills: one for most forms, several for a syncretic one such as English
@@ -130,11 +132,11 @@ def case : Flat Case := Flat.finsetInf p.cases (↑)
 /-- The referential categories of [cysouw-2003] that the person and number realize: none when
 either is unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
 def categories : Finset Person.Category :=
-  (Option.map₂ Person.Category.ofPersonNumber p.person p.number).getD ∅
+  (Option.map₂ (Person.Category.ofPersonNumber · p.clusivity ·) p.person p.number).getD ∅
 
-/-- A pronoun bears the bundle of its person, number, gender and case. -/
+/-- A pronoun bears the bundle of its person and clusivity, number, gender and case. -/
 def phi : Agreement.Bundle
-  | .person => Agreement.Dimension.Slot.ofFlat .person p.person
+  | .person => .ofPersonClusivity p.person p.clusivity
   | .number => p.number
   | .gender => p.gender
   | .case => p.case
@@ -142,13 +144,11 @@ def phi : Agreement.Bundle
 
 instance : HasPhi Pronoun := ⟨phi⟩
 
-/-- Clusivity is not borne by a singular: the inclusive and exclusive persons split the first
-person non-singular ([cysouw-2003]). -/
-def WellFormed : Prop :=
-  ∀ per ∈ p.person, per.MarksClusivity → p.number ≠ some .singular
+/-- Clusivity is not borne by a singular: the inclusive and the exclusive split the first person
+non-singular ([cysouw-2003]). -/
+def WellFormed : Prop := p.clusivity.isSome → p.number ≠ some .singular
 
-instance : Decidable p.WellFormed :=
-  inferInstanceAs (Decidable (∀ per ∈ p.person, _ → _))
+instance : Decidable p.WellFormed := inferInstanceAs (Decidable (_ → _))
 
 /-! ### The pronouns of a table -/
 
@@ -159,7 +159,7 @@ variable {C : Type*} (person : C → Person) (number : C → Option Number)
 
 /-- The categories of the cells `s`, those each cell's person and number realize. -/
 def cellCategories (s : Finset C) : Finset Person.Category :=
-  s.biUnion fun c ↦ ((number c).map (Person.Category.ofPersonNumber (person c))).getD ∅
+  s.biUnion fun c ↦ ((number c).map (Person.Category.ofPersonNumber (person c) none)).getD ∅
 
 /-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a number, a
 gender and a case: the cases of the cells, the flat value of their person and gender, and the
@@ -185,7 +185,8 @@ for a pro-adverb. -/
 def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
     (cat : UD.UPOS := .PRON) : Morphology.Word :=
   { form := p.form, cat := cat,
-    features := .of (person := p.person) (number := p.number) (gender := p.gender)
+    features := .of (person := p.person) (clusivity := p.clusivity) (number := p.number)
+      (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
 
 /-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type, reflexive

@@ -157,13 +157,13 @@ theorem basque_isDirect_iff (s : Scenario Person) :
   decide +kernel
 
 /-- Nishnaabemwin's direct contexts are 2N1, 2N3 and 1N3 (22b), the inclusive patterning with the
-second person (fn. 9). -/
-theorem nishnaabemwin_isDirect_iff (s : Scenario Person) :
-    IsDirect nishnaabemwin s ↔
-      (s.high = .second ∨ s.high = .firstInclusive) ∧
-          (s.low = .first ∨ s.low = .firstExclusive ∨ s.low = .third) ∨
-        (s.high = .first ∨ s.high = .firstExclusive) ∧ s.low = .third := by
-  revert s
+second person (fn. 9): the external argument includes the addressee and the internal argument
+does not, or the external argument is the speaker alone over a third person. -/
+theorem nishnaabemwin_not_specLE_iff (hi lo : Finset SpeechAct.Role) :
+    ¬ SpecLE nishnaabemwin (Person.Specification.ofParticipants hi).segments
+        (Person.Specification.ofParticipants lo).segments ↔
+      .addressee ∈ hi ∧ .addressee ∉ lo ∨ hi = {.speaker} ∧ lo = ∅ := by
+  revert hi lo
   decide +kernel
 
 /-- Every Swahili context is inverse (22a). -/
@@ -178,11 +178,13 @@ example : IsInverse basque ⟨.first, .second⟩ ∧ IsDirect kashmiri ⟨.first
   decide +kernel
 
 -- (26)
-theorem kashmiri_participant_direct_iff (s : Scenario Person) :
-    IsDirect kashmiri s ∧ s.high.IsSAP ∧ s.low.IsSAP ↔
-      (s.high = .first ∨ s.high = .firstInclusive ∨ s.high = .firstExclusive) ∧
-        s.low = .second := by
-  revert s
+/-- Among participants, Kashmiri's direct contexts are those of a first person, inclusive or
+exclusive, over the second person. -/
+theorem kashmiri_participant_not_specLE_iff (hi lo : Finset SpeechAct.Role) :
+    ¬ SpecLE kashmiri (Person.Specification.ofParticipants hi).segments
+        (Person.Specification.ofParticipants lo).segments ∧ hi.Nonempty ∧ lo.Nonempty ↔
+      .speaker ∈ hi ∧ lo = {.addressee} := by
+  revert hi lo
   decide +kernel
 
 /-! ### The added probe (§4.1) -/

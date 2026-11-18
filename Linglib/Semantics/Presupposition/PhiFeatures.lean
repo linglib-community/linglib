@@ -97,23 +97,27 @@ def Feature.dom (f : Feature) : Set E := ⋃ r ∈ f.roles, Set.Ici (c.holder r)
   simp [Feature.dom, Feature.participant, SpeechAct.Role.exists_role]
 
 /-- At a context of utterance, the first person is defined of the referents including the agent,
-the inclusive of those including the agent and the addressee, and the second of those including
-the agent or the addressee; the third person and an absent value, the impersonal, restrict
-nothing. -/
-def dom : Option Person → Set E
-  | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
-  | p => (p.map (toFeatures {.participant, .speaker})).elim Set.univ (·.inf (Feature.dom c))
+the second of those including the agent or the addressee, and the inclusive, beyond its person,
+of those including the addressee; the third person, an absent value, the impersonal, and the
+exclusive restrict nothing. -/
+def dom (p : Option Person) (cl : Option Clusivity := none) : Set E :=
+  (p.map (toFeatures {.participant, .speaker})).elim Set.univ (·.inf (Feature.dom c)) ∩
+    if cl = some .inclusive then Set.Ici c.addressee else Set.univ
 
-@[simp] theorem dom_none : dom c none = Set.univ := rfl
+@[simp] theorem dom_none : dom c none = Set.univ := by simp [dom]
 
 @[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := by
   simp [dom, or_and_right]
 
-@[simp] theorem mem_dom_firstInclusive :
-    x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := Iff.rfl
+@[simp] theorem mem_dom_first_inclusive :
+    x ∈ dom c (some .first) (some .inclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := by
+  simp only [dom, Option.map_some, Option.elim_some, ite_true, Set.mem_inter_iff, Set.mem_Ici]
+  simp only [or_and_right, toFeatures_first, Finset.inf_insert, Finset.inf_singleton,
+    Set.inf_eq_inter, Set.mem_inter_iff, Feature.mem_dom_participant, Feature.mem_dom_speaker]
+  tauto
 
-@[simp] theorem mem_dom_firstExclusive :
-    x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := by
+@[simp] theorem mem_dom_first_exclusive :
+    x ∈ dom c (some .first) (some .exclusive) ↔ c.agent ≤ x := by
   simp [dom, or_and_right]
 
 @[simp] theorem mem_dom_second :
@@ -123,9 +127,9 @@ def dom : Option Person → Set E
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
 
-theorem dom_firstInclusive_subset_dom_first :
-    dom c (some .firstInclusive) ⊆ dom c (some .first) :=
-  fun _ hx ↦ (mem_dom_first c _).2 hx.1
+/-- Clusivity only narrows the domain of a person. -/
+theorem dom_subset_dom (p : Option Person) (cl : Option Clusivity) : dom c p cl ⊆ dom c p :=
+  fun _ hx ↦ ⟨hx.1, by simp⟩
 
 end Person
 
@@ -145,36 +149,34 @@ theorem preimage_participants_lowerPolar (F : Set Feature) :
   ext x; simp [mem_lowerPolar_iff, mem_dom_feature_iff]
 
 /-- The domain of a person holds the referents whose participants bear every feature of its
-bundle of [participant] and [speaker]. The inclusive is not of this form on those two features,
-on which its bundle is the exclusive's. -/
-theorem dom_eq_preimage_lowerPolar {p : Person} (hp : p ≠ .firstInclusive) :
+bundle of [participant] and [speaker]. -/
+theorem dom_eq_preimage_lowerPolar (p : Person) :
     dom c (some p) =
       c.participants ⁻¹' lowerPolar Bears ↑(p.toFeatures {.participant, .speaker}) := by
   have h : dom c (some p) = (p.toFeatures {.participant, .speaker}).inf (Feature.dom c) := by
-    cases p <;> first | rfl | exact absurd rfl hp
+    simp [dom]
   rw [h, preimage_participants_lowerPolar]
   ext x; simp [Finset.inf_set_eq_iInter]
 
-/-- The domain of the inclusive holds the referents whose participants bear every feature of its
-bundle of all three features. -/
-theorem dom_firstInclusive_eq_preimage_lowerPolar :
-    dom c (some .firstInclusive) =
-      c.participants ⁻¹' lowerPolar Bears ↑(Person.firstInclusive.toFeatures Finset.univ) := by
-  rw [preimage_participants_lowerPolar,
-    show Person.firstInclusive.toFeatures Finset.univ = Finset.univ by decide]
+/-- The domain of the inclusive first person holds the referents whose participants bear all
+three features. -/
+theorem dom_first_inclusive_eq_preimage_lowerPolar :
+    dom c (some .first) (some .inclusive) =
+      c.participants ⁻¹' lowerPolar Bears ↑(Finset.univ : Features) := by
+  rw [preimage_participants_lowerPolar]
   ext x
-  simp only [mem_dom_firstInclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
+  simp only [mem_dom_first_inclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
     Set.mem_iInter]
   exact ⟨fun h f ↦ by cases f <;> simp [h.1, h.2],
     fun h ↦ ⟨(Feature.mem_dom_speaker c).1 (h .speaker),
       (Feature.mem_dom_addressee c).1 (h .addressee)⟩⟩
 
-/-- A referent is of a person of the standard tripartition exactly when the features of
-[participant] and [speaker] defined of it are that person's. -/
-theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
+/-- A referent is of a person exactly when the features of [participant] and [speaker] defined of
+it are that person's. -/
+theorem participants_mem_participantSets_iff {p : Person} :
     c.participants x ∈ p.participantSets ↔ ∀ f ∈ ({.participant, .speaker} : Features),
       (x ∈ Feature.dom c f ↔ f ∈ p.toFeatures {.participant, .speaker}) := by
-  rw [mem_participantSets_iff hp, Finset.ext_iff]
+  rw [mem_participantSets_iff, Finset.ext_iff]
   refine forall_congr' fun f ↦ ?_
   simp only [mem_bundle, mem_dom_feature_iff]
   by_cases hf : f ∈ ({.participant, .speaker} : Features)
@@ -184,10 +186,10 @@ theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
 /-- The first person's participant sets are those of the referents including the agent. -/
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
-  rw [participants_mem_participantSets_iff c x rfl]
+  rw [participants_mem_participantSets_iff c x]
   refine ⟨fun h ↦ (Feature.mem_dom_speaker c).1 ((h .speaker (by simp)).2 (by decide)),
     fun h f hf ↦ ?_⟩
-  cases f <;> simp [h, mem_toFeatures] at hf ⊢
+  cases f <;> simp [h] at hf ⊢
 
 end Person
 

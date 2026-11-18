@@ -86,17 +86,18 @@ theorem active_isLowerSet (l : Lang) : IsLowerSet (↑l.active : Set Node) := by
 structure Row where
   lang : Lang
   person : Person
+  clusivity : Option Clusivity
   number : Number
   form : String
   deriving DecidableEq, Repr
 
 /-- The person of a pool row, by the tables' labels. -/
-def personOfLabel : String → Option Person
-  | "1" => some .first
-  | "1ex" => some .firstExclusive
-  | "1in" => some .firstInclusive
-  | "2" => some .second
-  | "3" => some .third
+def personOfLabel : String → Option (Person × Option Clusivity)
+  | "1" => some (.first, none)
+  | "1ex" => some (.first, some .exclusive)
+  | "1in" => some (.first, some .inclusive)
+  | "2" => some (.second, none)
+  | "3" => some (.third, none)
   | _ => none
 
 /-- The number of a pool row, by the tables' labels; `none` is number-neutral. -/
@@ -113,7 +114,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let lang ← Lang.ofGlottocode ex.language
   let person ← ex.feature? "person" >>= personOfLabel
   let number ← ex.feature? "number" >>= numberOfLabel
-  pure ⟨lang, person, number, ex.primaryText⟩
+  pure ⟨lang, person.1, person.2, number, ex.primaryText⟩
 
 theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
@@ -125,19 +126,21 @@ def Lang.rows (l : Lang) : List Row := HarleyRitter2002.rows.filter (·.lang = l
 
 /-- The geometry of a row's cell in its language. -/
 def Row.cell (r : Row) : Option (Finset Node) :=
-  Morphology.FeatureGeometry.cell r.lang.active r.person r.number
+  Morphology.FeatureGeometry.cell r.lang.active r.person r.clusivity r.number
 
-theorem licenses_rows : ∀ r ∈ rows, Licenses r.lang.active r.person r.number := by decide
+theorem licenses_rows :
+    ∀ r ∈ rows, Licenses r.lang.active r.person r.clusivity r.number := by decide
 
 /-- Each geometry node is active iff the paradigm has the corresponding person or number distinction
 (§2.4, §3). -/
 theorem active_of_rows (l : Lang) :
     (Node.addressee ∈ l.active ↔ ∃ r ∈ l.rows, r.person = .second) ∧
-      (Node.speaker ∈ l.active ↔ ∃ r ∈ l.rows, r.person = .firstInclusive) ∧
+      (Node.speaker ∈ l.active ↔ ∃ r ∈ l.rows, r.clusivity = some .inclusive) ∧
       (Node.minimal ∈ l.active ↔ ∃ r ∈ l.rows, r.number = .dual) ∧
       (Node.augmented ∈ l.active ↔ ∃ r ∈ l.rows, r.number = .paucal) ∧
       (Node.individuation ∈ l.active ↔
-        ∃ r ∈ l.rows, ∃ s ∈ l.rows, r.person = s.person ∧ r.number ≠ s.number) := by
+        ∃ r ∈ l.rows, ∃ s ∈ l.rows,
+          r.person = s.person ∧ r.clusivity = s.clusivity ∧ r.number ≠ s.number) := by
   cases l <;> decide
 
 theorem cell_nodup (l : Lang) : (l.rows.map Row.cell).Nodup := by
@@ -156,54 +159,56 @@ theorem card_participant_geometries :
 
 /-! ### Complex geometries imply simpler ones (§2.10, §6.1) -/
 
-variable {A : Finset Node} {p : Person} {n : Number}
+variable {A : Finset Node} {p : Person} {cl : Option Clusivity} {n : Number}
 
 -- (32a)
-theorem cell_plural_eq (A : Finset Node) (p : Person) :
-    cell A p .plural = (cell A p .dual).map (·.filter λ b => ¬ Node.minimal ≤ b) := by
-  cases p <;> by_cases hi : Node.individuation ∈ A <;>
+theorem cell_plural_eq (A : Finset Node) (p : Person) (cl : Option Clusivity) :
+    cell A p cl .plural = (cell A p cl .dual).map (·.filter λ b => ¬ Node.minimal ≤ b) := by
+  cases p <;> rcases cl with _ | _ | _ <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, ↓reduceIte] <;> decide
 
 -- (32a)
-theorem cell_singular_eq (h : Node.minimal ∈ A) (p : Person) :
-    cell A p .singular = (cell A p .dual).map (·.filter λ b => ¬ Node.group ≤ b) := by
-  cases p <;> by_cases hi : Node.individuation ∈ A <;>
+theorem cell_singular_eq (h : Node.minimal ∈ A) (p : Person) (cl : Option Clusivity) :
+    cell A p cl .singular = (cell A p cl .dual).map (·.filter λ b => ¬ Node.group ≤ b) := by
+  cases p <;> rcases cl with _ | _ | _ <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, h, ↓reduceIte] <;> decide
 
-theorem cell_dual_eq (A : Finset Node) (p : Person) :
-    cell A p .dual = (cell A p .paucal).map (·.filter λ b => ¬ Node.augmented ≤ b) := by
-  cases p <;> by_cases hi : Node.individuation ∈ A <;>
+theorem cell_dual_eq (A : Finset Node) (p : Person) (cl : Option Clusivity) :
+    cell A p cl .dual = (cell A p cl .paucal).map (·.filter λ b => ¬ Node.augmented ≤ b) := by
+  cases p <;> rcases cl with _ | _ | _ <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, ↓reduceIte] <;> decide
 
 -- (32b)
 theorem cell_second_eq (A : Finset Node) (n : Number) :
-    cell A .second n = (cell A .firstInclusive n).map (·.filter λ b => ¬ Node.speaker ≤ b) ∧
-      cell A .firstExclusive n =
-        (cell A .firstInclusive n).map (·.filter λ b => ¬ Node.addressee ≤ b) := by
+    cell A .second none n =
+        (cell A .first (some .inclusive) n).map (·.filter λ b => ¬ Node.speaker ≤ b) ∧
+      cell A .first (some .exclusive) n =
+        (cell A .first (some .inclusive) n).map (·.filter λ b => ¬ Node.addressee ≤ b) := by
   cases n <;> by_cases hi : Node.individuation ∈ A <;> by_cases hm : Node.minimal ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, hm, ↓reduceIte] <;> decide
 
-theorem licenses_of_map_filter {n' : Number} {p' : Person} {a : Node}
-    (h : cell A p' n' = (cell A p n).map (·.filter λ b => ¬ a ≤ b)) (hl : Licenses A p n) :
-    Licenses A p' n' := by
+theorem licenses_of_map_filter {n' : Number} {p' : Person} {cl' : Option Clusivity} {a : Node}
+    (h : cell A p' cl' n' = (cell A p cl n).map (·.filter λ b => ¬ a ≤ b))
+    (hl : Licenses A p cl n) :
+    Licenses A p' cl' n' := by
   obtain ⟨g, hg, hsub⟩ := hl
   exact ⟨_, h ▸ Option.mem_map_of_mem _ hg, (Finset.filter_subset _ _).trans hsub⟩
 
 /-- **(18a)** No dual without plural. -/
-theorem dual_needs_plural (h : Licenses A p .dual) : Licenses A p .plural :=
-  licenses_of_map_filter (cell_plural_eq A p) h
+theorem dual_needs_plural (h : Licenses A p cl .dual) : Licenses A p cl .plural :=
+  licenses_of_map_filter (cell_plural_eq A p cl) h
 
 -- (18b)
-theorem paucal_needs_dual (h : Licenses A p .paucal) : Licenses A p .dual :=
-  licenses_of_map_filter (cell_dual_eq A p) h
+theorem paucal_needs_dual (h : Licenses A p cl .paucal) : Licenses A p cl .dual :=
+  licenses_of_map_filter (cell_dual_eq A p cl) h
 
 -- (18c)
-theorem inclusive_needs_second (h : Licenses A .firstInclusive n) :
-    Licenses A .second n ∧ Licenses A .firstExclusive n :=
+theorem inclusive_needs_second (h : Licenses A .first (some .inclusive) n) :
+    Licenses A .second none n ∧ Licenses A .first (some .exclusive) n :=
   ⟨licenses_of_map_filter (cell_second_eq A n).1 h,
     licenses_of_map_filter (cell_second_eq A n).2 h⟩
 
@@ -229,9 +234,9 @@ theorem no_gender_only_in_plural
 
 /-! ### Markedness (§1.3, §2.3) -/
 
-theorem third_least_marked {g g' : Finset Node} (h : cell A .third n = some g)
-    (h' : cell A p n = some g') : g ⊆ g' := by
-  cases p <;> cases n <;> by_cases hi : Node.individuation ∈ A <;>
+theorem third_least_marked {g g' : Finset Node} (h : cell A .third none n = some g)
+    (h' : cell A p cl n = some g') : g ⊆ g' := by
+  cases p <;> rcases cl with _ | _ | _ <;> cases n <;> by_cases hi : Node.individuation ∈ A <;>
     by_cases hm : Node.minimal ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, hm, ↓reduceIte, Option.some.injEq,
@@ -239,42 +244,43 @@ theorem third_least_marked {g g' : Finset Node} (h : cell A .third n = some g)
 
 -- §2.3
 theorem daga_first_singular_lt_plural :
-    ∀ g ∈ cell Lang.daga.active .first .singular,
-      ∀ g' ∈ cell Lang.daga.active .first .plural, g.card < g'.card := by
+    ∀ g ∈ cell Lang.daga.active .first none .singular,
+      ∀ g' ∈ cell Lang.daga.active .first none .plural, g.card < g'.card := by
   decide
 
 -- §2.8
 theorem fijian_inclusive_paucal :
-    cell Lang.fijian.active .firstInclusive .paucal = some Lang.fijian.active ∧
+    cell Lang.fijian.active .first (some .inclusive) .paucal = some Lang.fijian.active ∧
       Lang.fijian.active.card = 8 := by
   decide
 
 /-! ### Acquisition (§3) -/
 
 theorem first_before_second :
-    ∀ g ∈ cell A .first n, ∀ g' ∈ cell A .second n, g ⊂ g' := by
+    ∀ g ∈ cell A .first none n, ∀ g' ∈ cell A .second none n, g ⊂ g' := by
   cases n <;> by_cases hi : Node.individuation ∈ A <;> by_cases hm : Node.minimal ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, hm, ↓reduceIte, Option.mem_def,
       Option.some.injEq, forall_eq', reduceCtorEq, false_implies, implies_true] <;> decide
 
 theorem singular_before_plural (hm : Node.minimal ∉ A) (hi : Node.individuation ∈ A) :
-    ∀ g ∈ cell A p .singular, ∀ g' ∈ cell A p .plural, g ⊂ g' := by
-  cases p <;> simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def,
+    ∀ g ∈ cell A p cl .singular, ∀ g' ∈ cell A p cl .plural, g ⊂ g' := by
+  cases p <;> rcases cl with _ | _ | _ <;>
+    simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def,
     Option.bind, hi, hm, ↓reduceIte, Option.mem_def, Option.some.injEq, forall_eq'] <;> decide
 
 -- (20b)
 theorem second_third_plural_incomparable :
-    ∀ g ∈ cell Lang.daga.active .second .singular,
-      ∀ g' ∈ cell Lang.daga.active .third .plural, ¬ g ⊆ g' ∧ ¬ g' ⊆ g := by
+    ∀ g ∈ cell Lang.daga.active .second none .singular,
+      ∀ g' ∈ cell Lang.daga.active .third none .plural, ¬ g ⊆ g' ∧ ¬ g' ⊆ g := by
   decide
 
 /-! ### Empty paradigm space (§4.1) -/
 
 -- (27)
 theorem maxakali_coopts :
-    ∀ g ∈ cell Lang.maxakali.active .first .singular,
-      ∀ g' ∈ cell Lang.maxakali.active .firstExclusive .plural,
+    ∀ g ∈ cell Lang.maxakali.active .first none .singular,
+      ∀ g' ∈ cell Lang.maxakali.active .first (some .exclusive) .plural,
         g ≠ g' ∧ fillDefaults g = fillDefaults g' := by
   decide
 
