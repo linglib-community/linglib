@@ -46,10 +46,6 @@ namespace Autosegmental.AR
 variable {ι : Type*} {α β M : Type} (f :
     AR (Multiplanar ι (Sponsored α M) (Sponsored Slot M))) (i : ι) (b : Slot) (φ : α → β)
 
-/-- The slots of class `b`, which bear the melody of a tier that takes them ([mccarthy-1981],
-p. 383). -/
-def bearers : List ℕ := f.template.findIdxs (· == b)
-
 /-- Element `k` of plane `i` is associated when a line leaves it. -/
 def IsAssociated (k : ℕ) : Prop := ∃ l ∈ (f.lines (some i) none), l.1 = k
 
@@ -93,12 +89,6 @@ theorem delink_mapMelody (s : ℕ) : (f.mapMelody φ).delink i s = (f.delink i s
 end Link
 
 variable [Fintype ι]
-
-/-- The free slots of class `b`, left to right. A slot with a line from any plane is
-unavailable. -/
-def freeBearers : List ℕ := (f.bearers b).filter (¬ f.IsFilled ·)
-
-@[simp] theorem freeBearers_mapMelody : (f.mapMelody φ).freeBearers b = f.freeBearers b := rfl
 
 variable [DecidableEq ι]
 
