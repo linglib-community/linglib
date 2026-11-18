@@ -22,7 +22,11 @@ otherwise second with the addressee, otherwise third, Zwicky's correspondence pr
 [resolution in it selects the more prominent conjunct](##Person.coarsen_ofParticipants_union), as
 Corbett's resolution rules state. An inventory of person features
 [generates](##Person.generated) the system identifying the participant sets with the same bundle,
-and [every system is so generated](##Person.exists_generated).
+and [every system is so generated](##Person.exists_generated). The values of `Person` are the
+cells of two of these systems: [the three features](##Person.mem_participantSets_ofParticipants)
+give the quadripartition and [[participant] and
+[speaker]](##Person.generated_participant_speaker) the standard tripartition, whose general first
+person [covers the two clusives](##Person.participantSets_first).
 
 ## References
 
@@ -108,5 +112,18 @@ theorem generated_participant_speaker :
   show (generated _).r s t ↔ standardTripartition.r s t
   rw [generated_r_iff, standardTripartition_r_iff]
   revert s t; decide
+
+/-- Each class of the system the three features generate is a single participant set, the one
+its person of the quadripartition covers. -/
+theorem mem_participantSets_ofParticipants {s t : Finset Role} :
+    t ∈ (ofParticipants s).participantSets ↔ (generated Finset.univ).r s t := by
+  rw [participantSets_ofParticipants, Finset.mem_singleton]
+  exact ⟨fun h ↦ h ▸ (generated _).refl _, fun h ↦ (bundle_univ_injective h).symm⟩
+
+/-- Every person value is a cell of one of the two systems: a person of the quadripartition or
+the general first person of the standard tripartition. -/
+theorem exists_eq_ofParticipants_or_eq_coarsen (p : Person) :
+    ∃ s, p = ofParticipants s ∨ p = (ofParticipants s).coarsen := by
+  revert p; decide
 
 end Person
