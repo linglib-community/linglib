@@ -391,31 +391,38 @@ inductive Object
   | ballB
   deriving DecidableEq, Fintype, Repr
 
-/-- The cause balls are in one of three states; the target's fine-grained outcome is the time at
-which it passes through the gate, if it does. -/
+/-- The fine-grained outcome for Ball B: it misses the gate, passes through as it actually did, or
+passes through at another place or time. -/
+inductive Passage
+  | misses
+  | asActual
+  | otherwise
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The cause balls take a state and the target a passage. -/
 abbrev Outcome : Object → Type
   | .ballA => Ball
   | .blueBall => Ball
-  | .ballB => Option ℕ
+  | .ballB => Passage
 
 instance : ∀ v, Inhabited (Outcome v)
   | .ballA => inferInstanceAs (Inhabited Ball)
   | .blueBall => inferInstanceAs (Inhabited Ball)
-  | .ballB => inferInstanceAs (Inhabited (Option ℕ))
+  | .ballB => inferInstanceAs (Inhabited Passage)
 
 instance : ∀ v, DecidableEq (Outcome v)
   | .ballA => inferInstanceAs (DecidableEq Ball)
   | .blueBall => inferInstanceAs (DecidableEq Ball)
-  | .ballB => inferInstanceAs (DecidableEq (Option ℕ))
+  | .ballB => inferInstanceAs (DecidableEq Passage)
 
-/-- Ball A knocks Ball B through the gate, at a slightly different time if it is perturbed.
-Without Ball A the blue ball knocks Ball B through shortly afterwards, and without either Ball B
-stays where it is. -/
-def passage : Ball → Ball → Option ℕ
-  | .actual, _ => some 1
-  | .changed, _ => some 2
-  | .removed, .removed => none
-  | .removed, _ => some 3
+/-- Ball A knocks Ball B through the gate, at a slightly different place and time if it is
+perturbed. Without Ball A the blue ball knocks Ball B through shortly afterwards, and without
+either Ball B stays where it is. -/
+def passage : Ball → Ball → Passage
+  | .actual, _ => .asActual
+  | .changed, _ => .otherwise
+  | .removed, .removed => .misses
+  | .removed, _ => .otherwise
 
 /-- Ball B's passage depends on both balls. -/
 def sceneEdges : Finset (Object × Object) := {(.ballA, .ballB), (.blueBall, .ballB)}
@@ -438,7 +445,7 @@ instance : scene.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 the state `u`, the alternative cause to remove being the blue ball. -/
 abbrev sceneAspects (u : Ball) : Aspect → Prop :=
   aspects scene {.blueBall} (uniqueElim Ball.removed) u .ballA .removed .changed .ballB
-    Option.isSome
+    (· = Passage.misses)
 
 private theorem solve_scene (u : Ball) : scene.solve u .ballB = passage .actual u := by
   cases u <;> decide
@@ -459,7 +466,7 @@ private theorem solve_contingency_ballA (a u : Ball) :
 theorem sceneAspects_removed (a : Aspect) : sceneAspects .removed a ↔ a ∈ Scenario.s1.aspects := by
   cases a <;>
     simp only [sceneAspects, aspects, IsWhetherCause, IsHowCause, IsSufficientCause, solve_scene,
-      solve_scene_ballA, solve_contingency, solve_contingency_ballA] <;>
+      solve_scene_ballA, solve_contingency, solve_contingency_ballA, ne_eq, eq_iff_iff] <;>
     decide
 
 /-- Under preemption Ball A is not a whether-cause, since the blue ball would have knocked Ball B
@@ -468,7 +475,8 @@ through the gate. -/
 theorem caused_preemption :
     ¬ sceneAspects .actual .whether ∧ Expression.caused.Holds (sceneAspects .actual) := by
   simp only [Expression.Holds, sceneAspects, aspects, IsWhetherCause, IsHowCause,
-    IsSufficientCause, solve_scene, solve_scene_ballA, solve_contingency, solve_contingency_ballA]
+    IsSufficientCause, solve_scene, solve_scene_ballA, solve_contingency, solve_contingency_ballA,
+    ne_eq, eq_iff_iff]
   decide
 
 end Structural
