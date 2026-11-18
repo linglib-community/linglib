@@ -55,7 +55,6 @@ structure Configuration where
   participants : Finset Role
   /-- The number of members that are not participants. -/
   others : ℕ
-  deriving DecidableEq
 
 namespace Configuration
 
@@ -67,6 +66,8 @@ def toProd (x : Configuration) : Finset Role × ℕ := (x.participants, x.others
 
 theorem toProd_injective : Function.Injective toProd := fun _ _ h ↦
   Configuration.ext (congrArg Prod.fst h) (congrArg Prod.snd h)
+
+instance : DecidableEq Configuration := toProd_injective.decidableEq
 
 instance : LE Configuration := ⟨fun x y ↦ x.participants ⊆ y.participants ∧ x.others ≤ y.others⟩
 
@@ -219,8 +220,53 @@ def covered (S : Finset (Finset Role)) : Number → Finset Configuration
 
 end Configuration
 
+namespace Category
+
 /-- The categories of the referents in the region of `S` that a number label covers. -/
-def Category.ofNumber (S : Finset (Finset Role)) (n : Number) : Finset Category :=
+def ofNumber (S : Finset (Finset Role)) (n : Number) : Finset Category :=
   (Configuration.covered S n).biUnion fun x ↦ x.category.toFinset
+
+/-- The categories a person, an optional clusivity and a number label cover: those of the
+referents in the region of the person, narrowed by the clusivity, that the label covers. The
+first person without a clusivity is every referent with the speaker, of which the speaker
+alone is the smallest; with one, the inclusive has the speaker and the addressee as its
+smallest and the exclusive the speaker alone. -/
+def ofPersonNumber (p : Person) (cl : Option Clusivity) (n : Number) : Finset Category :=
+  ofNumber (Clusivity.restrict cl p.participantSets) n
+
+/-- Every category is recovered from its person and clusivity at some number label. -/
+theorem ofPersonNumber_person (c : Category) :
+    ∃ n, ofPersonNumber c.person c.clusivity n = {c} := by
+  cases c
+  · exact ⟨.singular, by decide⟩
+  · exact ⟨.singular, by decide⟩
+  · exact ⟨.singular, by decide⟩
+  · exact ⟨.minimal, by decide⟩
+  · exact ⟨.augmented, by decide⟩
+  · exact ⟨.plural, by decide⟩
+  · exact ⟨.plural, by decide⟩
+  · exact ⟨.plural, by decide⟩
+
+/-- A category without others has exactly its participants, so a number label of fixed
+cardinality covers it only at that cardinality. -/
+theorem exactCard_eq_card_of_mem_ofPersonNumber :
+    ∀ p cl n c, c ∈ ofPersonNumber p cl n → c.otherCount = 0 →
+      ∀ k ∈ n.exactCard, (k : ℕ) = c.card := by
+  decide
+
+/-- No category of a region is both minimal and augmented in it. -/
+theorem disjoint_ofNumber_minimal_augmented :
+    ∀ S, Disjoint (ofNumber S .minimal) (ofNumber S .augmented) := by
+  decide
+
+theorem sharedPerson_ofPersonNumber (p : Person) (cl : Option Clusivity) (n : Number)
+    (h : (ofPersonNumber p cl n).Nonempty) : sharedPerson (ofPersonNumber p cl n) = some p := by
+  revert h; revert p cl n; decide
+
+theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (cl : Option Clusivity) (n : Number)
+    (h : sharedNumber (ofPersonNumber p cl n) = some .general) : n = .general := by
+  revert h; revert p cl n; decide
+
+end Category
 
 end Person
