@@ -22,7 +22,11 @@ otherwise second with the addressee, otherwise third, Zwicky's correspondence pr
 [resolution in it selects the more prominent conjunct](##Person.coarsen_ofParticipants_union), as
 Corbett's resolution rules state. An inventory of person features
 [generates](##Person.generated) the system identifying the participant sets with the same bundle,
-and [every system is so generated](##Person.exists_generated).
+and [every system is so generated](##Person.exists_generated). The persons of a system are the
+classes of its congruence, its quotient, on which coordination is the join:
+[three](##Person.card_quotient_standardTripartition) in the standard tripartition, and
+[one for each participant set](##Person.injective_mk'_generated_univ) in the system of all three
+features.
 
 ## References
 
@@ -50,6 +54,13 @@ theorem standardTripartition_r_iff {s t : Finset Role} :
     standardTripartition.r s t ↔ (s.Nonempty ↔ t.Nonempty) ∧ (.speaker ∈ s ↔ .speaker ∈ t) := by
   show (ofParticipants s).coarsen = (ofParticipants t).coarsen ↔ _
   revert s t; decide
+
+instance : DecidableRel standardTripartition.r := fun _ _ ↦
+  decidable_of_iff _ standardTripartition_r_iff.symm
+
+/-- The standard tripartition has three persons, the classes of its congruence. -/
+theorem card_quotient_standardTripartition : Fintype.card standardTripartition.Quotient = 3 := by
+  decide
 
 /-- Each class of the standard tripartition is the family of participant sets its person
 covers. -/
@@ -80,6 +91,21 @@ theorem generated_r_iff {F : Features} {s t : Finset Role} :
   · by_cases hf : f ∈ F
     · simp only [hf, true_and, h f hf]
     · simp [hf]
+
+instance (F : Features) : DecidableRel (generated F).r := fun _ _ ↦
+  decidable_of_iff _ generated_r_iff.symm
+
+/-- The persons of the system an inventory generates are told apart by their bundles, and the
+bundle of a coordination is the union of its conjuncts' bundles. -/
+def bundleLift (F : Features) : SupHom (generated F).Quotient Features :=
+  SupCon.kerLift (Person.bundle F)
+
+theorem bundleLift_injective (F : Features) : Function.Injective (bundleLift F) :=
+  SupCon.kerLift_injective _
+
+/-- In the system the three features generate every participant set is a person of its own. -/
+theorem injective_mk'_generated_univ : Function.Injective (generated Finset.univ).mk' :=
+  fun _ _ h ↦ bundle_univ_injective (SupCon.eq.1 h)
 
 private theorem subset_iff_or_exists (a : Finset Role) :
     a = Finset.univ ∨ ∃ f : Feature, ∀ s, s ⊆ a ↔ ¬ Bears s f := by
