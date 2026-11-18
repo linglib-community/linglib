@@ -185,8 +185,8 @@ def participants (s : Finset Ω) : Finset SpeechAct.Role :=
 the referents whose participants the corresponding person value covers. -/
 theorem quad_cells_eq_participantSets :
     ∀ s ∈ ℒπ,
-      (s ∈ inclusive ↔ participants s ∈ Person.firstInclusive.participantSets) ∧
-      (s ∈ exclusive ↔ participants s ∈ Person.firstExclusive.participantSets) ∧
+      (s ∈ inclusive ↔ participants s ∈ Person.Specification.firstInclusive.sets) ∧
+      (s ∈ exclusive ↔ participants s ∈ Person.Specification.firstExclusive.sets) ∧
       (s ∈ secondP ↔ participants s ∈ Person.second.participantSets) ∧
       (s ∈ thirdP ↔ participants s ∈ Person.third.participantSets) := by
   decide

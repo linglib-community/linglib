@@ -8,6 +8,7 @@ module
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Presupposition.PhiFeatures
+public import Linglib.Syntax.Person.Specification
 public import Studies.Landau2013
 public import Studies.Landau2015
 public import Linglib.Data.Examples.Landau2024a
@@ -165,7 +166,7 @@ inductive Jussive where
 /-- The person of a jussive's subject is its orientation in matrix clauses. The volitional is
 speaker-oriented, the imperative addressee-oriented, and the exhortative oriented to the speaker
 and the addressee. -/
-def Jussive.person : Jussive → Person
+def Jussive.person : Jussive → Person.Specification
   | .volitional => .firstExclusive
   | .imperative => .second
   | .exhortative => .firstInclusive
@@ -186,12 +187,13 @@ def reported : SpeechAct.Context W E P T := { c with agent := s, addressee := o 
 /-- At the reported context a first exclusive subject includes just the matrix subject and a second
 person one just the object, Postal's correlation (33), and an inclusive one both. -/
 theorem mem_participantSets_reported :
-    ((reported c s o).participants x ∈ Person.firstExclusive.participantSets ↔
+    ((reported c s o).participants x ∈ Person.Specification.firstExclusive.sets ↔
         s ≤ x ∧ ¬ o ≤ x) ∧
       ((reported c s o).participants x ∈ Person.second.participantSets ↔ o ≤ x ∧ ¬ s ≤ x) ∧
-      ((reported c s o).participants x ∈ Person.firstInclusive.participantSets ↔
+      ((reported c s o).participants x ∈ Person.Specification.firstInclusive.sets ↔
         s ≤ x ∧ o ≤ x) := by
-  simp only [Person.participantSets, Finset.mem_singleton, Finset.ext_iff,
+  simp only [Person.participantSets, Person.Specification.sets_ofParticipants,
+    Finset.mem_singleton, Finset.ext_iff,
     SpeechAct.Role.forall_role, SpeechAct.Context.speaker_mem_participants,
     SpeechAct.Context.addressee_mem_participants, reported]
   simp; tauto
@@ -213,7 +215,7 @@ of its person (35b)–(35d), and the indicative controls nothing (35a). -/
 theorem jussive_rows :
     ∀ row ∈ Examples.all, row.feature? "verb" = some "mal" → ∀ r ∈ row.readings,
       ∀ rs ∈ roles r.1, (r.2 = .acceptable ↔
-        ∀ j ∈ jussiveOf row, rs ∈ j.person.participantSets) := by
+        ∀ j ∈ jussiveOf row, rs ∈ j.person.sets) := by
   decide +kernel
 
 /-! ### Partial control (36), (37) -/
