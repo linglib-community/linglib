@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Mereology.Sum
+public import Mathlib.Order.Hom.Lattice
 
 /-!
 # Atomic and atomless part structures
@@ -131,5 +132,26 @@ theorem Atom.le_sup_iff [SemilatticeSup α] [SupIsSum α] {a x y : α} (ha : Ato
     a ≤ x ⊔ y ↔ a ≤ x ∨ a ≤ y := by
   have h := congrArg (a ∈ ·) (atomsBelow_sup x y)
   simpa [atomsBelow, ha] using h
+
+/-! ### Atomicity and sums
+
+Atomicity is not preserved along sums, so the number of a coordination is not a function of its
+conjuncts' numbers. -/
+
+section
+
+variable {E β : Type*} [SemilatticeSup E] [SemilatticeSup β] {a b : E}
+
+/-- No map preserving sums identifies two distinct atoms while keeping atoms apart from
+non-atoms: an atom summed with itself is an atom, and summed with another is not. -/
+theorem not_forall_atom_iff_of_map_eq (f : SupHom E β) (hab : a ≠ b) (ha : Atom a) (hb : Atom b)
+    (hf : f a = f b) : ¬ ∀ x y, f x = f y → (Atom x ↔ Atom y) := by
+  intro hat
+  have h₁ : f a = f (b ⊔ a) := by rw [map_sup, ← hf, sup_idem]
+  have hsum : Atom (b ⊔ a) := (hat _ _ h₁).1 ha
+  have h₂ : b ⊔ a ≤ a := hsum.2 ha.1 le_sup_right
+  exact hab (le_antisymm (ha.2 hb.1 (le_sup_left.trans h₂)) (le_sup_left.trans h₂))
+
+end
 
 end Mereology
