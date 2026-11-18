@@ -111,7 +111,7 @@ def dom (p : Option Person) (cl : Option Clusivity := none) : Set E :=
 
 @[simp] theorem mem_dom_first_inclusive :
     x ∈ dom c (some .first) (some .inclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := by
-  simp only [dom, Option.map_some, Option.elim_some, if_true, Set.mem_inter_iff, Set.mem_Ici]
+  simp only [dom, Option.map_some, Option.elim_some, ite_true, Set.mem_inter_iff, Set.mem_Ici]
   simp only [or_and_right, toFeatures_first, Finset.inf_insert, Finset.inf_singleton,
     Set.inf_eq_inter, Set.mem_inter_iff, Feature.mem_dom_participant, Feature.mem_dom_speaker]
   tauto
@@ -127,9 +127,9 @@ def dom (p : Option Person) (cl : Option Clusivity := none) : Set E :=
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
 
-theorem dom_first_inclusive_subset_dom_first :
-    dom c (some .first) (some .inclusive) ⊆ dom c (some .first) :=
-  fun _ hx ↦ (mem_dom_first c _).2 ((mem_dom_first_inclusive c _).1 hx).1
+/-- Clusivity only narrows the domain of a person. -/
+theorem dom_subset_dom (p : Option Person) (cl : Option Clusivity) : dom c p cl ⊆ dom c p :=
+  fun _ hx ↦ ⟨hx.1, by simp⟩
 
 end Person
 

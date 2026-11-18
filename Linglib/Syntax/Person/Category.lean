@@ -300,6 +300,19 @@ theorem sharedPerson_singleton (c : Category) : sharedPerson {c} = some c.person
 theorem sharedClusivity_singleton (c : Category) : sharedClusivity {c} = c.clusivity := by
   cases c <;> decide
 
+/-- Categories sharing the third person share no clusivity, none of them holding the speaker. -/
+theorem sharedClusivity_eq_none_of_sharedPerson_eq_third {s : Finset Category}
+    (h : sharedPerson s = some .third) : sharedClusivity s = none := by
+  unfold sharedPerson at h
+  split_ifs at h with h0 _ _ h3
+  iterate 2 cases h
+  obtain ⟨c, hc⟩ := Finset.nonempty_iff_ne_empty.2 h0
+  have hcl : c.clusivity = none := by
+    simpa [clusivity, IncludesSpeaker] using fun _ ↦ (h3 c hc).1
+  have hne (cl : Clusivity) : ¬ ∀ c ∈ s, c.clusivity = some cl := fun hall ↦ by
+    simpa [hcl] using hall c hc
+  simp [sharedClusivity, h0, hne]
+
 theorem sharedPerson_ofPersonNumber (p : Person) (cl : Option Clusivity) (n : Number)
     (h : (ofPersonNumber p cl n).Nonempty) : sharedPerson (ofPersonNumber p cl n) = some p := by
   revert h; revert p cl n; decide
