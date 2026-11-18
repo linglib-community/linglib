@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Bilattice.Representation
 public import Linglib.Logic.Trivalent.Four
 public import Linglib.Logic.Trivalent.Basic
-public import Linglib.Logic.Consequence
+public import Linglib.Logic.Consequence.Mixed
 
 /-!
 # Fitting (2021): The strict/tolerant idea and bilattices
@@ -159,25 +159,25 @@ def TolerantlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsA
 
 /-- A valuation satisfies a sequent strict-to-tolerantly when some conclusion is tolerantly
 designated whenever every premise is strictly designated. -/
-def STSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : List (Fml α)) : Prop :=
+def STSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : Set (Fml α)) : Prop :=
   Consequence.Satisfies (fun v φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ TolerantlyDesignated F (φ.eval v)) v Γ Δ
 
 /-- A valuation satisfies a sequent strictly on both sides. -/
-def CSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : List (Fml α)) : Prop :=
+def CSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : Set (Fml α)) : Prop :=
   Consequence.Satisfies (fun v φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ StrictlyDesignated F (φ.eval v)) v Γ Δ
 
 /-- `ST⟨B, F⟩` validity is the mixed consequence of strict premises and tolerant conclusions over
 the valuations into the anticonsistent values ([fitting-2021] Def 8.7.1). -/
-def STValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) : Prop :=
+def STValid (F : PrimeBifilter B) (Γ Δ : Set (Fml α)) : Prop :=
   Consequence.MixedConsequence
     (fun (v : {v : α → B // ∀ p, IsAnticonsistent (v p)}) φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ TolerantlyDesignated F (φ.eval v)) Γ Δ
 
 /-- `C⟨B, F⟩` validity is the consequence of strict premises and strict conclusions over the
 valuations into the exact values ([fitting-2021] Def 8.7.1). -/
-def CValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) : Prop :=
+def CValid (F : PrimeBifilter B) (Γ Δ : Set (Fml α)) : Prop :=
   Consequence.MixedConsequence
     (fun (v : {v : α → B // ∀ p, IsExact (v p)}) φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ StrictlyDesignated F (φ.eval v)) Γ Δ
@@ -194,7 +194,7 @@ section Interlaced
 
 variable [Conflation B] [Negation B] [IsInterlaced B] [NegConfComm B]
 
-theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
+theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : Set (Fml α)) :
     STValid F Γ Δ ↔ CValid F Γ Δ := by
   refine ⟨fun h ↦ h.comap (fun v ↦ ⟨v, fun p ↦ (v.2 p).isAnticonsistent⟩) (fun _ _ _ ↦ id)
     fun v ψ _ hψ ↦ ⟨hψ.1, eval_isExact v.2 ψ⟩, fun h ↦ ?_⟩
@@ -206,16 +206,17 @@ theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
 
 end Interlaced
 
-theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α} {v : α → B}
-    (h₁ : CSatisfies F v (A :: Γ) Δ) (h₂ : CSatisfies F v Γ (A :: Δ)) : CSatisfies F v Γ Δ :=
+theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : Set (Fml α)} {A : Fml α} {v : α → B}
+    (h₁ : CSatisfies F v (insert A Γ) Δ) (h₂ : CSatisfies F v Γ (insert A Δ)) :
+    CSatisfies F v Γ Δ :=
   Consequence.Satisfies.cut id h₁ h₂
 
 variable [BoundedOrder (Know B)]
 
 theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know B) ≠ ⊤) :
     ¬ ∀ v : α → B, (∀ q, IsAnticonsistent (v q)) →
-      STSatisfies F v [.atom p] [] → STSatisfies F v [] [.atom p] →
-      STSatisfies F v ([] : List (Fml α)) [] := by
+      STSatisfies F v {.atom p} ∅ → STSatisfies F v ∅ {.atom p} →
+      STSatisfies F v (∅ : Set (Fml α)) ∅ := by
   intro h
   set kT : B := ofKnow (⊤ : Know B) with hkT
   have hle_top : ∀ x : B, x ≤ₖ kT := fun _ ↦ le_top (α := Know B)
@@ -225,10 +226,10 @@ theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know 
     obtain ⟨a, ha⟩ := F.nonempty
     exact F.mem_of_kLE ha (hle_top a)
   have hfinal := h (fun _ ↦ kT) (fun _ ↦ hanti)
-    (fun hΓ ↦ absurd (hΓ _ (List.Mem.head _)).2 hnexact)
-    (fun _ ↦ ⟨.atom p, List.Mem.head _, hmem, hanti⟩)
-  obtain ⟨ψ, hψ, -⟩ := hfinal (fun φ hφ ↦ nomatch hφ)
-  exact nomatch hψ
+    (fun hΓ ↦ absurd (hΓ _ rfl).2 hnexact)
+    (fun _ ↦ ⟨.atom p, rfl, hmem, hanti⟩)
+  obtain ⟨ψ, hψ, -⟩ := hfinal (fun φ hφ ↦ hφ.elim)
+  exact hψ
 
 end Logics
 
@@ -335,7 +336,7 @@ def Fml.evalL (v : α → L) : Fml α → L
 
 /-- A sequent is valid in the logic `⟨L, D⟩` when designated premises entail a designated
 conclusion (§8.2). -/
-def LValid (D : PrimeFilter L) (Γ Δ : List (Fml α)) : Prop :=
+def LValid (D : PrimeFilter L) (Γ Δ : Set (Fml α)) : Prop :=
   Consequence.MixedConsequence (fun v φ ↦ φ.evalL v ∈ D) (fun v φ ↦ φ.evalL v ∈ D) Γ Δ
 
 /-- The exact valuation of `L ⊙ L` a valuation in `L` determines, `p ↦ ⟨v p, (v p)ᶜ⟩`. -/
@@ -361,7 +362,7 @@ theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = m
 
 variable [BoundedOrder L]
 
-theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
+theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : Set (Fml α)) :
     CValid D.prod Γ Δ ↔ LValid D Γ Δ := by
   have hval (v : α → L) (φ : Fml α) : φ.eval (exactVal v) ∈ D.prod ↔ φ.evalL v ∈ D := by
     rw [PrimeFilter.mem_prod_iff, eval_exactVal, pro_mk]
@@ -376,14 +377,14 @@ theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
 
 /-! ### Generating strict/tolerant examples (§8.10) -/
 
-theorem stValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
+theorem stValid_prod_iff (D : PrimeFilter L) (Γ Δ : Set (Fml α)) :
     STValid D.prod Γ Δ ↔ LValid D Γ Δ :=
   (stValid_iff_cValid _ _ _).trans (cValid_prod_iff D Γ Δ)
 
 theorem cut_not_local_prod [Nontrivial L] (D : PrimeFilter L) (p : α) :
     ¬ ∀ v : α → L ⊙ L, (∀ q, IsAnticonsistent (v q)) →
-      STSatisfies D.prod v [.atom p] [] → STSatisfies D.prod v [] [.atom p] →
-      STSatisfies D.prod v ([] : List (Fml α)) [] :=
+      STSatisfies D.prod v {.atom p} ∅ → STSatisfies D.prod v ∅ {.atom p} →
+      STSatisfies D.prod v (∅ : Set (Fml α)) ∅ :=
   cut_not_local_stValid D.prod p fun h ↦
     bot_ne_top (congrArg (fun k : Know (L ⊙ L) ↦ (ofKnow k).pro) h)
 
@@ -419,14 +420,14 @@ theorem four_isAnticonsistent_iff :
   decide
 
 -- Example 8.7.4 [cobreros-etal-2012] [fitting-2021]
-theorem four_stValid_iff_cValid {α : Type*} (Γ Δ : List (Fml α)) :
+theorem four_stValid_iff_cValid {α : Type*} (Γ Δ : Set (Fml α)) :
     STValid fourBifilter Γ Δ ↔ CValid fourBifilter Γ Δ :=
   stValid_iff_cValid fourBifilter Γ Δ
 
 theorem four_cut_not_local {α : Type*} (p : α) :
     ¬ ∀ v : α → FOUR, (∀ q, IsAnticonsistent (v q)) →
-      STSatisfies fourBifilter v [.atom p] [] → STSatisfies fourBifilter v [] [.atom p] →
-      STSatisfies fourBifilter v ([] : List (Fml α)) [] :=
+      STSatisfies fourBifilter v {.atom p} ∅ → STSatisfies fourBifilter v ∅ {.atom p} →
+      STSatisfies fourBifilter v (∅ : Set (Fml α)) ∅ :=
   cut_not_local_prod classicalFilter p
 
 /-- `K3`, Kleene's strong three-valued logic, is `Trivalent` with `{true}` designated
@@ -492,9 +493,10 @@ theorem lp_designated : (∀ x : NINE, StrictlyDesignated lpFilter.prod x ↔
 
 -- Example 8.10.4 [fitting-2021]
 theorem lp_explosion_fails :
-    ¬ STValid lpFilter.prod [.atom true, .not (.atom true)] [.atom false] := fun h ↦
-  absurd (h ⟨fun b ↦ if b then mk .undefined .undefined else mk .false .true, by decide⟩
-    (by decide)) (by decide)
+    ¬ STValid lpFilter.prod {.atom true, .not (.atom true)} {.atom false} := fun h ↦
+  absurd (Consequence.mixedConsequence_singleton_right.1 h
+    ⟨fun b ↦ if b then mk .undefined .undefined else mk .false .true, by decide⟩
+    (Set.forall_mem_insert.2 ⟨by decide, Set.forall_mem_singleton.2 (by decide)⟩)) (by decide)
 
 /-- `FDE` is the logical De Morgan algebra `FOUR` under the truth order with `{t, ⊤}` designated
 ([fitting-2021] Example 8.10.5). -/
@@ -512,7 +514,7 @@ instance : DecidablePred (· ∈ fdeFilter) :=
 abbrev SIXTEEN := FOUR ⊙ FOUR
 
 -- Example 8.10.5 [fitting-2021]
-theorem fde_stValid_iff {α : Type*} (Γ Δ : List (Fml α)) :
+theorem fde_stValid_iff {α : Type*} (Γ Δ : Set (Fml α)) :
     STValid fdeFilter.prod Γ Δ ↔ LValid fdeFilter Γ Δ :=
   stValid_prod_iff fdeFilter Γ Δ
 
