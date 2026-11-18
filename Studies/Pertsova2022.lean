@@ -63,11 +63,12 @@ theorem graph_active_ne_authorBipartition (F : Person.Features) (hF : Active F) 
 /-- Under active features, inclusive conflates with second person only if exclusive does, and
 likewise for the other pairs (pp. 402–403). -/
 theorem no_partial_conflation (F : Person.Features) (hF : Active F) :
-    ((Person.generated F).r {.speaker, .addressee} {.addressee} →
-        (Person.generated F).r {.speaker, .addressee} {.speaker}) ∧
-      ((Person.generated F).r {.addressee} ∅ → (Person.generated F).r {.addressee} {.speaker}) ∧
-      ((Person.generated F).r {.speaker} ∅ → (Person.generated F).r {.speaker} {.addressee}) := by
-  simp only [Person.generated_r_iff]
+    (Person.bundle F {.speaker, .addressee} = Person.bundle F {.addressee} →
+        Person.bundle F {.speaker, .addressee} = Person.bundle F {.speaker}) ∧
+      (Person.bundle F {.addressee} = Person.bundle F ∅ →
+        Person.bundle F {.addressee} = Person.bundle F {.speaker}) ∧
+      (Person.bundle F {.speaker} = Person.bundle F ∅ →
+        Person.bundle F {.speaker} = Person.bundle F {.addressee}) := by
   revert F; decide
 
 -- (9), (4)
