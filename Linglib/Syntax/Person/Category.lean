@@ -1,8 +1,10 @@
 module
 
 public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Clusivity
 public import Linglib.Syntax.Person.Lattice
 public import Linglib.Syntax.Number.Basic
+public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
 
@@ -13,16 +15,17 @@ Cysouw's eight referential person categories configure the speech-act participan
 contains with the others it contains, none, one or several: the three singular participants and the
 five attested groups. [They are exactly the well-formed
 configurations](##Person.Category.toConfig_bijective), the two groups this excludes being several
-speakers and an audience with no one else. A category's person keeps clusivity on the groups
-(`Person.Category.person`), and [every category is recovered from its person at some
+speakers and an audience with no one else. A category has a person and, when it is a group
+with the speaker, a clusivity (`Person.Category.person`, `Person.Category.clusivity`), and
+[every category is recovered from the two at some
 number](##Person.Category.ofPersonNumber_person).
 
-The person of a category lies strictly between two partitions of the categories,
+Person and clusivity together lie strictly between two partitions of the categories,
 [coarser](##Person.Category.person_eq_of_participants_eq_of_isGroup_iff) than participants
 together with being a group and [finer](##Person.Category.participants_eq_of_person_eq) than
 participants alone. The speaker alone and the speaker with others share their participants, so
 they are one person where a person is a set of participants, as for Harbour and for Dalrymple
-and Kaplan, and two where the exclusive is a group, as here.
+and Kaplan, and differ in clusivity where the exclusive is a group, as here.
 
 ## References
 
@@ -143,11 +146,16 @@ theorem IsInclusive.includesSpeaker (h : c.IsInclusive) : c.IncludesSpeaker := h
 
 /-! ### The person projection -/
 
-/-- The person of a category is the person of its participants, clusivity being a property of
-groups. -/
-def person (c : Category) : Person :=
-  if c.IsGroup then Person.ofParticipants c.participants
-  else (Person.ofParticipants c.participants).coarsen
+/-- The person of a category: first with the speaker, otherwise second with the addressee,
+otherwise third. -/
+def person (c : Category) : Person := (Person.ofParticipants c.participants).coarsen
+
+/-- The clusivity of a category: a group with the speaker includes or excludes the addressee,
+clusivity being a property of groups. -/
+def clusivity (c : Category) : Option Clusivity :=
+  if c.IsGroup ∧ .speaker ∈ c.participants then
+    some (if .addressee ∈ c.participants then .inclusive else .exclusive)
+  else none
 
 theorem person_includesSpeaker_iff (c : Category) :
     c.person.IncludesSpeaker ↔ c.IncludesSpeaker := by
@@ -157,18 +165,24 @@ theorem participants_mem_participantSets_person (c : Category) :
     c.participants ∈ c.person.participantSets := by
   cases c <;> decide
 
-theorem person_separates_clusivity :
-    Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide +kernel
+theorem clusivity_separates :
+    Category.speakerAddresseeOthers.clusivity ≠ Category.speakerOthers.clusivity := by decide
 
-/-- Categories of one person have the same participants. -/
-theorem participants_eq_of_person_eq {a b : Category} (h : a.person = b.person) :
-    a.participants = b.participants := by
+/-- A clusivity a category has holds of its participants. -/
+theorem holds_of_mem_clusivity {c : Category} {cl : Clusivity} (h : cl ∈ c.clusivity) :
+    cl.Holds c.participants := by
+  revert h; revert c cl; decide
+
+/-- Categories of one person and one clusivity have the same participants. -/
+theorem participants_eq_of_person_eq {a b : Category} (h : a.person = b.person)
+    (hc : a.clusivity = b.clusivity) : a.participants = b.participants := by
   revert a b; decide
 
 /-- Categories with the same participants that are both groups or both individuals have one
-person. -/
+person and one clusivity. -/
 theorem person_eq_of_participants_eq_of_isGroup_iff {a b : Category}
-    (h : a.participants = b.participants) (hg : a.IsGroup ↔ b.IsGroup) : a.person = b.person := by
+    (h : a.participants = b.participants) (hg : a.IsGroup ↔ b.IsGroup) :
+    a.person = b.person ∧ a.clusivity = b.clusivity := by
   revert a b; decide
 
 /-- The speaker and the addressee together are a group. -/
@@ -177,47 +191,51 @@ theorem isGroup_of_participants_eq_univ {c : Category} (h : c.participants = Fin
   revert c; decide
 
 /-- Both refinements are strict: the speaker alone and with others share their participants and
-not their person, and the addressee alone and with others share their person and are not both
-groups. -/
+not their clusivity, and the addressee alone and with others share their person and clusivity
+and are not both groups. -/
 theorem person_strictly_between :
     (Category.speaker.participants = Category.speakerOthers.participants ∧
-      Category.speaker.person ≠ Category.speakerOthers.person) ∧
+      Category.speaker.clusivity ≠ Category.speakerOthers.clusivity) ∧
     (Category.addressee.person = Category.addresseeOthers.person ∧
+      Category.addressee.clusivity = Category.addresseeOthers.clusivity ∧
       ¬ (Category.addressee.IsGroup ↔ Category.addresseeOthers.IsGroup)) := by
   decide
 
-/-- The categories a (person, number) coordinate pair can realize. Clusivity rides on the
-person value and the minimal/augmented coordinates give the minimal/augmented inclusives
-directly (Tagalog *kata* = `(firstInclusive, minimal)` ↦ `{speakerAddressee}`). A
-clusivity-unmarked non-singular first person is the syncretism
-`{speakerAddressee, speakerAddresseeOthers, speakerOthers}` (English *we*), except that the
-speaker and the addressee alone are two and minimal, so the trial, the augmented and the unit
-augmented realize only the groups with others. General number is noncommittal between the
-singular and the group category (`(second, general)` ↦ `{addressee, addresseeOthers}`), and a
-singular or minimal bearing exclusivity realizes nothing. -/
-def ofPersonNumber : Person → Number → Finset Category
-  | .first, .singular | .first, .minimal => {.speaker}
-  | .first, .dual => {.speakerAddressee, .speakerOthers}
-  | .first, .trial | .first, .augmented | .first, .unitAugmented =>
+/-- The categories a person, an optional clusivity and a number can realize. The
+minimal/augmented coordinates give the minimal/augmented inclusives directly (Tagalog *kata* is
+first person, inclusive, minimal, `{speakerAddressee}`). A non-singular first person with no
+clusivity is the syncretism `{speakerAddressee, speakerAddresseeOthers, speakerOthers}` (English
+*we*), except that the speaker and the addressee alone are two and minimal, so the trial, the
+augmented and the unit augmented realize only the groups with others. General number is
+noncommittal between the singular and the group category (the second person at the general
+number is `{addressee, addresseeOthers}`). A singular or minimal with the exclusive realizes
+nothing, and neither does a clusivity on the second or the third person. -/
+def ofPersonNumber : Person → Option Clusivity → Number → Finset Category
+  | .first, none, .singular | .first, none, .minimal => {.speaker}
+  | .first, none, .dual => {.speakerAddressee, .speakerOthers}
+  | .first, none, .trial | .first, none, .augmented | .first, none, .unitAugmented =>
     {.speakerAddresseeOthers, .speakerOthers}
-  | .first, .general => {.speaker, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
-  | .first, _ => {.speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
-  | .firstInclusive, .singular => ∅
-  | .firstInclusive, .minimal | .firstInclusive, .dual => {.speakerAddressee}
-  | .firstInclusive, .general => {.speakerAddressee, .speakerAddresseeOthers}
-  | .firstInclusive, _ => {.speakerAddresseeOthers}
-  | .firstExclusive, .singular | .firstExclusive, .minimal => ∅
-  | .firstExclusive, _ => {.speakerOthers}
-  | .second, .singular | .second, .minimal => {.addressee}
-  | .second, .general => {.addressee, .addresseeOthers}
-  | .second, _ => {.addresseeOthers}
-  | .third, .singular | .third, .minimal => {.other}
-  | .third, .general => {.other, .others}
-  | .third, _ => {.others}
+  | .first, none, .general =>
+    {.speaker, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
+  | .first, none, _ => {.speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
+  | .first, some .inclusive, .singular => ∅
+  | .first, some .inclusive, .minimal | .first, some .inclusive, .dual => {.speakerAddressee}
+  | .first, some .inclusive, .general => {.speakerAddressee, .speakerAddresseeOthers}
+  | .first, some .inclusive, _ => {.speakerAddresseeOthers}
+  | .first, some .exclusive, .singular | .first, some .exclusive, .minimal => ∅
+  | .first, some .exclusive, _ => {.speakerOthers}
+  | .second, none, .singular | .second, none, .minimal => {.addressee}
+  | .second, none, .general => {.addressee, .addresseeOthers}
+  | .second, none, _ => {.addresseeOthers}
+  | .third, none, .singular | .third, none, .minimal => {.other}
+  | .third, none, .general => {.other, .others}
+  | .third, none, _ => {.others}
+  | _, _, _ => ∅
 
-/-- `ofPersonNumber` inverts the person projection, recovering every category from its
-coordinates at some number value. -/
-theorem ofPersonNumber_person (c : Category) : ∃ n, ofPersonNumber c.person n = {c} := by
+/-- `ofPersonNumber` inverts the person and clusivity projections, recovering every category from
+its coordinates at some number value. -/
+theorem ofPersonNumber_person (c : Category) :
+    ∃ n, ofPersonNumber c.person c.clusivity n = {c} := by
   cases c
   · exact ⟨.singular, rfl⟩
   · exact ⟨.singular, rfl⟩
@@ -231,15 +249,15 @@ theorem ofPersonNumber_person (c : Category) : ∃ n, ofPersonNumber c.person n 
 /-- A category without others has exactly its participants, so a number value of fixed
 cardinality realizes it only at that cardinality. -/
 theorem exactCard_eq_card_of_mem_ofPersonNumber :
-    ∀ p n c, c ∈ ofPersonNumber p n → c.otherCount = 0 →
+    ∀ p cl n c, c ∈ ofPersonNumber p cl n → c.otherCount = 0 →
       ∀ k ∈ n.exactCard, (k : ℕ) = c.card := by
   decide
 
 /-- No category is both minimal and augmented, whatever the person values: `[−minimal]` is the
 complement of `[+minimal]`. -/
-theorem disjoint_ofPersonNumber_minimal_augmented (p q : Person) :
-    Disjoint (ofPersonNumber p .minimal) (ofPersonNumber q .augmented) := by
-  revert p q; decide
+theorem disjoint_ofPersonNumber_minimal_augmented (p q : Person) (c d : Option Clusivity) :
+    Disjoint (ofPersonNumber p c .minimal) (ofPersonNumber q d .augmented) := by
+  revert p q c d; decide
 
 /-! ### The person and number of a set of categories
 
@@ -248,17 +266,22 @@ addressees or English *we* for any group containing the speaker, has a person an
 only up to the values neutral between them, the clusivity-unmarked `first` and the
 noncommittal `general`. -/
 
-/-- The person shared by a set of referential categories is the common value of `person` where
-there is one, `first` for categories differing only in clusivity, and `none` for the empty set
-and for categories disagreeing on the speech-act roles they include. -/
+/-- The person shared by a set of referential categories: first where all include the speaker,
+second where all include the addressee and not the speaker, third where none includes either,
+and `none` for the empty set and for categories disagreeing on the roles they include. -/
 def sharedPerson (s : Finset Category) : Option Person :=
   if s = ∅ then none
-  else if ∀ c ∈ s, c.IncludesSpeaker then
-    if ∀ c ∈ s, c.person = .firstInclusive then some .firstInclusive
-    else if ∀ c ∈ s, c.person = .firstExclusive then some .firstExclusive
-    else some .first
+  else if ∀ c ∈ s, c.IncludesSpeaker then some .first
   else if ∀ c ∈ s, c.IncludesAddressee ∧ ¬ c.IncludesSpeaker then some .second
   else if ∀ c ∈ s, ¬ c.IncludesSpeaker ∧ ¬ c.IncludesAddressee then some .third
+  else none
+
+/-- The clusivity shared by a set of referential categories: one that all of them have, and
+`none` for the empty set and for categories that differ in clusivity or have none. -/
+def sharedClusivity (s : Finset Category) : Option Clusivity :=
+  if s = ∅ then none
+  else if ∀ c ∈ s, c.clusivity = some .inclusive then some .inclusive
+  else if ∀ c ∈ s, c.clusivity = some .exclusive then some .exclusive
   else none
 
 /-- The number shared by a set of referential categories is singular or plural when the
@@ -274,13 +297,20 @@ def sharedNumber (s : Finset Category) : Option Number :=
 theorem sharedPerson_singleton (c : Category) : sharedPerson {c} = some c.person := by
   cases c <;> decide
 
-theorem sharedPerson_ofPersonNumber (p : Person) (n : Number)
-    (h : (ofPersonNumber p n).Nonempty) : sharedPerson (ofPersonNumber p n) = some p := by
-  revert h; revert p n; decide
+theorem sharedClusivity_singleton (c : Category) : sharedClusivity {c} = c.clusivity := by
+  cases c <;> decide
 
-theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (n : Number)
-    (h : sharedNumber (ofPersonNumber p n) = some .general) : n = .general := by
-  revert h; revert p n; decide
+theorem sharedPerson_ofPersonNumber (p : Person) (cl : Option Clusivity) (n : Number)
+    (h : (ofPersonNumber p cl n).Nonempty) : sharedPerson (ofPersonNumber p cl n) = some p := by
+  revert h; revert p cl n; decide
+
+theorem sharedClusivity_ofPersonNumber (p : Person) (cl : Option Clusivity) (n : Number)
+    (h : (ofPersonNumber p cl n).Nonempty) : sharedClusivity (ofPersonNumber p cl n) = cl := by
+  revert h; revert p cl n; decide
+
+theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (cl : Option Clusivity) (n : Number)
+    (h : sharedNumber (ofPersonNumber p cl n) = some .general) : n = .general := by
+  revert h; revert p cl n; decide
 
 end Category
 

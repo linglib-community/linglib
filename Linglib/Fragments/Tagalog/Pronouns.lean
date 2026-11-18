@@ -85,7 +85,8 @@ def sa : Category → String
 
 /-- The pronoun of a category in a case series, with the series' comparative value. -/
 def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
-  { form, person := some c.person, number := some (number c), cases := {k.label} }
+  { form, person := some c.person, clusivity := c.clusivity, number := some (number c),
+    cases := {k.label} }
 
 /-- The pronoun inventory: the three series over the eight categories. -/
 def personal : Finset PersonalPronoun :=
@@ -94,12 +95,12 @@ def personal : Finset PersonalPronoun :=
 /-- An entry denotes exactly its category. -/
 theorem entry_categories (c : Category) (k : Case) (f : String) :
     (entry c k f).categories = {c} := by
-  show Category.ofPersonNumber c.person (number c) = {c}
+  show Category.ofPersonNumber c.person c.clusivity (number c) = {c}
   cases c <;> decide
 
 /-- Clusivity is borne only by the non-singular first-person entries. -/
 theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).WellFormed := by
-  show ∀ per ∈ some c.person, per.MarksClusivity → some (number c) ≠ some .singular
+  show c.clusivity.isSome → some (number c) ≠ some .singular
   cases c <;> decide
 
 /-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*

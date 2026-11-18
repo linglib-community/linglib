@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Person.Basic
-public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Clusivity
@@ -116,13 +115,6 @@ theorem restrict_exclusive_second :
 
 theorem restrict_inclusive_third :
     restrict (some inclusive) Person.third.participantSets = ∅ := by
-  decide
-
-/-- With no person specified, the inclusive participant sets are those of the second person and
-of the inclusive first person. -/
-theorem restrict_inclusive_univ :
-    restrict (some inclusive) Finset.univ =
-      Person.second.participantSets ∪ Person.firstInclusive.participantSets := by
   decide
 
 end Clusivity

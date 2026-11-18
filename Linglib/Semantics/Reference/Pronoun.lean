@@ -52,19 +52,19 @@ variable {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (
 domain of its referential person at the context of utterance, the number domain of its referential
 number and the gender domain of its gender. -/
 def phiDom : Set E :=
-  Person.dom c e.referentialPerson ∩
+  Person.dom c e.referentialPerson e.referentialClusivity ∩
     Number.dom e.referentialNumber ∩
     Gender.dom e.gender
 
 @[simp] theorem mem_phiDom (x : E) :
     x ∈ e.phiDom c ↔
-      x ∈ Person.dom c e.referentialPerson ∧ x ∈ Number.dom e.referentialNumber ∧
-        x ∈ Gender.dom e.gender := by
+      x ∈ Person.dom c e.referentialPerson e.referentialClusivity ∧
+        x ∈ Number.dom e.referentialNumber ∧ x ∈ Gender.dom e.gender := by
   simp only [phiDom, Set.mem_inter_iff, and_assoc]
 
 theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
-  simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
+  simp only [phiDom, referentialPerson, referentialClusivity, referentialNumber, hr, hg]
 
 /-- A pronoun denotes the value `g i` of its index where that value lies in the φ-domain, and
 nothing elsewhere. -/

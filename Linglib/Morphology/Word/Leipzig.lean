@@ -47,8 +47,8 @@ namespace Morphology
 /-- The standard abbreviations of the Leipzig Glossing Rules that name a value of the feature,
 with the value each names. -/
 def Feature.labels : (f : Feature) → List (List Char × f.Value)
-  | .person => [("1".toList, .first), ("2".toList, .second), ("3".toList, .third),
-      ("INCL".toList, .firstInclusive), ("EXCL".toList, .firstExclusive)]
+  | .person => [("1".toList, .first), ("2".toList, .second), ("3".toList, .third)]
+  | .clusivity => [("INCL".toList, .inclusive), ("EXCL".toList, .exclusive)]
   | .number => [("SG".toList, .singular), ("DU".toList, .dual), ("PL".toList, .plural)]
   | .gender => [("M".toList, .Masc), ("F".toList, .Fem), ("N".toList, .Neut),
       ("MASC".toList, .Masc), ("FEM".toList, .Fem), ("NEUT".toList, .Neut)]
@@ -71,13 +71,11 @@ theorem Feature.nodup_labels (f : Feature) : (f.labels.map Prod.fst).Nodup := by
 
 namespace Features
 
-/-- The features the category labels `ls` name. A person is read from a label `INCL` or `EXCL`,
-else from the digit that begins a label, and a number from a label after its person digit, a
-person and a number being written together (Rule 5). -/
+/-- The features the category labels `ls` name. A person is read from the digit that begins a
+label, and a number from a label after its person digit, a person and a number being written
+together (Rule 5). -/
 def ofLabels (ls : List (List Char)) : Features
-  | .person => (ls.findSome? fun l ↦ (Feature.labels .person).lookup l |>.filter
-      (· ∈ [Person.firstInclusive, .firstExclusive])).orElse fun _ ↦
-        ls.findSome? fun l ↦ l.head?.bind fun c ↦ (Feature.labels .person).lookup [c]
+  | .person => ls.findSome? fun l ↦ l.head?.bind fun c ↦ (Feature.labels .person).lookup [c]
   | .number => ls.findSome? fun l ↦
       (Feature.labels .number).lookup (l.dropWhile (· ∈ ['1', '2', '3']))
   | f => ls.findSome? ((Feature.labels f).lookup ·)

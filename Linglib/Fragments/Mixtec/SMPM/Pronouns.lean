@@ -86,12 +86,12 @@ def cl1sg : PersonalPronoun :=
 
 /-- *=(y)é* is the first person plural inclusive clitic ((4), (61)). -/
 def cl1plIncl : PersonalPronoun :=
-  { form := "=(y)é", person := some .firstInclusive, number := some .plural,
+  { form := "=(y)é", person := some .first, clusivity := some .inclusive, number := some .plural,
     strength := some .clitic }
 
 /-- *=ndú* is the first person plural exclusive clitic ((4), (61)). -/
 def cl1plExcl : PersonalPronoun :=
-  { form := "=ndú", person := some .firstExclusive, number := some .plural,
+  { form := "=ndú", person := some .first, clusivity := some .exclusive, number := some .plural,
     strength := some .clitic }
 
 /-- *=ú* is the second person singular clitic ((4), (61)). -/
@@ -128,7 +128,7 @@ def str1sg : PersonalPronoun :=
 
 /-- *ndú'ú* is the first person plural exclusive non-clitic ((4), (62)). -/
 def str1plExcl : PersonalPronoun :=
-  { form := "ndú'ú", person := some .firstExclusive, number := some .plural,
+  { form := "ndú'ú", person := some .first, clusivity := some .exclusive, number := some .plural,
     strength := some .strong }
 
 /-- *yô'o* is the second person singular non-clitic ((4), (62)). -/

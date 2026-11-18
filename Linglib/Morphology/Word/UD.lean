@@ -47,35 +47,47 @@ as features, which drops them.
 
 namespace Person
 
-/-- Realization as a person tag and, for an inclusive or exclusive first person, a clusivity
-tag. -/
-def toUD : Person → UD.Person × Option UD.Clusivity
-  | .first => (.first, none)
-  | .firstInclusive => (.first, some .In)
-  | .firstExclusive => (.first, some .Ex)
-  | .second => (.second, none)
-  | .third => (.third, none)
+/-- Realization as a person tag. -/
+def toUD : Person → UD.Person
+  | .second => .second
+  | .third => .third
+  | _ => .first
 
-/-- Ingest a person tag with a clusivity tag, which only the first person takes; the zero and the
-fourth person have no value. -/
-def fromUD : UD.Person × Option UD.Clusivity → Option Person
-  | (.first, none) => some .first
-  | (.first, some .In) => some .firstInclusive
-  | (.first, some .Ex) => some .firstExclusive
-  | (.second, none) => some .second
-  | (.third, none) => some .third
+/-- Ingest a person tag; the zero and the fourth person have no value. -/
+def fromUD : UD.Person → Option Person
+  | .first => some .first
+  | .second => some .second
+  | .third => some .third
   | _ => none
 
-/-- Realization and ingestion of person are a partial equivalence: a person has its tags exactly
-when they ingest as it. -/
-def toUDPEquiv : Person ≃. UD.Person × Option UD.Clusivity where
-  toFun p := some p.toUD
-  invFun := fromUD
-  inv p u := by obtain ⟨_ | _ | _ | _ | _, _ | _ | _⟩ := u <;> cases p <;> decide
-
-theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p := by cases p <;> rfl
+-- TODO: once `Person` is first, second and third alone, `toUD` and `fromUD` are a partial
+-- equivalence `Person ≃. UD.Person` and `coarsen` goes.
+theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> rfl
 
 end Person
+
+/-! ### Clusivity -/
+
+namespace Clusivity
+
+/-- Realization as a clusivity tag. -/
+def toUD : Clusivity → UD.Clusivity
+  | .inclusive => .In
+  | .exclusive => .Ex
+
+/-- Ingest a clusivity tag. -/
+def fromUD : UD.Clusivity → Clusivity
+  | .In => .inclusive
+  | .Ex => .exclusive
+
+/-- Realization and ingestion of clusivity are inverse. -/
+def toUDEquiv : Clusivity ≃ UD.Clusivity where
+  toFun := toUD
+  invFun := fromUD
+  left_inv c := by cases c <;> rfl
+  right_inv u := by cases u <;> rfl
+
+end Clusivity
 
 /-! ### Number -/
 
@@ -229,13 +241,14 @@ def toUD (f : Features) : UD.MorphFeatures where
   voice := f .voice
   evident := f .evident
   polarity := f .polarity
-  person := (f .person).map (·.toUD.1)
-  clusivity := (f .person).bind (·.toUD.2)
+  person := (f .person).map Person.toUD
+  clusivity := (f .clusivity).map Clusivity.toUD
   polite := f .polite
 
 /-- The features an annotation ingests as. -/
 def ofUD (m : UD.MorphFeatures) : Features
-  | .person => m.person.bind fun u ↦ Person.fromUD (u, m.clusivity)
+  | .person => m.person.bind Person.fromUD
+  | .clusivity => m.clusivity.map Clusivity.fromUD
   | .number => m.number.bind Number.fromUD
   | .gender => m.gender
   | .animacy => m.animacy
@@ -255,17 +268,21 @@ def ofUD (m : UD.MorphFeatures) : Features
   | .polarity => m.polarity
   | .polite => m.polite
 
-/-- Ingestion inverts realization except at case and number: the oblique case returns as the
-accusative and the purposive as the causal, and a number value without a tag returns as `none`. -/
+/-- Ingestion inverts realization except at case, number and person: the oblique case returns as
+the accusative and the purposive as the causal, a number value without a tag returns as `none`,
+and a person returns without its clusivity, which is a feature of its own. -/
 theorem ofUD_toUD (f : Features) (t : Feature) :
     ofUD (toUD f) t =
       match t with
       | .case => (f .case).map fun c ↦ if c = .obl then .acc else if c = .purp then .caus else c
       | .number => (f .number).bind fun n ↦ if n.toUD = none then none else some n
+      | .person => (f .person).map Person.coarsen
       | t => f t := by
   cases t
   case person => rcases h : f .person with - | p <;> simp only [ofUD, toUD, h] <;>
     [rfl; (cases p <;> rfl)]
+  case clusivity => rcases h : f .clusivity with - | c <;> simp only [ofUD, toUD, h] <;>
+    [rfl; (cases c <;> rfl)]
   case number => rcases h : f .number with - | n <;> simp only [ofUD, toUD, h] <;>
     [rfl; (cases n <;> rfl)]
   case case => rcases h : f .case with - | c <;> simp only [ofUD, toUD, h] <;>

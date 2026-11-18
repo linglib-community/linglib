@@ -203,7 +203,8 @@ theorem participant_mem_toFeatures :
     .participant ∈ c.toFeatures univ ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
   cases c <;> decide +kernel
 
-theorem toFeatures_person (F : Features) (c : Category) :
+/-- Without [addressee], a category bears the features its person does. -/
+theorem toFeatures_person (hF : .addressee ∉ F) (c : Category) :
     c.person.toFeatures F = c.toFeatures F := by
   revert F; cases c <;> decide
 

@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Clusivity
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -117,6 +118,28 @@ theorem le_ofParticipants_iff {x : Specification} {s : Finset Role} :
     x ≤ ofParticipants s ↔ s ∈ x.sets :=
   Finset.singleton_subset_iff
 
+/-- The specification of an optional person narrowed by an optional clusivity: the participant
+sets of the person, all of them where there is none, that satisfy the clusivity. It is
+unspecified where no participant set does, as for the second person with the exclusive. -/
+def ofPersonClusivity (p : Option Person) (c : Option Clusivity) : Specification :=
+  if h : (Clusivity.restrict c (p.elim Finset.univ participantSets)).Nonempty then
+    OrderDual.toDual ⟨_, h⟩
+  else ⊥
+
+@[simp] theorem ofPersonClusivity_none_none : ofPersonClusivity none none = ⊥ := by decide
+
+@[simp] theorem ofPersonClusivity_some_none (p : Person) :
+    ofPersonClusivity (some p) none = ofPerson p := by
+  revert p; decide
+
+theorem ofPersonClusivity_first_inclusive :
+    ofPersonClusivity (some .first) (some .inclusive) = firstInclusive := by
+  decide
+
+theorem ofPersonClusivity_first_exclusive :
+    ofPersonClusivity (some .first) (some .exclusive) = firstExclusive := by
+  decide
+
 /-- A specification is printed as the participant sets it covers. -/
 instance : Repr Specification where
   reprPrec x _ :=
@@ -155,3 +178,14 @@ theorem not_compat_first_second : ¬ Compat (ofPerson .first) (ofPerson .second)
 end Specification
 
 end Person
+
+namespace Clusivity
+
+/-- With no person specified, the inclusive participant sets are those of the second person and
+of the inclusive first person. -/
+theorem restrict_inclusive_univ :
+    restrict (some inclusive) Finset.univ =
+      Person.second.participantSets ∪ Person.firstInclusive.participantSets := by
+  decide
+
+end Clusivity

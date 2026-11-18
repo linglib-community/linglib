@@ -16,8 +16,8 @@ An agreement bundle gives each dimension a slot: a person specification
 is less specific than an inclusive or an exclusive one, and a slot of the flat order of
 `Core/Order/Flat.lean` in the others. Its partial order, its bottom, the wholly unspecified
 bundle, and its unification are the pointwise ones. Each dimension is a token feature with that
-feature's values, and a token's bundle is its features read along that inclusion,
-`Agreement.Bundle.ofFeatures`.
+feature's values, and a token's bundle is its features read along that inclusion, the person
+slot from the token's person and clusivity together, `Agreement.Bundle.ofFeatures`.
 
 ## Main definitions
 
@@ -139,10 +139,27 @@ def personNumber (x : Person.Specification) (n : Number) : Bundle :=
 
 /-- The restriction of a token's features to the agreement dimensions reads them along
 `Dimension.toFeature`. -/
-def ofFeatures (f : Morphology.Features) : Bundle := fun d ↦ Dimension.Slot.ofFlat d (f d.toFeature)
+def ofFeatures (f : Morphology.Features) : Bundle
+  | .person => .ofPersonClusivity (f .person) (f .clusivity)
+  | .number => f .number
+  | .gender => f .gender
+  | .case => f .case
+  | .definiteness => f .definiteness
 
-@[simp] theorem ofFeatures_apply (f : Morphology.Features) (d : Dimension) :
-    ofFeatures f d = Dimension.Slot.ofFlat d (f d.toFeature) :=
+@[simp] theorem ofFeatures_person (f : Morphology.Features) :
+    ofFeatures f .person = .ofPersonClusivity (f .person) (f .clusivity) :=
+  rfl
+
+@[simp] theorem ofFeatures_number (f : Morphology.Features) : ofFeatures f .number = f .number :=
+  rfl
+
+@[simp] theorem ofFeatures_gender (f : Morphology.Features) : ofFeatures f .gender = f .gender :=
+  rfl
+
+@[simp] theorem ofFeatures_case (f : Morphology.Features) : ofFeatures f .case = f .case := rfl
+
+@[simp] theorem ofFeatures_definiteness (f : Morphology.Features) :
+    ofFeatures f .definiteness = f .definiteness :=
   rfl
 
 instance : DecidableLE Bundle := fun x y ↦ inferInstanceAs (Decidable (∀ d, x d ≤ y d))
