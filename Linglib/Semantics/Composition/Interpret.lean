@@ -16,6 +16,7 @@ functions of the value its index is given](##PhraseStructure.Tree.interpret_bind
 
 ## Main definitions
 
+* `Interpreter.withAbstraction`: an interpreter that admits abstraction at an index.
 * `PhraseStructure.Tree.derive`: the derivations of a tree over a language of rules with
   abstraction, its traces variables.
 * `PhraseStructure.Tree.interpret`: their values, relative to an assignment.
@@ -27,6 +28,19 @@ functions of the value its index is given](##PhraseStructure.Tree.interpret_bind
 -/
 
 @[expose] public section
+
+namespace Interpreter
+
+variable {B : Type} {L : ManySorted.Language.{0, 0} (Ty B)}
+
+/-- An interpreter with predicate abstraction: a binder node admits abstraction over its index,
+and a binary node admits what the interpreter admits. -/
+def withAbstraction (I : Interpreter L ℕ) (Γ : ℕ → Ty B) :
+    Interpreter (L.withAbstraction Γ) ℕ where
+  bind n b := [⟨Γ n ⇒ b, ManySorted.Language.Sum.inr (PredicateAbstraction.index n b)⟩]
+  binary l r := (I.binary l r).map fun ⟨u, m⟩ ↦ ⟨u, .inl m⟩
+
+end Interpreter
 
 open ManySorted Interpreter
 

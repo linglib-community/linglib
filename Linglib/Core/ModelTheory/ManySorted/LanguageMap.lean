@@ -157,6 +157,19 @@ def withBinary {B : S → S → S → Type v} (f : ∀ {a b c : S}, L.Binary a b
     | .prod (.of _) .nil, g => g
     | .prod (.of _) (.prod _ _), g => g
 
+/-- The map from `L.withBinary B` to `L.withBinary B'` given by a map of the binary symbols. -/
+def mapBinary {B B' : S → S → S → Type v} (f : ∀ {a b c : S}, B a b c → B' a b c) :
+    L.withBinary B →ᴸ L.withBinary B' where
+  onFunction σ _ g :=
+    match σ, g with
+    | .prod (.of _) (.of _), g => f g
+    | .nil, g => g
+    | .of _, g => g
+    | .prod .nil _, g => g
+    | .prod (.prod _ _) _, g => g
+    | .prod (.of _) .nil, g => g
+    | .prod (.of _) (.prod _ _), g => g
+
 /-! ### Expansions -/
 
 /-- A language homomorphism is an expansion on a pair of structures if it commutes with the
@@ -201,6 +214,38 @@ theorem isExpansionOn_reduct (φ : L →ᴸ L') (M' : L'.Structure D) :
 theorem pi_isExpansionOn {M : L.Structure D} {M' : L'.Structure D} (h : φ.IsExpansionOn M M')
     (A : Type x) : φ.IsExpansionOn (M.pi A) (M'.pi A) :=
   ⟨fun _ _ f _ ↦ funext fun _ ↦ h.map_onFunction f _⟩
+
+theorem withBinary_isExpansionOn {B : S → S → S → Type v} {M : L.Structure D}
+    {f : ∀ {a b c : S}, L.Binary a b c → B a b c}
+    {binary : ∀ {a b c : S}, B a b c → D a → D b → D c}
+    (h : ∀ {a b c : S} (g : L.Binary a b c) (x : D a) (y : D b),
+      binary (f g) x y = M.funMap g (x, y)) :
+    (LHom.withBinary (L := L) f).IsExpansionOn M (M.withBinary binary) where
+  map_onFunction σ _ g x :=
+    match σ, g with
+    | .prod (.of _) (.of _), g => h g x.1 x.2
+    | .nil, _ => rfl
+    | .of _, _ => rfl
+    | .prod .nil _, _ => rfl
+    | .prod (.prod _ _) _, _ => rfl
+    | .prod (.of _) .nil, _ => rfl
+    | .prod (.of _) (.prod _ _), _ => rfl
+
+theorem mapBinary_isExpansionOn {B B' : S → S → S → Type v} {M : L.Structure D}
+    {f : ∀ {a b c : S}, B a b c → B' a b c}
+    {binary : ∀ {a b c : S}, B a b c → D a → D b → D c}
+    {binary' : ∀ {a b c : S}, B' a b c → D a → D b → D c}
+    (h : ∀ {a b c : S} (g : B a b c), binary' (f g) = binary g) :
+    (LHom.mapBinary (L := L) f).IsExpansionOn (M.withBinary binary) (M.withBinary binary') where
+  map_onFunction σ _ g x :=
+    match σ, g with
+    | .prod (.of _) (.of _), g => congrFun₂ (h g) x.1 x.2
+    | .nil, _ => rfl
+    | .of _, _ => rfl
+    | .prod .nil _, _ => rfl
+    | .prod (.prod _ _) _, _ => rfl
+    | .prod (.of _) .nil, _ => rfl
+    | .prod (.of _) (.prod _ _), _ => rfl
 
 /-! ### Terms -/
 

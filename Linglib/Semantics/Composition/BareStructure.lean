@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Basic
+public import Linglib.Semantics.Composition.Interpreter
 public import Linglib.Syntax.Skeleton
 
 /-!
@@ -39,7 +39,7 @@ each word may be. -/
 def derivs (I : Interpreter L N) (lex : Lx → List (Sigma W)) :
     Skeleton N Lx → List (Sigma (Deriv L W))
   | .leaf x => (lex x).map fun ⟨a, w⟩ ↦ ⟨a, .leaf w⟩
-  | .unary n s => I.unaryValues (Term.structure L W) n (I.derivs lex s)
+  | .unary n s => I.bindValues (Term.structure L W) n (I.derivs lex s)
   | .binary _ s₁ s₂ => I.binaryValues (Term.structure L W) (I.derivs lex s₁) (I.derivs lex s₂)
 
 /-- The values of the derivations over a bare structure, for a lexicon of typed items whose

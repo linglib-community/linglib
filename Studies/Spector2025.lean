@@ -9,6 +9,7 @@ public import Linglib.Semantics.Composition.PredicateAbstraction
 public import Linglib.Semantics.Composition.Readings
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Data.Examples.Spector2025
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Spector (2025): Supervaluationist RSA

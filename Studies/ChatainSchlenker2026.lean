@@ -11,6 +11,7 @@ public import Mathlib.Data.PFun
 public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
 public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Composition.Mode.Interpreter
 
 /-!
 # Chatain and Schlenker (2026): Local accommodation without covert operators

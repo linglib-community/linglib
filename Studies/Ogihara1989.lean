@@ -12,6 +12,7 @@ public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Syntax.Tree.Command
 public import Studies.Partee1973
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Ogihara (1989): Temporal Reference in English and Japanese

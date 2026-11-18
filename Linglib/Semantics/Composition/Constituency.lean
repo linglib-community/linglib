@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Semantics.Composition.Basic
+public import Linglib.Semantics.Composition.Interpreter
+public import Linglib.Core.ModelTheory.ManySorted.Comap
 
 /-!
 # The interpretation of a constituency tree
@@ -65,7 +66,7 @@ def nodeValues (I : Interpreter G ℕ) (M : G.Structure D) (ρ : ∀ {a : T}, W 
     Label C L → List (List (Sigma D)) → List (Sigma D)
   | .terminal _ w, [] => (lex (.inl w)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩
   | .trace n _, [] => (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩
-  | .bind n _, [X] => I.unaryValues M n X
+  | .bind n _, [X] => I.bindValues M n X
   | .phrase _ _, [X] => X
   | .phrase _ _, [X, Y] => I.binaryValues M X Y
   | _, _ => []
@@ -116,7 +117,7 @@ theorem map_nodeValues {D' : T → Type} {M' : G.Structure D'} {ρ' : ∀ {a : T
   match l, Xs with
   | .terminal _ w, [] => simp [nodeValues, Function.comp_def, hρ]
   | .trace n _, [] => simp [nodeValues, Function.comp_def, hρ]
-  | .bind n _, [X] => exact map_unaryValues h hu
+  | .bind n _, [X] => exact map_bindValues h hu
   | .phrase _ _, [X] => rfl
   | .phrase _ _, [X, Y] => exact map_binaryValues h hb
   | .terminal _ _, _ :: _ | .trace _ _, _ :: _ | .bind _ _, [] | .bind _ _, _ :: _ :: _
@@ -151,12 +152,12 @@ theorem derivs_eq_values (t : Tree C L) :
       (lex (.inr n)).map fun ⟨a, x⟩ ↦ ⟨a, ρ x⟩ := by
   simp [values_eq_fold, nodeValues]
 
-/-- The values of a binder over an index are those of the unary rules its index admits, at the
+/-- The values of a binder over an index are those of the rules its index admits, at the
 values of its body. -/
 @[simp] theorem values_bind (n : ℕ) (c : C) (t : Tree C L) :
     (bind n c t).values I M ρ lex = (t.values I M ρ lex).flatMap fun ⟨a, x⟩ ↦
-      (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩ := by
-  simp [values_eq_fold, nodeValues, unaryValues]
+      (I.bind n a).map fun ⟨b, r⟩ ↦ ⟨b, M.funMap r x⟩ := by
+  simp [values_eq_fold, nodeValues, bindValues]
 
 /-- The values of a binary node are those of the rules the node admits for its daughters'
 types, at the values of its daughters. -/
@@ -184,8 +185,8 @@ theorem derivs_trace (n : ℕ) (c : C) :
 
 theorem derivs_bind (n : ℕ) (c : C) (t : Tree C L) :
     (bind n c t).derivs I lex = (t.derivs I lex).flatMap fun ⟨a, d⟩ ↦
-      (I.unary n a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩ := by
-  simp [derivs, nodeValues, unaryValues]
+      (I.bind n a).map fun ⟨b, r⟩ ↦ ⟨b, .unary r d⟩ := by
+  simp [derivs, nodeValues, bindValues]
   rfl
 
 theorem derivs_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
@@ -202,31 +203,145 @@ theorem derivs_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
 
 end Compositional
 
+/-! ### Relations between the values of two interpreters
+
+Two interpreters may differ in their rules, their types and their domains. A relation between
+their lists of values that holds at the words, and that binders and binary nodes preserve, holds
+of the values of every tree. -/
+
+section Rel
+
+variable {T' : Type} {G' : Language T'} {W' D' : T' → Type} {I : Interpreter G ℕ}
+  {J : Interpreter G' ℕ} {M : G.Structure D} {M' : G'.Structure D'} {ρ : ∀ {a : T}, W a → D a}
+  {ρ' : ∀ {a : T'}, W' a → D' a} {lex : L ⊕ ℕ → List (Sigma W)}
+  {lex' : L ⊕ ℕ → List (Sigma W')} (R : List (Sigma D) → List (Sigma D') → Prop)
+
+/-- A relation between lists of values that holds of the items of each word and each trace, and
+that binders and binary nodes preserve, is preserved by every label. -/
+theorem nodeValues_rel (hnil : R [] [])
+    (hlex : ∀ x, R ((lex x).map fun ⟨a, w⟩ ↦ ⟨a, ρ w⟩) ((lex' x).map fun ⟨a, w⟩ ↦ ⟨a, ρ' w⟩))
+    (hbind : ∀ n X Y, R X Y → R (I.bindValues M n X) (J.bindValues M' n Y))
+    (hbinary : ∀ X₁ Y₁ X₂ Y₂, R X₁ Y₁ → R X₂ Y₂ →
+      R (I.binaryValues M X₁ X₂) (J.binaryValues M' Y₁ Y₂))
+    (l : Label C L) {Xs : List (List (Sigma D))} {Ys : List (List (Sigma D'))}
+    (h : List.Forall₂ R Xs Ys) :
+    R (nodeValues I M ρ lex l Xs) (nodeValues J M' ρ' lex' l Ys) := by
+  match l, Xs, Ys, h with
+  | .terminal _ w, [], [], _ => exact hlex _
+  | .trace n _, [], [], _ => exact hlex _
+  | .bind n _, [X], [Y], .cons h .nil => exact hbind n X Y h
+  | .phrase _ _, [X], [Y], .cons h .nil => exact h
+  | .phrase _ _, [X₁, X₂], [Y₁, Y₂], .cons h₁ (.cons h₂ .nil) => exact hbinary _ _ _ _ h₁ h₂
+  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
+  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
+  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact hnil
+
+/-- A relation between lists of values that holds of the items of each word and each trace, and
+that binders and binary nodes preserve, holds of the values of a tree. -/
+theorem values_rel (hnil : R [] [])
+    (hlex : ∀ x, R ((lex x).map fun ⟨a, w⟩ ↦ ⟨a, ρ w⟩) ((lex' x).map fun ⟨a, w⟩ ↦ ⟨a, ρ' w⟩))
+    (hbind : ∀ n X Y, R X Y → R (I.bindValues M n X) (J.bindValues M' n Y))
+    (hbinary : ∀ X₁ Y₁ X₂ Y₂, R X₁ Y₁ → R X₂ Y₂ →
+      R (I.binaryValues M X₁ X₂) (J.binaryValues M' Y₁ Y₂))
+    (t : Tree C L) : R (t.values I M ρ lex) (t.values J M' ρ' lex') := by
+  rw [values_eq_fold, values_eq_fold]
+  exact RoseTree.rel_fold R (fun l _ _ h ↦ nodeValues_rel R hnil hlex hbind hbinary l h) t
+
+end Rel
+
 variable {I : Interpreter G ℕ} {M : G.Structure D} {ρ : ∀ {a : T}, W a → D a}
   {lex : L ⊕ ℕ → List (Sigma W)}
 
 /-- Where a node admits at most one rule for given daughters and a word is at most one item, a
 tree has at most one value: interpretation is a function. -/
-theorem length_values_le_one (hu : ∀ n a, (I.unary n a).length ≤ 1)
+theorem length_values_le_one (hu : ∀ n a, (I.bind n a).length ≤ 1)
     (hb : ∀ a b, (I.binary a b).length ≤ 1) (hl : ∀ x, (lex x).length ≤ 1) (t : Tree C L) :
-    (t.values I M ρ lex).length ≤ 1 := by
-  rw [values_eq_fold]
-  refine RoseTree.rel_fold (g := nodeValues I M ρ lex)
-    (fun (X _ : List (Sigma D)) ↦ X.length ≤ 1) (fun l Xs Ys h ↦ ?_) t
-  match l, Xs, Ys, h with
-  | .terminal _ w, [], [], _ => simpa [nodeValues] using hl _
-  | .trace n _, [], [], _ => simpa [nodeValues] using hl _
-  | .bind n _, [X], [_], .cons hX .nil => exact length_unaryValues_le_one (hu _) hX
-  | .phrase _ _, [X], [_], .cons hX .nil => exact hX
-  | .phrase _ _, [X, Y], [_, _], .cons hX (.cons hY .nil) =>
-    exact length_binaryValues_le_one hb hX hY
-  | .terminal _ _, _ :: _, _ :: _, _ | .trace _ _, _ :: _, _ :: _, _ | .bind _ _, [], [], _
-  | .bind _ _, _ :: _ :: _, _ :: _ :: _, _ | .phrase _ _, [], [], _
-  | .phrase _ _, _ :: _ :: _ :: _, _ :: _ :: _ :: _, _ => exact Nat.zero_le _
-
+    (t.values I M ρ lex).length ≤ 1 :=
+  values_rel (J := I) (M' := M) (ρ' := ρ) (lex' := lex) (fun X _ ↦ X.length ≤ 1)
+    (Nat.zero_le _) (fun x ↦ by simpa using hl x)
+    (fun _ _ _ hX ↦ length_bindValues_le_one (hu _) hX)
+    (fun _ _ _ _ hX hY ↦ length_binaryValues_le_one hb hX hY) t
 
 theorem Uninterpretable.values_eq_nil {t : Tree C L} (h : t.Uninterpretable I lex)
     (M : G.Structure D) (ρ : ∀ {a : T}, W a → D a) : t.values I M ρ lex = [] := by
   simp [values, h.derivs_eq_nil]
+
+/-- Two interpreters that agree along a map of types give a tree the same values. The second
+interprets at the image `ι a` what the first interprets at `a`, the values of the first at `a`
+being values of the second at `ι a`. Where, on the types satisfying `Q`, the items of each word
+and the values of the rules each node admits correspond, and the rules of the first keep to
+those types, the values of a tree by the second are its values by the first, retyped. -/
+theorem values_eq_map_of_types {T' : Type} {G' : Language T'} {W' D' : T' → Type} (ι : T → T')
+    (Q : T → Prop) {I : Interpreter G ℕ} {J : Interpreter G' ℕ}
+    {M : G.Structure fun a ↦ D' (ι a)} {M' : G'.Structure D'}
+    {ρ : ∀ {a : T}, W a → D' (ι a)} {ρ' : ∀ {a : T'}, W' a → D' a}
+    {lex : L ⊕ ℕ → List (Sigma W)} {lex' : L ⊕ ℕ → List (Sigma W')}
+    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma D')) =
+      (lex x).map fun p ↦ ⟨ι p.1, ρ p.2⟩)
+    (hQ : ∀ x, ∀ p ∈ lex x, Q p.1)
+    (hu : ∀ (n : ℕ) (a : T), Q a → ∀ x : D' (ι a),
+      (J.bind n (ι a)).map (fun r ↦ (⟨r.1, M'.funMap r.2 x⟩ : Sigma D')) =
+        (I.bind n a).map fun r ↦ ⟨ι r.1, M.funMap (σ := .of a) r.2 x⟩)
+    (hQu : ∀ (n : ℕ) (a : T), Q a → ∀ r ∈ I.bind n a, Q r.1)
+    (hb : ∀ a b : T, Q a → Q b → ∀ (x : D' (ι a)) (y : D' (ι b)),
+      (J.binary (ι a) (ι b)).map (fun m ↦ (⟨m.1, M'.funMap m.2 (x, y)⟩ : Sigma D')) =
+        (I.binary a b).map fun m ↦ ⟨ι m.1, M.funMap (σ := .prod (.of a) (.of b)) m.2 (x, y)⟩)
+    (hQb : ∀ a b : T, Q a → Q b → ∀ m ∈ I.binary a b, Q m.1) (t : Tree C L) :
+    t.values J M' ρ' lex' = (t.values I M ρ lex).map fun d ↦ ⟨ι d.1, d.2⟩ := by
+  refine (values_rel
+    (fun (X : List (Sigma D')) (Y : List (Sigma fun a ↦ D' (ι a))) ↦
+      X = Y.map (fun d ↦ ⟨ι d.1, d.2⟩) ∧ ∀ d ∈ Y, Q d.1)
+    ⟨rfl, fun _ hd ↦ nomatch hd⟩ (fun x ↦ ⟨?_, fun d hd ↦ ?_⟩) ?_ ?_ t).1
+  · exact (hlex x).trans (by rw [List.map_map]; rfl)
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hd
+    exact hQ x p hp
+  · rintro n _ Y ⟨rfl, hY⟩
+    refine ⟨?_, fun d hd ↦ ?_⟩
+    · simp only [bindValues, List.flatMap_map, List.map_flatMap]
+      exact List.flatMap_congr fun d hd ↦ by rw [hu n d.1 (hY d hd) d.2, List.map_map]; rfl
+    · obtain ⟨d₁, h₁, r, hr, rfl⟩ := mem_bindValues.1 hd
+      exact hQu n d₁.1 (hY d₁ h₁) r hr
+  · rintro _ Y₁ _ Y₂ ⟨rfl, h₁⟩ ⟨rfl, h₂⟩
+    refine ⟨?_, fun d hd ↦ ?_⟩
+    · simp only [binaryValues, List.flatMap_map, List.map_flatMap]
+      exact List.flatMap_congr fun d₁ hd₁ ↦ List.flatMap_congr fun d₂ hd₂ ↦ by
+        rw [hb d₁.1 d₂.1 (h₁ d₁ hd₁) (h₂ d₂ hd₂) d₁.2 d₂.2, List.map_map]; rfl
+    · obtain ⟨d₁, hd₁, d₂, hd₂, m, hm, rfl⟩ := mem_binaryValues.1 hd
+      exact hQb d₁.1 d₂.1 (h₁ d₁ hd₁) (h₂ d₂ hd₂) m hm
+
+/-- An interpreter keeps to the types satisfying `Q` when the rules it admits for daughters of
+such types give a mother of one. -/
+structure _root_.Interpreter.KeepsTo (I : Interpreter G ℕ) (Q : T → Prop) : Prop where
+  /-- The rules of a binder. -/
+  bind : ∀ (n : ℕ) (a : T), Q a → ∀ r ∈ I.bind n a, Q r.1
+  /-- The rules of a binary node. -/
+  binary : ∀ a b : T, Q a → Q b → ∀ m ∈ I.binary a b, Q m.1
+
+/-- A map of grammars along a map of types gives a tree the same values. Where the structure of
+the second grammar, pulled back along the map of types, expands that of the first, and on the
+types satisfying `Q`, to which the first interpreter keeps, the second interpreter admits at the
+images the images of the rules the first admits, the values of a tree by the second are its
+values by the first, retyped. -/
+theorem values_eq_map_values {T' : Type} {G' : Language T'} {W' D' : T' → Type} {ι : T → T'}
+    {φ : G →ᴸ G'.comap ι} {M : G.Structure fun a ↦ D' (ι a)} {M' : G'.Structure D'}
+    (hφ : φ.IsExpansionOn M (M'.comap ι)) {Q : T → Prop} {I : Interpreter G ℕ}
+    {J : Interpreter G' ℕ} (hI : I.KeepsTo Q)
+    {ρ : ∀ {a : T}, W a → D' (ι a)} {ρ' : ∀ {a : T'}, W' a → D' a}
+    {lex : L ⊕ ℕ → List (Sigma W)} {lex' : L ⊕ ℕ → List (Sigma W')}
+    (hlex : ∀ x, (lex' x).map (fun p ↦ (⟨p.1, ρ' p.2⟩ : Sigma D')) =
+      (lex x).map fun p ↦ ⟨ι p.1, ρ p.2⟩)
+    (hQ : ∀ x, ∀ p ∈ lex x, Q p.1)
+    (hbind : ∀ (n : ℕ) (a : T), Q a →
+      J.bind n (ι a) = (I.bind n a).map fun r ↦ ⟨ι r.1, φ.onFunction r.2⟩)
+    (hbinary : ∀ a b : T, Q a → Q b →
+      J.binary (ι a) (ι b) = (I.binary a b).map fun m ↦ ⟨ι m.1, φ.onFunction m.2⟩)
+    (t : Tree C L) :
+    t.values J M' ρ' lex' = (t.values I M ρ lex).map fun d ↦ ⟨ι d.1, d.2⟩ := by
+  refine values_eq_map_of_types ι Q hlex hQ (fun n a ha x ↦ ?_) hI.bind
+    (fun a b ha hb x y ↦ ?_) hI.binary t
+  · rw [hbind n a ha, List.map_map]
+    exact List.map_congr_left fun r _ ↦ congrArg (Sigma.mk _) (hφ.map_onFunction r.2 x)
+  · rw [hbinary a b ha hb, List.map_map]
+    exact List.map_congr_left fun m _ ↦ congrArg (Sigma.mk _) (hφ.map_onFunction m.2 (x, y))
 
 end PhraseStructure.Tree

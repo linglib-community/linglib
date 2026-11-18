@@ -14,6 +14,7 @@ public import Linglib.Semantics.Quantification.Polyadic
 public import Linglib.Semantics.Quantification.Continuation
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Heim and Kratzer (1998): Semantics in Generative Grammar

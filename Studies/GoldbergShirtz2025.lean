@@ -324,8 +324,8 @@ condition. Speakers exploit the construction precisely for situation types that 
 antecedently familiar (observational humor, sniglets), so common-ground satisfaction is typically
 reached by accommodation or pretense, not antecedent entailment. -/
 def palMeaning (W : Type*) (situationType headNoun : W → Prop) :
-    ConventionalImplicature.TwoDim W (W → Prop) :=
-  ⟨headNoun, situationType⟩
+    ConventionalImplicature.TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := headNoun) (notAtIssue := situationType)
 
 /-! ### Irreducibility -/
 

@@ -7,6 +7,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Percus2000
 public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Percus (2000): Constraints on Some Other Variables in Syntax

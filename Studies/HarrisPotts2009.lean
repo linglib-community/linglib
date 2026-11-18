@@ -67,9 +67,14 @@ structure CIItem (Person W : Type) where
 variable {Person W : Type} (item : CIItem Person W)
 
 /-- The two-dimensional meaning once the orientation variable is resolved to `o`. -/
-@[simps]
-def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
-  { atIssue := item.atIssue, notAtIssue := item.ciFor o }
+def CIItem.resolve (o : Orientation Person) : TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := item.atIssue) (notAtIssue := item.ciFor o)
+
+@[simp] theorem CIItem.resolve_atIssue (o : Orientation Person) :
+    (item.resolve o).atIssue = item.atIssue := rfl
+
+@[simp] theorem CIItem.resolve_notAtIssue (o : Orientation Person) :
+    (item.resolve o).notAtIssue = item.ciFor o := rfl
 
 /-- Orientation is public commitment (§1), so uttering the item with its orientation resolved to
 `o` commits the speaker to the at-issue content and `o` to the conventional implicature. -/

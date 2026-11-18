@@ -69,7 +69,7 @@ namespace Yagi2025
 
 open DynamicSemantics CCP.Partial ConventionalImplicature
 
-variable {W : Type*} {φ ψ : W → Trivalent} {p q : TwoDim W (W → Prop)}
+variable {W : Type*} {φ ψ : W → Trivalent} {p q : TwoDim (W → Prop) (W → Prop)}
 
 /-- Two trivalent propositions have conflicting presuppositions when at every world one of them
 is undefined. -/
@@ -91,8 +91,9 @@ theorem orFilter_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
 
 /-- The two-dimensional disjunction whose presupposition is the disjunction of the
 presuppositions, (7). -/
-def orPresupOr (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
-  ⟨fun w ↦ p.atIssue w ∨ q.atIssue w, fun w ↦ p.notAtIssue w ∨ q.notAtIssue w⟩
+def orPresupOr (p q : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Prop) :=
+  .mk (atIssue := fun w ↦ p.atIssue w ∨ q.atIssue w)
+    (notAtIssue := fun w ↦ p.notAtIssue w ∨ q.notAtIssue w)
 
 theorem orPresupOr_toTrivalent_eq_false_iff (w : W) :
     (orPresupOr p q).toTrivalent w = .false ↔

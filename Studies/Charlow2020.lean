@@ -10,6 +10,7 @@ public import Linglib.Semantics.Quantification.Predicative
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Studies.Charlow2014
 public import Linglib.Data.Examples.Charlow2020
+public import Linglib.Semantics.Composition.Interpret
 
 /-!
 # Charlow (2020): the scope of alternatives

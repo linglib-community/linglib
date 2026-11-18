@@ -1,6 +1,9 @@
 module
 
 public import Mathlib.Control.Monad.Writer
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Lattice
+public import Mathlib.Data.Part
 
 /-!
 # Writer monads
@@ -8,7 +11,9 @@ public import Mathlib.Control.Monad.Writer
 A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
 nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
 and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
-log never feeds a value.
+log never feeds a value. A log in a meet-semilattice with a top combines by meet, and with
+truth values for logs a computation is [a partial value](##Writer.toPart) defined where its log
+holds.
 
 ## Main definitions
 
@@ -59,6 +64,9 @@ protected theorem ext {m₁ m₂ : Writer ω A} (hv : m₁.val = m₂.val) (hl :
   WriterT.ext _ _ (Prod.ext hv hl)
 
 @[simp] theorem val_mk (a : A) (w : ω) : (Writer.mk a w).val = a := rfl
+
+@[simp] theorem mk_inj {a b : A} {v w : ω} : Writer.mk a v = Writer.mk b w ↔ a = b ∧ v = w :=
+  ⟨fun h ↦ ⟨congrArg val h, congrArg log h⟩, fun ⟨ha, hw⟩ ↦ ha ▸ hw ▸ rfl⟩
 
 @[simp] theorem log_mk (a : A) (w : ω) : (Writer.mk a w).log = w := rfl
 
@@ -111,5 +119,49 @@ on list logs. -/
 theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
     m.log <+: (m >>= f).log :=
   ⟨(f m.val).log, rfl⟩
+
+end Writer
+
+/-! ### Logs under meet -/
+
+namespace WriterT
+
+variable {ω : Type u} {M : Type u → Type v} [SemilatticeInf ω] [OrderTop ω]
+
+/-- A writer over a meet-semilattice with a top is a monad whose empty log is `⊤` and whose logs
+combine by meet. It has low priority, so that a monoid on the log takes precedence. -/
+instance (priority := low) instMonadInf [Monad M] : Monad (WriterT ω M) :=
+  WriterT.monad ⊤ (· ⊓ ·)
+
+instance (priority := low) instLawfulMonadInf [Monad M] [LawfulMonad M] :
+    LawfulMonad (WriterT ω M) := LawfulMonad.mk'
+  (id_map := fun _ ↦ by ext; simp)
+  (pure_bind := fun _ _ ↦ by ext; simp)
+  (bind_assoc := fun _ _ _ ↦ by ext; simp [inf_assoc])
+  (bind_pure_comp := fun _ _ ↦ by ext; simp)
+
+end WriterT
+
+/-! ### Truth-value logs and partiality -/
+
+namespace Writer
+
+variable {α : Type}
+
+/-- A value with a logged truth value is the partial value defined where the log holds. -/
+def toPart (m : Writer Prop α) : Part α := ⟨m.log, fun _ ↦ m.val⟩
+
+@[simp] theorem toPart_dom (m : Writer Prop α) : m.toPart.Dom = m.log := rfl
+
+@[simp] theorem mem_toPart {m : Writer Prop α} {a : α} : a ∈ m.toPart ↔ m.log ∧ m.val = a :=
+  ⟨fun ⟨h, e⟩ ↦ ⟨h, e⟩, fun ⟨h, e⟩ ↦ ⟨h, e⟩⟩
+
+/-- Two computations give the same partial value when their logs agree and their values agree
+where the log holds: `toPart` forgets the value where the log fails. -/
+theorem toPart_eq_iff {m n : Writer Prop α} :
+    m.toPart = n.toPart ↔ (m.log ↔ n.log) ∧ (m.log → m.val = n.val) := by
+  refine ⟨fun h ↦ ?_, fun ⟨hd, hv⟩ ↦ Part.ext' hd fun hx _ ↦ hv hx⟩
+  have hd : m.log ↔ n.log := iff_of_eq (congrArg Part.Dom h)
+  exact ⟨hd, fun hx ↦ ((mem_toPart (m := n)).1 (h ▸ mem_toPart.2 ⟨hx, rfl⟩)).2.symm⟩
 
 end Writer
