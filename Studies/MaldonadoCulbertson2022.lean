@@ -22,7 +22,7 @@ cost of the third-inclusive system is a bias against homophony outside natural c
 
 The plural categories are their participant sets, first exclusive `{speaker}`, inclusive
 `{speaker, addressee}`, second `{addressee}` and third `∅`, and the features those of
-`Harbour2016.ThreeFeature`, [±hearer] standing for Harley and Ritter's addressee feature. The
+`Person.Feature`, [±hearer] standing for Harley and Ritter's addressee feature. The
 model coefficients are kept as printed data; the study does not restate the paper's reading of
 them. Experiments 1 and 3 are not formalized.
 

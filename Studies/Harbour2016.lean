@@ -411,15 +411,34 @@ def referent (c : Category) : Finset Examples.Ω :=
   (if .speaker ∈ c.participants then {0} else ∅) ∪
     (if .addressee ∈ c.participants then {1} else ∅) ∪ (if c.otherCount = 0 then ∅ else {2})
 
-/-- Harbour's sign for a Cysouw category (Table 4.3) is the sign of the quadripartition cell
-holding its referent: `+author` in the inclusive and the exclusive cells, `+participant` in the
-inclusive and the second-person cells. The exclusive, and with it the singular speaker, which
+/-- The values of Harbour's two features. They are signs of operations on the π lattice, not
+properties of a referent's participants, so they are not indexed by `Person.Feature`. -/
+structure Sign where
+  /-- The value of [±author]. -/
+  author : Bool
+  /-- The value of [±participant]. -/
+  participant : Bool
+  deriving DecidableEq, Repr
+
+/-- Harbour's sign for a Cysouw category in the quadripartition (Table 4.3) is the sign of the
+cell holding its referent: `+author` in the inclusive and the exclusive cells, `+participant` in
+the inclusive and the second-person cells. The exclusive, and with it the singular speaker, which
 the quadripartition places in the exclusive cell (p. 96), is `+author −participant`, so it does
-not collapse with the inclusive `+author +participant` as under `Category.toFeatures`. The sign
-is given as the set of the two features valued `+`. -/
-def signOf (c : Category) : Features :=
-  (if referent c ∈ Examples.inclusive ∪ Examples.exclusive then {.author} else ∅) ∪
-    (if referent c ∈ Examples.inclusive ∪ Examples.secondP then {.participant} else ∅)
+not collapse with the inclusive `+author +participant` as under `Category.toFeatures`. -/
+def signOf (c : Category) : Sign where
+  author := decide (referent c ∈ Examples.inclusive ∪ Examples.exclusive)
+  participant := decide (referent c ∈ Examples.inclusive ∪ Examples.secondP)
+
+/-- In the quadripartition a category is `+author` exactly when it includes the speaker. -/
+theorem signOf_author (c : Category) : (signOf c).author = true ↔ c.IncludesSpeaker := by
+  cases c <;> decide +kernel
+
+/-- In the quadripartition a category is `+participant` exactly when it includes the addressee:
+composed inside [±author], the participant feature tells the addressee's presence, not a
+participant's. -/
+theorem signOf_participant (c : Category) :
+    (signOf c).participant = true ↔ c.IncludesAddressee := by
+  cases c <;> decide +kernel
 
 theorem signOf_speakerOthers_ne_speakerAddressee :
     signOf .speakerOthers ≠ signOf .speakerAddressee := by decide
@@ -459,11 +478,11 @@ open Tamil.Pronouns (naam naanŋgæ)
 
 /-- The signs a pronoun realizes are those of its categories, several where its φ-features
 underdetermine the category. -/
-def harbourSign (p : Pronoun) : Finset Features := p.categories.image signOf
+def harbourSign (p : Pronoun) : Finset Sign := p.categories.image signOf
 
-theorem naam_sign : harbourSign naam.toPronoun = {{.participant, .author}} := by decide
+theorem naam_sign : harbourSign naam.toPronoun = {⟨true, true⟩} := by decide
 
-theorem naanŋgæ_sign : harbourSign naanŋgæ.toPronoun = {{.author}} := by decide
+theorem naanŋgæ_sign : harbourSign naanŋgæ.toPronoun = {⟨true, false⟩} := by decide
 
 /-- Harbour's signs distinguish *naam* from *naan-ŋgæ* through the Pronoun API. -/
 theorem tamil_clusivity_distinguished :
@@ -474,8 +493,7 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
       naanŋgæ.toPronoun.categories.image (Category.toFeatures {.participant, .author}) := by
   decide
 
-theorem exclusive_sign_filtered :
-    ¬ IsLowerSet (↑(signOf .speakerOthers) : Set Person.Feature) := by
-  decide
+/-- The exclusive is `+author −participant`, though its referents include a participant. -/
+theorem signOf_speakerOthers : signOf .speakerOthers = ⟨true, false⟩ := by decide +kernel
 
 end Harbour2016
