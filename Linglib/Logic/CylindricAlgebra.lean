@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Logic.Function.DependsOn
+public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.Closure
 
@@ -34,8 +34,8 @@ quantifiers and identity conditions of the assignment-based dynamic systems are 
 * `CylindricAlgebra.diag_comm`: diagonal elements are symmetric.
 * `CylindricAlgebra.subst_apply`: on predicates, substitution evaluates the predicate at the
   assignment updated at `i` with the value at `j`.
-* `CylindricAlgebra.dimSet_eq_essentialVars`: the dimension set of a predicate is the set of its
-  essential variables, so it lies inside every set of variables the predicate depends on.
+* `CylindricAlgebra.dimSet_subset_of_dependsOn`: a predicate that depends only on the variables
+  in `s` has its dimension set inside `s`.
 
 ## Implementation notes
 
@@ -295,20 +295,17 @@ theorem subst_apply : subst i j p g ↔ p (update g i (g j)) := by
   · simp
   · simp [subst_of_ne h, update_of_ne h.symm]
 
-/-- The dimension set of a predicate on assignments is the set of its essential variables. -/
-theorem dimSet_eq_essentialVars : dimSet p = essentialVars p := by
-  ext i
-  rw [← not_iff_not, notMem_dimSet, mem_essentialVars, not_not, dependsOn_compl_singleton_iff]
-  refine ⟨fun h g e ↦ ?_, fun h ↦ funext fun g ↦ propext ⟨fun ⟨e, he⟩ ↦ h g e ▸ he,
-    fun hg ↦ ⟨g i, by simpa using hg⟩⟩⟩
-  have key (g : ι → E) : (∃ e, p (update g i e)) ↔ p g := iff_of_eq (congrFun h g)
-  exact propext ⟨fun he ↦ (key g).1 ⟨e, he⟩,
-    fun hg ↦ (key _).1 ⟨g i, by simpa using hg⟩⟩
-
 /-- A predicate that depends only on the variables in `s` is fixed by cylindrification along
 every index outside `s`. -/
-theorem dimSet_subset_of_dependsOn {s : Set ι} (hp : DependsOn p s) : dimSet p ⊆ s :=
-  dimSet_eq_essentialVars.trans_subset hp.essentialVars_subset
+theorem dimSet_subset_of_dependsOn {s : Set ι} (hp : DependsOn p s) : dimSet p ⊆ s := by
+  intro i
+  contrapose!
+  intro hi
+  rw [notMem_dimSet]
+  ext g
+  have (e : E) : p (update g i e) ↔ p g :=
+    (hp fun k hk ↦ update_of_ne (ne_of_mem_of_not_mem hk hi) ..).to_iff
+  exact ⟨fun ⟨e, h⟩ ↦ (this e).1 h, fun h ↦ ⟨g i, (this _).2 h⟩⟩
 
 end Pi
 
