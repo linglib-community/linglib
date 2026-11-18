@@ -70,7 +70,7 @@ def crossed (α β : GornAddress) : List GornAddress :=
 
 theorem mem_crossed {α β p : GornAddress} : p ∈ crossed α β ↔ p ≤ α ∧ ¬ p ≤ β := by
   obtain ⟨p⟩ := p
-  simp [crossed, List.mem_inits, GornAddress.le_def]
+  simp [crossed, GornAddress.le_def]
 
 /-- **Locality, Bobaljik's formulation.** A trigger at `β` may condition the head at `α` when no
 maximal projection is crossed going from `α` to `β`. -/
@@ -107,7 +107,7 @@ contains may condition anything else it contains. -/
 theorem mayCondition'_of_isHeadAt {t : Tree C W} {h α β : GornAddress} (hh : IsHeadAt t h)
     (hα : h ≤ α) (hβ : h ≤ β) : MayCondition' t α β :=
   mayCondition'_iff.mpr fun _ hp hpβ ↦
-    (IsLeftLinear.comparable_of_le_common hp hα).elim (fun hph ↦ absurd (hph.trans hβ) hpβ)
+    (IsForestOrder.le_total_of_le_of_le hp hα).elim (fun hph ↦ absurd (hph.trans hβ) hpβ)
       hh.mono
 
 /-! ### Pronominal stranding -/
@@ -144,7 +144,7 @@ theorem strands_iff {X : C} {t : Tree C W} {α β : GornAddress} :
 theorem includes_iff {X : C} {t : Tree C W} {α β : GornAddress} :
     Includes X t α β ↔ ∃ p, p ≤ α ∧ p ≤ β ∧ Replaceable X t p := by
   refine exists_congr fun ⟨p⟩ ↦ and_congr_left fun _ ↦ ?_
-  simp [List.mem_inits, GornAddress.le_def]
+  simp [GornAddress.le_def]
 
 theorem includes_comm {X : C} {t : Tree C W} {α β : GornAddress} :
     Includes X t α β ↔ Includes X t β α := by

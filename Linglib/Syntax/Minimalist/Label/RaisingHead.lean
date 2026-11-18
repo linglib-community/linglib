@@ -261,8 +261,7 @@ def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
 
 theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Vertex}
     (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
-  subst_vars
-  rw [treeRaisingHead, dif_pos (h ▸ x.isSyntacticObject_toUnorderedTree)]
+  rw [treeRaisingHead, dite_eq_left (h ▸ x.isSyntacticObject_toUnorderedTree)]
   exact congrArg raisingHead
     (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
 

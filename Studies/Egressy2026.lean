@@ -43,12 +43,11 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
   feature; its matrix verb and the clause's grammatical role are read off its gloss line
   (`Data/Examples/Gloss.lean`), the verb by its declared past stem in `Hungarian.Verbs` and the
-  role by the case cell of `Hungarian.Pronouns.az` its expletive realizes. Direct perception,
-  which the paper says removes the backshifted reading pragmatically, is its `directPerception`
-  feature. Each single-embedding
-  row also carries a linearized witness over a study lexicon that pronounces the row's gloss
-  line (`Minimalist.SpellsOut`) and shows the same matrix verb and expletive cell the readers
-  find.
+  role by the case cell of `Hungarian.Pronouns.azRealization` its expletive fills. Direct
+  perception, which the paper says removes the backshifted reading pragmatically, is its
+  `directPerception` feature. Each single-embedding row also carries a linearized witness over a
+  study lexicon that pronounces the row's gloss line (`Minimalist.SpellsOut`) and shows the same
+  matrix verb and expletive cell the readers find.
 * Footnote 9 allows the complement of *mond* to be an XP with Say > Foc > X > T, which movement
   to Spec,FocP escapes but Agree from T does not; the shared sequence has no such head, so those
   complements are SayPs here.
@@ -282,21 +281,26 @@ inductive ClauseRole where
   | adjunct
   deriving DecidableEq, Repr
 
-/-- The case cells of the expletive paradigm with the clause role each diagnoses (§2.1–2.2):
-accusative *azt* for an object clause, nominative *az* for the subject clause, and instrumental
-*azzal* or *amiatt* 'because of that' for an adjunct. -/
-def roleTable : List (Option String × ClauseRole) :=
-  [(Hungarian.Pronouns.az .acc, .object), (Hungarian.Pronouns.az .nom, .subject),
-    (Hungarian.Pronouns.az .inst, .adjunct), (some Hungarian.Pronouns.amiatt, .adjunct)]
+/-- The clause role that a case of the expletive correlate diagnoses (§2.1–2.2): the accusative
+an object clause, the nominative the subject clause and the instrumental an adjunct. -/
+def ClauseRole.ofCase : Hungarian.Case → Option ClauseRole
+  | .acc => some .object
+  | .nom => some .subject
+  | .inst => some .adjunct
+  | _ => none
 
-/-- The clause's role, read off its expletive correlate: the word glossed *it* — the gloss
-setting the demonstrative apart from its article homograph — realizes a case cell of
-`Hungarian.Pronouns.az`, and `roleTable` names the cell's role. -/
+/-- The clause role a correlate's form diagnoses: an adjunct for *amiatt* 'because of that', and
+otherwise the role of a case cell of *az* that the form fills. -/
+def roleOfForm? (f : List Char) : Option ClauseRole :=
+  if f = Hungarian.Pronouns.amiatt.toList then some .adjunct
+  else [ClauseRole.object, .subject, .adjunct].find? fun r ↦
+    ∃ c ∈ Hungarian.Pronouns.azRealization.cells () f, ClauseRole.ofCase c = some r
+
+/-- The clause's role, read off its expletive correlate: the word glossed *it*, the gloss setting
+the demonstrative apart from its article homograph. -/
 def clauseRole? (e : Datum) : Option ClauseRole :=
   e.glossedWords.findSome? fun w ↦
-    if w.lexicalGloss? = some "it".toList then
-      (roleTable.find? fun x ↦ x.1.map (·.toList) == some w.wordform).map (·.2)
-    else none
+    if w.lexicalGloss? = some "it".toList then roleOfForm? w.wordform else none
 
 /-- The frame shape a clause role demands of the matrix verb: a clausal complement for an object
 clause, a clausal subject for a subject clause, and for an adjunct a frame with no clausal
@@ -524,11 +528,10 @@ def matrixToken? (t : PlanarSyntacticObject) : Option LexicalItem.Token :=
   ((Minimalist.pfYield t).takeWhile fun tok ↦ tok.item.cat ≠ .C).find? fun tok ↦
     tok.item.cat = .V
 
-/-- The clause role a witness shows: the role `roleTable` gives the paradigm cell its pronounced
-expletive realizes. -/
+/-- The clause role a witness shows: the role its pronounced expletive diagnoses. -/
 def roleOf (t : PlanarSyntacticObject) : Option ClauseRole :=
   (Minimalist.pfYield t).findSome? fun tok ↦
-    (roleTable.find? fun x ↦ x.1 == tok.item.phonForm?).map (·.2)
+    tok.item.phonForm?.bind fun f ↦ roleOfForm? f.toList
 
 /-- The single-embedding rows with their witnesses. -/
 def witnessRows : List (Datum × PlanarSyntacticObject) :=

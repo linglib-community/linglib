@@ -64,7 +64,7 @@ the past of a moment is determinate and its future is not. -/
 
 section Branching
 
-variable {M : Type*} [PartialOrder M] [IsLeftLinear M] {now t t' : M}
+variable {M : Type*} [PartialOrder M] [IsForestOrder M] {now t t' : M}
 
 /-- From an epistemic alternative the past is determinate, in that a time the upper limit constraint
 admits lies on every history through the now. -/

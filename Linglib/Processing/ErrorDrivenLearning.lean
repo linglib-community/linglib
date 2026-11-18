@@ -10,26 +10,14 @@ public import Mathlib.Topology.Instances.Matrix
 
 A learner holds a matrix `W` of association weights from cues to outcomes and meets learning
 events, each a cue vector `x` paired with an outcome vector `y`. The weights predict the outcome
-`x ᵥ* W`, and the error-driven update moves the weight from cue `i` to outcome `j` by the cue's
-value times the outcome's prediction error, scaled by a rate `α i` for the cue and a rate `β j`
-for the outcome. On indicator vectors this is the rule of Rescorla and Wagner, where `α` is the
-salience of a cue and `β` the importance of an outcome. With a single rate it is the rule of
-Widrow and Hoff for real-valued vectors.
-
-The cues of an event share its prediction error. An event that the weights already predict
-therefore changes nothing, and repeating an event shrinks its error geometrically while dividing
-the weight gained among the cues in proportion to their rates.
-
-## Main definitions
-
-* `ErrorDrivenLearning.update`: the weights after one learning event.
-
-## Main results
-
-* `ErrorDrivenLearning.update_eq_self_iff`: an event leaves the weights fixed exactly when none
-  of its cues is effective or none of its outcomes is mispredicted.
-* `ErrorDrivenLearning.iterate_update`, `ErrorDrivenLearning.tendsto_iterate_update_apply`: the
-  weights after `n` repetitions of an event, and their limit.
+`x ᵥ* W`, and the [error-driven update](##ErrorDrivenLearning.update) moves the weight from cue
+`i` to outcome `j` by the cue's value times the outcome's prediction error, scaled by a rate `α i`
+for the cue and a rate `β j` for the outcome. On indicator vectors this is [the rule of Rescorla
+and Wagner](##ErrorDrivenLearning.update_indicator_apply), and with a single rate [the rule of
+Widrow and Hoff](##ErrorDrivenLearning.update_smul_one) for real-valued vectors. The cues of an
+event share its prediction error, so an event the weights already predict [changes
+nothing](##ErrorDrivenLearning.update_eq_self_iff), and repeating an event [divides the weight
+gained among its cues](##ErrorDrivenLearning.tendsto_iterate_update_apply) by rate and value.
 
 ## References
 
@@ -53,7 +41,7 @@ variable {ι κ : Type*} [Fintype ι] (α : ι → ℝ) (β : κ → ℝ) (x : �
 /-- The **error-driven update** of the weights `W` on a learning event with cues `x` and outcomes
 `y` adds `α i * x i * ((y j - (x ᵥ* W) j) * β j)` to the weight from cue `i` to outcome `j`, the
 cue's rate and value times the outcome's prediction error and rate. -/
-noncomputable def update : Matrix ι κ ℝ :=
+def update : Matrix ι κ ℝ :=
   W + vecMulVec (α * x) ((y - x ᵥ* W) * β)
 
 theorem update_apply (i : ι) (j : κ) :
@@ -83,12 +71,12 @@ theorem sub_vecMul_update :
 
 /-- An event leaves the weights fixed exactly when none of its cues is effective or none of its
 outcomes is mispredicted. -/
-theorem update_eq_self_iff :
+theorem update_eq_self_iff {α : ι → ℝ} {β : κ → ℝ} {x : ι → ℝ} {y : κ → ℝ} {W : Matrix ι κ ℝ} :
     update α β x y W = W ↔ α * x = 0 ∨ (y - x ᵥ* W) * β = 0 := by
   simp [update, ← Matrix.ext_iff, vecMulVec_apply, funext_iff, forall_or_left, forall_or_right]
 
 theorem update_eq_self_of_vecMul_eq {x y W} (h : x ᵥ* W = y) : update α β x y W = W :=
-  (update_eq_self_iff ..).2 <| .inr <| by rw [h, sub_self, zero_mul]
+  update_eq_self_iff.2 <| .inr <| by rw [h, sub_self, zero_mul]
 
 /-! ### Repeating an event -/
 

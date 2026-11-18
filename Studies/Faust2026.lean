@@ -255,7 +255,7 @@ C-slot, provided that slot lies in its window, so that its line crosses none of 
 otherwise the consonant floats (13b–c). -/
 def intrude (m : AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) :
     AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
-  match m.unfilledCSlots.max? with
+  match (m.freeBearers .C).max? with
   | some s =>
     if s ∈ window ((m.lines (some .consonantal) none) :
         SetRel ℕ ℕ) ((m.word (some .consonantal))).length then
@@ -335,7 +335,7 @@ a nominal base whose template is unsatisfied, by merger of the feminine morph ((
 def derive (p : Pattern) (r : ConsonantalRoot String) :
     AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
   let m := associate p r
-  if p.category = .noun ∧ ¬ m.allCSlotsFilled then intrude m else m
+  if p.category = .noun ∧ m.freeBearers .C ≠ [] then intrude m else m
 
 -- (11)
 theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
@@ -376,7 +376,7 @@ def collapse : Bool → List (Slot × Option String) → List String
 pattern truncates and that slot is vacant. -/
 def truncate (p : Pattern) (m :
     AR (Multiplanar Plane (Sponsored String Morpheme) (Sponsored Slot Morpheme))) : Skeleton :=
-  match m.unfilledCSlots.max?, m.template.cSlots.max? with
+  match (m.freeBearers .C).max?, (m.bearers .C).max? with
   | some s, some s' =>
     if p.truncates ∧ s = s' then m.template.take (s - 1) else m.template
   | _, _ => m.template
@@ -461,31 +461,32 @@ def hebrewTaqtil : Pattern :=
 
 -- (3a–b), (1)
 theorem klt_kl_satisfy :
-    (derive hebrewPst klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst klt) ∧
-    (derive hebrewPst kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst kl) ∧
+    (derive hebrewPst klt).freeBearers .C = [] ∧ ¬ Misaligned (derive hebrewPst klt) ∧
+    (derive hebrewPst kl).freeBearers .C = [] ∧ ¬ Misaligned (derive hebrewPst kl) ∧
     (1, 4) ∈ (derive hebrewPst kl).lines (some .consonantal) none := by
   decide
 
 /-- For √klj the final [+c] slot stays vacant, since spreading would misalign the l ((4), (6)). -/
 theorem klj_spread_misaligned :
-    (derive hebrewPst klj).unfilledCSlots = [4] ∧
+    (derive hebrewPst klj).freeBearers .C = [4] ∧
     ¬ Misaligned (derive hebrewPst klj) ∧
     Misaligned ((derive hebrewPst klj).spread .consonantal .C) ∧
-    realize hebrewPst ((derive hebrewPst klj).spread .consonantal .C) = ["k", "a", "l", "a", "l"] := by
+    realize hebrewPst ((derive hebrewPst klj).spread .consonantal .C) =
+      ["k", "a", "l", "a", "l"] := by
   decide
 
 -- (3c)
 theorem klj_qtila_qatul :
-    (derive hebrewQtila klj).allCSlotsFilled ∧
-    (derive hebrewQatul klj).allCSlotsFilled := by
+    (derive hebrewQtila klj).freeBearers .C = [] ∧
+    (derive hebrewQatul klj).freeBearers .C = [] := by
   decide
 
 -- (10)
 theorem dmj_taqtil :
-    (associate hebrewTaqtil dmj).unfilledCSlots = [3] ∧
+    (associate hebrewTaqtil dmj).freeBearers .C = [3] ∧
     Misaligned ((associate hebrewTaqtil dmj).spread .consonantal .C) ∧
     (derive hebrewTaqtil dmj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
-    (derive hebrewTaqtil dmj).allCSlotsFilled ∧
+    (derive hebrewTaqtil dmj).freeBearers .C = [] ∧
     ¬ Misaligned (derive hebrewTaqtil dmj) := by
   decide
 
@@ -514,35 +515,35 @@ def amharicInf : Pattern :=
 -- (7)
 theorem fdj_pfv :
     (2, 2) ∈ (derive amharicPfv fdj).lines (some .consonantal) none ∧
-    (derive amharicPfv fdj).unfilledCSlots = [4] ∧
+    (derive amharicPfv fdj).freeBearers .C = [4] ∧
     ¬ Misaligned (derive amharicPfv fdj) ∧
     Misaligned ((derive amharicPfv fdj).spread .consonantal .C) := by
   decide
 
 -- (5b) [broselow-1984]
 theorem wd_pfv :
-    (derive amharicPfv wd).allCSlotsFilled ∧ ¬ Misaligned (derive amharicPfv wd) ∧
+    (derive amharicPfv wd).freeBearers .C = [] ∧ ¬ Misaligned (derive amharicPfv wd) ∧
     wd.IsOCPClean ∧ ¬ (⟨["w", "d", "d"]⟩ : ConsonantalRoot String).IsOCPClean := by
   decide
 
 -- (8)
 theorem fdj_grnd :
     (derive amharicGrnd fdj).hostedOn .consonantal 3 = [⟨"t", .suffix⟩] ∧
-    (derive amharicGrnd fdj).allCSlotsFilled ∧
+    (derive amharicGrnd fdj).freeBearers .C = [] ∧
     ¬ Misaligned (derive amharicGrnd fdj) ∧
     (derive amharicGrnd fdj).NoCrossing := by
   decide
 
 -- (13a), (13b–c)
 theorem inf_intrusion :
-    (associate amharicInf sma).unfilledCSlots = [4] ∧
-    (associate amharicInf sam).unfilledCSlots = [2] ∧
-    (associate amharicInf hid).unfilledCSlots = [2] ∧
+    (associate amharicInf sma).freeBearers .C = [4] ∧
+    (associate amharicInf sam).freeBearers .C = [2] ∧
+    (associate amharicInf hid).freeBearers .C = [2] ∧
     (derive amharicInf sma).hostedOn .consonantal 4 = [⟨"t", .suffix⟩] ∧
     2 ∉ window ((associate amharicInf sam).lines (some .consonantal) none : SetRel ℕ ℕ) sam.arity ∧
     2 ∉ window ((associate amharicInf hid).lines (some .consonantal) none : SetRel ℕ ℕ) hid.arity ∧
-    (derive amharicInf sam).unfilledCSlots = [2] ∧
-    (derive amharicInf hid).unfilledCSlots = [2] ∧
+    (derive amharicInf sam).freeBearers .C = [2] ∧
+    (derive amharicInf hid).freeBearers .C = [2] ∧
     ¬ Misaligned (derive amharicInf sam) ∧
     ¬ Misaligned (derive amharicInf hid) := by
   decide

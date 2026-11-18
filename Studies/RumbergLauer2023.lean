@@ -162,9 +162,9 @@ not. -/
 theorem future_atom_of_lt {φ : Set M} (hmn : m < n) (hn : n ∈ φ) : (m, n) ∈ future (atom φ) :=
   fun _ ⟨_, hn'⟩ ↦ ⟨n, hn', hmn, hn⟩
 
-section LeftLinear
+section ForestOrder
 
-variable [IsLeftLinear M]
+variable [IsForestOrder M]
 
 theorem mem_of_mem_stable (hmn : m ≤ n ∨ n ≤ m) (h : (m, n) ∈ stable φ) : (m, n) ∈ φ :=
   h n le_rfl (histories_inter_nonempty_iff.2 hmn)
@@ -182,7 +182,7 @@ theorem future_atom_ofIsMax {x : M} (hx : IsMax x) (hmx : m ≤ x) (φ : Set M) 
     Set.mem_singleton_iff, Ockhamist.mem_future, Ockhamist.mem_atom, mem_atom]
   exact ⟨fun H ↦ H _ ⟨hmx, rfl⟩, fun H h ⟨_, hh⟩ ↦ hh ▸ H⟩
 
-end LeftLinear
+end ForestOrder
 
 /-! ### The conditional
 
@@ -232,10 +232,9 @@ theorem cond_eq_orderingImp (A C : Set (M × M)) :
 
 /-! ### Decidability on finite frames -/
 
-theorem mem_future_atom_iff [IsLeftLinear M] [Finite M] {φ : Set M} :
+theorem mem_future_atom_iff [IsForestOrder M] [Finite M] {φ : Set M} :
     (m, n) ∈ future (atom φ) ↔
       ∀ x, IsMax x → m ≤ x → n ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ m' ∈ φ := by
-  have : Nonempty M := ⟨m⟩
   have h1 : (m, n) ∈ future (atom φ) ↔
       ∀ h : Flag M, m ∈ h → n ∈ h → ∃ m' ∈ h, m < m' ∧ m' ∈ φ := by
     simp only [mem_future, Set.mem_inter_iff, mem_histories, and_imp, mem_atom]
@@ -246,7 +245,7 @@ theorem mem_future_atom_iff [IsLeftLinear M] [Finite M] {φ : Set M} :
 
 section Decidable
 
-variable [IsLeftLinear M] [Fintype M] [DecidableEq M] [DecidableLE M] [DecidableLT M]
+variable [IsForestOrder M] [Fintype M] [DecidableEq M] [DecidableLE M] [DecidableLT M]
 
 instance (φ : Set M) [DecidablePred (· ∈ φ)] (p : M × M) :
     Decidable (p ∈ future (atom φ)) :=
@@ -303,7 +302,7 @@ theorem mem_kaufmannCond_past_atom {e : Set M} {φ : Set M} {C : Set (M × Flag 
         (m', h) ∈ C := by
   simp only [mem_kaufmannCond, Ockhamist.settled_past_atom, Ockhamist.mem_atom]
 
-theorem mem_kaufmannCond_present_iff [IsLeftLinear M] [Finite M] {e : Set M} {φ ψ : Set M}
+theorem mem_kaufmannCond_present_iff [IsForestOrder M] [Finite M] {e : Set M} {φ ψ : Set M}
     {m : M} :
     m ∈ kaufmannCond e (ockhamistPresent (Ockhamist.atom φ))
         (ockhamistPresent (Ockhamist.atom ψ)) ↔
@@ -372,8 +371,8 @@ theorem addr_injective : Function.Injective addr := by decide
 instance : PartialOrder Game := PartialOrder.lift addr addr_injective
 instance : DecidableLE Game := fun a b ↦ inferInstanceAs (Decidable (addr a ≤ addr b))
 instance : DecidableLT Game := decidableLTOfDecidableLE
-instance : IsLeftLinear Game :=
-  (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isLeftLinear
+instance : IsForestOrder Game :=
+  (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isForestOrder
 
 /-- *The Red Sox play the Yankees* holds at both outcomes. -/
 def played : Set Game := {win, lose}
@@ -435,8 +434,8 @@ theorem addr_injective : Function.Injective addr := by decide
 instance : PartialOrder Trains := PartialOrder.lift addr addr_injective
 instance : DecidableLE Trains := fun a b ↦ inferInstanceAs (Decidable (addr a ≤ addr b))
 instance : DecidableLT Trains := decidableLTOfDecidableLE
-instance : IsLeftLinear Trains :=
-  (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isLeftLinear
+instance : IsForestOrder Trains :=
+  (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isForestOrder
 
 /-- The clock time of a moment is its depth in the tree, with the decisions at one and two
 and the arrivals at two and three. -/
@@ -522,8 +521,8 @@ theorem addr_injective : Function.Injective addr := by decide
 instance : PartialOrder Interview := PartialOrder.lift addr addr_injective
 instance : DecidableLE Interview := fun a b ↦ inferInstanceAs (Decidable (addr a ≤ addr b))
 instance : DecidableLT Interview := decidableLTOfDecidableLE
-instance : IsLeftLinear Interview :=
-  (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isLeftLinear
+instance : IsForestOrder Interview :=
+  (OrderEmbedding.ofMapLEIff addr fun _ _ ↦ Iff.rfl).isForestOrder
 
 /-- The clock time of a moment, its depth in the tree. -/
 def time (m : Interview) : ℕ := (addr m).depth

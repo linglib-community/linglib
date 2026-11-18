@@ -257,7 +257,7 @@ theorem not_le_fst_iff {tok : LexicalItem.Token} {x : GornAddress × GornAddress
     exact Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using h0)
   constructor
   · intro hDx
-    rcases IsLeftLinear.comparable_of_le_common hD hpx.le with h | h
+    rcases IsForestOrder.le_total_of_le_of_le hD hpx.le with h | h
     · exact absurd (h.trans hcov.le) hDx
     · exact lt_of_le_of_ne h fun he ↦ hDx (he ▸ hcov.le)
   · intro hlt hDx
@@ -302,14 +302,14 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
     CompToSpec hd t x ∨ x.2 ∈ sealed {h} complementDomain (.atCompletion hd t) x.1.parent := by
   have hcx : complement h ≤ x.2 := hr ▸ projectionAt_le hd t x.2
   have hlt : x.1.parent < complement h :=
-    ((IsLeftLinear.comparable_of_le_common (parent_lt_of_mem_links hx).1.le hcx).resolve_right
+    ((IsForestOrder.le_total_of_le_of_le (parent_lt_of_mem_links hx).1.le hcx).resolve_right
       hin).lt_of_ne fun he ↦ hin he.ge
   have hle : x.1.parent ≤ h.parent := by
     simpa [GornAddress.pred_eq_parent] using Order.le_pred_of_lt hlt
   have hcomp : CompToSpec hd t x ↔ projectionAt hd t h ≤ x.1.parent := by
     rw [CompToSpec, hr, complement_complement hh h0]
     exact and_iff_right hhead
-  rcases IsLeftLinear.comparable_of_le_common (projectionAt_le hd t h)
+  rcases IsForestOrder.le_total_of_le_of_le (projectionAt_le hd t h)
     (hle.trans (GornAddress.parent_le h)) with hph | hph
   · exact .inl (hcomp.2 hph)
   · rcases hph.lt_or_eq with hph | hph

@@ -11,7 +11,7 @@ public import Mathlib.Algebra.Order.Monoid.Unbundled.ExistsOfLE
 public import Mathlib.Data.List.Lex
 public import Mathlib.Order.Interval.Finset.Defs
 public import Linglib.Core.Data.List.Infix
-public import Linglib.Core.Order.LeftLinear
+public import Linglib.Core.Order.ForestOrder
 
 /-!
 # Gorn addresses
@@ -313,7 +313,7 @@ theorem covBy_iff : p ⋖ q ↔ ∃ i, q = p * of i := by
 /-- An address lies below at most one immediate successor of an address. -/
 theorem of_inj_of_mul_of_le {i j : ℕ} (hi : p * of i ≤ q) (hj : p * of j ≤ q) : i = j :=
   of_injective <| mul_right_injective p <|
-    IsLeftLinear.eq_of_covBy_of_le (covBy_mul_of p i) (covBy_mul_of p j) hi hj
+    IsForestOrder.eq_of_covBy_of_le (covBy_mul_of p i) (covBy_mul_of p j) hi hj
 
 /-- The addresses below distinct immediate successors are disjoint. -/
 theorem disjoint_Ici_mul_of (p : GornAddress) {i j : ℕ} (h : i ≠ j) :

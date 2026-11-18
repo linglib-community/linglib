@@ -240,7 +240,7 @@ theorem mul_eq_iff_forall_update_eq_self (hη : η ≠ 0) (hS : ∀ i, S i ≠ 0
     S * G = C ↔ ∀ i, update (η • 1) 1 (S i) (C i) G = G := by
   refine ⟨fun h i ↦ update_eq_self_of_vecMul_eq _ _ (congrFun h i), fun h ↦ funext fun i ↦ ?_⟩
   rw [mul_apply_eq_vecMul]
-  rcases (update_eq_self_iff ..).1 (h i) with h0 | h0
+  rcases update_eq_self_iff.1 (h i) with h0 | h0
   · exact absurd (funext fun k ↦ by simpa [hη] using congrFun h0 k) (hS i)
   · exact (sub_eq_zero.1 (by simpa using h0)).symm
 
