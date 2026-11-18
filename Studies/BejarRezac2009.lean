@@ -42,7 +42,8 @@ direct 3N3 forms, with differently specified third persons, are outside the mode
 3N3 cell is inverse as in (22a). Only arguments with
 structural Case establish an inverse context, which the model, without Case on the arguments of a
 transitive clause, does not state. A language's choice between [speaker] and [addressee] is carried
-by its probe, as in `Minimalist.CyclicAgree`.
+by its probe, as in `Minimalist.CyclicAgree`: the persons' specifications of Table 2 are what the
+probe sees of them (`kashmiri_inter_spec`, `nishnaabemwin_inter_spec`).
 
 ## TODO
 
@@ -80,6 +81,18 @@ def nishnaabemwin : Finset PersonSegment := .Iic .addressee
 /-- Mohawk and Kashmiri have the fully articulated probe `[u-3-2-1]`, articulated down to
 [speaker], as in (9) and Tables 7 and 11. -/
 def kashmiri : Finset PersonSegment := .Iic .speaker
+
+-- Table 2 (A)
+theorem kashmiri_inter_spec :
+    kashmiri ∩ spec .third = {pi} ∧ kashmiri ∩ spec .second = {pi, participant} ∧
+      kashmiri ∩ spec .first = {pi, participant, speaker} := by
+  decide
+
+-- Table 2 (C)
+theorem nishnaabemwin_inter_spec :
+    nishnaabemwin ∩ spec .third = {pi} ∧ nishnaabemwin ∩ spec .first = {pi, participant} ∧
+      nishnaabemwin ∩ spec .second = {pi, participant, addressee} := by
+  decide
 
 /-! ### Cyclic expansion (16) -/
 

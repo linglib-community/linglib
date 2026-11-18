@@ -647,13 +647,9 @@ def awtuwP : Scenario Animacy → ℕ := below .downstream ∘ Scenario.kind
 (49). -/
 def bauleT : Scenario Nominality → ℕ := below .downstream ∘ Scenario.kind
 
-theorem kashmiri_rank (p : Person) :
-    Minimalist.CyclicAgree.rank BejarRezac2009.kashmiri p = p.prominence + 1 := by
-  cases p <;> decide
-
 private theorem kashmiri_rank_eq :
     Minimalist.CyclicAgree.rank BejarRezac2009.kashmiri = (· + 1) ∘ Person.prominence :=
-  funext kashmiri_rank
+  funext Minimalist.CyclicAgree.rank_Iic_speaker
 
 open Minimalist.CyclicAgree in
 -- (47), Table 11 [bejar-rezac-2009]

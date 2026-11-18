@@ -17,24 +17,27 @@ A person feature is a property of participant sets preserved by union: [particip
 nonempty sets, [speaker] of those containing the speaker and [addressee] of those containing the
 addressee. A theory of person selects an inventory of them, and
 [the features of an inventory that a participant set bears](##Person.bundle) are its bundle there;
-the two-feature system Ackema and Neeleman trace to Halle is the inventory of [participant] and
-[speaker], on which the second person bears [participant] alone, and Harley and Ritter's geometry
-adds [addressee]. The three features tell
+the two features Béjar and Rezac cite from Halle, [participant] and [author], are the inventory
+of [participant] and [speaker], on which the second person bears [participant] alone, and Harley
+and Ritter's geometry adds [addressee]. The three features tell
 [every participant set from every other](##Person.bundle_univ_injective), so the full inventory
 sees clusivity and the two-feature one [does not](##Person.toFeatures_coarsen).
 
 [speaker] and [addressee] depend on [participant], and
 [the bundles closed under that dependency are exactly the closed sets of the
-context](##Person.wellFormed_iff_isIntent) of participant sets and features. Harley and Ritter
-caution that a geometry encodes morphological dependency, not logical implication, so the
-dependency stays a stipulated order and [its coincidence with
-entailment](##Person.Feature.le_iff_forall_bears) is a theorem about person.
+context](##Person.wellFormed_iff_isIntent) of participant sets and features,
+[five in all](##Person.card_wellFormed): the third person's empty bundle and Harley and Ritter's
+four possibilities under Participant. In a feature geometry dependence generally captures logical
+implication, though, as they note of the inclusive and the plural, not every implication is a
+dependence; among the person features [the two
+coincide](##Person.Feature.le_iff_forall_bears).
 [Counting the features of [participant] and [speaker] a value bears](##Person.prominence_le_iff)
 is the person hierarchy.
 
 ## References
 
-* [ackema-neeleman-2018]
+* [halle-1997]
+* [bejar-rezac-2009]
 * [harley-ritter-2002]
 * [harbour-2016]
 * [cysouw-2003]
@@ -132,6 +135,10 @@ theorem wellFormed_iff_isIntent (t : Features) :
 
 theorem not_wellFormed_singleton_speaker :
     ¬ IsLowerSet (↑({.speaker} : Features) : Set Feature) := by
+  decide
+
+-- (25), (26) [harley-ritter-2002]
+theorem card_wellFormed : Fintype.card {t : Features // IsLowerSet (↑t : Set Feature)} = 5 := by
   decide
 
 /-! ### The bundle of a person value -/

@@ -6,7 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.ForestOrder
-public import Linglib.Morphology.FeatureGeometry
+public import Linglib.Syntax.Person.Features
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Tactic.DeriveFintype
@@ -14,29 +15,22 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Person segments
 
-The person features that Agree manipulates are the person nodes of Harley and Ritter's feature
-geometry: the root `π`, which every nominal bears, [participant], and its dependents [speaker]
-and [addressee]. Béjar and Rezac call them the segments of an articulated person probe. The
-segments a person bears are read off the geometry, a bare [participant] receiving [speaker] by
-default.
-
-## Main definitions
-
-* `PersonSegment`: the person segments, ordered by the dominance of the geometry.
-* `PersonSegment.toNode`: a segment as a node of the geometry.
-* `PersonSegment.spec`: the segments a person bears.
-
-## Main results
-
-* `PersonSegment.spec_isLowerSet`: a person bears whatever its segments depend on.
-* `PersonSegment.isChain_Iic`: a segment and the segments it depends on form a chain.
-* `PersonSegment.participant_mem_spec_iff`,
-  `PersonSegment.speaker_mem_spec_iff`: the segments [participant] and [speaker] are
-  `Person.IsSAP` and `Person.IncludesSpeaker`.
+Béjar and Rezac articulate the person probe into segments: the root `π`, which every nominal
+bears, and the person features [participant], [speaker] and [addressee], each depending on the
+one before it as in Harley and Ritter's geometry. A segment is thus
+[a person feature or the root](##PersonSegment.ofFeature), and the segments a person bears are
+the root and [its features](##PersonSegment.ofFeature_mem_spec) in the full inventory, so that
+the second person bears [addressee] and the general first person [speaker] alone. They form a
+tree, [a segment and those it depends on a chain](##PersonSegment.isChain_Iic). A language
+specifies its persons on one such chain, [speaker] or [addressee], and
+[what a probe over an inventory sees of a person](##PersonSegment.inter_spec) is the person's
+bundle in that inventory.
 
 ## Implementation notes
 
-`π` is Harley and Ritter's root Referring Expression node, which Deal writes `[φ]`.
+`π` is Harley and Ritter's root Referring Expression node, which Deal writes `[φ]`, and the
+segments are the person nodes of their geometry (`Morphology/FeatureGeometry.lean`). The order is
+defined here and not read off that geometry, so that the person features do not depend on it.
 
 ## References
 
@@ -47,9 +41,7 @@ default.
 
 @[expose] public section
 
-open Morphology.FeatureGeometry
-
-/-- A segment of the person feature, a person node of the geometry of [harley-ritter-2002]. -/
+/-- A segment of the person feature: the root or a person feature. -/
 inductive PersonSegment where
   /-- `π`, the root, borne by every nominal. -/
   | pi
@@ -63,25 +55,22 @@ inductive PersonSegment where
 
 namespace PersonSegment
 
-/-- The node of the geometry a segment is. -/
-def toNode : PersonSegment → Node
-  | .pi => ⊥
-  | .participant => .participant
-  | .speaker => .speaker
-  | .addressee => .addressee
+/-- Segments are ordered by dependency, `a ≤ b` when `b` depends on `a`: the root below
+[participant], and [participant] below [speaker] and [addressee]. -/
+instance : PartialOrder PersonSegment where
+  le a b := a = b ∨ a = pi ∨ (a = participant ∧ b ≠ pi)
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
 
-theorem toNode_injective : Function.Injective toNode := by decide
-
-/-- Segments are ordered by the dominance of the geometry, `a ≤ b` when `b` depends on `a`. -/
-instance : PartialOrder PersonSegment := PartialOrder.lift toNode toNode_injective
-
-instance : DecidableLE PersonSegment := fun a b ↦ inferInstanceAs (Decidable (a.toNode ≤ b.toNode))
+instance : DecidableLE PersonSegment :=
+  fun a b ↦ inferInstanceAs (Decidable (a = b ∨ a = pi ∨ (a = participant ∧ b ≠ pi)))
 
 instance : OrderBot PersonSegment where
   bot := .pi
   bot_le := by decide
 
-/-- `Finset.Ici a` is the segment `a` and the segments it dominates. -/
+/-- `Finset.Ici a` is the segment `a` and the segments that depend on it. -/
 instance : LocallyFiniteOrderTop PersonSegment :=
   .ofIci' PersonSegment (fun a ↦ Finset.univ.filter (a ≤ ·)) fun _ _ ↦ by simp
 
@@ -90,7 +79,7 @@ containing `a`. -/
 instance : LocallyFiniteOrderBot PersonSegment :=
   .ofIic' PersonSegment (fun a ↦ Finset.univ.filter (· ≤ a)) fun _ _ ↦ by simp
 
-/-- The geometry is a tree: the segments a segment depends on are comparable. -/
+/-- The segments form a tree: the segments a segment depends on are comparable. -/
 instance : IsForestOrder PersonSegment := ⟨by decide⟩
 
 /-- A segment and the segments it depends on form a chain. -/
@@ -98,25 +87,45 @@ theorem isChain_Iic (a : PersonSegment) : IsChain (· ≤ ·) (↑(Finset.Iic a)
   fun _ hb _ hc _ ↦
     IsForestOrder.le_total_of_le_of_le (Finset.mem_Iic.1 hb) (Finset.mem_Iic.1 hc)
 
-/-- The segments a person bears, the nodes of its geometry. -/
-def spec (p : Person) : Finset PersonSegment := Finset.univ.filter (·.toNode ∈ personFeatures p)
+/-- A person feature as a segment, the dependency of the features being that of the segments. -/
+def ofFeature : Person.Feature ↪o PersonSegment where
+  toFun
+    | .participant => participant
+    | .speaker => speaker
+    | .addressee => addressee
+  inj' := by decide
+  map_rel_iff' := by decide
 
-theorem mem_spec {s : PersonSegment} {p : Person} : s ∈ spec p ↔ s.toNode ∈ personFeatures p := by
-  simp [spec]
+/-- The segments a person bears: the root and its features in the full inventory. -/
+def spec (p : Person) : Finset PersonSegment :=
+  insert pi ((p.toFeatures Finset.univ).map ofFeature.toEmbedding)
 
-@[simp] theorem pi_mem_spec (p : Person) : pi ∈ spec p := mem_spec.2 (bot_mem_personFeatures p)
+@[simp] theorem pi_mem_spec (p : Person) : pi ∈ spec p := Finset.mem_insert_self _ _
+
+/-- A person bears a feature as a segment exactly when the feature is in its bundle. -/
+@[simp] theorem ofFeature_mem_spec {p : Person} {f : Person.Feature} :
+    ofFeature f ∈ spec p ↔ f ∈ p.toFeatures Finset.univ := by
+  revert p f; decide
+
+/-- The segments of a probe over the features `F` that a person bears are the root and the
+person's bundle in `F`. A probe articulated to [speaker] thus sees a second person as [participant]
+alone, and one articulated to [addressee] sees a first person so, the two person specifications
+of [bejar-rezac-2009]. -/
+theorem inter_spec (F : Person.Features) (p : Person) :
+    insert pi (F.map ofFeature.toEmbedding) ∩ spec p =
+      insert pi ((p.toFeatures F).map ofFeature.toEmbedding) := by
+  revert F p; decide
 
 /-- A person bears whatever its segments depend on. -/
-theorem spec_isLowerSet (p : Person) : IsLowerSet (↑(spec p) : Set PersonSegment) :=
-  fun _ _ h ha ↦ mem_spec.2 (personFeatures_isLowerSet p h (mem_spec.1 ha))
+theorem spec_isLowerSet (p : Person) : IsLowerSet (↑(spec p) : Set PersonSegment) := by
+  revert p; decide
 
 /-- A person bears [participant] iff it includes a speech-act participant. -/
-theorem participant_mem_spec_iff {p : Person} : participant ∈ spec p ↔ p.IsSAP := by
-  revert p; decide
+theorem participant_mem_spec_iff {p : Person} : participant ∈ spec p ↔ p.IsSAP :=
+  (ofFeature_mem_spec (f := .participant)).trans Person.isSAP_iff_participant.symm
 
-/-- A person bears [speaker] iff it includes the speaker, a bare [participant] receiving [speaker]
-by default. -/
-theorem speaker_mem_spec_iff {p : Person} : speaker ∈ spec p ↔ p.IncludesSpeaker := by
-  revert p; decide
+/-- A person bears [speaker] iff it includes the speaker. -/
+theorem speaker_mem_spec_iff {p : Person} : speaker ∈ spec p ↔ p.IncludesSpeaker :=
+  (ofFeature_mem_spec (f := .speaker)).trans Person.includesSpeaker_iff_speaker.symm
 
 end PersonSegment
