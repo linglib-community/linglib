@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.Finset.Lattice.Fold
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Person.Feature
 
 /-!
 # Person systems
@@ -19,21 +19,15 @@ on how the two values compare, so the systems number seven, and a linearly order
 [identifies the inclusive](##Person.not_injective_sup_of_linearOrder) with the exclusive or with
 the second person. Harbour's [standard tripartition](##Person.standardTripartition) ranks the
 speaker above the addressee, first with the speaker, otherwise second with the addressee,
-otherwise third, Zwicky's correspondence principle; its value is
-[the prominence](##Person.prominence_ofParticipants) of the person, so
-[resolution in it selects the more prominent conjunct](##Person.coarsen_ofParticipants_union), as
-Corbett's resolution rules state. An inventory of person features generates the system whose
-person is the bundle, and [every system is so generated](##Person.exists_bundle_eq_iff). The
-values of `Person` are the cells of two of these systems:
-[the three features](##Person.mem_participantSets_ofParticipants) give the quadripartition and
-[[participant] and [speaker]](##Person.bundle_participant_speaker_eq_iff) the standard
-tripartition, whose general first person [covers the two clusives](##Person.participantSets_first).
+otherwise third, Zwicky's correspondence principle. An inventory of person features generates the
+system whose person is the bundle, [participant] and [speaker]
+[the standard tripartition](##Person.bundle_participant_speaker_eq_iff), and
+[every system is so generated](##Person.exists_bundle_eq_iff).
 
 ## References
 
 * [harbour-2016]
 * [zwicky-1977b]
-* [corbett-2006]
 -/
 
 @[expose] public section
@@ -107,25 +101,6 @@ theorem standardTripartition_eq_iff :
       (s.Nonempty ↔ t.Nonempty) ∧ (.speaker ∈ s ↔ .speaker ∈ t) := by
   revert s t; decide
 
-/-- The prominence of a participant set's person is its value in the standard tripartition. -/
-theorem prominence_ofParticipants (s : Finset Role) :
-    (ofParticipants s).prominence = standardTripartition s := by
-  revert s; decide
-
-/-- Each class of the standard tripartition is the family of participant sets its person
-covers. -/
-theorem mem_participantSets_coarsen_ofParticipants :
-    t ∈ (ofParticipants s).coarsen.participantSets ↔
-      standardTripartition s = standardTripartition t := by
-  revert s t; decide
-
-/-- In the standard tripartition, resolution selects the more prominent conjunct. -/
-theorem coarsen_ofParticipants_union (s t : Finset Role) :
-    (ofParticipants (s ∪ t)).coarsen =
-      if (ofParticipants t).prominence ≤ (ofParticipants s).prominence
-      then (ofParticipants s).coarsen else (ofParticipants t).coarsen := by
-  revert s t; decide
-
 /-! ### The system an inventory generates -/
 
 /-- Two participant sets have the same bundle iff they bear the same features of the inventory. -/
@@ -165,18 +140,5 @@ theorem bundle_participant_speaker_eq_iff :
     bundle {.participant, .speaker} s = bundle {.participant, .speaker} t ↔
       standardTripartition s = standardTripartition t := by
   revert s t; decide
-
-/-- Each class of the system the three features generate is a single participant set, the one
-its person of the quadripartition covers. -/
-theorem mem_participantSets_ofParticipants {s t : Finset Role} :
-    t ∈ (ofParticipants s).participantSets ↔ bundle univ s = bundle univ t := by
-  rw [participantSets_ofParticipants, mem_singleton]
-  exact ⟨fun h ↦ h ▸ rfl, fun h ↦ (bundle_univ_injective h).symm⟩
-
-/-- Every person value is a cell of one of the two systems: a person of the quadripartition or
-the general first person of the standard tripartition. -/
-theorem exists_eq_ofParticipants_or_eq_coarsen (p : Person) :
-    ∃ s, p = ofParticipants s ∨ p = (ofParticipants s).coarsen := by
-  revert p; decide
 
 end Person
