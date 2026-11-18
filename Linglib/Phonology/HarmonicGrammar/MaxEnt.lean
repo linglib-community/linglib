@@ -10,7 +10,7 @@ public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Entropy.Basic
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.MeasureTheory.Constructions.Pi

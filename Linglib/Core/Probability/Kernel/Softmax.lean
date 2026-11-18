@@ -2,7 +2,8 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.InformationTheory.KullbackLeibler.Tilted
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -34,9 +35,9 @@ both ranks the points and says which of them are available.
   rationality the rule concentrates on the strict maximizer of the utility, and at a vanishing one
   it is uniform on the available points.
 * `ProbabilityTheory.Kernel.softmax_eq_tilted`,
-  `ProbabilityTheory.Kernel.isGreatest_freeEnergy_softmax`: a row is the uniform measure on the
-  available points tilted by the score, and so maximizes the expected score less the divergence
-  from that uniform measure, by the Gibbs variational principle.
+  `ProbabilityTheory.Kernel.integral_sub_toReal_klDiv_le_softmax`: a row is the uniform measure
+  on the available points tilted by the score, and so maximizes the expected score less the
+  divergence from that uniform measure, by the Gibbs variational principle.
 -/
 
 @[expose] public section
@@ -311,28 +312,19 @@ theorem softmax_coe_real_singleton_lt_iff (f : α → β → ℝ) (w : α) {u u'
   have : Nonempty β := ⟨u⟩
   rw [softmax_coe_real_singleton, softmax_coe_real_singleton, Real.softmax_lt_softmax_iff]
 
-theorem freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
-    (uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
-        (softmax score w) =
-      cgf (fun u ↦ (score w u).toReal) (uniformOn {u | score w u ≠ ⊥}) 1 := by
+/-- A row of the softmax kernel is the Gibbs optimizer: no distribution absolutely continuous with
+respect to the uniform measure on the points of score above `⊥` has a greater expected score less
+divergence from that uniform measure. -/
+theorem integral_sub_toReal_klDiv_le_softmax (htop : ∀ u, score w u ≠ ⊤)
+    (h0 : ∃ u, score w u ≠ ⊥) {q : Measure β} [IsProbabilityMeasure q]
+    (hq : q ≪ uniformOn {u | score w u ≠ ⊥}) :
+    ∫ u, (score w u).toReal ∂q - (klDiv q (uniformOn {u | score w u ≠ ⊥})).toReal ≤
+      ∫ u, (score w u).toReal ∂(softmax score w) -
+        (klDiv (softmax score w) (uniformOn {u | score w u ≠ ⊥})).toReal := by
   have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
-  rw [softmax_eq_tilted htop h0]
-  exact freeEnergy_tilted _ .of_finite .of_finite .of_finite
-
-/-- A row of the softmax kernel is the Gibbs optimizer. Among the distributions absolutely
-continuous with respect to the uniform measure on the points of score above `⊥`, it has the
-greatest expected score less divergence from that uniform measure. -/
-theorem isGreatest_freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤)
-    (h0 : ∃ u, score w u ≠ ⊥) :
-    IsGreatest ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal) ''
-        {q | IsProbabilityMeasure q ∧ q ≪ uniformOn {u | score w u ≠ ⊥} ∧
-          Integrable (llr q (uniformOn {u | score w u ≠ ⊥})) q ∧
-          Integrable (fun u ↦ (score w u).toReal) q})
-      ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
-        (softmax score w)) := by
-  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
-  rw [freeEnergy_softmax htop h0]
-  exact isGreatest_cgf _ .of_finite .of_finite .of_finite
+  rw [softmax_eq_tilted htop h0, toReal_klDiv_tilted_left_self .of_finite .of_finite,
+    sub_sub_cancel]
+  exact integral_sub_toReal_klDiv_le_log_integral_exp hq .of_finite .of_finite .of_finite
 
 end Gibbs
 

@@ -9,7 +9,8 @@ public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Mathlib.MeasureTheory.Measure.Real
-public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.InformationTheory.KullbackLeibler.Tilted
+public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
@@ -93,11 +94,12 @@ noncomputable def blahutArimoto [Nonempty C] (κ : Kernel C W) [IsFiniteKernel �
     [IsFiniteMeasure μ] : Measure C :=
   Kernel.ofWeights (fun (_ : Unit) c ↦ (κ c).geomMean fun w ↦ (κ†μ) w {c}) ()
 
-private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilityMeasure ν]
-    (f : C → ℝ) : (uniformOn Set.univ).freeEnergy f ν
+private theorem integral_sub_toReal_klDiv_uniformOn [Nonempty C] (ν : Measure C)
+    [IsProbabilityMeasure ν] (f : C → ℝ) :
+    ∫ c, f c ∂ν - (klDiv ν (uniformOn Set.univ)).toReal
       = ∑ c, ν.real {c} * (f c - log (ν.real {c})) - log (Fintype.card C) := by
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
-  rw [Measure.freeEnergy, integral_fintype .of_finite,
+  rw [integral_fintype .of_finite,
     toReal_klDiv_eq_sum_log_div (absolutelyContinuous_uniformOn_univ ν),
     show log (Fintype.card C : ℝ) = ∑ c, ν.real {c} * log (Fintype.card C) by
       rw [← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul],
@@ -347,10 +349,11 @@ theorem eq_channelCapacity_iff_eq_tilted :
   · rintro ⟨h, hμ⟩
     -- the free energy of every input distribution, tilted by `μ`'s expected log posterior,
     -- is at most its mutual information, with equality at `μ`
-    have hfe (ν : Measure C) [IsProbabilityMeasure ν] : (uniformOn Set.univ).freeEnergy
-        (fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) ν + log (Fintype.card C)
-          ≤ Im[ν ⊗ₘ κ] := by
-      rw [freeEnergy_uniformOn, measureMutualInfo_compProd_eq_sum_log, sub_add_cancel]
+    have hfe (ν : Measure C) [IsProbabilityMeasure ν] :
+        ∫ c, ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) ∂ν - (klDiv ν (uniformOn Set.univ)).toReal
+          + log (Fintype.card C) ≤ Im[ν ⊗ₘ κ] := by
+      rw [integral_sub_toReal_klDiv_uniformOn, measureMutualInfo_compProd_eq_sum_log,
+        sub_add_cancel]
       simp only [mul_sub, Finset.sum_sub_distrib, sub_le_sub_iff_right]
       refine sum_mul_integral_log_le κ ν (κ†μ) fun w hw ↦ ?_
       refine Measure.absolutelyContinuous_of_forall_singleton fun c hc ↦ ?_
@@ -366,17 +369,20 @@ theorem eq_channelCapacity_iff_eq_tilted :
       by_contra hne
       exact (posterior_apply_singleton_ne_zero_iff κ μ hμw c).2
         ⟨hμ c, ((posterior_apply_singleton_ne_zero_iff κ ν hw c).1 hne).2⟩ hc
-    have hμeq : (uniformOn Set.univ).freeEnergy
-        (fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) μ + log (Fintype.card C)
-          = Im[μ ⊗ₘ κ] := by
-      rw [freeEnergy_uniformOn, measureMutualInfo_compProd_eq_sum_log, sub_add_cancel]
+    have hμeq :
+        ∫ c, ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) ∂μ - (klDiv μ (uniformOn Set.univ)).toReal
+          + log (Fintype.card C) = Im[μ ⊗ₘ κ] := by
+      rw [integral_sub_toReal_klDiv_uniformOn, measureMutualInfo_compProd_eq_sum_log,
+        sub_add_cancel]
     have : IsProbabilityMeasure ((uniformOn Set.univ).tilted
         fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) := isProbabilityMeasure_tilted .of_finite
-    refine eq_tilted_of_freeEnergy_eq_cgf _ _ (absolutelyContinuous_uniformOn_univ μ) .of_finite
-      .of_finite .of_finite (le_antisymm (freeEnergy_le_cgf _ _
+    refine (integral_sub_toReal_klDiv_eq_log_integral_exp_iff
+      (absolutelyContinuous_uniformOn_univ μ) .of_finite .of_finite .of_finite).1
+      (le_antisymm (integral_sub_toReal_klDiv_le_log_integral_exp
         (absolutelyContinuous_uniformOn_univ μ) .of_finite .of_finite .of_finite) ?_)
-    rw [← freeEnergy_tilted (uniformOn Set.univ) .of_finite .of_finite .of_finite]
-    linarith [hfe ((uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)),
+    linarith [toReal_klDiv_tilted_left_self (μ := uniformOn Set.univ)
+        (f := fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) .of_finite .of_finite,
+      hfe ((uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)),
       measureMutualInfo_compProd_le_channelCapacity κ
         ((uniformOn Set.univ).tilted fun c ↦ ∫ w, log (((κ†μ) w).real {c}) ∂(κ c))]
   · intro h

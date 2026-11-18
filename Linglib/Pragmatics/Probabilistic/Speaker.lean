@@ -5,7 +5,6 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
-public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Softmax
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
