@@ -185,6 +185,21 @@ boundary, as `Karlsson2017` takes the morphs before the first inflectional one a
 conformance level, where the Leipzig rules have no symbol of their own for it. A distinction
 the source does not draw is not recovered: Karlsson's clitics are exported under `-`.
 
+### Index
+
+A study that selects, excludes or lists some of a file's rows names them. A file that declares
+`"index": {"type": "Example", "doc": "..."}` gets the finite type of its examples, one constructor
+per row under the row's own name, a `Fintype`, with `Examples.Example.datum`, the row of each, and
+`Examples.Example.all`, the list of them in the file's order. A study then quantifies over the
+type, `∀ x : Examples.Example, x ∉ modelled → … x.datum …`, and lists rows as
+`[.ex_30b, .ex_51b]`.
+
+Comparing two names costs the kernel nothing. Comparing two rows compares every string of both,
+and the kernel frees nothing within one declaration: on a file of 75 rows a statement testing
+`row ∈ rows` took 6 GiB, and `AlonsoOvalleRoyer2024`, whose theorems excluded and listed rows
+that way, went from 3.8 GiB and 24 s to 1.05 GiB and 4.5 s on the index. Do not decide the
+equality or membership of rows.
+
 ## Languages
 
 `languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,

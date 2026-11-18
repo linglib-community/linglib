@@ -132,6 +132,12 @@ it. The module emits the enum and the reader `boundary? : GlossedMorpheme → Op
 `leipzig` gives the Leipzig separator the symbol is written as in the CLDF export and in the
 conformance level. Every declared symbol is one character that some word of the rows writes.
 
+Index: a file that declares `"index": {"type": "Example", "doc": "..."}` gets the finite type
+of its examples, one constructor per row named as the row is, a `Fintype`, with `Example.datum`,
+the row of each, and `Example.all`, the list of them in the file's order. A study quantifies over
+the type (`∀ x : Example, …`) and selects, excludes or lists examples by these names. Comparing two names is free for the kernel, where comparing two rows compares every
+string of both, and a statement over the rows that tests `row ∈ rows` can take gigabytes.
+
 Dependencies: pure stdlib (json module).
 """
 
@@ -430,13 +436,14 @@ def split_data(data, where: str):
     """The declared features, the declared readings (or `None`), the declared labels and lexemes
     of spans (or `None`) and the example rows of a paper's JSON."""
     if isinstance(data, list):
-        return [], None, None, None, data
-    keys = {"features", "readings", "spans", "boundaries", "examples"}
+        return [], None, None, None, None, data
+    keys = {"features", "readings", "spans", "boundaries", "index", "examples"}
     if isinstance(data, dict) and set(data) <= keys and "examples" in data:
         return (data.get("features", []), data.get("readings"), data.get("spans"),
-                data.get("boundaries"), data["examples"])
+                data.get("boundaries"), data.get("index"), data["examples"])
     raise ValueError(f"{where}: top level must be an array of examples or an object with "
-                     f"`examples` and optionally `features`, `readings`, `spans` and `boundaries`")
+                     f"`examples` and optionally `features`, `readings`, `spans`, `boundaries` "
+                     f"and `index`")
 
 
 def validate_levels(levels: list, w: str) -> set:
@@ -511,6 +518,42 @@ def validate_features(features: list, examples: list, where: str) -> None:
                                      f"declared level of {ft['type']}")
         if not occurs:
             raise ValueError(f"{w}: no row records `{ft['key']}`")
+
+
+def validate_index(decl, taken: set, where: str) -> None:
+    if decl is None:
+        return
+    w = f"{where}.index"
+    if set(decl) != {"type", "doc"}:
+        raise ValueError(f"{w}: needs exactly `type` and `doc`")
+    if not TYPE_IDENT.match(decl["type"]) or decl["type"] in taken:
+        raise ValueError(f"{w}: `type` {decl['type']!r} is not a fresh Lean type name")
+
+
+def emit_index(decl: dict, author_year: str, local_ids: list) -> str:
+    """The finite type of the file's examples, with the list of them and the row of each: a study
+    selects and compares examples by these names, which the kernel compares at no cost, where
+    comparing the rows themselves compares every string of both."""
+    t = decl["type"]
+    ctors = "\n".join(f"  | {i}" for i in local_ids)
+    lines, cur = [], ""
+    for i, n in enumerate(local_ids):
+        piece = f".{n}" + ("," if i < len(local_ids) - 1 else "")
+        if cur and len(cur) + 1 + len(piece) > 94:
+            lines.append(cur); cur = piece
+        else:
+            cur = f"{cur} {piece}" if cur else piece
+    lines.append(cur)
+    listed = "\n    ".join(lines)
+    arms = "\n".join(f"  | .{i} => _root_.{author_year}.Examples.{i}" for i in local_ids)
+    return (f"/-- {decl['doc']} -/\ninductive {t} where\n{ctors}\n"
+            f"  deriving DecidableEq, Repr, Fintype\n\n"
+            f"/-- Every example of the file, in its order. -/\n"
+            f"def {t}.all : List {t} :=\n  [{listed}]\n\n"
+            f"/-- The row of an example. -/\n"
+            f"def {t}.datum : {t} → Datum\n{arms}\n\n"
+            f"theorem {t}.map_datum_all :\n"
+            f"    {t}.all.map {t}.datum = _root_.{author_year}.Examples.all := rfl")
 
 
 def validate_boundaries(decl, taken: set, examples: list, where: str) -> None:
@@ -654,7 +697,7 @@ def emit_readings(rd: dict) -> str:
 
 def emit_module(author_year: str, examples: list, features: list | None = None,
                 readings: dict | None = None, spans: dict | None = None,
-                boundaries: dict | None = None) -> str:
+                boundaries: dict | None = None, index: dict | None = None) -> str:
     ay_lower = author_year.lower()
     if author_year not in CONTRIBUTION_METHODS:
         raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
@@ -679,7 +722,10 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
         feats += "\n\n" + emit_spans(spans)
     if boundaries is not None:
         feats += "\n\n" + emit_boundaries(boundaries)
-    typed = features or readings is not None or spans is not None or boundaries is not None
+    if index is not None and examples:
+        feats += "\n\n" + emit_index(index, author_year, local_ids)
+    typed = (features or readings is not None or spans is not None or boundaries is not None
+             or index is not None)
     imports = "import Linglib.Data.Examples.Schema" + (
         "\nimport Linglib.Data.Examples.Readers" if features else "") + (
         "\nimport Mathlib.Tactic.DeriveFintype" if typed else "")
@@ -724,15 +770,16 @@ def process(author_year: str, check: bool) -> bool:
 
     try:
         where = str(json_path.relative_to(ROOT))
-        features, readings, spans, boundaries, examples = split_data(examples, where)
+        features, readings, spans, boundaries, index, examples = split_data(examples, where)
         validate_features(features, examples, where)
         validate_readings(readings, features, examples, where)
         validate_spans(spans, features, readings, examples, where)
         taken = {ft["type"] for ft in features} | ({readings["type"]} if readings else set())
         taken |= {d["type"] for d in (spans or {}).values()}
         validate_boundaries(boundaries, taken, examples, where)
+        validate_index(index, taken | ({boundaries["type"]} if boundaries else set()), where)
         module_text = as_module_if_possible(
-            emit_module(author_year, examples, features, readings, spans, boundaries))
+            emit_module(author_year, examples, features, readings, spans, boundaries, index))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
@@ -949,11 +996,12 @@ def fmt(author_year: str) -> bool:
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
     if isinstance(data, dict):
-        features, readings, spans, boundaries, examples = split_data(data, str(json_path))
+        features, readings, spans, boundaries, index, examples = split_data(data, str(json_path))
         body = format_examples(examples).rstrip("\n").replace("\n", "\n  ")
         head = ""
         for key, val in (("features", features if "features" in data else None),
-                         ("readings", readings), ("spans", spans), ("boundaries", boundaries)):
+                         ("readings", readings), ("spans", spans), ("boundaries", boundaries),
+                         ("index", index)):
             if val is not None:
                 dumped = json.dumps(val, ensure_ascii=False, indent=2).replace("\n", "\n  ")
                 head += f'  "{key}": {dumped},\n'
