@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Orthologic.Basic
 public import Linglib.Logic.Orthologic.Compatibility
 public import Linglib.Core.Order.Ortholattice.Representation
+public import Linglib.Logic.Consequence.Basic
 
 /-!
 # Frame semantics and completeness for orthologic
@@ -35,7 +36,7 @@ algebraic completeness.
 
 @[expose] public section
 
-open Order Set OrthoConcept
+open Order Set OrthoConcept Consequence
 
 universe u
 
@@ -72,18 +73,39 @@ theorem support_setOf_eq_coe_eval (F : Compatibility S) (V : Var → F.Regular)
 
 variable {φ ψ : Formula Var}
 
+/-- A compatibility model with a distinguished possibility. -/
+structure PointedModel (Var : Type u) where
+  /-- The possibilities of the frame. -/
+  Possibility : Type u
+  /-- The compatibility frame. -/
+  frame : Compatibility Possibility
+  /-- The valuation, into the regular propositions of the frame. -/
+  val : Var → frame.Regular
+  /-- The possibility at which formulas are evaluated. -/
+  point : Possibility
+
+/-- A pointed model supports a formula when its distinguished possibility does. -/
+def PointedModel.Supports (M : PointedModel Var) (φ : Formula Var) : Prop :=
+  Support M.frame M.val M.point φ
+
 variable (φ ψ) in
 /-- `ψ` is a semantic consequence of `φ` over compatibility frames when in every model every
 possibility supporting `φ` supports `ψ` ([holliday-mandelkern-2024] Definition 4.18). -/
 def FrameConsequence : Prop :=
-  ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular) (s : S),
-    Support F V s φ → Support F V s ψ
+  {φ} ⊨[PointedModel.Supports] ψ
 
 @[inherit_doc] scoped infix:50 " ⊨ᶠ " => FrameConsequence
+
+theorem frameConsequence_iff :
+    (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular) (s : S),
+      Support F V s φ → Support F V s ψ :=
+  ⟨fun h _ F V s hs ↦ h ⟨_, F, V, s⟩ (Set.forall_mem_singleton.2 hs),
+    fun h M hM ↦ h M.frame M.val M.point (hM φ rfl)⟩
 
 theorem frameConsequence_iff_eval :
     (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Compatibility S) (V : Var → F.Regular),
       Formula.eval V φ ≤ Formula.eval V ψ := by
+  rw [frameConsequence_iff]
   refine ⟨fun h S F V ↦ ?_, fun h S F V s hs ↦ ?_⟩
   · rw [← SetLike.coe_subset_coe, ← support_setOf_eq_coe_eval, ← support_setOf_eq_coe_eval]
     exact fun s hs ↦ h F V s hs

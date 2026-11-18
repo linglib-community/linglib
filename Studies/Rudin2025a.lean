@@ -146,7 +146,7 @@ theorem IsAssertiveUpdate.eq_empty_of_not_compatible (hf : IsAssertiveUpdate s f
   (hf c).unique (isGreatest_empty_of_not_compatible h)
 
 theorem IsAssertiveUpdate.informationalConsequence (hf : IsAssertiveUpdate s f)
-    (h : ∀ c, Compatible id s c → f c ∈ MI id s') : InformationalConsequence [s] s' := by
+    (h : ∀ c, Compatible id s c → f c ∈ MI id s') : InformationalConsequence {s} s' := by
   refine informationalConsequence_singleton_iff.2 fun i (hi : i ∈ MI id s) ↦ ?_
   rcases i.eq_empty_or_nonempty with rfl | hne
   · exact mem_MI_of_eq_empty (b := id) s' rfl

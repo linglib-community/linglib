@@ -116,11 +116,11 @@ variable (e : AristotelianIso φ φ') {i j : ι}
   simp only [isCompl_iff, map_disjoint, map_codisjoint]
 
 @[simp] theorem map_isContrary : IsContrary (φ' (e i)) (φ' (e j)) ↔ IsContrary (φ i) (φ j) := by
-  simp only [IsContrary, map_disjoint, map_codisjoint]
+  simp only [isContrary_iff, map_disjoint, map_codisjoint]
 
 @[simp] theorem map_isSubcontrary :
     IsSubcontrary (φ' (e i)) (φ' (e j)) ↔ IsSubcontrary (φ i) (φ j) := by
-  simp only [IsSubcontrary, map_disjoint, map_codisjoint]
+  simp only [isSubcontrary_iff, map_disjoint, map_codisjoint]
 
 /-- An Aristotelian isomorphism of injective families from a bijection preserving and reflecting
 the four Aristotelian relations, as [demey-smessaert-2018] and [demey-smessaert-2024] define

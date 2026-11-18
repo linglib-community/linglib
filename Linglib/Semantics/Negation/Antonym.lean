@@ -136,7 +136,7 @@ open Aristotelian in
 /-- Disjoint extensions are contrary exactly when they leave a gap. -/
 theorem isContrary_iff_gap_nonempty (hPN : Disjoint P N) :
     IsContrary P N ↔ (P ∪ N)ᶜ.Nonempty := by
-  rw [IsContrary, and_iff_right hPN, codisjoint_iff]
+  rw [isContrary_iff, and_iff_right hPN, codisjoint_iff]
   exact Set.nonempty_compl.symm
 
 end Denotation

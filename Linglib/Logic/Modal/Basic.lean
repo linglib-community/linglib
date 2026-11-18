@@ -15,7 +15,7 @@ $\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. An opera
 propositions is *indicial* when it is necessity along some accessibility relation, after Gallin:
 Montague's necessity is the indicial operator of the universal relation, and Scott's present
 progressive is not indicial. Along a serial relation $\Box p$, $\Box \neg p$, $\Diamond p$ and
-$\neg \Box p$ [form a square of opposition](##modalSquare_relations).
+$\neg \Box p$ [form a square of opposition](##squareRelations_modalSquare).
 
 ## Main definitions
 
@@ -65,7 +65,7 @@ def modalSquare (R : SetRel W W) (p : W → Prop) : Aristotelian.Square (W → P
   I := ◇[R] p
   O := (□[R] p)ᶜ
 
-theorem modalSquare_relations (R : SetRel W W) [IsSerial R] (p : W → Prop) :
+theorem squareRelations_modalSquare (R : SetRel W W) [IsSerial R] (p : W → Prop) :
     Aristotelian.SquareRelations (modalSquare R p) :=
   .of_disjoint (compl_box_compl R p).symm rfl box_disjoint_compl
 

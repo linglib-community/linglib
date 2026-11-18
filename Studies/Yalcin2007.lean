@@ -198,60 +198,60 @@ theorem ifThen_must_iff {α : Sentence W} : ifThen α ψ.must s w ↔ ifThen α 
 
 /-! ### Consequence -/
 
-theorem lukasiewicz (p : Set W) : InformationalConsequence [(ofProp p)ᶜ] (ofProp p).mightᶜ := by
+theorem lukasiewicz (p : Set W) : InformationalConsequence {(ofProp p)ᶜ} (ofProp p).mightᶜ := by
   intro s h w hw ⟨w', hw', hp⟩
-  exact h _ List.mem_cons_self w' hw' hp
+  exact h _ rfl w' hw' hp
 
-theorem epistemic_contradiction (p : Set W) : InformationalConsequence [contra p] ⊥ := by
+theorem epistemic_contradiction (p : Set W) : InformationalConsequence {contra p} ⊥ := by
   intro s h w hw
-  exact absurd (h _ List.mem_cons_self) (not_accepted_contra ⟨w, hw⟩)
+  exact absurd (h _ rfl) (not_accepted_contra ⟨w, hw⟩)
 
 theorem nonfactivity :
-    ¬ InformationalConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) := by
+    ¬ InformationalConsequence {(ofProp {true}).might} (ofProp ({true} : Set Bool)) := by
   intro h
   have := h Set.univ (by
-    simp only [List.mem_singleton, forall_eq]
+    simp only [Set.mem_singleton_iff, forall_eq]
     intro _ _; exact ⟨true, trivial, rfl⟩) false trivial
   simp [ofProp] at this
 
 theorem not_diagonal_epistemic_contradiction :
-    ¬ DiagonalConsequence [contra ({true} : Set Bool)] ⊥ := by
+    ¬ DiagonalConsequence {contra ({true} : Set Bool)} ⊥ := by
   intro h
-  have := h Set.univ false trivial (by
-    simp only [List.mem_singleton, forall_eq]
+  have := diagonalConsequence_iff.1 h Set.univ false trivial (by
+    simp only [Set.mem_singleton_iff, forall_eq]
     exact ⟨by simp [ofProp], true, trivial, rfl⟩)
   simp at this
 
 theorem not_diagonal_factivity :
-    ¬ DiagonalConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) := by
+    ¬ DiagonalConsequence {(ofProp {true}).might} (ofProp ({true} : Set Bool)) := by
   intro h
-  have := h Set.univ false trivial (by
-    simp only [List.mem_singleton, forall_eq]
+  have := diagonalConsequence_iff.1 h Set.univ false trivial (by
+    simp only [Set.mem_singleton_iff, forall_eq]
     exact ⟨true, trivial, rfl⟩)
   simp [ofProp] at this
 
 -- fn. 7
 theorem factual_reductio (p q : Set W) :
-    InformationalConsequence [(ofProp p)ᶜ ⊓ ofProp q] ⊥ ↔
-      InformationalConsequence [ofProp q] (ofProp p) := by
+    InformationalConsequence {(ofProp p)ᶜ ⊓ ofProp q} ⊥ ↔
+      InformationalConsequence {ofProp q} (ofProp p) := by
   constructor
   · intro h s hq w hw
     by_contra hp
     have := h {w} (by
-      simp only [List.mem_singleton, forall_eq]
+      simp only [Set.mem_singleton_iff, forall_eq]
       intro v hv
       rw [Set.mem_singleton_iff.mp hv]
-      exact ⟨hp, hq _ List.mem_cons_self w hw⟩) w rfl
+      exact ⟨hp, hq _ rfl w hw⟩) w rfl
     simp at this
   · intro h s hs w hw
-    have hc := hs _ List.mem_cons_self
+    have hc := hs _ rfl
     refine absurd (h s ?_ w hw) (hc w hw).1
-    simp only [List.mem_singleton, forall_eq]
+    simp only [Set.mem_singleton_iff, forall_eq]
     exact fun v hv ↦ (hc v hv).2
 
 theorem not_classical :
-    InformationalConsequence [contra ({true} : Set Bool)] ⊥ ∧
-      ¬ InformationalConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) :=
+    InformationalConsequence {contra ({true} : Set Bool)} ⊥ ∧
+      ¬ InformationalConsequence {(ofProp {true}).might} (ofProp ({true} : Set Bool)) :=
   ⟨epistemic_contradiction _, nonfactivity⟩
 
 /-! ### Epistemic necessity -/
@@ -281,8 +281,8 @@ theorem isFixedPt_update_iff : IsFixedPt (update φ) s ↔ φ.AcceptedIn s :=
 /-- Informational consequence, which fn. 22 calls similar to Veltman's validity₃, is exactly
 validity₃ of the update of a sentence. -/
 theorem informationalConsequence_iff_preservesAcceptance :
-    InformationalConsequence Γ φ ↔ PreservesAcceptance (Γ.map update) (update φ) := by
-  simp [InformationalConsequence, PreservesAcceptance, isFixedPt_update_iff]
+    InformationalConsequence {γ | γ ∈ Γ} φ ↔ PreservesAcceptance (Γ.map update) (update φ) := by
+  simp [InformationalConsequence, Consequence.Entails, PreservesAcceptance, isFixedPt_update_iff]
 
 theorem update_ofProp (p : Set W) : update (ofProp p) = CCP.up p := rfl
 
@@ -305,12 +305,17 @@ theorem update_must : update φ.must = CCP.must (update φ) := by
 
 -- The verdicts of this section carry over to Veltman's system.
 example : ¬PreservesAcceptance [CCP.might (CCP.up {true})] (CCP.up ({true} : Set Bool)) :=
-  fun h ↦ nonfactivity (informationalConsequence_iff_preservesAcceptance.2 h)
+  fun h ↦ nonfactivity <| by
+    simpa only [List.mem_singleton, Set.ofPred_eq_eq_singleton] using
+      (informationalConsequence_iff_preservesAcceptance
+        (Γ := [(ofProp ({true} : Set Bool)).might]) (φ := ofProp {true})).2 h
 
 example (p : Set W) :
     PreservesAcceptance [CCP.neg (CCP.up p)] (CCP.neg (CCP.might (CCP.up p))) := by
   simpa [update_compl, update_might, update_ofProp] using
-    informationalConsequence_iff_preservesAcceptance.1 (lukasiewicz p)
+    (informationalConsequence_iff_preservesAcceptance (Γ := [(ofProp p)ᶜ])
+      (φ := (ofProp p).mightᶜ)).1
+      (by simpa only [List.mem_singleton, Set.ofPred_eq_eq_singleton] using lukasiewicz p)
 
 end UpdateSemantics
 

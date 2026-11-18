@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Semantics.Focus.Control
 public import Studies.Magri2009
 

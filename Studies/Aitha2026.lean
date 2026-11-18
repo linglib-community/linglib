@@ -339,9 +339,9 @@ def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
   | .trochees => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
 /-- (46)–(48): FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT, each read off a parse's footing as its
-non-bimoraic feet, its stray syllables, and the feet's distances from the left edge. -/
+degenerate feet, its stray syllables, and the feet's distances from the left edge. -/
 def stemRanking : List (Constraint StemCandidate) :=
-  [fun c ↦ (c.toFooting.nonBimoraicFeet id).length, fun c ↦ c.toFooting.strays.length,
+  [fun c ↦ c.toFooting.feet.countP (·.moraCount id < 2), fun c ↦ c.toFooting.strays.length,
     fun c ↦ c.toFooting.footOffsets.sum]
 
 -- (49)
@@ -539,7 +539,7 @@ def candidate (I c : Printed) : Candidate Segment :=
 
 /-- The stress of a slot, where its syllable is in a foot or stressed. -/
 def specified (P : Parse Segment) (i : ℕ) : Option ℕ :=
-  if P.stressAt i ≠ 0 ∨ ∃ t ∈ P.feet, ∃ s ∈ Prosody.syllableLeaves t, i ∈ P.form.yield s
+  if P.stressAt i ≠ 0 ∨ ∃ f ∈ P.feet, ∃ s ∈ f, i ∈ P.form.yield s
   then some (P.stressAt i) else none
 
 /-- The marks of a candidate whose first `stem` input slots are the Stem.

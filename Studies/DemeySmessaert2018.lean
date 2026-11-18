@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Order.Hom.CompleteLattice
 public import Linglib.Logic.Aristotelian.Morphism
-public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Logic.Aristotelian.Square.Hom
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Fin.VecNotation
@@ -306,7 +306,7 @@ theorem card_parts_minterms_syl :
 theorem not_isContrary_fol (i j : Fin 4) :
     ¬ IsContrary (categorical IsFOLPattern i) (categorical IsFOLPattern j) := by
   revert i j
-  simp only [IsContrary, codisjoint_iff]
+  simp only [isContrary_iff, codisjoint_iff]
   decide
 
 -- Section 4: on patterns, the first-order X is not Aristotelian isomorphic to the syllogistic
