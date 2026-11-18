@@ -75,7 +75,7 @@ def ContainsNoF : Formula Atom → Prop
 
 theorem sat_iff_of_sim (hV : IsAssignment F V) :
     ∀ {a : Formula Atom}, ContainsNoF a → ∀ {t : T} {w w' : World}, F.sim t w w' →
-      (F.sat V a t w ↔ F.sat V a t w')
+      (F.sat V a ⟨w, t⟩ ↔ F.sat V a ⟨w', t⟩)
   | .atom p, _, _, _, _, h => hV p le_rfl h
   | .neg a, ha, _, _, _, h => not_congr (sat_iff_of_sim hV (a := a) ha h)
   | .and a b, ha, _, _, _, h =>
@@ -86,30 +86,32 @@ theorem sat_iff_of_sim (hV : IsAssignment F V) :
   | .N _, _, _, _, _, h => by
     simp only [sat_N]
     exact forall_congr' fun _ ↦
-      imp_congr_left ⟨(F.sim _).iseqv.trans ((F.sim _).iseqv.symm h), (F.sim _).iseqv.trans h⟩
+      imp_congr_left ⟨(F.sim _).trans' ((F.sim _).symm' h), (F.sim _).trans' h⟩
   | .box _, _, _, _, _, _ => by simp only [sat_box]
 
 /-- (6): under an assignment, a formula without the future tense is historically necessary exactly
 when it is true (p. 209). -/
 theorem sat_N_iff (hV : IsAssignment F V) (ha : ContainsNoF a) :
-    F.sat V (.N a) t w ↔ F.sat V a t w :=
-  ⟨fun h ↦ h w ((F.sim t).iseqv.refl w), fun h _ hw ↦ (sat_iff_of_sim hV ha hw).1 h⟩
+    F.sat V (.N a) ⟨w, t⟩ ↔ F.sat V a ⟨w, t⟩ :=
+  (sat_N F V a t w).trans
+    ⟨fun h ↦ h w ((F.sim t).refl' w), fun h _ hw ↦ (sat_iff_of_sim hV ha hw).1 h⟩
 
 -- (6) in the terms of `TWFrame.IsSettled`: past and present issues are settled.
 theorem isSettled_sat (hV : IsAssignment F V) (ha : ContainsNoF a) (cg : Set World) :
-    F.IsSettled cg t (F.sat V a t) :=
+    F.IsSettled cg t (fun w ↦ F.sat V a ⟨w, t⟩) :=
   fun _ _ _ hv ↦ sat_iff_of_sim hV ha hv
 
 -- (7), p. 209: this needs only that historical equivalence gets finer as time advances.
-theorem sat_N_past_of_past_N (h : F.sat V (.Pst (.N a)) t w) : F.sat V (.N (.Pst a)) t w := by
-  simp only [sat_N, sat_Pst] at h ⊢
-  obtain ⟨t', ht', hN⟩ := h
-  exact fun v hv ↦ ⟨t', ht', hN v (F.antitone_sim ht'.le hv)⟩
+theorem sat_N_past_of_past_N {i : Index World T} (h : F.sat V (.Pst (.N a)) i) :
+    F.sat V (.N (.Pst a)) i :=
+  fun j hj ↦ sat_Pst_iff_diamond.2 <| ModalLogic.diamond_box_le_box_diamond
+    (by rw [Index.inv_past]; exact F.future_comp_historical_subset) _ _
+    (sat_Pst_iff_diamond.1 h) j hj
 
 -- The atomic instance of (8) is valid, by (6) and the T axiom.
 theorem sat_past_N_of_N_past (hV : IsAssignment F V) {p : Atom}
-    (h : F.sat V (.N (.Pst (.atom p))) t w) : F.sat V (.Pst (.N (.atom p))) t w := by
-  obtain ⟨t', ht', hp⟩ := (sat_Pst F V _ t w).1 (h w ((F.sim t).iseqv.refl w))
+    (h : F.sat V (.N (.Pst (.atom p))) ⟨w, t⟩) : F.sat V (.Pst (.N (.atom p))) ⟨w, t⟩ := by
+  obtain ⟨t', ht', hp⟩ := (sat_Pst F V _ t w).1 ((sat_N F V _ t w).1 h w ((F.sim t).refl' w))
   exact (sat_Pst F V _ t w).2 ⟨t', ht', (sat_N_iff hV (a := .atom p) trivial).2 hp⟩
 
 /-- (8) is invalid (p. 209): it can have been that something would happen, on every alternative,
@@ -117,8 +119,8 @@ while at no earlier time was it settled that it would. The countermodel is an as
 frame of dated facts. -/
 theorem exists_not_N_past_imp_past_N :
     ∃ (F : TWFrame Bool ℕ) (V : Unit → ℕ → Bool → Prop), IsAssignment F V ∧
-      F.sat V (.N (.Pst (.Fut (.atom ())))) 1 true ∧
-        ¬ F.sat V (.Pst (.N (.Fut (.atom ())))) 1 true := by
+      F.sat V (.N (.Pst (.Fut (.atom ())))) ⟨true, 1⟩ ∧
+        ¬ F.sat V (.Pst (.N (.Fut (.atom ())))) ⟨true, 1⟩ := by
   refine ⟨.ofDatedFacts (fun _ : Unit ↦ 1) (fun w _ ↦ w = true),
     fun _ t w ↦ t = 1 ∧ w = true, ?_, ?_, ?_⟩
   · rintro _ t₁ t w w' hle h
@@ -126,7 +128,7 @@ theorem exists_not_N_past_imp_past_N :
     · subst hne
       simpa using h () hle
     · simp [hne]
-  · intro v hv
+  · refine (sat_N _ _ _ _ _).2 fun v hv ↦ ?_
     obtain rfl : v = true := by simpa using (hv () le_rfl).1 rfl
     simp
   · simp only [sat_Pst, sat_N, sat_Fut, sat_atom]
@@ -138,25 +140,25 @@ theorem exists_not_N_past_imp_past_N :
 /-- Why (15) is valid: `FG[p ∧ ¬p]` says that a last moment lies ahead, whatever the world, so it
 is historically necessary when true (p. 217). -/
 theorem sat_fut_G_contradiction_iff :
-    F.sat V (.Fut (.G (.and a (.neg a)))) t w ↔ ∃ t', t < t' ∧ IsMax t' := by
+    F.sat V (.Fut (.G (.and a (.neg a)))) ⟨w, t⟩ ↔ ∃ t', t < t' ∧ IsMax t' := by
   simp only [sat_Fut, sat_G, sat_and, sat_neg, and_not_self, imp_false, isMax_iff_forall_not_lt]
 
 /-- Why (16) is valid: `GF[p ∨ ¬p]` says that no last moment lies ahead, whatever the world, so it
 is historically necessary when true (p. 217). -/
 theorem sat_G_fut_excluded_middle_iff :
-    F.sat V (.G (.Fut (.or a (.neg a)))) t w ↔ ∀ t', t < t' → ¬ IsMax t' := by
+    F.sat V (.G (.Fut (.or a (.neg a)))) ⟨w, t⟩ ↔ ∀ t', t < t' → ¬ IsMax t' := by
   simp only [sat_G, sat_Fut, sat_or, sat_neg, em, and_true, isMax_iff_forall_not_lt, not_forall,
     not_not]
 
 -- (15), p. 217
 theorem valid_fifteen : F.sat V ((Formula.Fut (.G (.and a (.neg a)))).imp
-    (.N (.Fut (.G (.and a (.neg a)))))) t w := by
+    (.N (.Fut (.G (.and a (.neg a)))))) ⟨w, t⟩ := by
   simp only [sat_imp, sat_N, sat_fut_G_contradiction_iff]
   exact fun h _ _ ↦ h
 
 -- (16), p. 217
 theorem valid_sixteen : F.sat V ((Formula.G (.Fut (.or a (.neg a)))).imp
-    (.N (.G (.Fut (.or a (.neg a)))))) t w := by
+    (.N (.G (.Fut (.or a (.neg a)))))) ⟨w, t⟩ := by
   simp only [sat_imp, sat_N, sat_G_fut_excluded_middle_iff]
   exact fun h _ _ ↦ h
 
