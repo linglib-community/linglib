@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.ModelTheory.ManySorted.Traverse
 public import Linglib.Semantics.Composition.Lawful
+public import Linglib.Semantics.Composition.LiftRel
 public import Linglib.Semantics.Composition.Mode.Pointwise
 
 /-!
@@ -116,5 +117,24 @@ theorem effectGrammar.alternatives_realize_pointwise (ρ : ∀ {a : Ty B}, W' a 
     (effectGrammar.realize_pointwise (f := (.F : Eff B)) ρ g d)).trans ?_
   rw [traverse_F (D := D)]
   exact Set.ext fun _ ↦ WithAlternatives.mem_alternatives_map
+
+/-! ### Relations through the pointwise grammar -/
+
+variable {D' : B → Type} [M' : G.Structure (Ty.Dom D')] {r : ∀ b, D b → D' b → Prop}
+
+/-- The operations of an applicative effect respect the relations it lifts. -/
+theorem Eff.liftsRel (r : ∀ b, D b → D' b → Prop) (f : Eff B) [h : f.IsApplicative] :
+    Applicative.LiftsRel (A := Eff.Obj D f) (A' := Eff.Obj D' f) fun R ↦ Eff.LiftRel r f R :=
+  ⟨@fun _ _ _ ↦ Eff.rel_pure f h, @fun _ _ _ _ _ _ ↦ Eff.rel_map f,
+    @fun _ _ _ _ _ _ ↦ Eff.rel_seq f h⟩
+
+/-- A logical relation between two structures for a grammar, lifted from a relation between base
+domains, is one between the pointwise grammars of an applicative effect over them. -/
+theorem effectGrammar.isLogicalRel_pointwise (hM : M.IsLogicalRel M' (Ty.LiftRel r)) :
+    (effectGrammar.pointwise (G := G) (D := D) f).IsLogicalRel
+      (effectGrammar.pointwise (G := G) (D := D') f)
+      fun a ↦ Eff.LiftRel r f (Ty.LiftRel r a) := by
+  rw [pointwise_eq_applicative, pointwise_eq_applicative]
+  exact (effectGrammar.isLogicalRel hM).applicative (Eff.liftsRel r f)
 
 end Interpreter
