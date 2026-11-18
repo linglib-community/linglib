@@ -183,7 +183,10 @@ must weaken the LCA. -/
 theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d)
     (hb : ∀ x : α, ¬ IsMax x → IsBranching x) (hx : ¬ IsMax x) :
     ¬ Linearizes (bareCCommand H) {a | IsMax a} := fun hl ↦ by
-  obtain ⟨m, a, b, ha, hb', hab, hma, hmb⟩ := exists_cherry hb hx
+  obtain ⟨m, hm, hmax⟩ := exists_not_isMax_and_forall_gt_isMax hx
+  obtain ⟨a, ha, b, hb', hab⟩ := hb m hm
+  have hma := hmax a ha.lt
+  have hmb := hmax b hb'.lt
   exact (hl.not_mem_or_not_mem_of_covBy hH ha hb' hab hma hmb).elim (· hma) (· hmb)
 
 /-! #### The configuration (154)
