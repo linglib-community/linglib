@@ -112,7 +112,7 @@ variable (g : Grammar) (l : Locus) (nom : Arg → Nominal)
 
 /-- The arguments a probe of grammar `g` Agrees with, in search order. -/
 def agreed (goals : List Arg) : List Arg :=
-  (run g (fun a ↦ (nom a).1) goals).interacted
+  (run g (fun a ↦ spec (nom a).1) goals).interacted
 
 /-- Agree is bidirectional ((31)): a head holding `fs` flags its next goal with all of `fs`, beyond
 the mark of agreement that is [deal-2025a]'s goal flag, and takes on the goal's φ-features. -/
@@ -126,7 +126,7 @@ def flagged (goals : List Arg) : List (Arg × Finset Feature) :=
 
 theorem agreed_pair (a b : Arg) :
     agreed g nom [a, b] = a :: if Licit g ⟨(nom b).1, (nom a).1⟩ then [b] else [] :=
-  interacted_run_pair g _ a b
+  interacted_run_pair g _ (fun _ ↦ pi_mem_spec _) a b
 
 /-- Feature transfer under Agree is transitive ((31)): a probe flags its first goal with its
 category feature alone and, if it goes on to a second, flags that with the first goal's φ-features

@@ -57,58 +57,77 @@ structure Grammar where
   dynamic : Finset Person.Segment
   deriving DecidableEq, Fintype
 
-/-- The run of grammar `g`'s probe over goals, each reading as a person. The state is the
-interaction condition, the features copied into it so far, starting from [φ]. A goal is visible
-when it bears them all; interacting with it copies its dynamic features into the condition, (44)
-and (45); and only a visible goal bearing the satisfaction feature satisfies the probe, (8b). -/
-def run {α : Type*} (g : Grammar) (person : α → Person) (goals : List α) :
+/-- The run of grammar `g`'s probe over goals, each read as the segments it bears. The state is
+the interaction condition, the features copied into it so far, starting from [φ]. A goal is
+visible when it bears them all, so a goal must bear the root to be seen; interacting with it
+copies its dynamic features into the condition, (44) and (45); and only a visible goal bearing
+the satisfaction feature satisfies the probe, (8b). -/
+def run {α : Type*} (g : Grammar) (segments : α → Finset Person.Segment) (goals : List α) :
     Probe.Result α (Finset Person.Segment) :=
   Probe.Dynamic.agree
-    (fun int ↦ ⟨fun a ↦ decide (int ⊆ spec (person a)),
-      fun a ↦ decide (int ⊆ spec (person a)) && g.satisfaction.any (· ∈ spec (person a))⟩)
-    (fun a int ↦ int ∪ g.dynamic ∩ spec (person a)) (fun _ int ↦ int) {.pi} goals
+    (fun int ↦ ⟨fun a ↦ decide (int ⊆ segments a),
+      fun a ↦ decide (int ⊆ segments a) && g.satisfaction.any (· ∈ segments a)⟩)
+    (fun a int ↦ int ∪ g.dynamic ∩ segments a) (fun _ int ↦ int) {.pi} goals
+
+/-- A direct object bearing the segments `lo` and an indirect object bearing `hi` are licit when
+the probe, meeting the direct object first, interacts with both. The positions keep two objects
+with the same segments apart. -/
+def LicitAt (g : Grammar) (lo hi : Finset Person.Segment) : Prop :=
+  (run g Prod.fst [(lo, 0), (hi, 1)]).interacted.map (·.2) = [0, 1]
+
+instance (g : Grammar) (lo hi : Finset Person.Segment) : Decidable (LicitAt g lo hi) :=
+  inferInstanceAs (Decidable (_ = _))
 
 /-- A clitic combination ⟨IO, DO⟩ is licit when the probe, meeting the direct object first,
 interacts with both objects, section 3.1; the reverse PCC of section 6.2, where the probe meets
-the indirect object first, is licitness of the swapped pair. The positions keep two objects of one
-person apart. -/
-def Licit (g : Grammar) (s : Scenario Person) : Prop :=
-  (run g Prod.fst [s.low, s.high].zipIdx).interacted.map (·.2) = [0, 1]
+the indirect object first, is licitness of the swapped pair. -/
+def Licit (g : Grammar) (s : Scenario Person) : Prop := LicitAt g (spec s.low) (spec s.high)
 
-instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦
+  inferInstanceAs (Decidable (LicitAt _ _ _))
 
-private theorem interacted_run_pair_aux {α : Type*} (g : Grammar) (person : α → Person) (a b : α) :
-    (run g person [a, b]).interacted =
-      a :: if (∀ x ∈ g.satisfaction, x ∉ spec (person a)) ∧
-          g.dynamic ∩ spec (person a) ⊆ spec (person b) then [b] else [] := by
+private theorem interacted_run_pair_aux {α : Type*} (g : Grammar)
+    (segments : α → Finset Person.Segment) (a b : α) (ha : pi ∈ segments a)
+    (hb : pi ∈ segments b) :
+    (run g segments [a, b]).interacted =
+      a :: if (∀ x ∈ g.satisfaction, x ∉ segments a) ∧
+          g.dynamic ∩ segments a ⊆ segments b then [b] else [] := by
   obtain ⟨_ | x, dyn⟩ := g
-  · simp [run, Probe.Dynamic.agree_cons, Finset.insert_subset_iff]
-  · by_cases hx : x ∈ spec (person a)
-    · simp [run, Probe.Dynamic.agree_cons, hx]
+  · simp [run, Probe.Dynamic.agree_cons, Finset.insert_subset_iff, ha, hb]
+  · by_cases hx : x ∈ segments a
+    · simp [run, Probe.Dynamic.agree_cons, hx, ha]
     · simp only [run, Probe.Dynamic.agree_cons]
-      simp [hx, Finset.insert_subset_iff]
+      simp [hx, Finset.insert_subset_iff, ha, hb]
       split_ifs <;> simp_all
 
-/-- A combination is licit exactly when the direct object does not satisfy the probe and the
+/-- Two objects are licit exactly when the direct object does not satisfy the probe and the
 indirect object is at least as specified as the direct object relative to the dynamic features. -/
-theorem licit_iff (g : Grammar) (s : Scenario Person) :
-    Licit g s ↔
-      (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ SpecLE g.dynamic (spec s.low) (spec s.high) := by
-  have h := interacted_run_pair_aux g Prod.fst (s.low, 0) (s.high, 1)
-  change (run g Prod.fst [(s.low, 0), (s.high, 1)]).interacted.map (·.2) = [0, 1] ↔ _
+theorem licitAt_iff (g : Grammar) {lo hi : Finset Person.Segment} (hlo : pi ∈ lo)
+    (hhi : pi ∈ hi) :
+    LicitAt g lo hi ↔ (∀ x ∈ g.satisfaction, x ∉ lo) ∧ SpecLE g.dynamic lo hi := by
+  have h := interacted_run_pair_aux g Prod.fst (lo, 0) (hi, 1) hlo hhi
+  change (run g Prod.fst [(lo, 0), (hi, 1)]).interacted.map (·.2) = [0, 1] ↔ _
   rw [h]
   dsimp only
   split_ifs with hc
   · exact iff_of_true rfl hc
   · exact iff_of_false (by simp) hc
 
-/-- A probe meeting two goals Agrees with the first, and with the second exactly when the pair is
-licit with the second over the first. -/
-theorem interacted_run_pair {α : Type*} (g : Grammar) (person : α → Person) (a b : α) :
-    (run g person [a, b]).interacted =
-      a :: if Licit g ⟨person b, person a⟩ then [b] else [] := by
-  rw [interacted_run_pair_aux]
-  exact congrArg (a :: ·) (if_congr (licit_iff g ⟨person b, person a⟩).symm rfl rfl)
+/-- A combination is licit exactly when the direct object does not satisfy the probe and the
+indirect object is at least as specified as the direct object relative to the dynamic features. -/
+theorem licit_iff (g : Grammar) (s : Scenario Person) :
+    Licit g s ↔
+      (∀ x ∈ g.satisfaction, x ∉ spec s.low) ∧ SpecLE g.dynamic (spec s.low) (spec s.high) :=
+  licitAt_iff g (pi_mem_spec _) (pi_mem_spec _)
+
+/-- A probe meeting two goals Agrees with the first, and with the second exactly when the two are
+licit with the second as the indirect object. -/
+theorem interacted_run_pair {α : Type*} (g : Grammar) (segments : α → Finset Person.Segment)
+    (h : ∀ a, pi ∈ segments a) (a b : α) :
+    (run g segments [a, b]).interacted =
+      a :: if LicitAt g (segments a) (segments b) then [b] else [] := by
+  rw [interacted_run_pair_aux g segments a b (h a) (h b)]
+  exact congrArg (a :: ·) (if_congr (licitAt_iff g (h a) (h b)).symm rfl rfl)
 
 /-- Licitness is antitone in the direct object and monotone in the indirect object. -/
 theorem Licit.mono {g : Grammar} {s t : Scenario Person} (hl : spec t.low ⊆ spec s.low)
