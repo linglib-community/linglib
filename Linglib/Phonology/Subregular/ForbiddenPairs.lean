@@ -56,6 +56,10 @@ variable {α : Type*} (R : α → α → Prop)
 def forbiddenPairs : Set (Augmented α) :=
   { f | ∃ a b, R a b ∧ f = [some a, some b] }
 
+instance [DecidableRel R] : DecidablePred (· ∈ forbiddenPairs R) := fun f ↦ match f with
+  | [some a, some b] => decidable_of_iff (R a b) (by simp [forbiddenPairs])
+  | [] | [_] | [none, _] | [some _, none] | _ :: _ :: _ :: _ => isFalse (by simp [forbiddenPairs])
+
 private lemma forbiddenPairFree_iff_isChain (xs : Augmented α) :
     (∀ f, f.length = 2 → f <:+: xs → f ∉ forbiddenPairs R) ↔
       xs.IsChain (fun u v ↦ ∀ a ∈ u, ∀ b ∈ v, ¬ R a b) := by

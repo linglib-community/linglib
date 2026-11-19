@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.Prosody.Foot
 public import Linglib.Phonology.OptimalityTheory.Constraint.Directional
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 
 /-!

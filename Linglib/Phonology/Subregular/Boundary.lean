@@ -19,7 +19,9 @@ local, locally testable, and tier-based classes are built on it. A word read at 
 is a two-sided family blank outside `[0, w.length)`, and its width-`k` window at `i` lists its
 entries on `[i, i + k)`. The entries of the padded word are those of the word shifted by the pad
 width, so [the `k`-factors of the augmented word are exactly its
-windows](##infix_boundary_and_length_eq_iff) starting in `[1 - k, w.length)`.
+windows](##infix_boundary_and_length_eq_iff) starting in `[1 - k, w.length)`. Listed from left to
+right, one for each start position, they form the list `windows k w`, [whose members are the
+`k`-factors of the padded word](##mem_windows_iff).
 
 ## Implementation notes
 
@@ -99,6 +101,10 @@ theorem getElem?_int_of_neg (h : i < 0) : w[i]? = none := ite_eq_right (by omega
 
 @[simp] theorem getElem?_int_nil : ([] : List α)[i]? = none := by simp
 
+theorem getElem?_int_cons_add_one (a : α) (hi : 0 ≤ i) : (a :: w)[i + 1]? = w[i]? := by
+  rw [getElem?_int_of_nonneg (by omega), getElem?_int_of_nonneg hi,
+    show (i + 1).toNat = i.toNat + 1 by omega, getElem?_cons_succ]
+
 theorem getElem?_int_eq_none_iff : w[i]? = none ↔ i < 0 ∨ (w.length : ℤ) ≤ i := by
   rw [_root_.getElem?_eq_none_iff]
   omega
@@ -124,7 +130,36 @@ lemma getElem?_window {k j : ℕ} {w : List α} {i : ℤ} (h : j < k) :
     (window k w i)[j]? = some w[i + j]? := by
   simp [window, h]
 
-variable {k : ℕ} {w y l : List α}
+variable {k : ℕ} {w y l : List α} {i : ℤ}
+
+@[simp] lemma window_zero : window 0 w i = [] := rfl
+
+@[simp] lemma window_nil : window k ([] : List α) i = List.replicate k none := by
+  simp [window, List.ofFn_const]
+
+/-- A window lists the entry at its start, then the window one narrower at the next position. -/
+lemma window_succ : window (k + 1) w i = w[i]? :: window k w (i + 1) := by
+  simp only [window, List.ofFn_succ, Fin.val_zero, Fin.val_succ]
+  congr 1
+  · rw [show i + ((0 : ℕ) : ℤ) = i by omega]
+  · congr 1
+    funext j
+    rw [show i + ((j + 1 : ℕ) : ℤ) = i + 1 + (j : ℕ) by omega]
+
+lemma window_succ_of_neg (hi : i < 0) : window (k + 1) w i = none :: window k w (i + 1) := by
+  rw [window_succ, List.getElem?_int_of_neg hi]
+
+/-- Prefixing a symbol to a word shifts by one the windows that start within it. -/
+lemma window_cons_add_one (a : α) (hi : 0 ≤ i) : window k (a :: w) (i + 1) = window k w i := by
+  simp only [window]
+  congr 1
+  funext j
+  rw [show i + 1 + (j : ℕ) = i + (j : ℕ) + 1 by omega,
+    List.getElem?_int_cons_add_one a (by omega)]
+
+lemma window_succ_cons_zero (a : α) : window (k + 1) (a :: w) 0 = some a :: window k w 0 := by
+  rw [window_succ, window_cons_add_one a (Int.le_refl 0)]
+  rfl
 
 lemma getElem?_boundary (j : ℕ) :
     (boundary k w)[j]? =
@@ -202,6 +237,42 @@ lemma infix_boundary_and_length_eq_iff {f : List (Option α)} (hk : 1 ≤ k) :
       getElem?_boundary_eq_getElem?_int (q := j + (i + (k - 1 : ℕ)).toNat) (by omega),
       show ((j + (i + (k - 1 : ℕ)).toNat : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = i + (j : ℕ)
         by omega]
+
+/-! ### The windows of a word -/
+
+/-- The width-`k` windows of a word, one for each start position in `[1 - k, w.length)`, from
+left to right. -/
+def windows (k : ℕ) (w : List α) : List (Augmented α) :=
+  (List.range (w.length + k - 1)).map fun j : ℕ ↦ window k w ((j : ℤ) + 1 - k)
+
+@[simp] lemma length_windows : (windows k w).length = w.length + k - 1 := by
+  simp [windows]
+
+/-- The windows of a word are the `k`-factors of its padded form. -/
+lemma mem_windows_iff (hk : 1 ≤ k) {f : Augmented α} :
+    f ∈ windows k w ↔ f <:+: boundary k w ∧ f.length = k := by
+  rw [infix_boundary_and_length_eq_iff hk, windows, List.mem_map]
+  constructor
+  · rintro ⟨j, hj, rfl⟩
+    rw [List.mem_range] at hj
+    exact ⟨(j : ℤ) + 1 - k, by omega, by omega, rfl⟩
+  · rintro ⟨i, h1, h2, rfl⟩
+    refine ⟨(i + k - 1).toNat, List.mem_range.2 (by omega), ?_⟩
+    congr 1
+    omega
+
+/-- The windows of a word are the `k - 1` that start before it, then one starting at each of its
+positions. -/
+lemma windows_eq_append (hk : 1 ≤ k) :
+    windows k w = (List.range (k - 1)).map (fun j : ℕ ↦ window k w ((j : ℤ) + 1 - k)) ++
+      (List.range w.length).map fun j : ℕ ↦ window k w j := by
+  rw [windows, show w.length + k - 1 = k - 1 + w.length by omega, List.range_add, List.map_append,
+    List.map_map]
+  congr 2
+  funext j
+  simp only [Function.comp_apply]
+  congr 1
+  omega
 
 /-! ### The edges of a padded word
 

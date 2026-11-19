@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Akan.Phonology
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Mathlib.Tactic.FinCases
@@ -59,18 +59,31 @@ section Surface
 
 variable {σ : Type*} (IsVowel : σ → Prop) [DecidablePred IsVowel]
 
+/-- The factors that mark a coda, a consonant followed by a consonant or by the right edge. -/
+def codaFactors : Set (Augmented σ) :=
+  {f | ∃ a b, ¬ IsVowel a ∧ (∀ y ∈ b, ¬ IsVowel y) ∧ f = [some a, b]}
+
+instance : DecidablePred (· ∈ codaFactors IsVowel) := fun f ↦ match f with
+  | [some a, b] => decidable_of_iff (¬ IsVowel a ∧ ∀ y ∈ b, ¬ IsVowel y) (by simp [codaFactors])
+  | [] | [_] | [none, _] | _ :: _ :: _ :: _ => isFalse (by simp [codaFactors])
+
 /-- The number of codas of a string, a coda being a consonant that no vowel follows. -/
-def codas : List σ → ℕ
-  | [] => 0
-  | [x] => if IsVowel x then 0 else 1
-  | x :: y :: rest =>
-    (if ¬ IsVowel x ∧ ¬ IsVowel y then 1 else 0) + codas (y :: rest)
+def codas : Constraint (List σ) := Constraint.ofForbiddenFactors 2 (codaFactors IsVowel)
+
+/-- The factors in which `x` stands between two vowels. -/
+def intervocalicFactors (x : σ) : Set (Augmented σ) :=
+  {f | ∃ a c, IsVowel a ∧ IsVowel c ∧ f = [some a, some x, some c]}
+
+instance [DecidableEq σ] (x : σ) : DecidablePred (· ∈ intervocalicFactors IsVowel x) := fun f ↦
+  match f with
+  | [some a, some b, some c] =>
+    decidable_of_iff (IsVowel a ∧ IsVowel c ∧ b = x) (by simp [intervocalicFactors, eq_comm])
+  | [] | [_] | [_, _] | [none, _, _] | [some _, none, _] | [some _, some _, none]
+  | _ :: _ :: _ :: _ :: _ => isFalse (by simp [intervocalicFactors])
 
 /-- The number of occurrences of `x` between two vowels. -/
-def intervocalic [DecidableEq σ] (x : σ) : List σ → ℕ
-  | a :: b :: c :: rest =>
-    (if IsVowel a ∧ b = x ∧ IsVowel c then 1 else 0) + intervocalic x (b :: c :: rest)
-  | _ => 0
+def intervocalic [DecidableEq σ] (x : σ) : Constraint (List σ) :=
+  Constraint.ofForbiddenFactors 3 (intervocalicFactors IsVowel x)
 
 end Surface
 

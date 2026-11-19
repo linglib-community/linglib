@@ -5,7 +5,7 @@ public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 public import Linglib.Phonology.OptimalityTheory.Constraint.Directional
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Fragments.Poko.Tone
 public import Linglib.Phonology.Autosegmental.Candidate

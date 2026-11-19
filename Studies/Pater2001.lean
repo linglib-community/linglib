@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Indonesian.Phonology
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Data.PHOIBLE.Inventories.Muna

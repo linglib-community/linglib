@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Data.Examples.Anttila1997
 public import Linglib.Fragments.Finnish.Phonology
 public import Mathlib.Data.Fin.VecNotation

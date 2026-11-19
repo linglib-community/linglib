@@ -3,7 +3,7 @@ module
 public import Linglib.Phonology.Prosody.Syllable
 public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Data.Nat.PSub
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Fragments.Japanese.Prosody
 public import Linglib.Phonology.Prosody.Intonation
 import all Init.Data.List.Scan.Basic  -- for unfolding `List.scanl`
