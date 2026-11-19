@@ -25,8 +25,8 @@ when `g ⁻¹'o r = r`, and acts on a ranking `σ` by `σ.trans g`.
 
 A stratified relation is used here through its linear extensions, each a total ranking, as
 Anttila uses a partial ranking. Tesar and Smolensky instead evaluate a stratified hierarchy by
-pooling the marks of a stratum, which is a property of evaluation rather than of the relation and
-is not formalized here.
+summing the violations of the constraints in a stratum, which is a property of evaluation rather
+than of the relation and is not formalized here.
 
 ## References
 

@@ -41,7 +41,7 @@ segments and a GEN that changes the length of the form.
 namespace OptimalityTheory.Constraint
 
 /-- The block of binary constraints that flags `locus i` at each position `i < n`, a directional
-constraint with single-segment loci ([lamont-2022b] §1.3). -/
+constraint with single-segment loci ([lamont-2022b], pp. 16–17). -/
 def directionalBlock {C : Type*} (n : ℕ) (locus : Fin n → C → Prop)
     [∀ i, DecidablePred (locus i)] : List (Constraint C) :=
   (List.finRange n).map fun i ↦ binary (locus i)

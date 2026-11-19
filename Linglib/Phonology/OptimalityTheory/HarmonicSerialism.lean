@@ -8,22 +8,22 @@ public import Mathlib.Dynamics.FixedPoints.Basic
 /-!
 # Harmonic Serialism
 
-In Harmonic Serialism a derivation applies GEN and EVAL repeatedly. GEN proposes the candidates
-that differ from the current form by a single change, EVAL selects among them under a ranking that
-stays fixed across rounds, and the derivation converges once the current form is the only winner
-of its own round. One round of the search is a total map on `Option C` whose fixed points are
-convergence and failure, and a derivation is an iterate of that map, so a search that need not
-terminate is computable once the number of rounds is bounded and a choice among tied winners is
-given. [If every step that changes the form descends a well-founded relation, the search is
-eventually constant](##iterateGen_eventually_constant), and the bound then does not affect the
-result. Each round is evaluated by the parallel `Constraint.eval`, and a directional constraint,
-such as the constraint against floating tones of McPherson and Lamont, is a
-`Constraint.directionalBlock` spliced into the ranking.
+In Harmonic Serialism a derivation applies GEN and EVAL repeatedly. GEN proposes candidates from the
+current form, EVAL selects among them under a ranking that stays fixed across rounds, and the
+derivation converges once the current form is the only winner of its own round. One round of the
+search is a total map on `Option C` that fixes both convergence and failure, and a derivation is an
+iterate of that map, so a search that need not terminate is computable once the number of rounds is
+bounded and a choice among tied winners is given. [If every step that changes the form descends a
+well-founded relation, the search is eventually constant](##iterateGen_eventually_constant), and the
+bound then does not affect the result. Each round is evaluated by the parallel `Constraint.eval`,
+and a directional constraint, such as the constraint against floating tones of McPherson and Lamont,
+is a `Constraint.directionalBlock` spliced into the ranking.
 
 ## Implementation notes
 
-Pruitt argues that Harmonic Serialism does not derive counterfeeding underapplication and derives
-counterbleeding only with further assumptions about GEN, and nothing here bears on opacity.
+Pruitt concludes that Harmonic Serialism cannot straightforwardly derive counterfeeding
+underapplication, and derives counterbleeding overapplication only when a principled modification
+of GEN eliminates the candidate that makes both changes at once; nothing here bears on opacity.
 Harmonic Serialism holds the ranking fixed and iterates the candidate, whereas Stratal Optimality
 Theory changes the ranking from one stratum to the next; their combination is not formalized.
 
@@ -78,7 +78,7 @@ def hsStep (step : C → Finset C) (pick : Finset C → Option C) (oc : Option C
   oc.bind fun c => if step c = {c} then some c else pick (step c)
 
 /-- The search from `c` run for `n` rounds. Bounding the number of rounds makes the search total,
-since a derivation need not converge ([lamont-2022b]). -/
+since a derivation need not converge ([lamont-2022b], p. 55). -/
 def iterateGen (step : C → Finset C) (pick : Finset C → Option C) (n : Nat) (c : C) : Option C :=
   (hsStep step pick)^[n] (some c)
 
