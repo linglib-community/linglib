@@ -239,8 +239,6 @@ daughter of each root-matches some daughter of the other, the two clauses of [ta
 def MatchesRoot : RoseTree F → RoseTree F → Prop
   | node f cs, node g ds =>
       f = g ∧ (∀ c ∈ cs, ∃ d ∈ ds, MatchesRoot c d) ∧ ∀ d ∈ ds, ∃ c, ∃ _ : c ∈ cs, MatchesRoot c d
-termination_by s _ => sizeOf s
-decreasing_by all_goals exact sizeOf_lt_of_mem (by assumption)
 
 theorem matchesRoot_node_iff {f g : F} {cs ds : List (RoseTree F)} :
     MatchesRoot (node f cs) (node g ds) ↔
@@ -251,8 +249,6 @@ theorem matchesRoot_node_iff {f g : F} {cs ds : List (RoseTree F)} :
 theorem MatchesRoot.refl : ∀ t : RoseTree F, MatchesRoot t t
   | node _ cs => matchesRoot_node_iff.2 ⟨rfl, fun c hc ↦ ⟨c, hc, MatchesRoot.refl c⟩,
       fun d hd ↦ ⟨d, hd, MatchesRoot.refl d⟩⟩
-termination_by t => sizeOf t
-decreasing_by all_goals exact sizeOf_lt_of_mem (by assumption)
 
 /-- A syntactic tree `s` matches a stored tree `t` when the root of `s` root-matches some node of
 `t`. -/
