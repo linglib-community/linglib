@@ -45,7 +45,7 @@ section Positions
 open RoseTree
 
 theorem mem_commandRelation_iff_inits (P : Set GornAddress) (a b : GornAddress) :
-    a ~[commandRelation P] b ↔
+    a ~[C[P]] b ↔
       ∀ x ∈ a.inits, x ≠ a → x ∈ P → x ≤ b := by
   constructor
   · intro h x hx hne hP
@@ -56,12 +56,12 @@ theorem mem_commandRelation_iff_inits (P : Set GornAddress) (a b : GornAddress) 
       ⟨x.toList, (List.mem_inits _ _).mpr (GornAddress.le_def.mp hxa.le), rfl⟩) hxa.ne hP
 
 instance (P : Set GornAddress) [DecidablePred (· ∈ P)] (a b : GornAddress) :
-    Decidable (a ~[commandRelation P] b) :=
+    Decidable (a ~[C[P]] b) :=
   decidable_of_iff _ (mem_commandRelation_iff_inits P a b).symm
 
 instance (P : Set GornAddress) [DecidablePred (· ∈ P)] (ab : GornAddress × GornAddress) :
     Decidable (ab ∈ mateRelation P) :=
-  inferInstanceAs (Decidable (ab.1 ~[commandRelation P] ab.2 ∧ ab.2 ~[commandRelation P] ab.1))
+  inferInstanceAs (Decidable (ab.1 ~[C[P]] ab.2 ∧ ab.2 ~[C[P]] ab.1))
 
 end Positions
 
@@ -88,7 +88,7 @@ instance (t : RoseTree β) (p : GornAddress) : Decidable (t.IsBranchingAt p) :=
 positions generate. It is reflexive and a position commands what it dominates, unlike
 `RoseTree.CCommands`; it is read off the tree, so decidable. -/
 abbrev cCommand (t : RoseTree β) : SetRel GornAddress GornAddress :=
-  commandRelation {p | t.IsBranchingAt p}
+  C[{p | t.IsBranchingAt p}]
 
 /-- The branching nodes of the order of positions, the mothers of two distinct nodes, are the
 positions with at least two children. -/
@@ -112,7 +112,7 @@ theorem isBranching_iff_isBranchingAt {t : RoseTree β} (p : t.Positions) :
 /-- The command relation the branching nodes of the order of positions generate is
 `RoseTree.cCommand`. -/
 theorem mem_commandRelation_isBranching_iff {t : RoseTree β} (a b : t.Positions) :
-    a ~[commandRelation {p | IsBranching p}] b ↔ a.val ~[t.cCommand] b.val := by
+    a ~[C[{p | IsBranching p}]] b ↔ a.val ~[t.cCommand] b.val := by
   rw [show {p : t.Positions | IsBranching p} = Subtype.val ⁻¹' {p | IsBranchingAt t p} from
     Set.ext isBranching_iff_isBranchingAt]
   exact mem_commandRelation_preimage_iff (OrderEmbedding.subtype (· ∈ t.validPaths))

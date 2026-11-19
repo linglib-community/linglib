@@ -56,19 +56,19 @@ it dominates, and the pronominal domain that every node of `Q b` does. -/
 def configuration (P : GornAddress → Set GornAddress) (Q : GornAddress → Set GornAddress := P) :
     Binding.Configuration GornAddress where
   commands := t.CCommands
-  domain b := {a | b ~[commandRelation (P b)] a}
-  pronominalDomain b := {a | b ~[commandRelation (Q b)] a}
+  domain b := {a | b ~[C[P b]] a}
+  pronominalDomain b := {a | b ~[C[Q b]] a}
 
 instance : DecidableRel (t.configuration P Q).commands :=
   inferInstanceAs (DecidableRel t.CCommands)
 
 instance [∀ b, DecidablePred (· ∈ P b)] (b : GornAddress) :
     DecidablePred (· ∈ (t.configuration P Q).domain b) :=
-  fun a ↦ inferInstanceAs (Decidable (b ~[commandRelation (P b)] a))
+  fun a ↦ inferInstanceAs (Decidable (b ~[C[P b]] a))
 
 instance [∀ b, DecidablePred (· ∈ Q b)] (b : GornAddress) :
     DecidablePred (· ∈ (t.configuration P Q).pronominalDomain b) :=
-  fun a ↦ inferInstanceAs (Decidable (b ~[commandRelation (Q b)] a))
+  fun a ↦ inferInstanceAs (Decidable (b ~[C[Q b]] a))
 
 /-- More bounding nodes give smaller domains and the same command. -/
 theorem configuration_anti (h : ∀ b, P b ⊆ P' b) (h' : ∀ b, Q b ⊆ Q' b) :
