@@ -4,7 +4,7 @@ public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Brodkin2026

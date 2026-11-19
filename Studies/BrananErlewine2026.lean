@@ -53,7 +53,7 @@ theorem eq_complement_of_finds_depth (ha : p.Finds s (·.val.depth) a) (hb : b �
     (hsb : p.sat b) (hba : t.toRoseTree.CCommands b.val a.val) : a.val = complement b.val := by
   have hb0 : b.val ≠ ⊥ := fun h ↦ hba.2.1 (h ▸ bot_le)
   have hc : complement b.val ≤ a.val :=
-    (mem_cCommandDomain_iff_complement_le b.2 hb0 a.2).1 hba
+    (cCommands_iff_complement_le b.2 hb0 a.2).1 hba
   refine (hc.eq_of_not_lt fun hlt ↦ ha.inspects.2 hb hsb ?_).symm
   show b.val.depth < a.val.depth
   rw [← depth_complement hb0]

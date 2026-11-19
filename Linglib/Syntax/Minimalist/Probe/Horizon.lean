@@ -239,10 +239,10 @@ position it c-commands below the sister is behind its horizon. -/
 theorem HorizonSetting.mem_cut_of_not_transparentTo (ha : a ∈ t.toRoseTree.validPaths) (ha0 : a ≠ ⊥)
     (hq : q ∈ t.toRoseTree.validPaths) (hc : t.toRoseTree.CCommands a q) (hne : q ≠ complement a)
     (hs : ¬ p.TransparentTo (spineAt η t (complement a))) : q ∈ p.cut η t a := by
-  have hle : complement a ≤ q := (mem_cCommandDomain_iff_complement_le ha ha0 hq).1 hc
+  have hle : complement a ≤ q := (cCommands_iff_complement_le ha ha0 hq).1 hc
   have hv : complement a ∈ t.toRoseTree.validPaths := isLowerSet_validPaths _ hle hq
   exact mem_cut_iff.2 ⟨_, lt_of_le_of_ne hle (Ne.symm hne),
-    (mem_cCommandDomain_iff_complement_le ha ha0 hv).2 le_rfl, hs⟩
+    (cCommands_iff_complement_le ha ha0 hv).2 le_rfl, hs⟩
 
 /-- A vacuous probe reaches nothing beyond its sister: where the head of `p` inherits from its
 sister and `p` is vacuous in the phrase it projects, every position it c-commands below the sister

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Syntax.Command.Closeness
 public import Linglib.Syntax.Tree.Command
 public import Linglib.Syntax.Tree.Projection
 public import Mathlib.Order.Atoms
@@ -11,7 +12,7 @@ public import Mathlib.Order.Hom.Set
 
 A property $P$ of nodes generates the command relation in which $a$ commands $b$ when every
 $P$-node properly dominating $a$ dominates $b$, and S-command, K-command, MAX-command, c-command
-and IDC-command differ in $P$ alone. The relation is `Syntax/Command.lean`'s upper polar, so the
+and IDC-command differ in $P$ alone. The relation is the substrate's upper polar `C[P]`, so the
 Intersection Theorem is mathlib's `upperPolar_union`. A relation on a tree is a command relation
 [exactly when it contains IDC-command and is fair](##isIntent_admits_iff). Its [largest
 generator](##extentClosure_admits) adds the root and the leaves, so the command relations
@@ -50,7 +51,7 @@ instead, they are [closed under union](##intent_inf_admitsAt) on a tree, a distr
 namespace BarkerPullum1990
 
 open PhraseStructure PhraseStructure.Tree
-open RoseTree (IsBranchingAt cCommand)
+open RoseTree (branching)
 open scoped SetRel
 
 /-- In the government schema `a` governs `b` when `a` commands `b` and `b` bears to `a` the
@@ -100,22 +101,22 @@ As a function of `P` the relation is an upper polar, which gives Theorems 1 and 
 
 -- Theorem 1
 theorem commandRelation_union (P Q : Set Node) :
-    commandRelation (P ∪ Q) = commandRelation P ∩ commandRelation Q :=
+    C[P ∪ Q] = C[P] ∩ C[Q] :=
   upperPolar_union ..
 
 -- Theorem 2
 theorem commandRelation_univ_subset (P : Set Node) :
-    commandRelation Set.univ ⊆ commandRelation P :=
+    C[Set.univ] ⊆ C[P] :=
   upperPolar_anti _ (Set.subset_univ P)
 
 -- (21)
 theorem mem_commandRelation_univ_iff [IsForestOrder Node] (ha : m ⋖ a) :
-    a ~[commandRelation Set.univ] b ↔ m ≤ b :=
+    a ~[C[Set.univ]] b ↔ m ≤ b :=
   mem_commandRelation_iff_le_of_covBy ha (Set.mem_univ m)
 
 -- Theorem 4
 theorem commandRelation_insert_of_isBot {r : Node} (hr : IsBot r) (P : Set Node) :
-    commandRelation (insert r P) = commandRelation P :=
+    C[insert r P] = C[P] :=
   (upperPolar_union _ {r} P).trans <| Set.inter_eq_right.2 fun _ _ _ hx _ ↦ hx ▸ hr _
 
 -- Theorem 5
@@ -131,28 +132,28 @@ def Fair (R : SetRel Node Node) : Prop :=
 
 -- When `a` commands `b` and `b` commands a node `a` does not, `b` is the lowest upper bound of
 -- `a`: the step on which the proof of Theorem 6 turns.
-theorem isGreatest_ancestors (hab : a ~[commandRelation P] b) (hbc : b ~[commandRelation P] c)
-    (hac : ¬ a ~[commandRelation P] c) : IsGreatest (ancestors P a) b := by
+theorem isGreatest_ancestors (hab : a ~[C[P]] b) (hbc : b ~[C[P]] c)
+    (hac : ¬ a ~[C[P]] c) : IsGreatest (ancestors P a) b := by
   simp only [mem_commandRelation, not_forall] at hac
   obtain ⟨x, hx, hxa, hxc⟩ := hac
   obtain rfl : x = b := (hab hx hxa).eq_of_not_lt fun hxb ↦ hxc (hbc hx hxb)
   exact ⟨⟨hx, hxa⟩, fun _ hy ↦ hab hy.1 hy.2⟩
 
 -- Theorem 6
-theorem fair_commandRelation (P : Set Node) : Fair (commandRelation P) :=
+theorem fair_commandRelation (P : Set Node) : Fair (C[P]) :=
   fun _ _ _ hab hbc hac _ ↦ (mem_commandRelation_iff_le (isGreatest_ancestors hab hbc hac)).1
 
 -- The Remark after Theorem 6 strengthens Fairness to an equivalence. It needs neither a root nor
 -- the Connected Ancestor Condition.
-theorem mem_commandRelation_iff_le_of_not_mem (hab : a ~[commandRelation P] b)
-    (hbc : b ~[commandRelation P] c) (hac : ¬ a ~[commandRelation P] c) :
-    a ~[commandRelation P] d ↔ b ≤ d :=
+theorem mem_commandRelation_iff_le_of_not_mem (hab : a ~[C[P]] b)
+    (hbc : b ~[C[P]] c) (hac : ¬ a ~[C[P]] c) :
+    a ~[C[P]] d ↔ b ≤ d :=
   mem_commandRelation_iff_le (isGreatest_ancestors hab hbc hac)
 
 -- Theorem 7
 theorem exists_forall_mem_commandRelation_iff_le [OrderBot Node] [IsForestOrder Node]
     [WellFoundedLT Node] [IsStronglyCoatomic Node] (P : Set Node) (a : Node) :
-    ∃ x, ∀ b, a ~[commandRelation P] b ↔ x ≤ b := by
+    ∃ x, ∀ b, a ~[C[P]] b ↔ x ≤ b := by
   induction a using WellFoundedLT.induction with | ind a ih
   rcases eq_or_ne a ⊥ with rfl | ha
   · exact ⟨⊥, fun b ↦ ⟨fun _ ↦ bot_le, fun _ _ _ hx ↦ absurd hx not_lt_bot⟩⟩
@@ -165,9 +166,10 @@ theorem exists_forall_mem_commandRelation_iff_le [OrderBot Node] [IsForestOrder 
 -- Theorem 8: a rooted graph embedded with Integrity is the set of nodes its root dominates.
 theorem mem_commandRelation_Ici_iff [IsForestOrder Node] (r : Node) (P : Set Node)
     (a b : Set.Ici r) :
-    a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
-  mem_commandRelation_subtype_iff (fun _ ha _ hxa ↦
-    (IsForestOrder.le_total_of_le_of_le hxa.le ha).symm.imp id fun hxr _ hy ↦ hxr.trans hy) P a b
+    a ~[C[Subtype.val ⁻¹' P]] b ↔ a.val ~[C[P]] b.val :=
+  mem_commandRelation_preimage_iff (OrderEmbedding.subtype (· ∈ Set.Ici r)) (fun a y hya ↦
+    (IsForestOrder.le_total_of_le_of_le hya.le a.2).symm.imp (fun h ↦ ⟨⟨y, h⟩, rfl⟩)
+      fun hyr _ ⟨z, hz⟩ ↦ hz ▸ hyr.trans z.2) P
 
 /-! ### Characterizing command relations
 
@@ -190,7 +192,7 @@ dominates or all her mother commands, and makes sisters agree on which; so the r
 rules that fix the command relation of the mothers that bound a daughter. -/
 theorem isIntent_admits_iff [OrderBot Node] [IsForestOrder Node] [WellFoundedLT Node]
     [IsStronglyCoatomic Node] {R : SetRel Node Node} :
-    Order.IsIntent Admits R ↔ commandRelation Set.univ ⊆ R ∧ Fair R := by
+    Order.IsIntent Admits R ↔ C[Set.univ] ⊆ R ∧ Fair R := by
   refine ⟨?_, fun ⟨hI, hF⟩ ↦ ?_⟩
   · rintro ⟨P, rfl⟩
     exact ⟨commandRelation_univ_subset P, fair_commandRelation P⟩
@@ -212,7 +214,7 @@ theorem isIntent_admits_iff [OrderBot Node] [IsForestOrder Node] [WellFoundedLT 
   · exact fun m a hm hP b ↦ (hedge hm).elim (fun h ↦ absurd ⟨a, hm, h⟩ hP) fun h ↦ h b
 
 theorem descent_and_constituency_of_fair [OrderBot Node] [IsForestOrder Node] [WellFoundedLT Node]
-    [IsStronglyCoatomic Node] {R : SetRel Node Node} (hI : commandRelation Set.univ ⊆ R)
+    [IsStronglyCoatomic Node] {R : SetRel Node Node} (hI : C[Set.univ] ⊆ R)
     (hF : Fair R) :
     (∀ a b c, a ~[R] b → b ≤ c → a ~[R] c) ∧ ∀ a, ∃ x, ∀ b, a ~[R] b ↔ x ≤ b := by
   obtain ⟨P, rfl⟩ := isIntent_admits_iff.2 ⟨hI, hF⟩
@@ -232,7 +234,7 @@ theorem not_isIntent_le [IsForestOrder Node] (h : m ⋖ a) :
 
 -- The characterization holds of the positions of phrase structure trees.
 example {R : SetRel GornAddress GornAddress} :
-    Order.IsIntent Admits R ↔ commandRelation Set.univ ⊆ R ∧ Fair R :=
+    Order.IsIntent Admits R ↔ C[Set.univ] ⊆ R ∧ Fair R :=
   isIntent_admits_iff
 
 /-! ### The literature's relations -/
@@ -244,31 +246,32 @@ variable {C W : Type*} [DecidableEq C]
 /-- Rouveret and Vergnaud's c-command is generated by the branching nodes together with the
 maximal projections. -/
 abbrev rvCommand (t : Tree C W) : SetRel GornAddress GornAddress :=
-  commandRelation ({p | IsBranchingAt t p} ∪ Tree.maximalProjectionsAt t)
+  C[branching t ∪ Tree.maximalProjectionsAt t]
 
-theorem rvCommand_eq (t : Tree C W) : rvCommand t = cCommand t ∩ Tree.maxCommand t :=
+theorem rvCommand_eq (t : Tree C W) :
+    rvCommand t = C[branching t] ∩ C[Tree.maximalProjectionsAt t] :=
   upperPolar_union ..
 
 /-- NP-command is generated by the NP nodes, the maximal projections of nouns. -/
 abbrev npCommand (t : Tree Cat W) : SetRel GornAddress GornAddress :=
-  commandRelation (labeled t {.N} ∩ Tree.maximalProjectionsAt t)
+  C[labeled t {.N} ∩ Tree.maximalProjectionsAt t]
 
 /-- Lasnik's kommand is generated by the cyclic nodes, S and NP. -/
 abbrev kCommand (t : Tree Cat W) : SetRel GornAddress GornAddress :=
-  commandRelation (labeled t {.S} ∪ (labeled t {.N} ∩ Tree.maximalProjectionsAt t))
+  C[labeled t {.S} ∪ (labeled t {.N} ∩ Tree.maximalProjectionsAt t)]
 
-theorem kCommand_eq (t : Tree Cat W) : kCommand t = sCommand t ∩ npCommand t :=
+theorem kCommand_eq (t : Tree Cat W) : kCommand t = C[labeled t {.S}] ∩ npCommand t :=
   upperPolar_union ..
 
 end Labeled
 
 /-- Klima's in-construction-with is the inverse of c-command. -/
 abbrev inConstructionWith {W : Type*} (t : Tree Cat W) : SetRel GornAddress GornAddress :=
-  (cCommand t).inv
+  (C[branching t]).inv
 
 instance {W : Type*} (t : Tree Cat W) (ab : GornAddress × GornAddress) :
     Decidable (ab ∈ inConstructionWith t) :=
-  inferInstanceAs (Decidable (ab.2 ~[cCommand t] ab.1))
+  inferInstanceAs (Decidable (ab.2 ~[C[branching t]] ab.1))
 
 /-- In `[S [NP N N] V]` the verb is in construction with the NP, which dominates its first
 noun, but not with that noun. -/
@@ -285,7 +288,7 @@ theorem not_isIntent_inConstructionWith :
 Definition 9 takes the mother relation to be covering in the dominance order, and Definition 10
 takes c-command to be generated by the nodes that are mothers of two distinct nodes, the
 `IsBranching` nodes of the order. On the positions of a tree these are the positions with at least
-two children, so the relation is the substrate's `RoseTree.cCommand`. -/
+two children, the substrate's `RoseTree.branching`. -/
 
 section Mother
 
@@ -295,7 +298,7 @@ variable {β : Type*}
 
 -- Definition 10
 example {t : RoseTree β} (a b : t.Positions) :
-    a ~[commandRelation {p | IsBranching p}] b ↔ a.val ~[t.cCommand] b.val :=
+    a ~[C[{p | IsBranching p}]] b ↔ a.val ~[C[t.branching]] b.val :=
   mem_commandRelation_isBranching_iff a b
 
 end Mother
@@ -318,7 +321,7 @@ theorem mem_mateRelation_of_ancestors_eq (h : ancestors P a = ancestors P b) :
     mem_commandRelation_of_ancestors_subset h.superset⟩
 
 theorem mem_mateRelation_of_forall_iff
-    (h : ∀ c, a ~[commandRelation P] c ↔ b ~[commandRelation P] c) : a ~[mateRelation P] b :=
+    (h : ∀ c, a ~[C[P]] c ↔ b ~[C[P]] c) : a ~[mateRelation P] b :=
   ⟨(h b).2 fun _ _ hx ↦ hx.le, (h a).1 fun _ _ hx ↦ hx.le⟩
 
 theorem mateRelation_empty : mateRelation (∅ : Set Node) = Set.univ :=
@@ -331,7 +334,8 @@ def nested : Tree Cat Unit :=
 theorem clausemates_nested :
     (⟨[0, 0]⟩ : GornAddress) ~[clausemates nested] ⟨[0]⟩ ∧
       ancestors (labeled nested {.S}) ⟨[0, 0]⟩ ≠ ancestors (labeled nested {.S}) ⟨[0]⟩ ∧
-      ¬ ∀ c, (⟨[0, 0]⟩ : GornAddress) ~[sCommand nested] c ↔ ⟨[0]⟩ ~[sCommand nested] c :=
+      ¬ ∀ c, (⟨[0, 0]⟩ : GornAddress) ~[C[labeled nested {.S}]] c ↔
+        ⟨[0]⟩ ~[C[labeled nested {.S}]] c :=
   ⟨by decide, fun h ↦ (by decide : (⟨[0]⟩ : GornAddress) ∉ labeled nested {.S} ∩ Set.Iio ⟨[0]⟩)
     ((Set.ext_iff.1 h ⟨[0]⟩).1 (by decide : _ ∈ labeled nested {.S} ∩ Set.Iio ⟨[0, 0]⟩)),
     fun h ↦ absurd ((h ⟨[1]⟩).2 (by decide)) (by decide)⟩
@@ -386,7 +390,8 @@ theorem tree25_not_governs_bar :
   ⟨by decide, fun h ↦ absurd h.isMinimalProjection (by decide)⟩
 
 theorem tree25_governs_head :
-    ⟨[0, 0]⟩ ~[government (Tree.maxCommand tree25) (flip (Tree.HeadDaughterAt tree25))] ⟨[1, 0]⟩ :=
+    ⟨[0, 0]⟩ ~[government C[Tree.maximalProjectionsAt tree25]
+      (flip (Tree.HeadDaughterAt tree25))] ⟨[1, 0]⟩ :=
   ⟨by decide, ⟨[1]⟩, .single ⟨0, by decide, rfl⟩, by decide⟩
 
 /-! ### Relations as generators
@@ -413,12 +418,12 @@ theorem mem_commandByRelation : a ~[commandByRelation R] b ↔ ∀ x, x ~[R] a �
 
 -- A relation generates for each commander what the property of bearing it to that commander does.
 theorem mem_commandByRelation_iff_mem_commandRelation :
-    a ~[commandByRelation R] b ↔ a ~[commandRelation (R.preimage {a})] b :=
+    a ~[commandByRelation R] b ↔ a ~[C[R.preimage {a}]] b :=
   mem_commandByRelation.trans
     ⟨by rintro h x ⟨_, rfl, hx⟩; exact h x hx, fun h _ hx ↦ h ⟨a, rfl, hx⟩⟩
 
 theorem commandByRelation_prod_univ (P : Set Node) :
-    commandByRelation (P ×ˢ Set.univ) = commandRelation P :=
+    commandByRelation (P ×ˢ Set.univ) = C[P] :=
   Set.ext fun _ ↦ ⟨fun h x hx ↦ h (a := (x, _)) ⟨hx, trivial⟩ rfl, fun h _ hx _ ↦ h hx.1⟩
 
 -- Relations generate fair command relations no more than by accident. This generator gives the
@@ -527,7 +532,7 @@ variable [IsForestOrder Node] [WellFoundedLT Node] [IsStronglyCoatomic Node]
 any property generating it. -/
 theorem extentClosure_admits (P : Set Node) :
     extentClosure Admits P = P ∪ (internalNodes Node)ᶜ := by
-  change lowerPolar Admits (commandRelation P) = _
+  change lowerPolar Admits (C[P]) = _
   refine (Set.union_subset (subset_lowerPolar_upperPolar _ P) ?_).antisymm' fun x hx ↦ ?_
   · rintro x hx ⟨a, b⟩ - hxa
     by_contra hxb
@@ -538,7 +543,7 @@ theorem extentClosure_admits (P : Set Node) :
     obtain ⟨m, -, hm⟩ := exists_le_covBy_of_lt (bot_lt_iff_ne_bot.2 hx0)
     obtain ⟨y, hxy⟩ := not_isMax_iff.1 hxmax
     obtain ⟨a, hxa, -⟩ := exists_covBy_le_of_lt hxy
-    have hP : a ~[commandRelation P] m :=
+    have hP : a ~[C[P]] m :=
       (mem_commandRelation_iff_of_covBy hxa hxP).2 (mem_commandRelation_of_covBy hm le_rfl)
     exact hm.lt.not_ge (hx hP hxa.lt)
 
@@ -546,12 +551,12 @@ theorem isExtent_admits_iff : Order.IsExtent Admits P ↔ (internalNodes Node)�
   rw [Order.isExtent_iff, ← extentClosure_apply, extentClosure_admits, Set.union_eq_left]
 
 theorem commandRelation_subset_commandRelation_iff :
-    commandRelation P ⊆ commandRelation Q ↔ Q ∩ internalNodes Node ⊆ P :=
+    C[P] ⊆ C[Q] ↔ Q ∩ internalNodes Node ⊆ P :=
   subset_upperPolar_iff_subset_lowerPolar.trans <| by
     rw [← extentClosure_apply, extentClosure_admits, Set.inter_subset, Set.union_comm]
 
 theorem commandRelation_eq_commandRelation_iff :
-    commandRelation P = commandRelation Q ↔
+    C[P] = C[Q] ↔
       P ∩ internalNodes Node = Q ∩ internalNodes Node := by
   rw [Set.Subset.antisymm_iff, commandRelation_subset_commandRelation_iff,
     commandRelation_subset_commandRelation_iff, Set.inter_eq_inter_iff_right]
@@ -583,16 +588,16 @@ def conceptOrderIso : Concept Node (Node × Node) Admits ≃o Set (internalNodes
 
 -- The relation that corresponds to a set of internal nodes is the one it generates.
 theorem intent_conceptOrderIso_symm (S : Set (internalNodes Node)) :
-    (conceptOrderIso.symm S).intent = commandRelation (Subtype.val '' S) := by
-  change commandRelation (Subtype.val '' S ∪ (internalNodes Node)ᶜ) = _
+    (conceptOrderIso.symm S).intent = C[Subtype.val '' S] := by
+  change C[Subtype.val '' S ∪ (internalNodes Node)ᶜ] = _
   exact commandRelation_eq_commandRelation_iff.2 <| by
     rw [Set.union_inter_distrib_right, Set.compl_inter_self, Set.union_empty]
 
 -- On the chain of three nodes the middle one is internal, so adding it to a generator shrinks the
 -- relation, while adding the leaf changes nothing.
 example :
-    ¬ commandRelation (∅ : Set (Fin 3)) ⊆ commandRelation {1} ∧
-      commandRelation ({2} : Set (Fin 3)) = commandRelation ∅ := by
+    ¬ C[(∅ : Set (Fin 3))] ⊆ C[{1}] ∧
+      C[({2} : Set (Fin 3))] = C[∅] := by
   rw [commandRelation_subset_commandRelation_iff, commandRelation_eq_commandRelation_iff]
   refine ⟨fun h ↦ h ⟨rfl, by decide, by decide⟩, ?_⟩
   ext x

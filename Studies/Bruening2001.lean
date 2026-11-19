@@ -79,7 +79,8 @@ def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelesco
 def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 
 -- The first object asymmetrically c-commands the second ([barss-lasnik-1986]).
-example : AsymmCCommands doc aGirl (everyTelescope : SyntacticObject) := by decide
+example : CCommands doc aGirl (everyTelescope : SyntacticObject) ∧
+    ¬ CCommands doc (everyTelescope : SyntacticObject) aGirl := by decide
 
 theorem doc_frozen : firsts doc v docQuantifiers = {↑aGirl} := by decide +kernel
 

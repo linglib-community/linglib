@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Order.Antichain
+public import Mathlib.Order.Comparable
 public import Mathlib.Order.Minimal
 
 /-!
@@ -32,14 +33,14 @@ variable {ι β : Type*} [Preorder ι] [Preorder β] {P : ι → Prop} {f : ι �
 whose strict order between incomparable elements is the irreflexive relation `r` exactly when no
 element of `P` is `r`-related to it. -/
 theorem minimalFor_iff_of_isAntichain (hP : IsAntichain (· ≤ ·) {j | P j}) (hr : ∀ j, ¬ r j j)
-    (h : ∀ ⦃j k⦄, ¬ j ≤ k → ¬ k ≤ j → (f j < f k ↔ r j k)) :
+    (h : ∀ ⦃j k⦄, IncompRel (· ≤ ·) j k → (f j < f k ↔ r j k)) :
     MinimalFor P f i ↔ P i ∧ ∀ ⦃j⦄, P j → ¬ r j i := by
   rw [minimalFor_iff_forall_lt]
   refine and_congr_right fun hi ↦ forall_congr' fun j ↦ ?_
   by_cases hj : P j
   · obtain rfl | hne := eq_or_ne j i
     · simp [hj, hr]
-    · simp [hj, h (hP hj hi hne) (hP hi hj hne.symm)]
+    · simp [hj, h ⟨hP hj hi hne, hP hi hj hne.symm⟩]
   · simp [hj]
 
 /-- A strictly monotone map `g` such that every element below `g a` is the image of one below

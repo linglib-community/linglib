@@ -55,7 +55,7 @@ surface Principle B account of (24) are not formalized.
 namespace Lechner2004
 
 open PhraseStructure PhraseStructure.Tree Binding
-open RoseTree (IsBranchingAt CCommands cCommands_replaceAt_of_le cCommands_replaceAt_self)
+open RoseTree (branching CCommands cCommands_replaceAt_of_le cCommands_replaceAt_self)
 
 /-! ### Trees and coreference -/
 
@@ -257,7 +257,7 @@ theorem cCommands_sentence_iff {m : GornAddress} (htm : ¬ e.thanPhrase ≤ m)
 theorem not_cCommands_direct (m q : List ℕ) :
     ¬ CCommands e.direct ⟨1 :: 1 :: m⟩ ⟨0 :: q⟩ := by
   rintro ⟨h, -, -⟩
-  have hb : IsBranchingAt e.direct ⟨[1]⟩ := ⟨_, rfl, by simp⟩
+  have hb : (⟨[1]⟩ : GornAddress) ∈ branching e.direct := ⟨_, rfl, by simp⟩
   have hlt : (⟨[1]⟩ : GornAddress) < ⟨1 :: 1 :: m⟩ :=
     lt_of_le_of_ne (GornAddress.le_def.2 ⟨1 :: m, rfl⟩) (by simp)
   simpa [GornAddress.le_def] using h hb hlt

@@ -48,7 +48,7 @@ dominates the other have disjoint yields.
 * `Decidable g.IsTree` goes through `Graph.isTree_iff_leftUnique_adj`, which searches from the
   root alone instead of looking for a cycle from every position.
 * `DominanceOrder g` carries the instances that mathlib's `Order/SuccPred/Tree.lean` and the
-  command relations of `Syntax/Command.lean` are stated over. Its archimedean property is
+  command relations of `Syntax/Command/Basic.lean` are stated over. Its archimedean property is
   inferred from finiteness.
 
 ## References
