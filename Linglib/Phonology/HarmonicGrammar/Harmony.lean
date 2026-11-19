@@ -47,15 +47,6 @@ open OptimalityTheory
 
 variable {C ι R : Type*} {n : ℕ}
 
-/-- The violation vector `C(c)` of a candidate, its violations of each constraint, a row of a
-tableau. -/
-def _root_.OptimalityTheory.ConstraintSet.violations [Ring R] (con : ConstraintSet C ι) (c : C) :
-    ι → R :=
-  fun j ↦ (con j c : R)
-
-@[simp] theorem _root_.OptimalityTheory.ConstraintSet.violations_apply [Ring R]
-    (con : ConstraintSet C ι) (c : C) (j : ι) : con.violations c j = (con j c : R) := rfl
-
 variable [Fintype ι]
 
 /-! ### Harmony -/
@@ -93,12 +84,6 @@ theorem harmony_smul [CommRing R] (T : C → ι → R) (r : R) (w : ι → R) :
 theorem harmony_sum [Ring R] {κ D : Type*} [Fintype κ] (T : κ → D → ι → R) (w : ι → R)
     (f : κ → D) : harmony (fun f ↦ ∑ k, T k (f k)) w f = ∑ k, harmony (T k) w (f k) := by
   simp [harmony, dotProduct_sum]
-
-/-- The violation difference `C(a) - C(b)` of two candidates, a row of a comparative
-tableau. -/
-def _root_.OptimalityTheory.ConstraintSet.violationDiff [Ring R] (con : ConstraintSet C ι)
-    (a b : C) : ι → R :=
-  fun j ↦ (con j a : R) - con j b
 
 /-- The harmony difference of two candidates is the weight vector against their violation
 difference. -/
