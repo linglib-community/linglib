@@ -40,8 +40,11 @@ different from the stem of their external noun](##stem_mismatches).
   entry](##printed). The number of an English word and the category of a Dutch word are computed
   from the entry and the printed form.
 * The paper's lexicon lists some words of each category by example. Here the category of a verb
-  follows from whether its entry takes a bare infinitive and an object, and from whether the word
-  is its infinitive or its finite form.
+  follows from the frames of its entry and from whether the word is its infinitive or its finite
+  form. The paper calls *laten* and *zien* transitive, the first noun phrase being "in some
+  sense" the object of the first verb and the subject of the second. The Dutch fragment follows
+  the grammar of Broekhuis and Corver, for which that noun phrase is the accusative subject of
+  the bare infinitival, and a verb counts as transitive here if its infinitival has one.
 * A marginal judgment counts as not acceptable.
 * The argument from the decimal expansion of π, the proof that the xx languages are not
   context-free, the rule schema for verbs with other complements, and the Mohawk translation of
@@ -883,15 +886,29 @@ theorem isVerbPhrase_iff (w : List Cat) : isVerbPhrase w = true ↔ IsVerbPhrase
 
 instance : DecidablePred IsVerbPhrase := fun w ↦ decidable_of_iff _ (isVerbPhrase_iff w)
 
+/-- A verb takes a bare infinitival if some frame of its entry has an infinitival complement. -/
+def TakesInfinitival (v : Dutch.Verbs.Verb) : Prop :=
+  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.coding? = some .infinitive
+
+/-- A verb comes with a noun phrase of its own beside its bare infinitival if the subject of the
+infinitival is an accusative noun phrase. -/
+def TakesAccusativeSubject (v : Dutch.Verbs.Verb) : Prop :=
+  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.subject? = some (.overt (some .acc))
+
+instance : DecidablePred TakesInfinitival := fun _ ↦ inferInstanceAs (Decidable (∃ fr ∈ _, _))
+
+instance : DecidablePred TakesAccusativeSubject := fun _ ↦
+  inferInstanceAs (Decidable (∃ fr ∈ _, _))
+
 /-- (29b): the category of a form of a Dutch entry. A name is a `B`. A verb that takes a bare
-infinitive is an `F` or a `G` in the infinitive and an `H` or an `I` in the finite form, the
-first of each pair if it also takes an object. Any other verb is a `D` in the infinitive if it
-takes an object and an `E` if it does not. -/
+infinitival is an `F` or a `G` in the infinitive and an `H` or an `I` in the finite form, the
+first of each pair if a noun phrase comes with it. Any other verb is a `D` in the infinitive if
+it takes an object and an `E` if it does not. -/
 def Entry.category? : Entry → List Char → Option Cat
   | .name n, w => if w = n.form.toList then some .B else none
   | .dutchVerb v, w =>
-    if ∃ fr ∈ v.valency.frames, fr.HasClausal then
-      if ∃ fr ∈ v.valency.frames, fr.HasClausal ∧ fr.HasNominal then
+    if TakesInfinitival v then
+      if TakesAccusativeSubject v then
         if w = v.infinitive.toList then some .F
         else if some w = v.present.map String.toList then some .H else none
       else

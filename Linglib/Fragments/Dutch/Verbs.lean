@@ -44,14 +44,15 @@ tested against them.
 ## Implementation notes
 
 * The participle of the simplex verb is stored without its *ge-*, as `German.Conjugation.Stem`
-  stores it. An entry lists its third person singular present where an example has the finite verb, and does
-  not conjugate further. The syntax of the particle, which the
-  grammar and den Dikken analyse, is left to the studies.
+  stores it. An entry lists its third person singular present where an example has the finite
+  verb, and does not conjugate further. The syntax of the particle, which the grammar and den
+  Dikken analyse, is left to the studies.
 
 ## References
 
 * [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume I: Verbs and Verb Phrases 1:
   Characterization, Classification and Lexical Projection* (2026)][broekhuis-corver-2026e]
+* [broekhuis-corver-2026f]
 * [levin-hovav-1995]
 * [sorace-2000]
 -/
@@ -329,35 +330,51 @@ example : perfectAuxiliary wandelen .intransitive = .have ∧
     perfectAuxiliary (wandelen.withPath Adposition.behind) .intransitive = .have := by
   decide
 
-/-! ### Verbs of the verb cluster
+/-! ### Verbs with a bare infinitival
 
-The verbs of the verb-raising examples: a final verb, and the verbs that take it or another such
-verb as a bare infinitive, with or without an object of their own. -/
+A bare infinitival has neither *om* nor *te*. Its subject is controlled under *willen* and is
+realized as an accusative noun phrase under the perception verb *zien* and the causative and
+permissive verb *laten* ([broekhuis-corver-2026f]). The section also has two verbs for the end of
+a verb cluster. -/
 
-/-- *schrijven* 'write', *schrijf - schreef - geschreven*, a transitive verb. -/
+/-- The frame with a bare infinitival whose subject is controlled, as in *Jan wil een boek
+kopen*. -/
+def controlInfinitival : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some .null)]⟩
+
+/-- The frame with a bare infinitival whose subject is an accusative noun phrase, as in *Jan zag
+haar op de hei lopen*. -/
+def accusativeInfinitival : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some (.overt (some .acc)))]⟩
+
+/-- *schrijven* 'write', a transitive verb, as in *Jan heeft de brief geschreven*. -/
 def schrijven : Verb := simplex "schrijven" "geschreven"
 
-/-- *liegen* 'lie, tell a lie', *lieg - loog - gelogen*, an intransitive verb. -/
+/-- *liegen* 'lie, tell a lie', an intransitive verb. -/
 def liegen : Verb :=
   { simplex "liegen" "gelogen" with valency := .ofFrame ArgumentFrame.intransitive }
 
-/-- *laten* 'let', *laat - liet - gelaten*, takes an object and a bare infinitive. -/
-def laten : Verb :=
-  { simplex "laten" "gelaten" with
-    valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1),
-    present := some "laat" }
-
-/-- *zien* 'see', *zie - zag - gezien*, takes an object, or an object and a bare infinitive. -/
-def zien : Verb :=
-  { simplex "zien" "gezien" with
-    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.smallClause.withObject],
-    present := some "ziet" }
-
-/-- *willen* 'want', *wil - wilde - gewild*, takes a bare infinitive, or an object. -/
+/-- *willen* 'want' takes a finite clause or a bare infinitival with a controlled subject, and
+not an infinitival with *te*. -/
 def willen : Verb :=
   { simplex "willen" "gewild" with
-    valency := .ofFrames [ArgumentFrame.infinitival, ArgumentFrame.np],
+    valency := .ofFrames [controlInfinitival, ArgumentFrame.finiteClause]
+      (controllers := [some 0, none]),
     present := some "wil" }
+
+/-- *zien* 'see' takes an object, as in *Jan zag het schilderij*, or a bare infinitival with an
+accusative subject, as in *dat Jan Peter dat boek ziet lezen*. -/
+def zien : Verb :=
+  { simplex "zien" "gezien" with
+    valency := .ofFrames [ArgumentFrame.np, accusativeInfinitival],
+    present := some "ziet" }
+
+/-- *laten* 'make, let' takes a bare infinitival with an accusative subject, as in *dat Marie
+Peter het boek laat lezen*. It takes no nominal complement, so the noun phrase is the subject of
+the infinitival and not an object of *laten*. -/
+def laten : Verb :=
+  { simplex "laten" "gelaten" with
+    valency := .ofFrame accusativeInfinitival, present := some "laat" }
 
 /-! ### The inventory -/
 
