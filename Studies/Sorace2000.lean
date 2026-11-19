@@ -1,86 +1,72 @@
 module
 
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Order.Monotone.Defs
 public import Linglib.Data.Examples.Sorace2000
-public import Linglib.Fragments.Dutch.Verbs
-public import Linglib.Fragments.German.Tense
-public import Linglib.Fragments.Romance.French.Verbs
-public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Fragments.German.Verbs
+public import Linglib.Fragments.Romance.French.Verbs
+public import Linglib.Fragments.Romance.Italian.Verbs
 
 /-!
 # Sorace (2000): Gradients in auxiliary selection with intransitive verbs
 
-[sorace-2000] argues that the perfect auxiliary of a monadic intransitive verb in Italian, French,
-Dutch and German depends on the verb's place on the Auxiliary Selection Hierarchy
-(`AuxiliarySelectionHierarchy`, Table 1): the transitions and states, ordered by decreasing
-telicity, followed by the processes, ordered by increasing control. Verbs of telic change of
-location take *be* and verbs of controlled nonmotional process take *have*, categorically, in every
-language and whatever the rest of the sentence contributes; these core types are the two ends of
-the hierarchy. The types between them allow both auxiliaries, to a degree that depends on their
-position, and respond to the telicity of the predicate and the agentivity of the subject. Each
-language draws a cutoff point on the hierarchy between the verbs that take *be* and those that
-take *have*, and the cutoff moves from language to language without reaching the core (§6).
+[sorace-2000] orders the monadic intransitive verbs of Italian, French, Dutch and German by their
+aspectual and thematic type on the Auxiliary Selection Hierarchy, `AuxiliarySelectionHierarchy`:
+the transitions and states by decreasing telicity, then the processes by increasing control. The
+verbs at the two ends choose their auxiliary in every language and every sentence, a verb of
+change of location *be* (`changeOfLocation_selects_be`) and a verb of controlled nonmotional
+process *have* (`nonmotionalProcess_selects_have`), and the types between them are exactly those
+with a verb that takes both auxiliaries alike (`free_alternation_iff`).
 
-The data are the paper's examples, one row per sentence with the judgment of each auxiliary it
-prints. The theorems are the generalizations the paper draws from them: the rigid core
-(`changeOfLocation_selects_be`, `nonmotionalProcess_selects_have`), variation confined to the
-types between (`free_alternation_iff`), the cutoff point of each language (`italian_cutoff`,
-`french_cutoff`, `dutch_cutoff`, `cutoff_varies`), and the sensitivity of verbs of motion to a
-directional phrase (`directional_motionalProcess`, `italian_directional_split`). Italian cuts at
-the seam of the two halves of the hierarchy, where the states end and the processes begin.
+A sentence *selects* an auxiliary when the paper judges it acceptable with that auxiliary and
+with no other it prints. For a language $l$ and an auxiliary $a$, `Language.typesWith l a` is the
+set of types of the verbs whose sentences select $a$, among the sentences that keep the default
+predicate and subject of their type. Each language draws its boundary between *be* and *have* in
+the sense that, along the types it attests, its *be* types form a lower set and its *have* types
+an upper set (`typesWith_ordered`): a type whose verbs all take *be* lies below every type with a
+verb that takes *have*, and a type whose verbs all take *have* above every type with a verb that
+takes *be*. A language varies on the types with verbs of both kinds: the existence of a state in
+Italian, a change and the continuation of a state in French, the continuation and the existence of
+a state in Dutch, and these two and motional process in German. Only Italian varies on a single
+type, and so only Italian has a cutoff point on the hierarchy itself (`italian_cutoff`); the
+others need adjacent types merged. The paper's typological prediction follows from the order: a
+language whose verbs of change of location admit *have* has no type whose verbs consistently take
+*be* (`subset_of_changeOfLocation_mem`).
 
-The German examples cross (`german_crossing`): *halten* 'last', a verb of continuation of a
-state, takes *haben* and rejects *sein* (17a), while *rennen*, *laufen* and *schwimmen*,
-controlled motional processes further down the hierarchy, take *sein* and reject *haben* under a
-durative adverbial (38). So no cutoff point separates the German verbs at the granularity of
-Table 1 (`german_no_cutoff`). The paper reports the German motion verbs (§4.3) and allows a
-language to merge types or to divide them more finely (fn. 17, §6); a German cutoff needs the
-types from continuation of a state to motional process merged into one.
+A directional phrase moves Dutch and German verbs of motion to *be* and leaves French ones with
+*have* (`directional_motionalProcess`).
 
-The examples are linked by their verb to the entries of the four fragments. Each fragment records
-the auxiliaries its reference grammar gives a verb, [maiden-robustelli-2007] §14.20 for Italian,
-[broekhuis-corver-2026e] §§2.1–2.2 for Dutch, [durrell-2011] §12.3.2 for German and the lists of
-[grevisse-goosse-2008] §§811–813 for French, and each linked verb with one auxiliary has the one
-the paper's judgments prefer (`entry_aux_of_prefers`).
+A row marks its auxiliary and its participle, each with the lexeme it is a form of. A verb with an
+entry in its language's fragment is mapped to it, and the auxiliary each reference grammar gives
+an entry is the one its sentences select, except for an attested *avere* with *bastare* 'be
+enough', which the Italian grammar does not give (`selects_not_mem_perfectAuxiliaries`).
 
 ## Implementation notes
 
-* A row's verb type is the type of the section its example illustrates; (36), from §4.2's
-  controlled affecting processes, a subclass of the controlled processes, is a nonmotional
-  process.
+* The paper classifies verbs, not sentences, so the type of a verb is a function of its lexeme,
+  `Examples.Lexeme.position?`, read from the section of the paper that discusses it. *Cedere*
+  'yield', from the controlled affecting processes, a subclass of the controlled processes, is a
+  nonmotional process.
 * The diacritics are read on the `Judgment` scale: unmarked is acceptable, `?` marginal, `??`
-  questionable, `?*` and `*?` unacceptable, `*` ungrammatical. The paper's `?*` lies between `??`
-  and `*`, which is where `unacceptable` sits, although the scale glosses that value as a
-  pragmatic failure.
-* A sentence prefers one auxiliary when the paper prints it with both and judges one better;
-  fn. 3 measures the strength of a preference by the distance between the two. The cutoffs of
-  French and Dutch rest on this: counting a sentence printed with one auxiliary as a choice would
-  add crossings, French *rougir* 'blush' with *avoir* (13) below *rester* 'remain' with *être*
-  (19a), Dutch *duren* 'last' with *hebben* (18b) below *blijken* 'seem' with *zijn* (24c).
-* A row records the departures from the default of its type that the paper points to: a
-  directional or bounding phrase that makes the predicate telic ((35), (39b), (40b), (41b), (41d),
-  (42b), (49), (51)), a durative adverbial that makes it atelic ((4), (11)), an agentive subject
-  ((5a), (15c), (45b), (46b)), or a nonagentive one ((34), (36b), (43), (44b)). The cutoff point is
-  tested on the rows without one.
-* Omitted examples: (2) and (3), frozen *be* in Romanian and English, which have no choice of
-  auxiliary; §3.5's anticausatives, dyadic and off the hierarchy, except (30a), the one
-  change-of-location verb printed with *have*; and (14b), the sense 'be elusive' of *échapper*,
-  which the paper places on no type.
-* §5's discussion of the projectionist and constructional models of the lexicon-syntax interface
-  is argument, not formalized here.
-* A row names its verb by the infinitive, the form of its entry among the monadic entries of its
-  language's fragment, those whose basic frame, the first, has no complement, with the auxiliary
-  their grammar gives them. A verb its grammar gives either auxiliary by meaning is left out, as
-  French *paraître* (14a) ([grevisse-goosse-2008] §813a), Italian *correre* and *durare*
-  ([maiden-robustelli-2007] §14.20) and Dutch *lopen* are.
-* The grammars are tested on the paper's preferences. (21a) and (21b), *bastare* 'be enough' and
-  *appartenere* 'belong' printed with *avere* alone, express none; the Italian grammar gives
-  *bastare* *essere*, as (20b) does, and *appartenere* either.
+  questionable, `?*` and `*?` unacceptable, `*` ungrammatical.
+* A sentence printed with one auxiliary selects it where it is acceptable, as the paper prints such
+  sentences to show the auxiliary a verb takes; a sentence printed with both and judged alike
+  selects neither. The boundary is read off the sentences that keep their type's default: a row
+  records a phrase that changes the telicity of the predicate, or a subject whose agentivity
+  departs from the default, where the paper points to one.
+* Omitted examples: frozen *be* in Romanian and English, which have no choice of auxiliary; the
+  anticausatives, dyadic and off the hierarchy, except the one change-of-location verb printed
+  with *have*; and the sense 'be elusive' of *échapper*, which the paper places on no type.
+* The discussion of the projectionist and constructional models of the lexicon-syntax interface is
+  argument, not formalized here.
 
 ## References
 
 * [sorace-2000]
+* [van-hout-1993]
 * [maiden-robustelli-2007]
 * [broekhuis-corver-2026e]
 * [durrell-2011]
@@ -99,183 +85,293 @@ inductive Language
   | italian | french | dutch | german
   deriving DecidableEq, Repr, Fintype
 
-/-- A phrase that changes the telicity of the predicate. A directional or bounding phrase makes it
-telic, a durative adverbial atelic. -/
-inductive PredicateShift
-  | telicized | detelicized
-  deriving DecidableEq, Repr
+/-! ### The lexemes -/
 
-/-- A subject whose agentivity departs from the default of the verb's type. -/
-inductive SubjectShift
-  | agentive | nonagentive
-  deriving DecidableEq, Repr
+namespace Examples.Lexeme
+
+/-- The type of a verb on the hierarchy, from the section of the paper that discusses it. -/
+def position? : Lexeme → Option AuxiliarySelectionHierarchy
+  -- §3.1
+  | venire | arriver | komen | ankommen | arrivare | cadere => some .changeOfLocation
+  -- §3.2
+  | salire | marcire | fiorire | naitre | sterven | gebaren | groeien | steigen | stijgen
+  | devenir | rougir | paraitre | echapper => some .changeOfState
+  -- §3.3
+  | rimanere | durare | survivre | halten | verweilen | overblijven | duren | rester | blijven
+  | bleiben => some .continuationOfState
+  -- §3.4
+  | esistere | bastare | sembrare | appartenere | scarseggiare | exister | gefallen | genugen
+  | liegen | abhangen | staan | bestaan | blijken | sein | zijn => some .existenceOfState
+  -- §4.4
+  | tentennare | tossire | squillare | risuonare | rimbombare | rintoccare | piovere | nevicare
+  | grandinare | tuonare | lampeggiare => some .uncontrolledProcess
+  -- §4.3
+  | correre | lopen | nager | rennen | laufen | schwimmen | rollen | tanzen | nuotare | courir
+  | saltare | atterrare => some .motionalProcess
+  -- §4.1, §4.2
+  | chiacchierare | travailler | blazen | arbeiten | funzionare | lavorare
+  | cedere => some .nonmotionalProcess
+  | essere | avere | etre | avoir | hebben | haben => none
+
+/-- The auxiliary a lexeme is, where it is one. -/
+def auxiliary? : Lexeme → Option PerfectAuxiliary
+  | essere | etre | zijn | sein => some .be
+  | avere | avoir | hebben | haben => some .have
+  | _ => none
+
+end Examples.Lexeme
+
+/-! ### The rows -/
 
 /-- An example sentence, with its language, its verb and the verb's type, the departures from the
 default of the type, and the judgment of the sentence with each auxiliary the paper prints. -/
 structure Row where
   language : Language
-  /-- The infinitive of the verb. -/
-  verb : String
+  verb : Examples.Lexeme
   position : AuxiliarySelectionHierarchy
-  predicate : Option PredicateShift
-  subject : Option SubjectShift
+  predicate : Option Examples.PredicateShift
+  subject : Option Examples.SubjectShift
   judgment : PerfectAuxiliary → Option Judgment
 
-/-- The row of an example, from its language, its `verb`, `position`, `aux`, `predicate` and
-`subject` features, and its alternative with the other auxiliary. -/
-def Row.ofDatum (ex : Datum) : Option Row := do
-  let language ← ex.byLanguage [(.italian, Language.italian), (.french, .french),
+/-- The lexeme of the span of `e` labelled `l`. -/
+def lexemeOf (e : Datum) (l : Examples.SpanLabel) : Option Examples.Lexeme :=
+  (e.spans.find? (Examples.label? · = some l)).bind Examples.lexeme?
+
+/-- The row of an example, from its language, the lexemes of its auxiliary and its participle, its
+departures from the default of the verb's type, and its alternative with the other
+auxiliary. -/
+def Row.ofDatum (e : Datum) : Option Row := do
+  let language ← e.byLanguage [(.italian, Language.italian), (.french, .french),
     (.dutch, .dutch), (.german, .german)]
-  let verb ← ex.feature? "verb"
-  let position ← ex.parse? "position"
-    [("changeOfLocation", AuxiliarySelectionHierarchy.changeOfLocation),
-    ("changeOfState", .changeOfState), ("continuationOfState", .continuationOfState),
-    ("existenceOfState", .existenceOfState), ("uncontrolledProcess", .uncontrolledProcess),
-    ("motionalProcess", .motionalProcess), ("nonmotionalProcess", .nonmotionalProcess)]
-  let aux ← ex.parse? "aux" [("be", PerfectAuxiliary.be), ("have", .have)]
+  let aux ← (lexemeOf e .auxiliary).bind (·.auxiliary?)
+  let verb ← lexemeOf e .participle
+  let position ← verb.position?
   pure
     { language, verb, position
-      predicate := ex.parse? "predicate"
-        [("telicized", PredicateShift.telicized), ("detelicized", .detelicized)]
-      subject := ex.parse? "subject" [("agentive", SubjectShift.agentive),
-        ("nonagentive", .nonagentive)]
-      judgment := fun a ↦
-        if a = aux then some ex.judgment else ex.contrasts.head?.map (·.2) }
+      predicate := Examples.predicate e
+      subject := Examples.subject e
+      judgment := fun a ↦ if a = aux then some e.judgment else e.contrasts.head?.map (·.2) }
 
 /-- The paper's examples. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 
-/-- The sentence of a row is judged better with auxiliary `a` than with `b`. -/
-def Row.Prefers (r : Row) (a b : PerfectAuxiliary) : Prop :=
-  ∃ j k, r.judgment a = some j ∧ r.judgment b = some k ∧ k < j
+/-- The sentence of a row selects `a` when the paper judges it acceptable with `a` and with no
+other auxiliary it prints. -/
+def Row.Selects (r : Row) (a : PerfectAuxiliary) : Prop :=
+  r.judgment a = some .acceptable ∧ ∀ b ≠ a, r.judgment b ≠ some .acceptable
 
-instance (r : Row) (a b : PerfectAuxiliary) : Decidable (r.Prefers a b) :=
-  inferInstanceAs (Decidable (∃ _ _, _))
+instance (r : Row) (a : PerfectAuxiliary) : Decidable (r.Selects a) := by
+  unfold Row.Selects; infer_instance
 
 /-! ### The core -/
 
-/-- A verb of change of location takes *be* and rejects *have* in all four languages ((4), (5);
-§3.1, (1), (30a)). -/
+/-- A verb of change of location takes *be* and rejects *have* in all four languages. -/
 theorem changeOfLocation_selects_be : ∀ r ∈ rows, r.position = .changeOfLocation →
     (∀ j ∈ r.judgment .be, j = .acceptable) ∧ ∀ j ∈ r.judgment .have, j = .ungrammatical := by
   decide
 
 /-- A verb of controlled nonmotional process takes *have* in all four languages, and *be* at best
-marginally ((34), (35), (36b); §4.1, (33)–(36)). -/
+marginally. -/
 theorem nonmotionalProcess_selects_have : ∀ r ∈ rows, r.position = .nonmotionalProcess →
     (∀ j ∈ r.judgment .have, j = .acceptable) ∧ ∀ j ∈ r.judgment .be, j ≤ .marginal := by
   decide
 
 /-- Some verb of a type takes both auxiliaries acceptably exactly when the type is not at either
-end of the hierarchy (§§2, 6). -/
+end of the hierarchy. -/
 theorem free_alternation_iff (t : AuxiliarySelectionHierarchy) :
     (∃ r ∈ rows, r.position = t ∧ r.judgment .be = some .acceptable ∧
       r.judgment .have = some .acceptable) ↔ t ≠ ⊥ ∧ t ≠ ⊤ := by
   revert t; decide
 
-/-! ### The cutoff point -/
+/-! ### The boundary -/
 
-section Cutoff
+/-- The types of the verbs whose sentences in `l` select `a`, among the sentences that depart from
+the default of their type in neither predicate nor subject. -/
+def Language.typesWith (l : Language) (a : PerfectAuxiliary) :
+    Finset AuxiliarySelectionHierarchy :=
+  (rows.filterMap fun r ↦ if r.language = l ∧ r.predicate = none ∧ r.subject = none ∧
+    r.Selects a then some r.position else none).toFinset
 
-variable {l : Language} {k : AuxiliarySelectionHierarchy}
-
-/-- The rows of a language without a departure from the default of their type. -/
-def baseRows (l : Language) : List Row :=
-  rows.filter fun r ↦ r.language = l ∧ r.predicate = none ∧ r.subject = none
-
-/-- A language has a cutoff point at type `k` (§6) when each of its sentences that prefers *be* has
-a verb of type at most `k`, and each that prefers *have* a verb of type at least `k`. Verbs of type
-`k` itself may go either way, as when a language divides a type more finely. -/
-def Cutoff (l : Language) (k : AuxiliarySelectionHierarchy) : Prop :=
-  ∀ r ∈ baseRows l, (r.Prefers .be .have → r.position ≤ k) ∧ (r.Prefers .have .be → k ≤ r.position)
-
-instance : Decidable (Cutoff l k) := inferInstanceAs (Decidable (∀ r ∈ baseRows l, _))
-
-theorem Cutoff.le_of_prefers (h : Cutoff l k) {r s : Row} (hr : r ∈ baseRows l)
-    (hs : s ∈ baseRows l) (hbe : r.Prefers .be .have) (hhave : s.Prefers .have .be) :
-    r.position ≤ s.position :=
-  ((h r hr).1 hbe).trans ((h s hs).2 hhave)
-
-/-- Italian cuts the hierarchy after the states and before the processes ((7), (15), (20) against
-(37), (41), (44)–(47), (50)). -/
-theorem italian_cutoff : Cutoff .italian k ↔ k = .existenceOfState ∨ k = .uncontrolledProcess := by
-  revert k; decide
-
-/-- French cuts within the continuation of a state, where *rester* 'remain' takes *être* (19a) and
-*survivre* 'survive' *avoir* (16) ((12), (22), (37c), (42a)). -/
-theorem french_cutoff : Cutoff .french k ↔ k = .continuationOfState := by
-  revert k; decide
-
-/-- Dutch also cuts within the continuation of a state, where *blijven* 'remain' takes *zijn* (19b)
-and *duren* 'last' *hebben* (18b) ((10a), (37b), (39a)). -/
-theorem dutch_cutoff : Cutoff .dutch k ↔ k = .continuationOfState := by
-  revert k; decide
-
-/-- "The cutoff point cannot be identical in all languages" (§6). -/
-theorem cutoff_varies : Cutoff .italian k → ¬ Cutoff .french k := by
-  rw [italian_cutoff, french_cutoff]
-  rintro (rfl | rfl) <;> decide
-
-/-- A German verb of motion that prefers *sein* sits below a verb of continuation of a state that
-prefers *haben* ((17a), (38)). -/
-theorem german_crossing : ∃ r ∈ baseRows .german, ∃ s ∈ baseRows .german,
-    r.Prefers .be .have ∧ s.Prefers .have .be ∧ s.position < r.position := by
+-- §§3–4, the sentences of each language
+theorem typesWith_italian_be : Language.italian.typesWith .be =
+    {.changeOfLocation, .changeOfState, .continuationOfState, .existenceOfState} := by
   decide
 
-/-- No cutoff point separates the German verbs at the granularity of Table 1. -/
-theorem german_no_cutoff : ¬ Cutoff .german k := fun h ↦
-  let ⟨_, hr, _, hs, hbe, hhave, hlt⟩ := german_crossing
-  (h.le_of_prefers hr hs hbe hhave).not_gt hlt
+theorem typesWith_italian_have : Language.italian.typesWith .have =
+    {.existenceOfState, .uncontrolledProcess, .motionalProcess, .nonmotionalProcess} := by
+  decide
 
-end Cutoff
+theorem typesWith_french_be : Language.french.typesWith .be =
+    {.changeOfLocation, .changeOfState, .continuationOfState} := by
+  decide
+
+theorem typesWith_french_have : Language.french.typesWith .have =
+    {.changeOfState, .continuationOfState, .existenceOfState, .motionalProcess,
+      .nonmotionalProcess} := by
+  decide
+
+theorem typesWith_dutch_be : Language.dutch.typesWith .be =
+    {.changeOfLocation, .changeOfState, .continuationOfState, .existenceOfState} := by
+  decide
+
+theorem typesWith_dutch_have : Language.dutch.typesWith .have =
+    {.continuationOfState, .existenceOfState, .motionalProcess, .nonmotionalProcess} := by
+  decide
+
+theorem typesWith_german_be : Language.german.typesWith .be =
+    {.changeOfLocation, .changeOfState, .continuationOfState, .existenceOfState,
+      .motionalProcess} := by
+  decide
+
+theorem typesWith_german_have : Language.german.typesWith .have =
+    {.continuationOfState, .existenceOfState, .motionalProcess, .nonmotionalProcess} := by
+  decide
+
+/-- Along the types a language attests, its *be* types form a lower set and its *have* types an
+upper set. -/
+theorem typesWith_ordered (l : Language) :
+    AntitoneOn (· ∈ l.typesWith .be) ↑(l.typesWith .be ∪ l.typesWith .have) ∧
+      MonotoneOn (· ∈ l.typesWith .have) ↑(l.typesWith .be ∪ l.typesWith .have) := by
+  simp only [AntitoneOn, MonotoneOn, Finset.mem_coe, le_Prop_eq]
+  cases l <;>
+    simp only [typesWith_italian_be, typesWith_italian_have, typesWith_french_be,
+      typesWith_french_have, typesWith_dutch_be, typesWith_dutch_have, typesWith_german_be,
+      typesWith_german_have] <;>
+    exact ⟨by decide, by decide⟩
+
+/-- A language whose *have* types form an upper set of its attested types, and whose verbs of
+change of location admit *have*, takes *have* in every type in which it takes *be*. -/
+theorem subset_of_changeOfLocation_mem {B H : Set AuxiliarySelectionHierarchy}
+    (h : MonotoneOn (· ∈ H) (B ∪ H)) (hH : .changeOfLocation ∈ H) : B ⊆ H :=
+  fun _ hb ↦ h (.inr hH) (.inl hb) bot_le hH
+
+-- §6, at the other end of the hierarchy
+theorem subset_of_nonmotionalProcess_mem {B H : Set AuxiliarySelectionHierarchy}
+    (h : AntitoneOn (· ∈ B) (B ∪ H)) (hB : .nonmotionalProcess ∈ B) : H ⊆ B :=
+  fun _ hh ↦ h (.inr hh) (.inl hB) le_top hB
+
+-- §3.4, (20) against (21)
+theorem italian_varies :
+    Language.italian.typesWith .be ∩ Language.italian.typesWith .have = {.existenceOfState} := by
+  rw [typesWith_italian_be, typesWith_italian_have]; decide
+
+-- §3.2, (12) against (13); §3.3, (19a) against (16)
+theorem french_varies : Language.french.typesWith .be ∩ Language.french.typesWith .have =
+    {.changeOfState, .continuationOfState} := by
+  rw [typesWith_french_be, typesWith_french_have]; decide
+
+-- (18), (19b) and (24)
+theorem dutch_varies : Language.dutch.typesWith .be ∩ Language.dutch.typesWith .have =
+    {.continuationOfState, .existenceOfState} := by
+  rw [typesWith_dutch_be, typesWith_dutch_have]; decide
+
+-- (17), (19c); (23), (25a); (38) against (40a)
+theorem german_varies : Language.german.typesWith .be ∩ Language.german.typesWith .have =
+    {.continuationOfState, .existenceOfState, .motionalProcess} := by
+  rw [typesWith_german_be, typesWith_german_have]; decide
+
+-- §6: "the cutoff point cannot be identical in all languages"
+theorem italian_french_disjoint :
+    Disjoint (Language.italian.typesWith .be ∩ Language.italian.typesWith .have)
+      (Language.french.typesWith .be ∩ Language.french.typesWith .have) := by
+  rw [italian_varies, french_varies]; decide
+
+-- §6
+theorem italian_cutoff :
+    upperBounds ↑(Language.italian.typesWith .be) ∩
+      lowerBounds ↑(Language.italian.typesWith .have) =
+        {AuxiliarySelectionHierarchy.existenceOfState} := by
+  rw [Finset.isLUB_sup_id.upperBounds_eq, Finset.isGLB_inf_id.lowerBounds_eq, Set.Ici_inter_Iic,
+    typesWith_italian_be, typesWith_italian_have]
+  exact Set.Icc_self _
 
 /-! ### Directional phrases -/
 
-/-- A directional phrase switches Dutch and German motion verbs from *have* ((39a), (40a)) to *be*
-((39b), (40b)), while French keeps *avoir* (42b) (§4.3). -/
+-- §4.3, (39), (40) against (42b)
 theorem directional_motionalProcess : ∀ r ∈ rows, r.position = .motionalProcess →
     r.predicate = some .telicized →
-    (r.language = .dutch ∨ r.language = .german → r.Prefers .be .have) ∧
-      (r.language = .french → r.Prefers .have .be) := by
+    (r.language = .dutch ∨ r.language = .german → r.Selects .be) ∧
+      (r.language = .french → r.Selects .have) := by
   decide
 
-/-- In Italian a directional phrase moves *correre* 'run' to *essere* but leaves *nuotare* 'swim'
-with *avere* (§4.3, (41b), (41d)). -/
+-- §4.3, (41b) against (41d): *correre* 'run' moves to *essere*, *nuotare* 'swim' does not
 theorem italian_directional_split :
-    (∃ r ∈ rows, r.language = .italian ∧ r.position = .motionalProcess ∧
-      r.predicate = some .telicized ∧ r.Prefers .be .have) ∧
-    ∃ r ∈ rows, r.language = .italian ∧ r.position = .motionalProcess ∧
-      r.predicate = some .telicized ∧ r.Prefers .have .be := by
+    (∃ r ∈ rows, r.verb = .correre ∧ r.predicate = some .telicized ∧ r.Selects .be) ∧
+      ∃ r ∈ rows, r.verb = .nuotare ∧ r.predicate = some .telicized ∧ r.Selects .have := by
   decide
 
 /-! ### The fragments -/
 
-/-- The auxiliary of an entry's perfect, where its grammar gives it exactly one. -/
-def soleAuxiliary? (v : Verb) : Option PerfectAuxiliary :=
-  [PerfectAuxiliary.be, .have].find? (v.perfectAuxiliaries = {·})
+/-- The entry of a verb in its language's fragment, where the fragment has one. -/
+def Examples.Lexeme.entry? : Examples.Lexeme → Option Verb
+  | .venire => some Italian.Verbs.venire.toVerb
+  | .arrivare => some Italian.Verbs.arrivare.toVerb
+  | .cadere => some Italian.Verbs.cadere.toVerb
+  | .salire => some Italian.Verbs.salire.toVerb
+  | .marcire => some Italian.Verbs.marcire.toVerb
+  | .fiorire => some Italian.Verbs.fiorire.toVerb
+  | .rimanere => some Italian.Verbs.rimanere.toVerb
+  | .durare => some Italian.Verbs.durare.toVerb
+  | .esistere => some Italian.Verbs.esistere.toVerb
+  | .bastare => some Italian.Verbs.bastare.toVerb
+  | .sembrare => some Italian.Verbs.sembrare.toVerb
+  | .appartenere => some Italian.Verbs.appartenere.toVerb
+  | .chiacchierare => some Italian.Verbs.chiacchierare.toVerb
+  | .lavorare => some Italian.Verbs.lavorare.toVerb
+  | .correre => some Italian.Verbs.correre.toVerb
+  | .saltare => some Italian.Verbs.saltare.toVerb
+  | .nuotare => some Italian.Verbs.nuotare.toVerb
+  | .tossire => some Italian.Verbs.tossire.toVerb
+  | .squillare => some Italian.Verbs.squillare.toVerb
+  | .arriver => some French.Verbs.arriver
+  | .naitre => some French.Verbs.naitre
+  | .devenir => some French.Verbs.devenir
+  | .rougir => some French.Verbs.rougir
+  | .paraitre => some French.Verbs.paraitre
+  | .survivre => some French.Verbs.survivre
+  | .rester => some French.Verbs.rester
+  | .exister => some French.Verbs.exister
+  | .travailler => some French.Verbs.travailler
+  | .nager => some French.Verbs.nager
+  | .courir => some French.Verbs.courir
+  | .komen => some Dutch.Verbs.komen.toVerb
+  | .sterven => some Dutch.Verbs.sterven.toVerb
+  | .groeien => some Dutch.Verbs.groeien.toVerb
+  | .stijgen => some Dutch.Verbs.stijgen.toVerb
+  | .blijven => some Dutch.Verbs.blijven.toVerb
+  | .overblijven => some Dutch.Verbs.overblijven.toVerb
+  | .duren => some Dutch.Verbs.duren.toVerb
+  | .staan => some Dutch.Verbs.staan.toVerb
+  | .bestaan => some Dutch.Verbs.bestaan.toVerb
+  | .blazen => some Dutch.Verbs.blazen.toVerb
+  | .lopen => some Dutch.Verbs.lopen.toVerb
+  | .rollen => some Dutch.Verbs.rollen.toVerb
+  | .ankommen => some German.Verbs.ankommen.toVerb
+  | .bleiben => some German.Verbs.bleiben.toVerb
+  | .liegen => some German.Verbs.liegen.toVerb
+  | .arbeiten => some German.Verbs.arbeiten.toVerb
+  | .rennen => some German.Verbs.rennen.toVerb
+  | .laufen => some German.Verbs.laufen.toVerb
+  | .tanzen => some German.Verbs.tanzen.toVerb
+  | _ => none
 
-/-- The monadic entries of a language's fragment, those whose basic frame, the first, has no
-complement, each with the auxiliary its grammar gives its perfect, where it gives one. -/
-def Language.entries (l : Language) : List (Verb × PerfectAuxiliary) :=
-  let verbs : List Verb := match l with
-    | .italian => Italian.Verbs.allVerbs.map (·.toVerb)
-    | .french => French.Verbs.allVerbs
-    | .dutch => Dutch.Verbs.inventory.map (·.toVerb)
-    | .german => German.Verbs.allVerbs.map (·.toVerb)
-  verbs.filterMap fun v ↦
-    if (v.valency.frames.headD .intransitive).IsIntransitive then (soleAuxiliary? v).map (v, ·)
-    else none
+-- each entry is written as the row names the participle's lexeme
+theorem entry?_form : ∀ e ∈ Examples.all, ∀ s ∈ e.spans, ∀ l ∈ Examples.lexeme? s,
+    ∀ v ∈ l.entry?, s.lexeme = some v.form := by
+  decide +kernel
 
-/-- The entry of a row's verb among the monadic entries of its language, with its auxiliary. -/
-def Row.entry? (r : Row) : Option (Verb × PerfectAuxiliary) :=
-  r.language.entries.find? (·.1.form == r.verb)
+-- each entry's basic frame, the first, has no complement
+theorem entry?_intransitive : ∀ l : Examples.Lexeme, ∀ v ∈ l.entry?,
+    (v.valency.frames.headD .intransitive).IsIntransitive := by
+  decide
 
-/-- Each language's grammar gives the verb of an example the auxiliary its judgments prefer,
-where the example departs from the default of its type in neither predicate nor subject. -/
-theorem entry_aux_of_prefers (l : Language) :
-    ∀ r ∈ baseRows l, ∀ e ∈ r.entry?, ∀ a b, r.Prefers a b → e.2 = a := by
-  revert l; decide
+-- (21a), the attested *avere* with *bastare*, is the one sentence that selects an auxiliary its
+-- grammar does not give its verb
+theorem selects_not_mem_perfectAuxiliaries :
+    (rows.filter fun r ↦ ∃ v ∈ r.verb.entry?, ∃ a, r.Selects a ∧
+      v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries).map (·.verb) = [.bastare] := by
+  decide +kernel
 
 end Sorace2000
