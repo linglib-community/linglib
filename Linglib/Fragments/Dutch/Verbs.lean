@@ -44,7 +44,8 @@ tested against them.
 ## Implementation notes
 
 * The participle of the simplex verb is stored without its *ge-*, as `German.Conjugation.Stem`
-  stores it, and the entry does not conjugate further. The syntax of the particle, which the
+  stores it. An entry lists its third person singular present where an example has the finite verb, and does
+  not conjugate further. The syntax of the particle, which the
   grammar and den Dikken analyse, is left to the studies.
 
 ## References
@@ -85,6 +86,8 @@ structure Verb extends _root_.Verb where
   participle : String
   /-- The formation. -/
   formation : Formation := .simplex
+  /-- The third person singular present, where the entry lists it, as *laat* of *laten*. -/
+  present : Option String := none
   deriving BEq
 
 namespace Verb
@@ -326,6 +329,36 @@ example : perfectAuxiliary wandelen .intransitive = .have ∧
     perfectAuxiliary (wandelen.withPath Adposition.behind) .intransitive = .have := by
   decide
 
+/-! ### Verbs of the verb cluster
+
+The verbs of the verb-raising examples: a final verb, and the verbs that take it or another such
+verb as a bare infinitive, with or without an object of their own. -/
+
+/-- *schrijven* 'write', *schrijf - schreef - geschreven*, a transitive verb. -/
+def schrijven : Verb := simplex "schrijven" "geschreven"
+
+/-- *liegen* 'lie, tell a lie', *lieg - loog - gelogen*, an intransitive verb. -/
+def liegen : Verb :=
+  { simplex "liegen" "gelogen" with valency := .ofFrame ArgumentFrame.intransitive }
+
+/-- *laten* 'let', *laat - liet - gelaten*, takes an object and a bare infinitive. -/
+def laten : Verb :=
+  { simplex "laten" "gelaten" with
+    valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1),
+    present := some "laat" }
+
+/-- *zien* 'see', *zie - zag - gezien*, takes an object, or an object and a bare infinitive. -/
+def zien : Verb :=
+  { simplex "zien" "gezien" with
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.smallClause.withObject],
+    present := some "ziet" }
+
+/-- *willen* 'want', *wil - wilde - gewild*, takes a bare infinitive, or an object. -/
+def willen : Verb :=
+  { simplex "willen" "gewild" with
+    valency := .ofFrames [ArgumentFrame.infinitival, ArgumentFrame.np],
+    present := some "wil" }
+
 /-! ### The inventory -/
 
 /-- `inventory` lists the entries. -/
@@ -333,7 +366,7 @@ def inventory : List Verb :=
   [straffen, kussen, bellen, voeren, halen, lezen, dekken, dienen,
    opbellen, uitvoeren, afhalen, ontdekken, bedekken, verdienen, herhalen,
    komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, werken,
-   lopen, wandelen, rollen]
+   lopen, wandelen, rollen, schrijven, liegen, laten, zien, willen]
 
 /-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempty →

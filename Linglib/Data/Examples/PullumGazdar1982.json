@@ -1,118 +1,148 @@
 {
-  "features": [
-    {
-      "key": "subject",
-      "lean": "subjects",
-      "type": "Subject",
-      "multiple": true,
-      "doc": "The conjoined subject noun phrases of a *respectively* sentence, in order.",
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
       "levels": [
         {
-          "name": "theWoman",
-          "label": "the woman",
-          "doc": "singular"
+          "name": "subject",
+          "label": "subject",
+          "doc": "the head noun of a conjoined subject of a *respectively* sentence, whose entry the lexeme names"
         },
         {
-          "name": "theMen",
-          "label": "the men",
-          "doc": "plural"
+          "name": "verb",
+          "label": "verb",
+          "doc": "a conjoined verb of a *respectively* sentence, whose entry the lexeme names"
         },
         {
-          "name": "theMan",
-          "label": "the man",
-          "doc": "singular"
+          "name": "verbPhrase",
+          "label": "verb phrase",
+          "doc": "the Dutch verb phrase that the grammar generates, bracketed in the paper's examples"
+        },
+        {
+          "name": "word",
+          "label": "word",
+          "doc": "a word of the Dutch verb phrase, which the lexeme names"
+        },
+        {
+          "name": "incorporated",
+          "label": "incorporated",
+          "doc": "a Mohawk verb with an incorporated noun stem, which the lexeme names"
+        },
+        {
+          "name": "external",
+          "label": "external",
+          "doc": "the head noun of the external noun phrase of a Mohawk verb, whose stem the lexeme names"
         }
       ]
     },
-    {
-      "key": "verb",
-      "lean": "verbs",
-      "type": "Verb",
-      "multiple": true,
-      "doc": "The conjoined verbs of a *respectively* sentence, in order.",
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The entries of the English, Dutch and Mohawk words that the spans mark.",
       "levels": [
         {
-          "name": "smokes",
-          "label": "smokes",
-          "doc": "third person singular present"
+          "name": "woman",
+          "label": "woman",
+          "doc": "the English noun"
         },
         {
-          "name": "drinks",
-          "label": "drinks",
-          "doc": "third person singular present"
+          "name": "man",
+          "label": "man",
+          "doc": "the English noun"
         },
         {
           "name": "smoke",
           "label": "smoke",
-          "doc": "plural present"
+          "doc": "the English verb"
         },
         {
           "name": "drink",
           "label": "drink",
-          "doc": "plural present"
-        }
-      ]
-    },
-    {
-      "key": "word",
-      "lean": "words",
-      "type": "DutchWord",
-      "multiple": true,
-      "doc": "The words of the bracketed Dutch verb phrase, in order.",
-      "levels": [
+          "doc": "the English verb"
+        },
         {
           "name": "marie",
           "label": "Marie",
-          "doc": "a personal name"
+          "doc": "Dutch, a personal name"
         },
         {
           "name": "pieter",
           "label": "Pieter",
-          "doc": "a personal name"
+          "doc": "Dutch, a personal name"
         },
         {
           "name": "arabisch",
           "label": "Arabisch",
-          "doc": "'Arabic'"
+          "doc": "Dutch 'Arabic'"
         },
         {
           "name": "hans",
           "label": "Hans",
-          "doc": "a personal name"
-        },
-        {
-          "name": "laat",
-          "label": "laat",
-          "doc": "'let', finite"
-        },
-        {
-          "name": "wil",
-          "label": "wil",
-          "doc": "'will', finite"
+          "doc": "Dutch, a personal name"
         },
         {
           "name": "laten",
           "label": "laten",
-          "doc": "'let', infinitive"
+          "doc": "Dutch 'let'"
         },
         {
           "name": "zien",
           "label": "zien",
-          "doc": "'see', infinitive"
+          "doc": "Dutch 'see'"
+        },
+        {
+          "name": "willen",
+          "label": "willen",
+          "doc": "Dutch 'want'"
         },
         {
           "name": "schrijven",
           "label": "schrijven",
-          "doc": "'write', infinitive"
+          "doc": "Dutch 'write'"
         },
         {
           "name": "liegen",
           "label": "liegen",
-          "doc": "'lie', infinitive"
+          "doc": "Dutch 'lie'"
+        },
+        {
+          "name": "nuhs",
+          "label": "nuhs",
+          "doc": "Mohawk 'house'"
+        },
+        {
+          "name": "hnek",
+          "label": "hnek",
+          "doc": "Mohawk 'liquid'"
+        },
+        {
+          "name": "tsits",
+          "label": "tsiʔts",
+          "doc": "Mohawk 'flower', 'wine'"
+        },
+        {
+          "name": "seleht",
+          "label": "seleht",
+          "doc": "Mohawk 'vehicle'"
+        },
+        {
+          "name": "bike",
+          "label": "bike",
+          "doc": "the English loan 'bike' in Mohawk"
+        },
+        {
+          "name": "liw",
+          "label": "liʔw",
+          "doc": "Mohawk 'idea', 'matter'"
+        },
+        {
+          "name": "sawatis",
+          "label": "sawatis",
+          "doc": "Mohawk, the name 'John'"
         }
       ]
     }
-  ],
+  },
   "examples": [
     {
       "id": "pullumgazdar1982_ex18a",
@@ -120,18 +150,22 @@
       "language": "stan1293",
       "primaryText": "The woman and the men smokes and drinks respectively.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["The", ""], ["woman", ""], ["and", ""], ["the", ""], ["men", ""], ["smokes", ""],
+        ["and", ""], ["drinks", ""], ["respectively", ""]
+      ],
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["subject", "the woman"],
-        ["subject", "the men"],
-        ["verb", "smokes"],
-        ["verb", "drinks"]
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "woman"},
+        {"start": 4, "label": "subject", "lexeme": "man"},
+        {"start": 5, "label": "verb", "lexeme": "smoke"},
+        {"start": 7, "label": "verb", "lexeme": "drink"}
       ],
+      "paperFeatures": [],
       "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"All of (18 a-c) we find ungrammatical\" (p. 483).",
       "verified": "page-image"
     },
@@ -141,18 +175,22 @@
       "language": "stan1293",
       "primaryText": "The woman and the men smokes and drink respectively.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["The", ""], ["woman", ""], ["and", ""], ["the", ""], ["men", ""], ["smokes", ""],
+        ["and", ""], ["drink", ""], ["respectively", ""]
+      ],
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["subject", "the woman"],
-        ["subject", "the men"],
-        ["verb", "smokes"],
-        ["verb", "drink"]
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "woman"},
+        {"start": 4, "label": "subject", "lexeme": "man"},
+        {"start": 5, "label": "verb", "lexeme": "smoke"},
+        {"start": 7, "label": "verb", "lexeme": "drink"}
       ],
+      "paperFeatures": [],
       "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"All of (18 a-c) we find ungrammatical\" (p. 483).",
       "verified": "page-image"
     },
@@ -162,18 +200,22 @@
       "language": "stan1293",
       "primaryText": "The woman and the men smoke and drinks respectively.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["The", ""], ["woman", ""], ["and", ""], ["the", ""], ["men", ""], ["smoke", ""],
+        ["and", ""], ["drinks", ""], ["respectively", ""]
+      ],
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["subject", "the woman"],
-        ["subject", "the men"],
-        ["verb", "smoke"],
-        ["verb", "drinks"]
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "woman"},
+        {"start": 4, "label": "subject", "lexeme": "man"},
+        {"start": 5, "label": "verb", "lexeme": "smoke"},
+        {"start": 7, "label": "verb", "lexeme": "drink"}
       ],
+      "paperFeatures": [],
       "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"All of (18 a-c) we find ungrammatical\" (p. 483).",
       "verified": "page-image"
     },
@@ -183,18 +225,22 @@
       "language": "stan1293",
       "primaryText": "The woman and the men smoke and drink respectively.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["The", ""], ["woman", ""], ["and", ""], ["the", ""], ["men", ""], ["smoke", ""],
+        ["and", ""], ["drink", ""], ["respectively", ""]
+      ],
       "translation": "",
       "context": "",
       "judgment": "marginal",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["subject", "the woman"],
-        ["subject", "the men"],
-        ["verb", "smoke"],
-        ["verb", "drink"]
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "woman"},
+        {"start": 4, "label": "subject", "lexeme": "man"},
+        {"start": 5, "label": "verb", "lexeme": "smoke"},
+        {"start": 7, "label": "verb", "lexeme": "drink"}
       ],
+      "paperFeatures": [],
       "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"(18d) is of uncertain status, it is the only one we could conceivably accept\" (p. 483).",
       "verified": "page-image"
     },
@@ -204,18 +250,22 @@
       "language": "stan1293",
       "primaryText": "The man and the woman smokes and drinks respectively.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["The", ""], ["man", ""], ["and", ""], ["the", ""], ["woman", ""], ["smokes", ""],
+        ["and", ""], ["drinks", ""], ["respectively", ""]
+      ],
       "translation": "",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["subject", "the man"],
-        ["subject", "the woman"],
-        ["verb", "smokes"],
-        ["verb", "drinks"]
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "man"},
+        {"start": 4, "label": "subject", "lexeme": "woman"},
+        {"start": 5, "label": "verb", "lexeme": "smoke"},
+        {"start": 7, "label": "verb", "lexeme": "drink"}
       ],
+      "paperFeatures": [],
       "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"we reject (19a) completely\" (p. 483).",
       "verified": "page-image"
     },
@@ -225,18 +275,22 @@
       "language": "stan1293",
       "primaryText": "The man and the woman smoke and drink respectively.",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["The", ""], ["man", ""], ["and", ""], ["the", ""], ["woman", ""], ["smoke", ""],
+        ["and", ""], ["drink", ""], ["respectively", ""]
+      ],
       "translation": "",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["subject", "the man"],
-        ["subject", "the woman"],
-        ["verb", "smoke"],
-        ["verb", "drink"]
+      "spans": [
+        {"start": 1, "label": "subject", "lexeme": "man"},
+        {"start": 4, "label": "subject", "lexeme": "woman"},
+        {"start": 5, "label": "verb", "lexeme": "smoke"},
+        {"start": 7, "label": "verb", "lexeme": "drink"}
       ],
+      "paperFeatures": [],
       "comment": "Printed unmarked (p. 482: \"which we do not mark with our own judgements\"); the authors' judgment: \"We find we can tolerate (19b)\" (p. 483).",
       "verified": "page-image"
     },
@@ -246,20 +300,25 @@
       "language": "dutc1256",
       "primaryText": "dat Jan Marie Pieter Arabisch laat zien schrijven",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["dat", "that"], ["Jan", "Jan"], ["Marie", "Marie"], ["Pieter", "Pieter"],
+        ["Arabisch", "Arabic"], ["laat", "let"], ["zien", "see"], ["schrijven", "write"]
+      ],
       "translation": "that Jan let Marie see Pieter write Arabic",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["word", "Marie"],
-        ["word", "Pieter"],
-        ["word", "Arabisch"],
-        ["word", "laat"],
-        ["word", "zien"],
-        ["word", "schrijven"]
+      "spans": [
+        {"start": 2, "length": 6, "label": "verb phrase"},
+        {"start": 2, "label": "word", "lexeme": "Marie"},
+        {"start": 3, "label": "word", "lexeme": "Pieter"},
+        {"start": 4, "label": "word", "lexeme": "Arabisch"},
+        {"start": 5, "label": "word", "lexeme": "laten"},
+        {"start": 6, "label": "word", "lexeme": "zien"},
+        {"start": 7, "label": "word", "lexeme": "schrijven"}
       ],
+      "paperFeatures": [],
       "verified": "page-image"
     },
     {
@@ -268,20 +327,25 @@
       "language": "dutc1256",
       "primaryText": "dat Jan Marie Pieter Arabisch laat zien liegen",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["dat", "that"], ["Jan", "Jan"], ["Marie", "Marie"], ["Pieter", "Pieter"],
+        ["Arabisch", "Arabic"], ["laat", "let"], ["zien", "see"], ["liegen", "lie"]
+      ],
       "translation": "that Jan let Marie see Pieter lie Arabic",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["word", "Marie"],
-        ["word", "Pieter"],
-        ["word", "Arabisch"],
-        ["word", "laat"],
-        ["word", "zien"],
-        ["word", "liegen"]
+      "spans": [
+        {"start": 2, "length": 6, "label": "verb phrase"},
+        {"start": 2, "label": "word", "lexeme": "Marie"},
+        {"start": 3, "label": "word", "lexeme": "Pieter"},
+        {"start": 4, "label": "word", "lexeme": "Arabisch"},
+        {"start": 5, "label": "word", "lexeme": "laten"},
+        {"start": 6, "label": "word", "lexeme": "zien"},
+        {"start": 7, "label": "word", "lexeme": "liegen"}
       ],
+      "paperFeatures": [],
       "verified": "page-image"
     },
     {
@@ -290,21 +354,27 @@
       "language": "dutc1256",
       "primaryText": "dat Jan Marie Pieter Arabisch Hans laat zien schrijven",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["dat", "that"], ["Jan", "Jan"], ["Marie", "Marie"], ["Pieter", "Pieter"],
+        ["Arabisch", "Arabic"], ["Hans", "Hans"], ["laat", "let"], ["zien", "see"],
+        ["schrijven", "write"]
+      ],
       "translation": "that Jan let Marie see Pieter write Arabic Hans",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["word", "Marie"],
-        ["word", "Pieter"],
-        ["word", "Arabisch"],
-        ["word", "Hans"],
-        ["word", "laat"],
-        ["word", "zien"],
-        ["word", "schrijven"]
+      "spans": [
+        {"start": 2, "length": 7, "label": "verb phrase"},
+        {"start": 2, "label": "word", "lexeme": "Marie"},
+        {"start": 3, "label": "word", "lexeme": "Pieter"},
+        {"start": 4, "label": "word", "lexeme": "Arabisch"},
+        {"start": 5, "label": "word", "lexeme": "Hans"},
+        {"start": 6, "label": "word", "lexeme": "laten"},
+        {"start": 7, "label": "word", "lexeme": "zien"},
+        {"start": 8, "label": "word", "lexeme": "schrijven"}
       ],
+      "paperFeatures": [],
       "verified": "page-image"
     },
     {
@@ -313,21 +383,27 @@
       "language": "dutc1256",
       "primaryText": "dat Jan Marie Pieter Arabisch wil laten zien schrijven",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["dat", "that"], ["Jan", "Jan"], ["Marie", "Marie"], ["Pieter", "Pieter"],
+        ["Arabisch", "Arabic"], ["wil", "will"], ["laten", "let"], ["zien", "see"],
+        ["schrijven", "write"]
+      ],
       "translation": "that Jan will let Marie see Pieter write Arabic",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["word", "Marie"],
-        ["word", "Pieter"],
-        ["word", "Arabisch"],
-        ["word", "wil"],
-        ["word", "laten"],
-        ["word", "zien"],
-        ["word", "schrijven"]
+      "spans": [
+        {"start": 2, "length": 7, "label": "verb phrase"},
+        {"start": 2, "label": "word", "lexeme": "Marie"},
+        {"start": 3, "label": "word", "lexeme": "Pieter"},
+        {"start": 4, "label": "word", "lexeme": "Arabisch"},
+        {"start": 5, "label": "word", "lexeme": "willen"},
+        {"start": 6, "label": "word", "lexeme": "laten"},
+        {"start": 7, "label": "word", "lexeme": "zien"},
+        {"start": 8, "label": "word", "lexeme": "schrijven"}
       ],
+      "paperFeatures": [],
       "verified": "page-image"
     },
     {
@@ -336,21 +412,28 @@
       "language": "dutc1256",
       "primaryText": "(dat Jan) Marie Arabisch Pieter wil laten zien schrijven",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["dat", "that"], ["Jan", "Jan"], ["Marie", "Marie"], ["Arabisch", "Arabic"],
+        ["Pieter", "Pieter"], ["wil", "will"], ["laten", "let"], ["zien", "see"],
+        ["schrijven", "write"]
+      ],
       "translation": "(that Jan) will let Marie see Arabic write Pieter",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["word", "Marie"],
-        ["word", "Arabisch"],
-        ["word", "Pieter"],
-        ["word", "wil"],
-        ["word", "laten"],
-        ["word", "zien"],
-        ["word", "schrijven"]
+      "spans": [
+        {"start": 2, "length": 7, "label": "verb phrase"},
+        {"start": 2, "label": "word", "lexeme": "Marie"},
+        {"start": 3, "label": "word", "lexeme": "Arabisch"},
+        {"start": 4, "label": "word", "lexeme": "Pieter"},
+        {"start": 5, "label": "word", "lexeme": "willen"},
+        {"start": 6, "label": "word", "lexeme": "laten"},
+        {"start": 7, "label": "word", "lexeme": "zien"},
+        {"start": 8, "label": "word", "lexeme": "schrijven"}
       ],
+      "paperFeatures": [],
+      "comment": "Printed with 'dat Jan' in parentheses and without brackets; given as a sentence the grammar generates that violates a selection restriction.",
       "verified": "page-image"
     },
     {
@@ -360,16 +443,20 @@
       "language": "moha1258",
       "primaryText": "iʔi knuhsnuhweʔs thikʌ kanuhsa",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["iʔi", "I"], ["knuhsnuhweʔs", "house-like"], ["thikʌ", "that"], ["kanuhsa", "house"]
+      ],
       "translation": "I like that house.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "nuhs"],
-        ["external", "nuhs"]
+      "spans": [
+        {"start": 1, "label": "incorporated", "lexeme": "nuhs"},
+        {"start": 3, "label": "external", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "One of the elicited examples of the object-doubling construction that the paper attributes to Postal (1962, pp. 290ff).",
       "verified": "page-image"
     },
     {
@@ -378,16 +465,20 @@
       "language": "moha1258",
       "primaryText": "waʔkhnekahnínuʔ ne otsìʔtsaʔ",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["waʔkhnekahnínuʔ", "I-liquid-bought"], ["ne", ""], ["otsìʔtsaʔ", "flower/wine"]
+      ],
       "translation": "I bought the wine.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "hnek"],
-        ["external", "tsiʔts"]
+      "spans": [
+        {"start": 0, "label": "incorporated", "lexeme": "hnek"},
+        {"start": 2, "label": "external", "lexeme": "tsiʔts"}
       ],
+      "paperFeatures": [],
+      "comment": "Supplied by Marianne Mithun (personal communication). The external stem -tsiʔts- means both 'flower' and 'wine'.",
       "verified": "page-image"
     },
     {
@@ -396,16 +487,20 @@
       "language": "moha1258",
       "primaryText": "wakeselehtahni:nuʔseʔ neʔ 'bike'",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["wakeselehtahni:nuʔseʔ", "I her-vehicle-bought"], ["neʔ", ""], ["'bike'", "bike"]
+      ],
       "translation": "I bought her a bike.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "seleht"],
-        ["external", "bike"]
+      "spans": [
+        {"start": 0, "label": "incorporated", "lexeme": "seleht"},
+        {"start": 2, "label": "external", "lexeme": "bike"}
       ],
+      "paperFeatures": [],
+      "comment": "From Bonvillain (1974, pp. 21-22), as the paper cites it.",
       "verified": "page-image"
     },
     {
@@ -414,16 +509,20 @@
       "language": "moha1258",
       "primaryText": "kanuhsrakʌ thikʌ kanuhsa",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["kanuhsrakʌ", "it-house-white"], ["thikʌ", "that"], ["kanuhsa", "house"]
+      ],
       "translation": "That house is white.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "nuhs"],
-        ["external", "nuhs"]
+      "spans": [
+        {"start": 0, "label": "incorporated", "lexeme": "nuhs"},
+        {"start": 2, "label": "external", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 395), as the paper cites it; given as synonymous with (41b).",
       "verified": "page-image"
     },
     {
@@ -432,15 +531,19 @@
       "language": "moha1258",
       "primaryText": "kanuhsrakʌ thikʌ",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["kanuhsrakʌ", "it-house-white"], ["thikʌ", "that"]
+      ],
       "translation": "That house is white.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "nuhs"]
+      "spans": [
+        {"start": 0, "label": "incorporated", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 395), as the paper cites it; given as synonymous with (41a).",
       "verified": "page-image"
     },
     {
@@ -450,15 +553,19 @@
       "language": "moha1258",
       "primaryText": "keliʔwanú:weʔs kiʔ",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["keliʔwanú:weʔs", "I it-idea-like"], ["kiʔ", "this"]
+      ],
       "translation": "I agree to this.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "liʔw"]
+      "spans": [
+        {"start": 0, "label": "incorporated", "lexeme": "liʔw"}
       ],
+      "paperFeatures": [],
+      "comment": "From Bonvillain and Francis (1980, p. 80, line 27; morpheme segmentation on p. 88), as the paper cites it.",
       "verified": "page-image"
     },
     {
@@ -467,15 +574,19 @@
       "language": "moha1258",
       "primaryText": "iʔi k-nuhweʔs ne ka-nuhs-aʔ",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["iʔi", "I"], ["k-nuhweʔs", "like"], ["ne", ""], ["ka-nuhs-aʔ", "house"]
+      ],
       "translation": "I like the house.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["external", "nuhs"]
+      "spans": [
+        {"start": 3, "label": "external", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 283, E147), as the paper cites it; morpheme gloss added by the paper.",
       "verified": "page-image"
     },
     {
@@ -484,15 +595,20 @@
       "language": "moha1258",
       "primaryText": "iʔi k-nuhweʔs ne sawatis hra-o-nuhs-aʔ",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["iʔi", "I"], ["k-nuhweʔs", "like"], ["ne", ""], ["sawatis", "John('s)"],
+        ["hra-o-nuhs-aʔ", "house"]
+      ],
       "translation": "I like John's house.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["external", "nuhs"]
+      "spans": [
+        {"start": 4, "label": "external", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 321, E243), as the paper cites it; morpheme gloss added by the paper.",
       "verified": "page-image"
     },
     {
@@ -501,16 +617,21 @@
       "language": "moha1258",
       "primaryText": "iʔi k-nuhs-nuhweʔs ne sawatis hrao-nuhs-aʔ",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["iʔi", "I"], ["k-nuhs-nuhweʔs", "house-like"], ["ne", ""], ["sawatis", "John('s)"],
+        ["hrao-nuhs-aʔ", "house"]
+      ],
       "translation": "I like John's house.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "nuhs"],
-        ["external", "nuhs"]
+      "spans": [
+        {"start": 1, "label": "incorporated", "lexeme": "nuhs"},
+        {"start": 4, "label": "external", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 291, E168), as the paper cites it; morpheme gloss added by the paper, printed 'house- like'.",
       "verified": "page-image"
     },
     {
@@ -519,16 +640,20 @@
       "language": "moha1258",
       "primaryText": "iʔi hrai-nuhs-nuhweʔs ne sawatis",
       "discourseSegments": [],
-      "glossedTokens": [],
+      "glossedTokens": [
+        ["iʔi", "I"], ["hrai-nuhs-nuhweʔs", "house-like"], ["ne", ""], ["sawatis", "John"]
+      ],
       "translation": "I like John's house.",
       "context": "",
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["incorporated", "nuhs"],
-        ["external", "sawatis"]
+      "spans": [
+        {"start": 1, "label": "incorporated", "lexeme": "nuhs"},
+        {"start": 3, "label": "external", "lexeme": "sawatis"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 320, E239), as the paper cites it; morpheme gloss added by the paper.",
       "verified": "page-image"
     },
     {
@@ -537,15 +662,20 @@
       "language": "moha1258",
       "primaryText": "iʔi hrai-nuhweʔs ne sawatis hrao-nuhs-aʔ",
       "discourseSegments": [],
-      "glossedTokens": [],
-      "translation": "I like John's house.",
+      "glossedTokens": [
+        ["iʔi", "I"], ["hrai-nuhweʔs", "like"], ["ne", ""], ["sawatis", "John('s)"],
+        ["hrao-nuhs-aʔ", "house"]
+      ],
+      "translation": "",
       "context": "",
       "judgment": "ungrammatical",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [
-        ["external", "nuhs"]
+      "spans": [
+        {"start": 4, "label": "external", "lexeme": "nuhs"}
       ],
+      "paperFeatures": [],
+      "comment": "From Postal (1962, p. 321, E244), as the paper cites it; morpheme gloss added by the paper. Printed without a translation.",
       "verified": "page-image"
     }
   ]

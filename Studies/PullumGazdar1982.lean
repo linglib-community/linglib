@@ -5,7 +5,11 @@ public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Linglib.Data.Examples.PullumGazdar1982
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
-public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Fragments.Dutch.Nouns
+public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.Verbs.Basic
+public import Linglib.Fragments.Mohawk.Nouns
 
 /-!
 # Pullum and Gazdar (1982): Natural Languages and Context-Free Languages
@@ -29,10 +33,15 @@ different from the stem of their external noun](##stem_mismatches).
 * The Dutch verb phrases are strings of the categories of the paper's lexicon. The paper states
   the number of names by three cases on the finite and the final verb; here it is the number of
   transitive verbs among all the verbs, which is the same condition.
-* The data rows record the words of each example, and the analysis is in this file: the number of
-  a subject and of a verb, and the lexicon. The paper's lexicon lists some words of each category;
-  *Arabisch*, *Hans* and *zien* have the categories that the paper's examples and its tree for a
-  verb phrase give them.
+* The data rows record each example with its gloss line, and mark as spans of it the subject
+  nouns and the verbs of the English sentences, the Dutch verb phrase and its words, and the
+  Mohawk verb with an incorporated stem and its external noun. Each of these spans names an entry
+  of the English, Dutch or Mohawk fragment, and [each marked word is a form of its
+  entry](##printed). The number of an English word and the category of a Dutch word are computed
+  from the entry and the printed form.
+* The paper's lexicon lists some words of each category by example. Here the category of a verb
+  follows from whether its entry takes a bare infinitive and an object, and from whether the word
+  is its infinitive or its finite form.
 * A marginal judgment counts as not acceptable.
 * The argument from the decimal expansion of π, the proof that the xx languages are not
   context-free, the rule schema for verbs with other complements, and the Mohawk translation of
@@ -50,6 +59,83 @@ different from the stem of their external noun](##stem_mismatches).
 namespace PullumGazdar1982
 
 open Examples
+
+/-! ### The marked words and their entries -/
+
+/-- An entry of the English, Dutch or Mohawk fragment. -/
+inductive Entry
+  /-- An English noun. -/
+  | noun (n : English.Nouns.Noun)
+  /-- An English verb. -/
+  | verb (v : English.Verbs.Verb)
+  /-- A Dutch name. -/
+  | name (n : ProperName)
+  /-- A Dutch verb. -/
+  | dutchVerb (v : Dutch.Verbs.Verb)
+  /-- A Mohawk noun stem. -/
+  | stem (n : Noun)
+
+/-- The fragment entry that a lexeme of the data rows names. -/
+def Examples.Lexeme.entry : Lexeme → Entry
+  | .woman => .noun English.Nouns.woman
+  | .man => .noun English.Nouns.man
+  | .smoke => .verb English.Verbs.smoke
+  | .drink => .verb English.Verbs.drink
+  | .marie => .name Dutch.Nouns.marie
+  | .pieter => .name Dutch.Nouns.pieter
+  | .arabisch => .name Dutch.Nouns.arabisch
+  | .hans => .name Dutch.Nouns.hans
+  | .laten => .dutchVerb Dutch.Verbs.laten
+  | .zien => .dutchVerb Dutch.Verbs.zien
+  | .willen => .dutchVerb Dutch.Verbs.willen
+  | .schrijven => .dutchVerb Dutch.Verbs.schrijven
+  | .liegen => .dutchVerb Dutch.Verbs.liegen
+  | .nuhs => .stem Mohawk.Nouns.nuhs
+  | .hnek => .stem Mohawk.Nouns.hnek
+  | .tsits => .stem Mohawk.Nouns.tsits
+  | .seleht => .stem Mohawk.Nouns.seleht
+  | .bike => .stem Mohawk.Nouns.bike
+  | .liw => .stem Mohawk.Nouns.liw
+  | .sawatis => .stem Mohawk.Nouns.sawatis.toNoun
+
+/-- The spans of a row with the label `l`, in order. -/
+def spansOf (r : Datum) (l : SpanLabel) : List Datum.Span := r.spans.filter (label? · = some l)
+
+/-- The entry that a span names and the word that it marks, for a span of one word that names a
+lexeme. -/
+def marked? (r : Datum) (p : Datum.Span) : Option (Entry × List Char) :=
+  match lexeme? p, p.words r with
+  | some l, [w] => some (l.entry, w.word)
+  | _, _ => none
+
+/-- A letter of the Mohawk transcription without its accent. -/
+def unaccent : Char → Char
+  | 'ì' | 'í' => 'i'
+  | 'ú' => 'u'
+  | c => c
+
+/-- A word is *printed as* an entry if it is a form of the entry: the singular or the plural of an
+English noun, the third person singular or the plain present of an English verb, a Dutch name,
+the infinitive or the third person singular present of a Dutch verb, or a Mohawk word that
+contains the stem, accents apart. -/
+def Entry.Printed : Entry → List Char → Prop
+  | .noun n, w => ∃ m ∈ [Number.singular, .plural], (n.realize m).map String.toList = some w
+  | .verb v, w => w = (v.realize .thirdSg).toList ∨ w = (v.realize .plainPresent).toList
+  | .name n, w => w = n.form.toList
+  | .dutchVerb v, w => w = v.infinitive.toList ∨ some w = v.present.map String.toList
+  | .stem n, w => n.form.toList <:+: w.map unaccent
+
+instance : ∀ (e : Entry) (w : List Char), Decidable (e.Printed w)
+  | .noun _, _ => inferInstanceAs (Decidable (∃ m ∈ _, _))
+  | .verb _, _ => inferInstanceAs (Decidable (_ ∨ _))
+  | .name _, _ => inferInstanceAs (Decidable (_ = _))
+  | .dutchVerb _, _ => inferInstanceAs (Decidable (_ ∨ _))
+  | .stem _, _ => inferInstanceAs (Decidable (_ <:+: _))
+
+-- every span that names a lexeme marks one word, printed as the entry
+theorem printed : ∀ r ∈ Examples.all, ∀ p ∈ r.spans, (lexeme? p).isSome →
+    ∃ x ∈ marked? r p, x.1.Printed x.2 := by
+  decide
 
 /-! ### Unbounded concord in a finite state language -/
 
@@ -516,19 +602,23 @@ theorem isXY_isContextFree : Language.IsContextFree ({w | IsXY w} : Language Sym
 
 /-! ### *Respectively* -/
 
-/-- The grammatical number of a subject noun phrase. -/
-def subjectNumber : Subject → Number
-  | .theWoman | .theMan => .singular
-  | .theMen => .plural
+/-- The grammatical number of a form of an English entry: the number at which a noun has the
+form, and for a verb singular for the third person singular present and plural for the plain
+present. -/
+def Entry.number? : Entry → List Char → Option Number
+  | .noun n, w => [Number.singular, .plural].find? fun m ↦ (n.realize m).map String.toList = some w
+  | .verb v, w =>
+    if w = (v.realize .thirdSg).toList then some .singular
+    else if w = (v.realize .plainPresent).toList then some .plural else none
+  | .name _, _ | .dutchVerb _, _ | .stem _, _ => none
 
-/-- The grammatical number of a verb form. -/
-def verbNumber : Verb → Number
-  | .smokes | .drinks => .singular
-  | .smoke | .drink => .plural
+/-- The numbers of the words that a row marks with the label `l`, in order. -/
+def numbers (r : Datum) (l : SpanLabel) : List (Option Number) :=
+  (spansOf r l).map fun p ↦ (marked? r p).bind fun x ↦ x.1.number? x.2
 
 /-- (17): a *respectively* sentence satisfies Langendoen's characterization if each verb agrees in
 number with the subject in the same position. -/
-def Langendoen (r : Datum) : Prop := (subjects r).map subjectNumber = (verbs r).map verbNumber
+def Langendoen (r : Datum) : Prop := numbers r .subject = numbers r .verb
 
 instance : DecidablePred Langendoen := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
@@ -793,27 +883,52 @@ theorem isVerbPhrase_iff (w : List Cat) : isVerbPhrase w = true ↔ IsVerbPhrase
 
 instance : DecidablePred IsVerbPhrase := fun w ↦ decidable_of_iff _ (isVerbPhrase_iff w)
 
-/-- (29b): the category of each word. The paper's examples and its tree (30) put *Arabisch* and
-*Hans* among the names and *zien* with *laten*. -/
-def lexicon : DutchWord → Cat
-  | .marie | .pieter | .arabisch | .hans => .B
-  | .schrijven => .D
-  | .liegen => .E
-  | .laten | .zien => .F
-  | .laat => .H
-  | .wil => .I
+/-- (29b): the category of a form of a Dutch entry. A name is a `B`. A verb that takes a bare
+infinitive is an `F` or a `G` in the infinitive and an `H` or an `I` in the finite form, the
+first of each pair if it also takes an object. Any other verb is a `D` in the infinitive if it
+takes an object and an `E` if it does not. -/
+def Entry.category? : Entry → List Char → Option Cat
+  | .name n, w => if w = n.form.toList then some .B else none
+  | .dutchVerb v, w =>
+    if ∃ fr ∈ v.valency.frames, fr.HasClausal then
+      if ∃ fr ∈ v.valency.frames, fr.HasClausal ∧ fr.HasNominal then
+        if w = v.infinitive.toList then some .F
+        else if some w = v.present.map String.toList then some .H else none
+      else
+        if w = v.infinitive.toList then some .G
+        else if some w = v.present.map String.toList then some .I else none
+    else if w = v.infinitive.toList then
+      if ∃ fr ∈ v.valency.frames, fr.HasNominal then some .D else some .E
+    else none
+  | .noun _, _ | .verb _, _ | .stem _, _ => none
+
+/-- The category of the word that a span marks. -/
+def category? (r : Datum) (p : Datum.Span) : Option Cat :=
+  (marked? r p).bind fun x ↦ x.1.category? x.2
+
+/-- The categories of the words of the verb phrase of a row. -/
+def categories (r : Datum) : List Cat := (spansOf r .word).filterMap (category? r)
+
+-- every word of a marked verb phrase is marked as a word with a category
+theorem dutch_words_marked : ∀ r ∈ Examples.all, ∀ vp ∈ r.spans, label? vp = some .verbPhrase →
+    ∀ i < vp.length, ∃ p ∈ r.spansIn vp, p.start = vp.start + i ∧ label? p = some .word ∧
+      (category? r p).isSome := by
+  decide
 
 -- (25) to (31)
 theorem dutch_rows : ∀ r ∈ Examples.all, r.language = Glottocode.dutch →
-    (r.judgment = .acceptable ↔ IsVerbPhrase ((words r).map lexicon)) := by
+    (r.judgment = .acceptable ↔ IsVerbPhrase (categories r)) := by
   decide
 
 /-! ### Mohawk noun incorporation -/
 
-/-- A sentence has *mismatched stems* if its verb incorporates a noun stem and its external noun has
-a different stem. -/
+/-- The lexeme of the first span of a row with the label `l`. -/
+def stem? (r : Datum) (l : SpanLabel) : Option Lexeme := (spansOf r l).head?.bind lexeme?
+
+/-- A sentence has *mismatched stems* if its verb incorporates a noun stem and its external noun
+has a different stem. -/
 def Mismatched (r : Datum) : Prop :=
-  match r.feature? "incorporated", r.feature? "external" with
+  match stem? r .incorporated, stem? r .external with
   | some i, some x => i ≠ x
   | _, _ => False
 
