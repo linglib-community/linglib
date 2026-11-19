@@ -49,7 +49,7 @@ abbrev count : Constraint (List Segment) :=
 
 /-- The categorical ban and the violation count agree. -/
 theorem free_iff_count_eq_zero (fm : List Segment) : Free fm ↔ count fm = 0 :=
-  (Constraint.forbidPairs_eq_zero_iff _ fm).symm
+  Constraint.forbidPairs_eq_zero_iff.symm
 
 /-! ### Hiatus at a juncture -/
 

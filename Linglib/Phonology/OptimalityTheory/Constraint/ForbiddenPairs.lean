@@ -11,35 +11,36 @@ public import Linglib.Phonology.OCP
 /-!
 # Forbidden-pair constraints
 
-This file defines the forbidden-pair constraints on strings, which carry genuine adjacency logic:
-`Constraint.forbidPairs R`, with one violation for each adjacent pair `(a, b)` satisfying `R a b`,
-and its identity and non-identity instances, the OCP of Goldsmith and McCarthy and AGREE. A
-constraint on candidates of another type, or on a tier, is not a separate constructor but the
-`Constraint.comap` of a string constraint along the candidate's string or along erasure of the
-off-tier symbols. Pulled back along the output form of a correspondence candidate, a string
-constraint is a markedness constraint (`Correspondence.isMarkedness_iff_exists_comap`). A string
-satisfies the OCP exactly when it is `OCP.IsClean`.
+The forbidden-pair constraint `Constraint.forbidPairs R` assigns a string one violation for each
+adjacent pair `(a, b)` with `R a b`. It is to `List.IsChain` what `List.countP` is to a bound
+universal: a string satisfies it
+[exactly when its adjacent elements form a chain of `¬ R`](##forbidPairs_eq_zero_iff).
 
-## Main definitions
+The Obligatory Contour Principle is the instance `R := (· = ·)`, `Constraint.ocp`. It is Leben's
+principle that two adjacent tonemes at the melodic level be distinct, under the name
+[goldsmith-1976] gave it; [mccarthy-1986] takes it to gemination and antigemination. A string
+satisfies it exactly when it is `OCP.IsClean`. Stated over any type of elements, it bans $XX$ for a
+variable $X$ ([berent-2026]), so
+[no injective relabelling of the elements changes its violations](##ocp_map_of_injective) and it
+extends to elements a language lacks.
 
-* `Constraint.forbidPairs`, `Constraint.ocp`, `Constraint.agree`: the forbidden-pair constraints
-  on strings.
-
-## Main results
-
-* `Constraint.forbidPairs_eq_zero_iff`: a string satisfies `forbidPairs R` iff no two adjacent
-  elements are `R`-related.
-* `Constraint.ocp_eq_zero_iff`, `Constraint.agree_eq_zero_iff`: the strings that satisfy the OCP
-  and AGREE.
+A constraint on candidates of another type, or on a tier, is not a separate constructor but the
+`Constraint.comap` of a string constraint along the candidate's string, along a projection of its
+elements, or along erasure of the off-tier symbols. Along a projection,
+[the relation is pulled back](##forbidPairs_map). Along the output
+string of a correspondence candidate, the pullback is a markedness constraint in the sense of
+`Correspondence.Coindexation.IsMarkedness`.
 
 ## Implementation notes
 
-`Constraint.ocp` and `Constraint.agree` compare whole symbols. Over segments, `ocp` is the
-identity OCP rather than OCP-Place, and `agree` is AGREE[F] only after the string is projected
-to the values of the feature `F`.
+`Constraint.ocp` compares whole symbols, so over segments it is the identity OCP. OCP-Place and
+the other OCP-Feature constraints are `ocp` pulled back along the feature's projection of the
+relevant tier, which `forbidPairs_map` rewrites as the forbidden-pair constraint of agreement in
+that feature.
 
 ## References
 
+* [W. R. Leben, *Suprasegmental Phonology* (1973)][leben-1973]
 * [J. A. Goldsmith, *Autosegmental Phonology* (1976)][goldsmith-1976]
 * [J. J. McCarthy, *OCP Effects: Gemination and Antigemination* (1986)][mccarthy-1986]
 * [I. Berent, *Three arguments for abstraction in phonology* (2026)][berent-2026]
@@ -47,25 +48,19 @@ to the values of the feature `F`.
 
 @[expose] public section
 
-namespace OptimalityTheory
+namespace OptimalityTheory.Constraint
 
-variable {α : Type*}
+variable {α β : Type*}
 
 /-- The forbidden-pair constraint on strings, with one violation for each adjacent pair `(a, b)`
 satisfying `R a b`. -/
-def Constraint.forbidPairs (R : α → α → Prop) [DecidableRel R] : Constraint (List α)
+def forbidPairs (R : α → α → Prop) [DecidableRel R] : Constraint (List α)
   | [] | [_] => 0
-  | a :: b :: w => (if R a b then 1 else 0) + Constraint.forbidPairs R (b :: w)
+  | a :: b :: w => (if R a b then 1 else 0) + forbidPairs R (b :: w)
 
-/-- The OCP ([goldsmith-1976], [mccarthy-1986]), the forbidden-pair constraint against adjacent
-identical elements, polymorphic over the feature type ([berent-2026]). -/
-def Constraint.ocp [DecidableEq α] : Constraint (List α) := Constraint.forbidPairs (· = ·)
-
-/-- AGREE, the forbidden-pair constraint against adjacent distinct elements and the dual of
-`Constraint.ocp`. -/
-def Constraint.agree [DecidableEq α] : Constraint (List α) := Constraint.forbidPairs (· ≠ ·)
-
-namespace Constraint
+/-- The OCP, the forbidden-pair constraint against adjacent identical elements ([goldsmith-1976],
+[mccarthy-1986]), polymorphic over the type of elements ([berent-2026]). -/
+def ocp [DecidableEq α] : Constraint (List α) := forbidPairs (· = ·)
 
 section forbidPairs
 
@@ -80,15 +75,11 @@ variable (R : α → α → Prop) [DecidableRel R]
 
 /-- A string satisfies the forbidden-pair constraint iff no two adjacent elements are
 `R`-related. -/
-theorem forbidPairs_eq_zero_iff (w : List α) :
+theorem forbidPairs_eq_zero_iff {R : α → α → Prop} [DecidableRel R] {w : List α} :
     forbidPairs R w = 0 ↔ w.IsChain (fun a b ↦ ¬ R a b) := by
-  induction w with
-  | nil => simp
-  | cons a rest ih => cases rest with
-    | nil => simp
-    | cons b rest' =>
-      rw [List.isChain_cons_cons, ← ih]
-      by_cases hab : R a b <;> simp [hab]
+  induction w using List.twoStepInduction with
+  | nil | singleton => simp
+  | cons_cons a b w _ ih => by_cases hab : R a b <;> simp [hab, ih]
 
 /-- The violations split at any element, as `List.isChain_split` splits a chain. -/
 theorem forbidPairs_split (l₁ : List α) (c : α) (l₂ : List α) :
@@ -103,6 +94,14 @@ theorem forbidPairs_append_cons_cons (l₁ : List α) (b c : α) (l₂ : List α
     forbidPairs R (l₁ ++ b :: c :: l₂) =
       forbidPairs R (l₁ ++ [b]) + (if R b c then 1 else 0) + forbidPairs R (c :: l₂) := by
   rw [forbidPairs_split, forbidPairs_cons_cons, Nat.add_assoc]
+
+/-- Pulling a string back along a map of its elements pulls back the forbidden relation, as
+`List.isChain_map` does for chains. -/
+theorem forbidPairs_map (f : β → α) (w : List β) :
+    forbidPairs R (w.map f) = forbidPairs (fun a b ↦ R (f a) (f b)) w := by
+  induction w using List.twoStepInduction with
+  | nil | singleton => rfl
+  | cons_cons a b w _ ih => simp only [List.map_cons, forbidPairs_cons_cons] at ih ⊢; rw [ih]
 
 /-- Two first elements related alike give a string the same violations. -/
 theorem forbidPairs_congr_head {a b : α} (h : ∀ x, R a x ↔ R b x) (w : List α) :
@@ -120,7 +119,7 @@ theorem forbidPairs_congr_last {a b : α} (h : ∀ x, R x a ↔ R x b) (w : List
 
 end forbidPairs
 
-section DecidableEq
+section ocp
 
 variable [DecidableEq α]
 
@@ -133,15 +132,14 @@ variable [DecidableEq α]
 
 /-- A string satisfies the OCP iff no two adjacent elements are identical. -/
 theorem ocp_eq_zero_iff {w : List α} : ocp w = 0 ↔ OCP.IsClean w :=
-  forbidPairs_eq_zero_iff (· = ·) w
+  forbidPairs_eq_zero_iff
 
-/-- A string satisfies AGREE iff its adjacent elements are equal, so that all its elements are
-equal. -/
-theorem agree_eq_zero_iff {w : List α} : agree w = 0 ↔ w.IsChain (· = ·) :=
-  (forbidPairs_eq_zero_iff (· ≠ ·) w).trans (by simp only [ne_eq, not_not])
+/-- An injective relabelling of the elements preserves the OCP's violations, as
+`List.map_destutter_ne` preserves the fusion of identical neighbours. -/
+theorem ocp_map_of_injective [DecidableEq β] {f : β → α} (hf : Function.Injective f)
+    (w : List β) : ocp (w.map f) = ocp w := by
+  simp only [ocp, forbidPairs_map, hf.eq_iff]
 
-end DecidableEq
+end ocp
 
-end Constraint
-
-end OptimalityTheory
+end OptimalityTheory.Constraint

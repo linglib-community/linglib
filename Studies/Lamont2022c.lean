@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.Prosody.Foot
 public import Linglib.Phonology.OptimalityTheory.Constraint.Directional
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 
 /-!
@@ -110,8 +111,7 @@ def footLeft : Constraint (Footing S) := Constraint.binary (·.strayMarks.head? 
 def footRight : Constraint (Footing S) := Constraint.binary (·.strayMarks.getLast? = some 1)
 
 /-- `*FootFoot` ((34)): one violation per pair of adjacent feet. -/
-def starFootFoot : Constraint (Footing S) :=
-  λ fc => ((fc.zip fc.tail).filter λ p => p.1.isLeft && p.2.isLeft).length
+def starFootFoot : Constraint (Footing S) := Constraint.forbidPairs fun a b ↦ a.isLeft ∧ b.isLeft
 
 /-- The violation vector of a block of constraints on a footing. -/
 def vec (block : List (Constraint (Footing S))) (fc : Footing S) : List ℕ := block.map (· fc)

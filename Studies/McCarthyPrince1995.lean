@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Akan.Phonology
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Mathlib.Tactic.FinCases
@@ -361,9 +362,7 @@ instance : DecidablePred IsVelar := fun _ ↦ inferInstanceAs (Decidable (_ ∧ 
 instance : DecidablePred IsFrontVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- PAL counts the plain velars that stand before a front vowel. -/
-def pal : List Segment → ℕ
-  | c :: v :: rest => (if IsVelar c ∧ IsFrontVowel v then 1 else 0) + pal (v :: rest)
-  | _ => 0
+def pal : Constraint (List Segment) := Constraint.forbidPairs fun c v ↦ IsVelar c ∧ IsFrontVowel v
 
 /-- OCP(+cor) counts the syllables of palatal onset and front vowel that stand before a
 syllable of coronal onset and a vowel that is not front, the clash of syllabic and segmental
