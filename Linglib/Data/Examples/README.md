@@ -200,6 +200,17 @@ and the kernel frees nothing within one declaration: on a file of 75 rows a stat
 that way, went from 3.8 GiB and 24 s to 1.05 GiB and 4.5 s on the index. Do not decide the
 equality or membership of rows.
 
+The index also reads the values a file declares without parsing them. Each feature is a function
+on the examples, `Examples.Example.<lean>`, the lexemes of the spans are
+`Examples.Example.lexemes : Example → SpanLabel → List Lexeme`, and the readings
+`Examples.Example.<lean> : Example → Reading → Option Judgment`. Each is defined by cases from the
+JSON and comes with a theorem `…_datum` that it agrees with the reader of the row. A study reads
+an example through these and through `x.datum` for its judgment, contrasts and language, and
+writes no table from strings to its own types: a reader of the row parses the strings the row
+records each time a theorem evaluates it, where a reader of the index compares constructors.
+On `Sorace2000`, a theorem over the 92 examples took 1.2 to 1.5 s in the kernel through a list of
+rows parsed from the strings and 0.1 to 0.2 s through the index's readers.
+
 ## Languages
 
 `languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,

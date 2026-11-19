@@ -137,6 +137,12 @@ of its examples, one constructor per row named as the row is, a `Fintype`, with 
 the row of each, and `Example.all`, the list of them in the file's order. A study quantifies over
 the type (`∀ x : Example, …`) and selects, excludes or lists examples by these names. Comparing two names is free for the kernel, where comparing two rows compares every
 string of both, and a statement over the rows that tests `row ∈ rows` can take gigabytes.
+The index also reads the file's declared values without parsing: each feature is a function
+`Example.<lean>` on the examples, the lexemes of the spans are `Example.lexemes : Example →
+SpanLabel → List Lexeme`, and the readings `Example.<lean> : Example → Reading → Option
+Judgment`, each read off a list defined by cases and paired with the theorem `…_datum` that it
+agrees with the reader of the row. A study reads an example through these, so that `decide` over the examples
+compares constructors rather than the strings the rows record.
 
 Dependencies: pure stdlib (json module).
 """
@@ -520,7 +526,7 @@ def validate_features(features: list, examples: list, where: str) -> None:
             raise ValueError(f"{w}: no row records `{ft['key']}`")
 
 
-def validate_index(decl, taken: set, where: str) -> None:
+def validate_index(decl, taken: set, where: str, readers: tuple = ((), None)) -> None:
     if decl is None:
         return
     w = f"{where}.index"
@@ -528,6 +534,12 @@ def validate_index(decl, taken: set, where: str) -> None:
         raise ValueError(f"{w}: needs exactly `type` and `doc`")
     if not TYPE_IDENT.match(decl["type"]) or decl["type"] in taken:
         raise ValueError(f"{w}: `type` {decl['type']!r} is not a fresh Lean type name")
+    features, readings = readers
+    names = list(features) + ([readings, readings + "s"] if readings else [])
+    taken_names = {"all", "datum", "map_datum_all", "lexemes", "labelledLexemes"}
+    clash = (set(names) & taken_names) | {n for n in names if names.count(n) > 1}
+    if clash:
+        raise ValueError(f"{w}: the readers of the index would share the names {sorted(clash)}")
 
 
 def emit_index(decl: dict, author_year: str, local_ids: list) -> str:
@@ -554,6 +566,76 @@ def emit_index(decl: dict, author_year: str, local_ids: list) -> str:
             f"def {t}.datum : {t} → Datum\n{arms}\n\n"
             f"theorem {t}.map_datum_all :\n"
             f"    {t}.all.map {t}.datum = _root_.{author_year}.Examples.all := rfl")
+
+
+def emit_index_readers(decl: dict, author_year: str, local_ids: list, examples: list,
+                       features: list, readings: dict | None, spans: dict | None) -> str:
+    """The readers of the index: each declared feature, the labelled lexemes of the spans and the
+    readings as total functions on the examples, by cases, each with the theorem that it agrees
+    with the reader of the row. A study that reads an example through them compares
+    constructors, where the readers of the row compare the strings the row records."""
+    t = decl["type"]
+    ns = f"_root_.{author_year}.Examples"
+    out = []
+
+    def cases(name: str, typ: str, vals: list, doc: str) -> str:
+        arms = "\n".join(f"  | .{i} => {v}" for i, v in zip(local_ids, vals))
+        return f"/-- {doc} -/\ndef {t}.{name} : {t} → {typ}\n{arms}"
+
+    for ft in features:
+        names = {lv["label"]: lv["name"] for lv in ft["levels"]}
+        vals = [[names[v] for k, v in ex.get("paperFeatures", []) if k == ft["key"]]
+                for ex in examples]
+        if ft.get("multiple", False):
+            body = cases(ft["lean"], f"List {ft['type']}",
+                         [f"[{', '.join('.' + v for v in vs)}]" for vs in vals],
+                         f"The values the example records under `{ft['key']}`.")
+        else:
+            body = cases(ft["lean"], f"Option {ft['type']}",
+                         [f"some .{vs[0]}" if vs else "none" for vs in vals],
+                         f"The value the example records under `{ft['key']}`.")
+        out.append(f"{body}\n\n"
+                   f"theorem {t}.{ft['lean']}_datum :\n"
+                   f"    ∀ x : {t}, {ns}.{ft['lean']} x.datum = x.{ft['lean']} := by\n"
+                   f"  decide +kernel")
+    if spans is not None and "lexemes" in spans:
+        lt, xt = spans["labels"]["type"], spans["lexemes"]["type"]
+        lnames = {lv["label"]: lv["name"] for lv in spans["labels"]["levels"]}
+        xnames = {lv["label"]: lv["name"] for lv in spans["lexemes"]["levels"]}
+        vals = [[f"(.{lnames[p['label']]}, .{xnames[p['lexeme']]})"
+                 for p in ex.get("spans", []) if "lexeme" in p] for ex in examples]
+        out.append(cases("labelledLexemes", f"List ({lt} × {xt})",
+                         [f"[{', '.join(vs)}]" for vs in vals],
+                         "The lexemes the spans of the example name, each with the span's label, "
+                         "in order.") + "\n\n"
+                   f"/-- The lexemes the spans of the example labelled `l` name, in order. -/\n"
+                   f"def {t}.lexemes (x : {t}) (l : {lt}) : List {xt} :=\n"
+                   f"  (x.labelledLexemes.filter (·.1 = l)).map (·.2)\n\n"
+                   f"theorem {t}.lexemes_datum : ∀ (x : {t}) (l : {lt}),\n"
+                   f"    (x.datum.spans.filter ({ns}.label? · = some l)).filterMap {ns}.lexeme? =\n"
+                   f"      x.lexemes l := by\n"
+                   f"  decide +kernel")
+    if readings is not None:
+        rt = readings["type"]
+        rnames = {lv["label"]: lv["name"] for lv in readings["levels"]}
+        vals = []
+        for ex in examples:
+            seen, vs = set(), []
+            for r in ex.get("readings", []):
+                if r["name"] not in seen:
+                    seen.add(r["name"])
+                    vs.append(f"(.{rnames[r['name']]}, .{r['judgment']})")
+            vals.append(f"[{', '.join(vs)}]")
+        lean = readings["lean"]
+        out.append(cases(f"{lean}s", f"List ({rt} × Judgment)", vals,
+                         "The readings the example judges, each with its judgment.") + "\n\n"
+                   f"/-- The judgment the example records for the reading, if it records one. -/\n"
+                   f"def {t}.{lean} (x : {t}) (r : {rt}) : Option Judgment :=\n"
+                   f"  (x.{lean}s.lookup r)\n\n"
+                   f"theorem {t}.{lean}_datum : ∀ (x : {t}) (r : {rt}),\n"
+                   f"    {ns}.{lean} x.datum r = x.{lean} r := by\n"
+                   f"  decide +kernel")
+    return "\n\n".join(out)
 
 
 def validate_boundaries(decl, taken: set, examples: list, where: str) -> None:
@@ -724,6 +806,9 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
         feats += "\n\n" + emit_boundaries(boundaries)
     if index is not None and examples:
         feats += "\n\n" + emit_index(index, author_year, local_ids)
+        readers = emit_index_readers(index, author_year, local_ids, examples, features, readings, spans)
+        if readers:
+            feats += "\n\n" + readers
     typed = (features or readings is not None or spans is not None or boundaries is not None
              or index is not None)
     imports = "import Linglib.Data.Examples.Schema" + (
@@ -777,7 +862,8 @@ def process(author_year: str, check: bool) -> bool:
         taken = {ft["type"] for ft in features} | ({readings["type"]} if readings else set())
         taken |= {d["type"] for d in (spans or {}).values()}
         validate_boundaries(boundaries, taken, examples, where)
-        validate_index(index, taken | ({boundaries["type"]} if boundaries else set()), where)
+        validate_index(index, taken | ({boundaries["type"]} if boundaries else set()), where,
+                       (tuple(ft["lean"] for ft in features), readings["lean"] if readings else None))
         module_text = as_module_if_possible(
             emit_module(author_year, examples, features, readings, spans, boundaries, index))
     except ValueError as e:
