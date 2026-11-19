@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Tagalog.Case
 public import Linglib.Syntax.Category.Pronoun.Personal
-public import Linglib.Syntax.Feature.Person.Category
+public import Linglib.Syntax.Feature.Person.Configuration
 
 /-!
 # Tagalog pronouns
@@ -13,11 +13,13 @@ two sharing a form: the speaker *ako*, the addressee *ikaw* (enclitic *ka*), a t
 speaker with others *kami*, the addressees *kayo* and the others *sila*. Each comes in three
 case series: the *ang* forms for the subject, the *ng* forms for possessors and for non-subject
 agents and objects, and the *sa* forms for obliques, which Himmelmann labels specifier,
-possessive and locative and Kroeger nominative, genitive and dative. The inclusive is split
-between a dual *kata* and a plural *tayo*, the minimal-augmented type of Cysouw's first-person
-hierarchy. Schachter and Otanes note that the dual is obsolescent in educated Manila Tagalog,
-where *tayo* covers both, and that the *kita* Himmelmann lists beside *kata* is a portmanteau
-of the first-person singular *ng* form and the second-person singular *ang* form, not a dual.
+possessive and locative and Kroeger nominative, genitive and dative. Schachter and Otanes
+chart four persons, the first, the dual of the speaker and the addressee, the second and the
+third, each with a non-plural and a plural that adds others to it: *kata* is the non-plural of
+the dual and *tayo* its plural, the minimal-augmented type of Cysouw's first-person hierarchy.
+They note that *kata* is obsolescent in educated Manila Tagalog, where *tayo* covers both, and
+that the *kita* Himmelmann lists beside *kata* is a portmanteau of the first-person singular
+*ng* form and the second-person singular *ang* form, not a dual.
 
 ## Main definitions
 
@@ -27,7 +29,7 @@ of the first-person singular *ng* form and the second-person singular *ang* form
 
 ## Main results
 
-* `Tagalog.Pronouns.entry_categories`, `Tagalog.Pronouns.entry_wellFormed` — an entry denotes its category
+* `Tagalog.Pronouns.entry_categories` — an entry denotes its category
 * `Tagalog.Pronouns.paradigm_nom` — the inventory's subject paradigm is the *ang* series
 * `Tagalog.Pronouns.ang_injective` — no two categories share an *ang* form
 
@@ -45,10 +47,12 @@ namespace Tagalog.Pronouns
 
 open Person (Category)
 
-/-- The number of a category: singular for a single member, dual for the speaker and addressee
-alone, and plural for the other groups. -/
-def number (c : Category) : Number :=
-  if c.IsSingular then .singular else if c = .speakerAddressee then .dual else .plural
+/-- The number of a category: the non-plural of Schachter and Otanes's chart, the smallest
+referent of its person, for a single member and for the speaker and addressee alone, and their
+plural, the same "and others", for the rest. -/
+def number : Category → Number
+  | .speaker | .addressee | .other | .speakerAddressee => .minimal
+  | .speakerAddresseeOthers | .speakerOthers | .addresseeOthers | .others => .augmented
 
 /-- The *ang* series, the subject forms. -/
 def ang : Category → String
@@ -96,11 +100,6 @@ def personal : Finset PersonalPronoun :=
 theorem entry_categories (c : Category) (k : Case) (f : String) :
     (entry c k f).categories = {c} := by
   show Category.ofPersonNumber c.person c.clusivity (number c) = {c}
-  cases c <;> decide
-
-/-- Clusivity is borne only by the non-singular first-person entries. -/
-theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).WellFormed := by
-  show c.clusivity.isSome → some (number c) ≠ some .singular
   cases c <;> decide
 
 /-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*

@@ -25,15 +25,17 @@ namespace Modifier
 
 variable {α : Type*} {R : SetRel α α}
 
+private theorem image_id_eq : (SetRel.id : SetRel α α).image = id := funext SetRel.image_id
+
 /-- The image of a relation is extensive exactly when the relation is reflexive. -/
 theorem isExtensive_image_iff : IsExtensive R.image ↔ R.IsRefl := by
-  rw [← SetRel.id_subset_iff, ← SetRel.image_le_image_iff, SetRel.image_id_eq]
+  rw [← SetRel.id_subset_iff, ← SetRel.image_le_image_iff, image_id_eq]
   rfl
 
 /-- The image of a relation is subsective exactly when the relation relates nothing to anything
 else. -/
 theorem isSubsective_image_iff : IsSubsective R.image ↔ R ⊆ .id := by
-  rw [← SetRel.image_le_image_iff, SetRel.image_id_eq]
+  rw [← SetRel.image_le_image_iff, image_id_eq]
   rfl
 
 /-- The image of a relation is privative only when the relation is empty, since a set `{a, b}`

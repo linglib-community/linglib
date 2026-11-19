@@ -154,7 +154,8 @@ def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm per
 nonlocal persons ((62)). -/
 theorem nonclitic_categories :
     nonclitics.biUnion (·.referential) =
-      clitics.biUnion (·.referential) \ {.speakerAddresseeOthers, .other, .others} := by
+      clitics.biUnion (·.referential) \
+        {.speakerAddressee, .speakerAddresseeOthers, .other, .others} := by
   decide
 
 theorem clitic_mem_paradigm_others_iff (g : Gender.Value) :

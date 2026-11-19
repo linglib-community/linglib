@@ -9,15 +9,18 @@ public import Mathlib.Order.Antichain
 public import Mathlib.Order.Minimal
 
 /-!
-# Minimality under a key on an antichain
+# Minimality under a key and along a map
 
 Among elements none of which lies below another, minimality under a key depends only on the key's
 strict order between incomparable elements: when that order is an irreflexive relation `r`, the
-minimal elements are those that nothing is `r`-related to.
+minimal elements are those that nothing is `r`-related to. A strictly monotone map along which
+lower elements lift carries the minimal elements of a preimage to the minimal elements of the
+set, whether or not the map is injective.
 
 ## Main statements
 
 * `minimalFor_iff_of_isAntichain`
+* `minimal_comp_iff_of_strictMono`
 -/
 
 public section
@@ -38,3 +41,14 @@ theorem minimalFor_iff_of_isAntichain (hP : IsAntichain (· ≤ ·) {j | P j}) (
     · simp [hj, hr]
     · simp [hj, h (hP hj hi hne) (hP hi hj hne.symm)]
   · simp [hj]
+
+/-- A strictly monotone map `g` such that every element below `g a` is the image of one below
+`a` reflects and preserves minimality: `a` is minimal among the elements whose image satisfies
+`Q` exactly when `g a` is minimal in `Q`. -/
+theorem minimal_comp_iff_of_strictMono {α : Type*} [PartialOrder α] {g : α → β} {Q : β → Prop}
+    {a : α} (hg : StrictMono g) (hlift : ∀ ⦃a b⦄, b ≤ g a → ∃ c ≤ a, g c = b) :
+    Minimal (fun c ↦ Q (g c)) a ↔ Minimal Q (g a) := by
+  refine ⟨fun ⟨ha, hmin⟩ ↦ ⟨ha, fun b hb hle ↦ ?_⟩, fun ⟨ha, hmin⟩ ↦ ⟨ha, fun c hc hca ↦ ?_⟩⟩
+  · obtain ⟨c, hca, rfl⟩ := hlift hle
+    exact hg.monotone (hmin hb hca)
+  · exact (hca.lt_or_eq.resolve_left fun hlt ↦ (hg hlt).not_ge (hmin hc (hg.monotone hca))).ge

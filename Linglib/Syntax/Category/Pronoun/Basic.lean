@@ -10,7 +10,7 @@ public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Feature.Case.Basic
-public import Linglib.Syntax.Feature.Person.Category
+public import Linglib.Syntax.Feature.Person.Configuration
 
 /-!
 # Pronouns
@@ -32,7 +32,6 @@ denotation, pronoun type or binding class of its own; the kind supplies them, an
 * `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
 * `Pronoun.categories`: the referential categories of Cysouw that the person and number
   realize.
-* `Pronoun.WellFormed`: clusivity is not borne by a singular.
 * `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
   its kind; `Pronoun.phi_toWord` says the token bears the pronoun's φ-features.
 * `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
@@ -143,12 +142,6 @@ def phi : Agreement.Bundle
   | .definiteness => ⊥
 
 instance : HasPhi Pronoun := ⟨phi⟩
-
-/-- Clusivity is not borne by a singular: the inclusive and the exclusive split the first person
-non-singular ([cysouw-2003]). -/
-def WellFormed : Prop := p.clusivity.isSome → p.number ≠ some .singular
-
-instance : Decidable p.WellFormed := inferInstanceAs (Decidable (_ → _))
 
 /-! ### The pronouns of a table -/
 
