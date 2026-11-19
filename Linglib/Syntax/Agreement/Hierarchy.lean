@@ -12,24 +12,25 @@ admits two agreements: syntactic agreement follows the feature value the control
 assigned, semantic agreement its meaning. [corbett-1979] ranges the targets of agreement in
 four positions, the attributive modifier, the predicate, the relative pronoun and the personal
 pronoun, and claims that the likelihood of semantic agreement never decreases from one to the
-next. A record of that likelihood at some of the positions [respects the
-hierarchy](##Agreement.RespectsHierarchy) when it is monotone where it is recorded, and then
-semantic agreement possible at a position [is possible at every later
-one](##Agreement.RespectsHierarchy.allows_semantic), as syntactic agreement [is at every
-earlier one](##Agreement.RespectsHierarchy.allows_syntactic).
+next. A record of that likelihood maps each position to a value, or to `none` where it records
+nothing, and the claim is that it is monotone where it records a value: for a record `f` and any
+default `d`, `MonotoneOn (fun i ↦ (f i).getD d) {i | (f i).isSome}`. The likelihood is graded
+by `Availability`, along which admitting semantic agreement is monotone
+(`Availability.monotone_allows_semantic`) and admitting syntactic agreement antitone
+(`Availability.antitone_allows_syntactic`).
 
 ## Implementation notes
 
 * The attributive is the least position, the order in which [corbett-1991] prints the
   hierarchy; [corbett-2006] prints the same ranking with `>`, for decreasing canonicity. With
   the attributive least, the claim of the hierarchy is monotonicity.
-* `RespectsHierarchy` takes any preorder of positions and any preorder of values, so that it
-  serves the four positions, a hierarchy within the predicate, a finer division of the
-  attributive and a product of a hierarchy with the stages of a change alike, and corpus
-  proportions of semantic agreement as well as availabilities. A position carrying no value,
-  because agreement does not apply there or there are no data, is skipped: values are compared
-  only across comparable positions that both carry one. A record with a value everywhere
-  respects the hierarchy exactly when it is `Monotone`.
+* A record keeps `none` at a position where agreement does not apply or there are no data, since
+  a value there would be a datum the source does not give. The hierarchy's claim reads the
+  record with a default on the positions it records, as mathlib reads `Polynomial.degree` with
+  `Polynomial.natDegree`; the default is never compared, and every result of mathlib's
+  `MonotoneOn` (composition along the positions, restriction to fewer of them) applies without
+  a predicate of the hierarchy's own. A record with a value everywhere is a total map, and its
+  claim is `Monotone`.
 * `Availability` has the five degrees that [corbett-1991]'s summary of the evidence shades.
 
 ## References
@@ -103,44 +104,5 @@ theorem antitone_allows_syntactic : Antitone (Allows · .syntactic) :=
   (by decide : ∀ a b : Availability, a ≤ b → b.Allows .syntactic → a.Allows .syntactic)
 
 end Availability
-
-section RespectsHierarchy
-
-variable {ι κ α : Type*} [Preorder ι] [Preorder κ] [Preorder α] {f : ι → Option α}
-
-/-- A map recording a value at some positions of a hierarchy respects it when the value
-never decreases along the hierarchy: of two comparable positions that both carry a value, the
-later carries the larger. -/
-def RespectsHierarchy (f : ι → Option α) : Prop :=
-  ∀ ⦃i j⦄, i ≤ j → ∀ a ∈ f i, ∀ b ∈ f j, a ≤ b
-
-instance [h : Decidable (∀ i j, i ≤ j → ∀ a ∈ f i, ∀ b ∈ f j, a ≤ b)] :
-    Decidable (RespectsHierarchy f) := h
-
-@[simp]
-theorem respectsHierarchy_some_comp {g : ι → α} :
-    RespectsHierarchy (some ∘ g) ↔ Monotone g := by
-  simp [RespectsHierarchy, Monotone]
-
-/-- A map respecting a hierarchy respects it along any monotone map into it. -/
-theorem RespectsHierarchy.comp_monotone (hf : RespectsHierarchy f) {g : κ → ι}
-    (hg : Monotone g) : RespectsHierarchy (f ∘ g) :=
-  fun _ _ h ↦ hf (hg h)
-
-variable {f : ι → Option Availability} {i j : ι} {a b : Availability}
-
-/-- Under the hierarchy, semantic agreement possible at a position is possible at every later
-position ([corbett-1979]). -/
-theorem RespectsHierarchy.allows_semantic (hf : RespectsHierarchy f) (h : i ≤ j) (ha : a ∈ f i)
-    (hb : b ∈ f j) : a.Allows .semantic → b.Allows .semantic :=
-  Availability.monotone_allows_semantic (hf h a ha b hb)
-
-/-- Under the hierarchy, syntactic agreement possible at a position is possible at every
-earlier position ([corbett-1979]). -/
-theorem RespectsHierarchy.allows_syntactic (hf : RespectsHierarchy f) (h : i ≤ j) (ha : a ∈ f i)
-    (hb : b ∈ f j) : b.Allows .syntactic → a.Allows .syntactic :=
-  Availability.antitone_allows_syntactic (hf h a ha b hb)
-
-end RespectsHierarchy
 
 end Agreement
