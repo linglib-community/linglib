@@ -10,21 +10,19 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 /-!
 # Directional constraints
 
-A directional constraint assigns each candidate a vector of violations indexed by position, and
-candidates are compared by the lexicographic order on these vectors, as in Eisner's directional
-evaluation and Lamont's Directional Harmonic Serialism. Lamont observes that a locus at one
-position relates to a locus at the next exactly as a higher-ranked constraint relates to a lower
-one. A directional constraint with single-segment loci over a length-preserving GEN is therefore a
-block of binary constraints, one per position, spliced into the ranking and compared under the
-lexicographic order of violation profiles. Spliced forward the block evaluates from left to right,
-and reversed it evaluates from right to left. The constraint against floating tones of McPherson
-and Lamont and `Parse(σ)` in Lamont's theory of footing are such blocks.
+This file defines the [block of binary constraints](##directionalBlock), one per position, that a
+directional constraint with single-segment loci becomes over a length-preserving GEN. A directional
+constraint assigns each candidate a vector of violations indexed by position, compared
+lexicographically, as in Eisner's directional evaluation and Lamont's Directional Harmonic
+Serialism. Since a locus at one position relates to a locus at the next as a higher-ranked
+constraint to a lower one, as Lamont observes, the block spliced into the ranking evaluates from
+left to right, and reversed it evaluates from right to left.
 
 ## Implementation notes
 
-Only single-segment loci and length-preserving GEN are covered, which are the cases of a floating
-tone and of an unfooted syllable. Lamont's general formulation also admits loci spanning several
-segments and a GEN that changes the length of the form.
+Only single-segment loci and length-preserving GEN are covered, the cases of a floating tone and of
+an unfooted syllable. Lamont also admits loci spanning several segments and a GEN that changes the
+length of the form.
 
 ## References
 

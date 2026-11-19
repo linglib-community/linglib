@@ -7,22 +7,19 @@ public import Mathlib.Data.List.Chain
 /-!
 # Vowel hiatus
 
-Vowel hiatus is the adjacency of two vowels in separate syllables. Many languages do not tolerate
-it, and where a vowel-final morph meets a vowel-initial one they elide one of the vowels, turn the
-first into a glide, merge the two, syllabify them as a diphthong, or insert a consonant.
-
-On strings of segments, a form is [free of hiatus](##Free) when no two adjacent segments are both
-vowels, and `Hiatus.count` is the constraint against such pairs. A `Hiatus.Juncture` is a seam at
-which two vowels meet, and
-[a form has a hiatus exactly when it has one](##not_free_iff_exists_input). Merger, elision and
-epenthesis [all leave the same count](##count_coalesce), one below the unrepaired form's, so the
-constraint cannot choose among them and the choice falls to the other constraints each violates.
+This file defines the [constraint against vowel hiatus](##count), the adjacency of two vowels in
+separate syllables, which many languages repair where a vowel-final morph meets a vowel-initial one
+by elision, glide formation, merger, diphthongization or epenthesis. A form is
+[free of hiatus](##Free) when no two adjacent segments are both vowels, and
+[has a hiatus exactly when it has a juncture](##not_free_iff_exists_input), a seam at which two
+vowels meet. Merger, elision and epenthesis [all leave the same count](##count_coalesce), one below
+the unrepaired form's, so the choice among them falls to the other constraints.
 
 ## Implementation notes
 
 Forms carry no syllable boundaries, so `Hiatus.count` also counts a vowel sequence within one
-syllable, such as a diphthong or a long vowel written as two segments. Glide formation and diphthong
-formation, which turn on the syllabification of the two vowels, are not defined.
+syllable, such as a diphthong. Glide formation and diphthong formation, which turn on
+syllabification, are not defined.
 
 ## References
 

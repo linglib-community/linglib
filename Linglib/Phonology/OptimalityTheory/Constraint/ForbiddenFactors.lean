@@ -12,55 +12,31 @@ public import Linglib.Phonology.Subregular.ForbiddenPairs
 /-!
 # Forbidden-factor constraints
 
-The simplest markedness constraints name a set $F$ of short strings that a language avoids and
-assign a word one violation for each place where one of them occurs. The occurrences are read off
-the word padded with boundary markers, so that a forbidden factor may mention an edge of the word,
-as a consonant before the right edge does when it is a coda. The forbidden-factor constraint
-`Constraint.ofForbiddenFactors k F` counts the width-`k` windows of the padded word that lie in
-`F`. A word satisfies it [exactly when the word belongs to the strictly `k`-local language that
-forbids `F`](##ofForbiddenFactors_eq_zero_iff), so the constraint counts what the grammar decides,
-much as `List.countP` counts what a bounded universal statement decides. Pulled back along the
-erasure of the symbols off a tier, it does the same for
-[the tier-based strictly local language](##comap_filter_ofForbiddenFactors_eq_zero_iff).
+This file defines the [forbidden-factor constraint](##ofForbiddenFactors) of a set `F` of strings,
+which assigns a word one violation for each width-`k` window of its boundary-padded form lying in
+`F`. A word satisfies it [exactly when it belongs to the strictly `k`-local language forbidding
+`F`](##ofForbiddenFactors_eq_zero_iff), and likewise
+[on a tier](##comap_filter_ofForbiddenFactors_eq_zero_iff).
 
-The forbidden-pair constraint `Constraint.ofForbiddenPairs R` is the case of width two whose
-factors are the adjacent pairs `(a, b)` with `R a b`. A string satisfies it
-[exactly when its adjacent elements form a chain of `¬ R`](##ofForbiddenPairs_eq_zero_iff).
-
-The Obligatory Contour Principle is the instance `R := (· = ·)`, `Constraint.ocp`. Leben proposed
-it for tone melodies and Goldsmith gave it its name. McCarthy states it for any melody as a
-prohibition on adjacent identical elements and applies it in segmental phonology, where it also
-blocks syncope from creating clusters of identical consonants. A string satisfies the OCP exactly
-when it is `OCP.IsClean`. Because the constraint is stated over any type of elements, it bans
-$XX$ for a variable $X$, as Berent argues identity restrictions do, so
-[no injective relabelling of the elements changes its violations](##ocp_map_of_injective) and the
-ban extends to elements that a language lacks.
-
-A constraint on candidates of another type, or on a tier, is the `Constraint.comap` of a string
-constraint along the candidate's string, along a projection of its elements, or along the erasure
-of off-tier symbols. Along a projection
-[the forbidden relation is pulled back](##ofForbiddenPairs_map), and along the output string of a
-correspondence candidate the pullback is a markedness constraint in the sense of
-`Correspondence.Coindexation.IsMarkedness`.
+We also define the [forbidden-pair constraint](##ofForbiddenPairs) of a relation `R`, the case of
+width two forbidding the adjacent pairs `(a, b)` with `R a b`, which a string satisfies
+[exactly when it is a chain of `¬ R`](##ofForbiddenPairs_eq_zero_iff), and the
+[Obligatory Contour Principle](##ocp), its instance for equality. The principle is Leben's, named
+by Goldsmith and stated for any melody by McCarthy. Since it bans $XX$ for a variable $X$, as
+Berent argues identity restrictions do,
+[no injective relabelling changes its violations](##ocp_map_of_injective).
 
 ## Implementation notes
 
-A constraint none of whose forbidden factors begins at the left edge counts one window for each
-position of the word, which gives it [a recursion on the word](##ofForbiddenFactors_cons) like that
-of `List.countP`. The forbidden-pair constraints are of this kind, and their recursion on adjacent
-pairs is proved from it rather than taken as their definition.
-
-`Constraint.ocp` compares whole symbols, so over segments it is the identity OCP. OCP-Place and
-the other OCP-Feature constraints are `ocp` pulled back along the feature's projection of the
-relevant tier, which `ofForbiddenPairs_map` rewrites as the forbidden-pair constraint of agreement
-in that feature.
+The recursion of `ofForbiddenPairs` on adjacent pairs is proved from
+[that of `ofForbiddenFactors`](##ofForbiddenFactors_cons), which holds when no forbidden factor
+begins at the left edge. OCP-Feature constraints are `ocp` pulled back along a feature projection,
+which [`ofForbiddenPairs_map`](##ofForbiddenPairs_map) rewrites.
 
 ## TODO
 
-Lamont counts the violations of a markedness constraint at a position as the number of its loci
-on the tier that end there, each locus matched at its own length. When a study needs loci of
-several lengths, state that count as a sum over the loci of forbidden-factor constraints on the
-tier.
+State Lamont's count, a sum over loci each matched at its own length, as a sum of
+forbidden-factor constraints when a study needs loci of several lengths.
 
 ## References
 

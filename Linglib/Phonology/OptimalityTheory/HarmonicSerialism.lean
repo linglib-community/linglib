@@ -8,24 +8,20 @@ public import Mathlib.Dynamics.FixedPoints.Basic
 /-!
 # Harmonic Serialism
 
-In Harmonic Serialism a derivation applies GEN and EVAL repeatedly. GEN proposes candidates from the
-current form, EVAL selects among them under a ranking that stays fixed across rounds, and the
-derivation converges once the current form is the only winner of its own round. One round of the
-search is a total map on `Option C` that fixes both convergence and failure, and a derivation is an
-iterate of that map, so a search that need not terminate is computable once the number of rounds is
-bounded and a choice among tied winners is given. [If every step that changes the form descends a
-well-founded relation, the search is eventually constant](##iterateGen_eventually_constant), and the
-bound then does not affect the result. Each round is evaluated by the parallel `Constraint.eval`,
-and a directional constraint, such as the constraint against floating tones of McPherson and Lamont,
-is a `Constraint.directionalBlock` spliced into the ranking.
+This file defines a [Harmonic Serialism derivation](##HSDerivation), which applies GEN and EVAL
+repeatedly under a fixed ranking and [converges](##HSDerivation.Converged) once the current form is
+the only winner of its own round. One round is a [total map on `Option C`](##hsStep) that fixes
+both convergence and failure, and a derivation is [its iterate](##iterateGen), computable once the
+number of rounds is bounded and a choice among tied winners is given. [If every step that changes
+the form descends a well-founded relation, the iterate is eventually
+constant](##iterateGen_eventually_constant), and the bound does not affect the result.
 
 ## Implementation notes
 
-Pruitt concludes that Harmonic Serialism cannot straightforwardly derive counterfeeding
-underapplication, and derives counterbleeding overapplication only when a principled modification
-of GEN eliminates the candidate that makes both changes at once; nothing here bears on opacity.
-Harmonic Serialism holds the ranking fixed and iterates the candidate, whereas Stratal Optimality
-Theory changes the ranking from one stratum to the next; their combination is not formalized.
+Each round is evaluated by the parallel `Constraint.eval`, and a directional constraint is a
+`Constraint.directionalBlock` spliced into the ranking. Counterfeeding opacity, which Pruitt argues
+Harmonic Serialism cannot straightforwardly derive, and the combination with Stratal Optimality
+Theory, which changes the ranking between strata, are not formalized.
 
 ## References
 

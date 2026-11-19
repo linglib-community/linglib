@@ -6,16 +6,15 @@ public import Linglib.Phonology.OptimalityTheory.Evaluation
 /-!
 # Positional faithfulness
 
-A positional faithfulness constraint is a faithfulness constraint restricted to a prominent
-position, such as the beginning of a word or a root, whose segments it protects. Restricted to
-deletion, a candidate is the set of input positions it deletes, and the MAX constraint of a set of
-positions counts the deleted positions in it; [on deletions from a string this is MAX restricted to
-those positions](##maxAt_eq_maxViolAt) in the sense of McCarthy and Prince's Correspondence Theory.
-The deletion of a single position therefore violates exactly the constraints that protect that
-position, and single deletions compete through those sets of constraints. [One of them is optimal
-under some ranking exactly when the set of constraints protecting its position is minimal among
-them](##exists_mem_optimal_positionalMax_iff), and [two of them are both optimal under a ranking
-exactly when the same constraints protect both positions](##optimal_eq_pair_positionalMax_iff).
+This file defines [MAX restricted to a set of positions](##maxAt), on candidates given by the input
+positions they delete, and [families of such constraints](##positionalMax), each protecting the
+segments of a prominent position such as the beginning of a word or a root.
+[On deletions from a string, the restriction is MAX restricted to those
+positions](##maxAt_eq_maxViolAt) in the sense of McCarthy and Prince's Correspondence Theory.
+Single deletions compete through the sets of constraints protecting their positions.
+[One is optimal under some ranking exactly when its set is minimal among
+them](##exists_mem_optimal_positionalMax_iff), and [two are both optimal under a ranking exactly
+when the same constraints protect both positions](##optimal_eq_pair_positionalMax_iff).
 
 ## References
 

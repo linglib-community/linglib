@@ -11,30 +11,22 @@ public import Mathlib.Data.List.Infix
 public import Mathlib.Data.List.OfFn
 
 /-!
-# Subregular Languages: Boundary Augmentation
+# Boundary augmentation
 
-Boundary augmentation pads a string with `k - 1` boundary markers on each side, so that the
-`k`-factors of the padded string, its infixes of length `k`, see the edges of the word. The strictly
-local, locally testable, and tier-based classes are built on it. A word read at integer positions
-is a two-sided family blank outside `[0, w.length)`, and its width-`k` window at `i` lists its
-entries on `[i, i + k)`. The entries of the padded word are those of the word shifted by the pad
-width, so [the `k`-factors of the augmented word are exactly its
-windows](##infix_boundary_and_length_eq_iff) starting in `[1 - k, w.length)`. Listed from left to
-right, one for each start position, they form the list `windows k w`, [whose members are the
-`k`-factors of the padded word](##mem_windows_iff).
+This file defines the [boundary augmentation](##boundary) of a word, which pads it with `k - 1`
+boundary markers on each side so that its `k`-factors see the edges of the word, as the strictly
+local, locally testable and tier-based classes require. It also defines the
+[width-`k` window](##window) of a word at an integer position `i`, which lists its entries on
+`[i, i + k)`, and proves that [the `k`-factors of the padded word are exactly its windows starting
+in `[1 - k, w.length)`](##infix_boundary_and_length_eq_iff). The [list of these windows](##windows),
+from left to right, therefore [has the `k`-factors as its members](##mem_windows_iff).
 
 ## Implementation notes
 
-The standard subregular convention extends the alphabet with two edge markers
-`⋊`, `⋉` and studies the `k`-factors of `⋊ᵏ⁻¹ · w · ⋉ᵏ⁻¹`. We instead use the
-one-fresh-symbol extension `Option α` (`none` = boundary, `some a` = original
-symbol): a single marker suffices because boundary symbols only ever occur at
-fixed positions, so the two edges are never confused.
-
-Integer positions are a lawful `GetElem? (List α) ℤ α` instance, `w[i]?` being `none` at every
-negative `i` rather than counting from the end, so position arithmetic across the left edge is
-ordinary `ℤ` arithmetic rather than a case split on `ℕ` subtraction. Being lawful, the instance
-gets the generic `getElem?_pos`, `getElem?_neg` and `getElem?_eq_some_iff`.
+One fresh symbol, `none` in `Option α`, marks both edges in place of the usual `⋊` and `⋉`, since
+a marker occurs only at fixed positions and the two edges are never confused. Integer positions
+are a lawful `GetElem? (List α) ℤ α` instance that is `none` at every negative index, so
+arithmetic across the left edge is ordinary `ℤ` arithmetic.
 
 ## References
 

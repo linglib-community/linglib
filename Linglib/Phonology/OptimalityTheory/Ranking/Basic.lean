@@ -15,26 +15,21 @@ public import Linglib.Core.Order.PiLex
 /-!
 # Constraint rankings
 
-A ranking of the constraints `ι` is an enumeration `r : Fin n ≃ ι` of the constraints in rank
-order, which presents Prince's total domination order `≫`. The constraint at rank position `p` is
-`r p`, position `0` is the most dominant, and `r.symm i` is the rank position of `i`. For
-`ι = Fin n` a ranking is a permutation.
-
-A ranking reads a violation vector `v` in rank order as `toLex (v ∘ r)`. Comparing two vectors
-under one ranking is therefore the lexicographic order along an enumeration
-(`Pi.toLex_comp_lt_iff_exists`), and comparing them under every ranking is the product order
-(`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. A ranking determines strict
-dominance `Dominates` and its reflexive closure `toRel`, which in turn determines the ranking.
-Rankings carry the discrete σ-algebra, so a distribution over rankings, as in a partially ordered
-grammar or in stochastic Optimality Theory, is a `Measure`.
+This file defines a [ranking](##Ranking.Enumeration) of the constraints `ι` as an enumeration
+`r : Fin n ≃ ι` of them in rank order, position `0` the most dominant, which presents Prince's
+total domination order. It defines the [strict dominance](##Ranking.Enumeration.Dominates) of a
+ranking and its [reflexive closure](##Ranking.Enumeration.toRel), which
+[determines the ranking](##Ranking.Enumeration.toRel_injective). A ranking reads a violation
+vector `v` in rank order as `toLex (v ∘ r)`, so comparing two vectors under one ranking is
+[the lexicographic order along an enumeration](##Pi.toLex_comp_lt_iff_exists), and comparing them
+under every ranking is [the product order](##Pi.forall_toLex_comp_lt_iff), which is harmonic
+bounding. Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
 
 ## Implementation notes
 
-A ranking is stored as the enumeration rather than as the order relation, so that rankings can be
-enumerated and compared decidably; the relation is derived (`Dominates`). The length `n` is a
-parameter rather than `Fintype.card ι`, so that a ranking of `Fin n` is literally a permutation.
-`card_eq` recovers `Fintype.card ι = n` from any ranking, and a statement quantifying over all
-rankings is vacuous when `n` does not match.
+A ranking is stored as an enumeration rather than as an order relation, so that rankings can be
+enumerated and compared decidably. The length `n` is a parameter rather than `Fintype.card ι`, so
+that a ranking of `Fin n` is literally a permutation, and `card_eq` recovers the cardinality.
 
 ## References
 
