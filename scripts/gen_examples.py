@@ -526,7 +526,7 @@ def validate_features(features: list, examples: list, where: str) -> None:
             raise ValueError(f"{w}: no row records `{ft['key']}`")
 
 
-def validate_index(decl, taken: set, where: str, readers: tuple = ()) -> None:
+def validate_index(decl, taken: set, where: str, readers: tuple = ((), None)) -> None:
     if decl is None:
         return
     w = f"{where}.index"
@@ -534,11 +534,12 @@ def validate_index(decl, taken: set, where: str, readers: tuple = ()) -> None:
         raise ValueError(f"{w}: needs exactly `type` and `doc`")
     if not TYPE_IDENT.match(decl["type"]) or decl["type"] in taken:
         raise ValueError(f"{w}: `type` {decl['type']!r} is not a fresh Lean type name")
-    clash = (set(readers) | {r + "s" for r in readers[-1:]}) & {
-        "all", "datum", "map_datum_all", "lexemes", "labelledLexemes"}
+    features, readings = readers
+    names = list(features) + ([readings, readings + "s"] if readings else [])
+    taken_names = {"all", "datum", "map_datum_all", "lexemes", "labelledLexemes"}
+    clash = (set(names) & taken_names) | {n for n in names if names.count(n) > 1}
     if clash:
-        raise ValueError(f"{w}: a feature or the readings take the name of a reader of the index, "
-                         f"{sorted(clash)}")
+        raise ValueError(f"{w}: the readers of the index would share the names {sorted(clash)}")
 
 
 def emit_index(decl: dict, author_year: str, local_ids: list) -> str:
@@ -862,7 +863,7 @@ def process(author_year: str, check: bool) -> bool:
         taken |= {d["type"] for d in (spans or {}).values()}
         validate_boundaries(boundaries, taken, examples, where)
         validate_index(index, taken | ({boundaries["type"]} if boundaries else set()), where,
-                       tuple(ft["lean"] for ft in features) + ((readings["lean"],) if readings else ()))
+                       (tuple(ft["lean"] for ft in features), readings["lean"] if readings else None))
         module_text = as_module_if_possible(
             emit_module(author_year, examples, features, readings, spans, boundaries, index))
     except ValueError as e:

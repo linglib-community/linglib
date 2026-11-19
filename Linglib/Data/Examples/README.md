@@ -208,8 +208,8 @@ JSON and comes with a theorem `…_datum` that it agrees with the reader of the 
 an example through these and through `x.datum` for its judgment, contrasts and language, and
 writes no table from strings to its own types: a reader of the row parses the strings the row
 records each time a theorem evaluates it, where a reader of the index compares constructors.
-On `Sorace2000`, a theorem over the 92 examples took 1.2 to 1.5 s through the rows and 37 ms
-through the index's readers.
+On `Sorace2000`, a theorem over the 92 examples took 1.2 to 1.5 s in the kernel through a list of
+rows parsed from the strings and 0.1 to 0.2 s through the index's readers.
 
 ## Languages
 

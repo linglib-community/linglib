@@ -22,32 +22,35 @@ process *have* (`nonmotionalProcess_selects_have`), and the types between them a
 with a verb that takes both auxiliaries alike (`free_alternation_iff`).
 
 A sentence *selects* an auxiliary when the paper judges it acceptable with that auxiliary and
-with no other it prints. For a language $l$ and an auxiliary $a$, `Language.typesWith l a` is the
+with no other it prints, and does not merely attest it. For a language $l$ and an auxiliary $a$, `Language.typesWith l a` is the
 set of types of the verbs whose sentences select $a$, among the sentences that keep the default
 predicate and subject of their type. Each language draws its boundary between *be* and *have* in
 the sense that, along the types it attests, its *be* types form a lower set and its *have* types
 an upper set (`typesWith_ordered`): a type whose verbs all take *be* lies below every type with a
 verb that takes *have*, and a type whose verbs all take *have* above every type with a verb that
-takes *be*. A language varies on the types with verbs of both kinds: the existence of a state in
-Italian, a change and the continuation of a state in French, the continuation and the existence of
-a state in Dutch, and these two and motional process in German. The cutoff points of $l$,
+takes *be*. A language varies on the types with verbs of both kinds: none in Italian, a change
+and the continuation of a state in French, the continuation and the existence of a state in
+Dutch, and these two and motional process in German. The cutoff points of $l$,
 `Language.cutoffs l`, are the types that bound its *be* types above and its *have* types below,
-the interval from the highest *be* type to the lowest *have* type (`cutoffs_eq_Icc`). Only
-Italian, which varies on a single type, has one (`cutoffs_italian`, `cutoffs_eq_empty`).
+the interval from the highest *be* type to the lowest *have* type (`cutoffs_eq_Icc`). Only Italian
+has any, the existence of a state and uncontrolled process, where the states end and the
+processes begin (`cutoffs_italian`, `cutoffs_eq_empty`).
 
 The order entails part of the paper's typological prediction: a language whose verbs of change of
 location admit *have* has no type whose verbs consistently take *be*
 (`subset_of_changeOfLocation_mem`), and dually at the other end of the hierarchy. It does not
-exclude a type whose verbs consistently take *have* while change of location varies.
+exclude a type whose verbs consistently take *have* while change of location varies
+(`exists_ordered_bot_varies`).
 
 A directional phrase moves Dutch and German verbs of motion to *be* and leaves French ones with
 *have* (`directional_motionalProcess`).
 
 An example marks its auxiliary and its participle, each with the lexeme it is a form of, and the
 study reads it through the typed readers of `Examples.Example`. A verb with an entry in its
-language's fragment is mapped to it, and the auxiliary each reference grammar gives an entry is
-the one its sentences select, except for an attested *avere* with *bastare* 'be enough', which the
-Italian grammar does not give (`selects_not_mem_perfectAuxiliaries`).
+language's fragment is mapped to it. Where the paper accepts an auxiliary that the reference
+grammar of the fragment does not give the verb, the verb is never at either end of the hierarchy
+(`position_mem_Ioo_of_not_mem_perfectAuxiliaries`): the grammars record the standard auxiliary,
+and the variation they leave out is the variation the hierarchy places between the core types.
 
 ## Implementation notes
 
@@ -59,7 +62,8 @@ Italian grammar does not give (`selects_not_mem_perfectAuxiliaries`).
   questionable, `?*` and `*?` unacceptable, `*` ungrammatical.
 * A sentence printed with one auxiliary selects it where it is acceptable, as the paper prints such
   sentences to show the auxiliary a verb takes; a sentence printed with both and judged alike
-  selects neither. The boundary is read off the sentences that keep their type's default: an
+  selects neither, and an attested example, which shows that an auxiliary is possible but not
+  that another is not, selects nothing. The boundary is read off the sentences that keep their type's default: an
   example records a phrase that changes the telicity of the predicate, or a subject whose
   agentivity departs from the default, where the paper points to one.
 * Omitted examples: frozen *be* in Romanian and English, which have no choice of auxiliary; the
@@ -159,9 +163,10 @@ instance (x : Example) (l : Language) : Decidable (x.In l) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The example selects `a` when the paper judges it acceptable with `a` and with no other
-auxiliary it prints. -/
+auxiliary it prints, and does not merely attest it. -/
 def Selects (x : Example) (a : PerfectAuxiliary) : Prop :=
-  x.judgment? a = some .acceptable ∧ ∀ b ≠ a, x.judgment? b ≠ some .acceptable
+  x.datum.method ≠ some .corpus ∧ x.judgment? a = some .acceptable ∧
+    ∀ b ≠ a, x.judgment? b ≠ some .acceptable
 
 instance (x : Example) (a : PerfectAuxiliary) : Decidable (x.Selects a) := by
   unfold Selects; infer_instance
@@ -210,8 +215,8 @@ theorem typesWith_ordered (l : Language) :
   simp only [AntitoneOn, MonotoneOn, Finset.mem_coe, le_Prop_eq]
   refine ⟨?_, ?_⟩ <;> cases l <;> decide
 
-/-- A language whose *have* types form an upper set of its attested types, and whose verbs of
-change of location admit *have*, takes *have* in every type in which it takes *be*. -/
+-- §6, fn. 32: a language whose *have* types form an upper set of its attested types, and whose
+-- verbs of change of location admit *have*, takes *have* in every type in which it takes *be*
 theorem subset_of_changeOfLocation_mem {B H : Set AuxiliarySelectionHierarchy}
     (h : MonotoneOn (· ∈ H) (B ∪ H)) (hH : .changeOfLocation ∈ H) : B ⊆ H :=
   fun _ hb ↦ h (.inr hH) (.inl hb) bot_le hH
@@ -221,9 +226,16 @@ theorem subset_of_nonmotionalProcess_mem {B H : Set AuxiliarySelectionHierarchy}
     (h : AntitoneOn (· ∈ B) (B ∪ H)) (hB : .nonmotionalProcess ∈ B) : H ⊆ B :=
   fun _ hh ↦ h (.inr hh) (.inl hB) le_top hB
 
--- §3.4, (20) against (21)
+-- the order allows *have* to be consistent at a type while change of location varies
+theorem exists_ordered_bot_varies : ∃ B H : Finset AuxiliarySelectionHierarchy,
+    AntitoneOn (· ∈ B) ↑(B ∪ H) ∧ MonotoneOn (· ∈ H) ↑(B ∪ H) ∧ ⊥ ∈ B ∩ H ∧
+      .uncontrolledProcess ∈ H \ B := by
+  refine ⟨{⊥}, {⊥, .uncontrolledProcess}, ?_, ?_, by decide, by decide⟩ <;>
+    simp only [AntitoneOn, MonotoneOn, Finset.mem_coe, le_Prop_eq] <;> decide
+
+-- §3.4, (20); the alternations of (21) are attested
 theorem italian_varies :
-    Language.italian.typesWith .be ∩ Language.italian.typesWith .have = {.existenceOfState} := by
+    Language.italian.typesWith .be ∩ Language.italian.typesWith .have = ∅ := by
   decide
 
 -- §3.2, (12) against (13); §3.3, (19a) against (16)
@@ -241,12 +253,6 @@ theorem german_varies : Language.german.typesWith .be ∩ Language.german.typesW
     {.continuationOfState, .existenceOfState, .motionalProcess} := by
   decide
 
--- §6: "the cutoff point cannot be identical in all languages"
-theorem italian_french_disjoint :
-    Disjoint (Language.italian.typesWith .be ∩ Language.italian.typesWith .have)
-      (Language.french.typesWith .be ∩ Language.french.typesWith .have) := by
-  rw [italian_varies, french_varies]; decide
-
 /-- §6: the cutoff points of a language, the types that bound its *be* types above and its *have*
 types below. -/
 def Language.cutoffs (l : Language) : Set AuxiliarySelectionHierarchy :=
@@ -258,11 +264,12 @@ theorem cutoffs_eq_Icc (l : Language) :
     Set.Ici_inter_Iic]
 
 -- §6, (20) against (37), (41), (44)–(47) and (50)
-theorem cutoffs_italian : Language.italian.cutoffs = {.existenceOfState} := by
+theorem cutoffs_italian :
+    Language.italian.cutoffs = Set.Icc .existenceOfState .uncontrolledProcess := by
   rw [cutoffs_eq_Icc, show (Language.italian.typesWith .be).sup id = .existenceOfState by decide,
-    show (Language.italian.typesWith .have).inf id = .existenceOfState by decide, Set.Icc_self]
+    show (Language.italian.typesWith .have).inf id = .uncontrolledProcess by decide]
 
--- §6, fn. 17
+-- §6, "the cutoff point cannot be identical in all languages"; fn. 17
 theorem cutoffs_eq_empty (l : Language) (hl : l ≠ .italian) : l.cutoffs = ∅ := by
   rw [cutoffs_eq_Icc, Set.Icc_eq_empty_iff]
   revert l; decide
@@ -347,11 +354,19 @@ theorem entry?_intransitive : ∀ l : Examples.Lexeme, ∀ v ∈ l.entry?,
     (v.valency.frames.headD .intransitive).IsIntransitive := by
   decide
 
--- (21a), the attested *avere* with *bastare*, is the one example that selects an auxiliary its
--- grammar does not give its verb
-theorem selects_not_mem_perfectAuxiliaries :
-    ({x : Example | ∃ v ∈ x.verb?.bind (·.entry?), ∃ a, x.Selects a ∧
-      v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries} : Finset Example) = {.ex21a} := by
+-- (8a), (11), (21a), (23c), (47a): the paper accepts an auxiliary the grammar does not give
+theorem acceptable_not_mem_perfectAuxiliaries :
+    ({x : Example | ∃ v ∈ x.verb?.bind (·.entry?), ∃ a, x.judgment? a = some .acceptable ∧
+      v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries} : Finset Example) =
+      {.ex8a, .ex11, .ex21a, .ex23c, .ex47a} := by
+  decide +kernel
+
+/-- Where the paper accepts an auxiliary that a reference grammar does not give a verb, the verb is
+at neither end of the hierarchy. -/
+theorem position_mem_Ioo_of_not_mem_perfectAuxiliaries : ∀ x : Example,
+    ∀ v ∈ x.verb?.bind (·.entry?), ∀ a, x.judgment? a = some .acceptable →
+      v.perfectAuxiliaries.Nonempty → a ∉ v.perfectAuxiliaries →
+        ∀ t ∈ x.position?, t ∈ Set.Ioo ⊥ ⊤ := by
   decide +kernel
 
 end Sorace2000
