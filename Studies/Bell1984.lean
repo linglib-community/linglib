@@ -37,8 +37,6 @@ community's range, and style stays within that social range
 * Initiative style shift and referee design are not formalized.
 * Bell's exceptions to the ratio, the crossover of the second highest class and the hyperstyle
   variables of Tehran Persian, are printed as figures and are not stored.
-* The bound is not tested against a table of classes by styles; the later study
-  `Studies.Labov2006` stores one.
 
 ## References
 
@@ -147,6 +145,24 @@ theorem th_facing_and_noise :
   decide
 
 theorem dh_noise : ∀ f, (dhStandard .noise f).percent < (dhStandard .quiet f).percent := by decide
+
+/-! ### The ratio of stylistic to social variation -/
+
+section Ratio
+
+variable {G S α : Type*} [AddGroup α] [LE α]
+
+/-- A table of groups by styles keeps style within social variation over the styles `t` when the
+largest shift of style by any group is at most the largest difference between two groups in one
+style. -/
+def StyleWithinSocial (x : G → S → α) (t : Set S) : Prop :=
+  ∀ g, ∀ s₁ ∈ t, ∀ s₂ ∈ t, ∃ s ∈ t, ∃ g₁ g₂, x g s₁ - x g s₂ ≤ x g₁ s - x g₂ s
+
+instance [Fintype G] [Fintype S] [DecidableLE α] (x : G → S → α) (t : Set S)
+    [DecidablePred (· ∈ t)] : Decidable (StyleWithinSocial x t) := by
+  unfold StyleWithinSocial; infer_instance
+
+end Ratio
 
 /-! ### Accommodation -/
 
