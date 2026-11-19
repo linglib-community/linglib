@@ -8,7 +8,6 @@ public import Linglib.Syntax.CCG.Grammar
 public import Linglib.Syntax.CCG.Interface
 public import Linglib.Syntax.CCG.Intonation
 public import Linglib.Syntax.WordOrder
-public import Studies.BeckmanPierrehumbert1986
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -31,8 +30,8 @@ of their constants.
   crossed composition is restricted to `VP` complements rather than the book's `VP_{-SUB}`.
 * The revealing rule (61) is a unary decomposition outside the binary derivations, so it enters
   only as the condition on the categories it reveals (`RevealedResidue`).
-* The tunes follow Pierrehumbert's decomposition of an intonation phrase into pitch accent,
-  phrase accent and boundary tone, which Beckman and Pierrehumbert supply (`ipToTune`).
+* Boundary tones are not elements of the strings: an utterance's division into prosodic phrases
+  is given, and each phrase projects the INFORMATION feature of its accents.
 
 ## References
 
@@ -44,7 +43,6 @@ of their constants.
 * [haegeman-1992]
 * [selkirk-1984]
 * [partee-rooth-1983]
-* [beckman-pierrehumbert-1986]
 -/
 
 @[expose] public section
@@ -623,62 +621,58 @@ end Quantification
 /-! ### Intonation and information structure
 
 Alternative derivations of one string are alternative information structures, disambiguated
-by tune: "(ANNA married)(MANNY)" (chapter 5 (14)) carves the composed derivation into a theme and
-a rheme, and its mirror "(ANNA)(married MANNY)" (13) the applicative one. Prosodic phrases are
-tune-marked constituents, so only constituents of the grammar can be phrases, the Sense Unit
-Condition of [selkirk-1984]. -/
+by intonation: "(ANNA married)(MANNY)" (chapter 5 (14)) carves the composed derivation into a
+theme and a rheme, and its mirror "(ANNA)(married MANNY)" (13) the applicative one. A prosodic
+phrase is a constituent of the grammar, the Sense Unit Condition of [selkirk-1984], and its
+words must agree on the INFORMATION feature. -/
 
 section Intonation
 
 open CCG.Intonation Prosody
 
-/-- The accents of "(ANNA married)(MANNY)" are a theme accent on "Anna" and a rheme accent on
-"Manny", with "married" unaccented. -/
-def annaMannyAccents : AccentAssignment String := fun w ↦
-  match w with
-  | "Anna" => some (.leading .L .H)
-  | "Manny" => some (.mono .H)
-  | _ => none
+/-- The marking of "(ANNA married)(MANNY)": L+H* on "Anna", H* on "Manny" and the null tone on
+"married". -/
+def annaMannyMark : String → InfoFeature
+  | "Anna" => accentInfo (.leading .L .H)
+  | "Manny" => accentInfo (.mono .H)
+  | _ => ⊥
 
-/-- "ANNA married" is the composed theme constituent, of category `S/NP`. -/
+/-- "Anna married" is the composed constituent of category `S/NP`. -/
 def anna_married : Derivation String (.multimodal 2) (S / NP) :=
   .fcomp (.lex "Anna" (S / (S \ NP))) (.lex "married" TV)
 
+-- (14): the theme accent spreads over the unaccented verb
 theorem anna_married_theme :
-    anna_married.infoFeature annaMannyAccents = some .θ := rfl
+    anna_married.infoFeature annaMannyMark = ((.θ : InfoFeature) : WithTop InfoFeature) := rfl
 
 theorem manny_rheme :
-    (Derivation.lex (R := .multimodal 2) "Manny" NP).infoFeature annaMannyAccents = some .ρ :=
-  rfl
+    (Derivation.lex (R := .multimodal 2) "Manny" NP).infoFeature annaMannyMark
+      = ((.ρ : InfoFeature) : WithTop InfoFeature) := rfl
 
-/-- Folding the rheme into the theme's constituent clashes. The whole sentence projects no
-single marking, so the tune forces the phrasing "[Anna married][Manny]". -/
-theorem theme_rheme_clash :
-    (Derivation.fapp anna_married (.lex "Manny" NP)).infoFeature annaMannyAccents
-      = none := rfl
+/-- Under the accents of (14) no derivation of "Anna married Manny", of any category and by
+any rules, is a single prosodic phrase: the theme accent and the rheme accent clash, so the
+utterance divides into phrases. -/
+theorem anna_married_manny_clash {c : Cat Atom} (d : Derivation String (.multimodal 2) c)
+    (h : d.yield = ["Anna", "married", "Manny"]) : d.infoFeature annaMannyMark = ⊤ :=
+  Derivation.infoFeature_eq_top_of_not_compat (t := "Anna") (u := "Manny") (by simp [h])
+    (by simp [h]) (by
+      rw [show annaMannyMark "Anna" = .θ from rfl, show annaMannyMark "Manny" = .ρ from rfl]
+      simp)
 
-/-- The mirror answer "(ANNA)(married MANNY)" of chapter 5 (13) has a rheme accent on "Anna"
-and a theme accent on "Manny". -/
-def mannyThemeAccents : AccentAssignment String := fun w ↦
-  match w with
-  | "Anna" => some (.mono .H)
-  | "Manny" => some (.leading .L .H)
-  | _ => none
+/-- The marking of the mirror answer "(ANNA)(married MANNY)": H* on "Anna" and L+H* on
+"Manny". -/
+def mannyThemeMark : String → InfoFeature
+  | "Anna" => accentInfo (.mono .H)
+  | "Manny" => accentInfo (.leading .L .H)
+  | _ => ⊥
 
--- (14)
+-- (13)
 theorem married_manny_theme :
     (Derivation.fapp (R := .multimodal 2) (.lex "married" TV) (.lex "Manny" NP)).infoFeature
-        mannyThemeAccents = some .θ ∧
-      anna_married.infoFeature mannyThemeAccents = some .ρ :=
+        mannyThemeMark = ((.θ : InfoFeature) : WithTop InfoFeature) ∧
+      (Derivation.lex (R := .multimodal 2) "Anna" (S / (S \ NP))).infoFeature mannyThemeMark
+        = ((.ρ : InfoFeature) : WithTop InfoFeature) :=
   ⟨rfl, rfl⟩
-
-/-- The utterance consists of two tune-marked phrases. -/
-def annaMannyUtterance : List (ProsodicPhrase String (RuleSystem.multimodal (α := Atom) 2)) :=
-  [⟨_, anna_married, themeTune⟩, ⟨_, .lex "Manny" NP, rhemeTune⟩]
-
-theorem annaMannyUtterance_infoStructure :
-    (extractInfoStructure annaMannyUtterance).map (fun i ↦ (i.theme.map (·.cat), i.rheme.cat))
-      = some (some (S / NP), NP) := rfl
 
 end Intonation
 
@@ -701,31 +695,5 @@ theorem interp_john_sees_mary :
     john_sees_mary.interp lexicon I = some (I .sees (I .mary) (I .john)) := rfl
 
 end TruthConditions
-
-/-! ### The tune terminal as an intonation-phrase terminal -/
-
-section BPTerminal
-
-open Prosody BeckmanPierrehumbert1986 CCG.Intonation
-
-/-- `ipToTune ip accent` is the tune with pitch accent `accent` whose terminal contour is the
-final phrase accent and boundary tone of the intonation phrase `ip`. -/
-def ipToTune (ip : IntonationPhrase) (accent : PitchAccent) : Tune :=
-  ⟨accent, ip.terminalContour⟩
-
-/-- A declarative intonation phrase has an L phrase accent and an L% boundary. -/
-def declarativeIP : IntonationPhrase :=
-  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .L }
-
-/-- A continuation-rise intonation phrase has an L phrase accent and an H% boundary. -/
-def continuationIP : IntonationPhrase :=
-  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H }
-
-theorem ipToTune_eq_tunes :
-    ipToTune declarativeIP (.mono .H) = rhemeTune ∧
-      ipToTune continuationIP (.leading .L .H) = themeTune := by
-  decide
-
-end BPTerminal
 
 end Steedman2000
