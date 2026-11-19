@@ -1542,7 +1542,7 @@ inductive Lexeme where
   | arriver
   /-- zijn: *zijn* 'be' -/
   | zijn
-  /-- komen: *komen* 'come' -/
+  /-- komen: *komen* 'arrive' -/
   | komen
   /-- sein: *sein* 'be' -/
   | sein
@@ -1697,5 +1697,513 @@ inductive Lexeme where
 /-- The lexeme a span is a form of, where it names a declared one. -/
 def lexeme? (p : Datum.Span) : Option Lexeme :=
   p.lexeme.bind (List.lookup · [("essere", .essere), ("venire", .venire), ("être", .etre), ("arriver", .arriver), ("zijn", .zijn), ("komen", .komen), ("sein", .sein), ("ankommen", .ankommen), ("arrivare", .arrivare), ("cadere", .cadere), ("avere", .avere), ("salire", .salire), ("marcire", .marcire), ("fiorire", .fiorire), ("naître", .naitre), ("sterven", .sterven), ("gebären", .gebaren), ("groeien", .groeien), ("steigen", .steigen), ("stijgen", .stijgen), ("devenir", .devenir), ("avoir", .avoir), ("rougir", .rougir), ("paraître", .paraitre), ("échapper", .echapper), ("rimanere", .rimanere), ("durare", .durare), ("survivre", .survivre), ("haben", .haben), ("halten", .halten), ("verweilen", .verweilen), ("overblijven", .overblijven), ("hebben", .hebben), ("duren", .duren), ("rester", .rester), ("blijven", .blijven), ("bleiben", .bleiben), ("esistere", .esistere), ("bastare", .bastare), ("sembrare", .sembrare), ("appartenere", .appartenere), ("scarseggiare", .scarseggiare), ("exister", .exister), ("gefallen", .gefallen), ("genügen", .genugen), ("liegen", .liegen), ("abhängen", .abhangen), ("staan", .staan), ("bestaan", .bestaan), ("blijken", .blijken), ("chiacchierare", .chiacchierare), ("travailler", .travailler), ("blazen", .blazen), ("arbeiten", .arbeiten), ("funzionare", .funzionare), ("lavorare", .lavorare), ("cedere", .cedere), ("correre", .correre), ("lopen", .lopen), ("nager", .nager), ("rennen", .rennen), ("laufen", .laufen), ("schwimmen", .schwimmen), ("rollen", .rollen), ("tanzen", .tanzen), ("nuotare", .nuotare), ("courir", .courir), ("saltare", .saltare), ("atterrare", .atterrare), ("tentennare", .tentennare), ("tossire", .tossire), ("squillare", .squillare), ("risuonare", .risuonare), ("rimbombare", .rimbombare), ("rintoccare", .rintoccare), ("piovere", .piovere), ("nevicare", .nevicare), ("grandinare", .grandinare), ("tuonare", .tuonare), ("lampeggiare", .lampeggiare)])
+
+/-- The examples of the paper. -/
+inductive Example where
+  | ex1a
+  | ex1b
+  | ex1c
+  | ex1d
+  | ex4
+  | ex5a
+  | ex5b
+  | ex30a
+  | ex7a
+  | ex7b
+  | ex8a
+  | ex9a
+  | ex9b
+  | ex9c
+  | ex10a
+  | ex10b
+  | ex11
+  | ex12
+  | ex13
+  | ex14a
+  | ex14c
+  | ex15a
+  | ex15b
+  | ex15c
+  | ex16
+  | ex17a
+  | ex17b
+  | ex18a
+  | ex18b
+  | ex19a
+  | ex19b
+  | ex19c
+  | ex20a
+  | ex20b
+  | ex20c
+  | ex21a
+  | ex21b
+  | ex21c
+  | ex22
+  | ex23a
+  | ex23b
+  | ex23c
+  | ex23d
+  | ex24a
+  | ex24b
+  | ex24c
+  | ex25a
+  | ex25b
+  | ex33a
+  | ex33b
+  | ex33c
+  | ex33d
+  | ex34
+  | ex35
+  | ex36a
+  | ex36b
+  | ex37a
+  | ex37b
+  | ex37c
+  | ex38_rennen
+  | ex38_laufen
+  | ex38_schwimmen
+  | ex39a
+  | ex39b
+  | ex40a
+  | ex40b
+  | ex41a
+  | ex41b
+  | ex41c
+  | ex41d
+  | ex42a
+  | ex42b
+  | ex43a
+  | ex43b
+  | ex44a
+  | ex44b
+  | ex45a
+  | ex45b
+  | ex46a
+  | ex46b
+  | ex47a
+  | ex47b
+  | ex47c
+  | ex47d
+  | ex48_piovere
+  | ex48_nevicare
+  | ex48_grandinare
+  | ex49
+  | ex50a
+  | ex50b
+  | ex51_tuonare
+  | ex51_lampeggiare
+  deriving DecidableEq, Repr, Fintype
+
+/-- Every example of the file, in its order. -/
+def Example.all : List Example :=
+  [.ex1a, .ex1b, .ex1c, .ex1d, .ex4, .ex5a, .ex5b, .ex30a, .ex7a, .ex7b, .ex8a, .ex9a, .ex9b,
+    .ex9c, .ex10a, .ex10b, .ex11, .ex12, .ex13, .ex14a, .ex14c, .ex15a, .ex15b, .ex15c, .ex16,
+    .ex17a, .ex17b, .ex18a, .ex18b, .ex19a, .ex19b, .ex19c, .ex20a, .ex20b, .ex20c, .ex21a,
+    .ex21b, .ex21c, .ex22, .ex23a, .ex23b, .ex23c, .ex23d, .ex24a, .ex24b, .ex24c, .ex25a, .ex25b,
+    .ex33a, .ex33b, .ex33c, .ex33d, .ex34, .ex35, .ex36a, .ex36b, .ex37a, .ex37b, .ex37c,
+    .ex38_rennen, .ex38_laufen, .ex38_schwimmen, .ex39a, .ex39b, .ex40a, .ex40b, .ex41a, .ex41b,
+    .ex41c, .ex41d, .ex42a, .ex42b, .ex43a, .ex43b, .ex44a, .ex44b, .ex45a, .ex45b, .ex46a,
+    .ex46b, .ex47a, .ex47b, .ex47c, .ex47d, .ex48_piovere, .ex48_nevicare, .ex48_grandinare,
+    .ex49, .ex50a, .ex50b, .ex51_tuonare, .ex51_lampeggiare]
+
+/-- The row of an example. -/
+def Example.datum : Example → Datum
+  | .ex1a => _root_.Sorace2000.Examples.ex1a
+  | .ex1b => _root_.Sorace2000.Examples.ex1b
+  | .ex1c => _root_.Sorace2000.Examples.ex1c
+  | .ex1d => _root_.Sorace2000.Examples.ex1d
+  | .ex4 => _root_.Sorace2000.Examples.ex4
+  | .ex5a => _root_.Sorace2000.Examples.ex5a
+  | .ex5b => _root_.Sorace2000.Examples.ex5b
+  | .ex30a => _root_.Sorace2000.Examples.ex30a
+  | .ex7a => _root_.Sorace2000.Examples.ex7a
+  | .ex7b => _root_.Sorace2000.Examples.ex7b
+  | .ex8a => _root_.Sorace2000.Examples.ex8a
+  | .ex9a => _root_.Sorace2000.Examples.ex9a
+  | .ex9b => _root_.Sorace2000.Examples.ex9b
+  | .ex9c => _root_.Sorace2000.Examples.ex9c
+  | .ex10a => _root_.Sorace2000.Examples.ex10a
+  | .ex10b => _root_.Sorace2000.Examples.ex10b
+  | .ex11 => _root_.Sorace2000.Examples.ex11
+  | .ex12 => _root_.Sorace2000.Examples.ex12
+  | .ex13 => _root_.Sorace2000.Examples.ex13
+  | .ex14a => _root_.Sorace2000.Examples.ex14a
+  | .ex14c => _root_.Sorace2000.Examples.ex14c
+  | .ex15a => _root_.Sorace2000.Examples.ex15a
+  | .ex15b => _root_.Sorace2000.Examples.ex15b
+  | .ex15c => _root_.Sorace2000.Examples.ex15c
+  | .ex16 => _root_.Sorace2000.Examples.ex16
+  | .ex17a => _root_.Sorace2000.Examples.ex17a
+  | .ex17b => _root_.Sorace2000.Examples.ex17b
+  | .ex18a => _root_.Sorace2000.Examples.ex18a
+  | .ex18b => _root_.Sorace2000.Examples.ex18b
+  | .ex19a => _root_.Sorace2000.Examples.ex19a
+  | .ex19b => _root_.Sorace2000.Examples.ex19b
+  | .ex19c => _root_.Sorace2000.Examples.ex19c
+  | .ex20a => _root_.Sorace2000.Examples.ex20a
+  | .ex20b => _root_.Sorace2000.Examples.ex20b
+  | .ex20c => _root_.Sorace2000.Examples.ex20c
+  | .ex21a => _root_.Sorace2000.Examples.ex21a
+  | .ex21b => _root_.Sorace2000.Examples.ex21b
+  | .ex21c => _root_.Sorace2000.Examples.ex21c
+  | .ex22 => _root_.Sorace2000.Examples.ex22
+  | .ex23a => _root_.Sorace2000.Examples.ex23a
+  | .ex23b => _root_.Sorace2000.Examples.ex23b
+  | .ex23c => _root_.Sorace2000.Examples.ex23c
+  | .ex23d => _root_.Sorace2000.Examples.ex23d
+  | .ex24a => _root_.Sorace2000.Examples.ex24a
+  | .ex24b => _root_.Sorace2000.Examples.ex24b
+  | .ex24c => _root_.Sorace2000.Examples.ex24c
+  | .ex25a => _root_.Sorace2000.Examples.ex25a
+  | .ex25b => _root_.Sorace2000.Examples.ex25b
+  | .ex33a => _root_.Sorace2000.Examples.ex33a
+  | .ex33b => _root_.Sorace2000.Examples.ex33b
+  | .ex33c => _root_.Sorace2000.Examples.ex33c
+  | .ex33d => _root_.Sorace2000.Examples.ex33d
+  | .ex34 => _root_.Sorace2000.Examples.ex34
+  | .ex35 => _root_.Sorace2000.Examples.ex35
+  | .ex36a => _root_.Sorace2000.Examples.ex36a
+  | .ex36b => _root_.Sorace2000.Examples.ex36b
+  | .ex37a => _root_.Sorace2000.Examples.ex37a
+  | .ex37b => _root_.Sorace2000.Examples.ex37b
+  | .ex37c => _root_.Sorace2000.Examples.ex37c
+  | .ex38_rennen => _root_.Sorace2000.Examples.ex38_rennen
+  | .ex38_laufen => _root_.Sorace2000.Examples.ex38_laufen
+  | .ex38_schwimmen => _root_.Sorace2000.Examples.ex38_schwimmen
+  | .ex39a => _root_.Sorace2000.Examples.ex39a
+  | .ex39b => _root_.Sorace2000.Examples.ex39b
+  | .ex40a => _root_.Sorace2000.Examples.ex40a
+  | .ex40b => _root_.Sorace2000.Examples.ex40b
+  | .ex41a => _root_.Sorace2000.Examples.ex41a
+  | .ex41b => _root_.Sorace2000.Examples.ex41b
+  | .ex41c => _root_.Sorace2000.Examples.ex41c
+  | .ex41d => _root_.Sorace2000.Examples.ex41d
+  | .ex42a => _root_.Sorace2000.Examples.ex42a
+  | .ex42b => _root_.Sorace2000.Examples.ex42b
+  | .ex43a => _root_.Sorace2000.Examples.ex43a
+  | .ex43b => _root_.Sorace2000.Examples.ex43b
+  | .ex44a => _root_.Sorace2000.Examples.ex44a
+  | .ex44b => _root_.Sorace2000.Examples.ex44b
+  | .ex45a => _root_.Sorace2000.Examples.ex45a
+  | .ex45b => _root_.Sorace2000.Examples.ex45b
+  | .ex46a => _root_.Sorace2000.Examples.ex46a
+  | .ex46b => _root_.Sorace2000.Examples.ex46b
+  | .ex47a => _root_.Sorace2000.Examples.ex47a
+  | .ex47b => _root_.Sorace2000.Examples.ex47b
+  | .ex47c => _root_.Sorace2000.Examples.ex47c
+  | .ex47d => _root_.Sorace2000.Examples.ex47d
+  | .ex48_piovere => _root_.Sorace2000.Examples.ex48_piovere
+  | .ex48_nevicare => _root_.Sorace2000.Examples.ex48_nevicare
+  | .ex48_grandinare => _root_.Sorace2000.Examples.ex48_grandinare
+  | .ex49 => _root_.Sorace2000.Examples.ex49
+  | .ex50a => _root_.Sorace2000.Examples.ex50a
+  | .ex50b => _root_.Sorace2000.Examples.ex50b
+  | .ex51_tuonare => _root_.Sorace2000.Examples.ex51_tuonare
+  | .ex51_lampeggiare => _root_.Sorace2000.Examples.ex51_lampeggiare
+
+theorem Example.map_datum_all :
+    Example.all.map Example.datum = _root_.Sorace2000.Examples.all := rfl
+
+/-- The value the example records under `predicate`. -/
+def Example.predicate : Example → Option PredicateShift
+  | .ex1a => none
+  | .ex1b => none
+  | .ex1c => none
+  | .ex1d => none
+  | .ex4 => some .detelicized
+  | .ex5a => none
+  | .ex5b => none
+  | .ex30a => none
+  | .ex7a => none
+  | .ex7b => none
+  | .ex8a => none
+  | .ex9a => none
+  | .ex9b => none
+  | .ex9c => none
+  | .ex10a => none
+  | .ex10b => none
+  | .ex11 => some .detelicized
+  | .ex12 => none
+  | .ex13 => none
+  | .ex14a => none
+  | .ex14c => none
+  | .ex15a => none
+  | .ex15b => none
+  | .ex15c => none
+  | .ex16 => none
+  | .ex17a => none
+  | .ex17b => none
+  | .ex18a => none
+  | .ex18b => none
+  | .ex19a => none
+  | .ex19b => none
+  | .ex19c => none
+  | .ex20a => none
+  | .ex20b => none
+  | .ex20c => none
+  | .ex21a => none
+  | .ex21b => none
+  | .ex21c => none
+  | .ex22 => none
+  | .ex23a => none
+  | .ex23b => none
+  | .ex23c => none
+  | .ex23d => none
+  | .ex24a => none
+  | .ex24b => none
+  | .ex24c => none
+  | .ex25a => none
+  | .ex25b => none
+  | .ex33a => none
+  | .ex33b => none
+  | .ex33c => none
+  | .ex33d => none
+  | .ex34 => none
+  | .ex35 => some .telicized
+  | .ex36a => none
+  | .ex36b => none
+  | .ex37a => none
+  | .ex37b => none
+  | .ex37c => none
+  | .ex38_rennen => none
+  | .ex38_laufen => none
+  | .ex38_schwimmen => none
+  | .ex39a => none
+  | .ex39b => some .telicized
+  | .ex40a => none
+  | .ex40b => some .telicized
+  | .ex41a => none
+  | .ex41b => some .telicized
+  | .ex41c => none
+  | .ex41d => some .telicized
+  | .ex42a => none
+  | .ex42b => some .telicized
+  | .ex43a => none
+  | .ex43b => none
+  | .ex44a => none
+  | .ex44b => none
+  | .ex45a => none
+  | .ex45b => none
+  | .ex46a => none
+  | .ex46b => none
+  | .ex47a => none
+  | .ex47b => none
+  | .ex47c => none
+  | .ex47d => none
+  | .ex48_piovere => none
+  | .ex48_nevicare => none
+  | .ex48_grandinare => none
+  | .ex49 => some .telicized
+  | .ex50a => none
+  | .ex50b => none
+  | .ex51_tuonare => some .telicized
+  | .ex51_lampeggiare => some .telicized
+
+theorem Example.predicate_datum :
+    ∀ x : Example, _root_.Sorace2000.Examples.predicate x.datum = x.predicate := by
+  decide +kernel
+
+/-- The value the example records under `subject`. -/
+def Example.subject : Example → Option SubjectShift
+  | .ex1a => none
+  | .ex1b => none
+  | .ex1c => none
+  | .ex1d => none
+  | .ex4 => none
+  | .ex5a => some .agentive
+  | .ex5b => none
+  | .ex30a => none
+  | .ex7a => none
+  | .ex7b => none
+  | .ex8a => none
+  | .ex9a => none
+  | .ex9b => none
+  | .ex9c => none
+  | .ex10a => none
+  | .ex10b => none
+  | .ex11 => none
+  | .ex12 => none
+  | .ex13 => none
+  | .ex14a => none
+  | .ex14c => none
+  | .ex15a => none
+  | .ex15b => none
+  | .ex15c => some .agentive
+  | .ex16 => none
+  | .ex17a => none
+  | .ex17b => none
+  | .ex18a => none
+  | .ex18b => none
+  | .ex19a => none
+  | .ex19b => none
+  | .ex19c => none
+  | .ex20a => none
+  | .ex20b => none
+  | .ex20c => none
+  | .ex21a => none
+  | .ex21b => none
+  | .ex21c => none
+  | .ex22 => none
+  | .ex23a => none
+  | .ex23b => none
+  | .ex23c => none
+  | .ex23d => none
+  | .ex24a => none
+  | .ex24b => none
+  | .ex24c => none
+  | .ex25a => none
+  | .ex25b => none
+  | .ex33a => none
+  | .ex33b => none
+  | .ex33c => none
+  | .ex33d => none
+  | .ex34 => some .nonagentive
+  | .ex35 => none
+  | .ex36a => none
+  | .ex36b => some .nonagentive
+  | .ex37a => none
+  | .ex37b => none
+  | .ex37c => none
+  | .ex38_rennen => none
+  | .ex38_laufen => none
+  | .ex38_schwimmen => none
+  | .ex39a => none
+  | .ex39b => none
+  | .ex40a => none
+  | .ex40b => none
+  | .ex41a => none
+  | .ex41b => none
+  | .ex41c => none
+  | .ex41d => none
+  | .ex42a => none
+  | .ex42b => none
+  | .ex43a => some .nonagentive
+  | .ex43b => some .nonagentive
+  | .ex44a => none
+  | .ex44b => some .nonagentive
+  | .ex45a => none
+  | .ex45b => some .agentive
+  | .ex46a => none
+  | .ex46b => some .agentive
+  | .ex47a => none
+  | .ex47b => none
+  | .ex47c => none
+  | .ex47d => none
+  | .ex48_piovere => none
+  | .ex48_nevicare => none
+  | .ex48_grandinare => none
+  | .ex49 => none
+  | .ex50a => none
+  | .ex50b => none
+  | .ex51_tuonare => none
+  | .ex51_lampeggiare => none
+
+theorem Example.subject_datum :
+    ∀ x : Example, _root_.Sorace2000.Examples.subject x.datum = x.subject := by
+  decide +kernel
+
+/-- The lexemes the spans of the example name, each with the span's label, in order. -/
+def Example.labelledLexemes : Example → List (SpanLabel × Lexeme)
+  | .ex1a => [(.auxiliary, .essere), (.participle, .venire)]
+  | .ex1b => [(.auxiliary, .etre), (.participle, .arriver)]
+  | .ex1c => [(.auxiliary, .zijn), (.participle, .komen)]
+  | .ex1d => [(.auxiliary, .sein), (.participle, .ankommen)]
+  | .ex4 => [(.auxiliary, .essere), (.participle, .arrivare)]
+  | .ex5a => [(.auxiliary, .essere), (.participle, .cadere)]
+  | .ex5b => [(.auxiliary, .essere), (.participle, .cadere)]
+  | .ex30a => [(.auxiliary, .avere), (.participle, .arrivare)]
+  | .ex7a => [(.auxiliary, .essere), (.participle, .salire)]
+  | .ex7b => [(.auxiliary, .essere), (.participle, .marcire)]
+  | .ex8a => [(.auxiliary, .essere), (.participle, .fiorire)]
+  | .ex9a => [(.auxiliary, .etre), (.participle, .naitre)]
+  | .ex9b => [(.auxiliary, .zijn), (.participle, .sterven)]
+  | .ex9c => [(.auxiliary, .sein), (.participle, .gebaren)]
+  | .ex10a => [(.auxiliary, .zijn), (.participle, .groeien)]
+  | .ex10b => [(.auxiliary, .sein), (.participle, .steigen)]
+  | .ex11 => [(.auxiliary, .zijn), (.participle, .stijgen)]
+  | .ex12 => [(.auxiliary, .etre), (.participle, .devenir)]
+  | .ex13 => [(.auxiliary, .avoir), (.participle, .rougir)]
+  | .ex14a => [(.auxiliary, .etre), (.participle, .paraitre)]
+  | .ex14c => [(.auxiliary, .etre), (.participle, .echapper)]
+  | .ex15a => [(.auxiliary, .essere), (.participle, .rimanere)]
+  | .ex15b => [(.auxiliary, .essere), (.participle, .durare)]
+  | .ex15c => [(.auxiliary, .essere), (.participle, .durare)]
+  | .ex16 => [(.auxiliary, .avoir), (.participle, .survivre)]
+  | .ex17a => [(.auxiliary, .haben), (.participle, .halten)]
+  | .ex17b => [(.auxiliary, .haben), (.participle, .verweilen)]
+  | .ex18a => [(.auxiliary, .zijn), (.participle, .overblijven)]
+  | .ex18b => [(.auxiliary, .hebben), (.participle, .duren)]
+  | .ex19a => [(.auxiliary, .etre), (.participle, .rester)]
+  | .ex19b => [(.auxiliary, .zijn), (.participle, .blijven)]
+  | .ex19c => [(.auxiliary, .sein), (.participle, .bleiben)]
+  | .ex20a => [(.auxiliary, .essere), (.participle, .esistere)]
+  | .ex20b => [(.auxiliary, .essere), (.participle, .bastare)]
+  | .ex20c => [(.auxiliary, .essere), (.participle, .sembrare)]
+  | .ex21a => [(.auxiliary, .avere), (.participle, .bastare)]
+  | .ex21b => [(.auxiliary, .avere), (.participle, .appartenere)]
+  | .ex21c => [(.auxiliary, .essere), (.participle, .scarseggiare)]
+  | .ex22 => [(.auxiliary, .avoir), (.participle, .exister)]
+  | .ex23a => [(.auxiliary, .haben), (.participle, .gefallen)]
+  | .ex23b => [(.auxiliary, .haben), (.participle, .genugen)]
+  | .ex23c => [(.auxiliary, .sein), (.participle, .liegen)]
+  | .ex23d => [(.auxiliary, .sein), (.participle, .abhangen)]
+  | .ex24a => [(.auxiliary, .hebben), (.participle, .staan)]
+  | .ex24b => [(.auxiliary, .hebben), (.participle, .bestaan)]
+  | .ex24c => [(.auxiliary, .zijn), (.participle, .blijken)]
+  | .ex25a => [(.auxiliary, .sein), (.participle, .sein)]
+  | .ex25b => [(.auxiliary, .zijn), (.participle, .zijn)]
+  | .ex33a => [(.auxiliary, .avere), (.participle, .chiacchierare)]
+  | .ex33b => [(.auxiliary, .avoir), (.participle, .travailler)]
+  | .ex33c => [(.auxiliary, .hebben), (.participle, .blazen)]
+  | .ex33d => [(.auxiliary, .haben), (.participle, .arbeiten)]
+  | .ex34 => [(.auxiliary, .avere), (.participle, .funzionare)]
+  | .ex35 => [(.auxiliary, .avere), (.participle, .lavorare)]
+  | .ex36a => [(.auxiliary, .avere), (.participle, .cedere)]
+  | .ex36b => [(.auxiliary, .avere), (.participle, .cedere)]
+  | .ex37a => [(.auxiliary, .avere), (.participle, .correre)]
+  | .ex37b => [(.auxiliary, .hebben), (.participle, .lopen)]
+  | .ex37c => [(.auxiliary, .avoir), (.participle, .nager)]
+  | .ex38_rennen => [(.auxiliary, .sein), (.participle, .rennen)]
+  | .ex38_laufen => [(.auxiliary, .sein), (.participle, .laufen)]
+  | .ex38_schwimmen => [(.auxiliary, .sein), (.participle, .schwimmen)]
+  | .ex39a => [(.auxiliary, .hebben), (.participle, .rollen)]
+  | .ex39b => [(.auxiliary, .zijn), (.participle, .rollen)]
+  | .ex40a => [(.auxiliary, .haben), (.participle, .tanzen)]
+  | .ex40b => [(.auxiliary, .sein), (.participle, .tanzen)]
+  | .ex41a => [(.auxiliary, .avere), (.participle, .correre)]
+  | .ex41b => [(.auxiliary, .essere), (.participle, .correre)]
+  | .ex41c => [(.auxiliary, .avere), (.participle, .nuotare)]
+  | .ex41d => [(.auxiliary, .avere), (.participle, .nuotare)]
+  | .ex42a => [(.auxiliary, .avoir), (.participle, .courir)]
+  | .ex42b => [(.auxiliary, .avoir), (.participle, .courir)]
+  | .ex43a => [(.auxiliary, .essere), (.participle, .correre)]
+  | .ex43b => [(.auxiliary, .essere), (.participle, .saltare)]
+  | .ex44a => [(.auxiliary, .avere), (.participle, .atterrare)]
+  | .ex44b => [(.auxiliary, .essere), (.participle, .atterrare)]
+  | .ex45a => [(.auxiliary, .avere), (.participle, .tentennare)]
+  | .ex45b => [(.auxiliary, .avere), (.participle, .tentennare)]
+  | .ex46a => [(.auxiliary, .avere), (.participle, .tossire)]
+  | .ex46b => [(.auxiliary, .avere), (.participle, .tossire)]
+  | .ex47a => [(.auxiliary, .avere), (.participle, .squillare)]
+  | .ex47b => [(.auxiliary, .avere), (.participle, .risuonare)]
+  | .ex47c => [(.auxiliary, .avere), (.participle, .rimbombare)]
+  | .ex47d => [(.auxiliary, .avere), (.participle, .rintoccare)]
+  | .ex48_piovere => [(.auxiliary, .avere), (.participle, .piovere)]
+  | .ex48_nevicare => [(.auxiliary, .avere), (.participle, .nevicare)]
+  | .ex48_grandinare => [(.auxiliary, .avere), (.participle, .grandinare)]
+  | .ex49 => [(.auxiliary, .essere), (.participle, .piovere)]
+  | .ex50a => [(.auxiliary, .avere), (.participle, .tuonare)]
+  | .ex50b => [(.auxiliary, .avere), (.participle, .lampeggiare)]
+  | .ex51_tuonare => [(.auxiliary, .essere), (.participle, .tuonare)]
+  | .ex51_lampeggiare => [(.auxiliary, .essere), (.participle, .lampeggiare)]
+
+/-- The lexemes the spans of the example labelled `l` name, in order. -/
+def Example.lexemes (x : Example) (l : SpanLabel) : List Lexeme :=
+  (x.labelledLexemes.filter (·.1 = l)).map (·.2)
+
+theorem Example.lexemes_datum : ∀ (x : Example) (l : SpanLabel),
+    (x.datum.spans.filter (_root_.Sorace2000.Examples.label? · = some l)).filterMap _root_.Sorace2000.Examples.lexeme? =
+      x.lexemes l := by
+  decide +kernel
 
 end Sorace2000.Examples

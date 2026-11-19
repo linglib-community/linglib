@@ -86,7 +86,7 @@
         {
           "name": "komen",
           "label": "komen",
-          "doc": "*komen* 'come'"
+          "doc": "*komen* 'arrive'"
         },
         {
           "name": "sein",
@@ -460,6 +460,10 @@
         }
       ]
     }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the paper."
   },
   "examples": [
     {

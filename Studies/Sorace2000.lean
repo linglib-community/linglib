@@ -1,9 +1,9 @@
 module
 
 public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Linglib.Data.Examples.Sorace2000
-public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Fragments.German.Verbs
@@ -30,19 +30,24 @@ an upper set (`typesWith_ordered`): a type whose verbs all take *be* lies below 
 verb that takes *have*, and a type whose verbs all take *have* above every type with a verb that
 takes *be*. A language varies on the types with verbs of both kinds: the existence of a state in
 Italian, a change and the continuation of a state in French, the continuation and the existence of
-a state in Dutch, and these two and motional process in German. Only Italian varies on a single
-type, and so only Italian has a cutoff point on the hierarchy itself (`italian_cutoff`); the
-others need adjacent types merged. The paper's typological prediction follows from the order: a
-language whose verbs of change of location admit *have* has no type whose verbs consistently take
-*be* (`subset_of_changeOfLocation_mem`).
+a state in Dutch, and these two and motional process in German. The cutoff points of $l$,
+`Language.cutoffs l`, are the types that bound its *be* types above and its *have* types below,
+the interval from the highest *be* type to the lowest *have* type (`cutoffs_eq_Icc`). Only
+Italian, which varies on a single type, has one (`cutoffs_italian`, `cutoffs_eq_empty`).
+
+The order entails part of the paper's typological prediction: a language whose verbs of change of
+location admit *have* has no type whose verbs consistently take *be*
+(`subset_of_changeOfLocation_mem`), and dually at the other end of the hierarchy. It does not
+exclude a type whose verbs consistently take *have* while change of location varies.
 
 A directional phrase moves Dutch and German verbs of motion to *be* and leaves French ones with
 *have* (`directional_motionalProcess`).
 
-A row marks its auxiliary and its participle, each with the lexeme it is a form of. A verb with an
-entry in its language's fragment is mapped to it, and the auxiliary each reference grammar gives
-an entry is the one its sentences select, except for an attested *avere* with *bastare* 'be
-enough', which the Italian grammar does not give (`selects_not_mem_perfectAuxiliaries`).
+An example marks its auxiliary and its participle, each with the lexeme it is a form of, and the
+study reads it through the typed readers of `Examples.Example`. A verb with an entry in its
+language's fragment is mapped to it, and the auxiliary each reference grammar gives an entry is
+the one its sentences select, except for an attested *avere* with *bastare* 'be enough', which the
+Italian grammar does not give (`selects_not_mem_perfectAuxiliaries`).
 
 ## Implementation notes
 
@@ -54,9 +59,9 @@ enough', which the Italian grammar does not give (`selects_not_mem_perfectAuxili
   questionable, `?*` and `*?` unacceptable, `*` ungrammatical.
 * A sentence printed with one auxiliary selects it where it is acceptable, as the paper prints such
   sentences to show the auxiliary a verb takes; a sentence printed with both and judged alike
-  selects neither. The boundary is read off the sentences that keep their type's default: a row
-  records a phrase that changes the telicity of the predicate, or a subject whose agentivity
-  departs from the default, where the paper points to one.
+  selects neither. The boundary is read off the sentences that keep their type's default: an
+  example records a phrase that changes the telicity of the predicate, or a subject whose
+  agentivity departs from the default, where the paper points to one.
 * Omitted examples: frozen *be* in Romanian and English, which have no choice of auxiliary; the
   anticausatives, dyadic and off the hierarchy, except the one change-of-location verb printed
   with *have*; and the sense 'be elusive' of *échapper*, which the paper places on no type.
@@ -79,11 +84,19 @@ namespace Sorace2000
 
 open ArgumentStructure
 open Verb (PerfectAuxiliary)
+open Examples (Example)
 
 /-- The four languages of the paper. -/
 inductive Language
   | italian | french | dutch | german
   deriving DecidableEq, Repr, Fintype
+
+/-- The Glottocode of a language. -/
+def Language.glottocode : Language → Glottocode
+  | .italian => .italian
+  | .french => .french
+  | .dutch => .dutch
+  | .german => .german
 
 /-! ### The lexemes -/
 
@@ -121,68 +134,63 @@ def auxiliary? : Lexeme → Option PerfectAuxiliary
 
 end Examples.Lexeme
 
-/-! ### The rows -/
+/-! ### The examples -/
 
-/-- An example sentence, with its language, its verb and the verb's type, the departures from the
-default of the type, and the judgment of the sentence with each auxiliary the paper prints. -/
-structure Row where
-  language : Language
-  verb : Examples.Lexeme
-  position : AuxiliarySelectionHierarchy
-  predicate : Option Examples.PredicateShift
-  subject : Option Examples.SubjectShift
-  judgment : PerfectAuxiliary → Option Judgment
+namespace Examples.Example
 
-/-- The lexeme of the span of `e` labelled `l`. -/
-def lexemeOf (e : Datum) (l : Examples.SpanLabel) : Option Examples.Lexeme :=
-  (e.spans.find? (Examples.label? · = some l)).bind Examples.lexeme?
+/-- The auxiliary of the example's perfect. -/
+def auxiliary? (x : Example) : Option PerfectAuxiliary :=
+  (x.lexemes .auxiliary).head?.bind (·.auxiliary?)
 
-/-- The row of an example, from its language, the lexemes of its auxiliary and its participle, its
-departures from the default of the verb's type, and its alternative with the other
-auxiliary. -/
-def Row.ofDatum (e : Datum) : Option Row := do
-  let language ← e.byLanguage [(.italian, Language.italian), (.french, .french),
-    (.dutch, .dutch), (.german, .german)]
-  let aux ← (lexemeOf e .auxiliary).bind (·.auxiliary?)
-  let verb ← lexemeOf e .participle
-  let position ← verb.position?
-  pure
-    { language, verb, position
-      predicate := Examples.predicate e
-      subject := Examples.subject e
-      judgment := fun a ↦ if a = aux then some e.judgment else e.contrasts.head?.map (·.2) }
+/-- The verb of the example, the lexeme of its participle. -/
+def verb? (x : Example) : Option Lexeme := (x.lexemes .participle).head?
 
-/-- The paper's examples. -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+/-- The type of the example's verb. -/
+def position? (x : Example) : Option AuxiliarySelectionHierarchy := x.verb?.bind (·.position?)
 
-example : rows.length = Examples.all.length := by decide
+/-- The judgment of the example with the auxiliary `a`, where the paper prints it with `a`. -/
+def judgment? (x : Example) (a : PerfectAuxiliary) : Option Judgment :=
+  if x.auxiliary? = some a then some x.datum.judgment else x.datum.contrasts.head?.map (·.2)
 
-/-- The sentence of a row selects `a` when the paper judges it acceptable with `a` and with no
-other auxiliary it prints. -/
-def Row.Selects (r : Row) (a : PerfectAuxiliary) : Prop :=
-  r.judgment a = some .acceptable ∧ ∀ b ≠ a, r.judgment b ≠ some .acceptable
+/-- The example is a sentence of the language `l`. -/
+def In (x : Example) (l : Language) : Prop := x.datum.language = l.glottocode
 
-instance (r : Row) (a : PerfectAuxiliary) : Decidable (r.Selects a) := by
-  unfold Row.Selects; infer_instance
+instance (x : Example) (l : Language) : Decidable (x.In l) :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- The example selects `a` when the paper judges it acceptable with `a` and with no other
+auxiliary it prints. -/
+def Selects (x : Example) (a : PerfectAuxiliary) : Prop :=
+  x.judgment? a = some .acceptable ∧ ∀ b ≠ a, x.judgment? b ≠ some .acceptable
+
+instance (x : Example) (a : PerfectAuxiliary) : Decidable (x.Selects a) := by
+  unfold Selects; infer_instance
+
+end Examples.Example
+
+-- every example has an auxiliary, a verb on the hierarchy and one of the four languages
+theorem example_complete :
+    ∀ x : Example, x.auxiliary?.isSome ∧ x.position?.isSome ∧ ∃ l, x.In l := by
+  decide
 
 /-! ### The core -/
 
 /-- A verb of change of location takes *be* and rejects *have* in all four languages. -/
-theorem changeOfLocation_selects_be : ∀ r ∈ rows, r.position = .changeOfLocation →
-    (∀ j ∈ r.judgment .be, j = .acceptable) ∧ ∀ j ∈ r.judgment .have, j = .ungrammatical := by
+theorem changeOfLocation_selects_be : ∀ x : Example, x.position? = some .changeOfLocation →
+    (∀ j ∈ x.judgment? .be, j = .acceptable) ∧ ∀ j ∈ x.judgment? .have, j = .ungrammatical := by
   decide
 
 /-- A verb of controlled nonmotional process takes *have* in all four languages, and *be* at best
 marginally. -/
-theorem nonmotionalProcess_selects_have : ∀ r ∈ rows, r.position = .nonmotionalProcess →
-    (∀ j ∈ r.judgment .have, j = .acceptable) ∧ ∀ j ∈ r.judgment .be, j ≤ .marginal := by
+theorem nonmotionalProcess_selects_have : ∀ x : Example, x.position? = some .nonmotionalProcess →
+    (∀ j ∈ x.judgment? .have, j = .acceptable) ∧ ∀ j ∈ x.judgment? .be, j ≤ .marginal := by
   decide
 
 /-- Some verb of a type takes both auxiliaries acceptably exactly when the type is not at either
 end of the hierarchy. -/
 theorem free_alternation_iff (t : AuxiliarySelectionHierarchy) :
-    (∃ r ∈ rows, r.position = t ∧ r.judgment .be = some .acceptable ∧
-      r.judgment .have = some .acceptable) ↔ t ≠ ⊥ ∧ t ≠ ⊤ := by
+    (∃ x : Example, x.position? = some t ∧ x.judgment? .be = some .acceptable ∧
+      x.judgment? .have = some .acceptable) ↔ t ≠ ⊥ ∧ t ≠ ⊤ := by
   revert t; decide
 
 /-! ### The boundary -/
@@ -191,43 +199,8 @@ theorem free_alternation_iff (t : AuxiliarySelectionHierarchy) :
 the default of their type in neither predicate nor subject. -/
 def Language.typesWith (l : Language) (a : PerfectAuxiliary) :
     Finset AuxiliarySelectionHierarchy :=
-  (rows.filterMap fun r ↦ if r.language = l ∧ r.predicate = none ∧ r.subject = none ∧
-    r.Selects a then some r.position else none).toFinset
-
--- §§3–4, the sentences of each language
-theorem typesWith_italian_be : Language.italian.typesWith .be =
-    {.changeOfLocation, .changeOfState, .continuationOfState, .existenceOfState} := by
-  decide
-
-theorem typesWith_italian_have : Language.italian.typesWith .have =
-    {.existenceOfState, .uncontrolledProcess, .motionalProcess, .nonmotionalProcess} := by
-  decide
-
-theorem typesWith_french_be : Language.french.typesWith .be =
-    {.changeOfLocation, .changeOfState, .continuationOfState} := by
-  decide
-
-theorem typesWith_french_have : Language.french.typesWith .have =
-    {.changeOfState, .continuationOfState, .existenceOfState, .motionalProcess,
-      .nonmotionalProcess} := by
-  decide
-
-theorem typesWith_dutch_be : Language.dutch.typesWith .be =
-    {.changeOfLocation, .changeOfState, .continuationOfState, .existenceOfState} := by
-  decide
-
-theorem typesWith_dutch_have : Language.dutch.typesWith .have =
-    {.continuationOfState, .existenceOfState, .motionalProcess, .nonmotionalProcess} := by
-  decide
-
-theorem typesWith_german_be : Language.german.typesWith .be =
-    {.changeOfLocation, .changeOfState, .continuationOfState, .existenceOfState,
-      .motionalProcess} := by
-  decide
-
-theorem typesWith_german_have : Language.german.typesWith .have =
-    {.continuationOfState, .existenceOfState, .motionalProcess, .nonmotionalProcess} := by
-  decide
+  ({x : Example | x.In l ∧ x.predicate = none ∧ x.subject = none ∧ x.Selects a} :
+    Finset Example).biUnion (·.position?.toFinset)
 
 /-- Along the types a language attests, its *be* types form a lower set and its *have* types an
 upper set. -/
@@ -235,11 +208,7 @@ theorem typesWith_ordered (l : Language) :
     AntitoneOn (· ∈ l.typesWith .be) ↑(l.typesWith .be ∪ l.typesWith .have) ∧
       MonotoneOn (· ∈ l.typesWith .have) ↑(l.typesWith .be ∪ l.typesWith .have) := by
   simp only [AntitoneOn, MonotoneOn, Finset.mem_coe, le_Prop_eq]
-  cases l <;>
-    simp only [typesWith_italian_be, typesWith_italian_have, typesWith_french_be,
-      typesWith_french_have, typesWith_dutch_be, typesWith_dutch_have, typesWith_german_be,
-      typesWith_german_have] <;>
-    exact ⟨by decide, by decide⟩
+  refine ⟨?_, ?_⟩ <;> cases l <;> decide
 
 /-- A language whose *have* types form an upper set of its attested types, and whose verbs of
 change of location admit *have*, takes *have* in every type in which it takes *be*. -/
@@ -255,22 +224,22 @@ theorem subset_of_nonmotionalProcess_mem {B H : Set AuxiliarySelectionHierarchy}
 -- §3.4, (20) against (21)
 theorem italian_varies :
     Language.italian.typesWith .be ∩ Language.italian.typesWith .have = {.existenceOfState} := by
-  rw [typesWith_italian_be, typesWith_italian_have]; decide
+  decide
 
 -- §3.2, (12) against (13); §3.3, (19a) against (16)
 theorem french_varies : Language.french.typesWith .be ∩ Language.french.typesWith .have =
     {.changeOfState, .continuationOfState} := by
-  rw [typesWith_french_be, typesWith_french_have]; decide
+  decide
 
 -- (18), (19b) and (24)
 theorem dutch_varies : Language.dutch.typesWith .be ∩ Language.dutch.typesWith .have =
     {.continuationOfState, .existenceOfState} := by
-  rw [typesWith_dutch_be, typesWith_dutch_have]; decide
+  decide
 
 -- (17), (19c); (23), (25a); (38) against (40a)
 theorem german_varies : Language.german.typesWith .be ∩ Language.german.typesWith .have =
     {.continuationOfState, .existenceOfState, .motionalProcess} := by
-  rw [typesWith_german_be, typesWith_german_have]; decide
+  decide
 
 -- §6: "the cutoff point cannot be identical in all languages"
 theorem italian_french_disjoint :
@@ -278,28 +247,39 @@ theorem italian_french_disjoint :
       (Language.french.typesWith .be ∩ Language.french.typesWith .have) := by
   rw [italian_varies, french_varies]; decide
 
--- §6
-theorem italian_cutoff :
-    upperBounds ↑(Language.italian.typesWith .be) ∩
-      lowerBounds ↑(Language.italian.typesWith .have) =
-        {AuxiliarySelectionHierarchy.existenceOfState} := by
-  rw [Finset.isLUB_sup_id.upperBounds_eq, Finset.isGLB_inf_id.lowerBounds_eq, Set.Ici_inter_Iic,
-    typesWith_italian_be, typesWith_italian_have]
-  exact Set.Icc_self _
+/-- §6: the cutoff points of a language, the types that bound its *be* types above and its *have*
+types below. -/
+def Language.cutoffs (l : Language) : Set AuxiliarySelectionHierarchy :=
+  upperBounds ↑(l.typesWith .be) ∩ lowerBounds ↑(l.typesWith .have)
+
+theorem cutoffs_eq_Icc (l : Language) :
+    l.cutoffs = Set.Icc ((l.typesWith .be).sup id) ((l.typesWith .have).inf id) := by
+  rw [Language.cutoffs, Finset.isLUB_sup_id.upperBounds_eq, Finset.isGLB_inf_id.lowerBounds_eq,
+    Set.Ici_inter_Iic]
+
+-- §6, (20) against (37), (41), (44)–(47) and (50)
+theorem cutoffs_italian : Language.italian.cutoffs = {.existenceOfState} := by
+  rw [cutoffs_eq_Icc, show (Language.italian.typesWith .be).sup id = .existenceOfState by decide,
+    show (Language.italian.typesWith .have).inf id = .existenceOfState by decide, Set.Icc_self]
+
+-- §6, fn. 17
+theorem cutoffs_eq_empty (l : Language) (hl : l ≠ .italian) : l.cutoffs = ∅ := by
+  rw [cutoffs_eq_Icc, Set.Icc_eq_empty_iff]
+  revert l; decide
 
 /-! ### Directional phrases -/
 
 -- §4.3, (39), (40) against (42b)
-theorem directional_motionalProcess : ∀ r ∈ rows, r.position = .motionalProcess →
-    r.predicate = some .telicized →
-    (r.language = .dutch ∨ r.language = .german → r.Selects .be) ∧
-      (r.language = .french → r.Selects .have) := by
+theorem directional_motionalProcess : ∀ x : Example, x.position? = some .motionalProcess →
+    x.predicate = some .telicized →
+    (x.In .dutch ∨ x.In .german → x.Selects .be) ∧ (x.In .french → x.Selects .have) := by
   decide
 
 -- §4.3, (41b) against (41d): *correre* 'run' moves to *essere*, *nuotare* 'swim' does not
 theorem italian_directional_split :
-    (∃ r ∈ rows, r.verb = .correre ∧ r.predicate = some .telicized ∧ r.Selects .be) ∧
-      ∃ r ∈ rows, r.verb = .nuotare ∧ r.predicate = some .telicized ∧ r.Selects .have := by
+    (∃ x : Example, x.verb? = some .correre ∧ x.predicate = some .telicized ∧ x.Selects .be) ∧
+      ∃ x : Example, x.verb? = some .nuotare ∧ x.predicate = some .telicized ∧
+        x.Selects .have := by
   decide
 
 /-! ### The fragments -/
@@ -357,8 +337,8 @@ def Examples.Lexeme.entry? : Examples.Lexeme → Option Verb
   | .tanzen => some German.Verbs.tanzen.toVerb
   | _ => none
 
--- each entry is written as the row names the participle's lexeme
-theorem entry?_form : ∀ e ∈ Examples.all, ∀ s ∈ e.spans, ∀ l ∈ Examples.lexeme? s,
+-- each entry is written as the example names the lexeme of its span
+theorem entry?_form : ∀ x : Example, ∀ s ∈ x.datum.spans, ∀ l ∈ Examples.lexeme? s,
     ∀ v ∈ l.entry?, s.lexeme = some v.form := by
   decide +kernel
 
@@ -367,11 +347,11 @@ theorem entry?_intransitive : ∀ l : Examples.Lexeme, ∀ v ∈ l.entry?,
     (v.valency.frames.headD .intransitive).IsIntransitive := by
   decide
 
--- (21a), the attested *avere* with *bastare*, is the one sentence that selects an auxiliary its
+-- (21a), the attested *avere* with *bastare*, is the one example that selects an auxiliary its
 -- grammar does not give its verb
 theorem selects_not_mem_perfectAuxiliaries :
-    (rows.filter fun r ↦ ∃ v ∈ r.verb.entry?, ∃ a, r.Selects a ∧
-      v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries).map (·.verb) = [.bastare] := by
+    ({x : Example | ∃ v ∈ x.verb?.bind (·.entry?), ∃ a, x.Selects a ∧
+      v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries} : Finset Example) = {.ex21a} := by
   decide +kernel
 
 end Sorace2000
