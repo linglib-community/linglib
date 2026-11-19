@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Fragments.Farsi.Phonology

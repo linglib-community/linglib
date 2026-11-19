@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-public import Linglib.Phonology.HarmonicGrammar.Expressivity
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.OfRanking
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Phonology.HarmonicGrammar.Noise
 public import Linglib.Data.Statistics.CoetzeePater2011
 

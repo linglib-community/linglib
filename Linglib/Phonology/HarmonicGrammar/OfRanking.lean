@@ -3,13 +3,13 @@ module
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.Realization
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Core.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
-# Expressivity of OT, Harmonic Grammar, and MaxEnt
+# The weights of a ranking
 
-This file compares Optimality Theory (OT), Harmonic Grammar (HG) and MaxEnt grammar. With
+A ranking of Optimality Theory (OT) can be simulated by Harmonic Grammar (HG) weights. With
 exponentially separated weights, the harmony order agrees with OT's lexicographic comparison on
 violation profiles bounded by the separation. So a problem that some ranking realizes [is
 realized](##OptimalityTheory.RealizationProblem.IsOTRealizable.isHGRealizable) by a non-negative

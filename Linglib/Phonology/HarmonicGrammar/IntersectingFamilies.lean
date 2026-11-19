@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Mathlib.LinearAlgebra.Pi
 
 /-!

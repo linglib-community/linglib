@@ -654,7 +654,6 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints

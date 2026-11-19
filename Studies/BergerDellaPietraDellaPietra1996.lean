@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Likelihood
 
 /-!
 # Berger, Della Pietra and Della Pietra (1996): A Maximum Entropy Approach to Natural Language Processing

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.Data.Fin.VecNotation

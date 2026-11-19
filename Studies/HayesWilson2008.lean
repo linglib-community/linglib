@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Likelihood
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Data.Examples.HayesWilson2008
 public import Linglib.Data.Examples.Readers

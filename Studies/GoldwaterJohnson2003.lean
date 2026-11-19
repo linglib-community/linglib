@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.Expressivity
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.OfRanking
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Likelihood
 public import Mathlib.Analysis.Convex.SpecificFunctions.Deriv
 public import Linglib.Data.Examples.GoldwaterJohnson2003
 public import Linglib.Data.Examples.Readers
