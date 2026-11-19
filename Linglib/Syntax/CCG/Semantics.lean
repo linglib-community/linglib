@@ -14,7 +14,8 @@ with a logical form of the type of its category. The meaning of a derivation is 
 the meanings of its leaves: application applies a function to its argument, and composition
 composes two functions beneath the arguments the rule passes on. Composition of functions is
 associative, so [derivations that differ only in their bracketing have the same
-meaning](##CCG.Derivation.interp_fcomp_assoc), the *spurious ambiguity* of CCG.
+meaning](##CCG.Derivation.interp_fcomp_assoc), the *spurious ambiguity* of CCG. The identity
+behind it, at every degree, is `composeUnder_comp`.
 
 ## Implementation notes
 
@@ -84,6 +85,18 @@ def composeUnder (τ : α → Ty B) {D : B → Type} : (β : List (Cat.Arg α)) 
   | ⟨s, m, z⟩ :: β, x, y, f, g =>
       composeUnder τ β (x := .slash s x m z) (y := .slash s y m z) (f ∘ ·) g
 
+/-- Composing beneath arguments is associative: composing `f` after `g` and then with `h` beneath
+`γ` is composing `f` with the composition of `g` and `h` beneath `γ`. -/
+theorem composeUnder_comp (τ : α → Ty B) {D : B → Type} :
+    ∀ (γ : List (Cat.Arg α)) {x y z : Cat α} (f : (y.toTy τ ⇒ x.toTy τ).Dom D)
+      (g : (z.toTy τ ⇒ y.toTy τ).Dom D) (h : ((z.pushArgs γ).toTy τ).Dom D),
+      composeUnder τ γ (x := x) (y := z) (f ∘ g) h =
+        composeUnder τ γ f (composeUnder τ γ (x := y) (y := z) g h)
+  | [], _, _, _, _, _, _ => rfl
+  | ⟨s, m, w⟩ :: γ, x, y, z, f, g, h =>
+      composeUnder_comp τ γ (x := .slash s x m w) (y := .slash s y m w) (z := .slash s z m w)
+        (f ∘ ·) (g ∘ ·) h
+
 /-- `r.sem τ` is the meaning of the rule `r` as an operation on its daughters' meanings, the
 primary composed with the secondary beneath the arguments the rule passes on. -/
 def Rule.sem (τ : α → Ty B) {D : B → Type} {R : RuleSystem α} : {l r c : Cat α} → Rule R l r c →
@@ -110,15 +123,28 @@ def Derivation.toDeriv {W : Cat α → Type*} {R : RuleSystem α} : {c : Cat α}
 
 section Interp
 
-variable {R : RuleSystem α} {τ : α → Ty B} {K : Ty B → Type*} {D : B → Type}
-  (I : ∀ {ty : Ty B}, K ty → ty.Dom D)
+variable {W : Cat α → Type*} {R : RuleSystem α} {τ : α → Ty B} {K : Ty B → Type*} {D : B → Type}
+
+/-- `d.realize τ ρ` is the meaning of the derivation `d` when `ρ` gives the meanings of its
+leaves: the value of `d` as a derivation of the grammar of its rules. -/
+def Derivation.realize (τ : α → Ty B) (ρ : ∀ c, W c → (c.toTy τ).Dom D) {c : Cat α}
+    (d : Derivation W R c) : (c.toTy τ).Dom D :=
+  d.toDeriv.realize (inferInstance : (grammar R).Structure fun c ↦ (c.toTy τ).Dom D)
+    fun {c} w ↦ ρ c w
+
+@[simp] theorem Derivation.realize_lex (ρ : ∀ c, W c → (c.toTy τ).Dom D) (c : Cat α) (w : W c) :
+    (Derivation.lex c w : Derivation W R c).realize τ ρ = ρ c w := rfl
+
+@[simp] theorem Derivation.realize_node (ρ : ∀ c, W c → (c.toTy τ).Dom D) {l r c : Cat α}
+    (ru : Rule R l r c) (d₁ : Derivation W R l) (d₂ : Derivation W R r) :
+    (Derivation.node ru d₁ d₂).realize τ ρ = ru.sem τ (d₁.realize τ ρ) (d₂.realize τ ρ) := rfl
+
+variable (I : ∀ {ty : Ty B}, K ty → ty.Dom D)
 
 /-- `d.interp I` is the meaning of the derivation `d` over lexical entries when the constants
-denote by `I`: the value of `d` as a derivation of the grammar of its rules, a leaf denoting the
-value of its logical form. -/
+denote by `I`, a leaf denoting the value of its logical form. -/
 def Derivation.interp {c : Cat α} (d : Derivation (LexEntry T τ K) R c) : (c.toTy τ).Dom D :=
-  d.toDeriv.realize (inferInstance : (grammar R).Structure fun c ↦ (c.toTy τ).Dom D)
-    fun e ↦ e.lf I
+  d.realize τ fun _ e ↦ e.lf I
 
 @[simp] theorem Derivation.interp_lex (c : Cat α) (e : LexEntry T τ K c) :
     (Derivation.lex c e : Derivation (LexEntry T τ K) R c).interp I = e.lf I := rfl
