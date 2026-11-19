@@ -65,7 +65,7 @@ theorem showsInitialPoint_iff (v : ViewpointType) :
     ShowsInitialPoint v ↔ v = .perfective ∨ v = .neutral := by
   refine (forall_imp_iff (D := IntervalAlgebra.startsWithin⁻¹)
     (P := @fun _ _ tt tsit ↦ tsit.fst ∈ tt) (fun _ _ ↦ by simp) v).trans ?_
-  cases v <;> decide +kernel
+  revert v; decide +kernel
 
 /-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
@@ -75,7 +75,7 @@ theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .per
   · rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_ofPred]
     simp [Allen.relation, Allen.ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le,
       compare_ge_iff_ge]
-  · cases v <;> decide +kernel
+  · revert v; decide +kernel
 
 /-- Closure: the perfective and the perfect present the situation as closed. -/
 theorem presentsClosed_iff (v : ViewpointType) :
@@ -84,7 +84,7 @@ theorem presentsClosed_iff (v : ViewpointType) :
     (P := @fun _ _ tt tsit ↦ tsit.snd ≤ tt.snd) (fun _ _ ↦ ?_) v).trans ?_
   · rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_ofPred]
     simp [Allen.relation, Allen.ofEndpoints, compare_ge_iff_ge]
-  · cases v <;> decide +kernel
+  · revert v; decide +kernel
 
 /-- Preliminary stages: only the imperfective places the topic time strictly inside the
 situation. -/
@@ -92,7 +92,7 @@ theorem focusesPreliminaryStages_iff (v : ViewpointType) :
     FocusesPreliminaryStages v ↔ v = .imperfective := by
   refine (forall_imp_iff (D := IntervalAlgebra.lt) (P := @fun _ _ tt tsit ↦ tt < tsit)
     (fun _ _ ↦ by simp) v).trans ?_
-  cases v <;> decide +kernel
+  revert v; decide +kernel
 
 /-- The perfective makes both endpoints visible and presents the situation as closed,
 section 4.2.1. -/

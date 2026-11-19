@@ -193,6 +193,24 @@ theorem realizes_simplePresent_iff : Realizes .simplePresent (.pure t₀) [x] �
 theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.fst := by
   simp [Realizes, show chain .future = [.posterior] from rfl, IntervalAlgebra.HoldsAlong, Link.cell]
 
+variable {b to₂ to₃ ts : NonemptyInterval T}
+
+theorem realizes_conditional_iff :
+    Realizes conditional b [to₂, ts] ↔ to₂.snd < b.fst ∧ to₂.snd ≤ ts.fst := by
+  simp [Realizes, show chain conditional = [.past, .posterior] from rfl,
+    IntervalAlgebra.HoldsAlong, Link.cell, NonemptyInterval.Precedes]
+
+theorem realizes_futurePerfect_iff :
+    Realizes .futurePerfect b [to₂, ts] ↔ b.snd ≤ to₂.fst ∧ ts.snd ≤ to₂.fst := by
+  simp [Realizes, show chain .futurePerfect = [.posterior, .anterior] from rfl,
+    IntervalAlgebra.HoldsAlong, Link.cell]
+
+theorem realizes_conditionalPerfect_iff :
+    Realizes conditionalPerfect b [to₂, to₃, ts] ↔
+      to₂.snd < b.fst ∧ to₂.snd ≤ to₃.fst ∧ ts.snd ≤ to₃.fst := by
+  simp [Realizes, show chain conditionalPerfect = [.past, .posterior, .anterior] from rfl,
+    IntervalAlgebra.HoldsAlong, Link.cell, NonemptyInterval.Precedes]
+
 -- p. 338
 theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
     Realizes .presentPerfect (.pure t₀) [x] ∧ ¬ Realizes .simplePast (.pure t₀) [x] := by
@@ -218,15 +236,15 @@ theorem vague :
         ts.position (.pure 0) = o) ∧
       (∃ to₂ to₃ ts : NonemptyInterval ℤ, Realizes conditionalPerfect (.pure 0) [to₂, to₃, ts] ∧
         ts.position (.pure 0) = o)
-  | .lt => ⟨⟨.pure (-3), .pure (-1), by decide +kernel, by decide⟩,
-      ⟨.pure 3, .pure (-1), by decide +kernel, by decide⟩,
-      ⟨.pure (-6), .pure 3, .pure (-1), by decide +kernel, by decide⟩⟩
-  | .eq => ⟨⟨.pure (-3), .pure 0, by decide +kernel, by decide⟩,
-      ⟨.pure 3, .pure 0, by decide +kernel, by decide⟩,
-      ⟨.pure (-6), .pure 3, .pure 0, by decide +kernel, by decide⟩⟩
-  | .gt => ⟨⟨.pure (-3), .pure 1, by decide +kernel, by decide⟩,
-      ⟨.pure 3, .pure 1, by decide +kernel, by decide⟩,
-      ⟨.pure (-6), .pure 3, .pure 1, by decide +kernel, by decide⟩⟩
+  | .lt => ⟨⟨.pure (-3), .pure (-1), realizes_conditional_iff.2 (by decide), by decide⟩,
+      ⟨.pure 3, .pure (-1), realizes_futurePerfect_iff.2 (by decide), by decide⟩,
+      ⟨.pure (-6), .pure 3, .pure (-1), realizes_conditionalPerfect_iff.2 (by decide), by decide⟩⟩
+  | .eq => ⟨⟨.pure (-3), .pure 0, realizes_conditional_iff.2 (by decide), by decide⟩,
+      ⟨.pure 3, .pure 0, realizes_futurePerfect_iff.2 (by decide), by decide⟩,
+      ⟨.pure (-6), .pure 3, .pure 0, realizes_conditionalPerfect_iff.2 (by decide), by decide⟩⟩
+  | .gt => ⟨⟨.pure (-3), .pure 1, realizes_conditional_iff.2 (by decide), by decide⟩,
+      ⟨.pure 3, .pure 1, realizes_futurePerfect_iff.2 (by decide), by decide⟩,
+      ⟨.pure (-6), .pure 3, .pure 1, realizes_conditionalPerfect_iff.2 (by decide), by decide⟩⟩
 
 /-- Projected onto [reichenbach-1947]'s points, the conditional realizes every posterior-past order
 and the future perfect every anterior-future order (§5.1.2.2). -/
@@ -237,7 +255,9 @@ theorem covers_retrogressive :
     ∀ x ∈ Reichenbach1947.structures, x.1 = .gt → x.2.1 = .lt →
       ∃ s r e : Fin 3, Realizes .futurePerfect (.pure s) [.pure r, .pure e] ∧
         (compare r s, compare e r, compare e s) = x := by
-  refine ⟨?_, ?_⟩ <;> decide +kernel
+  simp only [realizes_conditional_iff, realizes_futurePerfect_iff, NonemptyInterval.pure_fst,
+    NonemptyInterval.pure_snd]
+  refine ⟨?_, ?_⟩ <;> decide
 
 end Realizations
 

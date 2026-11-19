@@ -1,5 +1,7 @@
 module
 
+public import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Aspect: basic definitions
 
@@ -106,7 +108,7 @@ inductive ViewpointType
   | perfect
   | prospective
   | neutral
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The opposition of perfective and imperfective is viewpoint aspect at its coarsest, the right
 granularity where the fact at issue is that the perfective requires actualization and the

@@ -131,7 +131,13 @@ theorem usedTo_eq_image : usedTo P w = (IntervalAlgebra.toSetRel IntervalAlgebra
 perspective time, and may have ended at any time after that. -/
 theorem comp_retro_imperfective :
     IntervalAlgebra.le * IntervalAlgebra.precedes⁻¹ = .ofPred (·.fstFst = .gt) := by
-  decide +kernel
+  refine IntervalAlgebra.eq_of_toSetRel_rat (Set.ext fun ⟨k, i⟩ ↦ ?_)
+  rw [IntervalAlgebra.toSetRel_mul]
+  simp only [SetRel.mem_comp, IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_inv,
+    Allen.inv_relation, IntervalAlgebra.relation_mem_le, IntervalAlgebra.relation_mem_precedes,
+    IntervalAlgebra.mem_ofPred, Allen.toComparisons_relation, Allen.ofEndpoints, compare_gt_iff_gt]
+  exact ⟨fun ⟨j, hjk, hji⟩ ↦ (NonemptyInterval.le_def.1 hjk).1.trans_lt (j.fst_le_snd.trans_lt hji),
+    fun h ↦ ⟨.pure k.fst, NonemptyInterval.le_def.2 ⟨le_rfl, k.fst_le_snd⟩, h⟩⟩
 
 /-- *Used to* says only that a state began before the perspective time, which the state may
 outlast, so the retrospectivity of (28) is an implicature, cancelled in (30) and (31). -/

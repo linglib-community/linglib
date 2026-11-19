@@ -475,7 +475,8 @@ is the law of relations it names. -/
   rw [mem_toSetRel, relation_mem_one]
   exact eq_comm
 
-private theorem eq_of_toSetRel_rat
+/-- Two elements are equal when they relate the same intervals of the rationals. -/
+theorem eq_of_toSetRel_rat
     (h : (toSetRel C : SetRel (NonemptyInterval ℚ) _) = toSetRel D) : C = D :=
   toSetRel_injective ((Fin.valOrderEmb 4).trans Nat.castOrderEmbedding) h
 
