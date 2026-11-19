@@ -171,8 +171,7 @@ theorem composeUnder_append {B : Type} {D : B → Type} (τ : α → Ty B) (s : 
 
 /-! ### Existence -/
 
-/-- A derivation of one category is a derivation of an equal category, with the same shape,
-leaves and meaning. -/
+-- a derivation of one category is one of an equal category, with the same shape, leaves, meaning
 private theorem exists_cast {c c' : Cat α} (h : c = c') (d : Derivation W R c) :
     ∃ d' : Derivation W R c', (IsNormal d' ↔ IsNormal d) ∧ leaves d' = leaves d ∧
       ∀ {B : Type} (τ : α → Ty B) (D : B → Type) (ρ : ∀ c, W c → (c.toTy τ).Dom D),
