@@ -47,10 +47,9 @@ A directional phrase moves Dutch and German verbs of motion to *be* and leaves F
 
 An example marks its auxiliary and its participle, each with the lexeme it is a form of, and the
 study reads it through the typed readers of `Examples.Example`. A verb with an entry in its
-language's fragment is mapped to it. Where the paper accepts an auxiliary that the reference
-grammar of the fragment does not give the verb, the verb is never at either end of the hierarchy
-(`position_mem_Ioo_of_not_mem_perfectAuxiliaries`): the grammars record the standard auxiliary,
-and the variation they leave out is the variation the hierarchy places between the core types.
+language's fragment is mapped to it. Where the paper accepts an auxiliary that the fragment's entry
+does not record for the verb, the verb is at neither end of the hierarchy
+(`position_mem_Ioo_of_not_mem_perfectAuxiliaries`).
 
 ## Implementation notes
 
@@ -62,8 +61,8 @@ and the variation they leave out is the variation the hierarchy places between t
   questionable, `?*` and `*?` unacceptable, `*` ungrammatical.
 * A sentence printed with one auxiliary selects it where it is acceptable, as the paper prints such
   sentences to show the auxiliary a verb takes; a sentence printed with both and judged alike
-  selects neither, and an attested example, which shows that an auxiliary is possible but not
-  that another is not, selects nothing. The boundary is read off the sentences that keep their type's default: an
+  selects neither, and an example attested in a text or cited from a grammar, which shows that an
+  auxiliary is possible but not that another is not, selects nothing. The boundary is read off the sentences that keep their type's default: an
   example records a phrase that changes the telicity of the predicate, or a subject whose
   agentivity departs from the default, where the paper points to one.
 * Omitted examples: frozen *be* in Romanian and English, which have no choice of auxiliary; the
@@ -163,10 +162,10 @@ instance (x : Example) (l : Language) : Decidable (x.In l) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The example selects `a` when the paper judges it acceptable with `a` and with no other
-auxiliary it prints, and does not merely attest it. -/
+auxiliary it prints, and does not merely attest it or cite it from a grammar. -/
 def Selects (x : Example) (a : PerfectAuxiliary) : Prop :=
-  x.datum.method ≠ some .corpus ∧ x.judgment? a = some .acceptable ∧
-    ∀ b ≠ a, x.judgment? b ≠ some .acceptable
+  x.datum.method ≠ some .corpus ∧ x.datum.method ≠ some .description ∧
+    x.judgment? a = some .acceptable ∧ ∀ b ≠ a, x.judgment? b ≠ some .acceptable
 
 instance (x : Example) (a : PerfectAuxiliary) : Decidable (x.Selects a) := by
   unfold Selects; infer_instance
@@ -354,15 +353,15 @@ theorem entry?_intransitive : ∀ l : Examples.Lexeme, ∀ v ∈ l.entry?,
     (v.valency.frames.headD .intransitive).IsIntransitive := by
   decide
 
--- (8a), (11), (21a), (23c), (47a): the paper accepts an auxiliary the grammar does not give
+-- (8a), (11), (21a), (23c), (47a): the paper accepts an auxiliary the fragment's entry lacks
 theorem acceptable_not_mem_perfectAuxiliaries :
     ({x : Example | ∃ v ∈ x.verb?.bind (·.entry?), ∃ a, x.judgment? a = some .acceptable ∧
       v.perfectAuxiliaries.Nonempty ∧ a ∉ v.perfectAuxiliaries} : Finset Example) =
       {.ex8a, .ex11, .ex21a, .ex23c, .ex47a} := by
   decide +kernel
 
-/-- Where the paper accepts an auxiliary that a reference grammar does not give a verb, the verb is
-at neither end of the hierarchy. -/
+/-- Where the paper accepts an auxiliary that the fragment's entry does not record for a verb, the
+verb is at neither end of the hierarchy. -/
 theorem position_mem_Ioo_of_not_mem_perfectAuxiliaries : ∀ x : Example,
     ∀ v ∈ x.verb?.bind (·.entry?), ∀ a, x.judgment? a = some .acceptable →
       v.perfectAuxiliaries.Nonempty → a ∉ v.perfectAuxiliaries →
