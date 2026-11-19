@@ -18,25 +18,10 @@ The standard normal distribution function `Φ` is the cdf of mathlib's `gaussian
 everything about it here is an instance of a general fact about cdfs from
 `Linglib/Core/Probability/CDF.lean`. A nondegenerate Gaussian has no atoms, charges every nonempty
 open set, and is invariant under negation when centred, so `Φ` is continuous, strictly monotone and
-satisfies `Φ (-x) = 1 - Φ x`. It is therefore an order isomorphism from `ℝ` onto `(0, 1)`, and the
-probit is its inverse, extended by `0` outside `(0, 1)` as `Real.log` is extended outside `(0, ∞)`.
-
-## Main definitions
-
-* `ProbabilityTheory.normalCDF`: the standard normal distribution function `Φ`.
-* `ProbabilityTheory.probit`: the standard normal quantile function `Φ⁻¹`.
-
-## Main results
-
-* `ProbabilityTheory.cdf_gaussianReal_eq`: standardization,
-  `cdf (gaussianReal μ v) x = Φ ((x - μ) / √v)`.
-* `ProbabilityTheory.gaussianReal_real_Ioi`: the upper tail of a Gaussian is `Φ ((μ - x) / √v)`.
-* `ProbabilityTheory.probit_one_sub`: `Φ⁻¹ (1 - p) = -Φ⁻¹ p`, for every real `p`.
-* `ProbabilityTheory.gaussianPDFReal_div_gaussianPDFReal`: the ratio of two Gaussian densities of a
-  common variance is the exponential of an affine function.
-* `ProbabilityTheory.map_pi_gaussianReal_sum_mul`, `variance_pi_gaussianReal_sum_mul`,
-  `covariance_pi_gaussianReal_sum_mul`: a linear combination of independent Gaussians is Gaussian,
-  with the variance and covariances read off the coefficients.
+satisfies `Φ (-x) = 1 - Φ x`, and the probit, its quantile function, inverts it on `(0, 1)`. The
+cdf of any nondegenerate Gaussian is [`Φ` at the standard
+score](##ProbabilityTheory.cdf_gaussianReal_eq), and [a linear combination of independent Gaussians
+is Gaussian](##ProbabilityTheory.map_pi_gaussianReal_sum_mul).
 
 ## Implementation notes
 
@@ -137,47 +122,35 @@ theorem gaussianReal_real_Ioi (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) 
 
 /-! ### The probit -/
 
-/-- The probit, the quantile function `Φ⁻¹` of the standard normal, equal to the inverse of
-`normalCDF` on `(0, 1)` and to `0` elsewhere. The extension by `0` makes `probit_one_sub` hold for
-every real argument. -/
+/-- The probit `Φ⁻¹`, the quantile function of the standard normal. It is `0` outside `(0, 1)`. -/
 noncomputable def probit (p : ℝ) : ℝ :=
-  if hp : p ∈ Ioo 0 1 then (cdfOrderIso (gaussianReal 0 1)).symm ⟨p, hp⟩ else 0
-
-theorem probit_of_mem (hp : p ∈ Ioo 0 1) :
-    probit p = (cdfOrderIso (gaussianReal 0 1)).symm ⟨p, hp⟩ :=
-  dite_eq_left hp
+  quantile (gaussianReal 0 1) p
 
 theorem probit_of_notMem (hp : p ∉ Ioo 0 1) : probit p = 0 :=
-  dite_eq_right hp
+  quantile_of_notMem _ hp
 
-theorem normalCDF_probit (hp : p ∈ Ioo 0 1) : normalCDF (probit p) = p := by
-  rw [probit_of_mem hp, normalCDF, ← coe_cdfOrderIso_apply _, OrderIso.apply_symm_apply]
+theorem normalCDF_probit (hp : p ∈ Ioo 0 1) : normalCDF (probit p) = p :=
+  cdf_quantile _ hp
 
 @[simp]
-theorem probit_normalCDF (x : ℝ) : probit (normalCDF x) = x := by
-  rw [probit_of_mem (normalCDF_mem_Ioo x)]
-  exact (cdfOrderIso (gaussianReal 0 1)).symm_apply_apply x
+theorem probit_normalCDF (x : ℝ) : probit (normalCDF x) = x :=
+  quantile_cdf _ x
 
 theorem probit_lt_probit_iff (hp : p ∈ Ioo 0 1) (hq : q ∈ Ioo 0 1) :
-    probit p < probit q ↔ p < q := by
-  rw [probit_of_mem hp, probit_of_mem hq, OrderIso.lt_iff_lt, Subtype.mk_lt_mk]
+    probit p < probit q ↔ p < q :=
+  quantile_lt_quantile_iff _ hp hq
 
 theorem probit_le_probit_iff (hp : p ∈ Ioo 0 1) (hq : q ∈ Ioo 0 1) :
-    probit p ≤ probit q ↔ p ≤ q := by
-  rw [probit_of_mem hp, probit_of_mem hq, OrderIso.le_iff_le, Subtype.mk_le_mk]
+    probit p ≤ probit q ↔ p ≤ q :=
+  quantile_le_quantile_iff _ hp hq
 
 @[simp]
-theorem probit_inv_two : probit 2⁻¹ = 0 := by
-  rw [← normalCDF_zero, probit_normalCDF]
+theorem probit_inv_two : probit 2⁻¹ = 0 :=
+  quantile_inv_two _
 
-/-- The probit is odd about `1 / 2`. Outside `(0, 1)` both sides are the junk value `0`. -/
-theorem probit_one_sub (p : ℝ) : probit (1 - p) = -probit p := by
-  by_cases hp : p ∈ Ioo 0 1
-  · have hp' : 1 - p ∈ Ioo 0 1 := ⟨sub_pos.2 hp.2, sub_lt_self 1 hp.1⟩
-    apply normalCDF_injective
-    rw [normalCDF_probit hp', normalCDF_neg, normalCDF_probit hp]
-  · have hp' : 1 - p ∉ Ioo 0 1 := fun h ↦ hp ⟨by linarith [h.2], by linarith [h.1]⟩
-    rw [probit_of_notMem hp, probit_of_notMem hp', neg_zero]
+/-- The probit is odd about `1 / 2`. Outside `(0, 1)` both sides are `0`. -/
+theorem probit_one_sub (p : ℝ) : probit (1 - p) = -probit p :=
+  quantile_one_sub _ p
 
 /-! ### Densities -/
 
