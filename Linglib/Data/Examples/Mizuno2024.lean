@@ -59,7 +59,7 @@ def ja3 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("construction", "counterfactual"), ("strategy", "X-marking")] }
 
 def ja4a : Datum :=
   { id := "mizuno2024_ja4a"
@@ -161,13 +161,15 @@ def all : List Datum := [en1a, en2, ja3, ja4a, ja7a, ma13a, en8, ja9, ma11]
 inductive Construction where
   /-- anderson: an Anderson conditional, whose consequent is an observed fact (§2) -/
   | anderson
+  /-- counterfactual: a conditional whose antecedent is taken to be false (§3.1) -/
+  | counterfactual
   /-- flv: a future-less-vivid conditional (§4.2) -/
   | flv
   deriving DecidableEq, Repr, Fintype
 
 /-- The value a row records under `construction`. -/
 def construction (e : Datum) : Option Construction :=
-  e.parse? "construction" [("anderson", .anderson), ("flv", .flv)]
+  e.parse? "construction" [("anderson", .anderson), ("counterfactual", .counterfactual), ("flv", .flv)]
 
 /-- The marking of the row's primary text, in the terms of von Fintel and Iatridou. -/
 inductive Strategy where

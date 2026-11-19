@@ -5,6 +5,8 @@
      "levels": [
        {"name": "anderson", "label": "anderson",
         "doc": "an Anderson conditional, whose consequent is an observed fact (§2)"},
+       {"name": "counterfactual", "label": "counterfactual",
+        "doc": "a conditional whose antecedent is taken to be false (§3.1)"},
        {"name": "flv", "label": "flv", "doc": "a future-less-vivid conditional (§4.2)"}]},
     {"key": "strategy", "lean": "strategy", "type": "Strategy",
      "doc": "The marking of the row's primary text, in the terms of von Fintel and Iatridou.",
@@ -68,7 +70,10 @@
       "judgment": "acceptable",
       "contrasts": [],
       "readings": [],
-      "paperFeatures": [],
+      "paperFeatures": [
+        ["construction", "counterfactual"],
+        ["strategy", "X-marking"]
+      ],
       "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals.",
       "verified": "page-image"
     },
