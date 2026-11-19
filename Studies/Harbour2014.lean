@@ -202,7 +202,7 @@ theorem not_additiveIn_band [Infinite α] {lo hi : ℕ} (hlo : 1 ≤ lo) (s : Fi
   have hcard : (u \ s).card = max lo (hi - s.card) := by
     rw [Finset.card_sdiff_of_subset hsu, hu]; omega
   have := (h (u \ s) ⟨by omega, by omega⟩).2
-  rw [Finset.sup_eq_union, Finset.union_sdiff_of_subset hsu, hu] at this
+  rw [Finset.union_sdiff_of_subset hsu, hu] at this
   omega
 
 -- (10), (11)
@@ -231,7 +231,7 @@ theorem not_additiveIn_atomize_nonempty [Nontrivial α] (s : Finset α) :
   obtain ⟨a, rfl⟩ := Finset.card_eq_one.mp ((key s).mp hs)
   obtain ⟨b, hb⟩ := exists_ne a
   have := (key _).mp (h {b} ((key _).mpr (Finset.card_singleton b)))
-  rw [Finset.sup_eq_union, Finset.singleton_union, Finset.card_pair hb.symm] at this
+  rw [Finset.singleton_union, Finset.card_pair hb.symm] at this
   omega
 
 end Additive
@@ -277,12 +277,12 @@ theorem additiveIn_firstPerson_iff [Infinite α] {i : α} {c : ℕ} (hc : 2 ≤ 
     have hiu : i ∉ u \ s := fun h ↦ (Finset.mem_sdiff.mp h).2 hi
     have := (h (insert i (u \ s)) ⟨Finset.mem_insert_self i _, by
       rw [Finset.card_insert_of_notMem hiu, Finset.card_sdiff_of_subset hsu]; omega⟩).2
-    rw [Finset.sup_eq_union, Finset.union_insert, Finset.union_sdiff_of_subset hsu,
+    rw [Finset.union_insert, Finset.union_sdiff_of_subset hsu,
       Finset.insert_eq_of_mem (hsu hi), hu] at this
     omega
   · rintro rfl
     refine ⟨⟨Finset.mem_singleton_self i, by simp; omega⟩, fun t ht ↦ ?_⟩
-    rwa [Finset.sup_eq_union, Finset.singleton_union, Finset.insert_eq_of_mem ht.1]
+    rwa [Finset.singleton_union, Finset.insert_eq_of_mem ht.1]
 
 /-- `{±additive}` cuts the first-person lattice nonconvexly (p. 212), so by (32), after
 [gardenfors-2004], `[±additive]` is never a language's sole number feature. -/
@@ -460,7 +460,7 @@ theorem atomsOf_mem (s : Strata) : atomsOf s.Mem = s.atomic.Mem := by
   | empty => simp [atomsOf, Mem, atomic]
   | point n =>
     by_cases h : n = 1 <;> simp [atomsOf, Mem, atomic, atom_iff_eq_one, h]
-    all_goals omega
+    omega
   | ray n =>
     by_cases h : n ≤ 1 <;> simp [atomsOf, Mem, atomic, atom_iff_eq_one, h]
     all_goals omega
@@ -471,7 +471,7 @@ theorem nonAtomsOf_mem (s : Strata) : nonAtomsOf s.Mem = s.nonAtomic.Mem := by
   | empty => simp [nonAtomsOf, Mem, nonAtomic]
   | point n =>
     by_cases h : n = 1 <;> simp [nonAtomsOf, Mem, nonAtomic, atom_iff_eq_one, h]
-    all_goals omega
+    omega
   | ray n => simp [nonAtomsOf, Mem, nonAtomic, atom_iff_eq_one]; omega
 
 theorem atomize_mem (s : Strata) : atomize s.Mem = s.minimal.Mem := by

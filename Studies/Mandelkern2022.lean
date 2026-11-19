@@ -648,7 +648,7 @@ theorem update_null_neg_indef_then_it (h : ∃ w, extension I F w ∩ extension 
       (neg (indef x (atom₁ F x) (atom₁ G x))))
       (iota x (top x) (atom₁ H x)) = ∅ := by
   cases isEmpty_or_nonempty E
-  · refine Set.subset_eq_empty (update_subset.trans fun i hi ↦ ?_) rfl
+  · refine Set.eq_empty_of_subset (update_subset.trans fun i hi ↦ ?_) rfl
     obtain ⟨⟨g', hg', -⟩, -⟩ := hi.2.2
     obtain ⟨a, -⟩ := Part.ne_bot_iff_exists.1 (satt_atom₁.1 hg')
     exact isEmptyElim a

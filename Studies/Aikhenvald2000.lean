@@ -130,7 +130,7 @@ instance : DecidablePred ObligatoryNumber := fun l ↦ by
 
 end Language
 
-open Language
+open Aikhenvald2000.Language
 
 /-! ### Definitional properties -/
 

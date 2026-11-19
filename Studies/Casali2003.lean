@@ -83,7 +83,7 @@ instance (P : Segment → Prop) [DecidablePred P] : Decidable (HasContrastAmong 
 /-- The high vowels. -/
 def IsHigh (v : Segment) : Prop := v .high = true
 
-instance : DecidablePred IsHigh := fun v ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred IsHigh := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The mid vowels. -/
 def IsMid (v : Segment) : Prop := v .high = false ∧ v .low = false

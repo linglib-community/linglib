@@ -609,7 +609,7 @@ def accumulated (j : Fin 5) : KissEvent := directional (2 * j) ⊔ directional (
 theorem accumulated_injective : Function.Injective accumulated := by
   intro j j' h
   have hmem : directional (2 * j) ≤ accumulated j' := h ▸ (le_sup_left : _ ≤ accumulated j)
-  simp only [accumulated, directional, Finset.sup_eq_union, Finset.singleton_subset_iff,
+  simp only [accumulated, directional, Finset.singleton_subset_iff,
     Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
   exact Fin.ext (by omega)
 

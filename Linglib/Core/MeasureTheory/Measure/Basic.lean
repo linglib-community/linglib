@@ -49,7 +49,7 @@ theorem lintegral_option [Countable α] [MeasurableSingletonClass α] (μ : Meas
       cases o with
       | none => simp at ho
       | some a => exact mem_range_self a
-  rw [lintegral_countable', ENNReal.tsum_eq_add_tsum_ite none]
+  rw [lintegral_countable', tsum_eq_add_tsum_ite none]
   congr 1
   convert h
 

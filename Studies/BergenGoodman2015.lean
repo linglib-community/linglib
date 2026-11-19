@@ -208,7 +208,7 @@ theorem L0_subject (hδ : 0 < δ) (m : Meaning) : L0 δ (.subject m) = Measure.d
 theorem L0_subject_zero (m : Meaning) : L0 0 (.subject m) = 0 :=
   Measure.ext_of_singleton fun w ↦ by
     rw [L0_eq_listener, listener_apply_singleton_eq_zero (by simp [N_apply_singleton]),
-      Measure.coe_zero, Pi.zero_apply]
+      FunLike.coe_zero, Pi.zero_apply]
 
 theorem L0_full (hδ : δ < 1) (m : Meaning) : L0 δ (.full m) = Measure.dirac m := by
   rw [L0_eq_listener]

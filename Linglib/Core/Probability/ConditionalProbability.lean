@@ -75,7 +75,7 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 
 theorem cond_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (μ : Measure Ω) (s : Set Ω) :
     (c • μ)[|s] = μ[|s] := by
-  simp only [cond, Measure.smul_apply, smul_eq_mul, Measure.restrict_smul, smul_smul]
+  simp only [cond, smul_apply, smul_eq_mul, Measure.restrict_smul, smul_smul]
   rw [ENNReal.mul_inv (Or.inl hc0) (Or.inl hc), mul_right_comm, ENNReal.inv_mul_cancel hc0 hc,
     one_mul]
 

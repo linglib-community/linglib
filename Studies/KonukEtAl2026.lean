@@ -66,7 +66,7 @@ instance (s p : I) (x : Bool) : IsProbabilityMeasure (propensity s p x) :=
 theorem propensity_real_singleton (s p : I) (x y : Bool) :
     (propensity s p x).real {y} =
       s * (if x = y then 1 else 0) + (1 - s) * (if y then (p : ℝ) else 1 - p) := by
-  rw [measureReal_def, propensity, Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+  rw [measureReal_def, propensity, add_apply, smul_apply, smul_apply]
   cases x <;> cases y <;>
     simp [ENNReal.smul_def, ← ENNReal.coe_mul, ← ENNReal.coe_add, coe_symm_eq]
 

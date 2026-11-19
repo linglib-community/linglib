@@ -75,12 +75,12 @@ theorem the_iff : the A B ↔ (∃! x, x ∈ A) ∧ A ⊆ B := by
     exact ⟨x, fun y ↦ ⟨huniq y, fun h ↦ h ▸ hx⟩, hB hx⟩
 
 theorem the_iff_exists_mem_iota : the A B ↔ ∃ x ∈ iota A, x ∈ B :=
-  exists_congr fun x ↦ and_congr_left' <|
+  exists_congr fun _ ↦ and_congr_left' <|
     Set.ext_iff.symm.trans mem_iota_iff_eq_singleton.symm
 
 /-- *The `A`* is the lift of `iota A` where `iota A` is defined ([partee-1987], §3.2). -/
 theorem the_eq_individual {a : α} (h : a ∈ iota A) : the A = individual a :=
-  funext fun B ↦ propext <| the_iff_exists_mem_iota.trans
+  funext fun _ ↦ propext <| the_iff_exists_mem_iota.trans
     ⟨fun ⟨_, hx, hB⟩ ↦ Part.mem_unique h hx ▸ hB, fun hB ↦ ⟨a, h, hB⟩⟩
 
 /-- *The `A`* is the empty quantifier where `iota A` is undefined ([partee-1987], §3.2). -/

@@ -88,7 +88,7 @@ theorem isOptimalAssertion_iff_exists_measure [Fintype W] [DiscreteMeasurableSpa
       have h1 : (1 : ENNReal) ≤ Measure.count (ψ ∩ φᶜ) :=
         (by simp : (1 : ENNReal) = Measure.count ({w} : Set W)).trans_le
           (measure_mono (singleton_subset_iff.2 ⟨hwψ, hwφ⟩))
-      simp only [Measure.add_apply, Measure.smul_apply,
+      simp only [add_apply, smul_apply,
         Measure.restrict_apply MeasurableSet.of_discrete, inter_compl_self, measure_empty,
         ENNReal.smul_def, smul_eq_mul, ENNReal.coe_natCast, mul_zero, add_zero]
       calc Measure.count φ ≤ (Fintype.card W : ENNReal) * 1 := by simpa using hK
@@ -124,8 +124,8 @@ variable {μ : Measure W} {t t' : Set W}
 
 private theorem ae_le_iff_subset (hμ : ∀ w, μ {w} ≠ 0) : s ≤ᵐ[μ] t ↔ s ⊆ t :=
   ⟨fun h w hw ↦ by_contra fun hwt ↦ hμ w (measure_mono_null
-      (singleton_subset_iff.2 (show w ∈ s \ t from ⟨hw, hwt⟩)) (ae_le_set.1 h)),
-    fun h ↦ ae_le_set.2 (by rw [sdiff_eq_empty.2 h, measure_empty])⟩
+      (singleton_subset_iff.2 (show w ∈ s \ t from ⟨hw, hwt⟩)) (ae_subset.1 h)),
+    fun h ↦ ae_subset.2 (by rw [sdiff_eq_empty.2 h, measure_empty])⟩
 
 private theorem measure_ne_zero_of_nonempty (hμ : ∀ w, μ {w} ≠ 0) (hne : s.Nonempty) : μ s ≠ 0 :=
   let ⟨w, hw⟩ := hne

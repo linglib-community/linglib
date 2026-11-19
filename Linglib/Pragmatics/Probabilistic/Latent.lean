@@ -245,7 +245,7 @@ theorem listener_prod_fst (μ : Measure A) (ν : Measure B) (S : A × B → Meas
   change (listener (μ.prod ν) S u).fst {a} = _
   simp_rw [Measure.fst_apply_singleton, listener_apply_singleton, div_eq_mul_inv, ← Finset.sum_mul,
     Fintype.sum_prod_type, ← Set.singleton_prod_singleton, Measure.prod_prod,
-    Measure.finsetSum_apply, Measure.smul_apply, smul_eq_mul, Finset.sum_mul]
+    sum_apply, smul_apply, smul_eq_mul, Finset.sum_mul]
   refine Finset.sum_congr rfl fun _ _ ↦ ?_
   congr 1
   · ring
@@ -260,7 +260,7 @@ theorem listener_prod_snd (μ : Measure A) (ν : Measure B) (S : A × B → Meas
   change (listener (μ.prod ν) S u).snd {b} = _
   simp_rw [Measure.snd_apply_singleton, listener_apply_singleton, div_eq_mul_inv, ← Finset.sum_mul,
     Fintype.sum_prod_type, ← Set.singleton_prod_singleton, Measure.prod_prod,
-    Measure.finsetSum_apply, Measure.smul_apply, smul_eq_mul]
+    sum_apply, smul_apply, smul_eq_mul]
   congr 1
   · rw [Finset.sum_mul]
     exact Finset.sum_congr rfl fun _ _ ↦ by ring
@@ -277,7 +277,7 @@ theorem listener_prod_fst_apply_singleton_mul_eq (μ : Measure A) (ν : Measure 
     (listener (μ.prod ν) S).fst u {a₁} * μ {a₂} = (listener (μ.prod ν) S).fst u {a₂} * μ {a₁} := by
   rw [listener_prod_fst]
   refine listener_apply_singleton_mul_eq_of_apply_eq _ _ ?_
-  simp only [Measure.finsetSum_apply, Measure.smul_apply]
+  simp only [sum_apply, smul_apply]
   refine Finset.sum_congr rfl fun b _ ↦ ?_
   rcases eq_or_ne (ν {b}) 0 with hb | hb
   · rw [hb, zero_smul, zero_smul]

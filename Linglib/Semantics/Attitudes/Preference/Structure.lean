@@ -89,7 +89,7 @@ theorem consistent_iff_forall_isAntichain :
 
 /-- Consistency relative to an information state persists to any weaker one. -/
 theorem Consistent.mono {H : Set W} (hC : P.Consistent B) (h : B ⊆ H) : P.Consistent H :=
-  fun X hX hXH ↦ hC X hX (Set.subset_eq_empty (Set.inter_subset_inter_left _ h) hXH)
+  fun X hX hXH ↦ hC X hX (Set.eq_empty_of_subset (Set.inter_subset_inter_left _ h) hXH)
 
 /-- Consistency entails realism. -/
 theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := fun p hp ↦ by

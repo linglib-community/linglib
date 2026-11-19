@@ -104,7 +104,7 @@ theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Fins
       exact hab
     | sum _ _ ih ih' =>
       refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩
-      rw [Prod.fst_sup, Prod.snd_sup, Finset.sup_eq_union, Finset.sup_eq_union,
+      rw [Prod.fst_sup, Prod.snd_sup,
         Finset.coe_union, Finset.coe_union]
       exact ih.2.union ih'.2
   · rintro ⟨hx, hl, hr⟩
@@ -123,11 +123,11 @@ theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Fins
           ⟨Finset.singleton_subset_iff.2 (hg b hb), Finset.singleton_subset_iff.2 hb⟩
       · have hle :=
           Prod.le_def.1 (Finset.le_sup' (fun a ↦ (({a} : Finset A), ({f a} : Finset B))) ha)
-        rw [Prod.fst_sup, Finset.sup_eq_union]
+        rw [Prod.fst_sup]
         exact Finset.mem_union_left _ (Finset.singleton_subset_iff.1 hle.1)
       · have hle :=
           Prod.le_def.1 (Finset.le_sup' (fun b ↦ (({g b} : Finset A), ({b} : Finset B))) hb)
-        rw [Prod.snd_sup, Finset.sup_eq_union]
+        rw [Prod.snd_sup]
         exact Finset.mem_union_right _ (Finset.singleton_subset_iff.1 hle.2)
     show AlgClosure _ (x, y)
     rw [← key]

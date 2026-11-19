@@ -38,7 +38,7 @@ theorem tilted_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) : (c • �
   · simp [hz]
   ext s hs
   have hc' : 0 < c.toReal := ENNReal.toReal_pos hc0 hc
-  rw [Measure.smul_apply, withDensity_apply _ hs, withDensity_apply _ hs, smul_eq_mul,
+  rw [smul_apply, withDensity_apply _ hs, withDensity_apply _ hs, smul_eq_mul,
     ← lintegral_const_mul' _ _ hc]
   refine lintegral_congr fun x ↦ ?_
   rw [smul_eq_mul, ← ENNReal.ofReal_toReal hc, ← ENNReal.ofReal_mul hc'.le,

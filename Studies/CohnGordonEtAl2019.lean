@@ -384,7 +384,7 @@ theorem exists_prefix_of_s1_ne_zero {a : U} (h : g.s1 cost c r {some a} ≠ 0) :
 theorem isTight_incS1 (cost : Option U → ℝ) (r : W) : (g.incS1 cost r).IsTight := by
   refine (g.incS1 cost r).isTight_of_survival_eq_zero
     (n := (g.utterances.map List.length).sum + 1)
-    (ENNReal.tsum_eq_zero.2 fun ⟨x, hx⟩ ↦ not_not.1 fun h ↦ ?_)
+    (tsum_eq_zero_iff.2 fun ⟨x, hx⟩ ↦ not_not.1 fun h ↦ ?_)
   obtain h' | ⟨u, hu, hp⟩ := (g.incS1 cost r).induction_of_condPrefixProb_ne_zero
     (P := fun c ↦ c = [] ∨ ∃ u ∈ g.utterances, c <+: u)
     (fun c a _ ha ↦ .inr (g.exists_prefix_of_s1_ne_zero (by rwa [next_incS1] at ha))) (.inl rfl) h

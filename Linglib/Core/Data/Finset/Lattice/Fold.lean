@@ -33,7 +33,7 @@ theorem supBotHom_ext {f g : SupBotHom (Finset α) β} (h : ∀ a, f {a} = g {a}
   refine DFunLike.ext _ _ fun s ↦ ?_
   induction s using Finset.induction_on with
   | empty => rw [← bot_eq_empty, map_bot, map_bot]
-  | insert a s _ ih => rw [insert_eq, ← sup_eq_union, map_sup, map_sup, h, ih]
+  | insert a s _ ih => rw [insert_eq, map_sup, map_sup, h, ih]
 
 /-- A function into a join-semilattice with a bottom extends uniquely to a map out of the finite
 sets preserving joins and the bottom, the join of the function over the set. -/

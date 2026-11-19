@@ -247,7 +247,7 @@ theorem inf_categorical_fol :
     categorical IsFOLPattern 0 ⊓ categorical IsFOLPattern 1 =
       univ.filter fun m ↦ ¬ IsSYLPattern m.1 := by
   ext m
-  simp only [categorical, inf_eq_inter, mem_inter, mem_filter, mem_univ, true_and, IsSYLPattern,
+  simp only [categorical, mem_inter, mem_filter, mem_univ, true_and, IsSYLPattern,
     Matrix.cons_val_zero, Matrix.cons_val_one]
   exact ⟨fun ⟨hA, hE⟩ ⟨r, hr, hS⟩ ↦
       Set.eq_empty_iff_forall_notMem.1 (a_e_contrary hA hE) ⟨r, hr⟩ hS,

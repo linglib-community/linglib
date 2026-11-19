@@ -290,7 +290,7 @@ private theorem pair_agree_iff (a b : Segment) :
   have hoa : OnTier a := by simp [OnTier, ha]
   have hob : OnTier b := by simp [OnTier, hb]
   rw [← sibilantClass_of_onTier hoa, ← sibilantClass_of_onTier hob, ha, hb]
-  cases u <;> cases v <;> simp [hoa, hob] <;> decide
+  cases u <;> cases v <;> simp [hoa, hob]
 
 /-- Hansson's symmetric sibilant harmony is the language of the grammar of the paper's subfactor
 and its mirror image. -/

@@ -188,7 +188,7 @@ theorem Invariant.eq_of_isIrreducible [IsMarkovKernel κ] [IsIrreducible Measure
     refine hwinv.measure_singleton_ne_zero (fun h0 ↦ ?_) a₀ 
       (by rw [Measure.finsetSum_smul_dirac_singleton, hwa₀, ENNReal.ofReal_zero])
     have := congrArg (· {a}) h0
-    simp only [Measure.finsetSum_smul_dirac_singleton, Measure.coe_zero,
+    simp only [Measure.finsetSum_smul_dirac_singleton, FunLike.coe_zero,
       Pi.zero_apply, ENNReal.ofReal_eq_zero] at this
     exact ha (le_antisymm this (hw a))
   have hc : c = 1 := by
