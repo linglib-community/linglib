@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.ConditionalProbability
-public import Linglib.Processing.Psychophysics.SignalDetection
+public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Mathlib.Order.BooleanAlgebra.Basic
@@ -989,7 +989,7 @@ end Thurstone
 
 section Detection
 
-open Real MeasureTheory ProbabilityTheory Set SignalDetection
+open Real MeasureTheory ProbabilityTheory Set
 
 /-! ### §2.E: Signal detectability theory (pp. 58–64)
 
@@ -1040,27 +1040,30 @@ theorem forcedChoiceProb_roc (hα : 0 < α) (hv : 0 < v) :
   rw [forcedChoiceProb_eq_yesNoProb hα]
   exact yesNoProb_roc (by positivity) (by positivity)
 
+/-- The axiom-1 Yes-No model is a logistic observer with a criterion: the observation is standard
+logistic on noise trials and shifted by `log α` on signal trials, and the subject affirms the
+signal when it exceeds `log v`. -/
 theorem yesNoProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
     yesNoProb α v b =
-      (locationExperiment logisticMeasure (log α) b).real (Ioi (log v - log α / 2)) := by
+      (Kernel.boolKernel logisticMeasure (logisticMeasure.map (· + log α)) b).real
+        (Ioi (log v)) := by
   cases b
-  · rw [← falseAlarmRate, falseAlarmRate_logisticMeasure,
-      show -(log α / 2) - (log v - log α / 2) = -log v by ring, sigmoid_neg, sigmoid_log hv,
-      yesNoProb]
+  · rw [Kernel.boolKernel_false, measureReal_Ioi_eq_cdf_neg _ (measure_singleton _),
+      cdf_logisticMeasure_eq, sigmoid_neg, sigmoid_log hv, yesNoProb]
     field_simp
     ring
-  · rw [← hitRate, hitRate_logisticMeasure,
-      show log α / 2 - (log v - log α / 2) = log (α / v) by rw [log_div hα.ne' hv.ne']; ring,
-      sigmoid_log (div_pos hα hv), yesNoProb]
+  · rw [Kernel.boolKernel_true, measureReal_map_add_const_Ioi_eq_cdf _ _ (measure_singleton _),
+      cdf_logisticMeasure_eq, ← log_div hα.ne' hv.ne', sigmoid_log (div_pos hα hv), yesNoProb]
     field_simp
 
+-- p. 62: the forced choice doubles the logistic sensitivity
 theorem forcedChoiceProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
     forcedChoiceProb α v b =
-      (locationExperiment logisticMeasure (2 * log α) b).real (Ioi (log v)) := by
+      (Kernel.boolKernel logisticMeasure (logisticMeasure.map (· + 2 * log α)) b).real
+        (Ioi (log (α * v))) := by
   rw [forcedChoiceProb_eq_yesNoProb hα, yesNoProb_eq_logistic (by positivity) (by positivity),
-    log_pow, log_mul hα.ne' hv.ne']
-  congr 3
-  ring
+    log_pow]
+  norm_num
 
 end Detection
 

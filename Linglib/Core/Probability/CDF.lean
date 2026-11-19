@@ -115,6 +115,14 @@ theorem measureReal_Ioi_eq_cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) :
   rw [cdf_eq_real, ← neg_Ici, measureReal_congr (Ioi_ae_eq_Ici' hx), measureReal_def,
     measureReal_def, μ.measure_neg]
 
+/-- The upper tail of a translate of a negation-invariant measure is the cdf at the reflected
+point. -/
+theorem measureReal_map_add_const_Ioi_eq_cdf [μ.IsNegInvariant] (a : ℝ) {k : ℝ}
+    (hk : μ {k - a} = 0) : (μ.map (· + a)).real (Ioi k) = cdf μ (a - k) := by
+  rw [map_measureReal_apply (measurable_add_const a) measurableSet_Ioi,
+    show (· + a) ⁻¹' Ioi k = Ioi (k - a) by ext; simp [sub_lt_iff_lt_add],
+    measureReal_Ioi_eq_cdf_neg μ hk, neg_sub]
+
 /-- The reflection formula for the cdf of a negation-invariant measure, away from atoms. -/
 theorem cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) : cdf μ (-x) = 1 - cdf μ x := by
   rw [← measureReal_Ioi_eq_cdf_neg μ hx, ← compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic,
