@@ -524,7 +524,7 @@ noncomputable def produce (lam : ℝ) (k : ℕ) : Kernel (Lex × Fin 2) (Fin k �
   Kernel.ofFunOfCountable fun t ↦ Measure.pi fun _ ↦ pr ⊗ₘ (agents pr lam t.1.denote t.2).1
 
 instance (k : ℕ) : IsMarkovKernel (produce lam k) :=
-  ⟨fun t ↦ by rw [produce, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- Fig. 2: the prior over types favouring those with `L_lack` by a factor `c`. -/
 noncomputable def biasedPrior (c : ℝ≥0) : Measure (Lex × Fin 2) :=

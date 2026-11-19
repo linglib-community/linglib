@@ -147,7 +147,7 @@ noncomputable def N (δ : I) : Kernel Meaning Utterance :=
   Kernel.ofFunOfCountable fun m ↦ Ber(.subject m, .full m, δ)
 
 instance (δ : I) : IsMarkovKernel (N δ) :=
-  ⟨fun m ↦ by rw [N, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- The uniform prior over meanings. -/
 noncomputable abbrev μ : Measure Meaning := Measure.count
@@ -325,7 +325,7 @@ noncomputable def N (ε ε' : I) : Kernel Utterance Utterance :=
   Kernel.ofFunOfCountable fun u ↦ Ber(slip u, u, rate ε ε' u)
 
 instance (ε ε' : I) : IsMarkovKernel (N ε ε') :=
-  ⟨fun u ↦ by rw [N, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- The uniform prior over meanings. -/
 noncomputable abbrev μ : Measure Meaning := Measure.count

@@ -242,8 +242,9 @@ theorem speaker_qudListener_dirac {α : ℝ} (hα : 0 ≤ α) (κ : U → ℝ) (
   have hw : ∀ u', qudListener L q u' {m} ^ α * ENNReal.ofReal (Real.exp (-(α * κ u'))) =
       ((n : ℝ≥0∞) ^ α)⁻¹ *
         (L.map q u' {q m} ^ α * ENNReal.ofReal (Real.exp (-(α * κ u')))) := fun u' ↦ by
-    rw [qudListener_apply_singleton_of_ncard L q hq, Kernel.map_apply_singleton,
-      ENNReal.div_rpow_of_nonneg _ _ hα, div_eq_mul_inv, mul_comm (_ ^ α), mul_assoc]
+    rw [qudListener_apply_singleton_of_ncard L q hq,
+      Kernel.map_apply' _ .of_discrete _ (.singleton _), ENNReal.div_rpow_of_nonneg _ _ hα,
+      div_eq_mul_inv, mul_comm (_ ^ α), mul_assoc]
   rw [qudSpeaker, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton]
   simp only [hw]
   rw [← Finset.mul_sum, ENNReal.mul_div_mul_left _ _ hc0 hc]

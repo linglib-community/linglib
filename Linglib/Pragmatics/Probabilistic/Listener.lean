@@ -596,8 +596,8 @@ answer where the utterance is true, over the prior mass of the states where it i
 theorem literalListener_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
     [Countable U] (μ : Measure W) (sem : U → Set W) (q : W → X) (u : U) (x : X) :
     (literalListener μ sem).map q u {x} = μ (sem u ∩ q ⁻¹' {x}) / μ (sem u) := by
-  rw [Kernel.map_apply_singleton, literalListener_apply, cond_apply .of_discrete,
-    ENNReal.div_eq_inv_mul]
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), literalListener_apply,
+    cond_apply .of_discrete, ENNReal.div_eq_inv_mul]
 
 /-- Within a finite context set, a literal listener's probability of an answer is the prior mass
 of the states of the set where the utterance is true and that have the answer, over the prior
