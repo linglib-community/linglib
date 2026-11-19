@@ -17,8 +17,9 @@ point `t` of the set where it is finite, has derivative the mean of `X` under
 `μ.tilted (t * X ·)`. So for a target mean `m` the concave function `s ↦ s * m - cgf X μ s` [is
 greatest at](##ProbabilityTheory.isMaxOn_mul_sub_cgf_iff) such a `t` exactly when the derivative
 there is `m`, that is, [when the tilted
-measure](##ProbabilityTheory.isMaxOn_mul_sub_cgf_iff_integral_tilted_mul) at `t` has mean `m`: the member of the exponential family of `μ` and `X` that best fits a sample
-of mean `m` is the one that reproduces `m`.
+measure](##ProbabilityTheory.isMaxOn_mul_sub_cgf_iff_integral_tilted_mul) at `t` has mean `m`: the
+member of the exponential family of `μ` and `X` that best fits a sample of mean `m` is the one
+that reproduces `m`.
 -/
 
 public section
