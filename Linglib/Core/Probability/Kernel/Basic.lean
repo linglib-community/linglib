@@ -12,9 +12,9 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 /-!
 # Kernels out of countable spaces
 
-Out of a countable space with measurable singletons every family of measures is measurable, so a
-kernel is its family of rows: `ofFunOfCountable f` has row `f a` at `a`, and its classes are read
-off the rows. It is Markov when every row is a probability measure, and a kernel out of such a
+Out of a countable space with measurable singletons every family of measures is measurable, so
+every family `f` is the rows of a kernel, `ofFunOfCountable f`, whose classes are read off the
+rows. It is Markov when every row is a probability measure, and a kernel out of such a
 space is [s-finite exactly when every row is](##isSFiniteKernel_iff_of_countable), being
 [the sum of its rows](##sum_piecewise_singleton_const), each placed at its point. Every kernel
 between countable types is therefore s-finite. Pushed forward along a map out of a discrete
@@ -51,8 +51,6 @@ instance ofFunOfCountable.instIsMarkovKernel {f : α → Measure β}
     [∀ a, IsProbabilityMeasure (f a)] : IsMarkovKernel (ofFunOfCountable f) :=
   ⟨fun a ↦ inferInstanceAs (IsProbabilityMeasure (f a))⟩
 
-/-- A kernel out of a countable space is the sum over the points `a` of the kernel equal to its
-row at `a` on `{a}` and to zero elsewhere. -/
 theorem sum_piecewise_singleton_const [DecidableEq α] (κ : Kernel α β) :
     (Kernel.sum fun a ↦ piecewise (measurableSet_singleton a) (const α (κ a)) 0) = κ := by
   ext a s hs
@@ -84,8 +82,7 @@ theorem map_apply_singleton [DiscreteMeasurableSpace β] : κ.map f a {c} = κ a
 
 theorem map_apply_singleton_ne_zero_iff [Countable β] [MeasurableSingletonClass β] :
     κ.map f a {c} ≠ 0 ↔ ∃ b, f b = c ∧ κ a {b} ≠ 0 := by
-  rw [map_apply_singleton, ← Set.biUnion_of_singleton (f ⁻¹' {c}), ne_eq,
-    measure_biUnion_null_iff (Set.to_countable _)]
+  rw [map_apply_singleton, ne_eq, measure_null_iff_singleton (Set.to_countable _)]
   simp
 
 end Map
