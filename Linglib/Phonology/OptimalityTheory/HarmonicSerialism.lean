@@ -15,9 +15,9 @@ fixed point. `HSDerivation` bundles the two; the serial search itself is `iterat
 exactly convergence and failure — durability of both is mathlib's `IsFixedPt.iterate`;
 the `Nat` fuel and the `pick` tie-breaker make a possibly-non-terminating,
 possibly-tied search total and computable. One-step EVAL
-reuses the parallel `Tableau` machinery; directional EVAL ([lamont-2022b];
+is the parallel `Constraint.eval`; directional EVAL ([lamont-2022b];
 [eisner-2000]) needs nothing extra — a directional constraint like `*FLOAT^→` is a
-position-indexed scalar block (`Tone.starFloatBlock`) spliced into the ranking under
+`directionalBlock` (`McPhersonLamont2026.starFloatBlock`) spliced into the ranking under
 the canonical lex order.
 
 ## Main definitions
@@ -167,8 +167,8 @@ end Iteration
 /-! ### HS derivations -/
 
 /-- A Harmonic Serialism derivation: a one-step candidate-generation function (per
-[mccarthy-2008b]'s restricted GEN) and a durable ranking. The inner `Tableau` width is
-`ranking.length`. -/
+[mccarthy-2008b]'s restricted GEN) and a durable ranking, which one round evaluates with
+`Constraint.eval`. -/
 structure HSDerivation (C : Type*) [DecidableEq C] where
   /-- The one-step candidate-generation function. -/
   gen : C → Finset C

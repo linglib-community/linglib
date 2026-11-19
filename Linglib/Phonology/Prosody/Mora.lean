@@ -201,6 +201,12 @@ def free : Finset Mora := X.morae.filter fun m ↦ ∀ s ∈ X.syllables, (s, m)
 /-- The morae linked to no segment, such as those stranded by deletion. -/
 def stranded : Finset Mora := X.morae.filter (X.moraSpan · = ∅)
 
+/-- The morae of a form in order of their heads, and by index under one head. -/
+def moraList : List Mora :=
+  (List.range X.melody.length).flatMap fun i ↦
+    (List.range (X.morae.sup (·.idx) + 1)).filterMap fun k ↦
+      if (⟨i, k⟩ : Mora) ∈ X.morae then some ⟨i, k⟩ else none
+
 /-- The number of association lines at slot `i`: the length of its segment in a one-root theory
 of length ([hayes-1989]), one for a short segment and two for a long vowel or a geminate. -/
 def lineCount (i : ℕ) : ℕ :=

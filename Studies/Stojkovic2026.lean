@@ -163,10 +163,10 @@ def system : ConstraintSystem Context Candidate Con where
   gen := candidates
   marks c k
     | .noHiatus => Hiatus.count (output c k)
-    | .noCluster => Constraint.forbidPairs
+    | .noCluster => Constraint.ofForbiddenPairs
         (fun a b : Segment ↦ a .syllabic = false ∧ b .syllabic = false) (output c k)
     | .specify => (output c k).count node₀
-    | .noShare => Constraint.forbidPairs
+    | .noShare => Constraint.ofForbiddenPairs
         (fun a b : Segment ↦ a .back = false ∧ b .back = false ∧ a ∈ input c) (output c k)
     | .depBack => dep c .back true k
     | .depNonhigh => dep c .high false k

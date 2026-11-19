@@ -88,12 +88,12 @@ abbrev Cand := Correspondence.Coindexation BinaryRole Segment
 
 /-- *NC̥: a nasal before a voiceless obstruent. -/
 def nc : Constraint Cand :=
-  (Constraint.forbidPairs fun a b : Segment ↦
+  (Constraint.ofForbiddenPairs fun a b : Segment ↦
     a .nasal = true ∧ b .sonorant = false ∧ b .voice = false).comap (·.string .rhs)
 
 /-- NASASSIM (36): a nasal not homorganic with the consonant after it. -/
 def nasAssim : Constraint Cand :=
-  (Constraint.forbidPairs fun a b : Segment ↦
+  (Constraint.ofForbiddenPairs fun a b : Segment ↦
     a .nasal = true ∧ b.IsConsonant ∧ ¬ a.Homorganic b).comap (·.string .rhs)
 
 /-- *PL/LAB², the self-conjunction of *PL/LAB (15): two labial consonants or glides in a

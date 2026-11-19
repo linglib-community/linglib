@@ -175,7 +175,7 @@ length. -/
 
 /-- The number of H-to-L falls in a tone string — the occurrences of
 `(H, L)` among adjacent pairs. -/
-def hlFallCount : List LevelTone → ℕ := Constraint.forbidPairs fun t u ↦ t = .H ∧ u = .L
+def hlFallCount : List LevelTone → ℕ := Constraint.ofForbiddenPairs fun t u ↦ t = .H ∧ u = .L
 
 theorem hlFallCount_L_cons (l : List LevelTone) :
     hlFallCount (.L :: l) = hlFallCount l := by
@@ -183,7 +183,7 @@ theorem hlFallCount_L_cons (l : List LevelTone) :
 
 theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
     hlFallCount (t :: u :: l) = (if t = .H ∧ u = .L then 1 else 0) + hlFallCount (u :: l) :=
-  Constraint.forbidPairs_cons_cons _ t u l
+  Constraint.ofForbiddenPairs_cons_cons _ t u l
 
 theorem hlFallCount_le_count_tail :
     ∀ l : List LevelTone, hlFallCount l ≤ l.tail.count .L

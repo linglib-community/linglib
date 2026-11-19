@@ -10,40 +10,26 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 /-!
 # Directional constraints as position-indexed blocks
 
-[lamont-2022b]'s **directional constraint evaluation**, realized in the canonical
-constraint substrate. A directional constraint maps each candidate to a per-position
-violation *vector* compared lexicographically ([eisner-2000], [lamont-2022b]). The key
-observation ([lamont-2022b] §1.3) is that "a locus at position `i` relates to one at
-`i+1` exactly as a higher-ranked constraint relates to a lower one … violation vectors
-are ordered lexicographically, which is exactly how candidates are ordered with respect
-to an entire constraint set in OT". So a directional constraint with **single-segment
-loci** over a **length-preserving** GEN *is* a position-indexed block of binary
-constraints, spliced into a ranking and compared under the canonical `ViolationProfile`
-lex order (`List.ofFn_le_ofFn_iff`) — no new mechanism beyond the
-`ConstraintSet`/`ViolationProfile` substrate already present.
+A directional constraint ([eisner-2000], [lamont-2022b]) maps each candidate to a vector of
+violations by position, compared lexicographically. As [lamont-2022b] (§1.3) observes, "a locus at
+position `i` relates to one at `i+1` exactly as a higher-ranked constraint relates to a lower one …
+violation vectors are ordered lexicographically, which is exactly how candidates are ordered with
+respect to an entire constraint set in OT". A directional constraint with single-segment loci over
+a length-preserving GEN is therefore a block of binary constraints, one per position, spliced into
+a ranking and compared under the lexicographic order of `ViolationProfile`
+(`List.ofFn_le_ofFn_iff`).
 
-`directionalBlock n locus` is that block: at each position `i < n` it flags whether
-`locus i` holds. Splice it into a ranking forward for left-to-right evaluation (`⇒`),
-or `.reverse` for right-to-left (`⇐`) — "the positions are reversed in the violation
-vector" ([lamont-2022b] §1.3, Fig 1.9).
+`directionalBlock n locus` is that block. Spliced forward it evaluates left to right, and reversed
+it evaluates right to left, since "the positions are reversed in the violation vector"
+([lamont-2022b] §1.3, Fig 1.9). The constraint against floating tones of [mcpherson-lamont-2026]
+and `Parse(σ)` of [lamont-2022c] are such blocks.
 
-## Main definitions
+## Implementation notes
 
-* `directionalBlock` — the position-indexed block of binary constraints.
-
-## Consumers
-
-* `Tone.starFloatBlock` — `*FLOAT` directional float deletion ([mcpherson-lamont-2026]).
-* `Lamont2022c.parseLR` — `Parse(σ)` directional footing ([lamont-2022c]).
-
-## Scope
-
-This covers the *single-segment-loci, length-preserving* case — both current consumers
-(a floating tone / an unfooted syllable is a single position, and neither GEN changes
-the position count). [lamont-2022b]'s general formulation additionally handles
-multi-segment loci (the opposite-edge projection that rules out "locus folding", §2.3)
-and length-changing GEN (step-relative positions, fn. 10); those are deferred until a
-consumer exercises them.
+Only single-segment loci and length-preserving GEN are covered, which is the case of a floating
+tone and of an unfooted syllable. [lamont-2022b]'s general formulation also handles multi-segment
+loci (the opposite-edge projection that rules out "locus folding", §2.3) and length-changing GEN
+(step-relative positions, fn. 10).
 
 ## References
 
@@ -68,6 +54,6 @@ profile this is directional EVAL — `⇒` (left-to-right) for the forward block
 (`List.ofFn_le_ofFn_iff`). -/
 def directionalBlock {C : Type*} (n : ℕ) (locus : Fin n → C → Prop)
     [∀ i, DecidablePred (locus i)] : List (Constraint C) :=
-  (List.finRange n).map (fun i => Constraint.binary (locus i))
+  (List.finRange n).map fun i ↦ Constraint.binary (locus i)
 
 end OptimalityTheory

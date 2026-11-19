@@ -23,10 +23,10 @@ position `p`, position `0` is the most dominant, and `r.symm i` is the rank posi
 A ranking reads a violation vector `v` in rank order as `toLex (v ∘ r)`. Comparing two vectors
 under one ranking is the lexicographic order along an enumeration (`Pi.toLex_comp_lt_iff_exists`
 in `Core/Order/PiLex`); comparing them under every ranking is the product order
-(`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. `Tableau` evaluates candidates under a
-ranking, and `ElementaryRankingCondition.lean` infers rankings from winner–loser pairs. Rankings
-carry the discrete σ-algebra, so a distribution over rankings, as in a partially ordered grammar or
-stochastic OT, is a `Measure`.
+(`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. `Ranking.Enumeration.optimal` (in
+`Evaluation.lean`) evaluates candidates under a ranking, and `ElementaryRankingCondition.lean`
+infers rankings from winner–loser pairs. Rankings carry the discrete σ-algebra, so a distribution
+over rankings, as in a partially ordered grammar or stochastic OT, is a `Measure`.
 
 ## Main definitions
 
