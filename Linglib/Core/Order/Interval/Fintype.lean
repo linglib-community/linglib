@@ -1,33 +1,32 @@
 module
 
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.Interval.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Finitely many intervals
 
-[UPSTREAM] candidate for `Mathlib/Order/Interval/Basic.lean`.
-
 A nonempty interval is a pair of endpoints `a ≤ b`, so the nonempty intervals of a finite order
-form a finite type.
+with decidable `≤` form a finite type, enumerated as the pairs that satisfy the inequality.
 
-## Main definitions
+## Implementation notes
 
-* `NonemptyInterval.equivSubtype`: a nonempty interval is a pair `(a, b)` with `a ≤ b`.
+Mathlib's instance `SetLike.instFintype` already makes the nonempty intervals of a finite partial
+order a `Fintype`, through the injection into `Set α`, but noncomputably, so `decide` cannot
+evaluate its `Finset.univ`. The instance here is a computable one of the kind the TODO in
+`Mathlib/Data/SetLike/Fintype.lean` asks for. It needs only `LE α`, and since the `SetLike`
+instance has priority 100, it is the one found. `deriving Fintype` cannot produce it, since the
+field `fst_le_snd` needs `DecidableLE α`, so it is built by `derive_fintype%` under that
+hypothesis.
+
+`[UPSTREAM]` candidate for a file of its own beside `Mathlib/Order/Interval/Basic.lean`, which
+does not import `Fintype`.
 -/
 
 @[expose] public section
 
-namespace NonemptyInterval
-
-variable {α : Type*} [LE α]
-
-/-- A nonempty interval is a pair of endpoints `(a, b)` with `a ≤ b`. -/
-def equivSubtype : NonemptyInterval α ≃ {p : α × α // p.1 ≤ p.2} where
-  toFun s := ⟨s.toProd, s.fst_le_snd⟩
-  invFun p := ⟨p.1, p.2⟩
-
-instance [Fintype α] [DecidableLE α] : Fintype (NonemptyInterval α) :=
-  .ofEquiv _ equivSubtype.symm
-
-end NonemptyInterval
+instance NonemptyInterval.instFintype {α : Type*} [LE α] [Fintype α] [DecidableLE α] :
+    Fintype (NonemptyInterval α) :=
+  derive_fintype% _

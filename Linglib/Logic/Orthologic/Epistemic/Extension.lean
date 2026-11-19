@@ -4,8 +4,10 @@ public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Core.Order.Ortholattice.Hom
 public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The epistemic extension of a Boolean algebra
@@ -76,15 +78,10 @@ theorem toNonemptyInterval_injective :
     Function.Injective (toNonemptyInterval : Possibility B → NonemptyInterval B) :=
   fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by congr
 
-/-- A possibility is an interval with nonzero first component. -/
-def equivSubtype : Possibility B ≃ {s : NonemptyInterval B // s.fst ≠ ⊥} where
-  toFun x := ⟨x, x.fst_ne_bot⟩
-  invFun s := ⟨s.1, s.2⟩
-
 instance [DecidableEq B] : DecidableEq (Possibility B) := toNonemptyInterval_injective.decidableEq
 
 instance [Fintype (NonemptyInterval B)] [DecidableEq B] : Fintype (Possibility B) :=
-  .ofEquiv _ equivSubtype.symm
+  derive_fintype% _
 
 /-- Possibilities are ordered by inclusion of their intervals. -/
 instance : PartialOrder (Possibility B) := .lift _ toNonemptyInterval_injective
