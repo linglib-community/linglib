@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.Composition.MapComap
 public import Mathlib.MeasureTheory.Measure.WithDensity
 
 /-!
@@ -14,12 +13,11 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 
 Out of a countable space with measurable singletons every family of measures is measurable, so
 every family `f` is the rows of a kernel, `ofFunOfCountable f`, whose classes are read off the
-rows. It is Markov when every row is a probability measure, and a kernel out of such a
-space is [s-finite exactly when every row is](##isSFiniteKernel_iff_of_countable), being
+rows. It is Markov when every row is a probability measure, and a kernel out of such a space is
+[s-finite exactly when every row is](##isSFiniteKernel_iff_of_countable), being
 [the sum of its rows](##sum_piecewise_singleton_const), each placed at its point. Every kernel
-between countable types is therefore s-finite. Pushed forward along a map out of a discrete
-space, a kernel gives a point the mass of its fibre. `[UPSTREAM]` candidate for
-`Mathlib/Probability/Kernel/Basic.lean`, and for the pushforward `Composition/MapComap.lean`.
+between countable types is therefore s-finite. `[UPSTREAM]` candidate for
+`Mathlib/Probability/Kernel/Basic.lean`.
 
 ## Implementation notes
 
@@ -35,12 +33,8 @@ open MeasureTheory
 
 namespace ProbabilityTheory.Kernel
 
-variable {α β γ : Type*} {mα : MeasurableSpace α} {mβ : MeasurableSpace β}
-  {mγ : MeasurableSpace γ}
-
-section Countable
-
-variable [Countable α] [MeasurableSingletonClass α]
+variable {α β : Type*} {mα : MeasurableSpace α} {mβ : MeasurableSpace β} [Countable α]
+  [MeasurableSingletonClass α]
 
 @[simp, norm_cast]
 lemma coe_ofFunOfCountable (f : α → Measure β) : ⇑(ofFunOfCountable f) = f := rfl
@@ -70,21 +64,5 @@ instance ofFunOfCountable.instIsSFiniteKernel {f : α → Measure β} [∀ a, SF
 
 instance [Countable β] (κ : Kernel α β) : IsSFiniteKernel κ :=
   isSFiniteKernel_iff_of_countable.2 fun _ ↦ inferInstance
-
-end Countable
-
-section Map
-
-variable [MeasurableSingletonClass γ] (κ : Kernel α β) (f : β → γ) (a : α) (c : γ)
-
-theorem map_apply_singleton [DiscreteMeasurableSpace β] : κ.map f a {c} = κ a (f ⁻¹' {c}) :=
-  map_apply' κ .of_discrete a (.singleton c)
-
-theorem map_apply_singleton_ne_zero_iff [Countable β] [MeasurableSingletonClass β] :
-    κ.map f a {c} ≠ 0 ↔ ∃ b, f b = c ∧ κ a {b} ≠ 0 := by
-  rw [map_apply_singleton, ne_eq, measure_null_iff_singleton (Set.to_countable _)]
-  simp
-
-end Map
 
 end ProbabilityTheory.Kernel

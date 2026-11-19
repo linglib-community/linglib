@@ -186,7 +186,7 @@ theorem S1_compProd_congr (hπ : ∀ u, π {u} ≠ 0) (hπ' : ∀ u, π' {u} ≠
 omit [IsProbabilityMeasure π'] in
 private theorem map_L0_state (hπ : ∀ u, π {u} ≠ 0) (u s : Weather) :
     (L0 (π ⊗ₘ κ)).map (project .state) u {.inl s} = if u = s then 1 else 0 := by
-  rw [Kernel.map_apply_singleton, L0_compProd π κ (hπ u),
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), L0_compProd π κ (hπ u),
     Measure.dirac_compProd_apply .of_discrete]
   split_ifs with h
   · rw [show Prod.mk u ⁻¹' (project .state ⁻¹' {Sum.inl s}) = Set.univ by ext; simp [project, h],
@@ -197,7 +197,7 @@ private theorem map_L0_state (hπ : ∀ u, π {u} ≠ 0) (u s : Weather) :
 omit [IsProbabilityMeasure π'] in
 private theorem map_L0_valence (hπ : ∀ u, π {u} ≠ 0) (u : Weather) (v : Bool) :
     (L0 (π ⊗ₘ κ)).map (project .valence) u {.inr v} = κ u (Prod.fst ⁻¹' {v}) := by
-  rw [Kernel.map_apply_singleton, L0_compProd π κ (hπ u),
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), L0_compProd π κ (hπ u),
     Measure.dirac_compProd_apply .of_discrete]
   congr 1
   ext ⟨v', a⟩
@@ -222,7 +222,7 @@ private theorem S1_valence_apply (hπ : ∀ u, π {u} ≠ 0) (m : Meaning) (t : 
 omit [IsProbabilityMeasure π'] in
 private theorem map_L0_arousal (hπ : ∀ u, π {u} ≠ 0) (u : Weather) (a : Bool) :
     (L0 (π ⊗ₘ κ)).map (project .arousal) u {.inr a} = κ u (Prod.snd ⁻¹' {a}) := by
-  rw [Kernel.map_apply_singleton, L0_compProd π κ (hπ u),
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), L0_compProd π κ (hπ u),
     Measure.dirac_compProd_apply .of_discrete]
   congr 1
   ext ⟨v, a'⟩
