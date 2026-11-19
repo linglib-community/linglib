@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Compat
 public import Linglib.Morphology.Word.Features
 public import Linglib.Syntax.Feature.Person.Specification
 
@@ -71,7 +71,8 @@ instance (d : Dimension) : OrderBot d.Slot := by cases d <;> exact inferInstance
 
 instance (d : Dimension) : DecidableLE d.Slot := by cases d <;> exact inferInstance
 
-instance (d : Dimension) : PartialUnify d.Slot := by cases d <;> exact inferInstance
+instance (d : Dimension) (x y : d.Slot) : Decidable (Compat x y) := by
+  cases d <;> exact inferInstance
 
 /-- A value of a dimension or `⊥` as a slot, a person value as the specification of what it
 covers. -/
@@ -93,8 +94,35 @@ def Dimension.Slot.ofFlat : (d : Dimension) → Flat d.Value → d.Slot
     Dimension.Slot.ofFlat .person (p : Flat Person) = Person.Specification.ofPerson p :=
   rfl
 
+/-- Unification of two slots, `⊤` when they are incompatible: person specifications unify to what
+both cover, and two values unify when they are equal. -/
+def Dimension.Slot.unify : (d : Dimension) → d.Slot → d.Slot → WithTop d.Slot
+  | .person => Finset.unify
+  | .number => Flat.unify
+  | .gender => Flat.unify
+  | .case => Flat.unify
+  | .definiteness => Flat.unify
+
+theorem Dimension.Slot.isLUB_unify (d : Dimension) (a b : d.Slot) :
+    IsLUB ({↑a, ↑b} : Set (WithTop d.Slot)) (Dimension.Slot.unify d a b) := by
+  cases d
+  · exact Finset.isLUB_unify a b
+  all_goals exact Flat.isLUB_unify a b
+
 /-- A feature bundle assigns each dimension a slot. -/
 abbrev Bundle := (d : Dimension) → d.Slot
+
+/-- With the failure of unification adjoined as `⊤`, bundles form a join-semilattice whose join
+unifies dimension by dimension. -/
+instance : SemilatticeSup (WithTop Bundle) :=
+  WithTop.semilatticeSupOfIsLUB (WithTop.piUnify Dimension.Slot.unify)
+    (WithTop.isLUB_piUnify Dimension.Slot.isLUB_unify)
+
+/-- Unifying with a bundle that bears one slot unifies at that dimension. -/
+theorem Bundle.coe_sup_coe_update_bot (b : Bundle) (d : Dimension) (x : d.Slot) :
+    (b : WithTop Bundle) ⊔ ↑(Function.update (⊥ : Bundle) d x) =
+      (Dimension.Slot.unify d (b d) x).map (Function.update b d) :=
+  WithTop.piUnify_update_bot Dimension.Slot.isLUB_unify b d x
 
 namespace Bundle
 

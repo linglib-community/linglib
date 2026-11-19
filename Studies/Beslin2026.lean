@@ -167,6 +167,8 @@ abbrev Bundle :=
 
 instance (a b : Bundle) : Decidable (a = b) := decidable_of_iff _ Prod.ext_iff.symm
 
+instance (a b : Bundle) : Decidable (Compat a b) := decidable_of_iff _ compat_prod_iff.symm
+
 namespace Analysis
 
 /-- The structure an analysis gives a form. -/

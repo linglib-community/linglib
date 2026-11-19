@@ -121,7 +121,6 @@ import Linglib.Core.Order.Flat
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Ortholattice
-import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.UpperLower.Closure
@@ -805,7 +804,6 @@ import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.CCG.Cat
 import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
-import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Category.Adjective.Basic

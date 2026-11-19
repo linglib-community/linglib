@@ -11,7 +11,7 @@ into a probe ([chomsky-2000]), from the valuation of a single slot (`FeatureSlot
 absent slot is unchanged, since an item that lacks a dimension is not a probe for it.
 
 Valuing a bundle at a dimension it bears is [unification with the bundle that bears only the
-value](##Minimalist.FeatureBundle.valueAt_eq_unify). At an agreement dimension other than
+value](##Minimalist.FeatureBundle.valueAt_eq_coe_iff). At an agreement dimension other than
 person, valuation followed by `FeatureBundle.agreement` is [unification of agreement
 bundles](##Minimalist.FeatureBundle.map_agreement_valueAt). Agree with a goal that has no value at
 the dimension leaves the probe unchanged, so Agree can fail without causing a crash
@@ -84,21 +84,27 @@ theorem le_of_valueAt_eq_coe (h : b.valueAt t v = ↑b') : b ≤ b' := by
   obtain ⟨s, hs, rfl⟩ := WithTop.map_eq_some_iff.1 h
   exact le_update_self_iff.2 (FeatureSlot.le_of_valueWith_eq_coe hs)
 
-theorem valueAt_eq_unify (hb : b t ≠ .absent) :
-    b.valueAt t v = PartialUnify.unify b (single t v) := by
-  rw [valueAt, FeatureSlot.valueWith_of_ne_absent hb, single, PartialUnify.unify_update_bot]
+/-- Valuing a bundle at a dimension it bears is unifying it with the bundle that bears only the
+value. -/
+theorem valueAt_eq_coe_iff (hb : b t ≠ .absent) :
+    b.valueAt t v = ↑b' ↔ IsLUB {b, single t v} b' := by
+  rw [single, isLUB_pair_update_bot_iff, valueAt, WithTop.map_eq_some_iff]
+  exact ⟨fun ⟨s, hs, hb'⟩ ↦ hb' ▸ ⟨by simpa using (FeatureSlot.valueWith_eq_coe_iff hb).1 hs,
+      by simp⟩,
+    fun ⟨h₁, h₂⟩ ↦ ⟨b' t, (FeatureSlot.valueWith_eq_coe_iff hb).2 h₁, h₂.symm⟩⟩
 
 /-- Outside the person dimension, valuing a checking bundle is unifying its agreement bundle
 with the value. -/
 theorem map_agreement_valueAt {d : Agreement.Dimension} (hd : d ≠ .person)
     {v : (FeatureType.agr d).Value} {b : FeatureBundle} (hb : b (.agr d) ≠ .absent) :
     (b.valueAt (.agr d) v).map agreement =
-      PartialUnify.unify b.agreement (Function.update ⊥ d (slotOfFlat d (v : Flat _))) := by
+      (b.agreement : WithTop Agreement.Bundle) ⊔
+        ↑(Function.update (⊥ : Agreement.Bundle) d (slotOfFlat d (v : Flat _))) := by
   cases d
   · exact absurd rfl hd
   all_goals
-    rw [PartialUnify.unify_update_bot, agreement_apply, valueAt]
-    simp only [slotOfFlat]
+    rw [Agreement.Bundle.coe_sup_coe_update_bot, agreement_apply, valueAt]
+    simp only [slotOfFlat, Agreement.Dimension.Slot.unify]
     rw [← FeatureSlot.map_toFlat_valueWith (v := v) hb]
     induction (b (.agr _)).valueWith v using WithTop.recTopCoe with
     | top => rfl

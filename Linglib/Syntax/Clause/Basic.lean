@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Compat
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Syntax.Obligatoriness
 public import Mathlib.Data.Fintype.Prod
@@ -208,7 +208,7 @@ end LeftEdge.Table
 
 *Whether* selects polar and alternative questions and *wonder* any question. Selections are
 ordered by information, the smaller set of types the more specific, and two selections unify to
-their intersection when it is nonempty, by the instances of `Core/Order/PartialUnify.lean`. -/
+their intersection when it is nonempty (`Finset.isLUB_pair_iff_eq_inter`). -/
 
 /-- A nonempty set of sentence types, the more specific selection being the smaller set. -/
 abbrev Selection.Types := {s : Finset SentenceType // s.Nonempty}ᵒᵈ

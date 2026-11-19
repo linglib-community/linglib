@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Flat
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Compat
 public import Linglib.Data.UD.Features
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Feature.Number.Basic
