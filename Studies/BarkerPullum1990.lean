@@ -166,8 +166,9 @@ theorem exists_forall_mem_commandRelation_iff_le [OrderBot Node] [IsForestOrder 
 theorem mem_commandRelation_Ici_iff [IsForestOrder Node] (r : Node) (P : Set Node)
     (a b : Set.Ici r) :
     a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
-  mem_commandRelation_subtype_iff (fun _ ha _ hxa ↦
-    (IsForestOrder.le_total_of_le_of_le hxa.le ha).symm.imp id fun hxr _ hy ↦ hxr.trans hy) P a b
+  mem_commandRelation_preimage_iff (OrderEmbedding.subtype (· ∈ Set.Ici r)) (fun a y hya ↦
+    (IsForestOrder.le_total_of_le_of_le hya.le a.2).symm.imp (fun h ↦ ⟨⟨y, h⟩, rfl⟩)
+      fun hyr _ ⟨z, hz⟩ ↦ hz ▸ hyr.trans z.2) P
 
 /-! ### Characterizing command relations
 

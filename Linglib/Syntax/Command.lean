@@ -1,14 +1,15 @@
 module
 
 public import Linglib.Core.Order.Cover
+public import Linglib.Core.Order.ForestOrder
 public import Mathlib.Basic.Rel
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Order.Minimal
-public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Core.Relation.SetRel
 
 /-!
@@ -28,21 +29,25 @@ which a node commands what its mother dominates, if the mother is a generator, a
 commands, if not. Comparing nodes by their ancestors gives closeness, which is
 [command without the generators above a node](##PhraseStructure.ancestors_subset_ancestors_iff).
 
+Barker and Pullum's relations are reflexive and relate a node to what it dominates. `Commands`
+is command between nodes neither of which dominates the other, as in Reinhart's c-command and
+Collins and Stabler's; on a tree it is
+[sisterhood plus dominance](##PhraseStructure.commands_iff_lt_of_covBy).
+
 A relation between nodes induces one between the nodes they dominate, its dominance image, the
 upper closure of the relation in the product order. Kayne's linear correspondence reads the
 dominance image of asymmetric c-command as precedence among terminals, and sisters that c-command
 each other [stay unordered](##PhraseStructure.not_mem_dominanceImage_asymmetrize_of_covBy).
 
-On the positions of a rose tree the branching positions generate Barker and Pullum's c-command,
-`RoseTree.cCommand`. Reinhart's, `RoseTree.CCommands`, holds between positions neither of which
-dominates the other, where it is [sisterhood plus dominance](##RoseTree.cCommands_iff_parent_lt).
+The positions of a rose tree instantiate the theory in `Linglib/Syntax/Command/RoseTree.lean`.
 
 ## Implementation notes
 
 * `commandRelation` is an `abbrev` for an upper polar, so the lemmas of `Mathlib/Order/Concept.lean`
   apply to it as they stand and are not restated here.
 * The relations are `SetRel`s, written `a ~[commandRelation P] b`, since they are intersected,
-  inverted and compared; dominance, which is only ever applied, stays `≤`.
+  inverted and compared; dominance, which is only ever applied, stays `≤`, and `Commands`,
+  likewise only applied, is a predicate.
 * Barker and Pullum's own theorems, their generation by relations and their definition of
   c-command through the mother relation are in `Studies/BarkerPullum1990.lean`.
 
@@ -50,6 +55,7 @@ dominates the other, where it is [sisterhood plus dominance](##RoseTree.cCommand
 
 * [barker-pullum-1990]
 * [chomsky-1995]
+* [collins-stabler-2016]
 * [kayne-1994]
 * [reinhart-1976]
 -/
@@ -112,15 +118,57 @@ theorem mem_commandRelation_iff_le (h : IsGreatest (ancestors P a) m) :
     a ~[commandRelation P] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
 
-/-- Command within a set of nodes is command in the whole order when every node properly
-dominating a member is a member or dominates every member. -/
-theorem mem_commandRelation_subtype_iff {D : Set α}
-    (hD : ∀ a ∈ D, ∀ x < a, x ∈ D ∨ x ∈ lowerBounds D) (P : Set α) (a b : D) :
-    a ~[commandRelation (Subtype.val ⁻¹' P)] b ↔ a.val ~[commandRelation P] b.val :=
-  ⟨fun h x hx hxa ↦ (hD a a.2 x hxa).elim (fun hxD ↦ h (a := ⟨x, hxD⟩) hx hxa) fun hxD ↦ hxD b.2,
-    fun h _ hx hxa ↦ h hx hxa⟩
+/-- An order embedding preserves and reflects command when every node below a node of its range
+is in the range or below all of it, as for a subtree or a lower set. -/
+theorem mem_commandRelation_preimage_iff {β : Type*} [Preorder β] (f : α ↪o β)
+    (hf : ∀ a, ∀ y < f a, y ∈ range f ∨ y ∈ lowerBounds (range f)) (P : Set β) :
+    a ~[commandRelation (f ⁻¹' P)] b ↔ f a ~[commandRelation P] f b := by
+  refine ⟨fun h y hy hya ↦ ?_, fun h x hx hxa ↦ f.le_iff_le.1 (h hx (f.lt_iff_lt.2 hxa))⟩
+  obtain ⟨x, rfl⟩ | hy' := hf a y hya
+  · exact f.le_iff_le.2 (h (a := x) hy (f.lt_iff_lt.1 hya))
+  · exact hy' (mem_range_self b)
 
 end Preorder
+
+/-! ### Command between incomparable nodes
+
+The command relations of [barker-pullum-1990] are reflexive and relate a node to all it dominates.
+In [reinhart-1976]'s c-command, and in [collins-stabler-2016]'s, a node commands only nodes it
+neither dominates nor is dominated by. -/
+
+section Commands
+
+variable [Preorder α] {P Q : Set α} {a b : α}
+
+/-- `a` commands `b` under `P` when every `P`-node properly dominating `a` dominates `b` and
+neither of the two dominates the other. -/
+@[mk_iff]
+structure Commands (P : Set α) (a b : α) : Prop where
+  /-- Every `P`-node properly dominating the commander dominates the commanded node. -/
+  command : a ~[commandRelation P] b
+  /-- Neither node dominates the other. -/
+  incompRel : IncompRel (· ≤ ·) a b
+
+instance [Decidable (a ~[commandRelation P] b)] [Decidable (IncompRel (· ≤ ·) a b)] :
+    Decidable (Commands P a b) :=
+  decidable_of_iff' _ (commands_iff ..)
+
+theorem Commands.not_le (h : Commands P a b) : ¬ a ≤ b := h.incompRel.1
+
+theorem Commands.not_ge (h : Commands P a b) : ¬ b ≤ a := h.incompRel.2
+
+theorem not_commands_self : ¬ Commands P a a := fun h ↦ h.not_le le_rfl
+
+/-- A larger generator commands less. -/
+theorem Commands.anti (hPQ : P ⊆ Q) (h : Commands Q a b) : Commands P a b :=
+  ⟨upperPolar_anti _ hPQ h.command, h.incompRel⟩
+
+theorem commands_preimage_iff {β : Type*} [Preorder β] (f : α ↪o β)
+    (hf : ∀ a, ∀ y < f a, y ∈ range f ∨ y ∈ lowerBounds (range f)) (P : Set β) :
+    Commands (f ⁻¹' P) a b ↔ Commands P (f a) (f b) := by
+  simp only [commands_iff, mem_commandRelation_preimage_iff f hf, IncompRel, f.le_iff_le]
+
+end Commands
 
 /-! ### Command on trees
 
@@ -167,6 +215,19 @@ theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsS
     · exact (hmem hm hP b).trans (mem_commandRelation_iff_le_of_covBy hm hP).symm
     · exact (hnot hm hP b).trans <|
         (ih m hm.lt b).trans (mem_commandRelation_iff_of_covBy hm hP).symm
+
+/-- Sisterhood plus dominance: a node whose mother is a generator commands the nodes properly
+below its mother that it does not dominate. -/
+theorem commands_iff_lt_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
+    Commands P a b ↔ m < b ∧ ¬ a ≤ b := by
+  rw [commands_iff, mem_commandRelation_iff_le_of_covBy ha hm]
+  refine ⟨fun ⟨hmb, hab, hba⟩ ↦ ⟨hmb.lt_of_ne fun e ↦ hba (e ▸ ha.le), hab⟩,
+    fun ⟨hmb, hab⟩ ↦ ⟨hmb.le, hab, fun hba ↦ hab ?_⟩⟩
+  exact ((ha.eq_or_eq hmb.le hba).resolve_left hmb.ne').ge
+
+/-- Two daughters of one node command each other, whatever the generator. -/
+theorem commands_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b) : Commands P a b :=
+  ⟨mem_commandRelation_of_covBy ha hb.le, ha.not_le_of_ne hb hab, hb.not_le_of_ne ha hab.symm⟩
 
 end ForestOrder
 
@@ -234,13 +295,20 @@ theorem ancestors_eq_ancestors_iff (hab : ¬ a < b) (hba : ¬ b < a) :
   rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff_of_not_lt hba,
     ancestors_subset_ancestors_iff_of_not_lt hab, mem_mateRelation]
 
+/-- Between nodes neither of which dominates the other, the closer is the one that commands
+without being commanded. -/
+theorem ancestors_ssubset_ancestors_iff_commands (h : IncompRel (· ≤ ·) a b) :
+    ancestors P a ⊂ ancestors P b ↔ Commands P a b ∧ ¬ Commands P b a := by
+  simp only [ancestors_ssubset_ancestors_iff h.not_lt h.not_gt, commands_iff, h, h.symm,
+    and_true]
+
 /-- Among nodes none of which dominates another, the closest are those that no node of the set
-asymmetrically commands, the Minimal Link Condition. -/
+commands without being commanded, the Minimal Link Condition. -/
 theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
     MinimalFor (· ∈ S) (ancestors P) a ↔
-      a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
-  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ h ↦
-    ancestors_ssubset_ancestors_iff h.not_lt h.not_gt
+      a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (Commands P b a ∧ ¬ Commands P a b) :=
+  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ ↦
+    ancestors_ssubset_ancestors_iff_commands
 
 end Closeness
 
@@ -293,164 +361,4 @@ theorem not_mem_dominanceImage_asymmetrize_of_covBy
 
 end DominanceImageTree
 
-/-! ### Command relations on the positions of a tree
-
-Membership in `commandRelation P` at concrete positions is decidable: the nodes properly
-dominating a position are its proper prefixes, a finite list, so the defining universal is a
-`List`-bounded one. -/
-
-section Positions
-
-open RoseTree
-
-theorem mem_commandRelation_iff_inits (P : Set GornAddress) (a b : GornAddress) :
-    a ~[commandRelation P] b ↔
-      ∀ x ∈ a.inits, x ≠ a → x ∈ P → x ≤ b := by
-  constructor
-  · intro h x hx hne hP
-    obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hx
-    exact h hP (lt_of_le_of_ne (GornAddress.le_def.mpr ((List.mem_inits _ _).mp hl)) hne)
-  · intro h x hP hxa
-    exact h x (List.mem_map.mpr
-      ⟨x.toList, (List.mem_inits _ _).mpr (GornAddress.le_def.mp hxa.le), rfl⟩) hxa.ne hP
-
-instance (P : Set GornAddress) [DecidablePred (· ∈ P)] (a b : GornAddress) :
-    Decidable (a ~[commandRelation P] b) :=
-  decidable_of_iff _ (mem_commandRelation_iff_inits P a b).symm
-
-instance (P : Set GornAddress) [DecidablePred (· ∈ P)] (ab : GornAddress × GornAddress) :
-    Decidable (ab ∈ mateRelation P) :=
-  inferInstanceAs (Decidable (ab.1 ~[commandRelation P] ab.2 ∧ ab.2 ~[commandRelation P] ab.1))
-
-end Positions
-
 end PhraseStructure
-
-/-! ### C-command on the positions of a rose tree -/
-
-namespace RoseTree
-
-open PhraseStructure
-open scoped SetRel
-
-variable {β : Type*}
-
-/-- A position of `t` is **branching** when its subtree has at least two children, the
-geometric reading of [reinhart-1976]'s "first branching node". -/
-def IsBranchingAt (t : RoseTree β) (p : GornAddress) : Prop :=
-  p ∈ positionsWhere (fun s ↦ 2 ≤ s.arity) t
-
-instance (t : RoseTree β) (p : GornAddress) : Decidable (t.IsBranchingAt p) :=
-  inferInstanceAs (Decidable (p ∈ positionsWhere _ t))
-
-/-- Barker and Pullum's c-command on the positions of `t`, the command relation its branching
-positions generate. It is reflexive and a position commands what it dominates, unlike
-`RoseTree.CCommands`; it is read off the tree, so decidable. -/
-abbrev cCommand (t : RoseTree β) : SetRel GornAddress GornAddress :=
-  commandRelation {p | t.IsBranchingAt p}
-
-/-- The branching nodes of the order of positions, the mothers of two distinct nodes, are the
-positions with at least two children. -/
-theorem isBranching_iff_isBranchingAt {t : RoseTree β} (p : t.Positions) :
-    IsBranching p ↔ IsBranchingAt t p.val := by
-  have hv : ∀ i < p.subtree.arity, p.val * .of i ∈ t.validPaths := fun i hi ↦
-    mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, hi⟩
-  rw [IsBranchingAt, mem_positionsWhere, p.getElem?_eq]
-  simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
-  constructor
-  · rintro ⟨a, ha, b, hb, hab⟩
-    obtain ⟨i, hi, hai⟩ := Positions.covBy_iff_exists_lt.1 ha
-    obtain ⟨j, hj, hbj⟩ := Positions.covBy_iff_exists_lt.1 hb
-    have hij : i ≠ j := fun h ↦ hab (Subtype.ext (hai.trans (h ▸ hbj.symm)))
-    omega
-  · intro h
-    refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff_exists_lt.2 ⟨0, by omega, rfl⟩,
-      ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff_exists_lt.2 ⟨1, by omega, rfl⟩, fun e ↦ ?_⟩
-    simpa using congrArg (fun q : t.Positions ↦ q.val.toList) e
-
-/-- The command relation the branching nodes of the order of positions generate is
-`RoseTree.cCommand`. -/
-theorem mem_commandRelation_isBranching_iff {t : RoseTree β} (a b : t.Positions) :
-    a ~[commandRelation {p | IsBranching p}] b ↔ a.val ~[t.cCommand] b.val := by
-  rw [show {p : t.Positions | IsBranching p} = Subtype.val ⁻¹' {p | IsBranchingAt t p} from
-    Set.ext isBranching_iff_isBranchingAt]
-  exact mem_commandRelation_subtype_iff
-    (fun _ ha _ hxa ↦ .inl (isLowerSet_validPaths t hxa.le ha)) _ a b
-
-/-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
-dominating `a` dominates `b`: [reinhart-1976]'s c-command, `RoseTree.cCommand` between
-incomparable positions. The positions `a` c-commands are its c-command domain. -/
-def CCommands (t : RoseTree β) (a b : GornAddress) : Prop :=
-  a ~[t.cCommand] b ∧ IncompRel (· ≤ ·) a b
-
-instance (t : RoseTree β) : DecidableRel t.CCommands :=
-  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ IncompRel _ _ _))
-
-theorem cCommands_iff {t : RoseTree β} {a b : GornAddress} :
-    t.CCommands a b ↔ a ~[t.cCommand] b ∧ IncompRel (· ≤ ·) a b := Iff.rfl
-
-/-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
-the positions properly below its parent and not below itself. -/
-theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : GornAddress} (ha : a ≠ ⊥)
-    (hp : IsBranchingAt t a.parent) : CCommands t a b ↔ a.parent < b ∧ ¬ a ≤ b := by
-  have hcov : a.parent ⋖ a := by
-    rw [← GornAddress.pred_eq_parent]
-    exact Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha)
-  have hcc : a ~[cCommand t] b ↔ a.parent ≤ b := mem_commandRelation_iff_le_of_covBy hcov hp
-  rw [CCommands, hcc]
-  refine ⟨fun ⟨hpb, hab, hba⟩ ↦ ⟨lt_of_le_of_ne hpb fun he ↦ hba (he ▸ hcov.le), hab⟩,
-    fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
-  exact ((hcov.eq_or_eq hpb.le hba).resolve_left hpb.ne').ge
-
-theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : GornAddress} (hc : m ⋖ c)
-    (hm : IsBranchingAt t m) : CCommands t c q ↔ m < q ∧ ¬ c ≤ q := by
-  have hpar : c.parent = m := by rw [← GornAddress.pred_eq_parent, Order.pred_eq_of_covBy hc]
-  rw [cCommands_iff_parent_lt (ne_bot_of_gt hc.lt) (hpar ▸ hm), hpar]
-
-/-- Between positions neither of which dominates the other, strict closeness under the branching
-positions is asymmetric c-command. -/
-theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : GornAddress}
-    (h : IncompRel (· ≤ ·) a b) :
-    ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔
-      t.CCommands a b ∧ ¬ t.CCommands b a := by
-  simp only [ancestors_ssubset_ancestors_iff h.not_lt h.not_gt, cCommands_iff, h, h.symm,
-    and_true]
-
-theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : GornAddress) :
-    IsBranchingAt (t.map f) p ↔ IsBranchingAt t p := by
-  simp [IsBranchingAt, positionsWhere_map]
-
-theorem cCommand_map {γ : Type*} (f : β → γ) (t : RoseTree β) :
-    cCommand (t.map f) = cCommand t := by
-  simp only [cCommand, isBranchingAt_map]
-
-theorem cCommands_map {γ : Type*} (f : β → γ) (t : RoseTree β) (a b : GornAddress) :
-    (t.map f).CCommands a b ↔ t.CCommands a b := by
-  rw [cCommands_iff, cCommands_iff, cCommand_map]
-
-section Replace
-
-variable {t new : RoseTree β} {a b c : GornAddress}
-
-theorem isBranchingAt_replaceAt {x : GornAddress} (h : ¬ c ≤ x) :
-    IsBranchingAt (t.replaceAt c new) x ↔ IsBranchingAt t x :=
-  mem_positionsWhere_replaceAt (fun _ _ _ _ ↦ by simp [arity]) h new
-
-theorem mem_cCommand_replaceAt (h : ¬ c < a) :
-    a ~[cCommand (t.replaceAt c new)] b ↔ a ~[cCommand t] b :=
-  mem_commandRelation_congr fun _ hxa ↦ isBranchingAt_replaceAt fun hcx ↦ h (hcx.trans_lt hxa)
-
-theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a ≤ c) :
-    CCommands (t.replaceAt c new) a b ↔ CCommands t a c := by
-  have hlt : ¬ c < a := fun h ↦ hca h.le
-  have hab : ¬ a ≤ b := fun h ↦ (IsForestOrder.le_total_of_le_of_le h hcb).elim hac hca
-  have hba : ¬ b ≤ a := fun h ↦ hca (hcb.trans h)
-  simp only [CCommands, IncompRel, mem_commandRelation_iff_of_le hcb hlt,
-    mem_cCommand_replaceAt hlt, hab, hba, hac, hca, not_false_eq_true, and_true]
-
-theorem cCommands_replaceAt_self : CCommands (t.replaceAt c new) c a ↔ CCommands t c a := by
-  simp only [CCommands, mem_cCommand_replaceAt (lt_irrefl c)]
-
-end Replace
-
-end RoseTree

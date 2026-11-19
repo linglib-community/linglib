@@ -9,7 +9,7 @@ public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Coordination
 public import Linglib.Semantics.Composition.PredicateAbstraction
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Fragments.English.Coordination
 public import Mathlib.Data.Set.Card
 

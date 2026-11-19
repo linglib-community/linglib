@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Cat
 public import Linglib.Syntax.Tree.Basic
 

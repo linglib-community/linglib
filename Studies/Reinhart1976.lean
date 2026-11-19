@@ -56,7 +56,7 @@ variable {C W : Type*}
 /-- A node commands another (1) when neither dominates the other and the S node most immediately
 dominating the first dominates the second. -/
 def Commands (t : Tree Cat W) (a b : GornAddress) : Prop :=
-  a ~[sCommand t] b ∧ IncompRel (· ≤ ·) a b
+  PhraseStructure.Commands (labeled t {.S}) a b
 
 /-- Precede-and-command is the domain relation of the received view (5). -/
 def PrecedesAndCommands (t : Tree Cat W) (a b : GornAddress) : Prop :=
@@ -71,7 +71,7 @@ instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := fun _ _ ↦ 
 -- (49)
 theorem cCommands_commands {t : Tree Cat W} {a b : GornAddress}
     (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
-  ⟨upperPolar_anti _ hS h.1, h.2⟩
+  h.anti hS
 
 -- (38)
 theorem cCommand_eq_Ici {t : Tree C W} {a m : GornAddress} (hm : m < a) (hb : IsBranchingAt t m)

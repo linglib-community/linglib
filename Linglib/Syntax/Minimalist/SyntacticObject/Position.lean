@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Projection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
@@ -250,7 +250,7 @@ theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (h
 theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.toRoseTree.CCommands c q :=
     by
   have hpar : c.val.parent = a.val := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hc]
-  exact (cCommands_iff_of_covBy (Positions.covBy_iff.1 hc)
+  exact (commands_iff_lt_of_covBy (Positions.covBy_iff.1 hc)
     (hpar ▸ isBranchingAt_parent (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
 
 theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hcq : c < q)
@@ -333,7 +333,7 @@ theorem above_branching_lt_iff (h : IncompRel (· ≤ ·) q g) :
     t.above t.branching q < t.above t.branching g ↔
       t.toRoseTree.CCommands q g ∧ ¬ t.toRoseTree.CCommands g q := by
   rw [← Finset.coe_ssubset, coe_above, coe_above]
-  exact ancestors_ssubset_ancestors_iff_cCommands h
+  exact ancestors_ssubset_ancestors_iff_commands h
 
 theorem above_branching_lt_of_cCommands (hqg : t.toRoseTree.CCommands q g)
     (hgq : ¬ t.toRoseTree.CCommands g q) : t.above t.branching q < t.above t.branching g :=

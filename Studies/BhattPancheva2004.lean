@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.BhattPancheva2004
 public import Linglib.Semantics.Degree.HeimKennedy
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Minimalist.LateMerger
 public import Linglib.Data.Examples.Readers
 

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Data.List.Infix
+public import Linglib.Core.Order.GornAddress
 public import Linglib.Syntax.Command
 
 /-!

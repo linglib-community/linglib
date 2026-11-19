@@ -118,13 +118,13 @@ def IsVisible (x : α) : Prop := IsMinimalProjection H x ∨ IsMaximalProjection
 /-- In bare c-command, the book's (157), a visible node c-commands each node disconnected from it
 that every node properly dominating it dominates. -/
 def bareCCommand : SetRel α α :=
-  {p | IsVisible H p.1 ∧ IncompRel (· ≤ ·) p.1 p.2 ∧ p.1 ~[commandRelation univ] p.2}
+  {(a, b) | IsVisible H a ∧ Commands univ a b}
 
 variable {H} {R : SetRel α α} {T : Set α} {a b h j m p x J K L P : α}
 
 theorem mem_bareCCommand : a ~[bareCCommand H] b ↔
     IsVisible H a ∧ IncompRel (· ≤ ·) a b ∧ ∀ x < a, x ≤ b := by
-  simp [bareCCommand, mem_commandRelation]
+  simp [bareCCommand, commands_iff, mem_commandRelation, and_comm]
 
 theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Prop} (e : α ≃o β)
     (hH : ∀ a b, H' (e a) (e b) ↔ H a b) : Prod.map e e '' bareCCommand H = bareCCommand H' := by
@@ -153,14 +153,13 @@ variable [IsForestOrder α]
 
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
-  ⟨hv, ⟨CovBy.not_le_of_ne ha hb hab, CovBy.not_le_of_ne hb ha hab.symm⟩,
-    mem_commandRelation_of_covBy ha hb.le⟩
+  ⟨hv, commands_of_covBy ha hb hab⟩
 
 /-- A node does not precede a visible sister, so two visible sisters are unordered, as the
 terminals `m` and `p` of (154). -/
 theorem not_precedes_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hvb : IsVisible H b) :
     ¬ Precedes (bareCCommand H) a b := by
-  refine not_mem_dominanceImage_asymmetrize_of_covBy (fun _ _ h ↦ h.2.1)
+  refine not_mem_dominanceImage_asymmetrize_of_covBy (fun _ _ h ↦ h.2.incompRel)
     (fun h ↦ ?_) ha hb
   rcases eq_or_ne a b with rfl | hab
   · exact h
