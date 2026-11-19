@@ -23,8 +23,8 @@ into phrases, each of which must be a constituent.
 
 ## Implementation notes
 
-[steedman-2000] treats two of the pitch accents of [pierrehumbert-1980], L+H* and H*, and
-`accentInfo` leaves the others unmarked. Boundary tones are elements of the string in the book,
+[steedman-2000] treats two of the pitch accents of [pierrehumbert-1980], L+H* and H*, so the
+accents are given as a function of the two values, `Info.accent`. Boundary tones are elements of the string in the book,
 functions from a theme- or rheme-marked category into a phrasal category with a third value of
 the feature that unifies only with itself. They are not modelled: a boundary is represented by
 where an utterance is divided, and the feature has the two values that accents assign.
@@ -75,16 +75,12 @@ namespace InfoFeature
 
 end InfoFeature
 
-/-- The marking of a pitch accent in [steedman-2000]: L+H* marks the theme and H* the rheme.
-These are the two accents the book treats. -/
-def accentInfo : PitchAccent → InfoFeature
-  | .leading .L .H => .θ
-  | .mono .H => .ρ
-  | _ => ⊥
+/-- The pitch accent that marks a value in [steedman-2000]: L+H* the theme and H* the rheme. -/
+def Info.accent : Info → PitchAccent
+  | .θ => .leading .L .H
+  | .ρ => .mono .H
 
-@[simp] theorem accentInfo_leading_L_H : accentInfo (.leading .L .H) = .θ := rfl
-
-@[simp] theorem accentInfo_mono_H : accentInfo (.mono .H) = .ρ := rfl
+theorem Info.accent_injective : Function.Injective Info.accent := by decide
 
 end Intonation
 

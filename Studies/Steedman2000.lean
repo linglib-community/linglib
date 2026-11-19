@@ -630,11 +630,11 @@ section Intonation
 
 open CCG.Intonation Prosody
 
-/-- The marking of "(ANNA married)(MANNY)": L+H* on "Anna", H* on "Manny" and the null tone on
-"married". -/
+/-- The marking of "(ANNA married)(MANNY)": the theme accent on "Anna", the rheme accent on
+"Manny" and the null tone on "married". -/
 def annaMannyMark : String → InfoFeature
-  | "Anna" => accentInfo (.leading .L .H)
-  | "Manny" => accentInfo (.mono .H)
+  | "Anna" => .θ
+  | "Manny" => .ρ
   | _ => ⊥
 
 /-- "Anna married" is the composed constituent of category `S/NP`. -/
@@ -659,11 +659,11 @@ theorem anna_married_manny_clash {c : Cat Atom} (d : Derivation String (.multimo
       rw [show annaMannyMark "Anna" = .θ from rfl, show annaMannyMark "Manny" = .ρ from rfl]
       simp)
 
-/-- The marking of the mirror answer "(ANNA)(married MANNY)": H* on "Anna" and L+H* on
-"Manny". -/
+/-- The marking of the mirror answer "(ANNA)(married MANNY)": the rheme accent on "Anna" and
+the theme accent on "Manny". -/
 def mannyThemeMark : String → InfoFeature
-  | "Anna" => accentInfo (.mono .H)
-  | "Manny" => accentInfo (.leading .L .H)
+  | "Anna" => .ρ
+  | "Manny" => .θ
   | _ => ⊥
 
 -- (13)
