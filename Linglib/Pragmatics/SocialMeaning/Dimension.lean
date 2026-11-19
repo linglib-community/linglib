@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Combinatorics.SimpleGraph.MaximalIndepSet
+public import Linglib.Core.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Basic.Sign.Defs
 public import Mathlib.Combinatorics.SimpleGraph.CompleteMultipartite
 public import Mathlib.Data.Fintype.BigOperators
@@ -87,9 +87,9 @@ theorem isIndepSet_dimensionalIncompatibility_iff {s : Set P} :
     ⟨fun h hd ↦ by_contra fun hne ↦ h hne ⟨hne, hd⟩, fun h hne hpq ↦ hne (h hpq.2)⟩
 
 /-- A maximal consistent set of properties takes exactly one value of each dimension. -/
-theorem maximal_isIndepSet_dimensionalIncompatibility_iff {s : Set P} :
+theorem isMaximalIndepSet_dimensionalIncompatibility_iff {s : Set P} :
     Maximal (dimensionalIncompatibility dim).IsIndepSet s ↔ s.BijOn dim (Set.range dim) := by
-  rw [SimpleGraph.maximal_isIndepSet_iff_forall_exists_adj,
+  rw [SimpleGraph.isMaximalIndepSet_iff_forall_exists_adj,
     isIndepSet_dimensionalIncompatibility_iff]
   refine ⟨fun ⟨hi, hd⟩ ↦ ⟨fun p _ ↦ ⟨p, rfl⟩, hi, ?_⟩, fun ⟨_, hi, hs⟩ ↦ ⟨hi, fun p hp ↦ ?_⟩⟩
   · rintro _ ⟨p, rfl⟩
@@ -104,7 +104,7 @@ theorem mem_maximalIndepSets_dimensionalIncompatibility_iff [Fintype P] [Decidab
     [DecidableEq D] {s : Finset P} :
     s ∈ (dimensionalIncompatibility dim).maximalIndepSets ↔
       (s : Set P).BijOn dim (Set.range dim) := by
-  rw [SimpleGraph.mem_maximalIndepSets, maximal_isIndepSet_dimensionalIncompatibility_iff]
+  rw [SimpleGraph.mem_maximalIndepSets, isMaximalIndepSet_dimensionalIncompatibility_iff]
 
 end Dimensional
 
