@@ -6,6 +6,7 @@ public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
+public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # The softmax kernel of an extended-real score
@@ -98,11 +99,27 @@ theorem ofWeights_rpow_eq_softmax (w : α → β → ℝ≥0∞) (r : ℝ) :
     ofWeights (fun a b ↦ w a b ^ r) = softmax fun a b ↦ r * ENNReal.log (w a b) := by
   simpa using ofWeights_rpow_mul_eq_softmax w r 0
 
+/-- Reindexing the source of a softmax kernel reindexes its score. -/
+theorem softmax_comap {γ : Type*} [MeasurableSpace γ] [Countable γ] [MeasurableSingletonClass γ]
+    (score : α → β → EReal) (g : γ → α) (hg : Measurable g) :
+    (softmax score).comap g hg = softmax fun c b ↦ score (g c) b :=
+  rfl
+
 variable [MeasurableSingletonClass β]
 
 @[simp] theorem softmax_apply_singleton (score : α → β → EReal) (w : α) (u : β) :
     softmax score w {u} = EReal.exp (score w u) / ∑ u', EReal.exp (score w u') :=
   ofWeights_apply_singleton _ w u
+
+/-- Relabelling the target of a softmax kernel by a permutation relabels its score. -/
+theorem softmax_map_equiv {β' : Type*} [MeasurableSpace β'] [Fintype β']
+    [MeasurableSingletonClass β'] (score : α → β → EReal) (π : β ≃ β') :
+    (softmax score).map π = softmax fun a b' ↦ score a (π.symm b') := by
+  ext a : 1
+  refine Measure.ext_of_singleton fun b' ↦ ?_
+  rw [map_apply' _ .of_discrete _ (.singleton b'),
+    show π ⁻¹' {b'} = {π.symm b'} by ext; simp [Equiv.eq_symm_apply], softmax_apply_singleton,
+    softmax_apply_singleton, π.symm.sum_comp fun b ↦ (score a b).exp]
 
 theorem softmax_apply_singleton_eq_zero {w : α} {u : β} (h : score w u = ⊥) :
     softmax score w {u} = 0 :=

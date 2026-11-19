@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Core.Probability.Kernel.Invariance
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Core.MeasureTheory.Measure.Dirac
@@ -16,7 +17,7 @@ two languages with noisy production, learners who take a language of greatest po
 [one stationary distribution, the same for every bias the model
 allows](##invariant_mapLearner_comp_produce_iff), so they [keep the prior only when it already has
 that value](##invariant_mapLearner_comp_produce_prior_iff), and their chain [converges to that
-distribution](##tendsto_pow_comp_real_one) from any start.
+distribution](##tendsto_pow_mapLearner_comp_produce) from any start.
 
 ## Implementation notes
 
@@ -106,90 +107,8 @@ theorem argmax_eq (v : Language → ℝ≥0∞) :
   · cases i <;> simp [h₂.le, not_le.2 h₂]
   · cases i <;> simp [not_lt.1 h₁, not_lt.1 h₂]
 
-theorem real_one_add_real_two (ρ : Measure Language) [IsProbabilityMeasure ρ] :
-    ρ.real {one} + ρ.real {two} = 1 :=
-  measureReal_singleton_add_singleton_of_pair ρ (by decide) fun i _ ↦ by cases i <;> simp
-
-theorem real_two_eq_one_sub (ρ : Measure Language) [IsProbabilityMeasure ρ] :
-    ρ.real {two} = 1 - ρ.real {one} := by
-  linarith [real_one_add_real_two ρ]
-
-theorem ext_of_real_one {ρ ν : Measure Language} [IsProbabilityMeasure ρ] [IsProbabilityMeasure ν]
-    (h : ρ.real {one} = ν.real {one}) : ρ = ν := by
-  have h₂ : ρ.real {two} = ν.real {two} := by rw [real_two_eq_one_sub, real_two_eq_one_sub, h]
-  refine Measure.ext_of_singleton fun i ↦ ?_
-  cases i
-  · exact (measureReal_eq_measureReal_iff (measure_ne_top _ _) (measure_ne_top _ _)).1 h
-  · exact (measureReal_eq_measureReal_iff (measure_ne_top _ _) (measure_ne_top _ _)).1 h₂
-
-/-! #### Two-state chains
-
-A Markov kernel `Q` on the two languages is fixed by `q₁₂ = Q two {one}` and
-`q₂₁ = Q one {two}`, the paper's notation for the chance of moving to the first index from the
-second. -/
-
-variable (Q : Kernel Language Language) [IsMarkovKernel Q] (ν : Measure Language)
-  [IsProbabilityMeasure ν]
-
-theorem comp_real_one :
-    (Q ∘ₘ ν).real {one} =
-      (Q two).real {one} + (1 - (Q two).real {one} - (Q one).real {two}) * ν.real {one} := by
-  rw [Measure.comp_real_singleton, univ_eq, sum_pair (by decide), real_two_eq_one_sub ν,
-    show (Q one).real {one} = 1 - (Q one).real {two} by linarith [real_one_add_real_two (Q one)]]
-  ring
-
--- Eq. (13): detailed balance at the two atoms, the two-state case of mathlib's
--- `Kernel.IsReversible`.
-theorem invariant_iff :
-    Q.Invariant ν ↔ ν.real {one} * (Q one).real {two} = ν.real {two} * (Q two).real {one} := by
-  rw [real_two_eq_one_sub ν]
-  refine ⟨fun h ↦ ?_, fun h ↦ ext_of_real_one ?_⟩
-  · have := comp_real_one Q ν
-    rw [h.def] at this
-    linarith
-  · rw [comp_real_one]
-    linarith
-
--- Eq. (14)
-theorem real_one_eq_of_invariant (h : Q.Invariant ν)
-    (h₀ : (Q two).real {one} + (Q one).real {two} ≠ 0) :
-    ν.real {one} = (Q two).real {one} / ((Q two).real {one} + (Q one).real {two}) := by
-  rw [eq_div_iff h₀]
-  have := (invariant_iff Q ν).1 h
-  rw [real_two_eq_one_sub ν] at this
-  linarith
-
--- Eq. (15): the distance to the stationary probability shrinks by `λ₂ = 1 - q₁₂ - q₂₁` per step.
-theorem pow_comp_real_one_sub (n : ℕ) (h₀ : (Q two).real {one} + (Q one).real {two} ≠ 0) :
-    ((Q ^ n) ∘ₘ ν).real {one} - (Q two).real {one} / ((Q two).real {one} + (Q one).real {two}) =
-      (1 - (Q two).real {one} - (Q one).real {two}) ^ n *
-        (ν.real {one} - (Q two).real {one} / ((Q two).real {one} + (Q one).real {two})) := by
-  induction n with
-  | zero =>
-    rw [pow_zero, Kernel.one_def, Measure.id_comp]
-    simp
-  | succ n ih =>
-    rw [pow_succ', Kernel.mul_def, ← Measure.comp_assoc, comp_real_one, pow_succ,
-      mul_comm (_ ^ n), mul_assoc, ← ih]
-    field_simp
-    ring
-
-/-- Eqs. (14)–(15): a two-state chain whose second eigenvalue `1 - q₁₂ - q₂₁` has modulus below
-one converges, from any start, to the stationary probability `q₁₂ / (q₁₂ + q₂₁)` of the first
-state. -/
-theorem tendsto_pow_comp_real_one (h₀ : 0 < (Q two).real {one} + (Q one).real {two})
-    (h₂ : (Q two).real {one} + (Q one).real {two} < 2) :
-    Tendsto (fun n : ℕ ↦ ((Q ^ n) ∘ₘ ν).real {one}) atTop
-      (𝓝 ((Q two).real {one} / ((Q two).real {one} + (Q one).real {two}))) := by
-  have h := ((tendsto_pow_atTop_nhds_zero_of_abs_lt_one
-    (r := 1 - (Q two).real {one} - (Q one).real {two})
-    (abs_lt.2 ⟨by linarith, by linarith⟩)).mul_const
-      (ν.real {one} - (Q two).real {one} / ((Q two).real {one} + (Q one).real {two}))).add_const
-      ((Q two).real {one} / ((Q two).real {one} + (Q one).real {two}))
-  rw [zero_mul, zero_add] at h
-  refine h.congr fun n ↦ ?_
-  rw [← pow_comp_real_one_sub Q ν n h₀.ne']
-  ring
+theorem eq_one_or_eq_two (c : Language) : c = one ∨ c = two := by
+  cases c <;> simp
 
 end Language
 
@@ -411,11 +330,13 @@ theorem invariant_mapLearner_comp_produce_iff [IsProbabilityMeasure P] {α : ℝ
   have hθ₁ : (s + (1 - s) * ε) / (s + 2 * (1 - s) * ε) ≤ 1 :=
     div_le_one_of_le₀ (by nlinarith) hD.le
   have := isProbabilityMeasure_prior hθ₀ hθ₁
-  refine ⟨fun h ↦ ext_of_real_one ?_, fun h ↦ ?_⟩
-  · rw [real_one_eq_of_invariant Q ν h (by rw [q₁₂, q₂₁]; exact ne_of_gt (by linarith)), q₁₂, q₂₁,
+  refine ⟨fun h ↦ Measure.ext_of_measureReal_singleton_of_pair (by decide) eq_one_or_eq_two ?_,
+    fun h ↦ ?_⟩
+  · rw [h.real_singleton_of_pair (by decide) eq_one_or_eq_two
+      (by rw [q₁₂, q₂₁]; exact ne_of_gt (by linarith)), q₁₂, q₂₁,
       prior_real_one hθ₀]
     ring
-  · rw [h, invariant_iff, q₂₁, q₁₂, prior_real_one hθ₀, prior_real_two hθ₁, one_sub_div hD.ne',
+  · rw [h, Kernel.invariant_iff_of_pair (by decide) eq_one_or_eq_two, q₂₁, q₁₂, prior_real_one hθ₀, prior_real_two hθ₁, one_sub_div hD.ne',
       div_mul_eq_mul_div, div_mul_eq_mul_div, div_left_inj₀ hD.ne']
     ring
 
@@ -457,9 +378,9 @@ example [IsProbabilityMeasure P] {α : ℝ} (hα : 1 / 2 < α) (hαε : ε < 1 -
   · rw [invariant_mapLearner_comp_produce_prior_iff hα hαε hε, hθ]
     exact fun h ↦ by linarith
 
-/-- With noise, the MAP chain on two languages converges from any start to its stationary
-probability of `L₁`, which does not involve the prior. -/
-example [IsProbabilityMeasure P] (ν : Measure Language) [IsProbabilityMeasure ν] {α : ℝ}
+/-- Eqs. (14)–(15): with noise, the MAP chain on two languages converges from any start to its
+stationary probability of `L₁`, which does not involve the prior. -/
+theorem tendsto_pow_mapLearner_comp_produce [IsProbabilityMeasure P] (ν : Measure Language) [IsProbabilityMeasure ν] {α : ℝ}
     (hα : 1 / 2 < α) (hαε : ε < 1 - α) (hε : 0 < ε) :
     Tendsto (fun n : ℕ ↦
       (((mapLearner (produce P G ε) (prior α) ∘ₖ produce P G ε) ^ n) ∘ₘ ν).real {one}) atTop
@@ -469,7 +390,8 @@ example [IsProbabilityMeasure P] (ν : Measure Language) [IsProbabilityMeasure �
   have := isMarkovKernel_produce P G ε hε.le (by linarith)
   have hs₀ : 0 ≤ P.real {x | x ∈ G one ↔ x ∈ G two} := measureReal_nonneg
   have hs₁ : P.real {x | x ∈ G one ↔ x ∈ G two} ≤ 1 := measureReal_le_one (μ := P)
-  have h := tendsto_pow_comp_real_one (mapLearner (produce P G ε) (prior α) ∘ₖ produce P G ε) ν
+  have h := Kernel.tendsto_pow_comp_real_singleton_of_pair (by decide) eq_one_or_eq_two
+    (κ := mapLearner (produce P G ε) (prior α) ∘ₖ produce P G ε) (μ := ν)
   rw [mapLearner_comp_real_one_two hα hαε hε.le, mapLearner_comp_real_two_one hα hαε hε.le] at h
   convert h (by nlinarith) (by nlinarith) using 2
   ring
