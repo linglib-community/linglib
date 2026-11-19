@@ -12,25 +12,25 @@ public import Linglib.Phonology.OCP
 # Forbidden-pair constraints
 
 The forbidden-pair constraint `Constraint.ofForbiddenPairs R` assigns a string one violation for
-each adjacent pair `(a, b)` with `R a b`. It is to `List.IsChain` what `List.countP` is to a
-bound universal: a string satisfies it
-[exactly when its adjacent elements form a chain of `¬ R`](##ofForbiddenPairs_eq_zero_iff).
+each adjacent pair `(a, b)` with `R a b`. A string satisfies it
+[exactly when its adjacent elements form a chain of `¬ R`](##ofForbiddenPairs_eq_zero_iff), so the
+constraint counts what `List.IsChain` decides, much as `List.countP` counts what a bounded
+universal statement decides.
 
-The Obligatory Contour Principle is the instance `R := (· = ·)`, `Constraint.ocp`. [leben-1973]
-proposed it for tone melodies and [goldsmith-1976] named it. [mccarthy-1986] states it for any
-melody, prohibiting adjacent identical elements, and carries it into segmental phonology, where it
-also blocks syncope from creating clusters of identical consonants. A string satisfies it exactly
-when it is `OCP.IsClean`. Stated over any type of elements, it bans $XX$ for a
-variable $X$ ([berent-2026]), so
-[no injective relabelling of the elements changes its violations](##ocp_map_of_injective) and it
-extends to elements a language lacks.
+The Obligatory Contour Principle is the instance `R := (· = ·)`, `Constraint.ocp`. Leben proposed
+it for tone melodies and Goldsmith gave it its name. McCarthy states it for any melody as a
+prohibition on adjacent identical elements and applies it in segmental phonology, where it also
+blocks syncope from creating clusters of identical consonants. A string satisfies the OCP exactly
+when it is `OCP.IsClean`. Because the constraint is stated over any type of elements, it bans
+$XX$ for a variable $X$, as Berent argues identity restrictions do, so
+[no injective relabelling of the elements changes its violations](##ocp_map_of_injective) and the
+ban extends to elements that a language lacks.
 
-A constraint on candidates of another type, or on a tier, is not a separate constructor but the
-`Constraint.comap` of a string constraint along the candidate's string, along a projection of its
-elements, or along erasure of the off-tier symbols. Along a projection,
-[the relation is pulled back](##ofForbiddenPairs_map). Along the output
-string of a correspondence candidate, the pullback is a markedness constraint in the sense of
-`Correspondence.Coindexation.IsMarkedness`.
+A constraint on candidates of another type, or on a tier, is the `Constraint.comap` of a string
+constraint along the candidate's string, along a projection of its elements, or along the erasure
+of off-tier symbols. Along a projection
+[the forbidden relation is pulled back](##ofForbiddenPairs_map), and along the output string of a correspondence candidate the pullback is a markedness constraint
+in the sense of `Correspondence.Coindexation.IsMarkedness`.
 
 ## Implementation notes
 
@@ -59,9 +59,8 @@ def ofForbiddenPairs (R : α → α → Prop) [DecidableRel R] : Constraint (Lis
   | [] | [_] => 0
   | a :: b :: w => (if R a b then 1 else 0) + ofForbiddenPairs R (b :: w)
 
-/-- The OCP, "at the melodic level, adjacent identical elements are prohibited" ([mccarthy-1986]
-(2), after [leben-1973] and [goldsmith-1976]), as a forbidden-pair constraint polymorphic over the
-type of elements ([berent-2026]). -/
+/-- The Obligatory Contour Principle, the forbidden-pair constraint against adjacent identical
+elements ((2) of [mccarthy-1986]). -/
 def ocp [DecidableEq α] : Constraint (List α) := ofForbiddenPairs (· = ·)
 
 section ofForbiddenPairs
@@ -98,8 +97,8 @@ theorem ofForbiddenPairs_append_cons_cons (l₁ : List α) (b c : α) (l₂ : Li
       ofForbiddenPairs R (l₁ ++ [b]) + (if R b c then 1 else 0) + ofForbiddenPairs R (c :: l₂) := by
   rw [ofForbiddenPairs_split, ofForbiddenPairs_cons_cons, Nat.add_assoc]
 
-/-- Pulling a string back along a map of its elements pulls back the forbidden relation, as
-`List.isChain_map` does for chains. -/
+/-- Mapping the elements of a string by `f` pulls the forbidden relation back along `f`, as in
+`List.isChain_map`. -/
 theorem ofForbiddenPairs_map (f : β → α) (w : List β) :
     ofForbiddenPairs R (w.map f) = ofForbiddenPairs (fun a b ↦ R (f a) (f b)) w := by
   induction w using List.twoStepInduction with

@@ -36,8 +36,7 @@ namespace Phonology.Hiatus
 
 open OptimalityTheory
 
-/-- A form is free of hiatus when no two adjacent segments are both vowels. Like `OCP.IsClean`, it
-is a reducible alias of `List.IsChain`, so that API applies. -/
+/-- A form is free of hiatus when no two adjacent segments are both vowels. -/
 abbrev Free (fm : List Segment) : Prop :=
   fm.IsChain fun a b ↦ ¬(a.IsVowel ∧ b.IsVowel)
 
@@ -182,8 +181,8 @@ theorem count_input : count j.input = count j.left + 1 + count j.right := by
     j.v2_isVowel]
 
 /-- Merger into a vowel removes the hiatus at the juncture and no other. Each elision and epenthesis
-leave the same count, so the constraint against hiatus does not choose among these repairs: in
-tableau (30) of [casali-2011] each passes NOHIATUS and violates a constraint of its own. -/
+leave the same count, so the constraint against hiatus does not choose among these repairs, and in
+tableau (30) of [casali-2011] each satisfies NOHIATUS and violates a constraint of its own. -/
 theorem count_coalesce {v : Segment} (hv : v.IsVowel) :
     count (j.coalesce v) = count j.left + count j.right := by
   unfold coalesce left right count

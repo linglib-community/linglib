@@ -7,47 +7,37 @@ public import Mathlib.Dynamics.FixedPoints.Basic
 
 /-!
 # Harmonic Serialism
-[mccarthy-2000] [mccarthy-2010] [pruitt-2023] [lamont-2022a] [lamont-2022b]
 
-Harmonic Serialism: iterate a one-step `gen` and a durable constraint ranking to a
-fixed point. `HSDerivation` bundles the two; the serial search itself is `iterateGen`,
-`Function.iterate` of a one-round map `hsStep` on `Option C` whose fixed points are
-exactly convergence and failure — durability of both is mathlib's `IsFixedPt.iterate`;
-the `Nat` fuel and the `pick` tie-breaker make a possibly-non-terminating,
-possibly-tied search total and computable. One-step EVAL
-is the parallel `Constraint.eval`; directional EVAL ([lamont-2022b];
-[eisner-2000]) needs nothing extra — a directional constraint like `*FLOAT^→` is a
-`Constraint.directionalBlock` (`McPhersonLamont2026.starFloatBlock`) spliced into the ranking under
-the canonical lex order.
+In Harmonic Serialism a derivation applies GEN and EVAL repeatedly. GEN proposes the candidates
+that differ from the current form by a single change, EVAL selects among them under a ranking that
+stays fixed across rounds, and the derivation converges once the current form is the only winner
+of its own round. One round of the search is a total map on `Option C` whose fixed points are
+convergence and failure, and a derivation is an iterate of that map, so a search that need not
+terminate is computable once the number of rounds is bounded and a choice among tied winners is
+given. [If every step that changes the form descends a well-founded relation, the search is
+eventually constant](##iterateGen_eventually_constant), and the bound then does not affect the
+result. Each round is evaluated by the parallel `Constraint.eval`, and a directional constraint,
+such as the constraint against floating tones of McPherson and Lamont, is a
+`Constraint.directionalBlock` spliced into the ranking.
 
-## Main definitions
+## Implementation notes
 
-* `hsStep` / `iterateGen`: one total round of the search (convergence and failure are
-  its fixed points), and its `n`-fold `Function.iterate`.
-* `HSDerivation`: a one-step `gen` with a durable ranking; `stepOptimum` is one
-  GEN/EVAL round, `Converged` the halting condition, `derive` the bundled search.
+Pruitt argues that Harmonic Serialism does not derive counterfeeding underapplication and derives
+counterbleeding only with further assumptions about GEN, and nothing here bears on opacity.
+Harmonic Serialism holds the ranking fixed and iterates the candidate, whereas Stratal Optimality
+Theory changes the ranking from one stratum to the next; their combination is not formalized.
 
-## Main results
+## References
 
-* `iterateGen_eventually_constant`: under a well-founded harmony order that every
-  genuine step descends, the search is eventually constant — derivations cannot loop
-  while each step makes measurable progress, so the fuel bound is harmless.
-* `isFixedPt_singleton_iff_converged`: `Converged` is `Function.IsFixedPt` of the
-  powerset step at the singleton.
-* `converged_of_singleton_gen`: GEN-restriction to the faithful candidate forces
-  convergence.
-
-## Theoretical scope
-
-Per [pruitt-2023] (Table 1), HS does **not** solve counterfeeding underapplication and
-only patches counterbleeding with extra GEN assumptions; this file makes no
-"serial OT solves opacity" claim. [mcpherson-lamont-2026] is the motivating positive
-case for the directional variant. Architecturally distinct alternatives in linglib:
-`Phonology/Subregular/LocalRewrite.lean` (extrinsic rule ordering) and
-`Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking). HS and Stratal OT are
-sister specializations of parallel OT, not nested: HS holds the ranking constant and
-iterates the candidate; Stratal OT varies the ranking and chains the candidate
-(Stratal HS, combining both axes, is deferred — cf. [pruitt-2023] §2.4).
+* [mccarthy-2000]
+* [mccarthy-2008b]
+* [mccarthy-2010]
+* [eisner-2000]
+* [lamont-2022a]
+* [lamont-2022b]
+* [pruitt-2009]
+* [pruitt-2023]
+* [mcpherson-lamont-2026]
 -/
 
 @[expose] public section
@@ -56,8 +46,8 @@ namespace OptimalityTheory
 
 /-! ### The serial search -/
 
-/-- Lift a relation to `Option`, with `none` a bottom below every `some`: the
-well-founded carrier for the search orbit, where failure counts as a final descent. -/
+/-- The extension of a relation to `Option` that places `none` below every `some`, so that failure
+counts as a final descent. -/
 private def optionRel {C : Type*} (lt : C → C → Prop) : Option C → Option C → Prop
   | _, none => False
   | none, some _ => True
@@ -81,16 +71,14 @@ section Iteration
 
 variable {C : Type*} [DecidableEq C]
 
-/-- One total round of the serial search: a converged form (`step c = {c}`) returns
-itself, any other advances by `pick`ing from the step's output (a canonical sort +
-`head?`, or a directional tie-breaker), and failure — an empty pick, or an already
-failed search — is `none`. Convergence and failure are both fixed points, so the
-`n`-round search is literally `Function.iterate` of this map. -/
+/-- One round of the serial search. A form that is the only output of its step is returned
+unchanged, any other form is replaced by the candidate that `pick` chooses from its step, and an
+empty choice or an earlier failure gives `none`. -/
 def hsStep (step : C → Finset C) (pick : Finset C → Option C) (oc : Option C) : Option C :=
   oc.bind fun c => if step c = {c} then some c else pick (step c)
 
-/-- The `n`-round search from `c`: iterate `hsStep`. The `Nat` fuel makes the search
-total — HS need not converge ([lamont-2022b]). -/
+/-- The search from `c` run for `n` rounds. Bounding the number of rounds makes the search total,
+since a derivation need not converge ([lamont-2022b]). -/
 def iterateGen (step : C → Finset C) (pick : Finset C → Option C) (n : Nat) (c : C) : Option C :=
   (hsStep step pick)^[n] (some c)
 
@@ -144,11 +132,8 @@ private theorem hsStep_descends {lt : C → C → Prop}
         rw [hp] at hne
         exact sound a a' hcv hp fun he => hne (congrArg some he)
 
-/-- **HS terminates under a well-founded harmony order.** If every genuine step
-descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
-past which further fuel doesn't change the result. Derivations cannot loop while each
-step makes measurable progress, so the explicit `Nat` bound is harmless: the orbit cannot
-descend the harmony order lifted to `Option` forever, so some iterate is a fixed point. -/
+/-- If every step that changes the form descends a well-founded relation, the search is eventually
+constant in the number of rounds. -/
 theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
     (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
     (c : C) :
@@ -166,21 +151,19 @@ end Iteration
 
 /-! ### HS derivations -/
 
-/-- A Harmonic Serialism derivation: a one-step candidate-generation function (per
-[mccarthy-2008b]'s restricted GEN) and a durable ranking, which one round evaluates with
-`Constraint.eval`. -/
+/-- A Harmonic Serialism derivation consists of a candidate generator for one step, the restricted
+GEN of [mccarthy-2008b], and a ranking that is fixed across rounds. -/
 structure HSDerivation (C : Type*) [DecidableEq C] where
   /-- The one-step candidate-generation function. -/
   gen : C → Finset C
-  /-- The constraint ranking, durable across rounds (head = highest). -/
+  /-- The constraint ranking, most dominant first. -/
   ranking : List (OptimalityTheory.Constraint C)
 
 namespace HSDerivation
 
 variable {C : Type*} [DecidableEq C] (D : HSDerivation C) (c : C)
 
-/-- The optimal set of one GEN/EVAL round: the winners of the tableau of `gen c` under the
-durable ranking. -/
+/-- The optimal candidates of one round, the candidates of `gen c` that the ranking selects. -/
 def stepOptimum : Finset C := Constraint.eval (D.gen c) D.ranking
 
 @[simp] theorem stepOptimum_of_empty_gen (h : D.gen c = ∅) : D.stepOptimum c = ∅ := by
@@ -188,27 +171,23 @@ def stepOptimum : Finset C := Constraint.eval (D.gen c) D.ranking
 
 /-! ### Convergence -/
 
-/-- A form has **converged** iff its one-round optimal set is the singleton of the
-faithful candidate — the canonical HS halting condition ([mccarthy-2010]). -/
+/-- A form has converged when it is the only optimal candidate of its round ([mccarthy-2010]). -/
 def Converged : Prop := D.stepOptimum c = ({c} : Finset C)
 
 instance : Decidable (D.Converged c) := decEq (D.stepOptimum c) ({c} : Finset C)
 
-/-- `Converged` is `Function.IsFixedPt` of the powerset step
-`s ↦ ⋃ x ∈ s, stepOptimum x` at the singleton `{c}` — by `Finset.singleton_biUnion`,
-with no intermediate combinator. Simp-normalized toward `Converged`. -/
+/-- A form has converged iff its singleton is a fixed point of the round on sets of forms. -/
 @[simp] theorem isFixedPt_singleton_iff_converged :
     Function.IsFixedPt (fun s => s.biUnion D.stepOptimum) ({c} : Finset C)
       ↔ D.Converged c := by
   simp [Converged, Function.IsFixedPt, Finset.singleton_biUnion]
 
-/-- GEN-restriction to the faithful candidate forces convergence. -/
+/-- A form whose only candidate is itself has converged. -/
 theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
   rw [Converged, stepOptimum, h, Constraint.eval_singleton]
 
-/-- An `n`-round HS derivation: `iterateGen` over `stepOptimum` with a caller-supplied
-`pick` tie-breaker for non-singleton optima (ties not yet broken by directional eval,
-or genuinely divergent ties in the [pruitt-2009] sense). -/
+/-- The derivation from `c` run for `steps` rounds, with `pick` choosing among tied optimal
+candidates, including the divergent ties of [pruitt-2009]. -/
 def derive (pick : Finset C → Option C) (steps : Nat) : Option C :=
   iterateGen D.stepOptimum pick steps c
 

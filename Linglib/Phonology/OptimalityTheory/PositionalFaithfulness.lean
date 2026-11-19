@@ -6,30 +6,17 @@ public import Linglib.Phonology.OptimalityTheory.Evaluation
 /-!
 # Positional faithfulness
 
-A positional faithfulness constraint is a faithfulness constraint restricted to a prominent
-position, such as the beginning of a word or a root, whose segments it protects. Restricted to
-deletion, a candidate is the set of input positions it deletes, and the MAX constraint of a set of
-positions counts the deleted positions in it. The deletion of a single position therefore violates
-exactly the constraints that protect that position, and single deletions compete through those
-sets of constraints: one of them is optimal under some ranking exactly when the set of constraints
-protecting its position is minimal among them.
-
-## Main definitions
-
-* `OptimalityTheory.Constraint.maxAt`: MAX restricted to a set of positions, on deletions.
-* `OptimalityTheory.positionalMax`: a family of such constraints, on candidates that delete
-  positions.
-
-## Main results
-
-* `OptimalityTheory.Constraint.maxAt_eq_maxViolAt`, `maxAt_singleton_eq_maxViolAt`: on the
-  deletion of a set of positions, or of one, from a string, `maxAt` is MAX restricted to the
-  positions in the sense of Correspondence Theory.
-* `OptimalityTheory.exists_mem_optimal_positionalMax_iff`: among deletions of one position each,
-  one is optimal under some ranking iff the constraints protecting its position are minimal among
-  the sets protecting each.
-* `OptimalityTheory.optimal_eq_pair_positionalMax_iff`: both are optimal under a ranking iff the
-  same constraints protect the two positions.
+A positional faithfulness constraint, in Beckman's sense, is a faithfulness constraint restricted
+to a prominent position, such as the beginning of a word or a root, whose segments it protects.
+Restricted to deletion, a candidate is the set of input positions it deletes, and the MAX
+constraint of a set of positions counts the deleted positions in it;
+[on deletions from a string this is MAX restricted to those positions](##maxAt_eq_maxViolAt) in the
+sense of McCarthy and Prince's Correspondence Theory. The deletion of a single position therefore
+violates exactly the constraints that protect that position, and single deletions compete through
+those sets of constraints. [One of them is optimal under some ranking exactly when the set of
+constraints protecting its position is minimal among them](##exists_mem_optimal_positionalMax_iff),
+and [two of them are both optimal under a ranking exactly when the same constraints protect both
+positions](##optimal_eq_pair_positionalMax_iff).
 
 ## References
 
@@ -130,8 +117,8 @@ theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c
   exact exists_congr fun _ ↦ ⟨fun ⟨⟨h, h'⟩, hr⟩ ↦ ⟨h', h, fun j hj hj' ↦ hr j ⟨hj', hj⟩⟩,
     fun ⟨h', h, hr⟩ ↦ ⟨⟨h, h'⟩, fun j ⟨hj', hj⟩ ↦ hr j hj hj'⟩⟩
 
-/-- Of two single deletions, the one whose position fewer constraints protect is the sole winner
-under every ranking. -/
+/-- Of two single deletions, the one whose position is protected by a proper subset of the
+constraints protecting the other's is the sole winner under every ranking. -/
 theorem optimal_eq_singleton_positionalMax_of_ssubset (hcand : cands = {c, d}) (hc : del c = {k})
     (hd : del d = {k'}) (h : {i | P i k} ⊂ {i | P i k'}) (r : Ranking.Enumeration ι n) :
     r.optimal (positionalMax P del) cands = {c} :=
