@@ -7,9 +7,6 @@ public import Mathlib.Order.Atoms
 public import Mathlib.Order.Concept
 public import Mathlib.Order.Cover
 public import Mathlib.Order.Hom.Basic
-public import Mathlib.Order.Minimal
-public import Mathlib.Order.UpperLower.Closure
-public import Linglib.Core.Order.Minimal
 public import Linglib.Core.Relation.SetRel
 
 /-!
@@ -26,20 +23,17 @@ API. In the commanded node it is the
 [upper bounds of a node's ancestors](##PhraseStructure.mem_commandRelation_iff_mem_upperBounds),
 and on a tree it is [the only relation](##PhraseStructure.eq_commandRelation_of_forall_covBy) in
 which a node commands what its mother dominates, if the mother is a generator, and what its mother
-commands, if not. Comparing nodes by their ancestors gives closeness, which is
-[command without the generators above a node](##PhraseStructure.ancestors_subset_ancestors_iff).
+commands, if not.
 
 Barker and Pullum's relations are reflexive and relate a node to what it dominates. `Commands`
 is command between nodes neither of which dominates the other, as in Reinhart's c-command and
 Collins and Stabler's; on a tree it is
 [sisterhood plus dominance](##PhraseStructure.commands_iff_lt_of_covBy).
 
-A relation between nodes induces one between the nodes they dominate, its dominance image, the
-upper closure of the relation in the product order. Kayne's linear correspondence reads the
-dominance image of asymmetric c-command as precedence among terminals, and sisters that c-command
-each other [stay unordered](##PhraseStructure.not_mem_dominanceImage_asymmetrize_of_covBy).
-
-The positions of a rose tree instantiate the theory in `Linglib/Syntax/Command/RoseTree.lean`.
+Closeness, the comparison of nodes by their ancestors, is in
+`Linglib/Syntax/Command/Closeness.lean`, the relation a relation induces on the nodes below in
+`Linglib/Syntax/Command/DominanceImage.lean`, and the positions of a rose tree in
+`Linglib/Syntax/Command/RoseTree.lean`.
 
 ## Implementation notes
 
@@ -55,9 +49,7 @@ The positions of a rose tree instantiate the theory in `Linglib/Syntax/Command/R
 ## References
 
 * [barker-pullum-1990]
-* [chomsky-1995]
 * [collins-stabler-2016]
-* [kayne-1994]
 * [reinhart-1976]
 -/
 
@@ -248,121 +240,5 @@ theorem mem_mateRelation :
     a ~[mateRelation P] b ↔ a ~[C[P]] b ∧ b ~[C[P]] a := Iff.rfl
 
 end Mates
-
-/-! ### Closeness
-
-Of two nodes the closer is the one with fewer ancestors: `a` is at least as close as `b` when
-`ancestors P a ⊆ ancestors P b`. This is command, except that a node is not as close as a
-generator dominating it; between nodes neither of which properly dominates the other the two
-agree, strict closeness is asymmetric command and equal closeness is mateship. Where command
-relates a node to all it dominates in both directions or neither, closeness puts a generator
-strictly before what it dominates. The minimal nodes of a set under closeness are the goals of
-[chomsky-1995]'s Minimal Link Condition. -/
-
-section Closeness
-
-variable [PartialOrder α] {P : Set α} {a b x : α}
-
-/-- A node is at least as close as another when it commands it and the other is not one of its
-ancestors. -/
-theorem ancestors_subset_ancestors_iff :
-    ancestors P a ⊆ ancestors P b ↔ a ~[C[P]] b ∧ b ∉ ancestors P a :=
-  ⟨fun h ↦ ⟨fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun hb ↦ lt_irrefl b (h hb).2⟩,
-    fun ⟨h, hb⟩ _ hx ↦ ⟨hx.1, (h hx.1 hx.2).lt_of_ne fun e : _ = b ↦ hb (e ▸ hx)⟩⟩
-
-/-- A node commands every node at most as close as it. -/
-theorem mem_commandRelation_of_ancestors_subset (h : ancestors P a ⊆ ancestors P b) :
-    a ~[C[P]] b :=
-  (ancestors_subset_ancestors_iff.1 h).1
-
-theorem ancestors_subset_ancestors_iff_of_not_lt (hba : ¬ b < a) :
-    ancestors P a ⊆ ancestors P b ↔ a ~[C[P]] b :=
-  ancestors_subset_ancestors_iff.trans (and_iff_left fun hb ↦ hba hb.2)
-
-/-- A node is closer than the nodes it dominates through a generator. -/
-theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (hx : x ∈ P) :
-    ancestors P a ⊂ ancestors P b :=
-  (ssubset_iff_of_subset (ancestors_subset_ancestors (hax.trans hxb.le))).2
-    ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
-
-/-- Between nodes neither of which properly dominates the other, strict closeness is asymmetric
-command. -/
-theorem ancestors_ssubset_ancestors_iff (hab : ¬ a < b) (hba : ¬ b < a) :
-    ancestors P a ⊂ ancestors P b ↔ a ~[C[P]] b ∧ ¬ b ~[C[P]] a := by
-  rw [ssubset_def, ancestors_subset_ancestors_iff_of_not_lt hba,
-    ancestors_subset_ancestors_iff_of_not_lt hab]
-
-/-- Between nodes neither of which properly dominates the other, the equally close are the
-mates. -/
-theorem ancestors_eq_ancestors_iff (hab : ¬ a < b) (hba : ¬ b < a) :
-    ancestors P a = ancestors P b ↔ a ~[mateRelation P] b := by
-  rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff_of_not_lt hba,
-    ancestors_subset_ancestors_iff_of_not_lt hab, mem_mateRelation]
-
-/-- Between nodes neither of which dominates the other, the closer is the one that commands
-without being commanded. -/
-theorem ancestors_ssubset_ancestors_iff_commands (h : IncompRel (· ≤ ·) a b) :
-    ancestors P a ⊂ ancestors P b ↔ Commands P a b ∧ ¬ Commands P b a := by
-  simp only [ancestors_ssubset_ancestors_iff h.not_lt h.not_gt, commands_iff, h, h.symm,
-    and_true]
-
-/-- Among nodes none of which dominates another, the closest are those that no node of the set
-commands without being commanded, the Minimal Link Condition. -/
-theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
-    MinimalFor (· ∈ S) (ancestors P) a ↔
-      a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (Commands P b a ∧ ¬ Commands P a b) :=
-  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ ↦
-    ancestors_ssubset_ancestors_iff_commands
-
-end Closeness
-
-/-! ### Dominance images
-
-A relation between nodes induces one between the nodes they dominate, relating `a` to `b` when a
-node dominating `a` is related to a node dominating `b`. Since dominance is `≤`, this is the upper
-closure of the relation in the product order, and it is transported by order isomorphisms. On a
-tree, siblings are never related by the image of the asymmetric part of a relation between
-disconnected nodes under which they relate both ways. -/
-
-section DominanceImage
-
-variable [Preorder α] {A : SetRel α α} {a b : α}
-
-/-- The dominance image of a relation, relating the nodes dominated by related nodes. -/
-abbrev dominanceImage (A : SetRel α α) : SetRel α α := upperClosure A
-
-theorem mem_dominanceImage : a ~[dominanceImage A] b ↔ ∃ x ≤ a, ∃ y ≤ b, x ~[A] y := by
-  simp only [SetLike.mem_coe, mem_upperClosure, Prod.exists, Prod.mk_le_mk]
-  exact ⟨fun ⟨x, y, h, hx, hy⟩ ↦ ⟨x, hx, y, hy, h⟩, fun ⟨x, hx, y, hy, h⟩ ↦ ⟨x, y, h, hx, hy⟩⟩
-
-/-- An order isomorphism carries the dominance image of a relation to that of its image, by
-`upperClosure_image`. -/
-theorem mem_dominanceImage_image {β : Type*} [Preorder β] (e : α ≃o β) :
-    e a ~[dominanceImage (Prod.map e e '' A)] e b ↔ a ~[dominanceImage A] b := by
-  rw [dominanceImage, show Prod.map e e = e.prodCongr e from rfl, upperClosure_image]
-  exact (UpperSet.mem_map (f := e.prodCongr e) (b := (e a, e b))).trans (by simp)
-
-end DominanceImage
-
-section DominanceImageTree
-
-variable [PartialOrder α] [IsForestOrder α] {R : SetRel α α} {a b m : α}
-
-/-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
-relation between disconnected nodes that relates them both ways. -/
-theorem not_mem_dominanceImage_asymmetrize_of_covBy
-    (hR : ∀ ⦃x y⦄, x ~[R] y → IncompRel (· ≤ ·) x y) (hab : a ~[R] b → b ~[R] a)
-    (ha : m ⋖ a) (hb : m ⋖ b) : ¬ a ~[dominanceImage R.asymmetrize] b := by
-  rw [mem_dominanceImage]
-  rintro ⟨x, hxa, y, hyb, hxy, hyx⟩
-  obtain ⟨hn₁, hn₂⟩ := hR hxy
-  rcases hxa.eq_or_lt with rfl | hx <;> rcases hyb.eq_or_lt with rfl | hy
-  · exact hyx (hab hxy)
-  · exact hn₂ ((IsForestOrder.le_of_lt_of_covBy hb hy).trans ha.le)
-  · exact hn₁ ((IsForestOrder.le_of_lt_of_covBy ha hx).trans hb.le)
-  · exact (IsForestOrder.le_total_of_le_of_le (IsForestOrder.le_of_lt_of_covBy ha hx)
-      (IsForestOrder.le_of_lt_of_covBy hb hy)).elim hn₁ hn₂
-
-end DominanceImageTree
 
 end PhraseStructure
