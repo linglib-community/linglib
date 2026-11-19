@@ -169,6 +169,7 @@ theorem logPseudoLikelihood_eq (h : data ≠ []) (w : Fin n → ℝ) :
   simp only [integral_dirac, smul_eq_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast, ← mul_assoc,
     mul_inv_cancel₀ hlen, one_mul]
   rw [logPseudoLikelihood, ← Fin.sum_univ_fun_getElem]
+  simp only [condMaxEnt_apply]
   rfl
 
 /-- Maximum entropy models "have as high an entropy as possible under the constraint that they

@@ -9,7 +9,7 @@ public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Core.Analysis.Convex.Deriv
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.InformationTheory.ChannelCapacity
+public import Linglib.Core.InformationTheory.Entropy.Softmax
 public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Mathlib.Analysis.Calculus.Deriv.Pi
@@ -337,23 +337,24 @@ end Joint
 section Conditional
 
 variable {X Y : Type*} [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
-  [MeasurableSpace Y] (T : X × Y → ι → ℝ) (w : ι → ℝ)
+  [MeasurableSpace Y] [Fintype Y] [MeasurableSingletonClass Y] (T : X × Y → ι → ℝ) (w : ι → ℝ)
 
 /-- The conditional MaxEnt grammar takes each input to the MaxEnt distribution of its candidates,
-whose violation vectors are `T (x, ·)`. -/
-noncomputable def condMaxEnt : Kernel X Y where
-  toFun x := maxEnt (fun y ↦ T (x, y)) w
-  measurable' := .of_discrete
+whose violation vectors are `T (x, ·)`. It is the softmax kernel of the harmony. -/
+noncomputable def condMaxEnt : Kernel X Y :=
+  Kernel.softmax fun x y ↦ ((harmony T w (x, y) : ℝ) : EReal)
 
-@[simp] theorem condMaxEnt_apply (x : X) : condMaxEnt T w x = maxEnt (fun y ↦ T (x, y)) w :=
-  rfl
+@[simp] theorem condMaxEnt_apply (x : X) : condMaxEnt T w x = maxEnt (fun y ↦ T (x, y)) w := by
+  rcases isEmpty_or_nonempty Y with h | h
+  · rw [Measure.eq_zero_of_isEmpty (condMaxEnt T w x), Measure.eq_zero_of_isEmpty (maxEnt _ w)]
+  · exact Kernel.softmax_coe_eq_count_tilted _ x
 
 /-- The conditional log-likelihood of an empirical distribution `p` of input–output pairs is the
 expected log-probability of each output given its input. -/
 noncomputable def condLogLikelihood (p : Measure (X × Y)) (w : ι → ℝ) : ℝ :=
   ∫ z, log ((condMaxEnt T w z.1).real {z.2}) ∂p
 
-variable [Fintype Y] [MeasurableSingletonClass Y] (p : Measure (X × Y)) [IsProbabilityMeasure p]
+variable (p : Measure (X × Y)) [IsProbabilityMeasure p]
 
 theorem condLogLikelihood_eq :
     condLogLikelihood T p w =
@@ -363,22 +364,21 @@ theorem condLogLikelihood_eq :
     sum_sub_distrib, sum_mul, harmony, dotProduct_sum, dotProduct_smul, mul_neg,
     sum_neg_distrib]
 
+variable (ν : Measure X) [IsProbabilityMeasure ν]
+
+theorem sum_toReal_klDiv_condMaxEnt_add_condEntropy (q : Kernel X Y) [IsMarkovKernel q] :
+    ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal + H[Prod.snd | Prod.fst ; ν ⊗ₘ q] =
+      w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ q)) + ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
+  have h := sum_toReal_klDiv_softmax_add_condEntropy (fun x y ↦ harmony T w (x, y)) ν q
+  rw [show ∫ z, harmony T w (z.1, z.2) ∂(ν ⊗ₘ q) = _ from integral_harmony T w (ν ⊗ₘ q)] at h
+  rw [condMaxEnt, h]
+  simp only [logPartition, harmony]
+  ring
+
 variable [Nonempty Y]
 
 instance : IsMarkovKernel (condMaxEnt T w) :=
   ⟨fun x ↦ by rw [condMaxEnt_apply]; infer_instance⟩
-
-variable (ν : Measure X) [IsProbabilityMeasure ν]
-
-omit [Nonempty Y] in
-theorem sum_toReal_klDiv_condMaxEnt_add_condEntropy (q : Kernel X Y) [IsMarkovKernel q] :
-    ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal + H[Prod.snd | Prod.fst ; ν ⊗ₘ q] =
-      w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ q)) + ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
-  rw [condEntropy_snd_fst_compProd q ν, Measure.integral_compProd_eq_sum, dotProduct_sum,
-    ← sum_add_distrib, ← sum_add_distrib]
-  refine sum_congr rfl fun x _ ↦ ?_
-  rw [dotProduct_smul, smul_eq_mul, ← mul_add, ← mul_add, condMaxEnt_apply,
-    toReal_klDiv_maxEnt_add_measureEntropy]
 
 theorem condEntropy_condMaxEnt :
     H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] =
@@ -386,31 +386,23 @@ theorem condEntropy_condMaxEnt :
         ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
   simpa using sum_toReal_klDiv_condMaxEnt_add_condEntropy T w ν (condMaxEnt T w)
 
-theorem condEntropy_add_sum_toReal_klDiv {q : Kernel X Y} [IsMarkovKernel q]
+variable {T w ν} in
+private theorem integral_harmony_compProd_eq {q : Kernel X Y} [IsMarkovKernel q]
     (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) :
-    H[Prod.snd | Prod.fst ; ν ⊗ₘ q] + ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal =
-      H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] := by
-  rw [condEntropy_condMaxEnt, ← hq, ← sum_toReal_klDiv_condMaxEnt_add_condEntropy, add_comm]
+    ∫ z, harmony T w (z.1, z.2) ∂(ν ⊗ₘ q) = ∫ z, harmony T w (z.1, z.2)
+      ∂(ν ⊗ₘ Kernel.softmax fun x y ↦ ((harmony T w (x, y) : ℝ) : EReal)) :=
+  (integral_harmony T w (ν ⊗ₘ q)).trans <| hq ▸ (integral_harmony T w (ν ⊗ₘ condMaxEnt T w)).symm
 
 theorem condEntropy_le_condMaxEnt {q : Kernel X Y} [IsMarkovKernel q]
     (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) :
-    H[Prod.snd | Prod.fst ; ν ⊗ₘ q] ≤ H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] := by
-  rw [← condEntropy_add_sum_toReal_klDiv T w ν hq]
-  exact le_add_of_nonneg_right <| sum_nonneg fun x _ ↦
-    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
+    H[Prod.snd | Prod.fst ; ν ⊗ₘ q] ≤ H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] :=
+  condEntropy_le_condEntropy_softmax (integral_harmony_compProd_eq hq)
 
 theorem eq_condMaxEnt_of_condEntropy_eq {q : Kernel X Y} [IsMarkovKernel q]
     (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w))
     (h : H[Prod.snd | Prod.fst ; ν ⊗ₘ q] = H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w]) {x : X}
-    (hx : ν {x} ≠ 0) : q x = condMaxEnt T w x := by
-  have hkl := condEntropy_add_sum_toReal_klDiv T w ν hq
-  rw [h, add_eq_left, sum_eq_zero_iff_of_nonneg fun x _ ↦
-    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg] at hkl
-  have hx' := (mul_eq_zero.1 (hkl x (mem_univ x))).resolve_left
-    ((measureReal_ne_zero_iff (measure_ne_top _ _)).2 hx)
-  rw [condMaxEnt_apply] at hx' ⊢
-  exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hx').resolve_right
-    (klDiv_ne_top (absolutelyContinuous_maxEnt _ w (q x)) .of_finite))
+    (hx : ν {x} ≠ 0) : q x = condMaxEnt T w x :=
+  eq_softmax_of_condEntropy_eq (integral_harmony_compProd_eq hq) h hx
 
 /-- The conditional MaxEnt grammar has the greatest conditional entropy among the conditional
 models with its average expected violations. -/

@@ -28,9 +28,11 @@ the paper leaves to the reader. [Its solution](##isGreatest_three)
 ## Implementation notes
 
 * Features are real-valued, `f : X × Y → ι → ℝ`; in the paper they are binary.
-* The exponential model with multipliers `λ` is `HarmonicGrammar.condMaxEnt f (-λ)`, because the
-  substrate's harmony is minus the weighted statistic. [At each
-  context](##model_apply) it is the counting measure tilted by `λ ⬝ᵥ f (x, ·)`.
+* The exponential model with multipliers `λ` is the softmax kernel of `λ ⬝ᵥ f (x, y)`, which [at
+  each context](##model_apply) is the counting measure tilted by `λ ⬝ᵥ f (x, ·)`. It
+  [is](##model_eq_condMaxEnt) `HarmonicGrammar.condMaxEnt f (-λ)`, harmony being minus the
+  weighted statistic; only the statements about the weights of greatest likelihood use that
+  identification.
 * The conditional entropy of a model `q` is `H[Prod.snd | Prod.fst ; p̃.fst ⊗ₘ q]`, the entropy
   of the output given the context under the joint distribution `p̃(x) q(y | x)`.
 * The Lagrangian is the entropy plus each multiplier times the violation of its constraint, as
@@ -211,21 +213,30 @@ theorem isGreatest_three :
 section Modeling
 
 variable {X Y ι : Type*} [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
-  [MeasurableSpace Y] [Fintype ι] (f : X × Y → ι → ℝ) (p : Measure (X × Y))
+  [MeasurableSpace Y] [Fintype Y] [MeasurableSingletonClass Y] [Fintype ι] (f : X × Y → ι → ℝ)
+  (p : Measure (X × Y))
 
 /-- The set `C` of (4): the conditional models under which each feature has the same expected
 value, with contexts drawn from the sample, as in the sample. -/
 def constraints : Set (Kernel X Y) :=
   {q | IsMarkovKernel q ∧ ∫ z, f z ∂(p.fst ⊗ₘ q) = ∫ z, f z ∂p}
 
-/-- The exponential model `p_λ` of (10). The multipliers are written `θ`. -/
+/-- The exponential model `p_λ` of (10), the softmax kernel of the weighted features. The
+multipliers are written `θ`. -/
 noncomputable def model (θ : ι → ℝ) : Kernel X Y :=
-  condMaxEnt f (-θ)
+  Kernel.softmax fun x y ↦ ((θ ⬝ᵥ f (x, y) : ℝ) : EReal)
+
+instance [Nonempty Y] (θ : ι → ℝ) : IsMarkovKernel (model f θ) :=
+  inferInstanceAs (IsMarkovKernel (Kernel.softmax fun x y ↦ ((θ ⬝ᵥ f (x, y) : ℝ) : EReal)))
 
 -- (10)
-theorem model_apply (θ : ι → ℝ) (x : X) :
+theorem model_apply [Nonempty Y] (θ : ι → ℝ) (x : X) :
     model f θ x = Measure.count.tilted fun y ↦ θ ⬝ᵥ f (x, y) :=
-  congrArg Measure.count.tilted (funext fun y ↦ by simp [harmony])
+  Kernel.softmax_coe_eq_count_tilted _ x
+
+omit [MeasurableSingletonClass Y] in
+theorem model_eq_condMaxEnt (θ : ι → ℝ) : model f θ = condMaxEnt f (-θ) := by
+  simp [model, condMaxEnt, harmony]
 
 /-- The Lagrangian (7): the conditional entropy (5) of the model plus, for each feature, its
 multiplier times the difference between the model's and the sample's expected value. -/
@@ -236,32 +247,41 @@ noncomputable def lagrangian (q : Kernel X Y) (θ : ι → ℝ) : ℝ :=
 noncomputable def logLik (q : Kernel X Y) : ℝ :=
   ∫ z, log ((q z.1).real {z.2}) ∂p
 
-theorem logLik_model (θ : ι → ℝ) : logLik p (model f θ) = condLogLikelihood f p (-θ) :=
-  rfl
+omit [MeasurableSingletonClass Y] in
+theorem logLik_model (θ : ι → ℝ) : logLik p (model f θ) = condLogLikelihood f p (-θ) := by
+  rw [logLik, model_eq_condMaxEnt, condLogLikelihood]
 
+omit [MeasurableSingletonClass Y] in
 private theorem isMaxOn_condLogLikelihood_neg {θ : ι → ℝ}
     (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     IsMaxOn (condLogLikelihood f p) Set.univ (-θ) :=
   isMaxOn_iff.2 fun w _ ↦ by simpa [logLik_model] using h (Set.mem_univ (-w))
 
-variable [Fintype Y] [MeasurableSingletonClass Y] [Nonempty Y] [IsProbabilityMeasure p]
+private theorem integral_dotProduct (θ : ι → ℝ) (μ : Measure (X × Y)) [IsFiniteMeasure μ] :
+    ∫ z, θ ⬝ᵥ f (z.1, z.2) ∂μ = θ ⬝ᵥ ∫ z, f z ∂μ := by
+  rw [integral_fintype .of_finite, integral_fintype .of_finite]
+  simp [dotProduct_sum, dotProduct_smul]
+
+variable [Nonempty Y] [IsProbabilityMeasure p]
 
 /-- For fixed multipliers, the Lagrangian is greatest at the exponential model: (8) and (10). -/
 theorem lagrangian_le_lagrangian_model (θ : ι → ℝ) (q : Kernel X Y) [IsMarkovKernel q] :
     lagrangian f p q θ ≤ lagrangian f p (model f θ) θ := by
-  have h₁ := sum_toReal_klDiv_condMaxEnt_add_condEntropy f (-θ) p.fst q
-  have h₂ := condEntropy_condMaxEnt f (-θ) p.fst
-  have h₃ : 0 ≤ ∑ x, p.fst.real {x} * (klDiv (q x) (condMaxEnt f (-θ) x)).toReal :=
+  have h₁ := sum_toReal_klDiv_softmax_add_condEntropy (fun x y ↦ θ ⬝ᵥ f (x, y)) p.fst q
+  have h₂ := condEntropy_softmax (fun x y ↦ θ ⬝ᵥ f (x, y)) p.fst
+  have h₃ : 0 ≤ ∑ x, p.fst.real {x} * (klDiv (q x) (model f θ x)).toReal :=
     sum_nonneg fun x _ ↦ mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
-  simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h₁ h₂ ⊢
+  rw [integral_dotProduct] at h₁ h₂
+  simp only [lagrangian, model, dotProduct_sub] at h₃ ⊢
   linarith
 
 -- (9), (11), (14)
 theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
     lagrangian f p (model f θ) θ = -logLik p (model f θ) := by
-  have h := condEntropy_condMaxEnt f (-θ) p.fst
-  rw [logLik_model, condLogLikelihood_eq]
-  simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h ⊢
+  have h₁ := condEntropy_softmax (fun x y ↦ θ ⬝ᵥ f (x, y)) p.fst
+  have h₂ := integral_log_softmax_real_singleton (fun x y ↦ θ ⬝ᵥ f (x, y)) p
+  rw [integral_dotProduct] at h₁ h₂
+  simp only [lagrangian, logLik, model, dotProduct_sub]
   linarith
 
 /-- **Weak duality**: if `q` satisfies the constraints, then for every `θ` its conditional entropy
@@ -277,7 +297,7 @@ variable {f p} {θ : ι → ℝ}
 
 theorem model_mem_constraints (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     model f θ ∈ constraints f p :=
-  ⟨inferInstanceAs (IsMarkovKernel (condMaxEnt f (-θ))),
+  ⟨inferInstance, model_eq_condMaxEnt f θ ▸
     (isMaxOn_condLogLikelihood_iff f (-θ) p).1 (isMaxOn_condLogLikelihood_neg f p h)⟩
 
 /-- **Maximum entropy is maximum likelihood** (§3.5): if `θ` maximizes the likelihood of the
@@ -285,14 +305,17 @@ sample among the exponential models, then `p_θ` has the greatest conditional en
 theorem isGreatest_condEntropy_model (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q]) '' constraints f p)
       (H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ]) :=
-  isGreatest_condEntropy_of_isMaxOn f (-θ) p (isMaxOn_condLogLikelihood_neg f p h)
+  ⟨⟨_, model_mem_constraints h, rfl⟩, by
+    rintro _ ⟨q, hq, rfl⟩
+    have := lagrangian_model_eq_neg_logLik f p θ
+    simp only [lagrangian, (model_mem_constraints h).2, sub_self, dotProduct_zero,
+      add_zero] at this
+    exact this ▸ condEntropy_le_neg_logLik f p θ hq⟩
 
 theorem condEntropy_model_eq_neg_logLik
     (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ] = -logLik p (model f θ) := by
-  rw [logLik_model, condLogLikelihood_eq_neg_condEntropy f (-θ) p
-    (model_mem_constraints h).2, neg_neg]
-  rfl
+  simpa [lagrangian, (model_mem_constraints h).2] using lagrangian_model_eq_neg_logLik f p θ
 
 /-- **Uniqueness**: if `θ` maximizes the likelihood and `q ∈ C` has the conditional entropy of
 `p_θ`, then `q` agrees with `p_θ` at every context that occurs in the sample. -/
@@ -301,8 +324,9 @@ theorem eq_model_of_condEntropy_eq (h : IsMaxOn (fun θ ↦ logLik p (model f θ
     (hH : H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q] = H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ])
     {x : X} (hx : p.fst {x} ≠ 0) : q x = model f θ x := by
   have := hq.1
-  exact eq_condMaxEnt_of_condEntropy_eq f (-θ) p.fst
-    (hq.2.trans (model_mem_constraints h).2.symm) hH hx
+  refine eq_softmax_of_condEntropy_eq ?_ hH hx
+  rw [integral_dotProduct, integral_dotProduct, hq.2]
+  exact congrArg _ (model_mem_constraints h).2.symm
 
 variable (f p)
 
