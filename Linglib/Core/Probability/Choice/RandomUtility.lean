@@ -9,6 +9,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.MeasureTheory.Constructions.Pi
 public import Linglib.Core.Probability.Distributions.Gaussian
 public import Linglib.Core.Probability.Distributions.Gumbel
+public import Linglib.Core.Probability.Distributions.Logistic
 public import Mathlib.MeasureTheory.Group.Convolution
 
 /-!
@@ -18,36 +19,23 @@ In a random utility model the alternatives `j : ι` have real-valued utilities w
 on `ι → ℝ`, and the alternative with the highest utility is chosen. The choice probability of `i` is
 the mass `μ` gives to the event that coordinate `i` is the strict maximum. Most models take the
 utilities independent, `μ = Measure.pi ν`; noise on parameters shared by the alternatives
-correlates them, and such a law is a pushforward (`choiceProb_map`). The additive model, with
-utility `u j + ε j` for a systematic part `u j` and noise `ε j`, is the case where `ν` is a location
-family.
+correlates them, and such a law is [a pushforward](##ProbabilityTheory.choiceProb_map). The additive
+model, with utility `u j + ε j` for a systematic part `u j` and noise `ε j`, is the case where `ν`
+is a location family.
 
 For independent utilities the theory is independent of the noise family. Splitting coordinate `i`
-off the product measure (`measurePreserving_piSplitAt`) writes the choice probability as the
-integral against `ν i` of the product of the other coordinates' distribution functions. For
-atomless noise ties are null, so the choice probabilities of the alternatives sum to one.
-Independent Gumbel noise gives the softmax rule. This direction is due to Marschak and, in
-constructive form, to Holman and Marley as reported by Luce and Suppes; McFadden proves it as his
-Lemma 1, and his Lemma 2 is the converse for choice sets of size at least three, since Yellott
-shows that binary logistic choice does not pin down Gumbel noise. Gaussian noise gives the probit
-rule, whose binary case is computed here from the convolution of two Gaussians.
-
-## Main definitions
-
-* `ProbabilityTheory.choiceProb`: the probability that alternative `i` has the highest utility under
-  a joint law of the utilities.
-
-## Main results
-
-* `ProbabilityTheory.choiceProb_map`: the choice probabilities of a pushforward law.
-* `ProbabilityTheory.choiceProb_pi_eq_lintegral`: for independent utilities, the choice
-  probability as an integral against
-  `ν i`.
-* `ProbabilityTheory.sum_choiceProb`: when ties are null the choice probabilities sum to one.
-* `ProbabilityTheory.choiceProb_pi_gumbelMeasure`: under independent Gumbel utilities the choice
-  probabilities are softmax.
-* `ProbabilityTheory.choiceProb_pi_gaussianReal`: two alternatives with independent Gaussian
-  utilities of common variance `v` have choice probability `Φ ((u 0 - u 1) / √(2 * v))`.
+off the product measure writes the choice probability as [the integral against `ν i` of the product
+of the other coordinates' distribution
+functions](##ProbabilityTheory.choiceProb_pi_eq_lintegral_cdf). For atomless noise ties are null, so
+[the choice probabilities of the alternatives sum to one](##ProbabilityTheory.sum_choiceProb).
+[Independent Gumbel noise gives the softmax rule](##ProbabilityTheory.choiceProb_pi_gumbelMeasure).
+This direction is due to Marschak and, in constructive form, to Holman and Marley as reported by
+Luce and Suppes; McFadden proves it as his Lemma 1, and his Lemma 2 is the converse for choice sets
+of size at least three, since Yellott shows that binary logistic choice does not pin down Gumbel
+noise. With two alternatives [the difference of the Gumbel utilities is
+logistic](##ProbabilityTheory.map_sub_pi_gumbelMeasure). [Gaussian noise gives the probit
+rule](##ProbabilityTheory.choiceProb_pi_gaussianReal), whose binary case is computed here from the
+convolution of two Gaussians.
 
 ## References
 
@@ -220,6 +208,41 @@ theorem choiceProb_pi_gumbelMeasure_fin_two (u : Fin 2 → ℝ) (hβ : β ≠ 0)
   rw [choiceProb_pi_gumbelMeasure u hβ 0, softmax_fin_two]
   simp only [Pi.smul_apply, smul_eq_mul]
   congr 2; ring
+
+/-- The difference of two independent Gumbel utilities of a common scale `β` is logistic, with
+location the difference of their locations and scale `β`. -/
+theorem map_sub_pi_gumbelMeasure (u : Fin 2 → ℝ) (hβ : β ≠ 0) :
+    (Measure.pi fun j ↦ gumbelMeasure (u j) β).map (fun η ↦ η 0 - η 1) =
+      logisticMeasure.map (fun x ↦ x * β + (u 0 - u 1)) := by
+  have hβ' : (0 : ℝ) < β := NNReal.coe_pos.2 hβ.bot_lt
+  set P := Measure.pi fun j ↦ gumbelMeasure (u j) β with hP
+  refine Measure.eq_of_cdf _ _ (StieltjesFunction.ext fun x ↦ ?_)
+  have hR : cdf (logisticMeasure.map (fun y ↦ y * β + (u 0 - u 1))) x =
+      sigmoid ((x - (u 0 - u 1)) / β) := by
+    rw [← cdf_logisticMeasure_eq]
+    exact cdf_map_orderIso _ ((OrderIso.mulRight₀ _ hβ').trans (OrderIso.addRight (u 0 - u 1))) x
+  -- Lowering the first location by `x` turns the event `η 0 - η 1 > x` into a choice event.
+  let c : Fin 2 → ℝ := ![-x, 0]
+  have hshift : P.map (fun η j ↦ η j + c j) = Measure.pi fun j ↦ gumbelMeasure (u j + c j) β := by
+    rw [hP, Measure.pi_map_pi fun j ↦ (measurable_add_const (c j)).aemeasurable]
+    simp_rw [gumbelMeasure_map_add_const]
+  have hchoice : P {η | η 1 < η 0 - x} = ENNReal.ofReal (sigmoid ((u 0 - x - u 1) / β)) := by
+    have h := choiceProb_pi_gumbelMeasure_fin_two (fun j ↦ u j + c j) hβ
+    rw [← hshift, choiceProb_map _ (by fun_prop),
+      show u 0 + c 0 - (u 1 + c 1) = u 0 - x - u 1 by simp [c, sub_eq_add_neg]] at h
+    rw [← h]
+    congr 1
+    ext η
+    simp [Fin.forall_fin_two, c, sub_eq_add_neg]
+  have hs : (fun η : Fin 2 → ℝ ↦ η 0 - η 1) ⁻¹' Iic x = {η | η 1 < η 0 - x}ᶜ := by
+    ext η
+    simp only [Set.mem_preimage, Set.mem_Iic, mem_compl_iff, mem_ofPred_eq, not_lt]
+    exact sub_le_comm
+  rw [hR, cdf_eq_real, map_measureReal_apply (by fun_prop) measurableSet_Iic, hs,
+    probReal_compl_eq_one_sub (measurableSet_lt (by fun_prop) (by fun_prop)), measureReal_def,
+    hchoice, ENNReal.toReal_ofReal (sigmoid_nonneg _), ← sigmoid_neg]
+  congr 1
+  ring
 
 end GumbelRUM
 
