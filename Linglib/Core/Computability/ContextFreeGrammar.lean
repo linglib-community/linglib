@@ -322,6 +322,20 @@ end MapNonterminal
 theorem not_produces_map_terminal {w : List T} {v : List (Symbol T g.NT)} :
     ¬ g.Produces (w.map .terminal) v := fun ⟨_, _, h⟩ ↦ h.not_map_terminal
 
+/-- A word derives only itself. -/
+theorem Derives.eq_of_map_terminal {w : List T} {v : List (Symbol T g.NT)}
+    (h : g.Derives (w.map .terminal) v) : v = w.map .terminal := by
+  rcases h.eq_or_head with rfl | ⟨_, hp, _⟩
+  exacts [rfl, (not_produces_map_terminal hp).elim]
+
+/-- A derivation from a form that starts with a terminal keeps the terminal and derives from the
+rest. -/
+theorem Derives.exists_of_terminal_cons {a : T} {u v : List (Symbol T g.NT)}
+    (h : g.Derives (.terminal a :: u) v) : ∃ v', v = .terminal a :: v' ∧ g.Derives u v' := by
+  obtain ⟨v₁, v₂, rfl, h₁, h₂⟩ := Derives.append_split (u₁ := [.terminal a]) h
+  obtain rfl := Derives.eq_of_map_terminal (w := [a]) h₁
+  exact ⟨v₂, rfl, h₂⟩
+
 /-- A word with a single nonterminal produces exactly the words obtained by replacing that
 nonterminal with the output of one of its rules. -/
 theorem produces_map_terminal_append_singleton_append_iff {A : g.NT} {w u : List T}

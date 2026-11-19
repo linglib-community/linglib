@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Union
-public import Mathlib.Computability.DFA
+public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Fintype.Prod
 
@@ -16,8 +16,11 @@ public import Mathlib.Data.Fintype.Prod
 Over a finite alphabet, [every regular language is
 context-free](##Language.IsRegular.isContextFree): the right-linear grammar
 `M.toContextFreeGrammar` of a finite automaton `M` [generates the language of
-`M`](##DFA.language_toContextFreeGrammar). The context-free languages are [closed under
-intersection with regular languages](##Language.IsContextFree.inf_isRegular).
+`M`](##DFA.language_toContextFreeGrammar). Conversely [a right-linear grammar generates a regular
+language](##ContextFreeGrammar.IsRightLinear.isRegular_language), so the regular languages over a
+finite alphabet are [those of the right-linear
+grammars](##Language.isRegular_iff_exists_isRightLinear). The context-free languages are [closed
+under intersection with regular languages](##Language.IsContextFree.inf_isRegular).
 
 The intersection is the triple construction. The nonterminals of `G.triple M q` are triples
 `(p, A, p')` of a nonterminal `A` of `G` with an entry and an exit state of `M`. A sentential form
@@ -40,6 +43,11 @@ its sentential forms are a word `w` followed by the state `M.eval w`, or an acce
 alphabet must be finite, because a grammar has finitely many rules and so uses finitely many
 letters: over an infinite alphabet the language of all words is regular, by a one-state
 automaton, but not context-free.
+
+A right-linear grammar is shown regular by the Myhill–Nerode theorem, with no automaton: the left
+quotient of its language by a word is the union of the languages of a set of suffixes of
+right-hand sides, and a right-linear grammar is one where such a suffix has a nonterminal only at
+its end.
 
 ## References
 
@@ -117,6 +125,99 @@ theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
   · rwa [List.map_injective_iff.2 (fun _ _ ↦ terminal.inj) h]
 
 end toContextFreeGrammar
+
+end DFA
+
+namespace ContextFreeGrammar
+
+variable {T : Type*} {g : ContextFreeGrammar T}
+
+/-- A grammar is right-linear when a nonterminal occurs only at the end of a right-hand side. -/
+def IsRightLinear (g : ContextFreeGrammar T) : Prop :=
+  ∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, ¬ s.IsNonterminal
+
+instance : DecidablePred (IsRightLinear (T := T)) := fun g ↦
+  inferInstanceAs (Decidable (∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, ¬ s.IsNonterminal))
+
+/-- The suffixes of the start symbol and of the right-hand sides. -/
+private def suffixes (g : ContextFreeGrammar T) : Set (List (Symbol T g.NT)) :=
+  {α | α <:+ [nonterminal g.initial] ∨ ∃ r ∈ g.rules, α <:+ r.output}
+
+private theorem finite_suffixes : (suffixes g).Finite := by
+  have h (l : List (Symbol T g.NT)) : {α | α <:+ l}.Finite :=
+    l.tails.finite_toSet.subset fun _ h ↦ (List.mem_tails _ _).mpr h
+  exact ((h _).union (g.rules.finite_toSet.biUnion fun r _ ↦ h r.output)).subset fun α hα ↦
+    hα.imp id fun ⟨r, hr, hα⟩ ↦ Set.mem_biUnion hr hα
+
+private theorem mem_suffixes_of_cons {s : Symbol T g.NT} {α : List (Symbol T g.NT)}
+    (h : s :: α ∈ suffixes g) : α ∈ suffixes g :=
+  h.imp (List.suffix_cons s α).trans fun ⟨r, hr, h⟩ ↦ ⟨r, hr, (List.suffix_cons s α).trans h⟩
+
+private theorem IsRightLinear.eq_nil_of_nonterminal_cons_mem (hg : g.IsRightLinear) {B : g.NT}
+    {α : List (Symbol T g.NT)} (h : nonterminal B :: α ∈ suffixes g) : α = [] := by
+  rcases h with h | ⟨r, hr, p, hp⟩
+  · simpa using h.length_le
+  · by_contra hα
+    refine hg r hr (nonterminal B) ?_ trivial
+    rw [← hp, List.dropLast_append_of_ne_nil (by simp), List.dropLast_cons_of_ne_nil hα]
+    simp
+
+/-- In a right-linear grammar, a suffix that derives a word starting with `a` derives `a`
+followed by a suffix that derives the rest. -/
+private theorem IsRightLinear.exists_derives_terminal_cons (hg : g.IsRightLinear) {a : T}
+    {w : List T} {α : List (Symbol T g.NT)} (hα : α ∈ suffixes g)
+    (h : g.Derives α (terminal a :: w.map terminal)) :
+    ∃ β ∈ suffixes g, g.Derives α (terminal a :: β) ∧ g.Derives β (w.map terminal) := by
+  have key {b : T} {α : List (Symbol T g.NT)} (hα : terminal b :: α ∈ suffixes g)
+      (h : g.Derives (terminal b :: α) (terminal a :: w.map terminal)) :
+      ∃ β ∈ suffixes g, g.Derives (terminal b :: α) (terminal a :: β) ∧
+        g.Derives β (w.map terminal) := by
+    obtain ⟨v, hv, hd⟩ := h.exists_of_terminal_cons
+    obtain ⟨rfl, rfl⟩ : a = b ∧ w.map terminal = v := by simpa using hv
+    exact ⟨α, mem_suffixes_of_cons hα, .refl _, hd⟩
+  induction h using Relation.ReflTransGen.head_induction_on with
+  | refl => exact key hα (.refl _)
+  | @head α α' step rest ih =>
+    rcases α with _ | ⟨b | B, α⟩
+    · exact (not_produces_map_terminal (w := []) step).elim
+    · exact key hα (step.trans_derives rest)
+    · obtain rfl := hg.eq_nil_of_nonterminal_cons_mem hα
+      obtain ⟨r, hr, rfl, rfl⟩ := produces_singleton_iff.mp step
+      obtain ⟨β, hβ, h₁, h₂⟩ := ih (.inr ⟨r, hr, List.suffix_rfl⟩)
+      exact ⟨β, hβ, step.trans_derives h₁, h₂⟩
+
+/-- A right-linear grammar generates a regular language: the left quotient by a word is the union
+of the languages of some suffixes of right-hand sides, and there are finitely many of those. -/
+theorem IsRightLinear.isRegular_language (hg : g.IsRightLinear) : g.language.IsRegular := by
+  refine .of_finite_range_leftQuotient (((finite_suffixes (g := g)).finite_subsets.image
+    fun S ↦ ({w | ∃ β ∈ S, g.Derives β (w.map terminal)} : Language T)).subset ?_)
+  rintro _ ⟨u, rfl⟩
+  induction u using List.reverseRecOn with
+  | nil =>
+    exact ⟨{[nonterminal g.initial]}, by simp [suffixes], by ext w; simp [Language.leftQuotient]⟩
+  | append_singleton u a ih =>
+    obtain ⟨S, hS, hu⟩ := ih
+    refine ⟨{β ∈ suffixes g | ∃ α ∈ S, g.Derives α (terminal a :: β)}, fun _ h ↦ h.1, ?_⟩
+    ext w
+    have hw : u ++ [a] ++ w ∈ g.language ↔ ∃ α ∈ S, g.Derives α (terminal a :: w.map terminal) := by
+      simpa [Language.leftQuotient] using (Set.ext_iff.mp hu (a :: w)).symm
+    refine Iff.trans ?_ hw.symm
+    constructor
+    · rintro ⟨β, ⟨-, α, hα, h₁⟩, h₂⟩
+      exact ⟨α, hα, h₁.trans (h₂.append_left [terminal a])⟩
+    · rintro ⟨α, hα, h⟩
+      obtain ⟨β, hβ, h₁, h₂⟩ := hg.exists_derives_terminal_cons (hS hα) h
+      exact ⟨β, ⟨hβ, α, hα, h₁⟩, h₂⟩
+
+end ContextFreeGrammar
+
+namespace DFA
+
+/-- The grammar of a finite automaton is right-linear. -/
+theorem isRightLinear_toContextFreeGrammar {α : Type*} {σ : Type} [Fintype α] [Fintype σ]
+    (M : DFA α σ) : M.toContextFreeGrammar.IsRightLinear := by
+  intro r hr s hs
+  obtain ⟨a, ho⟩ | ⟨-, ho⟩ := mem_toContextFreeGrammar_rules.1 hr <;> simp_all
 
 section Threads
 
@@ -266,6 +367,14 @@ theorem IsRegular.isContextFree [Finite α] (h : L.IsRegular) : L.IsContextFree 
   have := Fintype.ofFinite α
   obtain ⟨σ, _, M, rfl⟩ := h
   exact ⟨M.toContextFreeGrammar, M.language_toContextFreeGrammar⟩
+
+/-- Over a finite alphabet, the regular languages are those of the right-linear grammars. -/
+theorem isRegular_iff_exists_isRightLinear [Finite α] :
+    L.IsRegular ↔ ∃ g : ContextFreeGrammar α, g.IsRightLinear ∧ g.language = L := by
+  refine ⟨fun h ↦ ?_, fun ⟨g, hg, h⟩ ↦ h ▸ hg.isRegular_language⟩
+  have := Fintype.ofFinite α
+  obtain ⟨σ, _, M, rfl⟩ := h
+  exact ⟨_, M.isRightLinear_toContextFreeGrammar, M.language_toContextFreeGrammar⟩
 
 /-- Context-free languages are closed under intersection with regular languages. -/
 theorem IsContextFree.inf_isRegular (hL : L.IsContextFree) (hR : R.IsRegular) :

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Computability.ContextFreeGrammar.Regular
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Linglib.Data.Examples.PullumGazdar1982
 public import Linglib.Data.Examples.Readers
@@ -11,7 +12,8 @@ public import Linglib.Data.Examples.Languages
 This file formalizes [pullum-gazdar-1982]'s examination of the published arguments that some
 natural language is not a context-free stringset, each of which the paper finds formally or
 empirically invalid. The formal exhibits are grammars. The finite state grammar of §1 generates
-unbounded long-distance number concord (`concordGrammar`, `concord_unbounded`). Grammar (9)
+a regular language with unbounded long-distance number concord (`concordGrammar`,
+`isRegular_concordGrammar_language`, `concord_unbounded`). Grammar (9)
 generates exactly the nonidentity language (8) that Chomsky's comparative argument took to be
 beyond context-free power (`xyGrammar_language`), so the language is context-free
 (`isXY_isContextFree`). Grammar (29) generates exactly the Dutch verb-raising verb phrases (24)
@@ -30,8 +32,7 @@ trees: soundness by induction on a licensed tree, with what each nonterminal gen
 (`Generated`), and completeness by building the derivation. The Dutch verb phrases are described
 as the paper does, with the categories of the lexicon (29b) as terminals; the row predictions
 decide membership by stripping the names and counting the transitive verbs (`isVerbPhrase`),
-which is proved equivalent to the description. Finite stateness is the right-linear form of the
-rules, since mathlib has no bridge from grammars to regular languages. The π argument of §3, the
+which is proved equivalent to the description. The π argument of §3, the
 xx-language closure argument of §1, the ditransitive schema (32), and the Mohawk translation of
 Langendoen's finite state language are not formalized.
 
@@ -99,19 +100,15 @@ private theorem cprod {r : CRule} (hr : r ∈ concordGrammar.rules) :
     concordGrammar.Produces [.nonterminal r.input] r.output :=
   produces_of_mem hr
 
-/-- In a finite state grammar every rule rewrites to terminals followed by at most one
-nonterminal. -/
-def IsFiniteState {T : Type*} (g : ContextFreeGrammar T) : Prop :=
-  ∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, (Symbol.terminal? s).isSome
+theorem concordGrammar_isRightLinear : concordGrammar.IsRightLinear := by decide
 
-theorem concordGrammar_isFiniteState : IsFiniteState concordGrammar := by
-  intro r hr
-  simp only [concordGrammar, Finset.mem_insert, Finset.mem_singleton] at hr
-  rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+/-- The concord grammar generates a finite state language. -/
+theorem isRegular_concordGrammar_language : concordGrammar.language.IsRegular :=
+  concordGrammar_isRightLinear.isRegular_language
 
 /-- A chain of *she thought* and *you thought* clauses. -/
 def chain (ps : List Bool) : List Word :=
-  ps.flatMap λ b => if b then [.she, .thought] else [.you, .thought]
+  ps.flatMap fun b ↦ if b then [.she, .thought] else [.you, .thought]
 
 private theorem derives_chain (ps : List Bool) :
     concordGrammar.Derives [.nonterminal .U]
