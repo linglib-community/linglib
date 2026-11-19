@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.HarmonicGrammar.Harmony
+public import Linglib.Core.Analysis.Convex.Deriv
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.ChannelCapacity
@@ -290,12 +291,9 @@ theorem isMaxOn_logLikelihood_iff :
     funext j
     have := congrArg (· (Pi.single j 1)) h0
     simpa [dotProductBilin, dotProduct_single, sub_eq_zero] using this
-  · intro h w' _
-    have hent := toReal_klDiv_maxEnt_add_measureEntropy T w' (maxEnt T w)
-    have hent' := measureEntropy_maxEnt T w
-    change logLikelihood T p w' ≤ logLikelihood T p w
-    rw [logLikelihood_eq, logLikelihood_eq, ← h]
-    linarith [ENNReal.toReal_nonneg (a := klDiv (maxEnt T w) (maxEnt T w'))]
+  · intro h
+    exact (concaveOn_logLikelihood T p).isMaxOn_of_hasFDerivAt_zero (Set.mem_univ w)
+      (by simpa [h] using hasFDerivAt_logLikelihood T w p)
 
 /-- The most likely MaxEnt grammar of an empirical distribution gives the maximum-entropy
 distribution among those with the observed expected violations. -/
@@ -468,14 +466,9 @@ theorem isMaxOn_condLogLikelihood_iff :
     funext j
     have := congrArg (· (Pi.single j 1)) h0
     simpa [dotProductBilin, dotProduct_single, sub_eq_zero] using this
-  · intro h w' _
-    have h₁ := sum_toReal_klDiv_condMaxEnt_add_condEntropy T w' p.fst (condMaxEnt T w)
-    have h₂ := condEntropy_condMaxEnt T w p.fst
-    have h₃ : 0 ≤ ∑ x, p.fst.real {x} * (klDiv (condMaxEnt T w x) (condMaxEnt T w' x)).toReal :=
-      sum_nonneg fun x _ ↦ mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
-    change condLogLikelihood T p w' ≤ condLogLikelihood T p w
-    rw [condLogLikelihood_eq, condLogLikelihood_eq, ← h]
-    linarith
+  · intro h
+    exact (concaveOn_condLogLikelihood T p).isMaxOn_of_hasFDerivAt_zero (Set.mem_univ w)
+      (by simpa [h] using hasFDerivAt_condLogLikelihood T w p)
 
 /-- At weights matching the observed violations the conditional log-likelihood is minus the
 conditional entropy of the grammar, the common value of the two dual problems. -/
