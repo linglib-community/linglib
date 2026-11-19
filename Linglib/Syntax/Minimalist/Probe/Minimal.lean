@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.Basic
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.Prod.Lex.Basic

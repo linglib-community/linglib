@@ -274,8 +274,8 @@ def features (t : LF) : Finset GornAddress := (wordPositions t (·.feature?.isSo
 
 /-- A tense `b` can be deleted when something in `F` is local for it and has the value of its
 feature: it commands `b` under `R`, and no other member of `F` that it commands commands `b`. A
-node commands itself on the reflexive relations of `Syntax/Command.lean`, so *other* excludes `b`
-as well as the commander. -/
+node commands itself on the reflexive relations `C[P]`, so *other* excludes `b` as well as the
+commander. -/
 def Deletable (R : SetRel GornAddress GornAddress) (F : Finset GornAddress) (t : LF) (b :
     GornAddress) : Prop :=
   b ∈ tenses t ∧ ∃ a ∈ F, a ≠ b ∧ a ~[R] b ∧ featureAt? t a = featureAt? t b ∧

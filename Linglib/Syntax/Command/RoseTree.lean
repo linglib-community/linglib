@@ -1,13 +1,13 @@
 module
 
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.Basic
 public import Linglib.Core.Data.RoseTree.Positions
 
 /-!
 # Command relations on the positions of a rose tree
 
 The positions of a rose tree are a dominance order, so a set of them generates a command relation
-(`Linglib/Syntax/Command.lean`). The branching positions, those with at least two children,
+(`Linglib/Syntax/Command/Basic.lean`). The branching positions, those with at least two children,
 are `RoseTree.branching`. Between positions neither of which dominates the other they generate
 c-command, `RoseTree.CCommands`, which is
 [sisterhood plus dominance](##RoseTree.cCommands_iff_parent_lt). Both are read off the tree, so

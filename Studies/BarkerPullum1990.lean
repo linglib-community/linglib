@@ -11,7 +11,7 @@ public import Mathlib.Order.Hom.Set
 
 A property $P$ of nodes generates the command relation in which $a$ commands $b$ when every
 $P$-node properly dominating $a$ dominates $b$, and S-command, K-command, MAX-command, c-command
-and IDC-command differ in $P$ alone. The relation is `Syntax/Command.lean`'s upper polar, so the
+and IDC-command differ in $P$ alone. The relation is the substrate's upper polar `C[P]`, so the
 Intersection Theorem is mathlib's `upperPolar_union`. A relation on a tree is a command relation
 [exactly when it contains IDC-command and is fair](##isIntent_admits_iff). Its [largest
 generator](##extentClosure_admits) adds the root and the leaves, so the command relations
