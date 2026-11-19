@@ -197,7 +197,6 @@ def john_sees_mary_via_tr : Derivation Entry (.multimodal 2) S :=
 theorem interp_john_sees_mary_via_tr :
     john_sees_mary_via_tr.interp I = john_sees_mary.interp I := rfl
 
-/-- The coordinated constituents are conjoined pointwise. -/
 theorem coord_interp_pointwise (e : D ()) :
     john_sees_and_mary_eats.interp I e =
       I .conj (mary_eats.interp I e) (john_sees.interp I e) := rfl
