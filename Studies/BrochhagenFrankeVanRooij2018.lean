@@ -23,8 +23,10 @@ speaker whose utility is the logarithm of the literal hearer's credence
 the prior, and the messages by any permutation, relabels every speaker and hearer alike, so it
 leaves expected success unchanged (`success_image`). Over the two states of *some*, the lexicon
 that bounds *some* above communicates better with its own kind than the lexicon that does not, at
-each level of reasoning (`selfSuccess_lt`); `selfSuccess_Llack_zero_lt` gives the rationalities at
-which literal use of the unbounded lexicon is outdone by pragmatic use of either lexicon.
+each level of reasoning (`selfSuccess_lt`). Pragmatic use of the bounded lexicon outdoes literal use
+of the unbounded one exactly above the rationality $\log(5/3)$, while at rationalities up to
+$2\log(5/2)$ literal use of the unbounded lexicon outdoes pragmatic use of it
+(`selfSuccess_Llack_zero_lt`).
 
 A population of types evolves by the replicator–mutator step, which reweights it by fitness and
 passes the result through the kernel that sends a teacher's type to the type its learner acquires.
@@ -217,7 +219,7 @@ theorem hearer_image (he : MeasurePreserving e pr pr) (π : M ≃ M) (n : ℕ) :
       ((hearer pr lam L n).comap π.symm .of_discrete).map e :=
   (speaker_image_and_hearer_image pr lam L he π n).2
 
--- §2.4.2: so the expected success of any speaker with any hearer is unchanged when both lexica are
+-- So the expected success of any speaker with any hearer is unchanged when both lexica are
 -- relabelled alike.
 theorem success_image (L' : M → Set S) (he : MeasurePreserving e pr pr) (π : M ≃ M) (n n' : ℕ) :
     success pr (speaker pr lam (fun m ↦ e '' L (π.symm m)) n)
@@ -873,7 +875,8 @@ theorem replicatorMutator_real_negative_eq_iff (x : Measure Sign) [IsProbability
   set a := x.real {negative}
   have hΦ : 3 * a ^ 2 - 4 * a + 2 ≠ 0 := by nlinarith [sq_nonneg (a - 2 / 3)]
   rw [div_eq_iff hΦ]
-  exact ⟨fun h ↦ by linear_combination (-10 : ℝ) * h, fun h ↦ by linear_combination (-1 / 10 : ℝ) * h⟩
+  exact ⟨fun h ↦ by linear_combination (-10 : ℝ) * h,
+    fun h ↦ by linear_combination (-1 / 10 : ℝ) * h⟩
 
 end AppendixA
 

@@ -362,10 +362,28 @@ section Antonym
 
 variable {α : ℝ} {cost : Utterance → ℝ}
 
+-- Negating the threshold offset relabels the literal listener by the antonyms and the reflection.
+theorem literal_negate (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) :
+    literal c (negate σ) =
+      ((literal c σ).comap Utterance.antonym_involutive.toPerm.symm .of_discrete).map
+        World.reflect_involutive.toPerm := by
+  have hprior : prior.map World.reflect_involutive.toPerm = prior :=
+    Measure.ext_of_singleton fun w ↦ by
+      rw [Measure.map_apply .of_discrete (.singleton w), ← Equiv.image_symm_eq_preimage,
+        Set.image_singleton]
+      exact prior_reflect w
+  rw [literal, literal, RSA.literalListener_relabel, hprior]
+  congr 1 with u w
+  rw [Set.mem_image_equiv]
+  change Holds c u (negate σ) w ↔ Holds c u.antonym σ w.reflect
+  rw [← holds_reflect c u.antonym σ w.reflect, Utterance.antonym_involutive,
+    World.reflect_involutive]
+
 theorem literal_antonym (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) (u : Utterance)
-    (w : World) : literal c (negate σ) u.antonym {w.reflect} = literal c σ u {w} :=
-  RSA.literalListener_apply_singleton_of_equiv World.reflect_involutive.toPerm prior_reflect
-    (fun w ↦ by simp only [Function.Involutive.coe_toPerm, Set.mem_ofPred_eq, holds_reflect]) w
+    (w : World) : literal c (negate σ) u.antonym {w.reflect} = literal c σ u {w} := by
+  rw [literal_negate, Kernel.map_apply' _ .of_discrete _ (.singleton _), Kernel.comap_apply,
+    ← Equiv.image_symm_eq_preimage, Set.image_singleton]
+  simp [World.reflect_involutive w, Utterance.antonym_involutive u]
 
 theorem listener_antonym (c : Option Comparison) (u : Utterance) (w : World)
     (σ : Finset.Icc (-4 : ℤ) 4) :

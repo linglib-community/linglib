@@ -336,7 +336,8 @@ theorem invariant_mapLearner_comp_produce_iff [IsProbabilityMeasure P] {α : ℝ
       (by rw [q₁₂, q₂₁]; exact ne_of_gt (by linarith)), q₁₂, q₂₁,
       prior_real_one hθ₀]
     ring
-  · rw [h, Kernel.invariant_iff_of_pair (by decide) eq_one_or_eq_two, q₂₁, q₁₂, prior_real_one hθ₀, prior_real_two hθ₁, one_sub_div hD.ne',
+  · rw [h, Kernel.invariant_iff_of_pair (by decide) eq_one_or_eq_two, q₂₁, q₁₂,
+      prior_real_one hθ₀, prior_real_two hθ₁, one_sub_div hD.ne',
       div_mul_eq_mul_div, div_mul_eq_mul_div, div_left_inj₀ hD.ne']
     ring
 
@@ -378,10 +379,10 @@ example [IsProbabilityMeasure P] {α : ℝ} (hα : 1 / 2 < α) (hαε : ε < 1 -
   · rw [invariant_mapLearner_comp_produce_prior_iff hα hαε hε, hθ]
     exact fun h ↦ by linarith
 
-/-- Eqs. (14)–(15): with noise, the MAP chain on two languages converges from any start to its
-stationary probability of `L₁`, which does not involve the prior. -/
-theorem tendsto_pow_mapLearner_comp_produce [IsProbabilityMeasure P] (ν : Measure Language) [IsProbabilityMeasure ν] {α : ℝ}
-    (hα : 1 / 2 < α) (hαε : ε < 1 - α) (hε : 0 < ε) :
+/-- With noise, the MAP chain on two languages converges from any start to its stationary
+probability of `L₁`, which does not involve the prior. -/
+theorem tendsto_pow_mapLearner_comp_produce [IsProbabilityMeasure P] (ν : Measure Language)
+    [IsProbabilityMeasure ν] {α : ℝ} (hα : 1 / 2 < α) (hαε : ε < 1 - α) (hε : 0 < ε) :
     Tendsto (fun n : ℕ ↦
       (((mapLearner (produce P G ε) (prior α) ∘ₖ produce P G ε) ^ n) ∘ₘ ν).real {one}) atTop
       (𝓝 ((P.real {x | x ∈ G one ↔ x ∈ G two} + (1 - P.real {x | x ∈ G one ↔ x ∈ G two}) * ε) /

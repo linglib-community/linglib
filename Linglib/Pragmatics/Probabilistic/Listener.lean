@@ -526,18 +526,6 @@ theorem literalListener_apply_singleton_eq_one_iff_eq_singleton [IsFiniteMeasure
         hμ x (measure_mono_null (Set.singleton_subset_iff.2 (by simpa using ⟨hx, hne⟩)) h0),
       fun h ↦ by rw [Set.sdiff_eq_empty.2 (show sem u ⊆ {w} from fun x hx ↦ h x hx), measure_empty]⟩
 
-theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
-    [DiscreteMeasurableSpace W'] [MeasurableSpace U'] [Countable U'] [MeasurableSingletonClass U']
-    [Fintype W] [Fintype W'] (e : W ≃ W') {μ : Measure W} {μ' : Measure W'} {sem : U → Set W}
-    {sem' : U' → Set W'} {u : U} {u' : U'} (hμ : ∀ w, μ' {e w} = μ {w})
-    (hsem : ∀ w, e w ∈ sem' u' ↔ w ∈ sem u) (w : W) :
-    literalListener μ' sem' u' {e w} = literalListener μ sem u {w} := by
-  rw [literalListener_eq_ofDensity, literalListener_eq_ofDensity]
-  refine Kernel.ofDensity_apply_singleton_of_equiv e hμ (fun w ↦ ?_) w
-  by_cases h : w ∈ sem u
-  · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hsem w).2 h), Pi.one_apply, Pi.one_apply]
-  · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (mt (hsem w).1 h)]
-
 /-- Relabelling the states by `e` and the utterances by `π` relabels the literal listener alike. -/
 theorem literalListener_relabel {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
     [Countable U'] [MeasurableSingletonClass U'] [Fintype W] [Fintype W']
