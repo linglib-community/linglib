@@ -1,233 +1,248 @@
-[
-  {
-    "id": "mizuno2024_en1a",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(1a)"},
-    "language": "stan1293",
-    "primaryText": "You're right. If Jones had taken arsenic last night, he would show those symptoms which he is now showing.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Jones is in the ER with poisoning symptoms; the investigation team is figuring out which chemical was used. One shrewd member suggests that, given the symptoms, he must have taken arsenic. The boss then says (1a) and the follow-up (1b) 'So, it looks like he did take arsenic' in a row: an Anderson conditional arguing FOR the truth of its antecedent.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "anderson"],
-      ["strategy", "x-marking"]
-    ],
-    "comment": "English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact.",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_en2",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(2)"},
-    "language": "stan1293",
-    "primaryText": "If Jones took arsenic, he shows just exactly those symptoms which he does in fact show.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Same scenario as (1). The O-marked (simple-past indicative / present) counterpart of (1a).",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "anderson"],
-      ["strategy", "o-marking"]
-    ],
-    "comment": "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999).",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_ja3",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(3)"},
-    "language": "nucl1643",
-    "primaryText": "John-ga ima kono siai-no naka-ni ir-eba, syoohai-wa mada wakar-ana-katta daroo.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ga", "John-NOM"], ["ima", "now"], ["kono", "this"], ["siai-no", "game-GEN"],
-      ["naka-ni", "inside-LOC"], ["ir-eba", "be-COND"], ["syoohai-wa", "outcome-TOP"],
-      ["mada", "yet"], ["wakar-ana-katta", "be.clear-NEG-PAST"], ["daroo", "MOD"]
-    ],
-    "translation": "If John were playing now, the outcome of the game would still be uncertain.",
-    "context": "John, an ace player, has recently left the team for better pay. The team weakens considerably after losing their mainstay, and their defeat in today's game is already certain during the first half. A fan who is currently watching the game says the following.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "fake-past"],
-      ["x_exponent", "-ta"]
-    ],
-    "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals.",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_ja4a",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(4a)"},
-    "language": "nucl1643",
-    "primaryText": "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ru hazuda.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Tasikani", "you're.right"], ["Jones-si-ga", "Jones-Mr.-NOM"], ["sakuya", "last.night"],
-      ["hiso-o", "arsenic-ACC"], ["nom-eba", "drink-COND"], ["kare-ga", "he-NOM"], ["ima", "now"],
-      ["mise-tei-ru", "show-ASP-NPST"], ["syoozyoo-to", "symptom-as"], ["mattaku", "exactly"],
-      ["onazi", "same"], ["syoozyoo-o", "symptom-ACC"], ["ima", "now"], ["mise-ru", "show-NPST"],
-      ["hazuda", "MOD"]
-    ],
-    "translation": "If Jones had taken arsenic last night, he would show exactly the same symptoms as he is now showing.",
-    "context": "Uttered in the context in (1) — the Anderson scenario.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", "judgment": "unacceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "anderson"],
-      ["strategy", "o-marking"]
-    ],
-    "comment": "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous.",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_ja7a",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(7a)"},
-    "language": "nucl1643",
-    "primaryText": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-uru (hazuda).",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Tasikani", "you're.right"], ["Jones-ga", "Jones-NOM"], ["ototoi", "two.days.ago"],
-      ["Manila-o", "Manila-ACC"], ["syuppatusu-reba", "leave-COND"], ["kare-no", "he-GEN"],
-      ["zissai-no", "actual-GEN"], ["nyuukoku", "immigration"], ["geeto-to", "gate-as"],
-      ["mattaku", "exactly"], ["onazi", "same"], ["geeto-o", "gate-ACC"],
-      ["kinoo-no", "yesterday-GEN"], ["tuuka", "passage"], ["zikoku-to", "time-as"],
-      ["mattaku", "exactly"], ["onazi", "same"], ["zikoku-ni", "time-at"],
-      ["tuukas-uru", "pass-NPST"], ["(hazuda)", "MOD"]
-    ],
-    "translation": "You're right. If Jones had left Manila two days ago, he would have passed exactly the same immigration gate that he actually passed yesterday, exactly at the same time as he actually did it.",
-    "context": "Jones is a fugitive who reportedly entered Korea via Incheon yesterday; the team infers the country he flew from. The consequent event lies overtly in the past (adverbial kinoo 'yesterday'), yet Non-Past is still required.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).",
-        "judgment": "unacceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "anderson"],
-      ["strategy", "o-marking"],
-      ["hp_type", "radical"]
-    ],
-    "comment": "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present.",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_ma13a",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(13a)"},
-    "language": "mand1415",
-    "primaryText": "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ruguo", "if"], ["Jones", "Jones"], ["zuotian", "yesterday"], ["he", "drink"],
-      ["le", "PERF"], ["pishuang", "arsenic"], ["jiu", "then"], ["hui", "MOD"],
-      ["chuxian", "show"], ["ta", "he"], ["xianzai", "now"], ["shiji", "actually"],
-      ["chuxian", "show"], ["de", "REL"], ["zheyangde", "such"], ["zhengzhuang", "symptoms"]
-    ],
-    "translation": "If Jones drank arsenic yesterday, he would show such symptoms as he actually shows now.",
-    "context": "Uttered in the context in (1) — the Anderson scenario.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", "judgment": "unacceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "anderson"],
-      ["strategy", "o-marking"]
-    ],
-    "comment": "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_en8",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(8)"},
-    "language": "stan1293",
-    "primaryText": "If John came tomorrow, the party would be fun, but he probably won't come tomorrow, I think.",
-    "discourseSegments": [
-      "If John came tomorrow, the party would be fun,",
-      "but he probably won't come tomorrow, I think."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "flv"],
-      ["strategy", "x-marking"],
-      ["flv_xmarking", "available"]
-    ],
-    "comment": "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b).",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_ja9",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(9)"},
-    "language": "nucl1643",
-    "primaryText": "John-ga asita kur-eba, paatii-wa totemo moriagar-u daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-ga", "John-NOM"], ["asita", "tomorrow"], ["kur-eba", "come-COND"],
-      ["paatii-wa", "party-TOP"], ["totemo", "very"], ["moriagar-u", "be.fun-NPST"],
-      ["daroo", "MOD"], ["kedo", "but"], ["tabun", "probably"], ["kare-wa", "he-TOP"],
-      ["asita", "tomorrow"], ["ko-na-i", "come-NEG-NPST"], ["to", "COMP"], ["omou", "think"]
-    ],
-    "translation": "If John came tomorrow, the party would be fun, but probably he won't come tomorrow, I think.",
-    "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
-        "judgment": "unacceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "flv"],
-      ["strategy", "o-marking"],
-      ["flv_xmarking", "unavailable"]
-    ],
-    "comment": "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
-    "verified": "page-image"
-  },
-  {
-    "id": "mizuno2024_ma11",
-    "source": {"bibkey": "mizuno-2024", "paperLabel": "(11)"},
-    "language": "mand1415",
-    "primaryText": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai, danshi wo juede ta mingtian bu hui lai.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ruguo", "if"], ["mingtian", "tomorrow"], ["John", "John"], ["lai", "come"],
-      ["paidui", "party"], ["de", "GEN"], ["qifen", "atmosphere"], ["jiu", "then"],
-      ["neng", "MOD"], ["huoyue", "be.lively"], ["qilai", "get"], ["danshi", "but"], ["wo", "I"],
-      ["juede", "think"], ["ta", "he"], ["mingtian", "tomorrow"], ["bu", "not"], ["hui", "will"],
-      ["lai", "come"]
-    ],
-    "translation": "If John comes tomorrow, the party atmosphere would get lively, but I think he won't come tomorrow.",
-    "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.",
-        "judgment": "unacceptable"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["construction", "flv"],
-      ["strategy", "o-marking"],
-      ["flv_xmarking", "unavailable"]
-    ],
-    "comment": "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {"key": "construction", "lean": "construction", "type": "Construction",
+     "doc": "The constructions whose marking the paper compares.",
+     "levels": [
+       {"name": "anderson", "label": "anderson",
+        "doc": "an Anderson conditional, whose consequent is an observed fact (§2)"},
+       {"name": "counterfactual", "label": "counterfactual",
+        "doc": "a conditional whose antecedent is taken to be false (§3.1)"},
+       {"name": "flv", "label": "flv", "doc": "a future-less-vivid conditional (§4.2)"}]},
+    {"key": "strategy", "lean": "strategy", "type": "Strategy",
+     "doc": "The marking of the row's primary text, in the terms of von Fintel and Iatridou.",
+     "levels": [
+       {"name": "xMarking", "label": "X-marking",
+        "doc": "the morphology of a counterfactual conditional"},
+       {"name": "oMarking", "label": "O-marking", "doc": "the absence of X-marking"}]}
+  ],
+  "examples": [
+    {
+      "id": "mizuno2024_en1a",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(1a)"},
+      "language": "stan1293",
+      "primaryText": "You're right. If Jones had taken arsenic last night, he would show those symptoms which he is now showing.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Jones is in the ER with poisoning symptoms; the investigation team is figuring out which chemical was used. One shrewd member suggests that, given the symptoms, he must have taken arsenic. The boss then says (1a) and the follow-up (1b) 'So, it looks like he did take arsenic' in a row: an Anderson conditional arguing FOR the truth of its antecedent.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "anderson"],
+        ["strategy", "X-marking"]
+      ],
+      "comment": "English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_en2",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(2)"},
+      "language": "stan1293",
+      "primaryText": "If Jones took arsenic, he shows just exactly those symptoms which he does in fact show.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Same scenario as (1). The O-marked (simple-past indicative / present) counterpart of (1a).",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "anderson"],
+        ["strategy", "O-marking"]
+      ],
+      "comment": "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999).",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_ja3",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(3)"},
+      "language": "nucl1643",
+      "primaryText": "John-ga ima kono siai-no naka-ni ir-eba, syoohai-wa mada wakar-ana-katta daroo.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ga", "John-NOM"], ["ima", "now"], ["kono", "this"], ["siai-no", "game-GEN"],
+        ["naka-ni", "inside-LOC"], ["ir-eba", "be-COND"], ["syoohai-wa", "outcome-TOP"],
+        ["mada", "yet"], ["wakar-ana-katta", "be.clear-NEG-PAST"], ["daroo", "MOD"]
+      ],
+      "translation": "If John were playing now, the outcome of the game would still be uncertain.",
+      "context": "John, an ace player, has recently left the team for better pay. The team weakens considerably after losing their mainstay, and their defeat in today's game is already certain during the first half. A fan who is currently watching the game says the following.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "counterfactual"],
+        ["strategy", "X-marking"]
+      ],
+      "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_ja4a",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(4a)"},
+      "language": "nucl1643",
+      "primaryText": "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ru hazuda.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tasikani", "you're.right"], ["Jones-si-ga", "Jones-Mr.-NOM"], ["sakuya", "last.night"],
+        ["hiso-o", "arsenic-ACC"], ["nom-eba", "drink-COND"], ["kare-ga", "he-NOM"], ["ima", "now"],
+        ["mise-tei-ru", "show-ASP-NPST"], ["syoozyoo-to", "symptom-as"], ["mattaku", "exactly"],
+        ["onazi", "same"], ["syoozyoo-o", "symptom-ACC"], ["ima", "now"], ["mise-ru", "show-NPST"],
+        ["hazuda", "MOD"]
+      ],
+      "translation": "If Jones had taken arsenic last night, he would show exactly the same symptoms as he is now showing.",
+      "context": "Uttered in the context in (1) — the Anderson scenario.",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", "judgment": "unacceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "anderson"],
+        ["strategy", "O-marking"]
+      ],
+      "comment": "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_ja7a",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(7a)"},
+      "language": "nucl1643",
+      "primaryText": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-uru (hazuda).",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tasikani", "you're.right"], ["Jones-ga", "Jones-NOM"], ["ototoi", "two.days.ago"],
+        ["Manila-o", "Manila-ACC"], ["syuppatusu-reba", "leave-COND"], ["kare-no", "he-GEN"],
+        ["zissai-no", "actual-GEN"], ["nyuukoku", "immigration"], ["geeto-to", "gate-as"],
+        ["mattaku", "exactly"], ["onazi", "same"], ["geeto-o", "gate-ACC"],
+        ["kinoo-no", "yesterday-GEN"], ["tuuka", "passage"], ["zikoku-to", "time-as"],
+        ["mattaku", "exactly"], ["onazi", "same"], ["zikoku-ni", "time-at"],
+        ["tuukas-uru", "pass-NPST"], ["(hazuda)", "MOD"]
+      ],
+      "translation": "You're right. If Jones had left Manila two days ago, he would have passed exactly the same immigration gate that he actually passed yesterday, exactly at the same time as he actually did it.",
+      "context": "Jones is a fugitive who reportedly entered Korea via Incheon yesterday; the team infers the country he flew from. The consequent event lies overtly in the past (adverbial kinoo 'yesterday'), yet Non-Past is still required.",
+      "judgment": "acceptable",
+      "contrasts": [
+        {
+          "form": "Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).",
+          "judgment": "unacceptable"
+        }
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "anderson"],
+        ["strategy", "O-marking"],
+        ["hp_type", "radical"]
+      ],
+      "comment": "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_ma13a",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(13a)"},
+      "language": "mand1415",
+      "primaryText": "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ruguo", "if"], ["Jones", "Jones"], ["zuotian", "yesterday"], ["he", "drink"],
+        ["le", "PERF"], ["pishuang", "arsenic"], ["jiu", "then"], ["hui", "MOD"],
+        ["chuxian", "show"], ["ta", "he"], ["xianzai", "now"], ["shiji", "actually"],
+        ["chuxian", "show"], ["de", "REL"], ["zheyangde", "such"], ["zhengzhuang", "symptoms"]
+      ],
+      "translation": "If Jones drank arsenic yesterday, he would show such symptoms as he actually shows now.",
+      "context": "Uttered in the context in (1) — the Anderson scenario.",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", "judgment": "unacceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "anderson"],
+        ["strategy", "O-marking"]
+      ],
+      "comment": "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_en8",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(8)"},
+      "language": "stan1293",
+      "primaryText": "If John came tomorrow, the party would be fun, but he probably won't come tomorrow, I think.",
+      "discourseSegments": [
+        "If John came tomorrow, the party would be fun,",
+        "but he probably won't come tomorrow, I think."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "flv"],
+        ["strategy", "X-marking"]
+      ],
+      "comment": "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_ja9",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(9)"},
+      "language": "nucl1643",
+      "primaryText": "John-ga asita kur-eba, paatii-wa totemo moriagar-u daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ga", "John-NOM"], ["asita", "tomorrow"], ["kur-eba", "come-COND"],
+        ["paatii-wa", "party-TOP"], ["totemo", "very"], ["moriagar-u", "be.fun-NPST"],
+        ["daroo", "MOD"], ["kedo", "but"], ["tabun", "probably"], ["kare-wa", "he-TOP"],
+        ["asita", "tomorrow"], ["ko-na-i", "come-NEG-NPST"], ["to", "COMP"], ["omou", "think"]
+      ],
+      "translation": "If John came tomorrow, the party would be fun, but probably he won't come tomorrow, I think.",
+      "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
+      "judgment": "acceptable",
+      "contrasts": [
+        {
+          "form": "John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.",
+          "judgment": "unacceptable"
+        }
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "flv"],
+        ["strategy", "O-marking"]
+      ],
+      "comment": "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
+      "verified": "page-image"
+    },
+    {
+      "id": "mizuno2024_ma11",
+      "source": {"bibkey": "mizuno-2024", "paperLabel": "(11)"},
+      "language": "mand1415",
+      "primaryText": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai, danshi wo juede ta mingtian bu hui lai.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ruguo", "if"], ["mingtian", "tomorrow"], ["John", "John"], ["lai", "come"],
+        ["paidui", "party"], ["de", "GEN"], ["qifen", "atmosphere"], ["jiu", "then"],
+        ["neng", "MOD"], ["huoyue", "be.lively"], ["qilai", "get"], ["danshi", "but"], ["wo", "I"],
+        ["juede", "think"], ["ta", "he"], ["mingtian", "tomorrow"], ["bu", "not"], ["hui", "will"],
+        ["lai", "come"]
+      ],
+      "translation": "If John comes tomorrow, the party atmosphere would get lively, but I think he won't come tomorrow.",
+      "context": "Future Less Vivid conditional with an unlikeliness follow-up.",
+      "judgment": "acceptable",
+      "contrasts": [
+        {
+          "form": "Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.",
+          "judgment": "unacceptable"
+        }
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "flv"],
+        ["strategy", "O-marking"]
+      ],
+      "comment": "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
+      "verified": "page-image"
+    }
+  ]
+}
