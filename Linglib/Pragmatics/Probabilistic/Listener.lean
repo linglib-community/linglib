@@ -180,13 +180,6 @@ theorem listener_apply_singleton (u : U) (w : W) :
     listener μ S u {w} = S w {u} * μ {w} / ∑ w', S w' {u} * μ {w'} :=
   Kernel.ofDensity_apply_singleton μ _ u w
 
-theorem listener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
-    [Countable U'] [MeasurableSingletonClass U'] [Fintype W'] [MeasurableSingletonClass W']
-    (e : W ≃ W') {μ' : Measure W'} {S' : W' → Measure U'} {u : U} {u' : U'}
-    (hμ : ∀ w, μ' {e w} = μ {w}) (hS : ∀ w, S' (e w) {u'} = S w {u}) (w : W) :
-    listener μ' S' u' {e w} = listener μ S u {w} :=
-  Kernel.ofDensity_apply_singleton_of_equiv e hμ hS w
-
 /-- Relabelling the states by `e` and the utterances by `π` relabels the listener alike: Bayes'
 rule commutes with the relabelling. -/
 theorem listener_relabel {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U'] [Countable U']

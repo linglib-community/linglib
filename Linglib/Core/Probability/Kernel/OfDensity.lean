@@ -157,15 +157,6 @@ theorem ofDensity_apply_singleton_ne_zero_iff (μ : Measure β) [IsFiniteMeasure
   exact and_iff_left (ENNReal.sum_ne_top.mpr fun b' _ ↦
     ENNReal.mul_ne_top (hf b') (measure_ne_top _ _))
 
-theorem ofDensity_apply_singleton_of_equiv {α' β' : Type*} [MeasurableSpace α']
-    [MeasurableSpace β'] [Countable α'] [MeasurableSingletonClass α'] [Fintype β']
-    [MeasurableSingletonClass β'] (e : β ≃ β') {μ : Measure β} {μ' : Measure β'}
-    {f : α → β → ℝ≥0∞} {f' : α' → β' → ℝ≥0∞} {a : α} {a' : α'} (hμ : ∀ b, μ' {e b} = μ {b})
-    (hf : ∀ b, f' a' (e b) = f a b) (b : β) :
-    ofDensity μ' f' a' {e b} = ofDensity μ f a {b} := by
-  rw [ofDensity_apply_singleton, ofDensity_apply_singleton, hf, hμ, ← e.sum_comp]
-  simp only [hf, hμ]
-
 variable [Nonempty β]
 
 /-- Against the uniform prior the density kernel is the weight kernel of the density. -/
