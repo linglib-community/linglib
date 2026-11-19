@@ -15,49 +15,27 @@ public import Linglib.Core.Relation.SetRel
 # Command relations
 
 A dominance order has the root at `⊥` and `x ≤ y` for `x` dominates `y`. A set `P` of nodes
-generates a command relation: `a` commands `b` when every `P`-node properly dominating `a`
-dominates `b`. The relations of the literature differ in the generator alone, c-command taking
-the branching nodes, S-command the S nodes and MAX-command the maximal projections.
+generates a command relation: `a` commands `b` when every `P`-node properly dominating `a`, every
+member of `ancestors P a`, dominates `b`. The relations of the literature differ in the generator
+alone, c-command taking the branching nodes, S-command the S nodes and MAX-command the maximal
+projections.
 
-The relation is an upper polar in the generator, so that its dependence on `P` is mathlib's
-polarity API: a union of generators gives the intersection of the relations by
-`upperPolar_union`, the map is antitone by `upperPolar_anti`, and the relations some property
-generates are the `Order.IsIntent` sets. In the commanded node it is a set of upper
-bounds, and on a tree it is the cone of one node, the lowest generator above the commander.
+The relation is an upper polar in the generator, so its dependence on `P` is mathlib's polarity
+API. In the commanded node it is the
+[upper bounds of a node's ancestors](##PhraseStructure.mem_commandRelation_iff_mem_upperBounds),
+and on a tree it is [the only relation](##PhraseStructure.eq_commandRelation_of_forall_covBy) in
+which a node commands what its mother dominates, if the mother is a generator, and what its mother
+commands, if not. Comparing nodes by their ancestors gives closeness, which is
+[command without the generators above a node](##PhraseStructure.ancestors_subset_ancestors_iff).
 
 A relation between nodes induces one between the nodes they dominate, its dominance image, the
 upper closure of the relation in the product order. Kayne's linear correspondence reads the
-dominance image of asymmetric c-command as precedence among terminals.
+dominance image of asymmetric c-command as precedence among terminals, and sisters that c-command
+each other [stay unordered](##PhraseStructure.not_mem_dominanceImage_asymmetrize_of_covBy).
 
-## Main definitions
-
-* `PhraseStructure.commandRelation`: the command relation a set of nodes generates.
-* `PhraseStructure.mateRelation`: its symmetric part, each node commanding the other.
-* `RoseTree.IsBranchingAt`, `RoseTree.cCommand`: the branching positions of a rose tree and
-  Barker and Pullum's c-command, the command relation they generate.
-* `RoseTree.CCommands`: Reinhart's c-command, between positions neither of which dominates the
-  other, and `RoseTree.cCommandDomain`, the positions a position c-commands.
-* `PhraseStructure.dominanceImage`: the relation a relation induces on the nodes below.
-* `PhraseStructure.ancestors`: the generators properly dominating a node, the key of closeness.
-
-## Main statements
-
-* `PhraseStructure.mem_commandRelation_iff_mem_upperBounds`: the nodes `a` commands are the upper
-  bounds of the generators properly dominating `a`.
-* `PhraseStructure.mem_commandRelation_iff_le`: when those generators have a greatest member,
-  `a` commands exactly what it dominates.
-* `PhraseStructure.mem_commandRelation_iff_le_of_covBy`,
-  `PhraseStructure.mem_commandRelation_iff_of_covBy`: on a tree a node commands what its mother
-  dominates if the mother is a generator, and what its mother commands if not. By
-  `PhraseStructure.eq_commandRelation_of_forall_covBy` the command relation is the only relation
-  obeying these two rules in which the root commands every node.
-* `RoseTree.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance, and by
-  `RoseTree.ancestors_ssubset_ancestors_iff_cCommands` strict closeness is asymmetric c-command.
-* `PhraseStructure.ancestors_ssubset_ancestors_iff`, `PhraseStructure.minimalFor_ancestors_iff`:
-  between nodes neither of which dominates the other, strict closeness is asymmetric command, and
-  minimality under closeness is the Minimal Link Condition.
-* `PhraseStructure.not_mem_dominanceImage_asymmetrize_of_covBy`: siblings are not related by
-  the dominance image of the asymmetric part of a relation between disconnected nodes.
+On the positions of a rose tree the branching positions generate Barker and Pullum's c-command,
+`RoseTree.cCommand`. Reinhart's, `RoseTree.CCommands`, holds between positions neither of which
+dominates the other, where it is [sisterhood plus dominance](##RoseTree.cCommands_iff_parent_lt).
 
 ## Implementation notes
 
@@ -71,6 +49,7 @@ dominance image of asymmetric c-command as precedence among terminals.
 ## References
 
 * [barker-pullum-1990]
+* [chomsky-1995]
 * [kayne-1994]
 * [reinhart-1976]
 -/
@@ -100,9 +79,21 @@ abbrev commandRelation (P : Set α) : SetRel α α := upperPolar Admits P
 
 theorem mem_commandRelation : a ~[commandRelation P] b ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
 
-/-- The nodes `a` commands are the upper bounds of the `P`-nodes properly dominating `a`. -/
+/-- The `P`-ancestors of a node, the members of `P` properly dominating it: the upper bounds for
+the node with respect to `P` of [barker-pullum-1990]. -/
+def ancestors (P : Set α) (a : α) : Set α := P ∩ Iio a
+
+theorem mem_ancestors {x : α} : x ∈ ancestors P a ↔ x ∈ P ∧ x < a := Iff.rfl
+
+theorem ancestors_subset_ancestors (h : a ≤ b) : ancestors P a ⊆ ancestors P b :=
+  fun _ hx ↦ ⟨hx.1, hx.2.trans_le h⟩
+
+theorem ancestors_mono (h : P ⊆ Q) : ancestors P a ⊆ ancestors Q a :=
+  inter_subset_inter_left _ h
+
+/-- The nodes `a` commands are the nodes all its `P`-ancestors dominate. -/
 theorem mem_commandRelation_iff_mem_upperBounds :
-    a ~[commandRelation P] b ↔ b ∈ upperBounds (P ∩ Iio a) :=
+    a ~[commandRelation P] b ↔ b ∈ upperBounds (ancestors P a) :=
   ⟨fun h _ hx ↦ h hx.1 hx.2, fun h _ hx hxa ↦ h ⟨hx, hxa⟩⟩
 
 instance : (commandRelation P).IsRefl := ⟨fun _ _ _ hxa ↦ hxa.le⟩
@@ -115,9 +106,9 @@ theorem mem_commandRelation_congr (h : ∀ x < a, x ∈ P ↔ x ∈ Q) :
     a ~[commandRelation P] b ↔ a ~[commandRelation Q] b :=
   ⟨fun hP _ hx hxa ↦ hP ((h _ hxa).2 hx) hxa, fun hQ _ hx hxa ↦ hQ ((h _ hxa).1 hx) hxa⟩
 
-/-- When the `P`-nodes properly dominating `a` have a greatest member `m`, the lowest of them in
-the tree, `a` commands exactly what `m` dominates. -/
-theorem mem_commandRelation_iff_le (h : IsGreatest (P ∩ Iio a) m) :
+/-- When the `P`-ancestors of `a` have a greatest member `m`, the lowest of them in the tree, `a`
+commands exactly what `m` dominates. -/
+theorem mem_commandRelation_iff_le (h : IsGreatest (ancestors P a) m) :
     a ~[commandRelation P] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
 
@@ -195,61 +186,61 @@ end Mates
 
 /-! ### Closeness
 
-Of two nodes a probe can reach, the closer is the one fewer generators dominate: `a` is at least as
-close as `b` when every generator properly dominating `a` properly dominates `b`. Closeness is the
-order the generators above a node induce, `ancestors P` ordered by inclusion, and a probe finds its
-goal under it (`Minimalist.Probe.Finds`). Between nodes neither of which dominates the other it is
-command, so that strict closeness is asymmetric command and equidistance is mateship; the
-branching generators give the Minimal Link Condition with sisters equidistant, and the maximal
-projections give equidistance within a minimal domain. Unlike command, closeness also orders a
-node before the nodes it dominates through a generator, the container before the contained. -/
+Of two nodes the closer is the one with fewer ancestors: `a` is at least as close as `b` when
+`ancestors P a ⊆ ancestors P b`. This is command, except that a node is not as close as a
+generator dominating it; between nodes neither of which properly dominates the other the two
+agree, strict closeness is asymmetric command and equal closeness is mateship. Where command
+relates a node to all it dominates in both directions or neither, closeness puts a generator
+strictly before what it dominates. The minimal nodes of a set under closeness are the goals of
+[chomsky-1995]'s Minimal Link Condition. -/
 
 section Closeness
 
 variable [PartialOrder α] {P : Set α} {a b x : α}
 
-/-- The generators properly dominating a node, the key of closeness. -/
-def ancestors (P : Set α) (a : α) : Set α := P ∩ Iio a
+/-- A node is at least as close as another when it commands it and the other is not one of its
+ancestors. -/
+theorem ancestors_subset_ancestors_iff :
+    ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b ∧ b ∉ ancestors P a :=
+  ⟨fun h ↦ ⟨fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun hb ↦ lt_irrefl b (h hb).2⟩,
+    fun ⟨h, hb⟩ _ hx ↦ ⟨hx.1, (h hx.1 hx.2).lt_of_ne fun e : _ = b ↦ hb (e ▸ hx)⟩⟩
 
-theorem mem_ancestors : x ∈ ancestors P a ↔ x ∈ P ∧ x < a := Iff.rfl
-
-theorem ancestors_subset_ancestors_of_le (h : a ≤ b) : ancestors P a ⊆ ancestors P b :=
-  fun _ hx ↦ ⟨hx.1, hx.2.trans_le h⟩
-
-theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (hx : x ∈ P) :
-    ancestors P a ⊂ ancestors P b :=
-  (ssubset_iff_of_subset (ancestors_subset_ancestors_of_le (hax.trans hxb.le))).2
-    ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
-
-/-- A node commands every node that all its generators properly dominate. -/
+/-- A node commands every node at most as close as it. -/
 theorem mem_commandRelation_of_ancestors_subset (h : ancestors P a ⊆ ancestors P b) :
     a ~[commandRelation P] b :=
-  fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le
+  (ancestors_subset_ancestors_iff.1 h).1
 
-theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
-    ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b := by
-  refine ⟨mem_commandRelation_of_ancestors_subset, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
-  refine lt_of_le_of_ne (mem_commandRelation.1 h _ hx.1 hx.2) ?_
-  rintro rfl
-  exact hba hx.2.le
+theorem ancestors_subset_ancestors_iff_of_not_lt (hba : ¬ b < a) :
+    ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b :=
+  ancestors_subset_ancestors_iff.trans (and_iff_left fun hb ↦ hba hb.2)
 
-/-- Between nodes neither of which dominates the other, strict closeness is asymmetric
+/-- A node is closer than the nodes it dominates through a generator. -/
+theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (hx : x ∈ P) :
+    ancestors P a ⊂ ancestors P b :=
+  (ssubset_iff_of_subset (ancestors_subset_ancestors (hax.trans hxb.le))).2
+    ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
+
+/-- Between nodes neither of which properly dominates the other, strict closeness is asymmetric
 command. -/
-theorem ancestors_ssubset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+theorem ancestors_ssubset_ancestors_iff (hab : ¬ a < b) (hba : ¬ b < a) :
     ancestors P a ⊂ ancestors P b ↔ a ~[commandRelation P] b ∧ ¬ b ~[commandRelation P] a := by
-  rw [ssubset_def, ancestors_subset_ancestors_iff hab hba, ancestors_subset_ancestors_iff hba hab]
+  rw [ssubset_def, ancestors_subset_ancestors_iff_of_not_lt hba,
+    ancestors_subset_ancestors_iff_of_not_lt hab]
 
-theorem ancestors_eq_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+/-- Between nodes neither of which properly dominates the other, the equally close are the
+mates. -/
+theorem ancestors_eq_ancestors_iff (hab : ¬ a < b) (hba : ¬ b < a) :
     ancestors P a = ancestors P b ↔ a ~[mateRelation P] b := by
-  rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff hab hba,
-    ancestors_subset_ancestors_iff hba hab, mem_mateRelation]
+  rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff_of_not_lt hba,
+    ancestors_subset_ancestors_iff_of_not_lt hab, mem_mateRelation]
 
 /-- Among nodes none of which dominates another, the closest are those that no node of the set
 asymmetrically commands, the Minimal Link Condition. -/
 theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
     MinimalFor (· ∈ S) (ancestors P) a ↔
       a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
-  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ ↦ ancestors_ssubset_ancestors_iff
+  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ hjk hkj ↦
+    ancestors_ssubset_ancestors_iff (fun h ↦ hjk h.le) fun h ↦ hkj h.le
 
 end Closeness
 
@@ -272,21 +263,12 @@ theorem mem_dominanceImage : a ~[dominanceImage A] b ↔ ∃ x ≤ a, ∃ y ≤ 
   simp only [SetLike.mem_coe, mem_upperClosure, Prod.exists, Prod.mk_le_mk]
   exact ⟨fun ⟨x, y, h, hx, hy⟩ ↦ ⟨x, hx, y, hy, h⟩, fun ⟨x, hx, y, hy, h⟩ ↦ ⟨x, y, h, hx, hy⟩⟩
 
-theorem dominanceImage_eq_comp (A : SetRel α α) :
-    dominanceImage A = {p : α × α | p.2 ≤ p.1} ○ A ○ {p : α × α | p.1 ≤ p.2} := by
-  ext ⟨a, b⟩
-  rw [mem_dominanceImage]
-  exact ⟨fun ⟨x, hx, y, hy, h⟩ ↦ ⟨y, ⟨x, hx, h⟩, hy⟩, fun ⟨y, ⟨x, hx, h⟩, hy⟩ ↦ ⟨x, hx, y, hy, h⟩⟩
-
+/-- An order isomorphism carries the dominance image of a relation to that of its image, by
+`upperClosure_image`. -/
 theorem mem_dominanceImage_image {β : Type*} [Preorder β] (e : α ≃o β) :
     e a ~[dominanceImage (Prod.map e e '' A)] e b ↔ a ~[dominanceImage A] b := by
-  simp only [mem_dominanceImage]
-  constructor
-  · rintro ⟨x, hx, y, hy, ⟨x', y'⟩, h, he⟩
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-    exact ⟨x', e.le_iff_le.1 hx, y', e.le_iff_le.1 hy, h⟩
-  · rintro ⟨x, hx, y, hy, h⟩
-    exact ⟨e x, e.le_iff_le.2 hx, e y, e.le_iff_le.2 hy, (x, y), h, rfl⟩
+  rw [dominanceImage, show Prod.map e e = e.prodCongr e from rfl, upperClosure_image]
+  exact (UpperSet.mem_map (f := e.prodCongr e) (b := (e a, e b))).trans (by simp)
 
 end DominanceImage
 
@@ -315,8 +297,7 @@ end DominanceImageTree
 
 Membership in `commandRelation P` at concrete positions is decidable: the nodes properly
 dominating a position are its proper prefixes, a finite list, so the defining universal is a
-`List`-bounded one. The branching property of a position is read off the tree, at least two
-children, the geometric reading of [reinhart-1976]'s "branching node". -/
+`List`-bounded one. -/
 
 section Positions
 
@@ -448,7 +429,8 @@ theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : GornA
     (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔
       t.CCommands a b ∧ ¬ t.CCommands b a := by
-  rw [ancestors_ssubset_ancestors_iff hab hba, cCommands_iff, cCommands_iff]
+  rw [ancestors_ssubset_ancestors_iff (fun h ↦ hab h.le) fun h ↦ hba h.le, cCommands_iff,
+    cCommands_iff]
   tauto
 
 theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : GornAddress) :
