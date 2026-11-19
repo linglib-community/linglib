@@ -71,13 +71,9 @@ def Comparisons.swap (c : Comparisons) : Comparisons :=
 @[simp] theorem Comparisons.swap_swap (c : Comparisons) : c.swap.swap = c := by
   simp [Comparisons.swap]
 
-private theorem swap_compare {α : Type*} [LinearOrder α] (a b : α) :
-    (compare a b).swap = compare b a :=
-  Std.OrientedOrd.eq_swap.symm
-
 @[simp] theorem swap_ofEndpoints {α : Type*} [LinearOrder α] (a b c d : α) :
     (ofEndpoints a b c d).swap = ofEndpoints c d a b := by
-  simp [ofEndpoints, Comparisons.swap, swap_compare]
+  simp [ofEndpoints, Comparisons.swap, ← Std.OrientedCmp.eq_swap]
 
 /-- The comparisons on reversed time, where each interval's end is its start. -/
 def Comparisons.dual (c : Comparisons) : Comparisons :=
@@ -86,18 +82,12 @@ def Comparisons.dual (c : Comparisons) : Comparisons :=
 @[simp] theorem Comparisons.dual_dual (c : Comparisons) : c.dual.dual = c := by
   simp [Comparisons.dual]
 
-private theorem compare_toDual {α : Type*} [LinearOrder α] (a b : α) :
-    compare (OrderDual.toDual a) (OrderDual.toDual b) = compare b a := by
-  rcases lt_trichotomy a b with h | rfl | h
-  · exact (compare_gt_iff_gt.2 (OrderDual.toDual_lt_toDual.2 h)).trans (compare_gt_iff_gt.2 h).symm
-  · rw [compare_eq_iff_eq.2 rfl, compare_eq_iff_eq.2 rfl]
-  · exact (compare_lt_iff_lt.2 (OrderDual.toDual_lt_toDual.2 h)).trans (compare_lt_iff_lt.2 h).symm
-
 @[simp] theorem dual_ofEndpoints {α : Type*} [LinearOrder α] (a b c d : α) :
     (ofEndpoints a b c d).dual =
       ofEndpoints (OrderDual.toDual b) (OrderDual.toDual a) (OrderDual.toDual d)
         (OrderDual.toDual c) := by
-  simp [ofEndpoints, Comparisons.dual, swap_compare, compare_toDual]
+  simp only [ofEndpoints, Comparisons.dual, ← Std.OrientedCmp.eq_swap]
+  rfl
 
 /-- The comparisons that two intervals realize, those of two intervals among four points. -/
 def realizable : Finset Comparisons :=
@@ -127,17 +117,13 @@ theorem Comparisons.dual_mem_realizable {c : Comparisons} (h : c ∈ realizable)
 
 /-- A relation is how one interval of a linear order stands to another: comparisons among the
 endpoints of two intervals that some two intervals realize. -/
+@[ext (flat := false)]
 structure Relation extends Comparisons where
   /-- Two intervals realize the comparisons. -/
   mem_realizable : toComparisons ∈ realizable
+  deriving DecidableEq
 
 namespace Relation
-
-@[ext] theorem ext {r s : Relation} (h : r.toComparisons = s.toComparisons) : r = s := by
-  cases r; cases s; congr
-
-instance : DecidableEq Relation := fun r s ↦
-  decidable_of_iff (r.toComparisons = s.toComparisons) ⟨ext, congrArg _⟩
 
 /-- The relations are the realizable comparisons. -/
 def equivRealizable : Relation ≃ { c // c ∈ realizable } where
@@ -149,13 +135,13 @@ instance : Fintype Relation := Fintype.ofEquiv _ equivRealizable.symm
 /-- The converse of a relation: how the second interval stands to the first. -/
 def inv (r : Relation) : Relation := ⟨r.swap, Comparisons.swap_mem_realizable r.mem_realizable⟩
 
-@[simp] theorem inv_inv (r : Relation) : r.inv.inv = r := ext (Comparisons.swap_swap _)
+@[simp] theorem inv_inv (r : Relation) : r.inv.inv = r := Relation.ext (Comparisons.swap_swap _)
 
 /-- The relation on reversed time: how the first interval stands to the second when earlier and
 later are exchanged. -/
 def dual (r : Relation) : Relation := ⟨r.toComparisons.dual, r.dual_mem_realizable r.mem_realizable⟩
 
-@[simp] theorem dual_dual (r : Relation) : r.dual.dual = r := ext (Comparisons.dual_dual _)
+@[simp] theorem dual_dual (r : Relation) : r.dual.dual = r := Relation.ext (Comparisons.dual_dual _)
 
 end Relation
 
@@ -262,7 +248,6 @@ theorem position_relation (i j : NonemptyInterval T) :
     i.position j = (relation i j).position := by
   simp only [NonemptyInterval.position, Relation.position, relation, ofEndpoints,
     NonemptyInterval.Precedes, compare_lt_iff_lt, compare_gt_iff_gt]
-  split_ifs <;> rfl
 
 end LinearOrder
 

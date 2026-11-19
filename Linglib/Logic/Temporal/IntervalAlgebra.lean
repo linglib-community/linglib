@@ -128,12 +128,10 @@ end LinearOrder
 /-! ### Converse -/
 
 /-- The converse reads each relation from the second interval to the first. -/
-instance : Inv IntervalAlgebra := ⟨fun C ↦ Finset.image Relation.inv C⟩
+instance : Inv IntervalAlgebra :=
+  ⟨fun C ↦ Finset.map (Function.Involutive.toPerm _ Relation.inv_inv).toEmbedding C⟩
 
-@[simp] theorem mem_inv : r ∈ C⁻¹ ↔ r.inv ∈ C := by
-  change r ∈ Finset.image Relation.inv C ↔ _
-  exact ⟨fun h ↦ by obtain ⟨s, hs, rfl⟩ := Finset.mem_image.1 h; simpa using hs,
-    fun h ↦ Finset.mem_image.2 ⟨r.inv, h, r.inv_inv⟩⟩
+@[simp] theorem mem_inv : r ∈ C⁻¹ ↔ r.inv ∈ C := Finset.mem_map_equiv
 
 instance : InvolutiveInv IntervalAlgebra where
   inv_inv C := by
@@ -148,11 +146,11 @@ theorem toSetRel_inv {T : Type*} [LinearOrder T] (C : IntervalAlgebra) :
 /-! ### Reversed time -/
 
 /-- The element on reversed time. -/
-def dual (C : IntervalAlgebra) : IntervalAlgebra := C.image Relation.dual
+def dual (C : IntervalAlgebra) : IntervalAlgebra :=
+  Finset.map (Function.Involutive.toPerm _ Relation.dual_dual).toEmbedding C
 
 @[simp] theorem mem_dual {C : IntervalAlgebra} {r : Relation} : r ∈ dual C ↔ r.dual ∈ C :=
-  ⟨fun h ↦ by obtain ⟨s, hs, rfl⟩ := Finset.mem_image.1 h; simpa using hs,
-    fun h ↦ Finset.mem_image.2 ⟨r.dual, h, r.dual_dual⟩⟩
+  Finset.mem_map_equiv
 
 @[simp] theorem dual_dual (C : IntervalAlgebra) : dual (dual C) = C := by
   ext r; simp
@@ -287,32 +285,41 @@ def startsNoEarlier : IntervalAlgebra := ofPred (·.fstFst ≠ .lt)
 @[irreducible]
 def endsNoLater : IntervalAlgebra := ofPred (·.sndSnd ≠ .gt)
 
-theorem precedes_mul_precedes : precedes * precedes = precedes := by decide +kernel
-
 /-- Containment is starting no earlier and ending no later. -/
 theorem le_eq_startsNoEarlier_inf_endsNoLater : le = startsNoEarlier ⊓ endsNoLater := by
-  decide +kernel
+  ext r; simp [le, startsNoEarlier, endsNoLater]
 
 /-- Ending no later is starting no earlier on reversed time. -/
-theorem dual_startsNoEarlier : dual startsNoEarlier = endsNoLater := by decide +kernel
+theorem dual_startsNoEarlier : dual startsNoEarlier = endsNoLater := by
+  ext r; simp [startsNoEarlier, endsNoLater, Relation.dual, Comparisons.dual]
 
-theorem dual_endsNoLater : dual endsNoLater = startsNoEarlier := by decide +kernel
+theorem dual_endsNoLater : dual endsNoLater = startsNoEarlier := by
+  ext r; simp [startsNoEarlier, endsNoLater, Relation.dual, Comparisons.dual]
 
 /-- Containment is the same on reversed time. -/
-theorem dual_le : dual le = le := by decide +kernel
+theorem dual_le : dual le = le := by
+  ext r; simp [le, Relation.dual, Comparisons.dual, and_comm]
 
 /-- Precedence on reversed time is its converse. -/
-theorem dual_precedes : dual precedes = precedes⁻¹ := by decide +kernel
+theorem dual_precedes : dual precedes = precedes⁻¹ := by
+  ext r; simp [precedes, Relation.dual, Comparisons.dual, Relation.inv, Comparisons.swap]
 
-theorem finalSubinterval_le_endsNoLater : finalSubinterval ≤ endsNoLater := by decide +kernel
+theorem finalSubinterval_le_endsNoLater : finalSubinterval ≤ endsNoLater := fun r hr ↦ by
+  rw [finalSubinterval, mem_ofPred] at hr
+  rw [endsNoLater, mem_ofPred, hr.2]
+  exact nofun
 
 /-- The relations whose position is one of `C`. -/
 @[irreducible]
 def ofPosition (C : PointAlgebra) : IntervalAlgebra := ofPred (·.position ∈ C)
 
-theorem ofPosition_one : ofPosition 1 = overlaps := by decide +kernel
+theorem ofPosition_one : ofPosition 1 = overlaps := by
+  ext r; simp only [ofPosition, overlaps, mem_ofPred, Relation.position]
+  split_ifs <;> simp_all [PointAlgebra.mem_one]
 
-theorem ofPosition_lt : ofPosition {.lt} = precedes := by decide +kernel
+theorem ofPosition_lt : ofPosition {.lt} = precedes := by
+  ext r; simp only [ofPosition, precedes, mem_ofPred, Relation.position]
+  split_ifs <;> simp_all
 
 section LinearOrder
 
@@ -432,10 +439,13 @@ private theorem exists_fin_of_mem_comp :
       ∃ x y z : Fin 6, compare x y = r ∧ compare y z = s ∧ compare x z = o := by
   decide
 
-private theorem toComparisons_eq_of_shapes :
-    ∀ t : Relation, t.firstShape = .eq → t.secondShape = .eq →
-      t.toComparisons = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
-  decide +kernel
+private theorem toComparisons_eq_of_shapes (t : Relation) (h₁ : t.firstShape = .eq)
+    (h₂ : t.secondShape = .eq) :
+    t.toComparisons = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
+  obtain ⟨i, j, rfl⟩ := exists_relation_eq t
+  have hi : i.fst = i.snd := compare_eq_iff_eq.1 h₁
+  have hj : j.fst = j.snd := compare_eq_iff_eq.1 h₂
+  simp [ofEndpoints, ← hi, ← hj]
 
 /-- The embedding of the point algebra preserves products. -/
 theorem pure_mul (R S : PointAlgebra) : pure (R * S) = pure R * pure S := by
@@ -522,6 +532,10 @@ instance : IdemSemiring IntervalAlgebra where
 theorem mul_inv_rev (C D : IntervalAlgebra) : (C * D)⁻¹ = D⁻¹ * C⁻¹ := by
   apply eq_of_toSetRel_rat
   simp only [toSetRel_inv, toSetRel_mul, SetRel.inv_comp]
+
+/-- Precedence composed with itself is precedence, as on dense time. -/
+theorem precedes_mul_precedes : precedes * precedes = precedes :=
+  eq_of_toSetRel_rat (by rw [toSetRel_mul, toSetRel_precedes_comp_self])
 
 /-! ### Chains
 
