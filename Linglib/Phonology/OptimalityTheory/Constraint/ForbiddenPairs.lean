@@ -16,10 +16,11 @@ adjacent pair `(a, b)` with `R a b`. It is to `List.IsChain` what `List.countP` 
 universal: a string satisfies it
 [exactly when its adjacent elements form a chain of `¬ R`](##forbidPairs_eq_zero_iff).
 
-The Obligatory Contour Principle is the instance `R := (· = ·)`, `Constraint.ocp`. It is [leben-1973]'s
-principle that two adjacent tonemes at the melodic level be distinct, under the name
-[goldsmith-1976] gave it; [mccarthy-1986] takes it to gemination and antigemination. A string
-satisfies it exactly when it is `OCP.IsClean`. Stated over any type of elements, it bans $XX$ for a
+The Obligatory Contour Principle is the instance `R := (· = ·)`, `Constraint.ocp`. [leben-1973]
+proposed it for tone melodies and [goldsmith-1976] named it. [mccarthy-1986] states it for any
+melody, prohibiting adjacent identical elements, and carries it into segmental phonology, where it
+also blocks syncope from creating clusters of identical consonants. A string satisfies it exactly
+when it is `OCP.IsClean`. Stated over any type of elements, it bans $XX$ for a
 variable $X$ ([berent-2026]), so
 [no injective relabelling of the elements changes its violations](##ocp_map_of_injective) and it
 extends to elements a language lacks.
@@ -58,8 +59,9 @@ def forbidPairs (R : α → α → Prop) [DecidableRel R] : Constraint (List α)
   | [] | [_] => 0
   | a :: b :: w => (if R a b then 1 else 0) + forbidPairs R (b :: w)
 
-/-- The OCP, the forbidden-pair constraint against adjacent identical elements ([leben-1973],
-[goldsmith-1976], [mccarthy-1986]), polymorphic over the type of elements ([berent-2026]). -/
+/-- The OCP, "at the melodic level, adjacent identical elements are prohibited" ([mccarthy-1986]
+(2), after [leben-1973] and [goldsmith-1976]), as a forbidden-pair constraint polymorphic over the
+type of elements ([berent-2026]). -/
 def ocp [DecidableEq α] : Constraint (List α) := forbidPairs (· = ·)
 
 section forbidPairs
