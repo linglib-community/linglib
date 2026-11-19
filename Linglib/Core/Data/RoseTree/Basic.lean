@@ -67,7 +67,7 @@ abbrev leaf (a : α) : RoseTree α := .node a []
 
 /-! ### Decidable equality
 
-`deriving DecidableEq` does not fire through the nested `List` occurrence (as of Lean v4.35.0), so
+`deriving DecidableEq` does not fire through the nested `List` occurrence (as of Lean v4.36.0), so
 the instance is built by mutual recursion on the tree and its child list. -/
 
 section DecidableEq
@@ -104,14 +104,6 @@ instance instDecidableEq : DecidableEq (RoseTree α) := RoseTree.decEq
 
 end DecidableEq
 
-/-! ### Size -/
-
-theorem sizeOf_lt_of_mem [SizeOf α] {a : α} {cs : List (RoseTree α)} {c : RoseTree α}
-    (hc : c ∈ cs) : sizeOf c < sizeOf (RoseTree.node a cs) := by
-  have := List.sizeOf_lt_of_mem hc
-  simp only [RoseTree.node.sizeOf_spec]
-  omega
-
 /-! ### The recursion principle -/
 
 /-- Induction on a rose tree proves `motive t` for all `t` from `motive (node a cs)` given
@@ -121,9 +113,7 @@ def rec' {motive : RoseTree α → Sort*}
     (node : ∀ (a : α) (cs : List (RoseTree α)),
       (∀ c ∈ cs, motive c) → motive (RoseTree.node a cs)) :
     ∀ t, motive t
-  | .node a cs => node a cs fun c _hc ↦ rec' node c
-termination_by t => sizeOf t
-decreasing_by exact sizeOf_lt_of_mem _hc
+  | .node a cs => node a cs fun c _ ↦ rec' node c
 
 /-! ### Catamorphism
 
