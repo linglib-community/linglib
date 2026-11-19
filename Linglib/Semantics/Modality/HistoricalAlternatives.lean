@@ -57,6 +57,11 @@ variable {F}
 
 theorem mem_alternatives_self : w ∈ F.alternatives ⟨w, t⟩ := (F.sim t).refl' w
 
+omit F in
+@[simp] theorem sim_ofDatedFacts {Fact : Type*} {time : Fact → T} {holds : W → Fact → Prop} :
+    (ofDatedFacts time holds).sim t w v ↔ ∀ f, time f ≤ t → (holds w f ↔ holds v f) :=
+  Iff.rfl
+
 /-- A historical alternative of a world has the same historical alternatives. -/
 theorem alternatives_eq_of_mem (h : v ∈ F.alternatives ⟨w, t⟩) :
     F.alternatives ⟨v, t⟩ = F.alternatives ⟨w, t⟩ :=

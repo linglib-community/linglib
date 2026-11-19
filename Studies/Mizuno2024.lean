@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Discourse.CommonGround
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Discourse.Commitment.Table
 public import Linglib.Fragments.English.Conditionals
 public import Linglib.Fragments.Japanese.Conditionals
 public import Linglib.Fragments.Mandarin.Conditionals
@@ -23,10 +24,10 @@ historical present, to an earlier time with more live possibilities. The same st
 counterfactuality excludes X-marked future-less-vivid conditionals, so X-marking is available in
 both constructions or in neither.
 
-The live possibilities at a time are the context set of the common ground then, the facts
-established so far, and they shrink as time goes on. A domain makes a conditional contingent
-when it has an antecedent-world and does not settle the consequent. X-marking is felicitous when
-some proper extension of `D` does so and its presupposition holds; O-marking when `D` does or,
+The live possibilities at a world and a time are the worlds that agree with it on what is
+established by then, the alternatives of a T × W frame, which shrink as time goes on. A domain
+makes a conditional contingent when it has an antecedent-world and does not settle the
+consequent. X-marking is felicitous when some proper extension of `D` does so and its presupposition holds; O-marking when `D` does or,
 where X-marking fails, the live possibilities of an earlier time do. With the antecedent live,
 X-marking is felicitous
 [only without strong counterfactuality](##Mizuno2024.xFelicitous_iff_of_live), whatever the
@@ -39,9 +40,13 @@ X-marking signals strong counterfactuality, predicts
 
 ## Implementation notes
 
-Footnote 5 reads `D` as a proxy for the Stalnakerian context set, so a scenario's information is
-a common ground at each time, the facts established by then asserted in order, and the live
-possibilities are its context set. Contingency asks for an antecedent-world in the domain as well
+The paper writes a context as a world, a time and the domain of live possibilities at them,
+says that these shrink as time develops, and reads the domain as a proxy for the Stalnakerian
+context set (footnote 5). It gives the domains no further structure. They are formalized as
+`TWFrame.alternatives` of a frame built from dated facts, which adds that the domains partition
+the worlds; the frame's equivalence is read as agreement on what is established by a time,
+whether or not the matter is historically settled, since which poison Jones took is a past event
+that the scenario leaves open. Contingency asks for an antecedent-world in the domain as well
 as an open consequent: footnote 7 has X-marking suspend the falsity of the antecedent in an
 ordinary counterfactual as it suspends the truth of the consequent in an Anderson conditional.
 Whether the member of (1) who proposes that Jones *must* have
@@ -72,6 +77,7 @@ alternatives of a row carry the marking its primary text lacks.
 namespace Mizuno2024
 
 open Conditional (Reading strictImp mem_strictImp_of_subset)
+open Temporal (TWFrame)
 
 /-! ### Domains and felicity
 
@@ -90,29 +96,7 @@ inductive Counterfactuality
   | strong
   deriving DecidableEq, Repr
 
-variable {W : Type*} {D D' A C : Set W} {κ : Counterfactuality}
-
-/-- The common ground at a time is the trivial one with every fact dated by then asserted. -/
-def commonGround (facts : List (ℤ × Set W)) (t : ℤ) : Filter W :=
-  ((facts.filter (·.1 ≤ t)).map (·.2)).foldl (· ⊓ Filter.principal ·) ⊤
-
-theorem antitone_commonGround (facts : List (ℤ × Set W)) : Antitone (commonGround facts) :=
-  fun _ _ h ↦ Filter.foldl_inf_principal_anti <| List.map_subset _ fun _ hf ↦ by
-    simp only [List.mem_filter, decide_eq_true_eq] at hf ⊢
-    exact ⟨hf.1, hf.2.trans h⟩
-
-/-- The live possibilities at a time, the context set of the common ground then. -/
-def live (facts : List (ℤ × Set W)) (t : ℤ) : Set W := (commonGround facts t).ker
-
-theorem mem_live {facts : List (ℤ × Set W)} {t : ℤ} {v : W} :
-    v ∈ live facts t ↔ ∀ f ∈ facts, f.1 ≤ t → v ∈ f.2 := by
-  simp only [live, commonGround, Filter.foldl_inf_principal_top, Filter.ker_principal,
-    Set.mem_iInter, List.mem_map, List.mem_filter, decide_eq_true_eq]
-  exact ⟨fun h f hf ht ↦ h _ ⟨f, ⟨hf, ht⟩, rfl⟩, fun h _ ⟨f, ⟨hf, ht⟩, hp⟩ ↦ hp ▸ h f hf ht⟩
-
--- §3.3
-theorem antitone_live (facts : List (ℤ × Set W)) : Antitone (live facts) :=
-  Filter.ker_mono.comp_antitone (antitone_commonGround facts)
+variable {W T : Type*} [Preorder T] {D D' A C : Set W} {κ : Counterfactuality}
 
 /-- A domain makes a conditional contingent when it has an antecedent-world and does not settle
 the consequent. -/
@@ -135,12 +119,13 @@ counterfactuality, the antecedent holds at no live possibility. -/
 def XFelicitous (κ : Counterfactuality) (D A C : Set W) : Prop :=
   (∃ D', D ⊂ D' ∧ Contingent D' A C) ∧ (κ = .strong → Disjoint A D)
 
-/-- An O-marked conditional quantifies over the live possibilities at the time of utterance or,
-unless X-marking is felicitous, those at an earlier time. It is felicitous when one of these
-domains makes it contingent. -/
-def OFelicitous (κ : Counterfactuality) (live : ℤ → Set W) (t : ℤ) (A C : Set W) : Prop :=
-  Contingent (live t) A C ∨
-    ¬ XFelicitous κ (live t) A C ∧ ∃ t' < t, Contingent (live t') A C
+/-- An O-marked conditional quantifies over the live possibilities at its index or, unless
+X-marking is felicitous, those of its world at an earlier time. It is felicitous when one of
+these domains makes it contingent. -/
+def OFelicitous (κ : Counterfactuality) (F : TWFrame W T) (i : Index W T) (A C : Set W) : Prop :=
+  Contingent (F.alternatives i) A C ∨
+    ¬ XFelicitous κ (F.alternatives i) A C ∧
+      ∃ t < i.time, Contingent (F.alternatives ⟨i.world, t⟩) A C
 
 /-- With the antecedent a live possibility, X-marking is felicitous exactly when it does not
 signal strong counterfactuality, whatever the consequent: its availability in Anderson and in
@@ -154,24 +139,20 @@ theorem xFelicitous_of_disjoint (hA : Disjoint A D) (hX : ∃ D', D ⊂ D' ∧ C
     XFelicitous κ D A C :=
   ⟨hX, fun _ ↦ hA⟩
 
-theorem oFelicitous_iff_of_not_contingent {live : ℤ → Set W} {t : ℤ}
-    (h : ¬ Contingent (live t) A C) :
-    OFelicitous κ live t A C ↔
-      ¬ XFelicitous κ (live t) A C ∧ ∃ t' < t, Contingent (live t') A C :=
+theorem oFelicitous_iff_of_not_contingent {F : TWFrame W T} {i : Index W T}
+    (h : ¬ Contingent (F.alternatives i) A C) :
+    OFelicitous κ F i A C ↔ ¬ XFelicitous κ (F.alternatives i) A C ∧
+      ∃ t < i.time, Contingent (F.alternatives ⟨i.world, t⟩) A C :=
   or_iff_right h
 
-theorem not_decidedBy_of_live {facts : List (ℤ × Set W)} {t : ℤ}
-    (h₁ : ¬ live facts t ⊆ A) (h₂ : ¬ Disjoint A (live facts t)) :
-    ¬ (Question.polar A).DecidedBy (commonGround facts t) := by
-  rw [Question.decidedBy_polar]
-  rintro (h | h)
-  · exact h₁ (Filter.subset_ker.1 subset_rfl _ h)
-  · exact h₂ (Set.subset_compl_iff_disjoint_right.1 (Filter.subset_ker.1 subset_rfl _ h)).symm
+theorem not_decidedBy_of_live (h₁ : ¬ D ⊆ A) (h₂ : ¬ Disjoint A D) :
+    ¬ (Question.polar A).DecidedBy (Filter.principal D) := by
+  rw [Question.decidedBy_polar, Filter.mem_principal, Filter.mem_principal]
+  exact not_or.2 ⟨h₁, fun h ↦ h₂ (Set.subset_compl_iff_disjoint_right.1 h).symm⟩
 
 theorem felicitous_iff_of_live {P : Type*} {K : Commitment.Table P W}
-    {facts : List (ℤ × Set W)} {t : ℤ} (hK : K.commonGround = commonGround facts t)
-    (h : ∀ a, A ∉ K.discourseCommitments a) (h₁ : ¬ live facts t ⊆ A)
-    (h₂ : ¬ Disjoint A (live facts t)) {ct : Reading} :
+    (hK : K.commonGround = Filter.principal D) (h : ∀ a, A ∉ K.discourseCommitments a)
+    (h₁ : ¬ D ⊆ A) (h₂ : ¬ Disjoint A D) {ct : Reading} :
     ct.Felicitous K A ↔ ct = .hypothetical :=
   Reading.felicitous_iff_of_not_decidedBy h (hK ▸ not_decidedBy_of_live h₁ h₂)
 
@@ -191,70 +172,59 @@ inductive Jones
 /-- The proposition that Jones shows the symptoms, the consequent of (1) and (4). -/
 def symptoms : Set Jones := {w | w ≠ .unpoisoned}
 
-/-- The facts of the Jones scenario of (1) and (4). -/
-def jonesFacts : List (ℤ × Set Jones) := [(1, symptoms)]
-
-theorem mem_live_jones {v : Jones} {t : ℤ} :
-    v ∈ live jonesFacts t ↔ (1 ≤ t → v ≠ .unpoisoned) := by
-  simp [jonesFacts, mem_live, symptoms]
+/-- The frame of the Jones scenario of (1) and (4): that he shows the symptoms is established at
+time `1`. -/
+def jonesFrame : TWFrame Jones ℤ := .ofDatedFacts (fun _ : Unit ↦ 1) fun w _ ↦ w ∈ symptoms
 
 -- §2
-theorem live_jones_subset_symptoms : live jonesFacts 1 ⊆ symptoms :=
-  fun _ hv ↦ mem_live_jones.1 hv le_rfl
+theorem alternatives_jones_one : jonesFrame.alternatives ⟨.arsenic, 1⟩ = symptoms := by
+  ext v; simp [jonesFrame, symptoms]
+
+-- §3.3
+theorem alternatives_jones_zero : jonesFrame.alternatives ⟨.arsenic, 0⟩ = Set.univ := by
+  ext v; simp [jonesFrame]
+
+theorem symptoms_ne_univ : symptoms ≠ Set.univ :=
+  fun h ↦ (h ▸ trivial : Jones.unpoisoned ∈ symptoms) rfl
 
 -- (2)
-theorem oMarking_trivial (A : Set Jones) : (1 : ℤ) ∈ strictImp (live jonesFacts) A symptoms :=
-  mem_strictImp_of_subset live_jones_subset_symptoms
-
-theorem unpoisoned_notMem_live_jones : Jones.unpoisoned ∉ live jonesFacts 1 :=
-  fun h ↦ mem_live_jones.1 h le_rfl rfl
-
--- §3.3
-theorem live_jones_ssubset_live_zero : live jonesFacts 1 ⊂ live jonesFacts 0 :=
-  (Set.ssubset_iff_of_subset (antitone_live jonesFacts zero_le_one)).2
-    ⟨.unpoisoned, mem_live_jones.2 (by decide), unpoisoned_notMem_live_jones⟩
-
--- §3.3
-theorem contingent_live_jones_zero : Contingent (live jonesFacts 0) {.arsenic} symptoms :=
-  ⟨⟨.arsenic, mem_live_jones.2 (by decide), rfl⟩,
-    fun h ↦ h (mem_live_jones.2 (by decide) : Jones.unpoisoned ∈ _) rfl⟩
+theorem oMarking_trivial (A : Set Jones) :
+    (⟨.arsenic, 1⟩ : Index Jones ℤ) ∈ strictImp jonesFrame.alternatives A symptoms :=
+  mem_strictImp_of_subset alternatives_jones_one.subset
 
 -- (1b)
-theorem arsenic_live : ¬ Disjoint ({.arsenic} : Set Jones) (live jonesFacts 1) :=
-  Set.not_disjoint_iff.2 ⟨.arsenic, rfl, mem_live_jones.2 nofun⟩
+theorem arsenic_live : ¬ Disjoint ({.arsenic} : Set Jones) symptoms :=
+  Set.not_disjoint_iff.2 ⟨.arsenic, rfl, nofun⟩
 
 -- §2
-theorem exists_ssuperset_jones :
-    ∃ D', live jonesFacts 1 ⊂ D' ∧ Contingent D' {.arsenic} symptoms :=
-  (exists_ssuperset_contingent (D := live jonesFacts 1) fun h ↦
-      unpoisoned_notMem_live_jones (h ▸ trivial)).2
-    ⟨⟨.arsenic, rfl⟩, fun h ↦ (h ▸ trivial : Jones.unpoisoned ∈ symptoms) rfl⟩
+theorem exists_ssuperset_jones : ∃ D', symptoms ⊂ D' ∧ Contingent D' {.arsenic} symptoms :=
+  (exists_ssuperset_contingent symptoms_ne_univ).2 ⟨⟨.arsenic, rfl⟩, symptoms_ne_univ⟩
 
 /-- An X-marked Anderson conditional is felicitous exactly when the X-marking does not signal
 strong counterfactuality: English (1a) and not Japanese (4a) with *-ta* (§3.2). -/
 theorem xFelicitous_jones_iff :
-    XFelicitous κ (live jonesFacts 1) {.arsenic} symptoms ↔ κ = .weak :=
-  xFelicitous_iff_of_live arsenic_live exists_ssuperset_jones
+    XFelicitous κ (jonesFrame.alternatives ⟨.arsenic, 1⟩) {.arsenic} symptoms ↔ κ = .weak := by
+  rw [alternatives_jones_one]
+  exact xFelicitous_iff_of_live arsenic_live exists_ssuperset_jones
 
 /-- An O-marked Anderson conditional is felicitous iff the X-marking signals strong
 counterfactuality, as in Japanese (4a) but not English (2) (§3.3, fn. 14). -/
 theorem oFelicitous_jones_iff :
-    OFelicitous κ (live jonesFacts) 1 {.arsenic} symptoms ↔ κ = .strong := by
-  rw [oFelicitous_iff_of_not_contingent fun h ↦ h.2 live_jones_subset_symptoms,
+    OFelicitous κ jonesFrame ⟨.arsenic, 1⟩ {.arsenic} symptoms ↔ κ = .strong := by
+  rw [oFelicitous_iff_of_not_contingent fun h ↦ h.2 alternatives_jones_one.subset,
     xFelicitous_jones_iff]
   cases κ
   · simp
-  · exact iff_of_true ⟨nofun, 0, zero_lt_one, contingent_live_jones_zero⟩ rfl
+  · refine iff_of_true ⟨nofun, 0, zero_lt_one, ?_⟩ rfl
+    rw [alternatives_jones_zero]
+    exact contingent_univ.2 ⟨⟨.arsenic, rfl⟩, symptoms_ne_univ⟩
 
 -- (4a), §3.2
-theorem xFelicitous_strong_identified :
-    XFelicitous .strong (live [(1, {Jones.mimic})] 1) {.arsenic} symptoms := by
-  have hD : live [((1 : ℤ), ({.mimic} : Set Jones))] 1 = {.mimic} := by ext v; simp [mem_live]
-  rw [hD]
-  exact xFelicitous_of_disjoint (Set.disjoint_singleton.2 nofun)
+theorem xFelicitous_strong_identified : XFelicitous .strong {Jones.mimic} {.arsenic} symptoms :=
+  xFelicitous_of_disjoint (Set.disjoint_singleton.2 nofun)
     ((exists_ssuperset_contingent (D := {Jones.mimic}) fun h ↦
       absurd (h ▸ Set.mem_univ Jones.arsenic) nofun).2
-      ⟨⟨.arsenic, rfl⟩, fun h ↦ (h ▸ trivial : Jones.unpoisoned ∈ symptoms) rfl⟩)
+      ⟨⟨.arsenic, rfl⟩, symptoms_ne_univ⟩)
 
 /-! ### Counterfactual conditionals (§3.1)
 
@@ -272,24 +242,28 @@ inductive Game
 /-- The proposition that the outcome is still uncertain, the consequent of (3). -/
 def uncertain : Set Game := {.playsOpen, .awayOpen}
 
-/-- The facts of the game scenario of (3). -/
-def gameFacts : List (ℤ × Set Game) := [(0, {w | w ≠ .playsOpen}), (1, {.awayLost})]
+/-- The frame of the game scenario of (3): that John has left is established at time `0` and
+that the defeat is certain at time `1`. -/
+def gameFrame : TWFrame Game ℤ :=
+  .ofDatedFacts (fun b : Bool ↦ cond b 1 0) fun w b ↦ cond b (w = .awayLost) (w ≠ .playsOpen)
 
-theorem live_game : live gameFacts 1 = {.awayLost} := by
-  ext v; cases v <;> simp [gameFacts, mem_live]
+theorem alternatives_game : gameFrame.alternatives ⟨.awayLost, 1⟩ = {.awayLost} := by
+  ext v; cases v <;> simp [gameFrame]
 
 /-- An X-marked counterfactual conditional is felicitous whether or not the X-marking signals
 strong counterfactuality, as Japanese (3) with *-ta* is. -/
-theorem xFelicitous_game : XFelicitous κ (live gameFacts 1) {.playsOpen} uncertain := by
-  rw [live_game]
+theorem xFelicitous_game :
+    XFelicitous κ (gameFrame.alternatives ⟨.awayLost, 1⟩) {.playsOpen} uncertain := by
+  rw [alternatives_game]
   exact xFelicitous_of_disjoint (Set.disjoint_singleton.2 nofun)
     ((exists_ssuperset_contingent (D := {Game.awayLost}) fun h ↦
       absurd (h ▸ Set.mem_univ Game.playsOpen) nofun).2
       ⟨⟨.playsOpen, rfl⟩, fun h ↦ absurd (h ▸ Set.mem_univ Game.awayLost) (by simp [uncertain])⟩)
 
 -- fn. 7
-theorem not_oFelicitous_game : ¬ OFelicitous κ (live gameFacts) 1 {.playsOpen} uncertain := by
-  rw [oFelicitous_iff_of_not_contingent fun h ↦ by simpa [live_game] using h.1]
+theorem not_oFelicitous_game :
+    ¬ OFelicitous κ gameFrame ⟨.awayLost, 1⟩ {.playsOpen} uncertain := by
+  rw [oFelicitous_iff_of_not_contingent fun h ↦ by simpa [alternatives_game] using h.1]
   exact fun h ↦ h.1 xFelicitous_game
 
 /-! ### Future-less-vivid conditionals (§4.2)
@@ -309,47 +283,52 @@ inductive Party
 /-- The proposition that the party is fun, the consequent of (8) and (9). -/
 def partyFun : Set Party := {.johnComes, .funAnyway}
 
-/-- The facts of the party scenario of (8) and (9), in which John stays away and the party is
-dull. -/
-def partyFacts : List (ℤ × Set Party) := [(0, {w | w ≠ .cancelled}), (2, {.dull})]
+/-- The proposition that the party takes place. -/
+def held : Set Party := {w | w ≠ .cancelled}
 
-theorem mem_live_party {v : Party} : v ∈ live partyFacts 1 ↔ v ≠ .cancelled := by
-  simp [partyFacts, mem_live]
+/-- The frame of the party scenario of (8) and (9): that the party takes place is established at
+time `0`, and that John stays away and the party is dull at time `2`. -/
+def partyFrame : TWFrame Party ℤ :=
+  .ofDatedFacts (fun b : Bool ↦ cond b 2 0) fun w b ↦ cond b (w = .dull) (w ∈ held)
+
+theorem alternatives_party : partyFrame.alternatives ⟨.dull, 1⟩ = held := by
+  ext v; cases v <;> simp [partyFrame, held]
 
 -- (8b)
-theorem johnComes_live : ¬ Disjoint ({.johnComes} : Set Party) (live partyFacts 1) :=
-  Set.not_disjoint_iff.2 ⟨.johnComes, rfl, mem_live_party.2 nofun⟩
+theorem johnComes_live : ¬ Disjoint ({.johnComes} : Set Party) held :=
+  Set.not_disjoint_iff.2 ⟨.johnComes, rfl, nofun⟩
 
-theorem contingent_live_party : Contingent (live partyFacts 1) {.johnComes} partyFun :=
-  ⟨⟨.johnComes, mem_live_party.2 nofun, rfl⟩,
-    fun h ↦ absurd (h (mem_live_party.2 nofun : Party.dull ∈ _)) (by simp [partyFun])⟩
+theorem contingent_held : Contingent held {.johnComes} partyFun :=
+  ⟨⟨.johnComes, nofun, rfl⟩, fun h ↦ absurd (h (show Party.dull ∈ held from nofun))
+    (by simp [partyFun])⟩
 
-theorem exists_ssuperset_party :
-    ∃ D', live partyFacts 1 ⊂ D' ∧ Contingent D' {.johnComes} partyFun :=
-  (exists_ssuperset_contingent (D := live partyFacts 1) fun h ↦
-      mem_live_party.1 (h ▸ trivial) rfl).2
+theorem exists_ssuperset_party : ∃ D', held ⊂ D' ∧ Contingent D' {.johnComes} partyFun :=
+  (exists_ssuperset_contingent (D := held) fun h ↦ (h ▸ trivial : Party.cancelled ∈ held) rfl).2
     ⟨⟨.johnComes, rfl⟩, fun h ↦ absurd (h ▸ Set.mem_univ Party.dull) (by simp [partyFun])⟩
 
 -- (8), (10), (12)
 theorem xFelicitous_party_iff :
-    XFelicitous κ (live partyFacts 1) {.johnComes} partyFun ↔ κ = .weak :=
-  xFelicitous_iff_of_live johnComes_live exists_ssuperset_party
+    XFelicitous κ (partyFrame.alternatives ⟨.dull, 1⟩) {.johnComes} partyFun ↔ κ = .weak := by
+  rw [alternatives_party]
+  exact xFelicitous_iff_of_live johnComes_live exists_ssuperset_party
 
 -- (9), (11)
-theorem oFelicitous_party : OFelicitous κ (live partyFacts) 1 {.johnComes} partyFun :=
-  .inl contingent_live_party
+theorem oFelicitous_party : OFelicitous κ partyFrame ⟨.dull, 1⟩ {.johnComes} partyFun :=
+  .inl (by rw [alternatives_party]; exact contingent_held)
 
 /-! ### The rows -/
 
 /-- The felicity the account predicts for a strategy in a construction, in a language whose
 X-marking has counterfactuality `κ`. -/
 def Felicitous (κ : Counterfactuality) : Examples.Construction → Examples.Strategy → Prop
-  | .anderson, .xMarking => XFelicitous κ (live jonesFacts 1) {.arsenic} symptoms
-  | .anderson, .oMarking => OFelicitous κ (live jonesFacts) 1 {.arsenic} symptoms
-  | .counterfactual, .xMarking => XFelicitous κ (live gameFacts 1) {.playsOpen} uncertain
-  | .counterfactual, .oMarking => OFelicitous κ (live gameFacts) 1 {.playsOpen} uncertain
-  | .flv, .xMarking => XFelicitous κ (live partyFacts 1) {.johnComes} partyFun
-  | .flv, .oMarking => OFelicitous κ (live partyFacts) 1 {.johnComes} partyFun
+  | .anderson, .xMarking =>
+    XFelicitous κ (jonesFrame.alternatives ⟨.arsenic, 1⟩) {.arsenic} symptoms
+  | .anderson, .oMarking => OFelicitous κ jonesFrame ⟨.arsenic, 1⟩ {.arsenic} symptoms
+  | .counterfactual, .xMarking =>
+    XFelicitous κ (gameFrame.alternatives ⟨.awayLost, 1⟩) {.playsOpen} uncertain
+  | .counterfactual, .oMarking => OFelicitous κ gameFrame ⟨.awayLost, 1⟩ {.playsOpen} uncertain
+  | .flv, .xMarking => XFelicitous κ (partyFrame.alternatives ⟨.dull, 1⟩) {.johnComes} partyFun
+  | .flv, .oMarking => OFelicitous κ partyFrame ⟨.dull, 1⟩ {.johnComes} partyFun
 
 instance (κ : Counterfactuality) : ∀ c m, Decidable (Felicitous κ c m)
   | .anderson, .xMarking => decidable_of_iff _ xFelicitous_jones_iff.symm
@@ -386,18 +365,18 @@ is read hypothetically, and the markers heading the rows are attested marking hy
 conditionals. -/
 
 theorem felicitous_jones_iff {P : Type*} {K : Commitment.Table P Jones}
-    (hK : K.commonGround = commonGround jonesFacts 1)
+    (hK : K.commonGround = Filter.principal symptoms)
     (h : ∀ a, {.arsenic} ∉ K.discourseCommitments a) {ct : Reading} :
     ct.Felicitous K {.arsenic} ↔ ct = .hypothetical :=
-  felicitous_iff_of_live hK h
-    (fun h' ↦ absurd (h' (mem_live_jones.2 nofun : Jones.mimic ∈ _)) nofun) arsenic_live
+  felicitous_iff_of_live hK h (fun h' ↦ absurd (h' (show Jones.mimic ∈ symptoms from nofun)) nofun)
+    arsenic_live
 
 theorem felicitous_party_iff {P : Type*} {K : Commitment.Table P Party}
-    (hK : K.commonGround = commonGround partyFacts 1)
+    (hK : K.commonGround = Filter.principal held)
     (h : ∀ a, {.johnComes} ∉ K.discourseCommitments a) {ct : Reading} :
     ct.Felicitous K {.johnComes} ↔ ct = .hypothetical :=
-  felicitous_iff_of_live hK h
-    (fun h' ↦ absurd (h' (mem_live_party.2 nofun : Party.dull ∈ _)) nofun) johnComes_live
+  felicitous_iff_of_live hK h (fun h' ↦ absurd (h' (show Party.dull ∈ held from nofun)) nofun)
+    johnComes_live
 
 /-- The rows of each sampled language are headed by English *if*, by Japanese *-(e)ba*, to which
 the paper restricts its attention (fn. 8), or by Mandarin *rúguǒ*. -/
