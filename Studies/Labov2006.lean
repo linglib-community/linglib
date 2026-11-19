@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Statistics.Labov2006
+public import Studies.Bell1984
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Monotone.Defs
@@ -13,7 +14,8 @@ contextual style from casual speech to minimal pairs, and by age. This file
 states what the book reads off its printed tables: the stratification of three department
 stores, the class and stylistic stratification of every variable except the lower class's (oh),
 and the fit of each variable's table of age by class to Labov's models of a stigmatized feature,
-stable or changing, and of an incoming prestige feature.
+stable or changing, and of an incoming prestige feature. Bell's bound on stylistic by social
+variation [holds on the table for (th) and (dh) alone](##Labov2006.styleWithinSocial_iff).
 
 ## Implementation notes
 
@@ -36,6 +38,7 @@ stable or changing, and of an incoming prestige feature.
 ## References
 
 * [labov-2006]
+* [bell-1984]
 -/
 
 @[expose] public section
@@ -183,6 +186,13 @@ theorem classDeviant_iff_styleDeviant (v : Variable) (g : ClassGroup) :
 theorem classDeviant_iff (v : Variable) (g : ClassGroup) :
     ClassDeviant v g ↔ v = .oh ∧ g = .lower := by
   revert v g; decide +kernel
+
+/-- On the table, no class group shifts style further than the class groups differ in one style
+exactly for (th) and (dh). [bell-1984] excepts from this bound three New York variables in which
+the lower middle class shifts beyond the upper middle class, naming (r). -/
+theorem styleWithinSocial_iff (v : Variable) :
+    Bell1984.StyleWithinSocial (standardIndex v) v.styles ↔ v = .th ∨ v = .dh := by
+  revert v; decide +kernel
 
 /-! ### Apparent time -/
 
