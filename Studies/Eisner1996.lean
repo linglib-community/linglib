@@ -24,13 +24,6 @@ whose leaves are distinct.
 
 ## TODO
 
-* `exists_isNormal_equivalent`: by induction on the derivation, as the paper sketches. Where
-  the normal form of the left daughter of a forward rule is a forward composition of `β₁` and
-  `β₂`, rotate to `β₁` combined with the normal form of `β₂` and the right daughter. The
-  rotated rules have the degree of the two original rules together, less one, and the meaning
-  is unchanged by `composeUnder_append`. What remains is to build the rotated tree, whose
-  categories agree with the original only up to `Cat.pushArgs_append`, with its mirror image for
-  backward rules, and to show that the recursion ends.
 * `eq_of_isNormal_of_equivalent`: the paper sketches a proof that two distinct normal-form trees
   differ in which leaf takes immediate scope over which, and gives the full proof in the longer
   version of the paper, which has not been read.
@@ -159,31 +152,133 @@ def castDom {B : Type} {D : B → Type} (τ : α → Ty B) {c c' : Cat α} (h : 
     (v : (c.toTy τ).Dom D) : (c'.toTy τ).Dom D :=
   h ▸ v
 
-/-- Composing `f` with `g` beneath `β` and a last rightward argument `z`, and the result with
-`h` beneath `γ`, is composing `f` beneath `β` and `γ` with the composition of `g` and `h`
-beneath `γ`. -/
-theorem composeUnder_append {B : Type} {D : B → Type} (τ : α → Ty B) (m : Modality) (z : Cat α)
-    (γ : List (Cat.Arg α)) :
+/-- Composing `f` with `g` beneath `β` and a last argument `z`, and the result with `h` beneath
+`γ`, is composing `f` beneath `β` and `γ` with the composition of `g` and `h` beneath `γ`. -/
+theorem composeUnder_append {B : Type} {D : B → Type} (τ : α → Ty B) (s : Edge) (m : Modality)
+    (z : Cat α) (γ : List (Cat.Arg α)) :
     ∀ (β : List (Cat.Arg α)) (x y : Cat α) (f : (y.toTy τ ⇒ x.toTy τ).Dom D)
-      (g : ((y.pushArgs (β ++ [⟨.right, m, z⟩])).toTy τ).Dom D)
+      (g : ((y.pushArgs (β ++ [⟨s, m, z⟩])).toTy τ).Dom D)
       (h : ((z.pushArgs γ).toTy τ).Dom D),
       composeUnder τ γ (x := x.pushArgs β) (y := z)
-          (castDom τ (Cat.pushArgs_append x β [⟨.right, m, z⟩]) (composeUnder τ _ f g)) h =
+          (castDom τ (Cat.pushArgs_append x β [⟨s, m, z⟩]) (composeUnder τ _ f g)) h =
         castDom τ (Cat.pushArgs_append x β γ)
           (composeUnder τ (β ++ γ) f (castDom τ (Cat.pushArgs_append y β γ).symm
             (composeUnder τ γ (x := y.pushArgs β) (y := z)
-              (castDom τ (Cat.pushArgs_append y β [⟨.right, m, z⟩]) g) h)))
+              (castDom τ (Cat.pushArgs_append y β [⟨s, m, z⟩]) g) h)))
   | [], _, _, f, g, h => composeUnder_comp τ γ f g h
-  | b :: β, x, y, f, g, h => composeUnder_append τ m z γ β (x.push b) (y.push b) (f ∘ ·) g h
+  | b :: β, x, y, f, g, h => composeUnder_append τ s m z γ β (x.push b) (y.push b) (f ∘ ·) g h
 
 /-! ### Existence and uniqueness -/
+
+/-- A derivation of one category is a derivation of an equal category, with the same shape,
+leaves and meaning. -/
+private theorem exists_cast {c c' : Cat α} (h : c = c') (d : Derivation W R c) :
+    ∃ d' : Derivation W R c', (IsNormal d' ↔ IsNormal d) ∧ leaves d' = leaves d ∧
+      ∀ {B : Type} (τ : α → Ty B) (D : B → Type) (ρ : ∀ c, W c → (c.toTy τ).Dom D),
+        d'.realize τ ρ = castDom τ h (d.realize τ ρ) := by
+  subst h
+  exact ⟨d, Iff.rfl, rfl, fun _ _ _ ↦ rfl⟩
+
+/-- A forward rule over two derivations in normal form has a normal form. Where the left input
+is a forward composition, its right daughter combines first with the right input, the rotation
+of (13), and the same holds again of that combination. -/
+private theorem exists_forward {c₁ : Cat α} (d₁ : Derivation W (pure (α := α)) c₁) :
+    IsNormal d₁ → ∀ {x y : Cat α} {m : Modality} (hc : c₁ = .slash .right x m y)
+      (γ : List (Cat.Arg α)) (d₂ : Derivation W (pure (α := α)) (y.pushArgs γ)), IsNormal d₂ →
+      ∃ d' : Derivation W (pure (α := α)) (x.pushArgs γ), IsNormal d' ∧
+        leaves d' = leaves d₁ ++ leaves d₂ ∧
+        ∀ {B : Type} (τ : α → Ty B) (D : B → Type) (ρ : ∀ c, W c → (c.toTy τ).Dom D),
+          d'.realize τ ρ =
+            composeUnder τ γ (castDom τ hc (d₁.realize τ ρ)) (d₂.realize τ ρ) := by
+  induction d₁ with
+  | lex c w =>
+    rintro - x y m rfl γ d₂ h₂
+    exact ⟨.node (.forward γ trivial) (.lex _ w) d₂,
+      ⟨trivial, h₂, fun _ ↦ id, fun h ↦ (h trivial).elim⟩, rfl, fun _ _ _ ↦ rfl⟩
+  | node ru a b _ ihb =>
+    intro h₁ x y m hc γ d₂ h₂
+    by_cases hf : IsForwardComp ru
+    · cases ru with
+      | backward => exact hf.elim
+      | forward β' _ =>
+        obtain rfl | ⟨β, ⟨s, m', z⟩, rfl⟩ := β'.eq_nil_or_concat'
+        · exact (hf rfl).elim
+        have e := hc
+        simp only [Cat.pushArgs_append, Cat.pushArgs_cons, Cat.pushArgs_nil, Cat.push_mk,
+          Cat.slash.injEq] at e
+        obtain ⟨rfl, rfl, rfl, rfl⟩ := e
+        obtain ⟨e', he', hl', hs'⟩ := ihb h₁.2.1 (Cat.pushArgs_append _ β [_]) γ d₂ h₂
+        obtain ⟨e'', hn'', hl'', hs''⟩ := exists_cast (Cat.pushArgs_append _ β γ).symm e'
+        obtain ⟨d', hn, hl, hs⟩ := exists_cast (Cat.pushArgs_append _ β γ)
+          (.node (.forward (β ++ γ) trivial) a e'')
+        refine ⟨d', hn.2 ⟨h₁.1, hn''.2 he', fun _ ↦ h₁.2.2.1 trivial, fun h ↦ (h trivial).elim⟩,
+          ?_, fun τ D ρ ↦ ?_⟩
+        · rw [hl, leaves, hl'', hl', leaves, List.append_assoc]
+        · rw [hs, Derivation.realize_node, hs'', hs']
+          exact (composeUnder_append τ .right _ _ γ β _ _ _ _ _).symm
+    · subst hc
+      exact ⟨.node (.forward γ trivial) (.node ru a b) d₂,
+        ⟨h₁, h₂, fun _ ↦ hf, fun h ↦ (h trivial).elim⟩, rfl, fun _ _ _ ↦ rfl⟩
+
+/-- A backward rule over two derivations in normal form has a normal form, the mirror image of
+`exists_forward`. -/
+private theorem exists_backward {c₂ : Cat α} (d₂ : Derivation W (pure (α := α)) c₂) :
+    IsNormal d₂ → ∀ {x y : Cat α} {m : Modality} (hc : c₂ = .slash .left x m y)
+      (γ : List (Cat.Arg α)) (d₁ : Derivation W (pure (α := α)) (y.pushArgs γ)), IsNormal d₁ →
+      ∃ d' : Derivation W (pure (α := α)) (x.pushArgs γ), IsNormal d' ∧
+        leaves d' = leaves d₁ ++ leaves d₂ ∧
+        ∀ {B : Type} (τ : α → Ty B) (D : B → Type) (ρ : ∀ c, W c → (c.toTy τ).Dom D),
+          d'.realize τ ρ =
+            composeUnder τ γ (castDom τ hc (d₂.realize τ ρ)) (d₁.realize τ ρ) := by
+  induction d₂ with
+  | lex c w =>
+    rintro - x y m rfl γ d₁ h₁
+    exact ⟨.node (.backward γ trivial) d₁ (.lex _ w),
+      ⟨h₁, trivial, fun h ↦ h.elim, fun _ ↦ id⟩, rfl, fun _ _ _ ↦ rfl⟩
+  | node ru b a ihb _ =>
+    intro h₂ x y m hc γ d₁ h₁
+    by_cases hf : IsBackwardComp ru
+    · cases ru with
+      | forward => exact hf.elim
+      | backward β' _ =>
+        obtain rfl | ⟨β, ⟨s, m', z⟩, rfl⟩ := β'.eq_nil_or_concat'
+        · exact (hf rfl).elim
+        have e := hc
+        simp only [Cat.pushArgs_append, Cat.pushArgs_cons, Cat.pushArgs_nil, Cat.push_mk,
+          Cat.slash.injEq] at e
+        obtain ⟨rfl, rfl, rfl, rfl⟩ := e
+        obtain ⟨e', he', hl', hs'⟩ := ihb h₂.1 (Cat.pushArgs_append _ β [_]) γ d₁ h₁
+        obtain ⟨e'', hn'', hl'', hs''⟩ := exists_cast (Cat.pushArgs_append _ β γ).symm e'
+        obtain ⟨d', hn, hl, hs⟩ := exists_cast (Cat.pushArgs_append _ β γ)
+          (.node (.backward (β ++ γ) trivial) e'' a)
+        refine ⟨d', hn.2 ⟨hn''.2 he', h₂.2.1, fun h ↦ h.elim, fun _ ↦ h₂.2.2.2 id⟩,
+          ?_, fun τ D ρ ↦ ?_⟩
+        · rw [hl, leaves, hl'', hl', leaves, List.append_assoc]
+        · rw [hs, Derivation.realize_node, hs'', hs']
+          exact (composeUnder_append τ .left _ _ γ β _ _ _ _ _).symm
+    · subst hc
+      exact ⟨.node (.backward γ trivial) d₁ (.node ru b a),
+        ⟨h₁, h₂, fun h ↦ h.elim, fun _ ↦ hf⟩, rfl, fun _ _ _ ↦ rfl⟩
 
 /-- Theorem 1: in pure CCG every derivation is equivalent to one in normal form over the same
 leaves. -/
 theorem exists_isNormal_equivalent (d : Derivation W (pure (α := α)) c) :
     ∃ d' : Derivation W (pure (α := α)) c,
       IsNormal d' ∧ leaves d' = leaves d ∧ Equivalent d d' := by
-  sorry
+  induction d with
+  | lex c w => exact ⟨.lex c w, trivial, rfl, fun _ _ _ ↦ rfl⟩
+  | node ru d₁ d₂ ih₁ ih₂ =>
+    obtain ⟨e₁, hn₁, hl₁, he₁⟩ := ih₁
+    obtain ⟨e₂, hn₂, hl₂, he₂⟩ := ih₂
+    cases ru with
+    | forward γ _ =>
+      obtain ⟨d', hn, hl, hs⟩ := exists_forward e₁ hn₁ rfl γ e₂ hn₂
+      exact ⟨d', hn, by rw [hl, hl₁, hl₂]; rfl, fun τ D ρ ↦ by
+        rw [hs, Derivation.realize_node, he₁ τ D ρ, he₂ τ D ρ]; rfl⟩
+    | backward γ _ =>
+      obtain ⟨d', hn, hl, hs⟩ := exists_backward e₂ hn₂ rfl γ e₁ hn₁
+      exact ⟨d', hn, by rw [hl, hl₁, hl₂]; rfl, fun τ D ρ ↦ by
+        rw [hs, Derivation.realize_node, he₁ τ D ρ, he₂ τ D ρ]; rfl⟩
 
 /-- Theorem 2: two equivalent derivations in normal form over the same distinct leaves are the
 same derivation. -/
