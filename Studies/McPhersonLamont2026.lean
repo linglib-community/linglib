@@ -40,8 +40,9 @@ by morphemes, generic over the segment and sponsor types. Faithfulness (`maxTone
 `depLinkTone`) compares a candidate's surface state with its form, which the candidate carries as
 a parameter; without it the asymmetry between left-to-right and right-to-left multi-step
 derivations collapses. Directionality is a property of EVAL, not of a constraint: `*FLOAT` is a
-`directionalBlock`, and `starFloatCount` is its count collapse, which agrees with the block on at
-most one floating tone and cannot tell deleting the leftmost from deleting the rightmost.
+`Constraint.directionalBlock`, and `starFloatCount` is its count collapse, which agrees with the
+block on at most one floating tone and cannot tell deleting the leftmost from deleting the
+rightmost.
 
 ## References
 
@@ -73,7 +74,7 @@ abbrev ToneHasValue (k : Fin (u.word .upper).length) (t : TRN) : Prop :=
 /-- `*FLOAT` (eq. 16) as a directional constraint ([lamont-2022b]), one binary constraint per
 underlying tone that flags it while it floats. Spliced forward it is `*FLOAT^→`. -/
 def starFloatBlock : List (Constraint (Candidate u)) :=
-  directionalBlock (u.word .upper).length fun i c ↦ c.IsFloating i
+  Constraint.directionalBlock (u.word .upper).length fun i c ↦ c.IsFloating i
 
 /-- `*FLOAT^←` is `starFloatBlock` laid out in reverse position order, for right-to-left
 evaluation. -/

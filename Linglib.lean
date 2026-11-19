@@ -662,7 +662,6 @@ import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
-import Linglib.Phonology.OptimalityTheory.Ranking
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid

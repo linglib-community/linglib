@@ -43,7 +43,7 @@ loci (the opposite-edge projection that rules out "locus folding", §2.3) and le
 
 @[expose] public section
 
-namespace OptimalityTheory
+namespace OptimalityTheory.Constraint
 
 /-- A **directional constraint** with single-segment loci over length-preserving GEN
 ([lamont-2022b]): the position-indexed block of binary constraints `i ↦ ⟦locus i⟧`,
@@ -54,6 +54,6 @@ profile this is directional EVAL — `⇒` (left-to-right) for the forward block
 (`List.ofFn_le_ofFn_iff`). -/
 def directionalBlock {C : Type*} (n : ℕ) (locus : Fin n → C → Prop)
     [∀ i, DecidablePred (locus i)] : List (Constraint C) :=
-  (List.finRange n).map fun i ↦ Constraint.binary (locus i)
+  (List.finRange n).map fun i ↦ binary (locus i)
 
-end OptimalityTheory
+end OptimalityTheory.Constraint

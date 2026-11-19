@@ -31,10 +31,10 @@ parsed (`monosyllable_never_optimal`), and `Parse(σ)` orders the placements of 
 A footing is the library's `Prosody.Footing`, a flat sequence of feet and stray syllables
 with no head foot, since the paper does not distinguish primary from secondary stress; a
 syllable carries no weight, and for Waorani only its affiliation to stem or suffix. Directional
-constraints are `OptimalityTheory.directionalBlock`s, one binary constraint per syllable position,
-the block reversed for right-to-left evaluation; a foot-form violation is charged at the
-rightmost syllable of its foot, as under left-to-right evaluation, which the paper shows is the
-only direction that matters for these constraints in iterative footing. The prosodic-word
+constraints are `OptimalityTheory.Constraint.directionalBlock`s, one binary constraint per
+syllable position, the block reversed for right-to-left evaluation; a foot-form violation is
+charged at the rightmost syllable of its foot, as under left-to-right evaluation, which the paper
+shows is the only direction that matters for these constraints in iterative footing. The prosodic-word
 constraints `Hd(ω)`, `NonFinality`, `FootLeft`, `FootRight`, and `*FootFoot` are counted, their
 direction being irrelevant to a word. Each tableau is a `stepOptimum` computation with
 convergence checked at the last step; the factorial typology of §4 is not formalized.
@@ -75,7 +75,7 @@ def gen (fc : Footing S) : Finset (Footing S) := (fc :: parseOne fc).toFinset
 
 /-- `Parse(σ)` evaluated left to right ((10)): one violation at each unfooted syllable. -/
 def parseLR (n : ℕ) : List (Constraint (Footing S)) :=
-  directionalBlock n λ i fc => fc.strayMarks.getD i.val 0 = 1
+  Constraint.directionalBlock n fun i fc ↦ fc.strayMarks.getD i.val 0 = 1
 
 /-- `Parse(σ)` evaluated right to left: the block reversed. -/
 def parseRL (n : ℕ) : List (Constraint (Footing S)) := (parseLR n).reverse
@@ -90,12 +90,14 @@ def footMarks (P : Foot S → Bool) (fc : Footing S) : List ℕ :=
 /-- `Trochee` ((15)): one violation per foot whose rightmost syllable is its head, a
 monosyllabic foot included. -/
 def trochee (n : ℕ) : List (Constraint (Footing S)) :=
-  directionalBlock n λ i fc => (footMarks (λ f => decide f.IsIambic) fc).getD i.val 0 = 1
+  Constraint.directionalBlock n fun i fc ↦
+    (footMarks (fun f ↦ decide f.IsIambic) fc).getD i.val 0 = 1
 
 /-- `Iamb` ((18)): one violation per foot whose leftmost syllable is its head, a monosyllabic
 foot included. -/
 def iamb (n : ℕ) : List (Constraint (Footing S)) :=
-  directionalBlock n λ i fc => (footMarks (λ f => decide f.IsTrochaic) fc).getD i.val 0 = 1
+  Constraint.directionalBlock n fun i fc ↦
+    (footMarks (fun f ↦ decide f.IsTrochaic) fc).getD i.val 0 = 1
 
 /-- `Hd(ω)` ((26)): the word dominates no foot. -/
 def hdWord : Constraint (Footing S) := Constraint.binary (·.feet = [])
@@ -269,13 +271,13 @@ def Morph.isSuffix : Morph → Bool
 
 /-- `Parse(σ)` indexed to the suffix string, evaluated left to right. -/
 def parseSuffixLR (n : ℕ) : List (Constraint (Footing Morph)) :=
-  directionalBlock n λ i fc =>
+  Constraint.directionalBlock n fun i fc ↦
     (fc.flatMap (Sum.elim (λ f => List.replicate f.length 0)
       (λ s => [if s.isSuffix then 1 else 0]))).getD i.val 0 = 1
 
 /-- `Trochee` indexed to the suffix string: charged to a foot dominating a suffix syllable. -/
 def trocheeSuffix (n : ℕ) : List (Constraint (Footing Morph)) :=
-  directionalBlock n λ i fc =>
+  Constraint.directionalBlock n fun i fc ↦
     (footMarks (λ f => decide f.IsIambic && f.syllables.any Morph.isSuffix) fc).getD i.val 0 = 1
 
 /-- `FootRight ≫ Parse(σ)⇒ ≫ Trochee ≫ Iamb` ((43)), with the indexed `Trocheeₛᵤffix ≫

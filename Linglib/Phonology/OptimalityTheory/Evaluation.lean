@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Filtration
-public import Linglib.Phonology.OptimalityTheory.Ranking
+public import Linglib.Phonology.OptimalityTheory.Ranking.Basic
 public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Mathlib.Order.Prod.Lex.Basic
 
@@ -263,9 +263,9 @@ namespace OptimalityTheory.Constraint
 
 /-- Eval along a list of constraints is lexicographic minimization of the profiles along it. -/
 theorem eval_eq_argmin_ofList {C : Type*} {s : Finset C} {Fs : List (Constraint C)} :
-    _root_.OptimalityTheory.Constraint.eval s Fs = s.argmin (ViolationProfile.ofList Fs) := by
+    eval s Fs = s.argmin (ViolationProfile.ofList Fs) := by
   ext c
-  rw [_root_.OptimalityTheory.Constraint.mem_eval, Finset.mem_argmin]
+  rw [mem_eval, Finset.mem_argmin]
   refine and_congr_right fun _ ↦ forall₂_congr fun d _ ↦ ?_
   have key : ∀ x : C, Fs.map (· x) = List.ofFn fun p ↦ Fs.get p x := fun x ↦ by
     conv_lhs => rw [← List.ofFn_get Fs]

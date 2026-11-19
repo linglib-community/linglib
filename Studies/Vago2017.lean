@@ -96,18 +96,18 @@ theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).string .rhs = resolv
 /-- Each MAX constraint counts the input segments it protects that have no correspondent in the
 output. -/
 theorem maxAt_deleted_eq_maxViolAt (P : ℕ → Prop) [DecidablePred P] (D : Finset ElidedVowel) :
-    maxAt P (deleted c D) = (corr c D).maxViolAt P .lhs .rhs :=
-  maxAt_eq_maxViolAt P fun k hk ↦ by
+    Constraint.maxAt P (deleted c D) = (corr c D).maxViolAt P .lhs .rhs :=
+  Constraint.maxAt_eq_maxViolAt P fun k hk ↦ by
     obtain ⟨e, -, rfl⟩ := Finset.mem_image.1 hk
     exact Casali1997.position_lt_length_input c e
 
 /-- The violations of a candidate, with the long vowels at the positions `long`. -/
 def marks (D : Finset ElidedVowel) : Con → ℕ
-  | .maxLong => maxAt (· ∈ long) (deleted c D)
-  | .maxMS => maxAt (c.Protects .soleSegment) (deleted c D)
-  | .maxLex => maxAt (c.Protects .lexical) (deleted c D)
+  | .maxLong => Constraint.maxAt (· ∈ long) (deleted c D)
+  | .maxMS => Constraint.maxAt (c.Protects .soleSegment) (deleted c D)
+  | .maxLex => Constraint.maxAt (c.Protects .lexical) (deleted c D)
   | .starVV => Hiatus.count (resolve c D)
-  | .maxMI => maxAt (c.Protects .morphemeInitial) (deleted c D)
+  | .maxMI => Constraint.maxAt (c.Protects .morphemeInitial) (deleted c D)
 
 /-- The constraint order of the hierarchy a suffix is indexed to, most dominant first: the
 regular hierarchy (8a), MAX LEX ≫ \*VV ≫ MAX MI, below MAX on long vowels and on morphs of one
@@ -175,8 +175,8 @@ decides. -/
 local macro "regular_beats " k:num : tactic =>
   `(tactic| (refine regular_lt $k (by decide) (fun j hj ↦ ?_) ?_ <;>
     [(rcases j with _ | _ | _ | _ | j <;>
-      first | omega | simp_all [Wordlist.Hierarchy.order, marks, maxAt_insert]);
-      simp_all [Wordlist.Hierarchy.order, marks, maxAt_insert, Nat.pos_iff_ne_zero]]))
+      first | omega | simp_all [Wordlist.Hierarchy.order, marks, Constraint.maxAt_insert]);
+      simp_all [Wordlist.Hierarchy.order, marks, Constraint.maxAt_insert, Nat.pos_iff_ne_zero]]))
 
 /-- Between a morph and a suffix that is not a root, under the regular hierarchy, the second
 vowel deletes when the first is long or the sole segment of its morph, and the first vowel deletes

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Ranking
+public import Linglib.Phonology.OptimalityTheory.Ranking.Basic
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Prod.Basic
 public import Mathlib.Order.Extension.Linear

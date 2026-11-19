@@ -17,7 +17,7 @@ the `Nat` fuel and the `pick` tie-breaker make a possibly-non-terminating,
 possibly-tied search total and computable. One-step EVAL
 is the parallel `Constraint.eval`; directional EVAL ([lamont-2022b];
 [eisner-2000]) needs nothing extra — a directional constraint like `*FLOAT^→` is a
-`directionalBlock` (`McPhersonLamont2026.starFloatBlock`) spliced into the ranking under
+`Constraint.directionalBlock` (`McPhersonLamont2026.starFloatBlock`) spliced into the ranking under
 the canonical lex order.
 
 ## Main definitions
