@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Agreement.HasPhi
+public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Morphology.Word.Basic
 
 /-!

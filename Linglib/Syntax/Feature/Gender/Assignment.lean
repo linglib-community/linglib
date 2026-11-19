@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Logic.Function.FactorsThrough
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Feature.Gender.Basic
 
 /-!
 # Gender assignment systems

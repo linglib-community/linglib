@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Order.Minimal
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Number
-public import Linglib.Syntax.Person.Configuration
+public import Linglib.Syntax.Feature.Person.Configuration
 
 /-!
 # Number features on the configurations of a person

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.Paradigm.Analogy
 public import Linglib.Processing.DiscriminativeLexicon.Training
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Shafaei-Bajestan, Moradipour-Tari, Uhrig and Baayen (2024): The pluralization palette

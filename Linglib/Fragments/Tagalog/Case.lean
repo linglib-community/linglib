@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Case.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Tagalog case markers

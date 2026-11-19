@@ -8,8 +8,8 @@ public import Linglib.Fragments.NezPerce.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Obligatoriness
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.Finset.Erase
 public import Mathlib.Data.Finset.Image

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Feature.Gender.Basic
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Semantics.Reference.Animacy
 

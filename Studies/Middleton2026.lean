@@ -6,7 +6,7 @@ public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Fragments.Taos.Agreement
 public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Phonology.RuleInteraction
 
 /-!

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Tagalog.Case
 public import Linglib.Syntax.Category.Pronoun.Personal
-public import Linglib.Syntax.Person.Configuration
+public import Linglib.Syntax.Feature.Person.Configuration
 
 /-!
 # Tagalog pronouns

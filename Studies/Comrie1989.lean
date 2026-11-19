@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Card
 public import Linglib.Core.Order.Monotone.Extension
 public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Syntax.Clause.Alignment
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy

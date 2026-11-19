@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Fragments.Slavic.Russian.Agreement
 public import Linglib.Fragments.Slavic.Russian.Gender
 public import Linglib.Fragments.Somali.Gender

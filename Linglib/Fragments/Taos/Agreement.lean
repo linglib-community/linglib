@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Syntax.Number.Inverse
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Inverse
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Taos verbal agreement prefixes

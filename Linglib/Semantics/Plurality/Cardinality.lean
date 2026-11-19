@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Data.PNat.Basic
 public import Mathlib.Data.PNat.Interval
 public import Mathlib.Order.Interval.Set.OrdConnected

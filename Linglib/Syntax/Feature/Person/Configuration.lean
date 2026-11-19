@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Person.Category
+public import Linglib.Syntax.Feature.Person.Category
 
 /-!
 # Configurations of a referent

@@ -7,8 +7,8 @@ public import Linglib.Semantics.Reference.Context.Participants
 public import Linglib.Semantics.Reference.Gender
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Gender.Decomposition
+public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Gender.Decomposition
 
 /-!
 # The domains of φ-features

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Feature.Case.Spatial
 public import Linglib.Syntax.Clause.Alignment
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Data.Fintype.Option

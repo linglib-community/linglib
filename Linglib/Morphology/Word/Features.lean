@@ -8,9 +8,9 @@ module
 public import Linglib.Core.Order.Flat
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Data.UD.Features
-public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Clusivity
+public import Linglib.Syntax.Feature.Case.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
 
 /-!
 # Token features

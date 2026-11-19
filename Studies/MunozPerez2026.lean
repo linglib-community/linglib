@@ -5,7 +5,7 @@ public import Linglib.Syntax.Person.CaseConstraint
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Fragments.Romance.Spanish.Clitics
 public import Linglib.Fragments.Romance.Spanish.Verbs
 import all Init.Data.String.Defs  -- for unfolding `String.intercalate`

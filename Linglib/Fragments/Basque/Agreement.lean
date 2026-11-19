@@ -50,7 +50,7 @@ as a plural, and the newer plural *zuek* adds a further plural marker to the for
 
 ## Implementation notes
 
-The cells are the bundles of `Syntax/Agreement/Bundle.lean`, so that a pronoun's features are
+The cells are the bundles of `Syntax/Feature/Bundle.lean`, so that a pronoun's features are
 realized by the cells they extend. The second person plural cell is that of *zu*, following the
 forms rather than the meaning, and *zuek* has no cell of its own. The two cells of *hi* with a
 gender occur only in the dative and ergative tables, and the absolutive realizes them by its

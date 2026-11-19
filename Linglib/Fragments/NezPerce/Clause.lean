@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Fragments.NezPerce.Case
 
 /-!

@@ -10,7 +10,7 @@ public import Mathlib.Tactic.DeriveFintype
 Corbett's typology. A label has no reference of its own: which referents it covers is a matter
 of the number system it belongs to, as the plural is whatever the system's other values leave
 over, and is stated in `Semantics/Plurality/Cardinality.lean` for the values fixed by a
-cardinality and in `Syntax/Person/Configuration.lean` for the values of a person. The Universal
+cardinality and in `Syntax/Feature/Person/Configuration.lean` for the values of a person. The Universal
 Dependencies tags that corpora annotate (`Morphology/Word/UD.lean`) lack the general, minimal,
 augmented and unit augmented values and add inverse, collective and count categories. The
 quadral is excluded, Corbett reanalysing apparent quadrals (Sursurunga, Tangga) as paucals.

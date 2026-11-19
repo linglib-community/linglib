@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Romance.Spanish.Binominals
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Data.Examples.Saab2026
 public import Mathlib.Tactic.DeriveFintype

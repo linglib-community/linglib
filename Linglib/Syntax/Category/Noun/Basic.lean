@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Gender.Assignment
+public import Linglib.Syntax.Feature.Gender.Assignment
 public import Linglib.Semantics.Reference.Gender
 public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Option

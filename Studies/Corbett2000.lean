@@ -10,7 +10,7 @@ public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement
-public import Linglib.Syntax.Agreement.HasPhi
+public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
@@ -661,13 +661,13 @@ theorem bayso_concord_not_injective :
 
 /-- British English *committee* takes syntactic agreement only in attributive position and
 either agreement elsewhere, (19) to (22). -/
-def britishCommittee : Hybrid Position :=
+def britishCommittee : Position → Option Availability :=
   fun | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
       | .personalPronoun => some .both
 
 /-- American English *committee* takes plural agreement rarely in the predicate and admits it
 in the personal pronoun. -/
-def americanCommittee : Hybrid Position :=
+def americanCommittee : Position → Option Availability :=
   fun | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
       | .personalPronoun => some .both | _ => none
 
@@ -715,16 +715,7 @@ inductive PredicateTarget where
 
 namespace PredicateTarget
 
-/-- The position of a target in the Predicate Hierarchy. -/
-def rank : PredicateTarget → ℕ
-  | .verb => 3
-  | .participle => 2
-  | .adjective => 1
-  | .noun => 0
-
-theorem rank_injective : Function.Injective rank := by decide
-
-instance : LinearOrder PredicateTarget := LinearOrder.lift' rank rank_injective
+instance : LinearOrder PredicateTarget := LinearOrder.lift' PredicateTarget.ctorIdx (by decide)
 
 end PredicateTarget
 
@@ -741,10 +732,6 @@ namespace Honorific
 /-- A row of the table gives the language and its four sub-positions. -/
 def ofRow (language : String) (v p a n : Availability) : Honorific :=
   ⟨language, fun | .verb => v | .participle => p | .adjective => a | .noun => n⟩
-
-/-- By the Predicate Hierarchy, the likelihood of semantic agreement never decreases from the
-verb to the noun. -/
-abbrev Respects (h : Honorific) : Prop := Antitone h.profile
 
 end Honorific
 
@@ -772,7 +759,9 @@ def slavonic : List Honorific :=
     .ofRow "Russian, long-form adjective"
       .syntacticOnly .syntacticOnly .mostlySemantic .semanticOnly]
 
-theorem slavonic_respect : ∀ h ∈ slavonic, h.Respects := by decide
+/-- By the Predicate Hierarchy, the likelihood of semantic agreement never decreases from the
+verb to the noun. -/
+theorem slavonic_monotone : ∀ h ∈ slavonic, Monotone h.profile := by decide
 
 /-! ### Conjoined noun phrases (§6.5) -/
 
