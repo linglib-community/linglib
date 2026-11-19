@@ -9,24 +9,26 @@ public import Mathlib.Order.UpperLower.Basic
 /-!
 # Bell (1984): Language style as audience design
 
-Bell derives the variation within one speaker's speech from the variation between speakers: a
-speaker designs her style for her audience. The members of an audience hold one of four roles,
-[ordered](##Bell1984.AudienceRole.le_iff) by whether the speaker knows, ratifies and addresses
-them, and the effect of a role on a variable is graded by its distance from the speaker. A
-graded family of effects [varies by a role only if it varies by every closer
-one](##Bell1984.Graded.isLowerSet_support), which is Bell's implicational scale. A speaker who
-approaches her addressees without overshooting them
-[shifts no further than her community differs](##Bell1984.Accommodates.diam_range_le), which is
-the style axiom's bound on the ratio of stylistic to social variation. When every speaker goes
-the same fraction $c$ of the way, the speakers heard by one addressee differ by $1 - c$ of the
-community's range, and style stays within that social range
-[exactly when $c \le 1/2$](##Bell1984.diam_style_le_diam_social_iff).
+A speaker designs her style for her audience, so variation within one speaker derives from
+variation between speakers. Audience roles are [ordered](##Bell1984.AudienceRole.le_iff) by
+whether the speaker knows, ratifies and addresses the hearer, and a family of effects graded by
+that order [varies by a role only if it varies by every closer
+one](##Bell1984.Graded.isLowerSet_support). A speaker who approaches her addressees without
+overshooting them [shifts no further than her community
+differs](##Bell1984.Accommodates.diam_range_le). Against the speakers one addressee hears, with
+convergence by a fraction $c_\uparrow$ toward higher levels and $c_\downarrow$ toward lower
+ones, style stays within social variation [exactly when $c_\uparrow + c_\downarrow \le
+1$](##Bell1984.diam_style_le_diam_social_iff).
 
 ## Implementation notes
 
 * The level of a variable is a real number indexed by speaker and addressee, both drawn from one
   community, and a speaker's base level is her level to an addressee like herself, as Bell takes
   the travel assistant's.
+* Convergence is two constant fractions, one toward addressees whose level is higher and one
+  toward those whose level is lower. Bell reports the travel assistant going a little more than
+  halfway to the classes below her own and shifting slightly and inconsistently toward those
+  above.
 * The quantitative hypothesis is stated with a weak clause for a pair of zero effects, since an
   indicator has no addressee effect and no auditor effect.
 * Persons are those of `Person`: the speaker is first person, the addressee second, and the
@@ -185,46 +187,81 @@ theorem Accommodates.diam_range_le (h : Accommodates level)
   rintro _ ⟨a, rfl⟩
   exact segment_subset_convexHull (s := range fun i ↦ level i i) ⟨s, rfl⟩ ⟨a, rfl⟩ (h s a)
 
-/-- Every speaker goes the fraction `c` of the way from her base level to her addressee's. -/
-def linear (b : I → ℝ) (c : ℝ) (s a : I) : ℝ := b s + c * (b a - b s)
+/-- Every speaker goes the fraction `cUp` of the way to an addressee whose level is at least her
+own, and the fraction `cDown` of the way to one whose level is lower. -/
+noncomputable def converge (b : I → ℝ) (cUp cDown : ℝ) (s a : I) : ℝ :=
+  b s + (if b s ≤ b a then cUp else cDown) * (b a - b s)
 
-@[simp] theorem linear_self (s : I) : linear b c s s = b s := by simp [linear]
+variable {cUp cDown : ℝ} {lo hi : I}
 
-theorem accommodates_linear (hc : c ∈ Icc (0 : ℝ) 1) : Accommodates (linear b c) := fun s a ↦ by
-  rw [linear_self, linear_self, segment_eq_image_lineMap]
-  exact ⟨c, hc, by simp [linear, AffineMap.lineMap_apply_ring']; ring⟩
+@[simp] theorem converge_self (s : I) : converge b cUp cDown s s = b s := by simp [converge]
 
-private theorem diam_range_mul_add (k d : ℝ) (f : I → ℝ) :
-    diam (range fun i ↦ k * f i + d) = |k| * diam (range f) := by
-  have : (range fun i ↦ k * f i + d) = (· + d) '' (k • range f) := by
-    ext x
-    simp only [mem_range, mem_image, mem_smul_set, smul_eq_mul, exists_exists_eq_and]
-  rw [this, (isometry_add_right d).diam_image, diam_smul₀, Real.norm_eq_abs]
-
-theorem diam_range_linear_style (s : I) :
-    diam (range (linear b c s)) = |c| * diam (range b) := by
-  rw [← diam_range_mul_add c (b s - c * b s) b]
-  congr 2
-  ext a
-  simp only [linear]
+theorem accommodates_converge (hu : cUp ∈ Icc (0 : ℝ) 1) (hd : cDown ∈ Icc (0 : ℝ) 1) :
+    Accommodates (converge b cUp cDown) := fun s a ↦ by
+  rw [converge_self, converge_self, segment_eq_image_lineMap]
+  refine ⟨if b s ≤ b a then cUp else cDown, by split_ifs <;> assumption, ?_⟩
+  simp only [converge, AffineMap.lineMap_apply_ring']
   ring
 
-theorem diam_range_linear_social (a : I) :
-    diam (range fun s ↦ linear b c s a) = |1 - c| * diam (range b) := by
-  rw [← diam_range_mul_add (1 - c) (c * b a) b]
-  congr 2
-  ext s
-  simp only [linear]
-  ring
+private theorem diam_range_eq_sub {f : I → ℝ} (h : ∀ i, f lo ≤ f i ∧ f i ≤ f hi) :
+    diam (range f) = f hi - f lo := by
+  have hsub : range f ⊆ Icc (f lo) (f hi) := by rintro _ ⟨i, rfl⟩; exact h i
+  refine le_antisymm ((diam_mono hsub (isBounded_Icc _ _)).trans_eq (Real.diam_Icc (h lo).2)) ?_
+  have := dist_le_diam_of_mem ((isBounded_Icc _ _).subset hsub) (mem_range_self hi)
+    (mem_range_self lo)
+  rw [Real.dist_eq] at this
+  exact (le_abs_self _).trans this
 
-/-- When every speaker goes the same fraction of the way to her addressee, style varies no more
-than speakers heard by one addressee do exactly when the fraction is at most a half. -/
-theorem diam_style_le_diam_social_iff (hc : c ∈ Icc (0 : ℝ) 1) (hb : 0 < diam (range b))
-    (s a : I) :
-    diam (range (linear b c s)) ≤ diam (range fun s ↦ linear b c s a) ↔ c ≤ 1 / 2 := by
-  rw [diam_range_linear_style, diam_range_linear_social, mul_le_mul_iff_of_pos_right hb,
-    abs_of_nonneg hc.1, abs_of_nonneg (sub_nonneg.2 hc.2)]
-  constructor <;> intro h <;> linarith
+-- a speaker's range of style
+theorem diam_range_converge_style (hlo : ∀ i, b lo ≤ b i) (hhi : ∀ i, b i ≤ b hi)
+    (hu : 0 ≤ cUp) (hd : 0 ≤ cDown) (s : I) :
+    diam (range (converge b cUp cDown s)) = cUp * (b hi - b s) + cDown * (b s - b lo) := by
+  have key (a : I) : converge b cUp cDown s lo ≤ converge b cUp cDown s a ∧
+      converge b cUp cDown s a ≤ converge b cUp cDown s hi := by
+    have := hlo a; have := hhi a; have := hlo s; have := hhi s
+    simp only [converge]
+    split_ifs <;> constructor <;> nlinarith
+  rw [diam_range_eq_sub key]
+  have := hlo s; have := hhi s
+  simp only [converge]
+  split_ifs <;> nlinarith
+
+-- the range of the speakers one addressee hears
+theorem diam_range_converge_social (hlo : ∀ i, b lo ≤ b i) (hhi : ∀ i, b i ≤ b hi)
+    (hu : cUp ≤ 1) (hd : cDown ≤ 1) (a : I) :
+    diam (range fun s ↦ converge b cUp cDown s a) =
+      (b hi - b lo) - cUp * (b a - b lo) - cDown * (b hi - b a) := by
+  have key (s : I) : converge b cUp cDown lo a ≤ converge b cUp cDown s a ∧
+      converge b cUp cDown s a ≤ converge b cUp cDown hi a := by
+    have := hlo a; have := hhi a; have := hlo s; have := hhi s
+    simp only [converge]
+    split_ifs <;> constructor <;> nlinarith
+  rw [diam_range_eq_sub (f := fun s ↦ converge b cUp cDown s a) key]
+  have := hlo a; have := hhi a
+  simp only [converge]
+  split_ifs <;> nlinarith
+
+/-- When speakers converge by one fraction toward higher levels and by another toward lower ones,
+every speaker's range of style is within the range of the speakers some addressee hears exactly
+when the two fractions sum to at most one. -/
+theorem diam_style_le_diam_social_iff (hlo : ∀ i, b lo ≤ b i) (hhi : ∀ i, b i ≤ b hi)
+    (hb : b lo < b hi) (hu : cUp ∈ Icc (0 : ℝ) 1) (hd : cDown ∈ Icc (0 : ℝ) 1) :
+    (∀ s, ∃ a, diam (range (converge b cUp cDown s)) ≤
+      diam (range fun s' ↦ converge b cUp cDown s' a)) ↔ cUp + cDown ≤ 1 := by
+  simp only [diam_range_converge_style hlo hhi hu.1 hd.1,
+    diam_range_converge_social hlo hhi hu.2 hd.2]
+  constructor
+  · intro h
+    obtain ⟨a, ha⟩ := h lo
+    obtain ⟨a', ha'⟩ := h hi
+    have := hlo a; have := hhi a; have := hlo a'; have := hhi a'
+    by_contra hc
+    rcases le_total cDown cUp with hle | hle <;> nlinarith [hu.1, hd.1]
+  · intro h s
+    have := hlo s; have := hhi s
+    rcases le_total cDown cUp with hle | hle
+    · exact ⟨lo, by nlinarith [hu.1, hd.1]⟩
+    · exact ⟨hi, by nlinarith [hu.1, hd.1]⟩
 
 end Accommodation
 
