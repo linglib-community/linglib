@@ -20,9 +20,10 @@ log-odds](##ProbabilityTheory.quantile_logisticMeasure) `Real.logit`.
 
 ## Implementation notes
 
-Mathlib's distributions on `ℝ` are families with a density with respect to the Lebesgue measure.
-This file has the standard member of the logistic family only, built from its distribution function
-without the density `σ x * (1 - σ x)`.
+Mathlib's distributions on `ℝ` are families defined by a density with respect to the Lebesgue
+measure. This file has the standard member of the logistic family only, defined from its
+distribution function; [its density is
+`σ x * (1 - σ x)`](##ProbabilityTheory.logisticMeasure_eq_withDensity).
 -/
 
 @[expose] public section
@@ -56,6 +57,18 @@ instance : logisticMeasure.IsOpenPosMeasure :=
 instance : logisticMeasure.IsNegInvariant :=
   (isNegInvariant_iff_cdf_neg _).2 fun x ↦ by
     simp only [cdf_logisticMeasure_eq, Real.sigmoid_neg]
+
+/-- The standard logistic distribution has density `σ x * (1 - σ x)`. -/
+theorem logisticMeasure_eq_withDensity :
+    logisticMeasure =
+      volume.withDensity fun x ↦ ENNReal.ofReal (Real.sigmoid x * (1 - Real.sigmoid x)) := by
+  have hf : (0 : ℝ → ℝ) ≤ fun x ↦ Real.sigmoid x * (1 - Real.sigmoid x) := fun x ↦
+    mul_nonneg (Real.sigmoid_nonneg x) (sub_nonneg.2 (Real.sigmoid_le_one x))
+  have := isProbabilityMeasure_withDensity_of_hasDerivAt Real.hasDerivAt_sigmoid hf
+    Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop
+  refine Measure.eq_of_cdf _ _ (StieltjesFunction.ext fun x ↦ ?_)
+  rw [cdf_logisticMeasure_eq, cdf_withDensity_of_hasDerivAt Real.hasDerivAt_sigmoid hf
+    Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop]
 
 /-- The quantile function of the standard logistic distribution is the log-odds. -/
 theorem quantile_logisticMeasure {p : ℝ} (hp : p ∈ Set.Ioo 0 1) :

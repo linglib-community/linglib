@@ -195,14 +195,6 @@ theorem locationExperiment_gaussianReal (b : Bool) :
       gaussianReal (if b then δ / 2 else -(δ / 2)) 1 := by
   rw [locationExperiment_apply, gaussianReal_map_add_const, zero_add]
 
-theorem hitRate_gaussianReal :
-    hitRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (δ / 2 - k) :=
-  hitRate_locationExperiment_eq_cdf k
-
-theorem falseAlarmRate_gaussianReal :
-    falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (-(δ / 2) - k) :=
-  falseAlarmRate_locationExperiment_eq_cdf k
-
 /-- In the normal model the sensitivity is the difference of the z-scores of the rates, whatever the
 criterion, so the receiver operating characteristic on z-score axes is the line `z(H) = z(F) + d'`
 of unit slope ([macmillan-creelman-2005], eq. (1.8)). -/

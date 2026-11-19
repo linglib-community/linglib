@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Integral.IntegralEqImproper
 public import Linglib.Core.MeasureTheory.Measure.Stieltjes
 public import Mathlib.MeasureTheory.Group.Measure
 public import Mathlib.Probability.CDF
@@ -17,12 +18,14 @@ Each regularity property of `ProbabilityTheory.cdf μ` is the image of a propert
 the Stieltjes function `cdf μ` whose measure is `μ`. The cdf is [continuous exactly at the points
 that are not atoms](##ProbabilityTheory.continuousAt_cdf_iff), [strictly monotone exactly when `μ`
 charges every nonempty open set](##ProbabilityTheory.strictMono_cdf_iff), and, when `μ` has no
-atoms, satisfies the reflection formula `cdf μ (-x) = 1 - cdf μ x` [exactly when `μ` is invariant under
-negation](##ProbabilityTheory.isNegInvariant_iff_cdf_neg). The quantile function
+atoms, satisfies the reflection formula `cdf μ (-x) = 1 - cdf μ x` [exactly when `μ` is invariant
+under negation](##ProbabilityTheory.isNegInvariant_iff_cdf_neg). The quantile function
 `quantile μ p = sInf {x | p ≤ cdf μ x}` is [the lower adjoint of the cdf on
 `(0, 1)`](##ProbabilityTheory.quantile_le_iff). For a measure with the first two properties the cdf
 is an order isomorphism from `ℝ` onto `(0, 1)` whose [inverse is the quantile
-function](##ProbabilityTheory.coe_cdfOrderIso_symm_apply). `[UPSTREAM]` candidate for
+function](##ProbabilityTheory.coe_cdfOrderIso_symm_apply). A measure whose density is the
+nonnegative derivative of `F` [has cdf `F`](##ProbabilityTheory.cdf_withDensity_of_hasDerivAt).
+`[UPSTREAM]` candidate for
 `Mathlib/Probability/CDF.lean`.
 
 ## Implementation notes
@@ -45,6 +48,50 @@ variable (μ : Measure ℝ) [IsProbabilityMeasure μ] {x : ℝ}
 cdf is continuous and strictly monotone. -/
 noncomputable def quantile (p : ℝ) : ℝ :=
   sInf {x | p ≤ cdf μ x}
+
+/-! ### Pushforwards -/
+
+theorem cdf_map_orderIso (e : ℝ ≃o ℝ) (x : ℝ) : cdf (μ.map e) x = cdf μ (e.symm x) := by
+  rw [cdf_eq_real, cdf_eq_real, map_measureReal_apply e.continuous.measurable measurableSet_Iic,
+    e.preimage_Iic]
+
+theorem cdf_map_add_const (c x : ℝ) : cdf (μ.map (· + c)) x = cdf μ (x - c) := by
+  rw [sub_eq_add_neg]
+  exact cdf_map_orderIso μ (OrderIso.addRight c) x
+
+/-! ### Densities -/
+
+section Density
+
+variable {F f : ℝ → ℝ}
+
+/-- A nonnegative function that is the derivative of a function with limits `0` and `1` at the two
+infinities is a probability density. -/
+theorem lintegral_ofReal_of_hasDerivAt (hF : ∀ x, HasDerivAt F (f x) x) (hf : 0 ≤ f)
+    (h0 : Tendsto F atBot (𝓝 0)) (h1 : Tendsto F atTop (𝓝 1)) :
+    ∫⁻ x, ENNReal.ofReal (f x) = 1 := by
+  rw [← ofReal_integral_eq_lintegral_ofReal (integrable_deriv_of_nonneg hF hf h0 h1)
+    (ae_of_all _ hf), integral_of_hasDerivAt_of_nonneg hF hf h0 h1, sub_zero, ENNReal.ofReal_one]
+
+theorem isProbabilityMeasure_withDensity_of_hasDerivAt (hF : ∀ x, HasDerivAt F (f x) x)
+    (hf : 0 ≤ f) (h0 : Tendsto F atBot (𝓝 0)) (h1 : Tendsto F atTop (𝓝 1)) :
+    IsProbabilityMeasure (volume.withDensity fun x ↦ ENNReal.ofReal (f x)) :=
+  ⟨by rw [withDensity_apply _ .univ, Measure.restrict_univ,
+    lintegral_ofReal_of_hasDerivAt hF hf h0 h1]⟩
+
+/-- The measure whose density is the nonnegative derivative of `F`, a function with limits `0` and
+`1` at the two infinities, has cdf `F`. -/
+theorem cdf_withDensity_of_hasDerivAt (hF : ∀ x, HasDerivAt F (f x) x) (hf : 0 ≤ f)
+    (h0 : Tendsto F atBot (𝓝 0)) (h1 : Tendsto F atTop (𝓝 1)) (x : ℝ) :
+    cdf (volume.withDensity fun x ↦ ENNReal.ofReal (f x)) x = F x := by
+  have := isProbabilityMeasure_withDensity_of_hasDerivAt hF hf h0 h1
+  have hint := (integrable_deriv_of_nonneg hF hf h0 h1).integrableOn (s := Iic x)
+  rw [cdf_eq_real, measureReal_def, withDensity_apply _ measurableSet_Iic,
+    ← ofReal_integral_eq_lintegral_ofReal hint (ae_of_all _ hf),
+    ENNReal.toReal_ofReal (setIntegral_nonneg measurableSet_Iic fun y _ ↦ hf y),
+    integral_Iic_of_hasDerivAt_of_tendsto' (fun y _ ↦ hF y) hint h0, sub_zero]
+
+end Density
 
 /-! ### Continuity -/
 

@@ -53,8 +53,6 @@ instance [NeZero v] : (gaussianReal μ v).IsOpenPosMeasure :=
 instance : (gaussianReal 0 v).IsNegInvariant :=
   ⟨by simpa [Measure.neg_def] using gaussianReal_map_neg (μ := 0) (v := v)⟩
 
-variable {x p q : ℝ}
-
 /-! ### The standard normal distribution function -/
 
 /-- The standard normal distribution function `Φ`, the cdf of `gaussianReal 0 1`. -/
@@ -63,25 +61,9 @@ noncomputable def normalCDF (x : ℝ) : ℝ :=
 
 theorem normalCDF_nonneg (x : ℝ) : 0 ≤ normalCDF x := cdf_nonneg _ x
 
-theorem normalCDF_le_one (x : ℝ) : normalCDF x ≤ 1 := cdf_le_one _ x
-
 theorem normalCDF_pos (x : ℝ) : 0 < normalCDF x := cdf_pos _ x
 
-theorem normalCDF_lt_one (x : ℝ) : normalCDF x < 1 := cdf_lt_one _ x
-
-theorem normalCDF_mem_Ioo (x : ℝ) : normalCDF x ∈ Ioo (0 : ℝ) 1 :=
-  ⟨normalCDF_pos x, normalCDF_lt_one x⟩
-
 theorem normalCDF_strictMono : StrictMono normalCDF := strictMono_cdf _
-
-theorem normalCDF_monotone : Monotone normalCDF := normalCDF_strictMono.monotone
-
-theorem normalCDF_injective : Function.Injective normalCDF := normalCDF_strictMono.injective
-
-theorem continuous_normalCDF : Continuous normalCDF := continuous_cdf _
-
-@[simp]
-theorem range_normalCDF : range normalCDF = Ioo 0 1 := range_cdf _
 
 theorem normalCDF_neg (x : ℝ) : normalCDF (-x) = 1 - normalCDF x :=
   cdf_neg _ (measure_singleton x)
@@ -89,30 +71,23 @@ theorem normalCDF_neg (x : ℝ) : normalCDF (-x) = 1 - normalCDF x :=
 @[simp]
 theorem normalCDF_zero : normalCDF 0 = 2⁻¹ := cdf_zero _ (measure_singleton 0)
 
-theorem inv_two_lt_normalCDF_iff : 2⁻¹ < normalCDF x ↔ 0 < x := by
-  rw [← normalCDF_zero, normalCDF_strictMono.lt_iff_lt]
-
-theorem normalCDF_lt_inv_two_iff : normalCDF x < 2⁻¹ ↔ x < 0 := by
-  rw [← normalCDF_zero, normalCDF_strictMono.lt_iff_lt]
-
 /-! ### Standardization -/
 
 /-- The cdf of a nondegenerate Gaussian is `Φ` at the standard score. -/
 theorem cdf_gaussianReal_eq (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
     cdf (gaussianReal μ v) x = normalCDF ((x - μ) / √v) := by
   have hs : 0 < √(v : ℝ) := Real.sqrt_pos.2 (NNReal.coe_pos.2 hv.bot_lt)
-  have h : (gaussianReal μ v).map (fun y ↦ (y - μ) / √v) = gaussianReal 0 1 := by
-    rw [show (fun y ↦ (y - μ) / √(v : ℝ)) = (· / √(v : ℝ)) ∘ (· - μ) from rfl,
-      ← Measure.map_map (by fun_prop) (by fun_prop), gaussianReal_map_sub_const,
-      gaussianReal_map_div_const, sub_self, zero_div]
+  have h : gaussianReal μ v = (gaussianReal 0 1).map
+      ((OrderIso.mulRight₀ _ hs).trans (OrderIso.addRight μ)) := by
+    rw [show ⇑((OrderIso.mulRight₀ _ hs).trans (OrderIso.addRight μ)) =
+        (· + μ) ∘ (· * √(v : ℝ)) from rfl, ← Measure.map_map (by fun_prop) (by fun_prop),
+      gaussianReal_map_mul_const, gaussianReal_map_add_const]
     congr
-    ext
-    simp [Real.sq_sqrt, hv]
-  rw [normalCDF, cdf_eq_real, cdf_eq_real, ← h,
-    map_measureReal_apply (by fun_prop) measurableSet_Iic]
-  congr 1
-  ext y
-  simp [div_le_div_iff_of_pos_right hs]
+    · simp
+    · ext
+      simp [Real.sq_sqrt]
+  rw [h, cdf_map_orderIso]
+  rfl
 
 /-- The upper tail of a nondegenerate Gaussian `X ~ N(μ, v)` is `P(X > x) = Φ ((μ - x) / √v)`. -/
 theorem gaussianReal_real_Ioi (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
@@ -126,31 +101,9 @@ theorem gaussianReal_real_Ioi (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) 
 noncomputable def probit (p : ℝ) : ℝ :=
   quantile (gaussianReal 0 1) p
 
-theorem probit_of_notMem (hp : p ∉ Ioo 0 1) : probit p = 0 :=
-  quantile_of_notMem _ hp
-
-theorem normalCDF_probit (hp : p ∈ Ioo 0 1) : normalCDF (probit p) = p :=
-  cdf_quantile _ hp
-
 @[simp]
 theorem probit_normalCDF (x : ℝ) : probit (normalCDF x) = x :=
   quantile_cdf _ x
-
-theorem probit_lt_probit_iff (hp : p ∈ Ioo 0 1) (hq : q ∈ Ioo 0 1) :
-    probit p < probit q ↔ p < q :=
-  quantile_lt_quantile_iff _ hp hq
-
-theorem probit_le_probit_iff (hp : p ∈ Ioo 0 1) (hq : q ∈ Ioo 0 1) :
-    probit p ≤ probit q ↔ p ≤ q :=
-  quantile_le_quantile_iff _ hp hq
-
-@[simp]
-theorem probit_inv_two : probit 2⁻¹ = 0 :=
-  quantile_inv_two _
-
-/-- The probit is odd about `1 / 2`. Outside `(0, 1)` both sides are `0`. -/
-theorem probit_one_sub (p : ℝ) : probit (1 - p) = -probit p :=
-  quantile_one_sub _ p
 
 /-! ### Densities -/
 
