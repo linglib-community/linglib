@@ -24,9 +24,13 @@ whose leaves are distinct.
 
 ## TODO
 
-* `eq_of_isNormal_of_equivalent`: the paper sketches a proof that two distinct normal-form trees
-  differ in which leaf takes immediate scope over which, and gives the full proof in the longer
-  version of the paper, which has not been read.
+* `eq_of_isNormal_of_equivalent`: the author's unpublished proof gives each leaf a constant of
+  its own and each tree a λ-term in which only constants take arguments. Two distinct terms of
+  this kind differ in some model. Two distinct trees over the same leaves differ either in the
+  rule that joins two common subtrees or in the side to which a common subtree combines, and
+  when both are in normal form some constant then has a different parent or child in the two
+  terms. None of this is formalized. A model whose atoms denote such terms would stand in for
+  the syntax of terms, and the comparison of parents and children is the long part.
 
 ## References
 
