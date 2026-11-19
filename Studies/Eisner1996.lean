@@ -12,25 +12,22 @@ forward composition is never the left input of a forward rule, and the output of
 composition never the right input of a backward rule. Two derivations are *equivalent* when
 they have the same meaning whatever the words mean. In the grammar with every instance of the
 rule schema, each derivation is equivalent to [one in normal
-form](##Eisner1996.exists_isNormal_equivalent), and [two equivalent derivations in normal form
-are the same](##Eisner1996.eq_of_isNormal_of_equivalent), so a parser that builds only normal
-forms finds each reading exactly once.
-
-## Implementation notes
-
-The paper takes the meanings of the leaves of a tree to be independent. Here a meaning is given
-to each leaf by its category and its word, so the uniqueness theorem is stated for derivations
-whose leaves are distinct.
+form](##Eisner1996.exists_isNormal_equivalent), so a parser that builds only normal forms loses
+no reading. The paper also states that two equivalent derivations in normal form are the same,
+so that such a parser finds each reading exactly once.
 
 ## TODO
 
-* `eq_of_isNormal_of_equivalent`: the author's unpublished proof gives each leaf a constant of
-  its own and each tree a λ-term in which only constants take arguments. Two distinct terms of
-  this kind differ in some model. Two distinct trees over the same leaves differ either in the
-  rule that joins two common subtrees or in the side to which a common subtree combines, and
-  when both are in normal form some constant then has a different parent or child in the two
-  terms. None of this is formalized. A model whose atoms denote such terms would stand in for
-  the syntax of terms, and the comparison of parents and children is the long part.
+* Uniqueness, the paper's second theorem, is not stated: two equivalent derivations in normal
+  form over the same leaves are the same derivation. The paper takes the meanings of the leaves
+  of a tree to be independent, and here a meaning is given to each leaf by its category and its
+  word, so the statement needs the leaves to be distinct. The author's unpublished proof gives
+  each leaf a constant of its own and each tree a λ-term in which only constants take
+  arguments. Two distinct terms of this kind differ in some model. Two distinct trees over the
+  same leaves differ either in the rule that joins two common subtrees or in the side to which
+  a common subtree combines, and when both are in normal form some constant then has a
+  different parent or child in the two terms. A model whose atoms denote such terms would stand
+  in for the syntax of terms, and the comparison of parents and children is the long part.
 
 ## References
 
@@ -172,7 +169,7 @@ theorem composeUnder_append {B : Type} {D : B → Type} (τ : α → Ty B) (s : 
   | [], _, _, f, g, h => composeUnder_comp τ γ f g h
   | b :: β, x, y, f, g, h => composeUnder_append τ s m z γ β (x.push b) (y.push b) (f ∘ ·) g h
 
-/-! ### Existence and uniqueness -/
+/-! ### Existence -/
 
 /-- A derivation of one category is a derivation of an equal category, with the same shape,
 leaves and meaning. -/
@@ -283,12 +280,5 @@ theorem exists_isNormal_equivalent (d : Derivation W (pure (α := α)) c) :
       obtain ⟨d', hn, hl, hs⟩ := exists_backward e₂ hn₂ rfl γ e₁ hn₁
       exact ⟨d', hn, by rw [hl, hl₁, hl₂]; rfl, fun τ D ρ ↦ by
         rw [hs, Derivation.realize_node, he₁ τ D ρ, he₂ τ D ρ]; rfl⟩
-
-/-- Theorem 2: two equivalent derivations in normal form over the same distinct leaves are the
-same derivation. -/
-theorem eq_of_isNormal_of_equivalent {d d' : Derivation W (pure (α := α)) c} (h : IsNormal d)
-    (h' : IsNormal d') (hl : leaves d = leaves d') (hn : (leaves d).Nodup)
-    (he : Equivalent d d') : d = d' := by
-  sorry
 
 end Eisner1996
