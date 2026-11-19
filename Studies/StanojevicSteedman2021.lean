@@ -23,7 +23,7 @@ concatenated in canonical or inverted order. Completeness (`derives_of_sepPerm`)
 paper's three lemmas in one induction, canonical splits combining by forward and inverted
 splits by backward composition; soundness (`sepPerm_of_derives`) is the rule induction, in
 which application and second-order composition never fire over a first-order chain; the
-universal is `derives_fwd_iff` with its mirror `derives_bwd_iff`.
+universal is `derives_span_iff`, at either side of the slash.
 
 The enumeration `sepPerms` lists the separable permutations of a span by their separating
 trees and makes `SepPerm` decidable. Over four elements it has the third large Schröder number
@@ -68,27 +68,23 @@ open CCG
 
 /-! ### The natural order of dominance -/
 
-/-- The forward realization `Xᵢ/Xᵢ₊₁` of chain position `i`. -/
-def fwd (i : ℕ) : Cat ℕ := .slash .right (.atom i) .dot (.atom (i + 1))
+/-- The span category `Xᵢ|Xⱼ₊₁` with its slash looking to the side `s`. -/
+def span (s : Edge) (i j : ℕ) : Cat ℕ := .slash s (.atom i) .dot (.atom (j + 1))
 
-/-- The backward realization `Xᵢ\Xᵢ₊₁` of chain position `i`. -/
-def bwd (i : ℕ) : Cat ℕ := .slash .left (.atom i) .dot (.atom (i + 1))
-
-/-- The natural-order-of-dominance lexicon over `n` words gives each position both slash
-realizations of its chain category, the paper's order-free `|`. -/
+/-- The natural-order-of-dominance lexicon over `n` words gives each position its chain category
+`Xᵢ|Xᵢ₊₁` at both sides, the paper's order-free `|`. -/
 def nodLexicon (n : ℕ) : List (ℕ × Cat ℕ) :=
-  (List.range n).flatMap fun i ↦ [(i + 1, fwd (i + 1)), (i + 1, bwd (i + 1))]
+  (List.range n).flatMap fun i ↦ [(i + 1, span .right (i + 1) (i + 1)),
+    (i + 1, span .left (i + 1) (i + 1))]
 
 /-- The NOD grammar is the multimodal grammar over the chain lexicon. The start atom plays no
 role in the span-level claims. -/
 def nodGrammar (n : ℕ) : Grammar ℕ ℕ := .multimodal (nodLexicon n) 1 2
 
-theorem mem_nodLexicon {n m : ℕ} (h1 : 1 ≤ m) (hn : m ≤ n) :
-    (m, fwd m) ∈ nodLexicon n ∧ (m, bwd m) ∈ nodLexicon n := by
-  have : m - 1 ∈ List.range n := List.mem_range.mpr (by omega)
-  constructor <;> [refine List.mem_flatMap.mpr ⟨m - 1, this, ?_⟩;
-    refine List.mem_flatMap.mpr ⟨m - 1, this, ?_⟩] <;>
-    simp [show m - 1 + 1 = m from by omega]
+theorem mem_nodLexicon {n m : ℕ} (h1 : 1 ≤ m) (hn : m ≤ n) (s : Edge) :
+    (m, span s m m) ∈ nodLexicon n := by
+  refine List.mem_flatMap.mpr ⟨m - 1, List.mem_range.mpr (by omega), ?_⟩
+  cases s <;> simp [show m - 1 + 1 = m from by omega]
 
 /-! ### Separable permutations -/
 
@@ -201,23 +197,15 @@ category `Xᵢ|Xⱼ₊₁`, the paper's three lemmas in one induction: canonical
 strengthened both-slashes hypothesis feeds the harmonic and crossing cases alike. -/
 
 theorem derives_of_sepPerm {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
-    (h : SepPerm i j l) :
-    (nodGrammar n).Derives (.slash .right (.atom i) .dot (.atom (j + 1))) l ∧
-    (nodGrammar n).Derives (.slash .left (.atom i) .dot (.atom (j + 1))) l := by
-  induction h with
-  | single m =>
-    obtain ⟨hf, hb⟩ := mem_nodLexicon h1 hn
-    exact ⟨.lex hf, .lex hb⟩
+    (h : SepPerm i j l) (s : Edge) : (nodGrammar n).Derives (span s i j) l := by
+  induction h generalizing s with
+  | single m => exact .lex (mem_nodLexicon h1 hn s)
   | @pos i j k u v hu hv ihu ihv =>
-    obtain ⟨huf, hub⟩ := ihu h1 (by have := hv.le; omega)
-    obtain ⟨hvf, hvb⟩ := ihv (by omega) hn
-    exact ⟨.forward [⟨.right, .dot, .atom (k + 1)⟩] huf hvf (by simp [nodGrammar]),
-      .forward [⟨.left, .dot, .atom (k + 1)⟩] huf hvb (by simp [nodGrammar])⟩
+    exact .forward [⟨s, .dot, .atom (k + 1)⟩] (ihu h1 (by have := hv.le; omega) .right)
+      (ihv (by omega) hn s) (by simp [nodGrammar])
   | @neg i j k u v hu hv ihu ihv =>
-    obtain ⟨huf, hub⟩ := ihu h1 (by have := hv.le; omega)
-    obtain ⟨hvf, hvb⟩ := ihv (by omega) hn
-    exact ⟨.backward [⟨.right, .dot, .atom (k + 1)⟩] hvf hub (by simp [nodGrammar]),
-      .backward [⟨.left, .dot, .atom (k + 1)⟩] hvb hub (by simp [nodGrammar])⟩
+    exact .backward [⟨s, .dot, .atom (k + 1)⟩] (ihv (by omega) hn s)
+      (ihu h1 (by have := hv.le; omega) .left) (by simp [nodGrammar])
 
 /-! ### Soundness
 
@@ -228,67 +216,55 @@ never fire. -/
 
 theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List ℕ}
     (h : (nodGrammar n).Derives c w) :
-    ∃ i j, 1 ≤ i ∧ j ≤ n ∧ SepPerm i j w ∧
-      (c = .slash .right (.atom i) .dot (.atom (j + 1)) ∨
-       c = .slash .left (.atom i) .dot (.atom (j + 1))) := by
+    ∃ i j s, 1 ≤ i ∧ j ≤ n ∧ SepPerm i j w ∧ c = span s i j := by
   induction h with
   | @lex w' c' hmem =>
     obtain ⟨m, hm, hentry⟩ := List.mem_flatMap.mp hmem
     have hm' := List.mem_range.mp hm
     simp only [List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq] at hentry
     rcases hentry with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · exact ⟨m + 1, m + 1, by omega, by omega, .single _, Or.inl rfl⟩
-    · exact ⟨m + 1, m + 1, by omega, by omega, .single _, Or.inr rfl⟩
+    · exact ⟨m + 1, m + 1, .right, by omega, by omega, .single _, rfl⟩
+    · exact ⟨m + 1, m + 1, .left, by omega, by omega, .single _, rfl⟩
   | @forward x y m β _ _ _ _ _ iha ihb =>
-    obtain ⟨i, j, hi, hj, hsep, hcat⟩ := iha
-    obtain ⟨i', j', hi', hj', hsep', hcat'⟩ := ihb
-    obtain ⟨rfl, rfl, rfl⟩ : x = .atom i ∧ m = .dot ∧ y = .atom (j + 1) := by simpa using hcat
-    obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ : (j + 1 = i' ∧ β = [⟨.right, .dot, .atom (j' + 1)⟩]) ∨
-        (j + 1 = i' ∧ β = [⟨.left, .dot, .atom (j' + 1)⟩]) := by
-      simpa [Cat.atom_pushArgs_eq_iff] using hcat'
-    · exact ⟨i, j', hi, hj', .pos hsep hsep', Or.inl rfl⟩
-    · exact ⟨i, j', hi, hj', .pos hsep hsep', Or.inr rfl⟩
+    obtain ⟨i, j, s, hi, hj, hsep, hcat⟩ := iha
+    obtain ⟨i', j', s', hi', hj', hsep', hcat'⟩ := ihb
+    obtain ⟨-, rfl, rfl, rfl⟩ : .right = s ∧ x = .atom i ∧ m = .dot ∧ y = .atom (j + 1) := by
+      simpa [span] using hcat
+    obtain ⟨rfl, rfl⟩ : j + 1 = i' ∧ β = [⟨s', .dot, .atom (j' + 1)⟩] := by
+      simpa [span, Cat.atom_pushArgs_eq_iff] using hcat'
+    exact ⟨i, j', s', hi, hj', .pos hsep hsep', rfl⟩
   | @backward x y m β _ _ _ _ _ iha ihb =>
-    obtain ⟨i, j, hi, hj, hsep, hcat⟩ := iha
-    obtain ⟨i', j', hi', hj', hsep', hcat'⟩ := ihb
-    obtain ⟨rfl, rfl, rfl⟩ : x = .atom i' ∧ m = .dot ∧ y = .atom (j' + 1) := by
-      simpa using hcat'
-    obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ : (j' + 1 = i ∧ β = [⟨.right, .dot, .atom (j + 1)⟩]) ∨
-        (j' + 1 = i ∧ β = [⟨.left, .dot, .atom (j + 1)⟩]) := by
-      simpa [Cat.atom_pushArgs_eq_iff] using hcat
-    · exact ⟨i', j, hi', hj, .neg hsep' hsep, Or.inl rfl⟩
-    · exact ⟨i', j, hi', hj, .neg hsep' hsep, Or.inr rfl⟩
+    obtain ⟨i, j, s, hi, hj, hsep, hcat⟩ := iha
+    obtain ⟨i', j', s', hi', hj', hsep', hcat'⟩ := ihb
+    obtain ⟨-, rfl, rfl, rfl⟩ : .left = s' ∧ x = .atom i' ∧ m = .dot ∧ y = .atom (j' + 1) := by
+      simpa [span] using hcat'
+    obtain ⟨rfl, rfl⟩ : j' + 1 = i ∧ β = [⟨s, .dot, .atom (j + 1)⟩] := by
+      simpa [span, Cat.atom_pushArgs_eq_iff] using hcat
+    exact ⟨i', j, s, hi', hj, .neg hsep' hsep, rfl⟩
 
 /-! ### The universal -/
 
-theorem derives_fwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) :
-    (nodGrammar n).Derives (.slash .right (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
-  refine ⟨fun h ↦ ?_, fun h ↦ (derives_of_sepPerm h1 hn h).1⟩
-  obtain ⟨i', j', -, -, hsep, hcat | hcat⟩ := sepPerm_of_derives h
-  · obtain ⟨rfl, rfl⟩ : i = i' ∧ j = j' := by simpa using hcat
-    exact hsep
-  · exact absurd hcat (by simp)
-
-theorem derives_bwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) :
-    (nodGrammar n).Derives (.slash .left (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
-  refine ⟨fun h ↦ ?_, fun h ↦ (derives_of_sepPerm h1 hn h).2⟩
-  obtain ⟨i', j', -, -, hsep, hcat | hcat⟩ := sepPerm_of_derives h
-  · exact absurd hcat (by simp)
-  · obtain ⟨rfl, rfl⟩ : i = i' ∧ j = j' := by simpa using hcat
-    exact hsep
+/-- The orders the grammar derives over the span `i…j`, at either side of the slash, are the
+separable permutations of the span. -/
+theorem derives_span_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) (s : Edge) :
+    (nodGrammar n).Derives (span s i j) l ↔ SepPerm i j l := by
+  refine ⟨fun h ↦ ?_, fun h ↦ derives_of_sepPerm h1 hn h s⟩
+  obtain ⟨i', j', s', -, -, hsep, hcat⟩ := sepPerm_of_derives h
+  obtain ⟨-, rfl, rfl⟩ : s = s' ∧ i = i' ∧ j = j' := by simpa [span] using hcat
+  exact hsep
 
 theorem perm_of_derives {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
-    (h : (nodGrammar n).Derives (.slash .right (.atom i) .dot (.atom (j + 1))) l) :
+    (h : (nodGrammar n).Derives (span .right i j) l) :
     l.Perm (List.range' i (j + 1 - i)) :=
-  ((derives_fwd_iff h1 hn).mp h).perm
+  ((derives_span_iff h1 hn .right).mp h).perm
 
 theorem not_derives_2413 :
-    ¬ (nodGrammar 4).Derives (.slash .right (.atom 1) .dot (.atom 5)) [2, 4, 1, 3] :=
-  mt (derives_fwd_iff le_rfl le_rfl).mp not_sepPerm_2413
+    ¬ (nodGrammar 4).Derives (span .right 1 4) [2, 4, 1, 3] :=
+  mt (derives_span_iff le_rfl le_rfl .right).mp not_sepPerm_2413
 
 theorem not_derives_3142 :
-    ¬ (nodGrammar 4).Derives (.slash .right (.atom 1) .dot (.atom 5)) [3, 1, 4, 2] :=
-  mt (derives_fwd_iff le_rfl le_rfl).mp not_sepPerm_3142
+    ¬ (nodGrammar 4).Derives (span .right 1 4) [3, 1, 4, 2] :=
+  mt (derives_span_iff le_rfl le_rfl .right).mp not_sepPerm_3142
 
 /-! ### The typological record -/
 
