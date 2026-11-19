@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Semantics.Plurality.Number
 
 /-!

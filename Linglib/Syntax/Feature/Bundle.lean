@@ -3,41 +3,31 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.Compat
 public import Linglib.Morphology.Word.Features
-public import Linglib.Syntax.Person.Specification
+public import Linglib.Syntax.Feature.Person.Specification
 
 /-!
 # Feature bundles
 
-This file defines the dimensions in which agreement targets covary and the analytical
-feature bundle over them, a value or nothing in each dimension.
+A feature bundle gives a slot to each of the five dimensions in which the form of one element
+may covary with another: person, number, gender, case and definiteness. The person slot is a
+person specification (`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is
+less specific than an inclusive or an exclusive one, and the others are slots of the flat order
+of `Core/Order/Flat.lean`, a value or nothing. The partial order of bundles, their bottom, the
+wholly unspecified bundle, and their unification are the pointwise ones. Each dimension is a
+token feature with that feature's values, and [a token's bundle](##Agreement.Bundle.ofFeatures)
+is its features read along that inclusion, the person slot from the token's person and
+clusivity together.
 
-An agreement bundle gives each dimension a slot: a person specification
-(`Syntax/Person/Specification.lean`) in the person dimension, so that a form with no clusivity
-is less specific than an inclusive or an exclusive one, and a slot of the flat order of
-`Core/Order/Flat.lean` in the others. Its partial order, its bottom, the wholly unspecified
-bundle, and its unification are the pointwise ones. Each dimension is a token feature with that
-feature's values, and a token's bundle is its features read along that inclusion, the person
-slot from the token's person and clusivity together, `Agreement.Bundle.ofFeatures`.
+## Implementation notes
 
-## Main definitions
-
-* `Agreement.Dimension` — the five dimensions a target's form may covary in
-* `Agreement.Dimension.toFeature`, `Agreement.Dimension.Value` — the token feature a dimension
-  is, and its values
-* `Agreement.Dimension.Slot`, `Agreement.Dimension.Slot.ofFlat` — the slot of a dimension, and
-  a value or `⊥` as a slot
-* `Agreement.Bundle` — a slot in each dimension
-* `Agreement.Bundle.set`, `Agreement.Bundle.personNumber` — a bundle with one dimension set,
-  and the bundle valued in person and number alone
-* `Agreement.Bundle.ofFeatures` — the restriction of a token's features
-* `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural` — the speech-act participant and plural
-  bundles
-* `Agreement.Bundle.personNumberCells` — the six bundles of three persons and two numbers
+Bundles are borne by pronouns and nominals as well as by agreement targets, and are spelled out
+by morphology, so the file stands with the feature inventories below `Syntax/Agreement` and
+`Morphology`. Its declarations keep the namespace `Agreement`.
 
 ## References
 
-* [corbett-1998] — the three indisputable agreement features and the two contested ones
-* [norris-2019] — the dimensions of the concord survey
+* [corbett-1998]
+* [norris-2019]
 -/
 
 @[expose] public section

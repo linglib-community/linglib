@@ -148,7 +148,7 @@ variable [CompleteLattice E] {D : Set E} {r : Set E} {u v w : E}
 theorem isUpperSet_of_mem_latticeClosure (hr : r ∈ latticeClosure (Ici '' D)) : IsUpperSet r := by
   have ht : IsSublattice {r : Set E | IsUpperSet r} :=
     ⟨fun _ hp _ hq ↦ IsUpperSet.union hp hq, fun _ hp _ hq ↦ IsUpperSet.inter hp hq⟩
-  exact latticeClosure_min (by rintro _ ⟨x, -, rfl⟩; exact isUpperSet_Ici x) ht hr
+  exact latticeClosure_min (by rintro _ ⟨x, -, rfl⟩; exact IsUpperSet.Ici x) ht hr
 
 variable [IsAtomistic E]
 

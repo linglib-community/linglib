@@ -82,7 +82,7 @@ section LocallyFiniteOrderBot
 variable {α : Type*} [LinearOrder α] [LocallyFiniteOrderBot α] {s : Finset α} {a : α}
 
 theorem isLowerSet_coe_Iic (a : α) : IsLowerSet (↑(Iic a) : Set α) := by
-  rw [coe_Iic]; exact isLowerSet_Iic a
+  rw [coe_Iic]; exact IsLowerSet.Iic a
 
 @[simp] theorem Finset.max_Iic (a : α) : (Iic a).max = a :=
   le_antisymm (Finset.max_le fun _ hb ↦ WithBot.coe_le_coe.2 (mem_Iic.1 hb))
@@ -151,5 +151,5 @@ theorem Finset.filter_not_le_mem_lowerSubsets (h : s ∈ t.lowerSubsets) (a : α
     (s.filter fun b => ¬ a ≤ b) ∈ t.lowerSubsets := by
   rw [mem_lowerSubsets] at h ⊢
   refine ⟨(filter_subset _ _).trans h.1, ?_⟩
-  convert h.2.sdiff_of_isUpperSet (isUpperSet_Ici a) using 1
+  convert h.2.sdiff_of_isUpperSet (IsUpperSet.Ici a) using 1
   ext; simp

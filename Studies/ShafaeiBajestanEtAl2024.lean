@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.Paradigm.Analogy
 public import Linglib.Processing.DiscriminativeLexicon.Training
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Shafaei-Bajestan, Moradipour-Tari, Uhrig and Baayen (2024): The pluralization palette
@@ -110,14 +110,14 @@ def classCue : Matrix Noun K ℝ := of fun l ↦ Pi.single (κ l) 1
 omit [Fintype Noun] in
 @[simp] theorem classCue_mul_apply [Fintype K] (G : Matrix K (Fin d) ℝ) (l : Noun) :
     (classCue κ * G) l = G (κ l) := by
-  funext j; simp [classCue, mul_apply, Pi.single_apply]
+  funext j; simp [classCue, Matrix.mul_apply, Pi.single_apply]
 
 theorem weightedLoss_classCue [Fintype K] (t : K → Fin d → ℝ) :
     weightedLoss (classCue κ) (pl - sg) 1 (of t) =
       ∑ l, (sg l + t (κ l) - pl l) ⬝ᵥ (sg l + t (κ l) - pl l) := by
   refine Finset.sum_congr rfl fun l _ ↦ ?_
   have h : (classCue κ * of t - (pl - sg)) l = sg l + t (κ l) - pl l := by
-    funext j; simp [classCue, mul_apply, Pi.single_apply]; ring
+    funext j; simp [classCue, Matrix.mul_apply, Pi.single_apply]; ring
   rw [Pi.one_apply, NNReal.coe_one, one_mul, h]
 
 /-- The class shifts are the least-squares shifts: they form the endstate-trained mapping from the

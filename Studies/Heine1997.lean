@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Heine1997
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.SymmDiff
 public import Mathlib.Tactic.DeriveFintype

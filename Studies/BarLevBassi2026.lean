@@ -286,6 +286,7 @@ A plural definite is odd where its quantified counterpart needs stress on the qu
 stress on the counterpart shows the background question, and the plural definite is acceptable
 when the head that question asks to be F-marked is pronounced. -/
 
+attribute [local instance 2000] List.decidableBAll in
 /-- The word a sentence prints in capitals, the bearer of its focal stress. -/
 def stressed? (s : String) : Option (List Char) :=
   (((Gloss.split [' '] s.toList).map Gloss.trim).find? fun t ↦

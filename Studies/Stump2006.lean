@@ -7,7 +7,7 @@ public import Linglib.Morphology.Word.UD
 public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Linglib.Fragments.Slavic.Russian.Case
 public import Linglib.Fragments.Slavic.Russian.Gender
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Prod

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Set.Semiring
+public import Mathlib.Data.Set.Semiring
 public import Mathlib.Algebra.FreeMonoid.Basic
 public import Mathlib.Computability.Language
 
@@ -35,11 +35,16 @@ namespace Language
 /-- A language over `α` is a subset of the free monoid on `α`, with union as addition and
 concatenation as multiplication. -/
 def equivSetSemiring : Language α ≃+* SetSemiring (FreeMonoid α) where
-  toFun L := (FreeMonoid.toList ⁻¹' L).up
-  invFun s := FreeMonoid.ofList ⁻¹' s.down
+  toFun L := .ofSet (FreeMonoid.toList ⁻¹' L)
+  invFun s := FreeMonoid.ofList ⁻¹' s.toSet
   left_inv _ := rfl
   right_inv _ := rfl
-  map_mul' _ _ := rfl
+  map_mul' L M := by
+    rw [← SetSemiring.ofSet_mul]
+    congr 1
+    ext x
+    exact ⟨fun ⟨a, ha, b, hb, h⟩ ↦ ⟨.ofList a, ha, .ofList b, hb, congrArg FreeMonoid.ofList h⟩,
+      fun ⟨a, ha, b, hb, h⟩ ↦ ⟨a.toList, ha, b.toList, hb, congrArg FreeMonoid.toList h⟩⟩
   map_add' _ _ := rfl
 
 /-- The image of a language under a string homomorphism `φ`: `SetSemiring.imageHom φ` read through
@@ -49,7 +54,8 @@ noncomputable def stringMap (φ : FreeMonoid α →* FreeMonoid β) : Language �
 
 @[simp] theorem mem_stringMap {φ : FreeMonoid α →* FreeMonoid β} {L : Language α}
     {w : List β} : w ∈ stringMap φ L ↔ ∃ v ∈ L, (φ (.ofList v)).toList = w :=
-  Iff.rfl
+  ⟨fun ⟨x, hx, h⟩ ↦ ⟨x.toList, hx, congrArg FreeMonoid.toList h⟩,
+    fun ⟨v, hv, h⟩ ↦ ⟨.ofList v, hv, congrArg FreeMonoid.ofList h⟩⟩
 
 @[simp] theorem stringMap_id : stringMap (MonoidHom.id (FreeMonoid α)) = RingHom.id _ := by
   simp [stringMap]
@@ -60,6 +66,6 @@ theorem stringMap_comp (ψ : FreeMonoid β →* FreeMonoid γ) (φ : FreeMonoid 
 
 /-- On a map of letters, `stringMap` is `Language.map`. -/
 @[simp] theorem stringMap_map (f : α → β) : stringMap (FreeMonoid.map f) = map f :=
-  RingHom.ext fun _ ↦ rfl
+  RingHom.ext fun _ ↦ Language.ext fun _ ↦ mem_stringMap
 
 end Language

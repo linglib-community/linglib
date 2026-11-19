@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.Paradigm
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Feature.Gender.Basic
 public import Linglib.Morphology.Morph
 public import Linglib.Fragments.Bantu.Params
 

@@ -8,8 +8,8 @@ public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Semantics.Modality.Typology
 public import Linglib.Syntax.Agreement.Target
 public import Linglib.Syntax.Category.Auxiliary.Basic
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # English auxiliaries

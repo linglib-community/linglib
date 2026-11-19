@@ -593,8 +593,7 @@ theorem uniformOn_strictMono {α : Type*} [Fintype α] [DecidableEq α] {ℓ : �
     constructor
     · intro h
       have hπ : a.symm.trans e = Tuple.sort f := by
-        refine Tuple.eq_sort_iff.2 ⟨?_, fun i j hij hfij ↦
-          absurd (hf hfij) ((a.symm.trans e).injective.ne hij.ne)⟩
+        refine Tuple.eq_sort_iff.2 ⟨?_, fun i j _ hfij ↦ (hf hfij).le⟩
         simpa [f, Function.comp_def] using h.monotone
       rw [← hπ]
       ext x

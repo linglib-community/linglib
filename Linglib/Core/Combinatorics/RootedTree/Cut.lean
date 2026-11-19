@@ -155,25 +155,29 @@ example (a : α) : rootCuts extract (RoseTree.leaf a) = {(0, RoseTree.leaf a)} :
 /-- The cuts of a list of children are the product of the cuts at each child in the monoid
 semiring, where a product adds crowns and appends remainders. -/
 theorem ofMultiset_childrenCuts (l : List (RoseTree α)) :
-    AddMonoidAlgebra.ofMultiset ℕ (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α))
-        (childrenCuts extract l) =
+    AddMonoidAlgebra.ofMultiset ℕ
+        ((childrenCuts extract l).map (Prod.map id FreeAddMonoid.ofList)) =
       (l.map fun t ↦ AddMonoidAlgebra.ofMultiset ℕ
-        (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) (childCuts extract t)).prod := by
+        ((childCuts extract t).map (Prod.map id FreeAddMonoid.ofList))).prod := by
   induction l with
-  | nil => rw [childrenCuts_nil, AddMonoidAlgebra.ofMultiset_singleton]; rfl
+  | nil =>
+    rw [childrenCuts_nil, Multiset.map_singleton, AddMonoidAlgebra.ofMultiset_singleton]; rfl
   | cons t ts ih =>
-    rw [childrenCuts_cons, List.map_cons, List.prod_cons, ← ih]
-    exact AddMonoidAlgebra.ofMultiset_map_add_product _ _
+    rw [childrenCuts_cons, List.map_cons, List.prod_cons, ← ih,
+      ← AddMonoidAlgebra.ofMultiset_map_add_product]
+    exact congrArg _ (Multiset.map_map_product_distrib (fun _ _ ↦ rfl) _ _)
 
 theorem childrenCuts_append (l₁ l₂ : List (RoseTree α)) :
     childrenCuts extract (l₁ ++ l₂) =
       ((childrenCuts extract l₁ ×ˢ childrenCuts extract l₂) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
-  refine AddMonoidAlgebra.ofMultiset_injective ℕ
-    (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α))
-    (.trans ?_ (AddMonoidAlgebra.ofMultiset_map_add_product _ _).symm)
-  rw [ofMultiset_childrenCuts, ofMultiset_childrenCuts, ofMultiset_childrenCuts, List.map_append,
-    List.prod_append]
+  refine Multiset.map_injective
+    (Function.injective_id.prodMap (g := FreeAddMonoid.ofList)
+      fun _ _ h ↦ congrArg FreeAddMonoid.toList h)
+    (AddMonoidAlgebra.ofMultiset_injective ℕ ?_)
+  rw [ofMultiset_childrenCuts, List.map_append, List.prod_append, ← ofMultiset_childrenCuts,
+    ← ofMultiset_childrenCuts, ← AddMonoidAlgebra.ofMultiset_map_add_product]
+  exact congrArg _ (Multiset.map_map_product_distrib (fun _ _ ↦ rfl) _ _).symm
 
 /-! ### Induction over cuts
 

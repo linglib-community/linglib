@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Morphology.Morph
 
 /-!

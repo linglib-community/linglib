@@ -107,7 +107,7 @@ theorem not_isStarFree_setOf_even_length [Nonempty α] :
 /-- Star-free languages are closed under inverse homomorphisms of free monoids. -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
-    Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
+    Language.IsStarFree {w : List α | (φ (FreeMonoid.ofList w)).toList ∈ L} := by
   have := h.1
   obtain ⟨S, hS⟩ := L.recognizes_toSyntacticMonoid.comap φ
   exact .of_recognizes h.2 _ S (Set.ext_iff.mp hS)

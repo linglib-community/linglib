@@ -122,7 +122,7 @@ theorem pos_ne_subcomparative :
 -- (11), (12)
 theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Set Entity) (μ : Entity → D) :
     ¬ ∃ m, IsGreatest (scopeDegrees (no bought) (Set.Iic ∘ μ)) m :=
-  not_isGreatest_scopeDegrees (antitone_no bought) (fun _ ↦ isLowerSet_Iic _)
+  not_isGreatest_scopeDegrees (antitone_no bought) (fun _ ↦ IsLowerSet.Iic _)
 
 /-- `er` over a negated *than*-clause never holds, the negative island ((11), (87a)). -/
 theorem not_er_nobody [NoMaxOrder D] (bought : Set Entity) (μ : Entity → D) (S : Set D) :

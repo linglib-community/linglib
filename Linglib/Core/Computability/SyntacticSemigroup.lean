@@ -76,7 +76,7 @@ theorem ker_toSyntacticSemigroup (L : Language α) :
 congruence on the free monoid, since every word is empty or nonempty. -/
 theorem syntacticSemigroupCon_eq_comap :
     L.syntacticSemigroupCon = L.syntacticCon.comap toFreeMonoid (map_mul _) :=
-  (Con.comap_syntactic eq_one_or_toFreeMonoid _).symm
+  (Con.comap_syntactic eq_one_or_toFreeMonoid (FreeMonoid.toList ⁻¹' L)).symm
 
 theorem syntacticSemigroupCon_iff {u v : FreeSemigroup α} :
     L.syntacticSemigroupCon u v ↔ L.syntacticCon u.toFreeMonoid v.toFreeMonoid := by
@@ -189,7 +189,7 @@ theorem RecognizesSemigroup.comap {β : Type*} (hrec : L.RecognizesSemigroup η)
   obtain ⟨P, hP⟩ := recognizesSemigroup_iff.mp hrec
   refine recognizesSemigroup_iff.mpr ⟨P, fun w ↦ ⟨?_, fun hw ↦ ⟨w, rfl, (hP _).mpr hw⟩⟩⟩
   rintro ⟨u, hu, hmem⟩
-  obtain rfl : u = w := toFreeMonoid_injective (FreeMonoid.toList.injective hu)
+  obtain rfl : u = w := toFreeMonoid_injective (FreeMonoid.toListEquiv.injective hu)
   exact (hP _).mp hmem
 
 theorem recognizesSemigroup_iff_ker_le :

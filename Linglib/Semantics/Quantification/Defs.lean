@@ -105,7 +105,7 @@ variable {α : Type*}
 
 theorem isAntiAdditive_iff {q : Quantifier α} :
     IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
-  simp only [IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
+  simp only [IsAntiAdditive, inf_Prop_eq, eq_iff_iff]
 
 namespace Det
 

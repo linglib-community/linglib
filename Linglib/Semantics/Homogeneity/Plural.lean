@@ -95,7 +95,7 @@ theorem supClosed_readings : SupClosed (readings Q x) := by
   rintro _ ⟨U, hxU, rfl⟩ _ ⟨V, -, rfl⟩
   refine ⟨U ⊓ V, UpperSet.mem_inf_iff.2 (.inl hxU), ?_⟩
   ext w
-  simp only [Set.sup_eq_union, Set.mem_union, Set.mem_ofPred_eq, UpperSet.mem_inf_iff]
+  simp only [Set.mem_union, Set.mem_ofPred_eq, UpperSet.mem_inf_iff]
   grind
 
 end Readings

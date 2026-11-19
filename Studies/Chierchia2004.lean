@@ -446,7 +446,8 @@ theorem working_or_seeingSome :
   · rw [disj_strongApply working_nonempty working_ne_univ, strengthen_strong_eq_sdiff]
     · exact congrArg (fun s ↦ (working ∪ s) \ (working ∩ seeingSome))
         (strengthen_strong_lexical_pair seeingAll_ssubset)
-    · refine (congrArg (· ∩ _) (pair_comm _ _)).trans (pair_inter_Iio ?_)
+    · rw [pair_comm]
+      refine pair_inter_Iio ?_
       exact (ssubset_iff_of_subset (inter_subset_left.trans subset_union_left)).2
         ⟨(false, 1), Or.inr (by decide : (1 : Fin 3) ≠ 0), fun h ↦ Bool.false_ne_true h.1⟩
   · rw [strongApply_of_not_antitone (not_antitone_union working_ne_univ),
@@ -509,7 +510,8 @@ theorem exactlyTwoSmokeOrDrink_independent :
   have hsd : smokesOrDrinks.strengthen.strong = (smokes ∪ drinks) \ (smokes ∩ drinks) := by
     rw [smokesOrDrinks, disj_strongApply hne hne', strengthen_strong_eq_sdiff]
     · rfl
-    · exact (congrArg (· ∩ _) (pair_comm _ _)).trans (pair_inter_Iio hlt)
+    · rw [pair_comm]
+      exact pair_inter_Iio hlt
   have hs : exactlyTwoSmokeOrDrink.strong = exactlyTwo ((smokes ∪ drinks) \ (smokes ∩ drinks)) := by
     rw [exactlyTwoSmokeOrDrink, strongApply_of_not_antitone not_antitone_exactlyTwo, applyRegular,
       ← hsd]

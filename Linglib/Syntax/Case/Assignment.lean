@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Feature.Slot
 public import Mathlib.Data.Finset.Card

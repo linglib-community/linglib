@@ -110,10 +110,10 @@ theorem pro_den_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Ato
     rw [support_falsum, ← and_or_left, and_iff_left s.eq_empty_or_nonempty.symm]
     exact Iff.rfl
   | conjLeft C θ, hC => by
-    change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
+    change (_ ∩ _ : Set _) = (_ ∩ _) ∪ (_ ∩ _)
     rw [pro_den_fill M ψ (C := C) hC, Set.union_inter_distrib_right]
   | conjRight θ C, hC => by
-    change _ ∩ _ = (_ ∩ _) ∪ (_ ∩ _)
+    change (_ ∩ _ : Set _) = (_ ∩ _) ∪ (_ ∩ _)
     rw [pro_den_fill M ψ (C := C) hC, Set.inter_union_distrib_left]
   | disjLeft C θ, hC => by
     change (Team.disj _ _).pro = (Team.disj _ _).pro ∪ (Team.disj _ _).pro
@@ -289,7 +289,7 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
   | falsumE _ ih =>
     intro s hΓ
     obtain ⟨t₁, h₁, t₂, h₂, rfl⟩ := Set.mem_sups.1 (ih s hΓ)
-    rwa [(support_falsum M t₁).mp h₁, Finset.sup_eq_union, Finset.empty_union]
+    rwa [(support_falsum M t₁).mp h₁, Finset.empty_union]
   | strongFalsumCtr _ _ ih =>
     intro s hΓ
     obtain ⟨t₁, h₁, -⟩ := ih s hΓ

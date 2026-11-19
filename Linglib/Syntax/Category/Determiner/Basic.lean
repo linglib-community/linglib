@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Image
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Discourse.SpeechAct.Role
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Semantics.Quantification.Counting
 

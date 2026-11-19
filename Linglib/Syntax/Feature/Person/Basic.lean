@@ -18,7 +18,7 @@ there are four: neither, the speaker, the addressee, and both.
 `Person` is first, second or third. Each covers some participant sets: the third person covers
 neither role, the second the addressee alone, and the first the speaker with or without the
 addressee. Whether a first person form includes the addressee is its clusivity
-(`Syntax/Person/Clusivity.lean`), a feature beside person.
+(`Syntax/Feature/Person/Clusivity.lean`), a feature beside person.
 
 ## Main definitions
 

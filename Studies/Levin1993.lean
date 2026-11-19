@@ -155,7 +155,7 @@ theorem isUpperSet_sensitivity {a : DiathesisAlternation} (ha : a ≠ .causative
     IsUpperSet (sensitivity a : Set (Finset MeaningComponent)) := by
   have : (sensitivity a).snd = ⊤ := by cases a <;> first | exact absurd rfl ha | rfl
   rw [NonemptyInterval.coe_def, this, Set.Icc_top]
-  exact isUpperSet_Ici _
+  exact IsUpperSet.Ici _
 
 /-- The causative/inchoative is not open to a verb that adds a means, such as contact, to a pure
 change of state (pp. 9–10). -/

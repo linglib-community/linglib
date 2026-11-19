@@ -106,7 +106,7 @@ theorem Set.OrdConnected.sups [IsDistribSemilatticeSup α] (hs : s.OrdConnected)
 theorem isDistribSemilatticeSup_iff_isLowerSet_sups : IsDistribSemilatticeSup α ↔
     ∀ s t : Set α, IsLowerSet s → IsLowerSet t → IsLowerSet (s ⊻ t) := by
   refine ⟨fun _ _ _ hs ht ↦ hs.sups ht, fun h ↦ ⟨fun {a b c} hle ↦ ?_⟩⟩
-  exact Set.mem_sups.1 <| h _ _ (isLowerSet_Iic b) (isLowerSet_Iic c) hle
+  exact Set.mem_sups.1 <| h _ _ (IsLowerSet.Iic b) (IsLowerSet.Iic c) hle
     (Set.sup_mem_sups Set.self_mem_Iic Set.self_mem_Iic)
 
 end IsDistribSemilatticeSup

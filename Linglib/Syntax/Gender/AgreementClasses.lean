@@ -7,7 +7,7 @@ public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Morphology.Paradigm.Polarity
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Feature.Gender.Basic
 
 /-!
 # Agreement classes and target genders

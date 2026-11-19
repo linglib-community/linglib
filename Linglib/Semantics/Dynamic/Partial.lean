@@ -285,11 +285,13 @@ def diff (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s \ ψ s
 
 /-- The union of updates is `s[φ ∪ ψ] = s[φ] ∪ s[ψ]`, defined iff both updates are
 ([george-2014], Definition 7). -/
-def union (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s ∪ ψ s
+def union (φ ψ : CCP.Partial P) : CCP.Partial P :=
+  fun s ↦ (φ s).bind fun sφ ↦ (ψ s).map fun sψ ↦ sφ ∪ sψ
 
 /-- The intersection of updates is `s[φ ∩ ψ] = s[φ] ∩ s[ψ]`, defined iff both updates are
 ([george-2014], Definition 7). -/
-def inter (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s ∩ ψ s
+def inter (φ ψ : CCP.Partial P) : CCP.Partial P :=
+  fun s ↦ (φ s).bind fun sφ ↦ (ψ s).map fun sψ ↦ sφ ∩ sψ
 
 theorem admits_diff (φ ψ : CCP.Partial P) (s : Set P) :
     (diff φ ψ).Admits s ↔ φ.Admits s ∧ ψ.Admits s := exists_prop
@@ -479,7 +481,7 @@ theorem ofTrivalent_joinWeak (p q : W → Trivalent) :
   funext s
   refine Part.ext' ((admits_ofTrivalent_weak (f := Trivalent.joinWeak) (by decide) p q s).trans
     (admits_union _ _ s).symm) fun h _ ↦ ?_
-  simp only [union, Part.union_get_eq, ofTrivalent_get]
+  change {w ∈ s | _ = Trivalent.true} = {w ∈ s | p w = .true} ∪ {w ∈ s | q w = .true}
   ext w
   by_cases hw : w ∈ s
   · have hd : Trivalent.joinWeak (p w) (q w) ≠ .undefined := h hw
@@ -495,7 +497,7 @@ theorem ofTrivalent_meetWeak (p q : W → Trivalent) :
   funext s
   refine Part.ext' ((admits_ofTrivalent_weak (f := Trivalent.meetWeak) (by decide) p q s).trans
     (admits_inter _ _ s).symm) fun _ _ ↦ ?_
-  simp only [inter, Part.inter_get_eq, ofTrivalent_get]
+  change {w ∈ s | _ = Trivalent.true} = {w ∈ s | p w = .true} ∩ {w ∈ s | q w = .true}
   ext w
   simp only [Set.mem_inter_iff, Set.mem_sep_iff, Trivalent.meetWeak_eq_true_iff]
   tauto

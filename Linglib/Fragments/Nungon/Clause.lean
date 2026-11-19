@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Data.Finset.Union
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Syntax.Clause.Chaining
 
 /-!

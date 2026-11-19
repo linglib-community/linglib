@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Clusivity
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
 
 /-!
 # Shawi

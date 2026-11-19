@@ -268,7 +268,7 @@ theorem pex_but_no_eq_true_iff [Fintype α] [DecidableEq α]
   rw [exhOnly_eq_true_iff F subset_rfl, forall_mem_only_iff (sep_subset _ _) hsingle
     fun x hx ↦ hF _ (hco x hx), mem_only_of_subset (sep_subset _ _),
     Exceptive.isExceptionSet_no_iff, Set.ext_iff]
-  simp only [Set.inf_eq_inter, Set.mem_inter_iff, Finset.mem_coe, mem_sep_iff]
+  simp only [Set.mem_inter_iff, Finset.mem_coe, mem_sep_iff]
   refine ⟨fun ⟨hXw, h⟩ a ↦ ⟨fun ⟨haA, haw⟩ ↦ h {a} ⟨hF _ (Finset.singleton_nonempty a),
       Finset.singleton_subset_iff.2 haA⟩ (Finset.singleton_subset_iff.2 haw)
       (Finset.mem_singleton_self a), fun haX ↦ ⟨hXA haX, hXw haX⟩⟩,

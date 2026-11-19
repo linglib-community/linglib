@@ -241,6 +241,7 @@ def inventory : List Adjective :=
    rood, wit, groen, geel, blauw, zwart, roze, mauve, lila,
    bitter, zoet, zuur, zout, vreemd, gezond, leuk, bijzonder, dicht]
 
+attribute [local instance 2000] List.decidableBEx in
 theorem not_declines_iff :
     ∀ a ∈ inventory, ¬ a.Declines ↔
       a.form.toList.getLast? ∈ [some 'e', some 'a', some 'o', some 'i'] ∨

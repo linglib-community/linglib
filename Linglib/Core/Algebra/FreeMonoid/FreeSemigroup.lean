@@ -22,4 +22,4 @@ variable {α : Type*} (u : FreeSemigroup α)
 
 @[simp] theorem FreeSemigroup.toList_toFreeMonoid_ne_nil :
     u.toFreeMonoid.toList ≠ [] := fun h ↦
-  toFreeMonoid_ne_one u (FreeMonoid.toList.injective h)
+  toFreeMonoid_ne_one u (FreeMonoid.toListEquiv.injective h)

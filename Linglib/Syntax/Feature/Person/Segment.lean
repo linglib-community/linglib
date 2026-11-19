@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.ForestOrder
-public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Person.Specification
+public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Person.Specification
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Order.Preorder.Chain

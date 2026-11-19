@@ -58,7 +58,7 @@ variable {S W D : Type*} [Preorder S] [Preorder D] {θ : S → Set W} {μ : S �
 -- (53): if σ is confident that `p` and more confident of `q` than of `p`, σ is confident that `q`.
 example [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ) {c : S} {p q : Set W}
     (hp : p ∈ θ '' Ici c) (h : MaxComparative .gt (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
-  CarianiSantorioWellwood2023.mem_image_of_maxComparative (isUpperSet_Ici c) hμ hp h
+  CarianiSantorioWellwood2023.mem_image_of_maxComparative (IsUpperSet.Ici c) hμ hp h
 
 /-- The entailment (59) under a contrast mapping `p` to its negation, read strictly: if the
 `p`-state lies above the `¬p`-state, its holder is more confident that `p` than that `¬p`. -/

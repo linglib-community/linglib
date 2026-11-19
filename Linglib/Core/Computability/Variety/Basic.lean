@@ -93,7 +93,7 @@ theorem mem_languages_iff_exists_recognizes : L ∈ V.languages α ↔
 /-- The languages of `V` are closed under inverse images of homomorphisms of free monoids. -/
 theorem comap_mem_languages {L : Language β} (h : L ∈ V.languages β)
     (φ : FreeMonoid α →* FreeMonoid β) :
-    {w : List α | φ (FreeMonoid.ofList w) ∈ L} ∈ V.languages α :=
+    {w : List α | (φ (FreeMonoid.ofList w)).toList ∈ L} ∈ V.languages α :=
   mem_languages_of_recognizes h (L.recognizes_toSyntacticMonoid.comap φ)
 
 theorem leftQuotient_mem_languages (h : L ∈ V.languages α) (u : List α) :
@@ -120,7 +120,7 @@ structure LanguageVariety where
   isRegular : ∀ {α : Type u} {L : Language α}, L ∈ lang α → L.IsRegular
   /-- The inverse image of a member under a homomorphism of free monoids is a member. -/
   comap_mem : ∀ {α β : Type u} {L : Language β} (φ : FreeMonoid α →* FreeMonoid β),
-    L ∈ lang β → {w : List α | φ (FreeMonoid.ofList w) ∈ L} ∈ lang α
+    L ∈ lang β → {w : List α | (φ (FreeMonoid.ofList w)).toList ∈ L} ∈ lang α
   /-- The left quotient of a member by a word is a member. -/
   leftQuotient_mem : ∀ {α : Type u} {L : Language α} (u : List α),
     L ∈ lang α → L.leftQuotient u ∈ lang α

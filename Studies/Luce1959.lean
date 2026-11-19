@@ -858,7 +858,7 @@ noncomputable def ofRandomUtility (P : Measure Ω) [IsProbabilityMeasure P] (hU 
     have : Nonempty T := hT.to_subtype
     have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
     refine ⟨?_⟩
-    simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, measure_univ,
+    simp only [FunLike.coe_sum, Finset.sum_apply, smul_apply, measure_univ,
       smul_eq_mul, mul_one]
     refine sum_choiceProb _ fun j k hjk ↦ ?_
     rw [Measure.map_apply hV (measurableSet_eq_fun (measurable_pi_apply j) (measurable_pi_apply k))]
@@ -872,7 +872,7 @@ variable {P : Measure Ω} [IsProbabilityMeasure P] (hU : Measurable U)
 theorem ofRandomUtility_prob_singleton {T : Finset A} {a : A} (ha : a ∈ T) :
     (ofRandomUtility P hU hties).prob T {a} = P {ω | ∀ j ∈ T, j ≠ a → U ω j < U ω a} := by
   have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
-  simp only [ofRandomUtility, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+  simp only [ofRandomUtility, FunLike.coe_sum, Finset.sum_apply, smul_apply,
     smul_eq_mul]
   rw [Finset.sum_eq_single ⟨a, ha⟩ (fun b _ hb ↦ by simp [Subtype.coe_ne_coe.2 hb]) (by simp),
     Measure.dirac_apply_of_mem (Set.mem_singleton a), mul_one, choiceProb_map P hV]
@@ -2421,9 +2421,9 @@ theorem ProportionalChange.encard_le_four_or {M : Matrix (Fin 2) (Fin 2) ℝ} {a
     refine encard_le_of_isRoot (p := C (M 0 0 * M 1 0) * X ^ 4 +
       C ((M 1 0 * M 0 1 + M 0 0 * M 1 1 - 1) * K) * X ^ 2 + C (M 0 1 * M 1 1 * K ^ 2))
       (fun hp ↦ hc ?_) (by compute_degree) ?_
-    · have c4 := congrArg (coeff · 4) hp
-      have c2 := congrArg (coeff · 2) hp
-      have c0 := congrArg (coeff · 0) hp
+    · have c4 := congrArg (·.coeff 4) hp
+      have c2 := congrArg (·.coeff 2) hp
+      have c0 := congrArg (·.coeff 0) hp
       simp only [coeff_add, coeff_C_mul, coeff_X_pow, coeff_C, coeff_zero] at c4 c2 c0
       norm_num at c4 c2 c0
       exact ⟨mul_eq_zero.2 c4, by simpa [hK.ne'] using c0, by
@@ -2472,9 +2472,9 @@ theorem encard_le_two_or_gamma {β γ : Fin 2 → ℝ} {K : ℝ} (hK : 0 < K) :
     refine encard_le_of_isRoot (p := C (β 0 * γ 1) * X ^ 2 +
       C ((β 0 * β 1 - 1) * K + γ 0 * γ 1) * X + C (γ 0 * β 1 * K))
       (fun hp ↦ hc ?_) (by compute_degree) ?_
-    · have c2 := congrArg (coeff · 2) hp
-      have c1 := congrArg (coeff · 1) hp
-      have c0 := congrArg (coeff · 0) hp
+    · have c2 := congrArg (·.coeff 2) hp
+      have c1 := congrArg (·.coeff 1) hp
+      have c0 := congrArg (·.coeff 0) hp
       simp only [coeff_add, coeff_C_mul, coeff_X_pow, coeff_X, coeff_C, coeff_zero] at c2 c1 c0
       norm_num at c2 c1 c0
       exact ⟨mul_eq_zero.2 c2, c1, by simpa [hK.ne'] using c0⟩
@@ -2577,7 +2577,7 @@ theorem integral_kernel (f : ℝ → ℝ) (u : ℝ) : ∫ x, f x ∂m.kernel u =
     ENNReal.toReal_ofReal (m.w₃_nonneg u), ENNReal.toReal_ofReal (m.w₄_nonneg u)]
 
 theorem kernel_apply_univ (u : ℝ) : m.kernel u Set.univ = 1 := by
-  simp only [kernel_apply, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+  simp only [kernel_apply, add_apply, smul_apply, measure_univ, smul_eq_mul,
     mul_one]
   rw [← ENNReal.ofReal_add (m.w₁_nonneg u) (m.w₂_nonneg u),
     ← ENNReal.ofReal_add (add_nonneg (m.w₁_nonneg u) (m.w₂_nonneg u)) (m.w₃_nonneg u),

@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Reciprocal
 public import Studies.HeimLasnikMay1991
 public import Linglib.Semantics.ArgumentStructure.RoleList
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Semantics.Plurality.Groups
 
 /-!
