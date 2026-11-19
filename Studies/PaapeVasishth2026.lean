@@ -133,8 +133,7 @@ theorem Condition.isMatch_iff (c : Condition) :
   obtain ⟨d, x⟩ := c
   cases d <;> cases x <;> simp [Condition.IsMatch, ReferentiallySupported,
     Disambiguation.modifier, Disambiguation.IsRelative,
-    ReferentialContext.iota_woman_dom_iff, ReferentialContext.iota_woman_eq_none_iff,
-    ReferentialContext.iota_relativeClause_dom]
+    ReferentialContext.iota_woman_dom_iff, ReferentialContext.iota_relativeClause_dom]
 
 /-! ### The processing tree -/
 
@@ -225,7 +224,7 @@ theorem node_eq : node p yes no = toNNReal p • yes + toNNReal (σ p) • no :=
 
 instance [IsProbabilityMeasure yes] [IsProbabilityMeasure no] :
     IsProbabilityMeasure (node p yes no) :=
-  ⟨by simp [node_eq]⟩
+  ⟨by simp [node_eq, ← ENNReal.coe_add]⟩
 
 theorem node_real_apply [IsFiniteMeasure yes] [IsFiniteMeasure no] (s : Set Route) :
     (node p yes no).real s = p * yes.real s + (1 - p) * no.real s := by

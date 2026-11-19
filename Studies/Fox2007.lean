@@ -438,8 +438,8 @@ theorem free_choice_hornAlt (hfc : ((O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b
     exhIter (hornAlt O O' a b) 2 (O (a ⊔ b)) = (O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
   have hl := exhIE_hornAlt_left hO hO' ha
   have hr : exhIE (hornAlt O O' a b) (O b) = O b \ (O a ∪ O' (a ⊔ b)) := by
-    rw [← hornAlt_comm, ← sup_comm]
-    exact exhIE_hornAlt_left hO hO' (by rwa [sup_comm])
+    rw [← hornAlt_comm, ← sup_comm b a]
+    exact exhIE_hornAlt_left hO hO' (by rwa [sup_comm b a])
   obtain ⟨x, hx⟩ := ha
   obtain ⟨y, hy⟩ := hb
   have hxy : O a ≠ O (a ⊔ b) := fun h' ↦ hy.2 (Or.inl (h' ▸ hO le_sup_right hy.1))

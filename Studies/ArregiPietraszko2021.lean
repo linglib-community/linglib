@@ -644,8 +644,8 @@ theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun 
   let _ : Semigroup Exponent := { (inferInstance : Mul Exponent) with mul_assoc := h }
   obtain ⟨hterm, hspell⟩ := mirror_class9
   obtain ⟨e, -, he, hi⟩ := hspell
-  have := congrArg Exponent.segments
-    (lift_eq_lift_of_lift_of_eq e (FreeMonoid.toList.injective hterm))
+  have := congrArg Exponent.segments (lift_eq_lift_of_lift_of_eq e (x := nonMirror)
+    (y := relative.mvalue) (FreeMonoid.toListEquiv.injective hterm))
   exact absurd (he.symm.trans (this.symm.trans hi)) (by decide)
 
 /-! ### Amalgamation -/

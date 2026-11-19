@@ -591,7 +591,7 @@ theorem not_admissible_compl_shift {b₁ b₂ : ι} (h : b₁ ≠ b₂) :
   · rw [← compl_inter]
     refine ⟨_, lift_mem_shift (insert_nonempty b₁ {b₂}), ?_⟩
     ext s
-    simp [insert_subset_iff]
+    simp [insert_subset_iff, imp_iff_not_or]
   · exact fun h' ↦ h' (show ({b₂} : Set ι) ∈ {s | {b₁} ⊆ s}ᶜ by simpa using h)
       (show ({b₂} : Set ι) ∈ {s | {b₂} ⊆ s} by simp)
   · exact fun h' ↦ h' (show ({b₁} : Set ι) ∈ {s | {b₂} ⊆ s}ᶜ by simpa using h.symm)

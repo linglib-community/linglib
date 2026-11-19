@@ -74,9 +74,11 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 @[reducible] instance : EmptyCollection (State W V M) :=
   inferInstanceAs (EmptyCollection (Set _))
 
-@[reducible] instance : Union (State W V M) := inferInstanceAs (Union (Set _))
+@[reducible] instance : Union (State W V M) :=
+  ⟨fun s s' ↦ (s ∪ s' : Set (Possibility W V (Part M)))⟩
 
-@[reducible] instance : Inter (State W V M) := inferInstanceAs (Inter (Set _))
+@[reducible] instance : Inter (State W V M) :=
+  ⟨fun s s' ↦ (s ∩ s' : Set (Possibility W V (Part M)))⟩
 
 @[reducible] instance : SDiff (State W V M) := inferInstanceAs (SDiff (Set _))
 

@@ -472,9 +472,10 @@ theorem intent_inf_admitsAt [IsForestOrder Node]
     (c d : Concept (Node × Node) (Node × Node) AdmitsAt) :
     (c ⊓ d).intent = c.intent ∪ d.intent :=
   (congrArg (upperPolar AdmitsAt)
-    (congrArg₂ (· ∩ ·) c.isExtent_extent.eq.symm d.isExtent_extent.eq.symm)).trans <|
+    (congrArg₂ (· ∩ · : Set (Node × Node) → _ → _) c.isExtent_extent.eq.symm
+      d.isExtent_extent.eq.symm)).trans <|
     (commandByRelation_union _ _).symm.trans
-      (congrArg₂ (· ∪ ·) c.upperPolar_extent d.upperPolar_extent)
+      (congrArg₂ (· ∪ · : Set (Node × Node) → _ → _) c.upperPolar_extent d.upperPolar_extent)
 
 /-- On a tree the command relations that relations generate form a distributive lattice, with
 intersection and union for its operations. -/

@@ -199,6 +199,9 @@ def bundles (s : Stage) (a : Antecedent) : List (Finset Feature) :=
 /-- The pronoun forms available for an antecedent at a stage. -/
 def forms (s : Stage) (a : Antecedent) : List String := (bundles s a).filterMap spellout
 
+instance (s : Stage) (a : Antecedent) (p : String) : Decidable (p ∈ forms s a) :=
+  inferInstanceAs (Decidable (p ∈ (_ : List String)))
+
 /-! ### Singular *they* across the stages -/
 
 variable {s : Stage} {a : Antecedent}

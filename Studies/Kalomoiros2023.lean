@@ -395,6 +395,7 @@ theorem limitedSymmetryAt_not_and_second :
   refine ⟨fun h w hw hpa ↦ by_contra fun hq ↦ ?_, fun h w hw hq ↦ ?_⟩
   · have := h w hw hq 0 le_rfl
     ls_at this
+    exact hpa this
   · have hpa : w ∈ I p ∩ I a := by_contra fun hpa ↦ hq (h hw hpa)
     obtain ⟨hp, ha⟩ := hpa
     ls_points

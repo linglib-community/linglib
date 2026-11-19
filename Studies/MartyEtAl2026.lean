@@ -181,7 +181,8 @@ theorem mem_truth_clause_iff {σ : Type*} (s : Sentence) (π o : σ → Prop) [D
   · rfl
   · ext e
     cases s <;> simp [Formula.truth, interp, Sentence.scope, Sentence.triggerStandard,
-      Sentence.scopeAt_apply] <;> exact Iff.rfl
+      Sentence.scopeAt_apply]
+    exact imp_iff_not_or.symm
 
 /-- Intermediate projection, (6) and (7c), is George's deployment with concern for
 disappointment: *each* and *exactly one* are true where their scope is true of the children they
