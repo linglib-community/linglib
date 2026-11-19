@@ -60,7 +60,7 @@ scoped notation:50 k:51 " ⊢[" O "] " φ:51 => SetRel.core (O k) φ
 /-- The performative update by `k`'s commitment to `φ` keeps the `φ`-successors of `O k` and
 leaves every other accessibility unchanged ([yamada-2012]'s update by an act of asserting,
 [van-der-leer-2026] Definition 4). -/
-def perform : κ → SetRel W W := fun k' ↦ (O k').restrictRange {v | k' = k → v ∈ φ}
+def perform : κ → SetRel W W := fun k' ↦ {p | p ∈ O k' ∧ (k' = k → p.2 ∈ φ)}
 
 variable {O k φ ψ} {k' : κ}
 
@@ -73,18 +73,16 @@ theorem disjoint_committed_compl [IsSerial (O k)] :
 @[simp] theorem mem_perform {p : W × W} :
     p ∈ perform O k φ k' ↔ p ∈ O k' ∧ (k' = k → p.2 ∈ φ) := .rfl
 
-theorem perform_self : perform O k φ k = (O k).restrictRange φ :=
-  Set.ext fun _ ↦ and_congr_right fun _ ↦ ⟨fun h ↦ h rfl, fun h _ ↦ h⟩
-
-theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := SetRel.restrictRange_subset
+theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := fun _ h ↦ h.1
 
 theorem perform_of_ne (h : k' ≠ k) : perform O k φ k' = O k' :=
   Set.ext fun _ ↦ ⟨And.left, fun hp ↦ ⟨hp, (absurd · h)⟩⟩
 
 /-- After the performative update by `φ`, `k⊢ψ` holds where `k⊢(φ → ψ)` held before
 ([yamada-2012]'s reduction axiom for the asserter's own commitments). -/
-theorem committed_perform : (k ⊢[perform O k φ] ψ) = (k ⊢[O] (φᶜ ∪ ψ)) := by
-  rw [perform_self, SetRel.core_restrictRange]
+theorem committed_perform : (k ⊢[perform O k φ] ψ) = (k ⊢[O] (φᶜ ∪ ψ)) :=
+  Set.ext fun _ ↦ ⟨fun h _ hb ↦ or_iff_not_imp_left.2 fun ht ↦ h ⟨hb, fun _ ↦ not_not.1 ht⟩,
+    fun h _ hb ↦ (h hb.1).resolve_left (not_not.2 (hb.2 rfl))⟩
 
 theorem committed_perform_of_ne (h : k' ≠ k) :
     (k' ⊢[perform O k φ] ψ) = (k' ⊢[O] ψ) := by
@@ -118,12 +116,9 @@ theorem perform_eq_self_iff : perform O k φ = O ↔ (k ⊢[O] φ) = Set.univ :=
   ⟨fun h ↦ (le_perform_iff.1 h.ge).2,
     fun h ↦ le_antisymm (fun k' ↦ perform_subset k') (le_perform_iff.2 ⟨le_rfl, h⟩)⟩
 
-instance {R : SetRel W W} [IsK45Frame R] : IsK45Frame (R.restrictRange φ) where
-  trans _ _ _ h₁ h₂ := ⟨R.trans h₁.1 h₂.1, h₂.2⟩
+instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') where
+  trans _ _ _ h₁ h₂ := ⟨(O k').trans h₁.1 h₂.1, h₂.2⟩
   eucl _ _ _ h₁ h₂ := ⟨IsEuclidean.eucl _ _ _ h₁.1 h₂.1, h₂.2⟩
-
-instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') :=
-  inferInstanceAs (IsK45Frame ((O k').restrictRange _))
 
 /-! ### Public commitment sets -/
 
