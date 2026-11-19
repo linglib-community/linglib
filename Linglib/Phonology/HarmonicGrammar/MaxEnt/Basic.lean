@@ -54,16 +54,10 @@ namespace HarmonicGrammar
 
 variable {C ι : Type*} [Fintype ι]
 
-section LogPartition
-
-variable [Fintype C] (T : C → ι → ℝ) (w : ι → ℝ)
-
 /-- The log-partition function, the log of the normalizing constant of the MaxEnt
 distribution. -/
-noncomputable def logPartition : ℝ :=
+noncomputable def logPartition [Fintype C] (T : C → ι → ℝ) (w : ι → ℝ) : ℝ :=
   log (∑ c, exp (harmony T w c))
-
-end LogPartition
 
 variable [MeasurableSpace C]
 

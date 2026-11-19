@@ -38,7 +38,6 @@ geminates.
 namespace HarmonicGrammar
 
 open OptimalityTheory Real Finset Filter Topology
-open OptimalityTheory
 
 /-! ### Exponentially separated weights -/
 

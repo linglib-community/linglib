@@ -53,17 +53,27 @@ namespace HarmonicGrammar
 
 variable {C ι : Type*} [Fintype ι]
 
-section LogPartition
+/-! ### The log-partition function and the linear term -/
 
-variable [Fintype C] (T : C → ι → ℝ) (w : ι → ℝ)
-
-theorem convexOn_logPartition [Nonempty C] : ConvexOn ℝ Set.univ (logPartition T) := by
+theorem convexOn_logPartition [Fintype C] (T : C → ι → ℝ) [Nonempty C] : ConvexOn ℝ Set.univ (logPartition T) := by
   refine ⟨convex_univ, fun x _ y _ a b ha hb hab ↦ ?_⟩
   have := convexOn_log_sum_exp.2 (Set.mem_univ (harmony T x)) (Set.mem_univ (harmony T y))
     ha hb hab
   simpa [logPartition, harmony_add, harmony_smul] using this
 
-end LogPartition
+private theorem concaveOn_neg_dotProduct (m : ι → ℝ) :
+    ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ m) :=
+  (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip m)) convex_univ).congr fun w _ ↦ by simp
+
+private theorem hasFDerivAt_neg_dotProduct (m w : ι → ℝ) :
+    HasFDerivAt (fun w ↦ -(w ⬝ᵥ m))
+      (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ m)) w :=
+  (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ m)).hasFDerivAt.congr_of_eventuallyEq
+    (Eventually.of_forall fun w ↦ by simp [dotProductBilin, dotProduct_comm])
+
+/-! ## A distribution of candidates -/
+
+section Measure
 
 variable [MeasurableSpace C]
 
@@ -78,7 +88,7 @@ noncomputable def logLikelihood (T : C → ι → ℝ) (p : Measure C) (w : ι �
 
 variable [Fintype C] [MeasurableSingletonClass C] (T : C → ι → ℝ) (w : ι → ℝ)
 
-/-! ### Expected log-probability -/
+/-! ### The log-likelihood of a sample -/
 
 theorem integral_harmony (q : Measure C) [IsFiniteMeasure q] :
     ∫ c, harmony T w c ∂q = -(w ⬝ᵥ ∫ c, T c ∂q) := by
@@ -92,9 +102,7 @@ theorem integral_log_maxEnt_real_singleton (q : Measure C) [IsProbabilityMeasure
   rw [integral_sub .of_finite .of_finite, integral_harmony, integral_const, probReal_univ,
     one_smul]
 
-variable (p : Measure C) [IsProbabilityMeasure p]
-
-theorem logLikelihood_eq :
+theorem logLikelihood_eq (p : Measure C) [IsProbabilityMeasure p] :
     logLikelihood T p w = -(w ⬝ᵥ ∫ c, T c ∂p) - logPartition T w :=
   integral_log_maxEnt_real_singleton T w p
 
@@ -123,32 +131,22 @@ theorem eq_maxEnt_of_measureEntropy_eq {q : Measure C} [IsProbabilityMeasure q]
     q = maxEnt T w :=
   (measureEntropy_eq_measureEntropy_count_tilted_iff (integral_harmony_eq hq)).1 h
 
-variable [Nonempty C]
-
-theorem measureEntropy_maxEnt :
+theorem measureEntropy_maxEnt [Nonempty C] :
     Hm[maxEnt T w] = w ⬝ᵥ (∫ c, T c ∂maxEnt T w) + logPartition T w := by
   simpa using toReal_klDiv_maxEnt_add_measureEntropy T w (maxEnt T w)
 
 /-- The MaxEnt distribution has the greatest entropy among the distributions with its expected
 violations. -/
-theorem isGreatest_measureEntropy_maxEnt :
+theorem isGreatest_measureEntropy_maxEnt [Nonempty C] :
     IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
       ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w}) (Hm[maxEnt T w]) :=
   ⟨⟨maxEnt T w, ⟨inferInstance, rfl⟩, rfl⟩, by
     rintro _ ⟨q, ⟨hq, hv⟩, rfl⟩
     exact measureEntropy_le_maxEnt T w hv⟩
 
-/-! ### Learning -/
+/-! ### Concavity and gradient of the log-likelihood -/
 
-private theorem concaveOn_neg_dotProduct (m : ι → ℝ) :
-    ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ m) :=
-  (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip m)) convex_univ).congr fun w _ ↦ by simp
-
-private theorem hasFDerivAt_neg_dotProduct (m w : ι → ℝ) :
-    HasFDerivAt (fun w ↦ -(w ⬝ᵥ m))
-      (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ m)) w :=
-  (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ m)).hasFDerivAt.congr_of_eventuallyEq
-    (Eventually.of_forall fun w ↦ by simp [dotProductBilin, dotProduct_comm])
+variable (p : Measure C) [IsProbabilityMeasure p] [Nonempty C]
 
 theorem hasFDerivAt_logPartition :
     HasFDerivAt (logPartition T)
@@ -193,6 +191,8 @@ theorem hasDerivAt_logLikelihood_update [DecidableEq ι] (j : ι) :
     (hasDerivAt_update w j (w j)) (Function.update_eq_self j w).symm
   exact this.congr_deriv (by simp [dotProductBilin, dotProduct_single])
 
+/-! ### Maximum likelihood -/
+
 /-- Weights maximize the log-likelihood exactly when their MaxEnt distribution has the observed
 expected violations. -/
 theorem isMaxOn_logLikelihood_iff :
@@ -215,9 +215,11 @@ theorem isGreatest_measureEntropy_of_isMaxOn (h : IsMaxOn (logLikelihood T p) Se
       ∫ c, T c ∂q = ∫ c, T c ∂p}) (Hm[maxEnt T w]) := by
   simpa [(isMaxOn_logLikelihood_iff T w p).1 h] using isGreatest_measureEntropy_maxEnt T w
 
-/-! ### Conditional MaxEnt -/
+end Measure
 
-section Conditional
+/-! ## A conditional grammar -/
+
+section Kernel
 
 variable {X Y : Type*} [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
   [MeasurableSpace Y] [Fintype Y] [MeasurableSingletonClass Y] (T : X × Y → ι → ℝ) (w : ι → ℝ)
@@ -227,15 +229,17 @@ expected log-probability of each output given its input. -/
 noncomputable def condLogLikelihood (p : Measure (X × Y)) (w : ι → ℝ) : ℝ :=
   ∫ z, log ((condMaxEnt T w z.1).real {z.2}) ∂p
 
-variable (p : Measure (X × Y)) [IsProbabilityMeasure p]
+/-! ### The conditional log-likelihood of a sample -/
 
-theorem condLogLikelihood_eq :
+theorem condLogLikelihood_eq (p : Measure (X × Y)) [IsProbabilityMeasure p] :
     condLogLikelihood T p w =
       -(w ⬝ᵥ ∫ z, T z ∂p) - ∑ x, p.fst.real {x} * logPartition (fun y ↦ T (x, y)) w := by
   simp only [condLogLikelihood, integral_fintype .of_finite, Fintype.sum_prod_type, smul_eq_mul,
     condMaxEnt_apply, log_maxEnt_real_singleton, Measure.fst_real_singleton_eq_sum, mul_sub,
     sum_sub_distrib, sum_mul, harmony, dotProduct_sum, dotProduct_smul, mul_neg,
     sum_neg_distrib]
+
+/-! ### The maximum conditional entropy principle -/
 
 variable (ν : Measure X) [IsProbabilityMeasure ν]
 
@@ -284,6 +288,9 @@ theorem isGreatest_condEntropy_condMaxEnt :
     rintro _ ⟨q, ⟨hq, hv⟩, rfl⟩
     exact condEntropy_le_condMaxEnt T w ν hv⟩
 
+/-! ### Concavity and gradient of the conditional log-likelihood -/
+
+variable (p : Measure (X × Y)) [IsProbabilityMeasure p]
 
 theorem concaveOn_condLogLikelihood : ConcaveOn ℝ Set.univ (condLogLikelihood T p) := by
   have hlin := concaveOn_neg_dotProduct (∫ z, T z ∂p)
@@ -319,6 +326,8 @@ theorem hasFDerivAt_condLogLikelihood :
     smul_dotProduct, mul_neg, sum_neg_distrib]
   ring
 
+/-! ### Maximum conditional likelihood -/
+
 /-- Weights maximize the conditional log-likelihood exactly when the expected violations of their
 grammar, over the observed inputs, are the observed ones. -/
 theorem isMaxOn_condLogLikelihood_iff :
@@ -353,6 +362,6 @@ theorem isGreatest_condEntropy_of_isMaxOn (h : IsMaxOn (condLogLikelihood T p) S
   simpa [(isMaxOn_condLogLikelihood_iff T w p).1 h] using
     isGreatest_condEntropy_condMaxEnt T w p.fst
 
-end Conditional
+end Kernel
 
 end HarmonicGrammar
