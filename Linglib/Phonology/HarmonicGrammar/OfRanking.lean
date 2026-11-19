@@ -3,44 +3,34 @@ module
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.Realization
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Core.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
-# Expressivity of OT, Harmonic Grammar, and MaxEnt
+# The weights of a ranking
 
-This file compares the expressive power of Optimality Theory (OT), Harmonic Grammar (HG), and
-maximum-entropy grammar (MaxEnt). With exponentially separated weights the harmony order of HG
-agrees with the lexicographic comparison of OT on violation profiles bounded by the separation, so
-on a finite set of inputs every OT grammar is an HG grammar, and as the weights are scaled up
-MaxEnt concentrates on the OT winner. The containment of OT in HG is
-strict because of *cumulativity*, in which several low-weight violations together outweigh a
-single high-weight one. The comparison follows Smolensky and Legendre, Pater, and Coetzee and
-Pater, and the cumulativity witness is Pater's devoicing of Japanese loanwords, where Itô and
-Mester's OCP-Voice gangs up with a ban on voiced geminates.
-
-Realizability is stated of a `RealizationProblem`, a constraint system with a target output for
-each input. A problem some ranking realizes
-[is realized](##OptimalityTheory.RealizationProblem.IsOTRealizable.isHGRealizable) by a
-non-negative weighting, and [not conversely](##HarmonicGrammar.hg_strictly_contains_ot).
+A ranking of Optimality Theory (OT) can be simulated by Harmonic Grammar (HG) weights. With
+exponentially separated weights, the harmony order agrees with OT's lexicographic comparison on
+violation profiles bounded by the separation. So a problem that some ranking realizes [is
+realized](##OptimalityTheory.RealizationProblem.IsOTRealizable.isHGRealizable) by a non-negative
+weighting, and as the weights are scaled up MaxEnt [concentrates](##HarmonicGrammar.maxent_ot_limit)
+on the OT winner. The containment [is strict](##HarmonicGrammar.hg_strictly_contains_ot) because
+of *cumulativity*: several low-weight violations can together outweigh one high-weight violation.
+The witness is the devoicing of Japanese loanwords, where OCP-Voice gangs up with a ban on voiced
+geminates.
 
 ## References
 
-* [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
-  (1993)][prince-smolensky-1993]
-* [P. Smolensky and G. Legendre, *The Harmonic Mind: From Neural Computation to
-  Optimality-Theoretic Grammar* (2006)][smolensky-legendre-2006]
-* [J. Pater, *Weighted Constraints in Generative Linguistics* (2009)][pater-2009]
-* [A. W. Coetzee and J. Pater, *The Place of Variation in Phonological Theory*
-  (2011)][coetzee-pater-2011]
-* [J. Itô and A. Mester, *The Phonology of Voicing in Japanese* (1986)][ito-mester-1986]
-* [S. Kawahara, *A Faithfulness Ranking Projected from a Perceptibility Scale: The Case of
-  [+voice] in Japanese* (2006)][kawahara-2006]
-* [B. Hayes and C. Wilson, *A Maximum Entropy Model of Phonotactics and Phonotactic Learning*
-  (2008)][hayes-wilson-2008]
-* [B. Tesar and P. Smolensky, *The Learnability of Optimality Theory* (1995)][tesar-smolensky-1995]
-* [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
-* [J. Riggle, *Violation Semirings in Optimality Theory* (2009)][riggle-2009b]
+* [prince-smolensky-1993]
+* [smolensky-legendre-2006]
+* [pater-2009]
+* [coetzee-pater-2011]
+* [ito-mester-1986]
+* [kawahara-2006]
+* [hayes-wilson-2008]
+* [tesar-smolensky-1995]
+* [prince-2002]
+* [riggle-2009b]
 -/
 
 @[expose] public section
@@ -48,16 +38,6 @@ non-negative weighting, and [not conversely](##HarmonicGrammar.hg_strictly_conta
 namespace HarmonicGrammar
 
 open OptimalityTheory Real Finset Filter Topology
-open OptimalityTheory
-
-/-! ### OT → HG weights
-
-An OT ranking is a `List (Constraint C)`; as a `ConstraintSet C (Fin ranking.length)` it is just
-`ranking.get`. The Harmonic-Grammar reading of that ranking with violation bound
-`M` weights coordinate `i` (0 = highest) by `(M+1)^(n−1−i)` — the `expWeights`
-vector below. So the HG harmony of an OT ranking is
-`harmonyScore ranking.get (expWeights ranking.length M)`, with no separate
-weighted-constraint object. -/
 
 /-! ### Exponentially separated weights -/
 
@@ -133,9 +113,6 @@ def Ganging (w₁ w₂ w₃ : ℝ) : Prop :=
   w₁ < w₃ ∧ w₂ < w₃ ∧
   w₃ < w₁ + w₂
 
-theorem ganging_example : Ganging 2 2 3 := by
-  unfold Ganging; norm_num
-
 theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℝ)
     (hw : ExponentiallySeparated w 1) (k : Fin n) : ∑ i ∈ Ioi k, w i < w k := by
   simpa using hw k
@@ -159,7 +136,7 @@ private theorem argmin_profile_eq_argmax {C : Type*} {n M : ℕ} {w : Fin n → 
     (hM : ∀ c ∈ s, ∀ p, u c p ≤ M) :
     s.argmin (fun c ↦ toLex (u c)) = s.argmax (harmonyScore (fun p c ↦ u c p) w) :=
   Finset.argmin_eq_argmax_of_le_iff fun a ha b hb ↦ by
-    rw [harmonyScore, harmonyScore, neg_le_neg_iff]
+    rw [harmonyScore_def, harmonyScore_def, neg_le_neg_iff]
     exact ((Pi.strictMonoOn_sum_mul hw).le_iff_le (hM a ha) (hM b hb)).symm
 
 /-- With exponentially separated weights, read onto the constraints along the ranking and
@@ -173,7 +150,7 @@ theorem _root_.OptimalityTheory.Ranking.Enumeration.optimal_eq_argmax_harmonySco
     argmin_profile_eq_argmax hw (fun c p ↦ v c (σ p)) s fun c hc p ↦ hM c hc (σ p)]
   congr 1
   funext c
-  simp only [harmonyScore, comp_equiv_symm_dotProduct]
+  simp only [harmonyScore_def, comp_equiv_symm_dotProduct]
   rfl
 
 /-- With exponentially separated weights bounding every violation, Eval along a list of
@@ -269,7 +246,7 @@ theorem hg_strictly_contains_ot :
       target_mem := fun _ _ ↦ Finset.mem_univ _ },
     ⟨![3, 2, 2], fun k ↦ by fin_cases k <;> norm_num, ?_⟩, ?_⟩
   · refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun o _ hne ↦ ?_⟩
-    simp only [harmonyScore, dotProduct, Fin.sum_univ_three]
+    simp only [harmonyScore_def, dotProduct, Fin.sum_univ_three]
     fin_cases i <;> cases o <;>
       first
       | (exfalso; exact hne rfl)

@@ -29,6 +29,8 @@ vanishes on the identity candidate, and a constraint over an opaque candidate ty
 * `ConstraintSet C ι`: a grammar's constraint set, CON, a family of constraints indexed by `ι`.
 * `Constraint.joint`, `ConstraintSet.joint`: joint evaluation on output tuples by constraint
   summation.
+* `ConstraintSet.violations`, `ConstraintSet.violationDiff`: the violation vector of a candidate
+  and the violation difference of two candidates, with entries in a ring.
 * `ConstraintSystem I O ι`: a constraint system, each input's candidates (GEN) and their marks
   on the constraints (CON); `ConstraintSystem.joint` its single-input Minkowski sum.
 
@@ -136,6 +138,21 @@ def joint (inputs : κ → I) (con : ConstraintSet (I × O) ι) : ConstraintSet 
 
 @[simp] theorem joint_apply (inputs : κ → I) (con : ConstraintSet (I × O) ι) (j : ι) :
     con.joint inputs j = (con j).joint inputs := rfl
+
+variable {R : Type*} [Ring R]
+
+/-- The violation vector `C(c)` of a candidate, its violations of each constraint, a row of a
+tableau. -/
+def violations (con : ConstraintSet C ι) (c : C) : ι → R :=
+  fun j ↦ (con j c : R)
+
+@[simp] theorem violations_apply (con : ConstraintSet C ι) (c : C) (j : ι) :
+    con.violations c j = (con j c : R) := rfl
+
+/-- The violation difference `C(a) - C(b)` of two candidates, a row of a comparative
+tableau. -/
+def violationDiff (con : ConstraintSet C ι) (a b : C) : ι → R :=
+  fun j ↦ (con j a : R) - con j b
 
 end ConstraintSet
 
