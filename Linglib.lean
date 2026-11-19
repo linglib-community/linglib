@@ -804,7 +804,6 @@ import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.CCG.Cat
 import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
-import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Category.Adjective.Basic

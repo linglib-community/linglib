@@ -8,27 +8,13 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # CCG categories
 
-The categories of combinatory categorial grammar are built from atoms by a slash that looks to
-the right or to the left and carries one of Baldridge's modalities. Every category is uniquely an
-atom, its *target*, followed by a sequence of *arguments*, slash–category pairs; Kuhlmann, Koller
-and Satta write it `A|ₘXₘ ⋯ |₁X₁`, and the composition rules of every CCG formalism have the
-form `X/Y Yβ ⇒ Xβ` over an argument sequence `β`. Categories are stated over an arbitrary type
-`α` of atoms, so a grammar with featured atoms instantiates its own inventory.
-
-## Main definitions
-
-* `CCG.Modality`: the slash modalities, a bounded order with `dot = ⊥`, `star = ⊤`, and
-  `diamond` and `cross` incomparable.
-* `CCG.Cat`: categories over a type `α` of atoms.
-* `CCG.Cat.Arg`, `CCG.Cat.pushArgs`: an argument, and the category `xβ`.
-* `CCG.Cat.target`, `CCG.Cat.args`: the target and the arguments of a category.
-* `CCG.Cat.equivTargetArgs`: a category is its target together with its arguments.
-* `CCG.Cat.count`: the count of an atom.
-
-## Main statements
-
-* `CCG.Cat.atom_pushArgs_eq_iff`: a category is `aβ` exactly when `a` is its target and `β` its
-  arguments.
+A category of combinatory categorial grammar is an atom, such as `S` or `NP`, or a slash category.
+`X/Y` combines with a `Y` on its right to give an `X`, and `X\Y` with a `Y` on its left. Each
+slash carries a modality, which limits the rules the slash may take part in. Every category is
+in exactly one way an atom, its *target*, followed by a sequence of *arguments*, each a slash
+with the category it seeks (`Cat.equivTargetArgs`). A transitive verb `(S\NP)/NP` has target `S`
+and two arguments. Categories are stated over an arbitrary type of atoms, so that a grammar
+chooses its own.
 
 ## Notation
 
@@ -46,7 +32,6 @@ fully parenthesized (`(S \ NP) / NP`).
 * [steedman-2019]
 * [baldridge-2002]
 * [kuhlmann-koller-satta-2015]
-* [van-benthem-1986]
 -/
 
 @[expose] public section
@@ -211,33 +196,6 @@ def forwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
 target `t`. -/
 def backwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
   t \ (t / x)
-
-variable [DecidableEq α]
-
-/-! ### The count invariant -/
-
-/-- The count of the atom `a` in a category ([van-benthem-1986]) adds `1` for each occurrence in
-result position and subtracts `1` for each occurrence in argument position, so that every
-combinatory rule preserves it (`CCG.Rule.count_eq`). -/
-def count (a : α) : Cat α → ℤ
-  | .atom b => if b = a then 1 else 0
-  | .slash _ x _ y => count a x - count a y
-
-@[simp] theorem count_atom (a b : α) : count a (atom b) = if b = a then 1 else 0 := rfl
-
-@[simp] theorem count_slash (a : α) (s : Edge) (x y : Cat α) (m : Modality) :
-    count a (slash s x m y) = count a x - count a y := rfl
-
-@[simp] theorem count_push (a : α) (x : Cat α) (b : Arg α) :
-    (x.push b).count a = x.count a - b.cat.count a := rfl
-
-theorem count_pushArgs (a : α) (x : Cat α) (β : List (Arg α)) :
-    (x.pushArgs β).count a = x.count a - (β.map (·.cat.count a)).sum := by
-  induction β generalizing x with
-  | nil => simp
-  | cons b β ih =>
-    simp only [pushArgs_cons, ih, count_push, List.map_cons, List.sum_cons]
-    omega
 
 end Cat
 

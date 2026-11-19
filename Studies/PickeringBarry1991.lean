@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Data.List.OfFn
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Syntax.CCG.Interface
+public import Linglib.Syntax.CCG.Semantics
+public import Linglib.Syntax.CCG.Invariant
 public import Linglib.Data.Examples.PickeringBarry1991
 public import Linglib.Data.Examples.Readers
 

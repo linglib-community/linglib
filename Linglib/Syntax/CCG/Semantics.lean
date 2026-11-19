@@ -5,35 +5,22 @@ public import Linglib.Semantics.Composition.Effect
 public import Linglib.Semantics.Composition.Basic
 
 /-!
-# The CCG syntax-semantics interface
+# The semantics of CCG derivations
 
-A typing of the atoms extends to every category, sending `X/Y` and `X\Y` to the function type
-from the type of `Y` to that of `X` and ignoring slash modalities, which control combinatory
-potential rather than meaning. Since a `Derivation` is indexed by its category, its
-interpretation needs no run-time category checks: a rule instance `X/Y Yβ ⇒ Xβ` composes its
-daughters' meanings beneath the arguments `β`, Curry's combinator `Bⁿ` for `n` the length of `β`,
-so application is function application and first-order composition is Steedman's `B`.
-A lexical entry of a category pairs a word with a logical form of the category's type, a function
-of what the constants of a signature denote, so an entry is the same in every model. Type-raising
-and coordination are lexical, so their logical forms (the Montague lift, generalized conjunction)
-are entries' logical forms. The combinatory rules are the binary rules of a grammar over
-categories, and the meaning of a derivation whose leaves are lexical entries is its value as a
-derivation of that grammar.
+Each category has a semantic type. An atom has the type the grammar gives it, and `X/Y` and
+`X\Y` both have the type of functions from the type of `Y` to the type of `X`: the direction and
+the modality of a slash matter to word order and not to meaning. A lexical entry pairs a word
+with a logical form of the type of its category. The meaning of a derivation is computed from
+the meanings of its leaves: application applies a function to its argument, and composition
+composes two functions beneath the arguments the rule passes on. Composition of functions is
+associative, so [derivations that differ only in their bracketing have the same
+meaning](##CCG.Derivation.interp_fcomp_assoc), the *spurious ambiguity* of CCG.
 
-## Main definitions
+## Implementation notes
 
-* `CCG.Cat.toTy`: the semantic type of a category under a typing of its atoms.
-* `CCG.LexEntry`: a lexical entry of a category, a word with a logical form.
-* `CCG.composeUnder`: composition beneath an argument sequence, Curry's `Bⁿ`.
-* `CCG.grammar`: the combinatory rules of a rule system as a grammar over categories.
-* `CCG.Derivation.interp`: the meaning of a derivation over lexical entries in an interpretation
-  of the constants, and `CCG.Derivation.words`, the derivation over its words.
-
-## Main statements
-
-* `CCG.Derivation.interp_fcomp_assoc`, `CCG.Derivation.interp_fapp_fcomp` and their backward
-  mirrors: in every rule system, reassociating a composition-application chain does not change
-  its interpretation, the source of CCG's spurious ambiguity.
+A logical form is a function of what the constants of a signature denote, so an entry is the same
+in every model. The combinatory rules are the binary rules of a many-sorted grammar over the
+categories, and the meaning of a derivation is its value as a derivation of that grammar.
 
 ## TODO
 

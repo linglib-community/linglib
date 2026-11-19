@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.CCG.Grammar
+public import Linglib.Syntax.CCG.Invariant
 public import Linglib.Core.Computability.NonContextFree.AnBnCn
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.List.Basic

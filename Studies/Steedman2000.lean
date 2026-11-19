@@ -5,9 +5,11 @@ public import Linglib.Fragments.English.Coordination
 public import Linglib.Semantics.Coordinator
 public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Syntax.CCG.Grammar
-public import Linglib.Syntax.CCG.Interface
+public import Linglib.Syntax.CCG.Semantics
+public import Linglib.Syntax.CCG.Invariant
 public import Linglib.Syntax.CCG.Intonation
 public import Linglib.Syntax.WordOrder
+public import Mathlib.GroupTheory.Perm.Basic
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -36,6 +38,7 @@ of their constants.
 ## References
 
 * [steedman-2000]
+* [pentus-1993]
 * [ross-1970]
 * [bayer-1996]
 * [kayne-1998]
@@ -138,6 +141,19 @@ def john_sleeps : Derivation Entry (.multimodal 2) S :=
 
 def john_sees_mary : Derivation Entry (.multimodal 2) S :=
   .bapp (.lex NP Lex.john) (.fapp (.lex TV Lex.sees) (.lex NP Lex.mary))
+
+-- The canonical derivation is harmonic, with the verb between its arguments.
+example : john_sees_mary.IsHarmonic ∧ john_sees_mary.cats = [NP, TV, NP] := by decide
+
+/-- Slash direction enforces word order: no harmonic derivation of a sentence, in any rule system
+and over any lexicon, has the transitive verb before both of its arguments. The categories
+`TV`, `NP`, `NP` have the counts of a sentence, and it is their order that rules them out. -/
+theorem cats_ne_verb_initial {W : Cat Atom → Type*} {R : RuleSystem Atom} (d : Derivation W R S)
+    (h : d.IsHarmonic) : d.cats ≠ [TV, NP, NP] := fun hc ↦ by
+  have := d.eval_eq_prod_cats (G := Equiv.Perm (Fin 3))
+    (fun | .S => Equiv.swap 0 1 | .NP => Equiv.swap 1 2) h
+  rw [hc] at this
+  exact absurd this (by decide)
 
 /-! ### Non-constituent coordination -/
 
@@ -642,7 +658,7 @@ words must agree on the INFORMATION feature. -/
 
 section Intonation
 
-open CCG.Intonation Prosody
+open Prosody
 
 /-- The marking of "(ANNA married)(MANNY)": the theme accent on "Anna", the rheme accent on
 "Manny" and the null tone on "married". -/
