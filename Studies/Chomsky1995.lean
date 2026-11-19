@@ -118,12 +118,12 @@ def IsVisible (x : α) : Prop := IsMinimalProjection H x ∨ IsMaximalProjection
 /-- In bare c-command, the book's (157), a visible node c-commands each node disconnected from it
 that every node properly dominating it dominates. -/
 def bareCCommand : SetRel α α :=
-  {p | IsVisible H p.1 ∧ ¬ p.1 ≤ p.2 ∧ ¬ p.2 ≤ p.1 ∧ p.1 ~[commandRelation univ] p.2}
+  {p | IsVisible H p.1 ∧ IncompRel (· ≤ ·) p.1 p.2 ∧ p.1 ~[commandRelation univ] p.2}
 
 variable {H} {R : SetRel α α} {T : Set α} {a b h j m p x J K L P : α}
 
 theorem mem_bareCCommand : a ~[bareCCommand H] b ↔
-    IsVisible H a ∧ ¬ a ≤ b ∧ ¬ b ≤ a ∧ ∀ x < a, x ≤ b := by
+    IsVisible H a ∧ IncompRel (· ≤ ·) a b ∧ ∀ x < a, x ≤ b := by
   simp [bareCCommand, mem_commandRelation]
 
 theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Prop} (e : α ≃o β)
@@ -136,8 +136,8 @@ theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Pr
   rw [show (e a, e b) = Prod.map e e (a, b) from rfl,
     (e.injective.prodMap e.injective).mem_set_image]
   refine mem_bareCCommand.trans (Iff.trans ?_ mem_bareCCommand.symm)
-  rw [hv, e.le_iff_le, e.le_iff_le, e.surjective.forall]
-  simp only [e.lt_iff_lt, e.le_iff_le]
+  rw [hv, e.surjective.forall]
+  simp only [IncompRel, e.lt_iff_lt, e.le_iff_le]
 
 /-- Bare c-command commutes with order isomorphisms, so the LCA in the bare theory ignores the
 order of sisters (note 108). -/
@@ -153,14 +153,14 @@ variable [IsForestOrder α]
 
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
-  ⟨hv, CovBy.not_le_of_ne ha hb hab, CovBy.not_le_of_ne hb ha hab.symm,
+  ⟨hv, ⟨CovBy.not_le_of_ne ha hb hab, CovBy.not_le_of_ne hb ha hab.symm⟩,
     mem_commandRelation_of_covBy ha hb.le⟩
 
 /-- A node does not precede a visible sister, so two visible sisters are unordered, as the
 terminals `m` and `p` of (154). -/
 theorem not_precedes_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hvb : IsVisible H b) :
     ¬ Precedes (bareCCommand H) a b := by
-  refine not_mem_dominanceImage_asymmetrize_of_covBy (fun _ _ h ↦ ⟨h.2.1, h.2.2.1⟩)
+  refine not_mem_dominanceImage_asymmetrize_of_covBy (fun _ _ h ↦ h.2.1)
     (fun h ↦ ?_) ha hb
   rcases eq_or_ne a b with rfl | hab
   · exact h
@@ -197,29 +197,30 @@ theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d
 /-- Every node a visible specifier dominates precedes the head. -/
 theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvJ : IsVisible H J) (hj : J ≤ j) : Precedes (bareCCommand H) j h := by
-  refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, fun hJh ↦ ?_, fun hhJ ↦ ?_,
+  refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, ⟨fun hJh ↦ ?_, fun hhJ ↦ ?_⟩,
     fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
   · exact (IsForestOrder.le_total_of_le_of_le hJh hh.le).elim (CovBy.not_le_of_ne hJ hL hJL)
       (CovBy.not_le_of_ne hL hJ hJL.symm)
   · exact CovBy.not_le_of_ne hL hJ hJL.symm (hh.le.trans hhJ)
-  · exact CovBy.not_le_of_ne hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
+  · exact CovBy.not_le_of_ne hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2 L hh.lt)
 
 /-- A visible head precedes the nodes properly inside its complement but not the complement
 itself, so the order specifier-head-complement needs a branching complement. -/
 theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hvh : IsVisible H h)
     (hp : P < p) : Precedes (bareCCommand H) h p := by
-  refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2 ⟨hvh, fun hhp ↦ ?_, fun hph ↦ ?_,
-    fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
+  refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2
+    ⟨hvh, ⟨fun hhp ↦ ?_, fun hph ↦ ?_⟩, fun x hx ↦
+      (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
   · exact (IsForestOrder.le_total_of_le_of_le hhp hp.le).elim (CovBy.not_le_of_ne hh hP hhP)
       (CovBy.not_le_of_ne hP hh hhP.symm)
   · exact CovBy.not_le_of_ne hP hh hhP.symm (hp.le.trans hph)
-  · exact CovBy.not_le_of_ne hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
+  · exact CovBy.not_le_of_ne hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2 P hp)
 
 /-- When the X′ is invisible the head precedes nothing in the specifier. -/
 theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvL : ¬ IsVisible H L) (hj : J ≤ j) : ¬ Precedes (bareCCommand H) h j := by
   rintro ⟨⟨x, y⟩, ⟨hxy, -⟩, hxh, hyj⟩
-  obtain ⟨hvx, hn₁, hn₂, hc⟩ := mem_bareCCommand.1 hxy
+  obtain ⟨hvx, ⟨hn₁, hn₂⟩, hc⟩ := mem_bareCCommand.1 hxy
   rcases hxh.eq_or_lt with rfl | hxh
   · exact (IsForestOrder.le_total_of_le_of_le (hc L hh.lt |>.trans hyj) hj).elim
       (CovBy.not_le_of_ne hL hJ hJL.symm) (CovBy.not_le_of_ne hJ hL hJL)
@@ -235,13 +236,13 @@ theorem Linearizes.not_isVisible (hl : Linearizes (bareCCommand H) T) (hJ : K �
     (hhT : h ∈ T) : ¬ IsVisible H L := fun hvL ↦ by
   have hah : Precedes (bareCCommand H) a h := precedes_of_spec hJ hL hJL hh hvJ hα.le
   have hha : Precedes (bareCCommand H) h a := precedes_iff.2 ⟨L, hh.le, a, le_rfl,
-    mem_bareCCommand.2 ⟨hvL, fun hLa ↦ ?_, fun haL ↦ ?_,
+    mem_bareCCommand.2 ⟨hvL, ⟨fun hLa ↦ ?_, fun haL ↦ ?_⟩,
       fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
   · exact (linearizes_iff.1 hl).2.1 a haT ((linearizes_iff.1 hl).2.2 a haT h hhT a haT hah hha)
   · exact (IsForestOrder.le_total_of_le_of_le hLa hα.le).elim (CovBy.not_le_of_ne hL hJ hJL.symm)
       (CovBy.not_le_of_ne hJ hL hJL)
   · exact CovBy.not_le_of_ne hJ hL hJL (hα.le.trans haL)
-  · exact CovBy.not_le_of_ne hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)
+  · exact CovBy.not_le_of_ne hJ hL hJL ((mem_bareCCommand.1 hc).2.2 J hα)
 
 end Bare
 

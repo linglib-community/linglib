@@ -335,15 +335,15 @@ variable {t} {q g : t.toRoseTree.Positions}
 
 /-- Between positions neither of which dominates the other, closeness under the branching
 positions is asymmetric c-command. -/
-theorem above_branching_lt_iff (hqg : ¬ q ≤ g) (hgq : ¬ g ≤ q) :
+theorem above_branching_lt_iff (h : IncompRel (· ≤ ·) q g) :
     t.above t.branching q < t.above t.branching g ↔
       t.toRoseTree.CCommands q g ∧ ¬ t.toRoseTree.CCommands g q := by
   rw [← Finset.coe_ssubset, coe_above, coe_above]
-  exact ancestors_ssubset_ancestors_iff_cCommands hqg hgq
+  exact ancestors_ssubset_ancestors_iff_cCommands h
 
 theorem above_branching_lt_of_cCommands (hqg : t.toRoseTree.CCommands q g)
     (hgq : ¬ t.toRoseTree.CCommands g q) : t.above t.branching q < t.above t.branching g :=
-  (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
+  (above_branching_lt_iff hqg.2).2 ⟨hqg, hgq⟩
 
 end PlanarSyntacticObject
 

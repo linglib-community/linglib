@@ -55,7 +55,7 @@ variable {C W : Type*}
 /-- A node commands another (1) when neither dominates the other and the S node most immediately
 dominating the first dominates the second. -/
 def Commands (t : Tree Cat W) (a b : GornAddress) : Prop :=
-  (a, b) ∈ sCommand t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
+  (a, b) ∈ sCommand t ∧ IncompRel (· ≤ ·) a b
 
 /-- Precede-and-command is the domain relation of the received view (5). -/
 def PrecedesAndCommands (t : Tree Cat W) (a b : GornAddress) : Prop :=

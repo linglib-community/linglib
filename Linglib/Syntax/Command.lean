@@ -239,8 +239,8 @@ asymmetrically commands, the Minimal Link Condition. -/
 theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
     MinimalFor (· ∈ S) (ancestors P) a ↔
       a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
-  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ hjk hkj ↦
-    ancestors_ssubset_ancestors_iff (fun h ↦ hjk h.le) fun h ↦ hkj h.le
+  minimalFor_iff_of_isAntichain hS (fun _ h ↦ h.2 h.1) fun _ _ h ↦
+    ancestors_ssubset_ancestors_iff h.not_lt h.not_gt
 
 end Closeness
 
@@ -279,7 +279,7 @@ variable [PartialOrder α] [IsForestOrder α] {R : SetRel α α} {a b m : α}
 /-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
 relation between disconnected nodes that relates them both ways. -/
 theorem not_mem_dominanceImage_asymmetrize_of_covBy
-    (hR : ∀ ⦃x y⦄, x ~[R] y → ¬ x ≤ y ∧ ¬ y ≤ x) (hab : a ~[R] b → b ~[R] a)
+    (hR : ∀ ⦃x y⦄, x ~[R] y → IncompRel (· ≤ ·) x y) (hab : a ~[R] b → b ~[R] a)
     (ha : m ⋖ a) (hb : m ⋖ b) : ¬ a ~[dominanceImage R.asymmetrize] b := by
   rw [mem_dominanceImage]
   rintro ⟨x, hxa, y, hyb, hxy, hyx⟩
@@ -386,15 +386,16 @@ theorem mem_commandRelation_isBranching_iff {t : RoseTree β} (a b : t.Positions
     (fun _ ha _ hxa ↦ .inl (isLowerSet_validPaths t hxa.le ha)) _ a b
 
 /-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
-dominating `a` dominates `b`: [reinhart-1976]'s c-command, `RoseTree.cCommand` without dominance. -/
+dominating `a` dominates `b`: [reinhart-1976]'s c-command, `RoseTree.cCommand` between
+incomparable positions. -/
 def CCommands (t : RoseTree β) (a b : GornAddress) : Prop :=
-  a ~[t.cCommand] b ∧ ¬ a ≤ b ∧ ¬ b ≤ a
+  a ~[t.cCommand] b ∧ IncompRel (· ≤ ·) a b
 
 instance (t : RoseTree β) : DecidableRel t.CCommands :=
-  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ IncompRel _ _ _))
 
 theorem cCommands_iff {t : RoseTree β} {a b : GornAddress} :
-    t.CCommands a b ↔ a ~[t.cCommand] b ∧ ¬ a ≤ b ∧ ¬ b ≤ a := Iff.rfl
+    t.CCommands a b ↔ a ~[t.cCommand] b ∧ IncompRel (· ≤ ·) a b := Iff.rfl
 
 /-- The c-command domain of a position, the positions it c-commands. -/
 def cCommandDomain (t : RoseTree β) (a : GornAddress) : Set GornAddress := {b | t.CCommands a b}
@@ -426,12 +427,11 @@ theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : GornAddress} (hc : m �
 /-- Between positions neither of which dominates the other, strict closeness under the branching
 positions is asymmetric c-command. -/
 theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : GornAddress}
-    (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
+    (h : IncompRel (· ≤ ·) a b) :
     ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔
       t.CCommands a b ∧ ¬ t.CCommands b a := by
-  rw [ancestors_ssubset_ancestors_iff (fun h ↦ hab h.le) fun h ↦ hba h.le, cCommands_iff,
-    cCommands_iff]
-  tauto
+  simp only [ancestors_ssubset_ancestors_iff h.not_lt h.not_gt, cCommands_iff, h, h.symm,
+    and_true]
 
 theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : GornAddress) :
     IsBranchingAt (t.map f) p ↔ IsBranchingAt t p := by
@@ -462,8 +462,8 @@ theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a
   have hlt : ¬ c < a := fun h ↦ hca h.le
   have hab : ¬ a ≤ b := fun h ↦ (IsForestOrder.le_total_of_le_of_le h hcb).elim hac hca
   have hba : ¬ b ≤ a := fun h ↦ hca (hcb.trans h)
-  simp only [CCommands, mem_commandRelation_iff_of_le hcb hlt, mem_cCommand_replaceAt hlt, hab,
-    hba, hac, hca, not_false_eq_true, and_true]
+  simp only [CCommands, IncompRel, mem_commandRelation_iff_of_le hcb hlt,
+    mem_cCommand_replaceAt hlt, hab, hba, hac, hca, not_false_eq_true, and_true]
 
 theorem cCommands_replaceAt_self : CCommands (t.replaceAt c new) c a ↔ CCommands t c a := by
   simp only [CCommands, mem_cCommand_replaceAt (lt_irrefl c)]
