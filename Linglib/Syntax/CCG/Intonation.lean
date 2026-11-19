@@ -25,8 +25,8 @@ into phrases, each of which must be a constituent.
 
 [steedman-2000] treats two of the pitch accents of [pierrehumbert-1980], L+H* and H*, so the
 accents are given as a function of the two values, `Info.accent`. Boundary tones are elements
-of the string in the book, functions from a theme- or rheme-marked category into a phrasal category with a third value of
-the feature that unifies only with itself. They are not modelled: a boundary is represented by
+of the string in the book, functions from a theme- or rheme-marked category into a phrasal
+category with a third value of the feature that unifies only with itself. They are not modelled: a boundary is represented by
 where an utterance is divided, and the feature has the two values that accents assign.
 
 ## TODO
@@ -94,39 +94,40 @@ variable {T α : Type*} {R : RuleSystem α} {c c' : Cat α} (mark : T → InfoFe
 /-- The INFORMATION feature a derivation projects when `mark` gives the feature of each word.
 A leaf has the feature of its word and a combination the unification of its daughters'
 features, `⊤` when a theme meets a rheme. -/
-def infoFeature : {c : Cat α} → Derivation T R c → WithTop InfoFeature
-  | _, .lex t _ => (mark t : InfoFeature)
+def infoFeature : {c : Cat α} → Derivation (fun _ ↦ T) R c → WithTop InfoFeature
+  | _, .lex _ t => (mark t : InfoFeature)
   | _, .node _ d₁ d₂ => d₁.infoFeature ⊔ d₂.infoFeature
 
-@[simp] theorem infoFeature_lex (t : T) (c : Cat α) :
-    (lex (R := R) t c).infoFeature mark = (mark t : InfoFeature) := rfl
+@[simp] theorem infoFeature_lex (c : Cat α) (t : T) :
+    (lex (W := fun _ ↦ T) (R := R) c t).infoFeature mark = (mark t : InfoFeature) := rfl
 
-@[simp] theorem infoFeature_node {l r : Cat α} (ru : Rule R l r c) (d₁ : Derivation T R l)
-    (d₂ : Derivation T R r) :
+@[simp] theorem infoFeature_node {l r : Cat α} (ru : Rule R l r c) (d₁ : Derivation (fun _ ↦ T) R l)
+    (d₂ : Derivation (fun _ ↦ T) R r) :
     (node ru d₁ d₂).infoFeature mark = d₁.infoFeature mark ⊔ d₂.infoFeature mark := rfl
 
 variable {mark}
 
 /-- The feature of a derivation is the least bound of the features of its words. -/
-theorem infoFeature_le_iff {d : Derivation T R c} {x : WithTop InfoFeature} :
+theorem infoFeature_le_iff {d : Derivation (fun _ ↦ T) R c} {x : WithTop InfoFeature} :
     d.infoFeature mark ≤ x ↔ ∀ t ∈ d.yield, (mark t : WithTop InfoFeature) ≤ x := by
   induction d with
-  | lex t c => simp [yield]
+  | lex c t => simp [yield]
   | node ru d₁ d₂ ih₁ ih₂ => simp [yield, ih₁, ih₂, or_imp, forall_and]
 
-theorem le_infoFeature {d : Derivation T R c} {t : T} (ht : t ∈ d.yield) :
+theorem le_infoFeature {d : Derivation (fun _ ↦ T) R c} {t : T} (ht : t ∈ d.yield) :
     (mark t : WithTop InfoFeature) ≤ d.infoFeature mark :=
   infoFeature_le_iff.1 le_rfl t ht
 
 /-- Derivations of one string project one feature, whatever their combinatory structure and
 their categories. -/
-theorem infoFeature_eq_of_yield_eq {d : Derivation T R c} {d' : Derivation T R c'}
-    (h : d.yield = d'.yield) : d.infoFeature mark = d'.infoFeature mark :=
+theorem infoFeature_eq_of_yield_eq {d : Derivation (fun _ ↦ T) R c}
+    {d' : Derivation (fun _ ↦ T) R c'} (h : d.yield = d'.yield) : d.infoFeature mark = d'.infoFeature mark :=
   eq_of_forall_ge_iff fun x ↦ by rw [infoFeature_le_iff, infoFeature_le_iff, h]
 
 /-- A derivation over two words whose features do not unify clashes. -/
-theorem infoFeature_eq_top_of_not_compat {d : Derivation T R c} {t u : T} (ht : t ∈ d.yield)
-    (hu : u ∈ d.yield) (h : ¬ Compat (mark t) (mark u)) : d.infoFeature mark = ⊤ := by
+theorem infoFeature_eq_top_of_not_compat {d : Derivation (fun _ ↦ T) R c} {t u : T}
+    (ht : t ∈ d.yield) (hu : u ∈ d.yield) (h : ¬ Compat (mark t) (mark u)) :
+    d.infoFeature mark = ⊤ := by
   by_contra hd
   obtain ⟨x, hx⟩ := WithTop.ne_top_iff_exists.1 hd
   exact h (.of_le (WithTop.coe_le_coe.1 (hx ▸ le_infoFeature ht))

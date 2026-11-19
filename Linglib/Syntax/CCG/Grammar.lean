@@ -180,7 +180,7 @@ tree in its rule system over its lexicon: the trees are the proof-relevant calcu
 `Derivation.interp` consumes), the relation is its string-language shadow. -/
 
 /-- Every `Derivation` tree in a grammar's rule system over its lexicon witnesses derivability. -/
-theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation T G.rules c)
+theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation (fun _ ↦ T) G.rules c)
     (h : d.LexIn G.lexicon) : G.Derives c d.yield := by
   induction d with
   | lex => exact .lex h
@@ -192,10 +192,10 @@ theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation T G.r
 /-- Derivability is the tree calculus: a grammar derives `w` at `c` iff some derivation in its
 rule system over its lexicon has yield `w`. -/
 theorem Grammar.derives_iff {G : Grammar T α} {c : Cat α} {w : List T} :
-    G.Derives c w ↔ ∃ d : Derivation T G.rules c, d.LexIn G.lexicon ∧ d.yield = w := by
+    G.Derives c w ↔ ∃ d : Derivation (fun _ ↦ T) G.rules c, d.LexIn G.lexicon ∧ d.yield = w := by
   refine ⟨fun h ↦ ?_, fun ⟨d, hl, hy⟩ ↦ hy ▸ d.derives hl⟩
   induction h with
-  | @lex t c h => exact ⟨.lex t c, h, rfl⟩
+  | @lex t c h => exact ⟨.lex c t, h, rfl⟩
   | forward β _ _ hr ih₁ ih₂ =>
     obtain ⟨d₁, h₁, rfl⟩ := ih₁
     obtain ⟨d₂, h₂, rfl⟩ := ih₂
