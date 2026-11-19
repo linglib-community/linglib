@@ -5,24 +5,17 @@ public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 /-!
 # Berger, Della Pietra and Della Pietra (1996): A Maximum Entropy Approach to Natural Language Processing
 
-The paper models a process that produces an output $y$ in a context $x$, from a sample of pairs
-with empirical distribution $\tilde p$. A *feature* is a function $f(x, y)$. A model
-$p(y \mid x)$ satisfies the constraint of $f$ if $f$ has the same expected value under the model,
-with contexts drawn from the sample, as in the sample. The maximum entropy principle selects,
-among the models satisfying every constraint, the one of greatest conditional entropy.
-
-The paper solves this problem with Lagrange multipliers $\lambda$. For fixed $\lambda$ the
-Lagrangian [is greatest at](##lagrangian_le_lagrangian_model) the exponential model
-$p_\lambda(y \mid x) \propto \exp(\lambda \cdot f(x, y))$. Hence every model satisfying the
-constraints [has entropy at most](##condEntropy_le_neg_logLik) $-L(p_\lambda)$, where $L$ is the
-log-likelihood of the sample. At the $\lambda$ of greatest likelihood, $p_\lambda$ [is the
-maximum entropy model](##isGreatest_condEntropy_model), and it [is the only
-one](##eq_model_of_condEntropy_eq) at the contexts that occur in the sample.
-
-The opening example translates English *in* into one of five French phrases. Under the constraint
-$p(\textit{dans}) + p(\textit{en}) = 3/10$ the maximum entropy model [is](##isGreatest_two)
-$(3/20, 3/20, 7/30, 7/30, 7/30)$. Adding $p(\textit{dans}) + p(\textit{à}) = 1/2$ gives a problem
-the paper leaves to the reader. [Its solution](##isGreatest_three)
+The paper models a process that produces an output $y$ in a context $x$, from a sample with
+empirical distribution $\tilde p$. Among the conditional models under which each feature
+$f(x, y)$ has its sample mean, the maximum entropy principle selects the one of greatest
+conditional entropy. For fixed multipliers $\lambda$ the Lagrangian of this problem [is greatest
+at](##lagrangian_le_lagrangian_model) the exponential model $p_\lambda(y \mid x) \propto
+\exp(\lambda \cdot f(x, y))$. Hence every model satisfying the constraints [has entropy at
+most](##condEntropy_le_neg_logLik) minus the log-likelihood of each $p_\lambda$. The $p_\lambda$
+of greatest likelihood [is the maximum entropy model](##isGreatest_condEntropy_model), and [the
+only one](##eq_model_of_condEntropy_eq) at the contexts in the sample. In the opening example,
+which translates English *in* into five French phrases under two constraints, [the
+solution](##isGreatest_three) that the paper leaves to the reader
 [has](##threeModel_real_singleton) $p(\textit{dans}) = (9 - \sqrt{51})/10$.
 
 ## Implementation notes

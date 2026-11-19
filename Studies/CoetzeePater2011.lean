@@ -562,7 +562,7 @@ theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
   refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨mem_univ _, fun o _ hne ↦ ?_⟩
   cases i <;> cases o <;>
-    simp [loanwordDevoicing, ConstraintSystem.con, harmonyScore, dotProduct, Fin.sum_univ_three,
+    simp [loanwordDevoicing, ConstraintSystem.con, harmonyScore_def, dotProduct, Fin.sum_univ_three,
       identVoice, ocpVoice, voicedGeminate] at hne ⊢ <;> norm_num
 
 theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizable := by decide
@@ -620,7 +620,7 @@ theorem guddo_maxEnt_half (o : Voicing) :
   have h : harmonyScore (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1] =
       fun _ ↦ (-2 : ℝ) := by
     funext o
-    cases o <;> norm_num [loanwordDevoicing, ConstraintSystem.con, harmonyScore, dotProduct,
+    cases o <;> norm_num [loanwordDevoicing, ConstraintSystem.con, harmonyScore_def, dotProduct,
       Fin.sum_univ_three, identVoice, ocpVoice, voicedGeminate]
   rw [maxEnt_real_singleton, harmony_violations, h]
   simp [show Fintype.card Voicing = 2 from rfl]

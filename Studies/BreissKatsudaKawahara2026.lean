@@ -152,7 +152,7 @@ theorem harmony_apply (w : Weights) (it : Item) (v : Velar) :
 theorem harmony_violations_eq (w : Weights) (it : Item) :
     harmony (violations it) w.vec = harmonyScore (con it) (w.vec * activations it) := by
   funext v
-  simp only [harmony, harmonyScore, violations, dotProduct, Pi.mul_apply,
+  simp only [harmony, harmonyScore_def, violations, dotProduct, Pi.mul_apply,
     ConstraintSet.violations_apply, mul_assoc]
 
 /-- A base's pull toward nasalisation is its activation, signed by its listed velar. -/

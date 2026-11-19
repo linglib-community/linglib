@@ -6,23 +6,15 @@ public import Mathlib.LinearAlgebra.Pi
 /-!
 # Intersecting constraint families
 
-Two constraint families *intersect* when each constraint is insensitive to one of two binary
-factors: on the square of the four underlying forms crossing them, its violations of the two
-surface variants are constant across the rows or across the columns. The *interaction contrast* is a
-linear functional that vanishes [exactly when the differences along the two rows
-agree](##HarmonicGrammar.Square.interaction_eq_zero_iff). Under independence [a sum of
-per-constraint terms has zero
+A `HarmonicGrammar.Square` is four underlying forms crossing two binary factors, each with two
+surface variants. Two constraint families *intersect* on it when each constraint is insensitive
+to one of the factors: its violations are constant across the rows or across the columns
+(`Square.Independent`). The *interaction contrast* `Square.interaction` of a function of the
+forms is `f tl - f tr - f bl + f br`. It vanishes [exactly
+when](##HarmonicGrammar.Square.interaction_eq_zero_iff) the differences along the two rows agree.
+Under independence [a sum of per-constraint terms has zero
 interaction](##HarmonicGrammar.Square.Independent.interaction_sum_eq_zero), and so do [the MaxEnt
-log-odds of the two variants](##HarmonicGrammar.Square.Independent.interaction_logOdds_maxEnt).
-
-## Main definitions
-
-* `HarmonicGrammar.Square`: four underlying forms crossing two binary factors, (12) of
-  [magri-2025].
-* `Square.interaction`: the interaction contrast `f tl - f tr - f bl + f br`, and `Square.sum`,
-  the sum over the four forms; both linear functionals on the functions of the forms.
-* `Square.InsensitiveToRow`, `Square.InsensitiveToCol`, `Square.Independent`: the independence
-  of the rows and columns relative to a constraint set, on two surface variants.
+log-odds](##HarmonicGrammar.Square.Independent.interaction_logOdds_maxEnt) of the two variants.
 
 ## References
 

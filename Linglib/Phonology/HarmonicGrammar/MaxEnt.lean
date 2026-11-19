@@ -19,36 +19,16 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 /-!
 # MaxEnt grammars
 
-A MaxEnt grammar assigns probabilities to the candidates of an input. Each candidate `c` has a
-violation vector `T c`, and under weights `w` its harmony is `-(w ⬝ᵥ T c)`. The MaxEnt
-distribution `HarmonicGrammar.maxEnt T w` gives `c` a probability [proportional
-to](##HarmonicGrammar.maxEnt_real_singleton) the exponential of its harmony. Equivalently, the
-[log-odds](##HarmonicGrammar.log_maxEnt_real_singleton_div) of two candidates are the difference
-of their harmonies. As a measure it is the counting measure tilted by the harmony.
-
-The name comes from a duality between entropy and likelihood.
-
-* Among the distributions with the same expected violations as `maxEnt T w`, the MaxEnt
-  distribution [has the greatest entropy](##HarmonicGrammar.isGreatest_measureEntropy_maxEnt),
-  and it [is the only one](##HarmonicGrammar.eq_maxEnt_of_measureEntropy_eq) with that entropy.
-* The log-likelihood of an empirical distribution [is
-  concave](##HarmonicGrammar.concaveOn_logLikelihood) in the weights. Its
-  [gradient](##HarmonicGrammar.hasFDerivAt_logLikelihood) is the expected minus the observed
-  violation vector.
-* Hence weights maximize the likelihood [if and only
-  if](##HarmonicGrammar.isMaxOn_logLikelihood_iff) their distribution has the observed expected
-  violations, and that distribution [has the greatest
-  entropy](##HarmonicGrammar.isGreatest_measureEntropy_of_isMaxOn) among those that do.
-
-A conditional grammar `HarmonicGrammar.condMaxEnt T w` is a Markov kernel taking each input to the
-MaxEnt distribution of its candidates. [The same
-duality](##HarmonicGrammar.isGreatest_condEntropy_of_isMaxOn) holds for it, with conditional
-entropy and with expected violations averaged over the observed inputs.
-
-Two further facts: scaling the weights up
-[concentrates](##HarmonicGrammar.tendsto_maxEnt_smul_atTop) the distribution on the candidate of
-greatest harmony, and when the violations of a tuple of outputs add up, the outputs [are
-independent](##HarmonicGrammar.maxEnt_sum).
+A MaxEnt grammar gives each candidate `c` a probability [proportional
+to](##HarmonicGrammar.maxEnt_real_singleton) the exponential of its harmony `-(w ⬝ᵥ T c)`:
+`HarmonicGrammar.maxEnt T w` is the counting measure tilted by the harmony. The name comes from a
+duality. Among the distributions with its expected violations, the MaxEnt distribution [has the
+greatest entropy](##HarmonicGrammar.isGreatest_measureEntropy_maxEnt). The log-likelihood of a
+sample [is concave](##HarmonicGrammar.concaveOn_logLikelihood) in the weights, and weights
+maximize it [if and only if](##HarmonicGrammar.isMaxOn_logLikelihood_iff) their distribution has
+the observed expected violations. The conditional grammar `HarmonicGrammar.condMaxEnt T w`, the
+softmax kernel of the harmony, [satisfies the same
+duality](##HarmonicGrammar.isGreatest_condEntropy_of_isMaxOn) with conditional entropy.
 
 ## Implementation notes
 
@@ -241,6 +221,16 @@ theorem isGreatest_measureEntropy_maxEnt :
 
 /-! ### Learning -/
 
+private theorem concaveOn_neg_dotProduct (m : ι → ℝ) :
+    ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ m) :=
+  (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip m)) convex_univ).congr fun w _ ↦ by simp
+
+private theorem hasFDerivAt_neg_dotProduct (m w : ι → ℝ) :
+    HasFDerivAt (fun w ↦ -(w ⬝ᵥ m))
+      (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ m)) w :=
+  (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ m)).hasFDerivAt.congr_of_eventuallyEq
+    (Eventually.of_forall fun w ↦ by simp [dotProductBilin, dotProduct_comm])
+
 theorem hasFDerivAt_logPartition :
     HasFDerivAt (logPartition T)
       (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ (∫ c, T c ∂maxEnt T w))) w := by
@@ -258,9 +248,7 @@ theorem hasFDerivAt_logPartition :
 /-- The log-likelihood is concave in the weights: it is linear in them less the log-partition
 function. -/
 theorem concaveOn_logLikelihood : ConcaveOn ℝ Set.univ (logLikelihood T p) := by
-  have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ c, T c ∂p) :=
-    (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ c, T c ∂p))) convex_univ).congr
-      fun w _ ↦ by simp
+  have hlin := concaveOn_neg_dotProduct (∫ c, T c ∂p)
   exact (hlin.sub (convexOn_logPartition T)).congr fun w _ ↦ (logLikelihood_eq T w p).symm
 
 /-- The gradient of the log-likelihood is the expected less the observed violation vector. -/
@@ -271,8 +259,7 @@ theorem hasFDerivAt_logLikelihood :
   let ℓ (a : ι → ℝ) : (ι → ℝ) →L[ℝ] ℝ := LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ a)
   have hℓ (a v : ι → ℝ) : ℓ a v = a ⬝ᵥ v := rfl
   have hlin : HasFDerivAt (fun w ↦ -(w ⬝ᵥ ∫ c, T c ∂p)) (-ℓ (∫ c, T c ∂p)) w :=
-    (-ℓ (∫ c, T c ∂p)).hasFDerivAt.congr_of_eventuallyEq
-      (Eventually.of_forall fun w ↦ by simp [hℓ, dotProduct_comm])
+    hasFDerivAt_neg_dotProduct _ w
   refine (hlin.sub (hasFDerivAt_logPartition T w)).congr_of_eventuallyEq
     (Eventually.of_forall fun w ↦ logLikelihood_eq T w p) |>.congr_fderiv ?_
   ext v
@@ -416,9 +403,7 @@ theorem isGreatest_condEntropy_condMaxEnt :
 
 
 theorem concaveOn_condLogLikelihood : ConcaveOn ℝ Set.univ (condLogLikelihood T p) := by
-  have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ z, T z ∂p) :=
-    (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ z, T z ∂p))) convex_univ).congr
-      fun w _ ↦ by simp
+  have hlin := concaveOn_neg_dotProduct (∫ z, T z ∂p)
   have hZ : ConvexOn ℝ Set.univ fun w : ι → ℝ ↦
       ∑ x, p.fst.real {x} * logPartition (fun y ↦ T (x, y)) w := by
     refine ⟨convex_univ, fun u _ v _ a b ha hb hab ↦ ?_⟩
@@ -439,8 +424,7 @@ theorem hasFDerivAt_condLogLikelihood :
   let ℓ (a : ι → ℝ) : (ι → ℝ) →L[ℝ] ℝ := LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ a)
   have hℓ (a v : ι → ℝ) : ℓ a v = a ⬝ᵥ v := rfl
   have hlin : HasFDerivAt (fun w ↦ -(w ⬝ᵥ ∫ z, T z ∂p)) (-ℓ (∫ z, T z ∂p)) w :=
-    (-ℓ (∫ z, T z ∂p)).hasFDerivAt.congr_of_eventuallyEq
-      (Eventually.of_forall fun w ↦ by simp [hℓ, dotProduct_comm])
+    hasFDerivAt_neg_dotProduct _ w
   have hZ := HasFDerivAt.fun_sum fun x (_ : x ∈ univ) ↦
     (hasFDerivAt_logPartition (fun y ↦ T (x, y)) w).const_mul (p.fst.real {x})
   refine (hlin.sub hZ).congr_of_eventuallyEq
