@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Part
 public import Linglib.Semantics.Index
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Compat
 public import Mathlib.Data.PFun
 public import Mathlib.Logic.Function.Basic
 
@@ -249,17 +249,6 @@ theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
 theorem domain_eq_of_isLUB (h : IsLUB {p, q} u) : u.domain = p.domain ∪ q.domain :=
   have ⟨hp, hq, hdom⟩ := isLUB_pair_iff.mp h
   hdom.antisymm (Set.union_subset (domain_mono hp) (domain_mono hq))
-
-open Classical in
-/-- Unification of points returns their join when they are compatible, and fails otherwise. The
-instance is noncomputable, since compatibility is not decided. -/
-noncomputable instance : PartialUnify (Possibility W V (Part M)) where
-  unify p q := if h : Compat p q then ↑(exists_isLUB h).choose else ⊤
-  isLUB_of_unify_eq_coe {p q u} h := by
-    split_ifs at h with hc
-    · exact WithTop.coe_inj.mp h ▸ (exists_isLUB hc).choose_spec
-    · exact absurd h WithTop.top_ne_coe
-  unify_ne_top_of_bddAbove {p q} h := by simp [h]
 
 theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) : p = q :=
   have ⟨u, hu⟩ := exists_isLUB h

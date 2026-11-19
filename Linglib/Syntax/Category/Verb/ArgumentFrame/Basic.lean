@@ -225,14 +225,6 @@ instance : ∀ a : Axis, OrderBot a.Carrier
   | .adposition => inferInstanceAs (OrderBot (Flat Adposition))
   | .interp => inferInstanceAs (OrderBot (Flat ImplicitInterp))
 
-instance : ∀ a : Axis, PartialUnify a.Carrier
-  | .coding => inferInstanceAs (PartialUnify (Flat Clause.ComplementType))
-  | .types => inferInstanceAs (PartialUnify Clause.Selection)
-  | .subject => inferInstanceAs (PartialUnify (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (PartialUnify (Flat Case.Kind))
-  | .adposition => inferInstanceAs (PartialUnify (Flat Adposition))
-  | .interp => inferInstanceAs (PartialUnify (Flat ImplicitInterp))
-
 instance : ∀ a : Axis, DecidableEq a.Carrier
   | .coding => inferInstanceAs (DecidableEq (Flat Clause.ComplementType))
   | .types => inferInstanceAs (DecidableEq Clause.Selection)
@@ -240,6 +232,14 @@ instance : ∀ a : Axis, DecidableEq a.Carrier
   | .relation => inferInstanceAs (DecidableEq (Flat Case.Kind))
   | .adposition => inferInstanceAs (DecidableEq (Flat Adposition))
   | .interp => inferInstanceAs (DecidableEq (Flat ImplicitInterp))
+
+instance : ∀ (a : Axis) (x y : a.Carrier), Decidable (Compat x y)
+  | .coding => inferInstanceAs (∀ x y : Flat Clause.ComplementType, Decidable (Compat x y))
+  | .types => inferInstanceAs (∀ x y : Clause.Selection, Decidable (Compat x y))
+  | .subject => inferInstanceAs (∀ x y : Flat Clause.EmbeddedSubject, Decidable (Compat x y))
+  | .relation => inferInstanceAs (∀ x y : Flat Case.Kind, Decidable (Compat x y))
+  | .adposition => inferInstanceAs (∀ x y : Flat Adposition, Decidable (Compat x y))
+  | .interp => inferInstanceAs (∀ x y : Flat ImplicitInterp, Decidable (Compat x y))
 
 instance : ∀ a : Axis, DecidableLE a.Carrier
   | .coding => inferInstanceAs (DecidableLE (Flat Clause.ComplementType))
@@ -250,7 +250,7 @@ instance : ∀ a : Axis, DecidableLE a.Carrier
   | .interp => inferInstanceAs (DecidableLE (Flat ImplicitInterp))
 
 /-- A family of partial axis values, ordered pointwise by extension. Unification is
-    `PartialUnify.unify` and consistency is `Compat`. -/
+    the join of a pair and consistency is `Compat`. -/
 abbrev Axes := ∀ a : Axis, a.Carrier
 
 /-- The axes the position records. -/

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Compat
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Syntax.Person.Clusivity
 public import Mathlib.Data.Fintype.Powerset
@@ -35,7 +35,7 @@ person slot of an agreement bundle is a specification (`Syntax/Agreement/Bundle.
 
 ## Implementation notes
 
-The order is that of `{s : Finset α // s.Nonempty}ᵒᵈ` in `Core/Order/PartialUnify.lean`, the
+The order is that of `{s : Finset α // s.Nonempty}ᵒᵈ` in `Core/Order/Compat.lean`, the
 smaller family the larger element. The empty family is not a specification, so that
 incompatible specifications have no common extension.
 
@@ -165,8 +165,7 @@ theorem ofPerson_first_le_exclusive : first ≤ firstExclusive := by decide
 theorem not_exclusive_le_inclusive : ¬ firstExclusive ≤ firstInclusive := by decide
 
 /-- The first person with no clusivity and the inclusive unify to the inclusive. -/
-theorem unify_ofPerson_first_inclusive :
-    PartialUnify.unify first firstInclusive = ↑firstInclusive := by
+theorem isLUB_first_inclusive : IsLUB {first, firstInclusive} firstInclusive := by
   decide
 
 /-- The first and the second person have no common extension. -/

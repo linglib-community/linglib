@@ -220,29 +220,19 @@ variable [DecidableEq α] {v w : α} {s s' : FeatureSlot α}
 
 /-- The slot `s` valued with `v`, or `⊤` if `s` is valued otherwise. An absent slot is
 unchanged. -/
-def valueWith (v : α) (s : FeatureSlot α) : WithTop (FeatureSlot α) :=
-  if s = absent then s else PartialUnify.unify s (valued v)
-
-theorem valueWith_of_ne_absent (hs : s ≠ absent) :
-    valueWith v s = PartialUnify.unify s (valued v) := by
-  simp [valueWith, hs]
+def valueWith (v : α) : FeatureSlot α → WithTop (FeatureSlot α)
+  | .absent => (absent : FeatureSlot α)
+  | .unvalued => (valued v : FeatureSlot α)
+  | .valued w => if w = v then (valued w : FeatureSlot α) else ⊤
 
 @[simp] theorem valueWith_absent (v : α) :
-    valueWith v (absent : FeatureSlot α) = ↑(absent : FeatureSlot α) := by
-  simp [valueWith]
+    valueWith v (absent : FeatureSlot α) = ↑(absent : FeatureSlot α) := rfl
 
 @[simp] theorem valueWith_unvalued (v : α) :
-    valueWith v (unvalued : FeatureSlot α) = valued v := by
-  rw [valueWith_of_ne_absent unvalued_ne_absent]
-  exact PartialUnify.unify_eq_right.2 (WithBot.coe_le_coe.2 bot_le)
+    valueWith v (unvalued : FeatureSlot α) = valued v := rfl
 
 @[simp] theorem valueWith_valued (v w : α) :
-    valueWith v (valued w) = if w = v then ↑(valued w : FeatureSlot α) else ⊤ := by
-  rw [valueWith_of_ne_absent (valued_ne_absent w)]
-  split_ifs with h
-  · exact h ▸ PartialUnify.unify_self _
-  · simp [PartialUnify.unify_coe_coe,
-      show PartialUnify.unify (w : Flat α) v = ⊤ from Flat.unify_eq_top_of_ne h]
+    valueWith v (valued w) = if w = v then ↑(valued w : FeatureSlot α) else ⊤ := rfl
 
 theorem valueWith_eq_top_iff : valueWith v s = ⊤ ↔ ∃ w, w ≠ v ∧ s = valued w := by
   cases s with
@@ -250,11 +240,26 @@ theorem valueWith_eq_top_iff : valueWith v s = ⊤ ↔ ∃ w, w ≠ v ∧ s = va
   | unvalued => simp
   | valued w => by_cases h : w = v <;> simp [h]
 
+/-- Valuing a slot the item bears is unifying it with the value. -/
+theorem valueWith_eq_coe_iff (hs : s ≠ absent) :
+    valueWith v s = ↑s' ↔ IsLUB {s, valued v} s' := by
+  cases s with
+  | absent => exact absurd rfl hs
+  | unvalued =>
+    simp only [valueWith_unvalued, WithTop.coe_inj, isLUB_pair_iff_forall_le, valued_le_iff]
+    exact ⟨fun h ↦ h ▸ ⟨unvalued_le_valued v, rfl, fun u _ hu ↦ hu ▸ le_rfl⟩, fun h ↦ h.2.1.symm⟩
+  | valued w =>
+    simp only [valueWith_valued, isLUB_pair_iff_forall_le, valued_le_iff]
+    split_ifs with h
+    · subst h
+      rw [WithTop.coe_inj]
+      exact ⟨fun h ↦ h ▸ ⟨rfl, rfl, fun u hu _ ↦ hu ▸ le_rfl⟩, fun h ↦ h.1.symm⟩
+    · exact iff_of_false WithTop.top_ne_coe fun ⟨h₁, h₂, _⟩ ↦ h (valued_inj.1 (h₁ ▸ h₂))
+
 theorem le_of_valueWith_eq_coe (h : valueWith v s = s') : s ≤ s' := by
   rcases eq_or_ne s absent with rfl | hs
   · exact bot_le
-  · rw [valueWith_of_ne_absent hs, PartialUnify.unify_eq_coe_iff_isLUB] at h
-    exact (mem_upperBounds_pair.1 h.1).1
+  · exact (isLUB_pair_iff_forall_le.1 ((valueWith_eq_coe_iff hs).1 h)).1
 
 theorem valueWith_mono (v : α) :
     Monotone (valueWith v : FeatureSlot α → WithTop (FeatureSlot α)) := by
@@ -273,12 +278,10 @@ theorem valueWith_mono (v : α) :
     | valued w => obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h); exact le_rfl
 
 theorem map_toFlat_valueWith (hs : s ≠ absent) :
-    (valueWith v s).map toFlat = PartialUnify.unify s.toFlat (v : Flat α) := by
+    (valueWith v s).map toFlat = Flat.unify s.toFlat (v : Flat α) := by
   cases s with
   | absent => exact absurd rfl hs
-  | unvalued =>
-    rw [valueWith_unvalued, WithTop.map_coe, toFlat_valued, toFlat_unvalued, eq_comm]
-    exact PartialUnify.unify_eq_right.2 bot_le
+  | unvalued => rfl
   | valued w =>
     rcases eq_or_ne w v with rfl | hwv
     · simp

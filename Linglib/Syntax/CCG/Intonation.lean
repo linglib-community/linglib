@@ -24,8 +24,8 @@ into phrases, each of which must be a constituent.
 ## Implementation notes
 
 [steedman-2000] treats two of the pitch accents of [pierrehumbert-1980], L+H* and H*, so the
-accents are given as a function of the two values, `Info.accent`. Boundary tones are elements of the string in the book,
-functions from a theme- or rheme-marked category into a phrasal category with a third value of
+accents are given as a function of the two values, `Info.accent`. Boundary tones are elements
+of the string in the book, functions from a theme- or rheme-marked category into a phrasal category with a third value of
 the feature that unifies only with itself. They are not modelled: a boundary is represented by
 where an utterance is divided, and the feature has the two values that accents assign.
 
@@ -44,7 +44,6 @@ closes, need INFORMATION on the categories of `CCG.Cat`.
 @[expose] public section
 
 open Prosody
-open scoped PartialUnify
 
 namespace CCG
 

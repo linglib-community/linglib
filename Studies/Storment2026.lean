@@ -347,7 +347,6 @@ def probeStage : Construction → Derivation
   | .inversion => p.tStage .vpMovement
   | .noninverted => p.vP.append [.em .left t₀]
 
-open scoped PartialUnify in
 /-- The value T ends with when its probe seeks `P`: the join of the φ-features of the goals its
 depth-first search agrees with (118). -/
 def value (c : Construction) (P : Finset Dimension) : WithTop Bundle :=
