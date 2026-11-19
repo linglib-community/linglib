@@ -69,10 +69,10 @@ open CCG
 /-! ### The natural order of dominance -/
 
 /-- The forward realization `Xᵢ/Xᵢ₊₁` of chain position `i`. -/
-def fwd (i : ℕ) : Cat ℕ := .rslash (.atom i) .dot (.atom (i + 1))
+def fwd (i : ℕ) : Cat ℕ := .slash .right (.atom i) .dot (.atom (i + 1))
 
 /-- The backward realization `Xᵢ\Xᵢ₊₁` of chain position `i`. -/
-def bwd (i : ℕ) : Cat ℕ := .lslash (.atom i) .dot (.atom (i + 1))
+def bwd (i : ℕ) : Cat ℕ := .slash .left (.atom i) .dot (.atom (i + 1))
 
 /-- The natural-order-of-dominance lexicon over `n` words gives each position both slash
 realizations of its chain category, the paper's order-free `|`. -/
@@ -202,8 +202,8 @@ strengthened both-slashes hypothesis feeds the harmonic and crossing cases alike
 
 theorem derives_of_sepPerm {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
     (h : SepPerm i j l) :
-    (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) l ∧
-    (nodGrammar n).Derives (.lslash (.atom i) .dot (.atom (j + 1))) l := by
+    (nodGrammar n).Derives (.slash .right (.atom i) .dot (.atom (j + 1))) l ∧
+    (nodGrammar n).Derives (.slash .left (.atom i) .dot (.atom (j + 1))) l := by
   induction h with
   | single m =>
     obtain ⟨hf, hb⟩ := mem_nodLexicon h1 hn
@@ -229,8 +229,8 @@ never fire. -/
 theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List ℕ}
     (h : (nodGrammar n).Derives c w) :
     ∃ i j, 1 ≤ i ∧ j ≤ n ∧ SepPerm i j w ∧
-      (c = .rslash (.atom i) .dot (.atom (j + 1)) ∨
-       c = .lslash (.atom i) .dot (.atom (j + 1))) := by
+      (c = .slash .right (.atom i) .dot (.atom (j + 1)) ∨
+       c = .slash .left (.atom i) .dot (.atom (j + 1))) := by
   induction h with
   | @lex w' c' hmem =>
     obtain ⟨m, hm, hentry⟩ := List.mem_flatMap.mp hmem
@@ -262,7 +262,7 @@ theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List ℕ}
 /-! ### The universal -/
 
 theorem derives_fwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) :
-    (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
+    (nodGrammar n).Derives (.slash .right (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
   refine ⟨fun h ↦ ?_, fun h ↦ (derives_of_sepPerm h1 hn h).1⟩
   obtain ⟨i', j', -, -, hsep, hcat | hcat⟩ := sepPerm_of_derives h
   · obtain ⟨rfl, rfl⟩ : i = i' ∧ j = j' := by simpa using hcat
@@ -270,7 +270,7 @@ theorem derives_fwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ 
   · exact absurd hcat (by simp)
 
 theorem derives_bwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) :
-    (nodGrammar n).Derives (.lslash (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
+    (nodGrammar n).Derives (.slash .left (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
   refine ⟨fun h ↦ ?_, fun h ↦ (derives_of_sepPerm h1 hn h).2⟩
   obtain ⟨i', j', -, -, hsep, hcat | hcat⟩ := sepPerm_of_derives h
   · exact absurd hcat (by simp)
@@ -278,16 +278,16 @@ theorem derives_bwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ 
     exact hsep
 
 theorem perm_of_derives {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
-    (h : (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) l) :
+    (h : (nodGrammar n).Derives (.slash .right (.atom i) .dot (.atom (j + 1))) l) :
     l.Perm (List.range' i (j + 1 - i)) :=
   ((derives_fwd_iff h1 hn).mp h).perm
 
 theorem not_derives_2413 :
-    ¬ (nodGrammar 4).Derives (.rslash (.atom 1) .dot (.atom 5)) [2, 4, 1, 3] :=
+    ¬ (nodGrammar 4).Derives (.slash .right (.atom 1) .dot (.atom 5)) [2, 4, 1, 3] :=
   mt (derives_fwd_iff le_rfl le_rfl).mp not_sepPerm_2413
 
 theorem not_derives_3142 :
-    ¬ (nodGrammar 4).Derives (.rslash (.atom 1) .dot (.atom 5)) [3, 1, 4, 2] :=
+    ¬ (nodGrammar 4).Derives (.slash .right (.atom 1) .dot (.atom 5)) [3, 1, 4, 2] :=
   mt (derives_fwd_iff le_rfl le_rfl).mp not_sepPerm_3142
 
 /-! ### The typological record -/

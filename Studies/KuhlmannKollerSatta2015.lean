@@ -99,12 +99,12 @@ def clusterCat : Nat → Cat Atom
 /-! ### The construction, as `Derives` inductions -/
 
 theorem fc2Chain_derives (j : Nat) :
-    exampleGrammar.Derives ((clusterCat (j + 1)).rslash .dot Bcat)
+    exampleGrammar.Derives (.slash .right (clusterCat (j + 1)) .dot Bcat)
       (List.replicate (j + 1) .b) := by
   induction j with
   | zero => exact .lex (by decide)
   | succ j ih =>
-      have h : exampleGrammar.Derives ((clusterCat (j + 2)).rslash .dot Bcat)
+      have h : exampleGrammar.Derives (.slash .right (clusterCat (j + 2)) .dot Bcat)
           (List.replicate (j + 1) .b ++ [.b]) :=
         .forward [⟨.right, .dot, Ccat⟩, ⟨.right, .dot, Bcat⟩] ih (.lex (by decide))
           ⟨by decide, by simp⟩
@@ -152,11 +152,11 @@ def Reachable : Cat Atom → List Letter → Prop := fun c w ↦
   (c = (Ccat \ Acat) ∧ w = [.c]) ∨
   (c = ((Bcat / Ccat) / Bcat) ∧ w = [.b]) ∨
   (c = (Bcat / Ccat) ∧ w = [.b]) ∨
-  (∃ j : Nat, c = (clusterCat (j + 1)).rslash .dot Bcat ∧
+  (∃ j : Nat, c = .slash .right (clusterCat (j + 1)) .dot Bcat ∧
     w = List.replicate (j + 1) .b) ∨
   (∃ k i : Nat, c = clusterCat k ∧
     w = List.replicate i .a ++ List.replicate (k + i) .b ++ List.replicate i .c) ∨
-  (∃ k i : Nat, c = (clusterCat k).lslash .dot Acat ∧
+  (∃ k i : Nat, c = .slash .left (clusterCat k) .dot Acat ∧
     w = List.replicate i .a ++ List.replicate (k + 1 + i) .b ++
       List.replicate (i + 1) .c)
 

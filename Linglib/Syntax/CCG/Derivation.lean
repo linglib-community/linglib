@@ -109,10 +109,10 @@ combining a left constituent of category `l` with a right constituent of categor
 inductive Rule (R : RuleSystem α) : Cat α → Cat α → Cat α → Type _ where
   /-- Forward composition `X/Y Yβ ⇒ Xβ` (`>Bⁿ`), forward application `>` when `β = []`. -/
   | forward {x y : Cat α} {m : Modality} (β : List (Cat.Arg α)) (h : R x ⟨.right, m, y⟩ β) :
-      Rule R (.rslash x m y) (y.pushArgs β) (x.pushArgs β)
+      Rule R (.slash .right x m y) (y.pushArgs β) (x.pushArgs β)
   /-- Backward composition `Yβ X\Y ⇒ Xβ` (`<Bⁿ`), backward application `<` when `β = []`. -/
   | backward {x y : Cat α} {m : Modality} (β : List (Cat.Arg α)) (h : R x ⟨.left, m, y⟩ β) :
-      Rule R (y.pushArgs β) (.lslash x m y) (x.pushArgs β)
+      Rule R (y.pushArgs β) (.slash .left x m y) (x.pushArgs β)
 
 variable {R : RuleSystem α}
 
@@ -141,34 +141,34 @@ variable {x y z : Cat α} {m n : Modality}
 categories are closed. -/
 
 /-- Forward application `>`, `X/Y Y ⇒ X`. -/
-abbrev fapp (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R y)
+abbrev fapp (d₁ : Derivation T R (.slash .right x m y)) (d₂ : Derivation T R y)
     (h : R x ⟨.right, m, y⟩ [] := by decide) : Derivation T R x :=
   .node (r := y) (c := x) (.forward [] h) d₁ d₂
 
 /-- Backward application `<`, `Y X\Y ⇒ X`. -/
-abbrev bapp (d₁ : Derivation T R y) (d₂ : Derivation T R (.lslash x m y))
+abbrev bapp (d₁ : Derivation T R y) (d₂ : Derivation T R (.slash .left x m y))
     (h : R x ⟨.left, m, y⟩ [] := by decide) : Derivation T R x :=
   .node (l := y) (c := x) (.backward [] h) d₁ d₂
 
 /-- Forward harmonic composition `>B`, `X/Y Y/Z ⇒ X/Z`. -/
-abbrev fcomp (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.rslash y n z))
-    (h : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩] := by decide) : Derivation T R (.rslash x n z) :=
-  .node (r := .rslash y n z) (c := .rslash x n z) (.forward [⟨.right, n, z⟩] h) d₁ d₂
+abbrev fcomp (d₁ : Derivation T R (.slash .right x m y)) (d₂ : Derivation T R (.slash .right y n z))
+    (h : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩] := by decide) : Derivation T R (.slash .right x n z) :=
+  .node (r := .slash .right y n z) (c := .slash .right x n z) (.forward [⟨.right, n, z⟩] h) d₁ d₂
 
 /-- Backward harmonic composition `<B`, `Y\Z X\Y ⇒ X\Z`. -/
-abbrev bcomp (d₁ : Derivation T R (.lslash y n z)) (d₂ : Derivation T R (.lslash x m y))
-    (h : R x ⟨.left, m, y⟩ [⟨.left, n, z⟩] := by decide) : Derivation T R (.lslash x n z) :=
-  .node (l := .lslash y n z) (c := .lslash x n z) (.backward [⟨.left, n, z⟩] h) d₁ d₂
+abbrev bcomp (d₁ : Derivation T R (.slash .left y n z)) (d₂ : Derivation T R (.slash .left x m y))
+    (h : R x ⟨.left, m, y⟩ [⟨.left, n, z⟩] := by decide) : Derivation T R (.slash .left x n z) :=
+  .node (l := .slash .left y n z) (c := .slash .left x n z) (.backward [⟨.left, n, z⟩] h) d₁ d₂
 
 /-- Forward crossing composition `>B×`, `X/Y Y\Z ⇒ X\Z`. -/
-abbrev fcompx (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.lslash y n z))
-    (h : R x ⟨.right, m, y⟩ [⟨.left, n, z⟩] := by decide) : Derivation T R (.lslash x n z) :=
-  .node (r := .lslash y n z) (c := .lslash x n z) (.forward [⟨.left, n, z⟩] h) d₁ d₂
+abbrev fcompx (d₁ : Derivation T R (.slash .right x m y)) (d₂ : Derivation T R (.slash .left y n z))
+    (h : R x ⟨.right, m, y⟩ [⟨.left, n, z⟩] := by decide) : Derivation T R (.slash .left x n z) :=
+  .node (r := .slash .left y n z) (c := .slash .left x n z) (.forward [⟨.left, n, z⟩] h) d₁ d₂
 
 /-- Backward crossing composition `<B×`, `Y/Z X\Y ⇒ X/Z`. -/
-abbrev bcompx (d₁ : Derivation T R (.rslash y n z)) (d₂ : Derivation T R (.lslash x m y))
-    (h : R x ⟨.left, m, y⟩ [⟨.right, n, z⟩] := by decide) : Derivation T R (.rslash x n z) :=
-  .node (l := .rslash y n z) (c := .rslash x n z) (.backward [⟨.right, n, z⟩] h) d₁ d₂
+abbrev bcompx (d₁ : Derivation T R (.slash .right y n z)) (d₂ : Derivation T R (.slash .left x m y))
+    (h : R x ⟨.left, m, y⟩ [⟨.right, n, z⟩] := by decide) : Derivation T R (.slash .right x n z) :=
+  .node (l := .slash .right y n z) (c := .slash .right x n z) (.backward [⟨.right, n, z⟩] h) d₁ d₂
 
 /-- The token string a derivation spells out, its leaves from left to right. Rule nodes
 concatenate their daughters, so the yield is independent of the derivation's combinatory
@@ -210,7 +210,7 @@ instance LexIn.decidable [DecidableEq T] [DecidableEq α] (L : List (T × Cat α
 
 theorem _root_.CCG.Rule.count_eq [DecidableEq α] (a : α) {l r c : Cat α}
     (ru : Rule R l r c) : c.count a = l.count a + r.count a := by
-  cases ru <;> simp only [Cat.count_pushArgs, Cat.count_rslash, Cat.count_lslash] <;> omega
+  cases ru <;> simp only [Cat.count_pushArgs, Cat.count_slash] <;> omega
 
 /-- The count invariant of [van-benthem-1986]. A derivation's category has the count of its
 leaves, so a string whose lexical counts do not sum to the count of a category has no derivation

@@ -63,8 +63,7 @@ variable {T α : Type*} {B : Type}
 /-- `c.toTy τ` is the semantic type of the category `c` when each atom `a` has type `τ a`. -/
 def Cat.toTy (τ : α → Ty B) : Cat α → Ty B
   | .atom a => τ a
-  | .rslash x _ y => y.toTy τ ⇒ x.toTy τ
-  | .lslash x _ y => y.toTy τ ⇒ x.toTy τ
+  | .slash _ x _ y => y.toTy τ ⇒ x.toTy τ
 
 @[simp] theorem Cat.toTy_forwardTypeRaise (τ : α → Ty B) (x t : Cat α) :
     (x.forwardTypeRaise t).toTy τ = ((x.toTy τ ⇒ t.toTy τ) ⇒ t.toTy τ) := rfl
@@ -116,10 +115,8 @@ def composeUnder (τ : α → Ty B) {D : B → Type} : (β : List (Cat.Arg α)) 
     (y.toTy τ ⇒ x.toTy τ).Dom D → ((y.pushArgs β).toTy τ).Dom D →
       ((x.pushArgs β).toTy τ).Dom D
   | [], _, _, f, g => f g
-  | ⟨.right, m, z⟩ :: β, x, y, f, g =>
-      composeUnder τ β (x := .rslash x m z) (y := .rslash y m z) (f ∘ ·) g
-  | ⟨.left, m, z⟩ :: β, x, y, f, g =>
-      composeUnder τ β (x := .lslash x m z) (y := .lslash y m z) (f ∘ ·) g
+  | ⟨s, m, z⟩ :: β, x, y, f, g =>
+      composeUnder τ β (x := .slash s x m z) (y := .slash s y m z) (f ∘ ·) g
 
 /-- `r.sem τ` is the meaning of the rule `r` as an operation on its daughters' meanings, the
 primary composed with the secondary beneath the arguments the rule passes on. -/
@@ -193,8 +190,8 @@ variable [DecidableEq T] [DecidableEq α] {R : RuleSystem α} {τ : α → Ty B}
 /-- Reassociating a forward-composition chain preserves its interpretation, since composition
 is associative. -/
 theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
-    (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.rslash y n z))
-    (d₃ : Derivation T R (.rslash z p w)) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])
+    (d₁ : Derivation T R (.slash .right x m y)) (d₂ : Derivation T R (.slash .right y n z))
+    (d₃ : Derivation T R (.slash .right z p w)) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])
     (h₂ : R x ⟨.right, n, z⟩ [⟨.right, p, w⟩]) (h₃ : R y ⟨.right, n, z⟩ [⟨.right, p, w⟩])
     (h₄ : R x ⟨.right, m, y⟩ [⟨.right, p, w⟩]) :
     (Derivation.fcomp (.fcomp d₁ d₂ h₁) d₃ h₂).interp L I
@@ -206,7 +203,7 @@ theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
 /-- Composing and then applying has the interpretation of applying twice, since
 `(f ∘ g) x = f (g x)`. -/
 theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
-    (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.rslash y n z))
+    (d₁ : Derivation T R (.slash .right x m y)) (d₂ : Derivation T R (.slash .right y n z))
     (d₃ : Derivation T R z) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])
     (h₂ : R x ⟨.right, n, z⟩ []) (h₃ : R y ⟨.right, n, z⟩ []) (h₄ : R x ⟨.right, m, y⟩ []) :
     (Derivation.fapp (.fcomp d₁ d₂ h₁) d₃ h₂).interp L I
@@ -216,8 +213,8 @@ theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
     rcases d₃.interp L I with _ | m₃ <;> rfl
 
 theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
-    (d₁ : Derivation T R (.lslash y p z)) (d₂ : Derivation T R (.lslash x n y))
-    (d₃ : Derivation T R (.lslash w m x)) (h₁ : R x ⟨.left, n, y⟩ [⟨.left, p, z⟩])
+    (d₁ : Derivation T R (.slash .left y p z)) (d₂ : Derivation T R (.slash .left x n y))
+    (d₃ : Derivation T R (.slash .left w m x)) (h₁ : R x ⟨.left, n, y⟩ [⟨.left, p, z⟩])
     (h₂ : R w ⟨.left, m, x⟩ [⟨.left, p, z⟩]) (h₃ : R w ⟨.left, m, x⟩ [⟨.left, n, y⟩])
     (h₄ : R w ⟨.left, n, y⟩ [⟨.left, p, z⟩]) :
     (Derivation.bcomp (.bcomp d₁ d₂ h₁) d₃ h₂).interp L I
@@ -227,8 +224,8 @@ theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
     rcases d₃.interp L I with _ | m₃ <;> rfl
 
 theorem Derivation.interp_bapp_bcomp {x y w : Cat α} {m n : Modality}
-    (d₁ : Derivation T R y) (d₂ : Derivation T R (.lslash x n y))
-    (d₃ : Derivation T R (.lslash w m x)) (h₁ : R x ⟨.left, n, y⟩ [])
+    (d₁ : Derivation T R y) (d₂ : Derivation T R (.slash .left x n y))
+    (d₃ : Derivation T R (.slash .left w m x)) (h₁ : R x ⟨.left, n, y⟩ [])
     (h₂ : R w ⟨.left, m, x⟩ []) (h₃ : R w ⟨.left, m, x⟩ [⟨.left, n, y⟩])
     (h₄ : R w ⟨.left, n, y⟩ []) :
     (Derivation.bapp (.bapp d₁ d₂ h₁) d₃ h₂).interp L I

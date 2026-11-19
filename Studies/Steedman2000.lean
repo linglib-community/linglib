@@ -232,14 +232,14 @@ open WordOrder
 /-- `raiseArg c` raises the argument of the function category `c` order-preservingly over
 `c`. The argument of `X\A` raises to `X/(X\A)` and that of `X/A` to `X\(X/A)`. -/
 def raiseArg : Cat Atom → Option (Cat Atom)
-  | .lslash x _ a => some (Cat.forwardTypeRaise a x)
-  | .rslash x _ a => some (Cat.backwardTypeRaise a x)
+  | .slash .left x _ a => some (Cat.forwardTypeRaise a x)
+  | .slash .right x _ a => some (Cat.backwardTypeRaise a x)
   | .atom _ => none
 
 /-- `hcomp` is harmonic composition, the order-preserving rules `>B` and `<B`. -/
 def hcomp : Cat Atom → Cat Atom → Option (Cat Atom)
-  | .rslash x _ y, .rslash y' n z => if y = y' then some (.rslash x n z) else none
-  | .lslash y' n z, .lslash x _ y => if y = y' then some (.lslash x n z) else none
+  | .slash .right x _ y, .slash .right y' n z => if y = y' then some (.slash .right x n z) else none
+  | .slash .left y' n z, .slash .left x _ y => if y = y' then some (.slash .left x n z) else none
   | _, _ => none
 
 /-- `cluster v` is the category of the argument cluster over the transitive verb category
@@ -247,7 +247,7 @@ def hcomp : Cat Atom → Cat Atom → Option (Cat Atom)
 harmonically, in whichever order the rules allow. -/
 def cluster (v : Cat Atom) : Option (Cat Atom) :=
   match v with
-  | .lslash inner _ _ | .rslash inner _ _ => do
+  | .slash .left inner _ _ | .slash .right inner _ _ => do
       let r₁ ← raiseArg inner
       let r₂ ← raiseArg v
       hcomp r₁ r₂ <|> hcomp r₂ r₁
@@ -310,7 +310,7 @@ inductive GappingDirection where
 is backward when the cluster looks rightward for the verb and forward when it looks leftward. -/
 def gappingDirection (v : Cat Atom) : Option GappingDirection :=
   (cluster v).map fun
-    | .rslash .. => .backward
+    | .slash .right .. => .backward
     | _ => .forward
 
 -- (77)
@@ -325,15 +325,15 @@ theorem gappingDirection_transitiveCat (a : Arrangement Constituent 3) :
 /-- `RightwardInto t c` holds when `c` is `t` or a rightward function into `t`, a member of the
 book's `t/$`. -/
 def RightwardInto (t : Cat Atom) : Cat Atom → Prop
-  | .rslash x m y => Cat.rslash x m y = t ∨ RightwardInto t x
+  | .slash .right x m y => Cat.slash .right x m y = t ∨ RightwardInto t x
   | c => c = t
 
 /-- `RightwardInto t` is decided by recursion on the category. -/
 def RightwardInto.decidable (t : Cat Atom) : ∀ c, Decidable (RightwardInto t c)
-  | .rslash x m y =>
+  | .slash .right x m y =>
     have := RightwardInto.decidable t x
-    inferInstanceAs (Decidable (Cat.rslash x m y = t ∨ RightwardInto t x))
-  | .lslash x m y => inferInstanceAs (Decidable (Cat.lslash x m y = t))
+    inferInstanceAs (Decidable (Cat.slash .right x m y = t ∨ RightwardInto t x))
+  | .slash .left x m y => inferInstanceAs (Decidable (Cat.slash .left x m y = t))
   | .atom a => inferInstanceAs (Decidable (Cat.atom a = t))
 
 instance (t : Cat Atom) : DecidablePred (RightwardInto t) := RightwardInto.decidable t
@@ -341,12 +341,12 @@ instance (t : Cat Atom) : DecidablePred (RightwardInto t) := RightwardInto.decid
 /-- The virtual conjunct-revealing rule of chapter 7 (61) decomposes a sentence into a revealed
 `Y = S/$` and the residue `S\Y`. `RevealedResidue c` says `c` is such a residue. -/
 def RevealedResidue : Cat Atom → Prop
-  | .lslash x _ y => x = S ∧ RightwardInto S y
+  | .slash .left x _ y => x = S ∧ RightwardInto S y
   | _ => False
 
 instance : DecidablePred RevealedResidue
-  | .lslash x _ y => inferInstanceAs (Decidable (x = S ∧ RightwardInto S y))
-  | .rslash .. | .atom _ => isFalse id
+  | .slash .left x _ y => inferInstanceAs (Decidable (x = S ∧ RightwardInto S y))
+  | .slash .right .. | .atom _ => isFalse id
 
 -- (62)
 theorem rightwardInto_transitiveCat_iff (a : Arrangement Constituent 3) :

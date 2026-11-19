@@ -155,11 +155,11 @@ inductive Grammar.Derives (G : Grammar T α) : Cat α → List T → Prop where
   | lex {t : T} {c : Cat α} : (t, c) ∈ G.lexicon → G.Derives c [t]
   /-- Forward composition `X/Y Yβ ⇒ Xβ`, application when `β = []`. -/
   | forward {x y : Cat α} {m : Modality} (β : List (Cat.Arg α)) {u v : List T} :
-      G.Derives (.rslash x m y) u → G.Derives (y.pushArgs β) v →
+      G.Derives (.slash .right x m y) u → G.Derives (y.pushArgs β) v →
       G.rules x ⟨.right, m, y⟩ β → G.Derives (x.pushArgs β) (u ++ v)
   /-- Backward composition `Yβ X\Y ⇒ Xβ`, application when `β = []`. -/
   | backward {x y : Cat α} {m : Modality} (β : List (Cat.Arg α)) {u v : List T} :
-      G.Derives (y.pushArgs β) u → G.Derives (.lslash x m y) v →
+      G.Derives (y.pushArgs β) u → G.Derives (.slash .left x m y) v →
       G.rules x ⟨.left, m, y⟩ β → G.Derives (x.pushArgs β) (u ++ v)
 
 /-- The string language of a grammar is the set of token strings derived at the start atom. -/
