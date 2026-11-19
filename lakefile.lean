@@ -47,3 +47,22 @@ lean_lib PsychVerbs where
 
 lean_lib scratch where
   globs := #[.submodules `scratch]
+
+/-- Declarations for `python3 scripts/checks.py selftest`, which checks that the hash of a
+    statement closure changes exactly when what the statement says does. -/
+lean_lib ChecksFixture where
+  srcDir := "scripts/checks"
+  roots := #[`ChecksFixture]
+
+/-- A stand-in for Mathlib in the fixture of `checks.py selftest`, outside the project's
+    libraries, with a constant renamed by deprecation. -/
+lean_lib ChecksFixtureDeps where
+  srcDir := "scripts/checks"
+  roots := #[`ChecksFixtureDeps]
+
+/-- The statement closures of declarations, read by `scripts/checks.py` to record and verify
+    human checks that statements are faithful to their sources (`checks/`). -/
+lean_exe checkClosure where
+  root := `CheckClosure
+  srcDir := "scripts/checks"
+  supportInterpreter := true

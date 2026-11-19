@@ -54,6 +54,9 @@ needs it:
   a paper another study formalizes adds a "formalized" link to that study.
 - A study's definition's docstring that opens with a paper locator shows it as a tag naming the paper
   on hover. A bare number is a numbered example; any other display names its kind (`Eq. (12)`).
+- A declaration that states an item of a source, in `checks/`, says under its statement who checked
+  it against the item and when, or that its statement has changed since, or which unchecked item
+  the check relies on. Unchecked items say nothing. It is a line of prose, like "Used by".
 - The page's own styles and script are the shared files `docs_page/docs.css` and `docs.js`, since
   two thousand pages carry them.
 

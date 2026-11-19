@@ -1,0 +1,12 @@
+# Renames of Lean and Mathlib constants, recorded by `python3 scripts/checks.py renames`.
+#
+# Each is a constant that an upgrade renamed, keeping the old name as a deprecated alias of the
+# new one, so that the two mean the same. In the terms that sign-offs hash, every name linked by
+# these renames stands for the earliest recorded, so a sign-off stays current when a statement
+# switches from a constant's old name to its new one, even after the alias is removed. Entries are
+# never removed or reordered, since that would change the hashes.
+
+[[rename]]
+old   = "setOf"
+new   = "Set.ofPred"
+since = "2026-07-09"
