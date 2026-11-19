@@ -353,28 +353,20 @@ abbrev cCommand (t : RoseTree β) : SetRel GornAddress GornAddress :=
 positions with at least two children. -/
 theorem isBranching_iff_isBranchingAt {t : RoseTree β} (p : t.Positions) :
     IsBranching p ↔ IsBranchingAt t p.val := by
-  obtain ⟨s, hs⟩ : ∃ s, t[p.val.toList]? = some s := Option.isSome_iff_exists.mp p.2
+  have hv : ∀ i < p.subtree.arity, p.val * .of i ∈ t.validPaths := fun i hi ↦
+    mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, hi⟩
+  rw [IsBranchingAt, mem_positionsWhere, p.getElem?_eq]
+  simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
   constructor
-  · rintro ⟨⟨⟨la⟩, ha'⟩, ha, ⟨⟨lb⟩, hb'⟩, hb, hab⟩
-    obtain ⟨i, hi⟩ := GornAddress.covBy_iff.mp (Positions.covBy_iff.mp ha)
-    obtain ⟨j, hj⟩ := GornAddress.covBy_iff.mp (Positions.covBy_iff.mp hb)
-    obtain rfl : la = p.val.toList ++ [i] := congrArg GornAddress.toList hi
-    obtain rfl : lb = p.val.toList ++ [j] := congrArg GornAddress.toList hj
-    obtain ⟨s₁, hs₁, hi'⟩ := mem_validPaths_append_singleton_iff.mp ha'
-    obtain ⟨s₂, hs₂, hj'⟩ := mem_validPaths_append_singleton_iff.mp hb'
-    rw [hs, Option.some.injEq] at hs₁ hs₂
-    subst hs₁ hs₂
-    have hij : i ≠ j := fun h ↦ hab (by subst h; rfl)
-    exact ⟨s, hs, show 2 ≤ s.children.length by omega⟩
-  · rintro ⟨s', hs', hlen⟩
-    rw [Option.mem_def, hs, Option.some.injEq] at hs'
-    subst hs'
-    rw [arity] at hlen
-    refine ⟨⟨p.val * .of 0, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
-      Positions.covBy_iff.mpr (GornAddress.covBy_iff.mpr ⟨0, rfl⟩),
-      ⟨p.val * .of 1, mem_validPaths_append_singleton_iff.mpr ⟨s, hs, by omega⟩⟩,
-      Positions.covBy_iff.mpr (GornAddress.covBy_iff.mpr ⟨1, rfl⟩), fun h ↦ ?_⟩
-    simpa using congrArg (fun q : t.Positions ↦ q.val.toList) h
+  · rintro ⟨a, ha, b, hb, hab⟩
+    obtain ⟨i, hi, hai⟩ := Positions.covBy_iff_exists_lt.1 ha
+    obtain ⟨j, hj, hbj⟩ := Positions.covBy_iff_exists_lt.1 hb
+    have hij : i ≠ j := fun h ↦ hab (Subtype.ext (hai.trans (h ▸ hbj.symm)))
+    omega
+  · intro h
+    refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff_exists_lt.2 ⟨0, by omega, rfl⟩,
+      ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff_exists_lt.2 ⟨1, by omega, rfl⟩, fun e ↦ ?_⟩
+    simpa using congrArg (fun q : t.Positions ↦ q.val.toList) e
 
 /-- The command relation the branching nodes of the order of positions generate is
 `RoseTree.cCommand`. -/
@@ -387,7 +379,7 @@ theorem mem_commandRelation_isBranching_iff {t : RoseTree β} (a b : t.Positions
 
 /-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
 dominating `a` dominates `b`: [reinhart-1976]'s c-command, `RoseTree.cCommand` between
-incomparable positions. -/
+incomparable positions. The positions `a` c-commands are its c-command domain. -/
 def CCommands (t : RoseTree β) (a b : GornAddress) : Prop :=
   a ~[t.cCommand] b ∧ IncompRel (· ≤ ·) a b
 
@@ -396,15 +388,6 @@ instance (t : RoseTree β) : DecidableRel t.CCommands :=
 
 theorem cCommands_iff {t : RoseTree β} {a b : GornAddress} :
     t.CCommands a b ↔ a ~[t.cCommand] b ∧ IncompRel (· ≤ ·) a b := Iff.rfl
-
-/-- The c-command domain of a position, the positions it c-commands. -/
-def cCommandDomain (t : RoseTree β) (a : GornAddress) : Set GornAddress := {b | t.CCommands a b}
-
-@[simp] theorem mem_cCommandDomain {t : RoseTree β} {a b : GornAddress} :
-    b ∈ t.cCommandDomain a ↔ t.CCommands a b := Iff.rfl
-
-instance (t : RoseTree β) (a b : GornAddress) : Decidable (b ∈ t.cCommandDomain a) :=
-  inferInstanceAs (Decidable (t.CCommands a b))
 
 /-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
 the positions properly below its parent and not below itself. -/

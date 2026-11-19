@@ -69,6 +69,7 @@ available antecedents (`privileged_iff_available`), so no distractor is accessed
 namespace BakayEtAl2026
 
 open PhraseStructure PhraseStructure.Tree Binding
+open scoped SetRel
 
 /-! ### The stimuli -/
 
@@ -153,7 +154,7 @@ theorem available_iff (s : Structure) (r : Role) :
 is a clause or verb-phrase node sharing the minimal clause of `q`, so that it hangs from the
 spine of that clause. -/
 def Local (t : Tree Cat Unit) (p q : GornAddress) : Prop :=
-  p.parent ∈ labeled t {.S, .V} ∧ (p.parent, q) ∈ mateRelation (labeled t {.S})
+  p.parent ∈ labeled t {.S, .V} ∧ p.parent ~[mateRelation (labeled t {.S})] q
 
 instance (t : Tree Cat Unit) (p q : GornAddress) : Decidable (Local t p q) :=
   inferInstanceAs (Decidable (_ ∧ _))

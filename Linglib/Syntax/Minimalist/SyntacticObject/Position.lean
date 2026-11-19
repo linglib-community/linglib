@@ -41,7 +41,7 @@ head function (`SyntacticObject/Projection.lean`).
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
-* `Minimalist.mem_cCommandDomain_iff_complement_le`: a head c-commands exactly the positions below
+* `Minimalist.cCommands_iff_complement_le`: a head c-commands exactly the positions below
   its complement.
 
 ## References
@@ -104,14 +104,8 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
   exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
 
 /-- A position that is not a leaf branches. -/
-theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
-  have h2 := length_children_subtree hp
-  have hv : ∀ i < 2, p.val * .of i ∈ t.toRoseTree.validPaths := fun i hi ↦
-    mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
-  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨0, rfl⟩),
-    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨1, rfl⟩), fun h ↦
-        ?_⟩
-  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.last?) h
+theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p :=
+  (isBranching_iff_isBranchingAt p).2 ⟨_, p.getElem?_eq, (length_children_subtree hp).ge⟩
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
@@ -387,9 +381,9 @@ theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPa
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
 complement. -/
-theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
+theorem cCommands_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hq : q ∈ t.toRoseTree.validPaths) :
-    q ∈ t.toRoseTree.cCommandDomain h ↔ complement h ≤ q := by
+    t.toRoseTree.CCommands h q ↔ complement h ≤ q := by
   set hp : t.toRoseTree.Positions := ⟨h, hh⟩
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
@@ -410,7 +404,7 @@ theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.t
     simp only [hp, hc, complement, GornAddress.last?_mul_of] at this
     cases hl : h.last? <;> simp [hl] at this
     omega
-  rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
+  rw [cCommands_iff_parent_lt h0
     (PlanarSyntacticObject.isBranchingAt_parent (t := t) hp0)]
   set qp : t.toRoseTree.Positions := ⟨q, hq⟩
   constructor

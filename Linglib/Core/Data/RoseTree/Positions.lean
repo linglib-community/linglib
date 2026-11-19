@@ -412,6 +412,15 @@ theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q
       Option.bind_some] at this
     exact List.mem_of_getElem? (by simpa using this)
 
+/-- The positions covering a position are its numbered daughters. -/
+theorem covBy_iff_exists_lt {q : Positions t} :
+    p ⋖ q ↔ ∃ i < p.subtree.arity, q.val = p.val * .of i := by
+  rw [covBy_iff, GornAddress.covBy_iff]
+  refine exists_congr fun i ↦ ⟨fun h ↦ ⟨?_, h⟩, And.right⟩
+  obtain ⟨s, hs, hi⟩ := mem_validPaths_append_singleton_iff.1 (h ▸ q.2)
+  rw [p.getElem?_eq, Option.some.injEq] at hs
+  exact hs ▸ hi
+
 theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
   refine ⟨fun h ↦ List.eq_nil_iff_forall_not_mem.2 fun c hc ↦ ?_, fun h q hpq ↦ ?_⟩
   · obtain ⟨q, hq, -⟩ := mem_children_subtree.1 hc

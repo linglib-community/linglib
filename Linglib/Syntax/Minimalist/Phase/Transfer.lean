@@ -284,7 +284,7 @@ theorem crosses_iff {tok : LexicalItem.Token} {h : GornAddress} (hh : h ∈ t.to
   obtain ⟨q, hq, p, -, -, rfl⟩ := mem_links.1 hx
   simp only [sealed, Finset.mem_singleton, exists_eq_left, Schedule.atCompletion,
     complementDomain, Set.mem_Ici, Set.mem_ofPred_eq]
-  rw [mem_cCommandDomain_iff_complement_le hh h0 (mem_validPaths_of_mem_chain hq)]
+  rw [cCommands_iff_complement_le hh h0 (mem_validPaths_of_mem_chain hq)]
   have hle : ∀ hc : complement h ≤ q, projectionAt hd t h ≤ q := fun hc ↦
     hproj.trans ((parent_covBy_complement h).le.trans hc)
   exact ⟨fun ⟨hc, hn⟩ ↦ ⟨(not_le_fst_iff hx (hle hc)).1 hn, hc⟩,

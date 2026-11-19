@@ -78,6 +78,8 @@ relations.
 
 namespace PhraseStructure
 
+open scoped SetRel
+
 section Defs
 
 variable {α : Type*} (H : α → α → Prop)
@@ -428,7 +430,7 @@ include hA
 does not MAX-command the adjunct. -/
 theorem maxCommand_adjunct [IsForestOrder α] {m d a b : α} (hmd : A m d) (ha : m ⋖ a)
     (had : a ≠ d) (hd : d ∈ maximalProjections P A) (hdb : d < b) :
-    (a, b) ∈ maxCommand P A ∧ (b, a) ∉ maxCommand P A :=
+    a ~[maxCommand P A] b ∧ ¬ b ~[maxCommand P A] a :=
   ⟨mem_commandRelation_of_covBy ha ((hA _ _ hmd).lt.le.trans hdb.le), fun h ↦
     CovBy.not_le_of_ne (hA _ _ hmd) ha had.symm (h hd hdb)⟩
 
@@ -447,7 +449,7 @@ theorem isMaximalCategory_iff_forall_above [IsForestOrder α] (hP : ∀ m d, P m
 `b` dominates. -/
 theorem mem_maxCommand_iff_le [IsForestOrder α] (hP : ∀ m d, P m d → m ⋖ d) {h b x : α}
     (hb : IsProjectionOf (P ⊔ A) h b) (hmax : b ∈ maximalProjections P A) (hne : b ≠ h) :
-    (h, x) ∈ maxCommand P A ↔ b ≤ x := by
+    h ~[maxCommand P A] x ↔ b ≤ x := by
   have hH : ∀ m d, (P ⊔ A) m d → m ⋖ d := fun m d hmd ↦ hmd.elim (hP m d) (hA m d)
   refine mem_commandRelation_iff_le ⟨⟨hmax, lt_of_le_of_ne (hb.le hH) hne⟩, fun x ⟨hx, hxh⟩ ↦ ?_⟩
   rcases IsForestOrder.le_total_of_le_of_le hxh.le (hb.le hH) with h' | h'

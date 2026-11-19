@@ -47,6 +47,7 @@ namespace Reinhart1976
 
 open PhraseStructure PhraseStructure.Tree
 open RoseTree (IsBranchingAt cCommand CCommands)
+open scoped SetRel
 
 variable {C W : Type*}
 
@@ -55,7 +56,7 @@ variable {C W : Type*}
 /-- A node commands another (1) when neither dominates the other and the S node most immediately
 dominating the first dominates the second. -/
 def Commands (t : Tree Cat W) (a b : GornAddress) : Prop :=
-  (a, b) ∈ sCommand t ∧ IncompRel (· ≤ ·) a b
+  a ~[sCommand t] b ∧ IncompRel (· ≤ ·) a b
 
 /-- Precede-and-command is the domain relation of the received view (5). -/
 def PrecedesAndCommands (t : Tree Cat W) (a b : GornAddress) : Prop :=
@@ -74,7 +75,7 @@ theorem cCommands_commands {t : Tree Cat W} {a b : GornAddress}
 
 -- (38)
 theorem cCommand_eq_Ici {t : Tree C W} {a m : GornAddress} (hm : m < a) (hb : IsBranchingAt t m)
-    (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommand t} = Set.Ici m :=
+    (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | a ~[cCommand t] b} = Set.Ici m :=
   Set.ext fun _ ↦ mem_commandRelation_iff_le ⟨⟨hb, hm⟩, fun x hx ↦ hmax x hx.2 hx.1⟩
 
 /-- In type I of (50), `a` c-commands `b` but `b` precedes `a`. -/
