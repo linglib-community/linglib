@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Combinatorics.SimpleGraph.MaximalIndepSet
+public import Linglib.Core.Combinatorics.SimpleGraph.Clique
 
 /-!
 # Personae and grounded fields
@@ -132,9 +132,7 @@ theorem compatiblePersonae_eq_singleton (h : F.indexes v ∈ G.maximalIndepSets)
     F.compatiblePersonae v = {⟨F.indexes v, h⟩} := by
   ext π
   rw [mem_compatiblePersonae, Finset.mem_singleton, Compatible, Subtype.ext_iff]
-  refine ⟨fun hsub ↦ ?_, fun he ↦ he ▸ subset_rfl⟩
-  exact (Finset.coe_injective ((G.mem_maximalIndepSets.1 h).eq_of_subset
-    (G.mem_maximalIndepSets.1 π.2).prop (Finset.coe_subset.2 hsub))).symm
+  exact ⟨fun hsub ↦ (G.isAntichain_maximalIndepSets.eq h π.2 hsub).symm, fun he ↦ he ▸ subset_rfl⟩
 
 end Personae
 
@@ -174,10 +172,7 @@ theorem personae_eq_compl : F.personae v = {h.symm.persona}ᶜ := by
   ext π
   rw [mem_personae, Finset.mem_compl, Finset.mem_singleton, Meets, h.indexes_eq_compl,
     disjoint_compl_left_iff, not_iff_not, Subtype.ext_iff]
-  refine ⟨fun hsub ↦ ?_, fun he ↦ he ▸ le_rfl⟩
-  have hπ := π.2
-  rw [SimpleGraph.mem_maximalIndepSets] at hπ
-  exact Finset.coe_injective (hπ.eq_of_subset (F.isIndepSet w) (Finset.coe_subset.2 hsub))
+  exact ⟨G.isAntichain_maximalIndepSets.eq π.2 h.right_mem, fun he ↦ he ▸ le_rfl⟩
 
 theorem symm_persona_notMem_personae : h.symm.persona ∉ F.personae v := by
   rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton, not_not]
