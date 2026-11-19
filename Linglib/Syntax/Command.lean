@@ -43,9 +43,10 @@ The positions of a rose tree instantiate the theory in `Linglib/Syntax/Command/R
 
 ## Implementation notes
 
-* `commandRelation` is an `abbrev` for an upper polar, so the lemmas of `Mathlib/Order/Concept.lean`
-  apply to it as they stand and are not restated here.
-* The relations are `SetRel`s, written `a ~[commandRelation P] b`, since they are intersected,
+* `C[P]` is [barker-pullum-1990]'s $C_P$, notation for `commandRelation P`, which is an `abbrev`
+  for an upper polar, so the lemmas of `Mathlib/Order/Concept.lean` apply to it as they stand and
+  are not restated here.
+* The relations are `SetRel`s, written `a ~[C[P]] b`, since they are intersected,
   inverted and compared; dominance, which is only ever applied, stays `≤`, and `Commands`,
   likewise only applied, is a predicate.
 * Barker and Pullum's own theorems, their generation by relations and their definition of
@@ -83,7 +84,9 @@ abbrev Admits (x : α) (ab : α × α) : Prop := x < ab.1 → x ≤ ab.2
 dominating `a` dominates `b`: the upper polar of `P` along `Admits`. -/
 abbrev commandRelation (P : Set α) : SetRel α α := upperPolar Admits P
 
-theorem mem_commandRelation : a ~[commandRelation P] b ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
+@[inherit_doc] scoped notation "C[" P "]" => commandRelation P
+
+theorem mem_commandRelation : a ~[C[P]] b ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
 
 /-- The `P`-ancestors of a node, the members of `P` properly dominating it: the upper bounds for
 the node with respect to `P` of [barker-pullum-1990]. -/
@@ -99,30 +102,30 @@ theorem ancestors_mono (h : P ⊆ Q) : ancestors P a ⊆ ancestors Q a :=
 
 /-- The nodes `a` commands are the nodes all its `P`-ancestors dominate. -/
 theorem mem_commandRelation_iff_mem_upperBounds :
-    a ~[commandRelation P] b ↔ b ∈ upperBounds (ancestors P a) :=
+    a ~[C[P]] b ↔ b ∈ upperBounds (ancestors P a) :=
   ⟨fun h _ hx ↦ h hx.1 hx.2, fun h _ hx hxa ↦ h ⟨hx, hxa⟩⟩
 
-instance : (commandRelation P).IsRefl := ⟨fun _ _ _ hxa ↦ hxa.le⟩
+instance : (C[P]).IsRefl := ⟨fun _ _ _ hxa ↦ hxa.le⟩
 
-theorem mem_commandRelation_of_le (h : a ~[commandRelation P] b) (hbc : b ≤ c) :
-    a ~[commandRelation P] c :=
+theorem mem_commandRelation_of_le (h : a ~[C[P]] b) (hbc : b ≤ c) :
+    a ~[C[P]] c :=
   fun _ hx hxa ↦ (h hx hxa).trans hbc
 
 theorem mem_commandRelation_congr (h : ∀ x < a, x ∈ P ↔ x ∈ Q) :
-    a ~[commandRelation P] b ↔ a ~[commandRelation Q] b :=
+    a ~[C[P]] b ↔ a ~[C[Q]] b :=
   ⟨fun hP _ hx hxa ↦ hP ((h _ hxa).2 hx) hxa, fun hQ _ hx hxa ↦ hQ ((h _ hxa).1 hx) hxa⟩
 
 /-- When the `P`-ancestors of `a` have a greatest member `m`, the lowest of them in the tree, `a`
 commands exactly what `m` dominates. -/
 theorem mem_commandRelation_iff_le (h : IsGreatest (ancestors P a) m) :
-    a ~[commandRelation P] b ↔ m ≤ b := by
+    a ~[C[P]] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
 
 /-- An order embedding preserves and reflects command when every node below a node of its range
 is in the range or below all of it, as for a subtree or a lower set. -/
 theorem mem_commandRelation_preimage_iff {β : Type*} [Preorder β] (f : α ↪o β)
     (hf : ∀ a, ∀ y < f a, y ∈ range f ∨ y ∈ lowerBounds (range f)) (P : Set β) :
-    a ~[commandRelation (f ⁻¹' P)] b ↔ f a ~[commandRelation P] f b := by
+    a ~[C[f ⁻¹' P]] b ↔ f a ~[C[P]] f b := by
   refine ⟨fun h y hy hya ↦ ?_, fun h x hx hxa ↦ f.le_iff_le.1 (h hx (f.lt_iff_lt.2 hxa))⟩
   obtain ⟨x, rfl⟩ | hy' := hf a y hya
   · exact f.le_iff_le.2 (h (a := x) hy (f.lt_iff_lt.1 hya))
@@ -145,11 +148,11 @@ neither of the two dominates the other. -/
 @[mk_iff]
 structure Commands (P : Set α) (a b : α) : Prop where
   /-- Every `P`-node properly dominating the commander dominates the commanded node. -/
-  command : a ~[commandRelation P] b
+  command : a ~[C[P]] b
   /-- Neither node dominates the other. -/
   incompRel : IncompRel (· ≤ ·) a b
 
-instance [Decidable (a ~[commandRelation P] b)] [Decidable (IncompRel (· ≤ ·) a b)] :
+instance [Decidable (a ~[C[P]] b)] [Decidable (IncompRel (· ≤ ·) a b)] :
     Decidable (Commands P a b) :=
   decidable_of_iff' _ (commands_iff ..)
 
@@ -180,22 +183,22 @@ section ForestOrder
 variable [PartialOrder α] [IsForestOrder α] {P : Set α} {a b c m : α}
 
 theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
-    a ~[commandRelation P] b ↔ a ~[commandRelation P] c :=
+    a ~[C[P]] b ↔ a ~[C[P]] c :=
   ⟨fun h _ hx hxa ↦ (IsForestOrder.le_total_of_le_of_le (h hx hxa) hcb).resolve_right
       fun hcx ↦ hca (hcx.trans_lt hxa),
     fun h ↦ mem_commandRelation_of_le h hcb⟩
 
-theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[commandRelation P] b :=
+theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[C[P]] b :=
   fun _ _ hxa ↦ (IsForestOrder.le_of_lt_of_covBy ha hxa).trans hb
 
 /-- A node whose mother is a generator commands exactly what its mother dominates. -/
 theorem mem_commandRelation_iff_le_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
-    a ~[commandRelation P] b ↔ m ≤ b :=
+    a ~[C[P]] b ↔ m ≤ b :=
   mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsForestOrder.le_of_lt_of_covBy ha hx.2⟩
 
 /-- A node whose mother is not a generator commands exactly what its mother commands. -/
 theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
-    a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
+    a ~[C[P]] b ↔ m ~[C[P]] b :=
   ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
     h hx ((IsForestOrder.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
 
@@ -205,7 +208,7 @@ in `P` or not. -/
 theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsStronglyCoatomic α]
     {R : SetRel α α} (hbot : ∀ b, ⊥ ~[R] b)
     (hmem : ∀ ⦃m a⦄, m ⋖ a → m ∈ P → ∀ b, a ~[R] b ↔ m ≤ b)
-    (hnot : ∀ ⦃m a⦄, m ⋖ a → m ∉ P → ∀ b, a ~[R] b ↔ m ~[R] b) : R = commandRelation P := by
+    (hnot : ∀ ⦃m a⦄, m ⋖ a → m ∉ P → ∀ b, a ~[R] b ↔ m ~[R] b) : R = C[P] := by
   ext ⟨a, b⟩
   induction a using WellFoundedLT.induction generalizing b with | ind a ih
   rcases eq_or_ne a ⊥ with rfl | ha
@@ -238,10 +241,10 @@ section Mates
 variable [Preorder α] {P : Set α} {a b : α}
 
 /-- Two nodes are `P`-mates when each `P`-commands the other. -/
-abbrev mateRelation (P : Set α) : SetRel α α := (commandRelation P).symmetrize
+abbrev mateRelation (P : Set α) : SetRel α α := (C[P]).symmetrize
 
 theorem mem_mateRelation :
-    a ~[mateRelation P] b ↔ a ~[commandRelation P] b ∧ b ~[commandRelation P] a := Iff.rfl
+    a ~[mateRelation P] b ↔ a ~[C[P]] b ∧ b ~[C[P]] a := Iff.rfl
 
 end Mates
 
@@ -262,17 +265,17 @@ variable [PartialOrder α] {P : Set α} {a b x : α}
 /-- A node is at least as close as another when it commands it and the other is not one of its
 ancestors. -/
 theorem ancestors_subset_ancestors_iff :
-    ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b ∧ b ∉ ancestors P a :=
+    ancestors P a ⊆ ancestors P b ↔ a ~[C[P]] b ∧ b ∉ ancestors P a :=
   ⟨fun h ↦ ⟨fun _ hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun hb ↦ lt_irrefl b (h hb).2⟩,
     fun ⟨h, hb⟩ _ hx ↦ ⟨hx.1, (h hx.1 hx.2).lt_of_ne fun e : _ = b ↦ hb (e ▸ hx)⟩⟩
 
 /-- A node commands every node at most as close as it. -/
 theorem mem_commandRelation_of_ancestors_subset (h : ancestors P a ⊆ ancestors P b) :
-    a ~[commandRelation P] b :=
+    a ~[C[P]] b :=
   (ancestors_subset_ancestors_iff.1 h).1
 
 theorem ancestors_subset_ancestors_iff_of_not_lt (hba : ¬ b < a) :
-    ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b :=
+    ancestors P a ⊆ ancestors P b ↔ a ~[C[P]] b :=
   ancestors_subset_ancestors_iff.trans (and_iff_left fun hb ↦ hba hb.2)
 
 /-- A node is closer than the nodes it dominates through a generator. -/
@@ -284,7 +287,7 @@ theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (h
 /-- Between nodes neither of which properly dominates the other, strict closeness is asymmetric
 command. -/
 theorem ancestors_ssubset_ancestors_iff (hab : ¬ a < b) (hba : ¬ b < a) :
-    ancestors P a ⊂ ancestors P b ↔ a ~[commandRelation P] b ∧ ¬ b ~[commandRelation P] a := by
+    ancestors P a ⊂ ancestors P b ↔ a ~[C[P]] b ∧ ¬ b ~[C[P]] a := by
   rw [ssubset_def, ancestors_subset_ancestors_iff_of_not_lt hba,
     ancestors_subset_ancestors_iff_of_not_lt hab]
 
