@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Order.Comparable
 

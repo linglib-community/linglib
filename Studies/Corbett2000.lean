@@ -9,7 +9,7 @@ public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Number.Resolve
 public import Linglib.Syntax.Agreement.ConjunctAgreement
-public import Linglib.Syntax.Agreement.HasPhi
+public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Feature.Slot
 public import Linglib.Syntax.Person.Features
 

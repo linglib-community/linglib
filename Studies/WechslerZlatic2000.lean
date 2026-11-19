@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Agreement.Hierarchy
 public import Linglib.Data.Examples.WechslerZlatic2000
 

@@ -7,7 +7,7 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
-public import Linglib.Syntax.Agreement.HasPhi
+public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Person.Category

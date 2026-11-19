@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Logic.Function.DependsOn
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Agreement.Hierarchy
 
 /-!

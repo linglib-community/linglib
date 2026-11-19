@@ -22,7 +22,7 @@ A specification that covers fewer participant sets is more specific, so
 inclusive](##Person.Specification.ofPerson_first_le_inclusive). Two specifications are
 compatible when some participant set is covered by both;
 [the first and the second person are not](##Person.Specification.not_compat_first_second). The
-person slot of an agreement bundle is a specification (`Syntax/Agreement/Bundle.lean`).
+person slot of an agreement bundle is a specification (`Syntax/Feature/Bundle.lean`).
 
 ## Main definitions
 
