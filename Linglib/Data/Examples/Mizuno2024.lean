@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Mizuno2024` — typed example data
@@ -26,7 +28,7 @@ def en1a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "anderson"), ("strategy", "x-marking")] }
+    paperFeatures := [("construction", "anderson"), ("strategy", "X-marking")] }
 
 def en2 : Datum :=
   { id := "mizuno2024_en2"
@@ -39,7 +41,7 @@ def en2 : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
+    paperFeatures := [("construction", "anderson"), ("strategy", "O-marking")] }
 
 def ja3 : Datum :=
   { id := "mizuno2024_ja3"
@@ -54,7 +56,7 @@ def ja3 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "fake-past"), ("x_exponent", "-ta")] }
+    paperFeatures := [] }
 
 def ja4a : Datum :=
   { id := "mizuno2024_ja4a"
@@ -69,7 +71,7 @@ def ja4a : Datum :=
     judgment := .acceptable
     contrasts := [("Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", .unacceptable)]
     readings := []
-    paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
+    paperFeatures := [("construction", "anderson"), ("strategy", "O-marking")] }
 
 def ja7a : Datum :=
   { id := "mizuno2024_ja7a"
@@ -84,7 +86,7 @@ def ja7a : Datum :=
     judgment := .acceptable
     contrasts := [("Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, kare-no zissai-no nyuukoku geeto-to mattaku onazi geeto-o, kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita (hazuda).", .unacceptable)]
     readings := []
-    paperFeatures := [("construction", "anderson"), ("strategy", "o-marking"), ("hp_type", "radical")] }
+    paperFeatures := [("construction", "anderson"), ("strategy", "O-marking"), ("hp_type", "radical")] }
 
 def ma13a : Datum :=
   { id := "mizuno2024_ma13a"
@@ -99,7 +101,7 @@ def ma13a : Datum :=
     judgment := .acceptable
     contrasts := [("Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", .unacceptable)]
     readings := []
-    paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
+    paperFeatures := [("construction", "anderson"), ("strategy", "O-marking")] }
 
 def en8 : Datum :=
   { id := "mizuno2024_en8"
@@ -112,7 +114,7 @@ def en8 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "flv"), ("strategy", "x-marking"), ("flv_xmarking", "available")] }
+    paperFeatures := [("construction", "flv"), ("strategy", "X-marking")] }
 
 def ja9 : Datum :=
   { id := "mizuno2024_ja9"
@@ -127,7 +129,7 @@ def ja9 : Datum :=
     judgment := .acceptable
     contrasts := [("John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, kedo, tabun kare-wa asita ko-na-i to omou.", .unacceptable)]
     readings := []
-    paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")] }
+    paperFeatures := [("construction", "flv"), ("strategy", "O-marking")] }
 
 def ma11 : Datum :=
   { id := "mizuno2024_ma11"
@@ -142,8 +144,32 @@ def ma11 : Datum :=
     judgment := .acceptable
     contrasts := [("Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, danshi wo juede ta mingtian bu hui lai.", .unacceptable)]
     readings := []
-    paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")] }
+    paperFeatures := [("construction", "flv"), ("strategy", "O-marking")] }
 
 def all : List Datum := [en1a, en2, ja3, ja4a, ja7a, ma13a, en8, ja9, ma11]
+
+/-- The constructions whose marking the paper compares. -/
+inductive Construction where
+  /-- anderson: an Anderson conditional, whose consequent is an observed fact (§2) -/
+  | anderson
+  /-- flv: a future-less-vivid conditional (§4.2) -/
+  | flv
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `construction`. -/
+def construction (e : Datum) : Option Construction :=
+  e.parse? "construction" [("anderson", .anderson), ("flv", .flv)]
+
+/-- The marking of the row's primary text, in the terms of von Fintel and Iatridou. -/
+inductive Strategy where
+  /-- X-marking: the morphology of a counterfactual conditional -/
+  | xMarking
+  /-- O-marking: the absence of X-marking -/
+  | oMarking
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `strategy`. -/
+def strategy (e : Datum) : Option Strategy :=
+  e.parse? "strategy" [("X-marking", .xMarking), ("O-marking", .oMarking)]
 
 end Mizuno2024.Examples

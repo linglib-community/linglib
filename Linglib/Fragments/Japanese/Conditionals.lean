@@ -1,14 +1,12 @@
 module
 
 public import Linglib.Semantics.Conditionals.Typology
-public import Linglib.Semantics.Modality.XMarking
-public import Linglib.Fragments.Japanese.Morph
 
 /-!
 # Japanese conditional markers
 
 The Japanese conditional markers *-ra* ~ *-tara*, *nara* and *-(e)ba*, typed by
-`Conditional.Marker`, and the language's X-marking exponent. Lassiter finds that *-ra* marks only
+`Conditional.Marker`. Lassiter finds that *-ra* marks only
 hypothetical conditionals and *nara*, which doubles as a topic marker, either reading. Mizuno
 records *-(e)ba* heading counterfactual, Anderson and future-less-vivid conditionals, which the
 consequent's tense rather than the marker distinguishes.
@@ -17,8 +15,6 @@ consequent's tense rather than the marker distinguishes.
 
 * [lassiter-2025]
 * [mizuno-2024]
-* [ogihara-2014]
-* [mizuno-kaufmann-2019]
 -/
 
 @[expose] public section
@@ -44,10 +40,5 @@ of [mizuno-2024]. The source records nothing on a premise reading. -/
 def eba : Conditional.Marker where
   morphs := [.suff "(e)ba"]
   readings := ⟨({.hypothetical}, ⊤), le_top⟩
-
-/-- Japanese X-marking is the fake past, the past suffix `Japanese.Verb.Exponent.ta`
-([ogihara-2014], [mizuno-kaufmann-2019]; [mizuno-2024] ex. 3). -/
-def xMarking : Option Modality.XMarking.XMarkingExponent :=
-  some ⟨Morphology.Morph.surface Verb.Exponent.ta.morphs, [.past]⟩
 
 end Japanese.Conditionals

@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Modality.XMarking
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Discourse.CommonGround
 public import Linglib.Fragments.English.Conditionals
@@ -28,11 +27,13 @@ A `Scenario` is a common ground that grows over time, with the antecedent and co
 conditional; its context set at the time of utterance is `D`. A strategy is felicitous when it
 can quantify over a domain that leaves the consequent open: X-marking over any proper extension
 of `D` whose presupposition holds, O-marking over `D` or, where X-marking fails, the context set of
-an earlier time. Each strategy's felicity is derived in each construction (`xFelicitous_jones_iff`,
-`oFelicitous_jones_iff`, `xFelicitous_party_iff`, `oFelicitous_party`), so the constructions stand
-or fall together (`xFelicitous_jones_iff_party`). One parameter per language, whether its
-X-marking signals strong counterfactuality, predicts the judgment of every row and of its
-alternatives (`rows_felicity`).
+an earlier time. In an Anderson conditional X-marking is felicitous
+[only without strong counterfactuality](##Mizuno2024.xFelicitous_jones_iff) and O-marking
+[only with it](##Mizuno2024.oFelicitous_jones_iff); in a future-less-vivid conditional X-marking
+[behaves the same](##Mizuno2024.xFelicitous_party_iff), so the two constructions
+[stand or fall together](##Mizuno2024.xFelicitous_jones_iff_party). One parameter per language,
+whether its X-marking signals strong counterfactuality, predicts
+[the judgment of every row and of its alternatives](##Mizuno2024.rows_felicity).
 
 ## Implementation notes
 
@@ -41,7 +42,9 @@ a common ground at each time, the facts established by then asserted in order, a
 possibilities are its context set. Whether the member of (1) who proposes that Jones *must* have
 taken arsenic is thereby committed to the antecedent decides whether the premise reading is
 felicitous too; `felicitous_iff_of_open` takes that no participant is committed to it as a
-hypothesis. The Mandarin exponent *le* is study-local, resting on the paper's single consultant.
+hypothesis. A row records its construction and whether its primary text is X-marked or O-marked,
+in the terms of [von-fintel-iatridou-2023]; O-marking being the absence of X-marking, the
+alternatives of a row carry the marking its primary text lacks.
 
 ## References
 
@@ -63,7 +66,6 @@ hypothesis. The Mandarin exponent *le* is study-local, resting on the paper's si
 
 namespace Mizuno2024
 
-open Modality.XMarking (MarkingStrategy XMarkingExponent)
 open Conditional (Reading strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 
 /-! ### Scenarios and felicity
@@ -320,7 +322,7 @@ signal strong counterfactuality: English (8) and not Japanese (10) or Mandarin (
 theorem xFelicitous_party_iff {κ : Counterfactuality} : party.XFelicitous κ ↔ κ = .weak :=
   Scenario.xFelicitous_iff antecedent_live_party exists_ssuperset_party
 
-/-- An O-marked future-less-vivid conditional is felicitous, (9) and (11). -/
+-- (9), (11)
 theorem oFelicitous_party {κ : Counterfactuality} : party.OFelicitous κ :=
   Scenario.oFelicitous_of_not_subset not_domain_subset_consequent_party
 
@@ -333,15 +335,9 @@ theorem xFelicitous_jones_iff_party {κ : Counterfactuality} :
 
 /-! ### The rows -/
 
-/-- The constructions of the paper's examples. -/
-inductive Construction
-  | anderson
-  | flv
-  deriving DecidableEq, Repr
-
 /-- The felicity the account predicts for a strategy in a construction, in a language whose
 X-marking has counterfactuality `κ`. -/
-def Felicitous (κ : Counterfactuality) : Construction → MarkingStrategy → Prop
+def Felicitous (κ : Counterfactuality) : Examples.Construction → Examples.Strategy → Prop
   | .anderson, .xMarking => jones.XFelicitous κ
   | .anderson, .oMarking => jones.OFelicitous κ
   | .flv, .xMarking => party.XFelicitous κ
@@ -359,43 +355,17 @@ counterfactuality. -/
 def counterfactuality (l : Glottocode) : Option Counterfactuality :=
   List.lookup l [(.english, .weak), (.japanese, .strong), (.mandarinChinese, .strong)]
 
-/-- The row's construction. -/
-def constructionOf (e : Datum) : Option Construction :=
-  e.parse? "construction" [("anderson", .anderson), ("flv", .flv)]
-
-/-- The strategy of the row's primary text; its alternatives realize the other. -/
-def strategyOf (e : Datum) : Option MarkingStrategy :=
-  e.parse? "strategy" [("x-marking", .xMarking), ("o-marking", .oMarking)]
-
-theorem rows_parsed : ∀ e ∈ Examples.all, (constructionOf e).isSome →
-    (strategyOf e).isSome ∧ (counterfactuality e.language).isSome := by
+theorem rows_parsed : ∀ e ∈ Examples.all, (Examples.construction e).isSome →
+    (Examples.strategy e).isSome ∧ (counterfactuality e.language).isSome := by
   decide
 
 /-- Every row and its alternatives are judged as predicted, in English (1a), (2) and (8), Japanese
 (4a), (7a) and (9), and Mandarin (11) and (13a). -/
 theorem rows_felicity :
-    ∀ e ∈ Examples.all, ∀ c ∈ constructionOf e, ∀ m ∈ strategyOf e,
+    ∀ e ∈ Examples.all, ∀ c ∈ Examples.construction e, ∀ m ∈ Examples.strategy e,
       ∀ κ ∈ counterfactuality e.language,
         (e.JudgedFelicitous ↔ Felicitous κ c m) ∧
-          ∀ a ∈ e.contrasts, (a.2 = .acceptable ↔ Felicitous κ c m.other) := by
-  decide
-
-/-! ### The inventory (§3.1)
-
-Every sampled language has X-marking, so the inventory alone predicts X-marked Anderson
-conditionals throughout, which Japanese and Mandarin reject. -/
-
-/-- The X-marking exponents of English and Japanese are the fragments', and that of Mandarin is
-*le*, study-local since it rests on one consultant (fn. 15). -/
-def xExponent (l : Glottocode) : Option XMarkingExponent :=
-  (List.lookup l [(.english, English.Conditionals.xMarking),
-    (.japanese, Japanese.Conditionals.xMarking),
-    (.mandarinChinese, some ⟨"le", [.perfective]⟩)]).join
-
--- (3)
-theorem xExponent_isSome : (∀ e ∈ Examples.all, (xExponent e.language).isSome) ∧
-    ∃ e ∈ Examples.all, e.JudgedFelicitous ∧
-      e.feature? "x_exponent" = Japanese.Conditionals.xMarking.map (·.form) := by
+          ∀ j ∈ e.contrasts.map Prod.snd, ∀ m' ≠ m, (j = .acceptable ↔ Felicitous κ c m') := by
   decide
 
 /-! ### The conditional markers
