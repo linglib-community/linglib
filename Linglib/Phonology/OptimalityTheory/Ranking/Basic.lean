@@ -15,35 +15,21 @@ public import Linglib.Core.Order.PiLex
 /-!
 # Constraint rankings
 
-A *ranking* of the constraints `ι` is an enumeration `r : Fin n ≃ ι` of the constraints in rank
-order, the total domination order `≫` of [prince-2002]. Here `r p` is the constraint at rank
-position `p`, position `0` is the most dominant, and `r.symm i` is the rank position of `i`. For
-`ι = Fin n` a ranking is a permutation, `Equiv.Perm (Fin n)`.
-
-A ranking reads a violation vector `v` in rank order as `toLex (v ∘ r)`. Comparing two vectors
-under one ranking is the lexicographic order along an enumeration (`Pi.toLex_comp_lt_iff_exists`
-in `Core/Order/PiLex`); comparing them under every ranking is the product order
-(`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. `Tableau` evaluates candidates under a
-ranking, and `ElementaryRankingCondition.lean` infers rankings from winner–loser pairs. Rankings
-carry the discrete σ-algebra, so a distribution over rankings, as in a partially ordered grammar or
-stochastic OT, is a `Measure`.
-
-## Main definitions
-
-* `Ranking.Enumeration.ofList`: the ranking that orders the constraints as a list of all of them
-  does.
-* `Ranking.Enumeration.Dominates`: strict dominance, a strict total order on the constraints.
-* `Ranking.Enumeration.toRel`: the reflexive closure of `Dominates`, which determines the ranking.
-* `Ranking.Enumeration.take`: the top `k` constraints.
-* `Ranking.Enumeration.swapAt`: the transposition of two adjacent constraints.
+This file defines a [ranking](##Ranking.Enumeration) of the constraints `ι` as an enumeration
+`r : Fin n ≃ ι` of them in rank order, position `0` the most dominant, which presents Prince's
+total domination order. It defines the [strict dominance](##Ranking.Enumeration.Dominates) of a
+ranking and its [reflexive closure](##Ranking.Enumeration.toRel), which
+[determines the ranking](##Ranking.Enumeration.toRel_injective). A ranking reads a violation
+vector `v` in rank order as `toLex (v ∘ r)`, so comparing two vectors under one ranking is
+[the lexicographic order along an enumeration](##Pi.toLex_comp_lt_iff_exists), and comparing them
+under every ranking is [the product order](##Pi.forall_toLex_comp_lt_iff), which is harmonic
+bounding. Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
 
 ## Implementation notes
 
-A ranking is stored as the enumeration rather than as the order relation, so that rankings can be
-enumerated and compared decidably; the relation is derived (`Dominates`). The length `n` is a
-parameter rather than `Fintype.card ι`, so that a ranking of `Fin n` is literally a permutation.
-`card_eq` recovers `Fintype.card ι = n` from any ranking, and a statement quantifying over all
-rankings is vacuous when `n` does not match.
+A ranking is stored as an enumeration rather than as an order relation, so that rankings can be
+enumerated and compared decidably. The length `n` is a parameter rather than `Fintype.card ι`, so
+that a ranking of `Fin n` is literally a permutation, and `card_eq` recovers the cardinality.
 
 ## References
 
@@ -74,9 +60,9 @@ theorem total_eq_of_le {α : Type*} {r s : α → α → Prop}
   · obtain rfl := ha.antisymm _ _ hs (h b a hr)
     exact (ht.total a a).elim id id
 
-/-- A *ranking* of the constraints `ι`: an enumeration of all of them, most dominant first. It
-is the enumeration by `Fin (Fintype.card ι)`, so a ranking is given by the constraints alone,
-and what is proved of an arbitrary `Ranking.Enumeration ι n` holds of it. -/
+/-- A ranking of the constraints `ι` is an enumeration of all of them, most dominant first, indexed
+by `Fin (Fintype.card ι)`, so that what is proved of an arbitrary `Ranking.Enumeration ι n` holds of
+it. -/
 abbrev Ranking (ι : Type*) [Fintype ι] := Ranking.Enumeration ι (Fintype.card ι)
 
 /-- The ranking a list of all the constraints enumerates, most dominant first. -/

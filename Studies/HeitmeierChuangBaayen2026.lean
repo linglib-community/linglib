@@ -268,7 +268,7 @@ abbrev base : cells := ⟨.base, by decide⟩
 abbrev past : cells := ⟨.past, by decide⟩
 
 /-- The letter-trigram cue inventory of the four forms; §12.9 codes forms as letter trigrams. -/
-def trigram : Fin 13 → Augmented Char :=
+def trigram : Fin 13 → Subregular.Augmented Char :=
   ![[none, some 'w', some 'a'], [some 'w', some 'a', some 'l'], [some 'a', some 'l', some 'k'],
     [some 'l', some 'k', none], [some 'l', some 'k', some 'e'], [some 'k', some 'e', some 'd'],
     [some 'e', some 'd', none], [none, some 'g', some 'o'], [some 'g', some 'o', none],

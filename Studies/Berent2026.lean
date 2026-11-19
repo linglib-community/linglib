@@ -52,7 +52,7 @@ decides it](##initialIdentity_not_factorsThrough). English speakers carry doubli
 
 namespace Berent2026
 
-open Phonology Morphology OptimalityTheory BerentEtAl2016
+open Phonology Morphology OptimalityTheory BerentEtAl2016 Subregular
 
 /-! ### Abstract: the syllable hierarchy -/
 

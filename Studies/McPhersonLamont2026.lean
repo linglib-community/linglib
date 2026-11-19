@@ -4,7 +4,9 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
-public import Linglib.Phonology.Tone.Constraints
+public import Linglib.Phonology.OptimalityTheory.Constraint.Directional
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
+public import Linglib.Phonology.Tone.Basic
 public import Linglib.Fragments.Poko.Tone
 public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.HarmonicGrammar.Harmony
@@ -33,12 +35,22 @@ sponsored by its position in the phrase, as the source colours each stem; the ta
 rankings, and serial derivations are the substrate's harmonic-serialism and tableau
 apparatus.
 
+The constraints read the candidates of an autosegmental form whose tones and TBUs are sponsored
+by morphemes, generic over the segment and sponsor types. Faithfulness (`maxTone`, `maxLinkTone`,
+`depLinkTone`) compares a candidate's surface state with its form, which the candidate carries as
+a parameter; without it the asymmetry between left-to-right and right-to-left multi-step
+derivations collapses. Directionality is a property of EVAL, not of a constraint: `*FLOAT` is a
+`Constraint.directionalBlock`, and `starFloatCount` is its count collapse, which agrees with the
+block on at most one floating tone and cannot tell deleting the leftmost from deleting the
+rightmost.
+
 ## References
 
 * [mcpherson-lamont-2026]
 * [lamont-2022b]
 * [pruitt-2009]
 * [prince-2002]
+* [wolf-2007]
 -/
 
 @[expose] public section
@@ -47,6 +59,86 @@ namespace McPhersonLamont2026
 
 open OptimalityTheory
 open OptimalityTheory Autosegmental HarmonicGrammar Poko Tone
+
+/-! ### Constraints -/
+
+section Constraints
+
+variable {S M : Type} [DecidableEq S] [DecidableEq M]
+  {u : AR (TwoTier (Sponsored TRN M) (Sponsored S M))}
+
+/-- The tone at index `k` has value `t`. -/
+abbrev ToneHasValue (k : Fin (u.word .upper).length) (t : TRN) : Prop :=
+  (u.word .upper)[k].value = t
+
+/-- `*FLOAT` (eq. 16) as a directional constraint ([lamont-2022b]), one binary constraint per
+underlying tone that flags it while it floats. Spliced forward it is `*FLOAT^→`. -/
+def starFloatBlock : List (Constraint (Candidate u)) :=
+  Constraint.directionalBlock (u.word .upper).length fun i c ↦ c.IsFloating i
+
+/-- `*FLOAT^←` is `starFloatBlock` laid out in reverse position order, for right-to-left
+evaluation. -/
+def starFloatBlockRev : List (Constraint (Candidate u)) := starFloatBlock.reverse
+
+/-- The count variant of `*FLOAT` totals the floating tones as a single scalar constraint, the
+degree collapse of `starFloatBlock`. -/
+def starFloatCount : Constraint (Candidate u) :=
+  fun c ↦ (Finset.univ.filter c.IsFloating).card
+
+/-- `*TAUTDOCK` (eq. 15, after [wolf-2007]) assigns one violation per GEN-inserted tautomorphemic
+surface link. -/
+def starTautDock : Constraint (Candidate u) :=
+  fun c ↦ (c.insertedLinks.filter u.IsTautomorphemic).card
+
+/-- The tones counting toward the tonal mass of morpheme `m` are its surviving underlying tones
+and the tones surface-linked to its TBUs. -/
+def tonesForMorpheme (c : Candidate u) (m : M) : Finset (Fin (u.word .upper).length) :=
+  (Finset.univ.filter fun k ↦ k ∉ c.deleted ∧ (u.word .upper)[k].morpheme = m) ∪
+    (c.links.filter fun l ↦ (u.word .lower)[l.2].morpheme = m).image Prod.fst
+
+/-- `*CROWD` (eq. 5) assigns one violation per morpheme with more than `threshold` tones
+(default 2), counting its surviving underlying tones plus tones docked onto its TBUs from other
+morphemes. -/
+def starCrowd (threshold : ℕ := 2) : Constraint (Candidate u) :=
+  fun c ↦ (u.morphemes.filter fun m ↦ threshold < (tonesForMorpheme c m).card).card
+
+/-- A tone pair `(t1, t2)` in tier order is falling when it is HM, HL, or ML (eq. 23). -/
+abbrev IsFallingPair (t1 t2 : TRN) : Prop :=
+  (t1 = .H ∧ t2 = .M) ∨ (t1 = .H ∧ t2 = .L) ∨ (t1 = .M ∧ t2 = .L)
+
+/-- A tone sequence has a fall when two adjacent tones form a falling pair. -/
+abbrev HasFall (ts : List TRN) : Prop := ¬ ts.IsChain fun t1 t2 ↦ ¬ IsFallingPair t1 t2
+
+/-- `*FALL` (eq. 23) assigns one violation per syllable with a falling contour (HM, HL, ML). -/
+def starFall : Constraint (Candidate u) :=
+  fun c ↦ (Finset.univ.filter fun i ↦ HasFall (c.tierValues i)).card
+
+/-- `*M<L` (eq. 29) assigns one violation per M tone immediately preceding an L on the tonal
+tier, with adjacency measured over the surviving tones in tier order, so deletions skip
+positions. -/
+def starMlessL : Constraint (Candidate u) :=
+  fun c ↦ Constraint.ofForbiddenPairs (fun a b ↦ a = TRN.M ∧ b = TRN.L)
+    (c.alive.map fun k ↦ (u.word .upper)[k].value)
+
+/-- `HAVETONE` (eq. 17) assigns one violation per syllable not associated to any tone. -/
+def haveTone : Constraint (Candidate u) :=
+  fun c ↦ (Finset.univ.filter fun i ↦ c.linksTo i = []).card
+
+/-- `MAX(T)` (eq. 7c) assigns one violation per underlying tone of value `t` deleted by GEN. -/
+def maxTone (t : TRN) : Constraint (Candidate u) :=
+  fun c ↦ (c.deleted.filter fun k ↦ ToneHasValue k t).card
+
+/-- `DEP(link)/T` (eq. 7a) assigns one violation per surface link inserted by GEN whose linked
+tone has value `t`. -/
+def depLinkTone (t : TRN) : Constraint (Candidate u) :=
+  fun c ↦ (c.insertedLinks.filter fun l ↦ ToneHasValue l.1 t).card
+
+/-- `MAX(link)/T` (eq. 7b) assigns one violation per underlying link of value `t` deleted by
+GEN. -/
+def maxLinkTone (t : TRN) : Constraint (Candidate u) :=
+  fun c ↦ (c.deletedLinks.filter fun l ↦ ToneHasValue l.1 t).card
+
+end Constraints
 
 /-! ### Shared fig. 2 ranking -/
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Ranking
+public import Linglib.Phonology.OptimalityTheory.Ranking.Basic
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Prod.Basic
 public import Mathlib.Order.Extension.Linear
@@ -9,24 +9,23 @@ public import Mathlib.Order.RelIso.Basic
 /-!
 # Linear extensions of a ranking relation
 
-A partial ranking of the constraints is a relation `r` on them, and the total rankings compatible
-with it are its linear extensions. Every partial order has one, by Szpilrajn's theorem, and a
-permutation of the constraints that preserves `r` permutes its linear extensions. In a stratified
-relation the constraints fall into strata ranked one above the other, and a transposition within
-a freely ranked stratum preserves it.
+This file defines the [linear extensions](##Ranking.Enumeration.IsLinearExtension) of a relation
+`r` on the constraints, the total rankings compatible with a partial ranking, and the
+[stratified relations](##stratified), in which the constraints fall into strata ranked one above
+the other. [Every partial order on finitely many constraints has a linear
+extension](##Ranking.Enumeration.exists_isLinearExtension), by Szpilrajn's theorem, an automorphism
+of `r` [carries linear extensions to linear
+extensions](##Ranking.Enumeration.IsLinearExtension.trans_of_preimage_eq), and
+[a transposition within a freely ranked stratum preserves a stratified
+relation](##swap_preimage_stratified).
 
 ## Implementation notes
 
-A relation is an unbundled `r : ι → ι → Prop` on the constraints `ι` with `[IsPartialOrder ι r]`
-where needed, never a `PartialOrder ι` value, since a class-typed binder would become a local
-instance and capture the `≤` and `<` notation. This is mathlib's idiom for orders treated as
-data, as in `extend_partialOrder`. A permutation `g` of the constraints is an automorphism of `r`
-when `g ⁻¹'o r = r`, and acts on a ranking `σ` by `σ.trans g`.
-
-A stratified relation is used here through its linear extensions, each a total ranking, as
-[anttila-1997] uses a partial ranking. [tesar-smolensky-1995] evaluate a stratified hierarchy
-by pooling the marks of a stratum, a property of evaluation rather than of the relation, which
-is not formalized here.
+A relation is an unbundled `r : ι → ι → Prop` with `[IsPartialOrder ι r]` where needed, never a
+`PartialOrder ι` value, which would become a local instance, as in mathlib's
+`extend_partialOrder`. A stratified relation is used through its linear extensions, as Anttila
+uses a partial ranking. Tesar and Smolensky's evaluation, which sums the violations within a
+stratum, is not formalized.
 
 ## References
 
@@ -120,8 +119,8 @@ theorem exists_isLinearExtension (r : ι → ι → Prop) [IsPartialOrder ι r]
 
 variable [DecidableEq ι]
 
-/-- The linear extensions of a grammar: Anttila's tableaux, the total rankings among which the
-grammar chooses at each evaluation. -/
+/-- The linear extensions of a grammar, which are the total rankings among which the grammar chooses
+at each evaluation (Anttila's tableaux). -/
 def linearExtensions (r : ι → ι → Prop) [DecidableRel r] : Finset (Ranking.Enumeration ι n) :=
   {σ | σ.IsLinearExtension r}
 
@@ -164,9 +163,8 @@ section Stratified
 variable {s : ℕ} {stratumOf : ι → Fin s} {inner : ι → ι → Prop} {k : Fin s}
   {d d' : ι}
 
-/-- The stratified grammar of a stratum assignment and an inner order: the lexicographic order
-`Prod.Lex` pulled back along `a ↦ (stratumOf a, a)`, so that strata compare strictly and `inner`
-applies within a stratum. -/
+/-- The stratified grammar of a stratum assignment and an inner order, which orders constraints of
+different strata by their strata and constraints of one stratum by `inner`. -/
 def stratified (stratumOf : ι → Fin s) (inner : ι → ι → Prop) : ι → ι → Prop :=
   fun a b ↦ Prod.Lex (· < ·) inner (stratumOf a, a) (stratumOf b, b)
 

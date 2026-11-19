@@ -3,7 +3,7 @@ module
 public import Linglib.Phonology.Prosody.Syllable
 public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Data.Nat.PSub
-public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Fragments.Japanese.Prosody
 public import Linglib.Phonology.Prosody.Intonation
 import all Init.Data.List.Scan.Basic  -- for unfolding `List.scanl`
@@ -175,16 +175,15 @@ length. -/
 
 /-- The number of H-to-L falls in a tone string — the occurrences of
 `(H, L)` among adjacent pairs. -/
-def hlFallCount (l : List LevelTone) : ℕ := (l.zip l.tail).count (.H, .L)
+def hlFallCount : List LevelTone → ℕ := Constraint.ofForbiddenPairs fun t u ↦ t = .H ∧ u = .L
 
 theorem hlFallCount_L_cons (l : List LevelTone) :
     hlFallCount (.L :: l) = hlFallCount l := by
   cases l <;> simp [hlFallCount]
 
 theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
-    hlFallCount (t :: u :: l) =
-      hlFallCount (u :: l) + if t = .H ∧ u = .L then 1 else 0 := by
-  cases t <;> cases u <;> simp [hlFallCount]
+    hlFallCount (t :: u :: l) = (if t = .H ∧ u = .L then 1 else 0) + hlFallCount (u :: l) :=
+  Constraint.ofForbiddenPairs_cons_cons _ t u l
 
 theorem hlFallCount_le_count_tail :
     ∀ l : List LevelTone, hlFallCount l ≤ l.tail.count .L
@@ -194,8 +193,7 @@ theorem hlFallCount_le_count_tail :
       have ih := hlFallCount_le_count_tail (u :: rest)
       rw [hlFallCount_cons_cons, List.tail_cons]
       rw [List.tail_cons] at ih
-      cases t <;> cases u <;> simp_all
-      omega
+      cases t <;> cases u <;> simp_all <;> omega
 
 theorem hlFallCount_cons_self (t : LevelTone) (l : List LevelTone) :
     hlFallCount (t :: t :: l) = hlFallCount (t :: l) := by

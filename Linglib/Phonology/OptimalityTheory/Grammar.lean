@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition.Antimatroid
-public import Linglib.Phonology.OptimalityTheory.LinearExtension
+public import Linglib.Phonology.OptimalityTheory.Ranking.LinearExtension
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Order.Concept
 

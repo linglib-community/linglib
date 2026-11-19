@@ -53,7 +53,7 @@ sharing a string. -/
 def word : Fin 3 → List Phone := ![[.t, .a, .i, .m], [.l, .a, .i, .m], [.t, .a, .i, .m]]
 
 /-- The six triphones of (2) are listed in the paper's column order `#ta taɪ aɪm ɪm# #la laɪ`. -/
-def triphone : Fin 6 → Augmented Phone :=
+def triphone : Fin 6 → Subregular.Augmented Phone :=
   ![[none, some .t, some .a], [some .t, some .a, some .i], [some .a, some .i, some .m],
     [some .i, some .m, none], [none, some .l, some .a], [some .l, some .a, some .i]]
 
