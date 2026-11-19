@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Syntax.Person.Basic
-public import Linglib.Syntax.Person.Clusivity
-public import Linglib.Syntax.Person.Lattice
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Person.Lattice
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod

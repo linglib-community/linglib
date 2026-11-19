@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Person.Segment
+public import Linglib.Syntax.Feature.Person.Segment
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Minimalist.Probe.Agree
 

@@ -5,9 +5,9 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Agreement.Hierarchy
 public import Linglib.Syntax.Agreement.ResolutionRule
 public import Linglib.Syntax.Gender.AgreementClasses
-public import Linglib.Syntax.Gender.Assignment
-public import Linglib.Syntax.Number.Resolve
-public import Linglib.Syntax.Person.Lattice
+public import Linglib.Syntax.Feature.Gender.Assignment
+public import Linglib.Syntax.Feature.Number.Resolve
+public import Linglib.Syntax.Feature.Person.Lattice
 public import Linglib.Fragments.Tamil.Gender
 public import Linglib.Fragments.Swahili.Nouns
 public import Linglib.Fragments.Afar.Gender

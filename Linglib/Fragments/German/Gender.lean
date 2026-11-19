@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Syntax.Gender.Assignment
+public import Linglib.Syntax.Feature.Gender.Assignment
 
 /-!
 # German gender

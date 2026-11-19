@@ -4,8 +4,8 @@ public import Linglib.Core.Data.Fintype.Order
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.SuccPred.Basic
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Syntax.Person.Clusivity
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Tactic.DeriveFintype
 

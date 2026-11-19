@@ -7,7 +7,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Gender.AgreementClasses
-public import Linglib.Syntax.Number.Resolve
+public import Linglib.Syntax.Feature.Number.Resolve
 public import Linglib.Syntax.Agreement.ConjunctAgreement
 public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Fragments.Bayso.Number

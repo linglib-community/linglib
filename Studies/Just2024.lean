@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.Just2024
 public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Clause.Scenario
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Data.Examples.Readers
 
 /-!

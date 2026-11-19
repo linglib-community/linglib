@@ -8,7 +8,7 @@ module
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Syntax.Person.Specification
+public import Linglib.Syntax.Feature.Person.Specification
 public import Studies.Landau2013
 public import Studies.Landau2015
 public import Linglib.Data.Examples.Landau2024a

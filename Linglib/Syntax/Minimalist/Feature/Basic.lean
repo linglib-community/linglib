@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Feature.Slot
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 
 /-!
 # Features for Minimalist Agree
@@ -19,7 +19,7 @@ The agreement bundle of a checking bundle (`Agreement.Bundle`) keeps the value a
 dimension and drops the other dimensions; an agreement bundle is in turn a checking bundle that is
 absent where it is unspecified, and [has that agreement
 bundle](##Minimalist.FeatureBundle.agreement_ofAgreement). The person of a checking slot is a
-person specification (`Syntax/Person/Specification.lean`), the participant sets the features
+person specification (`Syntax/Feature/Person/Specification.lean`), the participant sets the features
 copied to the slot leave open, as a probe that has copied [participant] alone is specified for
 a speech-act participant and no further ([deal-2024]).
 

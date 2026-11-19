@@ -3,7 +3,7 @@ module
 public import Linglib.Fragments.Slavic.Czech.Case
 public import Linglib.Fragments.Slavic.Czech.Gender
 public import Linglib.Fragments.Slavic.Czech.Phonology
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Data.Fintype.Sets
 public import Mathlib.Data.Fintype.Prod
 

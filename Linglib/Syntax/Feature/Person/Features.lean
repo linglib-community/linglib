@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Person.Category
-public import Linglib.Syntax.Person.System
+public import Linglib.Syntax.Feature.Person.Category
+public import Linglib.Syntax.Feature.Person.System
 
 /-!
 # The features of the person values

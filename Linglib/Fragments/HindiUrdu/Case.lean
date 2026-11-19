@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Semantics.Aspect.Defs
 

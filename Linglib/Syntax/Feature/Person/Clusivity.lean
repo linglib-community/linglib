@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Clusivity

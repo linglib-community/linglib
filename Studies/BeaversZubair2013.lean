@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Sinhala.Verbs
 public import Studies.KoontzGarboden2009

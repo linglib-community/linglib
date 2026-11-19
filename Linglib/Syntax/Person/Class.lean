@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.Atoms
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Clause.Scenario
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 
 /-!
 # The binary person scale

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Person resolution

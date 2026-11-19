@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Paradigm.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Data.Fin.VecNotation
 
 /-!

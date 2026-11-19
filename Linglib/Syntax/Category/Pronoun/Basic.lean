@@ -9,8 +9,8 @@ public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
 public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Syntax.Binding.Basic
-public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Person.Category
+public import Linglib.Syntax.Feature.Case.Basic
+public import Linglib.Syntax.Feature.Person.Category
 
 /-!
 # Pronouns

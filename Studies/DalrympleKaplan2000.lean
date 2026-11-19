@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.Examples.DalrympleKaplan2000
 public import Linglib.Syntax.Agreement.ResolutionRule
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Fragments.Chichewa.Gender
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.German.Pronouns

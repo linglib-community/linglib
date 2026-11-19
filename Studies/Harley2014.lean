@@ -7,7 +7,7 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Allosemy
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Clause.Arguments
 public import Linglib.Data.Examples.Harley2014
 public import Linglib.Morphology.DistributedMorphology.RootCategorization

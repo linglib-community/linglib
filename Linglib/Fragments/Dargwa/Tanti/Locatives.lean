@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Feature.Case.Spatial
 public import Linglib.Fragments.Dargwa.Tanti.Case
 public import Linglib.Fragments.Dargwa.Tanti.Agreement
 

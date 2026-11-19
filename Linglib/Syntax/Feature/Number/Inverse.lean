@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Inverse number

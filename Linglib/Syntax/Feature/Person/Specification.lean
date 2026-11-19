@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.PartialUnify
-public import Linglib.Syntax.Person.Basic
-public import Linglib.Syntax.Person.Clusivity
+public import Linglib.Syntax.Feature.Person.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
 public import Mathlib.Data.Fintype.Powerset
 
 /-!

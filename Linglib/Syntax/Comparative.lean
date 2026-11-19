@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.WALS.Features.F121A
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Morphology.Morph
 
 /-!

@@ -32,7 +32,7 @@ determinate values of a system form an initial segment, which number resolution 
 Harbour's implicational universals and the order his features induce on the values are in
 `Studies/Harbour2014.lean`, the feature decomposition of the singular, dual and plural is in
 `Semantics/Plurality/NumberFeatures.lean`, and coordinate resolution in
-`Syntax/Number/Resolve.lean`.
+`Syntax/Feature/Number/Resolve.lean`.
 
 ## References
 

@@ -3,14 +3,14 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Morphology.Word.Features
-public import Linglib.Syntax.Person.Specification
+public import Linglib.Syntax.Feature.Person.Specification
 
 /-!
 # Feature bundles
 
 A feature bundle gives a slot to each of the five dimensions in which the form of one element
 may covary with another: person, number, gender, case and definiteness. The person slot is a
-person specification (`Syntax/Person/Specification.lean`), so that a form with no clusivity is
+person specification (`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is
 less specific than an inclusive or an exclusive one, and the others are slots of the flat order
 of `Core/Order/Flat.lean`, a value or nothing. The partial order of bundles, their bottom, the
 wholly unspecified bundle, and their unification are the pointwise ones. Each dimension is a
