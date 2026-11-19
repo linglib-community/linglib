@@ -90,6 +90,9 @@ theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMe
     rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _),
       ← measureReal_def, ← measureReal_def, h, tilted_real_singleton, hZeq]
 
+instance [Nonempty α] (f : α → ℝ) : IsProbabilityMeasure (Measure.count.tilted f) :=
+  isProbabilityMeasure_tilted .of_finite
+
 /-- On a finite type every measure is absolutely continuous with respect to a tilt of the counting
 measure, which gives every point positive mass. -/
 theorem absolutelyContinuous_count_tilted (μ : Measure α) (f : α → ℝ) :

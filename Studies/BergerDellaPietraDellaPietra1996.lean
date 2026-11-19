@@ -5,37 +5,46 @@ public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 /-!
 # Berger, Della Pietra and Della Pietra (1996): A Maximum Entropy Approach to Natural Language Processing
 
-Berger, Della Pietra and Della Pietra model a process that outputs `y` in a context `x` by the
-most uniform conditional distribution consistent with the statistics of a sample. A statistic is
-the expectation of a feature `f(x, y)`; a model satisfies its constraint when its expectation of
-the feature, averaged over the sample's contexts, is the sample's (4), and among the models
-satisfying every constraint the maximum entropy principle chooses the one of greatest conditional
-entropy (5)–(6). The maximizer of the Lagrangian (7) for fixed multipliers `λ` has the
-exponential form (10), and the maximum entropy model is the member of that family that maximizes
-the likelihood of the sample (§3.5).
+Berger, Della Pietra and Della Pietra model a process that outputs $y$ in a context $x$ by the
+most uniform conditional distribution consistent with the statistics of a sample $\tilde p$. A
+statistic is the expectation of a feature $f(x, y)$, and a model satisfies its constraint when its
+expectation of the feature, averaged over the sample's contexts, is the sample's. Among the
+models satisfying every constraint the maximum entropy principle chooses the one of greatest
+conditional entropy. For fixed multipliers $\lambda$ the Lagrangian of this problem [is greatest
+at](##lagrangian_le_lagrangian_model) the exponential model $p_\lambda(y \mid x) \propto
+\exp(\lambda \cdot f(x, y))$, so every model satisfying the constraints [has entropy at
+most](##condEntropy_le_neg_logLik) minus the log-likelihood of every $p_\lambda$, and the
+$p_\lambda$ of greatest likelihood [is the maximum entropy
+model](##isGreatest_condEntropy_model), [the only one](##eq_model_of_condEntropy_eq) at the
+contexts the sample contains.
 
-The motivating example (§2) translates English *in* by one of five French phrases. With only the
-phrases known the most uniform model is uniform; requiring `p(dans) + p(en) = 3/10` makes it
-`3/20, 3/20, 7/30, 7/30, 7/30`; adding `p(dans) + p(à) = 1/2` gives the solution the paper leaves
-to the reader (§3.4), with `p(dans) = (9 − √51)/10`.
+The motivating example translates English *in* by one of five French phrases. Requiring
+$p(\textit{dans}) + p(\textit{en}) = 3/10$ makes the most uniform model $3/20, 3/20, 7/30, 7/30,
+7/30$; adding $p(\textit{dans}) + p(\textit{à}) = 1/2$ gives [the
+solution](##isGreatest_three) the paper leaves to the reader, [with](##threeModel_real_singleton) $p(\textit{dans}) = (9 -
+\sqrt{51})/10$.
 
 ## Implementation notes
 
-* Features are real-valued, `f : X × Y → ι → ℝ`, binary in the paper. The model (10) is
+* Features are real-valued, `f : X × Y → ι → ℝ`, binary in the paper. The exponential model is
   `HarmonicGrammar.condMaxEnt f (-λ)`, the substrate's harmony being minus the weighted
-  statistic, and the paper's conditional entropy (5) is `H[Prod.snd | Prod.fst ; p̃.fst ⊗ₘ q]`,
-  its footnote 1's `H(Y | X)` under the joint `p̃(x) p(y|x)`.
-* With the Lagrangian (7), the value at its maximizer is `∑ p̃(x) log Z_λ(x) − λ · p̃(f)`, which is
-  `−L(p_λ)`; (11) prints this dual function with the opposite sign, as `L(p_λ)` (14), and so poses
-  the dual as a maximization. The dual of (7) is minimized; maximizing `L(p_λ)` is the same
-  problem.
-* §3.3 says the maximum entropy model in `C` is unique; it is unique at the contexts of positive
-  empirical mass, and unconstrained at the others.
+  statistic, and the paper's conditional entropy is `H[Prod.snd | Prod.fst ; p̃.fst ⊗ₘ q]`, the
+  `H(Y | X)` of its first footnote under the joint `p̃(x) p(y|x)`.
+* With the paper's Lagrangian, entropy plus each multiplier times its constraint's violation, the
+  value at the maximizer is `∑ p̃(x) log Z_λ(x) − λ · p̃(f)`, which
+  [is](##lagrangian_model_eq_neg_logLik) `−L(p_λ)`. The paper's dual function is `L(p_λ)` and its dual problem a maximization; the dual
+  of the Lagrangian as formalized is minimized, which is the same problem.
+* The maximum entropy model is determined at the contexts of positive empirical mass and
+  unconstrained at the others.
+* In the example a model is a distribution of the phrases, the counting measure tilted by the
+  weighted features, and each constraint enters only through the expected value of that
+  potential.
 
 ## TODO
 
-* Footnote 2's unattained case, where the maximum entropy model is a limit of models `p_λ`.
-* Improved iterative scaling (§3.6), feature selection (§4) and the applications of §5.
+* The unattained case of the paper's second footnote, where the maximum entropy model is a limit
+  of models `p_λ`.
+* Improved iterative scaling, feature selection and the applications.
 
 ## References
 
@@ -49,7 +58,7 @@ namespace BergerDellaPietraDellaPietra1996
 open MeasureTheory ProbabilityTheory InformationTheory HarmonicGrammar Real Finset
 open scoped ENNReal
 
-/-! ### The translation example (§2) -/
+/-! ### The translation example -/
 
 /-- The French renderings of *in* in the expert's sample. -/
 inductive Phrase
@@ -90,66 +99,30 @@ theorem integral_eq (q : Measure Phrase) [IsFiniteMeasure q] (g : Phrase → ℝ
   rw [integral_fintype .of_finite, sum_eq]
   simp only [smul_eq_mul]
 
-/-- Knowing only the five phrases, the maximum entropy model is uniform. With no features, every
-distribution satisfies the constraints, and the uniform one has the greatest entropy. -/
+-- p. 41, the first model
 theorem isGreatest_uniform :
     IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q})
-      (Hm[maxEnt (fun _ : Phrase ↦ (0 : Fin 0 → ℝ)) 0]) ∧
-      ∀ φ, (maxEnt (fun _ : Phrase ↦ (0 : Fin 0 → ℝ)) 0).real {φ} = 1 / 5 := by
-  refine ⟨?_, fun φ ↦ ?_⟩
-  · convert isGreatest_measureEntropy_maxEnt (fun _ : Phrase ↦ (0 : Fin 0 → ℝ)) 0 using 3
-    ext q
-    exact ⟨fun h ↦ ⟨h, Subsingleton.elim _ _⟩, And.left⟩
-  · rw [maxEnt_real_singleton]
-    simp [harmony, softmax_apply, show Fintype.card Phrase = 5 from rfl]
+      (Hm[uniformOn (Set.univ : Set Phrase)]) := by
+  have h : Hm[uniformOn (Set.univ : Set Phrase)] = log (Fintype.card Phrase) := by
+    simpa using measureEntropy_uniformOn (S := Phrase) univ_nonempty
+  refine ⟨⟨_, isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty, rfl⟩, ?_⟩
+  rintro _ ⟨q, -, rfl⟩
+  exact h ▸ measureEntropy_le_log_card q
 
-/-- The statistic of the first two constraints. -/
-def twoFeatures (φ : Phrase) : Fin 1 → ℝ := ![dansOrEn φ]
+/-- The model with weight `u` on *dans* or *en* and `v` on *dans* or *à*. -/
+noncomputable abbrev expModel (u v : ℝ) : Measure Phrase :=
+  Measure.count.tilted fun φ ↦ u * dansOrEn φ + v * dansOrÀ φ
 
-/-- The model maximizing entropy subject to `p(dans) + p(en) = 3/10`. -/
-noncomputable abbrev twoModel : Measure Phrase := maxEnt twoFeatures ![log (14 / 9)]
-
-theorem twoModel_real_singleton :
-    twoModel.real {dans} = 3 / 20 ∧ twoModel.real {en} = 3 / 20 ∧ twoModel.real {à} = 7 / 30 ∧
-      twoModel.real {auCoursDe} = 7 / 30 ∧ twoModel.real {pendant} = 7 / 30 := by
-  have he : exp (-log (14 / 9 : ℝ)) = 9 / 14 := by rw [exp_neg, exp_log (by norm_num)]; norm_num
-  simp only [twoModel, maxEnt_real_singleton, softmax_apply, sum_eq]
-  norm_num [harmony, twoFeatures, dansOrEn, dotProduct, he]
-
-/-- Requiring `p(dans) + p(en) = 3/10`, the most uniform model gives *dans* and *en* `3/20` each
-and the other three phrases `7/30` each. -/
-theorem isGreatest_two :
-    IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q ∧
-      q.real {dans} + q.real {en} = 3 / 10}) (Hm[twoModel]) := by
-  have hT (q : Measure Phrase) [IsFiniteMeasure q] :
-      ∫ φ, twoFeatures φ ∂q = ![q.real {dans} + q.real {en}] := by
-    rw [integral_eq_sum, sum_eq]
-    funext i
-    fin_cases i
-    simp [twoFeatures, dansOrEn]
-  have hP : twoModel.real {dans} + twoModel.real {en} = 3 / 10 := by
-    rw [twoModel_real_singleton.1, twoModel_real_singleton.2.1]; norm_num
-  convert isGreatest_measureEntropy_maxEnt twoFeatures ![log (14 / 9)] using 3
-  ext q
-  refine and_congr_right fun hq ↦ ?_
-  rw [hT, ← twoModel, hT, hP]
-  simp
-
-/-- The statistic of all three constraints. -/
-def threeFeatures (φ : Phrase) : Fin 2 → ℝ := ![dansOrEn φ, dansOrÀ φ]
-
-theorem maxEnt_three_real_singleton {d e a c : ℝ} (he : 0 < e) (ha : 0 < a) (hc : 0 < c)
-    (hR : e * a = d * c) (hN : d + e + a + 2 * c = 1) :
-    (maxEnt threeFeatures ![-log (e / c), -log (a / c)]).real {dans} = d ∧
-      (maxEnt threeFeatures ![-log (e / c), -log (a / c)]).real {en} = e ∧
-      (maxEnt threeFeatures ![-log (e / c), -log (a / c)]).real {à} = a ∧
-      (maxEnt threeFeatures ![-log (e / c), -log (a / c)]).real {auCoursDe} = c ∧
-      (maxEnt threeFeatures ![-log (e / c), -log (a / c)]).real {pendant} = c := by
-  have hH : harmony threeFeatures ![-log (e / c), -log (a / c)] =
-      fun φ ↦ log (e / c) * dansOrEn φ + log (a / c) * dansOrÀ φ := by
-    funext φ
-    simp [harmony, threeFeatures, dotProduct, Fin.sum_univ_two]
-    ring
+-- the model giving *en*, *à* and each of the other two phrases the probabilities `e`, `a`, `c`
+-- gives *dans* the `d` with `d * c = e * a`
+theorem expModel_real_singleton {d e a c : ℝ} (he : 0 < e) (ha : 0 < a) (hc : 0 < c)
+    (hR : e * a = d * c) (hN : d + e + a + 2 * c = 1) (φ : Phrase) :
+    (expModel (log (e / c)) (log (a / c))).real {φ} =
+      match φ with
+      | dans => d
+      | en => e
+      | à => a
+      | auCoursDe | pendant => c := by
   have hd : exp (log (e / c) + log (a / c)) = d / c := by
     rw [exp_add, exp_log (div_pos he hc), exp_log (div_pos ha hc)]
     field_simp
@@ -160,54 +133,77 @@ theorem maxEnt_three_real_singleton {d e a c : ℝ} (he : 0 < e) (ha : 0 < a) (h
       exp_log (div_pos he hc), exp_log (div_pos ha hc)]
     field_simp
     linear_combination hN
-  simp only [maxEnt_real_singleton, softmax_apply, hH, hZ]
-  simp only [dansOrEn, dansOrÀ, mul_one, mul_zero, add_zero, zero_add, exp_zero, hd,
-    exp_log (div_pos he hc), exp_log (div_pos ha hc)]
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> field_simp
+  rw [count_tilted_real_singleton, softmax_apply, hZ]
+  cases φ <;>
+    simp only [dansOrEn, dansOrÀ, mul_one, mul_zero, add_zero, zero_add, exp_zero, hd,
+      exp_log (div_pos he hc), exp_log (div_pos ha hc)] <;> field_simp
 
-/-- The model maximizing entropy subject to all three constraints, which §3.4 leaves to the
-reader. -/
+theorem integral_expModel (u v : ℝ) (q : Measure Phrase) [IsFiniteMeasure q] :
+    ∫ φ, u * dansOrEn φ + v * dansOrÀ φ ∂q =
+      u * (q.real {dans} + q.real {en}) + v * (q.real {dans} + q.real {à}) := by
+  rw [integral_eq]
+  simp only [dansOrEn, dansOrÀ]
+  ring
+
+/-- The model maximizing entropy subject to `p(dans) + p(en) = 3/10`. -/
+noncomputable abbrev twoModel : Measure Phrase := expModel (log (9 / 14)) 0
+
+theorem twoModel_real_singleton (φ : Phrase) :
+    twoModel.real {φ} = match φ with
+      | dans | en => 3 / 20
+      | _ => 7 / 30 := by
+  have h := expModel_real_singleton (d := 3 / 20) (e := 3 / 20) (a := 7 / 30) (c := 7 / 30)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) φ
+  rw [show (3 / 20 : ℝ) / (7 / 30) = 9 / 14 by norm_num, div_self (by norm_num), log_one] at h
+  rw [h]
+  cases φ <;> rfl
+
+-- p. 41, the second model
+theorem isGreatest_two :
+    IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q ∧
+      q.real {dans} + q.real {en} = 3 / 10}) (Hm[twoModel]) := by
+  have h2 : twoModel.real {dans} + twoModel.real {en} = 3 / 10 := by
+    rw [twoModel_real_singleton, twoModel_real_singleton]; norm_num
+  refine ⟨⟨_, ⟨inferInstance, h2⟩, rfl⟩, ?_⟩
+  rintro _ ⟨q, ⟨hq, h⟩, rfl⟩
+  refine measureEntropy_le_measureEntropy_count_tilted ?_
+  rw [integral_expModel, integral_expModel, h, h2]
+  simp
+
+/-- The model maximizing entropy subject to all three constraints. -/
 noncomputable abbrev threeModel : Measure Phrase :=
-  maxEnt threeFeatures ![-log (((√51 - 6) / 10) / ((11 - √51) / 20)),
-    -log (((√51 - 4) / 10) / ((11 - √51) / 20))]
+  expModel (log (((√51 - 6) / 10) / ((11 - √51) / 20)))
+    (log (((√51 - 4) / 10) / ((11 - √51) / 20)))
 
-theorem threeModel_real_singleton :
-    threeModel.real {dans} = (9 - √51) / 10 ∧ threeModel.real {en} = (√51 - 6) / 10 ∧
-      threeModel.real {à} = (√51 - 4) / 10 ∧ threeModel.real {auCoursDe} = (11 - √51) / 20 ∧
-      threeModel.real {pendant} = (11 - √51) / 20 := by
+theorem threeModel_real_singleton (φ : Phrase) :
+    threeModel.real {φ} = match φ with
+      | dans => (9 - √51) / 10
+      | en => (√51 - 6) / 10
+      | à => (√51 - 4) / 10
+      | auCoursDe | pendant => (11 - √51) / 20 := by
   have hs : √51 ^ 2 = 51 := sq_sqrt (by norm_num)
   have h7 : 7 < √51 := lt_sqrt (by norm_num) |>.2 (by norm_num)
   have h8 : √51 < 8 := (sqrt_lt' (by norm_num)).2 (by norm_num)
-  exact maxEnt_three_real_singleton (by linarith) (by linarith) (by linarith)
-    (by linear_combination hs / 200) (by ring)
+  exact expModel_real_singleton (by linarith) (by linarith) (by linarith)
+    (by linear_combination hs / 200) (by ring) φ
 
-/-- Requiring also `p(dans) + p(à) = 1/2`, the most uniform model gives *dans* `(9 − √51)/10`. -/
+/-- Requiring `p(dans) + p(en) = 3/10` and `p(dans) + p(à) = 1/2`, the most uniform model is the
+exponential one giving *dans* the probability `(9 − √51)/10`, the solution §3.4 leaves to the
+reader. -/
 theorem isGreatest_three :
     IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q ∧
       q.real {dans} + q.real {en} = 3 / 10 ∧ q.real {dans} + q.real {à} = 1 / 2})
       (Hm[threeModel]) := by
-  have hT (q : Measure Phrase) [IsFiniteMeasure q] :
-      ∫ φ, threeFeatures φ ∂q = ![q.real {dans} + q.real {en}, q.real {dans} + q.real {à}] := by
-    rw [integral_eq_sum, sum_eq]
-    funext i
-    fin_cases i <;> simp [threeFeatures, dansOrEn, dansOrÀ]
-  obtain ⟨h1, h2, h3, -, -⟩ := threeModel_real_singleton
-  convert isGreatest_measureEntropy_maxEnt threeFeatures _ using 3
-  ext q
-  refine and_congr_right fun hq ↦ ?_
-  rw [hT, ← threeModel, hT, h1, h2, h3]
-  constructor
-  · rintro ⟨hen, hà⟩
-    rw [hen, hà]
-    funext i
-    fin_cases i <;> simp <;> ring
-  · intro h
-    have h0 := congrFun h 0
-    have h1' := congrFun h 1
-    simp at h0 h1'
-    exact ⟨by linarith, by linarith⟩
+  have h2 : threeModel.real {dans} + threeModel.real {en} = 3 / 10 := by
+    rw [threeModel_real_singleton, threeModel_real_singleton]; ring
+  have h3 : threeModel.real {dans} + threeModel.real {à} = 1 / 2 := by
+    rw [threeModel_real_singleton, threeModel_real_singleton]; ring
+  refine ⟨⟨_, ⟨inferInstance, h2, h3⟩, rfl⟩, ?_⟩
+  rintro _ ⟨q, ⟨hq, h, h'⟩, rfl⟩
+  refine measureEntropy_le_measureEntropy_count_tilted ?_
+  rw [integral_expModel, integral_expModel, h, h', h2, h3]
 
-/-! ### Maximum entropy modeling (§3) -/
+/-! ### Maximum entropy modeling -/
 
 section Modeling
 
@@ -222,6 +218,11 @@ def constraints : Set (Kernel X Y) :=
 /-- The exponential model (10) with multipliers `θ`, the paper's `λ`. -/
 noncomputable def model (θ : ι → ℝ) : Kernel X Y :=
   condMaxEnt f (-θ)
+
+-- (10)
+theorem model_apply (θ : ι → ℝ) (x : X) :
+    model f θ x = Measure.count.tilted fun y ↦ θ ⬝ᵥ f (x, y) :=
+  congrArg Measure.count.tilted (funext fun y ↦ by simp [harmony])
 
 /-- The Lagrangian (7), the conditional entropy (5) plus each multiplier times its constraint's
 violation. -/
@@ -252,7 +253,7 @@ theorem lagrangian_le_lagrangian_model (θ : ι → ℝ) (q : Kernel X Y) [IsMar
   simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h₁ h₂ ⊢
   linarith
 
-/-- The value of the Lagrangian at its maximizer is minus the log-likelihood of `p_θ` ((13)). -/
+-- (9), (11), (14)
 theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
     lagrangian f p (model f θ) θ = -logLik p (model f θ) := by
   have h := condEntropy_condMaxEnt f (-θ) p.fst
@@ -260,9 +261,17 @@ theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
   simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h ⊢
   linarith
 
+/-- Weak duality: a model satisfying the constraints has entropy at most minus the log-likelihood
+of each exponential model. -/
+theorem condEntropy_le_neg_logLik (θ : ι → ℝ) {q : Kernel X Y} (hq : q ∈ constraints f p) :
+    H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q] ≤ -logLik p (model f θ) := by
+  have := hq.1
+  have h := lagrangian_le_lagrangian_model f p θ q
+  rw [lagrangian_model_eq_neg_logLik] at h
+  simpa [lagrangian, hq.2] using h
+
 variable {f p} {θ : ι → ℝ}
 
-/-- The parameters of greatest likelihood give a model satisfying the constraints. -/
 theorem model_mem_constraints (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     model f θ ∈ constraints f p :=
   ⟨inferInstanceAs (IsMarkovKernel (condMaxEnt f (-θ))),
@@ -275,8 +284,6 @@ theorem isGreatest_condEntropy_model (h : IsMaxOn (fun θ ↦ logLik p (model f 
       (H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ]) :=
   isGreatest_condEntropy_of_isMaxOn f (-θ) p (isMaxOn_condLogLikelihood_neg f p h)
 
-/-- The primal and dual values agree, the greatest entropy in `C` being minus the greatest
-log-likelihood. -/
 theorem condEntropy_model_eq_neg_logLik
     (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ] = -logLik p (model f θ) := by
@@ -296,7 +303,7 @@ theorem eq_model_of_condEntropy_eq (h : IsMaxOn (fun θ ↦ logLik p (model f θ
 
 variable (f p)
 
-/-- The log-likelihood of the model is concave in the multipliers (§3.6). -/
+-- §3.6
 theorem concaveOn_logLik_model : ConcaveOn ℝ Set.univ fun θ ↦ logLik p (model f θ) := by
   simpa [Function.comp_def, logLik_model] using
     (concaveOn_condLogLikelihood f p).comp_linearMap (-LinearMap.id)

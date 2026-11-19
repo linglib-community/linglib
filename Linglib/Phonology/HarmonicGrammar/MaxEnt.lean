@@ -19,47 +19,28 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 # MaxEnt grammars
 
 A MaxEnt grammar makes harmonies into probabilities: a candidate whose violation vector is `T c`
-has probability proportional to the exponential of its harmony `-(w ⬝ᵥ T c)`. As a measure, the
-MaxEnt distribution is the counting measure on the candidates tilted by harmony, the exponential
-family with statistic `T` and parameter `-w`. Violations are counts for a constraint set
-(`OptimalityTheory.ConstraintSet.violations`) and may be any reals, as when a lexicon scales them.
+[has probability](##HarmonicGrammar.maxEnt_real_singleton) proportional to the exponential of its
+harmony `-(w ⬝ᵥ T c)`, so that [log-odds](##HarmonicGrammar.log_maxEnt_real_singleton_div) are
+harmony differences. As a measure, `HarmonicGrammar.maxEnt` is the counting measure on the
+candidates tilted by harmony, the exponential family with statistic `T` and parameter `-w`.
 
 The name records a duality. Among the distributions of the candidates with the same expected
-violations as a MaxEnt distribution, the MaxEnt one has the greatest entropy, and no other has as
-much. The log-likelihood of an empirical distribution is concave in the weights, with gradient the
-expected less the observed violations, so the weights that maximize it are exactly those whose
-distribution has the observed expected violations, and the most likely MaxEnt grammar is the
-maximum-entropy one. A conditional grammar, a Markov kernel from inputs to the MaxEnt
-distributions of their candidates, satisfies the same duality with conditional entropy, the
-expected violations averaged over the observed inputs.
-
-## Main definitions
-
-* `HarmonicGrammar.maxEnt T w`: the MaxEnt distribution of the candidates.
-* `HarmonicGrammar.logPartition T w`: the log of its normalizing constant.
-* `HarmonicGrammar.logLikelihood T p w`: the expected log-probability, under the grammar, of the
-  candidates drawn from `p`.
-* `HarmonicGrammar.condMaxEnt T w`, `HarmonicGrammar.condLogLikelihood T p w`: the conditional
-  grammar and its log-likelihood on input–output pairs drawn from `p`.
-
-## Main results
-
-* `maxEnt_real_singleton`: a candidate's probability is the softmax of the harmonies.
-* `log_maxEnt_real_singleton_div`: log-odds are harmony differences.
-* `maxEnt_real_singleton_of_pair`: of two candidates, one has the sigmoid of its harmony
-  advantage.
-* `isGreatest_measureEntropy_maxEnt`, `eq_maxEnt_of_measureEntropy_eq`: the maximum entropy
-  principle.
-* `concaveOn_logLikelihood`, `hasFDerivAt_logLikelihood`: the log-likelihood is concave, with
-  gradient the expected less the observed violations.
-* `isMaxOn_logLikelihood_iff`, `isGreatest_measureEntropy_of_isMaxOn`: maximum likelihood is
-  matching the observed violations, and gives the maximum-entropy distribution.
-* `maxEnt_sum`: additive violations over several inputs give independent outputs.
-* `isGreatest_condEntropy_condMaxEnt`, `isMaxOn_condLogLikelihood_iff`,
-  `condLogLikelihood_eq_neg_condEntropy`, `isGreatest_condEntropy_of_isMaxOn`: the conditional
-  duality.
-* `tendsto_maxEnt_smul_atTop`: scaling the weights concentrates the distribution on the harmony
-  maximum.
+violations as a MaxEnt distribution, the MaxEnt one [has the greatest
+entropy](##HarmonicGrammar.isGreatest_measureEntropy_maxEnt), and [no
+other](##HarmonicGrammar.eq_maxEnt_of_measureEntropy_eq) has as much; this is
+`InformationTheory.isGreatest_measureEntropy_count_tilted` at the harmony. The log-likelihood of
+an empirical distribution [is concave](##HarmonicGrammar.concaveOn_logLikelihood) in the weights,
+with [gradient](##HarmonicGrammar.hasFDerivAt_logLikelihood) the expected less the observed
+violations, so the weights that maximize it [are exactly
+those](##HarmonicGrammar.isMaxOn_logLikelihood_iff) whose distribution has the observed expected
+violations, and the most likely MaxEnt grammar [is the maximum-entropy
+one](##HarmonicGrammar.isGreatest_measureEntropy_of_isMaxOn). A conditional grammar,
+`HarmonicGrammar.condMaxEnt`, is a Markov kernel from inputs to the MaxEnt distributions of their
+candidates, and [satisfies the same duality](##HarmonicGrammar.isGreatest_condEntropy_of_isMaxOn)
+with conditional entropy, the expected violations averaged over the observed inputs. Scaling the
+weights [concentrates](##HarmonicGrammar.tendsto_maxEnt_smul_atTop) the distribution on the
+harmony maximum, and additive violations over several inputs [give independent
+outputs](##HarmonicGrammar.maxEnt_sum).
 
 ## Implementation notes
 
@@ -192,13 +173,17 @@ theorem tendsto_maxEnt_smul_atTop {c : C} (h : univ.argmax (harmony T w) = {c}) 
 
 /-! ### Expected log-probability -/
 
+theorem integral_harmony (q : Measure C) [IsFiniteMeasure q] :
+    ∫ c, harmony T w c ∂q = -(w ⬝ᵥ ∫ c, T c ∂q) := by
+  rw [integral_fintype .of_finite, integral_eq_sum]
+  simp only [smul_eq_mul, harmony, dotProduct_sum, dotProduct_smul, mul_neg, sum_neg_distrib]
+
 theorem integral_log_maxEnt_real_singleton (q : Measure C) [IsProbabilityMeasure q] :
     ∫ c, log ((maxEnt T w).real {c}) ∂q =
       -(w ⬝ᵥ ∫ c, T c ∂q) - logPartition T w := by
-  rw [integral_fintype .of_finite, integral_eq_sum]
-  simp only [smul_eq_mul, log_maxEnt_real_singleton, mul_sub, sum_sub_distrib, ← sum_mul,
-    sum_measureReal_singleton, Finset.coe_univ, probReal_univ, one_mul, harmony, dotProduct_sum,
-    dotProduct_smul, mul_neg, sum_neg_distrib]
+  simp_rw [log_maxEnt_real_singleton]
+  rw [integral_sub .of_finite .of_finite, integral_harmony, integral_const, probReal_univ,
+    one_smul]
 
 variable (p : Measure C) [IsProbabilityMeasure p]
 
@@ -206,42 +191,36 @@ theorem logLikelihood_eq :
     logLikelihood T p w = -(w ⬝ᵥ ∫ c, T c ∂p) - logPartition T w :=
   integral_log_maxEnt_real_singleton T w p
 
-variable [Nonempty C]
-
 /-! ### The maximum entropy principle -/
 
 theorem toReal_klDiv_maxEnt_add_measureEntropy (q : Measure C) [IsProbabilityMeasure q] :
     (klDiv q (maxEnt T w)).toReal + Hm[q] =
       w ⬝ᵥ (∫ c, T c ∂q) + logPartition T w := by
-  have h := integral_log_maxEnt_real_singleton T w q
-  rw [integral_fintype .of_finite] at h
-  simp only [smul_eq_mul] at h
-  rw [toReal_klDiv_add_measureEntropy (absolutelyContinuous_maxEnt T w q), h]
+  rw [maxEnt, toReal_klDiv_count_tilted_add_measureEntropy, integral_harmony, logPartition]
   ring
 
-theorem measureEntropy_maxEnt :
-    Hm[maxEnt T w] = w ⬝ᵥ (∫ c, T c ∂maxEnt T w) + logPartition T w := by
-  simpa using toReal_klDiv_maxEnt_add_measureEntropy T w (maxEnt T w)
-
-theorem measureEntropy_add_toReal_klDiv_maxEnt {q : Measure C} [IsProbabilityMeasure q]
+variable {T w} in
+private theorem integral_harmony_eq {q : Measure C} [IsProbabilityMeasure q]
     (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) :
-    Hm[q] + (klDiv q (maxEnt T w)).toReal = Hm[maxEnt T w] := by
-  rw [measureEntropy_maxEnt, ← hq, ← toReal_klDiv_maxEnt_add_measureEntropy, add_comm]
+    ∫ c, harmony T w c ∂q = ∫ c, harmony T w c ∂Measure.count.tilted (harmony T w) := by
+  rw [integral_harmony, hq, ← maxEnt, integral_harmony]
 
 theorem measureEntropy_le_maxEnt {q : Measure C} [IsProbabilityMeasure q]
-    (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) : Hm[q] ≤ Hm[maxEnt T w] := by
-  rw [← measureEntropy_add_toReal_klDiv_maxEnt T w hq]
-  exact le_add_of_nonneg_right ENNReal.toReal_nonneg
+    (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) : Hm[q] ≤ Hm[maxEnt T w] :=
+  measureEntropy_le_measureEntropy_count_tilted (integral_harmony_eq hq)
 
 /-- The MaxEnt distribution is the only distribution with its expected violations and its
 entropy. -/
 theorem eq_maxEnt_of_measureEntropy_eq {q : Measure C} [IsProbabilityMeasure q]
     (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) (h : Hm[q] = Hm[maxEnt T w]) :
-    q = maxEnt T w := by
-  have hkl := measureEntropy_add_toReal_klDiv_maxEnt T w hq
-  rw [h, add_eq_left] at hkl
-  exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hkl).resolve_right
-    (klDiv_ne_top (absolutelyContinuous_maxEnt T w q) .of_finite))
+    q = maxEnt T w :=
+  (measureEntropy_eq_measureEntropy_count_tilted_iff (integral_harmony_eq hq)).1 h
+
+variable [Nonempty C]
+
+theorem measureEntropy_maxEnt :
+    Hm[maxEnt T w] = w ⬝ᵥ (∫ c, T c ∂maxEnt T w) + logPartition T w := by
+  simpa using toReal_klDiv_maxEnt_add_measureEntropy T w (maxEnt T w)
 
 /-- The MaxEnt distribution has the greatest entropy among the distributions with its expected
 violations. -/
@@ -386,6 +365,7 @@ instance : IsMarkovKernel (condMaxEnt T w) :=
 
 variable (ν : Measure X) [IsProbabilityMeasure ν]
 
+omit [Nonempty Y] in
 theorem sum_toReal_klDiv_condMaxEnt_add_condEntropy (q : Kernel X Y) [IsMarkovKernel q] :
     ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal + H[Prod.snd | Prod.fst ; ν ⊗ₘ q] =
       w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ q)) + ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by

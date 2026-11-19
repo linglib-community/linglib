@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.Entropy.Measure
+public import Linglib.Core.InformationTheory.KullbackLeibler.Tilted
 public import Linglib.Core.MeasureTheory.Measure.Tilted
 public import Linglib.Core.Probability.Kernel.Softmax
 
@@ -19,6 +20,13 @@ most](##InformationTheory.integral_add_measureEntropy_le_log_sum_exp) `log ∑ e
 [exactly at](##InformationTheory.integral_add_measureEntropy_eq_log_sum_exp_iff) the tilted measure:
 this is the Gibbs variational principle with the counting measure as reference, where
 `InformationTheory.integral_sub_toReal_klDiv_le_log_integral_exp` has a probability measure.
+
+The maximum entropy principle is the case of equal expectations. A distribution `q` under which
+`f` has the expected value it has under the tilted measure [falls
+short](##InformationTheory.measureEntropy_add_toReal_klDiv_count_tilted) of the tilted measure's
+entropy by its divergence from it, so the tilted measure [has the greatest
+entropy](##InformationTheory.isGreatest_measureEntropy_count_tilted) among such distributions, and
+[no other](##InformationTheory.measureEntropy_eq_measureEntropy_count_tilted_iff) has as much.
 -/
 
 @[expose] public section
@@ -124,5 +132,54 @@ theorem integral_add_measureEntropy_eq_log_sum_exp_iff :
   have hne := klDiv_ne_top (absolutelyContinuous_count_tilted q f) .of_finite
   rw [← klDiv_eq_zero_iff, ← (ENNReal.toReal_eq_zero_iff _).trans (or_iff_left hne)]
   constructor <;> intro h <;> linarith [toReal_klDiv_count_tilted_add_measureEntropy q f]
+
+/-! ### The maximum entropy principle -/
+
+variable {q f}
+
+/-- A distribution under which `f` has the expected value it has under the tilted measure falls
+short of the tilted measure's entropy by its divergence from it. -/
+theorem measureEntropy_add_toReal_klDiv_count_tilted
+    (h : ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f) :
+    Hm[q] + (klDiv q (Measure.count.tilted f)).toReal = Hm[Measure.count.tilted f] := by
+  have := nonempty_of_isProbabilityMeasure q
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set S)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
+  have : IsProbabilityMeasure (Measure.count.tilted f) := isProbabilityMeasure_tilted .of_finite
+  have hadd := klDiv_eq_klDiv_tilted_add (μ := uniformOn Set.univ) (q := q) (f := f) .of_finite
+    .of_finite .of_finite (by rwa [uniformOn_univ_tilted])
+  rw [uniformOn_univ_tilted] at hadd
+  have hne := klDiv_ne_top (absolutelyContinuous_count_tilted q f) .of_finite
+  have hne' := klDiv_ne_top (absolutelyContinuous_uniformOn_univ (Measure.count.tilted f))
+    .of_finite
+  have hadd' := congrArg ENNReal.toReal hadd
+  rw [ENNReal.toReal_add hne hne'] at hadd'
+  linarith [toReal_klDiv_uniformOn_add_measureEntropy q,
+    toReal_klDiv_uniformOn_add_measureEntropy (Measure.count.tilted f)]
+
+theorem measureEntropy_le_measureEntropy_count_tilted
+    (h : ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f) :
+    Hm[q] ≤ Hm[Measure.count.tilted f] := by
+  linarith [measureEntropy_add_toReal_klDiv_count_tilted h,
+    ENNReal.toReal_nonneg (a := klDiv q (Measure.count.tilted f))]
+
+/-- The tilted measure is the only distribution with its expected value of `f` and its
+entropy. -/
+theorem measureEntropy_eq_measureEntropy_count_tilted_iff
+    (h : ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f) :
+    Hm[q] = Hm[Measure.count.tilted f] ↔ q = Measure.count.tilted f := by
+  have := nonempty_of_isProbabilityMeasure q
+  rw [← integral_add_measureEntropy_eq_log_sum_exp_iff]
+  constructor <;> intro h' <;> linarith [measureEntropy_count_tilted f]
+
+variable (f) in
+/-- **Maximum entropy principle**: the counting measure tilted by `f` has the greatest entropy
+among the distributions under which `f` has the same expected value. -/
+theorem isGreatest_measureEntropy_count_tilted [Nonempty S] :
+    IsGreatest (measureEntropy '' {q : Measure S | IsProbabilityMeasure q ∧
+      ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f}) (Hm[Measure.count.tilted f]) :=
+  ⟨⟨_, ⟨isProbabilityMeasure_tilted .of_finite, rfl⟩, rfl⟩, by
+    rintro _ ⟨q, ⟨hq, h⟩, rfl⟩
+    exact measureEntropy_le_measureEntropy_count_tilted h⟩
 
 end InformationTheory
