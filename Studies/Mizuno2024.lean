@@ -27,9 +27,9 @@ both constructions or in neither.
 The live possibilities at a world and a time are the worlds that agree with it on what is
 established by then, the alternatives of a T × W frame, which shrink as time goes on. A domain
 makes a conditional contingent when it has an antecedent-world and does not settle the
-consequent. X-marking is felicitous when some proper extension of `D` does so and its presupposition holds; O-marking when `D` does or,
-where X-marking fails, the live possibilities of an earlier time do. With the antecedent live,
-X-marking is felicitous
+consequent. X-marking is felicitous when some proper extension of `D` does so and its
+presupposition holds; O-marking when `D` does or, where X-marking fails, the live possibilities
+of an earlier time do. With the antecedent live, X-marking is felicitous
 [only without strong counterfactuality](##Mizuno2024.xFelicitous_iff_of_live), whatever the
 consequent, so Anderson and future-less-vivid conditionals stand or fall together;
 an O-marked Anderson conditional is felicitous
