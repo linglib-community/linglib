@@ -124,7 +124,7 @@ theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
     SayDeRe Acq alts P x w dom :=
   ⟨fun _ ↦ selfConcept,
     ⟨fun u hu ↦ (hdom u hu).elim (fun e ↦ Or.inl e.symm) (fun e ↦ Or.inr ⟨e, rfl⟩),
-      fun _ _ ↦ ⟨_, hself, fun p _ ↦
+      fun _ _ ↦ ⟨_, hself, fun _ _ ↦
         ⟨mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩, fun _ ↦ mem_relatum.2 ⟨rfl, fun _ h ↦ h⟩⟩⟩⟩,
     h⟩
 

@@ -416,7 +416,7 @@ theorem invariant_mapLearner_comp_produce_iff [IsProbabilityMeasure P] {α : ℝ
       prior_real_one hθ₀]
     ring
   · rw [h, invariant_iff, q₂₁, q₁₂, prior_real_one hθ₀, prior_real_two hθ₁, one_sub_div hD.ne',
-      div_mul_eq_mul_div, div_mul_eq_mul_div, div_left_inj' hD.ne']
+      div_mul_eq_mul_div, div_mul_eq_mul_div, div_left_inj₀ hD.ne']
     ring
 
 -- MAP learners keep the prior `α` stationary only when it already gives `L₁` the stationary

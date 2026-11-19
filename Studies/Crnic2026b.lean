@@ -522,13 +522,11 @@ theorem isAllowableRestriction_onlyCtx_iff {R : Set Rank}
     have hexh : exh (onlyCtx '' {grad, r}) (onlyCtx nonAcademic) = onlyCtx nonAcademic :=
       exh_eq_self (by rintro _ ⟨q, -, rfl⟩; exact onlyCtx_subset_onlyCtx_iff.2 (.inr rfl))
     rw [ExhaustivelyRelevant, hexh, onlyCtx_nonAcademic_eq_inter hr]
-    change onlyCtx grad ⊓ onlyCtx r ∈ _
     exact inf_mem (subset_closure (mem_image_of_mem _ (by simp)))
       (subset_closure (mem_image_of_mem _ (by simp)))
   have hcompl (q r : Rank) (h : [q, r] = [postdoc, professor] ∨ [q, r] = [professor, postdoc]) :
       ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic, r}) (onlyCtx q) := by
     rw [ExhaustivelyRelevant, exh_onlyCtx_eq_compl h]
-    change (onlyCtx grad ⊔ onlyCtx nonAcademic ⊔ onlyCtx r)ᶜ ∈ _
     have hmem (r' : Rank) (h : r' ∈ ({grad, nonAcademic, r} : Set Rank)) :
         onlyCtx r' ∈ closure (onlyCtx '' {grad, nonAcademic, r}) :=
       subset_closure (mem_image_of_mem _ h)

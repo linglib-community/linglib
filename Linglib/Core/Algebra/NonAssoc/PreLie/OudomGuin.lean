@@ -77,7 +77,7 @@ order. -/
 theorem commutator_derivation (y z : L) :
     ⁅derivation b z, derivation b y⁆ = derivation b (y * z) - derivation b (z * y) :=
   derivation_ext fun i ↦ by
-    simp only [Derivation.commutator_apply, Derivation.sub_apply, derivation_ofTree,
+    simp only [Derivation.commutator_apply, sub_apply, derivation_ofTree,
       derivation_incl, ← map_sub]
     refine congrArg _ ?_
     rw [sub_eq_sub_iff_add_eq_add, add_comm (b i * (y * z))]
@@ -95,7 +95,7 @@ of `X`. -/
 def act : L →+ ConnesKreimer R ι →+ ConnesKreimer R ι :=
   AddMonoidHom.mk' (fun X ↦ (actₗ b X).toAddMonoidHom) fun X Y ↦ AddMonoidHom.ext fun x ↦ by
     simp only [LinearMap.toAddMonoidHom_coe, actₗ_apply, AddMonoidHom.add_apply, map_add,
-      derivation_add, Derivation.add_apply, mul_add]
+      derivation_add, add_apply, mul_add]
     abel
 
 @[simp] theorem act_apply (X : L) (x : ConnesKreimer R ι) :
@@ -108,7 +108,7 @@ theorem act_smul (r : R) (X : L) (x : ConnesKreimer R ι) : act b (r • X) x = 
 theorem isRightLieAction_act : IsRightLieAction (act b) := fun x y z ↦ by
   have h := congrArg (fun D : Derivation R (ConnesKreimer R ι) (ConnesKreimer R ι) ↦ D x)
     (commutator_derivation b y z)
-  simp only [Derivation.commutator_apply, Derivation.sub_apply] at h
+  simp only [Derivation.commutator_apply, sub_apply] at h
   simp only [act_apply, map_add, Derivation.leibniz, derivation_incl, smul_eq_mul]
   linear_combination h
 
@@ -257,7 +257,7 @@ theorem product_incl (x : ConnesKreimer R ι) (Y : L) :
     product b x (incl b Y) = x * incl b Y + derivation b Y x := by
   let g : L →ₗ[R] ConnesKreimer R ι :=
     { toFun := fun Y ↦ x * incl b Y + derivation b Y x
-      map_add' := fun Y Z ↦ by simp only [map_add, derivation_add, Derivation.add_apply, mul_add]
+      map_add' := fun Y Z ↦ by simp only [map_add, derivation_add, add_apply, mul_add]
                                abel
       map_smul' := fun r Y ↦ by simp [derivation_smul, smul_add] }
   have h : product b x ∘ₗ incl b = g := b.ext fun i ↦ by simp [g, product_ofTree]

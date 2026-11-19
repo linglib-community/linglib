@@ -507,7 +507,7 @@ omit [Fintype M] [MeasurableSingletonClass M] [Nonempty M] in
 instance {L : ℕ} [NeZero L] (priors : Fin L → Measure M)
     [∀ l, IsProbabilityMeasure (priors l)] : IsProbabilityMeasure (averagePrior priors) := by
   constructor
-  rw [averagePrior, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
+  rw [averagePrior, smul_apply, FunLike.coe_sum, Finset.sum_apply]
   simp only [measure_univ, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one,
     smul_eq_mul]
   exact ENNReal.inv_mul_cancel (by exact_mod_cast NeZero.ne L) (ENNReal.natCast_ne_top L)

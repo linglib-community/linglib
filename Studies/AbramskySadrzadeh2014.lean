@@ -469,7 +469,7 @@ theorem gluingMeasure_apply (c : Noun × Noun) :
     gluingMeasure {ripeGluing c} = score c / 48 := by
   rw [gluingMeasure, Measure.map_apply measurable_from_top MeasurableSpace.measurableSet_top,
     ← Set.image_singleton, ripeGluing_injective.preimage_image, coveringMeasure,
-    Measure.smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton, ← Nat.cast_sum,
+    smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton, ← Nat.cast_sum,
     show ∑ c : Noun × Noun, score c = 48 from rfl, Nat.cast_ofNat, ENNReal.div_eq_inv_mul]
 
 /-- *Ripe bananas, cheeky monkeys* (`t₂`) is the most likely resolution, with probability `1/2`. -/

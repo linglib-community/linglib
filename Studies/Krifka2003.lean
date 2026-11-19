@@ -92,7 +92,7 @@ measure. -/
 theorem sup_mem_ofAtoms [DecidableEq Atom] (hx : x ∈ ofAtoms D w n) (hy : y ∈ ofAtoms D w m)
     (hxy : ¬ Overlap x y) : x ⊔ y ∈ ofAtoms D w (n + m) := by
   refine ⟨⟨hx.1.1.mono le_sup_left, ?_⟩, ?_⟩
-  · rw [Finset.sup_eq_union, Finset.coe_union]
+  · rw [Finset.coe_union]
     exact Set.union_subset hx.1.2 hy.1.2
   · rw [IsExtensiveMeasure.additive (μ := Finset.card) x y hxy, hx.2, hy.2]
 
@@ -119,7 +119,7 @@ theorem cum_pluralize_ofAtoms [DecidableEq Atom] (D : World → Set Atom) (w : W
   obtain ⟨hx, hxD⟩ := mem_pluralize_ofAtoms.1 hx
   obtain ⟨-, hyD⟩ := mem_pluralize_ofAtoms.1 hy
   refine mem_pluralize_ofAtoms.2 ⟨hx.mono le_sup_left, ?_⟩
-  rw [Finset.sup_eq_union, Finset.coe_union]
+  rw [Finset.coe_union]
   exact Set.union_subset hxD hyD
 
 /-! ### Kind reference -/

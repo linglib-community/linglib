@@ -264,7 +264,7 @@ theorem valence_le_prior (hπ : ∀ u, π {u} ≠ 0) (hα : 0 < α) (hν : ν {.
   -- the speaker's mass on `t`, summed over questions
   have hg : ∀ m : Meaning, (∑ q, ν {q} • S1 (π ⊗ₘ κ) α (m, q)) {t} =
       ν {.state} * (sem t).indicator 1 m + ν {.valence} * σ m.2.1 := fun ⟨s, A⟩ ↦ by
-    simp only [Measure.finsetSum_apply, Measure.smul_apply, sum_qud, smul_eq_mul, hν, zero_mul,
+    simp only [sum_apply, smul_apply, sum_qud, smul_eq_mul, hν, zero_mul,
       add_zero, S1_valence_apply π κ α hπ, hσ]
     by_cases hs : s = t
     · subst hs

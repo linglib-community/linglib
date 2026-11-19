@@ -604,8 +604,8 @@ theorem weightNoiseChoiceProb_guddo (w : Fin 3 → ℝ) (hw : w 0 = w 1 + w 2) (
         using congrFun h 0]
   have : harmonyScore (fun k o ↦ loanwordDevoicing.marks .guddo o k) w .devoiced -
       harmonyScore (fun k o ↦ loanwordDevoicing.marks .guddo o k) w .voiced = 0 := by
-    simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, ConstraintSystem.con,
-      identVoice, ocpVoice, voicedGeminate, hw]
+    simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, loanwordDevoicing, identVoice, ocpVoice,
+      voicedGeminate, hw]
   rw [this, zero_div, normalCDF_zero, ENNReal.ofReal_inv_of_pos two_pos, ENNReal.ofReal_ofNat]
 
 /-- The Noisy HG grammar of (21) weighs IDENT-VOICE as OCP-VOICE and \*VOICED-GEMINATE

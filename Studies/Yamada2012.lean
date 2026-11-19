@@ -155,7 +155,7 @@ open Formula Model
 variable {M : Model W P I} {i j : I} {k : Kind} {χ φ ψ : Formula P I}
 
 @[simp] theorem realize_imp : (φ.imp ψ).realize M = (φ.realize M)ᶜ ∪ ψ.realize M := by
-  simp [imp, realize, Set.compl_inter]
+  simp [imp, realize]
 
 /-! ### The reduction axioms -/
 

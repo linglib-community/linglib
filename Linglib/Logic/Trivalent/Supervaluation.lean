@@ -165,7 +165,7 @@ theorem supervaluationOn_singleton (a : α) [Decidable (P a)] :
 
 theorem nontrivial_of_supervaluationOn_eq_undefined (h : supervaluationOn s P = .undefined) :
     s.Nontrivial :=
-  let ⟨⟨a, ha, hPa⟩, b, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
+  let ⟨⟨_, ha, hPa⟩, _, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
   Set.nontrivial_of_mem_mem_ne ha hb fun e ↦ hPb (e ▸ hPa)
 
 theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :

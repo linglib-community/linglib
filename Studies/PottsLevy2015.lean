@@ -505,11 +505,11 @@ theorem s2_prefers_disjunction (hc0 : 0 ≤ c) (hc10 : c ≤ Real.log 10) (m : M
 
 theorem s2exp_uncertain : S2exp 2 1 c .w₁₂ {.A} = 0 ∧ S2exp 2 1 c .w₁₂ {.AorX} ≠ 0 := by
   refine ⟨?_, ?_⟩
-  · simp only [S2exp, sum_apply, smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
+  · simp only [S2exp, sum_apply, smul_apply, sum_apply, smul_apply,
       smul_eq_mul]
     exact Finset.sum_eq_zero fun l _ => by
       rw [Kernel.comap_apply', S2_apply_eq_zero two_pos (by cases l <;> decide), mul_zero]
-  · simp only [S2exp, sum_apply, smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
+  · simp only [S2exp, sum_apply, smul_apply, sum_apply, smul_apply,
       smul_eq_mul, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ, true_implies, mul_eq_zero,
       not_forall, not_or]
     exact ⟨.excl, uniformOn_univ_singleton_ne_zero _, by

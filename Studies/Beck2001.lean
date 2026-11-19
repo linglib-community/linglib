@@ -741,7 +741,7 @@ private theorem algClosure_triple_iff {β γ : Type*} [DecidableEq β] [Decidabl
       obtain ⟨a, b, t, hR, rfl⟩ := h
       simpa using hR
     | sum _ _ ih ih' =>
-      simp only [Prod.fst_sup, Prod.snd_sup, Finset.sup_eq_union]
+      simp only [Prod.fst_sup, Prod.snd_sup]
       exact ⟨ih.1.mono Finset.subset_union_left, by grind, by grind, by grind⟩
   · rintro ⟨⟨a, ha⟩, hs, hx, hy⟩
     classical

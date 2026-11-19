@@ -91,11 +91,11 @@ theorem support_translate_iff :
   cases c with
   | ge =>
     rw [translate, support_disj_predc_amountModel, Comparison.interval_eq, Comparison.interval_gt,
-      Set.singleton_union, Set.Ioi_insert]
+      Set.singleton_union, Set.insert_Ioi]
     rfl
   | le =>
     rw [translate, support_disj_predc_amountModel, Comparison.interval_eq, Comparison.interval_lt,
-      Set.singleton_union, Set.Iio_insert]
+      Set.singleton_union, Set.insert_Iio]
     rfl
   | _ => rfl
 
@@ -170,7 +170,7 @@ theorem support_enrich_neg_translate_ge :
     support (amountModel R κ μ) (Formula.neg (translate .ge n k)).enrich s ↔
       support (amountModel R κ μ) (translate .lt n k).enrich s :=
   support_enrich_neg_disj_predc.trans <| by
-    rw [Comparison.interval_eq, Comparison.interval_gt, Set.singleton_union, Set.Ioi_insert,
+    rw [Comparison.interval_eq, Comparison.interval_gt, Set.singleton_union, Set.insert_Ioi,
       Set.compl_Ici]
     rfl
 
@@ -179,7 +179,7 @@ theorem support_enrich_neg_translate_le :
     support (amountModel R κ μ) (Formula.neg (translate .le n k)).enrich s ↔
       support (amountModel R κ μ) (translate .gt n k).enrich s :=
   support_enrich_neg_disj_predc.trans <| by
-    rw [Comparison.interval_eq, Comparison.interval_lt, Set.singleton_union, Set.Iio_insert,
+    rw [Comparison.interval_eq, Comparison.interval_lt, Set.singleton_union, Set.insert_Iio,
       Set.compl_Iic]
     rfl
 

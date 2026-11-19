@@ -224,7 +224,7 @@ theorem meaning_mirror (hs : ∀ i, s' i = swap (s i)) {u : List Word} (hu : u �
   simp only [meaning, hs]
   generalize s i = r
   obtain ⟨_ | _, _ | _⟩ := r <;> rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [mirrorUtterance, mirror, prodMeaning, lexicon, value, Word.Holds, swap, noisy] <;> ring
+    simp [mirrorUtterance, mirror, prodMeaning, lexicon, value, Word.Holds, swap, noisy]
 
 private theorem step_mirror (hcost : ∀ o, cost (mirror o) = cost o)
     (hs : ∀ i, s' i = swap (s i))
@@ -254,7 +254,7 @@ private theorem step_mirror (hcost : ∀ o, cost (mirror o) = cost o)
 private theorem incrementalMeaning_nonneg (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) (L : List (List Word)) (s : Scene) (ctx : List Word) (o : Option Word)
     (i : Fin 3) : 0 ≤ incrementalMeaning (alternatives L s) (meaning vs vc s) ctx o i :=
-  stringMeaning_nonneg fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s _ i
+  stringMeaning_nonneg fun _ _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s _ i
 
 private theorem step_apply_eq_one (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) {L : List (List Word)} {ctx u : List Word} {o : Option Word}

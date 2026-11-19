@@ -325,7 +325,7 @@ theorem exists_eq_comp_of_forall_valueOfInformation_le [Fintype Θ] (f : Θ → 
     (measurable_of_countable g)).1 (isGarblingOf_of_bayesRisk_uniform_le fun ℓ hℓ ↦ ?_)
   have hπ : ((Fintype.card Θ : ℝ≥0∞)⁻¹ • Measure.count : Measure Θ) = uniformOn Set.univ :=
     Measure.ext fun s _ ↦ by
-      rw [uniformOn_univ, Measure.smul_apply, smul_eq_mul, ENNReal.div_eq_inv_mul]
+      rw [uniformOn_univ, smul_apply, smul_eq_mul, ENNReal.div_eq_inv_mul]
   have hU : ∀ θ x', -(ℓ θ x').toReal ≤ 0 := fun _ _ ↦ neg_nonpos.2 ENNReal.toReal_nonneg
   have hℓ' : ℓ = fun θ x' ↦ ENNReal.ofReal (0 - -(ℓ θ x').toReal) := by
     ext θ x'

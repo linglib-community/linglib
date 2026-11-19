@@ -357,7 +357,7 @@ private theorem foldr_inf_naturalClass (l : List (Feature × Bool)) :
     obtain ⟨f, v⟩ := p
     rw [List.map_cons, List.foldr_cons, ih]
     ext x
-    simp only [Finset.inf_eq_inter, Finset.mem_inter, mem_naturalClass, Finset.mem_filter,
+    simp only [Finset.mem_inter, mem_naturalClass, Finset.mem_filter,
       List.forall_mem_cons, setFeature_le_iff (bot_apply _), and_iff_left bot_le]
     tauto
 

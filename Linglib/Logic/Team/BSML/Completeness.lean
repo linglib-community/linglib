@@ -386,7 +386,7 @@ theorem derives_of_support (he : Function.Injective e) :
     obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := Set.mem_sups.1 h
     obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_left.trans_eq ht)
     obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_right.trans_eq ht)
-    rw [Finset.sup_eq_union, ← Finset.image_union,
+    rw [← Finset.image_union,
       (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
     subst ht
     exact (((strongHintikka_union_derives T₁ T₂).disjMonLeft ((ih₁ T₁).2 h₁)).disjMon'
@@ -399,7 +399,7 @@ theorem derives_of_support (he : Function.Injective e) :
     obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := Set.mem_sups.1 h
     obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_left.trans_eq ht)
     obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (le_sup_right.trans_eq ht)
-    rw [Finset.sup_eq_union, ← Finset.image_union,
+    rw [← Finset.image_union,
       (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
     subst ht
     exact ((strongHintikka_union_derives T₁ T₂).disjMonLeft ((ih₁ T₁).1 h₁)).disjMon'

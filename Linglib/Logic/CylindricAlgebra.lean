@@ -155,14 +155,14 @@ theorem dimSet_compl (x : A) : dimSet xᶜ = (dimSet x : Set ι) := by
 
 theorem dimSet_inf_subset (x y : A) : (dimSet (x ⊓ y) : Set ι) ⊆ dimSet x ∪ dimSet y := by
   intro i
-  contrapose!
+  contrapose
   simp only [Set.mem_union, not_or, notMem_dimSet]
   rintro ⟨hx, hy⟩
   rw [← hy, cyl_inf_cyl, hx]
 
 theorem dimSet_sup_subset (x y : A) : (dimSet (x ⊔ y) : Set ι) ⊆ dimSet x ∪ dimSet y := by
   intro i
-  contrapose!
+  contrapose
   simp only [Set.mem_union, not_or, notMem_dimSet]
   rintro ⟨hx, hy⟩
   rw [cyl_sup, hx, hy]
@@ -181,7 +181,7 @@ theorem cyl_diag (h : i ≠ j) : cyl i (diag i j : A) = ⊤ :=
 
 theorem dimSet_diag_subset (i j : ι) : dimSet (diag i j : A) ⊆ {i, j} := by
   intro k
-  contrapose!
+  contrapose
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or, notMem_dimSet]
   rintro ⟨hi, hj⟩
   rw [← cyl_diag_inf_diag hi hj, cyl_cyl]
@@ -299,7 +299,7 @@ theorem subst_apply : subst i j p g ↔ p (update g i (g j)) := by
 every index outside `s`. -/
 theorem dimSet_subset_of_dependsOn {s : Set ι} (hp : DependsOn p s) : dimSet p ⊆ s := by
   intro i
-  contrapose!
+  contrapose
   intro hi
   rw [notMem_dimSet]
   ext g

@@ -231,7 +231,7 @@ inductive Pair
   | assassinate
   deriving DecidableEq
 
-theorem assassin_cycle [PartialOrder Pair] (hphon : Pair.assassinate < .assassin)
+theorem assassin_cycle (_ : PartialOrder Pair) (hphon : Pair.assassinate < .assassin)
     (hsem : Pair.assassin < .assassinate) : False :=
   hphon.asymm hsem
 

@@ -71,7 +71,7 @@ instance [DecidableRel M.graph.Adj] (a b : V) : Decidable (Causes M a b) :=
 /-- A is necessary for B when, in every context and under every intervention that leaves B open
 and turns A off, B is off. -/
 def Necessary (a b : V) : Prop :=
-  ∀ u (X : Finset V) (x : ∀ v : X, Bool), b ∉ X → ∀ ha : a ∈ X, x ⟨a, ha⟩ = false →
+  ∀ u (X : Finset V) (x : X → Bool), b ∉ X → ∀ ha : a ∈ X, x ⟨a, ha⟩ = false →
     (M.intervene X x).solve u b = false
 
 /-- *A enables B* asserts a link from A to B, an accessory variable also linked to B, and A

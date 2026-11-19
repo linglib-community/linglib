@@ -100,7 +100,7 @@ theorem down_eq_none_iff : down P s = Part.none ↔ ¬ ∃ d, IsGreatest (P s) d
 
 /-- ∩∪d = d, Chierchia's (17a). -/
 theorem down_up (k : S → Part E) : down (up k) = k :=
-  funext fun s ↦ Part.ext fun d ↦ mem_down.trans
+  funext fun _ ↦ Part.ext fun d ↦ mem_down.trans
     ⟨fun ⟨⟨d', hd', hle⟩, hub⟩ ↦ hle.antisymm (hub ⟨d', hd', le_rfl⟩) ▸ hd',
       fun h ↦ ⟨⟨d, h, le_rfl⟩, fun _ ⟨_, hd', hx⟩ ↦ Part.mem_unique hd' h ▸ hx⟩⟩
 

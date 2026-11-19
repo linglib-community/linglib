@@ -574,7 +574,7 @@ theorem relative_eq_of_traditional_eq {x y : Configuration} (hx : x ≠ ⊥) (hy
     · simp
     · exact Or.inr ⟨Configuration.minimum_of_nonempty hne, Finset.card_pos.2 hne⟩
   simp only [traditional, relative, Configuration.card] at h ⊢
-  split_ifs at h ⊢ <;> first | rfl | (exfalso; omega) | cases h
+  split_ifs at h ⊢ <;> first | rfl | (exfalso; omega)
 
 -- Table 5.17
 theorem traditional_ne_of_relative_eq :

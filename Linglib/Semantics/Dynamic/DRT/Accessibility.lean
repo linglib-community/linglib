@@ -420,7 +420,7 @@ theorem Condition.freeVarFinset_subset_iff {c : Condition L V} {X : Finset V} :
   | eq u v => simp [IsAtomic.eq]
   | neg K => simpa using nofun
   | imp a c =>
-    simp only [freeVarFinset_imp, Finset.union_subset_iff, sdiff_le_iff, Finset.sup_eq_union,
+    simp only [freeVarFinset_imp, Finset.union_subset_iff, sdiff_le_iff,
       subordinates_imp, List.mem_cons, List.cons.injEq, List.not_mem_nil, or_false]
     exact ⟨fun ⟨ha, hc⟩ => ⟨fun _ => ⟨ha, hc⟩, by rintro K s (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simpa⟩,
       fun ⟨_, h⟩ => ⟨by simpa using h a [] (.inl ⟨rfl, rfl⟩),

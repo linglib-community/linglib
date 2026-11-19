@@ -109,7 +109,7 @@ theorem update_subset (s : Set W) (φ : Sentence W) : update s φ ⊆ s :=
   fun _ h ↦ (mem_update.1 h).1.1
 
 @[simp] theorem update_empty (φ : Sentence W) : update ∅ φ = ∅ :=
-  Set.subset_eq_empty (update_subset ∅ φ) rfl
+  Set.eq_empty_of_subset (update_subset ∅ φ) rfl
 
 theorem update_nonempty_iff : (update s φ).Nonempty ↔ ∃ w ∈ s, φ s w = .true := by
   refine ⟨fun ⟨w, hw⟩ ↦ (mem_update.1 hw).2, fun ⟨w, hw, h⟩ ↦

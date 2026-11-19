@@ -102,7 +102,7 @@ noncomputable def empirical : Measure (I × O) :=
 
 theorem isProbabilityMeasure_empirical (h : data ≠ []) : IsProbabilityMeasure (empirical data) :=
   ⟨by
-    simp only [empirical, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply, measure_univ,
+    simp only [empirical, smul_apply, FunLike.coe_sum, Finset.sum_apply, measure_univ,
       Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one, smul_eq_mul]
     exact ENNReal.inv_mul_cancel (by simpa using h) (ENNReal.natCast_ne_top _)⟩
 

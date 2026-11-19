@@ -108,7 +108,7 @@ the paper leaves to any extant account. -/
 def actualCause {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
     (u : U) (cause effect : V) : Prop :=
   M.solve u cause = true ∧ M.solve u effect = true ∧
-    ∃ (W : Finset V) (w : ∀ v : W, Bool),
+    ∃ (W : Finset V) (w : W → Bool),
       (M.intervene W w)[cause ← true].solve u effect = true ∧
         (M.intervene W w)[cause ← false].solve u effect ≠ true
 

@@ -132,10 +132,10 @@ theorem not_isTight_softmaxModel_length [Nonempty α] :
     have hpow (n : ℕ) : w n = ENNReal.ofReal (exp (-1)) ^ (n + 1) := by
       simp only [w, ← ENNReal.ofReal_pow (exp_pos _).le, ← exp_nat_mul]
       congr 2; push_cast; ring
-    refine ((ENNReal.tsum_le_tsum hle).trans_lt ?_).ne hsum
+    refine ((tsum_le_tsum hle).trans_lt ?_).ne hsum
     calc ∑' n, w n = ∑' n : ℕ, ENNReal.ofReal (exp (-1)) ^ (n + 1) := tsum_congr hpow
       _ ≤ ∑' n : ℕ, ENNReal.ofReal (exp (-1)) ^ n :=
-        ENNReal.tsum_le_tsum fun n ↦ pow_le_pow_of_le_one bot_le hr.le n.le_succ
+        tsum_le_tsum fun n ↦ pow_le_pow_of_le_one bot_le hr.le n.le_succ
       _ < ∞ := by rw [ENNReal.tsum_geometric]; exact ENNReal.inv_lt_top.2 (tsub_pos_of_lt hr)
 
 theorem surprisal_next_ofMeasure_stringMeasure (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}

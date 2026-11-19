@@ -129,7 +129,7 @@ theorem mem_sums_iff {y : Finset ι} : y ∈ sums ↔ Mereology.AlgClosure (· �
   simp only [mem_filter, mem_univ, true_and]
   constructor
   · refine Nonempty.cons_induction (fun a ↦ .base (by simp)) fun a s h _ ih ↦ ?_
-    rw [cons_eq_insert, insert_eq, ← sup_eq_union]
+    rw [cons_eq_insert, insert_eq]
     exact .sum (.base (by simp)) ih
   · intro hy
     induction hy using Mereology.AlgClosure.induction with

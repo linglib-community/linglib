@@ -470,11 +470,12 @@ theorem Rule.run_toSubsequentialTransducer (r : Rule) :
 
 /-- **Every local rewrite rule is Left-Subsequential.** `Segment` is a partial
 valuation of the 26 features of Hayes, so it is finite but carries no
-`Fintype` instance (it is a `def`, so that none is derived), and the hypothesis
-supplies the finite alphabet Mohri assumes without forcing a
-`3 ^ 26`-element enumeration on every consumer of this file. -/
-theorem Rule.isLeftSubsequential [Fintype Segment] (r : Rule) :
-    IsLeftSubsequential r.apply :=
-  r.run_toSubsequentialTransducer ▸ r.toSubsequentialTransducer.isLeftSubsequential
+`Fintype` instance, and the proof takes the finite alphabet Mohri assumes from
+that finiteness without forcing a `3 ^ 26`-element enumeration on every
+consumer of this file. -/
+theorem Rule.isLeftSubsequential (r : Rule) : IsLeftSubsequential r.apply := by
+  have : Finite Segment := .of_injective Segment.val fun _ _ ↦ Segment.ext
+  have := Fintype.ofFinite Segment
+  exact r.run_toSubsequentialTransducer ▸ r.toSubsequentialTransducer.isLeftSubsequential
 
 end Subregular.LocalRewrite

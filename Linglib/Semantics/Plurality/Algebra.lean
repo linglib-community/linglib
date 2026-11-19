@@ -176,7 +176,7 @@ theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
     | base h => obtain ⟨a, ha, rfl⟩ := h; exact ⟨Finset.singleton_nonempty a, by simpa⟩
     | sum _ _ ih ih' =>
       refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩
-      rw [Finset.sup_eq_union, Finset.coe_union]
+      rw [Finset.coe_union]
       exact Set.union_subset ih.2 ih'.2
   · rintro ⟨hx, hS⟩
     have key : x.sup' hx (fun a ↦ ({a} : Finset α)) = x :=

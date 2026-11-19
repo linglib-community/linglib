@@ -335,7 +335,7 @@ theorem Model.respondent_truthful [IsFiniteMeasure πD] (hβ : p.β < 1) (hα : 
   have hint : ∫⁻ d', klDiv πW (RSA.listener (m.prior d') m.R0' r) ∂(m.goalPosterior p πD q) =
       ∞ := by
     rw [lintegral_countable']
-    exact ENNReal.tsum_eq_top_of_eq_top ⟨d, by rw [hkl, ENNReal.top_mul hgp]⟩
+    exact tsum_eq_top_of_eq_top ⟨d, by rw [hkl, ENNReal.top_mul hgp]⟩
   refine Kernel.softmax_apply_singleton_eq_zero ?_
   simp only [Model.respondentScore, hint, EReal.coe_ennreal_top, EReal.neg_top,
     EReal.coe_mul_bot_of_pos (sub_pos.2 hβ), EReal.bot_add, EReal.coe_mul_bot_of_pos hα]

@@ -68,7 +68,7 @@ theorem _root_.ProbabilityTheory.cond_withDensity_eq_cond_iff {Ω : Type*} [Meas
   refine ⟨fun h ↦ ?_, fun ⟨c, hc0, hc, hc'⟩ ↦ cond_withDensity_of_ae_eq μ hs hc0 hc hc'⟩
   have h1 : (μ.withDensity f s)⁻¹ * μ.withDensity f s = 1 := by
     have := congrArg (· s) h
-    simpa only [cond, Measure.smul_apply, Measure.restrict_apply_self, smul_eq_mul,
+    simpa only [cond, smul_apply, Measure.restrict_apply_self, smul_eq_mul,
       ENNReal.inv_mul_cancel h0 htop] using this
   have hν0 : μ.withDensity f s ≠ 0 := fun h' ↦ by simp [h'] at h1
   have hνtop : μ.withDensity f s ≠ ∞ := fun h' ↦ by simp [h'] at h1

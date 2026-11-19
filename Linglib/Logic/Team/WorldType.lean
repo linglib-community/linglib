@@ -184,6 +184,6 @@ theorem supClosed_image_types (he : Function.Surjective e) (hP : BisimInvariantA
   have h : s₁.map .inl ⊔ s₂.map .inr ∈ PointedTeam.mk _ (M₁.sum M₂) ⁻¹' P :=
     hs _ ((mem_iff_types_mem_image he hP).2 ⟨_, h₁, h₁'.symm⟩)
       ((mem_iff_types_mem_image he hP).2 ⟨_, h₂, h₂'.symm⟩)
-  exact ⟨_, h, by simp only [PointedTeam.types, Finset.sup_eq_union, Finset.image_union, h₁', h₂']⟩
+  exact ⟨_, h, by simp only [PointedTeam.types, Finset.image_union, h₁', h₂']⟩
 
 end ModalLogic
