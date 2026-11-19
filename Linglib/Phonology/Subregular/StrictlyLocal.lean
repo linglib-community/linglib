@@ -70,6 +70,8 @@ identifiable in the limit only over a finite alphabet
 
 @[expose] public section
 
+open Subregular
+
 variable {α : Type*}
 
 /-- A **strictly-local grammar** over `α` is a set of *permitted* factors over the

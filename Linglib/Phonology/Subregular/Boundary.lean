@@ -47,28 +47,6 @@ gets the generic `getElem?_pos`, `getElem?_neg` and `getElem?_eq_some_iff`.
 
 variable {α : Type*}
 
-/-! ### Boundary augmentation -/
-
-/-- A boundary-augmented string has the original symbols (`some a`) and the boundary marker
-`none`. -/
-abbrev Augmented (α : Type*) := List (Option α)
-
-section Boundary
-
-variable (k : ℕ) (w : List α)
-
-/-- `w` padded with `k - 1` boundary markers (`none`) on each side. -/
-def boundary : Augmented α :=
-  List.replicate (k - 1) none ++ w.map some ++ List.replicate (k - 1) none
-
-@[simp] lemma boundary_one : boundary 1 w = w.map some := by
-  simp [boundary]
-
-lemma length_boundary : (boundary k w).length = w.length + 2 * (k - 1) := by
-  simp [boundary]; omega
-
-end Boundary
-
 /-! ### Integer indexing -/
 
 namespace List
@@ -110,6 +88,30 @@ theorem getElem?_int_eq_none_iff : w[i]? = none ↔ i < 0 ∨ (w.length : ℤ) �
   omega
 
 end List
+
+namespace Subregular
+
+/-! ### Boundary augmentation -/
+
+/-- A boundary-augmented string has the original symbols (`some a`) and the boundary marker
+`none`. -/
+abbrev Augmented (α : Type*) := List (Option α)
+
+section Boundary
+
+variable (k : ℕ) (w : List α)
+
+/-- `w` padded with `k - 1` boundary markers (`none`) on each side. -/
+def boundary : Augmented α :=
+  List.replicate (k - 1) none ++ w.map some ++ List.replicate (k - 1) none
+
+@[simp] lemma boundary_one : boundary 1 w = w.map some := by
+  simp [boundary]
+
+lemma length_boundary : (boundary k w).length = w.length + 2 * (k - 1) := by
+  simp [boundary]; omega
+
+end Boundary
 
 /-! ### Position discrimination and windows
 
@@ -367,3 +369,5 @@ lemma eq_nil_of_replicate_none_infix_boundary (hk : 1 ≤ k)
     omega
 
 end Pinning
+
+end Subregular

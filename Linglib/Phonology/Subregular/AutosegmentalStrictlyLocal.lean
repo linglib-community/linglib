@@ -53,6 +53,8 @@ the class here contains his and its separation results are the stronger statemen
 
 @[expose] public section
 
+open Subregular
+
 namespace Language
 
 open Autosegmental

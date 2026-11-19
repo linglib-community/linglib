@@ -43,7 +43,7 @@ under the paper's ranking.
 
 namespace McCarthy2005
 
-open OptimalityTheory
+open OptimalityTheory Subregular
 
 variable {α ι : Type*}
 

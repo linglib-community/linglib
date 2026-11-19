@@ -28,7 +28,7 @@ which vectors for the primitives are imputed from word embeddings by regression.
 
 namespace DiscriminativeLexicon
 
-open Matrix
+open Matrix Subregular
 
 /-! ### Form side -/
 
