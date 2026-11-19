@@ -44,13 +44,15 @@ tested against them.
 ## Implementation notes
 
 * The participle of the simplex verb is stored without its *ge-*, as `German.Conjugation.Stem`
-  stores it, and the entry does not conjugate further. The syntax of the particle, which the
-  grammar and den Dikken analyse, is left to the studies.
+  stores it. An entry lists its third person singular present where an example has the finite
+  verb, and does not conjugate further. The syntax of the particle, which the grammar and den
+  Dikken analyse, is left to the studies.
 
 ## References
 
 * [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume I: Verbs and Verb Phrases 1:
   Characterization, Classification and Lexical Projection* (2026)][broekhuis-corver-2026e]
+* [broekhuis-corver-2026f]
 * [levin-hovav-1995]
 * [sorace-2000]
 -/
@@ -85,6 +87,8 @@ structure Verb extends _root_.Verb where
   participle : String
   /-- The formation. -/
   formation : Formation := .simplex
+  /-- The third person singular present, where the entry lists it, as *laat* of *laten*. -/
+  present : Option String := none
   deriving BEq
 
 namespace Verb
@@ -326,6 +330,52 @@ example : perfectAuxiliary wandelen .intransitive = .have ∧
     perfectAuxiliary (wandelen.withPath Adposition.behind) .intransitive = .have := by
   decide
 
+/-! ### Verbs with a bare infinitival
+
+A bare infinitival has neither *om* nor *te*. Its subject is controlled under *willen* and is
+realized as an accusative noun phrase under the perception verb *zien* and the causative and
+permissive verb *laten* ([broekhuis-corver-2026f]). The section also has two verbs for the end of
+a verb cluster. -/
+
+/-- The frame with a bare infinitival whose subject is controlled, as in *Jan wil een boek
+kopen*. -/
+def controlInfinitival : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some .null)]⟩
+
+/-- The frame with a bare infinitival whose subject is an accusative noun phrase, as in *Jan zag
+haar op de hei lopen*. -/
+def accusativeInfinitival : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .infinitive) (subject := some (.overt (some .acc)))]⟩
+
+/-- *schrijven* 'write', a transitive verb, as in *Jan heeft de brief geschreven*. -/
+def schrijven : Verb := simplex "schrijven" "geschreven"
+
+/-- *liegen* 'lie, tell a lie', an intransitive verb. -/
+def liegen : Verb :=
+  { simplex "liegen" "gelogen" with valency := .ofFrame ArgumentFrame.intransitive }
+
+/-- *willen* 'want' takes a finite clause or a bare infinitival with a controlled subject, and
+not an infinitival with *te*. -/
+def willen : Verb :=
+  { simplex "willen" "gewild" with
+    valency := .ofFrames [controlInfinitival, ArgumentFrame.finiteClause]
+      (controllers := [some 0, none]),
+    present := some "wil" }
+
+/-- *zien* 'see' takes an object, as in *Jan zag het schilderij*, or a bare infinitival with an
+accusative subject, as in *dat Jan Peter dat boek ziet lezen*. -/
+def zien : Verb :=
+  { simplex "zien" "gezien" with
+    valency := .ofFrames [ArgumentFrame.np, accusativeInfinitival],
+    present := some "ziet" }
+
+/-- *laten* 'make, let' takes a bare infinitival with an accusative subject, as in *dat Marie
+Peter het boek laat lezen*. It takes no nominal complement, so the noun phrase is the subject of
+the infinitival and not an object of *laten*. -/
+def laten : Verb :=
+  { simplex "laten" "gelaten" with
+    valency := .ofFrame accusativeInfinitival, present := some "laat" }
+
 /-! ### The inventory -/
 
 /-- `inventory` lists the entries. -/
@@ -333,7 +383,7 @@ def inventory : List Verb :=
   [straffen, kussen, bellen, voeren, halen, lezen, dekken, dienen,
    opbellen, uitvoeren, afhalen, ontdekken, bedekken, verdienen, herhalen,
    komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, werken,
-   lopen, wandelen, rollen]
+   lopen, wandelen, rollen, schrijven, liegen, laten, zien, willen]
 
 /-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempty →

@@ -135,6 +135,15 @@ theorem grammar_induction
     | terminal a => obtain rfl : cs = [] := List.map_eq_nil_iff.mp hR; exact terminal a
     | nonterminal A => exact nonterminal A cs hR hcs ih
 
+/-- A licensed tree whose root is the terminal `a` has yield `[a]`. -/
+theorem yield_eq_of_value_terminal {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses)
+    {a : T} (hv : t.value = .terminal a) : t.yield = [a] := by
+  induction ht using grammar_induction with
+  | terminal b =>
+    obtain rfl : b = a := by simpa [leaf] using hv
+    simp [leaf]
+  | nonterminal => simp at hv
+
 end Licensed
 
 /-! ### Rule counts -/

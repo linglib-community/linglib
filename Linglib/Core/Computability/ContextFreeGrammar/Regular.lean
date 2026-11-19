@@ -5,46 +5,40 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar
-public import Mathlib.Computability.DFA
+public import Linglib.Core.Computability.ContextFreeGrammar.Union
+public import Mathlib.Computability.MyhillNerode
+public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Context-free and regular languages
 
-Over a finite alphabet, every regular language is context-free: the right-linear grammar
-`M.toContextFreeGrammar` of a finite automaton `M` generates the language of `M`. The intersection
-of a context-free language with a regular language is context-free. The grammar `G.inter M` is the
-triple construction: its nonterminals are the nonterminals of `G` annotated with an entry and an
-exit state of `M`, and a rule of `G` yields one rule for every way of threading the states of `M`
-through its right-hand side. A fresh start symbol rewrites to the start nonterminal of `G` between
-the start state and each accepting state of `M`.
-
-## Main definitions
-
-* `DFA.toContextFreeGrammar`: the right-linear grammar of a finite automaton over a finite
-  alphabet.
-* `ContextFreeGrammar.Annotates`: `Annotates M p l out q` says that the sentential form `l` is
-  `out` with its nonterminals annotated so that the states of `M` thread from `p` to `q`.
-* `ContextFreeGrammar.inter`: the grammar of the intersection of a grammar with a finite
-  automaton.
-
-## Main results
-
-* `DFA.language_toContextFreeGrammar`: the right-linear grammar of `M` generates the language of
-  `M`, so over a finite alphabet regular languages are context-free
-  (`Language.IsRegular.isContextFree`).
-* `ContextFreeGrammar.language_inter`: `G.inter M` generates the intersection.
-* `Language.IsContextFree.inf_isRegular`: closure under intersection with a regular language.
+This file relates the context-free languages to the regular languages. A grammar is *right-linear*
+if every right-hand side is a string of terminals followed by at most one nonterminal. Over a
+finite alphabet, [a language is regular if and only if a right-linear grammar generates
+it](##Language.isRegular_iff_exists_isRightLinear), so [every regular language is
+context-free](##Language.IsRegular.isContextFree). The intersection of a context-free language
+with a regular language [is context-free](##Language.IsContextFree.inf_isRegular): for a grammar
+`G` and a finite automaton `M`, the grammar `G.inter M` [generates the intersection of their
+languages](##ContextFreeGrammar.language_inter).
 
 ## Implementation notes
 
-The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a q'` for each
-transition from `q` to `q'` on the letter `a`, and a rule `q → ε` for each accepting state `q`;
-its sentential forms are a word `w` followed by the state `M.eval w`, or an accepted word. The
-alphabet must be finite, because a grammar has finitely many rules and so uses finitely many
-letters: over an infinite alphabet the language of all words is regular, by a one-state
-automaton, but not context-free.
+* The right-linear grammar `M.toContextFreeGrammar` of a finite automaton `M` needs a finite
+  alphabet, because a grammar has finitely many rules and so uses finitely many letters. Over an
+  infinite alphabet the language of all words is regular, by an automaton with one state, but not
+  context-free.
+* That a right-linear grammar generates a regular language is proved from the Myhill–Nerode
+  theorem, without an automaton. The left quotient of the language by a word is a union of
+  languages derived from suffixes of right-hand sides, and a grammar has finitely many such
+  suffixes.
+* `G.inter M` is the union, over the accepting states `q` of `M`, of the *triple construction*
+  `G.triple M q`. Its nonterminals are triples `(p, A, p')` of a nonterminal `A` of `G`, an entry
+  state `p` and an exit state `p'`. A sentential form over triples *threads* from `p` to `q`
+  (`DFA.Threads`) if reading it takes `M` from `p` to `q`, where a triple can be read only in its
+  entry state and takes `M` to its exit state. The rules of `G.triple M q` are the rules over
+  triples that become rules of `G` when the states are erased and whose right-hand side threads
+  from the entry state to the exit state of the left-hand side.
 
 ## References
 
@@ -54,33 +48,30 @@ automaton, but not context-free.
 
 @[expose] public section
 
+open Symbol
+
 namespace DFA
 
-open List Symbol
+section toContextFreeGrammar
 
-variable {α : Type*} {σ : Type} [Fintype α] [Fintype σ] (M : DFA α σ)
-  [DecidablePred (· ∈ M.accept)]
+variable {α : Type*} {σ : Type} [Fintype α] [Fintype σ] {M : DFA α σ}
 
-/-- The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a (M.step q a)`
-for each state `q` and letter `a`, and a rule `q → ε` for each accepting state `q`. -/
-def toContextFreeGrammar : ContextFreeGrammar α where
+open scoped Classical in
+/-- The *right-linear grammar* of a finite automaton `M`. Its nonterminals are the states of `M`. It
+has a rule `q → a q'` for each transition from `q` to `q'` on the letter `a`, and a rule `q → ε` for
+each accepting state `q`. -/
+noncomputable def toContextFreeGrammar (M : DFA α σ) : ContextFreeGrammar α where
   NT := σ
   initial := M.start
-  rules :=
-    (Finset.univ.map ⟨fun x : σ × α ↦ ⟨x.1, [terminal x.2, nonterminal (M.step x.1 x.2)]⟩,
-      fun x y h ↦ by simp_all [Prod.ext_iff]⟩).disjUnion
-    ((Finset.univ.filter (· ∈ M.accept)).map ⟨fun q ↦ ⟨q, []⟩, fun p q h ↦ by simpa using h⟩)
-    (by simp only [Finset.disjoint_left, Finset.mem_map]; rintro _ ⟨_, -, rfl⟩ ⟨_, -, h⟩; simp at h)
+  rules := Finset.image₂ (fun q a ↦ ⟨q, [terminal a, nonterminal (M.step q a)]⟩) .univ .univ ∪
+    (Finset.univ.filter (· ∈ M.accept)).image (⟨·, []⟩)
 
-variable {M}
-
-theorem mem_rules_toContextFreeGrammar {r : ContextFreeRule α σ} :
+theorem mem_toContextFreeGrammar_rules {r : ContextFreeRule α σ} :
     r ∈ M.toContextFreeGrammar.rules ↔
       (∃ a, r.output = [terminal a, nonterminal (M.step r.input a)]) ∨
         (r.input ∈ M.accept ∧ r.output = []) := by
   obtain ⟨q, o⟩ := r
-  unfold toContextFreeGrammar
-  simp [eq_comm]
+  simp [toContextFreeGrammar, eq_comm]
 
 theorem derives_toContextFreeGrammar (w : List α) :
     M.toContextFreeGrammar.Derives [nonterminal M.start]
@@ -90,7 +81,7 @@ theorem derives_toContextFreeGrammar (w : List α) :
   | append_singleton w a ih =>
     refine ih.trans_produces (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
       ⟨⟨M.eval w, [terminal a, nonterminal (M.step (M.eval w) a)]⟩,
-        mem_rules_toContextFreeGrammar.2 (.inl ⟨a, rfl⟩), rfl, ?_⟩)
+        mem_toContextFreeGrammar_rules.2 (.inl ⟨a, rfl⟩), rfl, ?_⟩)
     simp [eval_append_singleton]
 
 theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
@@ -104,7 +95,7 @@ theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
       obtain ⟨w, rfl | ⟨rfl, -⟩⟩ := ih
       · obtain ⟨r, hr, hq, rfl⟩ :=
           ContextFreeGrammar.produces_map_terminal_append_singleton_iff.1 hstep
-        obtain ⟨a, ho⟩ | ⟨hacc, ho⟩ := mem_rules_toContextFreeGrammar.1 hr
+        obtain ⟨a, ho⟩ | ⟨hacc, ho⟩ := mem_toContextFreeGrammar_rules.1 hr
         · exact ⟨w ++ [a], .inl (by simp [ho, hq, eval_append_singleton])⟩
         · exact ⟨w, .inr ⟨by simp [ho], hq ▸ hacc⟩⟩
       · exact (ContextFreeGrammar.not_produces_map_terminal hstep).elim
@@ -112,277 +103,283 @@ theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
     · exact derives_toContextFreeGrammar w
     · exact (derives_toContextFreeGrammar w).trans_produces
         (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
-          ⟨⟨M.eval w, []⟩, mem_rules_toContextFreeGrammar.2 (.inr ⟨hacc, rfl⟩), rfl, by simp⟩)
+          ⟨⟨M.eval w, []⟩, mem_toContextFreeGrammar_rules.2 (.inr ⟨hacc, rfl⟩), rfl, by simp⟩)
 
-/-- The grammar of `M` generates the language of `M`. -/
-theorem language_toContextFreeGrammar : M.toContextFreeGrammar.language = M.accepts := by
+/-- The right-linear grammar of `M` generates the language that `M` accepts. -/
+@[simp] theorem language_toContextFreeGrammar (M : DFA α σ) :
+    M.toContextFreeGrammar.language = M.accepts := by
   ext w
   change M.toContextFreeGrammar.Derives [nonterminal M.start] _ ↔ _
   rw [derives_toContextFreeGrammar_iff, mem_accepts]
   refine ⟨fun ⟨u, h⟩ ↦ ?_, fun h ↦ ⟨w, .inr ⟨rfl, h⟩⟩⟩
   rcases h with h | ⟨h, hacc⟩
   · simpa using congr(nonterminal (M.eval u) ∈ $h)
-  · rwa [map_injective_iff.2 (fun _ _ ↦ terminal.inj) h]
+  · rwa [List.map_injective_iff.2 (fun _ _ ↦ terminal.inj) h]
+
+end toContextFreeGrammar
 
 end DFA
 
 namespace ContextFreeGrammar
 
-variable {T N : Type*} {σ : Type} (M : DFA T σ)
+variable {T : Type*} {g : ContextFreeGrammar T}
 
-/-- `Annotates M p l out q` says that the sentential form `l` is `out` with every nonterminal
-`A` replaced by some `some (p', A, q')` so that the states thread from `p` to `q`. A terminal
-advances the automaton, and an annotated nonterminal jumps from its entry state to its exit
-state. -/
-inductive Annotates : σ → List (Symbol T (Option (σ × N × σ))) → List (Symbol T N) → σ → Prop
-  | nil (p : σ) : Annotates p [] [] p
-  | terminal {p q : σ} (a : T) {l : List (Symbol T (Option (σ × N × σ)))}
-      {out : List (Symbol T N)} (h : Annotates (M.step p a) l out q) :
-      Annotates p (.terminal a :: l) (.terminal a :: out) q
-  | nonterminal {p p' q : σ} (A : N) {l : List (Symbol T (Option (σ × N × σ)))}
-      {out : List (Symbol T N)} (h : Annotates p' l out q) :
-      Annotates p (.nonterminal (some (p, A, p')) :: l) (.nonterminal A :: out) q
+/-- A grammar is *right-linear* if every right-hand side is a string of terminals followed by at
+most one nonterminal. -/
+def IsRightLinear (g : ContextFreeGrammar T) : Prop :=
+  ∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, ¬ s.IsNonterminal
 
-namespace Annotates
+instance : DecidablePred (IsRightLinear (T := T)) := fun g ↦
+  inferInstanceAs (Decidable (∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, ¬ s.IsNonterminal))
 
-variable {M} {p q r : σ} {l l₁ l₂ : List (Symbol T (Option (σ × N × σ)))}
-  {out out₁ out₂ : List (Symbol T N)}
+/-- The suffixes of the right-hand sides of `g`, together with the suffixes of its start symbol. -/
+private def suffixes (g : ContextFreeGrammar T) : Set (List (Symbol T g.NT)) :=
+  {α | α <:+ [nonterminal g.initial] ∨ ∃ r ∈ g.rules, α <:+ r.output}
 
-theorem append (h₁ : Annotates M p l₁ out₁ q) (h₂ : Annotates M q l₂ out₂ r) :
-    Annotates M p (l₁ ++ l₂) (out₁ ++ out₂) r := by
-  induction h₁ with
-  | nil => exact h₂
-  | terminal a _ ih => exact .terminal a (ih h₂)
-  | nonterminal A _ ih => exact .nonterminal A (ih h₂)
+private theorem finite_suffixes : (suffixes g).Finite := by
+  have h (l : List (Symbol T g.NT)) : {α | α <:+ l}.Finite :=
+    l.tails.finite_toSet.subset fun _ h ↦ (List.mem_tails _ _).mpr h
+  exact ((h _).union (g.rules.finite_toSet.biUnion fun r _ ↦ h r.output)).subset fun α hα ↦
+    hα.imp id fun ⟨r, hr, hα⟩ ↦ Set.mem_biUnion hr hα
 
-theorem split_out (h : Annotates M p l (out₁ ++ out₂) r) :
-    ∃ l₁ l₂ q, l = l₁ ++ l₂ ∧ Annotates M p l₁ out₁ q ∧ Annotates M q l₂ out₂ r := by
-  induction out₁ generalizing l p with
-  | nil => exact ⟨[], l, p, rfl, .nil p, h⟩
-  | cons s out₁ ih =>
-    cases h with
-    | terminal a h =>
-      obtain ⟨l₁, l₂, q, rfl, h₁, h₂⟩ := ih h
-      exact ⟨_ :: l₁, l₂, q, rfl, .terminal a h₁, h₂⟩
-    | nonterminal A h =>
-      obtain ⟨l₁, l₂, q, rfl, h₁, h₂⟩ := ih h
-      exact ⟨_ :: l₁, l₂, q, rfl, .nonterminal A h₁, h₂⟩
+private theorem mem_suffixes_of_cons {s : Symbol T g.NT} {α : List (Symbol T g.NT)}
+    (h : s :: α ∈ suffixes g) : α ∈ suffixes g :=
+  h.imp (List.suffix_cons s α).trans fun ⟨r, hr, h⟩ ↦ ⟨r, hr, (List.suffix_cons s α).trans h⟩
 
-/-- An annotation that is a concatenation annotates a concatenation. -/
-theorem split (h : Annotates M p (l₁ ++ l₂) out r) :
-    ∃ out₁ out₂ q, out = out₁ ++ out₂ ∧ Annotates M p l₁ out₁ q ∧ Annotates M q l₂ out₂ r := by
-  induction l₁ generalizing out p with
-  | nil => exact ⟨[], out, p, rfl, .nil p, h⟩
-  | cons s l₁ ih =>
-    cases h with
-    | terminal a h =>
-      obtain ⟨out₁, out₂, q, rfl, h₁, h₂⟩ := ih h
-      exact ⟨_ :: out₁, out₂, q, rfl, .terminal a h₁, h₂⟩
-    | nonterminal A h =>
-      obtain ⟨out₁, out₂, q, rfl, h₁, h₂⟩ := ih h
-      exact ⟨_ :: out₁, out₂, q, rfl, .nonterminal A h₁, h₂⟩
+private theorem IsRightLinear.eq_nil_of_nonterminal_cons_mem (hg : g.IsRightLinear) {B : g.NT}
+    {α : List (Symbol T g.NT)} (h : nonterminal B :: α ∈ suffixes g) : α = [] := by
+  rcases h with h | ⟨r, hr, p, hp⟩
+  · simpa using h.length_le
+  · by_contra hα
+    refine hg r hr (nonterminal B) ?_ trivial
+    rw [← hp, List.dropLast_append_of_ne_nil (by simp), List.dropLast_cons_of_ne_nil hα]
+    simp
 
-theorem map_terminal (p : σ) (w : List T) :
-    Annotates (N := N) M p (w.map .terminal) (w.map .terminal) (M.evalFrom p w) := by
-  induction w generalizing p with
-  | nil => exact .nil p
-  | cons a w ih => exact .terminal a (ih (M.step p a))
+/-- In a right-linear grammar, if a suffix `α` derives a word that starts with the letter `a`, then
+`α` derives `a` followed by some suffix `β`, and `β` derives the rest of the word. -/
+private theorem IsRightLinear.exists_derives_terminal_cons (hg : g.IsRightLinear) {a : T}
+    {w : List T} {α : List (Symbol T g.NT)} (hα : α ∈ suffixes g)
+    (h : g.Derives α (terminal a :: w.map terminal)) :
+    ∃ β ∈ suffixes g, g.Derives α (terminal a :: β) ∧ g.Derives β (w.map terminal) := by
+  have key {b : T} {α : List (Symbol T g.NT)} (hα : terminal b :: α ∈ suffixes g)
+      (h : g.Derives (terminal b :: α) (terminal a :: w.map terminal)) :
+      ∃ β ∈ suffixes g, g.Derives (terminal b :: α) (terminal a :: β) ∧
+        g.Derives β (w.map terminal) := by
+    obtain ⟨v, hv, hd⟩ := h.exists_of_terminal_cons
+    obtain ⟨rfl, rfl⟩ : a = b ∧ w.map terminal = v := by simpa using hv
+    exact ⟨α, mem_suffixes_of_cons hα, .refl _, hd⟩
+  induction h using Relation.ReflTransGen.head_induction_on with
+  | refl => exact key hα (.refl _)
+  | @head α α' step rest ih =>
+    rcases α with _ | ⟨b | B, α⟩
+    · exact (not_produces_map_terminal (w := []) step).elim
+    · exact key hα (step.trans_derives rest)
+    · obtain rfl := hg.eq_nil_of_nonterminal_cons_mem hα
+      obtain ⟨r, hr, rfl, rfl⟩ := produces_singleton_iff.mp step
+      obtain ⟨β, hβ, h₁, h₂⟩ := ih (.inr ⟨r, hr, List.suffix_rfl⟩)
+      exact ⟨β, hβ, step.trans_derives h₁, h₂⟩
 
-theorem eq_of_map_terminal_right {w : List T} (h : Annotates M p l (w.map .terminal) q) :
-    l = w.map .terminal ∧ q = M.evalFrom p w := by
-  induction w generalizing l p with
-  | nil => cases h; exact ⟨rfl, rfl⟩
-  | cons a w ih =>
-    cases h with
-    | terminal _ h => obtain ⟨rfl, rfl⟩ := ih h; exact ⟨rfl, rfl⟩
-
-theorem eq_of_map_terminal_left {w : List T} (h : Annotates M p (w.map .terminal) out q) :
-    out = w.map .terminal ∧ q = M.evalFrom p w := by
-  induction w generalizing out p with
-  | nil => cases h; exact ⟨rfl, rfl⟩
-  | cons a w ih =>
-    cases h with
-    | terminal _ h => obtain ⟨rfl, rfl⟩ := ih h; exact ⟨rfl, rfl⟩
-
-theorem eq_of_singleton_right {A : N} (h : Annotates M p l [.nonterminal A] q) :
-    l = [.nonterminal (some (p, A, q))] := by
-  cases h with
-  | nonterminal _ h => cases h; rfl
-
-theorem eq_of_singleton_left {p₀ q₀ : σ} {A : N}
-    (h : Annotates M p [.nonterminal (some (p₀, A, q₀))] out q) :
-    out = [.nonterminal A] ∧ p₀ = p ∧ q₀ = q := by
-  cases h with
-  | nonterminal _ h => cases h; exact ⟨rfl, rfl, rfl⟩
-
-theorem none_notMem (h : Annotates M p l out q) : Symbol.nonterminal none ∉ l := by
-  induction h with
-  | nil => simp
-  | terminal _ _ ih => simpa using ih
-  | nonterminal _ _ ih => simpa using ih
-
-end Annotates
-
-variable [Fintype σ]
-
-open scoped Classical in
-/-- The annotations of `out` from state `p`, each with its exit state. -/
-noncomputable def annotations :
-    σ → List (Symbol T N) → Finset (σ × List (Symbol T (Option (σ × N × σ))))
-  | p, [] => {(p, [])}
-  | p, .terminal a :: out => (annotations (M.step p a) out).image fun x => (x.1, .terminal a :: x.2)
-  | p, .nonterminal A :: out => Finset.univ.biUnion fun p' =>
-      (annotations p' out).image fun x => (x.1, .nonterminal (some (p, A, p')) :: x.2)
-
-theorem mem_annotations {p : σ} {out : List (Symbol T N)}
-    {x : σ × List (Symbol T (Option (σ × N × σ)))} :
-    x ∈ annotations M p out ↔ Annotates M p x.2 out x.1 := by
-  induction out generalizing p x with
+/-- A right-linear grammar generates a regular language. -/
+theorem IsRightLinear.isRegular_language (hg : g.IsRightLinear) : g.language.IsRegular := by
+  refine .of_finite_range_leftQuotient (((finite_suffixes (g := g)).finite_subsets.image
+    fun S ↦ ({w | ∃ β ∈ S, g.Derives β (w.map terminal)} : Language T)).subset ?_)
+  rintro _ ⟨u, rfl⟩
+  induction u using List.reverseRecOn with
   | nil =>
-    obtain ⟨q, l⟩ := x
-    simp only [annotations, Finset.mem_singleton, Prod.mk.injEq]
+    exact ⟨{[nonterminal g.initial]}, by simp [suffixes], by ext w; simp [Language.leftQuotient]⟩
+  | append_singleton u a ih =>
+    obtain ⟨S, hS, hu⟩ := ih
+    refine ⟨{β ∈ suffixes g | ∃ α ∈ S, g.Derives α (terminal a :: β)}, fun _ h ↦ h.1, ?_⟩
+    ext w
+    have hw : u ++ [a] ++ w ∈ g.language ↔ ∃ α ∈ S, g.Derives α (terminal a :: w.map terminal) := by
+      simpa [Language.leftQuotient] using (Set.ext_iff.mp hu (a :: w)).symm
+    refine Iff.trans ?_ hw.symm
     constructor
-    · rintro ⟨rfl, rfl⟩; exact .nil _
-    · rintro ⟨⟩; exact ⟨rfl, rfl⟩
-  | cons s out ih =>
-    obtain ⟨q, l⟩ := x
-    cases s with
-    | terminal a =>
-      simp only [annotations, Finset.mem_image, Prod.mk.injEq]
-      constructor
-      · rintro ⟨⟨q', l'⟩, h, rfl, rfl⟩; exact .terminal a (ih.mp h)
-      · intro h
-        cases h with
-        | terminal _ h => exact ⟨(q, _), ih.mpr h, rfl, rfl⟩
-    | nonterminal A =>
-      simp only [annotations, Finset.mem_biUnion, Finset.mem_univ, true_and, Finset.mem_image,
-        Prod.mk.injEq]
-      constructor
-      · rintro ⟨p', ⟨q', l'⟩, h, rfl, rfl⟩; exact .nonterminal A (ih.mp h)
-      · intro h
-        cases h with
-        | nonterminal _ h => exact ⟨_, (q, _), ih.mpr h, rfl, rfl⟩
+    · rintro ⟨β, ⟨-, α, hα, h₁⟩, h₂⟩
+      exact ⟨α, hα, h₁.trans (h₂.append_left [terminal a])⟩
+    · rintro ⟨α, hα, h⟩
+      obtain ⟨β, hβ, h₁, h₂⟩ := hg.exists_derives_terminal_cons (hS hα) h
+      exact ⟨β, ⟨hβ, α, hα, h₁⟩, h₂⟩
 
-open scoped Classical in
-/-- The grammar `G.inter M` generates the intersection of `G` with a finite automaton `M`. Its
-nonterminals are those of `G` annotated with entry and exit states, it has each rule of `G` in
-every annotation of its right-hand side, and its fresh start symbol `none` rewrites to the start
-nonterminal of `G` between the start state and each accepting state. -/
-noncomputable def inter (G : ContextFreeGrammar T) (M : DFA T σ) : ContextFreeGrammar T where
-  NT := Option (σ × G.NT × σ)
-  initial := none
-  rules := (Finset.univ.filter (· ∈ M.accept)).image (fun q =>
-      ⟨none, [.nonterminal (some (M.start, G.initial, q))]⟩) ∪
-    G.rules.biUnion fun r => Finset.univ.biUnion fun p =>
-      (annotations M p r.output).image fun x => ⟨some (p, r.input, x.1), x.2⟩
+end ContextFreeGrammar
 
-variable {G : ContextFreeGrammar T}
+namespace DFA
 
-@[simp] theorem inter_initial : (G.inter M).initial = none := rfl
+/-- The grammar `M.toContextFreeGrammar` is right-linear. -/
+theorem isRightLinear_toContextFreeGrammar {α : Type*} {σ : Type} [Fintype α] [Fintype σ]
+    (M : DFA α σ) : M.toContextFreeGrammar.IsRightLinear := by
+  intro r hr s hs
+  obtain ⟨a, ho⟩ | ⟨-, ho⟩ := mem_toContextFreeGrammar_rules.1 hr <;> simp_all
 
-variable {M}
+section Threads
 
-theorem mem_inter_rules {r' : ContextFreeRule T (G.inter M).NT} :
-    r' ∈ (G.inter M).rules ↔
-      (r'.input = none ∧
-          ∃ q ∈ M.accept, r'.output = [.nonterminal (some (M.start, G.initial, q))]) ∨
-        ∃ r ∈ G.rules, ∃ p q, r'.input = some (p, r.input, q) ∧
-          Annotates M p r'.output r.output q := by
-  obtain ⟨i, o⟩ := r'
-  simp only [inter, Finset.mem_union, Finset.mem_image, Finset.mem_filter, Finset.mem_univ,
-    true_and, Finset.mem_biUnion, mem_annotations, ContextFreeRule.mk.injEq]
-  refine or_congr ⟨fun ⟨q, hq, h₁, h₂⟩ => ⟨h₁.symm, q, hq, h₂.symm⟩,
-    fun ⟨h₁, q, hq, h₂⟩ => ⟨q, hq, h₁.symm, h₂.symm⟩⟩
-    (exists_congr fun r => and_congr_right fun _ => ?_)
-  constructor
-  · rintro ⟨p, ⟨q, l⟩, h, rfl, rfl⟩; exact ⟨p, q, rfl, h⟩
-  · rintro ⟨p, q, rfl, h⟩; exact ⟨p, (q, o), h, rfl, rfl⟩
+variable {T N σ : Type*} (M : DFA T σ) {p q r p₀ q₀ : σ} {l l₁ l₂ : List (Symbol T (σ × N × σ))}
 
-/-! ### The grammar generates the intersection -/
+/-- `M.Threads p l q` means that reading the sentential form `l` takes `M` from the state `p` to the
+state `q`. A terminal `a` takes a state `p` to `M.step p a`. A nonterminal `(p₀, A, q₀)` can be read
+only in its entry state `p₀`, and takes it to its exit state `q₀`. -/
+def Threads : σ → List (Symbol T (σ × N × σ)) → σ → Prop
+  | p, [], q => p = q
+  | p, .terminal a :: l, q => Threads (M.step p a) l q
+  | p, .nonterminal (p₀, _, q₀) :: l, q => p = p₀ ∧ Threads q₀ l q
 
-theorem Produces.of_inter {l' t' : List (Symbol T (G.inter M).NT)}
-    (step : (G.inter M).Produces l' t') {p q : σ} {out : List (Symbol T G.NT)}
-    (h : Annotates M p l' out q) : ∃ out', G.Produces out out' ∧ Annotates M p t' out' q := by
-  obtain ⟨r', hr', hrw⟩ := step
+@[simp] theorem threads_nil : M.Threads (N := N) p [] q ↔ p = q := .rfl
+
+@[simp] theorem threads_terminal_cons {a : T} :
+    M.Threads p (terminal a :: l) q ↔ M.Threads (M.step p a) l q := .rfl
+
+@[simp] theorem threads_nonterminal_cons {A : N} :
+    M.Threads p (nonterminal (p₀, A, q₀) :: l) q ↔ p = p₀ ∧ M.Threads q₀ l q := .rfl
+
+/-- A concatenation `l₁ ++ l₂` threads from `p` to `r` if and only if `l₁` threads from `p` to some
+state `q` and `l₂` threads from `q` to `r`. -/
+theorem threads_append :
+    M.Threads p (l₁ ++ l₂) r ↔ ∃ q, M.Threads p l₁ q ∧ M.Threads q l₂ r := by
+  induction l₁ generalizing p with
+  | nil => simp
+  | cons s l₁ ih => rcases s with a | ⟨p₀, A, q₀⟩ <;> simp [ih, and_assoc]
+
+/-- A string of terminals `w` threads from `p` to `q` if and only if `M` evaluates `w` from `p` to
+`q`. -/
+@[simp] theorem threads_map_terminal {w : List T} :
+    M.Threads (N := N) p (w.map terminal) q ↔ M.evalFrom p w = q := by
+  induction w generalizing p with
+  | nil => simp
+  | cons a w ih => simp [ih]
+
+end Threads
+
+end DFA
+
+namespace ContextFreeGrammar
+
+variable {T : Type*} {σ : Type} [Finite σ] {G : ContextFreeGrammar T} {M : DFA T σ} {p q r : σ}
+
+/-- The *triple construction* of a grammar `G` and a finite automaton `M`. Its nonterminals are
+triples `(p, A, p')` of a nonterminal `A` of `G`, an entry state `p` and an exit state `p'`. Its
+rules are the rules over triples that become rules of `G` when the states are erased, and whose
+right-hand side threads from the entry state to the exit state of the left-hand side. Its start
+symbol is `(M.start, G.initial, q)`. -/
+noncomputable def triple (G : ContextFreeGrammar T) (M : DFA T σ) (q : σ) :
+    ContextFreeGrammar T where
+  NT := σ × G.NT × σ
+  initial := (M.start, G.initial, q)
+  rules := Set.Finite.toFinset
+    (s := {r' | r'.mapNonterminal (fun X : σ × G.NT × σ ↦ X.2.1) ∈ G.rules ∧
+      M.Threads r'.input.1 r'.output r'.input.2.2})
+    ((ContextFreeRule.finite_preimage_mapNonterminal (f := fun X : σ × G.NT × σ ↦ X.2.1)
+      (fun A ↦ (Set.finite_range fun x : σ × σ ↦ (x.1, A, x.2)).subset
+        fun ⟨p, _, q⟩ h ↦ ⟨(p, q), by cases h; rfl⟩) G.rules.finite_toSet).subset fun _ h ↦ h.1)
+
+@[simp] theorem triple_initial (G : ContextFreeGrammar T) (M : DFA T σ) (q : σ) :
+    (G.triple M q).initial = (M.start, G.initial, q) := rfl
+
+theorem mem_triple_rules {A : G.NT} {p' q' : σ} {l : List (Symbol T (σ × G.NT × σ))} :
+    ⟨(p', A, q'), l⟩ ∈ (G.triple M q).rules ↔
+      ⟨A, l.map (mapNonterminal (·.2.1))⟩ ∈ G.rules ∧ M.Threads p' l q' := by
+  simp [triple, ContextFreeRule.mapNonterminal]
+
+/-- Erasing the states of a rule of `G.triple M q` gives a rule of `G`. -/
+theorem mapNonterminal_mem_of_mem_triple_rules {r' : ContextFreeRule T (σ × G.NT × σ)}
+    (h : r' ∈ (G.triple M q).rules) : r'.mapNonterminal (·.2.1) ∈ G.rules := by
+  obtain ⟨⟨p', A, q'⟩, l⟩ := r'
+  exact (mem_triple_rules.mp h).1
+
+/-- If `l` threads from `p` to `r` and `G.triple M q` produces `l'` from `l`, then `l'` threads from
+`p` to `r`. -/
+theorem Produces.threads {l l' : List (Symbol T (σ × G.NT × σ))}
+    (h : (G.triple M q).Produces l l') (hl : M.Threads p l r) : M.Threads p l' r := by
+  obtain ⟨⟨⟨p', A, q'⟩, o⟩, hr, hrw⟩ := h
   obtain ⟨pre, post, rfl, rfl⟩ := hrw.exists_parts
-  rcases mem_inter_rules.mp hr' with ⟨hi, -⟩ | ⟨r, hr, p₀, q₀, hi, hbody⟩
-  · exact absurd (by simp [hi]) h.none_notMem
-  · obtain ⟨out₁, out₃, p₂, rfl, h₁₂, h₃⟩ := h.split
-    obtain ⟨out₁, out₂, p₁, rfl, h₁, h₂⟩ := h₁₂.split
-    rw [hi] at h₂
-    obtain ⟨rfl, rfl, rfl⟩ := h₂.eq_of_singleton_left
-    exact ⟨out₁ ++ r.output ++ out₃, ⟨r, hr, ContextFreeRule.rewrites_of_exists_parts r out₁ out₃⟩,
-      (h₁.append hbody).append h₃⟩
+  obtain ⟨_, h₁₂, h₃⟩ := M.threads_append.mp hl
+  obtain ⟨_, h₁, rfl, rfl⟩ := M.threads_append.mp h₁₂
+  exact M.threads_append.mpr
+    ⟨_, M.threads_append.mpr ⟨_, h₁, (mem_triple_rules.mp hr).2⟩, h₃⟩
 
-theorem Derives.of_inter {l' t' : List (Symbol T (G.inter M).NT)}
-    (hd : (G.inter M).Derives l' t') {p q : σ} {out : List (Symbol T G.NT)}
-    (h : Annotates M p l' out q) : ∃ out', G.Derives out out' ∧ Annotates M p t' out' q := by
-  induction hd with
-  | refl => exact ⟨out, .refl _, h⟩
-  | tail _ step ih =>
-    obtain ⟨out', hd', h'⟩ := ih
-    obtain ⟨out'', hp, h''⟩ := step.of_inter h'
-    exact ⟨out'', hd'.trans_produces hp, h''⟩
+/-- If `l` threads from `p` to `r` and `G.triple M q` derives `l'` from `l`, then `l'` threads from
+`p` to `r`. -/
+theorem Derives.threads {l l' : List (Symbol T (σ × G.NT × σ))}
+    (h : (G.triple M q).Derives l l') (hl : M.Threads p l r) : M.Threads p l' r := by
+  induction h with
+  | refl => exact hl
+  | tail _ step ih => exact step.threads ih
 
-theorem language_inter_le : (G.inter M).language ≤ G.language ⊓ M.accepts := by
-  intro w hw
-  rcases ((mem_language_iff _ _).mp hw).eq_or_head with heq | ⟨v, hstep, hd⟩
-  · cases w <;> simp at heq
-  · obtain ⟨r', hr', hin, rfl⟩ := produces_singleton_iff.mp hstep
-    rcases mem_inter_rules.mp hr' with ⟨-, q, hq, hout⟩ | ⟨r, -, p, q, hi, -⟩
-    · rw [hout] at hd
-      obtain ⟨out, hdG, h⟩ := hd.of_inter (.nonterminal (p := M.start) G.initial (.nil q))
-      obtain ⟨rfl, rfl⟩ := h.eq_of_map_terminal_left
-      exact ⟨(mem_language_iff _ _).mpr hdG, hq⟩
-    · simp [hin] at hi
-
-theorem exists_annotates_of_derives {out : List (Symbol T G.NT)} {w : List T}
-    (hd : G.Derives out (w.map .terminal)) (p : σ) :
-    ∃ l, Annotates M p l out (M.evalFrom p w) ∧ (G.inter M).Derives l (w.map .terminal) := by
+/-- If `G` derives the word `w` from `out`, then for every state `p` there is a form `l` over
+triples that gives `out` when the states are erased, threads from `p` to `M.evalFrom p w`, and
+derives `w` in `G.triple M q`. -/
+theorem exists_derives_triple {out : List (Symbol T G.NT)} {w : List T}
+    (hd : G.Derives out (w.map terminal)) (p : σ) :
+    ∃ l, l.map (mapNonterminal (·.2.1)) = out ∧ M.Threads p l (M.evalFrom p w) ∧
+      (G.triple M q).Derives l (w.map terminal) := by
   induction hd using Relation.ReflTransGen.head_induction_on with
-  | refl => exact ⟨_, .map_terminal p w, .refl _⟩
+  | refl => exact ⟨w.map terminal, by simp, by simp, .refl _⟩
   | head step _ ih =>
-    obtain ⟨l, hl, hd⟩ := ih
+    obtain ⟨l, hl, ht, hd⟩ := ih
     obtain ⟨r, hr, hrw⟩ := step
     obtain ⟨pre, post, rfl, rfl⟩ := hrw.exists_parts
-    obtain ⟨l₁, l₃, p₂, rfl, h₁₂, h₃⟩ := hl.split_out
-    obtain ⟨l₁, l₂, p₁, rfl, h₁, h₂⟩ := h₁₂.split_out
-    exact ⟨l₁ ++ [.nonterminal (some (p₁, r.input, p₂))] ++ l₃,
-      (h₁.append (.nonterminal r.input (.nil p₂))).append h₃,
-      (Produces.single ⟨⟨_, l₂⟩, mem_inter_rules.mpr (.inr ⟨r, hr, p₁, p₂, rfl, h₂⟩),
+    obtain ⟨l₁₂, l₃, rfl, h₁₂, rfl⟩ := List.map_eq_append_iff.mp hl
+    obtain ⟨l₁, l₂, rfl, rfl, h₂⟩ := List.map_eq_append_iff.mp h₁₂
+    obtain ⟨p₂, h₁₂, h₃⟩ := M.threads_append.mp ht
+    obtain ⟨p₁, h₁, ht₂⟩ := M.threads_append.mp h₁₂
+    exact ⟨l₁ ++ [nonterminal (p₁, r.input, p₂)] ++ l₃, by simp,
+      M.threads_append.mpr ⟨p₂, M.threads_append.mpr ⟨p₁, h₁, rfl, rfl⟩, h₃⟩,
+      (Produces.single ⟨⟨_, l₂⟩, mem_triple_rules.mpr ⟨h₂ ▸ hr, ht₂⟩,
         ContextFreeRule.rewrites_of_exists_parts _ l₁ l₃⟩).trans hd⟩
 
-theorem le_language_inter : G.language ⊓ M.accepts ≤ (G.inter M).language := by
-  rintro w ⟨hG, hM⟩
-  obtain ⟨l, hl, hd⟩ :=
-    exists_annotates_of_derives (M := M) ((mem_language_iff _ _).mp hG) M.start
-  rw [hl.eq_of_singleton_right] at hd
-  exact (mem_language_iff _ _).mpr <| (produces_singleton_iff.mpr
-    ⟨⟨none, [.nonterminal (some (M.start, G.initial, M.eval w))]⟩,
-      mem_inter_rules.mpr (.inl ⟨rfl, _, hM, rfl⟩), rfl, rfl⟩).trans_derives hd
+/-- A word is in the language of `G.triple M q` if and only if it is in the language of `G` and `M`
+evaluates it to the state `q`. -/
+theorem mem_language_triple {w : List T} :
+    w ∈ (G.triple M q).language ↔ w ∈ G.language ∧ M.eval w = q := by
+  refine ⟨fun h ↦ ⟨?_, ?_⟩, ?_⟩
+  · simpa using Derives.mapNonterminal (g' := G) (f := fun X : σ × G.NT × σ ↦ X.2.1)
+      (fun _ ↦ mapNonterminal_mem_of_mem_triple_rules) ((mem_language_iff _ _).mp h)
+  · exact M.threads_map_terminal.mp (Derives.threads ((mem_language_iff _ _).mp h) ⟨rfl, rfl⟩)
+  · rintro ⟨hG, rfl⟩
+    obtain ⟨l, hl, ht, hd⟩ :=
+      exists_derives_triple (M := M) (q := M.eval w) ((mem_language_iff _ _).mp hG) M.start
+    obtain ⟨X, rfl, hX⟩ := List.map_eq_singleton_iff.mp hl
+    obtain ⟨⟨p', A, q'⟩, rfl, rfl⟩ := mapNonterminal_eq_nonterminal_iff.mp hX
+    obtain ⟨rfl, rfl⟩ := ht
+    exact hd
 
-/-- **Bar-Hillel's theorem**: `G.inter M` generates the intersection. -/
-theorem language_inter (G : ContextFreeGrammar T) (M : DFA T σ) :
-    (G.inter M).language = G.language ⊓ M.accepts :=
-  language_inter_le.antisymm le_language_inter
+/-- `G.inter M` is the union of the triple constructions `G.triple M q` over the accepting states
+`q` of the finite automaton `M`. -/
+noncomputable def inter (G : ContextFreeGrammar T) (M : DFA T σ) : ContextFreeGrammar T :=
+  iUnion fun q : M.accept ↦ G.triple M q
+
+/-- **Bar-Hillel's theorem**. The grammar `G.inter M` generates the intersection of the language of
+`G` with the language that `M` accepts. -/
+@[simp] theorem language_inter (G : ContextFreeGrammar T) (M : DFA T σ) :
+    (G.inter M).language = G.language ⊓ M.accepts := by
+  ext w
+  simp only [inter, language_iUnion, Language.mem_iSup, mem_language_triple, Language.mem_inf,
+    DFA.mem_accepts]
+  exact ⟨fun ⟨q, hG, hq⟩ ↦ ⟨hG, hq ▸ q.2⟩, fun ⟨hG, hq⟩ ↦ ⟨⟨_, hq⟩, hG, rfl⟩⟩
 
 end ContextFreeGrammar
 
 namespace Language
 
-variable {α : Type*}
+variable {α : Type*} {L R : Language α}
 
 /-- Over a finite alphabet, every regular language is context-free. -/
-theorem IsRegular.isContextFree [Finite α] {L : Language α} (h : L.IsRegular) :
-    L.IsContextFree := by
-  classical
+theorem IsRegular.isContextFree [Finite α] (h : L.IsRegular) : L.IsContextFree := by
   have := Fintype.ofFinite α
   obtain ⟨σ, _, M, rfl⟩ := h
-  exact ⟨M.toContextFreeGrammar, DFA.language_toContextFreeGrammar⟩
+  exact ⟨M.toContextFreeGrammar, M.language_toContextFreeGrammar⟩
 
-/-- Context-free languages are closed under intersection with regular languages. -/
-theorem IsContextFree.inf_isRegular {L R : Language α}
-    (hL : L.IsContextFree) (hR : R.IsRegular) : (L ⊓ R).IsContextFree := by
+/-- Over a finite alphabet, a language is regular if and only if a right-linear grammar generates
+it. -/
+theorem isRegular_iff_exists_isRightLinear [Finite α] :
+    L.IsRegular ↔ ∃ g : ContextFreeGrammar α, g.IsRightLinear ∧ g.language = L := by
+  refine ⟨fun h ↦ ?_, fun ⟨g, hg, h⟩ ↦ h ▸ hg.isRegular_language⟩
+  have := Fintype.ofFinite α
+  obtain ⟨σ, _, M, rfl⟩ := h
+  exact ⟨_, M.isRightLinear_toContextFreeGrammar, M.language_toContextFreeGrammar⟩
+
+/-- The intersection of a context-free language with a regular language is context-free. -/
+theorem IsContextFree.inf_isRegular (hL : L.IsContextFree) (hR : R.IsRegular) :
+    (L ⊓ R).IsContextFree := by
   obtain ⟨G, rfl⟩ := hL
   obtain ⟨σ, _, M, rfl⟩ := hR
   exact ⟨G.inter M, G.language_inter M⟩
