@@ -244,7 +244,7 @@ theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : GornAddress × Gor
   have hv : projectionAt hd t p ∈ t.toRoseTree.validPaths :=
     isLowerSet_validPaths _ (projectionAt_le hd t p) (mem_validPaths_of_mem_chain hp)
   have h0 : projectionAt hd t p ≠ ⊥ := fun h ↦ hl.1.2.1 (h ▸ bot_le)
-  have hb := PlanarSyntacticObject.isBranchingAt_parent (t := t)
+  have hb := PlanarSyntacticObject.parent_mem_branching (t := t)
     (a := ⟨projectionAt hd t p, hv⟩) fun h ↦ h0 (congrArg Subtype.val h)
   exact (cCommands_iff_parent_lt h0 hb).1 hl.1
 

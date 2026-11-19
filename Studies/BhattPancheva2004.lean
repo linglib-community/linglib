@@ -75,7 +75,7 @@ where it is merged](##rows_ellipsis).
 namespace BhattPancheva2004
 
 open Quantifier Quantifier.Det Set PhraseStructure PhraseStructure.Tree
-open RoseTree (cCommand)
+open RoseTree (branching)
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
 
@@ -95,9 +95,9 @@ def lf22b : Tree Unit String :=
 open Examples in
 -- (22), (24), (25): the quantifier's scope in (22b) holds the degree trace but not the DegP
 theorem rows_hkc :
-    (IsHeimKennedy (cCommand lf22a) ⟨[0]⟩ ⟨[1, 0, 0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ↔
+    (IsHeimKennedy C[branching lf22a] ⟨[0]⟩ ⟨[1, 0, 0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ↔
       bp2004_22.readings.lookup "every > -er" = some .acceptable) ∧
-    (IsHeimKennedy (cCommand lf22b) ⟨[1, 0, 0]⟩ ⟨[0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ↔
+    (IsHeimKennedy C[branching lf22b] ⟨[1, 0, 0]⟩ ⟨[0]⟩ ⟨[1, 0, 1, 0, 1, 0]⟩ ↔
       bp2004_22.readings.lookup "-er > every" = some .acceptable) := by
   decide
 

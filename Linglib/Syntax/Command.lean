@@ -19,7 +19,7 @@ A dominance order has the root at `⊥` and `x ≤ y` for `x` dominates `y`. A s
 generates a command relation: `a` commands `b` when every `P`-node properly dominating `a`, every
 member of `ancestors P a`, dominates `b`. The relations of the literature differ in the generator
 alone, c-command taking the branching nodes, S-command the S nodes and MAX-command the maximal
-projections.
+projections, so a generator is named and its relation is written `C[P]`.
 
 The relation is an upper polar in the generator, so its dependence on `P` is mathlib's polarity
 API. In the commanded node it is the
@@ -144,7 +144,8 @@ section Commands
 variable [Preorder α] {P Q : Set α} {a b : α}
 
 /-- `a` commands `b` under `P` when every `P`-node properly dominating `a` dominates `b` and
-neither of the two dominates the other. -/
+neither of the two dominates the other. This is command as most of the literature uses the word;
+[barker-pullum-1990]'s "`a` `P`-commands `b`" is the reflexive `a ~[C[P]] b`. -/
 @[mk_iff]
 structure Commands (P : Set α) (a b : α) : Prop where
   /-- Every `P`-node properly dominating the commander dominates the commanded node. -/

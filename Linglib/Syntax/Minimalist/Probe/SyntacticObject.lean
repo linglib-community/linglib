@@ -56,13 +56,13 @@ variable {t : PlanarSyntacticObject} {p : Probe t.toRoseTree.Positions} {s : Set
 /-- A satisfier that asymmetrically c-commands a position blocks the goal there, whatever else the
 probe's domain holds. -/
 theorem not_finds_of_cCommands (hq : q ∈ s) (hsq : p.sat q) (hqg : t.toRoseTree.CCommands q g)
-    (hgq : ¬ t.toRoseTree.CCommands g q) : ¬ p.Finds s (t.above t.branching) g := fun h ↦
+    (hgq : ¬ t.toRoseTree.CCommands g q) : ¬ p.Finds s (t.above t.toRoseTree.branching) g := fun h ↦
   h.inspects.2 hq hsq (above_branching_lt_of_cCommands hqg hgq)
 
 /-- Among satisfiers none of which dominates another, a probe finds those that no satisfier
 asymmetrically c-commands: mutually c-commanding candidates are equidistant. -/
 theorem finds_above_branching_iff (hs : IsAntichain (· ≤ ·) {q | q ∈ s ∧ p.sat q}) :
-    p.Finds s (t.above t.branching) g ↔ (g ∈ s ∧ p.sat g) ∧
+    p.Finds s (t.above t.toRoseTree.branching) g ↔ (g ∈ s ∧ p.sat g) ∧
       ∀ ⦃q⦄, q ∈ s → p.sat q → ¬ (t.toRoseTree.CCommands q g ∧ ¬ t.toRoseTree.CCommands g q) := by
   simpa only [Probe.Finds, and_imp] using minimalFor_iff_of_isAntichain hs (fun _ h ↦ h.2 h.1)
     fun _ _ ↦ above_branching_lt_iff
@@ -94,11 +94,12 @@ variable (t) in
 /-- The terms a probe on the head `h` finds: those at the closest satisfying positions that an
 occurrence of `h` c-commands. -/
 def goals (p : Probe t.toRoseTree.Positions) (h : SyntacticObject) : Finset SyntacticObject :=
-  t.goalsBy p h (t.above t.branching)
+  t.goalsBy p h (t.above t.toRoseTree.branching)
 
 theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
-    ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.branching) g ∧
-      t.termAt g = x :=
+    ∃ a, t.termAt a = h ∧ ∃ g,
+      p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching) g ∧
+        t.termAt g = x :=
   mem_goalsBy
 
 variable (t) in
@@ -109,7 +110,7 @@ def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
     Finset SyntacticObject :=
   (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
     p.Finds {q | t.toRoseTree.CCommands a q ∧ q.val ∉ cut a.val} (t.above
-        t.branching) g).image t.termAt
+        t.toRoseTree.branching) g).image t.termAt
 
 @[simp] theorem goalsUnder_empty {h : SyntacticObject} :
     t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
@@ -118,8 +119,8 @@ def goalsUnder (p : Probe t.toRoseTree.Positions) (h : SyntacticObject)
 theorem mem_goalsUnder_of_finds {h : SyntacticObject}
     {cut : GornAddress → Set GornAddress}
     [∀ a, DecidablePred (· ∈ cut a)] {a : t.toRoseTree.Positions} (ha : t.termAt a = h)
-    (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.branching) g) (hgc : g.val ∉ cut
-        a.val) :
+    (hg : p.Finds {q | t.toRoseTree.CCommands a q} (t.above t.toRoseTree.branching) g)
+    (hgc : g.val ∉ cut a.val) :
     t.termAt g ∈ t.goalsUnder p h cut := by
   simp only [goalsUnder, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨g, ⟨a, ha, hg.of_subset (fun _ hq ↦ hq.1) ⟨hg.mem, hgc⟩⟩, rfl⟩
@@ -161,14 +162,15 @@ theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token
     (iff_of_eq (congrArg (fun r : RoseTree _ ↦ r.CCommands a.val q.val) (toRoseTree_map f t))).trans
       (RoseTree.cCommands_map _ _ _ _)
   have hkey (q : t.toRoseTree.Positions) :
-      (t.map f).above (t.map f).branching (e q) = t.above t.branching q :=
+      (t.map f).above (t.map f).toRoseTree.branching (e q) = t.above t.toRoseTree.branching q :=
     Finset.filter_congr fun x _ ↦
-      (iff_of_eq (congrArg (fun r : RoseTree _ ↦ r.IsBranchingAt x) (toRoseTree_map f t))).trans
-        (RoseTree.isBranchingAt_map _ t.toRoseTree x)
+      (iff_of_eq (congrArg (fun r : RoseTree _ ↦ x ∈ r.branching) (toRoseTree_map f t))).trans
+        (by rw [RoseTree.branching_map])
   have hfinds (a g : t.toRoseTree.Positions) :
       ((t.map f).leafProbe c).Finds {q | (t.map f).toRoseTree.CCommands (e a) q}
-          ((t.map f).above (t.map f).branching) (e g) ↔
-        (t.leafProbe c).Finds {q | t.toRoseTree.CCommands a q} (t.above t.branching) g := by
+          ((t.map f).above (t.map f).toRoseTree.branching) (e g) ↔
+        (t.leafProbe c).Finds {q | t.toRoseTree.CCommands a q}
+          (t.above t.toRoseTree.branching) g := by
     simp only [Probe.Finds, MinimalFor, e.surjective.forall, Set.mem_ofPred_eq, hcc, hkey,
       leafProbe, Probe.relativized_sat, hterm, SyntacticObject.isLeafOf_map hcat]
   rw [mem_goals, mem_goals, e.surjective.exists]
