@@ -10,13 +10,12 @@ public import Linglib.Core.Analysis.Convex.Deriv
 public import Mathlib.Probability.Moments.MGFAnalytic
 
 /-!
-# The maximum of `s * m - cgf X μ s`  `[UPSTREAM]`
+# Maximizing `s * m - cgf X μ s`  `[UPSTREAM]`
 
-The cumulant-generating function of a real random variable `X` is convex, and differentiable in
-the interior of the set where it is finite. A convex function lies above its tangents
-(`ConvexOn.apply_sub_le_sub_of_hasFDerivAt`), so the concave function `s ↦ s * m - cgf X μ s`
-[is greatest at](##ProbabilityTheory.isMaxOn_mul_sub_cgf_iff) an interior point `t` exactly when
-the derivative of the cumulant-generating function at `t` is `m`.
+Fix a real number `m`. The function `s ↦ s * m - cgf X μ s` is concave on
+`integrableExpSet X μ`, because the cumulant-generating function is convex there. At a point `t`
+in the interior of that set, it [attains its maximum](##ProbabilityTheory.isMaxOn_mul_sub_cgf_iff)
+if and only if `deriv (cgf X μ) t = m`.
 -/
 
 public section
@@ -27,8 +26,8 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {X : Ω → ℝ} {t m : ℝ}
 
-/-- The function `s ↦ s * m - cgf X μ s` is greatest at an interior point `t` exactly when the
-derivative of the cumulant-generating function at `t` is `m`. -/
+/-- For `t` in the interior of `integrableExpSet X μ`, the function `s ↦ s * m - cgf X μ s`
+attains its maximum on that set at `t` if and only if `deriv (cgf X μ) t = m`. -/
 theorem isMaxOn_mul_sub_cgf_iff (ht : t ∈ interior (integrableExpSet X μ)) :
     IsMaxOn (fun s ↦ s * m - cgf X μ s) (integrableExpSet X μ) t ↔ deriv (cgf X μ) t = m := by
   have hd := (analyticAt_cgf ht).differentiableAt.hasDerivAt

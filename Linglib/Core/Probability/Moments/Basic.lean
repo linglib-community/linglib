@@ -11,10 +11,12 @@ public import Mathlib.Probability.Moments.IntegrableExpMul
 /-!
 # Convexity of the cumulant-generating function  `[UPSTREAM]`
 
-The moment-generating function of a real random variable `X` [is
-log-convex](##ProbabilityTheory.mgf_add_le_rpow_mul_rpow) on the set where it is finite, by
-Hölder's inequality with the conjugate exponents `1 / a` and `1 / b`, so the
-cumulant-generating function [is convex](##ProbabilityTheory.convexOn_cgf) there.
+Let `X` be a real random variable and `μ` a measure, and let `integrableExpSet X μ` be the set of
+`t` for which `exp (t * X)` is integrable. On this set the moment-generating function [is
+log-convex](##ProbabilityTheory.mgf_add_le_rpow_mul_rpow): if `a, b > 0` and `a + b = 1`, then
+`mgf X μ (a * s + b * t) ≤ mgf X μ s ^ a * mgf X μ t ^ b`. This is Hölder's inequality with the
+exponents `1 / a` and `1 / b`. Taking logarithms, the cumulant-generating function [is
+convex](##ProbabilityTheory.convexOn_cgf) on the same set.
 -/
 
 public section
@@ -25,7 +27,9 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {X : Ω → ℝ} {s t a b : ℝ}
 
-/-- Log-convexity of the moment-generating function, in multiplicative form. -/
+/-- **Log-convexity of the moment-generating function**: if `exp (s * X)` and `exp (t * X)` are
+integrable, `a, b > 0` and `a + b = 1`, then
+`mgf X μ (a * s + b * t) ≤ mgf X μ s ^ a * mgf X μ t ^ b`. -/
 theorem mgf_add_le_rpow_mul_rpow (hs : s ∈ integrableExpSet X μ) (ht : t ∈ integrableExpSet X μ)
     (ha : 0 < a) (hb : 0 < b) (hab : a + b = 1) :
     mgf X μ (a * s + b * t) ≤ mgf X μ s ^ a * mgf X μ t ^ b := by
@@ -55,8 +59,7 @@ theorem mgf_add_le_rpow_mul_rpow (hs : s ∈ integrableExpSet X μ) (ht : t ∈ 
   · rw [one_div_one_div, one_div_one_div]
     congr 2 <;> exact integral_congr_ae (ae_of_all _ fun ω ↦ hpow (by assumption) _ ω)
 
-/-- The cumulant-generating function is convex on the set where the moment-generating function
-is finite. -/
+/-- The cumulant-generating function is convex on `integrableExpSet X μ`. -/
 theorem convexOn_cgf : ConvexOn ℝ (integrableExpSet X μ) (cgf X μ) := by
   refine ⟨convex_integrableExpSet, fun s hs t ht a b ha hb hab ↦ ?_⟩
   rcases eq_or_ne μ 0 with rfl | hμ

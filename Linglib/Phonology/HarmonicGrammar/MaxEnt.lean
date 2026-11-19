@@ -19,29 +19,36 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 /-!
 # MaxEnt grammars
 
-A MaxEnt grammar makes harmonies into probabilities: a candidate whose violation vector is `T c`
-[has probability](##HarmonicGrammar.maxEnt_real_singleton) proportional to the exponential of its
-harmony `-(w ⬝ᵥ T c)`, so that [log-odds](##HarmonicGrammar.log_maxEnt_real_singleton_div) are
-harmony differences. As a measure, `HarmonicGrammar.maxEnt` is the counting measure on the
-candidates tilted by harmony, the exponential family with statistic `T` and parameter `-w`.
+A MaxEnt grammar assigns probabilities to the candidates of an input. Each candidate `c` has a
+violation vector `T c`, and under weights `w` its harmony is `-(w ⬝ᵥ T c)`. The MaxEnt
+distribution `HarmonicGrammar.maxEnt T w` gives `c` a probability [proportional
+to](##HarmonicGrammar.maxEnt_real_singleton) the exponential of its harmony. Equivalently, the
+[log-odds](##HarmonicGrammar.log_maxEnt_real_singleton_div) of two candidates are the difference
+of their harmonies. As a measure it is the counting measure tilted by the harmony.
 
-The name records a duality. Among the distributions of the candidates with the same expected
-violations as a MaxEnt distribution, the MaxEnt one [has the greatest
-entropy](##HarmonicGrammar.isGreatest_measureEntropy_maxEnt), and [no
-other](##HarmonicGrammar.eq_maxEnt_of_measureEntropy_eq) has as much; this is
-`InformationTheory.isGreatest_measureEntropy_count_tilted` at the harmony. The log-likelihood of
-an empirical distribution [is concave](##HarmonicGrammar.concaveOn_logLikelihood) in the weights,
-with [gradient](##HarmonicGrammar.hasFDerivAt_logLikelihood) the expected less the observed
-violations, so the weights that maximize it [are exactly
-those](##HarmonicGrammar.isMaxOn_logLikelihood_iff) whose distribution has the observed expected
-violations, and the most likely MaxEnt grammar [is the maximum-entropy
-one](##HarmonicGrammar.isGreatest_measureEntropy_of_isMaxOn). A conditional grammar,
-`HarmonicGrammar.condMaxEnt`, is a Markov kernel from inputs to the MaxEnt distributions of their
-candidates, and [satisfies the same duality](##HarmonicGrammar.isGreatest_condEntropy_of_isMaxOn)
-with conditional entropy, the expected violations averaged over the observed inputs. Scaling the
-weights [concentrates](##HarmonicGrammar.tendsto_maxEnt_smul_atTop) the distribution on the
-harmony maximum, and additive violations over several inputs [give independent
-outputs](##HarmonicGrammar.maxEnt_sum).
+The name comes from a duality between entropy and likelihood.
+
+* Among the distributions with the same expected violations as `maxEnt T w`, the MaxEnt
+  distribution [has the greatest entropy](##HarmonicGrammar.isGreatest_measureEntropy_maxEnt),
+  and it [is the only one](##HarmonicGrammar.eq_maxEnt_of_measureEntropy_eq) with that entropy.
+* The log-likelihood of an empirical distribution [is
+  concave](##HarmonicGrammar.concaveOn_logLikelihood) in the weights. Its
+  [gradient](##HarmonicGrammar.hasFDerivAt_logLikelihood) is the expected minus the observed
+  violation vector.
+* Hence weights maximize the likelihood [if and only
+  if](##HarmonicGrammar.isMaxOn_logLikelihood_iff) their distribution has the observed expected
+  violations, and that distribution [has the greatest
+  entropy](##HarmonicGrammar.isGreatest_measureEntropy_of_isMaxOn) among those that do.
+
+A conditional grammar `HarmonicGrammar.condMaxEnt T w` is a Markov kernel taking each input to the
+MaxEnt distribution of its candidates. [The same
+duality](##HarmonicGrammar.isGreatest_condEntropy_of_isMaxOn) holds for it, with conditional
+entropy and with expected violations averaged over the observed inputs.
+
+Two further facts: scaling the weights up
+[concentrates](##HarmonicGrammar.tendsto_maxEnt_smul_atTop) the distribution on the candidate of
+greatest harmony, and when the violations of a tuple of outputs add up, the outputs [are
+independent](##HarmonicGrammar.maxEnt_sum).
 
 ## Implementation notes
 

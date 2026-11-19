@@ -5,46 +5,47 @@ public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 /-!
 # Berger, Della Pietra and Della Pietra (1996): A Maximum Entropy Approach to Natural Language Processing
 
-Berger, Della Pietra and Della Pietra model a process that outputs $y$ in a context $x$ by the
-most uniform conditional distribution consistent with the statistics of a sample $\tilde p$. A
-statistic is the expectation of a feature $f(x, y)$, and a model satisfies its constraint when its
-expectation of the feature, averaged over the sample's contexts, is the sample's. Among the
-models satisfying every constraint the maximum entropy principle chooses the one of greatest
-conditional entropy. For fixed multipliers $\lambda$ the Lagrangian of this problem [is greatest
-at](##lagrangian_le_lagrangian_model) the exponential model $p_\lambda(y \mid x) \propto
-\exp(\lambda \cdot f(x, y))$, so every model satisfying the constraints [has entropy at
-most](##condEntropy_le_neg_logLik) minus the log-likelihood of every $p_\lambda$, and the
-$p_\lambda$ of greatest likelihood [is the maximum entropy
-model](##isGreatest_condEntropy_model), [the only one](##eq_model_of_condEntropy_eq) at the
-contexts the sample contains.
+The paper models a process that produces an output $y$ in a context $x$, from a sample of pairs
+with empirical distribution $\tilde p$. A *feature* is a function $f(x, y)$. A model
+$p(y \mid x)$ satisfies the constraint of $f$ if $f$ has the same expected value under the model,
+with contexts drawn from the sample, as in the sample. The maximum entropy principle selects,
+among the models satisfying every constraint, the one of greatest conditional entropy.
 
-The motivating example translates English *in* by one of five French phrases. Requiring
-$p(\textit{dans}) + p(\textit{en}) = 3/10$ makes the most uniform model $3/20, 3/20, 7/30, 7/30,
-7/30$; adding $p(\textit{dans}) + p(\textit{à}) = 1/2$ gives [the
-solution](##isGreatest_three) the paper leaves to the reader, [with](##threeModel_real_singleton) $p(\textit{dans}) = (9 -
-\sqrt{51})/10$.
+The paper solves this problem with Lagrange multipliers $\lambda$. For fixed $\lambda$ the
+Lagrangian [is greatest at](##lagrangian_le_lagrangian_model) the exponential model
+$p_\lambda(y \mid x) \propto \exp(\lambda \cdot f(x, y))$. Hence every model satisfying the
+constraints [has entropy at most](##condEntropy_le_neg_logLik) $-L(p_\lambda)$, where $L$ is the
+log-likelihood of the sample. At the $\lambda$ of greatest likelihood, $p_\lambda$ [is the
+maximum entropy model](##isGreatest_condEntropy_model), and it [is the only
+one](##eq_model_of_condEntropy_eq) at the contexts that occur in the sample.
+
+The opening example translates English *in* into one of five French phrases. Under the constraint
+$p(\textit{dans}) + p(\textit{en}) = 3/10$ the maximum entropy model [is](##isGreatest_two)
+$(3/20, 3/20, 7/30, 7/30, 7/30)$. Adding $p(\textit{dans}) + p(\textit{à}) = 1/2$ gives a problem
+the paper leaves to the reader. [Its solution](##isGreatest_three)
+[has](##threeModel_real_singleton) $p(\textit{dans}) = (9 - \sqrt{51})/10$.
 
 ## Implementation notes
 
-* Features are real-valued, `f : X × Y → ι → ℝ`, binary in the paper. The exponential model is
-  `HarmonicGrammar.condMaxEnt f (-λ)`, the substrate's harmony being minus the weighted
-  statistic, and the paper's conditional entropy is `H[Prod.snd | Prod.fst ; p̃.fst ⊗ₘ q]`, the
-  `H(Y | X)` of its first footnote under the joint `p̃(x) p(y|x)`.
-* With the paper's Lagrangian, entropy plus each multiplier times its constraint's violation, the
-  value at the maximizer is `∑ p̃(x) log Z_λ(x) − λ · p̃(f)`, which
-  [is](##lagrangian_model_eq_neg_logLik) `−L(p_λ)`. The paper's dual function is `L(p_λ)` and its dual problem a maximization; the dual
-  of the Lagrangian as formalized is minimized, which is the same problem.
-* The maximum entropy model is determined at the contexts of positive empirical mass and
-  unconstrained at the others.
-* In the example a model is a distribution of the phrases, the counting measure tilted by the
-  weighted features, and each constraint enters only through the expected value of that
-  potential.
+* Features are real-valued, `f : X × Y → ι → ℝ`; in the paper they are binary.
+* The exponential model with multipliers `λ` is `HarmonicGrammar.condMaxEnt f (-λ)`, because the
+  substrate's harmony is minus the weighted statistic. [At each
+  context](##model_apply) it is the counting measure tilted by `λ ⬝ᵥ f (x, ·)`.
+* The conditional entropy of a model `q` is `H[Prod.snd | Prod.fst ; p̃.fst ⊗ₘ q]`, the entropy
+  of the output given the context under the joint distribution `p̃(x) q(y | x)`.
+* The Lagrangian is the entropy plus each multiplier times the violation of its constraint, as
+  in the paper. Its value at the maximizer [is](##lagrangian_model_eq_neg_logLik) `-L(p_λ)`. The
+  paper's dual function is `L(p_λ)`, which it maximizes; minimizing `-L(p_λ)` is the same
+  problem.
+* The maximum entropy model is determined only at the contexts of positive empirical mass.
+* In the example a model is a distribution of the five phrases, the counting measure tilted by
+  the weighted features.
 
 ## TODO
 
-* The unattained case of the paper's second footnote, where the maximum entropy model is a limit
-  of models `p_λ`.
-* Improved iterative scaling, feature selection and the applications.
+* The case of the paper's second footnote: when no `λ` has greatest likelihood, the maximum
+  entropy model is a limit of the models `p_λ`.
+* Improved iterative scaling, feature selection, and the applications.
 
 ## References
 
@@ -109,7 +110,8 @@ theorem isGreatest_uniform :
   rintro _ ⟨q, -, rfl⟩
   exact h ▸ measureEntropy_le_log_card q
 
-/-- The model with weight `u` on *dans* or *en* and `v` on *dans* or *à*. -/
+/-- The exponential model of the phrases with multiplier `u` for *dans* or *en* and `v` for
+*dans* or *à*. -/
 noncomputable abbrev expModel (u v : ℝ) : Measure Phrase :=
   Measure.count.tilted fun φ ↦ u * dansOrEn φ + v * dansOrÀ φ
 
@@ -145,7 +147,7 @@ theorem integral_expModel (u v : ℝ) (q : Measure Phrase) [IsFiniteMeasure q] :
   simp only [dansOrEn, dansOrÀ]
   ring
 
-/-- The model maximizing entropy subject to `p(dans) + p(en) = 3/10`. -/
+/-- The maximum entropy model under the constraint `p(dans) + p(en) = 3/10`. -/
 noncomputable abbrev twoModel : Measure Phrase := expModel (log (9 / 14)) 0
 
 theorem twoModel_real_singleton (φ : Phrase) :
@@ -170,7 +172,8 @@ theorem isGreatest_two :
   rw [integral_expModel, integral_expModel, h, h2]
   simp
 
-/-- The model maximizing entropy subject to all three constraints. -/
+/-- The maximum entropy model under the constraints `p(dans) + p(en) = 3/10` and
+`p(dans) + p(à) = 1/2`. -/
 noncomputable abbrev threeModel : Measure Phrase :=
   expModel (log (((√51 - 6) / 10) / ((11 - √51) / 20)))
     (log (((√51 - 4) / 10) / ((11 - √51) / 20)))
@@ -187,9 +190,9 @@ theorem threeModel_real_singleton (φ : Phrase) :
   exact expModel_real_singleton (by linarith) (by linarith) (by linarith)
     (by linear_combination hs / 200) (by ring) φ
 
-/-- Requiring `p(dans) + p(en) = 3/10` and `p(dans) + p(à) = 1/2`, the most uniform model is the
-exponential one giving *dans* the probability `(9 − √51)/10`, the solution §3.4 leaves to the
-reader. -/
+/-- Among the distributions of the phrases with `p(dans) + p(en) = 3/10` and
+`p(dans) + p(à) = 1/2`, the exponential model `threeModel` has the greatest entropy. This is the
+exercise of §3.4; the model gives *dans* the probability `(9 − √51)/10`. -/
 theorem isGreatest_three :
     IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q ∧
       q.real {dans} + q.real {en} = 3 / 10 ∧ q.real {dans} + q.real {à} = 1 / 2})
@@ -210,12 +213,12 @@ section Modeling
 variable {X Y ι : Type*} [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
   [MeasurableSpace Y] [Fintype ι] (f : X × Y → ι → ℝ) (p : Measure (X × Y))
 
-/-- The models satisfying the constraints (4), conditional distributions whose expectations of
-the features, averaged over the sample's contexts, are the sample's. -/
+/-- The set `C` of (4): the conditional models under which each feature has the same expected
+value, with contexts drawn from the sample, as in the sample. -/
 def constraints : Set (Kernel X Y) :=
   {q | IsMarkovKernel q ∧ ∫ z, f z ∂(p.fst ⊗ₘ q) = ∫ z, f z ∂p}
 
-/-- The exponential model (10) with multipliers `θ`, the paper's `λ`. -/
+/-- The exponential model `p_λ` of (10). The multipliers are written `θ`. -/
 noncomputable def model (θ : ι → ℝ) : Kernel X Y :=
   condMaxEnt f (-θ)
 
@@ -224,12 +227,12 @@ theorem model_apply (θ : ι → ℝ) (x : X) :
     model f θ x = Measure.count.tilted fun y ↦ θ ⬝ᵥ f (x, y) :=
   congrArg Measure.count.tilted (funext fun y ↦ by simp [harmony])
 
-/-- The Lagrangian (7), the conditional entropy (5) plus each multiplier times its constraint's
-violation. -/
+/-- The Lagrangian (7): the conditional entropy (5) of the model plus, for each feature, its
+multiplier times the difference between the model's and the sample's expected value. -/
 noncomputable def lagrangian (q : Kernel X Y) (θ : ι → ℝ) : ℝ :=
   H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q] + θ ⬝ᵥ ((∫ z, f z ∂(p.fst ⊗ₘ q)) - ∫ z, f z ∂p)
 
-/-- The log-likelihood (13) of a conditional model on the sample. -/
+/-- The log-likelihood (13) of the sample under a conditional model. -/
 noncomputable def logLik (q : Kernel X Y) : ℝ :=
   ∫ z, log ((q z.1).real {z.2}) ∂p
 
@@ -243,7 +246,7 @@ private theorem isMaxOn_condLogLikelihood_neg {θ : ι → ℝ}
 
 variable [Fintype Y] [MeasurableSingletonClass Y] [Nonempty Y] [IsProbabilityMeasure p]
 
-/-- The model `p_θ` maximizes the Lagrangian for fixed multipliers (8), (10). -/
+/-- For fixed multipliers, the Lagrangian is greatest at the exponential model: (8) and (10). -/
 theorem lagrangian_le_lagrangian_model (θ : ι → ℝ) (q : Kernel X Y) [IsMarkovKernel q] :
     lagrangian f p q θ ≤ lagrangian f p (model f θ) θ := by
   have h₁ := sum_toReal_klDiv_condMaxEnt_add_condEntropy f (-θ) p.fst q
@@ -261,8 +264,8 @@ theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
   simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h ⊢
   linarith
 
-/-- Weak duality: a model satisfying the constraints has entropy at most minus the log-likelihood
-of each exponential model. -/
+/-- **Weak duality**: if `q` satisfies the constraints, then for every `θ` its conditional entropy
+is at most minus the log-likelihood of the exponential model `p_θ`. -/
 theorem condEntropy_le_neg_logLik (θ : ι → ℝ) {q : Kernel X Y} (hq : q ∈ constraints f p) :
     H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q] ≤ -logLik p (model f θ) := by
   have := hq.1
@@ -277,8 +280,8 @@ theorem model_mem_constraints (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Se
   ⟨inferInstanceAs (IsMarkovKernel (condMaxEnt f (-θ))),
     (isMaxOn_condLogLikelihood_iff f (-θ) p).1 (isMaxOn_condLogLikelihood_neg f p h)⟩
 
-/-- The Kuhn–Tucker conclusion of §3.5. The model in the parametric family that maximizes the
-likelihood of the sample is the maximum entropy model in `C`. -/
+/-- **Maximum entropy is maximum likelihood** (§3.5): if `θ` maximizes the likelihood of the
+sample among the exponential models, then `p_θ` has the greatest conditional entropy in `C`. -/
 theorem isGreatest_condEntropy_model (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q]) '' constraints f p)
       (H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ]) :=
@@ -291,8 +294,8 @@ theorem condEntropy_model_eq_neg_logLik
     (model_mem_constraints h).2, neg_neg]
   rfl
 
-/-- A model in `C` with the greatest entropy is the maximum entropy model at every context of
-positive empirical mass. -/
+/-- **Uniqueness**: if `θ` maximizes the likelihood and `q ∈ C` has the conditional entropy of
+`p_θ`, then `q` agrees with `p_θ` at every context that occurs in the sample. -/
 theorem eq_model_of_condEntropy_eq (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ)
     {q : Kernel X Y} (hq : q ∈ constraints f p)
     (hH : H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q] = H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ])

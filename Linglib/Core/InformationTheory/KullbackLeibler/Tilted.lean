@@ -23,10 +23,11 @@ is the Donsker–Varadhan inequality, which
 [holds](##InformationTheory.ofReal_integral_sub_log_integral_exp_le_klDiv) in `ℝ≥0∞` with no
 condition relating `q` to `μ`.
 
-When `f` has the same expected value under `q` as under the tilted measure, the divergences
-[add](##InformationTheory.klDiv_eq_klDiv_tilted_add),
-`KL(q ‖ μ) = KL(q ‖ μ.tilted f) + KL(μ.tilted f ‖ μ)`, so the tilted measure [is the
-nearest](##InformationTheory.klDiv_tilted_left_self_le) to `μ` among such measures.
+Suppose `f` has the same integral against `q` as against `μ.tilted f`. Then the divergences
+[add](##InformationTheory.klDiv_eq_klDiv_tilted_add):
+`KL(q ‖ μ) = KL(q ‖ μ.tilted f) + KL(μ.tilted f ‖ μ)`. This is the Pythagorean identity for the
+tilted measure. It follows that `μ.tilted f` [is the closest
+measure](##InformationTheory.klDiv_tilted_left_self_le) to `μ` among those with that integral.
 
 `[UPSTREAM]` candidate for `Mathlib/InformationTheory/KullbackLeibler/Tilted.lean`: the module
 docstring of `Mathlib/MeasureTheory/Measure/Tilted.lean` names variational expressions for the
@@ -126,13 +127,13 @@ theorem integral_sub_toReal_klDiv_eq_log_integral_exp_iff (hqμ : q ≪ μ)
   constructor <;> intro h <;> linarith
 
 omit [IsProbabilityMeasure q] in
+/-- The divergence of a tilted measure from its base measure is finite. -/
 theorem klDiv_tilted_left_self_ne_top (hf : Integrable f (μ.tilted f))
     (h_exp : Integrable (fun x ↦ exp (f x)) μ) : klDiv (μ.tilted f) μ ≠ ∞ :=
   klDiv_ne_top (tilted_absolutelyContinuous μ f) (integrable_llr_tilted_left_self hf h_exp)
 
-/-- **Pythagorean identity**: a measure `q` under which `f` has the expected value it has under
-`μ.tilted f` is further from `μ` than the tilted measure is, by its divergence from the tilted
-measure. -/
+/-- **Pythagorean identity**: if `∫ f ∂q = ∫ f ∂(μ.tilted f)`, then
+`KL(q ‖ μ) = KL(q ‖ μ.tilted f) + KL(μ.tilted f ‖ μ)`. -/
 theorem klDiv_eq_klDiv_tilted_add (hf : Integrable f q) (hf' : Integrable f (μ.tilted f))
     (h_exp : Integrable (fun x ↦ exp (f x)) μ) (h : ∫ x, f x ∂q = ∫ x, f x ∂μ.tilted f) :
     klDiv q μ = klDiv q (μ.tilted f) + klDiv (μ.tilted f) μ := by
@@ -147,8 +148,7 @@ theorem klDiv_eq_klDiv_tilted_add (hf : Integrable f q) (hf' : Integrable f (μ.
     toReal_klDiv_tilted_left_self hf' h_exp, h]
   ring
 
-/-- Among the measures under which `f` has the expected value it has under `μ.tilted f`, the
-tilted measure is the nearest to `μ`. -/
+/-- If `∫ f ∂q = ∫ f ∂(μ.tilted f)`, then `μ.tilted f` is at least as close to `μ` as `q` is. -/
 theorem klDiv_tilted_left_self_le (hf : Integrable f q) (hf' : Integrable f (μ.tilted f))
     (h_exp : Integrable (fun x ↦ exp (f x)) μ) (h : ∫ x, f x ∂q = ∫ x, f x ∂μ.tilted f) :
     klDiv (μ.tilted f) μ ≤ klDiv q μ :=

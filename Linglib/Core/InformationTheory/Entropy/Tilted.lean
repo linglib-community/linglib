@@ -21,12 +21,13 @@ most](##InformationTheory.integral_add_measureEntropy_le_log_sum_exp) `log ∑ e
 this is the Gibbs variational principle with the counting measure as reference, where
 `InformationTheory.integral_sub_toReal_klDiv_le_log_integral_exp` has a probability measure.
 
-The maximum entropy principle is the case of equal expectations. A distribution `q` under which
-`f` has the expected value it has under the tilted measure [falls
-short](##InformationTheory.measureEntropy_add_toReal_klDiv_count_tilted) of the tilted measure's
-entropy by its divergence from it, so the tilted measure [has the greatest
-entropy](##InformationTheory.isGreatest_measureEntropy_count_tilted) among such distributions, and
-[no other](##InformationTheory.measureEntropy_eq_measureEntropy_count_tilted_iff) has as much.
+The maximum entropy principle concerns the distributions `q` that give `f` the same expected value
+as the tilted measure does. For such a `q`, [the
+identity](##InformationTheory.measureEntropy_add_toReal_klDiv_count_tilted)
+`H(q) + KL(q ‖ count.tilted f) = H(count.tilted f)` holds. So the tilted measure [has the greatest
+entropy](##InformationTheory.isGreatest_measureEntropy_count_tilted) among them, and it [is the
+only one](##InformationTheory.measureEntropy_eq_measureEntropy_count_tilted_iff) with that
+entropy.
 -/
 
 @[expose] public section
@@ -137,8 +138,8 @@ theorem integral_add_measureEntropy_eq_log_sum_exp_iff :
 
 variable {q f}
 
-/-- A distribution under which `f` has the expected value it has under the tilted measure falls
-short of the tilted measure's entropy by its divergence from it. -/
+/-- If `∫ f ∂q = ∫ f ∂(count.tilted f)`, then
+`H(q) + KL(q ‖ count.tilted f) = H(count.tilted f)`. -/
 theorem measureEntropy_add_toReal_klDiv_count_tilted
     (h : ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f) :
     Hm[q] + (klDiv q (Measure.count.tilted f)).toReal = Hm[Measure.count.tilted f] := by
@@ -157,14 +158,15 @@ theorem measureEntropy_add_toReal_klDiv_count_tilted
   linarith [toReal_klDiv_uniformOn_add_measureEntropy q,
     toReal_klDiv_uniformOn_add_measureEntropy (Measure.count.tilted f)]
 
+/-- If `∫ f ∂q = ∫ f ∂(count.tilted f)`, then `H(q) ≤ H(count.tilted f)`. -/
 theorem measureEntropy_le_measureEntropy_count_tilted
     (h : ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f) :
     Hm[q] ≤ Hm[Measure.count.tilted f] := by
   linarith [measureEntropy_add_toReal_klDiv_count_tilted h,
     ENNReal.toReal_nonneg (a := klDiv q (Measure.count.tilted f))]
 
-/-- The tilted measure is the only distribution with its expected value of `f` and its
-entropy. -/
+/-- If `∫ f ∂q = ∫ f ∂(count.tilted f)`, then `q` has the entropy of the tilted measure only if
+it is the tilted measure. -/
 theorem measureEntropy_eq_measureEntropy_count_tilted_iff
     (h : ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f) :
     Hm[q] = Hm[Measure.count.tilted f] ↔ q = Measure.count.tilted f := by
@@ -173,8 +175,8 @@ theorem measureEntropy_eq_measureEntropy_count_tilted_iff
   constructor <;> intro h' <;> linarith [measureEntropy_count_tilted f]
 
 variable (f) in
-/-- **Maximum entropy principle**: the counting measure tilted by `f` has the greatest entropy
-among the distributions under which `f` has the same expected value. -/
+/-- **Maximum entropy principle**: among the probability measures `q` with
+`∫ f ∂q = ∫ f ∂(count.tilted f)`, the tilted measure has the greatest entropy. -/
 theorem isGreatest_measureEntropy_count_tilted [Nonempty S] :
     IsGreatest (measureEntropy '' {q : Measure S | IsProbabilityMeasure q ∧
       ∫ s, f s ∂q = ∫ s, f s ∂Measure.count.tilted f}) (Hm[Measure.count.tilted f]) :=
