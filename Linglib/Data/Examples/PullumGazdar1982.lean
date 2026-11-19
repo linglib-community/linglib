@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `PullumGazdar1982` — typed example data
@@ -26,7 +28,7 @@ def ex18a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("subjects", "sg pl"), ("verbs", "sg sg")] }
+    paperFeatures := [("subject", "the woman"), ("subject", "the men"), ("verb", "smokes"), ("verb", "drinks")] }
 
 def ex18b : Datum :=
   { id := "pullumgazdar1982_ex18b"
@@ -39,7 +41,7 @@ def ex18b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("subjects", "sg pl"), ("verbs", "sg pl")] }
+    paperFeatures := [("subject", "the woman"), ("subject", "the men"), ("verb", "smokes"), ("verb", "drink")] }
 
 def ex18c : Datum :=
   { id := "pullumgazdar1982_ex18c"
@@ -52,7 +54,7 @@ def ex18c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("subjects", "sg pl"), ("verbs", "pl sg")] }
+    paperFeatures := [("subject", "the woman"), ("subject", "the men"), ("verb", "smoke"), ("verb", "drinks")] }
 
 def ex18d : Datum :=
   { id := "pullumgazdar1982_ex18d"
@@ -65,7 +67,7 @@ def ex18d : Datum :=
     judgment := .marginal
     contrasts := []
     readings := []
-    paperFeatures := [("subjects", "sg pl"), ("verbs", "pl pl")] }
+    paperFeatures := [("subject", "the woman"), ("subject", "the men"), ("verb", "smoke"), ("verb", "drink")] }
 
 def ex19a : Datum :=
   { id := "pullumgazdar1982_ex19a"
@@ -78,7 +80,7 @@ def ex19a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("subjects", "sg sg"), ("verbs", "sg sg")] }
+    paperFeatures := [("subject", "the man"), ("subject", "the woman"), ("verb", "smokes"), ("verb", "drinks")] }
 
 def ex19b : Datum :=
   { id := "pullumgazdar1982_ex19b"
@@ -91,7 +93,7 @@ def ex19b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("subjects", "sg sg"), ("verbs", "pl pl")] }
+    paperFeatures := [("subject", "the man"), ("subject", "the woman"), ("verb", "smoke"), ("verb", "drink")] }
 
 def ex25 : Datum :=
   { id := "pullumgazdar1982_ex25"
@@ -104,7 +106,7 @@ def ex25 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("categories", "BBBHFD")] }
+    paperFeatures := [("word", "Marie"), ("word", "Pieter"), ("word", "Arabisch"), ("word", "laat"), ("word", "zien"), ("word", "schrijven")] }
 
 def ex26 : Datum :=
   { id := "pullumgazdar1982_ex26"
@@ -117,7 +119,7 @@ def ex26 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("categories", "BBBHFE")] }
+    paperFeatures := [("word", "Marie"), ("word", "Pieter"), ("word", "Arabisch"), ("word", "laat"), ("word", "zien"), ("word", "liegen")] }
 
 def ex27 : Datum :=
   { id := "pullumgazdar1982_ex27"
@@ -130,7 +132,7 @@ def ex27 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("categories", "BBBBHFD")] }
+    paperFeatures := [("word", "Marie"), ("word", "Pieter"), ("word", "Arabisch"), ("word", "Hans"), ("word", "laat"), ("word", "zien"), ("word", "schrijven")] }
 
 def ex28 : Datum :=
   { id := "pullumgazdar1982_ex28"
@@ -143,7 +145,7 @@ def ex28 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("categories", "BBBIFFD")] }
+    paperFeatures := [("word", "Marie"), ("word", "Pieter"), ("word", "Arabisch"), ("word", "wil"), ("word", "laten"), ("word", "zien"), ("word", "schrijven")] }
 
 def ex31 : Datum :=
   { id := "pullumgazdar1982_ex31"
@@ -156,12 +158,13 @@ def ex31 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("categories", "BBBIFFD")] }
+    paperFeatures := [("word", "Marie"), ("word", "Arabisch"), ("word", "Pieter"), ("word", "wil"), ("word", "laten"), ("word", "zien"), ("word", "schrijven")] }
 
 def ex38 : Datum :=
   { id := "pullumgazdar1982_ex38"
     source := ⟨"pullum-gazdar-1982", "(38)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "moha1258"
     primaryText := "iʔi knuhsnuhweʔs thikʌ kanuhsa"
     glossedTokens := []
@@ -221,12 +224,13 @@ def ex41b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("incorporated", "nuhs"), ("external", "none")] }
+    paperFeatures := [("incorporated", "nuhs")] }
 
 def ex42 : Datum :=
   { id := "pullumgazdar1982_ex42"
     source := ⟨"pullum-gazdar-1982", "(42)"⟩
     reportedIn := none
+    method := some .corpus
     language := "moha1258"
     primaryText := "keliʔwanú:weʔs kiʔ"
     glossedTokens := []
@@ -234,7 +238,7 @@ def ex42 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("incorporated", "liʔw"), ("external", "none")] }
+    paperFeatures := [("incorporated", "liʔw")] }
 
 def ex43a : Datum :=
   { id := "pullumgazdar1982_ex43a"
@@ -247,7 +251,7 @@ def ex43a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
+    paperFeatures := [("external", "nuhs")] }
 
 def ex43b : Datum :=
   { id := "pullumgazdar1982_ex43b"
@@ -260,7 +264,7 @@ def ex43b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
+    paperFeatures := [("external", "nuhs")] }
 
 def ex43c : Datum :=
   { id := "pullumgazdar1982_ex43c"
@@ -299,8 +303,68 @@ def ex43e : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
+    paperFeatures := [("external", "nuhs")] }
 
 def all : List Datum := [ex18a, ex18b, ex18c, ex18d, ex19a, ex19b, ex25, ex26, ex27, ex28, ex31, ex38, ex39, ex40, ex41a, ex41b, ex42, ex43a, ex43b, ex43c, ex43d, ex43e]
+
+/-- The conjoined subject noun phrases of a *respectively* sentence, in order. -/
+inductive Subject where
+  /-- the woman: singular -/
+  | theWoman
+  /-- the men: plural -/
+  | theMen
+  /-- the man: singular -/
+  | theMan
+  deriving DecidableEq, Repr, Fintype
+
+/-- The values a row records under `subject`. -/
+def subjects (e : Datum) : List Subject :=
+  (e.features "subject").filterMap (List.lookup · [("the woman", .theWoman), ("the men", .theMen), ("the man", .theMan)])
+
+/-- The conjoined verbs of a *respectively* sentence, in order. -/
+inductive Verb where
+  /-- smokes: third person singular present -/
+  | smokes
+  /-- drinks: third person singular present -/
+  | drinks
+  /-- smoke: plural present -/
+  | smoke
+  /-- drink: plural present -/
+  | drink
+  deriving DecidableEq, Repr, Fintype
+
+/-- The values a row records under `verb`. -/
+def verbs (e : Datum) : List Verb :=
+  (e.features "verb").filterMap (List.lookup · [("smokes", .smokes), ("drinks", .drinks), ("smoke", .smoke), ("drink", .drink)])
+
+/-- The words of the bracketed Dutch verb phrase, in order. -/
+inductive DutchWord where
+  /-- Marie: a personal name -/
+  | marie
+  /-- Pieter: a personal name -/
+  | pieter
+  /-- Arabisch: 'Arabic' -/
+  | arabisch
+  /-- Hans: a personal name -/
+  | hans
+  /-- laat: 'let', finite -/
+  | laat
+  /-- wil: 'will', finite -/
+  | wil
+  /-- laten: 'let', infinitive -/
+  | laten
+  /-- zien: 'see', infinitive -/
+  | zien
+  /-- schrijven: 'write', infinitive -/
+  | schrijven
+  /-- liegen: 'lie', infinitive -/
+  | liegen
+  deriving DecidableEq, Repr, Fintype
+
+/-- The values a row records under `word`. -/
+def words (e : Datum) : List DutchWord :=
+  (e.features "word").filterMap (List.lookup · [("Marie", .marie), ("Pieter", .pieter), ("Arabisch", .arabisch), ("Hans", .hans),
+    ("laat", .laat), ("wil", .wil), ("laten", .laten), ("zien", .zien),
+    ("schrijven", .schrijven), ("liegen", .liegen)])
 
 end PullumGazdar1982.Examples

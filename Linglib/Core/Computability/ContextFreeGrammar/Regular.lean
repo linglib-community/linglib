@@ -13,41 +13,32 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Context-free and regular languages
 
-Over a finite alphabet, [every regular language is
-context-free](##Language.IsRegular.isContextFree): the right-linear grammar
-`M.toContextFreeGrammar` of a finite automaton `M` [generates the language of
-`M`](##DFA.language_toContextFreeGrammar). Conversely [a right-linear grammar generates a regular
-language](##ContextFreeGrammar.IsRightLinear.isRegular_language), so the regular languages over a
-finite alphabet are [those of the right-linear
-grammars](##Language.isRegular_iff_exists_isRightLinear). The context-free languages are [closed
-under intersection with regular languages](##Language.IsContextFree.inf_isRegular).
-
-The intersection is the triple construction. The nonterminals of `G.triple M q` are triples
-`(p, A, p')` of a nonterminal `A` of `G` with an entry and an exit state of `M`. A sentential form
-over these [threads](##DFA.Threads) from `p` to `q` when reading it takes `M` from `p` to `q`,
-where a terminal steps the automaton and a triple is passable only from its entry state and leaves
-at its exit state. The rules are the rules over triples that erase to a rule of `G` and whose
-right-hand side threads from the entry state to the exit state of their left-hand side. Erasure
-then sends derivations to derivations of `G`, a production [preserves
-threading](##ContextFreeGrammar.Produces.threads), and every derivation of a word in `G` [lifts
-along every threading](##ContextFreeGrammar.exists_derives_triple). So `G.triple M q` [generates
-the words of `G` that take `M` to `q`](##ContextFreeGrammar.mem_language_triple), and the union
-`G.inter M` over the accepting states `q` [generates the
-intersection](##ContextFreeGrammar.language_inter).
+This file relates the context-free languages to the regular languages. A grammar is *right-linear*
+if every right-hand side is a string of terminals followed by at most one nonterminal. Over a
+finite alphabet, [a language is regular if and only if a right-linear grammar generates
+it](##Language.isRegular_iff_exists_isRightLinear), so [every regular language is
+context-free](##Language.IsRegular.isContextFree). The intersection of a context-free language
+with a regular language [is context-free](##Language.IsContextFree.inf_isRegular): for a grammar
+`G` and a finite automaton `M`, the grammar `G.inter M` [generates the intersection of their
+languages](##ContextFreeGrammar.language_inter).
 
 ## Implementation notes
 
-The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a q'` for each
-transition from `q` to `q'` on the letter `a`, and a rule `q → ε` for each accepting state `q`;
-its sentential forms are a word `w` followed by the state `M.eval w`, or an accepted word. The
-alphabet must be finite, because a grammar has finitely many rules and so uses finitely many
-letters: over an infinite alphabet the language of all words is regular, by a one-state
-automaton, but not context-free.
-
-A right-linear grammar is shown regular by the Myhill–Nerode theorem, with no automaton: the left
-quotient of its language by a word is the union of the languages of a set of suffixes of
-right-hand sides, and a right-linear grammar is one where such a suffix has a nonterminal only at
-its end.
+* The right-linear grammar `M.toContextFreeGrammar` of a finite automaton `M` needs a finite
+  alphabet, because a grammar has finitely many rules and so uses finitely many letters. Over an
+  infinite alphabet the language of all words is regular, by an automaton with one state, but not
+  context-free.
+* That a right-linear grammar generates a regular language is proved from the Myhill–Nerode
+  theorem, without an automaton. The left quotient of the language by a word is a union of
+  languages derived from suffixes of right-hand sides, and a grammar has finitely many such
+  suffixes.
+* `G.inter M` is the union, over the accepting states `q` of `M`, of the *triple construction*
+  `G.triple M q`. Its nonterminals are triples `(p, A, p')` of a nonterminal `A` of `G`, an entry
+  state `p` and an exit state `p'`. A sentential form over triples *threads* from `p` to `q`
+  (`DFA.Threads`) if reading it takes `M` from `p` to `q`, where a triple can be read only in its
+  entry state and takes `M` to its exit state. The rules of `G.triple M q` are the rules over
+  triples that become rules of `G` when the states are erased and whose right-hand side threads
+  from the entry state to the exit state of the left-hand side.
 
 ## References
 
@@ -66,8 +57,9 @@ section toContextFreeGrammar
 variable {α : Type*} {σ : Type} [Fintype α] [Fintype σ] {M : DFA α σ}
 
 open scoped Classical in
-/-- The right-linear grammar of `M` has a nonterminal for each state, a rule `q → a (M.step q a)`
-for each state `q` and letter `a`, and a rule `q → ε` for each accepting state `q`. -/
+/-- The *right-linear grammar* of a finite automaton `M`. Its nonterminals are the states of `M`. It
+has a rule `q → a q'` for each transition from `q` to `q'` on the letter `a`, and a rule `q → ε` for
+each accepting state `q`. -/
 noncomputable def toContextFreeGrammar (M : DFA α σ) : ContextFreeGrammar α where
   NT := σ
   initial := M.start
@@ -113,7 +105,7 @@ theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
         (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
           ⟨⟨M.eval w, []⟩, mem_toContextFreeGrammar_rules.2 (.inr ⟨hacc, rfl⟩), rfl, by simp⟩)
 
-/-- The grammar of `M` generates the language of `M`. -/
+/-- The right-linear grammar of `M` generates the language that `M` accepts. -/
 @[simp] theorem language_toContextFreeGrammar (M : DFA α σ) :
     M.toContextFreeGrammar.language = M.accepts := by
   ext w
@@ -132,14 +124,15 @@ namespace ContextFreeGrammar
 
 variable {T : Type*} {g : ContextFreeGrammar T}
 
-/-- A grammar is right-linear when a nonterminal occurs only at the end of a right-hand side. -/
+/-- A grammar is *right-linear* if every right-hand side is a string of terminals followed by at
+most one nonterminal. -/
 def IsRightLinear (g : ContextFreeGrammar T) : Prop :=
   ∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, ¬ s.IsNonterminal
 
 instance : DecidablePred (IsRightLinear (T := T)) := fun g ↦
   inferInstanceAs (Decidable (∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, ¬ s.IsNonterminal))
 
-/-- The suffixes of the start symbol and of the right-hand sides. -/
+/-- The suffixes of the right-hand sides of `g`, together with the suffixes of its start symbol. -/
 private def suffixes (g : ContextFreeGrammar T) : Set (List (Symbol T g.NT)) :=
   {α | α <:+ [nonterminal g.initial] ∨ ∃ r ∈ g.rules, α <:+ r.output}
 
@@ -162,8 +155,8 @@ private theorem IsRightLinear.eq_nil_of_nonterminal_cons_mem (hg : g.IsRightLine
     rw [← hp, List.dropLast_append_of_ne_nil (by simp), List.dropLast_cons_of_ne_nil hα]
     simp
 
-/-- In a right-linear grammar, a suffix that derives a word starting with `a` derives `a`
-followed by a suffix that derives the rest. -/
+/-- In a right-linear grammar, if a suffix `α` derives a word that starts with the letter `a`, then
+`α` derives `a` followed by some suffix `β`, and `β` derives the rest of the word. -/
 private theorem IsRightLinear.exists_derives_terminal_cons (hg : g.IsRightLinear) {a : T}
     {w : List T} {α : List (Symbol T g.NT)} (hα : α ∈ suffixes g)
     (h : g.Derives α (terminal a :: w.map terminal)) :
@@ -186,8 +179,7 @@ private theorem IsRightLinear.exists_derives_terminal_cons (hg : g.IsRightLinear
       obtain ⟨β, hβ, h₁, h₂⟩ := ih (.inr ⟨r, hr, List.suffix_rfl⟩)
       exact ⟨β, hβ, step.trans_derives h₁, h₂⟩
 
-/-- A right-linear grammar generates a regular language: the left quotient by a word is the union
-of the languages of some suffixes of right-hand sides, and there are finitely many of those. -/
+/-- A right-linear grammar generates a regular language. -/
 theorem IsRightLinear.isRegular_language (hg : g.IsRightLinear) : g.language.IsRegular := by
   refine .of_finite_range_leftQuotient (((finite_suffixes (g := g)).finite_subsets.image
     fun S ↦ ({w | ∃ β ∈ S, g.Derives β (w.map terminal)} : Language T)).subset ?_)
@@ -213,7 +205,7 @@ end ContextFreeGrammar
 
 namespace DFA
 
-/-- The grammar of a finite automaton is right-linear. -/
+/-- The grammar `M.toContextFreeGrammar` is right-linear. -/
 theorem isRightLinear_toContextFreeGrammar {α : Type*} {σ : Type} [Fintype α] [Fintype σ]
     (M : DFA α σ) : M.toContextFreeGrammar.IsRightLinear := by
   intro r hr s hs
@@ -223,9 +215,9 @@ section Threads
 
 variable {T N σ : Type*} (M : DFA T σ) {p q r p₀ q₀ : σ} {l l₁ l₂ : List (Symbol T (σ × N × σ))}
 
-/-- `M.Threads p l q` says that reading the sentential form `l` takes `M` from `p` to `q`: a
-terminal steps the automaton, and a nonterminal `(p₀, A, q₀)` is passable only from its entry
-state `p₀` and leaves at its exit state `q₀`. -/
+/-- `M.Threads p l q` means that reading the sentential form `l` takes `M` from the state `p` to the
+state `q`. A terminal `a` takes a state `p` to `M.step p a`. A nonterminal `(p₀, A, q₀)` can be read
+only in its entry state `p₀`, and takes it to its exit state `q₀`. -/
 def Threads : σ → List (Symbol T (σ × N × σ)) → σ → Prop
   | p, [], q => p = q
   | p, .terminal a :: l, q => Threads (M.step p a) l q
@@ -239,14 +231,16 @@ def Threads : σ → List (Symbol T (σ × N × σ)) → σ → Prop
 @[simp] theorem threads_nonterminal_cons {A : N} :
     M.Threads p (nonterminal (p₀, A, q₀) :: l) q ↔ p = p₀ ∧ M.Threads q₀ l q := .rfl
 
-/-- A concatenation threads through an intermediate state. -/
+/-- A concatenation `l₁ ++ l₂` threads from `p` to `r` if and only if `l₁` threads from `p` to some
+state `q` and `l₂` threads from `q` to `r`. -/
 theorem threads_append :
     M.Threads p (l₁ ++ l₂) r ↔ ∃ q, M.Threads p l₁ q ∧ M.Threads q l₂ r := by
   induction l₁ generalizing p with
   | nil => simp
   | cons s l₁ ih => rcases s with a | ⟨p₀, A, q₀⟩ <;> simp [ih, and_assoc]
 
-/-- A word threads as the automaton evaluates it. -/
+/-- A string of terminals `w` threads from `p` to `q` if and only if `M` evaluates `w` from `p` to
+`q`. -/
 @[simp] theorem threads_map_terminal {w : List T} :
     M.Threads (N := N) p (w.map terminal) q ↔ M.evalFrom p w = q := by
   induction w generalizing p with
@@ -261,10 +255,11 @@ namespace ContextFreeGrammar
 
 variable {T : Type*} {σ : Type} [Finite σ] {G : ContextFreeGrammar T} {M : DFA T σ} {p q r : σ}
 
-/-- The triple construction: the nonterminals are those of `G` between an entry and an exit state
-of `M`, and the rules are those that erase to a rule of `G` and whose right-hand side threads from
-the entry to the exit state of their left-hand side. The start nonterminal is that of `G` between
-the start state and `q`. -/
+/-- The *triple construction* of a grammar `G` and a finite automaton `M`. Its nonterminals are
+triples `(p, A, p')` of a nonterminal `A` of `G`, an entry state `p` and an exit state `p'`. Its
+rules are the rules over triples that become rules of `G` when the states are erased, and whose
+right-hand side threads from the entry state to the exit state of the left-hand side. Its start
+symbol is `(M.start, G.initial, q)`. -/
 noncomputable def triple (G : ContextFreeGrammar T) (M : DFA T σ) (q : σ) :
     ContextFreeGrammar T where
   NT := σ × G.NT × σ
@@ -284,13 +279,14 @@ theorem mem_triple_rules {A : G.NT} {p' q' : σ} {l : List (Symbol T (σ × G.NT
       ⟨A, l.map (mapNonterminal (·.2.1))⟩ ∈ G.rules ∧ M.Threads p' l q' := by
   simp [triple, ContextFreeRule.mapNonterminal]
 
-/-- Erasing the states sends the rules of the triple construction to rules of `G`. -/
+/-- Erasing the states of a rule of `G.triple M q` gives a rule of `G`. -/
 theorem mapNonterminal_mem_of_mem_triple_rules {r' : ContextFreeRule T (σ × G.NT × σ)}
     (h : r' ∈ (G.triple M q).rules) : r'.mapNonterminal (·.2.1) ∈ G.rules := by
   obtain ⟨⟨p', A, q'⟩, l⟩ := r'
   exact (mem_triple_rules.mp h).1
 
-/-- A production of the triple construction preserves threading. -/
+/-- If `l` threads from `p` to `r` and `G.triple M q` produces `l'` from `l`, then `l'` threads from
+`p` to `r`. -/
 theorem Produces.threads {l l' : List (Symbol T (σ × G.NT × σ))}
     (h : (G.triple M q).Produces l l') (hl : M.Threads p l r) : M.Threads p l' r := by
   obtain ⟨⟨⟨p', A, q'⟩, o⟩, hr, hrw⟩ := h
@@ -300,15 +296,17 @@ theorem Produces.threads {l l' : List (Symbol T (σ × G.NT × σ))}
   exact M.threads_append.mpr
     ⟨_, M.threads_append.mpr ⟨_, h₁, (mem_triple_rules.mp hr).2⟩, h₃⟩
 
-/-- A derivation of the triple construction preserves threading. -/
+/-- If `l` threads from `p` to `r` and `G.triple M q` derives `l'` from `l`, then `l'` threads from
+`p` to `r`. -/
 theorem Derives.threads {l l' : List (Symbol T (σ × G.NT × σ))}
     (h : (G.triple M q).Derives l l') (hl : M.Threads p l r) : M.Threads p l' r := by
   induction h with
   | refl => exact hl
   | tail _ step ih => exact step.threads ih
 
-/-- A derivation of a word in `G` lifts, from every state, to a derivation of the triple
-construction from a form that threads as the automaton evaluates the word. -/
+/-- If `G` derives the word `w` from `out`, then for every state `p` there is a form `l` over
+triples that gives `out` when the states are erased, threads from `p` to `M.evalFrom p w`, and
+derives `w` in `G.triple M q`. -/
 theorem exists_derives_triple {out : List (Symbol T G.NT)} {w : List T}
     (hd : G.Derives out (w.map terminal)) (p : σ) :
     ∃ l, l.map (mapNonterminal (·.2.1)) = out ∧ M.Threads p l (M.evalFrom p w) ∧
@@ -328,7 +326,8 @@ theorem exists_derives_triple {out : List (Symbol T G.NT)} {w : List T}
       (Produces.single ⟨⟨_, l₂⟩, mem_triple_rules.mpr ⟨h₂ ▸ hr, ht₂⟩,
         ContextFreeRule.rewrites_of_exists_parts _ l₁ l₃⟩).trans hd⟩
 
-/-- The triple construction generates the words of `G` that take `M` to the state `q`. -/
+/-- A word is in the language of `G.triple M q` if and only if it is in the language of `G` and `M`
+evaluates it to the state `q`. -/
 theorem mem_language_triple {w : List T} :
     w ∈ (G.triple M q).language ↔ w ∈ G.language ∧ M.eval w = q := by
   refine ⟨fun h ↦ ⟨?_, ?_⟩, ?_⟩
@@ -343,12 +342,13 @@ theorem mem_language_triple {w : List T} :
     obtain ⟨rfl, rfl⟩ := ht
     exact hd
 
-/-- The grammar `G.inter M` of the intersection of `G` with a finite automaton `M` is the union of
-the triple constructions at the accepting states of `M`. -/
+/-- `G.inter M` is the union of the triple constructions `G.triple M q` over the accepting states
+`q` of the finite automaton `M`. -/
 noncomputable def inter (G : ContextFreeGrammar T) (M : DFA T σ) : ContextFreeGrammar T :=
   iUnion fun q : M.accept ↦ G.triple M q
 
-/-- **Bar-Hillel's theorem**: `G.inter M` generates the intersection. -/
+/-- **Bar-Hillel's theorem**. The grammar `G.inter M` generates the intersection of the language of
+`G` with the language that `M` accepts. -/
 @[simp] theorem language_inter (G : ContextFreeGrammar T) (M : DFA T σ) :
     (G.inter M).language = G.language ⊓ M.accepts := by
   ext w
@@ -368,7 +368,8 @@ theorem IsRegular.isContextFree [Finite α] (h : L.IsRegular) : L.IsContextFree 
   obtain ⟨σ, _, M, rfl⟩ := h
   exact ⟨M.toContextFreeGrammar, M.language_toContextFreeGrammar⟩
 
-/-- Over a finite alphabet, the regular languages are those of the right-linear grammars. -/
+/-- Over a finite alphabet, a language is regular if and only if a right-linear grammar generates
+it. -/
 theorem isRegular_iff_exists_isRightLinear [Finite α] :
     L.IsRegular ↔ ∃ g : ContextFreeGrammar α, g.IsRightLinear ∧ g.language = L := by
   refine ⟨fun h ↦ ?_, fun ⟨g, hg, h⟩ ↦ h ▸ hg.isRegular_language⟩
@@ -376,7 +377,7 @@ theorem isRegular_iff_exists_isRightLinear [Finite α] :
   obtain ⟨σ, _, M, rfl⟩ := h
   exact ⟨_, M.isRightLinear_toContextFreeGrammar, M.language_toContextFreeGrammar⟩
 
-/-- Context-free languages are closed under intersection with regular languages. -/
+/-- The intersection of a context-free language with a regular language is context-free. -/
 theorem IsContextFree.inf_isRegular (hL : L.IsContextFree) (hR : R.IsRegular) :
     (L ⊓ R).IsContextFree := by
   obtain ⟨G, rfl⟩ := hL

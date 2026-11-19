@@ -10,12 +10,11 @@ public import Linglib.Core.Computability.ContextFreeGrammar
 /-!
 # Context-free languages are closed under finite unions
 
-The union `ContextFreeGrammar.iUnion g` of a finite family of grammars has the nonterminals of
-every `g i`, tagged by `i`, and a fresh start symbol that rewrites to the start nonterminal of each
-`g i`. Tagging is a relabelling of nonterminals that sends the rules of `g i` to rules of the union
-and accounts for every rule of the union at a tagged nonterminal, so the union [generates the union
-of the languages](##ContextFreeGrammar.language_iUnion). The context-free languages are therefore
-[closed under finite unions](##Language.IsContextFree.iSup).
+This file proves that [a finite union of context-free languages is
+context-free](##Language.IsContextFree.iSup). The *union* `ContextFreeGrammar.iUnion g` of a
+finite family of grammars has the nonterminals and the rules of every `g i`, with the nonterminals
+tagged by `i`, and a new start symbol that rewrites to the start symbol of each `g i`. It
+[generates the union of the languages](##ContextFreeGrammar.language_iUnion) of the `g i`.
 
 ## References
 
@@ -28,9 +27,9 @@ namespace ContextFreeGrammar
 
 variable {T : Type*} {ι : Type} [Finite ι] {g : ι → ContextFreeGrammar T}
 
-/-- The union of a finite family of grammars: the nonterminals of each `g i` tagged by `i`, with
-the rules of `g i`, and a fresh start symbol `none` that rewrites to the start nonterminal of each
-`g i`. -/
+/-- The *union* of a finite family of grammars `g`. Its nonterminals are the nonterminals of each `g
+i`, tagged by `i`, together with a new start symbol `none`. Its rules are the rules of each `g i`
+and, for each `i`, a rule that rewrites `none` to the start symbol of `g i`. -/
 noncomputable def iUnion (g : ι → ContextFreeGrammar T) : ContextFreeGrammar T where
   NT := Option (Σ i, (g i).NT)
   initial := none
@@ -44,7 +43,7 @@ theorem mem_iUnion_rules {r' : ContextFreeRule T (Option (Σ i, (g i).NT))} :
       ∃ i, ∃ r ∈ (g i).rules, r.mapNonterminal (fun A ↦ some ⟨i, A⟩) = r' := by
   simp [iUnion]
 
-/-- The union of a family of grammars generates the union of their languages. -/
+/-- The union of a finite family of grammars generates the union of their languages. -/
 @[simp] theorem language_iUnion (g : ι → ContextFreeGrammar T) :
     (iUnion g).language = ⨆ i, (g i).language := by
   ext w
@@ -77,14 +76,14 @@ namespace Language
 
 variable {T : Type*}
 
-/-- Context-free languages are closed under finite unions. -/
+/-- A finite union of context-free languages is context-free. -/
 protected theorem IsContextFree.iSup {ι : Type*} [Finite ι] {L : ι → Language T}
     (h : ∀ i, (L i).IsContextFree) : (⨆ i, L i).IsContextFree := by
   obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin ι
   choose g hg using h
   exact ⟨.iUnion fun k ↦ g (e.symm k), by simpa [hg] using e.symm.iSup_comp (g := L)⟩
 
-/-- Context-free languages are closed under union. -/
+/-- The union of two context-free languages is context-free. -/
 protected theorem IsContextFree.add {L₁ L₂ : Language T} (h₁ : L₁.IsContextFree)
     (h₂ : L₂.IsContextFree) : (L₁ + L₂).IsContextFree := by
   have := IsContextFree.iSup (L := fun b : Bool ↦ bif b then L₁ else L₂)
