@@ -127,7 +127,7 @@ scoped macro "decide_worlds" : tactic =>
   `(tactic| (simp only [Background.mem_accessibleWorlds, Preorder.ofCriteria_le_iff,
       circumstances, desires, wantsOffice, Function.const_apply, Set.mem_insert_iff,
       Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.subset_def, forall_eq_or_imp, forall_eq,
-      false_implies, implies_true, and_true, Pi.sup_apply, Set.sup_eq_union, Set.mem_union,
+      false_implies, implies_true, and_true, Pi.sup_apply, Set.mem_union,
       or_imp, forall_and]; try decide))
 
 -- p. 65: the two backgrounds being consistent, what is necessary is what follows from their union.

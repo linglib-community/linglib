@@ -79,7 +79,9 @@ a vowel letter or *y* other than the *u* of *qu* and an initial *y*. -/
 def EndsInVowel (r : List Char) : Prop :=
   (∃ c ∈ r.head?, IsVowelLetter c ∨ c = 'y') ∧ ¬['u', 'q'] <+: r ∧ r ≠ ['y']
 
-instance : DecidablePred EndsInVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance : DecidablePred EndsInVowel := fun r ↦
+  haveI : Decidable (∃ c ∈ r.head?, IsVowelLetter c ∨ c = 'y') := Option.decidableExistsMem _
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- `alternant r suffix` is the suffix as written after the base whose reversal is `r`. The
 suffix *-s* is *-es* after *s*, *x*, *z*, *sh* and *ch*, and after *o* that follows a

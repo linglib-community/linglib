@@ -65,19 +65,19 @@ theorem exists_collapse [Finite Entity] (girl : Set Entity) (μ : Entity → D) 
 theorem negation_high_undefined [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
     ¬ ∃ m, IsGreatest (scopeDegrees (fun S ↦ a ∉ S) (Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (Q := fun S ↦ a ∉ S) (fun _ _ h hT hS ↦ hT (h hS))
-    (fun _ ↦ isLowerSet_Iic _)
+    (fun _ ↦ IsLowerSet.Iic _)
 
 -- (18c)
 theorem atMost_high_undefined [Fintype Entity] [NoMaxOrder D] (girl : Set Entity)
     (μ : Entity → D) : ¬ ∃ m, IsGreatest (scopeDegrees (atMost 2 girl) (Iic ∘ μ)) m :=
-  not_isGreatest_scopeDegrees (antitone_atMost (α := Entity) 2 girl) (fun _ ↦ isLowerSet_Iic _)
+  not_isGreatest_scopeDegrees (antitone_atMost (α := Entity) 2 girl) (fun _ ↦ IsLowerSet.Iic _)
 
 -- (20c), (20)
 theorem exactly_high_atLeast [Fintype Entity] {girl : Set Entity} {μ : Entity → D} {m : D}
     (h : IsGreatest (scopeDegrees (exactly 2 girl) (Iic ∘ μ)) m) :
     IsGreatest (scopeDegrees (atLeast 2 girl) (Iic ∘ μ)) m := by
   rw [exactly_eq_atLeast_inf_atMost] at h
-  exact isGreatest_scopeDegrees_of_inf (antitone_atMost 2 girl) (fun _ ↦ isLowerSet_Iic _) h
+  exact isGreatest_scopeDegrees_of_inf (antitone_atMost 2 girl) (fun _ ↦ IsLowerSet.Iic _) h
 
 /-! ### Exactly-differentials and less -/
 
@@ -142,7 +142,7 @@ theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : 
     ⟨_, hw⟩
   rw [scopeDegrees_no, lowScope_maxIn]
   refine (exists_congr fun m ↦ and_congr_right fun _ ↦
-    isGLB_compl_scopeDegrees_iff (monotone_some _) (fun _ ↦ isLowerSet_Iic _) hex).trans
+    isGLB_compl_scopeDegrees_iff (monotone_some _) (fun _ ↦ IsLowerSet.Iic _) hex).trans
     ((allowed_less hDes ℓ t).trans ?_)
   exact not_exists.trans (forall_congr' fun _ ↦ not_and.trans (imp_congr_right fun _ ↦ not_le))
 

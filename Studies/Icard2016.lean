@@ -715,7 +715,7 @@ theorem ellsberg_not_agree (r : Set (Fin 3) → Set (Fin 3) → Prop) [IsQualita
   have h0 := (h 0).1 (Finset.mem_univ _)
   have h1 := (h 1).1 (Finset.mem_univ _)
   have key : r ({1} ⊔ {2}) ({0} ⊔ {2}) ↔ r {1} {0} := rel_sup_sup_right_iff (by simp) (by simp)
-  simp only [Set.sup_eq_union, Set.singleton_union] at key
+  simp only [Set.singleton_union] at key
   exact h0.2 (key.1 h1.1)
 
 theorem ellsberg_not_representable : ¬ellsberg.Representable := fun ⟨_, _, h⟩ ↦

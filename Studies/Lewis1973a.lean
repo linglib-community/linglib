@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.SetTheory.Ordinal.Rank
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Relation.ReflTransGen

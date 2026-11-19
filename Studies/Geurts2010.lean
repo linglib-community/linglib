@@ -124,8 +124,8 @@ theorem notMem_polar_Ici_of_mem_primaryImplicatures (ha : IsAtom a) (hb : IsAtom
     s ∉ polar (Ici a) := by
   have hweak := mem_primaryImplicatures.1 hp
   refine fun h ↦ (Question.mem_polar.1 h).elim
-    (hweak _ (isUpperSet_Ici a) (Ici_ssubset_Ioi_bot ha hb hab)) fun hna ↦ ?_
-  exact hweak _ (isLowerSet_Iic a).compl (compl_Iic_ssubset_Ioi_bot ha) fun y hy hya ↦
+    (hweak _ (IsUpperSet.Ici a) (Ici_ssubset_Ioi_bot ha hb hab)) fun hna ↦ ?_
+  exact hweak _ (IsLowerSet.Iic a).compl (compl_Iic_ssubset_Ioi_bot ha) fun y hy hya ↦
     hna hy ((ha.le_iff_eq (mem_Ioi.1 (hq hy)).ne').1 hya).ge
 
 variable [IsAtomic α]
@@ -141,7 +141,7 @@ theorem isSecondaryImplicature_upperSets_iff :
   rw [isSecondaryImplicature_iff]
   refine and_congr_right fun _ ↦ and_congr_right fun _ ↦
     ⟨fun h x hx hxt ↦ ?_, fun h χ hχ hχφ hsub ↦ ?_⟩
-  · exact h _ (isLowerSet_Iic x).compl (compl_Iic_ssubset_Ioi_bot hx)
+  · exact h _ (IsLowerSet.Iic x).compl (compl_Iic_ssubset_Ioi_bot hx)
       fun y hy hle ↦ hy.2 ((hx.le_iff_eq (mem_Ioi.1 hy.1).ne').1 hle ▸ hxt)
   · exact hχφ.2 fun y hy ↦
       let ⟨b, hb, hby⟩ := exists_isAtom_le hy
@@ -156,7 +156,7 @@ theorem Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom :
   refine ⟨fun ⟨hx, hn⟩ ↦ ?_, fun hx ↦ ⟨hx.bot_lt, fun ⟨t, ⟨_, _, h⟩, hxt⟩ ↦ h x hx hxt⟩⟩
   by_contra hna
   obtain ⟨b, hb, hbx⟩ := exists_isAtom_le hx
-  refine hn ⟨Ici x, ⟨isUpperSet_Ici x, ⟨fun _ hy ↦ hx.trans_le hy, fun h ↦ ?_⟩, fun y hy hxy ↦ ?_⟩,
+  refine hn ⟨Ici x, ⟨IsUpperSet.Ici x, ⟨fun _ hy ↦ hx.trans_le hy, fun h ↦ ?_⟩, fun y hy hxy ↦ ?_⟩,
     le_rfl⟩
   · exact hna (le_antisymm hbx (h hb.bot_lt) ▸ hb)
   · exact hna ((hy.le_iff_eq hx.ne').1 hxy ▸ hy)

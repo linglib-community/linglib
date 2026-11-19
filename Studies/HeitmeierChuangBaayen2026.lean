@@ -230,7 +230,7 @@ theorem isTrained_iff_sum_update_sub_eq_zero (hη : η ≠ 0) :
     ext k j
     simp only [update_smul_one, add_sub_cancel_left, Matrix.sum_apply, Matrix.smul_apply,
       vecMulVec_apply, Pi.sub_apply, smul_eq_mul]
-    rw [mul_apply, Finset.mul_sum]
+    rw [Matrix.mul_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [mul_diagonal, transpose_apply, Matrix.sub_apply, mul_apply_eq_vecMul]
     ring

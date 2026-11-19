@@ -192,7 +192,7 @@ theorem specificity_lt_of_applySet_ssubset (hij : applySet i ⊂ applySet j) :
   rw [← Finset.filter_union_filter_not_eq (·.1 = 0) j.site,
     ← Finset.filter_union_filter_not_eq (·.1 = 0) i.site,
     Finset.eq_of_subset_of_card_le h₀ heq.ge]
-  exact congrArg (_ ∪ ·) h₂
+  exact congrArg (_ ∪ · : Finset _ → Finset _) h₂
 
 @[simp] theorem not_specificity_lt_elsewhere (i : VocabularyItem F E) (e : E) :
     ¬ i.specificity < ((∅ : Finset F) ⟷ e).specificity := by

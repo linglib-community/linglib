@@ -117,7 +117,8 @@ theorem parallelComp_id_comp_apply_singleton (ρ : Measure (α × β)) (η : Ker
     [IsSFiniteKernel η] (a : α) (c : γ) :
     (((Kernel.id : Kernel α α) ∥ₖ η) ∘ₘ ρ) {(a, c)} = ∑ b, ρ {(a, b)} * η b {c} := by
   classical
-  rw [comp_eq_sum_of_countable, sum_apply _ (.singleton _), tsum_fintype, Fintype.sum_prod_type]
+  rw [comp_eq_sum_of_countable, Measure.sum_apply _ (.singleton _), tsum_fintype,
+    Fintype.sum_prod_type]
   simp only [smul_apply, Kernel.parallelComp_apply, Kernel.id_apply, ← Set.singleton_prod_singleton,
     prod_prod, dirac_apply' _ (.singleton _), smul_eq_mul, Set.indicator_apply,
     Set.mem_singleton_iff, Pi.one_apply, ite_mul, one_mul, zero_mul, mul_ite, mul_zero]

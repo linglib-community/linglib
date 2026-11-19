@@ -37,7 +37,7 @@ variable {α : Type*} (p : α → Prop) [DecidablePred p]
 def filter : FreeMonoid α →* FreeMonoid α where
   toFun w := ofList (w.toList.filter p)
   map_one' := rfl
-  map_mul' x y := List.filter_append x.toList y.toList
+  map_mul' x y := congrArg ofList (List.filter_append x.toList y.toList)
 
 @[simp] theorem toList_filter (w : FreeMonoid α) : (filter p w).toList = w.toList.filter p := rfl
 

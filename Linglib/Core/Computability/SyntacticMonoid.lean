@@ -89,7 +89,7 @@ theorem syntacticClass_flatten (L : Language α) (ws : List (List α)) :
   induction ws <;> simp [*]
 
 theorem syntacticClass_surjective (L : Language α) : Function.Surjective L.syntacticClass :=
-  Con.mk'_surjective.comp FreeMonoid.ofList.surjective
+  Con.mk'_surjective.comp fun x ↦ ⟨x.toList, rfl⟩
 
 theorem syntacticClass_eq_iff {u v : List α} :
     L.syntacticClass u = L.syntacticClass v ↔ ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L :=
@@ -151,14 +151,15 @@ section
 variable {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
 
 theorem recognizes_iff_ker_le : Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
-  (Con.ker_le_syntactic_iff (S := FreeMonoid.toList ⁻¹' L)).symm
+  (exists_congr fun S ↦ ⟨by rintro rfl; rfl, fun h ↦ by rw [← h]; rfl⟩).trans
+    (Con.ker_le_syntactic_iff (S := FreeMonoid.toList ⁻¹' L)).symm
 
 theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
     Con.ker φ ≤ syntacticCon L :=
   recognizes_iff_ker_le.1 hrec
 
 theorem Recognizes.comap {β : Type*} (hrec : Recognizes φ L) (ψ : FreeMonoid β →* FreeMonoid α) :
-    Recognizes (φ.comp ψ) {w : List β | ψ (FreeMonoid.ofList w) ∈ L} := by
+    Recognizes (φ.comp ψ) {w : List β | (ψ (FreeMonoid.ofList w)).toList ∈ L} := by
   obtain ⟨S, rfl⟩ := hrec
   exact ⟨S, rfl⟩
 
@@ -214,7 +215,8 @@ theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.Syntacti
 
 /-! ### Boolean combinations -/
 
-theorem syntacticCon_compl : Lᶜ.syntacticCon = L.syntacticCon := Con.syntactic_compl
+theorem syntacticCon_compl : Lᶜ.syntacticCon = L.syntacticCon :=
+  Con.syntactic_compl (S := FreeMonoid.toList ⁻¹' L)
 
 theorem inf_syntacticCon_le_syntacticCon_inf {L' : Language α} :
     L.syntacticCon ⊓ L'.syntacticCon ≤ (L ⊓ L').syntacticCon :=

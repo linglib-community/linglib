@@ -113,7 +113,7 @@ def dom (p : Option Person) (cl : Option Clusivity := none) : Set E :=
     x ∈ dom c (some .first) (some .inclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := by
   simp only [dom, Option.map_some, Option.elim_some, ite_true, Set.mem_inter_iff, Set.mem_Ici]
   simp only [or_and_right, toFeatures_first, Finset.inf_insert, Finset.inf_singleton,
-    Set.inf_eq_inter, Set.mem_inter_iff, Feature.mem_dom_participant, Feature.mem_dom_speaker]
+      Set.mem_inter_iff, Feature.mem_dom_participant, Feature.mem_dom_speaker]
   tauto
 
 @[simp] theorem mem_dom_first_exclusive :

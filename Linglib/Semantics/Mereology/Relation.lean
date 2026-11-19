@@ -149,7 +149,7 @@ as `Relation.fibration_iff_isLowerSet_image` characterizes a fibration. -/
 theorem me_iff_forall_isLowerSet :
     ME θ ↔ ∀ s : Set β, IsLowerSet s → IsLowerSet (θ.preimage s) :=
   ⟨fun h _ hs _ _ hle ⟨_, he, hθ⟩ ↦ let ⟨e', he', hθ'⟩ := h hθ hle; ⟨e', hs he' he, hθ'⟩,
-    fun h _ e hθ _ hle ↦ h _ (isLowerSet_Iic e) hle ⟨e, le_rfl, hθ⟩⟩
+    fun h _ e hθ _ hle ↦ h _ (IsLowerSet.Iic e) hle ⟨e, le_rfl, hθ⟩⟩
 
 /-- A relation maps to objects iff the events related to a lower set of objects form a lower
 set. -/

@@ -292,8 +292,8 @@ theorem not_stronglyStable_pair :
 -- true and `(Iic w)ᶜ` the weakest false one at `w`
 theorem bilaterallyStronglyStable_isUpperSet {P : Type*} [Preorder P] :
     BilaterallyStronglyStable {φ : Set P | IsUpperSet φ} := by
-  refine ⟨fun w ↦ ⟨Ici w, ⟨isUpperSet_Ici w, mem_Ici.2 le_rfl⟩, fun φ ⟨hφ, hw⟩ v hv ↦ hφ hv hw⟩,
-    fun w ↦ ⟨(Iic w)ᶜᶜ, ⟨⟨(Iic w)ᶜ, (isLowerSet_Iic w).compl, rfl⟩, by simp⟩, ?_⟩⟩
+  refine ⟨fun w ↦ ⟨Ici w, ⟨IsUpperSet.Ici w, mem_Ici.2 le_rfl⟩, fun φ ⟨hφ, hw⟩ v hv ↦ hφ hv hw⟩,
+    fun w ↦ ⟨(Iic w)ᶜᶜ, ⟨⟨(Iic w)ᶜ, (IsLowerSet.Iic w).compl, rfl⟩, by simp⟩, ?_⟩⟩
   rintro _ ⟨⟨φ, hφ, rfl⟩, hw⟩ v hv
   simp only [compl_compl, mem_Iic] at hv
   exact fun hvφ ↦ hw (hφ hv hvφ)

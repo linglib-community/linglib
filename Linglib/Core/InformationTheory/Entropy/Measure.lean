@@ -81,7 +81,9 @@ theorem measureEntropy_univ_smul : Hm[(μ Set.univ)⁻¹ • μ] = Hm[μ] := by
   by_cases hμ : IsFiniteMeasure μ
   · rcases eq_zero_or_neZero μ with rfl | _
     · simp
-    · simp [measureEntropy]
+    · have h : (μ Set.univ).toReal ≠ 0 :=
+        (ENNReal.toReal_pos (NeZero.ne _) (measure_ne_top μ _)).ne'
+      simp [measureEntropy, h]
   · rw [measureEntropy_of_not_isFiniteMeasure hμ]
     rw [not_isFiniteMeasure_iff] at hμ
     simp [hμ]
@@ -107,7 +109,7 @@ theorem measureEntropy_map_of_injective {U : Type*} [MeasurableSpace U]
   rw [measureEntropy, ← hinj.tsum_eq hsupp, measureEntropy, Measure.map_apply hf .univ,
     Set.preimage_univ]
   congr with s
-  rw [measureReal_def, measureReal_def, Measure.smul_apply, Measure.smul_apply,
+  rw [measureReal_def, measureReal_def, smul_apply, smul_apply,
     Measure.map_apply hf (.singleton _), ← Set.image_singleton, hinj.preimage_image]
 
 variable [MeasurableSingletonClass S]

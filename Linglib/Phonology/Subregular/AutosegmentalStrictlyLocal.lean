@@ -137,11 +137,11 @@ variable {S ι : Type*} {τ : ι → Type*} (g : S → AR τ)
 
 theorem setOf_factorEmbeds_prod_map_eq_of_link_free (F : AR τ) (hF : ∀ i j p q, ¬ F.Link i j p q) :
     {w : List S | F.FactorEmbeds (w.map g).prod} =
-      ⋂ i, {w : List S | F.word i <:+: (AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)} := by
+      ⋂ i, {w : List S | F.word i <:+:
+        ((AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)).toList} := by
   ext w
   simp only [Set.mem_ofPred_eq, Set.mem_iInter, AR.factorEmbeds_iff_infix_of_link_free hF,
-    MonoidHom.comp_apply, FreeMonoid.lift_ofList, AR.wordHom_apply]
-  exact Iff.rfl
+    MonoidHom.comp_apply, FreeMonoid.lift_ofList, AR.wordHom_apply, FreeMonoid.toList_ofList]
 
 /-- Without lines, a banned-subgraph language is an intersection over the factors of unions
 over the tiers of tier-avoidance preimages. -/
@@ -149,15 +149,14 @@ theorem bannedSubgraph_prod_map_eq_of_link_free (B : List (AR τ))
     (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.Link i j p q) :
     bannedSubgraph (fun w ↦ (w.map g).prod) B =
       ⋂ F ∈ B, ⋃ i, {w : List S | ¬ F.word i <:+:
-        (AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)} :=
+        ((AR.wordHom i).comp (FreeMonoid.lift g) (.ofList w)).toList} :=
   Set.ext fun w ↦ by
     refine Iff.trans (show _ ↔ ∀ F ∈ B, ¬ F.FactorEmbeds (w.map g).prod from Iff.rfl) ?_
     refine Iff.trans ?_ Set.mem_iInter₂.symm
     refine forall₂_congr fun F hF ↦ Iff.trans ?_ Set.mem_iUnion.symm
     rw [AR.factorEmbeds_iff_infix_of_link_free (hB F hF)]
     simp only [not_forall, Set.mem_ofPred_eq, MonoidHom.comp_apply, FreeMonoid.lift_ofList,
-      AR.wordHom_apply]
-    exact Iff.rfl
+      AR.wordHom_apply, FreeMonoid.toList_ofList]
 
 variable [Finite ι]
 

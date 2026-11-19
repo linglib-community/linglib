@@ -201,7 +201,7 @@ def supportMatrix : Matrix (Fin m) (Fin m) ℝ := S * G * Cᵀ
 
 theorem supportMatrix_apply (i k : Fin m) :
     supportMatrix G S C i k = (S i ᵥ* G) ⬝ᵥ C k := by
-  rw [supportMatrix, mul_apply]
+  rw [supportMatrix, Matrix.mul_apply]
   rfl
 
 /-- *Semantic support for form* is the diagonal of `T`, the support a word's form receives from

@@ -109,9 +109,9 @@ instance (Φ : Finset GornAddress) (D : GornAddress → Set GornAddress) (σ : S
 variable {hd t} {Φ : Finset GornAddress} {D : GornAddress → Set GornAddress} {σ : Schedule}
   {h s : GornAddress}
 
-theorem isUpperSet_complementDomain : IsUpperSet (complementDomain h) := isUpperSet_Ici _
+theorem isUpperSet_complementDomain : IsUpperSet (complementDomain h) := IsUpperSet.Ici _
 
-theorem isUpperSet_wholePhaseDomain : IsUpperSet (wholePhaseDomain hd t h) := isUpperSet_Ioi _
+theorem isUpperSet_wholePhaseDomain : IsUpperSet (wholePhaseDomain hd t h) := IsUpperSet.Ioi _
 
 /-- Sealed positions dominate only sealed positions. -/
 theorem isUpperSet_sealed (hD : ∀ h, IsUpperSet (D h)) : IsUpperSet (sealed Φ D σ s) :=

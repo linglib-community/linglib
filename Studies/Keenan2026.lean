@@ -151,7 +151,7 @@ noncomputable def moreThanC (C : Set α) : Det α := fun A B ↦ (A ∩ C).ncard
 noncomputable def asManyAsC (C : Set α) : Det α := fun A B ↦ (A ∩ B).ncard ≤ (A ∩ C).ncard
 
 theorem conservative_moreThanC (C : Set α) : (moreThanC C).Conservative := fun A B ↦ by
-  simp [moreThanC, ← Set.inter_assoc]
+  simp [moreThanC]
 
 theorem not_asManyAsC_iff {C A B : Set α} : ¬ asManyAsC C A B ↔ moreThanC C A B := not_le
 
@@ -351,7 +351,7 @@ theorem not_aac_atLeastAsManyAsAnyOther [Finite α] {s p : Set α} {a c : α} (h
     ⟨ha, fun b _ _ ↦ by simp⟩
   have hle := this.2 c hc hac
   simp [hac.symm] at hle
-  exact hp.ne_empty ((Set.ncard_eq_zero p.toFinite).1 hle)
+  exact hp.ne_empty (hle.resolve_right (Set.not_infinite.2 p.toFinite))
 
 theorem not_isPredicateAnaphor_atLeastAsManyAsAnyOther {s p : Set α} {a b : α} (ha : a ∈ s)
     (hb : b ∉ s) : ¬ IsPredicateAnaphor (atLeastAsManyAsAnyOther s p) := fun h ↦
