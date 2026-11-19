@@ -595,7 +595,7 @@ instance : IsFiniteKernel (wonkySpeaker s) :=
 noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountable (worldPrior s)
 
 instance : IsMarkovKernel (worldKernel s) :=
-  ⟨fun b ↦ by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- The prior of Degen and colleagues' listener: a background, then a world under it (item 4). -/
 noncomputable def wonkyJoint : Measure (World × Background) :=
