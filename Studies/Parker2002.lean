@@ -77,9 +77,9 @@ inductive Class where
 
 namespace Class
 
-/-- Table 5.28: the rank of a class, with the obstruents ranked by `ObstruentClass.rank o`. The table as
-printed is `rankWith .lt`, `rankWith .gt` exchanges its second and third ranks, and `rankWith .eq`
-merges them. -/
+/-- Table 5.28: the rank of a class, with the obstruents ranked by `ObstruentClass.rank o`. The
+table as printed is `rankWith .lt`, `rankWith .gt` exchanges its second and third ranks, and
+`rankWith .eq` merges them. -/
 def rankWith (o : Ordering) : Class → ℕ
   | obstruent x => ObstruentClass.rank o x
   | h => 5 | nasal => 6 | trill => 7 | flap => 8 | lateral => 9 | rhotic => 10 | glide => 11
@@ -104,7 +104,8 @@ theorem le_iff_forall_rankWith_le {a b : Class} : a ≤ b ↔ ∀ o, rankWith o 
   revert a b
   decide +kernel
 
-@[simp] theorem obstruent_le_obstruent {x y : ObstruentClass} : obstruent x ≤ obstruent y ↔ x ≤ y := by
+@[simp] theorem obstruent_le_obstruent {x y : ObstruentClass} :
+    obstruent x ≤ obstruent y ↔ x ≤ y := by
   revert x y
   decide
 
