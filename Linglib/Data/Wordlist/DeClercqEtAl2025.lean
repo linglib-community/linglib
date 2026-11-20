@@ -81,15 +81,15 @@ def Lexemes.jazyk : Lexeme :=
     pos := ↑UD.UPOS.NOUN }
 
 def Lexemes.kipaw : Lexeme :=
-  { id := "kipaw", languageId := "kips1239", parameterId := "kipaw", label := "kipaw",
+  { id := "kipaw", languageId := "endo1242", parameterId := "kipaw", label := "kipaw",
     pos := ↑UD.UPOS.NOUN }
 
 def Lexemes.peel : Lexeme :=
-  { id := "peel", languageId := "kips1239", parameterId := "peel", label := "peel",
+  { id := "peel", languageId := "endo1242", parameterId := "peel", label := "peel",
     pos := ↑UD.UPOS.NOUN }
 
 def Lexemes.pata : Lexeme :=
-  { id := "pata", languageId := "kips1239", parameterId := "pata", label := "pata",
+  { id := "pata", languageId := "endo1242", parameterId := "pata", label := "pata",
     pos := ↑UD.UPOS.NOUN }
 
 def Lexemes.bati : Lexeme :=

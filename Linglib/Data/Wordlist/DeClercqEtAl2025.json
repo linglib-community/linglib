@@ -1,5 +1,5 @@
 {
-  "description": "The word forms of the chapter's case studies with the segmentation it prints, and for each the exponents of its lexicalization tables, in linear order. The Czech adjectives carry an agreement ending the chapter sets aside. The Kalenjin nouns are those of the chapter's Table 1.6, whose caption names Endo-Marakwet and whose text names Kipsigis, the variety of the works it cites.",
+  "description": "The word forms of the chapter's case studies with the segmentation it prints, and for each the exponents of its lexicalization tables, in linear order. The Czech adjectives carry an agreement ending the chapter sets aside. The Kalenjin nouns are the Endo-Marakwet ones of the chapter's Table 1.6.",
   "CellTable": [
     {
       "ID": "pos",
@@ -171,21 +171,21 @@
     },
     {
       "ID": "kipaw",
-      "Language_ID": "kips1239",
+      "Language_ID": "endo1242",
       "Parameter_ID": "kipaw",
       "Name": "kipaw",
       "POS": "NOUN"
     },
     {
       "ID": "peel",
-      "Language_ID": "kips1239",
+      "Language_ID": "endo1242",
       "Parameter_ID": "peel",
       "Name": "peel",
       "POS": "NOUN"
     },
     {
       "ID": "pata",
-      "Language_ID": "kips1239",
+      "Language_ID": "endo1242",
       "Parameter_ID": "pata",
       "Name": "pata",
       "POS": "NOUN"
