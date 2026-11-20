@@ -63,9 +63,9 @@ def Order.phrases : Order → List Cat
   | .cpFirst => [.C, N]
 
 -- (10b)
-theorem structural_admits_iff (d : HeadDirection) (o : Order) :
-    Admits (Licensed (ConjunctAgreement.first.conjuncts d) {N}) o.phrases ↔ o = .dpFirst := by
-  cases d <;> cases o <;> decide
+theorem structural_admits_iff (o : Order) :
+    Admits (Licensed ConjunctAgreement.first.conjuncts {N}) o.phrases ↔ o = .dpFirst := by
+  cases o <;> decide
 
 -- (10a)
 theorem closeness_embedded_iff (o : Order) :
@@ -75,11 +75,10 @@ theorem closeness_embedded_iff (o : Order) :
 /-- The analyses differ before the verb only, which is what makes German the test case, since
 after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
-    (∃ o : Order, ¬ (Admits (Licensed (ConjunctAgreement.first.conjuncts embeddedPosition) {N})
-        o.phrases ↔ Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
-      checkedOnce (α := Conjunct) rootPosition = ConjunctAgreement.first.conjuncts rootPosition :=
-  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ (checkedOnce_eq_conjuncts_nearest _ cs).trans
-    (ConjunctAgreement.conjuncts_nearest_headInitial _ cs)⟩
+    (∃ o : Order, ¬ (Admits (Licensed ConjunctAgreement.first.conjuncts {N}) o.phrases ↔
+        Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
+      checkedOnce (α := Conjunct) rootPosition = ConjunctAgreement.first.conjuncts :=
+  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ checkedOnce_eq_conjuncts_nearest _ cs⟩
 
 /-! ### Experiment 1 -/
 
@@ -161,8 +160,7 @@ theorem choices_refute_closeness :
 /-- The bottom-up analyses admit exactly the preferred order in both positions, which the squib
 takes to support them only indirectly (p. 15). -/
 theorem choices_match_structural (p : Position) (o : Order) :
-    Admits (Licensed (ConjunctAgreement.first.conjuncts p.direction) {N}) o.phrases ↔
-      o = preferred p := by
+    Admits (Licensed ConjunctAgreement.first.conjuncts {N}) o.phrases ↔ o = preferred p := by
   rw [preferred_eq, structural_admits_iff]
 
 end Schwarzer2026

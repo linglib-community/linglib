@@ -69,8 +69,8 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   Corbett's typology of gender; the Predicate Hierarchy is a linear order on the predicate's
   four sub-positions, and the rows of Table 6.11 are profiles over it.
 * The options for agreement with conjoined noun phrases (§6.5.1) are the substrate's
-  `Agreement.ConjunctAgreement`, none of which gives the last conjunct alone when it is the more
-  distant (`Agreement.ConjunctAgreement.conjuncts_concat_eq_singleton_iff`). An example fits an
+  `Agreement.ConjunctAgreement`, of which those found exclude agreement with the last conjunct
+  when it is the more distant (`Agreement.ConjunctAgreement.attested_iff`). An example fits an
   option when its target agrees in φ-features (`Agreement.Bundle.index`) with the conjunct the
   option picks or with the resolved
   features, all read off the glosses' category labels (`GlossedWord.features`), a conjunct
@@ -805,22 +805,22 @@ section Fits
 variable (r : Morphology.Features) (d : HeadDirection) (cs : List Morphology.Features)
   (t : Morphology.Features)
 
-/-- A target with the features `t` on side `d` of conjuncts `cs` that resolve to `r` fits the
-option `a` when it agrees with what the option gives it access to: the conjunct it picks, or the
-resolved features under agreement with all (§6.5.1). -/
+/-- A target with the features `t` beside conjuncts `cs` that resolve to `r` fits the option `a`
+when it agrees with what the option gives it access to: the conjunct it picks, or the resolved
+features under agreement with all (§6.5.1). -/
 def Fits : ConjunctAgreement → Prop
   | .all => Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures r).index
-  | a => ∃ x ∈ a.conjuncts d cs, Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures x).index
+  | .one e => ∃ x ∈ (ConjunctAgreement.one e).conjuncts cs,
+      Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures x).index
 
-instance : DecidablePred (Fits r d cs t)
+instance : DecidablePred (Fits r cs t)
   | .all => inferInstanceAs (Decidable (Compat _ _))
-  | .nearest | .first => inferInstanceAs (Decidable (∃ x ∈ _, _))
+  | .one _ => inferInstanceAs (Decidable (∃ x ∈ _, _))
 
-/-- The target fits the option `a` and no other, unless the nearest and the first conjuncts
-carry the same features, so that the two options are not told apart. -/
+/-- A target on side `d` of the conjuncts fits the option `a` and no other of the options found
+for that side, unless the other selects conjuncts with the same features. -/
 def FitsOnly (a : ConjunctAgreement) : Prop :=
-  Fits r d cs t a ∧ ∀ b, Fits r d cs t b →
-    b = a ∨ ConjunctAgreement.nearest.conjuncts d cs = ConjunctAgreement.first.conjuncts d cs
+  Fits r cs t a ∧ ∀ b, b.Attested d → Fits r cs t b → b.conjuncts cs = a.conjuncts cs
 
 instance : DecidablePred (FitsOnly r d cs t) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ ∀ _, _))
@@ -965,13 +965,13 @@ def resolved? (row : Datum) : Option Morphology.Features :=
       (.russian, .of (number := number russian)), (.kashubian, .of (number := number russian)),
       (.moroccanArabic, .of (number := number russian))]
 
-/-- Each conjoined example fits the option Corbett names for it, and no other, unless its nearest
-and first conjuncts carry the same features (§6.5.1). -/
+/-- Each conjoined example fits the option Corbett names for it, and no other of the options
+found unless that one selects conjuncts with the same features (§6.5.1). -/
 theorem conjoined_rows : ∀ row ∈ Examples.all,
     ∀ a ∈ row.parse? "conjunctAgreement"
-      [("nearest", ConjunctAgreement.nearest), ("first", .first), ("all", .all)],
+      [("nearest", ConjunctAgreement.nearest), ("first", fun _ ↦ .first), ("all", fun _ ↦ .all)],
     ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
-      FitsOnly r d cs t a := by
+      FitsOnly r d cs t (a d) := by
   decide +kernel
 
 -- (28), (30)
@@ -1017,7 +1017,7 @@ theorem hungarian_rows : ∀ row ∈ Examples.all, row.language = .hungarian →
 theorem moroccan_rows : ∀ row ∈ Examples.all, row.language = .moroccanArabic →
     ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
       (row.judgment = .acceptable ↔
-        Fits r d cs t .all ∨ d = .headInitial ∧ Fits r d cs t .nearest) := by
+        Fits r cs t .all ∨ d = .headInitial ∧ Fits r cs t (.nearest d)) := by
   decide +kernel
 
 end Corbett2000

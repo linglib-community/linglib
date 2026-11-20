@@ -115,7 +115,8 @@ def checkedOnce (d : HeadDirection) (cs : List α) : List α :=
 the nearest conjunct, the first if it precedes the coordination and the last if it follows it
 (§4.3). -/
 theorem checkedOnce_eq_conjuncts_nearest (d : HeadDirection) (cs : List α) :
-    checkedOnce d cs = ConjunctAgreement.nearest.conjuncts d cs := by
+    checkedOnce d cs = (ConjunctAgreement.nearest d).conjuncts cs := by
+  rw [ConjunctAgreement.conjuncts_nearest, ← Edge.toList_head?]
   cases d
   · rcases cs with _ | ⟨c, _ | _⟩ <;> simp [checkedOnce, derivationOrder, List.reduceOption]
   · have : (cs.map some).reduceOption = cs := by simp [List.reduceOption, List.filterMap_map]
@@ -125,9 +126,9 @@ theorem checkedOnce_eq_conjuncts_nearest (d : HeadDirection) (cs : List α) :
     · simpa using ((List.mem_inits _ _).1 hs).subset h
 
 @[simp] theorem mem_checkedOnce {d : HeadDirection} {cs : List α} {x : α} :
-    x ∈ checkedOnce d cs ↔ x ∈ d.nearest cs := by
-  rw [checkedOnce_eq_conjuncts_nearest, ConjunctAgreement.conjuncts_nearest, Option.mem_toList,
-    Option.mem_def]
+    x ∈ checkedOnce d cs ↔ x ∈ d.headEdge.head? cs := by
+  rw [checkedOnce_eq_conjuncts_nearest]
+  exact ConjunctAgreement.mem_conjuncts_one
 
 end Derivation
 
@@ -199,8 +200,7 @@ theorem Admits.forall_mem {L : List Conjunct → Prop} {P : Conjunct → Prop} {
 
 theorem licensed_swap_reverse {cs : List Conjunct} :
     Licensed (checkedOnce d.swap) cats cs.reverse ↔ Licensed (checkedOnce d) cats cs := by
-  simp [Licensed, Coordinable, Satisfies, checkedOnce_eq_conjuncts_nearest,
-    HeadDirection.nearest_swap_reverse]
+  simp [Licensed, Coordinable, Satisfies, Edge.head?_reverse]
 
 -- §3.1, p. 33
 theorem admits_swap_reverse :
@@ -222,15 +222,15 @@ theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
 
 /-- The phrase next to the selector is selected in its own category (§3.1). -/
 theorem mem_cats_of_mem_nearest (h : Admits (Licensed (checkedOnce d) cats) ps) :
-    ∀ p ∈ d.nearest ps, p ∈ cats := by
+    ∀ p ∈ d.headEdge.head? ps, p ∈ cats := by
   obtain ⟨cs, hcs, -, hsel, hS⟩ := h
   intro p hp
-  have hrel := HeadDirection.rel_nearest (mem_sections_map_ofCat.1 hcs) d
+  have hrel := Edge.rel_head? (mem_sections_map_ofCat.1 hcs) d.headEdge
   rw [Option.mem_def.1 hp] at hrel
-  generalize hx : d.nearest cs = o at hrel
+  generalize hx : d.headEdge.head? cs = o at hrel
   cases hrel with
   | @some x _ hxp =>
-    have := hsel x (HeadDirection.mem_of_mem_nearest hx)
+    have := hsel x (Edge.mem_of_mem_head? hx)
     rwa [eq_phrase_of_mem_ofCat hxp fun h ↦ hS (mem_checkedOnce.2 (h ▸ hx))] at this
 
 /-- A phrase displaced to the left is related to the position its selector selects by a phrase of
@@ -261,21 +261,21 @@ theorem admits_tfae (hp : p ∉ cats) : List.TFAE
     refine ⟨N, ?_⟩
     cases d
     · exact .inl ⟨[phrase N, nullN], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
     · exact .inr ⟨[nullN, phrase N], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
   tfae_have 4 → 2 := by
     rintro ⟨rfl, hN⟩
     exact ⟨[nullN], by simp [ofCat], by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
   tfae_have 4 → 3 := by
     rintro ⟨rfl, hN⟩
     refine ⟨[phrase N], by simp [ofCat, displacedLeft], ?_⟩
-    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]
+    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN]
   tfae_finish
 
 -- fn. 30
 theorem mem_cats_of_admits_all
-    (h : Admits (Satisfies (ConjunctAgreement.all.conjuncts d) cats) ps) : ∀ p ∈ ps, p ∈ cats :=
+    (h : Admits (Satisfies ConjunctAgreement.all.conjuncts cats) ps) : ∀ p ∈ ps, p ∈ cats :=
   h.forall_mem (P := fun x ↦ x.cat ∈ cats ∧ x ≠ nullN)
     (fun _ h x hx ↦ ⟨h.1 x hx, fun e ↦ h.2 (e ▸ hx)⟩)
     fun x _ hx ⟨hc, hn⟩ ↦ by rwa [eq_phrase_of_mem_ofCat hx hn] at hc
@@ -365,7 +365,7 @@ theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some
 theorem argument_rows_first : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
     side? e = some .headFinal → 2 ≤ (e.features "conjunct").length →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
-      (Admits (Licensed (ConjunctAgreement.first.conjuncts .headFinal) cats) ps ↔
+      (Admits (Licensed ConjunctAgreement.first.conjuncts cats) ps ↔
         e.judgment ≠ .acceptable) := by
   decide
 
