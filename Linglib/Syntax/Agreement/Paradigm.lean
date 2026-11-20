@@ -9,7 +9,7 @@ public import Mathlib.Order.Comparable
 
 This file defines the agreement paradigm of a target, a table pairing cells, which are feature
 bundles, with the exponents realizing them, and realizes a bundle such as a controller's
-`HasPhi.phi` by the exponent of the most specific cell it extends.
+agreement bundle by the exponent of the most specific cell it extends.
 
 Since cells are partial, a target reads a controller only along the dimensions its cells
 specify: a verb whose cells give person and number realizes a controller bearing gender and case

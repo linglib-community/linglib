@@ -190,7 +190,7 @@ theorem cCommands12_iff {a b : GornAddress} (ha : a ≠ ⊥) (hp : a.parent ∈ 
 /-- Coindexed noun phrases agree in φ-features. -/
 def Agrees (t : Rep) : Prop :=
   ∀ a b : Nominal t, Coindexed a b → ∀ v ∈ token? a.1.2, ∀ w ∈ token? b.1.2,
-    HasPhi.Agree v.word w.word
+    Compat v.word.agreement.index w.word.agreement.index
 
 instance : Decidable (Agrees t) := inferInstanceAs (Decidable (∀ _ _, _))
 

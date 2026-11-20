@@ -124,8 +124,8 @@ theorem hasPersonPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
-theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.personal,
-    HasPersonPrefix (HasPhi.phi p) ↔ p.person ≠ some .third := by
+theorem hasPersonPrefix_agreement_iff : ∀ p ∈ Pronouns.personal,
+    HasPersonPrefix p.agreement ↔ p.person ≠ some .third := by
   decide
 
 /-- The absolutive prefix of *hi* is that of the second person singular, whatever the gender of

@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Set.Restrict
-public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Fragments.Hungarian.Reciprocals
 public import Linglib.Fragments.Hungarian.Phonology
@@ -158,14 +157,16 @@ theorem verb_agreement :
 it agrees with the verb in person and number. -/
 theorem reflexive_acceptable_iff_agree :
     ∀ e ∈ all, antecedent e ≠ some .inclusive → ∀ r ∈ reflexives, HasAnaphor e r.toPronoun →
-      ∀ v ∈ verb? e, (e.judgment = .acceptable ↔ HasPhi.Agree r.toPronoun v) := by
+      ∀ v ∈ verb? e, (e.judgment = .acceptable ↔
+        Compat r.toPronoun.agreement.index (Agreement.Bundle.ofFeatures v).index) := by
   decide
 
 -- (4a), (4b)
 theorem boundVariable_iff_agree :
     ∀ e ∈ all, ∀ r ∈ reflexives, HasAnaphor e r.toPronoun → ∀ v ∈ verb? e,
       ∀ j ∈ Examples.reading e .boundVariable,
-        (j = .acceptable ↔ HasPhi.Agree r.toPronoun v) := by
+        (j = .acceptable ↔
+          Compat r.toPronoun.agreement.index (Agreement.Bundle.ofFeatures v).index) := by
   decide
 
 /-- The reflexive's judgment is not a function of its antecedent: a coordination takes the
