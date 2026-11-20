@@ -483,7 +483,7 @@ def sonority (c : Seg) : ℕ := Benua1997.Hebrew.sonority c.toBenua
 /-- Whether SONCON (30) wants a schwa before `c₂ c₃`: `c₂` is more sonorous than `c₃`, or the
 two are a geminate. -/
 def SchwaFirst (c₂ c₃ : Seg) : Prop :=
-  c₂ = c₃ ∨ Phonology.Sonority.profile sonority c₂ c₃ = .gt
+  c₂ = c₃ ∨ sonority c₃ < sonority c₂
 
 instance (c₂ c₃ : Seg) : Decidable (SchwaFirst c₂ c₃) := inferInstanceAs (Decidable (_ ∨ _))
 

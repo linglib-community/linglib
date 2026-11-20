@@ -318,7 +318,7 @@ def complexCoda (w : List Seg) : ℕ := if (finalCluster w).isSome then 1 else 0
 /-- `SON-CON` (86): a coda that rises in sonority. -/
 def sonCon (w : List Seg) : ℕ :=
   match finalCluster w with
-  | some (x, y) => if Sonority.profile sonority x y = .lt then 1 else 0
+  | some (x, y) => if sonority x < sonority y then 1 else 0
   | none => 0
 
 -- pp. 49, 113

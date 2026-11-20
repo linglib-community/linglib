@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
 public import Studies.Parker2002
+public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
 public import Linglib.Data.Wordlist.AfkirZellou2025
@@ -180,25 +181,18 @@ example : ∀ r ∈ targets, ∀ x ∈ r.segments, x ∈ consonants ∨ x = l :=
 
 /-! ### Sonority profiles -/
 
-/-- The sonority of a phone on Parker's hierarchy with the obstruents ranked by the hierarchy of
-his (3.6) that `o` fixes, and his classes above them merged into nasals, liquids, glides and
-vowels. -/
-def sonorityWith (o : Ordering) (x : Segment) : ℕ :=
-  match Sonority.ofSegment x with
-  | .obstruent =>
-    Parker2002.hierarchy o (.ofSegment x)
-  | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
+/-- The sonority of a phone: its class in the hierarchy of obstruents, nasals, liquids, glides and
+vowels, and within the obstruents its rank on the hierarchy of Parker's (3.6) that `o` fixes. -/
+def sonorityWith (o : Ordering) (x : Segment) : Sonority ×ₗ ℕ :=
+  toLex (Sonority.ofSegment x,
+    if Sonority.ofSegment x = .obstruent then Parker2002.hierarchy o (.ofSegment x) else 0)
 
 /-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
 fricatives, Parker's (3.6a). -/
-def sonority : Segment → ℕ := sonorityWith .gt
+def sonority : Segment → Sonority ×ₗ ℕ := sonorityWith .gt
 
-theorem coarsens_ofSegment : Sonority.Coarsens Sonority.ofSegment sonority := by
-  have hle (o : Parker2002.Obstruent) : Parker2002.hierarchy .gt o ≤ 4 := by revert o; decide
-  intro a b h
-  simp only [sonority, sonorityWith] at h
-  rcases ha : Sonority.ofSegment a <;> rcases hb : Sonority.ofSegment b <;>
-    simp only [ha, hb] at h <;> first | decide | (have := hle; grind)
+theorem coarsens_ofSegment : Sonority.Coarsens Sonority.ofSegment sonority :=
+  fun _ _ h ↦ Prod.Lex.monotone_fst _ _ h
 
 /-- The phone at root position `i` is a voiceless obstruent. -/
 def VoicelessAt (r : ConsonantalRoot Segment) (i : ℕ) : Prop :=
@@ -209,7 +203,7 @@ instance (r : ConsonantalRoot Segment) (i : ℕ) : Decidable (VoicelessAt r i) :
 
 /-- Whether sonority rises, plateaus or falls across the initial cluster of a root. -/
 def onsetProfile (r : ConsonantalRoot Segment) : Option Ordering := do
-  pure (Sonority.profile sonority (← r.segments[0]?) (← r.segments[1]?))
+  pure (compare (sonority (← r.segments[0]?)) (sonority (← r.segments[1]?)))
 
 /-- Seventeen of the target words begin with a rising cluster, six with a plateau and fifteen
 with a fall (§3.2.1). -/
@@ -220,7 +214,8 @@ theorem countP_rising_plateau_falling :
   decide +kernel
 
 example : ∀ r ∈ targets, ∀ a ∈ r.segments[0]?, ∀ b ∈ r.segments[1]?,
-    Sonority.profile (sonorityWith .gt) a b = Sonority.profile (sonorityWith .lt) a b := by
+    compare (sonorityWith .gt a) (sonorityWith .gt b) =
+      compare (sonorityWith .lt a) (sonorityWith .lt b) := by
   decide +kernel
 
 /-! ### The tables -/

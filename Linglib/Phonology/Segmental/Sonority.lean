@@ -17,47 +17,33 @@ import Linglib.Phonology.Segmental.PHOIBLE
 /-!
 # Sonority scales
 
-A sonority scale ranks segments, or classes of them, in a linear order. A set is a cut of a
-scale when it is what the scale places in an upper set of its points, and contiguous when it is
-what lies within some interval, the preimage of an order-connected set. A feature cuts a scale
-when the segments with one of its values form a cut. The cuts of a scale are nested, as the upper
-sets of a linear order are, so features whose values cross do not both cut it, and two features
-whose values combine freely do not both divide it into contiguous classes. A scale coarsens
-another when it preserves its order, and the cuts and the contiguous sets of the coarser scale
-are cuts and contiguous sets of the finer one.
+A sonority scale is a map `σ : α → β` from segments, or classes of them, to a linear order. A set
+`S` is contiguous on `σ` when it is the preimage `σ ⁻¹' I` of an order-connected set `I`, and a
+scale `τ` coarsens `σ` when `σ a ≤ σ b` implies `τ a ≤ τ b`. The contiguous sets of a coarser
+scale are contiguous on a finer one (`Phonology.Sonority.Contiguous.of_coarsens`), and two
+features whose values combine freely do not both divide a scale into contiguous classes
+(`Phonology.Sonority.not_contiguous_of_independent`).
 
-The base scale is the sonority hierarchy of Hayes's Table 4.1, the modal hierarchy of Parker:
-obstruents, nasals, liquids, glides and vowels. Each class is defined by the features of
-Hayes's p. 77, the columns of the table are cut by [sonorant], [approximant], [consonantal] and
-[syllabic], [continuant] is not a sonority feature, and among the columns the natural classes
-are the contiguous sets.
+`Phonology.Sonority` is the hierarchy of obstruents, nasals, liquids, glides and vowels, a linear
+order. `Sonority.toSegment` gives each class its values for [sonorant], [approximant],
+[consonantal] and [syllabic], and each of the four features holds on an upper set of the
+hierarchy, `Set.Ici` of a class (`Phonology.Sonority.setOf_toSegment_eq_Ici`). `Sonority.ofSegment`
+reads the class of a segment off the four features, and a segment with the values of a class has
+that class (`Phonology.Sonority.ofSegment_eq_of_le`). Among the classes, the natural classes are
+the order-connected sets (`Phonology.Sonority.isNaturalClass_image_iff`), and the segments that
+are [+continuant] are not contiguous on `ofSegment`.
 
-## Main definitions
+## Implementation notes
 
-* `Phonology.Sonority.IsCut`, `Phonology.Sonority.Contiguous`: the sets of a scale above a point
-  and within an interval.
-* `Phonology.Sonority.Coarsens`: a scale preserves the order of another.
-* `Phonology.Sonority.profile`: whether sonority rises, plateaus or falls from one segment to
-  another.
-* `Phonology.Sonority`: the classes of the hierarchy, with `Sonority.toSegment` the columns of
-  Table 4.1, `Sonority.description` the features of p. 77, and `Sonority.ofSegment`.
-
-## Main results
-
-* `Phonology.Sonority.IsCut.total`: the cuts of a scale are nested.
-* `Phonology.Sonority.not_contiguous_of_independent`: two features whose values combine freely
-  do not both divide a scale into contiguous classes.
-* `Phonology.Sonority.IsCut.of_coarsens`, `Phonology.Sonority.Contiguous.of_coarsens`: the cuts
-  and the contiguous sets of a coarser scale are cuts and contiguous sets of a finer one.
-* `Phonology.Sonority.ofSegment_eq_of_le`, `Phonology.Sonority.description_le_iff`: a segment
-  with the values of a column of Table 4.1 has that column's sonority and description.
-* `Phonology.Sonority.isNaturalClass_image_iff`: among the columns, the natural classes are the
-  contiguous sets.
+Contiguity and coarsening are stated of a scale and not of an order on its domain, because a
+study compares several scales on one type and a scale may rank two classes level. A set above a
+point of a scale `σ` is `σ ⁻¹' Set.Ici b`, with mathlib's `IsUpperSet` API, and the comparison of
+two segments is `compare (σ a) (σ b)`.
 
 ## References
 
-* [hayes-2009]: Table 4.1 (p. 76), the manner classes (p. 77), and [continuant] (p. 78)
-* [parker-2002]: the modal hierarchy (3.3) (p. 62)
+* [hayes-2009]
+* [parker-2002]
 -/
 
 @[expose] public section
@@ -68,31 +54,13 @@ namespace Phonology
 
 namespace Sonority
 
-variable {α β γ : Type*} [LinearOrder β] [LinearOrder γ] {σ : α → β} {τ : α → γ} {S T : Set α}
-
-/-- A set is a cut of a scale when it is what the scale places in an upper set of its points. -/
-def IsCut (σ : α → β) (S : Set α) : Prop := ∃ U : UpperSet β, S = σ ⁻¹' U
+variable {α β γ : Type*} [LinearOrder β] [LinearOrder γ] {σ : α → β} {τ : α → γ} {S : Set α}
 
 /-- A set is contiguous on a scale when it is the preimage of an order-connected set. -/
 def Contiguous (σ : α → β) (S : Set α) : Prop := ∃ I : Set β, I.OrdConnected ∧ S = σ ⁻¹' I
 
 /-- A scale `τ` coarsens a scale `σ` when it preserves its order. -/
 def Coarsens (τ : α → γ) (σ : α → β) : Prop := ∀ a b, σ a ≤ σ b → τ a ≤ τ b
-
-/-- Whether sonority rises (`lt`), plateaus (`eq`) or falls (`gt`) from `a` to `b`. -/
-def profile (σ : α → β) (a b : α) : Ordering := compare (σ a) (σ b)
-
-theorem IsCut.total (hS : IsCut σ S) (hT : IsCut σ T) : S ⊆ T ∨ T ⊆ S := by
-  obtain ⟨U, rfl⟩ := hS
-  obtain ⟨V, rfl⟩ := hT
-  exact (le_total V U).imp (Set.preimage_mono ·) (Set.preimage_mono ·)
-
-theorem not_isCut_and_isCut (hST : ¬ S ⊆ T) (hTS : ¬ T ⊆ S) : ¬ (IsCut σ S ∧ IsCut σ T) :=
-  fun ⟨hS, hT⟩ ↦ (hS.total hT).elim hST hTS
-
-theorem IsCut.contiguous (h : IsCut σ S) : Contiguous σ S := by
-  obtain ⟨U, rfl⟩ := h
-  exact ⟨U, U.upper.ordConnected, rfl⟩
 
 theorem contiguous_iff :
     Contiguous σ S ↔ ∀ a ∈ S, ∀ b ∈ S, ∀ c, σ a ≤ σ c → σ c ≤ σ b → c ∈ S := by
@@ -108,19 +76,13 @@ theorem contiguous_iff :
 instance [Fintype α] [DecidablePred (· ∈ S)] : Decidable (Contiguous σ S) :=
   decidable_of_iff _ contiguous_iff.symm
 
-theorem IsCut.of_coarsens (h : Coarsens τ σ) (hS : IsCut τ S) : IsCut σ S := by
-  obtain ⟨U, rfl⟩ := hS
-  refine ⟨⟨{y | ∃ a ∈ τ ⁻¹' U, σ a ≤ y}, fun x y hxy ⟨a, ha, hax⟩ ↦ ⟨a, ha, hax.trans hxy⟩⟩, ?_⟩
-  ext b
-  exact ⟨fun hb ↦ ⟨b, hb, le_rfl⟩, fun ⟨a, ha, hab⟩ ↦ U.upper (h a b hab) ha⟩
-
 theorem Contiguous.of_coarsens (h : Coarsens τ σ) (hS : Contiguous τ S) : Contiguous σ S :=
   contiguous_iff.2 fun a ha b hb c hac hcb ↦
     contiguous_iff.1 hS a ha b hb c (h a c hac) (h c b hcb)
 
 /-- Scales that induce the same order have the same contiguous sets. -/
-theorem contiguous_congr (h : ∀ a b, σ a ≤ σ b ↔ τ a ≤ τ b) : Contiguous σ S ↔ Contiguous τ S :=
-  ⟨.of_coarsens fun a b ↦ (h a b).2, .of_coarsens fun a b ↦ (h a b).1⟩
+theorem contiguous_congr (h : ∀ a b, σ a ≤ σ b ↔ τ a ≤ τ b) : Contiguous σ S ↔ Contiguous τ S := by
+  simp only [contiguous_iff, h]
 
 /-- Two features whose values combine freely do not both divide a scale into contiguous classes. -/
 theorem not_contiguous_of_independent (σ : α → β) {φ ψ : α → Bool}
@@ -203,15 +165,16 @@ def ofSegment (s : Segment) : Sonority :=
 
 theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
 
-/-- [sonorant], [approximant], [consonantal] and [syllabic] cut the hierarchy (Table 4.1). -/
-theorem isCut_features :
-    IsCut id {c : Sonority | c.toSegment .sonorant = true} ∧
-      IsCut id {c : Sonority | c.toSegment .approximant = true} ∧
-      IsCut id {c : Sonority | c.toSegment .consonantal = false} ∧
-      IsCut id {c : Sonority | c.toSegment .syllabic = true} := by
-  refine ⟨⟨.Ici nasal, ?_⟩, ⟨.Ici liquid, ?_⟩, ⟨.Ici glide, ?_⟩, ⟨.Ici vowel, ?_⟩⟩ <;>
+/-- Table 4.1: [sonorant], [approximant], [consonantal] and [syllabic] each hold on an upper set
+of the hierarchy. -/
+theorem setOf_toSegment_eq_Ici :
+    {c : Sonority | c.toSegment .sonorant = true} = Set.Ici nasal ∧
+      {c : Sonority | c.toSegment .approximant = true} = Set.Ici liquid ∧
+      {c : Sonority | c.toSegment .consonantal = false} = Set.Ici glide ∧
+      {c : Sonority | c.toSegment .syllabic = true} = Set.Ici vowel := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
   · ext c
-    simp only [Set.mem_preimage, id, UpperSet.coe_Ici, Set.mem_Ici]
+    simp only [Set.mem_setOf_eq, Set.mem_Ici]
     cases c <;> decide
 
 /-- The features `ofSegment` reads, the four of Table 4.1. -/
