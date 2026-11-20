@@ -65,8 +65,6 @@ namespace PersonalPronoun
 
 variable {p : PersonalPronoun}
 
-instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
-
 /-- The person a pronoun contributes to interpretation: the one its referential categories
 share. -/
 def referentialPerson (p : PersonalPronoun) : Option Person :=

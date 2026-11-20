@@ -5,31 +5,37 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Feature.HasPhi
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Morphology.Word.Basic
 
 /-!
 # φ-agreement between word tokens
 
-A word's φ-features are the agreement dimensions of its features, so two words agree when those
-bundles are compatible. Agreement is reflexive and symmetric but not transitive, since an
-unspecified dimension agrees with every value.
+A word bears the agreement bundle of its features, `Morphology.Word.agreement`. Two words agree
+in φ-features when the indices of their bundles (`Agreement.Bundle.index`) are compatible,
+compatibility and not identity of values: controller and target
+each contribute partial information, and a clash of values is a failure of unification
+[shieber-1986] [corbett-2006]. The relation is not transitive
+(`Morphology.Word.not_isTrans_compat_index`), since an unspecified dimension agrees with every
+value, and it does not compare case, so a pronoun agrees with an antecedent of another case.
 
-## Main results
+## References
 
-* `Morphology.Word.not_isTrans_agree`: agreement between words is not transitive.
+* [corbett-2006]
+* [shieber-1986]
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- A word bears the agreement dimensions of its features. -/
-instance Word.instHasPhi : HasPhi Word := ⟨fun w ↦ phi w.features⟩
+/-- The agreement bundle of a word, that of its features. -/
+def Word.agreement (w : Word) : Agreement.Bundle := .ofFeatures w.features
 
 /-- Agreement between words is not transitive: underspecified *they* agrees with both *she* and
 *he*, which disagree. -/
-theorem Word.not_isTrans_agree : ¬ IsTrans Word HasPhi.Agree := fun ⟨h⟩ ↦
+theorem Word.not_isTrans_compat_index :
+    ¬ IsTrans Word fun v w ↦ Compat v.agreement.index w.agreement.index := fun ⟨h⟩ ↦
   absurd
     (h ⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)
           (gender := some .Fem)⟩
@@ -39,10 +45,19 @@ theorem Word.not_isTrans_agree : ¬ IsTrans Word HasPhi.Agree := fun ⟨h⟩ ↦
        (by decide) (by decide))
     (by decide)
 
+/-- Case is not a φ-feature: nominative *she* agrees with accusative *her*, which can be its
+antecedent. -/
+example : Compat
+    (⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)
+      (gender := some .Fem) (case := some .nom)⟩ : Word).agreement.index
+    (⟨"her", .PRON, Features.of (person := some .third) (number := some .singular)
+      (gender := some .Fem) (case := some .acc)⟩ : Word).agreement.index := by
+  decide
+
 /-- Reflexivity is not an agreement feature: a reflexive-marked token agrees with an unmarked
 one. -/
-example : HasPhi.Agree (⟨"sich", .PRON, Features.of (reflex := some ())⟩ : Word)
-    (⟨"Kind", .NOUN, ⊥⟩ : Word) := by
+example : Compat (⟨"sich", .PRON, Features.of (reflex := some ())⟩ : Word).agreement.index
+    (⟨"Kind", .NOUN, ⊥⟩ : Word).agreement.index := by
   decide
 
 end Morphology

@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Pi
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.Compat
 public import Linglib.Morphology.Word.Features
@@ -9,9 +10,14 @@ public import Linglib.Syntax.Feature.Person.Specification
 # Feature bundles
 
 A feature bundle gives a slot to each of the five dimensions in which the form of one element
-may covary with another: person, number, gender, case and definiteness. The person slot is a
-person specification (`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is
-less specific than an inclusive or an exclusive one, and the others are slots of the flat order
+may covary with another: person, number, gender, case and definiteness, the first three the
+φ-features (`Agreement.Dimension.phi`). The index of a bundle and its concord
+(`Agreement.Bundle.index`, `Agreement.Bundle.concord`) are its projections onto the φ-features
+and onto case, number and gender, and two elements agree in one of them when the projections of
+their bundles are compatible. Bundles are compatible exactly when they unify
+(`Agreement.Bundle.coe_sup_coe_eq_top_iff`). The person slot is a person specification
+(`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is less specific
+than an inclusive or an exclusive one, and the others are slots of the flat order
 of `Core/Order/Flat.lean`, a value or nothing. The partial order of bundles, their bottom, the
 wholly unspecified bundle, and their unification are the pointwise ones. Each dimension is a
 token feature with that feature's values, and [a token's bundle](##Agreement.Bundle.ofFeatures)
@@ -20,14 +26,26 @@ clusivity together.
 
 ## Implementation notes
 
+A person and a clusivity that no participant set satisfies, as the second person and the
+exclusive, have no specification, and no monotone map could give them one: its value would
+extend both the second person and the exclusive, which are incompatible. The person slot of such
+a token is `⊥`, so `Agreement.Bundle.ofFeatures` is monotone on the coherent tokens
+(`Agreement.Bundle.monotoneOn_ofFeatures`) and not outright.
+
 Bundles are borne by pronouns and nominals as well as by agreement targets, and are spelled out
 by morphology, so the file stands with the feature inventories below `Syntax/Agreement` and
 `Morphology`. Its declarations keep the namespace `Agreement`.
 
+The slots hold the cross-linguistic values of the token features, so that bundles of different
+languages compare. A language-particular system, such as a set of noun classes, is not a
+bundle; `Syntax/Gender/AgreementClasses.lean` treats those over an arbitrary feature type.
+
 ## References
 
 * [corbett-1998]
+* [corbett-2006]
 * [norris-2019]
+* [wechsler-zlatic-2000]
 -/
 
 @[expose] public section
@@ -39,6 +57,14 @@ three indisputable agreement features or the two contested ones ([corbett-1998])
 inductive Dimension where
   | person | number | gender | case | definiteness
   deriving DecidableEq, Repr, Fintype
+
+/-- The φ-features are the three indisputable agreement features, person, number and gender
+([corbett-2006]). -/
+def Dimension.phi : Finset Dimension := {.person, .number, .gender}
+
+/-- The concord features are case, number and gender, those in which the elements of a noun
+phrase covary ([wechsler-zlatic-2000]). -/
+def Dimension.concord : Finset Dimension := {.case, .number, .gender}
 
 /-- The token feature a dimension is. It is reducible, so that the values of a dimension reduce
 to those of its feature when coercions are sought. -/
@@ -124,7 +150,23 @@ theorem Bundle.coe_sup_coe_update_bot (b : Bundle) (d : Dimension) (x : d.Slot) 
       (Dimension.Slot.unify d (b d) x).map (Function.update b d) :=
   WithTop.piUnify_update_bot Dimension.Slot.isLUB_unify b d x
 
+/-- Two bundles fail to unify exactly when they are incompatible. -/
+theorem Bundle.coe_sup_coe_eq_top_iff {x y : Bundle} :
+    (x : WithTop Bundle) ⊔ y = ⊤ ↔ ¬ Compat x y :=
+  WithTop.eq_top_iff_of_isLUB (WithTop.isLUB_piUnify Dimension.Slot.isLUB_unify x y)
+
 namespace Bundle
+
+/-- The index of a bundle, its φ-features: the projection onto person, number and gender. -/
+def index (x : Bundle) : (d : Dimension.phi) → Dimension.Slot d := Dimension.phi.restrict x
+
+/-- The concord of a bundle: the projection onto case, number and gender. -/
+def concord (x : Bundle) : (d : Dimension.concord) → Dimension.Slot d :=
+  Dimension.concord.restrict x
+
+@[simp] theorem index_apply (x : Bundle) (d : Dimension.phi) : x.index d = x d := rfl
+
+@[simp] theorem concord_apply (x : Bundle) (d : Dimension.concord) : x.concord d = x d := rfl
 
 /-- The bundle with the dimension `d` set to the value `v`. -/
 def set (d : Dimension) (v : d.Value) (b : Bundle) : Bundle :=
@@ -180,6 +222,26 @@ def ofFeatures (f : Morphology.Features) : Bundle
     ofFeatures f .definiteness = f .definiteness :=
   rfl
 
+/-- More specific features give a more specific bundle, where the more specific person and
+clusivity are coherent. -/
+theorem ofFeatures_le_ofFeatures {f g : Morphology.Features} (h : f ≤ g)
+    (hg : Person.Specification.Coherent (g .person) (g .clusivity)) :
+    ofFeatures f ≤ ofFeatures g := by
+  intro d
+  cases d
+  · exact Person.Specification.ofPersonClusivity_le_ofPersonClusivity (h .person) (h .clusivity) hg
+  all_goals exact h _
+
+theorem monotoneOn_ofFeatures :
+    MonotoneOn ofFeatures {f | Person.Specification.Coherent (f .person) (f .clusivity)} :=
+  fun _ _ _ hg h ↦ ofFeatures_le_ofFeatures h hg
+
+/-- The bundle of features is not monotone outright: the second person with the exclusive is
+unspecified for person. -/
+theorem not_monotone_ofFeatures : ¬ Monotone ofFeatures := fun h ↦
+  absurd (h (a := .of (person := some .second))
+    (b := .of (person := some .second) (clusivity := some .exclusive)) (by decide)) (by decide)
+
 instance : DecidableLE Bundle := fun x y ↦ inferInstanceAs (Decidable (∀ d, x d ≤ y d))
 
 instance : DecidableLT Bundle := decidableLTOfDecidableLE
@@ -208,7 +270,8 @@ instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = 
 /-- The six bundles of the first, second and third persons in the singular and the plural, the
 cells of a paradigm without clusivity or a dual. -/
 def personNumberCells : List Bundle :=
-  [Number.singular, .plural].flatMap fun n ↦ [Person.Specification.first, .second, .third].map (personNumber · n)
+  [Number.singular, .plural].flatMap fun n ↦
+    [Person.Specification.first, .second, .third].map (personNumber · n)
 
 end Bundle
 

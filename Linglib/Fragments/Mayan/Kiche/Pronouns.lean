@@ -76,7 +76,7 @@ def addresseePl : Grade → PersonalPronoun
 person singular *are'* does. -/
 theorem addressee_honorific :
     laal.referential = at_.referential ∧ alaq.referential = ix.referential ∧
-      phi laal = phi are' ∧ phi alaq = phi are' := by
+      laal.agreement = are'.agreement ∧ alaq.agreement = are'.agreement := by
   decide
 
 /-- The independent pronouns. -/

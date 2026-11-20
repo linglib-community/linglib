@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Compat
+public import Linglib.Core.Order.Flat
 public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Syntax.Feature.Person.Clusivity
 public import Mathlib.Data.Fintype.Powerset
@@ -125,6 +126,37 @@ def ofPersonClusivity (p : Option Person) (c : Option Clusivity) : Specification
   if h : (Clusivity.restrict c (p.elim Finset.univ participantSets)).Nonempty then
     OrderDual.toDual ⟨_, h⟩
   else ⊥
+
+/-- A person and a clusivity are coherent when some participant set satisfies both, as the
+second person and the exclusive are not. -/
+def Coherent (p : Option Person) (c : Option Clusivity) : Prop :=
+  (Clusivity.restrict c (p.elim Finset.univ participantSets)).Nonempty
+
+instance (p : Option Person) (c : Option Clusivity) : Decidable (Coherent p c) :=
+  inferInstanceAs (Decidable (Finset.Nonempty _))
+
+theorem sets_ofPersonClusivity {p : Option Person} {c : Option Clusivity} (h : Coherent p c) :
+    (ofPersonClusivity p c).sets = Clusivity.restrict c (p.elim Finset.univ participantSets) := by
+  simp only [ofPersonClusivity, dif_pos (show (Clusivity.restrict c _).Nonempty from h)]
+  rfl
+
+/-- The specification of a person and a clusivity is monotone where the more specific pair is
+coherent: specifying a person or a clusivity narrows what the form covers. -/
+theorem ofPersonClusivity_le_ofPersonClusivity {p p' : Flat Person} {c c' : Flat Clusivity}
+    (hp : p ≤ p') (hc : c ≤ c') (h : Coherent p' c') :
+    ofPersonClusivity p c ≤ ofPersonClusivity p' c' := by
+  have key : Clusivity.restrict c' (Option.elim p' Finset.univ participantSets) ⊆
+      Clusivity.restrict c (Option.elim p Finset.univ participantSets) := by
+    intro s hs
+    rw [Clusivity.mem_restrict] at hs ⊢
+    refine ⟨?_, fun k hk ↦ hs.2 k ?_⟩
+    · rcases Flat.le_def.1 hp with rfl | ⟨a, rfl, rfl⟩
+      exacts [Finset.mem_univ s, hs.1]
+    · rcases Flat.le_def.1 hc with rfl | ⟨a, rfl, rfl⟩
+      · cases hk
+      · exact hk
+  rw [le_iff, sets_ofPersonClusivity h, sets_ofPersonClusivity (h.mono key)]
+  exact key
 
 @[simp] theorem ofPersonClusivity_none_none : ofPersonClusivity none none = ⊥ := by decide
 

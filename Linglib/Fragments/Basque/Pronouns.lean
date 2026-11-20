@@ -67,7 +67,7 @@ def addressee : Grade → PersonalPronoun
 /-- The pronoun inventory. -/
 def personal : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
 
-theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
+theorem agreement_zu : zu.agreement = zuek.agreement := by decide
 
 theorem referential_zu : zu.referential = hi.referential := by decide
 

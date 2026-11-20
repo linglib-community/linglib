@@ -197,10 +197,10 @@ theorem hierarchy_silent_on_restriction :
 /-- The K'ichee' formal addressee *laal* agrees as a third person singular and does not outrank the
 third person (§7.1, quoting Stiebels). -/
 theorem formal_addressee :
-    afTarget (phi Kiche.Pronouns.laal) (.personNumber .first .singular) =
+    afTarget Kiche.Pronouns.laal.agreement (.personNumber .first .singular) =
         some (.personNumber .first .singular) ∧
-      ¬ PersonRestriction (phi Kiche.Pronouns.at_) (.personNumber .first .singular) ∧
-      afTarget (phi Kiche.Pronouns.laal) (.personNumber .third .plural) =
+      ¬ PersonRestriction Kiche.Pronouns.at_.agreement (.personNumber .first .singular) ∧
+      afTarget Kiche.Pronouns.laal.agreement (.personNumber .third .plural) =
         some (.personNumber .third .plural) := by
   decide
 
