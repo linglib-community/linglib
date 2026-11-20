@@ -62,8 +62,8 @@ negation `−P`, and its regular closure, the exclusionary negation `∼P`.
 
 ## Implementation notes
 
-Fine's published Downward Exclusion condition omits the regular closure of the excluders, which
-Champollion and Bernard report as a typo. It is stated here with the closure. The de Morgan laws
+Downward Exclusion is stated with the regular closure of the excluders, as Champollion and Bernard
+state Fine's condition. The de Morgan laws
 are proved by computing the inexact verifiers and the subject-matter of each side, which determine
 a regular proposition (`Truthmaker.regularClosure_eq_iff`). Fine states that negation does not see
 regular closure for regular propositions only and his de Morgan laws for regular ones, but they

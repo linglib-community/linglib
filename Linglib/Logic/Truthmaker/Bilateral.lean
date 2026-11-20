@@ -225,6 +225,16 @@ def mirror (x : α × Bool) : α × Bool :=
 theorem mirror_involutive : Function.Involutive (mirror (α := α)) :=
   mirror_mirror
 
+/-- Mirroring as a permutation of the literals. -/
+def mirrorPerm : Equiv.Perm (α × Bool) :=
+  mirror_involutive.toPerm
+
+@[simp] theorem coe_mirrorPerm : ⇑(mirrorPerm (α := α)) = mirror :=
+  rfl
+
+@[simp] theorem mirrorPerm_symm : (mirrorPerm (α := α)).symm = mirrorPerm :=
+  rfl
+
 theorem mirror_ne (x : α × Bool) : mirror x ≠ x :=
   fun h ↦ Bool.not_ne_self x.2 (congrArg Prod.snd h)
 
