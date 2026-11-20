@@ -16,28 +16,28 @@ it to `a`, so Additive Remainder holds (`Diamond.additiveRemainder`), and Strong
 holds, but the remainder is not unique and Remainder fails (`Diamond.not_remainder`): nothing has
 as parts exactly the parts of `a` that do not overlap `b₁`.
 
-In the model `Butterfly`, two individuals `c` and `d` lie below each of two others, `a` and
-`b`. Weak Supplementation holds and Strong Supplementation fails
+In the model `Butterfly`, two individuals `c` and `d` lie below each of two others, `a` and `b`.
+Weak Supplementation holds and Strong Supplementation fails
 (`Butterfly.not_strongSupplementation`): `a` is not part of `b`, and every part of `a` overlaps
 `b`. There `a` is a Goodman fusion of `a` and `b` (`Butterfly.isGoodmanFusion_not_le`). In the
-model `Crown`, which adds a top to `Butterfly`, `c` and `d` have two Leśniewski fusions and no
-least upper bound (`Crown.isFusion_not_isLUB`), and Weak Supplementation fails. In the model
-`Tent`, Strong Supplementation holds and Remainder fails (`Tent.not_remainder`). A two-element
-chain satisfies neither supplementation principle.
+model `Crown`, which adds a top `u` to `Butterfly`, each of `a`, `b` and `u` is a Leśniewski
+fusion of `c` and `d`, which have no least upper bound (`Crown.isFusion_not_isLUB`), and Weak
+Supplementation fails. In the model `Tent`, Strong Supplementation holds and Remainder fails
+(`Tent.not_remainder`). A two-element chain satisfies neither supplementation principle.
 
 The nonempty subsets of a three-element set are a classical mereology
 (`isClassical_nonempty_subsets`).
 
 ## Implementation notes
 
-The models are the book's figures: the two-element chain and `Butterfly` are its two failures
-of Remainder, `Diamond` its model of Additive Remainder without remainders, `Tent` its model of
-Strong Supplementation with missing remainders, `Crown` its model of Leśniewski fusions that
-are not least upper bounds, `Vee` and `Butterfly` its Goodman fusions that
-are no upper bounds, and the nonempty subsets of a three-element set
-its three-atom Boolean algebra without the empty set. The orders are given by their graphs, and
-the statements are decided by enumeration. Weak Supplementation is stated with a part that does
-not overlap the proper part, which in a partial order is a proper part.
+The models are the book's figures: the two-element chain and `Butterfly` are its two models
+without unique remainders (`not_remainder_bool`, `Butterfly.not_remainder`), `Diamond` its model
+of Additive Remainder without remainders, `Tent` its model of Strong Supplementation with missing
+remainders, `Crown` its model of Leśniewski fusions that are not least upper bounds, `Vee` and
+`Butterfly` its Goodman fusions that are no upper bounds, and the nonempty subsets of a
+three-element set its three-atom Boolean algebra without the empty set. The orders are given by
+their graphs, and the statements are decided by enumeration. Weak Supplementation is stated with a
+part that does not overlap the proper part, which in a partial order is a proper part.
 
 ## References
 
@@ -146,6 +146,8 @@ theorem not_strongSupplementation : ¬ StrongSupplementation Butterfly := by
   unfold StrongSupplementation Overlap
   decide
 
+theorem not_remainder : ¬ Remainder Butterfly := fun h ↦ not_strongSupplementation h.strong
+
 -- `a` and `b` are both minimal upper bounds of `c` and `d`, which have no least upper bound.
 theorem minimal_upperBounds_not_isLUB :
     Minimal (· ∈ upperBounds {c, d}) a ∧ Minimal (· ∈ upperBounds {c, d}) b ∧
@@ -185,9 +187,10 @@ instance : DecidableLE Crown := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _)
 
 instance : DecidableLT Crown := decidableLTOfDecidableLE
 
--- `a` and `b` are both Leśniewski fusions of `c` and `d`, which have no least upper bound.
+-- Each of `a`, `b` and `u` is a Leśniewski fusion of `c` and `d`, which have no least upper
+-- bound.
 theorem isFusion_not_isLUB :
-    IsFusion {c, d} a ∧ IsFusion {c, d} b ∧ ¬ ∃ x, IsLUB {c, d} x := by
+    IsFusion {c, d} a ∧ IsFusion {c, d} b ∧ IsFusion {c, d} u ∧ ¬ ∃ x, IsLUB {c, d} x := by
   simp only [IsFusion, IsLUB, IsLeast, mem_upperBounds, mem_lowerBounds, Set.mem_insert_iff,
     Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, exists_eq_or_imp, exists_eq_left]
   unfold Overlap

@@ -10,9 +10,9 @@ public import Linglib.Semantics.Mereology.Solid
 A classical mereology is a partial order in which every nonempty set has a least upper bound
 and Remainder holds: if `x` is not part of `y`, something has as parts exactly the parts of `x`
 that do not overlap `y`. This is `Mereology.IsClassical`, the axiom system of
-[cotnoir-varzi-2021]. It is the same theory as Strong Supplementation with a Leśniewski fusion
-of every nonempty set (`Mereology.isClassical_iff`), the axiomatization by supplementation and
-sums defined from overlap.
+[cotnoir-varzi-2021]. It is the same theory as Weak Supplementation with a Leśniewski fusion of
+every nonempty set (`Mereology.isClassical_iff_weak`), the axiomatization by supplementation
+and sums defined from overlap.
 
 A classical mereology with two elements has no least one. A complete Boolean algebra without
 its least element is a classical mereology (`Mereology.isClassical_subtype_ne_bot`), and a
@@ -29,11 +29,18 @@ Unrestricted fusion quantifies over sets. The first-order axiom schema, over for
 models that are not complete Boolean algebras, and the representation theorem is for the
 second-order form.
 
-The part structures of [krifka-1989] and [krifka-1998] have binary sums and a remainder
-principle, not arbitrary sums, so they are weaker than classical mereology; those of
+The part structure of [krifka-1998] has binary sums and a unique additive remainder, and that
+of [krifka-1989] is a complete join semilattice without bottom element with an additive
+remainder. Neither set of axioms gives Remainder: the model `CotnoirVarzi2021.Diamond` has
+every least upper bound and additive remainders. The part structures of
 [champollion-krifka-2016] and [hovda-2009] are classical mereologies with no null element.
-[hovda-2009] shows that binary distributivity with weak supplementation and arbitrary least
-upper bounds does not give a classical mereology on an infinite domain.
+[hovda-2009] shows that complete join semilattices satisfying Landman's decomposition
+principle, that a part of `y ⊔ z` is part of `y`, part of `z`, or a sum of a part of each, need
+not be classical mereologies on an infinite domain.
+
+Strong Supplementation with Leśniewski fusions (`Mereology.isClassical_iff`) is a system that
+[cotnoir-varzi-2021] note results in classical mereology, and Weak Supplementation with
+Leśniewski fusions (`Mereology.isClassical_iff_weak`) is an axiomatization of [hovda-2009].
 
 ## References
 
@@ -84,6 +91,28 @@ theorem isClassical_iff : IsClassical X ↔
       let ⟨x, hx⟩ := h.exists_isLUB s hs; ⟨x, hx.isFusion h.remainder hs⟩⟩,
     fun ⟨hS, hF⟩ ↦ ⟨fun s hs ↦ let ⟨x, hx⟩ := hF s hs; ⟨x, hx.isLUB hS⟩,
       remainder_of_strong_of_fusion hS hF⟩⟩
+
+/-- Weak Supplementation with unrestricted Leśniewski fusions gives Strong Supplementation
+([hovda-2009]): if `y` is not part of `x` and overlaps it, the fusion of their common parts is
+a proper part of `y`, and a supplement of it in `y` does not overlap `x`. -/
+theorem strong_of_weak_of_fusion (hW : WeakSupplementation X)
+    (hF : ∀ s : Set X, s.Nonempty → ∃ x, IsFusion s x) : StrongSupplementation X :=
+  fun x y hyx ↦ by
+    by_cases ho : Overlap y x
+    · obtain ⟨p, hp⟩ := hF {w | w ≤ y ∧ w ≤ x} ho
+      have hlub := hp.isLUB_of_weak hW fun a b ↦ hF {a, b} (Set.insert_nonempty _ _)
+      have hpy : p ≤ y := hlub.2 fun _ h ↦ h.1
+      have hpx : p ≤ x := hlub.2 fun _ h ↦ h.2
+      obtain ⟨z, hzy, hzp⟩ := hW (lt_of_le_of_ne hpy fun e ↦ hyx (e ▸ hpx))
+      exact ⟨z, hzy, fun ⟨w, hwz, hwx⟩ ↦ hzp ⟨w, hwz, hlub.1 ⟨hwz.trans hzy, hwx⟩⟩⟩
+    · exact ⟨y, le_rfl, ho⟩
+
+/-- The axiomatization by Weak Supplementation and unrestricted Leśniewski fusion
+([hovda-2009]) is the same theory. -/
+theorem isClassical_iff_weak : IsClassical X ↔
+    WeakSupplementation X ∧ ∀ s : Set X, s.Nonempty → ∃ x, IsFusion s x :=
+  isClassical_iff.trans ⟨fun ⟨hS, hF⟩ ↦ ⟨hS.weak, hF⟩,
+    fun ⟨hW, hF⟩ ↦ ⟨strong_of_weak_of_fusion hW hF, hF⟩⟩
 
 /-- A complete Boolean algebra without its least element is a classical mereology. -/
 theorem isClassical_subtype_ne_bot [CompleteBooleanAlgebra B] :

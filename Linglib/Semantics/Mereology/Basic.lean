@@ -156,7 +156,7 @@ section Atoms
 
 variable [PartialOrder α] [OrderBot α] {x y : α}
 
-/-- Two individuals overlap ([krifka-1998]) iff they share a part that is not null. -/
+/-- Two individuals are not disjoint iff they share a part that is not null. -/
 theorem not_disjoint_iff_exists : ¬ Disjoint x y ↔ ∃ z, z ≠ ⊥ ∧ z ≤ x ∧ z ≤ y :=
   ⟨fun h ↦ by
       by_contra hz

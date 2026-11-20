@@ -32,7 +32,8 @@ Remainder (`Studies/CotnoirVarzi2021.lean`).
 ## TODO
 
 Whether unique Additive Remainder implies Remainder is not settled here. An exhaustive search
-finds no part structure with binary sums and at most seven elements that separates them.
+finds no part structure with binary sums and at most seven elements that separates them, so a
+separating model, if there is one, is larger.
 
 ## References
 
@@ -62,7 +63,7 @@ theorem IsFusion.isLUB (hS : StrongSupplementation X) (h : IsFusion s x) : IsLUB
     exact hzu (hzy.mono le_rfl (hu hy))⟩
 
 /-- Under Weak Supplementation, if any two individuals have a fusion then a fusion is a least
-upper bound ([hovda-2009]). -/
+upper bound ([cotnoir-varzi-2021], after [hovda-2009]). -/
 theorem IsFusion.isLUB_of_weak (hW : WeakSupplementation X)
     (hF : ∀ x y : X, ∃ z, IsFusion {x, y} z) (h : IsFusion s x) : IsLUB s x :=
   ⟨h.1, fun u hu ↦ by
@@ -91,7 +92,8 @@ theorem _root_.IsLUB.isFusion (hR : Remainder X) (hne : s.Nonempty) (h : IsLUB s
       exact ((hr z).1 (hzx.trans this)).2 (.refl z)⟩
 
 variable (X) in
-/-- Products: two overlapping individuals have a greatest common part. -/
+/-- Product ([hovda-2009]; Unrestricted Product, A.37 of [cotnoir-varzi-2021]): two overlapping
+individuals have a greatest common part. -/
 def Products : Prop := ∀ ⦃x y : X⦄, Overlap x y → ∃ z, IsGLB {x, y} z
 
 /-- Goodman's fusion, defined from overlap alone: it overlaps exactly what the members
@@ -110,14 +112,14 @@ section SemilatticeSup
 variable [SemilatticeSup X] {x y v w : X}
 
 variable (X) in
-/-- Additive Remainder (T.18 of Cotnoir and Varzi), the relative complement of Krifka 1989
-(D 9): a proper part `x` of `y` has something that does not overlap `x` and sums with it to
-`y`. -/
+/-- Additive Remainder (T.18 of [cotnoir-varzi-2021]), the relative complement of
+[krifka-1989]: a proper part `x` of `y` has something that does not overlap `x` and sums with
+it to `y`. -/
 def AdditiveRemainder : Prop := ∀ ⦃x y : X⦄, x < y → ∃ z, ¬ Overlap z x ∧ x ⊔ z = y
 
 variable (X) in
-/-- The remainder principle of Krifka 1998 and the unique separation of Champollion and Krifka:
-the remainder is unique. -/
+/-- The remainder principle of [krifka-1998] and the unique separation of
+[champollion-krifka-2016]: the remainder is unique. -/
 def UniqueAdditiveRemainder : Prop := ∀ ⦃x y : X⦄, x < y → ∃! z, ¬ Overlap z x ∧ x ⊔ z = y
 
 theorem UniqueAdditiveRemainder.additiveRemainder (h : UniqueAdditiveRemainder X) :
@@ -152,7 +154,8 @@ theorem Remainder.additiveRemainder (h : Remainder X) : AdditiveRemainder X := f
     ((hz w).2 ⟨hwy, fun ho ↦ hw (ho.mono le_rfl le_sup_left)⟩)))
 
 variable (X) in
-/-- Filtration for binary sums: a part of a sum overlaps one of the summands. -/
+/-- Filtration (T.38 of [cotnoir-varzi-2021], after [hovda-2009]) for binary sums: a part of a
+sum overlaps one of the summands. -/
 def Filtration : Prop := ∀ ⦃x y z : X⦄, z ≤ x ⊔ y → Overlap z x ∨ Overlap z y
 
 theorem Remainder.filtration (h : Remainder X) : Filtration X := fun _ _ _ hz ↦

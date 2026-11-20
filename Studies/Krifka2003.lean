@@ -129,6 +129,19 @@ theorem ofAtoms_one (D : Set Atom) : ofAtoms D 1 = ({·} : Atom → Finset Atom)
   · rintro ⟨a, ha, rfl⟩
     exact ⟨⟨Finset.singleton_nonempty a, by simpa using ha⟩, a, rfl⟩
 
+-- On nonempty finite sets of atoms, which have no null element, the atom count is an extensive
+-- measure, so (53b) applies to it.
+theorem isExtensive_card :
+    letI : SemilatticeSup {s : Finset Atom // s.Nonempty} :=
+      Subtype.semilatticeSup fun _ _ hx _ ↦ hx.inl
+    IsExtensive fun s : {s : Finset Atom // s.Nonempty} ↦ s.1.card :=
+  letI : SemilatticeSup {s : Finset Atom // s.Nonempty} :=
+    Subtype.semilatticeSup fun _ _ hx _ ↦ hx.inl
+  { map_sup := fun x y h ↦ Finset.card_union_of_disjoint <| Finset.disjoint_left.2 fun a hx hy ↦
+      h ⟨⟨{a}, Finset.singleton_nonempty a⟩, Finset.singleton_subset_iff.2 hx,
+        Finset.singleton_subset_iff.2 hy⟩
+    pos := fun x ↦ Finset.card_pos.2 x.2 }
+
 -- A count noun with its number argument filled is a measure phrase, (6) of [krifka-1989].
 theorem qua_ofAtoms (D : Set Atom) (n : ℕ) : QUA (ofAtoms D n) :=
   qua_inter_preimage_of_strictMonoOn (Finset.card_strictMono.strictMonoOn _) n

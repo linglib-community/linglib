@@ -29,7 +29,10 @@ by symmetry is the axiom that whatever is connected to a part is connected to th
 relation a cluster is taken under need not be a connection relation, as external connection is
 not reflexive. The chain that connects two members of a cluster may run through `P`-entities
 outside the cluster, since Grimm's definition quantifies over the set the chain runs through,
-so a cluster of self-connected entities need not be self-connected.
+so a cluster of self-connected entities need not be self-connected. A maximal cluster is one
+that contains every cluster overlapping it. [grimm-docekal-2021] state the condition as a
+biconditional, whose converse would make every part of a maximal cluster a cluster; only the
+first direction is formalized.
 
 ## TODO
 

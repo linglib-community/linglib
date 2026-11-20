@@ -27,6 +27,16 @@ distributive. On a generalized Boolean algebra, which has a null element, the fa
 these roles are mathlib's: `Finset.card` is additive on disjoint sets
 (`Finset.card_union_of_disjoint`) and strictly monotone (`Finset.card_strictMono`).
 
+The measure functions of [krifka-1989] and [krifka-1998] may be partial, and their definitions
+have a further clause, the Archimedean property or commensurability, from which the positivity
+of the measure of a remainder is derived. `IsExtensive` is total and takes positivity as a
+field.
+
+## TODO
+
+Measure functions relative to a preorder with the Archimedean property, as in [krifka-1989],
+with positivity a theorem.
+
 ## References
 
 * [champollion-krifka-2016], [krifka-1989], [krifka-1998]
@@ -40,8 +50,8 @@ variable {α β : Type*}
 
 /-! ### Extensive measures
 
-[krifka-1989] and [krifka-1998] define an extensive measure by additivity over non-overlapping
-elements and positivity, and derive from the remainder principle that a proper part measures less
+The extensive measures of [krifka-1989] and [krifka-1998] are additive over non-overlapping
+elements and positive on remainders, so by the remainder principle a proper part measures less
 than the whole. [champollion-krifka-2016] call a measure extensive on a set when it has that
 property there. Either way, the measure phrases such a measure builds are quantized. -/
 
@@ -74,8 +84,8 @@ section Extensive
 
 variable {M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M] {μ : α → M}
 
-/-- An extensive measure ([krifka-1989], [krifka-1998]) is additive over individuals that do not
-overlap and positive. -/
+/-- An extensive measure is additive over individuals that do not overlap and positive
+([krifka-1989], [krifka-1998], where positivity follows from commensurability). -/
 structure IsExtensive (μ : α → M) : Prop where
   /-- The measure of a sum of non-overlapping individuals is the sum of their measures. -/
   map_sup ⦃x y : α⦄ : ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y

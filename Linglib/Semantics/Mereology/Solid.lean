@@ -22,11 +22,13 @@ individuals have a product.
 
 ## Implementation notes
 
-On a part structure without a null element solid overlap is overlap, and these are the
-definitions of `Mereology.Overlap`, `Mereology.IsFusion` and `Mereology.StrongSupplementation`.
-With a null element the plain definitions degenerate: everything overlaps everything, and
-Strong Supplementation fails. The statements are made with `IsBot`, so they apply to a carrier
-with or without a least element.
+On a part structure without a null element solid overlap is overlap, and these are the definitions
+of `Mereology.Overlap`, `Mereology.IsFusion` and `Mereology.StrongSupplementation`. With a null
+element the plain definitions degenerate: everything overlaps everything, and Strong
+Supplementation fails. The axiom system [cotnoir-varzi-2021] give for mereology with a null
+element, with Solid Remainder, is not formalized; the definitions here are the solid forms of
+Strong Supplementation and Leśniewski's fusion. The statements are made with `IsBot`, so they
+apply to a carrier with or without a least element.
 
 ## References
 
@@ -87,8 +89,8 @@ section Sum
 
 variable [PartialOrder α] {P Q : Set α} {s t x y : α}
 
-/-- `t` is a sum of the region `P` ([champollion-krifka-2016]) if it lies above each member and
-each of its non-null parts overlaps one of them. -/
+/-- `t` is a sum of the region `P` if it lies above each member and each of its non-null parts
+overlaps one of them. Without a null element this is the sum of [champollion-krifka-2016]. -/
 def IsSum (P : Set α) (t : α) : Prop :=
   (∀ x ∈ P, x ≤ t) ∧ ∀ y ≤ t, ¬ IsBot y → ∃ x ∈ P, SolidOverlap y x
 
@@ -204,8 +206,10 @@ end GeneralizedBooleanAlgebra
 instance [SemilatticeInf α] : HasProducts α where
   exists_isGLB x y _ := ⟨x ⊓ y, isGLB_pair⟩
 
-/-- A part structure is a classical extensional mereology ([champollion-krifka-2016]) if it is
-strongly supplemented and every nonempty region has a sum. -/
+/-- A classical mereology that may have a null element: Strong Supplementation and a sum of
+every nonempty region, both stated with solid overlap. Without a null element it is the
+classical extensional mereology of [champollion-krifka-2016], whose axiom is uniqueness of sums
+(`Mereology.isClassicalMereology_iff_existsUnique`). -/
 class IsClassicalMereology (α : Type*) [PartialOrder α] : Prop
     extends StronglySupplemented α where
   exists_isSum (P : Set α) : P.Nonempty → ∃ t, IsSum P t

@@ -26,8 +26,9 @@ namespace Mereology
 variable {X : Type*} [PartialOrder X] {x y : X}
 
 variable (X) in
-/-- Weak Supplementation (A.10): a proper part leaves some part of the whole that does not overlap
-it. -/
+/-- Weak Supplementation: a proper part leaves some part of the whole that does not overlap it.
+This is the form T.25 of [cotnoir-varzi-2021], equivalent in a partial order to their A.10,
+which asks for a proper part. -/
 def WeakSupplementation : Prop := ∀ ⦃x y : X⦄, x < y → ∃ z ≤ y, ¬ Overlap z x
 
 variable (X) in
@@ -35,8 +36,8 @@ variable (X) in
 def StrongSupplementation : Prop := ∀ ⦃x y : X⦄, ¬ y ≤ x → ∃ z ≤ y, ¬ Overlap z x
 
 variable (X) in
-/-- Remainder (A.4 of Cotnoir and Varzi): if `x` is not part of `y`, something has as
-parts exactly the parts of `x` that do not overlap `y`. -/
+/-- Remainder (A.4 of [cotnoir-varzi-2021]): if `x` is not part of `y`, something has as parts
+exactly the parts of `x` that do not overlap `y`. -/
 def Remainder : Prop := ∀ ⦃x y : X⦄, ¬ x ≤ y → ∃ z, ∀ w, w ≤ z ↔ w ≤ x ∧ ¬ Overlap w y
 
 theorem StrongSupplementation.weak (h : StrongSupplementation X) : WeakSupplementation X :=
