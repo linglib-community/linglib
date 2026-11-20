@@ -31,9 +31,8 @@ public import Linglib.Data.Examples.Languages
 A language's genders are its agreement classes, assigned to nouns by ordered rules that read
 meaning or form, never form alone; German diminutives put [a formal rule before the semantic
 one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily rightwards
-along the Agreement Hierarchy ([Table 8.1](##hybrids_respectHierarchy)), and in coastal Bantu
-[semantic agreement spreads leftwards along it stage by
-stage](##BantuStage.respectsHierarchy). Coordinations resolve
+along the Agreement Hierarchy (`hybrids_monotoneOn`), and in coastal Bantu semantic agreement
+spreads leftwards along it stage by stage (`BantuStage.monotoneOn_uncurry_hybrid`). Coordinations resolve
 by ordered rules reading the conjuncts' person, meaning or gender, and Serbo-Croat moves from
 syntactic to semantic resolution through [a stage varying between the
 two](##SerboCroat.stage2_map_resolve), [conditioned by meaning, not
@@ -576,8 +575,11 @@ def hybridNames : List (String × (Position → Option Availability)) :=
     ("gazde", gazde),
     ("boat", boat)]
 
-/-- Every hybrid of Table 8.1, and the English boat nouns, respect the Agreement Hierarchy. -/
-theorem hybrids_respectHierarchy : ∀ h ∈ hybridNames, RespectsHierarchy h.2 := by decide
+/-- Every hybrid of Table 8.1, and the English boat nouns, is monotone along the Agreement
+Hierarchy where it is recorded. -/
+theorem hybrids_monotoneOn : ∀ h ∈ hybridNames,
+    MonotoneOn (fun i ↦ (h.2 i).getD .syntacticOnly) {i | (h.2 i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide
 
 /-- At the corpus level, 16.9 per cent of 3,835 of Panov's respondents favour feminine
 agreement with *vrač* for the attributive and 51.7 per cent of 3,806 for the predicate. -/
@@ -586,7 +588,9 @@ def vracFeminine : Position → Option ℚ
   | .predicate => some (517 / 1000)
   | _ => none
 
-theorem vracFeminine_respectsHierarchy : RespectsHierarchy vracFeminine := by decide +kernel
+theorem vracFeminine_monotoneOn :
+    MonotoneOn (fun i ↦ (vracFeminine i).getD 0) {i | (vracFeminine i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide +kernel
 
 /-! ### The spread of semantic agreement in Bantu (§8.3)
 
@@ -665,13 +669,20 @@ def hybrid : BantuStage → FinePosition → Option Availability
 
 /-- Semantic agreement spreads leftwards along the Agreement Hierarchy: of two positions at two
 stages, the later position at the later stage is never the less open to semantic agreement. -/
-theorem respectsHierarchy : RespectsHierarchy (Function.uncurry hybrid) := by decide
+theorem monotoneOn_uncurry_hybrid :
+    MonotoneOn (fun p ↦ (Function.uncurry hybrid p).getD .syntacticOnly)
+      {p | (Function.uncurry hybrid p).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide
 
-theorem hybrid_respectsHierarchy (s : BantuStage) : RespectsHierarchy s.hybrid :=
-  respectsHierarchy.comp_monotone (g := Prod.mk s) fun _ _ h ↦ ⟨le_rfl, h⟩
+theorem monotoneOn_hybrid (s : BantuStage) :
+    MonotoneOn (fun i ↦ (s.hybrid i).getD .syntacticOnly) {i | (s.hybrid i).isSome} :=
+  monotoneOn_uncurry_hybrid.comp
+    ((monotone_const.prodMk monotone_id).monotoneOn _) fun _ h ↦ h
 
-theorem hybrid_monotone (i : FinePosition) : RespectsHierarchy (hybrid · i) :=
-  respectsHierarchy.comp_monotone (g := (·, i)) fun _ _ h ↦ ⟨h, le_rfl⟩
+theorem monotoneOn_swap_hybrid (i : FinePosition) :
+    MonotoneOn (fun s ↦ (hybrid s i).getD .syntacticOnly) {s | (hybrid s i).isSome} :=
+  monotoneOn_uncurry_hybrid.comp
+    ((monotone_id.prodMk monotone_const).monotoneOn _) fun _ h ↦ h
 
 end BantuStage
 

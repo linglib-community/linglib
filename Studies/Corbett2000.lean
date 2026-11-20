@@ -671,8 +671,12 @@ def americanCommittee : Position → Option Availability :=
   fun | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
       | .personalPronoun => some .both | _ => none
 
-theorem committee_respectHierarchy :
-    RespectsHierarchy britishCommittee ∧ RespectsHierarchy americanCommittee := by decide
+theorem committee_monotoneOn :
+    MonotoneOn (fun i ↦ (britishCommittee i).getD .syntacticOnly)
+        {i | (britishCommittee i).isSome} ∧
+      MonotoneOn (fun i ↦ (americanCommittee i).getD .syntacticOnly)
+        {i | (americanCommittee i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; exact ⟨by decide, by decide⟩
 
 /-- Nixon's corpus gives the percentage of plural agreement with corporate nouns by target, the
 pronouns pooling the possessive with the personal. -/
@@ -682,7 +686,8 @@ def nixon : Position → Option ℚ
   | .personalPronoun => some (274 / 10)
   | _ => none
 
-theorem nixon_respectsHierarchy : RespectsHierarchy nixon := by decide +kernel
+theorem nixon_monotoneOn : MonotoneOn (fun i ↦ (nixon i).getD 0) {i | (nixon i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide +kernel
 
 /-- The varieties of English. -/
 inductive Variety where
@@ -820,13 +825,14 @@ end Fits
 
 /-- Table 6.12 gives the percentage of number resolution with Russian conjoined noun phrases by
 target. -/
-def russianConjoined : Position → Option ℚ
-  | .attributive => some 12
-  | .predicate => some 70
-  | .relativePronoun => some 100
-  | .personalPronoun => some 100
+def russianConjoined : Position → ℚ
+  | .attributive => 12
+  | .predicate => 70
+  | .relativePronoun => 100
+  | .personalPronoun => 100
 
-theorem russianConjoined_respectsHierarchy : RespectsHierarchy russianConjoined := by decide
+theorem russianConjoined_monotone : Monotone russianConjoined := by
+  unfold Monotone; decide
 
 /-- A row of Table 6.13 gives the percentage of plural predicates with conjoined subjects by the
 animacy of the conjuncts and their position relative to the predicate. -/
