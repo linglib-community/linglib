@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Dominance
+public import Linglib.Syntax.DependencyGrammar.Tree
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.List.Sort
