@@ -36,7 +36,7 @@ judgments.
   argument that its form or predicate forces, whether it is a logophor, the locus of an explicit
   distributor, and the number of the matrix argument. A form or predicate that needs an
   individual forces binding, and one that needs the plurality forces group coreference, since
-  a bound dref has one value in each class of the distribution
+  a bound dref has one value in each class of a distribution that separates its binder's values
   (`PPCDRT.subsingleton_value_of_bindingCond`). Partial control forces neither, since PRO may
   properly include the controller or coincide with it.
 * A simple sentence has only the in-situ reading, so (18b)–(20) are the narrow reading with the
@@ -102,8 +102,8 @@ open PPCDRT PCDRT in
 -- (7), (9)
 theorem exists_scopeReading (r : Scope) :
     ∃ S : PluralAssign ℕ Ind,
-      ScopeReading r.locus r.antecedence u₁ u₂ u₃ S {u₁, w} ∧ (value u₂ S).Nonempty :=
-  (exists_scopeReading_iff _ _).2 (by cases r <;> simp)
+      ScopeReading r.locus r.antecedence u₁ u₂ u₃ S {w} ∧ (value u₂ S).Nonempty :=
+  let ⟨S, _, h⟩ := (exists_scopeReading_iff _ _).2 (by cases r <;> simp); ⟨S, h⟩
 
 /-- The relation a pronoun's number forces: a singular pronoun denotes an individual and so
     must be bound, a plural pronoun may be bound or group-identical ((10b)). -/

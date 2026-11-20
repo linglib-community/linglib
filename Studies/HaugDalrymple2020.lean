@@ -25,8 +25,9 @@ construal of the Cheyenne affix (78), multiple reciprocals (85), (86), the forks
 sailors (96), and the wide construal with three girls (136).
 The readings are classified by two parameters (§3.3), the locus of the reciprocal, in situ
 or lifted to the matrix DRS, and the relation of its antecedent to the matrix subject, bound
-or group coreference (`ScopeReading`). Three of the four combinations have a state
-(`exists_scopeReading_iff`): a bound dref has one value in each class of the distribution
+or group coreference (`ScopeReading`). Where no two holders of the attitude share a doxastic
+alternative, three of the four combinations have a state (`exists_scopeReading_iff`): a bound
+dref then has one value in each class of the distribution
 (`PPCDRT.subsingleton_value_of_bindingCond`), which leaves no plurality for a reciprocal in situ.
 
 The paper's relation to cumulation is stated in general. Pointwise conditions on plural
@@ -53,6 +54,10 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
   `T` and `think` of (14), (46) are not defined, and each sample state is checked under
   the `Δ` its DRS induces. The `max` operator of (97) is likewise replaced by the static
   readings it yields.
+* The complement of *think* is read under distribution over the world dref alone, `Δ = {w}`, as
+  `δ_w` in (46) has it. The classes are then those of the matrix subject only when no two of
+  its values share a doxastic alternative, which the paper assumes of its examples and
+  `exists_scopeReading_iff` takes as a hypothesis.
 * Sample rows are `Option`-valued (`row`, read into assignments by `toPart`): `Part` has no
   type-level decidable equality, so the transcribed conditions are decided over the options.
 * A DRS is true when some output state satisfies its conditions. `relCond` asks every state to
@@ -531,8 +536,6 @@ end Cumulativity
 
 /-! ### Reciprocal scope (§3) -/
 
-private theorem mem_u₁w : ∀ v, v ∈ ({u₁, w} : Set ℕ) ↔ v ∈ [u₁, w] := by simp
-
 private theorem mem_w : ∀ v, v ∈ ({w} : Set ℕ) ↔ v ∈ [w] := by simp
 
 /-- Each girl thought "we will win", `∪u₂ → ∪u₁` under `δ_w` (49). -/
@@ -549,12 +552,12 @@ def girlsWide : List (ℕ → Option Ind) :=
 
 -- (49), (51), (44), §3.1
 theorem win_readings :
-    (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {u₁, w} ∧
-        ¬ bindingCond u₂ u₁ (ofRows girlsNarrow) {u₁, w}) ∧
-      bindingCond u₂ u₁ (ofRows girlsWide) {u₁, w} ∧
-        ¬ groupIdentityCond u₂ u₁ (ofRows girlsWide) {u₁, w} := by
-  rw [groupIdentityCond_ofRows mem_u₁w, bindingCond_ofRows, bindingCond_ofRows,
-    groupIdentityCond_ofRows mem_u₁w]
+    (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {w} ∧
+        ¬ bindingCond u₂ u₁ (ofRows girlsNarrow) {w}) ∧
+      bindingCond u₂ u₁ (ofRows girlsWide) {w} ∧
+        ¬ groupIdentityCond u₂ u₁ (ofRows girlsWide) {w} := by
+  rw [groupIdentityCond_ofRows mem_w, bindingCond_ofRows, bindingCond_ofRows,
+    groupIdentityCond_ofRows mem_w]
   decide
 
 /-- Each girl thought "we saw each other", the reciprocal inside the belief (53). -/
@@ -578,9 +581,9 @@ def sawCrossed : List (ℕ → Option Ind) :=
 
 -- §3.2, (53), (52)
 theorem saw_narrow :
-    groupIdentityCond u₂ u₁ (ofRows sawNarrow) {u₁, w} ∧
-      reciprocityCond u₃ u₂ (ofRows sawNarrow) {u₁, w} := by
-  rw [groupIdentityCond_ofRows mem_u₁w, reciprocityCond_ofRows mem_u₁w]
+    groupIdentityCond u₂ u₁ (ofRows sawNarrow) {w} ∧
+      reciprocityCond u₃ u₂ (ofRows sawNarrow) {w} := by
+  rw [groupIdentityCond_ofRows mem_w, reciprocityCond_ofRows mem_w]
   decide
 
 -- §3.2, (55), (54)
@@ -639,18 +642,28 @@ locus `l` and with antecedent relation `a`: (52b) low with group coreference, (5
 def ScopeReading {E : Type*} (l : Locus) (a : Antecedence) (v₁ v₂ v₃ : ℕ) : PPDRSCond E :=
   fun S Δ ↦ a.cond v₂ v₁ S (l.dist Δ) ∧ reciprocityCond v₃ v₂ S (l.dist Δ)
 
-/-- Three of the four combinations of locus and antecedent relation have a state in which the
-local antecedent has a value: a bound antecedent cannot cooccur with a low reciprocal. -/
+private theorem forall_eqOn_ofRows {rows : List (ℕ → Option Ind)} {Δ : Set ℕ} {Δl : List ℕ}
+    {u : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
+    (∀ t ∈ ofRows rows, ∀ t' ∈ ofRows rows, Set.EqOn t t' Δ → t u = t' u) ↔
+      ∀ s ∈ rows, ∀ s' ∈ rows, (∀ v ∈ Δl, s v = s' v) → s u = s' u := by
+  simp [ofRows, Set.EqOn, hΔ]
+
+/-- Where no two holders of the attitude share a doxastic alternative, three of the four
+combinations of locus and antecedent relation have a state in which the local antecedent has a
+value: a bound antecedent cannot cooccur with a low reciprocal. -/
 theorem exists_scopeReading_iff (l : Locus) (a : Antecedence) :
-    (∃ S : PluralAssign ℕ Ind, ScopeReading l a u₁ u₂ u₃ S {u₁, w} ∧ (value u₂ S).Nonempty) ↔
+    (∃ S : PluralAssign ℕ Ind, (∀ t ∈ S, ∀ t' ∈ S, Set.EqOn t t' {w} → t u₁ = t' u₁) ∧
+        ScopeReading l a u₁ u₂ u₃ S {w} ∧ (value u₂ S).Nonempty) ↔
       ¬(l = .low ∧ a = .bound) := by
   cases l <;> cases a
-  · exact iff_of_false (fun ⟨_, ⟨hb, hr⟩, hne⟩ ↦ hne.ne_empty <|
-      value_eq_empty_of_bindingCond_of_reciprocityCond hb (Set.mem_insert ..) hr) (by simp)
-  · exact iff_of_true ⟨_, saw_narrow, by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
-  · exact iff_of_true ⟨_, saw_wide, by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
-  · exact iff_of_true ⟨_, ⟨saw_crossed.1, saw_crossed.2.1⟩,
+  · exact iff_of_false (fun ⟨_, hw, ⟨hb, hr⟩, hne⟩ ↦ hne.ne_empty <|
+      value_eq_empty_of_bindingCond_of_reciprocityCond hb hw hr) (by simp)
+  · exact iff_of_true ⟨_, (forall_eqOn_ofRows mem_w).2 (by decide), saw_narrow,
       by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
+  · exact iff_of_true ⟨_, (forall_eqOn_ofRows mem_w).2 (by decide), saw_wide,
+      by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
+  · exact iff_of_true ⟨_, (forall_eqOn_ofRows mem_w).2 (by decide),
+      ⟨saw_crossed.1, saw_crossed.2.1⟩, by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
 
 /-- Example (69) distributed over two accessible worlds, with the reciprocal lifted above `◇`. -/
 def beatModal : List (ℕ → Option Ind) :=

@@ -25,10 +25,11 @@ Higginbotham and Williams:
 
 Without distribution, group identity is equality of the two drefs' values
 (`groupIdentityCond_empty`), and reciprocity says that their dependency is irreflexive with equal
-domain and codomain (`reciprocityCond_empty_iff`). Under distribution over its antecedent a bound
-anaphor has at most one value in each class (`subsingleton_value_of_bindingCond`), while the
-antecedent of a reciprocal has two values in the state (`nontrivial_value_of_reciprocityCond`), so
-a bound dref has no value for a reciprocal inside the distribution to take as antecedent
+domain and codomain (`reciprocityCond_empty_iff`). Where the rows that agree on `Δ` agree on
+its antecedent, as they do when the antecedent is in `Δ`, a bound anaphor has at most one value
+in each class (`subsingleton_value_of_bindingCond`), while the antecedent of a reciprocal has two
+values in the state (`nontrivial_value_of_reciprocityCond`), so a bound dref has no value for a
+reciprocal inside the distribution to take as antecedent
 (`value_eq_empty_of_bindingCond_of_reciprocityCond`).
 
 Partial dref introduction `extend u` relates `i` to `o` when `o` values `u`, `i` does not, and
@@ -171,26 +172,30 @@ theorem nontrivial_value_of_reciprocityCond (h : reciprocityCond uAnaph uAnt S �
   ⟨a, h.1 s hs ▸ ⟨s, self_mem_eqClass S Δ hs, Part.eq_some_iff.2 ha⟩,
     b, ⟨s, hs, Part.eq_some_iff.2 hb⟩, h.2 s hs a ha b hb⟩
 
-/-- A bound anaphor holds one value throughout each class under distribution over its
-antecedent. -/
-theorem eq_of_mem_eqClass_of_bindingCond (h : bindingCond uAnaph uAnt S Δ) (hΔ : uAnt ∈ Δ)
+/-- A bound anaphor holds one value throughout each class, where rows that agree on `Δ` agree on
+its antecedent. -/
+theorem eq_of_mem_eqClass_of_bindingCond (h : bindingCond uAnaph uAnt S Δ)
+    (hΔ : ∀ t ∈ S, ∀ t' ∈ S, Set.EqOn t t' Δ → t uAnt = t' uAnt)
     {s t t' : ℕ → Part E} (ht : t ∈ eqClass S Δ s) (ht' : t' ∈ eqClass S Δ s) :
     t uAnaph = t' uAnaph := by
-  rw [h t ht.1, h t' ht'.1, ht.2 hΔ, ht'.2 hΔ]
+  rw [h t ht.1, h t' ht'.1, hΔ t ht.1 t' ht'.1 (ht.2.trans ht'.2.symm)]
 
-/-- A bound anaphor denotes an individual: under distribution over its antecedent it has at most
-one value in each class. -/
-theorem subsingleton_value_of_bindingCond (h : bindingCond uAnaph uAnt S Δ) (hΔ : uAnt ∈ Δ)
-    (s : ℕ → Part E) : (value uAnaph (eqClass S Δ s)).Subsingleton :=
+/-- A bound anaphor denotes an individual: where rows that agree on `Δ` agree on its antecedent,
+it has at most one value in each class. -/
+theorem subsingleton_value_of_bindingCond (h : bindingCond uAnaph uAnt S Δ)
+    (hΔ : ∀ t ∈ S, ∀ t' ∈ S, Set.EqOn t t' Δ → t uAnt = t' uAnt) (s : ℕ → Part E) :
+    (value uAnaph (eqClass S Δ s)).Subsingleton :=
   fun _ ⟨_, ht, ha⟩ _ ⟨_, ht', hb⟩ ↦ Part.some_injective <|
     ha.symm.trans ((eq_of_mem_eqClass_of_bindingCond h hΔ ht ht').trans hb)
 
-/-- A reciprocal inside the distribution cannot take a bound dref as its antecedent: the reciprocal
-would find the antecedent's value within the class, where the antecedent holds that value in every
-row and so is nowhere distinct from it. -/
+/-- A reciprocal inside the distribution cannot take a bound dref as its antecedent, where rows
+that agree on `Δ` agree on the binder: the reciprocal would find the antecedent's value within
+the class, where the antecedent holds that value in every row and so is nowhere distinct from
+it. -/
 theorem value_eq_empty_of_bindingCond_of_reciprocityCond {uRecip : ℕ}
-    (hb : bindingCond uAnaph uAnt S Δ) (hΔ : uAnt ∈ Δ) (hr : reciprocityCond uRecip uAnaph S Δ) :
-    value uAnaph S = ∅ := by
+    (hb : bindingCond uAnaph uAnt S Δ)
+    (hΔ : ∀ t ∈ S, ∀ t' ∈ S, Set.EqOn t t' Δ → t uAnt = t' uAnt)
+    (hr : reciprocityCond uRecip uAnaph S Δ) : value uAnaph S = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun d hd ↦ ?_
   obtain ⟨s, hs, hsd⟩ := id hd
   rw [← hr.1 s hs] at hd
