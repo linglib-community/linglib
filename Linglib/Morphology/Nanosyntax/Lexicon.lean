@@ -16,8 +16,9 @@ exactly when the other's stored object contains its own (`LexicalEntry.applySet_
 (`spellout_realizes`).
 
 The spellable objects of a lexicon are closed under constituents (`isLowerSpellout_spellout`),
-and none has an unlabelled node unless an entry stores one (`not_hasUnlabelled_of_spellout_isSome`), the
-two hypotheses of the general results on the lexicalization algorithm. An entry of the
+and none has an unlabelled node unless an entry stores one
+(`not_hasUnlabelled_of_spellout_isSome`), the two hypotheses of the general results on the
+lexicalization algorithm. An entry of the
 containment engine is read as an entry storing a spine, and on such a lexicon the algorithm's
 one exponent is the containment engine's spellout (`exponents_ofSupersetRule`).
 
