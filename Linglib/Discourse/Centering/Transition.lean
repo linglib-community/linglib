@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Order.WithBot
 
@@ -15,7 +16,7 @@ and Cote, are the four outcomes of the two tests; Grosz, Joshi, and Weinstein's 
 continuation, retaining, and shifting, merge the two shifts, and the merging map
 `ExtendedTransition.toTransition` is monotone (`ExtendedTransition.toTransition_mono`). Rule 2
 orders the transitions by the first test and then by the second
-(`ExtendedTransition.lt_iff_toLex_lt`).
+(`ExtendedTransition.toLexIso`).
 
 ## Implementation notes
 
@@ -52,15 +53,31 @@ inductive Transition where
 
 namespace Transition
 
-/-- The outcome of the second test on a transition whose center is kept, `⊥` on a shift. -/
-def salience : Transition → WithBot Bool
-  | continuation => (true : Bool)
-  | retaining => (false : Bool)
-  | shifting => ⊥
+/-- A transition as the outcome of the second test where the center is kept, and `⊥` on a
+shift. -/
+def salienceEquiv : Transition ≃ WithBot Bool where
+  toFun
+    | continuation => (true : Bool)
+    | retaining => (false : Bool)
+    | shifting => ⊥
+  invFun
+    | some true => continuation
+    | some false => retaining
+    | none => shifting
+  left_inv t := by cases t <;> rfl
+  right_inv b := by rcases b with _ | _ | _ <;> rfl
 
 /-- Rule 2: continuation, then retaining, then shifting. -/
-instance : LinearOrder Transition :=
-  LinearOrder.lift' salience fun a b h ↦ by cases a <;> cases b <;> cases h <;> rfl
+instance : LinearOrder Transition := LinearOrder.lift' salienceEquiv salienceEquiv.injective
+
+/-- The transitions in the order of Rule 2 are `WithBot Bool`. -/
+def salienceIso : Transition ≃o WithBot Bool := ⟨salienceEquiv, Iff.rfl⟩
+
+@[simp] theorem salienceIso_continuation : salienceIso continuation = (true : Bool) := rfl
+
+@[simp] theorem salienceIso_retaining : salienceIso retaining = (false : Bool) := rfl
+
+@[simp] theorem salienceIso_shifting : salienceIso shifting = ⊥ := rfl
 
 end Transition
 
@@ -104,13 +121,23 @@ variable (c s : Prop) [Decidable c] [Decidable s]
 
 end ofTests
 
+/-- A transition as the outcomes of the two tests. -/
+def testsEquiv : ExtendedTransition ≃ Bool × Bool where
+  toFun t := (t.cohesion, t.salience)
+  invFun p := ofTests (p.1 = true) (p.2 = true)
+  left_inv t := by cases t <;> rfl
+  right_inv p := by rcases p with ⟨_ | _, _ | _⟩ <;> rfl
+
 /-- Rule 2: the order by the first test and then by the second. -/
 instance : LinearOrder ExtendedTransition :=
-  LinearOrder.lift' (fun t ↦ toLex (t.cohesion, t.salience)) fun _ _ h ↦
-    have h := Prod.ext_iff.mp (toLex.injective h); ext h.1 h.2
+  LinearOrder.lift' (toLex ∘ testsEquiv) (toLex.injective.comp testsEquiv.injective)
 
-theorem lt_iff_toLex_lt {t t' : ExtendedTransition} :
-    t < t' ↔ toLex (t.cohesion, t.salience) < toLex (t'.cohesion, t'.salience) := Iff.rfl
+/-- The transitions in the order of Rule 2 are the pairs of outcomes of the two tests in
+lexicographic order. -/
+def toLexIso : ExtendedTransition ≃o Bool ×ₗ Bool := ⟨testsEquiv.trans toLex, Iff.rfl⟩
+
+@[simp] theorem toLexIso_apply (t : ExtendedTransition) :
+    toLexIso t = toLex (t.cohesion, t.salience) := rfl
 
 /-- The transition of Grosz, Joshi, and Weinstein that a transition refines. -/
 def toTransition : ExtendedTransition → Transition
@@ -120,6 +147,18 @@ def toTransition : ExtendedTransition → Transition
 
 theorem toTransition_mono : Monotone toTransition := by
   intro a b; cases a <;> cases b <;> decide
+
+/-- `toTransition` as an order homomorphism. -/
+def toTransitionHom : ExtendedTransition →o Transition := ⟨toTransition, toTransition_mono⟩
+
+@[simp] theorem coe_toTransitionHom : ⇑toTransitionHom = toTransition := rfl
+
+/-- Through the two order isomorphisms, `toTransition` keeps the outcome of the second test
+where the first passes and forgets it where the first fails. -/
+theorem salienceIso_toTransition (t : ExtendedTransition) :
+    Transition.salienceIso t.toTransition =
+      if t.cohesion then (t.salience : WithBot Bool) else ⊥ := by
+  cases t <;> rfl
 
 end ExtendedTransition
 

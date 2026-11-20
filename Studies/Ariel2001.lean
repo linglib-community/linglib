@@ -80,6 +80,11 @@ theorem attenuation_mono : Monotone attenuation := by
   unfold Monotone
   decide
 
+/-- `attenuation` as an order homomorphism. -/
+def attenuationHom : AccessibilityLevel →o Attenuation := ⟨attenuation, attenuation_mono⟩
+
+@[simp] theorem coe_attenuationHom : ⇑attenuationHom = attenuation := rfl
+
 theorem not_antitone_informativity : ¬ Antitone informativity :=
   fun h ↦ absurd (h (show lastName ≤ distalDemMod by decide)) (by decide)
 

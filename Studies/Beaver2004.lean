@@ -413,13 +413,15 @@ theorem cot_lt_iff_bfp_lt_of_tied (h0 : agree feat prev c₁ = agree feat prev c
   rcases priorTopic with _ | p
   · rw [extendedTransition_none_eq_ofTests hx₁, extendedTransition_none_eq_ofTests hx₂, cohere_none,
       cohere_none, WithBot.coe_lt_coe]
-    simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex,
+    rw [← ExtendedTransition.toLexIso.lt_iff_lt]
+    simp only [ExtendedTransition.toLexIso_apply, Prod.Lex.toLex_lt_toLex,
       ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
       decide_true, decide_eq_true_eq, decide_eq_false_iff_not, false_or, lt_self_iff_false,
       true_and]
     omega
   · rw [extendedTransition_eq_ofTests hx₁, extendedTransition_eq_ofTests hx₂, WithBot.coe_lt_coe]
-    simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex,
+    rw [← ExtendedTransition.toLexIso.lt_iff_lt]
+    simp only [ExtendedTransition.toLexIso_apply, Prod.Lex.toLex_lt_toLex,
       ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
       decide_eq_true_eq, decide_eq_false_iff_not, decide_eq_decide]
     omega

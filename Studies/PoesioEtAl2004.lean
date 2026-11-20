@@ -114,6 +114,12 @@ theorem cbUniqueness_of_role_injective (prev : Utterance E R F) (s : Finset E)
     CBUniqueness prev s :=
   card_backwardCenters_le_one s h
 
+/-- A ranking that refines one with a unique CB has a unique CB. -/
+theorem CBUniqueness.of_mapRole {R' : Type*} [LinearOrder R'] {f : R → R'} (hf : Monotone f)
+    {prev : Utterance E R F} {s : Finset E} (h : CBUniqueness (prev.mapRole f) s) :
+    CBUniqueness prev s :=
+  (Finset.card_le_card (backwardCenters_subset_mapRole hf)).trans h
+
 /-- CB uniqueness holds once ties in the ranking are broken by linear order, as
 [strube-hahn-1999] break ties of information status by text position. -/
 theorem cbUniqueness_indexed (prev : Utterance E R F) (s : Finset E) :
@@ -167,6 +173,12 @@ def InfoStatus.rank : InfoStatus → ℕ
   | .hearerNew => 0
 
 instance : LinearOrder InfoStatus := LinearOrder.lift' InfoStatus.rank (by decide)
+
+/-- `InfoStatus.rank` as an order embedding. -/
+def InfoStatus.rankOrderEmbedding : InfoStatus ↪o ℕ := ⟨⟨InfoStatus.rank, by decide⟩, Iff.rfl⟩
+
+@[simp] theorem InfoStatus.coe_rankOrderEmbedding :
+    ⇑InfoStatus.rankOrderEmbedding = InfoStatus.rank := rfl
 
 /-! ### The illustrations -/
 

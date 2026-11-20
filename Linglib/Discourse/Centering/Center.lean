@@ -27,6 +27,10 @@ The *preferred center* of an utterance is the highest-ranked of its own forward-
   there is at most one.
 * `Discourse.Centering.card_backwardCenters_le_one`: there is at most one when no two entities
   are realized in the same role.
+* `Discourse.Centering.backwardCenters_subset_mapRole`: a monotone map of roles keeps every
+  backward-looking center, so a coarser ranking has at least the centers of a finer one.
+* `Discourse.Centering.backwardCenters_mapRole`, `Discourse.Centering.cb_mapRole`: a strictly
+  monotone map of roles changes neither the backward-looking centers nor `cb`.
 * `Discourse.Centering.backwardCenters_indexed`: after an utterance ranked by role and then by
   surface position, `cb` is the only backward-looking center.
 * `Discourse.Centering.cb_cf_self`: the preferred center of an utterance is the
@@ -165,6 +169,33 @@ theorem card_backwardCenters_le_one (s : Finset E)
   obtain ⟨rb, hrb, rfl, heb⟩ := prev.exists_rank_eq hpb
   exact h ra hra rb hrb (WithBot.coe_injective (hea.symm.trans (hab.trans heb)))
 
+/-- A monotone map of roles keeps every backward-looking center: the centers under a ranking are
+among the centers under any coarser one. -/
+theorem backwardCenters_subset_mapRole {R' : Type*} [LinearOrder R'] {f : R → R'}
+    (hf : Monotone f) : backwardCenters prev s ⊆ backwardCenters (prev.mapRole f) s := by
+  intro e he
+  obtain ⟨h₁, h₂, h₃⟩ := mem_backwardCenters.1 he
+  have hmem : ∀ {x : E}, x ∈ prev.mapRole f ↔ x ∈ prev := fun {x} ↦ by
+    rw [← Utterance.mem_cf, Utterance.cf_mapRole, Utterance.mem_cf]
+  refine mem_backwardCenters.2 ⟨hmem.2 h₁, h₂, fun e' he' hs ↦ ?_⟩
+  rw [prev.rank_mapRole hf, prev.rank_mapRole hf]
+  exact WithBot.monotone_map_iff.2 hf (h₃ e' (hmem.1 he') hs)
+
+/-- A strictly monotone map of roles leaves the backward-looking centers unchanged. -/
+theorem backwardCenters_mapRole {R' : Type*} [LinearOrder R'] {f : R → R'} (hf : StrictMono f) :
+    backwardCenters (prev.mapRole f) s = backwardCenters prev s := by
+  ext e
+  simp only [mem_backwardCenters, ← Utterance.mem_cf, Utterance.cf_mapRole,
+    prev.rank_mapRole hf.monotone, (WithBot.strictMono_map_iff.2 hf).le_iff_le]
+
+/-- A strictly monotone map of roles leaves the backward-looking center unchanged. -/
+theorem cb_mapRole {R' : Type*} [LinearOrder R'] {f : R → R'} (hf : StrictMono f) :
+    cb (prev.mapRole f) s = cb prev s := by
+  rw [cb, cb, Utterance.mapRole, List.filter_map, List.argmax_map, Option.map_map]
+  show Option.map (·.entity) (List.argmax (fun x : Realization E R F ↦ f x.role)
+    (prev.realizations.filter (·.entity ∈ s))) = _
+  exact congrArg _ (List.argmax_congr fun _ _ _ _ ↦ hf.le_iff_le)
+
 /-! ### The preferred center and the backward-looking center -/
 
 /-- The preferred center of `prev` is the backward-looking center of any set containing it: a
@@ -199,6 +230,13 @@ theorem Utterance.rank_le_of_cp {u : Utterance E R F} (h : u.cp = some e) (e' : 
   rw [cb, cb, h, Utterance.indexed, List.filter_map, List.argmax_map, List.argmax_map,
     Option.map_map, Option.map_map]
   exact congrArg _ (List.argmax_toLex_toDual_snd ((List.pairwise_snd_lt_zipIdx _ _).filter _))
+
+/-- Ranking by role and then by surface position only removes backward-looking centers. -/
+theorem backwardCenters_indexed_subset (u : Utterance E R F) (s : Finset E) :
+    backwardCenters u.indexed s ⊆ backwardCenters u s := by
+  have h := backwardCenters_subset_mapRole (prev := u.indexed) (s := s)
+    (Prod.Lex.monotone_fst_ofLex (α := R) (β := ℕᵒᵈ))
+  rwa [u.indexed_mapRole] at h
 
 /-- After an utterance ranked by role and then by surface position, the backward-looking center
 is the only backward-looking center. -/

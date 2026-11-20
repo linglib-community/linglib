@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.Finset.Empty
 public import Mathlib.Data.Finset.Lattice.Basic
-public import Mathlib.Data.List.MinMax
+public import Linglib.Core.Data.List.MinMax
 public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
@@ -23,8 +23,16 @@ the highest role in which it is realized.
 * `Discourse.Centering.Utterance.pronominalized`: the entities realized by a form in a given set.
 * `Discourse.Centering.Utterance.indexed`: the utterance with each role refined by surface
   position.
+* `Discourse.Centering.Utterance.mapRole`: the utterance with its roles mapped into another
+  ranking.
 * `Discourse.Centering.Utterance.withImplicit`: the utterance with further entities realized but
   not directly realized.
+
+## Main results
+
+* `Discourse.Centering.Utterance.rank_mapRole`: a monotone map of roles maps the ranks.
+* `Discourse.Centering.Utterance.indexed_mapRole`: forgetting the surface positions of
+  `Utterance.indexed` gives the utterance back.
 
 ## Implementation notes
 
@@ -103,6 +111,34 @@ def indexed : Utterance E (R ×ₗ ℕᵒᵈ) F :=
     rfl
   exact congrArg List.toFinset h
 
+/-- The utterance `u` with each role replaced by its image under `f`. -/
+def mapRole {R' : Type*} (f : R → R') : Utterance E R' F :=
+  ⟨u.realizations.map fun x ↦ ⟨x.entity, f x.role, x.form⟩⟩
+
+@[simp] theorem cf_mapRole {R' : Type*} (f : R → R') : (u.mapRole f).cf = u.cf := by
+  simp [cf, mapRole, Function.comp_def]
+
+omit [DecidableEq E] in
+@[simp] theorem mapRole_id : u.mapRole id = u := by
+  rcases u with ⟨l⟩
+  exact congrArg Utterance.mk (List.map_id l)
+
+omit [DecidableEq E] in
+theorem mapRole_mapRole {R' R'' : Type*} (f : R → R') (g : R' → R'') :
+    (u.mapRole f).mapRole g = u.mapRole (g ∘ f) := by
+  simp [mapRole, Function.comp_def]
+
+omit [DecidableEq E] in
+/-- Forgetting the surface positions of `u.indexed` gives `u` back. -/
+theorem indexed_mapRole : u.indexed.mapRole (fun p ↦ (ofLex p).1) = u := by
+  rcases u with ⟨l⟩
+  have h : (l.zipIdx.map fun p ↦ (⟨p.1.entity, toLex (p.1.role, OrderDual.toDual p.2),
+      p.1.form⟩ : Realization E (R ×ₗ ℕᵒᵈ) F)).map
+      (fun x ↦ (⟨x.entity, (ofLex x.role).1, x.form⟩ : Realization E R F)) = l := by
+    rw [List.map_map]
+    exact List.zipIdx_map_fst 0 l
+  exact congrArg Utterance.mk h
+
 /-- The utterance `u` with the entities `es` realized but not directly realized, in the role `r`:
 a realization of `u` keeps its form as `some f`, and an added one has the form `none`. -/
 def withImplicit (es : List E) (r : R) : Utterance E R (Option F) :=
@@ -164,6 +200,13 @@ theorem exists_rank_eq (h : e ∈ u) :
   obtain ⟨m, hm⟩ := WithBot.ne_bot_iff_exists.1 (List.maximum_ne_bot_of_ne_nil hne)
   obtain ⟨r', hr', rfl⟩ := List.mem_map.1 (List.maximum_mem hm.symm)
   exact ⟨r', (List.mem_filter.1 hr').1, by simpa using (List.mem_filter.1 hr').2, hm.symm⟩
+
+/-- A monotone map of roles maps the rank of each entity. -/
+theorem rank_mapRole {R' : Type*} [LinearOrder R'] {f : R → R'} (hf : Monotone f) (e : E) :
+    (u.mapRole f).rank e = (u.rank e).map f := by
+  rw [rank, rank, mapRole, List.filter_map, List.map_map, ← List.maximum_map_of_monotone hf,
+    List.map_map]
+  rfl
 
 end Rank
 

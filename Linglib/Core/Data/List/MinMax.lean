@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.MinMax
+public import Mathlib.Order.MinMax
 public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
@@ -26,6 +27,7 @@ index, leaves the maximizer where it was, since `argmax` already takes the first
 * `List.argmax_map`: `argmax` commutes with `map`.
 * `List.argmax_congr`: scores that order `l` the same way have the same maximizer.
 * `List.argmax_eq_head?`: on a list sorted by decreasing score the maximizer is the head.
+* `List.maximum_map_of_monotone`: `maximum` commutes with a monotone `map`.
 * `List.argmax_toLex_toDual_snd`: on a list with increasing indices, breaking ties in favour of
   the smaller index does not change the maximizer.
 -/
@@ -106,6 +108,14 @@ theorem argmax_toLex_toDual_snd {l : List (α × ℕ)} (h : l.Pairwise fun a b �
     · have hlt : a.2 < c.2 := (pairwise_cons.mp h).1 c (argmax_mem hc)
       simp only [hc, Prod.Lex.toLex_lt_toLex, OrderDual.toDual_lt_toDual, Nat.lt_asymm hlt,
         and_false, or_false]
+
+theorem maximum_map_of_monotone {g : β → γ} (hg : Monotone g) (l : List β) :
+    (l.map g).maximum = l.maximum.map g := by
+  induction l with
+  | nil => rfl
+  | cons a t ih =>
+    rw [map_cons, maximum_cons, maximum_cons, ih,
+      Monotone.map_max (WithBot.monotone_map_iff.mpr hg), WithBot.map_coe]
 
 theorem pairwise_snd_lt_zipIdx (l : List α) (k : ℕ) :
     (l.zipIdx k).Pairwise fun a b ↦ a.2 < b.2 := by
