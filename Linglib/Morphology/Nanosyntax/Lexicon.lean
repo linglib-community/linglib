@@ -21,6 +21,10 @@ two hypotheses of the general results on the lexicalization algorithm. An entry 
 containment engine is read as an entry storing a spine, and on such a lexicon the algorithm's
 one exponent is the containment engine's spellout (`exponents_ofSupersetRule`).
 
+`LexicalEntry.MatchesFeatures` is the rival matching by sets of features, which every match by
+containment satisfies (`LexicalEntry.Matches.matchesFeatures`), and `featureSpellout` its
+spellout, which reads only features (`isFeatureSpellout_featureSpellout`).
+
 ## Implementation notes
 
 * Matching is identity with a constituent of the stored object, the formulation in which
@@ -29,8 +33,7 @@ one exponent is the containment engine's spellout (`exponents_ofSupersetRule`).
 
 ## TODO
 
-* Matching as a parameter of the lexicon: identity ignoring traces, matching by the set of
-  features, and matching of spans.
+* Matching by identity ignoring traces, and matching of spans.
 * The Foot Condition of [taraldsen-et-al-2018], and the matching relation of [taraldsen-2018],
   which pairs a node of the stored object with the root of the syntactic one and asks their
   daughters to match each other both ways.
@@ -42,6 +45,7 @@ one exponent is the containment engine's spellout (`exponents_ofSupersetRule`).
 * [starke-2018]
 * [taraldsen-2018]
 * [taraldsen-et-al-2018]
+* [vandenwyngaerd-2018]
 -/
 
 @[expose] public section
@@ -137,6 +141,40 @@ theorem not_hasUnlabelled_of_isSome (hL : ∀ e ∈ L, ¬ HasUnlabelled e.tree)
   exact hL e he ⟨u, Relation.ReflTransGen.trans hm hu, hu'⟩
 
 end
+
+/-! ### Matching by features -/
+
+/-- The Revised Superset Principle of [vandenwyngaerd-2018]: an entry spells out an object
+whose features are among the features of its stored object. -/
+def LexicalEntry.MatchesFeatures (e : LexicalEntry F α) (t : SyntacticObject F) : Prop :=
+  t.yield ⊆ e.tree.yield
+
+instance [DecidableEq F] (e : LexicalEntry F α) (t : SyntacticObject F) :
+    Decidable (e.MatchesFeatures t) :=
+  decidable_of_iff (∀ g ∈ t.yield, g ∈ e.tree.yield) Multiset.subset_iff.symm
+
+/-- An entry that matches an object by containment matches it by features. -/
+theorem LexicalEntry.Matches.matchesFeatures {e : LexicalEntry F α} {t : SyntacticObject F}
+    (h : e.Matches t) : e.MatchesFeatures t :=
+  Multiset.subset_of_le (yield_le_of_mem_terms (mem_terms.2 h))
+
+/-- `featureSpellout L t` is the exponent of the entry with the fewest features among those
+matching `t` by features, the first listed on ties. -/
+def featureSpellout [DecidableEq F] (L : RuleSet (LexicalEntry F α)) (t : SyntacticObject F) :
+    Option α :=
+  ((L.filter fun e ↦ e.MatchesFeatures t).argmin fun e ↦ e.tree.yield.card).map (·.exponent)
+
+theorem featureSpellout_isSome_iff [DecidableEq F] {L : RuleSet (LexicalEntry F α)}
+    {t : SyntacticObject F} :
+    (featureSpellout L t).isSome ↔ ∃ e ∈ L, e.MatchesFeatures t := by
+  rw [featureSpellout, Option.isSome_map, ← Option.ne_none_iff_isSome, Ne, List.argmin_eq_none,
+    List.filter_eq_nil_iff]
+  simp
+
+theorem isFeatureSpellout_featureSpellout [DecidableEq F] (L : RuleSet (LexicalEntry F α)) :
+    IsFeatureSpellout (featureSpellout L) := fun _ _ hst ht ↦ by
+  obtain ⟨e, he, hm⟩ := featureSpellout_isSome_iff.1 ht
+  exact featureSpellout_isSome_iff.2 ⟨e, he, fun _ hg ↦ hm (hst hg)⟩
 
 /-! ### Spellout over containment hierarchies -/
 

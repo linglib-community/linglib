@@ -30,6 +30,9 @@ bare feature above the bottom is spellable the algorithm never evacuates
 (`eq_pspine_or_hasUnlabelled`), so where no spellable object has an unlabelled node, a sequence
 pronounced with one exponent has every initial part pronounced with one exponent
 (`exists_exponents_eq_singleton_of_prefix`).
+The same holds, whatever objects are stored, of a spellout that reads only
+the features of an object (`exists_exponents_eq_singleton_of_prefix_of_isFeatureSpellout`), so
+matching by sets of features derives no inverse marking.
 
 ## Implementation notes
 
@@ -433,5 +436,92 @@ theorem exponents_cons_of_forall_bare (hσ : IsLowerSpellout σ) (f₀ : F) {fs 
             rw [hbare]; rfl),
           List.filterMap_nil, List.append_nil, pspine_concat]
   · exact exponents_cons_of_eq_some hσ f₀ hx
+
+/-! ### Spellout by features -/
+
+variable (σ) in
+/-- A spellout that reads only the features of an object: an object whose features are among
+those of a spellable object is spellable. -/
+def IsFeatureSpellout : Prop :=
+  ∀ s t : SyntacticObject F, s.yield ⊆ t.yield → (σ t).isSome → (σ s).isSome
+
+theorem IsFeatureSpellout.isLowerSpellout (hσ : IsFeatureSpellout σ) : IsLowerSpellout σ :=
+  fun s t hst ↦ hσ s t (Multiset.subset_of_le (yield_le_of_mem_terms (mem_terms.2 hst)))
+
+theorem mem_yield_spine {f₀ g : F} {fs : List F} : g ∈ (spine f₀ fs).yield ↔ g = f₀ ∨ g ∈ fs := by
+  induction fs using List.reverseRecOn with
+  | nil => simp
+  | append_singleton fs f ih =>
+    simp [ih]
+    tauto
+
+/-- An evacuation divides the features of an object between the evacuee and what is left. -/
+theorem yield_add_of_mem_evacuations {t : PlanarSyntacticObject F} :
+    ∀ p ∈ evacuations t, p.1.toSyntacticObject.yield +
+      p.2.elim 0 (·.toSyntacticObject.yield) = t.toSyntacticObject.yield := by
+  fun_induction evacuations t with
+  | case1 a b r ih =>
+    intro p hp
+    rcases List.mem_append.1 hp with hp | hp
+    · obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hp
+      have h := ih q hq
+      rw [show FreeMagma.mul (FreeMagma.mul a b) r = FreeMagma.mul a b * r from rfl,
+        PlanarSyntacticObject.toSyntacticObject_merge, yield_merge, ← h]
+      rcases q with ⟨e, - | m⟩
+      · simp
+      · simp [PlanarSyntacticObject.toSyntacticObject_merge, add_assoc]
+    · rw [List.mem_singleton.1 hp]
+      simp
+  | case2 t _ =>
+    intro p hp
+    rw [List.mem_singleton.1 hp]
+    simp
+
+/-- A derivation has the features of its sequence. -/
+theorem mem_yield_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSyntacticObject F}
+    (h : t ∈ derivations σ (pbare f₀) fs) {g : F} :
+    g ∈ t.toSyntacticObject.yield ↔ g = f₀ ∨ g ∈ fs := by
+  induction fs using List.reverseRecOn generalizing t with
+  | nil =>
+    obtain rfl : t = pbare f₀ := by simpa using h
+    simp
+  | append_singleton fs f ih =>
+    rw [derivations_append] at h
+    obtain ⟨t₁, h₁, h⟩ := List.mem_flatMap.1 h
+    rw [derivations_singleton] at h
+    have ih := ih h₁
+    rcases List.mem_append.1 h with h | h
+    · obtain ⟨x, -, rfl⟩ : ∃ x, σ (pphrase f t₁).toSyntacticObject = some x ∧
+          pphrase f t₁ = t := by simpa using h
+      rw [PlanarSyntacticObject.toSyntacticObject_merge, yield_merge]
+      simp [ih]
+      tauto
+    · obtain ⟨p, hp, h⟩ := List.mem_filterMap.1 h
+      obtain ⟨x, -, rfl⟩ := Option.map_eq_some_iff.1 h
+      have hy := yield_add_of_mem_evacuations p hp
+      rw [← hy] at ih
+      rw [PlanarSyntacticObject.toSyntacticObject_merge, yield_merge]
+      rcases p with ⟨e, - | m⟩
+      · simp only [Option.elim_none, add_zero] at ih
+        simp [remnant, ih]
+        tauto
+      · simp only [Option.elim_some, Multiset.mem_add] at ih
+        simp [remnant, PlanarSyntacticObject.toSyntacticObject_merge]
+        tauto
+
+/-- Under a spellout that reads only features, a sequence pronounced with one exponent has every
+initial part pronounced with one exponent, whatever objects the entries store. -/
+theorem exists_exponents_eq_singleton_of_prefix_of_isFeatureSpellout (hσ : IsFeatureSpellout σ)
+    {f₀ : F} {fs gs : List F} {x : α} (hgs : gs <+: fs)
+    (h : exponents σ (f₀ :: fs) = some [x]) : ∃ y, exponents σ (f₀ :: gs) = some [y] := by
+  obtain ⟨t, ht, hs⟩ := Option.bind_eq_some_iff.1 h
+  obtain ⟨b, -, ht⟩ := Option.bind_eq_some_iff.1 ht
+  have hmem := List.mem_of_mem_head? ht
+  obtain ⟨-, a, c, rfl⟩ := eq_pspine_or_hasUnlabelled σ hmem
+  have hx := eq_some_of_spell_eq_singleton σ hs
+  have hsub : (spine f₀ gs).yield ⊆ (a * c).toSyntacticObject.yield := fun g hg ↦
+    (mem_yield_of_mem_derivations hmem).2 ((mem_yield_spine.1 hg).imp_right fun h ↦ hgs.subset h)
+  obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1 (hσ _ _ hsub (Option.isSome_iff_exists.2 ⟨x, hx⟩))
+  exact ⟨y, exponents_cons_of_eq_some hσ.isLowerSpellout f₀ hy⟩
 
 end Morphology.Nanosyntax

@@ -18,7 +18,10 @@ object, and no spine between the two
 stores an unlabelled node cannot give a sequence one exponent and an initial part of it two
 (`Morphology.Nanosyntax.exists_exponents_eq_singleton_of_prefix`), so a noun with a suffix in the
 singular and none in the plural, or a verb with a suffix in the second person alone, has a root
-of this shape.
+of this shape. Matching by sets of features, the Revised Superset Principle of
+[vandenwyngaerd-2018], does not tell the shapes apart: the root of *peel* matches the singular
+(`matchesFeatures_peelEntry`), and no lexicon derives its paradigm
+(`not_derives_peel_of_featureSpellout`).
 
 The file runs the lexicalization algorithm on the lexicons of four case studies, the degrees of
 comparison of English, Czech and Armenian, two Czech declensions, number in Kalenjin and the
@@ -34,20 +37,17 @@ tables in `DeClercqEtAl2025.Wordlist`.
 * The entry of English *bad* is given the size of *tall*, which the comparison with *worse*
   presupposes.
 * The Kalenjin plural suffix *-tiin* of *kipaw* 'rhino' has no entry in the source, so that noun
-  has rows in the data and no lexicon here.
+  has rows in the data and no lexicon here. The stored objects of *peel* and *pata* are the sets
+  of [blix-2022].
 * An exponent is the underlying form of the lexicalization tables: *pata* in *pat-een*, *chytr*
   and *-ějš* in *chytř-ejš-í*.
-
-## TODO
-
-* The comparison with matching by feature sets and with spans: under either, an entry that
-  lexicalizes the plural lexicalizes the singular. `not_derives_peel_of_labelled` is the
-  corresponding statement for constituent matching without stored evacuation.
 
 ## References
 
 * [declercq-et-al-2025]
 * [starke-2018]
+* [blix-2022]
+* [vandenwyngaerd-2018]
 -/
 
 @[expose] public section
@@ -55,15 +55,15 @@ tables in `DeClercqEtAl2025.Wordlist`.
 namespace DeClercqEtAl2025
 
 open Morphology.Nanosyntax Morphology
-open Minimalist (PlanarSyntacticObject)
+open Minimalist (PlanarSyntacticObject SyntacticObject)
 
 variable {F : Type} [DecidableEq F]
 
-/-- The algorithm gives each analysed form the exponents of its row in a lexicalization table,
-for the feature sequence `seq` assigns to the form's cell. -/
-abbrev Derives (L : RuleSet (LexicalEntry F String)) (seq : Wordlist.Cell → List F)
+/-- Under the spellout `σ` the algorithm gives each analysed form the exponents of its row in a
+lexicalization table, for the feature sequence `seq` assigns to the form's cell. -/
+abbrev Derives (σ : SyntacticObject F → Option String) (seq : Wordlist.Cell → List F)
     (rows : List Wordlist.Analysis) : Prop :=
-  ∀ a ∈ rows, exponents (spellout L) (seq a.form.cell) = some a.exponents
+  ∀ a ∈ rows, exponents σ (seq a.form.cell) = some a.exponents
 
 /-! ### Degrees of comparison -/
 
@@ -107,14 +107,15 @@ def chytr : RuleSet (LexicalEntry Deg String) :=
 it; *worse* needs no evacuation, so the comparative is not *badd-er*; *partsrahasag* has one form
 in all degrees; *inteligent-* takes a suffix more than *chytr-*. -/
 theorem derives_degrees :
-    Derives tall degreeSeq [Wordlist.tall.analysis, Wordlist.taller.analysis,
+    Derives (spellout tall) degreeSeq [Wordlist.tall.analysis, Wordlist.taller.analysis,
         Wordlist.tallest.analysis] ∧
-      Derives bad degreeSeq [Wordlist.bad.analysis, Wordlist.worse.analysis] ∧
-      Derives partsrahasag degreeSeq [Wordlist.partsrahasag_pos.analysis,
+      Derives (spellout bad) degreeSeq [Wordlist.bad.analysis, Wordlist.worse.analysis] ∧
+      Derives (spellout partsrahasag) degreeSeq [Wordlist.partsrahasag_pos.analysis,
         Wordlist.partsrahasag_cmp.analysis, Wordlist.partsrahasag_sup.analysis] ∧
-      Derives inteligent degreeSeq [Wordlist.inteligentni.analysis,
+      Derives (spellout inteligent) degreeSeq [Wordlist.inteligentni.analysis,
         Wordlist.inteligentnejsi.analysis] ∧
-      Derives chytr degreeSeq [Wordlist.chytry.analysis, Wordlist.chytrejsi.analysis] := by
+      Derives (spellout chytr) degreeSeq
+        [Wordlist.chytry.analysis, Wordlist.chytrejsi.analysis] := by
   decide
 
 -- Section 1.4.4
@@ -150,9 +151,9 @@ def jazyk : RuleSet (LexicalEntry Case String) :=
 
 -- Table 1.5
 theorem derives_declension :
-    Derives chleb caseSeq [Wordlist.chleba_nom.analysis, Wordlist.chleba_acc.analysis,
+    Derives (spellout chleb) caseSeq [Wordlist.chleba_nom.analysis, Wordlist.chleba_acc.analysis,
         Wordlist.chleba_gen.analysis] ∧
-      Derives jazyk caseSeq [Wordlist.jazyk_nom.analysis, Wordlist.jazyk_acc.analysis,
+      Derives (spellout jazyk) caseSeq [Wordlist.jazyk_nom.analysis, Wordlist.jazyk_acc.analysis,
         Wordlist.jazyka_gen.analysis] := by
   decide
 
@@ -202,8 +203,9 @@ theorem matches_peelEntry_iff (gs : List Num) : peelEntry.Matches (spine .n gs) 
 /-- *peel-yaan*, *peel* and *pata-yaan*, *pat-een*. The entry of *peel* contains the bare noun and
 no singular phrase over a noun, so the singular needs *-yaan*. -/
 theorem derives_number :
-    Derives peel numSeq [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] ∧
-      Derives pata numSeq [Wordlist.patayaan_sg.analysis, Wordlist.pateen_pl.analysis] := by
+    Derives (spellout peel) numSeq [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] ∧
+      Derives (spellout pata) numSeq
+        [Wordlist.patayaan_sg.analysis, Wordlist.pateen_pl.analysis] := by
   decide
 
 -- (38)
@@ -218,11 +220,28 @@ theorem lexicalize_peel_pl :
 lexicalizes the plural by itself would lexicalize the singular by itself. -/
 theorem not_derives_peel_of_labelled {L : RuleSet (LexicalEntry Num String)}
     (hL : ∀ e ∈ L, ¬ HasUnlabelled e.tree) :
-    ¬ Derives L numSeq [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] := fun h ↦ by
+    ¬ Derives (spellout L) numSeq
+      [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] := fun h ↦ by
   have hpl : exponents (spellout L) [.n, .sg, .pl] = some ["peel"] := h _ (.tail _ (.head _))
   have hsg : exponents (spellout L) [.n, .sg] = some ["peel", "yaan"] := h _ (.head _)
   obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix (isLowerSpellout_spellout L)
     (fun _ ↦ not_hasUnlabelled_of_isSome hL) (gs := [.sg]) ⟨[.pl], rfl⟩ hpl
+  simp [hsg] at hy
+
+-- Section 1.7
+theorem matchesFeatures_peelEntry :
+    peelEntry.MatchesFeatures (spine .n [.sg]) ∧ ¬ peelEntry.Matches (spine .n [.sg]) := by
+  decide
+
+-- Section 1.7
+theorem not_derives_peel_of_featureSpellout (L : RuleSet (LexicalEntry Num String)) :
+    ¬ Derives (featureSpellout L) numSeq
+      [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] := fun h ↦ by
+  have hpl : exponents (featureSpellout L) [.n, .sg, .pl] = some ["peel"] :=
+    h _ (.tail _ (.head _))
+  have hsg : exponents (featureSpellout L) [.n, .sg] = some ["peel", "yaan"] := h _ (.head _)
+  obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix_of_isFeatureSpellout
+    (isFeatureSpellout_featureSpellout L) (gs := [.sg]) ⟨[.pl], rfl⟩ hpl
   simp [hsg] at hy
 
 /-! ### The Friulian present -/
@@ -269,9 +288,9 @@ theorem matches_batEntry_iff (gs : List Phi) :
 /-- *bat*, *bat-s*, *bat* and *fin-iʃ*, *fin-iʃ-s*, *fin-iʃ*. The entry of *bat-* contains the
 third-person phrase and no participant phrase over it, so the second person needs *-s*. -/
 theorem derives_present :
-    Derives bat personSeq [Wordlist.bat_1.analysis, Wordlist.bats_2.analysis,
+    Derives (spellout bat) personSeq [Wordlist.bat_1.analysis, Wordlist.bats_2.analysis,
         Wordlist.bat_3.analysis] ∧
-      Derives fin personSeq [Wordlist.finis_1.analysis, Wordlist.finiss_2.analysis,
+      Derives (spellout fin) personSeq [Wordlist.finis_1.analysis, Wordlist.finiss_2.analysis,
         Wordlist.finis_3.analysis] := by
   decide
 
@@ -286,7 +305,7 @@ theorem lexicalize_p1 :
 -- Table 1.8
 theorem not_derives_bati_of_labelled {L : RuleSet (LexicalEntry Phi String)}
     (hL : ∀ e ∈ L, ¬ HasUnlabelled e.tree) :
-    ¬ Derives L personSeq [Wordlist.bat_1.analysis, Wordlist.bats_2.analysis,
+    ¬ Derives (spellout L) personSeq [Wordlist.bat_1.analysis, Wordlist.bats_2.analysis,
       Wordlist.bat_3.analysis] := fun h ↦ by
   have h₁ : exponents (spellout L) [.t, .num, .π, .part, .spkr] = some ["bat"] := h _ (.head _)
   have h₂ : exponents (spellout L) [.t, .num, .π, .part] = some ["bat", "s"] :=
