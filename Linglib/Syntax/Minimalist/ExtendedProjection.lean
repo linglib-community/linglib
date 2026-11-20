@@ -73,6 +73,7 @@ demonstrative, so those pairs are incomparable.
 * [dendikken-2010]
 * [arregi-pietraszko-2021]
 * [thoms-etal-2026]
+* [elkins-torrence-brown-2026]
 -/
 
 @[expose] public section
@@ -95,6 +96,7 @@ def citedSequences : List (List Cat) :=
     [.T, .Pol, .C],                               -- [laka-1990] (46)–(47), p. 127
     [.v, .T, .Nmlz],                              -- [keine-2020] (106), p. 74
     [.v, .T, .C],                                 -- [keine-2020] (238), p. 156
+    [.V, .v, .Voice, .Dir, .C],                   -- [elkins-torrence-brown-2026] (8), p. 6
     [.T, .Fin, .Top, .Foc, .Top, .Force],         -- [rizzi-1997] (41), p. 297
     [.T, .Foc, .Say],                             -- [egressy-2026] p. 14
     [.Mood, .SA],                                 -- [speas-tenny-2003] p. 332

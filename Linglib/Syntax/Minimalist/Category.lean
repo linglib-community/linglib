@@ -93,6 +93,9 @@ inductive Cat where
   | Voice
   /-- The applicative head ([pylkkanen-2008], [cuervo-2003]). -/
   | Appl
+  /-- The directional auxiliary of the Mayan clause, above Voice
+  ([elkins-torrence-brown-2026]). -/
+  | Dir
   /-- Focus, in Rizzi's split complementizer system ([rizzi-1997]). -/
   | Foc
   /-- Topic, in Rizzi's split complementizer system ([rizzi-1997]). -/
@@ -163,7 +166,7 @@ def CatFamily.lexical : CatFamily → Cat
 
 /-- The family of a category, the extended projection it belongs to. -/
 def Cat.family : Cat → CatFamily
-  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
+  | .V | .v | .Voice | .Appl | .Dir | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Mood | .Pol | .Asp | .InnerAsp | .Evid | .Nmlz => .verbal
   | .N | .n | .Poss | .Num | .Dem | .Q | .D | .K | .Lnk => .nominal
   | .A | .a => .adjectival
