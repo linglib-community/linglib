@@ -36,12 +36,12 @@ FAM-DEF > COHERE > ALIGN. Between two fully anaphoric interpretations that pass 
 * The interpretations of a sentence give its indefinites new referents (fn. 20), and the
   discourse includes the previous sentence (`prev ∈ ctx`), so that no indefinite realizes an
   entity of it. BFP's prediction is the fully anaphoric interpretation surviving the filters
-  (`Filtered`) with the highest transition (`bfpTransition`), an interpretation without a topic
+  (`Filtered`) with the highest transition (`extendedTransition`), an interpretation without a topic
   having none.
 * COHERE is satisfied only when the topic is defined and unchanged (p. 17), so with no prior
   topic every candidate violates it (`cohere_none`), while the first transition test of
   [walker-iida-cote-1994] passes when there is no prior center
-  (`bfpTransition_none_eq_ofTests`). Both treat the candidates of a sentence alike, and the
+  (`extendedTransition_none_eq_ofTests`). Both treat the candidates of a sentence alike, and the
   comparison of (19) holds either way (`cot_lt_iff_bfp_lt_of_tied`).
 * Both readings of (12c) violate FAM-DEF (`d12_famDef`), *Mary* being new, so (12) lies outside
   `Filtered` and Proposition (20); (1) instantiates them.
@@ -235,35 +235,17 @@ private theorem proTop_eq_one (h : ¬ ∃ x ∈ sentence c, x.2 ∈ pronouns) : 
 
 /-! ### BFP's transitions and table (19) -/
 
-/-- BFP's transition into a candidate, from the prior topic, its backward-looking center and its
-preferred center; `⊥` when it has no backward-looking center, which the transitions do not
-classify. -/
-def bfpTransition (prev : Utterance E R (Form Φ N)) (priorTopic : Option E)
-    (c : Utterance E R (Form Φ N)) :
-    WithBot ExtendedTransition :=
-  match cb prev c.cf with
-  | some x => ExtendedTransition.ofCenters priorTopic x c.cp
-  | none => ⊥
-
-theorem bfpTransition_of_cb_eq_none (priorTopic : Option E) (h : cb prev c.cf = none) :
-    bfpTransition prev priorTopic c = ⊥ := by
-  simp [bfpTransition, h]
-
-theorem bfpTransition_of_cb_eq_some (priorTopic : Option E) (h : cb prev c.cf = some x) :
-    bfpTransition prev priorTopic c = ExtendedTransition.ofCenters priorTopic x c.cp := by
-  simp [bfpTransition, h]
-
 -- (19): with a prior topic, the transition is read off the COHERE and ALIGN verdicts
-theorem bfpTransition_eq_ofTests {p : E} (h : cb prev c.cf = some x) :
-    bfpTransition prev (some p) c =
+theorem extendedTransition_eq_ofTests {p : E} (h : cb prev c.cf = some x) :
+    extendedTransition (some p) prev c =
       ExtendedTransition.ofTests (cohere prev (some p) c = 0) (align prev c = 0) := by
-  rw [bfpTransition_of_cb_eq_some _ h, WithBot.coe_inj]
+  rw [extendedTransition_of_cb_eq_some _ h, WithBot.coe_inj]
   ext <;> simp [ExtendedTransition.ofCenters, cohere, align, h, eq_comm]
 
 -- [walker-iida-cote-1994]: the first test passes when there is no prior center
-theorem bfpTransition_none_eq_ofTests (h : cb prev c.cf = some x) :
-    bfpTransition prev none c = ExtendedTransition.ofTests True (align prev c = 0) := by
-  rw [bfpTransition_of_cb_eq_some _ h, WithBot.coe_inj]
+theorem extendedTransition_none_eq_ofTests (h : cb prev c.cf = some x) :
+    extendedTransition none prev c = ExtendedTransition.ofTests True (align prev c = 0) := by
+  rw [extendedTransition_of_cb_eq_some _ h, WithBot.coe_inj]
   ext <;> simp [ExtendedTransition.ofCenters, align, h]
 
 end Order
@@ -415,28 +397,28 @@ theorem cot_lt_iff_bfp_lt_of_tied (h0 : agree feat prev c₁ = agree feat prev c
     (h3 : famDef ctx prev c₁ = famDef ctx prev c₂)
     (hcb : cb prev c₁.cf = none ↔ cb prev c₂.cf = none) :
     cotProfile feat ctx prev priorTopic c₁ < cotProfile feat ctx prev priorTopic c₂ ↔
-      bfpTransition prev priorTopic c₂ < bfpTransition prev priorTopic c₁ := by
+      extendedTransition priorTopic prev c₂ < extendedTransition priorTopic prev c₁ := by
   simp only [cotProfile_lt_iff, h0, h1, h2, h3, lt_self_iff_false, false_or, true_and]
   have b1 : cohere prev priorTopic c₁ ≤ 1 := Constraint.binary_le_one _ _
   have b2 : cohere prev priorTopic c₂ ≤ 1 := Constraint.binary_le_one _ _
   have b3 : align prev c₁ ≤ 1 := Constraint.binary_le_one _ _
   have b4 : align prev c₂ ≤ 1 := Constraint.binary_le_one _ _
   rcases hx₁ : cb prev c₁.cf with _ | x₁ <;> rcases hx₂ : cb prev c₂.cf with _ | x₂
-  · rw [bfpTransition_of_cb_eq_none _ hx₁, bfpTransition_of_cb_eq_none _ hx₂,
+  · rw [extendedTransition_of_cb_eq_none _ hx₁, extendedTransition_of_cb_eq_none _ hx₂,
       cohere_of_cb_eq_none _ hx₁, cohere_of_cb_eq_none _ hx₂, align_of_cb_eq_none hx₁,
       align_of_cb_eq_none hx₂]
     simp
   · simp [hx₁, hx₂] at hcb
   · simp [hx₁, hx₂] at hcb
   rcases priorTopic with _ | p
-  · rw [bfpTransition_none_eq_ofTests hx₁, bfpTransition_none_eq_ofTests hx₂, cohere_none,
+  · rw [extendedTransition_none_eq_ofTests hx₁, extendedTransition_none_eq_ofTests hx₂, cohere_none,
       cohere_none, WithBot.coe_lt_coe]
     simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex,
       ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
       decide_true, decide_eq_true_eq, decide_eq_false_iff_not, false_or, lt_self_iff_false,
       true_and]
     omega
-  · rw [bfpTransition_eq_ofTests hx₁, bfpTransition_eq_ofTests hx₂, WithBot.coe_lt_coe]
+  · rw [extendedTransition_eq_ofTests hx₁, extendedTransition_eq_ofTests hx₂, WithBot.coe_lt_coe]
     simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex,
       ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
       decide_eq_true_eq, decide_eq_false_iff_not, decide_eq_decide]
@@ -449,7 +431,7 @@ theorem cot_lt_iff_bfp_lt (hprev : prev ∈ ctx) (hc₁ : c₁ ∈ interpretatio
     (hc₂ : c₂ ∈ interpretations ctx s) (h₁ : Filtered feat ctx prev c₁)
     (h₂ : Filtered feat ctx prev c₂) :
     cotProfile feat ctx prev priorTopic c₁ < cotProfile feat ctx prev priorTopic c₂ ↔
-      bfpTransition prev priorTopic c₂ < bfpTransition prev priorTopic c₁ :=
+      extendedTransition priorTopic prev c₂ < extendedTransition priorTopic prev c₁ :=
   cot_lt_iff_bfp_lt_of_tied (h₁.agree_eq.trans h₂.agree_eq.symm)
     (h₁.disjoint_eq.trans h₂.disjoint_eq.symm)
     (by rw [proTop_eq h₁.famDef_eq h₁.rule1, proTop_eq h₂.famDef_eq h₂.rule1, hc₁.1, hc₂.1])
@@ -461,7 +443,7 @@ theorem cot_lt_iff_bfp_lt (hprev : prev ∈ ctx) (hc₁ : c₁ ∈ interpretatio
 theorem cot_optimal_of_bfp (hprev : prev ∈ ctx) (hc : c ∈ interpretations ctx s)
     (hf : Filtered feat ctx prev c)
     (hb : ∀ d' ∈ interpretations ctx s, Filtered feat ctx prev d' → d' ≠ c →
-      bfpTransition prev priorTopic d' < bfpTransition prev priorTopic c)
+      extendedTransition priorTopic prev d' < extendedTransition priorTopic prev c)
     (hd : d ∈ interpretations ctx s) (hdc : d ≠ c) :
     cotProfile feat ctx prev priorTopic c < cotProfile feat ctx prev priorTopic d := by
   have hs : sentence c = sentence d := hc.1.trans hd.1.symm
@@ -575,7 +557,7 @@ theorem cot_iff_bfp [Infinite E] (hprev : prev ∈ ctx) (hc : c ∈ interpretati
     (famDef ctx prev c = 0 ∧ ∀ d ∈ interpretations ctx s, d ≠ c →
         cotProfile feat ctx prev priorTopic c < cotProfile feat ctx prev priorTopic d) ↔
       Filtered feat ctx prev c ∧ ∀ d ∈ interpretations ctx s, Filtered feat ctx prev d → d ≠ c →
-        bfpTransition prev priorTopic d < bfpTransition prev priorTopic c := by
+        extendedTransition priorTopic prev d < extendedTransition priorTopic prev c := by
   refine ⟨fun ⟨hf, ho⟩ ↦ ?_, fun ⟨hfc, hb⟩ ↦
     ⟨hfc.famDef_eq, fun _ hd hdc ↦ cot_optimal_of_bfp hprev hc hfc hb hd hdc⟩⟩
   have hfc : Filtered feat ctx prev c := Filtered.of_cot_optimal (priorTopic := priorTopic) hc hf
@@ -644,8 +626,8 @@ theorem d1_filtered : Filtered Entity.gender [D1.a, D1.b] D1.b D1.c_continue ∧
 
 -- (1c), Table I
 theorem d1_transitions :
-    bfpTransition D1.b D1.priorTopic D1.c_continue = ExtendedTransition.continue ∧
-      bfpTransition D1.b D1.priorTopic D1.c_retain = ExtendedTransition.retain := by
+    extendedTransition D1.priorTopic D1.b D1.c_continue = ExtendedTransition.continue ∧
+      extendedTransition D1.priorTopic D1.b D1.c_retain = ExtendedTransition.retain := by
   decide
 
 theorem d1_lex_picks_continue :
@@ -721,7 +703,7 @@ theorem d12_lex_picks_l_eq_i :
 
 -- (12c)
 theorem d12_transition_retain :
-    bfpTransition D12.b D12.priorTopic D12.c_l_eq_i = ExtendedTransition.retain := by decide
+    extendedTransition D12.priorTopic D12.b D12.c_l_eq_i = ExtendedTransition.retain := by decide
 
 -- (13)
 theorem d12_famDef : famDef [D12.a, D12.b] D12.b D12.c_l_eq_i = 1 ∧

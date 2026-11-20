@@ -15,12 +15,25 @@ center with the one before and with its own preferred center.
 ## Main definitions
 
 * `Discourse.Centering.transition`: the transition from one utterance into the next.
+* `Discourse.Centering.extendedTransition`: the transition of Brennan, Friedman, and Pollard's
+  table from one utterance into the next.
 * `Discourse.Centering.cbs`: the backward-looking center of each utterance after the first.
 * `Discourse.Centering.transitions`: the transition into each utterance after the first.
+
+## Main results
+
+* `Discourse.Centering.transition_eq_toTransition`: the transition is the one that the extended
+  transition refines.
+
+## Implementation notes
+
+An utterance with no backward-looking center has no extended transition, and
+`extendedTransition` is `⊥` there.
 
 ## References
 
 * [grosz-joshi-weinstein-1995]
+* [brennan-friedman-pollard-1987]
 -/
 
 @[expose] public section
@@ -32,6 +45,45 @@ variable {E R F : Type*} [DecidableEq E] [LinearOrder R]
 /-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
 def transition (prevCb : Option E) (prev cur : Utterance E R F) : Transition :=
   .ofCenters prevCb (cb prev cur.cf) cur.cp
+
+/-- The transition of [brennan-friedman-pollard-1987] into `cur` from `prev`, given the
+backward-looking center of `prev`: `⊥` when `cur` has no backward-looking center. -/
+def extendedTransition (prevCb : Option E) (prev cur : Utterance E R F) :
+    WithBot ExtendedTransition :=
+  match cb prev cur.cf with
+  | some c => ExtendedTransition.ofCenters prevCb c cur.cp
+  | none => ⊥
+
+section extendedTransition
+
+variable {prevCb : Option E} {prev cur : Utterance E R F} {c : E}
+
+theorem extendedTransition_of_cb_eq_none (prevCb : Option E) (h : cb prev cur.cf = none) :
+    extendedTransition prevCb prev cur = ⊥ := by
+  simp [extendedTransition, h]
+
+theorem extendedTransition_of_cb_eq_some (prevCb : Option E) (h : cb prev cur.cf = some c) :
+    extendedTransition prevCb prev cur = ExtendedTransition.ofCenters prevCb c cur.cp := by
+  simp [extendedTransition, h]
+
+@[simp] theorem extendedTransition_eq_bot_iff :
+    extendedTransition prevCb prev cur = ⊥ ↔ cb prev cur.cf = none := by
+  rcases h : cb prev cur.cf with - | c
+  · simp [extendedTransition_of_cb_eq_none _ h]
+  · simp [extendedTransition_of_cb_eq_some _ h]
+
+/-- The transition into an utterance is the one that its extended transition refines. -/
+theorem transition_eq_toTransition {t : ExtendedTransition}
+    (h : extendedTransition prevCb prev cur = t) :
+    transition prevCb prev cur = t.toTransition := by
+  rcases hc : cb prev cur.cf with - | c
+  · rw [extendedTransition_of_cb_eq_none _ hc] at h
+    exact absurd h WithBot.bot_ne_coe
+  · rw [extendedTransition_of_cb_eq_some _ hc, WithBot.coe_inj] at h
+    rw [transition, hc, ← h]
+    rfl
+
+end extendedTransition
 
 /-- The backward-looking center of each utterance of `d` after the first. -/
 def cbs (d : List (Utterance E R F)) : List (Option E) :=

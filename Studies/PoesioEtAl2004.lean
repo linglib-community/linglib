@@ -40,7 +40,7 @@ the three forms of Rule 1 are ordered (`CbPronominalized.rule1Original`), counti
 demonstratives among the R1-pronouns Rule 1 takes as an argument helps the unconditional form and
 can hurt Rule 1 itself (`pronominalizationConstraint_narrowR1_not_broadR1`), and the four-way
 transition classification of Brennan, Friedman, and Pollard refines the three-way one
-(`bfp_toTransition`).
+(`transition_eq_toTransition`).
 
 ## Implementation notes
 
@@ -142,30 +142,6 @@ theorem CbPronominalized.rule1Original {P : Set F} [DecidablePred (· ∈ P)]
   fun _ ↦ h
 
 end Rule1
-
-/-! ### Transitions (§2.2.3, §2.3.3) -/
-
-section Transitions
-
-variable [DecidableEq E] [LinearOrder R]
-
-/-- The four-way classification of [brennan-friedman-pollard-1987] of an utterance after an
-utterance with center `prevCb`, `none` for an utterance with no center. -/
-def bfp (prev cur : Utterance E R F) (prevCb : Option E) : Option ExtendedTransition :=
-  (cb prev cur.cf).map fun c ↦ .ofCenters prevCb c cur.cp
-
-theorem bfp_eq_none_iff (prev cur : Utterance E R F) (prevCb : Option E) :
-    bfp prev cur prevCb = none ↔ cb prev cur.cf = none := by
-  simp [bfp]
-
-/-- The four-way classification refines the three-way one. -/
-theorem bfp_toTransition {prev cur : Utterance E R F} {prevCb : Option E}
-    {t : ExtendedTransition} (h : bfp prev cur prevCb = some t) :
-    t.toTransition = transition prevCb prev cur := by
-  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.mp h
-  simp [transition, hc, Transition.ofCenters]
-
-end Transitions
 
 /-! ### The parameters (§2.4, §3.4) -/
 
