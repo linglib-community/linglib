@@ -49,6 +49,7 @@ realizes entities that its noun phrases are only associated with.
 * [grosz-joshi-weinstein-1995]
 * [gordon-grosz-gilliom-1993]
 * [poesio-stevenson-eugenio-hitzeman-2004]
+* [walker-joshi-prince-1998]
 -/
 
 @[expose] public section
@@ -166,7 +167,9 @@ theorem card_backwardCenters_le_one (s : Finset E)
 
 /-! ### The preferred center and the backward-looking center -/
 
-/-- The preferred center of `prev` is the backward-looking center of any set containing it. -/
+/-- The preferred center of `prev` is the backward-looking center of any set containing it: a
+preferred center realized in the next utterance is its backward-looking center
+([walker-joshi-prince-1998]). -/
 theorem cb_eq_of_cp_eq (hp : prev.cp = some e) (he : e ∈ s) : cb prev s = some e := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp hp
   exact Option.map_eq_some_iff.mpr ⟨r, List.argmax_filter_of_mem hr (decide_eq_true he), rfl⟩

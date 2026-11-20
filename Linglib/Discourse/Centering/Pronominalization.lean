@@ -19,6 +19,9 @@ requires the backward-looking center to be pronominalized whatever else is.
 * `Discourse.Centering.CbPronominalized.constraint`: the unconditional form implies Rule 1.
 * `Discourse.Centering.CbPronominalized.mono`: counting more forms as pronouns preserves the
   unconditional form.
+* `Discourse.Centering.PronominalizationConstraint.cb_eq_of_pronominalized_eq_singleton`: under
+  Rule 1, a forward-looking center of the previous utterance that is the only entity
+  pronominalized is the backward-looking center.
 
 ## Implementation notes
 
@@ -30,6 +33,7 @@ of `cb`, so where several backward-looking centers tie they constrain the first 
 * [grosz-joshi-weinstein-1995]
 * [gordon-grosz-gilliom-1993]
 * [poesio-stevenson-eugenio-hitzeman-2004]
+* [walker-joshi-prince-1998]
 -/
 
 @[expose] public section
@@ -73,6 +77,18 @@ one. -/
 theorem pronominalizationConstraint_of_disjoint (h : Disjoint prev.cf (cur.pronominalized P)) :
     PronominalizationConstraint P prev cur :=
   fun hne ↦ absurd (Finset.disjoint_iff_inter_eq_empty.mp h) hne.ne_empty
+
+/-- Under Rule 1, if the only entity `cur` pronominalizes is a forward-looking center of `prev`,
+it is the backward-looking center, as [walker-joshi-prince-1998] note. -/
+theorem PronominalizationConstraint.cb_eq_of_pronominalized_eq_singleton {e : E}
+    (h : PronominalizationConstraint P prev cur) (he : e ∈ prev.cf)
+    (hP : cur.pronominalized P = {e}) : cb prev cur.cf = some e := by
+  have hmem : e ∈ cur.pronominalized P := hP ▸ Finset.mem_singleton_self e
+  obtain ⟨c, hc⟩ : ∃ c, cb prev cur.cf = some c := Option.ne_none_iff_exists'.1 fun h0 ↦
+    Finset.disjoint_left.1 (cb_eq_none_iff.1 h0) he (Utterance.pronominalized_subset_cf hmem)
+  have hce := h ⟨e, Finset.mem_inter.2 ⟨he, hmem⟩⟩ c hc
+  rw [hP, Finset.mem_singleton] at hce
+  rw [hc, hce]
 
 /-- Counting more forms as pronouns preserves the unconditional form of Rule 1. -/
 theorem CbPronominalized.mono {Q : Set F} [DecidablePred (· ∈ Q)] (hPQ : P ⊆ Q)
