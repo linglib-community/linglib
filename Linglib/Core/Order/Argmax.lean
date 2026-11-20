@@ -5,6 +5,7 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # The argmax set of a function on a finset
@@ -30,6 +31,8 @@ Option α`; the set-valued form is the natural companion of `Finset.max'` and
   element.
 * `argmax_nonempty` — nonempty on nonempty input, in a total preorder.
 * `argmax_comp_strictMono` — invariance under strictly monotone rescaling.
+* `argmin_argmin` — minimizing `g` over the minimizers of `f` minimizes `(f, g)`
+  lexicographically.
 
 ## Implementation notes
 
@@ -127,6 +130,23 @@ theorem mem_argmax_iff_maximalFor : a ∈ s.argmax f ↔ MaximalFor (· ∈ s) f
 end Total
 
 end Preorder
+
+section Lex
+
+variable [PartialOrder β] [DecidableLE β] [Preorder γ] [DecidableLE γ] [DecidableLE (β ×ₗ γ)]
+
+/-- Minimizing `g` over the minimizers of `f` is minimizing the pair `(f, g)`
+lexicographically. -/
+theorem argmin_argmin (s : Finset α) (f : α → β) (g : α → γ) :
+    (s.argmin f).argmin g = s.argmin fun a ↦ toLex (f a, g a) := by
+  ext a
+  simp only [mem_argmin, Prod.Lex.toLex_le_toLex]
+  refine ⟨fun ⟨⟨ha, hf⟩, hg⟩ ↦ ⟨ha, fun b hb ↦ ?_⟩, fun ⟨ha, h⟩ ↦ ?_⟩
+  · exact (hf b hb).lt_or_eq.imp_right fun he ↦ ⟨he, hg b ⟨hb, fun c hc ↦ he ▸ hf c hc⟩⟩
+  · have hf : ∀ b ∈ s, f a ≤ f b := fun b hb ↦ (h b hb).elim le_of_lt fun h ↦ h.1.le
+    exact ⟨⟨ha, hf⟩, fun b hb ↦ (h b hb.1).elim (fun hlt ↦ absurd (hb.2 a ha) hlt.not_ge) (·.2)⟩
+
+end Lex
 
 section OrderedCancelAddCommMonoid
 

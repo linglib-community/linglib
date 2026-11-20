@@ -74,12 +74,14 @@ open ArgumentStructure (ThematicFrame)
 `P` and measures strictly above the maximal than-clause degree of `b`. -/
 def comparativeTruth {Ent α Measured D : Type*} [Preorder D] (role : Ent → α → Prop)
     (P : α → Prop) (extract : α → Measured) (μ : Measured → D) (a b : Ent) : Prop :=
-  MaxComparative .gt (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
+  MaxComparative .gt ((fun e ↦ μ (extract e)) '' {e | role b e ∧ P e})
+    ((fun e ↦ μ (extract e)) '' {e | role a e ∧ P e})
 
 /-- The equative, (27ii), is the comparative with a weak comparison. -/
 def equativeTruth {Ent α Measured D : Type*} [Preorder D] (role : Ent → α → Prop)
     (P : α → Prop) (extract : α → Measured) (μ : Measured → D) (a b : Ent) : Prop :=
-  MaxComparative .ge (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
+  MaxComparative .ge ((fun e ↦ μ (extract e)) '' {e | role b e ∧ P e})
+    ((fun e ↦ μ (extract e)) '' {e | role a e ∧ P e})
 
 theorem comparativeTruth_entails_equativeTruth {Ent α Measured D : Type*} [Preorder D]
     (role : Ent → α → Prop) (P : α → Prop) (extract : α → Measured)
@@ -123,7 +125,11 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} [PartialOrder D] (role
       and_assoc]
   rw [this, Quantifier.scopeDegrees_some_Iic]
   simp only [comparativeTruth, MaxComparative, isGreatest_lowerClosure_iff, matrixClause,
-    matrixDegP, Comparison.Rel, and_assoc]
+    matrixDegP, Set.Nonempty, Set.mem_inter_iff, Set.mem_image, Set.mem_ofPred_eq,
+    Comparison.interval_gt, Set.mem_Ioi, and_assoc]
+  exact exists_congr fun δ ↦ and_congr_right fun _ ↦
+    ⟨fun ⟨e, h₁, h₂, h₃⟩ ↦ ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩,
+      fun ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩ ↦ ⟨e, h₁, h₂, h₃⟩⟩
 
 end Derivation
 
@@ -413,7 +419,7 @@ theorem comparativeTruth_iff_of_isGreatest [Preorder D] {μ : Measured → D}
     (ha : IsGreatest {e | role a e ∧ P e} xa) (hb : IsGreatest {e | role b e ∧ P e} xb)
     (hμ : Monotone (μ ∘ extract)) :
     comparativeTruth role P extract μ a b ↔ μ (extract xb) < μ (extract xa) :=
-  maxComparative_gt_iff_of_isGreatest ha (hμ.monotoneOn _) hb (hμ.monotoneOn _)
+  maxComparative_gt_image_iff_of_isGreatest ha (hμ.monotoneOn _) hb (hμ.monotoneOn _)
 
 /-- On the truth conditions (42), (48) and (65), *a ran more than b* is true under one admissible
 measure and *b ran more than a* under another, as with the duration and distance of (5b), exactly

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Discourse.LogophoricRole
 
 /-!
 # Speas & Tenny (2003): Configurational Properties of Point of View Roles

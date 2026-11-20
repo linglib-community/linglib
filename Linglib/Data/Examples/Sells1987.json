@@ -1,4 +1,48 @@
-[
+{
+  "features": [
+    {
+      "key": "environment",
+      "lean": "environment",
+      "type": "Environment",
+      "doc": "The discourse environments of Table 1, from the one with no role internal to the one with every role internal.",
+      "levels": [
+        {"name": "directSpeech", "label": "external",
+         "doc": "direct speech, in which the external speaker holds every role"},
+        {"name": "thirdPerson", "label": "3POV",
+         "doc": "third-person point of view, in which the speaker reports from where someone in the sentence stands, as in an adverbial clause"},
+        {"name": "psychVerb", "label": "psych-verb",
+         "doc": "the complement of a psychological verb such as distress, through which the speaker reports the state of mind of someone in the sentence"},
+        {"name": "logophoricVerb", "label": "logophoric verb",
+         "doc": "the complement of a verb of communication such as say, the fully logophoric case"}
+      ]
+    },
+    {
+      "key": "diagnostic",
+      "lean": "diagnostic",
+      "type": "Diagnostic",
+      "doc": "The discourse-oriented phrases of section 4, each tested for whose side it is understood from.",
+      "levels": [
+        {"name": "thatFool", "label": "that fool",
+         "doc": "the speaker-evaluative phrase 'that fool' (section 4.1)"},
+        {"name": "mysteriously", "label": "mysteriously",
+         "doc": "the adverb 'mysteriously' (section 4.2)"},
+        {"name": "beloved", "label": "beloved",
+         "doc": "the adjective 'beloved' (section 4.3)"}
+      ]
+    }
+  ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "Whose evaluation a discourse-oriented phrase can be understood to give.",
+    "levels": [
+      {"name": "internalProtagonist", "label": "internal protagonist",
+       "doc": "the one inside the sentence whose part the speaker takes"},
+      {"name": "externalSpeaker", "label": "external speaker",
+       "doc": "the one making the report"}
+    ]
+  },
+  "examples": [
   {
     "id": "sells1987_11a",
     "source": {"bibkey": "sells-1987", "paperLabel": "(11a)"},
@@ -653,3 +697,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Person.CaseConstraint
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Discourse.LogophoricRole
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Fragments.Romance.Italian.Pronouns
 public import Linglib.Fragments.Romance.Spanish.Clitics
@@ -21,7 +21,8 @@ and P-Primacy, generate the five attested varieties, strong, ultra-strong, weak,
 and me-first, together with three predicted ones, and the grammars of four of them
 [license the combinations of the descriptive
 varieties](##PanchevaZubizarreta2018.isLicit_iff_variety). The three prominence values
-correspond to Sells's logophoric roles pivot, self, and source (`prominenceToSellsRole`).
+correspond to Sells's logophoric roles pivot, self, and source
+(`ProminenceThreshold.toLogophoricRole`).
 
 ## Implementation notes
 
@@ -281,21 +282,21 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 /-! ### Logophoric roles (§6.2) -/
 
-/-- The prominence values are the logophoric roles of [sells-1987], proximate arguments being
-pivots, participants selves, and authors sources. -/
-def prominenceToSellsRole : ProminenceThreshold → LogophoricRole
-  | .proximate => .pivot
-  | .participant => .self
-  | .author => .source
-
-theorem family_logophoric_assignments :
-    prominenceToSellsRole strongGrammar.prominence = .pivot ∧
-      prominenceToSellsRole ultraStrongGrammar.prominence = .pivot ∧
-      prominenceToSellsRole weakGrammar.prominence = .pivot ∧
-      prominenceToSellsRole superStrongGrammar.prominence = .self ∧
-      prominenceToSellsRole meFirstGrammar.prominence = .source ∧
-      prominenceToSellsRole pg3Grammar.prominence = .source := by
-  decide
+/-- (46): the prominence values are the logophoric roles of [sells-1987] in the order of his
+hierarchy, a `proximate` argument being at least a pivot, a `participant` at least a self, and an
+`author` a source. -/
+def ProminenceThreshold.toLogophoricRole : ProminenceThreshold ≃o LogophoricRole where
+  toFun
+    | .proximate => .pivot
+    | .participant => .self
+    | .author => .source
+  invFun
+    | .pivot => .proximate
+    | .self => .participant
+    | .source => .author
+  left_inv := by decide
+  right_inv := by decide
+  map_rel_iff' := by decide
 
 /-! ### The paper's examples (§4) -/
 

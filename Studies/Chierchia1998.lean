@@ -320,34 +320,34 @@ variable {S E : Type*} [PartialOrder E]
 
 /-- *Dogs bark* (38b), `Gn x, s [∪∩dog(x) ∧ C(x, s)] [bark(x, s)]`, puts the instances of the
 kind in the restriction of the generic operator, which binds them with the situations. -/
-def dogsBark (N : Normality S (E × S)) (dog : S → Set E) (C : Set (E × S))
+def dogsBark (N : S → Normality (E × S)) (dog : S → Set E) (C : Set (E × S))
     (bark : E → S → Prop) : Set S :=
-  N.gen ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C) {p | bark p.1 p.2}
+  {s | (N s).gen ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C) {p | bark p.1 p.2}}
 
 /-- In *Computers route modern planes* (39b), the object is fronted into the restriction of the
 generic operator and the subject is reconstructed into its scope, where derived kind predication
 reads it existentially. -/
-def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
-    (route : E → E → S → Prop) : Set S :=
-  N.gen ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C)
-    {p | Quantifier.Det.some (Kind.up (Kind.down computer) p.2) {x | route x p.1 p.2}}
+def computersRoute (N : S → Normality (E × S)) (computer plane : S → Set E)
+    (C : Set (E × S)) (route : E → E → S → Prop) : Set S :=
+  {s | (N s).gen ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C)
+    {p | Quantifier.Det.some (Kind.up (Kind.down computer) p.2) {x | route x p.1 p.2}}}
 
 /-- In (39b) the fronted bare plural is universal over the normal cases, and the one in scope
 existential over its kind's instances (p. 368). -/
-theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Set E}
+theorem mem_computersRoute {N : S → Normality (E × S)} {computer plane : S → Set E}
     {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
     s ∈ computersRoute N computer plane C route ↔
-      ∀ p ∈ N.normal s ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C),
+      ∀ p ∈ (N s).normal ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C),
         ∃ x ∈ Kind.up (Kind.down computer) p.2, route x p.1 p.2 :=
   Iff.rfl
 
 /-- The generic reading of a bare plural (38b) entails its episodic reading by derived kind
 predication (31c) wherever the kind has a normal instance. -/
-theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
+theorem some_up_of_mem_dogsBark {N : S → Normality (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
-    (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C)) :
+    (hx : (x, s') ∈ (N s).normal ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C)) :
     Quantifier.Det.some (Kind.up (Kind.down dog) s') {x | bark x s'} :=
-  ⟨x, (N.normal_subset s _ hx).1, h hx⟩
+  ⟨x, ((N s).normal_subset _ hx).1, h hx⟩
 
 end Generic
 

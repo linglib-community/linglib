@@ -147,7 +147,7 @@ restriction satisfies the predicate. It binds the event variable itself, so it r
 verifying instance. -/
 def gen (ideal : W → Set T → Set E) (restr : E → Prop) (w : W) (t : Set T) (P : E → Prop) :
     Prop :=
-  (w, t) ∈ (Genericity.Normality.ofAccess fun i : W × Set T ↦ ideal i.1 i.2).gen {e | restr e}
+  (Genericity.Normality.restrict (ideal w t)).gen {e | restr e}
     {e | P e}
 
 /-- A root modal under `GEN` has no actuality entailment ((93), (100)). -/

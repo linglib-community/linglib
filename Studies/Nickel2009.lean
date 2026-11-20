@@ -1,31 +1,35 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Genericity.Normality
 public import Studies.Cohen1999
 
 /-!
 # Nickel (2009): Generics and the Ways of Normality
 
-This file formalizes the argument of [nickel-2009] from conjunctive generics against
-majority-based accounts of the generic operator. *Elephants live in Africa and Asia* is
-sentential conjunction, *elephants live in Africa and elephants live in Asia*, and is true
-although no majority of elephants lives in either place, so the probabilistic operator of
-[cohen-1999a] predicts it false (`cohen_fails_elephant_asia`). Normality comes in ways: a
-characterizing sentence is true when there is a way of being normal in the respect the
-predicate determines such that every individual normal in that way satisfies the predicate
-(`nickelGEN`), so each conjunct of a conjunctive generic may draw on its own way
-(`nickelConjunctiveGEN`, `nickel_handles_elephant_conjunction`,
-`bears_nickel_succeeds`), and the ways are incompatible without the conjunction entailing
-that anything lives in both places (`ways_incompatible`).
+[nickel-2009] proposes that a characterizing sentence with restrictor `A` and matrix `F` is true
+when there is a way of being a normal `A`, in the respect that `F` fixes, such that every `A`
+normal in that way is `F`. A way of being normal is here a `Genericity.Normality`, the ways of
+being normal in the respect of a matrix are a set `ways F` of them, and we define
+`gen ways A F ↔ ∃ N ∈ ways F, N.gen A F`.
+
+The paper's argument concerns generics whose matrices exclude one another, as in *elephants live
+in Africa and elephants live in Asia*. On a majority-based account such as the probabilistic one
+of [cohen-1999a], two generics with one restrictor have compatible matrices
+(`not_disjoint_of_gen_of_gen`), so the two conjuncts cannot both be true. With one way of being
+normal the two conjuncts leave the restrictor no normal case
+(`normal_eq_empty_of_gen_of_gen`). With a way for each matrix both conjuncts are true, and where
+each is instantiated the generic with the conjoined matrix is false (`gen_and_not_gen_inter`).
 
 ## Implementation notes
 
-The ways are indices selecting the individuals that count as normal, the actual-extension
-proxy for the paper's respects of normality and its inductive targets; the counterfactual
-element the paper notes it needs when no individual is normal in a way is not represented,
-so the operator holds vacuously in that case. Each toy model is a finite type of entities,
-over which GEN is the type-level `every`. The comparison with Cohen's operator runs over one
-shared toy model, with the habitats as the alternative set.
+* A way of being normal is a normality and not a set of individuals, so that a way may select
+  its normal cases by any means. The ways of the paper's examples are the normalities
+  `Genericity.Normality.restrict F`, whose normal cases are the cases that are `F`.
+* The ways depend on the matrix through the function `ways`, which stands for the respect of
+  normality that the matrix determines.
+* The paper notes that its truth conditions need a counterfactual element where nothing is
+  normal in the relevant respect. That element is not represented, and `gen ways A F` holds when
+  some way in `ways F` leaves `A` no normal case.
 
 ## References
 
@@ -37,150 +41,63 @@ shared toy model, with the habitats as the alternative set.
 
 namespace Nickel2009
 
-open Quantifier.Det ProbabilityTheory
+open Genericity Quantifier MeasureTheory Set
 
-/-! ### Ways of Being Normal -/
+variable {α : Type*}
 
-/-- A way of being normal, an index selecting which entities count as normal for a given
-generalization. Different generic claims can appeal to different normality ways. -/
-structure NormalcyWay where
-  id : ℕ
-  deriving DecidableEq, Repr
+/-! ### Majority-based accounts -/
 
-/-! ### Nickel's GEN
+/-- On the probabilistic account, two generics with one restrictor have compatible matrices. -/
+theorem not_disjoint_of_gen_of_gen [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]
+    {ψ φ φ' : Set α} (hψ : MeasurableSet ψ) (hφ' : MeasurableSet φ')
+    (h : Cohen1999.gen μ ψ φ) (h' : Cohen1999.gen μ ψ φ') : ¬ Disjoint φ φ' := by
+  intro hd
+  rw [Cohen1999.gen_iff_lt hψ] at h h'
+  have hu : μ (ψ ∩ φ) + μ (ψ ∩ φ') ≤ μ ψ := by
+    rw [← measure_union (hd.mono inter_subset_right inter_subset_right) (hψ.inter hφ'),
+      ← inter_union_distrib_left]
+    exact measure_mono inter_subset_left
+  have hlt := ENNReal.add_lt_add h h'
+  rw [← mul_add, ← two_mul] at hlt
+  exact (hlt.trans_le (by gcongr)).false
 
-GEN is the restricted universal `every` under an existential over normality ways, so the only
-apparatus specific to Nickel is the existential over ways. -/
+/-! ### Ways of being normal -/
 
-section GEN
+variable {ways : Set α → Set (Normality α)} {N : Normality α} {A F F' : Set α}
 
-variable {α : Type*} (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay)
-  (restrictor scope scope' : Set α)
+/-- The truth conditions for characterizing sentences: there is a way of being normal in the
+respect of the matrix such that every normal case of the restrictor is a case of the matrix. -/
+def gen (ways : Set α → Set (Normality α)) : Det α :=
+  fun A F ↦ ∃ N ∈ ways F, N.gen A F
 
-/-- Nickel's GEN with way-indexed normality holds when there is a way of being normal such
-that every entity normal in that way and satisfying the restrictor satisfies the scope. The
-existential over ways lets different conjuncts of a conjunctive generic use different ways. -/
-def nickelGEN : Prop :=
-  ∃ w ∈ ways, every (restrictor ∩ {e | normalIn e w}) scope
+theorem gen_iff : gen ways A F ↔ ∃ N ∈ ways F, N.gen A F := Iff.rfl
 
-/-- A conjunctive generic holds when both `GEN[A][F₁]` and `GEN[A][F₂]` hold, possibly through
-different normality ways. -/
-def nickelConjunctiveGEN : Prop :=
-  nickelGEN normalIn ways restrictor scope ∧ nickelGEN normalIn ways restrictor scope'
+@[simp]
+theorem gen_singleton : gen (fun _ ↦ {N}) A F ↔ N.gen A F := by
+  simp [gen]
 
-/-- Normality ways are pairwise incompatible when no entity is normal in two distinct ways.
-The paper (p. 643) states this holds "usually (perhaps always)"; here it is a property of the
-toy model, not a commitment of the account. -/
-def WaysIncompatible : Prop :=
-  ∀ e, ∀ w₁ ∈ ways, ∀ w₂ ∈ ways, w₁ ≠ w₂ → ¬ (normalIn e w₁ ∧ normalIn e w₂)
+theorem gen_of_restrict_mem (h : Normality.restrict F ∈ ways F) : gen ways A F :=
+  ⟨_, h, inter_subset_left⟩
 
-variable [Fintype α] [DecidablePred (· ∈ restrictor)] [DecidablePred (· ∈ scope)]
-  [DecidablePred (· ∈ scope')]
-  [∀ w, DecidablePred (normalIn · w)]
+/-- With one way of being normal, two generics with one restrictor and disjoint matrices leave
+the restrictor no normal case. -/
+theorem normal_eq_empty_of_gen_of_gen (h : gen (fun _ ↦ {N}) A F) (h' : gen (fun _ ↦ {N}) A F')
+    (hd : Disjoint F F') : N.normal A = ∅ :=
+  N.normal_eq_empty_of_disjoint (gen_singleton.1 h) (gen_singleton.1 h')
+    (hd.mono_left inter_subset_right)
 
-instance : Decidable (nickelGEN normalIn ways restrictor scope) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-instance : Decidable (nickelConjunctiveGEN normalIn ways restrictor scope scope') :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-instance : Decidable (WaysIncompatible normalIn ways) :=
-  inferInstanceAs (Decidable (∀ _, _))
-
-end GEN
-
-/-! ### The Elephant Example (2b/11) -/
-
-section Elephants
-
-/-- Ten elephants, six African (`0`–`5`) and four Asian (`6`–`9`). -/
-abbrev Elephant := Fin 10
-
-abbrev isElephant : Set Elephant := Set.univ
-abbrev livesInAfrica : Set Elephant := {e | e < 6}
-abbrev livesInAsia : Set Elephant := {e | 6 ≤ e}
-
-def africanWay : NormalcyWay := ⟨1⟩
-def asianWay : NormalcyWay := ⟨2⟩
-def ways : Finset NormalcyWay := {africanWay, asianWay}
-
-/-- Normal in the African way are the African elephants, in the Asian way the Asian ones. -/
-abbrev elephantNormalIn : Elephant → NormalcyWay → Prop := fun e w ↦
-  (w.id = 1 ∧ e < 6) ∨ (w.id = 2 ∧ 6 ≤ e)
-
-end Elephants
-
-/-! ### The Bears Example (2a) -/
-
-section Bears
-
-/-- Twenty bears across four continents, five each, with NA `0`–`4`, SA `5`–`9`, EU `10`–`14`
-and AS `15`–`19`, so that each habitat is a quarter of the bears. -/
-abbrev Bear := Fin 20
-
-abbrev isBear : Set Bear := Set.univ
-abbrev bearNA : Set Bear := {e | e < 5}
-abbrev bearSA : Set Bear := {e | 5 ≤ e ∧ e < 10}
-abbrev bearEU : Set Bear := {e | 10 ≤ e ∧ e < 15}
-abbrev bearAS : Set Bear := {e | 15 ≤ e}
-
-/-- The union of the habitat alternatives, which every bear lies in. -/
-abbrev bearHabitat : Set Bear := bearNA ∪ bearSA ∪ bearEU ∪ bearAS
-
-def bearWays : Finset NormalcyWay := {⟨1⟩, ⟨2⟩, ⟨3⟩, ⟨4⟩}
-
-abbrev bearNormalIn : Bear → NormalcyWay → Prop := fun e w ↦
-  (w.id = 1 ∧ e < 5) ∨ (w.id = 2 ∧ 5 ≤ e ∧ e < 10) ∨
-  (w.id = 3 ∧ 10 ≤ e ∧ e < 15) ∨ (w.id = 4 ∧ 15 ≤ e)
-
-end Bears
-
-/-! ### Key Theorems -/
-
-theorem nickel_handles_elephant_conjunction :
-    nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia := by
-  decide
-
-/-- In the bears example (2a) Nickel's view succeeds for all four habitat conjuncts. -/
-theorem bears_nickel_succeeds :
-    nickelGEN bearNormalIn bearWays isBear bearNA ∧
-    nickelGEN bearNormalIn bearWays isBear bearSA ∧
-    nickelGEN bearNormalIn bearWays isBear bearEU ∧
-    nickelGEN bearNormalIn bearWays isBear bearAS := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-theorem ways_incompatible :
-    WaysIncompatible elephantNormalIn ways ∧ WaysIncompatible bearNormalIn bearWays := by
-  decide
-
-/-! ### The majority view fails where Nickel's succeeds
-
-The headline contrast is a theorem over a shared model citing the `gen` of [cohen-1999a]
-directly, with the habitats as the alternative set. The majority view fails on the conjunction
-because the Asia conjunct has prevalence 4/10 < 1/2, while Nickel's view succeeds. -/
-
-theorem cohen_fails_elephant_asia :
-    ¬ Cohen1999.gen (uniformOn (livesInAfrica ∪ livesInAsia)) isElephant livesInAsia := by
-  decide
-
-theorem cohen_fails_nickel_succeeds_on_conjunction :
-    ¬ Cohen1999.gen (uniformOn (livesInAfrica ∪ livesInAsia)) isElephant livesInAsia ∧
-    nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia :=
-  ⟨cohen_fails_elephant_asia, nickel_handles_elephant_conjunction⟩
-
--- (2a)
-theorem cohen_fails_all_bear_habitats :
-    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearNA ∧
-    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearSA ∧
-    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearEU ∧
-    ¬ Cohen1999.gen (uniformOn bearHabitat) isBear bearAS := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-! ### Connection to Traditional GEN -/
-
-theorem nickelGEN_singleton_iff {α : Type*} (normalIn : α → NormalcyWay → Prop)
-    (w : NormalcyWay) (restrictor scope : Set α) :
-    nickelGEN normalIn {w} restrictor scope ↔ every (restrictor ∩ {e | normalIn e w}) scope := by
-  simp [nickelGEN]
+/-- (22): with a way of being normal for each of two disjoint matrices that the restrictor
+instantiates, each generic is true and the generic with the conjoined matrix is false. -/
+theorem gen_and_not_gen_inter (hd : Disjoint F F') (hF : (A ∩ F).Nonempty)
+    (hF' : (A ∩ F').Nonempty) :
+    gen (fun _ ↦ {.restrict F, .restrict F'}) A F ∧
+      gen (fun _ ↦ {.restrict F, .restrict F'}) A F' ∧
+        ¬ gen (fun _ ↦ {.restrict F, .restrict F'}) A (F ∩ F') := by
+  refine ⟨gen_of_restrict_mem (.inl rfl), gen_of_restrict_mem (.inr rfl), ?_⟩
+  rintro ⟨N, rfl | rfl, hN⟩
+  · obtain ⟨x, hA, hx⟩ := hF
+    exact hd.le_bot ⟨hx, (hN ⟨hx, hA⟩).2⟩
+  · obtain ⟨x, hA, hx⟩ := hF'
+    exact hd.le_bot ⟨(hN ⟨hx, hA⟩).1, hx⟩
 
 end Nickel2009

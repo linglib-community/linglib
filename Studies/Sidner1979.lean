@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.List.Sort
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Sidner1979
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
@@ -59,6 +60,12 @@ def Thematic.rank : Thematic → ℕ
   | .verbPhrase => 3
 
 instance : LinearOrder Thematic := LinearOrder.lift' Thematic.rank (by decide)
+
+/-- `Thematic.rank` as an order embedding. -/
+def Thematic.rankOrderEmbedding : Thematic ↪o ℕ := ⟨⟨Thematic.rank, by decide⟩, Iff.rfl⟩
+
+@[simp] theorem Thematic.coe_rankOrderEmbedding : ⇑Thematic.rankOrderEmbedding = Thematic.rank :=
+  rfl
 
 /-- The form of a sentence as far as the expected focus algorithm consults it: an is-a or
 there-insertion sentence with its subject, or a plain sentence. -/

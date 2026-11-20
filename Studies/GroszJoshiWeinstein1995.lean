@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.Discourse
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Accessibility
 public import Linglib.Core.Data.List.Forall2
@@ -23,7 +24,8 @@ grammatical role from the hamster variants (7) to (10), which Rule 1 separates i
 acceptable and the degraded (`rule1_separates_variants`), and from the subject preference of
 (11) and (12) and the toy contrast of (13) and (14); section 7 applies the rules to the
 violation in (15) and its repair by the shift in (16), the full noun phrase center of (17),
-and the transitions annotated on (20); and section 9 compares centering with [sidner-1979] on
+the center of (19) that is realized but not directly realized (`d19_house_cb`), and the
+transitions annotated on (20); and section 9 compares centering with [sidner-1979] on
 Sidner's example (34), where the centering account makes Jeff the center that the pronoun of
 (34c) continues (`d34_jeff_cb`). The section says that Sidner's actor focus, Carl after (34b),
 makes Carl the leading candidate for that pronoun; Sidner's rule for a pronoun in agent
@@ -53,9 +55,8 @@ sequences by the order on `Transition`; its restriction to pairs of utterances i
 
 ## TODO
 
-The center of (19), realized but not directly realized, the value-free and value-loaded
-interpretations of (25) to (31), and the referential uses of (32) and (33) in section 8 need a
-realization relation richer than the substrate's list of directly realized entities.
+The value-free and value-loaded interpretations of (25) to (31) and the referential uses of (32)
+and (33) in section 8 need a realization relation between noun phrases and entities.
 -/
 
 @[expose] public section
@@ -68,7 +69,7 @@ open Discourse.AccessibilityLevel (Head)
 /-- The individuals of the paper's discourses. -/
 inductive Entity
   | john | store | piano | susan | betsy | hamster | wine | susie | tommy | boat | bear | mike
-  | speaker | dog | vet
+  | speaker | dog | vet | house | door | furniture
   deriving DecidableEq
 
 /-- An utterance with its realizations, ranked subject > object > other. -/
@@ -133,7 +134,7 @@ theorem d1_continues : transitions D1.all = [.continuation, .continuation, .cont
 -- (2), (2b), Rule 1, (2d), (2c)
 theorem d2_retains : cbs D2.all = [some .john, some .john, some .john] ∧
     transitions D2.all = [.retaining, .continuation, .retaining] ∧
-      ¬ Rule1 D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, D2.d.Pronominalizes pronouns e := by
+      ¬ Rule1 D1.a D2.b ∧ Disjoint D1.c.cf (D2.d.pronominalized pronouns) := by
   decide
 
 /-- Discourse (1) is a sequence of continuations, which Rule 2 prefers to the transitions of (2)
@@ -169,14 +170,14 @@ def c10 : Utt := ⟨[pron .betsy .subject, name .susan .object]⟩
 
 end D7
 
-theorem susan_cb : cb D7.b D7.c7 = some .susan ∧ cb D7.b D7.c8 = some .susan ∧
-    cb D7.b D7.c9 = some .susan ∧ cb D7.b D7.c10 = some .susan := by
+theorem susan_cb : cb D7.b D7.c7.cf = some .susan ∧ cb D7.b D7.c8.cf = some .susan ∧
+    cb D7.b D7.c9.cf = some .susan ∧ cb D7.b D7.c10.cf = some .susan := by
   decide
 
 -- (7c), (8c)
 theorem c7_continues_c8_retains :
-    transition (cb D7.a D7.b) D7.b D7.c7 = .continuation ∧
-      transition (cb D7.a D7.b) D7.b D7.c8 = .retaining := by
+    transition (cb D7.a D7.b.cf) D7.b D7.c7 = .continuation ∧
+      transition (cb D7.a D7.b.cf) D7.b D7.c8 = .retaining := by
   decide
 
 /-- Rule 1 separates the variants as the paper's acceptability ordering does: (7) and (8)
@@ -203,8 +204,8 @@ def e12 : Utt := ⟨[pron .susan .object]⟩
 
 end D11
 
-theorem subject_preference : D11.d.cp = some .susan ∧ cb D11.c D11.d = some .susan ∧
-    cb D11.d D11.e11 = some .susan ∧ cb D11.d D11.e12 = some .susan := by
+theorem subject_preference : D11.d.cp = some .susan ∧ cb D11.c D11.d.cf = some .susan ∧
+    cb D11.d D11.e11.cf = some .susan ∧ cb D11.d D11.e12.cf = some .susan := by
   decide
 
 namespace D13
@@ -218,7 +219,7 @@ def d : Utt := ⟨[name .tommy .subject, pron .boat .object, desc .bear .other]�
 end D13
 
 -- (13), (14)
-theorem boat_cb : cb D13.c D13.d = some .boat := by decide
+theorem boat_cb : cb D13.c D13.d.cf = some .boat := by decide
 
 /-! ### Applications of the rules, section 7 -/
 
@@ -236,7 +237,7 @@ def c : Utt := ⟨[name .john .subject, pron .mike .object]⟩
 end D15
 
 -- (15c), Rule 1, (15b)
-theorem d15_violates_rule1 : cb D15.b D15.c = some .john ∧
+theorem d15_violates_rule1 : cb D15.b D15.c.cf = some .john ∧
     Rule1 D15.a D15.b ∧ ¬ Rule1 D15.b D15.c := by
   decide
 
@@ -272,8 +273,28 @@ def c : Utt := ⟨[desc .dog .subject]⟩
 end D17
 
 -- Rule 1, (17c)
-theorem full_noun_phrase_cb : cb D17.b D17.c = some .dog ∧
+theorem full_noun_phrase_cb : cb D17.b D17.c.cf = some .dog ∧
     Rule1 D17.b D17.c := by
+  decide
+
+namespace D19
+
+/-- (19a) The house appeared to have been burgled. -/
+def a : Utt := ⟨[desc .house .subject]⟩
+
+/-- (19b) The door was ajar, realizing the house without directly realizing it. -/
+def b : Utterance Entity GrammaticalRole (Option Head) :=
+  (⟨[desc .door .subject]⟩ : Utt).withImplicit [.house] .other
+
+/-- (19c) The furniture was in disarray, realizing the house in the same way. -/
+def c : Utterance Entity GrammaticalRole (Option Head) :=
+  (⟨[desc .furniture .subject]⟩ : Utt).withImplicit [.house] .other
+
+end D19
+
+-- (19b), (19c)
+theorem d19_house_cb : cb D19.a D19.b.cf = some .house ∧ cb D19.b D19.c.cf = some .house ∧
+    D19.b.rank .house < D19.b.rank .door := by
   decide
 
 namespace D20
@@ -331,11 +352,11 @@ end D34
 
 /-- On the centering account Jeff is the center at (34b), and the pronoun of (34c) that
 continues him satisfies Rule 1: there is no problem. -/
-theorem d34_jeff_cb : cb D34.a D34.b = some .jeff ∧ cb D34.b D34.c = some .jeff ∧
+theorem d34_jeff_cb : cb D34.a D34.b.cf = some .jeff ∧ cb D34.b D34.c.cf = some .jeff ∧
     Rule1 D34.b D34.c := by
   decide
 
-theorem d34_two_pronouns : cb D34.b D34.c' = some .carl ∧
+theorem d34_two_pronouns : cb D34.b D34.c'.cf = some .carl ∧
     Rule1 D34.b D34.c' := by
   decide
 
@@ -348,7 +369,7 @@ theorem d34_sidner_foci : Sidner1979.D9.afterB.discourse = some ⟨.jeff, 1⟩ �
 /-- On Sidner's agent-position rule, the pronoun of (34c) co-specifies Jeff, the discourse focus of
 (34a) and the center on the centering account. -/
 theorem d34_sidner_cospecify :
-    Sidner1979.D9.afterB.cospecify .agent (· ∈ [.jeff, .carl]) = cb D34.a D34.b := by
+    Sidner1979.D9.afterB.cospecify .agent (· ∈ [.jeff, .carl]) = cb D34.a D34.b.cf := by
   decide
 
 end GroszJoshiWeinstein1995
