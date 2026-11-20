@@ -26,7 +26,7 @@ condition that the number exceed one, so it is `⋃ n, ofAtoms D n`, which is Li
 The definite article and the kind-forming operator ∩ take the largest member of an extension.
 The predicate `ofAtoms D n` has one exactly when `D` has `n` members (`down_ofAtoms_dom`), and
 the semantic plural exactly when `D` is nonempty and finite (`down_iUnion_ofAtoms_dom`), where
-it is the sum of all of `D`.
+it is the sum of all of `D` (`isGreatest_iUnion_ofAtoms`).
 
 Composition is type driven. Sisters combine by functional application, and two predicates of
 individuals, which application does not combine, by existential closure `∃ x, P x ∧ V x`. A
@@ -183,26 +183,15 @@ end Atoms
 
 section Kind
 
-variable {World Atom : Type*} [DecidableEq Atom] {D : World → Set Atom} {w : World}
-  {x : Finset Atom} {n : ℕ}
+variable {Atom : Type*} [DecidableEq Atom] {D : Set Atom} {n : ℕ}
 
-theorem mem_down_ofAtoms :
-    x ∈ Kind.down (fun w ↦ ofAtoms (D w) n) w ↔ (x.Nonempty ∧ ↑x = D w) ∧ x.card = n :=
-  Kind.mem_down.trans isGreatest_ofAtoms
-
--- (80)
-theorem mem_down_iUnion_ofAtoms :
-    x ∈ Kind.down (fun w ↦ ⋃ n, ofAtoms (D w) n) w ↔ x.Nonempty ∧ ↑x = D w :=
-  Kind.mem_down.trans isGreatest_iUnion_ofAtoms
-
-/-- ∩ is defined on a count noun with its number argument filled at the worlds with exactly
-that many instances. -/
-theorem down_ofAtoms_dom :
-    (Kind.down (fun w ↦ ofAtoms (D w) n) w).Dom ↔ n ≠ 0 ∧ (D w).encard = n := by
+/-- ∩ is defined on a count noun with its number argument filled where there are exactly that
+many instances. -/
+theorem down_ofAtoms_dom : (Kind.down (ofAtoms D n)).Dom ↔ n ≠ 0 ∧ D.encard = n := by
   simp only [Kind.down_dom, isGreatest_ofAtoms]
   constructor
-  · rintro ⟨x, ⟨hne, hx⟩, rfl⟩
-    exact ⟨hne.card_ne_zero, by rw [← hx, Set.encard_coe_eq_coe_finsetCard]⟩
+  · rintro ⟨x, ⟨hne, rfl⟩, rfl⟩
+    exact ⟨hne.card_ne_zero, Set.encard_coe_eq_coe_finsetCard x⟩
   · rintro ⟨hn, h⟩
     have hfin := Set.finite_of_encard_eq_coe h
     have hc : hfin.toFinset.card = n := by
@@ -213,7 +202,7 @@ theorem down_ofAtoms_dom :
 
 -- (63b)
 theorem down_iUnion_ofAtoms_dom :
-    (Kind.down (fun w ↦ ⋃ n, ofAtoms (D w) n) w).Dom ↔ (D w).Nonempty ∧ (D w).Finite := by
+    (Kind.down (⋃ n, ofAtoms D n)).Dom ↔ D.Nonempty ∧ D.Finite := by
   simp only [Kind.down_dom, isGreatest_iUnion_ofAtoms]
   exact ⟨fun ⟨x, hne, hx⟩ ↦ hx ▸ ⟨Finset.coe_nonempty.2 hne, x.finite_toSet⟩,
     fun ⟨hne, hfin⟩ ↦ ⟨hfin.toFinset, hfin.toFinset_nonempty.2 hne, hfin.coe_toFinset⟩⟩

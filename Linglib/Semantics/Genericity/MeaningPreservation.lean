@@ -60,7 +60,7 @@ namespace Determiner.Inventory
 
 /-- A covert shift is available to a bare nominal of number `num` in a language with the
 determiners `ds` when it is defined for the nominal, ∩ only where `down` holds (for Chierchia's ∩,
-`Kind.down P ∈ K`), and no determiner blocks it for that number. ∩ is undefined for a singular
+`Kind.down ∘ P ∈ K`), and no determiner blocks it for that number. ∩ is undefined for a singular
 count noun and for a property anchored to particular entities such as *parts of this machine*
 ([dayal-2004]'s fn. 1). -/
 def Available (ds : Inventory) (num : Number) (down : Prop) (τ : CovertShift) : Prop :=
