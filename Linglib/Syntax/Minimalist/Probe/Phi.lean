@@ -52,7 +52,7 @@ def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Bundle :=
 namespace FeatureBundle
 
 /-- The bundle of a nominal with φ-cell `c` and case slot `k`. -/
-def nominal (c : Agreement.Bundle) (k : FeatureSlot Case) : FeatureBundle :=
+def nominal (c : Agreement.Bundle) (k : FeatureSlot (Flat Case)) : FeatureBundle :=
   Function.update (ofAgreement c) .case k
 
 /-- A bundle is active when its case slot is unvalued. -/
@@ -60,17 +60,17 @@ def IsActive (b : FeatureBundle) : Prop := b .case = .unvalued
 
 instance (b : FeatureBundle) : Decidable b.IsActive := inferInstanceAs (Decidable (_ = _))
 
-variable {c : Agreement.Bundle} {k : FeatureSlot Case}
+variable {c : Agreement.Bundle} {k : FeatureSlot (Flat Case)}
 
 @[simp] theorem nominal_case : nominal c k .case = k := Function.update_self ..
 
 @[simp] theorem isActive_nominal : (nominal c k).IsActive ↔ k = .unvalued := by
   simp [IsActive]
 
-@[simp] theorem agreement_nominal : (nominal c k).agreement = Function.update c .case k.toFlat := by
-  rw [nominal, agreement_update_agr, agreement_ofAgreement]; rfl
+@[simp] theorem agreement_nominal : (nominal c k).agreement = Function.update c .case (k.unbotD ⊥) := by
+  rw [nominal, agreement_update_agr, agreement_ofAgreement]
 
-theorem update_case_nominal (k' : FeatureSlot Case) :
+theorem update_case_nominal (k' : FeatureSlot (Flat Case)) :
     Function.update (nominal c k) .case k' = nominal c k' :=
   Function.update_idem ..
 

@@ -158,13 +158,13 @@ def ditransitive : Derivation :=
 /-- The cases a grammar reads off a derivation, the indirect object `goalD` dative from its
     lexical head where `datIO` says so. -/
 def casesOf (g : CaseAssigners) (d : Derivation) (datIO : Bool) :
-    Option (LexicalItem.Token → FeatureSlot (Case × Case.Mechanism)) :=
+    Option (LexicalItem.Token → FeatureSlot (Flat (Case × Case.Mechanism))) :=
   d.externalize?.map fun t ↦
     g.assignOn .raising t complementDomain IsPhaseHead
       (fun x ↦ if datIO && x = goalD then .valued .dat else .unvalued) [subjD, objD, goalD]
 
 /-- The cases of the Mongolian ditransitive. -/
-def ditransitiveCases : Option (LexicalItem.Token → FeatureSlot (Case × Case.Mechanism)) :=
+def ditransitiveCases : Option (LexicalItem.Token → FeatureSlot (Flat (Case × Case.Mechanism))) :=
   casesOf grammar ditransitive true
 
 theorem do_gets_dependent_acc :

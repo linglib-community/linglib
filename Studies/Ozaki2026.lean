@@ -103,7 +103,7 @@ def ablVariant : Participant → Option Case
   | .source => some .abl
 
 /-- The cases of a variant. -/
-def cases (lex : Participant → Option Case) : Participant → FeatureSlot (Case × Mechanism) :=
+def cases (lex : Participant → Option Case) : Participant → FeatureSlot (Flat (Case × Mechanism)) :=
   (Rules.ofAlignment .accusative).assign lex [.leaver, .source]
 
 /-- In the accusative variant the source receives dependent accusative by (27) and the

@@ -65,7 +65,7 @@ open Case DependentCase Minimalist Examples
 
 section Stack
 
-variable {ι : Type*} [DecidableEq ι] (s : ι → FeatureSlot (Case × Mechanism))
+variable {ι : Type*} [DecidableEq ι] (s : ι → FeatureSlot (Flat (Case × Mechanism)))
 
 /-- The φ-probe relativized to unmarked case: it sees exactly the caseless DPs. -/
 def unmarkedProbe : Probe ι := Probe.relativized fun x ↦ s x = .unvalued
@@ -78,7 +78,7 @@ def stack (gs : List ι) : Option ι :=
 
 /-- The stack assigning the case `c`: the DP it finds is valued `c` by Agree, every other goal
 is left as it was. -/
-def assignDep (c : Case) (gs : List ι) : ι → FeatureSlot (Case × Mechanism) :=
+def assignDep (c : Case) (gs : List ι) : ι → FeatureSlot (Flat (Case × Mechanism)) :=
   (stack s gs).elim s (Function.update s · (.valued (c, .functional)))
 
 /-- The case an NP carries. -/

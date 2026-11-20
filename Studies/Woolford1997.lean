@@ -169,7 +169,8 @@ theorem maxAcc_negative : maxAcc [some .dat] = -1 ∧ maxAcc [some .erg, some .d
 
 /-- The slots of the arguments on entering the clause, valued where the verb assigns a lexical
 Case. -/
-def entering (args : List (Option LexicalCase)) (j : Fin args.length) : FeatureSlot AbstractCase :=
+def entering (args : List (Option LexicalCase)) (j : Fin args.length) :
+    FeatureSlot (Flat AbstractCase) :=
   .offer (args[j].map .lexical)
 
 /-- Case on arguments, the highest first: an argument keeps its lexical Case, the functional heads
