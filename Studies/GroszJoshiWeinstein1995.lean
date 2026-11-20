@@ -292,8 +292,7 @@ def c : Utterance Entity GrammaticalRole (Option Head) :=
 
 end D19
 
-/-- The house is the center of (19b) and again of (19c), though neither directly realizes it, and
-the door outranks it among the forward-looking centers of (19b). -/
+-- (19b), (19c)
 theorem d19_house_cb : cb D19.a D19.b.cf = some .house ∧ cb D19.b D19.c.cf = some .house ∧
     D19.b.rank .house < D19.b.rank .door := by
   decide
