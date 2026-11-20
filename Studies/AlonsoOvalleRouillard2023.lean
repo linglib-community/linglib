@@ -110,8 +110,8 @@ theorem Phrase.atom_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a 
 theorem Phrase.sup_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (p : Phrase) :
     a ⊔ b ∈ p.felicitous ↔ p ≠ .sci := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   cases p <;> simp [Phrase.felicitous, whFelicitous_singular, whFelicitous_plural ha hb hab,
     whFelicitous_none, presupposition_hamblin_whDomain,
     presupposition_hamblin_Ici (toFinite _) isUpperSet_whStrongPlural, mem_whStrongPlural, hne, hna]
@@ -376,7 +376,7 @@ theorem rows_agree [IsAtomistic E] [Finite E] (ha : IsAtom a) (hb : IsAtom b) (h
 private theorem sup_mem_whStrongPlural (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     a ⊔ b ∈ (whStrongPlural : Set E) :=
   mem_whStrongPlural.2 ⟨fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1, fun h ↦
-    not_atom_sup_of_ne (atom_iff_isAtom.2 ha) (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)⟩
+    not_isAtom_sup_of_ne (ha) (hb) hab (h)⟩
 
 -- (36a), (38b): the weak singular has every disjunction
 theorem Disjunction.answer_mem_hamblin_whDomain (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c)

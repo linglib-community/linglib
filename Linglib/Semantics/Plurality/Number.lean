@@ -56,7 +56,7 @@ a bundle, and competition recovers these regions from it for the singular and pl
 
 namespace Number
 
-open Mereology (Atom CUM atomize atomize_subset)
+open Mereology (CUM atomize atomize_subset)
 
 variable {D : Type*}
 
@@ -87,23 +87,23 @@ instance [Fintype D] [DecidablePred (· ∈ Q)] : DecidablePred (· ∈ additive
 
 end Additive
 
-variable [PartialOrder D] {P : Set D} {x : D}
+variable [PartialOrder D] [OrderBot D] {P : Set D} {x : D}
 
 /-- The region a valued feature selects from the region `P`: `[+atomic]` its atoms and
 `[−atomic]` the rest, `[+minimal]` its minimal elements and `[−minimal]` the rest. `[±additive]`
 cuts a region at a height the region does not fix, and leaves it. -/
 def Feature.restrict : Feature → Bool → Set D → Set D
-  | .atomic, true, P => P ∩ {x | Atom x}
-  | .atomic, false, P => P \ {x | Atom x}
+  | .atomic, true, P => P ∩ {x | IsAtom x}
+  | .atomic, false, P => P \ {x | IsAtom x}
   | .minimal, true, P => atomize P
   | .minimal, false, P => P \ atomize P
   | .additive, _, P => P
 
 @[simp] theorem Feature.mem_restrict_atomic_true :
-    x ∈ Feature.restrict .atomic true P ↔ x ∈ P ∧ Atom x := Iff.rfl
+    x ∈ Feature.restrict .atomic true P ↔ x ∈ P ∧ IsAtom x := Iff.rfl
 
 @[simp] theorem Feature.mem_restrict_atomic_false :
-    x ∈ Feature.restrict .atomic false P ↔ x ∈ P ∧ ¬ Atom x := Iff.rfl
+    x ∈ Feature.restrict .atomic false P ↔ x ∈ P ∧ ¬ IsAtom x := Iff.rfl
 
 @[simp] theorem Feature.restrict_minimal_true (P : Set D) :
     Feature.restrict .minimal true P = atomize P := rfl
@@ -129,14 +129,14 @@ theorem not_restrict_minimal_false_atomize (P : Set D) (x : D) :
 
 /-- An atom of a region excluding the null individual is minimal in it, so
 `[+atomic]` entails `[+minimal]`. -/
-theorem singular_subset_minimal (hP : ∀ y ∈ P, ¬ IsBot y)
+theorem singular_subset_minimal (hP : ∀ y ∈ P, y ≠ ⊥)
     (hx : x ∈ Feature.restrict .atomic true P) : x ∈ atomize P :=
-  ⟨hx.1, fun _ hy hle ↦ hx.2.2 (hP _ hy) hle⟩
+  ⟨hx.1, fun _ hy hle ↦ ((hx.2.le_iff_eq (hP _ hy)).1 hle).ge⟩
 
 /-- Over a region of atoms `[+minimal]` selects everything, so `(+minimal(+atomic(P)))` is
 `(+atomic(P))`, the singular. -/
-theorem atomize_eq_of_atoms (hAll : ∀ x ∈ P, Atom x) : atomize P = P :=
+theorem atomize_eq_of_atoms (hAll : ∀ x ∈ P, IsAtom x) : atomize P = P :=
   (atomize_subset P).antisymm fun x hPx ↦
-    singular_subset_minimal (fun y hy ↦ (hAll y hy).not_isBot) ⟨hPx, hAll x hPx⟩
+    singular_subset_minimal (fun y hy ↦ (hAll y hy).1) ⟨hPx, hAll x hPx⟩
 
 end Number

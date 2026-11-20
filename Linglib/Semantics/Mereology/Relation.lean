@@ -13,22 +13,20 @@ part-structure properties of that set. Summativity is closure of `θ` under sums
 participants and of events are injectivity of the two projections on `θ`, and the mapping and
 uniqueness conditions relate the parts of a related object to the parts of its event. Each
 condition on the object side is the event-side condition of the converse relation `θ.inv`. A
-relation maps to events exactly when
-[the objects of a divisive set of events are divisive](##Mereology.me_iff_forall_isLowerSet), and
-under both uniqueness conditions the parts of a related object and event
-[correspond by an order isomorphism](##Mereology.UE.partOrderIso) whose graph is `θ`. Uniqueness
-of objects makes mapping to subobjects the same as
-[quantization of the events of each object](##Mereology.UO.mso_iff_forall_qua), and a summative
-relation with unique events [gives each object one event](##Mereology.UE.gue_of_sum).
+relation maps to events exactly when the objects of a divisive set of events are divisive
+(`Mereology.me_iff_forall_isLowerSet`), and under both uniqueness conditions the parts of a
+related object and event correspond by an order isomorphism whose graph is `θ`
+(`Mereology.UE.partOrderIso`). Uniqueness of objects makes mapping to subobjects the same as
+quantization of the events of each object (`Mereology.UO.mso_iff_forall_qua`), and a summative
+relation with unique events gives each object one event (`Mereology.UE.gue_of_sum`).
 
 When the relation is the converse graph of a thematic function, as in [champollion-krifka-2016],
 the conditions become properties of the function: summativity is preservation of sums, general
 uniqueness of events is injectivity, mapping to subobjects is strict monotonicity, and mapping to
 events is mathlib's `Relation.Fibration` for the part orders. A summative relation with unique
-participants is always such a converse graph, of [a partial sum
-homomorphism](##Mereology.UP.inv_graph_toSupPMap) defined on the events that have a participant,
-and it [maps to objects](##Mereology.mo_graph_supPMap_iff) exactly when that domain is closed under
-parts.
+participants is always such a converse graph, of a partial sum homomorphism defined on the
+events that have a participant (`Mereology.UP.inv_graph_toSupPMap`), and it maps to objects
+exactly when that domain is closed under parts (`Mereology.mo_graph_supPMap_iff`).
 
 ## References
 

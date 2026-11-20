@@ -28,8 +28,9 @@ covert type shifts it blocks, [none in an argument-only language](##argOnly_bloc
 with the parameter which bare nominals it admits as arguments, in English
 [a bare singular only where ∩ is defined for it](##english_licensesBare_singular_iff). ∩
 [undoes ∪](##Kind.down_up), ∪ [undoes ∩ on a property closed downward](##Kind.up_down), and ∩ is
-[undefined for a singular property](##Kind.down_notMem_of_atom). Carlson's state predication on a
-kind [is derived kind predication over its instances](##carlson_mem_image_iff), so a state passes
+[undefined for a singular property](##Kind.down_comp_notMem_of_isMin). Carlson's state
+predication on a kind
+[is derived kind predication over its instances](##carlson_mem_image_iff), so a state passes
 from a kind to any kind whose instances include its own,
 [Carlson's (119)](##carlson_119). A generic bare plural
 [entails its episodic reading](##some_up_of_mem_dogsBark).
@@ -61,9 +62,9 @@ property with no instance in some situation (the first `example` of the kind-for
 (pp. 359–360), Id sending an individual to its parts, `Set.Iic`. (17b) is stated under its own
 hypothesis, that ∩P is defined, read as ∩P having a value wherever P has instances, for a property
 closed downward (`Kind.up_down`); over the paper's complete semilattice a property closed under
-sum meets it whatever the size of its extension (`Kind.up_down_of_sumClosed`). In (17c), AT_P,
+sum meets it whatever the size of its extension (`Kind.up_down_of_isClassical`). In (17c), AT_P,
 "the set that generates P under PL", is read as the atoms beneath members of P
-(`Kind.up_down_of_forall_atom`): read as the singular property itself, (17c) fails at a situation
+(`Kind.up_down_of_forall_isMin`): read as the singular property itself, (17c) fails at a situation
 with exactly one instance, where the plural has no member. Carlson's instance relation is
 part-of in the model `lawn`, so a kind is an instance of itself.
 
@@ -142,7 +143,7 @@ theorem exists_isBareCount_mandarin : ∃ n ∈ Language.mandarin.nouns, n.IsBar
 at each situation, where that concept is a kind, (16), and is undefined otherwise; ∪ takes a kind
 to the parts of its value, (15). These are `Kind.down` and `Kind.up`. A kind cannot have a singular
 instance in every situation where it has one (p. 351), so ∩ is undefined for a singular property,
-which is true of atoms only (`Kind.down_notMem_of_atom`). -/
+which is true of atoms only (`Kind.down_comp_notMem_of_isMin`). -/
 
 section KindFormation
 
@@ -151,29 +152,24 @@ open Mereology
 /-- Were kinds to exclude only concepts instantiated by one individual in every situation, a
 singular property with no instance in some situation could have a kind. -/
 example :
-    ∃ (P : Bool → Set Bool) (K : Set (Bool → Part Bool)),
-      (∀ k ∈ K, ¬ ∀ s, ∃ d, d ∈ k s ∧ Atom d) ∧ (∀ s, ∀ x ∈ P s, Atom x) ∧
-        Kind.down P ∈ K := by
-  refine ⟨fun s ↦ if s then {true} else ∅, {Kind.down fun s ↦ if s then {true} else ∅}, ?_, ?_,
-    Set.mem_singleton _⟩
-  · rintro k rfl h
-    obtain ⟨d, hd, -⟩ := h false
-    simp [Kind.down, iota_isGreatest_empty] at hd
-  · rintro (_ | _) x hx
-    · exact absurd hx (by simp)
-    · obtain rfl : x = true := hx
-      show ¬ IsBot true ∧ ∀ ⦃y⦄, ¬ IsBot y → y ≤ true → true ≤ y
-      decide
+    ∃ (P : Bool → Set Unit) (K : Set (Bool → Part Unit)),
+      (∀ k ∈ K, ¬ ∀ s, ∃ d, d ∈ k s ∧ IsMin d) ∧ (∀ s, ∀ x ∈ P s, IsMin x) ∧
+        Kind.down ∘ P ∈ K := by
+  refine ⟨fun s ↦ if s then {()} else ∅, {fun s ↦ Kind.down (if s then {()} else ∅)}, ?_,
+    fun _ _ _ _ _ ↦ le_rfl, Set.mem_singleton _⟩
+  rintro k rfl h
+  obtain ⟨d, hd, -⟩ := h false
+  simp [Kind.down, iota_isGreatest_empty] at hd
 
 /-- Read with AT_P the singular property itself, (17c) fails at a situation with exactly one
 instance: in Link's model over two atoms, the plural of a property true of one atom alone has no
 member, so ∩ has no value there and ∪∩ yields nothing, while the plural and its singular together
 hold of the atom. -/
-example {P : Unit → Set (Individual Bool)}
-    (hP : ∀ x, x ∈ P () ↔ x ≠ .atom true ∧ ∀ y ≤ x, Atom y → y = .atom true) :
-    Kind.up (Kind.down P) () ≠ P () ∪ {.atom true} := by
-  have hf : Atom (Individual.atom false) := Individual.atom_atom false
-  have h0 : ∀ x, x ∉ P () := fun x hx ↦ by
+example {P : Set (Individual Bool)}
+    (hP : ∀ x, x ∈ P ↔ x ≠ .atom true ∧ ∀ y ≤ x, IsMin y → y = .atom true) :
+    Kind.up (Kind.down P) ≠ P ∪ {.atom true} := by
+  have hf : IsMin (Individual.atom false) := Individual.isMin_atom false
+  have h0 : ∀ x, x ∉ P := fun x hx ↦ by
     obtain ⟨hne, hat⟩ := (hP x).1 hx
     by_cases hx0 : false ∈ x.1
     · exact absurd (hat (.atom false) (Set.singleton_subset_iff.2 hx0) hf)
@@ -185,10 +181,10 @@ example {P : Unit → Set (Individual Bool)}
       refine hne (Subtype.ext (Set.ext fun a ↦ ?_))
       cases a <;> simp [Individual.atom, hx0, htrue]
   intro h
-  have ht : Individual.atom true ∈ Kind.up (Kind.down P) () := by
+  have ht : Individual.atom true ∈ Kind.up (Kind.down P) := by
     rw [h]
     exact Or.inr rfl
-  rw [Kind.up_apply_of_not_dom fun hd ↦ (Kind.down_dom.1 hd).elim fun d hd ↦ h0 d hd.1] at ht
+  rw [Kind.up_of_not_dom fun hd ↦ (Kind.down_dom.1 hd).elim fun d hd ↦ h0 d hd.1] at ht
   exact ht
 
 end KindFormation
@@ -209,8 +205,8 @@ open scoped SetRel
 once his instances of the kind are the instances of its concept. -/
 theorem carlson_mem_image_iff {S E Stage Place Time : Type*} [Preorder E]
     {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k : E} {κ : S → Part E}
-    {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s) (hk : M.RealizedByInstances inst k)
-    (P : Set Stage) : k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up κ s) (M.R.image P) :=
+    {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up (κ s)) (hk : M.RealizedByInstances inst k)
+    (P : Set Stage) : k ∈ M.R.image P ↔ Quantifier.Det.some (Kind.up (κ s)) (M.R.image P) :=
   Set.ext (a := {x | x ~[inst] k}) hinst ▸ Carlson1977.Model.mem_image_iff hk P
 
 /-- Two dogs, `0` and `1`, and a cat, `2`, each with one stage at its own place; an individual is
@@ -232,9 +228,9 @@ whose instances include its own, since the instance that derived kind predicatio
 first is an instance of the second. -/
 theorem carlson_119 {S E Stage Place Time : Type*} [Preorder E]
     {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k k' : E}
-    {κ κ' : S → Part E} {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s)
-    (hinst' : ∀ x, x ~[inst] k' ↔ x ∈ Kind.up κ' s) (hk : M.RealizedByInstances inst k)
-    (hk' : M.RealizedByInstances inst k') (hsub : Kind.up κ s ⊆ Kind.up κ' s)
+    {κ κ' : S → Part E} {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up (κ s))
+    (hinst' : ∀ x, x ~[inst] k' ↔ x ∈ Kind.up (κ' s)) (hk : M.RealizedByInstances inst k)
+    (hk' : M.RealizedByInstances inst k') (hsub : Kind.up (κ s) ⊆ Kind.up (κ' s))
     {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P :=
   (carlson_mem_image_iff hinst' hk' P).2 <|
     ((carlson_mem_image_iff hinst hk P).1 hP).mono (Set.inter_subset_inter_left _ hsub)
@@ -305,10 +301,10 @@ theorem english_licensesBare_of_ne_singular {num : Number} (hnum : num ≠ .sing
 open Mereology in
 /-- English admits no bare singular count noun, (24b), since ∩ is undefined for it. -/
 theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
-    {K : Set (S → Part E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
-    (hP : ∀ s, ∀ x ∈ P s, Atom x) :
-    ¬ (nominalMapping .english).LicensesBare (determiners .english) .singular (Kind.down P ∈ K) :=
-  (english_licensesBare_singular_iff _).not.2 (Kind.down_notMem_of_atom hK hP)
+    {K : Set (S → Part E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, IsMin d)
+    (hP : ∀ s, ∀ x ∈ P s, IsMin x) :
+    ¬ (nominalMapping .english).LicensesBare (determiners .english) .singular (Kind.down ∘ P ∈ K) :=
+  (english_licensesBare_singular_iff _).not.2 (Kind.down_comp_notMem_of_isMin hK hP)
 
 /-! ### Bare plurals in generic and episodic sentences, §4.1 -/
 
@@ -322,31 +318,31 @@ variable {S E : Type*} [PartialOrder E]
 kind in the restriction of the generic operator, which binds them with the situations. -/
 def dogsBark (N : S → Normality (E × S)) (dog : S → Set E) (C : Set (E × S))
     (bark : E → S → Prop) : Set S :=
-  {s | (N s).gen ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C) {p | bark p.1 p.2}}
+  {s | (N s).gen ({p | p.1 ∈ Kind.up (Kind.down (dog p.2))} ∩ C) {p | bark p.1 p.2}}
 
 /-- In *Computers route modern planes* (39b), the object is fronted into the restriction of the
 generic operator and the subject is reconstructed into its scope, where derived kind predication
 reads it existentially. -/
 def computersRoute (N : S → Normality (E × S)) (computer plane : S → Set E)
     (C : Set (E × S)) (route : E → E → S → Prop) : Set S :=
-  {s | (N s).gen ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C)
-    {p | Quantifier.Det.some (Kind.up (Kind.down computer) p.2) {x | route x p.1 p.2}}}
+  {s | (N s).gen ({p | p.1 ∈ Kind.up (Kind.down (plane p.2))} ∩ C)
+    {p | Quantifier.Det.some (Kind.up (Kind.down (computer p.2))) {x | route x p.1 p.2}}}
 
 /-- In (39b) the fronted bare plural is universal over the normal cases, and the one in scope
 existential over its kind's instances (p. 368). -/
 theorem mem_computersRoute {N : S → Normality (E × S)} {computer plane : S → Set E}
     {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
     s ∈ computersRoute N computer plane C route ↔
-      ∀ p ∈ (N s).normal ({p | p.1 ∈ Kind.up (Kind.down plane) p.2} ∩ C),
-        ∃ x ∈ Kind.up (Kind.down computer) p.2, route x p.1 p.2 :=
+      ∀ p ∈ (N s).normal ({p | p.1 ∈ Kind.up (Kind.down (plane p.2))} ∩ C),
+        ∃ x ∈ Kind.up (Kind.down (computer p.2)), route x p.1 p.2 :=
   Iff.rfl
 
 /-- The generic reading of a bare plural (38b) entails its episodic reading by derived kind
 predication (31c) wherever the kind has a normal instance. -/
 theorem some_up_of_mem_dogsBark {N : S → Normality (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
-    (hx : (x, s') ∈ (N s).normal ({p | p.1 ∈ Kind.up (Kind.down dog) p.2} ∩ C)) :
-    Quantifier.Det.some (Kind.up (Kind.down dog) s') {x | bark x s'} :=
+    (hx : (x, s') ∈ (N s).normal ({p | p.1 ∈ Kind.up (Kind.down (dog p.2))} ∩ C)) :
+    Quantifier.Det.some (Kind.up (Kind.down (dog s'))) {x | bark x s'} :=
   ⟨x, ((N s).normal_subset _ hx).1, h hx⟩
 
 end Generic

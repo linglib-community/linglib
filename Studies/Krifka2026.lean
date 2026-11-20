@@ -36,7 +36,7 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
   sets of atoms, `Mereology.Individual`. A kind is a function from worlds to partial
   individuals, and σ is ι of `IsGreatest`, as in (13a), so *it* is ∩, `Kind.down`. The
   paper's sufficient condition for σ, closure under arbitrary sums, is
-  `Kind.down_dom_of_sumClosed`, which holds in Link's model as a classical mereology; for a
+  `Kind.down_dom_of_isClassical`, which applies to Link's model as a classical mereology; for a
   finite extension closure under binary sums is enough (`Kind.down_dom_of_supClosed`).
 
 ## TODO
@@ -71,44 +71,42 @@ section Kinds
 variable [SemilatticeSup E]
 
 /-- *they* (17b) denotes the kind of the plural closure (14) of a concept. -/
-noncomputable def they (P : World → Set E) : World → Part E :=
-  Kind.down fun w ↦ supClosure (P w)
+noncomputable def they (s : Set E) : Part E :=
+  Kind.down (supClosure s)
 
 /-- `pronoun noun` is the kind pronoun that the head noun selects (12): *they* for a count noun,
 and for a mass noun *it*, which denotes the kind of the concept, ∩ as in (13b), (17a). -/
-noncomputable def pronoun (noun : English.Nouns.Noun) : (World → Set E) → World → Part E :=
+noncomputable def pronoun (noun : English.Nouns.Noun) : Set E → Part E :=
   if noun.IsCount then they else Kind.down
 
 theorem pronoun_of_isCount {noun : English.Nouns.Noun} (h : noun.IsCount) :
-    pronoun (World := World) (E := E) noun = they :=
+    pronoun (E := E) noun = they :=
   ite_eq_left h
 
 theorem pronoun_of_not_isCount {noun : English.Nouns.Noun} (h : ¬ noun.IsCount) :
-    pronoun (World := World) (E := E) noun = Kind.down :=
+    pronoun (E := E) noun = Kind.down :=
   ite_eq_right h
 
 /-- *pollen* is resumed by *it* and *pollen grains* by *they*, though they can describe the same
 stuff (8), (12). -/
 theorem pronoun_pollen :
-    pronoun (World := World) (E := E) English.Nouns.pollen = Kind.down ∧
-      pronoun (World := World) (E := E) English.Nouns.pollenGrain = they :=
+    pronoun (E := E) English.Nouns.pollen = Kind.down ∧
+      pronoun (E := E) English.Nouns.pollenGrain = they :=
   ⟨pronoun_of_not_isCount (by decide), pronoun_of_isCount (by decide)⟩
 
 /-- On a cumulative concept the plural closure changes nothing, so *they* and *it* denote the
 same kind ((16), (18d)). -/
-theorem they_eq_down_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w)) :
-    they P = Kind.down P := by
-  unfold they
-  simp only [fun w ↦ (h w).supClosure_eq]
+theorem they_eq_down_of_supClosed {s : Set E} (h : SupClosed s) : they s = Kind.down s :=
+  congrArg Kind.down h.supClosure_eq
 
 end Kinds
 
 /-- The concept *spider* holds of the two atoms of a two-atom model. -/
-def spider : Unit → Set (Individual Bool) :=
-  fun _ ↦ {Individual.atom true, Individual.atom false}
+def spider : Set (Individual Bool) :=
+  {Individual.atom true, Individual.atom false}
 
 /-- The kind of the singular count concept is undefined with two instances (15c). -/
-theorem spider_no_kind : Kind.down spider () = Part.none := by
+theorem spider_no_kind : Kind.down spider = Part.none := by
   refine IsAntichain.iota_isGreatest_eq_none ?_ (Set.mem_insert _ _)
     (Set.mem_insert_of_mem _ rfl) fun h ↦ Bool.noConfusion (Set.singleton_eq_singleton_iff.1
       (congrArg Subtype.val h))
@@ -116,7 +114,7 @@ theorem spider_no_kind : Kind.down spider () = Part.none := by
   exacts [hne rfl, Bool.noConfusion (h rfl), Bool.noConfusion (h rfl), hne rfl]
 
 /-- The kind of the plural closure of *spider* is the sum of the two spiders (15b). -/
-theorem spiders_kind : (Individual.atom true ⊔ Individual.atom false) ∈ they spider () := by
+theorem spiders_kind : (Individual.atom true ⊔ Individual.atom false) ∈ they spider := by
   refine mem_iota_isGreatest.2
     ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
       (subset_supClosure (Set.mem_insert_of_mem _ rfl)), ?_⟩
@@ -182,7 +180,7 @@ def emptyNP (n : ℕ) (K : (World → Set E) → Update (HAssign World E)) :
 /-- The kind pronoun (48c) presupposes a concept referent at `n` introduced by a head noun it
 agrees with and introduces the kind at `m`. -/
 def kindPronoun (noun : English.Nouns.Noun) (n m : ℕ) : Update (HAssign World E) :=
-  {(g, h) | ∃ P, g n = .concept P noun ∧ h = Function.update g m (.kind (pronoun noun P))}
+  {(g, h) | ∃ P, g n = .concept P noun ∧ h = Function.update g m (.kind fun w ↦ pronoun noun (P w))}
 
 /-- The partitive PP presupposes an entity referent at `n` and introduces a part of it at `m`.
 -/
@@ -237,7 +235,7 @@ theorem doesntOwnADog_g₀ : g₀ ~[doesntOwnADog] g₀ :=
 (5c). -/
 theorem them_after_doesntOwnADog {h : HAssign Unit (Individual Ent)}
     (hNeg : g₀ ~[doesntOwnADog] h) :
-    h ~[kindPronoun English.Nouns.dog 2 4] Function.update h 4 (.kind (they dog)) ∧
+    h ~[kindPronoun English.Nouns.dog 2 4] Function.update h 4 (.kind fun w ↦ they (dog w)) ∧
       h 3 = .undef :=
   ⟨⟨dog, concept_survives_test rfl hNeg, by rw [pronoun_of_isCount (by decide)]⟩,
     entity_trapped_by_test rfl hNeg⟩

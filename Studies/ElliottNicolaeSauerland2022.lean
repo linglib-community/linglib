@@ -437,8 +437,8 @@ omit [IsAtomistic E] in
 theorem atoms_ssubset_nonNull (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     {w : E | IsAtom w} ⊂ {w | w ≠ ⊥} := by
   refine ⟨fun _ hx ↦ IsAtom.ne_bot hx, fun h ↦ ?_⟩
-  exact not_atom_sup_of_ne (atom_iff_isAtom.2 ha) (atom_iff_isAtom.2 hb) hab
-    (atom_iff_isAtom.2 (h fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1))
+  exact not_isAtom_sup_of_ne (ha) (hb) hab
+    ((h fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1))
 
 omit [IsAtomistic E] in
 theorem nonNull_ssubset_univ : {w : E | w ≠ ⊥} ⊂ univ :=
@@ -616,8 +616,8 @@ theorem minimalFor_quienesE_not_usable (ha : IsAtom a) (hb : IsAtom b) (hab : a 
         Form.content (E := E) ⁻¹' Ici {a, a ⊔ b}) (Form.content (E := E)) .quienesE ∧
       ¬ Form.quienesE.Usable False ({a, a ⊔ b} : Set E) := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   refine ⟨minimalFor_preimage_Ici_iff.2 ⟨?_, ?_⟩, fun h ↦ ?_⟩
   · rw [content_quienesE]
     rintro _ (rfl | rfl)
@@ -749,8 +749,8 @@ theorem Item.usable_quienes_iff_of (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ 
 theorem Item.usable_set_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) (κ : Ctx) :
     i.Usable pl (κ.set a b) ↔ i.Predicted pl κ := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   have hbA : ¬ IsAtom (⊥ : E) := fun h ↦ h.ne_bot rfl
   have hnon : (κ.set a b).Nonempty := by cases κ <;> simp [Ctx.set]
   have hatoms : κ.set a b ⊆ {w : E | IsAtom w} ↔ κ = .exactlyOne := by
@@ -799,8 +799,8 @@ theorem Item.atom_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b
 theorem Item.sup_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) :
     a ⊔ b ∈ (i.Answers : Set E) ↔ i ≠ .queSg := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   cases i <;> simp [Item.Answers, Item.parses, strengthen_queSg, strengthen_quePl ha hb hab,
     strengthen_quienE ha hb hab, strengthen_quienGQ_of_not not_false,
     strengthen_quienesE ha hb hab, strengthen_quienesGQ ha hb hab, hne, hna]

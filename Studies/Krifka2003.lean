@@ -26,7 +26,7 @@ condition that the number exceed one, so it is `⋃ n, ofAtoms D n`, which is Li
 The definite article and the kind-forming operator ∩ take the largest member of an extension.
 The predicate `ofAtoms D n` has one exactly when `D` has `n` members (`down_ofAtoms_dom`), and
 the semantic plural exactly when `D` is nonempty and finite (`down_iUnion_ofAtoms_dom`), where
-it is the sum of all of `D`.
+it is the sum of all of `D` (`isGreatest_iUnion_ofAtoms`).
 
 Composition is type driven. Sisters combine by functional application, and two predicates of
 individuals, which application does not combine, by existential closure `∃ x, P x ∧ V x`. A
@@ -42,7 +42,8 @@ determiner phrase with a trace of individuals takes scope over negation
 
 * Individuals are finite sets of atoms, with `Finset.card` as the measure. Link's nonempty sets
   of atoms, `Mereology.Individual`, have a sum of any nonempty `D`, but their cardinality
-  `Set.ncard` is `0` on infinite sets and so is no extensive measure. With finite sets the
+  `Set.ncard` is `0` on infinite sets and so is no extensive measure, and
+  `Set.encard` is not strictly monotone on them. With finite sets the
   semantic plural has a largest member only for a finite `D`.
 * Existential closure is a mode of combination of two sisters, not a shift of one of them, so
   it is the same rule whether the nominal predicate is shifted to a quantifier or the verbal
@@ -91,10 +92,9 @@ theorem pairwise_disjoint_inter_preimage (P : Set α) (μ : α → M) :
 
 -- (53b)
 theorem sup_mem_inter_preimage [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
-    [IsExtensiveMeasure μ] (hP : CUM P) (hx : x ∈ P ∩ μ ⁻¹' {n}) (hy : y ∈ P ∩ μ ⁻¹' {m})
+    (hμ : IsExtensive μ) (hP : CUM P) (hx : x ∈ P ∩ μ ⁻¹' {n}) (hy : y ∈ P ∩ μ ⁻¹' {m})
     (hxy : ¬ Overlap x y) : x ⊔ y ∈ P ∩ μ ⁻¹' {n + m} :=
-  ⟨hP hx.1 hy.1,
-    (IsExtensiveMeasure.additive (μ := μ) x y hxy).trans (congrArg₂ (· + ·) hx.2 hy.2)⟩
+  ⟨hP hx.1 hy.1, (hμ.map_sup hxy).trans (congrArg₂ (· + ·) hx.2 hy.2)⟩
 
 end Measure
 
@@ -129,9 +129,22 @@ theorem ofAtoms_one (D : Set Atom) : ofAtoms D 1 = ({·} : Atom → Finset Atom)
   · rintro ⟨a, ha, rfl⟩
     exact ⟨⟨Finset.singleton_nonempty a, by simpa using ha⟩, a, rfl⟩
 
+-- On nonempty finite sets of atoms, which have no null element, the atom count is an extensive
+-- measure, so (53b) applies to it.
+theorem isExtensive_card :
+    letI : SemilatticeSup {s : Finset Atom // s.Nonempty} :=
+      Subtype.semilatticeSup fun _ _ hx _ ↦ hx.inl
+    IsExtensive fun s : {s : Finset Atom // s.Nonempty} ↦ s.1.card :=
+  letI : SemilatticeSup {s : Finset Atom // s.Nonempty} :=
+    Subtype.semilatticeSup fun _ _ hx _ ↦ hx.inl
+  { map_sup := fun x y h ↦ Finset.card_union_of_disjoint <| Finset.disjoint_left.2 fun a hx hy ↦
+      h ⟨⟨{a}, Finset.singleton_nonempty a⟩, Finset.singleton_subset_iff.2 hx,
+        Finset.singleton_subset_iff.2 hy⟩
+    pos := fun x ↦ Finset.card_pos.2 x.2 }
+
 -- A count noun with its number argument filled is a measure phrase, (6) of [krifka-1989].
 theorem qua_ofAtoms (D : Set Atom) (n : ℕ) : QUA (ofAtoms D n) :=
-  Krifka1989.qua_inter_preimage Finset.card n _
+  qua_inter_preimage_of_strictMonoOn (Finset.card_strictMono.strictMonoOn _) n
 
 theorem cum_iUnion_ofAtoms (D : Set Atom) : CUM (⋃ n, ofAtoms D n) := by
   rw [iUnion_ofAtoms]
@@ -183,26 +196,15 @@ end Atoms
 
 section Kind
 
-variable {World Atom : Type*} [DecidableEq Atom] {D : World → Set Atom} {w : World}
-  {x : Finset Atom} {n : ℕ}
+variable {Atom : Type*} [DecidableEq Atom] {D : Set Atom} {n : ℕ}
 
-theorem mem_down_ofAtoms :
-    x ∈ Kind.down (fun w ↦ ofAtoms (D w) n) w ↔ (x.Nonempty ∧ ↑x = D w) ∧ x.card = n :=
-  Kind.mem_down.trans isGreatest_ofAtoms
-
--- (80)
-theorem mem_down_iUnion_ofAtoms :
-    x ∈ Kind.down (fun w ↦ ⋃ n, ofAtoms (D w) n) w ↔ x.Nonempty ∧ ↑x = D w :=
-  Kind.mem_down.trans isGreatest_iUnion_ofAtoms
-
-/-- ∩ is defined on a count noun with its number argument filled at the worlds with exactly
-that many instances. -/
-theorem down_ofAtoms_dom :
-    (Kind.down (fun w ↦ ofAtoms (D w) n) w).Dom ↔ n ≠ 0 ∧ (D w).encard = n := by
+/-- ∩ is defined on a count noun with its number argument filled where there are exactly that
+many instances. -/
+theorem down_ofAtoms_dom : (Kind.down (ofAtoms D n)).Dom ↔ n ≠ 0 ∧ D.encard = n := by
   simp only [Kind.down_dom, isGreatest_ofAtoms]
   constructor
-  · rintro ⟨x, ⟨hne, hx⟩, rfl⟩
-    exact ⟨hne.card_ne_zero, by rw [← hx, Set.encard_coe_eq_coe_finsetCard]⟩
+  · rintro ⟨x, ⟨hne, rfl⟩, rfl⟩
+    exact ⟨hne.card_ne_zero, Set.encard_coe_eq_coe_finsetCard x⟩
   · rintro ⟨hn, h⟩
     have hfin := Set.finite_of_encard_eq_coe h
     have hc : hfin.toFinset.card = n := by
@@ -213,7 +215,7 @@ theorem down_ofAtoms_dom :
 
 -- (63b)
 theorem down_iUnion_ofAtoms_dom :
-    (Kind.down (fun w ↦ ⋃ n, ofAtoms (D w) n) w).Dom ↔ (D w).Nonempty ∧ (D w).Finite := by
+    (Kind.down (⋃ n, ofAtoms D n)).Dom ↔ D.Nonempty ∧ D.Finite := by
   simp only [Kind.down_dom, isGreatest_iUnion_ofAtoms]
   exact ⟨fun ⟨x, hne, hx⟩ ↦ hx ▸ ⟨Finset.coe_nonempty.2 hne, x.finite_toSet⟩,
     fun ⟨hne, hfin⟩ ↦ ⟨hfin.toFinset, hfin.toFinset_nonempty.2 hne, hfin.coe_toFinset⟩⟩

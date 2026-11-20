@@ -8,8 +8,8 @@ public import Linglib.Semantics.Mereology.Basic
 
 The cardinality of an element relative to a set `Z` is the number of its parts in `Z`
 ([landman-2020]). It grows with the element and with `Z`, and when `Z` is independent, as a
-disjoint set of a frame is, [a sum of elements of `Z` counts as many as the elements
-summed](##Mereology.count_sSup).
+disjoint set of a frame is, a sum of elements of `Z` counts as many as the elements summed
+(`Mereology.count_sSup`).
 
 ## References
 

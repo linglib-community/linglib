@@ -35,7 +35,7 @@ liters of milk* [is quantized](##Aspect.vp_qua_graph).
 
 Temporal precedence is a parameter of the telicity notions. The proofs use only that parts of an
 event neither precede nor follow it, `NoPartPrecedes`, which follows from Krifka's axiom that
-overlapping events do not precede each other (`noPartPrecedes_of_overlap`) and holds of any
+overlapping events do not precede each other (`noPartPrecedes_of_forall_le`) and holds of any
 temporal precedence on a part structure of events
 (`IsTemporalPrecedence.noPartPrecedes`). A final part is an
 initial part under the converse precedence, so results about final parts are transported, and
@@ -74,12 +74,11 @@ theorem NoPartPrecedes.swap (h : NoPartPrecedes precedes) :
     NoPartPrecedes (Function.swap precedes) :=
   fun _ _ hp ↦ (h hp).symm
 
-/-- Parts of an event neither precede nor follow it if overlapping events do not precede each
-other ([krifka-1998] (35)) and no event is null. -/
-theorem noPartPrecedes_of_overlap [NoBotOrder β] (h : ∀ a b, Overlap a b → ¬ precedes a b) :
+/-- Parts of an event neither precede nor follow it if events with a common part do not precede
+each other ([krifka-1998] (35)). -/
+theorem noPartPrecedes_of_forall_le (h : ∀ a b c, c ≤ a → c ≤ b → ¬ precedes a b) :
     NoPartPrecedes precedes := fun a b hp ↦
-  ⟨fun hle ↦ h a b (.of_le (not_isBot a) hle) hp,
-    fun hle ↦ h a b (Overlap.of_le (not_isBot b) hle).symm hp⟩
+  ⟨fun hle ↦ h a b a le_rfl hle hp, fun hle ↦ h a b b hle le_rfl hp⟩
 
 variable (precedes) [IsStrictOrder β precedes]
 

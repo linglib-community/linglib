@@ -33,7 +33,7 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 ## Implementation notes
 
 * Assignments come from any register structure and values from any partial order, whose atoms are
-  `Mereology.Atom`. The examples take finite sets of atoms, whose sum is union.
+  `IsAtom`. The examples take finite sets of atoms, whose sum is union.
 * Every register content is an individual, so the lexical relations (63) are Plural CDRT's atomic
   conditions `PCDRT.atom` at the identity `PCDRT.ValueEmbedding`.
 * The event dref of event closure (72) is folded into a verb relating the values of the agent and
@@ -224,10 +224,10 @@ theorem image_mem_intro_iff {A : Set E} {K : Set S} :
 /-- `unique{u}` (75b) holds when `u` takes one value across the state. -/
 def unique (u : R) : Condition (Set S) := {I | (val u '' I).Subsingleton}
 
-variable [PartialOrder E]
+variable [PartialOrder E] [OrderBot E]
 
 /-- `atom{u}` (75a) holds when the values of `u` are atoms. -/
-def atomic (u : R) : Condition (Set S) := {I | val u '' I ⊆ {a | Atom a}}
+def atomic (u : R) : Condition (Set S) := {I | val u '' I ⊆ {a | IsAtom a}}
 
 /-- A cardinality condition holds when the number of atoms of each value of `u` satisfies `p`,
 which is `= n` for the numeral `n` (77) and `> 1` for *several* (78). -/
@@ -239,8 +239,8 @@ negating the singular. -/
 def bare (u : R) : Condition (Set S) := (atomic u ∩ unique u)ᶜ
 
 -- (74), §5.1
-theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, ¬ IsBot (val u i)) :
-    I ∈ atomic u ∩ unique u ↔ ∃ a, Atom a ∧ IsLUB (val u '' I) a := by
+theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, (val u i) ≠ ⊥) :
+    I ∈ atomic u ∩ unique u ↔ ∃ a, IsAtom a ∧ IsLUB (val u '' I) a := by
   refine ⟨fun ⟨hA, hU⟩ ↦ ?_, fun ⟨a, ha, hlub⟩ ↦ ?_⟩
   · obtain ⟨i, hi⟩ := hI
     refine ⟨val u i, hA (Set.mem_image_of_mem _ hi), ?_⟩
@@ -248,16 +248,16 @@ theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, ¬ IsBo
     exact isLUB_singleton
   · have h : val u '' I ⊆ {a} := by
       rintro _ ⟨i, hi, rfl⟩
-      exact ha.eq (hlub.1 (Set.mem_image_of_mem _ hi)) (hu i hi)
+      exact (ha.le_iff_eq (hu i hi)).1 (hlub.1 (Set.mem_image_of_mem _ hi))
     exact ⟨h.trans (Set.singleton_subset_iff.2 ha), Set.subsingleton_singleton.anti h⟩
 
-theorem singleton_mem_atomic_inter_unique_iff : {i} ∈ atomic u ∩ unique u ↔ Atom (val u i) := by
+theorem singleton_mem_atomic_inter_unique_iff : {i} ∈ atomic u ∩ unique u ↔ IsAtom (val u i) := by
   simp [atomic, unique]
 
 variable (u u') in
 /-- Exh above the VP negates the singular alternative (114), which some model separates from the
 plural, so a bare plural object gets the condition (115) ((89)). -/
-theorem exh_vp {y : E} (hy : ¬ Atom y) (i : S) :
+theorem exh_vp {y : E} (hy : ¬ IsAtom y) (i : S) :
     Exhaustification.exh {acrossModels fun M : Model E ↦ vp u u' M ○ test (atomic u' ∩ unique u')}
       (acrossModels fun M : Model E ↦ vp u u' M) =
         acrossModels fun M : Model E ↦ vp u u' M ○ test (bare (S := S) u') := by
@@ -280,7 +280,7 @@ theorem mem_split {j : S} :
 theorem split_singleton : split u {i} = (extend i u ·) '' atomsBelow (val u i) := by
   simp [split]
 
-theorem atom_of_mem_split {j : S} (h : j ∈ split u I) : Atom (val u j) := by
+theorem atom_of_mem_split {j : S} (h : j ∈ split u I) : IsAtom (val u j) := by
   obtain ⟨_, -, a, ha, rfl⟩ := mem_split.1 h
   rw [val_extend_self]
   exact ha.1
@@ -289,15 +289,15 @@ theorem image_val_split_singleton : val u '' split u {i} = atomsBelow (val u i) 
   rw [split_singleton, Set.image_image]
   simp [val_extend_self]
 
-theorem split_singleton_of_atom (h : Atom (val u i)) : split u {i} = {i} := by
-  rw [split_singleton, atomsBelow_of_atom h, Set.image_singleton, extend_eq_self]
+theorem split_singleton_of_atom (h : IsAtom (val u i)) : split u {i} = {i} := by
+  rw [split_singleton, atomsBelow_of_isAtom h, Set.image_singleton, extend_eq_self]
 
 -- (92)
 theorem split_split (u : R) (I : Set S) : split u (split u I) = split u I := by
   refine Set.Subset.antisymm (fun j hj ↦ ?_) fun j hj ↦
     mem_split.2 ⟨j, hj, val u j, ⟨atom_of_mem_split hj, le_rfl⟩, extend_eq_self ..⟩
   obtain ⟨k, hk, a, ha, rfl⟩ := mem_split.1 hj
-  rwa [(atom_of_mem_split hk).eq ha.2 ha.1.not_isBot, extend_eq_self]
+  rwa [((atom_of_mem_split hk).le_iff_eq ha.1.1).1 ha.2, extend_eq_self]
 
 /-- Weak distributivity `dist_w` (93a) splits, then updates. -/
 def distW (u : R) (D : Update (Set S)) : Update (Set S) := (split u).graph ○ D
@@ -393,7 +393,7 @@ theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
 
 theorem image_mem_bare_iff {u u' : R} {k : S} {b : E → E} :
     (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ bare u' ↔
-      ¬((∀ a ∈ atomsBelow (val u k), Atom (b a)) ∧ (b '' atomsBelow (val u k)).Subsingleton) := by
+      ¬((∀ a ∈ atomsBelow (val u k), IsAtom (b a)) ∧ (b '' atomsBelow (val u k)).Subsingleton) := by
   simp only [bare, atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_ofPred_eq,
     Set.image_image, Set.image_subset_iff, val_extend_self]
   simp [Set.subset_def, val_extend_self]
@@ -403,7 +403,7 @@ variable (P M)
 -- (116)
 theorem cumulative_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P id M (bare u')).dom ↔
-      ∃ x, P x ∧ ∃ y, M.noun y ∧ M.verb x y ∧ ¬ Atom y := by
+      ∃ x, P x ∧ ∃ y, M.noun y ∧ M.verb x y ∧ ¬ IsAtom y := by
   simp only [singleton_mem_dom_sentence_iff, id, singleton_mem_dom_vp_iff huu', bare,
     Set.mem_compl_iff, singleton_mem_atomic_inter_unique_iff, val_extend_self]
 
@@ -421,7 +421,7 @@ theorem dependent_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P (distW u) M (bare u')).dom ↔
       ∃ x, P x ∧ ∃ b : E → E, (atomsBelow x).Nonempty ∧
         (∀ a ∈ atomsBelow x, M.noun (b a) ∧ M.verb a (b a)) ∧
-        ¬ ((∀ a ∈ atomsBelow x, Atom (b a)) ∧ (b '' atomsBelow x).Subsingleton) := by
+        ¬ ((∀ a ∈ atomsBelow x, IsAtom (b a)) ∧ (b '' atomsBelow x).Subsingleton) := by
   rw [singleton_mem_dom_sentence_iff]
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ ?_
   rw [singleton_mem_dom_distW_iff huu', val_extend_self]
@@ -450,7 +450,7 @@ theorem distW_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
 theorem distS_bare_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P (distS u) M (bare u')).dom ↔
       ∃ x, P x ∧ (atomsBelow x).Nonempty ∧
-        ∀ a ∈ atomsBelow x, ∃ y, M.noun y ∧ M.verb a y ∧ ¬ Atom y := by
+        ∀ a ∈ atomsBelow x, ∃ y, M.noun y ∧ M.verb a y ∧ ¬ IsAtom y := by
   simp only [singleton_mem_dom_sentence_iff, singleton_mem_dom_distS_iff, val_extend_self,
     singleton_mem_dom_vp_iff huu', bare, Set.mem_compl_iff, singleton_mem_atomic_inter_unique_iff]
 
@@ -537,7 +537,7 @@ def stateMax (u : R) (D : Update (Set S)) : Update (Set S) :=
   {(I, J) | I ~[PCDRT.intro u ○ D] J ∧
     ∀ K, I ~[PCDRT.intro u ○ D] K → (PCDRT.value u K : Set E) ⊆ PCDRT.value u J}
 
-omit [PartialOrder E] in
+omit [PartialOrder E] [OrderBot E] in
 -- p. 149 [brasoveanu-2008]
 theorem stateMax_not_dist {a b : E} {i₀ i₁ : S} (hab : a ≠ b) (ha : P a)
     (hb : P b) (hP : ∀ x, P x → x = a ∨ x = b) (h : ∀ x y, extend i₀ u x ≠ extend i₁ u y) :
@@ -632,7 +632,7 @@ theorem singleton_mem_dom_distW_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'
     {k} ∈ (distW u (test (lex P u) ○ (vp u u'' M ○ test (bare u'')))).dom ↔
       (atomsBelow (val u k)).Nonempty ∧ (∀ a ∈ atomsBelow (val u k), P a) ∧
         ∃ b : E → E, (∀ a ∈ atomsBelow (val u k), M.noun (b a) ∧ M.verb a (b a)) ∧
-          ¬((∀ a ∈ atomsBelow (val u k), Atom (b a)) ∧
+          ¬((∀ a ∈ atomsBelow (val u k), IsAtom (b a)) ∧
             (b '' atomsBelow (val u k)).Subsingleton) := by
   rw [mem_dom_distW_test_comp, singleton_mem_dom_distW_iff h]
   simp only [mem_lex, image_val_split_singleton, Set.subset_def, Set.mem_ofPred_eq,
@@ -644,7 +644,7 @@ theorem singleton_mem_dom_distS_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'
     {k} ∈ (distS u (test (atomic u ∩ unique u ∩ lex P u) ○
       (vp u u'' M ○ test (bare u'')))).dom ↔
       (atomsBelow (val u k)).Nonempty ∧ ∀ a ∈ atomsBelow (val u k), P a ∧
-        ∃ b, M.noun b ∧ M.verb a b ∧ ¬Atom b := by
+        ∃ b, M.noun b ∧ M.verb a b ∧ ¬IsAtom b := by
   rw [singleton_mem_dom_distS_iff]
   refine and_congr_right fun _ ↦ forall₂_congr fun a ha ↦ ?_
   rw [dom_comp, preimage_test, Set.mem_inter_iff, Set.mem_inter_iff,
@@ -661,7 +661,7 @@ theorem detPl_most_iff (h₁ : u' ≠ u) (h₂ : u ≠ u'') :
       ∃ x' x, IsGreatest {y | (atomsBelow y).Nonempty ∧ ∀ a ∈ atomsBelow y, P a} x' ∧
         IsGreatest {y | (atomsBelow y).Nonempty ∧ (∀ a ∈ atomsBelow y, P a) ∧
           ∃ b : E → E, (∀ a ∈ atomsBelow y, M.noun (b a) ∧ M.verb a (b a)) ∧
-            ¬((∀ a ∈ atomsBelow y, Atom (b a)) ∧ (b '' atomsBelow y).Subsingleton)} x ∧
+            ¬((∀ a ∈ atomsBelow y, IsAtom (b a)) ∧ (b '' atomsBelow y).Subsingleton)} x ∧
         (atomsBelow x' \ atomsBelow x).ncard < atomCount E x := by
   have hv' (x' x : E) : val u' (extend (extend i u' x') u x) = x' := by
     rw [val_extend_of_ne _ _ _ _ h₁, val_extend_self]
@@ -680,7 +680,7 @@ theorem detSg_every_iff (h₁ : u' ≠ u) (h₂ : u ≠ u'') :
       (fun v ↦ vp v u'' M ○ test (bare u''))).dom ↔
       ∃ x' x, IsGreatest {y | (atomsBelow y).Nonempty ∧ ∀ a ∈ atomsBelow y, P a} x' ∧
         IsGreatest {y | (atomsBelow y).Nonempty ∧ ∀ a ∈ atomsBelow y, P a ∧
-          ∃ b, M.noun b ∧ M.verb a b ∧ ¬Atom b} x ∧ atomCount E x' = atomCount E x := by
+          ∃ b, M.noun b ∧ M.verb a b ∧ ¬IsAtom b} x ∧ atomCount E x' = atomCount E x := by
   have hv' (x' x : E) : val u' (extend (extend i u' x') u x) = x' := by
     rw [val_extend_of_ne _ _ _ _ h₁, val_extend_self]
   simp only [detSg, distS']
@@ -793,7 +793,7 @@ theorem judgments :
     rintro ⟨_, rfl, -, h⟩
     obtain ⟨y, -, hy, hat⟩ := h _ h0
     obtain ⟨b, rfl⟩ := exists_eq_singleton_of_verb hy
-    exact hat (atom_iff_isAtom.2 (Finset.isAtom_singleton b))
+    exact hat ((Finset.isAtom_singleton b))
   · rw [detPl_most_iff girl hats hne' hne]
     refine ⟨_, _, ⟨hgirls, fun y hy ↦ le_of_forall_girl hy.2⟩,
       ⟨⟨hgirls.1, hgirls.2, fun a ↦ a.image (· + 3), ?_, fun hs ↦ ?_⟩,
@@ -814,7 +814,7 @@ theorem judgments :
     rw [atomsBelow_finset] at ha
     obtain ⟨g, -, rfl⟩ := ha
     obtain ⟨c, rfl⟩ := exists_eq_singleton_of_verb hb
-    exact hat (atom_iff_isAtom.2 (Finset.isAtom_singleton c))
+    exact hat ((Finset.isAtom_singleton c))
 
 /-- Brasoveanu's example of state-level maximization in the model: two girls and the hats `3` and
 `4`. -/

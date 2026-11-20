@@ -118,7 +118,7 @@ section Denotation
 
 universe w
 
-variable {R S E : Type w} [RegisterStructure R S E] [PartialOrder E]
+variable {R S E : Type w} [RegisterStructure R S E] [PartialOrder E] [OrderBot E]
 
 /-- A concept, a type of (65), denotes the predicate of individuals of a noun, and a predicate of
 referents denotes a condition on the values of a referent. -/
@@ -179,10 +179,10 @@ theorem subsingleton_of_mem_vp (hI : I.Subsingleton) (h : I ~[vp u u' M] J) : J.
   obtain ⟨K, ⟨f, -, rfl⟩, rfl, -⟩ := h
   exact hI.image f
 
-variable [PartialOrder E]
+variable [PartialOrder E] [OrderBot E]
 
 variable (u u') in
-theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b)
+theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
     (i : S) : ∃ I J : Set S, (I, J) ∈ vp u u' ⟨fun _ ↦ True, fun _ _ ↦ True⟩ ○ test (atomic u') ∧
       J ∉ unique u' := by
   let f : S → S := fun r ↦ extend r u' (val u r)
@@ -202,7 +202,7 @@ theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : Atom a) (hb : Atom b) (h
 variable (u u') in
 /-- Exh above a VP with an atomic-plural object negates the singular alternative (79), leaving
 non-uniqueness (87). -/
-theorem exh_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (i : S) :
+theorem exh_atomicPlural {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : S) :
     Exhaustification.exh
         {acrossModels (S := S) fun M : Model E ↦ vp u u' M ○ test (atomic u') ○ test (unique u')}
         (acrossModels (S := S) fun M : Model E ↦ vp u u' M ○ test (atomic u')) =
@@ -213,7 +213,7 @@ theorem exh_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (
 variable (u u') in
 /-- The non-uniqueness implicature of an atomic plural is mandatory under any relevance property
 obeying [magri-2009]'s postulates (§6.2). -/
-theorem disjoint_exhR_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (i : S)
+theorem disjoint_exhR_atomicPlural {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : S)
     {Rel : Set (Model E × (Set S × Set S)) → Prop}
     (hR : Magri2009.IsRelevance {w | w.2.1.Subsingleton}
       (acrossModels fun M : Model E ↦ vp u u' M ○ test (atomic u')) Rel) :
@@ -255,7 +255,7 @@ theorem atomicPlural_distW_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P (distW u) M (atomic u' ∩ (unique u')ᶜ)).dom ↔
       ∃ x, P x ∧ ∃ b : E → E, (atomsBelow x).Nonempty ∧
         (∀ a ∈ atomsBelow x, M.noun (b a) ∧ M.verb a (b a)) ∧
-        (∀ a ∈ atomsBelow x, Atom (b a)) ∧ ¬ (b '' atomsBelow x).Subsingleton := by
+        (∀ a ∈ atomsBelow x, IsAtom (b a)) ∧ ¬ (b '' atomsBelow x).Subsingleton := by
   rw [singleton_mem_dom_sentence_iff]
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ ?_
   rw [singleton_mem_dom_distW_iff huu', val_extend_self]
@@ -352,7 +352,7 @@ theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x 
     (hyw' : y ≠ w') (M : IModel E) (P : E → Prop) :
     {i} ∈ (wide w w' x y M P (distW x) (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom ↔
       ∃ s, P s ∧ ∃ b : E → E,
-        (∀ a ∈ atomsBelow s, M.inst (val w i) (b a) ∧ Atom (b a) ∧
+        (∀ a ∈ atomsBelow s, M.inst (val w i) (b a) ∧ IsAtom (b a) ∧
           ∀ v ∈ atomsBelow (M.bul (val w i) a), M.meet v a (b a)) ∧
         ¬ (b '' atomsBelow s).Subsingleton := by
   rw [wide, singleton_mem_dom_intro_comp_iff]
@@ -425,7 +425,7 @@ theorem partee :
     refine ⟨{3}, by simp [singleton_mem_lex_iff, model], ?_⟩
     rw [id, singleton_mem_dom_intro_comp_iff]
     refine ⟨{5}, ⟨by simp [singleton_mem_lex₂_iff, model], ?_, Team.singleton_mem_dep _⟩, ?_⟩
-    · simp [atomic, atom_iff_isAtom]
+    · simp [atomic]
     · rw [mem_dom_want_test_iff (by decide) (by decide)]
       simp [model, atomsBelow_finset]
   · rw [wideScope_iff (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)]
@@ -436,7 +436,7 @@ theorem partee :
       rw [atomsBelow_finset]
       exact ⟨4, by decide, rfl⟩
     refine ⟨_, rfl, fun a ↦ a.image (· + 2), ?_, fun hs ↦ ?_⟩
-    · simp only [atomsBelow_finset, Set.forall_mem_image, Finset.mem_coe, atom_iff_isAtom,
+    · simp only [atomsBelow_finset, Set.forall_mem_image, Finset.mem_coe,
         Finset.isAtom_iff, model]
       decide
     · have := hs (Set.mem_image_of_mem _ h₃) (Set.mem_image_of_mem _ h₄)

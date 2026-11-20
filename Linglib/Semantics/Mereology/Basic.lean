@@ -15,11 +15,13 @@ Algebraic semantics models parthood as a partial order and mereological sum as j
 reference properties of a region, a set of individuals, are then mathlib predicates: cumulativity
 is `SupClosed`, divisiveness `IsLowerSet` and quantization `IsAntichain (· ≤ ·)`, and Link's
 closure `*P` is `supClosure`, so a region is quantized and cumulative only if it has at most one
-member (`Mereology.qua_and_cum_iff_subsingleton`). A carrier
-may have a null individual, as a Boolean algebra does, or none, as a classical mereology does.
-Atoms and overlap are stated relative to mathlib's `IsBot`, so on an `OrderBot` carrier they
-are [`IsAtom`](##Mereology.atom_iff_isAtom) and
-[`¬ Disjoint`](##Mereology.overlap_iff_not_disjoint).
+member (`Mereology.qua_and_cum_iff_subsingleton`).
+
+Atoms and counting are stated here on a carrier with a least element `⊥`, as the sets of atoms
+of a model are: an atom is `IsAtom`, two individuals overlap when they are not `Disjoint`
+(`Mereology.not_disjoint_iff_exists`), and `⊥` is no individual. On a part structure without a
+null element an atom is `IsMin` and overlap is `Mereology.Overlap`; `WithBot.isAtom_coe` and
+`Mereology.overlap_iff_not_disjoint_coe` translate between the two.
 
 ## Implementation notes
 
@@ -146,44 +148,38 @@ end SemilatticeSup
 
 /-! ### Atoms and overlap
 
-The null individual of a carrier, if it has one, is its `IsBot` element: `⊥` on an
-`OrderBot` carrier, and nothing on a `NoBotOrder` carrier or a classical mereology. -/
+The carrier has a null individual `⊥`, as a Boolean algebra does, and the individuals of the
+sources are its elements other than `⊥`. An atom is then mathlib's `IsAtom`, and two individuals
+overlap when they are not `Disjoint`. -/
 
 section Atoms
 
-variable [PartialOrder α] {x y : α}
+variable [PartialOrder α] [OrderBot α] {x y : α}
 
-instance [OrderBot α] [DecidableEq α] (x : α) : Decidable (IsBot x) :=
-  decidable_of_iff (x = ⊥) isBot_iff_eq_bot.symm
+/-- Two individuals are not disjoint iff they share a part that is not null. -/
+theorem not_disjoint_iff_exists : ¬ Disjoint x y ↔ ∃ z, z ≠ ⊥ ∧ z ≤ x ∧ z ≤ y :=
+  ⟨fun h ↦ by
+      by_contra hz
+      exact h fun z hx hy ↦ le_bot_iff.2 (by_contra fun h0 ↦ hz ⟨z, h0, hx, hy⟩),
+    fun ⟨_, hz, hx, hy⟩ h ↦ hz (le_bot_iff.1 (h hx hy))⟩
 
-instance [Fintype α] [DecidableLE α] (x : α) : Decidable (IsBot x) :=
-  inferInstanceAs (Decidable (∀ y, x ≤ y))
+instance (priority := low) [Fintype α] [DecidableEq α] [DecidableLT α] (x : α) :
+    Decidable (IsAtom x) :=
+  inferInstanceAs (Decidable (x ≠ ⊥ ∧ ∀ b < x, b = ⊥))
 
-/-- An atom ([link-1983]) is a non-null element with no non-null proper part, that is, a minimal
-non-null element. The `P`-relative notion is `atomize`. -/
-abbrev Atom (x : α) : Prop := Minimal (¬ IsBot ·) x
+theorem not_disjoint_of_le (hx : x ≠ ⊥) (h : x ≤ y) : ¬ Disjoint x y :=
+  fun hd ↦ hx (hd.eq_bot_of_le h)
 
-theorem Atom.not_isBot (h : Atom x) : ¬ IsBot x := h.1
-
-/-- An atom's only non-null part is itself. -/
-theorem Atom.eq (h : Atom x) (hle : y ≤ x) (hy : ¬ IsBot y) : y = x :=
-  le_antisymm hle (h.2 hy hle)
-
-theorem qua_of_atom {s : Set α} (h : ∀ ⦃x⦄, x ∈ s → Atom x) : QUA s :=
-  (atomize_qua (s := {x | ¬ IsBot x})).subset h
-
-theorem exists_atom_le [WellFoundedLT α] (hy : ¬ IsBot y) : ∃ a, Atom a ∧ a ≤ y := by
-  obtain ⟨a, ⟨ha, hay⟩, hmin⟩ :=
-    WellFounded.has_min wellFounded_lt {z | ¬ IsBot z ∧ z ≤ y} ⟨y, hy, le_rfl⟩
-  exact ⟨a, ⟨ha, fun z hz hza ↦ (eq_of_le_of_not_lt hza (hmin z ⟨hz, hza.trans hay⟩)).ge⟩, hay⟩
+theorem qua_of_isAtom {s : Set α} (h : ∀ ⦃x⦄, x ∈ s → IsAtom x) : QUA s :=
+  fun _ ha _ hb hne hle ↦ hne (((h hb).le_iff_eq (h ha).1).1 hle)
 
 /-- The atoms below `x`, its atomic parts. -/
-def atomsBelow (x : α) : Set α := {a | Atom a ∧ a ≤ x}
+def atomsBelow (x : α) : Set α := {a | IsAtom a ∧ a ≤ x}
 
-@[simp] theorem mem_atomsBelow : y ∈ atomsBelow x ↔ Atom y ∧ y ≤ x := Iff.rfl
+@[simp] theorem mem_atomsBelow : y ∈ atomsBelow x ↔ IsAtom y ∧ y ≤ x := Iff.rfl
 
-theorem atomsBelow_of_atom (h : Atom x) : atomsBelow x = {x} :=
-  Set.ext fun _ ↦ ⟨fun hy ↦ h.eq hy.2 hy.1.not_isBot, by rintro rfl; exact ⟨h, le_rfl⟩⟩
+theorem atomsBelow_of_isAtom (h : IsAtom x) : atomsBelow x = {x} :=
+  Set.ext fun _ ↦ ⟨fun hy ↦ (h.le_iff_eq hy.1.1).1 hy.2, by rintro rfl; exact ⟨h, le_rfl⟩⟩
 
 /-- `count Z x` is the number of parts of `x` in `Z`, the cardinality of `x` relative to `Z`
 ([landman-2020]). -/
@@ -191,34 +187,19 @@ noncomputable def count (Z : Set α) (x : α) : ℕ := (Set.Iic x ∩ Z).ncard
 
 variable (α) in
 /-- `atomCount α x` is the number of atoms below `x` ([champollion-krifka-2016]). -/
-noncomputable def atomCount (x : α) : ℕ := count {a | Atom a} x
+noncomputable def atomCount (x : α) : ℕ := count {a | IsAtom a} x
 
 theorem atomCount_eq_ncard (x : α) : atomCount α x = (atomsBelow x).ncard :=
   congrArg Set.ncard (Set.ext fun _ ↦ and_comm)
 
-/-- Two elements overlap ([krifka-1998]) if they share a non-null part. -/
-def Overlap (x y : α) : Prop := ∃ z, ¬ IsBot z ∧ z ≤ x ∧ z ≤ y
-
-theorem Overlap.refl (h : ¬ IsBot x) : Overlap x x := ⟨x, h, le_rfl, le_rfl⟩
-
-theorem Overlap.symm (h : Overlap x y) : Overlap y x :=
-  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzy, hzx⟩
-
-theorem Overlap.not_isBot_left (h : Overlap x y) : ¬ IsBot x :=
-  let ⟨_, hz, hzx, _⟩ := h; fun hx ↦ hz (hx.mono hzx)
-
-theorem Overlap.not_isBot_right (h : Overlap x y) : ¬ IsBot y := h.symm.not_isBot_left
-
-theorem Overlap.of_le (hx : ¬ IsBot x) (h : x ≤ y) : Overlap x y := ⟨x, hx, le_rfl, h⟩
-
-theorem Overlap.mono {x' y' : α} (hx : x ≤ x') (hy : y ≤ y') (h : Overlap x y) : Overlap x' y' :=
-  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzx.trans hx, hzy.trans hy⟩
+theorem atomize_ne_bot : atomize {x : α | x ≠ ⊥} = {x | IsAtom x} :=
+  Set.ext fun _ ↦ isAtom_iff_le_of_ge.symm
 
 end Atoms
 
-theorem not_atom_sup_of_ne [SemilatticeSup α] {x y : α} (hx : Atom x) (hy : Atom y) (hne : x ≠ y) :
-    ¬ Atom (x ⊔ y) :=
-  fun h ↦ hne ((h.eq le_sup_left hx.not_isBot).trans (h.eq le_sup_right hy.not_isBot).symm)
+theorem not_isAtom_sup_of_ne [SemilatticeSup α] [OrderBot α] {x y : α} (hx : IsAtom x)
+    (hy : IsAtom y) (hne : x ≠ y) : ¬ IsAtom (x ⊔ y) :=
+  fun h ↦ hne (((h.le_iff_eq hx.1).1 le_sup_left).trans ((h.le_iff_eq hy.1).1 le_sup_right).symm)
 
 /-! ### Pluralities -/
 
@@ -234,32 +215,34 @@ def IsPlural (s : Set α) (x : α) : Prop :=
 theorem not_isPlural_of_subsingleton (h : s.Subsingleton) (x : α) : ¬ IsPlural s x :=
   fun ⟨_, _, _, _, _, ha, hb, hne⟩ ↦ hne (h ha hb)
 
-theorem mem_of_mem_supClosure_of_atom (hx : x ∈ supClosure s) (h : Atom x) : x ∈ s := by
+variable [OrderBot α]
+
+theorem mem_of_mem_supClosure_of_isAtom (hx : x ∈ supClosure s) (h : IsAtom x) : x ∈ s := by
   induction hx using supClosure_induction with
   | mem a ha => exact ha
   | sup a b _ _ iha ihb =>
-    by_cases ha : IsBot a
-    · rw [sup_eq_right.mpr (ha _)] at h ⊢
+    by_cases ha : a = ⊥
+    · rw [ha, bot_sup_eq] at h ⊢
       exact ihb h
-    · have heq := h.eq le_sup_left ha
+    · have heq := (h.le_iff_eq ha).1 le_sup_left
       rw [← heq] at h ⊢
       exact iha h
 
-theorem isPlural_iff_of_atom (hs : ∀ ⦃a⦄, a ∈ s → Atom a) :
-    IsPlural s x ↔ x ∈ supClosure s ∧ ¬ Atom x := by
+theorem isPlural_iff_of_isAtom (hs : ∀ ⦃a⦄, a ∈ s → IsAtom a) :
+    IsPlural s x ↔ x ∈ supClosure s ∧ ¬ IsAtom x := by
   constructor
   · rintro ⟨hx, a, ha, -, -, hPa, -, -⟩
-    exact ⟨hx, fun h ↦ ha.ne (h.eq ha.le (hs hPa).not_isBot)⟩
+    exact ⟨hx, fun h ↦ ha.ne ((h.le_iff_eq (hs hPa).1).1 ha.le)⟩
   · rintro ⟨hx, hne⟩
     refine ⟨hx, ?_⟩
     induction hx using supClosure_induction with
     | mem a h => exact absurd (hs h) hne
     | sup y z hy hz ihy ihz =>
-      by_cases hay : Atom y
-      · by_cases haz : Atom z
+      by_cases hay : IsAtom y
+      · by_cases haz : IsAtom z
         · refine ⟨y, lt_of_le_of_ne le_sup_left fun h ↦ hne (by rw [← h]; exact hay),
             z, lt_of_le_of_ne le_sup_right fun h ↦ hne (by rw [← h]; exact haz),
-            mem_of_mem_supClosure_of_atom hy hay, mem_of_mem_supClosure_of_atom hz haz,
+            mem_of_mem_supClosure_of_isAtom hy hay, mem_of_mem_supClosure_of_isAtom hz haz,
             fun h ↦ hne ?_⟩
           subst h
           rwa [sup_idem]
@@ -268,55 +251,31 @@ theorem isPlural_iff_of_atom (hs : ∀ ⦃a⦄, a ∈ s → Atom a) :
       · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihy hay
         exact ⟨a, ha.trans_le le_sup_left, b, hb.trans_le le_sup_left, hPa, hPb, hab⟩
 
-theorem atomize_mem_supClosure (hs : ∀ ⦃a⦄, a ∈ s → Atom a) :
+theorem atomize_mem_supClosure (hs : ∀ ⦃a⦄, a ∈ s → IsAtom a) :
     atomize (supClosure s) = s := by
   ext x
   refine ⟨fun hx ↦ ?_, fun hx ↦ ⟨subset_supClosure hx, fun y hy hyx ↦ ?_⟩⟩
   · obtain ⟨a, ha, hax⟩ := exists_le_of_mem_supClosure hx.prop
     exact hx.eq_of_le (subset_supClosure ha) hax ▸ ha
   · obtain ⟨b, hb, hby⟩ := exists_le_of_mem_supClosure hy
-    rw [← (hs hx).eq (hby.trans hyx) (hs hb).not_isBot]
+    rw [← ((hs hx).le_iff_eq (hs hb).1).1 (hby.trans hyx)]
     exact hby
 
 end Plural
 
-/-! ### Bounded and bottomless carriers -/
+/-! ### Finite sets -/
 
-section OrderBot
+instance {β : Type*} (s : Finset β) : Decidable (IsAtom s) :=
+  decidable_of_iff (s.card = 1) (Finset.isAtom_iff.trans Finset.card_eq_one.symm).symm
 
-variable [PartialOrder α] [OrderBot α] {x y : α}
-
-theorem atom_iff_isAtom : Atom x ↔ IsAtom x := by
-  simp only [Atom, Minimal, isBot_iff_eq_bot, isAtom_iff_le_of_ge, ne_eq]
-
-theorem overlap_iff_not_disjoint : Overlap x y ↔ ¬ Disjoint x y := by
-  constructor
-  · rintro ⟨z, hz, hzx, hzy⟩ hd
-    exact hz (isBot_iff_eq_bot.2 (le_bot_iff.mp (hd hzx hzy)))
-  · intro hd
-    by_contra h
-    exact hd fun z hzx hzy ↦ le_bot_iff.mpr
-      (by_contra fun hz ↦ h ⟨z, mt isBot_iff_eq_bot.1 hz, hzx, hzy⟩)
-
-theorem atomize_ne_bot : atomize {x : α | x ≠ ⊥} = {x | IsAtom x} :=
-  Set.ext fun _ ↦ isAtom_iff_le_of_ge.symm
-
-end OrderBot
-
-theorem atom_singleton {β : Type*} (b : β) : Atom ({b} : Finset β) :=
-  atom_iff_isAtom.2 (Finset.isAtom_singleton b)
-
-theorem atom_finset_iff {β : Type*} {s : Finset β} : Atom s ↔ ∃ b, s = {b} := by
-  rw [atom_iff_isAtom, Finset.isAtom_iff]
-
-theorem atom_finset_iff_card_eq_one {β : Type*} {s : Finset β} : Atom s ↔ s.card = 1 :=
-  atom_finset_iff.trans Finset.card_eq_one.symm
+theorem isAtom_finset_iff_card_eq_one {β : Type*} {s : Finset β} : IsAtom s ↔ s.card = 1 :=
+  Finset.isAtom_iff.trans Finset.card_eq_one.symm
 
 /-- The atomic parts of a finite set are its singletons. -/
 theorem atomsBelow_finset {β : Type*} (s : Finset β) :
     atomsBelow s = (fun b ↦ ({b} : Finset β)) '' ↑s := by
   ext a
-  simp only [mem_atomsBelow, atom_iff_isAtom, Finset.isAtom_iff, Set.mem_image, Finset.mem_coe]
+  simp only [mem_atomsBelow, Finset.isAtom_iff, Set.mem_image, Finset.mem_coe]
   constructor
   · rintro ⟨⟨b, rfl⟩, h⟩
     exact ⟨b, Finset.singleton_subset_iff.1 h, rfl⟩
@@ -327,8 +286,5 @@ theorem atomsBelow_finset {β : Type*} (s : Finset β) :
 theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s = s.card := by
   rw [atomCount_eq_ncard, atomsBelow_finset,
     Set.ncard_image_of_injective _ Finset.singleton_injective, Set.ncard_coe_finset]
-
-theorem atom_iff_isMin [PartialOrder α] [NoBotOrder α] {x : α} : Atom x ↔ IsMin x :=
-  ⟨fun h _ hy ↦ h.2 (not_isBot _) hy, fun h ↦ ⟨not_isBot x, fun _ _ hy ↦ h hy⟩⟩
 
 end Mereology

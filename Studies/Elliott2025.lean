@@ -596,12 +596,12 @@ section Collective
 
 open Mereology
 
-variable {β : Type*} [PartialOrder β] {C N : Set β} {X : PolarGroup β}
+variable {β : Type*} [PartialOrder β] [OrderBot β] {C N : Set β} {X : PolarGroup β}
 
-theorem delta_collective_iff (hC : ∀ x ∈ C, ¬ Atom x) (hX : noun {x | Atom x ∧ x ∈ N} X) :
+theorem delta_collective_iff (hC : ∀ x ∈ C, ¬ IsAtom x) (hX : noun {x | IsAtom x ∧ x ∈ N} X) :
     X.delta C ↔ X.posAtoms = ∅ := by
   rw [noun_iff] at hX
-  have hA {x : β} {b : Bool} (hx : X x = ↑b) : Atom x :=
+  have hA {x : β} {b : Bool} (hx : X x = ↑b) : IsAtom x :=
     (Set.ext_iff.1 hX x |>.1 (show X x ≠ ⊥ by simp [hx])).1
   refine ⟨fun h ↦ Set.eq_empty_iff_forall_notMem.2 fun x hx ↦ hC x ((h (x, true) hx).2 rfl)
     (hA hx), fun h ⟨x, b⟩ hx ↦ ?_⟩
@@ -610,8 +610,8 @@ theorem delta_collective_iff (hC : ∀ x ∈ C, ¬ Atom x) (hX : noun {x | Atom 
   · exact absurd hx (Set.eq_empty_iff_forall_notMem.1 h x)
 
 /-- *Some boy gathered* is false, since a positive atom would have to gather. -/
-theorem not_some_singular_collective (hC : ∀ x ∈ C, ¬ Atom x) :
-    ¬ sentence Det.some {x | Atom x ∧ x ∈ N} C := fun ⟨_, ⟨hs, hX⟩, hd⟩ ↦
+theorem not_some_singular_collective (hC : ∀ x ∈ C, ¬ IsAtom x) :
+    ¬ sentence Det.some {x | IsAtom x ∧ x ∈ N} C := fun ⟨_, ⟨hs, hX⟩, hd⟩ ↦
   hs ((delta_collective_iff hC hX).1 hd)
 
 end Collective

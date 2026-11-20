@@ -19,7 +19,7 @@ others](##Person.Configuration.atomize_ofParticipants_iff), the speaker alone, t
 alone, the speaker with the addressee, or a single other, and `[+minimal]` of `[−minimal]` the
 referent with one more (`Person.Configuration.atomize_restrict_minimal_false_ofParticipants_iff`),
 the unit augmented. [The atoms are the referents of one
-member](##Person.Configuration.atom_iff_card_eq_one), so [the speaker with the addressee has no
+member](##Person.Configuration.isAtom_iff_card_eq_one), so [the speaker with the addressee has no
 singular](##Person.Configuration.not_atom_of_participants_eq_univ), and [the dual of a region is
 its referents of two members](##Person.Configuration.dual_ofParticipants_iff).
 
@@ -92,29 +92,30 @@ theorem atomize_restrict_minimal_false_ofParticipants_iff :
     from Set.ext fun _ ↦ restrict_minimal_false_ofParticipants_iff]
   exact minimal_le_others_iff
 
-theorem not_isBot_iff_one_le_card : ¬ IsBot x ↔ 1 ≤ x.card := by
-  rw [isBot_iff_eq_bot, eq_bot_iff_card_eq_zero]; omega
+theorem ne_bot_iff_one_le_card : x ≠ ⊥ ↔ 1 ≤ x.card := by
+  rw [Ne, eq_bot_iff_card_eq_zero]; omega
 
 /-- The atoms are the configurations of one member: the speaker, the addressee, and a single
 other. -/
-theorem atom_iff_card_eq_one : Atom x ↔ x.card = 1 := by
+theorem isAtom_iff_card_eq_one : IsAtom x ↔ x.card = 1 := by
+  rw [isAtom_iff_le_of_ge]
   constructor
   · rintro ⟨hx, hmin⟩
     obtain ⟨s, n⟩ := x
     rcases s.eq_empty_or_nonempty with rfl | ⟨r, hr⟩
-    · have h1 : 1 ≤ n := by simpa [card] using not_isBot_iff_one_le_card.1 hx
+    · have h1 : 1 ≤ n := by simpa [card] using ne_bot_iff_one_le_card.1 hx
       have := (le_def.1
-        (hmin (y := ⟨∅, 1⟩) (not_isBot_iff_one_le_card.2 (by simp [card])) ⟨le_rfl, h1⟩)).2
+        (hmin ⟨∅, 1⟩ (ne_bot_iff_one_le_card.2 (by simp [card])) ⟨le_rfl, h1⟩)).2
       simp only [card, Finset.card_empty] at this ⊢
       omega
-    · have := le_def.1 (hmin (y := ⟨{r}, 0⟩) (not_isBot_iff_one_le_card.2 (by simp [card]))
+    · have := le_def.1 (hmin ⟨{r}, 0⟩ (ne_bot_iff_one_le_card.2 (by simp [card]))
         ⟨Finset.singleton_subset_iff.2 hr, Nat.zero_le _⟩)
       have hs : s = {r} := le_antisymm this.1 (Finset.singleton_subset_iff.2 hr)
       have hn : n = 0 := Nat.le_zero.1 this.2
       simp [card, hs, hn]
   · intro h
-    refine ⟨not_isBot_iff_one_le_card.2 h.ge, fun y hy hyx ↦ ?_⟩
-    have h1 := not_isBot_iff_one_le_card.1 hy
+    refine ⟨ne_bot_iff_one_le_card.2 h.ge, fun y hy hyx ↦ ?_⟩
+    have h1 := ne_bot_iff_one_le_card.1 hy
     obtain ⟨hp, hn⟩ := le_def.1 hyx
     have hc := Finset.card_le_card hp
     simp only [card] at h h1
@@ -122,9 +123,9 @@ theorem atom_iff_card_eq_one : Atom x ↔ x.card = 1 := by
 
 /-- The speaker with the addressee is no atom, whatever its others: the inclusive has no
 singular. -/
-theorem not_atom_of_participants_eq_univ (h : x.participants = Finset.univ) : ¬ Atom x := by
+theorem not_atom_of_participants_eq_univ (h : x.participants = Finset.univ) : ¬ IsAtom x := by
   intro ha
-  have h1 := atom_iff_card_eq_one.1 ha
+  have h1 := isAtom_iff_card_eq_one.1 ha
   have h2 : (Finset.univ : Finset Role).card = 2 := by decide
   rw [card, h, h2] at h1
   omega
@@ -141,7 +142,7 @@ theorem dual_ofParticipants_iff :
   have key : Feature.restrict .atomic false (OfParticipants s) =
       {y : Configuration | y.participants = s ∧ 2 ≤ s.card + y.others} := by
     ext y
-    simp only [Feature.mem_restrict_atomic_false, atom_iff_card_eq_one, ofParticipants_iff, card,
+    simp only [Feature.mem_restrict_atomic_false, isAtom_iff_card_eq_one, ofParticipants_iff, card,
       Set.mem_ofPred_eq]
     constructor
     · rintro ⟨⟨h1, h2⟩, h3⟩

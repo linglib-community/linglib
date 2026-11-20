@@ -80,7 +80,7 @@ theorem fixes_Evar {v r : R} (h : r ≠ v) (P : E → Prop) : Fixes r (Evar (S :
 /-- `relTest u v r` is the dynamic verb that tests `r` of the values of `u` and `v` (11). -/
 def relTest (u v : R) (r : E → E → Prop) : Update S := test {i | r (val u i) (val v i)}
 
-variable [PartialOrder E]
+variable [PartialOrder E] [OrderBot E]
 
 theorem mem_maxAt_Evar_comp_test {u : R} {Q : E → Prop} {C : Condition S} {i j : S} :
     i ~[maxAt u (Evar u Q ○ test C)] j ↔
@@ -150,7 +150,7 @@ section Tower
 
 universe u
 
-variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E]
+variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E] [OrderBot E]
 
 /-- `exactly v n P` is the dynamic quantifier (3), which introduces, maximizes and counts in one
 scope. -/
@@ -281,7 +281,7 @@ theorem not_hasType_pseudoCumulative (A : Ty) :
     | seq h _ => exact hmax _ h
 
 /-- `K.denote` is the update that the logical form `K` denotes. -/
-def LF.denote {S : Type*} [RegisterStructure R S E] [PartialOrder E] :
+def LF.denote {S : Type*} [RegisterStructure R S E] [PartialOrder E] [OrderBot E] :
     LF R E → Update S
   | .dref v P => Evar v P
   | .max v K => maxAt v K.denote
@@ -289,7 +289,7 @@ def LF.denote {S : Type*} [RegisterStructure R S E] [PartialOrder E] :
   | .rel u v r => relTest u v r
   | .seq K L => K.denote ○ L.denote
 
-variable {S : Type*} [RegisterStructure R S E] [PartialOrder E]
+variable {S : Type*} [RegisterStructure R S E] [PartialOrder E] [OrderBot E]
 
 theorem denote_cumulative :
     (LF.cumulative v u P Q r n m).denote = (cumulative v u P Q r n m : Update S) := rfl
@@ -305,7 +305,7 @@ section PostSuppositional
 
 universe u
 
-variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E]
+variable {R S : Type u} {E : Type*} [RegisterStructure R S E] [PartialOrder E] [OrderBot E]
 
 /-- A post-suppositional meaning (52) is a computation of the Writer monad over the update monoid,
 whose log is its post-supposition; `pure` and `bind` are (120) and (121), the unit being the
@@ -345,7 +345,7 @@ end PostSuppositional
 
 section UpdateTheoretic
 
-variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [OrderBot E]
 
 /-- Update-theoretic maximization (78) keeps the outputs whose value of `v` is maximal in the
 whole updated context. -/
@@ -370,7 +370,7 @@ def sentenceULowered (v u : R) (P Q : E → Prop) (r : E → E → Prop) (n m : 
   exactlyU v n P fun a ↦ CCP.seq
     (CCP.lower (maxAtU u (CCP.seq (Evar u Q).image (relTest u a r).image))).image (card u m).image
 
-omit [PartialOrder E] in
+omit [PartialOrder E] [OrderBot E] in
 private theorem image_comp_eq_seq (D₁ D₂ : Update S) :
     (D₁ ○ D₂).image = CCP.seq D₁.image D₂.image :=
   funext fun _ ↦ SetRel.image_comp ..

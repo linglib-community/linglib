@@ -34,8 +34,8 @@ presupposition failure is undefinedness rather than falsity.
 
 ## Implementation notes
 
-The null individual is `IsBot`, the overlap relation `Mereology.Overlap`, and non-overlap of a
-restrictor `Mereology.DisjointPred`. The heads are `PFun.res` of the identity on the
+The null individual is `⊥`, overlap is `¬ Disjoint`, and non-overlap of a restrictor is
+`Set.PairwiseDisjoint`. The heads are `PFun.res` of the identity on the
 restrictors meeting their presupposition, and a structure applied to a restrictor and a scope is
 a `Part Prop`, defined when the head is. Time is measured in minutes, so *ten minutes* denotes the
 consecutive half-open intervals of `ℕ`. The survey of universal quantifiers in the paper's first
@@ -60,11 +60,11 @@ variable {α : Type*} {P Q : Set α} {x : α}
 
 section PartialOrder
 
-variable [PartialOrder α]
+variable [PartialOrder α] [OrderBot α]
 
 /-- `MaxNonOverlap P x` says that `x` is a `P`-element containing every `P`-element it
 overlaps, the domain condition of the quantifier. -/
-def MaxNonOverlap (P : Set α) (x : α) : Prop := x ∈ P ∧ ∀ y ∈ P, Overlap x y → y ≤ x
+def MaxNonOverlap (P : Set α) (x : α) : Prop := x ∈ P ∧ ∀ y ∈ P, ¬ Disjoint x y → y ≤ x
 
 /-- The single universal quantifier `Q∀` says that the scope holds of every maximal
 non-overlapping element of the restrictor. -/
@@ -72,20 +72,20 @@ def QForall (P Q : Set α) : Prop := ∀ x, MaxNonOverlap P x → x ∈ Q
 
 theorem MaxNonOverlap.mem (h : MaxNonOverlap P x) : x ∈ P := h.1
 
-theorem MaxNonOverlap.maximal (hx : ¬ IsBot x) (h : MaxNonOverlap P x) : Maximal (· ∈ P) x :=
-  ⟨h.1, fun y hy hle ↦ h.2 y hy ⟨x, hx, le_rfl, hle⟩⟩
+theorem MaxNonOverlap.maximal (hx : x ≠ ⊥) (h : MaxNonOverlap P x) : Maximal (· ∈ P) x :=
+  ⟨h.1, fun y hy hle ↦ h.2 y hy (not_disjoint_of_le hx hle)⟩
 
-theorem maxNonOverlap_iff_of_disjoint (h : DisjointPred P) :
+theorem maxNonOverlap_iff_of_disjoint (h : P.PairwiseDisjoint id) :
     MaxNonOverlap P x ↔ x ∈ P :=
   ⟨And.left, fun hx ↦ ⟨hx, fun _ hy hov ↦
-    (Classical.byContradiction fun hne ↦ h hx hy (Ne.symm hne) hov).le⟩⟩
+    (Classical.byContradiction fun hne ↦ hov (h hx hy (Ne.symm hne))).le⟩⟩
 
 /-- The singular half of the generalization says that on a pairwise non-overlapping restrictor
 the quantifier is the ordinary universal. -/
-theorem qForall_iff_of_disjoint (h : DisjointPred P) : QForall P Q ↔ ∀ x ∈ P, x ∈ Q :=
+theorem qForall_iff_of_disjoint (h : P.PairwiseDisjoint id) : QForall P Q ↔ ∀ x ∈ P, x ∈ Q :=
   forall_congr' fun _ ↦ imp_congr_left (maxNonOverlap_iff_of_disjoint h)
 
-theorem qForall_iff_every (h : DisjointPred P) :
+theorem qForall_iff_every (h : P.PairwiseDisjoint id) :
     QForall P Q ↔ Quantifier.Det.every P Q :=
   qForall_iff_of_disjoint h
 
@@ -93,20 +93,20 @@ end PartialOrder
 
 section SemilatticeSup
 
-variable [SemilatticeSup α] {m : α}
+variable [SemilatticeSup α] [OrderBot α] {m : α}
 
 theorem maxNonOverlap_of_supClosed (hP : SupClosed P) (hm : Maximal (· ∈ P) m) :
     MaxNonOverlap P m :=
   ⟨hm.1, fun _ hy _ ↦ le_sup_right.trans (hm.2 (hP hm.1 hy) le_sup_left)⟩
 
-theorem maxNonOverlap_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupClosed P)
+theorem maxNonOverlap_iff_of_supClosed (h0 : ∀ x ∈ P, x ≠ ⊥) (hP : SupClosed P)
     (hm : Maximal (· ∈ P) m) : MaxNonOverlap P x ↔ x = m :=
   ⟨fun hx ↦ cum_maximal_unique hP (hx.maximal (h0 x hx.1)) hm,
    fun hxm ↦ hxm ▸ maxNonOverlap_of_supClosed hP hm⟩
 
 /-- The plural half of the generalization says that on a sum-closed restrictor without the null
 individual the quantifier applies the scope to the largest sum. -/
-theorem qForall_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupClosed P)
+theorem qForall_iff_of_supClosed (h0 : ∀ x ∈ P, x ≠ ⊥) (hP : SupClosed P)
     (hm : Maximal (· ∈ P) m) : QForall P Q ↔ m ∈ Q := by
   simp only [QForall, maxNonOverlap_iff_of_supClosed h0 hP hm, forall_eq]
 
@@ -116,19 +116,19 @@ end SemilatticeSup
 
 section Heads
 
-variable [PartialOrder α]
+variable [PartialOrder α] [OrderBot α]
 
 /-- The presupposition of ONE_∅ is that the restrictor has more than one element and no two of
 them overlap. -/
-def OneEmptyDom (P : Set α) : Prop := P.Nontrivial ∧ DisjointPred P
+def OneEmptyDom (P : Set α) : Prop := P.Nontrivial ∧ P.PairwiseDisjoint id
 
 /-- The presupposition of ONE_AT is that the restrictor has more than one element, all of them
 atoms. -/
-def OneAtDom (P : Set α) : Prop := P.Nontrivial ∧ ∀ x ∈ P, Atom x
+def OneAtDom (P : Set α) : Prop := P.Nontrivial ∧ ∀ x ∈ P, IsAtom x
 
 theorem OneAtDom.oneEmptyDom (h : OneAtDom P) : OneEmptyDom P :=
-  ⟨h.1, fun x hx y hy hne ⟨_, hz, hzx, hzy⟩ ↦
-    hne (((h.2 x hx).eq hzx hz).symm.trans ((h.2 y hy).eq hzy hz))⟩
+  ⟨h.1, fun x hx y hy hne _ hzx hzy ↦ le_bot_iff.2 <| by_contra fun hz ↦
+    hne ((((h.2 x hx).le_iff_eq hz).1 hzx).symm.trans (((h.2 y hy).le_iff_eq hz).1 hzy))⟩
 
 /-- The head ONE_∅ is the identity on the restrictors meeting its presupposition. -/
 def oneEmpty : Set α →. Set α := PFun.res id {P | OneEmptyDom P}
@@ -171,19 +171,19 @@ theorem each_get_iff (h : (each P Q).Dom) : (each P Q).get h ↔ ∀ x ∈ P, x 
 
 section Decidable
 
-variable [Fintype α] [DecidableEq α] [DecidableLE α] [DecidablePred (IsBot : α → Prop)]
+variable [Fintype α] [DecidableEq α] [DecidableLE α]
   [DecidablePred (· ∈ P)] [DecidablePred (· ∈ Q)]
 
-instance (x y : α) : Decidable (Overlap x y) := Fintype.decidableExistsFintype
+instance (x y : α) : Decidable (Disjoint x y) :=
+  inferInstanceAs (Decidable (∀ ⦃z⦄, z ≤ x → z ≤ y → z ≤ ⊥))
 
-instance (x : α) : Decidable (Atom x) :=
-  inferInstanceAs (Decidable (¬ IsBot x ∧ ∀ ⦃y⦄, ¬ IsBot y → y ≤ x → x ≤ y))
+instance (x : α) : Decidable (IsAtom x) := decidable_of_iff _ isAtom_iff_le_of_ge.symm
 
 instance (x : α) : Decidable (Maximal (· ∈ P) x) :=
   inferInstanceAs (Decidable (x ∈ P ∧ ∀ ⦃y⦄, y ∈ P → x ≤ y → y ≤ x))
 
 instance : DecidablePred (MaxNonOverlap P) := fun x ↦
-  inferInstanceAs (Decidable (x ∈ P ∧ ∀ y ∈ P, Overlap x y → y ≤ x))
+  inferInstanceAs (Decidable (x ∈ P ∧ ∀ y ∈ P, ¬ Disjoint x y → y ≤ x))
 
 instance : Decidable (QForall P Q) :=
   inferInstanceAs (Decidable (∀ x, MaxNonOverlap P x → x ∈ Q))
@@ -191,10 +191,10 @@ instance : Decidable (QForall P Q) :=
 instance : Decidable P.Nontrivial := inferInstanceAs (Decidable (∃ x ∈ P, ∃ y ∈ P, x ≠ y))
 
 instance : Decidable (OneEmptyDom P) :=
-  inferInstanceAs (Decidable (P.Nontrivial ∧ DisjointPred P))
+  inferInstanceAs (Decidable (P.Nontrivial ∧ P.PairwiseDisjoint id))
 
 instance : Decidable (OneAtDom P) :=
-  inferInstanceAs (Decidable (P.Nontrivial ∧ ∀ x ∈ P, Atom x))
+  inferInstanceAs (Decidable (P.Nontrivial ∧ ∀ x ∈ P, IsAtom x))
 
 end Decidable
 
@@ -233,7 +233,7 @@ under the plural restrictor and fails under the singular one. -/
 theorem dng : QForall students met ∧ ¬ QForall student met := by decide
 
 theorem qForall_students_iff (Q : Set (Finset Student)) : QForall students Q ↔ Finset.univ ∈ Q :=
-  qForall_iff_of_supClosed (fun _ hs h ↦ hs.ne_empty (Finset.subset_empty.1 (h ∅)))
+  qForall_iff_of_supClosed (fun _ hs h ↦ hs.ne_empty h)
     (fun _ hx _ _ ↦ hx.mono Finset.subset_union_left)
     ⟨Finset.univ_nonempty, fun y _ _ ↦ Finset.subset_univ y⟩
 
@@ -267,20 +267,18 @@ theorem tenMinutes_nontrivial : tenMinutes.Nontrivial :=
   Set.nontrivial_of_mem_mem_ne (Set.mem_range_self 0) (Set.mem_range_self 1) fun h ↦ by
     simpa using Set.ext_iff.1 h 0
 
-theorem tenMinutes_disjoint : DisjointPred tenMinutes := by
-  rintro _ ⟨j, rfl⟩ _ ⟨k, rfl⟩ hne ⟨z, hz, hzj, hzk⟩
-  obtain ⟨n, hn⟩ : z.Nonempty := Set.nonempty_iff_ne_empty.2 fun h ↦ hz (h ▸ isBot_bot)
-  obtain ⟨hj₁, hj₂⟩ := hzj hn
-  obtain ⟨hk₁, hk₂⟩ := hzk hn
+theorem tenMinutes_disjoint : tenMinutes.PairwiseDisjoint id := by
+  rintro _ ⟨j, rfl⟩ _ ⟨k, rfl⟩ hne
+  refine Set.disjoint_left.2 fun n ⟨hj₁, hj₂⟩ ⟨hk₁, hk₂⟩ ↦ hne ?_
   obtain rfl : j = k := by omega
-  exact hne rfl
+  rfl
 
 theorem oneEmptyDom_tenMinutes : OneEmptyDom tenMinutes :=
   ⟨tenMinutes_nontrivial, tenMinutes_disjoint⟩
 
-theorem not_atom_tenMinutes : ∀ I ∈ tenMinutes, ¬ Atom I := by
+theorem not_atom_tenMinutes : ∀ I ∈ tenMinutes, ¬ IsAtom I := by
   rintro _ ⟨k, rfl⟩ h
-  obtain ⟨n, hn⟩ := Set.isAtom_iff.1 (atom_iff_isAtom.1 h)
+  obtain ⟨n, hn⟩ := Set.isAtom_iff.1 h
   rw [Set.ext_iff] at hn
   have h0 : 10 * k = n := (hn _).1 ⟨le_rfl, by omega⟩
   have h1 : 10 * k + 1 = n := (hn _).1 ⟨by omega, by omega⟩
@@ -315,7 +313,7 @@ inductive Structure where
   deriving DecidableEq, Repr, Fintype
 
 /-- The head a structure spells out. -/
-def Structure.head [PartialOrder α] : Structure → (Set α →. Set α)
+def Structure.head [PartialOrder α] [OrderBot α] : Structure → (Set α →. Set α)
   | .bare => PFun.lift id
   | .nonOverlap => oneEmpty
   | .atomic => oneEmpty.comp oneAt

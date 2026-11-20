@@ -208,8 +208,8 @@ theorem image_Cand_eq_readings {x : Finset Atom} (hx : x.Nonempty)
     (fun D ↦ {w | reading D P w}) '' (Cand x : Set (Finset (Finset Atom))) =
       readings (fun z ↦ {w | P z w}) x := by
   classical
-  have hbot {z : Finset Atom} : ¬ IsBot z ↔ z.Nonempty :=
-    isBot_iff_eq_bot.not.trans Finset.nonempty_iff_ne_empty.symm
+  have hbot {z : Finset Atom} : z ≠ ⊥ ↔ z.Nonempty :=
+    Finset.nonempty_iff_ne_empty.symm
   ext p
   constructor
   · rintro ⟨D, hD, rfl⟩
@@ -1058,7 +1058,7 @@ variable [DecidableEq Atom] {R : Atom → Atom → W → Prop} {x y z : Finset A
 /-- Beck's cumulated relation at `w`, the relation to *the other ones among* the second argument.
 -/
 def Reciprocated (R : Atom → Atom → W → Prop) (z y : Finset Atom) (w : W) : Prop :=
-  Beck2001.cumulatedReading Mereology.Atom Mereology.Atom
+  Beck2001.cumulatedReading IsAtom IsAtom
     (Relation.Map (R · · w) ({·}) ({·})) z y = .true
 
 theorem reciprocated_iff :
@@ -1170,7 +1170,7 @@ theorem reciprocated_singleton (a : Atom) (w : W) :
     (∀ H : HParam Atom, H.Admissible → ¬ pred₂ H i j (Reciprocated R) {a} {a} w) ∧
     Beck2001.Examples.ex119.judgment ≠ .acceptable ∧
     ∀ H : HParam Atom, H.Admissible → ∀ z ∈ H i {a}, ∀ y ∈ H j {a},
-      Beck2001.cumulatedReading Mereology.Atom Mereology.Atom
+      Beck2001.cumulatedReading IsAtom IsAtom
         (Relation.Map (R · · w) ({·}) ({·})) z y = .undefined := by
   refine ⟨forall_not_pred₂_reciprocated_iff.2 fun u hu v hv hne _ ↦
     hne ((Finset.mem_singleton.1 hu).trans (Finset.mem_singleton.1 hv).symm),

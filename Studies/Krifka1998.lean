@@ -4,7 +4,7 @@ public import Linglib.Semantics.Aspect.Telicity
 public import Studies.Krifka1989
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.FinCases
-public import Linglib.Semantics.Mereology.Measure
+public import Linglib.Semantics.Mereology.Extensive
 
 /-!
 # Krifka (1998): The Origins of Telicity
@@ -27,9 +27,9 @@ two non-contemporaneous events are atelic.
   its event axioms that overlapping events never precede each other enters as
   `NoPartPrecedes`, which is all the proofs use and which [any precedence on a part structure
   of events satisfies](##IsTemporalPrecedence.noPartPrecedes).
-* Overlap is `Mereology.Overlap`, relative to a possible null element. The paper's part
+* Objects and times have a null element here, and overlap is `¬ Disjoint`. The paper's part
   structures have none, so the expansion theorems assume that the thematic relation never
-  relates the null object.
+  relates the null object. Events have no null element.
 * The source and goal conditions quantify the subpath and the subevent separately; the
   formalization ties them through the thematic relation, as the paper's telicity proof does.
 * The measure adverbial (55) is formalized only through its part relation `IsTemporalPart`,
@@ -59,21 +59,21 @@ variable {α β : Type*}
 
 section MeasureAdverbial
 
-variable {T : Type*} [PartialOrder β] [PartialOrder T] (τ : β → T)
+variable {T : Type*} [PartialOrder β] [PartialOrder T] [OrderBot T] (τ : β → T)
 
 /-- `e'` is a temporal part of `e`, in the part relation of a temporal measure (55), if it is
 part of `e` and `e` has a part whose runtime does not overlap the runtime of `e'`. -/
 structure IsTemporalPart (e' e : β) : Prop where
   le : e' ≤ e
-  exists_not_overlap : ∃ e'' ≤ e, ¬ Overlap (τ e') (τ e'')
+  exists_not_overlap : ∃ e'' ≤ e, Disjoint (τ e') (τ e'')
 
 variable {τ}
 
 theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ e' e)
-    (h₀ : ∀ e'', e'' ≤ e → ¬ IsBot (τ e'')) : e' ≠ e := by
+    (h₀ : ∀ e'', e'' ≤ e → (τ e'') ≠ ⊥) : e' ≠ e := by
   rintro rfl
   obtain ⟨_, e'', he'', hov⟩ := h
-  exact hov ⟨τ e'', h₀ e'' he'', hτ he'', le_rfl⟩
+  exact not_disjoint_iff_exists.2 ⟨τ e'', h₀ e'' he'', hτ he'', le_rfl⟩ hov
 
 end MeasureAdverbial
 
@@ -133,7 +133,7 @@ theorem eat_apples_cum : CUM (VP eat {x | x.Nonempty}) :=
 incremental and summative (54). -/
 theorem eat_two_apples_qua : QUA (VP eat {x | x.card = 2}) :=
   eat_sinc.vp_qua eat_sum
-    (QUA.preimage (IsExtensiveMeasure.strictMono Finset.card)
+    (QUA.preimage Finset.card_strictMono
       (Set.subsingleton_singleton.isAntichain _))
 
 end Eat
@@ -257,10 +257,11 @@ end Reading
 
 section Expansion
 
-variable [SemilatticeSup α] [SemilatticeSup β] (precedes : β → β → Prop) (θ : SetRel α β)
+variable [SemilatticeSup α] [OrderBot α] [SemilatticeSup β] (precedes : β → β → Prop)
+  (θ : SetRel α β)
 
 /-- A relation is expansive if the objects of temporally ordered events do not overlap. -/
-def EXP : Prop := ∀ x y e e', x ~[θ] e → y ~[θ] e' → precedes e e' → ¬ Overlap x y
+def EXP : Prop := ∀ x y e e', x ~[θ] e → y ~[θ] e' → precedes e e' → Disjoint x y
 
 /-- A relation is strictly expansive incremental if it is expansive and maps to objects. -/
 structure SEINC : Prop where
@@ -268,20 +269,20 @@ structure SEINC : Prop where
   mo : MO θ
 
 variable {precedes θ} [IsStrictOrder β precedes] (h : SEINC precedes θ)
-  (h₀ : ∀ x e, x ~[θ] e → ¬ IsBot x) {x : α} {e e' : β}
+  (h₀ : ∀ x e, x ~[θ] e → x ≠ ⊥) {x : α} {e e' : β}
 include h h₀
 
 theorem isInitialPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
   isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
     let ⟨y, hy, hθ⟩ := h.mo hx h''
-    h.exp y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
+    not_disjoint_iff_exists.2 ⟨y, h₀ y e'' hθ, le_rfl, hy⟩ (h.exp y x e'' e' hθ hx' hp)⟩
 
 theorem isFinalPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
   isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
     let ⟨y, hy, hθ⟩ := h.mo hx h''
-    h.exp x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
+    not_disjoint_iff_exists.2 ⟨y, h₀ y e'' hθ, hy, le_rfl⟩ (h.exp x y e' e'' hx' hθ hp)⟩
 
 theorem isTelic_of_seinc (x : α) : IsTelic precedes {e | x ~[θ] e} :=
   fun _ _ hx hx' hle ↦
