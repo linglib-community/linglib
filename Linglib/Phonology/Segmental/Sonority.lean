@@ -22,8 +22,9 @@ scale when it is what the scale places in an upper set of its points, and contig
 what lies within some interval, the preimage of an order-connected set. A feature cuts a scale
 when the segments with one of its values form a cut. The cuts of a scale are nested, as the upper
 sets of a linear order are, so features whose values cross do not both cut it, and two features
-whose values combine freely do not both divide it into contiguous classes. A scale coarsens another when it preserves its order, and the cuts of
-the coarser scale are cuts of the finer one.
+whose values combine freely do not both divide it into contiguous classes. A scale coarsens
+another when it preserves its order, and the cuts and the contiguous sets of the coarser scale
+are cuts and contiguous sets of the finer one.
 
 The base scale is the sonority hierarchy of Hayes's Table 4.1, the modal hierarchy of Parker:
 obstruents, nasals, liquids, glides and vowels. Each class is defined by the features of
@@ -46,7 +47,8 @@ are the contiguous sets.
 * `Phonology.Sonority.IsCut.total`: the cuts of a scale are nested.
 * `Phonology.Sonority.not_contiguous_of_independent`: two features whose values combine freely
   do not both divide a scale into contiguous classes.
-* `Phonology.Sonority.IsCut.of_coarsens`: the cuts of a coarser scale are cuts of a finer one.
+* `Phonology.Sonority.IsCut.of_coarsens`, `Phonology.Sonority.Contiguous.of_coarsens`: the cuts
+  and the contiguous sets of a coarser scale are cuts and contiguous sets of a finer one.
 * `Phonology.Sonority.ofSegment_eq_of_le`, `Phonology.Sonority.description_le_iff`: a segment
   with the values of a column of Table 4.1 has that column's sonority and description.
 * `Phonology.Sonority.isNaturalClass_image_iff`: among the columns, the natural classes are the
@@ -111,6 +113,14 @@ theorem IsCut.of_coarsens (h : Coarsens τ σ) (hS : IsCut τ S) : IsCut σ S :=
   refine ⟨⟨{y | ∃ a ∈ τ ⁻¹' U, σ a ≤ y}, fun x y hxy ⟨a, ha, hax⟩ ↦ ⟨a, ha, hax.trans hxy⟩⟩, ?_⟩
   ext b
   exact ⟨fun hb ↦ ⟨b, hb, le_rfl⟩, fun ⟨a, ha, hab⟩ ↦ U.upper (h a b hab) ha⟩
+
+theorem Contiguous.of_coarsens (h : Coarsens τ σ) (hS : Contiguous τ S) : Contiguous σ S :=
+  contiguous_iff.2 fun a ha b hb c hac hcb ↦
+    contiguous_iff.1 hS a ha b hb c (h a c hac) (h c b hcb)
+
+/-- Scales that induce the same order have the same contiguous sets. -/
+theorem contiguous_congr (h : ∀ a b, σ a ≤ σ b ↔ τ a ≤ τ b) : Contiguous σ S ↔ Contiguous τ S :=
+  ⟨.of_coarsens fun a b ↦ (h a b).2, .of_coarsens fun a b ↦ (h a b).1⟩
 
 /-- Two features whose values combine freely do not both divide a scale into contiguous classes. -/
 theorem not_contiguous_of_independent (σ : α → β) {φ ψ : α → Bool}
