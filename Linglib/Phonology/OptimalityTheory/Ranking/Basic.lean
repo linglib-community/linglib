@@ -23,8 +23,8 @@ ranking and its [reflexive closure](##Ranking.Enumeration.toRel), which
 vector `v` in rank order as `toLex (v ∘ r)`, so comparing two vectors under one ranking is
 the lexicographic order `Pi.Lex r.Dominates (· < ·)` of the constraints under dominance
 (`Pi.toLex_comp_lt_toLex_comp_iff`), and comparing them under every ranking is the product order
-(`OptimalityTheory.Ranking.Enumeration.forall_profile_lt_iff`), which is harmonic bounding. Rankings carry the discrete
-σ-algebra, so a distribution over rankings is a `Measure`.
+(`OptimalityTheory.Ranking.Enumeration.forall_profile_lt_iff`), which is harmonic bounding.
+Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
 
 ## Implementation notes
 

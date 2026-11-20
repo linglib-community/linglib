@@ -341,7 +341,8 @@ private theorem eq_and_lt_and_gt_of_toLex_comp_swap {κ β : Type*} [LinearOrder
     [WellFoundedLT κ] [DecidableEq κ] [LinearOrder β] {a b : κ} {x y : κ → β} (hab : a ⋖ b)
     (h : toLex x < toLex y) (h' : toLex (y ∘ Equiv.swap a b) < toLex (x ∘ Equiv.swap a b)) :
     (∀ c < a, x c = y c) ∧ x a < y a ∧ y b < x b := by
-  have := InvImage.isStrictTotalOrder (r := (· < · : κ → κ → Prop)) (Equiv.swap a b).symm.injective
+  have := InvImage.isStrictTotalOrder (r := (· < · : κ → κ → Prop))
+    (Equiv.swap a b).symm.injective
   obtain ⟨i, hi, hd⟩ := Pi.lex_iff_exists_forall.1 h
   obtain ⟨i', hi', hd'⟩ :=
     ((Pi.toLex_comp_lt_toLex_comp_iff (Equiv.swap a b)).trans Pi.lex_iff_exists_forall).1 h'
