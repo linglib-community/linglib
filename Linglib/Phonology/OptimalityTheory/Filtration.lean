@@ -51,26 +51,20 @@ theorem filtration_append :
   | nil => rfl
   | cons k l ih => exact ih
 
+/-- Filtration along a list minimizes the violations along the list lexicographically. -/
+theorem filtration_eq_argmin : filtration v s l = s.argmin fun c ↦ l.map (v c) := by
+  induction l generalizing s with
+  | nil => simp
+  | cons k l ih =>
+    rw [filtration_cons, ih, Finset.argmin_argmin]
+    ext c
+    simp only [Finset.mem_argmin, Prod.Lex.toLex_le_toLex, List.map_cons, List.cons_le_cons_iff']
+
 /-- The survivors of filtration are the candidates whose violations along the list are
 lexicographically least. -/
 theorem mem_filtration :
     c ∈ filtration v s l ↔ c ∈ s ∧ ∀ d ∈ s, l.map (v c) ≤ l.map (v d) := by
-  induction l generalizing s with
-  | nil => simp
-  | cons k l ih =>
-    simp only [filtration_cons, ih, Finset.mem_argmin, List.map_cons, List.cons_le_cons_iff']
-    constructor
-    · rintro ⟨⟨hc, hk⟩, h⟩
-      refine ⟨hc, fun d hd ↦ ?_⟩
-      rcases (hk d hd).lt_or_eq with hlt | heq
-      · exact Or.inl hlt
-      · exact Or.inr ⟨heq, h d ⟨hd, fun b hb ↦ heq ▸ hk b hb⟩⟩
-    · rintro ⟨hc, h⟩
-      have hk : ∀ b ∈ s, v c k ≤ v b k := fun b hb ↦ (h b hb).elim le_of_lt fun h ↦ h.1.le
-      refine ⟨⟨hc, hk⟩, fun d hd ↦ ?_⟩
-      rcases h d hd.1 with hlt | ⟨-, hle⟩
-      · exact absurd (hd.2 c hc) (not_le.2 hlt)
-      · exact hle
+  rw [filtration_eq_argmin, Finset.mem_argmin]
 
 theorem filtration_subset : filtration v s l ⊆ s := fun _ h ↦ (mem_filtration.1 h).1
 

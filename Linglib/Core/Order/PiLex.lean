@@ -20,12 +20,13 @@ well-founded strict total order and each `β i` is linearly ordered, the agreeme
 dropped: `x` is below `y` iff some index where `x` is smaller comes `r`-before every index where
 `x` is larger (`Pi.lex_iff_exists_forall`). For a well-founded linear order on the indices this
 gives `toLex x < toLex y ↔ ∃ i, x i < y i ∧ ∀ j, y j < x j → i < j`
-(`Pi.toLex_lt_toLex_iff_exists`) and two forms of `≤`, one with the quantifiers in each order
-(`Pi.toLex_le_toLex_iff_forall`, `Pi.toLex_le_toLex_iff_exists`).
+(`Pi.toLex_lt_toLex_iff_exists`). The negation `¬ Pi.Lex r (· < ·) y x`, which is `≤` for a
+linear order on the indices, has two forms, one with the quantifiers in each order
+(`Pi.not_lex_iff_forall_exists`, `Pi.not_lex_iff_exists_forall`).
 
-For `e : κ ≃ ι`, a function `v : ι → β` read along `e` is `toLex (v ∘ e)`, and the same three
-statements hold with the positions `e.symm i` compared in place of the indices
-(`Pi.toLex_comp_lt_iff_exists`). Over all enumerations `e : Fin n ≃ ι` of a finite type, `v` is
+For `e : κ ≃ ι`, a function `v : ι → β` read along `e` is `toLex (v ∘ e)`, and comparing two such
+is `Pi.Lex` for the order of positions `InvImage (· < ·) e.symm` on `ι`
+(`Pi.toLex_comp_lt_toLex_comp_iff`), so the statements above apply to it. Over all enumerations `e : Fin n ≃ ι` of a finite type, `v` is
 below `w` along some `e` iff `v i < w i` for some `i` (`Pi.exists_toLex_comp_lt_iff`), and along
 every `e` iff `v < w` in the product order (`Pi.forall_toLex_comp_lt_iff`). Two functions ordered
 one way, and the other way once two adjacent indices are transposed, agree before those indices
@@ -63,6 +64,30 @@ theorem lex_iff_exists_forall [Std.Trichotomous r] [wf : WellFounded r] :
     refine ⟨wf.min _ hne, fun k hk ↦ not_not.1 fun h ↦ wf.not_lt_min _ h hk, ?_⟩
     exact (wf.min_mem _ hne).lt_or_gt.resolve_right fun h ↦ wf.not_lt_min _ hi.ne (hd _ h)
 
+section StrictTotal
+
+variable [IsStrictTotalOrder ι r] [wf : WellFounded r]
+
+theorem not_lex_iff_forall_exists :
+    ¬ Pi.Lex r (· < ·) y x ↔ ∀ j, y j < x j → ∃ i, x i < y i ∧ r i j := by
+  rw [lex_iff_exists_forall]
+  push Not
+  refine forall₂_congr fun j hj ↦ exists_congr fun i ↦ and_congr_right fun hi ↦
+    ⟨fun h ↦ by_contra fun h' ↦ ?_, fun h ↦ asymm h⟩
+  obtain rfl := Std.Trichotomous.trichotomous j i h h'
+  exact lt_asymm hi hj
+
+theorem not_lex_iff_exists_forall [Nonempty ι] :
+    ¬ Pi.Lex r (· < ·) y x ↔ ∃ i, ∀ j, y j < x j → x i < y i ∧ r i j := by
+  refine ⟨fun h ↦ ?_, fun ⟨i, hi⟩ ↦ not_lex_iff_forall_exists.2 fun j hj ↦ ⟨i, hi j hj⟩⟩
+  by_cases hxy : Pi.Lex r (· < ·) x y
+  · obtain ⟨i, hi, hd⟩ := lex_iff_exists_forall.1 hxy
+    exact ⟨i, fun j hj ↦ ⟨hi, hd j hj⟩⟩
+  · obtain rfl := (trichotomous_lex r (· < ·)).trichotomous x y hxy h
+    exact ⟨Classical.arbitrary ι, fun j hj ↦ absurd hj (lt_irrefl _)⟩
+
+end StrictTotal
+
 variable [LinearOrder ι] [WellFoundedLT ι]
 
 theorem toLex_lt_toLex_iff_exists :
@@ -70,24 +95,9 @@ theorem toLex_lt_toLex_iff_exists :
   lex_iff_exists_forall
 
 theorem toLex_le_toLex_iff_forall :
-    toLex x ≤ toLex y ↔ ∀ j, y j < x j → ∃ i < j, x i < y i := by
-  rw [← not_lt, toLex_lt_toLex_iff_exists]
-  push Not
-  exact forall₂_congr fun j hj ↦ ⟨fun ⟨i, hi, hle⟩ ↦ ⟨i, hle.lt_of_ne fun h ↦ lt_asymm hi (h ▸ hj),
-    hi⟩, fun ⟨i, hlt, hi⟩ ↦ ⟨i, hi, hlt.le⟩⟩
-
-theorem toLex_le_toLex_iff_exists [Nonempty ι] :
-    toLex x ≤ toLex y ↔ ∃ i, ∀ j, y j < x j → x i < y i ∧ i < j := by
-  refine ⟨fun h ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
-  · rcases h.lt_or_eq with h | h
-    · obtain ⟨i, hi, hd⟩ := toLex_lt_toLex_iff_exists.1 h
-      exact ⟨i, fun j hj ↦ ⟨hi, hd j hj⟩⟩
-    · exact ⟨Classical.arbitrary ι, fun j hj ↦ absurd (congrFun (toLex_inj.1 h) j) hj.ne'⟩
-  · by_cases hv : ∃ j, y j < x j
-    · obtain ⟨j, hj⟩ := hv
-      exact (toLex_lt_toLex_iff_exists.2 ⟨i, (hi j hj).1, fun k hk ↦ (hi k hk).2⟩).le
-    · push Not at hv
-      exact toLex_monotone hv
+    toLex x ≤ toLex y ↔ ∀ j, y j < x j → ∃ i < j, x i < y i :=
+  (not_lt.symm.trans not_lex_iff_forall_exists).trans <|
+    forall₂_congr fun _ _ ↦ exists_congr fun _ ↦ and_comm
 
 end Rel
 
@@ -176,10 +186,16 @@ section Reindex
 
 variable {ι κ β : Type*} [LinearOrder κ] [LinearOrder β] (e : κ ≃ ι) {v w : ι → β}
 
-theorem toLex_comp_strictMono [WellFoundedLT κ] : StrictMono fun v : ι → β ↦ toLex (v ∘ e) :=
-  fun v w h ↦ Pi.toLex_strictMono <| by
-    obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 h
-    exact Pi.lt_def.2 ⟨fun k ↦ hle (e k), e.symm i, by simpa using hi⟩
+/-- Read along `e`, the lexicographic order compares positions: it is `Pi.Lex` for the order of
+the indices pulled back along `e.symm`. -/
+theorem toLex_comp_lt_toLex_comp_iff :
+    toLex (v ∘ e) < toLex (w ∘ e) ↔ Pi.Lex (InvImage (· < ·) e.symm) (· < ·) v w := by
+  constructor
+  · rintro ⟨k, hk, hs⟩
+    exact ⟨e k, fun j hj ↦ by simpa using hk (e.symm j) (by simpa [InvImage] using hj), hs⟩
+  · rintro ⟨i, hi, hs⟩
+    exact ⟨e.symm i, fun k hk ↦ by simpa using hi (e k) (by simpa [InvImage] using hk),
+      by simpa using hs⟩
 
 private theorem eq_and_eq_of_swap_lt_swap [DecidableEq κ] {a b x y : κ} (hab : a ⋖ b)
     (hxy : x < y) (h : Equiv.swap a b y < Equiv.swap a b x) : x = a ∧ y = b := by
@@ -204,19 +220,14 @@ private theorem eq_and_eq_of_swap_lt_swap [DecidableEq κ] {a b x y : κ} (hab :
 
 variable [WellFoundedLT κ]
 
+theorem toLex_comp_le_toLex_comp_iff :
+    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ¬ Pi.Lex (InvImage (· < ·) e.symm) (· < ·) w v :=
+  not_lt.symm.trans (toLex_comp_lt_toLex_comp_iff e).not
+
 theorem toLex_comp_lt_iff_exists :
     toLex (v ∘ e) < toLex (w ∘ e) ↔ ∃ i, v i < w i ∧ ∀ j, w j < v j → e.symm i < e.symm j :=
-  toLex_lt_toLex_iff_exists.trans <| e.exists_congr fun _ ↦ and_congr_right fun _ ↦
-    e.forall_congr fun _ ↦ by simp
-
-theorem toLex_comp_le_iff_forall_exists :
-    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∀ j, w j < v j → ∃ i, v i < w i ∧ e.symm i < e.symm j :=
-  toLex_le_toLex_iff_forall.trans <| e.forall_congr fun _ ↦ imp_congr_right fun _ ↦
-    e.exists_congr fun _ ↦ by simp [and_comm]
-
-theorem toLex_comp_le_iff_exists_forall [Nonempty κ] :
-    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∃ i, ∀ j, w j < v j → v i < w i ∧ e.symm i < e.symm j :=
-  toLex_le_toLex_iff_exists.trans <| e.exists_congr fun _ ↦ e.forall_congr fun _ ↦ by simp
+  have := InvImage.isStrictTotalOrder (r := (· < · : κ → κ → Prop)) e.symm.injective
+  (toLex_comp_lt_toLex_comp_iff e).trans lex_iff_exists_forall
 
 /-- Two functions ordered one way, and the other way once the adjacent indices `a ⋖ b` are
 transposed, agree before `a`, and the lower one is smaller at `a` and larger at `b`. -/
@@ -265,7 +276,7 @@ theorem exists_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
 theorem forall_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
     (∀ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ v < w := by
   refine ⟨fun h ↦ Pi.lt_def.2 ⟨fun i ↦ not_lt.1 fun hi ↦ ?_, ?_⟩,
-    fun h e ↦ toLex_comp_strictMono e h⟩
+    fun h e ↦ (toLex_comp_lt_toLex_comp_iff e).2 (lex_lt_of_lt (InvImage.wf _ wellFounded_lt) h)⟩
   · obtain ⟨e, he⟩ := (exists_toLex_comp_lt_iff hn).2 ⟨i, hi⟩
     exact (h e).asymm he
   · exact (exists_toLex_comp_lt_iff hn).1 ⟨_, h (Fintype.equivFinOfCardEq hn).symm⟩
