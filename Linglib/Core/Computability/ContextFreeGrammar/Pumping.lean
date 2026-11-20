@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Tactic.Abel
 
 /-!
 # The pumping lemma for context-free languages
@@ -21,6 +22,11 @@ low subtree with a proper subtree of the same
 nonterminal](##RoseTree.Licensed.exists_repeat_of_lt_height). [Grafting the one into the
 other](##RoseTree.Licensed.exists_pump) pumps the word, and in a tree with the fewest nodes the
 pumped pieces are not both empty.
+
+Arguments by counting letters need only the pumped pieces `t = v ++ y` as a multiset: `t` is a
+nonempty sublist of the short infix `v ++ x ++ y`, and for every `i` the language has a word whose
+letters are those of the original with `t` taken `i` times
+(`Language.IsContextFree.exists_pump_multiset`).
 
 ## References
 
@@ -168,3 +174,24 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
       show u ++ (replicate k v).flatten ++ inner.yield ++ (replicate k y).flatten ++ z =
         (t₁.replaceAt po s).yield by rw [hyu', hsy]; simp only [append_assoc]]
     exact (ht₁.replaceAt hpo hs (hsv.trans hv)).derives
+
+/-- The pumping lemma in terms of letter counts: beyond some length, every word `w` of a
+context-free language has an infix `s` no longer than that length and a nonempty sublist `t` of
+`s` such that, for every `i`, some word of the language has the letters of `w` with `t` taken
+`i` times instead of once. -/
+theorem Language.IsContextFree.exists_pump_multiset {T : Type*} {L : Language T}
+    (hcf : L.IsContextFree) :
+    ∃ p : ℕ, 0 < p ∧ ∀ w ∈ L, p ≤ w.length → ∃ s t : List T, s <:+: w ∧ s.length ≤ p ∧
+      t ≠ [] ∧ t <+ s ∧ ∀ i : ℕ, ∃ w' ∈ L, (w' : Multiset T) + t = w + i • (t : Multiset T) := by
+  obtain ⟨p, hp, h⟩ := hcf.hasCFLPumpingProperty
+  refine ⟨p, hp, fun w hw hlen ↦ ?_⟩
+  obtain ⟨u, v, x, y, z, rfl, hvxy, hvy, hall⟩ := h w hw hlen
+  have hrep (l : List T) (i : ℕ) :
+      ((replicate i l).flatten : Multiset T) = i • (l : Multiset T) := by
+    induction i with
+    | zero => rfl
+    | succ i ih => rw [replicate_succ, flatten_cons, ← Multiset.coe_add, ih, succ_nsmul']
+  refine ⟨v ++ x ++ y, v ++ y, ⟨u, z, by simp⟩, hvxy, hvy,
+    (sublist_append_left v x).append (.refl y), fun i ↦ ⟨_, hall i, ?_⟩⟩
+  simp only [← Multiset.coe_add, hrep, nsmul_add]
+  abel
