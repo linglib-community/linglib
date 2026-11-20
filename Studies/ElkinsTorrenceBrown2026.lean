@@ -39,7 +39,7 @@ do in Mam but are high adjuncts without [appl] in K'ichean, and temporals trigge
 
 ## Implementation notes
 
-* Clause sizes are `Spine`s, the Mam finite, aspectless and nonfinite clauses of (8) and
+* Clause sizes are `Minimalist.Spine`s, the Mam finite, aspectless and nonfinite clauses of (8) and
   §3.3–3.4, with the directional head `Head.dir`, a Mayan-specific category above VoiceP, spliced
   in by `spine`. A dependency is the list of clauses the mover crosses, bottom-up; its `path` is
   the [Ā]-bearers of those clauses and its `sites` the Voice and Dir heads among them, so the
@@ -88,21 +88,21 @@ abbrev Spine := List Head
 
 /-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
 Voice, lack directionals (§3.4). -/
-def spine (s : Spine) (n : ℕ) : Spine :=
+def spine (s : Minimalist.Spine) (n : ℕ) : Spine :=
   s.heads.flatMap fun c ↦
     if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
 
 /-- The Mam finite clause of (8), a CP over the aspect layer, Voice, v and V. -/
-def finiteClause : Spine := ⟨[.V, .v, .Voice, .Asp, .C]⟩
+def finiteClause : Minimalist.Spine := ⟨[.V, .v, .Voice, .Asp, .C]⟩
 
 /-- The aspectless clause, a VoiceP-sized reduced clause without the aspect layer or C (§3.3). -/
-def aspectlessClause : Spine := ⟨[.V, .v, .Voice]⟩
+def aspectlessClause : Minimalist.Spine := ⟨[.V, .v, .Voice]⟩
 
 /-- The nonfinite clause, a VP-sized complement (§3.4). -/
-def nonfiniteClause : Spine := ⟨[.V]⟩
+def nonfiniteClause : Minimalist.Spine := ⟨[.V]⟩
 
 /-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
-def aspP : Spine := ⟨[.V, .v, .Voice, .Asp]⟩
+def aspP : Minimalist.Spine := ⟨[.V, .v, .Voice, .Asp]⟩
 
 /-- C⁰, Voice⁰ and Dir⁰ bear [Ā], (41) and (44). -/
 def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir
@@ -161,9 +161,9 @@ theorem licensed_iff {d : Dependency} {i : ℕ} :
     rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hmem
     exact List.not_mem_nil hmem
 
-theorem exists_hostsReflex_spine_iff (s : Spine) (n : ℕ) :
+theorem exists_hostsReflex_spine_iff (s : Minimalist.Spine) (n : ℕ) :
     (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s := by
-  simp only [spine, List.mem_flatMap, Spine.mem_def]
+  simp only [spine, List.mem_flatMap, Minimalist.Spine.mem_def]
   constructor
   · rintro ⟨h, ⟨c, hc, hmem⟩, hh⟩
     split at hmem
@@ -178,7 +178,7 @@ theorem exists_hostsReflex_spine_iff (s : Spine) (n : ℕ) :
 
 /-- =(y)a' is licensed in a clause of the dependency iff that clause projects Voice (Table 3,
 §3.3–3.4, §4.3). -/
-theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : Spine} {n : ℕ}
+theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : Minimalist.Spine} {n : ℕ}
     (hd : d.getD i [] = spine s n) : Licensed d i ↔ .Voice ∈ s := by
   rw [licensed_iff, hd, exists_hostsReflex_spine_iff]
 
@@ -383,7 +383,7 @@ theorem directionalRows_sites :
   decide
 
 /-- The clause sizes as named in the rows. -/
-def sizeTable : List (String × Spine) :=
+def sizeTable : List (String × Minimalist.Spine) :=
   [("cP", finiteClause), ("voiceP", aspectlessClause), ("bareVP", nonfiniteClause), ("aspP", aspP)]
 
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands
