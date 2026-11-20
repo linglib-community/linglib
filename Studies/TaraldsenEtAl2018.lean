@@ -122,8 +122,8 @@ theorem outer_prefix_is_plural (h : spellout L (bare .num) = none)
     · rcases hi : spellout L (sgTree base) with - | i
       · simp [hb, ho, hi] at hr
       · obtain ⟨rfl, -⟩ : o = outer ∧ i = inner := by simpa [hb, ho, hi] using hr
-        obtain ⟨e, he, rfl, hw⟩ := spellout_isElsewhereWinner ho
-        exact ⟨e, he, hw.1.2, rfl⟩
+        obtain ⟨e, hw, rfl⟩ := spellout_realizes ho
+        exact ⟨e, hw.1.1, hw.1.2, rfl⟩
   · simp [hb] at hr
 
 -- (82), (83)

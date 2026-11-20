@@ -85,7 +85,7 @@ theorem no_containment_of_bottom_entries {n : ℕ} (L : RuleSet (SupersetRule n 
     exponents (Nanosyntax.spellout (L.map (LexicalEntry.ofSupersetRule id)))
         (List.range ((g : ℕ) + 1)) =
       (spellout L g).map fun x ↦ [x] := by
-  simpa using exponents_ofSupersetRule (feat := id) Function.injective_id L g
+  simpa using exponents_ofSupersetRule (feat := id) Nat.succ_ne_zero L g
 
 /-! ### Complexity -/
 

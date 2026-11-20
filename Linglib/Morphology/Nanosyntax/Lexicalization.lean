@@ -28,10 +28,11 @@ spine is spellable is lexicalized without movement (`lexicalize_cons_of_isSome`)
 bare feature above the bottom is spellable the algorithm never evacuates
 (`exponents_cons_of_forall_bare`). A derivation is its spine or has an unlabelled node
 (`eq_pspine_or_hasUnlabelled`), so where no spellable object has an unlabelled node, a sequence
-pronounced with one exponent has every initial part pronounced with one exponent
+is pronounced with one exponent exactly when its spine is spellable
+(`exponents_cons_eq_singleton_iff`), and then so is every initial part of it
 (`exists_exponents_eq_singleton_of_prefix`).
 The same holds, whatever objects are stored, of a spellout that reads only
-the features of an object (`exists_exponents_eq_singleton_of_prefix_of_isFeatureSpellout`), so
+the features of an object (`exists_exponents_eq_singleton_of_subset_of_isFeatureSpellout`), so
 matching by sets of features derives no inverse marking.
 
 ## Implementation notes
@@ -67,7 +68,7 @@ variable {F : Type}
 
 /-! ### The algorithm -/
 
-variable {α : Type} (σ : SyntacticObject F → Option α)
+variable {α : Type*} (σ : SyntacticObject F → Option α)
 
 /-- The ways of evacuating from an object, smallest evacuee first, each with what is left of the
 object, if anything. An unlabelled node that loses a daughter is not kept. -/
@@ -102,7 +103,7 @@ theorem derivations_append (t : PlanarSyntacticObject F) (fs gs : List F) :
     derivations σ t (fs ++ gs) = (derivations σ t fs).flatMap (derivations σ · gs) :=
   List.foldlM_append
 
-/-- The first derivation of a sequence. -/
+/-- The first derivation of a sequence, where the bare phrase of its bottom is spellable. -/
 def lexicalize : List F → Option (PlanarSyntacticObject F)
   | [] => none
   | f₀ :: fs => (σ (pbare f₀).toSyntacticObject).bind fun _ ↦ (derivations σ (pbare f₀) fs).head?
@@ -117,6 +118,8 @@ def spell : PlanarSyntacticObject F → Option (List α)
 def exponents (fs : List F) : Option (List α) := (lexicalize σ fs).bind (spell σ)
 
 /-! ### Evacuation builds unlabelled nodes -/
+
+variable {σ}
 
 theorem exists_mul_of_mem_evacuations {t : PlanarSyntacticObject F} (ht : ∃ a b, t = a * b) :
     ∀ p ∈ evacuations t, ∃ a b, p.1 = a * b := by
@@ -133,25 +136,31 @@ theorem exists_mul_of_mem_evacuations {t : PlanarSyntacticObject F} (ht : ∃ a 
     rw [List.mem_singleton.1 hp]
     exact ht
 
-theorem mem_mergeOptions {t t' : PlanarSyntacticObject F} {f : F} (h : t' ∈ mergeOptions σ t f) :
-    t' = pphrase f t ∨ ∃ p ∈ evacuations t, ∃ c d, t' = p.1 * (c * d) := by
-  rcases List.mem_append.1 h with h | h
-  · obtain ⟨x, -, rfl⟩ : ∃ x, σ (pphrase f t).toSyntacticObject = some x ∧ pphrase f t = t' := by
-      simpa using h
-    exact .inl rfl
-  · obtain ⟨p, hp, h⟩ := List.mem_filterMap.1 h
-    obtain ⟨x, -, rfl⟩ := Option.map_eq_some_iff.1 h
-    refine .inr ⟨p, hp, ?_⟩
-    rcases p.2 with - | m
-    · exact ⟨_, _, rfl⟩
-    · exact ⟨_, _, rfl⟩
+theorem exists_remnant_eq_mul (f : F) (m : Option (PlanarSyntacticObject F)) :
+    ∃ c d, remnant f m = c * d := by
+  cases m <;> exact ⟨_, _, rfl⟩
+
+theorem mem_mergeOptions {t t' : PlanarSyntacticObject F} {f : F} :
+    t' ∈ mergeOptions σ t f ↔
+      (σ (pphrase f t).toSyntacticObject).isSome ∧ t' = pphrase f t ∨
+        ∃ p ∈ evacuations t, (σ (remnant f p.2).toSyntacticObject).isSome ∧
+          t' = p.1 * remnant f p.2 := by
+  simp only [mergeOptions, List.mem_append, Option.mem_toList, Option.map_eq_some_iff,
+    List.mem_filterMap, Option.isSome_iff_exists]
+  constructor
+  · rintro (⟨x, hx, rfl⟩ | ⟨p, hp, x, hx, rfl⟩)
+    · exact .inl ⟨⟨x, hx⟩, rfl⟩
+    · exact .inr ⟨p, hp, ⟨x, hx⟩, rfl⟩
+  · rintro (⟨⟨x, hx⟩, rfl⟩ | ⟨p, hp, ⟨x, hx⟩, rfl⟩)
+    · exact .inl ⟨x, hx, rfl⟩
+    · exact .inr ⟨p, hp, x, hx, rfl⟩
 
 theorem hasUnlabelled_phrase {f : F} {s : SyntacticObject F} (h : HasUnlabelled s) :
     HasUnlabelled (phrase f s) := by
   obtain ⟨u, hu, hu'⟩ := h
   exact ⟨u, containsOrEq_merge.2 (.inr (.inr hu)), hu'⟩
 
-/-- A derivation of a sequence is its spine or has an unlabelled node. -/
+/-- A derivation of a sequence is its spine or has an unlabelled node, and it is a product. -/
 theorem eq_pspine_or_hasUnlabelled {f₀ : F} {fs : List F} {t : PlanarSyntacticObject F}
     (h : t ∈ derivations σ (pbare f₀) fs) :
     (t = pspine f₀ fs ∨ HasUnlabelled t.toSyntacticObject) ∧ ∃ a b, t = a * b := by
@@ -164,7 +173,7 @@ theorem eq_pspine_or_hasUnlabelled {f₀ : F} {fs : List F} {t : PlanarSyntactic
     obtain ⟨t₁, h₁, h⟩ := List.mem_flatMap.1 h
     rw [derivations_singleton] at h
     obtain ⟨ht₁, hmul⟩ := ih h₁
-    rcases mem_mergeOptions σ h with rfl | ⟨p, hp, c, d, rfl⟩
+    rcases mem_mergeOptions.1 h with ⟨-, rfl⟩ | ⟨p, hp, -, rfl⟩
     · refine ⟨?_, _, _, rfl⟩
       rcases ht₁ with rfl | ht₁
       · exact .inl (pspine_concat ..).symm
@@ -172,8 +181,9 @@ theorem eq_pspine_or_hasUnlabelled {f₀ : F} {fs : List F} {t : PlanarSyntactic
         rw [PlanarSyntacticObject.toSyntacticObject_merge]
         exact hasUnlabelled_phrase ht₁
     · obtain ⟨a, b, hab⟩ := exists_mul_of_mem_evacuations hmul p hp
+      obtain ⟨c, d, hcd⟩ := exists_remnant_eq_mul f p.2
       refine ⟨.inr ⟨_, Relation.ReflTransGen.refl, ?_⟩, _, _, rfl⟩
-      rw [hab]
+      rw [hab, hcd]
       exact ⟨a.toSyntacticObject, b.toSyntacticObject, c.toSyntacticObject, d.toSyntacticObject,
         by simp only [PlanarSyntacticObject.toSyntacticObject_merge]⟩
 
@@ -236,8 +246,7 @@ theorem spell_ne_nil (t : PlanarSyntacticObject F) : spell σ t ≠ some [] := b
       exact ihl (hc.1 ▸ hl)
     · simp at hc
 
-/-- A product pronounced with one exponent is lexicalized whole. -/
-theorem eq_some_of_spell_eq_singleton {l r : PlanarSyntacticObject F} {x : α}
+private theorem eq_some_of_spell_eq_singleton {l r : PlanarSyntacticObject F} {x : α}
     (h : spell σ (l * r) = some [x]) : σ (l * r).toSyntacticObject = some x := by
   rw [spell_mul] at h
   generalize σ (l * r).toSyntacticObject = o at h ⊢
@@ -248,11 +257,24 @@ theorem eq_some_of_spell_eq_singleton {l r : PlanarSyntacticObject F} {x : α}
     · simp [hl, hr] at h
     simp [hl, hr] at h
     rcases xs with - | ⟨a, xs⟩
-    · exact absurd hl (spell_ne_nil σ l)
+    · exact absurd hl (spell_ne_nil l)
     · rcases ys with - | ⟨b, ys⟩
-      · exact absurd hr (spell_ne_nil σ r)
+      · exact absurd hr (spell_ne_nil r)
       · simp at h
   · simpa using h
+
+/-- An object is pronounced with one exponent exactly when it is lexicalized whole. -/
+theorem spell_eq_some_singleton_iff {t : PlanarSyntacticObject F} {x : α} :
+    spell σ t = some [x] ↔ σ t.toSyntacticObject = some x := by
+  refine ⟨fun h ↦ ?_, spell_of_eq_some⟩
+  cases t with
+  | of a =>
+    obtain ⟨y, hy, hxy⟩ := Option.map_eq_some_iff.1 h
+    rw [hy, List.singleton_inj.1 hxy]
+  | mul l r => exact eq_some_of_spell_eq_singleton h
+
+theorem mem_evacuations_self (t : PlanarSyntacticObject F) : (t, none) ∈ evacuations t := by
+  fun_induction evacuations t <;> simp
 
 /-! ### Soundness -/
 
@@ -267,7 +289,7 @@ theorem isSome_spell_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSynt
     refine ⟨fun p hp ↦ ?_, _, _, rfl⟩
     rw [show evacuations (pbare f₀) = [(pbare f₀, none)] from rfl] at hp
     obtain rfl := List.mem_singleton.1 hp
-    exact Option.isSome_iff_exists.2 ⟨_, spell_of_eq_some σ (t := pbare f₀) hx⟩
+    exact Option.isSome_iff_exists.2 ⟨_, spell_of_eq_some (t := pbare f₀) hx⟩
   | append_singleton fs f ih =>
     rw [derivations_append] at h
     obtain ⟨t₁, h₁, h⟩ := List.mem_flatMap.1 h
@@ -279,13 +301,13 @@ theorem isSome_spell_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSynt
       refine ⟨fun p hp ↦ ?_, _, _, rfl⟩
       rw [show evacuations (pphrase f t₁) = [(pphrase f t₁, none)] from rfl] at hp
       obtain rfl := List.mem_singleton.1 hp
-      exact Option.isSome_iff_exists.2 ⟨_, spell_of_eq_some σ hx⟩
+      exact Option.isSome_iff_exists.2 ⟨_, spell_of_eq_some hx⟩
     · obtain ⟨p, hp, h⟩ := List.mem_filterMap.1 h
       obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.1 h
       obtain ⟨a, b, hab⟩ := exists_mul_of_mem_evacuations hmul p hp
       obtain ⟨xs, hxs⟩ := Option.isSome_iff_exists.1 (ht₁ p hp)
       have hwhole : (spell σ (p.1 * remnant f p.2)).isSome := by
-        rw [spell_mul, hxs, spell_of_eq_some σ hx]
+        rw [spell_mul, hxs, spell_of_eq_some hx]
         cases σ (p.1 * remnant f p.2).toSyntacticObject <;> rfl
       refine ⟨fun q hq ↦ ?_, _, _, rfl⟩
       rw [hab, show evacuations (a * b * remnant f p.2) =
@@ -307,13 +329,8 @@ theorem exponents_eq_none_iff {fs : List F} : exponents σ fs = none ↔ lexical
   · simp [exponents, h]
   · obtain ⟨b, hb, ht⟩ := Option.bind_eq_some_iff.1 h
     have hb' : (σ (bare f₀)).isSome := Option.isSome_iff_exists.2 ⟨b, hb⟩
-    obtain ⟨hs, a, c, rfl⟩ := isSome_spell_of_mem_derivations σ hb' (List.mem_of_mem_head? ht)
-    have hmem : (a * c, none) ∈ evacuations (a * c) := by
-      have : ∀ t : PlanarSyntacticObject F, (t, none) ∈ evacuations t := by
-        intro t
-        fun_induction evacuations t <;> simp
-      exact this _
-    obtain ⟨xs, hxs⟩ := Option.isSome_iff_exists.1 (hs _ hmem)
+    obtain ⟨hs, a, c, rfl⟩ := isSome_spell_of_mem_derivations hb' (List.mem_of_mem_head? ht)
+    obtain ⟨xs, hxs⟩ := Option.isSome_iff_exists.1 (hs _ (mem_evacuations_self _))
     simp [exponents, h, hxs]
 
 /-! ### Short sequences -/
@@ -324,7 +341,7 @@ theorem exponents_singleton (f : F) : exponents σ [f] = (σ (bare f)).map fun x
   · rw [show (pbare f).toSyntacticObject = bare f from rfl, h]
     rfl
   · rw [show (pbare f).toSyntacticObject = bare f from rfl, h]
-    exact spell_of_eq_some σ (t := pbare f) h
+    exact spell_of_eq_some (t := pbare f) h
 
 theorem exponents_pair (f₁ f₂ : F) :
     exponents σ [f₁, f₂] = (σ (bare f₁)).bind fun x ↦
@@ -343,18 +360,17 @@ theorem exponents_pair (f₁ f₂ : F) :
   · rcases hs : σ (bare f₂) with - | z
     · simp [remnant, e₂, hs]
     · rcases ha : σ (merge (bare f₁) (bare f₂)) with - | w
-      · simp [remnant, e₂, hs, spell_mul, e₄, ha, spell_of_eq_some σ (t := pbare f₁) h₁,
-          spell_of_eq_some σ (t := pbare f₂) hs]
+      · simp [remnant, e₂, hs, spell_mul, e₄, ha, spell_of_eq_some (t := pbare f₁) h₁,
+          spell_of_eq_some (t := pbare f₂) hs]
       · simp [remnant, e₂, hs, spell_mul, e₄, ha]
-  · simp [spell_of_eq_some σ (t := pphrase f₂ (pbare f₁)) hw]
+  · simp [spell_of_eq_some (t := pphrase f₂ (pbare f₁)) hw]
 
 /-! ### Lexicalization without movement, and without stored evacuation -/
 
+variable (σ) in
 /-- Spellable objects are closed under constituents, as under any matching by containment. -/
 def IsLowerSpellout : Prop :=
   ∀ s t : SyntacticObject F, t.ContainsOrEq s → (σ t).isSome → (σ s).isSome
-
-variable {σ}
 
 /-- A sequence whose spine is spellable is lexicalized without movement. -/
 theorem lexicalize_cons_of_isSome (hσ : IsLowerSpellout σ) (f₀ : F) {fs : List F}
@@ -379,27 +395,34 @@ theorem exponents_cons_of_eq_some (hσ : IsLowerSpellout σ) (f₀ : F) {fs : Li
     (h : σ (spine f₀ fs) = some x) : exponents σ (f₀ :: fs) = some [x] := by
   rw [exponents, lexicalize_cons_of_isSome hσ f₀ (Option.isSome_iff_exists.2 ⟨x, h⟩),
     Option.bind_some]
-  exact spell_of_eq_some σ (by rw [toSyntacticObject_pspine, h])
+  exact spell_of_eq_some (by rw [toSyntacticObject_pspine, h])
 
-/-- Where no spellable object has an unlabelled node, a sequence pronounced with one exponent
-has every initial part pronounced with one exponent. -/
+/-- Where spellable objects are closed under constituents and none has an unlabelled node, a
+sequence is pronounced with one exponent exactly when its spine is spellable. -/
+theorem exponents_cons_eq_singleton_iff (hσ : IsLowerSpellout σ)
+    (hL : ∀ s, (σ s).isSome → ¬ HasUnlabelled s) {f₀ : F} {fs : List F} {x : α} :
+    exponents σ (f₀ :: fs) = some [x] ↔ σ (spine f₀ fs) = some x := by
+  refine ⟨fun h ↦ ?_, exponents_cons_of_eq_some hσ f₀⟩
+  obtain ⟨t, ht, hs⟩ := Option.bind_eq_some_iff.1 h
+  obtain ⟨b, -, ht⟩ := Option.bind_eq_some_iff.1 ht
+  have hx := spell_eq_some_singleton_iff.1 hs
+  obtain rfl | ht' := (eq_pspine_or_hasUnlabelled (List.mem_of_mem_head? ht)).1
+  · rwa [toSyntacticObject_pspine] at hx
+  · exact absurd ht' (hL _ (Option.isSome_iff_exists.2 ⟨x, hx⟩))
+
+/-- Under the same hypotheses, a sequence pronounced with one exponent has every initial part
+pronounced with one exponent. -/
 theorem exists_exponents_eq_singleton_of_prefix (hσ : IsLowerSpellout σ)
     (hL : ∀ s, (σ s).isSome → ¬ HasUnlabelled s) {f₀ : F} {fs gs : List F} {x : α}
     (hgs : gs <+: fs) (h : exponents σ (f₀ :: fs) = some [x]) :
     ∃ y, exponents σ (f₀ :: gs) = some [y] := by
-  obtain ⟨t, ht, hs⟩ := Option.bind_eq_some_iff.1 h
-  obtain ⟨b, -, ht⟩ := Option.bind_eq_some_iff.1 ht
-  obtain ⟨ht', a, c, rfl⟩ := eq_pspine_or_hasUnlabelled σ (List.mem_of_mem_head? ht)
-  have hx := eq_some_of_spell_eq_singleton σ hs
-  obtain ht' | ht' := ht'
-  · rw [ht', toSyntacticObject_pspine] at hx
-    obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1
-      (hσ _ _ (spine_containsOrEq_spine_iff.2 hgs) (Option.isSome_iff_exists.2 ⟨x, hx⟩))
-    exact ⟨y, exponents_cons_of_eq_some hσ f₀ hy⟩
-  · exact absurd ht' (hL _ (Option.isSome_iff_exists.2 ⟨x, hx⟩))
+  have hx := (exponents_cons_eq_singleton_iff hσ hL).1 h
+  obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1
+    (hσ _ _ (spine_containsOrEq_spine_iff.2 hgs) (Option.isSome_iff_exists.2 ⟨x, hx⟩))
+  exact ⟨y, exponents_cons_of_eq_some hσ f₀ hy⟩
 
-/-- Where no bare feature above the bottom is spellable, the algorithm never evacuates: the
-sequence gets the one exponent of its spine, or none. -/
+/-- Where spellable objects are closed under constituents and no bare feature above the bottom
+is spellable, the sequence gets the one exponent of its spine, or none. -/
 theorem exponents_cons_of_forall_bare (hσ : IsLowerSpellout σ) (f₀ : F) {fs : List F}
     (h : ∀ f ∈ fs, σ (bare f) = none) :
     exponents σ (f₀ :: fs) = (σ (spine f₀ fs)).map fun x ↦ [x] := by
@@ -510,18 +533,19 @@ theorem mem_yield_of_mem_derivations {f₀ : F} {fs : List F} {t : PlanarSyntact
         tauto
 
 /-- Under a spellout that reads only features, a sequence pronounced with one exponent has every
-initial part pronounced with one exponent, whatever objects the entries store. -/
-theorem exists_exponents_eq_singleton_of_prefix_of_isFeatureSpellout (hσ : IsFeatureSpellout σ)
-    {f₀ : F} {fs gs : List F} {x : α} (hgs : gs <+: fs)
-    (h : exponents σ (f₀ :: fs) = some [x]) : ∃ y, exponents σ (f₀ :: gs) = some [y] := by
+sequence of features drawn from it pronounced with one exponent, whatever objects the entries
+store. -/
+theorem exists_exponents_eq_singleton_of_subset_of_isFeatureSpellout (hσ : IsFeatureSpellout σ)
+    {f₀ g₀ : F} {fs gs : List F} {x : α} (hgs : g₀ :: gs ⊆ f₀ :: fs)
+    (h : exponents σ (f₀ :: fs) = some [x]) : ∃ y, exponents σ (g₀ :: gs) = some [y] := by
   obtain ⟨t, ht, hs⟩ := Option.bind_eq_some_iff.1 h
   obtain ⟨b, -, ht⟩ := Option.bind_eq_some_iff.1 ht
   have hmem := List.mem_of_mem_head? ht
-  obtain ⟨-, a, c, rfl⟩ := eq_pspine_or_hasUnlabelled σ hmem
-  have hx := eq_some_of_spell_eq_singleton σ hs
-  have hsub : (spine f₀ gs).yield ⊆ (a * c).toSyntacticObject.yield := fun g hg ↦
-    (mem_yield_of_mem_derivations hmem).2 ((mem_yield_spine.1 hg).imp_right fun h ↦ hgs.subset h)
+  have hx := spell_eq_some_singleton_iff.1 hs
+  have hsub : (spine g₀ gs).yield ⊆ t.toSyntacticObject.yield := fun g hg ↦
+    (mem_yield_of_mem_derivations hmem).2
+      (List.mem_cons.1 (hgs (List.mem_cons.2 (mem_yield_spine.1 hg))))
   obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1 (hσ _ _ hsub (Option.isSome_iff_exists.2 ⟨x, hx⟩))
-  exact ⟨y, exponents_cons_of_eq_some hσ.isLowerSpellout f₀ hy⟩
+  exact ⟨y, exponents_cons_of_eq_some hσ.isLowerSpellout g₀ hy⟩
 
 end Morphology.Nanosyntax

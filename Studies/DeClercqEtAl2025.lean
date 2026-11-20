@@ -225,7 +225,7 @@ theorem not_derives_peel_of_labelled {L : RuleSet (LexicalEntry Num String)}
   have hpl : exponents (spellout L) [.n, .sg, .pl] = some ["peel"] := h _ (.tail _ (.head _))
   have hsg : exponents (spellout L) [.n, .sg] = some ["peel", "yaan"] := h _ (.head _)
   obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix (isLowerSpellout_spellout L)
-    (fun _ ↦ not_hasUnlabelled_of_isSome hL) (gs := [.sg]) ⟨[.pl], rfl⟩ hpl
+    (fun _ ↦ not_hasUnlabelled_of_spellout_isSome hL) (gs := [.sg]) ⟨[.pl], rfl⟩ hpl
   simp [hsg] at hy
 
 -- Section 1.7
@@ -240,8 +240,8 @@ theorem not_derives_peel_of_featureSpellout (L : RuleSet (LexicalEntry Num Strin
   have hpl : exponents (featureSpellout L) [.n, .sg, .pl] = some ["peel"] :=
     h _ (.tail _ (.head _))
   have hsg : exponents (featureSpellout L) [.n, .sg] = some ["peel", "yaan"] := h _ (.head _)
-  obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix_of_isFeatureSpellout
-    (isFeatureSpellout_featureSpellout L) (gs := [.sg]) ⟨[.pl], rfl⟩ hpl
+  obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_subset_of_isFeatureSpellout
+    (isFeatureSpellout_featureSpellout L) (g₀ := .n) (gs := [.sg]) (by simp) hpl
   simp [hsg] at hy
 
 /-! ### The Friulian present -/
@@ -311,7 +311,7 @@ theorem not_derives_bati_of_labelled {L : RuleSet (LexicalEntry Phi String)}
   have h₂ : exponents (spellout L) [.t, .num, .π, .part] = some ["bat", "s"] :=
     h _ (.tail _ (.head _))
   obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix (isLowerSpellout_spellout L)
-    (fun _ ↦ not_hasUnlabelled_of_isSome hL) (gs := [.num, .π, .part]) ⟨[.spkr], rfl⟩ h₁
+    (fun _ ↦ not_hasUnlabelled_of_spellout_isSome hL) (gs := [.num, .π, .part]) ⟨[.spkr], rfl⟩ h₁
   simp [h₂] at hy
 
 end DeClercqEtAl2025

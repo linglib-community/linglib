@@ -70,47 +70,47 @@ theorem spine_ne_trace (f₀ : F) (fs : List F) : spine f₀ fs ≠ (trace : Syn
   obtain ⟨f, t, h⟩ := exists_spine_eq_phrase f₀ fs
   exact h ▸ Ne.symm (trace_ne_merge _ _)
 
-theorem phrase_eq_phrase_iff {f g : F} {t s : SyntacticObject F} (hs : ∀ a, s ≠ leaf a) :
+theorem phrase_eq_phrase_iff {f g : F} {t s : SyntacticObject F} (hs : s ≠ leaf f) :
     phrase f t = phrase g s ↔ f = g ∧ t = s := by
   rw [merge_eq_merge_iff]
   constructor
   · rintro (⟨h, rfl⟩ | ⟨h, -⟩)
     · exact ⟨leaf_inj.1 h, rfl⟩
-    · exact absurd h.symm (hs f)
+    · exact absurd h.symm hs
   · rintro ⟨rfl, rfl⟩
     exact .inl ⟨rfl, rfl⟩
 
-theorem spine_eq_spine_iff {f₀ g₀ : F} {fs gs : List F} :
+theorem spine_inj {f₀ g₀ : F} {fs gs : List F} :
     spine f₀ fs = spine g₀ gs ↔ f₀ = g₀ ∧ fs = gs := by
   refine ⟨fun h ↦ ?_, fun ⟨h₀, h⟩ ↦ h₀ ▸ h ▸ rfl⟩
   induction fs using List.reverseRecOn generalizing gs with
   | nil =>
     cases gs using List.reverseRecOn with
-    | nil => exact ⟨((phrase_eq_phrase_iff fun a ↦ (leaf_ne_trace a).symm).1 h).1, rfl⟩
+    | nil => exact ⟨((phrase_eq_phrase_iff (leaf_ne_trace _).symm).1 h).1, rfl⟩
     | append_singleton gs g =>
-      rw [spine_nil, spine_concat, phrase_eq_phrase_iff (spine_ne_leaf g₀ gs)] at h
+      rw [spine_nil, spine_concat, phrase_eq_phrase_iff (spine_ne_leaf g₀ gs _)] at h
       exact absurd h.2.symm (spine_ne_trace g₀ gs)
   | append_singleton fs f ih =>
     cases gs using List.reverseRecOn with
     | nil =>
-      rw [spine_nil, spine_concat, phrase_eq_phrase_iff fun a ↦ (leaf_ne_trace a).symm] at h
+      rw [spine_nil, spine_concat, phrase_eq_phrase_iff (leaf_ne_trace _).symm] at h
       exact absurd h.2 (spine_ne_trace f₀ fs)
     | append_singleton gs g =>
-      rw [spine_concat, spine_concat, phrase_eq_phrase_iff (spine_ne_leaf g₀ gs)] at h
+      rw [spine_concat, spine_concat, phrase_eq_phrase_iff (spine_ne_leaf g₀ gs _)] at h
       obtain ⟨rfl, rfl⟩ := ih h.2
       exact ⟨rfl, by rw [h.1]⟩
 
 theorem spine_eq_bare_iff {f₀ g₀ : F} {gs : List F} :
     spine f₀ gs = merge (leaf g₀) trace ↔ f₀ = g₀ ∧ gs = [] :=
-  spine_eq_spine_iff (g₀ := g₀) (gs := [])
+  spine_inj (g₀ := g₀) (gs := [])
 
 theorem spine_eq_phrase_spine_iff {f₀ g₀ f : F} {fs gs : List F} :
     spine f₀ gs = merge (leaf f) (spine g₀ fs) ↔ f₀ = g₀ ∧ gs = fs ++ [f] := by
-  have := spine_eq_spine_iff (f₀ := f₀) (fs := gs) (g₀ := g₀) (gs := fs ++ [f])
+  have := spine_inj (f₀ := f₀) (fs := gs) (g₀ := g₀) (gs := fs ++ [f])
   rwa [spine_concat] at this
 
 theorem spine_injective (f₀ : F) : Function.Injective (spine f₀) :=
-  fun _ _ h ↦ (spine_eq_spine_iff.1 h).2
+  fun _ _ h ↦ (spine_inj.1 h).2
 
 /-- A spine contains the spines of the initial parts of its sequence and no other spine on its
 foot. -/
