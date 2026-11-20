@@ -42,7 +42,7 @@ responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 * The chapter endorses [matic-nikolaeva-2018]'s view that dislocation is no structural means of
   polarity focus but makes the reading available in context.
 * An utterance with a preceding turn, a statement or a polar question, is a
-  `Discourse.Response` to it (`Antecedent.response`), positive since it affirms; an inferred
+  `Response` to it (`Antecedent.response`), positive since it affirms; an inferred
   negation, an open question, a modal statement or no antecedent is no such turn.
 * The discourse trees are stated for finitely many worlds, which is what the substrate's strategy
   completeness needs to pass from lattice entailment to alternative entailment.
@@ -63,7 +63,7 @@ responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 
 namespace GarassinoJacob2018
 
-open Question Discourse
+open Question
 
 variable {W F : Type*}
 
@@ -133,7 +133,7 @@ inductive Relation
 
 /-- When the antecedent is a preceding turn, a polarity-focus utterance responds to it with an
 affirmation, after a negative statement, a positive statement or a polar question. -/
-def Antecedent.response : Antecedent → Option Discourse.Response
+def Antecedent.response : Antecedent → Option Response
   | .explicitNegation => some ⟨.assertion, .negative, .positive⟩
   | .positive => some ⟨.assertion, .positive, .positive⟩
   | .explicitQuestion => some ⟨.polarQuestion, .positive, .positive⟩

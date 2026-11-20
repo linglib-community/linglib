@@ -18,12 +18,12 @@ tree of questions whose children are the subquestions pursued to answer their pa
 
 * `Question.IsRelevantTo`: a move is relevant to a set of questions when some alternative of it
   partially answers one of them.
-* `Discourse.Strategy`: strategies of inquiry as `RoseTree (Question W)`.
-* `Discourse.Strategy.WellFormed`: every question in a subtree is a contextual subquestion of the
+* `Question.Strategy`: strategies of inquiry as `RoseTree (Question W)`.
+* `Question.Strategy.WellFormed`: every question in a subtree is a contextual subquestion of the
   subtree's root.
-* `Discourse.Strategy.IsComplete`: at every branching node, the meet of the children's questions
+* `Question.Strategy.IsComplete`: at every branching node, the meet of the children's questions
   entails the parent's.
-* `Discourse.Strategy.AnswersCompletely`: at every branching node, completely answering the
+* `Question.Strategy.AnswersCompletely`: at every branching node, completely answering the
   children completely answers the parent.
 
 ## Implementation notes
@@ -89,7 +89,7 @@ theorem isRelevantTo_polar_iff {p : Set W} {qs : Set (Question W)}
 
 end Question
 
-namespace Discourse
+namespace Question
 
 /-- A strategy of inquiry is a rose tree of questions whose children are the subquestions pursued to
 answer their parent ([roberts-2012] definition (12); [buring-2003]'s d-trees). -/
@@ -189,4 +189,4 @@ theorem forall_mem_completeAnswers_iff_inf_le {q : Question W} {qs : List (Quest
 
 end Strategy
 
-end Discourse
+end Question

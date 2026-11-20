@@ -15,27 +15,27 @@ The *preferred center* of an utterance is the highest-ranked of its own forward-
 
 ## Main definitions
 
-* `Discourse.Centering.backwardCenters`: the backward-looking centers of a set of entities after
+* `Centering.backwardCenters`: the backward-looking centers of a set of entities after
   an utterance, the maximizers of its ranking on the forward-looking centers in the set.
-* `Discourse.Centering.cb`: the backward-looking center, the first of them in surface order.
-* `Discourse.Centering.Utterance.cp`: the preferred center.
+* `Centering.cb`: the backward-looking center, the first of them in surface order.
+* `Centering.Utterance.cp`: the preferred center.
 
 ## Main results
 
-* `Discourse.Centering.cb_mem_backwardCenters`: `cb` is one of the backward-looking centers.
-* `Discourse.Centering.backwardCenters_eq_toFinset_cb_iff`: it is the only one exactly when
+* `Centering.cb_mem_backwardCenters`: `cb` is one of the backward-looking centers.
+* `Centering.backwardCenters_eq_toFinset_cb_iff`: it is the only one exactly when
   there is at most one.
-* `Discourse.Centering.card_backwardCenters_le_one`: there is at most one when no two entities
+* `Centering.card_backwardCenters_le_one`: there is at most one when no two entities
   are realized in the same role.
-* `Discourse.Centering.backwardCenters_subset_mapRole`: a monotone map of roles keeps every
+* `Centering.backwardCenters_subset_mapRole`: a monotone map of roles keeps every
   backward-looking center, so a coarser ranking has at least the centers of a finer one.
-* `Discourse.Centering.backwardCenters_mapRole`, `Discourse.Centering.cb_mapRole`: a strictly
+* `Centering.backwardCenters_mapRole`, `Centering.cb_mapRole`: a strictly
   monotone map of roles changes neither the backward-looking centers nor `cb`.
-* `Discourse.Centering.backwardCenters_indexed`: after an utterance ranked by role and then by
+* `Centering.backwardCenters_indexed`: after an utterance ranked by role and then by
   surface position, `cb` is the only backward-looking center.
-* `Discourse.Centering.cb_cf_self`: the preferred center of an utterance is the
+* `Centering.cb_cf_self`: the preferred center of an utterance is the
   backward-looking center of its own forward-looking centers.
-* `Discourse.Centering.cb_eq_of_cp_eq`: the preferred center of the previous utterance is the
+* `Centering.cb_eq_of_cp_eq`: the preferred center of the previous utterance is the
   backward-looking center of any set of entities containing it.
 
 ## Implementation notes
@@ -58,7 +58,7 @@ whatever its roles and forms.
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 variable {E R F : Type*}
 
@@ -253,4 +253,4 @@ theorem backwardCenters_indexed (u : Utterance E R F) (s : Finset E) :
 
 end Cb
 
-end Discourse.Centering
+end Centering

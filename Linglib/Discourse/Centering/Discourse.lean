@@ -14,15 +14,15 @@ center with the one before and with its own preferred center.
 
 ## Main definitions
 
-* `Discourse.Centering.transition`: the transition from one utterance into the next.
-* `Discourse.Centering.extendedTransition`: the transition of Brennan, Friedman, and Pollard's
+* `Centering.transition`: the transition from one utterance into the next.
+* `Centering.extendedTransition`: the transition of Brennan, Friedman, and Pollard's
   table from one utterance into the next.
-* `Discourse.Centering.cbs`: the backward-looking center of each utterance after the first.
-* `Discourse.Centering.transitions`: the transition into each utterance after the first.
+* `Centering.cbs`: the backward-looking center of each utterance after the first.
+* `Centering.transitions`: the transition into each utterance after the first.
 
 ## Main results
 
-* `Discourse.Centering.transition_eq_toTransition`: the transition is the one that the extended
+* `Centering.transition_eq_toTransition`: the transition is the one that the extended
   transition refines.
 
 ## Implementation notes
@@ -38,7 +38,7 @@ An utterance with no backward-looking center has no extended transition, and
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 variable {E R F : Type*} [DecidableEq E] [LinearOrder R]
 
@@ -114,4 +114,4 @@ def transitions (d : List (Utterance E R F)) : List Transition :=
     transition]
   simp [List.length_zipWith]
 
-end Discourse.Centering
+end Centering

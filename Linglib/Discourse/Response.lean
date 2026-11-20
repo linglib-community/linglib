@@ -12,7 +12,7 @@ A responding move reacts to a sentence that an assertion or a polar question has
 Table. Farkas and Bruce classify it by two polarity features, which Roelofsen and Farkas take
 over: its relative polarity, [same] when it confirms that sentence and [reverse] when it reverses
 it, and its absolute polarity, [+] or [−], the polarity of the sentence it asserts. A
-`Discourse.Response` records the move it reacts to, the polarity of the sentence on the Table
+`Response` records the move it reacts to, the polarity of the sentence on the Table
 and its own polarity, and its relative polarity is the quotient of the two. On a response
 sharing the radical of the sentence on the Table this is Farkas and Bruce's definition of the
 feature: the relative polarity takes the proposition on the Table to the one the response
@@ -26,21 +26,21 @@ polarity-based, or yes/no, system.
 
 ## Main definitions
 
-* `Discourse.InitiatingMove`: an assertion or a polar question.
-* `Discourse.Response`: a responding move, with `Response.relative` its relative polarity.
-* `Discourse.Response.Feature`, `Discourse.Response.HasFeature`: the relative and absolute
+* `InitiatingMove`: an assertion or a polar question.
+* `Response`: a responding move, with `Response.relative` its relative polarity.
+* `Response.Feature`, `Response.HasFeature`: the relative and absolute
   polarity features, and the features a response bears.
-* `Discourse.Response.ConfirmsNegativeQuestion`: a set of responses includes the confirmation
+* `Response.ConfirmsNegativeQuestion`: a set of responses includes the confirmation
   of a negative polar question, [same, −].
 
 ## Main results
 
-* `Discourse.Response.eq_relative_iff_smul_eq`: under a free polarity action the relative
+* `Response.eq_relative_iff_smul_eq`: under a free polarity action the relative
   polarity is the only polarity taking the antecedent's proposition to the response's.
-* `Discourse.Response.polarity_smul_eq_antecedent_smul_iff`,
-  `Discourse.Response.polarity_smul_eq_compl_iff`: a response asserts the proposition on the
+* `Response.polarity_smul_eq_antecedent_smul_iff`,
+  `Response.polarity_smul_eq_compl_iff`: a response asserts the proposition on the
   Table iff it is [same], and its complement iff it is [reverse].
-* `Discourse.Response.exists_value_eq_and_hasFeature_iff`: a response bears a feature of a given
+* `Response.exists_value_eq_and_hasFeature_iff`: a response bears a feature of a given
   value iff its relative or its absolute polarity has it.
 
 ## Implementation notes
@@ -60,8 +60,6 @@ this through freeness (`IsCancelSMul`) without building the torsor.
 -/
 
 @[expose] public section
-
-namespace Discourse
 
 /-- A move that puts a sentence on the Table for a response to react to. -/
 inductive InitiatingMove where
@@ -187,4 +185,3 @@ instance (S : Set Response) [DecidablePred (· ∈ S)] : Decidable (ConfirmsNega
 
 end Response
 
-end Discourse

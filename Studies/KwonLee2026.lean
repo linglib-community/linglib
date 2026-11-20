@@ -60,7 +60,7 @@ unlike two studies of Chinese and Korean](##overt_objectBiased_iff).
 
 namespace KwonLee2026
 
-open Discourse Data.Statistics
+open Data.Statistics
 
 /-! ### The three forms on the scale -/
 

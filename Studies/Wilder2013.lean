@@ -237,7 +237,7 @@ theorem ctValue_polarityFocus {γ : Type*} (P : γ → Set W) (cts : Set γ) :
 /-- The strategy the contrastive-topic verb phrase of (106) and (107) indicates asks whether he is
 a good doctor, divided into whether he has a lot of patients, diagnoses well and treats his
 patients politely. -/
-def doctorStrategy (good patients diagnose polite : Set W) : Discourse.Strategy W :=
+def doctorStrategy (good patients diagnose polite : Set W) : Question.Strategy W :=
   .node (Question.polar good)
     [.leaf (Question.polar patients), .leaf (Question.polar diagnose),
       .leaf (Question.polar polite)]

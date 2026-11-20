@@ -68,8 +68,8 @@ descriptions to common nouns, keeping the pronoun or non-pronoun status of each 
 
 namespace PoesioEtAl2004
 
-open Discourse.Centering
-open Discourse.AccessibilityLevel (Head)
+open Centering
+open AccessibilityLevel (Head)
 
 variable {E R F : Type*}
 
