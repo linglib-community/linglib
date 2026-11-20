@@ -1,11 +1,10 @@
 module
 
 public import Linglib.Syntax.Minimalist.Category
-public import Linglib.Core.Algebra.Free
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Mathlib.Algebra.Free
-public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 public import Mathlib.Data.List.Pairwise
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -63,6 +62,25 @@ inductive Direction
 
 variable {H : Type*}
 
+/-- A head-adjunction structure is a left comb when every product in it has a single head as its
+right factor, so that the structure adds one head at a time. -/
+def IsLeftComb : FreeMagma H → Prop
+  | of _ => True
+  | mul x (of _) => IsLeftComb x
+  | mul _ (mul _ _) => False
+
+instance decidableIsLeftComb : (x : FreeMagma H) → Decidable (IsLeftComb x)
+  | of _ => isTrue trivial
+  | mul x (of _) => decidableIsLeftComb x
+  | mul _ (mul _ _) => isFalse id
+
+@[simp] theorem isLeftComb_of (h : H) : IsLeftComb (of h) := trivial
+
+@[simp] theorem isLeftComb_mul_of (x : FreeMagma H) (h : H) :
+    IsLeftComb (x * of h) ↔ IsLeftComb x := Iff.rfl
+
+@[simp] theorem not_isLeftComb_mul_mul (x y z : FreeMagma H) : ¬ IsLeftComb (x * (y * z)) := id
+
 /-- A complex head in the course of the postsyntactic derivation. -/
 structure Amalgam (H : Type*) where
   /-- The head whose position the complex head occupies. -/
@@ -79,7 +97,7 @@ namespace Amalgam
 def single (h : H) (m : Option Direction) : Amalgam H := ⟨h, of h, m⟩
 
 /-- The heads that a complex head contains, lowest first. -/
-def members (a : Amalgam H) : List H := (toFreeMonoid a.complex).toList
+def members (a : Amalgam H) : List H := (toFreeSemigroup a.complex).toFreeMonoid.toList
 
 end Amalgam
 
@@ -116,7 +134,7 @@ private theorem flatMap_members_amalgamate {below : List (Amalgam H)}
     (h : amalgamate below pending above = some out) :
     out.reverse.flatMap Amalgam.members =
       below.reverse.flatMap Amalgam.members ++
-        pending.elim [] (fun x ↦ (toFreeMonoid x).toList) ++
+        pending.elim [] (fun x ↦ (toFreeSemigroup x).toFreeMonoid.toList) ++
         above.flatMap Amalgam.members := by
   induction above generalizing below pending out with
   | nil => cases pending <;> simp_all [amalgamate]
@@ -256,7 +274,7 @@ theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
     (h : lo ++ s :: hi = b :: rest) :
     amalgamateSpine (lo.map (single · (some .raising)) ++ single s none ::
         hi.map (single · (some .lowering))) =
-      some [⟨s, FreeSemigroup.leftComb ⟨b, rest⟩, none⟩] := by
+      some [⟨s, rest.foldl (· * of ·) (of b), none⟩] := by
   rw [amalgamateSpine, amalgamate_raising, amalgamate_none, amalgamate_lowering]
   cases lo with
   | nil =>
@@ -264,13 +282,13 @@ theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
     rfl
   | cons l lo =>
     obtain ⟨rfl, rfl⟩ : l = b ∧ lo ++ s :: hi = rest := by simpa using h
-    simp [foldl_raising, FreeSemigroup.leftComb_mk]
+    simp [foldl_raising]
 
 private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
     {pending : Option (FreeMagma H)} {hs : List (H × Option Direction)} {out : List (Amalgam H)}
     (h : amalgamate below pending (hs.map fun p ↦ single p.1 p.2) = some out) :
-    (∀ a ∈ out, a.complex.IsLeftComb) ↔
-      (∀ b ∈ below, b.complex.IsLeftComb) ∧ (∀ p ∈ pending, p.IsLeftComb) ∧
+    (∀ a ∈ out, IsLeftComb a.complex) ↔
+      (∀ b ∈ below, IsLeftComb b.complex) ∧ (∀ p ∈ pending, IsLeftComb p) ∧
         ((pending.map fun _ ↦ Direction.raising) :: hs.map (·.2)).IsChain
           fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
   induction hs generalizing below pending out with
@@ -289,7 +307,7 @@ mirrors the order of syntactic composition, exactly when no head Lowers right af
 Raised into it. -/
 theorem forall_isLeftComb_iff {hs : List (H × Option Direction)} {out : List (Amalgam H)}
     (h : amalgamateSpine (hs.map fun p ↦ single p.1 p.2) = some out) :
-    (∀ a ∈ out, a.complex.IsLeftComb) ↔
+    (∀ a ∈ out, IsLeftComb a.complex) ↔
       (hs.map (·.2)).IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   have := forall_isLeftComb_amalgamate hr

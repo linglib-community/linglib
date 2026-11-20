@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Algebra.Free
 public import Linglib.Syntax.Minimalist.Clause.VerbalSpine
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
@@ -70,7 +69,7 @@ structure HeadChain where
 namespace HeadChain
 
 /-- The morphological terminals of the M-value, lowest first. -/
-def terminals (c : HeadChain) : List Cat := (toFreeMonoid c.mvalue).toList
+def terminals (c : HeadChain) : List Cat := (toFreeSemigroup c.mvalue).toFreeMonoid.toList
 
 /-- Generalized Head Movement, GenHM, relates a head to the chain of its complement's head. The
 head joins the chain, and its morphological terminal attaches outside the shared M-value. -/
@@ -78,22 +77,26 @@ def extend (x : Cat) (c : HeadChain) : HeadChain := ⟨c.positions ++ [x], c.mva
 
 /-- The chain that cyclic GenHM builds from `bottom` up through the heads `above`. -/
 def ofHeads (bottom : Cat) (above : List Cat) : HeadChain :=
-  ⟨bottom :: above, FreeSemigroup.leftComb ⟨bottom, above⟩⟩
+  ⟨bottom :: above, above.foldl (· * of ·) (of bottom)⟩
 
 theorem extend_ofHeads (bottom x : Cat) (above : List Cat) :
     (ofHeads bottom above).extend x = ofHeads bottom (above ++ [x]) := by
-  simp [extend, ofHeads, FreeSemigroup.leftComb_mk]
+  simp [extend, ofHeads]
 
 /-- By the **Mirror Principle**, the terminals of a complex head are ordered as its heads are. -/
 theorem terminals_ofHeads (bottom : Cat) (above : List Cat) :
     (ofHeads bottom above).terminals = bottom :: above := by
-  simp [terminals, ofHeads, FreeSemigroup.toFreeMonoid_mk_eq_cons]
+  induction above using List.reverseRec with
+  | nil => rfl
+  | append_singleton l x ih => simp_all [terminals, ofHeads]
 
 /-- GenHM derives the Mirror Principle: each terminal of a complex head attaches outside the
 complex head of the heads below it. -/
 theorem isLeftComb_mvalue_ofHeads (bottom : Cat) (above : List Cat) :
-    (ofHeads bottom above).mvalue.IsLeftComb :=
-  FreeSemigroup.isLeftComb_leftComb _
+    HarizanovGribanova2019.IsLeftComb (ofHeads bottom above).mvalue := by
+  induction above using List.reverseRec with
+  | nil => trivial
+  | append_singleton l x ih => simpa [ofHeads] using ih
 
 /-- Orphan Assignment marks a morphological terminal in a chain that does not contain its
 syntactic terminal. -/
@@ -425,8 +428,7 @@ theorem imperatives :
       (∀ L, (derive L toC).HasC ∧ ¬ (derive L declarative).HasC) := by
   refine ⟨by decide, by decide, fun L ↦ ?_⟩
   simp only [Chains.HasC, derive, Splits, toC, declarative, VerbalSpine.Intervenes]
-  split_ifs <;>
-    simp [HeadChain.terminals, HeadChain.ofHeads, FreeSemigroup.toFreeMonoid_mk_eq_cons]
+  split_ifs <;> simp [HeadChain.terminals, HeadChain.ofHeads]
 
 /-! ### Negative Merger -/
 
@@ -632,7 +634,7 @@ def nonMirror : FreeMagma Cat := of .T * (of .C * (of .D * of .Lnk))
 /-- In class 9 the Mirror-obeying complex head spells out as the attested *e-* and the opposite
 bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
-    (toFreeMonoid nonMirror).toList = relative.terminals ∧
+    toFreeSemigroup nonMirror = toFreeSemigroup relative.mvalue ∧
       ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis,
         (lift e relative.mvalue).segments = [Ndebele.e] ∧
           (lift e nonMirror).segments = [Ndebele.i] := by
@@ -645,9 +647,9 @@ theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun 
   let _ : Semigroup Exponent := { (inferInstance : Mul Exponent) with mul_assoc := h }
   obtain ⟨hterm, hspell⟩ := mirror_class9
   obtain ⟨e, -, he, hi⟩ := hspell
-  have := congrArg Exponent.segments (apply_eq_apply_of_toFreeMonoid_eq (lift e)
-    (x := nonMirror) (y := relative.mvalue) (FreeMonoid.toListEquiv.injective hterm))
-  exact absurd (he.symm.trans (this.symm.trans hi)) (by decide)
+  have key : (FreeSemigroup.lift e).comp toFreeSemigroup = lift e := by ext1; rfl
+  rw [← key, MulHom.comp_apply, ← hterm, ← MulHom.comp_apply, key, hi] at he
+  exact absurd he (by decide)
 
 /-! ### Amalgamation -/
 
