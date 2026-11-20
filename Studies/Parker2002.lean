@@ -10,8 +10,9 @@ import Mathlib.Order.Interval.Set.OrdConnected
 # Parker (2002): the sonority hierarchy
 
 `Parker2002.Class` is the sixteen sonority classes: the four obstruent classes of
-`Phonology.ObstruentClass` below twelve further classes in a chain. `Class.rankWith o` ranks them
-with the obstruents ranked by `ObstruentClass.rank o`; it is injective unless `o = .eq`. The
+`Phonology.Sonority.ObstruentClass` below twelve further classes in a chain. `Class.rankWith o`
+ranks them with the obstruents ranked by `ObstruentClass.rank o`; it is injective unless
+`o = .eq`. The
 order on `Class` is the one the rankings share, `a ≤ b ↔ ∀ o, rankWith o a ≤ rankWith o b`, a
 partial order in which only the voiceless fricatives and the voiced stops are unordered, and
 every strictly monotone ranking of the sixteen classes induces the order of some `rankWith o`
@@ -43,12 +44,12 @@ the regression of sonority on intensity have no counterpart here.
 
 namespace Parker2002
 
-open Phonology ObstruentClass
+open Phonology Phonology.Sonority.ObstruentClass
 
 /-- Table 5.28: the sonority classes. -/
 inductive Class where
   /-- The obstruents of a class. -/
-  | obstruent (o : ObstruentClass)
+  | obstruent (o : Sonority.ObstruentClass)
   /-- /h/. -/
   | h
   /-- The nasals. -/
@@ -81,7 +82,7 @@ namespace Class
 table as printed is `rankWith .lt`, `rankWith .gt` exchanges its second and third ranks, and
 `rankWith .eq` merges them. -/
 def rankWith (o : Ordering) : Class → ℕ
-  | obstruent x => ObstruentClass.rank o x
+  | obstruent x => Sonority.ObstruentClass.rank o x
   | h => 5 | nasal => 6 | trill => 7 | flap => 8 | lateral => 9 | rhotic => 10 | glide => 11
   | highCentral => 12 | schwa => 13 | high => 14 | mid => 15 | low => 16
 
@@ -104,7 +105,7 @@ theorem le_iff_forall_rankWith_le {a b : Class} : a ≤ b ↔ ∀ o, rankWith o 
   revert a b
   decide +kernel
 
-@[simp] theorem obstruent_le_obstruent {x y : ObstruentClass} :
+@[simp] theorem obstruent_le_obstruent {x y : Sonority.ObstruentClass} :
     obstruent x ≤ obstruent y ↔ x ≤ y := by
   revert x y
   decide
@@ -158,9 +159,9 @@ theorem monotone_toSonority : Monotone toSonority := fun a b h ↦ coarsens_toSo
 def toSonorityHom : Class →o Sonority := ⟨toSonority, monotone_toSonority⟩
 
 -- p. 240: a language conflates the scale by collapsing adjacent ranks
-theorem contiguous_toSonority (o : Ordering) (c : Sonority) :
-    Sonority.Contiguous (rankWith o) (toSonority ⁻¹' {c}) :=
-  .of_coarsens (coarsens_toSonority o) ⟨{c}, Set.ordConnected_singleton, rfl⟩
+theorem ordConnectedAlong_toSonority (o : Ordering) (c : Sonority) :
+    (toSonority ⁻¹' {c}).OrdConnectedAlong (rankWith o) :=
+  (coarsens_toSonority o).ordConnectedAlong ⟨{c}, Set.ordConnected_singleton, rfl⟩
 
 /-! ### Vowels -/
 

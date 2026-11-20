@@ -7,6 +7,7 @@ module
 
 public import Linglib.Phonology.Segmental.Basic
 public import Linglib.Phonology.Segmental.NaturalClass
+public import Linglib.Core.Order.OrdConnected
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.UpperLower.Principal
 import Mathlib.Data.Fintype.Lattice
@@ -15,14 +16,7 @@ import Mathlib.Data.Fintype.Powerset
 import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
-# Sonority scales
-
-A sonority scale is a map `σ : α → β` from segments, or classes of them, to a linear order. A set
-`S` is contiguous on `σ` when it is the preimage `σ ⁻¹' I` of an order-connected set `I`, and a
-scale `τ` coarsens `σ` when `σ a ≤ σ b` implies `τ a ≤ τ b`. The contiguous sets of a coarser
-scale are contiguous on a finer one (`Phonology.Sonority.Contiguous.of_coarsens`), and two
-features whose values combine freely do not both divide a scale into contiguous classes
-(`Phonology.Sonority.not_contiguous_of_independent`).
+# The sonority hierarchy
 
 `Phonology.Sonority` is the hierarchy of obstruents, nasals, liquids, glides and vowels, a linear
 order. `Sonority.toSegment` gives each class its values for [sonorant], [approximant],
@@ -30,15 +24,14 @@ order. `Sonority.toSegment` gives each class its values for [sonorant], [approxi
 hierarchy, `Set.Ici` of a class (`Phonology.Sonority.setOf_toSegment_eq_Ici`). `Sonority.ofSegment`
 reads the class of a segment off the four features, and a segment with the values of a class has
 that class (`Phonology.Sonority.ofSegment_eq_of_le`). Among the classes, the natural classes are
-the order-connected sets (`Phonology.Sonority.isNaturalClass_image_iff`), and the segments that
-are [+continuant] are not contiguous on `ofSegment`.
+the order-connected sets (`Phonology.Sonority.isNaturalClass_image_iff`).
 
-## Implementation notes
-
-Contiguity and coarsening are stated of a scale and not of an order on its domain, because a
-study compares several scales on one type and a scale may rank two classes level. A set above a
-point of a scale `σ` is `σ ⁻¹' Set.Ici b`, with mathlib's `IsUpperSet` API, and the comparison of
-two segments is `compare (σ a) (σ b)`.
+A sonority scale is a map `σ : α → β` from segments, or classes of them, to a linear order. A set
+of segments is contiguous on `σ` when it is `Set.OrdConnectedAlong σ`, the preimage of an
+order-connected set; the segments that are [+continuant] are not contiguous on `ofSegment`. A
+scale `τ` coarsens `σ` when `σ a ≤ σ b` implies `τ a ≤ τ b`
+(`Phonology.Sonority.Coarsens`), and the sets contiguous on a coarser scale are contiguous on a
+finer one.
 
 ## References
 
@@ -49,58 +42,6 @@ two segments is `compare (σ a) (σ b)`.
 @[expose] public section
 
 namespace Phonology
-
-/-! ### Scales -/
-
-namespace Sonority
-
-variable {α β γ : Type*} [LinearOrder β] [LinearOrder γ] {σ : α → β} {τ : α → γ} {S : Set α}
-
-/-- A set is contiguous on a scale when it is the preimage of an order-connected set. -/
-def Contiguous (σ : α → β) (S : Set α) : Prop := ∃ I : Set β, I.OrdConnected ∧ S = σ ⁻¹' I
-
-/-- A scale `τ` coarsens a scale `σ` when it preserves its order. -/
-def Coarsens (τ : α → γ) (σ : α → β) : Prop := ∀ a b, σ a ≤ σ b → τ a ≤ τ b
-
-theorem contiguous_iff :
-    Contiguous σ S ↔ ∀ a ∈ S, ∀ b ∈ S, ∀ c, σ a ≤ σ c → σ c ≤ σ b → c ∈ S := by
-  refine ⟨?_, fun h ↦ ⟨{x | ∃ a ∈ S, ∃ b ∈ S, σ a ≤ x ∧ x ≤ σ b}, ⟨?_⟩, ?_⟩⟩
-  · rintro ⟨I, hI, rfl⟩ a ha b hb c hac hcb
-    exact hI.out ha hb ⟨hac, hcb⟩
-  · rintro x ⟨a, ha, -, -, hax, -⟩ y ⟨-, -, b, hb, -, hyb⟩ z ⟨hxz, hzy⟩
-    exact ⟨a, ha, b, hb, hax.trans hxz, hzy.trans hyb⟩
-  · ext c
-    exact ⟨fun hc ↦ ⟨c, hc, c, hc, le_rfl, le_rfl⟩,
-      fun ⟨a, ha, b, hb, hac, hcb⟩ ↦ h a ha b hb c hac hcb⟩
-
-instance [Fintype α] [DecidablePred (· ∈ S)] : Decidable (Contiguous σ S) :=
-  decidable_of_iff _ contiguous_iff.symm
-
-theorem Contiguous.of_coarsens (h : Coarsens τ σ) (hS : Contiguous τ S) : Contiguous σ S :=
-  contiguous_iff.2 fun a ha b hb c hac hcb ↦
-    contiguous_iff.1 hS a ha b hb c (h a c hac) (h c b hcb)
-
-/-- Scales that induce the same order have the same contiguous sets. -/
-theorem contiguous_congr (h : ∀ a b, σ a ≤ σ b ↔ τ a ≤ τ b) : Contiguous σ S ↔ Contiguous τ S := by
-  simp only [contiguous_iff, h]
-
-/-- Two features whose values combine freely do not both divide a scale into contiguous classes. -/
-theorem not_contiguous_of_independent (σ : α → β) {φ ψ : α → Bool}
-    (h : ∀ x y, ∃ a, φ a = x ∧ ψ a = y) :
-    ¬ ((∀ v, Contiguous σ {a | φ a = v}) ∧ ∀ v, Contiguous σ {a | ψ a = v}) := by
-  rintro ⟨hφ, hψ⟩
-  -- the lower of the two neighbours of a least combination lies between it and the other
-  choose w hw using h
-  obtain ⟨⟨x, y⟩, hm⟩ := Finite.exists_min fun p : Bool × Bool ↦ σ (w p.1 p.2)
-  rcases le_total (σ (w (!x) y)) (σ (w x (!y))) with hle | hle
-  · have := contiguous_iff.1 (hφ x) (w x y) (hw x y).1 (w x (!y)) (hw x (!y)).1 (w (!x) y)
-      (hm (!x, y)) hle
-    simp [(hw (!x) y).1] at this
-  · have := contiguous_iff.1 (hψ y) (w x y) (hw x y).2 (w (!x) y) (hw (!x) y).2 (w x (!y))
-      (hm (x, !y)) hle
-    simp [(hw x (!y)).2] at this
-
-end Sonority
 
 /-! ### The sonority hierarchy -/
 
@@ -164,6 +105,22 @@ def ofSegment (s : Segment) : Sonority :=
   else .glide
 
 theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
+
+/-! ### Scales -/
+
+section Scale
+
+variable {α β γ : Type*} [Preorder β] [Preorder γ] {σ : α → β} {τ : α → γ} {S : Set α}
+
+/-- A scale `τ` coarsens a scale `σ` when it preserves its order. -/
+def Coarsens (τ : α → γ) (σ : α → β) : Prop := ∀ a b, σ a ≤ σ b → τ a ≤ τ b
+
+/-- A set contiguous on a coarser scale is contiguous on a finer one. -/
+theorem Coarsens.ordConnectedAlong (h : Coarsens τ σ) (hS : S.OrdConnectedAlong τ) :
+    S.OrdConnectedAlong σ :=
+  hS.of_le_imp_le h
+
+end Scale
 
 /-- Table 4.1: [sonorant], [approximant], [consonantal] and [syllabic] each hold on an upper set
 of the hierarchy. -/
@@ -244,10 +201,10 @@ theorem rise_add_rise (a b c : Sonority) : rise a b + rise b c = rise a c := by
 
 /-- [continuant] is not a sonority feature: its positive class is not contiguous on the hierarchy
 (p. 78). -/
-theorem not_contiguous_continuant :
-    ¬ Contiguous ofSegment {s : Segment | s .continuant = true} := by
+theorem not_ordConnectedAlong_continuant :
+    ¬ {s : Segment | s .continuant = true}.OrdConnectedAlong ofSegment := by
   intro h
-  exact absurd (contiguous_iff.1 h ([−sonorant, +continuant]) (by decide)
+  exact absurd (Set.ordConnectedAlong_iff.1 h ([−sonorant, +continuant]) (by decide)
     ([+syllabic, +sonorant, +approximant, +continuant])
     (by decide) ([+sonorant, −approximant, −continuant])
     (by decide) (by decide)) (by decide)

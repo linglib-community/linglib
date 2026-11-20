@@ -185,7 +185,7 @@ example : ∀ r ∈ targets, ∀ x ∈ r.segments, x ∈ consonants ∨ x = l :=
 vowels, and within the obstruents its rank on the hierarchy of Parker's (3.6) that `o` fixes. -/
 def sonorityWith (o : Ordering) (x : Segment) : Sonority ×ₗ ℕ :=
   toLex (Sonority.ofSegment x,
-    if Sonority.ofSegment x = .obstruent then ObstruentClass.rank o (.ofSegment x) else 0)
+    if Sonority.ofSegment x = .obstruent then Sonority.ObstruentClass.rank o (.ofSegment x) else 0)
 
 /-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
 fricatives, Parker's (3.6a). -/

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!

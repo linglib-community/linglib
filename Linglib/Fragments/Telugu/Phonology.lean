@@ -3,7 +3,7 @@ module
 public import Linglib.Data.PHOIBLE.Inventories.Telugu
 public import Linglib.Phonology.Prosody.Syllable
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 
 /-!
 # Telugu phonemes

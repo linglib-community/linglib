@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 
 /-!
 # Latin phonemes

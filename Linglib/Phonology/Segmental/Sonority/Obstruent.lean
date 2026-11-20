@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.Order
@@ -14,19 +14,19 @@ import Mathlib.Tactic.Order
 # Obstruent classes on a sonority scale
 
 Sonority scales that divide the obstruents rank fricatives above stops and voiced obstruents
-above voiceless ones. `Phonology.ObstruentClass` is a pair of values of [continuant] and [voice],
-and the four classes carry the product order: the two rankings hold, and the voiceless fricatives
-and the voiced stops are unordered.
+above voiceless ones. `Phonology.Sonority.ObstruentClass` is a pair of values of [continuant] and
+[voice], and the four classes carry the product order: the two rankings hold, and the voiceless
+fricatives and the voiced stops are unordered.
 
 A ranking `r` of the four classes in a linear order that is strictly monotone for the product
 order is determined, up to the order it induces, by
 `compare (r voicelessFricative) (r voicedStop)`: it induces the order of `ObstruentClass.rank o`
-at that value `o` (`Phonology.ObstruentClass.le_iff_rank_le`), so there are three such rankings.
-On such a ranking the classes of [continuant] are contiguous exactly when the voiceless
-fricatives outrank the voiced stops (`Phonology.ObstruentClass.contiguous_continuant_iff`), and
-those of [voice] exactly when the voiced stops outrank the voiceless fricatives
-(`Phonology.ObstruentClass.contiguous_voice_iff`); on a tie neither are. On no ranking at all are
-both (`Phonology.ObstruentClass.not_contiguous_continuant_and_voice`).
+at that value `o` (`le_iff_rank_le`), so there are three such rankings. On such a ranking the
+classes of [continuant] are contiguous exactly when the voiceless fricatives outrank the voiced
+stops (`ordConnectedAlong_continuant_iff`), and those of [voice] exactly when the voiced stops
+outrank the voiceless fricatives (`ordConnectedAlong_voice_iff`); on a tie neither are. On no
+ranking at all are both (`not_ordConnectedAlong_continuant_and_voice`). All four results are in
+the namespace `Phonology.Sonority.ObstruentClass`.
 
 ## References
 
@@ -35,7 +35,7 @@ both (`Phonology.ObstruentClass.not_contiguous_continuant_and_voice`).
 
 @[expose] public section
 
-namespace Phonology
+namespace Phonology.Sonority
 
 /-- An obstruent class, by its values of [continuant] and [voice]. -/
 @[ext]
@@ -140,31 +140,30 @@ theorem le_iff_rank_le (hr : StrictMono r) (x y : ObstruentClass) :
 
 /-! ### Contiguity -/
 
-open Sonority
-
 /-- On a strictly monotone ranking, the classes of [continuant] are contiguous exactly when the
 voiceless fricatives outrank the voiced stops. -/
-theorem contiguous_continuant_iff (hr : StrictMono r) :
-    (∀ v, Contiguous r {o | o.continuant = v}) ↔ r voicedStop < r voicelessFricative := by
+theorem ordConnectedAlong_continuant_iff (hr : StrictMono r) :
+    (∀ v, {o | o.continuant = v}.OrdConnectedAlong r) ↔ r voicedStop < r voicelessFricative := by
   have key : ∀ o : Ordering,
-      (∀ v, Contiguous (rank o) {x | x.continuant = v}) ↔ o = .gt := by decide +kernel
-  exact (forall_congr' fun _ ↦ contiguous_congr (le_iff_rank_le hr)).trans
+      (∀ v, {x | x.continuant = v}.OrdConnectedAlong (rank o)) ↔ o = .gt := by decide +kernel
+  exact (forall_congr' fun _ ↦ Set.ordConnectedAlong_congr (le_iff_rank_le hr)).trans
     ((key _).trans compare_gt_iff_gt)
 
 /-- On a strictly monotone ranking, the classes of [voice] are contiguous exactly when the voiced
 stops outrank the voiceless fricatives. -/
-theorem contiguous_voice_iff (hr : StrictMono r) :
-    (∀ v, Contiguous r {o | o.voice = v}) ↔ r voicelessFricative < r voicedStop := by
+theorem ordConnectedAlong_voice_iff (hr : StrictMono r) :
+    (∀ v, {o | o.voice = v}.OrdConnectedAlong r) ↔ r voicelessFricative < r voicedStop := by
   have key : ∀ o : Ordering,
-      (∀ v, Contiguous (rank o) {x | x.voice = v}) ↔ o = .lt := by decide +kernel
-  exact (forall_congr' fun _ ↦ contiguous_congr (le_iff_rank_le hr)).trans
+      (∀ v, {x | x.voice = v}.OrdConnectedAlong (rank o)) ↔ o = .lt := by decide +kernel
+  exact (forall_congr' fun _ ↦ Set.ordConnectedAlong_congr (le_iff_rank_le hr)).trans
     ((key _).trans compare_lt_iff_lt)
 
 /-- No ranking divides the obstruents into contiguous classes of both [continuant] and [voice]. -/
-theorem not_contiguous_continuant_and_voice (r : ObstruentClass → α) :
-    ¬ ((∀ v, Contiguous r {o | o.continuant = v}) ∧ ∀ v, Contiguous r {o | o.voice = v}) :=
-  not_contiguous_of_independent r fun x y ↦ ⟨⟨x, y⟩, rfl, rfl⟩
+theorem not_ordConnectedAlong_continuant_and_voice (r : ObstruentClass → α) :
+    ¬ ((∀ v, {o | o.continuant = v}.OrdConnectedAlong r) ∧
+      ∀ v, {o | o.voice = v}.OrdConnectedAlong r) :=
+  Set.not_ordConnectedAlong_of_surjective r equivProd.surjective
 
 end ObstruentClass
 
-end Phonology
+end Phonology.Sonority

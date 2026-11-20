@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Hungarian
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Harmony.System
 
 /-!
