@@ -79,7 +79,7 @@ namespace Amalgam
 def single (h : H) (m : Option Direction) : Amalgam H := ⟨h, of h, m⟩
 
 /-- The heads that a complex head contains, lowest first. -/
-def members (a : Amalgam H) : List H := (FreeMagma.lift FreeMonoid.of a.complex).toList
+def members (a : Amalgam H) : List H := (toFreeMonoid a.complex).toList
 
 end Amalgam
 
@@ -116,7 +116,7 @@ private theorem flatMap_members_amalgamate {below : List (Amalgam H)}
     (h : amalgamate below pending above = some out) :
     out.reverse.flatMap Amalgam.members =
       below.reverse.flatMap Amalgam.members ++
-        pending.elim [] (fun x ↦ (FreeMagma.lift FreeMonoid.of x).toList) ++
+        pending.elim [] (fun x ↦ (toFreeMonoid x).toList) ++
         above.flatMap Amalgam.members := by
   induction above generalizing below pending out with
   | nil => cases pending <;> simp_all [amalgamate]
@@ -256,7 +256,7 @@ theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
     (h : lo ++ s :: hi = b :: rest) :
     amalgamateSpine (lo.map (single · (some .raising)) ++ single s none ::
         hi.map (single · (some .lowering))) =
-      some [⟨s, rest.foldl (· * of ·) (of b), none⟩] := by
+      some [⟨s, FreeSemigroup.leftComb ⟨b, rest⟩, none⟩] := by
   rw [amalgamateSpine, amalgamate_raising, amalgamate_none, amalgamate_lowering]
   cases lo with
   | nil =>
@@ -264,7 +264,7 @@ theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
     rfl
   | cons l lo =>
     obtain ⟨rfl, rfl⟩ : l = b ∧ lo ++ s :: hi = rest := by simpa using h
-    simp [foldl_raising]
+    simp [foldl_raising, FreeSemigroup.leftComb_mk]
 
 private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
     {pending : Option (FreeMagma H)} {hs : List (H × Option Direction)} {out : List (Amalgam H)}

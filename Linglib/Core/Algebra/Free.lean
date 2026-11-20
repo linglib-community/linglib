@@ -12,30 +12,76 @@ public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 /-!
 # Bracketings in a free magma
 
-An element of a free magma is a bracketing of a nonempty list of generators. This file singles
-out the left combs, the bracketings `((a * b) * c) * d` in which every product has a generator
-as its right factor, and shows that a homomorphism into a semigroup depends on the list of
-generators alone.
+An element of the free magma `FreeMagma α` is a bracketing of a nonempty word over `α`. The
+homomorphism `FreeMagma.toFreeSemigroup` forgets the bracketing and keeps the word, and
+`FreeMagma.toFreeMonoid` reads that word in the free monoid. Every homomorphism from the free
+magma to a semigroup factors through `toFreeSemigroup`, so it takes two bracketings of one word
+to the same value: see `FreeMagma.lift_comp_toFreeSemigroup` and
+`FreeMagma.apply_eq_apply_of_toFreeMonoid_eq`.
 
-## Main definitions
-
-* `FreeMagma.IsLeftComb`: the element is a left comb.
-
-## Main results
-
-* `FreeMagma.isLeftComb_foldl_mul_of`: multiplying on the right by generators preserves and
-  reflects being a left comb.
-* `FreeMagma.toList_lift_foldl_mul_of`: multiplying on the right by generators appends them to
-  the list of generators.
-* `FreeMagma.lift_eq_lift_of_lift_of_eq`: a homomorphism into a semigroup takes two elements
-  with the same generators in the same order to the same value.
+A *left comb* is a bracketing `((a * b) * c) * d` in which every product has a generator as its
+right factor. Each word `a b c d` has exactly one, `FreeSemigroup.leftComb`, given by the formula
+`l.foldl (· * of ·) (of a)` that defines `FreeSemigroup.lift` in a semigroup. The map `leftComb`
+is a section of `toFreeSemigroup`, and `FreeMagma.leftCombEquiv` is the resulting bijection
+between words and left combs.
 -/
 
 @[expose] public section
 
+variable {α β : Type*}
+
 namespace FreeMagma
 
-variable {α : Type*}
+/-! ### The word of a bracketing -/
+
+/-- The canonical multiplicative morphism from `FreeMagma α` to `FreeMonoid α`. -/
+def toFreeMonoid : FreeMagma α →ₙ* FreeMonoid α := lift FreeMonoid.of
+
+@[simp] theorem toFreeMonoid_of (a : α) : toFreeMonoid (of a) = FreeMonoid.of a := rfl
+
+theorem toFreeMonoid_comp_toFreeSemigroup :
+    FreeSemigroup.toFreeMonoid.comp toFreeSemigroup = @toFreeMonoid α := by ext1; rfl
+
+@[simp] theorem toFreeMonoid_toFreeSemigroup (x : FreeMagma α) :
+    (toFreeSemigroup x).toFreeMonoid = toFreeMonoid x :=
+  DFunLike.congr_fun toFreeMonoid_comp_toFreeSemigroup x
+
+theorem toFreeMonoid_eq_toFreeMonoid_iff {x y : FreeMagma α} :
+    toFreeMonoid x = toFreeMonoid y ↔ toFreeSemigroup x = toFreeSemigroup y := by
+  simp only [← toFreeMonoid_toFreeSemigroup, FreeSemigroup.toFreeMonoid_injective.eq_iff]
+
+theorem toFreeSemigroup_foldl_mul_of (x : FreeMagma α) (l : List α) :
+    toFreeSemigroup (l.foldl (· * of ·) x) =
+      ⟨(toFreeSemigroup x).head, (toFreeSemigroup x).tail ++ l⟩ := by
+  induction l generalizing x with
+  | nil => simp
+  | cons a l ih => simp [ih]
+
+section Semigroup
+
+variable [Semigroup β]
+
+/-- A homomorphism from a free magma to a semigroup factors through the free semigroup. -/
+theorem lift_comp_toFreeSemigroup (f : α → β) :
+    (FreeSemigroup.lift f).comp toFreeSemigroup = lift f := by ext1; rfl
+
+@[simp] theorem lift_toFreeSemigroup (f : α → β) (x : FreeMagma α) :
+    FreeSemigroup.lift f (toFreeSemigroup x) = lift f x :=
+  DFunLike.congr_fun (lift_comp_toFreeSemigroup f) x
+
+theorem apply_eq_apply_of_toFreeSemigroup_eq (f : FreeMagma α →ₙ* β) {x y : FreeMagma α}
+    (h : toFreeSemigroup x = toFreeSemigroup y) : f x = f y := by
+  rw [← lift_comp_of' f, ← lift_toFreeSemigroup, ← lift_toFreeSemigroup, h]
+
+/-- A homomorphism from a free magma to a semigroup takes two bracketings of the same word to the
+same value. -/
+theorem apply_eq_apply_of_toFreeMonoid_eq (f : FreeMagma α →ₙ* β) {x y : FreeMagma α}
+    (h : toFreeMonoid x = toFreeMonoid y) : f x = f y :=
+  apply_eq_apply_of_toFreeSemigroup_eq f (toFreeMonoid_eq_toFreeMonoid_iff.1 h)
+
+end Semigroup
+
+/-! ### Left combs -/
 
 /-- An element of a free magma is a left comb when every product in it has a generator as its
 right factor. -/
@@ -56,40 +102,89 @@ instance decidableIsLeftComb : (x : FreeMagma α) → Decidable (IsLeftComb x)
 
 @[simp] theorem not_isLeftComb_mul_mul (x y z : FreeMagma α) : ¬ IsLeftComb (x * (y * z)) := id
 
-theorem isLeftComb_foldl_mul_of (x : FreeMagma α) (l : List α) :
+theorem isLeftComb_mul {x y : FreeMagma α} :
+    IsLeftComb (x * y) ↔ IsLeftComb x ∧ ∃ a, y = of a := by
+  cases y with
+  | of a => exact (isLeftComb_mul_of x a).trans (and_iff_left ⟨a, rfl⟩).symm
+  | mul y z => exact iff_of_false (not_isLeftComb_mul_mul x y z) (by rintro ⟨-, a, ⟨⟩⟩)
+
+@[simp] theorem isLeftComb_foldl_mul_of (x : FreeMagma α) (l : List α) :
     IsLeftComb (l.foldl (· * of ·) x) ↔ IsLeftComb x := by
   induction l generalizing x with
   | nil => rfl
   | cons a l ih => simp [ih]
 
-theorem toList_lift_foldl_mul_of (x : FreeMagma α) (l : List α) :
-    (lift FreeMonoid.of (l.foldl (· * of ·) x)).toList = (lift FreeMonoid.of x).toList ++ l := by
-  induction l generalizing x with
-  | nil => simp
-  | cons a l ih => simp [ih]
+end FreeMagma
 
-section Semigroup
+namespace FreeSemigroup
 
-variable {β : Type*} [Semigroup β]
+open FreeMagma
 
-theorem lift_eq_lift_toFreeSemigroup (f : α → β) (x : FreeMagma α) :
-    lift f x = FreeSemigroup.lift f (toFreeSemigroup x) := by
-  induction x using FreeMagma.recOnMul with
-  | ih1 a => rfl
-  | ih2 x y hx hy => simp [hx, hy]
+/-- The left comb of a word, the bracketing `((a * b) * c) * d` of `a b c d`. -/
+def leftComb (u : FreeSemigroup α) : FreeMagma α := u.tail.foldl (· * .of ·) (.of u.head)
 
-theorem lift_of_eq_toFreeMonoid (x : FreeMagma α) :
-    lift FreeMonoid.of x = (toFreeSemigroup x).toFreeMonoid :=
-  lift_eq_lift_toFreeSemigroup _ x
+theorem leftComb_mk (a : α) (l : List α) : leftComb ⟨a, l⟩ = l.foldl (· * .of ·) (.of a) := rfl
 
-/-- A homomorphism from a free magma to a semigroup does not see the bracketing: it takes two
-elements with the same generators in the same order to the same value. -/
-theorem lift_eq_lift_of_lift_of_eq (f : α → β) {x y : FreeMagma α}
-    (h : lift FreeMonoid.of x = lift FreeMonoid.of y) : lift f x = lift f y := by
-  have : toFreeSemigroup x = toFreeSemigroup y :=
-    FreeSemigroup.toFreeMonoid_injective (by simpa only [lift_of_eq_toFreeMonoid] using h)
-  rw [lift_eq_lift_toFreeSemigroup, lift_eq_lift_toFreeSemigroup, this]
+@[simp] theorem leftComb_of (a : α) : leftComb (of a) = .of a := rfl
 
-end Semigroup
+@[simp] theorem leftComb_mul_of (u : FreeSemigroup α) (a : α) :
+    leftComb (u * of a) = leftComb u * .of a := by
+  simp [leftComb]
+
+@[simp] theorem isLeftComb_leftComb (u : FreeSemigroup α) : (leftComb u).IsLeftComb :=
+  (isLeftComb_foldl_mul_of _ _).2 (isLeftComb_of _)
+
+/-- The left comb of a word is a bracketing of that word. -/
+@[simp] theorem toFreeSemigroup_leftComb (u : FreeSemigroup α) :
+    toFreeSemigroup (leftComb u) = u := by
+  simp [leftComb, toFreeSemigroup_foldl_mul_of]
+
+theorem leftInverse_toFreeSemigroup_leftComb :
+    Function.LeftInverse toFreeSemigroup (@leftComb α) := toFreeSemigroup_leftComb
+
+theorem leftComb_injective : Function.Injective (@leftComb α) :=
+  leftInverse_toFreeSemigroup_leftComb.injective
+
+@[simp] theorem toFreeMonoid_leftComb (u : FreeSemigroup α) :
+    FreeMagma.toFreeMonoid (leftComb u) = u.toFreeMonoid := by
+  rw [← toFreeMonoid_toFreeSemigroup, toFreeSemigroup_leftComb]
+
+/-- In a semigroup, a homomorphism of the free magma evaluates the left comb of a word as the
+product of the word. -/
+theorem lift_leftComb [Semigroup β] (f : α → β) (u : FreeSemigroup α) :
+    FreeMagma.lift f (leftComb u) = lift f u := by
+  rw [← lift_toFreeSemigroup, toFreeSemigroup_leftComb]
+
+end FreeSemigroup
+
+namespace FreeMagma
+
+open FreeSemigroup
+
+theorem toFreeSemigroup_surjective : Function.Surjective (@toFreeSemigroup α) :=
+  leftInverse_toFreeSemigroup_leftComb.surjective
+
+/-- A left comb is the left comb of its word. -/
+theorem IsLeftComb.leftComb_toFreeSemigroup :
+    ∀ {x : FreeMagma α}, x.IsLeftComb → leftComb (toFreeSemigroup x) = x
+  | of _, _ => rfl
+  | mul x (of a), h => by
+    rw [mul_eq, map_mul, toFreeSemigroup_of, leftComb_mul_of,
+      IsLeftComb.leftComb_toFreeSemigroup (x := x) h]
+
+theorem isLeftComb_iff_leftComb_toFreeSemigroup {x : FreeMagma α} :
+    x.IsLeftComb ↔ leftComb (toFreeSemigroup x) = x :=
+  ⟨IsLeftComb.leftComb_toFreeSemigroup, fun h ↦ h ▸ isLeftComb_leftComb _⟩
+
+theorem range_leftComb : Set.range (@leftComb α) = {x | x.IsLeftComb} :=
+  Set.ext fun _ ↦
+    ⟨fun ⟨u, hu⟩ ↦ hu ▸ isLeftComb_leftComb u, fun h ↦ ⟨_, h.leftComb_toFreeSemigroup⟩⟩
+
+/-- Left combs are a normal form for bracketings: each word has exactly one. -/
+@[simps] def leftCombEquiv : FreeSemigroup α ≃ {x : FreeMagma α // x.IsLeftComb} where
+  toFun u := ⟨leftComb u, isLeftComb_leftComb u⟩
+  invFun x := toFreeSemigroup x.1
+  left_inv := toFreeSemigroup_leftComb
+  right_inv x := Subtype.ext x.2.leftComb_toFreeSemigroup
 
 end FreeMagma
