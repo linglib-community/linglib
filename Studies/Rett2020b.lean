@@ -98,11 +98,16 @@ def Class.Holds (s : D) : Class → Set D → Set D → Prop
   | .demonstrative, S, T => Quantifier.MaxIn T S
   | .implicit, S, T => (T ∩ Ioi s).Nonempty ∧ (S ∩ Ioi s).Nonempty
 
+-- Into a lower set of target degrees, the demonstrative equative is the max-quantified equative.
+theorem holds_demonstrative_iff_maxComparative (hT : IsLowerSet T) :
+    Class.demonstrative.Holds s S T ↔ MaxComparative .ge S T :=
+  ⟨fun ⟨m, hm, h⟩ ↦ ⟨m, h, m, hm, le_rfl⟩, fun ⟨m, h, _, hd, hle⟩ ↦ ⟨m, hT hle hd, h⟩⟩
+
 /-- A demonstrative equative holds exactly when the standard has a greatest degree and the
 sufficientive equative holds. -/
 theorem holds_demonstrative_iff (hT : IsLowerSet T) :
     Class.demonstrative.Holds s S T ↔ (∃ m, IsGreatest S m) ∧ Class.sufficientive.Holds s S T :=
-  ⟨fun ⟨m, hm, h⟩ ↦ ⟨⟨m, h⟩, fun _ hd ↦ hT (h.2 hd) hm⟩, fun ⟨⟨m, h⟩, hST⟩ ↦ ⟨m, hST h.1, h⟩⟩
+  (holds_demonstrative_iff_maxComparative hT).trans (maxComparative_ge_iff_subset hT)
 
 @[simp]
 theorem holds_predicative_Iic : Class.predicative.Holds s (Iic y) (Iic x) ↔ x = y := Iic_inj
