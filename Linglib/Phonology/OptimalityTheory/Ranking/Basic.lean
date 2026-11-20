@@ -21,9 +21,10 @@ total domination order. It defines the [strict dominance](##Ranking.Enumeration.
 ranking and its [reflexive closure](##Ranking.Enumeration.toRel), which
 [determines the ranking](##Ranking.Enumeration.toRel_injective). A ranking reads a violation
 vector `v` in rank order as `toLex (v ∘ r)`, so comparing two vectors under one ranking is
-[the lexicographic order along an enumeration](##Pi.toLex_comp_lt_iff_exists), and comparing them
-under every ranking is [the product order](##Pi.forall_toLex_comp_lt_iff), which is harmonic
-bounding. Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
+the lexicographic order `Pi.Lex r.Dominates (· < ·)` of the constraints under dominance
+(`Pi.toLex_comp_lt_toLex_comp_iff`), and comparing them under every ranking is the product order
+(`OptimalityTheory.Ranking.Enumeration.forall_profile_lt_iff`), which is harmonic bounding.
+Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
 
 ## Implementation notes
 
@@ -95,6 +96,8 @@ instance (i j : ι) : Decidable (r.Dominates i j) :=
   inferInstanceAs (Decidable (r.symm i < r.symm j))
 
 instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.symm.injective
+
+instance : WellFounded r.Dominates := InvImage.wf r.symm wellFounded_lt
 
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
@@ -263,18 +266,22 @@ theorem exists_dominates_iff [Fintype ι] {β : Type*} [LinearOrder β] (f : ι 
   rw [Dominates, ← not_le, this, not_le]
   rfl
 
+/-- Some ranking puts a given constraint above every other. -/
+theorem exists_forall_dominates [Fintype ι] (i : ι) (hn : Fintype.card ι = n := by simp) :
+    ∃ σ : Ranking.Enumeration ι n, ∀ j, j ≠ i → σ.Dominates i j := by
+  classical
+  let e : Fin n ≃ ι := (Fintype.equivFinOfCardEq hn).symm
+  let σ : Fin n ≃ ι := (Equiv.swap ⟨0, (e.symm i).pos⟩ (e.symm i)).trans e
+  have hi : σ.symm i = ⟨0, (e.symm i).pos⟩ := by simp [σ]
+  refine ⟨σ, fun j hj ↦ ?_⟩
+  rw [Dominates, hi, Fin.lt_def]
+  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| σ.symm.injective <|
+    Fin.ext (h0.trans (congrArg Fin.val hi).symm)
+
 /-- Any two distinct constraints are ranked in either order by some ranking. -/
-theorem exists_dominates [Fintype ι] [DecidableEq ι] {i j : ι} (hij : i ≠ j)
-    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking.Enumeration ι n, σ.Dominates i j := by
-  let e := Fintype.equivFinOfCardEq hn
-  obtain ⟨σ, hσ⟩ := exists_dominates_iff (fun c ↦ if c = i then 0 else (e c : ℕ) + 1)
-    (fun c d hcd ↦ by
-      by_cases hc : c = i <;> by_cases hd : d = i <;> simp only [hc, hd, ite_true, ite_false] at hcd
-      · exact hc.trans hd.symm
-      · omega
-      · omega
-      · exact e.injective (Fin.ext (by omega))) hn
-  exact ⟨σ, (hσ i j).2 (by simp [hij.symm])⟩
+theorem exists_dominates [Fintype ι] {i j : ι} (hij : i ≠ j)
+    (hn : Fintype.card ι = n := by simp) : ∃ σ : Ranking.Enumeration ι n, σ.Dominates i j :=
+  (exists_forall_dominates i hn).imp fun _ h ↦ h j hij.symm
 
 end Ranking.Enumeration
 end OptimalityTheory

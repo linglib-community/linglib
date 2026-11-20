@@ -155,17 +155,28 @@ def SatisfiedBy : Prop := toLex 0 ≤ toLex (α ∘ r)
 /-- A ranking satisfies an ERC iff its earliest non-neutral constraint, when one exists, is
 winner-preferring, which is Prince's description of satisfaction by a left-to-right sweep. -/
 theorem satisfiedBy_iff_lead :
-    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
-  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.lex_le_iff_find _ _).mp h he),
-   fun h => (Pi.lex_le_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
+    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W := by
+  rw [SatisfiedBy, Pi.toLex_le_toLex_iff_forall]
+  refine ⟨fun h he ↦ by_contra fun hW ↦ ?_, fun hlead j hj ↦ ?_⟩
+  · obtain ⟨i, hlt, hi⟩ := h _ <| lt_of_le_of_ne
+      (not_lt.1 fun h0 ↦ hW ((ERCVal.zero_lt_iff _).1 h0)) (Fin.find_spec he)
+    exact Fin.find_min he hlt hi.ne'
+  · have he : ∃ p, α (r p) ≠ .e := ⟨j, hj.ne⟩
+    have hW := (ERCVal.zero_lt_iff _).2 (hlead he)
+    exact ⟨Fin.find _ he, (Fin.find_le_of_pos he hj.ne).lt_of_ne fun h ↦
+      absurd (h ▸ hW) hj.asymm, hW⟩
+
+/-- A ranking satisfies an ERC iff the ERC is not below zero in the lexicographic order of the
+constraints under dominance. -/
+theorem satisfiedBy_iff_not_lex : α.SatisfiedBy r ↔ ¬ Pi.Lex r.Dominates (· < ·) α 0 :=
+  not_lt.symm.trans (Pi.toLex_comp_lt_toLex_comp_iff r (v := α) (w := 0)).not
 
 /-- Satisfaction in Prince's `∀∃` form, his (3): every loser-preferring constraint is dominated
 by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
-    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
-  rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
-    Pi.toLex_comp_le_iff_forall_exists]
-  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Enumeration.Dominates]
+    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c :=
+  (satisfiedBy_iff_not_lex r α).trans <| Pi.not_lex_iff_forall_exists.trans <| by
+    simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff]
 
 /-- An ERC *holds* of a relation on the constraints when every loser-preferring constraint is
 below some winner-preferring one, the `∀∃` form of an elementary ranking condition in
@@ -262,10 +273,16 @@ instance : Decidable (α.SatisfiedBy r) :=
 /-- Satisfaction in Prince's `∃∀` form, his (4): some winner-preferring constraint dominates
 every loser-preferring one. The two forms agree because the ranking is total. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
-    α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
-  rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
-    Pi.toLex_comp_le_iff_exists_forall]
-  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Enumeration.Dominates]
+    α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) :=
+  ⟨fun h ↦ (h.lt_or_eq : toLex 0 < toLex (α ∘ r) ∨ _).elim
+    (fun h ↦ by
+      obtain ⟨i, hi, hd⟩ := ((Pi.toLex_comp_lt_toLex_comp_iff r (v := 0) (w := α)).trans
+        (Pi.lex_iff_exists_forall (r := r.Dominates))).1 h
+      exact ⟨i, fun c hc ↦ ⟨(ERCVal.zero_lt_iff _).1 hi, hd c ((ERCVal.lt_zero_iff _).2 hc)⟩⟩)
+    fun h ↦ ⟨r 0, fun c hc ↦ by
+      have h0 : (0 : ERCVal) = α c := by simpa using congrFun (toLex_inj.1 h) (r.symm c)
+      exact absurd (h0.trans hc) (by decide)⟩,
+  fun ⟨d, hd⟩ ↦ (satisfiedBy_iff_dominance r α).2 fun c hc ↦ ⟨d, hd c hc⟩⟩
 
 theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking.Enumeration ι n) :
     α.SatisfiedBy r :=
@@ -602,12 +619,12 @@ def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC (Fin n) 
 
 theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
     toLex (fun _ => (0 : ERCVal)) ≤ toLex (ercOfProfiles (ofLex w) (ofLex l)) ↔ w ≤ l :=
-  (Pi.lex_le_iff_forall _ _).trans <|
+  Pi.toLex_le_toLex_iff_forall.trans <|
     (forall_congr' fun p => imp_congr
       ((ERCVal.lt_zero_iff _).trans (ercOfProfiles_eq_L_iff w l p))
       (exists_congr fun q => and_congr_right fun _ =>
         (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
-    (Pi.lex_le_iff_forall (ofLex w) (ofLex l)).symm
+    (Pi.toLex_le_toLex_iff_forall (x := ofLex w) (y := ofLex l)).symm
 
 /-- A ranking satisfies the ERC of a winner and a loser iff the winner's violations, read in the
 order of the ranking, are lexicographically at most the loser's. -/
@@ -627,28 +644,28 @@ theorem lex_pos_ercOfProfiles_iff_lt (r : Ranking.Enumeration ι n) (w l : ι �
 /-- A candidate is optimal under a ranking iff the ranking satisfies its ERC against every
 competitor. -/
 theorem Ranking.Enumeration.mem_optimal_iff_satisfiedBy {C : Type*} (σ : Ranking.Enumeration ι n)
-    (v : C → ι → ℕ) (s : Finset C) (w : C) :
-    w ∈ σ.optimal v s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (v w) (v l)).SatisfiedBy σ :=
+    (T : Tableau C ι) (s : Finset C) (w : C) :
+    w ∈ σ.optimal T s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (T w) (T l)).SatisfiedBy σ :=
   Ranking.Enumeration.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
-    (satisfiedBy_ercOfProfiles_iff_le σ (v w) (v l)).symm
+    (satisfiedBy_ercOfProfiles_iff_le σ (T w) (T l)).symm
 
 /-- A ranking argument: when `c` is optimal under a ranking, every constraint preferring a
 competitor `d` is dominated by some constraint preferring `c`. -/
-theorem Ranking.Enumeration.exists_dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+theorem Ranking.Enumeration.exists_dominates_of_mem_optimal {C : Type*} {T : Tableau C ι}
     {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {j : ι}
-    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
-    (hj : v d j < v c j) : ∃ i, v c i < v d i ∧ σ.Dominates i j :=
+    (h : c ∈ σ.optimal T s) (hd : d ∈ s)
+    (hj : T d j < T c j) : ∃ i, T c i < T d i ∧ σ.Dominates i j :=
   ((ERC.satisfiedBy_iff_dominance σ _).1
-    (((σ.mem_optimal_iff_satisfiedBy v s c).1 h).2 d hd) j
+    (((σ.mem_optimal_iff_satisfiedBy T s c).1 h).2 d hd) j
     ((ercOfProfiles_eq_L_iff _ _ j).2 hj)).imp fun _ hw ↦
       ⟨(ercOfProfiles_eq_W_iff _ _ _).1 hw.1, hw.2⟩
 
 /-- When `i` is the only constraint preferring an optimal candidate `c` to a competitor `d`, `i`
 dominates every constraint preferring `d`. -/
-theorem Ranking.Enumeration.dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+theorem Ranking.Enumeration.dominates_of_mem_optimal {C : Type*} {T : Tableau C ι}
     {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {i j : ι}
-    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
-    (hi : ∀ k, v c k < v d k → k = i) (hj : v d j < v c j) : σ.Dominates i j := by
+    (h : c ∈ σ.optimal T s) (hd : d ∈ s)
+    (hi : ∀ k, T c k < T d k → k = i) (hj : T d j < T c j) : σ.Dominates i j := by
   obtain ⟨w, hw, hdom⟩ := Ranking.Enumeration.exists_dominates_of_mem_optimal h hd hj
   exact hi w hw ▸ hdom
 

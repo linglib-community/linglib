@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.PiLex
+public import Mathlib.Order.PiLex
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Order.Interval.Finset.Fin
 public import Mathlib.Tactic.Linarith

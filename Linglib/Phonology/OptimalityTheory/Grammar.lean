@@ -120,33 +120,33 @@ end Grammar.Enumeration
 
 section Winner
 
-variable {C : Type*} {v : C → ι → ℕ} {candidates : Finset C} {w : C}
+variable {C : Type*} {T : Tableau C ι} {candidates : Finset C} {w : C}
   {σ : Ranking.Enumeration ι n}
 
 /-- The grammar of a winner among the candidates of a tableau, presented by its ERC against each
-candidate. `v c k` is the number of violations of the constraint `k` by the candidate `c`. -/
-def Grammar.Enumeration.ofWinner (v : C → ι → ℕ) (candidates : Finset C)
+candidate. `T c k` is the number of violations of the constraint `k` by the candidate `c`. -/
+def Grammar.Enumeration.ofWinner (T : Tableau C ι) (candidates : Finset C)
     (w : C) : Grammar.Enumeration ι n :=
-  .ofERCs ((fun l ↦ ercOfProfiles (v w) (v l)) '' candidates)
+  .ofERCs ((fun l ↦ ercOfProfiles (T w) (T l)) '' candidates)
 
 /-- The rankings of the grammar of a winner are those under which it is optimal. -/
 theorem Grammar.Enumeration.mem_extent_ofWinner (hw : w ∈ candidates) :
-    σ ∈ (Grammar.Enumeration.ofWinner v candidates w).extent ↔
-      w ∈ filtration v candidates (List.ofFn σ) := by
+    σ ∈ (Grammar.Enumeration.ofWinner T candidates w).extent ↔
+      w ∈ filtration T candidates (List.ofFn σ) := by
   rw [← Ranking.Enumeration.optimal_eq_filtration, σ.mem_optimal_iff_satisfiedBy,
     and_iff_right hw]
   exact ⟨fun h l hl ↦ h ⟨l, Finset.mem_coe.2 hl, rfl⟩, by rintro h _ ⟨l, hl, rfl⟩; exact h l hl⟩
 
 /-- The comparative tableau of a winner: its ERC against each of the listed competitors, the
 rows of `W`, `L` and `e` of [prince-2002]. -/
-def comparative (v : C → ι → ℕ) (w : C) (losers : List C) : List (ERC ι) :=
-  losers.map fun d ↦ ercOfProfiles (v w) (v d)
+def comparative (T : Tableau C ι) (w : C) (losers : List C) : List (ERC ι) :=
+  losers.map fun d ↦ ercOfProfiles (T w) (T d)
 
 /-- The grammar of a winner is the grammar its comparative tableau presents. -/
 theorem Grammar.Enumeration.ofERCs_comparative [DecidableEq C] (l : List C) :
-    (Grammar.Enumeration.ofERCs {α | α ∈ comparative v w (l.filter
+    (Grammar.Enumeration.ofERCs {α | α ∈ comparative T w (l.filter
         (· ≠ w))} : Grammar.Enumeration ι n) =
-      Grammar.Enumeration.ofWinner v l.toFinset w := by
+      Grammar.Enumeration.ofWinner T l.toFinset w := by
   refine Concept.ext (Set.ext fun σ ↦ ⟨fun h ↦ ?_, fun h α hα ↦ ?_⟩)
   · rintro _ ⟨d, hd, rfl⟩
     by_cases hdw : d = w
@@ -161,9 +161,9 @@ theorem Grammar.Enumeration.ofERCs_comparative [DecidableEq C] (l : List C) :
 /-- A winner is the sole winner when no row of its comparative tableau is neutral
 throughout. -/
 theorem filtration_eq_singleton_of_comparative [DecidableEq C] {l : List C}
-    (hw : w ∈ filtration v l.toFinset (List.ofFn σ))
-    (h : ∀ α ∈ comparative v w (l.filter (· ≠ w)), ∃ k, α k ≠ .e) :
-    filtration v l.toFinset (List.ofFn σ) = {w} := by
+    (hw : w ∈ filtration T l.toFinset (List.ofFn σ))
+    (h : ∀ α ∈ comparative T w (l.filter (· ≠ w)), ∃ k, α k ≠ .e) :
+    filtration T l.toFinset (List.ofFn σ) = {w} := by
   rw [← Ranking.Enumeration.optimal_eq_filtration] at hw ⊢
   refine (Ranking.Enumeration.optimal_eq_singleton_iff_of_mem hw).2 fun d hd he ↦ ?_
   by_contra hne
@@ -174,12 +174,12 @@ theorem filtration_eq_singleton_of_comparative [DecidableEq C] {l : List C}
 /-- Two winners are optimal together under no ranking when an ERC of the one and an ERC of the
 other fuse to an ERC with an `L` and no `W`. -/
 theorem Grammar.Enumeration.ofWinner_inf_ofWinner_eq_bot [Nonempty ι] {C' : Type*}
-    {v' : C' → ι → ℕ} {candidates' : Finset C'} {w' : C'} {d : C} {d' : C'}
+    {T' : Tableau C' ι} {candidates' : Finset C'} {w' : C'} {d : C} {d' : C'}
     (hd : d ∈ candidates) (hd' : d' ∈ candidates')
-    (h : ((ercOfProfiles (v w) (v d)).fuse
-      (ercOfProfiles (v' w') (v' d'))).IsContradictory) :
-    (Grammar.Enumeration.ofWinner v candidates w ⊓
-      Grammar.Enumeration.ofWinner v' candidates' w' : Grammar.Enumeration ι n) =
+    (h : ((ercOfProfiles (T w) (T d)).fuse
+      (ercOfProfiles (T' w') (T' d'))).IsContradictory) :
+    (Grammar.Enumeration.ofWinner T candidates w ⊓
+      Grammar.Enumeration.ofWinner T' candidates' w' : Grammar.Enumeration ι n) =
       ⊥ :=
   Grammar.Enumeration.ofERCs_inf_ofERCs_eq_bot ⟨d, Finset.mem_coe.2 hd, rfl⟩
     ⟨d', Finset.mem_coe.2 hd', rfl⟩ h
@@ -298,11 +298,11 @@ theorem Grammar.Enumeration.mem_intent_ofRel [Fintype ι] [IsTrans ι r] [Std.An
 holds of the diagram: the winner is optimal under every ranking that extends the diagram. -/
 theorem Grammar.Enumeration.ofRel_le_ofWinner_iff [Fintype ι] [IsTrans ι r] [Std.Antisymm r]
     {C : Type*}
-    {v : C → ι → ℕ} {candidates : Finset C} {w : C}
+    {T : Tableau C ι} {candidates : Finset C} {w : C}
     (hn : Fintype.card ι = n := by simp) :
     (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n) ≤
-        Grammar.Enumeration.ofWinner v candidates w ↔
-      ∀ d ∈ candidates, (ercOfProfiles (v w) (v d)).Holds r := by
+        Grammar.Enumeration.ofWinner T candidates w ↔
+      ∀ d ∈ candidates, (ercOfProfiles (T w) (T d)).Holds r := by
   rw [Grammar.Enumeration.ofWinner, Concept.le_ofAttributes_iff]
   exact ⟨fun h d hd ↦ (Grammar.Enumeration.mem_intent_ofRel hn).1 (h ⟨d, Finset.mem_coe.2 hd, rfl⟩),
     by rintro h _ ⟨d, hd, rfl⟩; exact (Grammar.Enumeration.mem_intent_ofRel hn).2 (h d hd)⟩
@@ -353,10 +353,10 @@ another, the grammar of the diagram lies below the grammar of the winner: the wi
 under every ranking that extends the diagram. -/
 theorem Grammar.Enumeration.ofRel_le_ofWinner_of_holds_below [Fintype ι] [DecidableRel r]
     {C : Type*}
-    {v : C → ι → ℕ} {candidates : Finset C} {w : C}
-    (h : ∀ d ∈ candidates, (ercOfProfiles (v w) (v d)).Holds fun a b ↦ b ∈ below r a) :
+    {T : Tableau C ι} {candidates : Finset C} {w : C}
+    (h : ∀ d ∈ candidates, (ercOfProfiles (T w) (T d)).Holds fun a b ↦ b ∈ below r a) :
     (Grammar.Enumeration.ofRel r : Grammar.Enumeration ι n) ≤
-        Grammar.Enumeration.ofWinner v candidates w :=
+        Grammar.Enumeration.ofWinner T candidates w :=
   Grammar.Enumeration.ofRel_le_ofERCs_of_holds_below (by rintro _ ⟨d, hd, rfl⟩; exact h d hd)
 
 theorem Grammar.Enumeration.extent_ofRel [Fintype ι] (r : ι → ι → Prop) [DecidableRel r] :
