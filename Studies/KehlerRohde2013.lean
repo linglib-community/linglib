@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Probability.Kernel.OfDensity
 public import Linglib.Data.Statistics.KehlerRohde2013
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Center
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
 public import Linglib.Fragments.English.Pronouns

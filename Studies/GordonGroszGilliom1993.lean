@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Statistics.GordonGroszGilliom1993
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 
 /-!

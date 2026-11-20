@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.Discourse
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.ViolationProfile

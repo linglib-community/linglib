@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.Discourse
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Accessibility
 public import Linglib.Core.Data.List.Forall2

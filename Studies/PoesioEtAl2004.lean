@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.Discourse
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Accessibility
 public import Linglib.Data.Examples.PoesioEtAl2004
@@ -113,8 +114,8 @@ theorem cbUniqueness_of_role_injective (prev : Utterance E R F) (s : Finset E)
     CBUniqueness prev s :=
   card_backwardCenters_le_one s h
 
-/-- CB uniqueness holds once grammatical function is disambiguated by linear order, the
-ranking of [strube-hahn-1999]. -/
+/-- CB uniqueness holds once ties in the ranking are broken by linear order, as
+[strube-hahn-1999] break ties of information status by text position. -/
 theorem cbUniqueness_indexed (prev : Utterance E R F) (s : Finset E) :
     CBUniqueness prev.indexed s := by
   rw [CBUniqueness, backwardCenters_indexed]

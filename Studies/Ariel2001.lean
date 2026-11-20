@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Data.Examples.Ariel2001
 public import Linglib.Data.Examples.Readers

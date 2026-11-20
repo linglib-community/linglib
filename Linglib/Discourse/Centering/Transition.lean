@@ -1,7 +1,5 @@
 module
 
-public import Linglib.Discourse.Centering.Basic
-public import Mathlib.Data.List.Zip
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Order.WithBot
 
@@ -155,42 +153,5 @@ theorem ofCenters_some (prevCb cp : Option E) (c : E) : ofCenters prevCb (some c
   split_ifs <;> rfl
 
 end Transition
-
-/-! ### Scanning a discourse -/
-
-variable {R F : Type*} [LinearOrder R]
-
-/-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
-def transition (prevCb : Option E) (prev cur : Utterance E R F) : Transition :=
-  .ofCenters prevCb (cb prev cur.cf) cur.cp
-
-/-- The backward-looking center of each utterance of `d` after the first. -/
-def cbs (d : List (Utterance E R F)) : List (Option E) :=
-  List.zipWith (fun prev cur ↦ cb prev cur.cf) d d.tail
-
-/-- The transition into each utterance of `d` after the first, the first of them with no prior
-center. -/
-def transitions (d : List (Utterance E R F)) : List Transition :=
-  List.zipWith3 transition (none :: cbs d) d d.tail
-
-@[simp] theorem cbs_nil : cbs ([] : List (Utterance E R F)) = [] := rfl
-
-@[simp] theorem cbs_singleton (u : Utterance E R F) : cbs [u] = [] := rfl
-
-@[simp] theorem cbs_cons_cons (u₁ u₂ : Utterance E R F) (d : List (Utterance E R F)) :
-    cbs (u₁ :: u₂ :: d) = cb u₁ u₂.cf :: cbs (u₂ :: d) := rfl
-
-@[simp] theorem length_cbs (d : List (Utterance E R F)) : (cbs d).length = d.length - 1 := by
-  simp [cbs, List.length_zipWith]
-
-@[simp] theorem transitions_nil : transitions ([] : List (Utterance E R F)) = [] := rfl
-
-@[simp] theorem transitions_singleton (u : Utterance E R F) : transitions [u] = [] := rfl
-
-@[simp] theorem length_transitions (d : List (Utterance E R F)) :
-    (transitions d).length = d.length - 1 := by
-  rw [transitions, ← List.zipWith_zipWith_left (fun (f : Utterance E R F → Transition) ↦ f)
-    transition]
-  simp [List.length_zipWith]
 
 end Discourse.Centering

@@ -2,33 +2,23 @@ module
 
 public import Linglib.Core.Data.List.MinMax
 public import Linglib.Core.Order.Argmax
+public import Linglib.Discourse.Centering.Utterance
 public import Mathlib.Data.Finset.Option
 
 /-!
-# Centering theory: centers and the pronominalization rule
+# Centering theory: backward-looking and preferred centers
 
-This file defines the centers of centering theory. An utterance realizes entities in grammatical
-roles, and the roles are ranked. The *forward-looking centers* of an utterance are the entities it
-realizes, each ranked by the highest role in which it is realized, and its *preferred center* is
-the highest-ranked of them. The *backward-looking centers* of an utterance are the highest-ranked
-forward-looking centers of the previous utterance among the entities it realizes. Rule 1 requires
-an utterance that pronominalizes any forward-looking center of the previous utterance to
-pronominalize its backward-looking center.
+The *backward-looking centers* of a set of entities after an utterance are the forward-looking
+centers of the utterance in the set that the utterance ranks highest. The set is that of the
+entities the next utterance realizes, so these are the centers that the next utterance continues.
+The *preferred center* of an utterance is the highest-ranked of its own forward-looking centers.
 
 ## Main definitions
 
-* `Discourse.Centering.Utterance.cf`, `Discourse.Centering.Utterance.rank`: the forward-looking
-  centers of an utterance and their ranking.
 * `Discourse.Centering.backwardCenters`: the backward-looking centers of a set of entities after
   an utterance, the maximizers of its ranking on the forward-looking centers in the set.
 * `Discourse.Centering.cb`: the backward-looking center, the first of them in surface order.
 * `Discourse.Centering.Utterance.cp`: the preferred center.
-* `Discourse.Centering.Utterance.pronominalized`: the entities an utterance realizes by a form
-  in a given set.
-* `Discourse.Centering.PronominalizationConstraint`: Rule 1.
-* `Discourse.Centering.CbPronominalized`: the backward-looking center is pronominalized.
-* `Discourse.Centering.Utterance.indexed`: an utterance with each role refined by surface
-  position.
 
 ## Main results
 
@@ -43,24 +33,16 @@ pronominalize its backward-looking center.
   backward-looking center of its own forward-looking centers.
 * `Discourse.Centering.cb_eq_of_cp_eq`: the preferred center of the previous utterance is the
   backward-looking center of any set of entities containing it.
-* `Discourse.Centering.CbPronominalized.mono`: counting more forms as pronouns preserves
-  `CbPronominalized`.
 
 ## Implementation notes
 
-The ranking is a `LinearOrder` on the role type, higher meaning more prominent. Two entities
-realized in the same role tie, so the ranking of entities by `Utterance.rank` is a total preorder
-and `backwardCenters` can have several elements. `cb` and `Utterance.cp` choose among the
-maximizers with `List.argmax`, which takes the first realization in surface order among those in
-the highest role.
+`backwardCenters` can have several elements, since entities realized in the same role tie. `cb`
+and `Utterance.cp` choose among the maximizers with `List.argmax`, which takes the first
+realization in surface order among those in the highest role.
 
 The backward-looking centers are those of a finite set of entities, the entities that the current
 utterance realizes: `cur.cf` when realization is direct, and a larger set when an utterance also
 realizes entities that its noun phrases are only associated with.
-
-The forms that count as pronouns for Rule 1 are a decidable set of forms. Rule 1 and
-`CbPronominalized` are stated of `cb`, so where several backward-looking centers tie they
-constrain the first in surface order.
 
 ## References
 
@@ -75,121 +57,24 @@ namespace Discourse.Centering
 
 variable {E R F : Type*}
 
-/-- A noun phrase realizing `entity` in the grammatical role `role` by an expression of form
-`form`. -/
-structure Realization (E R F : Type*) where
-  entity : E
-  role : R
-  form : F
-  deriving Repr, DecidableEq
+/-! ### The preferred center -/
 
-/-- An utterance as its noun-phrase realizations in surface order. -/
-structure Utterance (E R F : Type*) where
-  realizations : List (Realization E R F)
-  deriving Repr, DecidableEq
+section Cp
 
-namespace Utterance
-
-/-- `e ∈ u` when some realization in `u` is of `e`. -/
-instance : Membership E (Utterance E R F) := ⟨fun u e ↦ ∃ r ∈ u.realizations, r.entity = e⟩
-
-theorem mem_iff {u : Utterance E R F} {e : E} : e ∈ u ↔ ∃ r ∈ u.realizations, r.entity = e :=
-  Iff.rfl
-
-instance [DecidableEq E] (u : Utterance E R F) (e : E) : Decidable (e ∈ u) :=
-  inferInstanceAs (Decidable (∃ r ∈ u.realizations, r.entity = e))
-
-/-! ### Forward-looking centers -/
-
-section Cf
-
-variable [DecidableEq E] (u : Utterance E R F) {e : E}
-
-/-- The forward-looking centers of `u`: the entities it realizes. -/
-def cf : Finset E := (u.realizations.map (·.entity)).toFinset
-
-@[simp] theorem mem_cf : e ∈ u.cf ↔ e ∈ u := by simp [cf, mem_iff]
-
-@[simp] theorem cf_mk_nil : (⟨[]⟩ : Utterance E R F).cf = ∅ := rfl
-
-/-- The utterance `u` with the role of each realization refined by its surface position, an
-earlier realization outranking a later one in the same role. -/
-def indexed : Utterance E (R ×ₗ ℕᵒᵈ) F :=
-  ⟨u.realizations.zipIdx.map fun p ↦ ⟨p.1.entity, toLex (p.1.role, OrderDual.toDual p.2), p.1.form⟩⟩
-
-@[simp] theorem cf_indexed : u.indexed.cf = u.cf := by
-  have h : u.indexed.realizations.map (·.entity) = u.realizations.map (·.entity) := by
-    conv_rhs => rw [← List.zipIdx_map_fst 0 u.realizations]
-    simp only [indexed, List.map_map]
-    rfl
-  exact congrArg List.toFinset h
-
-variable (P : Set F) [DecidablePred (· ∈ P)]
-
-/-- The entities `u` realizes by a form in `P`. -/
-def pronominalized : Finset E :=
-  ((u.realizations.filter (·.form ∈ P)).map (·.entity)).toFinset
-
-variable {u P}
-
-@[simp] theorem mem_pronominalized :
-    e ∈ u.pronominalized P ↔ ∃ r ∈ u.realizations, r.entity = e ∧ r.form ∈ P := by
-  simp [pronominalized, and_assoc, and_comm]
-
-theorem pronominalized_subset_cf : u.pronominalized P ⊆ u.cf := fun _ he ↦
-  let ⟨r, hr, he, _⟩ := mem_pronominalized.mp he
-  u.mem_cf.mpr ⟨r, hr, he⟩
-
-theorem pronominalized_mono {Q : Set F} [DecidablePred (· ∈ Q)] (hPQ : P ⊆ Q) :
-    u.pronominalized P ⊆ u.pronominalized Q := fun _ he ↦
-  let ⟨r, hr, he, hP⟩ := mem_pronominalized.mp he
-  mem_pronominalized.mpr ⟨r, hr, he, hPQ hP⟩
-
-end Cf
-
-/-! ### Ranks -/
-
-section Rank
-
-variable [DecidableEq E] [LinearOrder R] (u : Utterance E R F) {e : E}
-
-/-- The rank of `e` in `u`: the highest role in which `u` realizes it, `⊥` if it does not. -/
-def rank (e : E) : WithBot R := ((u.realizations.filter (·.entity = e)).map (·.role)).maximum
-
-theorem role_le_rank {r : Realization E R F} (hr : r ∈ u.realizations) :
-    (r.role : WithBot R) ≤ u.rank r.entity :=
-  List.le_maximum_of_mem' (List.mem_map_of_mem (List.mem_filter.2 ⟨hr, by simp⟩))
-
-theorem rank_le_iff {b : WithBot R} :
-    u.rank e ≤ b ↔ ∀ r ∈ u.realizations, r.entity = e → (r.role : WithBot R) ≤ b := by
-  refine ⟨fun h r hr he ↦ by subst he; exact (u.role_le_rank hr).trans h, fun h ↦ ?_⟩
-  exact List.maximum_le_of_forall_le fun a ha ↦ by
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 ha
-    exact h r (List.mem_filter.1 hr).1 (by simpa using (List.mem_filter.1 hr).2)
-
-theorem exists_rank_eq (h : e ∈ u) :
-    ∃ r ∈ u.realizations, r.entity = e ∧ u.rank e = r.role := by
-  obtain ⟨r, hr, rfl⟩ := h
-  have hne : (u.realizations.filter (·.entity = r.entity)).map (·.role) ≠ [] :=
-    List.ne_nil_of_mem (List.mem_map_of_mem (List.mem_filter.2 ⟨hr, by simp⟩))
-  obtain ⟨m, hm⟩ := WithBot.ne_bot_iff_exists.1 (List.maximum_ne_bot_of_ne_nil hne)
-  obtain ⟨r', hr', rfl⟩ := List.mem_map.1 (List.maximum_mem hm.symm)
-  exact ⟨r', (List.mem_filter.1 hr').1, by simpa using (List.mem_filter.1 hr').2, hm.symm⟩
-
-end Rank
+variable [LinearOrder R] {u : Utterance E R F} {e : E}
 
 /-- The preferred center of `u`: the entity it realizes in the highest role, the first in surface
 order if several are. -/
-def cp [LinearOrder R] (u : Utterance E R F) : Option E :=
+def Utterance.cp (u : Utterance E R F) : Option E :=
   (u.realizations.argmax (·.role)).map (·.entity)
 
-@[simp] theorem cp_mk_nil [LinearOrder R] : (⟨[]⟩ : Utterance E R F).cp = none := rfl
+@[simp] theorem Utterance.cp_mk_nil : (⟨[]⟩ : Utterance E R F).cp = none := rfl
 
-theorem cp_mem [LinearOrder R] {u : Utterance E R F} {e : E} (h : u.cp = some e) : e ∈ u := by
+theorem Utterance.cp_mem (h : u.cp = some e) : e ∈ u := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, List.argmax_mem hr, rfl⟩
 
-end Utterance
+end Cp
 
 /-! ### Backward-looking centers -/
 
@@ -279,7 +164,7 @@ theorem card_backwardCenters_le_one (s : Finset E)
   obtain ⟨rb, hrb, rfl, heb⟩ := prev.exists_rank_eq hpb
   exact h ra hra rb hrb (WithBot.coe_injective (hea.symm.trans (hab.trans heb)))
 
-/-! ### The preferred center -/
+/-! ### The preferred center and the backward-looking center -/
 
 /-- The preferred center of `prev` is the backward-looking center of any set containing it. -/
 theorem cb_eq_of_cp_eq (hp : prev.cp = some e) (he : e ∈ s) : cb prev s = some e := by
@@ -326,48 +211,5 @@ theorem backwardCenters_indexed (u : Utterance E R F) (s : Finset E) :
   exact show p.1.entity = q.1.entity from congrArg Realization.entity (Option.some.inj hp').symm
 
 end Cb
-
-/-! ### Rule 1 -/
-
-section Rule1
-
-variable [DecidableEq E] [LinearOrder R] (P : Set F) [DecidablePred (· ∈ P)]
-  (prev cur : Utterance E R F)
-
-/-- The backward-looking center of `cur` after `prev`, if any, is realized by a form in `P`: the
-unconditional form of Rule 1 of [gordon-grosz-gilliom-1993]. -/
-def CbPronominalized : Prop := ∀ c ∈ cb prev cur.cf, c ∈ cur.pronominalized P
-
-instance : Decidable (CbPronominalized P prev cur) :=
-  inferInstanceAs (Decidable (∀ c ∈ cb prev cur.cf, c ∈ cur.pronominalized P))
-
-/-- Rule 1 of [grosz-joshi-weinstein-1995], for the pronouns `P`: if `cur` pronominalizes any
-forward-looking center of `prev`, it pronominalizes its backward-looking center. -/
-def PronominalizationConstraint : Prop :=
-  (prev.cf ∩ cur.pronominalized P).Nonempty → CbPronominalized P prev cur
-
-instance : Decidable (PronominalizationConstraint P prev cur) :=
-  inferInstanceAs
-    (Decidable ((prev.cf ∩ cur.pronominalized P).Nonempty → CbPronominalized P prev cur))
-
-variable {P prev cur}
-
-/-- The unconditional form implies Rule 1. -/
-theorem CbPronominalized.constraint (h : CbPronominalized P prev cur) :
-    PronominalizationConstraint P prev cur :=
-  fun _ ↦ h
-
-/-- Rule 1 holds of an utterance that pronominalizes no forward-looking center of the previous
-one. -/
-theorem pronominalizationConstraint_of_disjoint (h : Disjoint prev.cf (cur.pronominalized P)) :
-    PronominalizationConstraint P prev cur :=
-  fun hne ↦ absurd (Finset.disjoint_iff_inter_eq_empty.mp h) hne.ne_empty
-
-/-- Counting more forms as pronouns preserves the unconditional form of Rule 1. -/
-theorem CbPronominalized.mono {Q : Set F} [DecidablePred (· ∈ Q)] (hPQ : P ⊆ Q)
-    (h : CbPronominalized P prev cur) : CbPronominalized Q prev cur :=
-  fun c hc ↦ Utterance.pronominalized_mono hPQ (h c hc)
-
-end Rule1
 
 end Discourse.Centering
