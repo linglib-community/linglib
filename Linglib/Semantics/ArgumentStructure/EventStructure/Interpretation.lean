@@ -6,45 +6,54 @@ public import Linglib.Semantics.ArgumentStructure.Root.Basic
 /-!
 # Interpretations of the event-structure primitives
 
-This file defines the interpretations of the primitives of event-structural decomposition. An
-interpretation gives the three relations that the verbal heads introduce: an eventuality gives
-rise to a state, an eventuality causes another, and an individual is the effector of an
-eventuality. In the vocabulary of model theory it is a structure for the signature with these
-three relation symbols, over the sorts of individuals, states and eventualities. The heads
-themselves are operators on predicates, possibility along the relations: `vBecome` turns a state
-predicate into the predicate of the events that give rise to such a state, possibility along the
-converse of `become`, and `vCause` turns an event predicate into the predicate of the events
-that cause such an event, possibility along `cause`.
+Event-structural decomposition builds the meaning of a verb from three relations: a state `s`
+*arises from* an eventuality `e`, written `s ~[become] e`, an eventuality `v` *causes* an
+eventuality `e`, written `v ~[cause] e`, and an individual `y` is the *effector* of an
+eventuality `v`. An `EventStructure.Interpretation` over types of individuals, states and
+eventualities is a choice of these three relations.
 
-A state predicate may itself entail a change or a cause of the change, and a manner predicate
-describes actions. These are the meaning postulates that Beavers and Koontz-Garboden attach to
-a root, one for each kind of entailment, with one more for a root that carries both a manner and
-a cause, whose manner is that of the causing event. The postulates of a kind signature form a
-theory, and an interpretation `Respects` the signature for a predicate when it is a model of
-that theory. The postulates are modal formulas over the same relations, so the entailments among
-them are instances of the monotonicity of possibility. An entailment is then a statement about
-every interpretation, and a failure of entailment is witnessed by one.
+The verbal heads are possibility operators along the relations. For a state predicate `P` and an
+individual `x`, `vBecome P x` is the predicate `fun e ↦ ∃ s, s ~[become] e ∧ P x s` of the
+eventualities that give rise to a `P`-state of `x`, and for a predicate `Q` of eventualities,
+`vCause Q` is the predicate `fun v ↦ ∃ e, v ~[cause] e ∧ Q e` of the eventualities that cause a
+`Q`-eventuality. Possibility along a relation is left adjoint to necessity along its converse, so
+the eventualities that cause a change into a `P`-state all satisfy `Q` exactly when every cause
+of every change that a `P`-state arises from does (`Interpretation.vCause_vBecome_le_iff`).
 
-## Main definitions
-
-* `EventStructure.Interpretation`: the relations `become`, `cause` and `effector`.
-* `Interpretation.vBecome`, `Interpretation.vCause`: the two heads.
-* `Interpretation.EntailsChange`, `EntailsCause`: the postulates on a state predicate.
-* `Interpretation.EntailsManner`, `EntailsMannerOfCause`: a manner describes actions, and is the
-  manner of the cause of a change.
-* `EventStructure.Postulate`: the postulates of the theory, each with the kinds that trigger it.
-* `Interpretation.Respects`: the interpretation is a model of the postulates a signature triggers.
-
-## Main results
-
-* `Interpretation.respects_close`: a signature and its collocational closure have the same
-  models.
+A root's state predicate `P` and manner predicate `Q` may carry entailments of their own, the
+meaning postulates of Beavers and Koontz-Garboden. `P` *entails change* when every `P`-state
+arises from some change, `P x ≤ ◇[become] ⊤`, and *entails a cause* when that change has a
+cause, `P x ≤ ◇[become] (◇[cause.inv] ⊤)`. `Q` *is a manner* when every `Q`-eventuality has an
+effector, and `Q` *is the manner of the cause* of `P` when every `P`-state arises from a change
+that has a cause and whose causes are all `Q`-eventualities,
+`P x ≤ ◇[become] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`. An interpretation `Respects` a kind
+signature for `P` and `Q` when the postulates of the kinds in the signature hold. Each postulate
+entails the one before it, so a signature and its collocational closure have the same models
+(`Interpretation.respects_close`). Where a state arises from at most one change, the manner of
+the cause holds of the causing event of the causative
+(`Interpretation.EntailsMannerOfCause.vCause_vBecome_le`).
 
 ## Implementation notes
 
-The sorts are type parameters, so a relation cannot be applied to an argument of the wrong sort.
-mathlib's first-order structures are single-sorted; a view of an interpretation as such a
-structure, with the postulates as sentences, is not yet defined.
+The sorts are type parameters, so a relation cannot be applied to an argument of the wrong sort;
+mathlib's `FirstOrder.Language.Structure` is single-sorted and would need sort predicates and a
+relativized quantifier in each postulate.
+
+`vCause` introduces no individual. The causative head of [beavers-koontz-garboden-2020] also
+makes its subject the effector of the causing eventuality, which a caller states as a conjunct
+(`Template.denote` at `Template.effector`), so that the same operator serves analyses on which
+the causer is introduced by a separate head.
+
+The effector relation is curried, like the thematic relations of
+`ArgumentStructure.ThematicFrame`, where `become` and `cause` are sets of pairs along which the
+modal operators are taken.
+
+## TODO
+
+* `EntailsMannerOfCause` is the postulate of a root in the complement of `v`, whose state
+  predicate constrains the cause. A manner root adjoined to `v` that carries a cause, such as
+  √hand, has the converse postulate, on which every eventuality of the manner causes a change;
+  it is not defined, and `Respects` does not read the root's position.
 
 ## References
 
@@ -57,6 +66,7 @@ namespace ArgumentStructure.EventStructure
 
 /-- An interpretation of the event-structure primitives, the relations that the verbal heads
 introduce. -/
+@[ext]
 structure Interpretation (Entity State Event : Type*) where
   /-- A state and the eventuality that gives rise to it. -/
   become : SetRel State Event
@@ -65,61 +75,47 @@ structure Interpretation (Entity State Event : Type*) where
   /-- The individual is the effector of the eventuality. -/
   effector : Entity → Event → Prop
 
-/-- The meaning postulates of the root typology. -/
-inductive Postulate
-  /-- A state of the root arises from a change. -/
-  | change
-  /-- A state of the root arises from a caused change. -/
-  | cause
-  /-- The root's manner describes actions. -/
-  | manner
-  /-- The root's manner is that of the cause of the change. -/
-  | mannerOfCause
-  deriving DecidableEq, Fintype
-
-/-- The kinds a signature carries when the postulate applies to it: a postulate for each kind
-but the state, which imposes nothing beyond the predicate, and the manner of the cause for a
-manner with a cause. -/
-def Postulate.trigger : Postulate → Finset ArgumentStructure.Root.Kind
-  | .change => {.result}
-  | .cause => {.cause}
-  | .manner => {.manner}
-  | .mannerOfCause => {.manner, .cause}
-
 namespace Interpretation
 
 open ModalLogic
 open scoped SetRel
 
 variable {Entity State Event : Type*} (M : Interpretation Entity State Event)
-  {P P' : Entity → State → Prop} {Q Q' : Event → Prop} {x y : Entity} {e : Event}
+  {P P' : Entity → State → Prop} {Q Q' : Event → Prop} {x : Entity} {s : State} {e v : Event}
 
 /-- The change-of-state head `vBecome P x` holds of the events that give rise to a state of
 which `P x` holds. -/
 def vBecome (P : Entity → State → Prop) (x : Entity) : Event → Prop := ◇[M.become.inv] (P x)
 
 /-- The causative head `vCause Q` holds of the eventualities that cause an eventuality of which
-`Q` holds. It introduces no individual. -/
+`Q` holds. -/
 def vCause (Q : Event → Prop) : Event → Prop := ◇[M.cause] Q
 
 variable {M}
 
 theorem vBecome_iff : M.vBecome P x e ↔ ∃ s, s ~[M.become] e ∧ P x s := .rfl
 
-theorem vCause_iff : M.vCause Q e ↔ ∃ e', e ~[M.cause] e' ∧ Q e' := .rfl
+theorem vCause_iff : M.vCause Q v ↔ ∃ e, v ~[M.cause] e ∧ Q e := .rfl
 
+@[gcongr]
 theorem vBecome_mono (h : P ≤ P') : M.vBecome P ≤ M.vBecome P' :=
   fun x ↦ diamond_mono _ (h x)
 
+@[gcongr]
 theorem vCause_mono (h : Q ≤ Q') : M.vCause Q ≤ M.vCause Q' :=
   diamond_mono _ h
 
-/-! ### Meaning postulates on a state predicate -/
+/-- The eventualities that cause a change into a `P`-state of `x` all satisfy `Q` iff every
+cause of every change that a `P`-state of `x` arises from does. -/
+theorem vCause_vBecome_le_iff :
+    M.vCause (M.vBecome P x) ≤ Q ↔ P x ≤ □[M.become] (□[M.cause.inv] Q) :=
+  (diamond_box_gc M.cause _ _).trans (diamond_box_gc M.become.inv _ _)
+
+/-! ### Meaning postulates -/
 
 section Postulates
 
-
-variable (M) (P : Entity → State → Prop) (Q : Event → Prop) {ks : Finset Root.Kind}
+variable (M) (P : Entity → State → Prop) (Q : Event → Prop) {ks ks' : Finset Root.Kind}
 
 /-- The state predicate `P` entails change when every state of which it holds arises from a
 change. -/
@@ -129,58 +125,80 @@ def EntailsChange : Prop := ∀ x, P x ≤ ◇[M.become] ⊤
 change that some eventuality causes. -/
 def EntailsCause : Prop := ∀ x, P x ≤ ◇[M.become] (◇[M.cause.inv] ⊤)
 
-/-- The manner `Q` describes actions, the book's feature (11b): every eventuality of the manner
-has an effector. -/
+/-- `Q` is a manner when it describes actions: every eventuality of which it holds has an
+effector. -/
 def EntailsManner : Prop := ∀ v, Q v → ∃ y, M.effector y v
 
-/-- The manner `Q` is the manner of the cause of a change of state, as with √drown and √hand, when
-every state of which `P` holds arises from a change whose every cause is a `Q`-eventuality. -/
-def EntailsMannerOfCause : Prop := ∀ x, P x ≤ ◇[M.become] (□[M.cause.inv] Q)
+/-- `Q` is the manner of the cause of `P`, as with √guillotine and √drown, when every state of
+which `P` holds arises from a change that has a cause and whose every cause is a
+`Q`-eventuality. -/
+def EntailsMannerOfCause : Prop :=
+  ∀ x, P x ≤ ◇[M.become] (◇[M.cause.inv] ⊤ ⊓ □[M.cause.inv] Q)
 
-/-- The postulate in `M` for the state predicate `P` and the manner `Q`. -/
-def Holds : Postulate → Prop
-  | .change => M.EntailsChange P
-  | .cause => M.EntailsCause P
-  | .manner => M.EntailsManner Q
-  | .mannerOfCause => M.EntailsMannerOfCause P Q
-
-/-- The interpretation respects the kind signature `ks` for `P` and `Q` when every postulate that
-`ks` triggers holds. -/
-def Respects (ks : Finset Root.Kind) : Prop := ∀ p : Postulate, p.trigger ⊆ ks → M.Holds P Q p
+/-- The interpretation respects the kind signature `ks` for the state predicate `P` and the
+manner `Q` when the meaning postulate of each kind in `ks` holds, and that of the manner of the
+cause for a signature with a manner and a cause. The state kind imposes nothing beyond `P`. -/
+@[mk_iff]
+structure Respects (ks : Finset Root.Kind) : Prop where
+  /-- A state of a result root arises from a change. -/
+  change : .result ∈ ks → M.EntailsChange P
+  /-- A state of a root with a cause arises from a caused change. -/
+  cause : .cause ∈ ks → M.EntailsCause P
+  /-- The manner of a manner root describes actions. -/
+  manner : .manner ∈ ks → M.EntailsManner Q
+  /-- The manner of a root with a manner and a cause is that of the cause of the change. -/
+  mannerOfCause : .manner ∈ ks → .cause ∈ ks → M.EntailsMannerOfCause P Q
 
 variable {M P Q}
 
 theorem EntailsCause.entailsChange (h : M.EntailsCause P) : M.EntailsChange P :=
   fun x ↦ (h x).trans (diamond_mono _ le_top)
 
-theorem EntailsMannerOfCause.entailsChange (h : M.EntailsMannerOfCause P Q) :
-    M.EntailsChange P :=
-  fun x ↦ (h x).trans (diamond_mono _ le_top)
+theorem EntailsMannerOfCause.entailsCause (h : M.EntailsMannerOfCause P Q) : M.EntailsCause P :=
+  fun x ↦ (h x).trans (diamond_mono _ inf_le_left)
 
-theorem Respects.mono {ks' : Finset Root.Kind} (hks : ks ⊆ ks') (h : M.Respects P Q ks') :
-    M.Respects P Q ks :=
-  fun p hp ↦ h p (hp.trans hks)
+/-- A state of a root whose manner is that of the cause arises from a change that some
+eventuality of the manner causes. -/
+theorem EntailsMannerOfCause.le_diamond_diamond (h : M.EntailsMannerOfCause P Q) (x : Entity) :
+    P x ≤ ◇[M.become] (◇[M.cause.inv] Q) :=
+  (h x).trans <| diamond_mono _ fun _ ⟨⟨v, hv, _⟩, hQ⟩ ↦ ⟨v, hv, hQ v hv⟩
+
+/-- A state of a root whose manner is that of the cause arises from a change caused by an
+action of the manner, with an effector. -/
+theorem EntailsMannerOfCause.exists_effector (h : M.EntailsMannerOfCause P Q)
+    (hQ : M.EntailsManner Q) (hs : P x s) :
+    ∃ e v y, s ~[M.become] e ∧ v ~[M.cause] e ∧ Q v ∧ M.effector y v :=
+  let ⟨e, he, v, hv, hQv⟩ := h.le_diamond_diamond x s hs
+  let ⟨y, hy⟩ := hQ v hQv
+  ⟨e, v, y, he, hv, hQv, hy⟩
+
+/-- Where a state arises from at most one change, the manner of the cause holds of every
+eventuality that causes a change into a state of the root. -/
+theorem EntailsMannerOfCause.vCause_vBecome_le (h : M.EntailsMannerOfCause P Q)
+    (hM : ∀ s ⦃e⦄, s ~[M.become] e → ∀ ⦃e'⦄, s ~[M.become] e' → e = e') (x : Entity) :
+    M.vCause (M.vBecome P x) ≤ Q :=
+  vCause_vBecome_le_iff.2 <| (h x).trans <|
+    (diamond_mono _ inf_le_right).trans (diamond_le_box_iff.2 hM _)
+
+theorem Respects.mono (hks : ks ⊆ ks') (h : M.Respects P Q ks') : M.Respects P Q ks :=
+  ⟨fun hk ↦ h.change (hks hk), fun hk ↦ h.cause (hks hk), fun hk ↦ h.manner (hks hk),
+    fun hm hc ↦ h.mannerOfCause (hks hm) (hks hc)⟩
 
 /-- A signature is respected iff its collocational closure is: the closure adds a result only
 below a cause, whose postulate entails change, and adds no manner or cause. -/
 @[simp] theorem respects_close : M.Respects P Q (Root.close ks) ↔ M.Respects P Q ks := by
-  refine ⟨Respects.mono (Root.close.le_closure ks), fun h p hp ↦ ?_⟩
   have hm := Root.mem_close_iff_of_isMax (r := ks) Root.Kind.isMax_manner
   have hc := Root.mem_close_iff_of_isMax (r := ks) Root.Kind.isMax_cause
-  cases p with
-  | change =>
-    obtain ⟨j, hj, hrj⟩ := Root.mem_close.1 (Finset.singleton_subset_iff.1 hp)
-    cases hrj with
-    | refl => exact h .change (Finset.singleton_subset_iff.2 hj)
-    | result_cause => exact (h .cause (Finset.singleton_subset_iff.2 hj)).entailsChange
-  | cause => exact h .cause (by simpa [Postulate.trigger, hc] using hp)
-  | manner => exact h .manner (by simpa [Postulate.trigger, hm] using hp)
-  | mannerOfCause =>
-    exact h .mannerOfCause (by simpa [Postulate.trigger, Finset.insert_subset_iff, hm, hc] using hp)
+  refine ⟨.mono (Root.close.le_closure ks), fun h ↦ ⟨fun hr ↦ ?_, fun hk ↦ h.cause (hc.1 hk),
+    fun hk ↦ h.manner (hm.1 hk), fun hk hk' ↦ h.mannerOfCause (hm.1 hk) (hc.1 hk')⟩⟩
+  obtain ⟨j, hj, hrj⟩ := Root.mem_close.1 hr
+  cases hrj with
+  | refl => exact h.change hj
+  | result_cause => exact (h.cause hj).entailsChange
 
 theorem Respects.entailsChange (h : M.Respects P Q ks)
     (hr : Root.Kind.result ∈ Root.close ks) : M.EntailsChange P :=
-  respects_close.2 h .change (Finset.singleton_subset_iff.2 hr)
+  (respects_close.2 h).change hr
 
 end Postulates
 

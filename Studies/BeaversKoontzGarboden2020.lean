@@ -38,7 +38,13 @@ fills [the cells that markedness and naturalness allow](##mem_attestedCells_iff)
 * A diagnostic is a property of a root's state description in an interpretation, passed when some
   interpretation that respects the signature lets the denial go through (`passes_iff`). The
   denial of action is modelled as the book applies it to the manner of killing verbs, on a
-  causative; with a pure manner verb it denies the verb's own event and is not modelled.
+  causative, whose causing event it denies to be of the root's manner; with a pure manner verb
+  it denies the verb's own event and is not modelled.
+* The postulate of a root such as √guillotine constrains the causes of a change that its state
+  arises from, and the causative introduces a change of its own. The two are the same change
+  when a state arises from at most one, which `Passes` assumes of the interpretations it ranges
+  over; `not_vCause_vBecome_le_twoChanges` is an interpretation without the assumption in which
+  the postulate holds and the causing event lacks the manner.
 * The result-denial rows, which in the ditransitives depend on the template as well as the root,
   and the object-deletion row are not read; the rows of the three attachments of *again* are read
   by `attachment_rows`.
@@ -257,11 +263,18 @@ variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity 
 
 theorem crack_entails_cause (h : M.Respects P Q crack) (hs : P x s) :
     ◇[M.become] (◇[M.cause.inv] ⊤) s :=
-  h .cause (by decide) x s hs
+  h.cause (by decide) x s hs
 
+-- (74), p. 201
 theorem drown_entails_manner (h : M.Respects P Q drown) (hs : P x s) :
-    ◇[M.become] (□[M.cause.inv] Q) s :=
-  h .mannerOfCause (by decide) x s hs
+    ◇[M.become] (◇[M.cause.inv] Q) s :=
+  (h.mannerOfCause (by decide) (by decide)).le_diamond_diamond x s hs
+
+-- p. 201: the root constrains the causing event that `vcause` introduces
+theorem drown_vCause_vBecome_le (h : M.Respects P Q drown)
+    (hM : ∀ s ⦃e⦄, s ~[M.become] e → ∀ ⦃e'⦄, s ~[M.become] e' → e = e') :
+    M.vCause (M.vBecome P x) ≤ Q :=
+  (h.mannerOfCause (by decide) (by decide)).vCause_vBecome_le hM x
 
 end Model
 
@@ -280,24 +293,40 @@ def changing : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit wh
 theorem flat_not_entailsChange :
     unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat ∧
       ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
-  ⟨fun p hp ↦ absurd hp (by cases p <;> decide), fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
+  ⟨by constructor <;> intro h <;> exact absurd h (by decide),
+    fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
 
 private theorem changing_respects {ks : Root}
     (h : ¬ (Root.Kind.manner ∈ ks ∧ Root.Kind.cause ∈ ks)) :
-    changing.Respects (fun _ _ ↦ True) ⊥ ks := fun p hp ↦ by
-  cases p with
-  | change => exact fun _ _ _ ↦ ⟨(), trivial, trivial⟩
-  | cause => exact fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩
-  | manner => exact fun _ h ↦ h.elim
-  | mannerOfCause =>
-    exact absurd ⟨(Finset.insert_subset_iff.1 hp).1,
-      Finset.singleton_subset_iff.1 (Finset.insert_subset_iff.1 hp).2⟩ h
+    changing.Respects (fun _ _ ↦ True) ⊥ ks :=
+  ⟨fun _ _ _ _ ↦ ⟨(), trivial, trivial⟩, fun _ _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩,
+    fun _ _ h ↦ h.elim, fun hm hc ↦ absurd ⟨hm, hc⟩ h⟩
 
 theorem crack_respects :
     changing.Respects (fun _ _ ↦ True) ⊥ crack ∧
       ¬ unchanging.Respects (fun _ _ ↦ True) ⊥ crack :=
   ⟨changing_respects (by decide),
     fun h ↦ let ⟨_, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
+
+/-- The changes `change i` that the one state arises from and the actions `action i` that cause
+them. -/
+inductive Subevent
+  | change (i : Bool)
+  | action (i : Bool)
+
+/-- A model in which the one state arises from two changes, each caused by one action. -/
+def twoChanges : ArgumentStructure.EventStructure.Interpretation Unit Unit Subevent where
+  become := {(_, e) | ∃ i, e = .change i}
+  cause := {(v, e) | ∃ i, v = .action i ∧ e = .change i}
+  effector := ⊤
+
+theorem not_vCause_vBecome_le_twoChanges :
+    twoChanges.EntailsMannerOfCause (fun _ _ ↦ True) (· = .action true) ∧
+      ¬ twoChanges.vCause (twoChanges.vBecome (fun _ _ ↦ True) ()) ≤ (· = .action true) :=
+  ⟨fun _ _ _ ↦ ⟨.change true, ⟨_, rfl⟩, ⟨.action true, ⟨_, rfl, rfl⟩, trivial⟩,
+      fun _ ⟨_, hv, hi⟩ ↦ Subevent.change.inj hi ▸ hv⟩,
+    fun h ↦ Bool.false_ne_true <| Subevent.action.inj <|
+      h (.action false) ⟨.change false, ⟨_, rfl, rfl⟩, (), ⟨_, rfl⟩, trivial⟩⟩
 
 /-! ### The diagnostics
 
@@ -330,7 +359,7 @@ inductive Diagnostic
   | changeDenial
   /-- *Again* at the state presupposes an earlier state, and no earlier change. -/
   | restitutive
-  /-- The causative survives a denial that its causer acted. -/
+  /-- The causative survives a denial that its causing event was an action of the manner. -/
   | actionDenial
   deriving DecidableEq
 
@@ -346,7 +375,7 @@ def Diagnostic.Passes (R : SetRel State State) (P : Entity → State → Prop) (
     (x : Entity) : Diagnostic → Prop
   | .changeDenial => ∃ s, DeniesChange M P x s
   | .restitutive => ∃ s, againAt M .state R P x x s ≠ .undefined ∧ ¬ ◇[R] (◇[M.become] ⊤) s
-  | .actionDenial => ∃ s, P x s ∧ ¬ ◇[M.become] (□[M.cause.inv] Q) s
+  | .actionDenial => ∃ v, causative.denote M P Q x x v ∧ ¬ Q v
 
 end Diagnostics
 
@@ -373,20 +402,19 @@ theorem forged_restitutive :
     fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
 
 private theorem forged_respects {ks : Root} (hr : Root.Kind.result ∉ close ks) :
-    forged.Respects sharp ⊥ ks := fun p hp ↦ by
+    forged.Respects sharp ⊥ ks :=
   have hcause : Root.Kind.cause ∉ ks := fun hk ↦ hr (mem_close.2 ⟨_, hk, .result_cause⟩)
-  cases p with
-  | change => exact absurd (mem_close.2 ⟨_, Finset.singleton_subset_iff.1 hp, le_rfl⟩) hr
-  | cause => exact absurd (Finset.singleton_subset_iff.1 hp) hcause
-  | manner => exact fun _ h ↦ h.elim
-  | mannerOfCause => exact absurd (Finset.insert_subset_iff.1 hp).2 (by simpa using hcause)
+  ⟨fun hk ↦ absurd (mem_close.2 ⟨_, hk, le_rfl⟩) hr, fun hk ↦ absurd hk hcause,
+    fun _ _ h ↦ h.elim, fun _ hk ↦ absurd hk hcause⟩
 
 /-- A root of signature `ks` passes the diagnostic when its state description passes it in some
-model that respects the signature, with some manner. -/
+model that respects the signature, with some manner, and in which a state arises from at most
+one change. -/
 def Passes (ks : Root) (g : Diagnostic) : Prop :=
   ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation Unit State Event)
     (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
-    M.Respects P Q ks ∧ g.Passes M R P Q ()
+    (∀ s ⦃e⦄, s ~[M.become] e → ∀ ⦃e'⦄, s ~[M.become] e' → e = e') ∧
+      M.Respects P Q ks ∧ g.Passes M R P Q ()
 
 /-- A root passes a diagnostic exactly when its collocational closure lacks the kinds the
 diagnostic detects. -/
@@ -395,23 +423,23 @@ theorem passes_iff {ks : Root} (g : Diagnostic) :
   cases g with
   | changeDenial =>
     simp only [Diagnostic.detects, Finset.singleton_subset_iff]
-    exact ⟨fun ⟨_, _, M, _, _, _, hR, s, hs⟩ hr ↦
+    exact ⟨fun ⟨_, _, M, _, _, _, _, hR, s, hs⟩ hr ↦
       (entailsChange_iff_forall_not_deniesChange M).1 (hR.entailsChange hr) () s hs,
-      fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, ⊥, forged_respects hr, false, forged_deniesChange⟩⟩
+      fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, ⊥, fun _ _ _ _ _ ↦ rfl, forged_respects hr, false,
+        forged_deniesChange⟩⟩
   | restitutive =>
     simp only [Diagnostic.detects, Finset.singleton_subset_iff]
-    exact ⟨fun ⟨_, _, _, _, _, _, hR, _, ha, hn⟩ hr ↦
+    exact ⟨fun ⟨_, _, _, _, _, _, _, hR, _, ha, hn⟩ hr ↦
       hn (diamond_become_of_againAt_state_ne_undefined (hR.entailsChange hr) ha),
-      fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, {p | p.2 < p.1}, forged_respects hr, true,
-        forged_restitutive⟩⟩
+      fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, {p | p.2 < p.1}, fun _ _ _ _ _ ↦ rfl,
+        forged_respects hr, true, forged_restitutive⟩⟩
   | actionDenial =>
     simp only [Diagnostic.detects, Finset.insert_subset_iff, Finset.singleton_subset_iff,
       mem_close_iff_of_isMax Root.Kind.isMax_manner, mem_close_iff_of_isMax Root.Kind.isMax_cause]
-    exact ⟨fun ⟨_, _, _, _, _, _, hR, s, hs, hn⟩ ⟨hm, hc⟩ ↦
-      hn (hR .mannerOfCause (Finset.insert_subset_iff.2 ⟨hm, Finset.singleton_subset_iff.2 hc⟩)
-        () s hs),
-      fun h ↦ ⟨Unit, Unit, changing, fun _ _ ↦ True, ⊥, ⊥, changing_respects h, (), trivial,
-        fun ⟨_, _, hbox⟩ ↦ hbox () trivial⟩⟩
+    exact ⟨fun ⟨_, _, _, _, _, _, hM, hR, v, hv, hn⟩ ⟨hm, hc⟩ ↦
+      hn ((hR.mannerOfCause hm hc).vCause_vBecome_le hM () v hv.2),
+      fun h ↦ ⟨Unit, Unit, changing, fun _ _ ↦ True, ⊥, ⊥, fun _ _ _ _ _ ↦ rfl,
+        changing_respects h, (), ⟨trivial, (), trivial, (), trivial, trivial⟩, fun h ↦ h⟩⟩
 
 /-- The signature of a row's root, the least of the class the book assigns it. -/
 def kinds? (d : Datum) : Option Root :=
