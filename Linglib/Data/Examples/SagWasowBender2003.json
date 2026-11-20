@@ -320,6 +320,66 @@
     "verified": "page-image"
   },
   {
+    "id": "sagwasowbender2003_ex17a",
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (17a)"},
+    "language": "stan1293",
+    "primaryText": "I enjoy yourself.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "pronominal agreement"],
+      ["antecedent", "I"],
+      ["reflexive", "yourself"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sagwasowbender2003_ex17b",
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (17b)"},
+    "language": "stan1293",
+    "primaryText": "He enjoys themselves.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "pronominal agreement"],
+      ["antecedent", "he"],
+      ["reflexive", "themselves"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sagwasowbender2003_ex17c",
+    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (17c)"},
+    "language": "stan1293",
+    "primaryText": "She enjoys himself.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topic", "pronominal agreement"],
+      ["antecedent", "she"],
+      ["reflexive", "himself"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "sagwasowbender2003_ex37a",
     "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37a)"},
     "language": "stan1293",
