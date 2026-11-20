@@ -1,295 +1,593 @@
-[
-  {
-    "id": "tieuetal2020_1a",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(1a), (13), (21)"},
-    "language": "stan1293",
-    "primaryText": "Emily fed giraffes.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "more than one giraffe", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["polarity", "positive"]
-    ],
-    "comment": "Conveys that Emily fed more than one giraffe, the multiplicity inference.",
-    "verified": "page-image"
+{
+  "features": [
+    {
+      "key": "polarity",
+      "lean": "polarity",
+      "type": "Polarity",
+      "doc": "The environment of the plural or scalar item.",
+      "levels": [
+        {
+          "name": "positive",
+          "label": "positive",
+          "doc": "an unembedded positive sentence"
+        },
+        {
+          "name": "negative",
+          "label": "negative",
+          "doc": "under sentential negation"
+        },
+        {
+          "name": "downward",
+          "label": "downward",
+          "doc": "in the antecedent of a conditional or in a question"
+        }
+      ]
+    },
+    {
+      "key": "inference",
+      "lean": "inference",
+      "type": "Inference",
+      "doc": "The inference the sentence is tested for.",
+      "levels": [
+        {
+          "name": "multiplicity",
+          "label": "multiplicity",
+          "doc": "the more-than-one inference of a bare plural"
+        },
+        {
+          "name": "scalar",
+          "label": "scalar",
+          "doc": "the not-all inference of *some*"
+        }
+      ]
+    },
+    {
+      "key": "reward",
+      "lean": "reward",
+      "type": "Reward",
+      "doc": "The reward adults most often gave in the ternary judgment task of Experiment 3.",
+      "levels": [
+        {
+          "name": "minimal",
+          "label": "minimal",
+          "doc": "one strawberry"
+        },
+        {
+          "name": "intermediate",
+          "label": "intermediate",
+          "doc": "two strawberries"
+        }
+      ]
+    }
+  ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The paraphrases the paper judges a sentence against.",
+    "levels": [
+      {
+        "name": "moreThanOne",
+        "label": "more than one giraffe",
+        "doc": "Emily fed more than one giraffe"
+      },
+      {
+        "name": "notMoreThanOne",
+        "label": "not more than one giraffe",
+        "doc": "Emily didn't feed more than one giraffe"
+      },
+      {
+        "name": "notASingle",
+        "label": "not a single giraffe",
+        "doc": "Emily didn't feed a single giraffe"
+      },
+      {
+        "name": "notAll",
+        "label": "not all of the giraffes",
+        "doc": "Emily fed some and not all of the giraffes"
+      }
+    ]
   },
-  {
-    "id": "tieuetal2020_2a",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(2a), (16), (23)"},
-    "language": "stan1293",
-    "primaryText": "Emily didn't feed giraffes.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "not more than one giraffe", "judgment": "unacceptable"},
-      {"name": "not a single giraffe", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["polarity", "negative"]
-    ],
-    "comment": "Paraphrased as the negation of the singular, that Emily fed no giraffe, rather than as not more than one.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_3a",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(3a)"},
-    "language": "stan1293",
-    "primaryText": "If there are books on Stephen's desk, Robin should lock the door.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "downward"]
-    ],
-    "comment": "In the antecedent of a conditional the plural is equivalent to the singular.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_4a",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(4a)"},
-    "language": "stan1293",
-    "primaryText": "Are there books on Stephen's desk?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "downward"]
-    ],
-    "comment": "In a question the plural is equivalent to the singular.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_8",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(8), (18), (26)"},
-    "language": "stan1293",
-    "primaryText": "Emily didn't feed giraffes, because she fed only one!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"]
-    ],
-    "comment": "The marked reading with stress on the plural morpheme: the weak reading of the ambiguity account, a local implicature, or an undefined sentence used as if true.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_14",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(14)"},
-    "language": "stan1293",
-    "primaryText": "Emily fed exactly one giraffe.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"]
-    ],
-    "comment": "The more informative alternative to (13) whose denial is the multiplicity inference.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_17",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(17)"},
-    "language": "stan1293",
-    "primaryText": "Emily didn't feed exactly one giraffe.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"]
-    ],
-    "comment": "Weaker than (16), so no implicature arises under negation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_27a",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(27a)"},
-    "language": "stan1293",
-    "primaryText": "Emily fed giraffes.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Emily fed exactly one giraffe.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["n_acted_on", "one"]
-    ],
-    "comment": "In a context where Emily fed only one giraffe: literally true with a false implicature on the implicature approach, false on the ambiguity approach, undefined on the homogeneity approach.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_27b",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(27b)"},
-    "language": "stan1293",
-    "primaryText": "Emily didn't feed giraffes.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Emily fed exactly one giraffe.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["n_acted_on", "one"]
-    ],
-    "comment": "In the same context: false on the implicature and ambiguity approaches, undefined on the homogeneity approach.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_29a",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(29a)"},
-    "language": "stan1293",
-    "primaryText": "Emily fed some of the giraffes.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "not all of the giraffes", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["polarity", "positive"]
-    ],
-    "comment": "Children accept it where the stronger (29b) is also true, failing to compute the implicature (29c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_exp1_positive",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(34a), Experiment 1"},
-    "language": "stan1293",
-    "primaryText": "Emily fed pigs!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Emily is visiting the pig farm and feeds exactly one pig.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "1"],
-      ["polarity", "positive"],
-      ["n_acted_on", "one"]
-    ],
-    "comment": "Truth-value judgment after a story in which Emily fed exactly one pig; rejection indicates the multiplicity inference. Adults rejected at a high rate and children at a low rate.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_exp1_negative",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(35a), Experiment 1"},
-    "language": "stan1293",
-    "primaryText": "Emily didn't feed giraffes!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Emily feeds exactly one giraffe.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "1"],
-      ["polarity", "negative"],
-      ["n_acted_on", "one"]
-    ],
-    "comment": "Truth-value judgment after a story in which Emily fed exactly one giraffe; acceptance indicates a local multiplicity reading under negation, which adults gave at a moderate rate and children at a low rate.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_exp2_si",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(48), Experiment 2"},
-    "language": "stan1293",
-    "primaryText": "Lion carried some of the apples!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Lion carried all of the apples.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "2"],
-      ["polarity", "positive"],
-      ["inference", "scalar"]
-    ],
-    "comment": "Scalar-implicature target after a story in which Lion carried all of the apples; rejection indicates the not-all implicature. Children computed fewer scalar implicatures and fewer multiplicity inferences than adults, and the two rates were correlated within children.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_exp3_positive_plural",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(55a), Experiment 3"},
-    "language": "stan1293",
-    "primaryText": "Koala bought pears.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Koala bought exactly one pear.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "3"],
-      ["polarity", "positive"],
-      ["n_acted_on", "one"],
-      ["task", "ternary_reward"],
-      ["preferred_reward", "intermediate"]
-    ],
-    "comment": "Ternary judgment with adults after Koala bought exactly one pear: the intermediate reward, literally true but misleading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "tieuetal2020_exp3_negative_plural",
-    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "(55b), Experiment 3"},
-    "language": "stan1293",
-    "primaryText": "Koala didn't buy pears.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Koala bought exactly one pear.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "3"],
-      ["polarity", "negative"],
-      ["n_acted_on", "one"],
-      ["task", "ternary_reward"],
-      ["preferred_reward", "minimal"]
-    ],
-    "comment": "Ternary judgment with adults after Koala bought exactly one pear: the minimal reward, literally false.",
-    "verified": "page-image"
-  }
-]
+  "examples": [
+    {
+      "id": "tieuetal2020_1a",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(1a), (13), (21)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily fed giraffes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "more than one giraffe",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "polarity",
+          "positive"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "Conveys that Emily fed more than one giraffe, the multiplicity inference.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_2a",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(2a), (16), (23)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily didn't feed giraffes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "not more than one giraffe",
+          "judgment": "unacceptable"
+        },
+        {
+          "name": "not a single giraffe",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "polarity",
+          "negative"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "Paraphrased as the negation of the singular, that Emily fed no giraffe, rather than as not more than one.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_3a",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(3a)"
+      },
+      "language": "stan1293",
+      "primaryText": "If there are books on Stephen's desk, Robin should lock the door.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "downward"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "In the antecedent of a conditional the plural is equivalent to the singular.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_4a",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(4a)"
+      },
+      "language": "stan1293",
+      "primaryText": "Are there books on Stephen's desk?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "downward"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "In a question the plural is equivalent to the singular.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_8",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(8), (18), (26)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily didn't feed giraffes, because she fed only one!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "negative"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "The marked reading with stress on the plural morpheme: the weak reading of the ambiguity account, a local implicature, or an undefined sentence used as if true.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_14",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(14)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily fed exactly one giraffe.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "positive"
+        ]
+      ],
+      "comment": "The more informative alternative to (13) whose denial is the multiplicity inference.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_17",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(17)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily didn't feed exactly one giraffe.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "negative"
+        ]
+      ],
+      "comment": "Weaker than (16), so no implicature arises under negation.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_27a",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(27a)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily fed giraffes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Emily fed exactly one giraffe.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "positive"
+        ],
+        [
+          "n_acted_on",
+          "1"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "In a context where Emily fed only one giraffe: literally true with a false implicature on the implicature approach, false on the ambiguity approach, undefined on the homogeneity approach.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_27b",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(27b)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily didn't feed giraffes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Emily fed exactly one giraffe.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "polarity",
+          "negative"
+        ],
+        [
+          "n_acted_on",
+          "1"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "In the same context: false on the implicature and ambiguity approaches, undefined on the homogeneity approach.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_29a",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(29a)"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily fed some of the giraffes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "not all of the giraffes",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "polarity",
+          "positive"
+        ],
+        [
+          "inference",
+          "scalar"
+        ]
+      ],
+      "comment": "Children accept it where the stronger (29b) is also true, failing to compute the implicature (29c).",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "tieuetal2020_exp1_positive",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(34a), Experiment 1"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily fed pigs!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Emily is visiting the pig farm and feeds exactly one pig.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "experiment",
+          "1"
+        ],
+        [
+          "polarity",
+          "positive"
+        ],
+        [
+          "n_acted_on",
+          "1"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "Truth-value judgment after a story in which Emily fed exactly one pig; rejection indicates the multiplicity inference. Adults rejected at a high rate and children at a low rate.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tieuetal2020_exp1_negative",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(35a), Experiment 1"
+      },
+      "language": "stan1293",
+      "primaryText": "Emily didn't feed giraffes!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Emily feeds exactly one giraffe.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "experiment",
+          "1"
+        ],
+        [
+          "polarity",
+          "negative"
+        ],
+        [
+          "n_acted_on",
+          "1"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "Truth-value judgment after a story in which Emily fed exactly one giraffe; acceptance indicates a local multiplicity reading under negation, which adults gave at a moderate rate and children at a low rate.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tieuetal2020_exp2_si",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(48), Experiment 2"
+      },
+      "language": "stan1293",
+      "primaryText": "Lion carried some of the apples!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Lion carried all of the apples.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "experiment",
+          "2"
+        ],
+        [
+          "polarity",
+          "positive"
+        ],
+        [
+          "inference",
+          "scalar"
+        ]
+      ],
+      "comment": "Scalar-implicature target after a story in which Lion carried all of the apples; rejection indicates the not-all implicature. Children computed fewer scalar implicatures and fewer multiplicity inferences than adults, and the two rates were correlated within children.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tieuetal2020_exp3_positive_plural",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(55a), Experiment 3"
+      },
+      "language": "stan1293",
+      "primaryText": "Koala bought pears.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Koala bought exactly one pear.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "experiment",
+          "3"
+        ],
+        [
+          "polarity",
+          "positive"
+        ],
+        [
+          "n_acted_on",
+          "1"
+        ],
+        [
+          "task",
+          "ternary_reward"
+        ],
+        [
+          "reward",
+          "intermediate"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "Ternary judgment with adults after Koala bought exactly one pear: the intermediate reward, literally true but misleading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "tieuetal2020_exp3_negative_plural",
+      "source": {
+        "bibkey": "tieu-etal-2020",
+        "paperLabel": "(55b), Experiment 3"
+      },
+      "language": "stan1293",
+      "primaryText": "Koala didn't buy pears.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Koala bought exactly one pear.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "experiment",
+          "3"
+        ],
+        [
+          "polarity",
+          "negative"
+        ],
+        [
+          "n_acted_on",
+          "1"
+        ],
+        [
+          "task",
+          "ternary_reward"
+        ],
+        [
+          "reward",
+          "minimal"
+        ],
+        [
+          "inference",
+          "multiplicity"
+        ]
+      ],
+      "comment": "Ternary judgment with adults after Koala bought exactly one pear: the minimal reward, literally false.",
+      "verified": "page-image"
+    }
+  ]
+}
