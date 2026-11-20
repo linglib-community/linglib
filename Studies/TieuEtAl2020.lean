@@ -2,6 +2,8 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Homogeneity.Usable
+public import Linglib.Semantics.Plurality.Cardinality
+public import Linglib.Fragments.English.Nouns
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Data.Examples.TieuEtAl2020
 public import Linglib.Data.Examples.Readers
@@ -12,15 +14,15 @@ public import Linglib.Data.Examples.Readers
 A bare plural in a positive sentence conveys *more than one*, the multiplicity inference, and
 under negation, in the antecedent of a conditional and in a question it conveys no more than the
 singular does. With the number of giraffes Emily fed as the world, *Emily fed giraffes* has a weak
-reading `weak`, one or more, and a strong reading `strong`, more than one. Three accounts say which
-is heard.
+reading `weak`, true of every cardinality a referent can have, and a strong reading `strong`, true
+of the cardinalities English gives the plural, `Number.ofCard`. Three accounts say which is heard.
 
 The ambiguity account of Farkas and de Swart gives the sentence both readings and selects, among
 those consistent with the context, the one that entails the other. The implicature account of
 Spector and of Zweig gives it the weak reading and exhaustifies it against the alternative
-`singular`, exactly one. The homogeneity account of Križ gives it the trivalent value
-`homogeneous`, true where both readings are true, false where both are false and undefined
-elsewhere.
+`singular`, the cardinalities English gives the singular. The homogeneity account of Križ gives it
+the trivalent value `homogeneous`, true where both readings are true, false where both are false
+and undefined elsewhere.
 
 The readings are ordered `strong ⊆ weak` and `singular ⊆ weak`, and the accounts agree wherever
 the environment respects or reverses that order: unembedded, all three yield `strong`
@@ -69,23 +71,56 @@ open Exhaustification Trivalent Homogeneity
 
 /-! ### Readings of the plural -/
 
-/-- The weak reading is one or more. -/
-def weak : Set ℕ := {n | 1 ≤ n}
+/-- The exclusive reading of a number value holds of the cardinalities English gives that
+value. -/
+def exclusive (v : Number) : Set ℕ :=
+  (↑) '' (Number.ofCard English.Nouns.numberSystem ⁻¹' {v})
 
-/-- The strong reading is more than one, the multiplicity inference. -/
-def strong : Set ℕ := {n | 2 ≤ n}
+/-- The weak reading holds of every cardinality a referent can have: one or more. -/
+def weak : Set ℕ := Set.range ((↑) : ℕ+ → ℕ)
 
-/-- The singular alternative is exactly one. -/
-def singular : Set ℕ := {1}
+/-- The strong reading is the exclusive reading of the plural, the multiplicity inference. -/
+def strong : Set ℕ := exclusive .plural
 
-theorem strong_subset_weak : strong ⊆ weak := fun n (h : 2 ≤ n) ↦
-  show 1 ≤ n from one_le_two.trans h
+/-- The singular alternative is the exclusive reading of the singular. -/
+def singular : Set ℕ := exclusive .singular
 
-theorem singular_subset_weak : singular ⊆ weak := fun _ h ↦ h.ge
+variable {n : ℕ}
+
+@[simp] theorem exclusive_plural : exclusive .plural = strong := rfl
+
+@[simp] theorem exclusive_singular : exclusive .singular = singular := rfl
+
+theorem exclusive_subset_weak (v : Number) : exclusive v ⊆ weak := Set.image_subset_range _ _
+
+@[simp] theorem mem_weak : n ∈ weak ↔ 1 ≤ n :=
+  ⟨fun ⟨p, hp⟩ ↦ hp ▸ p.pos, fun h ↦ ⟨⟨n, h⟩, rfl⟩⟩
+
+@[simp] theorem singular_eq : singular = {1} := by
+  ext k
+  simp [singular, exclusive, Number.ofCard_eq_iff (v := .singular) (by decide), Number.exactCard,
+    English.Nouns.numberSystem, eq_comm]
+
+@[simp] theorem mem_strong : n ∈ strong ↔ 2 ≤ n := by
+  simp only [strong, exclusive, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
+    Number.ofCard_eq_plural_iff_forall, English.Nouns.numberSystem]
+  simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq,
+    Number.exactCard, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true, and_true]
+  refine ⟨fun ⟨p, hp, hk⟩ ↦ hk ▸ ?_, fun hk ↦ ⟨⟨n, by omega⟩, fun h ↦ ?_, rfl⟩⟩
+  · exact lt_of_le_of_ne p.pos fun h ↦ hp (PNat.coe_eq_one_iff.1 h.symm).symm
+  · have := congrArg PNat.val h
+    simp only [PNat.val_ofNat, PNat.mk_coe] at this
+    omega
+
+theorem strong_eq : strong = {n | 2 ≤ n} := Set.ext fun _ ↦ mem_strong
+
+theorem strong_subset_weak : strong ⊆ weak := exclusive_subset_weak _
+
+theorem singular_subset_weak : singular ⊆ weak := exclusive_subset_weak _
 
 theorem weak_sdiff_singular : weak \ singular = strong := by
   ext n
-  simp only [weak, singular, strong, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  simp only [Set.mem_sdiff, mem_weak, singular_eq, Set.mem_singleton_iff, mem_strong]
   omega
 
 /-! ### The implicature approach -/
@@ -93,11 +128,12 @@ theorem weak_sdiff_singular : weak \ singular = strong := by
 /-- Exhaustifying *one or more* against *exactly `m`* excludes `m`: the multiplicity inference
 when `m` is one, and the *not all* inference of *some of the `m` giraffes*. -/
 theorem exhIE_weak_singleton (m : ℕ) : exhIE {weak, {m}} weak = weak \ {m} :=
-  exhIE_pair_sdiff (φ := weak) ⟨m + 1, Nat.le_add_left 1 m, m.succ_ne_self⟩
+  exhIE_pair_sdiff (φ := weak) ⟨m + 1, mem_weak.2 (Nat.le_add_left 1 m), m.succ_ne_self⟩
 
 -- (13)–(15)
-theorem exhIE_weak : exhIE {weak, singular} weak = strong :=
-  (exhIE_weak_singleton 1).trans weak_sdiff_singular
+theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
+  rw [← weak_sdiff_singular, singular_eq]
+  exact exhIE_weak_singleton 1
 
 /-- In a downward-entailing environment an alternative stronger than the weak reading is entailed
 by it, so exhaustification adds nothing. -/
@@ -114,7 +150,7 @@ theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ :=
 -- (18)
 theorem one_mem_compl_exhIE_weak : 1 ∈ (exhIE {weak, singular} weak)ᶜ := by
   rw [exhIE_weak]
-  simp [strong]
+  simp
 
 /-! ### The ambiguity approach
 
@@ -138,10 +174,12 @@ theorem isLeast_of_antitone {W : Type*} {f : Set ℕ → Set W} (hf : Antitone f
 -- (8)
 theorem isLeast_compl_strong_of_singular :
     IsLeast {p ∈ ({weakᶜ, strongᶜ} : Set (Set ℕ)) | (p ∩ singular).Nonempty} strongᶜ := by
-  refine ⟨⟨by simp, 1, by simp [strong], rfl⟩, ?_⟩
+  refine ⟨⟨by simp, 1, by simp, by simp⟩, ?_⟩
   rintro _ ⟨rfl | rfl, hp⟩
-  · obtain ⟨n, hn, rfl⟩ := hp
-    exact absurd (le_refl 1) hn
+  · obtain ⟨n, hn, hn1⟩ := hp
+    rw [singular_eq] at hn1
+    obtain rfl := hn1
+    exact absurd (mem_weak.2 le_rfl) hn
   · exact le_rfl
 
 /-! ### The homogeneity approach -/
@@ -150,21 +188,19 @@ theorem isLeast_compl_strong_of_singular :
 are false and undefined elsewhere. -/
 noncomputable def homogeneous (n : ℕ) : Trivalent := supervaluationOn {weak, strong} (n ∈ ·)
 
-variable {n : ℕ}
-
 theorem homogeneous_eq_true_iff : homogeneous n = .true ↔ 2 ≤ n := by
   simp only [homogeneous, supervaluationOn_eq_true_iff, Set.mem_insert_iff,
-    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, weak, strong, Set.mem_ofPred_eq]
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, mem_weak, mem_strong]
   omega
 
 theorem homogeneous_eq_false_iff : homogeneous n = .false ↔ n = 0 := by
   simp only [homogeneous, supervaluationOn_eq_false_iff, Set.mem_insert_iff,
-    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, weak, strong, Set.mem_ofPred_eq,
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, mem_weak, mem_strong,
     Set.insert_nonempty, true_and]
   omega
 
 theorem homogeneous_eq_undefined_iff : homogeneous n = .undefined ↔ n ∈ singular := by
-  rw [eq_undefined_iff, Ne, Ne, homogeneous_eq_true_iff, homogeneous_eq_false_iff, singular,
+  rw [eq_undefined_iff, Ne, Ne, homogeneous_eq_true_iff, homogeneous_eq_false_iff, singular_eq,
     Set.mem_singleton_iff]
   omega
 
@@ -176,7 +212,7 @@ noncomputable def homogeneousHom : ℕ →o Trivalent where
     · rw [hm]
       exact bot_le
     · rcases trichotomy (homogeneous n) with hn | hn | hn
-      · rw [homogeneous_eq_undefined_iff] at hm
+      · rw [homogeneous_eq_undefined_iff, singular_eq] at hm
         rw [homogeneous_eq_false_iff] at hn
         obtain rfl : m = 1 := hm
         omega
@@ -193,12 +229,12 @@ theorem compl_homogeneous (n : ℕ) :
     (homogeneous n)ᶜ = supervaluationOn {weakᶜ, strongᶜ} (n ∈ ·) := by
   refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
   · simp only [compl_eq_true_iff, homogeneous_eq_false_iff, supervaluationOn_eq_true_iff,
-      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, weak, strong,
-      Set.mem_compl_iff, Set.mem_ofPred_eq]
+      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+      Set.mem_compl_iff, mem_weak, mem_strong]
     omega
   · simp only [compl_eq_false_iff, homogeneous_eq_true_iff, supervaluationOn_eq_false_iff,
-      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, weak, strong,
-      Set.mem_compl_iff, Set.mem_ofPred_eq, Set.insert_nonempty, true_and]
+      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+      Set.mem_compl_iff, mem_weak, mem_strong, Set.insert_nonempty, true_and]
     omega
 
 -- (25), (26): usable when all that matters is whether Emily fed more than one
@@ -206,33 +242,34 @@ theorem usable_compl_homogeneous_one :
     usable (Setoid.ker (· ∈ strong)) (fun n ↦ (homogeneous n)ᶜ) 1 := by
   refine ⟨⟨0, ?_, compl_eq_true_iff.2 (homogeneous_eq_false_iff.2 rfl)⟩, ?_⟩
   · show (1 ∈ strong) = (0 ∈ strong)
-    simp [strong]
+    simp
   · rintro ⟨a, b, hab, ha, hb⟩
     obtain rfl := homogeneous_eq_false_iff.1 (compl_eq_true_iff.1 ha)
-    have hb' : b ∈ strong := homogeneous_eq_true_iff.1 (compl_eq_false_iff.1 hb)
+    have hb' : b ∈ strong := mem_strong.2 (homogeneous_eq_true_iff.1 (compl_eq_false_iff.1 hb))
     have h0 : (0 ∈ strong) = (b ∈ strong) := hab
-    exact absurd (h0 ▸ hb') (by simp [strong])
+    exact absurd (h0 ▸ hb') (by simp)
 
 theorem not_usable_compl_homogeneous_one :
     ¬ usable (Setoid.ker (· ∈ weak)) (fun n ↦ (homogeneous n)ᶜ) 1 := by
   rintro ⟨⟨m, hm, ht⟩, -⟩
   obtain rfl := homogeneous_eq_false_iff.1 (compl_eq_true_iff.1 ht)
   have h0 : (1 ∈ weak) = (0 ∈ weak) := hm
-  simp [weak] at h0
+  simp at h0
 
 /-! ### Predictions -/
 
 theorem multiplicity_positive :
     exhIE {weak, singular} weak = strong ∧ IsLeast {weak, strong} strong ∧
       {n | homogeneous n = .true} = strong :=
-  ⟨exhIE_weak, isLeast_of_monotone monotone_id, Set.ext fun _ ↦ homogeneous_eq_true_iff⟩
+  ⟨exhIE_weak, isLeast_of_monotone monotone_id,
+    Set.ext fun _ ↦ homogeneous_eq_true_iff.trans mem_strong.symm⟩
 
 theorem multiplicity_negative :
     exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
       {n | (homogeneous n)ᶜ = .true} = weakᶜ := by
   refine ⟨exhIE_compl_weak, isLeast_of_antitone compl_anti, Set.ext fun n ↦ ?_⟩
   rw [Set.mem_ofPred_eq, compl_eq_true_iff, homogeneous_eq_false_iff]
-  simp [weak]
+  simp
 
 /-- Where Emily fed exactly one giraffe the implicature approach treats the positive and negative
 sentences asymmetrically, and the ambiguity and homogeneity approaches do not. -/
@@ -242,7 +279,7 @@ theorem singular_context :
       (1 ∉ strong ∧ 1 ∉ weakᶜ) ∧
       (homogeneous 1 = .undefined ∧ (homogeneous 1)ᶜ = .undefined) := by
   rw [exhIE_weak, exhIE_compl_weak, compl_eq_undefined_iff, homogeneous_eq_undefined_iff]
-  simp [weak, strong, singular]
+  simp
 
 /-! ### The examples -/
 
@@ -259,7 +296,7 @@ def alternative (k : ℕ) : Examples.Inference → Set ℕ
   | .scalar => {k}
 
 theorem strong_compl_ne_weak_compl : strongᶜ ≠ weakᶜ := fun h ↦
-  absurd (h ▸ (by simp [strong] : (1 : ℕ) ∈ strongᶜ)) (by simp [weak])
+  absurd (h ▸ (by simp : (1 : ℕ) ∈ strongᶜ)) (by simp)
 
 /-- A sentence is paraphrased by its exhaustified meaning and by no other paraphrase the paper
 considers. -/
