@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Dominance
+public import Linglib.Syntax.DependencyGrammar.Tree
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.List.Sort
@@ -79,11 +79,11 @@ def Graph.Interleave (v w : Fin n) : Prop :=
 /-- A dependency graph is well-nested if interleaved subtrees are never disjoint, one of the two
 roots always dominating the other ([kuhlmann-nivre-2006], Definition 8). -/
 def Graph.IsWellNested : Prop :=
-  ∀ v w : Fin n, g.Interleave v w → Dominates g v w ∨ Dominates g w v
+  ∀ v w : Fin n, g.Interleave v w → g.Dominates v w ∨ g.Dominates w v
 
 theorem Graph.isProjective_iff :
-    g.IsProjective ↔ ∀ v x, Dominates g v x → ∀ y, Dominates g v y →
-      ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
+    g.IsProjective ↔ ∀ v x, g.Dominates v x → ∀ y, g.Dominates v y →
+      ∀ z, x ≤ z → z ≤ y → g.Dominates v z := by
   simp [Graph.IsProjective, Set.ordConnected_def, Set.subset_def]
 
 instance : Decidable g.IsProjective := decidable_of_iff _ g.isProjective_iff.symm
@@ -92,11 +92,11 @@ instance : Decidable g.IsProjective := decidable_of_iff _ g.isProjective_iff.sym
 Gaifman and Marcus): every position between the endpoints of an arc is dominated by
 its head. -/
 def Graph.IsArcProjective : Prop :=
-  ∀ ⦃h d⦄, g.Adj h d → ∀ w ∈ Set.uIcc h d, Dominates g h w
+  ∀ ⦃h d⦄, g.Adj h d → ∀ w ∈ Set.uIcc h d, g.Dominates h w
 
 theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph L n} (hA : g.IsArcProjective)
-    {v x : Fin n} (hx : Dominates g v x) {w : Fin n} (hw : w ∈ Set.uIcc v x) :
-    Dominates g v w := by
+    {v x : Fin n} (hx : g.Dominates v x) {w : Fin n} (hw : w ∈ Set.uIcc v x) :
+    g.Dominates v w := by
   induction hx with
   | refl => exact (Set.uIcc_self.subset hw : w ∈ ({v} : Set (Fin n))) ▸ .refl
   | tail hvc hcx ih =>
@@ -190,7 +190,7 @@ theorem Graph.isProjective_iff_gapDegree_eq_zero :
 /-! ### The hierarchy on forests -/
 
 theorem Graph.IsProjective.dominates_of_mem_uIcc (hP : g.IsProjective)
-    {p t x : Fin n} (h : g.Adj p t) (hx : x ∈ Set.uIcc p t) : Dominates g p x :=
+    {p t x : Fin n} (h : g.Adj p t) (hx : x ∈ Set.uIcc p t) : g.Dominates p x :=
   (hP p).uIcc_subset .refl (.single h) hx
 
 /-- Every projective forest is planar. -/
@@ -199,7 +199,7 @@ theorem Graph.IsProjective.isPlanar (hF : g.IsForest) (hP : g.IsProjective) :
   rintro a b c d hL1 hL2 ⟨hac, hcb, hbd⟩
   -- The head of an arc dominates the head of any arc it spans an endpoint of.
   have step : ∀ {p t q u x : Fin n}, g.Adj p t → g.Adj q u →
-      x ∈ Set.uIcc p t → (x = q ∨ x = u) → p ≠ x → Dominates g p q := by
+      x ∈ Set.uIcc p t → (x = q ∨ x = u) → p ≠ x → g.Dominates p q := by
     rintro p t q u x h1 h2 hx (rfl | rfl) hne
     exacts [hP.dominates_of_mem_uIcc h1 hx,
             hF.dominates_head (hP.dominates_of_mem_uIcc h1 hx) hne h2]
@@ -245,22 +245,22 @@ theorem Graph.IsPlanar.isWellNested (hF : g.IsForest) (hPl : g.IsPlanar) :
   by_contra hcon
   push Not at hcon
   obtain ⟨hvw, hwv⟩ := hcon
-  have hdis : ∀ {x}, Dominates g v x → Dominates g w x → False :=
+  have hdis : ∀ {x}, g.Dominates v x → g.Dominates w x → False :=
     fun h1 h2 ↦ Set.disjoint_left.mp (hF.disjoint_yield hvw hwv) h1 h2
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
   have hcS : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
   have hdS : d ∉ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
-  obtain ⟨p, q, hLpq, hwp, hwq, hpS, hqS⟩ := exists_link_across hwc hwd hcS hdS
+  obtain ⟨p, q, hLpq, hwp, hwq, hpS, hqS⟩ := Graph.exists_link_across hwc hwd hcS hdS
   rw [Set.uIcc_of_le hab.le, Set.mem_Icc] at hpS hqS
   push Not at hqS
   have hap : a < p := lt_of_le_of_ne hpS.1 (fun h ↦ hdis hva (h ▸ hwp))
   have hpb : p < b := lt_of_le_of_ne hpS.2 (fun h ↦ hdis hvb (h ▸ hwp))
   -- A link below `v` spanning that link's endpoints contradicts planarity.
-  have main : ∀ {x y : Fin n}, Dominates g v x → Dominates g v y →
+  have main : ∀ {x y : Fin n}, g.Dominates v x → g.Dominates v y →
       x ∈ Set.uIcc p q → y ∉ Set.uIcc p q → False := by
     intro x y hx hy hin hout
-    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := exists_link_across hx hy hin hout
+    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := Graph.exists_link_across hx hy hin hout
     exact hPl.no_strict_straddle hLpq hL' hin'
       (fun h ↦ hdis hvp' (h ▸ hwp)) (fun h ↦ hdis hvp' (h ▸ hwq)) hout'
   -- `q` falls on one side or the other, putting exactly one of `a`, `b` inside.
@@ -276,13 +276,13 @@ but skips a position between them, the root lies strictly between `i` and
 is why planarity buys nothing once the root is given a boundary
 position. -/
 theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
-    {v i j k : Fin n} (hi : Dominates g v i) (hj : Dominates g v j)
-    (hik : i < k) (hkj : k < j) (hk : ¬ Dominates g v k) :
+    {v i j k : Fin n} (hi : g.Dominates v i) (hj : g.Dominates v j)
+    (hik : i < k) (hkj : k < j) (hk : ¬ g.Dominates v k) :
     i < g.root ∧ g.root < j := by
   by_contra hcon
   push Not at hcon
   -- `v` is not the root, so the root is not among the positions `v` dominates.
-  have hvr : ¬ Dominates g v g.root := fun h ↦
+  have hvr : ¬ g.Dominates v g.root := fun h ↦
     hk ((hT.dominates_antisymm h (hT.root_dominates v)).symm ▸
       hT.root_dominates k)
   have hri : g.root ≠ i := fun h ↦ hvr (h ▸ hi)
@@ -297,17 +297,17 @@ theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
       (not_not_intro hkS)
   have hpS : p ∉ Set.uIcc i j := hpS'
   have hqS : q ∈ Set.uIcc i j := not_not.mp hqS'
-  have hqv : ¬ Dominates g v q := fun h ↦ hk (h.trans hqk)
-  have hpv : ¬ Dominates g v p := fun h ↦
+  have hqv : ¬ g.Dominates v q := fun h ↦ hk (h.trans hqk)
+  have hpv : ¬ g.Dominates v p := fun h ↦
     hk (h.trans ((Relation.ReflTransGen.single hpq).trans hqk))
   rw [Set.uIcc_of_le hij.le, Set.mem_Icc] at hpS hqS
   push Not at hpS
   have hiq : i < q := lt_of_le_of_ne hqS.1 (fun h ↦ hqv (h ▸ hi))
   have hqj : q < j := lt_of_le_of_ne hqS.2 (fun h ↦ hqv (h ▸ hj))
-  have main : ∀ {x y : Fin n}, Dominates g v x → Dominates g v y →
+  have main : ∀ {x y : Fin n}, g.Dominates v x → g.Dominates v y →
       x ∈ Set.uIcc p q → y ∉ Set.uIcc p q → False := by
     intro x y hx hy hin hout
-    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := exists_link_across hx hy hin hout
+    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := Graph.exists_link_across hx hy hin hout
     exact hPl.no_strict_straddle (Or.inl hpq) hL' hin'
       (fun h ↦ hpv (h ▸ hvp')) (fun h ↦ hqv (h ▸ hvp')) hout'
   rcases (show p < i ∨ j < p by omega) with hp | hp

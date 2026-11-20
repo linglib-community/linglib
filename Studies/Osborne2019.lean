@@ -15,22 +15,22 @@ public import Linglib.Syntax.DependencyGrammar.Basic
 # Osborne (2019): A Dependency Grammar of English
 
 This file formalizes the parts of the dependency grammar of [osborne-2019] that the English fragment
-lexicon supports. A verb's valency frame (sixth chapter) lists the valents it can or must take
-and is a lexical property, read here off the argument roles of the fragment's basic frame. The
-passive participle's frame is not listed but related to the active one by a shuffle of indices,
-the passive voice moving the active's participants, with the demoted subject an optional
-*by*-phrase (`voiceValency_passive`); an ergative verb's intransitive use suppresses the agent
-instead and has no *by*-phrase (`voiceValency_anticausative`), so its valency lies within the
-passive's (`voiceValency_anticausative_le_passive`). Trees over fragment words satisfy their
-frames; a spurious or a missing object, a second subject, and a *by*-phrase with an ergative
-intransitive violate them. The catena (fourth chapter), any set of words connected by
-dominance, is the unit that constituents do not always match: every constituent is a catena,
-a head with one of its dependents is always a catena, and it is never a constituent when the
-head has another dependent, so a verb with its subject but not its object is a catena and not
-a constituent (`IsConstituent.isCatena`, `isCatena_pair`, `not_isConstituent_pair`); that is
-the material gapping elides (§12.7). Control and raising (§6.8, §6.9) share one basic tree,
-whose embedded verb lacks a subject; the enhanced graph adds the subject arc, which the basic
-tree cannot carry without ceasing to be a tree (`hasUnrepresentedArg_enhance`,
+lexicon supports. A verb's valency frame (sixth chapter) lists the valents it can or must take and
+is a lexical property, read here off the argument roles of the fragment's basic frame. The passive
+participle's frame is not listed but related to the active one by a shuffle of indices, the passive
+voice moving the active's participants, with the demoted subject an optional *by*-phrase
+(`voiceValency_passive`); an ergative verb's intransitive use suppresses the agent instead and has
+no *by*-phrase (`voiceValency_anticausative`), so its valency lies within the passive's
+(`voiceValency_anticausative_le_passive`). Trees over fragment words satisfy their frames; a
+spurious or a missing object, a second subject, and a *by*-phrase with an ergative intransitive
+violate them. The catena (fourth chapter), any set of words connected by dominance, is the unit that
+constituents do not always match: every constituent is a catena, a head with one of its dependents
+is always a catena, and it is never a constituent when the head has another dependent, so a verb
+with its subject but not its object is a catena and not a constituent
+(`Graph.IsConstituent.isCatena`, `Graph.isCatena_pair`, `Graph.not_isConstituent_pair`); that is the
+material gapping elides (§12.7). Control and raising (§6.8, §6.9) share one basic tree, whose
+embedded verb lacks a subject; the enhanced graph adds the subject arc, which the basic tree cannot
+carry without ceasing to be a tree (`Graph.hasUnrepresentedArg_enhance`,
 `Graph.not_isForest_enhance`).
 
 ## Implementation notes
@@ -246,17 +246,17 @@ but not a constituent, since the verb has another dependent; the whole clause an
 are constituents and therefore catenae. The verb with its subject is what gapping elides in
 *John devours pizza and Mary wine*. -/
 
-example : IsCatena transTree {1, 0} := isCatena_pair transTree (by decide) (by decide)
+example : transTree.IsCatena {1, 0} := Graph.isCatena_pair transTree (by decide) (by decide)
 
-example : ¬ IsConstituent transTree {1, 0} :=
-  not_isConstituent_pair (u := 2) (by decide) (by decide) (by decide) (by decide)
+example : ¬ transTree.IsConstituent {1, 0} :=
+  Graph.not_isConstituent_pair (u := 2) (by decide) (by decide) (by decide) (by decide)
 
-example : IsCatena transTree {0, 1, 2} :=
-  (show IsConstituent transTree {0, 1, 2} by decide).isCatena
+example : transTree.IsCatena {0, 1, 2} :=
+  (show transTree.IsConstituent {0, 1, 2} by decide).isCatena
 
-example : IsCatena transTree {2} := (show IsConstituent transTree {2} by decide).isCatena
+example : transTree.IsCatena {2} := (show transTree.IsConstituent {2} by decide).isCatena
 
-example : ¬ IsCatena transTree {0, 2} := by decide
+example : ¬ transTree.IsCatena {0, 2} := by decide
 
 /-! ### Control and raising (§6.8, §6.9)
 
@@ -275,14 +275,14 @@ def objControl : Graph UD.DepRel 5 :=
 def raising : Graph UD.DepRel 4 :=
   .ofArcs [john, seems, to_, sleep_] 1 [(1, 0, .nsubj), (1, 3, .xcomp), (3, 2, .mark)]
 
-example : HasUnrepresentedArg subjControl (subjControl.enhance [(3, 0, .nsubj)]) 0 :=
-  hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
+example : Graph.HasUnrepresentedArg subjControl (subjControl.enhance [(3, 0, .nsubj)]) 0 :=
+  Graph.hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
 
-example : HasUnrepresentedArg objControl (objControl.enhance [(4, 2, .nsubj)]) 2 :=
-  hasUnrepresentedArg_enhance _ (x := 4) .nsubj _ (by simp) (by decide)
+example : Graph.HasUnrepresentedArg objControl (objControl.enhance [(4, 2, .nsubj)]) 2 :=
+  Graph.hasUnrepresentedArg_enhance _ (x := 4) .nsubj _ (by simp) (by decide)
 
-example : HasUnrepresentedArg raising (raising.enhance [(3, 0, .nsubj)]) 0 :=
-  hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
+example : Graph.HasUnrepresentedArg raising (raising.enhance [(3, 0, .nsubj)]) 0 :=
+  Graph.hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
 
 example : ¬ (subjControl.enhance [(3, 0, .nsubj)]).IsTree := fun hT ↦
   Graph.not_isForest_enhance (v := 1) (w := 0) (x := 3) (by decide) (by decide) .nsubj _ (by simp)

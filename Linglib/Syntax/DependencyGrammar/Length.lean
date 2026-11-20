@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.WordOrder
+public import Linglib.Syntax.WordOrder.BoundaryDistance
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
@@ -19,34 +19,26 @@ public import Mathlib.Algebra.Order.Ring.Nat
 # Dependency length
 
 The length of a dependency is the distance in words between head and dependent. This file defines
-the total dependency length of a graph, transports a graph along a permutation of its positions,
-and defines the distance from a head to the nearest word of a dependent's yield, dependency length
-measured to the boundary of the dependent's phrase. On a projective forest that distance is one
-more than the sizes of the yields of the sibling dependents between head and dependent: it is the
-block measure `WordOrder.Arrangement.boundaryDist` with yields as blocks. Summed over the elements
-after a head, the block measure weighs each element's length by the number of elements farther
-out, so by the rearrangement inequality an order whose lengths grow outward is shortest. This is
-the short-before-long order that dependency length minimization predicts after a head, and its
-mirror image orders long before short before a final head.
+the total dependency length of a graph and the distance from a head to the nearest word of a
+dependent's yield, dependency length measured to the boundary of the dependent's phrase. On a
+projective forest that distance is one more than the sizes of the yields of the sibling dependents
+between head and dependent: it is the block measure `WordOrder.Arrangement.boundaryDist` with yields
+as blocks. Summed over the elements after a head, the block measure weighs each element's length by
+the number of elements farther out, so by the rearrangement inequality an order whose lengths grow
+outward is shortest. This is the short-before-long order that dependency length minimization
+predicts after a head, and its mirror image orders long before short before a final head.
 
 ## Main definitions
 
 * `Graph.totalLength`: the sum of `Nat.dist` over the arcs.
-* `Graph.map`: a graph transported along a permutation of its positions; `Graph.mirror` and
-  `Graph.linearize` read it in reverse and in a given order.
 * `Graph.yieldDist`: the distance from a position to the nearest word of a yield.
-* `WordOrder.Arrangement.boundaryDist`: the distance in words between two constituents of given
-  lengths in an arrangement.
 * `Graph.siblingArrangement`: a head and its dependents in the order of their positions.
 
 ## Main results
 
 * `Graph.totalLength_map`: transport along an isometry preserves total dependency length.
-* `Graph.IsTree.map`: transport preserves treehood.
 * `Graph.yieldDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
   dependent is one more than the yield sizes of the dependents between them.
-* `WordOrder.Arrangement.sum_boundaryDist_after_le`: no rearrangement of the elements after a
-  head is shorter than the order whose lengths grow outward.
 * `Graph.sum_yieldDist_eq_sum_boundaryDist`: on a projective forest a head's yield distances are
   the boundary distances of its sibling arrangement with phrase lengths.
 
@@ -59,237 +51,6 @@ mirror image orders long before short before a final head.
 -/
 
 @[expose] public section
-
-namespace WordOrder.Arrangement
-
-open Finset
-
-variable {α : Type*} {n : ℕ}
-
-section Monovary
-
-variable {a : Arrangement α n} (ℓ : α → ℕ)
-
-theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
-  simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
-  exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
-
-private theorem antivaryOn_rank_iff_monovaryOn {s : Set α} :
-    AntivaryOn ℓ (fun d ↦ n - 1 - a d) s ↔ MonovaryOn ℓ a s := by
-  constructor <;> intro h i hi j hj hij <;> refine h hj hi ?_ <;>
-    · have := (a j).isLt
-      have := (a i).isLt
-      simp only [Fin.lt_def] at hij ⊢
-      omega
-
-end Monovary
-
-section Fintype
-
-variable [Fintype α]
-
-section after
-
-variable {a : Arrangement α n} {x : α}
-
-theorem card_after (d : α) : #(a.after d) = n - 1 - a d := by
-  rw [← Fin.card_Ioi, ← card_map a.toEmbedding]
-  congr 1; ext j
-  simp only [mem_map, mem_after, Precedes, Equiv.coe_toEmbedding, mem_Ioi]
-  exact ⟨fun ⟨c, hc, hj⟩ ↦ hj ▸ hc, fun h ↦ ⟨a.symm j, by simpa using h, by simp⟩⟩
-
-variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.after x))
-include hσ
-
-theorem apply_eq_self_of_notMem_after {c : α} (hc : c ∉ a.after x) : σ c = c := by
-  by_contra h
-  exact hc (hσ h)
-
-theorem mem_after_apply_of_mem {c : α} (hc : c ∈ a.after x) : σ c ∈ a.after x := by
-  by_cases h : σ c = c
-  · rwa [h]
-  · exact hσ fun h' ↦ h (σ.injective h')
-
-theorem precedes_trans_iff_of_notMem_after {c d : α} (hc : c ∉ a.after x) :
-    (Precedes (σ.trans a) c d ↔ a.Precedes c d) ∧ (Precedes (σ.trans a) d c ↔ a.Precedes d c) := by
-  simp only [Precedes, Equiv.trans_apply, apply_eq_self_of_notMem_after hσ hc]
-  by_cases hd : d ∈ a.after x
-  · have h₁ := mem_after.1 (mem_after_apply_of_mem hσ hd)
-    have h₂ := mem_after.1 hd
-    simp only [mem_after, Precedes, Fin.lt_def, not_lt] at h₁ h₂ hc
-    simp only [Fin.lt_def]
-    constructor <;> constructor <;> intro <;> omega
-  · rw [apply_eq_self_of_notMem_after hσ hd]; exact ⟨Iff.rfl, Iff.rfl⟩
-
-theorem after_trans : after (σ.trans a) x = a.after x := by
-  ext c
-  simp only [mem_after]
-  exact (precedes_trans_iff_of_notMem_after hσ notMem_after_self).1
-
-end after
-
-variable [DecidableEq α] (a : Arrangement α n) (ℓ : α → ℕ) (x y : α)
-
-/-- The distance in words between the closest boundaries of `x` and `y` when each element `c` is
-`ℓ c` words long, which is one more than the words of the elements between them and zero from an
-element to itself. -/
-def boundaryDist : ℕ :=
-  if x = y then 0 else
-    1 + ∑ c with a.Precedes x c ∧ a.Precedes c y ∨ a.Precedes y c ∧ a.Precedes c x, ℓ c
-
-@[simp] theorem boundaryDist_self : a.boundaryDist ℓ x x = 0 := by simp [boundaryDist]
-
-theorem boundaryDist_comm : a.boundaryDist ℓ x y = a.boundaryDist ℓ y x := by
-  simp only [boundaryDist, eq_comm (a := x), or_comm]
-
-@[simp] theorem boundaryDist_mirror : a.mirror.boundaryDist ℓ x y = a.boundaryDist ℓ x y := by
-  simp only [boundaryDist, precedes_mirror, and_comm, or_comm]
-
-variable {a x y}
-
-/-- The distance reads only the lengths of the elements strictly between its ends. -/
-theorem boundaryDist_congr {ℓ' : α → ℕ} (h : ∀ c, c ≠ x → c ≠ y → ℓ c = ℓ' c) :
-    a.boundaryDist ℓ x y = a.boundaryDist ℓ' x y := by
-  unfold boundaryDist
-  split_ifs
-  · rfl
-  refine congrArg (1 + ·) (sum_congr rfl fun c hc ↦ h c ?_ ?_) <;>
-    · rintro rfl
-      simp [Precedes] at hc
-
-theorem boundaryDist_of_precedes (h : a.Precedes x y) :
-    a.boundaryDist ℓ x y = 1 + ∑ c with a.Precedes x c ∧ a.Precedes c y, ℓ c := by
-  rw [boundaryDist, ite_eq_right fun e ↦ (e ▸ h).asymm (e ▸ h)]
-  exact congrArg _ (sum_congr (filter_congr fun c _ ↦ or_iff_left fun hc ↦
-    h.asymm (hc.1.trans hc.2)) fun _ _ ↦ rfl)
-
-/-- The weight before `y` is the weight before `x`, then `x`, then the weight between them. -/
-theorem sum_precedes_of_precedes (w : α → ℕ) (h : a.Precedes x y) :
-    ∑ d with a.Precedes d y, w d =
-      ∑ d with a.Precedes d x, w d + w x + ∑ d with a.Precedes x d ∧ a.Precedes d y, w d := by
-  have e : univ.filter (fun d ↦ a.Precedes d y ∧ ¬ a.Precedes d x) =
-      insert x (univ.filter fun d ↦ a.Precedes x d ∧ a.Precedes d y) := by
-    ext d
-    simp only [mem_filter, mem_univ, true_and, mem_insert]
-    by_cases hdx : d = x
-    · rw [hdx]
-      exact ⟨fun _ ↦ .inl rfl, fun _ ↦ ⟨h, fun h' ↦ h'.asymm h'⟩⟩
-    · have := a.injective.ne hdx
-      simp only [hdx, false_or, Precedes, Fin.lt_def, ne_eq, Fin.ext_iff] at this h ⊢
-      omega
-  rw [← sum_filter_add_sum_filter_not {d | a.Precedes d y} (a.Precedes · x), filter_filter,
-    filter_filter, e,
-    sum_insert (by simp [Precedes]), add_assoc]
-  exact congrArg (· + _) (sum_congr (filter_congr fun d _ ↦ and_iff_right_of_imp (·.trans h))
-    fun _ _ ↦ rfl)
-
-variable (a x y)
-
-section Behaghel
-
-variable {a x}
-
-theorem sum_boundaryDist_after :
-    ∑ c ∈ a.after x, a.boundaryDist ℓ x c =
-      #(a.after x) + ∑ d ∈ a.after x, ℓ d * (n - 1 - a d) := by
-  rw [sum_congr rfl fun c hc ↦ boundaryDist_of_precedes ℓ (mem_after.1 hc)]
-  simp only [sum_add_distrib, sum_const, smul_eq_mul, mul_one, add_right_inj]
-  calc ∑ c ∈ a.after x, ∑ d with a.Precedes x d ∧ a.Precedes d c, ℓ d
-      = ∑ c ∈ a.after x, ∑ d ∈ a.after x with a.Precedes d c, ℓ d := by
-        simp only [after, filter_filter]
-    _ = ∑ d ∈ a.after x, ∑ c ∈ a.after x with a.Precedes d c, ℓ d := by
-        simp only [sum_filter]
-        rw [Finset.sum_comm]
-    _ = ∑ d ∈ a.after x, ℓ d * (n - 1 - a d) := by
-        refine sum_congr rfl fun d hd ↦ ?_
-        rw [sum_const, smul_eq_mul, mul_comm, ← card_after]
-        congr 2
-        ext c
-        simp only [mem_filter, mem_after]
-        exact ⟨fun h ↦ h.2, fun h ↦ ⟨(mem_after.1 hd).trans h, h⟩⟩
-
-section perm
-
-variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.after x))
-include hσ
-
-theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
-    boundaryDist (σ.trans a) ℓ x c = a.boundaryDist ℓ x c := by
-  have hx := notMem_after_self (a := a) (x := x)
-  simp only [boundaryDist, (precedes_trans_iff_of_notMem_after hσ hx).1,
-    (precedes_trans_iff_of_notMem_after hσ hx).2, (precedes_trans_iff_of_notMem_after hσ hc).1,
-    (precedes_trans_iff_of_notMem_after hσ hc).2]
-
-/-- When the lengths of the elements after `x` grow outward (`ℓ` monovaries with rank, short
-before long), no rearrangement of them shortens the distance from `x` to them: the nesting of
-dependents by length of [gildea-temperley-2007]. [futrell-levy-gibson-2020] derive from it
-Behaghel's law of growing constituents in head-initial contexts; [behaghel-1909] states the law for
-the conjuncts of a coordination (pp. 110, 139). -/
-theorem sum_boundaryDist_after_le (h : MonovaryOn ℓ a (a.after x)) :
-    ∑ c ∈ a.after x, a.boundaryDist ℓ x c ≤
-      ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
-  rw [sum_boundaryDist_after, sum_boundaryDist_after, after_trans hσ]
-  refine Nat.add_le_add_left ?_ _
-  simpa [Equiv.trans_apply] using
-    ((antivaryOn_rank_iff_monovaryOn ℓ).2 h).sum_mul_le_sum_mul_comp_perm hσ
-
-theorem sum_boundaryDist_after_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
-    ∑ c ∈ a.after x, a.boundaryDist ℓ x c <
-      ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c ↔
-      ¬ MonovaryOn ℓ (σ.trans a) (after (σ.trans a) x) := by
-  rw [sum_boundaryDist_after, sum_boundaryDist_after, after_trans hσ, add_lt_add_iff_left,
-    ← antivaryOn_rank_iff_monovaryOn]
-  simpa [Equiv.trans_apply, Function.comp_def] using
-    ((antivaryOn_rank_iff_monovaryOn ℓ).2 h).sum_mul_lt_sum_mul_comp_perm_iff hσ
-
-theorem sum_boundaryDist_le (h : MonovaryOn ℓ a (a.after x)) :
-    ∑ c, a.boundaryDist ℓ x c ≤ ∑ c, boundaryDist (σ.trans a) ℓ x c := by
-  rw [← sum_filter_add_sum_filter_not univ (a.Precedes x ·),
-    ← sum_filter_add_sum_filter_not univ (a.Precedes x ·)]
-  refine Nat.add_le_add ?_ (le_of_eq ?_)
-  · have := sum_boundaryDist_after_le (ℓ := ℓ) hσ h
-    rwa [after_trans hσ] at this
-  · refine sum_congr rfl fun c hc ↦ (boundaryDist_trans_of_notMem_after ℓ hσ ?_).symm
-    simpa using (mem_filter.1 hc).2
-
-theorem sum_boundaryDist_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
-    ∑ c, a.boundaryDist ℓ x c < ∑ c, boundaryDist (σ.trans a) ℓ x c ↔
-      ¬ MonovaryOn ℓ (σ.trans a) (after (σ.trans a) x) := by
-  have e : ∑ c with ¬ a.Precedes x c, boundaryDist (σ.trans a) ℓ x c =
-      ∑ c with ¬ a.Precedes x c, a.boundaryDist ℓ x c :=
-    sum_congr rfl fun c hc ↦
-      boundaryDist_trans_of_notMem_after ℓ hσ (by simpa using (mem_filter.1 hc).2)
-  rw [← sum_filter_add_sum_filter_not univ (a.Precedes x ·),
-    ← sum_filter_add_sum_filter_not univ (a.Precedes x ·), e, add_lt_add_iff_right,
-    ← sum_boundaryDist_after_lt_iff ℓ hσ h, after_trans hσ]
-  exact Iff.rfl
-
-end perm
-
-section before
-
-variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.before x))
-include hσ
-
-theorem sum_boundaryDist_before_le (h : AntivaryOn ℓ a (a.before x)) :
-    ∑ c ∈ a.before x, a.boundaryDist ℓ x c ≤
-      ∑ c ∈ before (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
-  have h' : {c | σ c ≠ c} ⊆ ↑(a.mirror.after x) := by rwa [← before_eq_after_mirror]
-  have e : ∀ b : Arrangement α n, ∑ c ∈ b.before x, b.boundaryDist ℓ x c =
-      ∑ c ∈ b.mirror.after x, b.mirror.boundaryDist ℓ x c := fun b ↦ by
-    rw [before_eq_after_mirror]
-    exact sum_congr rfl fun c _ ↦ (boundaryDist_mirror ..).symm
-  rw [e, e]
-  exact sum_boundaryDist_after_le (a := a.mirror) ℓ h'
-    ((monovaryOn_mirror_iff ℓ).2 ((before_eq_after_mirror (a := a) (x := x)) ▸ h))
-
-end before
-
-end Behaghel
-
-end Fintype
-
-end WordOrder.Arrangement
 
 namespace DependencyGrammar
 
@@ -305,49 +66,7 @@ def Graph.totalLength (g : Graph L n) : Nat :=
 theorem Graph.totalLength_words (g : Graph L n) (words' : Fin n → Morphology.Word) :
     Graph.totalLength { g with words := words' } = g.totalLength := rfl
 
-/-! ### Transport: same structure, different linearization -/
-
-/-- `g.map σ` transports `g` along the position permutation `σ`. Arcs, tokens and root move
-together, so the labeled structure is unchanged and only the linearization varies. -/
-def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
-  { words := g.words ∘ σ.symm
-    label := fun v w ↦ g.label (σ.symm v) (σ.symm w)
-    root := σ g.root }
-
-@[simp] theorem Graph.map_adj (g : Graph L n) (σ : Equiv.Perm (Fin n))
-    (v w : Fin n) : (g.map σ).Adj v w ↔ g.Adj (σ.symm v) (σ.symm w) :=
-  Iff.rfl
-
-@[simp] theorem Graph.map_linked (g : Graph L n) (σ : Equiv.Perm (Fin n))
-    (v w : Fin n) : (g.map σ).Linked v w ↔ g.Linked (σ.symm v) (σ.symm w) :=
-  Iff.rfl
-
-@[simp] theorem Graph.map_one (g : Graph L n) : g.map 1 = g := rfl
-
-theorem Graph.map_map (g : Graph L n) (σ τ : Equiv.Perm (Fin n)) :
-    (g.map σ).map τ = g.map (τ * σ) := rfl
-
-theorem Graph.dominates_map {g : Graph L n} {σ : Equiv.Perm (Fin n)} {v w : Fin n} :
-    Dominates (g.map σ) v w ↔ Dominates g (σ.symm v) (σ.symm w) :=
-  ⟨fun h ↦ ReflTransGen.lift (r := (g.map σ).Adj) (p := g.Adj) σ.symm (fun _ _ h ↦ h) _ _ h,
-    fun h ↦ by
-      simpa [Function.onFun] using ReflTransGen.lift (r := g.Adj) (p := (g.map σ).Adj) σ
-        (fun a b h ↦ by simpa [Function.onFun] using h) _ _ h⟩
-
-theorem Graph.IsForest.map {g : Graph L n} (hF : g.IsForest) (σ : Equiv.Perm (Fin n)) :
-    (g.map σ).IsForest where
-  not_dominates_of_adj _ _ h hd := hF.not_dominates_of_adj h (Graph.dominates_map.1 hd)
-  leftUnique_adj _ _ _ hu hv := σ.symm.injective (hF.leftUnique_adj hu hv)
-
-/-- A linearization of a tree is a tree. -/
-theorem Graph.IsTree.map {g : Graph L n} (hT : g.IsTree) (σ : Equiv.Perm (Fin n)) :
-    (g.map σ).IsTree where
-  toIsForest := hT.toIsForest.map σ
-  root_dominates v :=
-    Graph.dominates_map.2 (by simpa [Graph.map] using hT.root_dominates (σ.symm v))
-
-/-- The mirror image, transported along position reversal. -/
-def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm
+/-! ### Transport -/
 
 /-- Mirroring a linearization is linearizing along the mirrored arrangement. -/
 theorem Graph.mirror_map (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
@@ -385,20 +104,6 @@ theorem Graph.totalLength_mirror (g : Graph L n) :
 @[simp] theorem Graph.totalLength_map_mirror (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
     (g.map (WordOrder.Arrangement.mirror σ)).totalLength = (g.map σ).totalLength := by
   rw [← Graph.mirror_map, Graph.totalLength_mirror]
-
-/-- The graph read in the order `order`, which lists every position once. The token at
-position `p` is the token of `g` at `order[p]`, arcs and root following. -/
-def Graph.linearize (g : Graph L n) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
-    Graph L n :=
-  g.map ((finCongr (h.length_eq.trans List.length_finRange).symm).trans
-    ((h.nodup_iff.mpr (List.nodup_finRange n)).getEquivOfForallMemList order
-      fun x ↦ h.mem_iff.mpr (List.mem_finRange x))).symm
-
-theorem Graph.linearize_words (g : Graph L n) (order : List (Fin n))
-    (h : order.Perm (List.finRange n)) (p : Fin n) :
-    (g.linearize order h).words p =
-      g.words (order.get (Fin.cast (h.length_eq.trans List.length_finRange).symm p)) :=
-  rfl
 
 /-! ### Arc length and the dependent's phrase -/
 

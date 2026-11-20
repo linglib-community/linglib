@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGrammar.Maps
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Order.Interval.Basic
 
