@@ -36,9 +36,9 @@ the Heim-Kennedy generalization ((80)).
 
 ## Implementation notes
 
-* Pluralities are the finite sets of atoms, and `plural Z` is `Mereology.FullAlgClosure` of
+* Pluralities are the finite sets of atoms, and `plural Z` is `Mereology.fullSupClosure` of
   the singletons of `Z`, the full lattice `×Z`; without the empty sum it is Link's `*Z`,
-  `Mereology.AlgClosure` of them (`plural_sdiff_empty`). A distributive predicate `B` holds of a
+  `supClosure` of them (`plural_sdiff_empty`). A distributive predicate `B` holds of a
   plurality that is in `plural B`.
 * Degrees are natural numbers; Kennedy's numeral is `Quantifier.MaxIn {n}` and its two scopes are
   `Quantifier.LowScope` and `Quantifier.HighScope`. A numeral exhaustified against the higher
@@ -75,16 +75,16 @@ variable {α : Type*} [DecidableEq α]
 
 /-- The pluralities of members of `Z`, the full closure `×Z` of its singletons ((30)), are the sums
 `⊔X` of the subsets `X ⊆ Z`, the empty sum `⊥` among them. -/
-def plural (Z : Set α) : Set (Finset α) := {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' Z) x}
+def plural (Z : Set α) : Set (Finset α) := fullSupClosure (({·} : α → Finset α) '' Z)
 
 @[simp] theorem mem_plural {Z : Set α} {x : Finset α} : x ∈ plural Z ↔ ↑x ⊆ Z :=
-  fullAlgClosure_image_singleton Z x
+  mem_fullSupClosure_image_singleton Z x
 
 -- (29)
 theorem plural_sdiff_empty (Z : Set α) :
-    plural Z \ {∅} = {x | AlgClosure (· ∈ ({·} : α → Finset α) '' Z) x} := by
+    plural Z \ {∅} = supClosure (({·} : α → Finset α) '' Z) := by
   ext x
-  simp only [mem_sdiff, mem_plural, mem_singleton_iff, mem_ofPred_eq, algClosure_image_singleton,
+  simp only [mem_sdiff, mem_plural, mem_singleton_iff, mem_supClosure_image_singleton,
     Finset.nonempty_iff_ne_empty]
   exact and_comm
 
@@ -112,7 +112,8 @@ theorem countDegrees_singleton {A : Set α} {s : Finset α} (hs : ↑s ⊆ A) :
 theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
     countDegrees A (plural B) = Iic (A ∩ B).ncard := by
   rw [countDegrees, plural_inter]
-  exact card_image_fullAlgClosure h
+  rw [plural]
+  exact card_image_fullSupClosure h
 
 /-! ### *Zero*
 

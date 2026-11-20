@@ -25,24 +25,24 @@ individuals, `*` reduces to distribution over members.
 
 ## Main results
 
-* `Mereology.algClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
-* `Mereology.IsDistr.of_algClosure_of_atom_le`: Link's distributive inference, where joins
+* `Mereology.mem_supClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
+* `Mereology.IsDistr.of_mem_supClosure_of_atom_le`: Link's distributive inference, where joins
   are sums.
 * `Mereology.IsDistr.properPlural_sup`, `Mereology.cum_properPlural`: the sum
   of two distinct atoms of a distributive predicate is a proper plural, and proper plurals are
   closed under sum.
-* `Mereology.algClosure_image_singleton`: on finite sets of individuals, taken as
+* `Mereology.mem_supClosure_image_singleton`: on finite sets of individuals, taken as
   singletons, `*` holds of exactly the nonempty subsets, Sternefeld's identification of `*P` with
-  `D P` (15), and the full closure `Mereology.FullAlgClosure`, Bylinina and Nouwen's `×`, of
-  all subsets (`fullAlgClosure_image_singleton`).
-* `Mereology.card_image_fullAlgClosure`, `Mereology.card_image_algClosure`: the
+  `D P` (15), and the full closure `Mereology.fullSupClosure`, Bylinina and Nouwen's `×`, of
+  all subsets (`mem_fullSupClosure_image_singleton`).
+* `Mereology.card_image_fullSupClosure`, `Mereology.card_image_supClosure`: the
   pluralities of `×S` have `0, …, |S|` atoms and those of `*S` have `1, …, |S|`, so only with
   the empty sum does a count's set of degrees reach `0`.
 
 ## Implementation notes
 
 Link's model is a complete join semilattice with atoms and without a bottom; only `SemilatticeSup E`
-and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClosure P`, mathlib's
+and `Mereology.Atom` are used here. The plural closure `*P` is mathlib's
 `supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
 is a stronger assumption, which enters only through `Mereology.SupIsSum`. Schwarzschild's set-based
 ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
@@ -67,14 +67,14 @@ a bottom, `*P` still excludes it unless `P` holds of it, and `×P` adds it whate
 
 namespace Mereology
 
-variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {x y : E}
+variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {s : Set E} {x y : E}
 
 /-! ### Predicate operators -/
 
 /-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12), Harbour's
 `[−atomic]` of the closure. -/
-def properPlural (P : E → Prop) : E → Prop :=
-  fun x ↦ AlgClosure P x ∧ ¬ Atom x
+def properPlural (s : Set E) : Set E :=
+  supClosure s \ {x | Atom x}
 
 /-- A distributive predicate holds of atoms only (D.19). -/
 def IsDistr (P : E → Prop) : Prop :=
@@ -131,21 +131,22 @@ end Constitution
 /-! ### Link's theorems -/
 
 /-- On an atom, `*P` and `P` agree (T.8). -/
-theorem algClosure_iff_of_atom (hx : Atom x) : AlgClosure P x ↔ P x :=
-  ⟨(of_algClosure_of_atom · hx), .base⟩
+theorem mem_supClosure_iff_of_atom (hx : Atom x) : x ∈ supClosure s ↔ x ∈ s :=
+  ⟨(mem_of_mem_supClosure_of_atom · hx), fun h ↦ subset_supClosure h⟩
 
-theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : ¬ properPlural P x :=
+theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : x ∉ properPlural {x | P x} :=
   fun h ↦ h.2 (hP x hx)
 
 /-- The sum of two distinct atoms of a distributive predicate is a proper plural. -/
 theorem IsDistr.properPlural_sup (hP : IsDistr P) (hx : P x) (hy : P y) (hne : x ≠ y) :
-    properPlural P (x ⊔ y) :=
-  ⟨.sum (.base hx) (.base hy), not_atom_sup_of_ne (hP x hx) (hP y hy) hne⟩
+    x ⊔ y ∈ properPlural {x | P x} :=
+  ⟨supClosed_supClosure (subset_supClosure hx) (subset_supClosure hy),
+    not_atom_sup_of_ne (hP x hx) (hP y hy) hne⟩
 
 /-- Proper plurals are closed under sum. -/
-theorem cum_properPlural : CUM (properPlural P) := by
+theorem cum_properPlural : CUM (properPlural s) := by
   rintro x ⟨hx, hx'⟩ y ⟨hy, hy'⟩
-  refine ⟨.sum hx hy, fun h ↦ ?_⟩
+  refine ⟨supClosed_supClosure hx hy, fun h ↦ ?_⟩
   by_cases hx0 : IsBot x
   · rw [sup_eq_right.mpr (hx0 _)] at h
     exact hy' h
@@ -153,11 +154,11 @@ theorem cum_properPlural : CUM (properPlural P) := by
 
 /-- Where joins are sums, every atomic part of an element of `*P` satisfies a distributive
 `P`. -/
-theorem IsDistr.of_algClosure_of_atom_le [SupIsSum E] (hP : IsDistr P) (h : AlgClosure P x)
-    (hy : Atom y) (hle : y ≤ x) : P y := by
-  induction h using AlgClosure.induction with
-  | base hp => exact ((hP _ hp).eq hle hy.not_isBot) ▸ hp
-  | @sum a b _ _ iha ihb => exact (hy.le_sup_iff.1 hle).elim iha ihb
+theorem IsDistr.of_mem_supClosure_of_atom_le [SupIsSum E] (hP : IsDistr P)
+    (h : x ∈ supClosure {x | P x}) (hy : Atom y) (hle : y ≤ x) : P y := by
+  induction h using supClosure_induction with
+  | mem a hp => exact ((hP _ hp).eq hle hy.not_isBot) ▸ hp
+  | sup a b _ _ iha ihb => exact (hy.le_sup_iff.1 hle).elim iha ihb
 
 /-! ### Sets of individuals
 
@@ -168,13 +169,13 @@ section Finset
 variable {α : Type*} [DecidableEq α]
 
 /-- `*` of a set of individuals, taken as singletons, holds of exactly its nonempty subsets. -/
-theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
-    AlgClosure (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
+theorem mem_supClosure_image_singleton (S : Set α) (x : Finset α) :
+    x ∈ supClosure (({·} : α → Finset α) '' S) ↔ x.Nonempty ∧ ↑x ⊆ S := by
   constructor
   · intro h
-    induction h using AlgClosure.induction with
-    | base h => obtain ⟨a, ha, rfl⟩ := h; exact ⟨Finset.singleton_nonempty a, by simpa⟩
-    | sum _ _ ih ih' =>
+    induction h using supClosure_induction with
+    | mem _ h => obtain ⟨a, ha, rfl⟩ := h; exact ⟨Finset.singleton_nonempty a, by simpa⟩
+    | sup _ _ _ _ ih ih' =>
       refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩
       rw [Finset.coe_union]
       exact Set.union_subset ih.2 ih'.2
@@ -184,49 +185,48 @@ theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
         (Finset.subset_iff.2 fun a ha ↦
           Finset.singleton_subset_iff.1 (Finset.le_sup' (fun a ↦ ({a} : Finset α)) ha))
     rw [← key]
-    exact algClosure_finsetSup' hx fun a ha ↦ .base ⟨a, hS ha, rfl⟩
+    exact finsetSup'_mem_supClosure hx fun a ha ↦ ⟨a, hS ha, rfl⟩
 
-theorem algClosure_iff_of_subset_range_singleton {P : Finset α → Prop}
-    (hP : {x | P x} ⊆ Set.range ({·} : α → Finset α)) (x : Finset α) :
-    AlgClosure P x ↔ x.Nonempty ∧ ∀ a ∈ x, P {a} := by
-  have : P = (· ∈ ({·} : α → Finset α) '' {a | P {a}}) := by
-    ext s
+theorem mem_supClosure_iff_of_subset_range_singleton {s : Set (Finset α)}
+    (hs : s ⊆ Set.range ({·} : α → Finset α)) (x : Finset α) :
+    x ∈ supClosure s ↔ x.Nonempty ∧ ∀ a ∈ x, {a} ∈ s := by
+  have : s = ({·} : α → Finset α) '' {a | {a} ∈ s} := by
+    ext t
     constructor
-    · intro hs
-      obtain ⟨a, rfl⟩ := hP hs
-      exact ⟨a, hs, rfl⟩
+    · intro ht
+      obtain ⟨a, rfl⟩ := hs ht
+      exact ⟨a, ht, rfl⟩
     · rintro ⟨a, ha, rfl⟩
       exact ha
   conv_lhs => rw [this]
-  rw [algClosure_image_singleton]
+  rw [mem_supClosure_image_singleton]
   exact Iff.rfl
 
 /-- `×` of a set of individuals, taken as singletons, holds of exactly its subsets, the empty one
 among them. -/
-theorem fullAlgClosure_image_singleton (S : Set α) (x : Finset α) :
-    FullAlgClosure (· ∈ ({·} : α → Finset α) '' S) x ↔ ↑x ⊆ S := by
-  rw [FullAlgClosure, algClosure_image_singleton]
-  refine ⟨fun h ↦ h.elim And.right fun h ↦ by simp [h], fun h ↦ ?_⟩
+theorem mem_fullSupClosure_image_singleton (S : Set α) (x : Finset α) :
+    x ∈ fullSupClosure (({·} : α → Finset α) '' S) ↔ ↑x ⊆ S := by
+  rw [fullSupClosure, Set.mem_insert_iff, mem_supClosure_image_singleton]
+  refine ⟨fun h ↦ h.elim (fun h ↦ by simp [h]) And.right, fun h ↦ ?_⟩
   rcases x.eq_empty_or_nonempty with rfl | hx
-  exacts [.inr rfl, .inl ⟨hx, h⟩]
+  exacts [.inl rfl, .inr ⟨hx, h⟩]
 
 /-- The pluralities of `×S` for a finite `S` number `0, …, |S|` atoms. -/
-theorem card_image_fullAlgClosure {S : Set α} (h : S.Finite) :
-    Finset.card '' {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = Set.Iic S.ncard := by
-  rw [show {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = {x | x ⊆ h.toFinset} from
-    Set.ext fun x ↦ (fullAlgClosure_image_singleton S x).trans h.subset_toFinset.symm,
+theorem card_image_fullSupClosure {S : Set α} (h : S.Finite) :
+    Finset.card '' fullSupClosure (({·} : α → Finset α) '' S) = Set.Iic S.ncard := by
+  rw [show fullSupClosure (({·} : α → Finset α) '' S) = {x | x ⊆ h.toFinset} from
+    Set.ext fun x ↦ (mem_fullSupClosure_image_singleton S x).trans h.subset_toFinset.symm,
     Set.ncard_eq_toFinset_card _ h]
   ext d
   exact ⟨fun ⟨x, hx, hd⟩ ↦ hd ▸ Finset.card_le_card hx,
     fun hd ↦ let ⟨y, hy, hc⟩ := Finset.exists_subset_card_eq hd; ⟨y, hy, hc⟩⟩
 
 /-- Those of `*S` number `1, …, |S|`: without the empty sum no plurality has zero atoms. -/
-theorem card_image_algClosure {S : Set α} (h : S.Finite) :
-    Finset.card '' {x | AlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = Set.Icc 1 S.ncard := by
-  rw [show {x | AlgClosure (· ∈ ({·} : α → Finset α) '' S) x} =
-      {x | x.Nonempty ∧ x ⊆ h.toFinset} from
+theorem card_image_supClosure {S : Set α} (h : S.Finite) :
+    Finset.card '' supClosure (({·} : α → Finset α) '' S) = Set.Icc 1 S.ncard := by
+  rw [show supClosure (({·} : α → Finset α) '' S) = {x | x.Nonempty ∧ x ⊆ h.toFinset} from
     Set.ext fun x ↦
-      (algClosure_image_singleton S x).trans (and_congr_right' h.subset_toFinset.symm),
+      (mem_supClosure_image_singleton S x).trans (and_congr_right' h.subset_toFinset.symm),
     Set.ncard_eq_toFinset_card _ h]
   ext d
   refine ⟨fun ⟨x, ⟨hx, hS⟩, hd⟩ ↦ hd ▸ ⟨hx.card_pos, Finset.card_le_card hS⟩, fun ⟨h1, hd⟩ ↦ ?_⟩

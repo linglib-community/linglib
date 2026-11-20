@@ -111,11 +111,12 @@ theorem pluralize_ofAtoms_eq_empty (hD : D w = ∅) : pluralize (ofAtoms D) w = 
 
 /-- Numeral phrases are quantized: a proper part of `n` dogs is not `n` dogs. -/
 theorem qua_withNumber_ofAtoms [DecidableEq Atom] (D : World → Set Atom) (n : ℕ) (w : World) :
-    QUA (· ∈ withNumber n (ofAtoms D) w) :=
-  qua_and_eq_of_strictMonoOn ((IsExtensiveMeasure.strictMono Finset.card).strictMonoOn _) n
+    QUA (withNumber n (ofAtoms D) w) :=
+  qua_inter_preimage_of_strictMonoOn (r := {x : Finset Atom | x.Nonempty ∧ (↑x : Set Atom) ⊆ D w})
+    ((IsExtensiveMeasure.strictMono Finset.card).strictMonoOn _) n
 
 theorem cum_pluralize_ofAtoms [DecidableEq Atom] (D : World → Set Atom) (w : World) :
-    CUM (· ∈ pluralize (ofAtoms D) w) := fun x hx y hy ↦ by
+    CUM (pluralize (ofAtoms D) w) := fun x hx y hy ↦ by
   obtain ⟨hx, hxD⟩ := mem_pluralize_ofAtoms.1 hx
   obtain ⟨-, hyD⟩ := mem_pluralize_ofAtoms.1 hy
   refine mem_pluralize_ofAtoms.2 ⟨hx.mono le_sup_left, ?_⟩

@@ -191,9 +191,9 @@ theorem IsSelfConnected.sup [SemilatticeSup α] [StronglySupplemented α] [HasPr
 non-null individuals whose sum it is are connected. -/
 theorem isSelfConnected_iff_isSum [PartialOrder α] [StronglySupplemented α] {C : α → α → Prop}
     {x : α} : IsSelfConnected C x ↔
-      ∀ y z, ¬ IsBot y → ¬ IsBot z → IsSum (fun u ↦ u = y ∨ u = z) x → C y z := by
-  simp only [IsSelfConnected, isSum_iff_forall_overlap, or_and_right, exists_or,
-    exists_eq_left]
+      ∀ y z, ¬ IsBot y → ¬ IsBot z → IsSum {y, z} x → C y z := by
+  simp only [IsSelfConnected, isSum_iff_forall_overlap, Set.mem_insert_iff,
+    Set.mem_singleton_iff, or_and_right, exists_or, exists_eq_left]
 
 section SupIsSum
 
@@ -263,7 +263,7 @@ end Cluster
 
 /-- The clusters of a connected component are cumulative. -/
 theorem cum_isClusterIn [SemilatticeSup α] (C : α → α → Prop) (P : α → Prop)
-    (c : (connectionGraph C P).ConnectedComponent) : CUM (IsClusterIn C P c) := by
+    (c : (connectionGraph C P).ConnectedComponent) : CUM {x | IsClusterIn C P c x} := by
   rintro x ⟨Z₁, h₁, hZ₁, hx⟩ y ⟨Z₂, -, hZ₂, hy⟩
   exact ⟨Z₁ ∪ Z₂, h₁.mono Set.subset_union_left, fun z hz ↦ hz.elim (hZ₁ z) (hZ₂ z),
     hx.union hy⟩

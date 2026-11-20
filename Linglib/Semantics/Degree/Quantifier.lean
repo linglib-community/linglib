@@ -33,8 +33,8 @@ their principal cuts, `Comparison.rel_principal`.
 A measured degree property `Iic (μ x)` is a principal lower set and contains the bottom degree;
 the structural lemmas ask only that each degree property be a lower set. For a count, the
 cardinalities of the pluralities a numeral ranges over, `Iic` is pluralization with the empty sum
-(`Mereology.card_image_fullAlgClosure`); Link's pluralization, without it, gives `Icc 1 n`
-(`Mereology.card_image_algClosure`), and a collective predicate need give no lower set.
+(`Mereology.card_image_fullSupClosure`); Link's pluralization, without it, gives `Icc 1 n`
+(`Mereology.card_image_supClosure`), and a collective predicate need give no lower set.
 
 ## References
 

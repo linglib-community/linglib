@@ -65,7 +65,7 @@ theorem atomsBelow_nonempty [Atomic α] (hx : ¬ IsBot x) : (atomsBelow x).Nonem
   Atomic.exists_atom_le hx
 
 /-- An individual of an atomic part structure is the sum of its atoms. -/
-theorem isSum_atomsBelow [Atomic α] (x : α) : IsSum (· ∈ atomsBelow x) x :=
+theorem isSum_atomsBelow [Atomic α] (x : α) : IsSum (atomsBelow x) x :=
   ⟨fun _ h ↦ h.2, fun _ hy hy0 ↦
     let ⟨a, ha, hay⟩ := Atomic.exists_atom_le hy0
     ⟨a, ⟨ha, hay.trans hy⟩, (Overlap.of_le ha.not_isBot hay).symm⟩⟩
@@ -74,15 +74,15 @@ theorem atomsBelow_mono (h : x ≤ y) : atomsBelow x ⊆ atomsBelow y :=
   fun _ ha ↦ ⟨ha.1, ha.2.trans h⟩
 
 /-- The atoms of a sum are the atoms of its members. -/
-theorem IsSum.atomsBelow_eq {P : α → Prop} {t : α} (h : IsSum P t) :
-    atomsBelow t = ⋃ (x) (_ : P x), atomsBelow x := by
+theorem IsSum.atomsBelow_eq {P : Set α} {t : α} (h : IsSum P t) :
+    atomsBelow t = ⋃ x ∈ P, atomsBelow x := by
   refine Set.Subset.antisymm (fun a ha ↦ ?_)
     (Set.iUnion₂_subset fun x hx ↦ atomsBelow_mono (h.1 x hx))
   obtain ⟨x, hx, q, hq, hqa, hqx⟩ := h.2 a ha.2 ha.1.not_isBot
   exact Set.mem_iUnion₂.2 ⟨x, hx, ha.1, ha.1.eq hqa hq ▸ hqx⟩
 
 /-- The sum of a set of atoms has exactly those atoms as parts. -/
-theorem IsSum.atomsBelow_eq_of_forall_atom {S : Set α} {t : α} (h : IsSum (· ∈ S) t)
+theorem IsSum.atomsBelow_eq_of_forall_atom {S : Set α} {t : α} (h : IsSum S t)
     (hS : ∀ a ∈ S, Atom a) : atomsBelow t = S := by
   rw [h.atomsBelow_eq]
   exact Set.Subset.antisymm

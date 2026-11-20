@@ -133,7 +133,7 @@ strongest true answer, the conjunction of the two, (31). -/
 theorem isStrongestTrueAnswer_hamblin_starred (hg₁ : g₁ ∈ D) (hg₂ : g₂ ∈ D) :
     IsStrongestTrueAnswer (hamblin starred D) {g₁, g₂} (starred g₁ ∩ starred g₂) := by
   refine ⟨⟨.inl (inf_mem_infClosure (mem_image_of_mem _ hg₁) (mem_image_of_mem _ hg₂)),
-    .base (.inl rfl), .base (.inr rfl)⟩, ?_⟩
+    subset_supClosure (Set.mem_insert _ _), subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩, ?_⟩
   rintro q ⟨hq, hw⟩
   obtain ⟨X, -, -, rfl | rfl⟩ := mem_hamblin.1 hq
   · exact subset_iInter₂ fun x hx ↦ starred_subset_of_pair_mem (mem_iInter₂.1 hw x hx)
@@ -144,7 +144,8 @@ theorem isStrongestTrueAnswer_hamblin_starred (hg₁ : g₁ ∈ D) (hg₂ : g₂
 (70), the reading of (53b) that the weak singular allows and the strong singular does not. -/
 theorem isStrongestTrueAnswer_hamblin_starred_singleton (hg : g ∈ D) :
     IsStrongestTrueAnswer (hamblin starred D) {g} (starred g) := by
-  refine ⟨⟨.inl (subset_infClosure (mem_image_of_mem _ hg)), .base rfl⟩, ?_⟩
+  refine ⟨⟨.inl (subset_infClosure (mem_image_of_mem _ hg)),
+    singleton_mem_starred_iff.2 rfl⟩, ?_⟩
   rintro q ⟨hq, hw⟩
   obtain ⟨X, -, -, rfl | rfl⟩ := mem_hamblin.1 hq
   · exact subset_iInter₂ fun x hx ↦ singleton_mem_starred_iff.1 (mem_iInter₂.1 hw x hx) ▸ subset_rfl
@@ -428,7 +429,8 @@ theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ∈ whStrongPlural) (
       ¬ IsExhaustivelyResolvable (starred '' whStrongPlural) {g₁, g₂} := by
   refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_hamblin_starred hg₁ hg₂⟩ (by decide), fun h ↦ ?_⟩
   obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
-  exact hne ((huniq g₁ ⟨hg₁, .base (.inl rfl)⟩).trans (huniq g₂ ⟨hg₂, .base (.inr rfl)⟩).symm)
+  exact hne ((huniq g₁ ⟨hg₁, subset_supClosure (Set.mem_insert _ _)⟩).trans
+    (huniq g₂ ⟨hg₂, subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩).symm)
 
 -- (53): one collective lifting is answered by naming the group on the weak singular, and on the
 -- strong singular, whose answer is the tautology, it is not

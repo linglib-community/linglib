@@ -110,7 +110,7 @@ theorem achievement_rat : Achievement (fun q : ℚ ↦ 0 ≤ q) 0 :=
 
 -- (12)
 theorem qua_of_isPoint (Q : NonemptyInterval T → Prop) (h : ∀ t, Q t → t.IsPoint) :
-    Mereology.QUA Q := by
+    Mereology.QUA {t | Q t} := by
   intro a ha b hb hab hle
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   have ha' : a.fst = a.snd := h a ha

@@ -141,7 +141,7 @@ private theorem mem_supClosure_iff :
     u ∈ supClosure (Set.range fun i ↦ ({.inl i} : Finset (ι ⊕ β))) ↔
       u.Nonempty ∧ u.toRight = ∅ := by
   have h : u ∈ supClosure (({·} : ι ⊕ β → Finset (ι ⊕ β)) '' Set.range .inl) ↔ _ :=
-    algClosure_image_singleton (Set.range (Sum.inl : ι → ι ⊕ β)) u
+    mem_supClosure_image_singleton (Set.range (Sum.inl : ι → ι ⊕ β)) u
   rw [← Set.range_comp] at h
   refine h.trans (and_congr_right fun _ ↦ ?_)
   simp [Set.subset_def, Finset.eq_empty_iff_forall_notMem]

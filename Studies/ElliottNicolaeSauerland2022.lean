@@ -815,27 +815,28 @@ variable [SemilatticeSup E] {g g₁ g₂ x : E}
 
 /-- The nucleus `∗f` holds of `x` in a world, the extension of `f` there, when `x` is a sum from
 it. -/
-def starred (x : E) : Set (Set E) := {v | AlgClosure (· ∈ v) x}
+def starred (x : E) : Set (Set E) := {v | x ∈ supClosure v}
 
 theorem singleton_mem_starred_iff : {g} ∈ starred x ↔ x = g := by
-  refine ⟨fun h ↦ ?_, fun h ↦ .base h⟩
-  induction h using AlgClosure.induction with
-  | base h => exact h
-  | sum _ _ ih₁ ih₂ => rw [ih₁, ih₂, sup_idem]
+  refine ⟨fun h ↦ ?_, fun h ↦ subset_supClosure (Set.mem_singleton_iff.2 h)⟩
+  change x ∈ supClosure {g} at h
+  induction h using supClosure_induction with
+  | mem _ h => exact Set.mem_singleton_iff.1 h
+  | sup _ _ _ _ ih₁ ih₂ => rw [ih₁, ih₂, sup_idem]
 
 theorem starred_subset_of_pair_mem (h : {g₁, g₂} ∈ starred x) :
     starred g₁ ∩ starred g₂ ⊆ starred x := by
   rintro v ⟨h₁, h₂⟩
-  change AlgClosure _ x at h
-  induction h using AlgClosure.induction with
-  | base h => rcases h with rfl | rfl <;> assumption
-  | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
+  change x ∈ supClosure _ at h
+  induction h using supClosure_induction with
+  | mem _ h => rcases h with rfl | rfl <;> assumption
+  | sup _ _ _ _ ih₁ ih₂ => exact supClosed_supClosure ih₁ ih₂
 
 theorem starred_ne_univ : starred g ≠ univ := fun h ↦ by
-  have hemp {x : E} : ¬ AlgClosure (· ∈ (∅ : Set E)) x := fun hx ↦ by
-    induction hx using AlgClosure.induction with
-    | base h => exact h
-    | sum _ _ ih _ => exact ih
+  have hemp {x : E} : x ∉ supClosure (∅ : Set E) := fun hx ↦ by
+    induction hx using supClosure_induction with
+    | mem _ h => exact h
+    | sup _ _ _ _ ih _ => exact ih
   exact hemp (h ▸ mem_univ _ : (∅ : Set E) ∈ starred g)
 
 variable {D : Set E} {v : Set E}
@@ -857,7 +858,8 @@ theorem isStrongestTrueAnswer_upwardGQ_starred_pair (hg₁ : g₁ ∈ D) (hg₂ 
     IsStrongestTrueAnswer (upwardGQ starred D) {g₁, g₂} (starred g₁ ∩ starred g₂) := by
   refine ⟨⟨.inr (.inr (isSublattice_latticeClosure.infClosed
     (subset_latticeClosure (mem_image_of_mem _ hg₁))
-    (subset_latticeClosure (mem_image_of_mem _ hg₂)))), .base (.inl rfl), .base (.inr rfl)⟩, ?_⟩
+    (subset_latticeClosure (mem_image_of_mem _ hg₂)))), subset_supClosure (Set.mem_insert _ _),
+    subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩, ?_⟩
   rintro r ⟨rfl | rfl | hr, hw⟩
   · exact subset_univ _
   · exact hw.elim
@@ -867,7 +869,8 @@ theorem isStrongestTrueAnswer_upwardGQ_starred_pair (hg₁ : g₁ ∈ D) (hg₂ 
 -- (82): with one group the quantifiers over pluralities answer by naming it
 theorem isStrongestTrueAnswer_upwardGQ_starred_singleton (hg : g ∈ D) :
     IsStrongestTrueAnswer (upwardGQ starred D) {g} (starred g) := by
-  refine ⟨⟨.inr (.inr (subset_latticeClosure (mem_image_of_mem _ hg))), .base rfl⟩, ?_⟩
+  refine ⟨⟨.inr (.inr (subset_latticeClosure (mem_image_of_mem _ hg))),
+    singleton_mem_starred_iff.2 rfl⟩, ?_⟩
   rintro r ⟨rfl | rfl | hr, hw⟩
   · exact subset_univ _
   · exact hw.elim
@@ -960,7 +963,8 @@ theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ≠ ⊥) (hg₂ : g�
   refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_upwardGQ_starred_pair h₁ h₂⟩ (by decide),
     fun h ↦ ?_⟩
   obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
-  exact hne ((huniq g₁ ⟨h₁, .base (.inl rfl)⟩).trans (huniq g₂ ⟨h₂, .base (.inr rfl)⟩).symm)
+  exact hne ((huniq g₁ ⟨h₁, subset_supClosure (Set.mem_insert _ _)⟩).trans
+    (huniq g₂ ⟨h₂, subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩).symm)
 
 omit [IsAtomistic E] [Finite E] in
 -- (81), (82): a collective answer is not available on the singular's atomic trace but is on the

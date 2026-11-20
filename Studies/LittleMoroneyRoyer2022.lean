@@ -20,7 +20,7 @@ takes the first path and Shan the second, with constituency `[[Num Clf] N]` agai
 `[Num [Clf N]]`, and the two derivations reach the same denotation.
 
 A count noun denotes Link's star of its atoms, the singletons of its individuals, so the noun is
-`Mereology.AlgClosure` over `({·} : α → Finset α) '' dog`. Both derivations are by Functional
+mathlib's `supClosure` of `({·} : α → Finset α) '' dog`. Both derivations are by Functional
 Application alone: the Ch'ol root is measure modification by the atom count, and the Shan root
 is the partition numeral `IoninMatushansky2006.cardMod` over the atomized noun,
 `Mereology.atomize`. The distributional diagnostics of the paper's §4, its case against a uniform
@@ -72,14 +72,14 @@ variable {α : Type} [DecidableEq α] (dog : Set α)
 
 /-- A count noun denotes the atoms and their sums ((6)), Link's star of the singletons of its
 individuals (fn. 4). -/
-def dogs : Finset α → Prop := AlgClosure (· ∈ ({·} : α → Finset α) '' dog)
+def dogs : Finset α → Prop := (· ∈ supClosure (({·} : α → Finset α) '' dog))
 
 theorem dogs_iff (x : Finset α) : dogs dog x ↔ x.Nonempty ∧ ↑x ⊆ dog :=
-  algClosure_image_singleton dog x
+  mem_supClosure_image_singleton dog x
 
 /-- Atomizing a count noun yields its atoms ((13)), the singletons of its individuals. -/
 theorem atomize_dogs : atomize (dogs dog) = (· ∈ ({·} : α → Finset α) '' dog) :=
-  atomize_algClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
+  atomize_mem_supClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
 
 theorem dogs_and_card_eq_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
     dogs dog x ∧ x.card = n ↔ x.card = n ∧ ↑x ⊆ dog := by
@@ -241,8 +241,8 @@ theorem not_wellFormed_spine_cholTree : ¬ WellFormed (spine cholTree) := by dec
 
 /-! ### One denotation for *two dogs* -/
 
-theorem qua_dogs_card_eq (n : ℕ) : QUA fun x ↦ dogs dog x ∧ x.card = n :=
-  qua_and_eq_of_strictMonoOn (Finset.card_strictMono.strictMonoOn _) n
+theorem qua_dogs_card_eq (n : ℕ) : QUA {x | dogs dog x ∧ x.card = n} :=
+  qua_inter_preimage_of_strictMonoOn (Finset.card_strictMono.strictMonoOn {x | dogs dog x}) n
 
 /-- Derivationally distinct, the two strategies denote the same pluralities for every nonzero
 numeral (§4.5). -/

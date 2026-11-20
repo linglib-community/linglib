@@ -91,8 +91,8 @@ theorem not_nonBase_of_atom (hθ : 1 ≤ θ) {e : E} (he : Atom e) :
   exact (hθ.trans_lt h).false
 
 theorem isQuasiHomogeneous_nonBase [Preorder S] (hs : IsQuasiHomogeneous θ swarm)
-    (hw : DIV (coincident g y)) (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e')
-    (hl : DIV (landmark g)) :
+    (hw : DIV {s | coincident g y s}) (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e')
+    (hl : DIV {e | landmark g e}) :
     IsQuasiHomogeneous θ (nonBase θ swarm cause coincident landmark g y) := by
   rintro e e' ⟨⟨hse, -⟩, ⟨s, hws, hcs⟩, hle⟩ h h'
   obtain ⟨s', hs', hcs'⟩ := hc hcs h
@@ -107,8 +107,8 @@ theorem IsQuasiHomogeneous.not_isTelic {precedes : E → E → Prop} [IsStrictOr
 
 /-- (14), (21): the non-base alternant is atelic, by its quasi-homogeneity (§3.2.2). -/
 theorem not_isTelic_nonBase [Preorder S] {precedes : E → E → Prop} [IsStrictOrder E precedes]
-    (hs : IsQuasiHomogeneous θ swarm) (hw : DIV (coincident g y))
-    (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e') (hl : DIV (landmark g))
+    (hs : IsQuasiHomogeneous θ swarm) (hw : DIV {s | coincident g y s})
+    (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e') (hl : DIV {e | landmark g e})
     {e e' e'' : E} (he : nonBase θ swarm cause coincident landmark g y e) (h' : e' ≤ e)
     (hθ : θ < (atomsBelow e').encard) (h'' : e'' ≤ e) (hp : precedes e' e'') :
     ¬ IsTelic precedes (nonBase θ swarm cause coincident landmark g y) :=

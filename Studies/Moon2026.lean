@@ -94,12 +94,12 @@ theorem isSelfConnected_overlap_or_iff {T : α → α → Prop} {x : α} :
   simp only [isSelfConnected_iff_sup, or_iff_not_imp_left]
 
 theorem connectivity_breaks_cum (hConn : ∀ x, P x → IsSelfConnected C x) {x y : α} (hx : P x)
-    (hy : P y) (hx0 : ¬ IsBot x) (hy0 : ¬ IsBot y) (hDisc : ¬ C x y) : ¬ CUM P :=
+    (hy : P y) (hx0 : ¬ IsBot x) (hy0 : ¬ IsBot y) (hDisc : ¬ C x y) : ¬ CUM {x | P x} :=
   fun hCum ↦ hDisc ((hConn _ (hCum hx hy)).of_sup hx0 hy0)
 
 theorem connectivity_middle_ground (hConn : ∀ x, P x → IsSelfConnected C x) {a b : α}
     (ha : P a) (hb : P b) (ha0 : ¬ IsBot a) (hb0 : ¬ IsBot b) (hDisc : ¬ C a b) {x y : α}
-    (hx : P x) (hy : P y) (hlt : y < x) : ¬ CUM P ∧ ¬ QUA P :=
+    (hx : P x) (hy : P y) (hlt : y < x) : ¬ CUM {x | P x} ∧ ¬ QUA {x | P x} :=
   ⟨connectivity_breaks_cum hConn ha hb ha0 hb0 hDisc, fun hQ ↦ hQ hy hx hlt.ne hlt.le⟩
 
 end Mereotopology
@@ -188,7 +188,7 @@ theorem atoms_exclude_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α �
 
 theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
     (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
-    ¬ QUA (mixedDrinkDen C recipe μ phase) :=
+    ¬ QUA {z | mixedDrinkDen C recipe μ phase z} :=
   fun hQ ↦ hQ hy hx hlt.ne hlt.le
 
 /-- Two drinks that are not connected, as in two glasses, do not sum to a drink, so the
@@ -198,14 +198,15 @@ theorem mixedDrink_middle_ground [StronglySupplemented α] [SupIsSum α] {a b : 
     (ha : mixedDrinkDen C recipe μ phase a) (hb : mixedDrinkDen C recipe μ phase b)
     (hDisc : ¬ C a b) {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
     (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
-    ¬ CUM (mixedDrinkDen C recipe μ phase) ∧ ¬ QUA (mixedDrinkDen C recipe μ phase) :=
+    ¬ CUM {z | mixedDrinkDen C recipe μ phase z} ∧
+      ¬ QUA {z | mixedDrinkDen C recipe μ phase z} :=
   connectivity_middle_ground (fun _ ↦ isSelfConnected_of_mixedDrinkDen) ha hb
     (not_isBot_of_mixedDrinkDen ha) (not_isBot_of_mixedDrinkDen hb) hDisc hx hy hlt
 
 theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
-    (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)
-    (hθ_a : a ~[θ] e_a) (hθ_b : b ~[θ] e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x)
-    (hy : OBJ y) (hlt : y < x) (hθ_x : x ~[θ] e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
+    (hU : UP θ) (hs : SUM θ) {OBJ : Set α} {a b : α} {e_a e_b : β} (ha : a ∈ OBJ) (hb : b ∈ OBJ)
+    (hθ_a : a ~[θ] e_a) (hθ_b : b ~[θ] e_b) (hSum : a ⊔ b ∉ OBJ) {x y : α} {e_x : β} (hx : x ∈ OBJ)
+    (hy : y ∈ OBJ) (hlt : y < x) (hθ_x : x ~[θ] e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
   refine ⟨not_cum_vp hs hU ha hb hθ_a hθ_b hSum, fun hQua ↦ ?_⟩
   obtain ⟨e_y, he_y_lt, hθ_y⟩ := h.mse hθ_x hlt
   exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
@@ -217,9 +218,9 @@ theorem mixedDrink_VP_propagation_gap [StronglySupplemented α] [SupIsSum α] {�
     (hθ_b : b ~[drinkTheme] e_b) (hDisc : ¬ C a b) {x y : α} {e_x : β}
     (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x)
     (hθ_x : x ~[drinkTheme] e_x) :
-    ¬ CUM (VP drinkTheme (mixedDrinkDen C recipe μ phase)) ∧
-      ¬ QUA (VP drinkTheme (mixedDrinkDen C recipe μ phase)) :=
-  middle_ground_stable h hU hs ha hb hθ_a hθ_b
+    ¬ CUM (VP drinkTheme {z | mixedDrinkDen C recipe μ phase z}) ∧
+      ¬ QUA (VP drinkTheme {z | mixedDrinkDen C recipe μ phase z}) :=
+  middle_ground_stable (OBJ := {z | mixedDrinkDen C recipe μ phase z}) h hU hs ha hb hθ_a hθ_b
     (not_mixedDrinkDen_sup_of_not_connected (not_isBot_of_mixedDrinkDen ha)
       (not_isBot_of_mixedDrinkDen hb) hDisc) hx hy hlt hθ_x
 

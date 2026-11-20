@@ -37,7 +37,7 @@ aspectual phrase, (24e). The branches of a situation are its sub-situations lyin
 single history, given by a predicate `linear`, and the forward expansion, taken from [deo-2009]
 and which the chapter does not take to be a function, is a parameter `fexp` chosen per
 utterance. Verbs are event predicates with the agent conjunct folded in, the lexical
-cumulativity hypothesis is `Mereology.AlgClosure` of the singular events, and a plural event is
+cumulativity hypothesis is mathlib's `supClosure` of the singular events, and a plural event is
 `Mereology.IsPlural`, the iteration of the same volume's [boneh-doron-2013]. The kind of a noun
 is a parameter, the sum of its individuals, and a "kind coerced" indefinite ranges over a given
 set of sub-kinds, parts of the kind. Example numbers are those of the HAL preprint hal-00920848.
@@ -100,13 +100,13 @@ variable {linear τ}
 -- §5
 theorem isPlural_of_large {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {s : S}
     (hL : Large linear τ V₀ s) {b : S} (hb : Branch linear b s) {e : E}
-    (he : AlgClosure V₀ e) (hbe : b ≤ τ e) : IsPlural V₀ e :=
-  (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (of_algClosure_of_atom he ha) hbe⟩
+    (he : e ∈ supClosure {e | V₀ e}) (hbe : b ≤ τ e) : IsPlural {e | V₀ e} e :=
+  (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (mem_of_mem_supClosure_of_atom he ha) hbe⟩
 
 -- §5
 theorem impf_of_le {V₀ : E → Prop} {fexp : S → S} {s : S} {e : E} (he : V₀ e)
-    (hs : fexp s ≤ τ e) : IMPF linear τ fexp (AlgClosure V₀) s :=
-  λ _ hb => ⟨e, .base he, hb.2.trans hs⟩
+    (hs : fexp s ≤ τ e) : IMPF linear τ fexp (· ∈ supClosure {e | V₀ e}) s :=
+  λ _ hb => ⟨e, subset_supClosure he, hb.2.trans hs⟩
 
 end Aspect
 
@@ -209,19 +209,19 @@ include hTh
 `V₀`-event with one `N`-theme per atom (§5). -/
 theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {N : I → Prop}
     (hN : ∀ ⦃x⦄, N x → Atom x) {fexp : S → S} {s : S} (hL : Large linear τ V₀ (fexp s))
-    (h : IMPF linear τ fexp (indefinite Th N (AlgClosure V₀)) s) {b : S}
+    (h : IMPF linear τ fexp (indefinite Th N (· ∈ supClosure {e | V₀ e})) s) {b : S}
     (hb : Branch linear b (fexp s)) :
-    ∃ e, IsPlural V₀ e ∧ b ≤ τ e ∧ ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
+    ∃ e, IsPlural {e | V₀ e} e ∧ b ≤ τ e ∧ ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
   let ⟨e, ⟨x, hx, hcl, h'⟩, hbe⟩ := h b hb
   ⟨e, isPlural_of_large hV₀ hL hb hcl hbe, hbe, x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
 
 -- (2b), §7
 theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀ e → Atom e)
     {book : I → Prop} (hN : ∀ ⦃x⦄, book x → Atom x)
-    (hCK : ∀ e, IsPlural read₀ e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
+    (hCK : ∀ e, IsPlural {e | read₀ e} e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
     {fexp : S → S} {s : S} (hL : Large linear τ read₀ (fexp s)) {b : S}
     (hb : Branch linear b (fexp s)) :
-    ¬ IMPF linear τ fexp (indefinite Th book (AlgClosure read₀)) s := by
+    ¬ IMPF linear τ fexp (indefinite Th book (· ∈ supClosure {e | read₀ e})) s := by
   intro h
   obtain ⟨e, hpl, -, x, hx, hsame⟩ := hab_soe hTh hV₀ hN hL h hb
   obtain ⟨e', he', hne⟩ := hCK e hpl x hx
@@ -236,14 +236,14 @@ theorem impf_indefinite_witness :
       (car : I → Prop) (fexp : S → S) (s : S),
       (∀ ⦃e⦄, drive₀ e → Atom e) ∧ (∀ ⦃x⦄, car x → Atom x) ∧ (∀ e, Atom e → ¬ IsBot (Th e)) ∧
         Large linear τ drive₀ (fexp s) ∧ (∃ b, Branch linear b (fexp s)) ∧
-        IMPF linear τ fexp (indefinite Th car (AlgClosure drive₀)) s :=
+        IMPF linear τ fexp (indefinite Th car (· ∈ supClosure {e | drive₀ e})) s :=
   ⟨Finset (Fin 2), Finset (Fin 2), Finset (Fin 1), inferInstance, inferInstance, inferInstance,
     (· = {0, 1}), SupHom.id _, SupHom.const _ {0}, λ e => e = {0} ∨ e = {1}, (· = {0}),
     λ _ => {0, 1}, {0}, by decide, by decide, by decide, by unfold Large Branch; decide,
     ⟨{0, 1}, rfl, le_rfl⟩, by
       rintro b ⟨rfl, -⟩
-      exact ⟨{0} ⊔ {1}, ⟨{0}, rfl, .sum (.base (Or.inl rfl)) (.base (Or.inr rfl)), rfl⟩,
-        by decide⟩⟩
+      exact ⟨{0} ⊔ {1}, ⟨{0}, rfl, supClosed_supClosure (subset_supClosure (Or.inl rfl))
+        (subset_supClosure (Or.inr rfl)), rfl⟩, by decide⟩⟩
 
 /-! ### Against the covert quantifier, §2
 

@@ -79,7 +79,7 @@ section Denotations
 variable {α : Type*} {B x : Finset α}
 
 /-- *dəgha* 'boy' over the boys `B` denotes every nonempty group of them, general number (9a):
-Link's `*` of the boys, by `Mereology.algClosure_image_singleton`. -/
+Link's `*` of the boys, by `Mereology.mem_supClosure_image_singleton`. -/
 def boy (B : Finset α) : Set (Finset α) := Set.Ioc ∅ B
 
 theorem mem_boy : x ∈ boy B ↔ x ⊆ B ∧ 1 ≤ x.card := by

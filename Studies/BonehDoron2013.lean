@@ -78,7 +78,7 @@ base at its run time, within an iteration of `P`-events (14). -/
 def Hab [SemilatticeSup E] (mb : NonemptyInterval T → Background W) (D P : W → E → Prop) (w : W)
     (s : E) : Prop :=
   Initiated D w s ∧
-    ∀ w' ∈ (mb (τ s)).accessibleWorlds w, ∃ e, τ s ≤ τ e ∧ Mereology.IsPlural (P w') e
+    ∀ w' ∈ (mb (τ s)).accessibleWorlds w, ∃ e, τ s ≤ τ e ∧ Mereology.IsPlural {e | P w' e} e
 
 /-- With the indefinite over Hab, (8), a predicate that no object satisfies twice, such as smoking
 a given cigarette, has no habit over a consistent modal base, (4b) and (9b). -/
@@ -87,7 +87,7 @@ theorem not_hab_of_subsingleton [SemilatticeSup E] {mb : NonemptyInterval T → 
     (hP : ∀ v a b, P v a → P v b → a = b) : ¬ Hab mb D P w s := fun ⟨_, h⟩ ↦
   let ⟨w', hw'⟩ := hmb
   let ⟨e, _, he⟩ := h w' hw'
-  Mereology.not_isPlural_of_subsingleton (hP w') e he
+  Mereology.not_isPlural_of_subsingleton (fun _ ha _ hb ↦ hP w' _ _ ha hb) e he
 
 /-- Gen, (21): every `Q`-individual whose temporal extent `ext` lies within the interval `i` is a
 `P`-individual throughout the modal base at `i`. It is GEN with every case normal and the
@@ -239,16 +239,16 @@ private theorem hab_habit {P : Bool → NonemptyInterval ℕ → Prop} (h₁ : P
   refine ⟨⟨.pure 0, by decide, rfl⟩, fun w' hw' ↦ ⟨habit, le_rfl, ?_⟩⟩
   obtain rfl : w' = true := by simpa [gnomic] using hw'
   have h : NonemptyInterval.pure 1 ⊔ .pure 2 = habit := rfl
-  exact ⟨h ▸ .sum (.base h₁) (.base h₂), .pure 1, by decide, .pure 2, by decide, h₁, h₂,
-    by decide⟩
+  exact ⟨h ▸ supClosed_supClosure (subset_supClosure h₁) (subset_supClosure h₂), .pure 1,
+    by decide, .pure 2, by decide, h₁, h₂, by decide⟩
 
 /-- Ruti's habit of going to work by bus holds though she went once, (42a), as a habit initiated
 by a single event does, (16)–(17). -/
 theorem hab_of_single_trip :
-    Hab gnomic indicating bus false habit ∧ ¬ ∃ e, Mereology.IsPlural (bus false) e := by
+    Hab gnomic indicating bus false habit ∧ ¬ ∃ e, Mereology.IsPlural {e | bus false e} e := by
   refine ⟨hab_habit ⟨⟨1, rfl⟩, le_rfl⟩ ⟨⟨2, rfl⟩, Nat.le_succ 1⟩,
     fun ⟨e, he⟩ ↦ Mereology.not_isPlural_of_subsingleton ?_ e he⟩
-  rintro _ _ ⟨rfl, -⟩ ⟨rfl, -⟩
+  rintro _ ⟨rfl, -⟩ _ ⟨rfl, -⟩
   rfl
 
 -- (18), (19), (42), (42c)
@@ -265,14 +265,14 @@ theorem restrictor_rows :
       Examples.ex4b.judgment = .acceptable) ∧
     ((∃ f s, Hab gnomic indicating (repeatable · · f) false s) ↔
       Examples.ex6b.judgment = .acceptable) ∧
-    ((∃ r e, Mereology.IsPlural (onceAt false · r) e) ↔
+    ((∃ r e, Mereology.IsPlural {x | onceAt false x r} e) ↔
       Examples.ex7b.judgment = .acceptable) :=
   ⟨iff_of_true (fun _ ↦ gen_iff.2 fun _ _ ⟨t, ht⟩ _ _ ↦ ⟨t, ht⟩) rfl,
     iff_of_false (fun ⟨_, _, h⟩ ↦ not_hab_of_subsingleton ⟨true, by simp [gnomic]⟩
       (fun _ _ _ ha hb ↦ ha.trans hb.symm) h) (by decide),
     iff_of_true ⟨(), habit, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩ rfl,
     iff_of_false (fun ⟨_, e, h⟩ ↦ Mereology.not_isPlural_of_subsingleton
-      (fun _ _ ha hb ↦ ha.trans hb.symm) e h) (by decide)⟩
+      (fun _ ha _ hb ↦ Eq.trans ha (Eq.symm hb)) e h) (by decide)⟩
 
 /-- In the context of (42), the habit makes the simple form true, (42a), and supplies *would*'s
 restriction, so that *would*, Gen over the trips by (22), is true, (42b); *used to* is false,

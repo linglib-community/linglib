@@ -182,7 +182,7 @@ theorem UO.mso_of_ue (hO : UO θ) (hE : UE θ) : MSO θ := UE.mse_of_uo hO hE
 /-- Under uniqueness of objects, a relation maps to subobjects iff the events of each object form
 a quantized predicate: it takes the whole event to relate the object, not a part of it
 ([krifka-1998], after (50)). -/
-theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA (x ~[θ] ·) :=
+theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA {e | x ~[θ] e} :=
   ⟨fun hm _ ↦ qua_of_forall fun _ _ he hlt he' ↦
       let ⟨_, hy, hθ⟩ := hm he hlt
       hy.ne ((hO he hlt.le).unique ⟨hy.le, hθ⟩ ⟨le_rfl, he'⟩),
@@ -190,7 +190,7 @@ theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA (x ~[θ] ·) 
       let ⟨y, hy, hθ⟩ := (hO hxe hlt.le).exists
       ⟨y, lt_of_le_of_ne hy fun h ↦ hq x (h ▸ hθ : x ~[θ] e') hxe hlt.ne hlt.le, hθ⟩⟩
 
-theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (x ~[θ] ·) :=
+theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA {e | x ~[θ] e} :=
   hO.mso_iff_forall_qua.mp hm x
 
 end PartialOrder

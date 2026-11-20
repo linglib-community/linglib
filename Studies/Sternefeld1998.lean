@@ -54,19 +54,20 @@ theorem map_singleton_singleton (R : α → β → Prop) (a : α) (b : β) :
     Relation.Map R ({·}) ({·}) ({a} : Finset α) ({b} : Finset β) ↔ R a b := by
   simp [Relation.Map, Finset.singleton_inj]
 
-theorem algClosure_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
-    AlgClosure (Relation.Map R ({·}) ({·}) ({a} : Finset α)) B ↔ B.Nonempty ∧ ∀ b ∈ B, R a b := by
-  rw [algClosure_iff_of_subset_range_singleton]
-  · simp only [map_singleton_singleton]
+theorem mem_supClosure_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
+    B ∈ supClosure {y | Relation.Map R ({·}) ({·}) ({a} : Finset α) y} ↔
+      B.Nonempty ∧ ∀ b ∈ B, R a b := by
+  rw [mem_supClosure_iff_of_subset_range_singleton]
+  · simp only [Set.mem_ofPred_eq, map_singleton_singleton]
   · rintro _ ⟨_, b, _, _, rfl⟩
     exact ⟨b, rfl⟩
 
-private theorem algClosure_map_subset_range [DecidableEq β] (R : α → β → Prop)
+private theorem supClosure_map_subset_range [DecidableEq β] (R : α → β → Prop)
     (B : Finset α → Finset β) :
-    {x : Finset α | AlgClosure (Relation.Map R ({·}) ({·}) x) (B x)} ⊆
+    {x : Finset α | B x ∈ supClosure {y | Relation.Map R ({·}) ({·}) x y}} ⊆
       Set.range ({·} : α → Finset α) :=
   fun _ h ↦
-    let ⟨_, hy, _⟩ := algClosure_has_base h
+    let ⟨_, hy, _⟩ := exists_le_of_mem_supClosure h
     let ⟨a, _, _, ha, _⟩ := hy
     ⟨a, ha⟩
 
@@ -147,27 +148,27 @@ theorem not_weakReciprocity_langendoenModel :
 
 /-- Strong distributivity by iterated `*` (7): `A ∈ *{x : B ∈ *{y : R(x, y)}}`. -/
 def SD (R : α → β → Prop) (A : Finset α) (B : Finset β) : Prop :=
-  AlgClosure (fun x : Finset α ↦ AlgClosure (Relation.Map R ({·}) ({·}) x) B) A
+  A ∈ supClosure {x : Finset α | B ∈ supClosure {y | Relation.Map R ({·}) ({·}) x y}}
 
 /-- Strong reciprocity by iterated `*` (48b): `A ∈ *λx[{y : y ∈ A ∧ y ≠ x} ∈ *λy.R(x, y)]`,
 the reciprocal interpreted in situ as one NP. -/
 def SR (R : α → α → Prop) (A : Finset α) : Prop :=
-  AlgClosure (fun x : Finset α ↦
-    AlgClosure (Relation.Map R ({·}) ({·}) x) (A.filter fun b ↦ ({b} : Finset α) ≠ x)) A
+  A ∈ supClosure {x : Finset α |
+    A.filter (fun b ↦ ({b} : Finset α) ≠ x) ∈ supClosure {y | Relation.Map R ({·}) ({·}) x y}}
 
 -- (7), (2a)
 theorem sd_iff (R : α → β → Prop) {A : Finset α} {B : Finset β} (hA : A.Nonempty)
     (hB : B.Nonempty) : SD R A B ↔ ∀ a ∈ A, ∀ b ∈ B, R a b := by
-  rw [SD, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R fun _ ↦ B),
+  rw [SD, mem_supClosure_iff_of_subset_range_singleton (supClosure_map_subset_range R fun _ ↦ B),
     and_iff_right hA]
-  exact forall₂_congr fun a _ ↦ (algClosure_map_iff R a B).trans (and_iff_right hB)
+  exact forall₂_congr fun a _ ↦ (mem_supClosure_map_iff R a B).trans (and_iff_right hB)
 
 -- (48b), (3a)
 theorem sr_iff (R : α → α → Prop) {A : Finset α} : SR R A ↔ StrongReciprocity R A := by
-  rw [SR, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R _),
+  rw [SR, mem_supClosure_iff_of_subset_range_singleton (supClosure_map_subset_range R _),
     strongReciprocity_iff, ← Finset.one_lt_card_iff_nontrivial]
-  simp only [algClosure_map_iff, Finset.mem_filter, ne_eq, Finset.singleton_inj,
-    Finset.filter_nonempty_iff]
+  simp only [Set.mem_ofPred_eq, mem_supClosure_map_iff, Finset.mem_filter, ne_eq,
+    Finset.singleton_inj, Finset.filter_nonempty_iff]
   constructor
   · rintro ⟨⟨a, ha⟩, h⟩
     obtain ⟨⟨b, hb, hba⟩, -⟩ := h a ha

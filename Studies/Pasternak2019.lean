@@ -136,7 +136,7 @@ end Zero
 
 /-- Mental state homogeneity (55) says that a predicate closed under parts holds of `e` iff it
 holds of every part of `e`. -/
-theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} (h : Mereology.DIV P) (e : α) :
+theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} (h : Mereology.DIV {x | P x}) (e : α) :
     P e ↔ ∀ e' ≤ e, P e' :=
   ⟨fun he _ hle ↦ h hle he, fun hall ↦ hall e le_rfl⟩
 

@@ -25,7 +25,7 @@ context whose speaker is part of the addressee, where the first and second perso
 coincide and competition cannot separate them (`strengthen_second_of_degenerate`).
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
-restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
+restrictor (`der_unique`; his cover-based `*` is mathlib's `supClosure` by definition),
 and `JE`, a universal over the atomic parts of a group individual that projects its scope's
 presupposition universally (`JE`), whose truth on a bivalent scope is Link's distributivity
 operator (`je_eq_true_iff_D`, `je_eq_true_iff_forall`). The indefinite projects existentially
@@ -47,7 +47,7 @@ unmarked values, plural and third person (`politeness_unmarked`).
 
 namespace Sauerland2003
 
-open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
+open Mereology (Atom cum_maximal_unique not_atom_sup_of_ne)
 open Mereology (D)
 open Presupposition Trivalent
 
@@ -63,9 +63,9 @@ theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
   (Number.mem_dom_singular _).not.2 (not_atom_sup_of_ne ha hb hne)
 
-theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
-    (h₂ : Maximal (AlgClosure R) m₂) : m₁ = m₂ :=
-  cum_maximal_unique algClosure_cum h₁ h₂
+theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (· ∈ supClosure {x | R x}) m₁)
+    (h₂ : Maximal (· ∈ supClosure {x | R x}) m₂) : m₁ = m₂ :=
+  cum_maximal_unique supClosed_supClosure h₁ h₂
 
 /-- With `[Sg]` blocked by an independent factor, `[Pl]` is used of atoms too, (13)–(14). -/
 theorem strengthen_plural_of_singular_blocked :

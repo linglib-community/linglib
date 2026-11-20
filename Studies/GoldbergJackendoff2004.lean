@@ -157,15 +157,16 @@ def resultative (V : E → Prop) (R : Path Loc → Prop) (e : E) : Prop :=
 /-- If paths are additive and injective on events, an end-bounded result phrase makes the
 resultative telic (27). -/
 theorem qua_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e')
-    (hinj : Function.Injective (σ : E → Path Loc)) (hR : QUA R) : QUA (resultative V R) :=
+    (hinj : Function.Injective (σ : E → Path Loc)) (hR : QUA {p | R p}) :
+    QUA {e | resultative V R e} :=
   IsAntichain.subset
-    (qua_pullback ((OrderHomClass.monotone (SupHom.mk σ hσ)).strictMono_of_injective hinj) hR)
+    (QUA.preimage ((OrderHomClass.monotone (SupHom.mk σ hσ)).strictMono_of_injective hinj) hR)
     fun _ h ↦ h.2
 
 /-- If paths are additive, a non-end-bounded result phrase leaves the resultative of an activity
 atelic (27). -/
-theorem cum_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e') (hV : CUM V) (hR : CUM R) :
-    CUM (resultative V R) :=
+theorem cum_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e') (hV : CUM {e | V e})
+    (hR : CUM {p | R p}) : CUM {e | resultative V R e} :=
   SupClosed.inter hV (hR.preimage (SupHom.mk σ hσ))
 
 end Aspect

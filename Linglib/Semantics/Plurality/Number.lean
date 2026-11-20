@@ -76,7 +76,7 @@ theorem additiveIn_sup {Q : D → Prop} {x y : D} (hx : additiveIn Q x) (hy : ad
   exact hx.2 (y ⊔ z) (hy.2 z hz)
 
 /-- The additive elements of a region form a cumulative predicate. -/
-theorem additive_subregion_is_cum (Q : D → Prop) : CUM (additiveIn Q) :=
+theorem additive_subregion_is_cum (Q : D → Prop) : CUM {x | additiveIn Q x} :=
   fun _ hx _ hy => additiveIn_sup hx hy
 
 instance {Q : D → Prop} [Fintype D] [DecidablePred Q] (x : D) : Decidable (additiveIn Q x) :=
