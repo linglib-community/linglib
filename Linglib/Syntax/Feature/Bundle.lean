@@ -9,9 +9,10 @@ public import Linglib.Syntax.Feature.Person.Specification
 # Feature bundles
 
 A feature bundle gives a slot to each of the five dimensions in which the form of one element
-may covary with another: person, number, gender, case and definiteness. The person slot is a
-person specification (`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is
-less specific than an inclusive or an exclusive one, and the others are slots of the flat order
+may covary with another: person, number, gender, case and definiteness, the first three the
+φ-features (`Agreement.Dimension.phi`). The person slot is a person specification
+(`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is less specific
+than an inclusive or an exclusive one, and the others are slots of the flat order
 of `Core/Order/Flat.lean`, a value or nothing. The partial order of bundles, their bottom, the
 wholly unspecified bundle, and their unification are the pointwise ones. Each dimension is a
 token feature with that feature's values, and [a token's bundle](##Agreement.Bundle.ofFeatures)
@@ -27,6 +28,7 @@ by morphology, so the file stands with the feature inventories below `Syntax/Agr
 ## References
 
 * [corbett-1998]
+* [corbett-2006]
 * [norris-2019]
 -/
 
@@ -39,6 +41,10 @@ three indisputable agreement features or the two contested ones ([corbett-1998])
 inductive Dimension where
   | person | number | gender | case | definiteness
   deriving DecidableEq, Repr, Fintype
+
+/-- The φ-features are the three indisputable agreement features, person, number and gender
+([corbett-2006]). -/
+def Dimension.phi : Finset Dimension := {.person, .number, .gender}
 
 /-- The token feature a dimension is. It is reducible, so that the values of a dimension reduce
 to those of its feature when coercions are sought. -/
@@ -208,7 +214,8 @@ instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = 
 /-- The six bundles of the first, second and third persons in the singular and the plural, the
 cells of a paradigm without clusivity or a dual. -/
 def personNumberCells : List Bundle :=
-  [Number.singular, .plural].flatMap fun n ↦ [Person.Specification.first, .second, .third].map (personNumber · n)
+  [Number.singular, .plural].flatMap fun n ↦
+    [Person.Specification.first, .second, .third].map (personNumber · n)
 
 end Bundle
 

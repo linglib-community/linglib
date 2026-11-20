@@ -11,13 +11,13 @@ public import Linglib.Morphology.Word.Basic
 /-!
 # φ-agreement between word tokens
 
-A word's φ-features are the agreement dimensions of its features, so two words agree when those
-bundles are compatible. Agreement is reflexive and symmetric but not transitive, since an
-unspecified dimension agrees with every value.
+A word bears the agreement bundle of its features, so two words agree when their bundles are
+compatible in person, number and gender. Agreement between words is not transitive
+(`Morphology.Word.not_isTrans_agree`), since an unspecified dimension agrees with every value.
 
-## Main results
+## References
 
-* `Morphology.Word.not_isTrans_agree`: agreement between words is not transitive.
+* [corbett-2006]
 -/
 
 @[expose] public section
@@ -38,6 +38,15 @@ theorem Word.not_isTrans_agree : ¬ IsTrans Word HasPhi.Agree := fun ⟨h⟩ ↦
           (gender := some .Masc)⟩
        (by decide) (by decide))
     (by decide)
+
+/-- Case is not a φ-feature: nominative *she* agrees with accusative *her*, which can be its
+antecedent. -/
+example : HasPhi.Agree
+    (⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)
+      (gender := some .Fem) (case := some .nom)⟩ : Word)
+    (⟨"her", .PRON, Features.of (person := some .third) (number := some .singular)
+      (gender := some .Fem) (case := some .acc)⟩ : Word) := by
+  decide
 
 /-- Reflexivity is not an agreement feature: a reflexive-marked token agrees with an unmarked
 one. -/

@@ -133,16 +133,6 @@ either is unspecified, several for a syncretism such as clusivity-unmarked Engli
 def categories : Finset Person.Category :=
   (Option.map₂ (Person.Category.ofPersonNumber · p.clusivity ·) p.person p.number).getD ∅
 
-/-- A pronoun bears the bundle of its person and clusivity, number, gender and case. -/
-def phi : Agreement.Bundle
-  | .person => .ofPersonClusivity p.person p.clusivity
-  | .number => p.number
-  | .gender => p.gender
-  | .case => p.case
-  | .definiteness => ⊥
-
-instance : HasPhi Pronoun := ⟨phi⟩
-
 /-! ### The pronouns of a table -/
 
 section Table
@@ -182,11 +172,15 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
       (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
 
+/-- A pronoun bears the agreement features of its token: its person and clusivity, number, gender
+and case. -/
+instance : HasPhi Pronoun := ⟨fun p ↦ phi p.toWord⟩
+
 /-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type, reflexive
 marking and word class. -/
 @[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
-    (cat : UD.UPOS) : HasPhi.phi (p.toWord pronType reflex cat) = HasPhi.phi p := by
-  funext d; cases d <;> rfl
+    (cat : UD.UPOS) : HasPhi.phi (p.toWord pronType reflex cat) = HasPhi.phi p :=
+  rfl
 
 /-- A token marked reflexive classifies as a reflexive anaphor. -/
 @[simp]
@@ -229,6 +223,6 @@ variable {p} in
 /-- A candidate antecedent has the pronoun's number, where both mark one. -/
 theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
     {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
-  Flat.compat_iff.mp (h.2.apply .number) n hp m hw
+  Flat.compat_iff.mp (h.2 .number (by decide)) n hp m hw
 
 end Pronoun
