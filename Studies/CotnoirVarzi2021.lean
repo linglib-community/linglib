@@ -19,7 +19,8 @@ as parts exactly the parts of `a` that do not overlap `b₁`.
 In the model `Butterfly`, two individuals `c` and `d` lie below each of two others, `a` and
 `b`. Weak Supplementation holds and Strong Supplementation fails
 (`Butterfly.not_strongSupplementation`): `a` is not part of `b`, and every part of `a` overlaps
-`b`. In the model `Tent`, Strong Supplementation holds and Remainder fails
+`b`, and `a` is a Goodman fusion of `a` and `b` (`Butterfly.isGoodmanFusion_not_le`). In the
+model `Tent`, Strong Supplementation holds and Remainder fails
 (`Tent.not_remainder`). A two-element chain satisfies neither supplementation principle.
 
 The nonempty subsets of a three-element set are a classical mereology
@@ -29,7 +30,8 @@ The nonempty subsets of a three-element set are a classical mereology
 
 The models are the book's figures: the two-element chain and `Butterfly` are its two failures
 of Remainder, `Diamond` its model of Additive Remainder without remainders, `Tent` its model of
-Strong Supplementation with missing remainders, and the nonempty subsets of a three-element set
+Strong Supplementation with missing remainders, `Vee` and `Butterfly` its Goodman fusions that
+are no upper bounds, and the nonempty subsets of a three-element set
 its three-atom Boolean algebra without the empty set. The orders are given by their graphs, and
 the statements are decided by enumeration. Weak Supplementation is stated with a part that does
 not overlap the proper part, which in a partial order is a proper part.
@@ -93,6 +95,15 @@ theorem not_remainder : ¬ Remainder Diamond := by
   unfold Remainder Overlap
   decide
 
+-- `a` is the least upper bound of `b₁` and `b₂` and not their Leśniewski fusion: its part `b₃`
+-- overlaps neither.
+theorem isLUB_not_isFusion : IsLUB {b₁, b₂} a ∧ ¬ IsFusion {b₁, b₂} a := by
+  refine ⟨(isLUB_pair : IsLUB {b₁, b₂} (b₁ ⊔ b₂)), fun h ↦ ?_⟩
+  obtain ⟨z, hz, ho⟩ := h.2 b₃ (by decide)
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
+  revert ho
+  rcases hz with rfl | rfl <;> unfold Overlap <;> decide
+
 end Diamond
 
 /-! ### Weak without Strong Supplementation -/
@@ -132,7 +143,45 @@ theorem not_strongSupplementation : ¬ StrongSupplementation Butterfly := by
   unfold StrongSupplementation Overlap
   decide
 
+-- `a` is a Goodman fusion of `a` and `b`, though `b` is not part of `a`.
+theorem isGoodmanFusion_not_le : IsGoodmanFusion {a, b} a ∧ ¬ b ≤ a := by
+  refine ⟨fun y ↦ ?_, by decide⟩
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left]
+  revert y
+  unfold Overlap
+  decide
+
 end Butterfly
+
+/-! ### A Goodman fusion that is no upper bound -/
+
+/-- Two individuals with one common part. -/
+inductive Vee
+  | c | a | b
+  deriving DecidableEq
+
+namespace Vee
+
+instance : Fintype Vee := ⟨{c, a, b}, fun x ↦ by cases x <;> simp⟩
+
+instance : PartialOrder Vee where
+  le x y := x = y ∨ x = c
+  le_refl _ := .inl rfl
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : DecidableLE Vee := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+-- Everything overlaps everything, so `c` is a Goodman fusion of `a` and `b`; it is not an upper
+-- bound of them.
+theorem isGoodmanFusion_not_le : IsGoodmanFusion {a, b} c ∧ ¬ a ≤ c := by
+  refine ⟨fun y ↦ ?_, by decide⟩
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left]
+  revert y
+  unfold Overlap
+  decide
+
+end Vee
 
 /-! ### Strong Supplementation without Remainder -/
 

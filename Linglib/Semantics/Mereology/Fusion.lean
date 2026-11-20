@@ -10,7 +10,9 @@ The fusion of a set of individuals is its least upper bound. Leśniewski's fusio
 from overlap: it has every member as a part, and each of its parts overlaps a member. Under
 Strong Supplementation a Leśniewski fusion is a least upper bound (`Mereology.IsFusion.isLUB`),
 and under Remainder the least upper bound of a nonempty set is its Leśniewski fusion
-(`IsLUB.isFusion`).
+(`IsLUB.isFusion`). Goodman's fusion overlaps exactly what the members overlap; a Leśniewski
+fusion is one (`Mereology.IsFusion.isGoodmanFusion`), and without further principles a Goodman
+fusion need not have the members as parts.
 
 With binary sums, Additive Remainder says that a proper part `x` of `y` has a `z` that does not
 overlap `x` with `x ⊔ z = y`. It follows from Remainder, under which that `z` is unique
@@ -65,6 +67,15 @@ theorem _root_.IsLUB.isFusion (hR : Remainder X) (hne : s.Nonempty) (h : IsLUB s
     · obtain ⟨r, hr⟩ := hR hxz
       have : x ≤ r := h.2 fun y hy ↦ (hr y).2 ⟨h.1 hy, fun ho ↦ hno y hy ho.symm⟩
       exact ((hr z).1 (hzx.trans this)).2 (.refl z)⟩
+
+/-- Goodman's fusion, defined from overlap alone: it overlaps exactly what the members
+overlap. -/
+def IsGoodmanFusion (s : Set X) (x : X) : Prop := ∀ y, Overlap y x ↔ ∃ z ∈ s, Overlap y z
+
+/-- A Leśniewski fusion is a Goodman fusion. -/
+theorem IsFusion.isGoodmanFusion (h : IsFusion s x) : IsGoodmanFusion s x := fun _ ↦
+  ⟨fun ⟨w, hwy, hwx⟩ ↦ let ⟨z, hz, v, hvw, hvz⟩ := h.2 w hwx; ⟨z, hz, v, hvw.trans hwy, hvz⟩,
+    fun ⟨z, hz, ho⟩ ↦ ho.mono le_rfl (h.1 z hz)⟩
 
 end PartialOrder
 
