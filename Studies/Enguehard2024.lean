@@ -125,16 +125,7 @@ theorem exhIE_weak_inference_singular :
 
 -- (2), (3)
 theorem exhIE_compl (m : Number) : exhIE {weakᶜ, (inference m)ᶜ} weakᶜ = {0} := by
-  rw [← compl_weak]
-  ext k
-  rw [mem_exhIE_iff]
-  refine ⟨And.left, fun h ↦ ⟨h, fun a ha ↦ ?_⟩⟩
-  have hsub : weakᶜ ⊆ a := by
-    rcases Set.mem_insert_iff.1 ha.1 with rfl | h
-    · exact subset_rfl
-    · exact (Set.mem_singleton_iff.1 h) ▸ Set.compl_subset_compl.2 (inference_subset_weak m)
-  exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (Set.toFinite _)
-    ⟨0, by simp [weak]⟩ hsub)
+  rw [TieuEtAl2020.exhIE_of_antitone compl_anti (inference_subset_weak m), compl_weak]
 
 /-! ### The rows of (1)–(3) -/
 
