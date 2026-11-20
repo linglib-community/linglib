@@ -9,17 +9,17 @@ This file defines the updates of the dialogue gameboard of Ginzburg's theory of 
 pushing a question onto QUD, adding a fact, recording a move or a pending utterance, changing the
 turn, and QUD-downdate, which removes from QUD every question that some fact resolves. A
 gameboard satisfies `non-resolve-cond` when no fact resolves a question under discussion;
-downdate [is idle exactly](##Discourse.Gameboard.downdateQud_eq_self_iff) on the gameboards that
+downdate [is idle exactly](##Gameboard.downdateQud_eq_self_iff) on the gameboards that
 satisfy it and returns
-[the largest QUD free of resolved questions](##Discourse.Gameboard.sublist_qud_downdateQud_iff),
+[the largest QUD free of resolved questions](##Gameboard.sublist_qud_downdateQud_iff),
 and pushing a question
-[keeps the condition exactly](##Discourse.Gameboard.nonResolveCond_pushQud_iff) when no fact
+[keeps the condition exactly](##Gameboard.nonResolveCond_pushQud_iff) when no fact
 resolves that question. Contextual instantiation witnesses some of an utterance's contextual
 parameters, and the utterances it produces are
-[exactly the contextual extensions](##Discourse.LocutionaryProposition.exists_eq_instantiate_iff).
+[exactly the contextual extensions](##Gameboard.LocutionaryProposition.exists_eq_instantiate_iff).
 Utterance Interpolation accommodates a question as MaxQUD and records a move co-propositional
 with it, and a Clarification Context Update Rule
-[does so](##Discourse.Gameboard.clarify_eq_some_iff) for a question built from a constituent of
+[does so](##Gameboard.clarify_eq_some_iff) for a question built from a constituent of
 the maximal pending utterance, with the turn kept or passed on.
 
 ## Implementation notes
@@ -45,7 +45,7 @@ the maximal pending utterance, with the turn kept or passed on.
 
 @[expose] public section
 
-namespace Discourse
+namespace Gameboard
 
 variable {P F U I Q S Φ K Λ Δ C : Type*}
 
@@ -87,8 +87,6 @@ theorem exists_eq_instantiate_iff :
     simp_all [instantiate, Finset.sdiff_sdiff_eq_self hp]
 
 end LocutionaryProposition
-
-namespace Gameboard
 
 section Update
 
@@ -329,5 +327,3 @@ theorem qud_clarify (h : d.clarify r t i u m = some d') :
 end Interpolation
 
 end Gameboard
-
-end Discourse

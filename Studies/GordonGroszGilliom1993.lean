@@ -41,8 +41,8 @@ Experiments 4 and 5](##not_roleFactored).
 
 namespace GordonGroszGilliom1993
 
-open Discourse.Centering Data.Statistics
-open Discourse.AccessibilityLevel (Head)
+open Centering Data.Statistics
+open AccessibilityLevel (Head)
 
 /-- The named entities of the sample passages, and the subjects new to the critical sentences of
 Experiment 2. -/

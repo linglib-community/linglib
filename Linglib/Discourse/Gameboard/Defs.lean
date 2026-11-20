@@ -25,7 +25,7 @@ part of its form, as Ginzburg and Cooper argue. A question under discussion is r
 * A contextual parameter is its label; the restriction on its value is not represented, and
   sub-utterances do not record their own parameters.
 * The gameboard omits the utterance time and the addressing condition, and `non-resolve-cond` is
-  the predicate `Discourse.Gameboard.NonResolveCond` of `Gameboard/Basic.lean`.
+  the predicate `Gameboard.NonResolveCond` of `Gameboard/Basic.lean`.
 
 ## References
 
@@ -36,7 +36,7 @@ part of its form, as Ginzburg and Cooper argue. A question under discussion is r
 
 @[expose] public section
 
-namespace Discourse
+namespace Gameboard
 
 /-- A sub-utterance carries a phonological form, a category and a denotation, which make any
 constituent of an utterance clarifiable, the fractal heterogeneity of
@@ -87,6 +87,8 @@ structure InformationStructure (Question Constituent : Type*) where
   focusEstablishing : Finset Constituent := ∅
   deriving DecidableEq
 
+end Gameboard
+
 /-- The dialogue gameboard of a participant is their public share of the conversational state
 ([ginzburg-2012] (43) p. 175); each participant has their own. Its moves and pending utterances
 are locutionary propositions in (43), and its questions under discussion are questions there and
@@ -106,4 +108,3 @@ structure Gameboard (Participant Fact Utterance Question : Type*) where
   qud : List Question := []
   deriving DecidableEq
 
-end Discourse

@@ -54,7 +54,7 @@ center](##not_pronominalizationConstraint_accused).
 
 namespace Ariel2001
 
-open Discourse AccessibilityLevel
+open AccessibilityLevel
 
 /-! ### The criteria -/
 

@@ -39,7 +39,7 @@ it settles the question (`isStable_settle_polarQuestion`).
 the move types (26) and (29) on sentences; the same [reverse] response is a denial after an
 assertion and a reverse answer after a question (`inCrisis_reversing_assert`,
 `not_inCrisis_reversing_polarQuestion`). On a shared radical a sentence confirms or reverses another
-iff the `Discourse.Response` of their polarities is [same] or [reverse], as (31) defines the
+iff the `Response` of their polarities is [same] or [reverse], as (31) defines the
 features (`Confirming.iff_relative_eq_positive`, `Reversing.iff_relative_eq_negative`).
 
 §5.2 says what the polarity particles mark, as sets of responses bearing features
@@ -65,7 +65,7 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
   commitment lists as (17) prescribes; the projected set is derived from the Table rather than
   stored, as the paper notes it can be.
 * Rows record the polarities of the initiating and responding sentences as a
-  `Discourse.Response`; since a responding assertion shares its radical with the initiating
+  `Response`; since a responding assertion shares its radical with the initiating
   sentence, [same] is agreement of polarity and [reverse] its reversal.
 * `PolarityParticle` indexes the particles the paper discusses, each with its fragment entry: all
   of English and Romanian, and of the French and German particles only *si* and *doch*.
@@ -202,7 +202,6 @@ theorem isStable_settle_polarQuestion (hK : K.IsStable) :
 
 /-! ### Responding assertions and polarity features -/
 
-open Discourse
 
 /-- A sentence radical with its polarity, `S` or `¬S`. -/
 structure Sentence (W : Type*) where

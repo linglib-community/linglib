@@ -34,7 +34,7 @@ long passive.
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 /-- The grammatical roles by which [grosz-joshi-weinstein-1995] rank forward-looking centers,
 SUBJECT > OBJECT(S) > OTHER (p. 214): the subject, an object, and every other role. -/
@@ -76,4 +76,4 @@ theorem isAccusative_ofTermRole_comp_ofArgumentRole :
 
 end GrammaticalRole
 
-end Discourse.Centering
+end Centering

@@ -15,23 +15,23 @@ the highest role in which it is realized.
 
 ## Main definitions
 
-* `Discourse.Centering.Realization`, `Discourse.Centering.Utterance`: a noun phrase as an entity,
+* `Centering.Realization`, `Centering.Utterance`: a noun phrase as an entity,
   a role and a form, and an utterance as a list of them in surface order.
-* `Discourse.Centering.Utterance.cf`: the forward-looking centers, a finset of entities.
-* `Discourse.Centering.Utterance.rank`: the rank of an entity, the highest role in which the
+* `Centering.Utterance.cf`: the forward-looking centers, a finset of entities.
+* `Centering.Utterance.rank`: the rank of an entity, the highest role in which the
   utterance realizes it.
-* `Discourse.Centering.Utterance.pronominalized`: the entities realized by a form in a given set.
-* `Discourse.Centering.Utterance.indexed`: the utterance with each role refined by surface
+* `Centering.Utterance.pronominalized`: the entities realized by a form in a given set.
+* `Centering.Utterance.indexed`: the utterance with each role refined by surface
   position.
-* `Discourse.Centering.Utterance.mapRole`: the utterance with its roles mapped into another
+* `Centering.Utterance.mapRole`: the utterance with its roles mapped into another
   ranking.
-* `Discourse.Centering.Utterance.withImplicit`: the utterance with further entities realized but
+* `Centering.Utterance.withImplicit`: the utterance with further entities realized but
   not directly realized.
 
 ## Main results
 
-* `Discourse.Centering.Utterance.rank_mapRole`: a monotone map of roles maps the ranks.
-* `Discourse.Centering.Utterance.indexed_mapRole`: forgetting the surface positions of
+* `Centering.Utterance.rank_mapRole`: a monotone map of roles maps the ranks.
+* `Centering.Utterance.indexed_mapRole`: forgetting the surface positions of
   `Utterance.indexed` gives the utterance back.
 
 ## Implementation notes
@@ -58,7 +58,7 @@ realized ones a form `some f`.
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 variable {E R F : Type*}
 
@@ -212,4 +212,4 @@ end Rank
 
 end Utterance
 
-end Discourse.Centering
+end Centering

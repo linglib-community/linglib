@@ -53,9 +53,9 @@ status](##not_cbFactored).
 
 namespace KehlerRohde2013
 
-open MeasureTheory ProbabilityTheory Discourse.Centering
+open MeasureTheory ProbabilityTheory Centering
 open scoped ENNReal
-open Discourse.AccessibilityLevel (Head)
+open AccessibilityLevel (Head)
 open Morphology (Word Features)
 
 /-! ### The model -/
@@ -339,7 +339,7 @@ theorem not_heuristic (ν : Measure Role) (ρ : Instruction → Measure Relation
 /-! ### The end state -/
 
 /-- The paper's relations in Kehler's classification. -/
-def Relation.toCoherence : Relation → Discourse.Coherence.Relation
+def Relation.toCoherence : Relation → Coherence.Relation
   | .occasion => .occasion
   | .elaboration => .elaboration
   | .explanation => .explanation
@@ -348,7 +348,7 @@ def Relation.toCoherence : Relation → Discourse.Coherence.Relation
 
 /-- A relation focuses the end state when its second segment continues from the end state of the
 first, as Occasion does and Result, whose second segment is the effect (pp. 9–10). -/
-def FocusesEndState : Discourse.Coherence.Relation → Prop
+def FocusesEndState : Coherence.Relation → Prop
   | .occasion | .result => True
   | _ => False
 

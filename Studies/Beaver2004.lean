@@ -61,7 +61,7 @@ FAM-DEF > COHERE > ALIGN. Between two fully anaphoric interpretations that pass 
 
 namespace Beaver2004
 
-open Discourse.Centering OptimalityTheory
+open Centering OptimalityTheory
 
 /-! ### Interpretations -/
 

@@ -64,7 +64,7 @@ the participants share the sub-utterance's content, the constituent reading does
 
 namespace GinzburgCooper2004
 
-open Discourse
+open Gameboard
 
 /-- The syntactic categories of the examples, distinguished by the case or verb form the
 contrasts of (10) turn on. -/

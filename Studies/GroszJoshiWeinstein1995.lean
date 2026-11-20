@@ -63,8 +63,8 @@ and (33) in section 8 need a realization relation between noun phrases and entit
 
 namespace GroszJoshiWeinstein1995
 
-open Discourse.Centering
-open Discourse.AccessibilityLevel (Head)
+open Centering
+open AccessibilityLevel (Head)
 
 /-- The individuals of the paper's discourses. -/
 inductive Entity

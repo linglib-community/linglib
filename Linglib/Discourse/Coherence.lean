@@ -24,10 +24,10 @@ Contiguity relation, Occasion, is stated informally in the source and has no con
 
 ## Main definitions
 
-* `Discourse.Coherence.Relation`: the relations, a resemblance relation, a cause–effect relation
+* `Coherence.Relation`: the relations, a resemblance relation, a cause–effect relation
   by its direction and polarity, or Occasion, with Kehler's names as abbreviations.
-* `Discourse.Coherence.Direction.presupposes`: the presupposition of a cause–effect relation.
-* `Discourse.Coherence.Resemblance.Holds`: the constraint of a resemblance relation.
+* `Coherence.Direction.presupposes`: the presupposition of a cause–effect relation.
+* `Coherence.Resemblance.Holds`: the constraint of a resemblance relation.
 
 ## Implementation notes
 
@@ -44,7 +44,7 @@ Contiguity relation, Occasion, is stated informally in the source and has no con
 
 @[expose] public section
 
-namespace Discourse.Coherence
+namespace Coherence
 
 /-- The three kinds of connection between ideas, which classify coherence relations by the
 inference that establishes them. -/
@@ -224,4 +224,4 @@ theorem Resemblance.Holds.parallel_of_elaboration
 
 end Resemblance
 
-end Discourse.Coherence
+end Coherence

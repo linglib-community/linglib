@@ -141,7 +141,7 @@ theorem topical_not_fits (M : Model) (hM : M.Topical) : ¬ M.Fits (rate .retelli
 /-! ### Coherence and the goal effect (Experiment 2) -/
 
 /-- The coherence codes in Kehler's classification, Background having no counterpart there. -/
-def CoherenceCode.toCoherence : CoherenceCode → Option Discourse.Coherence.Relation
+def CoherenceCode.toCoherence : CoherenceCode → Option Coherence.Relation
   | .elaboration => some .elaboration
   | .explanation => some .explanation
   | .occasion => some .occasion

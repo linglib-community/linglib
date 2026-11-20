@@ -11,15 +11,15 @@ requires the backward-looking center to be pronominalized whatever else is.
 
 ## Main definitions
 
-* `Discourse.Centering.PronominalizationConstraint`: Rule 1.
-* `Discourse.Centering.CbPronominalized`: the backward-looking center is pronominalized.
+* `Centering.PronominalizationConstraint`: Rule 1.
+* `Centering.CbPronominalized`: the backward-looking center is pronominalized.
 
 ## Main results
 
-* `Discourse.Centering.CbPronominalized.constraint`: the unconditional form implies Rule 1.
-* `Discourse.Centering.CbPronominalized.mono`: counting more forms as pronouns preserves the
+* `Centering.CbPronominalized.constraint`: the unconditional form implies Rule 1.
+* `Centering.CbPronominalized.mono`: counting more forms as pronouns preserves the
   unconditional form.
-* `Discourse.Centering.PronominalizationConstraint.cb_eq_of_pronominalized_eq_singleton`: under
+* `Centering.PronominalizationConstraint.cb_eq_of_pronominalized_eq_singleton`: under
   Rule 1, a forward-looking center of the previous utterance that is the only entity
   pronominalized is the backward-looking center.
 
@@ -38,7 +38,7 @@ of `cb`, so where several backward-looking centers tie they constrain the first 
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 variable {E R F : Type*}
 
@@ -97,4 +97,4 @@ theorem CbPronominalized.mono {Q : Set F} [DecidablePred (· ∈ Q)] (hPQ : P �
 
 end Rule1
 
-end Discourse.Centering
+end Centering

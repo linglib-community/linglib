@@ -40,7 +40,7 @@ and colleagues note of the four-way table; `Transition.ofCenters` counts it as s
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 /-! ### Transitions and Rule 2 -/
 
@@ -193,4 +193,4 @@ theorem ofCenters_some (prevCb cp : Option E) (c : E) : ofCenters prevCb (some c
 
 end Transition
 
-end Discourse.Centering
+end Centering
