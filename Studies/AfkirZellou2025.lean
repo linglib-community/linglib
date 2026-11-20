@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
-public import Studies.Parker2002
+public import Linglib.Phonology.Segmental.Sonority.Obstruent
 public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
@@ -185,7 +185,7 @@ example : ∀ r ∈ targets, ∀ x ∈ r.segments, x ∈ consonants ∨ x = l :=
 vowels, and within the obstruents its rank on the hierarchy of Parker's (3.6) that `o` fixes. -/
 def sonorityWith (o : Ordering) (x : Segment) : Sonority ×ₗ ℕ :=
   toLex (Sonority.ofSegment x,
-    if Sonority.ofSegment x = .obstruent then Parker2002.hierarchy o (.ofSegment x) else 0)
+    if Sonority.ofSegment x = .obstruent then ObstruentClass.rank o (.ofSegment x) else 0)
 
 /-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
 fricatives, Parker's (3.6a). -/
