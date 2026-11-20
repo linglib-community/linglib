@@ -8,7 +8,6 @@ public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Syntax.Voice.Basic
-import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Kehler and Rohde (2013): A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven Theories of Pronoun Interpretation
@@ -612,15 +611,15 @@ theorem cp_contextSentence (v : Voice) : (contextSentence v).cp = some (contextS
   · rw [contextSentence_passive]; decide
 
 theorem cb_contextSentence (v : Voice) {cur : Utterance Word GrammaticalRole Head}
-    (h : contextSubject v ∈ cur) : cb (contextSentence v) cur = some (contextSubject v) :=
-  cb_eq_of_cp_eq (cp_contextSentence v) h
+    (h : contextSubject v ∈ cur) : cb (contextSentence v) cur.cf = some (contextSubject v) :=
+  cb_eq_of_cp_eq (cp_contextSentence v) (cur.mem_cf.2 h)
 
 /-- A pronominalization rate that depends on the context's subject only through whether it is the
 backward-looking center is the same in both voices, so it cannot print as the subject rates of
 Table 9, .62 and .87. -/
 theorem not_cbFactored (g : Prop → ℝ) (cur : Voice → Utterance Word GrammaticalRole Head)
     (hcur : ∀ v, contextSubject v ∈ cur v) :
-    ¬ ∀ v, RoundsTo (g (cb (contextSentence v) (cur v) = some (contextSubject v)))
+    ¬ ∀ v, RoundsTo (g (cb (contextSentence v) (cur v).cf = some (contextSubject v)))
       (pronominalizations v .subject).proportion := by
   intro h
   have h₁ := h .active

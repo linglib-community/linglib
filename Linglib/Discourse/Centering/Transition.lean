@@ -14,8 +14,10 @@ backward-looking center of the first, or the first has none, and whether it is t
 center of the second. Kibble calls the tests *cohesion* and *salience*. Brennan, Friedman, and
 Pollard's four transitions, named continue, retain, smooth shift, and rough shift by Walker, Iida,
 and Cote, are the four outcomes of the two tests; Grosz, Joshi, and Weinstein's three,
-continuation, retaining, and shifting, [merge the two shifts](##toTransition_mono). Rule 2 orders
-the transitions [by the first test and then by the second](##lt_iff_toLex_lt).
+continuation, retaining, and shifting, merge the two shifts, and the merging map
+`ExtendedTransition.toTransition` is monotone (`ExtendedTransition.toTransition_mono`). Rule 2
+orders the transitions by the first test and then by the second
+(`ExtendedTransition.lt_iff_toLex_lt`).
 
 ## Implementation notes
 
@@ -160,10 +162,11 @@ variable {R F : Type*} [LinearOrder R]
 
 /-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
 def transition (prevCb : Option E) (prev cur : Utterance E R F) : Transition :=
-  .ofCenters prevCb (cb prev cur) cur.cp
+  .ofCenters prevCb (cb prev cur.cf) cur.cp
 
 /-- The backward-looking center of each utterance of `d` after the first. -/
-def cbs (d : List (Utterance E R F)) : List (Option E) := List.zipWith cb d d.tail
+def cbs (d : List (Utterance E R F)) : List (Option E) :=
+  List.zipWith (fun prev cur ↦ cb prev cur.cf) d d.tail
 
 /-- The transition into each utterance of `d` after the first, the first of them with no prior
 center. -/
@@ -175,7 +178,7 @@ def transitions (d : List (Utterance E R F)) : List Transition :=
 @[simp] theorem cbs_singleton (u : Utterance E R F) : cbs [u] = [] := rfl
 
 @[simp] theorem cbs_cons_cons (u₁ u₂ : Utterance E R F) (d : List (Utterance E R F)) :
-    cbs (u₁ :: u₂ :: d) = cb u₁ u₂ :: cbs (u₂ :: d) := rfl
+    cbs (u₁ :: u₂ :: d) = cb u₁ u₂.cf :: cbs (u₂ :: d) := rfl
 
 @[simp] theorem length_cbs (d : List (Utterance E R F)) : (cbs d).length = d.length - 1 := by
   simp [cbs, List.length_zipWith]
