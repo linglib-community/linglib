@@ -5,36 +5,49 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Basic
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
-public import Linglib.Syntax.WordOrder
+public import Linglib.Syntax.DependencyGrammar.Length
+public import Mathlib.Data.Multiset.Filter
+public import Mathlib.Order.Interval.Basic
 
 /-!
-# Valency frames
+# Valency
 
-This file defines valency frames over dependency graphs: slot data,
-standard frame schemas for the basic valences, the valency of a verb's
-lexical `ArgumentFrame`, read off the argument roles of its core
-arguments, and satisfaction of a frame by a position's dependents.
+The *valency* of a word is the dependents it must and may govern. Among the dependents of a
+word, its *valents* are those its valency provides for and the rest are *adjuncts*, which any
+word takes freely; a valent is obligatory when its quantity is one and optional when its
+quantity is zero or one.
+
+A valency over relations of type `L` is a nonempty interval of multisets of relations: its lower
+end `val.fst` holds the relations a word must govern and its upper end `val.snd` those it may.
+In a dependency graph, given the predicate `p` of the relations borne by valents, the valents of
+a position `v` bear the multiset of relations `g.valents p v`, and `v` satisfies `val` when that
+multiset lies in the interval. The interval `NonemptyInterval.pure m` is the valency with every
+valent of `m` obligatory, and intervals are ordered by inclusion, so a valency lies below every
+valency that admits whatever it admits.
 
 ## Main definitions
 
-* `Valency` is a word's valency as a list of slots, each a relation, a head direction and an
-  optionality.
-* `Valency.ofFrame` is the valency of an argument frame, a slot for each
-  core argument by its argument role.
-* `Frames n` is the per-position valency table.
-* `Graph.SatisfiesFrames` is frame satisfaction: every filler on its
-  slot's side of the head, required slots filled, and no unlicensed core
-  arguments.
+* `Valency L` is the type of valencies over the relations `L`, and `Valency.withOptional` is the
+  valency with given obligatory and optional valents.
+* `Graph.childrenBy g p v` is the dependents of `v` by a relation satisfying `p`.
+* `Graph.valents g p v` is the multiset of the relations satisfying `p` that the dependents of
+  `v` bear.
+* `Graph.Satisfies g p v val` says that the valents of `v` are those of the valency `val`.
+
+## Main results
+
+* `Graph.satisfies_iff_count`: a position satisfies a valency iff the quantity of each relation
+  among its valents lies between the quantities at the two ends.
+* `Graph.Satisfies.mono`: satisfaction is monotone in the valency.
+* `Graph.satisfies_map`: satisfaction is invariant under a change of linearization.
 
 ## Implementation notes
 
-Frames are a side table (`Frames n`), not part of the graph carrier: the
-frame is framework apparatus (like HPSG's ARG-ST), supplied alongside the
-graph by the consumers that reason about valency and populated from the
-lexical carrier (`Valency.ofFrame` of a verb's basic frame).
+The valents are a multiset because a valency may call for several valents of one relation, as
+when relations are syntactic categories and a verb takes three nominals. A valency says nothing
+of word order: the side of the head a valent stands on is a property of the relation in a
+language, not of the word's valency, and `Graph.satisfies_map` holds for every permutation of
+the positions.
 
 ## References
 
@@ -45,112 +58,145 @@ lexical carrier (`Valency.ofFrame` of a verb's basic frame).
 
 @[expose] public section
 
+open Finset
+
 namespace DependencyGrammar
 
-/-! ### Slot data -/
+variable {L : Type*} {n : ℕ}
 
-/-- A single valency slot, recording which relation fills it, the direction of the head with
-respect to the filler, and whether it must be filled. -/
-structure Valency.Slot where
-  /-- The UD relation of the filler. -/
-  depType : UD.DepRel
-  /-- The direction of the head with respect to the filler. -/
-  direction : HeadDirection
-  /-- Whether the slot must be filled. -/
-  required : Bool := true
-  deriving Repr, DecidableEq
+/-! ### Valencies -/
 
-/-- The valency of a word is the list of dependent slots it requires or allows. -/
-abbrev Valency := List Valency.Slot
+/-- A valency over the relations `L`: an interval of multisets of relations, from the valents a
+word must have to those it may have. -/
+abbrev Valency (L : Type*) := NonemptyInterval (Multiset L)
 
-/-- The per-position frame table supplied alongside a `Graph UD.DepRel n`. -/
-abbrev Frames (n : ℕ) := Fin n → Option Valency
+namespace Valency
 
-/-- A sparse frame table, in which positions not listed carry no frame. -/
-def Frames.ofList {n : ℕ} (l : List (Fin n × Valency)) : Frames n :=
-  fun i ↦ (l.find? (·.1 == i)).map (·.2)
+/-- The valency whose obligatory valents are `required` and whose optional valents are
+`optional`. -/
+def withOptional (required optional : Multiset L) : Valency L :=
+  ⟨(required, required + optional), Multiset.le_add_right _ _⟩
 
-/-! ### Standard schemas -/
+@[simp] theorem mem_withOptional {required optional m : Multiset L} :
+    m ∈ withOptional required optional ↔ required ≤ m ∧ m ≤ required + optional :=
+  Iff.rfl
 
-/-- An intransitive verb takes its subject to the left. -/
-def Valency.intransitive : Valency := [⟨.nsubj, .headFinal, true⟩]
+@[simp] theorem withOptional_zero (m : Multiset L) : withOptional m 0 = .pure m := by
+  ext : 2 <;> simp [withOptional]
 
-/-- A transitive verb takes its subject to the left and its object to the right. -/
-def Valency.transitive : Valency := [⟨.nsubj, .headFinal, true⟩, ⟨.obj, .headInitial, true⟩]
+end Valency
 
-/-- A ditransitive verb takes its subject to the left and its indirect object and object to the
-right. -/
-def Valency.ditransitive : Valency :=
-  [⟨.nsubj, .headFinal, true⟩, ⟨.iobj, .headInitial, true⟩, ⟨.obj, .headInitial, true⟩]
+namespace Graph
 
-/-- A passive transitive verb takes its subject, the patient, to the left and an optional
-by-phrase to the right. -/
-def Valency.passiveTransitive : Valency := [⟨.nsubj, .headFinal, true⟩, ⟨.obl, .headInitial, false⟩]
+/-! ### Valents -/
 
-/-! ### Valency of an argument frame -/
+/-- The dependents of `v` by a relation satisfying `p`. -/
+def childrenBy (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) : Finset (Fin n) :=
+  {w | ∃ r ∈ g.label v w, p r}
 
-/-- The required slot of a core argument by its argument role. S and A are the subject, to the
-left of the head; P and T the object and R the indirect object, to its right. -/
-def Valency.Slot.ofRole : ArgumentRole → Valency.Slot
-  | .S | .A => ⟨.nsubj, .headFinal, true⟩
-  | .P | .T => ⟨.obj, .headInitial, true⟩
-  | .R => ⟨.iobj, .headInitial, true⟩
+/-- The relations satisfying `p` that the dependents of `v` bear, each as often as `v` has a
+dependent by it. With `p` the predicate of the relations of valents, these are the valents of
+`v`. -/
+def valents (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
+  (univ : Finset (Fin n)).val.filterMap fun w ↦ (g.label v w).filter p
 
-/-- The valency of an argument frame has a slot for each core argument, by its argument role.
-Clausal and adpositional complements have none, since UD's clausal relations and obliques are
-not core arguments and `Graph.SatisfiesFrames` leaves them unconstrained. -/
-def Valency.ofFrame (fr : ArgumentFrame) : Valency :=
-  fr.coreSlots.filterMap fun s ↦ (fr.argumentRole s).map .ofRole
+variable {g : Graph L n} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
+  {val val₁ val₂ : Valency L}
 
-theorem Valency.ofFrame_intransitive : ofFrame .intransitive = .intransitive := rfl
+@[simp] theorem mem_childrenBy : w ∈ g.childrenBy p v ↔ ∃ r ∈ g.label v w, p r := by
+  simp [childrenBy]
 
-theorem Valency.ofFrame_np : ofFrame .np = .transitive := rfl
+@[simp] theorem mem_valents : r ∈ g.valents p v ↔ p r ∧ ∃ w, g.label v w = some r := by
+  simp [valents, Option.filter_eq_some_iff, and_comm]
 
-theorem Valency.ofFrame_np_np : ofFrame .np_np = .ditransitive := rfl
+/-- A position has as many valents as dependents by a relation of valents. -/
+theorem card_valents : (g.valents p v).card = #(g.childrenBy p v) := by
+  rw [valents, childrenBy, Finset.card_def, Finset.filter_val]
+  induction (univ : Finset (Fin n)).val using Multiset.induction_on with
+  | empty => simp
+  | cons w s ih =>
+    rcases h : g.label v w with _ | r
+    · have hw : (g.label v w).filter p = none := by simp [h]
+      rw [Multiset.filterMap_cons_none (f := fun w ↦ (g.label v w).filter p) _ _ hw]
+      simpa [h] using ih
+    · by_cases hr : p r
+      · have hw : (g.label v w).filter p = some r := by simp [h, Option.filter, hr]
+        rw [Multiset.filterMap_cons_some (fun w ↦ (g.label v w).filter p) _ _ hw]
+        simp [h, hr, ih]
+      · have hw : (g.label v w).filter p = none := by simp [h, Option.filter, hr]
+        rw [Multiset.filterMap_cons_none (f := fun w ↦ (g.label v w).filter p) _ _ hw]
+        simpa [h, hr] using ih
 
-/-! ### Argument-frame satisfaction -/
+/-- The valents satisfying a further predicate are the valents by the conjunction. -/
+theorem filter_valents (q : L → Prop) [DecidablePred q] :
+    (g.valents p v).filter q = g.valents (fun r ↦ p r ∧ q r) v := by
+  simp only [valents, Multiset.filter_filterMap]
+  congr 1
+  funext w
+  cases g.label v w with
+  | none => rfl
+  | some r =>
+    simp only [Option.filter]
+    split_ifs <;> simp_all
 
-section Satisfaction
+/-- The quantity of a relation among the valents of `v` is the number of dependents `v` has by
+it when it is a relation of valents, and zero otherwise. -/
+theorem count_valents [DecidableEq L] (r : L) :
+    (g.valents p v).count r = if p r then #(g.childrenBy (· = r) v) else 0 := by
+  rw [Multiset.count_eq_card_filter_eq, filter_valents, card_valents]
+  split_ifs with hr
+  · congr 1
+    ext w
+    simp only [mem_childrenBy]
+    exact ⟨fun ⟨x, hx, _, h⟩ ↦ ⟨x, hx, h.symm⟩, fun ⟨x, hx, h⟩ ↦ ⟨x, hx, h ▸ hr, h.symm⟩⟩
+  · rw [Finset.card_eq_zero]
+    ext w
+    simp only [mem_childrenBy, notMem_empty, iff_false]
+    rintro ⟨x, -, hx, rfl⟩
+    exact hr hx
 
-variable {n : ℕ}
+/-- The valents of a position are those of its preimage under a change of linearization. -/
+theorem valents_map (σ : Equiv.Perm (Fin n)) : (g.map σ).valents p v = g.valents p (σ.symm v) := by
+  have h : (univ : Finset (Fin n)).val.map σ.symm = univ.val :=
+    congrArg Finset.val (Finset.map_univ_equiv σ.symm)
+  conv_rhs => rw [valents, ← h, Multiset.filterMap_map]
+  rfl
 
-/-- The dependents of `v` linked by relation `rel`. -/
-def Graph.fillersOf (g : Graph UD.DepRel n) (v : Fin n) (rel : UD.DepRel) : Finset (Fin n) :=
-  {w ∈ g.children v | g.label v w = some rel}
+/-! ### Satisfaction -/
 
-/-- The graph satisfies a valency at head `v` when the head has the slot's direction with
-respect to every filler of every slot, and required slots are filled. -/
-def SatisfiesValency (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) : Prop :=
-  ∀ slot ∈ val, (∀ w ∈ g.fillersOf v slot.depType, slot.direction.Orders v w) ∧
-    (slot.required → (g.fillersOf v slot.depType).Nonempty)
+/-- The position `v` satisfies the valency `val` when its valents, the relations satisfying `p`
+that its dependents bear, lie between the obligatory valents of `val` and all its valents. -/
+def Satisfies (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
+    Prop :=
+  g.valents p v ∈ val
 
-instance (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) :
-    Decidable (SatisfiesValency g v val) :=
-  List.decidableBAll _ val
+instance [DecidableEq L] : Decidable (g.Satisfies p v val) :=
+  inferInstanceAs (Decidable (_ ≤ _ ∧ _ ≤ _))
 
-/-- Every nominal core-argument dependent of `v` is licensed by a slot of `val`, the closed-world
-half of valency checking (`SatisfiesValency` only checks that required slots are filled). The
-clausal core relations are licensed by clause-embedding frames, which `Valency.ofFrame` does not
-schematize. -/
-def CoreArgsLicensed (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) : Prop :=
-  ∀ w ∈ g.children v, ∀ r ∈ g.label v w,
-    r.kind = .cell .core .nominal → ∃ slot ∈ val, slot.depType = r
+theorem satisfies_iff : g.Satisfies p v val ↔ val.fst ≤ g.valents p v ∧ g.valents p v ≤ val.snd :=
+  Iff.rfl
 
-instance (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) :
-    Decidable (CoreArgsLicensed g v val) :=
-  Finset.decidableDforallFinset
+/-- A position satisfies a valency iff the quantity of each relation among its valents is at
+least its quantity among the obligatory valents and at most its quantity among all valents. -/
+theorem satisfies_iff_count [DecidableEq L] :
+    g.Satisfies p v val ↔ ∀ r, val.fst.count r ≤ (g.valents p v).count r ∧
+      (g.valents p v).count r ≤ val.snd.count r := by
+  simp only [satisfies_iff, Multiset.le_iff_count, forall_and]
 
-/-- Each verb's dependents satisfy its frame, with required slots filled in the
-    right direction (`SatisfiesValency`) and no unlicensed core arguments
-    (`CoreArgsLicensed`). Verbs without a frame are unconstrained. -/
-def Graph.SatisfiesFrames (g : Graph UD.DepRel n) (frames : Frames n) : Prop :=
-  ∀ v, (g.words v).cat = .VERB → ∀ val ∈ frames v,
-    SatisfiesValency g v val ∧ CoreArgsLicensed g v val
+/-- A position satisfies the valency with every valent obligatory iff its valents are exactly
+those. -/
+@[simp] theorem satisfies_pure {m : Multiset L} : g.Satisfies p v (.pure m) ↔ g.valents p v = m :=
+  NonemptyInterval.mem_pure
 
-instance (g : Graph UD.DepRel n) (frames : Frames n) :
-    Decidable (g.SatisfiesFrames frames) :=
-  inferInstanceAs (Decidable (∀ _, _))
+/-- A position satisfying a valency satisfies every valency that includes it. -/
+theorem Satisfies.mono (h : val₁ ≤ val₂) (hs : g.Satisfies p v val₁) : g.Satisfies p v val₂ :=
+  ⟨h.1.trans hs.1, hs.2.trans h.2⟩
 
-end Satisfaction
+/-- Satisfaction of a valency is invariant under a change of linearization. -/
+@[simp] theorem satisfies_map (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
+  rw [Satisfies, valents_map, Satisfies]
+
+end Graph
 
 end DependencyGrammar
