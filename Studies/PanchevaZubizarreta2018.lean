@@ -21,7 +21,8 @@ and P-Primacy, generate the five attested varieties, strong, ultra-strong, weak,
 and me-first, together with three predicted ones, and the grammars of four of them
 [license the combinations of the descriptive
 varieties](##PanchevaZubizarreta2018.isLicit_iff_variety). The three prominence values
-correspond to Sells's logophoric roles pivot, self, and source (`prominenceToSellsRole`).
+correspond to Sells's logophoric roles pivot, self, and source
+(`ProminenceThreshold.toLogophoricRole`).
 
 ## Implementation notes
 
@@ -281,20 +282,28 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 /-! ### Logophoric roles (§6.2) -/
 
-/-- The prominence values are the logophoric roles of [sells-1987], proximate arguments being
-pivots, participants selves, and authors sources. -/
-def prominenceToSellsRole : ProminenceThreshold → LogophoricRole
-  | .proximate => .pivot
-  | .participant => .self
-  | .author => .source
+/-- The prominence values are the logophoric roles of [sells-1987] in the order of his hierarchy,
+proximate arguments being pivots, participants selves, and authors sources. -/
+def ProminenceThreshold.toLogophoricRole : ProminenceThreshold ≃o LogophoricRole where
+  toFun
+    | .proximate => .pivot
+    | .participant => .self
+    | .author => .source
+  invFun
+    | .pivot => .proximate
+    | .self => .participant
+    | .source => .author
+  left_inv := by decide
+  right_inv := by decide
+  map_rel_iff' := by decide
 
 theorem family_logophoric_assignments :
-    prominenceToSellsRole strongGrammar.prominence = .pivot ∧
-      prominenceToSellsRole ultraStrongGrammar.prominence = .pivot ∧
-      prominenceToSellsRole weakGrammar.prominence = .pivot ∧
-      prominenceToSellsRole superStrongGrammar.prominence = .self ∧
-      prominenceToSellsRole meFirstGrammar.prominence = .source ∧
-      prominenceToSellsRole pg3Grammar.prominence = .source := by
+    strongGrammar.prominence.toLogophoricRole = .pivot ∧
+      ultraStrongGrammar.prominence.toLogophoricRole = .pivot ∧
+      weakGrammar.prominence.toLogophoricRole = .pivot ∧
+      superStrongGrammar.prominence.toLogophoricRole = .self ∧
+      meFirstGrammar.prominence.toLogophoricRole = .source ∧
+      pg3Grammar.prominence.toLogophoricRole = .source := by
   decide
 
 /-! ### The paper's examples (§4) -/

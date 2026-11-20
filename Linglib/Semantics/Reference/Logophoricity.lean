@@ -6,22 +6,16 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Logophoric roles
 
-Sells replaces a single notion of logophoricity with three discourse roles, each defined with
-respect to a proposition: the source, the intentional agent of the communication; the self, whose
-mental state or attitude the proposition describes; and the pivot, with respect to whose location
-the proposition is evaluated. A report predicates each role of the external speaker or of a
-referent inside the sentence, and the roles form a hierarchy: where the source is internal so is
-the self, and where the self is internal so is the pivot. The order here is that hierarchy, the
-pivot least.
+A report has three discourse roles, each defined with respect to the proposition reported
+([sells-1987]). The *source* is the intentional agent of the communication, the *self* is the one
+whose mental state or attitude the proposition describes, and the *pivot* is the one with respect
+to whose location in space and time the proposition is evaluated. A role is held either by the
+external speaker or by a referent inside the sentence, and in the second case it is *internal*.
 
-## Main definitions
-
-* `LogophoricRole`: the three roles, a bounded linear order.
-
-## Implementation notes
-
-* The discourse environments the hierarchy sorts, and the forms oriented to each role, are in
-  `Studies/Sells1987.lean`.
+We define the type `LogophoricRole` of the three roles as a bounded linear order with
+`pivot < self < source`. This is the hierarchy of [sells-1987], on which an internal source
+implies an internal self and an internal self an internal pivot, so that the roles internal to a
+report form a lower set.
 
 ## References
 
@@ -42,22 +36,12 @@ inductive LogophoricRole where
 
 namespace LogophoricRole
 
-/-- The rank of a role in the hierarchy. -/
-def toNat : LogophoricRole → ℕ
-  | .pivot => 0
-  | .self => 1
-  | .source => 2
-
-theorem toNat_injective : Function.Injective toNat := by
-  intro a b h; cases a <;> cases b <;> simp_all [toNat]
-
-instance : LinearOrder LogophoricRole := LinearOrder.lift' toNat toNat_injective
+instance : LinearOrder LogophoricRole := LinearOrder.lift' (·.ctorIdx) (by decide)
 
 instance : BoundedOrder LogophoricRole where
-  bot := .pivot
-  bot_le r := by cases r <;> decide
-  top := .source
-  le_top r := by cases r <;> decide
+  bot := pivot
+  bot_le := by decide
+  top := source
+  le_top := by decide
 
 end LogophoricRole
-
