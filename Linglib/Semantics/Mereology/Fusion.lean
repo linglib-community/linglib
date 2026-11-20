@@ -10,9 +10,10 @@ The fusion of a set of individuals is its least upper bound. Leśniewski's fusio
 from overlap: it has every member as a part, and each of its parts overlaps a member. Under
 Strong Supplementation a Leśniewski fusion is a least upper bound (`Mereology.IsFusion.isLUB`),
 and under Remainder the least upper bound of a nonempty set is its Leśniewski fusion
-(`IsLUB.isFusion`). Goodman's fusion overlaps exactly what the members overlap; a Leśniewski
-fusion is one (`Mereology.IsFusion.isGoodmanFusion`), and without further principles a Goodman
-fusion need not have the members as parts.
+(`IsLUB.isFusion`). Weak Supplementation is enough for the first if any two individuals have a
+fusion (`Mereology.IsFusion.isLUB_of_weak`). Goodman's fusion overlaps exactly what the members
+overlap; a Leśniewski fusion is one (`Mereology.IsFusion.isGoodmanFusion`), and without further
+principles a Goodman fusion need not have the members as parts.
 
 With binary sums, Additive Remainder says that a proper part `x` of `y` has a `z` that does not
 overlap `x` with `x ⊔ z = y`. It follows from Remainder, under which that `z` is unique
@@ -30,7 +31,7 @@ Remainder (`Studies/CotnoirVarzi2021.lean`).
 
 ## References
 
-* [cotnoir-varzi-2021], [champollion-krifka-2016], [krifka-1989], [krifka-1998]
+* [cotnoir-varzi-2021], [champollion-krifka-2016], [hovda-2009], [krifka-1989], [krifka-1998]
 -/
 
 @[expose] public section
@@ -54,6 +55,22 @@ theorem IsFusion.isLUB (hS : StrongSupplementation X) (h : IsFusion s x) : IsLUB
     obtain ⟨z, hzx, hzu⟩ := hS hxu
     obtain ⟨y, hy, hzy⟩ := h.2 z hzx
     exact hzu (hzy.mono le_rfl (hu hy))⟩
+
+/-- Under Weak Supplementation, if any two individuals have a fusion then a fusion is a least
+upper bound ([hovda-2009]). -/
+theorem IsFusion.isLUB_of_weak (hW : WeakSupplementation X)
+    (hF : ∀ x y : X, ∃ z, IsFusion {x, y} z) (h : IsFusion s x) : IsLUB s x :=
+  ⟨h.1, fun u hu ↦ by
+    obtain ⟨a, ha⟩ := hF u x
+    have hua : u ≤ a := ha.1 u (.inl rfl)
+    suffices a ≤ u from (ha.1 x (.inr rfl)).trans this
+    by_contra hau
+    obtain ⟨b, hba, hbu⟩ := hW (lt_of_le_not_ge hua hau)
+    obtain ⟨_, rfl | rfl, hbo⟩ := ha.2 b hba
+    · exact hbu hbo
+    · obtain ⟨c, hcb, hcx⟩ := hbo
+      obtain ⟨m, hm, w, hwc, hwm⟩ := h.2 c hcx
+      exact hbu ⟨w, hwc.trans hcb, hwm.trans (hu hm)⟩⟩
 
 /-- Under Remainder the least upper bound of a nonempty set is its fusion. -/
 theorem _root_.IsLUB.isFusion (hR : Remainder X) (hne : s.Nonempty) (h : IsLUB s x) :
