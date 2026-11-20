@@ -40,9 +40,9 @@ The *preferred center* of an utterance is the highest-ranked of its own forward-
 and `Utterance.cp` choose among the maximizers with `List.argmax`, which takes the first
 realization in surface order among those in the highest role.
 
-The backward-looking centers are those of a finite set of entities, the entities that the current
-utterance realizes: `cur.cf` when realization is direct, and a larger set when an utterance also
-realizes entities that its noun phrases are only associated with.
+The backward-looking centers are those of a finite set of entities, the forward-looking centers
+`cur.cf` of the current utterance: they depend on the current utterance only through that set,
+whatever its roles and forms.
 
 ## References
 

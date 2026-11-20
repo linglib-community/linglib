@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.Finset.Empty
+public import Mathlib.Data.Finset.Lattice.Basic
 public import Mathlib.Data.List.MinMax
 public import Mathlib.Order.Prod.Lex.Basic
 
@@ -22,6 +23,8 @@ the highest role in which it is realized.
 * `Discourse.Centering.Utterance.pronominalized`: the entities realized by a form in a given set.
 * `Discourse.Centering.Utterance.indexed`: the utterance with each role refined by surface
   position.
+* `Discourse.Centering.Utterance.withImplicit`: the utterance with further entities realized but
+  not directly realized.
 
 ## Implementation notes
 
@@ -31,11 +34,18 @@ the ranking of entities by `Utterance.rank` is a total preorder.
 `Utterance.indexed` separates them by surface position, an earlier realization outranking a later
 one.
 
+The realizations of an utterance are all the entities it realizes, each with a role and a form.
+An entity that an utterance realizes without directly realizing it, as a house is realized by
+*the door*, is a realization like any other, so that it is a forward-looking center with a rank.
+`Utterance.withImplicit` adds such realizations, giving them the form `none` and the directly
+realized ones a form `some f`.
+
 ## References
 
 * [grosz-joshi-weinstein-1995]
 * [gordon-grosz-gilliom-1993]
 * [poesio-stevenson-eugenio-hitzeman-2004]
+* [walker-joshi-prince-1998]
 -/
 
 @[expose] public section
@@ -44,7 +54,7 @@ namespace Discourse.Centering
 
 variable {E R F : Type*}
 
-/-- A noun phrase realizing `entity` in the grammatical role `role` by an expression of form
+/-- The realization of `entity` in the grammatical role `role` by an expression of form
 `form`. -/
 structure Realization (E R F : Type*) where
   entity : E
@@ -52,7 +62,7 @@ structure Realization (E R F : Type*) where
   form : F
   deriving Repr, DecidableEq
 
-/-- An utterance as its noun-phrase realizations in surface order. -/
+/-- An utterance as its realizations in surface order. -/
 structure Utterance (E R F : Type*) where
   realizations : List (Realization E R F)
   deriving Repr, DecidableEq
@@ -92,6 +102,16 @@ def indexed : Utterance E (R ×ₗ ℕᵒᵈ) F :=
     simp only [indexed, List.map_map]
     rfl
   exact congrArg List.toFinset h
+
+/-- The utterance `u` with the entities `es` realized but not directly realized, in the role `r`:
+a realization of `u` keeps its form as `some f`, and an added one has the form `none`. -/
+def withImplicit (es : List E) (r : R) : Utterance E R (Option F) :=
+  ⟨u.realizations.map (fun x ↦ ⟨x.entity, x.role, some x.form⟩) ++ es.map (⟨·, r, none⟩)⟩
+
+@[simp] theorem cf_withImplicit (es : List E) (r : R) :
+    (u.withImplicit es r).cf = u.cf ∪ es.toFinset := by
+  ext e
+  simp [cf, withImplicit, Function.comp_def]
 
 variable (P : Set F) [DecidablePred (· ∈ P)]
 

@@ -27,8 +27,8 @@ The instantiations are the substrate's parameters: the realization relation is t
 entities of which `cb` is taken, the ranking is the `LinearOrder` on roles, the CF filter is
 `cfFilter`, the utterance unit is `merge`, and the previous utterance is the argument of `cb`.
 The paper's illustrations of each parameter are worked as such: the associative reference of (5)
-is a `bridged` realization (`ex5`), the second-person pronoun of (7) a filtered forward-looking
-center (`ex7`),
+is an entity realized but not directly realized (`ex5`), the second-person pronoun of (7) a
+filtered forward-looking center (`ex7`),
 the egg vases of (9) recovered either by sentence units or by indirect realization (`ex9`), the
 tie of (10) two backward-looking centers under grammatical-function ranking and one under its
 linear disambiguation (`ex10`), and the adjunct clauses of (14) and (16) the two definitions of
@@ -177,11 +177,6 @@ def cfFilter (p : E → Bool) (u : Utterance E R F) : Utterance E R F :=
 /-- The utterance unit: clauses merged into one sentence-sized utterance. -/
 def merge (us : List (Utterance E R F)) : Utterance E R F := ⟨(us.map (·.realizations)).flatten⟩
 
-/-- Indirect realization: the entities an utterance realizes when each mention also realizes the
-entities it is anchored to, `anchors` pairing a mention with an entity it is associated with. -/
-def bridged [DecidableEq E] (u : Utterance E R F) (anchors : List (E × E)) : Finset E :=
-  u.cf ∪ ((anchors.filter (·.1 ∈ u.cf)).map (·.2)).toFinset
-
 /-- The three tiers of information status of [strube-hahn-1999], the ranking of §4.4.3. -/
 inductive InfoStatus where
   | hearerOld
@@ -215,7 +210,7 @@ theorem ex5 :
       ⟨[⟨.john, .subject, .name⟩, ⟨.house, .other, .description⟩]⟩
     let u2 : Utterance Ent5 GrammaticalRole Head := ⟨[⟨.door, .subject, .description⟩]⟩
     cb u1 u2.cf = none ∧
-      cb u1 (bridged u2 [(.door, .house)]) = some .house := by
+      cb u1 (u2.withImplicit [.house] .other).cf = some .house := by
   decide
 
 /-- The entities of (7). -/
@@ -265,7 +260,7 @@ theorem ex9 :
     let u5 : Utterance Ent9 GrammaticalRole Head := ⟨[⟨.vases, .subject, .description⟩]⟩
     (cb u1 u2.cf = none ∧ cb u2 u3.cf = none ∧ cb u3 u4.cf = none ∧ cb u4 u5.cf = none) ∧
       cb (merge [u1, u2, u3, u4]) u5.cf = some .vases ∧
-      cb u1 (bridged u2 [(.bases, .vases), (.bodies, .vases)]) = some .vases := by
+      cb u1 (u2.withImplicit [.vases] .other).cf = some .vases := by
   decide
 
 /-- The entities of (10). -/

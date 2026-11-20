@@ -24,7 +24,8 @@ grammatical role from the hamster variants (7) to (10), which Rule 1 separates i
 acceptable and the degraded (`rule1_separates_variants`), and from the subject preference of
 (11) and (12) and the toy contrast of (13) and (14); section 7 applies the rules to the
 violation in (15) and its repair by the shift in (16), the full noun phrase center of (17),
-and the transitions annotated on (20); and section 9 compares centering with [sidner-1979] on
+the center of (19) that is realized but not directly realized (`d19_house_cb`), and the
+transitions annotated on (20); and section 9 compares centering with [sidner-1979] on
 Sidner's example (34), where the centering account makes Jeff the center that the pronoun of
 (34c) continues (`d34_jeff_cb`). The section says that Sidner's actor focus, Carl after (34b),
 makes Carl the leading candidate for that pronoun; Sidner's rule for a pronoun in agent
@@ -54,9 +55,6 @@ sequences by the order on `Transition`; its restriction to pairs of utterances i
 
 ## TODO
 
-The center of (19) is realized but not directly realized in (19b), and is then a forward-looking
-center of (19b): `cb` takes the entities the current utterance realizes as a set, but the
-forward-looking centers of the previous utterance are those its noun phrases realize directly.
 The value-free and value-loaded interpretations of (25) to (31) and the referential uses of (32)
 and (33) in section 8 need a realization relation between noun phrases and entities.
 -/
@@ -71,7 +69,7 @@ open Discourse.AccessibilityLevel (Head)
 /-- The individuals of the paper's discourses. -/
 inductive Entity
   | john | store | piano | susan | betsy | hamster | wine | susie | tommy | boat | bear | mike
-  | speaker | dog | vet
+  | speaker | dog | vet | house | door | furniture
   deriving DecidableEq
 
 /-- An utterance with its realizations, ranked subject > object > other. -/
@@ -277,6 +275,27 @@ end D17
 -- Rule 1, (17c)
 theorem full_noun_phrase_cb : cb D17.b D17.c.cf = some .dog ∧
     Rule1 D17.b D17.c := by
+  decide
+
+namespace D19
+
+/-- (19a) The house appeared to have been burgled. -/
+def a : Utt := ⟨[desc .house .subject]⟩
+
+/-- (19b) The door was ajar, realizing the house without directly realizing it. -/
+def b : Utterance Entity GrammaticalRole (Option Head) :=
+  (⟨[desc .door .subject]⟩ : Utt).withImplicit [.house] .other
+
+/-- (19c) The furniture was in disarray, realizing the house in the same way. -/
+def c : Utterance Entity GrammaticalRole (Option Head) :=
+  (⟨[desc .furniture .subject]⟩ : Utt).withImplicit [.house] .other
+
+end D19
+
+/-- The house is the center of (19b) and again of (19c), though neither directly realizes it, and
+the door outranks it among the forward-looking centers of (19b). -/
+theorem d19_house_cb : cb D19.a D19.b.cf = some .house ∧ cb D19.b D19.c.cf = some .house ∧
+    D19.b.rank .house < D19.b.rank .door := by
   decide
 
 namespace D20
