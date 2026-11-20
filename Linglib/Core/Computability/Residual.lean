@@ -303,6 +303,13 @@ theorem IsLeftSubsequential.of_finite_range_residual (hf : (Set.range f.residual
   have hT : T.run = f := funext fun v ↦ hrun none v
   exact hT ▸ T.isLeftSubsequential
 
+/-- A function whose residuals factor through a summary with finitely many values is
+left-subsequential. -/
+theorem IsLeftSubsequential.of_factorsThrough_residual {γ : Type*} {W : List α → γ}
+    (hW : f.residual.FactorsThrough W) (hfin : (Set.range W).Finite) : IsLeftSubsequential f :=
+  .of_finite_range_residual <| (hfin.image (Function.extend W f.residual fun _ _ ↦ [])).subset <|
+    Set.range_subset_iff.mpr fun u ↦ ⟨_, Set.mem_range_self u, hW.extend_apply _ u⟩
+
 /-- A function is left-subsequential iff it has finitely many residuals, which is the Myhill–Nerode
 theorem for subsequential transducers ([chandlee-eyraud-heinz-2015], after Oncina and García). -/
 theorem isLeftSubsequential_iff_finite_range_residual :

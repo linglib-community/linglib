@@ -244,9 +244,8 @@ example (t : List α) : IsLeftInputStrictlyLocal 1 (· ++ t) :=
 /-- Over a finite input alphabet, left-ISL functions are left-subsequential. -/
 theorem IsLeftInputStrictlyLocal.isLeftSubsequential [Finite α]
     (hf : IsLeftInputStrictlyLocal k f) : IsLeftSubsequential f :=
-  .of_finite_range_residual <| ((List.finite_length_le α (k - 1)).image
-    (Function.extend (fun u ↦ u.rtake (k - 1)) f.residual fun _ _ ↦ [])).subset <|
-      Set.range_subset_iff.mpr fun u ↦ ⟨_, List.length_rtake_le _ _, hf.extend_apply _ u⟩
+  .of_factorsThrough_residual hf <| (List.finite_length_le α (k - 1)).subset <|
+    Set.range_subset_iff.mpr fun _ ↦ List.length_rtake_le _ _
 
 theorem ISLRule.isMealyComputable_apply [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
