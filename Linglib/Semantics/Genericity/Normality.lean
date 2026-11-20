@@ -24,7 +24,9 @@ normalities that are monotone and satisfy the contraction condition
 `normal R ∩ R' ⊆ normal R'` for `R' ⊆ R` (`Normality.exists_eq_restrict_iff`).
 `Normality.minimals p` selects the minimal cases under a preorder `p`, and these are, for
 well-founded total `p`, the normalities whose GEN is a rational consequence relation that
-preserves consistency (`Normality.exists_eq_minimals_iff`). The minimal cases within a fixed set
+preserves consistency (`Normality.exists_eq_minimals_iff`), equivalently those with a normal case
+in every nonempty set and `normal (R ∩ B) = normal R ∩ B` whenever the right-hand side is nonempty
+(`Normality.exists_eq_minimals_iff_forall_inter`). The minimal cases within a fixed set
 are the composite, whose GEN is `Conditional.orderingImp` (`Normality.gen_minimals_comp_restrict`).
 Without well-foundedness the variably strict conditional is the GEN of no normality
 (`Normality.not_exists_gen_iff_variablyStrictImp`).
@@ -44,6 +46,14 @@ Without well-foundedness the variably strict conditional is the GEN of no normal
   principles of a rational conditional and do not impose them; by
   `Normality.exists_eq_minimals_iff` these, with consistency preservation, are what selecting the
   minimal cases of a well-founded total preorder adds.
+* The conditions on choice functions are those of [arrow-1959]: the contraction condition of
+  `Normality.exists_eq_restrict_iff` is his (C3), and the condition of
+  `Normality.exists_eq_minimals_iff_forall_inter` his (C4), from which he derives the ordering
+  on finite sets. [eckardt-2000] takes a normality on properties, sets of pairs of a world and
+  an individual, with the same two conditions as axioms.
+* A GEN that depends on the matrix as well as the restrictor is a family of normalities:
+  [nickel-2009] quantifies existentially over the ways of being normal in the respect the matrix
+  fixes.
 * GEN is a `Quantifier.Det`, so that it is compared with *every*, *most* and the probabilistic
   generic of `Studies/Cohen1999` as one determiner among others.
 
@@ -57,6 +67,9 @@ Without well-foundedness the variably strict conditional is the GEN of no normal
 * [krifka-etal-1995]
 * [asher-morreau-1995]
 * [pelletier-asher-1997]
+* [arrow-1959]
+* [eckardt-2000]
+* [nickel-2009]
 * [kraus-lehmann-magidor-1990]
 * [lehmann-magidor-1992]
 -/
@@ -185,6 +198,32 @@ theorem exists_eq_minimals_iff :
   refine Iff.trans ?_ (Nonmonotonic.exists_minimals_eq_iff (C := N.normal))
   exact exists_congr fun p ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
     ⟨fun h ↦ h ▸ rfl, fun h ↦ Normality.ext h.symm⟩
+
+/-- A normality selects the minimal cases of a well-founded total preorder exactly when every
+nonempty set has a normal case and the normal cases of `R` in `B`, where there are any, are the
+normal cases of `R ∩ B`. -/
+theorem exists_eq_minimals_iff_forall_inter :
+    (∃ p : Preorder X, Std.Total p.le ∧ WellFounded p.lt ∧ N = minimals p) ↔
+      (∀ R : Set X, R.Nonempty → (N.normal R).Nonempty) ∧
+        ∀ R B : Set X, (N.normal R ∩ B).Nonempty → N.normal (R ∩ B) = N.normal R ∩ B := by
+  rw [exists_eq_minimals_iff]
+  refine ⟨fun ⟨h, hc⟩ ↦ ⟨fun R hR ↦ nonempty_iff_ne_empty.2 fun he ↦ hR.ne_empty (hc R he.subset),
+    fun _ _ ↦ h.inter_eq⟩, fun ⟨hne, hi⟩ ↦ ⟨?_, fun R hR ↦ not_nonempty_iff_eq_empty.1 fun hR' ↦
+      (hne R hR').ne_empty (subset_empty_iff.1 hR)⟩⟩
+  refine ⟨⟨N.normal_subset, fun h h' ↦ h.trans h', fun h h' ↦ subset_inter h h', ?_, ?_⟩, ?_⟩
+  · intro φ ψ χ h h' x hx
+    rcases N.normal_subset _ hx with hφ | hψ
+    · exact h (union_inter_cancel_left (s := φ) (t := ψ) ▸ (hi _ φ ⟨x, hx, hφ⟩).symm ▸ ⟨hx, hφ⟩)
+    · exact h' (union_inter_cancel_right (s := φ) (t := ψ) ▸ (hi _ ψ ⟨x, hx, hψ⟩).symm ▸ ⟨hx, hψ⟩)
+  · intro φ ψ χ h h'
+    rcases (N.normal φ ∩ ψ).eq_empty_or_nonempty with he | hn
+    · have hφ : φ = ∅ := not_nonempty_iff_eq_empty.1 fun hφ ↦
+        (hne φ hφ).ne_empty ((inter_eq_left.2 h).symm.trans he)
+      exact fun x hx ↦ absurd (N.normal_subset _ hx).1 (hφ ▸ notMem_empty x)
+    · exact (hi φ ψ hn).subset.trans (inter_subset_left.trans h')
+  · intro φ ψ χ h h'
+    obtain ⟨x, hx, hxψ⟩ := not_subset.1 h'
+    exact (hi φ ψ ⟨x, hx, not_not.1 hxψ⟩).subset.trans (inter_subset_left.trans h)
 
 /-- GEN over the minimal cases of a preorder within a set of accessible cases is the conditional
 over the best accessible cases. -/
