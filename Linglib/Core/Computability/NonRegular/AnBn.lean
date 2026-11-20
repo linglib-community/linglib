@@ -22,10 +22,11 @@ those words `aⁿ` are pairwise distinct, since `bⁿ` is in the left quotient b
 `m = n`. For distinct letters this applies to `anbn a b` (`Language.not_isRegular_anbn`) and to the
 language of the words with as many `a` as `b` (`Language.not_isRegular_setOf_count_eq`).
 
-The grammar `ContextFreeGrammar.anbn a b` has the rules `S → a S b | ε`. Its sentential forms are
-`aⁿ S bⁿ` and `aⁿbⁿ` (`ContextFreeGrammar.derives_anbn_iff`), so it generates `anbn a b`, which is
-therefore context-free. Hence, over a finite alphabet with two letters, the regular languages are a
-proper subclass of the context-free languages
+The grammar `ContextFreeGrammar.anbn a b` has the rules `S → a S b | ε`, so its equation is
+`X = a X b + 1`. The language `anbn a b` is closed under that equation, and each `aⁿbⁿ` is derived
+by induction on `n`, so the grammar generates `anbn a b` (`ContextFreeGrammar.language_anbn`),
+which is therefore context-free. Hence, over a finite alphabet with two letters, the regular
+languages are a proper subclass of the context-free languages
 (`Language.setOf_isRegular_ssubset_setOf_isContextFree`).
 
 ## References
@@ -118,45 +119,25 @@ theorem mem_rules_anbn {r : ContextFreeRule α Unit} :
       r = ⟨(), [terminal a, nonterminal (), terminal b]⟩ ∨ r = ⟨(), []⟩ := by
   unfold anbn; simp
 
-theorem derives_anbn (n : ℕ) : (anbn a b).Derives [nonterminal ()]
-    ((replicate n a).map terminal ++ [nonterminal ()] ++ (replicate n b).map terminal) := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-    refine ih.trans_produces (produces_map_terminal_append_singleton_append_iff.2
-      ⟨_, mem_rules_anbn.2 (.inl rfl), rfl, ?_⟩)
-    rw [replicate_succ', replicate_succ]
-    simp
-
-theorem derives_anbn_iff {v : List (Symbol α (anbn a b).NT)} :
-    (anbn a b).Derives [nonterminal ()] v ↔ ∃ n,
-      v = (replicate n a).map terminal ++ [nonterminal ()] ++ (replicate n b).map terminal ∨
-      v = (replicate n a ++ replicate n b).map terminal := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · induction h with
-    | refl => exact ⟨0, .inl rfl⟩
-    | tail _ hstep ih =>
-      obtain ⟨n, rfl | rfl⟩ := ih
-      · obtain ⟨r, hr, -, rfl⟩ := produces_map_terminal_append_singleton_append_iff.1 hstep
-        obtain rfl | rfl := mem_rules_anbn.1 hr
-        · refine ⟨n + 1, .inl ?_⟩
-          rw [replicate_succ', replicate_succ]
-          simp
-        · exact ⟨n, .inr (by simp)⟩
-      · exact (not_produces_map_terminal hstep).elim
-  · rintro ⟨n, rfl | rfl⟩
-    · exact derives_anbn n
-    · exact (derives_anbn n).trans_produces (produces_map_terminal_append_singleton_append_iff.2
-        ⟨_, mem_rules_anbn.2 (.inr rfl), rfl, by simp⟩)
-
 theorem language_anbn : (anbn a b).language = Language.anbn a b := by
-  ext w
-  change (anbn a b).Derives [nonterminal ()] _ ↔ _
-  rw [derives_anbn_iff]
-  refine ⟨fun ⟨n, h⟩ ↦ ⟨n, ?_⟩, fun ⟨n, h⟩ ↦ ⟨n, .inr (h ▸ rfl)⟩⟩
-  rcases h with h | h
-  · simpa using congr(nonterminal () ∈ $h)
-  · exact (map_injective_iff.2 (fun _ _ ↦ terminal.inj) h).symm
+  refine le_antisymm
+    (language_le_of_equations_le (X := fun _ ↦ Language.anbn a b) fun _ w hw ↦ ?_) ?_
+  · obtain ⟨r, hr, -, hw⟩ := mem_equations.1 hw
+    obtain rfl | rfl := mem_rules_anbn.1 hr
+    · obtain ⟨_, rfl, _, ⟨_, ⟨n, rfl⟩, _, rfl, rfl⟩, rfl⟩ :
+          w ∈ {[a]} * (Language.anbn a b * {[b]}) := by simpa using hw
+      exact ⟨n + 1, by rw [replicate_succ, replicate_succ']; simp⟩
+    · exact ⟨0, by simpa [eq_comm] using hw⟩
+  · rintro _ ⟨n, rfl⟩
+    induction n with
+    | zero =>
+      exact languageFrom_output_le (mem_rules_anbn.2 (.inr rfl))
+        (mem_languageFrom_map_terminal _ [])
+    | succ n ih =>
+      refine languageFrom_output_le (mem_rules_anbn.2 (.inl rfl)) ?_
+      rw [replicate_succ, replicate_succ']
+      simpa using append_mem_languageFrom (mem_languageFrom_map_terminal (anbn a b) [a])
+        (append_mem_languageFrom (u := [nonterminal ()]) ih (mem_languageFrom_map_terminal _ [b]))
 
 end ContextFreeGrammar
 
