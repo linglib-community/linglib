@@ -78,7 +78,7 @@ theorem dogs_iff (x : Finset α) : dogs dog x ↔ x.Nonempty ∧ ↑x ⊆ dog :=
   mem_supClosure_image_singleton dog x
 
 /-- Atomizing a count noun yields its atoms ((13)), the singletons of its individuals. -/
-theorem atomize_dogs : atomize (dogs dog) = (· ∈ ({·} : α → Finset α) '' dog) :=
+theorem atomize_dogs : atomize {x | dogs dog x} = ({·} : α → Finset α) '' dog :=
   atomize_mem_supClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
 
 theorem dogs_and_card_eq_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
@@ -130,7 +130,7 @@ def Item.val : {a : Ty Base} → Item a → a.Dom (Base.Dom (Finset α) Unit)
   | _, .measure => Finset.card
   | _, .measuredNumeral => fun P x ↦ P x ∧ x.card = 8
   | _, .partitionNumeral => cardMod 2
-  | _, .atomizer => atomize
+  | _, .atomizer => fun P ↦ (· ∈ atomize {x | P x})
   | _, .noun => dogs dog
 
 /-- The denotations of a tree, by Functional Application. -/
@@ -183,13 +183,13 @@ def shanTree : Tree Unit Word := .bin (.leaf .song) shanClfNoun
 
 /-- The Shan root is the partition numeral over the atomized noun ((52)). -/
 theorem meanings_shanTree :
-    meanings dog shanTree = [⟨.et, cardMod 2 (atomize (dogs dog))⟩] :=
+    meanings dog shanTree = [⟨.et, cardMod 2 (· ∈ atomize {x | dogs dog x})⟩] :=
   rfl
 
 /-- Classifier and noun compose without a numeral, yielding the atoms
 ((42), Prediction 3). -/
 theorem meanings_shanClfNoun :
-    meanings dog shanClfNoun = [⟨.et, atomize (dogs dog)⟩] :=
+    meanings dog shanClfNoun = [⟨.et, (· ∈ atomize {x | dogs dog x})⟩] :=
   rfl
 
 /-- Numeral and classifier, both `⟨⟨e,t⟩,⟨e,t⟩⟩`, do not compose without the
@@ -247,7 +247,7 @@ theorem qua_dogs_card_eq (n : ℕ) : QUA {x | dogs dog x ∧ x.card = n} :=
 /-- Derivationally distinct, the two strategies denote the same pluralities for every nonzero
 numeral (§4.5). -/
 theorem dogs_and_card_eq_iff_cardMod_atomize {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
-    dogs dog x ∧ x.card = n ↔ cardMod n (atomize (dogs dog)) x := by
+    dogs dog x ∧ x.card = n ↔ cardMod n (· ∈ atomize {x | dogs dog x}) x := by
   rw [dogs_and_card_eq_iff dog hn, atomize_dogs, cardMod_atoms_iff]
 
 /-- Three dogs and a cat, the model of (6) with a cat added for the noun to exclude. -/
@@ -256,7 +256,7 @@ inductive Animal | a | b | c | cat
 
 -- *mǎa* atomized denotes the three dogs `{a, b, c}` ((52)).
 example (x : Finset Animal) :
-    atomize (dogs {.cat}ᶜ) x ↔ x ∈ ({{.a}, {.b}, {.c}} : Finset (Finset Animal)) := by
+    x ∈ atomize {x | dogs {.cat}ᶜ x} ↔ x ∈ ({{.a}, {.b}, {.c}} : Finset (Finset Animal)) := by
   simp only [atomize_dogs, Set.mem_image, Set.mem_compl_singleton_iff]
   revert x
   decide

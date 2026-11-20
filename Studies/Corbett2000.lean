@@ -544,7 +544,8 @@ theorem unitAugmented_one_more :
   decide
 
 theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
-    relative x = .minimal ↔ Mereology.atomize (Configuration.OfParticipants x.participants) x := by
+    relative x = .minimal ↔
+      x ∈ Mereology.atomize (Configuration.OfParticipants x.participants) := by
   have h := Configuration.ne_bot_iff_minimum_le.1 hx
   rw [Configuration.atomize_ofParticipants_iff, Configuration.ext_iff]
   simp only [relative, true_and]
@@ -552,8 +553,8 @@ theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
 
 theorem relative_eq_unitAugmented_iff {x : Configuration} (hx : x ≠ ⊥) :
     relative x = .unitAugmented ↔
-      Mereology.atomize (Number.Feature.restrict .minimal false
-        (Configuration.OfParticipants x.participants)) x := by
+      x ∈ Mereology.atomize (Number.Feature.restrict .minimal false
+        (Configuration.OfParticipants x.participants)) := by
   have h := Configuration.ne_bot_iff_minimum_le.1 hx
   rw [Configuration.atomize_restrict_minimal_false_ofParticipants_iff, Configuration.ext_iff]
   simp only [relative, true_and]
@@ -610,8 +611,8 @@ theorem constructed :
 members, the `[−atomic, +minimal]` region of its person: the two markers construct the dual. -/
 theorem constructed_iff_dual {x : Person.Configuration} :
     1 < x.card ∧ x.card ≤ 2 ↔
-      Number.Feature.restrict .minimal true (Number.Feature.restrict .atomic false
-        (Person.Configuration.OfParticipants x.participants)) x := by
+      x ∈ Number.Feature.restrict .minimal true (Number.Feature.restrict .atomic false
+        (Person.Configuration.OfParticipants x.participants)) := by
   rw [Person.Configuration.dual_ofParticipants_iff]
   exact ⟨fun h ↦ ⟨rfl, by omega⟩, fun h ↦ by omega⟩
 

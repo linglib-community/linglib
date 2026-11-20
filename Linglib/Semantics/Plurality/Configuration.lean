@@ -49,9 +49,9 @@ open SpeechAct Mereology Number
 variable {x : Configuration} {s : Finset Role}
 
 /-- The region of the referents whose participants are `s`. -/
-def OfParticipants (s : Finset Role) (x : Configuration) : Prop := x.participants = s ∧ x ≠ ⊥
+def OfParticipants (s : Finset Role) : Set Configuration := {x | x.participants = s ∧ x ≠ ⊥}
 
-theorem ofParticipants_iff : OfParticipants s x ↔ x.participants = s ∧ minimum s ≤ x.others :=
+theorem ofParticipants_iff : x ∈ OfParticipants s ↔ x.participants = s ∧ minimum s ≤ x.others :=
   ⟨fun ⟨h, hx⟩ ↦ ⟨h, h ▸ ne_bot_iff_minimum_le.1 hx⟩,
     fun ⟨h, hx⟩ ↦ ⟨h, ne_bot_iff_minimum_le.2 (h ▸ hx)⟩⟩
 
@@ -67,17 +67,17 @@ private theorem minimal_le_others_iff {k : ℕ} :
 
 /-- `[+minimal]` of the region of a set of participants is its one referent with the fewest
 others, the logical minimum. -/
-theorem atomize_ofParticipants_iff : atomize (OfParticipants s) x ↔ x = ⟨s, minimum s⟩ := by
-  rw [show OfParticipants s = fun y ↦ y.participants = s ∧ minimum s ≤ y.others from
-    funext fun _ ↦ propext ofParticipants_iff]
+theorem atomize_ofParticipants_iff : x ∈ atomize (OfParticipants s) ↔ x = ⟨s, minimum s⟩ := by
+  rw [show OfParticipants s = {y | y.participants = s ∧ minimum s ≤ y.others} from
+    Set.ext fun _ ↦ ofParticipants_iff]
   exact minimal_le_others_iff
 
 /-- `[−minimal]` of the region of a set of participants is its referents with more than the
 fewest others, the augmented. -/
 theorem restrict_minimal_false_ofParticipants_iff :
-    Feature.restrict .minimal false (OfParticipants s) x ↔
+    x ∈ Feature.restrict .minimal false (OfParticipants s) ↔
       x.participants = s ∧ minimum s < x.others := by
-  simp only [Feature.restrict, atomize_ofParticipants_iff, ofParticipants_iff,
+  simp only [Feature.mem_restrict_minimal_false, atomize_ofParticipants_iff, ofParticipants_iff,
     Configuration.ext_iff]
   exact ⟨fun ⟨⟨h1, h2⟩, h3⟩ ↦ ⟨h1, lt_of_le_of_ne h2 fun h ↦ h3 ⟨h1, h.symm⟩⟩,
     fun ⟨h1, h2⟩ ↦ ⟨⟨h1, h2.le⟩, fun h ↦ h2.ne' h.2⟩⟩
@@ -85,10 +85,11 @@ theorem restrict_minimal_false_ofParticipants_iff :
 /-- `[+minimal]` of `[−minimal]` is the referent with one other more than the fewest, the unit
 augmented. -/
 theorem atomize_restrict_minimal_false_ofParticipants_iff :
-    atomize (Feature.restrict .minimal false (OfParticipants s)) x ↔ x = ⟨s, minimum s + 1⟩ := by
+    x ∈ atomize (Feature.restrict .minimal false (OfParticipants s)) ↔
+      x = ⟨s, minimum s + 1⟩ := by
   rw [show Feature.restrict .minimal false (OfParticipants s) =
-      fun y ↦ y.participants = s ∧ minimum s + 1 ≤ y.others
-    from funext fun _ ↦ propext restrict_minimal_false_ofParticipants_iff]
+      {y | y.participants = s ∧ minimum s + 1 ≤ y.others}
+    from Set.ext fun _ ↦ restrict_minimal_false_ofParticipants_iff]
   exact minimal_le_others_iff
 
 theorem not_isBot_iff_one_le_card : ¬ IsBot x ↔ 1 ≤ x.card := by
@@ -130,7 +131,7 @@ theorem not_atom_of_participants_eq_univ (h : x.participants = Finset.univ) : ¬
 
 /-- The dual of the region of a set of participants is its referents of two members. -/
 theorem dual_ofParticipants_iff :
-    Feature.restrict .minimal true (Feature.restrict .atomic false (OfParticipants s)) x ↔
+    x ∈ Feature.restrict .minimal true (Feature.restrict .atomic false (OfParticipants s)) ↔
       x.participants = s ∧ x.card = 2 := by
   have hs : s.card ≤ 2 := s.card_le_univ
   have hb : (minimum s = 0 ∧ 1 ≤ s.card) ∨ (minimum s = 1 ∧ s.card = 0) := by
@@ -138,10 +139,10 @@ theorem dual_ofParticipants_iff :
     · simp
     · exact Or.inl ⟨minimum_of_nonempty h, Finset.card_pos.2 h⟩
   have key : Feature.restrict .atomic false (OfParticipants s) =
-      fun y : Configuration ↦ y.participants = s ∧ 2 ≤ s.card + y.others := by
-    funext y
-    apply propext
-    simp only [Feature.restrict, atom_iff_card_eq_one, ofParticipants_iff, card]
+      {y : Configuration | y.participants = s ∧ 2 ≤ s.card + y.others} := by
+    ext y
+    simp only [Feature.mem_restrict_atomic_false, atom_iff_card_eq_one, ofParticipants_iff, card,
+      Set.mem_ofPred_eq]
     constructor
     · rintro ⟨⟨h1, h2⟩, h3⟩
       rw [h1] at h3
@@ -149,8 +150,7 @@ theorem dual_ofParticipants_iff :
     · rintro ⟨h1, h2⟩
       rw [h1]
       exact ⟨⟨rfl, by omega⟩, by omega⟩
-  show Minimal (Feature.restrict .atomic false (OfParticipants s)) x ↔ _
-  rw [key, card]
+  rw [Feature.restrict_minimal_true, key, card, mem_atomize]
   obtain ⟨t, n⟩ := x
   constructor
   · rintro ⟨⟨h1, h2⟩, hmin⟩

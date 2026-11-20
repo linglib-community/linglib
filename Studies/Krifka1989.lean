@@ -91,7 +91,7 @@ structure SQUA (P : Set α) : Prop where
 
 /-- (D 18): A predicate has atomic reference if every instance has a part that is a `P`-atom
 (D 17). -/
-def ATM (P : Set α) : Prop := ∀ x ∈ P, ∃ y ≤ x, atomize (· ∈ P) y
+def ATM (P : Set α) : Prop := ∀ x ∈ P, ∃ y ≤ x, y ∈ atomize P
 
 -- (T 1)
 theorem SNG.qua (h : SNG P) : QUA P := h.subsingleton.isAntichain _

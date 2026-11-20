@@ -167,8 +167,8 @@ theorem strengthen_plural_eq_preimage_strong {E : Type*} [PartialOrder E] (c : E
   rw [Number.strengthen_plural hy]
   ext x
   have := hpos x
-  simp only [Number.Feature.restrict, Pi.top_apply, Prop.top_eq_true, true_and,
-    Set.mem_ofPred_eq, hc, Set.mem_preimage, mem_strong]
+  simp only [Number.Feature.mem_restrict_atomic_false, Set.mem_univ, true_and, hc,
+    Set.mem_preimage, mem_strong]
   omega
 
 /-! ### The ambiguity approach
