@@ -62,7 +62,7 @@ property with no instance in some situation (the first `example` of the kind-for
 (pp. 359–360), Id sending an individual to its parts, `Set.Iic`. (17b) is stated under its own
 hypothesis, that ∩P is defined, read as ∩P having a value wherever P has instances, for a property
 closed downward (`Kind.up_down`); over the paper's complete semilattice a property closed under
-sum meets it whatever the size of its extension (`Kind.up_down_of_sumClosed`). In (17c), AT_P,
+sum meets it whatever the size of its extension (`Kind.up_down_of_isClassical`). In (17c), AT_P,
 "the set that generates P under PL", is read as the atoms beneath members of P
 (`Kind.up_down_of_forall_isMin`): read as the singular property itself, (17c) fails at a situation
 with exactly one instance, where the plural has no member. Carlson's instance relation is

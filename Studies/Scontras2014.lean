@@ -46,10 +46,8 @@ each of them measures one relative atom under the relative-atom measure of (68)
   the measure takes one value on the predicate, `Set.Subsingleton` of its image.
 * Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
   reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
-  `IsConnection.of_overlap`). SolidOverlap (71) carries the library's non-null clause, with which it
-  agrees on carriers without a null individual (`Mereology.overlap_iff_exists_le`); on a carrier
-  with one, the clause-free version holds of any two individuals and makes self-connection
-  trivial. The maximality of (75) is mathlib's `Maximal`.
+  `IsConnection.of_overlap`). Overlap (71) is `Mereology.Overlap`, on a part structure with no
+  null individual. The maximality of (75) is mathlib's `Maximal`.
 
 ## References
 

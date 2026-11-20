@@ -19,8 +19,8 @@ and the operator 'up', ∪, of a kind `k : S → Part E` is `Kind.up ∘ k`.
 `Kind.down (Kind.up k) = k` (`Kind.down_up`), and `Kind.up (Kind.down s) = s` for a lower set
 `s` that has a largest member if it has a member (`Kind.up_down`). Closure under sums gives the
 largest member, not closure downward: in a classical mereology `Kind.down` is defined on a
-nonempty set closed under arbitrary sums, where its value is the sum of the members
-(`Kind.sum_mem_down`), and on a finite nonempty set closed under binary sums
+nonempty set that contains its sum, where its value is that sum
+(`Kind.down_dom_of_isClassical`), and on a finite nonempty set closed under binary sums
 (`Kind.down_dom_of_supClosed`). On the plural of a singular property, `Kind.up ∘ Kind.down`
 restores the atoms beneath the pluralities (`Kind.up_down_of_forall_isMin`). ∩ of a singular
 property is no kind when no kind is singular wherever it has a value
@@ -155,21 +155,20 @@ theorem down_dom_of_supClosed [SemilatticeSup E] (hcum : SupClosed s) (hfin : s.
 
 section Classical
 
-variable [PartialOrder E] [IsClassicalMereology E]
+variable [PartialOrder E]
 
-/-- ∩ is defined on a nonempty extension closed under sums, and its value is the sum of the
-instances. -/
-theorem sum_mem_down (hsum : SumClosed s) (hne : s.Nonempty) :
-    IsClassicalMereology.sum s hne ∈ down s :=
-  mem_down.2 (hsum.isGreatest_sum hne)
+/-- In a classical mereology ∩ is defined on a nonempty extension that contains its sum, and
+its value is that sum. -/
+theorem down_dom_of_isClassical (h : IsClassical E) (hsum : ∀ ⦃x⦄, IsLUB s x → x ∈ s)
+    (hne : s.Nonempty) : (down s).Dom :=
+  let ⟨x, hx⟩ := h.exists_isLUB s hne
+  Part.dom_iff_mem.2 ⟨x, mem_down.2 ⟨hsum hx, hx.1⟩⟩
 
-theorem down_dom_of_sumClosed (hsum : SumClosed s) (hne : s.Nonempty) : (down s).Dom :=
-  Part.dom_iff_mem.2 ⟨_, sum_mem_down hsum hne⟩
-
-/-- ∪∩P = P at a situation where the extension is closed downward and under sums, whatever its
-size. -/
-theorem up_down_of_sumClosed (hs : IsLowerSet s) (hsum : SumClosed s) : up (down s) = s :=
-  up_down hs (down_dom_of_sumClosed hsum)
+/-- ∪∩P = P at a situation where the extension is closed downward and contains its sum,
+whatever its size. -/
+theorem up_down_of_isClassical (h : IsClassical E) (hs : IsLowerSet s)
+    (hsum : ∀ ⦃x⦄, IsLUB s x → x ∈ s) : up (down s) = s :=
+  up_down hs (down_dom_of_isClassical h hsum)
 
 end Classical
 

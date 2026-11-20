@@ -36,7 +36,7 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
   sets of atoms, `Mereology.Individual`. A kind is a function from worlds to partial
   individuals, and σ is ι of `IsGreatest`, as in (13a), so *it* is ∩, `Kind.down`. The
   paper's sufficient condition for σ, closure under arbitrary sums, is
-  `Kind.down_dom_of_sumClosed`, which holds in Link's model as a classical mereology; for a
+  `Kind.down_dom_of_isClassical`, which applies to Link's model as a classical mereology; for a
   finite extension closure under binary sums is enough (`Kind.down_dom_of_supClosed`).
 
 ## TODO

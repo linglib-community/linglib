@@ -46,6 +46,12 @@ theorem Remainder.strong (h : Remainder X) : StrongSupplementation X := fun _ _ 
   let ⟨z, hz⟩ := h hyx
   ⟨z, ((hz z).1 le_rfl).1, ((hz z).1 le_rfl).2⟩
 
+theorem StrongSupplementation.le_of_forall_overlap (h : StrongSupplementation X)
+    (hall : ∀ z ≤ x, Overlap z y) : x ≤ y := by
+  by_contra hxy
+  obtain ⟨z, hzx, hzy⟩ := h hxy
+  exact hzy (hall z hzx)
+
 /-- Under strong supplementation parthood is determined by overlap. -/
 theorem StrongSupplementation.le_iff (h : StrongSupplementation X) :
     x ≤ y ↔ ∀ z, Overlap z x → Overlap z y :=

@@ -40,12 +40,12 @@ portions, and measured parts.
 
 ## Implementation notes
 
-Self-connection is Moon's (20b), stated with the library's overlap, which unlike (20a) relates
-non-null parts only. The touch-based self-connection of (22) is (20b) under the connection
-relation of overlapping or touching (`isSelfConnected_overlap_or_iff`), touch being a parameter,
-so connected liquid (23) is stated with (20b), without its temporal parameter. The results on
-sums assume that the part structure is strongly supplemented and that its joins are sums, as
-in the classical mereology the paper works in.
+Self-connection is Moon's (20b), on a part structure with no null individual. The touch-based
+self-connection of (22) is (20b) under the connection relation of overlapping or touching
+(`isSelfConnected_overlap_or_iff`), touch being a parameter, so connected liquid (23) is stated
+with (20b), without its temporal parameter. The results on sums take as a hypothesis that a part
+of a sum overlaps one of the summands, `Mereology.Filtration`, which holds in the classical
+mereology the paper works in.
 
 ## References
 
@@ -83,24 +83,25 @@ theorem ConnectedLiquid.isSelfConnected [PartialOrder α] {C : α → α → Pro
     {x : α} (h : ConnectedLiquid C phase x) : IsSelfConnected C x :=
   h.1
 
-variable [SemilatticeSup α] [StronglySupplemented α] [SupIsSum α] {C : α → α → Prop}
+variable [SemilatticeSup α] {C : α → α → Prop}
   {P : α → Prop}
 
 /-- Krifka's self-connection (22), on which any two non-overlapping individuals that join to `x`
 touch, is self-connection (20b) under the connection relation of overlapping or touching. -/
-theorem isSelfConnected_overlap_or_iff {T : α → α → Prop} {x : α} :
-    IsSelfConnected (fun y z ↦ SolidOverlap y z ∨ T y z) x ↔
-      ∀ y z, ¬ IsBot y → ¬ IsBot z → y ⊔ z = x → ¬ SolidOverlap y z → T y z := by
-  simp only [isSelfConnected_iff_sup, or_iff_not_imp_left]
+theorem isSelfConnected_overlap_or_iff (hS : StrongSupplementation α) (hF : Filtration α)
+    {T : α → α → Prop} {x : α} :
+    IsSelfConnected (fun y z ↦ Overlap y z ∨ T y z) x ↔
+      ∀ y z, y ⊔ z = x → ¬ Overlap y z → T y z := by
+  simp only [isSelfConnected_iff_sup hS hF, or_iff_not_imp_left]
 
-theorem connectivity_breaks_cum (hConn : ∀ x, P x → IsSelfConnected C x) {x y : α} (hx : P x)
-    (hy : P y) (hx0 : ¬ IsBot x) (hy0 : ¬ IsBot y) (hDisc : ¬ C x y) : ¬ CUM {x | P x} :=
-  fun hCum ↦ hDisc ((hConn _ (hCum hx hy)).of_sup hx0 hy0)
+theorem connectivity_breaks_cum (hF : Filtration α) (hConn : ∀ x, P x → IsSelfConnected C x)
+    {x y : α} (hx : P x) (hy : P y) (hDisc : ¬ C x y) : ¬ CUM {x | P x} :=
+  fun hCum ↦ hDisc ((hConn _ (hCum hx hy)).of_sup hF)
 
-theorem connectivity_middle_ground (hConn : ∀ x, P x → IsSelfConnected C x) {a b : α}
-    (ha : P a) (hb : P b) (ha0 : ¬ IsBot a) (hb0 : ¬ IsBot b) (hDisc : ¬ C a b) {x y : α}
-    (hx : P x) (hy : P y) (hlt : y < x) : ¬ CUM {x | P x} ∧ ¬ QUA {x | P x} :=
-  ⟨connectivity_breaks_cum hConn ha hb ha0 hb0 hDisc, fun hQ ↦ hQ hy hx hlt.ne hlt.le⟩
+theorem connectivity_middle_ground (hF : Filtration α)
+    (hConn : ∀ x, P x → IsSelfConnected C x) {a b : α} (ha : P a) (hb : P b) (hDisc : ¬ C a b)
+    {x y : α} (hx : P x) (hy : P y) (hlt : y < x) : ¬ CUM {x | P x} ∧ ¬ QUA {x | P x} :=
+  ⟨connectivity_breaks_cum hF hConn ha hb hDisc, fun hQ ↦ hQ hy hx hlt.ne hlt.le⟩
 
 end Mereotopology
 
@@ -132,11 +133,10 @@ structure MixedDrinkWitness (C : α → α → Prop) (recipe : Recipe α K n) (�
   /-- Each ingredient slot is filled by an entity. -/
   assign : Fin n → α
   part_le : ∀ i, assign i ≤ x
-  present : ∀ i, ¬ IsBot (assign i)
   satisfies : ∀ i, recipe.ingredients i (assign i)
   ratio : RatioHolds μ recipe assign
-  disjoint : ∀ i j, i ≠ j → ¬ SolidOverlap (assign i) (assign j)
-  covers : ∀ z, z ≤ x → ∃ i, SolidOverlap z (assign i)
+  disjoint : ∀ i j, i ≠ j → ¬ Overlap (assign i) (assign j)
+  covers : ∀ z, z ≤ x → ∃ i, Overlap z (assign i)
   connected : ConnectedLiquid C phase x
 
 /-- The denotation of a mixed drink noun, Moon's final formula, holds of ratio-related
@@ -154,18 +154,11 @@ theorem isSelfConnected_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe �
     IsSelfConnected C x :=
   hx.some.connected.isSelfConnected
 
-theorem not_isBot_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe μ phase x) :
-    ¬ IsBot x :=
-  let ⟨w⟩ := hx
-  let ⟨_, ho⟩ := w.covers x le_rfl
-  ho.not_isBot_left
-
 /-- Two non-null portions that are not connected do not make a mixed drink, as shots of the
 ingredients drunk one after another do not make a margarita. -/
-theorem not_mixedDrinkDen_sup_of_not_connected [StronglySupplemented α] [SupIsSum α] {y z : α}
-    (hy : ¬ IsBot y) (hz : ¬ IsBot z) (hDisc : ¬ C y z) :
-    ¬ mixedDrinkDen C recipe μ phase (y ⊔ z) :=
-  fun h ↦ hDisc ((isSelfConnected_of_mixedDrinkDen h).of_sup hy hz)
+theorem not_mixedDrinkDen_sup_of_not_connected (hF : Filtration α) {y z : α}
+    (hDisc : ¬ C y z) : ¬ mixedDrinkDen C recipe μ phase (y ⊔ z) :=
+  fun h ↦ hDisc ((isSelfConnected_of_mixedDrinkDen h).of_sup hF)
 
 theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (i : Fin (n + 2))
     (hExcl : ∀ j ≠ i, ∀ z ≤ y, ¬ recipe.ingredients j z) :
@@ -173,17 +166,17 @@ theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (
   fun ⟨w⟩ ↦ let ⟨j, hj⟩ := exists_ne i; hExcl j hj _ (w.part_le j) (w.satisfies j)
 
 theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
-    (hx : mixedDrinkDen C recipe μ phase x) : ¬ Minimal (¬ IsBot ·) x := by
+    (hx : mixedDrinkDen C recipe μ phase x) : ¬ IsMin x := by
   intro hAtom
   obtain ⟨w⟩ := hx
-  have h0 : w.assign 0 = x := le_antisymm (w.part_le 0) (hAtom.2 (w.present 0) (w.part_le 0))
-  have h1 : w.assign 1 = x := le_antisymm (w.part_le 1) (hAtom.2 (w.present 1) (w.part_le 1))
+  have h0 : w.assign 0 = x := le_antisymm (w.part_le 0) (hAtom (w.part_le 0))
+  have h1 : w.assign 1 = x := le_antisymm (w.part_le 1) (hAtom (w.part_le 1))
   have hDisj := w.disjoint 0 1 Fin.zero_ne_one
   rw [h0, h1] at hDisj
-  exact hDisj (SolidOverlap.refl hAtom.1)
+  exact hDisj (.refl x)
 
 theorem atoms_exclude_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
-    (hx : mixedDrinkDen C recipe μ phase x) : ¬ (DRINK x ∧ Minimal (¬ IsBot ·) x) :=
+    (hx : mixedDrinkDen C recipe μ phase x) : ¬ (DRINK x ∧ IsMin x) :=
   fun ⟨_, hAtom⟩ ↦ mixedDrink_not_atom hx hAtom
 
 theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
@@ -194,14 +187,13 @@ theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
 /-- Two drinks that are not connected, as in two glasses, do not sum to a drink, so the
 denotation is not cumulative; with a drink that has a smaller drink as a part it is not
 quantized either. -/
-theorem mixedDrink_middle_ground [StronglySupplemented α] [SupIsSum α] {a b : α}
+theorem mixedDrink_middle_ground (hF : Filtration α) {a b : α}
     (ha : mixedDrinkDen C recipe μ phase a) (hb : mixedDrinkDen C recipe μ phase b)
     (hDisc : ¬ C a b) {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
     (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
     ¬ CUM {z | mixedDrinkDen C recipe μ phase z} ∧
       ¬ QUA {z | mixedDrinkDen C recipe μ phase z} :=
-  connectivity_middle_ground (fun _ ↦ isSelfConnected_of_mixedDrinkDen) ha hb
-    (not_isBot_of_mixedDrinkDen ha) (not_isBot_of_mixedDrinkDen hb) hDisc hx hy hlt
+  connectivity_middle_ground hF (fun _ ↦ isSelfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
 
 theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
     (hU : UP θ) (hs : SUM θ) {OBJ : Set α} {a b : α} {e_a e_b : β} (ha : a ∈ OBJ) (hb : b ∈ OBJ)
@@ -211,7 +203,7 @@ theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : SetRel α β
   obtain ⟨e_y, he_y_lt, hθ_y⟩ := h.mse hθ_x hlt
   exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
 
-theorem mixedDrink_VP_propagation_gap [StronglySupplemented α] [SupIsSum α] {β : Type*}
+theorem mixedDrink_VP_propagation_gap (hF : Filtration α) {β : Type*}
     [SemilatticeSup β] {drinkTheme : SetRel α β} (h : SINC drinkTheme) (hU : UP drinkTheme)
     (hs : SUM drinkTheme) {a b : α} {e_a e_b : β} (ha : mixedDrinkDen C recipe μ phase a)
     (hb : mixedDrinkDen C recipe μ phase b) (hθ_a : a ~[drinkTheme] e_a)
@@ -221,8 +213,7 @@ theorem mixedDrink_VP_propagation_gap [StronglySupplemented α] [SupIsSum α] {�
     ¬ CUM (VP drinkTheme {z | mixedDrinkDen C recipe μ phase z}) ∧
       ¬ QUA (VP drinkTheme {z | mixedDrinkDen C recipe μ phase z}) :=
   middle_ground_stable (OBJ := {z | mixedDrinkDen C recipe μ phase z}) h hU hs ha hb hθ_a hθ_b
-    (not_mixedDrinkDen_sup_of_not_connected (not_isBot_of_mixedDrinkDen ha)
-      (not_isBot_of_mixedDrinkDen hb) hDisc) hx hy hlt hθ_x
+    (not_mixedDrinkDen_sup_of_not_connected hF hDisc) hx hy hlt hθ_x
 
 /-! ### Modifying the ratios -/
 

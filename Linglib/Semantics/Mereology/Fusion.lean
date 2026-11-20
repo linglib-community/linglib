@@ -68,6 +68,10 @@ theorem _root_.IsLUB.isFusion (hR : Remainder X) (hne : s.Nonempty) (h : IsLUB s
       have : x ≤ r := h.2 fun y hy ↦ (hr y).2 ⟨h.1 hy, fun ho ↦ hno y hy ho.symm⟩
       exact ((hr z).1 (hzx.trans this)).2 (.refl z)⟩
 
+variable (X) in
+/-- Products: two overlapping individuals have a greatest common part. -/
+def Products : Prop := ∀ ⦃x y : X⦄, Overlap x y → ∃ z, IsGLB {x, y} z
+
 /-- Goodman's fusion, defined from overlap alone: it overlaps exactly what the members
 overlap. -/
 def IsGoodmanFusion (s : Set X) (x : X) : Prop := ∀ y, Overlap y x ↔ ∃ z ∈ s, Overlap y z
@@ -124,6 +128,13 @@ theorem Remainder.additiveRemainder (h : Remainder X) : AdditiveRemainder X := f
   obtain ⟨w, hwy, hw⟩ := h.strong hle
   exact hw (.of_le (le_sup_of_le_right
     ((hz w).2 ⟨hwy, fun ho ↦ hw (ho.mono le_rfl le_sup_left)⟩)))
+
+variable (X) in
+/-- Filtration for binary sums: a part of a sum overlaps one of the summands. -/
+def Filtration : Prop := ∀ ⦃x y z : X⦄, z ≤ x ⊔ y → Overlap z x ∨ Overlap z y
+
+theorem Remainder.filtration (h : Remainder X) : Filtration X := fun _ _ _ hz ↦
+  or_iff_not_imp_left.2 fun hx ↦ .of_le (h.le_of_le_sup hz hx)
 
 /-- Under Remainder the complement of a proper part is unique. -/
 theorem Remainder.uniqueAdditiveRemainder (h : Remainder X) : UniqueAdditiveRemainder X :=
