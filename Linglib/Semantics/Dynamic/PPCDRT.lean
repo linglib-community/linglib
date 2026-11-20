@@ -6,42 +6,35 @@ public import Linglib.Semantics.Dynamic.PCDRT
 # Partial Plural CDRT
 
 Haug and Dalrymple's Partial Plural Compositional DRT joins the plural information states of
-Plural CDRT (Brasoveanu, Dotlačil) with the partial assignments of Partial CDRT
-(Haug), in which an anaphoric condition is a presupposition rather than a resolution the
-grammar makes. This file defines the conditions of a PPDRS on the states of `PCDRT`, reading a
-dref's values and dependencies through `PCDRT.value` and `PCDRT.dep`.
+Plural CDRT (Brasoveanu, Dotlačil) with the partial assignments of Partial CDRT (Haug), in which
+an anaphoric condition is a presupposition rather than a resolution the grammar makes. A condition
+of a PPDRS is a property of the output state `S` and of the set `Δ` of drefs the DRS distributes
+over. The class of a row `s` under distribution, `eqClass S Δ s`, is the set of rows of `S` that
+agree with `s` on `Δ`.
 
-A condition takes the output state and the set `Δ` of drefs the DRS distributes over. Three
-anaphoric relations are distinguished, after Higginbotham and Williams:
+We define three anaphoric relations between an anaphor `u` and its antecedent `v`, after
+Higginbotham and Williams:
 
-* binding (`u_anaph = u_ant`), pointwise equality of the two drefs, which needs c-command;
-* group identity (`∪u_anaph → ∪u_ant`), the anaphor's values summed over each state's class
-  under distribution equal to the antecedent's values over the whole state, so that the
-  antecedent escapes the distribution;
-* reciprocity, group identity with distinctness in every state, the contribution of *each
-  other*; without the distinctness it is the underspecified meaning of German *sich* or the
-  Cheyenne reflexive/reciprocal affix (Murray, Cable).
+* binding, `bindingCond`: `s u = s v` in every row `s`, which needs c-command;
+* group identity, `groupIdentityCond`: `value u (eqClass S Δ s) = value v S` for every row `s`,
+  so that the anaphor's values over each class are the antecedent's values over the whole state
+  and the antecedent escapes the distribution;
+* reciprocity, `reciprocityCond`: group identity with the two drefs distinct in every row, the
+  contribution of *each other*. Without the distinctness it is `underspecifiedCond`, the meaning
+  of German *sich* or the Cheyenne reflexive/reciprocal affix (Murray, Cable).
 
-## Main definitions
+Without distribution, group identity is equality of the two drefs' values
+(`groupIdentityCond_empty`), and reciprocity says that their dependency is irreflexive with equal
+domain and codomain (`reciprocityCond_empty_iff`). Under distribution over its antecedent a bound
+anaphor has at most one value in each class (`subsingleton_value_of_bindingCond`), while the
+antecedent of a reciprocal has two values in the state (`nontrivial_value_of_reciprocityCond`), so
+a bound dref has no value for a reciprocal inside the distribution to take as antecedent
+(`value_eq_empty_of_bindingCond_of_reciprocityCond`).
 
-* `PPCDRT.PPDRSCond`: a condition on a plural state under a distribution context.
-* `PPCDRT.eqClass`: the class of a state under distribution.
-* `PPCDRT.bindingCond`, `PPCDRT.groupIdentityCond`, `PPCDRT.reciprocityCond`,
-  `PPCDRT.underspecifiedCond`: the anaphoric relations.
-* `PPCDRT.extend`, `PPCDRT.introPartial`: partial dref introduction on assignments and on plural
-  states.
-
-## Main results
-
-* `PPCDRT.groupIdentityCond_empty`: without distribution, group identity is equality of the two
-  drefs' values.
-* `PPCDRT.reciprocityCond_empty_iff`: without distribution, reciprocity is a dependency with equal
-  domain and codomain and no reflexive pair.
-* `PPCDRT.binding_implies_groupIdentity`, `PPCDRT.reciprocity_excludes_binding`: binding and
-  reciprocity against group identity.
-* `PPCDRT.nontrivial_value_of_reciprocityCond`: a reciprocal's antecedent denotes a plurality.
-* `PPCDRT.mem_extend_iff_covBy`: introducing a dref is a covering step of the extension order.
-* `PPCDRT.introPartial_subset_intro`: partial introduction refines Plural CDRT's.
+Partial dref introduction `extend u` relates `i` to `o` when `o` values `u`, `i` does not, and
+the two agree on every other dref. It is a covering step of the extension order
+(`mem_extend_iff_covBy`), and its cumulative lift to plural states, `introPartial u`, refines
+Plural CDRT's introduction (`introPartial_subset_intro`).
 
 ## References
 
@@ -76,16 +69,27 @@ variable (uAnaph uAnt : ℕ) (S : PluralAssign ℕ E) (Δ : Set ℕ)
 /-- The class of `s` under distribution over `Δ` ([haug-dalrymple-2020] (26)): the states of `S`
 agreeing with `s` on every dref in `Δ`. -/
 def eqClass (s : ℕ → Part E) : PluralAssign ℕ E :=
-  {t ∈ S | ∀ u ∈ Δ, t u = s u}
+  {t ∈ S | Set.EqOn t s Δ}
 
 @[simp] theorem eqClass_empty (s : ℕ → Part E) : eqClass S ∅ s = S := by
   ext t; simp [eqClass]
 
-theorem mem_eqClass {s t : ℕ → Part E} :
-    t ∈ eqClass S Δ s ↔ t ∈ S ∧ ∀ u ∈ Δ, t u = s u := Iff.rfl
+theorem mem_eqClass {s t : ℕ → Part E} : t ∈ eqClass S Δ s ↔ t ∈ S ∧ Set.EqOn t s Δ := Iff.rfl
 
 theorem self_mem_eqClass {s : ℕ → Part E} (hs : s ∈ S) : s ∈ eqClass S Δ s :=
-  ⟨hs, fun _ _ ↦ rfl⟩
+  ⟨hs, Set.eqOn_refl s Δ⟩
+
+theorem eqClass_subset (s : ℕ → Part E) : eqClass S Δ s ⊆ S := fun _ h ↦ h.1
+
+variable {S Δ} in
+theorem eqClass_anti {Δ' : Set ℕ} (h : Δ ⊆ Δ') (s : ℕ → Part E) :
+    eqClass S Δ' s ⊆ eqClass S Δ s :=
+  fun _ ht ↦ ⟨ht.1, ht.2.mono h⟩
+
+variable {S Δ} in
+theorem eqClass_mono {T : PluralAssign ℕ E} (h : S ⊆ T) (s : ℕ → Part E) :
+    eqClass S Δ s ⊆ eqClass T Δ s :=
+  fun _ ht ↦ ⟨h ht.1, ht.2⟩
 
 /-! ### Anaphoric relations -/
 
@@ -167,6 +171,34 @@ theorem nontrivial_value_of_reciprocityCond (h : reciprocityCond uAnaph uAnt S �
   ⟨a, h.1 s hs ▸ ⟨s, self_mem_eqClass S Δ hs, Part.eq_some_iff.2 ha⟩,
     b, ⟨s, hs, Part.eq_some_iff.2 hb⟩, h.2 s hs a ha b hb⟩
 
+/-- A bound anaphor holds one value throughout each class under distribution over its
+antecedent. -/
+theorem eq_of_mem_eqClass_of_bindingCond (h : bindingCond uAnaph uAnt S Δ) (hΔ : uAnt ∈ Δ)
+    {s t t' : ℕ → Part E} (ht : t ∈ eqClass S Δ s) (ht' : t' ∈ eqClass S Δ s) :
+    t uAnaph = t' uAnaph := by
+  rw [h t ht.1, h t' ht'.1, ht.2 hΔ, ht'.2 hΔ]
+
+/-- A bound anaphor denotes an individual: under distribution over its antecedent it has at most
+one value in each class. -/
+theorem subsingleton_value_of_bindingCond (h : bindingCond uAnaph uAnt S Δ) (hΔ : uAnt ∈ Δ)
+    (s : ℕ → Part E) : (value uAnaph (eqClass S Δ s)).Subsingleton :=
+  fun _ ⟨_, ht, ha⟩ _ ⟨_, ht', hb⟩ ↦ Part.some_injective <|
+    ha.symm.trans ((eq_of_mem_eqClass_of_bindingCond h hΔ ht ht').trans hb)
+
+/-- A reciprocal inside the distribution cannot take a bound dref as its antecedent: the reciprocal
+would find the antecedent's value within the class, where the antecedent holds that value in every
+row and so is nowhere distinct from it. -/
+theorem value_eq_empty_of_bindingCond_of_reciprocityCond {uRecip : ℕ}
+    (hb : bindingCond uAnaph uAnt S Δ) (hΔ : uAnt ∈ Δ) (hr : reciprocityCond uRecip uAnaph S Δ) :
+    value uAnaph S = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun d hd ↦ ?_
+  obtain ⟨s, hs, hsd⟩ := id hd
+  rw [← hr.1 s hs] at hd
+  obtain ⟨t, ht, htd⟩ := hd
+  have ht' : t uAnaph = Part.some d :=
+    (eq_of_mem_eqClass_of_bindingCond hb hΔ ht (self_mem_eqClass S Δ hs)).trans hsd
+  exact hr.2 t ht.1 d (Part.eq_some_iff.1 htd) d (Part.eq_some_iff.1 ht') rfl
+
 /-! ### Partial dref introduction -/
 
 section Introduction
@@ -178,7 +210,7 @@ variable {Var D : Type*} {u : Var} {i o : Var → Part D}
 /-- Partial dref introduction `i[u]o` ([haug-dalrymple-2020] (20)): `i` leaves `u` unvalued, `o`
 values it, and the two agree on every other dref. -/
 def extend (u : Var) : Update (Var → Part D) :=
-  {p | ¬(p.1 u).Dom ∧ (p.2 u).Dom ∧ ∀ v ≠ u, p.1 v = p.2 v}
+  {(i, o) | ¬(i u).Dom ∧ (o u).Dom ∧ ∀ v ≠ u, i v = o v}
 
 theorem mem_extend : i ~[extend u] o ↔ ¬(i u).Dom ∧ (o u).Dom ∧ ∀ v ≠ u, i v = o v :=
   Iff.rfl
@@ -210,11 +242,11 @@ extends some input row, and the output state is nonempty. It refines Plural CDRT
 (`introPartial_subset_intro`) in two ways: every output row values `u`, where a random assignment
 may leave it ★, and the output is nonempty. -/
 def introPartial (u : Var) : Update (PluralAssign Var D) :=
-  {p | p.2.Nonempty ∧ p ∈ Update.cumul (extend u)}
+  {(I, O) | O.Nonempty ∧ I ~[Update.cumul (extend u)] O}
 
 theorem introPartial_subset_intro [DecidableEq Var] :
     introPartial u ⊆ PCDRT.intro (S := Var → Part D) (V := Part D) u :=
-  fun _ hp ↦ Update.cumul_mono extend_subset_randomAssign hp.2
+  fun (_, _) hp ↦ Update.cumul_mono extend_subset_randomAssign hp.2
 
 end Introduction
 

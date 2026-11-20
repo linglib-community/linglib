@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Data.Examples.DalrympleHaug2024
-public import Linglib.Semantics.Plurality.Reciprocal.Scope
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Wan.Reciprocals
+public import Studies.HaugDalrymple2020
 public import Studies.Landau2015
 public import Studies.Rakosi2020
 public import Linglib.Data.Examples.Readers
@@ -22,16 +22,23 @@ matrix clause. Bound and nonbound antecedents, collective conjuncts and control 
 come out alike on both analyses; an explicit distributor on the antecedent and a logophoric
 antecedent separate them, and only the relational analysis fits the data.
 
-We state each analysis by its two commitments, where it interprets the local antecedent under
-each reading and whether the reciprocal distributes, derive the readings each admits for each
-construction, and check them against the paper's judgments.
+A scope reading is a setting of the two parameters of Haug and Dalrymple, the locus of the
+reciprocal and the relation of its local antecedent to the matrix subject: narrow scope is the
+low locus with group coreference, wide scope the high locus with a bound antecedent, and each
+has a state (`exists_scopeReading`). We state each analysis by its two commitments, where it
+interprets the local antecedent under each reading and whether the reciprocal distributes,
+derive the readings each admits for each construction, and check them against the paper's
+judgments.
 
 ## Implementation notes
 
-* A construction is represented by its local antecedent alone: the denotation its form or
-  predicate forces, whether it is a logophor, the locus of an explicit distributor, and the
-  number of the matrix argument. Partial control forces no denotation, since PRO may properly
-  include the controller or coincide with it.
+* A construction is represented by its local antecedent alone: the relation to the matrix
+  argument that its form or predicate forces, whether it is a logophor, the locus of an explicit
+  distributor, and the number of the matrix argument. A form or predicate that needs an
+  individual forces binding, and one that needs the plurality forces group coreference, since
+  a bound dref has one value in each class of the distribution
+  (`PPCDRT.subsingleton_value_of_bindingCond`). Partial control forces neither, since PRO may
+  properly include the controller or coincide with it.
 * A simple sentence has only the in-situ reading, so (18b)–(20) are the narrow reading with the
   distributor at the low locus.
 
@@ -40,8 +47,9 @@ construction, and check them against the paper's judgments.
 * (17) is analysed, with the paper, as exhaustive control, but `Landau2015.derivedControlTier`
   puts *intend* (and *decide* of (14)) on the partial-control tier; a semantics for partial
   control would decide the case.
-* (25) is headed wide scope but read by the paper as a crossed reading; a crossed value in
-  `Scope` would make it a row and reach the substrate's `ScopeReading.crossed`.
+* (25) is headed wide scope and described as looking like a crossed reading, the high locus
+  with group coreference (`HaugDalrymple2020.ScopeReading .high .group`), which `Scope` does not
+  have as a value.
 
 ## References
 
@@ -66,41 +74,48 @@ construction, and check them against the paper's judgments.
 
 namespace DalrympleHaug2024
 
-open Reciprocal
+open HaugDalrymple2020
 
 /-! ### Analyses and local antecedents -/
 
-/-- What the local antecedent denotes under a reading ((5), (8)). -/
-inductive Grain where
-  /-- An individual, as a bound variable (`=`). -/
-  | individual
-  /-- The plurality, under group identity (`∪`) with the matrix subject. -/
-  | plurality
-  deriving DecidableEq, Repr
+/-- The scope readings of a reciprocal in a complement clause. -/
+inductive Scope where
+  /-- The we-reading ((6)): "Tracy and Chris each thought 'We saw each other'". -/
+  | narrow
+  /-- The I-reading ((8)): "Tracy thought 'I saw Chris' and Chris thought 'I saw Tracy'". -/
+  | wide
+  deriving DecidableEq, Repr, Fintype
 
-/-- The denotation of the local antecedent under a scope reading, read off the antecedent
-    relation of its cell, bound under wide scope and group-identical under narrow scope on both
-    analyses ((4), (6)–(8)). -/
-def antecedentGrain (r : Scope) : Grain :=
-  match r.reading.antecedentRel with
-  | .binding => .individual
-  | .groupIdentity | .reciprocity => .plurality
+/-- The locus of the reciprocal under a scope reading ((7), (9)). -/
+@[simp] def Scope.locus : Scope → Locus
+  | .narrow => .low
+  | .wide => .high
 
-@[simp] theorem antecedentGrain_narrow : antecedentGrain .narrow = .plurality := rfl
+/-- The relation of the local antecedent to the matrix subject under a scope reading, group
+    identity (`∪`) under narrow scope and binding (`=`) under wide scope on both analyses ((4),
+    (6)–(8)). -/
+@[simp] def Scope.antecedence : Scope → Antecedence
+  | .narrow => .group
+  | .wide => .bound
 
-@[simp] theorem antecedentGrain_wide : antecedentGrain .wide = .individual := rfl
+open PPCDRT PCDRT in
+-- (7), (9)
+theorem exists_scopeReading (r : Scope) :
+    ∃ S : PluralAssign ℕ Ind,
+      ScopeReading r.locus r.antecedence u₁ u₂ u₃ S {u₁, w} ∧ (value u₂ S).Nonempty :=
+  (exists_scopeReading_iff _ _).2 (by cases r <;> simp)
 
-/-- The denotation a pronoun's number forces: a singular pronoun denotes an individual and so
+/-- The relation a pronoun's number forces: a singular pronoun denotes an individual and so
     must be bound, a plural pronoun may be bound or group-identical ((10b)). -/
-def Grain.ofNumber? : Number → Option Grain
-  | .singular => some .individual
+def relationOfNumber? : Number → Option Antecedence
+  | .singular => some .bound
   | _ => none
 
 /-- The local antecedent of a reciprocal in a complement clause, by the properties the paper
     surveys. -/
 structure Antecedent where
-  /-- The denotation its form or its predicate forces, if any. -/
-  grain : Option Grain := none
+  /-- The relation to the matrix argument that its form or its predicate forces, if any. -/
+  relation : Option Antecedence := none
   /-- A logophor, interpreted inside the report (§6). -/
   logophoric : Bool := false
   /-- The locus of an explicit distributor on it, if any (§5). -/
@@ -110,7 +125,7 @@ structure Antecedent where
   deriving Repr
 
 /-- A pronoun of number `n` as local antecedent. -/
-def Antecedent.ofNumber (n : Option Number) : Antecedent := { grain := n.bind Grain.ofNumber? }
+def Antecedent.ofNumber (n : Option Number) : Antecedent := { relation := n.bind relationOfNumber? }
 
 /-- A logophoric pronoun as local antecedent: its number, interpreted inside the report. -/
 def Antecedent.ofLogophor (p : LogophoricPronoun) : Antecedent :=
@@ -130,27 +145,27 @@ def quantificational : Analysis := { antecedentLocus := fun _ ↦ .low, distribu
 
 /-- On the relational analysis the reciprocal is a pronoun anaphoric on the local antecedent,
     which is therefore interpreted where the reciprocal is ((3), (6)–(9)). -/
-def relational : Analysis := { antecedentLocus := fun r ↦ r.reading.locus, distributes := false }
+def relational : Analysis := { antecedentLocus := Scope.locus, distributes := false }
 
 /-- Reading `r` is available for the local antecedent `a` on analysis `A`: `r` gives the local
-    antecedent the denotation its form forces, a logophor stays inside the report, a
+    antecedent the relation its form forces, a logophor stays inside the report, a
     distributing reciprocal scopes below any explicit distributor, and a wide-scope reciprocal
     takes the matrix argument as its plural antecedent. -/
 def Available (A : Analysis) (a : Antecedent) (r : Scope) : Prop :=
-  (∀ g ∈ a.grain, antecedentGrain r = g) ∧ (a.logophoric → A.antecedentLocus r = .low) ∧
-    (A.distributes → ∀ d ∈ a.distributor, r.reading.locus < d) ∧ (r = .wide → a.matrixPlural)
+  (∀ g ∈ a.relation, r.antecedence = g) ∧ (a.logophoric → A.antecedentLocus r = .low) ∧
+    (A.distributes → ∀ d ∈ a.distributor, r.locus < d) ∧ (r = .wide → a.matrixPlural)
 
 instance (A : Analysis) (a : Antecedent) (r : Scope) : Decidable (Available A a r) := by
   unfold Available; infer_instance
 
-/-- The label of a reading in `Data/Examples/DalrympleHaug2024.json`. -/
-def label : Scope → String
-  | .narrow => "narrow"
-  | .wide => "wide"
+/-- The reading of a row that a scope reading is. -/
+def Scope.toReading : Scope → Examples.Reading
+  | .narrow => .narrow
+  | .wide => .wide
 
 /-- The paper records reading `r` of example `e` as available. -/
 def Attested (e : Datum) (r : Scope) : Prop :=
-  e.readings.lookup (label r) = some .acceptable
+  Examples.reading e r.toReading = some .acceptable
 
 instance (e : Datum) (r : Scope) : Decidable (Attested e r) := by
   unfold Attested; infer_instance
@@ -195,12 +210,12 @@ theorem covers_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor
   forall_congr' fun r ↦ imp_congr Iff.rfl (available_iff_of_none hd hl r)
 
 -- (11), (12)
-theorem narrow_of_plurality {A : Analysis} {a : Antecedent} (h : a.grain = some .plurality)
+theorem narrow_of_group {A : Analysis} {a : Antecedent} (h : a.relation = some .group)
     {r : Scope} (hr : Available A a r) : r = .narrow := by
   cases r <;> simp_all [Available]
 
 -- (10)
-theorem wide_of_individual {A : Analysis} {a : Antecedent} (h : a.grain = some .individual)
+theorem wide_of_bound {A : Analysis} {a : Antecedent} (h : a.relation = some .bound)
     {r : Scope} (hr : Available A a r) : r = .wide := by
   cases r <;> simp_all [Available]
 
@@ -216,8 +231,8 @@ theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=
   (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
 
 /-- The plural reflexive *zibun-tati*, which resists a bound reading and takes group identity
-    (Nishigauchi), so denotes the plurality ((11)). -/
-def japanese : Antecedent := { grain := some .plurality }
+    (Nishigauchi) ((11)). -/
+def japanese : Antecedent := { relation := some .group }
 
 theorem japanese_fits (A : Analysis) : Fits A japanese Examples.ex_11 :=
   (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
@@ -226,7 +241,7 @@ theorem japanese_fits (A : Analysis) : Fits A japanese Examples.ex_11 :=
 
 /-- The subject of a coordinated collective predicate, *meet at the tennis court*, which needs
     the plurality (Tay, New, Dalrymple and Haug) ((12)). -/
-def collectiveConjunct : Antecedent := { grain := some .plurality }
+def collectiveConjunct : Antecedent := { relation := some .group }
 
 -- (12)
 theorem collectiveConjunct_fits (A : Analysis) : Fits A collectiveConjunct Examples.ex_12 :=
@@ -237,9 +252,9 @@ theorem collectiveConjunct_fits (A : Analysis) : Fits A collectiveConjunct Examp
 /-- PRO as local antecedent: a collectively read matrix predicate makes PRO the group, under
     exhaustive control with a distributive reading PRO is the individual controller, and under
     partial control PRO is semantically plural and may properly include the controller, so no
-    denotation is forced. -/
+    relation is forced. -/
 def pro (exhaustive collective matrixPlural : Bool) : Antecedent :=
-  { grain := if collective then some .plurality else if exhaustive then some .individual else none
+  { relation := if collective then some .group else if exhaustive then some .bound else none
     matrixPlural }
 
 open English English.Verbs Landau2015 in
@@ -304,7 +319,7 @@ theorem not_available_exhaustiveSingular (A : Analysis) (r : Scope) :
 theorem exhaustiveSingular_fits (A : Analysis) :
     Fits A exhaustiveSingular Examples.ex_16a ∧ Fits A exhaustiveSingular Examples.ex_16b := by
   constructor <;> intro r <;>
-    simp [Attested, Examples.ex_16a, Examples.ex_16b, not_available_exhaustiveSingular]
+    exact iff_of_false (not_available_exhaustiveSingular A r) (by cases r <;> decide)
 
 /-! ### Distributive operators (§5) -/
 
@@ -375,7 +390,7 @@ def logophor : Antecedent := .ofLogophor Wan.Reciprocals.logPl
 def ordinary : Antecedent := .ofNumber Wan.Reciprocals.ordinaryPl.number
 
 -- (29)
-theorem narrow_of_logophoric {A : Analysis} (hA : ∀ r, A.antecedentLocus r = r.reading.locus)
+theorem narrow_of_logophoric {A : Analysis} (hA : ∀ r, A.antecedentLocus r = r.locus)
     {a : Antecedent} (ha : a.logophoric) {r : Scope} (h : Available A a r) :
     r = .narrow := by
   cases r <;> simp_all [Available]

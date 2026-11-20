@@ -759,7 +759,6 @@ import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Groups
 import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic

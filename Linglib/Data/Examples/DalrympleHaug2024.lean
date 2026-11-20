@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `DalrympleHaug2024` — typed example data
@@ -101,6 +102,7 @@ def ex_15a : Datum :=
   { id := "dalrymplehaug2024_15a"
     source := ⟨"dalrymple-haug-2024", "(15a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "I asked a girl who I liked if she wanted to get to know each other better and she said that she was already talking to someone else."
     glossedTokens := []
@@ -108,12 +110,13 @@ def ex_15a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("narrow", .acceptable)]
-    paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
+    paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control")] }
 
 def ex_15b : Datum :=
   { id := "dalrymplehaug2024_15b"
     source := ⟨"dalrymple-haug-2024", "(15b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "I vow to keep reminding you McDonald's is unhealthy and to go get that mole checked, because I want to live long, happy lives by each other's side."
     glossedTokens := []
@@ -121,7 +124,7 @@ def ex_15b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("narrow", .acceptable)]
-    paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
+    paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control")] }
 
 def ex_16a : Datum :=
   { id := "dalrymplehaug2024_16a"
@@ -192,6 +195,7 @@ def ex_19a : Datum :=
   { id := "dalrymplehaug2024_19a"
     source := ⟨"dalrymple-haug-2024", "(19a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "They each liked each other but never said a word."
     glossedTokens := []
@@ -199,12 +203,13 @@ def ex_19a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence")] }
 
 def ex_19b : Datum :=
   { id := "dalrymplehaug2024_19b"
     source := ⟨"dalrymple-haug-2024", "(19b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "At the end of the ceremony, they each kissed each other as husband and wife."
     glossedTokens := []
@@ -212,12 +217,13 @@ def ex_19b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence")] }
 
 def ex_20a : Datum :=
   { id := "dalrymplehaug2024_20a"
     source := ⟨"dalrymple-haug-2024", "(20a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "If there are 12 persons in a party and each of them shakes hands with each other, how many handshakes do happen in the party?"
     glossedTokens := []
@@ -225,12 +231,13 @@ def ex_20a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence")] }
 
 def ex_20b : Datum :=
   { id := "dalrymplehaug2024_20b"
     source := ⟨"dalrymple-haug-2024", "(20b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "Assertion: when a firefly hits a bus, each of them exerts the same force on each other."
     glossedTokens := []
@@ -238,7 +245,7 @@ def ex_20b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence")] }
 
 def ex_21a : Datum :=
   { id := "dalrymplehaug2024_21a"
@@ -283,6 +290,7 @@ def ex_23a : Datum :=
   { id := "dalrymplehaug2024_23a"
     source := ⟨"dalrymple-haug-2024", "(23a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "We each gave each other a different perspective of life, and that provided the balance and a good marriage and parenting needs."
     glossedTokens := []
@@ -290,12 +298,13 @@ def ex_23a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("internal", .acceptable)]
-    paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
 def ex_23b : Datum :=
   { id := "dalrymplehaug2024_23b"
     source := ⟨"dalrymple-haug-2024", "(23b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "They parallel one another and complemented one another other because they each gave each other a different sort of intensity at least how that's how I fell into that music."
     glossedTokens := []
@@ -303,12 +312,13 @@ def ex_23b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("internal", .acceptable)]
-    paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
 def ex_24a : Datum :=
   { id := "dalrymplehaug2024_24a"
     source := ⟨"dalrymple-haug-2024", "(24a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "Callie was an obvious one, as they were extremely close and both accepted that they each liked each other, but they didn't do anything about it."
     glossedTokens := []
@@ -316,12 +326,13 @@ def ex_24a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("narrow", .acceptable)]
-    paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause")] }
 
 def ex_24b : Datum :=
   { id := "dalrymplehaug2024_24b"
     source := ⟨"dalrymple-haug-2024", "(24b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "I saw in some rants it says that they just flirted a little or made out and were in love but they already established the fact that they each liked each other before the [sic] kissed."
     glossedTokens := []
@@ -329,12 +340,13 @@ def ex_24b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("narrow", .acceptable)]
-    paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause")] }
 
 def ex_25 : Datum :=
   { id := "dalrymplehaug2024_25"
     source := ⟨"dalrymple-haug-2024", "(25)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "So many what ifs and in the end, they find out that they each liked each other before. But now, they each have their own lives to lead."
     glossedTokens := []
@@ -342,12 +354,13 @@ def ex_25 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("wide", .acceptable)]
-    paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause")] }
 
 def ex_26a : Datum :=
   { id := "dalrymplehaug2024_26a"
     source := ⟨"dalrymple-haug-2024", "(26a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "While watching their movies, they each realize that they miss each other, make up and go to “Monkey Cars 3D” where the whole cast of So Random! and Chad is seen watching “Monkey Cars 3D”."
     glossedTokens := []
@@ -355,12 +368,13 @@ def ex_26a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("wide", .acceptable)]
-    paperFeatures := [("section", "5"), ("antecedent", "matrix distributor"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "matrix distributor")] }
 
 def ex_26b : Datum :=
   { id := "dalrymplehaug2024_26b"
     source := ⟨"dalrymple-haug-2024", "(26b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "“And I'll be back,” she reassured him, even though neither of them wanted to admit that they enjoyed each other's company and, deep down, especially on her part, wanted to find out more about that wolf's past."
     glossedTokens := []
@@ -368,7 +382,7 @@ def ex_26b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := [("wide", .acceptable)]
-    paperFeatures := [("section", "5"), ("antecedent", "matrix distributor 'neither of them'"), ("attested", "web")] }
+    paperFeatures := [("section", "5"), ("antecedent", "matrix distributor 'neither of them'")] }
 
 def ex_28 : Datum :=
   { id := "dalrymplehaug2024_28"
@@ -416,5 +430,31 @@ def ex_32 : Datum :=
     paperFeatures := [("section", "6"), ("antecedent", "ordinary plural pronoun")] }
 
 def all : List Datum := [ex_1, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15a, ex_15b, ex_16a, ex_16b, ex_17, ex_18a, ex_18b, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22, ex_23a, ex_23b, ex_24a, ex_24b, ex_25, ex_26a, ex_26b, ex_28, ex_31, ex_32]
+
+/-- The readings the squib judges a sentence for. -/
+inductive Reading where
+  /-- narrow: the reciprocal takes scope in the complement clause, the we-reading -/
+  | narrow
+  /-- wide: the reciprocal takes scope in the matrix clause, the I-reading -/
+  | wide
+  /-- internal: *different* compares the members of the distributed plurality -/
+  | internal
+  /-- external: *different* compares with something salient in the context -/
+  | external
+  /-- bound logophor: the plural logophor is bound by the matrix subject -/
+  | boundLogophor
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .narrow => "narrow"
+  | .wide => "wide"
+  | .internal => "internal"
+  | .external => "external"
+  | .boundLogophor => "bound logophor"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end DalrympleHaug2024.Examples

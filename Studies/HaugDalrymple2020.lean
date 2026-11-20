@@ -23,8 +23,11 @@ readings of the lawyers' secretary (24), (31), the narrow and wide readings of t
 belief (49), (51), (53), (55), the crossed reading (56), the modal (69), the mixed
 construal of the Cheyenne affix (78), multiple reciprocals (85), (86), the forks (93), the
 sailors (96), and the wide construal with three girls (136).
-`no_low_reciprocal_under_binding` derives the empty cell of §3.3: a bound antecedent
-leaves no plurality for a reciprocal inside the distribution.
+The readings are classified by two parameters (§3.3), the locus of the reciprocal, in situ
+or lifted to the matrix DRS, and the relation of its antecedent to the matrix subject, bound
+or group coreference (`ScopeReading`). Three of the four combinations have a state
+(`exists_scopeReading_iff`): a bound dref has one value in each class of the distribution
+(`PPCDRT.subsingleton_value_of_bindingCond`), which leaves no plurality for a reciprocal in situ.
 
 The paper's relation to cumulation is stated in general. Pointwise conditions on plural
 states give cumulative readings (§2.1, `cumulative_iff_exists_relCond`), with the truth
@@ -177,7 +180,7 @@ theorem groupIdentityCond_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     groupIdentityCond u u' (ofRows rows) Δ ↔
       ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
         ∃ t ∈ rows, t u' = some d := by
-  simp [groupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
+  simp [groupIdentityCond, eqClass, Set.EqOn, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 theorem distinct_ofRows :
     (∀ s ∈ ofRows rows, ∀ a ∈ s u, ∀ b ∈ s u', a ≠ b) ↔
@@ -201,7 +204,7 @@ theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : ℕ �
     {a b : Ind} :
     (a, b) ∈ dep u u' (eqClass (ofRows rows) Δ (toPart s)) ↔
       ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some a ∧ t u' = some b := by
-  simp [dep, eqClass, ofRows, hΔ, and_assoc]
+  simp [dep, eqClass, Set.EqOn, ofRows, hΔ, and_assoc]
 
 /-- The values of `u` summed over the `Δ`-class of `s`, as a finset. -/
 def sumRows (rows : List (ℕ → Option Ind)) (Δl : List ℕ) (s : ℕ → Option Ind)
@@ -212,7 +215,7 @@ theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : ℕ → Option In
     (↑(sumRows rows Δl s u) : Set Ind) =
       value u (eqClass (ofRows rows) Δ (toPart s)) := by
   ext d
-  simp [sumRows, value, eqClass, ofRows, hΔ, and_assoc]
+  simp [sumRows, value, eqClass, Set.EqOn, ofRows, hΔ, and_assoc]
 
 theorem value_ofRows : value u (ofRows rows) = ↑(sumRows rows [] (row []) u) := by
   rw [coe_sumRows (Δ := ∅) (by simp), eqClass_empty]
@@ -256,7 +259,7 @@ theorem distributedGroupIdentityCond_ofRows {rows : List (ℕ → Option Ind)} {
     distributedGroupIdentityCond u u' (ofRows rows) Δ ↔
       ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
         ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u' = some d := by
-  simp [distributedGroupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
+  simp [distributedGroupIdentityCond, eqClass, Set.EqOn, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 /-! ### Anaphora under distribution (§2.3) -/
 
@@ -595,18 +598,59 @@ theorem saw_crossed :
   rw [groupIdentityCond_ofRows mem_empty, reciprocityCond_ofRows mem_empty, bindingCond_ofRows]
   decide
 
-/-- A bound antecedent cannot cooccur with a low reciprocal (§3.3). -/
-theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ : Set ℕ}
-    {v₁ v₂ v₃ : ℕ} (hΔ : v₁ ∈ Δ) (hb : bindingCond v₂ v₁ S Δ)
-    (hr : reciprocityCond v₃ v₂ S Δ) {s : ℕ → Part E} (hs : s ∈ S) {d : E}
-    (hd : d ∈ s v₂) : False := by
-  have hmem : d ∈ value v₂ S := ⟨s, hs, Part.eq_some_iff.2 hd⟩
-  rw [← hr.1 s hs] at hmem
-  obtain ⟨t, ⟨ht, hcls⟩, ht₃⟩ := hmem
-  have ht₂ : t v₂ = Part.some d := by
-    rw [hb t ht, hcls v₁ hΔ, ← hb s hs]
-    exact Part.eq_some_iff.2 hd
-  exact hr.2 t ht d (Part.eq_some_iff.1 ht₃) d (Part.eq_some_iff.1 ht₂) rfl
+/-! ### The two parameters of a reading (§3.3) -/
+
+/-- The locus of the reciprocal, ordered by scope. -/
+inductive Locus where
+  /-- In situ, inside the distribution of the complement clause. -/
+  | low
+  /-- Lifted to the matrix DRS. -/
+  | high
+  deriving DecidableEq, Repr, Fintype
+
+instance : LinearOrder Locus :=
+  LinearOrder.lift' (fun | .low => 0 | .high => 1 : Locus → ℕ) (by rintro (_ | _) (_ | _) <;> simp)
+
+@[simp] theorem Locus.lt_iff (a b : Locus) : a < b ↔ a = .low ∧ b = .high := by
+  revert a b; decide
+
+/-- The distribution in force at a locus: that of the complement clause in situ, none in the
+matrix DRS. -/
+def Locus.dist (Δ : Set ℕ) : Locus → Set ℕ
+  | .low => Δ
+  | .high => ∅
+
+/-- The relation of the reciprocal's antecedent to its own antecedent. -/
+inductive Antecedence where
+  /-- The local antecedent is a bound variable, `u₂ → u₁`. -/
+  | bound
+  /-- The local antecedent corefers with the group, `∪u₂ → ∪u₁`. -/
+  | group
+  deriving DecidableEq, Repr, Fintype
+
+/-- The condition an antecedent relation puts on the anaphor and its antecedent. -/
+def Antecedence.cond {E : Type*} : Antecedence → ℕ → ℕ → PPDRSCond E
+  | .bound => bindingCond
+  | .group => groupIdentityCond
+
+/-- The anaphoric conditions of a reciprocal `v₃` whose antecedent `v₂` is anaphoric to `v₁`, at
+locus `l` and with antecedent relation `a`: (52b) low with group coreference, (54b) high and bound,
+(56) high with group coreference. -/
+def ScopeReading {E : Type*} (l : Locus) (a : Antecedence) (v₁ v₂ v₃ : ℕ) : PPDRSCond E :=
+  fun S Δ ↦ a.cond v₂ v₁ S (l.dist Δ) ∧ reciprocityCond v₃ v₂ S (l.dist Δ)
+
+/-- Three of the four combinations of locus and antecedent relation have a state in which the
+local antecedent has a value: a bound antecedent cannot cooccur with a low reciprocal. -/
+theorem exists_scopeReading_iff (l : Locus) (a : Antecedence) :
+    (∃ S : PluralAssign ℕ Ind, ScopeReading l a u₁ u₂ u₃ S {u₁, w} ∧ (value u₂ S).Nonempty) ↔
+      ¬(l = .low ∧ a = .bound) := by
+  cases l <;> cases a
+  · exact iff_of_false (fun ⟨_, ⟨hb, hr⟩, hne⟩ ↦ hne.ne_empty <|
+      value_eq_empty_of_bindingCond_of_reciprocityCond hb (Set.mem_insert ..) hr) (by simp)
+  · exact iff_of_true ⟨_, saw_narrow, by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
+  · exact iff_of_true ⟨_, saw_wide, by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
+  · exact iff_of_true ⟨_, ⟨saw_crossed.1, saw_crossed.2.1⟩,
+      by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
 
 /-- Example (69) distributed over two accessible worlds, with the reciprocal lifted above `◇`. -/
 def beatModal : List (ℕ → Option Ind) :=
