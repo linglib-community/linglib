@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.Basic
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Voice.TermRole
@@ -52,6 +53,11 @@ def rank : GrammaticalRole → ℕ
   | .other => 0
 
 instance : LinearOrder GrammaticalRole := LinearOrder.lift' rank (by decide)
+
+/-- `rank` as an order embedding. -/
+def rankOrderEmbedding : GrammaticalRole ↪o ℕ := ⟨⟨rank, by decide⟩, Iff.rfl⟩
+
+@[simp] theorem coe_rankOrderEmbedding : ⇑rankOrderEmbedding = rank := rfl
 
 theorem object_lt_subject : object < subject := by decide
 

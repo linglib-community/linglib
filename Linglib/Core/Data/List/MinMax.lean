@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.MinMax
+public import Mathlib.Order.MinMax
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # `List.argmax` under `filter` and `map`
@@ -14,7 +16,9 @@ public import Mathlib.Data.List.MinMax
 lemma relating it to `filter` or `map`. The maximizer stays the maximizer of any filter that keeps
 it, the choice-consistency property of selection by a score; `argmax` commutes with `map`; and it
 depends only on how the scores order the list, and on a list sorted by decreasing score it is
-the head. [UPSTREAM] candidates for that file.
+the head. Scoring a list of indexed elements lexicographically, by score and then by earlier
+index, leaves the maximizer where it was, since `argmax` already takes the first of several.
+[UPSTREAM] candidates for that file.
 
 ## Main results
 
@@ -23,6 +27,9 @@ the head. [UPSTREAM] candidates for that file.
 * `List.argmax_map`: `argmax` commutes with `map`.
 * `List.argmax_congr`: scores that order `l` the same way have the same maximizer.
 * `List.argmax_eq_head?`: on a list sorted by decreasing score the maximizer is the head.
+* `List.maximum_map_of_monotone`: `maximum` commutes with a monotone `map`.
+* `List.argmax_toLex_toDual_snd`: on a list with increasing indices, breaking ties in favour of
+  the smaller index does not change the maximizer.
 -/
 
 public section
@@ -87,5 +94,33 @@ theorem argmax_eq_head? (h : l.Pairwise fun a b ↦ f b ≤ f a) : argmax f l = 
     rcases t with - | ⟨b, t⟩
     · rfl
     · simp [not_lt.mpr ((pairwise_cons.mp h).1 b mem_cons_self)]
+
+/-- On a list of indexed elements with increasing indices, breaking ties of `f` in favour of the
+smaller index does not change `argmax`. -/
+theorem argmax_toLex_toDual_snd {l : List (α × ℕ)} (h : l.Pairwise fun a b ↦ a.2 < b.2) :
+    argmax (fun p ↦ toLex (f p.1, OrderDual.toDual p.2)) l = argmax (fun p ↦ f p.1) l := by
+  induction l with
+  | nil => rfl
+  | cons a t ih =>
+    rw [argmax_cons, argmax_cons, ih (pairwise_cons.mp h).2]
+    rcases hc : argmax (fun p ↦ f p.1) t with - | c
+    · rw [hc]
+    · have hlt : a.2 < c.2 := (pairwise_cons.mp h).1 c (argmax_mem hc)
+      simp only [hc, Prod.Lex.toLex_lt_toLex, OrderDual.toDual_lt_toDual, Nat.lt_asymm hlt,
+        and_false, or_false]
+
+theorem maximum_map_of_monotone {g : β → γ} (hg : Monotone g) (l : List β) :
+    (l.map g).maximum = l.maximum.map g := by
+  induction l with
+  | nil => rfl
+  | cons a t ih =>
+    rw [map_cons, maximum_cons, maximum_cons, ih,
+      Monotone.map_max (WithBot.monotone_map_iff.mpr hg), WithBot.map_coe]
+
+theorem pairwise_snd_lt_zipIdx (l : List α) (k : ℕ) :
+    (l.zipIdx k).Pairwise fun a b ↦ a.2 < b.2 := by
+  induction l generalizing k with
+  | nil => exact Pairwise.nil
+  | cons a t ih => exact pairwise_cons.mpr ⟨fun p hp ↦ le_snd_of_mem_zipIdx hp, ih (k + 1)⟩
 
 end List

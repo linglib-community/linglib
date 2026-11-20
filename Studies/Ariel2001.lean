@@ -1,12 +1,11 @@
 module
 
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Data.Examples.Ariel2001
 public import Linglib.Data.Examples.Readers
 public import Studies.GundelHedbergZacharski1993
-import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Ariel (2001): Accessibility theory: an overview
@@ -80,6 +79,11 @@ theorem criteria_lt_and_shortDefDescription_lt_iff (a : AccessibilityLevel) :
 theorem attenuation_mono : Monotone attenuation := by
   unfold Monotone
   decide
+
+/-- `attenuation` as an order homomorphism. -/
+def attenuationHom : AccessibilityLevel →o Attenuation := ⟨attenuation, attenuation_mono⟩
+
+@[simp] theorem coe_attenuationHom : ⇑attenuationHom = attenuation := rfl
 
 theorem not_antitone_informativity : ¬ Antitone informativity :=
   fun h ↦ absurd (h (show lastName ≤ distalDemMod by decide)) (by decide)
@@ -207,10 +211,12 @@ open Centering
 /-- Rule 1 holds of an utterance whose centers are all lexical, whichever non-lexical forms count
 as pronouns, so it does not rule out a repeated name. -/
 theorem pronominalizationConstraint_of_lexical {E R : Type*} [DecidableEq E] [LinearOrder R]
-    {P : Set AccessibilityLevel} (hP : ∀ l ∈ P, ¬ l.lexical)
+    {P : Set AccessibilityLevel} [DecidablePred (· ∈ P)] (hP : ∀ l ∈ P, ¬ l.lexical)
     (prev cur : Utterance E R AccessibilityLevel) (h : ∀ r ∈ cur.realizations, r.form.lexical) :
     PronominalizationConstraint P prev cur :=
-  pronominalizationConstraint_of_forall_not fun _ ⟨r, hr, _, hp⟩ ↦ hP _ hp (h r hr)
+  pronominalizationConstraint_of_disjoint <| Finset.disjoint_right.2 fun _ he _ ↦
+    let ⟨r, hr, _, hp⟩ := Utterance.mem_pronominalized.1 he
+    hP _ hp (h r hr)
 
 /-- The referents of (12): officer Feil, the discourse topic, and the officer in charge of him. -/
 inductive Referent
@@ -231,12 +237,14 @@ def accused (r : Datum) : Option (Utterance Referent GrammaticalRole Accessibili
 second, yet only the discourse topic is pronominal there: Rule 1 fails for any R1-pronouns that
 include the pronouns and exclude the lexical forms. -/
 theorem not_pronominalizationConstraint_accused {P : Set AccessibilityLevel}
+    [DecidablePred (· ∈ P)]
     (hpron : ∀ l, l.head = .pronoun → l ∈ P) (hlex : ∀ l ∈ P, ¬ l.lexical) :
-    ∃ u ∈ accused Examples.ex_12, cb demanded u = some .officer ∧
+    ∃ u ∈ accused Examples.ex_12, cb demanded u.cf = some .officer ∧
       ¬ PronominalizationConstraint P demanded u := by
   refine ⟨⟨[⟨.officer, .subject, shortDefDescription⟩, ⟨.feil, .object, unstressedPron⟩]⟩,
     by decide +kernel, by decide, fun h ↦ ?_⟩
-  obtain ⟨r, hr, he, hP⟩ := h ⟨.feil, by decide, _, .tail _ (.head _), rfl, hpron _ rfl⟩ .officer
+  obtain ⟨r, hr, he, hP⟩ := Utterance.mem_pronominalized.1 <| h ⟨.feil, Finset.mem_inter.2
+    ⟨by decide, Utterance.mem_pronominalized.2 ⟨_, .tail _ (.head _), rfl, hpron _ rfl⟩⟩⟩ .officer
     (by decide)
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
   rcases hr with rfl | rfl

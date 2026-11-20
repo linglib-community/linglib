@@ -276,7 +276,6 @@ import Linglib.Data.WALS.Features.F106A
 import Linglib.Data.WALS.Features.F113A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F121A
-import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
