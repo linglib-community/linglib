@@ -644,28 +644,28 @@ theorem lex_pos_ercOfProfiles_iff_lt (r : Ranking.Enumeration ι n) (w l : ι �
 /-- A candidate is optimal under a ranking iff the ranking satisfies its ERC against every
 competitor. -/
 theorem Ranking.Enumeration.mem_optimal_iff_satisfiedBy {C : Type*} (σ : Ranking.Enumeration ι n)
-    (v : C → ι → ℕ) (s : Finset C) (w : C) :
-    w ∈ σ.optimal v s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (v w) (v l)).SatisfiedBy σ :=
+    (T : Tableau C ι) (s : Finset C) (w : C) :
+    w ∈ σ.optimal T s ↔ w ∈ s ∧ ∀ l ∈ s, (ercOfProfiles (T w) (T l)).SatisfiedBy σ :=
   Ranking.Enumeration.mem_optimal_iff.trans <| and_congr_right fun _ ↦ forall₂_congr fun l _ ↦
-    (satisfiedBy_ercOfProfiles_iff_le σ (v w) (v l)).symm
+    (satisfiedBy_ercOfProfiles_iff_le σ (T w) (T l)).symm
 
 /-- A ranking argument: when `c` is optimal under a ranking, every constraint preferring a
 competitor `d` is dominated by some constraint preferring `c`. -/
-theorem Ranking.Enumeration.exists_dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+theorem Ranking.Enumeration.exists_dominates_of_mem_optimal {C : Type*} {T : Tableau C ι}
     {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {j : ι}
-    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
-    (hj : v d j < v c j) : ∃ i, v c i < v d i ∧ σ.Dominates i j :=
+    (h : c ∈ σ.optimal T s) (hd : d ∈ s)
+    (hj : T d j < T c j) : ∃ i, T c i < T d i ∧ σ.Dominates i j :=
   ((ERC.satisfiedBy_iff_dominance σ _).1
-    (((σ.mem_optimal_iff_satisfiedBy v s c).1 h).2 d hd) j
+    (((σ.mem_optimal_iff_satisfiedBy T s c).1 h).2 d hd) j
     ((ercOfProfiles_eq_L_iff _ _ j).2 hj)).imp fun _ hw ↦
       ⟨(ercOfProfiles_eq_W_iff _ _ _).1 hw.1, hw.2⟩
 
 /-- When `i` is the only constraint preferring an optimal candidate `c` to a competitor `d`, `i`
 dominates every constraint preferring `d`. -/
-theorem Ranking.Enumeration.dominates_of_mem_optimal {C : Type*} {v : C → ι → ℕ}
+theorem Ranking.Enumeration.dominates_of_mem_optimal {C : Type*} {T : Tableau C ι}
     {σ : Ranking.Enumeration ι n} {s : Finset C} {c d : C} {i j : ι}
-    (h : c ∈ σ.optimal v s) (hd : d ∈ s)
-    (hi : ∀ k, v c k < v d k → k = i) (hj : v d j < v c j) : σ.Dominates i j := by
+    (h : c ∈ σ.optimal T s) (hd : d ∈ s)
+    (hi : ∀ k, T c k < T d k → k = i) (hj : T d j < T c j) : σ.Dominates i j := by
   obtain ⟨w, hw, hdom⟩ := Ranking.Enumeration.exists_dominates_of_mem_optimal h hd hj
   exact hi w hw ▸ hdom
 

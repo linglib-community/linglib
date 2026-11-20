@@ -13,7 +13,8 @@ public import Mathlib.Algebra.Order.Group.PiLex
 /-!
 # Violation profiles
 
-The violations of a candidate under constraints in rank order form its *violation profile*, and
+The marks of a candidate under constraints in rank order form its *violation profile*
+([riggle-2009b]), and
 profiles are compared lexicographically: strict domination is mathlib's lexicographic order on
 `Fin n → ℕ`, position `0` the most dominant constraint. A profile along a list of constraints is
 `ViolationProfile.ofList`, and the harmony order it induces on candidates is the order
@@ -23,6 +24,7 @@ bidirectional optimality theory evaluates over, well-founded on any candidate se
 
 * [prince-smolensky-1993]
 * [blutner-2000]
+* [riggle-2009b]
 -/
 
 @[expose] public section
@@ -39,7 +41,7 @@ variable {C : Type*} {n : ℕ}
 
 /-- The violation profile of a candidate under constraints in rank order, position `0` most
 dominant. -/
-abbrev of (cs : ConstraintSet C (Fin n)) (c : C) : ViolationProfile n := toLex fun p ↦ cs p c
+abbrev of (cs : ConstraintSet C (Fin n)) (c : C) : ViolationProfile n := toLex (cs.marks c)
 
 /-- The violation profile of a candidate under a list of constraints in rank order. -/
 def ofList (ranking : List (Constraint C)) : C → ViolationProfile ranking.length := of ranking.get

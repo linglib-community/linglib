@@ -30,58 +30,57 @@ ranking selects and that survives a prefix
 
 namespace OptimalityTheory
 
-variable {C ι : Type*} {v : C → ι → ℕ} {s : Finset C} {l l₁ l₂ : List ι} {c d : C} {k : ι}
+variable {C ι : Type*} {T : Tableau C ι} {s : Finset C} {l l₁ l₂ : List ι} {c d : C} {k : ι}
 
 /-- The filtration of the candidates `s` along a list of constraints, most dominant first: each
-constraint in turn keeps the candidates that violate it least. `v c k` is the number of violations
-of the constraint `k` by the candidate `c`. -/
-def filtration (v : C → ι → ℕ) (s : Finset C) : List ι → Finset C
+constraint in turn keeps the candidates that violate it least. -/
+def filtration (T : Tableau C ι) (s : Finset C) : List ι → Finset C
   | [] => s
-  | k :: l => filtration v (s.argmin (v · k)) l
+  | k :: l => filtration T (s.argmin (T · k)) l
 
-@[simp] theorem filtration_nil : filtration v s [] = s := rfl
+@[simp] theorem filtration_nil : filtration T s [] = s := rfl
 
 @[simp] theorem filtration_cons :
-    filtration v s (k :: l) = filtration v (s.argmin (v · k)) l := rfl
+    filtration T s (k :: l) = filtration T (s.argmin (T · k)) l := rfl
 
 /-- Filtration along a concatenation filters along the first list and then along the second. -/
 theorem filtration_append :
-    filtration v s (l₁ ++ l₂) = filtration v (filtration v s l₁) l₂ := by
+    filtration T s (l₁ ++ l₂) = filtration T (filtration T s l₁) l₂ := by
   induction l₁ generalizing s with
   | nil => rfl
   | cons k l ih => exact ih
 
 /-- Filtration along a list minimizes the violations along the list lexicographically. -/
-theorem filtration_eq_argmin : filtration v s l = s.argmin fun c ↦ l.map (v c) := by
+theorem filtration_eq_argmin : filtration T s l = s.argmin fun c ↦ l.map (T c) := by
   induction l generalizing s with
   | nil => simp
   | cons k l ih =>
-    rw [filtration_cons, ih, Finset.argmin_argmin s (v · k) fun c ↦ l.map (v c)]
+    rw [filtration_cons, ih, Finset.argmin_argmin s (T · k) fun c ↦ l.map (T c)]
     ext c
     simp only [Finset.mem_argmin, Prod.Lex.toLex_le_toLex, List.map_cons, List.cons_le_cons_iff']
 
 /-- The survivors of filtration are the candidates whose violations along the list are
 lexicographically least. -/
 theorem mem_filtration :
-    c ∈ filtration v s l ↔ c ∈ s ∧ ∀ d ∈ s, l.map (v c) ≤ l.map (v d) := by
+    c ∈ filtration T s l ↔ c ∈ s ∧ ∀ d ∈ s, l.map (T c) ≤ l.map (T d) := by
   rw [filtration_eq_argmin, Finset.mem_argmin]
 
-theorem filtration_subset : filtration v s l ⊆ s := fun _ h ↦ (mem_filtration.1 h).1
+theorem filtration_subset : filtration T s l ⊆ s := fun _ h ↦ (mem_filtration.1 h).1
 
 /-- Telescoping: a longer list keeps a subset of what its prefix keeps. -/
-theorem filtration_append_subset : filtration v s (l₁ ++ l₂) ⊆ filtration v s l₁ := by
+theorem filtration_append_subset : filtration T s (l₁ ++ l₂) ⊆ filtration T s l₁ := by
   rw [filtration_append]
   exact filtration_subset
 
 /-- Forced choice: filtration never empties a non-empty candidate set. -/
-theorem filtration_nonempty (h : s.Nonempty) : (filtration v s l).Nonempty := by
+theorem filtration_nonempty (h : s.Nonempty) : (filtration T s l).Nonempty := by
   induction l generalizing s with
   | nil => exact h
   | cons k l ih => exact ih (Finset.argmin_nonempty h)
 
 /-- Survivor sameness: the survivors agree on every constraint of the list. -/
-theorem apply_eq_of_mem_filtration (hc : c ∈ filtration v s l) (hd : d ∈ filtration v s l)
-    (hk : k ∈ l) : v c k = v d k := by
+theorem apply_eq_of_mem_filtration (hc : c ∈ filtration T s l) (hd : d ∈ filtration T s l)
+    (hk : k ∈ l) : T c k = T d k := by
   have h₁ := (mem_filtration.1 hc).2 d (mem_filtration.1 hd).1
   have h₂ := (mem_filtration.1 hd).2 c (mem_filtration.1 hc).1
   obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.1 hk
@@ -89,15 +88,15 @@ theorem apply_eq_of_mem_filtration (hc : c ∈ filtration v s l) (hd : d ∈ fil
   simpa [List.getElem?_map, List.getElem?_eq_getElem hi] using h
 
 /-- A constraint on which the candidates all agree filters nothing. -/
-theorem filtration_cons_of_forall_eq (h : ∀ a ∈ s, ∀ b ∈ s, v a k = v b k) :
-    filtration v s (k :: l) = filtration v s l := by
+theorem filtration_cons_of_forall_eq (h : ∀ a ∈ s, ∀ b ∈ s, T a k = T b k) :
+    filtration T s (k :: l) = filtration T s l := by
   rw [filtration_cons, Finset.argmin_eq_self_of_forall_le fun a ha b hb ↦ (h a ha b hb).le]
 
 /-- Dropping the constraints on which two candidates agree does not change which of them does
 better along a list. -/
 theorem map_filter_le_map_filter_iff {p : ι → Prop} [DecidablePred p]
-    (h : ∀ k ∈ l, ¬ p k → v c k = v d k) :
-    (l.filter p).map (v c) ≤ (l.filter p).map (v d) ↔ l.map (v c) ≤ l.map (v d) := by
+    (h : ∀ k ∈ l, ¬ p k → T c k = T d k) :
+    (l.filter p).map (T c) ≤ (l.filter p).map (T d) ↔ l.map (T c) ≤ l.map (T d) := by
   induction l with
   | nil => rfl
   | cons k l ih =>
@@ -112,15 +111,15 @@ theorem map_filter_le_map_filter_iff {p : ι → Prop} [DecidablePred p]
 /-- A candidate is the sole survivor iff its violations along the list are lexicographically
 least, strictly. -/
 theorem filtration_eq_singleton_iff :
-    filtration v s l = {c} ↔ c ∈ s ∧ ∀ d ∈ s, d ≠ c → l.map (v c) < l.map (v d) := by
+    filtration T s l = {c} ↔ c ∈ s ∧ ∀ d ∈ s, d ≠ c → l.map (T c) < l.map (T d) := by
   refine ⟨fun h ↦ ?_, fun ⟨hc, h⟩ ↦ ?_⟩
-  · have hc : c ∈ filtration v s l := h ▸ Finset.mem_singleton_self c
+  · have hc : c ∈ filtration T s l := h ▸ Finset.mem_singleton_self c
     refine ⟨filtration_subset hc, fun d hd hne ↦ ?_⟩
-    have hd' : d ∉ filtration v s l := h ▸ fun hd' ↦ hne (Finset.mem_singleton.1 hd')
+    have hd' : d ∉ filtration T s l := h ▸ fun hd' ↦ hne (Finset.mem_singleton.1 hd')
     rw [mem_filtration, not_and, not_forall₂] at hd'
     obtain ⟨e, he, hlt⟩ := hd' hd
     exact ((mem_filtration.1 hc).2 e he).trans_lt (not_le.1 hlt)
-  · have hc' : c ∈ filtration v s l := mem_filtration.2 ⟨hc, fun d hd ↦ by
+  · have hc' : c ∈ filtration T s l := mem_filtration.2 ⟨hc, fun d hd ↦ by
       rcases eq_or_ne d c with rfl | hne
       exacts [le_rfl, (h d hd hne).le]⟩
     refine Finset.eq_singleton_iff_unique_mem.2 ⟨hc', fun d hd ↦ by_contra fun hne ↦ ?_⟩
@@ -128,15 +127,15 @@ theorem filtration_eq_singleton_iff :
 
 /-- A candidate that violates each constraint of the list at least as often as a competitor,
 and one of them more often, does not survive: it is harmonically bounded. -/
-theorem notMem_filtration_of_forall_le (hc : c ∈ s) (hle : ∀ k ∈ l, v c k ≤ v d k)
-    (hlt : ∃ k ∈ l, v c k < v d k) : d ∉ filtration v s l := by
+theorem notMem_filtration_of_forall_le (hc : c ∈ s) (hle : ∀ k ∈ l, T c k ≤ T d k)
+    (hlt : ∃ k ∈ l, T c k < T d k) : d ∉ filtration T s l := by
   induction l generalizing s with
   | nil => simp at hlt
   | cons k l ih =>
     rw [filtration_cons]
     intro hd
     have hdk := Finset.mem_argmin.1 (filtration_subset hd)
-    have hck : v c k = v d k := le_antisymm (hle k List.mem_cons_self) (hdk.2 c hc)
+    have hck : T c k = T d k := le_antisymm (hle k List.mem_cons_self) (hdk.2 c hc)
     refine ih (Finset.mem_argmin.2 ⟨hc, fun b hb ↦ hck ▸ hdk.2 b hb⟩)
       (fun j hj ↦ hle j (List.mem_cons_of_mem _ hj)) ?_ hd
     obtain ⟨j, hj, hjlt⟩ := hlt
@@ -148,8 +147,8 @@ theorem notMem_filtration_of_forall_le (hc : c ∈ s) (hle : ∀ k ∈ l, v c k 
 a list `l`, such as a whole ranking, and also along a list `l₁`, survives along `l₁` followed
 by the constraints of `l` that are not in `l₁`. A possible optimum that passes a prefix is
 selected by some completion of the prefix. -/
-theorem mem_filtration_append_filter [DecidableEq ι] (hl : c ∈ filtration v s l)
-    (hl₁ : c ∈ filtration v s l₁) : c ∈ filtration v s (l₁ ++ l.filter (· ∉ l₁)) := by
+theorem mem_filtration_append_filter [DecidableEq ι] (hl : c ∈ filtration T s l)
+    (hl₁ : c ∈ filtration T s l₁) : c ∈ filtration T s (l₁ ++ l.filter (· ∉ l₁)) := by
   rw [filtration_append, mem_filtration]
   refine ⟨hl₁, fun d hd ↦ ?_⟩
   rw [map_filter_le_map_filter_iff fun k _ hk ↦

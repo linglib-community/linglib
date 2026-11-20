@@ -706,16 +706,16 @@ noncomputable def indexedWeights : Option (Lexeme × Fin 3) → ℝ
   | some (.feast, k) => (![indexedMaxFeast, indexedMaxPreVFeast, indexedMaxFinalFeast] k).toRat
   | some (.most, k) => (![indexedMaxMost, indexedMaxPreVMost, indexedMaxFinalMost] k).toRat
 
-/-- The tableau of word `l` before `ctx` under the constraints of (32). -/
-def indexedTableau (l : Lexeme) (ctx : Context) : ConstraintSet Output (Option (Lexeme × Fin 3)) :=
+/-- The constraints of (32) at word `l` before `ctx`. -/
+def indexedConAt (l : Lexeme) (ctx : Context) : ConstraintSet Output (Option (Lexeme × Fin 3)) :=
   fun k o ↦ indexedCon k (l, ctx, o)
 
 /-- The permutation `exchange` swaps the two words in the indices of (32). -/
 def exchange : Option (Lexeme × Fin 3) ≃ Option (Lexeme × Fin 3) :=
   Equiv.optionCongr ((Equiv.swap Lexeme.feast .most).prodCongr (Equiv.refl _))
 
-theorem indexedTableau_most (ctx : Context) :
-    indexedTableau .most ctx = fun k ↦ indexedTableau .feast ctx (exchange k) := by
+theorem indexedConAt_most (ctx : Context) :
+    indexedConAt .most ctx = fun k ↦ indexedConAt .feast ctx (exchange k) := by
   funext k o
   rcases k with _ | ⟨_ | _, k⟩ <;> rfl
 
@@ -723,13 +723,13 @@ theorem indexedTableau_most (ctx : Context) :
 theorem weightNoiseChoiceProb_feast_lt_most {w : Option (Lexeme × Fin 3) → ℝ}
     (hw : ∀ k, w (some (.most, k)) < w (some (.feast, k))) {v : ℝ≥0} (hv : v ≠ 0)
     (ctx : Context) :
-    weightNoiseChoiceProb (indexedTableau .feast ctx) w v .delete <
-      weightNoiseChoiceProb (indexedTableau .most ctx) w v .delete := by
-  set d := (indexedTableau .feast ctx).violationDiff (R := ℝ) .delete .retain
-  have hd : d ≠ 0 := fun h ↦ by simpa [d, ConstraintSet.violationDiff, indexedTableau,
+    weightNoiseChoiceProb (indexedConAt .feast ctx) w v .delete <
+      weightNoiseChoiceProb (indexedConAt .most ctx) w v .delete := by
+  set d := (indexedConAt .feast ctx).violationDiff (R := ℝ) .delete .retain
+  have hd : d ≠ 0 := fun h ↦ by simpa [d, ConstraintSet.violationDiff, indexedConAt,
     indexedCon, con, starCT] using congrFun h none
-  have hmost : (indexedTableau .most ctx).violationDiff (R := ℝ) .delete .retain = d ∘ exchange :=
-    by rw [indexedTableau_most]; rfl
+  have hmost : (indexedConAt .most ctx).violationDiff (R := ℝ) .delete .retain = d ∘ exchange :=
+    by rw [indexedConAt_most]; rfl
   have hb (c : Output) (hc : c ≠ .delete) : c = .retain := by cases c <;> simp_all
   rw [weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv hb (by decide) hd,
     weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv hb (by decide)
@@ -746,20 +746,20 @@ theorem weightNoiseChoiceProb_feast_lt_most {w : Option (Lexeme × Fin 3) → �
     rw [dotProduct, ← exchange.symm.sum_comp]; simp]
   have hf (j : Fin 3) : 0 ≤ d (some (.feast, j)) := by
     have : ∀ (c : Context) (k : Fin 3), con k.succ (c, .retain) = 0 := by decide
-    simp [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed, this]
+    simp [d, ConstraintSet.violationDiff, indexedConAt, indexedCon, indexed, this]
   refine Finset.sum_lt_sum (fun k _ ↦ ?_) ⟨some (.feast, 0), mem_univ _, ?_⟩
   · rcases k with _ | ⟨_ | _, j⟩
     · rfl
     · exact mul_le_mul_of_nonneg_right (hw j).le (hf j)
-    · simp [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed]
+    · simp [d, ConstraintSet.violationDiff, indexedConAt, indexedCon, indexed]
   · rw [show exchange.symm (some (.feast, 0)) = some (.most, 0) from rfl]
-    simpa [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed, con, maxC]
+    simpa [d, ConstraintSet.violationDiff, indexedConAt, indexedCon, indexed, con, maxC]
       using hw 0
 
 -- (32)
 theorem weightNoiseChoiceProb_indexedWeights {v : ℝ≥0} (hv : v ≠ 0) (ctx : Context) :
-    weightNoiseChoiceProb (indexedTableau .feast ctx) indexedWeights v .delete <
-      weightNoiseChoiceProb (indexedTableau .most ctx) indexedWeights v .delete :=
+    weightNoiseChoiceProb (indexedConAt .feast ctx) indexedWeights v .delete <
+      weightNoiseChoiceProb (indexedConAt .most ctx) indexedWeights v .delete :=
   weightNoiseChoiceProb_feast_lt_most (fun k ↦ by
     fin_cases k <;> norm_num [indexedWeights, indexedMaxFeast, indexedMaxMost,
       indexedMaxPreVFeast, indexedMaxPreVMost, indexedMaxFinalFeast, indexedMaxFinalMost,

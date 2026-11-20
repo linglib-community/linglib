@@ -27,6 +27,8 @@ vanishes on the identity candidate, and a constraint over an opaque candidate ty
 * `Constraint.comap`, `ConstraintSet.comap`: the pullback of a constraint or constraint set along
   a candidate map.
 * `ConstraintSet C ι`: a grammar's constraint set, CON, a family of constraints indexed by `ι`.
+* `Tableau C ι`: a constraint tableau, giving each candidate its marks on the constraints `ι`;
+  `ConstraintSet.marks` is the tableau of a constraint set.
 * `Constraint.joint`, `ConstraintSet.joint`: joint evaluation on output tuples by constraint
   summation.
 * `ConstraintSet.violations`, `ConstraintSet.violationDiff`: the violation vector of a candidate
@@ -122,6 +124,12 @@ Harmonic Grammar weights its violations by a vector `ι → ℝ`, and MaxEnt tak
 resulting harmonies. A constraint set written as a vector `![C₀, …]` is indexed by `Fin n`. -/
 abbrev ConstraintSet (C : Type*) (ι : Type*) := ι → Constraint C
 
+/-- A **constraint tableau** ([prince-smolensky-1993]) has a row for each candidate and a column
+for each constraint: `T c` is the *marks* of the candidate `c`, and `T c k` the number of its
+violations of the constraint `k`. Evaluation compares the marks of candidates in `ι → ℕ`, in the
+product order for harmonic bounding and lexicographically along a ranking. -/
+abbrev Tableau (C : Type*) (ι : Type*) := C → ι → ℕ
+
 namespace ConstraintSet
 
 variable {ι : Type*}
@@ -139,12 +147,18 @@ def joint (inputs : κ → I) (con : ConstraintSet (I × O) ι) : ConstraintSet 
 @[simp] theorem joint_apply (inputs : κ → I) (con : ConstraintSet (I × O) ι) (j : ι) :
     con.joint inputs j = (con j).joint inputs := rfl
 
+/-- The tableau of a constraint set: the marks of a candidate are its violations of each
+constraint. -/
+def marks (con : ConstraintSet C ι) : Tableau C ι := fun c k ↦ con k c
+
+@[simp] theorem marks_apply (con : ConstraintSet C ι) (c : C) (k : ι) : con.marks c k = con k c :=
+  rfl
+
 variable {R : Type*} [Ring R]
 
-/-- The violation vector `C(c)` of a candidate, its violations of each constraint, a row of a
-tableau. -/
+/-- The marks of a candidate as a vector over the weight ring, a row of a tableau. -/
 def violations (con : ConstraintSet C ι) (c : C) : ι → R :=
-  fun j ↦ (con j c : R)
+  fun j ↦ (con.marks c j : R)
 
 @[simp] theorem violations_apply (con : ConstraintSet C ι) (c : C) (j : ι) :
     con.violations c j = (con j c : R) := rfl
@@ -164,8 +178,8 @@ and Harmonic Grammar weights them, and either way a grammar evaluates each input
 structure ConstraintSystem (I O ι : Type*) where
   /-- The candidate outputs of each input. -/
   gen : I → Finset O
-  /-- The marks of an output for an input: its violations of each constraint. -/
-  marks : I → O → ι → ℕ
+  /-- The tableau of each input: the marks of its outputs. -/
+  marks : I → Tableau O ι
 
 /-- The constraints of a system, evaluated on input–output mappings. -/
 def ConstraintSystem.con {I O ι : Type*} (S : ConstraintSystem I O ι) : ConstraintSet (I × O) ι :=

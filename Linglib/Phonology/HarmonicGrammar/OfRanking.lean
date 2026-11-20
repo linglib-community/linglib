@@ -143,11 +143,11 @@ private theorem argmin_profile_eq_argmax {C : Type*} {n M : ℕ} {w : Fin n → 
 bounding every violation, the optimal candidates under a ranking are the HG winners. -/
 theorem _root_.OptimalityTheory.Ranking.Enumeration.optimal_eq_argmax_harmonyScore
     {C ι : Type*} [Fintype ι] {n M : ℕ} {w : Fin n → ℝ}
-    (σ : Ranking.Enumeration ι n) (v : C → ι → ℕ) (s : Finset C)
-    (hw : ExponentiallySeparated w M) (hM : ∀ c ∈ s, ∀ k, v c k ≤ M) :
-    σ.optimal v s = s.argmax (harmonyScore (fun k c ↦ v c k) (w ∘ σ.symm)) := by
-  rw [show σ.optimal v s = s.argmin (fun c ↦ toLex fun p ↦ v c (σ p)) from rfl,
-    argmin_profile_eq_argmax hw (fun c p ↦ v c (σ p)) s fun c hc p ↦ hM c hc (σ p)]
+    (σ : Ranking.Enumeration ι n) (T : Tableau C ι) (s : Finset C)
+    (hw : ExponentiallySeparated w M) (hM : ∀ c ∈ s, ∀ k, T c k ≤ M) :
+    σ.optimal T s = s.argmax (harmonyScore (fun k c ↦ T c k) (w ∘ σ.symm)) := by
+  rw [show σ.optimal T s = s.argmin (fun c ↦ toLex fun p ↦ T c (σ p)) from rfl,
+    argmin_profile_eq_argmax hw (fun c p ↦ T c (σ p)) s fun c hc p ↦ hM c hc (σ p)]
   congr 1
   funext c
   simp only [harmonyScore_def, comp_equiv_symm_dotProduct]
