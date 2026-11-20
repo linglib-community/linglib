@@ -223,19 +223,15 @@ theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
 /-- The phrase next to the selector is selected in its own category (§3.1). -/
 theorem mem_cats_of_mem_nearest (h : Admits (Licensed (checkedOnce d) cats) ps) :
     ∀ p ∈ d.nearest ps, p ∈ cats := by
-  have key {ps : List Cat} (h : Admits (Licensed (checkedOnce .headInitial) cats) ps) :
-      ∀ p ∈ ps.head?, p ∈ cats := by
-    obtain ⟨cs, hcs, -, hsel, hS⟩ := h
-    cases mem_sections_map_ofCat.1 hcs with
-    | nil => simp
-    | @cons x p _ _ hxp _ =>
-      intro q hq
-      obtain rfl := Option.mem_some_iff.1 hq
-      have := hsel x List.mem_cons_self
-      rwa [eq_phrase_of_mem_ofCat hxp fun h ↦ hS (by simp [h])] at this
-  cases d
-  · exact key h
-  · simpa [List.head?_reverse] using key (admits_swap_reverse (d := .headFinal) |>.2 h)
+  obtain ⟨cs, hcs, -, hsel, hS⟩ := h
+  intro p hp
+  have hrel := HeadDirection.rel_nearest (mem_sections_map_ofCat.1 hcs) d
+  rw [Option.mem_def.1 hp] at hrel
+  generalize hx : d.nearest cs = o at hrel
+  cases hrel with
+  | @some x _ hxp =>
+    have := hsel x (HeadDirection.mem_of_mem_nearest hx)
+    rwa [eq_phrase_of_mem_ofCat hxp fun h ↦ hS (mem_checkedOnce.2 (h ▸ hx))] at this
 
 /-- A phrase displaced to the left is related to the position its selector selects by a phrase of
 category `displacedLeft c`: a clause, base-generated in an Ā-position, by a null operator of

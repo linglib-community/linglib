@@ -69,10 +69,10 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   Corbett's typology of gender; the Predicate Hierarchy is a linear order on the predicate's
   four sub-positions, and the rows of Table 6.11 are profiles over it.
 * The options for agreement with conjoined noun phrases (§6.5.1) are the substrate's
-  `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
-  (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`). An example fits an option
-  when its target agrees in φ-features (`Agreement.Bundle.index`) with the conjunct the option
-  picks or with the resolved
+  `Agreement.ConjunctAgreement`, none of which gives the last conjunct alone when it is the more
+  distant (`Agreement.ConjunctAgreement.conjuncts_concat_eq_singleton_iff`). An example fits an
+  option when its target agrees in φ-features (`Agreement.Bundle.index`) with the conjunct the
+  option picks or with the resolved
   features, all read off the glosses' category labels (`GlossedWord.features`), a conjunct
   whose gloss marks no number being singular; the target's side is read off the order of the
   words.

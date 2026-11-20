@@ -161,6 +161,17 @@ theorem mem_of_mem_nearest {d : HeadDirection} {l : List α} {a : α} (h : a ∈
   · exact List.mem_of_mem_head? h
   · exact List.mem_of_mem_getLast? h
 
+theorem toList_nearest_infix (d : HeadDirection) (l : List α) : (d.nearest l).toList <:+: l := by
+  cases d
+  · simpa [← List.take_one] using (List.take_prefix 1 l).isInfix
+  · rcases List.eq_nil_or_concat l with rfl | ⟨l, a, rfl⟩
+    · simp
+    · simpa using (List.suffix_append l [a]).isInfix
+
+theorem nearest_map (f : α → β) (d : HeadDirection) (l : List α) :
+    d.nearest (l.map f) = (d.nearest l).map f := by
+  cases d <;> simp [List.getLast?_map]
+
 theorem nearest_swap_reverse (d : HeadDirection) (l : List α) :
     d.swap.nearest l.reverse = d.nearest l := by
   cases d <;> simp [List.head?_reverse, List.getLast?_reverse]
