@@ -254,28 +254,28 @@ section Gen
 
 open Genericity
 
-variable (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
+variable (N : Normality S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
 
 /-- (10b): the negated kind indefinite of (9b) scoping over GEN, as assumption (α)1 demands:
 there is no sub-kind of tuscan cigar that Gianni smokes in every appropriate situation. -/
-def genWide : Prop := ¬ ∃ X, K X ∧ () ∈ N.gen {s | φ s} {s | P X s}
+def genWide : Prop := ¬ ∃ X, K X ∧ N.gen {s | φ s} {s | P X s}
 
 /-- (10'b): the negation below GEN: in no appropriate situation does Gianni smoke a sub-kind of
 tuscan cigar. -/
-def genNarrow : Prop := () ∈ N.gen {s | φ s} {s | ¬ ∃ X, K X ∧ P X s}
+def genNarrow : Prop := N.gen {s | φ s} {s | ¬ ∃ X, K X ∧ P X s}
 
 variable {N K φ P}
 
 /-- (10'b) is logically stronger than (10b), whatever the appropriate situations, provided there
 is one. -/
-theorem genWide_of_genNarrow (hφ : (N.normal () {s | φ s}).Nonempty) (h : genNarrow N K φ P) :
+theorem genWide_of_genNarrow (hφ : (N.normal {s | φ s}).Nonempty) (h : genNarrow N K φ P) :
     genWide N K φ P :=
   fun ⟨X, hX, hall⟩ ↦ let ⟨_, hs⟩ := hφ; h hs ⟨X, hX, hall hs⟩
 
 /-- Formula (10b) holds where (9b) and (10'b) fail, so it is too weak. -/
 theorem not_genNarrow_of_genWide :
-    ∃ (S I : Type) (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
-      (N.normal () {s | φ s}).Nonempty ∧ genWide N K φ P ∧ ¬ genNarrow N K φ P :=
+    ∃ (S I : Type) (N : Normality S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
+      (N.normal {s | φ s}).Nonempty ∧ genWide N K φ P ∧ ¬ genNarrow N K φ P :=
   ⟨Bool, Bool, ⊤, fun _ ↦ True, fun _ ↦ True, (· = ·), ⟨true, trivial⟩,
     fun ⟨X, _, hall⟩ ↦ absurd (hall (show (!X) ∈ {_s : Bool | True} from trivial))
       (by cases X <;> decide),
