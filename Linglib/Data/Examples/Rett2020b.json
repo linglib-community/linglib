@@ -1,982 +1,1073 @@
-[
-  {
-    "id": "rett2020b_50a",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(50a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is as tall as Bill.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"]
-    ],
-    "comment": "",
-    "verified": "page-image"
+{
+  "features": [
+    {
+      "key": "strategy",
+      "lean": "strategy",
+      "type": "Strategy",
+      "doc": "The descriptive strategies of section 3, the parameter-marked relatives split as in section 4.3.",
+      "levels": [
+        {
+          "name": "smOnly",
+          "label": "smOnly",
+          "doc": "only a relativizer standard marker, English tall like Bill or Italian come"
+        },
+        {
+          "name": "demonstrative",
+          "label": "demonstrative",
+          "doc": "a degree-demonstrative parameter marker and a relativizer standard marker, Italian tanto … quanto or Spanish tan … como"
+        },
+        {
+          "name": "sufficientive",
+          "label": "sufficientive",
+          "doc": "a sufficientive parameter marker and a relativizer standard marker, English as … as or German so … wie"
+        },
+        {
+          "name": "predicateMain",
+          "label": "predicateMain",
+          "doc": "a main predicate meaning equal, Swahili sawa"
+        },
+        {
+          "name": "predicateAdverbial",
+          "label": "predicateAdverbial",
+          "doc": "an adverbial meaning equally, Mandarin yíyàng or Swedish lika"
+        },
+        {
+          "name": "conjoined",
+          "label": "conjoined",
+          "doc": "conjoined parallel clauses, often with an additive particle"
+        },
+        {
+          "name": "dedicated",
+          "label": "dedicated",
+          "doc": "construction-specific markers, Welsh cyn … â"
+        }
+      ]
+    },
+    {
+      "key": "diagnostic",
+      "lean": "diagnostic",
+      "type": "Diagnostic",
+      "doc": "The diagnostics of section 4.1.",
+      "levels": [
+        {
+          "name": "weak",
+          "label": "weak",
+          "doc": "the continuation in fact she's taller"
+        },
+        {
+          "name": "evaluativity",
+          "label": "evaluativity",
+          "doc": "the continuation but she's short"
+        },
+        {
+          "name": "factor",
+          "label": "factor",
+          "doc": "a factor modifier, twice"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the chapter."
   },
-  {
-    "id": "rett2020b_50b",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(50b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is tall like Bill.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_50c",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(50c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is tall; Bill is tall (too).",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "conjoined"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_50d",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(50d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane equals Bill in height.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateMain"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_51a",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(51a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is as tall as Bill, in fact she's taller.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_51b",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(51b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is tall like Bill, in fact she's taller.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_51c",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(51c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is tall; Bill is tall (too). In fact she's taller.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "conjoined"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_51d",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(51d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane equals Bill in height, in fact she's taller.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateMain"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "#",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_53a",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(53a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is as tall as Bill, but she's short.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_53b",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(53b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is tall like Bill, but she's short.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "#",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_53c",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(53c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is tall; Bill is tall (too), but she is short.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "conjoined"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "#",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_53d",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(53d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane equals Bill in height, but she's short.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateMain"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_54a",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(54a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is twice as tall as Bill.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_54b",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(54b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is twice tall like Bill.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_54c",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(54c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane is twice tall; Bill is tall (too).",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "conjoined"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_54d",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(54d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Jane twice equals Bill in height.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateMain"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_55",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(55)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "swed1254",
-    "primaryText": "Thomas är lika lång som Christoffer; han är faktiskt längre.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Thomas is as tall as Christoffer; he is in fact taller.",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateAdverbial"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "#; the consultant reports a contradiction",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_56",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(56)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Jan is even lang als Piet. Hij is zelfs langer.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Pete. He is in fact taller.",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateAdverbial"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "??",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_58",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(58)"},
-    "reportedIn": null,
-    "language": "croa1245",
-    "primaryText": "Ivan je visok kao Petar.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Peter.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_59",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(59)"},
-    "reportedIn": null,
-    "language": "croa1245",
-    "primaryText": "Ivan je dvostruko visok kao Petar.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is twice as tall as Peter.",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "??",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_61",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(61)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Gianni è alto come Marco.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Gianni is as tall as Marco.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "The paper prints Gianni e alto; standard Italian è (glossed 'is'), as in (70)-(72).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_62",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(62)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Gianni è due volte alto come Marco.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Gianni is twice as tall as Marco.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "The paper prints Gianni e (standard Italian è, glossed 'is') and the standard marker as come /quanto; the row records come.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_63",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(63)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Jan is zo lang als Piet.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Pete.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_64",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(64)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Jan is twee keer zo lang als Piet.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is twice as tall as Pete.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_65",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(65)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Jan is zo lang als Piet, en hij is heel klein.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Pete, and he is short.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_66",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(66)"},
-    "reportedIn": null,
-    "language": "dutc1256",
-    "primaryText": "Jan is zo lang als Piet. Hij is zelfs langer.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Pete, in fact he is taller.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "The paper prints zo lang is Piet; the gloss line has as(SM) and (63)-(65) print als.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_67",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(67)"},
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Thomas är dubbelt så lång som Christoffer.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Thomas is twice as tall as Christoffer.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_68",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(68)"},
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Thomas är så lång som Christoffer, men båda är korta.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Thomas is as tall as Christoffer, but both are short.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_69",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(69)"},
-    "reportedIn": null,
-    "language": "swed1254",
-    "primaryText": "Thomas är så lång som Christoffer, han är till och med högre.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Thomas is as tall as Christoffer, in fact he is even taller.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_70",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(70)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Gianni è tanto alto quanto Pietro, ma è basso.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Peter, but he is short.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_71",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(71)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "G è tanto alto quanto P. Infatti, è più alto.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Peter. In fact, he is taller.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_72",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(72)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Gianni è due volte tanto alto quanto Pietro.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is twice as tall as Peter.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_73",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(73)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "Juan es tan alto como Pedro, pero Pedro es bajito.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Peter, but Peter is short.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"],
-      ["diagnostic", "evaluativity"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_74",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(74)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "Juan es tan alto como Pedro. De hecho, él es más alto.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is as tall as Peter. In fact, he is taller.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"],
-      ["diagnostic", "weak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_75",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(75)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "stan1288",
-    "primaryText": "Juan es dos veces tan alto como Pedro.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "John is twice as tall as Peter.",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"],
-      ["diagnostic", "factor"]
-    ],
-    "comment": "?; the consultants reported it as unnatural, a putative contrast with the Italian factor equative (72) (the prose cites (71))",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_26",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(26)"},
-    "reportedIn": null,
-    "language": "alba1267",
-    "primaryText": "Ime motër ëstë e bukur si ti.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_27",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(27)"},
-    "reportedIn": null,
-    "language": "bulg1262",
-    "primaryText": "Sestra mi e xubava kato tebe.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_28",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(28)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "I adhelfí mu ine ómorfi san (kj) eséna.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_29",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(29)"},
-    "reportedIn": null,
-    "language": "ital1282",
-    "primaryText": "Mia sorella è carina come te.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "smOnly"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_30",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(30)"},
-    "reportedIn": null,
-    "language": "port1283",
-    "primaryText": "A minha irmã é tão bonita quanto você.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_31",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(31)"},
-    "reportedIn": null,
-    "language": "panj1256",
-    "primaryText": "Ó ónna caŋgaa ai jínnaa ó daa pràà.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "He is as good as his brother.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_34",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(34)"},
-    "reportedIn": null,
-    "language": "swah1253",
-    "primaryText": "M-toto wa-ngu ni hodari sawa na wa-ko.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My child is as clever as yours.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateMain"]
-    ],
-    "comment": "from Henkelmann (2006)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_37",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(37)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Tā gēn nǐ yíyàng gāo.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "She is as tall as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateAdverbial"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_39",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(39)"},
-    "reportedIn": null,
-    "language": "icel1247",
-    "primaryText": "Systir mín er jafn stór og ég.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as tall as I.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "predicateAdverbial"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998). The paper prints Systir min et; standard Icelandic mín er (glossed 'my is').",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_47",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(47)"},
-    "reportedIn": null,
-    "language": "wels1247",
-    "primaryText": "Mae e cyn ddued â'r frân.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "He is as black as the crow.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "dedicated"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_92",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(92)"},
-    "reportedIn": null,
-    "language": "stan1289",
-    "primaryText": "La meva germana és tan bonica com tu.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998). The paper prints ès and tú; standard Catalan és, tu.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_93",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(93)"},
-    "reportedIn": null,
-    "language": "finn1318",
-    "primaryText": "Suomalaiset eivät anna kättä niin paljon kuin keskieurooppalaiset.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Finns don't shake hands as much as Central Europeans.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "sufficientive"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_95",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(95)"},
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "I adjelfí mu ine tóso ómorfi óso kj esí.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_97",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(97)"},
-    "reportedIn": null,
-    "language": "lith1251",
-    "primaryText": "Šiandien taip šalta kaip vakar.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Today is as cold as yesterday.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  },
-  {
-    "id": "rett2020b_100",
-    "source": {"bibkey": "rett-2020b", "paperLabel": "(100)"},
-    "reportedIn": null,
-    "language": "slov1268",
-    "primaryText": "Moja sestra je tako čedna kot ti.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "My sister is as pretty as you.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["strategy", "demonstrative"]
-    ],
-    "comment": "from Haspelmath and Buchholz (1998)",
-    "verified": "page-image"
-  }
-]
+  "examples": [
+    {
+      "id": "rett2020b_50a",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(50a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is as tall as Bill.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_50b",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(50b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is tall like Bill.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_50c",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(50c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is tall; Bill is tall (too).",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "conjoined"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_50d",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(50d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane equals Bill in height.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateMain"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_51a",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(51a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is as tall as Bill, in fact she's taller.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_51b",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(51b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is tall like Bill, in fact she's taller.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_51c",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(51c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is tall; Bill is tall (too). In fact she's taller.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "conjoined"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_51d",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(51d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane equals Bill in height, in fact she's taller.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateMain"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "#",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_53a",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(53a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is as tall as Bill, but she's short.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_53b",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(53b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is tall like Bill, but she's short.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "#",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_53c",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(53c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is tall; Bill is tall (too), but she is short.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "conjoined"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "#",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_53d",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(53d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane equals Bill in height, but she's short.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateMain"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_54a",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(54a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is twice as tall as Bill.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_54b",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(54b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is twice tall like Bill.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_54c",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(54c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane is twice tall; Bill is tall (too).",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "conjoined"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_54d",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(54d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Jane twice equals Bill in height.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateMain"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_55",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(55)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "swed1254",
+      "primaryText": "Thomas är lika lång som Christoffer; han är faktiskt längre.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Thomas is as tall as Christoffer; he is in fact taller.",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateAdverbial"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "#; the consultant reports a contradiction",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_56",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(56)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "dutc1256",
+      "primaryText": "Jan is even lang als Piet. Hij is zelfs langer.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Pete. He is in fact taller.",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateAdverbial"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "??",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_58",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(58)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "croa1245",
+      "primaryText": "Ivan je visok kao Petar.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Peter.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_59",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(59)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "croa1245",
+      "primaryText": "Ivan je dvostruko visok kao Petar.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is twice as tall as Peter.",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "??",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_61",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(61)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "ital1282",
+      "primaryText": "Gianni è alto come Marco.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Gianni is as tall as Marco.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "The paper prints Gianni e alto; standard Italian è (glossed 'is'), as in (70)-(72).",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_62",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(62)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "ital1282",
+      "primaryText": "Gianni è due volte alto come Marco.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Gianni is twice as tall as Marco.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "The paper prints Gianni e (standard Italian è, glossed 'is') and the standard marker as come /quanto; the row records come.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_63",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(63)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "dutc1256",
+      "primaryText": "Jan is zo lang als Piet.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Pete.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_64",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(64)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "dutc1256",
+      "primaryText": "Jan is twee keer zo lang als Piet.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is twice as tall as Pete.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_65",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(65)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "dutc1256",
+      "primaryText": "Jan is zo lang als Piet, en hij is heel klein.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Pete, and he is short.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_66",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(66)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "dutc1256",
+      "primaryText": "Jan is zo lang als Piet. Hij is zelfs langer.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Pete, in fact he is taller.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "The paper prints zo lang is Piet; the gloss line has as(SM) and (63)-(65) print als.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_67",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(67)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "swed1254",
+      "primaryText": "Thomas är dubbelt så lång som Christoffer.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Thomas is twice as tall as Christoffer.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_68",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(68)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "swed1254",
+      "primaryText": "Thomas är så lång som Christoffer, men båda är korta.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Thomas is as tall as Christoffer, but both are short.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_69",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(69)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "swed1254",
+      "primaryText": "Thomas är så lång som Christoffer, han är till och med högre.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Thomas is as tall as Christoffer, in fact he is even taller.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_70",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(70)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "ital1282",
+      "primaryText": "Gianni è tanto alto quanto Pietro, ma è basso.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Peter, but he is short.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_71",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(71)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "ital1282",
+      "primaryText": "G è tanto alto quanto P. Infatti, è più alto.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Peter. In fact, he is taller.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_72",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(72)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "ital1282",
+      "primaryText": "Gianni è due volte tanto alto quanto Pietro.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is twice as tall as Peter.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_73",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(73)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1288",
+      "primaryText": "Juan es tan alto como Pedro, pero Pedro es bajito.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Peter, but Peter is short.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"],
+        ["diagnostic", "evaluativity"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_74",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(74)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1288",
+      "primaryText": "Juan es tan alto como Pedro. De hecho, él es más alto.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is as tall as Peter. In fact, he is taller.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"],
+        ["diagnostic", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_75",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(75)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "stan1288",
+      "primaryText": "Juan es dos veces tan alto como Pedro.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "John is twice as tall as Peter.",
+      "context": "",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"],
+        ["diagnostic", "factor"]
+      ],
+      "comment": "?; the consultants reported it as unnatural, a putative contrast with the Italian factor equative (72) (the prose cites (71))",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_26",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(26)"},
+      "reportedIn": null,
+      "language": "alba1267",
+      "primaryText": "Ime motër ëstë e bukur si ti.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_27",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(27)"},
+      "reportedIn": null,
+      "language": "bulg1262",
+      "primaryText": "Sestra mi e xubava kato tebe.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_28",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "I adhelfí mu ine ómorfi san (kj) eséna.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_29",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(29)"},
+      "reportedIn": null,
+      "language": "ital1282",
+      "primaryText": "Mia sorella è carina come te.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "smOnly"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_30",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(30)"},
+      "reportedIn": null,
+      "language": "port1283",
+      "primaryText": "A minha irmã é tão bonita quanto você.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_31",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(31)"},
+      "reportedIn": null,
+      "language": "panj1256",
+      "primaryText": "Ó ónna caŋgaa ai jínnaa ó daa pràà.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "He is as good as his brother.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_34",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(34)"},
+      "reportedIn": null,
+      "language": "swah1253",
+      "primaryText": "M-toto wa-ngu ni hodari sawa na wa-ko.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My child is as clever as yours.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateMain"]
+      ],
+      "comment": "from Henkelmann (2006)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_37",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(37)"},
+      "reportedIn": null,
+      "language": "mand1415",
+      "primaryText": "Tā gēn nǐ yíyàng gāo.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "She is as tall as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateAdverbial"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_39",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(39)"},
+      "reportedIn": null,
+      "language": "icel1247",
+      "primaryText": "Systir mín er jafn stór og ég.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as tall as I.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "predicateAdverbial"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998). The paper prints Systir min et; standard Icelandic mín er (glossed 'my is').",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_47",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(47)"},
+      "reportedIn": null,
+      "language": "wels1247",
+      "primaryText": "Mae e cyn ddued â'r frân.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "He is as black as the crow.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "dedicated"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_92",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(92)"},
+      "reportedIn": null,
+      "language": "stan1289",
+      "primaryText": "La meva germana és tan bonica com tu.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998). The paper prints ès and tú; standard Catalan és, tu.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_93",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(93)"},
+      "reportedIn": null,
+      "language": "finn1318",
+      "primaryText": "Suomalaiset eivät anna kättä niin paljon kuin keskieurooppalaiset.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Finns don't shake hands as much as Central Europeans.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "sufficientive"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_95",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(95)"},
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "I adjelfí mu ine tóso ómorfi óso kj esí.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_97",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(97)"},
+      "reportedIn": null,
+      "language": "lith1251",
+      "primaryText": "Šiandien taip šalta kaip vakar.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Today is as cold as yesterday.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    },
+    {
+      "id": "rett2020b_100",
+      "source": {"bibkey": "rett-2020b", "paperLabel": "(100)"},
+      "reportedIn": null,
+      "language": "slov1268",
+      "primaryText": "Moja sestra je tako čedna kot ti.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "My sister is as pretty as you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["strategy", "demonstrative"]
+      ],
+      "comment": "from Haspelmath and Buchholz (1998)",
+      "verified": "page-image"
+    }
+  ]
+}
