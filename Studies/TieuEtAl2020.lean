@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Homogeneity.Usable
 public import Linglib.Semantics.Plurality.Multiplicity
+public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Data.Examples.TieuEtAl2020
@@ -40,10 +41,11 @@ of *some*, both being `weak` exhaustified against a singleton alternative
 The worlds are the number of giraffes fed, so a reading is a set of natural numbers, negation is
 complementation and a downward-entailing environment is an antitone map on readings. The
 implicature account is innocent exclusion with one alternative; the versions of the account differ
-in how they derive the alternative and agree on the result. *Emily fed some of the `k` giraffes*
-has the literal meaning `weak` and the alternative `{k}`. The Strongest Meaning Hypothesis is
-`IsLeast` over the readings consistent with the context. The homogeneity value is the
-supervaluation of the two readings, and the pragmatic use of an undefined sentence is
+in how they derive the alternative and agree on the result, as does the presuppositional variant
+of Sauerland and colleagues, `strengthen_plural_eq_preimage_strong`. *Emily fed some of the `k`
+giraffes* has the literal meaning `weak` and the alternative `{k}`. The Strongest Meaning
+Hypothesis is `IsLeast` over the readings consistent with the context. The homogeneity value is
+the supervaluation of the two readings, and the pragmatic use of an undefined sentence is
 `Homogeneity.usable` relative to the issue of whether Emily fed more than one.
 
 Of the experiments, only the modal responses of the ternary judgment task enter: adults gave the
@@ -58,6 +60,8 @@ inference with the *not all* inference are not formalized.
 * [farkas-de-swart-2010]
 * [spector-2007b]
 * [zweig-2009]
+* [sauerland-2003]
+* [sauerland-anderssen-yatsushiro-2005]
 * [kriz-2017]
 * [kriz-2015]
 * [fox-2007]
@@ -102,15 +106,11 @@ theorem exclusive_subset_weak (v : Number) :
     Number.exactCard, English.Nouns.numberSystem, eq_comm]
 
 @[simp] theorem mem_strong : n ∈ strong ↔ 2 ≤ n := by
-  simp only [strong, Number.exclusive, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
-    Number.ofCard_eq_plural_iff_forall, English.Nouns.numberSystem]
-  simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq,
-    Number.exactCard, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true, and_true]
-  refine ⟨fun ⟨p, hp, hk⟩ ↦ hk ▸ ?_, fun hk ↦ ⟨⟨n, by omega⟩, fun h ↦ ?_, rfl⟩⟩
-  · exact lt_of_le_of_ne p.pos fun h ↦ hp (PNat.coe_eq_one_iff.1 h.symm).symm
-  · have := congrArg PNat.val h
-    simp only [PNat.val_ofNat, PNat.mk_coe] at this
-    omega
+  simp only [strong, Number.mem_exclusive_plural_iff, English.Nouns.numberSystem,
+    Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, Number.exactCard,
+    Option.mem_def, Option.some.injEq, forall_eq', reduceCtorEq, false_imp_iff, implies_true,
+    and_true, PNat.one_coe]
+  omega
 
 theorem strong_eq : strong = {n | 2 ≤ n} := Set.ext fun _ ↦ mem_strong
 
@@ -141,8 +141,7 @@ theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
     cases v <;> simp [English.Nouns.numberSystem, Number.IsDeterminate, Number.exactCard]
   rwa [hs, Set.image_singleton] at h
 
-/-- In a downward-entailing environment an alternative stronger than the weak reading is entailed
-by it, so exhaustification adds nothing. -/
+-- (3), (4), (16), (17): in a downward-entailing environment the alternative is entailed
 theorem exhIE_of_antitone {W : Type*} {f : Set ℕ → Set W} (hf : Antitone f) {a : Set ℕ}
     (ha : a ⊆ weak) : exhIE {f weak, f a} (f weak) = f weak :=
   exhIE_eq_self_of_forall _ _ <| by
@@ -157,6 +156,20 @@ theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ :=
 theorem one_mem_compl_exhIE_weak : 1 ∈ (exhIE {weak, singular} weak)ᶜ := by
   rw [exhIE_weak]
   simp
+
+/-- The presuppositional variant of the approach yields the same reading: under a count of
+individuals that gives exactly the atoms one, the individuals of which the plural survives
+competition with the singular are those the strong reading counts. -/
+theorem strengthen_plural_eq_preimage_strong {E : Type*} [PartialOrder E] (c : E → ℕ)
+    (hc : ∀ x, Mereology.Atom x ↔ c x = 1) (hpos : ∀ x, 1 ≤ c x) {y : E}
+    (hy : ¬ Mereology.Atom y) :
+    Presupposition.strengthen Number.alts Number.dom (some .plural) = c ⁻¹' strong := by
+  rw [Number.strengthen_plural hy]
+  ext x
+  have := hpos x
+  simp only [Number.nonAtomsOf, Pi.top_apply, Prop.top_eq_true, true_and, Set.mem_ofPred_eq, hc,
+    Set.mem_preimage, mem_strong]
+  omega
 
 /-! ### The ambiguity approach
 
@@ -179,7 +192,7 @@ theorem isLeast_of_antitone {W : Type*} {f : Set ℕ → Set W} (hf : Antitone f
 
 -- (8)
 theorem isLeast_compl_strong_of_singular :
-    IsLeast {p ∈ ({weakᶜ, strongᶜ} : Set (Set ℕ)) | (p ∩ singular).Nonempty} strongᶜ := by
+    IsLeast ({weakᶜ, strongᶜ} ∩ {p | (p ∩ singular).Nonempty}) strongᶜ := by
   refine ⟨⟨by simp, 1, by simp, by simp⟩, ?_⟩
   rintro _ ⟨rfl | rfl, hp⟩
   · obtain ⟨n, hn, hn1⟩ := hp
@@ -213,35 +226,18 @@ theorem homogeneous_eq_undefined_iff : homogeneous n = .undefined ↔ n ∈ sing
 /-- Feeding more giraffes never lowers the value of the plural sentence. -/
 noncomputable def homogeneousHom : ℕ →o Trivalent where
   toFun := homogeneous
-  monotone' m n h := by
-    rcases trichotomy (homogeneous m) with hm | hm | hm
-    · rw [hm]
-      exact bot_le
-    · rcases trichotomy (homogeneous n) with hn | hn | hn
-      · rw [homogeneous_eq_undefined_iff, singular_eq] at hm
-        rw [homogeneous_eq_false_iff] at hn
-        obtain rfl : m = 1 := hm
-        omega
-      · rw [hm, hn]
-      · rw [hn]
-        exact le_top
-    · rw [homogeneous_eq_true_iff.2 ((homogeneous_eq_true_iff.1 hm).trans h)]
-      exact le_top
+  monotone' m n h := supervaluationOn_mono <| by
+    rintro _ (rfl | rfl) hm
+    exacts [mem_weak.2 ((mem_weak.1 hm).trans h), mem_strong.2 ((mem_strong.1 hm).trans h)]
 
 @[simp] theorem coe_homogeneousHom : ⇑homogeneousHom = homogeneous := rfl
 
 -- (23), (24)
 theorem compl_homogeneous (n : ℕ) :
     (homogeneous n)ᶜ = supervaluationOn {weakᶜ, strongᶜ} (n ∈ ·) := by
-  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
-  · simp only [compl_eq_true_iff, homogeneous_eq_false_iff, supervaluationOn_eq_true_iff,
-      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
-      Set.mem_compl_iff, mem_weak, mem_strong]
-    omega
-  · simp only [compl_eq_false_iff, homogeneous_eq_true_iff, supervaluationOn_eq_false_iff,
-      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
-      Set.mem_compl_iff, mem_weak, mem_strong, Set.insert_nonempty, true_and]
-    omega
+  rw [homogeneous, ← supervaluationOn_not (Set.insert_nonempty _ _), ← Set.image_pair compl,
+    supervaluationOn_image]
+  rfl
 
 -- (25), (26): usable when all that matters is whether Emily fed more than one
 theorem usable_compl_homogeneous_one :

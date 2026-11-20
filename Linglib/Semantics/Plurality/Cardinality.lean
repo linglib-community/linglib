@@ -15,17 +15,17 @@ public import Mathlib.Order.UpperLower.Basic
 # The cardinality of a number value, and number resolution
 
 A determinate number value is for a fixed number of individuals, one for the singular, two for
-the dual and three for the trial. A system's values partition the positive cardinalities: a referent of `n` individuals takes the
-determinate value of `n` if the system has one and the plural otherwise. A target agreeing with
-conjoined noun phrases takes the value of the group they form, whose cardinality is the sum of
-theirs: in Slovene the dual for two singulars and the plural otherwise. The group's value is a
-function of the conjuncts' values [exactly when the determinate values are an initial
-segment](##Number.determinateInitial_iff_factorsThrough) of singular, dual and trial, [exactly
-when the cells are intervals](##Number.determinateInitial_iff_ordConnected), and [`resolve` is
-that function](##Number.resolve_ofCard). A target's value is a function of its controller's
-[exactly when the controller's system has every determinate value of the
-target's](##Number.factorsThrough_ofCard_iff), as a Modern Hebrew verb takes the plural with a
-dual noun.
+the dual and three for the trial. A system's values partition the positive cardinalities: a
+referent of `n` individuals takes the determinate value of `n` if the system has one and the
+plural otherwise, `Number.ofCard`. A target agreeing with conjoined noun phrases takes the value
+of the group they form, whose cardinality is the sum of theirs: in Slovene the dual for two
+singulars and the plural otherwise. The group's value is a function of the conjuncts' values
+exactly when the determinate values are an initial segment of singular, dual and trial
+(`Number.determinateInitial_iff_factorsThrough`), which is exactly when the cells are intervals
+(`Number.determinateInitial_iff_ordConnected`), and `Number.resolve` is that function
+(`Number.resolve_ofCard`). A target's value is a function of its controller's exactly when the
+controller's system has every determinate value of the target's
+(`Number.factorsThrough_ofCard_iff`), as a Modern Hebrew verb takes the plural with a dual noun.
 
 ## Implementation notes
 
@@ -48,9 +48,9 @@ reaches them. In Harbour's settings an approximative value rules resolution out
 
 ## References
 
-* [corbett-1991] §9.1.2, pp. 263–264
-* [corbett-2000] §6.1, pp. 180–181; §6.5.2, pp. 198–199
-* [corbett-2006] §8.2, pp. 242–243; §8.5.4, p. 257
+* [corbett-1991]
+* [corbett-2000]
+* [corbett-2006]
 * [link-1983]
 * [heycock-zamparelli-2005]
 -/
@@ -80,34 +80,20 @@ instance : DecidablePred IsDeterminate := fun v ↦
 /-- `fromCard? n` is the determinate value of cardinality `n`, if there is one; from four on there
 is none, the greater plural being a value of abundance rather than of four or more. -/
 def fromCard? (n : ℕ+) : Option Number :=
-  match (n : ℕ) with
-  | 1 => some .singular
-  | 2 => some .dual
-  | 3 => some .trial
-  | _ => none
+  if n = 1 then some .singular else if n = 2 then some .dual else if n = 3 then some .trial
+  else none
 
 /-- `fromCard?` and `exactCard` are partial inverses. -/
 theorem fromCard?_eq_some_iff {n : ℕ+} {v : Number} :
     fromCard? n = some v ↔ v.exactCard = some n := by
-  constructor
-  · unfold fromCard?
-    split <;> rename_i heq <;> intro h <;> simp only [Option.some.injEq, reduceCtorEq] at h <;>
-      subst h <;> exact congrArg some (PNat.eq heq.symm)
-  · intro h
-    cases v <;> simp only [exactCard, Option.some.injEq, reduceCtorEq] at h <;> subst h <;> rfl
+  unfold fromCard?
+  cases v <;> simp only [exactCard] <;> split_ifs <;> simp_all [eq_comm]
 
 theorem fromCard?_eq_none_iff {n : ℕ+} : fromCard? n = none ↔ 3 < n := by
-  have hn := n.pos
-  rw [← PNat.coe_lt_coe]
-  show _ ↔ 3 < (n : ℕ)
+  have := n.pos
   unfold fromCard?
-  split <;> simp only [reduceCtorEq, false_iff, true_iff, not_lt]
-  iterate 3 omega
-  rename_i h₁ h₂ h₃
-  have : (n : ℕ) ≠ 1 := h₁
-  have : (n : ℕ) ≠ 2 := h₂
-  have : (n : ℕ) ≠ 3 := h₃
-  omega
+  simp only [← PNat.coe_inj, ← PNat.coe_lt_coe]
+  split_ifs <;> simp only [false_iff, true_iff, not_lt, PNat.val_ofNat] at * <;> omega
 
 theorem le_three_of_exactCard_eq_some {v : Number} {n : ℕ+} (h : v.exactCard = some n) : n ≤ 3 :=
   not_lt.1 fun h3 ↦ by simp [← fromCard?_eq_some_iff, fromCard?_eq_none_iff.2 h3] at h

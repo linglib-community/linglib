@@ -53,6 +53,16 @@ variable (s) in
 theorem exclusive_subset_inclusive (v : Number) : exclusive s v ⊆ inclusive :=
   Set.image_subset_range _ _
 
+/-- The exclusive reading of the plural holds of the cardinalities to which no value of the system
+is fixed. -/
+theorem mem_exclusive_plural_iff :
+    n ∈ exclusive s .plural ↔ 1 ≤ n ∧ ∀ v ∈ s, ∀ m ∈ v.exactCard, (m : ℕ) ≠ n := by
+  constructor
+  · rintro ⟨p, hp, rfl⟩
+    exact ⟨p.pos, fun v hv m hm h ↦ ofCard_eq_plural_iff_forall.1 hp v hv (PNat.eq h ▸ hm)⟩
+  · rintro ⟨h1, h⟩
+    exact ⟨⟨n, h1⟩, ofCard_eq_plural_iff_forall.2 fun v hv hc ↦ h v hv _ hc rfl, rfl⟩
+
 theorem disjoint_exclusive (h : v ≠ w) : Disjoint (exclusive s v) (exclusive s w) :=
   Set.disjoint_image_of_injective PNat.coe_injective <|
     Set.disjoint_iff.2 fun _ ⟨hv, hw⟩ ↦ h (hv.symm.trans hw)
