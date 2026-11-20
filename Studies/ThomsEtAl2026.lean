@@ -3,6 +3,8 @@ module
 public import Linglib.Data.Examples.ThomsEtAl2026
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
+public import Linglib.Syntax.Minimalist.SyntacticObject.Notation
+public import Linglib.Syntax.Minimalist.Lexicon
 public import Linglib.Syntax.Minimalist.Spine
 public import Mathlib.Basic.Real.Basic
 public import Studies.ArregiPietraszko2021
@@ -11,32 +13,32 @@ public import Studies.Myler2016
 /-!
 # Thoms, Adger, Heycock, Jamieson and Smith (2026): HAVE-raising and predicative possession
 
-This file formalizes the two structures that [thoms-etal-2026] give possessive HAVE. In the
-existential structure the possessor raises out of the possessee to the specifier of v; in the
-locative structure an applicative head relates the two. The probe on v finds the possessor exactly
-when the possessee has no D layer (`Structure.finds_iff`), so the existential structure takes only
-possessees with a weak determiner.
+This file formalizes the two structures that [thoms-etal-2026] give possessive HAVE, as trees. In
+`existential` the possessor is in the specifier of Poss inside the possessee, and v raises it; in
+`locative` an applicative head relates the two. Over a possessee with a D layer the probe of v
+does not find the possessor of the existential structure (`not_finds_existential_dP`), so that
+structure takes only possessees with a weak determiner.
 
 A variety is a list of rules, each pronouncing a span of heads at one of them, and HAVE is raised
-when its span is pronounced at T. Group A raises HAVE in the existential structure alone, hence
-with exactly the possessees of *there*-existentials (`generates_groupA_iff_extractable`). Where
-the position of HAVE does not show, all varieties agree (`generates_iff_of_not_raised`). A learner
-who keeps a raising rule from a threshold of unambiguous input on loses it for the locative
-structure first (`raises_acquired_existential`).
+when its span is pronounced at T. Group A raises HAVE over the span without the applicative alone,
+hence with exactly the possessees of *there*-existentials (`generates_groupA_iff_extractable`).
+Where the position of HAVE does not show, all varieties agree (`generates_iff_of_not_raised`). A
+learner who keeps a raising rule from a threshold of unambiguous input on loses it for the span
+with the applicative first (`raises_acquired_vT_of_applvT`).
 
 ## Implementation notes
 
-* The possessee is the spine `[n, Poss, Num]` with or without `D`. The tree of a structure is the
-  noun extended by the heads of the complement of v, with the possessor in the specifier of Poss
-  or of the applicative, and the span of HAVE is the verbal part of the clause's heads.
+* The possessee is the spine `[n, Poss, Num]` with or without `D`, built by
+  `PlanarSyntacticObject.extend`. The span of HAVE is read off a tree as its verbal heads and T,
+  which is right for these trees, whose arguments contain no verbal head.
 * The locative structure is restricted to alienable relations, and an amount phrase with *the*
   counts as weak, both as in the paper. The animacy of the possessor is not modelled.
-* A row attributed to a group is checked against that group's rule, and a row given for English
+* A row attributed to a group is checked against that group's rules, and a row given for English
   generally against all three.
 * The paper leaves the implementation of its spell-out rules open. With the Head Chain
   Pronunciation of [arregi-pietraszko-2021] a strong applicative head gives Group A's raising
-  (`pronounced_strong_appl_eq_T_iff`), with the applicative as the low position; no choice of
-  strong heads makes that position v (`not_pronounced_v_and_T`).
+  (`pronounced_strong_appl`), with the applicative as the low position; no choice of strong heads
+  makes that position v (`not_pronounced_v_and_T`).
 
 ## TODO
 
@@ -86,117 +88,78 @@ def sizes (d : Examples.Determiner) : List Spine := if d.NeedsD then [dP] else [
 
 /-! ### The two structures -/
 
-/-- The existential structure (38), where v takes the possessee, and the locative structure (44),
-where v takes the phrase of an applicative head over the possessee. -/
-inductive Structure where
-  | existential
-  | locative
-  deriving DecidableEq, Repr, Fintype
+/-- The words of the two structures beside the heads of the possessee. -/
+lexicon tokens from 100 where
+  /-- The light verb, whose probe searches for a D. -/
+  v₀ : .v
+  /-- The possessor, or *there* in an existential. -/
+  specifier : .D
+  /-- The applicative head, which selects a DP. -/
+  appl₀ : .Appl [.D]
+  /-- The noun at the foot of the possessee. -/
+  noun : .n
 
-/-- The light verb, whose probe searches for a D. -/
-def v₀ : LexicalItem.Token := ⟨.of .v [], 100⟩
+/-- The possessee with spine `s`: the noun extended by the heads above it, with `spec`, when there
+is one, in the specifier of Poss. -/
+def nominal (s : Spine) (spec : Option PlanarSyntacticObject) : PlanarSyntacticObject :=
+  (PlanarSyntacticObject.leaf noun).extend .n 1
+    (fun i ↦ if (s.above .n)[i]? = some .Poss then spec else none) (s.above .n)
 
-/-- The possessor, or *there* in an existential. -/
-def specifier : LexicalItem.Token := ⟨.of .D [], 101⟩
+/-- (38): the existential structure, in which v takes the possessee and the possessor is in the
+specifier of its Poss head. -/
+def existential (s : Spine) : PlanarSyntacticObject :=
+  so% [v₀ (nominal s (some (so% specifier)))]
 
-/-- The noun at the foot of the possessee. -/
-def noun : LexicalItem.Token := ⟨.of .n [], 0⟩
+/-- (44): the locative structure, in which v takes the phrase of an applicative head, with the
+possessor in its specifier and the possessee as its complement. -/
+def locative (s : Spine) : PlanarSyntacticObject :=
+  so% [v₀ [specifier [appl₀ (nominal s none)]]]
 
-namespace Structure
-
-/-- The heads between the possessee and v: none, or the applicative. -/
-def shell : Structure → List Cat
-  | existential => []
-  | locative => [.Appl]
-
-/-- The head whose specifier holds the possessor: the applicative when there is one, and Poss
-inside the possessee otherwise. -/
-def host (σ : Structure) : Cat := σ.shell.head?.getD .Poss
-
-/-- The heads of the complement of v over a possessee with spine `s`, from the noun up. -/
-def complement (σ : Structure) (s : Spine) : Spine := s.append σ.shell
-
-/-- The phrase v projects, (38) and (44) below the specifier of v: the noun extended by the heads
-of the complement, with the possessor in the specifier of its host, under v. -/
-def tree (σ : Structure) (s : Spine) : PlanarSyntacticObject :=
-  let above := (σ.complement s).above .n
-  let complement := (PlanarSyntacticObject.leaf noun).extend .n 1
-    (fun i ↦ if above[i]? = some σ.host then some (.leaf specifier) else none) above
-  {.leaf v₀, complement}
-
-/-- The φ-probe of v finds the possessor. -/
-def Finds (σ : Structure) (s : Spine) : Prop :=
-  ↑specifier ∈ (σ.tree s).goals ((σ.tree s).leafProbe .D) ↑v₀
-
-instance (σ : Structure) (s : Spine) : Decidable (σ.Finds s) := by unfold Finds; infer_instance
-
-/-- In the existential structure the probe of v finds the possessor exactly when the possessee
-has no D layer, the D of a full DP being a closer goal; in the locative structure it finds the
-possessor over a possessee of either size. -/
-theorem finds_iff : ∀ σ : Structure, ∀ s ∈ [numP, dP],
-    σ.Finds s ↔ σ = locative ∨ .D ∉ s := by
+-- (38) as drawn, with *a* in Num.
+theorem existential_numP :
+    existential numP =
+      so% [v₀ [⟨⟨.of .Num [.Poss], 2⟩⟩ [specifier [⟨⟨.of .Poss [.n], 1⟩⟩ noun]]]] := by
   decide
 
-/-- The applicative head selects a DP; v takes a nominal of either size. -/
-def Selects : Structure → Spine → Prop
-  | existential, _ => True
-  | locative, s => .D ∈ s
+/-- The φ-probe of v finds the possessor. -/
+def Finds (t : PlanarSyntacticObject) : Prop := ↑specifier ∈ t.goals (t.leafProbe .D) ↑v₀
 
-instance (σ : Structure) (s : Spine) : Decidable (σ.Selects s) := by
-  cases σ <;> unfold Selects <;> infer_instance
+instance (t : PlanarSyntacticObject) : Decidable (Finds t) := by unfold Finds; infer_instance
 
-/-- The span of HAVE, (53) and (54): the verbal heads of the clause, from the foot of the
-complement of v to T. -/
-def span (σ : Structure) : Spine :=
-  ⟨(((σ.complement dP).append [.v, .T]).heads.filter (·.family = .verbal))⟩
+@[simp] theorem finds_existential_numP : Finds (existential numP) := by decide
 
-@[simp] theorem span_existential : existential.span = ⟨[.v, .T]⟩ := by decide
+/-- In the existential structure over a full DP the probe of v does not find the possessor: the D
+of the possessee is a closer goal. -/
+@[simp] theorem not_finds_existential_dP : ¬ Finds (existential dP) := by decide
 
-@[simp] theorem span_locative : locative.span = ⟨[.Appl, .v, .T]⟩ := by decide
-
-theorem span_injective : Function.Injective span := by decide
-
-/-- The head chain of HAVE, the heads of its span sharing one M-value. -/
-def chain (σ : Structure) : HeadChain :=
-  .ofHeads (σ.span.heads.head?.getD .v) σ.span.heads.tail
-
-theorem exists_iff {p : Structure → Prop} : (∃ σ, p σ) ↔ p existential ∨ p locative :=
-  ⟨fun ⟨σ, h⟩ ↦ by cases σ <;> simp [h], fun h ↦ h.elim (⟨_, ·⟩) (⟨_, ·⟩)⟩
-
-end Structure
+@[simp] theorem finds_locative_dP : Finds (locative dP) := by decide
 
 /-- The specifier of a nominal with the determiner can be raised out of it: the nominal has a size
 at which the probe of v finds it. -/
-def Extractable (d : Examples.Determiner) : Prop := ∃ s ∈ sizes d, Structure.existential.Finds s
+def Extractable (d : Examples.Determiner) : Prop := ∃ s ∈ sizes d, Finds (existential s)
 
 theorem extractable_iff {d : Examples.Determiner} : Extractable d ↔ ¬ d.NeedsD := by
-  cases d <;> simp [Extractable, sizes, Examples.Determiner.NeedsD, Structure.finds_iff] <;>
-    decide
+  cases d <;> simp [Extractable, sizes, Examples.Determiner.NeedsD]
 
 instance : DecidablePred Extractable := fun _ ↦ decidable_of_iff _ extractable_iff.symm
 
-/-- A structure derives a possessee with the determiner in the relation when the possessee has a
-size that the structure selects and at which v finds the possessor; the applicative head moreover
-relates the possessor to what it has with it, an alienable relation. -/
-def Structure.Derives (σ : Structure) (d : Examples.Determiner) (r : Examples.Relation) : Prop :=
-  (∃ s ∈ sizes d, σ.Selects s ∧ σ.Finds s) ∧ (σ = .locative → r = .alienable)
+/-! ### Spans and varieties -/
 
-theorem Structure.derives_existential_iff {d : Examples.Determiner} {r : Examples.Relation} :
-    Structure.existential.Derives d r ↔ ¬ d.NeedsD := by
-  simpa [Structure.Derives, Structure.Selects, Extractable] using extractable_iff (d := d)
+/-- The span of HAVE in a structure: its verbal heads from the lowest, and T. -/
+def span (t : PlanarSyntacticObject) : Spine :=
+  ⟨(t.yield.map (·.item.cat)).reverse.filter (fun c ↦ decide (c.family = .verbal)) ++ [.T]⟩
 
-theorem Structure.derives_locative_iff {d : Examples.Determiner} {r : Examples.Relation} :
-    Structure.locative.Derives d r ↔ r = .alienable := by
-  cases d <;> simp [Structure.Derives, Structure.Selects, sizes, Examples.Determiner.NeedsD,
-    Structure.finds_iff] <;> intro _ <;> decide
+/-- The span of (53), v and T. -/
+abbrev vT : Spine := ⟨[.v, .T]⟩
 
-instance (σ : Structure) (d : Examples.Determiner) (r : Examples.Relation) :
-    Decidable (σ.Derives d r) := by
-  cases σ
-  · exact decidable_of_iff _ Structure.derives_existential_iff.symm
-  · exact decidable_of_iff _ Structure.derives_locative_iff.symm
+/-- The span of (54), the applicative, v and T. -/
+abbrev applvT : Spine := ⟨[.Appl, .v, .T]⟩
 
-/-! ### Varieties -/
+@[simp] theorem span_existential_numP : span (existential numP) = vT := by decide
+
+@[simp] theorem span_existential_dP : span (existential dP) = vT := by decide
+
+@[simp] theorem span_locative_dP : span (locative dP) = applvT := by decide
 
 /-- A spell-out rule pronounces the heads of a span at one of its positions. -/
 structure Rule where
@@ -207,28 +170,20 @@ structure Rule where
   deriving DecidableEq
 
 /-- Group B pronounces both spans of HAVE at T. -/
-def groupB : List Rule := [⟨⟨[.v, .T]⟩, .T⟩, ⟨⟨[.Appl, .v, .T]⟩, .T⟩]
+def groupB : List Rule := [⟨vT, .T⟩, ⟨applvT, .T⟩]
 
 /-- (55): Group A pronounces the span of v and T at T and the span with the applicative at v. -/
-def groupA : List Rule := [⟨⟨[.v, .T]⟩, .T⟩, ⟨⟨[.Appl, .v, .T]⟩, .v⟩]
+def groupA : List Rule := [⟨vT, .T⟩, ⟨applvT, .v⟩]
 
 /-- The standard variety pronounces both spans of HAVE at v. -/
-def standard : List Rule := [⟨⟨[.v, .T]⟩, .v⟩, ⟨⟨[.Appl, .v, .T]⟩, .v⟩]
+def standard : List Rule := [⟨vT, .v⟩, ⟨applvT, .v⟩]
 
-variable {g : List Rule} {σ : Structure} {f : Examples.Frame} {d : Examples.Determiner}
-  {r : Examples.Relation}
+variable {g : List Rule} {f : Examples.Frame} {d : Examples.Determiner} {r : Examples.Relation}
 
-/-- A variety raises HAVE in a structure when it has the rule that pronounces the span of the
-structure at T. -/
-def Raises (g : List Rule) (σ : Structure) : Prop := ⟨σ.span, .T⟩ ∈ g
+/-- A variety raises HAVE over a span when it has the rule that pronounces the span at T. -/
+def Raises (g : List Rule) (s : Spine) : Prop := ⟨s, .T⟩ ∈ g
 
-instance : Decidable (Raises g σ) := inferInstanceAs (Decidable (_ ∈ _))
-
-@[simp] theorem raises_groupA : Raises groupA σ ↔ σ = .existential := by cases σ <;> decide
-
-@[simp] theorem raises_groupB : Raises groupB σ := by cases σ <;> decide
-
-@[simp] theorem not_raises_standard : ¬ Raises standard σ := by cases σ <;> decide
+instance (s : Spine) : Decidable (Raises g s) := inferInstanceAs (Decidable (_ ∈ _))
 
 /-- HAVE stands before negation or the subject. -/
 def Examples.Frame.Raised : Examples.Frame → Prop
@@ -238,33 +193,45 @@ def Examples.Frame.Raised : Examples.Frame → Prop
 instance : DecidablePred Examples.Frame.Raised := fun f ↦ by
   cases f <;> unfold Examples.Frame.Raised <;> infer_instance
 
-/-- A variety generates a HAVE clause when a structure derives its possessee and, if the clause
-shows HAVE raised, the variety raises HAVE in that structure. -/
+/-- The structures a possessee with the determiner in the relation can be built into: the
+existential structure at each of its sizes, and the locative structure over a full DP when the
+relation is alienable, the applicative head relating a possessor to what it has with it. -/
+def analyses (d : Examples.Determiner) (r : Examples.Relation) : List PlanarSyntacticObject :=
+  (sizes d).map existential ++ if r = .alienable then [locative dP] else []
+
+/-- A variety generates a HAVE clause when, in one of the structures of its possessee, v finds the
+possessor and, if the clause shows HAVE raised, the variety raises HAVE over the span. -/
 def Generates (g : List Rule) (f : Examples.Frame) (d : Examples.Determiner)
     (r : Examples.Relation) : Prop :=
-  ∃ σ : Structure, σ.Derives d r ∧ (f.Raised → Raises g σ)
+  ∃ t ∈ analyses d r, Finds t ∧ (f.Raised → Raises g (span t))
 
-instance : Decidable (Generates g f d r) := inferInstanceAs (Decidable (∃ _, _))
+/-- A HAVE clause is generated by the existential structure, when its determiner is weak, or by
+the locative structure, when its relation is alienable. -/
+theorem generates_iff :
+    Generates g f d r ↔
+      (¬ d.NeedsD ∧ (f.Raised → Raises g vT)) ∨
+        (r = .alienable ∧ (f.Raised → Raises g applvT)) := by
+  cases d <;> cases r <;> simp [Generates, analyses, sizes, Examples.Determiner.NeedsD]
+
+instance : Decidable (Generates g f d r) := decidable_of_iff _ generates_iff.symm
 
 /-- A clause that does not show the position of HAVE is generated alike in every variety. -/
 theorem generates_iff_of_not_raised (g : List Rule) (hf : ¬ f.Raised) :
     Generates g f d r ↔ ¬ d.NeedsD ∨ r = .alienable := by
-  simp [Generates, Structure.exists_iff, hf, Structure.derives_existential_iff,
-    Structure.derives_locative_iff]
+  simp [generates_iff, hf]
 
 /-- Group A generates HAVE-raising with exactly the possessees whose specifier can be raised, the
 pivots of *there*-existentials. -/
 theorem generates_groupA_iff_extractable (hf : f.Raised) :
     Generates groupA f d r ↔ Extractable d := by
-  simp [Generates, hf, Structure.derives_existential_iff, extractable_iff]
+  simp [generates_iff, hf, extractable_iff, Raises, groupA]
 
 -- (34)
 theorem generates_groupB_iff : Generates groupB f d r ↔ ¬ d.NeedsD ∨ r = .alienable := by
-  simp [Generates, Structure.exists_iff, Structure.derives_existential_iff,
-    Structure.derives_locative_iff]
+  simp [generates_iff, Raises, groupB]
 
 theorem not_generates_standard (hf : f.Raised) : ¬ Generates standard f d r := by
-  simp [Generates, hf]
+  simp [generates_iff, hf, Raises, standard]
 
 /-- The judgment of a row is the one the variety predicts: an existential is accepted when its
 pivot's specifier can be raised, a HAVE clause when the variety generates it. -/
@@ -288,26 +255,25 @@ theorem rows_predicted : ∀ x ∈ Examples.all, ∀ g ∈ varieties x, Predicte
 
 /-! ### Head Chain Pronunciation -/
 
-theorem pronounced_strong_appl_eq_T_iff :
-    σ.chain.pronounced {.Appl} = some .T ↔ Raises groupA σ := by
-  cases σ <;> decide
+/-- The head chain of a span, its heads sharing one M-value. -/
+def chain (s : Spine) : HeadChain := .ofHeads (s.heads.head?.getD .v) s.heads.tail
 
-theorem pronounced_empty_eq_T : σ.chain.pronounced ∅ = some .T := by
-  cases σ <;> decide
+-- A strong applicative head leaves the chain of (53) at T and holds that of (54) down.
+theorem pronounced_strong_appl :
+    (chain vT).pronounced {.Appl} = some .T ∧ (chain applvT).pronounced {.Appl} = some .Appl := by
+  decide
 
--- No choice of strong heads pronounces the locative chain at v and the existential chain at T.
+-- No choice of strong heads pronounces the chain of (54) at v and that of (53) at T.
 theorem not_pronounced_v_and_T (strong : Finset Cat) :
-    ¬ (Structure.locative.chain.pronounced strong = some .v ∧
-      Structure.existential.chain.pronounced strong = some .T) := by
+    ¬ ((chain applvT).pronounced strong = some .v ∧ (chain vT).pronounced strong = some .T) := by
   by_cases hA : Cat.Appl ∈ strong <;> by_cases hv : Cat.v ∈ strong <;>
     by_cases hT : Cat.T ∈ strong <;>
-    simp [Structure.chain, HeadChain.pronounced, HeadChain.ofHeads, List.filter, hA, hv, hT]
+    simp [chain, HeadChain.pronounced, HeadChain.ofHeads, List.filter, hA, hv, hT]
 
 /-! ### The uniform HAVE of Myler -/
 
-/-- In [myler-2016] every context that spells v out as *have* has the same Voice, so a rule that
-reads Voice cannot tell two HAVE clauses apart, while the spans of the two structures differ
-(`Structure.span_injective`). -/
+-- In [myler-2016] every context that spells v out as *have* has the same Voice, so a rule that
+-- reads Voice cannot tell two HAVE clauses apart, while the two structures here differ in span.
 theorem myler_have_voice_eq {c c' : Myler2016.Context}
     (h : Myler2016.spellout Myler2016.englishItems c = some "have")
     (h' : Myler2016.spellout Myler2016.englishItems c' = some "have") :
@@ -319,32 +285,34 @@ theorem myler_have_voice_eq {c c' : Myler2016.Context}
 /-! ### The loss of raising -/
 
 open Classical in
-/-- The rules a learner acquires from `n` clauses with HAVE raised, when a share `rate σ` of them
-is derived by structure `σ` alone and a raising rule is kept from `θ` such clauses on: the span of
-a structure is pronounced at T when its evidence reaches the threshold, and at v otherwise. -/
-noncomputable def acquired (θ n : ℝ) (rate : Structure → ℝ) : List Rule :=
-  [Structure.existential, .locative].map fun σ ↦ ⟨σ.span, if θ ≤ rate σ * n then .T else .v⟩
+/-- The rules a learner acquires from `n` clauses with HAVE raised, when a share `rate s` of them
+is derived only with the span `s` at T and a raising rule is kept from `θ` such clauses on: a span
+is pronounced at T when its evidence reaches the threshold, and at v otherwise. -/
+noncomputable def acquired (θ n : ℝ) (rate : Spine → ℝ) : List Rule :=
+  [vT, applvT].map fun s ↦ ⟨s, if θ ≤ rate s * n then .T else .v⟩
 
-variable {θ n : ℝ} {rate : Structure → ℝ}
+variable {θ n : ℝ} {rate : Spine → ℝ}
 
-theorem raises_acquired_iff : Raises (acquired θ n rate) σ ↔ θ ≤ rate σ * n := by
-  cases σ <;> simp [Raises, acquired, Rule.mk.injEq]
+theorem raises_acquired_vT : Raises (acquired θ n rate) vT ↔ θ ≤ rate vT * n := by
+  simp [Raises, acquired, Rule.mk.injEq]
 
-/-- With unambiguous evidence rarer for the locative structure, a learner who raises HAVE there
-raises it in the existential structure. -/
-theorem raises_acquired_existential (hn : 0 ≤ n) (h : rate .locative ≤ rate .existential)
-    (hl : Raises (acquired θ n rate) .locative) : Raises (acquired θ n rate) .existential :=
-  raises_acquired_iff.2 ((raises_acquired_iff.1 hl).trans (mul_le_mul_of_nonneg_right h hn))
+theorem raises_acquired_applvT : Raises (acquired θ n rate) applvT ↔ θ ≤ rate applvT * n := by
+  simp [Raises, acquired, Rule.mk.injEq]
+
+/-- With unambiguous evidence rarer for the span with the applicative, a learner who raises HAVE
+over it raises HAVE over the span without. -/
+theorem raises_acquired_vT_of_applvT (hn : 0 ≤ n) (h : rate applvT ≤ rate vT)
+    (hl : Raises (acquired θ n rate) applvT) : Raises (acquired θ n rate) vT :=
+  raises_acquired_vT.2 ((raises_acquired_applvT.1 hl).trans (mul_le_mul_of_nonneg_right h hn))
 
 -- (35): some amount of input yields the rules of Group A.
-theorem exists_acquired_eq_groupA (hθ : 0 < θ) (h0 : 0 ≤ rate .locative)
-    (h : rate .locative < rate .existential) :
-    ∃ n, 0 ≤ n ∧ acquired θ n rate = groupA := by
-  have he : 0 < rate .existential := h0.trans_lt h
-  have hl : ¬ θ ≤ rate .locative * (θ / rate .existential) := by
+theorem exists_acquired_eq_groupA (hθ : 0 < θ) (h0 : 0 ≤ rate applvT)
+    (h : rate applvT < rate vT) : ∃ n, 0 ≤ n ∧ acquired θ n rate = groupA := by
+  have he : 0 < rate vT := h0.trans_lt h
+  have hl : ¬ θ ≤ rate applvT * (θ / rate vT) := by
     rw [not_le, ← mul_div_assoc, div_lt_iff₀ he, mul_comm]
     exact mul_lt_mul_of_pos_left h hθ
-  exact ⟨θ / rate .existential, (div_pos hθ he).le, by
+  exact ⟨θ / rate vT, (div_pos hθ he).le, by
     simp [acquired, groupA, hl, (mul_div_cancel₀ θ he.ne').ge]⟩
 
 end ThomsEtAl2026
