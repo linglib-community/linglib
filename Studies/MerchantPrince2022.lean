@@ -348,7 +348,7 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
       rw [Fin.lt_def] at h₁ h₂
       simp only at h₁ h₂
       omega⟩
-  obtain ⟨h₁, h₂, -⟩ := Pi.eq_and_lt_and_gt_of_toLex_comp_swap r hcov hlt hlt'
+  obtain ⟨h₁, h₂, -⟩ := Pi.eq_and_lt_and_gt_of_toLex_comp_swap hcov hlt hlt'
   exact ⟨x, hx, y, hy, h₁, h₂⟩
 
 -- A partition with a block that is not a grammar is not a typology.

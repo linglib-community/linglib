@@ -156,8 +156,8 @@ def SatisfiedBy : Prop := toLex 0 ≤ toLex (α ∘ r)
 winner-preferring, which is Prince's description of satisfaction by a left-to-right sweep. -/
 theorem satisfiedBy_iff_lead :
     α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
-  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.lex_le_iff_find _ _).mp h he),
-   fun h => (Pi.lex_le_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
+  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.toLex_le_toLex_iff_find _ _).mp h he),
+   fun h => (Pi.toLex_le_toLex_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
 /-- Satisfaction in Prince's `∀∃` form, his (3): every loser-preferring constraint is dominated
 by some winner-preferring one. -/
@@ -602,12 +602,12 @@ def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC (Fin n) 
 
 theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
     toLex (fun _ => (0 : ERCVal)) ≤ toLex (ercOfProfiles (ofLex w) (ofLex l)) ↔ w ≤ l :=
-  (Pi.lex_le_iff_forall _ _).trans <|
+  Pi.toLex_le_toLex_iff_forall.trans <|
     (forall_congr' fun p => imp_congr
       ((ERCVal.lt_zero_iff _).trans (ercOfProfiles_eq_L_iff w l p))
       (exists_congr fun q => and_congr_right fun _ =>
         (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
-    (Pi.lex_le_iff_forall (ofLex w) (ofLex l)).symm
+    (Pi.toLex_le_toLex_iff_forall (x := ofLex w) (y := ofLex l)).symm
 
 /-- A ranking satisfies the ERC of a winner and a loser iff the winner's violations, read in the
 order of the ranking, are lexicographically at most the loser's. -/
