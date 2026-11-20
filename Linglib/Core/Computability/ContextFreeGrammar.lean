@@ -19,8 +19,9 @@ trees, the closure properties and the weighted grammars share. `[UPSTREAM]` cand
 
 ## Main definitions
 
-* `Symbol.terminal?`, `Symbol.IsNonterminal`, `Symbol.mapNonterminal`: the terminal at a symbol,
-  the nonterminal predicate, and relabelling of nonterminals.
+* `Symbol.elim`, `Symbol.terminal?`, `Symbol.IsNonterminal`, `Symbol.mapNonterminal`: definition
+  by cases on a symbol, the terminal at a symbol, the nonterminal predicate, and relabelling of
+  nonterminals.
 * `ContextFreeRule.NonterminalPos`: the positions of a right-hand side holding a nonterminal.
 * `ContextFreeGrammar.inputs`, `ContextFreeGrammar.rulesWithInput`: the nonterminals a grammar has
   a rule for, and its rules at a nonterminal.
@@ -32,8 +33,6 @@ trees, the closure properties and the weighted grammars share. `[UPSTREAM]` cand
 * `ContextFreeGrammar.Derives.mapNonterminal`, `ContextFreeGrammar.Derives.of_mapNonterminal`: a
   relabelling of nonterminals that sends rules to rules sends derivations to derivations, and
   reflects them when every rule at a relabelled nonterminal is a relabelled rule.
-* `ContextFreeGrammar.produces_map_terminal_append_singleton_append_iff`: the one-step
-  productions of a word with a single nonterminal, the step of linear grammars.
 
 ## References
 
@@ -56,6 +55,17 @@ theorem List.finite_preimage_map {α β : Type*} {f : α → β} (hf : ∀ b, (f
 namespace Symbol
 
 variable {T N N' : Type*}
+
+/-- The function on symbols that is `f` on the terminals and `X` on the nonterminals. -/
+def elim {M : Type*} (f : T → M) (X : N → M) : Symbol T N → M
+  | terminal a => f a
+  | nonterminal A => X A
+
+@[simp] theorem elim_terminal {M : Type*} (f : T → M) (X : N → M) (a : T) :
+    (terminal a : Symbol T N).elim f X = f a := rfl
+
+@[simp] theorem elim_nonterminal {M : Type*} (f : T → M) (X : N → M) (A : N) :
+    (nonterminal A : Symbol T N).elim f X = X A := rfl
 
 /-- The terminal at a symbol, if it is one. -/
 def terminal? : Symbol T N → Option T
@@ -348,20 +358,6 @@ theorem Derives.exists_of_terminal_cons {a : T} {u v : List (Symbol T g.NT)}
   obtain ⟨v₁, v₂, rfl, h₁, h₂⟩ := Derives.append_split (u₁ := [.terminal a]) h
   obtain rfl := Derives.eq_of_map_terminal (w := [a]) h₁
   exact ⟨v₂, rfl, h₂⟩
-
-/-- A word with a single nonterminal produces exactly the words obtained by replacing that
-nonterminal with the output of one of its rules. -/
-theorem produces_map_terminal_append_singleton_append_iff {A : g.NT} {w u : List T}
-    {v : List (Symbol T g.NT)} :
-    g.Produces (w.map .terminal ++ [.nonterminal A] ++ u.map .terminal) v ↔
-      ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output ++ u.map .terminal := by
-  simp only [Produces, ContextFreeRule.rewrites_map_terminal_append_singleton_append_iff]
-
-theorem produces_map_terminal_append_singleton_iff {A : g.NT} {w : List T}
-    {v : List (Symbol T g.NT)} :
-    g.Produces (w.map .terminal ++ [.nonterminal A]) v ↔
-      ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output := by
-  simpa using produces_map_terminal_append_singleton_append_iff (A := A) (w := w) (u := []) (v := v)
 
 theorem produces_singleton_iff {A : g.NT} {v : List (Symbol T g.NT)} :
     g.Produces [.nonterminal A] v ↔ ∃ r ∈ g.rules, r.input = A ∧ v = r.output := by

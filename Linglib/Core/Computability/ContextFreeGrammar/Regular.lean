@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Computability.ContextFreeGrammar.Equations
 public import Linglib.Core.Computability.ContextFreeGrammar.Union
 public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Finset.NAry
@@ -73,48 +74,37 @@ theorem mem_toContextFreeGrammar_rules {r : ContextFreeRule α σ} :
   obtain ⟨q, o⟩ := r
   simp [toContextFreeGrammar, eq_comm]
 
-theorem derives_toContextFreeGrammar (w : List α) :
-    M.toContextFreeGrammar.Derives [nonterminal M.start]
-      (w.map terminal ++ [nonterminal (M.eval w)]) := by
-  induction w using List.reverseRecOn with
-  | nil => rfl
-  | append_singleton w a ih =>
-    refine ih.trans_produces (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
-      ⟨⟨M.eval w, [terminal a, nonterminal (M.step (M.eval w) a)]⟩,
-        mem_toContextFreeGrammar_rules.2 (.inl ⟨a, rfl⟩), rfl, ?_⟩)
-    simp [eval_append_singleton]
-
-theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
-    M.toContextFreeGrammar.Derives [nonterminal M.start] v ↔ ∃ w,
-      v = w.map terminal ++ [nonterminal (M.eval w)] ∨
-        (v = w.map terminal ∧ M.eval w ∈ M.accept) := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · induction h with
-    | refl => exact ⟨[], .inl rfl⟩
-    | tail _ hstep ih =>
-      obtain ⟨w, rfl | ⟨rfl, -⟩⟩ := ih
-      · obtain ⟨r, hr, hq, rfl⟩ :=
-          ContextFreeGrammar.produces_map_terminal_append_singleton_iff.1 hstep
-        obtain ⟨a, ho⟩ | ⟨hacc, ho⟩ := mem_toContextFreeGrammar_rules.1 hr
-        · exact ⟨w ++ [a], .inl (by simp [ho, hq, eval_append_singleton])⟩
-        · exact ⟨w, .inr ⟨by simp [ho], hq ▸ hacc⟩⟩
-      · exact (ContextFreeGrammar.not_produces_map_terminal hstep).elim
-  · rintro ⟨w, rfl | ⟨rfl, hacc⟩⟩
-    · exact derives_toContextFreeGrammar w
-    · exact (derives_toContextFreeGrammar w).trans_produces
-        (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
-          ⟨⟨M.eval w, []⟩, mem_toContextFreeGrammar_rules.2 (.inr ⟨hacc, rfl⟩), rfl, by simp⟩)
+/-- From the nonterminal `q`, the right-linear grammar of `M` derives the words that `M` accepts
+from the state `q`. -/
+theorem languageFrom_toContextFreeGrammar (M : DFA α σ) (q : σ) :
+    M.toContextFreeGrammar.languageFrom [nonterminal q] = M.acceptsFrom q := by
+  refine le_antisymm ?_ fun w hw ↦ ?_
+  · refine M.toContextFreeGrammar.isLeast_languageFrom.2
+      (?_ : M.toContextFreeGrammar.equations M.acceptsFrom ≤ M.acceptsFrom) q
+    intro q w hw
+    obtain ⟨r, hr, rfl, hr'⟩ := ContextFreeGrammar.mem_equations.1 hw
+    obtain ⟨a, ho⟩ | ⟨hacc, ho⟩ := mem_toContextFreeGrammar_rules.1 hr
+    · obtain ⟨_, rfl, v, hv, rfl⟩ : w ∈ {[a]} * M.acceptsFrom (M.step r.input a) := by
+        simpa [ho] using hr'
+      exact hv
+    · obtain rfl : w = [] := by simpa [ho] using hr'
+      exact hacc
+  · induction w generalizing q with
+    | nil =>
+      exact ContextFreeGrammar.languageFrom_output_le (r := ⟨q, []⟩)
+        (mem_toContextFreeGrammar_rules.2 (.inr ⟨hw, rfl⟩))
+        (ContextFreeGrammar.mem_languageFrom_map_terminal _ [])
+    | cons a w ih =>
+      refine ContextFreeGrammar.languageFrom_output_le
+        (r := ⟨q, [terminal a, nonterminal (M.step q a)]⟩)
+        (mem_toContextFreeGrammar_rules.2 (.inl ⟨a, rfl⟩)) ?_
+      exact ContextFreeGrammar.append_mem_languageFrom
+        (ContextFreeGrammar.mem_languageFrom_map_terminal _ [a]) (ih _ hw)
 
 /-- The right-linear grammar of `M` generates the language that `M` accepts. -/
 @[simp] theorem language_toContextFreeGrammar (M : DFA α σ) :
-    M.toContextFreeGrammar.language = M.accepts := by
-  ext w
-  change M.toContextFreeGrammar.Derives [nonterminal M.start] _ ↔ _
-  rw [derives_toContextFreeGrammar_iff, mem_accepts]
-  refine ⟨fun ⟨u, h⟩ ↦ ?_, fun h ↦ ⟨w, .inr ⟨rfl, h⟩⟩⟩
-  rcases h with h | ⟨h, hacc⟩
-  · simpa using congr(nonterminal (M.eval u) ∈ $h)
-  · rwa [List.map_injective_iff.2 (fun _ _ ↦ terminal.inj) h]
+    M.toContextFreeGrammar.language = M.accepts :=
+  M.languageFrom_toContextFreeGrammar M.start
 
 end toContextFreeGrammar
 
