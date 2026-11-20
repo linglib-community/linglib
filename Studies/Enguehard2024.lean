@@ -77,7 +77,7 @@ namespace Enguehard2024
 
 open MeasureTheory ProbabilityTheory Exhaustification
 open scoped ENNReal NNReal
-open TieuEtAl2020 (weak strong singular exclusive mem_weak mem_strong singular_eq strong_eq
+open TieuEtAl2020 (weak strong singular mem_weak mem_strong singular_eq strong_eq
   exclusive_singular exclusive_plural exclusive_subset_weak)
 open English.Nouns (numberSystem)
 
@@ -89,20 +89,15 @@ theorem compl_weak : weakᶜ = {0} := by
   omega
 
 -- (4)
-theorem exhIE_weak_exclusive_plural :
-    exhIE {weak, exclusive .plural} weak = exclusive .singular := by
-  rw [exclusive_plural, exclusive_singular,
-    exhIE_pair_sdiff (φ := weak) (d := strong) ⟨1, by simp⟩]
+theorem exhIE_weak_strong : exhIE {weak, strong} weak = singular := by
+  rw [exhIE_pair_sdiff (φ := weak) (d := strong) ⟨1, by simp⟩]
   ext k
   simp only [mem_weak, mem_strong, singular_eq, Set.mem_sdiff, Set.mem_singleton_iff]
   omega
 
-theorem exhIE_weak_exclusive_singular :
-    exhIE {weak, exclusive .singular} weak = exclusive .plural := by
-  simpa using TieuEtAl2020.exhIE_weak
-
 -- (2), (3)
-theorem exhIE_compl (m : Number) : exhIE {weakᶜ, (exclusive m)ᶜ} weakᶜ = {0} := by
+theorem exhIE_compl (m : Number) :
+    exhIE {weakᶜ, (Number.exclusive numberSystem m)ᶜ} weakᶜ = {0} := by
   rw [TieuEtAl2020.exhIE_of_antitone compl_anti (exclusive_subset_weak m), compl_weak]
 
 /-! ### The rows of (1)–(3) -/
@@ -140,7 +135,8 @@ private theorem indefiniteRows_eq :
 
 -- (1), (3)
 theorem indefiniteRows_inference : ∀ r ∈ indefiniteRows,
-    r.inference = if r.polarity = .positive then exclusive r.number else {0} := by
+    r.inference =
+      if r.polarity = .positive then Number.exclusive numberSystem r.number else {0} := by
   rw [indefiniteRows_eq]
   simp [strong_eq]
 
@@ -151,10 +147,10 @@ open Classical in
 asserts that there is no witness and presupposes that a cardinality its number fits is
 conceivable, (7). -/
 noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → Trivalent :=
-  Trivalent.condEvent (fun _ ↦ (K ∩ exclusive n).Nonempty) (· ∈ weakᶜ)
+  Trivalent.condEvent (fun _ ↦ (K ∩ Number.exclusive numberSystem n).Nonempty) (· ∈ weakᶜ)
 
 theorem negated_ne_undefined_iff {K : Set ℕ} {n : Number} {k : ℕ} :
-    negated K n k ≠ .undefined ↔ (K ∩ exclusive n).Nonempty := by
+    negated K n k ≠ .undefined ↔ (K ∩ Number.exclusive numberSystem n).Nonempty := by
   simp [negated]
 
 theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ .undefined)
@@ -253,10 +249,10 @@ theorem continuationRows_match :
 /-- The referent of an indefinite of number `n` can be resumed when the witness set has `k`
 members, that is, when a third person pronoun bears `n` and, read maximally, its number fits `k`. -/
 def Usable (n : Number) (k : ℕ) : Prop :=
-  ∃ p ∈ personal, p.person = some .third ∧ p.number = some n ∧ k ∈ exclusive n
+  ∃ p ∈ personal, p.person = some .third ∧ p.number = some n ∧ k ∈ Number.exclusive numberSystem n
 
 theorem usable_iff {n : Number} (hn : n ∈ numberSystem) {k : ℕ} :
-    Usable n k ↔ k ∈ exclusive n := by
+    Usable n k ↔ k ∈ Number.exclusive numberSystem n := by
   refine ⟨fun ⟨_, _, _, _, hk⟩ ↦ hk, fun hk ↦ ?_⟩
   rcases (by simpa [numberSystem] using hn : n = .singular ∨ n = .plural) with rfl | rfl
   exacts [⟨it, by decide, rfl, rfl, hk⟩, ⟨they, by decide, rfl, rfl, hk⟩]
@@ -276,8 +272,9 @@ theorem useful_iff_negated_ne_undefined {n : Number} (hn : n ∈ numberSystem) (
   simp only [negated_ne_undefined_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
 
 -- (23)
-theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ exclusive .singular).Nonempty)
-    (hpl : (K ∩ exclusive .plural).Nonempty) {n : Number} (hn : n ∈ numberSystem) :
+theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ Number.exclusive numberSystem .singular).Nonempty)
+    (hpl : (K ∩ Number.exclusive numberSystem .plural).Nonempty) {n : Number}
+    (hn : n ∈ numberSystem) :
     ∃ k ∈ K, 1 ≤ k ∧ ¬ Usable n k := by
   rw [exclusive_singular] at hsg
   rw [exclusive_plural] at hpl
@@ -434,7 +431,8 @@ theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
 /-- The chance of ineffability of number `n` under the witness distribution `μ` is the probability,
 given a witness, that its cardinality does not fit `n`, so that the referent of a negated
 indefinite of number `n` cannot be resumed. -/
-noncomputable def ineffability (μ : Measure ℕ) (n : Number) : ℝ≥0∞ := μ[(exclusive n)ᶜ | weak]
+noncomputable def ineffability (μ : Measure ℕ) (n : Number) : ℝ≥0∞ :=
+  μ[(Number.exclusive numberSystem n)ᶜ | weak]
 
 theorem ineffability_singular (μ : Measure ℕ) : ineffability μ .singular = μ[strong | weak] := by
   rw [ineffability, cond_apply .of_discrete, cond_apply .of_discrete]
@@ -460,7 +458,8 @@ theorem negated_ne_undefined_iff_ineffability_ne_one (μ : Measure ℕ) [IsFinit
     ENNReal.sub_lt_self_iff ENNReal.one_ne_top, cond_apply .of_discrete,
     Set.inter_eq_right.2 (exclusive_subset_weak n)]
   simp only [pos_iff_ne_zero, ne_eq, mul_eq_zero, ENNReal.inv_eq_zero, measure_ne_top, false_or]
-  rw [← Set.biUnion_of_singleton (exclusive n), measure_biUnion_null_iff (Set.to_countable _)]
+  rw [← Set.biUnion_of_singleton (Number.exclusive numberSystem n),
+    measure_biUnion_null_iff (Set.to_countable _)]
   simp [negated_ne_undefined_iff, Set.Nonempty, and_comm]
 
 /-- A best guess under the witness distribution `μ` is an English number minimizing the chance of

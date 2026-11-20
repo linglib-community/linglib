@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Semantics.Plurality.Cardinality
+public import Linglib.Semantics.Plurality.Multiplicity
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Data.Examples.TieuEtAl2020
@@ -14,13 +14,13 @@ public import Linglib.Data.Examples.Readers
 A bare plural in a positive sentence conveys *more than one*, the multiplicity inference, and
 under negation, in the antecedent of a conditional and in a question it conveys no more than the
 singular does. With the number of giraffes Emily fed as the world, *Emily fed giraffes* has a weak
-reading `weak`, true of every cardinality a referent can have, and a strong reading `strong`, true
-of the cardinalities English gives the plural, `Number.ofCard`. Three accounts say which is heard.
+reading `weak`, the inclusive reading `Number.inclusive`, and a strong reading `strong`, the
+exclusive reading `Number.exclusive` of the English plural. Three accounts say which is heard.
 
 The ambiguity account of Farkas and de Swart gives the sentence both readings and selects, among
 those consistent with the context, the one that entails the other. The implicature account of
 Spector and of Zweig gives it the weak reading and exhaustifies it against the alternative
-`singular`, the cardinalities English gives the singular. The homogeneity account of Križ gives it
+`singular`, the exclusive reading of the English singular. The homogeneity account of Križ gives it
 the trivalent value `homogeneous`, true where both readings are true, false where both are false
 and undefined elsewhere.
 
@@ -71,38 +71,38 @@ open Exhaustification Trivalent Homogeneity
 
 /-! ### Readings of the plural -/
 
-/-- The exclusive reading of a number value holds of the cardinalities English gives that
-value. -/
-def exclusive (v : Number) : Set ℕ :=
-  (↑) '' (Number.ofCard English.Nouns.numberSystem ⁻¹' {v})
+/-- The weak reading is the inclusive one: one or more. -/
+def weak : Set ℕ := Number.inclusive
 
-/-- The weak reading holds of every cardinality a referent can have: one or more. -/
-def weak : Set ℕ := Set.range ((↑) : ℕ+ → ℕ)
+/-- The strong reading is the exclusive reading of the English plural, the multiplicity
+inference. -/
+def strong : Set ℕ := Number.exclusive English.Nouns.numberSystem .plural
 
-/-- The strong reading is the exclusive reading of the plural, the multiplicity inference. -/
-def strong : Set ℕ := exclusive .plural
-
-/-- The singular alternative is the exclusive reading of the singular. -/
-def singular : Set ℕ := exclusive .singular
+/-- The singular alternative is the exclusive reading of the English singular. -/
+def singular : Set ℕ := Number.exclusive English.Nouns.numberSystem .singular
 
 variable {n : ℕ}
 
-@[simp] theorem exclusive_plural : exclusive .plural = strong := rfl
+@[simp] theorem exclusive_plural : Number.exclusive English.Nouns.numberSystem .plural = strong :=
+  rfl
 
-@[simp] theorem exclusive_singular : exclusive .singular = singular := rfl
+@[simp] theorem exclusive_singular :
+    Number.exclusive English.Nouns.numberSystem .singular = singular :=
+  rfl
 
-theorem exclusive_subset_weak (v : Number) : exclusive v ⊆ weak := Set.image_subset_range _ _
+theorem exclusive_subset_weak (v : Number) :
+    Number.exclusive English.Nouns.numberSystem v ⊆ weak :=
+  Number.exclusive_subset_inclusive _ v
 
-@[simp] theorem mem_weak : n ∈ weak ↔ 1 ≤ n :=
-  ⟨fun ⟨p, hp⟩ ↦ hp ▸ p.pos, fun h ↦ ⟨⟨n, h⟩, rfl⟩⟩
+@[simp] theorem mem_weak : n ∈ weak ↔ 1 ≤ n := Number.mem_inclusive
 
 @[simp] theorem singular_eq : singular = {1} := by
   ext k
-  simp [singular, exclusive, Number.ofCard_eq_iff (v := .singular) (by decide), Number.exactCard,
-    English.Nouns.numberSystem, eq_comm]
+  simp [singular, Number.exclusive, Number.ofCard_eq_iff (v := .singular) (by decide),
+    Number.exactCard, English.Nouns.numberSystem, eq_comm]
 
 @[simp] theorem mem_strong : n ∈ strong ↔ 2 ≤ n := by
-  simp only [strong, exclusive, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
+  simp only [strong, Number.exclusive, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
     Number.ofCard_eq_plural_iff_forall, English.Nouns.numberSystem]
   simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq,
     Number.exactCard, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true, and_true]
@@ -130,10 +130,16 @@ when `m` is one, and the *not all* inference of *some of the `m` giraffes*. -/
 theorem exhIE_weak_singleton (m : ℕ) : exhIE {weak, {m}} weak = weak \ {m} :=
   exhIE_pair_sdiff (φ := weak) ⟨m + 1, mem_weak.2 (Nat.le_add_left 1 m), m.succ_ne_self⟩
 
+theorem exhIE_weak_singleton_one : exhIE {weak, {1}} weak = strong :=
+  (exhIE_weak_singleton 1).trans (singular_eq ▸ weak_sdiff_singular)
+
 -- (13)–(15)
 theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
-  rw [← weak_sdiff_singular, singular_eq]
-  exact exhIE_weak_singleton 1
+  have h := Number.exhIE_inclusive English.Nouns.numberSystem
+  have hs : {v | v ∈ English.Nouns.numberSystem ∧ v.IsDeterminate} = {Number.singular} := by
+    ext v
+    cases v <;> simp [English.Nouns.numberSystem, Number.IsDeterminate, Number.exactCard]
+  rwa [hs, Set.image_singleton] at h
 
 /-- In a downward-entailing environment an alternative stronger than the weak reading is entailed
 by it, so exhaustification adds nothing. -/
