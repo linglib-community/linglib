@@ -1,15 +1,8 @@
 module
 
-public import Mathlib.Order.PiLex
-public import Mathlib.Order.Cover
 public import Mathlib.Data.List.Lex
 public import Mathlib.Data.List.OfFn
-public import Mathlib.Data.Fin.Tuple.Basic
-public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Fin.Tuple
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # The lexicographic order on functions, by a decisive coordinate
