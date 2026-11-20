@@ -67,12 +67,12 @@ open Modality Event Mereology
 
 section Number
 
-variable {E : Type*} [SemilatticeSup E] {P : Set E} {e : E}
+variable {E : Type*} [SemilatticeSup E] [OrderBot E] {P : Set E} {e : E}
 
 /-- `PL` (12): the sums in `P` of pairwise non-overlapping proper parts that are also in `P`. -/
 def PL (P : Set E) : Set E :=
   {e | e ∈ P ∧ ∃ s : Finset E, ∃ hs : s.Nonempty, (∀ x ∈ s, x < e ∧ x ∈ P) ∧
-    (s : Set E).Pairwise (fun x y ↦ ¬ Overlap x y) ∧ s.sup' hs id = e}
+    (s : Set E).Pairwise (fun x y ↦ Disjoint x y) ∧ s.sup' hs id = e}
 
 /-- No singular event of a description is a plural one. -/
 theorem sg_disjoint_pl : Disjoint (atomize P) (PL P) := by
@@ -248,16 +248,11 @@ theorem pl_playSoccer : ({0, 2, 4, 6} : Finset ℕ) ∈ PL {e | playSoccer .play
     rcases hx with rfl | rfl
     · exact ⟨Finset.ssubset_iff_subset_ne.2 ⟨by decide, by decide⟩, ⟨0, by decide⟩, by decide⟩
     · exact ⟨Finset.ssubset_iff_subset_ne.2 ⟨by decide, by decide⟩, ⟨4, by decide⟩, by decide⟩
-  · have hdisj : ¬ Overlap ({0, 2} : Finset ℕ) {4, 6} := by
-      rintro ⟨z, hz, hz₁, hz₂⟩
-      refine hz fun y ↦ ?_
-      have : z ⊆ ({0, 2} : Finset ℕ) ∩ {4, 6} := Finset.subset_inter hz₁ hz₂
-      rw [show ({0, 2} : Finset ℕ) ∩ {4, 6} = ∅ by decide] at this
-      exact (Finset.subset_empty.1 this) ▸ Finset.empty_subset _
+  · have hdisj : Disjoint ({0, 2} : Finset ℕ) {4, 6} := by decide
     simp only [Finset.coe_insert, Finset.coe_singleton]
     refine Set.pairwise_insert.2 ⟨Set.pairwise_singleton _ _, fun y hy _ ↦ ?_⟩
     rw [Set.mem_singleton_iff.1 hy]
-    exact ⟨hdisj, fun h ↦ hdisj h.symm⟩
+    exact ⟨hdisj, hdisj.symm⟩
 
 theorem utterance_le_hull : utterance ≤ τ ({0, 2, 4, 6} : Finset ℕ) := by
   change utterance ≤ hull _

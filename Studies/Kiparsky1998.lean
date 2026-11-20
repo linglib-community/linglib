@@ -13,7 +13,7 @@ unboundedness of the verb phrase. A predicate is *unbounded* if it is divisive, 
 not diverse, the first two relative to atoms and suprema; a verb phrase is unbounded if its verb
 or its object is, and the object of an unbounded verb phrase is partitive. Diversity is
 [Krifka's quantization](##isDiverse_iff_qua), Krifka's mass reference [is
-unbounded](##isUnbounded_of_cum_of_div), and the [bounded quantities](##classification) are
+unbounded](##isUnbounded_of_cum_of_forall_le), and the [bounded quantities](##classification) are
 bounded for the reasons Kiparsky gives, bare plurals being unbounded [only on the inclusive
 reading](##not_isDivisive_exclusive). The case rule derives [the acceptability of the paper's
 paradigm](##paradigm_checks) from the boundedness of the objects' denotations, which [classing
@@ -46,11 +46,11 @@ open Mereology
 
 section Boundedness
 
-variable {α : Type*} [PartialOrder α] (P : α → Prop)
+variable {α : Type*} [PartialOrder α] [OrderBot α] (P : α → Prop)
 
 /-- A predicate is *divisive* if each of its members that is not an atom has a proper part in
 it ((35a), cited as (36a); p. 17). -/
-def IsDivisive : Prop := ∀ x, P x → ¬ Atom x → ∃ y, y < x ∧ P y
+def IsDivisive : Prop := ∀ x, P x → ¬ IsAtom x → ∃ y, y < x ∧ P y
 
 /-- A predicate is *cumulative* if each of its members that is not its supremum is a proper part
 of a member ((35b), cited as (36b)). -/
@@ -68,7 +68,7 @@ structure IsUnbounded : Prop where
 
 variable {P}
 
-theorem isDivisive_iff : IsDivisive P ↔ ∀ x, Minimal P x → Atom x := by
+theorem isDivisive_iff : IsDivisive P ↔ ∀ x, Minimal P x → IsAtom x := by
   refine ⟨fun h x hx ↦ by_contra fun ha ↦ ?_, fun h x hx ha ↦ ?_⟩
   · obtain ⟨y, hyx, hy⟩ := h x hx.1 ha
     exact hyx.not_ge (hx.2 hy hyx.le)
@@ -87,24 +87,23 @@ theorem isDiverse_iff_qua : IsDiverse P ↔ QUA {x | P x} :=
   ⟨fun h _ hx _ hy hne hle ↦ (h _ _ hx hy hne).1 (hle.lt_of_ne hne),
     fun h _ _ hx hy hne ↦ ⟨fun hlt ↦ h hx hy hne hlt.le, fun hlt ↦ h hy hx hne.symm hlt.le⟩⟩
 
-theorem IsDivisive.of_div (hd : DIV {x | P x}) (hb : ∀ x : α, ¬ IsBot x) : IsDivisive P :=
-  isDivisive_iff.2 fun _ hx ↦ ⟨hb _, fun _ _ hyx ↦ hx.2 (hd hyx hx.1) hyx⟩
+theorem IsDivisive.of_forall_le (h0 : ¬ P ⊥) (hd : ∀ ⦃x y⦄, P x → y ≤ x → y ≠ ⊥ → P y) :
+    IsDivisive P :=
+  isDivisive_iff.2 fun _ hx ↦ ⟨fun h ↦ h0 (h ▸ hx.1), fun _ hb ↦ by_contra fun hb0 ↦
+    hb.not_ge (hx.2 (hd hx.1 hb.le hb0) hb.le)⟩
 
-theorem IsCumulative.of_cum {α : Type*} [SemilatticeSup α] {P : α → Prop}
+theorem IsCumulative.of_cum {α : Type*} [SemilatticeSup α] [OrderBot α] {P : α → Prop}
     (hc : CUM {x | P x}) : IsCumulative P :=
   isCumulative_iff.2 fun _ hx ↦ ((cum_maximal_iff_isGreatest hc).1 hx).2
 
-/-- Krifka's mass reference, cumulative and divisive but not quantized, is unbounded over a
-carrier with no null individual. -/
-theorem isUnbounded_of_cum_of_div {α : Type*} [SemilatticeSup α] {P : α → Prop}
-    (hc : CUM {x | P x}) (hd : DIV {x | P x}) (hq : ¬ QUA {x | P x}) (hb : ∀ x : α, ¬ IsBot x) :
-    IsUnbounded P :=
-  ⟨.of_div hd hb, .of_cum hc, mt isDiverse_iff_qua.1 hq⟩
+/-- Krifka's mass reference, cumulative and divisive but not quantized, is unbounded: here a
+predicate of no null individual that holds of every part of a member that is not null. -/
+theorem isUnbounded_of_cum_of_forall_le {α : Type*} [SemilatticeSup α] [OrderBot α]
+    {P : α → Prop} (hc : CUM {x | P x}) (h0 : ¬ P ⊥)
+    (hd : ∀ ⦃x y⦄, P x → y ≤ x → y ≠ ⊥ → P y) (hq : ¬ QUA {x | P x}) : IsUnbounded P :=
+  ⟨.of_forall_le h0 hd, .of_cum hc, mt isDiverse_iff_qua.1 hq⟩
 
 variable [Fintype α] [DecidableEq α] [DecidableLE α] [DecidableLT α] [DecidablePred P]
-
-instance : DecidablePred (Atom (α := α)) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ ∀ ⦃_⦄, _ → _ → _))
 
 instance : Decidable (IsDivisive P) := inferInstanceAs (Decidable (∀ _, _ → _ → ∃ _, _ ∧ _))
 

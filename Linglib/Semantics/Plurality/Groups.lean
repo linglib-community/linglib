@@ -25,7 +25,7 @@ sends an atom to the sum of its members, recovering the sum a group was formed f
   `Plurality.GroupStructure.down_eq_self`: group formation is one-one, and membership
   specification is onto and fixes the individuals. Landman states these as conditions; they
   follow from the others.
-* `Plurality.infinite_of_injective_atom`: iterated group formation has no finite models.
+* `Plurality.infinite_of_injective_isMin`: iterated group formation has no finite models.
 
 ## Implementation notes
 
@@ -33,9 +33,13 @@ sends an atom to the sum of its members, recovering the sum a group was formed f
   the sums of individuals for `up` and the atoms for `down`. Sums are finite.
 * The definition is Landman's of 2000. His group formation of 1989 applies to every element,
   groups and mixed sums included, and forms a new group even from an individual, so it maps the
-  whole domain one-one into its atoms and the domain is infinite (`infinite_of_injective_atom`).
+  whole domain one-one into its atoms and the domain is infinite (`infinite_of_injective_isMin`).
   The 2000 definition forms groups from sums of individuals only and lets an individual form
   itself, so its domains can be finite (`finsetModel`).
+* Landman's domains have no null element: "we have no use for the empty set in the domain of
+  individuals" ([landman-1989], p. 581). The carrier of a `GroupStructure` here has one, `⊥`,
+  which is no atom and no sum of individuals, so that finite sets are a model; the lemma on
+  iterated group formation is stated for a domain without one.
 
 ## References
 
@@ -49,11 +53,11 @@ namespace Plurality
 
 open Mereology
 
-variable {E : Type*} [SemilatticeSup E]
+variable {E : Type*} [SemilatticeSup E] [OrderBot E]
 
 /-- Landman's domain with groups ([landman-2000], p. 100): individual atoms, group formation `up`
 and membership specification `down`. -/
-structure GroupStructure (E : Type*) [SemilatticeSup E] where
+structure GroupStructure (E : Type*) [SemilatticeSup E] [OrderBot E] where
   /-- The individual atoms. -/
   individuals : Set E
   /-- Group formation. -/
@@ -61,13 +65,13 @@ structure GroupStructure (E : Type*) [SemilatticeSup E] where
   /-- Membership specification. -/
   down : E → E
   /-- An individual is an atom. -/
-  atom_of_mem ⦃a : E⦄ : a ∈ individuals → Atom a
+  atom_of_mem ⦃a : E⦄ : a ∈ individuals → IsAtom a
   /-- A sum of two or more individuals forms a group, an atom that is not an individual. -/
-  mapsTo_up : Set.MapsTo up (supClosure individuals \ individuals) ({a | Atom a} \ individuals)
+  mapsTo_up : Set.MapsTo up (supClosure individuals \ individuals) ({a | IsAtom a} \ individuals)
   /-- An individual forms itself. -/
   eqOn_up : Set.EqOn up id individuals
   /-- The members of an atom are a sum of individuals. -/
-  mapsTo_down : Set.MapsTo down {a | Atom a} (supClosure individuals)
+  mapsTo_down : Set.MapsTo down {a | IsAtom a} (supClosure individuals)
   /-- The members of a group are the sum it is formed from. -/
   leftInvOn : Set.LeftInvOn down up (supClosure individuals)
 
@@ -79,7 +83,7 @@ variable (G : GroupStructure E) {a x : E}
 def sums : Set E := supClosure G.individuals
 
 /-- The groups are the atoms that are not individuals. -/
-def groups : Set E := {a | Atom a} \ G.individuals
+def groups : Set E := {a | IsAtom a} \ G.individuals
 
 theorem subset_sums : G.individuals ⊆ G.sums := subset_supClosure
 
@@ -96,7 +100,7 @@ theorem down_up (hx : x ∈ G.sums) : G.down (G.up x) = x := G.leftInvOn hx
 theorem up_mem_groups (hx : x ∈ G.sums) (hx' : x ∉ G.individuals) : G.up x ∈ G.groups :=
   G.mapsTo_up ⟨hx, hx'⟩
 
-theorem atom_up (hx : x ∈ G.sums) : Atom (G.up x) := by
+theorem atom_up (hx : x ∈ G.sums) : IsAtom (G.up x) := by
   by_cases hx' : x ∈ G.individuals
   · rw [G.up_eq_self hx']
     exact G.atom_of_mem hx'
@@ -104,7 +108,7 @@ theorem atom_up (hx : x ∈ G.sums) : Atom (G.up x) := by
 
 theorem injOn_up : Set.InjOn G.up G.sums := G.leftInvOn.injOn
 
-theorem surjOn_down : Set.SurjOn G.down {a | Atom a} G.sums :=
+theorem surjOn_down : Set.SurjOn G.down {a | IsAtom a} G.sums :=
   G.leftInvOn.surjOn fun _ ↦ G.atom_up
 
 theorem down_eq_self (ha : a ∈ G.individuals) : G.down a = a := by
@@ -157,7 +161,7 @@ def finsetModel : GroupStructure (Finset (ι ⊕ {s : Finset ι // s.Nontrivial}
   down x := (x.toLeft ∪ x.toRight.biUnion (↑)).map .inl
   atom_of_mem := by
     rintro _ ⟨i, rfl⟩
-    exact atom_iff_isAtom.2 (Finset.isAtom_singleton _)
+    exact (Finset.isAtom_singleton _)
   mapsTo_up x hx := by
     obtain ⟨hne, hr⟩ := mem_supClosure_iff.1 hx.1
     have hN : x.toLeft.Nontrivial := by
@@ -166,14 +170,14 @@ def finsetModel : GroupStructure (Finset (ι ⊕ {s : Finset ι // s.Nontrivial}
       rintro ⟨i, hi⟩
       exact hx.2 ⟨i, by rw [← map_inl_toLeft hr, hi, Finset.map_singleton]; rfl⟩
     simp only [hN, ↓reduceDIte]
-    refine ⟨atom_iff_isAtom.2 (Finset.isAtom_singleton _), ?_⟩
+    refine ⟨(Finset.isAtom_singleton _), ?_⟩
     rintro ⟨i, hi⟩
     simp at hi
   eqOn_up := by
     rintro _ ⟨i, rfl⟩
     simp [toLeft_singleton_inl]
   mapsTo_down a ha := by
-    obtain ⟨z, rfl⟩ := Finset.isAtom_iff.1 (atom_iff_isAtom.1 ha)
+    obtain ⟨z, rfl⟩ := Finset.isAtom_iff.1 (ha)
     refine mem_supClosure_iff.2 ?_
     rcases z with i | g
     · simp [toLeft_singleton_inl, toRight_map_inl]
@@ -191,18 +195,18 @@ example : Fintype.card (Fin 3 ⊕ {s : Finset (Fin 3) // s.Nontrivial}) = 7 := b
 
 end GroupStructure
 
-/-- A domain mapped one-one into its own atoms, as by iterated group formation, has no finite
-models ([landman-1989], p. 580). -/
-theorem infinite_of_injective_atom [Nonempty E] {f : E → E} (hf : Function.Injective f)
-    (h : ∀ x, Atom (f x)) : Infinite E := by
+/-- A domain with two distinct elements and no null one that is mapped one-one into its minimal
+elements is infinite, so iterated group formation has no finite models ([landman-1989],
+p. 580). -/
+theorem infinite_of_injective_isMin {α : Type*} [SemilatticeSup α] [Nontrivial α] {f : α → α}
+    (hf : Function.Injective f) (h : ∀ x, IsMin (f x)) : Infinite α := by
   by_contra hfin
-  have : Finite E := not_infinite_iff_finite.1 hfin
-  have hall (x : E) : Atom x :=
+  have : Finite α := not_infinite_iff_finite.1 hfin
+  have hall (x : α) : IsMin x :=
     let ⟨y, hy⟩ := Finite.injective_iff_surjective.1 hf x
     hy ▸ h y
-  obtain ⟨x⟩ := ‹Nonempty E›
-  refine (hall x).not_isBot fun y ↦ (?_ : x = y).le
-  exact ((hall _).eq le_sup_left (hall x).not_isBot).trans
-    ((hall _).eq le_sup_right (hall y).not_isBot).symm
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  exact hxy (le_antisymm (le_sup_left.trans (hall (x ⊔ y) le_sup_right))
+    (le_sup_right.trans (hall (x ⊔ y) le_sup_left)))
 
 end Plurality

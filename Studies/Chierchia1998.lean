@@ -28,7 +28,7 @@ covert type shifts it blocks, [none in an argument-only language](##argOnly_bloc
 with the parameter which bare nominals it admits as arguments, in English
 [a bare singular only where ∩ is defined for it](##english_licensesBare_singular_iff). ∩
 [undoes ∪](##Kind.down_up), ∪ [undoes ∩ on a property closed downward](##Kind.up_down), and ∩ is
-[undefined for a singular property](##Kind.down_comp_notMem_of_atom). Carlson's state
+[undefined for a singular property](##Kind.down_comp_notMem_of_isMin). Carlson's state
 predication on a kind
 [is derived kind predication over its instances](##carlson_mem_image_iff), so a state passes
 from a kind to any kind whose instances include its own,
@@ -64,7 +64,7 @@ hypothesis, that ∩P is defined, read as ∩P having a value wherever P has ins
 closed downward (`Kind.up_down`); over the paper's complete semilattice a property closed under
 sum meets it whatever the size of its extension (`Kind.up_down_of_sumClosed`). In (17c), AT_P,
 "the set that generates P under PL", is read as the atoms beneath members of P
-(`Kind.up_down_of_forall_atom`): read as the singular property itself, (17c) fails at a situation
+(`Kind.up_down_of_forall_isMin`): read as the singular property itself, (17c) fails at a situation
 with exactly one instance, where the plural has no member. Carlson's instance relation is
 part-of in the model `lawn`, so a kind is an instance of itself.
 
@@ -143,7 +143,7 @@ theorem exists_isBareCount_mandarin : ∃ n ∈ Language.mandarin.nouns, n.IsBar
 at each situation, where that concept is a kind, (16), and is undefined otherwise; ∪ takes a kind
 to the parts of its value, (15). These are `Kind.down` and `Kind.up`. A kind cannot have a singular
 instance in every situation where it has one (p. 351), so ∩ is undefined for a singular property,
-which is true of atoms only (`Kind.down_comp_notMem_of_atom`). -/
+which is true of atoms only (`Kind.down_comp_notMem_of_isMin`). -/
 
 section KindFormation
 
@@ -152,28 +152,23 @@ open Mereology
 /-- Were kinds to exclude only concepts instantiated by one individual in every situation, a
 singular property with no instance in some situation could have a kind. -/
 example :
-    ∃ (P : Bool → Set Bool) (K : Set (Bool → Part Bool)),
-      (∀ k ∈ K, ¬ ∀ s, ∃ d, d ∈ k s ∧ Atom d) ∧ (∀ s, ∀ x ∈ P s, Atom x) ∧
+    ∃ (P : Bool → Set Unit) (K : Set (Bool → Part Unit)),
+      (∀ k ∈ K, ¬ ∀ s, ∃ d, d ∈ k s ∧ IsMin d) ∧ (∀ s, ∀ x ∈ P s, IsMin x) ∧
         Kind.down ∘ P ∈ K := by
-  refine ⟨fun s ↦ if s then {true} else ∅, {fun s ↦ Kind.down (if s then {true} else ∅)}, ?_, ?_,
-    Set.mem_singleton _⟩
-  · rintro k rfl h
-    obtain ⟨d, hd, -⟩ := h false
-    simp [Kind.down, iota_isGreatest_empty] at hd
-  · rintro (_ | _) x hx
-    · exact absurd hx (by simp)
-    · obtain rfl : x = true := hx
-      show ¬ IsBot true ∧ ∀ ⦃y⦄, ¬ IsBot y → y ≤ true → true ≤ y
-      decide
+  refine ⟨fun s ↦ if s then {()} else ∅, {fun s ↦ Kind.down (if s then {()} else ∅)}, ?_,
+    fun _ _ _ _ _ ↦ le_rfl, Set.mem_singleton _⟩
+  rintro k rfl h
+  obtain ⟨d, hd, -⟩ := h false
+  simp [Kind.down, iota_isGreatest_empty] at hd
 
 /-- Read with AT_P the singular property itself, (17c) fails at a situation with exactly one
 instance: in Link's model over two atoms, the plural of a property true of one atom alone has no
 member, so ∩ has no value there and ∪∩ yields nothing, while the plural and its singular together
 hold of the atom. -/
 example {P : Set (Individual Bool)}
-    (hP : ∀ x, x ∈ P ↔ x ≠ .atom true ∧ ∀ y ≤ x, Atom y → y = .atom true) :
+    (hP : ∀ x, x ∈ P ↔ x ≠ .atom true ∧ ∀ y ≤ x, IsMin y → y = .atom true) :
     Kind.up (Kind.down P) ≠ P ∪ {.atom true} := by
-  have hf : Atom (Individual.atom false) := Individual.atom_atom false
+  have hf : IsMin (Individual.atom false) := Individual.isMin_atom false
   have h0 : ∀ x, x ∉ P := fun x hx ↦ by
     obtain ⟨hne, hat⟩ := (hP x).1 hx
     by_cases hx0 : false ∈ x.1
@@ -306,10 +301,10 @@ theorem english_licensesBare_of_ne_singular {num : Number} (hnum : num ≠ .sing
 open Mereology in
 /-- English admits no bare singular count noun, (24b), since ∩ is undefined for it. -/
 theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
-    {K : Set (S → Part E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
-    (hP : ∀ s, ∀ x ∈ P s, Atom x) :
+    {K : Set (S → Part E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, IsMin d)
+    (hP : ∀ s, ∀ x ∈ P s, IsMin x) :
     ¬ (nominalMapping .english).LicensesBare (determiners .english) .singular (Kind.down ∘ P ∈ K) :=
-  (english_licensesBare_singular_iff _).not.2 (Kind.down_comp_notMem_of_atom hK hP)
+  (english_licensesBare_singular_iff _).not.2 (Kind.down_comp_notMem_of_isMin hK hP)
 
 /-! ### Bare plurals in generic and episodic sentences, §4.1 -/
 

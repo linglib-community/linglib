@@ -19,7 +19,8 @@ closure under binary sums (`Mereology.sumClosure_eq_supClosure`).
 
 ## Implementation notes
 
-The second clause of a sum ranges over non-null parts, as `Overlap` relates non-null parts. On a
+The second clause of a sum ranges over non-null parts, as `SolidOverlap` relates non-null parts.
+On a
 carrier without a null individual this is Tarski's definition; on a carrier with one, his
 definition holds of nothing, since the null individual overlaps nothing, and the present one
 holds of least upper bounds in a Boolean algebra.
@@ -35,9 +36,46 @@ namespace Mereology
 
 variable {α : Type*}
 
+/-! ### Overlap relative to a possible null individual
+
+The axioms of classical mereology are stated for carriers with a null individual and without
+one, so their overlap is relative to mathlib's `IsBot`; on an `OrderBot` carrier it is
+`¬ Disjoint`. -/
+
+section SolidOverlap
+
+variable [PartialOrder α] {x y : α}
+
+/-- Two elements overlap solidly if they share a part that is not null: the complement of the
+solid disjointness of [cotnoir-varzi-2021], which is overlap where there is no null element and
+`¬ Disjoint` where there is one. -/
+def SolidOverlap (x y : α) : Prop := ∃ z, ¬ IsBot z ∧ z ≤ x ∧ z ≤ y
+
+theorem SolidOverlap.refl (h : ¬ IsBot x) : SolidOverlap x x := ⟨x, h, le_rfl, le_rfl⟩
+
+theorem SolidOverlap.symm (h : SolidOverlap x y) : SolidOverlap y x :=
+  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzy, hzx⟩
+
+theorem SolidOverlap.not_isBot_left (h : SolidOverlap x y) : ¬ IsBot x :=
+  let ⟨_, hz, hzx, _⟩ := h; fun hx ↦ hz (hx.mono hzx)
+
+theorem SolidOverlap.not_isBot_right (h : SolidOverlap x y) : ¬ IsBot y := h.symm.not_isBot_left
+
+theorem SolidOverlap.of_le (hx : ¬ IsBot x) (h : x ≤ y) : SolidOverlap x y := ⟨x, hx, le_rfl, h⟩
+
+theorem SolidOverlap.mono {x' y' : α} (hx : x ≤ x') (hy : y ≤ y') (h : SolidOverlap x y) :
+    SolidOverlap x' y' :=
+  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzx.trans hx, hzy.trans hy⟩
+
+theorem overlap_iff_not_disjoint [OrderBot α] : SolidOverlap x y ↔ ¬ Disjoint x y :=
+  (exists_congr fun _ ↦ and_congr_left' (not_congr isBot_iff_eq_bot)).trans
+    not_disjoint_iff_exists.symm
+
+end SolidOverlap
+
 /-- Without a null individual, two elements overlap iff they share a part. -/
 theorem overlap_iff_exists_le [PartialOrder α] [NoBotOrder α] {x y : α} :
-    Overlap x y ↔ ∃ z, z ≤ x ∧ z ≤ y :=
+    SolidOverlap x y ↔ ∃ z, z ≤ x ∧ z ≤ y :=
   ⟨fun ⟨z, _, hzx, hzy⟩ ↦ ⟨z, hzx, hzy⟩, fun ⟨z, hzx, hzy⟩ ↦ ⟨z, not_isBot z, hzx, hzy⟩⟩
 
 /-! ### Sums -/
@@ -49,14 +87,14 @@ variable [PartialOrder α] {P Q : Set α} {s t x y : α}
 /-- `t` is a sum of the region `P` ([champollion-krifka-2016]) if it lies above each member and
 each of its non-null parts overlaps one of them. -/
 def IsSum (P : Set α) (t : α) : Prop :=
-  (∀ x ∈ P, x ≤ t) ∧ ∀ y ≤ t, ¬ IsBot y → ∃ x ∈ P, Overlap y x
+  (∀ x ∈ P, x ≤ t) ∧ ∀ y ≤ t, ¬ IsBot y → ∃ x ∈ P, SolidOverlap y x
 
 /-- Every individual is the sum of itself. -/
 theorem isSum_singleton (x : α) : IsSum {x} x :=
   ⟨fun _ h ↦ (Set.mem_singleton_iff.1 h).le, fun _ hy hy0 ↦ ⟨x, rfl, .of_le hy0 hy⟩⟩
 
 /-- A sum overlaps exactly what its members overlap. -/
-theorem IsSum.overlap_iff (h : IsSum P t) (w : α) : Overlap w t ↔ ∃ x ∈ P, Overlap w x :=
+theorem IsSum.overlap_iff (h : IsSum P t) (w : α) : SolidOverlap w t ↔ ∃ x ∈ P, SolidOverlap w x :=
   ⟨fun ⟨p, hp, hpw, hpt⟩ ↦ let ⟨x, hx, ho⟩ := h.2 p hpt hp; ⟨x, hx, ho.mono hpw le_rfl⟩,
     fun ⟨x, hx, ho⟩ ↦ ho.mono le_rfl (h.1 x hx)⟩
 
@@ -76,11 +114,11 @@ end Sum
 /-- A part structure is strongly supplemented if whatever is not part of `y` has a non-null part
 that does not overlap `y`. -/
 class StronglySupplemented (α : Type*) [PartialOrder α] : Prop where
-  exists_not_overlap ⦃x y : α⦄ : ¬ x ≤ y → ∃ z ≤ x, ¬ IsBot z ∧ ¬ Overlap z y
+  exists_not_overlap ⦃x y : α⦄ : ¬ x ≤ y → ∃ z ≤ x, ¬ IsBot z ∧ ¬ SolidOverlap z y
 
 /-- A part structure has products if two overlapping individuals have a greatest common part. -/
 class HasProducts (α : Type*) [PartialOrder α] : Prop where
-  exists_isGLB ⦃x y : α⦄ : Overlap x y → ∃ p, IsGLB {x, y} p
+  exists_isGLB ⦃x y : α⦄ : SolidOverlap x y → ∃ p, IsGLB {x, y} p
 
 /-- In a part structure with binary sums, the join of two individuals is their sum: each of its
 non-null parts overlaps one of the two. Boolean algebras and classical mereologies satisfy this;
@@ -95,7 +133,7 @@ section Principles
 variable [PartialOrder α] {P : Set α} {s t x y : α}
 
 /-- The product of two overlapping individuals is non-null. -/
-theorem Overlap.exists_isGLB [HasProducts α] (h : Overlap x y) :
+theorem SolidOverlap.exists_isGLB [HasProducts α] (h : SolidOverlap x y) :
     ∃ p, ¬ IsBot p ∧ IsGLB {x, y} p :=
   let ⟨p, hp⟩ := HasProducts.exists_isGLB h
   let ⟨_, hq, hqx, hqy⟩ := h
@@ -105,25 +143,25 @@ variable [StronglySupplemented α]
 
 /-- In a strongly supplemented part structure, `x` is part of whatever all its non-null parts
 overlap. -/
-theorem le_of_forall_overlap (h : ∀ z ≤ x, ¬ IsBot z → Overlap z y) : x ≤ y := by
+theorem le_of_forall_overlap (h : ∀ z ≤ x, ¬ IsBot z → SolidOverlap z y) : x ≤ y := by
   by_contra hxy
   obtain ⟨z, hzx, hz, hzy⟩ := StronglySupplemented.exists_not_overlap hxy
   exact hzy (h z hzx hz)
 
 /-- A proper part of `y` leaves a non-null part of `y` that it does not overlap, weak
 supplementation. -/
-theorem exists_not_overlap_of_lt (h : x < y) : ∃ z ≤ y, ¬ IsBot z ∧ ¬ Overlap z x :=
+theorem exists_not_overlap_of_lt (h : x < y) : ∃ z ≤ y, ¬ IsBot z ∧ ¬ SolidOverlap z x :=
   StronglySupplemented.exists_not_overlap h.not_ge
 
 /-- Two individuals that overlap the same things are identical. -/
-theorem eq_of_forall_overlap_iff (h : ∀ w, Overlap w x ↔ Overlap w y) : x = y :=
+theorem eq_of_forall_overlap_iff (h : ∀ w, SolidOverlap w x ↔ SolidOverlap w y) : x = y :=
   le_antisymm (le_of_forall_overlap fun z hz hz0 ↦ (h z).1 (.of_le hz0 hz))
     (le_of_forall_overlap fun z hz hz0 ↦ (h z).2 (.of_le hz0 hz))
 
 /-- In a strongly supplemented part structure, a sum is what overlaps exactly what the members
 overlap. -/
 theorem isSum_iff_forall_overlap :
-    IsSum P t ↔ ∀ w, Overlap w t ↔ ∃ x ∈ P, Overlap w x :=
+    IsSum P t ↔ ∀ w, SolidOverlap w t ↔ ∃ x ∈ P, SolidOverlap w x :=
   ⟨IsSum.overlap_iff, fun h ↦ ⟨fun x hx ↦ le_of_forall_overlap fun z hz hz0 ↦
     (h z).2 ⟨x, hx, .of_le hz0 hz⟩, fun y hy hy0 ↦ (h y).1 (.of_le hy0 hy)⟩⟩
 

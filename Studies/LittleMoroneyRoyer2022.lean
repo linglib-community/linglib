@@ -8,7 +8,7 @@ public import Studies.Borer2005
 public import Studies.IoninMatushansky2006
 public import Linglib.Fragments.Mayan.Chol.Classifiers
 public import Linglib.Fragments.Shan.Classifiers
-public import Linglib.Semantics.Mereology.Measure
+public import Linglib.Semantics.Mereology.Extensive
 
 /-!
 # Little, Moroney and Royer (2022): Classifiers Can Be for Numerals or Nouns
@@ -79,7 +79,7 @@ theorem dogs_iff (x : Finset α) : dogs dog x ↔ x.Nonempty ∧ ↑x ⊆ dog :=
 
 /-- Atomizing a count noun yields its atoms ((13)), the singletons of its individuals. -/
 theorem atomize_dogs : atomize {x | dogs dog x} = ({·} : α → Finset α) '' dog :=
-  atomize_mem_supClosure fun _ ⟨a, _, h⟩ ↦ h ▸ atom_iff_isAtom.2 (Finset.isAtom_singleton a)
+  atomize_mem_supClosure fun _ ⟨a, _, h⟩ ↦ h ▸ (Finset.isAtom_singleton a)
 
 theorem dogs_and_card_eq_iff {n : ℕ} (hn : n ≠ 0) (x : Finset α) :
     dogs dog x ∧ x.card = n ↔ x.card = n ∧ ↑x ⊆ dog := by

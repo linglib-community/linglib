@@ -40,7 +40,7 @@ variable {E : Type*} [CompleteLattice E]
 def whDomain (n : Option Number) : Set E := {x ∈ Number.dom n | x ≠ ⊥}
 
 theorem mem_whDomain_singular {x : E} : x ∈ whDomain (some .singular) ↔ IsAtom x := by
-  rw [whDomain, mem_sep_iff, Number.mem_dom_singular, Mereology.atom_iff_isAtom]
+  rw [whDomain, mem_sep_iff, Number.mem_dom_singular]
   exact ⟨And.left, fun h ↦ ⟨h, h.ne_bot⟩⟩
 
 theorem whDomain_of_ne_singular {n : Option Number} (h : n ≠ some .singular) :
@@ -58,10 +58,10 @@ theorem mem_whDomain_of_isAtom (n : Option Number) {a : E} (ha : IsAtom a) : a �
     exact ha.ne_bot
 
 /-- The domain of a strong plural *wh* phrase: the individuals neither null nor atomic. -/
-def whStrongPlural : Set E := {x | x ≠ ⊥ ∧ ¬ Mereology.Atom x}
+def whStrongPlural : Set E := {x | x ≠ ⊥ ∧ ¬ IsAtom x}
 
 theorem mem_whStrongPlural {x : E} : x ∈ whStrongPlural ↔ x ≠ ⊥ ∧ ¬ IsAtom x :=
-  and_congr_right fun _ ↦ not_congr Mereology.atom_iff_isAtom
+  Iff.rfl
 
 theorem isUpperSet_whStrongPlural : IsUpperSet (whStrongPlural : Set E) := fun _ _ hxy hx ↦ by
   obtain ⟨hne, hna⟩ := mem_whStrongPlural.1 hx
@@ -122,9 +122,7 @@ theorem whFelicitous_of_ne_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b) (h
     have hab' : a ⊔ b ∈ whDomain (some m) := by
       rw [hne hm]
       exact fun h0 ↦ ha.ne_bot (le_bot_iff.1 (h0 ▸ le_sup_left))
-    exact Mereology.not_atom_sup_of_ne (Mereology.atom_iff_isAtom.2 ha)
-      (Mereology.atom_iff_isAtom.2 hb) hab
-      (Mereology.atom_iff_isAtom.2 (mem_whDomain_singular.1 (h hab')))
+    exact Mereology.not_isAtom_sup_of_ne ha hb hab (mem_whDomain_singular.1 (h hab'))
   rw [whFelicitous_eq_strengthen_whDomain,
     strengthen_eq_sdiff (alts := Number.alts) (ψ := some .singular) (mem_insert _ _) hss, hne hm]
   · exact Set.ext fun _ ↦ and_congr_right fun _ ↦ not_congr mem_whDomain_singular

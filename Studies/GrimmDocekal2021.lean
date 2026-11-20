@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology.Topology
+public import Linglib.Semantics.Mereology.Connection
 public import Linglib.Semantics.Plurality.Groups
 public import Linglib.Data.Examples.GrimmDocekal2021
 public import Linglib.Data.Examples.Readers
@@ -197,10 +197,10 @@ The aggregate numeral counts clusters, section 5.2. Connection is reflexive and 
 entities of a property any two of which are transitively connected through such entities. Inside a
 connected component clusters are cumulative (`Mereology.cum_isClusterIn`), the cumulativity of *-í*
 nouns, *listí* and *listí* making *listí*; a maximal cluster absorbs every cluster it overlaps (63),
-so two maximal clusters do not overlap (`Mereology.disjointPred_isMaxCluster`), the paper's remark
+so two maximal clusters do not overlap (`Mereology.pairwise_not_overlap_isMaxCluster`), the paper's remark
 after (63). -/
 
-variable {α : Type*} [SemilatticeSup α] (C : α → α → Prop)
+variable {α : Type*} [SemilatticeSup α] [OrderBot α] (C : α → α → Prop)
 
 /-- The group numeral (55) forms a group atom from a sum of `n` members of `P`. -/
 def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop) (x : α) : Prop :=
@@ -208,7 +208,7 @@ def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop)
 
 -- (17), (54)
 theorem iceSem_atom {G : Plurality.GroupStructure α} {n : ℕ} {P : α → ℕ → Prop} {x : α}
-    (h : iceSem G n P x) : Mereology.Atom x :=
+    (h : iceSem G n P x) : IsAtom x :=
   let ⟨_, hy, hx, _⟩ := h
   hx ▸ G.atom_up hy
 

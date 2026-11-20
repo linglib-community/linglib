@@ -159,7 +159,7 @@ theorem CrossedPair.symm {e₁ e₂ : E} (h : CrossedPair V ag th d₁ d₂ e₁
   obtain ⟨h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩ := h
   exact ⟨h₂, h₁, ha₂, ht₂, ha₁, ht₁⟩
 
-variable [SemilatticeSup E] {GE : GroupStructure E}
+variable [SemilatticeSup E] [OrderBot E] {GE : GroupStructure E}
 
 /-- The accumulation reading of a syntactic reciprocal (46b), on which the event is the plain sum of
 the two directional sub-events. -/
@@ -194,11 +194,11 @@ def SubEventReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) : Prop
   ∃ e₁ e₂, e₁ < e ∧ e₂ < e ∧ e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
 theorem SubEventReading.not_atom :
-    SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e := by
+    SubEventReading V ag th d₁ d₂ e → ¬ IsAtom e := by
   rintro ⟨e₁, e₂, h₁, h₂, h₃, -⟩ ha
-  by_cases hn : IsBot e₁
-  · exact h₂.ne (by rw [h₃]; exact (sup_eq_right.mpr (hn _)).symm)
-  · exact h₁.ne (ha.eq h₁.le hn)
+  by_cases hn : e₁ = ⊥
+  · exact h₂.ne (by rw [h₃, hn, bot_sup_eq])
+  · exact h₁.ne ((ha.le_iff_eq hn).1 h₁.le)
 
 -- (46b)
 theorem subEventReading_of_crossedPair {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁)
@@ -207,7 +207,7 @@ theorem subEventReading_of_crossedPair {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁)
   ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, rfl, hc⟩
 
 theorem GroupEventReading.atom (hV : V ⊆ GE.sums) (h : GroupEventReading GE V ag th d₁ d₂ e) :
-    Mereology.Atom e := by
+    IsAtom e := by
   obtain ⟨_, _, rfl, hc⟩ := h
   exact GE.atom_up (GE.supClosed_sums (hV hc.1) (hV hc.2.1))
 
@@ -217,7 +217,7 @@ theorem GroupEventReading.underlyingReading (hV : V ⊆ GE.sums)
   obtain ⟨e₁, e₂, rfl, hc⟩ := h
   exact ⟨e₁, e₂, GE.down_up (GE.supClosed_sums (hV hc.1) (hV hc.2.1)), hc⟩
 
-variable [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E} {agTh : E → D}
+variable [SemilatticeSup D] [OrderBot D] {GD : GroupStructure D} {Vsym : Set E} {agTh : E → D}
 
 /-- A symmetric verb over the transitive `V`, the SYM marking of reciprocal bundling (36) as
 footnote 17 spells it out, is a set `Vsym` of singular events whose complex role `agTh` assigns
@@ -226,7 +226,7 @@ event are two `V` events with crossed Agent and Theme. -/
 structure IsSymmetricVerb (GD : GroupStructure D) (GE : GroupStructure E) (V : Set E)
     (ag th : E → D) (Vsym : Set E) (agTh : E → D) : Prop where
   /-- Symmetric verbs denote singular events. -/
-  atom : ∀ e ∈ Vsym, Mereology.Atom e
+  atom : ∀ e ∈ Vsym, IsAtom e
   /-- The complex role assigns the group of two distinct individuals. -/
   exists_pair : ∀ e ∈ Vsym, ∃ d₁ d₂, d₁ ∈ GD.individuals ∧ d₂ ∈ GD.individuals ∧ d₁ ≠ d₂ ∧
     agTh e = GD.up (d₁ ⊔ d₂)
@@ -557,10 +557,10 @@ def dan : Individual := {.inl .dan}
 /-- Rina, a singular individual. -/
 def rina : Individual := {.inl .rina}
 
-theorem atom_dan : Mereology.Atom dan := Mereology.atom_iff_isAtom.2 (Finset.isAtom_singleton _)
+theorem atom_dan : IsAtom dan := (Finset.isAtom_singleton _)
 
-theorem atom_rina : Mereology.Atom rina :=
-  Mereology.atom_iff_isAtom.2 (Finset.isAtom_singleton _)
+theorem atom_rina : IsAtom rina :=
+  (Finset.isAtom_singleton _)
 
 theorem dan_ne_rina : dan ≠ rina := by decide
 
@@ -703,7 +703,7 @@ while English *kiss* and *hug* resist it lexically (footnote 32). -/
 
 section Dyadic
 
-variable {D E : Type*} [SemilatticeSup E] {GE : GroupStructure E} {V Vsym : Set E}
+variable {D E : Type*} [SemilatticeSup E] [OrderBot E] {GE : GroupStructure E} {V Vsym : Set E}
   {ag th agTh obl : E → D} {d₁ d₂ : D} {e : E}
 
 /-- A dyadic symmetric verb over the transitive `V` (footnote 43) is a set `Vsym` of singular
@@ -713,7 +713,7 @@ Agent and Theme are the subject and the comitative, crossed. -/
 structure IsDyadicSymmetricVerb (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (Vsym : Set E) (agTh obl : E → D) : Prop where
   /-- Dyadic symmetric verbs denote singular events. -/
-  atom : ∀ e ∈ Vsym, Mereology.Atom e
+  atom : ∀ e ∈ Vsym, IsAtom e
   /-- The meaning postulate, (101) entailing (102). -/
   underlyingReading : ∀ e ∈ Vsym, UnderlyingReading GE V ag th (agTh e) (obl e) e
 

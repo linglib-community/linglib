@@ -65,7 +65,7 @@ open Mereology Aspect
 
 section Events
 
-variable {E S L Y : Type*} [PartialOrder E]
+variable {E S L Y : Type*} [PartialOrder E] [OrderBot E]
 
 /-- The pluractional head (66): the events of `f` with more than `θ` atomic parts. -/
 def pluract (θ : ℕ∞) (f : E → Prop) (e : E) : Prop := f e ∧ θ < (atomsBelow e).encard
@@ -84,10 +84,10 @@ def IsQuasiHomogeneous (θ : ℕ∞) (P : E → Prop) : Prop :=
 variable {θ : ℕ∞} {swarm : E → Prop} {cause : S → E → Prop} {coincident : L → Y → S → Prop}
   {landmark : L → E → Prop} {g : L} {y : Y}
 
-theorem not_nonBase_of_atom (hθ : 1 ≤ θ) {e : E} (he : Atom e) :
+theorem not_nonBase_of_atom (hθ : 1 ≤ θ) {e : E} (he : IsAtom e) :
     ¬ nonBase θ swarm cause coincident landmark g y e := by
   rintro ⟨⟨-, h⟩, -⟩
-  rw [atomsBelow_of_atom he, Set.encard_singleton] at h
+  rw [atomsBelow_of_isAtom he, Set.encard_singleton] at h
   exact (hθ.trans_lt h).false
 
 theorem isQuasiHomogeneous_nonBase [Preorder S] (hs : IsQuasiHomogeneous θ swarm)
@@ -117,9 +117,9 @@ theorem not_isTelic_nonBase [Preorder S] {precedes : E → E → Prop} [IsStrict
 end Events
 
 theorem exists_nonBase_atom :
-    ∃ y e : Finset ℕ, Atom y ∧ nonBase 1 (fun _ ↦ True) (fun (_ : Unit) _ ↦ True)
+    ∃ y e : Finset ℕ, IsAtom y ∧ nonBase 1 (fun _ ↦ True) (fun (_ : Unit) _ ↦ True)
       (fun (_ : Unit) _ _ ↦ True) (fun _ _ ↦ True) () y e := by
-  refine ⟨{0}, {0, 1}, atom_iff_isAtom.2 (Finset.isAtom_singleton 0), ⟨trivial, ?_⟩,
+  refine ⟨{0}, {0, 1}, (Finset.isAtom_singleton 0), ⟨trivial, ?_⟩,
     ⟨(), trivial, trivial⟩, trivial⟩
   rw [atomsBelow_finset, (Finset.singleton_injective.injOn).encard_image]
   simp [Set.encard_pair]

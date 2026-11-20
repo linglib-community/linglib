@@ -64,8 +64,8 @@ section Covers
 
 variable {α W : Type*}
 
-private theorem not_isBot_iff {z : Finset α} : ¬ IsBot z ↔ z.Nonempty :=
-  isBot_iff_eq_bot.not.trans Finset.nonempty_iff_ne_empty.symm
+private theorem ne_bot_iff_nonempty {z : Finset α} : z ≠ ⊥ ↔ z.Nonempty :=
+  Finset.nonempty_iff_ne_empty.symm
 
 variable [DecidableEq α]
 
@@ -87,7 +87,7 @@ theorem sUnion_readings_coverStar (hC : ∀ z ∈ C, z.Nonempty) :
     obtain ⟨a, ⟨haC, hPa⟩, haz⟩ := exists_le_of_mem_supClosure hz
     exact ⟨a, haC, haz.trans hzx, hPa⟩
   · rintro ⟨z, hzC, hzx, hP⟩
-    exact ⟨z, hzx, not_isBot_iff.2 (hC z hzC), subset_supClosure ⟨hzC, hP⟩⟩
+    exact ⟨z, hzx, ne_bot_iff_nonempty.2 (hC z hzC), subset_supClosure ⟨hzC, hP⟩⟩
 
 /-- A minimal cover containing the atoms of `x`, (24b-i), consists of the atoms of `x`. -/
 theorem eq_atoms_of_minimal (hx : x.Nonempty)
@@ -107,7 +107,7 @@ theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     ⋂₀ readings (coverStar C P) x = {w | x ∈ supClosure {y | P y w}} ∧
       ⋃₀ readings (coverStar C P) x = {w | ∃ z ⊆ x, z.Nonempty ∧ P z w} := by
   refine ⟨?_, ?_⟩
-  · rw [sInter_readings (not_isBot_iff.2 hx)]
+  · rw [sInter_readings (ne_bot_iff_nonempty.2 hx)]
     ext w
     simp only [coverStar, Set.mem_ofPred_eq]
     refine ⟨fun h ↦ supClosure_mono Set.inter_subset_right h, fun h ↦ ?_⟩
@@ -131,7 +131,7 @@ theorem atomic_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∀ a ∈ x, P {a} w} ∧
       ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∃ a ∈ x, P {a} w} := by
   refine ⟨?_, ?_⟩
-  · rw [sInter_readings (not_isBot_iff.2 hx)]
+  · rw [sInter_readings (ne_bot_iff_nonempty.2 hx)]
     ext w
     simp only [coverStar, Set.mem_ofPred_eq]
     rw [mem_supClosure_iff_of_subset_range_singleton
@@ -148,7 +148,7 @@ theorem singleton_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar {x} P) x = {w | P x w} ∧
       ⋃₀ readings (coverStar {x} P) x = {w | P x w} := by
   refine ⟨?_, ?_⟩
-  · rw [sInter_readings (not_isBot_iff.2 hx)]
+  · rw [sInter_readings (ne_bot_iff_nonempty.2 hx)]
     ext w
     simp only [coverStar, Set.mem_ofPred_eq]
     refine ⟨fun h ↦ ((Set.ext_iff.1 (SupClosed.supClosure_eq ?_) x).1 h).2,
@@ -198,7 +198,7 @@ theorem distributive_half_false :
       ⋃₀ readings (fun z ↦ {w | ∀ a ∈ z, lifted {a} w}) (Finset.univ : Finset Kid) := by
   rw [sUnion_readings]
   rintro ⟨z, -, hz, hP⟩
-  obtain ⟨a, ha⟩ := not_isBot_iff.1 hz
+  obtain ⟨a, ha⟩ := ne_bot_iff_nonempty.1 hz
   exact absurd (hP a ha) (by decide +revert)
 
 variable {C : Set (Finset Kid)} (hC : ∀ z ∈ C, z.Nonempty)

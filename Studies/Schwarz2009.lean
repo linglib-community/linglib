@@ -166,13 +166,13 @@ section Shift
 
 open Mereology
 
-variable {S : Type} [PartialOrder S]
+variable {S : Type} [PartialOrder S] [OrderBot S]
 
 /-- The type-shifter Π of (260) makes a property of a relational noun `R`. An individual `x` has it
 at `s` when `x` stands in `R` to a whole `y`, evaluated at `y` itself, that overlaps `s`;
 individuals are situations, so the whole is one. -/
 def shift (R : S → S → S → Prop) : (ℕ → S) → S → Set S :=
-  fun _ s ↦ {x | ∃ y, R y x y ∧ Overlap s y}
+  fun _ s ↦ {x | ∃ y, R y x y ∧ ¬ Disjoint s y}
 
 /-- A relational noun is local when it holds at a situation only of parts of the situation, as
 *Bürgermeister* evaluated at a town holds of a mayor who is part of the town. -/
@@ -182,12 +182,12 @@ variable {R : S → S → S → Prop} {g : ℕ → S} {s x y : S}
 
 /-- Π of a local relational noun picks out only parts of a whole that overlaps the situation. -/
 theorem exists_le_of_shift (hR : IsLocal R) (h : x ∈ shift R g s) :
-    ∃ y, x ≤ y ∧ R y x y ∧ Overlap s y :=
+    ∃ y, x ≤ y ∧ R y x y ∧ ¬ Disjoint s y :=
   let ⟨y, hy, ho⟩ := h
   ⟨y, hR y x y hy, hy, ho⟩
 
-theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shift R g s :=
-  ⟨y, hy, (Overlap.of_le hb hys).symm⟩
+theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : y ≠ ⊥) : x ∈ shift R g s :=
+  ⟨y, hy, fun h ↦ not_disjoint_of_le hb hys h.symm⟩
 
 /-- The weak article over Π of a local relational noun whose referents are not part of their
 relata, as authors are not part of their books, is undefined. -/
@@ -252,7 +252,7 @@ theorem larger_situation (g : ℕ → Sit) :
     {.mayor} ∈ Definite.unique (shift mayorOf) g {.station} ∧
       ¬ ({.mayor} : Sit) ≤ {.station} :=
   ⟨Definite.mem_unique.2
-    ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.Overlap.of_le (by simp) (by decide)⟩,
+    ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.not_disjoint_of_le (by simp) (by decide)⟩,
       fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩, by decide⟩
 
 -- (62), (275)

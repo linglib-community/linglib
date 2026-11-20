@@ -19,7 +19,7 @@ self-connected individuals transitively connected among themselves
 
 ## Implementation notes
 
-Connection is reflexive on non-null individuals only, as `Overlap` relates non-null parts: were
+Connection is reflexive on non-null individuals only, as `SolidOverlap` relates non-null parts: were
 a null individual connected to itself, monotonicity would connect everything. For the same
 reason the two individuals that self-connection quantifies over are non-null; a null one would
 make every self-connected individual connected to it and so to everything. On a carrier without
@@ -73,13 +73,13 @@ theorem IsConnection.mono₂ (hC : IsConnection C) (hx : x ≤ x') (hy : y ≤ y
 theorem IsConnection.of_le (hC : IsConnection C) (hx : ¬ IsBot x) (h : x ≤ y) : C x y :=
   hC.mono x h (hC.refl hx)
 
-/-- Overlap entails connection ([grimm-2012] (8)). -/
-theorem IsConnection.of_overlap (hC : IsConnection C) (h : Overlap x y) : C x y :=
+/-- SolidOverlap entails connection ([grimm-2012] (8)). -/
+theorem IsConnection.of_overlap (hC : IsConnection C) (h : SolidOverlap x y) : C x y :=
   let ⟨_, hz, hzx, hzy⟩ := h
   hC.mono₂ hzx hzy (hC.refl hz)
 
-/-- Overlap is a connection relation, by `IsConnection.of_overlap` the least one. -/
-theorem isConnection_overlap : IsConnection (Overlap : α → α → Prop) where
+/-- SolidOverlap is a connection relation, by `IsConnection.of_overlap` the least one. -/
+theorem isConnection_overlap : IsConnection (SolidOverlap : α → α → Prop) where
   refl _ h := .refl h
   symm _ _ h := h.symm
   mono _ _ _ h ho := ho.mono le_rfl h
@@ -110,13 +110,16 @@ variable (C) in
 /-- An individual is self-connected ([grimm-2012] D24) if any two non-null individuals that
 between them overlap exactly what it overlaps are connected. -/
 def IsSelfConnected (x : α) : Prop :=
-  ∀ y z, ¬ IsBot y → ¬ IsBot z → (∀ w, Overlap w x ↔ Overlap w y ∨ Overlap w z) → C y z
+  ∀ y z, ¬ IsBot y → ¬ IsBot z →
+    (∀ w, SolidOverlap w x ↔ SolidOverlap w y ∨ SolidOverlap w z) → C y z
 
 /-- An atom is self-connected, as two individuals that cover it both contain it. -/
-theorem Atom.isSelfConnected (hC : IsConnection C) (hx : Atom x) : IsSelfConnected C x := by
+theorem _root_.IsAtom.isSelfConnected [OrderBot α] (hC : IsConnection C) (hx : IsAtom x) :
+    IsSelfConnected C x := by
   intro y z hy hz h
-  have key {u : α} : Overlap u x → x ≤ u := fun ⟨p, hp, hpu, hpx⟩ ↦ hx.eq hpx hp ▸ hpu
-  exact hC.of_overlap ⟨x, hx.not_isBot, key ((h y).2 (.inl (.refl hy))),
+  have key {u : α} : SolidOverlap u x → x ≤ u := fun ⟨p, hp, hpu, hpx⟩ ↦
+    (hx.le_iff_eq (mt isBot_iff_eq_bot.2 hp)).1 hpx ▸ hpu
+  exact hC.of_overlap ⟨x, mt isBot_iff_eq_bot.1 hx.1, key ((h y).2 (.inl (.refl hy))),
     key ((h z).2 (.inr (.refl hz)))⟩
 
 section Sum
@@ -133,13 +136,13 @@ theorem IsSelfConnected.of_isLUB (hC : IsConnection C) {Z : Set α}
   by_contra hCuv
   have hdich : ∀ z ∈ Z, z ≤ u ∨ z ≤ v := fun z hz ↦ by
     by_contra! h
-    have cover (p : α) (hp : p ≤ z) (hp0 : ¬ IsBot p) : Overlap p u ∨ Overlap p v :=
+    have cover (p : α) (hp : p ≤ z) (hp0 : ¬ IsBot p) : SolidOverlap p u ∨ SolidOverlap p v :=
       (H p).1 (.of_le hp0 (hp.trans (hx.1 hz)))
-    have hzu : Overlap z u := by
+    have hzu : SolidOverlap z u := by
       by_contra hn
       exact h.2 (le_of_forall_overlap fun p hp hp0 ↦
         (cover p hp hp0).resolve_left fun ho ↦ hn (ho.mono hp le_rfl))
-    have hzv : Overlap z v := by
+    have hzv : SolidOverlap z v := by
       by_contra hn
       exact h.1 (le_of_forall_overlap fun p hp hp0 ↦
         (cover p hp hp0).resolve_right fun ho ↦ hn (ho.mono hp le_rfl))
@@ -154,7 +157,7 @@ theorem IsSelfConnected.of_isLUB (hC : IsConnection C) {Z : Set α}
         ha.2 (by rintro _ (rfl | rfl); exacts [hqp.trans hpz, hqu])⟩
     · exact .inr ⟨q, hq0, hqp.trans hpw,
         hb.2 (by rintro _ (rfl | rfl); exacts [hqp.trans hpz, hqv])⟩
-  have hov (h : x ≤ u ∨ x ≤ v) : Overlap u v := by
+  have hov (h : x ≤ u ∨ x ≤ v) : SolidOverlap u v := by
     rcases h with h | h
     · obtain ⟨p, hp0, hpv, hpx⟩ := (H v).2 (.inr (.refl hv))
       exact ⟨p, hp0, hpx.trans h, hpv⟩
@@ -238,7 +241,7 @@ def IsCluster (x : α) : Prop := ∃ c, IsClusterIn C P c x
 
 /-- A maximal cluster ([grimm-docekal-2021]) contains every cluster that overlaps it. -/
 def IsMaxCluster (x : α) : Prop :=
-  IsCluster C P x ∧ ∀ y, IsCluster C P y → Overlap y x → y ≤ x
+  IsCluster C P x ∧ ∀ y, IsCluster C P y → SolidOverlap y x → y ≤ x
 
 variable {C P}
 
@@ -256,7 +259,8 @@ theorem isCluster_iff {x : α} :
       fun z hz ↦ ⟨hP z hz, SimpleGraph.ConnectedComponent.sound (hR z hz z₀ hz₀)⟩, hx⟩
 
 /-- Maximal clusters do not overlap, since each would contain the other. -/
-theorem disjointPred_isMaxCluster : DisjointPred {x | IsMaxCluster C P x} :=
+theorem pairwise_not_overlap_isMaxCluster :
+    {x | IsMaxCluster C P x}.Pairwise fun x y ↦ ¬ SolidOverlap x y :=
   fun x hx y hy hne hov ↦ hne (le_antisymm (hy.2 x hx.1 hov) (hx.2 y hy.1 hov.symm))
 
 end Cluster

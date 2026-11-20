@@ -26,7 +26,7 @@ values. The containment of `[+atomic]` in `[+minimal]` follows from the semantic
 
 namespace Number
 
-open Mereology (Atom atomize atomize_subset)
+open Mereology (atomize atomize_subset)
 
 namespace Bundle
 
@@ -34,7 +34,7 @@ namespace Bundle
 def step {X : Type*} (b : Bundle) (v : Feature × Bool) (f : X → X) (x : X) : X :=
   if v ∈ b then f x else x
 
-variable {D : Type*} [PartialOrder D]
+variable {D : Type*} [PartialOrder D] [OrderBot D]
 
 /-- The region a bundle's `[±atomic]` and `[±minimal]` values select from `P`, the former first. -/
 def exact (b : Bundle) (P : Set D) : Set D :=
@@ -43,7 +43,7 @@ def exact (b : Bundle) (P : Set D) : Set D :=
     b.step (.atomic, true) (Feature.restrict .atomic true) <|
     b.step (.atomic, false) (Feature.restrict .atomic false) P
 
-omit [PartialOrder D] in
+omit [PartialOrder D] [OrderBot D] in
 private theorem step_subset (b : Bundle) (v : Feature × Bool) {f : Set D → Set D}
     (hf : ∀ P, f P ⊆ P) (P : Set D) : b.step v f P ⊆ P := by
   unfold step; split_ifs; exacts [hf P, subset_rfl]
@@ -54,7 +54,7 @@ theorem exact_le (b : Bundle) (P : Set D) {x : D} (h : x ∈ b.exact P) : x ∈ 
 
 /-- The `[+atomic]` region of a bundle carrying that value holds only atoms. -/
 theorem atom_of_exact {b : Bundle} (hb : (.atomic, true) ∈ b) {P : Set D} {x : D}
-    (h : x ∈ b.exact P) : Atom x := by
+    (h : x ∈ b.exact P) : IsAtom x := by
   have h₁ := step_subset b _ (Feature.restrict_le _ _) _ <| step_subset b _ atomize_subset _ h
   simp only [step, hb, ↓reduceIte] at h₁
   exact h₁.2

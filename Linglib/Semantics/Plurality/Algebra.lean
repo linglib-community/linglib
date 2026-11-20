@@ -21,13 +21,12 @@ individuals, `*` reduces to distribution over members.
 * `Mereology.D P x`: Link's 1987 distributive operator.
 * `Mereology.Materialization E M`: a `SupHom E M`, with `Mereology.mPart` and
   `Mereology.mEquiv` the preorder and equivalence it induces on `E`.
-* `Mereology.Individual α`: Link's model, the nonempty sets of atoms under union.
 
 ## Main results
 
-* `Mereology.mem_supClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
-* `Mereology.IsDistr.of_mem_supClosure_of_atom_le`: Link's distributive inference, where joins
-  are sums.
+* `Mereology.mem_supClosure_iff_of_isAtom`: on an atom, `*P` and `P` agree.
+* `Mereology.IsDistr.of_mem_supClosure_of_isAtom_le`: Link's distributive inference, in a
+  distributive lattice.
 * `Mereology.IsDistr.properPlural_sup`, `Mereology.cum_properPlural`: the sum
   of two distinct atoms of a distributive predicate is a proper plural, and proper plurals are
   closed under sum.
@@ -41,13 +40,15 @@ individuals, `*` reduces to distribution over members.
 
 ## Implementation notes
 
-Link's model is a complete join semilattice with atoms and without a bottom; only `SemilatticeSup E`
-and `Mereology.Atom` are used here. The plural closure `*P` is mathlib's
-`supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
-is a stronger assumption, which enters only through `Mereology.SupIsSum`. Schwarzschild's set-based
-ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
-own model of nonempty sets of atoms (`Individual`) is a classical mereology. Where the carrier has
-a bottom, `*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
+Link's model is a complete atomic Boolean algebra `E` with a null element, and his predicates
+are interpreted in `E \ {0}`, the null element being "a dummy object to which no predicate
+applies". Here the carrier likewise has a null individual `⊥`, and only `SemilatticeSup E`,
+`OrderBot E` and `IsAtom` are used; Link's distributive inference uses distributivity besides.
+The plural closure `*P` is mathlib's `supClosure` of the extension of `P`, which excludes `⊥`
+unless `P` holds of it, and `×P` adds it whatever `P` is. Link's materialization is a
+homomorphism from `E \ {0}`; here it is a `SupHom` on all of `E`. Schwarzschild's set-based
+ontology, where an individual is its singleton and sum is union, is the `Finset α` instance,
+and the full powerset `Set α` is a model of Link's `E`.
 
 ## References
 
@@ -67,18 +68,18 @@ a bottom, `*P` still excludes it unless `P` holds of it, and `×P` adds it whate
 
 namespace Mereology
 
-variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {s : Set E} {x y : E}
+variable {E : Type*} [SemilatticeSup E] [OrderBot E] {P Q : E → Prop} {s : Set E} {x y : E}
 
 /-! ### Predicate operators -/
 
 /-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12), Harbour's
 `[−atomic]` of the closure. -/
 def properPlural (s : Set E) : Set E :=
-  supClosure s \ {x | Atom x}
+  supClosure s \ {x | IsAtom x}
 
 /-- A distributive predicate holds of atoms only (D.19). -/
 def IsDistr (P : E → Prop) : Prop :=
-  ∀ x, P x → Atom x
+  ∀ x, P x → IsAtom x
 
 /-- An invariant predicate does not distinguish individuals that `h` identifies (D.21). -/
 def Inv {M : Type*} (h : E → M) (P : E → Prop) : Prop :=
@@ -86,10 +87,10 @@ def Inv {M : Type*} (h : E → M) (P : E → Prop) : Prop :=
 
 /-- The distributive operator `D P` holds of `x` when every atomic part of `x` satisfies `P`. -/
 def D (P : E → Prop) (x : E) : Prop :=
-  ∀ y ≤ x, Atom y → P y
+  ∀ y ≤ x, IsAtom y → P y
 
-theorem D_of_atom (hx : Atom x) (hP : P x) : D P x :=
-  fun _ hle hy ↦ (hx.eq hle hy.not_isBot) ▸ hP
+theorem D_of_isAtom (hx : IsAtom x) (hP : P x) : D P x :=
+  fun _ hle hy ↦ (hx.le_iff_eq hy.1).1 hle ▸ hP
 
 theorem D_mono (h : ∀ x, P x → Q x) (hD : D P x) : D Q x :=
   fun y hle hy ↦ h y (hD y hle hy)
@@ -102,7 +103,7 @@ variable {M : Type*} [SemilatticeSup M]
 
 /-- A materialization (D.22) is a sum-preserving map from individuals to their portions of
 matter. -/
-abbrev Materialization (E M : Type*) [SemilatticeSup E] [SemilatticeSup M] :=
+abbrev Materialization (E M : Type*) [SemilatticeSup E] [OrderBot E] [SemilatticeSup M] :=
   SupHom E M
 
 /-- `x` is a material part of `y` (D.23) when the matter of `x` is part of the matter of `y`. -/
@@ -131,8 +132,8 @@ end Constitution
 /-! ### Link's theorems -/
 
 /-- On an atom, `*P` and `P` agree (T.8). -/
-theorem mem_supClosure_iff_of_atom (hx : Atom x) : x ∈ supClosure s ↔ x ∈ s :=
-  ⟨(mem_of_mem_supClosure_of_atom · hx), fun h ↦ subset_supClosure h⟩
+theorem mem_supClosure_iff_of_isAtom (hx : IsAtom x) : x ∈ supClosure s ↔ x ∈ s :=
+  ⟨(mem_of_mem_supClosure_of_isAtom · hx), fun h ↦ subset_supClosure h⟩
 
 theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : x ∉ properPlural {x | P x} :=
   fun h ↦ h.2 (hP x hx)
@@ -141,23 +142,24 @@ theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : x ∉ properPlura
 theorem IsDistr.properPlural_sup (hP : IsDistr P) (hx : P x) (hy : P y) (hne : x ≠ y) :
     x ⊔ y ∈ properPlural {x | P x} :=
   ⟨supClosed_supClosure (subset_supClosure hx) (subset_supClosure hy),
-    not_atom_sup_of_ne (hP x hx) (hP y hy) hne⟩
+    not_isAtom_sup_of_ne (hP x hx) (hP y hy) hne⟩
 
 /-- Proper plurals are closed under sum. -/
 theorem cum_properPlural : CUM (properPlural s) := by
   rintro x ⟨hx, hx'⟩ y ⟨hy, hy'⟩
   refine ⟨supClosed_supClosure hx hy, fun h ↦ ?_⟩
-  by_cases hx0 : IsBot x
-  · rw [sup_eq_right.mpr (hx0 _)] at h
+  by_cases hx0 : x = ⊥
+  · rw [hx0, bot_sup_eq] at h
     exact hy' h
-  · exact hx' ((h.eq le_sup_left hx0) ▸ h)
+  · exact hx' ((h.le_iff_eq hx0).1 le_sup_left ▸ h)
 
-/-- Where joins are sums, every atomic part of an element of `*P` satisfies a distributive
+/-- In a distributive lattice, every atomic part of an element of `*P` satisfies a distributive
 `P`. -/
-theorem IsDistr.of_mem_supClosure_of_atom_le [SupIsSum E] (hP : IsDistr P)
-    (h : x ∈ supClosure {x | P x}) (hy : Atom y) (hle : y ≤ x) : P y := by
+theorem IsDistr.of_mem_supClosure_of_isAtom_le {L : Type*} [DistribLattice L] [OrderBot L]
+    {P : L → Prop} {x y : L} (hP : IsDistr P) (h : x ∈ supClosure {x | P x}) (hy : IsAtom y)
+    (hle : y ≤ x) : P y := by
   induction h using supClosure_induction with
-  | mem a hp => exact ((hP _ hp).eq hle hy.not_isBot) ▸ hp
+  | mem a hp => exact ((hP _ hp).le_iff_eq hy.1).1 hle ▸ hp
   | sup a b _ _ iha ihb => exact (hy.le_sup_iff.1 hle).elim iha ihb
 
 /-! ### Sets of individuals
@@ -235,13 +237,13 @@ theorem card_image_supClosure {S : Set α} (h : S.Finite) :
 
 end Finset
 
-/-! ### Link's model
+/-! ### Link's individuals
 
-An individual is a nonempty set of atoms, an atom its singleton, and sum is union. The
-individuals are the non-null elements of the Boolean algebra of sets, so they form a classical
-mereology, atomic and with no null individual once there are two atoms. -/
+The individuals of Link's model over a set of atoms are the elements of its powerset other than
+the null one: the nonempty sets of atoms, with union as sum and the singletons as the minimal
+elements. They form a join semilattice with no least element once there are two atoms. -/
 
-section Link
+section Individual
 
 variable {α : Type*}
 
@@ -253,26 +255,11 @@ instance : SemilatticeSup (Individual α) := Subtype.semilatticeSup fun _ _ hx _
 /-- The atomic individual `Individual.atom a` is the singleton of `a`. -/
 def Individual.atom (a : α) : Individual α := ⟨{a}, Set.singleton_nonempty a⟩
 
-instance : IsClassicalMereology (Individual α) :=
-  .subtype fun s ↦ by rw [isBot_iff_eq_bot, Set.bot_eq_empty, Set.nonempty_iff_ne_empty]
+/-- The singletons are the minimal individuals. -/
+theorem Individual.isMin_atom (a : α) : IsMin (Individual.atom a) := fun y hy b hb ↦ by
+  obtain ⟨c, hc⟩ := y.2
+  rwa [Set.mem_singleton_iff.1 hb, ← Set.mem_singleton_iff.1 (hy hc)]
 
-instance [Nontrivial α] : NoBotOrder (Individual α) where
-  exists_not_ge x :=
-    let ⟨a, ha⟩ := x.2
-    let ⟨b, hb⟩ := exists_ne a
-    ⟨.atom b, fun h ↦ hb.symm (h ha)⟩
-
-/-- With two atoms or more, the singletons are atoms. -/
-theorem Individual.atom_atom [Nontrivial α] (a : α) : Atom (Individual.atom a) :=
-  atom_iff_isMin.2 fun y hy b hb ↦ by
-    obtain ⟨c, hc⟩ := y.2
-    rwa [Set.mem_singleton_iff.1 hb, ← Set.mem_singleton_iff.1 (hy hc)]
-
-instance [Nontrivial α] : Atomic (Individual α) where
-  exists_atom_le x _ :=
-    let ⟨a, ha⟩ := x.2
-    ⟨.atom a, Individual.atom_atom a, Set.singleton_subset_iff.2 ha⟩
-
-end Link
+end Individual
 
 end Mereology

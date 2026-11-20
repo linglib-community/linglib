@@ -160,9 +160,9 @@ theorem one_mem_compl_exhIE_weak : 1 ∈ (exhIE {weak, singular} weak)ᶜ := by
 /-- The presuppositional variant of the approach yields the same reading: under a count of
 individuals that gives exactly the atoms one, the individuals of which the plural survives
 competition with the singular are those the strong reading counts. -/
-theorem strengthen_plural_eq_preimage_strong {E : Type*} [PartialOrder E] (c : E → ℕ)
-    (hc : ∀ x, Mereology.Atom x ↔ c x = 1) (hpos : ∀ x, 1 ≤ c x) {y : E}
-    (hy : ¬ Mereology.Atom y) :
+theorem strengthen_plural_eq_preimage_strong {E : Type*} [PartialOrder E] [OrderBot E]
+    (c : E → ℕ) (hc : ∀ x, IsAtom x ↔ c x = 1) (hpos : ∀ x, 1 ≤ c x) {y : E}
+    (hy : ¬ IsAtom y) :
     Presupposition.strengthen Number.alts Number.dom (some .plural) = c ⁻¹' strong := by
   rw [Number.strengthen_plural hy]
   ext x

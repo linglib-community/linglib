@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.English.MeasurePhrases
-public import Linglib.Semantics.Mereology.Topology
+public import Linglib.Semantics.Mereology.Connection
 public import Linglib.Data.Examples.Scontras2014
 public import Linglib.Data.Examples.Readers
 
@@ -28,7 +28,7 @@ measure term by lexical reinterpretation as the class of containers of a unit qu
 Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
 parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
 self-connection ((74), `Mereology.IsSelfConnected`), and a partition returns such units ((75),
-(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred`) does not stop the water
+(76), `IsMSCPartition`); no-overlap alone ((66), pairwise non-overlap) does not stop the water
 in a glass from counting as two. Either way the members of a partition form an antichain, so
 each of them measures one relative atom under the relative-atom measure of (68)
 (`pAtomMeasure_eq_one`), which is what lets cardinal numerals count them.
@@ -46,7 +46,7 @@ each of them measures one relative atom under the relative-atom measure of (68)
   the measure takes one value on the predicate, `Set.Subsingleton` of its image.
 * Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
   reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
-  `IsConnection.of_overlap`). Overlap (71) carries the library's non-null clause, with which it
+  `IsConnection.of_overlap`). SolidOverlap (71) carries the library's non-null clause, with which it
   agrees on carriers without a null individual (`Mereology.overlap_iff_exists_le`); on a carrier
   with one, the clause-free version holds of any two individuals and makes self-connection
   trivial. The maximality of (75) is mathlib's `Maximal`.
@@ -154,9 +154,9 @@ theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k
   (setOfPred_maximal_antichain _).subset h
 
 -- (66)
-theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
-    (h : DisjointPred {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
-  fun x hx _ hy hxy hle ↦ h hx hy hxy (.of_le (not_isBot x) hle)
+theorem isAntichain_of_pairwise_not_overlap {Q : E → Prop}
+    (h : {x | Q x}.Pairwise fun x y ↦ ¬ Overlap x y) : IsAntichain (· ≤ ·) {x | Q x} :=
+  fun _ hx _ hy hxy hle ↦ h hx hy hxy (.of_le hle)
 
 theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x} = {y} := by

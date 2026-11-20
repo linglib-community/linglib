@@ -71,14 +71,15 @@ section Region
 
 variable {α : Type*}
 
-theorem atom_iff_eq_one {k : ℕ} : Atom k ↔ k = 1 := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · have h0 : k ≠ 0 := fun h0 ↦ h.1 (h0 ▸ isBot_bot)
-    have := h.2 (y := 1) (by simp [isBot_iff_eq_bot]) (by omega)
+theorem isAtom_iff_eq_one {k : ℕ} : IsAtom k ↔ k = 1 := by
+  rw [isAtom_iff_le_of_ge]
+  simp only [Nat.bot_eq_zero]
+  constructor
+  · rintro ⟨h0, h⟩
+    have := h 1 (by simp) (by omega)
     omega
   · rintro rfl
-    exact ⟨by simp [isBot_iff_eq_bot], fun y hy _ ↦ by
-      have : y ≠ 0 := fun h0 ↦ hy (h0 ▸ isBot_bot); omega⟩
+    exact ⟨by simp, fun b hb _ ↦ by omega⟩
 
 /-- A region of the person lattice over `B` consists of the sums containing `B` whose number of
 atoms lies in `S`, a union of strata (12). -/
@@ -96,8 +97,8 @@ theorem atomize_region (hS : ∀ k ∈ S, B.card ≤ k) :
     exact Finset.card_le_card (h.2 ⟨hBt, hj⟩ hts)
   · exact (Finset.eq_of_subset_of_card_le hts (h.2.2 ht.2 (Finset.card_le_card hts))).ge
 
-theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
-  rw [atom_finset_iff_card_eq_one, atom_iff_eq_one]
+theorem atom_iff_card {s : Finset α} : IsAtom s ↔ IsAtom s.card := by
+  rw [isAtom_finset_iff_card_eq_one, isAtom_iff_eq_one]
 
 variable [DecidableEq α]
 
@@ -160,7 +161,7 @@ theorem atomize_restrict_iterate (n : ℕ) (s : Finset α) :
     s ∈ atomize ((Feature.restrict .minimal false)^[n]
       (Feature.restrict .atomic false {t | t.Nonempty})) ↔ s.card = n + 2 := by
   have hna : Feature.restrict .atomic false (Set.Ici 1) = Set.Ici 2 := by
-    ext j; simp only [Feature.mem_restrict_atomic_false, atom_iff_eq_one, Set.mem_Ici]; omega
+    ext j; simp only [Feature.mem_restrict_atomic_false, isAtom_iff_eq_one, Set.mem_Ici]; omega
   rw [nonempty_eq_region, restrict_region _ _ fun _ _ ↦ Nat.zero_le _, hna,
     restrict_minimal_false_iterate_region, restrict_minimal_false_iterate,
     atomize_region fun _ _ ↦ Nat.zero_le _, atomize_le]
@@ -172,7 +173,7 @@ theorem atomize_restrict_atomic_true (s : Finset α) :
     s ∈ atomize (Feature.restrict .atomic true {t | t.Nonempty}) ↔ s.card = 1 := by
   have ha : Feature.restrict .atomic true (Set.Ici 1) = ({1} : Set ℕ) := by
     ext j
-    simp only [Feature.mem_restrict_atomic_true, atom_iff_eq_one, Set.mem_Ici,
+    simp only [Feature.mem_restrict_atomic_true, isAtom_iff_eq_one, Set.mem_Ici,
       Set.mem_singleton_iff]
     omega
   rw [nonempty_eq_region, restrict_region _ _ fun _ _ ↦ Nat.zero_le _, ha,
@@ -186,7 +187,7 @@ end Successor
 
 section Orders
 
-variable {D : Type*} [SemilatticeSup D]
+variable {D : Type*} [SemilatticeSup D] [OrderBot D]
 
 -- §4.1, n. 15
 theorem not_restrict_atomic_true_restrict_atomic_false (P : Set D) (x : D) :
@@ -195,7 +196,7 @@ theorem not_restrict_atomic_true_restrict_atomic_false (P : Set D) (x : D) :
 
 -- §4.3
 theorem not_restrict_atomic_true_restrict_minimal_false {P : Set D}
-    (hP : ∀ y ∈ P, ¬ IsBot y) (x : D) :
+    (hP : ∀ y ∈ P, y ≠ ⊥) (x : D) :
     x ∉ Feature.restrict .atomic true (Feature.restrict .minimal false P) :=
   fun h ↦ h.1.2 (Number.singular_subset_minimal hP ⟨h.1.1, h.2⟩)
 
@@ -416,7 +417,8 @@ theorem Bundle.label_eq_singular_iff {c : Convention} {b : Bundle} :
 
 /-- Only `[+atomic]` restricts and only the singular carries it, so in every system a bundle is
 defined where its label is. -/
-theorem Bundle.dom_eq_dom_label {E : Type*} [PartialOrder E] (c : Convention) (b : Bundle) :
+theorem Bundle.dom_eq_dom_label {E : Type*} [PartialOrder E] [OrderBot E] (c : Convention)
+    (b : Bundle) :
     Bundle.dom (E := E) b = Number.dom (some (Bundle.label c b)) := by
   rw [Bundle.dom_eq]
   split_ifs with h
@@ -482,19 +484,19 @@ theorem restrict_toSet (f : Feature) (v : Bool) (s : Strata) :
     cases s with
     | empty => simp [toSet, restrict]
     | point n =>
-      by_cases h : n = 1 <;> simp [toSet, restrict, atom_iff_eq_one, h]
+      by_cases h : n = 1 <;> simp [toSet, restrict, isAtom_iff_eq_one, h]
       omega
     | ray n =>
-      by_cases h : n ≤ 1 <;> simp [toSet, restrict, atom_iff_eq_one, h]
+      by_cases h : n ≤ 1 <;> simp [toSet, restrict, isAtom_iff_eq_one, h]
       all_goals omega
   | .atomic, false =>
     ext k
     cases s with
     | empty => simp [toSet, restrict]
     | point n =>
-      by_cases h : n = 1 <;> simp [toSet, restrict, atom_iff_eq_one, h]
+      by_cases h : n = 1 <;> simp [toSet, restrict, isAtom_iff_eq_one, h]
       omega
-    | ray n => simp [toSet, restrict, atom_iff_eq_one]; omega
+    | ray n => simp [toSet, restrict, isAtom_iff_eq_one]; omega
   | .minimal, true => exact atomize_toSet s
   | .minimal, false =>
     ext k
@@ -595,13 +597,13 @@ instance (lo hi : ℕ) (b : Bundle) : DecidablePred (Bundle.Cut lo hi b) := fun 
   unfold Bundle.Cut; infer_instance
 
 /-- A bundle denotes the elements of its exact region that survive its cuts, graded by `g`. -/
-def Bundle.denote {D : Type*} [SemilatticeSup D] (g : D → ℕ) (lo hi : ℕ) (b : Bundle)
+def Bundle.denote {D : Type*} [SemilatticeSup D] [OrderBot D] (g : D → ℕ) (lo hi : ℕ) (b : Bundle)
     (P : Set D) (x : D) : Prop :=
   x ∈ b.exact P ∧ Bundle.Cut lo hi b (g x)
 
 /-- The cell of a bundle in a setting is its denotation less those of the more specific bundles,
 as the plural of Figure 7 is `Q+ \ Q′`. -/
-def Setting.cell {D : Type*} [SemilatticeSup D] (σ : Setting) (g : D → ℕ) (lo hi : ℕ)
+def Setting.cell {D : Type*} [SemilatticeSup D] [OrderBot D] (σ : Setting) (g : D → ℕ) (lo hi : ℕ)
     (P : Set D) (b : Bundle) (x : D) : Prop :=
   Bundle.denote g lo hi b P x ∧ ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ Bundle.denote g lo hi b' P x
 

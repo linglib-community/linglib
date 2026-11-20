@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Semantics.Aspect.Telicity
-public import Linglib.Semantics.Mereology.Topology
+public import Linglib.Semantics.Mereology.Connection
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
@@ -89,8 +89,8 @@ variable [SemilatticeSup α] [StronglySupplemented α] [SupIsSum α] {C : α →
 /-- Krifka's self-connection (22), on which any two non-overlapping individuals that join to `x`
 touch, is self-connection (20b) under the connection relation of overlapping or touching. -/
 theorem isSelfConnected_overlap_or_iff {T : α → α → Prop} {x : α} :
-    IsSelfConnected (fun y z ↦ Overlap y z ∨ T y z) x ↔
-      ∀ y z, ¬ IsBot y → ¬ IsBot z → y ⊔ z = x → ¬ Overlap y z → T y z := by
+    IsSelfConnected (fun y z ↦ SolidOverlap y z ∨ T y z) x ↔
+      ∀ y z, ¬ IsBot y → ¬ IsBot z → y ⊔ z = x → ¬ SolidOverlap y z → T y z := by
   simp only [isSelfConnected_iff_sup, or_iff_not_imp_left]
 
 theorem connectivity_breaks_cum (hConn : ∀ x, P x → IsSelfConnected C x) {x y : α} (hx : P x)
@@ -135,8 +135,8 @@ structure MixedDrinkWitness (C : α → α → Prop) (recipe : Recipe α K n) (�
   present : ∀ i, ¬ IsBot (assign i)
   satisfies : ∀ i, recipe.ingredients i (assign i)
   ratio : RatioHolds μ recipe assign
-  disjoint : ∀ i j, i ≠ j → ¬ Overlap (assign i) (assign j)
-  covers : ∀ z, z ≤ x → ∃ i, Overlap z (assign i)
+  disjoint : ∀ i j, i ≠ j → ¬ SolidOverlap (assign i) (assign j)
+  covers : ∀ z, z ≤ x → ∃ i, SolidOverlap z (assign i)
   connected : ConnectedLiquid C phase x
 
 /-- The denotation of a mixed drink noun, Moon's final formula, holds of ratio-related
@@ -173,17 +173,17 @@ theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (
   fun ⟨w⟩ ↦ let ⟨j, hj⟩ := exists_ne i; hExcl j hj _ (w.part_le j) (w.satisfies j)
 
 theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
-    (hx : mixedDrinkDen C recipe μ phase x) : ¬ Atom x := by
+    (hx : mixedDrinkDen C recipe μ phase x) : ¬ Minimal (¬ IsBot ·) x := by
   intro hAtom
   obtain ⟨w⟩ := hx
-  have h0 : w.assign 0 = x := Atom.eq hAtom (w.part_le 0) (w.present 0)
-  have h1 : w.assign 1 = x := Atom.eq hAtom (w.part_le 1) (w.present 1)
+  have h0 : w.assign 0 = x := le_antisymm (w.part_le 0) (hAtom.2 (w.present 0) (w.part_le 0))
+  have h1 : w.assign 1 = x := le_antisymm (w.part_le 1) (hAtom.2 (w.present 1) (w.part_le 1))
   have hDisj := w.disjoint 0 1 Fin.zero_ne_one
   rw [h0, h1] at hDisj
-  exact hDisj (Overlap.refl hAtom.not_isBot)
+  exact hDisj (SolidOverlap.refl hAtom.1)
 
 theorem atoms_exclude_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
-    (hx : mixedDrinkDen C recipe μ phase x) : ¬ (DRINK x ∧ Atom x) :=
+    (hx : mixedDrinkDen C recipe μ phase x) : ¬ (DRINK x ∧ Minimal (¬ IsBot ·) x) :=
   fun ⟨_, hAtom⟩ ↦ mixedDrink_not_atom hx hAtom
 
 theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)

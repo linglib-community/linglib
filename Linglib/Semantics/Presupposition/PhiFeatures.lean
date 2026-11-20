@@ -199,7 +199,7 @@ namespace Number
 
 open Presupposition
 
-variable {E : Type*} [PartialOrder E] (x : E)
+variable {E : Type*} [PartialOrder E] [OrderBot E] (x : E)
 
 /-- `[+atomic]` is defined of the atoms, the `[+atomic]` region of the whole domain, and
 `[+minimal]`, whose dual region needs `[−atomic]`, and `[+additive]`, of everything. -/
@@ -228,12 +228,12 @@ theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : x ∈ b.exact Set.univ
 /-- The singular is defined of the atoms; any other value, and an absent one, restricts
 nothing. -/
 def dom : Option Number → Set E
-  | some .singular => {x | Atom x}
+  | some .singular => {x | IsAtom x}
   | _ => Set.univ
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
-@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := Iff.rfl
+@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ IsAtom x := Iff.rfl
 
 @[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := rfl
 
@@ -242,7 +242,8 @@ def dom : Option Number → Set E
 /-- Of the features only `[+atomic]` restricts, so a bundle is defined where the singular is if
 it carries `[+atomic]` and everywhere otherwise. -/
 theorem Bundle.dom_eq (b : Bundle) :
-    Bundle.dom (E := E) b = if (.atomic, true) ∈ b then Number.dom (some .singular) else Set.univ := by
+    Bundle.dom (E := E) b =
+      if (.atomic, true) ∈ b then Number.dom (some .singular) else Set.univ := by
   ext x
   simp only [Bundle.dom, Finset.inf_eq_iInf, Set.iInf_eq_iInter, Set.mem_iInter,
     Finset.mem_filter, and_imp, Prod.forall]
@@ -270,7 +271,7 @@ def alts : Option Number → Set (Option Number)
 
 variable {y : E}
 
-theorem dom_singular_ssubset_dom_plural (hy : ¬ Atom y) :
+theorem dom_singular_ssubset_dom_plural (hy : ¬ IsAtom y) :
     dom (E := E) (some .singular) ⊂ dom (some .plural) := by
   rw [dom_plural]
   exact ⟨Set.subset_univ _, fun h ↦ hy ((mem_dom_singular y).1 (h (Set.mem_univ y)))⟩
@@ -288,7 +289,7 @@ theorem strengthen_singular :
 
 /-- Strengthened against the singular, the plural's unrestricted domain is the `[−atomic]` region:
 the inclusive reading of the bundle recovers the exclusive one. -/
-theorem strengthen_plural (hy : ¬ Atom y) :
+theorem strengthen_plural (hy : ¬ IsAtom y) :
     strengthen alts dom (some .plural) = Feature.restrict .atomic false (Set.univ : Set E) := by
   rw [strengthen_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
     (dom_singular_ssubset_dom_plural hy)]

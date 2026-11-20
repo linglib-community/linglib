@@ -22,9 +22,9 @@ largest member, not closure downward: in a classical mereology `Kind.down` is de
 nonempty set closed under arbitrary sums, where its value is the sum of the members
 (`Kind.sum_mem_down`), and on a finite nonempty set closed under binary sums
 (`Kind.down_dom_of_supClosed`). On the plural of a singular property, `Kind.up ∘ Kind.down`
-restores the atoms beneath the pluralities (`Kind.up_down_of_forall_atom`). ∩ of a singular
+restores the atoms beneath the pluralities (`Kind.up_down_of_forall_isMin`). ∩ of a singular
 property is no kind when no kind is singular wherever it has a value
-(`Kind.down_comp_notMem_of_atom`). Derived kind predication, which applies a predicate of
+(`Kind.down_comp_notMem_of_isMin`). Derived kind predication, which applies a predicate of
 objects to a kind by quantifying existentially over its instances, is
 `Quantifier.Det.some (Kind.up (k s))`.
 
@@ -122,10 +122,10 @@ theorem up_down (hs : IsLowerSet s) (hdef : s.Nonempty → (down s).Dom) : up (d
 /-- On the plural `s` of a singular property with extension `t`, true of what is not in `t` and
 has only atoms of `t`, ∪∩ adds the atoms beneath the pluralities where ∩ is defined, Chierchia's
 (17c). -/
-theorem up_down_of_forall_atom (ht : ∀ x ∈ t, Atom x)
-    (hs : ∀ x, x ∈ s ↔ x ∉ t ∧ ∀ y ≤ x, Atom y → y ∈ t)
+theorem up_down_of_forall_isMin (ht : ∀ x ∈ t, IsMin x)
+    (hs : ∀ x, x ∈ s ↔ x ∉ t ∧ ∀ y ≤ x, IsMin y → y ∈ t)
     (hdef : s.Nonempty → (down s).Dom) :
-    up (down s) = s ∪ {a | Atom a ∧ ∃ x ∈ s, a ≤ x} := by
+    up (down s) = s ∪ {a | IsMin a ∧ ∃ x ∈ s, a ≤ x} := by
   rcases s.eq_empty_or_nonempty with h0 | hne
   · rw [up_of_not_dom fun h ↦ (down_dom.1 h).elim fun _ hd ↦ h0.subset hd.1, h0]
     simp
@@ -134,7 +134,7 @@ theorem up_down_of_forall_atom (ht : ∀ x ∈ t, Atom x)
   rw [up_of_mem hm]
   ext y
   refine ⟨fun hy ↦ ?_, ?_⟩
-  · by_cases ha : Atom y
+  · by_cases ha : IsMin y
     · exact .inr ⟨ha, m, hgm.1, hy⟩
     · exact .inl ((hs y).2 ⟨fun hyt ↦ ha (ht y hyt),
         fun z hz hza ↦ ((hs m).1 hgm.1).2 z (hz.trans hy) hza⟩)
@@ -143,8 +143,8 @@ theorem up_down_of_forall_atom (ht : ∀ x ∈ t, Atom x)
 
 /-- ∩ of a singular property is no kind when no kind is singular in every situation where it
 has a value: the concept of a singular property is singular wherever it has one. -/
-theorem down_comp_notMem_of_atom {K : Set (S → Part E)} {P : S → Set E}
-    (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d) (hP : ∀ s, ∀ x ∈ P s, Atom x) : down ∘ P ∉ K :=
+theorem down_comp_notMem_of_isMin {K : Set (S → Part E)} {P : S → Set E}
+    (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, IsMin d) (hP : ∀ s, ∀ x ∈ P s, IsMin x) : down ∘ P ∉ K :=
   fun h ↦ hK _ h fun s _ hd ↦ hP s _ (mem_down.1 hd).1
 
 end PartialOrder
