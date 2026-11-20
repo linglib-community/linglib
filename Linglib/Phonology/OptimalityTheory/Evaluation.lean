@@ -72,10 +72,6 @@ theorem profile_lt_iff_lex :
     σ.profile v c < σ.profile v d ↔ Pi.Lex σ.Dominates (· < ·) (v c) (v d) :=
   Pi.toLex_comp_lt_toLex_comp_iff σ
 
-theorem profile_le_iff_not_lex :
-    σ.profile v c ≤ σ.profile v d ↔ ¬ Pi.Lex σ.Dominates (· < ·) (v d) (v c) :=
-  Pi.toLex_comp_le_toLex_comp_iff σ
-
 /-- One candidate beats another iff some constraint preferring it dominates every constraint
 preferring the other. -/
 theorem profile_lt_iff_exists_dominates :
@@ -239,18 +235,39 @@ section Bounding
 variable [DecidableEq C] [Fintype ι] (hn : Fintype.card ι = n)
 include hn
 
+omit [DecidableEq C] in
+/-- One candidate beats another under some ranking iff some constraint prefers it. -/
+theorem exists_profile_lt_iff :
+    (∃ σ : Ranking.Enumeration ι n, σ.profile v c < σ.profile v d) ↔ ∃ i, v c i < v d i := by
+  refine ⟨fun ⟨σ, h⟩ ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
+  · obtain ⟨i, hi, -⟩ := profile_lt_iff_exists_dominates.1 h
+    exact ⟨i, hi⟩
+  · obtain ⟨σ, hσ⟩ := Ranking.Enumeration.exists_forall_dominates i hn
+    exact ⟨σ, profile_lt_iff_exists_dominates.2
+      ⟨i, hi, fun j hj ↦ hσ j fun hji ↦ (hji ▸ hj).asymm hi⟩⟩
+
+omit [DecidableEq C] in
+/-- One candidate beats another under every ranking iff it harmonically bounds it: its violations
+are below the other's in the product order. -/
+theorem forall_profile_lt_iff :
+    (∀ σ : Ranking.Enumeration ι n, σ.profile v c < σ.profile v d) ↔ v c < v d := by
+  refine ⟨fun h ↦ Pi.lt_def.2 ⟨fun i ↦ not_lt.1 fun hi ↦ ?_, ?_⟩, fun h σ ↦ profile_lt_of_lt h⟩
+  · obtain ⟨σ, hσ⟩ := (exists_profile_lt_iff hn).2 ⟨i, hi⟩
+    exact (h σ).asymm hσ
+  · exact (exists_profile_lt_iff hn).1 ⟨_, h (Fintype.equivFinOfCardEq hn).symm⟩
+
 /-- A candidate wins against its only competitor under some ranking iff the competitor does not
 harmonically bound it. -/
 theorem exists_mem_optimal_iff_pair (hs : s = {c, d}) :
     (∃ σ : Ranking.Enumeration ι n, c ∈ σ.optimal v s) ↔ ¬ v d < v c := by
-  rw [← Pi.forall_toLex_comp_lt_iff hn, not_forall]
+  rw [← forall_profile_lt_iff hn (v := v) (c := d) (d := c), not_forall]
   exact exists_congr fun σ ↦ mem_optimal_iff_pair hs
 
 /-- A candidate is the sole winner against its only competitor under some ranking iff some
 constraint prefers it. -/
 theorem exists_optimal_eq_singleton_iff_pair (hs : s = {c, d}) (hne : c ≠ d) :
     (∃ σ : Ranking.Enumeration ι n, σ.optimal v s = {c}) ↔ ∃ i, v c i < v d i := by
-  rw [← Pi.exists_toLex_comp_lt_iff hn]
+  rw [← exists_profile_lt_iff hn (v := v) (c := c) (d := d)]
   exact exists_congr fun σ ↦ optimal_eq_singleton_iff_pair hs hne
 
 omit [DecidableEq C] in

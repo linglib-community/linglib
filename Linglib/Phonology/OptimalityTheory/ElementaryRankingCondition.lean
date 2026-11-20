@@ -155,14 +155,21 @@ def SatisfiedBy : Prop := toLex 0 ≤ toLex (α ∘ r)
 /-- A ranking satisfies an ERC iff its earliest non-neutral constraint, when one exists, is
 winner-preferring, which is Prince's description of satisfaction by a left-to-right sweep. -/
 theorem satisfiedBy_iff_lead :
-    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
-  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.toLex_le_toLex_iff_find _ _).mp h he),
-   fun h => (Pi.toLex_le_toLex_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
+    α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W := by
+  rw [SatisfiedBy, Pi.toLex_le_toLex_iff_forall]
+  refine ⟨fun h he ↦ by_contra fun hW ↦ ?_, fun hlead j hj ↦ ?_⟩
+  · obtain ⟨i, hlt, hi⟩ := h _ <| lt_of_le_of_ne
+      (not_lt.1 fun h0 ↦ hW ((ERCVal.zero_lt_iff _).1 h0)) (Fin.find_spec he)
+    exact Fin.find_min he hlt hi.ne'
+  · have he : ∃ p, α (r p) ≠ .e := ⟨j, hj.ne⟩
+    have hW := (ERCVal.zero_lt_iff _).2 (hlead he)
+    exact ⟨Fin.find _ he, (Fin.find_le_of_pos he hj.ne).lt_of_ne fun h ↦
+      absurd (h ▸ hW) hj.asymm, hW⟩
 
 /-- A ranking satisfies an ERC iff the ERC is not below zero in the lexicographic order of the
 constraints under dominance. -/
 theorem satisfiedBy_iff_not_lex : α.SatisfiedBy r ↔ ¬ Pi.Lex r.Dominates (· < ·) α 0 :=
-  Pi.toLex_comp_le_toLex_comp_iff r (v := 0) (w := α)
+  not_lt.symm.trans (Pi.toLex_comp_lt_toLex_comp_iff r (v := α) (w := 0)).not
 
 /-- Satisfaction in Prince's `∀∃` form, his (3): every loser-preferring constraint is dominated
 by some winner-preferring one. -/
@@ -267,9 +274,15 @@ instance : Decidable (α.SatisfiedBy r) :=
 every loser-preferring one. The two forms agree because the ranking is total. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) :=
-  have : Nonempty ι := ⟨r 0⟩
-  (satisfiedBy_iff_not_lex r α).trans <| Pi.not_lex_iff_exists_forall.trans <| by
-    simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff]
+  ⟨fun h ↦ (h.lt_or_eq : toLex 0 < toLex (α ∘ r) ∨ _).elim
+    (fun h ↦ by
+      obtain ⟨i, hi, hd⟩ := ((Pi.toLex_comp_lt_toLex_comp_iff r (v := 0) (w := α)).trans
+        (Pi.lex_iff_exists_forall (r := r.Dominates))).1 h
+      exact ⟨i, fun c hc ↦ ⟨(ERCVal.zero_lt_iff _).1 hi, hd c ((ERCVal.lt_zero_iff _).2 hc)⟩⟩)
+    fun h ↦ ⟨r 0, fun c hc ↦ by
+      have h0 : (0 : ERCVal) = α c := by simpa using congrFun (toLex_inj.1 h) (r.symm c)
+      exact absurd (h0.trans hc) (by decide)⟩,
+  fun ⟨d, hd⟩ ↦ (satisfiedBy_iff_dominance r α).2 fun c hc ↦ ⟨d, hd c hc⟩⟩
 
 theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking.Enumeration ι n) :
     α.SatisfiedBy r :=

@@ -314,6 +314,47 @@ theorem toLex_lt_of_not_rel (hf : ∀ c, Instantiates π c (f c)) (l : Ranking.E
   · obtain rfl : μ' = l := Equiv.ext fun j ↦ hpre j j.isLt
     exact absurd (π.iseqv.symm hμμ') h
 
+private theorem eq_and_eq_of_swap_lt_swap {κ : Type*} [LinearOrder κ] [DecidableEq κ] {a b x y : κ} (hab : a ⋖ b)
+    (hxy : x < y) (h : Equiv.swap a b y < Equiv.swap a b x) : x = a ∧ y = b := by
+  have hlt : ∀ z, z ≠ a → z < b → z < a := fun z hza hzb ↦ (hab.le_of_lt hzb).lt_of_ne hza
+  rcases eq_or_ne x a with rfl | hxa
+  · rcases eq_or_ne y b with rfl | hyb
+    · exact ⟨rfl, rfl⟩
+    · rw [Equiv.swap_apply_left, Equiv.swap_apply_of_ne_of_ne hxy.ne' hyb] at h
+      exact absurd (hlt y hxy.ne' h) hxy.not_gt
+  · rcases eq_or_ne x b with rfl | hxb
+    · rw [Equiv.swap_apply_right, Equiv.swap_apply_of_ne_of_ne (hab.lt.trans hxy).ne' hxy.ne'] at h
+      exact absurd (hab.lt.trans hxy) h.not_gt
+    · rw [Equiv.swap_apply_of_ne_of_ne hxa hxb] at h
+      rcases eq_or_ne y a with rfl | hya
+      · rw [Equiv.swap_apply_left] at h
+        exact absurd (hxy.trans hab.lt) h.not_gt
+      · rcases eq_or_ne y b with rfl | hyb
+        · rw [Equiv.swap_apply_right] at h
+          exact absurd (hlt x hxa hxy) h.not_gt
+        · rw [Equiv.swap_apply_of_ne_of_ne hya hyb] at h
+          exact absurd hxy h.not_gt
+
+-- Two functions ordered one way, and the other way once the adjacent indices `a ⋖ b` are
+-- transposed, agree before `a`, and the lower one is smaller at `a` and larger at `b`.
+private theorem eq_and_lt_and_gt_of_toLex_comp_swap {κ β : Type*} [LinearOrder κ]
+    [WellFoundedLT κ] [DecidableEq κ] [LinearOrder β] {a b : κ} {x y : κ → β} (hab : a ⋖ b)
+    (h : toLex x < toLex y) (h' : toLex (y ∘ Equiv.swap a b) < toLex (x ∘ Equiv.swap a b)) :
+    (∀ c < a, x c = y c) ∧ x a < y a ∧ y b < x b := by
+  have := InvImage.isStrictTotalOrder (r := (· < · : κ → κ → Prop)) (Equiv.swap a b).symm.injective
+  obtain ⟨i, hi, hd⟩ := Pi.lex_iff_exists_forall.1 h
+  obtain ⟨i', hi', hd'⟩ :=
+    ((Pi.toLex_comp_lt_toLex_comp_iff (Equiv.swap a b)).trans Pi.lex_iff_exists_forall).1 h'
+  simp only [InvImage, Equiv.symm_swap] at hd'
+  obtain ⟨rfl, rfl⟩ := eq_and_eq_of_swap_lt_swap hab (hd i' hi') (hd' i hi)
+  refine ⟨fun c hc ↦ ?_, hi, hi'⟩
+  rcases lt_trichotomy (x c) (y c) with hxy | hxy | hxy
+  · have := hd' c hxy
+    rw [Equiv.swap_apply_right, Equiv.swap_apply_of_ne_of_ne hc.ne (hc.trans hab.lt).ne] at this
+    exact absurd hc this.not_gt
+  · exact hxy
+  · exact absurd hc (hd c hxy).not_gt
+
 private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O ι)
     {r : Ranking.Enumeration ι n} {k : ℕ} (hk : k + 1 < n) {i : I}
     (hne : S.language r i ≠ S.language (r.swapAt k hk) i) :
@@ -348,7 +389,7 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
       rw [Fin.lt_def] at h₁ h₂
       simp only at h₁ h₂
       omega⟩
-  obtain ⟨h₁, h₂, -⟩ := Pi.eq_and_lt_and_gt_of_toLex_comp_swap hcov hlt hlt'
+  obtain ⟨h₁, h₂, -⟩ := eq_and_lt_and_gt_of_toLex_comp_swap hcov hlt hlt'
   exact ⟨x, hx, y, hy, h₁, h₂⟩
 
 -- A partition with a block that is not a grammar is not a typology.
