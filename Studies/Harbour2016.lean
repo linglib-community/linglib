@@ -37,12 +37,12 @@ signs keep [the exclusive apart from the inclusive](##tamil_clusivity_distinguis
 One other suffices for the person partition, whose four cells are fixed by the presence of the
 speaker and the hearer, so the ontology is `Fin 3` and the third-person group is not modeled;
 every result is checked on this finite model. Lexical Complementarity applies once, after both
-features, not cyclically (appendix B.1.2.3). Pairwise addition is mathlib's `⊻`; `ominus` and
-`act` come from `Semantics/Plurality/FeatureAction.lean`. The subsidiary parameter of the
-tripartition, which value of [±author] represents the third person, changes no partition and is
-not modeled. A setting's partition is compared with the three-feature systems on participant
-sets, two participant sets being related when a cell holds a referent with each; every cell is a
-union of the classes of referents with the same participants.
+features, not cyclically (appendix B.1.2.3). The actions of the features (`act`) and Lexical
+Complementarity (`lexComp`) come from `Semantics/Plurality/FeatureAction.lean`. The subsidiary
+parameter of the tripartition, which value of [±author] represents the third person, changes no
+partition and is not modeled. A setting's partition is compared with the three-feature systems on
+participant sets, two participant sets being related when a cell holds a referent with each; every
+cell is a union of the classes of referents with the same participants.
 
 ## References
 
@@ -63,12 +63,11 @@ open Plurality.FeatureAction
 section Construction
 variable {Ω : Type*} [DecidableEq Ω]
 
-/-- Refining a cell `c` against its siblings removes every sibling cell properly contained in
-it, Lexical Complementarity (31), and then discards the empty set, which no person denotes
-(§4.4). -/
+/-- Refining a cell `c` against its siblings applies Lexical Complementarity (31) and then
+discards the empty set, which no person denotes (§4.4). -/
 def refine (siblings : List (Finset (Finset Ω))) (c : Finset (Finset Ω)) :
     Finset (Finset Ω) :=
-  (siblings.foldl (fun acc d ↦ if d ⊂ c then acc \ d else acc) c).erase ∅
+  (lexComp siblings.toFinset c).erase ∅
 
 /-- The cells of a partition are the raw denotations of its sign assignments, each refined
 against the whole family. -/
@@ -121,21 +120,27 @@ namespace Examples
 
 abbrev Ω := Fin 3      -- 0 = speaker i, 1 = hearer u, 2 = other o
 
-/-- The author lattice `ℒau` has the single group `{i}`. -/
-def ℒau : Finset (Finset Ω) := {{0}}
-/-- The participant lattice `ℒpt` has the groups `{i}`, `{u}` and `{i, u}`. -/
-def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
+/-- The author lattice `ℒau` is the lattice of groups of the speaker. -/
+def ℒau : Finset (Finset Ω) := Ioc ∅ {0}
+/-- The participant lattice `ℒpt` is the lattice of groups of the speaker and the hearer. -/
+def ℒpt : Finset (Finset Ω) := Ioc ∅ {0, 1}
 /-- The π lattice has every nonempty set of referents as a group. -/
 def ℒπ  : Finset (Finset Ω) := Ioc ∅ univ
 
 -- p. 74
-theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
+theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ :=
+  ⟨Ioc_subset_Ioc_right (by decide), Ioc_subset_Ioc_right (subset_univ _)⟩
 
 /-! #### Quadripartition — author composes outermost ([harbour-2016] §4.3.5) -/
 
 /-- The raw quadripartition cell for the author sign `sa` and the participant sign `sp` applies
 the participant value first and the author value outermost. -/
 def quadRaw (sa sp : Bool) : Finset (Finset Ω) := act sa ℒau (act sp ℒpt ℒπ)
+
+-- (65): before Lexical Complementarity, `+author +participant` holds the groups containing `i`
+theorem quadRaw_true_true : quadRaw true true = containing {0} univ := by
+  rw [quadRaw, act_true, act_true, ℒau, ℒpt, ℒπ, Ioc_sups_Ioc (subset_univ _),
+    Ioc_sups_containing_of_subset (by decide) (subset_univ _)]
 
 /-- The raw quadripartition cells are those of the setting with both features, the participant
 feature composing first. -/
