@@ -71,7 +71,7 @@ variable [SemilatticeSup α]
 
 /-- A frame whose extension is its units and their sums, the unit and collection fields of
 (28)–(29): granular for disjoint units, a collective artifact for overlapping ones. -/
-def Frame.ofUnits (units : Set α) : Frame α := ⟨{x | AlgClosure (· ∈ units) x}, some units⟩
+def Frame.ofUnits (units : Set α) : Frame α := ⟨supClosure units, some units⟩
 
 @[simp] theorem Frame.objects_ofUnits (units : Set α) : (ofUnits units).objects = units := rfl
 
@@ -110,7 +110,7 @@ def base : Set α := if E.objectFn then E.frame.objects else E.frame.extn
 def cbase : Set α := E.perspective.getD (nullSchema E.base)
 
 /-- The extension is the counting base, closed under sum when the entry is. -/
-def extn : Set α := if E.sumClosed then {x | AlgClosure (· ∈ E.cbase) x} else E.cbase
+def extn : Set α := if E.sumClosed then supClosure E.cbase else E.cbase
 
 /-- Grammatical counting (A1) is defined over disjoint counting bases only: an entry is count
 when its base is disjoint. -/
@@ -167,19 +167,19 @@ theorem isCount_unitShift (E : Entry α) (D : Set α)
 contains something in the argument's extension; counting proceeds by the receptacle's
 counting base, which the argument does not touch. -/
 def containerExtn (R P : Entry α) (contain : α → α → Prop) : Set α :=
-  {x | AlgClosure (· ∈ R.cbase) x ∧ ∀ z ∈ R.cbase, z ≤ x → ∃ v ∈ P.extn, contain z v}
+  {x | x ∈ supClosure R.cbase ∧ ∀ z ∈ R.cbase, z ≤ x → ∃ v ∈ P.extn, contain z v}
 
 /-- The container classifier presupposes, (45), that the argument's extension is cumulative,
 which every sum-closed extension is. -/
-theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed) : CUM (· ∈ E.extn) := by
+theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed) : CUM E.extn := by
   simp only [Entry.extn, h, ↓reduceIte]
-  exact algClosure_cum
+  exact supClosed_supClosure
 
 /-- A singular count extension with two distinct units is not cumulative: the sum of two units
 is not a unit, so *#a bowl of an apple*. -/
 theorem not_cum_extn_of_singular {E : Entry α} (hs : ¬ E.sumClosed) (hc : E.IsCount)
     {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : ¬ IsBot u)
-    (hv0 : ¬ IsBot v) : ¬ CUM (· ∈ E.extn) := by
+    (hv0 : ¬ IsBot v) : ¬ CUM E.extn := by
   simp only [Entry.extn, hs, ↓reduceIte]
   intro hcum
   have hsum : u ⊔ v ∈ E.cbase := hcum hu hv
@@ -193,8 +193,10 @@ theorem not_disjointPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ un
     (hv : v ∈ units) (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
     ¬ DisjointPred (Frame.ofUnits units).extn := fun h ↦ by
   by_cases huv : u ⊔ v = u
-  · exact h (.base hu) (.base hv) hne ⟨v, hv0, sup_eq_left.1 huv, le_rfl⟩
-  · exact h (.base hu) (.sum (.base hu) (.base hv)) (Ne.symm huv) ⟨u, hu0, le_rfl, le_sup_left⟩
+  · exact h (subset_supClosure hu) (subset_supClosure hv) hne ⟨v, hv0, sup_eq_left.1 huv, le_rfl⟩
+  · exact h (subset_supClosure hu)
+      (supClosed_supClosure (subset_supClosure hu) (subset_supClosure hv)) (Ne.symm huv)
+      ⟨u, hu0, le_rfl, le_sup_left⟩
 
 /-- A `[−O,−S]` entry over a frame of units and their sums with two distinct non-null units is
 mass: the grains of *rice* and *čočka* are in the basic predicate, not in the counting base. -/
@@ -297,7 +299,7 @@ theorem rice_accessibility :
         lentil riceGrains riceGrains_disjoint True ∧
       (lentil riceGrains riceGrains_disjoint True).IsCount ∧
       (lentil riceGrains riceGrains_disjoint True).cbase = riceGrains :=
-  ⟨fun _ h ↦ .base h,
+  ⟨fun _ h ↦ subset_supClosure h,
     rice_mass (α := Part) (u := {0}) (v := {1}) (Or.inl rfl) (Or.inr (Or.inl rfl)) (by decide)
       (by decide) (by decide) rice rfl id rfl,
     rfl, (lentil_count _ _).1, (lentil_count _ _).2⟩

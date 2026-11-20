@@ -139,7 +139,7 @@ theorem IsTelic.swap (h : IsTelic precedes P) : IsTelic (Function.swap precedes)
   fun _ _ he he' hle ↦ ⟨h.isFinalPart he he' hle, h.isInitialPart he he' hle⟩
 
 /-- Quantized predicates are telic. -/
-theorem isTelic_of_qua (h : NoPartPrecedes precedes) (hP : QUA P) :
+theorem isTelic_of_qua (h : NoPartPrecedes precedes) (hP : QUA {e | P e}) :
     IsTelic precedes P := fun e e' he he' hle ↦ by
   obtain rfl : e' = e := by_contra fun hne ↦ hP he' he hne hle
   exact ⟨isInitialPart_self h _, isFinalPart_self h _⟩
@@ -161,7 +161,7 @@ theorem _root_.IsTemporalPrecedence.noPartPrecedes [SemilatticeSup β] (r : β �
 /-- Quantized predicates are telic under a temporal precedence on the part structure of
 events. -/
 theorem _root_.IsTemporalPrecedence.isTelic_of_qua [SemilatticeSup β] (r : β → β → Prop)
-    [IsTemporalPrecedence β r] {P : β → Prop} (hP : QUA P) : IsTelic r P :=
+    [IsTemporalPrecedence β r] {P : β → Prop} (hP : QUA {e | P e}) : IsTelic r P :=
   Aspect.isTelic_of_qua (IsTemporalPrecedence.noPartPrecedes r) hP
 
 /-- A predicate that fixes the run time is telic: a part of an event runs within it, so it neither
@@ -184,7 +184,7 @@ end Precedence
 telic. -/
 theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop}
     [IsStrictOrder β precedes] {P : β → Prop}
-    (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
+    (hP : CUM {e | P e}) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
   fun hT ↦ (isTelic_iff.mp hT (hP he he') he' le_sup_right (h''.trans le_sup_left)).right hp
 
@@ -192,7 +192,7 @@ theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop}
 the divisive reference of activities makes them atelic ([champollion-krifka-2016]). -/
 theorem not_isTelic_of_div [PartialOrder β] {precedes : β → β → Prop}
     [IsStrictOrder β precedes] {P : β → Prop}
-    (hP : DIV P) {e e' e'' : β} (he : P e) (h' : e' ≤ e) (h'' : e'' ≤ e)
+    (hP : DIV {e | P e}) {e e' e'' : β} (he : P e) (h' : e' ≤ e) (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
   fun hT ↦ (isTelic_iff.mp hT he (hP h' he) h' h'').right hp
 
@@ -271,18 +271,18 @@ end Incremental
 
 section VP
 
-/-- The verb phrase of a relation and an object predicate holds of the events with some object
-of the predicate. -/
-def VP (θ : SetRel α β) (OBJ : α → Prop) : β → Prop := fun e ↦ ∃ y, OBJ y ∧ y ~[θ] e
+/-- The verb phrase of a relation and a region of objects is the region of events with some object
+in it, the image of the region under the relation. -/
+abbrev VP (θ : SetRel α β) (OBJ : Set α) : Set β := θ.image OBJ
 
-theorem vp_eq (θ : SetRel α β) (y : α) : VP θ (· = y) = (y ~[θ] ·) :=
-  funext fun _ ↦ propext ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
+theorem vp_eq (θ : SetRel α β) (y : α) : VP θ {y} = {e | y ~[θ] e} :=
+  Set.ext fun _ ↦ ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
 
-theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (Function.graph f).inv OBJ = OBJ ∘ f :=
-  funext fun e ↦ propext
-    ⟨fun ⟨_, h, he⟩ ↦ show OBJ (f e) from (he : f e = _) ▸ h, fun h ↦ ⟨_, h, rfl⟩⟩
+theorem vp_graph (f : β → α) (OBJ : Set α) : VP (Function.graph f).inv OBJ = f ⁻¹' OBJ :=
+  Set.ext fun e ↦
+    ⟨fun ⟨_, h, he⟩ ↦ show f e ∈ OBJ from (he : f e = _) ▸ h, fun h ↦ ⟨_, h, rfl⟩⟩
 
-variable {θ : SetRel α β} {OBJ : α → Prop}
+variable {θ : SetRel α β} {OBJ : Set α}
 
 section Preorder
 
@@ -290,8 +290,8 @@ variable [Preorder α] [Preorder β]
 
 /-- A relation maps to objects iff it carries divisive reference from the object to the verb
 phrase. -/
-theorem mo_iff_forall_div_vp : MO θ ↔ ∀ OBJ : α → Prop, DIV OBJ → DIV (VP θ OBJ) :=
-  mo_iff_forall_isLowerSet.trans ⟨fun h OBJ ↦ h {x | OBJ x}, fun h s ↦ h (· ∈ s)⟩
+theorem mo_iff_forall_div_vp : MO θ ↔ ∀ OBJ : Set α, DIV OBJ → DIV (VP θ OBJ) :=
+  mo_iff_forall_isLowerSet
 
 theorem vp_div (hm : MO θ) (hObj : DIV OBJ) : DIV (VP θ OBJ) := mo_iff_forall_div_vp.1 hm OBJ hObj
 
@@ -308,11 +308,11 @@ theorem vp_qua [PartialOrder α] [PartialOrder β] (hU : UP θ) (hm : MSO θ) (h
 /-- Quantization carries over to the verb phrase from every object predicate iff the objects of
 properly nested events are properly nested, in either direction. -/
 theorem forall_qua_vp_iff [PartialOrder α] [PartialOrder β] :
-    (∀ OBJ : α → Prop, QUA OBJ → QUA (VP θ OBJ)) ↔
+    (∀ OBJ : Set α, QUA OBJ → QUA (VP θ OBJ)) ↔
       ∀ ⦃x y e e'⦄, x ~[θ] e → y ~[θ] e' → e' < e → x < y ∨ y < x := by
   refine ⟨fun h x y _ _ hx hy hlt ↦ by_contra fun hn ↦ ?_, fun h OBJ hO e' ⟨y, hy, hθy⟩ e
     ⟨x, hx, hθx⟩ hne hle ↦ ?_⟩
-  · have hO : QUA (fun z ↦ z = x ∨ z = y) := by
+  · have hO : QUA ({x, y} : Set α) := by
       rintro a (rfl | rfl) b (rfl | rfl) hab hle
       · exact hab rfl
       · exact hn (.inl (lt_of_le_of_ne hle hab))
@@ -326,7 +326,7 @@ theorem forall_qua_vp_iff [PartialOrder α] [PartialOrder β] :
 /-- For a relation with unique participants that maps to objects, mapping to subobjects is
 exactly what carries quantization from every object predicate to the verb phrase. -/
 theorem mso_iff_forall_qua_vp [PartialOrder α] [PartialOrder β] (hU : UP θ) (hm : MO θ) :
-    MSO θ ↔ ∀ OBJ : α → Prop, QUA OBJ → QUA (VP θ OBJ) :=
+    MSO θ ↔ ∀ OBJ : Set α, QUA OBJ → QUA (VP θ OBJ) :=
   ⟨fun h _ hO ↦ vp_qua hU h hO, fun h _ _ hxe _ hlt ↦
     let ⟨y, hy, hθy⟩ := hm hxe hlt.le
     ⟨y, (forall_qua_vp_iff.1 h hxe (SetRel.mem_inv.1 hθy) hlt).resolve_left hy.not_gt, hθy⟩⟩
@@ -339,9 +339,9 @@ theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) := SupClosed.re
 /-- For a relation with unique participants that maps to objects, summativity is exactly what
 carries cumulativity from every object predicate to the verb phrase. -/
 theorem sum_iff_forall_cum_vp (hU : UP θ) (hm : MO θ) :
-    SUM θ ↔ ∀ OBJ : α → Prop, CUM OBJ → CUM (VP θ OBJ) := by
+    SUM θ ↔ ∀ OBJ : Set α, CUM OBJ → CUM (VP θ OBJ) := by
   refine ⟨fun h _ hO ↦ vp_cum h hO, fun h ⟨x, e⟩ hx ⟨y, e'⟩ hy ↦ ?_⟩
-  obtain ⟨z, hz, hθz⟩ := h (· ∈ supClosure {x, y}) supClosed_supClosure
+  obtain ⟨z, hz, hθz⟩ := h (supClosure {x, y}) supClosed_supClosure
     ⟨x, subset_supClosure (.inl rfl), hx⟩ ⟨y, subset_supClosure (.inr rfl), hy⟩
   have hle : z ≤ x ⊔ y := by
     have : x ⊔ y ∈ upperBounds (supClosure {x, y}) := by
@@ -357,8 +357,8 @@ theorem sum_iff_forall_cum_vp (hU : UP θ) (hm : MO θ) :
 /-- Along a summative relation with unique participants, a verb phrase is cumulative only if the
 object predicate holds of the sum of any two of its objects that the relation relates to
 events. -/
-theorem not_cum_vp (hs : SUM θ) (hU : UP θ) {x y : α} {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y)
-    (hθ₁ : x ~[θ] e₁) (hθ₂ : y ~[θ] e₂) (hSum : ¬ OBJ (x ⊔ y)) : ¬ CUM (VP θ OBJ) := fun hCum ↦
+theorem not_cum_vp (hs : SUM θ) (hU : UP θ) {x y : α} {e₁ e₂ : β} (hx : x ∈ OBJ) (hy : y ∈ OBJ)
+    (hθ₁ : x ~[θ] e₁) (hθ₂ : y ~[θ] e₂) (hSum : x ⊔ y ∉ OBJ) : ¬ CUM (VP θ OBJ) := fun hCum ↦
   let ⟨_, hz, hθ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
   hSum (hU.eq hθ (hs.sup hθ₁ hθ₂) ▸ hz)
 

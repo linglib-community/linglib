@@ -152,18 +152,18 @@ variable [PartialOrder E] [IsClassicalMereology E]
 
 /-- ∩ is defined on a property closed under sums wherever the property has instances, and its
 value there is the sum of the instances. -/
-theorem sum_mem_down (hsum : SumClosed (· ∈ P s)) (hne : (P s).Nonempty) :
-    IsClassicalMereology.sum (· ∈ P s) hne ∈ down P s :=
+theorem sum_mem_down (hsum : SumClosed (P s)) (hne : (P s).Nonempty) :
+    IsClassicalMereology.sum (P s) hne ∈ down P s :=
   mem_down.2 (hsum.isGreatest_sum hne)
 
-theorem down_dom_of_sumClosed (hsum : SumClosed (· ∈ P s)) (hne : (P s).Nonempty) :
+theorem down_dom_of_sumClosed (hsum : SumClosed (P s)) (hne : (P s).Nonempty) :
     (down P s).Dom :=
   Part.dom_iff_mem.2 ⟨_, sum_mem_down hsum hne⟩
 
 /-- ∪∩P = P for a property closed downward and under sums, whatever the size of its
 extension. -/
 theorem up_down_of_sumClosed (hP : ∀ s, IsLowerSet (P s))
-    (hsum : ∀ s, SumClosed (· ∈ P s)) : up (down P) = P :=
+    (hsum : ∀ s, SumClosed (P s)) : up (down P) = P :=
   up_down hP fun s hne ↦ down_dom_of_sumClosed (hsum s) hne
 
 end Classical

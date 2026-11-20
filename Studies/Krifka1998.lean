@@ -95,7 +95,7 @@ local instance : TemporalTrace Ev ℕ := ⟨Prod.snd⟩
 
 -- A telic predicate need not be quantized.
 theorem exists_isTelic_not_qua :
-    ∃ P : Ev → Prop, IsTelic (Precedes : Ev → Ev → Prop) P ∧ ¬ QUA P ∧
+    ∃ P : Ev → Prop, IsTelic (Precedes : Ev → Ev → Prop) P ∧ ¬ QUA {e | P e} ∧
       ¬ IsTelic (Precedes : Ev → Ev → Prop) fun _ ↦ True := by
   refine ⟨(τ · = ⟨(3, 4), by decide⟩), isTelic_runTime_eq monotone_snd _, fun h ↦ ?_, fun h ↦ ?_⟩
   · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
@@ -125,19 +125,20 @@ theorem eat_sinc : SINC eat where
 theorem eat_sum : SUM eat := fun ⟨_, _⟩ h₁ ⟨_, _⟩ h₂ ↦ congr_arg₂ (· ⊔ ·) h₁ h₂
 
 /-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
-theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
+theorem eat_apples_cum : CUM (VP eat {x | x.Nonempty}) :=
   vp_cum eat_sum fun _ hx _ _ ↦ hx.mono Finset.subset_union_left
 
 /-- *eat two apples* is quantized, since a measure phrase is quantized and *eat* is strictly
 incremental and summative (54). -/
-theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
+theorem eat_two_apples_qua : QUA (VP eat {x | x.card = 2}) :=
   eat_sinc.vp_qua eat_sum
-    (qua_pullback (IsExtensiveMeasure.strictMono Finset.card) (singleton_qua 2))
+    (QUA.preimage (IsExtensiveMeasure.strictMono Finset.card)
+      (Set.subsingleton_singleton.isAntichain _))
 
 end Eat
 
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
-    (y : α) : QUA (VP θ (· = y)) :=
+    (y : α) : QUA (VP θ {y}) :=
   vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
 
 -- Uniqueness of events is mapping to events without the iterativity of Krifka (1989).
@@ -176,12 +177,12 @@ theorem twoThemes_sinc : SINC twoThemes where
 
 -- §3.3, after (54)
 theorem not_qua_vp_twoThemes :
-    QUA (· ∈ ({{0, 1}, {2}} : Finset (Finset (Fin 3)))) ∧
-      ¬ QUA (VP twoThemes (· ∈ ({{0, 1}, {2}} : Finset (Finset (Fin 3))))) := by
-  refine ⟨?_, fun h ↦ h (x := {0}) ⟨{2}, by decide, by decide⟩ (y := {0, 1})
-    ⟨{0, 1}, by decide, by decide⟩ (by decide) (by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1})⟩
+    QUA ({{0, 1}, {2}} : Set (Finset (Fin 3))) ∧
+      ¬ QUA (VP twoThemes {{0, 1}, {2}}) := by
+  refine ⟨?_, fun h ↦ h (x := {0}) ⟨{2}, Or.inr rfl, by decide⟩ (y := {0, 1})
+    ⟨{0, 1}, Or.inl rfl, by decide⟩ (by decide) (by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1})⟩
   rintro x hx y hy hne hle
-  simp only [Set.mem_ofPred_eq, Finset.mem_insert, Finset.mem_singleton] at hx hy
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx hy
   rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
     first | exact hne rfl | exact absurd hle (by decide)
 
@@ -287,8 +288,8 @@ theorem isTelic_of_seinc (x : α) : IsTelic precedes (x ~[θ] ·) :=
 
 /-- The verb phrase of a quantized object under a strictly expansive incremental relation with
 unique participants is telic, as *eat two apples* is. -/
-theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
-    IsTelic precedes (VP θ OBJ) := by
+theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : Set α} (hOBJ : QUA OBJ) :
+    IsTelic precedes (· ∈ VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := h.mo hx hle
   obtain rfl := hUP.eq hx' (SetRel.mem_inv.1 hx'')

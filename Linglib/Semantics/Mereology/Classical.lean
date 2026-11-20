@@ -38,24 +38,24 @@ namespace Mereology
 variable {α : Type*}
 
 /-- A part structure is a classical extensional mereology ([champollion-krifka-2016]) if it is
-strongly supplemented and every inhabited predicate has a sum. -/
+strongly supplemented and every nonempty region has a sum. -/
 class IsClassicalMereology (α : Type*) [PartialOrder α] : Prop
     extends StronglySupplemented α where
-  exists_isSum (P : α → Prop) : (∃ x, P x) → ∃ t, IsSum P t
+  exists_isSum (P : Set α) : P.Nonempty → ∃ t, IsSum P t
 
-/-- A part structure is a classical mereology iff every inhabited predicate has exactly one sum,
+/-- A part structure is a classical mereology iff every nonempty region has exactly one sum,
 the axiom of unique sums of [champollion-krifka-2016]. -/
 theorem isClassicalMereology_iff_existsUnique [PartialOrder α] :
-    IsClassicalMereology α ↔ ∀ P : α → Prop, (∃ x, P x) → ∃! t, IsSum P t := by
+    IsClassicalMereology α ↔ ∀ P : Set α, P.Nonempty → ∃! t, IsSum P t := by
   refine ⟨fun h P hP ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨t, ht⟩ := h.exists_isSum P hP
     exact ⟨t, ht, fun s hs ↦ hs.unique ht⟩
   · have weak {x y : α} (hxy : x < y) : ∃ z ≤ y, ¬ IsBot z ∧ ¬ Overlap z x := by
       by_contra! hall
-      exact hxy.ne ((h (· = x) ⟨x, rfl⟩).unique (isSum_eq x)
-        ⟨fun _ e ↦ e ▸ hxy.le, fun z hz hz0 ↦ ⟨x, rfl, hall z hz hz0⟩⟩)
+      exact hxy.ne ((h {x} ⟨x, rfl⟩).unique (isSum_singleton x)
+        ⟨fun _ e ↦ Set.mem_singleton_iff.1 e ▸ hxy.le, fun z hz hz0 ↦ ⟨x, rfl, hall z hz hz0⟩⟩)
     refine { exists_not_overlap := fun y u hyu ↦ ?_, exists_isSum := fun P hP ↦ (h P hP).exists }
-    obtain ⟨s, hs⟩ := (h (fun w ↦ w = y ∨ w = u) ⟨y, .inl rfl⟩).exists
+    obtain ⟨s, hs⟩ := (h {y, u} ⟨y, .inl rfl⟩).exists
     have hus : u < s := lt_of_le_of_ne (hs.1 u (.inr rfl)) fun e ↦ hyu (e ▸ hs.1 y (.inl rfl))
     obtain ⟨w, hws, hw0, hwu⟩ := weak hus
     obtain ⟨_, rfl | rfl, v, hv, hvw, hvy⟩ := hs.2 w hws hw0
@@ -66,18 +66,18 @@ namespace IsClassicalMereology
 
 section PartialOrder
 
-variable [PartialOrder α] [IsClassicalMereology α] {P : α → Prop} {t x y z : α}
+variable [PartialOrder α] [IsClassicalMereology α] {P : Set α} {t x y z : α}
 
-/-- In a classical mereology the sums of an inhabited predicate are its least upper bounds. -/
-theorem isSum_iff_isLUB (hP : ∃ x, P x) : IsSum P t ↔ IsLUB {x | P x} t :=
+/-- In a classical mereology the sums of a nonempty region are its least upper bounds. -/
+theorem isSum_iff_isLUB (hP : P.Nonempty) : IsSum P t ↔ IsLUB P t :=
   ⟨IsSum.isLUB, fun h ↦ let ⟨_, hs⟩ := exists_isSum P hP; hs.isLUB.unique h ▸ hs⟩
 
-theorem isSum_pair (h : IsLUB {x, y} t) : IsSum (fun u ↦ u = x ∨ u = y) t :=
-  (isSum_iff_isLUB ⟨x, .inl rfl⟩).2 h
+theorem isSum_pair (h : IsLUB {x, y} t) : IsSum {x, y} t :=
+  (isSum_iff_isLUB (Set.insert_nonempty _ _)).2 h
 
 theorem exists_remainder (h : x < y) : ∃ z, ¬ Overlap z x ∧ IsLUB {x, z} y := by
   obtain ⟨w₀, hw₀y, -, hw₀x⟩ := exists_not_overlap_of_lt h
-  obtain ⟨z, hz⟩ := exists_isSum (fun w ↦ w ≤ y ∧ ¬ Overlap w x) ⟨w₀, hw₀y, hw₀x⟩
+  obtain ⟨z, hz⟩ := exists_isSum {w | w ≤ y ∧ ¬ Overlap w x} ⟨w₀, hw₀y, hw₀x⟩
   refine ⟨z, fun ⟨q, hq, hqz, hqx⟩ ↦ ?_, ⟨?_, fun u hu ↦ ?_⟩⟩
   · obtain ⟨r, ⟨_, hrx⟩, v, hv, hvq, hvr⟩ := hz.2 q hqz hq
     exact hrx ⟨v, hv, hvr, hvq.trans hqx⟩
@@ -106,38 +106,39 @@ theorem existsUnique_remainder (h : x < y) : ∃! z, ¬ Overlap z x ∧ IsLUB {x
 /-- The product of two overlapping individuals is the sum of their common parts. -/
 instance : HasProducts α where
   exists_isGLB x y := fun ⟨q, _, hqx, hqy⟩ ↦ by
-    obtain ⟨p, hp⟩ := exists_isSum (fun w ↦ w ≤ x ∧ w ≤ y) ⟨q, hqx, hqy⟩
+    obtain ⟨p, hp⟩ := exists_isSum {w | w ≤ x ∧ w ≤ y} ⟨q, hqx, hqy⟩
     refine ⟨p, ?_, fun w hw ↦ hp.1 w ⟨hw (.inl rfl), hw (.inr rfl)⟩⟩
     rintro _ (rfl | rfl)
     exacts [hp.isLUB.2 fun _ h ↦ h.1, hp.isLUB.2 fun _ h ↦ h.2]
 
 /-! ### The generalized sum -/
 
-/-- `sum P h` is the sum of the inhabited predicate `P`, the generalized sum `⊕P` of
+/-- `sum P h` is the sum of the nonempty region `P`, the generalized sum `⊕P` of
 [champollion-krifka-2016]. -/
-noncomputable def sum (P : α → Prop) (h : ∃ x, P x) : α := (exists_isSum P h).choose
+noncomputable def sum (P : Set α) (h : P.Nonempty) : α := (exists_isSum P h).choose
 
-variable (hP : ∃ x, P x)
+variable (hP : P.Nonempty)
 
 theorem isSum_sum : IsSum P (sum P hP) := (exists_isSum P hP).choose_spec
 
-theorem isLUB_sum : IsLUB {x | P x} (sum P hP) := (isSum_sum hP).isLUB
+theorem isLUB_sum : IsLUB P (sum P hP) := (isSum_sum hP).isLUB
 
 theorem _root_.Mereology.IsSum.eq_sum (h : IsSum P t) : t = sum P hP := h.unique (isSum_sum hP)
 
-theorem le_sum (hx : P x) : x ≤ sum P hP := (isSum_sum hP).1 x hx
+theorem le_sum (hx : x ∈ P) : x ≤ sum P hP := (isSum_sum hP).1 x hx
 
-theorem sum_le_iff : sum P hP ≤ t ↔ ∀ x, P x → x ≤ t := isLUB_le_iff (isLUB_sum hP)
+theorem sum_le_iff : sum P hP ≤ t ↔ ∀ x ∈ P, x ≤ t := isLUB_le_iff (isLUB_sum hP)
 
 @[simp]
-theorem sum_eq (x : α) : sum (· = x) ⟨x, rfl⟩ = x := ((isSum_eq x).eq_sum _).symm
+theorem sum_singleton (x : α) : sum {x} (Set.singleton_nonempty x) = x :=
+  ((isSum_singleton x).eq_sum _).symm
 
 /-- The binary sum `a ⊕ b` of a classical mereology is the sum of the pair `{a, b}`. -/
 @[reducible] noncomputable def toSemilatticeSup : SemilatticeSup α :=
   { ‹PartialOrder α› with
-    sup := fun a b ↦ sum (fun u ↦ u = a ∨ u = b) ⟨a, .inl rfl⟩
-    le_sup_left := fun a b ↦ le_sum (P := fun u ↦ u = a ∨ u = b) ⟨a, .inl rfl⟩ (.inl rfl)
-    le_sup_right := fun a b ↦ le_sum (P := fun u ↦ u = a ∨ u = b) ⟨a, .inl rfl⟩ (.inr rfl)
+    sup := fun a b ↦ sum {a, b} (Set.insert_nonempty _ _)
+    le_sup_left := fun a b ↦ le_sum (P := {a, b}) (Set.insert_nonempty _ _) (.inl rfl)
+    le_sup_right := fun a b ↦ le_sum (P := {a, b}) (Set.insert_nonempty _ _) (.inr rfl)
     sup_le := fun _ _ _ ha hb ↦ (sum_le_iff _).2 <| by
       rintro _ (rfl | rfl)
       exacts [ha, hb] }
@@ -150,15 +151,15 @@ instance [SemilatticeSup α] [IsClassicalMereology α] : SupIsSum α where
 /-- A predicate closed under sums has its sum as greatest member, the referent of a definite
 description ([champollion-krifka-2016]). -/
 theorem _root_.Mereology.SumClosed.isGreatest_sum [PartialOrder α] [IsClassicalMereology α]
-    {P : α → Prop} (h : SumClosed P) (hP : ∃ x, P x) : IsGreatest {x | P x} (sum P hP) :=
-  ⟨h P (fun _ hx ↦ hx) hP _ (isSum_sum hP), fun _ hx ↦ le_sum hP hx⟩
+    {P : Set α} (h : SumClosed P) (hP : P.Nonempty) : IsGreatest P (sum P hP) :=
+  ⟨h P subset_rfl hP _ (isSum_sum hP), fun _ hx ↦ le_sum hP hx⟩
 
 /-- The closure of a predicate under sums has the sum of the predicate as greatest member: the
 supremum of a plural is the sum of the singular ([champollion-krifka-2016]). -/
-theorem isGreatest_sumClosure [PartialOrder α] [IsClassicalMereology α] {P : α → Prop}
-    (hP : ∃ x, P x) : IsGreatest {x | SumClosure P x} (sum P hP) :=
-  ⟨⟨P, fun _ hx ↦ hx, hP, isSum_sum hP⟩, fun _ ⟨_, hQ, _, hx⟩ ↦
-    hx.isLUB.2 fun _ hy ↦ le_sum hP (hQ _ hy)⟩
+theorem isGreatest_sumClosure [PartialOrder α] [IsClassicalMereology α] {P : Set α}
+    (hP : P.Nonempty) : IsGreatest (sumClosure P) (sum P hP) :=
+  ⟨⟨P, subset_rfl, hP, isSum_sum hP⟩, fun _ ⟨_, hQ, _, hx⟩ ↦
+    hx.isLUB.2 fun _ hy ↦ le_sum hP (hQ hy)⟩
 
 instance [SemilatticeSup α] [IsClassicalMereology α] : HasRemainders α where
   exists_remainder _ _ h :=
@@ -170,10 +171,10 @@ instance [SemilatticeSup α] [IsClassicalMereology α] : HasRemainders α where
 /-- A complete Boolean algebra is a classical mereology, its bottom the null individual and its
 sums its suprema. -/
 instance [CompleteBooleanAlgebra α] : IsClassicalMereology α where
-  exists_isSum P _ := ⟨sSup {x | P x}, Mereology.isSum_iff_isLUB.2 (isLUB_sSup _)⟩
+  exists_isSum P _ := ⟨sSup P, Mereology.isSum_iff_isLUB.2 (isLUB_sSup _)⟩
 
-theorem sum_eq_sSup [CompleteBooleanAlgebra α] (P : α → Prop) (hP : ∃ x, P x) :
-    sum P hP = sSup {x | P x} :=
+theorem sum_eq_sSup [CompleteBooleanAlgebra α] (P : Set α) (hP : P.Nonempty) :
+    sum P hP = sSup P :=
   (isLUB_sum hP).unique (isLUB_sSup _)
 
 section Subtype
@@ -205,7 +206,7 @@ theorem subtype : IsClassicalMereology {x // p x} where
     exact ⟨⟨z, (hp z).2 hz⟩, hzx, fun hb ↦ hzy ⟨z, hz, le_rfl, hb y⟩,
       fun ho ↦ hzy (overlap_of_overlap_subtype hp ho)⟩
   exists_isSum P := fun ⟨a, ha⟩ ↦ by
-    obtain ⟨t, ht⟩ := exists_isSum (fun x : α ↦ ∃ h, P ⟨x, h⟩) ⟨a, a.2, ha⟩
+    obtain ⟨t, ht⟩ := exists_isSum {x : α | ∃ h, (⟨x, h⟩ : {x // p x}) ∈ P} ⟨a, a.2, ha⟩
     have ht0 : ¬ IsBot t := fun hb ↦ (hp a).1 a.2 (hb.mono (ht.1 a ⟨a.2, ha⟩))
     refine ⟨⟨t, (hp t).2 ht0⟩, fun x hx ↦ ht.1 x ⟨x.2, hx⟩, fun y hy hy0 ↦ ?_⟩
     obtain ⟨x, ⟨hx0, hx⟩, q, hq0, hqy, hqx⟩ := ht.2 y hy ((hp y).1 y.2)
@@ -233,9 +234,9 @@ variable [PartialOrder α] [OrderBot α] [IsClassicalMereology α]
 open Classical in
 /-- A classical mereology with a null individual is a complete lattice. -/
 @[reducible] noncomputable def toCompleteLattice : CompleteLattice α :=
-  letI : SupSet α := ⟨fun s ↦ if h : ∃ x, x ∈ s then sum (· ∈ s) h else ⊥⟩
+  letI : SupSet α := ⟨fun s ↦ if h : s.Nonempty then sum s h else ⊥⟩
   completeLatticeOfSup α fun s ↦ by
-    change IsLUB s (if h : ∃ x, x ∈ s then sum (· ∈ s) h else ⊥)
+    change IsLUB s (if h : s.Nonempty then sum s h else ⊥)
     split_ifs with h
     · exact isLUB_sum h
     · rw [Set.not_nonempty_iff_eq_empty.1 h]
@@ -244,7 +245,7 @@ open Classical in
 /-- A classical mereology with a null individual is a complete Boolean algebra. -/
 @[reducible] noncomputable def toCompleteBooleanAlgebra : CompleteBooleanAlgebra α :=
   letI L : CompleteLattice α := toCompleteLattice
-  have hc (x : α) : IsSum (fun w ↦ ¬ Overlap w x) (sSup {w | ¬ Overlap w x}) :=
+  have hc (x : α) : IsSum {w | ¬ Overlap w x} (sSup {w | ¬ Overlap w x}) :=
     (isSum_iff_isLUB ⟨⊥, fun h ↦ h.not_isBot_left isBot_bot⟩).2 (isLUB_sSup _)
   { L with
     le_sup_inf := fun x y z ↦ le_of_forall_overlap fun p hp hp0 ↦ by
@@ -300,8 +301,8 @@ instance [NoBotOrder α] [IsClassicalMereology α] : IsClassicalMereology (WithB
         exact ⟨z, WithBot.coe_le_coe.2 hza, fun hb ↦ WithBot.not_coe_le_bot z (hb ⊥),
           fun ho ↦ hzb (overlap_coe_withBot.1 ho)⟩
   exists_isSum P hP := by
-    by_cases h : ∃ a : α, P a
-    · obtain ⟨t, ht⟩ := exists_isSum (fun a : α ↦ P a) h
+    by_cases h : ∃ a : α, (a : WithBot α) ∈ P
+    · obtain ⟨t, ht⟩ := exists_isSum {a : α | (a : WithBot α) ∈ P} h
       refine ⟨t, fun x hx ↦ ?_, fun y hy hy0 ↦ ?_⟩
       · induction x with
         | bot => exact bot_le

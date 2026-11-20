@@ -125,16 +125,17 @@ abbrev atoms : Finset (Finset ι) := univ.map ⟨({·}), singleton_injective⟩
 abbrev sums : Finset (Finset ι) := univ.filter Finset.Nonempty
 
 -- fn. 14
-theorem mem_sums_iff {y : Finset ι} : y ∈ sums ↔ Mereology.AlgClosure (· ∈ atoms) y := by
+theorem mem_sums_iff {y : Finset ι} :
+    y ∈ sums ↔ y ∈ supClosure ((atoms : Finset (Finset ι)) : Set (Finset ι)) := by
   simp only [mem_filter, mem_univ, true_and]
   constructor
-  · refine Nonempty.cons_induction (fun a ↦ .base (by simp)) fun a s h _ ih ↦ ?_
+  · refine Nonempty.cons_induction (fun a ↦ subset_supClosure (by simp)) fun a s h _ ih ↦ ?_
     rw [cons_eq_insert, insert_eq]
-    exact .sum (.base (by simp)) ih
+    exact supClosed_supClosure (subset_supClosure (by simp)) ih
   · intro hy
-    induction hy using Mereology.AlgClosure.induction with
-    | base h => obtain ⟨a, -, rfl⟩ := mem_map.1 h; exact singleton_nonempty a
-    | sum _ _ ih _ => exact ih.mono le_sup_left
+    induction hy using supClosure_induction with
+    | mem _ h => obtain ⟨a, -, rfl⟩ := mem_map.1 (mem_coe.1 h); exact singleton_nonempty a
+    | sup _ _ _ _ ih _ => exact ih.mono le_sup_left
 
 variable (ι) in
 /-- A scenario fixes the worlds each anchor projects: the worlds where the decision behind the VP

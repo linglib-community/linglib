@@ -9,9 +9,9 @@ public import Linglib.Semantics.Mereology.Classical
 An extensive measure is additive over non-overlapping individuals and positive on non-null
 ones. Over a carrier with remainders it is
 [strictly monotone](##Mereology.IsExtensiveMeasure.strictMono), so
-[the individuals of a given measure are quantized](##Mereology.qua_and_eq_of_strictMonoOn), as
-*five ounces of gold* is. The atom count is likewise strictly monotone on sums of atoms, which
-[quantizes *two cats*](##Mereology.qua_algClosure_atomCount).
+the individuals of a given measure are quantized
+(`Mereology.qua_inter_preimage_of_strictMonoOn`), as *five ounces of gold* is. The atom count is likewise strictly monotone on sums of atoms, which
+quantizes *two cats* (`Mereology.qua_supClosure_inter_atomCount`).
 
 ## References
 
@@ -31,16 +31,16 @@ elements and positivity, and derive from the remainder principle that a proper p
 than the whole. [champollion-krifka-2016] call a measure extensive on a set when it has that
 property there. Either way, the measure phrases such a measure builds are quantized. -/
 
-/-- The `R`-elements of measure `n` are quantized if the measure is strictly monotone on `R`, as
-*five ounces of gold* is in the measure construction of [krifka-1989]. -/
-theorem qua_and_eq_of_strictMonoOn {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop}
-    {μ : α → M} (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA fun x ↦ R x ∧ μ x = n :=
+/-- The members of a region with measure `n` are quantized if the measure is strictly monotone on
+the region, as *five ounces of gold* is in the measure construction of [krifka-1989]. -/
+theorem qua_inter_preimage_of_strictMonoOn {M : Type*} [PartialOrder α] [Preorder M] {r : Set α}
+    {μ : α → M} (hμ : StrictMonoOn μ r) (n : M) : QUA (r ∩ μ ⁻¹' {n}) :=
   fun _ hx _ hy hne hle ↦ (hμ hx.1 hy.1 (lt_of_le_of_ne hle hne)).ne (hx.2.trans hy.2.symm)
 
-theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop}
-    (hP : ∀ ⦃a⦄, P a → Atom a) : StrictMonoOn (atomCount α) {x | AlgClosure P x} := by
+theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {s : Set α}
+    (hs : ∀ ⦃a⦄, a ∈ s → Atom a) : StrictMonoOn (atomCount α) (supClosure s) := by
   intro x _ y hy hxy
-  obtain ⟨t, ht, hPt, rfl⟩ := (algClosure_iff_exists_sup' P y).1 hy
+  obtain ⟨t, ht, hPt, rfl⟩ := hy
   have hsub : atomsBelow x ⊆ atomsBelow (t.sup' ht id) :=
     fun a ha ↦ ⟨ha.1, ha.2.trans hxy.le⟩
   obtain ⟨a, ha, hax⟩ : ∃ a ∈ t, ¬ a ≤ x := by
@@ -48,13 +48,13 @@ theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop
     exact hxy.not_ge (Finset.sup'_le ht id hno)
   rw [atomCount_eq_ncard, atomCount_eq_ncard]
   exact Set.ncard_lt_ncard ((Set.ssubset_iff_of_subset hsub).2
-    ⟨a, ⟨hP (hPt a ha), Finset.le_sup' id ha⟩, fun h ↦ hax h.2⟩) (Set.toFinite _)
+    ⟨a, ⟨hs (hPt ha), Finset.le_sup' id ha⟩, fun h ↦ hax h.2⟩) (Set.toFinite _)
 
 /-- The sums of `P`-atoms with `n` atoms form an antichain, so *two cats* is quantized
 ([champollion-krifka-2016]). -/
-theorem qua_algClosure_atomCount [SemilatticeSup α] [Fintype α] {P : α → Prop}
-    (hP : ∀ ⦃a⦄, P a → Atom a) (n : ℕ) : QUA fun x ↦ AlgClosure P x ∧ atomCount α x = n :=
-  qua_and_eq_of_strictMonoOn (atomCount_strictMonoOn hP) n
+theorem qua_supClosure_inter_atomCount [SemilatticeSup α] [Fintype α] {s : Set α}
+    (hs : ∀ ⦃a⦄, a ∈ s → Atom a) (n : ℕ) : QUA (supClosure s ∩ atomCount α ⁻¹' {n}) :=
+  qua_inter_preimage_of_strictMonoOn (atomCount_strictMonoOn hs) n
 
 section ExtensiveMeasure
 

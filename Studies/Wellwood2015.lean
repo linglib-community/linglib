@@ -46,7 +46,7 @@ The obligatory *much* of *very* with nouns and verbs is Bresnan's Much Deletion.
   here, measures the coffee its determiner chooses.
 
 The paper's
-non-trivially structured domains are the predicates that are not quantized, `¬ QUA P`. An
+non-trivially structured domains are the predicates that are not quantized, `¬ QUA {x | P x}`. An
 admissible measure is `StrictMono` on the type of what is measured, the ordered domain of (26), or
 `StrictMonoOn` the satisfiers of a predicate. The bare-adjective, measure-phrase and scalar-change
 discussions of the paper's objections section are not formalized.
@@ -388,18 +388,18 @@ open Mereology
 
 variable {α D : Type*} [Preorder D]
 
-theorem not_qua_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM P) {x y : α} (hx : P x)
-    (hy : P y) (hne : x ≠ y) : ¬ QUA P := fun hQ ↦
+theorem not_qua_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM {x | P x}) {x y : α} (hx : P x)
+    (hy : P y) (hne : x ≠ y) : ¬ QUA {x | P x} := fun hQ ↦
   hne <| (hQ.eq hx (hC hx hy) le_sup_left).trans (hQ.eq hy (hC hx hy) le_sup_right).symm
 
-theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) (μ : α → D) :
+theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA {x | P x}) (μ : α → D) :
     StrictMonoOn μ {x | P x} :=
   fun _ hx _ hy hlt ↦ absurd hlt (hQ.not_lt hx hy)
 
 /-- Monotonicity (15) must preserve the strict part-whole order: a measure on which every part
 agrees with its whole, as temperature on a portion of coffee, preserves the weak order and is still
 not monotonic on a domain that is not quantized. -/
-theorem monotoneOn_and_not_strictMonoOn [PartialOrder α] {P : α → Prop} (hP : ¬ QUA P)
+theorem monotoneOn_and_not_strictMonoOn [PartialOrder α] {P : α → Prop} (hP : ¬ QUA {x | P x})
     {μ : α → D} (hμ : ∀ x y, P x → P y → x ≤ y → μ x = μ y) :
     MonotoneOn μ {x | P x} ∧ ¬ StrictMonoOn μ {x | P x} :=
   ⟨fun x hx y hy hxy ↦ (hμ x y hx hy hxy).le, fun h ↦

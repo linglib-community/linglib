@@ -70,7 +70,7 @@ dimension `d` stand in the granularity relation `γ` to the image of `x`, the st
 of [champollion-2017] eq. (16) with the granularity of eq. (17) made binary. -/
 def StratifiedReference {α β : Type*} [SemilatticeSup α]
     (d : α → β) (γ : β → β → Prop) (P : α → Prop) (x : α) : Prop :=
-  AlgClosure (fun y ↦ P y ∧ γ (d y) (d x)) x
+  x ∈ supClosure {y | P y ∧ γ (d y) (d x)}
 
 /-! ### Universal stratified reference -/
 
@@ -118,7 +118,7 @@ coincides with the functional form on a role's graph
 counts a part when it has an atomic `R`-filler. -/
 def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
-  AlgClosure (fun y ↦ P y ∧ ∃ a, R a y ∧ Atom a) x
+  x ∈ supClosure {y | P y ∧ ∃ a, R a y ∧ Atom a}
 
 /-- `P` has universal relational distributive reference when every `P`-element distributes
     along `R`. -/
@@ -132,7 +132,7 @@ theorem relationalDistributiveReference_mono {Entity α : Type*}
     ∀ x, RelationalDistributiveReference R P x →
       RelationalDistributiveReference R Q x := by
   intro x hx
-  exact algClosure_mono (fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) x hx
+  exact supClosure_mono (by exact fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) hx
 
 theorem relationalDistributiveReference_graph {Entity α : Type*}
     [PartialOrder Entity] [SemilatticeSup α]
@@ -232,25 +232,25 @@ theorem stratifiedReference_trivial_granularity {α β : Type*} [SemilatticeSup 
     {d : α → β} {P : α → Prop} :
     StratifiedReferenceUniv d (fun _ _ ↦ True) P := by
   intro x hx
-  exact AlgClosure.base ⟨hx, trivial⟩
+  exact subset_supClosure ⟨hx, trivial⟩
 
 theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
     [PartialOrder β]
     {θ : α → β} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, DistributiveReference θ P x → DistributiveReference θ Q x := by
   intro x hx
-  exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
+  exact supClosure_mono (by exact fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) hx
 
 theorem stratifiedReference_mono {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, StratifiedReference d γ P x → StratifiedReference d γ Q x := by
   intro x hx
-  exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
+  exact supClosure_mono (by exact fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) hx
 
 theorem stratifiedReference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} (hRefl : ∀ b, γ b b)
     {P : α → Prop} {x : α} (hx : P x) : StratifiedReference d γ P x :=
-  AlgClosure.base ⟨hx, hRefl (d x)⟩
+  subset_supClosure ⟨hx, hRefl (d x)⟩
 
 theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (d : SupHom α β)
@@ -260,17 +260,17 @@ theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [Semilattic
     (hx : StratifiedReference d γ P x) (hy : StratifiedReference d γ P y) :
     StratifiedReference d γ P (x ⊔ y) := by
   unfold StratifiedReference at hx hy ⊢
-  -- The closure structure already gives closure under sum (algClosure_cum);
+  -- The closure structure already gives closure under sum (`supClosed_supClosure`);
   -- we just weaken the granularity witness via monotonicity to compare
   -- against the joined outer dimension.
-  have hxy : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) (x ⊔ y) := by
-    have hx' : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) x := by
-      exact algClosure_mono
-        (fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_left⟩) x hx
-    have hy' : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) y := by
-      exact algClosure_mono
-        (fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_right⟩) y hy
-    exact AlgClosure.sum hx' hy'
+  have hxy : x ⊔ y ∈ supClosure {z | P z ∧ γ (d z) (d x ⊔ d y)} := by
+    have hx' : x ∈ supClosure {z | P z ∧ γ (d z) (d x ⊔ d y)} := by
+      exact supClosure_mono
+        (by exact fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_left⟩) hx
+    have hy' : y ∈ supClosure {z | P z ∧ γ (d z) (d x ⊔ d y)} := by
+      exact supClosure_mono
+        (by exact fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_right⟩) hy
+    exact supClosed_supClosure hx' hy'
   rw [map_sup]
   exact hxy
 
@@ -288,10 +288,10 @@ theorem qua_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
-    (hQua : QUA P)
+    (hQua : QUA {e | P e})
     {e : E} (he : P e) (hSub : SubintervalReference P e) :
     False := by
-  obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSub
+  obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := exists_le_of_mem_supClosure hSub
   have hne : a ≠ e := by
     intro heq; rw [heq] at hGran
     exact lt_irrefl _ hGran
@@ -310,7 +310,7 @@ theorem in_adverbial_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
-    (hQua : QUA P)
+    (hQua : QUA {e | P e})
     {e₁ e₂ : E} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
     ¬ SubintervalReferenceUniv P := by
   intro hSub
@@ -351,13 +351,13 @@ section ThematicRolesAndCumulativity
 /-- A predicate is lexically cumulative when it is a fixed point of the algebraic closure
 operator. -/
 def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
-  ∀ x, AlgClosure P x ↔ P x
+  ∀ x, x ∈ supClosure {y | P y} ↔ P x
 
 /-- Lexical cumulativity entails Krifka's `CUM` (closure under binary join). -/
 theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} (h : LexicallyCumulative P) : CUM P := by
+    {P : α → Prop} (h : LexicallyCumulative P) : CUM {x | P x} := by
   intro x hPx y hPy
-  exact (h _).mp (AlgClosure.sum (AlgClosure.base hPx) (AlgClosure.base hPy))
+  exact (h _).mp (supClosed_supClosure (subset_supClosure hPx) (subset_supClosure hPy))
 
 end ThematicRolesAndCumulativity
 
@@ -394,7 +394,7 @@ theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [TemporalTr
       ∃ (parts : Finset E) (hne : parts.Nonempty),
         (∀ p ∈ parts, P p ∧ Event.τ p < Event.τ e) ∧ parts.sup' hne id = e := by
   unfold SubintervalReference StratifiedReference SubintervalGranularity
-  exact algClosure_iff_exists_sup' _ _
+  exact Iff.rfl
 
 /-! ### Aspect and space: the subregion and strata approaches (§6.3–6.4) -/
 
@@ -420,10 +420,11 @@ theorem stratifiedReference_of_divisiveness (hτ : Monotone τ) {a b : α}
     (hov : ¬ Overlap (τ a) (τ b)) (ha : ¬ IsBot (τ a)) (hb : ¬ IsBot (τ b))
     (hdiv : ∀ e', IsTemporalPart τ e' (a ⊔ b) → P e') :
     StratifiedReference τ (· < ·) P (a ⊔ b) :=
-  .sum (.base ⟨hdiv a ⟨le_sup_left, b, le_sup_right, hov⟩, lt_of_le_of_ne (hτ le_sup_left)
-      fun h ↦ hov ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩⟩)
-    (.base ⟨hdiv b ⟨le_sup_right, a, le_sup_left, fun o ↦ hov o.symm⟩,
-      lt_of_le_of_ne (hτ le_sup_right) fun h ↦ hov ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩⟩)
+  supClosed_supClosure
+    (subset_supClosure (by exact ⟨hdiv a ⟨le_sup_left, b, le_sup_right, hov⟩,
+      lt_of_le_of_ne (hτ le_sup_left) fun h ↦ hov ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩⟩))
+    (subset_supClosure (by exact ⟨hdiv b ⟨le_sup_right, a, le_sup_left, fun o ↦ hov o.symm⟩,
+      lt_of_le_of_ne (hτ le_sup_right) fun h ↦ hov ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩⟩))
 
 /-- The back-and-forth scenario has four trips of two legs each, a leg at each instant, the even
 legs from the lot halfway to the store and the odd legs on to the store. An event is a set of
@@ -440,8 +441,9 @@ instance : DecidablePred PushCartsToStore := fun _ ↦ by unfold PushCartsToStor
 strata-based account admits the *for*-adverbial (Figure 6.2a). -/
 theorem pushCarts_stratified :
     StratifiedReference id (· < ·) PushCartsToStore (Finset.univ : Finset Leg) :=
-  (algClosure_iff_exists_sup' _ _).2
-    ⟨{{0, 1}, {2, 3}, {4, 5}, {6, 7}}, by decide, by decide +kernel, by decide +kernel⟩
+  have h : ∀ p ∈ ({{0, 1}, {2, 3}, {4, 5}, {6, 7}} : Finset (Finset Leg)),
+      PushCartsToStore p ∧ p < Finset.univ := by decide +kernel
+  ⟨{{0, 1}, {2, 3}, {4, 5}, {6, 7}}, by decide, fun p hp ↦ h p hp, by decide +kernel⟩
 
 /-- The halfway legs of §6.4.1 do not reach the store, so the subregion presupposition fails (Figure
 6.2b). -/

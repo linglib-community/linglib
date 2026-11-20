@@ -204,7 +204,7 @@ def LacksMinimalParts {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
 /-- The dog-pluralities over two dogs are the nonempty subsets. -/
 abbrev isDog (x : Finset (Fin 2)) : Prop := x.Nonempty
 
-theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog := by
+theorem maa_cumulative_not_divisive : CUM {x | isDog x} ∧ ¬ LacksMinimalParts isDog := by
   refine ⟨fun _ hx _ _ ↦ hx.mono Finset.subset_union_left, fun h ↦ ?_⟩
   obtain ⟨y, hy, hne⟩ := h {0} (Finset.singleton_nonempty 0)
   exact hne.ne_empty ((Finset.subset_singleton_iff.1 hy.le).resolve_right hy.ne)

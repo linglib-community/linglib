@@ -5,7 +5,7 @@ public import Linglib.Semantics.Mereology.Basic
 /-!
 # Sums and the principles of part structures
 
-A sum of a predicate, in Tarski's sense, is a bound of its members each of whose non-null parts
+A sum of a region, in Tarski's sense, is a bound of its members each of whose non-null parts
 overlaps one of them. It [overlaps exactly what its members overlap](##Mereology.IsSum.overlap_iff),
 which is the other definition of sum in use, and the two definitions agree in a part structure
 that is strongly supplemented: whatever is not part of `y` has a non-null part that does not
@@ -16,7 +16,7 @@ satisfy all four. Closure of a
 predicate under the sums of its inhabited subpredicates is cumulative reference in its general
 form, and [the predicates so closed are the fixed points](##Mereology.sumClosed_iff) of algebraic
 closure under arbitrary sums, which on a finite predicate is
-[closure under binary sums](##Mereology.sumClosure_iff_algClosure).
+closure under binary sums (`Mereology.sumClosure_eq_supClosure`).
 
 ## Implementation notes
 
@@ -46,29 +46,30 @@ theorem overlap_iff_exists_le [PartialOrder α] [NoBotOrder α] {x y : α} :
 
 section Sum
 
-variable [PartialOrder α] {P Q : α → Prop} {s t x y : α}
+variable [PartialOrder α] {P Q : Set α} {s t x y : α}
 
-/-- `t` is a sum of the `P`-elements ([champollion-krifka-2016]) if it lies above each of them and
+/-- `t` is a sum of the region `P` ([champollion-krifka-2016]) if it lies above each member and
 each of its non-null parts overlaps one of them. -/
-def IsSum (P : α → Prop) (t : α) : Prop :=
-  (∀ x, P x → x ≤ t) ∧ ∀ y ≤ t, ¬ IsBot y → ∃ x, P x ∧ Overlap y x
+def IsSum (P : Set α) (t : α) : Prop :=
+  (∀ x ∈ P, x ≤ t) ∧ ∀ y ≤ t, ¬ IsBot y → ∃ x ∈ P, Overlap y x
 
 /-- Every individual is the sum of itself. -/
-theorem isSum_eq (x : α) : IsSum (· = x) x :=
-  ⟨fun _ h ↦ h.le, fun _ hy hy0 ↦ ⟨x, rfl, .of_le hy0 hy⟩⟩
+theorem isSum_singleton (x : α) : IsSum {x} x :=
+  ⟨fun _ h ↦ (Set.mem_singleton_iff.1 h).le, fun _ hy hy0 ↦ ⟨x, rfl, .of_le hy0 hy⟩⟩
 
 /-- A sum overlaps exactly what its members overlap. -/
-theorem IsSum.overlap_iff (h : IsSum P t) (w : α) : Overlap w t ↔ ∃ x, P x ∧ Overlap w x :=
+theorem IsSum.overlap_iff (h : IsSum P t) (w : α) : Overlap w t ↔ ∃ x ∈ P, Overlap w x :=
   ⟨fun ⟨p, hp, hpw, hpt⟩ ↦ let ⟨x, hx, ho⟩ := h.2 p hpt hp; ⟨x, hx, ho.mono hpw le_rfl⟩,
     fun ⟨x, hx, ho⟩ ↦ ho.mono le_rfl (h.1 x hx)⟩
 
-/-- A sum of sums of subpredicates of `P` is a sum of a subpredicate of `P`. -/
-theorem IsSum.bind {R : α → α → Prop} (ht : IsSum Q t) (hQ : ∀ q, Q q → IsSum (R q) q) :
-    IsSum (fun x ↦ ∃ q, Q q ∧ R q x) t :=
-  ⟨fun _ ⟨q, hq, hx⟩ ↦ ((hQ q hq).1 _ hx).trans (ht.1 q hq), fun y hy hy0 ↦
-    let ⟨q, hq, p, hp0, hpy, hpq⟩ := ht.2 y hy hy0
-    let ⟨x, hx, ho⟩ := (hQ q hq).2 p hpq hp0
-    ⟨x, ⟨q, hq, hx⟩, ho.mono hpy le_rfl⟩⟩
+/-- A sum of sums of subregions of `P` is a sum of a subregion of `P`. -/
+theorem IsSum.bind {R : α → Set α} (ht : IsSum Q t) (hQ : ∀ q ∈ Q, IsSum (R q) q) :
+    IsSum (⋃ q ∈ Q, R q) t :=
+  ⟨fun _ hx ↦ let ⟨q, hq, hx⟩ := Set.mem_iUnion₂.1 hx; ((hQ q hq).1 _ hx).trans (ht.1 q hq),
+    fun y hy hy0 ↦
+      let ⟨q, hq, p, hp0, hpy, hpq⟩ := ht.2 y hy hy0
+      let ⟨x, hx, ho⟩ := (hQ q hq).2 p hpq hp0
+      ⟨x, Set.mem_iUnion₂.2 ⟨q, hq, hx⟩, ho.mono hpy le_rfl⟩⟩
 
 end Sum
 
@@ -93,13 +94,13 @@ class HasRemainders (α : Type*) [SemilatticeSup α] : Prop where
 non-null parts overlaps one of the two. Boolean algebras and classical mereologies satisfy this;
 the lattice of three atoms any two of which join to the top does not. -/
 class SupIsSum (α : Type*) [SemilatticeSup α] : Prop where
-  isSum_sup (x y : α) : IsSum (fun u ↦ u = x ∨ u = y) (x ⊔ y)
+  isSum_sup (x y : α) : IsSum {x, y} (x ⊔ y)
 
 export SupIsSum (isSum_sup)
 
 section Principles
 
-variable [PartialOrder α] {P : α → Prop} {s t x y : α}
+variable [PartialOrder α] {P : Set α} {s t x y : α}
 
 /-- The product of two overlapping individuals is non-null. -/
 theorem Overlap.exists_isGLB [HasProducts α] (h : Overlap x y) :
@@ -130,24 +131,24 @@ theorem eq_of_forall_overlap_iff (h : ∀ w, Overlap w x ↔ Overlap w y) : x = 
 /-- In a strongly supplemented part structure, a sum is what overlaps exactly what the members
 overlap. -/
 theorem isSum_iff_forall_overlap :
-    IsSum P t ↔ ∀ w, Overlap w t ↔ ∃ x, P x ∧ Overlap w x :=
+    IsSum P t ↔ ∀ w, Overlap w t ↔ ∃ x ∈ P, Overlap w x :=
   ⟨IsSum.overlap_iff, fun h ↦ ⟨fun x hx ↦ le_of_forall_overlap fun z hz hz0 ↦
     (h z).2 ⟨x, hx, .of_le hz0 hz⟩, fun y hy hy0 ↦ (h y).1 (.of_le hy0 hy)⟩⟩
 
 /-- In a strongly supplemented part structure, a sum is a least upper bound. -/
-theorem IsSum.isLUB (h : IsSum P t) : IsLUB {x | P x} t :=
+theorem IsSum.isLUB (h : IsSum P t) : IsLUB P t :=
   ⟨fun _ hx ↦ h.1 _ hx, fun _ hw ↦ le_of_forall_overlap fun y hy hy0 ↦
     let ⟨_, hx, ho⟩ := h.2 y hy hy0
     ho.mono le_rfl (hw hx)⟩
 
-/-- In a strongly supplemented part structure, a predicate has at most one sum. -/
+/-- In a strongly supplemented part structure, a region has at most one sum. -/
 theorem IsSum.unique (hs : IsSum P s) (ht : IsSum P t) : s = t := hs.isLUB.unique ht.isLUB
 
 end Principles
 
 section GeneralizedBooleanAlgebra
 
-variable [GeneralizedBooleanAlgebra α] {P : α → Prop} {t : α}
+variable [GeneralizedBooleanAlgebra α] {P : Set α} {t : α}
 
 instance : StronglySupplemented α where
   exists_not_overlap x y h := ⟨x \ y, sdiff_le, by rwa [isBot_iff_eq_bot, sdiff_eq_bot_iff],
@@ -159,7 +160,7 @@ instance : HasRemainders α where
       sup_sdiff_cancel_right h.le⟩
 
 /-- In a Boolean algebra the sums are the least upper bounds. -/
-theorem isSum_iff_isLUB : IsSum P t ↔ IsLUB {x | P x} t := by
+theorem isSum_iff_isLUB : IsSum P t ↔ IsLUB P t := by
   refine ⟨IsSum.isLUB, fun h ↦ ⟨fun x hx ↦ h.1 hx, fun y hy hy0 ↦ ?_⟩⟩
   by_contra! hno
   refine hy0 (isBot_iff_eq_bot.2 ?_)
@@ -179,64 +180,64 @@ instance [SemilatticeInf α] : HasProducts α where
 
 section SumClosed
 
-variable [PartialOrder α] {P : α → Prop} {x : α}
+variable [PartialOrder α] {P : Set α} {x : α}
 
-/-- A predicate is closed under sums if it holds of every sum of an inhabited subpredicate,
-cumulative reference in the form that covers infinite sums ([champollion-krifka-2016]). -/
-def SumClosed (P : α → Prop) : Prop :=
-  ∀ Q : α → Prop, (∀ x, Q x → P x) → (∃ x, Q x) → ∀ t, IsSum Q t → P t
+/-- A region is closed under sums if it has every sum of its nonempty subregions, cumulative
+reference in the form that covers infinite sums ([champollion-krifka-2016]). -/
+def SumClosed (P : Set α) : Prop :=
+  ∀ Q ⊆ P, Q.Nonempty → ∀ t, IsSum Q t → t ∈ P
 
-/-- The closure of `P` under sums ([champollion-krifka-2016]) holds of the sums of the inhabited
-subpredicates of `P`. -/
-def SumClosure (P : α → Prop) (x : α) : Prop :=
-  ∃ Q : α → Prop, (∀ y, Q y → P y) ∧ (∃ y, Q y) ∧ IsSum Q x
+/-- The closure of `P` under sums ([champollion-krifka-2016]) is the region of the sums of the
+nonempty subregions of `P`. -/
+def sumClosure (P : Set α) : Set α :=
+  {x | ∃ Q ⊆ P, Q.Nonempty ∧ IsSum Q x}
 
-theorem SumClosure.base (h : P x) : SumClosure P x :=
-  ⟨(· = x), fun _ e ↦ e ▸ h, ⟨x, rfl⟩, isSum_eq x⟩
+theorem subset_sumClosure : P ⊆ sumClosure P := fun x h ↦
+  ⟨{x}, Set.singleton_subset_iff.2 h, Set.singleton_nonempty x, isSum_singleton x⟩
 
-/-- The closure of a predicate under sums is closed under sums. -/
-theorem sumClosed_sumClosure (P : α → Prop) : SumClosed (SumClosure P) := by
+/-- The closure of a region under sums is closed under sums. -/
+theorem sumClosed_sumClosure (P : Set α) : SumClosed (sumClosure P) := by
   intro Q hQ ⟨q₀, hq₀⟩ t ht
-  choose! R hRP hRne hR using hQ
+  have hQ' : ∀ q ∈ Q, ∃ R : Set α, R ⊆ P ∧ R.Nonempty ∧ IsSum R q := fun q hq ↦ hQ hq
+  choose! R hRP hRne hR using hQ'
   obtain ⟨y, hy⟩ := hRne q₀ hq₀
-  exact ⟨fun x ↦ ∃ q, Q q ∧ R q x, fun x ⟨q, hq, hx⟩ ↦ hRP q hq x hx, ⟨y, q₀, hq₀, hy⟩,
-    ht.bind hR⟩
+  exact ⟨⋃ q ∈ Q, R q, Set.iUnion₂_subset hRP, ⟨y, Set.mem_iUnion₂.2 ⟨q₀, hq₀, hy⟩⟩, ht.bind hR⟩
 
-/-- A predicate is closed under sums iff its closure under sums adds nothing to it, as the
-plural of a cumulative mass noun adds nothing. -/
-theorem sumClosed_iff : SumClosed P ↔ ∀ x, SumClosure P x → P x :=
-  ⟨fun h _ ⟨Q, hQ, hne, hx⟩ ↦ h Q hQ hne _ hx, fun h Q hQ hne _ ht ↦ h _ ⟨Q, hQ, hne, ht⟩⟩
+/-- A region is closed under sums iff its closure under sums adds nothing to it, as the plural of
+a cumulative mass noun adds nothing. -/
+theorem sumClosed_iff : SumClosed P ↔ sumClosure P ⊆ P :=
+  ⟨fun h _ ⟨Q, hQ, hne, hx⟩ ↦ h Q hQ hne _ hx, fun h Q hQ hne _ ht ↦ h ⟨Q, hQ, hne, ht⟩⟩
 
 end SumClosed
 
 section SupIsSum
 
-variable [SemilatticeSup α] {P : α → Prop} {x : α}
+variable [SemilatticeSup α] {P : Set α} {x : α}
 
-/-- A predicate closed under sums is cumulative. -/
+/-- A region closed under sums is cumulative. -/
 theorem SumClosed.cum [SupIsSum α] (h : SumClosed P) : CUM P :=
-  fun x hx y hy ↦ h _ (by rintro _ (rfl | rfl) <;> assumption) ⟨x, .inl rfl⟩ _ (isSum_sup x y)
+  fun x hx y hy ↦ h {x, y} (by rintro _ (rfl | rfl) <;> assumption) (Set.insert_nonempty _ _) _
+    (isSum_sup x y)
 
 /-- The closure under binary sums lies in the closure under sums. -/
-theorem AlgClosure.sumClosure [SupIsSum α] (h : AlgClosure P x) : SumClosure P x :=
-  supClosure_min (t := {x | SumClosure P x}) (fun _ hx ↦ .base hx)
-    (sumClosed_sumClosure P).cum h
+theorem supClosure_subset_sumClosure [SupIsSum α] : supClosure P ⊆ sumClosure P :=
+  supClosure_min subset_sumClosure (sumClosed_sumClosure P).cum
 
-/-- The closure of a finite predicate under sums lies in its closure under binary sums. -/
-theorem SumClosure.algClosure [StronglySupplemented α] (hP : {x | P x}.Finite)
-    (h : SumClosure P x) : AlgClosure P x := by
-  obtain ⟨Q, hQ, ⟨q, hq⟩, hx⟩ := h
-  have hfin : {y | Q y}.Finite := hP.subset fun y hy ↦ hQ y hy
+/-- The closure of a finite region under sums lies in its closure under binary sums. -/
+theorem sumClosure_subset_supClosure [StronglySupplemented α] (hP : P.Finite) :
+    sumClosure P ⊆ supClosure P := by
+  rintro x ⟨Q, hQ, ⟨q, hq⟩, hx⟩
+  have hfin : Q.Finite := hP.subset hQ
   have hne : hfin.toFinset.Nonempty := ⟨q, hfin.mem_toFinset.2 hq⟩
-  have hlub : IsLUB {y | Q y} (hfin.toFinset.sup' hne id) := by
+  have hlub : IsLUB Q (hfin.toFinset.sup' hne id) := by
     simpa using Finset.isLUB_sup' hne
   rw [hx.isLUB.unique hlub]
-  exact algClosure_finsetSup' hne fun y hy ↦ .base (hQ y (hfin.mem_toFinset.1 hy))
+  exact finsetSup'_mem_supClosure hne fun y hy ↦ hQ (hfin.mem_toFinset.1 hy)
 
-/-- The two algebraic closures of a finite predicate agree. -/
-theorem sumClosure_iff_algClosure [StronglySupplemented α] [SupIsSum α]
-    (hP : {x | P x}.Finite) : SumClosure P x ↔ AlgClosure P x :=
-  ⟨SumClosure.algClosure hP, AlgClosure.sumClosure⟩
+/-- The two algebraic closures of a finite region agree. -/
+theorem sumClosure_eq_supClosure [StronglySupplemented α] [SupIsSum α] (hP : P.Finite) :
+    sumClosure P = supClosure P :=
+  (sumClosure_subset_supClosure hP).antisymm supClosure_subset_sumClosure
 
 end SupIsSum
 

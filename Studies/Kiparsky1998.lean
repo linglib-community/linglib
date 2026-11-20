@@ -83,21 +83,22 @@ theorem isCumulative_iff : IsCumulative P ↔ ∀ x, Maximal P x → ∀ y, P y 
     exact ⟨y, lt_of_le_not_ge hxy hyx, hy⟩
 
 /-- Diversity is Krifka's quantization: no member is a proper part of another. -/
-theorem isDiverse_iff_qua : IsDiverse P ↔ QUA P :=
+theorem isDiverse_iff_qua : IsDiverse P ↔ QUA {x | P x} :=
   ⟨fun h _ hx _ hy hne hle ↦ (h _ _ hx hy hne).1 (hle.lt_of_ne hne),
     fun h _ _ hx hy hne ↦ ⟨fun hlt ↦ h hx hy hne hlt.le, fun hlt ↦ h hy hx hne.symm hlt.le⟩⟩
 
-theorem IsDivisive.of_div (hd : DIV P) (hb : ∀ x : α, ¬ IsBot x) : IsDivisive P :=
+theorem IsDivisive.of_div (hd : DIV {x | P x}) (hb : ∀ x : α, ¬ IsBot x) : IsDivisive P :=
   isDivisive_iff.2 fun _ hx ↦ ⟨hb _, fun _ _ hyx ↦ hx.2 (hd hyx hx.1) hyx⟩
 
-theorem IsCumulative.of_cum {α : Type*} [SemilatticeSup α] {P : α → Prop} (hc : CUM P) :
-    IsCumulative P :=
+theorem IsCumulative.of_cum {α : Type*} [SemilatticeSup α] {P : α → Prop}
+    (hc : CUM {x | P x}) : IsCumulative P :=
   isCumulative_iff.2 fun _ hx ↦ ((cum_maximal_iff_isGreatest hc).1 hx).2
 
 /-- Krifka's mass reference, cumulative and divisive but not quantized, is unbounded over a
 carrier with no null individual. -/
-theorem isUnbounded_of_cum_of_div {α : Type*} [SemilatticeSup α] {P : α → Prop} (hc : CUM P)
-    (hd : DIV P) (hq : ¬ QUA P) (hb : ∀ x : α, ¬ IsBot x) : IsUnbounded P :=
+theorem isUnbounded_of_cum_of_div {α : Type*} [SemilatticeSup α] {P : α → Prop}
+    (hc : CUM {x | P x}) (hd : DIV {x | P x}) (hq : ¬ QUA {x | P x}) (hb : ∀ x : α, ¬ IsBot x) :
+    IsUnbounded P :=
   ⟨.of_div hd hb, .of_cum hc, mt isDiverse_iff_qua.1 hq⟩
 
 variable [Fintype α] [DecidableEq α] [DecidableLE α] [DecidableLT α] [DecidablePred P]
