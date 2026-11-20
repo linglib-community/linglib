@@ -24,9 +24,9 @@ Input Strictly Local (ISL) functions of Chandlee and of Chandlee and Heinz,
 rather than a cognitive theory of phonological grammar (that role is held by
 constraint-based frameworks such as `Phonology/OptimalityTheory/`). Their ISL
 functions are computed by transducers that write a final output at the word
-end. The left-ISL class of `Subregular.ISL` has no final output, so it contains
-the rules with no right reach (`Rule.isLeftInputStrictlyLocal`), while a rule
-with a right context needs the final flush of `Rule.toSubsequentialTransducer`.
+end. A rule with no right reach is computed by an ISL rule, which has no final
+output (`Rule.isLeftInputStrictlyLocal`), while a rule with a right context
+needs the final flush of `Rule.toSubsequentialTransducer`.
 
 ## Main definitions
 
@@ -64,17 +64,18 @@ alpha-variables, which is `Finset.piecewise` on the class — so insertion,
 metathesis and coalescence are not expressible, and application is neither
 iterative/directional nor cyclic. Iterative spreading lies outside ISL, in the
 Output Strictly Local class: its residuals factor through no input window
-(`Subregular.OSLRule.spread_residual_not_factorsThrough_rtake`).
+(`Subregular.OSLRule.spread_not_isLeftInputStrictlyLocal`).
 
 ## TODO
 
 * `Rule.apply` over boundary-augmented input. Padding the string with word
   boundaries turns the right context into lookahead the padding pays for, and
   the rule becomes `k`-Left-ISL with
-  `k = r.leftReach + r.rightReach + 1`. Over raw strings that statement does
-  not hold in general — a bounded left window cannot see the right context —
-  which is why `Rule.isLeftInputStrictlyLocal` assumes no right reach and
-  `Rule.isLeftSubsequential` is what survives without it.
+  `k = r.leftReach + r.rightReach + 1`. Over raw strings an ISL rule cannot
+  compute it, since a bounded left window cannot see the right context, which
+  is why `Rule.isLeftInputStrictlyLocal` assumes no right reach; the
+  transducer of `Rule.isLeftSubsequential` should show the same `k` through
+  `Subregular.isLeftInputStrictlyLocal_iff_exists_rule`.
 
 ## References
 
@@ -407,7 +408,7 @@ theorem Rule.toISLRule_apply (r : Rule) (h : r.rightReach = 0) :
 reach. -/
 theorem Rule.isLeftInputStrictlyLocal (r : Rule) (h : r.rightReach = 0) :
     IsLeftInputStrictlyLocal (r.leftReach + 1) r.apply :=
-  ⟨r.toISLRule h, r.toISLRule_apply h⟩
+  r.toISLRule_apply h ▸ (r.toISLRule h).isLeftInputStrictlyLocal_apply
 
 /-! ### The general case: left-subsequentiality
 

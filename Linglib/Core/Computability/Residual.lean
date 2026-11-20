@@ -213,6 +213,50 @@ theorem exists_append_singleton_of_factorsThrough_residual
     dsimp only
     rw [hW.extend_apply, append_residual (hpre u) [x]]⟩
 
+theorem prefixFunction_isPrefix (f : List α → List β) (u v : List α) :
+    f.prefixFunction u <+: f.prefixFunction (u ++ v) :=
+  prefix_prefixFunction_iff.mpr fun w ↦ List.append_assoc u v w ▸ prefixFunction_prefix u (v ++ w)
+
+/-- The prefix function grows on reading `x` by the prefix function of the residual at `[x]`. -/
+theorem prefixFunction_append_singleton (f : List α → List β) (u : List α) (x : α) :
+    f.prefixFunction (u ++ [x]) = f.prefixFunction u ++ (f.residual u).prefixFunction [x] :=
+  prefixFunction_eq_of_forall fun w ↦ by
+    rw [List.append_assoc, prefixFunction_append_residual]
+
+theorem prefixFunction_append_residual_nil (f : List α → List β) (u : List α) :
+    f.prefixFunction u ++ f.residual u [] = f u := by
+  simpa using prefixFunction_append_residual (f := f) u []
+
+/-- A function that appends to a function growing by blocks a final output, both read off the
+summary, has residuals that factor through the summary. -/
+theorem factorsThrough_residual_of_append_final {P : List α → List β} (δ : γ → α → γ)
+    (g : γ → α → List β) (t : γ → List β) (hW : ∀ u x, W (u ++ [x]) = δ (W u) x)
+    (hP : ∀ u x, P (u ++ [x]) = P u ++ g (W u) x) (hf : ∀ u, f u = P u ++ t (W u)) :
+    f.residual.FactorsThrough W := by
+  have hpre := isPrefix_append_of_append_singleton fun u x ↦ ⟨_, (hP u x).symm⟩
+  have hres := factorsThrough_residual_of_append_singleton δ g hW hP
+  have key (u : List α) : f.residual u =
+      residual (fun w ↦ P.residual u w ++ t (w.foldl δ (W u))) [] :=
+    residual_eq_of_forall (P := P u) fun w ↦ by
+      rw [hf, ← append_residual (hpre u) w, List.append_assoc, List.nil_append,
+        foldl_eq_of_append_singleton hW]
+  intro u₁ u₂ h
+  rw [key, key, hres h, h]
+
+/-- If the residuals of `f` factor through a summary, then its prefix function grows by blocks
+read off the summary, and so does what `f` adds to it at the end of the word. -/
+theorem exists_prefixFunction_append_singleton_of_factorsThrough_residual
+    (hW : f.residual.FactorsThrough W) :
+    ∃ (g : γ → α → List β) (t : γ → List β),
+      (∀ u x, f.prefixFunction (u ++ [x]) = f.prefixFunction u ++ g (W u) x) ∧
+        ∀ u, f u = f.prefixFunction u ++ t (W u) := by
+  refine ⟨fun c x ↦ (Function.extend W f.residual (fun _ _ ↦ []) c).prefixFunction [x],
+    fun c ↦ Function.extend W f.residual (fun _ _ ↦ []) c [], fun u x ↦ ?_, fun u ↦ ?_⟩
+  · dsimp only
+    rw [hW.extend_apply, prefixFunction_append_singleton]
+  · dsimp only
+    rw [hW.extend_apply, prefixFunction_append_residual_nil]
+
 end StateSummary
 
 end Function
