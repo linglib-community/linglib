@@ -65,7 +65,7 @@ abbrev Telic (s : Set β) : Prop := QUA s
 abbrev Atelic (s : Set β) : Prop := CUM s
 
 theorem isTelic_of_telic {precedes : β → β → Prop} [IsStrictOrder β precedes]
-    (h : NoPartPrecedes precedes) {P : β → Prop} (hP : Telic {e | P e}) : IsTelic precedes P :=
+    (h : NoPartPrecedes precedes) {s : Set β} (hP : Telic s) : IsTelic precedes s :=
   isTelic_of_qua h hP
 
 /-! ### The three classes of verbs (28) -/

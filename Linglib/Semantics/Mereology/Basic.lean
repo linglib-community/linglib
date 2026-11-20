@@ -64,9 +64,13 @@ theorem QUA.preimage [PartialOrder β] {d : α → β} (hd : StrictMono d) {t : 
   fun _ ha _ hb hab hle ↦ ht ha hb (hd (hle.lt_of_ne hab)).ne (hd (hle.lt_of_ne hab)).le
 
 /-- The `P`-atoms ([krifka-1989]) are the minimal `P`-elements. -/
-abbrev atomize (P : α → Prop) : α → Prop := Minimal P
+def atomize (s : Set α) : Set α := {x | Minimal (· ∈ s) x}
 
-theorem atomize_qua {P : α → Prop} : QUA {x | atomize P x} := setOfPred_minimal_antichain P
+@[simp] theorem mem_atomize {s : Set α} {x : α} : x ∈ atomize s ↔ Minimal (· ∈ s) x := Iff.rfl
+
+theorem atomize_subset (s : Set α) : atomize s ⊆ s := fun _ h ↦ h.prop
+
+theorem atomize_qua {s : Set α} : QUA (atomize s) := setOfPred_minimal_antichain (· ∈ s)
 
 end PartialOrder
 
@@ -166,7 +170,7 @@ theorem Atom.eq (h : Atom x) (hle : y ≤ x) (hy : ¬ IsBot y) : y = x :=
   le_antisymm hle (h.2 hy hle)
 
 theorem qua_of_atom {s : Set α} (h : ∀ ⦃x⦄, x ∈ s → Atom x) : QUA s :=
-  (atomize_qua (P := (¬ IsBot ·))).subset h
+  (atomize_qua (s := {x | ¬ IsBot x})).subset h
 
 theorem exists_atom_le [WellFoundedLT α] (hy : ¬ IsBot y) : ∃ a, Atom a ∧ a ≤ y := by
   obtain ⟨a, ⟨ha, hay⟩, hmin⟩ :=
@@ -265,9 +269,9 @@ theorem isPlural_iff_of_atom (hs : ∀ ⦃a⦄, a ∈ s → Atom a) :
         exact ⟨a, ha.trans_le le_sup_left, b, hb.trans_le le_sup_left, hPa, hPb, hab⟩
 
 theorem atomize_mem_supClosure (hs : ∀ ⦃a⦄, a ∈ s → Atom a) :
-    atomize (· ∈ supClosure s) = (· ∈ s) := by
-  funext x
-  refine propext ⟨fun hx ↦ ?_, fun hx ↦ ⟨subset_supClosure hx, fun y hy hyx ↦ ?_⟩⟩
+    atomize (supClosure s) = s := by
+  ext x
+  refine ⟨fun hx ↦ ?_, fun hx ↦ ⟨subset_supClosure hx, fun y hy hyx ↦ ?_⟩⟩
   · obtain ⟨a, ha, hax⟩ := exists_le_of_mem_supClosure hx.prop
     exact hx.eq_of_le (subset_supClosure ha) hax ▸ ha
   · obtain ⟨b, hb, hby⟩ := exists_le_of_mem_supClosure hy
@@ -294,8 +298,8 @@ theorem overlap_iff_not_disjoint : Overlap x y ↔ ¬ Disjoint x y := by
     exact hd fun z hzx hzy ↦ le_bot_iff.mpr
       (by_contra fun hz ↦ h ⟨z, mt isBot_iff_eq_bot.1 hz, hzx, hzy⟩)
 
-theorem atomize_ne_bot : atomize (· ≠ (⊥ : α)) = IsAtom := by
-  funext x; exact propext isAtom_iff_le_of_ge.symm
+theorem atomize_ne_bot : atomize {x : α | x ≠ ⊥} = {x | IsAtom x} :=
+  Set.ext fun _ ↦ isAtom_iff_le_of_ge.symm
 
 end OrderBot
 

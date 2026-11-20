@@ -102,7 +102,7 @@ theorem IsQuasiHomogeneous.not_isTelic {precedes : E → E → Prop} [IsStrictOr
     {P : E → Prop}
     (hP : IsQuasiHomogeneous θ P) {e e' e'' : E} (he : P e) (h' : e' ≤ e)
     (hθ : θ < (atomsBelow e').encard) (h'' : e'' ≤ e) (hp : precedes e' e'') :
-    ¬ IsTelic precedes P :=
+    ¬ IsTelic precedes {e | P e} :=
   fun hT ↦ (hT.isFinalPart he (hP he h' hθ) h').not_precedes h'' hp
 
 /-- (14), (21): the non-base alternant is atelic, by its quasi-homogeneity (§3.2.2). -/
@@ -111,7 +111,7 @@ theorem not_isTelic_nonBase [Preorder S] {precedes : E → E → Prop} [IsStrict
     (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e') (hl : DIV {e | landmark g e})
     {e e' e'' : E} (he : nonBase θ swarm cause coincident landmark g y e) (h' : e' ≤ e)
     (hθ : θ < (atomsBelow e').encard) (h'' : e'' ≤ e) (hp : precedes e' e'') :
-    ¬ IsTelic precedes (nonBase θ swarm cause coincident landmark g y) :=
+    ¬ IsTelic precedes {e | nonBase θ swarm cause coincident landmark g y e} :=
   (isQuasiHomogeneous_nonBase hs hw hc hl).not_isTelic he h' hθ h'' hp
 
 end Events

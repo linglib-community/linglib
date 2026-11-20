@@ -81,44 +81,42 @@ open Exhaustification Mereology Number Harbour2014
 
 section Predicate
 
-variable {D : Type*} [PartialOrder D] {P : D → Prop}
+variable {D : Type*} [PartialOrder D] {P : Set D}
 
 /-- The alternatives of a plural noun phrase are its own denotation and that of the singular, its
 atoms. -/
-def alternatives (P : D → Prop) : Set (Set D) :=
-  {{x | P x}, {x | Feature.restrict .atomic true P x}}
+def alternatives (P : Set D) : Set (Set D) := {P, Feature.restrict .atomic true P}
 
 /-- Exhaustified against the singular, a noun phrase is true of its non-atoms, as `[−atomic]`
 makes it. -/
-theorem exh_alternatives (h : ∃ x, Feature.restrict .atomic false P x) :
-    exh (alternatives P) {x | P x} = {x | Feature.restrict .atomic false P x} := by
+theorem exh_alternatives (h : (Feature.restrict .atomic false P).Nonempty) :
+    exh (alternatives P) P = Feature.restrict .atomic false P := by
   obtain ⟨y, hy⟩ := h
-  have hne : ¬ ({x | P x} : Set D) ⊆ {x | Feature.restrict .atomic true P x} := fun hs ↦
-    hy.2 (hs hy.1 : Feature.restrict .atomic true P y).2
+  have hne : ¬ P ⊆ Feature.restrict .atomic true P := fun hs ↦ hy.2 (hs hy.1).2
   rw [alternatives, exh_insert_of_subset subset_rfl, exh_singleton_of_not_subset hne]
   ext x
-  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Feature.restrict]
+  simp only [Set.mem_sdiff, Feature.mem_restrict_atomic_true, Feature.mem_restrict_atomic_false]
   tauto
 
 -- (77)
-theorem atomize_exh_alternatives (h : ∃ x, Feature.restrict .atomic false P x) :
-    atomize (· ∈ exh (alternatives P) {x | P x}) =
+theorem atomize_exh_alternatives (h : (Feature.restrict .atomic false P).Nonempty) :
+    atomize (exh (alternatives P) P) =
       Feature.restrict .minimal true (Feature.restrict .atomic false P) := by
   rw [exh_alternatives h]
   rfl
 
 -- (76)
-theorem restrict_minimal_false_exh_alternatives (h : ∃ x, Feature.restrict .atomic false P x) :
-    Feature.restrict .minimal false (· ∈ exh (alternatives P) {x | P x}) =
+theorem restrict_minimal_false_exh_alternatives
+    (h : (Feature.restrict .atomic false P).Nonempty) :
+    Feature.restrict .minimal false (exh (alternatives P) P) =
       Bundle.exact {(.atomic, false), (.minimal, false)} P := by
   rw [exh_alternatives h]
   simp only [Bundle.exact, Bundle.step, Finset.mem_insert, Finset.mem_singleton, Prod.mk.injEq,
     reduceCtorEq, Bool.true_eq_false, and_self, and_false, or_self, or_false, or_true,
     ↓reduceIte, and_true]
-  rfl
 
 theorem atomize_eq_restrict_atomic_true
-    (hP : ∀ x, P x → ∃ a, Feature.restrict .atomic true P a ∧ a ≤ x) :
+    (hP : ∀ x ∈ P, ∃ a ∈ Feature.restrict .atomic true P, a ≤ x) :
     atomize P = Feature.restrict .atomic true P := by
   ext x
   refine ⟨fun h ↦ ?_, fun h ↦ ⟨h.1, fun y hy hyx ↦ ?_⟩⟩
@@ -128,17 +126,17 @@ theorem atomize_eq_restrict_atomic_true
     exact (h.2.2 ha.2.1 (hay.trans hyx)).trans hay
 
 -- (80): above `[+minimal]` the operator leaves the atoms, the denotation of the singular
-theorem exh_atomize (hP : ∀ x, P x → ∃ a, Feature.restrict .atomic true P a ∧ a ≤ x) :
-    exh (alternatives P) {x | atomize P x} = {x | Feature.restrict .atomic true P x} := by
+theorem exh_atomize (hP : ∀ x ∈ P, ∃ a ∈ Feature.restrict .atomic true P, a ≤ x) :
+    exh (alternatives P) (atomize P) = Feature.restrict .atomic true P := by
   rw [atomize_eq_restrict_atomic_true hP]
   refine exh_eq_self ?_
   rintro _ (rfl | rfl)
-  exacts [fun _ h ↦ h.1, subset_rfl]
+  exacts [Feature.restrict_le _ _ _, subset_rfl]
 
 -- (80) with `[−atomic]` for the operator
 theorem not_restrict_atomic_false_atomize
-    (hP : ∀ x, P x → ∃ a, Feature.restrict .atomic true P a ∧ a ≤ x) (x : D) :
-    ¬ Feature.restrict .atomic false (atomize P) x := by
+    (hP : ∀ x ∈ P, ∃ a ∈ Feature.restrict .atomic true P, a ≤ x) (x : D) :
+    x ∉ Feature.restrict .atomic false (atomize P) := by
   rw [atomize_eq_restrict_atomic_true hP]
   exact fun h ↦ h.2 h.1.2
 
@@ -148,25 +146,25 @@ end Predicate
 
 section Sentence
 
-variable {D W W' : Type*} {P R : D → Prop} (V : W → D → Prop)
+variable {D W W' : Type*} {P R : Set D} (V : W → D → Prop)
 
 /-- The sentence that something in the region `R` satisfies the verb. -/
-def indef (R : D → Prop) : Set W := {w | ∃ x, R x ∧ V w x}
+def indef (R : Set D) : Set W := {w | ∃ x ∈ R, V w x}
 
-theorem indef_mono {R S : D → Prop} (h : ∀ x, R x → S x) : indef V R ⊆ indef V S :=
-  fun _ ⟨x, hx, hv⟩ ↦ ⟨x, h x hx, hv⟩
+theorem indef_mono {R S : Set D} (h : R ⊆ S) : indef V R ⊆ indef V S :=
+  fun _ ⟨x, hx, hv⟩ ↦ ⟨x, h hx, hv⟩
 
 /-- In an upward-entailing environment the sentence with the narrower region is the stronger,
 so the exclusive plural is chosen. -/
 theorem isLeast_indef_of_monotone {f : Set W → Set W'} (hf : Monotone f)
-    (hR : ∀ x, R x → P x) : IsLeast {f (indef V P), f (indef V R)} (f (indef V R)) :=
+    (hR : R ⊆ P) : IsLeast {f (indef V P), f (indef V R)} (f (indef V R)) :=
   ⟨Set.mem_insert_of_mem _ rfl, by
     rintro _ (rfl | rfl)
     exacts [hf (indef_mono V hR), le_rfl]⟩
 
 -- (56), (71), (75): downward, the sentence with the whole noun phrase is the stronger
 theorem isLeast_indef_of_antitone {f : Set W → Set W'} (hf : Antitone f)
-    (hR : ∀ x, R x → P x) : IsLeast {f (indef V P), f (indef V R)} (f (indef V P)) :=
+    (hR : R ⊆ P) : IsLeast {f (indef V P), f (indef V R)} (f (indef V P)) :=
   ⟨Set.mem_insert _ _, by
     rintro _ (rfl | rfl)
     exacts [le_rfl, hf (indef_mono V hR)]⟩
@@ -174,7 +172,7 @@ theorem isLeast_indef_of_antitone {f : Set W → Set W'} (hf : Antitone f)
 variable [PartialOrder D]
 
 -- (72): the propositional operator has no alternative to deny
-theorem exh_indef (hV : ∀ w x, P x → V w x → ∃ a, Feature.restrict .atomic true P a ∧ V w a) :
+theorem exh_indef (hV : ∀ w, ∀ x ∈ P, V w x → ∃ a ∈ Feature.restrict .atomic true P, V w a) :
     exh {indef V P, indef V (Feature.restrict .atomic true P)} (indef V P) = indef V P :=
   exh_eq_self <| by
     rintro _ (rfl | rfl)
@@ -185,15 +183,15 @@ theorem exh_compl_indef :
     exh {(indef V P)ᶜ, (indef V (Feature.restrict .atomic true P))ᶜ} (indef V P)ᶜ = (indef V P)ᶜ :=
   exh_eq_self <| by
     rintro _ (rfl | rfl)
-    exacts [subset_rfl, Set.compl_subset_compl.2 (indef_mono V fun _ h ↦ h.1)]
+    exacts [subset_rfl, Set.compl_subset_compl.2 (indef_mono V (Feature.restrict_le _ _ _))]
 
 -- witnesses of a region of sums of `k` atoms, for `k` in `S`, exist among `H` exactly when `H`
 -- has at least as many atoms as some such `k`
-theorem mem_indef_subset_iff {α : Type*} (S : ℕ → Prop) (H : Finset α) :
-    H ∈ indef (fun H x : Finset α ↦ x ⊆ H) (fun x ↦ S x.card) ↔ ∃ k ≤ H.card, S k :=
+theorem mem_indef_subset_iff {α : Type*} (S : Set ℕ) (H : Finset α) :
+    H ∈ indef (fun H x : Finset α ↦ x ⊆ H) (Finset.card ⁻¹' S) ↔ ∃ k ≤ H.card, k ∈ S :=
   ⟨fun ⟨x, hx, hxH⟩ ↦ ⟨x.card, Finset.card_le_card hxH, hx⟩, fun ⟨_, hk, hS⟩ ↦
     let ⟨t, ht, e⟩ := Finset.exists_subset_card_eq hk
-    ⟨t, show S t.card from e.symm ▸ hS, ht⟩⟩
+    ⟨t, show t.card ∈ S from e.symm ▸ hS, ht⟩⟩
 
 end Sentence
 

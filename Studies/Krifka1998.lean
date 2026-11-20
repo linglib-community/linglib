@@ -95,9 +95,10 @@ local instance : TemporalTrace Ev ℕ := ⟨Prod.snd⟩
 
 -- A telic predicate need not be quantized.
 theorem exists_isTelic_not_qua :
-    ∃ P : Ev → Prop, IsTelic (Precedes : Ev → Ev → Prop) P ∧ ¬ QUA {e | P e} ∧
-      ¬ IsTelic (Precedes : Ev → Ev → Prop) fun _ ↦ True := by
-  refine ⟨(τ · = ⟨(3, 4), by decide⟩), isTelic_runTime_eq monotone_snd _, fun h ↦ ?_, fun h ↦ ?_⟩
+    ∃ s : Set Ev, IsTelic (Precedes : Ev → Ev → Prop) s ∧ ¬ QUA s ∧
+      ¬ IsTelic (Precedes : Ev → Ev → Prop) Set.univ := by
+  refine ⟨{e | τ e = ⟨(3, 4), by decide⟩}, isTelic_runTime_eq monotone_snd _, fun h ↦ ?_,
+    fun h ↦ ?_⟩
   · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
       (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))
       (Prod.mk_le_mk.2 ⟨(by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1}), le_rfl⟩)
@@ -241,7 +242,7 @@ instance : IsStrictOrder (Finset (Fin 3)) precedes where
 
 /-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
 `{0, 1, 2}` that the re-reading `{2}` follows. -/
-theorem not_isTelic_read : ¬ IsTelic precedes (Finset.univ ~[read] ·) := fun h ↦ by
+theorem not_isTelic_read : ¬ IsTelic precedes {e | Finset.univ ~[read] e} := fun h ↦ by
   have h₁ : Finset.univ ~[read] {0, 1} := subset_supClosure (by decide)
   have h₂ : Finset.univ ~[read] {0, 2} := subset_supClosure (by decide)
   have hsum : Finset.univ ~[read] {0, 1, 2} := by
@@ -282,14 +283,14 @@ theorem isFinalPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e
     let ⟨y, hy, hθ⟩ := h.mo hx h''
     h.exp x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
-theorem isTelic_of_seinc (x : α) : IsTelic precedes (x ~[θ] ·) :=
+theorem isTelic_of_seinc (x : α) : IsTelic precedes {e | x ~[θ] e} :=
   fun _ _ hx hx' hle ↦
     ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
 /-- The verb phrase of a quantized object under a strictly expansive incremental relation with
 unique participants is telic, as *eat two apples* is. -/
 theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : Set α} (hOBJ : QUA OBJ) :
-    IsTelic precedes (· ∈ VP θ OBJ) := by
+    IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := h.mo hx hle
   obtain rfl := hUP.eq hx' (SetRel.mem_inv.1 hx'')
@@ -361,7 +362,7 @@ uniqueness of participants, as *walk from the university to the capitol* is. -/
 theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : UP θ)
     (u v : α) :
     IsTelic precedes
-      (fun e ↦ ∃ x, x ~[θ] e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
+      {e | ∃ x, x ~[θ] e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e} := by
   rintro e e' ⟨x, hx, hS, hG⟩ ⟨x', hx', hS', hG'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := hMO hx hle
   obtain rfl := hUP.eq hx' (SetRel.mem_inv.1 hx'')

@@ -67,19 +67,17 @@ open Modality Event Mereology
 
 section Number
 
-variable {E : Type*} [SemilatticeSup E] {P : E → Prop} {e : E}
+variable {E : Type*} [SemilatticeSup E] {P : Set E} {e : E}
 
 /-- `PL` (12): the sums in `P` of pairwise non-overlapping proper parts that are also in `P`. -/
-def PL (P : E → Prop) (e : E) : Prop :=
-  P e ∧ ∃ s : Finset E, ∃ hs : s.Nonempty, (∀ x ∈ s, x < e ∧ P x) ∧
-    (s : Set E).Pairwise (fun x y ↦ ¬ Overlap x y) ∧ s.sup' hs id = e
+def PL (P : Set E) : Set E :=
+  {e | e ∈ P ∧ ∃ s : Finset E, ∃ hs : s.Nonempty, (∀ x ∈ s, x < e ∧ x ∈ P) ∧
+    (s : Set E).Pairwise (fun x y ↦ ¬ Overlap x y) ∧ s.sup' hs id = e}
 
 /-- No singular event of a description is a plural one. -/
 theorem sg_disjoint_pl : Disjoint (atomize P) (PL P) := by
-  rw [Pi.disjoint_iff]
-  intro e
-  rw [Prop.disjoint_iff]
-  rintro ⟨hmin, -, s, ⟨x, hx⟩, hs, -⟩
+  rw [Set.disjoint_left]
+  rintro e hmin ⟨-, s, ⟨x, hx⟩, hs, -⟩
   exact (hs x hx).1.not_ge (hmin.2 (hs x hx).2 (hs x hx).1.le)
 
 end Number
@@ -93,22 +91,22 @@ variable {E W T : Type*} [LinearOrder T] [TemporalTrace E T]
 /-- `IMP` (111), with Portner's `BEST` (52), (53): in every best world of the circumstantial base
 for the description `P` at the reference interval, ranked by the ordering source, the reference
 interval lies within the run time of an event of type `N (P v)`. -/
-def IMP (N : (E → Prop) → E → Prop)
+def IMP (N : Set E → Set E)
     (circ ord : (W → E → Prop) → NonemptyInterval T → Background W) (P : W → E → Prop) :
     W → Set (NonemptyInterval T) :=
-  Aspect.IMPF (fun w t ↦ bestWorlds (circ P t) (ord P t) w) fun v ↦ N (P v)
+  Aspect.IMPF (fun w t ↦ bestWorlds (circ P t) (ord P t) w) fun v ↦ (· ∈ N {e | P v e})
 
-variable {N : (E → Prop) → E → Prop} {circ ord : (W → E → Prop) → NonemptyInterval T → Background W}
+variable {N : Set E → Set E} {circ ord : (W → E → Prop) → NonemptyInterval T → Background W}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
 theorem mem_IMP_iff : t ∈ IMP N circ ord P w ↔
-    ∀ v ∈ bestWorlds (circ P t) (ord P t) w, ∃ e, t ≤ τ e ∧ N (P v) e :=
+    ∀ v ∈ bestWorlds (circ P t) (ord P t) w, ∃ e, t ≤ τ e ∧ e ∈ N {e | P v e} :=
   Iff.rfl
 
 /-- Over a modal base that admits only the world of evaluation, the imperfective is Kratzer's
 extensional one: the reference interval lies within the run time of an actual event. -/
 theorem IMP_eq_unbounded_of_isTotallyRealistic (h : ∀ P t, (circ P t).IsTotallyRealistic) :
-    IMP N circ ord P w = Aspect.UNBOUNDED (fun v ↦ N (P v)) w := by
+    IMP N circ ord P w = Aspect.UNBOUNDED (fun v ↦ (· ∈ N {e | P v e})) w := by
   rw [← Aspect.impf_singleton]
   ext t
   have hbest : bestWorlds (circ P t) (ord P t) w = {w} := by
@@ -157,7 +155,7 @@ inductive Crossing
 across. -/
 def cross (v : Crossing) (e : NonemptyInterval ℕ) : Prop := v = .crosses ∧ e = crossing
 
-theorem atomize_cross : atomize (cross .crosses) crossing :=
+theorem atomize_cross : crossing ∈ atomize {e | cross .crosses e} :=
   ⟨⟨rfl, rfl⟩, fun _ ⟨_, hy⟩ _ ↦ hy ▸ le_rfl⟩
 
 /-- The street (45): the facts about John and the street exclude neither world, and the ordering
@@ -242,7 +240,7 @@ def accidentBase : (Soccer → Finset ℕ → Prop) → NonemptyInterval ℕ →
 def keepsPlaying : (Soccer → Finset ℕ → Prop) → NonemptyInterval ℕ → Background Soccer :=
   fun _ _ _ ↦ {{.accident}ᶜ}
 
-theorem pl_playSoccer : PL (playSoccer .plays) ({0, 2, 4, 6} : Finset ℕ) := by
+theorem pl_playSoccer : ({0, 2, 4, 6} : Finset ℕ) ∈ PL {e | playSoccer .plays e} := by
   refine ⟨⟨⟨0, by decide⟩, subset_rfl⟩, {({0, 2} : Finset ℕ), ({4, 6} : Finset ℕ)},
     ⟨_, Finset.mem_insert_self _ _⟩, ?_, ?_, by decide⟩
   · intro x hx
