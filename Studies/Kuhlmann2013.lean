@@ -72,7 +72,7 @@ theorem not_isWellNested_iff_siblings (hT : g.IsTree) :
     simp only [Graph.IsWellNested, not_forall, not_or] at h
     obtain ⟨u, v, ⟨a, ha, b, hb, c, hc, d, hd, halt⟩, huv, hvu⟩ := h
     obtain ⟨p, u', v', hu', hv', hne, hu'u, hv'v⟩ :=
-      exists_adj_adj_of_not_dominates (hT.root_dominates u) (hT.root_dominates v) huv hvu
+      Graph.exists_adj_adj_of_not_dominates (hT.root_dominates u) (hT.root_dominates v) huv hvu
     exact ⟨p, u', v', hu', hv', hne,
       a, hu'u.trans ha, b, hu'u.trans hb, c, hv'v.trans hc, d, hv'v.trans hd, halt⟩
   · rintro ⟨p, u, v, hpu, hpv, huv, hI⟩ hW
@@ -156,7 +156,7 @@ theorem figure11_wellNested :
       (fig11D2.IsWellNested ∧ ¬ fig11D2.IsProjective) := by
   decide +kernel
 
-theorem fig11D2_interleave : fig11D2.Interleave 0 1 ∧ Dominates fig11D2 0 1 := by
+theorem fig11D2_interleave : fig11D2.Interleave 0 1 ∧ fig11D2.Dominates 0 1 := by
   decide +kernel
 
 -- Lemma 9

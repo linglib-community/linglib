@@ -71,7 +71,7 @@ def fig3 : Tree UD.DepRel 4 :=
 
 -- Figure 3
 theorem fig3_not_isArcProjective : ¬ fig3.IsArcProjective :=
-  fun h ↦ (by decide : ¬ Dominates fig3.toGraph 0 1)
+  fun h ↦ (by decide : ¬ fig3.toGraph.Dominates 0 1)
     (h (by decide : fig3.Adj 0 3) 1 (Set.mem_uIcc.2 (Or.inl ⟨by decide, by decide⟩)))
 
 theorem fig3_yield : (fig3.yield 0).toFinset = {0, 2, 3} ∧ ¬ fig3.IsProjective :=
@@ -290,8 +290,8 @@ theorem fig9Enhanced_not_isTree :
   decide
 
 theorem fig9_unrepresented :
-    HasUnrepresentedArg fig9.toGraph fig9Enhanced 0 ∧
-      HasUnrepresentedArg fig9.toGraph fig9Enhanced 9 := by
+    Graph.HasUnrepresentedArg fig9.toGraph fig9Enhanced 0 ∧
+      Graph.HasUnrepresentedArg fig9.toGraph fig9Enhanced 9 := by
   decide
 
 end DeMarneffeNivre2019

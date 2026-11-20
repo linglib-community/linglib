@@ -19,13 +19,13 @@ one of several dependents is a catena that is not a constituent.
 
 ## Main definitions
 
-* `DependencyGrammar.IsCatena`: the words of `s` induce a connected subgraph.
-* `DependencyGrammar.IsConstituent`: `s` is the dominance cone of a word.
+* `Graph.IsCatena`: the words of `s` induce a connected subgraph.
+* `Graph.IsConstituent`: `s` is the dominance cone of a word.
 
 ## Main statements
 
-* `DependencyGrammar.IsConstituent.isCatena`: every constituent is a catena.
-* `DependencyGrammar.not_isConstituent_pair`: in a forest, a head with one of two dependents is
+* `Graph.IsConstituent.isCatena`: every constituent is a catena.
+* `Graph.not_isConstituent_pair`: in a forest, a head with one of two dependents is
   not a constituent.
 * `DependencyGrammar.Graph.IsTree.isTree_toSimpleGraph`: the undirected view of a dependency tree
   is a tree.
@@ -42,25 +42,25 @@ namespace DependencyGrammar
 variable {L : Type*} {n : ℕ}
 
 /-- `s` is a **catena** if the subgraph induced on `s` is connected. -/
-def IsCatena (g : Graph L n) (s : Finset (Fin n)) : Prop :=
+def Graph.IsCatena (g : Graph L n) (s : Finset (Fin n)) : Prop :=
   (g.toSimpleGraph.induce ↑s).Connected
 
 /-- `s` is a **constituent** if it is the dominance cone of some position. -/
-def IsConstituent (g : Graph L n) (s : Finset (Fin n)) : Prop :=
-  ∃ v, ∀ w, w ∈ s ↔ Dominates g v w
+def Graph.IsConstituent (g : Graph L n) (s : Finset (Fin n)) : Prop :=
+  ∃ v, ∀ w, w ∈ s ↔ g.Dominates v w
 
-instance (g : Graph L n) (s : Finset (Fin n)) : Decidable (IsCatena g s) :=
+instance (g : Graph L n) (s : Finset (Fin n)) : Decidable (g.IsCatena s) :=
   inferInstanceAs (Decidable (SimpleGraph.Connected _))
 
-instance (g : Graph L n) (s : Finset (Fin n)) : Decidable (IsConstituent g s) :=
+instance (g : Graph L n) (s : Finset (Fin n)) : Decidable (g.IsConstituent s) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-theorem singleton_isCatena (g : Graph L n) (v : Fin n) : IsCatena g {v} := by
-  rw [IsCatena, Finset.coe_singleton]
+theorem Graph.singleton_isCatena (g : Graph L n) (v : Fin n) : g.IsCatena {v} := by
+  rw [Graph.IsCatena, Finset.coe_singleton]
   exact .of_subsingleton
 
-theorem connected_induce_cone (g : Graph L n) (v : Fin n) :
-    (g.toSimpleGraph.induce {x | Dominates g v x}).Connected := by
+theorem Graph.connected_induce_cone (g : Graph L n) (v : Fin n) :
+    (g.toSimpleGraph.induce {x | g.Dominates v x}).Connected := by
   refine (SimpleGraph.connected_iff_exists_forall_reachable _).mpr ⟨⟨v, .refl⟩, ?_⟩
   rintro ⟨w, hw⟩
   induction hw with
@@ -72,22 +72,22 @@ theorem connected_induce_cone (g : Graph L n) (v : Fin n) :
 
 /-- Every constituent is a catena, since a constituent is the dominance cone of some position
 and cones induce connected subgraphs. -/
-theorem IsConstituent.isCatena {g : Graph L n} {s : Finset (Fin n)}
-    (h : IsConstituent g s) : IsCatena g s := by
+theorem Graph.IsConstituent.isCatena {g : Graph L n} {s : Finset (Fin n)}
+    (h : g.IsConstituent s) : g.IsCatena s := by
   obtain ⟨v, hv⟩ := h
-  rw [IsCatena, show (↑s : Set (Fin n)) = {x | Dominates g v x} from Set.ext hv]
-  exact connected_induce_cone g v
+  rw [Graph.IsCatena, show (↑s : Set (Fin n)) = {x | g.Dominates v x} from Set.ext hv]
+  exact Graph.connected_induce_cone g v
 
-theorem isCatena_pair (g : Graph L n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w) :
-    IsCatena g {v, w} := by
-  rw [IsCatena, Finset.coe_pair]
+theorem Graph.isCatena_pair (g : Graph L n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w) :
+    g.IsCatena {v, w} := by
+  rw [Graph.IsCatena, Finset.coe_pair]
   exact SimpleGraph.induce_pair_connected_of_adj ⟨hne, .inl h⟩
 
 /-- In a forest, a head with one of its dependents is not a constituent when the head has
 another dependent, since the head's cone contains the other dependent and the dependent's cone
 does not contain the head. -/
-theorem not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : Fin n} (hw : g.Adj v w)
-    (hu : g.Adj v u) (huw : u ≠ w) : ¬ IsConstituent g {v, w} := by
+theorem Graph.not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : Fin n} (hw : g.Adj v w)
+    (hu : g.Adj v u) (huw : u ≠ w) : ¬ g.IsConstituent {v, w} := by
   rintro ⟨c, hc⟩
   rcases Finset.mem_insert.mp ((hc c).2 Relation.ReflTransGen.refl) with rfl | hcw
   · rcases Finset.mem_insert.mp ((hc u).2 (Relation.ReflTransGen.single hu)) with rfl | hu'
@@ -96,12 +96,12 @@ theorem not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : Fin n}
   · rw [Finset.mem_singleton] at hcw; subst hcw
     exact hF.not_dominates_of_adj hw ((hc v).1 (by simp))
 
-theorem isConstituent_univ {g : Graph L n} (hT : g.IsTree) :
-    IsConstituent g Finset.univ :=
+theorem Graph.isConstituent_univ {g : Graph L n} (hT : g.IsTree) :
+    g.IsConstituent Finset.univ :=
   ⟨g.root, fun w ↦ ⟨fun _ ↦ hT.root_dominates w, fun _ ↦ Finset.mem_univ w⟩⟩
 
-theorem isCatena_univ {g : Graph L n} (hT : g.IsTree) : IsCatena g Finset.univ :=
-  (isConstituent_univ hT).isCatena
+theorem Graph.isCatena_univ {g : Graph L n} (hT : g.IsTree) : g.IsCatena Finset.univ :=
+  (Graph.isConstituent_univ hT).isCatena
 
 /-- The undirected view of a dependency tree is a tree: it is connected, the whole sentence being
 a catena, and its edges are the links from each position other than the root to its head. -/
@@ -111,8 +111,8 @@ theorem Graph.IsTree.isTree_toSimpleGraph {g : Graph L n} (hT : g.IsTree) :
     have ⟨_, h⟩ := hT.exists_adj hw
     hT.headOf_eq h ▸ h
   refine SimpleGraph.isTree_iff_connected_and_card.2 ⟨?_, ?_⟩
-  · have h := isCatena_univ hT
-    rw [IsCatena, Finset.coe_univ] at h
+  · have h := Graph.isCatena_univ hT
+    rw [Graph.IsCatena, Finset.coe_univ] at h
     exact g.toSimpleGraph.induceUnivIso.connected_iff.1 h
   rw [Nat.card_eq_fintype_card, ← SimpleGraph.edgeFinset_card, Nat.card_eq_fintype_card]
   refine .trans (congrArg (· + 1) ?_) (Finset.card_erase_add_one (Finset.mem_univ g.root))

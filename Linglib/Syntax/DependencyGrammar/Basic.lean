@@ -30,7 +30,7 @@ the dominance relation it is stated through.
 * `Graph.toSimpleGraph` is the undirected view of a graph as mathlib's
   `SimpleGraph`.
 * `Graph.enhance` adds arcs to a graph, as in UD's *enhanced*
-  representation; `HasUnrepresentedArg` says that an enhanced graph gives
+  representation; `Graph.HasUnrepresentedArg` says that an enhanced graph gives
   a position an argument relation its basic graph lacks.
 
 ## Implementation notes
@@ -183,16 +183,16 @@ end Graph
 
 /-- Position `w` has an argument relation in the enhanced graph that the
 basic graph fails to encode. -/
-def HasUnrepresentedArg {L : Type*} {n : ℕ} (basic enhanced : Graph L n) (w : Fin n) : Prop :=
+def Graph.HasUnrepresentedArg {L : Type*} {n : ℕ} (basic enhanced : Graph L n) (w : Fin n) : Prop :=
   ∃ v, enhanced.Adj v w ∧ ¬ basic.Adj v w
 
 instance {L : Type*} {n : ℕ} (b e : Graph L n) (w : Fin n) :
-    Decidable (HasUnrepresentedArg b e w) :=
+    Decidable (Graph.HasUnrepresentedArg b e w) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-theorem hasUnrepresentedArg_enhance {L : Type*} {n : ℕ} (g : Graph L n) {x w : Fin n} (r : L)
+theorem Graph.hasUnrepresentedArg_enhance {L : Type*} {n : ℕ} (g : Graph L n) {x w : Fin n} (r : L)
     (extra : List (Fin n × Fin n × L)) (hmem : (x, w, r) ∈ extra) (h : ¬ g.Adj x w) :
-    HasUnrepresentedArg g (g.enhance extra) w :=
+    Graph.HasUnrepresentedArg g (g.enhance extra) w :=
   ⟨x, Graph.enhance_adj.mpr (Or.inr ⟨r, hmem⟩), h⟩
 
 end DependencyGrammar

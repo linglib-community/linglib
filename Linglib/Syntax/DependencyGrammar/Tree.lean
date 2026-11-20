@@ -62,17 +62,17 @@ variable {L : Type*} {n : ℕ} {g : Graph L n} {u v w x y : Fin n}
 two heads ([kuhlmann-nivre-2006], Definition 2). -/
 structure Graph.IsForest (g : Graph L n) : Prop where
   /-- The graph is acyclic: a dependent does not dominate its head. -/
-  not_dominates_of_adj ⦃v w : Fin n⦄ : g.Adj v w → ¬ Dominates g w v
+  not_dominates_of_adj ⦃v w : Fin n⦄ : g.Adj v w → ¬ g.Dominates w v
   /-- A position has at most one head. -/
   leftUnique_adj : Relator.LeftUnique g.Adj
 
 /-- A dependency graph is a tree when it is a forest whose root dominates every position. -/
 structure Graph.IsTree (g : Graph L n) : Prop extends g.IsForest where
   /-- The root dominates every position. -/
-  root_dominates (v : Fin n) : Dominates g g.root v
+  root_dominates (v : Fin n) : g.Dominates g.root v
 
 instance (g : Graph L n) : Decidable g.IsForest :=
-  decidable_of_iff ((∀ v w, g.Adj v w → ¬ Dominates g w v) ∧
+  decidable_of_iff ((∀ v w, g.Adj v w → ¬ g.Dominates w v) ∧
       ∀ w u, g.Adj u w → ∀ v, g.Adj v w → u = v)
     ⟨fun h ↦ ⟨fun _ _ ↦ h.1 _ _, fun _ _ _ hu hv ↦ h.2 _ _ hu _ hv⟩,
       fun h ↦ ⟨fun _ _ ↦ @h.1 _ _, fun _ _ hu _ hv ↦ h.2 hu hv⟩⟩
@@ -92,23 +92,23 @@ theorem acyclic (v : Fin n) : ¬ TransGen g.Adj v v := fun h ↦
   have ⟨_, hvw, hwv⟩ := TransGen.head'_iff.1 h
   hF.not_dominates_of_adj hvw hwv
 
-theorem dominates_antisymm (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
+theorem dominates_antisymm (hvw : g.Dominates v w) (hwv : g.Dominates w v) : v = w := by
   obtain rfl | ⟨u, hvu, huw⟩ := ReflTransGen.cases_head hvw
   · rfl
   · exact absurd (huw.trans hwv) (hF.not_dominates_of_adj hvu)
 
-theorem dominates_head (hvw : Dominates g v w) (hne : v ≠ w) (hu : g.Adj u w) :
-    Dominates g v u := by
+theorem dominates_head (hvw : g.Dominates v w) (hne : v ≠ w) (hu : g.Adj u w) :
+    g.Dominates v u := by
   obtain rfl | ⟨z, hvz, hzw⟩ := ReflTransGen.cases_tail hvw
   · exact absurd rfl hne
   · exact hF.leftUnique_adj hzw hu ▸ hvz
 
-theorem dominates_total (hv : Dominates g v x) (hw : Dominates g w x) :
-    Dominates g v w ∨ Dominates g w v :=
+theorem dominates_total (hv : g.Dominates v x) (hw : g.Dominates w x) :
+    g.Dominates v w ∨ g.Dominates w v :=
   ReflTransGen.total_of_left_unique hF.leftUnique_adj hv hw
 
 /-- Positions of a forest neither of which dominates the other have disjoint yields. -/
-theorem disjoint_yield (hvw : ¬ Dominates g v w) (hwv : ¬ Dominates g w v) :
+theorem disjoint_yield (hvw : ¬ g.Dominates v w) (hwv : ¬ g.Dominates w v) :
     Disjoint (g.yield v) (g.yield w) :=
   Set.disjoint_left.2 fun _ hv hw ↦ (hF.dominates_total hv hw).elim hvw hwv
 
@@ -152,7 +152,7 @@ theorem Graph.isTree_iff_forall_not_adj_iff :
 every position: a cycle would have to be entered from the root's side through a second head. -/
 theorem Graph.isTree_iff_leftUnique_adj :
     g.IsTree ↔
-      Relator.LeftUnique g.Adj ∧ (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, Dominates g g.root v := by
+      Relator.LeftUnique g.Adj ∧ (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, g.Dominates g.root v := by
   refine ⟨fun hT ↦ ⟨hT.leftUnique_adj, hT.not_adj_root, hT.root_dominates⟩,
     fun ⟨hU, hr, hd⟩ ↦ ⟨⟨fun v w hvw hwv ↦ ?_, hU⟩, hd⟩⟩
   have hroot : ¬ TransGen g.Adj g.root g.root := fun h ↦
@@ -166,7 +166,7 @@ theorem Graph.isTree_iff_leftUnique_adj :
 
 instance (g : Graph L n) : Decidable g.IsTree :=
   decidable_of_iff ((∀ w u, g.Adj u w → ∀ v, g.Adj v w → u = v) ∧
-      (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, Dominates g g.root v)
+      (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, g.Dominates g.root v)
     ⟨fun h ↦ g.isTree_iff_leftUnique_adj.2 ⟨fun _ _ _ hu hv ↦ h.1 _ _ hu _ hv, h.2⟩,
       fun h ↦ ⟨fun _ _ hu _ hv ↦ h.leftUnique_adj hu hv, h.not_adj_root, h.root_dominates⟩⟩
 
@@ -207,13 +207,13 @@ section Forest
 variable [hF : Fact g.IsForest]
 
 instance : PartialOrder (DominanceOrder g) where
-  le v w := Dominates g v w
+  le v w := g.Dominates v w
   le_refl _ := .refl
   le_trans _ _ _ := .trans
   le_antisymm _ _ := hF.out.dominates_antisymm
 
 instance : DecidableLE (DominanceOrder g) :=
-  fun v w ↦ inferInstanceAs (Decidable (Dominates g v w))
+  fun v w ↦ inferInstanceAs (Decidable (g.Dominates v w))
 
 /-- The predecessor of a position is its head, and a headless position is its own. -/
 instance : PredOrder (DominanceOrder g) where
