@@ -72,6 +72,7 @@ demonstrative, so those pairs are incomparable.
 * [newman-2024]
 * [dendikken-2010]
 * [arregi-pietraszko-2021]
+* [thoms-etal-2026]
 -/
 
 @[expose] public section
@@ -99,6 +100,7 @@ def citedSequences : List (List Cat) :=
     [.Mood, .SA],                                 -- [speas-tenny-2003] p. 332
     [.N, .Q, .Num, .D],                           -- [borer-2005] (8a), p. 96
     [.N, .Num, .Dem],                             -- [cinque-2005] (7a), p. 321
+    [.n, .Poss, .Num],                            -- [thoms-etal-2026] (38), p. 22
     [.D, .K],                                     -- [newman-2024] (217), p. 129
     [.D, .Lnk],                                   -- [arregi-pietraszko-2021] (14), p. 250
     [.P, .Place, .Path]]                          -- [dendikken-2010] (20c), p. 81

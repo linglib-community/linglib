@@ -1,0 +1,711 @@
+{
+  "features": [
+    {
+      "key": "group",
+      "lean": "group",
+      "type": "Group",
+      "doc": "The group of speakers a judgment is attributed to; absent for English generally.",
+      "levels": [
+        {
+          "name": "a",
+          "label": "A",
+          "doc": "Group A, who accept HAVE-raising with indefinite possessees only"
+        },
+        {
+          "name": "b",
+          "label": "B",
+          "doc": "Group B, who accept HAVE-raising with definite possessees too"
+        }
+      ]
+    },
+    {
+      "key": "frame",
+      "lean": "frame",
+      "type": "Frame",
+      "doc": "The clause type, which shows or hides the position of the verb.",
+      "levels": [
+        {
+          "name": "raisedNegation",
+          "label": "raisedNegation",
+          "doc": "HAVE before negation"
+        },
+        {
+          "name": "raisedQuestion",
+          "label": "raisedQuestion",
+          "doc": "HAVE inverted with the subject"
+        },
+        {
+          "name": "plain",
+          "label": "plain",
+          "doc": "HAVE in a clause with no positional diagnostic"
+        },
+        {
+          "name": "haveGot",
+          "label": "haveGot",
+          "doc": "HAVE GOT"
+        },
+        {
+          "name": "doSupport",
+          "label": "doSupport",
+          "doc": "HAVE under *do*-support"
+        },
+        {
+          "name": "thereBe",
+          "label": "thereBe",
+          "doc": "a *there*-existential"
+        }
+      ]
+    },
+    {
+      "key": "determiner",
+      "lean": "determiner",
+      "type": "Determiner",
+      "doc": "The determiner of the possessee, or of the pivot of an existential.",
+      "levels": [
+        {
+          "name": "any",
+          "label": "any",
+          "doc": "*any*"
+        },
+        {
+          "name": "much",
+          "label": "much",
+          "doc": "*much*"
+        },
+        {
+          "name": "amountThe",
+          "label": "amountThe",
+          "doc": "*the* in an amount phrase, semantically indefinite"
+        },
+        {
+          "name": "the",
+          "label": "the",
+          "doc": "the definite article"
+        },
+        {
+          "name": "that",
+          "label": "that",
+          "doc": "the demonstrative *that*"
+        },
+        {
+          "name": "your",
+          "label": "your",
+          "doc": "a possessive"
+        },
+        {
+          "name": "every",
+          "label": "every",
+          "doc": "*every*"
+        },
+        {
+          "name": "most",
+          "label": "most",
+          "doc": "*most*"
+        }
+      ]
+    },
+    {
+      "key": "relation",
+      "lean": "relation",
+      "type": "Relation",
+      "doc": "The relation of the possessor to the possessee.",
+      "levels": [
+        {
+          "name": "alienable",
+          "label": "alienable",
+          "doc": "alienable possession, including temporary possession"
+        },
+        {
+          "name": "kinship",
+          "label": "kinship",
+          "doc": "a kinship relation"
+        },
+        {
+          "name": "bodyPart",
+          "label": "bodyPart",
+          "doc": "a body part"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "thomsetal2026_5a_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(5a)"},
+      "language": "stan1293",
+      "primaryText": "I haven't any money with me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "any"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_5a_B",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(5a)"},
+      "language": "stan1293",
+      "primaryText": "I haven't any money with me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "B"],
+        ["frame", "raisedNegation"],
+        ["determiner", "any"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_5b_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(5b)"},
+      "language": "stan1293",
+      "primaryText": "I haven't that charger with me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "that"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_5b_B",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(5b)"},
+      "language": "stan1293",
+      "primaryText": "I haven't that charger with me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "B"],
+        ["frame", "raisedNegation"],
+        ["determiner", "that"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_7a_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(7a)"},
+      "language": "stan1293",
+      "primaryText": "I haven't any cousins.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "any"],
+        ["relation", "kinship"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_7b_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(7b)"},
+      "language": "stan1293",
+      "primaryText": "I haven't much hair left.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "much"],
+        ["relation", "bodyPart"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_8a_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(8a)"},
+      "language": "stan1293",
+      "primaryText": "I haven't the money they lent me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "the"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_8b_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(8b)"},
+      "language": "stan1293",
+      "primaryText": "I haven't the money to buy what we need.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "amountThe"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_9a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(9a)"},
+      "language": "stan1293",
+      "primaryText": "There isn't the money they lent me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "thereBe"],
+        ["determiner", "the"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_9b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(9b)"},
+      "language": "stan1293",
+      "primaryText": "There isn't the money to buy what we need.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "thereBe"],
+        ["determiner", "amountThe"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_10a_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(10a)"},
+      "language": "stan1293",
+      "primaryText": "I haven't every Perec novel in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "every"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_10b_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(10b)"},
+      "language": "stan1293",
+      "primaryText": "I haven't most Perec novels in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedNegation"],
+        ["determiner", "most"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_11a_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(11a)"},
+      "language": "stan1293",
+      "primaryText": "Have you every Perec novel in paperback?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedQuestion"],
+        ["determiner", "every"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_11b_A",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(11b)"},
+      "language": "stan1293",
+      "primaryText": "Have you most Perec novels in paperback?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["group", "A"],
+        ["frame", "raisedQuestion"],
+        ["determiner", "most"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_12a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(12a)"},
+      "language": "stan1293",
+      "primaryText": "I have every Perec novel in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "every"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_12b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(12b)"},
+      "language": "stan1293",
+      "primaryText": "I have most Perec novels in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "most"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_12c",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(12c)"},
+      "language": "stan1293",
+      "primaryText": "I have the money they lent me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "the"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_13a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(13a)"},
+      "language": "stan1293",
+      "primaryText": "I have got every Perec novel in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "haveGot"],
+        ["determiner", "every"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_13b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(13b)"},
+      "language": "stan1293",
+      "primaryText": "I have got most Perec novels in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "haveGot"],
+        ["determiner", "most"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_13c",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(13c)"},
+      "language": "stan1293",
+      "primaryText": "I have got the money they lent me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "haveGot"],
+        ["determiner", "the"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_14a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(14a)"},
+      "language": "stan1293",
+      "primaryText": "I don't have every Perec novel in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doSupport"],
+        ["determiner", "every"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_14b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(14b)"},
+      "language": "stan1293",
+      "primaryText": "I don't have most Perec novels in paperback.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doSupport"],
+        ["determiner", "most"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_14c",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(14c)"},
+      "language": "stan1293",
+      "primaryText": "I don't have the money they lent me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doSupport"],
+        ["determiner", "the"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_15a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(15a)"},
+      "language": "stan1293",
+      "primaryText": "There is every Perec novel on that shelf.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "thereBe"],
+        ["determiner", "every"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_15b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(15b)"},
+      "language": "stan1293",
+      "primaryText": "There are most Perec novels on that shelf.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "thereBe"],
+        ["determiner", "most"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_43a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(43a)"},
+      "language": "stan1293",
+      "primaryText": "I have the keys.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "the"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_43b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(43b)"},
+      "language": "stan1293",
+      "primaryText": "John has your typewriter.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "your"],
+        ["relation", "alienable"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_48a",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(48a)"},
+      "language": "stan1293",
+      "primaryText": "I have that sister.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "that"],
+        ["relation", "kinship"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_48b",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(48b)"},
+      "language": "stan1293",
+      "primaryText": "I have your mother.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "your"],
+        ["relation", "kinship"]
+      ],
+      "verified": "text-layer"
+    },
+    {
+      "id": "thomsetal2026_48c",
+      "source": {"bibkey": "thoms-etal-2026", "paperLabel": "(48c)"},
+      "language": "stan1293",
+      "primaryText": "I have the blue eyes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "plain"],
+        ["determiner", "the"],
+        ["relation", "bodyPart"]
+      ],
+      "verified": "text-layer"
+    }
+  ]
+}

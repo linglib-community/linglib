@@ -82,6 +82,9 @@ inductive Cat where
   /-- Number ([ritter-1991]), Borer's counting head, above the dividing head `Q`
   ([borer-2005]). -/
   | Num
+  /-- The possessive head, which introduces a possessor inside the noun phrase, below number
+  ([myler-2016], [thoms-etal-2026]). -/
+  | Poss
   /-- The demonstrative, above number ([cinque-2005]). -/
   | Dem
   /-- Borer's dividing head, the classifier position, below `Num` ([borer-2005]). -/
@@ -162,7 +165,7 @@ def CatFamily.lexical : CatFamily → Cat
 def Cat.family : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Mood | .Pol | .Asp | .InnerAsp | .Evid | .Nmlz => .verbal
-  | .N | .n | .Num | .Dem | .Q | .D | .K | .Lnk => .nominal
+  | .N | .n | .Poss | .Num | .Dem | .Q | .D | .K | .Lnk => .nominal
   | .A | .a => .adjectival
   | .P | .Place | .Path => .adpositional
 
