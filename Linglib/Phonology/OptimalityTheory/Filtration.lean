@@ -56,7 +56,7 @@ theorem filtration_eq_argmin : filtration v s l = s.argmin fun c ↦ l.map (v c)
   induction l generalizing s with
   | nil => simp
   | cons k l ih =>
-    rw [filtration_cons, ih, Finset.argmin_argmin]
+    rw [filtration_cons, ih, Finset.argmin_argmin s (v · k) fun c ↦ l.map (v c)]
     ext c
     simp only [Finset.mem_argmin, Prod.Lex.toLex_le_toLex, List.map_cons, List.cons_le_cons_iff']
 

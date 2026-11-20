@@ -159,13 +159,17 @@ theorem satisfiedBy_iff_lead :
   ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.toLex_le_toLex_iff_find _ _).mp h he),
    fun h => (Pi.toLex_le_toLex_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
+/-- A ranking satisfies an ERC iff the ERC is not below zero in the lexicographic order of the
+constraints under dominance. -/
+theorem satisfiedBy_iff_not_lex : α.SatisfiedBy r ↔ ¬ Pi.Lex r.Dominates (· < ·) α 0 :=
+  Pi.toLex_comp_le_toLex_comp_iff r (v := 0) (w := α)
+
 /-- Satisfaction in Prince's `∀∃` form, his (3): every loser-preferring constraint is dominated
 by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
-    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
-  rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
-    Pi.toLex_comp_le_iff_forall_exists]
-  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Enumeration.Dominates]
+    α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c :=
+  (satisfiedBy_iff_not_lex r α).trans <| Pi.not_lex_iff_forall_exists.trans <| by
+    simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff]
 
 /-- An ERC *holds* of a relation on the constraints when every loser-preferring constraint is
 below some winner-preferring one, the `∀∃` form of an elementary ranking condition in
@@ -262,10 +266,10 @@ instance : Decidable (α.SatisfiedBy r) :=
 /-- Satisfaction in Prince's `∃∀` form, his (4): some winner-preferring constraint dominates
 every loser-preferring one. The two forms agree because the ranking is total. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
-    α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
-  rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
-    Pi.toLex_comp_le_iff_exists_forall]
-  simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Enumeration.Dominates]
+    α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) :=
+  have : Nonempty ι := ⟨r 0⟩
+  (satisfiedBy_iff_not_lex r α).trans <| Pi.not_lex_iff_exists_forall.trans <| by
+    simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff]
 
 theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking.Enumeration ι n) :
     α.SatisfiedBy r :=

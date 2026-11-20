@@ -13,7 +13,9 @@ the optimal candidates are those of least profile, the *harmonic ordering of for
 [prince-smolensky-1993]. Violations are given by a map `v`, with `v c k` the number of violations
 of the constraint `k` by the candidate `c`, and the candidates by a finite set.
 
-One candidate [beats](##OptimalityTheory.Ranking.Enumeration.profile_lt_iff_exists_dominates)
+Profiles are compared as the violation vectors are in the lexicographic order of the constraints
+under dominance (`OptimalityTheory.Ranking.Enumeration.profile_lt_iff_lex`), so one candidate
+[beats](##OptimalityTheory.Ranking.Enumeration.profile_lt_iff_exists_dominates)
 another iff some constraint preferring it dominates every constraint preferring the other, ties
 [do not depend on the ranking](##OptimalityTheory.Ranking.Enumeration.mem_optimal_iff_of_mem),
 and the optimal candidates are
@@ -34,7 +36,7 @@ variable {C ι : Type*} {n : ℕ} (σ : Ranking.Enumeration ι n) (v : C → ι 
   {c d : C}
 
 /-- The violations of a candidate in rank order, compared lexicographically. -/
-def profile (c : C) : Lex (Fin n → ℕ) := toLex fun p ↦ v c (σ p)
+def profile (c : C) : ViolationProfile n := toLex fun p ↦ v c (σ p)
 
 @[simp] theorem profile_apply (c : C) (p : Fin n) : σ.profile v c p = v c (σ p) := rfl
 
@@ -64,12 +66,27 @@ theorem optimal_eq_filtration : σ.optimal v s = filtration v s (List.ofFn σ) :
   rw [List.map_ofFn, List.map_ofFn, List.ofFn_le_ofFn_iff]
   rfl
 
+/-- Profiles under a ranking are compared as the violation vectors are in the lexicographic order
+of the constraints under dominance. -/
+theorem profile_lt_iff_lex :
+    σ.profile v c < σ.profile v d ↔ Pi.Lex σ.Dominates (· < ·) (v c) (v d) :=
+  Pi.toLex_comp_lt_toLex_comp_iff σ
+
+theorem profile_le_iff_not_lex :
+    σ.profile v c ≤ σ.profile v d ↔ ¬ Pi.Lex σ.Dominates (· < ·) (v d) (v c) :=
+  Pi.toLex_comp_le_toLex_comp_iff σ
+
 /-- One candidate beats another iff some constraint preferring it dominates every constraint
 preferring the other. -/
 theorem profile_lt_iff_exists_dominates :
     σ.profile v c < σ.profile v d ↔
       ∃ i, v c i < v d i ∧ ∀ j, v d j < v c j → σ.Dominates i j :=
-  Pi.toLex_comp_lt_iff_exists σ (v := v c) (w := v d)
+  profile_lt_iff_lex.trans Pi.lex_iff_exists_forall
+
+/-- A candidate that violates every constraint at most as often as another, and some constraint
+less often, beats it under every ranking. -/
+theorem profile_lt_of_lt (h : v c < v d) : σ.profile v c < σ.profile v d :=
+  profile_lt_iff_lex.2 (Pi.lex_lt_of_lt (InvImage.wf _ wellFounded_lt) h)
 
 /-- A candidate is the sole winner iff it is a candidate and, against each competitor, some
 constraint preferring it dominates every constraint preferring the competitor. -/
@@ -112,11 +129,11 @@ theorem optimal_eq_singleton_of_rel {R : ι → ι → Prop} (hr : R ≤ σ.Domi
 /-- A candidate that violates every constraint at least as often as a competitor, and some
 constraint more often, is *harmonically bounded*: it is optimal under no ranking. -/
 theorem notMem_optimal_of_lt (hc : c ∈ s) (hlt : v c < v d) : d ∉ σ.optimal v s :=
-  fun hd ↦ ((mem_optimal_iff.1 hd).2 c hc).not_gt (Pi.toLex_comp_strictMono σ hlt)
+  fun hd ↦ ((mem_optimal_iff.1 hd).2 c hc).not_gt (profile_lt_of_lt hlt)
 
 theorem optimal_eq_singleton_of_forall_lt (hc : c ∈ s) (hlt : ∀ d ∈ s, d ≠ c → v c < v d) :
     σ.optimal v s = {c} :=
-  optimal_eq_singleton_iff'.2 ⟨hc, fun d hd hne ↦ Pi.toLex_comp_strictMono σ (hlt d hd hne)⟩
+  optimal_eq_singleton_iff'.2 ⟨hc, fun d hd hne ↦ profile_lt_of_lt (hlt d hd hne)⟩
 
 /-- A candidate with no violations wins under every ranking. -/
 theorem zero_mem_optimal (hc : c ∈ s) (hzero : v c = 0) : c ∈ σ.optimal v s :=
@@ -151,7 +168,8 @@ the first. -/
 theorem mem_optimal_of_forall_le {C' : Type*} {v' : C' → ι → ℕ} {s' : Finset C'} {d : C'}
     (hc : c ∈ σ.optimal v s) (hd : d ∈ s') (hdc : v' d ≤ v c)
     (h : ∀ d' ∈ s', ∃ c' ∈ s, v c' ≤ v' d') : d ∈ σ.optimal v' s' := by
-  have hm := (Pi.toLex_comp_strictMono σ (β := ℕ)).monotone
+  have hm {a b : ι → ℕ} (h : a ≤ b) : toLex (a ∘ σ) ≤ toLex (b ∘ σ) :=
+    Pi.toLex_monotone fun p ↦ h (σ p)
   refine mem_optimal_iff.2 ⟨hd, fun d' hd' ↦ ?_⟩
   obtain ⟨c', hc', hle⟩ := h d' hd'
   exact (hm hdc).trans (((mem_optimal_iff.1 hc).2 c' hc').trans (hm hle))

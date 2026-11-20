@@ -21,9 +21,9 @@ total domination order. It defines the [strict dominance](##Ranking.Enumeration.
 ranking and its [reflexive closure](##Ranking.Enumeration.toRel), which
 [determines the ranking](##Ranking.Enumeration.toRel_injective). A ranking reads a violation
 vector `v` in rank order as `toLex (v ∘ r)`, so comparing two vectors under one ranking is
-[the lexicographic order along an enumeration](##Pi.toLex_comp_lt_iff_exists), and comparing them
-under every ranking is [the product order](##Pi.forall_toLex_comp_lt_iff), which is harmonic
-bounding. Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
+the lexicographic order `Pi.Lex r.Dominates (· < ·)` of the constraints under dominance
+(`Pi.toLex_comp_lt_toLex_comp_iff`), and comparing them under every ranking is the product order
+(`Pi.forall_toLex_comp_lt_iff`), which is harmonic bounding. Rankings carry the discrete σ-algebra, so a distribution over rankings is a `Measure`.
 
 ## Implementation notes
 
@@ -95,6 +95,8 @@ instance (i j : ι) : Decidable (r.Dominates i j) :=
   inferInstanceAs (Decidable (r.symm i < r.symm j))
 
 instance : IsStrictTotalOrder ι r.Dominates := InvImage.isStrictTotalOrder r.symm.injective
+
+instance : WellFounded r.Dominates := InvImage.wf r.symm wellFounded_lt
 
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
