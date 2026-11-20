@@ -1,0 +1,1201 @@
+{
+  "features": [
+    {
+      "key": "environment",
+      "lean": "environment",
+      "type": "Environment",
+      "doc": "The environment of the noun phrase.",
+      "levels": [
+        {
+          "name": "upward",
+          "label": "upward",
+          "doc": "an upward-entailing environment"
+        },
+        {
+          "name": "negation",
+          "label": "negation",
+          "doc": "under sentential negation"
+        },
+        {
+          "name": "restrictor",
+          "label": "restrictor",
+          "doc": "in the restriction of a universal or negative quantifier"
+        },
+        {
+          "name": "conditional",
+          "label": "conditional",
+          "doc": "in the antecedent of a conditional"
+        },
+        {
+          "name": "question",
+          "label": "question",
+          "doc": "in a question"
+        }
+      ]
+    },
+    {
+      "key": "form",
+      "lean": "form",
+      "type": "Form",
+      "doc": "The number the noun's form marks.",
+      "levels": [
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "a plural form"
+        },
+        {
+          "name": "dual",
+          "label": "dual",
+          "doc": "an unambiguously dual form"
+        },
+        {
+          "name": "dualOrPlural",
+          "label": "dual or plural",
+          "doc": "a form syncretic between dual and plural"
+        }
+      ]
+    }
+  ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The interpretations the paper judges a noun phrase for.",
+    "levels": [
+      {
+        "name": "inclusive",
+        "label": "inclusive",
+        "doc": "one or more"
+      },
+      {
+        "name": "exclusive",
+        "label": "exclusive",
+        "doc": "only as many as the plural of the language requires"
+      },
+      {
+        "name": "negatedDual",
+        "label": "negated dual",
+        "doc": "two, under the negation of the sentence"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "id": "marti2020a_19",
+      "source": {
+        "bibkey": "sauerland-2003",
+        "paperLabel": "(38a)"
+      },
+      "reportedIn": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(1), (19), (55), (67)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Lina harvested tomatoes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "exclusive",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "inclusive",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "upward"
+        ],
+        [
+          "form",
+          "plural"
+        ],
+        [
+          "at_least",
+          "2"
+        ]
+      ],
+      "comment": "True only if Lina harvested at least two tomatoes.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_20",
+      "source": {
+        "bibkey": "sauerland-2003",
+        "paperLabel": "(41b)"
+      },
+      "reportedIn": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(2), (20), (56), (70)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Lina didn't harvest tomatoes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "exclusive",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "Requires Lina not to have harvested any tomato; not true if she harvested exactly one.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_21a",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(21a)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "I don't have children.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_21b",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(21b)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Dogs are not barking at me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_22",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(22)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Few/No students came to the party.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "restrictor"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "The restriction of no or few.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_23",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(23)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "If you spot horses in this picture, you will get a prize.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Directed at one person.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "conditional"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_24",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(24)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Every house with windows overlooking the ocean is overpriced.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "restrictor"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "The restriction of a universal quantifier.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_25a",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(25a)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Have you ever seen horses in this meadow?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Directed at one person.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "question"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "Credited to Farkas and de Swart (2010).",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_25b",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(25b)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Did you eat apples today?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Directed at one person.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "question"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_26a",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(26a)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "I have children.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "exclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "upward"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_26b",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(26b)"
+      },
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Dogs are barking at me.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "exclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "upward"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "Credited to Carlson (1977).",
+      "verified": "text-layer"
+    },
+    {
+      "id": "marti2020a_32",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(32)"
+      },
+      "language": "slov1268",
+      "primaryText": "Kdor prvi zagleda konje na tem travniku, dobi nagrado.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Kdor",
+          "who"
+        ],
+        [
+          "prvi",
+          "first"
+        ],
+        [
+          "zagleda",
+          "see"
+        ],
+        [
+          "konje",
+          "horse.ACC.MASC.PL"
+        ],
+        [
+          "na",
+          "on"
+        ],
+        [
+          "tem",
+          "this"
+        ],
+        [
+          "travniku,",
+          "meadow"
+        ],
+        [
+          "dobi",
+          "win"
+        ],
+        [
+          "nagrado.",
+          "prize"
+        ]
+      ],
+      "translation": "Whoever first sees horses in this meadow wins a prize.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "restrictor"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "Seeing just one horse already wins the prize.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_33",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(33)"
+      },
+      "language": "slov1268",
+      "primaryText": "Ali ima Peter otroke? Ja. Ima enega.",
+      "discourseSegments": [
+        "Ali ima Peter otroke?",
+        "Ja. Ima enega."
+      ],
+      "glossedTokens": [
+        [
+          "Ali",
+          "Q"
+        ],
+        [
+          "ima",
+          "have"
+        ],
+        [
+          "Peter",
+          "Peter"
+        ],
+        [
+          "otroke?",
+          "child.ACC.MASC.PL"
+        ],
+        [
+          "Ja.",
+          "yes"
+        ],
+        [
+          "Ima",
+          "has"
+        ],
+        [
+          "enega.",
+          "one"
+        ]
+      ],
+      "translation": "Does Peter have children? Yes, he has one.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "question"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "The question can be answered with one child.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_34",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(34)"
+      },
+      "language": "slov1268",
+      "primaryText": "Do danes fantom (še) nisem pomagal.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Do",
+          "until"
+        ],
+        [
+          "danes",
+          "today"
+        ],
+        [
+          "fantom",
+          "boy.DAT.MASC.DU/PL"
+        ],
+        [
+          "(še)",
+          "yet"
+        ],
+        [
+          "nisem",
+          "NEG.AUX.1SG"
+        ],
+        [
+          "pomagal.",
+          "help.PTC.SG"
+        ]
+      ],
+      "translation": "Until today I didn't help boys.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "negated dual",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "dual or plural"
+        ]
+      ],
+      "comment": "The form is syncretic between dual and plural; the negated dual interpretation is absent.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_35",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(35)"
+      },
+      "language": "slov1268",
+      "primaryText": "Do danes fantoma nisem pomagal.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Do",
+          "until"
+        ],
+        [
+          "danes",
+          "today"
+        ],
+        [
+          "fantoma",
+          "boy.DAT.MASC.DU"
+        ],
+        [
+          "nisem",
+          "NEG.AUX.1SG"
+        ],
+        [
+          "pomagal.",
+          "help.PTC.SG"
+        ]
+      ],
+      "translation": "Until today I didn't help (the) two boys.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "negated dual",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "dual"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_36",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(36)"
+      },
+      "language": "slov1268",
+      "primaryText": "Rože ne cvetijo.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Rože",
+          "flower.NOM.FEM.PL"
+        ],
+        [
+          "ne",
+          "NEG"
+        ],
+        [
+          "cvetijo.",
+          "blossom.3PL"
+        ]
+      ],
+      "translation": "(The) flowers aren't blossoming.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "plural"
+        ]
+      ],
+      "comment": "The form may be dual or plural; the agreeing verb shows it is plural.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_37",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(37)"
+      },
+      "language": "slov1268",
+      "primaryText": "Nimam otrok.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Nimam",
+          "NEG.have.1SG"
+        ],
+        [
+          "otrok.",
+          "child.GEN.MASC.DU/PL"
+        ]
+      ],
+      "translation": "I don't have children.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "negated dual",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "dual or plural"
+        ]
+      ],
+      "comment": "Not ambiguous between an inclusive plural and a negated dual.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_38",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(38)"
+      },
+      "language": "slov1268",
+      "primaryText": "Ne vidim konjev na travniku.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Ne",
+          "NEG"
+        ],
+        [
+          "vidim",
+          "see"
+        ],
+        [
+          "konjev",
+          "horse.GEN.MASC.DU/PL"
+        ],
+        [
+          "na",
+          "on"
+        ],
+        [
+          "travniku.",
+          "meadow"
+        ]
+      ],
+      "translation": "I didn't see horses in the meadow.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "negated dual",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "dual or plural"
+        ]
+      ],
+      "comment": "Not ambiguous between an inclusive plural and a negated dual.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_39",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(39)"
+      },
+      "language": "slov1268",
+      "primaryText": "Nimam dveh otrok.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Nimam",
+          "NEG.have.1SG"
+        ],
+        [
+          "dveh",
+          "two.GEN.MASC.DU"
+        ],
+        [
+          "otrok.",
+          "child.GEN.MASC.DU"
+        ]
+      ],
+      "translation": "I don't have two children.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "negated dual",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "dual"
+        ]
+      ],
+      "comment": "The numeral requires the dual.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_40",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(40)"
+      },
+      "language": "slov1268",
+      "primaryText": "Ne vidim dveh konjev na travniku.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Ne",
+          "NEG"
+        ],
+        [
+          "vidim",
+          "see"
+        ],
+        [
+          "dveh",
+          "two.GEN.MASC.DU"
+        ],
+        [
+          "konjev",
+          "horse.GEN.MASC.DU"
+        ],
+        [
+          "na",
+          "on"
+        ],
+        [
+          "travniku.",
+          "meadow"
+        ]
+      ],
+      "translation": "I didn't see (the) two horses in the meadow.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "negated dual",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "negation"
+        ],
+        [
+          "form",
+          "dual"
+        ]
+      ],
+      "comment": "The numeral requires the dual.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_41",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(41)"
+      },
+      "language": "slov1268",
+      "primaryText": "Vsaka hiša ki ima okna s pogledom na morje je precenjena.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Vsaka",
+          "every"
+        ],
+        [
+          "hiša",
+          "house.NOM.FEM.SG"
+        ],
+        [
+          "ki",
+          "which"
+        ],
+        [
+          "ima",
+          "has"
+        ],
+        [
+          "okna",
+          "window.ACC.NEUT.DU/PL"
+        ],
+        [
+          "s",
+          "with"
+        ],
+        [
+          "pogledom",
+          "view"
+        ],
+        [
+          "na",
+          "on"
+        ],
+        [
+          "morje",
+          "sea"
+        ],
+        [
+          "je",
+          "is"
+        ],
+        [
+          "precenjena.",
+          "overpriced"
+        ]
+      ],
+      "translation": "Every house which has windows with a view of the sea is overpriced.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "inclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "restrictor"
+        ],
+        [
+          "form",
+          "dual or plural"
+        ]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_42",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(42)"
+      },
+      "language": "slov1268",
+      "primaryText": "En avtomobil je povozil študente.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "En",
+          "one.NOM.MASC.SG"
+        ],
+        [
+          "avtomobil",
+          "car.NOM.MASC.SG"
+        ],
+        [
+          "je",
+          "AUX.SG"
+        ],
+        [
+          "povozil",
+          "run.over.PTC.MASC.SG"
+        ],
+        [
+          "študente.",
+          "student.ACC.MASC.PL"
+        ]
+      ],
+      "translation": "A car ran over students.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "exclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "upward"
+        ],
+        [
+          "form",
+          "plural"
+        ],
+        [
+          "at_least",
+          "3"
+        ]
+      ],
+      "comment": "The number of students run over is three or more.",
+      "verified": "page-image"
+    },
+    {
+      "id": "marti2020a_43",
+      "source": {
+        "bibkey": "marti-2020a",
+        "paperLabel": "(43)"
+      },
+      "language": "slov1268",
+      "primaryText": "Ena hiša ki ima okna s pogledom na morje je precenjena.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Ena",
+          "one.NOM.FEM.SG"
+        ],
+        [
+          "hiša",
+          "house.NOM.FEM.SG"
+        ],
+        [
+          "ki",
+          "which"
+        ],
+        [
+          "ima",
+          "has"
+        ],
+        [
+          "okna",
+          "window.ACC.NEUT.DU/PL"
+        ],
+        [
+          "s",
+          "with"
+        ],
+        [
+          "pogledom",
+          "view"
+        ],
+        [
+          "na",
+          "on"
+        ],
+        [
+          "morje",
+          "sea"
+        ],
+        [
+          "je",
+          "is"
+        ],
+        [
+          "precenjena.",
+          "overpriced"
+        ]
+      ],
+      "translation": "One house which has windows with a view of the sea is overpriced.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "exclusive",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [
+        [
+          "environment",
+          "upward"
+        ],
+        [
+          "form",
+          "dual or plural"
+        ],
+        [
+          "at_least",
+          "3"
+        ]
+      ],
+      "comment": "A house with three or more windows.",
+      "verified": "page-image"
+    }
+  ]
+}
