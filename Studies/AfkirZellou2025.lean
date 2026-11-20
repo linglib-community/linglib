@@ -186,7 +186,7 @@ vowels. -/
 def sonorityWith (o : Ordering) (x : Segment) : ℕ :=
   match Sonority.ofSegment x with
   | .obstruent =>
-    Parker2002.hierarchy o ⟨decide (x .continuant = true), decide (x .voice = true)⟩
+    Parker2002.hierarchy o (.ofSegment x)
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
 /-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
