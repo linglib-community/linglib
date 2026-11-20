@@ -117,8 +117,8 @@ def phaseHeads (IsPhaseHead : LexicalItem.Token → Prop) [DecidablePred IsPhase
 phase head and `case` the case slot each NP enters with. -/
 def CaseAssigners.assignOn (g : CaseAssigners) (D : GornAddress → Set GornAddress)
     [∀ h, DecidablePred (· ∈ D h)] (IsPhaseHead : LexicalItem.Token → Prop)
-    [DecidablePred IsPhaseHead] (case : LexicalItem.Token → FeatureSlot Case)
-    (xs : List LexicalItem.Token) : LexicalItem.Token → FeatureSlot (Case × Mechanism) :=
+    [DecidablePred IsPhaseHead] (case : LexicalItem.Token → FeatureSlot (Flat Case))
+    (xs : List LexicalItem.Token) : LexicalItem.Token → FeatureSlot (Flat (Case × Mechanism)) :=
   let ph := phaseHeads hd t IsPhaseHead
   let Φ := (ph.map (·.1)).toFinset
   let U := xs.toFinset

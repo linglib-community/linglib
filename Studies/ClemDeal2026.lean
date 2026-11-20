@@ -591,7 +591,7 @@ theorem rule1_overgenerates :
 
 /-- Rule (37), [barany-sheehan-2024]'s writing a hierarchy into (1): of two NPs in one domain, over
 the ranking `rank`, the one c-commanding a caseless NP no higher on `rank` takes the ergative. -/
-def rule37 (rank : Person → ℕ) (s o : Nominal) : Arg → FeatureSlot (Case × Case.Mechanism) :=
+def rule37 (rank : Person → ℕ) (s o : Nominal) : Arg → FeatureSlot (Flat (Case × Case.Mechanism)) :=
   (DependentCase.Rules.ofAlignment .ergative).dependent.pass
     (fun p q ↦ p = .subject ∧ q = .object ∧ rank (nominals s o q).1 ≤ rank (nominals s o p).1)
     {.subject, .object} (Case.lexical fun _ ↦ .unvalued)

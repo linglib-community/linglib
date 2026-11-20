@@ -182,11 +182,11 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
 section DefaultCase
 
 variable {ι : Type*} [DecidableEq ι] (lt : ι → ι → Prop) [DecidableRel lt] (D : Finset ι)
-  (s : ι → FeatureSlot C)
+  (s : ι → FeatureSlot (Flat C))
 
 /-- Default case marking, (61d), as a pass over arguments ordered by their functions: the highest
 not yet valued takes the nominative and the next the accusative. -/
-def defaultCase : ι → FeatureSlot C :=
+def defaultCase : ι → FeatureSlot (Flat C) :=
   (CaseRule.inOrder [P.nom, P.acc]).passUnvalued lt D s
 
 theorem extends_defaultCase :

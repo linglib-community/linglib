@@ -7,13 +7,14 @@ public import Linglib.Syntax.Minimalist.Probe.Agree
 # Valuation
 
 This file defines valuation of feature bundles, the part of Agree that copies the value of a goal
-into a probe ([chomsky-2000]), from the valuation of a single slot (`FeatureSlot.valueWith`). An
-absent slot is unchanged, since an item that lacks a dimension is not a probe for it.
+into a probe ([chomsky-2000]), from the unification of a single slot (`FeatureSlot.unifyWith`)
+in the slot order of its dimension. An absent slot is unchanged, since an item that lacks a
+dimension is not a probe for it.
 
-Valuing a bundle at a dimension it bears is [unification with the bundle that bears only the
-value](##Minimalist.FeatureBundle.valueAt_eq_coe_iff). At an agreement dimension other than
-person, valuation followed by `FeatureBundle.agreement` is [unification of agreement
-bundles](##Minimalist.FeatureBundle.map_agreement_valueAt). Agree with a goal that has no value at
+Valuing a bundle at a dimension it bears is unification with the bundle that bears only the
+value (`Minimalist.FeatureBundle.valueAt_eq_coe_iff`). At an agreement dimension, person
+included, unification followed by `FeatureBundle.agreement` is unification of agreement bundles
+(`Minimalist.FeatureBundle.map_agreement_unifyAt`). Agree with a goal that has no value at
 the dimension leaves the probe unchanged, so Agree can fail without causing a crash
 ([preminger-2014]). The goal a probe agrees with is found by search
 (`Minimalist.PlanarSyntacticObject.goals`).
@@ -27,8 +28,10 @@ value ([chomsky-2000]). The probe of an item at a dimension is satisfied by the 
 it and interacts with those that are also active. A matching goal that is not active therefore
 halts the search without valuing: Chomsky's defective intervention is satisfaction without
 interaction in the sense of [deal-2025a]. Valuation only adds features, so [a run of Agree
-extends the state](##Minimalist.FeatureState.le_agree_state), and [a slot valued before Agree
-keeps its value](##Minimalist.FeatureState.apply_eq_valued_of_le).
+extends the state](##Minimalist.FeatureState.le_agree_state), and [a slot holding a maximal
+element of its order, as a value of a flat slot is, keeps it
+](##Minimalist.FeatureState.apply_eq_coe_of_le). A person slot can grow, as a slot specified for
+a speech-act participant becomes one specified for the first person.
 
 ## Main definitions
 
@@ -50,13 +53,6 @@ producing what [chomsky-2000] calls modified lexical items. The bundles of a der
 therefore kept outside the tree: a `FeatureState` assigns a bundle to each item, and valuation
 changes that assignment, not the tree.
 
-## TODO
-
-Valuation of the person slot is not yet unification of agreement bundles: a checking slot
-compares two valued persons by equality, while two person specifications unify to what both
-cover. State `map_agreement_valueAt` at the person dimension once the person slot is valued by
-unifying specifications.
-
 ## References
 
 * [chomsky-2000]
@@ -74,75 +70,91 @@ namespace FeatureBundle
 
 variable (probe goal : FeatureBundle) (t : FeatureType)
 
+/-- The bundle `b` unified with the slot `x` at `t`, or `⊤` if they are incompatible there. A
+bundle that lacks the dimension is unchanged. -/
+def unifyAt (b : FeatureBundle) (t : FeatureType) (x : t.Slot) : WithTop FeatureBundle :=
+  ((b t).unifyWith (FeatureType.Slot.unify t) x).map (Function.update b t)
+
 /-- The bundle `b` valued with `v` at `t`, or `⊤` if `b` is valued otherwise at `t`. -/
 def valueAt (b : FeatureBundle) (t : FeatureType) (v : t.Value) : WithTop FeatureBundle :=
-  ((b t).valueWith v).map (Function.update b t)
+  b.unifyAt t (FeatureType.Slot.ofValue t v)
 
-variable {t} {b b' : FeatureBundle} {v : t.Value}
+variable {t} {b b' : FeatureBundle} {x : t.Slot} {v : t.Value}
 
-theorem le_of_valueAt_eq_coe (h : b.valueAt t v = ↑b') : b ≤ b' := by
-  obtain ⟨s, hs, rfl⟩ := WithTop.map_eq_some_iff.1 h
-  exact le_update_self_iff.2 (FeatureSlot.le_of_valueWith_eq_coe hs)
+/-- Unifying a bundle at a dimension it bears is unifying it with the bundle that bears only the
+slot. -/
+theorem unifyAt_eq_coe_iff (hb : b t ≠ ⊥) :
+    b.unifyAt t x = ↑b' ↔ IsLUB {b, Function.update (⊥ : FeatureBundle) t ↑x} b' := by
+  rw [isLUB_pair_update_bot_iff, unifyAt, WithTop.map_eq_some_iff]
+  have key {s' : FeatureSlot t.Slot} := FeatureSlot.unifyWith_eq_coe_iff (x := x) (s' := s')
+    (FeatureType.Slot.isLUB_unify t) hb
+  exact ⟨fun ⟨s, hs, hb'⟩ ↦ hb' ▸ ⟨by simpa using key.1 hs, by simp⟩,
+    fun ⟨h₁, h₂⟩ ↦ ⟨b' t, key.2 h₁, h₂.symm⟩⟩
+
+theorem le_of_unifyAt_eq_coe (h : b.unifyAt t x = ↑b') : b ≤ b' := by
+  rcases eq_or_ne (b t) ⊥ with hb | hb
+  · rw [unifyAt, hb, FeatureSlot.unifyWith_bot, WithTop.map_coe, WithTop.coe_inj] at h
+    exact h ▸ le_update_self_iff.2 (hb ▸ le_rfl)
+  · exact (isLUB_pair_iff_forall_le.1 ((unifyAt_eq_coe_iff hb).1 h)).1
+
+theorem le_of_valueAt_eq_coe (h : b.valueAt t v = ↑b') : b ≤ b' := le_of_unifyAt_eq_coe h
 
 /-- Valuing a bundle at a dimension it bears is unifying it with the bundle that bears only the
 value. -/
-theorem valueAt_eq_coe_iff (hb : b t ≠ .absent) :
-    b.valueAt t v = ↑b' ↔ IsLUB {b, single t v} b' := by
-  rw [single, isLUB_pair_update_bot_iff, valueAt, WithTop.map_eq_some_iff]
-  exact ⟨fun ⟨s, hs, hb'⟩ ↦ hb' ▸ ⟨by simpa using (FeatureSlot.valueWith_eq_coe_iff hb).1 hs,
-      by simp⟩,
-    fun ⟨h₁, h₂⟩ ↦ ⟨b' t, (FeatureSlot.valueWith_eq_coe_iff hb).2 h₁, h₂.symm⟩⟩
+theorem valueAt_eq_coe_iff (hb : b t ≠ ⊥) :
+    b.valueAt t v = ↑b' ↔ IsLUB {b, single t v} b' :=
+  unifyAt_eq_coe_iff hb
 
-/-- Outside the person dimension, valuing a checking bundle is unifying its agreement bundle
-with the value. -/
-theorem map_agreement_valueAt {d : Agreement.Dimension} (hd : d ≠ .person)
-    {v : (FeatureType.agr d).Value} {b : FeatureBundle} (hb : b (.agr d) ≠ .absent) :
-    (b.valueAt (.agr d) v).map agreement =
-      (b.agreement : WithTop Agreement.Bundle) ⊔
-        ↑(Function.update (⊥ : Agreement.Bundle) d (slotOfFlat d (v : Flat _))) := by
-  cases d
-  · exact absurd rfl hd
-  all_goals
-    rw [Agreement.Bundle.coe_sup_coe_update_bot, agreement_apply, valueAt]
-    simp only [slotOfFlat, Agreement.Dimension.Slot.unify]
-    rw [← FeatureSlot.map_toFlat_valueWith (v := v) hb]
-    induction (b (.agr _)).valueWith v using WithTop.recTopCoe with
-    | top => rfl
-    | coe s' =>
-      simp only [WithTop.map_coe]
-      exact congrArg _ (agreement_update_agr b _ s')
+/-- Unifying a checking bundle at an agreement dimension it bears is unifying its agreement
+bundle there. -/
+theorem map_agreement_unifyAt {d : Agreement.Dimension} {x : d.Slot} {b : FeatureBundle}
+    (hb : b (.agr d) ≠ ⊥) :
+    (b.unifyAt (.agr d) x).map agreement =
+      (b.agreement : WithTop Agreement.Bundle) ⊔ ↑(Function.update (⊥ : Agreement.Bundle) d x) := by
+  rw [Agreement.Bundle.coe_sup_coe_update_bot, agreement_apply, unifyAt, WithTop.map_map,
+    ← FeatureSlot.map_unbotD_unifyWith (u := Agreement.Dimension.Slot.unify d) hb,
+    WithTop.map_map]
+  exact congrArg (WithTop.map · _) (funext fun s' ↦ agreement_update_agr b d s')
 
 variable (t)
 
-/-- The bundle `probe` valued from `goal` at `t`: valued with the value of `goal` at `t`, or
-unchanged if `goal` has no value there. -/
-def valueFrom : WithTop FeatureBundle :=
-  match goal t with
-  | .valued v => probe.valueAt t v
-  | _ => probe
-
-@[simp] theorem valueFrom_bot : probe.valueFrom ⊥ t = probe := rfl
+/-- The bundle `probe` valued from `goal` at `t`: unified with what `goal` holds at `t`, so
+unchanged if `goal` lacks the dimension or bears it unvalued. -/
+def valueFrom : WithTop FeatureBundle := probe.unifyAt t ((goal t).unbotD ⊥)
 
 variable {probe goal t}
 
-theorem valueFrom_of_forall_ne_valued (h : ∀ v, goal t ≠ .valued v) :
-    probe.valueFrom goal t = probe := by
-  unfold valueFrom
-  split
-  · exact absurd ‹_› (h _)
-  · rfl
-
 theorem le_of_valueFrom_eq_coe {probe' : FeatureBundle}
-    (h : probe.valueFrom goal t = ↑probe') : probe ≤ probe' := by
-  unfold valueFrom at h
-  split at h
-  · exact le_of_valueAt_eq_coe h
-  · exact (WithTop.coe_inj.1 h).le
+    (h : probe.valueFrom goal t = ↑probe') : probe ≤ probe' :=
+  le_of_unifyAt_eq_coe h
 
 theorem le_untopD_valueFrom : probe ≤ (probe.valueFrom goal t).untopD probe := by
   cases h : probe.valueFrom goal t with
   | top => exact le_rfl
   | coe b => exact le_of_valueFrom_eq_coe h
+
+@[simp] theorem unifyAt_bot (b : FeatureBundle) (t : FeatureType) : b.unifyAt t ⊥ = b := by
+  rcases eq_or_ne (b t) ⊥ with hb | hb
+  · rw [unifyAt, hb, FeatureSlot.unifyWith_bot, WithTop.map_coe, ← hb, Function.update_eq_self]
+  · refine (unifyAt_eq_coe_iff hb).2 (isLUB_pair_iff_forall_le.2 ⟨le_rfl, ?_, fun _ h _ ↦ h⟩)
+    obtain ⟨y, hy⟩ := WithBot.ne_bot_iff_exists.1 hb
+    exact update_le_iff.2 ⟨hy ▸ WithBot.coe_le_coe.2 bot_le, fun _ _ ↦ bot_le⟩
+
+/-- A bundle that bears a dimension unvalued takes the slot it is unified with there. -/
+theorem unifyAt_of_eq_coe_bot (h : b t = ↑(⊥ : t.Slot)) :
+    b.unifyAt t x = ↑(Function.update b t ↑x) := by
+  have hb : b t ≠ ⊥ := h ▸ WithBot.coe_ne_bot
+  refine (unifyAt_eq_coe_iff hb).2 (isLUB_pair_update_bot_iff.2 ⟨?_, by simp⟩)
+  rw [h, Function.update_self]
+  exact isLUB_pair_iff_forall_le.2 ⟨WithBot.coe_le_coe.2 bot_le, le_rfl, fun _ _ h ↦ h⟩
+
+theorem valueFrom_of_unbotD_eq_bot (h : (goal t).unbotD ⊥ = ⊥) :
+    probe.valueFrom goal t = probe := by
+  rw [valueFrom, h, unifyAt_bot]
+
+@[simp] theorem valueFrom_bot (probe : FeatureBundle) (t : FeatureType) :
+    probe.valueFrom ⊥ t = probe :=
+  valueFrom_of_unbotD_eq_bot rfl
 
 end FeatureBundle
 
@@ -159,13 +171,10 @@ variable {H : Type*} (s : FeatureState H) (α : H) (t : FeatureType)
 whether valued or not. A valued probe, such as a case assigner, matches a goal that bears `t`
 unvalued ([amato-2025]). -/
 def Matches (g : H) : Prop :=
-  match s α t with
-  | .unvalued => s g t ≠ .absent
-  | .valued _ => s g t = .unvalued
-  | .absent => False
+  s α t ≠ ⊥ ∧ if (s α t).unbotD ⊥ = ⊥ then s g t ≠ ⊥ else s g t = ↑(⊥ : t.Slot)
 
 instance : DecidablePred (s.Matches α t) := fun g ↦ by
-  unfold Matches; split <;> infer_instance
+  unfold Matches; infer_instance
 
 /-- The probe of `α` at `t`, satisfied by the goals that match it and interacting with the matching
 goals that are also active. -/
@@ -198,9 +207,12 @@ end Agree
 
 variable {s} {s' : FeatureState H}
 
-theorem apply_eq_valued_of_le (h : s ≤ s') {x : H} {u : FeatureType} {v : u.Value}
-    (hv : s x u = .valued v) : s' x u = .valued v :=
-  FeatureSlot.valued_le_iff.1 (hv ▸ h x u)
+/-- A slot that holds a maximal element of its order, as a value of a flat slot is, keeps it. -/
+theorem apply_eq_coe_of_le (h : s ≤ s') {x : H} {u : FeatureType} {y : u.Slot} (hy : IsMax y)
+    (hv : s x u = ↑y) : s' x u = ↑y := by
+  have hle := hv ▸ h x u
+  obtain ⟨z, hz, hyz⟩ := WithBot.coe_le_iff.1 hle
+  rw [hz, hy.eq_of_le hyz]
 
 end FeatureState
 

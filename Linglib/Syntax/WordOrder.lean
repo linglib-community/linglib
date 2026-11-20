@@ -3,7 +3,6 @@ module
 public import Linglib.Core.Computability.Edge
 public import Mathlib.Data.Fin.Rev
 public import Mathlib.Data.Fintype.Perm
-public import Mathlib.Data.List.Forall2
 public import Mathlib.Order.Cover
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -21,9 +20,9 @@ orders of the typological literature, each labelled by its list of constituents 
 ## Main declarations
 
 * `HeadDirection`: head-initial or head-final.
-* `HeadDirection.ofLT`, `dependentEdge`: the direction at given positions; the dependents' edge.
-* `HeadDirection.nearest`: the dependent next to the head, such as the conjunct of a coordination
-  that an adjacent selector or probe sees.
+* `HeadDirection.ofLT`: the direction at given positions.
+* `HeadDirection.headEdge`, `equivEdge`: the edge of its dependents at which the head stands, such
+  as the edge of a coordination whose conjunct an adjacent selector or probe sees.
 * `WordOrder.Arrangement`: a linear arrangement of a finite type over ranks.
 * `Arrangement.Precedes`, `Adjacent`, `headDirection`, `mirror`: precedence, adjacency, the head
   direction of a pair, and the reversed arrangement.
@@ -98,20 +97,32 @@ theorem ofLT_swap {α : Type*} [LinearOrder α] {head dep : α} (h : head ≠ de
     ofLT dep head = (ofLT head dep).swap := by
   rcases lt_or_gt_of_ne h with hlt | hlt <;> simp [ofLT, hlt, lt_asymm hlt]
 
-/-- The edge of a head on which its dependents lie, the right one for a head-initial head. -/
-def dependentEdge : HeadDirection → Edge
-  | headInitial => .right
-  | headFinal => .left
+/-- The edge of its dependents at which a head stands, the left one for a head-initial head, so
+that `d.headEdge.takeAt 1 l` holds the dependent of `l` next to the head. -/
+def headEdge : HeadDirection → Edge
+  | headInitial => .left
+  | headFinal => .right
 
-@[simp] theorem dependentEdge_headInitial : headInitial.dependentEdge = .right := rfl
+@[simp] theorem headEdge_headInitial : headInitial.headEdge = .left := rfl
 
-@[simp] theorem dependentEdge_headFinal : headFinal.dependentEdge = .left := rfl
+@[simp] theorem headEdge_headFinal : headFinal.headEdge = .right := rfl
 
-@[simp] theorem dependentEdge_swap :
-    ∀ d : HeadDirection, d.swap.dependentEdge = d.dependentEdge.swap := by
+@[simp] theorem headEdge_swap : ∀ d : HeadDirection, d.swap.headEdge = d.headEdge.swap := by
   decide
 
-theorem dependentEdge_injective : Function.Injective dependentEdge := by decide
+/-- Head directions correspond to edges, a head-initial head standing at the left edge of its
+dependents. -/
+def equivEdge : HeadDirection ≃ Edge where
+  toFun := headEdge
+  invFun
+    | .left => headInitial
+    | .right => headFinal
+  left_inv := by decide
+  right_inv := by decide
+
+@[simp] theorem coe_equivEdge : ⇑equivEdge = headEdge := rfl
+
+theorem headEdge_injective : Function.Injective headEdge := equivEdge.injective
 
 section Orders
 
@@ -140,52 +151,6 @@ theorem orders_iff_ofLT [LinearOrder α] : d.Orders head dep ↔ head ≠ dep �
     exact lt_of_le_of_ne (not_lt.1 (ofLT_eq_headFinal.1 h)) hne.symm
 
 end Orders
-
-section nearest
-
-variable {α β : Type*}
-
-/-- Of the dependents `l` on one side of the head, in linear order, the one next to the head is the
-first if the head precedes them and the last if it follows them. -/
-def nearest : HeadDirection → List α → Option α
-  | headInitial, l => l.head?
-  | headFinal, l => l.getLast?
-
-@[simp] theorem nearest_headInitial (l : List α) : headInitial.nearest l = l.head? := rfl
-
-@[simp] theorem nearest_headFinal (l : List α) : headFinal.nearest l = l.getLast? := rfl
-
-theorem mem_of_mem_nearest {d : HeadDirection} {l : List α} {a : α} (h : a ∈ d.nearest l) :
-    a ∈ l := by
-  cases d
-  · exact List.mem_of_mem_head? h
-  · exact List.mem_of_mem_getLast? h
-
-theorem nearest_swap_reverse (d : HeadDirection) (l : List α) :
-    d.swap.nearest l.reverse = d.nearest l := by
-  cases d <;> simp [List.head?_reverse, List.getLast?_reverse]
-
-theorem nearest_eq_head?_iff [Nontrivial α] {d : HeadDirection} :
-    (∀ l : List α, d.nearest l = l.head?) ↔ d = headInitial := by
-  refine ⟨fun h ↦ ?_, fun h l ↦ by simp [h]⟩
-  cases d with
-  | headInitial => rfl
-  | headFinal =>
-    obtain ⟨a, b, hab⟩ := exists_pair_ne α
-    simpa [eq_comm, hab] using h [a, b]
-
-private theorem rel_head? {R : α → β → Prop} :
-    ∀ {l₁ : List α} {l₂ : List β}, List.Forall₂ R l₁ l₂ → Option.Rel R l₁.head? l₂.head?
-  | _, _, .nil => .none
-  | _, _, .cons h _ => .some h
-
-theorem rel_nearest {R : α → β → Prop} {l₁ : List α} {l₂ : List β} (h : List.Forall₂ R l₁ l₂)
-    (d : HeadDirection) : Option.Rel R (d.nearest l₁) (d.nearest l₂) := by
-  cases d
-  · exact rel_head? h
-  · simpa [List.head?_reverse] using rel_head? (List.forall₂_reverse_iff.2 h)
-
-end nearest
 
 end HeadDirection
 
