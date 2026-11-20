@@ -26,6 +26,12 @@ clusivity together.
 
 ## Implementation notes
 
+A person and a clusivity that no participant set satisfies, as the second person and the
+exclusive, have no specification, and no monotone map could give them one: its value would
+extend both the second person and the exclusive, which are incompatible. The person slot of such
+a token is `⊥`, so `Agreement.Bundle.ofFeatures` is monotone on the coherent tokens
+(`Agreement.Bundle.monotoneOn_ofFeatures`) and not outright.
+
 Bundles are borne by pronouns and nominals as well as by agreement targets, and are spelled out
 by morphology, so the file stands with the feature inventories below `Syntax/Agreement` and
 `Morphology`. Its declarations keep the namespace `Agreement`.
@@ -215,6 +221,26 @@ def ofFeatures (f : Morphology.Features) : Bundle
 @[simp] theorem ofFeatures_definiteness (f : Morphology.Features) :
     ofFeatures f .definiteness = f .definiteness :=
   rfl
+
+/-- More specific features give a more specific bundle, where the more specific person and
+clusivity are coherent. -/
+theorem ofFeatures_le_ofFeatures {f g : Morphology.Features} (h : f ≤ g)
+    (hg : Person.Specification.Coherent (g .person) (g .clusivity)) :
+    ofFeatures f ≤ ofFeatures g := by
+  intro d
+  cases d
+  · exact Person.Specification.ofPersonClusivity_le_ofPersonClusivity (h .person) (h .clusivity) hg
+  all_goals exact h _
+
+theorem monotoneOn_ofFeatures :
+    MonotoneOn ofFeatures {f | Person.Specification.Coherent (f .person) (f .clusivity)} :=
+  fun _ _ _ hg h ↦ ofFeatures_le_ofFeatures h hg
+
+/-- The bundle of features is not monotone outright: the second person with the exclusive is
+unspecified for person. -/
+theorem not_monotone_ofFeatures : ¬ Monotone ofFeatures := fun h ↦
+  absurd (h (a := .of (person := some .second))
+    (b := .of (person := some .second) (clusivity := some .exclusive)) (by decide)) (by decide)
 
 instance : DecidableLE Bundle := fun x y ↦ inferInstanceAs (Decidable (∀ d, x d ≤ y d))
 
