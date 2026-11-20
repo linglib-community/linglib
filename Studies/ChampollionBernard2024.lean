@@ -1,5 +1,6 @@
 module
 
+public import Studies.Fine2017a
 public import Studies.PlebaniRosellaSaitta2022
 
 /-!
@@ -66,7 +67,7 @@ consequence relations are not formalized.
 
 @[expose] public section
 
-open SetFamily Truthmaker PlebaniRosellaSaitta2022
+open SetFamily Truthmaker Fine2017a PlebaniRosellaSaitta2022
 open scoped Bilattice
 
 universe u
@@ -144,14 +145,8 @@ theorem neg_singleton (f : E) : neg excl {f} = {e | ∃ g ≤ f, excl e g} := by
     exact ⟨fun _ ↦ e, fun f' hf' ↦ Set.mem_singleton_iff.1 hf' ▸ hg, by simp⟩
 
 theorem mem_upperClosure_neg {φ : Set E} {x : E} :
-    x ∈ upperClosure (neg excl φ) ↔ ∀ f ∈ φ, Conflict excl x f := by
-  refine ⟨fun hx f hf ↦ ?_, fun h ↦ ?_⟩
-  · obtain ⟨_, ⟨h, hh, rfl⟩, hle⟩ := mem_upperClosure.1 hx
-    obtain ⟨g, hgf, hx⟩ := hh f hf
-    exact ⟨h f, (le_sSup (Set.mem_image_of_mem h hf)).trans hle, g, hgf, hx⟩
-  · choose! h hhx g hg hx using h
-    exact mem_upperClosure.2 ⟨sSup (h '' φ), ⟨h, fun f hf ↦ ⟨g f, hg f hf, hx f hf⟩, rfl⟩,
-      sSup_le (Set.forall_mem_image.2 hhx)⟩
+    x ∈ upperClosure (neg excl φ) ↔ ∀ f ∈ φ, Conflict excl x f :=
+  mem_upperClosure_setOf_sSup_image (r := fun e f ↦ ∃ g ≤ f, excl e g)
 
 /-- The events containing a verifier of the negation of `φ` are those that conflict with every
 verifier of `φ`. -/
