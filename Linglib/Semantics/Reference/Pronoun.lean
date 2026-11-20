@@ -45,7 +45,7 @@ open SpeechAct
 
 namespace PersonalPronoun
 
-variable {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (i : ℕ)
+variable {E W P T : Type*} [PartialOrder E] [OrderBot E] [Gendered E] (e : PersonalPronoun) (i : ℕ)
   (c : Context W E P T)
 
 /-- The φ-domain of a pronoun entry over an entity domain `E` is the intersection of the person
@@ -75,9 +75,9 @@ universe u
 /-- A personal pronoun denotes on every model, the index and the context being the Reader
 arguments of its domain. -/
 instance : Denotes PersonalPronoun
-    (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
+    (∀ (E W P T : Type u) [PartialOrder E] [OrderBot E] [Gendered E], ℕ → Context W E P T →
       Definite (ℕ → E) W E) :=
-  ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩
+  ⟨fun e _ _ _ _ _ _ _ ↦ e.denote⟩
 
 @[simp] theorem denote_dom (g : ℕ → E) (w : W) :
     (e.denote i c g w).Dom ↔ g i ∈ e.phiDom c :=

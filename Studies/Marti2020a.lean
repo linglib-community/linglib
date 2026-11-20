@@ -81,7 +81,7 @@ open Exhaustification Mereology Number Harbour2014
 
 section Predicate
 
-variable {D : Type*} [PartialOrder D] {P : Set D}
+variable {D : Type*} [PartialOrder D] [OrderBot D] {P : Set D}
 
 /-- The alternatives of a plural noun phrase are its own denotation and that of the singular, its
 atoms. -/
@@ -123,7 +123,7 @@ theorem atomize_eq_restrict_atomic_true
   · obtain ⟨a, ha, hax⟩ := hP x h.1
     exact (hax.antisymm (h.2 ha.1 hax)) ▸ ha
   · obtain ⟨a, ha, hay⟩ := hP y hy
-    exact (h.2.2 ha.2.1 (hay.trans hyx)).trans hay
+    exact ((h.2.le_iff_eq ha.2.1).1 (hay.trans hyx)).ge.trans hay
 
 -- (80): above `[+minimal]` the operator leaves the atoms, the denotation of the singular
 theorem exh_atomize (hP : ∀ x ∈ P, ∃ a ∈ Feature.restrict .atomic true P, a ≤ x) :
@@ -169,7 +169,7 @@ theorem isLeast_indef_of_antitone {f : Set W → Set W'} (hf : Antitone f)
     rintro _ (rfl | rfl)
     exacts [le_rfl, hf (indef_mono V hR)]⟩
 
-variable [PartialOrder D]
+variable [PartialOrder D] [OrderBot D]
 
 -- (72): the propositional operator has no alternative to deny
 theorem exh_indef (hV : ∀ w, ∀ x ∈ P, V w x → ∃ a ∈ Feature.restrict .atomic true P, V w a) :

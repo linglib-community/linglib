@@ -30,7 +30,8 @@ namespace Buring2012
 
 open English.Pronouns
 
-variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g : ℕ → E)
+variable {E P T : Type*} [PartialOrder E] [OrderBot E] [Gendered E] (e : PersonalPronoun)
+  (g : ℕ → E)
   (n : ℕ) (c : SpeechAct.Context PUnit E P T)
 
 /-- A pronoun denotes the value of its index under the assignment, by the same variable lookup
