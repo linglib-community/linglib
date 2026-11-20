@@ -29,6 +29,11 @@ Additive Remainder is the relative complement of [krifka-1989]. The Remainder Pr
 fourth, satisfy Additive Remainder and Strong Supplementation without uniqueness and without
 Remainder (`Studies/CotnoirVarzi2021.lean`).
 
+## TODO
+
+Whether unique Additive Remainder implies Remainder is not settled here. An exhaustive search
+finds no part structure with binary sums and at most seven elements that separates them.
+
 ## References
 
 * [cotnoir-varzi-2021], [champollion-krifka-2016], [hovda-2009], [krifka-1989], [krifka-1998]
