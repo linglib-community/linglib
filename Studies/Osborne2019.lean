@@ -15,22 +15,22 @@ public import Linglib.Syntax.DependencyGrammar.Basic
 # Osborne (2019): A Dependency Grammar of English
 
 This file formalizes the parts of the dependency grammar of [osborne-2019] that the English fragment
-lexicon supports. A verb's valency frame (sixth chapter) lists the valents it can or must take
-and is a lexical property, read here off the argument roles of the fragment's basic frame. The
-passive participle's frame is not listed but related to the active one by a shuffle of indices,
-the passive voice moving the active's participants, with the demoted subject an optional
-*by*-phrase (`voiceValency_passive`); an ergative verb's intransitive use suppresses the agent
-instead and has no *by*-phrase (`voiceValency_anticausative`), so its valency lies within the
-passive's (`voiceValency_anticausative_le_passive`). Trees over fragment words satisfy their
-frames; a spurious or a missing object, a second subject, and a *by*-phrase with an ergative
-intransitive violate them. The catena (fourth chapter), any set of words connected by
-dominance, is the unit that constituents do not always match: every constituent is a catena,
-a head with one of its dependents is always a catena, and it is never a constituent when the
-head has another dependent, so a verb with its subject but not its object is a catena and not
-a constituent (`IsConstituent.isCatena`, `Graph.isCatena_pair`, `Graph.not_isConstituent_pair`); that is
-the material gapping elides (§12.7). Control and raising (§6.8, §6.9) share one basic tree,
-whose embedded verb lacks a subject; the enhanced graph adds the subject arc, which the basic
-tree cannot carry without ceasing to be a tree (`Graph.hasUnrepresentedArg_enhance`,
+lexicon supports. A verb's valency frame (sixth chapter) lists the valents it can or must take and
+is a lexical property, read here off the argument roles of the fragment's basic frame. The passive
+participle's frame is not listed but related to the active one by a shuffle of indices, the passive
+voice moving the active's participants, with the demoted subject an optional *by*-phrase
+(`voiceValency_passive`); an ergative verb's intransitive use suppresses the agent instead and has
+no *by*-phrase (`voiceValency_anticausative`), so its valency lies within the passive's
+(`voiceValency_anticausative_le_passive`). Trees over fragment words satisfy their frames; a
+spurious or a missing object, a second subject, and a *by*-phrase with an ergative intransitive
+violate them. The catena (fourth chapter), any set of words connected by dominance, is the unit that
+constituents do not always match: every constituent is a catena, a head with one of its dependents
+is always a catena, and it is never a constituent when the head has another dependent, so a verb
+with its subject but not its object is a catena and not a constituent
+(`Graph.IsConstituent.isCatena`, `Graph.isCatena_pair`, `Graph.not_isConstituent_pair`); that is the
+material gapping elides (§12.7). Control and raising (§6.8, §6.9) share one basic tree, whose
+embedded verb lacks a subject; the enhanced graph adds the subject arc, which the basic tree cannot
+carry without ceasing to be a tree (`Graph.hasUnrepresentedArg_enhance`,
 `Graph.not_isForest_enhance`).
 
 ## Implementation notes

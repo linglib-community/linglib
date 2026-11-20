@@ -20,13 +20,13 @@ public import Mathlib.Algebra.Order.Ring.Nat
 
 The length of a dependency is the distance in words between head and dependent. This file defines
 the total dependency length of a graph and the distance from a head to the nearest word of a
-dependent's yield, dependency length measured to the boundary of the dependent's phrase. On a projective forest that distance is one
-more than the sizes of the yields of the sibling dependents between head and dependent: it is the
-block measure `WordOrder.Arrangement.boundaryDist` with yields as blocks. Summed over the elements
-after a head, the block measure weighs each element's length by the number of elements farther
-out, so by the rearrangement inequality an order whose lengths grow outward is shortest. This is
-the short-before-long order that dependency length minimization predicts after a head, and its
-mirror image orders long before short before a final head.
+dependent's yield, dependency length measured to the boundary of the dependent's phrase. On a
+projective forest that distance is one more than the sizes of the yields of the sibling dependents
+between head and dependent: it is the block measure `WordOrder.Arrangement.boundaryDist` with yields
+as blocks. Summed over the elements after a head, the block measure weighs each element's length by
+the number of elements farther out, so by the rearrangement inequality an order whose lengths grow
+outward is shortest. This is the short-before-long order that dependency length minimization
+predicts after a head, and its mirror image orders long before short before a final head.
 
 ## Main definitions
 

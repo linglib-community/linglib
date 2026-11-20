@@ -21,8 +21,8 @@ the second, and its yield is the set of positions it dominates.
 
 ## Main statements
 
-* `Graph.exists_adj_adj_of_not_dominates`: positions under a common dominator, neither dominating the
-  other, lie under distinct dependents of one position.
+* `Graph.exists_adj_adj_of_not_dominates`: positions under a common dominator, neither dominating
+  the other, lie under distinct dependents of one position.
 * `Graph.dominates_map`: dominance is invariant under transport.
 
 ## Implementation notes

@@ -86,8 +86,8 @@ theorem Graph.isCatena_pair (g : Graph L n) {v w : Fin n} (h : g.Adj v w) (hne :
 /-- In a forest, a head with one of its dependents is not a constituent when the head has
 another dependent, since the head's cone contains the other dependent and the dependent's cone
 does not contain the head. -/
-theorem Graph.not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : Fin n} (hw : g.Adj v w)
-    (hu : g.Adj v u) (huw : u ≠ w) : ¬ g.IsConstituent {v, w} := by
+theorem Graph.not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : Fin n}
+    (hw : g.Adj v w) (hu : g.Adj v u) (huw : u ≠ w) : ¬ g.IsConstituent {v, w} := by
   rintro ⟨c, hc⟩
   rcases Finset.mem_insert.mp ((hc c).2 Relation.ReflTransGen.refl) with rfl | hcw
   · rcases Finset.mem_insert.mp ((hc u).2 (Relation.ReflTransGen.single hu)) with rfl | hu'
