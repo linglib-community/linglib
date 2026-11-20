@@ -10,9 +10,8 @@ overlaps one of them. It [overlaps exactly what its members overlap](##Mereology
 which is the other definition of sum in use, and the two definitions agree in a part structure
 that is strongly supplemented: whatever is not part of `y` has a non-null part that does not
 overlap `y`. There [a sum is a least upper bound](##Mereology.IsSum.isLUB), so a predicate has at
-most one. Three further principles are stated here: the product of two overlapping individuals,
-the remainder of a proper part in a whole, and that a binary join is a sum. Boolean algebras
-satisfy all four. Closure of a
+most one. Two further principles are stated here: the product of two overlapping individuals,
+and that a binary join is a sum. Boolean algebras satisfy all three. Closure of a
 predicate under the sums of its inhabited subpredicates is cumulative reference in its general
 form, and [the predicates so closed are the fixed points](##Mereology.sumClosed_iff) of algebraic
 closure under arbitrary sums, which on a finite predicate is
@@ -23,8 +22,7 @@ closure under binary sums (`Mereology.sumClosure_eq_supClosure`).
 The second clause of a sum ranges over non-null parts, as `Overlap` relates non-null parts. On a
 carrier without a null individual this is Tarski's definition; on a carrier with one, his
 definition holds of nothing, since the null individual overlaps nothing, and the present one
-holds of least upper bounds in a Boolean algebra. The sources state the remainder principle with
-uniqueness; the results that use it need only existence.
+holds of least upper bounds in a Boolean algebra.
 
 ## References
 
@@ -73,7 +71,7 @@ theorem IsSum.bind {R : α → Set α} (ht : IsSum Q t) (hQ : ∀ q ∈ Q, IsSum
 
 end Sum
 
-/-! ### Strong supplementation, products and remainders -/
+/-! ### Strong supplementation and products -/
 
 /-- A part structure is strongly supplemented if whatever is not part of `y` has a non-null part
 that does not overlap `y`. -/
@@ -83,12 +81,6 @@ class StronglySupplemented (α : Type*) [PartialOrder α] : Prop where
 /-- A part structure has products if two overlapping individuals have a greatest common part. -/
 class HasProducts (α : Type*) [PartialOrder α] : Prop where
   exists_isGLB ⦃x y : α⦄ : Overlap x y → ∃ p, IsGLB {x, y} p
-
-/-- A part structure has remainders if every proper part `x` of `y` is completed to `y` by a
-part that does not overlap `x`: the remainder principle of [krifka-1998], the relative
-complementarity of [krifka-1989], and the unique separation of [champollion-2017]. -/
-class HasRemainders (α : Type*) [SemilatticeSup α] : Prop where
-  exists_remainder : ∀ ⦃x y : α⦄, x < y → ∃ z, ¬ Overlap z x ∧ x ⊔ z = y
 
 /-- In a part structure with binary sums, the join of two individuals is their sum: each of its
 non-null parts overlaps one of the two. Boolean algebras and classical mereologies satisfy this;
@@ -153,11 +145,6 @@ variable [GeneralizedBooleanAlgebra α] {P : Set α} {t : α}
 instance : StronglySupplemented α where
   exists_not_overlap x y h := ⟨x \ y, sdiff_le, by rwa [isBot_iff_eq_bot, sdiff_eq_bot_iff],
     overlap_iff_not_disjoint.not_left.2 disjoint_sdiff_self_left⟩
-
-instance : HasRemainders α where
-  exists_remainder _ y h :=
-    ⟨y \ _, overlap_iff_not_disjoint.not_left.2 disjoint_sdiff_self_left,
-      sup_sdiff_cancel_right h.le⟩
 
 /-- In a Boolean algebra the sums are the least upper bounds. -/
 theorem isSum_iff_isLUB : IsSum P t ↔ IsLUB P t := by

@@ -161,11 +161,6 @@ theorem isGreatest_sumClosure [PartialOrder α] [IsClassicalMereology α] {P : S
   ⟨⟨P, subset_rfl, hP, isSum_sum hP⟩, fun _ ⟨_, hQ, _, hx⟩ ↦
     hx.isLUB.2 fun _ hy ↦ le_sum hP (hQ hy)⟩
 
-instance [SemilatticeSup α] [IsClassicalMereology α] : HasRemainders α where
-  exists_remainder _ _ h :=
-    let ⟨z, hz, hlub⟩ := exists_remainder h
-    ⟨z, hz, (hlub.unique isLUB_pair).symm⟩
-
 /-! ### Boolean algebras and non-null individuals -/
 
 /-- A complete Boolean algebra is a classical mereology, its bottom the null individual and its

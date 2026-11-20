@@ -13,8 +13,8 @@ A count noun relates a number `n` to the individuals that consist of `n` instanc
 extension at a world is a family `ℕ → Set α`. Krifka takes the family to be an extensive
 measure, as *gallon* is. For a region `P` and a measure `μ` the family is
 `fun n ↦ P ∩ μ ⁻¹' {n}`, the measure construction of [krifka-1989]: its members are pairwise
-disjoint (`pairwise_disjoint_inter_preimage`), and the sum of two individuals of `n` and of `m`
-instances that do not overlap has `n + m` (`sup_mem_inter_preimage`).
+disjoint (`pairwise_disjoint_inter_preimage`), and the sum of two disjoint individuals of `n` and of `m`
+instances has `n + m` (`sup_mem_inter_preimage`).
 
 We define the count noun of a set `D` of atoms on finite sets of atoms by
 `ofAtoms D n = supClosure (singleton '' D) ∩ Finset.card ⁻¹' {n}`, the sums of members of `D`
@@ -42,7 +42,8 @@ determiner phrase with a trace of individuals takes scope over negation
 
 * Individuals are finite sets of atoms, with `Finset.card` as the measure. Link's nonempty sets
   of atoms, `Mereology.Individual`, have a sum of any nonempty `D`, but their cardinality
-  `Set.ncard` is `0` on infinite sets and so is no extensive measure. With finite sets the
+  `Set.ncard` is `0` on infinite sets and so is no extensive measure, and
+  `Set.encard` is not strictly monotone on them. With finite sets the
   semantic plural has a largest member only for a finite `D`.
 * Existential closure is a mode of combination of two sisters, not a shift of one of them, so
   it is the same rule whether the nominal predicate is shifted to a quantifier or the verbal
@@ -90,11 +91,10 @@ theorem pairwise_disjoint_inter_preimage (P : Set α) (μ : α → M) :
   fun _ _ hnm ↦ Set.disjoint_left.2 fun _ hx hy ↦ hnm (hx.2.symm.trans hy.2)
 
 -- (53b)
-theorem sup_mem_inter_preimage [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
-    [IsExtensiveMeasure μ] (hP : CUM P) (hx : x ∈ P ∩ μ ⁻¹' {n}) (hy : y ∈ P ∩ μ ⁻¹' {m})
-    (hxy : ¬ Overlap x y) : x ⊔ y ∈ P ∩ μ ⁻¹' {n + m} :=
-  ⟨hP hx.1 hy.1,
-    (IsExtensiveMeasure.additive (μ := μ) x y hxy).trans (congrArg₂ (· + ·) hx.2 hy.2)⟩
+theorem sup_mem_inter_preimage [GeneralizedBooleanAlgebra α] [AddCommMonoid M] [PartialOrder M]
+    (hμ : IsExtensive μ) (hP : CUM P) (hx : x ∈ P ∩ μ ⁻¹' {n}) (hy : y ∈ P ∩ μ ⁻¹' {m})
+    (hxy : Disjoint x y) : x ⊔ y ∈ P ∩ μ ⁻¹' {n + m} :=
+  ⟨hP hx.1 hy.1, (hμ.map_sup_of_disjoint hxy).trans (congrArg₂ (· + ·) hx.2 hy.2)⟩
 
 end Measure
 
@@ -131,7 +131,7 @@ theorem ofAtoms_one (D : Set Atom) : ofAtoms D 1 = ({·} : Atom → Finset Atom)
 
 -- A count noun with its number argument filled is a measure phrase, (6) of [krifka-1989].
 theorem qua_ofAtoms (D : Set Atom) (n : ℕ) : QUA (ofAtoms D n) :=
-  Krifka1989.qua_inter_preimage Finset.card n _
+  Krifka1989.qua_inter_preimage isExtensive_card n _
 
 theorem cum_iUnion_ofAtoms (D : Set Atom) : CUM (⋃ n, ofAtoms D n) := by
   rw [iUnion_ofAtoms]

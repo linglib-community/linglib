@@ -30,7 +30,8 @@ adverbial is a measure phrase for events and so
 The paper's relations are stated with the library's object-first thematic relations, so its
 uniqueness of objects is `UP`, uniqueness of events `GUE`, mapping to objects `MO`, mapping to
 events `ME`, and summativity `SUM`. Its part structures satisfy relative complementarity (D 9),
-which the measure theorems assume as `Mereology.HasRemainders`. Theorem (T 3) needs a nonempty
+so the measure theorems are stated over a generalized Boolean algebra, where the
+remainder is `y \ x`. Theorem (T 3) needs a nonempty
 predicate, since the empty predicate is both quantized and strictly cumulative.
 
 Theorems (T 8) and (T 11) are stated for what their proofs establish. For (T 8) that is
@@ -120,12 +121,13 @@ theorem not_scum_of_qua (hne : P.Nonempty) (h : QUA P) : ¬ SCUM P := fun hs ↦
   hs.not_sng <| existsUnique_of_exists_of_unique hne fun _ _ hx hy ↦
     qua_and_cum_iff_subsingleton.1 ⟨h, hs.cum⟩ hx hy
 
--- (T 6)
-theorem qua_measure_eq [HasRemainders α] {M : Type*} [AddCommMonoid M] [PartialOrder M]
-    [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M) : QUA (μ ⁻¹' {n}) :=
-  QUA.preimage (IsExtensiveMeasure.strictMono μ) (Set.subsingleton_singleton.isAntichain _)
-
 end Reference
+
+-- (T 6)
+theorem qua_measure_eq {α M : Type*} [GeneralizedBooleanAlgebra α] [AddCommMonoid M]
+    [PartialOrder M] [AddLeftStrictMono M] {μ : α → M} (hμ : IsExtensive μ) (n : M) :
+    QUA (μ ⁻¹' {n}) :=
+  QUA.preimage hμ.strictMono (Set.subsingleton_singleton.isAntichain _)
 
 /-! ### Nominal predicates (§3) -/
 
@@ -148,23 +150,23 @@ theorem iUnion_inter_preimage (P : Set α) (μ : α → M) : ⋃ n, P ∩ μ ⁻
   ext x
   simp
 
-variable [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M] [PartialOrder M]
-  [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M)
+variable [GeneralizedBooleanAlgebra α] [AddCommMonoid M] [PartialOrder M]
+  [AddLeftStrictMono M] {μ : α → M}
 
 -- (6)
-theorem qua_inter_preimage (P : Set α) : QUA (P ∩ μ ⁻¹' {n}) :=
-  qua_inter_preimage_of_strictMonoOn ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n
+theorem qua_inter_preimage (hμ : IsExtensive μ) (n : M) (P : Set α) : QUA (P ∩ μ ⁻¹' {n}) :=
+  qua_inter_preimage_of_strictMonoOn (hμ.strictMono.strictMonoOn _) n
 
 -- (4)
-theorem qmod_inter_preimage (hP : CUM P) {x y : α} (hx : x ∈ P) (hy : y ∈ P) (hxy : x ≠ y) :
-    QMOD P (· ∩ μ ⁻¹' {n}) :=
-  ⟨fun hQ ↦ hxy (qua_and_cum_iff_subsingleton.1 ⟨hQ, hP⟩ hx hy), qua_inter_preimage μ n P⟩
+theorem qmod_inter_preimage (hμ : IsExtensive μ) (n : M) (hP : CUM P) {x y : α} (hx : x ∈ P)
+    (hy : y ∈ P) (hxy : x ≠ y) : QMOD P (· ∩ μ ⁻¹' {n}) :=
+  ⟨fun hQ ↦ hxy (qua_and_cum_iff_subsingleton.1 ⟨hQ, hP⟩ hx hy), qua_inter_preimage hμ n P⟩
 
 /-- (3c): No modifier is quantizing for a measure phrase, which is already quantized, so
 measure phrases do not iterate (*five ounces of seven cube centimeters of gold*). -/
-theorem not_qmod_inter_preimage (P : Set α) (f : Set α → Set α) :
+theorem not_qmod_inter_preimage (hμ : IsExtensive μ) (n : M) (P : Set α) (f : Set α → Set α) :
     ¬ QMOD (P ∩ μ ⁻¹' {n}) f :=
-  fun h ↦ h.not_qua (qua_inter_preimage μ n P)
+  fun h ↦ h.not_qua (qua_inter_preimage hμ n P)
 
 end Nominal
 
@@ -289,17 +291,18 @@ variable {E T M : Type*} {P : Set E} {τ : E → T}
 
 section Durative
 
-variable [PartialOrder E] [SemilatticeSup T] [HasRemainders T] [AddCommMonoid M] [PartialOrder M]
-  [AddLeftStrictMono M] (μ : T → M) [IsExtensiveMeasure μ] (n : M)
+variable [PartialOrder E] [GeneralizedBooleanAlgebra T] [AddCommMonoid M] [PartialOrder M]
+  [AddLeftStrictMono M] {μ : T → M}
 
 -- (D 41)
-theorem qua_inter_preimage_comp (hτ : StrictMonoOn τ P) : QUA (P ∩ (μ ∘ τ) ⁻¹' {n}) :=
-  qua_inter_preimage_of_strictMonoOn ((IsExtensiveMeasure.strictMono μ).comp_strictMonoOn hτ) n
+theorem qua_inter_preimage_comp (hμ : IsExtensive μ) (n : M) (hτ : StrictMonoOn τ P) :
+    QUA (P ∩ (μ ∘ τ) ⁻¹' {n}) :=
+  qua_inter_preimage_of_strictMonoOn (hμ.strictMono.comp_strictMonoOn hτ) n
 
 -- (15): *for an hour* is quantizing for exactly the predicates that are not quantized
-theorem qmod_durative_iff (hτ : StrictMonoOn τ P) :
+theorem qmod_durative_iff (hμ : IsExtensive μ) (n : M) (hτ : StrictMonoOn τ P) :
     QMOD P (· ∩ (μ ∘ τ) ⁻¹' {n}) ↔ ¬ QUA P :=
-  qmod_iff (qua_inter_preimage_comp μ n hτ)
+  qmod_iff (qua_inter_preimage_comp hμ n hτ)
 
 end Durative
 

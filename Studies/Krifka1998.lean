@@ -133,7 +133,7 @@ theorem eat_apples_cum : CUM (VP eat {x | x.Nonempty}) :=
 incremental and summative (54). -/
 theorem eat_two_apples_qua : QUA (VP eat {x | x.card = 2}) :=
   eat_sinc.vp_qua eat_sum
-    (QUA.preimage (IsExtensiveMeasure.strictMono Finset.card)
+    (QUA.preimage isExtensive_card.strictMono
       (Set.subsingleton_singleton.isAntichain _))
 
 end Eat

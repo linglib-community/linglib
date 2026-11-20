@@ -1,17 +1,31 @@
 module
 
 public import Mathlib.Algebra.Order.Archimedean.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.BooleanAlgebra.Basic
 public import Linglib.Semantics.Mereology.Classical
 
 /-!
 # Extensive measures
 
-An extensive measure is additive over non-overlapping individuals and positive on non-null
-ones. Over a carrier with remainders it is
-[strictly monotone](##Mereology.IsExtensiveMeasure.strictMono), so
-the individuals of a given measure are quantized
-(`Mereology.qua_inter_preimage_of_strictMonoOn`), as *five ounces of gold* is. The atom count is likewise strictly monotone on sums of atoms, which
-quantizes *two cats* (`Mereology.qua_supClosure_inter_atomCount`).
+An extensive measure on a generalized Boolean algebra of individuals is a function `μ` into an
+ordered additive monoid with `μ (x ⊔ y) = μ x + μ y` for disjoint `x` and `y` and `0 < μ x` for
+`x ≠ ⊥`. The whole then measures the part plus the remainder,
+`μ y = μ x + μ (y \ x)`, so `μ` is strictly monotone where addition is
+(`Mereology.IsExtensive.strictMono`), and the individuals of a region with a given measure are
+quantized (`Mereology.qua_inter_preimage_of_strictMonoOn`), as *five ounces of gold* is. The
+number of members is an extensive measure of finite sets (`Mereology.isExtensive_card`), and
+the extended number of members one of sets (`Mereology.isExtensive_encard`). The atom count is
+likewise strictly monotone on sums of atoms, which quantizes *two cats*
+(`Mereology.qua_supClosure_inter_atomCount`).
+
+## Implementation notes
+
+`IsExtensive` is a predicate on a function, as `Monotone` is, and not a class: a carrier has
+many extensive measures. The carrier is a generalized Boolean algebra, where the remainder of a
+part in a whole is `y \ x` and non-overlap is `Disjoint`; [krifka-1989] assumes relative
+complements of his part structures for the same purpose. Addition on `ℕ∞` is not strictly
+monotone, so `Set.encard` is strictly monotone on finite sets only.
 
 ## References
 
@@ -56,29 +70,37 @@ theorem qua_supClosure_inter_atomCount [SemilatticeSup α] [Fintype α] {s : Set
     (hs : ∀ ⦃a⦄, a ∈ s → Atom a) (n : ℕ) : QUA (supClosure s ∩ atomCount α ⁻¹' {n}) :=
   qua_inter_preimage_of_strictMonoOn (atomCount_strictMonoOn hs) n
 
-section ExtensiveMeasure
+section Extensive
 
-variable {M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
+variable {M : Type*} [GeneralizedBooleanAlgebra α] [AddCommMonoid M] [PartialOrder M] {μ : α → M}
 
-/-- An extensive measure function ([krifka-1989], [krifka-1998]) is additive over
-non-overlapping elements and positive on non-null ones. -/
-class IsExtensiveMeasure (μ : α → M) : Prop where
-  additive : ∀ x y, ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y
-  positive : ∀ x, ¬ IsBot x → 0 < μ x
+/-- An extensive measure ([krifka-1989], [krifka-1998]) is additive over disjoint individuals
+and positive on the ones that are not null. -/
+structure IsExtensive (μ : α → M) : Prop where
+  /-- The measure of a sum of disjoint individuals is the sum of their measures. -/
+  map_sup_of_disjoint ⦃x y : α⦄ : Disjoint x y → μ (x ⊔ y) = μ x + μ y
+  /-- An individual that is not null has a positive measure. -/
+  pos ⦃x : α⦄ : x ≠ ⊥ → 0 < μ x
 
-/-- Over a carrier with remainders, an extensive measure gives a proper part a smaller measure
-than the whole, which adds a non-null remainder to it. -/
-theorem IsExtensiveMeasure.strictMono [HasRemainders α] [AddLeftStrictMono M] (μ : α → M)
-    [h : IsExtensiveMeasure μ] : StrictMono μ := fun x y hxy ↦ by
-  obtain ⟨z, hz, rfl⟩ := HasRemainders.exists_remainder hxy
-  rw [h.additive x z fun ho ↦ hz ho.symm]
-  exact lt_add_of_pos_right _ (h.positive z fun hb ↦ hxy.ne (sup_eq_left.2 (hb x)).symm)
+/-- The measure of a whole is the measure of a part plus that of the remainder. -/
+theorem IsExtensive.map_eq_add_sdiff (h : IsExtensive μ) {x y : α} (hxy : x ≤ y) :
+    μ y = μ x + μ (y \ x) := by
+  rw [← h.map_sup_of_disjoint disjoint_sdiff_self_right, sup_sdiff_cancel_right hxy]
 
-end ExtensiveMeasure
+/-- An extensive measure gives a proper part a smaller measure than the whole. -/
+theorem IsExtensive.strictMono [AddLeftStrictMono M] (h : IsExtensive μ) : StrictMono μ :=
+  fun x y hxy ↦ by
+    rw [h.map_eq_add_sdiff hxy.le]
+    exact lt_add_of_pos_right _ (h.pos fun h0 ↦ hxy.not_ge (sdiff_eq_bot_iff.1 h0))
 
-instance [DecidableEq β] : IsExtensiveMeasure (Finset.card : Finset β → ℕ) where
-  additive _ _ h :=
-    Finset.card_union_of_disjoint (not_not.mp (overlap_iff_not_disjoint.not.mp h))
-  positive _ hx := Finset.card_pos.2 (Finset.nonempty_iff_ne_empty.2 (mt isBot_iff_eq_bot.2 hx))
+end Extensive
+
+theorem isExtensive_card [DecidableEq β] : IsExtensive (Finset.card : Finset β → ℕ) where
+  map_sup_of_disjoint _ _ h := Finset.card_union_of_disjoint h
+  pos _ h := Finset.card_pos.2 (Finset.nonempty_iff_ne_empty.2 h)
+
+theorem isExtensive_encard : IsExtensive (Set.encard : Set β → ℕ∞) where
+  map_sup_of_disjoint _ _ h := Set.encard_union_eq h
+  pos _ h := Set.encard_pos.2 (Set.nonempty_iff_ne_empty.2 h)
 
 end Mereology
