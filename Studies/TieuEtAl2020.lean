@@ -223,14 +223,11 @@ theorem homogeneous_eq_undefined_iff : homogeneous n = .undefined ↔ n ∈ sing
     Set.mem_singleton_iff]
   omega
 
-/-- Feeding more giraffes never lowers the value of the plural sentence. -/
-noncomputable def homogeneousHom : ℕ →o Trivalent where
-  toFun := homogeneous
-  monotone' m n h := supervaluationOn_mono <| by
+-- feeding more giraffes never lowers the value of the plural sentence
+theorem homogeneous_mono : Monotone homogeneous := fun m n h ↦
+  supervaluationOn_mono <| by
     rintro _ (rfl | rfl) hm
     exacts [mem_weak.2 ((mem_weak.1 hm).trans h), mem_strong.2 ((mem_strong.1 hm).trans h)]
-
-@[simp] theorem coe_homogeneousHom : ⇑homogeneousHom = homogeneous := rfl
 
 -- (23), (24)
 theorem compl_homogeneous (n : ℕ) :
