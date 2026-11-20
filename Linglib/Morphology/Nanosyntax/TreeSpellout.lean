@@ -18,26 +18,17 @@ instead pairs a node of the stored tree with the root of the syntactic tree and 
 daughters to match each other both ways; it agrees with containment on right-branching chains,
 where tree spellout is also the spellout of the containment engine.
 
-## Main definitions
-
-* `LexicalEntry`: a stored feature tree paired with an exponent.
-* `LexicalEntry.Matches`, `treeSelect`, `treeSpellout`: the Superset Principle and the Elsewhere
-  Condition.
-* `foot`, `FootConditionMet`: the Foot Condition.
-* `Matching`: Taraldsen's matching relation.
-* `chainTree`, `phrase`, `LexicalEntry.ofSupersetRule`: right-branching chains, and the
-  containment engine's entries read as chain entries.
-
-## Main results
-
-* `LexicalEntry.applySet_subset_iff`: specificity is reverse containment of the stored trees.
-* `treeSelect_isElsewhereWinner`: smallest-tree selection picks an Elsewhere winner.
-* `footConditionMet_of_matches_chainTree`: an entry storing a chain meets the Foot Condition
-  wherever it matches, so the condition constrains only entries with branching trees.
-* `matching_chainTree_iff`, `exists_matching_not_isSubtree`: Taraldsen's matching is containment
-  on chains but ignores the order of daughters in general.
-* `treeSpellout_ofSupersetRule`: on chains, tree spellout is the containment engine's
-  spellout.
+A `LexicalEntry` matches a tree by `LexicalEntry.Matches`, and `treeSpellout` is the exponent of
+the matching entry with the smallest stored tree, which `treeSelect_isElsewhereWinner` shows to be
+an Elsewhere winner: one entry is at least as specific as another exactly when the other's stored
+tree contains its own (`LexicalEntry.applySet_subset_iff`). The right-branching phrase of a
+feature sequence is `phrase f₀ fs`, and its subtrees are the phrases of the initial parts of the
+sequence (`isSubtree_phrase_iff`). An entry storing a chain meets the Foot Condition
+`FootConditionMet` wherever it matches (`footConditionMet_of_matches_chainTree`), so the
+condition constrains only entries with branching trees. Taraldsen's `Matching` is containment on
+chains (`matching_chainTree_iff`) and ignores the order of daughters in general
+(`exists_matching_not_isSubtree`). On chains tree spellout is the containment engine's spellout
+(`treeSpellout_ofSupersetRule`).
 
 ## Implementation notes
 
@@ -215,6 +206,51 @@ def phrase (f₀ : F) (fs : List F) : RoseTree F := fs.foldl (fun t f ↦ node f
 
 @[simp] theorem phrase_concat (f₀ : F) (fs : List F) (f : F) :
     phrase f₀ (fs ++ [f]) = node f [phrase f₀ fs] := by simp [phrase]
+
+theorem leafList_phrase (f₀ : F) (fs : List F) : (phrase f₀ fs).leafList = [f₀] := by
+  induction fs using List.reverseRecOn with
+  | nil => simp
+  | append_singleton fs f ih => simp [ih]
+
+theorem phrase_eq_phrase_iff {f₀ g₀ : F} {fs gs : List F} :
+    phrase f₀ fs = phrase g₀ gs ↔ f₀ = g₀ ∧ fs = gs := by
+  refine ⟨fun h ↦ ?_, fun ⟨h₀, h⟩ ↦ h₀ ▸ h ▸ rfl⟩
+  have h₀ : f₀ = g₀ := by simpa [leafList_phrase] using congrArg leafList h
+  subst h₀
+  refine ⟨rfl, ?_⟩
+  induction fs using List.reverseRecOn generalizing gs with
+  | nil => cases gs using List.reverseRecOn <;> simp_all
+  | append_singleton fs f ih =>
+    cases gs using List.reverseRecOn with
+    | nil => simp at h
+    | append_singleton gs g _ =>
+      simp only [phrase_concat, node.injEq, List.cons.injEq, and_true] at h
+      rw [ih h.2, h.1]
+
+theorem phrase_injective (f₀ : F) : Function.Injective (phrase f₀) :=
+  fun _ _ h ↦ (phrase_eq_phrase_iff.1 h).2
+
+/-- The subtrees of a right-branching phrase are the phrases of the initial parts of its
+sequence. -/
+theorem isSubtree_phrase_iff {t : RoseTree F} {f₀ : F} {fs : List F} :
+    IsSubtree t (phrase f₀ fs) ↔ ∃ gs, gs <+: fs ∧ t = phrase f₀ gs := by
+  induction fs using List.reverseRecOn with
+  | nil => simp
+  | append_singleton fs f ih =>
+    rw [phrase_concat, isSubtree_node_iff]
+    simp only [List.mem_singleton, exists_eq_left, ih, List.prefix_concat_iff]
+    constructor
+    · rintro (rfl | ⟨gs, h, rfl⟩)
+      · exact ⟨fs ++ [f], .inl rfl, (phrase_concat ..).symm⟩
+      · exact ⟨gs, .inr h, rfl⟩
+    · rintro ⟨gs, rfl | h, rfl⟩
+      · exact .inl (phrase_concat ..)
+      · exact .inr ⟨gs, h, rfl⟩
+
+theorem phrase_isSubtree_phrase_iff {f₀ : F} {fs gs : List F} :
+    IsSubtree (phrase f₀ gs) (phrase f₀ fs) ↔ gs <+: fs := by
+  rw [isSubtree_phrase_iff]
+  exact ⟨fun ⟨_, h, he⟩ ↦ phrase_injective f₀ he ▸ h, fun h ↦ ⟨gs, h, rfl⟩⟩
 
 theorem chainTree_eq_phrase (feat : ℕ → F) (k : ℕ) :
     chainTree feat k = phrase (feat 0) ((List.range k).map (feat ∘ Nat.succ)) := by

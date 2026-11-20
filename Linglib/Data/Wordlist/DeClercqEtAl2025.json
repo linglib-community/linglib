@@ -1,0 +1,668 @@
+{
+  "description": "The word forms of the chapter's case studies with the segmentation it prints, and for each the exponents of its lexicalization tables, in linear order. The Czech adjectives carry an agreement ending the chapter sets aside. The Kalenjin nouns are those of the chapter's Table 1.6, whose caption names Endo-Marakwet and whose text names Kipsigis, the variety of the works it cites.",
+  "CellTable": [
+    {
+      "ID": "pos",
+      "Name": "positive",
+      "Features": "Degree=Pos"
+    },
+    {
+      "ID": "cmp",
+      "Name": "comparative",
+      "Features": "Degree=Cmp"
+    },
+    {
+      "ID": "sup",
+      "Name": "superlative",
+      "Features": "Degree=Sup"
+    },
+    {
+      "ID": "nom",
+      "Name": "nominative singular",
+      "Features": "Case=Nom|Number=Sing"
+    },
+    {
+      "ID": "acc",
+      "Name": "accusative singular",
+      "Features": "Case=Acc|Number=Sing"
+    },
+    {
+      "ID": "gen",
+      "Name": "genitive singular",
+      "Features": "Case=Gen|Number=Sing"
+    },
+    {
+      "ID": "sg",
+      "Name": "singular",
+      "Features": "Number=Sing"
+    },
+    {
+      "ID": "pl",
+      "Name": "plural",
+      "Features": "Number=Plur"
+    },
+    {
+      "ID": "p1",
+      "Name": "first person singular present",
+      "Features": "Person=1|Number=Sing|Tense=Pres"
+    },
+    {
+      "ID": "p2",
+      "Name": "second person singular present",
+      "Features": "Person=2|Number=Sing|Tense=Pres"
+    },
+    {
+      "ID": "p3",
+      "Name": "third person singular present",
+      "Features": "Person=3|Number=Sing|Tense=Pres"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "tall",
+      "Name": "tall",
+      "Description": ""
+    },
+    {
+      "ID": "bad",
+      "Name": "bad",
+      "Description": ""
+    },
+    {
+      "ID": "partsrahasag",
+      "Name": "tall",
+      "Description": ""
+    },
+    {
+      "ID": "inteligentni",
+      "Name": "intelligent",
+      "Description": ""
+    },
+    {
+      "ID": "chytry",
+      "Name": "smart",
+      "Description": ""
+    },
+    {
+      "ID": "chleba",
+      "Name": "bread",
+      "Description": ""
+    },
+    {
+      "ID": "jazyk",
+      "Name": "tongue",
+      "Description": ""
+    },
+    {
+      "ID": "kipaw",
+      "Name": "rhino",
+      "Description": ""
+    },
+    {
+      "ID": "peel",
+      "Name": "elephant",
+      "Description": ""
+    },
+    {
+      "ID": "pata",
+      "Name": "duck",
+      "Description": ""
+    },
+    {
+      "ID": "bati",
+      "Name": "hit",
+      "Description": ""
+    },
+    {
+      "ID": "fini",
+      "Name": "finish",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "tall",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "tall",
+      "Name": "tall",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "bad",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "bad",
+      "Name": "bad",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "partsrahasag",
+      "Language_ID": "nucl1235",
+      "Parameter_ID": "partsrahasag",
+      "Name": "partsrahasag",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "inteligentni",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "inteligentni",
+      "Name": "inteligentní",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "chytry",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "chytry",
+      "Name": "chytrý",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "chleba",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "chleba",
+      "Name": "chleba",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "jazyk",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "jazyk",
+      "Name": "jazyk",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "kipaw",
+      "Language_ID": "kips1239",
+      "Parameter_ID": "kipaw",
+      "Name": "kipaw",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "peel",
+      "Language_ID": "kips1239",
+      "Parameter_ID": "peel",
+      "Name": "peel",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "pata",
+      "Language_ID": "kips1239",
+      "Parameter_ID": "pata",
+      "Name": "pata",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "bati",
+      "Language_ID": "friu1240",
+      "Variety": "Tualis",
+      "Parameter_ID": "bati",
+      "Name": "bati",
+      "POS": "VERB"
+    },
+    {
+      "ID": "fini",
+      "Language_ID": "friu1240",
+      "Variety": "Tualis",
+      "Parameter_ID": "fini",
+      "Name": "finî",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "declercqetal2025_tall",
+      "Lexeme_ID": "tall",
+      "Cell": "pos",
+      "Form": "tall",
+      "Morphs": ["tall"],
+      "Source": ["declercq-et-al-2025[(27)]"]
+    },
+    {
+      "ID": "declercqetal2025_taller",
+      "Lexeme_ID": "tall",
+      "Cell": "cmp",
+      "Form": "taller",
+      "Morphs": ["tall", "er"],
+      "Source": ["declercq-et-al-2025[(29)]"]
+    },
+    {
+      "ID": "declercqetal2025_tallest",
+      "Lexeme_ID": "tall",
+      "Cell": "sup",
+      "Form": "tallest",
+      "Morphs": ["tall", "est"],
+      "Source": ["declercq-et-al-2025[(30)]"]
+    },
+    {
+      "ID": "declercqetal2025_bad",
+      "Lexeme_ID": "bad",
+      "Cell": "pos",
+      "Form": "bad",
+      "Morphs": ["bad"],
+      "Source": ["declercq-et-al-2025[p. 16]"]
+    },
+    {
+      "ID": "declercqetal2025_worse",
+      "Lexeme_ID": "bad",
+      "Cell": "cmp",
+      "Form": "worse",
+      "Morphs": ["worse"],
+      "Source": ["declercq-et-al-2025[Table 1.3]"]
+    },
+    {
+      "ID": "declercqetal2025_partsrahasag_pos",
+      "Lexeme_ID": "partsrahasag",
+      "Cell": "pos",
+      "Form": "partsrahasag",
+      "Morphs": ["partsrahasag"],
+      "Source": ["declercq-et-al-2025[(14a)]"]
+    },
+    {
+      "ID": "declercqetal2025_partsrahasag_cmp",
+      "Lexeme_ID": "partsrahasag",
+      "Cell": "cmp",
+      "Form": "partsrahasag",
+      "Morphs": ["partsrahasag"],
+      "Source": ["declercq-et-al-2025[(14b)]"]
+    },
+    {
+      "ID": "declercqetal2025_partsrahasag_sup",
+      "Lexeme_ID": "partsrahasag",
+      "Cell": "sup",
+      "Form": "partsrahasag",
+      "Morphs": ["partsrahasag"],
+      "Source": ["declercq-et-al-2025[(14c)]"]
+    },
+    {
+      "ID": "declercqetal2025_inteligentni",
+      "Lexeme_ID": "inteligentni",
+      "Cell": "pos",
+      "Form": "inteligentní",
+      "Morphs": ["inteligent", "n", "í"],
+      "Source": ["declercq-et-al-2025[(12a)]"]
+    },
+    {
+      "ID": "declercqetal2025_inteligentnejsi",
+      "Lexeme_ID": "inteligentni",
+      "Cell": "cmp",
+      "Form": "inteligentnější",
+      "Morphs": ["inteligent", "n", "ějš", "í"],
+      "Source": ["declercq-et-al-2025[(12b)]"]
+    },
+    {
+      "ID": "declercqetal2025_nejinteligentnejsi",
+      "Lexeme_ID": "inteligentni",
+      "Cell": "sup",
+      "Form": "nejinteligentnější",
+      "Morphs": ["nej", "inteligent", "n", "ějš", "í"],
+      "Source": ["declercq-et-al-2025[(12c)]"]
+    },
+    {
+      "ID": "declercqetal2025_chytry",
+      "Lexeme_ID": "chytry",
+      "Cell": "pos",
+      "Form": "chytrý",
+      "Morphs": ["chytr", "ý"],
+      "Source": ["declercq-et-al-2025[p. 16]"]
+    },
+    {
+      "ID": "declercqetal2025_chytrejsi",
+      "Lexeme_ID": "chytry",
+      "Cell": "cmp",
+      "Form": "chytřejší",
+      "Morphs": ["chytř", "ejš", "í"],
+      "Source": ["declercq-et-al-2025[p. 16]"]
+    },
+    {
+      "ID": "declercqetal2025_chleba_nom",
+      "Lexeme_ID": "chleba",
+      "Cell": "nom",
+      "Form": "chleba",
+      "Morphs": ["chleb", "a"],
+      "Source": ["declercq-et-al-2025[Table 1.4]"]
+    },
+    {
+      "ID": "declercqetal2025_chleba_acc",
+      "Lexeme_ID": "chleba",
+      "Cell": "acc",
+      "Form": "chleba",
+      "Morphs": ["chleb", "a"],
+      "Source": ["declercq-et-al-2025[Table 1.4]"]
+    },
+    {
+      "ID": "declercqetal2025_chleba_gen",
+      "Lexeme_ID": "chleba",
+      "Cell": "gen",
+      "Form": "chleba",
+      "Morphs": ["chleb", "a"],
+      "Source": ["declercq-et-al-2025[Table 1.4]"]
+    },
+    {
+      "ID": "declercqetal2025_jazyk_nom",
+      "Lexeme_ID": "jazyk",
+      "Cell": "nom",
+      "Form": "jazyk",
+      "Morphs": ["jazyk"],
+      "Source": ["declercq-et-al-2025[Table 1.4]"]
+    },
+    {
+      "ID": "declercqetal2025_jazyk_acc",
+      "Lexeme_ID": "jazyk",
+      "Cell": "acc",
+      "Form": "jazyk",
+      "Morphs": ["jazyk"],
+      "Source": ["declercq-et-al-2025[Table 1.4]"]
+    },
+    {
+      "ID": "declercqetal2025_jazyka_gen",
+      "Lexeme_ID": "jazyk",
+      "Cell": "gen",
+      "Form": "jazyka",
+      "Morphs": ["jazyk", "a"],
+      "Source": ["declercq-et-al-2025[Table 1.4]"]
+    },
+    {
+      "ID": "declercqetal2025_kipaw_sg",
+      "Lexeme_ID": "kipaw",
+      "Cell": "sg",
+      "Form": "kipaw",
+      "Morphs": ["kipaw"],
+      "Source": ["declercq-et-al-2025[Table 1.6]"]
+    },
+    {
+      "ID": "declercqetal2025_kipawtiin_pl",
+      "Lexeme_ID": "kipaw",
+      "Cell": "pl",
+      "Form": "kipawtiin",
+      "Morphs": ["kipaw", "tiin"],
+      "Source": ["declercq-et-al-2025[Table 1.6]"]
+    },
+    {
+      "ID": "declercqetal2025_peelyaan_sg",
+      "Lexeme_ID": "peel",
+      "Cell": "sg",
+      "Form": "peelyaan",
+      "Morphs": ["peel", "yaan"],
+      "Source": ["declercq-et-al-2025[Table 1.6]"]
+    },
+    {
+      "ID": "declercqetal2025_peel_pl",
+      "Lexeme_ID": "peel",
+      "Cell": "pl",
+      "Form": "peel",
+      "Morphs": ["peel"],
+      "Source": ["declercq-et-al-2025[Table 1.6]"]
+    },
+    {
+      "ID": "declercqetal2025_patayaan_sg",
+      "Lexeme_ID": "pata",
+      "Cell": "sg",
+      "Form": "patayaan",
+      "Morphs": ["pata", "yaan"],
+      "Source": ["declercq-et-al-2025[Table 1.6]"]
+    },
+    {
+      "ID": "declercqetal2025_pateen_pl",
+      "Lexeme_ID": "pata",
+      "Cell": "pl",
+      "Form": "pateen",
+      "Morphs": ["pat", "een"],
+      "Source": ["declercq-et-al-2025[Table 1.6]"]
+    },
+    {
+      "ID": "declercqetal2025_bat_1",
+      "Lexeme_ID": "bati",
+      "Cell": "p1",
+      "Form": "bat",
+      "Morphs": ["bat"],
+      "Source": ["declercq-et-al-2025[Table 1.9]"]
+    },
+    {
+      "ID": "declercqetal2025_bats_2",
+      "Lexeme_ID": "bati",
+      "Cell": "p2",
+      "Form": "bats",
+      "Morphs": ["bat", "s"],
+      "Source": ["declercq-et-al-2025[Table 1.9]"]
+    },
+    {
+      "ID": "declercqetal2025_bat_3",
+      "Lexeme_ID": "bati",
+      "Cell": "p3",
+      "Form": "bat",
+      "Morphs": ["bat"],
+      "Source": ["declercq-et-al-2025[Table 1.9]"]
+    },
+    {
+      "ID": "declercqetal2025_finis_1",
+      "Lexeme_ID": "fini",
+      "Cell": "p1",
+      "Form": "finiʃ",
+      "Morphs": ["fin", "iʃ"],
+      "Source": ["declercq-et-al-2025[Table 1.9]"]
+    },
+    {
+      "ID": "declercqetal2025_finiss_2",
+      "Lexeme_ID": "fini",
+      "Cell": "p2",
+      "Form": "finiʃs",
+      "Morphs": ["fin", "iʃ", "s"],
+      "Source": ["declercq-et-al-2025[Table 1.9]"]
+    },
+    {
+      "ID": "declercqetal2025_finis_3",
+      "Lexeme_ID": "fini",
+      "Cell": "p3",
+      "Form": "finiʃ",
+      "Morphs": ["fin", "iʃ"],
+      "Source": ["declercq-et-al-2025[Table 1.9]"]
+    }
+  ],
+  "ParadigmTable": [
+    {
+      "ID": "tall",
+      "Lexeme_ID": "tall",
+      "Form_IDs": ["declercqetal2025_tall", "declercqetal2025_taller", "declercqetal2025_tallest"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "bad",
+      "Lexeme_ID": "bad",
+      "Form_IDs": ["declercqetal2025_bad", "declercqetal2025_worse"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "partsrahasag",
+      "Lexeme_ID": "partsrahasag",
+      "Form_IDs": ["declercqetal2025_partsrahasag_pos", "declercqetal2025_partsrahasag_cmp", "declercqetal2025_partsrahasag_sup"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "inteligentni",
+      "Lexeme_ID": "inteligentni",
+      "Form_IDs": ["declercqetal2025_inteligentni", "declercqetal2025_inteligentnejsi", "declercqetal2025_nejinteligentnejsi"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "chytry",
+      "Lexeme_ID": "chytry",
+      "Form_IDs": ["declercqetal2025_chytry", "declercqetal2025_chytrejsi"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "chleba",
+      "Lexeme_ID": "chleba",
+      "Form_IDs": ["declercqetal2025_chleba_nom", "declercqetal2025_chleba_acc", "declercqetal2025_chleba_gen"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "jazyk",
+      "Lexeme_ID": "jazyk",
+      "Form_IDs": ["declercqetal2025_jazyk_nom", "declercqetal2025_jazyk_acc", "declercqetal2025_jazyka_gen"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "kipaw",
+      "Lexeme_ID": "kipaw",
+      "Form_IDs": ["declercqetal2025_kipaw_sg", "declercqetal2025_kipawtiin_pl"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "peel",
+      "Lexeme_ID": "peel",
+      "Form_IDs": ["declercqetal2025_peelyaan_sg", "declercqetal2025_peel_pl"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "pata",
+      "Lexeme_ID": "pata",
+      "Form_IDs": ["declercqetal2025_patayaan_sg", "declercqetal2025_pateen_pl"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "bati",
+      "Lexeme_ID": "bati",
+      "Form_IDs": ["declercqetal2025_bat_1", "declercqetal2025_bats_2", "declercqetal2025_bat_3"],
+      "Source": ["declercq-et-al-2025"]
+    },
+    {
+      "ID": "fini",
+      "Lexeme_ID": "fini",
+      "Form_IDs": ["declercqetal2025_finis_1", "declercqetal2025_finiss_2", "declercqetal2025_finis_3"],
+      "Source": ["declercq-et-al-2025"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Exponents",
+      "Lean": "exponents",
+      "Type": "List String",
+      "Description": "the exponents of the form in linear order, as the lexicalization tables give them"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "declercqetal2025_tall",
+      "Exponents": ["tall"]
+    },
+    {
+      "Form_ID": "declercqetal2025_taller",
+      "Exponents": ["tall", "er"]
+    },
+    {
+      "Form_ID": "declercqetal2025_tallest",
+      "Exponents": ["tall", "est"]
+    },
+    {
+      "Form_ID": "declercqetal2025_bad",
+      "Exponents": ["bad"]
+    },
+    {
+      "Form_ID": "declercqetal2025_worse",
+      "Exponents": ["worse"]
+    },
+    {
+      "Form_ID": "declercqetal2025_partsrahasag_pos",
+      "Exponents": ["partsrahasag"]
+    },
+    {
+      "Form_ID": "declercqetal2025_partsrahasag_cmp",
+      "Exponents": ["partsrahasag"]
+    },
+    {
+      "Form_ID": "declercqetal2025_partsrahasag_sup",
+      "Exponents": ["partsrahasag"]
+    },
+    {
+      "Form_ID": "declercqetal2025_inteligentni",
+      "Exponents": ["inteligent", "n"]
+    },
+    {
+      "Form_ID": "declercqetal2025_inteligentnejsi",
+      "Exponents": ["inteligent", "n", "ějš"]
+    },
+    {
+      "Form_ID": "declercqetal2025_nejinteligentnejsi",
+      "Exponents": ["nej", "inteligent", "n", "ějš"]
+    },
+    {
+      "Form_ID": "declercqetal2025_chytry",
+      "Exponents": ["chytr"]
+    },
+    {
+      "Form_ID": "declercqetal2025_chytrejsi",
+      "Exponents": ["chytr", "ějš"]
+    },
+    {
+      "Form_ID": "declercqetal2025_chleba_nom",
+      "Exponents": ["chleb", "a"]
+    },
+    {
+      "Form_ID": "declercqetal2025_chleba_acc",
+      "Exponents": ["chleb", "a"]
+    },
+    {
+      "Form_ID": "declercqetal2025_chleba_gen",
+      "Exponents": ["chleb", "a"]
+    },
+    {
+      "Form_ID": "declercqetal2025_jazyk_nom",
+      "Exponents": ["jazyk"]
+    },
+    {
+      "Form_ID": "declercqetal2025_jazyk_acc",
+      "Exponents": ["jazyk"]
+    },
+    {
+      "Form_ID": "declercqetal2025_jazyka_gen",
+      "Exponents": ["jazyk", "a"]
+    },
+    {
+      "Form_ID": "declercqetal2025_kipaw_sg",
+      "Exponents": ["kipaw"]
+    },
+    {
+      "Form_ID": "declercqetal2025_kipawtiin_pl",
+      "Exponents": ["kipaw", "tiin"]
+    },
+    {
+      "Form_ID": "declercqetal2025_peelyaan_sg",
+      "Exponents": ["peel", "yaan"]
+    },
+    {
+      "Form_ID": "declercqetal2025_peel_pl",
+      "Exponents": ["peel"]
+    },
+    {
+      "Form_ID": "declercqetal2025_patayaan_sg",
+      "Exponents": ["pata", "yaan"]
+    },
+    {
+      "Form_ID": "declercqetal2025_pateen_pl",
+      "Exponents": ["pata", "een"]
+    },
+    {
+      "Form_ID": "declercqetal2025_bat_1",
+      "Exponents": ["bat"]
+    },
+    {
+      "Form_ID": "declercqetal2025_bats_2",
+      "Exponents": ["bat", "s"]
+    },
+    {
+      "Form_ID": "declercqetal2025_bat_3",
+      "Exponents": ["bat"]
+    },
+    {
+      "Form_ID": "declercqetal2025_finis_1",
+      "Exponents": ["fin", "iʃ"]
+    },
+    {
+      "Form_ID": "declercqetal2025_finiss_2",
+      "Exponents": ["fin", "iʃ", "s"]
+    },
+    {
+      "Form_ID": "declercqetal2025_finis_3",
+      "Exponents": ["fin", "iʃ"]
+    }
+  ]
+}

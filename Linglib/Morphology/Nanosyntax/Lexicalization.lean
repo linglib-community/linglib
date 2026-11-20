@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Nanosyntax.TreeSpellout
+public import Mathlib.Data.List.Monad
 
 /-!
 # Nanosyntax: the lexicalization algorithm
@@ -15,24 +16,27 @@ so evacuation is what makes a suffix. A lexicalized constituent is pronounced as
 entry matching the new phrase, or the whole structure evacuation has built, overrides the
 exponents inside it.
 
-## Main definitions
+A syntactic object is built from `spine`, `merge` and `adjoin`, the last being the unlabelled
+node an evacuated constituent forms with its remnant. `mergeOptions L d f` lists the ways of
+lexicalizing the merger of the feature `f` with the derivation `d`, in order of preference, and
+`derivations L d fs` folds it over the sequence `fs` in the list monad. Deriving `fs ++ gs` is
+then deriving `fs` and, from each result in turn, `gs` (`derivations_append`), which is
+backtracking. `lexicalize` returns the first derivation and `exponents` what `spell` pronounces
+of it.
 
-* `spine`, `merge`, `adjoin`: syntactic objects, with labelled phrases and the unlabelled nodes
-  evacuation creates.
-* `mergeOptions`: the ways of lexicalizing a merger, in order of preference.
-* `derivations`: the derivations of a feature sequence, in order of preference.
-* `spell`: the exponents of a derivation, largest lexicalized constituents first.
-* `lexicalize`, `exponents`: the first derivation and its exponents.
+Every constituent of the derivation is matched by an entry (`exists_matches_of_mem_lexicalize`),
+so a sequence the algorithm derives is pronounced (`exponents_eq_none_iff`). A sequence whose
+spine an entry matches is lexicalized without movement (`lexicalize_cons_of_isSome`). Where no
+entry lexicalizes a feature above the bottom alone the algorithm never evacuates
+(`exponents_cons_of_forall_leaf`), so on a lexicon of containment entries its one exponent is the
+containment engine's spellout (`exponents_ofSupersetRule`).
 
-## Main results
-
-* `derivations_append`: deriving a sequence is deriving its first part and then, from each
-  result in turn, the rest, which is backtracking.
-* `exists_matches_of_mem_lexicalize`, `exponents_eq_none_iff`: every constituent of the
-  derivation is matched by an entry, so a derivation is always pronounced.
-* `exponents_cons_of_forall_leaf`, `exponents_ofSupersetRule`: where no entry lexicalizes a
-  feature above the bottom alone the algorithm never evacuates, so on a lexicon of containment
-  entries its one exponent is the containment engine's spellout.
+The subtrees of a spine are the spines of the initial parts of its sequence
+(`isSubtree_spine_iff`), so an entry storing a spine shrinks to every smaller size. An entry
+storing `adjoin (spine f₀ fs) r` matches the spines on `f₀` up to `fs` and no larger one
+(`spine_isSubtree_adjoin_spine_iff`). Where no entry stores an unlabelled node, a sequence
+pronounced with one exponent has every initial part pronounced with one exponent
+(`exists_exponents_eq_singleton_of_prefix`).
 
 ## Implementation notes
 
@@ -83,6 +87,47 @@ abbrev adjoin (l r : RoseTree (Option F)) : RoseTree (Option F) := node none [l,
 
 @[simp] theorem spine_concat (f₀ : F) (fs : List F) (f : F) :
     spine f₀ (fs ++ [f]) = merge f (spine f₀ fs) := by simp [spine]
+
+theorem value_spine_ne_none (f₀ : F) (fs : List F) : (spine f₀ fs).value ≠ none := by
+  cases fs using List.reverseRecOn <;> simp
+
+theorem spine_eq_spine_iff {f₀ g₀ : F} {fs gs : List F} :
+    spine f₀ fs = spine g₀ gs ↔ f₀ = g₀ ∧ fs = gs := by
+  simp [spine, phrase_eq_phrase_iff, (Option.some_injective F).list_map.eq_iff]
+
+theorem spine_injective (f₀ : F) : Function.Injective (spine f₀) :=
+  fun _ _ h ↦ (spine_eq_spine_iff.1 h).2
+
+/-- The subtrees of a spine are the spines of the initial parts of its sequence. -/
+theorem isSubtree_spine_iff {t : RoseTree (Option F)} {f₀ : F} {fs : List F} :
+    IsSubtree t (spine f₀ fs) ↔ ∃ gs, gs <+: fs ∧ t = spine f₀ gs := by
+  rw [spine, isSubtree_phrase_iff]
+  constructor
+  · rintro ⟨gs, h, rfl⟩
+    refine ⟨fs.take gs.length, List.take_prefix _ _, ?_⟩
+    rw [spine, List.map_take, ← List.prefix_iff_eq_take.1 h]
+  · rintro ⟨gs, h, rfl⟩
+    exact ⟨gs.map some, h.map some, rfl⟩
+
+theorem spine_isSubtree_spine_iff {f₀ : F} {fs gs : List F} :
+    IsSubtree (spine f₀ gs) (spine f₀ fs) ↔ gs <+: fs := by
+  rw [isSubtree_spine_iff]
+  exact ⟨fun ⟨_, h, he⟩ ↦ spine_injective f₀ he ▸ h, fun h ↦ ⟨gs, h, rfl⟩⟩
+
+theorem isSubtree_adjoin_iff {t l r : RoseTree (Option F)} (ht : t.value ≠ none) :
+    IsSubtree t (adjoin l r) ↔ IsSubtree t l ∨ IsSubtree t r := by
+  rw [isSubtree_node_iff]
+  simp only [List.mem_cons, List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left]
+  exact or_iff_right fun h ↦ ht (h ▸ rfl)
+
+/-- A spine standing beside a remnant with another foot contains the spines on its foot up to
+its own size and no larger one. -/
+theorem spine_isSubtree_adjoin_spine_iff {f₀ g₀ : F} (h : f₀ ≠ g₀) {fs gs hs : List F} :
+    IsSubtree (spine f₀ gs) (adjoin (spine f₀ fs) (spine g₀ hs)) ↔ gs <+: fs := by
+  rw [isSubtree_adjoin_iff (value_spine_ne_none _ _), spine_isSubtree_spine_iff, or_iff_left]
+  rintro hr
+  obtain ⟨ks, -, he⟩ := isSubtree_spine_iff.1 hr
+  exact h (spine_eq_spine_iff.1 he).1
 
 /-- A derivation in progress is the row of constituents along the left edge of its root, the
 one holding the bottom of the feature sequence first and the remnants of evacuation after
@@ -171,10 +216,9 @@ theorem length_le_of_mem_mergeOptions
 
 /-- The derivations of a feature sequence from a derivation, in order of preference. Each
 merger takes its options in turn and the rest of the sequence is derived from each. -/
-def derivations (L : RuleSet (LexicalEntry (Option F) α)) :
-    Derivation F → List F → List (Derivation F)
-  | d, [] => [d]
-  | d, f :: fs => (mergeOptions L d f).flatMap (derivations L · fs)
+def derivations (L : RuleSet (LexicalEntry (Option F) α)) (d : Derivation F) (fs : List F) :
+    List (Derivation F) :=
+  fs.foldlM (mergeOptions L) d
 
 @[simp] theorem derivations_nil (d : Derivation F) : derivations L d [] = [d] := rfl
 
@@ -187,10 +231,23 @@ theorem derivations_singleton (d : Derivation F) (f : F) :
 /-- Deriving a sequence is deriving its first part and then the rest from each result in turn,
 so a failure in the rest returns to the latest merger of the first part with an option left. -/
 theorem derivations_append (d : Derivation F) (fs gs : List F) :
-    derivations L d (fs ++ gs) = (derivations L d fs).flatMap (derivations L · gs) := by
+    derivations L d (fs ++ gs) = (derivations L d fs).flatMap (derivations L · gs) :=
+  List.foldlM_append
+
+theorem ne_nil_of_mem_mergeOptions {d d' : Derivation F} (h : d' ∈ mergeOptions L d f) :
+    d' ≠ [] := by
+  obtain ⟨j, -, -, rfl⟩ := mem_mergeOptions.1 h
+  simp
+
+theorem ne_nil_of_mem_derivations {d d' : Derivation F} {fs : List F} (hfs : fs ≠ [])
+    (h : d' ∈ derivations L d fs) : d' ≠ [] := by
   induction fs generalizing d with
-  | nil => simp
-  | cons f fs ih => simp [ih, List.flatMap_assoc]
+  | nil => exact absurd rfl hfs
+  | cons f fs ih =>
+    obtain ⟨d₁, h₁, h⟩ := List.mem_flatMap.1 h
+    rcases fs with - | ⟨g, fs⟩
+    · exact List.mem_singleton.1 h ▸ ne_nil_of_mem_mergeOptions h₁
+    · exact ih (List.cons_ne_nil _ _) h
 
 /-- The lexicalization algorithm returns the first derivation of a feature sequence, the bottom
 of the sequence first. -/
@@ -301,6 +358,36 @@ theorem exponents_pair (L : RuleSet (LexicalEntry (Option F) α)) (f₁ f₂ : F
     · simp [hw]
     · simp [hw]
 
+/-! ### Lexicalization without movement -/
+
+/-- A sequence whose spine an entry matches is lexicalized without movement, since each merger
+tries the new phrase whole before any evacuation. -/
+theorem lexicalize_cons_of_isSome (f₀ : F) {fs : List F}
+    (h : (treeSpellout L (spine f₀ fs)).isSome) :
+    lexicalize L (f₀ :: fs) = some [spine f₀ fs] := by
+  rw [lexicalize]
+  induction fs using List.reverseRecOn with
+  | nil =>
+    obtain ⟨x, hx⟩ := Option.isSome_iff_exists.1 h
+    rw [spine_nil] at hx
+    simp [mergeOptions_nil, hx]
+  | append_singleton fs f ih =>
+    rw [spine_concat] at h
+    have hs : (treeSpellout L (spine f₀ fs)).isSome := by
+      by_contra hn
+      rw [treeSpellout_eq_none_of_isSubtree (.of_mem_children (t := merge f (spine f₀ fs))
+        (List.mem_singleton_self _)) (by simpa using hn)] at h
+      exact absurd h (by simp)
+    obtain ⟨ds, hds⟩ := List.head?_eq_some_iff.1 (ih hs)
+    obtain ⟨x, hx⟩ := Option.isSome_iff_exists.1 h
+    rw [← List.cons_append, derivations_append, hds, spine_concat]
+    simp [mergeOptions_singleton, hx]
+
+theorem exponents_cons_of_eq_some (f₀ : F) {fs : List F} {x : α}
+    (h : treeSpellout L (spine f₀ fs) = some x) : exponents L (f₀ :: fs) = some [x] := by
+  rw [exponents, lexicalize_cons_of_isSome f₀ (by simp [h])]
+  simp [h]
+
 /-! ### Lexicons without suffixes -/
 
 theorem mergeOptions_singleton_of_leaf (h : treeSpellout L (leaf (some f)) = none)
@@ -329,6 +416,70 @@ theorem exponents_cons_of_forall_leaf (f₀ : F) {fs : List F}
     exponents L (f₀ :: fs) = (treeSpellout L (spine f₀ fs)).map fun x ↦ [x] := by
   rw [exponents, lexicalize, derivations_cons_of_forall_leaf f₀ h]
   cases h : treeSpellout L (spine f₀ fs) <;> simp [h]
+
+/-! ### Lexicons without stored evacuation -/
+
+section Labelled
+
+variable (hL : ∀ e ∈ L, ∀ t, IsSubtree t e.tree → t.value ≠ none)
+include hL
+
+/-- Where no entry stores an unlabelled node, no entry matches an object of several
+constituents, so each constituent of a derivation has an exponent of its own. -/
+theorem length_of_spell_eq_some {d : Derivation F} {xs : List α} (h : spell L d = some xs) :
+    xs.length = d.length := by
+  induction d using List.reverseRecOn generalizing xs with
+  | nil => simpa [eq_comm] using h
+  | append_singleton d t ih =>
+    rcases eq_or_ne d [] with rfl | hd
+    · obtain ⟨x, -, rfl⟩ := Option.map_eq_some_iff.1 (by simpa using h)
+      rfl
+    · obtain ⟨u, hu⟩ : ∃ u, root d = some u := by
+        obtain ⟨s, ts, rfl⟩ := List.exists_cons_of_ne_nil hd
+        exact ⟨_, rfl⟩
+      have hroot : root (d ++ [t]) = some (adjoin u t) := by rw [root_concat hd, hu]; rfl
+      have hnone : treeSpellout L (adjoin u t) = none :=
+        treeSpellout_eq_none_iff.2 fun e he hm ↦ hL e he _ hm rfl
+      rcases hys : spell L d with - | ys <;> rcases hx : treeSpellout L t with - | x <;>
+        simp [spell_concat, hroot, hnone, hys, hx] at h
+      subst h
+      simp [ih hys]
+
+theorem eq_spine_of_mem_derivations {f₀ : F} {fs : List F} {d : Derivation F}
+    (h : d ∈ derivations L [] (f₀ :: fs)) (hd : d.length = 1) : d = [spine f₀ fs] := by
+  induction fs using List.reverseRecOn generalizing d with
+  | nil =>
+    rw [derivations_singleton, mergeOptions_nil] at h
+    cases hx : treeSpellout L (leaf (some f₀)) <;> simp_all
+  | append_singleton fs f ih =>
+    rw [← List.cons_append, derivations_append] at h
+    obtain ⟨d₁, h₁, h⟩ := List.mem_flatMap.1 h
+    rw [derivations_singleton] at h
+    have hle := length_le_of_mem_mergeOptions hL h
+    have hpos := List.length_pos_iff.2 (ne_nil_of_mem_derivations (List.cons_ne_nil _ _) h₁)
+    obtain rfl := ih h₁ (by omega)
+    obtain ⟨j, hj, -, rfl⟩ := mem_mergeOptions.1 h
+    obtain rfl : j = 0 := by
+      simp only [List.length_append, List.length_take, List.length_singleton] at hd hj
+      omega
+    simp [root]
+
+/-- Where no entry stores an unlabelled node, a sequence pronounced with one exponent has every
+initial part pronounced with one exponent. A root that needs a suffix at one size and none at a
+larger size therefore stores the structure evacuation builds. -/
+theorem exists_exponents_eq_singleton_of_prefix {f₀ : F} {fs gs : List F} {x : α}
+    (hgs : gs <+: fs) (h : exponents L (f₀ :: fs) = some [x]) :
+    ∃ y, exponents L (f₀ :: gs) = some [y] := by
+  obtain ⟨d, hd, hs⟩ := Option.bind_eq_some_iff.1 h
+  obtain rfl := eq_spine_of_mem_derivations hL (List.mem_of_mem_head? hd)
+    (length_of_spell_eq_some hL hs).symm
+  have hx : treeSpellout L (spine f₀ fs) = some x := by simpa using hs
+  rcases hy : treeSpellout L (spine f₀ gs) with - | y
+  · rw [treeSpellout_eq_none_of_isSubtree (spine_isSubtree_spine_iff.2 hgs) hy] at hx
+    exact absurd hx (by simp)
+  · exact ⟨y, exponents_cons_of_eq_some f₀ hy⟩
+
+end Labelled
 
 section Containment
 
