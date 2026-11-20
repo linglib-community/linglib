@@ -26,7 +26,6 @@ the two edges on string functions.
 * `Edge`, `Edge.swap`: the left or right end of a word, and the other one.
 * `Edge.orient`: a word as the scan from an edge reads it.
 * `Edge.takeAt`: the length-`k` prefix or suffix of a word.
-* `Edge.head?`: the letter of a word at an edge.
 * `Edge.window`: the part of a word not far from a target on one side.
 * `List.revConj`: conjugation of a string function by reversal.
 -/
@@ -158,53 +157,14 @@ lemma takeAt_infix : e.takeAt k xs <:+: xs := by
   cases e
   exacts [(List.take_prefix k xs).isInfix, (List.drop_suffix (xs.length - k) xs).isInfix]
 
+lemma forall₂_takeAt {β : Type*} {R : α → β → Prop} {xs : List α} {ys : List β}
+    (h : List.Forall₂ R xs ys) : List.Forall₂ R (e.takeAt k xs) (e.takeAt k ys) := by
+  cases e
+  · exact List.forall₂_take k h
+  · simpa [List.rtake, h.length_eq] using List.forall₂_drop (xs.length - k) h
+
 lemma finite_range_takeAt [Finite α] : (Set.range (e.takeAt (α := α) k)).Finite :=
   (List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp [length_takeAt])
-
-/-! ### The letter at an edge -/
-
-/-- The letter of a word at an edge, its first at the left and its last at the right. -/
-def head? : Edge → List α → Option α
-  | .left, xs => xs.head?
-  | .right, xs => xs.getLast?
-
-@[simp] theorem head?_left : Edge.left.head? xs = xs.head? := rfl
-
-@[simp] theorem head?_right : Edge.right.head? xs = xs.getLast? := rfl
-
-theorem head?_orient : (e.orient xs).head? = e.head? xs := by
-  cases e <;> simp [List.head?_reverse]
-
-/-- The letter at an edge is the length-1 part of the word there. -/
-theorem toList_head? : (e.head? xs).toList = e.takeAt 1 xs := by
-  cases e
-  · simp [List.take_one]
-  · rw [head?_right, takeAt_right, List.rtake_eq_reverse_take_reverse, List.take_one,
-      List.head?_reverse]
-    cases xs.getLast? <;> rfl
-
-/-- Reversal exchanges the letters at the two edges. -/
-theorem head?_reverse : e.head? xs.reverse = e.swap.head? xs := by
-  cases e <;> simp [List.head?_reverse, List.getLast?_reverse]
-
-theorem head?_map {β : Type*} (g : α → β) : e.head? (xs.map g) = (e.head? xs).map g := by
-  cases e <;> simp [List.getLast?_map]
-
-variable {e xs} in
-theorem mem_of_mem_head? {a : α} (h : a ∈ e.head? xs) : a ∈ xs := by
-  cases e
-  exacts [List.mem_of_mem_head? h, List.mem_of_mem_getLast? h]
-
-theorem rel_head? {β : Type*} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (h : List.Forall₂ R xs ys) (e : Edge) : Option.Rel R (e.head? xs) (e.head? ys) := by
-  have key {xs : List α} {ys : List β} (h : List.Forall₂ R xs ys) :
-      Option.Rel R xs.head? ys.head? := by
-    cases h with
-    | nil => exact .none
-    | cons h _ => exact .some h
-  cases e
-  · exact key h
-  · simpa [List.head?_reverse] using key (List.forall₂_reverse_iff.2 h)
 
 /-! ### Windows -/
 

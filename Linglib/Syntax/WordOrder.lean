@@ -20,8 +20,8 @@ orders of the typological literature, each labelled by its list of constituents 
 ## Main declarations
 
 * `HeadDirection`: head-initial or head-final.
-* `HeadDirection.ofLT`, `dependentEdge`: the direction at given positions; the dependents' edge.
-* `HeadDirection.headEdge`, `edgeEquiv`: the edge of its dependents at which the head stands, such
+* `HeadDirection.ofLT`: the direction at given positions.
+* `HeadDirection.headEdge`, `equivEdge`: the edge of its dependents at which the head stands, such
   as the edge of a coordination whose conjunct an adjacent selector or probe sees.
 * `WordOrder.Arrangement`: a linear arrangement of a finite type over ranks.
 * `Arrangement.Precedes`, `Adjacent`, `headDirection`, `mirror`: precedence, adjacency, the head
@@ -97,21 +97,8 @@ theorem ofLT_swap {α : Type*} [LinearOrder α] {head dep : α} (h : head ≠ de
     ofLT dep head = (ofLT head dep).swap := by
   rcases lt_or_gt_of_ne h with hlt | hlt <;> simp [ofLT, hlt, lt_asymm hlt]
 
-/-- The edge of a head on which its dependents lie, the right one for a head-initial head. -/
-def dependentEdge : HeadDirection → Edge
-  | headInitial => .right
-  | headFinal => .left
-
-@[simp] theorem dependentEdge_headInitial : headInitial.dependentEdge = .right := rfl
-
-@[simp] theorem dependentEdge_headFinal : headFinal.dependentEdge = .left := rfl
-
-@[simp] theorem dependentEdge_swap :
-    ∀ d : HeadDirection, d.swap.dependentEdge = d.dependentEdge.swap := by
-  decide
-
 /-- The edge of its dependents at which a head stands, the left one for a head-initial head, so
-that `d.headEdge.head? l` is the dependent of `l` next to the head. -/
+that `d.headEdge.takeAt 1 l` holds the dependent of `l` next to the head. -/
 def headEdge : HeadDirection → Edge
   | headInitial => .left
   | headFinal => .right
@@ -123,12 +110,9 @@ def headEdge : HeadDirection → Edge
 @[simp] theorem headEdge_swap : ∀ d : HeadDirection, d.swap.headEdge = d.headEdge.swap := by
   decide
 
-theorem swap_headEdge : ∀ d : HeadDirection, d.headEdge.swap = d.dependentEdge := by
-  decide
-
 /-- Head directions correspond to edges, a head-initial head standing at the left edge of its
 dependents. -/
-def edgeEquiv : HeadDirection ≃ Edge where
+def equivEdge : HeadDirection ≃ Edge where
   toFun := headEdge
   invFun
     | .left => headInitial
@@ -136,11 +120,9 @@ def edgeEquiv : HeadDirection ≃ Edge where
   left_inv := by decide
   right_inv := by decide
 
-@[simp] theorem coe_edgeEquiv : ⇑edgeEquiv = headEdge := rfl
+@[simp] theorem coe_equivEdge : ⇑equivEdge = headEdge := rfl
 
-theorem headEdge_injective : Function.Injective headEdge := edgeEquiv.injective
-
-theorem dependentEdge_injective : Function.Injective dependentEdge := by decide
+theorem headEdge_injective : Function.Injective headEdge := equivEdge.injective
 
 section Orders
 
