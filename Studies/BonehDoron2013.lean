@@ -94,7 +94,7 @@ theorem not_hab_of_subsingleton [SemilatticeSup E] {mb : NonemptyInterval T → 
 modality in the matrix. -/
 def Gen {Z : Type*} (ext : Z → NonemptyInterval T) (mb : NonemptyInterval T → Background W)
     (P Q : W → Z → Prop) (i : NonemptyInterval T) (w : W) : Prop :=
-  (i, w) ∈ (⊤ : Genericity.Normality (NonemptyInterval T × W) Z).gen {z | ext z ≤ i ∧ Q w z}
+  (⊤ : Genericity.Normality Z).gen {z | ext z ≤ i ∧ Q w z}
     {z | ∀ᶠ v in simpleNecessity (mb i) w, P v z}
 
 theorem gen_iff {Z : Type*} {ext : Z → NonemptyInterval T} {mb : NonemptyInterval T → Background W}
