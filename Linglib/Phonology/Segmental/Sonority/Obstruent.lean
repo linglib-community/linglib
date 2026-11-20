@@ -8,6 +8,7 @@ module
 public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Order.Prod.Lex.Basic
 import Mathlib.Tactic.Order
 
 /-!
@@ -27,6 +28,10 @@ stops (`ordConnectedAlong_continuant_iff`), and those of [voice] exactly when th
 outrank the voiceless fricatives (`ordConnectedAlong_voice_iff`); on a tie neither are. On no
 ranking at all are both (`not_ordConnectedAlong_continuant_and_voice`). All four results are in
 the namespace `Phonology.Sonority.ObstruentClass`.
+
+`Phonology.Sonority.ofSegmentWith o` is the scale on segments that divides the obstruents by
+`ObstruentClass.rank o` and leaves the other classes of the hierarchy whole; the hierarchy
+coarsens it.
 
 ## References
 
@@ -165,5 +170,15 @@ theorem not_ordConnectedAlong_continuant_and_voice (r : ObstruentClass → α) :
   Set.not_ordConnectedAlong_of_surjective r equivProd.surjective
 
 end ObstruentClass
+
+/-! ### The scale on segments -/
+
+/-- The sonority of a segment with the obstruents divided: its class in the hierarchy, and within
+the obstruents the rank of its class on `ObstruentClass.rank o`. -/
+def ofSegmentWith (o : Ordering) (x : Segment) : Sonority ×ₗ ℕ :=
+  toLex (ofSegment x, if ofSegment x = .obstruent then ObstruentClass.rank o (.ofSegment x) else 0)
+
+theorem coarsens_ofSegment_ofSegmentWith (o : Ordering) : Coarsens ofSegment (ofSegmentWith o) :=
+  fun _ _ h ↦ Prod.Lex.monotone_fst _ _ h
 
 end Phonology.Sonority

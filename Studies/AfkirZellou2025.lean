@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
 public import Linglib.Phonology.Segmental.Sonority.Obstruent
-public import Mathlib.Order.Prod.Lex.Basic
+public import Linglib.Phonology.Segmental.Sonority.Sequencing
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
 public import Linglib.Data.Wordlist.AfkirZellou2025
@@ -40,8 +40,8 @@ the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_int
 * `AfkirZellou2025.imperative`: a root's simple imperative, by the association conventions.
 * `AfkirZellou2025.intensive`: a root's intensive imperative, by the conventions, Erasure and
   fortition.
-* `AfkirZellou2025.sonority`: the sonority of a phone on the scale of Figure 9, which the modal
-  hierarchy coarsens (`coarsens_ofSegment`).
+* `AfkirZellou2025.sonority`: the sonority of a phone on the scale of Figure 9, the modal
+  hierarchy with the obstruents divided.
 * `AfkirZellou2025.onsetProfile`: whether sonority rises, plateaus or falls across the initial
   cluster.
 * `AfkirZellou2025.targets`: the thirty-eight CCəC target words, by root.
@@ -49,9 +49,9 @@ the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_int
 ## Implementation notes
 
 Figure 9 ranks voiced stops below voiceless fricatives, the majority view in the literature,
-against the default of Parker, whom it cites: it is `sonorityWith .gt`, Parker's (3.6a), where his
-default is `sonorityWith .lt`. No target cluster pairs the two classes, so the profiles are the
-same on either scale. The book gives the
+against the default of Parker, whom it cites: it is `Sonority.ofSegmentWith .gt`, Parker's (3.6a),
+where his default is `Sonority.ofSegmentWith .lt`. No target cluster pairs the two classes, so the
+profiles are the same on either scale. The book gives the
 intensive forms, not their derivation: the derivation here is McCarthy's for the Arabic second
 binyan, whose template CVCCVC the intensive shares (`intensiveStem_eq`). The regression
 estimates, the acoustic measurements and the perception study have no formal counterpart here.
@@ -181,18 +181,9 @@ example : ∀ r ∈ targets, ∀ x ∈ r.segments, x ∈ consonants ∨ x = l :=
 
 /-! ### Sonority profiles -/
 
-/-- The sonority of a phone: its class in the hierarchy of obstruents, nasals, liquids, glides and
-vowels, and within the obstruents its rank on the hierarchy of Parker's (3.6) that `o` fixes. -/
-def sonorityWith (o : Ordering) (x : Segment) : Sonority ×ₗ ℕ :=
-  toLex (Sonority.ofSegment x,
-    if Sonority.ofSegment x = .obstruent then Sonority.ObstruentClass.rank o (.ofSegment x) else 0)
-
 /-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
 fricatives, Parker's (3.6a). -/
-def sonority : Segment → Sonority ×ₗ ℕ := sonorityWith .gt
-
-theorem coarsens_ofSegment : Sonority.Coarsens Sonority.ofSegment sonority :=
-  fun _ _ h ↦ Prod.Lex.monotone_fst _ _ h
+def sonority : Segment → Sonority ×ₗ ℕ := Sonority.ofSegmentWith .gt
 
 /-- The phone at root position `i` is a voiceless obstruent. -/
 def VoicelessAt (r : ConsonantalRoot Segment) (i : ℕ) : Prop :=
@@ -205,6 +196,16 @@ instance (r : ConsonantalRoot Segment) (i : ℕ) : Decidable (VoicelessAt r i) :
 def onsetProfile (r : ConsonantalRoot Segment) : Option Ordering := do
   pure (compare (sonority (← r.segments[0]?)) (sonority (← r.segments[1]?)))
 
+theorem onsetProfile_eq_lt_iff {r : ConsonantalRoot Segment} {a b : Segment}
+    (ha : r.segments[0]? = some a) (hb : r.segments[1]? = some b) :
+    onsetProfile r = some .lt ↔ Sonority.PeaksAt sonority [a, b] 1 := by
+  simp [onsetProfile, ha, hb, Sonority.peaksAt_pair_one, compare_lt_iff_lt]
+
+theorem onsetProfile_eq_gt_iff {r : ConsonantalRoot Segment} {a b : Segment}
+    (ha : r.segments[0]? = some a) (hb : r.segments[1]? = some b) :
+    onsetProfile r = some .gt ↔ Sonority.PeaksAt sonority [a, b] 0 := by
+  simp [onsetProfile, ha, hb, Sonority.peaksAt_pair_zero, compare_gt_iff_gt]
+
 /-- Seventeen of the target words begin with a rising cluster, six with a plateau and fifteen
 with a fall (§3.2.1). -/
 theorem countP_rising_plateau_falling :
@@ -214,8 +215,8 @@ theorem countP_rising_plateau_falling :
   decide +kernel
 
 example : ∀ r ∈ targets, ∀ a ∈ r.segments[0]?, ∀ b ∈ r.segments[1]?,
-    compare (sonorityWith .gt a) (sonorityWith .gt b) =
-      compare (sonorityWith .lt a) (sonorityWith .lt b) := by
+    compare (sonority a) (sonority b) =
+      compare (Sonority.ofSegmentWith .lt a) (Sonority.ofSegmentWith .lt b) := by
   decide +kernel
 
 /-! ### The tables -/

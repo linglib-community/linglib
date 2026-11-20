@@ -2,6 +2,8 @@ module
 
 public import Linglib.Phonology.Segmental.Sonority.Obstruent
 public import Studies.Anttila1997
+public import Linglib.Phonology.Segmental.Sonority.Sequencing
+public import Linglib.Fragments.English.Phonology
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Sigma
 import Mathlib.Order.Interval.Set.OrdConnected
@@ -25,6 +27,9 @@ the classes it merges are contiguous on each.
 The five vowel classes are ordered by height and peripherality, low above mid above high above
 /ə/ above /ɨ/. `Class.nucleusEmbedding` embeds the nuclear sonority of Anttila's Finnish
 grammar, which orders nuclei by height alone, as the low, mid and high vowels.
+
+On the scale `Sonority.ofSegmentWith o`, the segments of *snug* are sequenced and those of
+*nsug* and *stick* are not (`peaksAt_snug_not_sequenced_nsug`).
 
 ## Implementation notes
 
@@ -187,5 +192,27 @@ def nucleusEmbedding : Anttila1997.Sonority ↪o Class :=
   cases s <;> rfl
 
 end Class
+
+/-! ### Sonority sequencing -/
+
+section Sequencing
+
+open English.Phonology Sonority
+
+/-- (1.1): the segments of *snug* are sequenced, with the peak on the vowel, and those of the
+reversed onset *nsug* are not, however the obstruents are ranked (p. 8). -/
+theorem peaksAt_snug_not_sequenced_nsug (o : Ordering) :
+    PeaksAt (ofSegmentWith o) [s, n, wedge, g] 2 ∧
+      ¬ Sequenced (ofSegmentWith o) [n, s, wedge, g] := by
+  revert o
+  decide +kernel
+
+-- p. 8: a fricative before a stop, as in *stick*, is a second peak
+theorem not_sequenced_stick (o : Ordering) :
+    ¬ Sequenced (ofSegmentWith o) [s, t, smallCapitalI, k] := by
+  revert o
+  decide +kernel
+
+end Sequencing
 
 end Parker2002
