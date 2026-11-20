@@ -116,7 +116,7 @@ theorem strengthen_plural_eq_arc (hy : ¬ Atom y) :
     strengthen Number.alts Number.dom (some .plural) = (arc : Set E) := by
   rw [Number.strengthen_plural hy]
   ext
-  simp [Number.nonAtomsOf]
+  simp [Number.Feature.restrict]
 
 /-! ### The pronoun and the partitive -/
 

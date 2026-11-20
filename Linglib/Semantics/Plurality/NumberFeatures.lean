@@ -5,35 +5,21 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Number.Decomposition
 public import Linglib.Semantics.Plurality.Number
 
 /-!
-# Signed number bundles
+# The region of a number bundle
 
-Harbour's number features are bivalent, and a bundle is the set of its signed values, so the empty
-bundle, which carries no number, differs from `[−atomic, −minimal]`. A bundle [denotes a
-region](##Number.Bundle.exact) by applying the region operators of its features in a fixed order.
-The containment of `[+atomic]` in `[+minimal]` then follows from the semantics: [`[+atomic,
-−minimal]` denotes nothing](##Number.Bundle.not_exact_atomic_nonMinimal), as Harbour observes. A
-bundle may [carry both values of a feature](##Number.Bundle.CarriesBoth): on Number⁰ under feature
-recursion, as the trial carries `[+minimal −minimal]`, and on a D head whose values come from a
-noun's class and its natural number, where Kiowa-Tanoan spells the conflict out as inverse.
-
-## Implementation notes
-
-Which bundle a number value names is a claim about a system, not about the value: the plural of
-English is `[−atomic]`, that of a language with a dual `[−atomic, −minimal]`. So there is no map
-from `Number` to bundles here; `Studies/Harbour2014.lean` labels the bundles of each setting. The
-features of person and gender are still the privative chains of `Person.Features` and
-`Gender.Features`.
+A bundle of Harbour's number features denotes a region of a noun's lattice, `Number.Bundle.exact`,
+by applying the region operators of its `[±atomic]` values and then those of its `[±minimal]`
+values. The containment of `[+atomic]` in `[+minimal]` follows from the semantics:
+`[+atomic, −minimal]` denotes nothing (`Number.Bundle.not_exact_atomic_nonMinimal`).
 
 ## References
 
 * [harbour-2011]
-* [harbour-2014], §5.1, p. 213
-* [harbour-2016], §9.5, pp. 222–223
+* [harbour-2014]
 -/
 
 @[expose] public section
@@ -42,24 +28,7 @@ namespace Number
 
 open Mereology (Atom atomize)
 
-/-- Harbour's number features are `[±atomic]`, `[±minimal]` and `[±additive]`. -/
-inductive Feature where
-  | atomic
-  | minimal
-  | additive
-  deriving DecidableEq, Fintype, Repr
-
-/-- A feature bundle is the set of its signed features, `(F, true)` standing for `+F`. The empty
-bundle carries no number. -/
-abbrev Bundle := Finset (Feature × Bool)
-
 namespace Bundle
-
-/-- `b.CarriesBoth f` holds when `b` carries both values of `f`. -/
-def CarriesBoth (b : Bundle) (f : Feature) : Prop := (f, true) ∈ b ∧ (f, false) ∈ b
-
-instance (b : Bundle) : DecidablePred b.CarriesBoth := fun _ ↦
-  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `b.step v f` applies `f` when the bundle `b` carries the signed feature `v`. -/
 def step {X : Type*} (b : Bundle) (v : Feature × Bool) (f : X → X) (x : X) : X :=
@@ -69,8 +38,10 @@ variable {D : Type*} [PartialOrder D]
 
 /-- The region a bundle's `[±atomic]` and `[±minimal]` values select from `P`, the former first. -/
 def exact (b : Bundle) (P : D → Prop) : D → Prop :=
-  b.step (.minimal, true) atomize <| b.step (.minimal, false) nonMinimalOf <|
-    b.step (.atomic, true) atomsOf <| b.step (.atomic, false) nonAtomsOf P
+  b.step (.minimal, true) atomize <|
+    b.step (.minimal, false) (Feature.restrict .minimal false) <|
+    b.step (.atomic, true) (Feature.restrict .atomic true) <|
+    b.step (.atomic, false) (Feature.restrict .atomic false) P
 
 theorem exact_le (b : Bundle) (P : D → Prop) {x : D} (h : b.exact P x) : P x := by
   have step_le : ∀ v (f : (D → Prop) → D → Prop), (∀ P x, f P x → P x) →

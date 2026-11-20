@@ -24,7 +24,7 @@ are no margarita and the denotation is not cumulative, a mereotopological route 
 non-cumulativity that a bare semilattice lacks, where it comes only from quantization
 (`connectivity_breaks_cum`). And a mixed drink has proper parts, so it is not a
 mereological atom (`mixedDrink_not_atom`), and the atomicity on which count theories found
-countability excludes it (`atomsOf_excludes_mixed_drinks`), while half a drink with its ratios
+countability excludes it (`atoms_exclude_mixed_drinks`), while half a drink with its ratios
 preserved is still a drink, so the denotation is not quantized either (`mixedDrink_not_qua`). Mixed
 drinks thus occupy Filip's ¬CUM ∧ ¬QUA middle ground (`mixedDrink_middle_ground`), and the gap
 propagates to drinking VPs through `middle_ground_stable` (`mixedDrink_VP_propagation_gap`).
@@ -182,8 +182,8 @@ theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
   rw [h0, h1] at hDisj
   exact hDisj (Overlap.refl hAtom.not_isBot)
 
-theorem atomsOf_excludes_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
-    (hx : mixedDrinkDen C recipe μ phase x) : ¬ Number.atomsOf DRINK x :=
+theorem atoms_exclude_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
+    (hx : mixedDrinkDen C recipe μ phase x) : ¬ (DRINK x ∧ Atom x) :=
   fun ⟨_, hAtom⟩ ↦ mixedDrink_not_atom hx hAtom
 
 theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)

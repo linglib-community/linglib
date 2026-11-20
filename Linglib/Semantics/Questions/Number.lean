@@ -58,7 +58,7 @@ theorem mem_whDomain_of_isAtom (n : Option Number) {a : E} (ha : IsAtom a) : a �
     exact ha.ne_bot
 
 /-- The domain of a strong plural *wh* phrase: the individuals neither null nor atomic. -/
-def whStrongPlural : Set E := {x | Number.nonAtomsOf (· ≠ ⊥) x}
+def whStrongPlural : Set E := {x | x ≠ ⊥ ∧ ¬ Mereology.Atom x}
 
 theorem mem_whStrongPlural {x : E} : x ∈ whStrongPlural ↔ x ≠ ⊥ ∧ ¬ IsAtom x :=
   and_congr_right fun _ ↦ not_congr Mereology.atom_iff_isAtom

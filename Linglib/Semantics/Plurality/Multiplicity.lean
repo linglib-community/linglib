@@ -73,11 +73,17 @@ theorem iUnion_exclusive : ⋃ v, exclusive s v = inclusive := by
     Set.preimage_univ, Set.image_univ, inclusive]
 
 variable (s) in
+/-- The alternatives of the inclusive reading in a system are itself and the exclusive readings
+of the system's determinate values. -/
+def exclusiveAlternatives : Set (Set ℕ) :=
+  insert inclusive (exclusive s '' {v | v ∈ s ∧ v.IsDeterminate})
+
+variable (s) in
 /-- Plain exhaustification of the inclusive reading against the exclusive readings of a system's
 determinate values gives the exclusive reading of the plural. -/
 theorem exh_inclusive :
-    exh (insert inclusive (exclusive s '' {v | v ∈ s ∧ v.IsDeterminate})) inclusive =
-      exclusive s .plural := by
+    exh (exclusiveAlternatives s) inclusive = exclusive s .plural := by
+  unfold exclusiveAlternatives
   ext n
   constructor
   · rintro ⟨⟨p, rfl⟩, h⟩
@@ -99,10 +105,10 @@ variable (s) in
 /-- Exhaustified against the exclusive readings of the determinate values of its system, the
 inclusive reading is the exclusive reading of the plural. -/
 theorem exhIE_inclusive :
-    exhIE (insert inclusive (exclusive s '' {v | v ∈ s ∧ v.IsDeterminate})) inclusive =
-      exclusive s .plural := by
-  rw [exhIE_eq_exh_of_nonempty _ _ (by
+    exhIE (exclusiveAlternatives s) inclusive = exclusive s .plural := by
+  have h : (exh (exclusiveAlternatives s) inclusive).Nonempty := by
     rw [exh_inclusive]
-    exact ⟨4, 4, ofCard_of_three_lt (by decide), rfl⟩), exh_inclusive]
+    exact ⟨4, 4, ofCard_of_three_lt (by decide), rfl⟩
+  rw [exhIE_eq_exh_of_nonempty _ _ h, exh_inclusive]
 
 end Number

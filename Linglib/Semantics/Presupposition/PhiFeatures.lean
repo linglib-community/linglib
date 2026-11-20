@@ -56,7 +56,7 @@ part of the addressee; otherwise the first and second person domains coincide
 Number is read at the positive values of a bundle alone, so the plural, `[−atomic, −minimal]`,
 restricts nothing, where Harbour's region operators read the same bundle as excluding atoms.
 [Strengthening recovers those regions](##Number.strengthen_plural) for the singular and the plural
-but not for the dual, whose region `Number.dualOf` is built on `[−atomic]`, a value this reading
+but not for the dual, whose region is `[+minimal]` of `[−atomic]`, a value this reading
 lacks, so the dual restricts nothing. This is Martí's undergeneration argument against
 inclusive-only plurals.
 
@@ -204,7 +204,7 @@ variable {E : Type*} [PartialOrder E] (x : E)
 /-- `[+atomic]` is defined of the atoms, the `[+atomic]` region of the whole domain, and
 `[+minimal]`, whose dual region needs `[−atomic]`, and `[+additive]`, of everything. -/
 def Feature.dom : Feature → Set E
-  | .atomic => {x | atomsOf ⊤ x}
+  | .atomic => {x | Feature.restrict .atomic true ⊤ x}
   | .minimal | .additive => Set.univ
 
 /-- A bundle is defined where its positive values are. -/
@@ -247,9 +247,9 @@ theorem Bundle.dom_eq (b : Bundle) :
     Finset.mem_filter, and_imp, Prod.forall]
   split_ifs with h
   · refine ⟨fun H ↦ ?_, fun hx f v _ hv ↦ ?_⟩
-    · simpa [Feature.dom, atomsOf] using H .atomic true h rfl
+    · simpa [Feature.dom, Feature.restrict] using H .atomic true h rfl
     · subst hv
-      cases f <;> simp_all [Feature.dom, atomsOf]
+      cases f <;> simp_all [Feature.dom, Feature.restrict]
   · refine iff_of_true (fun f v hf hv ↦ ?_) trivial
     subst hv
     cases f <;> simp_all [Feature.dom]
@@ -276,10 +276,10 @@ theorem dom_singular_ssubset_dom_plural (hy : ¬ Atom y) :
 
 /-- The singular's strengthening is the `[+atomic]` region. -/
 theorem strengthen_singular :
-    strengthen alts dom (some .singular) = {x : E | atomsOf ⊤ x} := by
+    strengthen alts dom (some .singular) = {x : E | Feature.restrict .atomic true ⊤ x} := by
   rw [strengthen_eq_self]
   · ext x
-    simp [atomsOf]
+    simp [Feature.restrict]
   · rintro ψ hψ hss
     rcases hψ with rfl | rfl
     · exact hss.ne rfl
@@ -288,11 +288,11 @@ theorem strengthen_singular :
 /-- Strengthened against the singular, the plural's unrestricted domain is the `[−atomic]` region:
 the inclusive reading of the bundle recovers the exclusive one. -/
 theorem strengthen_plural (hy : ¬ Atom y) :
-    strengthen alts dom (some .plural) = {x : E | nonAtomsOf ⊤ x} := by
+    strengthen alts dom (some .plural) = {x : E | Feature.restrict .atomic false ⊤ x} := by
   rw [strengthen_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
     (dom_singular_ssubset_dom_plural hy)]
   · ext x
-    simp [mem_dom_singular, nonAtomsOf]
+    simp [mem_dom_singular, Feature.restrict]
   · rintro χ (rfl | rfl) hss
     · exact le_rfl
     · exact absurd rfl hss.ne

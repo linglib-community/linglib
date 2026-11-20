@@ -139,7 +139,7 @@ theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
   have hs : {v | v ∈ English.Nouns.numberSystem ∧ v.IsDeterminate} = {Number.singular} := by
     ext v
     cases v <;> simp [English.Nouns.numberSystem, Number.IsDeterminate, Number.exactCard]
-  rwa [hs, Set.image_singleton] at h
+  rwa [Number.exclusiveAlternatives, hs, Set.image_singleton] at h
 
 -- (3), (4), (16), (17): in a downward-entailing environment the alternative is entailed
 theorem exhIE_of_antitone {W : Type*} {f : Set ℕ → Set W} (hf : Antitone f) {a : Set ℕ}
@@ -167,8 +167,8 @@ theorem strengthen_plural_eq_preimage_strong {E : Type*} [PartialOrder E] (c : E
   rw [Number.strengthen_plural hy]
   ext x
   have := hpos x
-  simp only [Number.nonAtomsOf, Pi.top_apply, Prop.top_eq_true, true_and, Set.mem_ofPred_eq, hc,
-    Set.mem_preimage, mem_strong]
+  simp only [Number.Feature.restrict, Pi.top_apply, Prop.top_eq_true, true_and,
+    Set.mem_ofPred_eq, hc, Set.mem_preimage, mem_strong]
   omega
 
 /-! ### The ambiguity approach
@@ -223,14 +223,11 @@ theorem homogeneous_eq_undefined_iff : homogeneous n = .undefined ↔ n ∈ sing
     Set.mem_singleton_iff]
   omega
 
-/-- Feeding more giraffes never lowers the value of the plural sentence. -/
-noncomputable def homogeneousHom : ℕ →o Trivalent where
-  toFun := homogeneous
-  monotone' m n h := supervaluationOn_mono <| by
+-- feeding more giraffes never lowers the value of the plural sentence
+theorem homogeneous_mono : Monotone homogeneous := fun m n h ↦
+  supervaluationOn_mono <| by
     rintro _ (rfl | rfl) hm
     exacts [mem_weak.2 ((mem_weak.1 hm).trans h), mem_strong.2 ((mem_strong.1 hm).trans h)]
-
-@[simp] theorem coe_homogeneousHom : ⇑homogeneousHom = homogeneous := rfl
 
 -- (23), (24)
 theorem compl_homogeneous (n : ℕ) :
