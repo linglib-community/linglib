@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.ThomsEtAl2026
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
+public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
 public import Linglib.Syntax.Minimalist.Spine
 public import Mathlib.Basic.Real.Basic
 public import Studies.ArregiPietraszko2021
@@ -34,8 +35,8 @@ some amount of input yields Group A (`exists_acquired_eq_groupA`).
 
 ## Implementation notes
 
-The nominal is the spine `[n, Poss, Num]` with or without `D`, and its tree is built from the
-spine with the specifier above Poss. The locative structure is available for alienable relations,
+The nominal is the spine `[n, Poss, Num]` with or without `D`, and its tree is the noun extended
+by the heads above it (`PlanarSyntacticObject.extend`) with the specifier above Poss. The locative structure is available for alienable relations,
 the paper's locative semantics of the applicative; the animacy of the possessor is not modelled.
 An amount phrase with *the* is recorded as a determiner of its own, weak as the paper takes it to
 be. A row attributed to a group is checked against that group's rule, and a row the paper gives
@@ -101,19 +102,19 @@ def v₀ : LexicalItem.Token := ⟨.of .v [], 100⟩
 /-- The phrase in the specifier of Poss, the possessor or *there*. -/
 def specifier : LexicalItem.Token := ⟨.of .D [], 101⟩
 
-/-- The tree of a nominal with spine `s`: each head merges with what the heads below it built, and
-the specifier merges above Poss, as in (38). -/
-def nominal (s : Spine) : Option PlanarSyntacticObject :=
-  s.heads.zipIdx.foldl (init := none) fun t ⟨c, i⟩ ↦
-    let head : PlanarSyntacticObject := .leaf ⟨.of c [], i⟩
-    let phrase := t.elim head ({head, ·})
-    some (if c = .Poss then {.leaf specifier, phrase} else phrase)
+/-- The noun at the foot of the nominal. -/
+def noun : LexicalItem.Token := ⟨.of .n [], 0⟩
+
+/-- The tree of a nominal with spine `s`: the heads above the noun merge in turn, and the
+specifier merges above Poss, as in (38). -/
+def nominal (s : Spine) : PlanarSyntacticObject :=
+  (PlanarSyntacticObject.leaf noun).extend .n 1
+    (fun i ↦ if (s.above .n)[i]? = some .Poss then some (.leaf specifier) else none) (s.above .n)
 
 /-- The φ-probe of v, merged with a nominal of spine `s`, finds the specifier of Poss. -/
 def Extracts (s : Spine) : Prop :=
-  ∃ n ∈ nominal s,
-    let t : PlanarSyntacticObject := {.leaf v₀, n}
-    ↑specifier ∈ t.goals (t.leafProbe .D) ↑v₀
+  let t : PlanarSyntacticObject := {.leaf v₀, nominal s}
+  ↑specifier ∈ t.goals (t.leafProbe .D) ↑v₀
 
 instance (s : Spine) : Decidable (Extracts s) := by unfold Extracts; infer_instance
 
