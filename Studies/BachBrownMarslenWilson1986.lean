@@ -214,7 +214,7 @@ private theorem depth_lt_of_adj {a b : Fin (n + n)} (h : (graph σ w).Adj a b) :
   rcases graph_adj.1 h with ⟨i, rfl, rfl⟩ | ⟨i, j, hij, rfl, rfl⟩ <;>
     simp only [depth_subject, depth_verb] <;> omega
 
-private theorem depth_le_of_dominates {a b : Fin (n + n)} (h : Dominates (graph σ w) a b) :
+private theorem depth_le_of_dominates {a b : Fin (n + n)} (h : (graph σ w).Dominates a b) :
     depth σ a ≤ depth σ b := by
   induction h with
   | refl => exact le_rfl
@@ -232,7 +232,7 @@ theorem isTree_graph : (graph σ w).IsTree where
     · obtain rfl := verb_inj.1 h
       exact verb_inj.2 (Fin.ext (by omega))
   root_dominates p := by
-    have hv (k : ℕ) (hk : k < n) : Dominates (graph σ w) (verb σ 0) (verb σ ⟨k, hk⟩) := by
+    have hv (k : ℕ) (hk : k < n) : (graph σ w).Dominates (verb σ 0) (verb σ ⟨k, hk⟩) := by
       induction k with
       | zero => exact (show (⟨0, hk⟩ : Fin n) = 0 by simp) ▸ .refl
       | succ k ih =>

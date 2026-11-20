@@ -83,7 +83,7 @@ section Catena
 
 variable {a b c : Fin n}
 
-private theorem exists_linked (hcat : IsCatena g {a, b, c}) (hab : a ≠ b) {v : Fin n}
+private theorem exists_linked (hcat : g.IsCatena {a, b, c}) (hab : a ≠ b) {v : Fin n}
     (hv : v ∈ ({a, b, c} : Finset (Fin n))) :
     ∃ w ∈ ({a, b, c} : Finset (Fin n)), w ≠ v ∧ g.Linked v w := by
   have : Nontrivial ↥(↑({a, b, c} : Finset (Fin n)) : Set (Fin n)) :=
@@ -107,7 +107,7 @@ private theorem exists_of_linked (hg : g.IsForest) {m x y : Fin n} (hx : g.Linke
   · exact ⟨((x, m), (m, y)), Or.inl ⟨⟨hx, hy⟩, rfl⟩, by ext; simp; tauto⟩
   · exact absurd (hg.leftUnique_adj hx hy) hxy
 
-private theorem linked_or (hcat : IsCatena g {a, b, c}) (hab : a ≠ b) :
+private theorem linked_or (hcat : g.IsCatena {a, b, c}) (hab : a ≠ b) :
     g.Linked a b ∨ g.Linked a c := by
   obtain ⟨t, ht, hta, h⟩ := exists_linked hcat hab (v := a) (by simp)
   simp only [mem_insert, mem_singleton] at ht
@@ -116,7 +116,7 @@ private theorem linked_or (hcat : IsCatena g {a, b, c}) (hab : a ≠ b) :
 
 -- §2.2: the catenae of three words are the hierarchical and the parallel ones
 theorem isCatena_triple_iff (hg : g.IsForest) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
-    IsCatena g {a, b, c} ↔ ∃ x ∈ hierarchical g ∪ parallel g,
+    g.IsCatena {a, b, c} ↔ ∃ x ∈ hierarchical g ∪ parallel g,
       ({x.1.1, x.1.2, x.2.1, x.2.2} : Finset (Fin n)) = {a, b, c} := by
   constructor
   · intro hcat
@@ -136,7 +136,7 @@ theorem isCatena_triple_iff (hg : g.IsForest) (hab : a ≠ b) (hac : a ≠ c) (h
           exists_of_linked hg h₂.symm (hb.resolve_left fun h ↦ h₁ h.symm).symm hab
         exact ⟨z, hz, e.trans (by ext; simp; tauto)⟩
   · rintro ⟨x, hx, e⟩
-    rw [← e, IsCatena]
+    rw [← e, Graph.IsCatena]
     simp only [hierarchical, parallel, mem_union, mem_filter, mem_product, Graph.mem_arcs] at hx
     rcases hx with ⟨⟨h₁, h₂⟩, h⟩ | ⟨⟨h₁, h₂⟩, h, -⟩
     all_goals
@@ -145,8 +145,8 @@ theorem isCatena_triple_iff (hg : g.IsForest) (hab : a ≠ b) (hac : a ≠ c) (h
         ext; simp; tauto
       rw [e]
       exact SimpleGraph.induce_union_connected
-        (SimpleGraph.Connected.preconnected (isCatena_pair g h₁ (hg.ne_of_adj h₁)))
-        (SimpleGraph.Connected.preconnected (isCatena_pair g h₂ (hg.ne_of_adj h₂)))
+        (SimpleGraph.Connected.preconnected (Graph.isCatena_pair g h₁ (hg.ne_of_adj h₁)))
+        (SimpleGraph.Connected.preconnected (Graph.isCatena_pair g h₂ (hg.ne_of_adj h₂)))
         ⟨x.2.1, by simp [h]⟩
 
 end Catena

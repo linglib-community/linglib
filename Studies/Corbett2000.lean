@@ -10,7 +10,7 @@ public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Semantics.Plurality.Cardinality
 public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement
-public import Linglib.Syntax.Feature.HasPhi
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
@@ -71,7 +71,8 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 * The options for agreement with conjoined noun phrases (§6.5.1) are the substrate's
   `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
   (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`). An example fits an option
-  when its target agrees (`HasPhi.Agree`) with the conjunct the option picks or with the resolved
+  when its target agrees in φ-features (`Agreement.Bundle.index`) with the conjunct the option
+  picks or with the resolved
   features, all read off the glosses' category labels (`GlossedWord.features`), a conjunct
   whose gloss marks no number being singular; the target's side is read off the order of the
   words.
@@ -805,11 +806,11 @@ variable (r : Morphology.Features) (d : HeadDirection) (cs : List Morphology.Fea
 option `a` when it agrees with what the option gives it access to: the conjunct it picks, or the
 resolved features under agreement with all (§6.5.1). -/
 def Fits : ConjunctAgreement → Prop
-  | .all => HasPhi.Agree t r
-  | a => ∃ x ∈ a.conjuncts d cs, HasPhi.Agree t x
+  | .all => Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures r).index
+  | a => ∃ x ∈ a.conjuncts d cs, Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures x).index
 
 instance : DecidablePred (Fits r d cs t)
-  | .all => inferInstanceAs (Decidable (HasPhi.Agree t r))
+  | .all => inferInstanceAs (Decidable (Compat _ _))
   | .nearest | .first => inferInstanceAs (Decidable (∃ x ∈ _, _))
 
 /-- The target fits the option `a` and no other, unless the nearest and the first conjuncts
