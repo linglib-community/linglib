@@ -10,7 +10,7 @@ public import Linglib.Phonology.Subregular.ISL
 public import Linglib.Phonology.Subregular.OSL
 public import Linglib.Core.Computability.Subsequential
 public import Linglib.Phonology.Subregular.Dependence
-public import Linglib.Core.Computability.Bimachine
+public import Linglib.Core.Computability.Bimachine.MyhillNerode
 public import Studies.LamontOHaraSmith2019
 public import Studies.McCollumEtAl2020
 

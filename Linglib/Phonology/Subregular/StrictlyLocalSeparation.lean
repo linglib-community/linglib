@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Computability.Mealy.MyhillNerode
 public import Linglib.Phonology.Subregular.OSL
 
 /-!
