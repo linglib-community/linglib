@@ -25,8 +25,9 @@ the highest role in which it is realized.
 
 ## Implementation notes
 
-The ranking is a `LinearOrder` on the role type, higher meaning more prominent. Two entities
-realized in the same role tie, so the ranking of entities by `Utterance.rank` is a total preorder.
+The ranking is a `LinearOrder` on the role type, higher meaning more prominent. An entity realized
+in several roles is ranked by the highest of them. Two entities realized in the same role tie, so
+the ranking of entities by `Utterance.rank` is a total preorder.
 `Utterance.indexed` separates them by surface position, an earlier realization outranking a later
 one.
 
