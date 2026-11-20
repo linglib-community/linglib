@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Truthmaker.Exclusion
+public import Linglib.Logic.Truthmaker.Formula
 
 /-!
 # Fine (2017): A theory of truthmaker content I, the unilateral negations
@@ -24,7 +25,8 @@ restores every regular proposition that the null state does not verify if it res
 state (`exclusionaryNeg_exclusionaryNeg`), which it need not
 (`RedBlueGreen.exclusionaryNeg_exclusionaryNeg_ne`). Under classical exclusion over a lower set of
 possible states (`ClassicalExclusion`), a single state paired with its negation is exclusive and
-exhaustive.
+exhaustive, so a formula whose letters denote such pairs is true at a world exactly when the
+classical truth tables make it true (`ClassicalExclusion.mem_upperClosure_pro_denote_iff`).
 
 Mirror exclusion on the canonical space, where a state with a literal excludes the states
 containing the mirror image of each of its literals, satisfies the three conditions
@@ -39,7 +41,15 @@ the proofs of the de Morgan laws apply it. The de Morgan laws are proved by comp
 verifiers and the subject-matter of each side, which determine a regular proposition
 (`Truthmaker.regularClosure_eq_iff`). They are stated without the regularity of the propositions
 negated. The law for disjunctions needs neither Null Exclusion nor verifiers. The law for
-conjunctions needs no distributivity.
+conjunctions needs no distributivity. In the colour frame a single colour excludes every state
+containing another colour, the least relation closed under Upward Exclusion in which distinct
+colours exclude each other.
+
+## TODO
+
+The standard proposition `(P, ∼P)` and its laws for conjunction and disjunction, the narrow and
+broad Boolean domains, and the verifiers of the negation and double negation of red in the colour
+frame are not formalized.
 
 ## References
 
@@ -99,6 +109,10 @@ variable (excl) in
 state excludes some state and is excluded by some state. -/
 def NullExclusion : Prop :=
   (∀ s : S, ¬ excl ⊥ s ∧ ¬ excl s ⊥) ∧ ∀ s : S, s ≠ ⊥ → (∃ t, excl s t) ∧ ∃ t, excl t s
+
+-- Downward Exclusion gives the part of Null Exclusion by which no state excludes the null state
+theorem DownwardExclusion.not_excl_bot (hD : DownwardExclusion excl) (q : S) : ¬ excl q ⊥ :=
+  fun h ↦ by simpa [regularClosure_empty] using hD (P := ∅) (by rwa [sSup_empty])
 
 variable (excl) in
 /-- The exclusive negation of `P` is verified by the fusions of propositions that exclude `P`. -/
@@ -361,6 +375,15 @@ theorem ClassicalExclusion.exhaustive (h : ClassicalExclusion excl P) (p : S) :
   · obtain ⟨t', hx, hst'⟩ := h.exists_excl hp s hs
     exact ⟨t', regularClosure.le_closure _ hx, hst'⟩
 
+/-- Under classical exclusion, a formula whose letters denote single states paired with their
+exclusionary negations is true at a world exactly when the classical truth tables make it true. -/
+theorem ClassicalExclusion.mem_upperClosure_pro_denote_iff {A : Type*}
+    (h : ClassicalExclusion excl P) (p : A → S) {w : S} (hw : Maximal (· ∈ P) w)
+    (φ : Formula A) :
+    w ∈ upperClosure (φ.denote fun a ↦ .mk {p a} (exclusionaryNeg excl {p a})).pro ↔
+      φ.Realize fun a ↦ w ∈ upperClosure {p a} :=
+  Formula.mem_upperClosure_pro_denote_iff (fun _ ↦ h.exclusive _) (fun _ ↦ h.exhaustive _) hw φ
+
 end CompleteLattice
 
 section Frame
@@ -534,7 +557,7 @@ every state containing another colour. -/
 def excl (s t : Set (Fin 3)) : Prop :=
   ∃ i, s = {i} ∧ ∃ j ∈ t, j ≠ i
 
-/-- The exclusionary negation of the exclusionary negation of red is not red. -/
+-- the exclusionary negation of the exclusionary negation of red is not red
 theorem exclusionaryNeg_exclusionaryNeg_ne :
     exclusionaryNeg excl (exclusionaryNeg excl {{0}}) ≠ {{0}} := by
   have hblue : ({1} : Set (Fin 3)) ∈ exclusionaryNeg excl {{0}} := by

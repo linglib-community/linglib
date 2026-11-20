@@ -46,7 +46,7 @@ it. `IsEFrame` is stated over complete lattices. The canonical frame is a powers
 distributive or Boolean ones (`forall_realize_iff_canonical`). Symmetry of exclusion is needed only
 for Plenitude, which the paper states with the event before the world while Harmony puts the world
 first, and for the comparison with worlds that are maximal with respect to compatibility. Formulas
-are those of `PlebaniRosellaSaitta2022.Formula`.
+are those of `Truthmaker.Formula`, with its classical `Truthmaker.Formula.Realize`.
 
 ## TODO
 
@@ -230,25 +230,18 @@ def denote (I : A → Set E) : Formula A → Set E
   | .conj φ ψ => denote I φ ⊻ denote I ψ
   | .disj φ ψ => denote I φ ∪ denote I ψ
 
-/-- A formula is realized by a valuation when the classical truth tables make it true. -/
-def Realize (v : A → Prop) : Formula A → Prop
-  | .atom a => v a
-  | .neg φ => ¬ Realize v φ
-  | .conj φ ψ => Realize v φ ∧ Realize v ψ
-  | .disj φ ψ => Realize v φ ∨ Realize v ψ
-
 /-- Under Harmony and Rashōmon, a formula is true at a world exactly when it is realized by the
 valuation making an atom true when the world contains one of its verifiers. -/
 theorem mem_upperClosure_denote_iff (hH : Harmony excl) (hR : PossibleFusion excl) {w : E}
     (hw : Maximal (· ∈ possible excl) w) (I : A → Set E) (φ : Formula A) :
-    w ∈ upperClosure (denote excl I φ) ↔ Realize (fun a ↦ w ∈ upperClosure (I a)) φ := by
+    w ∈ upperClosure (denote excl I φ) ↔ φ.Realize fun a ↦ w ∈ upperClosure (I a) := by
   induction φ with
   | atom a => rfl
   | neg φ ih => exact (mem_upperClosure_neg_iff hH hR hw).trans ih.not
   | conj φ ψ ihφ ihψ =>
-    simp only [denote, Realize, upperClosure_sups, UpperSet.mem_sup_iff, ihφ, ihψ]
+    simp only [denote, Formula.Realize, upperClosure_sups, UpperSet.mem_sup_iff, ihφ, ihψ]
   | disj φ ψ ihφ ihψ =>
-    simp only [denote, Realize, upperClosure_union, UpperSet.mem_inf_iff, ihφ, ihψ]
+    simp only [denote, Formula.Realize, upperClosure_union, UpperSet.mem_inf_iff, ihφ, ihψ]
 
 /-! ### Emergent exclusion and de Morgan's law -/
 
@@ -469,13 +462,13 @@ theorem worldEquiv_symm_apply (w : {w : Set (α × Bool) // Maximal (· ∈ Cano
 
 theorem mem_upperClosure_denote_worldEquiv (v : α → Prop) (φ : Formula α) :
     (worldEquiv v).1 ∈ upperClosure (denote Canonical.excl (fun a ↦ (atom a).pro) φ) ↔
-      Realize v φ := by
+      φ.Realize v := by
   rw [mem_upperClosure_denote_iff harmony_excl possibleFusion_excl
     (by rw [possible_excl]; exact (worldEquiv v).2)]
-  exact iff_of_eq (congrArg (Realize · φ) (funext fun a ↦ propext (by simp [mem_worldEquiv])))
+  exact iff_of_eq (congrArg φ.Realize (funext fun a ↦ propext (by simp [mem_worldEquiv])))
 
 theorem forall_realize_iff_canonical (φ : Formula α) :
-    (∀ v, Realize v φ) ↔ ∀ w, Maximal (· ∈ Canonical.possible) w →
+    (∀ v, φ.Realize v) ↔ ∀ w, Maximal (· ∈ Canonical.possible) w →
       w ∈ upperClosure (denote Canonical.excl (fun a ↦ (atom a).pro) φ) := by
   refine ⟨fun h w hw ↦ ?_,
     fun h v ↦ (mem_upperClosure_denote_worldEquiv v φ).1 (h _ (worldEquiv v).2)⟩
@@ -490,7 +483,7 @@ end Canonical
 /-- A formula is realized by every valuation exactly when it is true at every world of every
 E-frame under every interpretation. -/
 theorem forall_realize_iff {A : Type u} (φ : Formula A) :
-    (∀ v, Realize v φ) ↔ ∀ (E : Type u) [CompleteLattice E] (excl : E → E → Prop)
+    (∀ v, φ.Realize v) ↔ ∀ (E : Type u) [CompleteLattice E] (excl : E → E → Prop)
       (I : A → Set E) (w : E), IsEFrame excl → Maximal (· ∈ possible excl) w →
         w ∈ upperClosure (denote excl I φ) :=
   ⟨fun h _ _ _ I _ hE hw ↦
@@ -500,7 +493,7 @@ theorem forall_realize_iff {A : Type u} (φ : Formula A) :
 
 -- Theorem 9.8
 theorem exists_realize_iff {A : Type u} (φ : Formula A) :
-    (∃ v, Realize v φ) ↔ ∃ (E : Type u) (_ : CompleteLattice E) (excl : E → E → Prop)
+    (∃ v, φ.Realize v) ↔ ∃ (E : Type u) (_ : CompleteLattice E) (excl : E → E → Prop)
       (I : A → Set E) (w : E), IsEFrame excl ∧ Maximal (· ∈ possible excl) w ∧
         w ∈ upperClosure (denote excl I φ) :=
   ⟨fun ⟨v, hv⟩ ↦ ⟨_, inferInstance, _, _, _, isEFrame_excl,
