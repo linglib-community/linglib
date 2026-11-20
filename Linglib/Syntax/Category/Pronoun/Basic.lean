@@ -7,7 +7,6 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
-public import Linglib.Syntax.Feature.HasPhi
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Feature.Person.Configuration
@@ -33,7 +32,7 @@ denotation, pronoun type or binding class of its own; the kind supplies them, an
 * `Pronoun.categories`: the referential categories of Cysouw that the person and number
   realize.
 * `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind; `Pronoun.phi_toWord` says the token bears the pronoun's φ-features.
+  its kind; `Pronoun.agreement_toWord` says the token bears the pronoun's agreement bundle.
 * `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
   pronoun's number (`Pronoun.CandidateAntecedent.number_eq`).
 
@@ -172,14 +171,14 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
       (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
 
-/-- A pronoun bears the agreement features of its token: its person and clusivity, number, gender
-and case. -/
-instance : HasPhi Pronoun := ⟨fun p ↦ phi p.toWord⟩
+/-- The agreement bundle of a pronoun, that of its token: its person and clusivity, number,
+gender and case. -/
+def agreement : Agreement.Bundle := p.toWord.agreement
 
-/-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type, reflexive
-marking and word class. -/
-@[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
-    (cat : UD.UPOS) : HasPhi.phi (p.toWord pronType reflex cat) = HasPhi.phi p :=
+/-- The token of a pronoun bears the pronoun's agreement bundle, whatever its pronoun type,
+reflexive marking and word class. -/
+@[simp] theorem agreement_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
+    (cat : UD.UPOS) : (p.toWord pronType reflex cat).agreement = p.agreement :=
   rfl
 
 /-- A token marked reflexive classifies as a reflexive anaphor. -/
@@ -211,10 +210,10 @@ theorem bindingClassOf_toWord_of_isOperator {t : UD.PronType} (ht : Binding.IsOp
   rcases ht with rfl | rfl | rfl | rfl | rfl <;>
     simp +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- A candidate antecedent of a pronoun is a nominal token that agrees with it: a pro-form
-takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
+/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features:
+a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
 def CandidateAntecedent (w : Morphology.Word) : Prop :=
-  Binding.IsNominal w.cat ∧ HasPhi.Agree p w
+  Binding.IsNominal w.cat ∧ Compat p.agreement.index w.agreement.index
 
 instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -223,6 +222,6 @@ variable {p} in
 /-- A candidate antecedent has the pronoun's number, where both mark one. -/
 theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
     {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
-  Flat.compat_iff.mp (h.2 .number (by decide)) n hp m hw
+  Flat.compat_iff.mp (h.2.apply ⟨.number, by decide⟩) n hp m hw
 
 end Pronoun

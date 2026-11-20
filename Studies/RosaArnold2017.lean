@@ -70,7 +70,8 @@ structure Cell where
 
 /-- The gender contrast of a pair of characters: `same` exactly when their φ-features agree,
 the pairs a third-person singular pronoun cannot tell apart. -/
-def Gender.ofPair (w₁ w₂ : Word) : Gender := if HasPhi.Agree w₁ w₂ then .same else .different
+def Gender.ofPair (w₁ w₂ : Word) : Gender :=
+  if Compat w₁.agreement.index w₂.agreement.index then .same else .different
 
 /-- Lisa, of *Lisa gave the leftover pie to Brendan*. -/
 def lisa : Word :=

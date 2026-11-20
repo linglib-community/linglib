@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Pi
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.Compat
 public import Linglib.Morphology.Word.Features
@@ -10,7 +11,11 @@ public import Linglib.Syntax.Feature.Person.Specification
 
 A feature bundle gives a slot to each of the five dimensions in which the form of one element
 may covary with another: person, number, gender, case and definiteness, the first three the
-φ-features (`Agreement.Dimension.phi`). The person slot is a person specification
+φ-features (`Agreement.Dimension.phi`). The index of a bundle and its concord
+(`Agreement.Bundle.index`, `Agreement.Bundle.concord`) are its projections onto the φ-features
+and onto case, number and gender, and two elements agree in one of them when the projections of
+their bundles are compatible. Bundles are compatible exactly when they unify
+(`Agreement.Bundle.coe_sup_coe_eq_top_iff`). The person slot is a person specification
 (`Syntax/Feature/Person/Specification.lean`), so that a form with no clusivity is less specific
 than an inclusive or an exclusive one, and the others are slots of the flat order
 of `Core/Order/Flat.lean`, a value or nothing. The partial order of bundles, their bottom, the
@@ -25,11 +30,16 @@ Bundles are borne by pronouns and nominals as well as by agreement targets, and 
 by morphology, so the file stands with the feature inventories below `Syntax/Agreement` and
 `Morphology`. Its declarations keep the namespace `Agreement`.
 
+The slots hold the cross-linguistic values of the token features, so that bundles of different
+languages compare. A language-particular system, such as a set of noun classes, is not a
+bundle; `Syntax/Gender/AgreementClasses.lean` treats those over an arbitrary feature type.
+
 ## References
 
 * [corbett-1998]
 * [corbett-2006]
 * [norris-2019]
+* [wechsler-zlatic-2000]
 -/
 
 @[expose] public section
@@ -45,6 +55,10 @@ inductive Dimension where
 /-- The φ-features are the three indisputable agreement features, person, number and gender
 ([corbett-2006]). -/
 def Dimension.phi : Finset Dimension := {.person, .number, .gender}
+
+/-- The concord features are case, number and gender, those in which the elements of a noun
+phrase covary ([wechsler-zlatic-2000]). -/
+def Dimension.concord : Finset Dimension := {.case, .number, .gender}
 
 /-- The token feature a dimension is. It is reducible, so that the values of a dimension reduce
 to those of its feature when coercions are sought. -/
@@ -130,7 +144,23 @@ theorem Bundle.coe_sup_coe_update_bot (b : Bundle) (d : Dimension) (x : d.Slot) 
       (Dimension.Slot.unify d (b d) x).map (Function.update b d) :=
   WithTop.piUnify_update_bot Dimension.Slot.isLUB_unify b d x
 
+/-- Two bundles fail to unify exactly when they are incompatible. -/
+theorem Bundle.coe_sup_coe_eq_top_iff {x y : Bundle} :
+    (x : WithTop Bundle) ⊔ y = ⊤ ↔ ¬ Compat x y :=
+  WithTop.eq_top_iff_of_isLUB (WithTop.isLUB_piUnify Dimension.Slot.isLUB_unify x y)
+
 namespace Bundle
+
+/-- The index of a bundle, its φ-features: the projection onto person, number and gender. -/
+def index (x : Bundle) : (d : Dimension.phi) → Dimension.Slot d := Dimension.phi.restrict x
+
+/-- The concord of a bundle: the projection onto case, number and gender. -/
+def concord (x : Bundle) : (d : Dimension.concord) → Dimension.Slot d :=
+  Dimension.concord.restrict x
+
+@[simp] theorem index_apply (x : Bundle) (d : Dimension.phi) : x.index d = x d := rfl
+
+@[simp] theorem concord_apply (x : Bundle) (d : Dimension.concord) : x.concord d = x d := rfl
 
 /-- The bundle with the dimension `d` set to the value `v`. -/
 def set (d : Dimension) (v : d.Value) (b : Bundle) : Bundle :=
