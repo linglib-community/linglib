@@ -26,7 +26,10 @@ level](##Minimalist.Cat.antisymmRel_T); Rizzi's topics recur on both sides of th
 and focus are level](##Minimalist.Cat.antisymmRel_Top_Foc). Where the sources agree the order is
 strict, as along the verbal spine from the verb to Force and the nominal spine from the noun to K,
 and where no source relates two heads they are incomparable: Keine's nominalized clause [neither
-contains nor is contained in a CP](##Minimalist.Cat.not_extendsTo_Nmlz_C).
+contains nor is contained in a CP](##Minimalist.Cat.not_extendsTo_Nmlz_C). The heads of any one
+cited sequence extend one another in its order (`Minimalist.Cat.pairwise_extendsTo`), and that
+stays true as further sequences are cited, so a claim about the heads a source draws is stated
+over that sequence.
 
 ## Main definitions
 
@@ -153,6 +156,28 @@ theorem Step.extendsTo (h : c.Step d) : c.ExtendsTo d := .single h
 
 theorem Step.family_eq (h : c.Step d) : c.family = d.family :=
   (by decide +kernel : ∀ p ∈ citedSteps, p.1.family = p.2.family) _ h
+
+private theorem isChain_of_forall_mem_zip_tail {r : Cat → Cat → Prop} :
+    ∀ {l : List Cat}, (∀ p ∈ l.zip l.tail, r p.1 p.2) → l.IsChain r
+  | [], _ => .nil
+  | [_], _ => .singleton _
+  | x :: y :: _, h =>
+    List.isChain_cons_cons.2 ⟨h (x, y) List.mem_cons_self,
+      isChain_of_forall_mem_zip_tail fun p hp ↦ h p (List.mem_cons_of_mem _ hp)⟩
+
+/-- The heads of a cited sequence extend one another in its order: a source's own hierarchy
+embeds in the order that collects them all. -/
+theorem pairwise_extendsTo {l : List Cat} (hl : l ∈ citedSequences) : l.Pairwise ExtendsTo :=
+  List.isChain_iff_pairwise.1 <| isChain_of_forall_mem_zip_tail fun p hp ↦
+    Step.extendsTo (c := p.1) (d := p.2) <| List.mem_append_left _ <|
+      List.mem_flatMap.2 ⟨l, List.mem_cons_of_mem _ hl, hp⟩
+
+/-- Two heads of one cited sequence are comparable, whatever other sequences are cited. -/
+theorem extendsTo_or_extendsTo {l : List Cat} (hl : l ∈ citedSequences) (hc : c ∈ l)
+    (hd : d ∈ l) : c.ExtendsTo d ∨ d.ExtendsTo c :=
+  have h := pairwise_extendsTo hl
+  List.Pairwise.forall_of_forall_of_flip (R := fun x y ↦ x.ExtendsTo y ∨ y.ExtendsTo x)
+    (fun _ _ ↦ .inl .refl) (h.imp Or.inl) (h.imp Or.inr) hc hd
 
 /-- A category extends only to categories of its family. -/
 theorem ExtendsTo.family_eq (h : c.ExtendsTo d) : c.family = d.family := by
