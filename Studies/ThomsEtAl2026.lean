@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.ThomsEtAl2026
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
 public import Linglib.Syntax.Minimalist.SyntacticObject.Notation
+public import Linglib.Syntax.Minimalist.Lexicon
 public import Linglib.Syntax.Minimalist.Spine
 public import Mathlib.Basic.Real.Basic
 public import Studies.ArregiPietraszko2021
@@ -87,17 +88,16 @@ def sizes (d : Examples.Determiner) : List Spine := if d.NeedsD then [dP] else [
 
 /-! ### The two structures -/
 
-/-- The light verb, whose probe searches for a D. -/
-def v₀ : LexicalItem.Token := ⟨.of .v [], 100⟩
-
-/-- The possessor, or *there* in an existential. -/
-def specifier : LexicalItem.Token := ⟨.of .D [], 101⟩
-
-/-- The applicative head, which selects a DP. -/
-def appl₀ : LexicalItem.Token := ⟨.of .Appl [.D], 102⟩
-
-/-- The noun at the foot of the possessee. -/
-def noun : LexicalItem.Token := ⟨.of .n [], 0⟩
+/-- The words of the two structures beside the heads of the possessee. -/
+lexicon tokens from 100 where
+  /-- The light verb, whose probe searches for a D. -/
+  v₀ : .v
+  /-- The possessor, or *there* in an existential. -/
+  specifier : .D
+  /-- The applicative head, which selects a DP. -/
+  appl₀ : .Appl [.D]
+  /-- The noun at the foot of the possessee. -/
+  noun : .n
 
 /-- The possessee with spine `s`: the noun extended by the heads above it, with `spec`, when there
 is one, in the specifier of Poss. -/
