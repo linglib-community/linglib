@@ -128,7 +128,8 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} [PartialOrder D] (role
     matrixDegP, Set.Nonempty, Set.mem_inter_iff, Set.mem_image, Set.mem_ofPred_eq,
     Comparison.interval_gt, Set.mem_Ioi, and_assoc]
   exact exists_congr fun δ ↦ and_congr_right fun _ ↦
-    ⟨fun ⟨e, h₁, h₂, h₃⟩ ↦ ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩, fun ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩ ↦ ⟨e, h₁, h₂, h₃⟩⟩
+    ⟨fun ⟨e, h₁, h₂, h₃⟩ ↦ ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩,
+      fun ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩ ↦ ⟨e, h₁, h₂, h₃⟩⟩
 
 end Derivation
 
