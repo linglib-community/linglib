@@ -1,36 +1,48 @@
 module
 
-public import Mathlib.Order.Bounds.Basic
 public import Linglib.Data.Examples.Rett2020b
-public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Degree.Quantifier
 
 /-!
 # Rett (2020): Separate but equal: a typology of equative constructions
 
-This file formalizes the chapter's semantic typology of equatives. Descriptively, languages
-mark an equative by a relativizer standard marker with or without a parameter marker, by a
-predicate meaning *equal* or an adverbial meaning *equally*, by conjoined clauses, by a
-case-marked standard, or by dedicated morphemes, `Strategy`. Three diagnostics sort these into
-the classes of Figure 3, `Class`: predicative equatives have no weak *at least* reading;
-implicit equatives, the standard-marker-only relatives and the conjoined ones, are evaluative;
-and explicit equatives, whose parameter is marked, split into the sufficientive ones, which
-factor modifiers like *twice* can modify, and the demonstrative ones, which they cannot. The
-class semantics of section 5 derive the first two diagnostics: the sufficientive equative
-relates degree sets by inclusion, `sufficientive_iff`, the demonstrative one predicates the
-standard's maximal degree of the target, `demonstrative_iff`, so both hold when the target
-exceeds the standard and neither mentions a standard of tallness, while the implicit equative
-equates two evaluative properties, `implicit_evaluative`, and the predicative one an equality,
-`not_predicative_of_lt`. Modifiability is the chapter's claim that only the sufficientive
-strategy involves degree quantification. The examples of sections 3 and 4 are checked against
-Figure 3, `judgment_iff_expected`, and the sufficientive is the equative `μ b ≤ μ a` read at
-extent sets, `sufficientive_iff`.
+An equative of a gradable adjective relates the set `S` of degrees its standard of comparison
+reaches to the set `T` of degrees its target reaches; for an adjective with measure `μ`, a target
+`a` and a standard `b` these are `Set.Iic (μ b)` and `Set.Iic (μ a)`. We define the four classes
+of equative constructions that the chapter distinguishes by their truth conditions,
+`Class.Holds`. A predicative equative, formed with a word for *equal*, holds when `T = S`. A
+sufficientive equative, English *as … as*, is the degree quantifier `S ⊆ T`. A demonstrative
+equative, Italian *tanto … quanto*, says that the greatest degree of `S` is in `T`,
+`Quantifier.MaxIn T S`. An implicit equative, one with no parameter marker, holds when `T` and
+`S` both contain a degree above a contextual standard `s`.
+
+A demonstrative equative holds exactly when the standard has a greatest degree and the
+sufficientive equative holds, `holds_demonstrative_iff`, so on a measure both are `μ b ≤ μ a`.
+A class has a weak reading, `Class.HasWeakReading`, when its equative holds of some target that
+exceeds its standard, and it is evaluative, `Class.Evaluative`, when its equative entails that the
+target exceeds `s`. Every class but the predicative one has a weak reading, `hasWeakReading_iff`,
+and the implicit class alone is evaluative, `evaluative_iff`. The examples that continue an
+equative with *in fact she's taller* are acceptable exactly in the classes with a weak reading,
+`acceptable_iff_hasWeakReading`, and those that continue it with *but she's short* exactly in the
+classes that are not evaluative, `acceptable_iff_not_evaluative`.
 
 ## Implementation notes
 
-The descriptive strategies split the parameter-marked relatives into sufficientive and
-demonstrative as section 4.3 does; case-marked and dedicated strategies have no class, as the
-chapter leaves them for future research. The Slovenian cells of Figure 2 that the chapter
-leaves uncertain have no rows.
+The truth conditions are stated on sets of degrees, the type of the chapter's degree
+quantifiers, and not on measures, since the sufficientive and the demonstrative equative differ
+only on a standard with no greatest degree. The implicit equative of the chapter also closes
+existentially over a property that the two clauses share; it constrains nothing and is left out,
+so that the implicit equative is the conjunction of two positive forms. The chapter derives it
+for the relatives with only a standard marker and classes the conjoined equatives with them.
+
+That a factor modifier such as *twice* is acceptable only in a sufficientive equative is the
+chapter's claim that only a sufficientive parameter marker is a degree quantifier. It does not
+follow from the truth conditions, which a factor could scale in every class, and
+`acceptable_iff_eq_sufficientive` checks it against the examples as stated.
+
+The strategies with a case-marked standard or with dedicated morphemes have no class. Slovenian
+has no row for the diagnostics the chapter records no judgment on, and neither has (60), which
+the chapter prints without a judgment.
 
 ## References
 
@@ -41,186 +53,133 @@ leaves uncertain have no rows.
 
 @[expose] public section
 
+open Set
+
 namespace Rett2020b
 
+open Examples (Example Strategy Diagnostic)
 
-/-! ### Strategies and classes -/
+/-! ### Classes -/
 
-/-- The descriptive strategies of section 3, the parameter-marked relatives split as in
-section 4.3. -/
-inductive Strategy where
-  /-- The strategy with only a relativizer standard marker, English *tall like Bill* or Italian
-  *come*. -/
-  | smOnly
-  /-- The strategy with a degree-demonstrative parameter marker and a relativizer standard marker,
-  Italian *tanto … quanto* or Spanish *tan … como*. -/
-  | demonstrative
-  /-- The strategy with a sufficientive parameter marker and a relativizer standard marker, English
-  *as … as* or German *so … wie*. -/
-  | sufficientive
-  /-- The strategy with a main predicate meaning *equal*, Swahili *sawa*. -/
-  | predicateMain
-  /-- The strategy with an adverbial meaning *equally*, Mandarin *yíyàng* or Swedish *lika*. -/
-  | predicateAdverbial
-  /-- Conjoined parallel clauses, often with an additive particle. -/
-  | conjoined
-  /-- The strategy with a case marker or adposition as standard marker, as in Greenlandic and
-  Quechua. -/
-  | caseMarked
-  /-- The strategy with construction-specific markers, Welsh *cyn … â*. -/
-  | dedicated
-  deriving DecidableEq
-
-/-- The theoretical classes of Figure 3. -/
+/-- Figure 3: the theoretical classes of equatives. -/
 inductive Class where
+  /-- The equatives formed with a predicate or an adverbial meaning *equal*. -/
   | predicative
+  /-- The explicit equatives whose parameter marker is a sufficientive, a degree quantifier. -/
   | sufficientive
+  /-- The explicit equatives whose parameter marker is a degree demonstrative. -/
   | demonstrative
+  /-- The equatives that are not predicative and do not mark their parameter. -/
   | implicit
   deriving DecidableEq, Fintype
 
-/-- Figure 3's classification; the predicate subtypes pattern together, the standard-marker-only
-relatives and the conjoined equatives are implicit, and the case-marked and dedicated
-strategies are left open. -/
-def Strategy.class? : Strategy → Option Class
+/-- Figure 3: the class of a strategy, where the chapter assigns one. -/
+def Examples.Strategy.class? : Strategy → Option Class
   | .smOnly | .conjoined => some .implicit
   | .demonstrative => some .demonstrative
   | .sufficientive => some .sufficientive
   | .predicateMain | .predicateAdverbial => some .predicative
-  | .caseMarked | .dedicated => none
+  | .dedicated => none
 
-/-- The diagnostics of section 4.1 are the continuation *in fact she's taller*, the continuation
-*but she's short*, and a factor modifier. -/
-inductive Diagnostic where
-  | weak
-  | evaluativity
-  | factor
-  deriving DecidableEq, Fintype
+/-- The class of the strategy of an example. -/
+def Examples.Example.class? (x : Example) : Option Class := x.strategy.bind (·.class?)
 
-/-- Every class but the predicative one has a weak, *at least* reading. -/
-def Class.HasWeakReading : Class → Prop
-  | .predicative => False
-  | _ => True
+/-! ### Truth conditions -/
+
+variable {D : Type*} [LinearOrder D] {s x y : D} {S T : Set D} {c : Class}
+
+/-- The truth conditions of an equative of each class, for the degrees `S` of the standard of
+comparison, the degrees `T` of the target and a contextual standard `s`: the lexical equality of
+a predicative equative, the set-based *as* of (5b), the demonstrative equative of (86) and the
+two evaluative clauses of (81). -/
+def Class.Holds (s : D) : Class → Set D → Set D → Prop
+  | .predicative, S, T => T = S
+  | .sufficientive, S, T => S ⊆ T
+  | .demonstrative, S, T => Quantifier.MaxIn T S
+  | .implicit, S, T => (T ∩ Ioi s).Nonempty ∧ (S ∩ Ioi s).Nonempty
+
+/-- A demonstrative equative holds exactly when the standard has a greatest degree and the
+sufficientive equative holds. -/
+theorem holds_demonstrative_iff (hT : IsLowerSet T) :
+    Class.demonstrative.Holds s S T ↔ (∃ m, IsGreatest S m) ∧ Class.sufficientive.Holds s S T :=
+  ⟨fun ⟨m, hm, h⟩ ↦ ⟨⟨m, h⟩, fun _ hd ↦ hT (h.2 hd) hm⟩, fun ⟨⟨m, h⟩, hST⟩ ↦ ⟨m, hST h.1, h⟩⟩
+
+@[simp]
+theorem holds_predicative_Iic : Class.predicative.Holds s (Iic y) (Iic x) ↔ x = y := Iic_inj
+
+@[simp]
+theorem holds_sufficientive_Iic : Class.sufficientive.Holds s (Iic y) (Iic x) ↔ y ≤ x :=
+  Iic_subset_Iic
+
+@[simp]
+theorem holds_demonstrative_Iic : Class.demonstrative.Holds s (Iic y) (Iic x) ↔ y ≤ x :=
+  Quantifier.maxIn_Iic
+
+@[simp]
+theorem holds_implicit_Iic : Class.implicit.Holds s (Iic y) (Iic x) ↔ s < x ∧ s < y := by
+  simp [Class.Holds, Iic_inter_Ioi]
+
+/-! ### Weak readings and evaluativity -/
+
+variable (D) in
+/-- A class has a weak reading when its equative holds of some target that exceeds its
+standard. -/
+def Class.HasWeakReading (c : Class) : Prop := ∃ s x y : D, y < x ∧ c.Holds s (Iic y) (Iic x)
+
+variable (D) in
+/-- A class is evaluative when its equative entails that the target exceeds the contextual
+standard. -/
+def Class.Evaluative (c : Class) : Prop := ∀ s x y : D, c.Holds s (Iic y) (Iic x) → s < x
+
+/-- Every class but the predicative one has a weak reading. -/
+theorem hasWeakReading_iff [Nonempty D] [NoMaxOrder D] :
+    c.HasWeakReading D ↔ c ≠ .predicative := by
+  obtain ⟨s⟩ := ‹Nonempty D›
+  obtain ⟨y, hy⟩ := exists_gt s
+  obtain ⟨x, hx⟩ := exists_gt y
+  cases c
+  · simp [Class.HasWeakReading]
+  · simpa [Class.HasWeakReading] using ⟨x, y, hx, hx.le⟩
+  · simpa [Class.HasWeakReading] using ⟨x, y, hx, hx.le⟩
+  · simpa [Class.HasWeakReading] using ⟨s, x, y, hx, hy.trans hx, hy⟩
 
 /-- The implicit class alone is evaluative. -/
-def Class.Evaluative : Class → Prop
-  | .implicit => True
-  | _ => False
-
-/-- The sufficientive class alone admits a factor modifier, being the only one whose parameter
-marker is a degree quantifier. -/
-def Class.Modifiable : Class → Prop
-  | .sufficientive => True
-  | _ => False
-
-instance : DecidablePred Class.HasWeakReading := fun c ↦ by
-  cases c <;> unfold Class.HasWeakReading <;> infer_instance
-
-instance : DecidablePred Class.Evaluative := fun c ↦ by
-  cases c <;> unfold Class.Evaluative <;> infer_instance
-
-instance : DecidablePred Class.Modifiable := fun c ↦ by
-  cases c <;> unfold Class.Modifiable <;> infer_instance
-
-/-- A diagnostic sentence is expected to be acceptable for a class with the weak continuation when
-the class has a weak reading, the short continuation when it is not evaluative, and the factor
-modifier when it is modifiable. -/
-def Class.Expects (c : Class) : Diagnostic → Prop
-  | .weak => c.HasWeakReading
-  | .evaluativity => ¬ c.Evaluative
-  | .factor => c.Modifiable
-
-instance (c : Class) : DecidablePred c.Expects := fun d ↦ by
-  cases d <;> unfold Class.Expects <;> infer_instance
-
-/-! ### The class semantics -/
-
-variable {E D : Type*} [LinearOrder D] (μ : E → D) (s : D) (a b : E)
-
-/-- A predicative equative holds when the target's degree equals the standard's. -/
-def predicative : Prop := μ a = μ b
-
-/-- The sufficientive equative, the set-based *as* of (5-b), holds when the standard's degrees are
-among the target's. -/
-def sufficientive : Prop := Set.Iic (μ b) ⊆ Set.Iic (μ a)
-
-/-- The demonstrative equative (86) holds when the target has the maximal degree of the standard's
-degree relative. -/
-def demonstrative : Prop := ∃ d, IsGreatest (Set.Iic (μ b)) d ∧ d ≤ μ a
-
-/-- The implicit equative (81) holds when the target and the standard share the evaluative property
-of exceeding the standard of comparison `s`. -/
-def implicit : Prop := s < μ a ∧ s < μ b
-
-/-- A factor modifier scales the standard's degrees before the sufficientive relates them. -/
-def sufficientiveFactor (f : D → D) : Prop := f '' Set.Iic (μ b) ⊆ Set.Iic (μ a)
-
-theorem sufficientive_iff : sufficientive μ a b ↔ μ b ≤ μ a := Set.Iic_subset_Iic
-
-theorem demonstrative_iff : demonstrative μ a b ↔ μ b ≤ μ a :=
-  ⟨fun ⟨_, hd, h⟩ ↦ (hd.unique isGreatest_Iic) ▸ h, fun h ↦ ⟨μ b, isGreatest_Iic, h⟩⟩
-
-theorem sufficientiveFactor_iff {f : D → D} (hf : Monotone f) :
-    sufficientiveFactor μ a b f ↔ f (μ b) ≤ μ a :=
-  ⟨fun h ↦ h ⟨μ b, le_rfl, rfl⟩, fun h _ ⟨_, hd, hdf⟩ ↦ hdf ▸ (hf hd).trans h⟩
-
-theorem sufficientive_of_lt (h : μ b < μ a) : sufficientive μ a b :=
-  (sufficientive_iff μ a b).mpr h.le
-
-theorem demonstrative_of_lt (h : μ b < μ a) : demonstrative μ a b :=
-  (demonstrative_iff μ a b).mpr h.le
-
-theorem implicit_of_lt (hb : s < μ b) (h : μ b < μ a) : implicit μ s a b := ⟨hb.trans h, hb⟩
-
-theorem not_predicative_of_lt (h : μ b < μ a) : ¬ predicative μ a b := h.ne'
-
-theorem implicit_evaluative (h : implicit μ s a b) : s < μ a := h.1
-
-theorem nonevaluative (hab : μ a = μ b) (hs : μ a ≤ s) :
-    predicative μ a b ∧ sufficientive μ a b ∧ demonstrative μ a b ∧ ¬ implicit μ s a b :=
-  ⟨hab, (sufficientive_iff μ a b).mpr hab.ge, (demonstrative_iff μ a b).mpr hab.ge,
-    fun h ↦ absurd h.1 (not_lt.mpr hs)⟩
+theorem evaluative_iff [Nonempty D] : c.Evaluative D ↔ c = .implicit := by
+  obtain ⟨d⟩ := ‹Nonempty D›
+  cases c
+  · exact iff_of_false (fun h ↦ lt_irrefl d (h d d d (holds_predicative_Iic.2 rfl))) (by decide)
+  · exact iff_of_false (fun h ↦ lt_irrefl d (h d d d (holds_sufficientive_Iic.2 le_rfl)))
+      (by decide)
+  · exact iff_of_false (fun h ↦ lt_irrefl d (h d d d (holds_demonstrative_Iic.2 le_rfl)))
+      (by decide)
+  · exact iff_of_true (fun _ _ _ h ↦ (holds_implicit_Iic.1 h).1) rfl
 
 /-! ### The chapter's examples -/
 
-/-- The strategies by their `paperFeatures` labels. -/
-def Strategy.labels : List (String × Strategy) :=
-  [("smOnly", .smOnly), ("demonstrative", .demonstrative), ("sufficientive", .sufficientive),
-   ("predicateMain", .predicateMain), ("predicateAdverbial", .predicateAdverbial),
-   ("conjoined", .conjoined), ("caseMarked", .caseMarked), ("dedicated", .dedicated)]
+variable (D) [Nonempty D]
 
-/-- The diagnostics by their `paperFeatures` labels. -/
-def Diagnostic.labels : List (String × Diagnostic) :=
-  [("weak", .weak), ("evaluativity", .evaluativity), ("factor", .factor)]
+/-- An equative continued by *in fact she's taller* is acceptable exactly when its class has a
+weak reading. -/
+theorem acceptable_iff_hasWeakReading [NoMaxOrder D] : ∀ x : Example, x.diagnostic = some .weak →
+    ∀ c ∈ x.class?, (x.datum.judgment = .acceptable ↔ c.HasWeakReading D) := by
+  simp only [hasWeakReading_iff]
+  decide
 
-/-- An example records its strategy, the diagnostic it applies if any, and the judgment. -/
-structure Row where
-  strategy : Strategy
-  diagnostic : Option Diagnostic
-  judgment : Judgment
+/-- An equative continued by *but she's short* is acceptable exactly when its class is not
+evaluative. -/
+theorem acceptable_iff_not_evaluative : ∀ x : Example, x.diagnostic = some .evaluativity →
+    ∀ c ∈ x.class?, (x.datum.judgment = .acceptable ↔ ¬ c.Evaluative D) := by
+  simp only [evaluative_iff]
+  decide
 
-/-- A datum read into its row. -/
-def Row.ofDatum (e : Datum) : Option Row := do
-  let s ← e.parse? "strategy" Strategy.labels
-  let d ← match e.feature? "diagnostic" with
-    | none => some none
-    | some v => (Diagnostic.labels.lookup v).map some
-  pure ⟨s, d, e.judgment⟩
-
-theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
-
-/-- The chapter's examples. -/
-def data : List Row := Examples.all.filterMap Row.ofDatum
-
-/-- A diagnostic sentence is acceptable exactly when Figure 3 expects it of the strategy's
-class. -/
-theorem judgment_iff_expected :
-    ∀ d ∈ data, ∀ c : Class, d.strategy.class? = some c → ∀ x : Diagnostic, d.diagnostic = some x →
-      (d.judgment = .acceptable ↔ c.Expects x) := by
+-- (54), (59), (62), (64), (67), (72), (75)
+theorem acceptable_iff_eq_sufficientive : ∀ x : Example, x.diagnostic = some .factor →
+    ∀ c ∈ x.class?, (x.datum.judgment = .acceptable ↔ c = .sufficientive) := by
   decide
 
 -- Figure 3
-theorem class_attested : ∀ c : Class, ∃ d ∈ data, d.strategy.class? = some c := by
+theorem exists_class_diagnostic :
+    ∀ (c : Class) (d : Diagnostic), ∃ x : Example, x.class? = some c ∧ x.diagnostic = some d := by
   decide
 
 end Rett2020b
