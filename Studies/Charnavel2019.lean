@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Charnavel2019
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Discourse.LogophoricRole
 public import Linglib.Syntax.Binding.Tree
 public import Linglib.Data.Examples.Readers
 

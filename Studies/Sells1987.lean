@@ -5,7 +5,7 @@ public import Mathlib.Order.UpperLower.Principal
 public import Linglib.Data.Examples.Sells1987
 public import Linglib.Fragments.Ewe.Pronouns
 public import Linglib.Fragments.Icelandic.Reciprocals
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Discourse.LogophoricRole
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -35,7 +35,7 @@ role (`fits_diagnostic_iff`), and the self fits Icelandic *sig*.
   speaker takes no one's point of view has no head to specify a role, and is entered with every
   role external.
 * `Environment.internal` takes values in `Finset LogophoricRole`, which keeps membership
-  decidable, and `Environment.internalEmbedding` bundles it with the proof that each value is a
+  decidable, and `Environment.internalOrderEmbedding` bundles it with the proof that each value is a
   lower set.
 
 ## TODO
@@ -91,20 +91,20 @@ theorem exists_internal_eq_iff {s : Finset LogophoricRole} :
 namespace Examples.Environment
 
 /-- `Environment.internal` as an order embedding into the lower sets of roles. -/
-def internalEmbedding : Environment ↪o LowerSet LogophoricRole :=
+def internalOrderEmbedding : Environment ↪o LowerSet LogophoricRole :=
   .ofMapLEIff (fun e ↦ ⟨e.internal, exists_internal_eq_iff.1 ⟨e, rfl⟩⟩) fun _ _ ↦
     Finset.coe_subset.trans internal_subset_internal
 
 @[simp]
-theorem coe_internalEmbedding (e : Environment) :
-    (internalEmbedding e : Set LogophoricRole) = e.internal :=
+theorem coe_internalOrderEmbedding (e : Environment) :
+    (internalOrderEmbedding e : Set LogophoricRole) = e.internal :=
   rfl
 
 @[simp]
-theorem mem_internalEmbedding : r ∈ internalEmbedding e ↔ r ∈ e.internal :=
+theorem mem_internalOrderEmbedding : r ∈ internalOrderEmbedding e ↔ r ∈ e.internal :=
   Iff.rfl
 
-theorem internalEmbedding_surjective : Function.Surjective internalEmbedding := fun s ↦ by
+theorem internalOrderEmbedding_surjective : Function.Surjective internalOrderEmbedding := fun s ↦ by
   classical
   obtain ⟨e, he⟩ := exists_internal_eq_iff (s := (s : Set LogophoricRole).toFinset).2
     (by simp [s.lower])
@@ -112,10 +112,10 @@ theorem internalEmbedding_surjective : Function.Surjective internalEmbedding := 
 
 /-- The environments are the lower sets of the hierarchy of roles, in the order of Table 1. -/
 noncomputable def internalOrderIso : Environment ≃o LowerSet LogophoricRole :=
-  RelIso.ofSurjective _ internalEmbedding_surjective
+  RelIso.ofSurjective _ internalOrderEmbedding_surjective
 
 @[simp]
-theorem coe_internalOrderIso : ⇑internalOrderIso = internalEmbedding :=
+theorem coe_internalOrderIso : ⇑internalOrderIso = internalOrderEmbedding :=
   rfl
 
 end Examples.Environment
@@ -124,9 +124,9 @@ end Examples.Environment
 in every environment in which `r'` is. -/
 theorem le_iff_forall_mem_internal :
     r ≤ r' ↔ ∀ e : Environment, r' ∈ e.internal → r ∈ e.internal := by
-  refine ⟨fun h e ↦ (internalEmbedding e).lower h, fun h ↦ ?_⟩
-  obtain ⟨e, he⟩ := internalEmbedding_surjective (.Iic r')
-  have h' : r' ∈ internalEmbedding e → r ∈ internalEmbedding e := h e
+  refine ⟨fun h e ↦ (internalOrderEmbedding e).lower h, fun h ↦ ?_⟩
+  obtain ⟨e, he⟩ := internalOrderEmbedding_surjective (.Iic r')
+  have h' : r' ∈ internalOrderEmbedding e → r ∈ internalOrderEmbedding e := h e
   rw [he] at h'
   exact h' (LowerSet.mem_Iic_iff.2 le_rfl)
 

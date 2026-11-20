@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Person.CaseConstraint
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Discourse.LogophoricRole
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Fragments.Romance.Italian.Pronouns
 public import Linglib.Fragments.Romance.Spanish.Clitics
@@ -282,8 +282,9 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 /-! ### Logophoric roles (§6.2) -/
 
-/-- The prominence values are the logophoric roles of [sells-1987] in the order of his hierarchy,
-proximate arguments being pivots, participants selves, and authors sources. -/
+/-- (46): the prominence values are the logophoric roles of [sells-1987] in the order of his
+hierarchy, a `proximate` argument being at least a pivot, a `participant` at least a self, and an
+`author` a source. -/
 def ProminenceThreshold.toLogophoricRole : ProminenceThreshold ≃o LogophoricRole where
   toFun
     | .proximate => .pivot
@@ -296,15 +297,6 @@ def ProminenceThreshold.toLogophoricRole : ProminenceThreshold ≃o LogophoricRo
   left_inv := by decide
   right_inv := by decide
   map_rel_iff' := by decide
-
-theorem family_logophoric_assignments :
-    strongGrammar.prominence.toLogophoricRole = .pivot ∧
-      ultraStrongGrammar.prominence.toLogophoricRole = .pivot ∧
-      weakGrammar.prominence.toLogophoricRole = .pivot ∧
-      superStrongGrammar.prominence.toLogophoricRole = .self ∧
-      meFirstGrammar.prominence.toLogophoricRole = .source ∧
-      pg3Grammar.prominence.toLogophoricRole = .source := by
-  decide
 
 /-! ### The paper's examples (§4) -/
 
