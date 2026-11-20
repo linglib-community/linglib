@@ -15,12 +15,13 @@ Algebraic semantics models parthood as a partial order and mereological sum as j
 reference properties of a region, a set of individuals, are then mathlib predicates: cumulativity
 is `SupClosed`, divisiveness `IsLowerSet` and quantization `IsAntichain (· ≤ ·)`, and Link's
 closure `*P` is `supClosure`, so a region is quantized and cumulative only if it has at most one
-member (`Mereology.qua_and_cum_iff_subsingleton`). The carrier
-of atoms and overlap has a null individual `⊥`, as a Boolean algebra does, and the individuals
-of the sources are its other elements: an atom is `IsAtom`, two individuals overlap when they
-are not `Disjoint` (`Mereology.not_disjoint_iff_exists`), and the remainder of a part in a
-whole is `y \ x`. A classical mereology without a null individual is a complete Boolean
-algebra without its `⊥` (`Semantics/Mereology/Classical.lean`).
+member (`Mereology.qua_and_cum_iff_subsingleton`).
+
+Atoms and counting are stated here on a carrier with a least element `⊥`, as the sets of atoms
+of a model are: an atom is `IsAtom`, two individuals overlap when they are not `Disjoint`
+(`Mereology.not_disjoint_iff_exists`), and `⊥` is no individual. On a part structure without a
+null element an atom is `IsMin` and overlap is `Mereology.Overlap`; `WithBot.isAtom_coe` and
+`Mereology.overlap_iff_not_disjoint_coe` translate between the two.
 
 ## Implementation notes
 
