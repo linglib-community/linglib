@@ -26,9 +26,10 @@ linear order on the indices, has two forms, one with the quantifiers in each ord
 
 For `e : κ ≃ ι`, a function `v : ι → β` read along `e` is `toLex (v ∘ e)`, and comparing two such
 is `Pi.Lex` for the order of positions `InvImage (· < ·) e.symm` on `ι`
-(`Pi.toLex_comp_lt_toLex_comp_iff`), so the statements above apply to it. Over all enumerations `e : Fin n ≃ ι` of a finite type, `v` is
-below `w` along some `e` iff `v i < w i` for some `i` (`Pi.exists_toLex_comp_lt_iff`), and along
-every `e` iff `v < w` in the product order (`Pi.forall_toLex_comp_lt_iff`). Two functions ordered
+(`Pi.toLex_comp_lt_toLex_comp_iff`), so the statements above apply to it. Over all enumerations
+`e : Fin n ≃ ι` of a finite type, `v` is below `w` along some `e` iff `v i < w i` for some `i`
+(`Pi.exists_toLex_comp_lt_iff`), and along every `e` iff `v < w` in the product order
+(`Pi.forall_toLex_comp_lt_iff`). Two functions ordered
 one way, and the other way once two adjacent indices are transposed, agree before those indices
 and are ordered oppositely at them (`Pi.eq_and_lt_and_gt_of_toLex_comp_swap`).
 
