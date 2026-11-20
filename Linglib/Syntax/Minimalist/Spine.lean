@@ -11,41 +11,41 @@ public import Mathlib.Data.List.Chain
 public import Mathlib.Data.List.DropRight
 
 /-!
-# Clause spines
+# Spines
 
-A clause spine is the list of heads a clause projects, from the lexical head upward, so a bare VP
-is `[V]`, a finite clause `[V, v, T, C]`, and a nominalized complement the finite clause with the
-nominal shell `[N, D]` appended. A spine is an extended projection in Grimshaw's sense when each
-head extends the one below it. Keine observes that category features project bilaterally within an
-extended projection, so a clause is labeled by the set of every head it projects. The label of a
-spine is that finset, and spines are preordered by inclusion of labels, the extension order, in
-which the clause sizes of one extended projection form a chain and a nominalized clause and a
-finite clause are incomparable. A head divides a spine into its complement, the heads below it,
-and the shell above it.
+A spine is the list of heads a phrase projects, from the lexical head upward, so a bare VP is
+`[V]`, a finite clause `[V, v, T, C]`, a noun phrase with its determiner `[N, Num, D]`, and a
+nominalized complement the finite clause with the nominal shell `[N, D]` appended. A spine is an
+extended projection in Grimshaw's sense when each head extends the one below it. Keine observes
+that category features project bilaterally within an extended projection, so a phrase is labeled
+by the set of every head it projects. The label of a spine is that finset, and spines are
+preordered by inclusion of labels, the extension order, in which the clause sizes of one extended
+projection form a chain and a nominalized clause and a finite clause are incomparable. A head
+divides a spine into its complement, the heads below it, and the shell above it.
 
 ## Main definitions
 
-* `Minimalist.ClauseSpine`: the list of heads a clause projects, bottom-up.
-* `Minimalist.ClauseSpine.label`: the bilateral label, the finset of heads a spine projects.
-* `Minimalist.ClauseSpine.IsExtendedProjection`: a spine each of whose heads extends the one
+* `Minimalist.Spine`: the list of heads a phrase projects, bottom-up.
+* `Minimalist.Spine.label`: the bilateral label, the finset of heads a spine projects.
+* `Minimalist.Spine.IsExtendedProjection`: a spine each of whose heads extends the one
   below it.
-* `Minimalist.ClauseSpine.append`: the spine with a nominal or adpositional shell over it.
-* `Minimalist.ClauseSpine.below`, `Minimalist.ClauseSpine.above`: the spine below the first
+* `Minimalist.Spine.append`: the spine with a nominal or adpositional shell over it.
+* `Minimalist.Spine.below`, `Minimalist.Spine.above`: the spine below the first
   occurrence of a category, its complement, and the heads above the last, the shell over it.
-* `Minimalist.ClauseSpine.vP`, `Minimalist.ClauseSpine.tP`, `Minimalist.ClauseSpine.cP`: the
+* `Minimalist.Spine.vP`, `Minimalist.Spine.tP`, `Minimalist.Spine.cP`: the
   clause sizes of the verbal extended projection.
 
 ## Main results
 
-* `Minimalist.ClauseSpine.le_def`: the extension order is inclusion of labels.
-* `Minimalist.ClauseSpine.IsExtendedProjection.pairwise`: in an extended projection every head
+* `Minimalist.Spine.le_def`: the extension order is inclusion of labels.
+* `Minimalist.Spine.IsExtendedProjection.pairwise`: in an extended projection every head
   extends each head below it.
-* `Minimalist.ClauseSpine.below_le_below`: the complement of a head lies inside the complement
+* `Minimalist.Spine.below_le_below`: the complement of a head lies inside the complement
   of every head above it.
 
 ## Implementation notes
 
-`ClauseSpine` is a one-field structure rather than `List Cat` so that its order is inclusion of
+`Spine` is a one-field structure rather than `List Cat` so that its order is inclusion of
 labels, not the lexicographic order of lists.
 
 ## References
@@ -60,36 +60,36 @@ labels, not the lexicographic order of lists.
 
 namespace Minimalist
 
-/-- A clause spine is the list of heads a clause projects, from the lexical head upward. -/
-structure ClauseSpine where
+/-- A spine is the list of heads a phrase projects, from the lexical head upward. -/
+structure Spine where
   /-- The projected heads, bottom-up. -/
   heads : List Cat
   deriving Repr, DecidableEq
 
-namespace ClauseSpine
+namespace Spine
 
-variable {s t : ClauseSpine} {c d : Cat} {l : List Cat}
+variable {s t : Spine} {c d : Cat} {l : List Cat}
 
-instance : Membership Cat ClauseSpine := ⟨fun s c ↦ c ∈ s.heads⟩
+instance : Membership Cat Spine := ⟨fun s c ↦ c ∈ s.heads⟩
 
 @[simp] theorem mem_def : c ∈ s ↔ c ∈ s.heads := Iff.rfl
 
-instance (c : Cat) (s : ClauseSpine) : Decidable (c ∈ s) :=
+instance (c : Cat) (s : Spine) : Decidable (c ∈ s) :=
   inferInstanceAs (Decidable (c ∈ s.heads))
 
-instance (P : Cat → Prop) [DecidablePred P] (s : ClauseSpine) : Decidable (∀ c ∈ s, P c) :=
+instance (P : Cat → Prop) [DecidablePred P] (s : Spine) : Decidable (∀ c ∈ s, P c) :=
   inferInstanceAs (Decidable (∀ c ∈ s.heads, P c))
 
-instance (P : Cat → Prop) [DecidablePred P] (s : ClauseSpine) : Decidable (∃ c ∈ s, P c) :=
+instance (P : Cat → Prop) [DecidablePred P] (s : Spine) : Decidable (∃ c ∈ s, P c) :=
   inferInstanceAs (Decidable (∃ c ∈ s.heads, P c))
 
 /-! ### Extended projections -/
 
 /-- A spine is an extended projection when each head extends the one below it, so that its heads
 are of one family. -/
-def IsExtendedProjection (s : ClauseSpine) : Prop := s.heads.IsChain Cat.ExtendsTo
+def IsExtendedProjection (s : Spine) : Prop := s.heads.IsChain Cat.ExtendsTo
 
-instance (s : ClauseSpine) : Decidable s.IsExtendedProjection :=
+instance (s : Spine) : Decidable s.IsExtendedProjection :=
   inferInstanceAs (Decidable (List.IsChain _ _))
 
 /-- In an extended projection every head extends each head below it. -/
@@ -100,34 +100,34 @@ theorem IsExtendedProjection.pairwise (h : s.IsExtendedProjection) :
 /-! ### Labels and the extension order -/
 
 /-- The bilateral label of a spine is the set of heads it projects. -/
-def label (s : ClauseSpine) : Finset Cat := s.heads.toFinset
+def label (s : Spine) : Finset Cat := s.heads.toFinset
 
 @[simp] theorem mem_label : c ∈ s.label ↔ c ∈ s := List.mem_toFinset
 
 /-- The extension order. A spine lies below another when the other projects every head it does,
 as the clause sizes of one extended projection do. -/
-instance : Preorder ClauseSpine := Preorder.lift label
+instance : Preorder Spine := Preorder.lift label
 
 theorem le_def : s ≤ t ↔ s.label ⊆ t.label := Iff.rfl
 
 theorem le_iff_forall_mem : s ≤ t ↔ ∀ c ∈ s, c ∈ t := by simp [le_def, Finset.subset_iff]
 
-instance : DecidableLE ClauseSpine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊆ t.label))
+instance : DecidableLE Spine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊆ t.label))
 
-instance : DecidableLT ClauseSpine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊂ t.label))
+instance : DecidableLT Spine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊂ t.label))
 
 /-! ### Shells -/
 
-/-- Appending heads to a spine projects a nominal or adpositional shell over the clause. -/
-def append (s : ClauseSpine) (l : List Cat) : ClauseSpine := ⟨s.heads ++ l⟩
+/-- Appending heads to a spine projects a nominal or adpositional shell over the phrase. -/
+def append (s : Spine) (l : List Cat) : Spine := ⟨s.heads ++ l⟩
 
-@[simp] theorem heads_append (s : ClauseSpine) (l : List Cat) :
+@[simp] theorem heads_append (s : Spine) (l : List Cat) :
     (s.append l).heads = s.heads ++ l :=
   rfl
 
 @[simp] theorem mem_append : c ∈ s.append l ↔ c ∈ s ∨ c ∈ l := List.mem_append
 
-theorem le_append (s : ClauseSpine) (l : List Cat) : s ≤ s.append l :=
+theorem le_append (s : Spine) (l : List Cat) : s ≤ s.append l :=
   le_iff_forall_mem.2 fun _ hc ↦ mem_append.2 (Or.inl hc)
 
 /-! ### Complements of a head -/
@@ -135,20 +135,20 @@ theorem le_append (s : ClauseSpine) (l : List Cat) : s ≤ s.append l :=
 /-- The complement of the first occurrence of `c`, the spine of the heads strictly below it, so
 that `s.below .C` is the TP a finite clause's C⁰ selects. A spine that does not project `c` is its
 own complement. -/
-def below (s : ClauseSpine) (c : Cat) : ClauseSpine := ⟨s.heads.takeWhile (· != c)⟩
+def below (s : Spine) (c : Cat) : Spine := ⟨s.heads.takeWhile (· != c)⟩
 
-@[simp] theorem heads_below (s : ClauseSpine) (c : Cat) :
+@[simp] theorem heads_below (s : Spine) (c : Cat) :
     (s.below c).heads = s.heads.takeWhile (· != c) :=
   rfl
 
 /-- The heads strictly above the last occurrence of `c`, so that `s.above .C` is the shell over the
 CP of `s` and `[]` for a bare CP. -/
-def above (s : ClauseSpine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
+def above (s : Spine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
 
-theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h ↦ by
+theorem notMem_below_self (s : Spine) (c : Cat) : c ∉ s.below c := fun h ↦ by
   simpa using List.mem_takeWhile_imp h
 
-theorem below_le (s : ClauseSpine) (c : Cat) : s.below c ≤ s :=
+theorem below_le (s : Spine) (c : Cat) : s.below c ≤ s :=
   le_iff_forall_mem.2 fun _ h ↦ (List.takeWhile_prefix _).subset h
 
 /-- The complement of a head lies inside the complement of every head above it. -/
@@ -201,17 +201,17 @@ theorem IsExtendedProjection.extendsTo_of_mem_below (hs : s.IsExtendedProjection
 /-- A head of category `c` inherits the categories of a complement with spine `s` when it is
 functional and the highest head of `s` extends to it; a lexical head starts an extended projection
 of its own. -/
-def Inherits (s : ClauseSpine) (c : Cat) : Prop :=
+def Inherits (s : Spine) (c : Cat) : Prop :=
   c ≠ c.family.lexical ∧ ∃ d ∈ s.heads.getLast?, d.ExtendsTo c
 
 instance : Decidable (s.Inherits c) := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The spine of the phrase a head of category `c` projects over a complement with spine `s`: the
 complement's heads, where the head inherits them, and `c`. -/
-def project (s : ClauseSpine) (c : Cat) : ClauseSpine :=
+def project (s : Spine) (c : Cat) : Spine :=
   ⟨(if s.Inherits c then s.heads else []) ++ [c]⟩
 
-theorem mem_project_self (s : ClauseSpine) (c : Cat) : c ∈ s.project c := by simp [project]
+theorem mem_project_self (s : Spine) (c : Cat) : c ∈ s.project c := by simp [project]
 
 theorem le_project (h : s.Inherits c) : s ≤ s.project c :=
   le_iff_forall_mem.2 fun d hd ↦ by simp [project, h, mem_def.1 hd]
@@ -227,7 +227,7 @@ theorem below_project (hi : s.Inherits c) (hc : c ∉ s) : (s.project c).below c
 
 theorem IsExtendedProjection.project (hs : s.IsExtendedProjection) (c : Cat) :
     (s.project c).IsExtendedProjection := by
-  unfold ClauseSpine.project IsExtendedProjection
+  unfold Spine.project IsExtendedProjection
   split
   next h =>
     obtain ⟨d, hd, hdc⟩ := h.2
@@ -239,7 +239,7 @@ theorem IsExtendedProjection.project (hs : s.IsExtendedProjection) (c : Cat) :
 
 /-! ### Shells of a head -/
 
-theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
+theorem above_append (s : Spine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
   induction l using List.reverseRecOn with
   | nil => simp [above]
   | append_singleton l x ih =>
@@ -251,13 +251,13 @@ theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.
 /-! ### Clause sizes -/
 
 /-- The vP-sized clause `[V, v]`, the small nonfinite clause. -/
-def vP : ClauseSpine := ⟨[.V, .v]⟩
+def vP : Spine := ⟨[.V, .v]⟩
 
 /-- The TP-sized clause `[V, v, T]`, the large nonfinite clause. -/
-def tP : ClauseSpine := ⟨[.V, .v, .T]⟩
+def tP : Spine := ⟨[.V, .v, .T]⟩
 
 /-- The CP-sized clause `[V, v, T, C]`, the finite clause. -/
-def cP : ClauseSpine := ⟨[.V, .v, .T, .C]⟩
+def cP : Spine := ⟨[.V, .v, .T, .C]⟩
 
 @[simp] theorem tP_below_T : tP.below .T = vP := by decide
 
@@ -271,6 +271,6 @@ theorem tP_le_cP : tP ≤ cP := by decide
 
 theorem cP_isExtendedProjection : cP.IsExtendedProjection := by decide +kernel
 
-end ClauseSpine
+end Spine
 
 end Minimalist

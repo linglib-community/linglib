@@ -434,12 +434,12 @@ def sotProbe : HorizonSetting := ⟨.T, some .Say⟩
 
 theorem sotProbe_clauseTypes :
     sotProbe.TransparentTo .tP ∧
-      ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]) := by
+      ¬ sotProbe.TransparentTo (Spine.tP.append [.Foc, .Say]) := by
   decide
 
 -- §4, footnote 9
 theorem horizon_admits_FocP :
-    sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]) ∧ ¬ WilliamsCycle .T .Foc := by
+    sotProbe.TransparentTo (Spine.tP.append [.Foc]) ∧ ¬ WilliamsCycle .T .Foc := by
   decide +kernel
 
 /-! ### Recognition by witness

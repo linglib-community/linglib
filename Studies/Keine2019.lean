@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Horizon
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 
@@ -31,7 +31,7 @@ and the horizon bounds the position, the Height-Locality Theorem ((65)) instanti
 
 ## Implementation notes
 
-Clauses are the substrate's `ClauseSpine`s and transparency is `HorizonSetting.TransparentTo`; the
+Clauses are the substrate's `Spine`s and transparency is `HorizonSetting.TransparentTo`; the
 article's probes are defined here, and vacuity is `HorizonSetting.IsVacuousIn` the finite clause,
 where the sister of a probe on C⁰ is TP and of one on T⁰ is vP.
 
@@ -50,8 +50,8 @@ open Minimalist SyntacticObject PlanarSyntacticObject
 
 /-- The clause sizes are ordered vP ≤ TP ≤ CP, so a probe blocked by a clause is blocked by every
 larger one ((45), (46)). -/
-theorem sizes_le : ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP :=
-  ⟨ClauseSpine.vP_le_tP, ClauseSpine.tP_le_cP⟩
+theorem sizes_le : Spine.vP ≤ .tP ∧ Spine.tP ≤ .cP :=
+  ⟨Spine.vP_le_tP, Spine.tP_le_cP⟩
 
 /-! ### The Hindi probes (Section 4.2) -/
 
@@ -70,7 +70,7 @@ def ābarProbe : HorizonSetting := ⟨.C, none⟩
 /-- A probe's row of the transparency table over the finite, large nonfinite and small
 nonfinite clauses. -/
 def row (p : HorizonSetting) : List Bool :=
-  [ClauseSpine.cP, .tP, .vP].map fun s ↦ decide (p.TransparentTo s)
+  [Spine.cP, .tP, .vP].map fun s ↦ decide (p.TransparentTo s)
 
 /-- (58): φ-agreement and A-movement search only into vP clauses, wh-licensing into TP and vP
 clauses, Ā-movement into all three. -/
@@ -92,7 +92,7 @@ theorem finite_clauses_selectively_opaque :
 
 -- (21), (50), (51)
 theorem a_extraction_forces_lda :
-    (∀ s ∈ [ClauseSpine.tP, .vP], aProbe.TransparentTo s → s = .vP ∧ phiProbe.TransparentTo s) ∧
+    (∀ s ∈ [Spine.tP, .vP], aProbe.TransparentTo s → s = .vP ∧ phiProbe.TransparentTo s) ∧
       ābarProbe.TransparentTo .tP ∧ ¬ phiProbe.TransparentTo .tP := by
   decide
 
@@ -164,7 +164,7 @@ theorem hyperraising_blocked :
   decide
 
 theorem hyperraising_iff (h : Option Cat) :
-    (⟨.T, h⟩ : HorizonSetting).TransparentTo .cP ↔ ∀ c ∈ ClauseSpine.cP, h ≠ some c := by
+    (⟨.T, h⟩ : HorizonSetting).TransparentTo .cP ↔ ∀ c ∈ Spine.cP, h ≠ some c := by
   rw [HorizonSetting.transparentTo_iff]
   exact ⟨fun H c hc e ↦ H c e hc, fun H c e hc ↦ H c hc e⟩
 
@@ -175,8 +175,8 @@ theorem vacuous_example : (⟨.C, some .T⟩ : HorizonSetting).IsVacuousIn .cP :
 
 -- (65a)
 theorem height_to_locality (h : Cat) :
-    (¬ (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn .cP → h ∉ ClauseSpine.tP) ∧
-      (¬ (⟨.T, some h⟩ : HorizonSetting).IsVacuousIn .cP → h ∉ ClauseSpine.vP) := by
+    (¬ (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn .cP → h ∉ Spine.tP) ∧
+      (¬ (⟨.T, some h⟩ : HorizonSetting).IsVacuousIn .cP → h ∉ Spine.vP) := by
   simp
 
 -- (65b)
@@ -194,7 +194,7 @@ theorem nonvacuous_transparent (h : Option Cat) :
       (¬ (⟨.T, h⟩ : HorizonSetting).IsVacuousIn .cP →
         (⟨.T, h⟩ : HorizonSetting).TransparentTo .vP) :=
   ⟨fun hp ↦ ⟨.of_not_isVacuousIn hp (by simp),
-      .of_not_isVacuousIn hp (by simpa using ClauseSpine.vP_le_tP)⟩,
+      .of_not_isVacuousIn hp (by simpa using Spine.vP_le_tP)⟩,
     fun hp ↦ .of_not_isVacuousIn hp (by simp)⟩
 
 -- (21), (66), (67)

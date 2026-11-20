@@ -82,7 +82,7 @@ theorem postnominal_all_or_nothing (e : Ellipsis nominalSpine) (h : e.Deletes (.
     ∀ d, d = .N ∨ d ∈ nominalSpine.below .N → e.Deletes (.head d) := by
   rintro d (rfl | hd)
   · exact h
-  · simp [nominalSpine, ClauseSpine.below] at hd
+  · simp [nominalSpine, Spine.below] at hd
 
 /-! ### The contrast condition -/
 

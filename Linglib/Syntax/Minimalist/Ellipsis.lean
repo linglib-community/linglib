@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Order.Flat
 public import Linglib.Syntax.Anaphora.Basic
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 public import Mathlib.Data.List.Basic
 public import Mathlib.Data.Set.Function
 public import Mathlib.Order.Basic
@@ -34,9 +34,9 @@ complements [E] silences and the null pro-forms.
 
 ## Main definitions
 
-* `Minimalist.ClauseSpine.Site`, `Minimalist.ClauseSpine.rank`: the sites of a spine and their
+* `Minimalist.Spine.Site`, `Minimalist.Spine.rank`: the sites of a spine and their
   interleaved order.
-* `Minimalist.ClauseSpine.Deletes`: the initial segment of sites [E] on a head deletes.
+* `Minimalist.Spine.Deletes`: the initial segment of sites [E] on a head deletes.
 * `Minimalist.Ellipsis`: an [E] feature on a head of a spine, ordered by height, with its
   `Minimalist.Ellipsis.domain`, the identity condition `Minimalist.Ellipsis.Identical`, the
   `Minimalist.Ellipsis.argumentDomain` and the nondistinctness condition
@@ -89,7 +89,7 @@ for.
 
 namespace Minimalist
 
-namespace ClauseSpine
+namespace Spine
 
 /-- A site of a spine is a head, or the adjunction site of the phrase a head projects, where
 adjuncts such as *again* and prenominal modifiers attach. -/
@@ -98,28 +98,28 @@ inductive Site
   | adjunct (c : Cat)
   deriving DecidableEq, Repr
 
-variable {s : ClauseSpine} {p q : Cat} {x y : Site}
+variable {s : Spine} {p q : Cat} {x y : Site}
 
 /-- The rank of a site in the order of a spine's sites: the head of index `i` at `2 * i`, the
 adjunction site of the phrase it projects at `2 * i + 1`. -/
-def rank (s : ClauseSpine) : Site → ℕ
+def rank (s : Spine) : Site → ℕ
   | .head c => 2 * s.heads.idxOf c
   | .adjunct c => 2 * s.heads.idxOf c + 1
 
 /-- [E] on `p` deletes the sites below the adjunction site of its complement: the heads below `p`
 and the adjunction sites of the phrases inside its complement. -/
-def Deletes (s : ClauseSpine) (p : Cat) (x : Site) : Prop := s.rank x + 1 < s.rank (.head p)
+def Deletes (s : Spine) (p : Cat) (x : Site) : Prop := s.rank x + 1 < s.rank (.head p)
 
-instance (s : ClauseSpine) (p : Cat) (x : Site) : Decidable (s.Deletes p x) :=
+instance (s : Spine) (p : Cat) (x : Site) : Decidable (s.Deletes p x) :=
   inferInstanceAs (Decidable (_ < _))
 
 /-- The [E]-bearing head survives its own ellipsis, which is the core of X-stranding: a head that
 has moved to the [E]-bearing position is pronounced while its base position is deleted. -/
-theorem not_deletes_head_self (s : ClauseSpine) (p : Cat) : ¬ s.Deletes p (.head p) := by
+theorem not_deletes_head_self (s : Spine) (p : Cat) : ¬ s.Deletes p (.head p) := by
   simp [Deletes]
 
 /-- The sites of a spine, its heads and the adjunction sites of the phrases they project. -/
-def sites (s : ClauseSpine) : List Site := s.heads.flatMap fun c ↦ [.head c, .adjunct c]
+def sites (s : Spine) : List Site := s.heads.flatMap fun c ↦ [.head c, .adjunct c]
 
 /-- A deletion domain lies among the sites of the spine. -/
 theorem Deletes.mem_sites (h : s.Deletes p x) : x ∈ s.sites := by
@@ -138,23 +138,23 @@ theorem Deletes.of_rank_head_le (h : s.Deletes q x)
   unfold Deletes at *
   omega
 
-end ClauseSpine
+end Spine
 
 /-! ### Ellipses -/
 
 /-- An ellipsis is an [E] feature on a head of the spine `s`; its deletion domain is that head's
 complement. -/
 @[ext]
-structure Ellipsis (s : ClauseSpine) where
+structure Ellipsis (s : Spine) where
   /-- The head carrying [E]. -/
   ePosition : Cat
   mem : ePosition ∈ s
 
 namespace Ellipsis
 
-open ClauseSpine
+open Spine
 
-variable {s : ClauseSpine} {e e' : Ellipsis s} {x : Site}
+variable {s : Spine} {e e' : Ellipsis s} {x : Site}
 
 /-- The index on the spine of the head carrying [E]. -/
 def height (e : Ellipsis s) : ℕ := s.heads.idxOf e.ePosition
@@ -178,7 +178,7 @@ theorem deletes_iff : e.Deletes x ↔ s.rank x + 1 < 2 * e.height := Iff.rfl
 
 theorem Deletes.of_rank_le {y : Site} (h : e.Deletes x) (hy : s.rank y ≤ s.rank x) :
     e.Deletes y :=
-  ClauseSpine.Deletes.of_rank_le h hy
+  Spine.Deletes.of_rank_le h hy
 
 /-- `e.Spares x` when the site `x` is external to `e` and survives it. -/
 def Spares (e : Ellipsis s) (x : Site) : Prop := ¬ e.Deletes x
@@ -226,7 +226,7 @@ theorem identical_update_iff {α : Type*} (a : Site → α) (x : Site) (v : α) 
 
 instance {α : Type*} [DecidableEq α] (a t : Site → α) : Decidable (e.Identical a t) :=
   decidable_of_iff (∀ x ∈ s.sites, e.Deletes x → a x = t x)
-    ⟨fun h _ hx ↦ h _ (ClauseSpine.Deletes.mem_sites hx) hx, fun h _ _ hx ↦ h hx⟩
+    ⟨fun h _ hx ↦ h _ (Spine.Deletes.mem_sites hx) hx, fun h _ _ hx ↦ h hx⟩
 
 /-! ### Nondistinctness -/
 
@@ -265,7 +265,7 @@ theorem nondistinct_update_iff (a : Site → α) (x : Site) (v : α) :
 instance [DecidableRel (α := α) Compat] (a t : Site → α) : Decidable (e.Nondistinct a t) :=
   decidable_of_iff
     (∀ x ∈ s.sites, e.Deletes x → s.rank x ≤ s.rank (.head .Voice) → Compat (a x) (t x))
-    ⟨fun h _ hx ↦ h _ (ClauseSpine.Deletes.mem_sites hx.1) hx.1 hx.2,
+    ⟨fun h _ hx ↦ h _ (Spine.Deletes.mem_sites hx.1) hx.1 hx.2,
       fun h _ _ hd hr ↦ h ⟨hd, hr⟩⟩
 
 end Nondistinct
@@ -293,10 +293,10 @@ end Ellipsis
 namespace Ellipsis
 
 /-- The clausal spine that ellipsis distinguishes, V, v, Voice, T and C. -/
-def clausalSpine : ClauseSpine := ⟨[.V, .v, .Voice, .T, .C]⟩
+def clausalSpine : Spine := ⟨[.V, .v, .Voice, .T, .C]⟩
 
 /-- The nominal spine, N, the categorizer n, Num and D. -/
-def nominalSpine : ClauseSpine := ⟨[.N, .n, .Num, .D]⟩
+def nominalSpine : Spine := ⟨[.N, .n, .Num, .D]⟩
 
 /-- Sluicing puts [E] on C and deletes TP. -/
 def sluicing : Ellipsis clausalSpine := ⟨.C, by decide⟩
@@ -318,13 +318,13 @@ end Ellipsis
 /-- A null site of a spine: the complement an [E]-bearing head leaves unpronounced, which must
 contain some site, or a null pro-form, a head without a complement, such as *pro* or an empty
 noun. -/
-inductive NullSite (s : ClauseSpine) where
+inductive NullSite (s : Spine) where
   | elided (e : Ellipsis s) (h : ∃ x, e.Deletes x)
-  | proform (x : ClauseSpine.Site)
+  | proform (x : Spine.Site)
 
 namespace NullSite
 
-variable {s : ClauseSpine}
+variable {s : Spine}
 
 /-- [E]-deletion yields a surface anaphor, and a null pro-form a deep one. -/
 def depth : NullSite s → Anaphor.Depth
@@ -333,13 +333,13 @@ def depth : NullSite s → Anaphor.Depth
 
 /-- The sites a null site leaves unpronounced, the deletion domain of an [E]-bearing head and none
 for a pro-form. -/
-def Silences : NullSite s → ClauseSpine.Site → Prop
+def Silences : NullSite s → Spine.Site → Prop
   | .elided e _, x => e.Deletes x
   | .proform _, _ => False
 
 /-- [E]-deletion realizes Hankamer and Sag's depth: an [E] site silences its complement, and a
 null pro-form silences nothing. -/
-instance : Anaphor.DepthModel (NullSite s) ClauseSpine.Site where
+instance : Anaphor.DepthModel (NullSite s) Spine.Site where
   depth := depth
   Silences := Silences
   exists_silences_of_surface
@@ -349,11 +349,11 @@ instance : Anaphor.DepthModel (NullSite s) ClauseSpine.Site where
     | .elided .., _, h => nomatch h
     | .proform _, _, _ => id
 
-instance : ∀ (n : NullSite s) (x : ClauseSpine.Site), Decidable (n.Silences x)
+instance : ∀ (n : NullSite s) (x : Spine.Site), Decidable (n.Silences x)
   | .elided e _, _ => inferInstanceAs (Decidable (e.Deletes _))
   | .proform _, _ => inferInstanceAs (Decidable False)
 
-@[simp] theorem silences_elided {e : Ellipsis s} {h : ∃ x, e.Deletes x} {x : ClauseSpine.Site} :
+@[simp] theorem silences_elided {e : Ellipsis s} {h : ∃ x, e.Deletes x} {x : Spine.Site} :
     (elided e h).Silences x ↔ e.Deletes x := .rfl
 
 /-- The head that bears [E] lies outside the site it silences, which is what lets a head moved
@@ -375,7 +375,7 @@ inductive AgainReading
   deriving DecidableEq, Repr
 
 /-- The adjunction site of each reading. -/
-def AgainReading.site : AgainReading → ClauseSpine.Site
+def AgainReading.site : AgainReading → Spine.Site
   | .repetitive => .adjunct .v
   | .restitutive => .adjunct .V
 
@@ -389,7 +389,7 @@ theorem eq_vpEllipsis_iff :
     e = vpEllipsis ↔
       e.Spares AgainReading.repetitive.site ∧ e.Deletes AgainReading.restitutive.site := by
   rw [eq_iff_height_eq]
-  simp only [Spares, deletes_iff, AgainReading.site, ClauseSpine.rank]
+  simp only [Spares, deletes_iff, AgainReading.site, Spine.rank]
   have : vpEllipsis.height = 2 := rfl
   have : clausalSpine.heads.idxOf Cat.v = 1 := rfl
   have : clausalSpine.heads.idxOf Cat.V = 0 := rfl
@@ -400,7 +400,7 @@ tolerating voice mismatches and no others, has [E] on Voice. -/
 theorem eq_vpEllipsis_iff_spares_voice :
     e = vpEllipsis ↔ e.Spares (.head .Voice) ∧ e.Deletes (.head .v) := by
   rw [eq_iff_height_eq]
-  simp only [Spares, deletes_iff, ClauseSpine.rank]
+  simp only [Spares, deletes_iff, Spine.rank]
   have : vpEllipsis.height = 2 := rfl
   have : clausalSpine.heads.idxOf Cat.Voice = 2 := rfl
   have : clausalSpine.heads.idxOf Cat.v = 1 := rfl
@@ -410,7 +410,7 @@ theorem eq_vpEllipsis_iff_spares_voice :
 theorem eq_vStrandingVPE_iff :
     e = vStrandingVPE ↔ e.Deletes (.head .V) ∧ e.Spares AgainReading.restitutive.site := by
   rw [eq_iff_height_eq]
-  simp only [Spares, deletes_iff, AgainReading.site, ClauseSpine.rank]
+  simp only [Spares, deletes_iff, AgainReading.site, Spine.rank]
   have : vStrandingVPE.height = 1 := rfl
   have : clausalSpine.heads.idxOf Cat.V = 0 := rfl
   omega
