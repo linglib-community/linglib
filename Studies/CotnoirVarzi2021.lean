@@ -19,9 +19,11 @@ as parts exactly the parts of `a` that do not overlap `b₁`.
 In the model `Butterfly`, two individuals `c` and `d` lie below each of two others, `a` and
 `b`. Weak Supplementation holds and Strong Supplementation fails
 (`Butterfly.not_strongSupplementation`): `a` is not part of `b`, and every part of `a` overlaps
-`b`, and `a` is a Goodman fusion of `a` and `b` (`Butterfly.isGoodmanFusion_not_le`). In the
-model `Tent`, Strong Supplementation holds and Remainder fails
-(`Tent.not_remainder`). A two-element chain satisfies neither supplementation principle.
+`b`. There `a` is a Goodman fusion of `a` and `b` (`Butterfly.isGoodmanFusion_not_le`). In the
+model `Crown`, which adds a top to `Butterfly`, `c` and `d` have two Leśniewski fusions and no
+least upper bound (`Crown.isFusion_not_isLUB`), and Weak Supplementation fails. In the model
+`Tent`, Strong Supplementation holds and Remainder fails (`Tent.not_remainder`). A two-element
+chain satisfies neither supplementation principle.
 
 The nonempty subsets of a three-element set are a classical mereology
 (`isClassical_nonempty_subsets`).
@@ -30,7 +32,8 @@ The nonempty subsets of a three-element set are a classical mereology
 
 The models are the book's figures: the two-element chain and `Butterfly` are its two failures
 of Remainder, `Diamond` its model of Additive Remainder without remainders, `Tent` its model of
-Strong Supplementation with missing remainders, `Vee` and `Butterfly` its Goodman fusions that
+Strong Supplementation with missing remainders, `Crown` its model of Leśniewski fusions that
+are not least upper bounds, `Vee` and `Butterfly` its Goodman fusions that
 are no upper bounds, and the nonempty subsets of a three-element set
 its three-atom Boolean algebra without the empty set. The orders are given by their graphs, and
 the statements are decided by enumeration. Weak Supplementation is stated with a part that does
@@ -143,6 +146,14 @@ theorem not_strongSupplementation : ¬ StrongSupplementation Butterfly := by
   unfold StrongSupplementation Overlap
   decide
 
+-- `a` and `b` are both minimal upper bounds of `c` and `d`, which have no least upper bound.
+theorem minimal_upperBounds_not_isLUB :
+    Minimal (· ∈ upperBounds {c, d}) a ∧ Minimal (· ∈ upperBounds {c, d}) b ∧
+      ¬ ∃ x, IsLUB {c, d} x := by
+  simp only [Minimal, IsLUB, IsLeast, mem_upperBounds, mem_lowerBounds, Set.mem_insert_iff,
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
+  decide
+
 -- `a` is a Goodman fusion of `a` and `b`, though `b` is not part of `a`.
 theorem isGoodmanFusion_not_le : IsGoodmanFusion {a, b} a ∧ ¬ b ≤ a := by
   refine ⟨fun y ↦ ?_, by decide⟩
@@ -152,6 +163,49 @@ theorem isGoodmanFusion_not_le : IsGoodmanFusion {a, b} a ∧ ¬ b ≤ a := by
   decide
 
 end Butterfly
+
+/-! ### Leśniewski fusions that are not least upper bounds -/
+
+/-- `Butterfly` with an individual `u` above everything. -/
+inductive Crown
+  | c | d | a | b | u
+  deriving DecidableEq
+
+namespace Crown
+
+instance : Fintype Crown := ⟨{c, d, a, b, u}, fun x ↦ by cases x <;> simp⟩
+
+instance : PartialOrder Crown where
+  le x y := x = y ∨ y = u ∨ ((x = c ∨ x = d) ∧ (y = a ∨ y = b))
+  le_refl _ := .inl rfl
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : DecidableLE Crown := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+instance : DecidableLT Crown := decidableLTOfDecidableLE
+
+-- `a` and `b` are both Leśniewski fusions of `c` and `d`, which have no least upper bound.
+theorem isFusion_not_isLUB :
+    IsFusion {c, d} a ∧ IsFusion {c, d} b ∧ ¬ ∃ x, IsLUB {c, d} x := by
+  simp only [IsFusion, IsLUB, IsLeast, mem_upperBounds, mem_lowerBounds, Set.mem_insert_iff,
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, exists_eq_or_imp, exists_eq_left]
+  unfold Overlap
+  decide
+
+-- `u` is both the Leśniewski fusion and the least upper bound of `a` and `b`.
+theorem isFusion_isLUB : IsFusion {a, b} u ∧ IsLUB {a, b} u := by
+  simp only [IsFusion, IsLUB, IsLeast, mem_upperBounds, mem_lowerBounds, Set.mem_insert_iff,
+    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, exists_eq_or_imp, exists_eq_left]
+  unfold Overlap
+  decide
+
+-- `a` is a proper part of `u`, and every part of `u` overlaps `a`.
+theorem not_weakSupplementation : ¬ WeakSupplementation Crown := by
+  unfold WeakSupplementation Overlap
+  decide
+
+end Crown
 
 /-! ### A Goodman fusion that is no upper bound -/
 
