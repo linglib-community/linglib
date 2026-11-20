@@ -552,9 +552,10 @@ theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
 
 theorem relative_eq_unitAugmented_iff {x : Configuration} (hx : x ≠ ⊥) :
     relative x = .unitAugmented ↔
-      Mereology.atomize (Number.nonMinimalOf (Configuration.OfParticipants x.participants)) x := by
+      Mereology.atomize (Number.Feature.restrict .minimal false
+        (Configuration.OfParticipants x.participants)) x := by
   have h := Configuration.ne_bot_iff_minimum_le.1 hx
-  rw [Configuration.atomize_nonMinimalOf_ofParticipants_iff, Configuration.ext_iff]
+  rw [Configuration.atomize_restrict_minimal_false_ofParticipants_iff, Configuration.ext_iff]
   simp only [relative, true_and]
   split_ifs <;> simp <;> omega
 
@@ -607,10 +608,11 @@ theorem constructed :
 
 /-- A referent the pronoun counts as more than one and the verb as at most two is one of two
 members, the `[−atomic, +minimal]` region of its person: the two markers construct the dual. -/
-theorem constructed_iff_dualOf {x : Person.Configuration} :
+theorem constructed_iff_dual {x : Person.Configuration} :
     1 < x.card ∧ x.card ≤ 2 ↔
-      Number.dualOf (Person.Configuration.OfParticipants x.participants) x := by
-  rw [Person.Configuration.dualOf_ofParticipants_iff]
+      Number.Feature.restrict .minimal true (Number.Feature.restrict .atomic false
+        (Person.Configuration.OfParticipants x.participants)) x := by
+  rw [Person.Configuration.dual_ofParticipants_iff]
   exact ⟨fun h ↦ ⟨rfl, by omega⟩, fun h ↦ by omega⟩
 
 end Hopi

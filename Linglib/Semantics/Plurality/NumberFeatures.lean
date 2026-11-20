@@ -38,8 +38,10 @@ variable {D : Type*} [PartialOrder D]
 
 /-- The region a bundle's `[±atomic]` and `[±minimal]` values select from `P`, the former first. -/
 def exact (b : Bundle) (P : D → Prop) : D → Prop :=
-  b.step (.minimal, true) atomize <| b.step (.minimal, false) nonMinimalOf <|
-    b.step (.atomic, true) atomsOf <| b.step (.atomic, false) nonAtomsOf P
+  b.step (.minimal, true) atomize <|
+    b.step (.minimal, false) (Feature.restrict .minimal false) <|
+    b.step (.atomic, true) (Feature.restrict .atomic true) <|
+    b.step (.atomic, false) (Feature.restrict .atomic false) P
 
 theorem exact_le (b : Bundle) (P : D → Prop) {x : D} (h : b.exact P x) : P x := by
   have step_le : ∀ v (f : (D → Prop) → D → Prop), (∀ P x, f P x → P x) →

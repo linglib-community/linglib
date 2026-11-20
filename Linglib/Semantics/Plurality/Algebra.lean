@@ -74,7 +74,7 @@ variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {x y : E}
 /-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12), Harbour's
 `[−atomic]` of the closure. -/
 def properPlural (P : E → Prop) : E → Prop :=
-  Number.nonAtomsOf (AlgClosure P)
+  fun x ↦ AlgClosure P x ∧ ¬ Atom x
 
 /-- A distributive predicate holds of atoms only (D.19). -/
 def IsDistr (P : E → Prop) : Prop :=

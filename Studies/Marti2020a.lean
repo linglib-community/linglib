@@ -32,9 +32,9 @@ strongest of the two sentences is chosen (`isLeast_indef_of_monotone`,
 bear out (`reading_isLeast`). On the account with Mayr's predicate-level exhaustivity operator the
 operator does the work of `[−atomic]`: applied to the noun phrase against the singular it yields
 the non-atoms (`exh_alternatives`), `[+minimal]` then yields the dual (`atomize_exh_alternatives`)
-and `[−minimal]` the plural of a language with a dual (`nonMinimalOf_exh_alternatives`). Applied
-above `[+minimal]` it leaves the atoms, where `[−atomic]` leaves nothing (`exh_atomize`,
-`not_nonAtomsOf_atomize`).
+and `[−minimal]` the plural of a language with a dual
+(`restrict_minimal_false_exh_alternatives`). Applied above `[+minimal]` it leaves the atoms, where
+`[−atomic]` leaves nothing (`exh_atomize`, `not_restrict_atomic_false_atomize`).
 
 ## Implementation notes
 
@@ -85,29 +85,31 @@ variable {D : Type*} [PartialOrder D] {P : D → Prop}
 
 /-- The alternatives of a plural noun phrase are its own denotation and that of the singular, its
 atoms. -/
-def alternatives (P : D → Prop) : Set (Set D) := {{x | P x}, {x | atomsOf P x}}
+def alternatives (P : D → Prop) : Set (Set D) :=
+  {{x | P x}, {x | Feature.restrict .atomic true P x}}
 
 /-- Exhaustified against the singular, a noun phrase is true of its non-atoms, as `[−atomic]`
 makes it. -/
-theorem exh_alternatives (h : ∃ x, nonAtomsOf P x) :
-    exh (alternatives P) {x | P x} = {x | nonAtomsOf P x} := by
+theorem exh_alternatives (h : ∃ x, Feature.restrict .atomic false P x) :
+    exh (alternatives P) {x | P x} = {x | Feature.restrict .atomic false P x} := by
   obtain ⟨y, hy⟩ := h
-  have hne : ¬ ({x | P x} : Set D) ⊆ {x | atomsOf P x} := fun hs ↦
-    hy.2 (hs hy.1 : atomsOf P y).2
+  have hne : ¬ ({x | P x} : Set D) ⊆ {x | Feature.restrict .atomic true P x} := fun hs ↦
+    hy.2 (hs hy.1 : Feature.restrict .atomic true P y).2
   rw [alternatives, exh_insert_of_subset subset_rfl, exh_singleton_of_not_subset hne]
   ext x
-  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, atomsOf, nonAtomsOf]
+  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Feature.restrict]
   tauto
 
 -- (77)
-theorem atomize_exh_alternatives (h : ∃ x, nonAtomsOf P x) :
-    atomize (· ∈ exh (alternatives P) {x | P x}) = dualOf P := by
+theorem atomize_exh_alternatives (h : ∃ x, Feature.restrict .atomic false P x) :
+    atomize (· ∈ exh (alternatives P) {x | P x}) =
+      Feature.restrict .minimal true (Feature.restrict .atomic false P) := by
   rw [exh_alternatives h]
   rfl
 
 -- (76)
-theorem nonMinimalOf_exh_alternatives (h : ∃ x, nonAtomsOf P x) :
-    nonMinimalOf (· ∈ exh (alternatives P) {x | P x}) =
+theorem restrict_minimal_false_exh_alternatives (h : ∃ x, Feature.restrict .atomic false P x) :
+    Feature.restrict .minimal false (· ∈ exh (alternatives P) {x | P x}) =
       Bundle.exact {(.atomic, false), (.minimal, false)} P := by
   rw [exh_alternatives h]
   simp only [Bundle.exact, Bundle.step, Finset.mem_insert, Finset.mem_singleton, Prod.mk.injEq,
@@ -115,8 +117,9 @@ theorem nonMinimalOf_exh_alternatives (h : ∃ x, nonAtomsOf P x) :
     ↓reduceIte, and_true]
   rfl
 
-theorem atomize_eq_atomsOf (hP : ∀ x, P x → ∃ a, atomsOf P a ∧ a ≤ x) :
-    atomize P = atomsOf P := by
+theorem atomize_eq_restrict_atomic_true
+    (hP : ∀ x, P x → ∃ a, Feature.restrict .atomic true P a ∧ a ≤ x) :
+    atomize P = Feature.restrict .atomic true P := by
   ext x
   refine ⟨fun h ↦ ?_, fun h ↦ ⟨h.1, fun y hy hyx ↦ ?_⟩⟩
   · obtain ⟨a, ha, hax⟩ := hP x h.1
@@ -125,17 +128,18 @@ theorem atomize_eq_atomsOf (hP : ∀ x, P x → ∃ a, atomsOf P a ∧ a ≤ x) 
     exact (h.2.2 ha.2.1 (hay.trans hyx)).trans hay
 
 -- (80): above `[+minimal]` the operator leaves the atoms, the denotation of the singular
-theorem exh_atomize (hP : ∀ x, P x → ∃ a, atomsOf P a ∧ a ≤ x) :
-    exh (alternatives P) {x | atomize P x} = {x | atomsOf P x} := by
-  rw [atomize_eq_atomsOf hP]
+theorem exh_atomize (hP : ∀ x, P x → ∃ a, Feature.restrict .atomic true P a ∧ a ≤ x) :
+    exh (alternatives P) {x | atomize P x} = {x | Feature.restrict .atomic true P x} := by
+  rw [atomize_eq_restrict_atomic_true hP]
   refine exh_eq_self ?_
   rintro _ (rfl | rfl)
   exacts [fun _ h ↦ h.1, subset_rfl]
 
 -- (80) with `[−atomic]` for the operator
-theorem not_nonAtomsOf_atomize (hP : ∀ x, P x → ∃ a, atomsOf P a ∧ a ≤ x) (x : D) :
-    ¬ nonAtomsOf (atomize P) x := by
-  rw [atomize_eq_atomsOf hP]
+theorem not_restrict_atomic_false_atomize
+    (hP : ∀ x, P x → ∃ a, Feature.restrict .atomic true P a ∧ a ≤ x) (x : D) :
+    ¬ Feature.restrict .atomic false (atomize P) x := by
+  rw [atomize_eq_restrict_atomic_true hP]
   exact fun h ↦ h.2 h.1.2
 
 end Predicate
@@ -170,15 +174,15 @@ theorem isLeast_indef_of_antitone {f : Set W → Set W'} (hf : Antitone f)
 variable [PartialOrder D]
 
 -- (72): the propositional operator has no alternative to deny
-theorem exh_indef (hV : ∀ w x, P x → V w x → ∃ a, atomsOf P a ∧ V w a) :
-    exh {indef V P, indef V (atomsOf P)} (indef V P) = indef V P :=
+theorem exh_indef (hV : ∀ w x, P x → V w x → ∃ a, Feature.restrict .atomic true P a ∧ V w a) :
+    exh {indef V P, indef V (Feature.restrict .atomic true P)} (indef V P) = indef V P :=
   exh_eq_self <| by
     rintro _ (rfl | rfl)
     exacts [subset_rfl, fun w ⟨x, hx, hv⟩ ↦ hV w x hx hv]
 
 -- (71)
 theorem exh_compl_indef :
-    exh {(indef V P)ᶜ, (indef V (atomsOf P))ᶜ} (indef V P)ᶜ = (indef V P)ᶜ :=
+    exh {(indef V P)ᶜ, (indef V (Feature.restrict .atomic true P))ᶜ} (indef V P)ᶜ = (indef V P)ᶜ :=
   exh_eq_self <| by
     rintro _ (rfl | rfl)
     exacts [subset_rfl, Set.compl_subset_compl.2 (indef_mono V fun _ h ↦ h.1)]
@@ -248,7 +252,7 @@ variable (s : Finset Number) {n : ℕ}
 
 /-- The sentence that there are witnesses of a number value: at least as many as some cardinality
 the system gives the value. -/
-def sentence (v : Number) : Set ℕ := {n | ∃ k ≤ n, k ∈ exclusive s v}
+def sentence (v : Number) : Set ℕ := upperClosure (exclusive s v)
 
 /-- The sentence a reading gives. -/
 def Examples.Reading.toSet : Examples.Reading → Set ℕ
@@ -296,18 +300,21 @@ theorem mem_exclusive_plural_iff_three_le : n ∈ exclusive slovenianSystem .plu
 
 theorem sentence_plural_english : sentence englishSystem .plural = Set.Ici 2 := by
   ext n
-  simp only [sentence, Set.mem_ofPred_eq, mem_exclusive_plural_iff_two_le, Set.mem_Ici]
-  exact ⟨fun ⟨k, hk, h⟩ ↦ h.trans hk, fun h ↦ ⟨n, le_rfl, h⟩⟩
+  simp only [sentence, SetLike.mem_coe, mem_upperClosure, mem_exclusive_plural_iff_two_le,
+    Set.mem_Ici]
+  exact ⟨fun ⟨k, h, hk⟩ ↦ h.trans hk, fun h ↦ ⟨n, h, le_rfl⟩⟩
 
 theorem sentence_plural_slovenian : sentence slovenianSystem .plural = Set.Ici 3 := by
   ext n
-  simp only [sentence, Set.mem_ofPred_eq, mem_exclusive_plural_iff_three_le, Set.mem_Ici]
-  exact ⟨fun ⟨k, hk, h⟩ ↦ h.trans hk, fun h ↦ ⟨n, le_rfl, h⟩⟩
+  simp only [sentence, SetLike.mem_coe, mem_upperClosure, mem_exclusive_plural_iff_three_le,
+    Set.mem_Ici]
+  exact ⟨fun ⟨k, h, hk⟩ ↦ h.trans hk, fun h ↦ ⟨n, h, le_rfl⟩⟩
 
 theorem sentence_dual_slovenian : sentence slovenianSystem .dual = Set.Ici 2 := by
   ext n
   rw [slovenianSystem_eq]
-  simp [sentence, exclusive, ofCard_eq_iff (v := .dual) (by decide), exactCard, eq_comm]
+  simp [sentence, mem_upperClosure, exclusive, ofCard_eq_iff (v := .dual) (by decide), exactCard,
+    eq_comm]
 
 -- the cardinality from which the sentence of a reading holds
 private def bound (σ : Setting) : Examples.Reading → ℕ

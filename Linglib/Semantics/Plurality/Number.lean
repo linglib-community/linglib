@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Mereology.Basic
+public import Linglib.Syntax.Feature.Number.Decomposition
 
 /-!
 # Number features as region operators
@@ -16,9 +17,7 @@ cells of their bundles, are computed in `Studies/Harbour2014.lean`.
 
 ## Main definitions
 
-* `Number.atomsOf`, `Number.nonAtomsOf`: the `[+atomic]` and `[−atomic]` regions.
-* `Number.nonMinimalOf`: the `[−minimal]` region, the `[+minimal]` one being `Mereology.atomize`.
-* `Number.dualOf`: the `[−atomic, +minimal]` region, the dual.
+* `Number.Feature.restrict`: the region a valued feature selects from a region.
 * `Number.additiveIn`: the `[+additive]` elements of a subregion.
 
 ## Main results
@@ -27,7 +26,7 @@ cells of their bundles, are computed in `Studies/Harbour2014.lean`.
 * `Number.singular_subset_minimal`: in a region without the null individual an atom is minimal,
   so `[+atomic]` entails `[+minimal]`.
 * `Number.atomize_eq_of_atoms`: `[+minimal]` applied to a region of atoms changes nothing.
-* `Number.not_nonMinimalOf_atomize`: `[−minimal]` applied after `[+minimal]` is empty.
+* `Number.not_restrict_minimal_false_atomize`: `[−minimal]` applied after `[+minimal]` is empty.
 
 ## Implementation notes
 
@@ -87,28 +86,31 @@ end Additive
 
 variable [PartialOrder D]
 
-/-- The atoms of `P` form Harbour's `[+atomic]` region, the singular. -/
-abbrev atomsOf (P : D → Prop) (x : D) : Prop := P x ∧ Atom x
+/-- The region a valued feature selects from the region `P`: `[+atomic]` its atoms and
+`[−atomic]` the rest, `[+minimal]` its minimal elements and `[−minimal]` the rest. `[±additive]`
+cuts a region at a height the region does not fix, and leaves it. -/
+def Feature.restrict : Feature → Bool → (D → Prop) → D → Prop
+  | .atomic, true, P => fun x ↦ P x ∧ Atom x
+  | .atomic, false, P => fun x ↦ P x ∧ ¬ Atom x
+  | .minimal, true, P => atomize P
+  | .minimal, false, P => fun x ↦ P x ∧ ¬ atomize P x
+  | .additive, _, P => P
 
-/-- The non-atoms of `P` form Harbour's `[−atomic]` region. -/
-abbrev nonAtomsOf (P : D → Prop) (x : D) : Prop := P x ∧ ¬ Atom x
-
-/-- The non-minimal elements of `P` form Harbour's `[−minimal]` region, the complement in `P` of
-`atomize P`. -/
-abbrev nonMinimalOf (P : D → Prop) (x : D) : Prop := P x ∧ ¬ atomize P x
+theorem Feature.restrict_le (f : Feature) (v : Bool) (P : D → Prop) : f.restrict v P ≤ P :=
+  match f, v with
+  | .atomic, true | .atomic, false | .minimal, true | .minimal, false => fun _ h ↦ h.1
+  | .additive, _ => le_rfl
 
 /-- The minimal elements of a region of minimal elements are all of them, so
 `(−minimal(+minimal(P)))` is empty. -/
-theorem not_nonMinimalOf_atomize (P : D → Prop) (x : D) : ¬ nonMinimalOf (atomize P) x :=
+theorem not_restrict_minimal_false_atomize (P : D → Prop) (x : D) :
+    ¬ Feature.restrict .minimal false (atomize P) x :=
   fun h ↦ h.2 ⟨h.1, fun _ hy hyx ↦ h.1.2 hy.1 hyx⟩
-
-/-- The minimal non-atoms of `P` form the `[−atomic, +minimal]` region, the dual. -/
-abbrev dualOf (P : D → Prop) : D → Prop := atomize (nonAtomsOf P)
 
 /-- An atom of a region excluding the null individual is minimal in it, so
 `[+atomic]` entails `[+minimal]`. -/
 theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) {x : D}
-    (hx : atomsOf P x) : atomize P x :=
+    (hx : Feature.restrict .atomic true P x) : atomize P x :=
   ⟨hx.1, fun _ hy hle => hx.2.2 (hP _ hy) hle⟩
 
 /-- Over a region of atoms `[+minimal]` selects everything, so `(+minimal(+atomic(P)))` is

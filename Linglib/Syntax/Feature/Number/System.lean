@@ -33,8 +33,8 @@ consequents. -/
 def Implication.Holds (u : Implication) (s : Finset Number) : Prop :=
   u.antecedent ∈ s → ∃ v ∈ u.consequents, v ∈ s
 
-instance (u : Implication) (s : Finset Number) : Decidable (u.Holds s) := by
-  unfold Implication.Holds; infer_instance
+instance (u : Implication) (s : Finset Number) : Decidable (u.Holds s) :=
+  inferInstanceAs (Decidable (u.antecedent ∈ s → ∃ v ∈ u.consequents, v ∈ s))
 
 /-- The implicational universals of number, as [harbour-2014] tabulates them; the greater and the
 global plural have an implication each. -/
@@ -48,7 +48,7 @@ def universals : List Implication :=
 /-- A system satisfies the universals when it satisfies each implication. -/
 def SatisfiesUniversals (s : Finset Number) : Prop := ∀ u ∈ universals, u.Holds s
 
-instance (s : Finset Number) : Decidable (SatisfiesUniversals s) := by
-  unfold SatisfiesUniversals; infer_instance
+instance (s : Finset Number) : Decidable (SatisfiesUniversals s) :=
+  inferInstanceAs (Decidable (∀ u ∈ universals, u.Holds s))
 
 end Number
