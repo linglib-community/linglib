@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Nanosyntax.Lexicalization
+public import Linglib.Morphology.Nanosyntax.Lexicon
 public import Studies.DeganoAloni2025
 public import Studies.Dekier2021
 public import Studies.Haspelmath1997
@@ -57,19 +57,20 @@ open Haspelmath1997 hiding russian
 exponent of its lower layer and a suffix. Were a higher layer of the hierarchy to have an
 exponent of its own, the marker of one function would thus be built on the marker of another,
 the containment no indefinite paradigm shows. -/
-theorem containment_of_two_exponents {F : Type*} [DecidableEq F]
-    (L : RuleSet (LexicalEntry (Option F) String)) (f₁ f₂ : F) {x : String} {r : List String}
-    (h₁ : exponents L [f₁] = some [x]) (h₂ : exponents L [f₁, f₂] = some r) (hr : r.length ≠ 1) :
+theorem containment_of_two_exponents {F : Type} [DecidableEq F]
+    (L : RuleSet (LexicalEntry F String)) (f₁ f₂ : F) {x : String} {r : List String}
+    (h₁ : exponents (Nanosyntax.spellout L) [f₁] = some [x])
+    (h₂ : exponents (Nanosyntax.spellout L) [f₁, f₂] = some r) (hr : r.length ≠ 1) :
     ∃ y, r = [x, y] := by
   rw [exponents_singleton] at h₁
   rw [exponents_pair] at h₂
-  rcases h : treeSpellout L (.leaf (some f₁)) with - | x' <;> rw [h] at h₁ h₂
+  rcases h : Nanosyntax.spellout L (bare f₁) with - | x' <;> rw [h] at h₁ h₂
   · simp at h₁
   · obtain rfl : x' = x := by simpa using h₁
-    rcases hw : treeSpellout L (merge f₂ (.leaf (some f₁))) with - | y
-    · rcases hs : treeSpellout L (.leaf (some f₂)) with - | z
+    rcases hw : Nanosyntax.spellout L (phrase f₂ (bare f₁)) with - | y
+    · rcases hs : Nanosyntax.spellout L (bare f₂) with - | z
       · simp [hw, hs] at h₂
-      · rcases ha : treeSpellout L (adjoin (.leaf (some f₁)) (.leaf (some f₂))) with - | w <;>
+      · rcases ha : Nanosyntax.spellout L ((bare f₁).merge (bare f₂)) with - | w <;>
           simp [hw, hs, ha] at h₂
         · exact ⟨z, h₂.symm⟩
         · exact absurd (by simp [← h₂]) hr
@@ -81,7 +82,8 @@ single exponent under the lexicalization algorithm, the one its spellout has the
 marker is built on another. -/
 theorem no_containment_of_bottom_entries {n : ℕ} (L : RuleSet (SupersetRule n String))
     (g : Fin n) :
-    exponents (L.map (LexicalEntry.ofSupersetRule some)) (List.range ((g : ℕ) + 1)) =
+    exponents (Nanosyntax.spellout (L.map (LexicalEntry.ofSupersetRule id)))
+        (List.range ((g : ℕ) + 1)) =
       (spellout L g).map fun x ↦ [x] := by
   simpa using exponents_ofSupersetRule (feat := id) Function.injective_id L g
 

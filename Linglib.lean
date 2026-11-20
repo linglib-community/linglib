@@ -630,7 +630,6 @@ import Linglib.Morphology.Exponence.Elsewhere
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Paradigm.Analogy
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
