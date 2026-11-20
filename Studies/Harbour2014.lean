@@ -4,6 +4,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Tactic.IntervalCases
 public import Linglib.Semantics.Plurality.NumberFeatures
+public import Linglib.Syntax.Feature.Number.System
 public import Linglib.Core.Order.Concept
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Studies.Corbett2000
@@ -18,8 +19,8 @@ numbers. Each feature acts on a lattice of atoms and their sums, and the same tw
 govern all three: whether a feature is active on Number⁰ (22) and whether its two values may
 cooccur (23). A sociosemantic convention fixes the height of the cut `[±additive]` induces (14).
 A parameter setting generates a number system, the feature bundles with nonempty denotation, and
-the typology of Table 3 and the implications of Table 1 are claims about these systems. Without
-`[±additive]`, a setting with `[±atomic]` gives a referent of `k` individuals [the value
+the typology of Table 3 and the implications `Number.universals` are claims about these systems.
+Without `[±additive]`, a setting with `[±atomic]` gives a referent of `k` individuals [the value
 `Number.ofCard` gives](##Harbour2014.Setting.number_eq_ofCard), so conjoined noun phrases
 resolve to the value of the sum of their cardinalities; [an approximative value rules such
 resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
@@ -31,7 +32,6 @@ resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
 * `Setting.cell`: the region of a person lattice a bundle denotes in a setting.
 * `Setting.system`: the number system a setting generates.
 * `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
-* `table1`, `SatisfiesTable1`: the implicational universals of Table 1.
 * `Generates`, `Requires`: the legitimate settings as a formal context, and the order of its
   attribute concepts that (34) reads off them, one number requiring another.
 
@@ -63,7 +63,7 @@ resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
 namespace Harbour2014
 
 open Mereology
-open Number (Bundle Feature additiveIn atomsOf nonAtomsOf nonMinimalOf)
+open Number (Bundle Feature additiveIn atomsOf nonAtomsOf nonMinimalOf SatisfiesUniversals)
 
 /-! ### Person lattices and their strata (§2, (12)) -/
 
@@ -747,49 +747,17 @@ theorem length_values_le_six : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.a
     (σ.values c 0).length ≤ 6 := by
   decide +kernel
 
-/-- An implication of Table 1 says that a system with its antecedent has one of its
-consequents. -/
-structure Implication where
-  /-- The number that requires another. -/
-  antecedent : Number
-  /-- The numbers one of which it requires. -/
-  consequents : Finset Number
-  deriving DecidableEq
-
-/-- A system satisfies an implication when, with its antecedent, it has one of its
-consequents. -/
-def Implication.Holds (u : Implication) (s : Finset Number) : Prop :=
-  u.antecedent ∈ s → ∃ v ∈ u.consequents, v ∈ s
-
-instance (u : Implication) (s : Finset Number) : Decidable (u.Holds s) := by
-  unfold Implication.Holds; infer_instance
-
-/-- Table 1, the implications the features are to derive, in the printed order; its last row,
-for the greater and the global plural alike, is two implications. -/
-def table1 : List Implication :=
-  [⟨.trial, {.dual}⟩, ⟨.dual, {.singular}⟩, ⟨.singular, {.plural}⟩,
-    ⟨.plural, {.singular, .minimal}⟩, ⟨.unitAugmented, {.augmented}⟩,
-    ⟨.minimal, {.augmented, .plural}⟩, ⟨.augmented, {.minimal}⟩, ⟨.greaterPaucal, {.paucal}⟩,
-    ⟨.paucal, {.plural}⟩, ⟨.greaterPlural, {.plural, .augmented}⟩,
-    ⟨.globalPlural, {.plural, .augmented}⟩]
-
-/-- A system satisfies Table 1 when it satisfies each of its implications. -/
-def SatisfiesTable1 (s : Finset Number) : Prop := ∀ u ∈ table1, u.Holds s
-
-instance (s : Finset Number) : Decidable (SatisfiesTable1 s) := by
-  unfold SatisfiesTable1; infer_instance
-
 /-- Every legitimate setting satisfies Table 1 except `{±additive(*), ±minimal*}`, two lacunae of
 Table 3 whose unit augmented has no augmented. -/
-theorem satisfiesTable1_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
-    σ.Legitimate → (SatisfiesTable1 (σ.toSystem c) ↔
+theorem satisfiesUniversals_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    σ.Legitimate → (SatisfiesUniversals (σ.toSystem c) ↔
       ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
   decide +kernel
 
 -- Table 1 [corbett-2000]
-theorem satisfiesTable1_corbett (c : Corbett2000.Choices) : SatisfiesTable1 c.toSystem := by
+theorem satisfiesUniversals_corbett (c : Corbett2000.Choices) : SatisfiesUniversals c.toSystem := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
-  change SatisfiesTable1 (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem
+  change SatisfiesUniversals (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
 

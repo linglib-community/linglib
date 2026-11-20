@@ -212,9 +212,10 @@ theorem requires_dual_plural : Requires .dual .plural :=
   le_trans (requires_of_mem_derivedImplications (.dual, .singular) (by decide))
     (requires_of_mem_derivedImplications (.singular, .plural) (by decide))
 
-theorem not_satisfiesTable1_singular_dual : ¬ SatisfiesTable1 {.singular, .dual} := by decide
+theorem not_satisfiesUniversals_singular_dual : ¬ SatisfiesUniversals {.singular, .dual} := by
+  decide
 
-theorem not_satisfiesTable1_singular : ¬ SatisfiesTable1 {.singular} := by decide
+theorem not_satisfiesUniversals_singular : ¬ SatisfiesUniversals {.singular} := by decide
 
 -- (52): the loss of `[±minimal]`
 theorem bundles_erase_minimal :
