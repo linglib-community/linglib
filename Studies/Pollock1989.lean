@@ -8,26 +8,16 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Pollock (1989): Verb Movement, Universal Grammar, and the Structure of IP
 
-This file formalizes Pollock's account of the placement of French and English verbs
-relative to negation, adverbs, floating quantifiers, and the subject. The clause is
-`[TP T [NegP Neg [AgrP Agr [VP Adv V]]]]`, and a verb moves head to head: to Agr, the short
-movement that carries it past an adverb, and from Agr to T, the long movement that carries it
-past negation and lets it invert with the subject. A head that is opaque to θ-role assignment
-blocks the movement of a verb with θ-roles to assign, since the raised verb could no longer
-assign them, and only a verb with none, the auxiliaries *be* and *have*, may pass. English Agr
-is opaque and French Agr transparent; nonfinite T is opaque in both languages. Finite T is an
-operator that must bind a verb trace, so in a finite clause a verb rises as high as it can,
-and when it cannot rise at all the tense affix lowers onto it and *do* supports it under
-negation.
+This file formalizes [pollock-1989]'s account of where French and English verbs stand relative to
+negation, adverbs, floating quantifiers and the subject. A verb moves head to head, from VP to
+Agr and from Agr to T, and a head that is opaque to θ-role assignment admits only a verb with no
+θ-roles to assign, an auxiliary. English Agr is opaque and French Agr is not; nonfinite T is opaque
+in both languages.
 
-The heights a verb can reach are `Reaches`; from it follow the paper's generalizations: long
-movement passes through short movement, auxiliaries reach T in every clause, no lexical verb
-reaches nonfinite T in either language, lexical verbs move at all exactly in French, and
-do-support arises exactly in English finite clauses with a lexical verb (`reaches_tense_imp_agr`,
-`auxiliary_reaches_tense`, `lexical_not_reaches_nonfinite_tense`, `lexical_reaches_agr_iff`,
-`needsDo_iff`). The paradigm of examples (2) to (39), forty rows over finite and nonfinite
-clauses of both languages, is accounted for row by row: a row is excluded exactly when no
-admissible height puts the verb where the row puts it (`paradigm`).
+`Reaches` gives the heights a verb can reach. A lexical verb moves at all exactly in French
+(`lexical_reaches_agr_iff`), and *do*-support arises exactly in English finite clauses with a
+lexical verb (`needsDo_iff`). Each row of the paradigm is excluded exactly when no admissible
+height puts the verb where the row puts it (`paradigm`).
 
 ## Implementation notes
 

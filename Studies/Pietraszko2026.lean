@@ -1,33 +1,23 @@
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
 public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Pietraszko (2026): In Defense of the Clause-Internal Phase
 
-This file formalizes the argument of [pietraszko-2026] that VoiceP in Zimbabwean Ndebele is
-a phase, from its opacity to A-movement and φ-agreement rather than from footprints of
-successive-cyclic movement. A subject may move to Spec,TP and control agreement on T (5), or
-stay in situ under default agreement (6); of the three sources of a missing probe–goal
-relation (8), the account is locality: T always bears EPP and φ, VoiceP is a phase under the
-strong Phase Impenetrability Condition of [chomsky-2000], and Voice bears EPP optionally (9),
-(10). A subject that reaches Spec,VoiceP is visible to every head above and, operations being
-obligatory when possible with an unchecked EPP tolerated as in [preminger-2014], moves on to
-Spec,TP; a subject left in the phase's complement is invisible to them all. Hence movement and
-agreement go together (11)–(14) (`simple_clause`); auxiliary constructions agree on every head
-or on none and admit no intermediate landing site (16)–(21) (`auxV_uniform`,
-`auxV_no_partial`); a reduced clause whose highest head is Asp lets Asp attract the subject on
-its own (34)–(42) (`reduced_clause`); a subject that leaves its VoiceP has agreed with T on the
-way (25)–(28) (`agrees_of_lt_landing`); and hyperraising yields the four subject positions of
-(77) from the EPP of the phase heads alone, the VP-internal one included (69), (76)
-(`hyperraising_sites`). The general form is phase-delimited movement (79): movement within a
-phase is obligatory (`phase_internal_obligatory`), and a phase head without EPP freezes the
-subject below it (`cross_phasal_frozen`). The account with an optional [EPP, φ] on T of
-[carstens-mletshe-2015] admits the unattested partial patterns (30), (31) and default
-agreement on a T the subject has crossed (25) (`optional_T_overgenerates`), where the phasal
-account excludes them.
+This file formalizes [pietraszko-2026]'s argument that VoiceP is a phase in Zimbabwean Ndebele.
+T always bears EPP and φ, Voice bears EPP optionally, and VoiceP is a phase under the strong Phase
+Impenetrability Condition of [chomsky-2000]. A subject that reaches Spec,VoiceP is visible to
+every head above it and moves on to Spec,TP; a subject left in the complement of Voice is visible
+to none.
+
+Movement and agreement therefore go together (`simple_clause`), auxiliary constructions agree on
+every head or on none (`auxV_uniform`, `auxV_no_partial`), a reduced clause lets Asp attract the
+subject on its own (`reduced_clause`), and hyperraising yields four subject positions
+(`hyperraising_sites`). With [EPP, φ] optional on T instead, as [carstens-mletshe-2015] propose,
+unattested partial patterns are derived (`optional_T_overgenerates`).
 
 ## Implementation notes
 
@@ -320,10 +310,9 @@ def copyAt (k j : ℕ) : PlanarSyntacticObject := if j = k then .leaf subj else 
 with deleted copies at its base and in every specifier it passed through. -/
 def treeAt (sp : Spine) (n : ℕ) : PlanarSyntacticObject :=
   let k := (stateAt sp n).height
-  (sp.take n).zipIdx.foldl (fun t x ↦
-    let hp : PlanarSyntacticObject := .leaf (tokOf sp x.2 x.1) * t
-    if x.1.epp ∧ x.2 + 1 ≤ k then copyAt k (x.2 + 1) * hp else hp)
-    (copyAt k 0 * (v * (V * obj)))
+  (copyAt k 0 * (v * (V * obj)) : PlanarSyntacticObject).extend .v 10
+    (fun i ↦ sp[i]?.bind fun h ↦ if h.epp ∧ i + 1 ≤ k then some (copyAt k (i + 1)) else none)
+    ((sp.take n).map Head.cat)
 
 /-- The tree in which the head `hd` at index `i` has just merged. -/
 def probeTree (sp : Spine) (i : ℕ) (hd : Head) : PlanarSyntacticObject :=

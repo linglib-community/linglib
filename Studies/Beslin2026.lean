@@ -52,7 +52,7 @@ privative](##forall_nondistinct_iff_subsingleton).
 
 namespace Beslin2026
 
-open Minimalist Minimalist.Ellipsis ClauseSpine Minimalist.Voice
+open Minimalist Minimalist.Ellipsis Spine Minimalist.Voice
 open DistributedMorphology (Root)
 
 /-! ### Structures -/
@@ -356,7 +356,7 @@ theorem not_predicts_eq (D : Set Site) (f : Analysis) : ¬ Predicts (relatedOn E
     have hx' : ∀ y ∈ clausalSpine.sites, vpEllipsis.Deletes y →
         y = .head .V ∨ y = .adjunct .V ∨ y = .head .v := by
       decide +kernel
-    rcases hx' x (ClauseSpine.Deletes.mem_sites hx.2) hx.2 with rfl | rfl | rfl
+    rcases hx' x (Spine.Deletes.mem_sites hx.2) hx.2 with rfl | rfl | rfl
     · rfl
     · rfl
     · exact absurd hx.1 hD
@@ -684,7 +684,7 @@ theorem d_alternant_overgenerates :
 
 /-- §4.2. Nondistinctness rules out nothing exactly when every feature is privative, with at most
 one value, so ellipsis detects the features that are not. -/
-theorem forall_nondistinct_iff_subsingleton {ι : Type*} {κ : ι → Type*} {s : ClauseSpine}
+theorem forall_nondistinct_iff_subsingleton {ι : Type*} {κ : ι → Type*} {s : Spine}
     {e : Ellipsis s} {x : Site} (hx : x ∈ e.argumentDomain) :
     (∀ a t : Site → ∀ i, Flat (κ i), e.Nondistinct a t) ↔ ∀ i, Subsingleton (κ i) := by
   classical

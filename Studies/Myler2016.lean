@@ -8,18 +8,15 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Myler (2016): Building and Interpreting Possession Sentences
 
-This file formalizes Myler's treatment of *have* and *be* as one meaningless
-copula whose meaning is the identity function and whose form is fixed by its syntactic
-surroundings: *have* under a transitive Voice, one bearing the specifier feature and
-φ-features, and *be* otherwise (`englishItems`, `have_iff_transitive`). The possession
-relation comes from inside the noun-phrase complement, and Voice adds a thematic role only
-when the complement is a predicate of eventualities, so with a relational complement the
-sentence means what its complement means (`expletive_voice_passes_complement`). Icelandic's
-two *have* verbs divide the transitive context by what lies below the copula, *hafa* over a
-predicative phrase and *eiga* elsewhere (`icelandicItems`, `hafa_iff_predP`), and the two
-generalizations about attributive possession follow from the structures
-(`eiga_only_if_no_pp`, `hafa_only_if_pp`); the items reproduce the book's Icelandic data,
-clausal and attributive.
+This file formalizes [myler-2016]'s treatment of *have* and *be* as one copula with no meaning of
+its own, whose form depends on its surroundings: *have* under a transitive Voice and *be*
+otherwise (`have_iff_transitive`). The possession relation comes from the noun-phrase complement,
+and Voice adds a thematic role only over a predicate of eventualities
+(`expletive_voice_passes_complement`).
+
+Icelandic has two *have* verbs, *hafa* over a predicative phrase and *eiga* elsewhere
+(`hafa_iff_predP`), from which the two generalizations about attributive possession follow
+(`eiga_only_if_no_pp`, `hafa_only_if_pp`).
 
 ## Implementation notes
 

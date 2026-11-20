@@ -56,7 +56,7 @@ inductive Attachment
 
 /-- The site of the adjunct, adjoined to VP, or to TP above the negation a reason clause
 outscopes. -/
-def Attachment.site : Attachment → ClauseSpine.Site
+def Attachment.site : Attachment → Spine.Site
   | .vp => .adjunct .V
   | .reason => .adjunct .T
 

@@ -72,6 +72,8 @@ demonstrative, so those pairs are incomparable.
 * [newman-2024]
 * [dendikken-2010]
 * [arregi-pietraszko-2021]
+* [thoms-etal-2026]
+* [elkins-torrence-brown-2026]
 -/
 
 @[expose] public section
@@ -94,11 +96,13 @@ def citedSequences : List (List Cat) :=
     [.T, .Pol, .C],                               -- [laka-1990] (46)–(47), p. 127
     [.v, .T, .Nmlz],                              -- [keine-2020] (106), p. 74
     [.v, .T, .C],                                 -- [keine-2020] (238), p. 156
+    [.V, .v, .Voice, .Dir, .C],                   -- [elkins-torrence-brown-2026] (8), p. 6
     [.T, .Fin, .Top, .Foc, .Top, .Force],         -- [rizzi-1997] (41), p. 297
     [.T, .Foc, .Say],                             -- [egressy-2026] p. 14
     [.Mood, .SA],                                 -- [speas-tenny-2003] p. 332
     [.N, .Q, .Num, .D],                           -- [borer-2005] (8a), p. 96
     [.N, .Num, .Dem],                             -- [cinque-2005] (7a), p. 321
+    [.n, .Poss, .Num],                            -- [thoms-etal-2026] (38), p. 22
     [.D, .K],                                     -- [newman-2024] (217), p. 129
     [.D, .Lnk],                                   -- [arregi-pietraszko-2021] (14), p. 250
     [.P, .Place, .Path]]                          -- [dendikken-2010] (20c), p. 81

@@ -53,7 +53,7 @@ survives any ellipsis](##deletes_v).
 
 namespace Merchant2013
 
-open Minimalist Minimalist.Ellipsis ClauseSpine
+open Minimalist Minimalist.Ellipsis Spine
 
 /-- The kinds of ellipsis the paper compares. -/
 inductive Kind

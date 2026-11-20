@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Syntax.Minimalist.Clause.VerbalSpine
+public import Linglib.Data.UD.UPOS
+public import Linglib.Syntax.Minimalist.Category
+public import Mathlib.Data.List.DropRight
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Wordlist.ArregiPietraszko2021
@@ -17,20 +19,23 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Arregi and Pietraszko (2021): The ups and downs of head displacement
 
-Arregi and Pietraszko replace head raising and lowering by one syntactic operation, Generalized
-Head Movement, in which a head shares its M-value, the morphological features that Vocabulary
-Insertion spells out, with the head of its complement. The heads of a clause thus form a head
-chain around one complex head, pronounced in the chain's highest strong position, or in its
-highest position if none is strong. A chain that ends in a strong verb splits when a specifier
-intervenes or the verb phrase is elided or fronted, and the verb's terminal, an orphan in the
-half without the verb, is exponed as *do*.
+This file formalizes the Generalized Head Movement of [arregi-pietraszko-2021]. A head shares its
+M-value, the morphological features that Vocabulary Insertion spells out, with the head of its
+complement, so the heads of a clause form a head chain around one complex head. The chain is
+pronounced in its highest strong position, or in its highest position if none is strong
+(`HeadChain.pronounced`).
+
+A chain that ends in a strong verb splits when a specifier intervenes or the verb phrase is elided
+or fronted, and *do* expones the verb's terminal in the half without the verb. *Do*-support thus
+arises exactly where the chain splits (`doSupport_iff`).
 
 ## Implementation notes
 
-* A clause is a `Minimalist.VerbalSpine`: the tag of its verb, the heads related to the verb,
-  the heads whose specifier is pronounced, and what becomes of the verb phrase. A specifier
-  intervenes when it is that of a head below the highest. A negative imperative, where Σ keeps C
-  out of the verb's chain, is thereby the spine of a declarative.
+* A `Clause` holds what head-chain formation reads: the tag of the verb, the heads related to
+  the verb, the heads whose specifier is pronounced, and what becomes of the verb phrase. A
+  specifier intervenes when it is that of a head below the highest; the specifier of the highest
+  head does not, since that head does not c-command it. A negative imperative, where Σ keeps C
+  out of the verb's chain, is thereby the clause of a declarative.
 * Strength is a property of the functional heads and, for the verb, of its tag, so that English
   lexical verbs are strong and its auxiliaries weak while Danish auxiliaries are strong too.
 * Split-by-Deletion applies in every language, the possibility the paper raises for its typology
@@ -295,33 +300,54 @@ theorem fronted_forms :
       OrphanFate.obliterated.spellout.pf fronted.domain = [[.stem]] := by
   decide
 
-/-! ### Spines and chain splitting -/
+/-! ### Clauses and chain splitting -/
+
+/-- The verb phrase is pronounced in place, elided, or pronounced in a fronted copy. -/
+inductive VPStatus
+  | inSitu | elided | fronted
+  deriving DecidableEq, Repr
+
+/-- A clause as head-chain formation reads it: the tag of the verb, the heads above the verb that
+it is related to, lowest first, the heads among them whose specifier is pronounced, and the status
+of the verb phrase. -/
+structure Clause where
+  verb : UD.UPOS := .VERB
+  above : List Cat
+  specifiers : Finset Cat := ∅
+  vp : VPStatus := .inSitu
+  deriving DecidableEq
+
+/-- A pronounced specifier stands between the highest head and the verb: the specifier of a head
+below the highest. -/
+def Clause.Intervenes (x : Clause) : Prop := ∃ c ∈ x.above.dropLast, c ∈ x.specifiers
+
+instance (x : Clause) : Decidable x.Intervenes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- T is related to the verb, the subject pronounced in its specifier. -/
-def declarative : VerbalSpine := { above := [.T], specifiers := {.T} }
+def declarative : Clause := { above := [.T], specifiers := {.T} }
 
 /-- Σ stands between T and the verb, and its specifier, negation or verum focus, is pronounced. -/
-def polarity : VerbalSpine := { above := [.Pol, .T], specifiers := {.Pol, .T} }
+def polarity : Clause := { above := [.Pol, .T], specifiers := {.Pol, .T} }
 
 /-- Sentential negation in a language. -/
-def negation (L : Language) : VerbalSpine := if L.adverbialNegation then declarative else polarity
+def negation (L : Language) : Clause := if L.adverbialNegation then declarative else polarity
 
 /-- C is related to T and the specifier of T is not pronounced, as in a subject question, whose
 Spec,TP holds a lower copy, a subject-initial verb-second clause, and an affirmative
 imperative. -/
-def toC : VerbalSpine := { above := [.T, .C] }
+def toC : Clause := { above := [.T, .C] }
 
 /-- C is related to T across the subject pronounced in Spec,TP. -/
-def inversion : VerbalSpine := { toC with specifiers := {.T} }
+def inversion : Clause := { toC with specifiers := {.T} }
 
 /-- A chain that ends in a strong lexical verb splits at the verb when the language has
 Split-by-Intervention and a pronounced specifier intervenes, or when the verb is unpronounced
 under ellipsis or as the lower copy of a fronted verb phrase. -/
-def Splits (L : Language) (x : VerbalSpine) : Prop :=
+def Splits (L : Language) (x : Clause) : Prop :=
   x.verb = .VERB ∧ .VERB ∈ L.strongVerbs ∧ x.above ≠ [] ∧
     (L.splitByIntervention ∧ x.Intervenes ∨ x.vp ≠ .inSitu)
 
-instance (L : Language) (x : VerbalSpine) : Decidable (Splits L x) :=
+instance (L : Language) (x : Clause) : Decidable (Splits L x) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The head chains of a clause at Spell-Out, with the strong positions of the clause. -/
@@ -338,7 +364,7 @@ structure Chains where
 /-- `derive L x` holds the chains of a clause. GenHM relates the verb to the heads above it, a
 split leaves the verb alone in one half, and a fronted verb phrase carries a copy of the verb with
 the whole M-value. -/
-def derive (L : Language) (x : VerbalSpine) : Chains :=
+def derive (L : Language) (x : Clause) : Chains :=
   let c := HeadChain.ofHeads .V x.above
   let alone : HeadChain := ⟨[.V], c.mvalue⟩
   { verb := if Splits L x then alone else c
@@ -363,7 +389,7 @@ instance (d : Chains) : Decidable d.HasC := inferInstanceAs (Decidable (_ ∈ _)
 
 end Chains
 
-variable {L : Language} {x : VerbalSpine}
+variable {L : Language} {x : Clause}
 
 theorem splits_of_doSupport (h : (derive L x).DoSupport) : Splits L x := by
   by_contra hs
@@ -377,7 +403,7 @@ theorem doSupport_iff (h : .V ∉ x.above) : (derive L x).DoSupport ↔ Splits L
       .V :: x.above := HeadChain.terminals_ofHeads .V x.above
   simp [Chains.DoSupport, derive, hs, HeadChain.Orphan, ht, h]
 
-theorem not_doSupport_of_isAuxiliary (h : x.IsAuxiliary) : ¬ (derive L x).DoSupport :=
+theorem not_doSupport_of_verb_eq_aux (h : x.verb = .AUX) : ¬ (derive L x).DoSupport :=
   fun hd ↦ absurd ((splits_of_doSupport hd).1.symm.trans h) (by decide)
 
 theorem doSupport_iff_strong_of_ne_inSitu (h : .V ∉ x.above) (hne : x.above ≠ [])
@@ -393,7 +419,7 @@ theorem doSupport_iff_of_intervenes (h : .V ∉ x.above) (hne : x.above ≠ [])
 theorem finitePosition_declarative (hT : .T ∉ L.strongAt .VERB) :
     (derive L declarative).finitePosition = some (if .V ∈ L.strongAt .VERB then .V else .T) := by
   by_cases hV : Cat.V ∈ L.strongAt .VERB <;>
-    simp [Chains.finitePosition, derive, Splits, declarative, VerbalSpine.Intervenes,
+    simp [Chains.finitePosition, derive, Splits, declarative, Clause.Intervenes,
       HeadChain.pronounced, HeadChain.ofHeads, List.filter, hV, hT]
 
 theorem danish_verb_second :
@@ -421,7 +447,7 @@ theorem imperatives :
       (derive vallader toC).finitePosition = some .T ∧
       (∀ L, (derive L toC).HasC ∧ ¬ (derive L declarative).HasC) := by
   refine ⟨by decide, by decide, fun L ↦ ?_⟩
-  simp only [Chains.HasC, derive, Splits, toC, declarative, VerbalSpine.Intervenes]
+  simp only [Chains.HasC, derive, Splits, toC, declarative, Clause.Intervenes]
   split_ifs <;> simp [HeadChain.terminals, HeadChain.ofHeads]
 
 /-! ### Negative Merger -/
@@ -451,7 +477,7 @@ theorem Chains.finitePosition_negativeMerger (d : Chains) :
 
 theorem contracted_negation :
     let negated := (derive english (negation english)).negativeMerger
-    let question : VerbalSpine := { above := [.Pol, .T, .C], specifiers := {.Pol, .T} }
+    let question : Clause := { above := [.Pol, .T, .C], specifiers := {.Pol, .T} }
     negated.finite.word english = some [[.dummy], [.finite], [.contracted]] ∧
       negated.verb.word english = some [[.stem]] ∧
       (derive english { negation english with verb := .AUX }).negativeMerger.finite.word english =
@@ -492,7 +518,7 @@ def languages : List (Glottocode × Language) :=
 
 /-- The context each label of the rows names in a language. The elided verb-second clause is
 subject-initial, and in the fronting ones the subject follows the finite verb. -/
-def contexts (L : Language) : List (String × VerbalSpine) :=
+def contexts (L : Language) : List (String × Clause) :=
   [("declarative", declarative), ("negation", negation L), ("verum", polarity),
     ("inversion", inversion), ("v2", inversion), ("subjectWh", toC),
     ("imperativeAff", toC), ("imperativeNeg", declarative),
@@ -759,22 +785,22 @@ theorem doSupport_iff_intervener {L : Language} (hV : .VERB ∈ L.strongVerbs)
   refine ⟨rfl, (doSupport_iff (by decide)).mpr ⟨rfl, hV, by decide, .inl ⟨hs, by decide⟩⟩,
     fun h ↦ ?_⟩
   have := splits_of_doSupport h
-  simp [Splits, toC, VerbalSpine.Intervenes] at this
+  simp [Splits, toC, Clause.Intervenes] at this
 
 /-- The settings and context of a French or Danish clause among the verb-placement examples of
 the amalgamation study. -/
-def clauseOf (r : Datum) : Option (Language × VerbalSpine) :=
-  let cx (L : Language) : VerbalSpine :=
+def clauseOf (r : Datum) : Option (Language × Clause) :=
+  let cx (L : Language) : Clause :=
     if r.feature? "diagnostic" = some "negation" then negation L else declarative
   List.lookup (r.language, r.feature? "clause")
     [((.french, none), (french, cx french)), ((.danish, some "embedded"), (danish, cx danish)),
       ((.danish, some "root"), (danish, toC))]
 
 /-- The finite word of a clause whose verb has the tag is pronounced in T or above. -/
-def PlacedHigh (L : Language) (x : VerbalSpine) (verb : UD.UPOS) : Prop :=
+def PlacedHigh (L : Language) (x : Clause) (verb : UD.UPOS) : Prop :=
   (derive L { x with verb }).finitePosition ∈ [some .T, some .C]
 
-instance (L : Language) (x : VerbalSpine) (verb : UD.UPOS) : Decidable (PlacedHigh L x verb) :=
+instance (L : Language) (x : Clause) (verb : UD.UPOS) : Decidable (PlacedHigh L x verb) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 theorem amalgamation_rows :

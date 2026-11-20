@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Horizon
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 
 /-!
 # Keine (2020): Probes and Their Horizons
@@ -26,7 +26,7 @@ the Ban on Improper Movement (Section 6.2) with the smuggling and remnant-moveme
 
 ## Implementation notes
 
-Clauses are the substrate's `ClauseSpine`s, with the Hindi NmlzP, the
+Clauses are the substrate's `Spine`s, with the Hindi NmlzP, the
 German ForceP and the Tsez TopP and ForceP defined here, and so are the probes of (219), (241),
 (300) and (367); the Itelmen and Tsez probes are parameterized by their head, which (269) and
 (271) leave open. Chapters 4 and 5, on CP and vP phases, are not formalized beyond the opacity
@@ -46,21 +46,21 @@ namespace Keine2020
 open Minimalist
 
 /-- A probe's row of a transparency table over clause sizes. -/
-def row (sizes : List ClauseSpine) (p : HorizonSetting) : List Bool :=
+def row (sizes : List Spine) (p : HorizonSetting) : List Bool :=
   sizes.map fun s ↦ decide (p.TransparentTo s)
 
 /-- The Hindi nominalized clause `[V, v, T, Nmlz]`, a clause type distinct from CP (Chapter 2). -/
-def nmlzP : ClauseSpine := ⟨[.V, .v, .T, .Nmlz]⟩
+def nmlzP : Spine := ⟨[.V, .v, .T, .Nmlz]⟩
 
 /-- The German verb-second clause `[V, v, T, C, Force]`, projecting ForceP above CP
 (Chapter 4). -/
-def forceP : ClauseSpine := ⟨[.V, .v, .T, .C, .Force]⟩
+def forceP : Spine := ⟨[.V, .v, .T, .C, .Force]⟩
 
 /-! ### Upward Entailment -/
 
 theorem sizes_le :
-    ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP ∧ ClauseSpine.tP ≤ nmlzP ∧
-      ClauseSpine.cP ≤ forceP := by
+    Spine.vP ≤ .tP ∧ Spine.tP ≤ .cP ∧ Spine.tP ≤ nmlzP ∧
+      Spine.cP ≤ forceP := by
   decide
 
 /-- A language's probe settings for the four operations of the transparency tables. -/
@@ -99,7 +99,7 @@ def defaultHorizon (head : Cat) : HorizonSetting := ⟨head, some head⟩
 /-! ### Hindi (Chapters 2 and 3) -/
 
 /-- The four Hindi clause sizes of (168), the nominalized clause beside the finite one. -/
-def hindiSizes : List ClauseSpine := [.vP, .tP, .cP, nmlzP]
+def hindiSizes : List Spine := [.vP, .tP, .cP, nmlzP]
 
 /-- In Hindi (168), from (219), A-movement and φ-agreement enter only vP clauses, wh-licensing every
 clause but CP, and Ā-movement every clause but NmlzP. -/
@@ -111,10 +111,10 @@ theorem hindi_table :
   decide
 
 theorem nmlzP_cP_incomparable :
-    (¬ nmlzP ≤ ClauseSpine.cP ∧ ¬ ClauseSpine.cP ≤ nmlzP) ∧
+    (¬ nmlzP ≤ Spine.cP ∧ ¬ Spine.cP ≤ nmlzP) ∧
       (LanguageProbeConfig.hindi.wh.TransparentTo nmlzP ∧
-        ¬ LanguageProbeConfig.hindi.wh.TransparentTo ClauseSpine.cP) ∧
-      (LanguageProbeConfig.hindi.ābar.TransparentTo ClauseSpine.cP ∧
+        ¬ LanguageProbeConfig.hindi.wh.TransparentTo Spine.cP) ∧
+      (LanguageProbeConfig.hindi.ābar.TransparentTo Spine.cP ∧
         ¬ LanguageProbeConfig.hindi.ābar.TransparentTo nmlzP) ∧
       ([LanguageProbeConfig.hindi.phi, LanguageProbeConfig.hindi.wh,
         LanguageProbeConfig.hindi.ābar].map (row hindiSizes)).Nodup := by
@@ -123,14 +123,14 @@ theorem nmlzP_cP_incomparable :
 -- (231)
 theorem a_movement_agreement_generalization :
     LanguageProbeConfig.hindi.aMove = LanguageProbeConfig.hindi.phi ∧
-      LanguageProbeConfig.hindi.ābar.TransparentTo ClauseSpine.cP ∧
-      ¬ LanguageProbeConfig.hindi.phi.TransparentTo ClauseSpine.cP :=
+      LanguageProbeConfig.hindi.ābar.TransparentTo Spine.cP ∧
+      ¬ LanguageProbeConfig.hindi.phi.TransparentTo Spine.cP :=
   ⟨rfl, by decide, by decide⟩
 
 /-! ### English and German (Section 3.4.2 and Chapter 4) -/
 
 /-- The English clause sizes. -/
-def englishSizes : List ClauseSpine := [.vP, .tP, .cP]
+def englishSizes : List Spine := [.vP, .tP, .cP]
 
 /-- In English (241), the A-probe enters nonfinite but not finite clauses, banning hyperraising
 (242), the wh-probe enters every clause, and extraposition only vP. -/
@@ -152,7 +152,7 @@ def germanWh : HorizonSetting := ⟨.C, some .Force⟩
 def germanTop : HorizonSetting := ⟨.Force, none⟩
 
 /-- The German clause sizes, whose verb-second clauses project ForceP above CP. -/
-def germanSizes : List ClauseSpine := [.vP, .tP, .cP, forceP]
+def germanSizes : List Spine := [.vP, .tP, .cP, forceP]
 
 /-- Chapter 4: the four German movements cut off at successive clause sizes. -/
 theorem german_table :
@@ -175,38 +175,38 @@ def tsezPhi (head : Cat) : HorizonSetting := ⟨head, some .Force⟩
 def tsezMove (head : Cat) : HorizonSetting := ⟨head, some .Top⟩
 
 /-- The Tsez clause sizes above TP are TopP and ForceP, which requires TopP below it. -/
-def tsezTopP : ClauseSpine := ⟨[.V, .v, .T, .Top]⟩
+def tsezTopP : Spine := ⟨[.V, .v, .T, .Top]⟩
 
-def tsezForceP : ClauseSpine := ⟨[.V, .v, .T, .Top, .Force]⟩
+def tsezForceP : Spine := ⟨[.V, .v, .T, .Top, .Force]⟩
 
 /-- Movement and agreement mismatch in both directions, in Itelmen TP clauses and in Tsez TopP and
 ForceP clauses ((269), (271)). -/
 theorem mismatches (head : Cat) :
-    ((itelmenMove head).TransparentTo ClauseSpine.tP ∧
-        ¬ (itelmenPhi head).TransparentTo ClauseSpine.tP) ∧
+    ((itelmenMove head).TransparentTo Spine.tP ∧
+        ¬ (itelmenPhi head).TransparentTo Spine.tP) ∧
       ((tsezPhi head).TransparentTo tsezTopP ∧
         ¬ (tsezMove head).TransparentTo tsezTopP) ∧
       ¬ (tsezPhi head).TransparentTo tsezForceP ∧
         ¬ (tsezMove head).TransparentTo tsezForceP := by
-  simp [itelmenMove, itelmenPhi, tsezPhi, tsezMove, tsezTopP, tsezForceP, ClauseSpine.tP]
+  simp [itelmenMove, itelmenPhi, tsezPhi, tsezMove, tsezTopP, tsezForceP, Spine.tP]
 
 /-! ### The Height–Locality Theorem (Section 3.5) -/
 
 -- (274), (278)
 theorem vacuous_on_C :
-    ∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn .cP := by
+    ∀ h ∈ Spine.tP, (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn .cP := by
   decide
 
 /-- (279a), location to horizon: a probe on T⁰, C⁰ or Force⁰ with a horizon among the
 projections below it is vacuous. -/
 theorem hlt_location_to_horizon :
-    (∀ h ∈ ClauseSpine.vP, (⟨.T, some h⟩ : HorizonSetting).IsVacuousIn forceP) ∧
-      (∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn forceP) ∧
-      ∀ h ∈ ClauseSpine.cP, (⟨.Force, some h⟩ : HorizonSetting).IsVacuousIn forceP := by
+    (∀ h ∈ Spine.vP, (⟨.T, some h⟩ : HorizonSetting).IsVacuousIn forceP) ∧
+      (∀ h ∈ Spine.tP, (⟨.C, some h⟩ : HorizonSetting).IsVacuousIn forceP) ∧
+      ∀ h ∈ Spine.cP, (⟨.Force, some h⟩ : HorizonSetting).IsVacuousIn forceP := by
   decide
 
 -- (279b)
-theorem hlt_horizon_to_location {s : ClauseSpine} {c d h : Cat}
+theorem hlt_horizon_to_location {s : Spine} {c d h : Cat}
     (hc : (⟨c, some h⟩ : HorizonSetting).IsVacuousIn s) (hd : c ∈ s.below d) :
     (⟨d, some h⟩ : HorizonSetting).IsVacuousIn s :=
   hc.of_mem_below hd
@@ -222,8 +222,8 @@ theorem attested_nonvacuous :
 /-- The default horizon of a probe on X⁰ is X, the strictest non-vacuous choice, taken by the Hindi
 T⁰ probes, English extraposition and German scrambling (307). -/
 theorem default_horizon_strictest :
-    (∀ (X : Cat) (s : ClauseSpine), ¬ (defaultHorizon X).IsVacuousIn s) ∧
-      (∀ (X h : Cat) (s : ClauseSpine), h ∈ s.below X →
+    (∀ (X : Cat) (s : Spine), ¬ (defaultHorizon X).IsVacuousIn s) ∧
+      (∀ (X h : Cat) (s : Spine), h ∈ s.below X →
         (⟨X, some h⟩ : HorizonSetting).IsVacuousIn s) ∧
       LanguageProbeConfig.hindi.phi = defaultHorizon .T ∧
       englishExtr = defaultHorizon .T ∧
@@ -235,22 +235,22 @@ theorem default_horizon_strictest :
 
 /-- The A-movement settings of Hindi, English and Lubukusu form an entailment chain over clauses
 that project T whenever they project C (300). -/
-theorem a_movement_chain (s : ClauseSpine) (hs : Cat.C ∈ s → Cat.T ∈ s) :
+theorem a_movement_chain (s : Spine) (hs : Cat.C ∈ s → Cat.T ∈ s) :
     (LanguageProbeConfig.hindi.aMove.TransparentTo s →
         LanguageProbeConfig.english.aMove.TransparentTo s) ∧
       (LanguageProbeConfig.english.aMove.TransparentTo s → lubukusuAProbe.TransparentTo s) := by
   simpa [LanguageProbeConfig.hindi, LanguageProbeConfig.english, lubukusuAProbe] using mt hs
 
-theorem improper_movement (h : Cat) (hh : h ∈ ClauseSpine.cP) :
-    ¬ (⟨.T, some h⟩ : HorizonSetting).TransparentTo ClauseSpine.cP := by
+theorem improper_movement (h : Cat) (hh : h ∈ Spine.cP) :
+    ¬ (⟨.T, some h⟩ : HorizonSetting).TransparentTo Spine.cP := by
   simpa using hh
 
 -- (300)
 theorem improper_movement_attested :
     (∀ p ∈ [LanguageProbeConfig.hindi.aMove, LanguageProbeConfig.english.aMove, germanScr],
-        ¬ p.TransparentTo ClauseSpine.cP) ∧
+        ¬ p.TransparentTo Spine.cP) ∧
       ∀ p ∈ [LanguageProbeConfig.hindi.ābar, LanguageProbeConfig.english.wh],
-        p.TransparentTo ClauseSpine.cP := by
+        p.TransparentTo Spine.cP := by
   decide
 
 end Keine2020

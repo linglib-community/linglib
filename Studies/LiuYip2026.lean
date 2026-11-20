@@ -132,13 +132,13 @@ hierarchy, so what crosses a larger complement crosses a smaller one. -/
 theorem antitone_exceptionalScope (f : AspProjection) : Antitone (ExceptionalScope f) :=
   fun _ _ h hs hc ↦ hs (hc.trans h)
 
-/-- Outer-associated elements take exceptional scope across a verbal complement smaller than a
-TP, the vP, and across nothing larger. -/
-theorem exceptionalScope_outer_iff {s : ComplementSize} (hs : s.highestHead.family = .verbal) :
+/-- Outer-associated elements take exceptional scope across a complement comparable in size with
+a TP exactly when it is smaller, the vP. -/
+theorem exceptionalScope_outer_iff {s : ComplementSize}
+    (hs : s ≤ ComplementSize.tP ∨ ComplementSize.tP ≤ s) :
     ExceptionalScope .outer s ↔ s < ComplementSize.tP := by
   rw [ExceptionalScope, contains_outer_iff, lt_iff_le_not_ge, iff_and_self]
-  obtain ⟨c⟩ := s
-  cases c <;> first | exact absurd hs (by decide) | decide +kernel
+  exact hs.resolve_right
 
 /-- Inner-associated elements never take exceptional scope, since every complement contains
 inner aspect, so vP is the minimal size of a nonfinite clause. -/

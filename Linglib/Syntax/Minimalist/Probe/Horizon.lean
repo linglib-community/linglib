@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Order.Monotone.Defs
@@ -32,7 +32,7 @@ c-commands that is [not transparent to it](##Minimalist.HorizonSetting.mem_cut_i
 ## Implementation notes
 
 Vacuity is relative to the spine that hosts the probe, and the probe's sister is
-`ClauseSpine.below` of its head. On a spine that does not project the probe's head the complement
+`Spine.below` of its head. On a spine that does not project the probe's head the complement
 is the whole spine, so vacuity is meaningful only for a head the spine projects.
 
 The spine of a tree is a fold over it, given the index of each tree's head daughter. A head
@@ -65,12 +65,12 @@ structure HorizonSetting where
 
 namespace HorizonSetting
 
-variable (p : HorizonSetting) {s t : ClauseSpine} {c d h : Cat} {o : Option Cat}
+variable (p : HorizonSetting) {s t : Spine} {c d h : Cat} {o : Option Cat}
 
 /-! ### Transparency -/
 
 /-- A clause is transparent to `p` when its label is disjoint from the horizon of `p`. -/
-def TransparentTo (s : ClauseSpine) : Prop := Disjoint p.horizon.toFinset s.label
+def TransparentTo (s : Spine) : Prop := Disjoint p.horizon.toFinset s.label
 
 instance : Decidable (p.TransparentTo s) := inferInstanceAs (Decidable (Disjoint _ _))
 
@@ -100,7 +100,7 @@ theorem transparentTo_antitone : Antitone p.TransparentTo := fun _ _ ↦ Transpa
 variable (p) in
 /-- `p` is vacuous in `s` when its horizon lies in the complement of its head, so that its search
 ends at its sister and it triggers no movement or agreement. -/
-def IsVacuousIn (s : ClauseSpine) : Prop := ¬ p.TransparentTo (s.below p.head)
+def IsVacuousIn (s : Spine) : Prop := ¬ p.TransparentTo (s.below p.head)
 
 instance : Decidable (p.IsVacuousIn s) := inferInstanceAs (Decidable (¬ _))
 
@@ -128,7 +128,7 @@ theorem TransparentTo.of_not_isVacuousIn (hp : ¬ p.IsVacuousIn s) (ht : t ≤ s
 vacuous makes vacuous a probe on any head above `c`. -/
 theorem IsVacuousIn.of_mem_below (hp : (HorizonSetting.mk c o).IsVacuousIn s)
     (hc : c ∈ s.below d) : (HorizonSetting.mk d o).IsVacuousIn s :=
-  fun ht ↦ hp (ht.anti (ClauseSpine.below_le_below hc))
+  fun ht ↦ hp (ht.anti (Spine.below_le_below hc))
 
 /-- The Height–Locality Theorem on an extended projection: the horizon of a nonvacuous probe is at
 or above the head that hosts it. -/
@@ -155,7 +155,7 @@ def rootToken? : RoseTree Vertex → Option LexicalItem.Token
 /-- The spine of a tree, the heads of its extended projection, given the index `η` of the head
 daughter of each tree: a head projects its category over the spine of its sister, and a phrase
 keeps the spine of its head daughter ([keine-2019]'s Category Inheritance). -/
-def spineOf : RoseTree Vertex → ClauseSpine
+def spineOf : RoseTree Vertex → Spine
   | .node (.inl (some tok)) _ => ⟨[tok.item.cat]⟩
   | .node (.inl none) [l, r] =>
     match η (.node (.inl none) [l, r]) with
@@ -165,7 +165,7 @@ def spineOf : RoseTree Vertex → ClauseSpine
   | _ => ⟨[]⟩
 
 /-- The spine of the node at `p`. -/
-def spineAt (p : GornAddress) : ClauseSpine := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
+def spineAt (p : GornAddress) : Spine := t.toRoseTree[p]?.elim ⟨[]⟩ (spineOf η)
 
 /-- The positions behind the horizon `c` of the probe at `a`, those dominated by a node the probe
 c-commands whose spine contains `c` ([keine-2019]'s Horizons). -/
@@ -210,7 +210,7 @@ category the complement does, so it is a horizon for every probe the complement 
 theorem spineOf_le_spineOf_node (h : η (.node (.inl none) [l, r]) = some 0)
     (hl : rootToken? l = some tok) (hi : (spineOf η r).Inherits tok.item.cat) :
     spineOf η r ≤ spineOf η (.node (.inl none) [l, r]) := by
-  simpa [spineOf_node_zero h, hl] using ClauseSpine.le_project hi
+  simpa [spineOf_node_zero h, hl] using Spine.le_project hi
 
 theorem isUpperSet_horizon : IsUpperSet (horizon η t a c) :=
   fun _ _ hqr ⟨x, hx, h⟩ ↦ ⟨x, Finset.mem_Iio.2 ((Finset.mem_Iio.1 hx).trans_le hqr), h⟩
@@ -253,6 +253,6 @@ theorem HorizonSetting.mem_cut_of_isVacuousIn (ha : a ∈ t.toRoseTree.validPath
     (hn : p.head ∉ spineAt η t (complement a))
     (hv : p.IsVacuousIn ((spineAt η t (complement a)).project p.head)) : q ∈ p.cut η t a :=
   mem_cut_of_not_transparentTo ha ha0 hq hc hne (by
-    rwa [IsVacuousIn, ClauseSpine.below_project hi hn] at hv)
+    rwa [IsVacuousIn, Spine.below_project hi hn] at hv)
 
 end Minimalist
