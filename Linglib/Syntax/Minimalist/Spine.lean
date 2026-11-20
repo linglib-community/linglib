@@ -13,15 +13,13 @@ public import Mathlib.Data.List.DropRight
 /-!
 # Spines
 
-A spine is the list of heads a phrase projects, from the lexical head upward, so a bare VP is
-`[V]`, a finite clause `[V, v, T, C]`, a noun phrase with its determiner `[N, Num, D]`, and a
-nominalized complement the finite clause with the nominal shell `[N, D]` appended. A spine is an
-extended projection in Grimshaw's sense when each head extends the one below it. Keine observes
-that category features project bilaterally within an extended projection, so a phrase is labeled
-by the set of every head it projects. The label of a spine is that finset, and spines are
-preordered by inclusion of labels, the extension order, in which the clause sizes of one extended
-projection form a chain and a nominalized clause and a finite clause are incomparable. A head
-divides a spine into its complement, the heads below it, and the shell above it.
+A spine is the list of heads a phrase projects, from the lexical head upward: `[V, v, T, C]` for a
+finite clause, `[N, Num, D]` for a noun phrase. A spine is an extended projection in Grimshaw's
+sense when each head extends the one below it.
+
+Keine observes that category features project bilaterally within an extended projection, so the
+label of a spine is the set of heads it projects, and spines are preordered by inclusion of
+labels. A head divides a spine into its complement, the heads below it, and the shell above it.
 
 ## Main definitions
 

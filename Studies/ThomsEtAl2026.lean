@@ -11,42 +11,31 @@ public import Studies.Myler2016
 /-!
 # Thoms, Adger, Heycock, Jamieson and Smith (2026): HAVE-raising and predicative possession
 
-Possessive HAVE spells out two structures. In the existential structure the light verb v takes the
-possessee as a nominal predicate with the possessor in the specifier of its Poss head, and the
-φ-probe on v, which searches for a D, raises the possessor out of it. In the locative structure v
-takes an applicative phrase whose head relates a possessor in its specifier to a possessee in its
-complement. A weak determiner is introduced below D, so a possessee with one may be a NumP; a
-definite, a demonstrative, a possessive or a strong quantifier needs the D layer. We build the
-existential structure over a nominal of either size and show that the probe finds the possessor
-exactly when the nominal has no D layer (`extracts_iff`), the D of a full DP being closer. The
-same search raises *there* from the pivot of an existential.
+This file formalizes the two structures that [thoms-etal-2026] give possessive HAVE. In the
+existential structure the possessor raises out of the possessee to the specifier of v; in the
+locative structure an applicative head relates the two. The probe on v finds the possessor exactly
+when the possessee has no D layer (`extracts_iff`), so the existential structure takes only
+possessees with a weak determiner.
 
-A variety is a spell-out rule that pronounces the heads of a span at one of its positions, and
-HAVE precedes negation and the subject when the span of its structure is pronounced at T. Group B
-pronounces both spans at T, Group A the span without the applicative only, and the standard
-variety neither. For Group A, HAVE-raising is then generated with exactly the possessees that
-*there*-existentials allow (`generates_groupA_iff_extractable`), while a clause that does not show
-the position of the verb is generated alike in every variety (`generates_iff_of_not_raised`).
-
-A learner keeps the rule that pronounces a span at T when the input holds enough clauses that
-only that rule derives. With such clauses rarer for the locative structure, a learner who keeps
-the rule there keeps it for the existential structure too (`raises_acquired_existential`), and
-some amount of input yields Group A (`exists_acquired_eq_groupA`).
+A variety is a rule that pronounces the span of HAVE at one of its heads, and HAVE is raised when
+that head is T. Group A raises HAVE in the existential structure alone, hence with exactly the
+possessees of *there*-existentials (`generates_groupA_iff_extractable`). Where the position of
+HAVE does not show, all varieties agree (`generates_iff_of_not_raised`). A learner who keeps a
+raising rule from a threshold of unambiguous input on loses it for the locative structure first
+(`raises_acquired_existential`).
 
 ## Implementation notes
 
-The nominal is the spine `[n, Poss, Num]` with or without `D`, and its tree is the noun extended
-by the heads above it (`PlanarSyntacticObject.extend`) with the specifier above Poss. The locative structure is available for alienable relations,
-the paper's locative semantics of the applicative; the animacy of the possessor is not modelled.
-An amount phrase with *the* is recorded as a determiner of its own, weak as the paper takes it to
-be. A row attributed to a group is checked against that group's rule, and a row the paper gives
-for English generally against all three rules.
-
-The paper leaves open how the spell-out rules are implemented. Under the Head Chain Pronunciation
-of [arregi-pietraszko-2021], a strong applicative head keeps the locative chain out of T and
-leaves the existential chain there (`pronounced_strong_appl_eq_T_iff`); the low position is then
-the applicative rather than v, and no choice of strong heads pronounces the locative chain at v
-and the existential chain at T (`not_pronounced_v_and_T`).
+* The possessee is the spine `[n, Poss, Num]` with or without `D`, and its tree is the noun
+  extended by the heads above it, with the possessor above Poss.
+* The locative structure is restricted to alienable relations, and an amount phrase with *the*
+  counts as weak, both as in the paper. The animacy of the possessor is not modelled.
+* A row attributed to a group is checked against that group's rule, and a row given for English
+  generally against all three.
+* The paper leaves the implementation of its spell-out rules open. With the Head Chain
+  Pronunciation of [arregi-pietraszko-2021] a strong applicative head gives Group A's raising
+  (`pronounced_strong_appl_eq_T_iff`), with the applicative as the low position; no choice of
+  strong heads makes that position v (`not_pronounced_v_and_T`).
 
 ## TODO
 

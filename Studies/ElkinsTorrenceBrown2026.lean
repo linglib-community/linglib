@@ -13,29 +13,15 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam
 
-The movement enclitic =(y)a' of San Juan Ostuncalco Mam optionally appears on the predicate,
-and on any directional auxiliary, when an instrument, benefactive, dative, locative, reason,
-purpose or manner adjunct is extracted, but not with absolutive or ergative arguments, Aissen's
-Ergative Extraction Constraint sending the agent through an antipassive, and not with temporals.
-The enclitic may occur once per Voice⁰ and Dir⁰ of a clause and, in long-distance extraction,
-once per clause along the dependency: in the embedded clause exactly when that clause is at least
-VoiceP-sized, so on both predicates over a full CP or an aspectless VoiceP complement, on the
-matrix predicate only over a nonfinite VP complement, and on the embedded predicate only in an
-embedded question. Elkins, Torrence and Brown analyse the enclitic as the spellout of
-Ā-agreement between the extracted adjunct and the [Ā]-bearing heads Voice⁰ and Dir⁰ it passes
-through under the Relativized-Minimality successive cyclicity of Rizzi and Abels: Attract Closest
-forces the mover through the specifier of each intervening [Ā]-bearer, each Voice⁰ or Dir⁰ copies
-the [obl] Case feature the mover receives from its relational noun, and the bundle [Ā, obl] is
-realized as =(y)a' or as ∅. Mendes and Ranero's rival Chain Reduction via Substitution for the
-K'ichean fronting particle *wi*, which spells out lower copies at the base position and at each
-Spec,CP stopover and so derives the Fronting Particle Generalization, predicts a single reflex
-within a clause, none in the matrix clause over an aspectless complement, and one inside a
-nonfinite complement, all contrary to the Mam data; Keine and Zeijlstra's DP-intervention
-leapfrogging predicts at most one reflex per intervening argument, contrary to a clause with
-three; and an Agent-Focus-like analysis fails because the enclitic co-occurs with the passive and
-appears in every clause of the path while the antipassive is confined to the clause of origin.
-The two systems also differ in which adjuncts trigger the reflex: reasons, purposes and manners
-do in Mam but are high adjuncts without [appl] in K'ichean, and temporals trigger neither.
+This file formalizes [elkins-torrence-brown-2026]'s analysis of the movement enclitic =(y)a' of
+San Juan Ostuncalco Mam, which appears on the predicate and on directional auxiliaries when an
+oblique adjunct is extracted. The enclitic spells out Ā-agreement between the adjunct and the
+heads Voice and Dir that it passes through, so it may occur once per Voice and Dir of each clause
+the dependency crosses.
+
+A clause hosts the enclitic exactly when it projects Voice (`licensed_iff_mem_voice`). The rival
+accounts, the Chain Reduction via Substitution of [mendes-ranero-2021] and the leapfrogging of
+[keine-zeijlstra-2025], are predicates on the same dependencies, and the rows tell them apart.
 
 ## Implementation notes
 

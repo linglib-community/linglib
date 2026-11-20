@@ -19,13 +19,15 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Arregi and Pietraszko (2021): The ups and downs of head displacement
 
-Arregi and Pietraszko replace head raising and lowering by one syntactic operation, Generalized
-Head Movement, in which a head shares its M-value, the morphological features that Vocabulary
-Insertion spells out, with the head of its complement. The heads of a clause thus form a head
-chain around one complex head, pronounced in the chain's highest strong position, or in its
-highest position if none is strong. A chain that ends in a strong verb splits when a specifier
-intervenes or the verb phrase is elided or fronted, and the verb's terminal, an orphan in the
-half without the verb, is exponed as *do*.
+This file formalizes the Generalized Head Movement of [arregi-pietraszko-2021]. A head shares its
+M-value, the morphological features that Vocabulary Insertion spells out, with the head of its
+complement, so the heads of a clause form a head chain around one complex head. The chain is
+pronounced in its highest strong position, or in its highest position if none is strong
+(`HeadChain.pronounced`).
+
+A chain that ends in a strong verb splits when a specifier intervenes or the verb phrase is elided
+or fronted, and *do* expones the verb's terminal in the half without the verb. *Do*-support thus
+arises exactly where the chain splits (`doSupport_iff`).
 
 ## Implementation notes
 
