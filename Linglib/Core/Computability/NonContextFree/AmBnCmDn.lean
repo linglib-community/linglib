@@ -55,35 +55,33 @@ theorem not_isContextFree_of_replicate_mem_of_count_le (h : [a, b, c, d].Nodup)
     (hcount : ∀ w ∈ X, w.count a ≤ w.count c ∧ w.count b ≤ w.count d) : ¬ X.IsContextFree := by
   obtain ⟨⟨hab, hac, had⟩, ⟨hbc, hbd⟩, hcd⟩ :
       (a ≠ b ∧ a ≠ c ∧ a ≠ d) ∧ (b ≠ c ∧ b ≠ d) ∧ c ≠ d := by simpa using h
-  refine mt IsContextFree.hasCFLPumpingProperty ?_
-  rintro ⟨p, hp, hpump⟩
+  intro hX
+  obtain ⟨p, hp, hpump⟩ := hX.exists_pump_multiset
   obtain ⟨n, hpn, hn⟩ := Filter.frequently_atTop.1 hmem p
-  obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ := hpump _ hn (by simp; omega)
-  have hwin : v ++ x ++ y <:+: replicate n a ++ replicate n b ++ replicate n c ++ replicate n d :=
-    ⟨u, z, by rw [hw]; simp⟩
-  have hac' : a ∉ v ++ x ++ y ∨ c ∉ v ++ x ++ y :=
-    (show v ++ x ++ y <:+: replicate n a ++ replicate n b ++ (replicate n c ++ replicate n d) by
-      simpa only [append_assoc] using hwin).notMem_or_notMem_of_length_le
+  obtain ⟨s, t, hs, hsp, ht, hts, hall⟩ := hpump _ hn (by simp; omega)
+  have hac' : a ∉ s ∨ c ∉ s :=
+    (show s <:+: replicate n a ++ replicate n b ++ (replicate n c ++ replicate n d) by
+      simpa only [append_assoc] using hs).notMem_or_notMem_of_length_le
       (by rw [length_replicate]; omega) (by simp [mem_replicate, hab, hac, had])
       (by simp [mem_replicate, hac.symm, hbc.symm])
-  have hbd' : b ∉ v ++ x ++ y ∨ d ∉ v ++ x ++ y :=
-    hwin.notMem_or_notMem_of_length_le (by rw [length_replicate]; omega)
+  have hbd' : b ∉ s ∨ d ∉ s :=
+    hs.notMem_or_notMem_of_length_le (by rw [length_replicate]; omega)
       (by simp [mem_replicate, hbc, hbd]) (by simp [mem_replicate, had.symm, hbd.symm, hcd.symm])
-  have h0 := hcount _ (hall 0)
-  have h2 := hcount _ (hall 2)
-  simp only [replicate_zero, replicate_succ, flatten_nil, flatten_cons, append_nil,
-    count_append] at h0 h2
-  have ha := congr(count a $hw); have hb := congr(count b $hw)
-  have hc := congr(count c $hw); have hd := congr(count d $hw)
-  simp [count_replicate, hab, hac, had, hbc, hbd, hcd, Ne.symm] at ha hb hc hd
-  have hz : ∀ s, s ∉ v ++ x ++ y → v.count s = 0 ∧ y.count s = 0 := fun s hs ↦
-    ⟨count_eq_zero.mpr fun h ↦ hs (by simp [h]), count_eq_zero.mpr fun h ↦ hs (by simp [h])⟩
-  obtain ⟨e, he⟩ := exists_mem_of_ne_nil (v ++ y) hvy
+  obtain ⟨w₀, hw₀, h0⟩ := hall 0
+  obtain ⟨w₂, hw₂, h2⟩ := hall 2
+  have hw₀ := hcount w₀ hw₀
+  have hw₂ := hcount w₂ hw₂
+  have ha0 := congr(Multiset.count a $h0); have hb0 := congr(Multiset.count b $h0)
+  have hc0 := congr(Multiset.count c $h0); have hd0 := congr(Multiset.count d $h0)
+  have ha2 := congr(Multiset.count a $h2); have hb2 := congr(Multiset.count b $h2)
+  have hc2 := congr(Multiset.count c $h2); have hd2 := congr(Multiset.count d $h2)
+  simp [count_replicate, hab, hac, had, hbc, hbd, hcd, Ne.symm] at ha0 hb0 hc0 hd0 ha2 hb2 hc2 hd2
+  have hz : ∀ e, e ∉ s → t.count e = 0 := fun e he ↦ count_eq_zero.2 fun h ↦ he (hts.subset h)
+  obtain ⟨e, he⟩ := exists_mem_of_ne_nil t ht
   have hpos := count_pos_iff.2 he
-  have he' := hwin.subset (show e ∈ v ++ x ++ y by simp at he ⊢; tauto)
-  simp only [count_append, mem_append, mem_replicate] at hpos he'
-  rcases hac'.imp (hz _) (hz _) with ⟨_, _⟩ | ⟨_, _⟩ <;>
-    rcases hbd'.imp (hz _) (hz _) with ⟨_, _⟩ | ⟨_, _⟩ <;>
+  have he' := hs.subset (hts.subset he)
+  simp only [mem_append, mem_replicate] at he'
+  rcases hac'.imp (hz _) (hz _) with _ | _ <;> rcases hbd'.imp (hz _) (hz _) with _ | _ <;>
     rcases he' with ((⟨-, rfl⟩ | ⟨-, rfl⟩) | ⟨-, rfl⟩) | ⟨-, rfl⟩ <;> omega
 
 /-- For distinct letters, `{aᵐbⁿcᵐdⁿ}` is not context-free. -/
