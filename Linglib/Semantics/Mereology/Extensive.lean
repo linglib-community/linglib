@@ -30,12 +30,7 @@ these roles are mathlib's: `Finset.card` is additive on disjoint sets
 The measure functions of [krifka-1989] and [krifka-1998] may be partial, and their definitions
 have a further clause, the Archimedean property or commensurability, from which the positivity
 of the measure of a remainder is derived. `IsExtensive` is total and takes positivity as a
-field.
-
-## TODO
-
-Measure functions relative to a preorder with the Archimedean property, as in [krifka-1989],
-with positivity a theorem.
+field; `Studies/Krifka1989.lean` states the definition of [krifka-1989] and derives it.
 
 ## References
 

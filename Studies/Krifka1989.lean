@@ -2,6 +2,10 @@ module
 
 public import Linglib.Semantics.Aspect.Telicity
 public import Mathlib.Order.Minimal
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.PNat.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
 public import Linglib.Semantics.Mereology.Extensive
 
 /-!
@@ -40,6 +44,15 @@ no event is iterative on an object of the nominal predicate. The proof of (T 13)
 verbal event has a proper part outside the predicate; its conclusion that the event contains an
 atom holds of every predicate when the part order on events is well founded
 (`atm_of_wellFoundedLT`).
+
+An extensive measure function, (D 21)–(D 25), is `IsExtensiveMeasure`, stated for a total
+function to the reals, with the preorder the one the function induces and the multiplier of the
+Archimedean property a natural number. The concatenation is total, as (D 22) has it, so such a
+function has no finite domain (`IsExtensiveMeasure.infinite`). One compatible with a part
+structure, (D 26)–(D 27), is additive over non-overlapping individuals and positive
+(`IsCompatible.isExtensive`), which is `Mereology.IsExtensive`, the hypothesis the theorems on
+measure phrases use; the atom count of a finite model satisfies that and is no extensive
+measure function in the sense of (D 23)–(D 24).
 
 Measure functions are total here. The bare plural (8) binds the number argument of a count noun
 existentially, so with a total measure it has the extension of the underlying predicate
@@ -122,6 +135,84 @@ theorem not_scum_of_qua (hne : P.Nonempty) (h : QUA P) : ¬ SCUM P := fun hs ↦
     qua_and_cum_iff_subsingleton.1 ⟨h, hs.cum⟩ hx hy
 
 end Reference
+
+/-! ### Extensive measure functions (§2) -/
+
+section Measure
+
+variable {α : Type*}
+
+/-- (D 21)–(D 25): `m` is an extensive measure function relative to the concatenation `C`. The
+preorder of (D 21) is the one `m` induces, `m x ≤ m y`. -/
+structure IsExtensiveMeasure (C : α → α → α) (m : α → ℝ) : Prop where
+  /-- (D 22): concatenation is commutative. -/
+  comm (x y : α) : C x y = C y x
+  /-- (D 23): an individual is below its concatenation with another in the preorder. -/
+  le_map_conc (x y : α) : m x ≤ m (C x y)
+  /-- (D 24): additivity. -/
+  map_conc (x y : α) : m (C x y) = m x + m y
+  /-- (D 25): the Archimedean property. -/
+  archimedean ⦃x y : α⦄ : m x ≤ m y → ∃ n : ℕ, 0 < n ∧ m y < n • m x
+
+variable {C : α → α → α} {m : α → ℝ}
+
+-- (T 5): an extensive measure function has positive values.
+theorem IsExtensiveMeasure.pos (h : IsExtensiveMeasure C m) (x : α) : 0 < m x := by
+  obtain ⟨n, hn, hlt⟩ := h.archimedean (le_refl (m x))
+  by_contra hx
+  rw [nsmul_eq_mul] at hlt
+  have : (n : ℝ) * m x ≤ 1 * m x :=
+    mul_le_mul_of_nonpos_right (by exact_mod_cast hn) (not_lt.1 hx)
+  linarith
+
+theorem IsExtensiveMeasure.map_iterate (h : IsExtensiveMeasure C m) (x : α) (k : ℕ) :
+    m ((fun y ↦ C y y)^[k] x) = 2 ^ k * m x := by
+  induction k with
+  | zero => simp
+  | succ k ih => rw [Function.iterate_succ_apply', h.map_conc, ih]; ring
+
+-- An extensive measure function has no finite domain: concatenating an individual with itself
+-- doubles its measure.
+theorem IsExtensiveMeasure.infinite [Nonempty α] (h : IsExtensiveMeasure C m) : Infinite α := by
+  obtain ⟨x⟩ := ‹Nonempty α›
+  refine .of_injective (fun k ↦ (fun y ↦ C y y)^[k] x) fun i j hij ↦ ?_
+  have hm : (2 : ℝ) ^ i * m x = 2 ^ j * m x := by
+    rw [← h.map_iterate, ← h.map_iterate]; exact congrArg m hij
+  exact Nat.pow_right_injective le_rfl
+    (by exact_mod_cast mul_right_cancel₀ (h.pos x).ne' hm)
+
+/-- (D 26), (D 27): an extensive measure function is compatible with a part structure if its
+preorder continues parthood and its concatenation is the sum on individuals that do not
+overlap. -/
+structure IsCompatible [SemilatticeSup α] (C : α → α → α) (m : α → ℝ) : Prop
+    extends IsExtensiveMeasure C m where
+  /-- (D 26) -/
+  mono : Monotone m
+  /-- (D 27) -/
+  conc_eq_sup ⦃x y : α⦄ : ¬ Overlap x y → C x y = x ⊔ y
+
+-- A compatible extensive measure function is additive over individuals that do not overlap and
+-- positive.
+theorem IsCompatible.isExtensive [SemilatticeSup α] (h : IsCompatible C m) : IsExtensive m where
+  map_sup _ _ hxy := h.conc_eq_sup hxy ▸ h.map_conc _ _
+  pos := h.toIsExtensiveMeasure.pos
+
+-- The positive natural numbers under addition, measured by their value, are an extensive
+-- measure function compatible with their order.
+theorem isCompatible_pnat : IsCompatible (· + ·) fun n : ℕ+ ↦ ((n : ℕ) : ℝ) where
+  comm := add_comm
+  le_map_conc x y := by push_cast; exact le_add_of_nonneg_right (Nat.cast_nonneg _)
+  map_conc x y := by push_cast; rfl
+  archimedean x y _ := ⟨y + 1, Nat.succ_pos _, by
+    rw [nsmul_eq_mul]
+    have hx : (1 : ℝ) ≤ ((x : ℕ) : ℝ) := by exact_mod_cast (one_le : (1 : ℕ+) ≤ x)
+    have hy : (0 : ℝ) ≤ ((y : ℕ) : ℝ) := Nat.cast_nonneg _
+    push_cast
+    nlinarith⟩
+  mono x y hxy := Nat.cast_le.2 (PNat.coe_le_coe x y |>.2 hxy)
+  conc_eq_sup x y hxy := absurd ⟨x ⊓ y, inf_le_left, inf_le_right⟩ hxy
+
+end Measure
 
 -- (T 6)
 theorem qua_measure_eq {α M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
