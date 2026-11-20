@@ -9,27 +9,15 @@ public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 
 /-!
-# Late insertion
+# Early insertion
 
-The syntax hands PF a spell-out domain: the pronounced terminals of a linearized syntactic
-object, left to right, each read as a feature bundle (`SpelloutDomain.ofPlanar`). The
-postsyntactic pipeline then runs on it and Vocabulary Insertion realizes each surviving position
-in its neighborhood: late insertion, on which no phonological content travels through the syntax.
-Early insertion is the degenerate case: over the vocabulary whose items each spell out one
-terminal's own token as its lexically listed form, the pipeline with no postsyntactic operation
-returns exactly the carrier's `pfPhon`, so terminals carrying their forms compute what one
-context-free item per token computes, and contextual allomorphy is precisely what such a vocabulary cannot state.
-
-## Main definitions
-
-* `DistributedMorphology.SpelloutDomain.ofPlanar`: the handover.
-* `DistributedMorphology.earlyItems`, `DistributedMorphology.earlySpellout`: one context-free
-  item per token, spelling out its lexically listed form, and the pipeline it drives.
-
-## Main results
-
-* `DistributedMorphology.pf_earlySpellout`: the early pipeline realizes each token's listed form.
-* `DistributedMorphology.pfPhon_eq_earlyInsertion`: `pfPhon` is the early-insertion pipeline.
+On late insertion no phonological content travels through the syntax: PF receives the pronounced
+terminals of a linearized syntactic object, each read as a feature bundle, and Vocabulary Insertion
+realizes each in its neighborhood. Early insertion is the case in which every terminal carries
+its own form. We define the early vocabulary of a list of tokens, one context-free item per token
+that spells the token out as its lexically listed form, and show that the pipeline it drives
+returns the forms `pfPhon` reads off the tokens (`pfPhon_eq_earlyInsertion`). Contextual
+allomorphy is what such a vocabulary cannot state.
 
 ## References
 
@@ -42,16 +30,6 @@ context-free item per token computes, and contextual allomorphy is precisely wha
 namespace DistributedMorphology
 
 open Morphology Minimalist
-
-variable {Bundle : Type*}
-
-/-- The spell-out domain of a planar syntactic object: its pronounced terminals, left to
-right, each read as a feature bundle. -/
-def SpelloutDomain.ofPlanar (feats : LexicalItem.Token → Bundle)
-    (t : PlanarSyntacticObject) : SpelloutDomain Bundle :=
-  (pfYield t).map feats
-
-/-! ### Early insertion -/
 
 /-- The early-insertion vocabulary over the tokens `toks`: each token its own atomic feature,
 spelled out as its lexically listed form. -/
@@ -99,8 +77,8 @@ features and inserting each token's lexically listed form returns the carrier's 
 pronunciation, silent tokens dropped. -/
 theorem pfPhon_eq_earlyInsertion (t : PlanarSyntacticObject) :
     pfPhon t = ((earlySpellout (pfYield t)).pf
-      (SpelloutDomain.ofPlanar ({·}) t)).flatten.filter (· ≠ "") := by
-  rw [SpelloutDomain.ofPlanar, pf_earlySpellout (nodup_pfYield t), pfPhon]
+      ((pfYield t).map ({·}))).flatten.filter (· ≠ "") := by
+  rw [pf_earlySpellout (nodup_pfYield t), pfPhon]
   induction pfYield t with
   | nil => rfl
   | cons tok l ih =>
