@@ -32,10 +32,27 @@ values in the state (`nontrivial_value_of_reciprocityCond`), so a bound dref has
 reciprocal inside the distribution to take as antecedent
 (`value_eq_empty_of_bindingCond_of_reciprocityCond`).
 
+Within each class, the dependency between a reciprocal and a group-identical antecedent is
+irreflexive, and its domain and codomain are the values of the antecedent's own antecedent
+(`dep_eqClass_of_groupIdentityCond_of_reciprocityCond`).
+
+A DRS with universe `us` and conditions `C` is `box us C`: given `Δ`, it relates `I` to `O` when
+`O` introduces `us` over `I` and every condition holds of `O` under `Δ`.
+
 Partial dref introduction `extend u` relates `i` to `o` when `o` values `u`, `i` does not, and
 the two agree on every other dref. It is a covering step of the extension order
 (`mem_extend_iff_covBy`), and its cumulative lift to plural states, `introPartial u`, refines
 Plural CDRT's introduction (`introPartial_subset_intro`).
+
+## Implementation notes
+
+A condition takes the distributed drefs `Δ` as an argument, and a DRS passes its `Δ` to its
+conditions, as Haug and Dalrymple define them. The alternative is a distribution operator on
+DRSs, Dotlačil's `δ_u`, which is `PCDRT.dist`: it evaluates the DRS on each cell of `u`
+separately, so a condition inside it cannot read the whole state, and group identity needs the
+whole state for its antecedent. The two agree on conditions that only read the class
+(`dist_test_iff_of_local`), and the class under distribution over one dref is that dref's cell
+(`eqClass_singleton`).
 
 ## References
 
@@ -55,7 +72,7 @@ Plural CDRT's introduction (`introPartial_subset_intro`).
 
 namespace PPCDRT
 
-open PCDRT
+open PCDRT DynamicSemantics SetRel
 
 variable {E : Type*}
 
@@ -91,6 +108,11 @@ variable {S Δ} in
 theorem eqClass_mono {T : PluralAssign ℕ E} (h : S ⊆ T) (s : ℕ → Part E) :
     eqClass S Δ s ⊆ eqClass T Δ s :=
   fun _ ht ↦ ⟨h ht.1, ht.2⟩
+
+variable {S} in
+/-- The class of a row under distribution over one dref is that dref's cell. -/
+theorem eqClass_singleton {u : ℕ} (s : ℕ → Part E) : eqClass S {u} s = cell u (s u) S := by
+  ext t; simp [eqClass, Set.EqOn]
 
 /-! ### Anaphoric relations -/
 
@@ -204,11 +226,45 @@ theorem value_eq_empty_of_bindingCond_of_reciprocityCond {uRecip : ℕ}
     (eq_of_mem_eqClass_of_bindingCond hb hΔ ht (self_mem_eqClass S Δ hs)).trans hsd
   exact hr.2 t ht.1 d (Part.eq_some_iff.1 htd) d (Part.eq_some_iff.1 ht') rfl
 
+/-- Within each class, the dependency between a reciprocal and a group-identical antecedent is
+irreflexive, with the matrix antecedent's values as its domain and its codomain. -/
+theorem dep_eqClass_of_groupIdentityCond_of_reciprocityCond {u₁ u₂ u₃ : ℕ}
+    (hg : groupIdentityCond u₂ u₁ S Δ) (hr : reciprocityCond u₃ u₂ S Δ)
+    (hdef : ∀ s ∈ S, (s u₂).Dom ∧ (s u₃).Dom) {s : ℕ → Part E} (hs : s ∈ S) :
+    (dep u₂ u₃ (eqClass S Δ s)).dom = value u₁ S ∧
+      (dep u₂ u₃ (eqClass S Δ s)).cod = value u₁ S ∧
+      (dep u₂ u₃ (eqClass S Δ s)).IsIrrefl := by
+  have hsub := eqClass_subset S Δ s
+  have h₂ : value u₂ S = value u₁ S :=
+    Set.Subset.antisymm (fun x ⟨t, ht, hx⟩ ↦ hg t ht ▸ ⟨t, self_mem_eqClass S Δ ht, hx⟩)
+      (hg s hs ▸ value_mono hsub)
+  refine ⟨?_, ?_, ⟨fun a ⟨t, ht, ha, ha'⟩ ↦ ?_⟩⟩
+  · rw [dom_dep fun t ht _ ↦ (hdef t (hsub ht)).2, hg s hs]
+  · rw [cod_dep fun t ht _ ↦ (hdef t (hsub ht)).1, hr.1 s hs, h₂]
+  · exact hr.2 t (hsub ht) a (Part.eq_some_iff.1 ha') a (Part.eq_some_iff.1 ha) rfl
+
+/-- [dotlacil-2013]'s distribution operator, `PCDRT.dist`, reads a condition within each cell of
+`u`; a condition that only reads the class holds there exactly when it holds under `Δ = {u}`. An
+anaphoric condition reads the whole state as well, and so differs: its antecedent escapes the
+distribution. -/
+theorem dist_test_iff_of_local {c : PPDRSCond E} {u : ℕ}
+    (hc : ∀ S Δ, c S Δ ↔ ∀ s ∈ S, c (eqClass S Δ s) ∅) (hu : ∀ s ∈ S, (s u).Dom) :
+    S ~[dist u (Update.test {T | c T ∅})] S ↔ c S {u} := by
+  rw [hc S {u}]
+  constructor
+  · rintro ⟨-, h⟩ s hs
+    obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 (hu s hs)
+    have hx' : s u = Part.some x := Part.eq_some_iff.2 hx
+    rw [eqClass_singleton, hx']
+    exact (Update.mem_test.1 (h x ⟨s, hs, hx'⟩)).2
+  · intro h
+    refine ⟨rfl, fun x ⟨s, hs, hx⟩ ↦ Update.mem_test.2 ⟨rfl, ?_⟩⟩
+    have := h s hs
+    rwa [eqClass_singleton, show s u = Part.some x from hx] at this
+
 /-! ### Partial dref introduction -/
 
 section Introduction
-
-open DynamicSemantics SetRel
 
 variable {Var D : Type*} {u : Var} {i o : Var → Part D}
 
@@ -254,5 +310,79 @@ theorem introPartial_subset_intro [DecidableEq Var] :
   fun (_, _) hp ↦ Update.cumul_mono extend_subset_randomAssign hp.2
 
 end Introduction
+
+/-! ### Discourse representation structures -/
+
+section Box
+
+variable {I O : PluralAssign ℕ E} {Δ : Set ℕ} {u v : ℕ}
+
+/-- `I[u₁ … uₙ]O`: the drefs introduced one after another. -/
+def introList : List ℕ → Update (PluralAssign ℕ E)
+  | [] => SetRel.id
+  | u :: us => introPartial u ○ introList us
+
+@[simp] theorem introList_nil : (introList [] : Update (PluralAssign ℕ E)) = SetRel.id := rfl
+
+@[simp] theorem introList_cons (u : ℕ) (us : List ℕ) :
+    (introList (u :: us) : Update (PluralAssign ℕ E)) = introPartial u ○ introList us := rfl
+
+/-- Introduction leaves the other drefs' values in place. -/
+theorem value_eq_of_mem_introPartial (hv : v ≠ u) (h : I ~[introPartial u] O) :
+    value v O = value v I := by
+  ext x
+  constructor
+  · rintro ⟨o, ho, hx⟩
+    obtain ⟨i, hi, -, -, hio⟩ := h.2.2 o ho
+    exact ⟨i, hi, (hio v hv).trans hx⟩
+  · rintro ⟨i, hi, hx⟩
+    obtain ⟨o, ho, -, -, hio⟩ := h.2.1 i hi
+    exact ⟨o, ho, (hio v hv).symm.trans hx⟩
+
+theorem value_eq_of_mem_introList {us : List ℕ} (hv : v ∉ us) (h : I ~[introList us] O) :
+    value v O = value v I := by
+  induction us generalizing I with
+  | nil => obtain rfl := h; rfl
+  | cons u us ih =>
+    obtain ⟨K, hIK, hKO⟩ := h
+    rw [ih (fun h ↦ hv (List.mem_cons_of_mem _ h)) hKO,
+      value_eq_of_mem_introPartial (fun h ↦ hv (by simp [h])) hIK]
+
+/-- Every output row of an introduction comes from an input row that agrees with it on the
+other drefs. -/
+theorem exists_eq_of_mem_introList {us : List ℕ} (h : I ~[introList us] O) {o : ℕ → Part E}
+    (ho : o ∈ O) : ∃ i ∈ I, ∀ v ∉ us, i v = o v := by
+  induction us generalizing I with
+  | nil => obtain rfl := h; exact ⟨o, ho, fun _ _ ↦ rfl⟩
+  | cons u us ih =>
+    obtain ⟨K, hIK, hKO⟩ := h
+    obtain ⟨k, hk, hko⟩ := ih hKO
+    obtain ⟨i, hi, -, -, hik⟩ := hIK.2.2 k hk
+    exact ⟨i, hi, fun v hv ↦ (hik v fun h ↦ hv (by simp [h])).trans
+      (hko v fun h ↦ hv (List.mem_cons_of_mem _ h))⟩
+
+/-- Every output row values an introduced dref. -/
+theorem dom_of_mem_introList {us : List ℕ} (hu : u ∈ us) (hnd : us.Nodup)
+    (h : I ~[introList us] O) {o : ℕ → Part E} (ho : o ∈ O) : (o u).Dom := by
+  induction us generalizing I with
+  | nil => simp at hu
+  | cons u' us ih =>
+    obtain ⟨K, hIK, hKO⟩ := h
+    rcases List.mem_cons.1 hu with rfl | hu'
+    · obtain ⟨k, hk, hko⟩ := exists_eq_of_mem_introList hKO ho
+      obtain ⟨i, hi, -, hd, -⟩ := hIK.2.2 k hk
+      exact hko u (List.nodup_cons.1 hnd).1 ▸ hd
+    · exact ih hu' (List.nodup_cons.1 hnd).2 hKO
+
+/-- A DRS with universe `us` and conditions `C` ([haug-dalrymple-2020] (25)): under distribution
+over `Δ`, it introduces `us` and imposes each condition on the output state. -/
+def box (us : List ℕ) (C : List (PPDRSCond E)) : Set ℕ → Update (PluralAssign ℕ E) :=
+  fun Δ ↦ {(I, O) | I ~[introList us] O ∧ ∀ c ∈ C, c O Δ}
+
+theorem mem_box {us : List ℕ} {C : List (PPDRSCond E)} :
+    I ~[box us C Δ] O ↔ I ~[introList us] O ∧ ∀ c ∈ C, c O Δ :=
+  Iff.rfl
+
+end Box
 
 end PPCDRT
