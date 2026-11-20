@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.PHOIBLE.Inventories.Italian
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 
 /-!
 # Italian phonemes

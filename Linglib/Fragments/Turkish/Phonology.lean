@@ -4,7 +4,7 @@ public import Linglib.Data.PHOIBLE.Inventories.Turkish
 public import Linglib.Phonology.Harmony.System
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!

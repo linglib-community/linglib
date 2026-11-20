@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Sequencing
 public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
@@ -318,8 +318,13 @@ def complexCoda (w : List Seg) : ℕ := if (finalCluster w).isSome then 1 else 0
 /-- `SON-CON` (86): a coda that rises in sonority. -/
 def sonCon (w : List Seg) : ℕ :=
   match finalCluster w with
-  | some (x, y) => if Sonority.profile sonority x y = .lt then 1 else 0
+  | some (x, y) => if sonority x < sonority y then 1 else 0
   | none => 0
+
+theorem sonCon_eq_one_iff (w : List Seg) :
+    sonCon w = 1 ↔ ∃ x y, finalCluster w = some (x, y) ∧ Sonority.PeaksAt sonority [x, y] 1 := by
+  simp only [sonCon, Sonority.peaksAt_pair_one]
+  split <;> simp_all
 
 -- pp. 49, 113
 theorem sonCon_le_complexCoda (w : List Seg) : sonCon w ≤ complexCoda w := by
