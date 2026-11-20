@@ -25,7 +25,8 @@ monotonicity [needs a total one](##CarianiSantorioWellwood2023.not_mem_image_Ici
 * A holder's confidence states form a type `S` with the background preorder, and `θ : S → Set W`
   assigns themes. Orderings vary from holder to holder, so the theorems fix one holder.
 * The positive form is `p ∈ θ '' Set.Ici c` for a contrast state `c`, *certain* is
-  `p ∈ θ '' {s | IsMax s}`, and the comparative is `MaxComparative .gt (θ · = p) (θ · = q) μ`
+  `p ∈ θ '' {s | IsMax s}`, and the comparative is
+  `MaxComparative .gt (μ '' {s | θ s = q}) (μ '' {s | θ s = p})`
   for an admissible measure, `StrictMono μ`.
 * The paper takes the ordering to be a total preorder; the theorems that need totality assume it.
 * The paper states no semantics for *doubt*, so (63c) is not formalized.
@@ -57,15 +58,17 @@ variable {S W D : Type*} [Preorder S] [Preorder D] {θ : S → Set W} {μ : S �
 
 -- (53): if σ is confident that `p` and more confident of `q` than of `p`, σ is confident that `q`.
 example [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ) {c : S} {p q : Set W}
-    (hp : p ∈ θ '' Ici c) (h : MaxComparative .gt (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
+    (hp : p ∈ θ '' Ici c) (h : MaxComparative .gt (μ '' {s | θ s = p}) (μ '' {s | θ s = q})) :
+    q ∈ θ '' Ici c :=
   CarianiSantorioWellwood2023.mem_image_of_maxComparative (IsUpperSet.Ici c) hμ hp h
 
 /-- The entailment (59) under a contrast mapping `p` to its negation, read strictly: if the
 `p`-state lies above the `¬p`-state, its holder is more confident that `p` than that `¬p`. -/
 theorem maxComparative_compl_of_lt (hθ : θ.Injective) (hμ : StrictMono μ) {s c : S}
-    (hc : θ c = (θ s)ᶜ) (hlt : c < s) : MaxComparative .gt (θ · = θ s) (θ · = (θ s)ᶜ) μ := by
+    (hc : θ c = (θ s)ᶜ) (hlt : c < s) :
+    MaxComparative .gt (μ '' {u | θ u = (θ s)ᶜ}) (μ '' {u | θ u = θ s}) := by
   rw [← hc]
-  exact (maxComparative_iff_of_unique (P := (θ · = θ s)) (Q := (θ · = θ c)) rfl (fun _ h ↦ hθ h)
+  exact (maxComparative_image_iff_of_unique rfl (fun _ h ↦ hθ h)
     rfl (fun _ h ↦ hθ h)).2 (hμ hlt)
 
 -- Read weakly, as (40) prints it, (59) fails at a tie: of two tied states, the `p`-state `false`
@@ -74,8 +77,8 @@ theorem maxComparative_compl_of_lt (hθ : θ.Injective) (hμ : StrictMono μ) {s
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
     @LE.le _ tied.toLE true false ∧ @LE.le _ tied.toLE false true ∧
-      ¬ MaxComparative .gt (· = false) (· = true) (fun _ : Bool ↦ (0 : ℕ)) :=
-  ⟨trivial, trivial, fun h ↦ lt_irrefl 0 ((maxComparative_eq_iff _ _ _).1 h)⟩
+      ¬ MaxComparative .gt {(0 : ℕ)} {0} :=
+  ⟨trivial, trivial, fun h ↦ lt_irrefl 0 (maxComparative_singleton.1 h)⟩
 
 /-! ### The conjunction fallacy -/
 
@@ -121,9 +124,10 @@ theorem Ici_eq_setOf_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m) :
 
 /-- Under a monotone measure nothing is more confident than a certainty (68). -/
 theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone μ) {s : S}
-    (hs : IsMax s) {p q : Set W} (hsp : θ s = p) : ¬ MaxComparative .gt (θ · = q) (θ · = p) μ :=
+    (hs : IsMax s) {p q : Set W} (hsp : θ s = p) :
+    ¬ MaxComparative .gt (μ '' {s | θ s = p}) (μ '' {s | θ s = q}) :=
   fun h ↦
-    let ⟨y, _, hlt⟩ := h.exists_lt hsp
+    let ⟨_, ⟨y, _, rfl⟩, hlt⟩ := h.exists_lt ⟨_, hsp, rfl⟩
     (hμ ((total_of (· ≤ ·) y s).elim id fun h ↦ hs h)).not_gt hlt
 
 -- Admissibility (21) alone allows it: of two tied maximal states, as at the top of Figure 3, every
@@ -131,9 +135,9 @@ theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone �
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
     @StrictMono _ _ tied _ Bool.toNat ∧ @IsMax _ tied.toLE false ∧
-      MaxComparative .gt (· = true) (· = false) Bool.toNat :=
+      MaxComparative .gt {Bool.toNat false} {Bool.toNat true} :=
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), fun _ _ ↦ trivial,
-    (maxComparative_eq_iff _ _ _).2 Nat.zero_lt_one⟩
+    maxComparative_singleton.2 Nat.zero_lt_one⟩
 
 open English.Adjectives in
 -- Figure 3 in the fragment: *confident* and *certain* share one upper-closed scale, *certain* at
