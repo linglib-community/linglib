@@ -183,10 +183,10 @@ theorem causes_not_Enables : ¬ Enables causes .A .B :=
 being the conjunction of A and X. -/
 theorem enables_Enables : Enables enables .A .B := by
   refine ⟨by decide, ⟨.X, by decide, by decide⟩,
-    (guarantees_single_iff (by decide)).2 fun u X x hb ha hx ↦ ?_⟩
-  rw [solve_intervene_of_notMem hb]
-  show ((enables.intervene X x).solve u .A && (enables.intervene X x).solve u .X) = false
-  rw [solve_intervene_of_mem ha, hx, Bool.false_and]
+    (guarantees_single_iff (by decide)).2 fun i _ u ha hb ↦ ?_⟩
+  rw [solve_intervene_of_eq_bot hb]
+  show ((enables.intervene i).solve u .A && (enables.intervene i).solve u .X) = false
+  rw [solve_intervene_of_eq_some ha, Bool.false_and]
 
 theorem enables_not_entails :
     ¬ enables.CausallyEntails [.A ← true] .B true := by

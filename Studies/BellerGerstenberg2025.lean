@@ -344,7 +344,8 @@ open CausalModel
 section Aspects
 
 variable {U V β : Type*} [DecidableEq V] {γ : V → Type*} [∀ v, Nonempty (γ v)]
-  (M : CausalModel U V γ) [M.IsAcyclic] (R : Finset V) (r : ∀ v : R, γ v) (u : U) (c : V)
+  (M : CausalModel U V γ) [M.IsAcyclic] (r : ∀ v, Part (γ v)) [∀ v, Decidable (r v).Dom] (u : U)
+  (c : V)
   (removed changed : γ c) (e : V) (outcome : γ e → β)
 
 /-- The cause `c` is a whether-cause of the outcome at `e` (1) when holding it at its `removed`
@@ -358,20 +359,20 @@ def IsHowCause : Prop :=
   M[c ← changed].solve u e ≠ M.solve u e
 
 /-- The cause `c` is a sufficient-cause (3) when it is a whether-cause in the contingency that
-holds the alternative causes `R` at the values `r` that remove them. -/
+holds the alternative causes at the values that remove them, the partial assignment `r`. -/
 def IsSufficientCause : Prop :=
-  IsWhetherCause (M.intervene R r) u c removed e outcome
+  IsWhetherCause (M.intervene r) u c removed e outcome
 
 -- with no alternative causes to remove, sufficient-causation is whether-causation
-theorem isSufficientCause_empty (r : ∀ v : (∅ : Finset V), γ v) :
-    IsSufficientCause M ∅ r u c removed e outcome ↔ IsWhetherCause M u c removed e outcome := by
-  simp only [IsSufficientCause, intervene_empty]
+theorem isSufficientCause_bot :
+    IsSufficientCause M ⊥ u c removed e outcome ↔ IsWhetherCause M u c removed e outcome := by
+  simp only [IsSufficientCause, intervene_bot]
 
 /-- The aspects of `c` as a cause of the outcome at `e`. -/
 def aspects : Aspect → Prop
   | .whether => IsWhetherCause M u c removed e outcome
   | .how => IsHowCause M u c changed e
-  | .sufficient => IsSufficientCause M R r u c removed e outcome
+  | .sufficient => IsSufficientCause M r u c removed e outcome
 
 end Aspects
 
@@ -444,29 +445,17 @@ instance : scene.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 /-- The aspects of Ball A as a cause of Ball B's going through the gate when the blue ball is in
 the state `u`, the alternative cause to remove being the blue ball. -/
 abbrev sceneAspects (u : Ball) : Aspect → Prop :=
-  aspects scene {.blueBall} (uniqueElim Ball.removed) u .ballA .removed .changed .ballB
+  aspects scene [.blueBall ← Ball.removed] u .ballA .removed .changed .ballB
     (· = Passage.misses)
 
 private theorem solve_scene (u : Ball) : scene.solve u .ballB = passage .actual u := by
   cases u <;> decide
 
-private theorem solve_scene_ballA (a u : Ball) :
-    scene[.ballA ← a].solve u .ballB = passage a u := by
-  cases a <;> cases u <;> decide
-
-private theorem solve_contingency (u : Ball) :
-    scene[.blueBall ← Ball.removed].solve u .ballB = passage .actual .removed := by
-  cases u <;> decide
-
-private theorem solve_contingency_ballA (a u : Ball) :
-    scene[.blueBall ← Ball.removed, .ballA ← a].solve u .ballB = passage a .removed := by
-  cases a <;> cases u <;> decide
-
 -- without the blue ball the scene is Michottean launching, with the aspects of Table 1a
 theorem sceneAspects_removed (a : Aspect) : sceneAspects .removed a ↔ a ∈ Scenario.s1.aspects := by
   cases a <;>
     simp only [sceneAspects, aspects, IsWhetherCause, IsHowCause, IsSufficientCause, solve_scene,
-      solve_scene_ballA, solve_contingency, solve_contingency_ballA, ne_eq, eq_iff_iff] <;>
+      ne_eq, eq_iff_iff] <;>
     decide
 
 /-- Under preemption Ball A is not a whether-cause, since the blue ball would have knocked Ball B
@@ -475,8 +464,7 @@ through the gate. -/
 theorem caused_preemption :
     ¬ sceneAspects .actual .whether ∧ Expression.caused.Holds (sceneAspects .actual) := by
   simp only [Expression.Holds, sceneAspects, aspects, IsWhetherCause, IsHowCause,
-    IsSufficientCause, solve_scene, solve_scene_ballA, solve_contingency, solve_contingency_ballA,
-    ne_eq, eq_iff_iff]
+    IsSufficientCause, solve_scene, ne_eq, eq_iff_iff]
   decide
 
 end Structural

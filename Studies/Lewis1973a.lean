@@ -160,8 +160,8 @@ private theorem eq_solve_of_violations_subset (hx : x c = b) (h : violations M u
   eq_solve_of_isFixedPt <| funext fun v ↦ by
     rw [step_apply]
     rcases eq_or_ne v c with rfl | hv
-    · rw [intervene_eqn_of_mem (Finset.mem_singleton_self v)]; exact hx.symm
-    · rw [intervene_eqn_of_notMem (by simpa using hv)]
+    · rw [intervene_eqn_of_eq_some (Function.update_self ..)]; exact hx.symm
+    · rw [intervene_eqn_of_eq_bot (Function.update_of_ne hv ..)]
       exact (not_not.1 fun hn ↦ hv (h hn)).symm
 
 private theorem divergence_solve_intervene (hb : b ≠ M.solve u c) :
@@ -178,7 +178,7 @@ private theorem violations_solve_intervene (hb : b ≠ M.solve u c) :
   · rwa [solve_intervene_singleton_self]
   · rw [divergence_solve_intervene hb]
   · by_contra hvc
-    exact hv (solve_intervene_of_notMem (by simpa using hvc))
+    exact hv (solve_intervene_of_eq_bot (Function.update_of_ne hvc ..))
 
 -- Every other world where `c` is `b` departs no later than the intervention and violates no fewer
 -- laws, and departs earlier or violates more.
