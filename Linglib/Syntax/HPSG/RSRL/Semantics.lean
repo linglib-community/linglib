@@ -1,29 +1,26 @@
 module
 
-public import Linglib.Syntax.HPSG.Interpretation
-public import Mathlib.Data.Finset.Image
+public import Linglib.Syntax.HPSG.RSRL.Interpretation
+public import Linglib.Syntax.HPSG.RSRL.Syntax
 public import Mathlib.Logic.Function.Basic
 
 /-!
-# RSRL formulae, descriptions and grammars
+# RSRL semantics
 
-This file defines the formulae of RSRL and what it means for an entity to satisfy one. The
-quantifiers of a formula range over the components of the entity being described, not over the
-whole universe.
+This file defines what a term denotes in an interpretation and what it means for an entity to
+satisfy a formula. The quantifiers of a formula range over the components of the entity being
+described, not over the whole universe.
 
-A *description* is a formula with no free variables, a *grammar* is a set of descriptions, and
-an interpretation is a *model* of a grammar when every entity satisfies every description in
+An interpretation is a *model* of a grammar when every entity satisfies every description in
 it. An entity satisfies a formula exactly when its image under an embedding does
 (`HPSG.RSRL.Interpretation.Embedding.satisfies`), so an interpretation that embeds into a model
 is a model.
 
 ## Implementation notes
 
-Negation, implication and universal quantification are primitive and the other connectives are
-defined from them, as in mathlib's `FirstOrder.Language.BoundedFormula`. `SatisfiesOn` takes the
-range of the quantifiers as an argument, which `Satisfies` sets to the components. `models_iff`
-reduces satisfaction under every assignment to one assignment, which makes `Models` decidable
-for a grammar given by a list on a finite universe.
+`SatisfiesOn` takes the range of the quantifiers as an argument, which `Satisfies` sets to the
+components. `models_iff` reduces satisfaction under every assignment to one assignment, which
+makes `Models` decidable for a grammar given by a list on a finite universe.
 
 ## References
 
@@ -37,99 +34,94 @@ namespace HPSG.RSRL
 
 universe u v
 
-variable {Srt : Type u} [PartialOrder Srt]
+variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} {U : Type v}
 
-/-- A formula of the description language ([richter-2024], Definition 4). -/
-inductive Formula (Sig : Signature Srt) where
-  /-- The sort assignment `t ∼ σ` says that `t` denotes an entity whose sort is at least as
-  specific as `σ`. -/
-  | sortAssign (t : Term Sig) (σ : Srt)
-  /-- The path equation `t₁ ≈ t₂` says that `t₁` and `t₂` denote the same entity. -/
-  | pathEq (t₁ t₂ : Term Sig)
-  /-- The relational formula `ρ(x₁, …, xₙ)` says that the values of the variables stand in the
-  relation `ρ`. -/
-  | rel (ρ : Sig.Rel) (xs : Fin (Sig.arity ρ) → ℕ)
-  /-- Negation. -/
-  | neg (d : Formula Sig)
-  /-- Classical implication. -/
-  | imp (d e : Formula Sig)
-  /-- The formula `all x d` says that `d` holds when `x` is any component of the described
-  entity. -/
-  | all (x : ℕ) (d : Formula Sig)
+namespace Interpretation
 
-variable {Sig : Signature Srt} {U : Type v}
+variable (I : Interpretation Sig U)
 
-namespace Formula
+/-! ### Term denotation -/
 
-/-- Conjunction. -/
-protected def and (d e : Formula Sig) : Formula Sig := (d.imp e.neg).neg
+/-- The entity that a term denotes at the described entity `u` under the assignment `g`, when
+every attribute along the term is defined ([richter-2024], Definition 10). -/
+def termDenot (g : ℕ → U) : Term Sig → U → Option U
+  | .colon, u => some u
+  | .var n, _ => some (g n)
+  | .feat t α, u => (termDenot g t u).bind (I.A α)
 
-/-- Disjunction. -/
-protected def or (d e : Formula Sig) : Formula Sig := d.neg.imp e
+variable {I} {g g' : ℕ → U} {u v : U}
 
-/-- The formula `ex x d` says that `d` holds when `x` is some component of the described
-entity. -/
-def ex (x : ℕ) (d : Formula Sig) : Formula Sig := (all x d.neg).neg
+@[simp] theorem termDenot_colon : I.termDenot g .colon u = some u := rfl
 
-/-- The biconditional of two formulae. -/
-protected def iff (d e : Formula Sig) : Formula Sig := (d.imp e).and (e.imp d)
+@[simp] theorem termDenot_var (n : ℕ) : I.termDenot g (.var n) u = some (g n) := rfl
 
-/-- The formula `∀ x₀ (x₀ ≈ x₀)`, which every entity satisfies, in place of a constant for
-truth. -/
-def top : Formula Sig := .all 0 (.pathEq (.var 0) (.var 0))
+@[simp] theorem termDenot_feat (t : Term Sig) (α : Sig.Attr) :
+    I.termDenot g (t.feat α) u = (I.termDenot g t u).bind (I.A α) := rfl
 
-/-- The negation of `top`, which no entity satisfies. -/
-def bot : Formula Sig := top.neg
+/-- A term denotation depends only on the values of the variables that occur in the term. -/
+theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
+    I.termDenot g t u = I.termDenot g' t u := by
+  induction t with
+  | colon => rfl
+  | var n => simp [h n (Finset.mem_singleton_self n)]
+  | feat t α ih => rw [termDenot_feat, termDenot_feat, ih h]
 
-/-- The conjunction of a list of formulae. -/
-def conj (ds : List (Formula Sig)) : Formula Sig := ds.foldr Formula.and top
+theorem termDenot_of_isColonFree {t : Term Sig} (ht : t.IsColonFree) (u v : U) :
+    I.termDenot g t u = I.termDenot g t v := by
+  induction t with
+  | colon => exact ht.elim
+  | var n => rfl
+  | feat t α ih => rw [termDenot_feat, termDenot_feat, ih ht]
 
-/-- The disjunction of a list of formulae. -/
-def disj (ds : List (Formula Sig)) : Formula Sig := ds.foldr Formula.or bot
+theorem termDenot_path (g g' : ℕ → U) (p : Path Sig) :
+    I.termDenot g (.path p) u = I.termDenot g' (.path p) u :=
+  termDenot_congr (by simp)
 
-/-- The variables that occur free in a formula ([richter-2024], Definition 5). -/
-def freeVars : Formula Sig → Finset ℕ
-  | sortAssign t _ => t.freeVars
-  | pathEq t₁ t₂ => t₁.freeVars ∪ t₂.freeVars
-  | rel _ xs => Finset.univ.image xs
-  | neg d => d.freeVars
-  | imp d e => d.freeVars ∪ e.freeVars
-  | all x d => d.freeVars.erase x
+theorem termDenot_path_cons (α : Sig.Attr) (p : Path Sig) :
+    I.termDenot g (.path (α :: p)) u = (I.A α u).bind (I.termDenot g (.path p)) := by
+  induction p using List.reverseRecOn with
+  | nil => simp [Term.path]
+  | append_singleton p β ih =>
+    rw [← List.cons_append, Term.path_concat, Term.path_concat, termDenot_feat, ih,
+      Option.bind_assoc]
+    rfl
 
-@[simp] theorem freeVars_and (d e : Formula Sig) :
-    (d.and e).freeVars = d.freeVars ∪ e.freeVars := rfl
+theorem termDenot_path_append (p q : Path Sig) :
+    I.termDenot g (.path (p ++ q)) u =
+      (I.termDenot g (.path p) u).bind (I.termDenot g (.path q)) := by
+  induction p generalizing u with
+  | nil => rfl
+  | cons α p ih =>
+    rw [List.cons_append, termDenot_path_cons, termDenot_path_cons, Option.bind_assoc]
+    simp only [ih]
 
-@[simp] theorem freeVars_or (d e : Formula Sig) : (d.or e).freeVars = d.freeVars ∪ e.freeVars := rfl
+/-- Following a path from an entity is reading it in the machine of the interpretation. -/
+theorem evalFrom_toPartialMoore (g : ℕ → U) (u : U) (p : Path Sig) :
+    I.toPartialMoore.evalFrom u p = I.termDenot g (.path p) u := by
+  induction p using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton p α ih =>
+    rw [PartialMoore.evalFrom_append_singleton, ih, Term.path_concat, termDenot_feat]
+    rfl
 
-@[simp] theorem freeVars_ex (x : ℕ) (d : Formula Sig) :
-    (ex x d).freeVars = d.freeVars.erase x := rfl
+/-- The components of `u` are the entities that some path denotes at `u`
+([richter-2024], Definition 11). -/
+theorem isComponentOf_iff_exists_path (g : ℕ → U) :
+    I.IsComponentOf u v ↔ ∃ p : Path Sig, I.termDenot g (.path p) u = some v := by
+  simp only [← reaches_toPartialMoore_iff, PartialMoore.Reaches, evalFrom_toPartialMoore g]
 
-@[simp] theorem freeVars_iff (d e : Formula Sig) :
-    (d.iff e).freeVars = d.freeVars ∪ e.freeVars := by
-  simp [Formula.iff, freeVars, Finset.union_comm]
+/-- A homomorphism commutes with term denotation. -/
+theorem HomClass.termDenot_comp {V : Type*} {J : Interpretation Sig V} {F : Type*}
+    [FunLike F U V] [HomClass F I J] (f : F) (g : ℕ → U) (t : Term Sig) (u : U) :
+    J.termDenot (f ∘ g) t (f u) = (I.termDenot g t u).map f := by
+  induction t with
+  | colon => rfl
+  | var n => rfl
+  | feat t α ih =>
+    rw [termDenot_feat, termDenot_feat, ih]
+    cases I.termDenot g t u <;> simp
 
-/-- A formula is colon-free when none of its terms starts at the described entity. -/
-def IsColonFree : Formula Sig → Prop
-  | sortAssign t _ => t.IsColonFree
-  | pathEq t₁ t₂ => t₁.IsColonFree ∧ t₂.IsColonFree
-  | rel _ _ => True
-  | neg d | all _ d => d.IsColonFree
-  | imp d e => d.IsColonFree ∧ e.IsColonFree
-
-instance decidableIsColonFree : DecidablePred (IsColonFree (Sig := Sig))
-  | sortAssign t _ => Term.decidableIsColonFree t
-  | pathEq t₁ t₂ =>
-    have := Term.decidableIsColonFree t₁
-    have := Term.decidableIsColonFree t₂
-    inferInstanceAs (Decidable (t₁.IsColonFree ∧ t₂.IsColonFree))
-  | rel .. => isTrue trivial
-  | neg d | all _ d => decidableIsColonFree d
-  | imp d e =>
-    have := decidableIsColonFree d
-    have := decidableIsColonFree e
-    inferInstanceAs (Decidable (d.IsColonFree ∧ e.IsColonFree))
-
-end Formula
+end Interpretation
 
 namespace Interpretation
 
@@ -318,34 +310,6 @@ theorem satisfiesOn_iff_of_isColonFree (hd : d.IsColonFree) :
 
 end Interpretation
 
-/-! ### Descriptions and grammars -/
-
-/-- A description is a formula with no free variables ([richter-2024], Definition 6). -/
-@[ext] structure Description (Sig : Signature Srt) where
-  /-- The formula. -/
-  toFormula : Formula Sig
-  /-- The formula has no free variables. -/
-  freeVars_toFormula : toFormula.freeVars = ∅ := by decide
-
-attribute [coe] Description.toFormula
-attribute [simp] Description.freeVars_toFormula
-
-instance : Coe (Description Sig) (Formula Sig) := ⟨Description.toFormula⟩
-
-/-- A grammar over a signature is a set of descriptions, its principles
-([richter-2024], Definition 16). -/
-abbrev Grammar (Sig : Signature Srt) := Set (Description Sig)
-
-/-- The grammar whose principles are the members of a list. -/
-def Grammar.ofList (ds : List (Description Sig)) : Grammar Sig := {d | d ∈ ds}
-
-@[simp] theorem Grammar.mem_ofList {ds : List (Description Sig)} {d : Description Sig} :
-    d ∈ Grammar.ofList ds ↔ d ∈ ds := Iff.rfl
-
-@[simp] theorem Grammar.ofList_append (ds es : List (Description Sig)) :
-    Grammar.ofList (ds ++ es) = Grammar.ofList ds ∪ Grammar.ofList es :=
-  Set.ext fun _ ↦ List.mem_append
-
 namespace Interpretation
 
 variable (I : Interpretation Sig U) {G H : Grammar Sig} {u : U} {d : Description Sig}
@@ -373,8 +337,8 @@ structure IsExhaustive (G : Grammar Sig) : Prop where
 
 variable {I}
 
-/-- An entity is described by a description exactly when it satisfies it under the assignment
-of every variable to itself, since a description has no free variables. -/
+/-- A description describes an entity exactly when the entity satisfies it under the assignment of
+every variable to itself. -/
 theorem mem_denotation_iff : u ∈ I.denotation d ↔ I.Satisfies (fun _ ↦ u) u d :=
   ⟨fun h ↦ h _, fun h g ↦ (satisfies_iff_of_freeVars_eq_empty d.freeVars_toFormula _ g).1 h⟩
 
@@ -430,8 +394,7 @@ theorem satisfiesOn_image :
   | all x d ih =>
     simp only [satisfiesOn_all, Set.forall_mem_image, ← ih, Function.comp_update]
 
-/-- Satisfaction is invariant under embeddings: an entity satisfies a formula exactly when its
-image does, since the components of the image are the images of the components. -/
+/-- An entity satisfies a formula exactly when its image under an embedding does. -/
 theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
   rw [Satisfies, ← HomClass.image_isComponentOf, satisfiesOn_image, Satisfies]
 
@@ -448,7 +411,7 @@ theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
 theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=
   fun d hd g u ↦ f.satisfies.1 (hJ d hd (f ∘ g) (f u))
 
-/-- A model of a grammar that embeds onto an interpretation makes it a model. -/
+/-- An interpretation onto which a model of a grammar embeds is a model of it. -/
 theorem models_of_surjective (f : Embedding I J) (hf : Function.Surjective f)
     (hI : I.Models G) : J.Models G :=
   models_iff.2 fun d hd v ↦ by
@@ -465,40 +428,6 @@ theorem isExhaustive {V : Type v} {J : Interpretation Sig V} (f : Embedding I J)
 end Embedding
 
 end Interpretation
-
-/-! ### Constraints on sorts -/
-
-/-- A constraint `σ ⇒ φ` requires every entity whose sort is at least as specific as `σ` to
-satisfy the formula `φ`, which has no free variables. -/
-structure Constraint (Sig : Signature Srt) where
-  /-- The sort that the constraint applies to. -/
-  sort : Srt
-  /-- The formula that the entities of that sort satisfy. -/
-  body : Formula Sig
-  /-- The body has no free variables. -/
-  freeVars_body : body.freeVars = ∅ := by decide
-
-namespace Constraint
-
-attribute [simp] freeVars_body
-
-/-- The formula that states a constraint. -/
-def toFormula (c : Constraint Sig) : Formula Sig := (Formula.sortAssign .colon c.sort).imp c.body
-
-@[simp] theorem freeVars_toFormula (c : Constraint Sig) : c.toFormula.freeVars = ∅ := by
-  simp [toFormula, Formula.freeVars, Term.freeVars]
-
-/-- The description that states a constraint. -/
-@[coe, simps] def toDescription (c : Constraint Sig) : Description Sig :=
-  ⟨c.toFormula, c.freeVars_toFormula⟩
-
-instance : Coe (Constraint Sig) (Description Sig) := ⟨toDescription⟩
-
-/-- The constraints among `C` that the sort `σ` inherits, those on `σ` and on its supersorts. -/
-def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Constraint Sig) :=
-  C.filter fun c ↦ σ ≤ c.sort
-
-end Constraint
 
 namespace Interpretation
 
