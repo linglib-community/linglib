@@ -339,16 +339,11 @@ def Language.walsCode : Language → String
   | .ukrainian => "ukr" | .polish => "pol" | .serbian => "scr" | .macedonian => "mcd"
   | .bulgarian => "bul" | .russian => "rus"
 
-/-- Where the atlas codes a language, its default strategy is of the type the atlas gives,
-Slovenian apart, which the atlas codes for a question particle and the chapter for verb
-movement. -/
 theorem defaultStrategy_type :
     ∀ v ∈ Data.WALS.F116A.allData.lookup l.walsCode,
       (l.defaultStrategy.type = some v ↔ l ≠ .slovenian) := by
   cases l <;> decide +kernel
 
-/-- Bulgarian *li* follows the focus of the question, where the atlas codes the Bulgarian
-question particle as in second position. -/
 theorem bulgarian_li_anchor :
     Bulgarian.QuestionParticles.li.anchor = .focus .after ∧
       Data.WALS.F92A.allData.lookup "bul" = some .secondPosition := by
