@@ -20,9 +20,14 @@ When the agents choose between two actions, seeing one of them raises the observ
 of every statistic of the agents that monovaries with the value advantage of that action over the
 other, since the share a policy gives an action is increasing in that advantage.
 
+Seeing an action leaves the estimate of an agent unchanged exactly when that agent takes the
+action as often as the population does. So where the agents' response is forced, every agent
+having the same policy whatever its reasons, the action carries no information about the agent.
+
 ## Main definitions
 
 * `Agent.plan`: the forward model of a population of agents at an observation.
+* `Agent.ForcedAt`: every agent of the population has the same policy at the observation.
 
 ## Main results
 
@@ -30,6 +35,8 @@ other, since the share a policy gives an action is increasing in that advantage.
   statistic that monovaries with the action's value advantage on the agents of positive prior
   mass.
 * `Agent.integral_posterior_plan_le_integral`: and lowers that of one that antivaries with it.
+* `Agent.ForcedAt.posterior_plan_real_singleton`: where every agent has the same policy, an
+  action tells the observer nothing about the agent.
 
 ## References
 
@@ -101,5 +108,33 @@ theorem integral_posterior_plan_le_integral (hβ : 0 < β) (hxx' : x ≠ x')
     fun i hi j hj hij ↦ ?_
   simp only [plan_apply, policy_real_of_pair hxx' hall] at hij
   exact hf hi hj ((mul_lt_mul_iff_of_pos_left hβ).1 (Real.sigmoid_lt_iff.1 hij))
+
+/-- Seeing an action leaves the observer's estimate of an agent of positive prior mass where it
+was exactly when that agent takes the action as often as the population does. -/
+theorem posterior_plan_real_singleton_eq_iff (x : A) {ω : Ω} (hω : μ {ω} ≠ 0) :
+    (((plan p β o)†μ) x).real {ω} = μ.real {ω} ↔
+      ((p ω).policy β o).real {x} = (plan p β o ∘ₘ μ).real {x} := by
+  have hx := comp_plan_apply_singleton_ne_zero p o μ (β := β) x
+  have hm : (plan p β o ∘ₘ μ).real {x} ≠ 0 := by
+    rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
+  have hμ : μ.real {ω} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
+  rw [posterior_real_singleton _ μ hx, div_eq_iff hm, mul_right_inj' hμ, plan_apply]
+
+/-- The response of a population of agents is forced at an observation when every member has the
+same policy there, so that what an agent does does not depend on its reasons. -/
+def ForcedAt (p : Ω → Agent O S A) (β : ℝ) (o : O) : Prop :=
+  ∀ ω ω', (p ω).policy β o = (p ω').policy β o
+
+variable {p o} in
+/-- Where the response is forced, an action tells the observer nothing about the agent. -/
+theorem ForcedAt.posterior_plan_real_singleton (h : ForcedAt p β o) (x : A) (ω : Ω) :
+    (((plan p β o)†μ) x).real {ω} = μ.real {ω} := by
+  have hx := comp_plan_apply_singleton_ne_zero p o μ (β := β) x
+  obtain hω | hω := eq_or_ne (μ {ω}) 0
+  · rw [posterior_real_singleton _ μ hx, measureReal_def, hω]; simp
+  · refine (posterior_plan_real_singleton_eq_iff p o μ x hω).2 ?_
+    rw [Measure.comp_real_singleton_eq_integral]
+    simp_rw [plan_apply, fun ω' ↦ h ω' ω]
+    simp
 
 end Agent
