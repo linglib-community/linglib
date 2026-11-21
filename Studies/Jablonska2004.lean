@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.AspectualClass
+public import Linglib.Semantics.Aspect.Viewpoint.Defs
 public import Linglib.Data.Examples.Jablonska2004
 public import Linglib.Data.Wordlist.Jablonska2004
 public import Studies.Svenonius2004

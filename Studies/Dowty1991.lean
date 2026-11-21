@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ArgumentSelection
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Data.Examples.Dowty1991
 public import Studies.Cruse1973
 public import Linglib.Data.Examples.Readers

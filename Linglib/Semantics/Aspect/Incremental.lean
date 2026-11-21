@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.Mereology.Relation
 
 /-!

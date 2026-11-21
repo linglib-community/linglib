@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Studies.Krifka1998

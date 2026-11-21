@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.KnickSharf2026
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Studies.Chierchia2006
 public import Studies.IatridouEtAl2001

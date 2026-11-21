@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Data.Examples.Ferreira2016

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.ConstructionGrammar.Composition
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.AspectualClass
 
 /-!
 # Michaelis (2004): Type Shifting in Construction Grammar

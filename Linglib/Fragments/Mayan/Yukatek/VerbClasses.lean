@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Viewpoint.Defs
 public import Linglib.Morphology.Morph
 
 /-!

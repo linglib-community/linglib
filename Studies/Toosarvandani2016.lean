@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Toosarvandani2016
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Syntax.Clause.Chaining
 public import Linglib.Data.Examples.Readers
 

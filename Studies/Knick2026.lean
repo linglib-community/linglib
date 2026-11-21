@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Knick2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Syntax.Category.Verb.Tense
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Data.Examples.Eckardt2006
 

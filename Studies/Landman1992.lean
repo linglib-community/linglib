@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Studies.Dowty1979
 public import Linglib.Data.Examples.Landman1992
