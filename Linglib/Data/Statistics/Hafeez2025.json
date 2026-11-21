@@ -2,7 +2,7 @@
   "meta": {
     "bibkey": "hafeez-2025",
     "method": "experiment",
-    "description": "The acceptability rating study (chapter 5) and the discourse production study (chapter 6) of Urdu causal constructions, run on the 43 video clips of the Causality Across Languages project. Twelve raters judged a description of each clip in each of seven response types; a conditional inference tree per response type splits the clips by the semantic predictors, and Table 18 prints each leaf's share of ceiling ratings and its number of responses. The tables are recorded as printed, including the reversed InanCEAF signs of the ADV tree, the peaks of NCA and NCrA that Table 19 swaps, and the unattainable 0.08 of the LEX-INST tree; the studies that consume them state the discrepancies.",
+    "description": "The acceptability rating study (chapter 5) and the discourse production study (chapter 6) of Urdu causal constructions, run on the 43 video clips of the Causality Across Languages project. Twelve raters judged a description of each clip in each of seven response types; a conditional inference tree per response type splits the clips by the semantic predictors, and Table 18 prints each leaf's share of ceiling ratings and its number of responses. The tables are recorded as printed.",
     "rawData": [
       {
         "url": "https://github.com/JuergenBohnemeyer/cal_stats",
