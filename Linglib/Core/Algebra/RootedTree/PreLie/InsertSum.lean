@@ -12,13 +12,13 @@ public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 
 The grafting product `T ◁ S` of two rooted trees is the multiset of the trees obtained by
 grafting `S` onto one vertex of `T`, that is, by making `S` a new child of that vertex. It has
-[one summand for each vertex](##RoseTree.insertSum_eq_map_multiGraft) of `T`, the new child
-[at the root or inside one child](##RoseTree.insertSum_node), and is the one-guest case of the
-multi-insertion `insertion T gs`, which grafts every guest of `gs` at once. On nonplanar trees,
-grafting `S₁` and then `S₂` is
-[grafting `S₁ ◁ S₂`, plus grafting both at once](##UnorderedTree.insertSum_bind_insertSum), so the
-associator is [symmetric in its last two arguments](##UnorderedTree.insertSum_assoc_symm). This is
-the right pre-Lie identity, by which Chapoton and Livernet make the rooted trees a pre-Lie algebra.
+one summand for each vertex of `T` (`RoseTree.insertSum_eq_map_graft`), the new child at the root
+or inside one child (`RoseTree.insertSum_node`), and is the one-guest case of the multi-insertion
+`insertion T gs`, which grafts every guest of `gs` at once. On nonplanar trees, grafting `S₁` and
+then `S₂` is grafting `S₁ ◁ S₂`, plus grafting both at once
+(`UnorderedTree.insertSum_bind_insertSum`), so the associator is symmetric in its last two
+arguments (`UnorderedTree.insertSum_assoc_symm`). This is the right pre-Lie identity, by which
+Chapoton and Livernet make the rooted trees a pre-Lie algebra.
 
 ## Implementation notes
 
@@ -46,11 +46,13 @@ def insertSum (T S : RoseTree α) : Multiset (RoseTree α) :=
 @[inherit_doc] scoped infixl:65 " ◁ " => insertSum
 
 /-- `T ◁ S` sums, over the vertices `p` of `T`, the grafting of `S` at `p`. -/
-theorem insertSum_eq_map_multiGraft (T S : RoseTree α) :
-    T ◁ S = ((vertices T).map fun p => multiGraft T [(p, S)] : Multiset (RoseTree α)) := by
+theorem insertSum_eq_map_graft (T S : RoseTree α) :
+    T ◁ S = ((vertices T).map fun p ↦ graft T (Function.update (fun _ ↦ []) p [S]) :
+      Multiset (RoseTree α)) := by
   rw [insertSum, insertion_def, List.length_singleton, List.replicate_one, List.sections_singleton,
     List.map_map]
-  rfl
+  refine congrArg _ (List.map_congr_left fun p _ ↦ congrArg _ (funext fun q ↦ ?_))
+  by_cases h : p = q <;> simp [h, eq_comm]
 
 /-- Grafting into a node either adds a child at the root or grafts inside the children. -/
 theorem insertSum_node (a : α) (cs : List (RoseTree α)) (S : RoseTree α) :
@@ -65,8 +67,7 @@ theorem insertSum_node (a : α) (cs : List (RoseTree α)) (S : RoseTree α) :
   rfl
 
 theorem card_insertSum (T S : RoseTree α) : Multiset.card (T ◁ S) = T.numNodes := by
-  rw [insertSum_eq_map_multiGraft, Multiset.coe_card, List.length_map,
-    length_vertices]
+  rw [insertSum_eq_map_graft, Multiset.coe_card, List.length_map, length_vertices]
 
 /-- Grafting a leaf onto a two-vertex path adds it at the root or at the old leaf. -/
 example : node 0 [leaf 1] ◁ leaf 2 = {node 0 [leaf 2, leaf 1], node 0 [node 1 [leaf 2]]} := by
@@ -148,25 +149,14 @@ theorem map_mk_bind_insertionForest : ∀ (F : List (RoseTree α)) (S₁ S₂ : 
     abel
 end
 
-mutual
 /-- Every summand of `T ◁ S` has the vertices of `T` and those of `S`. -/
-theorem numNodes_of_mem_insertSum : ∀ {T S X : RoseTree α}, X ∈ T ◁ S →
-    X.numNodes = T.numNodes + S.numNodes
-  | node a cs, S, X, h => by
-    rw [insertSum_node, Multiset.mem_cons, Multiset.mem_map] at h
-    obtain rfl | ⟨L, hL, rfl⟩ := h
-    · simp only [numNodes_node, List.map_cons, List.sum_cons]; omega
-    · simp only [numNodes_node, sum_map_numNodes_of_mem_insertionForest hL]; omega
-private theorem sum_map_numNodes_of_mem_insertionForest : ∀ {F : List (RoseTree α)}
-    {S : RoseTree α} {L : List (RoseTree α)}, L ∈ insertionForest F [S] →
-    (L.map numNodes).sum = (F.map numNodes).sum + S.numNodes
-  | [], S, L, h => by simp at h
-  | T :: F, S, L, h => by
-    rw [insertionForest_cons_singleton, Multiset.mem_add, Multiset.mem_map, Multiset.mem_map] at h
-    obtain ⟨X, hX, rfl⟩ | ⟨L', hL', rfl⟩ := h
-    · simp only [List.map_cons, List.sum_cons, numNodes_of_mem_insertSum hX]; omega
-    · simp only [List.map_cons, List.sum_cons, sum_map_numNodes_of_mem_insertionForest hL']; omega
-end
+theorem numNodes_of_mem_insertSum {T S X : RoseTree α} (h : X ∈ T ◁ S) :
+    X.numNodes = T.numNodes + S.numNodes := by
+  rw [insertSum_eq_map_graft, Multiset.mem_coe, List.mem_map] at h
+  obtain ⟨p, hp, rfl⟩ := h
+  rw [numNodes_graft, List.sum_map_eq_nsmul_single p _ fun q hq _ ↦ by simp [hq],
+    @List.count_eq_one_of_mem _ instBEqOfDecidableEq _ _ _ (nodup_vertices T) hp]
+  simp
 
 /-- Grafting is not associative, since `(0 ◁ 1) ◁ 2` has two summands and `0 ◁ (1 ◁ 2)` one. -/
 example : (leaf 0 ◁ leaf 1).bind (· ◁ leaf 2) ≠ (leaf 1 ◁ leaf 2).bind (leaf 0 ◁ ·) := by
