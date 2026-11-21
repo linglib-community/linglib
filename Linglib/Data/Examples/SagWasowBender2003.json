@@ -47,20 +47,50 @@
       ]
     },
     {
-      "key": "binder",
-      "lean": "binder",
-      "type": "Binder",
-      "doc": "Whether the element a row's pronoun is coindexed with outranks it on an argument-structure list.",
+      "key": "frame",
+      "lean": "frame",
+      "type": "Frame",
+      "doc": "The argument structures of a row's sentence, with the places of *Susan* and of the pronoun on them.",
       "levels": [
         {
-          "name": "outranking",
-          "label": "local",
-          "doc": "it outranks the pronoun on the list of the same head"
+          "name": "transitive",
+          "label": "transitive",
+          "doc": "a transitive verb with *Susan* as subject and the pronoun as object"
         },
         {
-          "name": "notOutranking",
-          "label": "nonlocal",
-          "doc": "it does not"
+          "name": "doubleObject",
+          "label": "double object",
+          "doc": "a verb with *Susan* as subject, the pronoun as first object and a second object"
+        },
+        {
+          "name": "toDative",
+          "label": "to-PP",
+          "doc": "a verb with *Susan* as subject, an object, and the pronoun as object of an argument-marking preposition"
+        },
+        {
+          "name": "objectAndPP",
+          "label": "object and PP",
+          "doc": "a verb with *Susan* as subject, the pronoun as object, and a prepositional complement"
+        },
+        {
+          "name": "objectAntecedent",
+          "label": "object antecedent",
+          "doc": "a verb with another subject, *Susan* as object, and the pronoun as object of an argument-marking preposition"
+        },
+        {
+          "name": "embedded",
+          "label": "embedded clause",
+          "doc": "*Susan* as subject of a verb taking a clause, in which the pronoun is the object of a verb with another subject"
+        },
+        {
+          "name": "possessor",
+          "label": "possessor",
+          "doc": "the pronoun as object of a verb whose subject is a noun phrase with *Susan* as possessor"
+        },
+        {
+          "name": "pictureNoun",
+          "label": "picture noun",
+          "doc": "the pronoun as object of a verb whose subject is a noun phrase with *Susan* as complement of its noun"
         }
       ]
     }
@@ -81,7 +111,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "local"]
+        ["frame", "transitive"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -101,7 +131,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "local"]
+        ["frame", "transitive"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -121,7 +151,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "local"]
+        ["frame", "double object"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -141,7 +171,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "local"]
+        ["frame", "double object"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -161,7 +191,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "local"]
+        ["frame", "to-PP"]
       ],
       "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it.",
       "verified": "page-image"
@@ -181,7 +211,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "local"]
+        ["frame", "to-PP"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -201,7 +231,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "local"]
+        ["frame", "object and PP"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -221,7 +251,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "local"]
+        ["frame", "object and PP"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -241,7 +271,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "local"]
+        ["frame", "object antecedent"]
       ],
       "comment": "The local o-commander of herself is the object Susan.",
       "verified": "page-image"
@@ -261,7 +291,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "local"]
+        ["frame", "object antecedent"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -281,7 +311,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "nonlocal"]
+        ["frame", "embedded clause"]
       ],
       "comment": "Herself coindexed with Susan, not with its local o-commander nobody.",
       "verified": "page-image"
@@ -301,7 +331,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "nonlocal"]
+        ["frame", "embedded clause"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -321,7 +351,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "nonlocal"]
+        ["frame", "possessor"]
       ],
       "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends.",
       "verified": "page-image"
@@ -341,7 +371,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "nonlocal"]
+        ["frame", "possessor"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"
@@ -361,7 +391,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "anaphor"],
-        ["binder", "nonlocal"]
+        ["frame", "picture noun"]
       ],
       "comment": "Herself coindexed with Susan, not with its local o-commander the picture.",
       "verified": "page-image"
@@ -381,7 +411,7 @@
       "paperFeatures": [
         ["topic", "binding"],
         ["sort", "pronoun"],
-        ["binder", "nonlocal"]
+        ["frame", "picture noun"]
       ],
       "comment": "Her coindexed with Susan.",
       "verified": "page-image"

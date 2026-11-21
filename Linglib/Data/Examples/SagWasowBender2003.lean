@@ -28,7 +28,7 @@ def ex2a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "transitive")] }
 
 def ex2b : Datum :=
   { id := "sagwasowbender2003_ex2b"
@@ -41,7 +41,7 @@ def ex2b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "transitive")] }
 
 def ex3a : Datum :=
   { id := "sagwasowbender2003_ex3a"
@@ -54,7 +54,7 @@ def ex3a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "double object")] }
 
 def ex3b : Datum :=
   { id := "sagwasowbender2003_ex3b"
@@ -67,7 +67,7 @@ def ex3b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "double object")] }
 
 def ex4a : Datum :=
   { id := "sagwasowbender2003_ex4a"
@@ -80,7 +80,7 @@ def ex4a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "to-PP")] }
 
 def ex4b : Datum :=
   { id := "sagwasowbender2003_ex4b"
@@ -93,7 +93,7 @@ def ex4b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "to-PP")] }
 
 def ex5a : Datum :=
   { id := "sagwasowbender2003_ex5a"
@@ -106,7 +106,7 @@ def ex5a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "object and PP")] }
 
 def ex5b : Datum :=
   { id := "sagwasowbender2003_ex5b"
@@ -119,7 +119,7 @@ def ex5b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "object and PP")] }
 
 def ex6a : Datum :=
   { id := "sagwasowbender2003_ex6a"
@@ -132,7 +132,7 @@ def ex6a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "object antecedent")] }
 
 def ex6b : Datum :=
   { id := "sagwasowbender2003_ex6b"
@@ -145,7 +145,7 @@ def ex6b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "object antecedent")] }
 
 def ex7a : Datum :=
   { id := "sagwasowbender2003_ex7a"
@@ -158,7 +158,7 @@ def ex7a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "embedded clause")] }
 
 def ex7b : Datum :=
   { id := "sagwasowbender2003_ex7b"
@@ -171,7 +171,7 @@ def ex7b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "embedded clause")] }
 
 def ex8a : Datum :=
   { id := "sagwasowbender2003_ex8a"
@@ -184,7 +184,7 @@ def ex8a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "possessor")] }
 
 def ex8b : Datum :=
   { id := "sagwasowbender2003_ex8b"
@@ -197,7 +197,7 @@ def ex8b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "possessor")] }
 
 def ex9a : Datum :=
   { id := "sagwasowbender2003_ex9a"
@@ -210,7 +210,7 @@ def ex9a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
+    paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("frame", "picture noun")] }
 
 def ex9b : Datum :=
   { id := "sagwasowbender2003_ex9b"
@@ -223,7 +223,7 @@ def ex9b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
+    paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("frame", "picture noun")] }
 
 def ex17a : Datum :=
   { id := "sagwasowbender2003_ex17a"
@@ -425,16 +425,30 @@ inductive PronounSort where
 def sort (e : Datum) : Option PronounSort :=
   e.parse? "sort" [("anaphor", .anaphor), ("pronoun", .pronoun)]
 
-/-- Whether the element a row's pronoun is coindexed with outranks it on an argument-structure list. -/
-inductive Binder where
-  /-- local: it outranks the pronoun on the list of the same head -/
-  | outranking
-  /-- nonlocal: it does not -/
-  | notOutranking
+/-- The argument structures of a row's sentence, with the places of *Susan* and of the pronoun on them. -/
+inductive Frame where
+  /-- transitive: a transitive verb with *Susan* as subject and the pronoun as object -/
+  | transitive
+  /-- double object: a verb with *Susan* as subject, the pronoun as first object and a second object -/
+  | doubleObject
+  /-- to-PP: a verb with *Susan* as subject, an object, and the pronoun as object of an argument-marking preposition -/
+  | toDative
+  /-- object and PP: a verb with *Susan* as subject, the pronoun as object, and a prepositional complement -/
+  | objectAndPP
+  /-- object antecedent: a verb with another subject, *Susan* as object, and the pronoun as object of an argument-marking preposition -/
+  | objectAntecedent
+  /-- embedded clause: *Susan* as subject of a verb taking a clause, in which the pronoun is the object of a verb with another subject -/
+  | embedded
+  /-- possessor: the pronoun as object of a verb whose subject is a noun phrase with *Susan* as possessor -/
+  | possessor
+  /-- picture noun: the pronoun as object of a verb whose subject is a noun phrase with *Susan* as complement of its noun -/
+  | pictureNoun
   deriving DecidableEq, Repr, Fintype
 
-/-- The value a row records under `binder`. -/
-def binder (e : Datum) : Option Binder :=
-  e.parse? "binder" [("local", .outranking), ("nonlocal", .notOutranking)]
+/-- The value a row records under `frame`. -/
+def frame (e : Datum) : Option Frame :=
+  e.parse? "frame" [("transitive", .transitive), ("double object", .doubleObject), ("to-PP", .toDative),
+    ("object and PP", .objectAndPP), ("object antecedent", .objectAntecedent),
+    ("embedded clause", .embedded), ("possessor", .possessor), ("picture noun", .pictureNoun)]
 
 end SagWasowBender2003.Examples

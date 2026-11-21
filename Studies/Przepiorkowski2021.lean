@@ -86,20 +86,22 @@ open SagWasowBender2003 (clause)
 
 /-- At the subject of a clause some entity of the universe is a sign, but no component of the
 subject is. -/
-example : (clause .ana .iSubj .susan .susan).SatisfiesOn Set.univ (fun _ ↦ .subj) .subj
-      (.ex 0 (.sortAssign (.var 0) .sign)) ∧
-    ¬ (clause .ana .iSubj .susan .susan).Satisfies (fun _ ↦ .subj) .subj
-      (.ex 0 (.sortAssign (.var 0) .sign)) := by decide
+example : (clause .ana .susan .susan .susan).SatisfiesOn Set.univ (fun _ ↦ .syn .susan)
+      (.syn .susan) (.ex 0 (.sortAssign (.var 0) .sign)) ∧
+    ¬ (clause .ana .susan .susan .susan).Satisfies (fun _ ↦ .syn .susan) (.syn .susan)
+      (.ex 0 (.sortAssign (.var 0) .sign)) := by decide +kernel
 
 /-- The utterance *Susan likes herself* is a rooted model of the binding principles, and *Susan
 likes himself* is not: the masculine reflexive has an index of its own, the gender being the
 index's. -/
-example : ModelsFO ((clause .ana .iSubj .susan .susan).generated .s) Binding.grammar ∧
-    ¬ ModelsFO ((clause .ana .iObj .susan ⟨.third, .sing, .masc⟩).generated .s)
+example : ModelsFO ((clause .ana .susan .susan .susan).generated .root) Binding.grammar ∧
+    ¬ ModelsFO ((clause .ana .pron .susan ⟨.third, .sing, .masc⟩).generated .root)
       Binding.grammar := by
-  simp only [modelsFO_generated_iff_of_isColonFree _
-    (by simp only [Grammar.mem_ofList]; decide : ∀ d ∈ Binding.grammar, _), Grammar.mem_ofList]
-  decide
+  have hcf : ∀ d ∈ Binding.grammar, d.toFormula.IsColonFree := by
+    simp only [Grammar.mem_ofList]; decide
+  rw [modelsFO_generated_iff_of_isColonFree _ hcf, modelsFO_generated_iff_of_isColonFree _ hcf]
+  exact ⟨(SagWasowBender2003.grammatical_clause_ana_iff (by simp) _ _).2 rfl,
+    fun h ↦ by simpa using (SagWasowBender2003.grammatical_clause_ana_iff (by simp) _ _).1 h⟩
 
 end Binding
 
