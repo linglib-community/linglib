@@ -39,13 +39,13 @@ theorem measurable_solve (h : ∀ v, Measurable (uncurry (M.eqn v))) : Measurabl
   convert hiter (Fintype.card V) using 1
   exact funext fun u ↦ solve_eq_iterate_card u x₀
 
-theorem measurable_solve_intervene [DecidableEq V] (h : ∀ v, Measurable (uncurry (M.eqn v)))
-    (X : Finset V) (x : ∀ v : X, α v) : Measurable (M.intervene X x).solve :=
+theorem measurable_solve_intervene (h : ∀ v, Measurable (uncurry (M.eqn v)))
+    (s : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] : Measurable (M.intervene s).solve :=
   measurable_solve fun v ↦ by
-    by_cases hv : v ∈ X
-    · exact (funext fun p ↦ intervene_eqn_of_mem hv p.1 p.2 :
-        uncurry ((M.intervene X x).eqn v) = fun _ ↦ x ⟨v, hv⟩) ▸ measurable_const
-    · exact (funext fun p ↦ intervene_eqn_of_notMem hv p.1 p.2 :
-        uncurry ((M.intervene X x).eqn v) = uncurry (M.eqn v)) ▸ h v
+    by_cases hv : (s v).Dom
+    · exact (funext fun p ↦ intervene_eqn_of_dom hv p.1 p.2 :
+        uncurry ((M.intervene s).eqn v) = fun _ ↦ (s v).get hv) ▸ measurable_const
+    · exact (funext fun p ↦ intervene_eqn_of_eq_bot (Part.eq_none_iff'.2 hv) p.1 p.2 :
+        uncurry ((M.intervene s).eqn v) = uncurry (M.eqn v)) ▸ h v
 
 end CausalModel
