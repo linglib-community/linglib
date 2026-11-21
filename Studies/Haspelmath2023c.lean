@@ -187,7 +187,7 @@ records that placement. -/
 theorem li_isSecondPosition :
     (∀ m ∈ Russian.QuestionParticles.li.morphs,
         IsSecondPosition russian russian.IsContentful m) ∧
-      .second ∈ Russian.QuestionParticles.li.placements := by
+      .secondPosition ∈ Russian.QuestionParticles.li.placements := by
   decide
 
 open Haspelmath2021c (li) in

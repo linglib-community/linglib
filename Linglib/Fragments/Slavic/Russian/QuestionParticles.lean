@@ -27,7 +27,7 @@ second-position enclitic on the focused constituent. -/
 def li : Clause.Marker where
   morphs := [.encl "li"]
   script := some "ли"
-  anchor := .clause {.second}
+  anchor := .clause {.secondPosition}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .optional

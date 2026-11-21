@@ -27,6 +27,6 @@ namespace Dutch.Particles
 stands. -/
 def wel : Clause.Marker where
   morphs := [.free "wel"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
 
 end Dutch.Particles

@@ -29,7 +29,7 @@ namespace Serbian.QuestionParticles
 its full form, which it draws to the front of the clause. -/
 def li : Clause.Marker where
   morphs := [.encl "li"]
-  anchor := .clause {.second}
+  anchor := .clause {.secondPosition}
   distribution
     | (.polar, .matrix) => some .optional
     | (.polar, .subordinated) => some .optional

@@ -36,7 +36,7 @@ positive epistemic bias ([simik-2024] ex. 32b). -/
 def li : Clause.Marker where
   morphs := [.encl "li"]
   script := some "ли"
-  anchor := .clause {.second}
+  anchor := .clause {.secondPosition}
   distribution
     | (.polar, .matrix) => some .optional
     | (.polar, .subordinated) => some .optional

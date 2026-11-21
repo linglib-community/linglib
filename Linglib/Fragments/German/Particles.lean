@@ -47,37 +47,37 @@ def inMatrix (yes no : List Clause.SentenceType) : Clause.Distribution
 a command. -/
 def ja : Clause.Marker where
   morphs := [.free "ja"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution := inMatrix [.declarative, .exclamative, .imperative] []
 
 /-- *Denn* is used in questions only, polar and constituent. -/
 def denn : Clause.Marker where
   morphs := [.free "denn"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution := inMatrix [.polar, .constituent] [.declarative, .imperative, .exclamative]
 
 /-- *Wohl* signals probability in statements and uncertainty in questions. -/
 def wohl : Clause.Marker where
   morphs := [.free "wohl"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution := inMatrix [.declarative, .polar, .constituent] []
 
 /-- *Halt* occurs in statements and commands. -/
 def halt : Clause.Marker where
   morphs := [.free "halt"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution := inMatrix [.declarative, .imperative] []
 
 /-- *Doch* occurs in statements, commands, constituent questions and exclamations. -/
 def doch : Clause.Marker where
   morphs := [.free "doch"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution := inMatrix [.declarative, .imperative, .constituent, .exclamative] []
 
 /-- *Doch wohl*, also *wohl doch*, occurs in statements and hopes that something is the case. -/
 def dochWohl : Clause.Marker where
   morphs := [.free "doch", .free "wohl"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution := inMatrix [.declarative] []
 
 /-- The modal particles. -/

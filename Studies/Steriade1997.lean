@@ -356,7 +356,7 @@ theorem lexStress_firstThird : ∀ r ∈ Wordlist.relations,
 /-- Under the first ranking of (18) *remédiable* wins (16a), and under the second
 *rémediable*. -/
 theorem remediable : ∀ r ∈ derivations .remedy,
-    optimal r lapseRanking = {candidate r .second} ∧
+    optimal r lapseRanking = {candidate r .secondPosition} ∧
       optimal r verbRanking = {candidate r .sameAsBase} := by
   decide +kernel
 

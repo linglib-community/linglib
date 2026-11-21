@@ -60,7 +60,7 @@ def deleted (D : Finset ElidedVowel) : Finset ℕ := D.image (Casali1997.positio
 
 /-- The form a candidate gives. -/
 def resolve (D : Finset ElidedVowel) : List Segment :=
-  c.leftBody ++ (if .first ∈ D then [] else [c.v1]) ++ (if .second ∈ D then [] else [c.v2]) ++
+  c.leftBody ++ (if .first ∈ D then [] else [c.v1]) ++ (if .secondPosition ∈ D then [] else [c.v2]) ++
     c.rightBody
 
 /-- `corr c D` is the correspondence between the unrepaired concatenation and the form that the
@@ -71,7 +71,7 @@ def corr (D : Finset ElidedVowel) : Correspondence.Coindexation BinaryRole Segme
 /-- The output of each correspondence is the form of its candidate. -/
 theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).string .rhs = resolve c D := by
   have hmem (k : ℕ) : k ∈ deleted c D ↔
-      .first ∈ D ∧ k = c.leftBody.length ∨ .second ∈ D ∧ k = c.leftBody.length + 1 := by
+      .first ∈ D ∧ k = c.leftBody.length ∨ .secondPosition ∈ D ∧ k = c.leftBody.length + 1 := by
     simp only [deleted, Finset.mem_image]
     refine ⟨?_, by rintro (⟨h, rfl⟩ | ⟨h, rfl⟩) <;> exact ⟨_, h, rfl⟩⟩
     rintro ⟨_ | _, h, rfl⟩ <;> simp [h, Casali1997.position, Juncture.v1Idx, Juncture.v2Idx]
@@ -82,7 +82,7 @@ theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).string .rhs = resolv
     List.zipIdx_cons, List.zipIdx_cons, List.filter_append,
     hkeep _ _ fun p hp ↦ ?stem, List.filter_cons, List.filter_cons,
     hkeep _ _ fun p hp ↦ ?suffix]
-  · by_cases h₁ : ElidedVowel.first ∈ D <;> by_cases h₂ : ElidedVowel.second ∈ D <;>
+  · by_cases h₁ : ElidedVowel.first ∈ D <;> by_cases h₂ : ElidedVowel.secondPosition ∈ D <;>
       simp [hmem, h₁, h₂, resolve, List.zipIdx_map_fst]
   case stem =>
     have := List.snd_lt_of_mem_zipIdx hp
@@ -128,9 +128,9 @@ variable {c long}
 
 @[simp] theorem deleted_first : deleted c {.first} = {c.v1Idx} := rfl
 
-@[simp] theorem deleted_second : deleted c {.second} = {c.v2Idx} := rfl
+@[simp] theorem deleted_second : deleted c {.secondPosition} = {c.v2Idx} := rfl
 
-@[simp] theorem deleted_pair : deleted c {.first, .second} = insert c.v1Idx {c.v2Idx} := by
+@[simp] theorem deleted_pair : deleted c {.first, .secondPosition} = insert c.v1Idx {c.v2Idx} := by
   simp [deleted, Casali1997.position]
 
 theorem resolve_empty : resolve c ∅ = c.input := by simp [resolve, Juncture.input]
@@ -138,14 +138,14 @@ theorem resolve_empty : resolve c ∅ = c.input := by simp [resolve, Juncture.in
 theorem resolve_first : resolve c {.first} = c.elideV1 := by
   simp [resolve, Juncture.elideV1, Juncture.right]
 
-theorem resolve_second : resolve c {.second} = c.elideV2 := by
+theorem resolve_second : resolve c {.secondPosition} = c.elideV2 := by
   simp [resolve, Juncture.elideV2, Juncture.left]
 
 -- Deleting both vowels of two morphs free of hiatus brings no two vowels together, since a vowel
 -- before the first or after the second would already be in hiatus with it.
 private theorem free_resolve_pair (hl : Free c.left) (hr : Free c.right) :
-    Free (resolve c {.first, .second}) := by
-  have h : resolve c {.first, .second} = c.leftBody ++ c.rightBody := by simp [resolve]
+    Free (resolve c {.first, .secondPosition}) := by
+  have h : resolve c {.first, .secondPosition} = c.leftBody ++ c.rightBody := by simp [resolve]
   rw [h, Free, List.isChain_append]
   refine ⟨hl.left_of_append, hr.tail, fun x hx y _ hxy ↦ ?_⟩
   exact (List.isChain_append.1 hl).2.2 x hx c.v1 rfl ⟨hxy.1, c.v1_isVowel⟩
@@ -165,7 +165,7 @@ private theorem regular_lt {D D' : Finset ElidedVowel} (k : ℕ)
     fun j hj ↦ by simpa using h j hj, by simpa using hi⟩
 
 private theorem finset_cases (D : Finset ElidedVowel) :
-    D = ∅ ∨ D = {.first} ∨ D = {.second} ∨ D = {.first, .second} := by
+    D = ∅ ∨ D = {.first} ∨ D = {.secondPosition} ∨ D = {.first, .secondPosition} := by
   revert D; decide
 
 end Profiles
@@ -185,13 +185,13 @@ has a vowel sequence of its own. -/
 theorem optimal_regular (hl : c.leftKind ≠ .root) (hr : c.rightKind ≠ .root) (hv₂ : c.v2Idx ∉ long)
     (hs : c.rightBody ≠ []) (hfl : Free c.left) (hfr : Free c.right) :
     filtration (marks c long) Finset.univ Wordlist.Hierarchy.regular.order =
-      {if c.v1Idx ∈ long ∨ c.leftBody = [] then {.second} else {.first}} := by
+      {if c.v1Idx ∈ long ∨ c.leftBody = [] then {.secondPosition} else {.first}} := by
   have hne := v1Idx_ne_v2Idx (c := c)
   have hl := (free_iff_count_eq_zero _).1 hfl
   have hr' := (free_iff_count_eq_zero _).1 hfr
   have h₀ : Hiatus.count (resolve c ∅) ≠ 0 := by rw [resolve_empty, c.count_input]; omega
   have h₁ : Hiatus.count (resolve c {.first}) = 0 := by rw [resolve_first, c.count_elideV1, hl, hr']
-  have h₂ : Hiatus.count (resolve c {.second}) = 0 := by
+  have h₂ : Hiatus.count (resolve c {.secondPosition}) = 0 := by
     rw [resolve_second, c.count_elideV2, hl, hr']
   have h₃ := (free_iff_count_eq_zero _).1 (free_resolve_pair hfl hfr)
   refine filtration_eq_singleton_iff.2 ⟨Finset.mem_univ _, fun D _ hD ↦ ?_⟩
@@ -237,7 +237,7 @@ def kindOf : Wordlist.Kind → Morph.Kind
 def deletionOf : Wordlist.Deleted → Finset ElidedVowel
   | .neither => ∅
   | .first => {.first}
-  | .second => {.second}
+  | .second => {.secondPosition}
 
 /-- The example the paper's analysis of a form records. -/
 def example? (a : Wordlist.Analysis) : Option Example := do
@@ -269,7 +269,7 @@ private theorem marks_erdesz_lt_iff (i : Con) :
 MAX on long vowels and above MAX LEX, since that vowel is long and in a root. -/
 theorem starVV_dominates_of_erdesz {r : Ranking Con}
     (h : {.first} ∈ r.optimal (marks erdesz.context erdesz.long)
-      {∅, {.first}, {.second}, {.first, .second}}) :
+      {∅, {.first}, {.secondPosition}, {.first, .secondPosition}}) :
     r.Dominates .starVV .maxLong ∧ r.Dominates .starVV .maxLex := by
   have hle := (Ranking.Enumeration.mem_optimal_iff.1 h).2 (∅ : Finset ElidedVowel) (by simp)
   have hlt := hle.lt_of_ne fun heq ↦ by
@@ -288,7 +288,7 @@ def v1Deletion : Ranking Con :=
 -- The premise of `starVV_dominates_of_erdesz` holds of the reranking (8b).
 theorem erdesz_v1Deletion :
     v1Deletion.optimal (marks erdesz.context erdesz.long)
-      {∅, {.first}, {.second}, {.first, .second}} = {{.first}} := by
+      {∅, {.first}, {.secondPosition}, {.first, .secondPosition}} = {{.first}} := by
   decide +kernel
 
 end Vago2017

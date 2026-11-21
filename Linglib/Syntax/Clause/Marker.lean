@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.WALS.Features.F92A
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Clause.Basic
 
@@ -23,6 +24,8 @@ it introduces.
 * `Clause.Marker.form`, `Clause.Marker.placements`: the written form, and the positions of a
   marker placed in its clause.
 * `Clause.Marker.IsParticle`: no morph of the marker is an affix.
+* `Clause.Marker.questionParticlePosition`: the position of a language's polar question particles
+  as the atlas codes it.
 
 ## Implementation notes
 
@@ -45,15 +48,23 @@ open Morphology (Morph)
 
 namespace Clause
 
-/-- Where a marker stands in its clause. -/
+/-- Where a marker stands in its clause, the positions the atlas distinguishes for a polar
+question particle. -/
 inductive Placement where
   | initial
-  /-- After the first word or constituent. -/
-  | second
-  /-- Neither at an edge nor in second position, as in the German middle field. -/
-  | medial
   | final
+  /-- After the first word or constituent. -/
+  | secondPosition
+  /-- Neither at an edge nor in second position, as in the German middle field. -/
+  | otherPosition
   deriving DecidableEq, Repr, Fintype
+
+/-- The position in the atlas's terms. -/
+def Placement.toWALS : Placement → Data.WALS.F92A.QuestionParticlePosition
+  | .initial => .initial
+  | .final => .final
+  | .secondPosition => .secondPosition
+  | .otherPosition => .otherPosition
 
 /-- What a marker is placed by: its clause, in any of the given positions, or the focus of the
 clause, on the given side of it. -/
@@ -94,6 +105,17 @@ def placements : Finset Placement :=
   match p.anchor with
   | .clause s => s
   | .focus _ => ∅
+
+/-- The atlas's value for a language whose polar question particles are `ps`: none where it has
+no such particle, the position where they share one, and either of two positions where they
+differ. A particle with no position in the clause, as one placed by the focus, leaves the value
+undetermined. -/
+def questionParticlePosition (ps : List Marker) : Option Data.WALS.F92A.QuestionParticlePosition :=
+  if ps = [] then some .noQuestionParticle
+  else if ∃ q ∈ ps, q.placements = ∅ then none
+  else match Placement.enumList.filter fun a ↦ ∃ q ∈ ps, a ∈ q.placements with
+    | [a] => some a.toWALS
+    | _ => some .inEitherOfTwoPositions
 
 /-- A particle is a marker none of whose morphs is an affix. -/
 def IsParticle : Prop := ∀ m ∈ p.morphs, m.kind.attachment? ≠ some .affix

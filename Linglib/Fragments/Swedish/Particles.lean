@@ -35,7 +35,7 @@ declarative with *väl* is a question and not an assertion is a matter of speech
 clause type, analysed in `SeeligerRepp2018`. -/
 def val : Clause.Marker where
   morphs := [.free "väl"]
-  anchor := .clause {.medial}
+  anchor := .clause {.otherPosition}
   distribution
     | (.declarative, .matrix) => some .optional
     | _ => none

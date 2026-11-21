@@ -79,7 +79,7 @@ theorem optimal_of_bound_after (hl : c.leftKind = .bound .after a)
     (hr : c.rightKind = .bound .after a') (hb : c.beforeKind.isSome)
     (r : Ranking (Option Prominence)) :
     optimal c r =
-      if c.leftBody = [] then if c.rightBody = [] then {.first, .second} else {.second}
+      if c.leftBody = [] then if c.rightBody = [] then {.first, .secondPosition} else {.secondPosition}
       else {.first} := by
   obtain ⟨b, hb⟩ := Option.isSome_iff_exists.1 hb
   split_ifs with h₁ h₂
@@ -96,7 +96,7 @@ theorem optimal_of_bound_after (hl : c.leftKind = .bound .after a)
 vowel exactly when the first morph is a single vowel. -/
 theorem exists_mem_optimal_second_iff_leftBody_eq_nil (hl : c.leftKind = .bound .after a)
     (hr : c.rightKind = .bound .after a') :
-    (∃ r, .second ∈ optimal c r) ↔ c.leftBody = [] := by
+    (∃ r, .secondPosition ∈ optimal c r) ↔ c.leftBody = [] := by
   by_cases h : c.leftBody = [] <;>
     simp [exists_mem_optimal_iff, forall_elidedVowel, violations_first_subset_second_iff,
       violations_second_subset_first_iff, hl, hr, h, Morph.Kind.JoinsAt]
@@ -112,7 +112,7 @@ single vowel, and both elisions are optimal under every ranking. -/
 example (r : Ranking (Option Prominence)) :
     optimal { schematic .suffixSuffix with
       leftBody := [], rightBody := [], beforeKind := some .root } r =
-        {.first, .second} :=
+        {.first, .secondPosition} :=
   optimal_of_bound_after rfl rfl rfl r
 
 end Mkochi2021

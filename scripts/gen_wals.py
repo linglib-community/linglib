@@ -241,6 +241,7 @@ AUTO_FEATURES = {
     "143A": {"enum": "NegVerbOrder",       "author": "dryer-2013-wals"},
 
     # ── Questions (Ch 116) ─────────────────────────────────────────────
+    "92A": {"enum": "QuestionParticlePosition", "author": "dryer-2013-wals"},
     "116A": {"enum": "PolarQuestionType",  "author": "dryer-2013-wals"},
 
     # ── Gender/Number (Ch 30–31, 33–35) ────────────────────────────────
