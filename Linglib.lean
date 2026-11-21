@@ -751,7 +751,6 @@ import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Semantics.Modification.Basic
-import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Plurality.Algebra
