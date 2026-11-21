@@ -292,8 +292,6 @@ def howevers : Inventory Morph where
     if m = proposal then some .object else if m = fail then some .action
     else if m = ambitious then some .property else none
 
-/-- English *however* does not occur on its own and stands at either end of a sentence, so it is
-an ambiclitic, though it is written and labelled as a free word. -/
 theorem however_isAmbiclitic :
     IsAmbiclitic howevers howevers.IsContentful however ∧ however.kind = .free := by
   decide
