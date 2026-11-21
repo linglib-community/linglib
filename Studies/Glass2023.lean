@@ -1,6 +1,7 @@
 module
 
 public import Studies.NadathurLauer2020
+public import Linglib.Semantics.Causation.CausalModel.Guarantee
 
 /-!
 # Glass (2023)
@@ -20,6 +21,8 @@ and Lauer's asserts necessity, and the two diverge on their bus scenario
 
 ## Implementation notes
 
+* Global sufficiency and *cause* are `CausalModel.Guarantees`, at the state that knows the cause
+  alone and at the speaker's state of knowledge.
 * A background, the paper's "fixed setting of other variables", is an intervention holding some
   variables at values; "no matter what happens to any other variable" quantifies over every
   context and every such intervention leaving the effect open. What a state of knowledge keeps is
@@ -53,8 +56,7 @@ variable {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.I
 /-- `C = c` is globally sufficient for `E = e` when, in every context and under every background
 leaving `E` open in which `C = c`, `E = e`. -/
 def GloballySufficient (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∀ u (X : Finset V) (ξ : X → Bool), E ∉ X → ∀ hC : C ∈ X, ξ ⟨C, hC⟩ = c →
-    (M.intervene X ξ).solve u E = e
+  M.Guarantees [C ← c] E e
 
 /-- `C = c` is locally sufficient for `E = e` when, in some context and under some background
 leaving `E` open in which `C = c`, `E = e`. -/
@@ -65,8 +67,7 @@ def LocallySufficient (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
 /-- `C = c` is globally necessary for `E = e` when, without it, `E = e` fails in every context and
 under every background leaving `E` open. -/
 def GloballyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∀ u (X : Finset V) (ξ : X → Bool), E ∉ X → ∀ hC : C ∈ X, ξ ⟨C, hC⟩ = !c →
-    (M.intervene X ξ).solve u E = !e
+  M.Guarantees [C ← !c] E (!e)
 
 /-- `C = c` is locally necessary for `E = e` when, without it, `E = e` fails in some context and
 under some background leaving `E` open. -/
@@ -77,9 +78,7 @@ def LocallyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
 /-- *C causes E* is assertable on the state of knowledge `k` when the cause is known and the effect
 holds in every context under every background that keeps what is known and leaves it open. -/
 def Cause (k : V → Part Bool) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  k C = Part.some c ∧ ∀ u (X : Finset V) (ξ : X → Bool),
-    k ≤ Function.updateFinset ⊥ X (fun v ↦ Part.some (ξ v)) → E ∉ X →
-      (M.intervene X ξ).solve u E = e
+  k C = Part.some c ∧ M.Guarantees k E e
 
 variable {M} {C E : V} {c e : Bool} {k : V → Part Bool}
 
@@ -89,28 +88,17 @@ theorem globallyNecessary_iff :
 theorem locallyNecessary_iff :
     LocallyNecessary M C c E e ↔ LocallySufficient M C (!c) E (!e) := Iff.rfl
 
--- A background keeping what `k` settles holds each settled variable at its known value.
-private theorem mem_of_le_updateFinset {X : Finset V} {ξ : X → Bool}
-    (hk : k ≤ Function.updateFinset ⊥ X fun v ↦ Part.some (ξ v)) {v : V} {a : Bool}
-    (hv : k v = Part.some a) :
-    ∃ h : v ∈ X, ξ ⟨v, h⟩ = a := by
-  have := (Part.pi_le_iff.1 hk v (hv ▸ Part.some_dom a)).symm
-  rw [hv] at this
-  by_cases h : v ∈ X
-  · exact ⟨h, by simpa [Function.updateFinset, h] using this⟩
-  · simp [Function.updateFinset, h] at this
-
 theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C = Part.some c) :
     Cause M k C c E e :=
   ⟨hk, fun u X ξ hkX hE ↦
-    let ⟨hC, hξ⟩ := mem_of_le_updateFinset hkX hk
-    h u X ξ hE hC hξ⟩
+    let ⟨hC, hξ⟩ := exists_mem_of_le_updateFinset hkX hk
+    guarantees_single_iff.1 h u X ξ hE hC hξ⟩
 
 -- (22a)
 theorem LocallySufficient.of_globally [Inhabited U] (hCE : C ≠ E)
     (h : GloballySufficient M C c E e) : LocallySufficient M C c E e :=
   ⟨default, {C}, uniqueElim c, by simpa using hCE.symm, Finset.mem_singleton_self C, rfl,
-    h _ _ _ (by simpa using hCE.symm) (Finset.mem_singleton_self C) rfl⟩
+    guarantees_single_iff.1 h _ _ _ (by simpa using hCE.symm) (Finset.mem_singleton_self C) rfl⟩
 
 -- (21a)
 theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
@@ -120,12 +108,8 @@ theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
 /-- Knowing the cause alone, *C causes E* is assertable exactly when the cause is globally
 sufficient: the asymmetry of the paper's Table 2. -/
 theorem cause_update_bot_iff :
-    Cause M [C ← c] C c E e ↔ GloballySufficient M C c E e := by
-  refine ⟨fun h u X ξ hE hC hξ ↦ h.2 u X ξ (Part.pi_le_iff.2 fun v hv ↦ ?_) hE,
-    fun h ↦ Cause.of_globallySufficient h (Function.update_self ..)⟩
-  rcases eq_or_ne v C with rfl | hvC
-  · simp [Function.updateFinset, hC, hξ]
-  · simp [hvC] at hv
+    Cause M [C ← c] C c E e ↔ GloballySufficient M C c E e :=
+  ⟨fun h ↦ h.2, fun h ↦ ⟨Function.update_self .., h⟩⟩
 
 end General
 
@@ -168,14 +152,15 @@ theorem solve_L {X : Finset V} {ξ : X → Bool} (h : V.L ∉ X) (u : Context) :
   solve_intervene_of_notMem h
 
 theorem s1_off_globallySufficient : GloballySufficient light .S1 false .L false :=
-  fun u _ _ hL hS1 hξ ↦ by rw [solve_L hL, solve_intervene_of_mem hS1, hξ, Bool.false_and]
+  guarantees_single_iff.2 fun u _ _ hL hS1 hξ ↦ by
+    rw [solve_L hL, solve_intervene_of_mem hS1, hξ, Bool.false_and]
 
 theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
   s1_off_globallySufficient
 
 theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L true :=
-  fun h ↦ absurd (h ⟨true, false⟩ {.S1} (uniqueElim true) (by decide) (Finset.mem_singleton_self _)
-    rfl) (by decide)
+  fun h ↦ absurd (guarantees_single_iff.1 h ⟨true, false⟩ {.S1} (uniqueElim true) (by decide)
+    (Finset.mem_singleton_self _) rfl) (by decide)
 
 -- Table 2
 theorem s1_off_causes_off_uncertain :
@@ -193,8 +178,8 @@ abbrev bothOn : V → Part Bool := [.S1 ← true, .S2 ← true]
 -- Table 2
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
   refine ⟨by decide, fun u X ξ hk hL ↦ ?_⟩
-  obtain ⟨h1, h1'⟩ := mem_of_le_updateFinset hk (by decide : bothOn .S1 = Part.some true)
-  obtain ⟨h2, h2'⟩ := mem_of_le_updateFinset hk (by decide : bothOn .S2 = Part.some true)
+  obtain ⟨h1, h1'⟩ := exists_mem_of_le_updateFinset hk (by decide : bothOn .S1 = Part.some true)
+  obtain ⟨h2, h2'⟩ := exists_mem_of_le_updateFinset hk (by decide : bothOn .S2 = Part.some true)
   rw [solve_L hL, solve_intervene_of_mem h1, solve_intervene_of_mem h2, h1', h2']
   rfl
 
@@ -211,7 +196,7 @@ theorem glass_nl_diverge_on_bus :
       ¬ NadathurLauer2020.Cause busModel s_b actual .Tr true .Bs true := by
   refine ⟨⟨by decide, fun u X ξ hk hBs ↦ ?_⟩, not_cause⟩
   obtain ⟨hRn, hRn'⟩ :=
-    mem_of_le_updateFinset hk
+    exists_mem_of_le_updateFinset hk
       (by decide : Function.update s_b .Tr (Part.some true) .Rn = Part.some true)
   rw [solve_intervene_of_notMem hBs]
   show ((busModel.intervene X ξ).solve u .Rn || (busModel.intervene X ξ).solve u .Bk) = true
