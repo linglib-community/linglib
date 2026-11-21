@@ -393,8 +393,8 @@ theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
 
 -- (50)
 theorem not_forall_exists_become :
-    ¬ ∀ (M : Interpretation Unit Unit Unit) P Q y x v,
-      causativeEventStructure.denote M P Q y x v → ∃ s e, s ~[M.become] e :=
+    ¬ ∀ (M : Interpretation Unit Unit) (θ : Unit → Unit → Prop) P Q y x v,
+      causativeEventStructure.denote M θ P Q y x v → ∃ e s, e ~[M.become] s :=
   fun h ↦ absurd (result_mem_kinds_iff.2 h) (by decide)
 
 end EventStructure

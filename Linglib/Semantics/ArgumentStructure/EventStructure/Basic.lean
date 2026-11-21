@@ -18,8 +18,9 @@ with an individual causer, which is the `vcause` of Beavers and Koontz-Garboden.
 Templates are sorted like the domain of an `Interpretation`: `BECOME` turns a state template into
 an event template and `CAUSE` relates two event templates. `Template.denote` interprets a
 template with a root in its slots, the root's state predicate at the state and its manner at
-`ACT`, through the heads `vBecome` and `vCause`; with an individual causer, `CAUSE` is an
-eventuality that has the causer as its effector and causes the caused subevent
+`ACT`, with `BECOME` and `CAUSE` as possibility along the two relations and a thematic relation
+`θ` between an actor and its eventuality; with an individual causer, `CAUSE` is an eventuality
+that has the causer as its actor and causes the caused subevent
 (`Template.denote_cause_effector`). The primitives are the four kinds of entailment of the root
 typology of Beavers and Koontz-Garboden, so `Template.kinds` reads a template's primitives as a
 root signature. A template whose primitives include a manner and a state has `CAUSE`
@@ -150,32 +151,34 @@ theorem IsSubterm.kinds_subset {u : Template τ} {t : Template σ} (h : u.IsSubt
 
 section Denotation
 
-variable {Entity : Type*} {State Event : Type u} (M : Interpretation Entity State Event)
-  (P : Entity → State → Prop) (Q : Event → Prop)
+open ModalLogic
 
-/-- The denotation of a template in `M`, with a root's state predicate `P` at the state and its
-manner `Q` at `ACT`: a relation between the actor, the undergoer and an eventuality of the
-template's sort. -/
+variable {Entity : Type*} {State Event : Type u} (M : Interpretation State Event)
+  (θ : Entity → Event → Prop) (P : Entity → State → Prop) (Q : Event → Prop)
+
+/-- The denotation of a template in `M`, with `θ` the relation of an actor to its eventuality, a
+root's state predicate `P` at the state and its manner `Q` at `ACT`: a relation between the
+actor, the undergoer and an eventuality of the template's sort. -/
 def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Carrier State Event → Prop
   | _, state, _, x, s => P x s
-  | _, act, y, _, v => M.effector y v ∧ Q v
-  | _, effector, y, _, v => M.effector y v
-  | _, become t, y, x, e => M.vBecome (fun x ↦ denote t y x) x e
-  | _, cause c t, y, x, v => denote c y x v ∧ M.vCause (denote t x x) v
+  | _, act, y, _, v => θ y v ∧ Q v
+  | _, effector, y, _, v => θ y v
+  | _, become t, y, x, e => ◇[M.become] (denote t y x) e
+  | _, cause c t, y, x, v => denote c y x v ∧ ◇[M.cause] (denote t x x) v
 
-variable {M P Q} {y x : Entity}
+variable {M θ P Q} {y x : Entity}
 
 /-- CAUSE with an individual causer is the `vcause` of Beavers and Koontz-Garboden, an event
 whose effector is the causer and which causes the caused subevent. -/
 theorem denote_cause_effector {t : Template .event} {v : Event} :
-    (cause effector t).denote M P Q y x v ↔ M.effector y v ∧ M.vCause (t.denote M P Q x x) v :=
+    (cause effector t).denote M θ P Q y x v ↔ θ y v ∧ ◇[M.cause] (t.denote M θ P Q x x) v :=
   Iff.rfl
 
 /-- A template's denotation entails that each of its subterms is realized, with the same
 undergoer. -/
 theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.IsSubterm t)
-    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) :
-    ∃ y' w, u.denote M P Q y' x w := by
+    {v : σ.Carrier State Event} (h : t.denote M θ P Q y x v) :
+    ∃ y' w, u.denote M θ P Q y' x w := by
   induction hu generalizing y with
   | refl => exact ⟨y, v, h⟩
   | become _ ih => obtain ⟨_, _, hs⟩ := h; exact ih hs
@@ -183,17 +186,17 @@ theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.I
   | caused _ ih => obtain ⟨_, _, _, he⟩ := h; exact ih he
 
 theorem exists_become_of_denote {t : Template σ} (ht : .result ∈ t.kinds)
-    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, s ~[M.become] e := by
+    {v : σ.Carrier State Event} (h : t.denote M θ P Q y x v) : ∃ e s, e ~[M.become] s := by
   induction t generalizing y x with
   | state | act | effector => simp at ht
-  | become _ _ => obtain ⟨s, hb, _⟩ := h; exact ⟨s, _, hb⟩
+  | become _ _ => obtain ⟨s, hb, _⟩ := h; exact ⟨_, s, hb⟩
   | cause c e ihc ihe =>
     simp only [kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq, false_or] at ht
     obtain ⟨hc, _, _, he⟩ := h
     exact ht.elim (ihc · hc) (ihe · he)
 
 theorem exists_cause_of_denote {t : Template σ} (ht : .cause ∈ t.kinds)
-    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, v ~[M.cause] e := by
+    {v : σ.Carrier State Event} (h : t.denote M θ P Q y x v) : ∃ v e, v ~[M.cause] e := by
   induction t generalizing y x with
   | state | act | effector => simp at ht
   | become t ih =>
@@ -202,17 +205,17 @@ theorem exists_cause_of_denote {t : Template σ} (ht : .cause ∈ t.kinds)
     exact ih ht hs
   | cause _ _ _ _ => obtain ⟨_, _, hc, _⟩ := h; exact ⟨_, _, hc⟩
 
-/-- Where every individual is an effector of every eventuality, a template with the trivial
-state and manner is realized everywhere, if every eventuality arises from a state when the
-template has `BECOME` and causes an eventuality when it has `CAUSE`. -/
-theorem denote_top {M : Interpretation Entity State Event} (hM : ∀ y v, M.effector y v)
-    {t : Template σ} (hb : .result ∈ t.kinds → ∀ e, ∃ s, s ~[M.become] e)
+/-- Where every individual is an actor of every eventuality, a template with the trivial state
+and manner is realized everywhere, if every eventuality gives rise to a state when the template
+has `BECOME` and causes an eventuality when it has `CAUSE`. -/
+theorem denote_top (hθ : ∀ y v, θ y v) {t : Template σ}
+    (hb : .result ∈ t.kinds → ∀ e, ∃ s, e ~[M.become] s)
     (hc : .cause ∈ t.kinds → ∀ v, ∃ e, v ~[M.cause] e) (y x : Entity)
-    (v : σ.Carrier State Event) : t.denote M ⊤ ⊤ y x v := by
+    (v : σ.Carrier State Event) : t.denote M θ ⊤ ⊤ y x v := by
   induction t generalizing y x with
   | state => trivial
-  | effector => exact hM y v
-  | act => exact ⟨hM y v, trivial⟩
+  | effector => exact hθ y v
+  | act => exact ⟨hθ y v, trivial⟩
   | become t ih =>
     obtain ⟨s, hs⟩ := hb (by simp) v
     exact ⟨s, hs, ih (fun h ↦ hb (by simp [h])) (fun h ↦ hc (by simp [h])) y x s⟩
@@ -233,10 +236,10 @@ variable {Entity : Type*} {State Event : Type u} [Nonempty Entity] [Nonempty Sta
 /-- A template has `BECOME` iff every denotation of it, in every interpretation, involves a
 change. -/
 theorem result_mem_kinds_iff :
-    .result ∈ t.kinds ↔ ∀ (M : Interpretation Entity State Event) P Q y x
-      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ s e, s ~[M.become] e := by
-  refine ⟨fun ht _ _ _ _ _ _ ↦ exists_become_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
-  obtain ⟨_, _, hb⟩ := h ⟨⊥, ⊤, ⊤⟩ ⊤ ⊤ (Classical.arbitrary _) (Classical.arbitrary _)
+    .result ∈ t.kinds ↔ ∀ (M : Interpretation State Event) (θ : Entity → Event → Prop) P Q y x
+      (v : σ.Carrier State Event), t.denote M θ P Q y x v → ∃ e s, e ~[M.become] s := by
+  refine ⟨fun ht _ _ _ _ _ _ _ ↦ exists_become_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
+  obtain ⟨_, _, hb⟩ := h ⟨⊥, ⊤⟩ ⊤ ⊤ ⊤ (Classical.arbitrary _) (Classical.arbitrary _)
     (Classical.arbitrary _)
     (denote_top (fun _ _ ↦ trivial) (fun hr ↦ absurd hr ht) (fun _ v ↦ ⟨v, trivial⟩) _ _ _)
   exact hb
@@ -244,10 +247,10 @@ theorem result_mem_kinds_iff :
 /-- A template has `CAUSE` iff every denotation of it, in every interpretation, involves a
 causal relation. -/
 theorem cause_mem_kinds_iff :
-    .cause ∈ t.kinds ↔ ∀ (M : Interpretation Entity State Event) P Q y x
-      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ v e, v ~[M.cause] e := by
-  refine ⟨fun ht _ _ _ _ _ _ ↦ exists_cause_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
-  obtain ⟨_, _, hc⟩ := h ⟨⊤, ⊥, ⊤⟩ ⊤ ⊤ (Classical.arbitrary _) (Classical.arbitrary _)
+    .cause ∈ t.kinds ↔ ∀ (M : Interpretation State Event) (θ : Entity → Event → Prop) P Q y x
+      (v : σ.Carrier State Event), t.denote M θ P Q y x v → ∃ v e, v ~[M.cause] e := by
+  refine ⟨fun ht _ _ _ _ _ _ _ ↦ exists_cause_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
+  obtain ⟨_, _, hc⟩ := h ⟨⊤, ⊥⟩ ⊤ ⊤ ⊤ (Classical.arbitrary _) (Classical.arbitrary _)
     (Classical.arbitrary _)
     (denote_top (fun _ _ ↦ trivial) (fun _ _ ↦ ⟨Classical.arbitrary _, trivial⟩)
       (fun hc ↦ absurd hc ht) _ _ _)
