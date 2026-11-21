@@ -191,7 +191,7 @@ def correspondence : ConstraintSystem Input Candidate Con where
     | .headedness => (c.tree x).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
-    | .phrase => Correspondence.deficiency (Corresponds x.phrases) x.phrases (c.spans x .ph)
+    | .phrase => x.phrases.deficiency (Corresponds x.phrases) (c.spans x .ph)
     | .alignR =>
       (Correspondence.ofEdges .right .right (x.phrases.map (·.span)) (c.spans x .ph)).maxViol
     | .priority => if x.clitic ∧ (c.form = .strong ∨ c.form = .weak) then 1 else 0

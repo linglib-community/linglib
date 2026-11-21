@@ -14,11 +14,13 @@ public import Mathlib.Data.List.Perm.Subperm
 
 A matching of `R : α → β → Prop` between lists `l` and `m` pairs members of `l` with distinct
 members of `m` related to them: a sublist of `l` related pointwise by `List.Forall₂ R` to a
-subpermutation of `m`. `List.matchingNumber R l m` is the size of a largest matching.
+subpermutation of `m`. `List.matchingNumber R l m` is the size of a largest matching, and
+`List.deficiency R l m` the number of members of `l` it leaves unpaired.
 
 ## Main definitions
 
 * `List.matchingNumber`: the size of a largest matching of `R` between two lists.
+* `List.deficiency`: the members of the first list left unpaired by a largest matching.
 
 ## Main results
 
@@ -43,6 +45,10 @@ def matchingNumber : List α → List β → ℕ
   | [], _ => 0
   | a :: l, m => max (matchingNumber l m)
       ({b ∈ m.toFinset | R a b}.sup fun b ↦ matchingNumber l (m.erase b) + 1)
+
+/-- The **deficiency** of `R` between `l` and `m`, the number of members of `l` that a largest
+matching leaves unpaired. -/
+def deficiency (l : List α) (m : List β) : ℕ := l.length - matchingNumber R l m
 
 variable {R} {l : List α} {m : List β}
 

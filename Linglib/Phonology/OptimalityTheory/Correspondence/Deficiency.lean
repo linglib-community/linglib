@@ -14,9 +14,9 @@ public import Linglib.Core.Data.List.Matching
 MAX of [mccarthy-prince-1995] requires every element of one structure to have a correspondent in
 the other, and UNIFORMITY that no element of the second have several correspondents in the first.
 Where the correspondents an element may take are given by a relation `R` between two families of
-constituents, we define `Correspondence.deficiency R l m` to count the members of `l` left unpaired
-when each member of `m` is paired with at most one of them: the length of `l` less the matching
-number of `R`. It is the least number of violations of MAX among the correspondences within
+constituents, `List.deficiency R l m` counts the members of `l` left unpaired when each member of
+`m` is paired with at most one of them: the length of `l` less the matching number of `R`. It is
+the least number of violations of MAX among the correspondences within
 `Correspondence.ofRel R l.get m.get` that satisfy UNIFORMITY
 (`Correspondence.deficiency_le_maxViol`, `Correspondence.exists_maxViol_eq_deficiency`).
 
@@ -33,22 +33,16 @@ contained in `R` that relates no two members to one (`Correspondence.deficiency_
 
 namespace OptimalityTheory.Correspondence
 
-variable {β γ : Type*} (R : β → γ → Prop) [DecidableRel R] [DecidableEq γ]
-
-/-- The deficiency of `R` between two families: one violation for each member of the first left
-unpaired by a largest pairing along `R` in which each member of the second answers to at most one
-of the first (`List.le_matchingNumber_iff`). -/
-def deficiency (l : List β) (m : List γ) : ℕ := l.length - l.matchingNumber R m
-
-variable {R} {l : List β} {m : List γ}
+variable {β γ : Type*} {R : β → γ → Prop} [DecidableRel R] [DecidableEq γ] {l : List β}
+  {m : List γ}
 
 /-- A correspondence within `R` that violates UNIFORMITY nowhere violates MAX at least
-`deficiency R` times. -/
+`l.deficiency R m` times. -/
 theorem deficiency_le_maxViol {ℜ : Correspondence (Fin l.length) (Fin m.length)}
     (hR : ℜ ⊆ ofRel R l.get m.get) (hU : ℜ.uniformityViol = 0) :
-    deficiency R l m ≤ ℜ.maxViol := by
+    l.deficiency R m ≤ ℜ.maxViol := by
   rcases ℜ.eq_empty_or_nonempty with rfl | ⟨⟨i₀, j₀⟩, -⟩
-  · simp [deficiency, Correspondence.maxViol]
+  · simp [List.deficiency, Correspondence.maxViol]
   have : Nonempty (Fin m.length) := ⟨j₀⟩
   have hdom : ∀ i ∈ ℜ.image Prod.fst, ∃ j, (i, j) ∈ ℜ := fun i hi ↦ by
     obtain ⟨⟨i', j⟩, h, rfl⟩ := Finset.mem_image.1 hi
@@ -79,14 +73,14 @@ theorem deficiency_le_maxViol {ℜ : Correspondence (Fin l.length) (Fin m.length
       by simp⟩
   have hmax : ℜ.maxViol = l.length - (ℜ.image Prod.fst).card := by
     simp [Correspondence.maxViol, Finset.card_univ_sdiff]
-  simp only [deficiency, hmax, hcard]
+  simp only [List.deficiency, hmax, hcard]
   omega
 
 /-- Some correspondence within `R` that violates UNIFORMITY nowhere violates MAX exactly
-`deficiency R` times. -/
+`l.deficiency R m` times. -/
 theorem exists_maxViol_eq_deficiency (R : β → γ → Prop) [DecidableRel R] (l : List β)
     (m : List γ) : ∃ ℜ ⊆ ofRel R l.get m.get, ℜ.uniformityViol = 0 ∧
-      ℜ.maxViol = deficiency R l m := by
+      ℜ.maxViol = l.deficiency R m := by
   have h₀ : l.matchingNumber R m ≤
       l.matchingNumber (fun a j ↦ R a (m.get j)) (List.finRange m.length) := by
     simpa [List.map_get_finRange] using
@@ -117,12 +111,12 @@ theorem exists_maxViol_eq_deficiency (R : β → γ → Prop) [DecidableRel R] (
   have hmax : ℜ.maxViol = l.length - l₁.length := by
     simp [Correspondence.maxViol, Finset.card_univ_sdiff, himg,
       Finset.card_image_of_injective _ e.injective]
-  simp only [deficiency, hmax]
+  simp only [List.deficiency, hmax]
   omega
 
 /-- MAX of the whole relation is at most its deficiency. -/
 theorem maxViol_ofRel_le_deficiency (R : β → γ → Prop) [DecidableRel R] (l : List β)
-    (m : List γ) : (ofRel R l.get m.get).maxViol ≤ deficiency R l m := by
+    (m : List γ) : (ofRel R l.get m.get).maxViol ≤ l.deficiency R m := by
   obtain ⟨ℜ, hR, -, h⟩ := exists_maxViol_eq_deficiency R l m
   exact h ▸ maxViol_anti hR
 
@@ -131,7 +125,7 @@ member, the deficiency of `R` is at most MAX of `S`. -/
 theorem deficiency_le_maxViol_ofRel {S : β → γ → Prop} [DecidableRel S] (hl : l.Nodup)
     (hSR : ∀ a ∈ l, ∀ b, S a b → R a b)
     (hS : ∀ a ∈ l, ∀ a' ∈ l, ∀ b, S a b → S a' b → a = a') :
-    deficiency R l m ≤ (ofRel S l.get m.get).maxViol :=
+    l.deficiency R m ≤ (ofRel S l.get m.get).maxViol :=
   deficiency_le_maxViol (ofRel_mono fun i _ h ↦ hSR _ (l.get_mem i) _ h)
     ((uniformityViol_eq_zero_iff _).2 fun i i' _ h h' ↦ hl.get_inj_iff.1
       (hS _ (l.get_mem i) _ (l.get_mem i') _ (mem_ofRel.1 (Finset.mem_coe.1 h))
@@ -139,6 +133,6 @@ theorem deficiency_le_maxViol_ofRel {S : β → γ → Prop} [DecidableRel S] (h
 
 -- Two members related to one member of the other family: each is aligned, one goes unpaired.
 example : (ofRel (fun a b : ℕ ↦ a ≤ b) [0, 1].get [1].get).maxViol = 0 := by decide
-example : deficiency (fun a b : ℕ ↦ a ≤ b) [0, 1] [1] = 1 := by decide
+example : [0, 1].deficiency (fun a b : ℕ ↦ a ≤ b) [1] = 1 := by decide
 
 end OptimalityTheory.Correspondence

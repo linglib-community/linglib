@@ -51,7 +51,7 @@ constituents. A `π`-node over two sister constituents answers to neither, and a
 its subconstituents need a `π`-node each. -/
 def syntaxProsodyMax {M : Type*} (α : List HeadedSpan) (π : Level) :
     Constraint (RoseTree (Constituent Level M)) :=
-  fun t ↦ Correspondence.deficiency (Corresponds α) α (levelSpans π t)
+  fun t ↦ α.deficiency (Corresponds α) (levelSpans π t)
 
 variable {α : List HeadedSpan}
 
@@ -60,7 +60,7 @@ constituents of `α` have distinct spans each containing its head, fewer of them
 corresponding node than lack a node of the same span. -/
 theorem deficiency_corresponds_le (hα : (α.map (·.span)).Nodup)
     (hhead : ∀ a ∈ α, a.head ∈ Set.Ico a.span.fst a.span.snd) (m : List (NonemptyInterval ℕ)) :
-    Correspondence.deficiency (Corresponds α) α m ≤
+    α.deficiency (Corresponds α) m ≤
       (Correspondence.ofRel (fun a p ↦ a.span = p) α.get m.get).maxViol :=
   Correspondence.deficiency_le_maxViol_ofRel (List.Nodup.of_map _ hα)
     (fun a ha _ hp ↦ hp ▸ ⟨hhead a ha, fun _ _ ↦ id⟩)
