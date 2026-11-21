@@ -59,13 +59,13 @@ variable {β} {u : U} {a a' : A} {w : W}
 /-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
     (policy β L R u).real {a} = Real.softmax (fun a ↦ β * ∫ w, R a w ∂(L u)) a :=
-  Agent.policy_real_singleton (a := agent L R)
+  Agent.policy_real_singleton (ag := agent L R)
 
 /-- Row preference of the policy is comparison of expected reward. -/
 theorem policy_real_lt_iff (hβ : 0 < β) :
     (policy β L R u).real {a} < (policy β L R u).real {a'} ↔
       ∫ w, R a w ∂(L u) < ∫ w, R a' w ∂(L u) :=
-  Agent.policy_real_lt_iff (a := agent L R) hβ
+  Agent.policy_real_lt_iff (ag := agent L R) hβ
 
 /-- A listener rewarded for guessing the state prefers the states the belief finds more
 probable. -/
@@ -81,7 +81,7 @@ difference in expected reward. -/
 theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
       Real.sigmoid (β * (∫ w, R a w ∂(L u) - ∫ w, R a' w ∂(L u))) :=
-  Agent.policy_real_of_pair (a := agent L R) haa' hall
+  Agent.policy_real_of_pair (ag := agent L R) haa' hall
 
 /-- A constant gain in every action's expected reward leaves the policy's own expected reward
 unchanged. -/

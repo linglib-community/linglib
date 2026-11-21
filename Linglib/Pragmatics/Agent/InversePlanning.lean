@@ -27,7 +27,8 @@ other, since the share a policy gives an action is increasing in that advantage.
 ## Main results
 
 * `Agent.integral_le_integral_posterior_plan`: seeing an action raises the expectation of a
-  statistic that monovaries with the action's value advantage.
+  statistic that monovaries with the action's value advantage on the agents of positive prior
+  mass.
 * `Agent.integral_posterior_plan_le_integral`: and lowers that of one that antivaries with it.
 
 ## References
@@ -54,49 +55,51 @@ variable (p : Ω → Agent O S A) (β : ℝ) (o : O)
 
 @[simp] theorem plan_apply (ω : Ω) : plan p β o ω = (p ω).policy β o := rfl
 
+instance (ω : Ω) : IsZeroOrProbabilityMeasure (plan p β o ω) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure ((p ω).policy β o))
+
+instance : IsFiniteKernel (plan p β o) := ⟨1, ENNReal.one_lt_top, fun _ ↦ prob_le_one⟩
+
 instance [Nonempty A] : IsMarkovKernel (plan p β o) :=
   ⟨fun ω ↦ inferInstanceAs (IsProbabilityMeasure ((p ω).policy β o))⟩
 
 variable [MeasurableSingletonClass A]
 
-theorem policy_apply_singleton_ne_zero (a : Agent O S A) (x : A) : a.policy β o {x} ≠ 0 :=
-  Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
-
 variable (μ : Measure Ω) [IsProbabilityMeasure μ] {β} {x x' : A} {f : Ω → ℝ}
 
-/-- Every action has positive probability under the prior. -/
+/-- Every action has positive probability under the prior predictive. -/
 theorem comp_plan_apply_singleton_ne_zero (x : A) : (plan p β o ∘ₘ μ) {x} ≠ 0 := by
   rw [Measure.comp_apply_singleton]
   intro h
   have hμ : ∀ ω, μ {ω} = 0 := fun ω ↦
     (mul_eq_zero.1 (Finset.sum_eq_zero_iff.1 h ω (Finset.mem_univ ω))).resolve_right
-      (policy_apply_singleton_ne_zero β o (p ω) x)
+      ((p ω).policy_apply_singleton_ne_zero β o x)
   have := measure_univ (μ := μ)
   rw [← Finset.coe_univ, ← sum_measure_singleton, Finset.sum_eq_zero fun ω _ ↦ hμ ω] at this
   exact zero_ne_one this
 
-variable [Nonempty Ω] [Nonempty A]
+variable [Nonempty Ω]
 
 /-- Seeing an agent choose `x` over `x'` raises the observer's expectation of a statistic that
 monovaries with the value advantage of `x` over `x'`. -/
 theorem integral_le_integral_posterior_plan (hβ : 0 < β) (hxx' : x ≠ x')
     (hall : ∀ c, c = x ∨ c = x')
-    (hf : Monovary f fun ω ↦ (p ω).value o x - (p ω).value o x') :
+    (hf : MonovaryOn f (fun ω ↦ (p ω).value o x - (p ω).value o x') {ω | μ {ω} ≠ 0}) :
     ∫ ω, f ω ∂μ ≤ ∫ ω, f ω ∂((plan p β o)†μ) x := by
   refine integral_le_integral_posterior _ μ (comp_plan_apply_singleton_ne_zero p o μ x)
-    fun i _ j _ hij ↦ ?_
+    fun i hi j hj hij ↦ ?_
   simp only [plan_apply, policy_real_of_pair hxx' hall] at hij
-  exact hf ((mul_lt_mul_iff_of_pos_left hβ).1 (Real.sigmoid_lt_iff.1 hij))
+  exact hf hi hj ((mul_lt_mul_iff_of_pos_left hβ).1 (Real.sigmoid_lt_iff.1 hij))
 
 /-- Seeing an agent choose `x` over `x'` lowers the observer's expectation of a statistic that
 antivaries with the value advantage of `x` over `x'`. -/
 theorem integral_posterior_plan_le_integral (hβ : 0 < β) (hxx' : x ≠ x')
     (hall : ∀ c, c = x ∨ c = x')
-    (hf : Antivary f fun ω ↦ (p ω).value o x - (p ω).value o x') :
+    (hf : AntivaryOn f (fun ω ↦ (p ω).value o x - (p ω).value o x') {ω | μ {ω} ≠ 0}) :
     ∫ ω, f ω ∂((plan p β o)†μ) x ≤ ∫ ω, f ω ∂μ := by
   refine integral_posterior_le_integral _ μ (comp_plan_apply_singleton_ne_zero p o μ x)
-    fun i _ j _ hij ↦ ?_
+    fun i hi j hj hij ↦ ?_
   simp only [plan_apply, policy_real_of_pair hxx' hall] at hij
-  exact hf ((mul_lt_mul_iff_of_pos_left hβ).1 (Real.sigmoid_lt_iff.1 hij))
+  exact hf hi hj ((mul_lt_mul_iff_of_pos_left hβ).1 (Real.sigmoid_lt_iff.1 hij))
 
 end Agent
