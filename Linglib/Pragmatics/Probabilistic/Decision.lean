@@ -4,7 +4,7 @@ public import Linglib.Pragmatics.Probabilistic.Latent
 public import Linglib.Pragmatics.Probabilistic.Literal
 public import Linglib.Pragmatics.Probabilistic.Parse
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.Probability.Decision.Agent
+public import Linglib.Pragmatics.RationalAction.Agent
 
 /-!
 # The decision-theoretic listener and speaker
@@ -29,7 +29,7 @@ included](##RSA.actionSpeaker_apply_singleton_ne_zero).
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory RationalAction
 open scoped ENNReal
 
 namespace RSA

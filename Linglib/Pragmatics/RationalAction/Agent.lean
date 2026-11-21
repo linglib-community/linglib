@@ -19,21 +19,23 @@ there, and the agent's policy at rationality `β` is the kernel from observation
 soft-maximizes the value, the softmax of `β` times the value.
 
 Agents with different reasons may have the same policy, so the policy is the agent's behaviour
-and the agent is what an observer of the behaviour infers.
+and the agent is what an observer of the behaviour infers. Language use is one kind of rational
+action: a listener who acts on what she has understood is an agent whose belief is her
+interpretation.
 
 ## Main definitions
 
-* `ProbabilityTheory.Agent`: a belief and a utility.
-* `ProbabilityTheory.Agent.value`: the expected utility of an action at an observation.
-* `ProbabilityTheory.Agent.policy`: the soft-maximizing kernel from observations to actions.
+* `RationalAction.Agent`: a belief and a utility.
+* `RationalAction.Agent.value`: the expected utility of an action at an observation.
+* `RationalAction.Agent.policy`: the soft-maximizing kernel from observations to actions.
 
 ## Main results
 
-* `ProbabilityTheory.Agent.policy_real_singleton`: the policy's share of an action is the real
+* `RationalAction.Agent.policy_real_singleton`: the policy's share of an action is the real
   softmax of the scaled values.
-* `ProbabilityTheory.Agent.policy_real_lt_iff`: at positive rationality the policy prefers the
+* `RationalAction.Agent.policy_real_lt_iff`: at positive rationality the policy prefers the
   action of greater value.
-* `ProbabilityTheory.Agent.value_le_decisionValue`: no action is worth more than the decision
+* `RationalAction.Agent.value_le_decisionValue`: no action is worth more than the decision
   value of the belief.
 
 ## References
@@ -43,9 +45,9 @@ and the agent is what an observer of the behaviour infers.
 
 @[expose] public section
 
-open MeasureTheory
+open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory
+namespace RationalAction
 
 /-- An agent observes in `O`, acts in `A`, and has reasons that concern a state in `S`: what it
 believes the state to be at each observation, and what each action is worth to it at each
@@ -110,4 +112,4 @@ theorem policy_real_of_pair (hxx' : x ≠ x') (hall : ∀ c, c = x ∨ c = x') :
 
 end Agent
 
-end ProbabilityTheory
+end RationalAction
