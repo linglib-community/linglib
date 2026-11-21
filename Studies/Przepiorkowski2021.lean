@@ -95,7 +95,7 @@ example : (clause .ana .iSubj .susan .susan).SatisfiesOn Set.univ (fun _ ↦ .su
 likes himself* is not: the masculine reflexive has an index of its own, the gender being the
 index's. -/
 example : ModelsFO ((clause .ana .iSubj .susan .susan).generated .s) Binding.grammar ∧
-    ¬ ModelsFO ((clause .ana .iObj .susan ⟨.p3, .nSing, .gMasc⟩).generated .s)
+    ¬ ModelsFO ((clause .ana .iObj .susan ⟨.third, .sing, .masc⟩).generated .s)
       Binding.grammar := by
   simp only [modelsFO_generated_iff_of_isColonFree _
     (by simp only [Grammar.mem_ofList]; decide : ∀ d ∈ Binding.grammar, _), Grammar.mem_ofList]

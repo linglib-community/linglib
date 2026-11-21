@@ -62,34 +62,40 @@ namespace SagWasowBender2003
 open HPSG.RSRL HPSG.Construction
 
 /-- The rows on a topic. -/
-def probing (t : String) : List Datum :=
-  Examples.all.filter fun x ↦ decide (x.feature? "topic" = some t)
+def probing (t : Examples.Topic) : List Datum :=
+  Examples.all.filter fun x ↦ decide (Examples.topic x = some t)
 
 /-! ### Binding theory -/
 
-/-- The entities of a worked transitive clause are the verb's sign, its subject and object, two
-indices, and the person, number and gender values. -/
-inductive ClauseEnt
-  | s | subj | obj | iSubj | iObj | p1 | p2 | p3 | nSing | nPlur | gMasc | gFem | gNeut
+/-- The number values of an index. -/
+inductive Num | sing | plur
+  deriving DecidableEq, Fintype, Repr
+
+/-- The gender values of an index. -/
+inductive Gend | masc | fem | neut
   deriving DecidableEq, Fintype, Repr
 
 /-- The person, number and gender values of an index. -/
 structure Agr where
   /-- The person value. -/
-  per : ClauseEnt
+  per : Person
   /-- The number value. -/
-  num : ClauseEnt
+  num : Num
   /-- The gender value. -/
-  gend : ClauseEnt
-  deriving DecidableEq, Repr
+  gend : Gend
+  deriving DecidableEq, Fintype, Repr
 
 /-- The third person singular feminine, the values of the index of *Susan*. -/
-def Agr.susan : Agr := ⟨.p3, .nSing, .gFem⟩
+def Agr.susan : Agr := ⟨.third, .sing, .fem⟩
 
-/-- The eighteen resolved choices of person, number and gender. -/
-def agrs : List Agr :=
-  [ClauseEnt.p1, .p2, .p3].flatMap fun p ↦ [ClauseEnt.nSing, .nPlur].flatMap fun n ↦
-    [ClauseEnt.gMasc, .gFem, .gNeut].map fun g ↦ ⟨p, n, g⟩
+/-- The entities of a worked transitive clause are the verb's sign, its subject and object, two
+indices, and the person, number and gender values. -/
+inductive ClauseEnt
+  | s | subj | obj | iSubj | iObj
+  | per (p : Person)
+  | num (n : Num)
+  | gend (g : Gend)
+  deriving DecidableEq, Fintype, Repr
 
 /-- The worked transitive clause, whose subject is a nonpronoun indexed `iSubj` that locally
 o-commands the object. The object has the given sort and index, and the two indices have the
@@ -101,25 +107,25 @@ given values. -/
     | .subj => .npro
     | .obj => objSort
     | .iSubj | .iObj => .idx
-    | .p1 => .first
-    | .p2 => .second
-    | .p3 => .third
-    | .nSing => .sing
-    | .nPlur => .plur
-    | .gMasc => .masc
-    | .gFem => .fem
-    | .gNeut => .neut
+    | .per .first => .first
+    | .per .second => .second
+    | .per .third => .third
+    | .num .sing => .sing
+    | .num .plur => .plur
+    | .gend .masc => .masc
+    | .gend .fem => .fem
+    | .gend .neut => .neut
   A
     | .SUBJ, .s => some .subj
     | .OBJ, .s => some .obj
     | .IDX, .subj => some .iSubj
     | .IDX, .obj => some objIdx
-    | .PER, .iSubj => some subjAgr.per
-    | .NUM, .iSubj => some subjAgr.num
-    | .GEND, .iSubj => some subjAgr.gend
-    | .PER, .iObj => some objAgr.per
-    | .NUM, .iObj => some objAgr.num
-    | .GEND, .iObj => some objAgr.gend
+    | .PER, .iSubj => some (.per subjAgr.per)
+    | .NUM, .iSubj => some (.num subjAgr.num)
+    | .GEND, .iSubj => some (.gend subjAgr.gend)
+    | .PER, .iObj => some (.per objAgr.per)
+    | .NUM, .iObj => some (.num objAgr.num)
+    | .GEND, .iObj => some (.gend objAgr.gend)
     | _, _ => none
   R _ := {xs | xs 0 = .subj ∧ xs 1 = .obj}
 
@@ -128,24 +134,29 @@ instance (objSort : Binding.Srt) (objIdx : ClauseEnt) (subjAgr objAgr : Agr)
   fun xs ↦ inferInstanceAs (Decidable (xs 0 = .subj ∧ xs 1 = .obj))
 
 theorem clause_isTotallyWellTyped :
-    ∀ σ ∈ [Binding.Srt.ana, .ppro, .npro], ∀ i ∈ [ClauseEnt.iSubj, .iObj], ∀ a ∈ agrs,
+    ∀ σ ∈ [Binding.Srt.ana, .ppro, .npro], ∀ i ∈ [ClauseEnt.iSubj, .iObj], ∀ a : Agr,
       (clause σ i .susan a).IsSortResolved ∧ (clause σ i .susan a).IsTotallyWellTyped := by
   decide
 
 /-- A clause whose object has the underspecified sort `synsem` is not sort-resolved, and one
 whose object has a gender in place of its index is not well-typed. -/
 example : ¬ (clause .synsem .iSubj .susan .susan).IsSortResolved ∧
-    ¬ (clause .ana .gFem .susan .susan).IsWellTyped := by decide
+    ¬ (clause .ana (.gend .fem) .susan .susan).IsWellTyped := by decide
 
-def sorts : List (String × Binding.Srt) := [("anaphor", .ana), ("pronoun", .ppro)]
+/-- The sort of a row's pronoun. -/
+def Examples.PronounSort.toSrt : Examples.PronounSort → Binding.Srt
+  | .anaphor => .ana
+  | .pronoun => .ppro
 
-def binders : List (String × ClauseEnt) :=
-  [("local", .iSubj), ("nonlocal", .iObj)]
+/-- The index of a row's pronoun: the subject's if the subject is what it is coindexed with. -/
+def Examples.Binder.index : Examples.Binder → ClauseEnt
+  | .outranking => .iSubj
+  | .notOutranking => .iObj
 
 theorem binding_rows :
-    ∀ x ∈ probing "binding", ∀ s ∈ x.parse? "sort" sorts, ∀ i ∈ x.parse? "binder" binders,
+    ∀ x ∈ probing .binding, ∀ s ∈ Examples.sort x, ∀ b ∈ Examples.binder x,
       (x.judgment = .acceptable ↔
-        (clause s i .susan .susan).Models Binding.grammar) := by
+        (clause s.toSrt b.index .susan .susan).Models Binding.grammar) := by
   decide +kernel
 
 theorem clause_satisfies_conditions :
@@ -158,23 +169,19 @@ theorem clause_satisfies_conditions :
 
 /-! ### Pronominal agreement -/
 
-/-- A subject whose form has the agreement bundle `a` and a reflexive object whose form has the
-bundle `r` are licensed when some worked clause is a model of the binding grammar in which the
-index of the subject's agreement bundle extends that of `a` and the object's that of `r`. The
-index of a bundle is its person, number and gender, the features an HPSG index bears; a form's
-case is not among them. -/
-def Licenses (a r : Agreement.Bundle) : Prop :=
-  ∃ i ∈ [ClauseEnt.iSubj, .iObj], ∃ x ∈ agrs, ∃ y ∈ agrs,
-    a.index ≤ (Binding.agreement (clause .ana i x y) .subj).index ∧
-      r.index ≤ (Binding.agreement (clause .ana i x y) .obj).index ∧
-        (clause .ana i x y).Models Binding.grammar
-
-instance (a r : Agreement.Bundle) : Decidable (Licenses a r) :=
-  inferInstanceAs (Decidable (∃ i ∈ [ClauseEnt.iSubj, .iObj], ∃ x ∈ agrs, ∃ y ∈ agrs, _ ∧ _ ∧ _))
-
 /-- The agreement bundle of an index with the values `x`. -/
 def Agr.bundle (x : Agr) : Agreement.Bundle :=
   Binding.agreement (clause .ana .iSubj x x) .subj
+
+/-- A subject whose form has the agreement bundle `a` and a reflexive object whose form has the
+bundle `r` are licensed when one index bears the person, number and gender of both forms. The
+index of a bundle is its person, number and gender, the features an HPSG index bears; a form's
+case is not among them. -/
+def Licenses (a r : Agreement.Bundle) : Prop :=
+  ∃ x : Agr, a.index ≤ x.bundle.index ∧ r.index ≤ x.bundle.index
+
+instance (a r : Agreement.Bundle) : Decidable (Licenses a r) :=
+  inferInstanceAs (Decidable (∃ _ : Agr, _ ∧ _))
 
 theorem agreement_subj (i : ClauseEnt) (x y : Agr) :
     Binding.agreement (clause .ana i x y) .subj = x.bundle := by
@@ -193,20 +200,24 @@ theorem not_models_iObj (x y : Agr) : ¬ (clause .ana .iObj x y).Models Binding.
   cases Option.mem_def.1 hv
   cases Option.mem_def.1 hv'
 
-theorem models_iSubj : ∀ x ∈ agrs, (clause .ana .iSubj x x).Models Binding.grammar := by
+theorem models_iSubj : ∀ x : Agr, (clause .ana .iSubj x x).Models Binding.grammar := by
   decide +kernel
 
-/-- A subject and a reflexive object are licensed exactly when one index bears the features of
-both forms. -/
-theorem licenses_iff {a r : Agreement.Bundle} :
-    Licenses a r ↔ ∃ x ∈ agrs, a.index ≤ x.bundle.index ∧ r.index ≤ x.bundle.index := by
-  refine ⟨fun ⟨i, hi, x, hx, y, _, ha, hr, hM⟩ ↦ ?_,
-    fun ⟨x, hx, ha, hr⟩ ↦ ⟨.iSubj, by simp, x, hx, x, hx, ?_, ?_, models_iSubj x hx⟩⟩
-  · obtain rfl | rfl : i = .iSubj ∨ i = .iObj := by simpa using hi
-    · exact ⟨x, hx, agreement_subj _ x y ▸ ha, agreement_obj_iSubj x y ▸ hr⟩
-    · exact absurd hM (not_models_iObj x y)
+/-- A subject and a reflexive object are licensed exactly when some worked clause is a model of
+the binding grammar in which the subject's agreement bundle extends the subject form's index and
+the object's the reflexive form's. -/
+theorem licenses_iff_exists_models {a r : Agreement.Bundle} :
+    Licenses a r ↔ ∃ i ∈ [ClauseEnt.iSubj, .iObj], ∃ x y : Agr,
+      a.index ≤ (Binding.agreement (clause .ana i x y) .subj).index ∧
+        r.index ≤ (Binding.agreement (clause .ana i x y) .obj).index ∧
+          (clause .ana i x y).Models Binding.grammar := by
+  refine ⟨fun ⟨x, ha, hr⟩ ↦ ⟨.iSubj, by simp, x, x, ?_, ?_, models_iSubj x⟩,
+    fun ⟨i, hi, x, y, ha, hr, hM⟩ ↦ ?_⟩
   · exact (agreement_subj _ x x).symm ▸ ha
   · exact (agreement_obj_iSubj x x).symm ▸ hr
+  · obtain rfl | rfl : i = .iSubj ∨ i = .iObj := by simpa using hi
+    · exact ⟨x, agreement_subj _ x y ▸ ha, agreement_obj_iSubj x y ▸ hr⟩
+    · exact absurd hM (not_models_iObj x y)
 
 /-- With no agreement condition in the binding principles, an English reflexive is licensed with
 a pronoun antecedent exactly when the indices of their agreement bundles are compatible:
@@ -215,16 +226,14 @@ gender. -/
 theorem licenses_iff_compat :
     ∀ a ∈ English.Pronouns.personal, ∀ r ∈ English.Pronouns.reflexives,
       (Licenses a.agreement r.agreement ↔ Compat a.agreement.index r.agreement.index) := by
-  simp only [licenses_iff]
   decide +kernel
 
 -- (17a)–(17c)
 theorem agreement_rows :
-    ∀ x ∈ probing "pronominal agreement",
+    ∀ x ∈ probing .pronominalAgreement,
       ∀ a ∈ English.Pronouns.personal, x.feature? "antecedent" = some a.form →
         ∀ r ∈ English.Pronouns.reflexives, x.feature? "reflexive" = some r.form →
           (x.judgment = .acceptable ↔ Licenses a.agreement r.agreement) := by
-  simp only [licenses_iff]
   decide +kernel
 
 /-- Nominal objects with the same agreement bundle need not be coindexed: in *Susan likes her*
@@ -302,7 +311,7 @@ theorem coordConstruct_isWellTyped (g₁ g₂ : Bool) : (coordConstruct g₁ g�
   cases g₁ <;> cases g₂ <;> decide
 
 theorem coordination_rows :
-    ∀ x ∈ probing "coordination", ∀ g₁ ∈ x.bool? "gapInFirst",
+    ∀ x ∈ probing .coordination, ∀ g₁ ∈ x.bool? "gapInFirst",
       ∀ g₂ ∈ x.bool? "gapInSecond",
         (x.judgment = .acceptable ↔ (coordConstruct g₁ g₂).Models swbGrammar) := by
   decide +kernel
