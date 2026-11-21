@@ -5,47 +5,26 @@ public import Linglib.Core.Computability.PartialMoore
 /-!
 # Feature structures
 
-A *feature structure* describes a linguistic object by its features. The pronoun *she*, for
-example, has the feature `PERSON` with the value *third* and the feature `NUMBER` with the value
-*singular*. A value may have features of its own, so a feature structure is a graph: each node
-has a type, and each feature leads from a node to at most one other node. One node is the *root*,
-and every node is reached from the root by following features.
+A *feature structure* describes a linguistic object by its features: the pronoun *she* has the
+feature `PERSON` with the value *third* and `NUMBER` with the value *singular*. A value may have
+features of its own, and two paths of features may lead to the same value, so a feature
+structure is a rooted graph whose nodes carry types. We define it as a partial Moore machine,
+with the features as letters and the types as outputs, and a root from which every state is
+reached.
 
-Two paths of features may lead to the same node. This is how a feature structure says that two
-values are one and the same, as when a verb and its subject share their person and number, and
-not merely alike.
-
-A `FeatureStructure Q F T` has nodes `Q`, features `F` and types `T`. It is a partial Moore
-machine, with the features as letters and the types as outputs, together with a root from which
-every state is reached. The value of a path is the state the machine reaches on it.
-
-A feature structure `A` *subsumes* `B`, written `A.Subsumes B`, when `B` contains all the
-information in `A`. A structure that says only "third person" subsumes one that says "third
-person singular". Precisely, there is a map `h` from the nodes of `A` to those of `B` that sends
-the root to the root, sends each node to a node of an equal or more specific type, and sends the
-value of a feature to the value of the same feature (`FeatureStructure.subsumes_iff_exists`).
-
-What a feature structure says does not depend on what its nodes are. The *abstract feature
-structure* `A.abs` keeps only the type at the end of each path, and the pairs of paths that lead
-to the same node. We order abstract feature structures by information: a larger one has more
-paths, more specific types, and more pairs of paths identified.
-
-The main result, `FeatureStructure.subsumes_iff_abs_le`, says that `A` subsumes `B` exactly when
-`A.abs ≤ B.abs`. It follows that two feature structures subsume each other exactly when their
-abstract feature structures are equal (`FeatureStructure.abs_eq_iff`).
-
-Two feature structures can be *unified* when some feature structure contains the information of
-both. In terms of the order, their abstract feature structures have a common upper bound.
+A feature structure `A` *subsumes* `B` when `B` contains all the information in `A`: a map of
+nodes sends the root to the root, each node to a node of an equal or more specific type, and the
+value of a feature to the value of the same feature. The *abstract feature structure* `A.abs`
+keeps only the type at the end of each path and which paths lead to the same node. The main
+result, `FeatureStructure.subsumes_iff_abs_le`, says that `A` subsumes `B` exactly when
+`A.abs ≤ B.abs`.
 
 ## Implementation notes
 
-In the order of types, the more specific type is the greater one. This matches the orders of
-feature bundles and of flat slots, where more information is greater. A type hierarchy that is
-written the other way round gives feature structures over its order dual.
-
-Subsumption compares how much two feature structures say. It is weaker than a map that keeps
-every type and keeps track of which features are missing; such a map preserves the truth of
-descriptions, including negative ones, and subsumption does not.
+In the order of types the more specific type is the greater, as in the orders of feature bundles
+and flat slots. Subsumption is weaker than a map that keeps every type and every missing
+feature: such a map preserves the truth of descriptions, including negative ones, and
+subsumption does not.
 
 ## References
 

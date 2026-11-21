@@ -7,36 +7,20 @@ public import Mathlib.Data.List.Induction
 /-!
 # Partial Moore machines
 
-A *partial Moore machine* is a state machine that reads a word one letter at a time and shows an
-output at each state. It is partial: a state need not have a transition for every letter, and the
-machine stops when it meets a letter it has no transition for.
+A *partial Moore machine* is a state machine that shows an output at each state and may lack a
+transition for some letters. `M.evalFrom s x` is the state that the word `x` leads to from the
+state `s`, or `none` if the machine stops before the end of `x`.
 
-For a machine `M`, `M.evalFrom s x` is the state that the word `x` leads to from the state `s`,
-or `none` if the machine stops before the end of `x`. A state `q` is *reached* from `s`,
-`M.Reaches s q`, when some word leads from `s` to `q`.
-
-We record two observations of a machine started at `s`. The first, `M.output? s x`, is the output
-at the state that `x` leads to. The second, `M.Nerode s x y`, says that the words `x` and `y`
-lead to the same state.
-
-When the outputs are ordered, `M` at `s` is *simulated by* `N` at `t`, written
-`M.SimulatedBy N s t`, when there is a map `h` from the states of `M` to those of `N` such that
-`h s = t`, the output never decreases, `M.out q ≤ N.out (h q)`, and every transition of `M` is
-matched by one of `N`. These conditions are only asked of the states reached from `s`.
-
-The main result, `PartialMoore.simulatedBy_iff`, says that a simulation exists exactly when `N`
+When the outputs are ordered, `M` at `s` is *simulated by* `N` at `t` when a map of states sends
+`s` to `t`, never decreases the output and matches every transition, on the states reached from
+`s`. The main result, `PartialMoore.simulatedBy_iff`, says that this holds exactly when `N`
 reads every word that `M` reads, ending at an output at least as large, and any two words that
-lead `M` to one state also lead `N` to one state. So whether one machine simulates another
-depends only on the two observations, and not on what the states are.
+lead `M` to one state also lead `N` to one state.
 
 ## Implementation notes
 
-A machine has no start state. This lets us run one machine from each of its states, which is how
-it is used: a machine with a chosen start state from which every state is reached is a separate,
-bundled object.
-
-As with mathlib's `DFA`, the set of states may be infinite. `DFA` has a transition for every
-letter and no outputs; a partial Moore machine has neither restriction.
+A machine has no start state, so it can be run from each of its states. As with mathlib's `DFA`,
+the set of states may be infinite.
 -/
 
 @[expose] public section

@@ -13,64 +13,27 @@ public import Mathlib.Tactic.FinCases
 /-!
 # The construct hierarchy of Sign-Based Construction Grammar in RSRL
 
-In Sign-Based Construction Grammar a *construct* is a piece of syntactic structure: a mother sign
-with its daughter signs. A *construction* is a constraint on the constructs of one sort. This
-file states in RSRL the part of the grammar with which Sag analyses the English filler-gap
-clauses, such as *My bagels, she likes* and *Who did they visit?*
+In Sign-Based Construction Grammar a *construct* is a mother sign with its daughter signs, and a
+*construction* is a constraint on the constructs of one sort. This file states in RSRL the part
+of the grammar with which Sag analyses the English filler-gap clauses, such as *My bagels, she
+likes*.
 
-Construct sorts are classified in two ways: by how they are headed, and by the kind of clause
-they form. A sort may sit below one sort of each kind. It then inherits the constraints on both,
-because a constraint on a sort holds of every entity below it.
-`HPSG.Construction.forall_satisfies_grammar_iff_of_nsWhIntCl` shows this for the nonsubject
-wh-interrogative: it satisfies the grammar exactly when it satisfies the four constructions it
-inherits.
-
-The *headed* construction gives the mother the category of its head daughter
-(`HPSG.Construction.satisfies_hdCat_iff`).
-
-The *filler-head* construction, `HPSG.Construction.fillerHeadPrinciple`, is what a filler-gap
-clause is. A phrase with a missing argument records it on its `GAP` list. The construction
+Construct sorts are classified by how they are headed and by the kind of clause they form, and a
+sort below one of each inherits the constraints on both. The *filler-head* construction
 identifies the filler daughter with the first sign on the head daughter's `GAP` list and passes
-the rest of the list to the mother (`HPSG.Construction.satisfies_mtrGap_iff`).
-
-Each filler-gap clause adds constraints of its own: on the categories of its daughters, and on
-whether its head is inverted, independent or finite. The clause types fix the semantic type and
-verb form of the mother. The topicalized clause, the wh-exclamative and the the-clause give the
-head daughter exactly one gap.
-
-`HPSG.Construction.constraints` lists the constructions, each a constraint on one sort, and
-`HPSG.Construction.grammar` is the grammar that states them.
-
-`HPSG.Construction.ListMem` says that an entity is a member of a list in an interpretation. The
-principle `HPSG.Construction.memberDef` defines the relation symbol `member` to be list
-membership: on lists without cycles, a well-typed interpretation satisfies it exactly when
-`member` is `ListMem` (`HPSG.Construction.models_memberDef_iff`).
+the rest of the list to the mother (`HPSG.Construction.satisfies_mtrGap_iff`). The principle
+`HPSG.Construction.memberDef` defines the relation symbol `member` as list membership.
 
 ## Implementation notes
 
-As in Sag's grammars, a `GAP` list contains signs. A sign is overt or covert. Only overt signs
-are daughters of constructs (`HPSG.Construction.not_le_covertExpr`), and a word leaves a covert
-sign of sort `gap` on its `GAP` list for an argument that it does not realize.
+As in Sag's grammars, a `GAP` list contains signs, and a word leaves a covert sign of sort `gap`
+on it for an argument that it does not realize. Daughters are attributes named by their role,
+not members of a `DTRS` list. The signature has only the features that the constructions here
+mention; `WH`, `REL`, `VAL`, `SELECT`, `AUX` and `STORE` are left out, and the semantic type of
+the mother stands in for its meaning.
 
-The features of `SYN` and the index of `SEM` are attributes of the sign itself. Daughters are
-attributes named by their role, not members of a `DTRS` list.
-
-The filler-head construction identifies the `SYN` value of the filler with that of the gap,
-except for `WH` and `REL`. Those two are not in the signature here, so the filler and the gap
-share their `CAT` and `GAP` values and, as in Sag's synopsis of the framework, their index.
-
-As in Sag's signature, a verbal category has a verb form and an independence value, and a verb
-has an inversion value. Of the features he declares, the signature has only those that the
-constructions here mention; `WH`, `REL`, `VAL`, `SELECT`, `AUX` and `STORE` are left out. The
-semantic type of the mother stands in for its meaning.
-
-Sag places the topicalized clause below the filler-head construct alone and gives its head
-daughter an austinean meaning, which the mother inherits. Here the type of the mother is stated
-directly.
-
-The aux-initial construction is stated in `Studies/SagEtAl2020` and the coordinate construction
-in `Studies/SagWasowBender2003`. The worked constructs are in `Studies/Sag2010`, which checks
-the paper's judgments against the grammar and derives the island status of the five clauses.
+The aux-initial construction is in `Studies/SagEtAl2020`, the coordinate construction in
+`Studies/SagWasowBender2003`, and the worked constructs in `Studies/Sag2010`.
 
 ## References
 

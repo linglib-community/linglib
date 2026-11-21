@@ -9,63 +9,23 @@ public import Linglib.Data.Examples.Readers
 
 English has five kinds of clause in which a phrase at the front is understood in a gap further
 in: topicalized clauses, wh-exclamatives, nonsubject wh-interrogatives, wh-relatives and
-the-clauses. This file formalizes the paper's account of them as constructions of Sign-Based
-Construction Grammar.
+the-clauses. The paper analyses them as constructions that share the *filler-head* construction
+and each add a few constraints of their own.
 
-The five clauses share the *filler-head* construction, which binds a nonverbal filler to a gap
-in a verbal head daughter. Each also belongs to a clause type, which fixes its semantic type.
-What is left to each clause is a short list of constraints of its own.
-
-The paper's parameters of variation follow from these constraints: which distinguished element
-the filler must contain, which categories the filler and the head may have, whether the head may
-or must be inverted or infinitival, whether the clause is an island, and whether it must be
-independent.
-
-The constructions are those of the paper's appendix, stated in RSRL over the construct hierarchy
-of `Syntax/HPSG/Construction`.
-
-A row of the paper's examples describes a construct: the categories of its daughters, and the
-inversion, independence and finiteness of its head. The row is acceptable exactly when that
-construct is a model of the grammar (`judgments`).
-
-The parameters of variation hold in every model of the grammar:
-
-* the filler is nonverbal (`satisfies_filler_nonverbal`);
-* the head of every clause but the the-clause is a projection of a verb, since only a verb is
-  inverted or uninverted (`satisfies_head_verb`);
-* the inversion, finiteness and independence of the head follow from the constructions, a
-  wh-relative's through its mother (`satisfies_head_uninverted`, `satisfies_head_fin`,
-  `satisfies_head_ic`).
-
-A clause is an *absolute island* when, in every model of the grammar, every construct of its
-sort has a mother with an empty `GAP` list (`FGClause.IsIsland`). Topicalized clauses,
-wh-exclamatives and the-clauses are islands: their constructions give the head daughter a single
-gap, and the filler discharges it (`isIsland_iff`).
-
-The distinguished element is lexical. The inventory of wh-words is read off the paper's judgment
-triples (`occurs`), and no wh-form of any category occurs in all three wh-constructions
-(`no_universal_wh_word`).
+A row of the paper's examples describes a construct, and the row is acceptable exactly when that
+construct is a model of the grammar (`judgments`). A clause is an *absolute island* when, in
+every model, every construct of its sort has a mother with an empty `GAP` list; topicalized
+clauses, wh-exclamatives and the-clauses are islands (`isIsland_iff`). No wh-form occurs in all
+three wh-constructions (`no_universal_wh_word`).
 
 ## Implementation notes
 
-The features `WH`, `REL` and `VAL` are not in the RSRL signature. So the distinguished element
-is checked against the wh-word inventory and not by the model theory, and S and VP, both
-projections of a verb, are not told apart.
-
-Independence is identified with the absence of embedding. The embedded topicalizations that the
-paper licenses under predicates admitting main-clause phenomena are therefore not among the
-rows.
-
-The wh-word inventory is derived from the judgment triples and not from the paper's table of
-wh-words. The two differ in two cells: bare *what* in exclamatives and determiner *which* in
-relatives are marked as accepted by some speakers in the table and starred in the triples.
-
-The island rows are checked in one direction only, since the paper attributes the graded
-degradation of extraction from finite wh-interrogatives to processing.
-
-The-clauses come out as islands because their construction gives the head daughter a single
-gap, as the topicalization and wh-exclamative constructions do. The paper's text discusses
-islandhood only for the latter two, and no row tests a the-clause.
+The features `WH`, `REL` and `VAL` are not in the signature, so the distinguished element is
+checked against the wh-word inventory, and S and VP are not told apart. The inventory is read
+off the judgment triples; the paper's table of wh-words differs from them in two cells.
+Independence is identified with the absence of embedding. The island rows are checked in one
+direction, since the paper attributes the degradation of extraction from finite
+wh-interrogatives to processing. No row tests a the-clause for islandhood.
 
 ## TODO
 

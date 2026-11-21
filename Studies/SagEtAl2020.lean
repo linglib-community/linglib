@@ -5,25 +5,14 @@ public import Linglib.Syntax.HPSG.Construction
 /-!
 # Sag et al. (2020): Lessons from the English Auxiliary System
 
-In some English clauses, such as polar questions, the auxiliary comes before the subject. This
-file formalizes the paper's constructional analysis of this subject-auxiliary inversion.
+In some English clauses, such as polar questions, the auxiliary comes before the subject. The
+paper's *aux-initial* construction requires the head daughter of such a clause to be an
+invertible finite auxiliary, a word marked `[INV +]`, and says nothing about meaning: each kind
+of aux-initial clause gets its meaning from the clause type it also belongs to.
 
-The *aux-initial* construction requires the head daughter of a clause to be an invertible finite
-auxiliary, a word marked `[INV +]`. It says nothing about meaning. Following Fillmore, the
-aux-initial clauses share no semantics. Each kind gets its meaning from the clause type it also
-belongs to: the polar interrogative from the interrogative clauses, and the aux-initial
-exclamative from the exclamative clauses.
-
-A polar interrogative is built directly by its construction. It is not derived from an
-uninverted clause, which is why the auxiliary puzzle of structure dependence does not arise.
-
-The construction is one principle over the RSRL construct hierarchy of
-`Syntax/HPSG/Construction` (`auxInitialPrinciple`). The two clauses are sorts below both the
-aux-initial construction and a clause type (`sai_cross_classify`).
-
-A worked construct of either sort satisfies the grammar exactly when its head is inverted and
-its mother carries the semantics of its clause type (`polarInterrogative_models`,
-`auxInitialExclamative_models`).
+The construction is one principle (`auxInitialPrinciple`). A worked construct satisfies the
+grammar exactly when its head is inverted and its mother carries the semantics of its clause
+type (`polarInterrogative_models`, `auxInitialExclamative_models`).
 
 ## Implementation notes
 

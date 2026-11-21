@@ -14,55 +14,28 @@ public import Linglib.Syntax.Feature.Bundle
 /-!
 # HPSG binding theory in RSRL
 
-Binding theory says which noun phrases a pronoun can refer back to. In *Susan likes herself*,
-the reflexive *herself* must refer to Susan. In *Susan likes her*, the pronoun *her* cannot.
-This file states the two principles of HPSG that account for this, as descriptions in RSRL.
+Binding theory says which noun phrases a pronoun can refer back to: in *Susan likes herself* the
+reflexive must refer to Susan, and in *Susan likes her* the pronoun cannot. This file states the
+two principles of HPSG that account for this, as descriptions in RSRL.
 
-A nominal object has an *index*, and an index has a person, a number and a gender. Two nominal
-objects are *coindexed* when their indices are the same entity, which is how the grammar says
-that they refer to the same thing.
-
-Since person, number and gender belong to the index, coindexed nominal objects cannot differ in
-them. The agreement bundle of a nominal object, `HPSG.RSRL.Binding.agreement`, reads the three
-off its index, and `HPSG.RSRL.Binding.agreement_eq_of_coindexed` says that coindexed nominal
-objects have the same bundle. This is why the binding principles do not mention agreement.
-
-A nominal object that carries more information has a more specific bundle
-(`HPSG.RSRL.Binding.agreement_le_of_simulatedBy`).
-
-A word lists its arguments in its *argument structure*, in order of obliqueness: the subject
-first, then the objects. One argument *locally o-commands* another when it comes earlier on the
-argument structure of the same word.
-
-The argument structure is a list, built from the attributes `FIRST` and `REST`. So "earlier on
-the list" can be said with paths: the description `HPSG.RSRL.Binding.locallyOCommands` follows
-the `ARG-ST` of some word to two of its members. `HPSG.RSRL.Binding.LocallyOCommands` is the
-same relation stated directly on an interpretation, and
-`HPSG.RSRL.Binding.satisfies_locallyOCommands_iff` says that the description holds exactly when
-the relation does.
-
-One argument *locally o-binds* another when it locally o-commands it and is coindexed with it.
+A word lists its arguments on its argument structure, the subject first. One argument *locally
+o-commands* another when it comes earlier on the argument structure of the same word, and
+*locally o-binds* it when the two also have the same index.
 
 * Principle A: an anaphor that something locally o-commands is locally o-bound.
 * Principle B: a personal pronoun is not locally o-bound.
 
-`HPSG.RSRL.Binding.satisfies_grammar_iff_within` says what the two principles amount to at any
-entity: among its components, every anaphor with a local o-commander is coindexed with one, and
-no personal pronoun is. `HPSG.RSRL.Binding.satisfies_grammar_iff` relates this to Conditions A
-and B of `Syntax/Binding`, which are stated without reference to any framework.
+`HPSG.RSRL.Binding.satisfies_grammar_iff_within` says what the two principles amount to at an
+entity. Person, number and gender belong to the index, so coindexed nominal objects agree
+(`HPSG.RSRL.Binding.agreement_eq_of_coindexed`).
 
 ## Implementation notes
 
-An argument structure is read up to its third member. This is as far as a description can reach
-without a relation defined by recursion on lists, and it covers transitive and ditransitive
-verbs.
-
-Pollard and Sag also require the commanding argument to be referential and to have a different
-`LOCAL` value from the argument it commands. Neither condition is stated here; the fragment has
-no expletives and no long-distance dependencies.
-
-A phrase is given by the list of its daughters and has no further constituent structure. Worked
-examples are in `Studies/SagWasowBender2003`.
+An argument structure is read up to its third member, which is as far as a description reaches
+without a relation defined by recursion on lists. Pollard and Sag also require the commanding
+argument to be referential and to differ in its `LOCAL` value; neither condition is stated. A
+phrase is given by the list of its daughters. Worked examples are in
+`Studies/SagWasowBender2003`.
 
 ## References
 

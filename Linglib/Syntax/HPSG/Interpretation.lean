@@ -9,50 +9,27 @@ public import Linglib.Syntax.Feature.Structure
 /-!
 # RSRL interpretations
 
-An *interpretation* of a signature is a collection of entities together with what the signature
-says about them. Over a universe `U` of entities it gives a sort to every entity, a partial
+An *interpretation* of a signature over a universe `U` gives a sort to every entity, a partial
 function on entities for every attribute, and a set of tuples of entities for every relation
-symbol.
+symbol. A term then denotes an entity when every attribute along it is defined, and the
+*components* of an entity are the entities that some path reaches from it.
 
-A term then denotes an entity, when every attribute along it is defined
-(`HPSG.RSRL.Interpretation.termDenot`). The *components* of an entity are the entities that some
-path reaches from it (`HPSG.RSRL.Interpretation.isComponentOf_iff_exists_path`).
+A *homomorphism* of interpretations keeps sorts, commutes with the attributes and preserves the
+relations. It commutes with term denotation and maps the components of an entity onto those of
+its image (`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
 
-A *homomorphism* of interpretations is a map of entities that keeps the sort of each entity,
-commutes with the attributes, and sends relation tuples to relation tuples. An *embedding* is an
-injective one that also reflects the relations.
-
-A homomorphism commutes with term denotation
-(`HPSG.RSRL.Interpretation.HomClass.termDenot_comp`). Since attributes are functions, it also
-maps the components of an entity onto the components of its image
-(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
-
-An interpretation is also a partial Moore machine: the attributes are the letters, an attribute's
-partial function is its transition, and the sort of an entity is the output
-(`HPSG.RSRL.Interpretation.toPartialMoore`). Following a path is reading it in this machine
-(`HPSG.RSRL.Interpretation.evalFrom_toPartialMoore`), and the components of an entity are the
-states reached from it. So each entity is the root of a feature structure
-(`HPSG.RSRL.Interpretation.featureStructure`), and a homomorphism is in particular a simulation
-(`HPSG.RSRL.Interpretation.Hom.simulatedBy`).
+An interpretation is also a partial Moore machine, with the attributes as letters and the sorts
+as outputs, so each entity is the root of a feature structure
+(`HPSG.RSRL.Interpretation.featureStructure`).
 
 ## Implementation notes
 
 The universe is a parameter, not a field, as the carrier of a first-order structure is in
-mathlib. Instances on it are then found by inference.
-
-[richter-2024] builds three conditions into an interpretation. Here they are separate
-predicates, because a worked example often interprets only the part of a feature structure that
-a principle mentions. `IsSortResolved` and `IsTotallyWellTyped`, named as in [carpenter-1992],
-are the conditions on sorts and attributes, and `IsFull` restricts relation tuples to the
-components of one entity.
-
-Chains are not formalized, so a relation tuple holds entities only.
-
-`Hom`, `Embedding` and `HomClass` follow their namesakes in `FirstOrder.Language`. A fact about
-homomorphisms is stated once and applies to embeddings as well.
-
-The machine outputs the sort in the dual order, in which the more specific sort is the greater,
-since that is the order of information.
+mathlib. The conditions that [richter-2024] builds into an interpretation are separate
+predicates (`IsSortResolved`, `IsTotallyWellTyped`, `IsFull`), since a worked example often
+interprets only part of a feature structure. Chains are not formalized. `Hom`, `Embedding` and
+`HomClass` follow their namesakes in `FirstOrder.Language`. The machine outputs the sort in the
+dual order, in which the more specific sort is the greater.
 
 ## References
 
