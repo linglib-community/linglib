@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
-public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Alignment
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 
 /-!
@@ -99,10 +99,10 @@ def marks (t : Tree) : Con → ℕ
   | .headedness => headedness t
   | .nonRec => nonrecursivity .om t
   | .exh => exhaustivity .ph t
-  | .wdConL => Constraint.alignLeft (lexSpans, levelSpans .om t)
-  | .wdConR => Constraint.alignRight (lexSpans, levelSpans .om t)
-  | .pwdConL => Constraint.alignLeft (levelSpans .om t, lexSpans)
-  | .pwdConR => Constraint.alignRight (levelSpans .om t, lexSpans)
+  | .wdConL => (Correspondence.ofEdges .left .left lexSpans (levelSpans .om t)).maxViol
+  | .wdConR => (Correspondence.ofEdges .right .right lexSpans (levelSpans .om t)).maxViol
+  | .pwdConL => (Correspondence.ofEdges .left .left lexSpans (levelSpans .om t)).depViol
+  | .pwdConR => (Correspondence.ofEdges .right .right lexSpans (levelSpans .om t)).depViol
 
 /-- **The violations of the four structures**, (25): the free clitic violates only Exhaustivity
 at the phrase, the affixal clitic Nonrecursivity at the word and the alignment of the left edge
