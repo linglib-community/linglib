@@ -25,14 +25,6 @@ for the same morphs.
 * `Haspelmath2023c.IsSecondPosition`: a clitic that follows the first word of every free form
   it occurs in.
 
-## Main results
-
-* `Haspelmath2023c.isClitic_iff`: every clitic is of exactly one positional type.
-* `Haspelmath2023c.li_followsFirstWord`: Russian *li* directly follows the first word of its
-  question.
-* `Haspelmath2023c.mi_isEnclitic`: Turkish *mI* is an enclitic.
-* `Haspelmath2023c.however_isAmbiclitic`: English *however* is an ambiclitic.
-
 ## Implementation notes
 
 * An ambiclitic is taken to occur both at the end and at the beginning of free forms, so that the
@@ -104,7 +96,6 @@ theorem isClitic_iff :
 theorem IsEnclitic.not_isProclitic (h : IsEnclitic L root x) : ¬ IsProclitic L root x :=
   fun h' ↦ h.2.2 h'.2.1
 
-/-- A morph that is a free form is not a clitic. -/
 theorem not_isClitic_of_mem_forms (h : [x] ∈ L.forms) : ¬ L.IsClitic root x := fun hc ↦ hc.1 h
 
 section Decidable
@@ -173,7 +164,8 @@ def russian : Inventory Morph where
 /-- Russian *li* directly follows the first word of each question, a verb, a noun or an adverb,
 which is the placement the fragment records. -/
 theorem li_followsFirstWord :
-    (∀ m ∈ Russian.QuestionParticles.li.morphs, ∀ w ∈ russian.forms, FollowsFirstWord m w) ∧
+    (∀ m ∈ Russian.QuestionParticles.li.morphs, ∀ w ∈ russian.forms,
+        FollowsFirstWord m w) ∧
       .second ∈ Russian.QuestionParticles.li.placements := by
   decide
 
@@ -278,7 +270,6 @@ theorem however_isAmbiclitic :
     IsAmbiclitic howevers howevers.IsContentful however ∧ however.kind = .free := by
   decide
 
-/-- A response word is used on its own, so it is not a clitic. -/
 theorem yes_not_isClitic (L : Inventory Morph) (root : Morph → Prop)
     (h : [English.PolarityParticles.yes] ∈ L.forms) :
     ¬ L.IsClitic root English.PolarityParticles.yes :=
