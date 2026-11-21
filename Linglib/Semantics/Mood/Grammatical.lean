@@ -16,10 +16,6 @@ interrogative or imperative character of a root clause, in form and in meaning, 
 closely related; and both are distinct from reality status, the realis and irrealis marking of
 typological description, whose relation to verbal mood is not understood.
 
-## Main declarations
-
-* `Mood.Grammatical`: the indicative and the subjunctive.
-
 ## References
 
 * [portner-2018]

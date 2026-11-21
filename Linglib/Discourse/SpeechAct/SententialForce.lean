@@ -33,9 +33,9 @@ Zanuttini, Pak and Portner's exhortative.
 
 * The update of some participants' commitments is `Set.piecewise`, and that of one participant's
   is `Function.update`, in which the equations for each force are stated.
-* Portner leaves interrogatives open. A question here refines the inquiry of every participant
-  with the polar question whether `φ`, the question under discussion that the participants share
-  in the discourse contexts of Roberts and of Portner's earlier work.
+* Portner leaves interrogatives open. A question here refines the inquiry of every participant,
+  the question under discussion that the participants share in the discourse contexts of Roberts
+  and of Portner's earlier work.
 * An exclamation has no component and updates nothing.
 * `SpeechAct.Force` has no exhortative, so its update is stated as a function of the context.
 
@@ -55,32 +55,6 @@ open DynamicSemantics Function
 open SpeechAct (Force)
 
 variable {W : Type*}
-
-namespace Mood.Component
-
-/-- The update of a component of a mood state with `φ`: assertion for the context set, promotion
-for the ordering, and the polar question whether `φ` for the inquiry. -/
-def update : Component → State W → (W → Prop) → State W
-  | .informational, c, φ => c.assert φ
-  | .preferential, c, φ => c.promote φ
-  | .inquisitive, c, φ => c.inquire (Setoid.polar {w | φ w})
-
-@[simp] theorem update_informational (c : State W) (φ : W → Prop) :
-    informational.update c φ = c.assert φ := rfl
-
-@[simp] theorem update_preferential (c : State W) (φ : W → Prop) :
-    preferential.update c φ = c.promote φ := rfl
-
-@[simp] theorem update_inquisitive (c : State W) (φ : W → Prop) :
-    inquisitive.update c φ = c.inquire (Setoid.polar {w | φ w}) := rfl
-
-/-- The update of a component meets a state with a fixed content in that component. -/
-theorem isAdditive_update (k : Component) (φ : W → Prop) : IsAdditive (k.update · φ) := by
-  cases k
-  exacts [State.isAdditive_assert φ, State.isAdditive_promote φ,
-    State.isAdditive_inquire (Setoid.polar {w | φ w})]
-
-end Mood.Component
 
 namespace SpeechAct.Force
 

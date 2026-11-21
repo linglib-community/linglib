@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Data.Examples.Grano2024
 public import Linglib.Fragments.Greek.StandardModern.Verbs

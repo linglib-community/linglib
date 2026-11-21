@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Mood.Verbal
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Fragments.Romance.French.Verbs
 public import Linglib.Fragments.Romance.Spanish.Verbs
@@ -71,8 +72,8 @@ def Content.target : Content W → Component
 
 /-- The ordered information state a content induces at a world. -/
 def Content.state : Content W → W → DynamicSemantics.OrderedInformationState W
-  | .single f => stateAt f ⊥
-  | .pair g f => stateAt f g
+  | .single f => .ofBackground f ⊥
+  | .pair g f => .ofBackground f g
 
 /-- The Spanish moods relate a clause to a world through the force of the mood applied to the
 content. A mood and a content that target different components do not combine. -/

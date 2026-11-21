@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Order.Filter.Basic
 public import Linglib.Semantics.Dynamic.OrderedInformationState
-public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Questions.Entailment
 public import Mathlib.Tactic.DeriveFintype
 
@@ -30,10 +29,8 @@ state, so asserting and asking both meet it with a content (`Mood.State.issue_as
 `Mood.State.issue_inquire`). The propositions the issue determines form a Boolean subalgebra,
 `Question.determined`, and they are the propositions constant on the part of each inquiry cell
 inside the context set (`Mood.State.mem_determined_issue`). `Mood.Component` names the three
-coordinates of a mood state.
-
-A modal base and an ordering source induce an ordered information state at each world,
-`Mood.stateAt`, whose optimal worlds are Kratzer's best worlds.
+coordinates of a mood state, and `Mood.Component.update` is the update of each with a
+proposition, the inquiry being refined with the polar question whether it holds.
 
 ## Implementation notes
 
@@ -61,7 +58,6 @@ A modal base and an ordering source induce an ordered information state at each 
 * [roberts-2012]
 * [portner-2004]
 * [groenendijk-stokhof-1984]
-* [kratzer-1981]
 -/
 
 @[expose] public section
@@ -288,33 +284,28 @@ inductive Component where
   | inquisitive
   deriving DecidableEq, Repr, Fintype
 
-/-! ### Kratzer backgrounds induce states
+/-- The update of a component of a mood state with `φ`: assertion for the context set, promotion
+for the ordering, and the polar question whether `φ` for the inquiry. -/
+def Component.update : Component → State W → (W → Prop) → State W
+  | .informational, c, φ => c.assert φ
+  | .preferential, c, φ => c.promote φ
+  | .inquisitive, c, φ => c.inquire (Setoid.polar {w | φ w})
 
-Read as a modal base and an ordering source, the two coordinates of an ordered information state
-make truth throughout the information simple necessity and truth at the optimal worlds truth at
-the best worlds, as Portner glosses his (3). Read the other way, a Kratzer pair is a world-indexed
-family of ordered information states. -/
+@[simp] theorem Component.update_informational (c : State W) (φ : W → Prop) :
+    Component.informational.update c φ = c.assert φ := rfl
 
-open Modality
+@[simp] theorem Component.update_preferential (c : State W) (φ : W → Prop) :
+    Component.preferential.update c φ = c.promote φ := rfl
 
-variable (f g : Background W)
+@[simp] theorem Component.update_inquisitive (c : State W) (φ : W → Prop) :
+    Component.inquisitive.update c φ = c.inquire (Setoid.polar {w | φ w}) := rfl
 
-/-- The ordered information state that a modal base and an ordering source induce at a world. -/
-def stateAt (w : W) : OrderedInformationState W :=
-  ⟨f.accessibleWorlds w, premisePreorder (g w)⟩
-
-@[simp] theorem stateAt_info (w : W) : (stateAt f g w).info = f.accessibleWorlds w := rfl
-
-@[simp] theorem stateAt_order (w : W) : (stateAt f g w).order = premisePreorder (g w) := rfl
-
-theorem bestWorlds_eq_optimal (w : W) : bestWorlds f g w = (stateAt f g w).optimal := rfl
-
-theorem isFixedPt_assert_iff_eventually_simpleNecessity (p : W → Prop) (w : W) :
-    Function.IsFixedPt (·.assert p) (stateAt f g w) ↔ ∀ᶠ v in simpleNecessity f w, p v :=
-  OrderedInformationState.isFixedPt_assert_iff
-
-theorem isRealistic_iff_mem_stateAt_info : f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=
-  Iff.rfl
+/-- The update of a component meets a state with a fixed content in that component. -/
+theorem Component.isAdditive_update (k : Component) (φ : W → Prop) :
+    IsAdditive (k.update · φ) := by
+  cases k
+  exacts [State.isAdditive_assert φ, State.isAdditive_promote φ,
+    State.isAdditive_inquire (Setoid.polar {w | φ w})]
 
 namespace State
 

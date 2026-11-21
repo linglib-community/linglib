@@ -214,6 +214,31 @@ theorem foldl_promote_order (ps : List (W → Prop)) (σ : OrderedInformationSta
     rw [List.foldl_cons, ih, promote_order, show {q | q ∈ p :: ps} = insert p {q | q ∈ ps} by
       ext; simp, Preorder.ofCriteria_insert, inf_assoc, inf_comm (Preorder.ofCriterion p)]
 
+/-! ### The state of a modal base and an ordering source
+
+Read as a modal base and an ordering source, the two coordinates of an ordered information state
+make truth throughout the information simple necessity and truth at the optimal worlds truth at
+the best worlds, as Portner glosses his modals. Read the other way, a Kratzer pair is a
+world-indexed family of ordered information states. -/
+
+section Background
+
+open Modality
+
+variable (f g : Background W) (w : W)
+
+/-- The ordered information state that a modal base and an ordering source induce at a world. -/
+def ofBackground : OrderedInformationState W :=
+  ⟨f.accessibleWorlds w, premisePreorder (g w)⟩
+
+@[simp] theorem ofBackground_info : (ofBackground f g w).info = f.accessibleWorlds w := rfl
+
+@[simp] theorem ofBackground_order : (ofBackground f g w).order = premisePreorder (g w) := rfl
+
+@[simp] theorem optimal_ofBackground : (ofBackground f g w).optimal = bestWorlds f g w := rfl
+
+end Background
+
 end OrderedInformationState
 
 end DynamicSemantics

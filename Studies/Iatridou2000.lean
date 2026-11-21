@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Iatridou2000
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Mood.Grammatical
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
