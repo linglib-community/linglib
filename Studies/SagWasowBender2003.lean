@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.HPSG.Binding
+public import Linglib.Syntax.HPSG.Binding.Description
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Data.Examples.SagWasowBender2003
 public import Linglib.Data.Examples.Readers
@@ -45,7 +45,7 @@ Principle and the subject-extraction rule are not modelled.
 
 namespace SagWasowBender2003
 
-open HPSG.RSRL HPSG.Construction
+open HPSG HPSG.RSRL HPSG.Construction
 
 /-- The rows on a topic. -/
 def probing (t : Examples.Topic) : List Datum :=

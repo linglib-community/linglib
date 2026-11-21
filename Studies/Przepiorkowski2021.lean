@@ -82,7 +82,7 @@ end Quantification
 
 section Binding
 
-open HPSG.RSRL.Binding
+open HPSG.Binding
 open SagWasowBender2003 (clause)
 
 /-- At the subject of a clause some entity of the universe is a sign, but no component of the
@@ -95,10 +95,10 @@ example : (clause .ana .susan .susan .susan).SatisfiesOn Set.univ (fun _ ↦ .sy
 /-- The utterance *Susan likes herself* is a rooted model of the binding principles, and *Susan
 likes himself* is not: the masculine reflexive has an index of its own, the gender being the
 index's. -/
-example : ModelsFO ((clause .ana .susan .susan .susan).generated .root) Binding.grammar ∧
+example : ModelsFO ((clause .ana .susan .susan .susan).generated .root) HPSG.Binding.grammar ∧
     ¬ ModelsFO ((clause .ana .pron .susan ⟨.third, .sing, .masc⟩).generated .root)
-      Binding.grammar := by
-  have hcf : ∀ d ∈ Binding.grammar, d.toFormula.IsColonFree := by
+      HPSG.Binding.grammar := by
+  have hcf : ∀ d ∈ HPSG.Binding.grammar, d.toFormula.IsColonFree := by
     simp only [Grammar.mem_ofList]; decide
   rw [modelsFO_generated_iff_of_isColonFree _ hcf, modelsFO_generated_iff_of_isColonFree _ hcf]
   exact ⟨(SagWasowBender2003.grammatical_clause_ana_iff (by simp) _ _).2 rfl,

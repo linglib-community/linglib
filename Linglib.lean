@@ -832,7 +832,6 @@ import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Valency
-import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
