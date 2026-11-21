@@ -20,6 +20,8 @@ unpaired when each member of the second is paired with at most one of the first:
 the family less the matching number of `R`. It is the least number of violations of MAX among the
 correspondences between the positions of the two families that lie within `R` and satisfy
 UNIFORMITY (`Constraint.deficiency_le_maxViol`, `Constraint.exists_maxViol_eq_deficiency`).
+Alignment along `R` is MAX of the largest such relation, the correspondence of all pairs of
+positions related by `R` (`Constraint.align_eq_maxViol`).
 
 Pairing demands at least as much as alignment along the same relation, and no more than alignment
 along a relation contained in it that relates no two members to one:
@@ -62,6 +64,31 @@ theorem deficiency_le_align {S : β → γ → Prop} [DecidableRel S] {x : List 
   omega
 
 variable {l : List β} {m : List γ}
+
+omit [DecidableEq γ] in
+/-- Alignment along `R` is MAX of the correspondence of all pairs of positions related by `R`. -/
+theorem align_eq_maxViol (R : β → γ → Prop) [DecidableRel R] (l : List β) (m : List γ) :
+    align R (l, m) = Correspondence.maxViol
+      (Finset.univ.filter fun p : Fin l.length × Fin m.length ↦ R l[p.1] m[p.2]) := by
+  have hset : Finset.univ \ (Finset.univ.filter
+      fun p : Fin l.length × Fin m.length ↦ R l[p.1] m[p.2]).image Prod.fst =
+        Finset.univ.filter fun i : Fin l.length ↦ ∀ b ∈ m, ¬R l[i] b := by
+    ext i
+    simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_image, Finset.mem_filter,
+      Prod.exists, exists_and_right, exists_eq_right, not_exists]
+    exact ⟨fun h b hb ↦ by obtain ⟨j, rfl⟩ := List.mem_iff_get.1 hb; exact h j,
+      fun h j ↦ h _ (List.get_mem ..)⟩
+  have hcount : l.countP (fun a ↦ ∀ b ∈ m, ¬R a b) =
+      ((List.finRange l.length).filter fun i ↦ ∀ b ∈ m, ¬R l[i] b).length := by
+    calc l.countP (fun a ↦ ∀ b ∈ m, ¬R a b)
+        = ((List.finRange l.length).map l.get).countP fun a ↦ ∀ b ∈ m, ¬R a b := by
+          rw [List.map_get_finRange]
+      _ = _ := by rw [List.countP_map, List.countP_eq_length_filter]; rfl
+  rw [Correspondence.maxViol, hset, align, hcount,
+    ← List.toFinset_card_of_nodup ((List.nodup_finRange _).filter _)]
+  congr 1
+  ext i
+  simp
 
 /-- A correspondence between the positions of two families that lies within `R` and violates
 UNIFORMITY nowhere violates MAX at least `deficiency R` times. -/
