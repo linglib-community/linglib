@@ -165,42 +165,56 @@ instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls 
 
 /-! ### Question particles (§1.3) -/
 
-/-- A particle's layer is read off its embedding distribution (20): CP if it is licensed in
-subordination, otherwise PerspP if it is licensed in quasi-subordination, otherwise SAP if it is
-licensed in matrix clauses. -/
+/-- The three types of interrogative particle: a Q-particle types its clause, as Japanese *ka*
+does, a polar question particle goes with polar questions, as Hindi-Urdu *kya:* does, and a meta
+question particle asks about the question, as Japanese *kke* and English *quick* do. -/
+inductive ParticleType
+  | qParticle
+  | polarQuestionParticle
+  | metaQuestionParticle
+  deriving DecidableEq, Repr, Fintype
+
+/-- (20): The layer at which each type of particle sits. -/
+def ParticleType.layer : ParticleType → PeripheryLayer
+  | .qParticle => .cp
+  | .polarQuestionParticle => .perspP
+  | .metaQuestionParticle => .sap
+
+/-- The distribution a type of particle has: with each sentence type it goes with, it may occur in
+exactly the recorded contexts that embed at least its layer, and a Q-particle is obligatory in
+subordinated clauses. -/
+def ParticleType.Predicts (k : ParticleType) (d : Clause.Distribution) : Prop :=
+  (∀ t ∈ d.types, ∀ e, (t, e) ∈ d.recorded → ((t, e) ∈ d.possible ↔ k.layer ≤ layerOfContext e)) ∧
+    (k = .qParticle → ∀ t ∈ d.types, (t, .subordinated) ∈ d.required)
+
+instance (k : ParticleType) (d : Clause.Distribution) : Decidable (k.Predicts d) := by
+  unfold ParticleType.Predicts; infer_instance
+
+/-- The type of each particle of (15) to (19). -/
+def particleTypes : List (Clause.Marker × ParticleType) :=
+  [(ka, .qParticle), (kya, .polarQuestionParticle), (kke, .metaQuestionParticle),
+   (quick, .metaQuestionParticle)]
+
+/-- The distribution the fragments record for each particle is the one its type predicts: *ka*
+everywhere and obligatorily under subordination, *kya:* in root and quasi-subordinated clauses,
+*kke* and *quick* in root clauses and quotations. -/
+theorem predicts_distribution : ∀ x ∈ particleTypes, x.2.Predicts x.1.distribution := by
+  decide
+
+/-- No other type predicts the distribution of a particle. -/
+theorem predicts_iff :
+    ∀ x ∈ particleTypes, ∀ k : ParticleType, k.Predicts x.1.distribution ↔ k.layer = x.2.layer := by
+  decide
+
+/-- The layer read off a particle's distribution: CP if it may occur under subordination,
+otherwise PerspP if under quasi-subordination, otherwise SAP if in a root clause. -/
 def layerOf (p : Clause.Marker) : Option PeripheryLayer :=
   if .subordinated ∈ p.distribution.contexts then some .cp
   else if .quasiSubordinated ∈ p.distribution.contexts then some .perspP
   else if .matrix ∈ p.distribution.contexts then some .sap
   else none
 
--- (15), (19)
-theorem layers_derived :
-    layerOf ka = some .cp ∧ layerOf kya = some .perspP ∧
-      layerOf kke = some .sap ∧ layerOf quick = some .sap := by
-  decide
-
-/-- A particle follows its layer when, with each sentence type it goes with, it may occur in
-exactly the recorded contexts that embed at least its layer. -/
-def FollowsLayer (p : Clause.Marker) : Prop :=
-  ∀ l ∈ layerOf p, ∀ t ∈ p.distribution.types, ∀ e, (t, e) ∈ p.distribution.recorded →
-    ((t, e) ∈ p.distribution.possible ↔ l ≤ layerOfContext e)
-
-instance (p : Clause.Marker) : Decidable (FollowsLayer p) := by
-  unfold FollowsLayer; infer_instance
-
-/-- The question particles of Japanese, Hindi-Urdu and English follow their layers: each may
-occur wherever the clause is at least as large as the layer it belongs to. -/
-theorem followsLayer :
-    ∀ p ∈ [ka, Japanese.Particles.no_, kke, Japanese.Particles.daroo, kya,
-      HindiUrdu.Particles.ya_nahi, quick], FollowsLayer p := by
-  decide
-
-/-- The subordinators *ki* and *koto* do not follow a layer: they occur in embedded clauses and
-are excluded from root clauses, the largest. -/
-theorem not_followsLayer_subordinators :
-    ¬ FollowsLayer HindiUrdu.Particles.ki.toMarker ∧
-      ¬ FollowsLayer Japanese.Particles.koto.toMarker := by
+theorem layerOf_eq : ∀ x ∈ particleTypes, layerOf x.1 = some x.2.layer := by
   decide
 
 /-- The complementizers type the clauses their distributions admit: *koto* declaratives, and
