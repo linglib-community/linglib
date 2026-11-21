@@ -50,8 +50,8 @@ fills [the cells that markedness and naturalness allow](##mem_attestedCells_iff)
 * A ditransitive is the head `v◊cause` (29) with the root adjoined (36). The possibility operator
   of the head is a relation `prospect` between a causing event and the states it may bring
   about, which contains the composite of `cause` and `become` since an actual result is a
-  possible one. A root class is the result its root entails as a function of the template's
-  (`DitransitiveRoot.result`), and the result-denial rows of chapter 3 are read by
+  possible one. A ditransitive root class is the result its root entails as a function of the
+  template's (`Examples.RootClass.result?`), and the result-denial rows of chapter 3 are read by
   `resultDenial_rows`. In the causative of chapter 4 the template entails the result whatever
   the root (`causative_denote_le`). The object-deletion row is not read; the rows of the three
   attachments of *again* are read by `attachment_rows`.
@@ -159,23 +159,14 @@ theorem diamond_become_of_againAt_state_ne_undefined {R : SetRel State State} {s
     ◇[R] (◇[M.become.inv] ⊤) s :=
   diamond_mono R hres s (again_ne_undefined_iff.1 h)
 
-/-- The three attachment sites of *again* (27). -/
-inductive Site
-  /-- The root, for the restitutive reading. -/
-  | root
-  /-- `vbecome`, for the repetitive reading over the change. -/
-  | vBecome
-  /-- `vcause`, for the repetitive reading over the causation. -/
-  | vCause
-  deriving DecidableEq
-
-/-- The subterm of the causative template at a site. -/
-def Site.template : Site → Σ σ, Template σ
+/-- The subterm of the causative template at an attachment site of *again* (27). -/
+def Examples.Attachment.template : Examples.Attachment → Σ σ, Template σ
   | .root => ⟨_, .state⟩
   | .vBecome => ⟨_, .achievement⟩
   | .vCause => ⟨_, causative⟩
 
-theorem Site.isSubterm (s : Site) : s.template.2.IsSubterm causative := by
+theorem Examples.Attachment.isSubterm (s : Examples.Attachment) :
+    s.template.2.IsSubterm causative := by
   cases s
   · exact .caused (.become (.refl _))
   · exact .caused (.refl _)
@@ -400,33 +391,24 @@ theorem ditransitive_le_of_entailsCausedResult (h : M.EntailsCausedResult Q r) (
 
 end Ditransitive
 
-/-- The classes of ditransitive root of chapter 3. -/
-inductive DitransitiveRoot
-  /-- Roots of caused possession, as of *give* (39). -/
-  | truePossession
-  /-- Roots of transfer of possession by motion, as of *hand* (49). -/
-  | transferByMotion
-  /-- Release roots, as of *send* and *throw* (52). -/
-  | release
-  deriving DecidableEq
-
-/-- The result a root of the class entails, with `p` the result of the template and `q` a
-further description of a state: the template's result, that result reached by motion, or the
-theme's leaving the causer. -/
-def DitransitiveRoot.result {State : Type*} (p q : State → Prop) :
-    DitransitiveRoot → State → Prop
-  | .truePossession => p
-  | .transferByMotion => p ⊓ q
-  | .release => q
+/-- The result a ditransitive root of the class entails, with `p` the result of the template and
+`q` a further description of a state: the template's result (39), that result reached by motion
+(49), or the theme's leaving the causer (52). -/
+def Examples.RootClass.result? {State : Type*} (p q : State → Prop) :
+    Examples.RootClass → Option (State → Prop)
+  | .truePossession => some p
+  | .transferByMotion => some (p ⊓ q)
+  | .release => some q
+  | .propertyConcept | .result => none
 
 /-- A ditransitive with a root of the class survives the denial of the template's result when
 in some interpretation the root's manner entails its caused result and an event of the
 ditransitive brings about no state of the template's result. -/
-def DitransitiveRoot.Deniable (c : DitransitiveRoot) : Prop :=
+def Examples.RootClass.Deniable (c : Examples.RootClass) : Prop :=
   ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation State Event)
     (prospect : SetRel Event State) (θ : Unit → Event → Prop) (p q : State → Prop)
     (Q : Event → Prop),
-    M.cause ○ M.become ⊆ prospect ∧ M.EntailsCausedResult Q (c.result p q) ∧
+    M.cause ○ M.become ⊆ prospect ∧ (∃ r ∈ c.result? p q, M.EntailsCausedResult Q r) ∧
       ∃ v, ditransitive prospect θ p Q () v ∧ ¬ ◇[M.cause] (◇[M.become] p) v
 
 /-- (52): a throwing `false` causes a change `true` into the state `false`, in which the theme
@@ -435,15 +417,20 @@ def thrown : ArgumentStructure.EventStructure.Interpretation Bool Bool where
   become := {(e, s) | e = true ∧ s = false}
   cause := {(v, e) | v = false ∧ e = true}
 
-theorem DitransitiveRoot.deniable_iff (c : DitransitiveRoot) : c.Deniable ↔ c = .release := by
-  refine ⟨fun ⟨_, _, M, _, _, _, _, _, _, h, v, hv, hn⟩ ↦ ?_, ?_⟩
+theorem Examples.RootClass.deniable_iff (c : Examples.RootClass) :
+    c.Deniable ↔ c = .release := by
+  refine ⟨fun ⟨_, _, M, _, _, _, _, _, _, ⟨r, hr, h⟩, v, hv, hn⟩ ↦ ?_, ?_⟩
   · cases c
-    · exact absurd (ditransitive_le_of_entailsCausedResult h le_rfl v hv) hn
-    · exact absurd (ditransitive_le_of_entailsCausedResult h inf_le_left v hv) hn
+    · cases hr
+    · cases hr
+    · cases Option.mem_some_iff.1 hr
+      exact absurd (ditransitive_le_of_entailsCausedResult h le_rfl v hv) hn
+    · cases Option.mem_some_iff.1 hr
+      exact absurd (ditransitive_le_of_entailsCausedResult h inf_le_left v hv) hn
     · rfl
   · rintro rfl
     exact ⟨Bool, Bool, thrown, ⊤, ⊤, (· = true), (· = false), (· = false), fun _ _ ↦ trivial,
-      fun _ hv ↦ ⟨true, ⟨hv, rfl⟩, false, ⟨rfl, rfl⟩, rfl⟩, false,
+      ⟨_, rfl, fun _ hv ↦ ⟨true, ⟨hv, rfl⟩, false, ⟨rfl, rfl⟩, rfl⟩⟩, false,
       ⟨⟨trivial, true, trivial, rfl⟩, rfl⟩,
       fun ⟨_, _, _, ⟨_, hs⟩, hp⟩ ↦ Bool.false_ne_true (hs.symm.trans hp)⟩
 
@@ -561,15 +548,27 @@ theorem passes_iff {ks : Root} (g : Diagnostic) :
       fun h ↦ ⟨Unit, Unit, changing, ⊤, fun _ _ ↦ True, ⊥, ⊥, fun _ _ _ _ _ ↦ rfl,
         changing_respects h, (), ⟨trivial, (), trivial, (), trivial, trivial⟩, fun h ↦ h⟩⟩
 
-/-- The signature of a row's root, the least of the class the book assigns it. -/
+/-- The signature of a root class of chapter 2, the least the book assigns it. -/
+def Examples.RootClass.kinds? : Examples.RootClass → Option Root
+  | .propertyConcept => some Root.propertyConcept
+  | .result => some Root.pureResult
+  | .truePossession | .transferByMotion | .release => none
+
+/-- The signature of a row's root, from its root class or its verb class. -/
 def kinds? (d : Datum) : Option Root :=
-  d.parse? "root class" [("property concept", propertyConcept), ("result", pureResult)] <|>
-    d.parse? "verb class" [("manner of killing", fullSpec)]
+  (Examples.rootClass d).bind (·.kinds?) <|>
+    (Examples.verbClass d).map fun | .mannerOfKilling => fullSpec
+
+/-- The diagnostic of a root's entailments that a row's test is. -/
+def Examples.Diagnostic.toDiagnostic? :
+    Examples.Diagnostic → Option BeaversKoontzGarboden2020.Diagnostic
+  | .restitutiveAgain => some .restitutive
+  | .actionDenial => some .actionDenial
+  | .sublexicalAgain | .resultDenial | .objectDeletion => none
 
 /-- The diagnostic a row tests. -/
 def diagnostic? (d : Datum) : Option Diagnostic :=
-  d.parse? "diagnostic" [("change denial", .changeDenial), ("restitutive again", .restitutive),
-    ("action denial", .actionDenial)]
+  (Examples.diagnostic d).bind (·.toDiagnostic?)
 
 /-- A lexicon, an assignment of a signature to the root of each row, fits the judgments when each
 row that tests a diagnostic is acceptable exactly when its root passes it. -/
@@ -581,15 +580,10 @@ theorem rows : Fits fun d ↦ (kinds? d).getD ∅ := by
   simp only [Fits, passes_iff]
   decide
 
-/-- The class of a row's ditransitive root. -/
-def ditransitiveRoot? (d : Datum) : Option DitransitiveRoot :=
-  d.parse? "root class" [("true possession", .truePossession),
-    ("transfer of possession by motion", .transferByMotion), ("release", .release)]
-
 -- chapter 3, (10a), (11a), (48a)
-theorem resultDenial_rows : ∀ d ∈ Examples.all, ∀ c ∈ ditransitiveRoot? d,
-    (d.judgment = .acceptable ↔ c.Deniable) := by
-  simp only [DitransitiveRoot.deniable_iff]
+theorem resultDenial_rows : ∀ d ∈ Examples.all, Examples.diagnostic d = some .resultDenial →
+    ∀ c ∈ Examples.rootClass d, (d.judgment = .acceptable ↔ c.Deniable) := by
+  simp only [Examples.RootClass.deniable_iff]
   decide
 
 /-- No lexicon whose roots carry only states and manners fits the judgments: the Bifurcation
@@ -639,15 +633,12 @@ theorem exists_fits_not_mannerResult :
 
 /-! ### The attachment of *again* -/
 
-/-- The site at which a row attaches *again*. -/
-def site? (d : Datum) : Option Site :=
-  d.parse? "attachment" [("root", .root), ("v_become", .vBecome), ("v_cause", .vCause)]
-
 -- (25), (27): each reading of *Mary flattened the rug again* is available, *again* attaching
 -- at a subterm of the causative template (see `exists_denote_of_againAt_ne_undefined`)
-theorem attachment_rows : ∀ d ∈ Examples.all, ∀ s ∈ site? d,
+theorem attachment_rows : ∀ d ∈ Examples.all, ∀ s ∈ Examples.attachment d,
     d.judgment = .acceptable ∧ s.template.2.IsSubterm causative := by
-  have h : ∀ d ∈ Examples.all, ∀ s ∈ site? d, d.judgment = .acceptable := by decide
+  have h : ∀ d ∈ Examples.all, ∀ s ∈ Examples.attachment d, d.judgment = .acceptable := by
+    decide
   exact fun d hd s hs ↦ ⟨h d hd s hs, s.isSubterm⟩
 
 /-! ### The root hypothesis against Levin's class profiles -/
