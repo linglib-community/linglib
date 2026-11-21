@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.List.Dedup
 public import Mathlib.Data.List.Duplicate
 public import Mathlib.Data.List.Infix
@@ -32,6 +33,7 @@ a word is a free morph, a clitic, or a root with its affixes.
 * `Comparative.OccursOn`: occurrence on a root through candidate affixes.
 * `Comparative.Inventory.AffixStep`, `Comparative.Inventory.IsAffix`: one step of the definition
   of an affix, and its greatest solution.
+* `Comparative.Inventory.hostClasses`: the classes of the roots a morph stands next to.
 * `Comparative.Inventory.IsClitic`, `Comparative.Inventory.IsRequiredAffix`,
   `Comparative.Inventory.IsWord`: clitics, required affixes and words.
 
@@ -41,8 +43,9 @@ a word is a free morph, a clitic, or a root with its affixes.
   inventory.
 * `Comparative.Inventory.setOf_isAffix_eq_gfp`: when the roots of every free form are adjacent,
   the affixes are the greatest fixed point of the step.
-* `Comparative.Inventory.IsAffix.rootClass_eq`: the roots next to which an affix stands are of
-  one class.
+* `Comparative.Inventory.IsAffix.rootClass_eq`,
+  `Comparative.Inventory.IsAffix.card_hostClasses_le_one`: the roots next to which an affix
+  stands are of one class.
 
 ## Implementation notes
 
@@ -318,6 +321,46 @@ theorem IsAffix.rootClass_eq {x y₁ y₂ : M} {w₁ w₂ : List M} {i₁ i₂ :
   have h₂ := (hc w₂ hw₂ i₂ (List.getElem?_eq_some_iff.1 hx₂).1 hx₂).2 y₂ ho₂.mem
     (ho₂.mono (Set.empty_subset A))
   rw [h₁, h₂]
+
+section HostClasses
+
+variable (L root) [DecidableEq M] [DecidablePred root]
+
+/-- The classes of the roots next to which the morph stands in the free forms. -/
+def hostClasses (x : M) : Finset RootClass :=
+  (L.forms.flatMap fun w ↦ (List.range w.length).flatMap fun i ↦
+    if w[i]? = some x then
+      (w.filter fun y ↦ decide (OccursOn root ∅ w i y)).filterMap L.rootClass
+    else []).toFinset
+
+variable {L root}
+
+theorem mem_hostClasses {x : M} {c : RootClass} :
+    c ∈ L.hostClasses root x ↔
+      ∃ w ∈ L.forms, ∃ i, w[i]? = some x ∧ ∃ y, OccursOn root ∅ w i y ∧ L.rootClass y = some c := by
+  simp only [hostClasses, List.mem_toFinset, List.mem_flatMap, List.mem_range]
+  constructor
+  · rintro ⟨w, hw, i, -, h⟩
+    split_ifs at h with hx
+    · obtain ⟨y, hy, hc⟩ := List.mem_filterMap.1 h
+      exact ⟨w, hw, i, hx, y, of_decide_eq_true (List.mem_filter.1 hy).2, hc⟩
+    · simp at h
+  · rintro ⟨w, hw, i, hx, y, ho, hc⟩
+    refine ⟨w, hw, i, (List.getElem?_eq_some_iff.1 hx).1, ?_⟩
+    rw [if_pos hx]
+    exact List.mem_filterMap.2 ⟨y, List.mem_filter.2 ⟨ho.mem, decide_eq_true ho⟩, hc⟩
+
+/-- An affix stands next to roots of at most one class. -/
+theorem IsAffix.card_hostClasses_le_one {x : M} (h : L.IsAffix root x) :
+    (L.hostClasses root x).card ≤ 1 := by
+  refine Finset.card_le_one.2 fun a ha b hb ↦ ?_
+  obtain ⟨w₁, hw₁, i₁, hx₁, y₁, ho₁, hc₁⟩ := mem_hostClasses.1 ha
+  obtain ⟨w₂, hw₂, i₂, hx₂, y₂, ho₂, hc₂⟩ := mem_hostClasses.1 hb
+  have := h.rootClass_eq hw₁ hw₂ hx₁ hx₂ ho₁ ho₂
+  rw [hc₁, hc₂] at this
+  exact Option.some.inj this
+
+end HostClasses
 
 /-! ### Clitics, required affixes and words -/
 

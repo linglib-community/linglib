@@ -6,6 +6,7 @@ public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Morphology.Word.Comparative
 public import Studies.Haspelmath2021c
 public import Studies.Haspelmath2023
+public import Studies.ZwickyPullum1983
 
 /-!
 # Haspelmath (2023): Types of clitics in the world's languages
@@ -16,8 +17,9 @@ the beginning, a proclitic when it can occur at the beginning but not at the end
 when it can occur at both, and an interclitic when it can occur at neither. A second-position
 clitic must occur directly after the first word of its clause. These are properties of a morph's
 distribution over the free forms of its language, `Morphology.Comparative.Inventory`, and this
-file checks them against the paper's examples and against the attachment the fragments record
-for the same morphs.
+file checks them against the paper's examples, and states where they agree with the attachment
+the fragments record for the same morphs, a label of the source, and with Zwicky and Pullum's
+criterion of selection, of which lack of word-class selectivity is the first.
 
 ## Main definitions
 
@@ -25,6 +27,8 @@ for the same morphs.
   types of a clitic.
 * `Haspelmath2023c.IsSecondPosition`: a clitic that follows the first word of every free form
   it occurs in.
+* `Haspelmath2023c.selection`: Zwicky and Pullum's degree of selection of a morph, read off the
+  classes of the roots it stands next to.
 
 ## Implementation notes
 
@@ -35,6 +39,8 @@ for the same morphs.
 * The Turkish verb forms are segmented into a stem and the past suffix, which the paper writes
   unsegmented. An adverb is a free morph with no root class.
 * The roots of each inventory are its contentful morphs, as in `Studies.Haspelmath2023`.
+* The degree of selection is low when a morph stands next to roots of more than one class and a
+  single category otherwise; a closed list of stems is not read off the free forms.
 
 ## TODO
 
@@ -48,6 +54,7 @@ for the same morphs.
 * [haspelmath-2023c]
 * [haspelmath-2023]
 * [haspelmath-2021c]
+* [zwicky-pullum-1983]
 -/
 
 @[expose] public section
@@ -174,7 +181,8 @@ theorem li_not_isAffix : ¬ russian.IsAffix russian.IsContentful li := fun h ↦
   revert this
   decide
 
-/-- Russian *li* is a second-position clitic, the placement the fragment records. -/
+/-- On these forms Russian *li* is a second-position clitic by the definition, and the fragment
+records that placement. -/
 theorem li_isSecondPosition :
     (∀ m ∈ Russian.QuestionParticles.li.morphs,
         IsSecondPosition russian russian.IsContentful m) ∧
@@ -215,8 +223,8 @@ def turkish : Inventory Morph where
      dun :: Turkish.QuestionParticles.mi.morphs]
   rootClass m := if m = gel ∨ m = ol then some .action else if m = ali then some .object else none
 
-/-- Turkish *mI* follows a verb, a noun and an adverb and ends each question, so it is an
-enclitic, the attachment the fragment records. -/
+/-- Turkish *mI* follows a verb, a noun and an adverb and ends each question, so on these forms
+it is an enclitic by the definition, and the fragment labels it one. -/
 theorem mi_isEnclitic :
     ∀ m ∈ Turkish.QuestionParticles.mi.morphs,
       IsEnclitic turkish turkish.IsContentful m ∧ m.kind = .bound .after .clitic := by
@@ -293,5 +301,42 @@ theorem yes_not_isClitic (L : Inventory Morph) (root : Morph → Prop)
     (h : [English.PolarityParticles.yes] ∈ L.forms) :
     ¬ L.IsClitic root English.PolarityParticles.yes :=
   not_isClitic_of_mem_forms h
+
+/-! ### Selection
+
+Zwicky and Pullum's first criterion is that clitics show a low degree of selection with respect
+to their hosts and affixes a high one, and the lack of word-class selectivity is that criterion
+on the classes of roots. -/
+
+section Selection
+
+open Morphology.Diagnostics
+
+variable {M : Type*} [DecidableEq M] (L : Inventory M) (root : M → Prop) [DecidablePred root]
+
+/-- The degree of selection of a morph is low when it stands next to roots of more than one
+class in the free forms. -/
+def selection (x : M) : SelectionDegree :=
+  if 2 ≤ (L.hostClasses root x).card then .low else .singleCategory
+
+variable {L root}
+
+/-- An affix shows a high degree of selection. -/
+theorem isHighSelection_of_isAffix {x : M} (h : L.IsAffix root x) :
+    (selection L root x).IsHighSelection := by
+  have := h.card_hostClasses_le_one
+  simp only [selection, SelectionDegree.IsHighSelection]
+  split_ifs with h2
+  · omega
+  · simp
+
+end Selection
+
+open Haspelmath2023 (s_gen) in
+theorem selection_eq :
+    selection howevers howevers.IsContentful ed = ZwickyPullum1983.affixEd.selection ∧
+      selection genitives genitives.IsContentful s_gen = ZwickyPullum1983.cliticS.selection ∧
+      selection howevers howevers.IsContentful however = .low := by
+  decide
 
 end Haspelmath2023c
