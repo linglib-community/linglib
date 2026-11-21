@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.HPSG.Subinterpretation
+public import Linglib.Syntax.HPSG.FeatureStructure
 public import Linglib.Core.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Binding.Basic
@@ -31,7 +32,9 @@ person, number and gender between them. The agreement bundle of a nominal object
 `HPSG.RSRL.Binding.agreement`, reads the three off the sorts of its index's values, a more
 specific sort giving a more specific slot (`HPSG.RSRL.Binding.Srt.antitone_toGender`), and
 coindexed nominal objects have the same agreement bundle
-(`HPSG.RSRL.Binding.agreement_eq_of_coindexed`). The binding principles therefore mention no
+(`HPSG.RSRL.Binding.agreement_eq_of_coindexed`). The bundle is monotone in information: a nominal
+object that subsumes another has the less specific bundle
+(`HPSG.RSRL.Binding.agreement_le_of_subsumes`). The binding principles therefore mention no
 agreement: an anaphor whose index differs from its antecedent's in person, number or gender is
 not coindexed with it.
 
@@ -444,5 +447,34 @@ theorem agreement_eq_of_coindexed {x y : U} (h : Coindexed I x y) :
 theorem compat_agreement_of_coindexed {x y : U} (h : Coindexed I x y) :
     Compat (agreement I x) (agreement I y) :=
   agreement_eq_of_coindexed h ▸ compat_self _
+
+private theorem elim_le_elim_of_subsumes {γ : Type*} [PartialOrder γ] [OrderBot γ]
+    {V : Type*} {J : Interpretation sig V} {h : U → V} {x : U} {f : Srt → γ} (hf : Antitone f)
+    (hS : ∀ q, I.IsComponentOf x q → J.S (h q) ≤ I.S q)
+    (hA : ∀ α q q', I.IsComponentOf x q → I.A α q = some q' → J.A α (h q) = some (h q'))
+    (β : Attr) :
+    ((I.A .IDX x).bind (I.A β)).elim ⊥ (fun v ↦ f (I.S v)) ≤
+      ((J.A .IDX (h x)).bind (J.A β)).elim ⊥ fun v ↦ f (J.S v) := by
+  rcases hi : I.A .IDX x with _ | i
+  · simp
+  · have hxi : I.IsComponentOf x i := .single ⟨.IDX, hi⟩
+    rw [hA .IDX x i .refl hi, Option.bind_some, Option.bind_some]
+    rcases hv : I.A β i with _ | v
+    · simp
+    · rw [hA β i v hxi hv]
+      exact hf (hS v (hxi.tail ⟨β, hv⟩))
+
+/-- A nominal object that subsumes another has the less specific agreement bundle: the map from
+the feature structures of the fragment to agreement bundles is monotone in information. -/
+theorem agreement_le_of_subsumes {V : Type*} {J : Interpretation sig V} {x : U} {y : V}
+    (h : I.Subsumes J x y) : agreement I x ≤ agreement J y := by
+  obtain ⟨f, rfl, hS, hA⟩ := h
+  intro d
+  cases d
+  · exact elim_le_elim_of_subsumes Srt.antitone_toPerson hS hA .PER
+  · exact elim_le_elim_of_subsumes Srt.antitone_toNumber hS hA .NUM
+  · exact elim_le_elim_of_subsumes Srt.antitone_toGender hS hA .GEND
+  · exact le_rfl
+  · exact le_rfl
 
 end HPSG.RSRL.Binding
