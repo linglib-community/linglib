@@ -4,6 +4,7 @@ public import Linglib.Syntax.HPSG.Signature
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Basic.FunLike.Embedding
+public import Linglib.Syntax.Feature.Structure
 
 /-!
 # RSRL interpretations
@@ -396,6 +397,53 @@ def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
 @[simp] theorem comp_apply (f' : Embedding J K) (u : U) : f'.comp f u = f' (f u) := rfl
 
 end Embedding
+
+/-! ### The feature structure of an entity -/
+
+section FeatureStructure
+
+variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} {U : Type v} {V : Type w}
+  (I : Interpretation Sig U) {J : Interpretation Sig V} {u : U}
+
+/-- An interpretation as a partial Moore machine over the attributes: the transition for an
+attribute is its partial function, and the output at an entity is its sort, in the order in
+which the more specific sort is the greater. -/
+def toPartialMoore : PartialMoore U Sig.Attr Srtᵒᵈ where
+  step q α := I.A α q
+  out q := OrderDual.toDual (I.S q)
+
+/-- The feature structure of an entity, whose nodes are its components. -/
+abbrev featureStructure (u : U) :
+    FeatureStructure {q // I.toPartialMoore.Reaches u q} Sig.Attr Srtᵒᵈ :=
+  I.toPartialMoore.featureStructure u
+
+variable {I}
+
+/-- Following a path from an entity is reading it in the machine of the interpretation. -/
+theorem evalFrom_toPartialMoore (g : ℕ → U) (u : U) (p : Path Sig) :
+    I.toPartialMoore.evalFrom u p = I.termDenot g (.path p) u := by
+  induction p using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton p α ih =>
+    rw [PartialMoore.evalFrom_append_singleton, ih, Term.path_concat, termDenot_feat]
+    rfl
+
+/-- The components of an entity are the states its machine reaches from it. -/
+theorem reaches_toPartialMoore_iff {q : U} :
+    I.toPartialMoore.Reaches u q ↔ I.IsComponentOf u q := by
+  rw [isComponentOf_iff_exists_path fun _ ↦ u]
+  simp only [PartialMoore.Reaches, evalFrom_toPartialMoore fun _ ↦ u]
+
+/-- A homomorphism, which keeps sorts and reflects attributes, is in particular a simulation:
+the feature structure of an entity subsumes that of its image. -/
+theorem Hom.simulatedBy (f : Hom I J) (u : U) :
+    I.toPartialMoore.SimulatedBy J.toPartialMoore u (f u) :=
+  ⟨f, rfl, fun q _ ↦ OrderDual.toDual_le_toDual.2 (HomClass.map_S f q).le, fun α q q' _ hα ↦ by
+    show J.A α (f q) = some (f q')
+    rw [HomClass.map_A]
+    exact congrArg (Option.map f) hα⟩
+
+end FeatureStructure
 
 end Interpretation
 
