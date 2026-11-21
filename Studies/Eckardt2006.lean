@@ -100,7 +100,7 @@ theorem beGoingTo_subset_prosp : beGoingTo imm P x w ⊆ PROSP (P x) w :=
 section Inference
 
 variable (hprep : ∀ e e', prepare e e' → Event.Precedes e e')
-  (himm : ∀ x w t e e', go x w e → prepare e e' → t ≤ τ e → imm t e')
+  (himm : ∀ w t e e', go x w e → prepare e e' → t ≤ τ e → imm t e')
 
 include hprep himm
 
@@ -111,7 +111,7 @@ theorem unbounded_goTo_subset_beGoingTo :
     UNBOUNDED (goTo go prepare P x) w ⊆ beGoingTo imm P x w := by
   rintro t ⟨e, hte, hgo, e', hpr, hP⟩
   exact ⟨e', lt_of_le_of_lt (NonemptyInterval.le_def.1 hte).2 (hprep e e' hpr),
-    himm x w t e e' hgo hpr hte, hP⟩
+    himm w t e e' hgo hpr hte, hP⟩
 
 -- (4.50f) and (4.56): the inclusion under the present tense.
 theorem atPoint_goTo_subset :
