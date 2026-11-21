@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # English particles
@@ -47,7 +47,7 @@ namespace English.Particles
 
 /-- *quick* or *quickly* before a question, available in matrix questions and quotations and
 excluded from embedded questions. -/
-def quick : Clause.Particle where
+def quick : Clause.Marker where
   morphs := [.free "quick"]
   anchor := .clause {.initial}
   distribution := fun (c, e) ↦ match c with

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Bulgarian question particles
@@ -29,7 +29,7 @@ namespace Bulgarian.QuestionParticles
 
 /-- ли *li*, the canonical polar question complementizer, an enclitic on the focus of the
 question. -/
-def li : Clause.Particle where
+def li : Clause.Marker where
   morphs := [.encl "li"]
   script := some "ли"
   anchor := .focus .after
@@ -41,7 +41,7 @@ def li : Clause.Particle where
 
 /-- дали *dali*, the clause-initial polar question complementizer, which in a root question
 raises an issue without expecting the addressee to resolve it. -/
-def dali : Clause.Particle where
+def dali : Clause.Marker where
   morphs := [.free "dali"]
   script := some "дали"
   anchor := .clause {.initial}
@@ -52,7 +52,7 @@ def dali : Clause.Particle where
     | _ => none
 
 /-- нима *nima*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def nima : Clause.Particle where
+def nima : Clause.Marker where
   morphs := [.free "nima"]
   script := some "нима"
   anchor := .clause {.initial}

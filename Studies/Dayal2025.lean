@@ -168,7 +168,7 @@ instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls 
 /-- A particle's layer is read off its embedding distribution (20): CP if it is licensed in
 subordination, otherwise PerspP if it is licensed in quasi-subordination, otherwise SAP if it is
 licensed in matrix clauses. -/
-def layerOf (p : Clause.Particle) : Option PeripheryLayer :=
+def layerOf (p : Clause.Marker) : Option PeripheryLayer :=
   if .subordinated ∈ p.distribution.contexts then some .cp
   else if .quasiSubordinated ∈ p.distribution.contexts then some .perspP
   else if .matrix ∈ p.distribution.contexts then some .sap
@@ -182,11 +182,11 @@ theorem layers_derived :
 
 /-- A particle follows its layer when, with each sentence type it goes with, it may occur in
 exactly the recorded contexts that embed at least its layer. -/
-def FollowsLayer (p : Clause.Particle) : Prop :=
+def FollowsLayer (p : Clause.Marker) : Prop :=
   ∀ l ∈ layerOf p, ∀ t ∈ p.distribution.types, ∀ e, (t, e) ∈ p.distribution.recorded →
     ((t, e) ∈ p.distribution.possible ↔ l ≤ layerOfContext e)
 
-instance (p : Clause.Particle) : Decidable (FollowsLayer p) := by
+instance (p : Clause.Marker) : Decidable (FollowsLayer p) := by
   unfold FollowsLayer; infer_instance
 
 /-- The question particles of Japanese, Hindi-Urdu and English follow their layers: each may
@@ -199,7 +199,15 @@ theorem followsLayer :
 /-- The subordinators *ki* and *koto* do not follow a layer: they occur in embedded clauses and
 are excluded from root clauses, the largest. -/
 theorem not_followsLayer_subordinators :
-    ¬ FollowsLayer HindiUrdu.Particles.ki ∧ ¬ FollowsLayer Japanese.Particles.koto := by
+    ¬ FollowsLayer HindiUrdu.Particles.ki.toMarker ∧
+      ¬ FollowsLayer Japanese.Particles.koto.toMarker := by
+  decide
+
+/-- The complementizers type the clauses their distributions admit: *koto* declaratives, and
+*ki* declaratives and questions of every kind. -/
+theorem types_subordinators :
+    Japanese.Particles.koto.types.types = {.declarative} ∧
+      HindiUrdu.Particles.ki.types.types = {.declarative, .polar, .alternative, .constituent} := by
   decide
 
 /-! ### Centering (25)–(26), (42)–(43) -/

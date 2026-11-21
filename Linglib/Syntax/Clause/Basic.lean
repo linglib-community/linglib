@@ -27,8 +27,8 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
 * `Clause.Distribution`: the `Obligatoriness` recorded in each cell.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
-* `Clause.Distribution.types`, `contexts`: the sentence types and the embedding contexts in
-  which the element may occur.
+* `Clause.Distribution.types`, `contexts`, `selection`: the sentence types and the embedding
+  contexts in which the element may occur, and those types as a selection.
 * `Clause.LeftEdge`, `Clause.LeftEdge.Table`: whether a complementizer introduces a clause and
   whether its finite verb is fronted, and the left edges a language admits in each cell.
 * `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
@@ -123,6 +123,12 @@ namespace Distribution
 
 instance : DecidableEq Distribution :=
   inferInstanceAs (DecidableEq (Cell → Option Obligatoriness))
+
+/-- A distribution is shown as its recorded cells. -/
+instance : Repr Distribution :=
+  ⟨fun d _ ↦ repr <|
+    (SentenceType.enumList.flatMap fun t ↦ EmbeddingContext.enumList.map (t, ·)).filterMap
+      fun c ↦ (d c).map (c, ·)⟩
 
 variable (d : Distribution)
 
@@ -281,5 +287,20 @@ instance (sel : Selection) : Decidable sel.IsInterrogative :=
   inferInstanceAs (Decidable (∃ t ∈ sel.types, _))
 
 end Selection
+
+/-- The selection of a distribution is the sentence types in which the element may occur, `⊥`
+when it may occur in none. -/
+def Distribution.selection (d : Distribution) : Selection :=
+  if h : d.types.Nonempty then .of d.types h else ⊥
+
+@[simp] theorem Distribution.types_selection (d : Distribution) : d.selection.types = d.types := by
+  unfold Distribution.selection
+  split_ifs with h
+  · rfl
+  · simpa using (Finset.not_nonempty_iff_eq_empty.1 h).symm
+
+theorem Distribution.mem_selection {d : Distribution} {t : SentenceType} :
+    t ∈ d.selection ↔ ∃ e, (t, e) ∈ d.possible := by
+  rw [Selection.mem_iff, types_selection, mem_types]
 
 end Clause

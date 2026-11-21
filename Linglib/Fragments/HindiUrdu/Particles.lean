@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Hindi-Urdu interrogative particles
@@ -14,8 +14,8 @@ questions and occupies a projection above CP (Bhatt and Dayal's ForceP,
 Dayal's later PerspP); it embeds only in quasi-subordination. Since
 nothing clause-types a bare embedded polar clause, subordinated polar
 questions require the overt alternative *ya: nahĩ:* "or not". This file
-provides the three particles as `Clause.Particle` values with recorded
-licensing distributions.
+provides *kya:* and *ya: nahĩ:* as `Clause.Marker` values and *ki* as a
+`Complementizer`, with recorded licensing distributions.
 
 ## Main declarations
 
@@ -36,7 +36,7 @@ namespace HindiUrdu.Particles
 
 /-- *ki* is the general subordinator, distinct from the homophonous
 disjunction `HindiUrdu.Coordination.ki` of alternative questions. -/
-def ki : Clause.Particle where
+def ki : Complementizer where
   morphs := [.free "ki"]
   anchor := .clause {.initial}
   distribution := fun (c, e) ↦ match c with
@@ -49,7 +49,7 @@ def ki : Clause.Particle where
     | _ => none
 
 /-- *kya:* is a polar question particle. -/
-def kya : Clause.Particle where
+def kya : Clause.Marker where
   morphs := [.free "kya:"]
   anchor := .clause .univ
   distribution
@@ -62,7 +62,7 @@ def kya : Clause.Particle where
 
 /-- *ya: nahĩ:* "or not" is the overt disjunct forming a polar
 alternative question. -/
-def ya_nahi : Clause.Particle where
+def ya_nahi : Clause.Marker where
   morphs := [.free "ya:", .free "nahĩ:"]
   anchor := .clause {.final}
   distribution

@@ -256,7 +256,7 @@ def Language.defaultStrategy : Language → Strategy
   | .bulgarian | .russian => .verbAttachedParticle
 
 /-- The question particles of each language's fragment. -/
-def Language.particles : Language → List Clause.Particle
+def Language.particles : Language → List Clause.Marker
   | .czech | .slovak | .upperSorbian => []
   | .slovenian =>
     [Slovenian.QuestionParticles.ali, Slovenian.QuestionParticles.a,
@@ -347,7 +347,7 @@ inductive SerbianPQForm
   deriving DecidableEq, Repr, Fintype
 
 /-- The fragment marker of each strategy. -/
-def SerbianPQForm.particle : SerbianPQForm → Clause.Particle
+def SerbianPQForm.particle : SerbianPQForm → Clause.Marker
   | .daLiPPQ => Serbian.QuestionParticles.daLi
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi
   | .hnpq => Serbian.QuestionParticles.li
@@ -463,7 +463,7 @@ theorem razve_root_li_embedded :
   decide
 
 /-- The kin of *razve* the chapter lists across Slavic, whose semantics it leaves open. -/
-def razveKin : List Clause.Particle :=
+def razveKin : List Clause.Marker :=
   [Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
    Bulgarian.QuestionParticles.nima, Macedonian.QuestionParticles.zar,
    Serbian.QuestionParticles.zar, Czech.Particles.copak]

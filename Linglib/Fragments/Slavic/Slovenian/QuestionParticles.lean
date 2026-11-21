@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Slovene question particles
@@ -20,7 +20,7 @@ excluded from the quiz scenario ([simik-2024] §4.1). The strategy profile is in
 namespace Slovenian.QuestionParticles
 
 /-- *ali*, the clause-initial polar question particle. -/
-def ali : Clause.Particle where
+def ali : Clause.Marker where
   morphs := [.free "ali"]
   anchor := .clause {.initial}
   distribution
@@ -29,7 +29,7 @@ def ali : Clause.Particle where
     | _ => none
 
 /-- *a*, the colloquial clause-initial polar question particle. -/
-def a : Clause.Particle where
+def a : Clause.Marker where
   morphs := [.free "a"]
   anchor := .clause {.initial}
   distribution
@@ -37,7 +37,7 @@ def a : Clause.Particle where
     | _ => none
 
 /-- *kaj* (literally 'what'), the colloquial clause-initial polar question particle. -/
-def kaj : Clause.Particle where
+def kaj : Clause.Marker where
   morphs := [.free "kaj"]
   anchor := .clause {.initial}
   distribution := a.distribution

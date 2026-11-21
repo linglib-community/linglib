@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Turkish question particles
@@ -49,7 +49,7 @@ and the conditional copula -(y)sA has no example with *mI*.
 namespace Turkish.QuestionParticles
 
 /-- *mI*, the enclitic that forms yes/no and alternative questions. -/
-def mi : Clause.Particle where
+def mi : Clause.Marker where
   morphs := [.encl "mI"]
   anchor := .focus .after
   distribution

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Serbian question particles
@@ -27,7 +27,7 @@ namespace Serbian.QuestionParticles
 
 /-- *li* is the enclitic polar question marker, hosted by the finite verb in
 its full form, which it draws to the front of the clause. -/
-def li : Clause.Particle where
+def li : Clause.Marker where
   morphs := [.encl "li"]
   anchor := .clause {.second}
   distribution
@@ -38,14 +38,14 @@ def li : Clause.Particle where
 
 /-- *da li* is the sentence-initial polar question marker, the full form of
 *li* that leaves the order of the remaining clause free. -/
-def daLi : Clause.Particle where
+def daLi : Clause.Marker where
   morphs := [.free "da", .encl "li"]
   anchor := .clause {.initial}
   distribution := li.distribution
 
 /-- *je li* is the colloquial sentence-initial polar question marker, also
 the tag *je li?*. -/
-def jeLi : Clause.Particle where
+def jeLi : Clause.Marker where
   morphs := [.free "je", .encl "li"]
   anchor := .clause {.initial}
   distribution
@@ -54,7 +54,7 @@ def jeLi : Clause.Particle where
 
 /-- *zar* is the clause-initial mirative particle, kin of Russian *razve*,
 also the tag *zar ne?*. -/
-def zar : Clause.Particle where
+def zar : Clause.Marker where
   morphs := [.free "zar"]
   anchor := .clause {.initial}
   distribution := jeLi.distribution

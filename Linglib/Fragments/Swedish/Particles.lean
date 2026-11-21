@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Swedish particles
@@ -33,7 +33,7 @@ namespace Swedish.Particles
 /-- *väl* — clause-medial modal particle (after the finite verb) of matrix declaratives. That a
 declarative with *väl* is a question and not an assertion is a matter of speech act, not of
 clause type, analysed in `SeeligerRepp2018`. -/
-def val : Clause.Particle where
+def val : Clause.Marker where
   morphs := [.free "väl"]
   anchor := .clause {.medial}
   distribution

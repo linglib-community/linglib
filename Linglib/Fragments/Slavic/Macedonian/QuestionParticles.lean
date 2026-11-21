@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Macedonian question particles
@@ -22,7 +22,7 @@ reported to convey surprise or a negative answer expectation, unlike Bulgarian a
 namespace Macedonian.QuestionParticles
 
 /-- дали *dali*, the clause-initial polar question particle. -/
-def dali : Clause.Particle where
+def dali : Clause.Marker where
   morphs := [.free "dali"]
   script := some "дали"
   anchor := .clause {.initial}
@@ -33,7 +33,7 @@ def dali : Clause.Particle where
 
 /-- ли *li*, the polar question particle enclitic on the fronted verb, whose negated form conveys
 positive epistemic bias ([simik-2024] ex. 32b). -/
-def li : Clause.Particle where
+def li : Clause.Marker where
   morphs := [.encl "li"]
   script := some "ли"
   anchor := .clause {.second}
@@ -43,7 +43,7 @@ def li : Clause.Particle where
     | _ => none
 
 /-- зар *zar*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def zar : Clause.Particle where
+def zar : Clause.Marker where
   morphs := [.free "zar"]
   script := some "зар"
   anchor := .clause {.initial}

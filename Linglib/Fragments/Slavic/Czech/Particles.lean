@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Czech particles
@@ -26,7 +26,7 @@ namespace Czech.Particles
 /-- *náhodou* 'by (any) chance' is, in its particle use, restricted to negative polar questions
 ([stankova-2026] §2.2.1; the adverbial reading 'accidentally' is a separate item, her fn. 3).
 It diagnoses outer negation. -/
-def nahodou : Clause.Particle where
+def nahodou : Clause.Marker where
   morphs := [.free "náhodou"]
   distribution
     | (.declarative, .matrix) => some .excluded
@@ -35,7 +35,7 @@ def nahodou : Clause.Particle where
 
 /-- *ještě* 'yet, still' is an aspectual particle of declaratives and polar questions
 ([stankova-2026] (13)-(14)), and diagnoses inner negation. -/
-def jeste : Clause.Particle where
+def jeste : Clause.Marker where
   morphs := [.free "ještě"]
   distribution
     | (.declarative, .matrix) => some .optional
@@ -44,7 +44,7 @@ def jeste : Clause.Particle where
 
 /-- *fakt* 'really' is an emphatic particle of declaratives and polar questions
 ([stankova-2026] (15)), and diagnoses inner or medial negation. -/
-def fakt : Clause.Particle where
+def fakt : Clause.Marker where
   morphs := [.free "fakt"]
   distribution
     | (.declarative, .matrix) => some .optional
@@ -53,7 +53,7 @@ def fakt : Clause.Particle where
 
 /-- *vůbec* 'at all' is a negative polarity particle of assertions and polar questions
 ([stankova-2026] (9)), like English *at all*. -/
-def vubec : Clause.Particle where
+def vubec : Clause.Marker where
   morphs := [.free "vůbec"]
   distribution
     | (.declarative, .matrix) => some .optional
@@ -63,7 +63,7 @@ def vubec : Clause.Particle where
 /-- *snad* 'perhaps, surely not' is an adversative and mirative particle of polar questions
 ([nekula-1996], [stankova-2023]), which optionally supports their rhetorical readings
 ([simik-2024] ex. 8). -/
-def snad : Clause.Particle where
+def snad : Clause.Marker where
   morphs := [.free "snad"]
   distribution
     | (.polar, .matrix) => some .optional
@@ -71,7 +71,7 @@ def snad : Clause.Particle where
 
 /-- *copak* 'what then' is a particle of the Russian *razve* family ([simik-2024] §4.2.4) in
 positive and negative polar questions ([stankova-simik-2025] exs. 19a-b, [nekula-1996]). -/
-def copak : Clause.Particle where
+def copak : Clause.Marker where
   morphs := [.free "copak"]
   distribution
     | (.polar, .matrix) => some .optional

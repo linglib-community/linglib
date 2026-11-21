@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Japanese particles
@@ -40,7 +40,7 @@ namespace Japanese.Particles
 /-- *ka* — clause-typing Q-morpheme. Obligatory in subordinated
 interrogatives, optional in matrix (can be dropped). Marks CP as +WH.
 Licensed in quotation as well. -/
-def ka : Clause.Particle where
+def ka : Clause.Marker where
   morphs := [.free "ka"]
   script := some "か"
   anchor := .clause {.final}
@@ -55,7 +55,7 @@ def ka : Clause.Particle where
     | _ => none
 
 /-- *no* — clause-typing particle for questions (informal). -/
-def no_ : Clause.Particle where
+def no_ : Clause.Marker where
   morphs := [.free "no"]
   script := some "の"
   anchor := .clause {.final}
@@ -72,7 +72,7 @@ def no_ : Clause.Particle where
 having *ka* in the embedded clause suffices for interrogative
 interpretation, while *koto* marks a declarative ([dayal-2025]: (15)).
 Subordinated clauses only. -/
-def koto : Clause.Particle where
+def koto : Complementizer where
   morphs := [.free "koto"]
   script := some "こと"
   anchor := .clause {.final}
@@ -86,7 +86,7 @@ def koto : Clause.Particle where
 quotations ([sauerland-yatsushiro-2017]). Has a "remind-me"
 presupposition: speaker has forgotten Ans(Q) and believes the addressee
 knows it. -/
-def kke : Clause.Particle where
+def kke : Clause.Marker where
   morphs := [.free "kke"]
   script := some "っけ"
   anchor := .clause {.final}
@@ -107,7 +107,7 @@ The dual reading arises from the absence of an ignorance component,
 unlike wonder ([roelofsen-uegaki-2021], [uegaki-roelofsen-2018]).
 Appears in matrix and quasi-subordinated contexts but not in subordinated
 interrogatives (which use *ka*). -/
-def daroo : Clause.Particle where
+def daroo : Clause.Marker where
   morphs := [.free "darō"]
   script := some "だろう"
   anchor := .clause {.final}
@@ -121,13 +121,13 @@ def daroo : Clause.Particle where
     | _ => none
 
 /-- *ze* ぜ, a sentence-final particle ([ochs-1992]). -/
-def ze : Clause.Particle where
+def ze : Clause.Marker where
   morphs := [.free "ze"]
   script := some "ぜ"
   anchor := .clause {.final}
 
 /-- *wa* わ, a sentence-final particle ([ochs-1992]), distinct from the topic marker *wa* は. -/
-def wa : Clause.Particle where
+def wa : Clause.Marker where
   morphs := [.free "wa"]
   script := some "わ"
   anchor := .clause {.final}

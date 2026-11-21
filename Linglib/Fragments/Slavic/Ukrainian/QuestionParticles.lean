@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Ukrainian question particles
@@ -19,7 +19,7 @@ requires (Šimík's (29)). The mirative *xiba* is the Ukrainian kin of Russian *
 namespace Ukrainian.QuestionParticles
 
 /-- чи *čy*, the clause-initial polar question particle. -/
-def cy : Clause.Particle where
+def cy : Clause.Marker where
   morphs := [.free "čy"]
   script := some "чи"
   anchor := .clause {.initial}
@@ -29,7 +29,7 @@ def cy : Clause.Particle where
     | _ => none
 
 /-- хіба *xiba*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def xiba : Clause.Particle where
+def xiba : Clause.Marker where
   morphs := [.free "xiba"]
   script := some "хіба"
   anchor := .clause {.initial}

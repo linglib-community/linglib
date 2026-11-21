@@ -145,19 +145,19 @@ open Czech.Particles (nahodou jeste fakt copak)
 
 /-- [stankova-2026]'s Table 1: which diagnostic each particle
 realizes. -/
-def table1 : List (Clause.Particle × Diagnostic) :=
+def table1 : List (Clause.Marker × Diagnostic) :=
   [(nahodou, .nahodou), (jeste, .jeste), (fakt, .fakt)]
 
 /-- The Table 1 diagnostic realized by `p`, if any. -/
-def diagnostic? (p : Clause.Particle) : Option Diagnostic :=
+def diagnostic? (p : Clause.Marker) : Option Diagnostic :=
   table1.lookup p
 
 /-- A particle is compatible with a negation position when the position licenses the
 particle's Table 1 diagnostic, vacuously for a particle outside the table. -/
-def Compatible (p : Clause.Particle) (pos : Position) : Prop :=
+def Compatible (p : Clause.Marker) (pos : Position) : Prop :=
   ∀ d ∈ diagnostic? p, Licenses pos d
 
-instance (p : Clause.Particle) (pos : Position) : Decidable (Compatible p pos) := by
+instance (p : Clause.Marker) (pos : Position) : Decidable (Compatible p pos) := by
   unfold Compatible; infer_instance
 
 theorem nahodou_identifies_outer (pos : Position) : Compatible nahodou pos → pos = .outer := by

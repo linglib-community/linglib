@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
-public import Linglib.Syntax.Clause.Basic
+public import Linglib.Syntax.Clause.Marker
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
@@ -33,12 +33,14 @@ Studies-local projections over these entries, and the schema carries no
 denotation (cf. `Adjective`'s deferred degree semantics). Field
 conventions:
 
-- `morphs` lists the exponent in surface order: a free word (*that*), a
-  bound root that never surfaces bare (Buryat *gɘ*), or the
-  affixes of a prefix or suffix complex (Tigrinya *kɛm-zɨ-*). Attachment
-  is read off the morphs' kinds rather than stored.
+- A complementizer is a `Clause.Marker`, whose `morphs` list the exponent in
+  surface order: a free word (*that*), a bound root that never surfaces bare
+  (Buryat *gɘ*), or the affixes of a prefix or suffix complex (Tigrinya
+  *kɛm-zɨ-*). Attachment is read off the morphs' kinds rather than stored.
 - `types`: the sentence types of the clauses the morpheme types, a
   selection; a complementizer of polar questions records `.only .polar`.
+  An entry that records a distribution has the types that distribution
+  admits, `Clause.Distribution.selection`, unless it gives others.
 - `licenser` names the licensing projection, not the morphological
   host stem (which for a suffixal clause-typer is the verb it
   attaches to).
@@ -58,15 +60,13 @@ inductive Complementizer.Licenser where
   | verbal
   deriving DecidableEq, Fintype, Repr
 
-/-- A complementizer is its exponent as morphs together with the consensus clause-typing
-axes. -/
-structure Complementizer where
-  /-- The exponent, in surface order. -/
-  morphs : List Morph
+/-- A complementizer is a clause marker together with the consensus clause-typing axes. -/
+structure Complementizer extends Clause.Marker where
   /-- [noonan-2007] coding of the clause this morpheme types. -/
   coding : Option Clause.ComplementType := none
-  /-- The sentence types of the clauses this morpheme types. -/
-  types : Clause.Selection := ⊥
+  /-- The sentence types of the clauses this morpheme types, by default those in which its
+  distribution lets it occur. -/
+  types : Clause.Selection := distribution.selection
   /-- The realization the subject of the clause it types must have, as *for* requires an overt
   accusative one ([huddleston-pullum-2002] ch. 14 §1.4.1). -/
   subject : Option Clause.EmbeddedSubject := none

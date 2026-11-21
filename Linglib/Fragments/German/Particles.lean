@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # German modal particles
 
 This file defines the German modal particles *ja*, *denn*, *wohl*, *halt* and *doch* and the
-combination *doch wohl* as `Clause.Particle` entries, each with the sentence types of a main clause in
+combination *doch wohl* as `Clause.Marker` entries, each with the sentence types of a main clause in
 which Durrell describes it. A modal particle stands in the middle of the clause and adds the
 speaker's attitude to what is said. *Ja* appeals for agreement in statements, expresses surprise
 in exclamations and intensifies a command, often as a warning and especially when stressed.
@@ -45,43 +45,43 @@ def inMatrix (yes no : List Clause.SentenceType) : Clause.Distribution
 
 /-- *Ja* appeals for agreement in statements, expresses surprise in exclamations and intensifies
 a command. -/
-def ja : Clause.Particle where
+def ja : Clause.Marker where
   morphs := [.free "ja"]
   anchor := .clause {.medial}
   distribution := inMatrix [.declarative, .exclamative, .imperative] []
 
 /-- *Denn* is used in questions only, polar and constituent. -/
-def denn : Clause.Particle where
+def denn : Clause.Marker where
   morphs := [.free "denn"]
   anchor := .clause {.medial}
   distribution := inMatrix [.polar, .constituent] [.declarative, .imperative, .exclamative]
 
 /-- *Wohl* signals probability in statements and uncertainty in questions. -/
-def wohl : Clause.Particle where
+def wohl : Clause.Marker where
   morphs := [.free "wohl"]
   anchor := .clause {.medial}
   distribution := inMatrix [.declarative, .polar, .constituent] []
 
 /-- *Halt* occurs in statements and commands. -/
-def halt : Clause.Particle where
+def halt : Clause.Marker where
   morphs := [.free "halt"]
   anchor := .clause {.medial}
   distribution := inMatrix [.declarative, .imperative] []
 
 /-- *Doch* occurs in statements, commands, constituent questions and exclamations. -/
-def doch : Clause.Particle where
+def doch : Clause.Marker where
   morphs := [.free "doch"]
   anchor := .clause {.medial}
   distribution := inMatrix [.declarative, .imperative, .constituent, .exclamative] []
 
 /-- *Doch wohl*, also *wohl doch*, occurs in statements and hopes that something is the case. -/
-def dochWohl : Clause.Particle where
+def dochWohl : Clause.Marker where
   morphs := [.free "doch", .free "wohl"]
   anchor := .clause {.medial}
   distribution := inMatrix [.declarative] []
 
 /-- The modal particles. -/
-def modalParticles : List Clause.Particle := [ja, denn, wohl, halt, doch]
+def modalParticles : List Clause.Marker := [ja, denn, wohl, halt, doch]
 
 end German.Particles
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Singlish questions
@@ -22,7 +22,7 @@ in-situ question from an echo reading.
 namespace Singlish.Questions
 
 /-- *ah*: the clause-final particle that blocks the echo reading of a wh-in-situ question. -/
-def ah : Clause.Particle where
+def ah : Clause.Marker where
   morphs := [.free "ah"]
   anchor := .clause {.final}
   distribution

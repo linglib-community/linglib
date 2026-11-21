@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Clause.Particle
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Mandarin question particles
@@ -47,7 +47,7 @@ namespace Mandarin.QuestionParticles
 open Clause
 
 /-- *ma* 吗, the particle that turns a declarative into a polar question. -/
-def ma : Clause.Particle where
+def ma : Clause.Marker where
   morphs := [.free "ma"]
   script := some "吗"
   anchor := .clause {.final}
@@ -59,7 +59,7 @@ def ma : Clause.Particle where
 
 /-- *ne* 呢, which presents a declarative or a question as a response to the hearer's claim or
 expectation. -/
-def ne : Clause.Particle where
+def ne : Clause.Marker where
   morphs := [.free "ne"]
   script := some "呢"
   anchor := .clause {.final}
@@ -69,7 +69,7 @@ def ne : Clause.Particle where
     | _ => none
 
 /-- *ba* 吧, which solicits the hearer's agreement. -/
-def ba : Clause.Particle where
+def ba : Clause.Marker where
   morphs := [.free "ba"]
   script := some "吧"
   anchor := .clause {.final}
@@ -80,7 +80,7 @@ def ba : Clause.Particle where
     | _ => none
 
 /-- *nándào* 难道 'is it conceivable that', the attitude adverb of polar questions. -/
-def nandao : Clause.Particle where
+def nandao : Clause.Marker where
   morphs := [.free "nándào"]
   script := some "难道"
   distribution

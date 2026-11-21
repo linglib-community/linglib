@@ -8,7 +8,7 @@ public import Mathlib.Tactic.DeriveFintype
 This file defines the lexical record of a particle that goes with a focused or associated
 constituent, as the Yorùbá focus marker *ni* and exclusive *nìkan* do: its form and its position
 relative to that constituent or in the clause. A particle that goes with a clause as a whole is a
-`Clause.Particle`.
+`Clause.Marker`.
 
 ## Main definitions
 
