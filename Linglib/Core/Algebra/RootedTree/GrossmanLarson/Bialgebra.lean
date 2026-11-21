@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCutDuality
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Algebra
 public import Mathlib.RingTheory.Bialgebra.Primitive

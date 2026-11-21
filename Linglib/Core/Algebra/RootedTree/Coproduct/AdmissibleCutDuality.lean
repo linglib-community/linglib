@@ -29,8 +29,6 @@ Grossman–Larson algebra to the graded dual.
 * `ConnesKreimer.isAdjointPair_product_comulAlgHom`: the same as a `LinearMap.IsAdjointPair`.
 * `ConnesKreimer.toConv_pairing_product`: `⟨x ⋆ y, ·⟩ = ⟨y, ·⟩ * ⟨x, ·⟩` in the convolution
   algebra of linear functionals.
-* `ConnesKreimer.pairing_product_assoc`: the two triple products pair equally against everything,
-  since the convolution product is associative.
 
 ## Implementation notes
 
@@ -160,12 +158,6 @@ theorem toConv_pairing_product (x y : ConnesKreimer R (UnorderedTree α)) :
       pairing.tmul pairing (y ⊗ₜ[R] x) := TensorProduct.ext' fun _ _ ↦ mul_comm _ _
   exact (pairing_gl_eq_pairing_coproduct x y (ConnesKreimer.of' z)).trans
     (LinearMap.congr_fun h _).symm
-
-/-- The two triple Grossman–Larson products pair equally against everything, since the
-convolution product is associative. -/
-theorem pairing_product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
-    pairing (R := R) (product (product x y) z) = pairing (product x (product y z)) :=
-  toConv_injective <| by simp only [toConv_pairing_product, mul_assoc]
 
 end ConnesKreimer
 
