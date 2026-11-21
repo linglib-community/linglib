@@ -52,8 +52,6 @@ up its foreground.
 
 * The examples and their judgments, and the items of the later sections (expressions of minimal
   or maximal quantity, positive polarity items, questions), are not treated.
-* `Studies/Schwab2023` states scalar assertion in the form of [condoravdi-2010]; the two are not
-  yet related.
 
 ## References
 

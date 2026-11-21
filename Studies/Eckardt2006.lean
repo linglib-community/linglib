@@ -281,7 +281,7 @@ theorem licensed_of_not_emphatic (h : ¬ i.emphatic) : i.Licensed μ S := fun he
 -- (5.78)
 theorem not_licensed_of_monotone (hμ : Monotone μ) (hQ : Monotone Q) (he : i.emphatic)
     (ha : a ∈ i.alternatives) (h : S a ⊆ S i.value) : ¬ i.Licensed μ (Q ∘ S) :=
-  fun hl ↦ not_evenPresup_of_subset hμ (Set.mem_image_of_mem _ ha) (hQ h) (hl he)
+  fun hl ↦ not_evenPresup_image hμ ha (hQ h) (hl he)
 
 /-- (5.80): Under an antitone operator an emphatic entry whose alternatives all entail the
 sentence is licensed exactly when no alternative is as likely as the sentence. -/
@@ -289,8 +289,7 @@ theorem licensed_iff_of_antitone (hμ : Monotone μ) (hQ : Antitone Q) (he : i.e
     (h : ∀ a ∈ i.alternatives, S a ⊆ S i.value) :
     i.Licensed μ (Q ∘ S) ↔ ∀ a ∈ i.alternatives, μ (Q (S i.value)) ≠ μ (Q (S a)) := by
   rw [Licensed, imp_iff_right he]
-  exact (evenPresup_iff_ne hμ (Set.forall_mem_image.2 fun a ha ↦ hQ (h a ha))).trans
-    Set.forall_mem_image
+  exact evenPresup_image_iff_ne hμ fun a ha ↦ hQ (h a ha)
 
 end FocusEntry
 
