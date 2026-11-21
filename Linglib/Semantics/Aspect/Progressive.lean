@@ -36,7 +36,7 @@ requires an actual event of the type, and the inference from progressive to perf
 
 namespace Aspect
 
-open Event (τ)
+open Event (τ runTimes runTimes_τ)
 open Modality
 
 variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]

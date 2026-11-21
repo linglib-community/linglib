@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Condoravdi2002
-public import Linglib.Semantics.Aspect.Instantiation
+public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Data.Examples.Readers
@@ -21,6 +21,13 @@ stated over closed intervals of times that may run to the end of time.
 
 ## Implementation notes
 
+* A property is of events, of states, or of times, `SortedProperty`, and `At` instantiates it at
+  a reference interval. Reference intervals are `Interval (WithTop T)`, so that an interval may
+  run to the end of time, as `Interval.Ici ↑t` does, and the intersection of two intervals may be
+  the null interval `⊥`. On a bounded interval, instantiation of a property of events is
+  `Aspect.perfective` and of a property of states `Aspect.inclusive` of `Aspect.unbounded`.
+* The run time of an eventuality is `Event.τ e`, the same in every world; the paper's temporal
+  trace takes the world as a second argument.
 * The paper's *now* is an interval, albeit a short one, taken here as a point, and a modal base
   is indexed by the start of the reference interval; the paper's `MB(w, t)` takes an interval
   and its `w ≃_t w'` a point.
@@ -40,6 +47,9 @@ stated over closed intervals of times that may run to the end of time.
 ## References
 
 * [C. Condoravdi, *Temporal Interpretation of Modals* (2002)][condoravdi-2002]
+* [H. Kamp and C. Rohrer, *Tense in Texts* (1983)][kamp-rohrer-1983]
+* [B. Partee, *Nominal and Temporal Anaphora* (1984)][partee-1984]
+* [H. Kamp and U. Reyle, *From Discourse to Logic* (1993)][kamp-reyle-1993]
 * [F. Mondadori, *Remarks on Tense and Mood: The Perfect Future* (1978)][mondadori-1978]
 * [D. Abusch, *Sequence of Tense and Temporal De Re* (1997)][abusch-1997]
 * [D. Abusch, *Generalizing Tense Semantics for Future Contexts* (1998)][abusch-1998]
@@ -60,6 +70,82 @@ open Event (τ)
 
 open Aspect Temporal
 open Modality (TemporalPerspective TemporalOrientation)
+
+/-! ### Instantiation -/
+
+section Instantiation
+
+variable {W E T : Type*} [LinearOrder T]
+
+/-- A sorted property is a property of events, of states, or of times. -/
+inductive SortedProperty (W E T : Type*) [LinearOrder T]
+  | eventive (P : W → E → Prop)
+  | stative (P : W → E → Prop)
+  | temporal (P : W → Interval (WithTop T) → Prop)
+
+/-- A sorted property is a property of eventualities when it is not a property of times. -/
+def SortedProperty.IsEventuality : SortedProperty W E T → Prop
+  | .temporal _ => False
+  | _ => True
+
+variable [TemporalTrace E T]
+
+/-- (19): `At t w Q` says that the property `Q` is instantiated in `w` at the interval `t`, by
+inclusion of the run time for events, overlap for states, and application for properties of
+times. -/
+def At (t : Interval (WithTop T)) (w : W) : SortedProperty W E T → Prop
+  | .eventive P => ∃ e, P w e ∧ ↑(τ e).withTop ≤ t
+  | .stative P => ∃ e, P w e ∧ ¬ Disjoint (↑(τ e).withTop) t
+  | .temporal P => P w t
+
+variable {P : W → E → Prop} {Q : SortedProperty W E T} {r r' : Interval (WithTop T)} {w : W}
+
+theorem exists_mem_of_at (hQ : Q.IsEventuality) (h : At r w Q) : ∃ x, x ∈ r := by
+  cases Q with
+  | eventive R => obtain ⟨e, -, hle⟩ := h; exact ⟨_, (Interval.coe_le_iff.1 hle).1⟩
+  | stative R =>
+    obtain ⟨e, -, hd⟩ := h
+    obtain ⟨x, -, hx⟩ := Interval.not_disjoint_iff.1 hd
+    exact ⟨x, hx⟩
+  | temporal R => exact hQ.elim
+
+theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w Q := by
+  cases Q with
+  | eventive R => obtain ⟨e, he, hle⟩ := hr; exact ⟨e, he, le_trans hle h⟩
+  | stative R =>
+    obtain ⟨e, he, hd⟩ := hr
+    exact ⟨e, he, fun hd' ↦ hd (hd'.mono_right h)⟩
+  | temporal R => exact hQ.elim
+
+@[simp] theorem at_Ici_eventive_iff {t : T} :
+    At (Interval.Ici ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ (τ e).fst := by
+  simp [At, Interval.withTop_le_Ici]
+
+@[simp] theorem at_Ici_stative_iff {t : T} :
+    At (Interval.Ici ↑t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ (τ e).snd := by
+  simp [At, Interval.not_disjoint_withTop_Ici]
+
+theorem at_eventive_withTop_iff_perfective {i : NonemptyInterval T} :
+    At ↑i.withTop w (.eventive P) ↔ perfective (P w) i := by
+  simp [At, perfective_iff, and_comm]
+
+theorem at_stative_withTop_iff_inclusive_unbounded {i : NonemptyInterval T} :
+    At ↑i.withTop w (.stative P) ↔ inclusive (unbounded (P w)) i := by
+  rw [inclusive_unbounded_iff]
+  simp [At, Interval.not_disjoint_coe_coe, NonemptyInterval.Overlaps, and_comm]
+
+@[simp] theorem at_pure_eventive_iff {t : T} :
+    At (Interval.pure ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ τ e = .pure t :=
+  (at_eventive_withTop_iff_perfective (i := .pure t)).trans <|
+    perfective_pure_iff.trans <| exists_congr fun _ ↦ and_comm
+
+@[simp] theorem at_pure_stative_iff {t : T} :
+    At (Interval.pure ↑t) w (.stative P) ↔ ∃ e, P w e ∧ t ∈ τ e :=
+  (at_stative_withTop_iff_inclusive_unbounded (i := .pure t)).trans <|
+    inclusive_unbounded_iff.trans <| by
+      simp [NonemptyInterval.Overlaps, NonemptyInterval.mem_def, and_comm]
+
+end Instantiation
 
 variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P : W → E → Prop}
   {Q Q' : SortedProperty W E T}

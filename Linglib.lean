@@ -702,7 +702,6 @@ import Linglib.Semantics.ArgumentStructure.EnergySource
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Acquaintance
 import Linglib.Semantics.Attitudes.Anchor

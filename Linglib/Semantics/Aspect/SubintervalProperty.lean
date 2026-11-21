@@ -103,7 +103,7 @@ theorem atomDist_some_preimage (hτ : IsLowerSet (Set.range τ)) {S : Set (Nonem
 
 end Quantifier
 
-open Event (τ)
+open Event (τ runTimes runTimes_τ)
 open scoped SetRel
 
 variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P : E → Prop}

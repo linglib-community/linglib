@@ -116,7 +116,7 @@ open ModalLogic in
 /-- The operator of an aspect: the reference times at which it places an event of the
 predicate. -/
 def denote (p : Perfectivity) (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[IntervalAlgebra.toSetRel (cell p)] (Aspect.runTimes P)
+  ◇[IntervalAlgebra.toSetRel (cell p)] (Event.runTimes P)
 
 /-- A marked clause: its suffix, its aspect and its predicate of events. -/
 structure Marked (W E : Type*) where
@@ -251,7 +251,7 @@ the truth condition of its suffix and aspects. -/
 theorem exists_holds_iff :
     (∃ t₁ t : NonemptyInterval T, Holds [(⟨s, a, P⟩, t₁)] b Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e, τ e') ∈ eventRel s a b := by
-  simp only [Holds, eventRel, denote, List.mem_singleton, forall_eq, Aspect.diamond_runTimes_iff,
+  simp only [Holds, eventRel, denote, List.mem_singleton, forall_eq, Event.diamond_runTimes_iff,
     SetRel.mem_comp, SetRel.mem_inv]
   constructor
   · rintro ⟨t₁, t, ⟨⟨e, h₁, hP⟩, h₂⟩, e', h₃, hQ⟩

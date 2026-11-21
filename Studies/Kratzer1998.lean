@@ -64,7 +64,7 @@ open scoped Assignment
 open scoped Denotes
 
 open Tense PointAlgebra ModalLogic
-open Aspect (unbounded ViewpointType runTimes)
+open Aspect (unbounded ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
 
@@ -160,11 +160,11 @@ theorem cell_viewpointType :
 /-- An aspect maps a property of events to the property of times to which the time of some such
 event stands in the aspect's cell. -/
 def AspectHead.denote (a : AspectHead) (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[IntervalAlgebra.toSetRel a.cell] (runTimes P)
+  ◇[IntervalAlgebra.toSetRel a.cell] (Event.runTimes P)
 
 theorem AspectHead.denote_iff {a : AspectHead} {P : E → Prop} {r : NonemptyInterval T} :
     a.denote P r ↔ ∃ e, Allen.relation (τ e) r ∈ a.cell ∧ P e := by
-  simp [denote, Aspect.diamond_runTimes_iff]
+  simp [denote, Event.diamond_runTimes_iff]
 
 theorem denote_imperfective (P : E → Prop) :
     AspectHead.imperfective.denote (T := T) P = unbounded P := by

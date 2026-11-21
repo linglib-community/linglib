@@ -130,7 +130,7 @@ def Prog (e : E) (P : W → E → Prop) (w : W) : Prop := ∃ f v, M.Branch e w 
 /-- The progressive of `P` at a world as a property of intervals, those of the events in progress
 toward `P` there. -/
 def progAt (P : W → E → Prop) (w : W) : NonemptyInterval T → Prop :=
-  Aspect.runTimes fun e ↦ M.occurs e w ∧ M.Prog e P w
+  Event.runTimes fun e ↦ M.occurs e w ∧ M.Prog e P w
 
 variable {M} {e f : E} {w u v : W} {P : W → E → Prop}
 

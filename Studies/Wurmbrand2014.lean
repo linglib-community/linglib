@@ -109,11 +109,11 @@ open ModalLogic in
 /-- An aspect maps a predicate of events to the reference times to which the run time of an event
 of the predicate stands in its cell, (47). -/
 def Asp.denote (a : Asp) (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[IntervalAlgebra.toSetRel a.cell] (Aspect.runTimes P)
+  ◇[IntervalAlgebra.toSetRel a.cell] (Event.runTimes P)
 
 theorem Asp.denote_iff {a : Asp} {P : E → Prop} {t : NonemptyInterval T} :
     a.denote P t ↔ ∃ e, Allen.relation (Event.τ e) t ∈ a.cell ∧ P e := by
-  simp [denote, Aspect.diamond_runTimes_iff]
+  simp [denote, Event.diamond_runTimes_iff]
 
 -- (47a) is Pancheva's non-strict imperfective
 theorem denote_imperfective (P : E → Prop) :

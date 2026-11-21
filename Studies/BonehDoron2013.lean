@@ -60,7 +60,7 @@ time, and *would* is Gen with a restriction and an interval from the context.
 namespace BonehDoron2013
 
 open Event (τ)
-open Aspect (unbounded perfect durative runTimes)
+open Aspect (unbounded perfect durative)
 open ModalLogic
 open Modality (Background simpleNecessity)
 open scoped Denotes
@@ -124,7 +124,7 @@ def usedTo (P : E → Prop) : NonemptyInterval T → Prop :=
   retro (unbounded P)
 
 theorem usedTo_eq_diamond : usedTo P = ◇[IntervalAlgebra.toSetRel IntervalAlgebra.precedes]
-    (◇[IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹] (runTimes P)) := by
+    (◇[IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹] (Event.runTimes P)) := by
   rw [IntervalAlgebra.toSetRel_inv]
   rfl
 
@@ -146,7 +146,7 @@ theorem usedTo_iff : usedTo P p ↔ ∃ e, P e ∧ (τ e).fst < p.fst := by
   constructor
   · intro h
     rw [usedTo_eq_diamond] at h
-    obtain ⟨e, h, hP⟩ := Aspect.diamond_runTimes_iff.1
+    obtain ⟨e, h, hP⟩ := Event.diamond_runTimes_iff.1
       (IntervalAlgebra.diamond_toSetRel_diamond_le _ _ _ p h)
     rw [IntervalAlgebra.mem_toSetRel, comp_retro_imperfective] at h
     exact ⟨e, hP, compare_lt_iff_lt.1 (IntervalAlgebra.mem_ofPred.1 h)⟩

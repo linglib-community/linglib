@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Plurality.Number
-public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.Aspect.Incremental
 public import Linglib.Semantics.Mereology.Connection
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases

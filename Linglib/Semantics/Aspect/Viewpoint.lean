@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Aspect.IntervalProperty
-public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.Events.RunTimes
 
 /-!
 # Viewpoint aspect
@@ -11,13 +11,12 @@ A viewpoint relates the topic time to the situation time. This file defines the 
 viewpoint aspect, which take a predicate of events to an interval property, as possibility
 `◇[R]` along a relation `R` between intervals.
 
-The run times of an event predicate `P` form the interval property `runTimes P`, which holds at
-`s` when `s` is the run time `τ e` of some event `e` with `P e`. A viewpoint `v` has a cell
-`v.cell` of the interval algebra, and its operator `v.denote P` is possibility along that cell
-applied to `runTimes P`. The perfective `perfective P` holds at `t` when some run time lies within
-`t`, so that `perfective P = inclusive (runTimes P)`, and the non-strict imperfective `unbounded P`
-when `t` lies within some run time. The modal imperfective `imperfective acc P w` holds at `t` when
-`unbounded (P v) t` holds in every world `v` accessible from `w` along `acc t`.
+The run times of an event predicate `P` form the interval property `Event.runTimes P`. A viewpoint
+`v` has a cell `v.cell` of the interval algebra, and its operator `v.denote P` is possibility along
+that cell applied to `runTimes P`. The perfective `perfective P` holds at `t` when some run time
+lies within `t`, so that `perfective P = inclusive (runTimes P)`, and the non-strict imperfective
+`unbounded P` when `t` lies within some run time. The modal imperfective `imperfective acc P w`
+holds at `t` when `unbounded (P v) t` holds in every world `v` accessible from `w` along `acc t`.
 
 Possibility along a relation is left adjoint to necessity along its converse, which gives
 `unbounded_le_iff`: `unbounded P ≤ q ↔ runTimes P ≤ durative q`. The perfective is closed under
@@ -96,34 +95,10 @@ variable {T : Type*} [LinearOrder T] {tt tsit : NonemptyInterval T}
 
 end Cell
 
-/-! ### Run times -/
-
-open Event (τ)
+open Event (τ runTimes runTimes_iff runTimes_τ runTimes_mono diamond_runTimes_iff)
 
 variable {T : Type*} [LinearOrder T] {W E : Type*} [TemporalTrace E T]
-
-/-- The run times of an event predicate: `runTimes P` holds at the run time of each event of
-`P`. -/
-def runTimes (P : E → Prop) : NonemptyInterval T → Prop := ◇[(Function.graph τ).inv] P
-
-variable {P P' : E → Prop} {p q : NonemptyInterval T → Prop} {s t : NonemptyInterval T}
-
-theorem runTimes_iff : runTimes P s ↔ ∃ e, τ e = s ∧ P e := .rfl
-
-theorem runTimes_τ {e : E} (h : P e) : runTimes P (τ e) := ⟨e, rfl, h⟩
-
-/-- Possibility of a run time along a relation is possibility of an event along it. -/
-theorem diamond_runTimes_iff {α : Type*} {R : SetRel α (NonemptyInterval T)} {a : α} :
-    ◇[R] (runTimes P) a ↔ ∃ e, a ~[R] τ e ∧ P e := by
-  constructor
-  · rintro ⟨s, h, e, he, hP⟩
-    obtain rfl : τ e = s := he
-    exact ⟨e, h, hP⟩
-  · rintro ⟨e, h, hP⟩
-    exact ⟨τ e, h, e, rfl, hP⟩
-
-theorem runTimes_mono : Monotone (runTimes : (E → Prop) → NonemptyInterval T → Prop) :=
-  diamond_mono _
+  {P P' : E → Prop} {p q : NonemptyInterval T → Prop} {s t : NonemptyInterval T}
 
 /-! ### The operators of the viewpoints -/
 

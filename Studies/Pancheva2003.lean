@@ -117,31 +117,31 @@ theorem overlapsInto_iff (i j : NonemptyInterval T) :
 /-- The bounded aspect, (7b), holds where the run time of an event of the predicate is properly
 contained in the reference interval. -/
 def bounded (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[toSetRel IntervalAlgebra.lt] (runTimes P)
+  ◇[toSetRel IntervalAlgebra.lt] (Event.runTimes P)
 
 /-- The neutral aspect, (7b), holds where the reference interval overlaps the run time of an
 event of the predicate and begins strictly before it. -/
 def neutral (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[toSetRel overlapsFromBefore] (runTimes P)
+  ◇[toSetRel overlapsFromBefore] (Event.runTimes P)
 
 /-- The resultative aspect, (17), holds of a predicate of result states and their events where
 the reference interval overlaps into the run time of the result state. -/
 def resultative (P : S → E → Prop) : NonemptyInterval T → Prop :=
-  ◇[toSetRel overlapsInto] (runTimes fun s ↦ ∃ e, P s e)
+  ◇[toSetRel overlapsInto] (Event.runTimes fun s ↦ ∃ e, P s e)
 
 variable {P : E → Prop} {Q : S → E → Prop} {i : NonemptyInterval T} {t : T}
 
 theorem bounded_iff : bounded P i ↔ ∃ e, τ e < i ∧ P e := by
-  simp [bounded, diamond_runTimes_iff]
+  simp [bounded, Event.diamond_runTimes_iff]
 
 theorem neutral_iff :
     neutral P i ↔ ∃ e, (i.Overlaps (τ e) ∧ i.fst < (τ e).fst) ∧ P e := by
-  simp [neutral, diamond_runTimes_iff]
+  simp [neutral, Event.diamond_runTimes_iff]
 
 omit [TemporalTrace E T] in
 theorem resultative_iff : resultative Q i ↔
     ∃ e s, (i.fst < (τ s).fst ∧ (τ s).fst ≤ i.snd ∧ i.snd < (τ s).snd) ∧ Q s e := by
-  simp only [resultative, diamond_runTimes_iff, mem_toSetRel, relation_mem_overlapsInto]
+  simp only [resultative, Event.diamond_runTimes_iff, mem_toSetRel, relation_mem_overlapsInto]
   exact ⟨fun ⟨s, h, e, hQ⟩ ↦ ⟨e, s, h, hQ⟩, fun ⟨e, s, h, hQ⟩ ↦ ⟨s, h, e, hQ⟩⟩
 
 -- footnote 8
