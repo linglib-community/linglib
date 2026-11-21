@@ -107,22 +107,11 @@ def orderIsoProd : OrderedInformationState W ≃o Set W × Preorder W where
 @[simp] theorem info_inf : (σ ⊓ τ).info = σ.info ∩ τ.info := rfl
 @[simp] theorem order_inf : (σ ⊓ τ).order = σ.order ⊓ τ.order := rfl
 
-/-! ### Optimal worlds and necessity modals -/
+/-! ### Optimal worlds -/
 
 /-- The optimal worlds of a state are the most normal worlds compatible with the agent's
 information. -/
 def optimal (σ : OrderedInformationState W) : Set W := σ.order.minimals σ.info
-
-/-- Informational necessity `□_cs` holds of `p` when `p` holds at every world of the information
-state. This is entailment by the Stalnakerian context set and Portner's semantics of *believe*. -/
-def boxCs (σ : OrderedInformationState W) (p : W → Prop) : Prop :=
-  ∀ w ∈ σ.info, p w
-
-/-- Preferential necessity `□_≤` holds of `p` when `p` holds at every optimal world, the worlds
-with no better-ranked competitor. This is Portner's semantics of *want*, the Kratzerian deontic
-and bouletic necessity, and the condition that *presumably* tests. -/
-def boxLe (σ : OrderedInformationState W) (p : W → Prop) : Prop :=
-  ∀ w ∈ σ.optimal, p w
 
 /-! ### Updates -/
 
@@ -143,7 +132,7 @@ open Classical in
 absurd state. -/
 noncomputable def presumablyTest (φ : W → Prop) (σ : OrderedInformationState W) :
     OrderedInformationState W :=
-  if σ.boxLe φ then σ else ⊥
+  if ∀ w ∈ σ.optimal, φ w then σ else ⊥
 
 @[simp] theorem assert_info (σ : OrderedInformationState W) (φ : W → Prop) :
     (σ.assert φ).info = {w ∈ σ.info | φ w} := rfl
@@ -170,8 +159,9 @@ theorem isAdditive_promote (φ : W → Prop) : IsAdditive (promote · φ) := fun
 
 /-! ### Acceptance -/
 
-/-- A state accepts the assertion of `φ` exactly when `φ` is informationally necessary in it. -/
-theorem isFixedPt_assert_iff : IsFixedPt (assert · φ) σ ↔ σ.boxCs φ :=
+/-- A state accepts the assertion of `φ` exactly when `φ` holds throughout its information, the
+informational modal of Portner and his semantics of *believe*. -/
+theorem isFixedPt_assert_iff : IsFixedPt (assert · φ) σ ↔ ∀ w ∈ σ.info, φ w :=
   (isAdditive_assert φ).isFixedPt_iff.trans
     ⟨fun h _ hw ↦ (h.1 hw).2, fun h ↦ ⟨fun _ hw ↦ ⟨trivial, h _ hw⟩, le_top⟩⟩
 
@@ -183,8 +173,10 @@ theorem isFixedPt_promote_iff : IsFixedPt (promote · φ) σ ↔ σ.order ≤ .o
   ⟨fun h ↦ inf_eq_left.1 (congrArg order h),
     fun h ↦ OrderedInformationState.ext rfl (inf_eq_left.2 h)⟩
 
-/-- A state accepts *presumably φ* exactly when `φ` is preferentially necessary in it. -/
-theorem isFixedPt_presumablyTest_iff : IsFixedPt (presumablyTest φ) σ ↔ σ.boxLe φ := by
+/-- A state accepts *presumably φ* exactly when `φ` holds at its optimal worlds, the preference
+modal of Portner and his semantics of *want*. -/
+theorem isFixedPt_presumablyTest_iff :
+    IsFixedPt (presumablyTest φ) σ ↔ ∀ w ∈ σ.optimal, φ w := by
   refine ⟨fun h ↦ by_contra fun hφ ↦ hφ ?_, fun h ↦ ite_eq_left h⟩
   rw [← show ⊥ = σ from (ite_eq_right hφ).symm.trans h]
   exact fun _ hw ↦ absurd hw.1 (Set.notMem_empty _)
