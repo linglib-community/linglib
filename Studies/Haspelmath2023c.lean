@@ -41,6 +41,8 @@ criterion of selection, of which lack of word-class selectivity is the first.
 * The roots of each inventory are its contentful morphs, as in `Studies.Haspelmath2023`.
 * The degree of selection is low when a morph stands next to roots of more than one class and a
   single category otherwise; a closed list of stems is not read off the free forms.
+* In Zwicky and Pullum's two sentences each written word is one morph, a root when it is a noun,
+  a verb or an adjective.
 
 ## TODO
 
@@ -329,7 +331,38 @@ theorem isHighSelection_of_isAffix {x : M} (h : L.IsAffix root x) :
   · omega
   · simp
 
+theorem not_isAffix_of_selection_eq_low {x : M} (h : selection L root x = .low) :
+    ¬ L.IsAffix root x :=
+  fun ha ↦ isHighSelection_of_isAffix ha h
+
 end Selection
+
+/-- The English contracted auxiliary *'s*. -/
+def contracted : Morph := .encl "s"
+
+/-- Zwicky and Pullum's sentences *The ball you hit's just broken my dining room window* and
+*Any answer not entirely right's going to be marked as an error*. -/
+def contractions : Inventory Morph where
+  forms :=
+    [[.procl "the", .root "ball", .procl "you", .root "hit", contracted, .free "just",
+      .root "broken", .procl "my", .root "dining", .root "room", .root "window"],
+     [.free "any", .root "answer", .free "not", .free "entirely", .root "right", contracted,
+      .root "going", .procl "to", .free "be", .root "marked", .free "as", .procl "an",
+      .root "error"]]
+  rootClass m :=
+    if m.kind ≠ .root then none
+    else if m.form ∈ ["ball", "room", "window", "answer", "error"] then some .object
+    else if m.form ∈ ["hit", "broken", "going", "marked", "dining"] then some .action
+    else if m.form = "right" then some .property else none
+
+/-- The contracted auxiliary follows a verb and an adjective in Zwicky and Pullum's sentences, so
+its selection read off them is the low degree they record, and it is not an affix. -/
+theorem contracted_selection :
+    selection contractions contractions.IsContentful contracted =
+        ZwickyPullum1983.cliticS.selection ∧
+      ¬ contractions.IsAffix contractions.IsContentful contracted :=
+  have h : selection contractions contractions.IsContentful contracted = .low := by decide
+  ⟨h, not_isAffix_of_selection_eq_low h⟩
 
 open Haspelmath2023 (s_gen) in
 theorem selection_eq :
