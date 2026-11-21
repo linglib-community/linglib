@@ -28,7 +28,8 @@ for the same morphs.
 ## Main results
 
 * `Haspelmath2023c.isClitic_iff`: every clitic is of exactly one positional type.
-* `Haspelmath2023c.li_isSecondPosition`: Russian *li* is a second-position clitic.
+* `Haspelmath2023c.li_followsFirstWord`: Russian *li* directly follows the first word of its
+  question.
 * `Haspelmath2023c.mi_isEnclitic`: Turkish *mI* is an enclitic.
 * `Haspelmath2023c.however_isAmbiclitic`: English *however* is an ambiclitic.
 
@@ -45,6 +46,12 @@ for the same morphs.
 ## TODO
 
 * Read the free forms from example rows in boundary notation.
+* `Morphology.Comparative.Inventory.IsAffix` holds of *li* on the three Russian questions, in each
+  of which the noun *Anna* follows it: occurrence on a root does not distinguish the word a morph
+  follows from the word it precedes, and the affixes it is reached through are those of any set
+  the definition maps into itself. `Haspelmath2023c.IsSecondPosition` of *li* waits on a
+  definition of the affix that reads the three questions as the paper does, with *li* on the
+  verb, the noun and the adverb before it.
 
 ## References
 
@@ -120,10 +127,18 @@ end Decidable
 
 end Positional
 
+/-- The morph directly follows the first word of the form, the first run of morphs joined as
+affixes. -/
+def FollowsFirstWord (x : Morph) (w : List Morph) : Prop :=
+  ((Morph.wordsAt .affix w).drop 1).head? = some [x]
+
+instance (x : Morph) (w : List Morph) : Decidable (FollowsFirstWord x w) :=
+  inferInstanceAs (Decidable (_ = _))
+
 /-- A second-position clitic is a clitic that directly follows the first word of every free form
 it occurs in. -/
 def IsSecondPosition (L : Inventory Morph) (root : Morph → Prop) (x : Morph) : Prop :=
-  L.IsClitic root x ∧ ∀ w ∈ L.forms, x ∈ w → ((Morph.wordsAt .affix w).drop 1).head? = some [x]
+  L.IsClitic root x ∧ ∀ w ∈ L.forms, x ∈ w → FollowsFirstWord x w
 
 instance (L : Inventory Morph) (root : Morph → Prop) [DecidablePred root] (x : Morph) :
     Decidable (IsSecondPosition L root x) :=
@@ -155,10 +170,10 @@ def russian : Inventory Morph where
     if m = procita ∨ m = cita then some .action
     else if m = anna ∨ m = knigu then some .object else none
 
-/-- Russian *li* stands next to a verb, a noun and an adverb, so it is a clitic, and it directly
-follows the first word of each question, as the fragment records. -/
-theorem li_isSecondPosition :
-    (∀ m ∈ Russian.QuestionParticles.li.morphs, IsSecondPosition russian russian.IsContentful m) ∧
+/-- Russian *li* directly follows the first word of each question, a verb, a noun or an adverb,
+which is the placement the fragment records. -/
+theorem li_followsFirstWord :
+    (∀ m ∈ Russian.QuestionParticles.li.morphs, ∀ w ∈ russian.forms, FollowsFirstWord m w) ∧
       .second ∈ Russian.QuestionParticles.li.placements := by
   decide
 
