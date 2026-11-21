@@ -31,9 +31,11 @@ the expectation of every statistic that monovaries with the value advantage of c
 alone, that advantage increases in the advantageous-inequity weight and decreases in the money
 and disadvantageous-inequity weights, which gives the direction of each inference
 (`Setting.expectation_aia_defect_le_cooperate`, `Setting.expectation_money_cooperate_le_defect`,
-`Setting.expectation_dia_cooperate_le_defect`). A player who cares only to be thought averse to
-advantageous inequity cooperates at least as often in public, when cooperating earns the higher
-reputation for it (`Setting.policy_cooperate_le_policy_public`).
+`Setting.expectation_dia_cooperate_le_defect`). Cooperating therefore earns the higher
+reputation for aversion to advantageous inequity in such a population, so a player who cares only
+for that reputation cooperates at least as often in public
+(`Setting.policy_cooperate_le_policy_public_of_variesOnly`); such populations exist
+(`Setting.variesOnly_update`).
 
 The appraisals of an outcome are computed from the player's weights and belief: the utility
 achieved in a feature (`Setting.domainUtility`), its prediction error against the utility
@@ -357,6 +359,12 @@ def VariesOnly (d : Domain) : Prop :=
   ∀ ω ω', (∀ d', d' ≠ d → (p ω).base d' = (p ω').base d') ∧ (p ω).belief = (p ω').belief ∧
     (p ω).reference = (p ω').reference
 
+omit [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype Ω] [Nonempty Ω] in
+-- populations that vary in one weight alone exist: vary that weight of any player
+theorem variesOnly_update (q : Player) (d : Domain) (w : Ω → unitInterval) :
+    VariesOnly (fun ω ↦ { q with base := Function.update q.base d (w ω) }) d :=
+  fun _ _ ↦ ⟨fun _ hd ↦ by simp [Function.update_of_ne hd], rfl, rfl⟩
+
 /-- In a population that varies only in the weight of advantageous inequity, the weight inferred
 from cooperation is at least the weight inferred from defection. -/
 theorem expectation_aia_defect_le_cooperate (h : VariesOnly p .aia) :
@@ -435,9 +443,7 @@ theorem value_publicAgent (q : Player) (a₁ : Action) :
     smul_eq_mul]
   ring
 
-/-- A player whose only reputation concern is to be thought averse to advantageous inequity
-cooperates at least as often in public as in the anonymous game, when cooperating earns the
-higher reputation for it. -/
+-- (3.2), given that cooperating earns the higher reputation
 theorem policy_cooperate_le_policy_public (q : Player) (hm : q.repu .money = 0)
     (hd : q.repu .dia = 0)
     (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) :
@@ -450,6 +456,14 @@ theorem policy_cooperate_le_policy_public (q : Player) (hm : q.repu .money = 0)
     Domain.sign, hm, hd, Set.Icc.coe_zero]
   have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
   nlinarith [mul_nonneg (unitInterval.nonneg (q.repu .aia)) (sub_nonneg.2 this)]
+
+/-- In a population that varies only in the weight of advantageous inequity, a player whose only
+reputation concern is to be thought averse to it cooperates at least as often in public as in the
+anonymous game: cooperating is what earns that reputation. -/
+theorem policy_cooperate_le_policy_public_of_variesOnly (h : VariesOnly p .aia) (q : Player)
+    (hm : q.repu .money = 0) (hd : q.repu .dia = 0) :
+    S.policy S.agent q .cooperate ≤ S.policy (S.publicAgent p μ) q .cooperate :=
+  S.policy_cooperate_le_policy_public p μ q hm hd (S.expectation_aia_defect_le_cooperate p μ h)
 
 theorem policy_public_le_policy_cooperate (q : Player) (hm : q.repu .money = 0)
     (ha : q.repu .aia = 0)
