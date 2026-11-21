@@ -371,8 +371,9 @@ ascribes an objective property and subjective once it expresses the speaker's ev
 def Stage.level (s : Stage) : Traugott2010.SubjectivityLevel :=
   if s ∈ Diagnostic.n₁Evaluative.span then .subjective else .nonSubjective
 
-theorem path_unidirectional :
-    Traugott2010.Unidirectional (Stage.path.map Stage.level) := by
+theorem level_monotone : Monotone Stage.level := by decide
+
+theorem path_followsCline : Traugott2010.FollowsCline (Stage.path.map Stage.level) := by
   decide
 
 end TenWolde2023
