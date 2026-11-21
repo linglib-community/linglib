@@ -329,6 +329,12 @@ theorem particles_licensed_polar :
     ∀ p ∈ l.particles, Clause.root .polar ∈ p.distribution.possible := by
   cases l <;> decide
 
+theorem clauseInitialParticle_iff_position :
+    ∀ e ∈ quizRows l, ∀ p ∈ l.particles, e.feature? "particle" = some p.form →
+      strategy? e ≠ some .verbMovement →
+        (strategy? e = some .clauseInitialParticle ↔ p.position = some .clauseInitial) := by
+  cases l <;> decide
+
 /-! ### The Serbian strategies and Todorović's bias profile (§4.2.2, Table 1) -/
 
 /-- The Serbian strategies of (31) and Table 1, which are the two positive particle
