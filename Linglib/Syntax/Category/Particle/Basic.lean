@@ -1,22 +1,34 @@
 module
 
 public import Linglib.Syntax.Clause.Basic
-public import Mathlib.Data.Fintype.Basic
 
 /-!
-# Particle
+# Particles
 
-A `Particle` is the lexical core of an uninflectable function word in Zwicky's sense: its form, its
-position relative to its host, and its `Clause.Distribution` over sentence types in embedding
-contexts. The distribution records where the source finds the particle obligatory, optional or
-excluded, and nothing where the source is silent; it records distributional felicity, not the
-licensing mechanism, which is a study's matter. The cells where a particle is licensed are
-`p.distribution.possible`, and its sentence-type and embedding-context profiles are that
-relation's `dom` and `cod`.
+A particle is an uninflected function word associated with a host: a clause, as a question particle
+is, or a constituent, as a focus particle is. This file defines its lexical record, which gives the
+form, the position relative to the host, and a `Clause.Distribution` saying, for each sentence type
+in each embedding context, whether the particle is obligatory, optional or excluded there. The
+cells where a particle `p` may occur are `p.distribution.possible`, and the sentence types and
+embedding contexts that admit it are the `dom` and `cod` of that relation.
 
 ## Main definitions
 
-* `Particle`, `Particle.Position`: the entry and its position class.
+* `Particle.Position`: the position classes, relative to the clause or to a host constituent.
+* `Particle`: the form, position and distribution of a particle.
+
+## Implementation notes
+
+* The form is a string, so the record does not say whether a particle is a word or a clitic.
+  `Coordinator` and `AdditiveParticle` record a `Morphology.Morph`, which does.
+* A distribution says where a particle occurs and not what licenses it there. A cell on which the
+  source is silent is `none`, and so is a position the source does not give; a particle with no
+  fixed position has `Particle.Position.free`.
+
+## TODO
+
+* Record the form as morphs, as `Complementizer` does, so that an enclitic such as Russian *li*
+  and a free word such as *razve* differ in kind and not only in position.
 
 ## References
 
@@ -27,7 +39,7 @@ relation's `dom` and `cod`.
 
 @[expose] public section
 
-/-- Where a particle sits relative to its host domain, Zwicky's positional diagnostic. -/
+/-- Where a particle stands, in its clause or beside a host constituent. -/
 inductive Particle.Position where
   | clauseInitial
   /-- Second position (Wackernagel; Russian *li*). -/
@@ -41,7 +53,7 @@ inductive Particle.Position where
   | postHost
   /-- No fixed position (Hindi-Urdu *kya:*). -/
   | free
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- An uninflectable function word associated with a host constituent. -/
 structure Particle where
