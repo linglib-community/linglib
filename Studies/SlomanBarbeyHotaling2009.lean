@@ -182,7 +182,8 @@ theorem causes_not_Enables : ¬ Enables causes .A .B :=
 /-- *A enables B* holds of (3), which has the link, the accessory, and the necessity of A, B
 being the conjunction of A and X. -/
 theorem enables_Enables : Enables enables .A .B := by
-  refine ⟨by decide, ⟨.X, by decide, by decide⟩, guarantees_single_iff.2 fun u X x hb ha hx ↦ ?_⟩
+  refine ⟨by decide, ⟨.X, by decide, by decide⟩,
+    (guarantees_single_iff (by decide)).2 fun u X x hb ha hx ↦ ?_⟩
   rw [solve_intervene_of_notMem hb]
   show ((enables.intervene X x).solve u .A && (enables.intervene X x).solve u .X) = false
   rw [solve_intervene_of_mem ha, hx, Bool.false_and]

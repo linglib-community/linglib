@@ -88,17 +88,18 @@ theorem globallyNecessary_iff :
 theorem locallyNecessary_iff :
     LocallyNecessary M C c E e ↔ LocallySufficient M C (!c) E (!e) := Iff.rfl
 
-theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C = Part.some c) :
-    Cause M k C c E e :=
-  ⟨hk, fun u X ξ hkX hE ↦
+theorem Cause.of_globallySufficient (hCE : C ≠ E) (h : GloballySufficient M C c E e)
+    (hk : k C = Part.some c) (hE : k E = ⊥) : Cause M k C c E e :=
+  ⟨hk, fun u X ξ hkX hX ↦
     let ⟨hC, hξ⟩ := exists_mem_of_le_updateFinset hkX hk
-    guarantees_single_iff.1 h u X ξ hE hC hξ⟩
+    (guarantees_single_iff hCE).1 h u X ξ (fun hEX ↦ by simpa [hE] using hX hEX) hC hξ⟩
 
 -- (22a)
 theorem LocallySufficient.of_globally [Inhabited U] (hCE : C ≠ E)
     (h : GloballySufficient M C c E e) : LocallySufficient M C c E e :=
   ⟨default, {C}, uniqueElim c, by simpa using hCE.symm, Finset.mem_singleton_self C, rfl,
-    guarantees_single_iff.1 h _ _ _ (by simpa using hCE.symm) (Finset.mem_singleton_self C) rfl⟩
+    (guarantees_single_iff hCE).1 h _ _ _ (by simpa using hCE.symm) (Finset.mem_singleton_self C)
+      rfl⟩
 
 -- (21a)
 theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
@@ -152,15 +153,15 @@ theorem solve_L {X : Finset V} {ξ : X → Bool} (h : V.L ∉ X) (u : Context) :
   solve_intervene_of_notMem h
 
 theorem s1_off_globallySufficient : GloballySufficient light .S1 false .L false :=
-  guarantees_single_iff.2 fun u _ _ hL hS1 hξ ↦ by
+  (guarantees_single_iff (by decide)).2 fun u _ _ hL hS1 hξ ↦ by
     rw [solve_L hL, solve_intervene_of_mem hS1, hξ, Bool.false_and]
 
 theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
   s1_off_globallySufficient
 
 theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L true :=
-  fun h ↦ absurd (guarantees_single_iff.1 h ⟨true, false⟩ {.S1} (uniqueElim true) (by decide)
-    (Finset.mem_singleton_self _) rfl) (by decide)
+  fun h ↦ absurd ((guarantees_single_iff (by decide)).1 h ⟨true, false⟩ {.S1} (uniqueElim true)
+    (by decide) (Finset.mem_singleton_self _) rfl) (by decide)
 
 -- Table 2
 theorem s1_off_causes_off_uncertain :
@@ -178,6 +179,7 @@ abbrev bothOn : V → Part Bool := [.S1 ← true, .S2 ← true]
 -- Table 2
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
   refine ⟨by decide, fun u X ξ hk hL ↦ ?_⟩
+  replace hL : V.L ∉ X := fun h ↦ absurd (hL h) (by decide)
   obtain ⟨h1, h1'⟩ := exists_mem_of_le_updateFinset hk (by decide : bothOn .S1 = Part.some true)
   obtain ⟨h2, h2'⟩ := exists_mem_of_le_updateFinset hk (by decide : bothOn .S2 = Part.some true)
   rw [solve_L hL, solve_intervene_of_mem h1, solve_intervene_of_mem h2, h1', h2']
@@ -195,6 +197,7 @@ theorem glass_nl_diverge_on_bus :
     Cause busModel (Function.update s_b .Tr (Part.some true)) .Tr true .Bs true ∧
       ¬ NadathurLauer2020.Cause busModel s_b actual .Tr true .Bs true := by
   refine ⟨⟨by decide, fun u X ξ hk hBs ↦ ?_⟩, not_cause⟩
+  replace hBs : NadathurLauer2020.Bus.V.Bs ∉ X := fun h ↦ absurd (hBs h) (by decide)
   obtain ⟨hRn, hRn'⟩ :=
     exists_mem_of_le_updateFinset hk
       (by decide : Function.update s_b .Tr (Part.some true) .Rn = Part.some true)
