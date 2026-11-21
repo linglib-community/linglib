@@ -14,41 +14,33 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # The mood state
 
-A mood state is Portner's partially ordered set of worlds, a context set with a preorder on worlds,
-together with a partition of the worlds that records the open question. The first two coordinates
-form an ordered information state `DynamicSemantics.OrderedInformationState`, with its updates
-`assert` and `promote` and its modals `boxCs` and `boxLe`. For interrogatives Portner (p. 237)
-offers two options: replace the context set with a partition of it, or add a question set as a third
-coordinate, as in the discourse contexts of Roberts and of his own earlier work. The mood state
-takes the second option, with the question set reduced to the meet of its partitions.
+A mood state is an ordered information state, a context set together with a preorder on worlds,
+and an inquiry, a partition of the worlds that records the open question. Mood states are
+ordered coordinatewise, a more constrained state lying below a less constrained one, and form a
+complete lattice whose top is the state with no information, no expectations and no question.
 
-Each of the three updates meets one coordinate with a fixed content. The modal `boxAns` holds
-of what the open question settles within the context set.
+We define three updates, each of which changes one coordinate: `Mood.State.assert` removes
+worlds from the context set, `Mood.State.promote` refines the ordering, and `Mood.State.inquire`
+refines the inquiry. Each meets the state with a fixed content (`Mood.State.isAdditive_assert`,
+`Mood.State.isAdditive_promote`, `Mood.State.isAdditive_inquire`).
 
-## Main definitions
+Beside the two modals of an ordered information state we define answerhood,
+`Mood.State.boxAns`: a state settles `p` when `p` is constant on the part of each inquiry cell
+inside the context set, or equivalently when its issue entails the polar question whether `p`
+relative to the context set (`Mood.State.boxAns_iff_le_relativeTo`). `Mood.Component` names the
+three coordinates and `Mood.Component.boxOn` the modal of each.
 
-* `Mood.State`: an ordered information state together with an inquiry partition.
-* `Mood.Component`, `Mood.Component.boxOn`: the coordinates of a mood state and their modals,
-  by which Portner classifies the mood-bearing categories.
-* `Mood.State.inquire`: the update that refines the inquiry with a question.
-* `Mood.State.boxAns`: answerhood, constancy on the inquiry cells within the context set.
-* `Mood.stateAt`: the ordered information state that a Kratzer pair induces at a world.
-
-## Main statements
-
-* `Mood.State.boxAns_iff_le_relativeTo`: `boxAns p` holds exactly when the current issue
-  entails the polar question whether `p` relative to the context set.
-* `Mood.State.isAdditive_assert`, `Mood.State.isAdditive_promote`,
-  `Mood.State.isAdditive_inquire`: the three updates are additive.
-* `Mood.eventually_simpleNecessity_iff_boxCs`, `Mood.forall_mem_bestWorlds_iff_boxLe`: Kratzer's
-  simple necessity and truth at the best worlds are the two modals of the induced state, as
-  Portner glosses his (3).
+A modal base and an ordering source induce an ordered information state at each world,
+`Mood.stateAt`, whose two modals are Kratzer's simple necessity and truth at the best worlds.
 
 ## Implementation notes
 
+* For interrogatives Portner offers two options: replace the context set with a partition of
+  it, or add a question set as a third coordinate, as in the discourse contexts of Roberts and of
+  his own earlier work. The mood state takes the second, with the question set reduced to the
+  meet of its partitions, as Mari and Portner's discourse context keeps the question under
+  discussion as a component of its own beside the common ground.
 * The `?`-update and `boxAns` are additions of this library; Portner leaves interrogatives open.
-  Mari and Portner's discourse context likewise keeps the question under discussion as a component
-  of its own beside the common ground.
 * The inquiry is a partition. Questions that are not partitions, such as mention-some questions,
   live in `Question W`, into which `Question.fromSetoid` embeds the partitions.
 
@@ -70,6 +62,8 @@ namespace Mood
 
 open DynamicSemantics
 
+variable {W : Type*}
+
 /-- A mood state is an ordered information state together with an inquiry partition, the open
 question, where `⊤` is no question. -/
 @[ext]
@@ -78,8 +72,6 @@ structure State (W : Type*) extends OrderedInformationState W where
   inquiry : Setoid W
 
 namespace State
-
-variable {W : Type*}
 
 /-- The mood state with no open question. -/
 def ofOrderedInformationState (σ : OrderedInformationState W) : State W :=
@@ -91,6 +83,51 @@ def ofOrderedInformationState (σ : OrderedInformationState W) : State W :=
 
 @[simp] theorem ofOrderedInformationState_inquiry (σ : OrderedInformationState W) :
     (ofOrderedInformationState σ).inquiry = (⊤ : Setoid W) := rfl
+
+/-! ### The lattice of mood states
+
+Mood states are ordered componentwise, a more constrained state lying below a less constrained
+one. They form a complete lattice, the product of the lattice of ordered information states and
+the lattice of partitions, whose top is the state with no information, no expectations and no
+question. -/
+
+instance : LE (State W) :=
+  ⟨fun c₁ c₂ ↦ c₁.toOrderedInformationState ≤ c₂.toOrderedInformationState ∧
+    c₁.inquiry ≤ c₂.inquiry⟩
+instance : LT (State W) := ⟨fun c₁ c₂ ↦ c₁ ≤ c₂ ∧ ¬c₂ ≤ c₁⟩
+instance : Max (State W) :=
+  ⟨fun c₁ c₂ ↦
+    ⟨c₁.toOrderedInformationState ⊔ c₂.toOrderedInformationState, c₁.inquiry ⊔ c₂.inquiry⟩⟩
+instance : Min (State W) :=
+  ⟨fun c₁ c₂ ↦
+    ⟨c₁.toOrderedInformationState ⊓ c₂.toOrderedInformationState, c₁.inquiry ⊓ c₂.inquiry⟩⟩
+instance : SupSet (State W) := ⟨fun S ↦ ⟨⨆ c ∈ S, c.toOrderedInformationState, ⨆ c ∈ S, c.inquiry⟩⟩
+instance : InfSet (State W) := ⟨fun S ↦ ⟨⨅ c ∈ S, c.toOrderedInformationState, ⨅ c ∈ S, c.inquiry⟩⟩
+instance : Top (State W) := ⟨ofOrderedInformationState ⊤⟩
+instance : Bot (State W) := ⟨⟨⊥, ⊥⟩⟩
+
+instance : CompleteLattice (State W) :=
+  Function.Injective.completeLattice (fun c ↦ (c.toOrderedInformationState, c.inquiry))
+    (fun _ _ h ↦ State.ext (congrArg (·.1.info) h) (congrArg (·.1.order) h) (congrArg Prod.snd h))
+    Iff.rfl Iff.rfl (fun _ _ ↦ rfl) (fun _ _ ↦ rfl) (fun _ ↦ by simp only [Prod.iSup_mk]; rfl)
+    (fun _ ↦ by simp only [Prod.iInf_mk]; rfl) rfl rfl
+
+theorem le_iff {c₁ c₂ : State W} :
+    c₁ ≤ c₂ ↔
+      c₁.toOrderedInformationState ≤ c₂.toOrderedInformationState ∧ c₁.inquiry ≤ c₂.inquiry :=
+  Iff.rfl
+
+/-- Mood states are the pairs of an ordered information state and an inquiry partition. -/
+@[simps apply]
+def orderIsoProd : State W ≃o OrderedInformationState W × Setoid W where
+  toFun c := (c.toOrderedInformationState, c.inquiry)
+  invFun p := ⟨p.1, p.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_rel_iff' := Iff.rfl
+
+@[simp] theorem orderIsoProd_symm_apply (σ : OrderedInformationState W) (q : Setoid W) :
+    orderIsoProd.symm (σ, q) = ⟨σ, q⟩ := rfl
 
 /-! ### Updates -/
 
@@ -137,13 +174,6 @@ theorem inquire_inquire_self (c : State W) (q : Setoid W) :
     (c.inquire q).inquire q = c.inquire q :=
   congrArg (State.mk c.toOrderedInformationState) (inf_right_idem _ _)
 
-/-- Promotion changes nothing exactly when the content's worlds form a lower set of the
-ordering. -/
-theorem promote_eq_self_iff {c : State W} {p : W → Prop} :
-    c.promote p = c ↔ c.order ≤ .ofCriterion p :=
-  ⟨fun h ↦ OrderedInformationState.isFixedPt_promote_iff.1 (congrArg toOrderedInformationState h),
-    fun h ↦ congrArg (State.mk · c.inquiry) (OrderedInformationState.isFixedPt_promote_iff.2 h)⟩
-
 @[simp] theorem foldl_assert_toOrderedInformationState (ps : List (W → Prop)) (c : State W) :
     (ps.foldl assert c).toOrderedInformationState =
       ps.foldl OrderedInformationState.assert c.toOrderedInformationState := by
@@ -158,50 +188,7 @@ theorem promote_eq_self_iff {c : State W} {p : W → Prop} :
   | nil => rfl
   | cons p ps ih => exact ih (c.promote p)
 
-/-! ### Order
-
-Mood states are ordered componentwise, a more constrained state lying below a less constrained
-one. They form a complete lattice, the product of the lattice of ordered information states and
-the lattice of partitions, whose top is the state with no information, no expectations and no
-question. -/
-
-instance : LE (State W) :=
-  ⟨fun c₁ c₂ ↦ c₁.toOrderedInformationState ≤ c₂.toOrderedInformationState ∧
-    c₁.inquiry ≤ c₂.inquiry⟩
-instance : LT (State W) := ⟨fun c₁ c₂ ↦ c₁ ≤ c₂ ∧ ¬c₂ ≤ c₁⟩
-instance : Max (State W) :=
-  ⟨fun c₁ c₂ ↦
-    ⟨c₁.toOrderedInformationState ⊔ c₂.toOrderedInformationState, c₁.inquiry ⊔ c₂.inquiry⟩⟩
-instance : Min (State W) :=
-  ⟨fun c₁ c₂ ↦
-    ⟨c₁.toOrderedInformationState ⊓ c₂.toOrderedInformationState, c₁.inquiry ⊓ c₂.inquiry⟩⟩
-instance : SupSet (State W) := ⟨fun S ↦ ⟨⨆ c ∈ S, c.toOrderedInformationState, ⨆ c ∈ S, c.inquiry⟩⟩
-instance : InfSet (State W) := ⟨fun S ↦ ⟨⨅ c ∈ S, c.toOrderedInformationState, ⨅ c ∈ S, c.inquiry⟩⟩
-instance : Top (State W) := ⟨ofOrderedInformationState ⊤⟩
-instance : Bot (State W) := ⟨⟨⊥, ⊥⟩⟩
-
-instance : CompleteLattice (State W) :=
-  Function.Injective.completeLattice (fun c ↦ (c.toOrderedInformationState, c.inquiry))
-    (fun _ _ h ↦ State.ext (congrArg (·.1.info) h) (congrArg (·.1.order) h) (congrArg Prod.snd h))
-    Iff.rfl Iff.rfl (fun _ _ ↦ rfl) (fun _ _ ↦ rfl) (fun _ ↦ by simp only [Prod.iSup_mk]; rfl)
-    (fun _ ↦ by simp only [Prod.iInf_mk]; rfl) rfl rfl
-
-theorem le_iff {c₁ c₂ : State W} :
-    c₁ ≤ c₂ ↔
-      c₁.toOrderedInformationState ≤ c₂.toOrderedInformationState ∧ c₁.inquiry ≤ c₂.inquiry :=
-  Iff.rfl
-
-/-- Mood states are the pairs of an ordered information state and an inquiry partition. -/
-@[simps apply]
-def orderIsoProd : State W ≃o OrderedInformationState W × Setoid W where
-  toFun c := (c.toOrderedInformationState, c.inquiry)
-  invFun p := ⟨p.1, p.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-  map_rel_iff' := Iff.rfl
-
-@[simp] theorem orderIsoProd_symm_apply (σ : OrderedInformationState W) (q : Setoid W) :
-    orderIsoProd.symm (σ, q) = ⟨σ, q⟩ := rfl
+/-! ### Updates meet a state with a content -/
 
 theorem isAdditive_assert (p : W → Prop) : IsAdditive (assert · p) := fun c ↦
   congrArg₂ State.mk (OrderedInformationState.isAdditive_assert p c.toOrderedInformationState)
@@ -213,6 +200,13 @@ theorem isAdditive_promote (p : W → Prop) : IsAdditive (promote · p) := fun c
 
 theorem isAdditive_inquire (q : Setoid W) : IsAdditive (inquire · q) := fun c ↦
   congrArg₂ State.mk (inf_top_eq _).symm (congrArg (c.inquiry ⊓ ·) (top_inf_eq q).symm)
+
+/-- Promotion changes nothing exactly when the content's worlds form a lower set of the
+ordering. -/
+theorem promote_eq_self_iff {c : State W} {p : W → Prop} :
+    c.promote p = c ↔ c.order ≤ .ofCriterion p :=
+  ⟨fun h ↦ OrderedInformationState.isFixedPt_promote_iff.1 (congrArg toOrderedInformationState h),
+    fun h ↦ congrArg (State.mk · c.inquiry) (OrderedInformationState.isFixedPt_promote_iff.2 h)⟩
 
 theorem le_inquire_iff (c : State W) (q : Setoid W) :
     c ≤ c.inquire q ↔ c.inquiry ≤ q :=
@@ -277,22 +271,6 @@ theorem boxAns_imp (c : State W) (p q : W → Prop) :
     c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w → q w) :=
   fun hp hq _ hw _ hv hwv ↦ imp_congr (hp hw hv hwv) (hq hw hv hwv)
 
-/-! ### Answerhood is not informational necessity -/
-
-/-- The state over `Bool` with every world in the context set and the finest inquiry. -/
-def sepInquiry : State Bool where
-  info := Set.univ
-  order := ⊤
-  inquiry := ⊥
-
-/-- The proposition true at `false` alone. -/
-def sepProp : Bool → Prop := fun w ↦ w = false
-
-theorem boxAns_not_reducible_to_boxCs :
-    ∃ (c : State Bool) (p : Bool → Prop), c.boxAns p ∧ ¬ c.toOrderedInformationState.boxCs p :=
-  ⟨sepInquiry, sepProp, Setoid.bot_determines.determinesOn _,
-    fun h ↦ Bool.noConfusion (h true trivial)⟩
-
 end State
 
 /-! ### Components -/
@@ -309,21 +287,19 @@ inductive Component where
   | inquisitive
   deriving DecidableEq, Repr, Fintype
 
-variable {W : Type*}
-
 /-- The necessity modal of a component is `boxCs`, `boxLe` or `boxAns`. -/
 def Component.boxOn : Component → State W → (W → Prop) → Prop
   | .informational, c, p => c.toOrderedInformationState.boxCs p
   | .preferential,  c, p => c.toOrderedInformationState.boxLe p
   | .inquisitive,   c, p => c.boxAns p
 
-@[simp] theorem boxOn_informational (c : State W) (p : W → Prop) :
+@[simp] theorem Component.boxOn_informational (c : State W) (p : W → Prop) :
     Component.informational.boxOn c p = c.toOrderedInformationState.boxCs p := rfl
 
-@[simp] theorem boxOn_preferential (c : State W) (p : W → Prop) :
+@[simp] theorem Component.boxOn_preferential (c : State W) (p : W → Prop) :
     Component.preferential.boxOn c p = c.toOrderedInformationState.boxLe p := rfl
 
-@[simp] theorem boxOn_inquisitive (c : State W) (p : W → Prop) :
+@[simp] theorem Component.boxOn_inquisitive (c : State W) (p : W → Prop) :
     Component.inquisitive.boxOn c p = c.boxAns p := rfl
 
 /-! ### Kratzer backgrounds induce states
@@ -360,5 +336,25 @@ theorem isFixedPt_assert_iff_eventually_simpleNecessity (p : W → Prop) (w : W)
 
 theorem isRealistic_iff_mem_stateAt_info : f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=
   Iff.rfl
+
+namespace State
+
+/-! ### Answerhood is not informational necessity -/
+
+/-- The state over `Bool` with every world in the context set and the finest inquiry. -/
+def sepInquiry : State Bool where
+  info := Set.univ
+  order := ⊤
+  inquiry := ⊥
+
+/-- The proposition true at `false` alone. -/
+def sepProp : Bool → Prop := fun w ↦ w = false
+
+theorem boxAns_not_reducible_to_boxCs :
+    ∃ (c : State Bool) (p : Bool → Prop), c.boxAns p ∧ ¬ c.toOrderedInformationState.boxCs p :=
+  ⟨sepInquiry, sepProp, Setoid.bot_determines.determinesOn _,
+    fun h ↦ Bool.noConfusion (h true trivial)⟩
+
+end State
 
 end Mood
