@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `SagWasowBender2003` — typed example data
@@ -223,6 +225,45 @@ def ex9b : Datum :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
+def ex17a : Datum :=
+  { id := "sagwasowbender2003_ex17a"
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (17a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I enjoy yourself."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("topic", "pronominal agreement"), ("antecedent", "I"), ("reflexive", "yourself")] }
+
+def ex17b : Datum :=
+  { id := "sagwasowbender2003_ex17b"
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (17b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "He enjoys themselves."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("topic", "pronominal agreement"), ("antecedent", "he"), ("reflexive", "themselves")] }
+
+def ex17c : Datum :=
+  { id := "sagwasowbender2003_ex17c"
+    source := ⟨"sag-wasow-bender-2003", "ch. 7, (17c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She enjoys himself."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("topic", "pronominal agreement"), ("antecedent", "she"), ("reflexive", "himself")] }
+
 def ex37a : Datum :=
   { id := "sagwasowbender2003_ex37a"
     source := ⟨"sag-wasow-bender-2003", "ch. 15, (37a)"⟩
@@ -353,6 +394,47 @@ def ex44 : Datum :=
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 
-def all : List Datum := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex37a, ex37b, ex38a, ex38b, ex40a, ex40b, ex40c, ex36a, ex36b, ex44]
+def all : List Datum := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex17a, ex17b, ex17c, ex37a, ex37b, ex38a, ex38b, ex40a, ex40b, ex40c, ex36a, ex36b, ex44]
+
+/-- The part of the textbook a row illustrates. -/
+inductive Topic where
+  /-- binding: the binding principles of Chapter 7 -/
+  | binding
+  /-- pronominal agreement: the agreement of a reflexive with its antecedent (§7.3.2.1) -/
+  | pronominalAgreement
+  /-- coordination: extraction from coordinate structures (Chapter 15) -/
+  | coordination
+  /-- conjunctGap: a conjunct that is itself a gap (Chapter 15) -/
+  | conjunctGap
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `topic`. -/
+def topic (e : Datum) : Option Topic :=
+  e.parse? "topic" [("binding", .binding), ("pronominal agreement", .pronominalAgreement),
+    ("coordination", .coordination), ("conjunctGap", .conjunctGap)]
+
+/-- Whether a row's pronoun is a reflexive or a personal pronoun. -/
+inductive PronounSort where
+  /-- anaphor: a reflexive pronoun -/
+  | anaphor
+  /-- pronoun: a nonreflexive personal pronoun -/
+  | pronoun
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `sort`. -/
+def sort (e : Datum) : Option PronounSort :=
+  e.parse? "sort" [("anaphor", .anaphor), ("pronoun", .pronoun)]
+
+/-- Whether the element a row's pronoun is coindexed with outranks it on an argument-structure list. -/
+inductive Binder where
+  /-- local: it outranks the pronoun on the list of the same head -/
+  | outranking
+  /-- nonlocal: it does not -/
+  | notOutranking
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `binder`. -/
+def binder (e : Datum) : Option Binder :=
+  e.parse? "binder" [("local", .outranking), ("nonlocal", .notOutranking)]
 
 end SagWasowBender2003.Examples
