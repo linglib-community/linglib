@@ -141,20 +141,22 @@ theorem toSymmetricAlgebra_mul_ι (u : UniversalEnvelopingAlgebra R L) (X : L) :
 
 /-! ### Surjectivity -/
 
-/-- The derivation of `X` preserves degree. -/
-theorem derivation_mem_pow (X : L) {n : ℕ} {a : SymmetricAlgebra R L}
-    (ha : a ∈ LinearMap.range (ι R L) ^ n) : derivation R X a ∈ LinearMap.range (ι R L) ^ n := by
+/-- A derivation of `X` that preserves a submodule preserves its powers. -/
+theorem derivation_mem_pow_of {N : Submodule R (SymmetricAlgebra R L)} (X : L)
+    (hN : ∀ a ∈ N, derivation R X a ∈ N) {n : ℕ} {a : SymmetricAlgebra R L} (ha : a ∈ N ^ n) :
+    derivation R X a ∈ N ^ n := by
   induction ha using Submodule.pow_induction_on_left' with
   | algebraMap r => rw [Derivation.map_algebraMap]; exact zero_mem _
   | add x y i hx hy ihx ihy => rw [map_add]; exact add_mem ihx ihy
   | mem_mul m hm i x hx ih =>
-    obtain ⟨Y, rfl⟩ := hm
-    rw [Derivation.leibniz, derivation_ι, smul_eq_mul, smul_eq_mul]
-    exact add_mem
-      ((pow_succ' (LinearMap.range (ι R L)) i).symm ▸
-        Submodule.mul_mem_mul (LinearMap.mem_range_self _ _) ih)
-      ((pow_succ (LinearMap.range (ι R L)) i).symm ▸
-        Submodule.mul_mem_mul hx (LinearMap.mem_range_self _ _))
+    rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
+    exact add_mem ((pow_succ' N i).symm ▸ Submodule.mul_mem_mul hm ih)
+      ((pow_succ N i).symm ▸ Submodule.mul_mem_mul hx (hN m hm))
+
+/-- The derivation of `X` preserves degree. -/
+theorem derivation_mem_pow (X : L) {n : ℕ} {a : SymmetricAlgebra R L}
+    (ha : a ∈ LinearMap.range (ι R L) ^ n) : derivation R X a ∈ LinearMap.range (ι R L) ^ n :=
+  derivation_mem_pow_of R X (by rintro _ ⟨Y, rfl⟩; exact ⟨Y * X, (derivation_ι R X Y).symm⟩) ha
 
 theorem pow_le_range_toSymmetricAlgebra (n : ℕ) :
     LinearMap.range (ι R L) ^ n ≤ LinearMap.range (toSymmetricAlgebra R (L := L)) := by
@@ -180,5 +182,122 @@ theorem toSymmetricAlgebra_surjective :
   | zero => exact zero_mem _
   | homogeneous m => exact pow_le_range_toSymmetricAlgebra R _ m.2
   | add _ _ hm hm' => exact add_mem hm hm'
+
+/-! ### Filtrations
+
+The enveloping algebra and the symmetric algebra are filtered by the powers of `1 ⊔ M`, for `M`
+the range of the generators: the `n`-th power is spanned by the products of at most `n`
+generators. -/
+
+private theorem pow_le_one_sup_pow {A : Type*} [Semiring A] [Algebra R A] (M : Submodule R A)
+    (k : ℕ) : M ^ k ≤ (1 ⊔ M) ^ k :=
+  pow_le_pow_left' le_sup_right k
+
+private theorem one_sup_pow_succ {A : Type*} [Semiring A] [Algebra R A] (M : Submodule R A)
+    (m : ℕ) : (1 ⊔ M) ^ (m + 1) = (1 ⊔ M) ^ m ⊔ M ^ (m + 1) := by
+  have hmono : ∀ k, M ^ k ≤ (1 ⊔ M) ^ k := pow_le_one_sup_pow R M
+  have hstep : ∀ k, (1 ⊔ M) ^ k ≤ (1 ⊔ M) ^ (k + 1) := fun k ↦ by
+    rw [pow_succ, Submodule.mul_sup, mul_one]
+    exact le_sup_left
+  refine le_antisymm ?_ (sup_le (hstep m) (hmono _))
+  induction m with
+  | zero => simp
+  | succ m ih =>
+    rw [pow_succ, Submodule.mul_sup, mul_one]
+    refine sup_le le_sup_left ?_
+    refine (mul_le_mul' ih le_rfl).trans ?_
+    rw [Submodule.sup_mul, ← pow_succ]
+    exact sup_le (le_sup_of_le_left ((mul_le_mul' le_rfl le_sup_right).trans (pow_succ _ _).ge))
+      le_sup_right
+
+theorem toSymmetricAlgebra_algebraMap (r : R) :
+    toSymmetricAlgebra R (algebraMap R (UniversalEnvelopingAlgebra R L) r) =
+      algebraMap R (SymmetricAlgebra R L) r := by
+  rw [Algebra.algebraMap_eq_smul_one, map_smul, toSymmetricAlgebra_one,
+    Algebra.algebraMap_eq_smul_one]
+
+/-- The generators of the enveloping algebra, as a submodule. -/
+local notation "M_U" =>
+  LinearMap.range
+    ((UniversalEnvelopingAlgebra.ι R : L →ₗ⁅R⁆ UniversalEnvelopingAlgebra R L) : L →ₗ[R] _)
+
+/-- The generators of the symmetric algebra, as a submodule. -/
+local notation "M_S" => LinearMap.range (ι R L)
+
+theorem derivation_mem_one_sup_pow (X : L) {k : ℕ} {a : SymmetricAlgebra R L}
+    (ha : a ∈ (1 ⊔ M_S) ^ k) : derivation R X a ∈ (1 ⊔ M_S) ^ k :=
+  derivation_mem_pow_of R X (fun b hb ↦ by
+    obtain ⟨c, hc, d, ⟨Y, rfl⟩, rfl⟩ := Submodule.mem_sup.mp hb
+    obtain ⟨r, rfl⟩ := Submodule.mem_one.mp hc
+    rw [map_add, Derivation.map_algebraMap, zero_add, derivation_ι]
+    exact Submodule.mem_sup_right ⟨_, rfl⟩) ha
+
+/-- A product of at most `m` generators of the enveloping algebra goes to a sum of products of
+at most `m` generators of the symmetric algebra. -/
+theorem toSymmetricAlgebra_mem_pow {m : ℕ} {u : UniversalEnvelopingAlgebra R L}
+    (hu : u ∈ (1 ⊔ M_U) ^ m) : toSymmetricAlgebra R u ∈ (1 ⊔ M_S) ^ m := by
+  induction hu using Submodule.pow_induction_on_right' with
+  | algebraMap r =>
+    rw [toSymmetricAlgebra_algebraMap, pow_zero]
+    exact Submodule.mem_one.mpr ⟨r, rfl⟩
+  | add x y i hx hy ihx ihy => rw [map_add]; exact add_mem ihx ihy
+  | mul_mem i x hx ih w hw =>
+    obtain ⟨c, hc, d, ⟨X, rfl⟩, rfl⟩ := Submodule.mem_sup.mp hw
+    obtain ⟨r, rfl⟩ := Submodule.mem_one.mp hc
+    have hle : (1 ⊔ M_S) ^ i ≤ (1 ⊔ M_S) ^ (i + 1) := by
+      rw [one_sup_pow_succ]; exact le_sup_left
+    rw [mul_add, map_add, ← Algebra.commutes, ← Algebra.smul_def, map_smul]
+    refine add_mem (hle (Submodule.smul_mem _ r ih)) ?_
+    change toSymmetricAlgebra R (x * UniversalEnvelopingAlgebra.ι R X) ∈ _
+    rw [toSymmetricAlgebra_mul_ι, act_apply]
+    refine add_mem ?_ (hle (derivation_mem_one_sup_pow R X ih))
+    rw [pow_succ]
+    exact Submodule.mul_mem_mul ih (Submodule.mem_sup_right ⟨X, rfl⟩)
+
+/-- The generators of the tensor algebra, as a submodule. -/
+local notation "M_T" => LinearMap.range (TensorAlgebra.ι R : L →ₗ[R] TensorAlgebra R L)
+
+theorem mkAlgHom_mem_pow {k : ℕ} {t : TensorAlgebra R L} (ht : t ∈ M_T ^ k) :
+    UniversalEnvelopingAlgebra.mkAlgHom R L t ∈ M_U ^ k := by
+  induction ht using Submodule.pow_induction_on_right' with
+  | algebraMap r => rw [AlgHom.commutes, pow_zero]; exact Submodule.mem_one.mpr ⟨r, rfl⟩
+  | add x y i hx hy ihx ihy => rw [map_add]; exact add_mem ihx ihy
+  | mul_mem i x hx ih m hm =>
+    obtain ⟨Y, rfl⟩ := hm
+    rw [map_mul]
+    exact Submodule.mul_mem_mul ih ⟨Y, rfl⟩
+
+/-- A product of `n + 1` generators of the enveloping algebra goes to the product of the same
+generators in the symmetric algebra, up to products of at most `n` generators. -/
+theorem toSymmetricAlgebra_mkAlgHom_sub_mem (n : ℕ) {t : TensorAlgebra R L}
+    (ht : t ∈ M_T ^ (n + 1)) :
+    toSymmetricAlgebra R (UniversalEnvelopingAlgebra.mkAlgHom R L t) - algHom R L t ∈
+      (1 ⊔ M_S) ^ n := by
+  induction n generalizing t with
+  | zero =>
+    rw [zero_add, pow_one] at ht
+    obtain ⟨Y, rfl⟩ := ht
+    have h : UniversalEnvelopingAlgebra.mkAlgHom R L (TensorAlgebra.ι R Y) =
+        1 * UniversalEnvelopingAlgebra.ι R Y := (one_mul _).symm
+    rw [h, toSymmetricAlgebra_mul_ι, toSymmetricAlgebra_one, act_apply, one_mul,
+      Derivation.map_one_eq_zero, add_zero, show algHom R L (TensorAlgebra.ι R Y) = ι R L Y from rfl,
+      sub_self]
+    exact zero_mem _
+  | succ n ih =>
+    rw [pow_succ] at ht
+    refine Submodule.mul_induction_on ht (fun x hx m hm ↦ ?_) (fun x y hx hy ↦ ?_)
+    · obtain ⟨Y, rfl⟩ := hm
+      have hU : UniversalEnvelopingAlgebra.mkAlgHom R L (x * TensorAlgebra.ι R Y) =
+          UniversalEnvelopingAlgebra.mkAlgHom R L x * UniversalEnvelopingAlgebra.ι R Y := by
+        rw [map_mul]; rfl
+      have hW : UniversalEnvelopingAlgebra.mkAlgHom R L x ∈ (1 ⊔ M_U) ^ (n + 1) :=
+        pow_le_one_sup_pow R _ _ (mkAlgHom_mem_pow R hx)
+      rw [hU, toSymmetricAlgebra_mul_ι, act_apply, map_mul,
+        show algHom R L (TensorAlgebra.ι R Y) = ι R L Y from rfl, add_sub_right_comm, ← sub_mul]
+      refine add_mem ?_ (derivation_mem_one_sup_pow R Y (toSymmetricAlgebra_mem_pow R hW))
+      rw [pow_succ]
+      exact Submodule.mul_mem_mul (ih hx) (Submodule.mem_sup_right ⟨Y, rfl⟩)
+    · rw [map_add, map_add, map_add, add_sub_add_comm]
+      exact add_mem hx hy
 
 end RightPreLieAlgebra
