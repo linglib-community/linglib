@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.HPSG.Interpretation
+public import Linglib.Syntax.HPSG.RSRL.Interpretation
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Basic
 

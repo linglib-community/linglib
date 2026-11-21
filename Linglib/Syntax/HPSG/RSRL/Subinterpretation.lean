@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.HPSG.Description
+public import Linglib.Syntax.HPSG.RSRL.Description
 
 /-!
 # Generated sub-interpretations

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.HPSG.Subinterpretation
+public import Linglib.Syntax.HPSG.RSRL.Subinterpretation
 public import Linglib.Core.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Binding.Basic

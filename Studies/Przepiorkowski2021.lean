@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.FixedPoints
-public import Linglib.Syntax.HPSG.Subinterpretation
+public import Linglib.Syntax.HPSG.RSRL.Subinterpretation
 public import Studies.SagWasowBender2003
 public import Linglib.Syntax.HPSG.Construction
 public import Studies.Sag2010
