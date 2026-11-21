@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Algebra.Lie.UniversalEnveloping.Filtration
 public import Linglib.Core.Algebra.NonAssoc.PreLie.Brace
+public import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Basic
 public import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 public import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Grading
 public import Mathlib.Algebra.Lie.UniversalEnveloping
@@ -39,6 +40,7 @@ The product of the enveloping algebra, carried to `S(L)` along this equivalence,
 of [oudom-guin-2008], `RightPreLieAlgebra.product`. It is associative with unit `1`, and
 multiplying on the right by an element of `L` is the action:
 `a ⋆ X = a * ι X + D_X a` (`RightPreLieAlgebra.product_ι`).
+In particular `L` embeds in its enveloping algebra (`RightPreLieAlgebra.ι_injective`).
 
 ## Implementation notes
 
@@ -51,7 +53,6 @@ that of the enveloping algebra.
 
 * `product a (ι X₁ * ⋯ * ι Xₙ)` is the symmetric brace of the action on `a` and `{X₁, …, Xₙ}`,
   by the recursion `RightPreLieAlgebra.product_mul_ι`.
-* `UniversalEnvelopingAlgebra.ι` is injective for these Lie algebras.
 
 ## References
 
@@ -440,6 +441,12 @@ theorem toSymmetricAlgebra_ι (X : L) :
     toSymmetricAlgebra R (UniversalEnvelopingAlgebra.ι R X) = ι R L X := by
   rw [← one_mul (UniversalEnvelopingAlgebra.ι R X), toSymmetricAlgebra_mul_ι,
     toSymmetricAlgebra_one, act_apply, one_mul, Derivation.map_one_eq_zero, add_zero]
+
+/-- A pre-Lie algebra embeds in the enveloping algebra of its commutator Lie algebra. -/
+theorem ι_injective :
+    Function.Injective (UniversalEnvelopingAlgebra.ι R : L → UniversalEnvelopingAlgebra R L) :=
+  fun X Y h ↦ SymmetricAlgebra.ι_injective <| by
+    rw [← toSymmetricAlgebra_ι, ← toSymmetricAlgebra_ι, h]
 
 /-- The product of Oudom and Guin on the symmetric algebra: the product of the enveloping
 algebra, carried along `equivSymmetricAlgebra`. -/
