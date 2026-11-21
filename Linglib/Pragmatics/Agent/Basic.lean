@@ -94,6 +94,11 @@ theorem policy_real_singleton :
     (a.policy β o).real {x} = Real.softmax (fun x ↦ β * a.value o x) x :=
   Kernel.softmax_coe_real_singleton (fun o x ↦ β * a.value o x) o x
 
+/-- The policy gives every action positive probability. -/
+theorem policy_real_singleton_pos : 0 < (a.policy β o).real {x} := by
+  haveI : Nonempty A := ⟨x⟩
+  rw [policy_real_singleton]; exact Real.softmax_pos _ x
+
 /-- At positive rationality the policy prefers the action of greater value. -/
 theorem policy_real_lt_iff (hβ : 0 < β) :
     (a.policy β o).real {x} < (a.policy β o).real {x'} ↔ a.value o x < a.value o x' :=

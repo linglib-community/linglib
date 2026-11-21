@@ -10,38 +10,55 @@ public import Linglib.Pragmatics.Agent.InversePlanning
 /-!
 # Houlihan et al. (2023): Emotion prediction as computation over a generative theory of mind
 
-This file formalizes the inverse planning and computed appraisal modules of
-[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] for the Split or Steal game. A `Player`
-values an outcome by three Fehr–Schmidt base features, money against a reference point and the two
-inequities, weighted by preferences and passed through a value function; the expected base utility
-of an action under the player's belief about the opponent is (3.1)
-(`Setting.expectedBaseUtility`), the softmax policy is (3.3) (`Setting.policy`), and the
-observer's inverse inference (3.4) is the posterior kernel of the plan over a finite prior
-(`Setting.posterior`). A player is an agent whose state is the opponent's action
-(`Setting.agent`), so the plan is the forward model of a population of agents, `Agent.plan`. The
-public game adds the reputation utilities of (3.2), the base weights an observer of the anonymous
-game would infer from the action (`Setting.expectedPublicUtility`).
+A *player* of Split or Steal has a weight in the unit interval for each of three features of an
+outcome, the money won against a reference point, the advantageous inequity and the
+disadvantageous inequity, a second weight for the reputation each feature earns, a belief that
+the opponent cooperates, and the reference point. The base utility of an outcome is the signed
+sum of the weighted values `ν` of its features (`Setting.baseUtility`).
 
-The direction of the inferences in Figure 2 follows from the covariance form of Bayes' rule:
-observing cooperation raises the posterior expectation of any statistic that monovaries with
-the expected-utility gap in favour of cooperating, and in Split or Steal that gap increases in
-the advantageous-inequity weight and decreases in the money and disadvantageous-inequity
-weights. The appraisals of Section 4, achieved utility, prediction error and the two
-counterfactuals, then carry structural signs: a cooperator whose opponent stole has a negative
-disadvantageous-inequity prediction error and a positive opponent counterfactual, the two
-loadings of the learned envy concept, and a player who stole from a cooperator has a negative
-advantageous-inequity utility that cooperating would have spared.
+A player is an agent whose state is the opponent's action (`Setting.agent`): the value of an
+action is its expected base utility under the player's belief (`Setting.value_agent`), and the
+player takes the action with the probability the agent's policy gives it at rationality `lam`
+(`Setting.policy`). In the public game the utility of an action adds, for each feature, the
+reputation weight times the value of the base weight an observer of the anonymous game would
+infer from the action (`Setting.publicAgent`, `Setting.value_publicAgent`).
+
+An observer with a prior over a population of players infers a player's weights and belief from
+its action by the posterior of the forward model (`Setting.posterior`). Seeing cooperation raises
+the expectation of every statistic that monovaries with the value advantage of cooperating
+(`Setting.priorExpectation_le_expectation_cooperate`). In a population that varies in one weight
+alone, that advantage increases in the advantageous-inequity weight and decreases in the money
+and disadvantageous-inequity weights, which gives the direction of each inference
+(`Setting.expectation_aia_defect_le_cooperate`, `Setting.expectation_money_cooperate_le_defect`,
+`Setting.expectation_dia_cooperate_le_defect`). A player who cares only to be thought averse to
+advantageous inequity cooperates more in public (`Setting.policy_cooperate_le_policy_public`).
+
+The appraisals of an outcome are computed from the player's weights and belief: the utility
+achieved in a feature (`Setting.domainUtility`), its prediction error against the utility
+expected during planning (`Setting.predictionError`), the opponent counterfactual, weighted by
+the belief that the opponent would have chosen otherwise (`Setting.opponentCounterfactual`), and
+the agent counterfactual, weighted by the probability that the player would have chosen
+otherwise knowing the opponent's action (`Setting.agentCounterfactual`). A cooperator whose
+opponent stole has a nonpositive prediction error and a nonnegative opponent counterfactual in
+disadvantageous inequity (`Setting.predictionError_dia_cooperate_defect_nonpos`,
+`Setting.opponentCounterfactual_dia_cooperate_defect_nonneg`), and a player who stole from a
+cooperator has a nonnegative agent counterfactual in advantageous inequity
+(`Setting.agentCounterfactual_aia_defect_cooperate_nonneg`).
 
 ## Implementation notes
 
 * The prior over preferences and beliefs is carried by a finite type of simulated players,
   as in the paper's sampled implementation; the value function `ν` is any strictly monotone
   function vanishing at zero, in place of the sign-adjusted logarithm.
-* Figure 2's per-weight directions are stated for priors that vary in that weight alone,
-  which is what makes the weight monovary with the utility gap; a correlated prior can reverse
-  them, and the paper reports only its empirical prior.
-* The lesion models of Section 5 are the constant posterior and the restriction to the money
-  domain; the learned readout of Section 8 and the fitted concordances are not formalized.
+* The weights and the belief are points of the unit interval and the reference point is
+  nonnegative, the ranges the paper gives them.
+* The per-weight directions of inference are stated for priors that vary in that weight alone,
+  which is what makes the weight monovary with the value advantage; a correlated prior can
+  reverse them, and the paper reports only its empirical prior.
+* The appraisals follow the paper's description of them; its formal definitions are in the
+  supplementary methods, which were not consulted.
+* The lesion models are the constant posterior and the restriction to the money domain; the
+  learned readout of emotions and the fitted concordances are not formalized.
 
 ## References
 
@@ -165,10 +182,10 @@ end Feature
 /-- A simulated player has base preference weights, reputation weights, the belief `π_{a₂}` that the
 opponent cooperates, and the reference point `π_Money`. -/
 structure Player where
-  base : Domain → ℝ
-  repu : Domain → ℝ
+  base : Domain → unitInterval
+  repu : Domain → unitInterval
   belief : unitInterval
-  reference : ℝ
+  reference : NNReal
 
 /-- The belief as a distribution over the opponent's action. -/
 def Player.beliefOn (q : Player) : Action → ℝ
@@ -224,36 +241,6 @@ theorem expectedBaseUtility_cooperate_sub_defect (q : Player) :
     feature_dia_cooperate_defect hpot, payoff, S.ν_zero]
   ring
 
-/-- The softmax policy (3.3) at rationality `lam` for a utility `U`. -/
-def policy (U : Player → Action → ℝ) (q : Player) : Action → ℝ :=
-  Real.softmax (S.lam • U q)
-
-variable (U : Player → Action → ℝ) (q : Player)
-
-theorem policy_eq_sigmoid (a : Action) :
-    S.policy U q a = Real.sigmoid (S.lam * (U q a - U q a.other)) := by
-  rw [policy, Real.softmax_eq_sigmoid_of_univ_eq_pair (i := a) (j := a.other)
-    (by cases a <;> decide) (by cases a <;> decide)]
-  simp only [Pi.smul_apply, smul_eq_mul, mul_sub]
-
-theorem policy_pos (a : Action) : 0 < S.policy U q a := Real.softmax_pos _ a
-
--- (3.1)
-theorem policy_cooperate_le_half_of_belief_eq_zero (hb : q.belief = 0) (hd : 0 ≤ q.base .dia) :
-    S.policy S.expectedBaseUtility q .cooperate ≤ 1 / 2 := by
-  rw [policy_eq_sigmoid, Action.other_cooperate, one_div, ← Real.sigmoid_zero,
-    Real.sigmoid_le_iff, expectedBaseUtility_cooperate_sub_defect, hb, Set.Icc.coe_zero]
-  nlinarith [mul_nonneg S.lam_pos.le (mul_nonneg hd S.ν_pot_nonneg)]
-
-theorem half_le_policy_cooperate_iff (hb : q.belief = 1) :
-    1 / 2 ≤ S.policy S.expectedBaseUtility q .cooperate ↔
-      q.base .money * (S.ν (S.pot - q.reference) - S.ν (S.pot / 2 - q.reference)) ≤
-        q.base .aia * S.ν S.pot := by
-  rw [policy_eq_sigmoid, Action.other_cooperate, one_div, ← Real.sigmoid_zero,
-    Real.sigmoid_le_iff, expectedBaseUtility_cooperate_sub_defect, hb, Set.Icc.coe_one,
-    mul_nonneg_iff_of_pos_left S.lam_pos]
-  constructor <;> intro h <;> linarith
-
 /-! ### Players as agents -/
 
 /-- A player of the anonymous game as an agent: its state is the opponent's action, its belief the
@@ -270,6 +257,38 @@ theorem value_agent (q : Player) (a₁ : Action) :
     ENNReal.toReal_ofReal (sub_nonneg.2 q.belief.2.2)]
   simp [expectedBaseUtility, sum_action, Player.beliefOn]
 
+/-- The probability (3.3) that a player takes an action, the share the policy of the agent `ag`
+makes of the player gives the action at rationality `lam`. -/
+def policy (ag : Player → Agent Unit Action Action) (q : Player) (a : Action) : ℝ :=
+  ((ag q).policy S.lam ()).real {a}
+
+variable (ag : Player → Agent Unit Action Action) (q : Player)
+
+theorem policy_eq_sigmoid (a : Action) :
+    S.policy ag q a =
+      Real.sigmoid (S.lam * ((ag q).value () a - (ag q).value () a.other)) :=
+  Agent.policy_real_of_pair (by cases a <;> decide) fun c ↦ by cases a <;> cases c <;> simp
+
+theorem policy_pos (a : Action) : 0 < S.policy ag q a := Agent.policy_real_singleton_pos
+
+-- (3.1)
+theorem policy_cooperate_le_half_of_belief_eq_zero (hb : q.belief = 0) :
+    S.policy S.agent q .cooperate ≤ 1 / 2 := by
+  rw [policy_eq_sigmoid, Action.other_cooperate, one_div, ← Real.sigmoid_zero,
+    Real.sigmoid_le_iff, value_agent, value_agent, expectedBaseUtility_cooperate_sub_defect, hb,
+    Set.Icc.coe_zero]
+  nlinarith [mul_nonneg S.lam_pos.le (mul_nonneg (q.base .dia).2.1 S.ν_pot_nonneg)]
+
+theorem half_le_policy_cooperate_iff (hb : q.belief = 1) :
+    1 / 2 ≤ S.policy S.agent q .cooperate ↔
+      q.base .money * (S.ν (S.pot - q.reference) - S.ν (S.pot / 2 - q.reference)) ≤
+        q.base .aia * S.ν S.pot := by
+  rw [policy_eq_sigmoid, Action.other_cooperate, one_div, ← Real.sigmoid_zero,
+    Real.sigmoid_le_iff, value_agent, value_agent, expectedBaseUtility_cooperate_sub_defect, hb,
+    Set.Icc.coe_one,
+    mul_nonneg_iff_of_pos_left S.lam_pos]
+  constructor <;> intro h <;> linarith
+
 /-! ### Inverse planning -/
 
 variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype Ω]
@@ -283,10 +302,7 @@ instance : IsMarkovKernel (S.plan ag p) :=
   inferInstanceAs (IsMarkovKernel (Agent.plan _ _ _))
 
 -- (3.3)
-theorem plan_agent_real (ω : Ω) (a : Action) :
-    (S.plan S.agent p ω).real {a} = S.policy S.expectedBaseUtility (p ω) a := by
-  simp only [plan, Agent.plan_apply, Agent.policy_real_singleton, value_agent, policy]
-  rfl
+theorem plan_real (ω : Ω) (a : Action) : (S.plan ag p ω).real {a} = S.policy ag (p ω) a := rfl
 
 variable (μ : Measure Ω) [IsProbabilityMeasure μ] [Nonempty Ω]
 
@@ -310,6 +326,8 @@ variable (S : Setting) (ag : Player → Agent Unit Action Action) {Ω : Type*} [
   [MeasurableSingletonClass Ω] [Fintype Ω] [Nonempty Ω] (p : Ω → Player) (μ : Measure Ω)
   [IsProbabilityMeasure μ] {f : Player → ℝ}
 
+/-- Seeing a player cooperate raises the observer's expectation of every statistic of the players
+that monovaries with the value advantage of cooperating. -/
 theorem priorExpectation_le_expectation_cooperate
     (hf : Monovary (f ∘ p) fun ω ↦
       (ag (p ω)).value () .cooperate - (ag (p ω)).value () .defect) :
@@ -337,25 +355,26 @@ def VariesOnly (d : Domain) : Prop :=
   ∀ ω ω', (∀ d', d' ≠ d → (p ω).base d' = (p ω').base d') ∧ (p ω).belief = (p ω').belief ∧
     (p ω).reference = (p ω').reference
 
--- Figure 2
+/-- In a population that varies only in the weight of advantageous inequity, the weight inferred
+from cooperation is at least the weight inferred from defection (Figure 2). -/
 theorem expectation_aia_defect_le_cooperate (h : VariesOnly p .aia) :
-    S.expectation S.agent p μ (·.base .aia) .defect ≤
-      S.expectation S.agent p μ (·.base .aia) .cooperate := by
+    S.expectation S.agent p μ (fun q ↦ (q.base .aia : ℝ)) .defect ≤
+      S.expectation S.agent p μ (fun q ↦ (q.base .aia : ℝ)) .cooperate := by
   refine S.expectation_defect_le_expectation_cooperate _ p μ fun i j hij ↦ ?_
   obtain ⟨hd, hb', hr⟩ := h i j
   have hm := hd .money (by decide)
   have hd' := hd .dia (by decide)
   simp only [value_agent, expectedBaseUtility_cooperate_sub_defect, hm, hd', hb', hr] at hij
-  show (p i).base .aia ≤ (p j).base .aia
+  show ((p i).base .aia : ℝ) ≤ (p j).base .aia
   refine le_of_not_gt fun hlt ↦ ?_
   nlinarith [mul_le_mul_of_nonneg_left hlt.le (mul_nonneg (p j).belief.2.1 S.ν_pot_nonneg)]
 
 -- Figure 2
 theorem expectation_money_cooperate_le_defect (h : VariesOnly p .money) :
-    S.expectation S.agent p μ (·.base .money) .cooperate ≤
-      S.expectation S.agent p μ (·.base .money) .defect := by
+    S.expectation S.agent p μ (fun q ↦ (q.base .money : ℝ)) .cooperate ≤
+      S.expectation S.agent p μ (fun q ↦ (q.base .money : ℝ)) .defect := by
   have := S.expectation_defect_le_expectation_cooperate S.agent p μ
-    (f := fun q ↦ -q.base .money) fun i j hij ↦ ?_
+    (f := fun q ↦ -(q.base .money : ℝ)) fun i j hij ↦ ?_
   · simpa only [expectation, integral_neg, neg_le_neg_iff] using this
   obtain ⟨hd, hb', hr⟩ := h i j
   have ha := hd .aia (by decide)
@@ -363,23 +382,23 @@ theorem expectation_money_cooperate_le_defect (h : VariesOnly p .money) :
   simp only [value_agent, expectedBaseUtility_cooperate_sub_defect, ha, hd', hb', hr] at hij
   have hν : S.ν (S.pot / 2 - (p j).reference) ≤ S.ν (S.pot - (p j).reference) :=
     S.ν_strictMono.monotone (by linarith [S.pot_pos])
-  show -(p i).base .money ≤ -(p j).base .money
+  show -((p i).base .money : ℝ) ≤ -(p j).base .money
   refine le_of_not_gt fun hlt ↦ ?_
   nlinarith [mul_le_mul_of_nonneg_left (neg_lt_neg_iff.1 hlt).le
     (mul_nonneg (p j).belief.2.1 (sub_nonneg.2 hν))]
 
 -- Figure 2
 theorem expectation_dia_cooperate_le_defect (h : VariesOnly p .dia) :
-    S.expectation S.agent p μ (·.base .dia) .cooperate ≤
-      S.expectation S.agent p μ (·.base .dia) .defect := by
+    S.expectation S.agent p μ (fun q ↦ (q.base .dia : ℝ)) .cooperate ≤
+      S.expectation S.agent p μ (fun q ↦ (q.base .dia : ℝ)) .defect := by
   have := S.expectation_defect_le_expectation_cooperate S.agent p μ
-    (f := fun q ↦ -q.base .dia) fun i j hij ↦ ?_
+    (f := fun q ↦ -(q.base .dia : ℝ)) fun i j hij ↦ ?_
   · simpa only [expectation, integral_neg, neg_le_neg_iff] using this
   obtain ⟨hd, hb', hr⟩ := h i j
   have hm := hd .money (by decide)
   have ha := hd .aia (by decide)
   simp only [value_agent, expectedBaseUtility_cooperate_sub_defect, hm, ha, hb', hr] at hij
-  show -(p i).base .dia ≤ -(p j).base .dia
+  show -((p i).base .dia : ℝ) ≤ -(p j).base .dia
   refine le_of_not_gt fun hlt ↦ ?_
   nlinarith [mul_le_mul_of_nonneg_left (neg_lt_neg_iff.1 hlt).le
     (mul_nonneg (sub_nonneg.2 (p j).belief.2.2) S.ν_pot_nonneg)]
@@ -389,35 +408,13 @@ theorem expectation_dia_cooperate_le_defect (h : VariesOnly p .dia) :
 /-- The expected reputation in a domain is the base weight an observer of the anonymous game would
 infer from the action. -/
 def reputation (d : Domain) (a₁ : Action) : ℝ :=
-  S.expectation S.agent p μ (·.base d) a₁
+  S.expectation S.agent p μ (fun q ↦ (q.base d : ℝ)) a₁
 
 /-- The expected utility (3.2) of an action in the public game, the base utility plus the reputation
 utilities, each the value of the inferred base weight scaled by the pot. -/
 def expectedPublicUtility (q : Player) (a₁ : Action) : ℝ :=
   S.expectedBaseUtility q a₁ +
     ∑ d, d.repuSign * q.repu d * S.ν (S.reputation p μ d a₁ * S.pot)
-
-theorem policy_cooperate_le_policy_public (q : Player) (hm : q.repu .money = 0)
-    (hd : q.repu .dia = 0) (ha : 0 ≤ q.repu .aia)
-    (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) :
-    S.policy S.expectedBaseUtility q .cooperate ≤
-      S.policy (S.expectedPublicUtility p μ) q .cooperate := by
-  rw [policy_eq_sigmoid, policy_eq_sigmoid, Real.sigmoid_le_iff,
-    mul_le_mul_iff_of_pos_left S.lam_pos, Action.other_cooperate]
-  simp only [expectedPublicUtility, sum_domain, Domain.repuSign, Domain.sign, hm, hd]
-  have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
-  nlinarith [mul_nonneg ha (sub_nonneg.2 this)]
-
-theorem policy_public_le_policy_cooperate (q : Player) (hm : q.repu .money = 0)
-    (ha : q.repu .aia = 0) (hd : 0 ≤ q.repu .dia)
-    (hrep : S.reputation p μ .dia .cooperate ≤ S.reputation p μ .dia .defect) :
-    S.policy (S.expectedPublicUtility p μ) q .cooperate ≤
-      S.policy S.expectedBaseUtility q .cooperate := by
-  rw [policy_eq_sigmoid, policy_eq_sigmoid, Real.sigmoid_le_iff,
-    mul_le_mul_iff_of_pos_left S.lam_pos, Action.other_cooperate]
-  simp only [expectedPublicUtility, sum_domain, Domain.repuSign, Domain.sign, hm, ha]
-  have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
-  nlinarith [mul_nonneg hd (sub_nonneg.2 this)]
 
 /-- A player of the public game as an agent: the utility of an outcome adds the reputation
 utilities of the action to its base utility. -/
@@ -435,6 +432,32 @@ theorem value_publicAgent (q : Player) (a₁ : Action) :
   simp only [expectedPublicUtility, expectedBaseUtility, sum_action, Player.beliefOn,
     smul_eq_mul]
   ring
+
+/-- A player whose only reputation concern is to be thought averse to advantageous inequity
+cooperates at least as often in public as in the anonymous game. -/
+theorem policy_cooperate_le_policy_public (q : Player) (hm : q.repu .money = 0)
+    (hd : q.repu .dia = 0)
+    (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) :
+    S.policy S.agent q .cooperate ≤
+      S.policy (S.publicAgent p μ) q .cooperate := by
+  rw [policy_eq_sigmoid, policy_eq_sigmoid, Real.sigmoid_le_iff,
+    mul_le_mul_iff_of_pos_left S.lam_pos, Action.other_cooperate]
+  simp only [value_agent, value_publicAgent, expectedPublicUtility, sum_domain, Domain.repuSign,
+    Domain.sign, hm, hd, Set.Icc.coe_zero]
+  have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
+  nlinarith [mul_nonneg (q.repu .aia).2.1 (sub_nonneg.2 this)]
+
+theorem policy_public_le_policy_cooperate (q : Player) (hm : q.repu .money = 0)
+    (ha : q.repu .aia = 0)
+    (hrep : S.reputation p μ .dia .cooperate ≤ S.reputation p μ .dia .defect) :
+    S.policy (S.publicAgent p μ) q .cooperate ≤
+      S.policy S.agent q .cooperate := by
+  rw [policy_eq_sigmoid, policy_eq_sigmoid, Real.sigmoid_le_iff,
+    mul_le_mul_iff_of_pos_left S.lam_pos, Action.other_cooperate]
+  simp only [value_agent, value_publicAgent, expectedPublicUtility, sum_domain, Domain.repuSign,
+    Domain.sign, hm, ha, Set.Icc.coe_zero]
+  have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
+  nlinarith [mul_nonneg (q.repu .dia).2.1 (sub_nonneg.2 this)]
 
 /-- The inverse inference (3.4) for the public game, over the six weights and the belief. -/
 def publicPosterior : Kernel Action Ω :=
@@ -466,78 +489,83 @@ def opponentCounterfactual (a₁ a₂ : Action) (d : Domain) : ℝ :=
 /-- The agent counterfactual `CFa₁` is the utility the player's other choice would have brought,
 weighted by the probability of that choice under the policy of the player who knows the opponent's
 action (footnote 3). -/
-def agentCounterfactual (U : Player → Action → ℝ) (a₁ a₂ : Action) (d : Domain) :
+def agentCounterfactual (ag : Player → Agent Unit Action Action) (a₁ a₂ : Action) (d : Domain) :
     ℝ :=
-  S.policy U (q.knowing a₂) a₁.other *
+  S.policy ag (q.knowing a₂) a₁.other *
     (S.domainUtility q a₁.other a₂ d - S.domainUtility q a₁ a₂ d)
 
 /-- The absolute prediction error of the opponent's action, `|PE_{π_{a₂}}|`. -/
 def beliefError (a₂ : Action) : ℝ := |1 - q.beliefOn a₂|
 
--- Figure 5b
-theorem predictionError_dia_cooperate_defect_nonpos (hd : 0 ≤ q.base .dia) :
+/-- A cooperator whose opponent stole achieves no more disadvantageous-inequity utility than it
+expected (Figure 5b). -/
+theorem predictionError_dia_cooperate_defect_nonpos :
     S.predictionError q .cooperate .defect .dia ≤ 0 := by
   have hpot := S.pot_pos.le
   simp only [predictionError, expectedDomainUtility, sum_action, domainUtility, Domain.sign,
     Player.beliefOn, feature_dia_cooperate_cooperate, feature_dia_cooperate_defect hpot, S.ν_zero]
-  nlinarith [mul_nonneg q.belief.2.1 (mul_nonneg hd S.ν_pot_nonneg)]
+  nlinarith [mul_nonneg q.belief.2.1 (mul_nonneg (q.base .dia).2.1 S.ν_pot_nonneg)]
 
 -- Figure 5b
-theorem opponentCounterfactual_dia_cooperate_defect_nonneg (hd : 0 ≤ q.base .dia) :
+theorem opponentCounterfactual_dia_cooperate_defect_nonneg :
     0 ≤ S.opponentCounterfactual q .cooperate .defect .dia := by
   have hpot := S.pot_pos.le
   simp only [opponentCounterfactual, Action.other_defect, domainUtility, Domain.sign,
     Player.beliefOn, feature_dia_cooperate_cooperate, feature_dia_cooperate_defect hpot, S.ν_zero]
-  nlinarith [mul_nonneg q.belief.2.1 (mul_nonneg hd S.ν_pot_nonneg)]
+  nlinarith [mul_nonneg q.belief.2.1 (mul_nonneg (q.base .dia).2.1 S.ν_pot_nonneg)]
 
-theorem domainUtility_aia_defect_cooperate_nonpos (ha : 0 ≤ q.base .aia) :
+theorem domainUtility_aia_defect_cooperate_nonpos :
     S.domainUtility q .defect .cooperate .aia ≤ 0 := by
   simp only [domainUtility, Domain.sign, feature_aia_defect_cooperate S.pot_pos.le]
-  nlinarith [S.ν_pot_nonneg]
+  nlinarith [S.ν_pot_nonneg, (q.base .aia).2.1]
 
-theorem agentCounterfactual_aia_defect_cooperate_nonneg (U : Player → Action → ℝ)
-    (ha : 0 ≤ q.base .aia) : 0 ≤ S.agentCounterfactual q U .defect .cooperate .aia := by
+/-- A player who stole from a cooperator would have gained in advantageous-inequity utility by
+cooperating. -/
+theorem agentCounterfactual_aia_defect_cooperate_nonneg
+    (ag : Player → Agent Unit Action Action) :
+    0 ≤ S.agentCounterfactual q ag .defect .cooperate .aia := by
   have hpot := S.pot_pos.le
   simp only [agentCounterfactual, Action.other_defect, domainUtility, Domain.sign,
     feature_aia_cooperate hpot, feature_aia_defect_cooperate hpot, S.ν_zero]
-  nlinarith [mul_nonneg (S.policy_pos U (q.knowing .cooperate) .cooperate).le
-    (mul_nonneg ha S.ν_pot_nonneg)]
+  nlinarith [mul_nonneg (S.policy_pos ag (q.knowing .cooperate) .cooperate).le
+    (mul_nonneg (q.base .aia).2.1 S.ν_pot_nonneg)]
 
-theorem opponentCounterfactual_money_cooperate_cooperate_nonpos (hm : 0 ≤ q.base .money) :
+theorem opponentCounterfactual_money_cooperate_cooperate_nonpos :
     S.opponentCounterfactual q .cooperate .cooperate .money ≤ 0 := by
   simp only [opponentCounterfactual, Action.other_cooperate, domainUtility, Domain.sign,
     Player.beliefOn, feature_money, payoff, one_mul]
   have := S.ν_strictMono.monotone (show 0 - q.reference ≤ S.pot / 2 - q.reference by
     linarith [S.pot_pos])
-  nlinarith [mul_nonneg (sub_nonneg.2 q.belief.2.2) (mul_nonneg hm (sub_nonneg.2 this))]
+  nlinarith [mul_nonneg (sub_nonneg.2 q.belief.2.2)
+    (mul_nonneg (q.base .money).2.1 (sub_nonneg.2 this))]
 
-theorem agentCounterfactual_dia_defect_defect_nonpos (U : Player → Action → ℝ)
-    (hd : 0 ≤ q.base .dia) : S.agentCounterfactual q U .defect .defect .dia ≤ 0 := by
+theorem agentCounterfactual_dia_defect_defect_nonpos
+    (ag : Player → Agent Unit Action Action) :
+    S.agentCounterfactual q ag .defect .defect .dia ≤ 0 := by
   have hpot := S.pot_pos.le
   simp only [agentCounterfactual, Action.other_defect, domainUtility, Domain.sign,
     feature_dia_defect hpot, feature_dia_cooperate_defect hpot, S.ν_zero]
-  nlinarith [mul_nonneg (S.policy_pos U (q.knowing .defect) .cooperate).le
-    (mul_nonneg hd S.ν_pot_nonneg)]
+  nlinarith [mul_nonneg (S.policy_pos ag (q.knowing .defect) .cooperate).le
+    (mul_nonneg (q.base .dia).2.1 S.ν_pot_nonneg)]
 
 /-- The reputation utility of an action in a domain, the summands of (3.2). -/
 def reputationUtility (a₁ : Action) (d : Domain) : ℝ :=
   d.repuSign * q.repu d * S.ν (S.reputation p μ d a₁ * S.pot)
 
 /-- The agent counterfactual over reputation. -/
-def reputationAgentCounterfactual (U : Player → Action → ℝ) (a₁ a₂ : Action)
+def reputationAgentCounterfactual (ag : Player → Agent Unit Action Action) (a₁ a₂ : Action)
     (d : Domain) : ℝ :=
-  S.policy U (q.knowing a₂) a₁.other *
+  S.policy ag (q.knowing a₂) a₁.other *
     (S.reputationUtility p μ q a₁.other d - S.reputationUtility p μ q a₁ d)
 
-theorem reputationAgentCounterfactual_aia_defect_nonneg (U : Player → Action → ℝ)
-    (ha : 0 ≤ q.repu .aia)
+theorem reputationAgentCounterfactual_aia_defect_nonneg (ag : Player → Agent Unit Action Action)
     (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) (a₂ : Action) :
-    0 ≤ S.reputationAgentCounterfactual p μ q U .defect a₂ .aia := by
+    0 ≤ S.reputationAgentCounterfactual p μ q ag .defect a₂ .aia := by
   simp only [reputationAgentCounterfactual, Action.other_defect, reputationUtility,
     Domain.repuSign, Domain.sign]
   have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
-  nlinarith [mul_nonneg (S.policy_pos U (q.knowing a₂) .cooperate).le
-    (mul_nonneg ha (sub_nonneg.2 this))]
+  nlinarith [mul_nonneg (S.policy_pos ag (q.knowing a₂) .cooperate).le
+    (mul_nonneg (q.repu .aia).2.1 (sub_nonneg.2 this))]
 
 /-! ### Lesions (Section 5) -/
 
@@ -545,7 +573,8 @@ theorem domainUtility_money_cooperate_lt_defect (hm : 0 < q.base .money) :
     S.domainUtility q .cooperate .cooperate .money <
       S.domainUtility q .defect .cooperate .money := by
   simp only [domainUtility, Domain.sign, feature_money, payoff, one_mul]
-  exact mul_lt_mul_of_pos_left (S.ν_strictMono (by linarith [S.pot_pos])) hm
+  exact mul_lt_mul_of_pos_left (S.ν_strictMono (by linarith [S.pot_pos]))
+    (unitInterval.coe_pos.2 hm)
 
 end Setting
 
