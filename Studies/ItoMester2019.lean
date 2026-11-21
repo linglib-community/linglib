@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Prosody.Match
+public import Linglib.Phonology.Prosody.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Typology
 public import Mathlib.Tactic.DeriveFintype
 
