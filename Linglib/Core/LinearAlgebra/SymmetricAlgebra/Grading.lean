@@ -68,4 +68,11 @@ instance gradedAlgebra : GradedAlgebra fun n : ℕ ↦ LinearMap.range (ι R M) 
       rw [lift_ι_apply, GradedAlgebra.ι_apply R M, DirectSum.coeAlgHom_of])
     (GradedAlgebra.liftι_eq R M)
 
+/-- The part of degree `n` is the image of the homogeneous tensors of degree `n`. -/
+theorem map_algHom_pow (n : ℕ) :
+    (LinearMap.range (TensorAlgebra.ι R : M →ₗ[R] TensorAlgebra R M) ^ n).map
+        (algHom R M).toLinearMap = LinearMap.range (ι R M) ^ n := by
+  rw [Submodule.map_pow, ← LinearMap.range_comp]
+  rfl
+
 end SymmetricAlgebra

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.NonAssoc.PreLie.Enveloping
+public import Linglib.Core.Algebra.NonAssoc.PreLie.Product
 public import Linglib.Core.Algebra.RootedTree.Derivation
 public import Linglib.Core.Algebra.RootedTree.SymmetricAlgebra
 public import Mathlib.Algebra.Algebra.Bilinear
