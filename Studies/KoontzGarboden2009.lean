@@ -202,7 +202,7 @@ theorem not_monotonicityHypothesis_caused : ¬ MonotonicityHypothesis Template.c
 /-- Reflexivization on templates identifies the causer with the undergoer, so it applies
 exactly to templates with CAUSE and changes no operator. -/
 def reflexivizeTemplate (t : Template .event) : Option (Template .event) :=
-  if t.HasCause then some t else none
+  if .cause ∈ t.kinds then some t else none
 
 /-- Anticausativization as reflexivization satisfies the hypothesis. -/
 theorem monotonicityHypothesis_reflexivizeTemplate :

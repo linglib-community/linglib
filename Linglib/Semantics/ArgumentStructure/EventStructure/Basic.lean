@@ -18,31 +18,18 @@ with an individual causer, which is the `vcause` of Beavers and Koontz-Garboden.
 Templates are sorted like the domain of an `Interpretation`: `BECOME` turns a state template into
 an event template and `CAUSE` relates two event templates. `Template.denote` interprets a
 template with a root in its slots, the root's state predicate at the state and its manner at
-`ACT`, through the heads `vBecome` and `vCause`. The primitives are the four kinds of entailment
-of the root typology of Beavers and Koontz-Garboden, so `Template.kinds` reads a template's
-primitives as a root signature, and membership in it is exactly what every denotation of the
-template entails: a change for `HasResultState`, a causal relation for `HasCause`. A template's
-denotation entails that each of its subterms is realized, which orders the readings of a
-modifier such as *again* attached at different subterms.
-
-## Main definitions
-
-* `Eventuality`, `Template`: the two sorts, and the sorted terms, with `Template.achievement`
-  and `Template.accomplishment`
-* `Template.denote`: the denotation in an interpretation
-* `Template.kinds`, `Template.HasCause`, `Template.HasResultState`
-* `Template.causing`, `Template.caused`: the two subevents of a causative template
-* `Template.IsSubterm`
-
-## Main results
-
-* `Template.hasResultState_iff`, `Template.hasCause_iff`: the diagnostics are the entailments
-  of the denotation
-* `Template.hasCause_of_mem_kinds`: a template with a manner and a state has `CAUSE`
-* `Template.exists_denote_of_isSubterm`: a template's subterms are realized with its undergoer
-* `Template.IsSubterm.kinds_subset`: a subterm's primitives are among the template's
-* `Template.denote_cause_effector`: CAUSE with an individual causer is the effector of a
-  `vCause` event
+`ACT`, through the heads `vBecome` and `vCause`; with an individual causer, `CAUSE` is an
+eventuality that has the causer as its effector and causes the caused subevent
+(`Template.denote_cause_effector`). The primitives are the four kinds of entailment of the root
+typology of Beavers and Koontz-Garboden, so `Template.kinds` reads a template's primitives as a
+root signature. A template whose primitives include a manner and a state has `CAUSE`
+(`Template.cause_mem_kinds_of_manner_of_state`), and a subterm's primitives are among the
+template's (`Template.IsSubterm.kinds_subset`). Membership in the signature is exactly what
+every denotation of the template entails: it has a result iff every denotation involves a change
+(`Template.result_mem_kinds_iff`), and a cause iff every denotation involves a causal relation
+(`Template.cause_mem_kinds_iff`). A template's denotation entails that each of its subterms is
+realized (`Template.exists_denote_of_isSubterm`), which orders the readings of a modifier such
+as *again* attached at different subterms.
 
 ## Implementation notes
 
@@ -109,22 +96,13 @@ def accomplishment : Template .event := cause act achievement
 
 /-- The kinds of entailment a template's primitives contribute: a state, the manner of an
 action, the change of `BECOME` and the causation of `CAUSE`. -/
+@[simp]
 def kinds : {σ : Eventuality} → Template σ → Finset Root.Kind
   | _, state => {.state}
   | _, act => {.manner}
   | _, effector => ∅
   | _, become t => insert .result t.kinds
   | _, cause c e => insert .cause (c.kinds ∪ e.kinds)
-
-/-- The template has `CAUSE`. -/
-def HasCause (t : Template σ) : Prop := Root.Kind.cause ∈ t.kinds
-
-/-- The template has `BECOME`, and so a result state. -/
-def HasResultState (t : Template σ) : Prop := Root.Kind.result ∈ t.kinds
-
-instance (t : Template σ) : Decidable t.HasCause := inferInstanceAs (Decidable (_ ∈ _))
-
-instance (t : Template σ) : Decidable t.HasResultState := inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The causing subevent of a causative template. -/
 def causing : Template .event → Option (Template .event)
@@ -148,14 +126,14 @@ inductive IsSubterm : {α β : Eventuality} → Template α → Template β → 
 
 /-- A template whose primitives include a manner and a state has `CAUSE`, since causation is
 the only primitive that relates an action to a state. -/
-theorem hasCause_of_mem_kinds {t : Template σ} (hm : Root.Kind.manner ∈ t.kinds)
-    (hs : Root.Kind.state ∈ t.kinds) : t.HasCause := by
+theorem cause_mem_kinds_of_manner_of_state {t : Template σ} (hm : .manner ∈ t.kinds)
+    (hs : .state ∈ t.kinds) : .cause ∈ t.kinds := by
   induction t with
-  | state | act | effector => simp [kinds] at hm hs
+  | state | act | effector => simp at hm hs
   | become _ ih =>
-    simp only [kinds, Finset.mem_insert, reduceCtorEq, false_or] at hm hs
-    exact Finset.mem_insert_of_mem (ih hm hs)
-  | cause => exact Finset.mem_insert_self _ _
+    simp only [kinds, Finset.mem_insert, reduceCtorEq, false_or] at hm hs ⊢
+    exact ih hm hs
+  | cause => simp
 
 /-- A subterm's primitives are among the template's. -/
 theorem IsSubterm.kinds_subset {u : Template τ} {t : Template σ} (h : u.IsSubterm t) :
@@ -204,94 +182,75 @@ theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.I
   | causing _ ih => exact ih h.1
   | caused _ ih => obtain ⟨_, _, _, he⟩ := h; exact ih he
 
-theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
+theorem exists_become_of_denote {t : Template σ} (ht : .result ∈ t.kinds)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, s ~[M.become] e := by
   induction t generalizing y x with
-  | state | act | effector => simp [HasResultState, kinds] at ht
+  | state | act | effector => simp at ht
   | become _ _ => obtain ⟨s, hb, _⟩ := h; exact ⟨s, _, hb⟩
   | cause c e ihc ihe =>
-    simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
-      false_or] at ht
+    simp only [kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq, false_or] at ht
     obtain ⟨hc, _, _, he⟩ := h
     exact ht.elim (ihc · hc) (ihe · he)
 
-theorem exists_cause_of_denote {t : Template σ} (ht : t.HasCause)
+theorem exists_cause_of_denote {t : Template σ} (ht : .cause ∈ t.kinds)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, v ~[M.cause] e := by
   induction t generalizing y x with
-  | state | act | effector => simp [HasCause, kinds] at ht
+  | state | act | effector => simp at ht
   | become t ih =>
-    simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
+    simp only [kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
     obtain ⟨_, _, hs⟩ := h
     exact ih ht hs
   | cause _ _ _ _ => obtain ⟨_, _, hc, _⟩ := h; exact ⟨_, _, hc⟩
 
+/-- Where every individual is an effector of every eventuality, a template with the trivial
+state and manner is realized everywhere, if every eventuality arises from a state when the
+template has `BECOME` and causes an eventuality when it has `CAUSE`. -/
+theorem denote_top {M : Interpretation Entity State Event} (hM : ∀ y v, M.effector y v)
+    {t : Template σ} (hb : .result ∈ t.kinds → ∀ e, ∃ s, s ~[M.become] e)
+    (hc : .cause ∈ t.kinds → ∀ v, ∃ e, v ~[M.cause] e) (y x : Entity)
+    (v : σ.Carrier State Event) : t.denote M ⊤ ⊤ y x v := by
+  induction t generalizing y x with
+  | state => trivial
+  | effector => exact hM y v
+  | act => exact ⟨hM y v, trivial⟩
+  | become t ih =>
+    obtain ⟨s, hs⟩ := hb (by simp) v
+    exact ⟨s, hs, ih (fun h ↦ hb (by simp [h])) (fun h ↦ hc (by simp [h])) y x s⟩
+  | cause c e ihc ihe =>
+    obtain ⟨e', he'⟩ := hc (by simp) v
+    exact ⟨ihc (fun h ↦ hb (by simp [h])) (fun h ↦ hc (by simp [h])) y x v, e', he',
+      ihe (fun h ↦ hb (by simp [h])) (fun h ↦ hc (by simp [h])) x x e'⟩
+
 end Denotation
 
-/-! ### Completeness of the diagnostics -/
+/-! ### Completeness of the signature -/
 
 section Completeness
 
-variable {Entity : Type*} {State Event : Type u}
-
-/-- The interpretation in which every eventuality has every effector and causes every other,
-and nothing gives rise to a state. -/
-private def noChange (Entity : Type*) (State Event : Type u) :
-    Interpretation Entity State Event where
-  become := ⊥
-  cause := ⊤
-  effector := ⊤
-
-/-- The interpretation in which every eventuality has every effector and gives rise to every
-state, and nothing causes anything. -/
-private def noCause (Entity : Type*) (State Event : Type u) :
-    Interpretation Entity State Event where
-  become := ⊤
-  cause := ⊥
-  effector := ⊤
-
-private theorem denote_noChange [Nonempty Event] {t : Template σ} (ht : ¬ t.HasResultState)
-    (y x : Entity) (v : σ.Carrier State Event) :
-    t.denote (noChange Entity State Event) ⊤ ⊤ y x v := by
-  induction t generalizing y x with
-  | state | effector => trivial
-  | act => exact ⟨trivial, trivial⟩
-  | become _ _ => exact absurd (Finset.mem_insert_self _ _) ht
-  | cause c e ihc ihe =>
-    simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
-      false_or, not_or] at ht
-    exact ⟨ihc ht.1 y x v, Classical.arbitrary Event, trivial, ihe ht.2 x x _⟩
-
-private theorem denote_noCause [Nonempty State] {t : Template σ} (ht : ¬ t.HasCause)
-    (y x : Entity) (v : σ.Carrier State Event) :
-    t.denote (noCause Entity State Event) ⊤ ⊤ y x v := by
-  induction t generalizing y x with
-  | state | effector => trivial
-  | act => exact ⟨trivial, trivial⟩
-  | become t ih =>
-    simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
-    exact ⟨Classical.arbitrary State, trivial, ih ht y x _⟩
-  | cause _ _ _ _ => exact absurd (Finset.mem_insert_self _ _) ht
-
-variable [Nonempty Entity] [Nonempty State] [Nonempty Event] {t : Template σ}
+variable {Entity : Type*} {State Event : Type u} [Nonempty Entity] [Nonempty State]
+  [Nonempty Event] {t : Template σ}
 
 /-- A template has `BECOME` iff every denotation of it, in every interpretation, involves a
 change. -/
-theorem hasResultState_iff :
-    t.HasResultState ↔ ∀ (M : Interpretation Entity State Event) P Q y x
+theorem result_mem_kinds_iff :
+    .result ∈ t.kinds ↔ ∀ (M : Interpretation Entity State Event) P Q y x
       (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ s e, s ~[M.become] e := by
   refine ⟨fun ht _ _ _ _ _ _ ↦ exists_become_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
-  obtain ⟨_, _, hb⟩ := h _ _ _ (Classical.arbitrary _) (Classical.arbitrary _)
-    (Classical.arbitrary _) (denote_noChange ht _ _ _)
+  obtain ⟨_, _, hb⟩ := h ⟨⊥, ⊤, ⊤⟩ ⊤ ⊤ (Classical.arbitrary _) (Classical.arbitrary _)
+    (Classical.arbitrary _)
+    (denote_top (fun _ _ ↦ trivial) (fun hr ↦ absurd hr ht) (fun _ v ↦ ⟨v, trivial⟩) _ _ _)
   exact hb
 
 /-- A template has `CAUSE` iff every denotation of it, in every interpretation, involves a
 causal relation. -/
-theorem hasCause_iff :
-    t.HasCause ↔ ∀ (M : Interpretation Entity State Event) P Q y x
+theorem cause_mem_kinds_iff :
+    .cause ∈ t.kinds ↔ ∀ (M : Interpretation Entity State Event) P Q y x
       (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ v e, v ~[M.cause] e := by
   refine ⟨fun ht _ _ _ _ _ _ ↦ exists_cause_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
-  obtain ⟨_, _, hc⟩ := h _ _ _ (Classical.arbitrary _) (Classical.arbitrary _)
-    (Classical.arbitrary _) (denote_noCause ht _ _ _)
+  obtain ⟨_, _, hc⟩ := h ⟨⊤, ⊥, ⊤⟩ ⊤ ⊤ (Classical.arbitrary _) (Classical.arbitrary _)
+    (Classical.arbitrary _)
+    (denote_top (fun _ _ ↦ trivial) (fun _ _ ↦ ⟨Classical.arbitrary _, trivial⟩)
+      (fun hc ↦ absurd hc ht) _ _ _)
   exact hc
 
 end Completeness

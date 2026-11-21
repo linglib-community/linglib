@@ -384,7 +384,8 @@ about the activity (42). -/
 def causativeEventStructure : Template .event := .cause .effector eventStructure
 
 -- (50)
-theorem causativeEventStructure_hasCause : causativeEventStructure.HasCause := by decide
+theorem cause_mem_kinds_causativeEventStructure : .cause ∈ causativeEventStructure.kinds := by
+  decide
 
 -- (50), (57)
 theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
@@ -394,7 +395,7 @@ theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
 theorem not_forall_exists_become :
     ¬ ∀ (M : Interpretation Unit Unit Unit) P Q y x v,
       causativeEventStructure.denote M P Q y x v → ∃ s e, s ~[M.become] e :=
-  fun h ↦ absurd (hasResultState_iff.2 h) (by decide)
+  fun h ↦ absurd (result_mem_kinds_iff.2 h) (by decide)
 
 end EventStructure
 

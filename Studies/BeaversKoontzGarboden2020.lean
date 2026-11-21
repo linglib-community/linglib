@@ -140,9 +140,9 @@ theorem diamond_vCause_of_againAt_causative_ne_undefined {R : SetRel Event Event
   diamond_mono R (fun _ h ↦ h.2) w (again_ne_undefined_iff.1 h)
 
 theorem diamond_become_of_againAt_state_ne_undefined {R : SetRel State State} {s : State}
-    (hres : M.EntailsChange P) (h : againAt M .state R P y x s ≠ .undefined) :
+    (hres : M.EntailsChange (P x)) (h : againAt M .state R P y x s ≠ .undefined) :
     ◇[R] (◇[M.become] ⊤) s :=
-  diamond_mono R (hres x) s (again_ne_undefined_iff.1 h)
+  diamond_mono R hres s (again_ne_undefined_iff.1 h)
 
 /-- The three attachment sites of *again* (27). -/
 inductive Site
@@ -184,7 +184,7 @@ theorem attestedRows_eq_kinds_templates :
 
 theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root} (hm : .manner ∈ s)
     (hs : .state ∈ s) (hc : .cause ∉ s) : t.kinds ≠ s := by
-  rintro rfl; exact hc (hasCause_of_mem_kinds hm hs)
+  rintro rfl; exact hc (cause_mem_kinds_of_manner_of_state hm hs)
 
 -- (12), p. 230
 theorem kinds_ne_emptyRows (t : Template σ) :
@@ -261,20 +261,20 @@ section Model
 variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity State Event}
   {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
 
-theorem crack_entails_cause (h : M.Respects P Q crack) (hs : P x s) :
+theorem crack_entails_cause (h : M.Respects (P x) Q crack) (hs : P x s) :
     ◇[M.become] (◇[M.cause.inv] ⊤) s :=
-  h.cause (by decide) x s hs
+  h.cause (by decide) s hs
 
 -- (74), p. 201
-theorem drown_entails_manner (h : M.Respects P Q drown) (hs : P x s) :
+theorem drown_entails_manner (h : M.Respects (P x) Q drown) (hs : P x s) :
     ◇[M.become] (◇[M.cause.inv] Q) s :=
-  (h.mannerOfCause (by decide) (by decide)).le_diamond_diamond x s hs
+  (h.mannerOfCause (by decide) (by decide)).le_diamond_diamond s hs
 
 -- p. 201: the root constrains the causing event that `vcause` introduces
-theorem drown_vCause_vBecome_le (h : M.Respects P Q drown)
+theorem drown_vCause_vBecome_le (h : M.Respects (P x) Q drown)
     (hM : ∀ s ⦃e⦄, s ~[M.become] e → ∀ ⦃e'⦄, s ~[M.become] e' → e = e') :
     M.vCause (M.vBecome P x) ≤ Q :=
-  (h.mannerOfCause (by decide) (by decide)).vCause_vBecome_le hM x
+  (h.mannerOfCause (by decide) (by decide)).vCause_vBecome_le hM
 
 end Model
 
@@ -291,22 +291,24 @@ def changing : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit wh
   effector := ⊤
 
 theorem flat_not_entailsChange :
-    unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat ∧
-      ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
+    unchanging.Respects (fun _ ↦ True) (fun _ ↦ True) flat ∧
+      ¬ unchanging.EntailsChange (fun _ ↦ True) :=
   ⟨by constructor <;> intro h <;> exact absurd h (by decide),
-    fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
+    fun h ↦ let ⟨_, he, _⟩ := h () trivial; he⟩
 
 private theorem changing_respects {ks : Root}
     (h : ¬ (Root.Kind.manner ∈ ks ∧ Root.Kind.cause ∈ ks)) :
-    changing.Respects (fun _ _ ↦ True) ⊥ ks :=
-  ⟨fun _ _ _ _ ↦ ⟨(), trivial, trivial⟩, fun _ _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩,
+    changing.Respects (fun _ ↦ True) ⊥ ks :=
+  ⟨fun _ _ _ ↦ ⟨(), trivial, trivial⟩, fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩,
     fun _ _ h ↦ h.elim, fun hm hc ↦ absurd ⟨hm, hc⟩ h⟩
 
 theorem crack_respects :
-    changing.Respects (fun _ _ ↦ True) ⊥ crack ∧
-      ¬ unchanging.Respects (fun _ _ ↦ True) ⊥ crack :=
+    changing.Respects (fun _ ↦ True) ⊥ crack ∧
+      ¬ unchanging.Respects (fun _ ↦ True) ⊥ crack :=
   ⟨changing_respects (by decide),
-    fun h ↦ let ⟨_, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
+    fun h ↦
+      let ⟨_, he, _⟩ := crack_entails_cause (P := fun _ _ ↦ True) (x := ()) (s := ()) h trivial
+      he⟩
 
 /-- The changes `change i` that the one state arises from and the actions `action i` that cause
 them. -/
@@ -321,9 +323,9 @@ def twoChanges : ArgumentStructure.EventStructure.Interpretation Unit Unit Subev
   effector := ⊤
 
 theorem not_vCause_vBecome_le_twoChanges :
-    twoChanges.EntailsMannerOfCause (fun _ _ ↦ True) (· = .action true) ∧
+    twoChanges.EntailsMannerOfCause (fun _ ↦ True) (· = .action true) ∧
       ¬ twoChanges.vCause (twoChanges.vBecome (fun _ _ ↦ True) ()) ≤ (· = .action true) :=
-  ⟨fun _ _ _ ↦ ⟨.change true, ⟨_, rfl⟩, ⟨.action true, ⟨_, rfl, rfl⟩, trivial⟩,
+  ⟨fun _ _ ↦ ⟨.change true, ⟨_, rfl⟩, ⟨.action true, ⟨_, rfl, rfl⟩, trivial⟩,
       fun _ ⟨_, hv, hi⟩ ↦ Subevent.change.inj hi ▸ hv⟩,
     fun h ↦ Bool.false_ne_true <| Subevent.action.inj <|
       h (.action false) ⟨.change false, ⟨_, rfl, rfl⟩, (), ⟨_, rfl⟩, trivial⟩⟩
@@ -349,9 +351,9 @@ variable {Entity : Type*} {State Event : Type u}
 def DeniesChange (P : Entity → State → Prop) (x : Entity) : State → Prop :=
   P x ⊓ (◇[M.become] ⊤)ᶜ
 
-theorem entailsChange_iff_forall_not_deniesChange {P : Entity → State → Prop} :
-    M.EntailsChange P ↔ ∀ x s, ¬ DeniesChange M P x s :=
-  forall₂_congr fun _ _ ↦ not_and_not_right.symm
+theorem entailsChange_iff_forall_not_deniesChange {P : Entity → State → Prop} {x : Entity} :
+    M.EntailsChange (P x) ↔ ∀ s, ¬ DeniesChange M P x s :=
+  forall_congr' fun _ ↦ not_and_not_right.symm
 
 /-- The three diagnostics of a root's entailments. -/
 inductive Diagnostic
@@ -392,8 +394,8 @@ def sharp (_ : Unit) (_ : Bool) : Prop := True
 theorem forged_deniesChange : DeniesChange forged sharp () false :=
   ⟨trivial, fun ⟨_, h, _⟩ ↦ Bool.false_ne_true h⟩
 
-theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
-  fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
+theorem not_entailsChange_sharp : ¬ forged.EntailsChange (sharp ()) :=
+  fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h false forged_deniesChange
 
 theorem forged_restitutive :
     againAt forged .state {p | p.2 < p.1} sharp () () true ≠ .undefined ∧
@@ -402,7 +404,7 @@ theorem forged_restitutive :
     fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
 
 private theorem forged_respects {ks : Root} (hr : Root.Kind.result ∉ close ks) :
-    forged.Respects sharp ⊥ ks :=
+    forged.Respects (sharp ()) ⊥ ks :=
   have hcause : Root.Kind.cause ∉ ks := fun hk ↦ hr (mem_close.2 ⟨_, hk, .result_cause⟩)
   ⟨fun hk ↦ absurd (mem_close.2 ⟨_, hk, le_rfl⟩) hr, fun hk ↦ absurd hk hcause,
     fun _ _ h ↦ h.elim, fun _ hk ↦ absurd hk hcause⟩
@@ -414,7 +416,7 @@ def Passes (ks : Root) (g : Diagnostic) : Prop :=
   ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation Unit State Event)
     (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
     (∀ s ⦃e⦄, s ~[M.become] e → ∀ ⦃e'⦄, s ~[M.become] e' → e = e') ∧
-      M.Respects P Q ks ∧ g.Passes M R P Q ()
+      M.Respects (P ()) Q ks ∧ g.Passes M R P Q ()
 
 /-- A root passes a diagnostic exactly when its collocational closure lacks the kinds the
 diagnostic detects. -/
@@ -424,7 +426,7 @@ theorem passes_iff {ks : Root} (g : Diagnostic) :
   | changeDenial =>
     simp only [Diagnostic.detects, Finset.singleton_subset_iff]
     exact ⟨fun ⟨_, _, M, _, _, _, _, hR, s, hs⟩ hr ↦
-      (entailsChange_iff_forall_not_deniesChange M).1 (hR.entailsChange hr) () s hs,
+      (entailsChange_iff_forall_not_deniesChange M).1 (hR.entailsChange hr) s hs,
       fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, ⊥, fun _ _ _ _ _ ↦ rfl, forged_respects hr, false,
         forged_deniesChange⟩⟩
   | restitutive =>
@@ -437,7 +439,7 @@ theorem passes_iff {ks : Root} (g : Diagnostic) :
     simp only [Diagnostic.detects, Finset.insert_subset_iff, Finset.singleton_subset_iff,
       mem_close_iff_of_isMax Root.Kind.isMax_manner, mem_close_iff_of_isMax Root.Kind.isMax_cause]
     exact ⟨fun ⟨_, _, _, _, _, _, hM, hR, v, hv, hn⟩ ⟨hm, hc⟩ ↦
-      hn ((hR.mannerOfCause hm hc).vCause_vBecome_le hM () v hv.2),
+      hn ((hR.mannerOfCause hm hc).vCause_vBecome_le hM v hv.2),
       fun h ↦ ⟨Unit, Unit, changing, fun _ _ ↦ True, ⊥, ⊥, fun _ _ _ _ _ ↦ rfl,
         changing_respects h, (), ⟨trivial, (), trivial, (), trivial, trivial⟩, fun h ↦ h⟩⟩
 
