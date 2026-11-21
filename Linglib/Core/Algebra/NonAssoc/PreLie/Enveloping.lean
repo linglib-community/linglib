@@ -35,17 +35,22 @@ of at most `n + 1` elements has its part of degree `n + 1` vanish in `S(L)`, so 
 sum of products of at most `n` elements by
 `UniversalEnvelopingAlgebra.mkAlgHom_mem_of_algHom_eq_zero`.
 
+The product of the enveloping algebra, carried to `S(L)` along this equivalence, is the product
+of [oudom-guin-2008], `RightPreLieAlgebra.product`. It is associative with unit `1`, and
+multiplying on the right by an element of `L` is the action:
+`a ⋆ X = a * ι X + D_X a` (`RightPreLieAlgebra.product_ι`).
+
 ## Implementation notes
 
-[oudom-guin-2008] first build an associative product on `S(L)` and compare associated graded
-algebras. Here the product is not needed: `S(L)` is shown to be a free module of rank one over
-the enveloping algebra, and the filtrations are compared directly.
+[oudom-guin-2008] first build the product on `S(L)` and compare associated graded algebras.
+Here `S(L)` is first shown to be a free module of rank one over the enveloping algebra, comparing
+the filtrations directly, and the product is defined afterwards, so that its associativity is
+that of the enveloping algebra.
 
 ## TODO
 
-* Transport the product of the enveloping algebra to `S(L)` along `equivSymmetricAlgebra`. This
-  is the product of Oudom and Guin; `Linglib/Core/Algebra/NonAssoc/PreLie/OudomGuin.lean` builds
-  it from symmetric braces when `L` has a basis.
+* `product a (ι X₁ * ⋯ * ι Xₙ)` is the symmetric brace of the action on `a` and `{X₁, …, Xₙ}`,
+  by the recursion `RightPreLieAlgebra.product_mul_ι`.
 * `UniversalEnvelopingAlgebra.ι` is injective for these Lie algebras.
 
 ## References
@@ -428,5 +433,72 @@ def equivSymmetricAlgebra : UniversalEnvelopingAlgebra R L ≃ₗ[R] SymmetricAl
 
 @[simp] theorem equivSymmetricAlgebra_apply (u : UniversalEnvelopingAlgebra R L) :
     equivSymmetricAlgebra R u = toSymmetricAlgebra R u := rfl
+
+/-! ### The product of Oudom and Guin -/
+
+theorem toSymmetricAlgebra_ι (X : L) :
+    toSymmetricAlgebra R (UniversalEnvelopingAlgebra.ι R X) = ι R L X := by
+  rw [← one_mul (UniversalEnvelopingAlgebra.ι R X), toSymmetricAlgebra_mul_ι,
+    toSymmetricAlgebra_one, act_apply, one_mul, Derivation.map_one_eq_zero, add_zero]
+
+/-- The product of Oudom and Guin on the symmetric algebra: the product of the enveloping
+algebra, carried along `equivSymmetricAlgebra`. -/
+def product : SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
+  ((LinearMap.mul R (UniversalEnvelopingAlgebra R L)).compl₁₂
+    (equivSymmetricAlgebra R).symm.toLinearMap (equivSymmetricAlgebra R).symm.toLinearMap).compr₂
+    (equivSymmetricAlgebra R).toLinearMap
+
+theorem product_apply (a b : SymmetricAlgebra R L) :
+    product R a b = equivSymmetricAlgebra R
+      ((equivSymmetricAlgebra R).symm a * (equivSymmetricAlgebra R).symm b) := rfl
+
+/-- The equivalence carries the product of the enveloping algebra to `product`. -/
+theorem equivSymmetricAlgebra_mul (u v : UniversalEnvelopingAlgebra R L) :
+    equivSymmetricAlgebra R (u * v) =
+      product R (equivSymmetricAlgebra R u) (equivSymmetricAlgebra R v) := by
+  rw [product_apply, LinearEquiv.symm_apply_apply, LinearEquiv.symm_apply_apply]
+
+theorem equivSymmetricAlgebra_symm_one :
+    (equivSymmetricAlgebra R).symm (1 : SymmetricAlgebra R L) = 1 :=
+  (LinearEquiv.symm_apply_eq _).mpr (toSymmetricAlgebra_one R).symm
+
+theorem equivSymmetricAlgebra_symm_ι (X : L) :
+    (equivSymmetricAlgebra R).symm (ι R L X) = UniversalEnvelopingAlgebra.ι R X :=
+  (LinearEquiv.symm_apply_eq _).mpr (toSymmetricAlgebra_ι R X).symm
+
+/-- The product of Oudom and Guin is associative. -/
+theorem product_assoc (a b c : SymmetricAlgebra R L) :
+    product R (product R a b) c = product R a (product R b c) := by
+  simp only [product_apply, LinearEquiv.symm_apply_apply, mul_assoc]
+
+@[simp] theorem product_one_left (a : SymmetricAlgebra R L) : product R 1 a = a := by
+  rw [product_apply, equivSymmetricAlgebra_symm_one, one_mul, LinearEquiv.apply_symm_apply]
+
+@[simp] theorem product_one_right (a : SymmetricAlgebra R L) : product R a 1 = a := by
+  rw [product_apply, equivSymmetricAlgebra_symm_one, mul_one, LinearEquiv.apply_symm_apply]
+
+/-- The product with an element of `L` is its action: `a ⋆ X = a X + D_X a`. -/
+theorem product_ι (a : SymmetricAlgebra R L) (X : L) :
+    product R a (ι R L X) = a * ι R L X + derivation R X a := by
+  rw [product_apply, equivSymmetricAlgebra_symm_ι, equivSymmetricAlgebra_apply,
+    toSymmetricAlgebra_mul_ι, ← equivSymmetricAlgebra_apply, LinearEquiv.apply_symm_apply,
+    act_apply]
+
+/-- The recursion of the product in its second argument: `a ⋆ (b X) = (a ⋆ b) ⋆ X - a ⋆ D_X b`. -/
+theorem product_mul_ι (a b : SymmetricAlgebra R L) (X : L) :
+    product R a (b * ι R L X) =
+      product R (product R a b) (ι R L X) - product R a (derivation R X b) := by
+  rw [product_assoc, product_ι R b, map_add, add_sub_cancel_right]
+
+/-- On `L` the product is the commutative product plus the pre-Lie product. -/
+theorem product_ι_ι (X Y : L) :
+    product R (ι R L X) (ι R L Y) = ι R L X * ι R L Y + ι R L (X * Y) := by
+  rw [product_ι, derivation_ι]
+
+/-- The commutator of the product on `L` is the commutator of the pre-Lie product. -/
+theorem product_ι_ι_sub (X Y : L) :
+    product R (ι R L X) (ι R L Y) - product R (ι R L Y) (ι R L X) = ι R L (X * Y - Y * X) := by
+  rw [product_ι_ι, product_ι_ι, mul_comm (ι R L Y), map_sub]
+  abel
 
 end RightPreLieAlgebra
