@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.HPSG.RSRL.Description
+public import Linglib.Syntax.HPSG.RSRL.Semantics
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases

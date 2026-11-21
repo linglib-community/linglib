@@ -11,16 +11,14 @@ public import Linglib.Syntax.Feature.Structure
 
 An *interpretation* of a signature over a universe `U` gives a sort to every entity, a partial
 function on entities for every attribute, and a set of tuples of entities for every relation
-symbol. A term then denotes an entity when every attribute along it is defined, and the
-*components* of an entity are the entities that some path reaches from it.
+symbol. It is in particular a partial Moore machine, with the attributes as letters and the
+sorts as outputs, and following a path is reading it in this machine. The *components* of an
+entity are the entities that some path reaches from it, so each entity is the root of a feature
+structure (`HPSG.RSRL.Interpretation.featureStructure`).
 
 A *homomorphism* of interpretations keeps sorts, commutes with the attributes and preserves the
-relations. It commutes with term denotation and maps the components of an entity onto those of
-its image (`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
-
-An interpretation is also a partial Moore machine, with the attributes as letters and the sorts
-as outputs, so each entity is the root of a feature structure
-(`HPSG.RSRL.Interpretation.featureStructure`).
+relations. It maps the components of an entity onto those of its image
+(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
 
 ## Implementation notes
 
@@ -60,60 +58,21 @@ namespace Interpretation
 variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} {U : Type v}
   (I : Interpretation Sig U)
 
-/-! ### Term denotation -/
+/-! ### The machine of an interpretation -/
 
-/-- The entity that a term denotes at the described entity `u` under the assignment `g`, when
-every attribute along the term is defined ([richter-2024], Definition 10). -/
-def termDenot (g : ℕ → U) : Term Sig → U → Option U
-  | .colon, u => some u
-  | .var n, _ => some (g n)
-  | .feat t α, u => (termDenot g t u).bind (I.A α)
+/-- An interpretation as a partial Moore machine over the attributes: the transition for an
+attribute is its partial function, and the output at an entity is its sort, in the order in
+which the more specific sort is the greater. -/
+def toPartialMoore : PartialMoore U Sig.Attr Srtᵒᵈ where
+  step q α := I.A α q
+  out q := OrderDual.toDual (I.S q)
 
-variable {I} {g g' : ℕ → U} {u v : U}
+/-- The feature structure of an entity, whose nodes are its components. -/
+abbrev featureStructure (u : U) :
+    FeatureStructure {q // I.toPartialMoore.Reaches u q} Sig.Attr Srtᵒᵈ :=
+  I.toPartialMoore.featureStructure u
 
-@[simp] theorem termDenot_colon : I.termDenot g .colon u = some u := rfl
-
-@[simp] theorem termDenot_var (n : ℕ) : I.termDenot g (.var n) u = some (g n) := rfl
-
-@[simp] theorem termDenot_feat (t : Term Sig) (α : Sig.Attr) :
-    I.termDenot g (t.feat α) u = (I.termDenot g t u).bind (I.A α) := rfl
-
-/-- A term denotation depends only on the values of the variables that occur in the term. -/
-theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
-    I.termDenot g t u = I.termDenot g' t u := by
-  induction t with
-  | colon => rfl
-  | var n => simp [h n (Finset.mem_singleton_self n)]
-  | feat t α ih => rw [termDenot_feat, termDenot_feat, ih h]
-
-theorem termDenot_of_isColonFree {t : Term Sig} (ht : t.IsColonFree) (u v : U) :
-    I.termDenot g t u = I.termDenot g t v := by
-  induction t with
-  | colon => exact ht.elim
-  | var n => rfl
-  | feat t α ih => rw [termDenot_feat, termDenot_feat, ih ht]
-
-theorem termDenot_path (g g' : ℕ → U) (p : Path Sig) :
-    I.termDenot g (.path p) u = I.termDenot g' (.path p) u :=
-  termDenot_congr (by simp)
-
-theorem termDenot_path_cons (α : Sig.Attr) (p : Path Sig) :
-    I.termDenot g (.path (α :: p)) u = (I.A α u).bind (I.termDenot g (.path p)) := by
-  induction p using List.reverseRecOn with
-  | nil => simp [Term.path]
-  | append_singleton p β ih =>
-    rw [← List.cons_append, Term.path_concat, Term.path_concat, termDenot_feat, ih,
-      Option.bind_assoc]
-    rfl
-
-theorem termDenot_path_append (p q : Path Sig) :
-    I.termDenot g (.path (p ++ q)) u =
-      (I.termDenot g (.path p) u).bind (I.termDenot g (.path q)) := by
-  induction p generalizing u with
-  | nil => rfl
-  | cons α p ih =>
-    rw [List.cons_append, termDenot_path_cons, termDenot_path_cons, Option.bind_assoc]
-    simp only [ih]
+variable {I} {u v : U}
 
 /-! ### Components -/
 
@@ -132,25 +91,23 @@ instance [Fintype U] [DecidableEq U] [Fintype Sig.Attr] (u v : U) :
     Decidable (I.IsComponentOf u v) :=
   Relation.ReflTransGen.decidable_of_fintype u v
 
-/-- The components of `u` are the entities that some path denotes at `u`
-([richter-2024], Definition 11). -/
-theorem isComponentOf_iff_exists_path (g : ℕ → U) :
-    I.IsComponentOf u v ↔ ∃ p : Path Sig, I.termDenot g (.path p) u = some v := by
+/-- The components of an entity are the states its machine reaches from it. -/
+theorem reaches_toPartialMoore_iff : I.toPartialMoore.Reaches u v ↔ I.IsComponentOf u v := by
   constructor
-  · intro h
-    induction h with
-    | refl => exact ⟨[], rfl⟩
-    | tail _ hα ih =>
-      obtain ⟨α, hα⟩ := hα
-      obtain ⟨p, hp⟩ := ih
-      exact ⟨p ++ [α], by rw [Term.path_concat, termDenot_feat, hp]; exact hα⟩
   · rintro ⟨p, hp⟩
     induction p using List.reverseRecOn generalizing v with
-    | nil => cases hp; exact .refl
+    | nil => obtain rfl : u = v := by simpa using hp
+             exact .refl
     | append_singleton p α ih =>
-      rw [Term.path_concat, termDenot_feat, Option.bind_eq_some_iff] at hp
+      rw [PartialMoore.evalFrom_append_singleton, Option.bind_eq_some_iff] at hp
       obtain ⟨w, hw, hα⟩ := hp
       exact (ih hw).tail ⟨α, hα⟩
+  · intro h
+    induction h with
+    | refl => exact .refl _ _
+    | tail _ hα ih =>
+      obtain ⟨α, hα⟩ := hα
+      exact ih.step hα
 
 /-! ### Typing -/
 
@@ -186,11 +143,12 @@ instance [DecidableLE Srt] [Fintype U] [Fintype Sig.Attr] : Decidable I.IsTotall
 /-- In a well-typed interpretation the signature admits every path that is defined, from the
 sort of the entity it starts at to the sort of the entity it reaches. -/
 theorem IsWellTyped.admits (hI : I.IsWellTyped) {p : Path Sig}
-    (h : I.termDenot g (.path p) u = some v) : Sig.Admits (I.S u) p (I.S v) := by
+    (h : I.toPartialMoore.evalFrom u p = some v) : Sig.Admits (I.S u) p (I.S v) := by
   induction p generalizing u with
-  | nil => cases h; rfl
+  | nil => obtain rfl : u = v := by simpa using h
+           rfl
   | cons α p ih =>
-    rw [termDenot_path_cons, Option.bind_eq_some_iff] at h
+    rw [PartialMoore.evalFrom_cons, Option.bind_eq_some_iff] at h
     obtain ⟨w, hw, hp⟩ := h
     obtain ⟨τ, hτ, hle⟩ := hI α u w hw
     exact ⟨τ, hτ, I.S w, hle, ih hp⟩
@@ -252,16 +210,6 @@ attribute [simp] HomClass.map_S HomClass.map_A
 namespace HomClass
 
 variable {F : Type*} [FunLike F U V] [HomClass F I J] (f : F)
-
-/-- A homomorphism commutes with term denotation. -/
-theorem termDenot_comp (g : ℕ → U) (t : Term Sig) (u : U) :
-    J.termDenot (f ∘ g) t (f u) = (I.termDenot g t u).map f := by
-  induction t with
-  | colon => rfl
-  | var n => rfl
-  | feat t α ih =>
-    rw [termDenot_feat, termDenot_feat, ih]
-    cases I.termDenot g t u <;> simp
 
 theorem attrSucc (h : I.attrSucc u v) : J.attrSucc (f u) (f v) :=
   let ⟨α, hα⟩ := h; ⟨α, by rw [map_A f, hα]; rfl⟩
@@ -398,42 +346,6 @@ def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
 
 end Embedding
 
-/-! ### The feature structure of an entity -/
-
-section FeatureStructure
-
-variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} {U : Type v} {V : Type w}
-  (I : Interpretation Sig U) {J : Interpretation Sig V} {u : U}
-
-/-- An interpretation as a partial Moore machine over the attributes: the transition for an
-attribute is its partial function, and the output at an entity is its sort, in the order in
-which the more specific sort is the greater. -/
-def toPartialMoore : PartialMoore U Sig.Attr Srtᵒᵈ where
-  step q α := I.A α q
-  out q := OrderDual.toDual (I.S q)
-
-/-- The feature structure of an entity, whose nodes are its components. -/
-abbrev featureStructure (u : U) :
-    FeatureStructure {q // I.toPartialMoore.Reaches u q} Sig.Attr Srtᵒᵈ :=
-  I.toPartialMoore.featureStructure u
-
-variable {I}
-
-/-- Following a path from an entity is reading it in the machine of the interpretation. -/
-theorem evalFrom_toPartialMoore (g : ℕ → U) (u : U) (p : Path Sig) :
-    I.toPartialMoore.evalFrom u p = I.termDenot g (.path p) u := by
-  induction p using List.reverseRecOn with
-  | nil => rfl
-  | append_singleton p α ih =>
-    rw [PartialMoore.evalFrom_append_singleton, ih, Term.path_concat, termDenot_feat]
-    rfl
-
-/-- The components of an entity are the states its machine reaches from it. -/
-theorem reaches_toPartialMoore_iff {q : U} :
-    I.toPartialMoore.Reaches u q ↔ I.IsComponentOf u q := by
-  rw [isComponentOf_iff_exists_path fun _ ↦ u]
-  simp only [PartialMoore.Reaches, evalFrom_toPartialMoore fun _ ↦ u]
-
 /-- A homomorphism, which keeps sorts and reflects attributes, is in particular a simulation:
 the feature structure of an entity subsumes that of its image. -/
 theorem Hom.simulatedBy (f : Hom I J) (u : U) :
@@ -442,8 +354,6 @@ theorem Hom.simulatedBy (f : Hom I J) (u : U) :
     show J.A α (f q) = some (f q')
     rw [HomClass.map_A]
     exact congrArg (Option.map f) hα⟩
-
-end FeatureStructure
 
 end Interpretation
 
