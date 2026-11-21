@@ -160,8 +160,8 @@ instance : LinearOrder Use := LinearOrder.lift' Use.ctorIdx (by decide)
 movement *go* with an infinitive. The other two are the reanalysed entry of [eckardt-2006], and
 differ in what makes the event imminent: the intention of the subject, or the assessment of the
 speaker of the context. -/
-def Examples.Use.denote : Use → Character C W (Set (NonemptyInterval T))
-  | .motion => fun _ ↦ UNBOUNDED (goTo go prepare P x)
+def Examples.Use.denote : Use → Character C W (NonemptyInterval T → Prop)
+  | .motion => fun _ w ↦ unbounded (goTo go prepare P x w)
   | .intention => fun _ ↦ beGoingTo (intends x) P x
   | .raising => fun c ↦ beGoingTo (assess c) P x
 
@@ -174,9 +174,9 @@ theorem monotone_denote (hprep : ∀ e e', prepare e e' → Event.Precedes e e')
     (hint : ∀ w t e e', go x w e → prepare e e' → t ≤ τ e → intends x t e')
     (hass : ∀ t e, intends x t e → assess c t e) :
     Monotone fun u ↦ Use.denote go prepare intends assess P x u c w := by
-  have h₁ : UNBOUNDED (goTo go prepare P x) w ⊆ beGoingTo (intends x) P x w :=
-    Eckardt2006.unbounded_goTo_subset_beGoingTo hprep hint
-  have h₂ : beGoingTo (intends x) P x w ⊆ beGoingTo (assess c) P x w :=
+  have h₁ : unbounded (goTo go prepare P x w) ≤ beGoingTo (intends x) P x w :=
+    Eckardt2006.unbounded_goTo_le_beGoingTo hprep hint
+  have h₂ : beGoingTo (intends x) P x w ≤ beGoingTo (assess c) P x w :=
     Eckardt2006.beGoingTo_mono hass
   intro u v huv
   cases u <;> cases v <;>
@@ -187,7 +187,7 @@ theorem denote_raising_ne {t : NonemptyInterval T} {e : E} (ht : t.Precedes (τ 
     (hP : P x w e) (hc : assess c t e) (hc' : ∀ e', P x w e' → ¬ assess c' t e') :
     Use.denote go prepare intends assess P x .raising c ≠
       Use.denote go prepare intends assess P x .raising c' := fun h ↦
-  let ⟨e', _, hi, hP'⟩ := (congrFun h w).subset ⟨e, ht, hc, hP⟩
+  let ⟨e', _, hi, hP'⟩ := (congrFun (congrFun h w) t).mp ⟨e, ht, hc, hP⟩
   hc' e' hP' hi
 
 /-- A use of *be going to* is nonsubjective exactly when it says the same in every context. -/
