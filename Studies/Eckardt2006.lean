@@ -5,6 +5,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Data.Examples.Eckardt2006
+public import Studies.Krifka1995
 public import Linglib.Data.Statistics.Eckardt2006
 
 /-!
@@ -66,6 +67,10 @@ polarity item. *Pas* gives the subminimal parts of the events of a description
   longer a part of the reanalysed sentence is this difference of type: no viewpoint operator
   applies to the new entry.
 * `imm` is the one parameter of the new entry that the context supplies and the old entry lacks.
+* An entry with a sentence frame is a BFA structure of [krifka-1995a] (`FocusEntry.bfa`), and
+  licensing is the first of the two conditions of his emphatic assertion, taken in the common
+  ground of all worlds (`FocusEntry.licensed_of_emphAssertable`). His scalar assertion, which he
+  uses for the weak items, plays no part here: every item is licensed through emphatic assertion.
 * The focus semantic value of a sentence is the image of the entry's alternatives under the
   sentence frame, the pointwise composition of focus semantics. The likelihood `μ` is any monotone
   map into a partial order, a ranking that respects entailment.
@@ -87,6 +92,7 @@ polarity item. *Pas* gives the subminimal parts of the events of a description
 ## References
 
 * [eckardt-2006]
+* [krifka-1995a]
 -/
 
 @[expose] public section
@@ -252,6 +258,22 @@ variable {i : FocusEntry D} {a : D}
 sentence is less likely than each of its focus alternatives. -/
 def Licensed (μ : Set W → α) (S : D → Set W) (i : FocusEntry D) : Prop :=
   i.emphatic → evenPresup μ (S i.value) (S '' i.alternatives)
+
+/-- The BFA structure of [krifka-1995a] that an entry forms with a sentence frame as its
+background. -/
+def bfa (S : D → Set W) (i : FocusEntry D) : Krifka1995.BFA W D := ⟨S, i.value, i.alternatives⟩
+
+-- An operator on the sentence applies to the background, as in Krifka's rule.
+theorem bfa_comp (Q : Set W → Set W) (S : D → Set W) (i : FocusEntry D) :
+    i.bfa (Q ∘ S) = (i.bfa S).map Q := rfl
+
+-- (5.72) asks for the first condition of Krifka's emphatic assertion, in the common ground of all
+-- worlds, and not for the second.
+theorem licensed_of_emphAssertable
+    (h : Krifka1995.BFA.EmphAssertable (fun p q ↦ μ p < μ q) (i.bfa S) Set.univ) :
+    i.Licensed μ S := fun _ ↦ by
+  rintro _ ⟨a, ha, rfl⟩
+  simpa [Krifka1995.BFA.prop, bfa] using h.lt_of_mem a ha
 
 -- The loss of emphasis: without the requirement an entry is licensed in every frame.
 theorem licensed_of_not_emphatic (h : ¬ i.emphatic) : i.Licensed μ S := fun he ↦ absurd he h
