@@ -33,7 +33,6 @@ focus of the clause, as Turkish *mI* is.
 ## References
 
 * [dryer-2013-wals]
-* [sadock-zwicky-1985]
 * [simik-2024]
 -/
 
@@ -87,12 +86,6 @@ def placements : Finset Placement :=
   match p.anchor with
   | .clause s => s
   | .focus _ => ∅
-
-/-- The side of the focus on which a particle placed by the focus stands. -/
-def focusSide? : Option Morph.Side :=
-  match p.anchor with
-  | .clause _ => none
-  | .focus s => some s
 
 end Particle
 
