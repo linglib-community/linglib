@@ -31,7 +31,9 @@ forests, `UnorderedTree.productMultiset_assoc`, which gives it over every commut
 ## TODO
 
 * `UniversalEnvelopingAlgebra.lift R ιLie` is an isomorphism: Oudom and Guin's identification of
-  their product with the enveloping algebra. Injectivity needs the Poincaré–Birkhoff–Witt theorem.
+  their product with the enveloping algebra. The product has the commutative product as its
+  leading term, so surjectivity is by induction on the number of trees; injectivity needs the
+  ordered monomials in the trees to span the enveloping algebra, and not their independence.
 
 ## References
 
