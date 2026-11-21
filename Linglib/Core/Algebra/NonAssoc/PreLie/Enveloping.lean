@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.Lie.UniversalEnveloping.Filtration
 public import Linglib.Core.Algebra.NonAssoc.PreLie.Brace
 public import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 public import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Grading
@@ -15,7 +16,7 @@ public import Mathlib.RingTheory.Derivation.Lie
 public import Mathlib.Tactic.LinearCombination
 
 /-!
-# The enveloping algebra of a pre-Lie algebra acts on its symmetric algebra
+# The enveloping algebra of a pre-Lie algebra
 
 Let `L` be a right pre-Lie algebra over a commutative ring `R`. Each `X` in `L` acts on the
 symmetric algebra `S(L)` by `a ↦ a * ι X + D_X a`, where `D_X` is the derivation that multiplies
@@ -24,14 +25,28 @@ this a right action of the commutator Lie algebra of `L` (`RightPreLieAlgebra.ac
 extends to a right action of the enveloping algebra, and acting on `1` gives a linear map
 `RightPreLieAlgebra.toSymmetricAlgebra` from the enveloping algebra to `S(L)`.
 
-That map is surjective (`RightPreLieAlgebra.toSymmetricAlgebra_surjective`): the action of `X`
-on an element of degree `n` is its product with `ι X` plus an element of degree `n`.
+This map is bijective, `RightPreLieAlgebra.equivSymmetricAlgebra`: the enveloping algebra of the
+commutator Lie algebra of `L` is `S(L)` as a module, which is the Poincaré–Birkhoff–Witt theorem
+for these Lie algebras, with no hypothesis on `L` as a module. A product of `n + 1` elements of
+`L` in the enveloping algebra goes to the product of the same elements in `S(L)`, up to products
+of at most `n` (`RightPreLieAlgebra.toSymmetricAlgebra_mkAlgHom_sub_mem`). Surjectivity follows
+by induction on the degree. For injectivity, an element of the kernel that is a sum of products
+of at most `n + 1` elements has its part of degree `n + 1` vanish in `S(L)`, so that part is a
+sum of products of at most `n` elements by
+`UniversalEnvelopingAlgebra.mkAlgHom_mem_of_algHom_eq_zero`.
+
+## Implementation notes
+
+[oudom-guin-2008] first build an associative product on `S(L)` and compare associated graded
+algebras. Here the product is not needed: `S(L)` is shown to be a free module of rank one over
+the enveloping algebra, and the filtrations are compared directly.
 
 ## TODO
 
-* `toSymmetricAlgebra` is injective. With surjectivity this identifies the enveloping algebra of
-  the commutator Lie algebra of `L` with `S(L)`, as [oudom-guin-2008] show, and transports the
-  product of the enveloping algebra to their product on `S(L)`.
+* Transport the product of the enveloping algebra to `S(L)` along `equivSymmetricAlgebra`. This
+  is the product of Oudom and Guin; `Linglib/Core/Algebra/NonAssoc/PreLie/OudomGuin.lean` builds
+  it from symmetric braces when `L` has a basis.
+* `UniversalEnvelopingAlgebra.ι` is injective for these Lie algebras.
 
 ## References
 
@@ -193,6 +208,10 @@ private theorem pow_le_one_sup_pow {A : Type*} [Semiring A] [Algebra R A] (M : S
     (k : ℕ) : M ^ k ≤ (1 ⊔ M) ^ k :=
   pow_le_pow_left' le_sup_right k
 
+private theorem one_sup_pow_mono {A : Type*} [Semiring A] [Algebra R A] (M : Submodule R A)
+    {m n : ℕ} (h : m ≤ n) : (1 ⊔ M) ^ m ≤ (1 ⊔ M) ^ n :=
+  pow_le_pow_right' le_sup_left h
+
 private theorem one_sup_pow_succ {A : Type*} [Semiring A] [Algebra R A] (M : Submodule R A)
     (m : ℕ) : (1 ⊔ M) ^ (m + 1) = (1 ⊔ M) ^ m ⊔ M ^ (m + 1) := by
   have hmono : ∀ k, M ^ k ≤ (1 ⊔ M) ^ k := pow_le_one_sup_pow R M
@@ -280,8 +299,8 @@ theorem toSymmetricAlgebra_mkAlgHom_sub_mem (n : ℕ) {t : TensorAlgebra R L}
     have h : UniversalEnvelopingAlgebra.mkAlgHom R L (TensorAlgebra.ι R Y) =
         1 * UniversalEnvelopingAlgebra.ι R Y := (one_mul _).symm
     rw [h, toSymmetricAlgebra_mul_ι, toSymmetricAlgebra_one, act_apply, one_mul,
-      Derivation.map_one_eq_zero, add_zero, show algHom R L (TensorAlgebra.ι R Y) = ι R L Y from rfl,
-      sub_self]
+      Derivation.map_one_eq_zero, add_zero,
+      show algHom R L (TensorAlgebra.ι R Y) = ι R L Y from rfl, sub_self]
     exact zero_mem _
   | succ n ih =>
     rw [pow_succ] at ht
@@ -299,5 +318,115 @@ theorem toSymmetricAlgebra_mkAlgHom_sub_mem (n : ℕ) {t : TensorAlgebra R L}
       exact Submodule.mul_mem_mul (ih hx) (Submodule.mem_sup_right ⟨Y, rfl⟩)
     · rw [map_add, map_add, map_add, add_sub_add_comm]
       exact add_mem hx hy
+
+/-! ### Injectivity -/
+
+theorem algHom_mem_pow {k : ℕ} {t : TensorAlgebra R L} (ht : t ∈ M_T ^ k) :
+    algHom R L t ∈ M_S ^ k := by
+  induction ht using Submodule.pow_induction_on_right' with
+  | algebraMap r => rw [AlgHom.commutes, pow_zero]; exact Submodule.mem_one.mpr ⟨r, rfl⟩
+  | add x y i hx hy ihx ihy => rw [map_add]; exact add_mem ihx ihy
+  | mul_mem i x hx ih m hm =>
+    obtain ⟨Y, rfl⟩ := hm
+    rw [map_mul]
+    exact Submodule.mul_mem_mul ih ⟨Y, rfl⟩
+
+theorem exists_mkAlgHom_eq_of_mem_pow {k : ℕ} {u : UniversalEnvelopingAlgebra R L}
+    (hu : u ∈ M_U ^ k) : ∃ t ∈ M_T ^ k, UniversalEnvelopingAlgebra.mkAlgHom R L t = u := by
+  induction hu using Submodule.pow_induction_on_right' with
+  | algebraMap r =>
+    exact ⟨algebraMap R _ r, by rw [pow_zero]; exact Submodule.mem_one.mpr ⟨r, rfl⟩,
+      AlgHom.commutes _ r⟩
+  | add x y i hx hy ihx ihy =>
+    obtain ⟨s, hs, rfl⟩ := ihx
+    obtain ⟨t, ht, rfl⟩ := ihy
+    exact ⟨s + t, add_mem hs ht, map_add _ s t⟩
+  | mul_mem i x hx ih m hm =>
+    obtain ⟨s, hs, rfl⟩ := ih
+    obtain ⟨Y, rfl⟩ := hm
+    exact ⟨s * TensorAlgebra.ι R Y, Submodule.mul_mem_mul hs ⟨Y, rfl⟩, map_mul _ _ _⟩
+
+/-- An element of the symmetric algebra that is a sum of products of at most `m` generators has
+no component of degree above `m`. -/
+private theorem decompose_eq_zero_of_mem {m : ℕ} {s : SymmetricAlgebra R L}
+    (hs : s ∈ (1 ⊔ M_S) ^ m) {j : ℕ} (hj : m < j) :
+    (DirectSum.decompose (fun n : ℕ ↦ M_S ^ n) s j : SymmetricAlgebra R L) = 0 := by
+  induction m generalizing s with
+  | zero =>
+    rw [pow_zero] at hs
+    exact DirectSum.decompose_of_mem_ne _ (i := 0) (by rwa [pow_zero]) hj.ne
+  | succ m ih =>
+    rw [one_sup_pow_succ] at hs
+    obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hs
+    rw [DirectSum.decompose_add, DirectSum.add_apply, Submodule.coe_add,
+      ih ha (Nat.lt_of_succ_lt hj), DirectSum.decompose_of_mem_ne _ hb hj.ne, add_zero]
+
+/-- A homogeneous element of degree `m + 1` that is a sum of products of at most `m` generators
+is zero. -/
+private theorem eq_zero_of_mem_pow_of_mem {m : ℕ} {s : SymmetricAlgebra R L}
+    (hs : s ∈ M_S ^ (m + 1)) (hs' : s ∈ (1 ⊔ M_S) ^ m) : s = 0 := by
+  rw [← DirectSum.decompose_of_mem_same (fun n : ℕ ↦ M_S ^ n) hs]
+  exact decompose_eq_zero_of_mem R hs' (Nat.lt_succ_self m)
+
+theorem eq_zero_of_toSymmetricAlgebra_eq_zero {m : ℕ} {u : UniversalEnvelopingAlgebra R L}
+    (hu : u ∈ (1 ⊔ M_U) ^ m) (h : toSymmetricAlgebra R u = 0) : u = 0 := by
+  induction m generalizing u with
+  | zero =>
+    rw [pow_zero] at hu
+    obtain ⟨r, rfl⟩ := Submodule.mem_one.mp hu
+    rw [toSymmetricAlgebra_algebraMap, SymmetricAlgebra.algebraMap_eq_zero_iff] at h
+    rw [h, map_zero]
+  | succ m ih =>
+    rw [one_sup_pow_succ] at hu
+    obtain ⟨v, hv, w, hw, rfl⟩ := Submodule.mem_sup.mp hu
+    obtain ⟨t, ht, rfl⟩ := exists_mkAlgHom_eq_of_mem_pow R hw
+    rw [map_add] at h
+    have hS : algHom R L t ∈ (1 ⊔ M_S) ^ m := by
+      have e : algHom R L t = -toSymmetricAlgebra R v -
+          (toSymmetricAlgebra R (UniversalEnvelopingAlgebra.mkAlgHom R L t) - algHom R L t) := by
+        linear_combination h
+      rw [e]
+      exact sub_mem (neg_mem (toSymmetricAlgebra_mem_pow R hv))
+        (toSymmetricAlgebra_mkAlgHom_sub_mem R m ht)
+    have h0 := eq_zero_of_mem_pow_of_mem R (algHom_mem_pow R ht) hS
+    exact ih (add_mem hv (UniversalEnvelopingAlgebra.mkAlgHom_mem_of_algHom_eq_zero R L ht h0))
+      ((map_add _ _ _).trans h)
+
+theorem exists_mkAlgHom_mem_pow (a : TensorAlgebra R L) :
+    ∃ m, UniversalEnvelopingAlgebra.mkAlgHom R L a ∈ (1 ⊔ M_U) ^ m := by
+  induction a using TensorAlgebra.induction with
+  | algebraMap r =>
+    exact ⟨0, by rw [AlgHom.commutes, pow_zero]; exact Submodule.mem_one.mpr ⟨r, rfl⟩⟩
+  | ι x => exact ⟨1, by rw [pow_one]; exact Submodule.mem_sup_right ⟨x, rfl⟩⟩
+  | mul a b ha hb =>
+    obtain ⟨m, hm⟩ := ha
+    obtain ⟨n, hn⟩ := hb
+    exact ⟨m + n, by rw [map_mul, pow_add]; exact Submodule.mul_mem_mul hm hn⟩
+  | add a b ha hb =>
+    obtain ⟨m, hm⟩ := ha
+    obtain ⟨n, hn⟩ := hb
+    exact ⟨max m n, by
+      rw [map_add]
+      exact add_mem (one_sup_pow_mono R _ (le_max_left m n) hm)
+        (one_sup_pow_mono R _ (le_max_right m n) hn)⟩
+
+/-- The enveloping algebra acts freely on `1` in the symmetric algebra. -/
+theorem toSymmetricAlgebra_injective :
+    Function.Injective (toSymmetricAlgebra R (L := L)) := by
+  rw [injective_iff_map_eq_zero]
+  intro u hu
+  obtain ⟨a, rfl⟩ :=
+    (Quotient.mk_surjective : Function.Surjective (UniversalEnvelopingAlgebra.mkAlgHom R L)) u
+  obtain ⟨m, hm⟩ := exists_mkAlgHom_mem_pow R a
+  exact eq_zero_of_toSymmetricAlgebra_eq_zero R hm hu
+
+/-- The enveloping algebra of the commutator Lie algebra of a pre-Lie algebra is its symmetric
+algebra, as a module: the Poincaré–Birkhoff–Witt theorem for these Lie algebras. -/
+def equivSymmetricAlgebra : UniversalEnvelopingAlgebra R L ≃ₗ[R] SymmetricAlgebra R L :=
+  LinearEquiv.ofBijective (toSymmetricAlgebra R)
+    ⟨toSymmetricAlgebra_injective R, toSymmetricAlgebra_surjective R⟩
+
+@[simp] theorem equivSymmetricAlgebra_apply (u : UniversalEnvelopingAlgebra R L) :
+    equivSymmetricAlgebra R u = toSymmetricAlgebra R u := rfl
 
 end RightPreLieAlgebra
