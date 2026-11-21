@@ -41,6 +41,8 @@ a word is a free morph, a clitic, or a root with its affixes.
   inventory.
 * `Comparative.Inventory.setOf_isAffix_eq_gfp`: when the roots of every free form are adjacent,
   the affixes are the greatest fixed point of the step.
+* `Comparative.Inventory.IsAffix.rootClass_eq`: the roots next to which an affix stands are of
+  one class.
 
 ## Implementation notes
 
@@ -272,6 +274,43 @@ theorem setOf_isAffix_eq_gfp (hF : ∀ w ∈ L.forms, RootsContiguous root w) :
     rw [← (L.affixStep root hF).map_gfp] at hy
     have : L.AffixStep root (_ ∩ {z | ¬ root z}) y := hy
     rwa [key hnr] at this
+
+/-! ### Selectivity -/
+
+theorem _root_.Morphology.Comparative.OccursOn.mono {A B : Set M} (h : A ⊆ B) {w : List M} {i : ℕ} {y : M}
+    (ho : OccursOn root A w i y) : OccursOn root B w i y :=
+  ⟨ho.1, ho.2.imp (Reaches.mono h) (Reaches.mono h)⟩
+
+theorem _root_.Morphology.Comparative.OccursOn.mem {A : Set M} {w : List M} {i : ℕ} {y : M} (ho : OccursOn root A w i y) :
+    y ∈ w :=
+  ho.2.elim (fun h ↦ List.mem_of_mem_drop h.mem)
+    fun h ↦ List.mem_of_mem_take (List.mem_reverse.1 h.mem)
+
+/-- A morph occurs on the root that directly follows it. -/
+theorem _root_.Morphology.Comparative.occursOn_of_getElem?_succ {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
+    (h : w[i + 1]? = some y) : OccursOn root A w i y := by
+  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
+  exact ⟨hy, .inl (by rw [List.drop_eq_getElem_cons hlt]; exact .inl rfl)⟩
+
+/-- A morph occurs on the root that directly precedes it. -/
+theorem _root_.Morphology.Comparative.occursOn_succ_of_getElem? {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
+    (h : w[i]? = some y) : OccursOn root A w (i + 1) y := by
+  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
+  exact ⟨hy, .inr (by rw [List.take_succ_eq_append_getElem hlt, List.reverse_append]; exact .inl rfl)⟩
+
+/-- An affix is selective: the roots next to which it stands in the free forms are of one class,
+whichever morphs are taken to be affixes. -/
+theorem IsAffix.rootClass_eq {x y₁ y₂ : M} {w₁ w₂ : List M} {i₁ i₂ : ℕ} (h : L.IsAffix root x)
+    (hw₁ : w₁ ∈ L.forms) (hw₂ : w₂ ∈ L.forms) (hx₁ : w₁[i₁]? = some x) (hx₂ : w₂[i₂]? = some x)
+    (ho₁ : OccursOn root ∅ w₁ i₁ y₁) (ho₂ : OccursOn root ∅ w₂ i₂ y₂) :
+    L.rootClass y₁ = L.rootClass y₂ := by
+  obtain ⟨A, hxA, hA⟩ := h
+  obtain ⟨-, -, -, c, hc⟩ := hA x hxA
+  have h₁ := (hc w₁ hw₁ i₁ (List.getElem?_eq_some_iff.1 hx₁).1 hx₁).2 y₁ ho₁.mem
+    (ho₁.mono (Set.empty_subset A))
+  have h₂ := (hc w₂ hw₂ i₂ (List.getElem?_eq_some_iff.1 hx₂).1 hx₂).2 y₂ ho₂.mem
+    (ho₂.mono (Set.empty_subset A))
+  rw [h₁, h₂]
 
 /-! ### Clitics, required affixes and words -/
 

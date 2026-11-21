@@ -4,6 +4,7 @@ public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.Slavic.Russian.QuestionParticles
 public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Morphology.Word.Comparative
+public import Studies.Haspelmath2021c
 public import Studies.Haspelmath2023
 
 /-!
@@ -38,12 +39,9 @@ for the same morphs.
 ## TODO
 
 * Read the free forms from example rows in boundary notation.
-* `Morphology.Comparative.Inventory.IsAffix` holds of *li* on the three Russian questions, in each
-  of which the noun *Anna* follows it: occurrence on a root does not distinguish the word a morph
-  follows from the word it precedes, and the affixes it is reached through are those of any set
-  the definition maps into itself. `Haspelmath2023c.IsSecondPosition` of *li* waits on a
-  definition of the affix that reads the three questions as the paper does, with *li* on the
-  verb, the noun and the adverb before it.
+* `Morphology.Comparative.Inventory.IsAffix` takes a morph to be an affix when some set of
+  morphs containing it solves the definition, so on the three Russian questions alone it holds
+  of *li* and of *-la*, which no one solution contains together (`questions_affixStep`).
 
 ## References
 
@@ -152,7 +150,7 @@ def vcera : Morph := .free "včera"
 
 /-- The Russian questions *Pročita-la li Anna knigu?*, *Knigu li Anna pročita-la?* and
 *Včera li Anna čita-la?*, with the fragment's morph for *li*. -/
-def russian : Inventory Morph where
+def questions : Inventory Morph where
   forms :=
     [[procita, la] ++ Russian.QuestionParticles.li.morphs ++ [anna, knigu],
      knigu :: Russian.QuestionParticles.li.morphs ++ [anna, procita, la],
@@ -161,15 +159,39 @@ def russian : Inventory Morph where
     if m = procita ∨ m = cita then some .action
     else if m = anna ∨ m = knigu then some .object else none
 
-/-- Russian *li* directly follows the first word of each question, a verb, a noun or an adverb,
-which is the placement the fragment records. -/
-theorem li_followsFirstWord :
-    (∀ m ∈ Russian.QuestionParticles.li.morphs, ∀ w ∈ russian.forms,
-        FollowsFirstWord m w) ∧
+/-- The three questions together with *znaeš' li?*, *zdorov li?* and *zdes' li?*, in which
+nothing follows *li*. -/
+def russian : Inventory Morph where
+  forms := Haspelmath2021c.russian.forms ++ questions.forms
+  rootClass m := (Haspelmath2021c.russian.rootClass m).or (questions.rootClass m)
+
+open Haspelmath2021c (znaesh zdorov li) in
+/-- Russian *li* directly follows a verb in *znaeš' li?* and an adjective in *zdorov li?*, so it
+is not an affix. -/
+theorem li_not_isAffix : ¬ russian.IsAffix russian.IsContentful li := fun h ↦ by
+  have := h.rootClass_eq (w₁ := [znaesh, li]) (w₂ := [zdorov, li]) (i₁ := 1) (i₂ := 1)
+    (by decide) (by decide) rfl rfl
+    (occursOn_succ_of_getElem? _ (by decide) rfl) (occursOn_succ_of_getElem? _ (by decide) rfl)
+  revert this
+  decide
+
+/-- Russian *li* is a second-position clitic, the placement the fragment records. -/
+theorem li_isSecondPosition :
+    (∀ m ∈ Russian.QuestionParticles.li.morphs,
+        IsSecondPosition russian russian.IsContentful m) ∧
       .second ∈ Russian.QuestionParticles.li.placements := by
   decide
 
-theorem la_isAffix : russian.IsAffix russian.IsContentful la := by decide
+open Haspelmath2021c (li) in
+/-- On the three questions alone the definition of the affix has two solutions: the noun *Anna*
+follows *li* in each, so either *-la* is an affix and *li* stands on a verb and on nouns, or *li*
+is an affix on nouns and *-la* stands on a verb and, through *li*, on a noun. -/
+theorem questions_affixStep :
+    questions.AffixStep questions.IsContentful {la} la ∧
+      questions.AffixStep questions.IsContentful {li} li ∧
+      ¬ questions.AffixStep questions.IsContentful {la, li} li ∧
+      ¬ questions.AffixStep questions.IsContentful {la, li} la := by
+  decide
 
 /-! ### Turkish *mI* -/
 
