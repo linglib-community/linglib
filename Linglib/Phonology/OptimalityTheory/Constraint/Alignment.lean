@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Core.Computability.Edge
 public import Mathlib.Order.Interval.Basic
 
@@ -102,3 +103,22 @@ example : alignEdge (α := ℕ) .left .right ([⟨(2, 3), by decide⟩], [⟨(0,
   decide
 
 end OptimalityTheory.Constraint
+
+namespace OptimalityTheory.Correspondence
+
+variable {α : Type*} [LE α] [DecidableEq α]
+
+/-- (4): the pairs of positions of two families of spans at which the endpoint of the first span
+at `e₁` is the endpoint of the second at `e₂`. `Align(Cat₁, Edge₁, Cat₂, Edge₂)` of
+[mccarthy-prince-1993b] is its MAX, and `Align(Cat₂, Edge₂, Cat₁, Edge₁)` its DEP. -/
+def ofEdges (e₁ e₂ : Edge) (l m : List (NonemptyInterval α)) :
+    Correspondence (Fin l.length) (Fin m.length) :=
+  ofRel (fun a b ↦ e₁.endpoint a = e₂.endpoint b) l.get m.get
+
+/-- Two spans are equal exactly when they share both edges. -/
+theorem ofRel_eq (l m : List (NonemptyInterval α)) :
+    ofRel Eq l.get m.get = ofEdges .left .left l m ∩ ofEdges .right .right l m := by
+  ext ⟨i, j⟩
+  simp [ofEdges, NonemptyInterval.ext_iff, Prod.ext_iff]
+
+end OptimalityTheory.Correspondence

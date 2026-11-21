@@ -185,15 +185,18 @@ does. -/
 def correspondence : ConstraintSystem Input Candidate Con where
   gen := candidates
   marks x c
-    | .initFaith => Constraint.alignEdge .left .left
-        ((c.spans x .om).filter fun w ↦ ∃ l ∈ x.lex, Corresponds x.lex l w, x.lex.map (·.span))
+    | .initFaith => (Correspondence.ofEdges .left .left
+        ((c.spans x .om).filter fun w ↦ ∃ l ∈ x.lex, Corresponds x.lex l w)
+        (x.lex.map (·.span))).maxViol
     | .headedness => (c.tree x).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
     | .phrase => Constraint.deficiency (Corresponds x.phrases) (x.phrases, c.spans x .ph)
-    | .alignR => Constraint.alignEdge .right .right (x.phrases.map (·.span), c.spans x .ph)
+    | .alignR =>
+      (Correspondence.ofEdges .right .right (x.phrases.map (·.span)) (c.spans x .ph)).maxViol
     | .priority => if x.clitic ∧ (c.form = .strong ∨ c.form = .weak) then 1 else 0
-    | .word => Constraint.align (fun w l ↦ Corresponds x.lex l w) (c.spans x .om, x.lex)
+    | .word => (Correspondence.ofRel (fun w l ↦ Corresponds x.lex l w)
+        (c.spans x .om).get x.lex.get).maxViol
 
 /-- Standard Match Theory: MATCH-PHRASE, each phrase the span of a φ, fills the phrase slot, and
 MATCH-ω, each ω the span of a lexical word, the word slot. -/
@@ -201,7 +204,7 @@ def matchTheory : ConstraintSystem Input Candidate Con where
   gen := candidates
   marks x c
     | .phrase => Constraint.align Eq (x.phrases.map (·.span), c.spans x .ph)
-    | .word => Constraint.align Eq (c.spans x .om, x.lex.map (·.span))
+    | .word => (Correspondence.ofRel Eq (c.spans x .om).get (x.lex.map (·.span)).get).maxViol
     | i => correspondence.marks x c i
 
 theorem phrase_le (x : Input) (c : Candidate) :
