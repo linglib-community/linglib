@@ -22,9 +22,9 @@ no constituent of `Cat₂`. `Align(Cat₂, Edge₂, Cat₁, Edge₁)` is DEP of 
 For two families of spans we define `Correspondence.ofEdges e₁ e₂ l m`, the pairs of positions at
 which the endpoint of the first span at the edge `e₁` is the endpoint of the second at `e₂`. The
 relation of having the same span is the intersection of the relations of sharing the left and
-the right edge (`Correspondence.ofRel_eq`), so that by `Correspondence.maxViol_anti` a constraint
-requiring both edges to coincide, the Match constraint of [selkirk-2011], is violated at least as
-often as alignment at either edge.
+the right edge (`Correspondence.ofEdges_left_inter_ofEdges_right`), so that by
+`Correspondence.maxViol_anti` a constraint requiring both edges to coincide, the Match constraint
+of [selkirk-2011], is violated at least as often as alignment at either edge.
 
 ## Implementation notes
 
@@ -70,8 +70,8 @@ abbrev ofEdges (e₁ e₂ : Edge) (l m : List (NonemptyInterval α)) :
   ofRel (fun a b ↦ e₁.endpoint a = e₂.endpoint b) l.get m.get
 
 /-- Two spans are equal exactly when they share both edges. -/
-theorem ofRel_eq (l m : List (NonemptyInterval α)) :
-    ofRel Eq l.get m.get = ofEdges .left .left l m ∩ ofEdges .right .right l m := by
+theorem ofEdges_left_inter_ofEdges_right (l m : List (NonemptyInterval α)) :
+    ofEdges .left .left l m ∩ ofEdges .right .right l m = ofRel Eq l.get m.get := by
   ext ⟨i, j⟩
   simp [NonemptyInterval.ext_iff, Prod.ext_iff]
 
