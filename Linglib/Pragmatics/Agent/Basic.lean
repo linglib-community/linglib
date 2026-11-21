@@ -25,17 +25,17 @@ interpretation.
 
 ## Main definitions
 
-* `RationalAction.Agent`: a belief and a utility.
-* `RationalAction.Agent.value`: the expected utility of an action at an observation.
-* `RationalAction.Agent.policy`: the soft-maximizing kernel from observations to actions.
+* `Agent`: a belief and a utility.
+* `Agent.value`: the expected utility of an action at an observation.
+* `Agent.policy`: the soft-maximizing kernel from observations to actions.
 
 ## Main results
 
-* `RationalAction.Agent.policy_real_singleton`: the policy's share of an action is the real
+* `Agent.policy_real_singleton`: the policy's share of an action is the real
   softmax of the scaled values.
-* `RationalAction.Agent.policy_real_lt_iff`: at positive rationality the policy prefers the
+* `Agent.policy_real_lt_iff`: at positive rationality the policy prefers the
   action of greater value.
-* `RationalAction.Agent.value_le_decisionValue`: no action is worth more than the decision
+* `Agent.value_le_decisionValue`: no action is worth more than the decision
   value of the belief.
 
 ## References
@@ -46,8 +46,6 @@ interpretation.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-
-namespace RationalAction
 
 /-- An agent observes in `O`, acts in `A`, and has reasons that concern a state in `S`: what it
 believes the state to be at each observation, and what each action is worth to it at each
@@ -111,5 +109,3 @@ theorem policy_real_of_pair (hxx' : x ≠ x') (hall : ∀ c, c = x ∨ c = x') :
   ring_nf
 
 end Agent
-
-end RationalAction
