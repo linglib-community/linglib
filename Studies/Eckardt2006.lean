@@ -2,8 +2,10 @@ module
 
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Data.Examples.Eckardt2006
+public import Linglib.Data.Statistics.Eckardt2006
 
 /-!
 # Eckardt (2006): Meaning Change in Grammaticalization
@@ -32,6 +34,25 @@ every viewpoint (`ofRel_goTo_eq_empty`). A simple form has only the old entry, s
 only where the embedded clause allows the movement interpretation, and German *gehen*, which has
 no future entry, behaves in every form as the English simple forms do (`licensed_iff`).
 
+For the French negation particles a lexical entry is a `FocusEntry`: an ordinary value, focus
+alternatives of the same type, and possibly the requirement of emphatic focus. An emphatic
+assertion presupposes that the sentence is less likely than each of its focus alternatives, so an
+entry is licensed in a sentence frame `S` when `evenPresup μ (S value) (S '' alternatives)` holds
+if it is emphatic (`FocusEntry.Licensed`). Where an alternative entails the sentence, an emphatic
+entry is not licensed under a monotone operator (`FocusEntry.not_licensed_of_monotone`), and under
+an antitone one it is licensed exactly when no alternative is as likely as the sentence
+(`FocusEntry.licensed_iff_of_antitone`). An entry that does not require emphasis is licensed
+everywhere (`FocusEntry.licensed_of_not_emphatic`).
+
+*Mie* maps an event description to its smallest events, `mie V = {e | Minimal (· ∈ V) e}`, and
+its alternatives are other degree adverbs. Where whatever is done to some degree is done to a
+minimal degree, as in a well-founded part order (`mie_nonempty`), a clause with a restrictive
+degree adverb entails the clause with *mie* (`clause_subset_clause_mie`), which makes *mie* a
+polarity item. *Pas* gives the subminimal parts of the events of a description
+(`IsSubminimal`). There is a subminimal part exactly when there is an event of the description
+(`IsSubminimal.nonempty_iff`), so a clause with *pas* is true where the clause without it is
+(`clause_eq_of_isSubminimal`).
+
 ## Implementation notes
 
 * The progressive is the extensional `UNBOUNDED`, the reference time within the run time of the
@@ -45,12 +66,23 @@ no future entry, behaves in every form as the English simple forms do (`licensed
   longer a part of the reanalysed sentence is this difference of type: no viewpoint operator
   applies to the new entry.
 * `imm` is the one parameter of the new entry that the context supplies and the old entry lacks.
+* The focus semantic value of a sentence is the image of the entry's alternatives under the
+  sentence frame, the pointwise composition of focus semantics. The likelihood `μ` is any monotone
+  map into a partial order, a ranking that respects entailment.
+* `IsSubminimal` has the three conditions of (5.90) as printed, with strict parthood in each.
+* That a negated clause with *pas* has the truth conditions of plain negation is a consequence of
+  (5.90) drawn here, `clause_eq_of_isSubminimal`. The restriction of the later particles to
+  negation is not derived: an entry without the emphatic requirement is licensed in every frame.
 
 ## TODO
 
 * The manner adverbs that the new entry excludes, *carefully going to travel*, are not treated.
-* The other reanalyses of the book (the French negation particles, *selbst*, *lauter*) would decide
-  whether semantic reanalysis is to be a definition and not a pair of theorems for each case.
+* The contexts of the positive uses (`positiveUses`) are not yet mapped to the licensing contexts
+  of `Semantics/PolarityItem`, and the entries of *goutte*, *personne* and temporal *mie* are not
+  given.
+* The scalar implicature that confines *pas* to non-veridical contexts is stated only through its
+  premise, `IsSubminimal.nonempty_iff`.
+* The reanalyses of *selbst* and *lauter* are not treated.
 
 ## References
 
@@ -91,7 +123,6 @@ theorem beGoingTo_mono (h : ∀ t e, imm t e → imm' t e) :
     beGoingTo imm P x w ⊆ beGoingTo imm' P x w :=
   fun _ ⟨e, ht, hi, hP⟩ ↦ ⟨e, ht, h _ _ hi, hP⟩
 
-/-- The reanalysed *be going to* is a restriction of the prospective viewpoint. -/
 theorem beGoingTo_subset_prosp : beGoingTo imm P x w ⊆ PROSP (P x) w :=
   fun _ ⟨e, ht, _, hP⟩ ↦ ⟨e, le_of_lt ht, hP⟩
 
@@ -138,8 +169,6 @@ theorem not_precedes_of_le {s : NonemptyInterval T} (h : t ≤ s) : ¬ t.Precede
 
 /-! ### What the new entry no longer conveys -/
 
-/-- Movement *go* with an infinitive holds at no reference time, under any viewpoint, when no
-going prepares an event of the embedded predicate. -/
 theorem ofRel_goTo_eq_empty (R : NonemptyInterval T → NonemptyInterval T → Prop)
     (h : ∀ e e', go x w e → prepare e e' → ¬ P x w e') : ofRel R (goTo go prepare P x) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨e, _, hgo, e', hpr, hP⟩ ↦ h e e' hgo hpr hP
@@ -196,5 +225,135 @@ theorem licensed_iff (e : Example) :
     ∀ v ∈ e.verb, ∀ f ∈ e.form, ∀ m ∈ e.movement,
       (Licensed v f m ↔ e.datum.judgment = .acceptable) := by
   cases e <;> decide
+
+/-! ### Emphatic assertion and polarity items -/
+
+section Emphatic
+
+open Focus
+
+variable {D α : Type*} [PartialOrder α] {μ : Set W → α} {Q : Set W → Set W} {S : D → Set W}
+
+/-- (5.88): A lexical entry has an ordinary value, focus alternatives of the same type, and may
+have to be used in emphatic focus. -/
+structure FocusEntry (D : Type*) where
+  /-- The ordinary semantic value. -/
+  value : D
+  /-- The focus alternatives. -/
+  alternatives : Set D
+  /-- The entry must be used in emphatic focus. -/
+  emphatic : Prop
+
+namespace FocusEntry
+
+variable {i : FocusEntry D} {a : D}
+
+/-- (5.72): An entry is licensed in a sentence frame when, if it requires emphatic focus, the
+sentence is less likely than each of its focus alternatives. -/
+def Licensed (μ : Set W → α) (S : D → Set W) (i : FocusEntry D) : Prop :=
+  i.emphatic → evenPresup μ (S i.value) (S '' i.alternatives)
+
+-- The loss of emphasis: without the requirement an entry is licensed in every frame.
+theorem licensed_of_not_emphatic (h : ¬ i.emphatic) : i.Licensed μ S := fun he ↦ absurd he h
+
+-- (5.78)
+theorem not_licensed_of_monotone (hμ : Monotone μ) (hQ : Monotone Q) (he : i.emphatic)
+    (ha : a ∈ i.alternatives) (h : S a ⊆ S i.value) : ¬ i.Licensed μ (Q ∘ S) :=
+  fun hl ↦ not_evenPresup_of_subset hμ (Set.mem_image_of_mem _ ha) (hQ h) (hl he)
+
+/-- (5.80): Under an antitone operator an emphatic entry whose alternatives all entail the
+sentence is licensed exactly when no alternative is as likely as the sentence. -/
+theorem licensed_iff_of_antitone (hμ : Monotone μ) (hQ : Antitone Q) (he : i.emphatic)
+    (h : ∀ a ∈ i.alternatives, S a ⊆ S i.value) :
+    i.Licensed μ (Q ∘ S) ↔ ∀ a ∈ i.alternatives, μ (Q (S i.value)) ≠ μ (Q (S a)) := by
+  rw [Licensed, imp_iff_right he]
+  exact (evenPresup_iff_ne hμ (Set.forall_mem_image.2 fun a ha ↦ hQ (h a ha))).trans
+    Set.forall_mem_image
+
+end FocusEntry
+
+end Emphatic
+
+/-! ### *Mie* and *pas* -/
+
+section Minimizers
+
+open Focus
+
+variable {Ev α : Type*} [PartialOrder Ev] [PartialOrder α] {μ : Set W → α}
+  {Q : Set W → Set W} {V : W → Set Ev} {U : Set Ev} {A : Set Ev → Set Ev}
+  {alts : Set (Set Ev → Set Ev)}
+
+/-- (5.88): *Mie* maps an event description to its smallest events. -/
+def mie (U : Set Ev) : Set Ev := {e | Minimal (· ∈ U) e}
+
+theorem mie_subset (U : Set Ev) : mie U ⊆ U := fun _ h ↦ h.prop
+
+-- In a well-founded part order whatever is done to some degree is done to a minimal degree.
+theorem mie_nonempty [WellFoundedLT Ev] (h : U.Nonempty) : (mie U).Nonempty :=
+  exists_minimal_of_wellFoundedLT _ h
+
+/-- The clause in which a degree adverb modifies an event description: some event of the modified
+description takes place. -/
+def clause (V : W → Set Ev) (A : Set Ev → Set Ev) : Set W := {w | (A (V w)).Nonempty}
+
+/-- A clause with a restrictive degree adverb entails the clause with *mie*, where whatever is
+done to some degree is done to a minimal degree. -/
+theorem clause_subset_clause_mie (hA : ∀ U, A U ⊆ U)
+    (hmin : ∀ w, (V w).Nonempty → (mie (V w)).Nonempty) : clause V A ⊆ clause V mie :=
+  fun w hw ↦ hmin w (hw.mono (hA _))
+
+/-- (5.88): The entry of *mie*, with other degree adverbs as its alternatives and the requirement
+of emphatic focus. -/
+def mieEntry (alts : Set (Set Ev → Set Ev)) : FocusEntry (Set Ev → Set Ev) := ⟨mie, alts, True⟩
+
+-- (5.77): *mie* in a positive sentence.
+theorem not_licensed_mieEntry (hμ : Monotone μ) (hQ : Monotone Q) (hA : A ∈ alts)
+    (hAr : ∀ U, A U ⊆ U) (hmin : ∀ w, (V w).Nonempty → (mie (V w)).Nonempty) :
+    ¬ (mieEntry alts).Licensed μ (Q ∘ clause V) :=
+  FocusEntry.not_licensed_of_monotone hμ hQ trivial hA (clause_subset_clause_mie hAr hmin)
+
+-- (5.79): *mie* under a downward-entailing operator.
+theorem licensed_mieEntry_iff (hμ : Monotone μ) (hQ : Antitone Q)
+    (hr : ∀ A ∈ alts, ∀ U, A U ⊆ U) (hmin : ∀ w, (V w).Nonempty → (mie (V w)).Nonempty) :
+    (mieEntry alts).Licensed μ (Q ∘ clause V) ↔
+      ∀ A ∈ alts, μ (Q (clause V mie)) ≠ μ (Q (clause V A)) :=
+  FocusEntry.licensed_iff_of_antitone hμ hQ trivial fun A hA ↦
+    clause_subset_clause_mie (hr A hA) hmin
+
+/-- (5.90): The subminimal parts of the events of a description. Every event of the description
+has one as a proper part, each is a proper part of an event of the description, and none has an
+event of the description as a proper part. -/
+structure IsSubminimal (pas U : Set Ev) : Prop where
+  /-- (i): Every event of the description has a subminimal part. -/
+  exists_lt_of_mem : ∀ e ∈ U, ∃ e' ∈ pas, e' < e
+  /-- (ii): Every subminimal part is a proper part of an event of the description. -/
+  exists_gt_of_mem : ∀ e' ∈ pas, ∃ e ∈ U, e' < e
+  /-- (iii): No subminimal part has an event of the description as a proper part. -/
+  not_lt_of_mem : ∀ e' ∈ pas, ¬ ∃ e ∈ U, e < e'
+
+/-- There is a subminimal part exactly when there is an event of the description. -/
+theorem IsSubminimal.nonempty_iff {pas : Set Ev} (h : IsSubminimal pas U) :
+    pas.Nonempty ↔ U.Nonempty :=
+  ⟨fun ⟨e', he'⟩ ↦ let ⟨e, he, _⟩ := h.exists_gt_of_mem e' he'; ⟨e, he⟩,
+    fun ⟨e, he⟩ ↦ let ⟨e', he', _⟩ := h.exists_lt_of_mem e he; ⟨e', he'⟩⟩
+
+-- A clause with *pas* is true where the clause without it is.
+theorem clause_eq_of_isSubminimal {pas : Set Ev → Set Ev} (h : ∀ U, IsSubminimal (pas U) U) :
+    clause V pas = clause V id :=
+  Set.ext fun w ↦ (h (V w)).nonempty_iff
+
+end Minimizers
+
+/-! ### The positive uses of the particles -/
+
+-- Table 4: *pas* has a positive sense only under negation and in rhetorical questions.
+theorem pas_mem_positiveUses_iff (c : Context) :
+    .pas ∈ (positiveUses c).particles ↔ c = .negation ∨ c = .rhetoricalQuestion := by
+  cases c <;> decide
+
+-- Table 4: every particle has a positive sense in a clause embedded under negation.
+theorem mem_positiveUses_negation (p : Particle) : p ∈ (positiveUses .negation).particles := by
+  cases p <;> decide
 
 end Eckardt2006
