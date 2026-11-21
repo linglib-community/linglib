@@ -5,34 +5,34 @@ public import Linglib.Semantics.Aspect.Viewpoint
 /-!
 # Instantiation of sorted properties
 
-This file defines the instantiation of a sorted property at a reference interval. An event
-property is instantiated when the run time of one of its events lies in the interval, a state
-property when the run time of one of its states overlaps it, as in the discourse
-representation analyses of Kamp and Rohrer, Partee, and Kamp and Reyle, and a property of times
-when it holds of the interval. Reference intervals are `Interval (WithTop T)`, so an interval
-may run to the end of time and the null interval is `⊥`.
+A sorted property is a property of events, of states, or of times. This file defines the relation
+`At t w Q`, which says that the sorted property `Q` is instantiated in the world `w` at the
+interval `t`: for a property `P` of events, some event `e` with `P w e` has its run time within
+`t`; for a property of states, some state `e` with `P w e` has a run time overlapping `t`; and a
+property of times is instantiated at `t` when it holds of `t`. The choice of inclusion for events
+and overlap for states is that of the discourse representation analyses of Kamp and Rohrer, of
+Partee, and of Kamp and Reyle.
 
-## Main definitions
+Instantiation of a property of events or states is monotone in the interval, `At.mono`, and
+fails at the null interval. At the ray from `t` it says that an event starts no earlier than `t`
+or that a state lasts until `t`, and at the point `t` that an event occurs exactly at `t` or that
+a state holds at `t`. On a bounded interval `i`, a property of events is instantiated when `i`
+belongs to the perfective `Aspect.PRFV`, and a property of states when a state's run time
+overlaps `i`.
 
-* `Aspect.SortedProperty`: a property of events, of states, or of times.
-* `Aspect.At`: the instantiation relation `AT(t, w, P)`.
+## Implementation notes
 
-## Main results
-
-* `Aspect.At.mono`: instantiation of an eventuality is monotone in the interval.
-* `Aspect.at_Ici_eventive_iff`: an event property is instantiated at a ray when an event starts
-  no earlier than it.
-* `Aspect.at_Ici_stative_iff`: a state property is instantiated at a ray when a state persists
-  to it.
-* `Aspect.at_eventive_withTop_iff_prfv`: on a bounded interval, eventive instantiation is
-  Klein's perfective `PRFV`.
+* Reference intervals are `Interval (WithTop T)`, so that an interval may run to the end of time,
+  as `Interval.Ici ↑t` does, and the intersection of two intervals may be the null interval `⊥`.
+* The run time of an eventuality is `Event.τ e`, the same in every world; the source's temporal
+  trace takes the world as a second argument.
 
 ## References
 
+* [C. Condoravdi, *Temporal Interpretation of Modals* (2002)][condoravdi-2002]
 * [H. Kamp and C. Rohrer, *Tense in Texts* (1983)][kamp-rohrer-1983]
 * [B. Partee, *Nominal and Temporal Anaphora* (1984)][partee-1984]
 * [H. Kamp and U. Reyle, *From Discourse to Logic* (1993)][kamp-reyle-1993]
-* [W. Klein, *Time in Language* (1994)][klein-1994]
 -/
 
 @[expose] public section
@@ -101,13 +101,26 @@ theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :
     At ↑i.withTop w (.eventive P) ↔ i ∈ PRFV P w := by
   simp [At, mem_prfv, and_comm]
 
+/-- On a bounded interval, a state is instantiated when its run time overlaps the interval. -/
+theorem at_stative_withTop_iff {i : NonemptyInterval T} :
+    At ↑i.withTop w (.stative P) ↔ ∃ e, P w e ∧ (τ e).Overlaps i := by
+  simp [At, Interval.not_disjoint_coe_coe, NonemptyInterval.Overlaps]
+
 theorem at_stative_withTop_of_unbounded {i : NonemptyInterval T} (h : i ∈ UNBOUNDED P w) :
-    At ↑i.withTop w (.stative P) := by
-  obtain ⟨e, hle, he⟩ := h
-  have hle := NonemptyInterval.le_def.1 hle
-  refine ⟨e, he, Interval.not_disjoint_iff.2 ⟨↑i.fst, ?_, ?_⟩⟩
-  · exact NonemptyInterval.mem_withTop.2 ⟨WithTop.coe_le_coe.2 hle.1,
-      WithTop.coe_le_coe.2 (le_trans i.fst_le_snd hle.2)⟩
-  · exact NonemptyInterval.mem_withTop.2 ⟨le_rfl, WithTop.coe_le_coe.2 i.fst_le_snd⟩
+    At ↑i.withTop w (.stative P) :=
+  let ⟨e, hle, he⟩ := h
+  at_stative_withTop_iff.2 ⟨e, he, (NonemptyInterval.overlaps_of_le hle).symm⟩
+
+/-- An event is instantiated at the point `t` when its run time is `t`. -/
+@[simp] theorem at_pure_eventive_iff {t : T} :
+    At (Interval.pure ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ τ e = .pure t :=
+  (at_eventive_withTop_iff_prfv (i := .pure t)).trans <|
+    pure_mem_prfv.trans <| exists_congr fun _ ↦ and_comm
+
+/-- A state is instantiated at the point `t` when it holds at `t`. -/
+@[simp] theorem at_pure_stative_iff {t : T} :
+    At (Interval.pure ↑t) w (.stative P) ↔ ∃ e, P w e ∧ t ∈ τ e :=
+  (at_stative_withTop_iff (i := .pure t)).trans <| by
+    simp [NonemptyInterval.Overlaps, NonemptyInterval.mem_def]
 
 end Aspect
