@@ -299,6 +299,51 @@ theorem insertionMultiset_bind_singleton (F G : Multiset (UnorderedTree α))
       insertionMultiset F (X ::ₘ G) + (insertionMultiset G {X}).bind (insertionMultiset F ·) :=
   insertionMultiset_bind_singleton_of (fun T _ G ↦ insertion_bind_insertSum T G X) G
 
+theorem productMultiset_singleton (W : Multiset (UnorderedTree α)) (X : UnorderedTree α) :
+    productMultiset W {X} = (X ::ₘ W) ::ₘ insertionMultiset W {X} := by
+  rw [productMultiset, ← Multiset.cons_zero, Multiset.antidiagonal_cons, Multiset.antidiagonal_zero]
+  simp [insertionMultiset_zero_right, add_comm]
+  rw [add_comm, Multiset.singleton_add]
+
+/-- Multiplying by one more tree `X` on the right, after the forest `E`, multiplies by `X` and
+`E` together or by `E` with `X` grafted onto it. -/
+theorem productMultiset_bind_singleton (F E : Multiset (UnorderedTree α)) (X : UnorderedTree α) :
+    (productMultiset F E).bind (productMultiset · {X}) =
+      productMultiset F (X ::ₘ E) + (insertionMultiset E {X}).bind (productMultiset F ·) := by
+  have hL : (productMultiset F E).bind (productMultiset · {X}) =
+      E.antidiagonal.bind fun p ↦
+        (insertionMultiset F p.2).map (fun Y ↦ X ::ₘ (Y + p.1)) +
+        ((insertionMultiset F p.2).bind (insertionMultiset · {X})).map (· + p.1) +
+        (insertionMultiset p.1 {X}).bind fun P ↦ (insertionMultiset F p.2).map (· + P) := by
+    rw [productMultiset, Multiset.bind_assoc]
+    refine Multiset.bind_congr fun p _ ↦ ?_
+    simp only [Multiset.bind_map, productMultiset_singleton, insertionMultiset_add_singleton,
+      Multiset.bind_cons, Multiset.map_map, Multiset.bind_add,
+      Multiset.map_bind, Function.comp_def, add_assoc]
+    congr 2
+    exact Multiset.bind_map_comm _ _
+  have hR1 : productMultiset F (X ::ₘ E) =
+      (E.antidiagonal.bind fun p ↦ (insertionMultiset F (X ::ₘ p.2)).map (· + p.1)) +
+      E.antidiagonal.bind fun p ↦ (insertionMultiset F p.2).map fun Y ↦ X ::ₘ (Y + p.1) := by
+    rw [productMultiset, Multiset.antidiagonal_cons, Multiset.add_bind, Multiset.bind_map,
+      Multiset.bind_map]
+    simp only [Prod.map_fst, Prod.map_snd, id, Multiset.add_cons]
+  have hR2 : (insertionMultiset E {X}).bind (productMultiset F ·) =
+      (E.antidiagonal.bind fun p ↦ (insertionMultiset p.1 {X}).bind fun P ↦
+        (insertionMultiset F p.2).map (· + P)) +
+      E.antidiagonal.bind fun p ↦ (insertionMultiset p.2 {X}).bind fun P ↦
+        (insertionMultiset F P).map (· + p.1) := by
+    simp only [productMultiset]
+    rw [← Multiset.bind_assoc, bind_antidiagonal_insertionMultiset_singleton,
+      Multiset.bind_assoc, ← Multiset.bind_add]
+    refine Multiset.bind_congr fun p _ ↦ ?_
+    rw [Multiset.add_bind, Multiset.bind_map, Multiset.bind_map]
+  rw [hL]
+  simp only [insertionMultiset_bind_singleton]
+  rw [hR1, hR2]
+  simp only [Multiset.map_add, Multiset.bind_add, Multiset.map_bind]
+  abel
+
 /-! ### The pre-Lie identity -/
 
 /-- Grafting `S₁` then `S₂` into `T` is grafting `S₁ ◁ S₂` into `T` plus grafting both at once, the

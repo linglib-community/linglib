@@ -6,9 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.NonAssoc.PreLie.OudomGuin
-public import Linglib.Core.Algebra.RootedTree.Coproduct.AdmissibleCutDuality
 public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
-public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 public import Mathlib.Algebra.Lie.UniversalEnveloping
 
 /-!
@@ -24,11 +22,11 @@ of the pre-Lie algebra of trees.
 
 ## Implementation notes
 
-Associativity is proved over `ℕ` by duality: the product is the transpose of the Connes–Kreimer
-coproduct under the symmetry-weighted pairing (`Coproduct/AdmissibleCutDuality.lean`), which is
-coassociative, and over `ℕ` an element is determined by its pairings. The structure constants are
-natural numbers, so the `ℕ` case is an identity of multisets of forests, which gives associativity
-over every commutative semiring.
+Associativity is that of the product of Oudom and Guin, which holds in the symmetric algebra of
+every pre-Lie algebra. The two products agree over a commutative ring because both satisfy the
+recursion `(x ⋆ E) ⋆ X = x ⋆ (E X) + x ⋆ (E ∘ X)` in the last tree of the right factor. The
+structure constants are natural numbers, so associativity over `ℤ` is an identity of multisets of
+forests, `UnorderedTree.productMultiset_assoc`, which gives it over every commutative semiring.
 
 ## TODO
 
@@ -52,90 +50,9 @@ open ConnesKreimer
 
 variable {α : Type*}
 
-private theorem product_assoc_nat [DecidableEq α] (x y z : ConnesKreimer ℕ (UnorderedTree α)) :
-    product (product x y) z = product x (product y z) :=
-  pairing_injective (pairing_product_assoc x y z)
-
-variable {R : Type*} [CommSemiring R]
-
-private theorem product_product_of' (F G H : Forest (UnorderedTree α)) :
-    product (product (of' F) (of' G)) (of' (R := R) H) =
-      (((productMultiset F G).bind (productMultiset · H)).map of').sum := by
-  change product.flip (of' H) (product (of' F) (of' G)) = _
-  rw [product_of'_of', map_multiset_sum, Multiset.map_map, Multiset.map_bind, Multiset.sum_bind]
-  simp
-
-private theorem product_of'_product (F G H : Forest (UnorderedTree α)) :
-    product (of' F) (product (of' G) (of' (R := R) H)) =
-      (((productMultiset G H).bind (productMultiset F ·)).map of').sum := by
-  rw [product_of'_of' G, map_multiset_sum, Multiset.map_map, Multiset.map_bind, Multiset.sum_bind]
-  simp
-
-end GrossmanLarson
-
-namespace UnorderedTree
-
-variable {α : Type*}
-
-/-- The Grossman–Larson product is associative on basis forests, multiplicities included. -/
-theorem productMultiset_assoc (F G H : Multiset (UnorderedTree α)) :
-    (productMultiset F G).bind (productMultiset · H) =
-      (productMultiset G H).bind (productMultiset F ·) := by
-  classical
-  refine ConnesKreimer.sum_map_of'_injective (R := ℕ) ?_
-  simp only
-  rw [← GrossmanLarson.product_product_of', ← GrossmanLarson.product_of'_product,
-    GrossmanLarson.product_assoc_nat]
-
-end UnorderedTree
-
-namespace GrossmanLarson
-
-open ConnesKreimer
-
-variable {R : Type*} [CommSemiring R] {α : Type*}
-
-/-- The Grossman–Larson product is associative. -/
-theorem product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
-    product (product x y) z = product x (product y z) := by
-  have h₁ (F G : Forest (UnorderedTree α)) :
-      product (product (of' (R := R) F) (of' G)) = (product (of' F)).comp (product (of' G)) :=
-    lhom_ext' fun H ↦ by
-      rw [LinearMap.comp_apply, product_product_of', product_of'_product, productMultiset_assoc]
-  have h₂ (F : Forest (UnorderedTree α)) (w : ConnesKreimer R (UnorderedTree α)) :
-      (product.flip w).comp (product (of' F)) = (product (of' F)).comp (product.flip w) :=
-    lhom_ext' fun G ↦ LinearMap.congr_fun (h₁ F G) w
-  have h₃ (w y : ConnesKreimer R (UnorderedTree α)) :
-      (product.flip w).comp (product.flip y) = product.flip (product y w) :=
-    lhom_ext' fun F ↦ LinearMap.congr_fun (h₂ F w) y
-  exact LinearMap.congr_fun (h₃ z y) x
-
-noncomputable instance instSemiring : Semiring (GrossmanLarson R α) where
-  mul_assoc x y z := ext (product_assoc x.toConnesKreimer y.toConnesKreimer z.toConnesKreimer)
-
-noncomputable instance instAlgebra : Algebra R (GrossmanLarson R α) :=
-  Algebra.ofModule smul_mul_assoc mul_smul_comm
-
 section Ring
 
 variable {R : Type*} [CommRing R]
-
-noncomputable instance instNeg : Neg (GrossmanLarson R α) := ⟨fun x ↦ ⟨-x.toConnesKreimer⟩⟩
-
-noncomputable instance instSub : Sub (GrossmanLarson R α) :=
-  ⟨fun x y ↦ ⟨x.toConnesKreimer - y.toConnesKreimer⟩⟩
-
-@[simp] theorem toConnesKreimer_neg (x : GrossmanLarson R α) :
-    (-x).toConnesKreimer = -x.toConnesKreimer := rfl
-
-@[simp] theorem toConnesKreimer_sub (x y : GrossmanLarson R α) :
-    (x - y).toConnesKreimer = x.toConnesKreimer - y.toConnesKreimer := rfl
-
-noncomputable instance instAddCommGroup : AddCommGroup (GrossmanLarson R α) :=
-  fast_instance% toConnesKreimer_injective.addCommGroup _ rfl toConnesKreimer_add
-    toConnesKreimer_neg toConnesKreimer_sub (fun _ _ ↦ rfl) fun _ _ ↦ rfl
-
-noncomputable instance instRing : Ring (GrossmanLarson R α) where
 
 /-! ### The Grossman–Larson product as the product of Oudom and Guin -/
 
@@ -194,11 +111,76 @@ theorem product_eq_oudomGuin :
     have hGL : product x (of' E * ofTree X) =
         product (product x (of' E)) (ofTree X) -
           product x (OudomGuin.derivation (ChapotonLivernet.basis R α) (.of X) (of' E)) := by
-      rw [product_assoc, eq_sub_iff_add_eq, ← map_add, ← insertion_ofTree, product_apply (of' E),
-        comulPrim_ofTree]
-      simp [mul_comm, add_comm]
+      rw [product_product_ofTree, insertion_ofTree, of'_cons, mul_comm, add_sub_cancel_right]
     rw [of'_cons, mul_comm, hGL, OudomGuin.product_mul_ofTree, ChapotonLivernet.basis_apply,
       ih E hE', hD, hstep]
+
+end Ring
+
+end GrossmanLarson
+
+namespace UnorderedTree
+
+variable {α : Type*}
+
+/-- The Grossman–Larson product is associative on basis forests, multiplicities included. -/
+theorem productMultiset_assoc (F G H : Multiset (UnorderedTree α)) :
+    (productMultiset F G).bind (productMultiset · H) =
+      (productMultiset G H).bind (productMultiset F ·) := by
+  refine ConnesKreimer.sum_map_of'_injective (R := ℤ) ?_
+  simp only
+  rw [← GrossmanLarson.product_product_of', ← GrossmanLarson.product_of'_product,
+    GrossmanLarson.product_eq_oudomGuin, OudomGuin.product_assoc]
+
+end UnorderedTree
+
+namespace GrossmanLarson
+
+open ConnesKreimer
+
+variable {R : Type*} [CommSemiring R] {α : Type*}
+
+/-- The Grossman–Larson product is associative. -/
+theorem product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
+    product (product x y) z = product x (product y z) := by
+  have h₁ (F G : Forest (UnorderedTree α)) :
+      product (product (of' (R := R) F) (of' G)) = (product (of' F)).comp (product (of' G)) :=
+    lhom_ext' fun H ↦ by
+      rw [LinearMap.comp_apply, product_product_of', product_of'_product, productMultiset_assoc]
+  have h₂ (F : Forest (UnorderedTree α)) (w : ConnesKreimer R (UnorderedTree α)) :
+      (product.flip w).comp (product (of' F)) = (product (of' F)).comp (product.flip w) :=
+    lhom_ext' fun G ↦ LinearMap.congr_fun (h₁ F G) w
+  have h₃ (w y : ConnesKreimer R (UnorderedTree α)) :
+      (product.flip w).comp (product.flip y) = product.flip (product y w) :=
+    lhom_ext' fun F ↦ LinearMap.congr_fun (h₂ F w) y
+  exact LinearMap.congr_fun (h₃ z y) x
+
+noncomputable instance instSemiring : Semiring (GrossmanLarson R α) where
+  mul_assoc x y z := ext (product_assoc x.toConnesKreimer y.toConnesKreimer z.toConnesKreimer)
+
+noncomputable instance instAlgebra : Algebra R (GrossmanLarson R α) :=
+  Algebra.ofModule smul_mul_assoc mul_smul_comm
+
+section Ring
+
+variable {R : Type*} [CommRing R]
+
+noncomputable instance instNeg : Neg (GrossmanLarson R α) := ⟨fun x ↦ ⟨-x.toConnesKreimer⟩⟩
+
+noncomputable instance instSub : Sub (GrossmanLarson R α) :=
+  ⟨fun x y ↦ ⟨x.toConnesKreimer - y.toConnesKreimer⟩⟩
+
+@[simp] theorem toConnesKreimer_neg (x : GrossmanLarson R α) :
+    (-x).toConnesKreimer = -x.toConnesKreimer := rfl
+
+@[simp] theorem toConnesKreimer_sub (x y : GrossmanLarson R α) :
+    (x - y).toConnesKreimer = x.toConnesKreimer - y.toConnesKreimer := rfl
+
+noncomputable instance instAddCommGroup : AddCommGroup (GrossmanLarson R α) :=
+  fast_instance% toConnesKreimer_injective.addCommGroup _ rfl toConnesKreimer_add
+    toConnesKreimer_neg toConnesKreimer_sub (fun _ _ ↦ rfl) fun _ _ ↦ rfl
+
+noncomputable instance instRing : Ring (GrossmanLarson R α) where
 
 /-- The one-tree forests are the pre-Lie algebra of trees in its symmetric algebra. -/
 theorem toConnesKreimer_ι (x : ChapotonLivernet R α) :
