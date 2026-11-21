@@ -80,7 +80,7 @@ abbrev lex : List (NonemptyInterval ℕ) := [⟨(1, 2), by decide⟩]
 /-- Lex-to-ω(L), (12a), the Align(Lex, Left, ω, Left) of [mccarthy-prince-1993b]: a violation when
 no prosodic word begins where the lexical word does, as in the amalgamated site (20b). -/
 def lexToOmega : Constraint Tree :=
-  (Constraint.alignEdge .left .left).comap fun t ↦ (lex, levelSpans .om t)
+  fun t ↦ (Correspondence.ofEdges .left .left lex (levelSpans .om t)).maxViol
 
 /-- The candidate set. -/
 def candidates : Finset Tree := {fullOmega, amalgamated, omegaAdjoined, phiAttached}

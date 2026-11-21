@@ -7,6 +7,7 @@ module
 
 public import Linglib.Phonology.Prosody.Hierarchy
 public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Core.Data.RoseTree.Span
 
 /-!
@@ -16,9 +17,10 @@ This file defines the Match constraints of the syntax–prosody interface ([selk
 constituent structure over a string is the family of spans its constituents cover, so a syntactic
 input enters as the spans of its constituents of a category, counted in the syllables of the
 output, and a prosodic candidate as the spans of its nodes at a level. Match(α, π) requires each
-α-span to be the span of a π-node and Match(π, α) each π-span to be an α-span: two-sided
-alignment, both edges of a constituent coinciding with those of one constituent of the other
-category. One-sided alignment is `Constraint.alignEdge` on the same families.
+α-span to be the span of a π-node and Match(π, α) each π-span to be an α-span: MAX and DEP of the
+relation of having the same span, both edges of a constituent coinciding with those of one
+constituent of the other category. One-sided alignment is MAX or DEP of
+`Correspondence.ofEdges` on the same families.
 
 ## Implementation notes
 
@@ -59,13 +61,13 @@ is the span of no `π`-node, the two edges of the constituent coinciding with th
 `π`-node ([ito-mester-2019]). -/
 def syntaxProsodyMatch {M : Type*} (α : List (NonemptyInterval ℕ)) (π : Level) :
     Constraint (RoseTree (Constituent Level M)) :=
-  (Constraint.align Eq).comap fun t ↦ (α, levelSpans π t)
+  fun t ↦ (Correspondence.ofRel Eq α.get (levelSpans π t).get).maxViol
 
 /-- **Match(π, α)** ([selkirk-2011]): one violation for each `π`-node whose span is the span of no
 constituent of the syntactic family `α`. -/
 def prosodySyntaxMatch {M : Type*} (π : Level) (α : List (NonemptyInterval ℕ)) :
     Constraint (RoseTree (Constituent Level M)) :=
-  (Constraint.align Eq).comap fun t ↦ (levelSpans π t, α)
+  fun t ↦ (Correspondence.ofRel Eq α.get (levelSpans π t).get).depViol
 
 -- Two words phrased together: the φ over both matches the phrase spanning them, and neither word
 -- is matched by a φ of its own.

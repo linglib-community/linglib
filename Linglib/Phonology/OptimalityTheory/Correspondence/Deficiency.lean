@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Core.Data.List.Matching
 
@@ -15,18 +14,15 @@ public import Linglib.Core.Data.List.Matching
 MAX of [mccarthy-prince-1995] requires every element of one structure to have a correspondent in
 the other, and UNIFORMITY that no element of the second have several correspondents in the first.
 Where the correspondents an element may take are given by a relation `R` between two families of
-constituents, we define `Constraint.deficiency R` to count the members of the first family left
-unpaired when each member of the second is paired with at most one of the first: the length of
-the family less the matching number of `R`. It is the least number of violations of MAX among the
-correspondences between the positions of the two families that lie within `R` and satisfy
-UNIFORMITY (`Constraint.deficiency_le_maxViol`, `Constraint.exists_maxViol_eq_deficiency`).
-Alignment along `R` is MAX of the largest such relation, the correspondence of all pairs of
-positions related by `R` (`Constraint.align_eq_maxViol`).
+constituents, we define `Constraint.deficiency R l m` to count the members of `l` left unpaired
+when each member of `m` is paired with at most one of them: the length of `l` less the matching
+number of `R`. It is the least number of violations of MAX among the correspondences within
+`Correspondence.ofRel R l.get m.get` that satisfy UNIFORMITY
+(`Constraint.deficiency_le_maxViol`, `Constraint.exists_maxViol_eq_deficiency`).
 
-Pairing demands at least as much as alignment along the same relation, and no more than alignment
-along a relation contained in it that relates no two members to one:
-`align R ≤ deficiency R ≤ align S` (`Constraint.align_le_deficiency`,
-`Constraint.deficiency_le_align`).
+MAX of the whole relation, which is alignment along `R`, is therefore at most the deficiency
+(`Constraint.maxViol_ofRel_le_deficiency`), and the deficiency is at most MAX of a relation
+contained in `R` that relates no two members to one (`Constraint.deficiency_le_maxViol_ofRel`).
 
 ## References
 
@@ -37,64 +33,22 @@ along a relation contained in it that relates no two members to one:
 
 namespace OptimalityTheory.Constraint
 
+open Correspondence
+
 variable {β γ : Type*} (R : β → γ → Prop) [DecidableRel R] [DecidableEq γ]
 
 /-- The deficiency of `R` between two families: one violation for each member of the first left
 unpaired by a largest pairing along `R` in which each member of the second answers to at most one
 of the first (`List.le_matchingNumber_iff`). -/
-def deficiency : Constraint (List β × List γ) := fun x ↦ x.1.length - x.1.matchingNumber R x.2
+def deficiency (l : List β) (m : List γ) : ℕ := l.length - l.matchingNumber R m
 
-variable {R}
+variable {R} {l : List β} {m : List γ}
 
-/-- A member aligned with nothing along `R` is left unpaired along `R`. -/
-theorem align_le_deficiency (x : List β × List γ) : align R x ≤ deficiency R x := by
-  have h₁ := List.matchingNumber_le_countP (R := R) x.1 x.2
-  have h₂ := align_add_countP (R := R) x
-  simp only [deficiency]
-  omega
-
-/-- Where `S` is contained in `R` and no two members of a duplicate-free family bear `S` to one
-member, the members left unpaired along `R` are at most those aligned with nothing along `S`. -/
-theorem deficiency_le_align {S : β → γ → Prop} [DecidableRel S] {x : List β × List γ}
-    (hx : x.1.Nodup) (hSR : ∀ a ∈ x.1, ∀ b, S a b → R a b)
-    (hS : ∀ a ∈ x.1, ∀ a' ∈ x.1, ∀ b, S a b → S a' b → a = a') : deficiency R x ≤ align S x := by
-  have h₁ := List.countP_le_matchingNumber hx hSR hS x.2
-  have h₂ := align_add_countP (R := S) x
-  simp only [deficiency]
-  omega
-
-variable {l : List β} {m : List γ}
-
-omit [DecidableEq γ] in
-/-- Alignment along `R` is MAX of the correspondence of all pairs of positions related by `R`. -/
-theorem align_eq_maxViol (R : β → γ → Prop) [DecidableRel R] (l : List β) (m : List γ) :
-    align R (l, m) = Correspondence.maxViol
-      (Finset.univ.filter fun p : Fin l.length × Fin m.length ↦ R l[p.1] m[p.2]) := by
-  have hset : Finset.univ \ (Finset.univ.filter
-      fun p : Fin l.length × Fin m.length ↦ R l[p.1] m[p.2]).image Prod.fst =
-        Finset.univ.filter fun i : Fin l.length ↦ ∀ b ∈ m, ¬R l[i] b := by
-    ext i
-    simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_image, Finset.mem_filter,
-      Prod.exists, exists_and_right, exists_eq_right, not_exists]
-    exact ⟨fun h b hb ↦ by obtain ⟨j, rfl⟩ := List.mem_iff_get.1 hb; exact h j,
-      fun h j ↦ h _ (List.get_mem ..)⟩
-  have hcount : l.countP (fun a ↦ ∀ b ∈ m, ¬R a b) =
-      ((List.finRange l.length).filter fun i ↦ ∀ b ∈ m, ¬R l[i] b).length := by
-    calc l.countP (fun a ↦ ∀ b ∈ m, ¬R a b)
-        = ((List.finRange l.length).map l.get).countP fun a ↦ ∀ b ∈ m, ¬R a b := by
-          rw [List.map_get_finRange]
-      _ = _ := by rw [List.countP_map, List.countP_eq_length_filter]; rfl
-  rw [Correspondence.maxViol, hset, align, hcount,
-    ← List.toFinset_card_of_nodup ((List.nodup_finRange _).filter _)]
-  congr 1
-  ext i
-  simp
-
-/-- A correspondence between the positions of two families that lies within `R` and violates
-UNIFORMITY nowhere violates MAX at least `deficiency R` times. -/
+/-- A correspondence within `R` that violates UNIFORMITY nowhere violates MAX at least
+`deficiency R` times. -/
 theorem deficiency_le_maxViol {ℜ : Correspondence (Fin l.length) (Fin m.length)}
-    (hR : ∀ i j, (i, j) ∈ ℜ → R l[i] m[j]) (hU : ℜ.uniformityViol = 0) :
-    deficiency R (l, m) ≤ ℜ.maxViol := by
+    (hR : ℜ ⊆ ofRel R l.get m.get) (hU : ℜ.uniformityViol = 0) :
+    deficiency R l m ≤ ℜ.maxViol := by
   rcases ℜ.eq_empty_or_nonempty with rfl | ⟨⟨i₀, j₀⟩, -⟩
   · simp [deficiency, Correspondence.maxViol]
   have : Nonempty (Fin m.length) := ⟨j₀⟩
@@ -123,18 +77,18 @@ theorem deficiency_le_maxViol {ℜ : Correspondence (Fin l.length) (Fin m.length
   have hle : idxs.length ≤ l.matchingNumber R m := List.le_matchingNumber_iff.2
     ⟨_, _, hl, hm, by
       rw [List.map_map, List.forall₂_map_left_iff, List.forall₂_map_right_iff, List.forall₂_same]
-      exact fun i hi ↦ hR i (f i) (hf i (hmem i hi)), by simp⟩
+      exact fun i hi ↦ (mem_ofRel (R := R) (a := l.get) (b := m.get)).1 (hR (hf i (hmem i hi))),
+      by simp⟩
   have hmax : ℜ.maxViol = l.length - (ℜ.image Prod.fst).card := by
     simp [Correspondence.maxViol, Finset.card_univ_sdiff]
   simp only [deficiency, hmax, hcard]
   omega
 
-/-- Some correspondence between the positions of two families that lies within `R` and violates
-UNIFORMITY nowhere violates MAX exactly `deficiency R` times. -/
+/-- Some correspondence within `R` that violates UNIFORMITY nowhere violates MAX exactly
+`deficiency R` times. -/
 theorem exists_maxViol_eq_deficiency (R : β → γ → Prop) [DecidableRel R] (l : List β)
-    (m : List γ) : ∃ ℜ : Correspondence (Fin l.length) (Fin m.length),
-      (∀ i j, (i, j) ∈ ℜ → R l[i] m[j]) ∧ ℜ.uniformityViol = 0 ∧
-        ℜ.maxViol = deficiency R (l, m) := by
+    (m : List γ) : ∃ ℜ ⊆ ofRel R l.get m.get, ℜ.uniformityViol = 0 ∧
+      ℜ.maxViol = deficiency R l m := by
   have h₀ : l.matchingNumber R m ≤
       l.matchingNumber (fun a j ↦ R a (m.get j)) (List.finRange m.length) := by
     simpa [List.map_get_finRange] using
@@ -146,12 +100,12 @@ theorem exists_maxViol_eq_deficiency (R : β → γ → Prop) [DecidableRel R] (
   obtain ⟨hlen, hget⟩ := List.forall₂_iff_get.1 hF
   let ℜ : Correspondence (Fin l.length) (Fin m.length) :=
     Finset.univ.image fun k : Fin l₁.length ↦ (e k, js.get (k.cast hlen))
-  have hR : ∀ i j, (i, j) ∈ ℜ → R l[i] m[j] := fun i j h ↦ by
+  have hR : ℜ ⊆ ofRel R l.get m.get := fun ⟨i, j⟩ h ↦ by
     obtain ⟨k, -, hk'⟩ := Finset.mem_image.1 h
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hk'
     have := hget k k.2 (hlen ▸ k.2)
     rw [he k] at this
-    simpa using this
+    exact mem_ofRel.2 this
   have hU : ℜ.uniformityViol = 0 :=
     (Correspondence.uniformityViol_eq_zero_iff ℜ).2 fun i i' j h h' ↦ by
       obtain ⟨k, -, hk₁⟩ := Finset.mem_image.1 (Finset.mem_coe.1 h)
@@ -168,12 +122,25 @@ theorem exists_maxViol_eq_deficiency (R : β → γ → Prop) [DecidableRel R] (
   simp only [deficiency, hmax]
   omega
 
--- Two words inside one phrase both align to it, but only one can have it as correspondent.
-example : align (· ≤ ·) ([(⟨(0, 1), by decide⟩ : NonemptyInterval ℕ), ⟨(1, 2), by decide⟩],
-    [⟨(0, 2), by decide⟩]) = 0 := by
-  decide
-example : deficiency (· ≤ ·) ([(⟨(0, 1), by decide⟩ : NonemptyInterval ℕ), ⟨(1, 2), by decide⟩],
-    [⟨(0, 2), by decide⟩]) = 1 := by
-  decide
+/-- MAX of the whole relation is at most its deficiency. -/
+theorem maxViol_ofRel_le_deficiency (R : β → γ → Prop) [DecidableRel R] (l : List β)
+    (m : List γ) : (ofRel R l.get m.get).maxViol ≤ deficiency R l m := by
+  obtain ⟨ℜ, hR, -, h⟩ := exists_maxViol_eq_deficiency R l m
+  exact h ▸ maxViol_anti hR
+
+/-- Where `S` is contained in `R` and no two members of a duplicate-free family bear `S` to one
+member, the deficiency of `R` is at most MAX of `S`. -/
+theorem deficiency_le_maxViol_ofRel {S : β → γ → Prop} [DecidableRel S] (hl : l.Nodup)
+    (hSR : ∀ a ∈ l, ∀ b, S a b → R a b)
+    (hS : ∀ a ∈ l, ∀ a' ∈ l, ∀ b, S a b → S a' b → a = a') :
+    deficiency R l m ≤ (ofRel S l.get m.get).maxViol :=
+  deficiency_le_maxViol (ofRel_mono fun i _ h ↦ hSR _ (l.get_mem i) _ h)
+    ((uniformityViol_eq_zero_iff _).2 fun i i' _ h h' ↦ hl.get_inj_iff.1
+      (hS _ (l.get_mem i) _ (l.get_mem i') _ (mem_ofRel.1 (Finset.mem_coe.1 h))
+        (mem_ofRel.1 (Finset.mem_coe.1 h'))))
+
+-- Two members related to one member of the other family: each is aligned, one goes unpaired.
+example : (ofRel (fun a b : ℕ ↦ a ≤ b) [0, 1].get [1].get).maxViol = 0 := by decide
+example : deficiency (fun a b : ℕ ↦ a ≤ b) [0, 1] [1] = 1 := by decide
 
 end OptimalityTheory.Constraint

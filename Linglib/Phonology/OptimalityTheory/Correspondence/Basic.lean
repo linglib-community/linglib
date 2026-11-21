@@ -391,6 +391,46 @@ theorem maxViol_ofRel_eq_zero_iff [DecidableEq ι] :
 
 end OfRel
 
+section OfRelGet
+
+variable {β γ : Type*} (R : β → γ → Prop) [DecidableRel R] (l : List β) (m : List γ)
+
+/-- MAX on the correspondence of `R` between the positions of two lists counts the members of the
+first bearing `R` to no member of the second. -/
+theorem maxViol_ofRel_get :
+    (ofRel R l.get m.get).maxViol = l.countP fun a ↦ ∀ b ∈ m, ¬R a b := by
+  have hset : Finset.univ \ (ofRel R l.get m.get).image Prod.fst =
+      Finset.univ.filter fun i : Fin l.length ↦ ∀ b ∈ m, ¬R (l.get i) b := by
+    ext i
+    simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_image, mem_ofRel,
+      Prod.exists, exists_and_right, exists_eq_right, not_exists, Finset.mem_filter]
+    exact ⟨fun h b hb ↦ by obtain ⟨j, rfl⟩ := List.mem_iff_get.1 hb; exact h j,
+      fun h j ↦ h _ (List.get_mem ..)⟩
+  have hcount : l.countP (fun a ↦ ∀ b ∈ m, ¬R a b) =
+      ((List.finRange l.length).filter fun i ↦ ∀ b ∈ m, ¬R (l.get i) b).length := by
+    calc l.countP (fun a ↦ ∀ b ∈ m, ¬R a b)
+        = ((List.finRange l.length).map l.get).countP fun a ↦ ∀ b ∈ m, ¬R a b := by
+          rw [List.map_get_finRange]
+      _ = _ := by rw [List.countP_map, List.countP_eq_length_filter]; rfl
+  rw [maxViol, hset, hcount, ← List.toFinset_card_of_nodup ((List.nodup_finRange _).filter _)]
+  congr 1
+  ext i
+  simp
+
+/-- DEP on the correspondence of `R` between the positions of two lists counts the members of the
+second to which no member of the first bears `R`. -/
+theorem depViol_ofRel_get :
+    (ofRel R l.get m.get).depViol = m.countP fun b ↦ ∀ a ∈ l, ¬R a b := by
+  rw [depViol, inv_ofRel, maxViol_ofRel_get]
+
+variable {R l m}
+
+theorem maxViol_ofRel_get_eq_zero_iff :
+    (ofRel R l.get m.get).maxViol = 0 ↔ ∀ a ∈ l, ∃ b ∈ m, R a b := by
+  simp [maxViol_ofRel_get, List.countP_eq_zero]
+
+end OfRelGet
+
 /-! ### LINEARITY -/
 
 section Linearity

@@ -162,8 +162,8 @@ theorem candidates_isUtterance :
 
 /-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
-  (Constraint.alignEdge .left .left).comap fun t ↦
-    ([⟨(1, 2), by decide⟩], Prosody.levelSpans .ph t)
+  fun t ↦ (OptimalityTheory.Correspondence.ofEdges .left .left [⟨(1, 2), by decide⟩]
+    (Prosody.levelSpans .ph t)).maxViol
 
 /-- Phrasal economy assigns one violation per φ. -/
 def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length

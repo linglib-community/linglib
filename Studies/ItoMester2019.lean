@@ -191,7 +191,7 @@ def correspondence : ConstraintSystem Input Candidate Con where
     | .headedness => (c.tree x).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
-    | .phrase => Constraint.deficiency (Corresponds x.phrases) (x.phrases, c.spans x .ph)
+    | .phrase => Constraint.deficiency (Corresponds x.phrases) x.phrases (c.spans x .ph)
     | .alignR =>
       (Correspondence.ofEdges .right .right (x.phrases.map (·.span)) (c.spans x .ph)).maxViol
     | .priority => if x.clitic ∧ (c.form = .strong ∨ c.form = .weak) then 1 else 0
@@ -203,7 +203,8 @@ MATCH-ω, each ω the span of a lexical word, the word slot. -/
 def matchTheory : ConstraintSystem Input Candidate Con where
   gen := candidates
   marks x c
-    | .phrase => Constraint.align Eq (x.phrases.map (·.span), c.spans x .ph)
+    | .phrase => (Correspondence.ofRel (fun a p ↦ a.span = p)
+        x.phrases.get (c.spans x .ph).get).maxViol
     | .word => (Correspondence.ofRel Eq (c.spans x .om).get (x.lex.map (·.span)).get).maxViol
     | i => correspondence.marks x c i
 
