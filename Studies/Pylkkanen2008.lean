@@ -457,9 +457,9 @@ theorem possessor_dative_transitivity :
 /-! ### Cause introduces a causing event, not a causer -/
 
 -- (9), (14), (13b), (16), (15b)
-theorem melted_readings (M : EventStructure.Interpretation Entity E E)
+theorem melted_readings (M : EventStructure.Interpretation E E)
     (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
-    (eventIdentification agent (M.vCause melt) john e ↔
+    (eventIdentification agent (ModalLogic.Diamond M.cause melt) john e ↔
         agent john e ∧ ∃ e', e ~[M.cause] e' ∧ melt e') ∧
       (eventIdentification causer melt john e ↔ causer john e ∧ melt e) :=
   ⟨Iff.rfl, Iff.rfl⟩
