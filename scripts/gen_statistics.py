@@ -29,6 +29,7 @@ A JSON file has four parts:
 Column types form a closed vocabulary:
 
 * `nat`, `int`
+* `bool`: a JSON `true` or `false`, for a binary coding of the source
 * `decimal`: a JSON string as printed ("99.1", "75", "0", or a power of ten "10^-5"),
   emitted as `Data.Statistics.Decimal`
 * `pvalue`: a p-value as printed, a decimal with the relation it is printed with
@@ -102,7 +103,7 @@ def parse_type(s: str, types: Types, where: str):
         return (parts[0], parse_type(" ".join(parts[1:]), types, where))
     if parts[0] == "literals" and len(parts) == 2 and parts[1] in types.levels:
         return ("literals", parts[1])
-    if len(parts) == 1 and parts[0] in ("nat", "int", "decimal", "pvalue"):
+    if len(parts) == 1 and parts[0] in ("nat", "int", "bool", "decimal", "pvalue"):
         return (parts[0],)
     if len(parts) == 1 and parts[0] in types.levels:
         return ("enum", parts[0])
@@ -113,6 +114,7 @@ def lean_type(t) -> str:
     match t[0]:
         case "nat": return "ℕ"
         case "int": return "ℤ"
+        case "bool": return "Bool"
         case "decimal": return "Decimal"
         case "pvalue": return "PValue"
         case "enum": return t[1]
@@ -166,6 +168,10 @@ def value_lit(v, t, types: Types, where: str) -> str:
             if not isinstance(v, int):
                 fatal(where, f"{v!r} is not an integer")
             return str(v)
+        case "bool":
+            if not isinstance(v, bool):
+                fatal(where, f"{v!r} is not a boolean")
+            return "true" if v else "false"
         case "decimal": return decimal_lit(v, where)
         case "pvalue": return pvalue_lit(v, where)
         case "enum": return types.level(t[1], v, where)
