@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.Aspect.Incremental
 public import Studies.Krifka1989
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.FinCases

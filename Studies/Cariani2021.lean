@@ -361,7 +361,7 @@ is designed to avoid (p. 128). -/
 section Condoravdi
 
 open Aspect
-open Condoravdi2002 (PRES WOLL frame)
+open Condoravdi2002 (PRES WOLL frame SortedProperty At at_pure_stative_iff at_pure_eventive_iff)
 open Event (τ)
 
 variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T] (s : SelectionFunction W)

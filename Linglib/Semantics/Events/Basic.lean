@@ -32,7 +32,7 @@ order.
 * τ is total, where Champollion lets trace functions be partial. Krifka's richness, that every
   time is the run time of some event, is the hypothesis `Function.Surjective τ`.
 * Bach divides eventualities into states and non-states; here the division is a property of
-  predicates (`Aspect.Dynamicity`, `Aspect.SortedProperty`), not a field of events.
+  predicates (`Aspect.Dynamicity`), not a field of events.
 * Intervals form an event domain with the identity trace, in which the studies build their
   satisfiability witnesses.
 

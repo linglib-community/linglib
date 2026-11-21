@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.Aspect.Incremental
 public import Mathlib.Order.Minimal
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.PNat.Basic

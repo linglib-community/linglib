@@ -33,46 +33,46 @@ namespace Smith1997
 /-- The viewpoint asserts the initial point of the situation. -/
 def ShowsInitialPoint (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-    v.ttTSitRelation tt tsit → tsit.fst ∈ tt
+    Allen.relation tsit tt ∈ v.cell → tsit.fst ∈ tt
 
 /-- The viewpoint asserts the final point of the situation. -/
 def ShowsFinalPoint (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-    v.ttTSitRelation tt tsit → tsit.snd ∈ tt
+    Allen.relation tsit tt ∈ v.cell → tsit.snd ∈ tt
 
 /-- The viewpoint presents the situation as closed: the topic time reaches its final point. -/
 def PresentsClosed (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-    v.ttTSitRelation tt tsit → tsit.snd ≤ tt.snd
+    Allen.relation tsit tt ∈ v.cell → tsit.snd ≤ tt.snd
 
 /-- The viewpoint focuses a topic time strictly inside the situation. -/
 def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-    v.ttTSitRelation tt tsit → tt < tsit
+    Allen.relation tsit tt ∈ v.cell → tt < tsit
 
 private theorem forall_imp_iff {D : IntervalAlgebra}
     {P : ∀ {T : Type} [LinearOrder T], NonemptyInterval T → NonemptyInterval T → Prop}
     (hP : ∀ {T : Type} [LinearOrder T] (tt tsit : NonemptyInterval T),
-      P tt tsit ↔ (tsit, tt) ∈ IntervalAlgebra.toSetRel D) (v : ViewpointType) :
+      P tt tsit ↔ Allen.relation tsit tt ∈ D) (v : ViewpointType) :
     (∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-      v.ttTSitRelation tt tsit → P tt tsit) ↔ v.cell ≤ D := by
+      Allen.relation tsit tt ∈ v.cell → P tt tsit) ↔ v.cell ≤ D := by
   rw [← IntervalAlgebra.forall_toSetRel_subset_iff]
-  exact ⟨fun h T _ ⟨tsit, tt⟩ hv ↦ (hP tt tsit).1 (h ((v.ttTSitRelation_iff tt tsit).2 hv)),
-    fun h T _ tt tsit hv ↦ (hP tt tsit).2 (h T ((v.ttTSitRelation_iff tt tsit).1 hv))⟩
+  exact ⟨fun h T _ ⟨tt, tsit⟩ hv ↦ (hP tt tsit).1 (h hv),
+    fun h T _ tt tsit hv ↦ (hP tt tsit).2 (h T (a := (tt, tsit)) hv)⟩
 
 /-- The initial point: the perfective and the neutral viewpoint assert it. -/
 theorem showsInitialPoint_iff (v : ViewpointType) :
     ShowsInitialPoint v ↔ v = .perfective ∨ v = .neutral := by
-  refine (forall_imp_iff (D := IntervalAlgebra.startsWithin⁻¹)
+  refine (forall_imp_iff (D := IntervalAlgebra.startsWithin)
     (P := @fun _ _ tt tsit ↦ tsit.fst ∈ tt) (fun _ _ ↦ by simp) v).trans ?_
   revert v; decide +kernel
 
 /-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
   refine (forall_imp_iff
-    (D := IntervalAlgebra.ofPred fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
+    (D := IntervalAlgebra.ofPred fun r ↦ r.sndFst ≠ .lt ∧ r.sndSnd ≠ .gt)
     (P := @fun _ _ tt tsit ↦ tsit.snd ∈ tt) (fun _ _ ↦ ?_) v).trans ?_
-  · rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_ofPred]
+  · rw [IntervalAlgebra.mem_ofPred]
     simp [Allen.relation, Allen.ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le,
       compare_ge_iff_ge]
   · revert v; decide +kernel
@@ -80,17 +80,15 @@ theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .per
 /-- Closure: the perfective and the perfect present the situation as closed. -/
 theorem presentsClosed_iff (v : ViewpointType) :
     PresentsClosed v ↔ v = .perfective ∨ v = .perfect := by
-  refine (forall_imp_iff (D := IntervalAlgebra.ofPred (·.sndSnd ≠ .lt))
-    (P := @fun _ _ tt tsit ↦ tsit.snd ≤ tt.snd) (fun _ _ ↦ ?_) v).trans ?_
-  · rw [IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_ofPred]
-    simp [Allen.relation, Allen.ofEndpoints, compare_ge_iff_ge]
-  · revert v; decide +kernel
+  refine (forall_imp_iff (D := IntervalAlgebra.endsNoLater)
+    (P := @fun _ _ tt tsit ↦ tsit.snd ≤ tt.snd) (fun _ _ ↦ by simp) v).trans ?_
+  revert v; decide +kernel
 
 /-- Preliminary stages: only the imperfective places the topic time strictly inside the
 situation. -/
 theorem focusesPreliminaryStages_iff (v : ViewpointType) :
     FocusesPreliminaryStages v ↔ v = .imperfective := by
-  refine (forall_imp_iff (D := IntervalAlgebra.lt) (P := @fun _ _ tt tsit ↦ tt < tsit)
+  refine (forall_imp_iff (D := IntervalAlgebra.lt⁻¹) (P := @fun _ _ tt tsit ↦ tt < tsit)
     (fun _ _ ↦ by simp) v).trans ?_
   revert v; decide +kernel
 
