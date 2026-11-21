@@ -17,7 +17,7 @@ Instantiation of a property of events or states is monotone in the interval, `At
 fails at the null interval. At the ray from `t` it says that an event starts no earlier than `t`
 or that a state lasts until `t`, and at the point `t` that an event occurs exactly at `t` or that
 a state holds at `t`. On a bounded interval `i`, a property of events is instantiated when `i`
-belongs to the perfective `Aspect.PRFV`, and a property of states when a state's run time
+belongs to the perfective `Aspect.perfective`, and a property of states when a state's run time
 overlaps `i`.
 
 ## Implementation notes
@@ -97,25 +97,25 @@ theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w 
   simp [At, Interval.not_disjoint_withTop_Ici]
 
 /-- On a bounded interval, eventive instantiation is the perfective viewpoint. -/
-theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :
-    At ↑i.withTop w (.eventive P) ↔ i ∈ PRFV P w := by
-  simp [At, mem_prfv, and_comm]
+theorem at_eventive_withTop_iff_perfective {i : NonemptyInterval T} :
+    At ↑i.withTop w (.eventive P) ↔ perfective (P w) i := by
+  simp [At, perfective_iff, and_comm]
 
 /-- On a bounded interval, a state is instantiated when its run time overlaps the interval. -/
 theorem at_stative_withTop_iff {i : NonemptyInterval T} :
     At ↑i.withTop w (.stative P) ↔ ∃ e, P w e ∧ (τ e).Overlaps i := by
   simp [At, Interval.not_disjoint_coe_coe, NonemptyInterval.Overlaps]
 
-theorem at_stative_withTop_of_unbounded {i : NonemptyInterval T} (h : i ∈ UNBOUNDED P w) :
+theorem at_stative_withTop_of_unbounded {i : NonemptyInterval T} (h : unbounded (P w) i) :
     At ↑i.withTop w (.stative P) :=
-  let ⟨e, hle, he⟩ := h
+  let ⟨e, hle, he⟩ := unbounded_iff.1 h
   at_stative_withTop_iff.2 ⟨e, he, (NonemptyInterval.overlaps_of_le hle).symm⟩
 
 /-- An event is instantiated at the point `t` when its run time is `t`. -/
 @[simp] theorem at_pure_eventive_iff {t : T} :
     At (Interval.pure ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ τ e = .pure t :=
-  (at_eventive_withTop_iff_prfv (i := .pure t)).trans <|
-    pure_mem_prfv.trans <| exists_congr fun _ ↦ and_comm
+  (at_eventive_withTop_iff_perfective (i := .pure t)).trans <|
+    perfective_pure_iff.trans <| exists_congr fun _ ↦ and_comm
 
 /-- A state is instantiated at the point `t` when it holds at `t`. -/
 @[simp] theorem at_pure_stative_iff {t : T} :

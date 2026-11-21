@@ -6,37 +6,34 @@ public import Linglib.Semantics.Quantification.Predicative
 /-!
 # The subinterval property
 
-This file defines the subinterval property of Bennett and Partee and of Dowty. A predicate of
-events has it when [every subinterval](##Aspect.hasSubintervalProperty_iff_witnesses) of the run
-time of an event it holds of is the run time of an event it holds of, which is to say that its run
-times form a lower set. States and activities have the property: if John slept from one to three,
-he slept from one to two. Accomplishments and achievements [lack
-it](##Aspect.not_hasSubintervalProperty_snd_eq), since no proper part of the building of a house
-is the building of a house.
+A predicate of events has the subinterval property of Bennett and Partee and of Dowty when every
+subinterval of the run time of one of its events is the run time of one of its events: its run
+times `runTimes P` are closed under subintervals, `Antitone (runTimes P)`. States and activities
+have the property: if John slept from one to three, he slept from one to two. A predicate of
+events that all end when a given durative event ends lacks it,
+`not_hasSubintervalProperty_snd_eq`, as no proper part of the building of a house is the building
+of a house.
 
-For a predicate with the property the imperfective [entails the
-perfective](##Aspect.HasSubintervalProperty.impf_subset_prfv) at the same reference time, *Mary was
-running* entailing *Mary ran*. The entailment [does not
-characterize](##Aspect.exists_prfv_of_unbounded_not_hasSubintervalProperty) the property. For an
-interval property, a set of intervals at each world, the property is `IsLowerSet`: the [negated
-perfective](##Aspect.isLowerSet_compl_prfv) has it, and for a lower set the [durative
-claim](##Aspect.durative_eq_of_isLowerSet) and the [perfect](##Aspect.perfect_eq_of_isLowerSet) are
-the set itself.
+A predicate has the property exactly when its non-strict imperfective holds only at its run times,
+`hasSubintervalProperty_iff_unbounded_le`. The imperfective then entails the perfective at the same
+reference time, `HasSubintervalProperty.imperfective_le_perfective`, *Mary was running* entailing
+*Mary ran*;
+the entailment does not characterize the property,
+`exists_unbounded_le_perfective_not_hasSubintervalProperty`.
 
 Zhao states the property of a quantifier over events and of a trace on any ordered domain, a
-degree scale as well as the timeline: `Aspect.AtomDist`, Atomic Distributivity, holds when the
-traces the quantifier applies at form a lower set. Such a quantifier [applies at every
-point](##Aspect.AtomDist.pure) of a trace it applies at, and the subinterval property of a
-predicate [is the Atomic Distributivity](##Aspect.hasSubintervalProperty_iff_forall_atomDist) of
-its existential quantifier along the run time.
+degree scale as well as the timeline: `AtomDist τ V`, Atomic Distributivity, holds when the
+traces the quantifier applies at form a lower set. Such a quantifier applies at every point of a
+trace it applies at, `AtomDist.pure`, and the subinterval property of a predicate is the Atomic
+Distributivity of its existential quantifier along the run time,
+`hasSubintervalProperty_iff_atomDist`.
 
 ## Implementation notes
 
-The property is divisive reference, `Mereology.DIV`, of the predicate's run times, so it is
-stated on mathlib's `IsLowerSet`. The viewpoint operators quantify over events of the world of
-evaluation, so the entailment is the extensional one. The imperfective paradox proper, on which
-*John was building a house* is true though no house is ever built, is the business of the modal
-progressive, `Aspect.PROG`. A quantifier that applies at no trace is atomically distributive.
+The viewpoint operators quantify over events of one world, so the entailment is the extensional
+one. The imperfective paradox proper, on which *John was building a house* is true though no
+house is ever built, is the business of the modal progressive, `Aspect.progressive`. A quantifier
+that applies at no trace is atomically distributive.
 
 ## References
 
@@ -107,74 +104,81 @@ theorem atomDist_some_preimage (hτ : IsLowerSet (Set.range τ)) {S : Set (Nonem
 end Quantifier
 
 open Event (τ)
+open scoped SetRel
 
-variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P : W → E → Prop} {w : W}
+variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P : E → Prop}
   {t : NonemptyInterval T}
 
-/-- A predicate of events has the subinterval property when its run times form a lower set at
-every world. -/
-def HasSubintervalProperty (P : W → E → Prop) : Prop :=
-  ∀ w, IsLowerSet (τ '' {e | P w e})
-
-/-- A predicate has the subinterval property exactly when its existential quantifier is
-atomically distributive along the run time at every world. -/
-theorem hasSubintervalProperty_iff_forall_atomDist :
-    HasSubintervalProperty P ↔ ∀ w, AtomDist τ (Quantifier.Det.some {e | P w e}) :=
-  forall_congr' fun _ ↦ atomDist_some_iff.symm
+/-- A predicate of events has the subinterval property when its run times are closed under
+subintervals. -/
+def HasSubintervalProperty (P : E → Prop) : Prop := Antitone (runTimes P)
 
 /-- A predicate has the subinterval property exactly when every subinterval of the run time of
 one of its events is the run time of one of its events. -/
 theorem hasSubintervalProperty_iff_witnesses :
-    HasSubintervalProperty P ↔
-      ∀ (e : E) (w : W), P w e → ∀ t ≤ τ e, ∃ e' : E, τ e' = t ∧ P w e' :=
-  ⟨fun h _ w hP _ ht ↦ let ⟨e', hP', hτ⟩ := h w ht (Set.mem_image_of_mem τ hP); ⟨e', hτ, hP'⟩,
-    fun h w _ t ht ⟨e, hP, he⟩ ↦ let ⟨e', hτ, hP'⟩ := h e w hP t (he ▸ ht); ⟨e', hP', hτ⟩⟩
+    HasSubintervalProperty P ↔ ∀ e, P e → ∀ t ≤ τ e, ∃ e', τ e' = t ∧ P e' :=
+  ⟨fun h _ hP _ ht ↦ h ht (runTimes_τ hP), fun h _ _ hle ⟨e, he, hP⟩ ↦ h e hP _ (he ▸ hle)⟩
+
+/-- A predicate has the subinterval property exactly when its existential quantifier is
+atomically distributive along the run time. -/
+theorem hasSubintervalProperty_iff_atomDist :
+    HasSubintervalProperty P ↔ AtomDist τ (Quantifier.Det.some {e | P e}) := by
+  rw [atomDist_some_iff, hasSubintervalProperty_iff_witnesses]
+  exact ⟨fun h _ _ hle ⟨e, hP, he⟩ ↦ let ⟨e', he', hP'⟩ := h e hP _ (he ▸ hle); ⟨e', hP', he'⟩,
+    fun h e hP _ ht ↦ let ⟨e', hP', he'⟩ := h ht ⟨e, hP, rfl⟩; ⟨e', he', hP'⟩⟩
+
+/-- A predicate has the subinterval property exactly when its non-strict imperfective holds only
+at its run times. -/
+theorem hasSubintervalProperty_iff_unbounded_le :
+    HasSubintervalProperty P ↔ unbounded P ≤ runTimes P := by
+  rw [unbounded_le_iff]
+  exact ⟨fun h _ ht ↦ durative_iff.2 fun _ hs ↦ h hs ht,
+    fun h _ _ hle ht ↦ durative_iff.1 (h _ ht) _ hle⟩
 
 namespace HasSubintervalProperty
 
-theorem mem_image_of_unbounded (h : HasSubintervalProperty P) (ht : t ∈ UNBOUNDED P w) :
-    t ∈ τ '' {e | P w e} :=
-  let ⟨e, hle, hP⟩ := ht; h w hle ⟨e, hP, rfl⟩
+theorem unbounded_le_runTimes (h : HasSubintervalProperty P) : unbounded P ≤ runTimes P :=
+  hasSubintervalProperty_iff_unbounded_le.1 h
 
-theorem unbounded_subset_prfv (h : HasSubintervalProperty P) (w : W) :
-    UNBOUNDED P w ⊆ PRFV P w := fun _ ht ↦
-  let ⟨e, hP, hτ⟩ := h.mem_image_of_unbounded ht; ⟨e, hτ.le, hP⟩
+theorem unbounded_le_perfective (h : HasSubintervalProperty P) : unbounded P ≤ perfective P :=
+  h.unbounded_le_runTimes.trans (le_inclusive _)
 
 /-- Under the subinterval property, the imperfective over a modal domain containing the world of
 evaluation entails the perfective, Dowty's entailment from *x is V-ing* to *x has V-ed*. -/
-theorem impf_subset_prfv (h : HasSubintervalProperty P) {acc : W → NonemptyInterval T → Set W}
-    {w : W} (hw : ∀ t, w ∈ acc w t) : IMPF acc P w ⊆ PRFV P w :=
-  fun t ht ↦ h.unbounded_subset_prfv w (mem_unbounded_of_mem_impf (hw t) ht)
+theorem imperfective_le_perfective {P : W → E → Prop} {w : W} (h : HasSubintervalProperty (P w))
+    {acc : NonemptyInterval T → SetRel W W} (hw : ∀ t, w ~[acc t] w) :
+    imperfective acc P w ≤ perfective (P w) :=
+  fun t ht ↦ h.unbounded_le_perfective t (unbounded_of_imperfective (hw t) ht)
 
 /-- Under the subinterval property, a predicate in progress throughout a span holds perfectively at
 every subinterval of it. -/
-theorem unbounded_subset_durative_prfv (h : HasSubintervalProperty P) (w : W) :
-    UNBOUNDED P w ⊆ durative (PRFV P) w :=
-  fun _ ht _ hj ↦ h.unbounded_subset_prfv w (isLowerSet_unbounded P w hj ht)
+theorem unbounded_le_durative_perfective (h : HasSubintervalProperty P) :
+    unbounded P ≤ durative (perfective P) :=
+  fun _ ht ↦ durative_iff.2 fun _ hs ↦ h.unbounded_le_perfective _ (antitone_unbounded P hs ht)
 
 end HasSubintervalProperty
 
 /-- The predicate of events that end when a durative event ends lacks the subinterval property,
 as the building of a house holds of no proper part that lacks the result. -/
-theorem not_hasSubintervalProperty_snd_eq [Nonempty W] {e : E} (he : (τ e).fst < (τ e).snd) :
-    ¬ HasSubintervalProperty fun (_ : W) (e' : E) ↦ (τ e').snd = (τ e).snd := fun h ↦ by
-  obtain ⟨e', hτ, hP⟩ := hasSubintervalProperty_iff_witnesses.1 h e (Classical.arbitrary W) rfl
+theorem not_hasSubintervalProperty_snd_eq {e : E} (he : (τ e).fst < (τ e).snd) :
+    ¬ HasSubintervalProperty fun e' : E ↦ (τ e').snd = (τ e).snd := fun h ↦ by
+  obtain ⟨e', hτ, hP⟩ := hasSubintervalProperty_iff_witnesses.1 h e rfl
     (.pure (τ e).fst) (NonemptyInterval.le_def.2 ⟨le_rfl, he.le⟩)
   rw [hτ] at hP
   exact he.ne hP
 
-/-- The entailment from the extensional imperfective to the perfective does not characterize the
+/-- The entailment from the non-strict imperfective to the perfective does not characterize the
 subinterval property. The predicate of events that are instantaneous or run from `0` to `2`
 validates it, every reference time containing an instant, and the interval from `0` to `1` is a
 subinterval of one of its run times without being one. -/
-theorem exists_prfv_of_unbounded_not_hasSubintervalProperty :
-    ∃ P : Unit → NonemptyInterval ℤ → Prop,
-      (∀ w, UNBOUNDED P w ⊆ PRFV P w) ∧ ¬ HasSubintervalProperty P := by
-  refine ⟨fun _ e ↦ e.IsPoint ∨ e = ⟨⟨0, 2⟩, by decide⟩,
-    fun _ t _ ↦ ⟨.pure t.fst, NonemptyInterval.le_def.2 ⟨le_rfl, t.fst_le_snd⟩, .inl rfl⟩,
+theorem exists_unbounded_le_perfective_not_hasSubintervalProperty :
+    ∃ P : NonemptyInterval ℤ → Prop, unbounded P ≤ perfective P ∧ ¬ HasSubintervalProperty P := by
+  refine ⟨fun e ↦ e.IsPoint ∨ e = ⟨⟨0, 2⟩, by decide⟩,
+    fun t _ ↦ perfective_iff.2
+      ⟨.pure t.fst, NonemptyInterval.le_def.2 ⟨le_rfl, t.fst_le_snd⟩, .inl rfl⟩,
     fun h ↦ ?_⟩
   obtain ⟨e', hτ, hP⟩ := hasSubintervalProperty_iff_witnesses.1 h
-    ⟨⟨0, 2⟩, by decide⟩ () (.inr rfl) ⟨⟨0, 1⟩, by decide⟩
+    ⟨⟨0, 2⟩, by decide⟩ (.inr rfl) ⟨⟨0, 1⟩, by decide⟩
     (NonemptyInterval.le_def.2 ⟨le_rfl, by decide⟩)
   rw [Event.τ_nonemptyInterval] at hτ
   subst hτ
@@ -182,29 +186,8 @@ theorem exists_prfv_of_unbounded_not_hasSubintervalProperty :
   · exact absurd hP (by decide)
   · exact absurd (congrArg (·.snd) hP) (by decide)
 
-/-! ### Interval properties -/
-
-variable (P w) in
-/-- Negation yields the subinterval property, since an interval containing no event of the
-predicate has no subinterval containing one. -/
-theorem isLowerSet_compl_prfv : IsLowerSet (PRFV P w)ᶜ :=
-  (isUpperSet_prfv P w).compl
-
-variable {p : W → Set (NonemptyInterval T)}
-
-variable (p w) in
-theorem isLowerSet_durative : IsLowerSet (durative p w) :=
-  fun _ _ hle h ↦ (Set.Iic_subset_Iic.2 hle).trans h
-
-/-- For an interval property with the subinterval property, the durative claim is the property
-itself. -/
-theorem durative_eq_of_isLowerSet (hp : IsLowerSet (p w)) : durative p w = p w :=
-  Set.ext fun _ ↦ ⟨fun h ↦ h (Set.mem_Iic.2 le_rfl), fun h ↦ hp.Iic_subset h⟩
-
-/-- For an interval property with the subinterval property, the perfect is the property
-itself. -/
-theorem perfect_eq_of_isLowerSet (hp : IsLowerSet (p w)) : perfect p w = p w :=
-  Set.ext fun i ↦ ⟨fun ⟨_, hp', hf⟩ ↦ hp hf.le hp',
-    fun h ↦ ⟨i, h, NonemptyInterval.finalSubinterval_refl i⟩⟩
+/-- An interval containing no event of the predicate has no subinterval containing one. -/
+theorem antitone_not_perfective (P : E → Prop) : Antitone fun t ↦ ¬ perfective P t :=
+  fun _ _ hle h hp ↦ h (monotone_perfective P hle hp)
 
 end Aspect

@@ -28,7 +28,7 @@ be](##exists_kelh_not_precedes), the reading of English *would*.
   denote a reference time that is the utterance time.
 * Both conjuncts of (16)–(18) are perfective. The one in progress has the subinterval property, so
   that a part of it lies within the reference time
-  (`Aspect.HasSubintervalProperty.unbounded_subset_prfv`); the theorem takes that part as the
+  (`Aspect.HasSubintervalProperty.unbounded_le_perfective`); the theorem takes that part as the
   event at the utterance time.
 * *Kelh* is the temporal operator of (36), `Aspect.prospective`; its modality and the enclitic
   *tu7* are not represented.
@@ -48,8 +48,7 @@ open Tense (pronoun mem_pronoun)
 open Event (τ)
 
 variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P Q : W → E → Prop}
-  {p : W → Set (NonemptyInterval T)} {g : ℕ → NonemptyInterval T} {u : NonemptyInterval T}
-  {w : W} {i : ℕ}
+  {g : ℕ → NonemptyInterval T} {u : NonemptyInterval T} {w : W} {i : ℕ}
 
 /-! ### The tenses -/
 
@@ -76,9 +75,9 @@ theorem TENSE_dom_iff :
   simp [NonemptyInterval.forall_le_not_precedes_iff']
 
 -- (15)
-theorem exists_mem_TENSE_prfv : (∃ t ∈ TENSE i g w, t ∈ PRFV P w) ↔
+theorem exists_mem_TENSE_perfective : (∃ t ∈ TENSE i g w, perfective (P w) t) ↔
     (g i).snd ≤ (g 0).snd ∧ ∃ e, τ e ≤ g i ∧ P w e := by
-  simp [mem_prfv]
+  simp [perfective_iff]
 
 -- (6): a nonfuture reference time is not after the utterance time
 theorem not_precedes_of_mem_TENSE {t : NonemptyInterval T} (h : t ∈ TENSE (W := W) i g w) :
@@ -91,23 +90,28 @@ within it (16)–(18), some nonfuture reference time contains an event of each, 
 reference time and no present one does. -/
 theorem tense_and_not_past_or_present_of_split (hi : i ≠ 0) (hP : ∃ e, P w e) (hQ : ∃ e, Q w e)
     (hP' : ∀ e, P w e → (τ e).Precedes u) (hQ' : ∀ e, Q w e → τ e ≤ u) :
-    (∃ g : ℕ → NonemptyInterval T, g 0 = u ∧ ∃ t ∈ TENSE i g w, t ∈ PRFV P w ∩ PRFV Q w) ∧
-      (∀ g : ℕ → NonemptyInterval T, g 0 = u → ¬ ∃ t ∈ PAST i g w, t ∈ PRFV P w ∩ PRFV Q w) ∧
+    (∃ g : ℕ → NonemptyInterval T, g 0 = u ∧
+        ∃ t ∈ TENSE i g w, (perfective (P w) ⊓ perfective (Q w)) t) ∧
+      (∀ g : ℕ → NonemptyInterval T, g 0 = u →
+        ¬ ∃ t ∈ PAST i g w, (perfective (P w) ⊓ perfective (Q w)) t) ∧
       ∀ g : ℕ → NonemptyInterval T, g 0 = u →
-        ¬ ∃ t ∈ PRESENT i g w, t ∈ PRFV P w ∩ PRFV Q w := by
+        ¬ ∃ t ∈ PRESENT i g w, (perfective (P w) ⊓ perfective (Q w)) t := by
   obtain ⟨e₁, h₁⟩ := hP
   obtain ⟨e₂, h₂⟩ := hQ
   refine ⟨⟨Function.update (fun _ ↦ u) i (τ e₁ ⊔ τ e₂), by simp [Function.update_of_ne hi.symm],
-    τ e₁ ⊔ τ e₂, ?_, ⟨e₁, le_sup_left, h₁⟩, e₂, le_sup_right, h₂⟩, ?_, ?_⟩
+    τ e₁ ⊔ τ e₂, ?_, perfective_iff.2 ⟨e₁, le_sup_left, h₁⟩,
+    perfective_iff.2 ⟨e₂, le_sup_right, h₂⟩⟩, ?_, ?_⟩
   · simpa [Function.update_of_ne hi.symm] using
       ⟨(hP' e₁ h₁).le.trans u.fst_le_snd,
         (NonemptyInterval.le_def.1 (hQ' e₂ h₂)).2⟩
-  · rintro g rfl ⟨t, ht, -, e, hle, he⟩
+  · rintro g rfl ⟨t, ht, -, hq⟩
+    obtain ⟨e, hle, he⟩ := perfective_iff.1 hq
     obtain ⟨hlt, rfl⟩ := mem_pronoun.1 ht
     rw [mem_toSetRel, relation_mem_precedes] at hlt
     exact (((NonemptyInterval.le_def.1 (hQ' e he)).1.trans
       ((τ e).fst_le_snd.trans (NonemptyInterval.le_def.1 hle).2)).not_gt hlt)
-  · rintro g rfl ⟨t, ht, ⟨e, hle, he⟩, -⟩
+  · rintro g rfl ⟨t, ht, hp, -⟩
+    obtain ⟨e, hle, he⟩ := perfective_iff.1 hp
     obtain ⟨heq, rfl⟩ := mem_pronoun.1 ht
     rw [mem_toSetRel, relation_mem_one] at heq
     exact ((((NonemptyInterval.le_def.1 (heq ▸ hle)).1).trans (τ e).fst_le_snd).not_gt
@@ -116,13 +120,14 @@ theorem tense_and_not_past_or_present_of_split (hi : i ≠ 0) (hP : ∃ e, P w e
 /-! ### The future -/
 
 -- (38)
-theorem exists_mem_TENSE_kelh : (∃ t ∈ TENSE i g w, t ∈ prospective (PRFV P) w) ↔
+theorem exists_mem_TENSE_kelh : (∃ t ∈ TENSE i g w, prospective (perfective (P w)) t) ↔
     (g i).snd ≤ (g 0).snd ∧ ∃ e, (g i).Precedes (τ e) ∧ P w e := by
-  simp [prospective_prfv]
+  simp [prospective_perfective_iff]
 
 /-- With the utterance time for its reference time, a sentence with *kelh* is true only of an
 event after the utterance time (7). -/
-theorem precedes_of_mem_kelh (h : g i = g 0) (ht : ∃ t ∈ TENSE i g w, t ∈ prospective (PRFV P) w) :
+theorem precedes_of_mem_kelh (h : g i = g 0)
+    (ht : ∃ t ∈ TENSE i g w, prospective (perfective (P w)) t) :
     ∃ e, (g 0).Precedes (τ e) ∧ P w e :=
   h ▸ (exists_mem_TENSE_kelh.1 ht).2
 
@@ -130,12 +135,14 @@ theorem precedes_of_mem_kelh (h : g i = g 0) (ht : ∃ t ∈ TENSE i g w, t ∈ 
 time, the reading of *would* in (39). -/
 theorem exists_kelh_not_precedes :
     ∃ (P : Unit → NonemptyInterval ℤ → Prop) (g : ℕ → NonemptyInterval ℤ),
-      (∃ t ∈ TENSE 1 g (), t ∈ prospective (PRFV P) ()) ∧
+      (∃ t ∈ TENSE 1 g (), prospective (perfective (P ())) t) ∧
         ∀ e, P () e → (τ e).Precedes (g 0) := by
   refine ⟨fun _ e ↦ e = .pure 1, fun n ↦ if n = 0 then .pure 2 else .pure 0,
-    exists_mem_TENSE_kelh.2 ⟨by decide, .pure 1, by decide, rfl⟩, ?_⟩
-  rintro e rfl
-  decide
+    ?_, ?_⟩
+  · exact (exists_mem_TENSE_kelh (P := fun _ (e : NonemptyInterval ℤ) ↦ e = .pure 1)).2
+      ⟨by decide, .pure 1, by decide, rfl⟩
+  · rintro e rfl
+    decide
 
 /-! ### The adverbials -/
 

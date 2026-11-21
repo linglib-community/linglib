@@ -33,7 +33,7 @@ matrix reference time](##table3), as [the aspect rows bear out](##aspect_rows).
   times a clause allows (`Locates`) put the time below *-s* at the utterance time and the time
   below any other morpheme in that morpheme's cell. These times are points, as in the cells.
 * Reference times are nonempty intervals. (47) prints the perfective with proper inclusion and the
-  imperfective, Pancheva's `Aspect.UNBOUNDED`, with inclusion. The attitude holder's NOW and the
+  imperfective, Pancheva's `Aspect.unbounded`, with inclusion. The attitude holder's NOW and the
   utterance time, which the paper takes to be very short, are instants, which properly contain no
   run time, and an adverbial such as *at 5 p.m.* restricts a reference time to an instant (`D`).
   Statives project no aspect (p. 428). The evaluation time of *woll* and the NOW are one instant.
@@ -88,36 +88,53 @@ inductive Asp
 
 section Aspect
 
-variable {T W E : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
-/-- The relation (47) of an aspect between the reference time `t` and an event's run time `s`: the
+/-- The cell (47) of an aspect says how an event's run time stands to the reference time: the
 perfective puts the run time properly inside the reference time, the imperfective the reference
 time inside the run time. -/
-def Asp.rel : Asp → NonemptyInterval T → NonemptyInterval T → Prop
-  | .perfective, t, s => s < t
-  | .imperfective, t, s => t ≤ s
+def Asp.cell : Asp → IntervalAlgebra
+  | .perfective => IntervalAlgebra.lt
+  | .imperfective => IntervalAlgebra.le⁻¹
 
-/-- An aspect maps a predicate of events to the reference times standing in its relation to the run
-time of an event of the predicate, (47). -/
-def Asp.denote (a : Asp) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  Aspect.ofRel a.rel P
+@[simp] theorem Asp.relation_mem_cell_perfective {s t : NonemptyInterval T} :
+    Allen.relation s t ∈ Asp.perfective.cell ↔ s < t := by
+  simp [cell]
+
+@[simp] theorem Asp.relation_mem_cell_imperfective {s t : NonemptyInterval T} :
+    Allen.relation s t ∈ Asp.imperfective.cell ↔ t ≤ s := by
+  simp [cell]
+
+open ModalLogic in
+/-- An aspect maps a predicate of events to the reference times to which the run time of an event
+of the predicate stands in its cell, (47). -/
+def Asp.denote (a : Asp) (P : E → Prop) : NonemptyInterval T → Prop :=
+  ◇[IntervalAlgebra.toSetRel a.cell] (Aspect.runTimes P)
+
+theorem Asp.denote_iff {a : Asp} {P : E → Prop} {t : NonemptyInterval T} :
+    a.denote P t ↔ ∃ e, Allen.relation (Event.τ e) t ∈ a.cell ∧ P e := by
+  simp [denote, Aspect.diamond_runTimes_iff]
 
 -- (47a) is Pancheva's non-strict imperfective
-theorem denote_imperfective (P : W → E → Prop) :
-    Asp.imperfective.denote P = Aspect.UNBOUNDED P := rfl
+theorem denote_imperfective (P : E → Prop) :
+    Asp.imperfective.denote (T := T) P = Aspect.unbounded P := by
+  rw [Asp.denote, Asp.cell, IntervalAlgebra.toSetRel_inv]
+  rfl
 
 /-- A reference time admits a verb phrase of aspect `a` when the run time of some eventuality stands
-in the aspect's relation to it; a stative projects no aspect and admits every reference time. -/
+in the aspect's cell to it; a stative projects no aspect and admits every reference time. -/
 def Admits : Option Asp → NonemptyInterval T → Prop
   | none, _ => True
-  | some a, r => r ∈ a.denote (fun (_ : Unit) (_ : NonemptyInterval T) ↦ True) ()
+  | some a, r => a.denote (fun _ : NonemptyInterval T ↦ True) r
 
 variable {r : NonemptyInterval T}
 
 -- (47b): no run time lies properly inside an instant
 theorem admits_perfective_iff : Admits (some .perfective) r ↔ ¬ r.IsPoint := by
-  refine ⟨fun ⟨s, hs, _⟩ hr ↦ ?_, fun hr ↦ ⟨.pure r.fst, ?_, trivial⟩⟩
-  · have hs : s < r := hs
+  refine ⟨fun h hr ↦ ?_, fun hr ↦ Asp.denote_iff.2
+    ⟨.pure r.fst, Asp.relation_mem_cell_perfective.2 ?_, trivial⟩⟩
+  · obtain ⟨s, hs, -⟩ := Asp.denote_iff.1 h
+    have hs : s < r := Asp.relation_mem_cell_perfective.1 hs
     have hr : r.fst = r.snd := hr
     have hle := NonemptyInterval.le_def.1 hs.le
     have h₁ : s.fst = r.fst := le_antisymm (s.fst_le_snd.trans (hle.2.trans hr.ge)) hle.1
@@ -130,7 +147,7 @@ theorem admits_perfective_iff : Admits (some .perfective) r ↔ ¬ r.IsPoint := 
 @[simp] theorem admits_none (r : NonemptyInterval T) : Admits none r := trivial
 
 @[simp] theorem admits_imperfective (r : NonemptyInterval T) : Admits (some .imperfective) r :=
-  ⟨r, (le_rfl : r ≤ r), trivial⟩
+  Asp.denote_iff.2 ⟨r, Asp.relation_mem_cell_imperfective.2 le_rfl, trivial⟩
 
 theorem not_admits_perfective_pure (t : T) : ¬ Admits (some .perfective) (.pure t) :=
   fun h ↦ admits_perfective_iff.1 h rfl
