@@ -24,9 +24,9 @@ def cy : Particle where
   script := some "чи"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .obligatory
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .obligatory
+    | _ => none
 
 /-- хіба *xiba*, the clause-initial mirative particle, kin of Russian *razve*. -/
 def xiba : Particle where
@@ -34,8 +34,8 @@ def xiba : Particle where
   script := some "хіба"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 end Ukrainian.QuestionParticles

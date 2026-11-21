@@ -128,13 +128,13 @@ instance (e : EmbeddingContext) : Decidable (selectsForceP e) :=
 ((8), (9), (21)). -/
 theorem kya_licensed_iff_selectsForceP :
     ∀ e, e ≠ EmbeddingContext.quotation →
-      (e ∈ kya.distribution.possible.cod ↔ selectsForceP e) := by
+      (e ∈ kya.distribution.contexts ↔ selectsForceP e) := by
   decide
 
 /-- *kya:* is licensed in polar and alternative questions and not in constituent questions,
 (4) and (5). -/
 theorem kya_clause_types :
-    ∀ c, c ∈ kya.distribution.possible.dom ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
+    ∀ c, c ∈ kya.distribution.types ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
   decide
 
 end BhattDayal2020

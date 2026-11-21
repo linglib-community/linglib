@@ -34,10 +34,10 @@ def li : Particle where
   script := some "ли"
   position := some .postHost
   distribution
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | .constituent, .matrix => some .optional
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | (.constituent, .matrix) => some .optional
+    | _ => none
 
 /-- дали *dali*, the clause-initial polar question complementizer, which in a root question
 raises an issue without expecting the addressee to resolve it. -/
@@ -46,10 +46,10 @@ def dali : Particle where
   script := some "дали"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | _ => none
 
 /-- нима *nima*, the clause-initial mirative particle, kin of Russian *razve*. -/
 def nima : Particle where
@@ -57,8 +57,8 @@ def nima : Particle where
   script := some "нима"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 end Bulgarian.QuestionParticles

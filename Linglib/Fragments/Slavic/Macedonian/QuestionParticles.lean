@@ -27,9 +27,9 @@ def dali : Particle where
   script := some "дали"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 /-- ли *li*, the polar question particle enclitic on the fronted verb, whose negated form conveys
 positive epistemic bias ([simik-2024] ex. 32b). -/
@@ -38,9 +38,9 @@ def li : Particle where
   script := some "ли"
   position := some .secondPosition
   distribution
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | _ => none
 
 /-- зар *zar*, the clause-initial mirative particle, kin of Russian *razve*. -/
 def zar : Particle where
@@ -48,7 +48,7 @@ def zar : Particle where
   script := some "зар"
   position := some .clauseInitial
   distribution
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 end Macedonian.QuestionParticles

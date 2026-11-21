@@ -51,17 +51,17 @@ open Clause
 
 /-- The left edges of Standard Norwegian clauses, written `⟨complementizer, verbSecond⟩`. -/
 def leftEdges : LeftEdge.Table
-  | .declarative, .matrix => some {⟨false, true⟩}  -- FLV p. 859, W (5)–(7)
-  | .polar, .matrix => some {⟨false, true⟩}  -- FLV p. 863, W (8)
-  | .constituent, .matrix => some {⟨false, true⟩}  -- FLV p. 863, W (9), (10)
-  | .exclamative, .matrix => some {⟨false, false⟩}  -- W (13)
-  | .imperative, .matrix => some {⟨false, true⟩}  -- FLV p. 863
-  | .declarative, .quasiSubordinated => some .univ  -- FLV pp. 866–867, W (36)
-  | .declarative, .subordinated => some {⟨true, false⟩, ⟨false, false⟩}  -- FLV p. 866
-  | .polar, .subordinated => some {⟨true, false⟩}  -- FLV p. 865
-  | .constituent, .subordinated => some {⟨false, false⟩, ⟨true, false⟩}  -- FLV pp. 864–866
-  | .declarative, .insubordinated => some {⟨true, false⟩}  -- FLV p. 864
-  | _, _ => none
+  | (.declarative, .matrix) => some {⟨false, true⟩}  -- FLV p. 859, W (5)–(7)
+  | (.polar, .matrix) => some {⟨false, true⟩}  -- FLV p. 863, W (8)
+  | (.constituent, .matrix) => some {⟨false, true⟩}  -- FLV p. 863, W (9), (10)
+  | (.exclamative, .matrix) => some {⟨false, false⟩}  -- W (13)
+  | (.imperative, .matrix) => some {⟨false, true⟩}  -- FLV p. 863
+  | (.declarative, .quasiSubordinated) => some .univ  -- FLV pp. 866–867, W (36)
+  | (.declarative, .subordinated) => some {⟨true, false⟩, ⟨false, false⟩}  -- FLV p. 866
+  | (.polar, .subordinated) => some {⟨true, false⟩}  -- FLV p. 865
+  | (.constituent, .subordinated) => some {⟨false, false⟩, ⟨true, false⟩}  -- FLV pp. 864–866
+  | (.declarative, .insubordinated) => some {⟨true, false⟩}  -- FLV p. 864
+  | _ => none
 
 /-- Verb second in Standard Norwegian: required in root declaratives, questions and imperatives,
 optional after a bridge verb, and excluded in the other clauses recorded. -/
@@ -70,9 +70,9 @@ def verbSecond : Distribution := leftEdges.verbSecond
 /-- The left edges of Nordmøre clauses: as in Standard Norwegian in root clauses, except that a
 wh-question may leave its verb unfronted. Subordinate clauses are not described. -/
 def Nordmore.leftEdges : LeftEdge.Table
-  | .constituent, .matrix => some {⟨false, true⟩, ⟨false, false⟩}  -- W (37), (38)
-  | t, .matrix => Norwegian.leftEdges t .matrix
-  | _, _ => none
+  | (.constituent, .matrix) => some {⟨false, true⟩, ⟨false, false⟩}  -- W (37), (38)
+  | (t, .matrix) => Norwegian.leftEdges (t, .matrix)
+  | _ => none
 
 /-- Verb second in the Nordmøre dialect. -/
 def Nordmore.verbSecond : Distribution := Nordmore.leftEdges.verbSecond

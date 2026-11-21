@@ -25,8 +25,8 @@ namespace Singlish.Questions
 def ah : Particle where
   form := "ah"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c, e with
-    | .constituent, .matrix => some .optional
-    | _, _ => none
+  distribution
+    | (.constituent, .matrix) => some .optional
+    | _ => none
 
 end Singlish.Questions

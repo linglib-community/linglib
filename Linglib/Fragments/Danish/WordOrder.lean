@@ -52,17 +52,17 @@ open Clause
 
 /-- The left edges of Danish clauses, written `⟨complementizer, verbSecond⟩`. -/
 def leftEdges : LeftEdge.Table
-  | .declarative, .matrix => some {⟨false, true⟩}  -- V (33c)–(33e)
-  | .polar, .matrix => some {⟨false, true⟩}  -- V (33b), (42b)
-  | .constituent, .matrix => some {⟨false, true⟩}  -- V (37c), (38c)
-  | .exclamative, .matrix => some {⟨false, true⟩, ⟨false, false⟩}  -- W (17), note 1
-  | .declarative, .quasiSubordinated =>  -- V (13a), (14a), (54), list (17)
+  | (.declarative, .matrix) => some {⟨false, true⟩}  -- V (33c)–(33e)
+  | (.polar, .matrix) => some {⟨false, true⟩}  -- V (33b), (42b)
+  | (.constituent, .matrix) => some {⟨false, true⟩}  -- V (37c), (38c)
+  | (.exclamative, .matrix) => some {⟨false, true⟩, ⟨false, false⟩}  -- W (17), note 1
+  | (.declarative, .quasiSubordinated) =>  -- V (13a), (14a), (54), list (17)
     some {⟨true, true⟩, ⟨true, false⟩, ⟨false, false⟩}
-  | .declarative, .subordinated => some {⟨true, false⟩, ⟨false, false⟩}  -- V (15a), (16a), p. 84
-  | .polar, .subordinated => some {⟨true, false⟩}  -- V (45b)
-  | .constituent, .subordinated => some {⟨false, false⟩}  -- V (43b), (44b)
-  | .declarative, .insubordinated => some {⟨true, false⟩}  -- V (79a)
-  | _, _ => none
+  | (.declarative, .subordinated) => some {⟨true, false⟩, ⟨false, false⟩}  -- V (15a), (16a), p. 84
+  | (.polar, .subordinated) => some {⟨true, false⟩}  -- V (45b)
+  | (.constituent, .subordinated) => some {⟨false, false⟩}  -- V (43b), (44b)
+  | (.declarative, .insubordinated) => some {⟨true, false⟩}  -- V (79a)
+  | _ => none
 
 /-- Verb second in Danish: required in root declaratives and questions, optional in exclamatives
 and after a bridge verb, and excluded in the other clauses recorded. -/

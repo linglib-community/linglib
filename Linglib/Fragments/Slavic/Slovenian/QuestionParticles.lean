@@ -23,18 +23,18 @@ namespace Slovenian.QuestionParticles
 def ali : Particle where
   form := "ali"
   position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+  distribution
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 /-- *a*, the colloquial clause-initial polar question particle. -/
 def a : Particle where
   form := "a"
   position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .polar, .matrix => some .optional
-    | _, _ => none
+  distribution
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 /-- *kaj* (literally 'what'), the colloquial clause-initial polar question particle. -/
 def kaj : Particle where

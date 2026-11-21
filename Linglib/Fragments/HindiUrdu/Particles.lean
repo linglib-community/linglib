@@ -39,7 +39,7 @@ disjunction `HindiUrdu.Coordination.ki` of alternative questions. -/
 def ki : Particle where
   form := "ki"
   position := some .clauseInitial
-  distribution := fun c e ↦ match c with
+  distribution := fun (c, e) ↦ match c with
     | .declarative | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .excluded
@@ -52,23 +52,23 @@ def ki : Particle where
 def kya : Particle where
   form := "kya:"
   position := some .free
-  distribution := fun c e ↦ match c, e with
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .excluded
-    | .polar, .quasiSubordinated => some .optional
-    | .alternative, .matrix => some .optional
-    | .constituent, _ => some .excluded
-    | _, _ => none
+  distribution
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .excluded
+    | (.polar, .quasiSubordinated) => some .optional
+    | (.alternative, .matrix) => some .optional
+    | (.constituent, _) => some .excluded
+    | _ => none
 
 /-- *ya: nahĩ:* "or not" is the overt disjunct forming a polar
 alternative question. -/
 def ya_nahi : Particle where
   form := "ya: nahĩ:"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c, e with
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .obligatory
-    | .polar, .quasiSubordinated => some .optional
-    | _, _ => none
+  distribution
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .obligatory
+    | (.polar, .quasiSubordinated) => some .optional
+    | _ => none
 
 end HindiUrdu.Particles

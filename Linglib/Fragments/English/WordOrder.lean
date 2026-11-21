@@ -35,25 +35,25 @@ open Clause
 /-- Verb second in Standard English: the auxiliary precedes the subject in root wh-questions
 and yes/no-questions, and in none of the other clauses recorded. -/
 def verbSecond : Distribution
-  | .polar, .matrix => some .obligatory
-  | .constituent, .matrix => some .obligatory
-  | .declarative, .matrix => some .excluded
-  | .exclamative, .matrix => some .excluded
-  | .imperative, .matrix => some .excluded
-  | .declarative, .subordinated => some .excluded
-  | .polar, .subordinated => some .excluded
-  | .constituent, .subordinated => some .excluded
-  | _, _ => none
+  | (.polar, .matrix) => some .obligatory
+  | (.constituent, .matrix) => some .obligatory
+  | (.declarative, .matrix) => some .excluded
+  | (.exclamative, .matrix) => some .excluded
+  | (.imperative, .matrix) => some .excluded
+  | (.declarative, .subordinated) => some .excluded
+  | (.polar, .subordinated) => some .excluded
+  | (.constituent, .subordinated) => some .excluded
+  | _ => none
 
 /-- Verb second in Belfast English: as in Standard English, and in imperatives as well. -/
 def Belfast.verbSecond : Distribution
-  | .imperative, .matrix => some .obligatory
-  | t, e => English.verbSecond t e
+  | (.imperative, .matrix) => some .obligatory
+  | c => English.verbSecond c
 
 /-- Verb second in a subordinate clause without a complementizer in Belfast English: required in
 the complement of a rogative verb such as *ask*. -/
 def Belfast.verbSecondWithoutComplementizer : Distribution
-  | .polar, .quasiSubordinated => some .obligatory
-  | _, _ => none
+  | (.polar, .quasiSubordinated) => some .obligatory
+  | _ => none
 
 end English

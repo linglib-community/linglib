@@ -44,7 +44,7 @@ def ka : Particle where
   form := "ka"
   script := some "か"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c with
+  distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional
@@ -59,7 +59,7 @@ def no_ : Particle where
   form := "no"
   script := some "の"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c with
+  distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional
@@ -76,11 +76,11 @@ def koto : Particle where
   form := "koto"
   script := some "こと"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c, e with
-    | .declarative, .matrix => some .excluded
-    | .declarative, .subordinated => some .optional
-    | .declarative, .quasiSubordinated => some .excluded
-    | _, _ => none
+  distribution
+    | (.declarative, .matrix) => some .excluded
+    | (.declarative, .subordinated) => some .optional
+    | (.declarative, .quasiSubordinated) => some .excluded
+    | _ => none
 
 /-- *kke* — meta question particle (MQP). Only in matrix questions and
 quotations ([sauerland-yatsushiro-2017]). Has a "remind-me"
@@ -90,7 +90,7 @@ def kke : Particle where
   form := "kke"
   script := some "っけ"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c with
+  distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional
@@ -111,7 +111,7 @@ def daroo : Particle where
   form := "darō"
   script := some "だろう"
   position := some .clauseFinal
-  distribution := fun c e ↦ match c with
+  distribution := fun (c, e) ↦ match c with
     | .declarative | .polar =>
       match e with
       | .matrix => some .optional

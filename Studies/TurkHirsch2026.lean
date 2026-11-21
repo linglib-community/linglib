@@ -224,7 +224,7 @@ theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p
   rintro q ⟨rfl | rfl, hwq⟩ <;> [exact absurd hwq hw; exact le_rfl]
 
 /-- *=mI* is obligatory in polar questions such as (4), as the fragment records. -/
-example : Turkish.QuestionParticles.mi.distribution .polar .matrix = some .obligatory := rfl
+example : Turkish.QuestionParticles.mi.distribution (.polar, .matrix) = some .obligatory := rfl
 
 open Turkish.Phonology in
 /-- In its default position in (4), *=mI* follows the markers of the predicate *uyu-du*. -/

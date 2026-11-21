@@ -30,11 +30,11 @@ its full form, which it draws to the front of the clause. -/
 def li : Particle where
   form := "li"
   position := some .secondPosition
-  distribution := fun c e => match c, e with
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | .alternative, .matrix => some .optional
-    | _, _ => none
+  distribution
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | (.alternative, .matrix) => some .optional
+    | _ => none
 
 /-- *da li* is the sentence-initial polar question marker, the full form of
 *li* that leaves the order of the remaining clause free. -/
@@ -48,9 +48,9 @@ the tag *je li?*. -/
 def jeLi : Particle where
   form := "je li"
   position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .polar, .matrix => some .optional
-    | _, _ => none
+  distribution
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 /-- *zar* is the clause-initial mirative particle, kin of Russian *razve*,
 also the tag *zar ne?*. -/

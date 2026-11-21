@@ -52,10 +52,10 @@ def ma : Particle where
   script := some "吗"
   position := some .clauseFinal
   distribution
-    | .polar, .matrix => some .optional
-    | .declarative, .matrix | .alternative, .matrix | .constituent, .matrix
-    | .polar, .subordinated => some .excluded
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | (.declarative, .matrix) | (.alternative, .matrix) | (.constituent, .matrix)
+    | (.polar, .subordinated) => some .excluded
+    | _ => none
 
 /-- *ne* 呢, which presents a declarative or a question as a response to the hearer's claim or
 expectation. -/
@@ -64,9 +64,9 @@ def ne : Particle where
   script := some "呢"
   position := some .clauseFinal
   distribution
-    | .declarative, .matrix | .alternative, .matrix | .constituent, .matrix => some .optional
-    | .polar, .matrix => some .excluded
-    | _, _ => none
+    | (.declarative, .matrix) | (.alternative, .matrix) | (.constituent, .matrix) => some .optional
+    | (.polar, .matrix) => some .excluded
+    | _ => none
 
 /-- *ba* 吧, which solicits the hearer's agreement. -/
 def ba : Particle where
@@ -74,20 +74,20 @@ def ba : Particle where
   script := some "吧"
   position := some .clauseFinal
   distribution
-    | .declarative, .matrix | .polar, .matrix | .imperative, .matrix
-    | .exclamative, .matrix => some .optional
-    | .alternative, .matrix | .constituent, .matrix => some .excluded
-    | _, _ => none
+    | (.declarative, .matrix) | (.polar, .matrix) | (.imperative, .matrix)
+    | (.exclamative, .matrix) => some .optional
+    | (.alternative, .matrix) | (.constituent, .matrix) => some .excluded
+    | _ => none
 
 /-- *nándào* 难道 'is it conceivable that', the attitude adverb of polar questions. -/
 def nandao : Particle where
   form := "nándào"
   script := some "难道"
   distribution
-    | .polar, .matrix => some .optional
-    | .declarative, .matrix | .alternative, .matrix | .constituent, .matrix
-    | .declarative, .subordinated | .polar, .subordinated => some .excluded
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | (.declarative, .matrix) | (.alternative, .matrix) | (.constituent, .matrix)
+    | (.declarative, .subordinated) | (.polar, .subordinated) => some .excluded
+    | _ => none
 
 /-- *Ma* and *ne* are in complementary distribution as sentence-final particles for questions
 ([li-thompson-1981] p. 306). -/

@@ -48,19 +48,19 @@ open Clause
 
 /-- The left edges of German clauses, written `⟨complementizer, verbSecond⟩`. -/
 def leftEdges : LeftEdge.Table
-  | .declarative, .matrix => some {⟨false, true⟩}  -- V (36a)
-  | .polar, .matrix => some {⟨false, true⟩}  -- V (42c)
-  | .constituent, .matrix => some {⟨false, true⟩}  -- V (37d)
-  | .exclamative, .matrix => some {⟨false, false⟩}  -- W Table 3.1
-  | .imperative, .matrix => some {⟨false, true⟩}  -- G (5.53), pp. 193–194
-  | .declarative, .quasiSubordinated => some {⟨true, false⟩, ⟨false, true⟩}  -- W (17); V (52)
-  | .declarative, .subordinated => some {⟨true, false⟩}  -- V (15b), (16b)
-  | .polar, .subordinated => some {⟨true, false⟩}  -- V (45c)
-  | .constituent, .subordinated => some {⟨false, false⟩}  -- V (43c), (44c)
-  | .declarative, .insubordinated => some {⟨true, false⟩}  -- G (5.44)
-  | .polar, .insubordinated => some {⟨true, false⟩}  -- G (5.36b)
-  | .constituent, .insubordinated => some {⟨false, false⟩}  -- G (5.48)
-  | _, _ => none
+  | (.declarative, .matrix) => some {⟨false, true⟩}  -- V (36a)
+  | (.polar, .matrix) => some {⟨false, true⟩}  -- V (42c)
+  | (.constituent, .matrix) => some {⟨false, true⟩}  -- V (37d)
+  | (.exclamative, .matrix) => some {⟨false, false⟩}  -- W Table 3.1
+  | (.imperative, .matrix) => some {⟨false, true⟩}  -- G (5.53), pp. 193–194
+  | (.declarative, .quasiSubordinated) => some {⟨true, false⟩, ⟨false, true⟩}  -- W (17); V (52)
+  | (.declarative, .subordinated) => some {⟨true, false⟩}  -- V (15b), (16b)
+  | (.polar, .subordinated) => some {⟨true, false⟩}  -- V (45c)
+  | (.constituent, .subordinated) => some {⟨false, false⟩}  -- V (43c), (44c)
+  | (.declarative, .insubordinated) => some {⟨true, false⟩}  -- G (5.44)
+  | (.polar, .insubordinated) => some {⟨true, false⟩}  -- G (5.36b)
+  | (.constituent, .insubordinated) => some {⟨false, false⟩}  -- G (5.48)
+  | _ => none
 
 /-- Verb second in German: required in root declaratives, questions and imperatives, optional after
 a bridge verb, and excluded in the other clauses recorded. -/

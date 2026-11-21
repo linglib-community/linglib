@@ -452,7 +452,7 @@ def neuzeliNegations : Finset (Option Polarity) := {some .negative}
 theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by decide
 
 theorem razve_root_li_embedded :
-    .subordinated ∉ Russian.QuestionParticles.razve.distribution.possible.cod ∧
+    .subordinated ∉ Russian.QuestionParticles.razve.distribution.contexts ∧
       Clause.embedded .polar ∈ Russian.QuestionParticles.li.distribution.possible := by
   decide
 

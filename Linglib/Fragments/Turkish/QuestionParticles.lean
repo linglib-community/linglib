@@ -53,9 +53,9 @@ def mi : Particle where
   form := "mI"
   position := some .postHost
   distribution
-    | .polar, .matrix | .polar, .quotation | .alternative, .matrix => some .obligatory
-    | .polar, .subordinated | .alternative, .subordinated => some .optional
-    | _, _ => none
+    | (.polar, .matrix) | (.polar, .quotation) | (.alternative, .matrix) => some .obligatory
+    | (.polar, .subordinated) | (.alternative, .subordinated) => some .optional
+    | _ => none
 
 open Turkish.Phonology in
 /-- The segments of *mI*, which attach as a suffix does (§3.2). -/

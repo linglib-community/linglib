@@ -28,11 +28,11 @@ def bara : Particle where
   form := "bərə"
   position := some .clauseFinal
   distribution
-    | .declarative, .matrix => some .optional
-    | .polar, .matrix => some .excluded
-    | .constituent, .matrix => some .optional
-    | .imperative, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .optional
+    | (.polar, .matrix) => some .excluded
+    | (.constituent, .matrix) => some .optional
+    | (.imperative, .matrix) => some .optional
+    | _ => none
 
 /-- *na*, the utterance-final particle that augments an imperative while leaving the addressee
 the choice ([deo-2025-bara] fn. 5); its other uses are not recorded. -/
@@ -40,7 +40,7 @@ def na : Particle where
   form := "na"
   position := some .clauseFinal
   distribution
-    | .imperative, .matrix => some .optional
-    | _, _ => none
+    | (.imperative, .matrix) => some .optional
+    | _ => none
 
 end Marathi.Particles

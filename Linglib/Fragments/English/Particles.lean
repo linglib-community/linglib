@@ -52,7 +52,7 @@ excluded from embedded questions. -/
 def quick : Particle where
   form := "quick"
   position := some .clauseInitial
-  distribution := fun c e ↦ match c with
+  distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional

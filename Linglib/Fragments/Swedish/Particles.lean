@@ -36,9 +36,9 @@ clause type, analysed in `SeeligerRepp2018`. -/
 def val : Particle where
   form := "väl"
   position := some .clauseMedial
-  distribution := fun c e ↦ match c, e with
-    | .declarative, .matrix => some .optional
-    | _, _ => none
+  distribution
+    | (.declarative, .matrix) => some .optional
+    | _ => none
 
 end Swedish.Particles
 

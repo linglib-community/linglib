@@ -28,11 +28,11 @@ def li : Particle where
   form := "li"
   script := some "ли"
   position := some .secondPosition
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .obligatory
-    | _, _ => none
+  distribution
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .obligatory
+    | _ => none
 
 /-- разве razve is the mirative/dubitative question particle, signalling
 conflict between the speaker's prior epistemic state and current
@@ -41,12 +41,12 @@ def razve : Particle where
   form := "razve"
   script := some "разве"
   position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .excluded
-    | .constituent, .matrix => some .excluded
-    | _, _ => none
+  distribution
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .excluded
+    | (.constituent, .matrix) => some .excluded
+    | _ => none
 
 /-- неужели neuželi is the mirative question particle that, unlike *razve*,
 lexicalizes VERUM and so combines with inner negation only

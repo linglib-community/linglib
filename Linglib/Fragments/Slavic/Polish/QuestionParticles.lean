@@ -23,17 +23,17 @@ def czy : Particle where
   form := "czy"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .obligatory
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .obligatory
+    | _ => none
 
 /-- *czyżby*, the clause-initial mirative particle, kin of Russian *razve*. -/
 def czyzby : Particle where
   form := "czyżby"
   position := some .clauseInitial
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 end Polish.QuestionParticles

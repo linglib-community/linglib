@@ -40,8 +40,8 @@ open Clause (EmbeddingContext)
 /-- `inMatrix yes no` records a particle as optional in the main-clause sentence types `yes` and
 excluded from those in `no`, and records nothing else. -/
 def inMatrix (yes no : List Clause.SentenceType) : Clause.Distribution
-  | c, .matrix => if c ∈ yes then some .optional else if c ∈ no then some .excluded else none
-  | _, _ => none
+  | (c, .matrix) => if c ∈ yes then some .optional else if c ∈ no then some .excluded else none
+  | _ => none
 
 /-- *Ja* appeals for agreement in statements, expresses surprise in exclamations and intensifies
 a command. -/
