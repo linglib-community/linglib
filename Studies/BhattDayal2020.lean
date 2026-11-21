@@ -137,4 +137,10 @@ theorem kya_clause_types :
     ∀ c, c ∈ kya.distribution.types ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
   decide
 
+/-- The fragment gives *kya:* every position in its clause, where the atlas codes the Hindi
+question particle as initial. -/
+theorem kya_placements :
+    kya.placements = Finset.univ ∧ Data.WALS.F92A.allData.lookup "hin" = some .initial := by
+  decide +kernel
+
 end BhattDayal2020

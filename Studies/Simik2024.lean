@@ -18,6 +18,7 @@ public import Linglib.Fragments.Slavic.Czech.Particles
 public import Linglib.Data.Examples.Simik2024
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Data.WALS.Features.F116A
 
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech
@@ -324,6 +325,34 @@ theorem negationTriggersBias_iff :
 theorem quiz_particles_in_fragment :
     ∀ e ∈ quizRows l, ∀ f ∈ e.feature? "particle", f ∈ l.particles.map (·.form) := by
   cases l <;> decide
+
+/-- The atlas's type of a strategy; a declarative clause used as a question has none. -/
+def Strategy.type : Strategy → Option Data.WALS.F116A.PolarQuestionType
+  | .verbMovement => some .interrogativeWordOrder
+  | .clauseInitialParticle | .verbAttachedParticle => some .questionParticle
+  | .intonation => some .interrogativeIntonationOnly
+  | .declarative => none
+
+/-- The atlas's code for each language. -/
+def Language.walsCode : Language → String
+  | .czech => "cze" | .slovak => "svk" | .upperSorbian => "sou" | .slovenian => "slo"
+  | .ukrainian => "ukr" | .polish => "pol" | .serbian => "scr" | .macedonian => "mcd"
+  | .bulgarian => "bul" | .russian => "rus"
+
+/-- Where the atlas codes a language, its default strategy is of the type the atlas gives,
+Slovenian apart, which the atlas codes for a question particle and the chapter for verb
+movement. -/
+theorem defaultStrategy_type :
+    ∀ v ∈ Data.WALS.F116A.allData.lookup l.walsCode,
+      (l.defaultStrategy.type = some v ↔ l ≠ .slovenian) := by
+  cases l <;> decide +kernel
+
+/-- Bulgarian *li* follows the focus of the question, where the atlas codes the Bulgarian
+question particle as in second position. -/
+theorem bulgarian_li_anchor :
+    Bulgarian.QuestionParticles.li.anchor = .focus .after ∧
+      Data.WALS.F92A.allData.lookup "bul" = some .secondPosition := by
+  decide +kernel
 
 theorem particles_licensed_polar :
     ∀ p ∈ l.particles, Clause.root .polar ∈ p.distribution.possible := by

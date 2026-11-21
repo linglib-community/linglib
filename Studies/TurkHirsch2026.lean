@@ -233,4 +233,11 @@ example : ∃ t ∈ Examples.ex_4.glossedTokens,
       [⟨_, .di⟩, ⟨_, .person .one (.personNumber .third .singular)⟩])) := by
   decide
 
+/-- *=mI* follows the focus of its question, where the atlas codes the Turkish question particle
+as final. -/
+theorem mi_anchor :
+    Turkish.QuestionParticles.mi.anchor = .focus .after ∧
+      Data.WALS.F92A.allData.lookup "tur" = some .final := by
+  decide +kernel
+
 end TurkHirsch2026

@@ -55,7 +55,7 @@ def particles : List (String × List Clause.Marker) :=
 /-- Each of these languages marks polar questions with a question particle in the atlas. -/
 theorem questionParticle :
     ∀ x ∈ particles, F116A.allData.lookup x.1 = some .questionParticle := by
-  decide
+  decide +kernel
 
 /-- Where the particles of a fragment have a position in the clause, it is the position the atlas
 codes for the language, Hindi apart: second position in Russian, final in Japanese and Mandarin,
@@ -63,11 +63,11 @@ initial in Polish and Ukrainian, and either of two positions in Serbian-Croatian
 theorem questionParticlePosition_eq :
     ∀ x ∈ particles, x.1 ≠ "hin" → ∀ v ∈ Marker.questionParticlePosition x.2,
       F92A.allData.lookup x.1 = some v := by
-  decide
+  decide +kernel
 
 theorem questionParticlePosition_isSome :
     (particles.filter fun x ↦ (Marker.questionParticlePosition x.2).isSome).map (·.1) =
       ["rus", "jpn", "mnd", "pol", "ukr", "scr", "hin"] := by
-  decide
+  decide +kernel
 
 end Dryer2013Question
