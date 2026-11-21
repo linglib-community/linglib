@@ -18,8 +18,6 @@ A term then denotes an entity, when every attribute along it is defined
 (`HPSG.RSRL.Interpretation.termDenot`). The *components* of an entity are the entities that some
 path reaches from it (`HPSG.RSRL.Interpretation.isComponentOf_iff_exists_path`).
 
-## Homomorphisms
-
 A *homomorphism* of interpretations is a map of entities that keeps the sort of each entity,
 commutes with the attributes, and sends relation tuples to relation tuples. An *embedding* is an
 injective one that also reflects the relations.
@@ -29,9 +27,7 @@ A homomorphism commutes with term denotation
 maps the components of an entity onto the components of its image
 (`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
 
-## The feature structure of an entity
-
-An interpretation is a partial Moore machine: the attributes are the letters, an attribute's
+An interpretation is also a partial Moore machine: the attributes are the letters, an attribute's
 partial function is its transition, and the sort of an entity is the output
 (`HPSG.RSRL.Interpretation.toPartialMoore`). Following a path is reading it in this machine
 (`HPSG.RSRL.Interpretation.evalFrom_toPartialMoore`), and the components of an entity are the

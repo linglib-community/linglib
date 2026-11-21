@@ -12,8 +12,6 @@ public import Linglib.Fragments.English.Pronouns
 This file formalizes parts of two chapters of the textbook, in the RSRL model theory of
 `Syntax/HPSG`: the binding theory of Chapter 7 and the long-distance dependencies of Chapter 15.
 
-## Binding
-
 The binding theory says that a reflexive must be outranked by a coindexed argument on some
 argument-structure list, and that a nonreflexive pronoun must not be. So *Susan likes herself*
 is good with *herself* referring to Susan, and *Susan likes her* is not.
@@ -28,8 +26,6 @@ pronoun does not (`grammatical_utterance_iff`).
 Each of the textbook's sentences has a *frame*, which fixes the argument structures of its
 words. With the pronoun coindexed with *Susan*, the textbook's judgments follow (`binding_rows`).
 
-## Agreement of a reflexive with its antecedent
-
 The textbook's binding principles do not mention agreement; it adds a separate principle that
 coindexed elements agree. Here person, number and gender belong to the index, as in
 [pollard-sag-1994], so no separate principle is needed: a reflexive that differs from its
@@ -43,9 +39,8 @@ themselves* and *She enjoys himself* (`agreement_rows`).
 The converse fails. Two nominals with the same features need not be coindexed: in *Susan likes
 her*, *her* can be another woman (`agreement_eq_not_coindexed`).
 
-## Long-distance dependencies
-
-The list-valued feature `GAP` records the missing arguments of a phrase. The GAP Principle
+For long-distance dependencies, the list-valued feature `GAP` records the missing arguments of a
+phrase. The GAP Principle
 passes the gaps of the daughters up to the mother, and the Head-Filler Rule discharges one. This
 is the filler-head construction of `Syntax/HPSG/Construction`.
 

@@ -18,8 +18,6 @@ Binding theory says which noun phrases a pronoun can refer back to. In *Susan li
 the reflexive *herself* must refer to Susan. In *Susan likes her*, the pronoun *her* cannot.
 This file states the two principles of HPSG that account for this, as descriptions in RSRL.
 
-## Indices and coindexation
-
 A nominal object has an *index*, and an index has a person, a number and a gender. Two nominal
 objects are *coindexed* when their indices are the same entity, which is how the grammar says
 that they refer to the same thing.
@@ -32,8 +30,6 @@ objects have the same bundle. This is why the binding principles do not mention 
 A nominal object that carries more information has a more specific bundle
 (`HPSG.RSRL.Binding.agreement_le_of_simulatedBy`).
 
-## Local o-command
-
 A word lists its arguments in its *argument structure*, in order of obliqueness: the subject
 first, then the objects. One argument *locally o-commands* another when it comes earlier on the
 argument structure of the same word.
@@ -44,8 +40,6 @@ the `ARG-ST` of some word to two of its members. `HPSG.RSRL.Binding.LocallyOComm
 same relation stated directly on an interpretation, and
 `HPSG.RSRL.Binding.satisfies_locallyOCommands_iff` says that the description holds exactly when
 the relation does.
-
-## The principles
 
 One argument *locally o-binds* another when it locally o-commands it and is coindexed with it.
 

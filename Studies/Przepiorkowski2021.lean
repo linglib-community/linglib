@@ -12,8 +12,6 @@ public import Studies.Sag2010
 The paper proposes three changes to the model theory of HPSG. This file formalizes the first
 two.
 
-## Rooted models
-
 The first proposal is about what a model of a grammar is. In RSRL every entity must satisfy the
 grammar, with quantifiers that range over its own components. The paper takes a model to be a
 *rooted* model of a single utterance, whose quantifiers range over the whole universe
@@ -22,12 +20,10 @@ grammar, with quantifiers that range over its own components. The paper takes a 
 The rooted model that an entity generates is such a model exactly when every component satisfies
 the grammar with quantifiers over the components of the root (`modelsFO_generated_iff`).
 
-## Höhle's Problem
-
-Two objects in a model may look exactly alike and yet be either one object or two. This gives a
-grammar spurious ambiguities. The second proposal removes them with a General Identity
-Principle, which identifies look-alike objects. A cycle exempts the referential indices, which
-must be allowed to differ.
+The second proposal is about Höhle's Problem: two objects in a model may look exactly alike
+and yet be either one object or two, which gives a grammar spurious ambiguities. The paper
+removes them with a General Identity Principle, which identifies look-alike objects. A cycle
+exempts the referential indices, which must be allowed to differ.
 
 ## Implementation notes
 

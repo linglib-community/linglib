@@ -19,15 +19,11 @@ A `FeatureStructure Q F T` has nodes `Q`, features `F` and types `T`. It is a pa
 machine, with the features as letters and the types as outputs, together with a root from which
 every state is reached. The value of a path is the state the machine reaches on it.
 
-## Subsumption
-
 A feature structure `A` *subsumes* `B`, written `A.Subsumes B`, when `B` contains all the
 information in `A`. A structure that says only "third person" subsumes one that says "third
 person singular". Precisely, there is a map `h` from the nodes of `A` to those of `B` that sends
 the root to the root, sends each node to a node of an equal or more specific type, and sends the
 value of a feature to the value of the same feature (`FeatureStructure.subsumes_iff_exists`).
-
-## Abstract feature structures
 
 What a feature structure says does not depend on what its nodes are. The *abstract feature
 structure* `A.abs` keeps only the type at the end of each path, and the pairs of paths that lead

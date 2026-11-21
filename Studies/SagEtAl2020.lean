@@ -8,8 +8,6 @@ public import Linglib.Syntax.HPSG.Construction
 In some English clauses, such as polar questions, the auxiliary comes before the subject. This
 file formalizes the paper's constructional analysis of this subject-auxiliary inversion.
 
-## The analysis
-
 The *aux-initial* construction requires the head daughter of a clause to be an invertible finite
 auxiliary, a word marked `[INV +]`. It says nothing about meaning. Following Fillmore, the
 aux-initial clauses share no semantics. Each kind gets its meaning from the clause type it also
@@ -18,8 +16,6 @@ exclamative from the exclamative clauses.
 
 A polar interrogative is built directly by its construction. It is not derived from an
 uninverted clause, which is why the auxiliary puzzle of structure dependence does not arise.
-
-## What is proved
 
 The construction is one principle over the RSRL construct hierarchy of
 `Syntax/HPSG/Construction` (`auxInitialPrinciple`). The two clauses are sorts below both the

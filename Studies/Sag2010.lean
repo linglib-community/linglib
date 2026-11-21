@@ -12,8 +12,6 @@ in: topicalized clauses, wh-exclamatives, nonsubject wh-interrogatives, wh-relat
 the-clauses. This file formalizes the paper's account of them as constructions of Sign-Based
 Construction Grammar.
 
-## The account
-
 The five clauses share the *filler-head* construction, which binds a nonverbal filler to a gap
 in a verbal head daughter. Each also belongs to a clause type, which fixes its semantic type.
 What is left to each clause is a short list of constraints of its own.
@@ -22,8 +20,6 @@ The paper's parameters of variation follow from these constraints: which disting
 the filler must contain, which categories the filler and the head may have, whether the head may
 or must be inverted or infinitival, whether the clause is an island, and whether it must be
 independent.
-
-## What is proved
 
 The constructions are those of the paper's appendix, stated in RSRL over the construct hierarchy
 of `Syntax/HPSG/Construction`.

@@ -18,16 +18,12 @@ with its daughter signs. A *construction* is a constraint on the constructs of o
 file states in RSRL the part of the grammar with which Sag analyses the English filler-gap
 clauses, such as *My bagels, she likes* and *Who did they visit?*
 
-## The hierarchy
-
 Construct sorts are classified in two ways: by how they are headed, and by the kind of clause
 they form. A sort may sit below one sort of each kind. It then inherits the constraints on both,
 because a constraint on a sort holds of every entity below it.
 `HPSG.Construction.forall_satisfies_grammar_iff_of_nsWhIntCl` shows this for the nonsubject
 wh-interrogative: it satisfies the grammar exactly when it satisfies the four constructions it
 inherits.
-
-## The constructions
 
 The *headed* construction gives the mother the category of its head daughter
 (`HPSG.Construction.satisfies_hdCat_iff`).
@@ -44,8 +40,6 @@ head daughter exactly one gap.
 
 `HPSG.Construction.constraints` lists the constructions, each a constraint on one sort, and
 `HPSG.Construction.grammar` is the grammar that states them.
-
-## Lists
 
 `HPSG.Construction.ListMem` says that an entity is a member of a list in an interpretation. The
 principle `HPSG.Construction.memberDef` defines the relation symbol `member` to be list

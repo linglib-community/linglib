@@ -18,8 +18,6 @@ A *description* is a formula with no free variables. A *grammar* is a set of des
 an interpretation is a *model* of a grammar when every entity satisfies every description in it
 (`HPSG.RSRL.Interpretation.Models`).
 
-## Embeddings preserve satisfaction
-
 An entity satisfies a formula exactly when its image under an embedding does
 (`HPSG.RSRL.Interpretation.Embedding.satisfies`). It follows that an interpretation that embeds
 into a model is a model (`HPSG.RSRL.Interpretation.Embedding.models`), and that a model
