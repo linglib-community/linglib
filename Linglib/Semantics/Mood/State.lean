@@ -191,6 +191,18 @@ theorem le_iff {c₁ c₂ : State W} :
       c₁.toOrderedInformationState ≤ c₂.toOrderedInformationState ∧ c₁.inquiry ≤ c₂.inquiry :=
   Iff.rfl
 
+/-- Mood states are the pairs of an ordered information state and an inquiry partition. -/
+@[simps apply]
+def orderIsoProd : State W ≃o OrderedInformationState W × Setoid W where
+  toFun c := (c.toOrderedInformationState, c.inquiry)
+  invFun p := ⟨p.1, p.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_rel_iff' := Iff.rfl
+
+@[simp] theorem orderIsoProd_symm_apply (σ : OrderedInformationState W) (q : Setoid W) :
+    orderIsoProd.symm (σ, q) = ⟨σ, q⟩ := rfl
+
 theorem isAdditive_assert (p : W → Prop) : IsAdditive (assert · p) := fun c ↦
   congrArg₂ State.mk (OrderedInformationState.isAdditive_assert p c.toOrderedInformationState)
     (inf_top_eq _).symm

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Data.Set.Piecewise
 public import Mathlib.Dynamics.FixedPoints.Basic
 public import Mathlib.Order.BoundedOrder.Lattice
 public import Mathlib.Order.UpperLower.Basic
@@ -199,7 +200,27 @@ theorem isFixedPt_apply (hf : IsAdditive f) (σ : α) : IsFixedPt f (f σ) :=
 theorem isLowerSet_fixedPoints (hf : IsAdditive f) : IsLowerSet (fixedPoints f) :=
   fun _ _ hτσ hσ ↦ hf.isFixedPt_iff.2 (hτσ.trans (hf.isFixedPt_iff.1 hσ))
 
+variable {g : α → α}
+
+/-- The content of a sequence of two additive updates is the meet of their contents. -/
+theorem comp (hf : IsAdditive f) (hg : IsAdditive g) : IsAdditive (f ∘ g) := fun σ ↦ by
+  rw [comp_apply, comp_apply, hf (g σ), hg σ, hf (g ⊤), inf_assoc]
+
+/-- Additive updates commute, so a text of them is insensitive to the order of its sentences. -/
+theorem commute (hf : IsAdditive f) (hg : IsAdditive g) : Function.Commute f g := fun σ ↦ by
+  rw [hf (g σ), hg σ, hg (f σ), hf σ, inf_right_comm]
+
+/-- Applying an additive update to the members of a family indexed by `s` and leaving the other
+members alone is an additive update of the family. -/
+theorem piecewise {ι : Type*} (hf : IsAdditive f) (s : Set ι) [∀ i, Decidable (i ∈ s)] :
+    IsAdditive fun d : ι → α ↦ s.piecewise (fun i ↦ f (d i)) d := fun d ↦ funext fun i ↦ by
+  by_cases hi : i ∈ s
+  · simpa [Set.piecewise_eq_of_mem _ _ _ hi] using hf (d i)
+  · simp [Set.piecewise_eq_of_notMem _ _ _ hi]
+
 end IsAdditive
+
+theorem isAdditive_id : IsAdditive (id : α → α) := fun _ ↦ (inf_top_eq _).symm
 
 theorem isAdditive_inf_right (a : α) : IsAdditive (· ⊓ a) := fun _ ↦ by simp
 

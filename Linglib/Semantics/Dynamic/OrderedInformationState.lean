@@ -91,6 +91,15 @@ instance : CompleteLattice (OrderedInformationState W) :=
 
 theorem le_iff : σ ≤ τ ↔ σ.info ⊆ τ.info ∧ σ.order ≤ τ.order := Iff.rfl
 
+/-- Ordered information states are the pairs of a set of worlds and a preorder on worlds. -/
+@[simps]
+def orderIsoProd : OrderedInformationState W ≃o Set W × Preorder W where
+  toFun σ := (σ.info, σ.order)
+  invFun p := ⟨p.1, p.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_rel_iff' := Iff.rfl
+
 @[simp] theorem info_top : (⊤ : OrderedInformationState W).info = Set.univ := rfl
 @[simp] theorem order_top : (⊤ : OrderedInformationState W).order = ⊤ := rfl
 @[simp] theorem info_bot : (⊥ : OrderedInformationState W).info = ∅ := rfl
