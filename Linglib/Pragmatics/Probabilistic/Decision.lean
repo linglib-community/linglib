@@ -4,17 +4,19 @@ public import Linglib.Pragmatics.Probabilistic.Latent
 public import Linglib.Pragmatics.Probabilistic.Literal
 public import Linglib.Pragmatics.Probabilistic.Parse
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Core.Probability.Decision.Agent
 
 /-!
 # The decision-theoretic listener and speaker
 
 A listener who acts holds a belief after an utterance, and a decision problem gives a reward for
-each action at each state. [Her policy](##RSA.policy) is the softmax of an action's expected reward
-under her belief, and [the decision-theoretic speaker](##RSA.actionSpeaker) the softmax of the true
-reward of the listener's choice, in expectation, less a cost. The rule is `Kernel.softmax`, as for
-`RSA.speaker`, and only the utility differs: hers is linear in the listener's choice where
-`RSA.utility` is the logarithm of the listener's mass, so
-[she sends every utterance, false ones included](##RSA.actionSpeaker_apply_singleton_ne_zero).
+each action at each state. She is the agent with that belief and that reward (`RSA.agent`), and [her
+policy](##RSA.policy) is the softmax of an action's expected reward under her belief; [the
+decision-theoretic speaker](##RSA.actionSpeaker) the softmax of the true reward of the listener's
+choice, in expectation, less a cost. The rule is `Kernel.softmax`, as for `RSA.speaker`, and only
+the utility differs: hers is linear in the listener's choice where `RSA.utility` is the logarithm of
+the listener's mass, so [she sends every utterance, false ones
+included](##RSA.actionSpeaker_apply_singleton_ne_zero).
 
 ## References
 
@@ -37,32 +39,33 @@ section Policy
 variable {W U A : Type*} [MeasurableSpace W] [MeasurableSpace U] [Fintype U]
   [DiscreteMeasurableSpace U] [Fintype A] [MeasurableSpace A] [DiscreteMeasurableSpace A]
 
+/-- The listener who acts is the agent that believes her interpretation and is rewarded by `R`. -/
+abbrev agent (L : Kernel U W) (R : A → W → ℝ) : Agent U W A := ⟨L, fun w a ↦ R a w⟩
+
 /-- The listener's policy is the softmax at rationality `β` of an action's expected reward under her
-belief. -/
+belief, the policy of the agent `agent L R`. -/
 noncomputable def policy (β : ℝ) (L : Kernel U W) (R : A → W → ℝ) : Kernel U A :=
-  Kernel.softmax fun u a ↦ ((β * ∫ w, R a w ∂(L u) : ℝ) : EReal)
+  (agent L R).policy β
 
 variable (β : ℝ) (L : Kernel U W) (R : A → W → ℝ)
 
-instance : IsFiniteKernel (policy β L R) := inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
+instance : IsFiniteKernel (policy β L R) := inferInstanceAs (IsFiniteKernel (Agent.policy _ _))
 
 instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
-  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary A, EReal.coe_ne_bot _⟩)
-    (fun _ _ ↦ EReal.coe_ne_top _)
+  inferInstanceAs (IsMarkovKernel (Agent.policy _ _))
 
 variable {β} {u : U} {a a' : A} {w : W}
 
 /-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
     (policy β L R u).real {a} = Real.softmax (fun a ↦ β * ∫ w, R a w ∂(L u)) a :=
-  Kernel.softmax_coe_real_singleton (fun u a ↦ β * ∫ w, R a w ∂(L u)) u a
+  Agent.policy_real_singleton (a := agent L R)
 
 /-- Row preference of the policy is comparison of expected reward. -/
 theorem policy_real_lt_iff (hβ : 0 < β) :
     (policy β L R u).real {a} < (policy β L R u).real {a'} ↔
       ∫ w, R a w ∂(L u) < ∫ w, R a' w ∂(L u) :=
-  (Kernel.softmax_coe_real_singleton_lt_iff (fun u a ↦ β * ∫ w, R a w ∂(L u)) u).trans
-    (mul_lt_mul_iff_right₀ hβ)
+  Agent.policy_real_lt_iff (a := agent L R) hβ
 
 /-- A listener rewarded for guessing the state prefers the states the belief finds more
 probable. -/
@@ -77,10 +80,8 @@ theorem policy_single_real_lt_iff [Fintype W] [DecidableEq W] [DiscreteMeasurabl
 difference in expected reward. -/
 theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
-      Real.sigmoid (β * (∫ w, R a w ∂(L u) - ∫ w, R a' w ∂(L u))) := by
-  rw [policy, Kernel.softmax_real_singleton_of_pair haa' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _)
-    (fun _ ↦ EReal.coe_ne_top _) (fun c _ ↦ hall c), EReal.toReal_coe, EReal.toReal_coe]
-  ring_nf
+      Real.sigmoid (β * (∫ w, R a w ∂(L u) - ∫ w, R a' w ∂(L u))) :=
+  Agent.policy_real_of_pair (a := agent L R) haa' hall
 
 /-- A constant gain in every action's expected reward leaves the policy's own expected reward
 unchanged. -/
