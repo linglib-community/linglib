@@ -401,7 +401,7 @@ constituent question its context asks, and the answer particle it opens with. -/
 structure Link where
   host : Host
   contextWh : Option InterrogativePronoun := none
-  particle : Option Particle := none
+  particle : Option Morphology.Morph := none
 
 namespace Host
 
