@@ -6,7 +6,7 @@ public import Mathlib.Data.List.MinMax
 public import Mathlib.Order.Preorder.Chain
 public import Linglib.Core.Data.Tree.Cells
 public import Linglib.Data.Statistics.Hafeez2025
-public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Syntax.Voice.Causativization
 
 /-!
 # Hafeez (2025): Agentivity and causation in Urdu
@@ -58,7 +58,7 @@ prototype is unmediated and the MCV prototype mediated (`lexErg_mcv_mediation`),
 
 * The second participant is one variable with four values, so a scene type such as
   [-ContrHCEAF, +InanCEAF] and its shorter form [+InanCEAF] denote the same scenes.
-* The scene's mediation is the substrate's `Causation.Morphological.Mediation`: [+Mediation] is a
+* The scene's mediation is the substrate's `Causativization.Mediation`: [+Mediation] is a
   third participant between causer and result, the narrow sense of directness the dissertation
   distinguishes from the broad one.
 * A clip's scene is read from the clip coding of the Causality Across Languages project
@@ -86,7 +86,7 @@ prototype is unmediated and the MCV prototype mediated (`lexErg_mcv_mediation`),
 
 namespace Hafeez2025
 
-open Causation.Morphological Data.Statistics
+open Causativization Data.Statistics
 
 /-! ### Scenes -/
 
