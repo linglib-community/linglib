@@ -4,7 +4,9 @@ public import Mathlib.Data.List.Chain
 public import Mathlib.Order.Cover
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Reference.Character
 public import Linglib.Data.Examples.Traugott2010
+public import Studies.Eckardt2006
 
 /-!
 # Traugott (2010): (Inter)subjectivity and (Inter)subjectification: A Reassessment
@@ -19,6 +21,13 @@ level `a`. Equivalently, the levels coded by any given time form a lower set of 
 (`followsCline_iff_forall_prefix`). In such a history a level first arises after every level
 below it (`FollowsCline.idxOf_lt_idxOf`), so an intersubjective meaning is preceded by a
 subjective one.
+
+The uses of *be going to* are given characters, functions from contexts to interval properties
+(`Examples.Use.denote`): motion with intent is the progressive of movement *go* with an infinitive,
+and the later uses are the reanalysed entry of Eckardt with the event made imminent by the
+subject's intention or by the speaker's assessment. Each use is included in the later ones
+(`monotone_denote`), and a use has the nonsubjective level exactly when its character is constant
+in the context (`level_eq_nonSubjective_iff`).
 
 The binominals *a piece of*, *a bit of* and *a shred of* pass through the stages Partitive,
 Extended Partitive and Quantifier, and *a bit of* goes on to Degree Modifier and Adjunct. The
@@ -43,6 +52,7 @@ grammaticalization are the subjective ones (`forall_stage_le_iff`).
 * [traugott-2010]
 * [traugott-dasher-2002]
 * [himmelmann-2004]
+* [eckardt-2006]
 -/
 
 @[expose] public section
@@ -130,6 +140,71 @@ theorem followsCline_honorific :
       .intersubjective ∈ Example.ex_6.honorific.map Honorific.level := by
   decide
 
+/-! ### The uses of *be going to* -/
+
+section GoingTo
+
+open Aspect
+open Event (τ)
+open Eckardt2006 (goTo beGoingTo)
+
+variable {C W X E T : Type*} [LinearOrder T] [TemporalTrace E T]
+  (go : X → W → E → Prop) (prepare : E → E → Prop)
+  (intends : X → NonemptyInterval T → E → Prop) (assess : C → NonemptyInterval T → E → Prop)
+  (P : X → W → E → Prop) (x : X) {w : W} {c c' : C}
+
+/-- The uses are ordered as they arose. -/
+instance : LinearOrder Use := LinearOrder.lift' Use.ctorIdx (by decide)
+
+/-- (5): The character of each use of *be going to*. The motion use is the progressive of
+movement *go* with an infinitive. The other two are the reanalysed entry of [eckardt-2006], and
+differ in what makes the event imminent: the intention of the subject, or the assessment of the
+speaker of the context. -/
+def Examples.Use.denote : Use → Character C W (Set (NonemptyInterval T))
+  | .motion => fun _ ↦ UNBOUNDED (goTo go prepare P x)
+  | .intention => fun _ ↦ beGoingTo (intends x) P x
+  | .raising => fun c ↦ beGoingTo (assess c) P x
+
+variable {go prepare intends assess P x}
+
+/-- Each use of *be going to* is included in the uses that arose after it, where a going in
+progress shows the intention of what it prepares and the speaker takes as imminent what the
+subject intends. -/
+theorem monotone_denote (hprep : ∀ e e', prepare e e' → Event.Precedes e e')
+    (hint : ∀ w t e e', go x w e → prepare e e' → t ≤ τ e → intends x t e')
+    (hass : ∀ t e, intends x t e → assess c t e) :
+    Monotone fun u ↦ Use.denote go prepare intends assess P x u c w := by
+  have h₁ : UNBOUNDED (goTo go prepare P x) w ⊆ beGoingTo (intends x) P x w :=
+    Eckardt2006.unbounded_goTo_subset_beGoingTo hprep hint
+  have h₂ : beGoingTo (intends x) P x w ⊆ beGoingTo (assess c) P x w :=
+    Eckardt2006.beGoingTo_mono hass
+  intro u v huv
+  cases u <;> cases v <;>
+    first | exact le_rfl | exact h₁ | exact h₂ | exact h₁.trans h₂ | exact absurd huv (by decide)
+
+-- The raising use says different things where the speakers assess imminence differently.
+theorem denote_raising_ne {t : NonemptyInterval T} {e : E} (ht : t.Precedes (τ e))
+    (hP : P x w e) (hc : assess c t e) (hc' : ∀ e', P x w e' → ¬ assess c' t e') :
+    Use.denote go prepare intends assess P x .raising c ≠
+      Use.denote go prepare intends assess P x .raising c' := fun h ↦
+  let ⟨e', _, hi, hP'⟩ := (congrFun h w).subset ⟨e, ht, hc, hP⟩
+  hc' e' hP' hi
+
+/-- A use of *be going to* is nonsubjective exactly when it says the same in every context. -/
+theorem level_eq_nonSubjective_iff
+    (hne : ∃ c c' : C, Use.denote go prepare intends assess P x .raising c ≠
+      Use.denote go prepare intends assess P x .raising c') (u : Use) :
+    u.level = .nonSubjective ↔
+      ∀ c c' : C, Use.denote go prepare intends assess P x u c =
+        Use.denote go prepare intends assess P x u c' := by
+  obtain ⟨c, c', h⟩ := hne
+  cases u
+  · exact iff_of_true rfl fun _ _ ↦ rfl
+  · exact iff_of_true rfl fun _ _ ↦ rfl
+  · exact iff_of_false (by decide) fun h' ↦ h (h' c c')
+
+end GoingTo
+
 /-! ### Partitive to Quantifier -/
 
 /-- The stages are ordered as they are listed. -/
@@ -161,7 +236,6 @@ def Examples.Stage.path : List Stage :=
 
 theorem path_isChain : Stage.path.IsChain (· ⋖ ·) := by decide
 
-/-- The levels coded at the stages of each item, in the order of the stages, follow the cline. -/
 theorem followsCline_stages (i : Item) :
     FollowsCline ((Stage.path.filter (· ∈ stages i)).map Stage.level) := by
   cases i <;> decide
@@ -183,6 +257,11 @@ def Expansion.stage : Expansion → Stage
 
 theorem isLUB_range_stage : IsLUB (Set.range Expansion.stage) .quantifier :=
   ⟨by rintro _ ⟨e, rfl⟩; cases e <;> decide, fun _ hs ↦ hs ⟨.syntactic, rfl⟩⟩
+
+-- Semantic-pragmatic expansion alone, which [himmelmann-2004] takes as defining, gives the same.
+theorem stage_semanticPragmatic_le_iff {s : Stage} :
+    Expansion.semanticPragmatic.stage ≤ s ↔ .subjective ≤ s.level := by
+  cases s <;> decide
 
 /-- The stages by which all three expansions have occurred are those whose coded level is
 subjective. -/
