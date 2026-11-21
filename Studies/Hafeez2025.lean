@@ -1,9 +1,10 @@
 module
 
-public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.List.MinMax
-public import Mathlib.Data.Tree.Basic
+public import Mathlib.Order.Preorder.Chain
+public import Linglib.Core.Data.Tree.Cells
 public import Linglib.Data.Statistics.Hafeez2025
 public import Linglib.Semantics.Causation.Morphological
 
@@ -15,17 +16,18 @@ A *scene* is a causal chain classified by three variables: its causer, an intent
 controlling human causee (ContrHCEAF), a physically or a psychologically impacted human
 (PhysImpHCEAF, PsychImpHCEAF) or an inanimate affectee (InanCEAF); and whether a third participant
 mediates the chain (Mediation). A *scene type* is a conjunction of signed predictors such as
-[+IHCr, -Mediation, +InanCEAF], and a scene falls under it when it has each of them
-(`Scene.Fits`).
+[+IHCr, -Mediation, +InanCEAF], denoting the scenes that have each of them (`denote`). The
+scenes the clip design stages are those whose mediated chains pass through a human (`design`).
 
 [hafeez-2025] has twelve raters judge a description of each of the 43 clips of the Causality
 Across Languages project in each of seven Urdu response types, and fits one conditional inference
-tree per response type: a binary tree whose inner nodes test a signed predictor, so that the
-scene types of its leaves partition the scenes (`leaves_partition`). The *prototype* of a
-response type is the scene type of the leaf with the highest share of ceiling ratings, when that
-share exceeds 50% (`prototype`). The trees of `tree` have the leaves the dissertation tabulates
-(`tree_leaves`), and the prototypes derived from them are the ones it states
-(`prototype_iff_printed`); the lexical dative has none (`prototype_eq_none_iff`).
+tree per response type: a binary tree whose inner nodes test a signed predictor, so that its
+leaves are pairwise disjoint and cover the scenes (`pairwise_disjoint_leaves`,
+`foldr_sup_leaves`). The *prototype* of a response type is the set of scenes of the leaf with the
+highest share of ceiling ratings, when that share exceeds 50%, and empty otherwise (`prototype`).
+The trees of `tree` have the leaves the dissertation tabulates (`cells_tree`), and the prototypes
+derived from them are the ones it states (`prototype_inter_design`); the lexical dative has none
+(`prototype_eq_empty_iff`).
 
 The response types are the lexical ergative LEX-ERG (ergative causer, transitive verb), the
 lexical instrumental LEX-INST (instrumental causer, intransitive verb), the lexical dative
@@ -46,25 +48,26 @@ In the production study a response type's preferred scene types refine its proto
 with one of the response type's own model (`combined_comparable_individual`). The LEX-ERG
 prototype is unmediated and the MCV prototype mediated (`lexErg_mcv_mediation`), the order
 [comrie-1989]'s compactness generalization requires of a lexical and a morphological causative
-(`lexErg_mcv_comrieMonotone`).
+(`lexErg_mcv_isChain`).
 
 ## Implementation notes
 
 * The second participant is one variable with four values, so a scene type such as
-  [-ContrHCEAF, +InanCEAF] and its shorter form [+InanCEAF] hold of the same scenes.
+  [-ContrHCEAF, +InanCEAF] and its shorter form [+InanCEAF] denote the same scenes.
 * The scene's mediation is the substrate's `Causation.Morphological.Mediation`: [+Mediation] is a
   third participant between causer and result, the narrow sense of directness the dissertation
   distinguishes from the broad one.
-* A clip's scene is read from its name (`Clip.scene`), as the clip coding of the Causality Across
-  Languages project does.
+* A clip's scene is read from the clip coding of the Causality Across Languages project
+  (`Clip.scene`): an intentional human causer is a human who acts intentionally, a physically
+  impacted second participant a human without control whom the causer impacts, and so on.
 * The InanCEAF literal of an ADV scene type is read with the sign of the prose on the ADV tree,
   whose peak scene type has a human second participant (`sceneType`).
 * A printed prototype may be shorter than the scene type of its leaf: LEX-ERG's omits
-  [-Mediation]. The two hold of the same scenes among those the design can stage
-  (`Scene.Stageable`), and `not_stageable_fits_not_prototypical` is a scene outside the design
-  that separates them.
-* A tree is a mathlib `BinaryTree` of signed predictors, the scenes that pass a node's test going
-  left.
+  [-Mediation]. The two denote the same scenes of the design, and
+  `denote_lexErg_not_subset_prototype` is a scene outside the design that separates them.
+* A tree is a mathlib `BinaryTree` of signed predictors, and its leaves are the
+  `BinaryTree.cells` of the tree of the sets they denote, the scenes that pass a node's test
+  going left.
 
 ## References
 
@@ -112,102 +115,73 @@ structure Scene where
   mediation : Mediation
   deriving DecidableEq, Repr, Fintype
 
-/-- A scene the design can stage: a mediated chain's second participant is a human causee, never
-an inanimate affectee. -/
-def Scene.Stageable (s : Scene) : Prop :=
-  s.mediation = .indirect → s.causeeAffectee ≠ .inanimate
+/-- The scenes the design can stage: a mediated chain's second participant is a human causee,
+never an inanimate affectee. -/
+def design : Finset Scene := {s | s.mediation = .indirect → s.causeeAffectee ≠ .inanimate}
 
-instance : DecidablePred Scene.Stageable := fun _ ↦ inferInstanceAs (Decidable (_ → _))
-
-/-! ### Predictors and scene types -/
+/-! ### Scene types -/
 
 /-- The scenes a predictor is true of. -/
-def Scene.Is (s : Scene) : Predictor → Prop
-  | .ihcr => s.causer = .intentionalHuman
-  | .ahcr => s.causer = .accidentalHuman
-  | .nfcr => s.causer = .naturalForce
-  | .contrHCEAF => s.causeeAffectee = .controlling
-  | .physImpHCEAF => s.causeeAffectee = .physicallyImpacted
-  | .psychImpHCEAF => s.causeeAffectee = .psychologicallyImpacted
-  | .inanCEAF => s.causeeAffectee = .inanimate
-  | .mediation => s.mediation = .indirect
-
-instance (s : Scene) : DecidablePred s.Is := fun p ↦ by
-  cases p <;> unfold Scene.Is <;> infer_instance
+def scenes : Predictor → Finset Scene
+  | .ihcr => {s | s.causer = .intentionalHuman}
+  | .ahcr => {s | s.causer = .accidentalHuman}
+  | .nfcr => {s | s.causer = .naturalForce}
+  | .contrHCEAF => {s | s.causeeAffectee = .controlling}
+  | .physImpHCEAF => {s | s.causeeAffectee = .physicallyImpacted}
+  | .psychImpHCEAF => {s | s.causeeAffectee = .psychologicallyImpacted}
+  | .inanCEAF => {s | s.causeeAffectee = .inanimate}
+  | .mediation => {s | s.mediation = .indirect}
 
 /-- The scenes a signed predictor, [+F] or [-F], is true of. -/
-def Scene.Has (s : Scene) : Predictor × Sign → Prop
-  | (p, .plus) => s.Is p
-  | (p, .minus) => ¬s.Is p
+def literal : Predictor × Sign → Finset Scene
+  | (p, .plus) => scenes p
+  | (p, .minus) => (scenes p)ᶜ
 
-instance (s : Scene) : DecidablePred s.Has := fun
-  | (_, .plus) => inferInstanceAs (Decidable (s.Is _))
-  | (_, .minus) => inferInstanceAs (Decidable ¬_)
+/-- The scenes of a scene type, a conjunction of signed predictors. -/
+def denote (t : List (Predictor × Sign)) : Finset Scene := t.foldr (literal · ∩ ·) Finset.univ
 
-/-- The signed predictor with the opposite sign. -/
-def negate : Predictor × Sign → Predictor × Sign
-  | (p, .plus) => (p, .minus)
-  | (p, .minus) => (p, .plus)
+@[simp] theorem denote_nil : denote [] = Finset.univ := rfl
 
-@[simp] theorem Scene.has_negate (s : Scene) (l : Predictor × Sign) :
-    s.Has (negate l) ↔ ¬s.Has l := by
-  obtain ⟨p, _ | _⟩ := l <;> simp [negate, Has]
-
-/-- A scene falls under a scene type, a conjunction of signed predictors, when it has each. -/
-def Scene.Fits (s : Scene) (t : List (Predictor × Sign)) : Prop := ∀ l ∈ t, s.Has l
-
-instance (s : Scene) : DecidablePred s.Fits := fun _ ↦ List.decidableBAll _ _
-
-@[simp] theorem Scene.fits_nil (s : Scene) : s.Fits [] := by simp [Fits]
-
-@[simp] theorem Scene.fits_cons (s : Scene) (l : Predictor × Sign) (t : List (Predictor × Sign)) :
-    s.Fits (l :: t) ↔ s.Has l ∧ s.Fits t := by simp [Fits]
+@[simp] theorem denote_cons (l : Predictor × Sign) (t : List (Predictor × Sign)) :
+    denote (l :: t) = literal l ∩ denote t := rfl
 
 /-! ### The clips -/
 
-/-- A clip's scene, read off its name by the code of Appendix L: the first letter is the causer,
-the second the second participant, and a third letter O an inanimate affectee behind a mediating
-causee. The M of clip 22 names an umbrella, an inanimate affectee. -/
+/-- A clip's scene, by the definitions of the predictors: a human causer is intentional or
+accidental, a human second participant controls its action, is physically impacted by the causer
+or is neither, and the chain is mediated when a participant stands between the two ends. -/
 def Clip.scene (c : Clip) : Scene where
-  causer := match c.causer with
-    | .h => .intentionalHuman
-    | .u => .accidentalHuman
-    | .n => .naturalForce
-  causeeAffectee := if c.number = 22 then .inanimate else match c.second with
-    | .c => .controlling
-    | .u => .psychologicallyImpacted
-    | .m => .physicallyImpacted
-    | .o => .inanimate
-  mediation := if c.third.isSome then .indirect else .direct
+  causer :=
+    if !c.humanCauser then .naturalForce
+    else if c.intentionalCauser then .intentionalHuman else .accidentalHuman
+  causeeAffectee :=
+    if !c.humanSecond then .inanimate
+    else if c.controllingSecond then .controlling
+    else if c.impactedSecond then .physicallyImpacted else .psychologicallyImpacted
+  mediation := if c.intermediate then .indirect else .direct
 
-theorem clips_stageable : ∀ c ∈ clips, c.scene.Stageable := by decide
+theorem scene_mem_design : ∀ c ∈ clips, c.scene ∈ design := by decide
 
 /-! ### Conditional inference trees -/
 
-/-- The leaves of a tree whose root is node `n`, numbered in preorder as the dissertation's tree
-plots number them, each with the scene type of its path. -/
-def leafPaths : BinaryTree (Predictor × Sign) → ℕ → List (ℕ × List (Predictor × Sign))
-  | .nil, n => [(n, [])]
-  | .node l p f, n =>
-      (leafPaths p (n + 1)).map (Prod.map id (l :: ·)) ++
-        (leafPaths f (n + 1 + (p.numNodes + p.numLeaves))).map (Prod.map id (negate l :: ·))
+/-- The node numbers of the leaves of a tree whose root is node `n`, numbered in preorder as the
+dissertation's tree plots number them. -/
+def leafNumbers {α : Type*} : BinaryTree α → ℕ → List ℕ
+  | .nil, n => [n]
+  | .node _ l r, n => leafNumbers l (n + 1) ++ leafNumbers r (n + 1 + (l.numNodes + l.numLeaves))
 
-theorem countP_leafPaths (t : BinaryTree (Predictor × Sign)) (n : ℕ) (s : Scene) :
-    (leafPaths t n).countP (fun p ↦ s.Fits p.2) = 1 := by
-  induction t generalizing n with
-  | nil => simp [leafPaths]
-  | node l p f ihp ihf =>
-    by_cases h : s.Has l <;>
-      simp [leafPaths, List.countP_append, List.countP_map, Function.comp_def, h, ihp, ihf]
+/-- The opposite sign. -/
+def opposite : Sign → Sign
+  | .plus => .minus
+  | .minus => .plus
 
 /-- The scene type a printed conjunction of signed predictors denotes for a response type: the
 conjunction itself, with the InanCEAF literal of an ADV scene type read with the opposite sign. -/
 def sceneType (r : ResponseType) (t : List (Predictor × Sign)) : List (Predictor × Sign) :=
-  if r = .adv then t.map fun q ↦ if q.1 = .inanCEAF then negate q else q else t
+  if r = .adv then t.map fun q ↦ if q.1 = .inanCEAF then (q.1, opposite q.2) else q else t
 
-/-- The scene type of a leaf. -/
-def Leaf.sceneType (l : Leaf) : List (Predictor × Sign) :=
-  Hafeez2025.sceneType l.responseType l.path
+/-- The scenes of a leaf. -/
+def Leaf.scenes (l : Leaf) : Finset Scene := denote (sceneType l.responseType l.path)
 
 /-- The leaves of a response type's tree. -/
 def leavesOf (r : ResponseType) : List Leaf := leaves.filter (·.responseType = r)
@@ -230,66 +204,72 @@ def tree : ResponseType → Option (BinaryTree (Predictor × Sign))
       node (.inanCEAF, .plus) (node (.ihcr, .minus) nil nil) (node (.nfcr, .plus) nil nil)
   | _ => none
 
+variable {r : ResponseType} {t : BinaryTree (Predictor × Sign)}
+
 -- Table 18
-theorem tree_leaves (r : ResponseType) (t : BinaryTree (Predictor × Sign)) (h : tree r = some t) :
-    leafPaths t 1 = (leavesOf r).map fun l ↦ (l.node, l.sceneType) := by
+theorem leafNumbers_tree (h : tree r = some t) :
+    leafNumbers t 1 = (leavesOf r).map (·.node) := by
   cases r <;> cases h <;> decide
 
-/-- The scene types of the leaves of a response type's tree partition the scenes. -/
-theorem leaves_partition (r : ResponseType) (t : BinaryTree (Predictor × Sign))
-    (h : tree r = some t) (s : Scene) :
-    (leavesOf r).countP (fun l ↦ s.Fits l.sceneType) = 1 := by
-  simpa [tree_leaves r t h, List.countP_map, Function.comp_def] using countP_leafPaths t 1 s
+/-- The leaves the dissertation tabulates for a response type are the cells of its tree. -/
+theorem cells_tree (h : tree r = some t) :
+    (t.map literal).cells Finset.univ = (leavesOf r).map (·.scenes) := by
+  cases r <;> cases h <;> decide +kernel
+
+theorem pairwise_disjoint_leaves (h : tree r = some t) :
+    ((leavesOf r).map (·.scenes)).Pairwise Disjoint :=
+  cells_tree h ▸ BinaryTree.pairwise_disjoint_cells _ _
+
+theorem foldr_sup_leaves (h : tree r = some t) :
+    ((leavesOf r).map (·.scenes)).foldr (· ⊔ ·) ⊥ = Finset.univ :=
+  cells_tree h ▸ BinaryTree.foldr_sup_cells _ _
 
 /-! ### Response counts -/
 
-/-- The number of clips whose scene falls under a scene type. -/
-def clipCount (t : List (Predictor × Sign)) : ℕ := clips.countP fun c ↦ c.scene.Fits t
+/-- The number of clips whose scene is among the given ones. -/
+def clipCount (S : Finset Scene) : ℕ := clips.countP (·.scene ∈ S)
 
-theorem responses_le : ∀ l ∈ leaves, l.responses ≤ raters * clipCount l.sceneType := by
-  decide
+theorem responses_le : ∀ l ∈ leaves, l.responses ≤ raters * clipCount l.scenes := by
+  decide +kernel
 
 theorem responses_eq : ∀ l ∈ leaves,
     (l.responseType, l.node) ∉ [(ResponseType.lexInst, 8), (.lexDat, 5), (.ncrA, 7)] →
-      l.responses = raters * clipCount l.sceneType := by
-  decide
+      l.responses = raters * clipCount l.scenes := by
+  decide +kernel
 
 /-! ### Prototypes -/
 
 /-- The leaf with the peak share of ceiling ratings. -/
 def peakLeaf (r : ResponseType) : Option Leaf := (leavesOf r).argmax (·.ceilingPercent.toRat)
 
-/-- The prototype of a response type: the scene type of the peak leaf, when its share of ceiling
-ratings exceeds 50%. -/
-def prototype (r : ResponseType) : Option (List (Predictor × Sign)) :=
-  ((peakLeaf r).filter fun l ↦ 50 < l.ceilingPercent.toRat).map (·.sceneType)
+/-- The prototype of a response type: the scenes of the peak leaf, when its share of ceiling
+ratings exceeds 50%, and no scene otherwise. -/
+def prototype (r : ResponseType) : Finset Scene :=
+  ((peakLeaf r).filter fun l ↦ 50 < l.ceilingPercent.toRat).elim ∅ (·.scenes)
 
-/-- The scenes of the response type's prototype. -/
-def Prototypical (r : ResponseType) (s : Scene) : Prop := ∃ t ∈ prototype r, s.Fits t
+/-- The scenes of a printed prototype of a response type. -/
+def printed (r : ResponseType) (o : Option (List (Predictor × Sign))) : Finset Scene :=
+  o.elim ∅ fun t ↦ denote (sceneType r t)
 
-instance (r : ResponseType) : DecidablePred (Prototypical r) := fun s ↦
-  decidable_of_iff (∃ t ∈ (prototype r).toList, s.Fits t) (by simp [Prototypical])
-
-theorem prototype_eq_none_iff (r : ResponseType) :
-    prototype r = none ↔ r ∈ [.lexNom, .lexDat, .acc, .impCausRel] := by
+-- the lexical dative, whose peak is below 50%, and the three response types that were not rated
+theorem prototype_eq_empty_iff (r : ResponseType) :
+    prototype r = ∅ ↔ r ∈ [.lexNom, .lexDat, .acc, .impCausRel] := by
   cases r <;> decide +kernel
 
-theorem exists_clip_prototypical (r : ResponseType) (hr : prototype r ≠ none) :
-    ∃ c ∈ clips, Prototypical r c.scene := by
+theorem exists_clip_mem_prototype (r : ResponseType) (hr : prototype r ≠ ∅) :
+    ∃ c ∈ clips, c.scene ∈ prototype r := by
   cases r <;> first | decide +kernel | exact absurd (by decide +kernel) hr
 
-/-- The prototypes the dissertation states hold of the scenes of the derived prototypes, among
-the scenes the design can stage. -/
-theorem prototype_iff_printed :
-    ∀ row ∈ comparison, ∀ s : Scene, s.Stageable →
-      ((∃ t ∈ row.prototype, s.Fits (sceneType row.responseType t)) ↔
-        Prototypical row.responseType s) := by
+/-- The prototypes the dissertation states are the derived prototypes, among the scenes of the
+design. -/
+theorem prototype_inter_design :
+    ∀ row ∈ comparison,
+      printed row.responseType row.prototype ∩ design = prototype row.responseType ∩ design := by
   decide +kernel
 
-theorem not_stageable_fits_not_prototypical :
-    ∃ s : Scene, ¬s.Stageable ∧ s.Fits [(.ihcr, .plus), (.inanCEAF, .plus)] ∧
-      ¬Prototypical .lexErg s :=
-  ⟨⟨.intentionalHuman, .inanimate, .indirect⟩, by decide +kernel⟩
+theorem denote_lexErg_not_subset_prototype :
+    ¬denote [(.ihcr, .plus), (.inanCEAF, .plus)] ⊆ prototype .lexErg := by
+  decide +kernel
 
 /-! ### Agentivity -/
 
@@ -313,37 +293,37 @@ def CauseeAffectee.degree : CauseeAffectee → Option Degree
   | .physicallyImpacted | .psychologicallyImpacted => some .marginal
   | .inanimate => none
 
-theorem lexErg_full : ∀ s, Prototypical .lexErg s → s.causer.degree = some .full := by
+theorem lexErg_full : ∀ s ∈ prototype .lexErg, s.causer.degree = some .full := by
   decide +kernel
 
-theorem lexInst_marginal : ∀ s, Prototypical .lexInst s →
+theorem lexInst_marginal : ∀ s ∈ prototype .lexInst,
     s.causer.degree ≠ some .full ∧ s.causeeAffectee.degree = none := by
   decide +kernel
 
 /-- The prototype of the morphological causative pairs a fully agentive causer with a causee of
 induced agentivity. -/
-theorem mcv_full_induced : ∀ s, Prototypical .mcv s →
+theorem mcv_full_induced : ∀ s ∈ prototype .mcv,
     s.causer.degree = some .full ∧ s.causeeAffectee.degree = some .induced := by
   decide +kernel
 
-theorem adv_agentive : ∀ s, Prototypical .adv s → s.causeeAffectee.degree ≠ none := by
+theorem adv_agentive : ∀ s ∈ prototype .adv, s.causeeAffectee.degree ≠ none := by
   decide +kernel
 
-theorem nca_agentive : ∀ s, Prototypical .nca s →
+theorem nca_agentive : ∀ s ∈ prototype .nca,
     s.causer.degree ≠ none ∧ s.causeeAffectee.degree ≠ none := by
   decide +kernel
 
-theorem ncrA_nonagentive : ∀ s, Prototypical .ncrA s →
+theorem ncrA_nonagentive : ∀ s ∈ prototype .ncrA,
     s.causer.degree = none ∧ s.causeeAffectee.degree ≠ none := by
   decide +kernel
 
 /-! ### Production -/
 
-/-- The production study's preferences refine the acceptability prototypes: every stageable
-scene a rated response type's own model prefers it for is prototypical for it. -/
+/-- The production study's preferences refine the acceptability prototypes: the scenes of the
+design a rated response type's own model prefers it for are in its prototype. -/
 theorem individual_le_prototype :
-    ∀ row ∈ comparison, row.rated = .yes → ∀ t ∈ row.individualPreferences, ∀ s : Scene,
-      s.Stageable → s.Fits t → Prototypical row.responseType s := by
+    ∀ row ∈ comparison, row.rated = .yes → ∀ t ∈ row.individualPreferences,
+      denote t ∩ design ⊆ prototype row.responseType := by
   decide +kernel
 
 theorem combinedPreference_isSome_iff :
@@ -353,28 +333,30 @@ theorem combinedPreference_isSome_iff :
 -- Table 25
 theorem combined_comparable_individual :
     ∀ row ∈ comparison, ∀ t ∈ row.combinedPreference, ∃ t' ∈ row.individualPreferences,
-      (∀ s : Scene, s.Stageable → s.Fits t → s.Fits t') ∨
-        (∀ s : Scene, s.Stageable → s.Fits t' → s.Fits t) := by
+      denote t ∩ design ⊆ denote t' ∨ denote t' ∩ design ⊆ denote t := by
   decide +kernel
 
 -- Table 25
-theorem nca_combined_not_le_prototype :
+theorem nca_combined_not_subset_prototype :
     ∀ row ∈ comparison, row.responseType = .nca → ∃ t ∈ row.combinedPreference,
-      ∃ c ∈ clips, c.scene.Fits t ∧ ¬Prototypical .nca c.scene := by
+      ∃ c ∈ clips, c.scene ∈ denote t ∧ c.scene ∉ prototype .nca := by
   decide +kernel
 
 /-! ### Compactness and directness -/
 
 theorem lexErg_mcv_mediation :
-    ∀ s₁ s₂, Prototypical .lexErg s₁ → Prototypical .mcv s₂ → s₁.mediation < s₂.mediation := by
+    ∀ s₁ ∈ prototype .lexErg, ∀ s₂ ∈ prototype .mcv, s₁.mediation < s₂.mediation := by
   decide +kernel
 
-/-- The prototypes of the lexical ergative and of the morphological causative are ordered as
-[comrie-1989] orders a lexical and a morphological causative: the more compact construction has
-the more direct prototype. -/
-theorem lexErg_mcv_comrieMonotone (s₁ s₂ : Scene) (h₁ : Prototypical .lexErg s₁)
-    (h₂ : Prototypical .mcv s₂) :
-    CausativeConstruction.ComrieMonotone ⟨.lexical, s₁.mediation⟩ ⟨.morphological, s₂.mediation⟩ :=
-  fun _ ↦ (lexErg_mcv_mediation s₁ s₂ h₁ h₂).le
+/-- The prototypes of the lexical ergative and of the morphological causative form a chain of
+complexity and mediation, as [comrie-1989]'s generalization requires of a lexical and a
+morphological causative: the more compact construction has the more direct prototype. -/
+theorem lexErg_mcv_isChain {s₁ s₂ : Scene} (h₁ : s₁ ∈ prototype .lexErg)
+    (h₂ : s₂ ∈ prototype .mcv) :
+    IsChain (· ≤ ·)
+      ({(.lexical, s₁.mediation), (.morphological, s₂.mediation)} :
+        Set (CausativeComplexity × Mediation)) :=
+  IsChain.pair ⟨(by decide : CausativeComplexity.lexical ≤ .morphological),
+    (lexErg_mcv_mediation s₁ h₁ s₂ h₂).le⟩
 
 end Hafeez2025

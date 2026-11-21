@@ -9,9 +9,10 @@ public import Mathlib.Tactic.DeriveFintype
 
 Causative constructions vary along two scales: **morphological complexity**, from compact
 (lexical) to analytic (periphrastic), and **directness of mediation**, from a causer that brings
-about the result itself to one that acts through a causee. [comrie-1989]'s generalization is that
-within a language the more compact construction expresses the more direct causation
-(`CausativeConstruction.ComrieMonotone`). The causee of a causativized verb takes the highest
+about the result itself to one that acts through a causee. A causative construction is a point
+of `CausativeComplexity × Mediation`, and [comrie-1989]'s generalization is that within a language
+the more compact construction expresses the more direct causation: a language's constructions form
+a chain of the product order, `IsChain (· ≤ ·)`. The causee of a causativized verb takes the highest
 grammatical relation not already filled by the causer and the base verb's other arguments
 (`causeeDemotion`), so the causee sinks as the base valency rises (`causeeDemotion_antitone`).
 
@@ -56,24 +57,6 @@ inductive CausativeComplexity where
 
 /-- Lexical < morphological < periphrastic: the compactness scale, compact first. -/
 instance : LinearOrder CausativeComplexity := LinearOrder.lift' (·.ctorIdx) (by decide)
-
-/-! ### Causative constructions and Comrie's generalization -/
-
-/-- A causative construction, located on the two scales. -/
-structure CausativeConstruction where
-  /-- Morphological complexity (compact → analytic). -/
-  complexity : CausativeComplexity
-  /-- Direct vs. indirect mediation. -/
-  mediation : Mediation
-  deriving DecidableEq, Repr
-
-/-- **Comrie's monotonicity** ([comrie-1989]): if construction `c₁` is morphologically more
-compact than `c₂`, then `c₁` encodes at least as direct causation as `c₂`. -/
-def CausativeConstruction.ComrieMonotone (c₁ c₂ : CausativeConstruction) : Prop :=
-  c₁.complexity < c₂.complexity → c₁.mediation ≤ c₂.mediation
-
-instance (c₁ c₂ : CausativeConstruction) : Decidable (c₁.ComrieMonotone c₂) :=
-  inferInstanceAs (Decidable (_ → _))
 
 /-! ### The causee hierarchy -/
 

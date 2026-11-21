@@ -6,7 +6,7 @@
     "rawData": [
       {
         "url": "https://github.com/JuergenBohnemeyer/cal_stats",
-        "doc": "the R analyses of the Causality Across Languages project, with the project's clip coding in Non_df_input_csvs/ClipVariables.csv, which codes clips 11 and 21 with a human second participant and clip 22 without one, as the clip names do; the rating responses are not included"
+        "doc": "the R analyses of the Causality Across Languages project, with the project's clip coding in Non_df_input_csvs/ClipVariables.csv (CC0), the source of the coding columns of the clip table; the rating responses are not included"
       },
       {
         "url": "https://github.com/Saima-Hafeez/Agentivity-and-Causation-Hafeez-Sreeram",
@@ -62,53 +62,6 @@
           "name": "psychImpHCEAF",
           "label": "PsychImpHCEAF",
           "doc": "psychologically impacted human causee or affectee"
-        }
-      ]
-    },
-    {
-      "name": "CauserCode",
-      "doc": "The first letter of a clip name (Appendix L).",
-      "levels": [
-        {
-          "name": "h",
-          "label": "H",
-          "doc": "intentional human causer"
-        },
-        {
-          "name": "u",
-          "label": "U",
-          "doc": "unintentional causer"
-        },
-        {
-          "name": "n",
-          "label": "N",
-          "doc": "natural force causer"
-        }
-      ]
-    },
-    {
-      "name": "ParticipantCode",
-      "doc": "A later letter of a clip name (Appendix L).",
-      "levels": [
-        {
-          "name": "c",
-          "label": "C",
-          "doc": "controlling human causee or affectee"
-        },
-        {
-          "name": "u",
-          "label": "U",
-          "doc": "non-controlling human causee or affectee"
-        },
-        {
-          "name": "m",
-          "label": "M",
-          "doc": "physically impacted human causee or affectee, used once for an umbrella"
-        },
-        {
-          "name": "o",
-          "label": "O",
-          "doc": "inanimate affectee"
         }
       ]
     },
@@ -199,8 +152,8 @@
     {
       "name": "clips",
       "structure": "Clip",
-      "doc": "a stimulus clip, with the letters of its name and the predictors Table 4 marks present.",
-      "locator": "Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L",
+      "doc": "a stimulus clip, with the project's coding of its causal chain and the predictors Table 4 marks present.",
+      "locator": "Tables 3 and 4 (pp. 45-47, 51-52), with the coding columns from ClipVariables.csv of the raw data",
       "verified": "page-image",
       "columns": [
         {
@@ -209,19 +162,34 @@
           "doc": "The clip number, in the first presentation order."
         },
         {
-          "name": "causer",
-          "type": "CauserCode",
-          "doc": "The first letter of the clip name."
+          "name": "humanCauser",
+          "type": "bool",
+          "doc": "The causer is a human. (column CRHuman of ClipVariables.csv)"
         },
         {
-          "name": "second",
-          "type": "ParticipantCode",
-          "doc": "The second letter of the clip name."
+          "name": "intentionalCauser",
+          "type": "bool",
+          "doc": "The causer acts intentionally. (column CRIntentional of ClipVariables.csv)"
         },
         {
-          "name": "third",
-          "type": "option ParticipantCode",
-          "doc": "The third letter of the clip name, when it is the O of an inanimate affectee."
+          "name": "humanSecond",
+          "type": "bool",
+          "doc": "The second participant is a human. (column HumanCEorAF of ClipVariables.csv)"
+        },
+        {
+          "name": "controllingSecond",
+          "type": "bool",
+          "doc": "The second participant controls its action. (column CEorAFIntentional of ClipVariables.csv)"
+        },
+        {
+          "name": "impactedSecond",
+          "type": "bool",
+          "doc": "The causer physically impacts the second participant. (column DoesCRImpactNextPart of ClipVariables.csv)"
+        },
+        {
+          "name": "intermediate",
+          "type": "bool",
+          "doc": "A participant stands between the causer and the final affectee. (column IntPart of ClipVariables.csv)"
         },
         {
           "name": "present",
@@ -232,9 +200,12 @@
       "rows": [
         {
           "number": 1,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF",
@@ -244,9 +215,12 @@
         },
         {
           "number": 2,
-          "causer": "H",
-          "second": "C",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "IHCr",
             "ContrHCEAF"
@@ -255,9 +229,12 @@
         },
         {
           "number": 3,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -266,9 +243,12 @@
         },
         {
           "number": 4,
-          "causer": "H",
-          "second": "U",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "Mediation",
@@ -278,9 +258,12 @@
         },
         {
           "number": 5,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -289,9 +272,12 @@
         },
         {
           "number": 6,
-          "causer": "N",
-          "second": "M",
-          "third": null,
+          "humanCauser": false,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "NFCr",
             "PhysImpHCEAF"
@@ -300,9 +286,12 @@
         },
         {
           "number": 7,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -311,9 +300,12 @@
         },
         {
           "number": 8,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -322,9 +314,12 @@
         },
         {
           "number": 9,
-          "causer": "U",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "InanCEAF"
@@ -333,9 +328,12 @@
         },
         {
           "number": 10,
-          "causer": "U",
-          "second": "M",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "PhysImpHCEAF"
@@ -344,9 +342,12 @@
         },
         {
           "number": 11,
-          "causer": "H",
-          "second": "M",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": true,
           "present": [
             "IHCr",
             "InanCEAF",
@@ -357,9 +358,12 @@
         },
         {
           "number": 12,
-          "causer": "H",
-          "second": "U",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "IHCr",
             "PsychImpHCEAF"
@@ -368,9 +372,12 @@
         },
         {
           "number": 13,
-          "causer": "U",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "InanCEAF"
@@ -379,9 +386,12 @@
         },
         {
           "number": 14,
-          "causer": "H",
-          "second": "C",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "ContrHCEAF",
@@ -391,9 +401,12 @@
         },
         {
           "number": 15,
-          "causer": "N",
-          "second": "C",
-          "third": null,
+          "humanCauser": false,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "NFCr",
             "ContrHCEAF"
@@ -402,9 +415,12 @@
         },
         {
           "number": 16,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -413,9 +429,12 @@
         },
         {
           "number": 17,
-          "causer": "U",
-          "second": "C",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "AHCr",
             "ContrHCEAF"
@@ -424,9 +443,12 @@
         },
         {
           "number": 18,
-          "causer": "H",
-          "second": "C",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "ContrHCEAF",
@@ -436,9 +458,12 @@
         },
         {
           "number": 19,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -447,9 +472,12 @@
         },
         {
           "number": 20,
-          "causer": "H",
-          "second": "M",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "PhysImpHCEAF"
@@ -458,9 +486,12 @@
         },
         {
           "number": 21,
-          "causer": "U",
-          "second": "M",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": true,
           "present": [
             "AHCr",
             "InanCEAF",
@@ -471,9 +502,12 @@
         },
         {
           "number": 22,
-          "causer": "N",
-          "second": "M",
-          "third": null,
+          "humanCauser": false,
+          "intentionalCauser": false,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "NFCr",
             "PhysImpHCEAF"
@@ -482,9 +516,12 @@
         },
         {
           "number": 23,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF",
@@ -494,9 +531,12 @@
         },
         {
           "number": 24,
-          "causer": "H",
-          "second": "U",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "Mediation",
@@ -506,9 +546,12 @@
         },
         {
           "number": 25,
-          "causer": "U",
-          "second": "M",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "PhysImpHCEAF"
@@ -517,9 +560,12 @@
         },
         {
           "number": 26,
-          "causer": "N",
-          "second": "U",
-          "third": null,
+          "humanCauser": false,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "NFCr",
             "PsychImpHCEAF"
@@ -528,9 +574,12 @@
         },
         {
           "number": 27,
-          "causer": "H",
-          "second": "M",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": true,
           "present": [
             "IHCr",
             "Mediation",
@@ -540,9 +589,12 @@
         },
         {
           "number": 28,
-          "causer": "H",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "InanCEAF"
@@ -551,9 +603,12 @@
         },
         {
           "number": 29,
-          "causer": "H",
-          "second": "C",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "ContrHCEAF",
@@ -563,9 +618,12 @@
         },
         {
           "number": 30,
-          "causer": "U",
-          "second": "M",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "PhysImpHCEAF"
@@ -574,9 +632,12 @@
         },
         {
           "number": 31,
-          "causer": "U",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "InanCEAF"
@@ -585,9 +646,12 @@
         },
         {
           "number": 32,
-          "causer": "H",
-          "second": "C",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "IHCr",
             "ContrHCEAF"
@@ -596,9 +660,12 @@
         },
         {
           "number": 33,
-          "causer": "H",
-          "second": "C",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "ContrHCEAF",
@@ -608,9 +675,12 @@
         },
         {
           "number": 34,
-          "causer": "U",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "InanCEAF"
@@ -619,9 +689,12 @@
         },
         {
           "number": 35,
-          "causer": "U",
-          "second": "U",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "AHCr",
             "PsychImpHCEAF"
@@ -630,9 +703,12 @@
         },
         {
           "number": 36,
-          "causer": "H",
-          "second": "U",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "IHCr",
             "PsychImpHCEAF"
@@ -641,9 +717,12 @@
         },
         {
           "number": 37,
-          "causer": "N",
-          "second": "C",
-          "third": "O",
+          "humanCauser": false,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "NFCr",
             "ContrHCEAF",
@@ -653,9 +732,12 @@
         },
         {
           "number": 38,
-          "causer": "H",
-          "second": "C",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "ContrHCEAF",
@@ -665,9 +747,12 @@
         },
         {
           "number": 39,
-          "causer": "U",
-          "second": "O",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": false,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "AHCr",
             "InanCEAF"
@@ -676,9 +761,12 @@
         },
         {
           "number": 40,
-          "causer": "U",
-          "second": "U",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "AHCr",
             "Mediation",
@@ -688,9 +776,12 @@
         },
         {
           "number": 41,
-          "causer": "H",
-          "second": "C",
-          "third": "O",
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": true,
+          "impactedSecond": false,
+          "intermediate": true,
           "present": [
             "IHCr",
             "ContrHCEAF",
@@ -700,9 +791,12 @@
         },
         {
           "number": 42,
-          "causer": "H",
-          "second": "M",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": true,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": true,
+          "intermediate": false,
           "present": [
             "IHCr",
             "PhysImpHCEAF"
@@ -711,9 +805,12 @@
         },
         {
           "number": 43,
-          "causer": "U",
-          "second": "U",
-          "third": null,
+          "humanCauser": true,
+          "intentionalCauser": false,
+          "humanSecond": true,
+          "controllingSecond": false,
+          "impactedSecond": false,
+          "intermediate": false,
           "present": [
             "AHCr",
             "PsychImpHCEAF"

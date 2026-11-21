@@ -409,22 +409,21 @@ theorem control_rows :
 /-! ### Compactness and directness (§8.1) -/
 
 /-- The causative construction a row records, its formal complexity and its mediation. -/
-def CausativeConstruction.ofRow (row : Datum) : Option CausativeConstruction := do
+def construction? (row : Datum) : Option (CausativeComplexity × Mediation) := do
   guard (row.feature? "construction" = some "compactness")
-  return ⟨← row.parse? "complexity"
+  return (← row.parse? "complexity"
       [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
       ("analytic", .periphrastic)],
-    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)]⟩
+    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)])
 
 -- Nivkh (6)–(7) and English *Anton broke the stick* against *Anton brought it about that the
 -- stick broke*.
 theorem compactness_rows :
-    (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ CausativeConstruction.ofRow r₁,
+    (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ construction? r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language),
-        ∀ c₂ ∈ CausativeConstruction.ofRow r₂, c₁.ComrieMonotone c₂) ∧
+        ∀ c₂ ∈ construction? r₂, c₁ ≤ c₂ ∨ c₂ ≤ c₁) ∧
       ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
-        ∃ c₁ ∈ CausativeConstruction.ofRow r₁, ∃ c₂ ∈ CausativeConstruction.ofRow r₂,
-          c₁.complexity < c₂.complexity ∧ c₁.mediation < c₂.mediation := by
+        ∃ c₁ ∈ construction? r₁, ∃ c₂ ∈ construction? r₂, c₁.1 < c₂.1 ∧ c₁.2 < c₂.2 := by
   decide
 
 /-! ### Subject as a prototype (chapter 5) -/
