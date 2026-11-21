@@ -40,7 +40,9 @@ The product of the enveloping algebra, carried to `S(L)` along this equivalence,
 of [oudom-guin-2008], `RightPreLieAlgebra.product`. It is associative with unit `1`, and
 multiplying on the right by an element of `L` is the action:
 `a ⋆ X = a * ι X + D_X a` (`RightPreLieAlgebra.product_ι`).
-In particular `L` embeds in its enveloping algebra (`RightPreLieAlgebra.ι_injective`).
+On a monomial it is the symmetric brace of the action, `a ⋆ (X₁ ⋯ Xₙ) = a{X₁, …, Xₙ}`
+(`RightPreLieAlgebra.product_prod_ι`). Since `ι` is injective for the symmetric algebra, `L`
+embeds in its enveloping algebra (`RightPreLieAlgebra.ι_injective`).
 
 ## Implementation notes
 
@@ -48,11 +50,6 @@ In particular `L` embeds in its enveloping algebra (`RightPreLieAlgebra.ι_injec
 Here `S(L)` is first shown to be a free module of rank one over the enveloping algebra, comparing
 the filtrations directly, and the product is defined afterwards, so that its associativity is
 that of the enveloping algebra.
-
-## TODO
-
-* `product a (ι X₁ * ⋯ * ι Xₙ)` is the symmetric brace of the action on `a` and `{X₁, …, Xₙ}`,
-  by the recursion `RightPreLieAlgebra.product_mul_ι`.
 
 ## References
 
@@ -507,5 +504,45 @@ theorem product_ι_ι_sub (X Y : L) :
     product R (ι R L X) (ι R L Y) - product R (ι R L Y) (ι R L X) = ι R L (X * Y - Y * X) := by
   rw [product_ι_ι, product_ι_ι, mul_comm (ι R L Y), map_sub]
   abel
+
+/-! ### The brace formula -/
+
+/-- The action as a biadditive map, the form in which `RightPreLieRing.braceWith` takes it. -/
+def actAddHom : L →+ SymmetricAlgebra R L →+ SymmetricAlgebra R L :=
+  AddMonoidHom.mk' (fun X ↦ (act R X).toAddMonoidHom) fun X Y ↦ by rw [map_add]; rfl
+
+theorem actAddHom_apply (X : L) (a : SymmetricAlgebra R L) :
+    actAddHom R X a = a * ι R L X + derivation R X a := rfl
+
+theorem isRightLieAction_actAddHom : IsRightLieAction (actAddHom R (L := L)) :=
+  fun a Y Z ↦ act_act R a Y Z
+
+/-- The derivation of `X` on a monomial multiplies each of its factors in turn by `X`. -/
+theorem derivation_prod_ι (X : L) (M : Multiset L) :
+    derivation R X (M.map (ι R L)).prod =
+      ((M.mulOnce X).map fun D ↦ (D.map (ι R L)).prod).sum := by
+  induction M using Multiset.induction_on with
+  | empty => simp
+  | cons b M ih =>
+    rw [Multiset.map_cons, Multiset.prod_cons, Derivation.leibniz, ih, derivation_ι,
+      Multiset.mulOnce_cons, Multiset.map_cons, Multiset.sum_cons, Multiset.map_map]
+    simp only [smul_eq_mul, Function.comp_def, Multiset.map_cons, Multiset.prod_cons,
+      Multiset.sum_map_mul_left]
+    ring
+
+/-- The product with a monomial is the symmetric brace of the action:
+`a ⋆ (X₁ ⋯ Xₙ) = a{X₁, …, Xₙ}`. -/
+theorem product_prod_ι (a : SymmetricAlgebra R L) (M : Multiset L) :
+    product R a (M.map (ι R L)).prod = braceWith (actAddHom R) a M := by
+  induction hc : Multiset.card M using Nat.strong_induction_on generalizing M with | _ k ih =>
+  rcases Multiset.empty_or_exists_mem M with rfl | ⟨y, hy⟩
+  · rw [Multiset.map_zero, Multiset.prod_zero, product_one_right, braceWith_zero]
+  · obtain ⟨M, rfl⟩ := Multiset.exists_cons_of_mem hy
+    have hM : Multiset.card M < k := by rw [← hc, Multiset.card_cons]; exact Nat.lt_succ_self _
+    rw [Multiset.map_cons, Multiset.prod_cons, mul_comm, product_mul_ι,
+      braceWith_cons (isRightLieAction_actAddHom R), derivation_prod_ι, map_multiset_sum,
+      Multiset.map_map, ih _ hM M rfl, product_ι, actAddHom_apply]
+    refine congrArg _ (congrArg _ (Multiset.map_congr rfl fun D hD ↦ ?_))
+    exact ih _ (by rwa [Multiset.card_of_mem_mulOnce hD]) D rfl
 
 end RightPreLieAlgebra
