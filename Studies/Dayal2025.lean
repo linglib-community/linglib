@@ -180,6 +180,28 @@ theorem layers_derived :
       layerOf kke = some .sap ∧ layerOf quick = some .sap := by
   decide
 
+/-- A particle follows its layer when, with each sentence type it goes with, it may occur in
+exactly the recorded contexts that embed at least its layer. -/
+def FollowsLayer (p : Clause.Particle) : Prop :=
+  ∀ l ∈ layerOf p, ∀ t ∈ p.distribution.types, ∀ e, (t, e) ∈ p.distribution.recorded →
+    ((t, e) ∈ p.distribution.possible ↔ l ≤ layerOfContext e)
+
+instance (p : Clause.Particle) : Decidable (FollowsLayer p) := by
+  unfold FollowsLayer; infer_instance
+
+/-- The question particles of Japanese, Hindi-Urdu and English follow their layers: each may
+occur wherever the clause is at least as large as the layer it belongs to. -/
+theorem followsLayer :
+    ∀ p ∈ [ka, Japanese.Particles.no_, kke, Japanese.Particles.daroo, kya,
+      HindiUrdu.Particles.ya_nahi, quick], FollowsLayer p := by
+  decide
+
+/-- The subordinators *ki* and *koto* do not follow a layer: they occur in embedded clauses and
+are excluded from root clauses, the largest. -/
+theorem not_followsLayer_subordinators :
+    ¬ FollowsLayer HindiUrdu.Particles.ki ∧ ¬ FollowsLayer Japanese.Particles.koto := by
+  decide
+
 /-! ### Centering (25)–(26), (42)–(43) -/
 
 variable {W : Type*} {c : Set W} (H : Set (Set W)) (Dox : SetRel W W)

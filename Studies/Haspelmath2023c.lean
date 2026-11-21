@@ -166,12 +166,11 @@ def russian : Inventory Morph where
   rootClass m := (Haspelmath2021c.russian.rootClass m).or (questions.rootClass m)
 
 open Haspelmath2021c (znaesh zdorov li) in
-/-- Russian *li* directly follows a verb in *znaeš' li?* and an adjective in *zdorov li?*, so it
-is not an affix. -/
 theorem li_not_isAffix : ¬ russian.IsAffix russian.IsContentful li := fun h ↦ by
   have := h.rootClass_eq (w₁ := [znaesh, li]) (w₂ := [zdorov, li]) (i₁ := 1) (i₂ := 1)
     (by decide) (by decide) rfl rfl
-    (occursOn_succ_of_getElem? _ (by decide) rfl) (occursOn_succ_of_getElem? _ (by decide) rfl)
+    (occursOn_succ_of_getElem? (y := znaesh) (by decide) rfl)
+    (occursOn_succ_of_getElem? (y := zdorov) (by decide) rfl)
   revert this
   decide
 
@@ -223,8 +222,6 @@ theorem mi_isEnclitic :
       IsEnclitic turkish turkish.IsContentful m ∧ m.kind = .bound .after .clitic := by
   decide
 
-/-- On the verb forms alone *mI* would be an affix: it is its occurrence on a noun that makes it
-a clitic. -/
 theorem mi_isAffix_of_verbs :
     ∀ m ∈ Turkish.QuestionParticles.mi.morphs,
       ({ turkish with forms := turkish.forms.take 2 } : Inventory Morph).IsAffix
