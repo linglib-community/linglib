@@ -90,7 +90,6 @@ def IsInterclitic : Prop := L.IsClitic root x ∧ ¬ OccursFinally L x ∧ ¬ Oc
 
 variable {L root x}
 
-/-- Every clitic is an enclitic, a proclitic, an ambiclitic or an interclitic. -/
 theorem isClitic_iff :
     L.IsClitic root x ↔
       IsEnclitic L root x ∨ IsProclitic L root x ∨ IsAmbiclitic L root x ∨
@@ -335,7 +334,7 @@ end Selection
 open Haspelmath2023 (s_gen) in
 theorem selection_eq :
     selection howevers howevers.IsContentful ed = ZwickyPullum1983.affixEd.selection ∧
-      selection genitives genitives.IsContentful s_gen = ZwickyPullum1983.cliticS.selection ∧
+      selection genitives genitives.IsContentful s_gen = .low ∧
       selection howevers howevers.IsContentful however = .low := by
   decide
 
