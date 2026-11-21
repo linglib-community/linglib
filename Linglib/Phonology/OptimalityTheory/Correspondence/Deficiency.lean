@@ -14,15 +14,15 @@ public import Linglib.Core.Data.List.Matching
 MAX of [mccarthy-prince-1995] requires every element of one structure to have a correspondent in
 the other, and UNIFORMITY that no element of the second have several correspondents in the first.
 Where the correspondents an element may take are given by a relation `R` between two families of
-constituents, we define `Constraint.deficiency R l m` to count the members of `l` left unpaired
+constituents, we define `Correspondence.deficiency R l m` to count the members of `l` left unpaired
 when each member of `m` is paired with at most one of them: the length of `l` less the matching
 number of `R`. It is the least number of violations of MAX among the correspondences within
 `Correspondence.ofRel R l.get m.get` that satisfy UNIFORMITY
-(`Constraint.deficiency_le_maxViol`, `Constraint.exists_maxViol_eq_deficiency`).
+(`Correspondence.deficiency_le_maxViol`, `Correspondence.exists_maxViol_eq_deficiency`).
 
 MAX of the whole relation, which is alignment along `R`, is therefore at most the deficiency
-(`Constraint.maxViol_ofRel_le_deficiency`), and the deficiency is at most MAX of a relation
-contained in `R` that relates no two members to one (`Constraint.deficiency_le_maxViol_ofRel`).
+(`Correspondence.maxViol_ofRel_le_deficiency`), and the deficiency is at most MAX of a relation
+contained in `R` that relates no two members to one (`Correspondence.deficiency_le_maxViol_ofRel`).
 
 ## References
 
@@ -31,9 +31,7 @@ contained in `R` that relates no two members to one (`Constraint.deficiency_le_m
 
 @[expose] public section
 
-namespace OptimalityTheory.Constraint
-
-open Correspondence
+namespace OptimalityTheory.Correspondence
 
 variable {β γ : Type*} (R : β → γ → Prop) [DecidableRel R] [DecidableEq γ]
 
@@ -143,4 +141,4 @@ theorem deficiency_le_maxViol_ofRel {S : β → γ → Prop} [DecidableRel S] (h
 example : (ofRel (fun a b : ℕ ↦ a ≤ b) [0, 1].get [1].get).maxViol = 0 := by decide
 example : deficiency (fun a b : ℕ ↦ a ≤ b) [0, 1] [1] = 1 := by decide
 
-end OptimalityTheory.Constraint
+end OptimalityTheory.Correspondence

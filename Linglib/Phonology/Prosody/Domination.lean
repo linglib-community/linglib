@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Antichain

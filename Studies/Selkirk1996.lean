@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
-public import Linglib.Phonology.OptimalityTheory.Constraint.Alignment
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Alignment
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 
 /-!
