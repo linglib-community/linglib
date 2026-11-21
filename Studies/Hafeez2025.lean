@@ -36,9 +36,9 @@ MCV (the indirect causative *-va*), the adverbial ADV (two clauses joined by *ke
 'because'), the non-sentential cause adjunct NCA (a cause NP with *=par*, *wajhan=se* or *=se*)
 and the non-sentential causer adjunct NCrA (a causer NP with *wajhan=se*).
 
-Agentivity has three degrees, from intentionality and control: full for an intentional actor in
-control, induced for a causee in control of an action it was induced to perform, and marginal for
-a human involved without intention or control. The prototypes fix the degrees of the participants:
+Agentivity has three degrees, from intentionality and control (`Degree.of`): full for an
+intentional actor in control, induced for a causee in control of an action it was induced to
+perform, and marginal for a human involved without intention or control. The prototypes fix the degrees of the participants:
 the LEX-ERG causer is fully agentive (`lexErg_full`), the MCV prototype pairs a fully agentive
 causer with an induced causee (`mcv_full_induced`), and the NCrA causer is not agentive
 (`ncrA_nonagentive`).
@@ -65,6 +65,8 @@ prototype is unmediated and the MCV prototype mediated (`lexErg_mcv_mediation`),
 * A printed prototype may be shorter than the scene type of its leaf: LEX-ERG's omits
   [-Mediation]. The two denote the same scenes of the design, and
   `denote_lexErg_not_subset_prototype` is a scene outside the design that separates them.
+* The source gives no degree to an intentional actor without control; `Degree.of` counts it as
+  marginal, and no participant of the design is one.
 * A tree is a mathlib `BinaryTree` of signed predictors, and its leaves are the
   `BinaryTree.cells` of the tree of the sets they denote, the scenes that pass a node's test
   going left.
@@ -273,25 +275,47 @@ theorem denote_lexErg_not_subset_prototype :
 
 /-! ### Agentivity -/
 
-/-- The degrees of agentivity, from intentionality and control, the ability to initiate or
-terminate an action in [bohnemeyer-2004]'s sense: full for an intentional actor in control,
-marginal for an actor involved accidentally, without intention or control, and induced for a
-causee in control of an action it was induced to perform. -/
+/-- The degrees of agentivity. -/
 inductive Degree where
-  | full | induced | marginal
+  /-- An intentional actor in control. -/
+  | full
+  /-- A causee in control of an action it was induced to perform. -/
+  | induced
+  /-- A human involved without intention or control. -/
+  | marginal
   deriving DecidableEq, Repr
 
-/-- A causer's agentivity; a natural force has none. -/
-def Causer.degree : Causer → Option Degree
-  | .intentionalHuman => some .full
-  | .accidentalHuman => some .marginal
-  | .naturalForce => none
+/-- The degree of agentivity of a participant, from whether it is human, acts intentionally and
+has control, the ability to initiate or terminate an action in [bohnemeyer-2004]'s sense. Only a
+human has a degree. -/
+def Degree.of (human intentional control : Prop) [Decidable human] [Decidable intentional]
+    [Decidable control] : Option Degree :=
+  if ¬human then none
+  else if ¬control then some .marginal
+  else if intentional then some .full else some .induced
 
-/-- A second participant's agentivity; an inanimate affectee has none. -/
-def CauseeAffectee.degree : CauseeAffectee → Option Degree
-  | .controlling => some .induced
-  | .physicallyImpacted | .psychologicallyImpacted => some .marginal
-  | .inanimate => none
+/-- The causer is a human. -/
+def Causer.Human (c : Causer) : Prop := c ≠ .naturalForce
+
+/-- The causer acts intentionally, and so in control. -/
+def Causer.Intentional (c : Causer) : Prop := c = .intentionalHuman
+
+/-- The second participant is a human. -/
+def CauseeAffectee.Human (p : CauseeAffectee) : Prop := p ≠ .inanimate
+
+/-- The second participant controls the caused event. -/
+def CauseeAffectee.Control (p : CauseeAffectee) : Prop := p = .controlling
+
+instance : DecidablePred Causer.Human := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred Causer.Intentional := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred CauseeAffectee.Human := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred CauseeAffectee.Control := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+/-- A causer's agentivity: an intentional human is in control, an accidental one is not. -/
+def Causer.degree (c : Causer) : Option Degree := Degree.of c.Human c.Intentional c.Intentional
+
+/-- A second participant's agentivity: it acts, when it does, because it was induced to. -/
+def CauseeAffectee.degree (p : CauseeAffectee) : Option Degree := Degree.of p.Human False p.Control
 
 theorem lexErg_full : ∀ s ∈ prototype .lexErg, s.causer.degree = some .full := by
   decide +kernel
