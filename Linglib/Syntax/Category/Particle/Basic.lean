@@ -30,16 +30,16 @@ relative to that constituent or in the clause. A particle that goes with a claus
 /-- Where a particle stands, in its clause or beside a host constituent. -/
 inductive Particle.Position where
   | clauseInitial
-  /-- Second position (Wackernagel; Russian *li*). -/
+  /-- Second position. -/
   | secondPosition
-  /-- Clause-medial / middle field (German *denn*, Swedish *väl*). -/
+  /-- Clause-medial, as Yorùbá *kàn* between the subject and the verb. -/
   | clauseMedial
   | clauseFinal
-  /-- Immediately before a host constituent (adnominal focus particles). -/
+  /-- Immediately before a host constituent. -/
   | preHost
-  /-- Immediately after a host constituent (Turkish *mI*, Bulgarian *li* on the focus). -/
+  /-- Immediately after a host constituent, as Yorùbá *ni* after the fronted focus. -/
   | postHost
-  /-- No fixed position (Hindi-Urdu *kya:*). -/
+  /-- No fixed position. -/
   | free
   deriving DecidableEq, Repr, Fintype
 
@@ -47,7 +47,7 @@ inductive Particle.Position where
 structure Particle where
   /-- Surface form (romanization or orthographic). -/
   form : String
-  /-- Native-script form, when `form` is a romanization (Mandarin 吗). -/
+  /-- Native-script form, when `form` is a romanization. -/
   script : Option String := none
   /-- Host/position class; `none` when the source records no placement. -/
   position : Option Particle.Position := none
