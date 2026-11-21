@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
 # Nadathur and Lauer (2020)
@@ -483,6 +484,30 @@ theorem volitionalActionConstraint_iff_not_freeDecision (b : Bool) :
         ¬ FreeDecision permission true) ∧
       (VolitionalActionConstraint command [.WD ← b] .G .D .WD ↔ ¬ FreeDecision command true) := by
   cases b <;> decide
+
+section Observer
+
+open MeasureTheory ProbabilityTheory
+
+variable {U : Type*} [Fintype U] [Nonempty U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
+  (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
+
+/-- Whether the children dance, as a kernel from the contexts of a dynamics. -/
+noncomputable def dance : Kernel U Bool :=
+  Kernel.deterministic (fun u ↦ M.solve u .D) .of_discrete
+
+instance : IsMarkovKernel (dance M) := inferInstanceAs (IsMarkovKernel (Kernel.deterministic _ _))
+
+/-- Where the children make no free decision at Gurung's action, whether they dance tells an
+observer who knows what Gurung did nothing more about the context, their desire included. -/
+theorem posterior_dance_of_not_freeDecision {g : Bool} (h : ¬ FreeDecision M g) (ν : Measure U)
+    [IsProbabilityMeasure ν] (hν : ∀ u, ν {u} ≠ 0 → M.solve u .G = g) {d : Bool}
+    (hd : (dance M ∘ₘ ν) {d} ≠ 0) (u : U) : (((dance M)†ν) d).real {u} = ν.real {u} :=
+  posterior_real_singleton_of_forall_eq _ ν hd (fun u u' hu hu' ↦ by
+    simp only [dance, Kernel.deterministic_apply]
+    exact congrArg _ (of_not_not fun hne ↦ h ⟨u, u', hν u hu, hν u' hu', hne⟩)) u
+
+end Observer
 
 end Dancing
 

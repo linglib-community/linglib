@@ -113,12 +113,8 @@ theorem integral_posterior_plan_le_integral (hβ : 0 < β) (hxx' : x ≠ x')
 was exactly when that agent takes the action as often as the population does. -/
 theorem posterior_plan_real_singleton_eq_iff (x : A) {ω : Ω} (hω : μ {ω} ≠ 0) :
     (((plan p β o)†μ) x).real {ω} = μ.real {ω} ↔
-      ((p ω).policy β o).real {x} = (plan p β o ∘ₘ μ).real {x} := by
-  have hx := comp_plan_apply_singleton_ne_zero p o μ (β := β) x
-  have hm : (plan p β o ∘ₘ μ).real {x} ≠ 0 := by
-    rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
-  have hμ : μ.real {ω} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
-  rw [posterior_real_singleton _ μ hx, div_eq_iff hm, mul_right_inj' hμ, plan_apply]
+      ((p ω).policy β o).real {x} = (plan p β o ∘ₘ μ).real {x} :=
+  posterior_real_singleton_eq_iff _ μ (comp_plan_apply_singleton_ne_zero p o μ x) hω
 
 /-- The response of a population of agents is forced at an observation when every member has the
 same policy there, so that what an agent does does not depend on its reasons. -/
@@ -128,13 +124,8 @@ def ForcedAt (p : Ω → Agent O S A) (β : ℝ) (o : O) : Prop :=
 variable {p o} in
 /-- Where the response is forced, an action tells the observer nothing about the agent. -/
 theorem ForcedAt.posterior_plan_real_singleton (h : ForcedAt p β o) (x : A) (ω : Ω) :
-    (((plan p β o)†μ) x).real {ω} = μ.real {ω} := by
-  have hx := comp_plan_apply_singleton_ne_zero p o μ (β := β) x
-  obtain hω | hω := eq_or_ne (μ {ω}) 0
-  · rw [posterior_real_singleton _ μ hx, measureReal_def, hω]; simp
-  · refine (posterior_plan_real_singleton_eq_iff p o μ x hω).2 ?_
-    rw [Measure.comp_real_singleton_eq_integral]
-    simp_rw [plan_apply, fun ω' ↦ h ω' ω]
-    simp
+    (((plan p β o)†μ) x).real {ω} = μ.real {ω} :=
+  posterior_real_singleton_of_forall_eq _ μ (comp_plan_apply_singleton_ne_zero p o μ x)
+    (fun ω ω' _ _ ↦ h ω ω') ω
 
 end Agent
