@@ -40,7 +40,7 @@ out the unmarked form only when it spells out the marked one
 namespace BeaversEtAl2021
 
 open Presupposition ArgumentStructure
-open BeaversKoontzGarboden2020 (DeniesChange Passes passes_iff kinds? diagnostic? againAt)
+open BeaversKoontzGarboden2020 (DeniesChange Passes passes_iff againAt)
 open scoped SetRel ModalLogic
 
 /-! ### State predicates that entail change -/
@@ -203,6 +203,19 @@ theorem oromo_long :
   decide
 
 /-! ### The judgments -/
+
+/-- The signature of a row's root, the least of its class. -/
+def kinds? (d : Datum) : Option Root :=
+  (Examples.rootClass d).map fun
+    | .propertyConcept => Root.propertyConcept
+    | .result => Root.pureResult
+
+/-- The diagnostic a row tests. -/
+def diagnostic? (d : Datum) : Option BeaversKoontzGarboden2020.Diagnostic :=
+  (Examples.diagnostic d).bind fun
+    | .changeDenial => some .changeDenial
+    | .restitutiveAgain => some .restitutive
+    | .additiveRestitutive => none
 
 /-- A row is accepted exactly when its root passes its diagnostic, except for (13), which only
 some speakers accept, and Kakataibo (26). -/

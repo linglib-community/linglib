@@ -1,344 +1,389 @@
-[
-  {
-    "id": "beavers_etal2021_1c",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(1c)"},
-    "language": "stan1293",
-    "primaryText": "The vase cracked.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["root class", "result"],
-      ["form", "monomorphemic verb"]
-    ],
-    "comment": "Change of state expressed by a basic verb, unlike 'became black' or 'flattened'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_7a",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(7a)"},
-    "language": "stan1293",
-    "primaryText": "Look at the bright picture on your left.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["root class", "property concept"],
-      ["form", "basic stative"]
-    ],
-    "comment": "PC roots show both a simple adjective and a deverbal one ('brightened', (7b)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_10a",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(10a)"},
-    "language": "stan1293",
-    "primaryText": "The bright photo has never brightened.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "property concept"]
-    ],
-    "comment": "Simple PC adjectives survive change denial; deverbal '#brightened photo' does not.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_11c",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(11c)"},
-    "language": "stan1293",
-    "primaryText": "The shattered vase has never shattered.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "An artist makes ceramic pieces that, properly assembled, would form a vase.",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "result"]
-    ],
-    "comment": "Contradictory even in a prototypical-result context: the adjective entails prior change.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_13",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(13)"},
-    "language": "stan1293",
-    "primaryText": "The window is broken but it never broke. It was manufactured that way.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "result"],
-      ["judgedBy", "some speakers"]
-    ],
-    "comment": "Printed unmarked; 'several speakers (including a referee) have told us that broken applied to physical artifacts does not entail change, such that 13 should be acceptable'. Lexical drift toward a 'not functioning' sense, expected variation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_15a",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(15a)"},
-    "language": "stan1293",
-    "primaryText": "John sharpened the knife again.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "John buys a knife forged already sharp, uses it until it becomes blunt, and sharpens it with a whetting stone.",
-    "judgment": "acceptable",
-    "readings": [
-      {"name": "restitutive: could be just one sharpening", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "property concept"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_16a",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(16a)"},
-    "language": "stan1293",
-    "primaryText": "Chris thawed the meat again.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Chris kills a rabbit, butchers it, freezes the fresh meat for a week, then puts it out to thaw.",
-    "judgment": "unacceptable",
-    "readings": [
-      {"name": "repetitive: necessarily two defrostings", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "result"]
-    ],
-    "comment": "Result roots lack the restitutive reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_25a",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(25a)"},
-    "language": "cash1251",
-    "primaryText": "madin papanka ëdkitëkënia.",
-    "glossedTokens": [
-      ["madi=n", "sand=POSS"], ["papa=n=ka=a", "father=A/S=VAL=3A/S"],
-      ["ëd-ki-tëkën-i-a", "dry-INTR-again-IPFV-NPROX"]
-    ],
-    "translation": "The desert is getting dry again.",
-    "context": "The desert starts off dry. Then it is made nondry. Then it turns dry again.",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "property concept"]
-    ],
-    "comment": "Printed unmarked: Kakataibo PC roots generally allow restitutive readings under -tëkën, as in this example, while result roots usually resist them (25b).",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_26",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(26)"},
-    "language": "cash1251",
-    "primaryText": "maxákana rë(të)tëkëa.",
-    "glossedTokens": [
-      ["maxat=ka=na", "stone=VAL=1A/S"], ["rëtë-tëkën-a", "kill-again-PFV"]
-    ],
-    "translation": "I killed the stone again.",
-    "context": "The stone was always dead. Then it was brought to life. Then I kill it.",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "result"]
-    ],
-    "comment": "Unlike English 'kill': rëtë means 'not alive', applicable to never-alive inanimates — expected lexicalization variation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_28a",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(28a)"},
-    "language": "kiny1244",
-    "primaryText": "Icy-uma gi-hor-a gi-tyay-e.",
-    "glossedTokens": [
-      ["Icy-uma", "7-knife"], ["gi-hor-a", "7S-always-FV"], ["gi-tyay-e", "7S-sharp-PFV"]
-    ],
-    "translation": "The knife has always been sharp.",
-    "context": "Habimana buys a knife that is manufactured very sharp.",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "property concept"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_28b",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(28b)"},
-    "language": "kiny1244",
-    "primaryText": "Umu-keri u-hor-a u-tek-ets-e.",
-    "glossedTokens": [
-      ["Umu-keri", "3-fruit"], ["u-hor-a", "3S-always-FV"], ["u-tek-ets-e", "3S-cook-STV-PFV"]
-    ],
-    "translation": "The fruit has always been cooked.",
-    "context": "A hypothetical fruit that is always soft and ripe since it first grows and can be eaten any time.",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "result"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_29b",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(29b)"},
-    "language": "kiny1244",
-    "primaryText": "Karemera y-ongey-e ku-men-a iki-rahure.",
-    "glossedTokens": [
-      ["Karemera", "Karemera"], ["y-ongey-e", "1S-again-PFV"], ["ku-men-a", "INF-break-FV"],
-      ["iki-rahure", "7-glass"]
-    ],
-    "translation": "Karemera broke the glass again.",
-    "context": "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Karemera then breaks.",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "result"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_31",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(31)"},
-    "language": "hebr1245",
-    "primaryText": "ha-gesher 'arox 'aval 'afpaʕam lo hu'arax.",
-    "glossedTokens": [
-      ["ha-gesher", "the-bridge"], ["'arox", "long"], ["'aval", "but"], ["'afpaʕam", "never"],
-      ["lo", "NEG"], ["hu'arax", "lengthened.PASS"]
-    ],
-    "translation": "The bridge is long but (was) never lengthened.",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "property concept"]
-    ],
-    "comment": "With deverbal mu'arax 'lengthened' in place of 'arox the sentence is contradictory.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_32",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(32)"},
-    "language": "hebr1245",
-    "primaryText": "ha-zxuxit menupecet, 'aval hi 'afpaʕam lo hitnapca.",
-    "glossedTokens": [
-      ["ha-zxuxit", "the-glass"], ["menupecet", "shattered"], ["'aval", "but"], ["hi", "it"],
-      ["'afpaʕam", "never"], ["lo", "NEG"], ["hitnapca", "shattered.REFL"]
-    ],
-    "translation": "The glass is shattered, but it never shattered.",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "result"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_33b",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(33b)"},
-    "language": "hebr1245",
-    "primaryText": "Kim nipca šuv/mexadaš 'et ha-zxuxit.",
-    "glossedTokens": [
-      ["Kim", "Kim"], ["nipca", "shattered"], ["šuv/mexadaš", "again/anew"], ["'et", "ACC"],
-      ["ha-zxuxit", "the-glass"]
-    ],
-    "translation": "Kim shattered the glass again.",
-    "context": "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Kim then shatters.",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "result"]
-    ],
-    "comment": "mexadaš 'anew' generates only restitutive readings, similar to English re- prefixation.",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_35b",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(35b)"},
-    "language": "mara1378",
-    "primaryText": "kāc phoɖ-leli āhe pəɳ ti kədhi phuʈ-leli nāhi.",
-    "glossedTokens": [
-      ["kāc", "glass.NOM.F.SG"], ["phoɖ-leli", "shatter.TR-PART.F.SG"], ["āhe", "be.PRS.3SG"],
-      ["pəɳ", "but"], ["ti", "DEM.F.SG"], ["kədhi", "ever"],
-      ["phuʈ-leli", "shatter.INTR-PART.F.SG"], ["nāhi", "NEG"]
-    ],
-    "translation": "The glass is shattered, but it never shattered.",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "change denial"],
-      ["root class", "result"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_36b",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(36b)"},
-    "language": "mara1378",
-    "primaryText": "Kim-ne parat kach phoɖ-li.",
-    "glossedTokens": [
-      ["Kim-ne", "Kim-ERG"], ["parat", "again"], ["kach", "glass.F.SG.NOM"],
-      ["phoɖ-li", "break-PFV.F.SG"]
-    ],
-    "translation": "Kim broke the glass again.",
-    "context": "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Kim then shatters.",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "restitutive again"],
-      ["root class", "result"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "beavers_etal2021_38b",
-    "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(38b)"},
-    "language": "mode1248",
-    "primaryText": "I Maria eftiakse ke tin tileorasi.",
-    "glossedTokens": [
-      ["I", "the"], ["Maria", "Mary"], ["eftiakse", "fixed"], ["ke", "also"], ["tin", "the"],
-      ["tileorasi", "television"]
-    ],
-    "translation": "Mary fixed the television too.",
-    "context": "Mary bought a new TV and a new laptop. The laptop was working fine, but the TV was not. Mary brought her tools.",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "additive restitutive"],
-      ["root class", "result"]
-    ],
-    "comment": "Spathas's additive test: ftiahno 'fix' rejects the restitutive-like additive reading, patterning with result roots.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "root class",
+      "lean": "rootClass",
+      "type": "RootClass",
+      "doc": "The two classes of root the paper compares.",
+      "levels": [
+        {
+          "name": "propertyConcept",
+          "label": "property concept",
+          "doc": "a root that describes a state and entails no change"
+        },
+        {
+          "name": "result",
+          "label": "result",
+          "doc": "a root whose state arises from a change"
+        }
+      ]
+    },
+    {
+      "key": "diagnostic",
+      "lean": "diagnostic",
+      "type": "Diagnostic",
+      "doc": "The diagnostics the examples apply.",
+      "levels": [
+        {
+          "name": "changeDenial",
+          "label": "change denial",
+          "doc": "a continuation that denies that a change gave rise to the state"
+        },
+        {
+          "name": "restitutiveAgain",
+          "label": "restitutive again",
+          "doc": "*again* with a reading on which only the state held before"
+        },
+        {
+          "name": "additiveRestitutive",
+          "label": "additive restitutive",
+          "doc": "an additive particle with a restitutive reading"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "beavers_etal2021_1c",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(1c)"},
+      "language": "stan1293",
+      "primaryText": "The vase cracked.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["root class", "result"],
+        ["form", "monomorphemic verb"]
+      ],
+      "comment": "Change of state expressed by a basic verb, unlike 'became black' or 'flattened'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_7a",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(7a)"},
+      "language": "stan1293",
+      "primaryText": "Look at the bright picture on your left.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["root class", "property concept"],
+        ["form", "basic stative"]
+      ],
+      "comment": "PC roots show both a simple adjective and a deverbal one ('brightened', (7b)).",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_10a",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(10a)"},
+      "language": "stan1293",
+      "primaryText": "The bright photo has never brightened.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "property concept"]
+      ],
+      "comment": "Simple PC adjectives survive change denial; deverbal '#brightened photo' does not.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_11c",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(11c)"},
+      "language": "stan1293",
+      "primaryText": "The shattered vase has never shattered.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "An artist makes ceramic pieces that, properly assembled, would form a vase.",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "result"]
+      ],
+      "comment": "Contradictory even in a prototypical-result context: the adjective entails prior change.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_13",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(13)"},
+      "language": "stan1293",
+      "primaryText": "The window is broken but it never broke. It was manufactured that way.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "result"],
+        ["judgedBy", "some speakers"]
+      ],
+      "comment": "Printed unmarked; 'several speakers (including a referee) have told us that broken applied to physical artifacts does not entail change, such that 13 should be acceptable'. Lexical drift toward a 'not functioning' sense, expected variation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_15a",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(15a)"},
+      "language": "stan1293",
+      "primaryText": "John sharpened the knife again.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "John buys a knife forged already sharp, uses it until it becomes blunt, and sharpens it with a whetting stone.",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "restitutive: could be just one sharpening", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "property concept"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_16a",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(16a)"},
+      "language": "stan1293",
+      "primaryText": "Chris thawed the meat again.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Chris kills a rabbit, butchers it, freezes the fresh meat for a week, then puts it out to thaw.",
+      "judgment": "unacceptable",
+      "readings": [
+        {"name": "repetitive: necessarily two defrostings", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "result"]
+      ],
+      "comment": "Result roots lack the restitutive reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_25a",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(25a)"},
+      "language": "cash1251",
+      "primaryText": "madin papanka ëdkitëkënia.",
+      "glossedTokens": [
+        ["madi=n", "sand=POSS"], ["papa=n=ka=a", "father=A/S=VAL=3A/S"],
+        ["ëd-ki-tëkën-i-a", "dry-INTR-again-IPFV-NPROX"]
+      ],
+      "translation": "The desert is getting dry again.",
+      "context": "The desert starts off dry. Then it is made nondry. Then it turns dry again.",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "property concept"]
+      ],
+      "comment": "Printed unmarked: Kakataibo PC roots generally allow restitutive readings under -tëkën, as in this example, while result roots usually resist them (25b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_26",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(26)"},
+      "language": "cash1251",
+      "primaryText": "maxákana rë(të)tëkëa.",
+      "glossedTokens": [
+        ["maxat=ka=na", "stone=VAL=1A/S"], ["rëtë-tëkën-a", "kill-again-PFV"]
+      ],
+      "translation": "I killed the stone again.",
+      "context": "The stone was always dead. Then it was brought to life. Then I kill it.",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "result"]
+      ],
+      "comment": "Unlike English 'kill': rëtë means 'not alive', applicable to never-alive inanimates — expected lexicalization variation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_28a",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(28a)"},
+      "language": "kiny1244",
+      "primaryText": "Icy-uma gi-hor-a gi-tyay-e.",
+      "glossedTokens": [
+        ["Icy-uma", "7-knife"], ["gi-hor-a", "7S-always-FV"], ["gi-tyay-e", "7S-sharp-PFV"]
+      ],
+      "translation": "The knife has always been sharp.",
+      "context": "Habimana buys a knife that is manufactured very sharp.",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "property concept"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_28b",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(28b)"},
+      "language": "kiny1244",
+      "primaryText": "Umu-keri u-hor-a u-tek-ets-e.",
+      "glossedTokens": [
+        ["Umu-keri", "3-fruit"], ["u-hor-a", "3S-always-FV"], ["u-tek-ets-e", "3S-cook-STV-PFV"]
+      ],
+      "translation": "The fruit has always been cooked.",
+      "context": "A hypothetical fruit that is always soft and ripe since it first grows and can be eaten any time.",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "result"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_29b",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(29b)"},
+      "language": "kiny1244",
+      "primaryText": "Karemera y-ongey-e ku-men-a iki-rahure.",
+      "glossedTokens": [
+        ["Karemera", "Karemera"], ["y-ongey-e", "1S-again-PFV"], ["ku-men-a", "INF-break-FV"],
+        ["iki-rahure", "7-glass"]
+      ],
+      "translation": "Karemera broke the glass again.",
+      "context": "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Karemera then breaks.",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "result"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_31",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(31)"},
+      "language": "hebr1245",
+      "primaryText": "ha-gesher 'arox 'aval 'afpaʕam lo hu'arax.",
+      "glossedTokens": [
+        ["ha-gesher", "the-bridge"], ["'arox", "long"], ["'aval", "but"], ["'afpaʕam", "never"],
+        ["lo", "NEG"], ["hu'arax", "lengthened.PASS"]
+      ],
+      "translation": "The bridge is long but (was) never lengthened.",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "property concept"]
+      ],
+      "comment": "With deverbal mu'arax 'lengthened' in place of 'arox the sentence is contradictory.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_32",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(32)"},
+      "language": "hebr1245",
+      "primaryText": "ha-zxuxit menupecet, 'aval hi 'afpaʕam lo hitnapca.",
+      "glossedTokens": [
+        ["ha-zxuxit", "the-glass"], ["menupecet", "shattered"], ["'aval", "but"], ["hi", "it"],
+        ["'afpaʕam", "never"], ["lo", "NEG"], ["hitnapca", "shattered.REFL"]
+      ],
+      "translation": "The glass is shattered, but it never shattered.",
+      "context": "",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "result"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_33b",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(33b)"},
+      "language": "hebr1245",
+      "primaryText": "Kim nipca šuv/mexadaš 'et ha-zxuxit.",
+      "glossedTokens": [
+        ["Kim", "Kim"], ["nipca", "shattered"], ["šuv/mexadaš", "again/anew"], ["'et", "ACC"],
+        ["ha-zxuxit", "the-glass"]
+      ],
+      "translation": "Kim shattered the glass again.",
+      "context": "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Kim then shatters.",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "result"]
+      ],
+      "comment": "mexadaš 'anew' generates only restitutive readings, similar to English re- prefixation.",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_35b",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(35b)"},
+      "language": "mara1378",
+      "primaryText": "kāc phoɖ-leli āhe pəɳ ti kədhi phuʈ-leli nāhi.",
+      "glossedTokens": [
+        ["kāc", "glass.NOM.F.SG"], ["phoɖ-leli", "shatter.TR-PART.F.SG"], ["āhe", "be.PRS.3SG"],
+        ["pəɳ", "but"], ["ti", "DEM.F.SG"], ["kədhi", "ever"],
+        ["phuʈ-leli", "shatter.INTR-PART.F.SG"], ["nāhi", "NEG"]
+      ],
+      "translation": "The glass is shattered, but it never shattered.",
+      "context": "",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "change denial"],
+        ["root class", "result"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_36b",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(36b)"},
+      "language": "mara1378",
+      "primaryText": "Kim-ne parat kach phoɖ-li.",
+      "glossedTokens": [
+        ["Kim-ne", "Kim-ERG"], ["parat", "again"], ["kach", "glass.F.SG.NOM"],
+        ["phoɖ-li", "break-PFV.F.SG"]
+      ],
+      "translation": "Kim broke the glass again.",
+      "context": "Small pieces of glass, manufactured in that size, are assembled into a single pane, which Kim then shatters.",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "restitutive again"],
+        ["root class", "result"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "beavers_etal2021_38b",
+      "source": {"bibkey": "beavers-etal-2021", "paperLabel": "(38b)"},
+      "language": "mode1248",
+      "primaryText": "I Maria eftiakse ke tin tileorasi.",
+      "glossedTokens": [
+        ["I", "the"], ["Maria", "Mary"], ["eftiakse", "fixed"], ["ke", "also"], ["tin", "the"],
+        ["tileorasi", "television"]
+      ],
+      "translation": "Mary fixed the television too.",
+      "context": "Mary bought a new TV and a new laptop. The laptop was working fine, but the TV was not. Mary brought her tools.",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "additive restitutive"],
+        ["root class", "result"]
+      ],
+      "comment": "Spathas's additive test: ftiahno 'fix' rejects the restitutive-like additive reading, patterning with result roots.",
+      "verified": "page-image"
+    }
+  ]
+}
