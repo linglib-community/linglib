@@ -5,26 +5,23 @@ public import Linglib.Syntax.HPSG.Construction
 /-!
 # Sag et al. (2020): Lessons from the English Auxiliary System
 
-This file formalizes the paper's constructional analysis of subject-auxiliary inversion. The
-aux-initial construction requires the head daughter of a clause to be an invertible finite
-auxiliary, a word marked `[INV +]`, and says nothing about meaning: following Fillmore, the
-aux-initial clauses share no semantics, and each kind of aux-initial clause gets its meaning
-from the clausal type it cross-classifies with, the polar interrogative from the
-interrogative clauses and the aux-initial exclamative from the exclamative clauses. So the
-construction is one principle over the RSRL construct hierarchy of
-`Syntax/HPSG/Construction` (`auxInitialPrinciple`), the two clauses are sorts below both the
-aux-initial construction and a clausal type (`sai_cross_classify`), and a worked construct of
-either sort satisfies the grammar exactly when its head is inverted and its mother carries the
-clausal type's semantics (`polarInterrogative_models`, `auxInitialExclamative_models`). A
-polar interrogative is built directly by its construction rather than derived from an
-uninverted clause, which is why the auxiliary puzzle of structure dependence never arises.
+In some English clauses, such as polar questions, the auxiliary comes before the subject. The
+paper's *aux-initial* construction requires the head daughter of such a clause to be an
+invertible finite auxiliary, a word marked `[INV +]`, and says nothing about meaning: each kind
+of aux-initial clause gets its meaning from the clause type it also belongs to.
+
+The construction is one principle (`auxInitialPrinciple`). A worked construct satisfies the
+grammar exactly when its head is inverted and its mother carries the semantics of its clause
+type (`polarInterrogative_models`, `auxInitialExclamative_models`).
 
 ## Implementation notes
 
-The construction's valence conditions, that the head daughter's valents are its sisters and
-the mother is valence-saturated, are not in the RSRL signature and are not modelled; only the
-`[INV +]` head is. The remaining constructions of the paper, the inflectional and negation
-constructions and contraction, are not formalized.
+The construction also has valence conditions: the valents of the head daughter are its sisters,
+and the mother is valence-saturated. These are not in the RSRL signature and are not modelled;
+only the `[INV +]` head is.
+
+The paper's other constructions, the inflectional and negation constructions and contraction,
+are not formalized.
 
 ## References
 

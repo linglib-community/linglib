@@ -4,31 +4,32 @@ public import Linglib.Syntax.HPSG.Signature
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Basic.FunLike.Embedding
+public import Linglib.Syntax.Feature.Structure
 
 /-!
 # RSRL interpretations
 
-An interpretation of an RSRL signature over a universe `U` of entities assigns a sort to every
-entity, a partial function on entities to every attribute, and a set of tuples of entities to
-every relation symbol. A term then denotes a partial function on entities, and the
-[components](##HPSG.RSRL.Interpretation.isComponentOf_iff_exists_path) of an entity are the
-entities that some path reaches from it. A homomorphism of interpretations preserves sorts,
-commutes with the attributes and preserves the relations. Since attributes are functions, a
-homomorphism [maps the components of an entity onto the components of its
-image](##HPSG.RSRL.Interpretation.HomClass.image_isComponentOf), and it
-[commutes with term denotation](##HPSG.RSRL.Interpretation.HomClass.termDenot_comp).
+An *interpretation* of a signature over a universe `U` gives a sort to every entity, a partial
+function on entities for every attribute, and a set of tuples of entities for every relation
+symbol. A term then denotes an entity when every attribute along it is defined, and the
+*components* of an entity are the entities that some path reaches from it.
+
+A *homomorphism* of interpretations keeps sorts, commutes with the attributes and preserves the
+relations. It commutes with term denotation and maps the components of an entity onto those of
+its image (`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
+
+An interpretation is also a partial Moore machine, with the attributes as letters and the sorts
+as outputs, so each entity is the root of a feature structure
+(`HPSG.RSRL.Interpretation.featureStructure`).
 
 ## Implementation notes
 
-The universe is a parameter rather than a field, as the carrier of a first-order structure is in
-mathlib, so that instances on it are found by inference. The conditions that [richter-2024]
-builds into an interpretation are separate predicates, since a worked example often interprets
-only the part of a feature structure that a principle mentions: `IsSortResolved` and
-`IsTotallyWellTyped`, named as in [carpenter-1992], for the conditions on sorts and attributes,
-and `IsFull` for the restriction of relation tuples to the components of one entity. Chains are
-not formalized, so a relation tuple holds entities only. `Hom`, `Embedding` and `HomClass`
-follow their namesakes in `FirstOrder.Language`, so a fact about homomorphisms is stated once
-and applies to embeddings.
+The universe is a parameter, not a field, as the carrier of a first-order structure is in
+mathlib. The conditions that [richter-2024] builds into an interpretation are separate
+predicates (`IsSortResolved`, `IsTotallyWellTyped`, `IsFull`), since a worked example often
+interprets only part of a feature structure. Chains are not formalized. `Hom`, `Embedding` and
+`HomClass` follow their namesakes in `FirstOrder.Language`. The machine outputs the sort in the
+dual order, in which the more specific sort is the greater.
 
 ## References
 
@@ -396,6 +397,53 @@ def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
 @[simp] theorem comp_apply (f' : Embedding J K) (u : U) : f'.comp f u = f' (f u) := rfl
 
 end Embedding
+
+/-! ### The feature structure of an entity -/
+
+section FeatureStructure
+
+variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} {U : Type v} {V : Type w}
+  (I : Interpretation Sig U) {J : Interpretation Sig V} {u : U}
+
+/-- An interpretation as a partial Moore machine over the attributes: the transition for an
+attribute is its partial function, and the output at an entity is its sort, in the order in
+which the more specific sort is the greater. -/
+def toPartialMoore : PartialMoore U Sig.Attr Srtᵒᵈ where
+  step q α := I.A α q
+  out q := OrderDual.toDual (I.S q)
+
+/-- The feature structure of an entity, whose nodes are its components. -/
+abbrev featureStructure (u : U) :
+    FeatureStructure {q // I.toPartialMoore.Reaches u q} Sig.Attr Srtᵒᵈ :=
+  I.toPartialMoore.featureStructure u
+
+variable {I}
+
+/-- Following a path from an entity is reading it in the machine of the interpretation. -/
+theorem evalFrom_toPartialMoore (g : ℕ → U) (u : U) (p : Path Sig) :
+    I.toPartialMoore.evalFrom u p = I.termDenot g (.path p) u := by
+  induction p using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton p α ih =>
+    rw [PartialMoore.evalFrom_append_singleton, ih, Term.path_concat, termDenot_feat]
+    rfl
+
+/-- The components of an entity are the states its machine reaches from it. -/
+theorem reaches_toPartialMoore_iff {q : U} :
+    I.toPartialMoore.Reaches u q ↔ I.IsComponentOf u q := by
+  rw [isComponentOf_iff_exists_path fun _ ↦ u]
+  simp only [PartialMoore.Reaches, evalFrom_toPartialMoore fun _ ↦ u]
+
+/-- A homomorphism, which keeps sorts and reflects attributes, is in particular a simulation:
+the feature structure of an entity subsumes that of its image. -/
+theorem Hom.simulatedBy (f : Hom I J) (u : U) :
+    I.toPartialMoore.SimulatedBy J.toPartialMoore u (f u) :=
+  ⟨f, rfl, fun q _ ↦ OrderDual.toDual_le_toDual.2 (HomClass.map_S f q).le, fun α q q' _ hα ↦ by
+    show J.A α (f q) = some (f q')
+    rw [HomClass.map_A]
+    exact congrArg (Option.map f) hα⟩
+
+end FeatureStructure
 
 end Interpretation
 

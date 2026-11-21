@@ -9,32 +9,22 @@ public import Linglib.Core.Relation.ReflTransGen
 /-!
 # RSRL signatures
 
-This file defines the signatures of Relational Speciate Re-entrant Logic (RSRL), the logic in
-which Richter states HPSG grammars, and the terms of its description language. A signature
-declares a sort hierarchy, attributes with their appropriateness conditions, and relation symbols
-with their arities. In the hierarchy `σ ≤ τ` says that `σ` is at least as specific as `τ`, so the
-species, the maximally specific sorts, are its minimal elements.
+Relational Speciate Re-entrant Logic (RSRL) is the logic in which Richter states HPSG grammars.
+This file defines its signatures and the terms of its description language.
 
-## Main definitions
-
-* `HPSG.RSRL.Signature`: a signature over a sort hierarchy `Srt`.
-* `HPSG.RSRL.IsSpecies`: a sort is a species when it is minimal in the hierarchy.
-* `HPSG.RSRL.Signature.ofDecl`: the signature in which each attribute is declared once at the
-  sorts that introduce it and inherited by their subsorts.
-* `HPSG.RSRL.Term`: a term of the description language.
-* `HPSG.RSRL.Term.path`: the term that follows a list of attributes from the described entity.
-* `HPSG.RSRL.Term.freeVars`: the variables that occur in a term.
-* `HPSG.RSRL.Signature.Admits`: the paths that the appropriateness conditions allow between two
-  sorts.
+A *signature* gives the sorts, arranged in a hierarchy; the attributes; for each sort, which
+attributes it has and what sort their values are; and the relation symbols with their arities.
+In the hierarchy, `σ ≤ τ` means that `σ` is at least as specific as `τ`, so a *species* is a
+minimal sort. A *term* picks out an entity, starting from the one being described: it is the
+colon, which stands for that entity, a variable, or a term followed by an attribute.
 
 ## Implementation notes
 
-The sort hierarchy is a `PartialOrder` instance on the type of sorts rather than a field of the
-signature, so that mathlib's order lemmas apply to sorts. Richter's requirements that every arity
-be positive and that there be finitely many relation symbols are not imposed, and chains, the
-list-like arguments of RSRL relations, are not formalized. A large hierarchy is declared by its
-immediate-subsumption edges and a rank that every edge decreases (`partialOrderOfCovers`), so
-transitivity is never checked by enumeration.
+The sort hierarchy is a `PartialOrder` instance on the type of sorts, not a field of the
+signature, so mathlib's order lemmas apply to sorts. Richter's requirements that arities be
+positive and relation symbols finitely many are not imposed, and chains are not formalized. A
+large hierarchy is declared by its immediate-subsort edges and a rank that every edge decreases
+(`partialOrderOfCovers`).
 
 ## References
 

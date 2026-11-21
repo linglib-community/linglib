@@ -7,25 +7,23 @@ public import Mathlib.Logic.Function.Basic
 /-!
 # RSRL formulae, descriptions and grammars
 
-This file defines the formulae of RSRL and their satisfaction relation, whose quantifiers range
-over the components of the described entity. A description is a formula with no free variables,
-a grammar is a set of descriptions, and an interpretation is a model of a grammar when every
-description of the grammar describes every entity. Satisfaction is [invariant under
-embeddings](##HPSG.RSRL.Interpretation.Embedding.satisfies), so an interpretation that embeds
-into a model [is a model](##HPSG.RSRL.Interpretation.Embedding.models), and a model that
-contains an exhaustive model [is exhaustive](##HPSG.RSRL.Interpretation.Embedding.isExhaustive).
+This file defines the formulae of RSRL and what it means for an entity to satisfy one. The
+quantifiers of a formula range over the components of the entity being described, not over the
+whole universe.
+
+A *description* is a formula with no free variables, a *grammar* is a set of descriptions, and
+an interpretation is a *model* of a grammar when every entity satisfies every description in
+it. An entity satisfies a formula exactly when its image under an embedding does
+(`HPSG.RSRL.Interpretation.Embedding.satisfies`), so an interpretation that embeds into a model
+is a model.
 
 ## Implementation notes
 
-Negation, implication and universal quantification are the primitive connectives, and
-conjunction, disjunction and existential quantification are defined from them, as in mathlib's
-`FirstOrder.Language.BoundedFormula`, so that an induction on formulae has six cases; the
-`satisfiesOn_and`, `satisfiesOn_or` and `satisfiesOn_ex` lemmas give the clauses of
-[richter-2024] for the defined ones. As in Richter's syntax, a relation symbol applies to
-variables only. `SatisfiesOn` takes the range of the quantifiers as an argument, which
-`Satisfies` sets to the components. A model satisfies its principles under every assignment;
-`models_iff` reduces this to the assignment of every variable to the described entity, which is
-what makes `Models` decidable for a grammar given by a list on a finite universe.
+Negation, implication and universal quantification are primitive and the other connectives are
+defined from them, as in mathlib's `FirstOrder.Language.BoundedFormula`. `SatisfiesOn` takes the
+range of the quantifiers as an argument, which `Satisfies` sets to the components. `models_iff`
+reduces satisfaction under every assignment to one assignment, which makes `Models` decidable
+for a grammar given by a list on a finite universe.
 
 ## References
 

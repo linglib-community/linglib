@@ -9,50 +9,29 @@ public import Linglib.Fragments.English.Pronouns
 /-!
 # Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction
 
-This file formalizes two chapters of the textbook in the RSRL model theory of `Syntax/HPSG`.
-The binding theory of Chapter 7 says that an anaphor must be outranked by a coindexed argument
-on some argument-structure list and that a nonreflexive pronoun must not be. A worked utterance
-has two words with their argument structures as lists, and local o-command in it is precedence
-on one of those lists (`locallyOCommandsWithin_root_iff`), so that it satisfies the binding
-principles at its root exactly when its pronoun, if an anaphor that something precedes, shares
-the index of something that precedes it, and, if a personal pronoun, does not
-(`grammatical_utterance_iff`). Each of the textbook's sentences names its argument structures,
-and with the pronoun coindexed with *Susan* the judgments follow (`binding_rows`). The binding
-principles mention no agreement, and the textbook adds that coindexed elements agree. Here the
-person, number and
-gender are attributes of the index, as in [pollard-sag-1994], so a reflexive whose form differs
-from its antecedent's in one of them cannot share its index: over the pronouns of
-`Fragments/English/Pronouns`, a reflexive is licensed with a pronoun antecedent exactly when the
-indices of their agreement bundles are compatible (`licenses_iff_compat`), which excludes the
-textbook's *I enjoy yourself*, *He enjoys themselves* and *She enjoys himself*
-(`agreement_rows`). Equal features do not make two nominals coindexed
-(`agreement_eq_not_coindexed`). The long-distance
-dependencies of Chapter 15 rest on the list-valued feature GAP: the GAP Principle sums the
-daughters' gaps into the mother and the Head-Filler Rule discharges one, which is the
-filler-head construction of `Syntax/HPSG/Construction`. The Coordinate Structure Constraint and
-its across-the-board exception are then derived rather than stipulated: conjuncts share their
-SYN value, GAP included, so a gap in one conjunct whose filler lies outside is rejected while
-gaps in every conjunct paired with one filler pass (`coordinationPrinciple`,
-`coordination_rows`), and a conjunct cannot itself be a gap, since a gap is an argument
-unrealized in the syntax rather than an empty phrase (`gap_not_conjunct`).
+This file formalizes the binding theory of Chapter 7 and the long-distance dependencies of
+Chapter 15, in the RSRL model theory of `Syntax/HPSG`.
+
+A reflexive must be outranked by a coindexed argument on some argument-structure list, and a
+nonreflexive pronoun must not be. We model a sentence by two words with their argument
+structures, and the textbook's judgments follow (`binding_rows`). Person, number and gender
+belong to the index, so a reflexive is licensed with a pronoun antecedent exactly when the two
+are compatible in them (`licenses_iff_compat`).
+
+The feature `GAP` lists the missing arguments of a phrase. Conjuncts share their `GAP` lists, so
+a gap in only one conjunct is rejected and a gap in every conjunct is accepted
+(`coordination_rows`).
 
 ## Implementation notes
 
-A sentence is grammatical when its utterance satisfies the binding principles at its root, the
-quantifiers ranging over the whole utterance. A model in the sense of RSRL has every entity
-satisfy them over its own components, which is the same where the pronoun is on one argument
-structure only (`models_utterance_iff`), as in every sentence here (`binding_rows_models`).
-The object of an argument-marking preposition stands in the place of its PP on the verb's
-argument structure, the textbook giving the two equal rank; determiners are left off the
-argument structures of nouns, and an argument structure is read to its third member.
-The textbook keeps the agreement features in `AGR`, on the head, and states the agreement of
-coindexed elements as a principle of its own; with the features on the index it is a
-consequence (`HPSG.RSRL.Binding.agreement_eq_of_coindexed`). A form constrains its index only in
-the index of its agreement bundle, so its case is not compared.
-Coordination is a binary construct whose conjuncts share their category and GAP list by token
-identity, the SYN identity of the textbook's rule; n-ary coordination, the conjunction daughter
-and the semantic restriction list are not modelled. The Argument Realization Principle, the
-subject-extraction lexical rule and the initial symbol are not formalized.
+A sentence counts as grammatical when its utterance satisfies the binding principles at its
+root. An RSRL model asks this of every entity; the two agree when the pronoun is on only one
+argument structure (`models_utterance_iff`), as in every sentence here. The object of an
+argument-marking preposition takes the place of its PP on the verb's argument structure.
+
+The textbook keeps person, number and gender in `AGR` and adds an agreement principle; here they
+are on the index, as in [pollard-sag-1994]. Coordination is binary, and the Argument Realization
+Principle and the subject-extraction rule are not modelled.
 
 ## References
 

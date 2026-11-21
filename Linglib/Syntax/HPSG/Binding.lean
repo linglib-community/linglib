@@ -14,38 +14,28 @@ public import Linglib.Syntax.Feature.Bundle
 /-!
 # HPSG binding theory in RSRL
 
-This file states Principles A and B of HPSG binding theory as RSRL descriptions. A nominal
-object has an index, and an index has a person, a number and a gender. Two nominal objects are
-coindexed when their indices are the same entity. A word has an argument structure, a list, and
-one of its members locally o-commands another when it precedes it there, being less oblique; it
-locally o-binds the other when, in addition, the two are coindexed. Local o-command is not a
-relation symbol of the signature: the description `HPSG.RSRL.Binding.locallyOCommands` follows
-the `ARG-ST` of some word to two of its members by paths of `REST` and `FIRST`, and
-`HPSG.RSRL.Binding.LocallyOCommands` is the relation it describes in an interpretation
-(`HPSG.RSRL.Binding.satisfies_locallyOCommands_iff`). Principle A requires a locally o-commanded
-anaphor to be locally o-bound, and Principle B requires a personal pronoun to be locally
-o-free.
+Binding theory says which noun phrases a pronoun can refer back to: in *Susan likes herself* the
+reflexive must refer to Susan, and in *Susan likes her* the pronoun cannot. This file states the
+two principles of HPSG that account for this, as descriptions in RSRL.
 
-Since the agreement features are attributes of the index, coindexed nominal objects have one
-person, number and gender between them. The agreement bundle of a nominal object,
-`HPSG.RSRL.Binding.agreement`, reads the three off the sorts of its index's values, a more
-specific sort giving a more specific slot (`HPSG.RSRL.Binding.Srt.antitone_toGender`), and
-coindexed nominal objects have the same agreement bundle
-(`HPSG.RSRL.Binding.agreement_eq_of_coindexed`). The binding principles therefore mention no
-agreement: an anaphor whose index differs from its antecedent's in person, number or gender is
-not coindexed with it.
+A word lists its arguments on its argument structure, the subject first. One argument *locally
+o-commands* another when it comes earlier on the argument structure of the same word, and
+*locally o-binds* it when the two also have the same index.
 
-At the root of an interpretation the two principles are the framework-neutral Conditions A and B
-of `Syntax/Binding` over local o-command, with the anaphors that nothing locally o-commands
-exempt (`HPSG.RSRL.Binding.satisfies_grammar_iff`).
+* Principle A: an anaphor that something locally o-commands is locally o-bound.
+* Principle B: a personal pronoun is not locally o-bound.
+
+`HPSG.RSRL.Binding.satisfies_grammar_iff_within` says what the two principles amount to at an
+entity. Person, number and gender belong to the index, so coindexed nominal objects agree
+(`HPSG.RSRL.Binding.agreement_eq_of_coindexed`).
 
 ## Implementation notes
 
-An argument structure is read to its third member, which is as far as the description of local
-o-command reaches without a relation defined by recursion on lists. The requirements that the
-commander be referential and that the two have distinct `LOCAL` values are not stated; the
-fragment has no expletives and no nonlocal dependencies. A phrase is given by the list of its
-daughters, with no constituent structure. Worked models are in `Studies/SagWasowBender2003`.
+An argument structure is read up to its third member, which is as far as a description reaches
+without a relation defined by recursion on lists. Pollard and Sag also require the commanding
+argument to be referential and to differ in its `LOCAL` value; neither condition is stated. A
+phrase is given by the list of its daughters. Worked examples are in
+`Studies/SagWasowBender2003`.
 
 ## References
 
@@ -444,5 +434,38 @@ theorem agreement_eq_of_coindexed {x y : U} (h : Coindexed I x y) :
 theorem compat_agreement_of_coindexed {x y : U} (h : Coindexed I x y) :
     Compat (agreement I x) (agreement I y) :=
   agreement_eq_of_coindexed h ▸ compat_self _
+
+private theorem elim_le_elim_of_simulatedBy {γ : Type*} [PartialOrder γ] [OrderBot γ]
+    {V : Type*} {J : Interpretation sig V} {h : U → V} {x : U} {f : Srt → γ} (hf : Antitone f)
+    (hS : ∀ q, I.toPartialMoore.Reaches x q → J.S (h q) ≤ I.S q)
+    (hA : ∀ α q q', I.toPartialMoore.Reaches x q → I.A α q = some q' →
+      J.A α (h q) = some (h q')) (β : Attr) :
+    ((I.A .IDX x).bind (I.A β)).elim ⊥ (fun v ↦ f (I.S v)) ≤
+      ((J.A .IDX (h x)).bind (J.A β)).elim ⊥ fun v ↦ f (J.S v) := by
+  rcases hi : I.A .IDX x with _ | i
+  · simp
+  · have hxi : I.toPartialMoore.Reaches x i := (PartialMoore.Reaches.refl _ x).step hi
+    rw [hA .IDX x i (.refl _ x) hi, Option.bind_some, Option.bind_some]
+    rcases hv : I.A β i with _ | v
+    · simp
+    · rw [hA β i v hxi hv]
+      exact hf (hS v (hxi.step hv))
+
+/-- A nominal object whose feature structure subsumes another's has the less specific agreement
+bundle: the map from the feature structures of the fragment to agreement bundles is monotone in
+information. -/
+theorem agreement_le_of_simulatedBy {V : Type*} {J : Interpretation sig V} {x : U} {y : V}
+    (h : I.toPartialMoore.SimulatedBy J.toPartialMoore x y) :
+    agreement I x ≤ agreement J y := by
+  obtain ⟨f, rfl, hO, hA⟩ := h
+  have hS q (hq : I.toPartialMoore.Reaches x q) : J.S (f q) ≤ I.S q :=
+    OrderDual.toDual_le_toDual.1 (hO q hq)
+  intro d
+  cases d
+  · exact elim_le_elim_of_simulatedBy Srt.antitone_toPerson hS hA .PER
+  · exact elim_le_elim_of_simulatedBy Srt.antitone_toNumber hS hA .NUM
+  · exact elim_le_elim_of_simulatedBy Srt.antitone_toGender hS hA .GEND
+  · exact le_rfl
+  · exact le_rfl
 
 end HPSG.RSRL.Binding
