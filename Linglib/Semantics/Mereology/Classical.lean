@@ -36,7 +36,7 @@ every least upper bound and additive remainders. The part structures of
 [champollion-krifka-2016] and [hovda-2009] are classical mereologies with no null element.
 [hovda-2009] shows that complete join semilattices satisfying Landman's decomposition
 principle, that a part of `y ⊔ z` is part of `y`, part of `z`, or a sum of a part of each, need
-not be classical mereologies on an infinite domain.
+not be classical mereologies on an infinite domain (`Studies/Hovda2009.lean`).
 
 Strong Supplementation with Leśniewski fusions (`Mereology.isClassical_iff`) is a system that
 [cotnoir-varzi-2021] note results in classical mereology, and Weak Supplementation with

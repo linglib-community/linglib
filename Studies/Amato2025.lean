@@ -149,8 +149,8 @@ def AllActive : Head → FeatureType → Prop := fun _ _ ↦ True
 instance (h : Head) (t : FeatureType) : Decidable (AllActive h t) := inferInstanceAs (Decidable True)
 
 /-- `[ϕ:p]`. -/
-def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Value :=
-  ⟨.person, .valued (.ofPerson p)⟩
+def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Slot :=
+  ⟨.person, ↑(FeatureType.Slot.ofValue .person p)⟩
 
 /-! ### Standard Italian auxiliary selection (§3)
 
@@ -263,7 +263,7 @@ theorem t_targets_subject (p : Person) :
 
 /-- The Vocabulary Items (14) insert `/AVERE/ ↔ Perf[π:α]`, and `/ESSERE/` elsewhere. -/
 def standardItalianAux (s : FeatureState Head) : PerfectAuxiliary :=
-  if (s .perf .person).toFlat ≠ ⊥ then .have else .be
+  if (s .perf .person).unbotD ⊥ ≠ ⊥ then .have else .be
 
 -- (4), (5)
 theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
@@ -278,7 +278,7 @@ theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
 
 /-- Ariellese (23) inserts `/AVERE/ ↔ Perf[π:-participant]`. -/
 def arielleseAux (s : FeatureState Head) : PerfectAuxiliary :=
-  if s .perf .person = .valued .third then .have else .be
+  if s .perf .person = ↑(FeatureType.Slot.ofValue .person .third) then .have else .be
 
 -- (22), (21), §3.5
 theorem ariellese_aux (c : TransitivityClass) (p : Person) :
@@ -287,7 +287,9 @@ theorem ariellese_aux (c : TransitivityClass) (p : Person) :
 
 /-- Tufillese (24) inserts `/AVERE/ ↔ Perf[π:α] / T[ϕ:3sg]`. -/
 def tufilleseAux (s : FeatureState Head) : PerfectAuxiliary :=
-  if (s .perf .person).toFlat ≠ ⊥ ∧ s .t .person = .valued .third then .have else .be
+  if (s .perf .person).unbotD ⊥ ≠ ⊥ ∧ s .t .person = ↑(FeatureType.Slot.ofValue .person .third) then
+    .have
+  else .be
 
 -- §3.5
 theorem tufillese_aux (c : TransitivityClass) (p : Person) :
@@ -329,7 +331,7 @@ def phiGoal (o : ProbeOrder) (applDat : Bool) : Option Head :=
 
 /-- The case of each object, the recipient and the theme as the derivation leaves them and P
 with the accusative v assigns a transitive object; S and A are not read. -/
-def caseMarking (o : ProbeOrder) (applDat : Bool) : ArgumentRole → FeatureSlot Case
+def caseMarking (o : ProbeOrder) (applDat : Bool) : ArgumentRole → FeatureSlot (Flat Case)
   | .R => (ditransitive o applDat).2 .dpR .case
   | .T => (ditransitive o applDat).2 .dpT .case
   | _ => .valued .acc
@@ -396,7 +398,7 @@ def icelandicOrder : ProbeOrder → List FeatureType
   | .phiFirst => [.number, .case]
 
 /-- T's number slot after probing. -/
-def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.Value :=
+def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.Slot :=
   (run IcelandicActive .t [.dpDat, .dpNom] (icelandicOrder o) (icelandicInitial k)).2 .t .number
 
 -- (29a)
@@ -423,13 +425,14 @@ def lakInitial (ps po : Person) : Head → FeatureBundle
   | _ => ⊥
 
 /-- Asp's person slot after v has agreed with the object and Asp with v. -/
-def lak (ps po : Person) : FeatureSlot FeatureType.person.Value :=
+def lak (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
   let s := (run AllActive .v [.dpObj] [.person] (lakInitial ps po)).2
   (run AllActive .asp (domain isPhase [⟨[.dpSbj], .v⟩, ⟨[], .dpObj⟩]) [.infl, .person] s).2
     .asp .person
 
 -- (31c), (31d)
-theorem lak_agrees_with_object (ps po : Person) : lak ps po = .valued (.ofPerson po) := by
+theorem lak_agrees_with_object (ps po : Person) :
+    lak ps po = ↑(FeatureType.Slot.ofValue .person po) := by
   revert ps po; decide
 
 /-! ### Subject agreement in Spanish VOS (§4.2.2) -/
@@ -496,14 +499,14 @@ def hindiSpine : HindiClause → List (Layer Head)
 
 /-- T's person slot after v has probed its complement (empty in (40), the object having
 moved, fn. 33) and T has Infl-agreed with Asp and, nested under it, probed for ϕ. -/
-def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Value :=
+def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Slot :=
   let s := (run AllActive .v (if k = .bothMarked then [] else [.verb, .dpObj]) [.person]
     (hindiInitial k ps po)).2
   (run AllActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person
 
 -- (37)
 theorem hindi_object_agreement (ps po : Person) :
-    hindi .ergSubject ps po = .valued (.ofPerson po) := by
+    hindi .ergSubject ps po = ↑(FeatureType.Slot.ofValue .person po) := by
   revert ps po; decide
 
 -- (38a)
@@ -512,7 +515,7 @@ theorem hindi_default_agreement (ps po : Person) : hindi .bothMarked ps po = .un
 
 -- (38b)
 theorem hindi_subject_agreement (ps po : Person) :
-    hindi .unmarkedSubject ps po = .valued (.ofPerson ps) := by
+    hindi .unmarkedSubject ps po = ↑(FeatureType.Slot.ofValue .person ps) := by
   revert ps po; decide
 
 end Amato2025

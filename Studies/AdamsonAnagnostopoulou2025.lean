@@ -257,11 +257,11 @@ theorem inanimate_uniform_neuter :
 
 -- (45), (46)
 theorem closest_conjunct :
-    (HeadDirection.headInitial.nearest
-        [system.nominal megalofiia .man, system.nominal filos .man]).bind system.exponent =
+    (HeadDirection.headInitial.headEdge.takeAt 1
+        [system.nominal megalofiia .man, system.nominal filos .man]).head?.bind system.exponent =
       some .feminine ∧
-    (HeadDirection.headInitial.nearest
-        [system.nominal pinakas .thing, system.nominal karekla .thing]).bind system.exponent =
+    (HeadDirection.headInitial.headEdge.takeAt 1
+        [system.nominal pinakas .thing, system.nominal karekla .thing]).head?.bind system.exponent =
       some .masculine := by
   decide
 

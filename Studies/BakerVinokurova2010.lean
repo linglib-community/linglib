@@ -459,7 +459,7 @@ def probes (r : Datum) : List (Cat × Cat) :=
 
 /-- The case slots of a domain's occupants. -/
 def derive (g : CaseAssigners) (r : Datum) (d : List Occupant) :
-    Fin d.length → FeatureSlot (Case × Mechanism) :=
+    Fin d.length → FeatureSlot (Flat (Case × Mechanism)) :=
   g.assign Finset.univ (d[·].np) (· < ·) (probes r) domainOrder
 
 /-- The Case filter requires a caseless overt NP to be pseudo-incorporated, an unshifted
@@ -473,13 +473,13 @@ instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o
 /-- T agrees with the NP it values nominative: where a row states the verb's agreement
     target, an overt NP is nominative by Agree exactly when it is that target, so default
     agreement means no NP is. -/
-def Agrees (r : Datum) (d : List Occupant) (out : Fin d.length → FeatureSlot (Case × Mechanism)) :
-    Prop :=
+def Agrees (r : Datum) (d : List Occupant)
+    (out : Fin d.length → FeatureSlot (Flat (Case × Mechanism))) : Prop :=
   (r.feature? "agreesWith").isSome → ∀ i : Fin d.length, d[i].covert = false →
     (out i = .valued (.nom, .functional) ↔ r.feature? "agreesWith" = d[i].slot.map Slot.key)
 
-instance (r : Datum) (d : List Occupant) (out : Fin d.length → FeatureSlot (Case × Mechanism)) :
-    Decidable (Agrees r d out) := by
+instance (r : Datum) (d : List Occupant)
+    (out : Fin d.length → FeatureSlot (Flat (Case × Mechanism))) : Decidable (Agrees r d out) := by
   unfold Agrees; infer_instance
 
 /-- A domain derives the row under a grammar: every overt NP gets the case its gloss shows,

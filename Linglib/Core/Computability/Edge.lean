@@ -8,6 +8,7 @@ module
 public import Mathlib.Computability.Language
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Set.Finite.List
+public import Mathlib.Data.List.Forall2
 public import Mathlib.Order.Nat
 public import Linglib.Core.Data.List.DropRight
 
@@ -151,6 +152,16 @@ lemma takeAt_reverse : e.takeAt k xs.reverse = (e.swap.takeAt k xs).reverse := b
 
 lemma takeAt_map {β : Type*} (g : α → β) : e.takeAt k (xs.map g) = (e.takeAt k xs).map g := by
   cases e <;> simp [List.rtake, List.map_take, List.map_drop]
+
+lemma takeAt_infix : e.takeAt k xs <:+: xs := by
+  cases e
+  exacts [(List.take_prefix k xs).isInfix, (List.drop_suffix (xs.length - k) xs).isInfix]
+
+lemma forall₂_takeAt {β : Type*} {R : α → β → Prop} {xs : List α} {ys : List β}
+    (h : List.Forall₂ R xs ys) : List.Forall₂ R (e.takeAt k xs) (e.takeAt k ys) := by
+  cases e
+  · exact List.forall₂_take k h
+  · simpa [List.rtake, h.length_eq] using List.forall₂_drop (xs.length - k) h
 
 lemma finite_range_takeAt [Finite α] : (Set.range (e.takeAt (α := α) k)).Finite :=
   (List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp [length_takeAt])

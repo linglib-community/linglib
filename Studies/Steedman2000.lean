@@ -318,8 +318,8 @@ theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := 
 the edge of the verb on which `a` puts it, the object first as in the English `(S\NP)/NP`. Which
 argument comes first matters to the category only when the two slashes look different ways. -/
 def transitiveCat (a : Arrangement Constituent 3) : Cat Atom :=
-  (S.push ⟨(a.headDirection .verb .subject).dependentEdge, .dot, NP⟩).push
-    ⟨(a.headDirection .verb .object).dependentEdge, .dot, NP⟩
+  (S.push ⟨(a.headDirection .verb .subject).headEdge.swap, .dot, NP⟩).push
+    ⟨(a.headDirection .verb .object).headEdge.swap, .dot, NP⟩
 
 theorem transitiveCat_sov : transitiveCat .sov = sovTV := by decide
 

@@ -50,10 +50,10 @@ variable {ι κ : Type*} [DecidableEq ι] (lt : ι → ι → Prop) [DecidableRe
 
 /-- Agree into the domain `D`: the closest goal in `D`, the goals being its unvalued NPs, is valued
 with `v`. Goals neither of which c-commands the other are all closest, and all are valued. -/
-def agree (v : κ) (D : Finset ι) (s : ι → FeatureSlot κ) : ι → FeatureSlot κ :=
+def agree (v : κ) (D : Finset ι) (s : ι → FeatureSlot (Flat κ)) : ι → FeatureSlot (Flat κ) :=
   (CaseRule.inOrder [v]).passUnvalued lt D s
 
-variable {lt} {D : Finset ι} {s t : ι → FeatureSlot κ} {x : ι} {v : κ} {xs : List ι}
+variable {lt} {D : Finset ι} {s t : ι → FeatureSlot (Flat κ)} {x : ι} {v : κ} {xs : List ι}
 
 /-- Agree values the goals with no goal above them, and nothing else. -/
 theorem agree_apply : agree lt v D s x =
@@ -151,7 +151,7 @@ structure PhasedNP where
   /-- The case slot the NP enters with: valued by a lexical head, absent for an NP that bears no
   case, such as PRO, which competes for dependent case without bearing it, and unvalued
   otherwise. -/
-  case : FeatureSlot Case := .unvalued
+  case : FeatureSlot (Flat Case) := .unvalued
   /-- The phase whose domain merges the NP. -/
   phase : Cat := .C
   /-- The phase whose domain the NP shifts into, if any. -/
@@ -206,7 +206,8 @@ variable {ι κ : Type*} [DecidableEq ι]
 
 /-- One domain: its dependent rule over the NPs it sees, then each of its probes valuing the closest
 NP it reaches, then its elsewhere rule. An NP that bears no case is passed over by all three. -/
-def CaseDomain.pass (d : CaseDomain ι κ) (s : ι → FeatureSlot κ) : ι → FeatureSlot κ :=
+def CaseDomain.pass (d : CaseDomain ι κ) (s : ι → FeatureSlot (Flat κ)) :
+    ι → FeatureSlot (Flat κ) :=
   d.elsewhere.pass d.above d.spellOut <|
     d.probes.foldl (fun st p ↦ agree d.above p.1 p.2 st) (d.dependent.pass d.above d.sees s)
 
@@ -214,7 +215,7 @@ def CaseDomain.pass (d : CaseDomain ι κ) (s : ι → FeatureSlot κ) : ι → 
 def CaseDomain.values (d : CaseDomain ι κ) : Set κ :=
   d.dependent.values ∪ {v | ∃ p ∈ d.probes, p.1 = v} ∪ d.elsewhere.values
 
-theorem CaseDomain.extends_pass (d : CaseDomain ι κ) (s : ι → FeatureSlot κ) :
+theorem CaseDomain.extends_pass (d : CaseDomain ι κ) (s : ι → FeatureSlot (Flat κ)) :
     Extends d.values s (d.pass s) := by
   have hprobes : ∀ st, Extends d.values st
       (d.probes.foldl (fun st p ↦ agree d.above p.1 p.2 st) st) :=
@@ -225,11 +226,12 @@ theorem CaseDomain.extends_pass (d : CaseDomain ι κ) (s : ι → FeatureSlot �
     (hprobes _).trans <| (CaseRule.extends_pass _ _ _).mono fun _ hv ↦ Or.inr hv
 
 /-- Assignment over the domains `ds`, innermost first. -/
-def assignBy (ds : List (CaseDomain ι κ)) (s : ι → FeatureSlot κ) : ι → FeatureSlot κ :=
+def assignBy (ds : List (CaseDomain ι κ)) (s : ι → FeatureSlot (Flat κ)) :
+    ι → FeatureSlot (Flat κ) :=
   ds.foldl (fun st d ↦ d.pass st) s
 
 /-- Assignment over domains extends the state by what the domains can assign. -/
-theorem extends_assignBy (ds : List (CaseDomain ι κ)) (s : ι → FeatureSlot κ) :
+theorem extends_assignBy (ds : List (CaseDomain ι κ)) (s : ι → FeatureSlot (Flat κ)) :
     Extends {v | ∃ d ∈ ds, v ∈ d.values} s (assignBy ds s) :=
   Extends.foldl (F := fun (d : CaseDomain ι κ) st ↦ d.pass st) ds (fun d hd st ↦
     (d.extends_pass st).mono fun v hv ↦ (⟨d, hd, hv⟩ : ∃ d ∈ ds, v ∈ d.values)) s
@@ -262,7 +264,7 @@ def CaseAssigners.domain (c : Cat) : CaseDomain ι (Case × Mechanism) where
 
 /-- Case for the NPs `U` placed by hand, `lt` their c-command, the domains spelling out in
     `order`. -/
-def CaseAssigners.assign (order : List Cat) : ι → FeatureSlot (Case × Mechanism) :=
+def CaseAssigners.assign (order : List Cat) : ι → FeatureSlot (Flat (Case × Mechanism)) :=
   assignBy (order.map (g.domain U np lt probes)) (Case.lexical fun x ↦ (np x).case)
 
 /-- What values a case under assignment: a lexical head; a dependent or elsewhere rule of a domain;

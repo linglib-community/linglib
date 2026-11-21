@@ -1,516 +1,644 @@
-[
-  {
-    "id": "sagwasowbender2003_ex2a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (2a)"},
-    "language": "stan1293",
-    "primaryText": "Susan likes herself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "local"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex2b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (2b)"},
-    "language": "stan1293",
-    "primaryText": "Susan likes her.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "local"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex3a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (3a)"},
-    "language": "stan1293",
-    "primaryText": "Susan told herself a story.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "local"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex3b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (3b)"},
-    "language": "stan1293",
-    "primaryText": "Susan told her a story.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "local"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex4a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (4a)"},
-    "language": "stan1293",
-    "primaryText": "Susan told a story to herself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "local"]
-    ],
-    "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex4b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (4b)"},
-    "language": "stan1293",
-    "primaryText": "Susan told a story to her.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "local"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex5a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (5a)"},
-    "language": "stan1293",
-    "primaryText": "Susan devoted herself to linguistics.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "local"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex5b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (5b)"},
-    "language": "stan1293",
-    "primaryText": "Susan devoted her to linguistics.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "local"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex6a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (6a)"},
-    "language": "stan1293",
-    "primaryText": "Nobody told Susan about herself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "local"]
-    ],
-    "comment": "The local o-commander of herself is the object Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex6b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (6b)"},
-    "language": "stan1293",
-    "primaryText": "Nobody told Susan about her.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "local"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex7a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (7a)"},
-    "language": "stan1293",
-    "primaryText": "Susan thinks that nobody likes herself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "nonlocal"]
-    ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander nobody.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex7b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (7b)"},
-    "language": "stan1293",
-    "primaryText": "Susan thinks that nobody likes her.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "nonlocal"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex8a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (8a)"},
-    "language": "stan1293",
-    "primaryText": "Susan's friends like herself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "nonlocal"]
-    ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex8b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (8b)"},
-    "language": "stan1293",
-    "primaryText": "Susan's friends like her.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "nonlocal"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex9a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (9a)"},
-    "language": "stan1293",
-    "primaryText": "That picture of Susan offended herself.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "anaphor"],
-      ["binder", "nonlocal"]
-    ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander the picture.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex9b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (9b)"},
-    "language": "stan1293",
-    "primaryText": "That picture of Susan offended her.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "binding"],
-      ["sort", "pronoun"],
-      ["binder", "nonlocal"]
-    ],
-    "comment": "Her coindexed with Susan.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex37a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37a)"},
-    "language": "stan1293",
-    "primaryText": "Here is the student that the principal suspended and Sandy defended him.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "true"],
-      ["gapInSecond", "false"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex37b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37b)"},
-    "language": "stan1293",
-    "primaryText": "Here is the student that the student council passed new rules and the principal suspended.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "false"],
-      ["gapInSecond", "true"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex38a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (38a)"},
-    "language": "stan1293",
-    "primaryText": "Apple bagels, I can assure you that Leslie likes and Sandy hates cream cheese.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "true"],
-      ["gapInSecond", "false"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex38b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (38b)"},
-    "language": "stan1293",
-    "primaryText": "Apple bagels, I can assure you that Leslie likes cream cheese and Sandy hates.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "false"],
-      ["gapInSecond", "true"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex40a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40a)"},
-    "language": "stan1293",
-    "primaryText": "This is the dancer that we bought a portrait of and two photos of.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "true"],
-      ["gapInSecond", "true"]
-    ],
-    "comment": "Across the board: each conjunct has a gap paired with the same filler.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex40b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40b)"},
-    "language": "stan1293",
-    "primaryText": "Here is the student that the principal suspended and the teacher defended.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "true"],
-      ["gapInSecond", "true"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex40c",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40c)"},
-    "language": "stan1293",
-    "primaryText": "Apple bagels, I can assure you that Leslie likes and Sandy hates.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "coordination"],
-      ["gapInFirst", "true"],
-      ["gapInSecond", "true"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex36a",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (36a)"},
-    "language": "stan1293",
-    "primaryText": "Here is the student that the principal suspended and Sandy.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "conjunctGap"]
-    ],
-    "comment": "The first conjunct is a gap.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex36b",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (36b)"},
-    "language": "stan1293",
-    "primaryText": "Here is the student that the principal suspended Sandy and.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "conjunctGap"]
-    ],
-    "comment": "The second conjunct is a gap.",
-    "verified": "page-image"
-  },
-  {
-    "id": "sagwasowbender2003_ex44",
-    "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (44)"},
-    "language": "stan1293",
-    "primaryText": "Which rock legend would it be ridiculous to compare and?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["topic", "conjunctGap"]
-    ],
-    "comment": "Both conjuncts are gaps paired with one filler, which the across-the-board exception as stated would permit.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "topic",
+      "lean": "topic",
+      "type": "Topic",
+      "doc": "The part of the textbook a row illustrates.",
+      "levels": [
+        {
+          "name": "binding",
+          "label": "binding",
+          "doc": "the binding principles of Chapter 7"
+        },
+        {
+          "name": "pronominalAgreement",
+          "label": "pronominal agreement",
+          "doc": "the agreement of a reflexive with its antecedent (§7.3.2.1)"
+        },
+        {
+          "name": "coordination",
+          "label": "coordination",
+          "doc": "extraction from coordinate structures (Chapter 15)"
+        },
+        {
+          "name": "conjunctGap",
+          "label": "conjunctGap",
+          "doc": "a conjunct that is itself a gap (Chapter 15)"
+        }
+      ]
+    },
+    {
+      "key": "sort",
+      "lean": "sort",
+      "type": "PronounSort",
+      "doc": "Whether a row's pronoun is a reflexive or a personal pronoun.",
+      "levels": [
+        {
+          "name": "anaphor",
+          "label": "anaphor",
+          "doc": "a reflexive pronoun"
+        },
+        {
+          "name": "pronoun",
+          "label": "pronoun",
+          "doc": "a nonreflexive personal pronoun"
+        }
+      ]
+    },
+    {
+      "key": "binder",
+      "lean": "binder",
+      "type": "Binder",
+      "doc": "Whether the element a row's pronoun is coindexed with outranks it on an argument-structure list.",
+      "levels": [
+        {
+          "name": "outranking",
+          "label": "local",
+          "doc": "it outranks the pronoun on the list of the same head"
+        },
+        {
+          "name": "notOutranking",
+          "label": "nonlocal",
+          "doc": "it does not"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "sagwasowbender2003_ex2a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (2a)"},
+      "language": "stan1293",
+      "primaryText": "Susan likes herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "local"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex2b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (2b)"},
+      "language": "stan1293",
+      "primaryText": "Susan likes her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "local"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex3a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (3a)"},
+      "language": "stan1293",
+      "primaryText": "Susan told herself a story.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "local"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex3b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (3b)"},
+      "language": "stan1293",
+      "primaryText": "Susan told her a story.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "local"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex4a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (4a)"},
+      "language": "stan1293",
+      "primaryText": "Susan told a story to herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "local"]
+      ],
+      "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex4b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (4b)"},
+      "language": "stan1293",
+      "primaryText": "Susan told a story to her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "local"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex5a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (5a)"},
+      "language": "stan1293",
+      "primaryText": "Susan devoted herself to linguistics.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "local"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex5b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (5b)"},
+      "language": "stan1293",
+      "primaryText": "Susan devoted her to linguistics.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "local"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex6a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (6a)"},
+      "language": "stan1293",
+      "primaryText": "Nobody told Susan about herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "local"]
+      ],
+      "comment": "The local o-commander of herself is the object Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex6b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (6b)"},
+      "language": "stan1293",
+      "primaryText": "Nobody told Susan about her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "local"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex7a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (7a)"},
+      "language": "stan1293",
+      "primaryText": "Susan thinks that nobody likes herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "nonlocal"]
+      ],
+      "comment": "Herself coindexed with Susan, not with its local o-commander nobody.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex7b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (7b)"},
+      "language": "stan1293",
+      "primaryText": "Susan thinks that nobody likes her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "nonlocal"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex8a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (8a)"},
+      "language": "stan1293",
+      "primaryText": "Susan's friends like herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "nonlocal"]
+      ],
+      "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex8b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (8b)"},
+      "language": "stan1293",
+      "primaryText": "Susan's friends like her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "nonlocal"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex9a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (9a)"},
+      "language": "stan1293",
+      "primaryText": "That picture of Susan offended herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "anaphor"],
+        ["binder", "nonlocal"]
+      ],
+      "comment": "Herself coindexed with Susan, not with its local o-commander the picture.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex9b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (9b)"},
+      "language": "stan1293",
+      "primaryText": "That picture of Susan offended her.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "binding"],
+        ["sort", "pronoun"],
+        ["binder", "nonlocal"]
+      ],
+      "comment": "Her coindexed with Susan.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex17a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (17a)"},
+      "language": "stan1293",
+      "primaryText": "I enjoy yourself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "pronominal agreement"],
+        ["antecedent", "I"],
+        ["reflexive", "yourself"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex17b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (17b)"},
+      "language": "stan1293",
+      "primaryText": "He enjoys themselves.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "pronominal agreement"],
+        ["antecedent", "he"],
+        ["reflexive", "themselves"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex17c",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 7, (17c)"},
+      "language": "stan1293",
+      "primaryText": "She enjoys himself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "pronominal agreement"],
+        ["antecedent", "she"],
+        ["reflexive", "himself"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex37a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37a)"},
+      "language": "stan1293",
+      "primaryText": "Here is the student that the principal suspended and Sandy defended him.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "true"],
+        ["gapInSecond", "false"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex37b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (37b)"},
+      "language": "stan1293",
+      "primaryText": "Here is the student that the student council passed new rules and the principal suspended.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "false"],
+        ["gapInSecond", "true"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex38a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (38a)"},
+      "language": "stan1293",
+      "primaryText": "Apple bagels, I can assure you that Leslie likes and Sandy hates cream cheese.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "true"],
+        ["gapInSecond", "false"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex38b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (38b)"},
+      "language": "stan1293",
+      "primaryText": "Apple bagels, I can assure you that Leslie likes cream cheese and Sandy hates.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "false"],
+        ["gapInSecond", "true"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex40a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40a)"},
+      "language": "stan1293",
+      "primaryText": "This is the dancer that we bought a portrait of and two photos of.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "true"],
+        ["gapInSecond", "true"]
+      ],
+      "comment": "Across the board: each conjunct has a gap paired with the same filler.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex40b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40b)"},
+      "language": "stan1293",
+      "primaryText": "Here is the student that the principal suspended and the teacher defended.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "true"],
+        ["gapInSecond", "true"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex40c",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (40c)"},
+      "language": "stan1293",
+      "primaryText": "Apple bagels, I can assure you that Leslie likes and Sandy hates.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "coordination"],
+        ["gapInFirst", "true"],
+        ["gapInSecond", "true"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex36a",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (36a)"},
+      "language": "stan1293",
+      "primaryText": "Here is the student that the principal suspended and Sandy.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "conjunctGap"]
+      ],
+      "comment": "The first conjunct is a gap.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex36b",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (36b)"},
+      "language": "stan1293",
+      "primaryText": "Here is the student that the principal suspended Sandy and.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "conjunctGap"]
+      ],
+      "comment": "The second conjunct is a gap.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagwasowbender2003_ex44",
+      "source": {"bibkey": "sag-wasow-bender-2003", "paperLabel": "ch. 15, (44)"},
+      "language": "stan1293",
+      "primaryText": "Which rock legend would it be ridiculous to compare and?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["topic", "conjunctGap"]
+      ],
+      "comment": "Both conjuncts are gaps paired with one filler, which the across-the-board exception as stated would permit.",
+      "verified": "page-image"
+    }
+  ]
+}

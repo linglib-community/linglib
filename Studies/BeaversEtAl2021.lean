@@ -61,8 +61,8 @@ def resultStative (P : Entity → State → Prop) (x : Entity) : State → Prop 
 theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M P) x s :=
   fun h ↦ h.2 h.1.2
 
-theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P x s :=
-  and_iff_left_of_imp (h x s)
+theorem resultStative_iff (h : M.EntailsChange (P x)) : resultStative M P x s ↔ P x s :=
+  and_iff_left_of_imp (h s)
 
 theorem diamond_become_of_againAt_achievement_ne_zero {e : Event}
     (hp : againAt M .achievement R P y x e ≠ .undefined) : ◇[R] (◇[M.become.inv] ⊤) e :=
@@ -110,9 +110,9 @@ theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
 
 theorem entailsChange_of_verbRealization_eq_unmarked {Entity State Event : Type*}
     {M : ArgumentStructure.EventStructure.Interpretation Entity State Event}
-    {P : Entity → State → Prop} {Q : Event → Prop} (h : M.Respects P Q r)
+    {p : State → Prop} {Q : Event → Prop} (h : M.Respects p Q r)
     (hr : verbRealization r = .unmarked) :
-    M.EntailsChange P :=
+    M.EntailsChange p :=
   h.entailsChange (by unfold verbRealization at hr; split_ifs at hr with hk; exact hk)
 
 /-- A language's spell-out of the two realizations, in which the unmarked one is overt only if
