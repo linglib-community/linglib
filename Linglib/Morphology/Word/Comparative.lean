@@ -133,6 +133,34 @@ instance [DecidablePred root] (w : List M) : Decidable (RootsContiguous root w) 
 
 end
 
+section
+variable {root : M → Prop}
+
+theorem OccursOn.mono {A B : Set M} (h : A ⊆ B) {w : List M} {i : ℕ} {y : M}
+    (ho : OccursOn root A w i y) : OccursOn root B w i y :=
+  ⟨ho.1, ho.2.imp (Reaches.mono h) (Reaches.mono h)⟩
+
+theorem OccursOn.mem {A : Set M} {w : List M} {i : ℕ} {y : M} (ho : OccursOn root A w i y) :
+    y ∈ w :=
+  ho.2.elim (fun h ↦ List.mem_of_mem_drop h.mem)
+    fun h ↦ List.mem_of_mem_take (List.mem_reverse.1 h.mem)
+
+/-- A morph occurs on the root that directly follows it. -/
+theorem occursOn_of_getElem?_succ {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
+    (h : w[i + 1]? = some y) : OccursOn root A w i y := by
+  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
+  exact ⟨hy, .inl (by rw [List.drop_eq_getElem_cons hlt]; exact .inl rfl)⟩
+
+/-- A morph occurs on the root that directly precedes it. -/
+theorem occursOn_succ_of_getElem? {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
+    (h : w[i]? = some y) : OccursOn root A w (i + 1) y := by
+  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
+  refine ⟨hy, .inr ?_⟩
+  rw [List.take_succ_eq_append_getElem hlt, List.reverse_append]
+  exact .inl rfl
+
+end
+
 /-! ### Inventories -/
 
 /-- An inventory is a language's free forms, each a sequence of morphs, with the class of root
@@ -276,27 +304,6 @@ theorem setOf_isAffix_eq_gfp (hF : ∀ w ∈ L.forms, RootsContiguous root w) :
     rwa [key hnr] at this
 
 /-! ### Selectivity -/
-
-theorem _root_.Morphology.Comparative.OccursOn.mono {A B : Set M} (h : A ⊆ B) {w : List M} {i : ℕ} {y : M}
-    (ho : OccursOn root A w i y) : OccursOn root B w i y :=
-  ⟨ho.1, ho.2.imp (Reaches.mono h) (Reaches.mono h)⟩
-
-theorem _root_.Morphology.Comparative.OccursOn.mem {A : Set M} {w : List M} {i : ℕ} {y : M} (ho : OccursOn root A w i y) :
-    y ∈ w :=
-  ho.2.elim (fun h ↦ List.mem_of_mem_drop h.mem)
-    fun h ↦ List.mem_of_mem_take (List.mem_reverse.1 h.mem)
-
-/-- A morph occurs on the root that directly follows it. -/
-theorem _root_.Morphology.Comparative.occursOn_of_getElem?_succ {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
-    (h : w[i + 1]? = some y) : OccursOn root A w i y := by
-  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
-  exact ⟨hy, .inl (by rw [List.drop_eq_getElem_cons hlt]; exact .inl rfl)⟩
-
-/-- A morph occurs on the root that directly precedes it. -/
-theorem _root_.Morphology.Comparative.occursOn_succ_of_getElem? {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
-    (h : w[i]? = some y) : OccursOn root A w (i + 1) y := by
-  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
-  exact ⟨hy, .inr (by rw [List.take_succ_eq_append_getElem hlt, List.reverse_append]; exact .inl rfl)⟩
 
 /-- An affix is selective: the roots next to which it stands in the free forms are of one class,
 whichever morphs are taken to be affixes. -/
