@@ -299,7 +299,8 @@ def subcat : Constraint Candidate :=
 /-- Positional Minimality (26a), Align-R(φ, (σ́σ)): one violation for each φ whose right edge no
 disyllabic trochee shares. -/
 def positionalMinimality : Constraint Candidate :=
-  Constraint.alignRight.comap fun c ↦ (levelSpans .ph (c.tree x), (c.tree x).spans IsTrochee)
+  (Constraint.alignEdge .right .right).comap fun c ↦
+    (levelSpans .ph (c.tree x), (c.tree x).spans IsTrochee)
 
 /-- PRIORITY (60a), after [mascaro-2007]: as many violations as the inserted item stands below
 the first item of `v` applicable to the head. -/

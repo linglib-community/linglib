@@ -185,13 +185,13 @@ does. -/
 def correspondence : ConstraintSystem Input Candidate Con where
   gen := candidates
   marks x c
-    | .initFaith => Constraint.alignLeft
+    | .initFaith => Constraint.alignEdge .left .left
         ((c.spans x .om).filter fun w ↦ ∃ l ∈ x.lex, Corresponds x.lex l w, x.lex.map (·.span))
     | .headedness => (c.tree x).subtrees.countP fun s ↦
         s.value.level ≠ .syl ∧ ∀ c ∈ s.children,
           c.value.level ≠ s.value.level ∧ c.value.level.toNat + 1 ≠ s.value.level.toNat
     | .phrase => Constraint.deficiency (Corresponds x.phrases) (x.phrases, c.spans x .ph)
-    | .alignR => Constraint.alignRight (x.phrases.map (·.span), c.spans x .ph)
+    | .alignR => Constraint.alignEdge .right .right (x.phrases.map (·.span), c.spans x .ph)
     | .priority => if x.clitic ∧ (c.form = .strong ∨ c.form = .weak) then 1 else 0
     | .word => Constraint.align (fun w l ↦ Corresponds x.lex l w) (c.spans x .om, x.lex)
 

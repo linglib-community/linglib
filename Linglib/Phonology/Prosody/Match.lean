@@ -18,9 +18,9 @@ spans of its constituents of a category, counted in the syllables of the output,
 candidate as the spans of its nodes at a level. Match(α, π) requires each α-span to be the span
 of a π-node and Match(π, α) each π-span to be an α-span: two-sided alignment, both edges of a
 constituent coinciding with those of one constituent of the other category. One-sided alignment is
-`Constraint.alignLeft` and `Constraint.alignRight` on the same families. MAX(α, π) asks only that
-each α-constituent have a corresponding π-node, one containing its head and no head from outside
-it, no π-node answering to two α-constituents.
+`Constraint.alignEdge` on the same families. MAX(α, π) asks only that each α-constituent have a
+corresponding π-node, one containing its head and no head from outside it, no π-node answering to
+two α-constituents.
 
 ## Main definitions
 
@@ -116,7 +116,7 @@ theorem deficiency_corresponds_le (hα : (α.map (·.span)).Nodup)
   have h := Constraint.deficiency_le_align (R := Corresponds α) (S := fun a p ↦ a.span = p)
     (x := (α, m)) (List.Nodup.of_map _ hα) (fun a ha p hp ↦ hp ▸ ⟨hhead a ha, fun _ _ ↦ id⟩)
     fun a ha a' ha' p h h' ↦ List.inj_on_of_nodup_map hα ha ha' (h.trans h'.symm)
-  simpa [Constraint.align, List.countP_map, Function.comp_def] using h
+  exact h.trans_eq (by simpa using (Constraint.align_map (R := Eq) (·.span) id α m).symm)
 
 -- Two words phrased together: the φ over both matches the phrase spanning them, and neither word
 -- is matched by a φ of its own.
