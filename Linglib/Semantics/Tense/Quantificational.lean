@@ -18,7 +18,10 @@ dense](##Tense.diamond_future_den_iff), $Gp \to Fp$ [exactly when time has no la
 moment](##Tense.isSerial_toSetRel_future_iff), and $PFp \to Mp$ [exactly when time does not branch
 forward](##Tense.diamond_past_diamond_future_le_iff). A tense under a tense [entails the tense of
 the product](##Tense.diamond_diamond_toSetRel), and is that tense for all elements of the point
-algebra [exactly when time is dense without endpoints](##Tense.diamond_toSetRel_mul_iff).
+algebra [exactly when time is dense without endpoints](##Tense.diamond_toSetRel_mul_iff). The
+same holds of the cells of the interval algebra, `IntervalAlgebra.diamond_toSetRel_diamond_le`
+and `IntervalAlgebra.diamond_toSetRel_mul`, and a tense applies to a property of intervals
+through its values at points, `IntervalAlgebra.diamond_toSetRel_pure`.
 
 ## References
 
@@ -209,5 +212,35 @@ theorem diamond_precedes_den_iff :
 theorem diamond_precedes_diamond_precedes [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
     ◇[toSetRel precedes] (◇[toSetRel precedes] Q) = ◇[toSetRel precedes] Q := by
   rw [← diamond_comp, toSetRel_precedes_comp_self]
+
+/-- Possibility along one cell after another entails possibility along their product. -/
+theorem diamond_toSetRel_diamond_le (C D : IntervalAlgebra) (Q : NonemptyInterval T → Prop) :
+    ◇[toSetRel C] (◇[toSetRel D] Q) ≤ ◇[toSetRel (C * D)] Q := by
+  rw [← diamond_comp]
+  exact diamond_le_diamond_iff.2 (toSetRel_comp_subset C D) Q
+
+/-- On dense time without endpoints, possibility along a product of cells is possibility along
+one after the other. -/
+theorem diamond_toSetRel_mul [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T]
+    (C D : IntervalAlgebra) (Q : NonemptyInterval T → Prop) :
+    ◇[toSetRel (C * D)] Q = ◇[toSetRel C] (◇[toSetRel D] Q) := by
+  rw [toSetRel_mul, diamond_comp]
+
+/-- Possibility along a cell is left adjoint to necessity along its converse. -/
+theorem diamond_toSetRel_box_inv_gc (C : IntervalAlgebra) :
+    GaloisConnection (◇[toSetRel C] : (NonemptyInterval T → Prop) → _) □[toSetRel C⁻¹] :=
+  toSetRel_inv (T := T) C ▸ diamond_box_gc _
+
+/-- Along the embedding of the point algebra, possibility on intervals at a point is possibility
+on points: a tense applies to an interval property through its values at points. -/
+theorem diamond_toSetRel_pure (C : PointAlgebra) (Q : NonemptyInterval T → Prop) (a : T) :
+    ◇[toSetRel (pure C)] Q (.pure a) ↔ ◇[PointAlgebra.toSetRel C] (fun b ↦ Q (.pure b)) a := by
+  simp only [diamond_iff, mem_toSetRel, relation_mem_pure, PointAlgebra.mem_toSetRel_iff]
+  constructor
+  · rintro ⟨s, ⟨hs, -, hC⟩, hQ⟩
+    have hs : s = .pure s.fst := NonemptyInterval.ext (Prod.ext rfl hs.symm)
+    exact ⟨s.fst, hC, hs ▸ hQ⟩
+  · rintro ⟨b, hC, hQ⟩
+    exact ⟨.pure b, ⟨rfl, rfl, hC⟩, hQ⟩
 
 end IntervalAlgebra

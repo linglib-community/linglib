@@ -49,22 +49,6 @@ open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {p q : NonemptyInterval T → Prop} {s t : NonemptyInterval T}
 
-/-! ### Composition -/
-
-/-- Possibility along one cell after another entails possibility along their product. -/
-theorem _root_.IntervalAlgebra.diamond_toSetRel_diamond_le (C D : IntervalAlgebra)
-    (p : NonemptyInterval T → Prop) :
-    ◇[toSetRel C] (◇[toSetRel D] p) ≤ ◇[toSetRel (C * D)] p := by
-  rw [← diamond_comp]
-  exact diamond_le_diamond_iff.2 (toSetRel_comp_subset C D) p
-
-/-- On dense time without endpoints, possibility along a product of cells is possibility along
-one after the other. -/
-theorem _root_.IntervalAlgebra.diamond_toSetRel_mul [DenselyOrdered T] [NoMinOrder T]
-    [NoMaxOrder T] (C D : IntervalAlgebra) (p : NonemptyInterval T → Prop) :
-    ◇[toSetRel (C * D)] p = ◇[toSetRel C] (◇[toSetRel D] p) := by
-  rw [toSetRel_mul, diamond_comp]
-
 /-! ### Subintervals and superintervals -/
 
 /-- `inclusive p` holds at an interval when `p` holds at some subinterval of it, the inclusive

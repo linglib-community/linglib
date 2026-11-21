@@ -5,6 +5,7 @@ public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Perspective
+public import Linglib.Semantics.Tense.Quantificational
 public import Studies.IatridouEtAl2001
 public import Linglib.Data.Examples.Readers
 
