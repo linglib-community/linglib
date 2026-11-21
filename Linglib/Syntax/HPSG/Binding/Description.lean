@@ -32,7 +32,7 @@ namespace HPSG.Binding
 
 open HPSG.RSRL
 
-/-! ### Principles A and B -/
+/-! ### The descriptions -/
 
 /-- The term for the member at position `m` of the argument structure of the entity at the
 variable `w`: its `ARG-ST`, then `REST` `m` times, then `FIRST`. -/
@@ -71,6 +71,8 @@ example : (locallyOBinds 1 0).freeVars = {0, 1} := by decide
 
 variable {U : Type*} {I : Interpretation sig U} {r : U}
 
+/-! ### Satisfaction at a root -/
+
 theorem termDenot_arg (g : ℕ → U) (u : U) (w m : ℕ) :
     I.termDenot g (arg w m) u = argAt I (g w) m := by
   have key : ∀ m, I.termDenot g ((·.feat .REST)^[m] (.feat (.var w) .ARGST)) u =
@@ -108,6 +110,8 @@ theorem satisfies_of_models (hI : I.Models grammar) (hr : I.IsRootedAt r)
     (configuration I).Satisfies (Coindexed I) (configuration I).exempt
       fun x ↦ (I.S x).bindingClass :=
   (principleA_and_principleB_iff hirr).1 ((satisfies_grammar_iff hr).1 fun d hd ↦ hI d hd _ r)
+
+/-! ### Satisfaction at any entity -/
 
 theorem Coindexed.of_generated {r : U} {x y : {v // I.IsComponentOf r v}}
     (h : Coindexed (I.generated r) x y) : Coindexed I x y := by
