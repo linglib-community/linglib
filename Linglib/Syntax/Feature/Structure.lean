@@ -5,32 +5,51 @@ public import Linglib.Core.Computability.PartialMoore
 /-!
 # Feature structures
 
-A feature structure over features `F` and types `T` is a set of nodes `Q` with a root, a type at
-each node, and for each feature a partial function on the nodes, every node being reached from
-the root by some path of features. It is a partial Moore machine with a start state all of whose
-states are reached: the value of a path is the state the machine reads the path to, and two paths
-share their value when it reads them to the same state.
+A *feature structure* describes a linguistic object by its features. The pronoun *she*, for
+example, has the feature `PERSON` with the value *third* and the feature `NUMBER` with the value
+*singular*. A value may have features of its own, so a feature structure is a graph: each node
+has a type, and each feature leads from a node to at most one other node. One node is the *root*,
+and every node is reached from the root by following features.
 
-One feature structure subsumes another, `A.Subsumes B`, when a map of nodes sends root to root,
-sends each node to one of an at least as specific type, and preserves each feature where it is
-defined, so that the second carries all the information of the first.
+Two paths of features may lead to the same node. This is how a feature structure says that two
+values are one and the same, as when a verb and its subject share their person and number, and
+not merely alike.
 
-The abstract feature structure `A.abs` gives the type at the end of each defined path and the
-pairs of paths that lead to one node. Abstract feature structures are partially ordered by
-information, and subsumption is that order (`FeatureStructure.subsumes_iff_abs_le`), so that
-feature structures subsume each other exactly when their abstract feature structures are equal
-(`FeatureStructure.abs_eq_iff`). Two feature structures are unifiable when their abstract feature
-structures have a common upper bound.
+A `FeatureStructure Q F T` has nodes `Q`, features `F` and types `T`. It is a partial Moore
+machine, with the features as letters and the types as outputs, together with a root from which
+every state is reached. The value of a path is the state the machine reaches on it.
+
+## Subsumption
+
+A feature structure `A` *subsumes* `B`, written `A.Subsumes B`, when `B` contains all the
+information in `A`. A structure that says only "third person" subsumes one that says "third
+person singular". Precisely, there is a map `h` from the nodes of `A` to those of `B` that sends
+the root to the root, sends each node to a node of an equal or more specific type, and sends the
+value of a feature to the value of the same feature (`FeatureStructure.subsumes_iff_exists`).
+
+## Abstract feature structures
+
+What a feature structure says does not depend on what its nodes are. The *abstract feature
+structure* `A.abs` keeps only the type at the end of each path, and the pairs of paths that lead
+to the same node. We order abstract feature structures by information: a larger one has more
+paths, more specific types, and more pairs of paths identified.
+
+The main result, `FeatureStructure.subsumes_iff_abs_le`, says that `A` subsumes `B` exactly when
+`A.abs ≤ B.abs`. It follows that two feature structures subsume each other exactly when their
+abstract feature structures are equal (`FeatureStructure.abs_eq_iff`).
+
+Two feature structures can be *unified* when some feature structure contains the information of
+both. In terms of the order, their abstract feature structures have a common upper bound.
 
 ## Implementation notes
 
-In the order of types the more specific type is the greater, as in the orders of feature bundles
-and of flat slots. A type hierarchy written with the more specific type lesser gives feature
-structures over its order dual.
+In the order of types, the more specific type is the greater one. This matches the orders of
+feature bundles and of flat slots, where more information is greater. A type hierarchy that is
+written the other way round gives feature structures over its order dual.
 
-A feature structure is a description of an object as far as it goes. A map that keeps the type of
-each node and has a feature defined on an image exactly when it is defined on the source
-preserves more than subsumption does, namely the truth of descriptions.
+Subsumption compares how much two feature structures say. It is weaker than a map that keeps
+every type and keeps track of which features are missing; such a map preserves the truth of
+descriptions, including negative ones, and subsumption does not.
 
 ## References
 

@@ -9,21 +9,42 @@ public import Studies.Sag2010
 /-!
 # Przepiórkowski (2021): Three improvements to the HPSG model theory
 
-This file formalizes the first two of the paper's three proposals. The first takes the models of
-a grammar to be rooted models of single utterances, whose quantifiers range over the whole
-universe. The second solves Höhle's Problem, the spurious ambiguity between look-alike objects
-that may or may not be token-identical, by a General Identity Principle from which a cycle exempts
-the referential indices.
+The paper proposes three changes to the model theory of HPSG. This file formalizes the first
+two.
+
+## Rooted models
+
+The first proposal is about what a model of a grammar is. In RSRL every entity must satisfy the
+grammar, with quantifiers that range over its own components. The paper takes a model to be a
+*rooted* model of a single utterance, whose quantifiers range over the whole universe
+(`ModelsFO`).
+
+The rooted model that an entity generates is such a model exactly when every component satisfies
+the grammar with quantifiers over the components of the root (`modelsFO_generated_iff`).
+
+## Höhle's Problem
+
+Two objects in a model may look exactly alike and yet be either one object or two. This gives a
+grammar spurious ambiguities. The second proposal removes them with a General Identity
+Principle, which identifies look-alike objects. A cycle exempts the referential indices, which
+must be allowed to differ.
 
 ## Implementation notes
 
-`copiesDef` states (13) for any signature. The illustration has a signature with the attribute
-`INT` of (14) and one without it, and `withCopies` adds a copy relation to an utterance. A root
-principle is evaluated at the root in place of the paper's term `r`, which agrees for formulas
-that mention `r` but not the colon. The values that (13) relates are first bound to variables,
-since RSRL applies relations to variables only. An index stands in for the paper's stranded
-`local` objects and has a gender and `INT` but no person or number. The third proposal, a
-second-order description language, is not formalized.
+`copiesDef` states the paper's definition of the copy relation for any signature. The
+illustration has one signature with the attribute `INT` and one without it, and `withCopies`
+adds a copy relation to an utterance.
+
+A root principle is evaluated at the root. The paper uses a term `r` for the root instead; the
+two agree for formulas that mention `r` but not the colon.
+
+The values that the copy relation relates are first bound to variables, since RSRL applies
+relations to variables only.
+
+An index stands in for the paper's stranded `local` objects. It has a gender and `INT` but no
+person or number.
+
+The third proposal, a second-order description language, is not formalized.
 
 ## References
 

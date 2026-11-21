@@ -7,27 +7,36 @@ public import Mathlib.Data.List.Induction
 /-!
 # Partial Moore machines
 
-A partial Moore machine has a state type `σ`, an input alphabet `α` and an output type `β`: a
-partial transition `step : σ → α → Option σ` and an output `out : σ → β` at each state. From a
-state `s` it reads a word as far as its transitions are defined, `M.evalFrom s x`, and a state is
-reached from `s` when it reads some word to it, `M.Reaches s q`.
+A *partial Moore machine* is a state machine that reads a word one letter at a time and shows an
+output at each state. It is partial: a state need not have a transition for every letter, and the
+machine stops when it meets a letter it has no transition for.
 
-Two things are observed of a machine started at `s`: the output at the end of each word it reads
-to the end, `M.output? s x`, and which pairs of words it reads to the same state,
-`M.Nerode s x y`.
+For a machine `M`, `M.evalFrom s x` is the state that the word `x` leads to from the state `s`,
+or `none` if the machine stops before the end of `x`. A state `q` is *reached* from `s`,
+`M.Reaches s q`, when some word leads from `s` to `q`.
 
-For outputs ordered by `≤`, the machine `M` at `s` is simulated by `N` at `t`,
-`M.SimulatedBy N s t`, when a map of the states reached from `s` sends `s` to `t`, does not
-decrease the output, and preserves each transition that is defined. A simulation exists exactly
-when `N` reads every word `M` does to an output at least as great, and reads to one state every
-two words that `M` does (`PartialMoore.simulatedBy_iff`).
+We record two observations of a machine started at `s`. The first, `M.output? s x`, is the output
+at the state that `x` leads to. The second, `M.Nerode s x y`, says that the words `x` and `y`
+lead to the same state.
+
+When the outputs are ordered, `M` at `s` is *simulated by* `N` at `t`, written
+`M.SimulatedBy N s t`, when there is a map `h` from the states of `M` to those of `N` such that
+`h s = t`, the output never decreases, `M.out q ≤ N.out (h q)`, and every transition of `M` is
+matched by one of `N`. These conditions are only asked of the states reached from `s`.
+
+The main result, `PartialMoore.simulatedBy_iff`, says that a simulation exists exactly when `N`
+reads every word that `M` reads, ending at an output at least as large, and any two words that
+lead `M` to one state also lead `N` to one state. So whether one machine simulates another
+depends only on the two observations, and not on what the states are.
 
 ## Implementation notes
 
-The machine has no start state, so that one machine can be run from each of its states; a
-machine with a start state all of whose states are reached is a pointed one. The state type may
-be infinite. A total machine is the case in which no transition is `none`; mathlib's `DFA` has a
-total transition function and no outputs.
+A machine has no start state. This lets us run one machine from each of its states, which is how
+it is used: a machine with a chosen start state from which every state is reached is a separate,
+bundled object.
+
+As with mathlib's `DFA`, the set of states may be infinite. `DFA` has a transition for every
+letter and no outputs; a partial Moore machine has neither restriction.
 -/
 
 @[expose] public section

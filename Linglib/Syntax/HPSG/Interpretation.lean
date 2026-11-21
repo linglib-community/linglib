@@ -9,27 +9,54 @@ public import Linglib.Syntax.Feature.Structure
 /-!
 # RSRL interpretations
 
-An interpretation of an RSRL signature over a universe `U` of entities assigns a sort to every
-entity, a partial function on entities to every attribute, and a set of tuples of entities to
-every relation symbol. A term then denotes a partial function on entities, and the
-[components](##HPSG.RSRL.Interpretation.isComponentOf_iff_exists_path) of an entity are the
-entities that some path reaches from it. A homomorphism of interpretations preserves sorts,
-commutes with the attributes and preserves the relations. Since attributes are functions, a
-homomorphism [maps the components of an entity onto the components of its
-image](##HPSG.RSRL.Interpretation.HomClass.image_isComponentOf), and it
-[commutes with term denotation](##HPSG.RSRL.Interpretation.HomClass.termDenot_comp).
+An *interpretation* of a signature is a collection of entities together with what the signature
+says about them. Over a universe `U` of entities it gives a sort to every entity, a partial
+function on entities for every attribute, and a set of tuples of entities for every relation
+symbol.
+
+A term then denotes an entity, when every attribute along it is defined
+(`HPSG.RSRL.Interpretation.termDenot`). The *components* of an entity are the entities that some
+path reaches from it (`HPSG.RSRL.Interpretation.isComponentOf_iff_exists_path`).
+
+## Homomorphisms
+
+A *homomorphism* of interpretations is a map of entities that keeps the sort of each entity,
+commutes with the attributes, and sends relation tuples to relation tuples. An *embedding* is an
+injective one that also reflects the relations.
+
+A homomorphism commutes with term denotation
+(`HPSG.RSRL.Interpretation.HomClass.termDenot_comp`). Since attributes are functions, it also
+maps the components of an entity onto the components of its image
+(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
+
+## The feature structure of an entity
+
+An interpretation is a partial Moore machine: the attributes are the letters, an attribute's
+partial function is its transition, and the sort of an entity is the output
+(`HPSG.RSRL.Interpretation.toPartialMoore`). Following a path is reading it in this machine
+(`HPSG.RSRL.Interpretation.evalFrom_toPartialMoore`), and the components of an entity are the
+states reached from it. So each entity is the root of a feature structure
+(`HPSG.RSRL.Interpretation.featureStructure`), and a homomorphism is in particular a simulation
+(`HPSG.RSRL.Interpretation.Hom.simulatedBy`).
 
 ## Implementation notes
 
-The universe is a parameter rather than a field, as the carrier of a first-order structure is in
-mathlib, so that instances on it are found by inference. The conditions that [richter-2024]
-builds into an interpretation are separate predicates, since a worked example often interprets
-only the part of a feature structure that a principle mentions: `IsSortResolved` and
-`IsTotallyWellTyped`, named as in [carpenter-1992], for the conditions on sorts and attributes,
-and `IsFull` for the restriction of relation tuples to the components of one entity. Chains are
-not formalized, so a relation tuple holds entities only. `Hom`, `Embedding` and `HomClass`
-follow their namesakes in `FirstOrder.Language`, so a fact about homomorphisms is stated once
-and applies to embeddings.
+The universe is a parameter, not a field, as the carrier of a first-order structure is in
+mathlib. Instances on it are then found by inference.
+
+[richter-2024] builds three conditions into an interpretation. Here they are separate
+predicates, because a worked example often interprets only the part of a feature structure that
+a principle mentions. `IsSortResolved` and `IsTotallyWellTyped`, named as in [carpenter-1992],
+are the conditions on sorts and attributes, and `IsFull` restricts relation tuples to the
+components of one entity.
+
+Chains are not formalized, so a relation tuple holds entities only.
+
+`Hom`, `Embedding` and `HomClass` follow their namesakes in `FirstOrder.Language`. A fact about
+homomorphisms is stated once and applies to embeddings as well.
+
+The machine outputs the sort in the dual order, in which the more specific sort is the greater,
+since that is the order of information.
 
 ## References
 

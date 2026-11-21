@@ -5,13 +5,17 @@ public import Linglib.Syntax.HPSG.Description
 /-!
 # Generated sub-interpretations
 
-The sub-interpretation that an entity `r` generates has the components of `r` as its universe,
-and an interpretation is rooted at `r` when every entity is a component of `r`. The inclusion of
-a generated sub-interpretation is an [embedding](##HPSG.RSRL.Interpretation.generatedEmbedding),
-so [satisfaction in it is satisfaction in the whole
-interpretation](##HPSG.RSRL.Interpretation.satisfies_generated), a generated sub-interpretation
-of a model [is a model](##HPSG.RSRL.Interpretation.Models.generated), and a rooted interpretation
-[is full](##HPSG.RSRL.Interpretation.IsRootedAt.isFull).
+Every entity `r` of an interpretation generates a smaller interpretation, whose universe is the
+set of components of `r` (`HPSG.RSRL.Interpretation.generated`). An interpretation is *rooted*
+at `r` when every entity is a component of `r` (`HPSG.RSRL.Interpretation.IsRootedAt`).
+
+The inclusion of a generated sub-interpretation is an embedding
+(`HPSG.RSRL.Interpretation.generatedEmbedding`). So an entity satisfies a formula in the
+sub-interpretation exactly when it does in the whole interpretation
+(`HPSG.RSRL.Interpretation.satisfies_generated`), and a generated sub-interpretation of a model
+is a model (`HPSG.RSRL.Interpretation.Models.generated`).
+
+A rooted interpretation is full (`HPSG.RSRL.Interpretation.IsRootedAt.isFull`).
 
 ## References
 

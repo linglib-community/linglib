@@ -13,59 +13,66 @@ public import Mathlib.Tactic.FinCases
 /-!
 # The construct hierarchy of Sign-Based Construction Grammar in RSRL
 
-A construct pairs a mother sign with daughter signs, and a construction is a constraint on the
-constructs of one sort. Construct sorts are classified by how they are headed and by the kind of
-clause they form. A sort below one sort of each dimension inherits the constraints on both,
-since a constraint on a sort holds of every entity below it. This file states in RSRL the
-fragment of Sign-Based Construction Grammar with which Sag analyses the English filler-gap
-clauses.
+In Sign-Based Construction Grammar a *construct* is a piece of syntactic structure: a mother sign
+with its daughter signs. A *construction* is a constraint on the constructs of one sort. This
+file states in RSRL the part of the grammar with which Sag analyses the English filler-gap
+clauses, such as *My bagels, she likes* and *Who did they visit?*
 
-The headed construction gives the mother the category of its head daughter. The filler-head
-construction identifies the filler daughter with the first sign on the head daughter's `GAP`
-list and passes the rest of the list to the mother. Each filler-gap clause adds constraints on
-the categories of its daughters and on the inversion, independence and verb form of its head,
-the clause types fix the semantic type and verb form of the mother, and the topicalized,
-wh-exclamative and the-clause constructions give the head daughter exactly one gap. The
-principle `memberDef` defines list membership, uniquely on lists without cycles.
+## The hierarchy
 
-## Main definitions
+Construct sorts are classified in two ways: by how they are headed, and by the kind of clause
+they form. A sort may sit below one sort of each kind. It then inherits the constraints on both,
+because a constraint on a sort holds of every entity below it.
+`HPSG.Construction.forall_satisfies_grammar_iff_of_nsWhIntCl` shows this for the nonsubject
+wh-interrogative: it satisfies the grammar exactly when it satisfies the four constructions it
+inherits.
 
-* `HPSG.Construction.Srt`: the sorts, with the hierarchies of categories, verb forms, semantic
-  types, lists, signs, constructs and clauses.
-* `HPSG.Construction.sig`: the signature.
-* `HPSG.Construction.fillerHeadPrinciple`: the filler-head construction.
-* `HPSG.Construction.constraints`: the constructions, each a constraint on one sort.
-* `HPSG.Construction.grammar`: the grammar that states the constructions.
-* `HPSG.Construction.ListMem`: the elements of a list in an interpretation.
-* `HPSG.Construction.memberDef`: the principle that defines list membership.
+## The constructions
 
-## Main results
+The *headed* construction gives the mother the category of its head daughter
+(`HPSG.Construction.satisfies_hdCat_iff`).
 
-* `HPSG.Construction.forall_satisfies_grammar_iff_of_nsWhIntCl`: a nonsubject wh-interrogative
-  satisfies the grammar exactly when it satisfies the four constructions it inherits.
-* `HPSG.Construction.satisfies_mtrGap_iff`: in a model of the grammar, the mother of a
-  filler-head construct has the `GAP` list that remains of its head daughter's.
-* `HPSG.Construction.satisfies_hdCat_iff`: in a model of the grammar, the head daughter of a
-  headed construct has the features of its mother's category.
-* `HPSG.Construction.not_le_covertExpr`: no daughter of a construct is covert.
-* `HPSG.Construction.models_memberDef_iff`: on lists without cycles, a well-typed interpretation
-  models `memberDef` exactly when `member` is list membership.
+The *filler-head* construction, `HPSG.Construction.fillerHeadPrinciple`, is what a filler-gap
+clause is. A phrase with a missing argument records it on its `GAP` list. The construction
+identifies the filler daughter with the first sign on the head daughter's `GAP` list and passes
+the rest of the list to the mother (`HPSG.Construction.satisfies_mtrGap_iff`).
+
+Each filler-gap clause adds constraints of its own: on the categories of its daughters, and on
+whether its head is inverted, independent or finite. The clause types fix the semantic type and
+verb form of the mother. The topicalized clause, the wh-exclamative and the the-clause give the
+head daughter exactly one gap.
+
+`HPSG.Construction.constraints` lists the constructions, each a constraint on one sort, and
+`HPSG.Construction.grammar` is the grammar that states them.
+
+## Lists
+
+`HPSG.Construction.ListMem` says that an entity is a member of a list in an interpretation. The
+principle `HPSG.Construction.memberDef` defines the relation symbol `member` to be list
+membership: on lists without cycles, a well-typed interpretation satisfies it exactly when
+`member` is `ListMem` (`HPSG.Construction.models_memberDef_iff`).
 
 ## Implementation notes
 
-As in Sag's grammars, a `GAP` list contains signs. Signs are overt or covert, only overt signs are
-daughters of constructs, and a word leaves a covert sign of sort `gap` on its `GAP` list for an
-argument that it does not realize. The features of `SYN` and the index of `SEM` are attributes of
-the sign itself. The filler-head construction identifies the `SYN` value of the filler with that of
-the gap except for `WH` and `REL`, which are not in the signature, so the filler and the gap share
-their `CAT` and `GAP` values, and, in Sag's synopsis of the framework, their index. Daughters are
-attributes named by their role rather than members of a `DTRS` list. As in Sag's signature, a verbal
-category has a verb form and an independence value and a verb an inversion value; of the features he
-declares, only those that the constructions here mention are in the signature, so `WH`, `REL`,
-`VAL`, `SELECT`, `AUX` and `STORE` are not, and the semantic type of the mother stands in for its
-meaning. Sag places the topicalized clause below the filler-head construct alone and gives its head
-daughter an austinean meaning, which the mother's meaning inherits; here the mother's type is
-stated.
+As in Sag's grammars, a `GAP` list contains signs. A sign is overt or covert. Only overt signs
+are daughters of constructs (`HPSG.Construction.not_le_covertExpr`), and a word leaves a covert
+sign of sort `gap` on its `GAP` list for an argument that it does not realize.
+
+The features of `SYN` and the index of `SEM` are attributes of the sign itself. Daughters are
+attributes named by their role, not members of a `DTRS` list.
+
+The filler-head construction identifies the `SYN` value of the filler with that of the gap,
+except for `WH` and `REL`. Those two are not in the signature here, so the filler and the gap
+share their `CAT` and `GAP` values and, as in Sag's synopsis of the framework, their index.
+
+As in Sag's signature, a verbal category has a verb form and an independence value, and a verb
+has an inversion value. Of the features he declares, the signature has only those that the
+constructions here mention; `WH`, `REL`, `VAL`, `SELECT`, `AUX` and `STORE` are left out. The
+semantic type of the mother stands in for its meaning.
+
+Sag places the topicalized clause below the filler-head construct alone and gives its head
+daughter an austinean meaning, which the mother inherits. Here the type of the mother is stated
+directly.
 
 The aux-initial construction is stated in `Studies/SagEtAl2020` and the coordinate construction
 in `Studies/SagWasowBender2003`. The worked constructs are in `Studies/Sag2010`, which checks

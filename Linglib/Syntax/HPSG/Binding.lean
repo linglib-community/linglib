@@ -14,40 +14,61 @@ public import Linglib.Syntax.Feature.Bundle
 /-!
 # HPSG binding theory in RSRL
 
-This file states Principles A and B of HPSG binding theory as RSRL descriptions. A nominal
-object has an index, and an index has a person, a number and a gender. Two nominal objects are
-coindexed when their indices are the same entity. A word has an argument structure, a list, and
-one of its members locally o-commands another when it precedes it there, being less oblique; it
-locally o-binds the other when, in addition, the two are coindexed. Local o-command is not a
-relation symbol of the signature: the description `HPSG.RSRL.Binding.locallyOCommands` follows
-the `ARG-ST` of some word to two of its members by paths of `REST` and `FIRST`, and
-`HPSG.RSRL.Binding.LocallyOCommands` is the relation it describes in an interpretation
-(`HPSG.RSRL.Binding.satisfies_locallyOCommands_iff`). Principle A requires a locally o-commanded
-anaphor to be locally o-bound, and Principle B requires a personal pronoun to be locally
-o-free.
+Binding theory says which noun phrases a pronoun can refer back to. In *Susan likes herself*,
+the reflexive *herself* must refer to Susan. In *Susan likes her*, the pronoun *her* cannot.
+This file states the two principles of HPSG that account for this, as descriptions in RSRL.
 
-Since the agreement features are attributes of the index, coindexed nominal objects have one
-person, number and gender between them. The agreement bundle of a nominal object,
-`HPSG.RSRL.Binding.agreement`, reads the three off the sorts of its index's values, a more
-specific sort giving a more specific slot (`HPSG.RSRL.Binding.Srt.antitone_toGender`), and
-coindexed nominal objects have the same agreement bundle
-(`HPSG.RSRL.Binding.agreement_eq_of_coindexed`). The bundle is monotone in information: a nominal
-object whose feature structure subsumes another's has the less specific bundle
-(`HPSG.RSRL.Binding.agreement_le_of_simulatedBy`). The binding principles therefore mention no
-agreement: an anaphor whose index differs from its antecedent's in person, number or gender is
-not coindexed with it.
+## Indices and coindexation
 
-At the root of an interpretation the two principles are the framework-neutral Conditions A and B
-of `Syntax/Binding` over local o-command, with the anaphors that nothing locally o-commands
-exempt (`HPSG.RSRL.Binding.satisfies_grammar_iff`).
+A nominal object has an *index*, and an index has a person, a number and a gender. Two nominal
+objects are *coindexed* when their indices are the same entity, which is how the grammar says
+that they refer to the same thing.
+
+Since person, number and gender belong to the index, coindexed nominal objects cannot differ in
+them. The agreement bundle of a nominal object, `HPSG.RSRL.Binding.agreement`, reads the three
+off its index, and `HPSG.RSRL.Binding.agreement_eq_of_coindexed` says that coindexed nominal
+objects have the same bundle. This is why the binding principles do not mention agreement.
+
+A nominal object that carries more information has a more specific bundle
+(`HPSG.RSRL.Binding.agreement_le_of_simulatedBy`).
+
+## Local o-command
+
+A word lists its arguments in its *argument structure*, in order of obliqueness: the subject
+first, then the objects. One argument *locally o-commands* another when it comes earlier on the
+argument structure of the same word.
+
+The argument structure is a list, built from the attributes `FIRST` and `REST`. So "earlier on
+the list" can be said with paths: the description `HPSG.RSRL.Binding.locallyOCommands` follows
+the `ARG-ST` of some word to two of its members. `HPSG.RSRL.Binding.LocallyOCommands` is the
+same relation stated directly on an interpretation, and
+`HPSG.RSRL.Binding.satisfies_locallyOCommands_iff` says that the description holds exactly when
+the relation does.
+
+## The principles
+
+One argument *locally o-binds* another when it locally o-commands it and is coindexed with it.
+
+* Principle A: an anaphor that something locally o-commands is locally o-bound.
+* Principle B: a personal pronoun is not locally o-bound.
+
+`HPSG.RSRL.Binding.satisfies_grammar_iff_within` says what the two principles amount to at any
+entity: among its components, every anaphor with a local o-commander is coindexed with one, and
+no personal pronoun is. `HPSG.RSRL.Binding.satisfies_grammar_iff` relates this to Conditions A
+and B of `Syntax/Binding`, which are stated without reference to any framework.
 
 ## Implementation notes
 
-An argument structure is read to its third member, which is as far as the description of local
-o-command reaches without a relation defined by recursion on lists. The requirements that the
-commander be referential and that the two have distinct `LOCAL` values are not stated; the
-fragment has no expletives and no nonlocal dependencies. A phrase is given by the list of its
-daughters, with no constituent structure. Worked models are in `Studies/SagWasowBender2003`.
+An argument structure is read up to its third member. This is as far as a description can reach
+without a relation defined by recursion on lists, and it covers transitive and ditransitive
+verbs.
+
+Pollard and Sag also require the commanding argument to be referential and to have a different
+`LOCAL` value from the argument it commands. Neither condition is stated here; the fragment has
+no expletives and no long-distance dependencies.
+
+A phrase is given by the list of its daughters and has no further constituent structure. Worked
+examples are in `Studies/SagWasowBender2003`.
 
 ## References
 
