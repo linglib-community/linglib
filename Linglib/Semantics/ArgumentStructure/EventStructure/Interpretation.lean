@@ -47,14 +47,13 @@ that is a thematic relation, which a caller supplies and states as a conjunct (`
 so that the same relations serve analyses on which the causer is an agent or is introduced by a
 separate head.
 
+`Respects` reads a signature as the postulates of a root in the complement of `v`. For a root
+adjoined to `v` the cause kind is `EntailsCausedResult` of a result that the signature does not
+fix, since a root may entail the result of its template or another one, so a caller states that
+postulate of the result it means.
+
 `become` runs from the eventuality to the state it gives rise to, the direction of `cause`, so
 that the two compose; [beavers-koontz-garboden-2020] write the state first.
-
-## TODO
-
-* `Respects` reads a signature as the postulates of a root in the complement of `v`. For a root
-  adjoined to `v` the cause kind is `EntailsCausedResult`, and no predicate yet reads a
-  signature at that position.
 
 ## References
 

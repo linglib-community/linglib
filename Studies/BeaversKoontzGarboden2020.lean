@@ -47,9 +47,14 @@ fills [the cells that markedness and naturalness allow](##mem_attestedCells_iff)
   assumption in which the postulate holds and the causing event lacks the manner. The mirror
   postulate of √hand, on which an action of the manner causes the result, is independent of it
   (`twoChanges_not_entailsCausedResult`, `jointCause_not_entailsMannerOfCause`).
-* The result-denial rows, which in the ditransitives depend on the template as well as the root,
-  and the object-deletion row are not read; the rows of the three attachments of *again* are read
-  by `attachment_rows`.
+* A ditransitive is the head `v◊cause` (29) with the root adjoined (36). The possibility operator
+  of the head is a relation `prospect` between a causing event and the states it may bring
+  about, which contains the composite of `cause` and `become` since an actual result is a
+  possible one. A root class is the result its root entails as a function of the template's
+  (`DitransitiveRoot.result`), and the result-denial rows of chapter 3 are read by
+  `resultDenial_rows`. In the causative of chapter 4 the template entails the result whatever
+  the root (`causative_denote_le`). The object-deletion row is not read; the rows of the three
+  attachments of *again* are read by `attachment_rows`.
 
 ## References
 
@@ -143,6 +148,11 @@ theorem diamond_cause_of_againAt_causative_ne_undefined {R : SetRel Event Event}
     (h : againAt M θ causative R P y x w ≠ .undefined) :
     ◇[R] (◇[M.cause] (◇[M.become] (P x))) w :=
   diamond_mono R (fun _ h ↦ h.2) w (again_ne_undefined_iff.1 h)
+
+-- chapter 4, (25a): the template entails the result whatever the root
+theorem causative_denote_le {Q : Event → Prop} :
+    causative.denote M θ P Q y x ≤ ◇[M.cause] (◇[M.become] (P x)) :=
+  fun _ h ↦ h.2
 
 theorem diamond_become_of_againAt_state_ne_undefined {R : SetRel State State} {s : State}
     (hres : M.EntailsChange (P x)) (h : againAt M θ .state R P y x s ≠ .undefined) :
@@ -357,6 +367,86 @@ theorem jointCause_not_entailsMannerOfCause :
     fun h ↦ let ⟨_, he, _, hQ⟩ := h () trivial
       Bool.false_ne_true <| Subevent.action.inj <| hQ (.action false) ⟨⟨_, rfl⟩, he⟩⟩
 
+/-! ### Ditransitives and the denial of the result
+
+The ditransitive head `v◊cause` (29) says that its subject is the effector of an event that may
+cause a change into the result state, and a root adjoined to it (36) adds its manner. The result
+is then prospective: *Mary sent John a letter, but he never got it*. A root may entail an actual
+caused result of its own, and the result of the template cannot be denied when the root's
+entails it, as with √give (39) and √hand (49), while the root of *send* entails only that the
+theme leaves the causer (52). -/
+
+section Ditransitive
+
+variable {Entity State Event : Type*} {M : EventStructure.Interpretation State Event}
+  {prospect : SetRel Event State} {θ : Entity → Event → Prop} {p r : State → Prop}
+  {Q : Event → Prop} {x : Entity}
+
+/-- (36): the ditransitive head with a root of manner `Q` adjoined holds of an event of the
+manner whose actor is `x` and that may bring about a state of `p`. -/
+def ditransitive (prospect : SetRel Event State) (θ : Entity → Event → Prop) (p : State → Prop)
+    (Q : Event → Prop) (x : Entity) : Event → Prop :=
+  θ x ⊓ ◇[prospect] p ⊓ Q
+
+-- (43), (44): a result that obtains is prospective
+theorem diamond_prospect_inf_eq (h : M.cause ○ M.become ⊆ prospect) (p : State → Prop) :
+    ◇[prospect] p ⊓ ◇[M.cause] (◇[M.become] p) = ◇[M.cause] (◇[M.become] p) :=
+  inf_eq_right.2 fun _ ⟨e, hve, s, hes, hs⟩ ↦ ⟨s, h ⟨e, hve, hes⟩, hs⟩
+
+-- (38), (48)
+theorem ditransitive_le_of_entailsCausedResult (h : M.EntailsCausedResult Q r) (hr : r ≤ p) :
+    ditransitive prospect θ p Q x ≤ ◇[M.cause] (◇[M.become] p) :=
+  fun v hv ↦ ModalLogic.diamond_mono _ (ModalLogic.diamond_mono _ hr) v (h v hv.2)
+
+end Ditransitive
+
+/-- The classes of ditransitive root of chapter 3. -/
+inductive DitransitiveRoot
+  /-- Roots of caused possession, as of *give* (39). -/
+  | truePossession
+  /-- Roots of transfer of possession by motion, as of *hand* (49). -/
+  | transferByMotion
+  /-- Release roots, as of *send* and *throw* (52). -/
+  | release
+  deriving DecidableEq
+
+/-- The result a root of the class entails, with `p` the result of the template and `q` a
+further description of a state: the template's result, that result reached by motion, or the
+theme's leaving the causer. -/
+def DitransitiveRoot.result {State : Type*} (p q : State → Prop) :
+    DitransitiveRoot → State → Prop
+  | .truePossession => p
+  | .transferByMotion => p ⊓ q
+  | .release => q
+
+/-- A ditransitive with a root of the class survives the denial of the template's result when
+in some interpretation the root's manner entails its caused result and an event of the
+ditransitive brings about no state of the template's result. -/
+def DitransitiveRoot.Deniable (c : DitransitiveRoot) : Prop :=
+  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation State Event)
+    (prospect : SetRel Event State) (θ : Unit → Event → Prop) (p q : State → Prop)
+    (Q : Event → Prop),
+    M.cause ○ M.become ⊆ prospect ∧ M.EntailsCausedResult Q (c.result p q) ∧
+      ∃ v, ditransitive prospect θ p Q () v ∧ ¬ ◇[M.cause] (◇[M.become] p) v
+
+/-- (52): a throwing `false` causes a change `true` into the state `false`, in which the theme
+has left the causer; the state `true`, in which the recipient has it, does not come about. -/
+def thrown : ArgumentStructure.EventStructure.Interpretation Bool Bool where
+  become := {(e, s) | e = true ∧ s = false}
+  cause := {(v, e) | v = false ∧ e = true}
+
+theorem DitransitiveRoot.deniable_iff (c : DitransitiveRoot) : c.Deniable ↔ c = .release := by
+  refine ⟨fun ⟨_, _, M, _, _, _, _, _, _, h, v, hv, hn⟩ ↦ ?_, ?_⟩
+  · cases c
+    · exact absurd (ditransitive_le_of_entailsCausedResult h le_rfl v hv) hn
+    · exact absurd (ditransitive_le_of_entailsCausedResult h inf_le_left v hv) hn
+    · rfl
+  · rintro rfl
+    exact ⟨Bool, Bool, thrown, ⊤, ⊤, (· = true), (· = false), (· = false), fun _ _ ↦ trivial,
+      fun _ hv ↦ ⟨true, ⟨hv, rfl⟩, false, ⟨rfl, rfl⟩, rfl⟩, false,
+      ⟨⟨trivial, true, trivial, rfl⟩, rfl⟩,
+      fun ⟨_, _, _, ⟨_, hs⟩, hp⟩ ↦ Bool.false_ne_true (hs.symm.trans hp)⟩
+
 /-! ### The diagnostics
 
 Each diagnostic asks whether a sentence can deny something of a root's state description: that a
@@ -489,6 +579,17 @@ def Fits (σ : Datum → Root) : Prop :=
 /-- The book's root classes fit the judgments of (46)–(48) and (32). -/
 theorem rows : Fits fun d ↦ (kinds? d).getD ∅ := by
   simp only [Fits, passes_iff]
+  decide
+
+/-- The class of a row's ditransitive root. -/
+def ditransitiveRoot? (d : Datum) : Option DitransitiveRoot :=
+  d.parse? "root class" [("true possession", .truePossession),
+    ("transfer of possession by motion", .transferByMotion), ("release", .release)]
+
+-- chapter 3, (10a), (11a), (48a)
+theorem resultDenial_rows : ∀ d ∈ Examples.all, ∀ c ∈ ditransitiveRoot? d,
+    (d.judgment = .acceptable ↔ c.Deniable) := by
+  simp only [DitransitiveRoot.deniable_iff]
   decide
 
 /-- No lexicon whose roots carry only states and manners fits the judgments: the Bifurcation
