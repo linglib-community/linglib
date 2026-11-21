@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.HPSG.Binding
+public import Linglib.Syntax.HPSG.Binding.Description
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Data.Examples.SagWasowBender2003
 public import Linglib.Data.Examples.Readers
@@ -10,7 +10,7 @@ public import Linglib.Fragments.English.Pronouns
 # Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction
 
 This file formalizes the binding theory of Chapter 7 and the long-distance dependencies of
-Chapter 15, in the RSRL model theory of `Syntax/HPSG`.
+Chapter 15, in the RSRL model theory of `Syntax/HPSG/RSRL`.
 
 A reflexive must be outranked by a coindexed argument on some argument-structure list, and a
 nonreflexive pronoun must not be. We model a sentence by two words with their argument
@@ -45,7 +45,7 @@ Principle and the subject-extraction rule are not modelled.
 
 namespace SagWasowBender2003
 
-open HPSG.RSRL HPSG.Construction
+open HPSG HPSG.RSRL HPSG.Construction
 
 /-- The rows on a topic. -/
 def probing (t : Examples.Topic) : List Datum :=
