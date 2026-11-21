@@ -42,7 +42,8 @@ namespace HPSG.RSRL
 
 universe u v w
 
-/-- An interpretation of the signature `Sig` over the universe `U`
+/-- An interpretation of the signature `Sig` over the universe `U` gives each entity a sort, each
+attribute a partial function on entities, and each relation symbol a set of tuples of entities
 ([richter-2024], Definition 7). -/
 structure Interpretation {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt)
     (U : Type v) where
@@ -308,7 +309,7 @@ instance : HomClass (Embedding I J) I J where
 
 variable (f : Embedding I J)
 
-/-- An embedding is a homomorphism. -/
+/-- An embedding regarded as a homomorphism. -/
 def toHom : Hom I J where
   toFun := f
   map_S' := HomClass.map_S f
@@ -346,8 +347,7 @@ def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
 
 end Embedding
 
-/-- A homomorphism, which keeps sorts and reflects attributes, is in particular a simulation:
-the feature structure of an entity subsumes that of its image. -/
+/-- A homomorphism is a simulation of the machine at an entity by the machine at its image. -/
 theorem Hom.simulatedBy (f : Hom I J) (u : U) :
     I.toPartialMoore.SimulatedBy J.toPartialMoore u (f u) :=
   ⟨f, rfl, fun q _ ↦ OrderDual.toDual_le_toDual.2 (HomClass.map_S f q).le, fun α q q' _ hα ↦ by

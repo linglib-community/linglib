@@ -38,7 +38,8 @@ variable {Srt : Type u} [PartialOrder Srt]
 
 variable (Sig : Signature Srt)
 
-/-- A term of the description language ([richter-2024], Definition 3). -/
+/-- A term of the description language is the colon, a variable, or a term followed by an attribute
+([richter-2024], Definition 3). -/
 inductive Term where
   /-- The colon denotes the described entity. -/
   | colon : Term
@@ -85,7 +86,9 @@ end Term
 
 /-! ### Formulae -/
 
-/-- A formula of the description language ([richter-2024], Definition 4). -/
+/-- A formula of the description language is a sort assignment, a path equation or a relational
+formula, or is built from formulae by negation, implication and universal quantification
+([richter-2024], Definition 4). -/
 inductive Formula (Sig : Signature Srt) where
   /-- The sort assignment `t ∼ σ` says that `t` denotes an entity whose sort is at least as
   specific as `σ`. -/
@@ -220,7 +223,7 @@ namespace Constraint
 
 attribute [simp] freeVars_body
 
-/-- The formula that states a constraint. -/
+/-- The formula `: ∼ σ → φ` that states the constraint `σ ⇒ φ`. -/
 def toFormula (c : Constraint Sig) : Formula Sig := (Formula.sortAssign .colon c.sort).imp c.body
 
 @[simp] theorem freeVars_toFormula (c : Constraint Sig) : c.toFormula.freeVars = ∅ := by

@@ -143,8 +143,7 @@ theorem locallyOCommands_iff {y x : U} :
   simp [or_assoc]
 variable (I)
 
-/-- Local o-command gives a binding configuration on the entities of an interpretation, in which
-every domain is the whole universe, local o-command being local already. -/
+/-- The binding configuration of local o-command, in which every domain is the whole universe. -/
 def configuration : _root_.Binding.Configuration U where
   commands a b := LocallyOCommands I a b
   domain _ := Set.univ
@@ -155,9 +154,8 @@ def Coindexed (x y : U) : Prop := ∃ v ∈ I.A .IDX x, v ∈ I.A .IDX y
 instance [DecidableEq U] (x y : U) : Decidable (Coindexed I x y) :=
   inferInstanceAs (Decidable (∃ v ∈ I.A .IDX x, v ∈ I.A .IDX y))
 
-/-- The binding class of a sort, under which an anaphor falls under Condition A, a personal
-pronoun under Condition B, and a nonpronoun under none, since the fragment states no
-Principle C. -/
+/-- The binding class of a sort: reflexive for an anaphor, pronoun for a personal pronoun, and none
+for any other sort. -/
 def Srt.bindingClass : Srt → Option _root_.Binding.BindingClass
   | .ana => some .reflexive
   | .ppro => some .pronoun
@@ -186,8 +184,8 @@ variable {I}
 
 open _root_.Binding.Configuration
 
-/-- With nothing locally o-commanding itself, the principles hold exactly when coindexation
-satisfies the framework-neutral Conditions A and B over local o-command, with the anaphors that
+/-- When nothing locally o-commands itself, Principles A and B hold exactly when coindexation
+satisfies Conditions A and B of `Syntax/Binding` over local o-command, with the anaphors that
 nothing locally o-commands exempt. -/
 theorem principleA_and_principleB_iff (hirr : ∀ x, ¬ LocallyOCommands I x x) :
     PrincipleA I ∧ PrincipleB I ↔
@@ -244,8 +242,7 @@ def agreement (x : U) : Agreement.Bundle
   | .gender => ((I.A .IDX x).bind (I.A .GEND)).elim ⊥ fun v ↦ (I.S v).toGender
   | .case | .definiteness => ⊥
 
-/-- Coindexed nominal objects have the same agreement bundle, the agreement features being
-attributes of the index they share. -/
+/-- Coindexed nominal objects have the same agreement bundle. -/
 theorem agreement_eq_of_coindexed {x y : U} (h : Coindexed I x y) :
     agreement I x = agreement I y := by
   obtain ⟨v, hx, hy⟩ := h
@@ -273,9 +270,8 @@ private theorem elim_le_elim_of_simulatedBy {γ : Type*} [PartialOrder γ] [Orde
     · rw [hA β i v hxi hv]
       exact hf (hS v (hxi.step hv))
 
-/-- A nominal object whose feature structure subsumes another's has the less specific agreement
-bundle: the map from the feature structures of the fragment to agreement bundles is monotone in
-information. -/
+/-- If the machine at `x` is simulated by the machine at `y`, then the agreement bundle of `x` is at
+most that of `y`. -/
 theorem agreement_le_of_simulatedBy {V : Type*} {J : Interpretation sig V} {x : U} {y : V}
     (h : I.toPartialMoore.SimulatedBy J.toPartialMoore x y) :
     agreement I x ≤ agreement J y := by

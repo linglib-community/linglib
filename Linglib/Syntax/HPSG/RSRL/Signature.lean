@@ -39,7 +39,9 @@ universe u
 
 /-! ### Signatures -/
 
-/-- An RSRL signature over the sort hierarchy `Srt` ([richter-2024], Definition 1). -/
+/-- An RSRL signature over the sort hierarchy `Srt` consists of attributes, relation symbols with
+their arities, and an appropriateness function that says which attributes each sort has
+([richter-2024], Definition 1). -/
 structure Signature (Srt : Type u) [PartialOrder Srt] where
   /-- The attributes. -/
   Attr : Type u

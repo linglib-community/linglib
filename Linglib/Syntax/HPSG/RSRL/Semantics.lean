@@ -337,8 +337,8 @@ structure IsExhaustive (G : Grammar Sig) : Prop where
 
 variable {I}
 
-/-- An entity is described by a description exactly when it satisfies it under the assignment
-of every variable to itself, since a description has no free variables. -/
+/-- A description describes an entity exactly when the entity satisfies it under the assignment of
+every variable to itself. -/
 theorem mem_denotation_iff : u ∈ I.denotation d ↔ I.Satisfies (fun _ ↦ u) u d :=
   ⟨fun h ↦ h _, fun h g ↦ (satisfies_iff_of_freeVars_eq_empty d.freeVars_toFormula _ g).1 h⟩
 
@@ -394,8 +394,7 @@ theorem satisfiesOn_image :
   | all x d ih =>
     simp only [satisfiesOn_all, Set.forall_mem_image, ← ih, Function.comp_update]
 
-/-- Satisfaction is invariant under embeddings: an entity satisfies a formula exactly when its
-image does, since the components of the image are the images of the components. -/
+/-- An entity satisfies a formula exactly when its image under an embedding does. -/
 theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
   rw [Satisfies, ← HomClass.image_isComponentOf, satisfiesOn_image, Satisfies]
 
@@ -412,7 +411,7 @@ theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
 theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=
   fun d hd g u ↦ f.satisfies.1 (hJ d hd (f ∘ g) (f u))
 
-/-- A model of a grammar that embeds onto an interpretation makes it a model. -/
+/-- An interpretation onto which a model of a grammar embeds is a model of it. -/
 theorem models_of_surjective (f : Embedding I J) (hf : Function.Surjective f)
     (hI : I.Models G) : J.Models G :=
   models_iff.2 fun d hd v ↦ by
