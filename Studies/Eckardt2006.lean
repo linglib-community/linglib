@@ -20,30 +20,30 @@ x w` holds of a reference time `t` when `t` precedes an event `e` of `P x w` wit
 `imm` says which events count as imminent at a time.
 
 When a preparation precedes what it prepares, and a going in progress makes what it prepares
-imminent, the progressive of the old entry is included in the new one
-(`unbounded_goTo_subset_beGoingTo`): the inference that the planned event is imminent is a
-consequence of where the reference time lies. The inclusion holds under the present and under
-every tense (`atPoint_goTo_subset`, `diamond_goTo_le`), and in each world of the modal domain of
-the imperfective (`impf_goTo_subset`). The new entry is a restriction of the prospective viewpoint
-(`beGoingTo_subset_prosp`) and conveys no movement (`unbounded_goTo_eq_empty`).
+imminent, the progressive of the old entry entails the new one (`unbounded_goTo_le_beGoingTo`): the
+inference that the planned event is imminent is a consequence of where the reference time lies. The
+entailment holds under the present and under every tense (`beGoingTo_pure_of_unbounded_goTo`,
+`diamond_goTo_le`), and in each world accessible along the modal imperfective
+(`imperfective_goTo_le`). The new entry is a restriction of the prospective viewpoint
+(`beGoingTo_le_prospective`) and conveys no movement (`unbounded_goTo_eq_bot`).
 
 The old entry holds of nothing when no going prepares an event of the embedded predicate, under
-every viewpoint (`ofRel_goTo_eq_empty`). A simple form has only the old entry, so it is acceptable
-only where the embedded clause allows the movement interpretation, and German *gehen*, which has
-no future entry, behaves in every form as the English simple forms do (`licensed_iff`).
+every viewpoint (`diamond_runTimes_goTo_eq_bot`). A simple form has only the old entry, so it is
+acceptable only where the embedded clause allows the movement interpretation, and German *gehen*,
+which has no future entry, behaves in every form as the English simple forms do (`licensed_iff`).
 
 ## Implementation notes
 
-* The progressive is the extensional `UNBOUNDED`, the reference time within the run time of the
-  event, as in the source. `impf_goTo_subset` states the inclusion for the modal imperfective,
-  where an event in progress need not be completed: there the planned event follows the reference
-  time in every world of the modal domain, and in the world of evaluation only if it belongs to
-  that domain.
-* The new entry has strict precedence, the reference time ending before the event starts, where
-  `PROSP` allows the two to meet.
+* The progressive is the extensional `Aspect.unbounded`, the reference time within the run time of
+  the event, as in the source. `imperfective_goTo_le` states the entailment for the modal
+  imperfective, where an event in progress need not be completed: there the planned event follows
+  the reference time in every accessible world, and in the world of evaluation only if it is
+  accessible.
+* The new entry has strict precedence, the reference time ending before the event starts, where the
+  prospective viewpoint allows the two to meet.
 * `goTo` is an event predicate and `beGoingTo` an interval property. That the progressive is no
-  longer a part of the reanalysed sentence is this difference of type: no viewpoint operator
-  applies to the new entry.
+  longer a part of the reanalysed sentence is this difference of type: no viewpoint operator applies
+  to the new entry.
 * `imm` is the one parameter of the new entry that the context supplies and the old entry lacks.
 
 ## TODO
@@ -80,20 +80,21 @@ def goTo (go : X → W → E → Prop) (prepare : E → E → Prop) (P : X → W
 
 /-- (4.58): The reanalysed *be going to* holds of a reference time that precedes an imminent event
 of the embedded predicate. -/
-def beGoingTo (imm : NonemptyInterval T → E → Prop) (P : X → W → E → Prop) (x : X) :
-    W → Set (NonemptyInterval T) :=
-  fun w ↦ {t | ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e}
+def beGoingTo (imm : NonemptyInterval T → E → Prop) (P : X → W → E → Prop) (x : X) (w : W) :
+    NonemptyInterval T → Prop :=
+  fun t ↦ ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e
 
-@[simp] theorem mem_beGoingTo :
-    t ∈ beGoingTo imm P x w ↔ ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e := Iff.rfl
+theorem beGoingTo_iff :
+    beGoingTo imm P x w t ↔ ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e := Iff.rfl
 
 theorem beGoingTo_mono (h : ∀ t e, imm t e → imm' t e) :
-    beGoingTo imm P x w ⊆ beGoingTo imm' P x w :=
+    beGoingTo imm P x w ≤ beGoingTo imm' P x w :=
   fun _ ⟨e, ht, hi, hP⟩ ↦ ⟨e, ht, h _ _ hi, hP⟩
 
 /-- The reanalysed *be going to* is a restriction of the prospective viewpoint. -/
-theorem beGoingTo_subset_prosp : beGoingTo imm P x w ⊆ PROSP (P x) w :=
-  fun _ ⟨e, ht, _, hP⟩ ↦ ⟨e, le_of_lt ht, hP⟩
+theorem beGoingTo_le_prospective :
+    beGoingTo imm P x w ≤ ViewpointType.prospective.denote (P x w) :=
+  fun _ ⟨e, ht, _, hP⟩ ↦ denote_prospective_iff.2 ⟨e, le_of_lt ht, hP⟩
 
 /-! ### From the inference to the literal content -/
 
@@ -105,29 +106,30 @@ variable (hprep : ∀ e e', prepare e e' → Event.Precedes e e')
 include hprep himm
 
 /-- (4.54): Where preparations precede what they prepare and a going in progress makes what it
-prepares imminent, the progressive of movement *go* is included in the reanalysed *be going
-to*. -/
-theorem unbounded_goTo_subset_beGoingTo :
-    UNBOUNDED (goTo go prepare P x) w ⊆ beGoingTo imm P x w := by
-  rintro t ⟨e, hte, hgo, e', hpr, hP⟩
+prepares imminent, the progressive of movement *go* entails the reanalysed *be going to*. -/
+theorem unbounded_goTo_le_beGoingTo :
+    unbounded (goTo go prepare P x w) ≤ beGoingTo imm P x w := by
+  intro t ht
+  obtain ⟨e, hte, hgo, e', hpr, hP⟩ := unbounded_iff.1 ht
   exact ⟨e', lt_of_le_of_lt (NonemptyInterval.le_def.1 hte).2 (hprep e e' hpr),
     himm w t e e' hgo hpr hte, hP⟩
 
--- (4.50f) and (4.56): the inclusion under the present tense.
-theorem atPoint_goTo_subset :
-    atPoint (UNBOUNDED (goTo go prepare P x)) ⊆ atPoint (beGoingTo imm P x) :=
-  fun _ hs ↦ unbounded_goTo_subset_beGoingTo hprep himm hs
+-- (4.50f) and (4.56): the entailment under the present tense.
+theorem beGoingTo_pure_of_unbounded_goTo {a : T}
+    (h : unbounded (goTo go prepare P x w) (.pure a)) : beGoingTo imm P x w (.pure a) :=
+  unbounded_goTo_le_beGoingTo hprep himm _ h
 
--- (4.51) and (4.60): the inclusion under every tense.
+-- (4.51) and (4.60): the entailment under every tense.
 theorem diamond_goTo_le (tn : Tense) :
-    ◇[toSetRel ⟦tn⟧] (fun r ↦ (⟨w, r⟩ : Index W T) ∈ atPoint (UNBOUNDED (goTo go prepare P x))) ≤
-      ◇[toSetRel ⟦tn⟧] (fun r ↦ (⟨w, r⟩ : Index W T) ∈ atPoint (beGoingTo imm P x)) :=
-  diamond_mono _ fun _ hr ↦ atPoint_goTo_subset hprep himm hr
+    ◇[toSetRel ⟦tn⟧] (fun r ↦ unbounded (goTo go prepare P x w) (.pure r)) ≤
+      ◇[toSetRel ⟦tn⟧] (fun r ↦ beGoingTo imm P x w (.pure r)) :=
+  diamond_mono _ fun _ hr ↦ beGoingTo_pure_of_unbounded_goTo hprep himm hr
 
--- The inclusion in each world of the modal domain of the imperfective.
-theorem impf_goTo_subset {acc : W → NonemptyInterval T → Set W} :
-    IMPF acc (goTo go prepare P x) w ⊆ {t | ∀ v ∈ acc w t, t ∈ beGoingTo imm P x v} :=
-  fun _ ht v hv ↦ unbounded_goTo_subset_beGoingTo hprep himm (ht v hv)
+-- The entailment in each world accessible along the modal imperfective.
+theorem imperfective_goTo_le {acc : NonemptyInterval T → SetRel W W} :
+    imperfective acc (goTo go prepare P x) w ≤
+      fun t ↦ □[acc t] (fun v ↦ beGoingTo imm P x v t) w :=
+  fun _ ht v hv ↦ unbounded_goTo_le_beGoingTo hprep himm _ (ht v hv)
 
 end Inference
 
@@ -138,21 +140,22 @@ theorem not_precedes_of_le {s : NonemptyInterval T} (h : t ≤ s) : ¬ t.Precede
 
 /-! ### What the new entry no longer conveys -/
 
-/-- Movement *go* with an infinitive holds at no reference time, under any viewpoint, when no
-going prepares an event of the embedded predicate. -/
-theorem ofRel_goTo_eq_empty (R : NonemptyInterval T → NonemptyInterval T → Prop)
-    (h : ∀ e e', go x w e → prepare e e' → ¬ P x w e') : ofRel R (goTo go prepare P x) w = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨e, _, hgo, e', hpr, hP⟩ ↦ h e e' hgo hpr hP
+/-- Movement *go* with an infinitive holds at no reference time, along any relation between the
+reference time and the run time, when no going prepares an event of the embedded predicate. -/
+theorem diamond_runTimes_goTo_eq_bot (R : SetRel (NonemptyInterval T) (NonemptyInterval T))
+    (h : ∀ e e', go x w e → prepare e e' → ¬ P x w e') :
+    ◇[R] (Event.runTimes (goTo go prepare P x w)) = ⊥ :=
+  eq_bot_iff.2 fun _ ht ↦
+    let ⟨e, _, hgo, e', hpr, hP⟩ := Event.diamond_runTimes_iff.1 ht; h e e' hgo hpr hP
 
-theorem unbounded_goTo_eq_empty (h : ∀ e, ¬ go x w e) :
-    UNBOUNDED (goTo go prepare P x) w = ∅ :=
-  ofRel_goTo_eq_empty _ fun e _ hgo _ ↦ (h e hgo).elim
+theorem unbounded_goTo_eq_bot (h : ∀ e, ¬ go x w e) :
+    unbounded (goTo go prepare P x w) = ⊥ :=
+  diamond_runTimes_goTo_eq_bot _ fun e _ hgo _ ↦ (h e hgo).elim
 
 -- A time at which something is going to happen though nothing moves.
-theorem pure_mem_beGoingTo :
-    (.pure 0 : NonemptyInterval ℕ) ∈
-      beGoingTo (E := NonemptyInterval ℕ) (fun _ _ ↦ True)
-        (fun (_ _ : Unit) e ↦ e = .pure 1) () () :=
+theorem beGoingTo_pure :
+    beGoingTo (E := NonemptyInterval ℕ) (fun _ _ ↦ True)
+      (fun (_ _ : Unit) e ↦ e = .pure 1) () () (.pure 0) :=
   ⟨.pure 1, Nat.zero_lt_one, trivial, rfl⟩
 
 /-! ### Simple forms and German *gehen* -/
