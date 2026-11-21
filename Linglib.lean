@@ -831,11 +831,7 @@ import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Valency
-import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Syntax.HPSG.Description
-import Linglib.Syntax.HPSG.Interpretation
-import Linglib.Syntax.HPSG.Signature
 import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Ellipsis

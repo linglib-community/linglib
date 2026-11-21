@@ -1,0 +1,344 @@
+{
+  "features": [
+    {
+      "key": "verb",
+      "lean": "verb",
+      "type": "Verb",
+      "doc": "The verb of movement of the example.",
+      "levels": [
+        {
+          "name": "go",
+          "label": "go",
+          "doc": "English *go*"
+        },
+        {
+          "name": "gehen",
+          "label": "gehen",
+          "doc": "German *gehen*"
+        }
+      ]
+    },
+    {
+      "key": "form",
+      "lean": "form",
+      "type": "Form",
+      "doc": "The form of the verb of movement.",
+      "levels": [
+        {
+          "name": "goingTo",
+          "label": "going to",
+          "doc": "a form of *be going to*"
+        },
+        {
+          "name": "simple",
+          "label": "simple",
+          "doc": "a form without the progressive"
+        }
+      ]
+    },
+    {
+      "key": "movement",
+      "lean": "movement",
+      "type": "Movement",
+      "doc": "Whether the embedded clause allows the movement interpretation.",
+      "levels": [
+        {
+          "name": "possible",
+          "label": "possible",
+          "doc": "the going can be a preparation for what the clause describes"
+        },
+        {
+          "name": "excluded",
+          "label": "excluded",
+          "doc": "the clause disallows a movement interpretation"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of chapter 4."
+  },
+  "examples": [
+    {
+      "id": "eckardt2006_4_6",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.6)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "when you are going to lay a tax upon the people . . .",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1657, Burton, entry of 12 January.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "going to"],
+        ["movement", "excluded"]
+      ],
+      "comment": "Given among the examples that leave no question that they are about the future.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "eckardt2006_4_20",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.20)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Sir, I am going to visit a friend, that's sicke",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1601, B. Jonson, Poetaster II.i; spoken by Horatio.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "going to"],
+        ["movement", "possible"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "eckardt2006_4_49",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.49)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio is going to visit a friend",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "going to"],
+        ["movement", "possible"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_60a",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.60)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio was going to visit a friend",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "going to"],
+        ["movement", "possible"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_60b",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.60)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio had been going to visit a friend",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "going to"],
+        ["movement", "possible"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_60c",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.60)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio will be going to visit a friend",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "going to"],
+        ["movement", "possible"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_62a",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.62)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio went to finish his talk at 5 o'clock.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "simple"],
+        ["movement", "excluded"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_62b",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.62)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio had gone to like Paris.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "simple"],
+        ["movement", "excluded"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_62c",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.62)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The house will go to break down.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "simple"],
+        ["movement", "excluded"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_64a",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.64)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio went to stop talking in five minutes.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "simple"],
+        ["movement", "excluded"]
+      ],
+      "comment": "Printed with the alternative of the next row after a slash.",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_64b",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.64)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Horatio went to avoid any allusions to the scandal.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "go"],
+        ["form", "simple"],
+        ["movement", "excluded"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "eckardt2006_4_10",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.10)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Emil geht ein Bier holen",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Emil", "Emil"], ["geht", "goes"], ["ein", "a"], ["Bier", "beer"], ["holen", "to-fetch"]
+      ],
+      "translation": "Emil goes/is going (in order to) to fetch a beer",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gehen"],
+        ["form", "simple"],
+        ["movement", "possible"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "eckardt2006_4_12",
+      "source": {"bibkey": "eckardt-2006", "paperLabel": "(4.12)"},
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Emil geht die Arbeit um fünf Uhr niederlegen",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Emil", "Emil"], ["geht", "goes"], ["die", "the"], ["Arbeit", "work"], ["um", "at"],
+        ["fünf", "5"], ["Uhr", "o'clock"], ["niederlegen", "stop"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "gehen"],
+        ["form", "simple"],
+        ["movement", "excluded"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    }
+  ]
+}

@@ -10,13 +10,11 @@ public import Linglib.Core.Relation.ReflTransGen
 # RSRL signatures
 
 Relational Speciate Re-entrant Logic (RSRL) is the logic in which Richter states HPSG grammars.
-This file defines its signatures and the terms of its description language.
 
 A *signature* gives the sorts, arranged in a hierarchy; the attributes; for each sort, which
 attributes it has and what sort their values are; and the relation symbols with their arities.
 In the hierarchy, `σ ≤ τ` means that `σ` is at least as specific as `τ`, so a *species* is a
-minimal sort. A *term* picks out an entity, starting from the one being described: it is the
-colon, which stands for that entity, a variable, or a term followed by an attribute.
+minimal sort. A *path* is a list of attributes.
 
 ## Implementation notes
 
@@ -41,7 +39,9 @@ universe u
 
 /-! ### Signatures -/
 
-/-- An RSRL signature over the sort hierarchy `Srt` ([richter-2024], Definition 1). -/
+/-- An RSRL signature over the sort hierarchy `Srt` consists of attributes, relation symbols with
+their arities, and an appropriateness function that says which attributes each sort has
+([richter-2024], Definition 1). -/
 structure Signature (Srt : Type u) [PartialOrder Srt] where
   /-- The attributes. -/
   Attr : Type u
@@ -118,59 +118,13 @@ theorem appropOfDecl_inherits
 
 end Decl
 
-/-! ### Terms -/
+/-! ### Paths -/
 
-variable (Sig : Signature Srt)
+variable {Sig : Signature Srt}
 
+variable (Sig) in
 /-- A path is a list of attributes, read from the first attribute followed to the last. -/
 abbrev Path := List Sig.Attr
-
-/-- A term of the description language ([richter-2024], Definition 3). -/
-inductive Term where
-  /-- The colon denotes the described entity. -/
-  | colon : Term
-  /-- A variable. -/
-  | var : ℕ → Term
-  /-- The term `t.feat α` follows the attribute `α` from the entity that `t` denotes. -/
-  | feat : Term → Sig.Attr → Term
-
-variable {Sig}
-
-namespace Term
-
-/-- The term that follows the path `p` from the described entity. -/
-def path (p : Path Sig) : Term Sig := p.foldl feat colon
-
-@[simp] theorem path_nil : path ([] : Path Sig) = colon := rfl
-
-@[simp] theorem path_concat (p : Path Sig) (α : Sig.Attr) : path (p ++ [α]) = (path p).feat α :=
-  List.foldl_concat ..
-
-/-- The variables that occur in a term ([richter-2024], Definition 5). -/
-def freeVars : Term Sig → Finset ℕ
-  | colon => ∅
-  | var n => {n}
-  | feat t _ => t.freeVars
-
-@[simp] theorem freeVars_path (p : Path Sig) : (path p).freeVars = ∅ := by
-  induction p using List.reverseRecOn with
-  | nil => rfl
-  | append_singleton p α ih => rw [path_concat]; exact ih
-
-/-- A term is colon-free when it starts at a variable rather than at the described entity. -/
-def IsColonFree : Term Sig → Prop
-  | colon => False
-  | var _ => True
-  | feat t _ => t.IsColonFree
-
-instance decidableIsColonFree : DecidablePred (IsColonFree (Sig := Sig))
-  | colon => isFalse id
-  | var _ => isTrue trivial
-  | feat t _ => decidableIsColonFree t
-
-end Term
-
-/-! ### Admissible paths -/
 
 /-- The signature admits the path `p` from the sort `σ` to the sort `ρ` when each attribute of
 `p` is appropriate to the sort reached so far, which may be any subsort of the declared value
