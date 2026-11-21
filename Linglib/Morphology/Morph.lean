@@ -104,7 +104,8 @@ inductive Morph.Kind where
   | bound (position : Morph.Position) (attachment : Morph.Attachment)
   /-- The morph is a root. -/
   | root
-  /-- The morph is free and not a root, as a particle or an auxiliary is. -/
+  /-- The morph is written as a separate word, is not a root, and is not called a clitic by its
+  source, as an auxiliary is. -/
   | free
   deriving DecidableEq, Repr, Fintype
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Particle
 
 /-!
 # Bulgarian question particles
@@ -29,10 +29,10 @@ namespace Bulgarian.QuestionParticles
 
 /-- ли *li*, the canonical polar question complementizer, an enclitic on the focus of the
 question. -/
-def li : Particle where
-  form := "li"
+def li : Clause.Particle where
+  morphs := [.encl "li"]
   script := some "ли"
-  position := some .postHost
+  anchor := .focus .after
   distribution
     | (.polar, .matrix) => some .optional
     | (.polar, .subordinated) => some .optional
@@ -41,10 +41,10 @@ def li : Particle where
 
 /-- дали *dali*, the clause-initial polar question complementizer, which in a root question
 raises an issue without expecting the addressee to resolve it. -/
-def dali : Particle where
-  form := "dali"
+def dali : Clause.Particle where
+  morphs := [.free "dali"]
   script := some "дали"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .optional
@@ -52,10 +52,10 @@ def dali : Particle where
     | _ => none
 
 /-- нима *nima*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def nima : Particle where
-  form := "nima"
+def nima : Clause.Particle where
+  morphs := [.free "nima"]
   script := some "нима"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .optional

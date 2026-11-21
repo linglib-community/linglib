@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Particle
 
 /-!
 # Polish question particles
@@ -19,18 +19,18 @@ evidential bias. The mirative *czyżby* is the Polish kin of Russian *razve* (Š
 namespace Polish.QuestionParticles
 
 /-- *czy*, the clause-initial polar question particle. -/
-def czy : Particle where
-  form := "czy"
-  position := some .clauseInitial
+def czy : Clause.Particle where
+  morphs := [.free "czy"]
+  anchor := .clause {.initial}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .obligatory
     | _ => none
 
 /-- *czyżby*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def czyzby : Particle where
-  form := "czyżby"
-  position := some .clauseInitial
+def czyzby : Clause.Particle where
+  morphs := [.free "czyżby"]
+  anchor := .clause {.initial}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .optional

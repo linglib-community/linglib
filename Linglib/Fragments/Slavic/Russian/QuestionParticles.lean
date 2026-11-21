@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Particle
 
 /-!
 # Russian question particles
@@ -24,10 +24,10 @@ namespace Russian.QuestionParticles
 
 /-- ли li is the neutral polar question particle (formal register), a
 second-position enclitic on the focused constituent. -/
-def li : Particle where
-  form := "li"
+def li : Clause.Particle where
+  morphs := [.encl "li"]
   script := some "ли"
-  position := some .secondPosition
+  anchor := .clause {.second}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .optional
@@ -37,10 +37,10 @@ def li : Particle where
 /-- разве razve is the mirative/dubitative question particle, signalling
 conflict between the speaker's prior epistemic state and current
 contextual evidence. -/
-def razve : Particle where
-  form := "razve"
+def razve : Clause.Particle where
+  morphs := [.free "razve"]
   script := some "разве"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.polar, .matrix) => some .optional
@@ -51,10 +51,10 @@ def razve : Particle where
 /-- неужели neuželi is the mirative question particle that, unlike *razve*,
 lexicalizes VERUM and so combines with inner negation only
 ([repp-geist-2022] as reported by [simik-2024]). -/
-def neuzeli : Particle where
-  form := "neuželi"
+def neuzeli : Clause.Particle where
+  morphs := [.free "neuželi"]
   script := some "неужели"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution := razve.distribution
 
 end Russian.QuestionParticles

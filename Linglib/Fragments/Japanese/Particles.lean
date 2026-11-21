@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Particle
 
 /-!
 # Japanese particles
@@ -40,10 +40,10 @@ namespace Japanese.Particles
 /-- *ka* — clause-typing Q-morpheme. Obligatory in subordinated
 interrogatives, optional in matrix (can be dropped). Marks CP as +WH.
 Licensed in quotation as well. -/
-def ka : Particle where
-  form := "ka"
+def ka : Clause.Particle where
+  morphs := [.free "ka"]
   script := some "か"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
@@ -55,10 +55,10 @@ def ka : Particle where
     | _ => none
 
 /-- *no* — clause-typing particle for questions (informal). -/
-def no_ : Particle where
-  form := "no"
+def no_ : Clause.Particle where
+  morphs := [.free "no"]
   script := some "の"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
@@ -72,10 +72,10 @@ def no_ : Particle where
 having *ka* in the embedded clause suffices for interrogative
 interpretation, while *koto* marks a declarative ([dayal-2025]: (15)).
 Subordinated clauses only. -/
-def koto : Particle where
-  form := "koto"
+def koto : Clause.Particle where
+  morphs := [.free "koto"]
   script := some "こと"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution
     | (.declarative, .matrix) => some .excluded
     | (.declarative, .subordinated) => some .optional
@@ -86,10 +86,10 @@ def koto : Particle where
 quotations ([sauerland-yatsushiro-2017]). Has a "remind-me"
 presupposition: speaker has forgotten Ans(Q) and believes the addressee
 knows it. -/
-def kke : Particle where
-  form := "kke"
+def kke : Clause.Particle where
+  morphs := [.free "kke"]
   script := some "っけ"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
@@ -107,10 +107,10 @@ The dual reading arises from the absence of an ignorance component,
 unlike wonder ([roelofsen-uegaki-2021], [uegaki-roelofsen-2018]).
 Appears in matrix and quasi-subordinated contexts but not in subordinated
 interrogatives (which use *ka*). -/
-def daroo : Particle where
-  form := "darō"
+def daroo : Clause.Particle where
+  morphs := [.free "darō"]
   script := some "だろう"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution := fun (c, e) ↦ match c with
     | .declarative | .polar =>
       match e with
@@ -121,31 +121,29 @@ def daroo : Particle where
     | _ => none
 
 /-- *ze* ぜ, a sentence-final particle ([ochs-1992]). -/
-def ze : Particle where
-  form := "ze"
+def ze : Clause.Particle where
+  morphs := [.free "ze"]
   script := some "ぜ"
-  position := some .clauseFinal
+  anchor := .clause {.final}
 
 /-- *wa* わ, a sentence-final particle ([ochs-1992]), distinct from the topic marker *wa* は. -/
-def wa : Particle where
-  form := "wa"
+def wa : Clause.Particle where
+  morphs := [.free "wa"]
   script := some "わ"
-  position := some .clauseFinal
+  anchor := .clause {.final}
 
 end Japanese.Particles
 
 namespace Japanese.PolarityParticles
 
 /-- *un* 'yes'. -/
-def un : Particle where
-  form := "un"
+def un : Morphology.Morph := .free "un"
 
 /-- *uun* 'no', as in *Kare-wa koohii-o noma nai no?* 'Does he not drink coffee?' — *Uun, nomu
 yo* 'No, he drinks'. -/
-def uun : Particle where
-  form := "uun"
+def uun : Morphology.Morph := .free "uun"
 
 /-- The colloquial polarity particles. -/
-def all : List Particle := [un, uun]
+def all : List Morphology.Morph := [un, uun]
 
 end Japanese.PolarityParticles

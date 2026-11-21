@@ -168,7 +168,7 @@ instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls 
 /-- A particle's layer is read off its embedding distribution (20): CP if it is licensed in
 subordination, otherwise PerspP if it is licensed in quasi-subordination, otherwise SAP if it is
 licensed in matrix clauses. -/
-def layerOf (p : Particle) : Option PeripheryLayer :=
+def layerOf (p : Clause.Particle) : Option PeripheryLayer :=
   if .subordinated ∈ p.distribution.contexts then some .cp
   else if .quasiSubordinated ∈ p.distribution.contexts then some .perspP
   else if .matrix ∈ p.distribution.contexts then some .sap

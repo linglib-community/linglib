@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Particle
 
 /-!
 # Mandarin question particles
@@ -47,10 +47,10 @@ namespace Mandarin.QuestionParticles
 open Clause
 
 /-- *ma* 吗, the particle that turns a declarative into a polar question. -/
-def ma : Particle where
-  form := "ma"
+def ma : Clause.Particle where
+  morphs := [.free "ma"]
   script := some "吗"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution
     | (.polar, .matrix) => some .optional
     | (.declarative, .matrix) | (.alternative, .matrix) | (.constituent, .matrix)
@@ -59,20 +59,20 @@ def ma : Particle where
 
 /-- *ne* 呢, which presents a declarative or a question as a response to the hearer's claim or
 expectation. -/
-def ne : Particle where
-  form := "ne"
+def ne : Clause.Particle where
+  morphs := [.free "ne"]
   script := some "呢"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution
     | (.declarative, .matrix) | (.alternative, .matrix) | (.constituent, .matrix) => some .optional
     | (.polar, .matrix) => some .excluded
     | _ => none
 
 /-- *ba* 吧, which solicits the hearer's agreement. -/
-def ba : Particle where
-  form := "ba"
+def ba : Clause.Particle where
+  morphs := [.free "ba"]
   script := some "吧"
-  position := some .clauseFinal
+  anchor := .clause {.final}
   distribution
     | (.declarative, .matrix) | (.polar, .matrix) | (.imperative, .matrix)
     | (.exclamative, .matrix) => some .optional
@@ -80,8 +80,8 @@ def ba : Particle where
     | _ => none
 
 /-- *nándào* 难道 'is it conceivable that', the attitude adverb of polar questions. -/
-def nandao : Particle where
-  form := "nándào"
+def nandao : Clause.Particle where
+  morphs := [.free "nándào"]
   script := some "难道"
   distribution
     | (.polar, .matrix) => some .optional

@@ -146,7 +146,7 @@ inductive PolarityParticle where
   deriving DecidableEq, Repr, Fintype
 
 /-- The fragment entry of a particle. -/
-def PolarityParticle.entry : PolarityParticle → Particle
+def PolarityParticle.entry : PolarityParticle → Morphology.Morph
   | .yes => English.PolarityParticles.yes
   | .no => English.PolarityParticles.no
   | .oui => French.PolarityParticles.oui
