@@ -149,11 +149,19 @@ theorem mem_run_map_seq {f : Trivalent → Trivalent → Trivalent} {m n : State
 
 /-! ### Extensions and truth -/
 
+/-- The relation on assignments `m` induces at the value `v`: `g` is related to the outputs of `m`
+at `g` tagged `v`. -/
+def rel (m : StateSet D Trivalent) (v : Trivalent) : SetRel (ℕ → Part D) (ℕ → Part D) :=
+  {p | (v, p.2) ∈ m.run p.1}
+
+@[simp] theorem mem_rel {m : StateSet D Trivalent} {v : Trivalent} {g h : ℕ → Part D} :
+    g ~[rel m v] h ↔ (v, h) ∈ m.run g := Iff.rfl
+
 /-- `extension v m g` is the set of outputs of `m` at `g` tagged `v`; at `true`, `false` and
 `undefined` these are the positive, negative and maybe extensions (Def. 2.5). -/
 def extension (v : Trivalent) (m : StateSet D Trivalent) (g : ℕ → Part D) :
     Set (ℕ → Part D) :=
-  {h | (v, h) ∈ m.run g}
+  {h | g ~[rel m v] h}
 
 @[simp] theorem mem_extension {v : Trivalent} {m : StateSet D Trivalent}
     {g h : ℕ → Part D} : h ∈ extension v m g ↔ (v, h) ∈ m.run g := Iff.rfl
@@ -175,14 +183,6 @@ theorem isTrue_or_isFalse_iff {m : StateSet D Trivalent} {g : ℕ → Part D} :
     IsTrue m g ∨ IsFalse m g ↔
       (extension .true m g).Nonempty ∨ (extension .false m g).Nonempty := by
   rcases (extension .true m g).eq_empty_or_nonempty with h | h <;> simp [IsTrue, IsFalse, h]
-
-/-- The relation on assignments `m` induces at the value `v`: `g` is related to the outputs of `m`
-at `g` tagged `v`. -/
-def rel (m : StateSet D Trivalent) (v : Trivalent) : SetRel (ℕ → Part D) (ℕ → Part D) :=
-  {p | (v, p.2) ∈ m.run p.1}
-
-@[simp] theorem mem_rel {m : StateSet D Trivalent} {v : Trivalent} {g h : ℕ → Part D} :
-    g ~[rel m v] h ↔ (v, h) ∈ m.run g := Iff.rfl
 
 theorem rel_neg (v : Trivalent) (m : StateSet D Trivalent) : rel (neg m) v = rel m (vᶜ) := by
   ext ⟨g, h⟩
@@ -311,8 +311,8 @@ existential is not straightforwardly compatible with that decomposition (App. A)
 existential decomposes, a random reset bound to its scope, but positive closure is not a bind. -/
 
 /-- Random assignment, resetting `n` to any individual. -/
-def reset (n : ℕ) : StateSet D PUnit := .mk fun g ↦
-  {q | ∃ x, q = ((), Function.update g n (Part.some x))}
+def reset (n : ℕ) : StateSet D PUnit :=
+  monadLift (Set.univ : Set D) >>= fun x ↦ modify (Function.update · n (Part.some x))
 
 theorem dplExists_destructive (n : ℕ) (m : StateSet D Trivalent) :
     dplExists .destructive n m = reset n >>= fun _ ↦ m := by
