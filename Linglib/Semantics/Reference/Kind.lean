@@ -4,7 +4,6 @@ public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Mereology.Classical
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.Iota
-public import Mathlib.Basic.PEquiv
 public import Mathlib.Order.UpperLower.Closure
 
 /-!
@@ -41,12 +40,6 @@ objects to a kind by quantifying existentially over its instances, is
 `Quantifier.Det.some (Kind.up (k s))`, which holds of a predicate iff the value of the kind is
 in the predicate's upper closure (`Kind.inter_up_nonempty_iff`).
 
-In Chierchia's earlier theory ∩ takes a property to an entity, its correlate, and ∪ takes the
-correlate back, a partial equivalence between properties and entities. The Russell property, of
-being the correlate of a property one lacks, has no correlate (`Kind.apply_russell_eq_none`),
-and the correlate is no function of the property's extension
-(`Kind.not_exists_apply_eq_comp`).
-
 ## Implementation notes
 
 The operators take the extension and the value at one situation, not a property and a concept
@@ -59,9 +52,7 @@ where the plural has no member and ∩ no value (`Studies/Chierchia1998.lean`).
 
 ## References
 
-* [chierchia-1984]
 * [chierchia-1998]
-* [partee-1987]
 -/
 
 @[expose] public section
@@ -264,32 +255,5 @@ theorem down_eq_maximal {Ctx W : Type*} (R : Ctx → W → Set E) (c : Ctx) (s :
     down (R c s) = Definite.maximal R c s := rfl
 
 end Equiv
-
-/-! ### Kinds as correlates of properties -/
-
-section Correlate
-
-variable {P : S → Set E} {s : S} (c : (S → Set E) ≃. E)
-
-/-- The Russell property of a pairing of properties with correlates: at each situation, being the
-correlate of a property one lacks there. -/
-def russell : S → Set E := fun s ↦ {x | ∃ P ∈ c.symm x, x ∉ P s}
-
-/-- The Russell property has no correlate, so ∩ is only almost total ([partee-1987], §3.1). -/
-theorem apply_russell_eq_none [Nonempty S] : c (russell c) = none := by
-  refine Option.eq_none_iff_forall_ne_some.2 fun r h ↦ ?_
-  have hr : c.symm r = some (russell c) := c.eq_some_iff.2 h
-  obtain ⟨s⟩ := ‹Nonempty S›
-  exact iff_not_self (a := r ∈ russell c s)
-    ⟨fun ⟨_, hP, hrP⟩ ↦ (Option.some_injective _ (hr.symm.trans hP)) ▸ hrP, fun h ↦ ⟨_, hr, h⟩⟩
-
-/-- The correlate is no function of the extension at a situation: where ∩ is defined on a property,
-a different property with the same extension there defeats any such function, which is why
-[partee-1987] calls an extensional ∩ a misrepresentation (§3.1). -/
-theorem not_exists_apply_eq_comp {P' : S → Set E} (hs : P s = P' s) (hne : P ≠ P')
-    (hx : c P = some x) : ¬ ∃ f : Set E → Option E, ∀ Q, c Q = f (Q s) := fun ⟨f, hf⟩ ↦
-  hne <| c.inj hx <| by rw [hf P', ← hs, ← hf P]; exact hx
-
-end Correlate
 
 end Kind

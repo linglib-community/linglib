@@ -588,6 +588,14 @@ theorem apply_kind_iff (V : Set E) (k : Part E) :
     (kind k).apply V ↔ ∃ d ∈ k, d ∈ upperClosure V :=
   Kind.inter_up_nonempty_iff
 
+-- The quantifier ∩ makes of a restrictor is the kind it forms, applied by derived kind
+-- predication.
+theorem apply_kind_down_iff {E W : Type} [PartialOrder E] (R : (ℕ → E) → W → Set E) (d : ℕ)
+    (g : ℕ → E) (s : W) (V : Set E) :
+    (kind (Kind.down (R g s))).apply V ↔ CovertShift.down.quantifier R d g s V :=
+  ⟨fun ⟨y, ⟨x, hx, hyx⟩, hV⟩ ↦ ⟨x, hx, y, hyx, hV⟩,
+    fun ⟨x, hx, y, hyx, hV⟩ ↦ ⟨y, ⟨x, hx, hyx⟩, hV⟩⟩
+
 -- (48): the argument ∃ makes of a property.
 theorem raise_quantifier_some (O : Prop → Prop) (V P : Set E) :
     (quantifier (Quantifier.Det.some P)).raise O V ↔ ∃ x ∈ P, O (x ∈ V) :=

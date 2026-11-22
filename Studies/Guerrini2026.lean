@@ -152,12 +152,12 @@ def number : Nominal → Number
 /-- The expression denotes a kind when the parameter or the article makes kind formation
 available and the noun is plural, (10a) and (16). -/
 def CanDenoteKind (n : Nominal) : Prop :=
-  n.mapping.CanDenoteKind (n.definite = true) ∧ n.number = .plural
+  (.kind ∈ n.mapping ∨ n.definite = true) ∧ n.number = .plural
 
 /-- The expression denotes a property when the parameter allows it and no article has formed a
 kind (145). -/
 def CanDenoteProperty (n : Nominal) : Prop :=
-  n.mapping.CanDenoteProperty ∧ n.definite = false
+  .property ∈ n.mapping ∧ n.definite = false
 
 instance : DecidablePred CanDenoteKind := fun n ↦ by unfold CanDenoteKind; infer_instance
 instance : DecidablePred CanDenoteProperty := fun n ↦ by unfold CanDenoteProperty; infer_instance

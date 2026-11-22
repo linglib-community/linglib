@@ -67,24 +67,6 @@ def predOnly : NominalMapping := ({.property} : Finset NominalDenotation)
 @[simp] theorem mem_predOnly {d : NominalDenotation} : d ∈ predOnly ↔ d = .property := by
   cases d <;> decide
 
-/-- A nominal can denote a kind outright in a [+arg] language, and otherwise under an overt
-determiner. -/
-def CanDenoteKind (m : NominalMapping) (hasD : Prop) : Prop := .kind ∈ m ∨ hasD
-
-instance (m : NominalMapping) (hasD : Prop) [Decidable hasD] :
-    Decidable (m.CanDenoteKind hasD) := by
-  unfold CanDenoteKind; infer_instance
-
-/-- A nominal can denote a property in a [+pred] language. -/
-def CanDenoteProperty (m : NominalMapping) : Prop := .property ∈ m
-
-instance (m : NominalMapping) : Decidable m.CanDenoteProperty := by
-  unfold CanDenoteProperty; infer_instance
-
-end NominalMapping
-
-namespace NominalMapping
-
 /-! ### Bare arguments -/
 
 /-- A language with the setting `m` and the determiners `ds` admits as an argument a bare

@@ -41,7 +41,11 @@ not record that restriction to kinds.
 
 `Determiner.Entry.Lexicalizes` quantifies over models `(E W : Type)` inside a proposition, so the
 models are in the lowest universe. A quantificational determiner is not counted as denoting the
-quantifier of a shift: *some* leaves ∃ to the bare plural.
+quantifier of a shift: *some* leaves ∃ to the bare plural. An article's quantifiers are those of
+its definite and indefinite readings, so no entry lexicalizes ∩; a definite determiner that also
+forms kind terms, as Dayal analyses the Romance one, is a reading the entries do not record, and
+`Studies/Dayal2004.lean` states that analysis on its own record of what a determiner
+lexicalizes.
 
 ι^x, the anaphoric definite of Jenks, postdates both rankings, and Moroney is the first to make
 it a covert shift. It introduces no quantificational force, so Dayal's ranking puts it with ∩ and
@@ -86,30 +90,9 @@ def quantifier [PartialOrder E] (τ : CovertShift) (R : (ℕ → E) → W → Se
 
 end CovertShift
 
-/-- The quantifiers an article denotes over a restrictor: the individuals of its definite
-readings, and the existential where it marks an indefinite degree. -/
-noncomputable def Article.quantifiers {E W : Type} [PartialOrder E] (a : Article)
-    (R : (ℕ → E) → W → Set E) (d : ℕ) : Set ((ℕ → E) → W → Quantifier E) :=
-  Definite.quantifier '' a.denotations R d ∪
-    {q | (∃ δ ∈ a.definiteness, δ < .definite) ∧ q = fun g s ↦ Quantifier.Det.some (R g s)}
-
 namespace Determiner.Entry
 
 open scoped Denotes
-
-/-- A determiner denotes a quantifier over a restrictor when the quantifier is among an
-article's, or is what a demonstrative denotes at every relation locating referents at participant
-sets, or a possessive at every possessor and possession relation. A quantificational determiner
-is not counted, *some* leaving ∃ to the bare plural. -/
-def DenotesQuantifier {E W : Type} [PartialOrder E] (e : Entry) (R : (ℕ → E) → W → Set E)
-    (d : ℕ) (q : (ℕ → E) → W → Quantifier E) : Prop :=
-  match e with
-  | .article a => q ∈ a.quantifiers R d
-  | .demonstrative dem =>
-      ∀ N : SetRel (Finset SpeechAct.Role) E, (dem.denote R d N).quantifier = q
-  | .possessive p => ∀ (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop),
-      (p.denote R possessor rel).quantifier = q
-  | .quantifier _ => False
 
 /-- A determiner lexicalizes a covert shift when it denotes the quantifier the shift makes of
 every restrictor, on every model of individuals ordered by part-of, [dayal-2004]'s Blocking
