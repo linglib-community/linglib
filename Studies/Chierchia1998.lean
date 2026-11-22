@@ -33,7 +33,9 @@ outside `t` whose atoms are all in `t`.
 
 Where nouns denote kinds, the extension of a noun is ∪ of its kind. That set is closed downward,
 and in an atomic domain its plural is empty (`PL_up`), while the plural of the atoms is every
-other individual (`mem_PL_isMin`). The sampled languages whose fragments count nouns through
+other individual (`mem_PL_isMin`). The plural of a set of atoms is its closure under sums less
+the atoms (`PL_eq_supClosure_diff`), so its largest member is their sum
+(`isLUB_of_isGreatest_PL`). The sampled languages whose fragments count nouns through
 classifiers are the ones whose nouns denote kinds (`hasClassifiers_iff`). Such a language admits
 every bare nominal as an argument, and one whose nouns denote properties admits none unless it
 has a null determiner, which a governing head licenses. A language with both settings admits a
@@ -69,7 +71,9 @@ rather than that: Mandarin counts the measure noun *tiān* bare (`exists_isBareC
 `PL_up` takes the atomicity of the domain as two hypotheses, that every individual has an atom
 as a part and that an individual is part of whatever its atoms are part of, since the
 individuals have no null element; Link's nonempty sets of atoms meet both
-(`PL_up_individual`).
+(`PL_up_individual`). `PL_eq_supClosure_diff` takes two more: an atom that is part of a sum is
+part of a summand, which holds in Link's model (`isMin_le_sup_individual`), and every individual
+is a finite sum of atoms, which holds there only of the finite individuals.
 
 The set `K` of kinds is a parameter, primitive as in the paper, and its property that no kind
 has a singular instance in every situation is a hypothesis, read with the paper's "(when
@@ -234,6 +238,68 @@ theorem up_down_PL (ht : ∀ x ∈ t, IsMin x) (hdef : (PL t).Nonempty → (Kind
   Kind.up_down_of_forall_isMin ht (fun _ ↦ Iff.rfl) hdef
 
 end Plural
+
+/-! ### The plural and the sum-closure
+
+The plural of a set of atoms is its closure under sums with the atoms removed, where an atom
+that is part of a sum is part of a summand and every individual is a sum of atoms. Its largest
+member is then the sum of the atoms, as for the closure itself, and it has one only from two
+atoms up. -/
+
+section SumClosure
+
+open Mereology
+
+variable {E : Type*} [SemilatticeSup E] {t : Set E} {d : E}
+
+theorem supClosure_diff_subset_PL (ht : ∀ x ∈ t, IsMin x)
+    (hprime : ∀ a x y : E, IsMin a → a ≤ x ⊔ y → a ≤ x ∨ a ≤ y) :
+    supClosure t \ {x | IsMin x} ⊆ PL t := by
+  rintro x ⟨hx, hxmin⟩
+  refine ⟨fun hxt ↦ hxmin (ht x hxt), ?_⟩
+  have hS : SupClosed {x : E | ∀ y ≤ x, IsMin y → y ∈ t} := fun x hx y hy a ha hmin ↦
+    (hprime a x y hmin ha).elim (hx a · hmin) (hy a · hmin)
+  have ht' : t ⊆ {x : E | ∀ y ≤ x, IsMin y → y ∈ t} := fun x hx y hy _ ↦
+    le_antisymm hy (ht x hx hy) ▸ hx
+  exact supClosure_min ht' hS hx
+
+theorem PL_subset_supClosure_diff (hgen : ∀ x : E, x ∈ supClosure {a : E | IsMin a}) :
+    PL t ⊆ supClosure t \ {x | IsMin x} := by
+  rintro x ⟨hxt, hat⟩
+  refine ⟨?_, fun hmin ↦ hxt (hat x le_rfl hmin)⟩
+  obtain ⟨F, hF, hFs, rfl⟩ := hgen x
+  exact ⟨F, hF, fun f hf ↦ hat f (Finset.le_sup' id hf) (hFs hf), rfl⟩
+
+-- Chierchia's plural of a set of atoms is Link's: the closure of the set under sums, less the
+-- atoms.
+theorem PL_eq_supClosure_diff (ht : ∀ x ∈ t, IsMin x)
+    (hprime : ∀ a x y : E, IsMin a → a ≤ x ⊔ y → a ≤ x ∨ a ≤ y)
+    (hgen : ∀ x : E, x ∈ supClosure {a : E | IsMin a}) :
+    PL t = supClosure t \ {x | IsMin x} :=
+  (PL_subset_supClosure_diff hgen).antisymm (supClosure_diff_subset_PL ht hprime)
+
+-- The largest plurality of two or more atoms is their sum.
+theorem isLUB_of_isGreatest_PL (ht : ∀ x ∈ t, IsMin x)
+    (hprime : ∀ a x y : E, IsMin a → a ≤ x ⊔ y → a ≤ x ∨ a ≤ y)
+    (hgen : ∀ x : E, x ∈ supClosure {a : E | IsMin a}) (h2 : t.Nontrivial)
+    (hd : IsGreatest (PL t) d) : IsLUB t d := by
+  rw [PL_eq_supClosure_diff ht hprime hgen] at hd
+  refine ⟨fun a ha ↦ ?_, fun u hu ↦ (upperBounds_supClosure t ▸ hu : _) hd.1.1⟩
+  obtain ⟨b, hb, hba⟩ := h2.exists_ne a
+  exact le_sup_left.trans <| hd.2 ⟨supClosed_supClosure (subset_supClosure ha)
+    (subset_supClosure hb), fun hmin ↦ hba (le_antisymm (le_sup_right.trans
+      (hmin le_sup_left)) (ht a ha (le_sup_right.trans (hmin le_sup_left))))⟩
+
+-- In Link's model an atom that is part of a sum is part of a summand.
+theorem isMin_le_sup_individual {α : Type*} (a x y : Individual α) (ha : IsMin a)
+    (h : a ≤ x ⊔ y) : a ≤ x ∨ a ≤ y := by
+  obtain ⟨c, hc⟩ := a.2
+  have hac : a ≤ Individual.atom c := ha (Set.singleton_subset_iff.2 hc)
+  rcases h hc with hx | hy
+  · exact .inl fun z hz ↦ Set.mem_singleton_iff.1 (hac hz) ▸ hx
+  · exact .inr fun z hz ↦ Set.mem_singleton_iff.1 (hac hz) ▸ hy
+
+end SumClosure
 
 /-! ### Kind formation
 
