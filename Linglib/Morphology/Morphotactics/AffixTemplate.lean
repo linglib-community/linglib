@@ -57,52 +57,65 @@ def slots : List Slot := t.prefixSlots ++ t.suffixSlots
 /-! ### Order along a scale
 
 A scale of categories is compared with a template through a partial map `cat` from positions to
-the scale: a position of no category on the scale is passed over. -/
+the scale: a position of no category on the scale is passed over. The scale may be a partial
+order, and positions of incomparable categories are then left free. -/
 
 section Scale
 
 variable {α : Type*} [Preorder α] (cat : Slot → Option α)
 
-/-- The suffix positions ascend along `cat` away from the stem: those that `cat` places on the
-scale come in its order. -/
-def SuffixesAscend : Prop := (t.suffixSlots.filterMap cat).SortedLE
+/-- The suffix positions ascend along `cat` away from the stem: no position stands inside one
+that `cat` places strictly lower on the scale. -/
+def SuffixesAscend : Prop := (t.suffixSlots.filterMap cat).Pairwise fun x y ↦ ¬ y < x
 
 /-- The prefix positions ascend along `cat` away from the stem. -/
-def PrefixesAscend : Prop := (t.prefixSlots.reverse.filterMap cat).SortedLE
+def PrefixesAscend : Prop := (t.prefixSlots.reverse.filterMap cat).Pairwise fun x y ↦ ¬ y < x
 
-instance [DecidableLE α] : Decidable (t.SuffixesAscend cat) :=
-  inferInstanceAs (Decidable (List.SortedLE _))
+instance [DecidableLT α] : Decidable (t.SuffixesAscend cat) :=
+  inferInstanceAs (Decidable (List.Pairwise _ _))
 
-instance [DecidableLE α] : Decidable (t.PrefixesAscend cat) :=
-  inferInstanceAs (Decidable (List.SortedLE _))
+instance [DecidableLT α] : Decidable (t.PrefixesAscend cat) :=
+  inferInstanceAs (Decidable (List.Pairwise _ _))
 
 variable {t cat} {v : List Slot}
 
 theorem suffixesAscend_iff_pairwise :
     t.SuffixesAscend cat ↔
-      t.suffixSlots.Pairwise fun a b ↦ ∀ x ∈ cat a, ∀ y ∈ cat b, x ≤ y := by
-  simp [SuffixesAscend, List.sortedLE_iff_pairwise, List.pairwise_filterMap]
+      t.suffixSlots.Pairwise fun a b ↦ ∀ x ∈ cat a, ∀ y ∈ cat b, ¬ y < x := by
+  simp [SuffixesAscend, List.pairwise_filterMap]
 
 theorem prefixesAscend_iff_pairwise :
     t.PrefixesAscend cat ↔
-      t.prefixSlots.Pairwise fun a b ↦ ∀ x ∈ cat a, ∀ y ∈ cat b, y ≤ x := by
-  simp only [PrefixesAscend, List.sortedLE_iff_pairwise, List.pairwise_filterMap,
-    List.pairwise_reverse, Option.mem_def]
+      t.prefixSlots.Pairwise fun a b ↦ ∀ x ∈ cat a, ∀ y ∈ cat b, ¬ x < y := by
+  simp only [PrefixesAscend, List.pairwise_filterMap, List.pairwise_reverse, Option.mem_def]
   exact List.Pairwise.iff fun a b ↦ ⟨fun h x hx y hy ↦ h y hy x hx, fun h y hy x hx ↦ h x hx y hy⟩
 
 /-- A string of suffixes in the template's order ascends along `cat`. -/
-theorem SuffixesAscend.sortedLE_filterMap (h : t.SuffixesAscend cat)
-    (hv : v.Sublist t.suffixSlots) :
-    (v.filterMap cat).SortedLE :=
-  (h.pairwise.sublist (hv.filterMap cat)).sortedLE
+theorem SuffixesAscend.pairwise_filterMap (h : t.SuffixesAscend cat)
+    (hv : v.Sublist t.suffixSlots) : (v.filterMap cat).Pairwise fun x y ↦ ¬ y < x :=
+  h.sublist (hv.filterMap cat)
 
 /-- A string of prefixes in the template's order descends along `cat` towards the stem. -/
-theorem PrefixesAscend.sortedLE_filterMap (h : t.PrefixesAscend cat)
-    (hv : v.Sublist t.prefixSlots) :
-    (v.reverse.filterMap cat).SortedLE :=
-  (h.pairwise.sublist (hv.reverse.filterMap cat)).sortedLE
+theorem PrefixesAscend.pairwise_filterMap (h : t.PrefixesAscend cat)
+    (hv : v.Sublist t.prefixSlots) : (v.reverse.filterMap cat).Pairwise fun x y ↦ ¬ y < x :=
+  h.sublist (hv.reverse.filterMap cat)
 
 end Scale
+
+section LinearScale
+
+variable {α : Type*} [LinearOrder α] {cat : Slot → Option α} {t}
+
+/-- Along a linear scale, the suffixes ascend when their categories are sorted. -/
+theorem suffixesAscend_iff_sortedLE :
+    t.SuffixesAscend cat ↔ (t.suffixSlots.filterMap cat).SortedLE := by
+  simp [SuffixesAscend, List.sortedLE_iff_pairwise]
+
+theorem prefixesAscend_iff_sortedLE :
+    t.PrefixesAscend cat ↔ (t.prefixSlots.reverse.filterMap cat).SortedLE := by
+  simp [PrefixesAscend, List.sortedLE_iff_pairwise]
+
+end LinearScale
 
 variable [DecidableEq Slot]
 
@@ -164,19 +177,19 @@ theorem mem_language_iff_sublist (ht : t.slots.Nodup) (h : t.stacking = ∅) :
   exact (idxOf_inj (hw.subset ha)).1 (le_antisymm hab hba)
 
 /-- In a template of suffixes that ascends along `cat`, every admitted string ascends. -/
-theorem SuffixesAscend.sortedLE_of_mem_language {α : Type*} [Preorder α] {cat : Slot → Option α}
+theorem SuffixesAscend.pairwise_of_mem_language {α : Type*} [Preorder α] {cat : Slot → Option α}
     (h : t.SuffixesAscend cat) (hp : t.prefixSlots = []) (hv : v ∈ t.language) :
-    (v.filterMap cat).SortedLE := by
+    (v.filterMap cat).Pairwise fun x y ↦ ¬ y < x := by
   have hs : t.slots = t.suffixSlots := by simp [slots, hp]
   have hR := pairwise_iff_getElem.1 (suffixesAscend_iff_pairwise.1 h)
-  rw [sortedLE_iff_pairwise, pairwise_filterMap]
+  rw [List.pairwise_filterMap]
   refine (pairwise_map.1 (sortedLE_iff_pairwise.1 hv.1)).imp_of_mem
     fun {a b} ha hb hab x hx y hy ↦ ?_
   have ha' := (hv.2 a ha).1
   have hb' := (hv.2 b hb).1
   rcases hab.eq_or_lt with heq | hlt
   · obtain rfl := (idxOf_inj ha').1 heq
-    exact (Option.some.inj (hx.symm.trans hy)).le
+    exact Option.some.inj (hx.symm.trans hy) ▸ lt_irrefl x
   · rw [hs] at ha' hb' hlt
     have := hR _ _ (idxOf_lt_length_of_mem ha') (idxOf_lt_length_of_mem hb') hlt
     simp only [getElem_idxOf] at this
