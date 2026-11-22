@@ -37,10 +37,9 @@ inputs of surprisal theory ([hale-2001], [levy-2008]).
 
 @[expose] public section
 
-namespace Surprisal
+namespace SurprisalTheory
 
 open MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
-open scoped ProbabilityTheory
 
 variable {T W : Type*} (str : T → List W)
 
@@ -82,4 +81,4 @@ theorem next_ofMeasure_map_apply_some (ws : List W) (w : W) :
     Measure.map_apply .of_discrete .of_discrete]
   rfl
 
-end Surprisal
+end SurprisalTheory

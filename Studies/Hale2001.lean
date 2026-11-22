@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Processing.Surprisal.PrefixProbability
+public import Linglib.Processing.SurprisalTheory.PrefixProbability
 
 /-!
 # Hale (2001): A Probabilistic Earley Parser as a Psycholinguistic Model
@@ -53,7 +53,7 @@ ratio is a theorem about it; both are infinite at a word that no analysis of the
 
 namespace Hale2001
 
-open InformationTheory MeasureTheory ProbabilityTheory Surprisal AutoregressiveSequenceModel
+open InformationTheory MeasureTheory ProbabilityTheory SurprisalTheory AutoregressiveSequenceModel
 open scoped ENNReal
 
 variable {T W : Type*} [MeasurableSpace T] (P : Measure T) (str : T → List W) (ws : List W)
