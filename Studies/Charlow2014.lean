@@ -860,11 +860,13 @@ def only (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w
   P.ordinary ∈ P.alternatives ∧
     _root_.Focus.only (· = ·) P.alternatives toSet P.ordinary (x, w) = .true
 
+open Classical in
 /-- `also P` holds of `x` at `w` when the VP's value is among its alternatives and the additive on
 the identity scale is true at `(x, w)`. -/
 def also (P : WithAlternatives (E → W → Prop)) : E → W → Prop := fun x w ↦
   P.ordinary ∈ P.alternatives ∧
-    _root_.Focus.additive (· = ·) P.alternatives toSet P.ordinary (x, w) = .true
+    _root_.Focus.additive (· = ·) P.alternatives (fun Q xw ↦ Trivalent.ofProp (xw ∈ toSet Q))
+      P.ordinary (x, w) = .true
 
 theorem only_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
     only P x w ↔ {Q | Q ∈ P.alternatives ∧ Q x w} = {P.ordinary} := by
@@ -878,8 +880,8 @@ theorem only_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
 
 theorem also_iff (P : WithAlternatives (E → W → Prop)) (x : E) (w : W) :
     also P x w ↔ {P.ordinary} ⊂ {Q | Q ∈ P.alternatives ∧ Q x w} := by
-  simp only [also, _root_.Focus.additive_eq_true_iff,
-    _root_.Focus.mem_additivePresup, mem_toSet]
+  simp only [also, _root_.Focus.additive_eq_true_iff, _root_.Focus.mem_additivePresup,
+    Trivalent.mem_posExt, Trivalent.ofProp_eq_true_iff, mem_toSet]
   constructor
   · rintro ⟨ho, ⟨Q, hQ, hQw, hne⟩, hw⟩
     have hsub : {P.ordinary} ⊆ {Q | Q ∈ P.alternatives ∧ Q x w} :=

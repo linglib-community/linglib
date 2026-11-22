@@ -294,6 +294,55 @@ theorem condEvent_eq_condEvent_iff {A A' B B' : W → Prop} [DecidablePred A]
 
 end ConditionalEvent
 
+/-! ### Restriction
+
+A trivalent proposition `p` further presupposing `A` is its restriction to `A`, the pointwise
+transplication of `p` on `A`: the value of `p` where `A` holds and `undefined` elsewhere. A
+conditional event is the restriction of a two-valued proposition. -/
+
+section Restrict
+
+/-- The restriction of `p` to `A`, `p` further presupposing `A`: the value of `p` where `A` holds
+and `undefined` elsewhere. -/
+def restrict (A : W → Prop) [DecidablePred A] (p : W → Trivalent) : W → Trivalent :=
+  fun w ↦ transplication (ofProp (A w)) (p w)
+
+variable {A B : W → Prop} [DecidablePred A] [DecidablePred B] {p : W → Trivalent} {w : W}
+
+theorem restrict_apply : restrict A p w = transplication (ofProp (A w)) (p w) := rfl
+
+@[simp] theorem restrict_eq_true_iff : restrict A p w = .true ↔ A w ∧ p w = .true := by
+  simp [restrict]
+
+@[simp] theorem restrict_eq_false_iff : restrict A p w = .false ↔ A w ∧ p w = .false := by
+  simp [restrict]
+
+@[simp] theorem restrict_eq_undefined_iff :
+    restrict A p w = .undefined ↔ ¬ A w ∨ p w = .undefined := by
+  simp [restrict]
+
+@[simp] theorem posExt_restrict : posExt (restrict A p) = {w | A w} ∩ posExt p := by
+  ext w; simp
+
+@[simp] theorem negExt_restrict : negExt (restrict A p) = {w | A w} ∩ negExt p := by
+  ext w; simp
+
+@[simp] theorem gapExt_restrict : gapExt (restrict A p) = {w | A w}ᶜ ∪ gapExt p := by
+  ext w; simp
+
+theorem condEvent_eq_restrict : condEvent A B = restrict A fun w ↦ ofProp (B w) := rfl
+
+/-- Negating a restriction negates the proposition and keeps the condition. -/
+theorem compl_restrict : (restrict A p)ᶜ = restrict A pᶜ :=
+  funext fun _ ↦ eq_of_eq_undefined_iff_of_eq_true_iff (by simp) (by simp)
+
+/-- Restricting twice restricts to the conjunction of the conditions. -/
+theorem restrict_restrict : restrict A (restrict B p) = restrict (fun w ↦ A w ∧ B w) p :=
+  funext fun _ ↦ eq_of_eq_undefined_iff_of_eq_true_iff
+    (by simp only [restrict_eq_undefined_iff]; tauto) (by simp [and_assoc])
+
+end Restrict
+
 /-! ### Extensions under assertion
 
 Asserting a proposition pointwise, `fun w ↦ ofProp (p w = .true)`, keeps its positive extension and

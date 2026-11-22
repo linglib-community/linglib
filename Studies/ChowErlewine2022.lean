@@ -14,8 +14,8 @@ public import Mathlib.Tactic.DeriveFintype
 A clause is a scalar item under a spine of overt operators, and the covert exhaustifier *exh* may
 adjoin at any site of the spine. Predicates of the focused individual denote trivalent
 propositions `F → W → Trivalent`. Negation is `ᶜ`, a presupposition hole. The additive `also C`
-asserts its scope of the focused individual and presupposes `Focus.additivePresup` on the
-identity scale: its scope is true of some other individual among the salient ones `C`. The spine
+is `Focus.additive` on the identity scale: it asserts its scope of the focused individual and
+presupposes that the scope is true of some other individual among the salient ones `C`. The spine
 denotes by `spine C : FreeMonoid ClauseOp →* Function.End (F → W → Trivalent)`, so the
 alternative to a clause is the same spine over the scale-mate of its scalar item, and *exh* at
 site `i` is Spector and Sudo's strong-negation `Exhaustification.Trivalent.exh2` of the material
@@ -69,24 +69,11 @@ instance (P : F → W → Trivalent) (x : F) :
     DecidablePred (· ∈ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x) :=
   fun w ↦ inferInstanceAs (Decidable (∃ j ∈ C, w ∈ Trivalent.posExt (P j) ∧ ¬ x = j))
 
-/-- *Also* asserts its scope of the focused individual and presupposes that the scope is true of
-another individual among the salient ones `C`. -/
-def also (P : F → W → Trivalent) (x : F) (w : W) : Trivalent :=
-  .transplication
-    (.ofProp (w ∈ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x)) (P x w)
+/-- *Also* is the additive on the identity scale over the salient individuals `C`: it asserts its
+scope of the focused individual and presupposes that the scope is true of another one in `C`. -/
+abbrev also (P : F → W → Trivalent) (x : F) : W → Trivalent := Focus.additive (· = ·) C P x
 
 variable {C} {P Q : F → W → Trivalent} {x : F} {w : W}
-
-theorem also_eq_undefined_iff :
-    also C P x w = .undefined ↔
-      w ∉ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x ∨
-        P x w = .undefined := by
-  simp [also]
-
-theorem also_eq_true_iff :
-    also C P x w = .true ↔
-      w ∈ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x ∧ P x w = .true := by
-  simp [also]
 
 /-- (5): *exh* above *also* that excludes the alternative is defined only where the additive
 presuppositions of both the scalar item and its scale-mate hold. -/

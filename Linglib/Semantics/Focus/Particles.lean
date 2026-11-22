@@ -244,11 +244,11 @@ does not reach on the scale `S`, on the identity scale an alternative other than
 ([beaver-clark-2008]). -/
 def additivePresup : Set W := {w | ∃ j ∈ C, w ∈ P j ∧ ¬ S i j}
 
-open Classical in
-/-- An additive particle, *too* or *also*, presupposes `additivePresup S C P i` and asserts its
-prejacent `P i`. -/
-noncomputable def additive : W → Trivalent :=
-  Trivalent.condEvent (· ∈ additivePresup S C P i) (· ∈ P i)
+/-- An additive particle, *too* or *also*, over alternatives with trivalent contents `φ` asserts
+its prejacent `φ i` and further presupposes `additivePresup S C` of their truth conditions. -/
+def additive (φ : ι → W → Trivalent) (k : ι)
+    [DecidablePred (· ∈ additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) k)] : W → Trivalent :=
+  Trivalent.restrict (· ∈ additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) k) (φ k)
 
 variable {S C P i} {j : ι} {w : W}
 
@@ -260,27 +260,42 @@ variable {S C P i} {j : ι} {w : W}
 theorem additivePresup_eq_compl_atMost : additivePresup S C P i = (atMost S C P i)ᶜ := by
   ext; simp
 
+section
+
+variable {φ : ι → W → Trivalent}
+  [DecidablePred (· ∈ additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) i)]
+
 @[simp] theorem additive_eq_undefined_iff :
-    additive S C P i w = .undefined ↔ w ∉ additivePresup S C P i := by
+    additive S C φ i w = .undefined ↔
+      w ∉ additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) i ∨ φ i w = .undefined := by
   simp [additive]
 
-theorem compl_gapExt_additive :
-    (Trivalent.gapExt (additive S C P i))ᶜ = additivePresup S C P i := by
-  ext; simp
-
 @[simp] theorem additive_eq_true_iff :
-    additive S C P i w = .true ↔ w ∈ additivePresup S C P i ∧ w ∈ P i := by
+    additive S C φ i w = .true ↔
+      w ∈ additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) i ∧ φ i w = .true := by
   simp [additive]
 
 @[simp] theorem additive_eq_false_iff :
-    additive S C P i w = .false ↔ w ∈ additivePresup S C P i ∧ w ∉ P i := by
+    additive S C φ i w = .false ↔
+      w ∈ additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) i ∧ φ i w = .false := by
   simp [additive]
 
+/-- The additive is defined where its presupposition holds and its prejacent is defined. -/
+theorem compl_gapExt_additive :
+    (Trivalent.gapExt (additive S C φ i))ᶜ =
+      additivePresup S C (fun j ↦ Trivalent.posExt (φ j)) i ∩ (Trivalent.gapExt (φ i))ᶜ := by
+  ext; simp
+
+end
+
+open Classical in
 /-- Where the prejacent and the presupposition of *only* hold, *only* is true exactly where the
-additive is not. -/
+additive over the same two-valued contents is not. -/
 theorem only_eq_true_iff_additive_ne_true (hw : w ∈ P i) (hl : w ∈ atLeast S C P i) :
-    only S C P i w = .true ↔ additive S C P i w ≠ .true := by
-  simp [-mem_atLeast, -mem_atMost, hw, hl, additivePresup_eq_compl_atMost]
+    only S C P i w = .true ↔ additive S C (fun j w ↦ Trivalent.ofProp (w ∈ P j)) i w ≠ .true := by
+  have hP : (fun j ↦ Trivalent.posExt fun w ↦ Trivalent.ofProp (w ∈ P j)) = P := by
+    funext j; ext w; simp
+  simp [-mem_atLeast, -mem_atMost, hw, hl, hP, additivePresup_eq_compl_atMost]
 
 theorem additivePresup_mono {C' : Set ι} (h : C ⊆ C') :
     additivePresup S C P i ⊆ additivePresup S C' P i :=
