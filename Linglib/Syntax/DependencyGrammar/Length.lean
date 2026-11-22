@@ -6,7 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.LocalSubtree
+public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Core.Data.Finset.Sort
 public import Linglib.Syntax.WordOrder.BoundaryDistance
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -35,6 +36,7 @@ distance `WordOrder.Arrangement.boundaryDist` of the local arrangement, with the
 
 * `Digraph.totalLength`: the sum of `Nat.dist` over the arcs.
 * `Digraph.reachSetDist`: the distance from a position to the nearest word of a yield.
+* `Digraph.localArrangement`: a head and its dependents in the order of their positions.
 
 ## Main results
 
@@ -326,7 +328,17 @@ section LocalSubtree
 
 open Finset WordOrder
 
-variable {G : Digraph (Fin n)} [DecidableRel G.Adj] {v : Fin n}
+variable (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n)
+
+/-- The arrangement of a local subtree in the order of its positions. -/
+noncomputable def Digraph.localArrangement : Arrangement (G.localSubtree v) #(G.localSubtree v) :=
+  (G.localSubtree v).rankOrderIso.toEquiv
+
+variable {G v}
+
+@[simp] theorem Digraph.localArrangement_precedes {c d : G.localSubtree v} :
+    (G.localArrangement v).Precedes c d ↔ (c : Fin n) < d :=
+  (G.localSubtree v).rankOrderIso.lt_iff_lt.trans Subtype.coe_lt_coe.symm
 
 theorem Digraph.reachSetDist_eq_boundaryDist (hF : G.IsBranching) (hP : G.IsProjective) {w : Fin n}
     (h : G.Adj v w) :

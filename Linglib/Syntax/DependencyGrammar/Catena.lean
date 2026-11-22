@@ -11,21 +11,30 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
 /-!
-# Catenae
+# Catenae, constituents and local subtrees
 
-A *catena* is a set of words that is connected by dependencies, taken in either direction. A
-*constituent* is the yield of a word: the word together with everything it dominates. Every
-constituent is a catena, but not conversely. A head with one of its several dependents is a
-catena and not a constituent.
+A *catena* is a set of words that is connected by dependencies, taken in either direction. Two
+kinds of catena are picked out by a word `v`.
+
+* The *constituent* of `v` is its yield: `v` together with everything it dominates.
+* The *local subtree* of `v` is `v` together with its dependents.
+
+The local subtree of `v` is contained in the constituent of `v`, and both are catenae. In a
+forest the two are equal exactly when the dependents of `v` have no dependents of their own.
+Not every catena is a constituent: a head with one of its several dependents is not.
 
 ## Main definitions
 
 * `Digraph.IsCatena`: the words of `s` induce a connected subgraph.
 * `Digraph.IsConstituent`: `s` is the yield of a word.
+* `Digraph.localSubtree`: a word together with its dependents.
 
 ## Main statements
 
-* `Digraph.IsConstituent.isCatena`: every constituent is a catena.
+* `Digraph.IsConstituent.isCatena`, `Digraph.isCatena_localSubtree`: every constituent and every
+  local subtree is a catena.
+* `Digraph.IsBranching.isConstituent_localSubtree_iff`: in a forest, a local subtree is a
+  constituent exactly when the dependents of its head have no dependents.
 * `Digraph.IsBranching.isCatena_iff_existsUnique`: in a forest, a catena is a set of positions
   exactly one of which, its root, has no head among them.
 * `Digraph.IsBranching.card_isConstituent`: a forest has as many constituents as positions.
@@ -106,6 +115,64 @@ theorem Digraph.not_isConstituent_pair {G : Digraph (Fin n)} [DecidableRel G.Adj
     · exact huw (Finset.mem_singleton.mp hu')
   · rw [Finset.mem_singleton] at hcw; subst hcw
     exact hF.not_reachable_of_adj hw ((hc v).1 (by simp))
+
+/-! ### Local subtrees -/
+
+/-- The *local subtree* of `v` is `v` together with its dependents. -/
+def Digraph.localSubtree (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
+    Finset (Fin n) :=
+  insert v (G.outNeighborFinset v)
+
+@[simp] theorem Digraph.self_mem_localSubtree (G : Digraph (Fin n)) [DecidableRel G.Adj]
+    (v : Fin n) : v ∈ G.localSubtree v :=
+  mem_insert_self _ _
+
+theorem Digraph.mem_localSubtree_iff {G : Digraph (Fin n)} [DecidableRel G.Adj] {v w : Fin n} :
+    w ∈ G.localSubtree v ↔ w = v ∨ G.Adj v w := by
+  simp [Digraph.localSubtree]
+
+theorem Digraph.mem_localSubtree_of_adj {G : Digraph (Fin n)} [DecidableRel G.Adj] {v w : Fin n}
+    (h : G.Adj v w) : w ∈ G.localSubtree v :=
+  Digraph.mem_localSubtree_iff.2 (.inr h)
+
+theorem Digraph.coe_localSubtree_subset_reachSet (G : Digraph (Fin n)) [DecidableRel G.Adj]
+    (v : Fin n) : (G.localSubtree v : Set (Fin n)) ⊆ G.reachSet v := fun w hw ↦ by
+  rcases Digraph.mem_localSubtree_iff.1 (mem_coe.1 hw) with rfl | h
+  exacts [.refl, .single h]
+
+/-- The local subtree of a position is a catena. -/
+theorem Digraph.isCatena_localSubtree (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
+    G.IsCatena (G.localSubtree v) := by
+  refine (SimpleGraph.connected_iff_exists_forall_reachable _).mpr
+    ⟨⟨v, mem_coe.2 (G.self_mem_localSubtree v)⟩, ?_⟩
+  rintro ⟨w, hw⟩
+  rcases eq_or_ne v w with rfl | hne
+  · exact .rfl
+  · exact SimpleGraph.Adj.reachable
+      ⟨hne, .inl ((Digraph.mem_localSubtree_iff.1 (mem_coe.1 hw)).resolve_left hne.symm)⟩
+
+/-- In a forest, the local subtree of a position is a constituent exactly when the dependents of
+the position have no dependents. -/
+theorem Digraph.IsBranching.isConstituent_localSubtree_iff {G : Digraph (Fin n)}
+    [DecidableRel G.Adj] (hF : G.IsBranching) {v : Fin n} :
+    G.IsConstituent (G.localSubtree v) ↔ ∀ ⦃w u⦄, G.Adj v w → ¬ G.Adj w u := by
+  rw [Digraph.isConstituent_iff]
+  refine ⟨fun ⟨c, hc⟩ w u hw hu ↦ ?_, fun h ↦ ⟨v, fun w ↦ ⟨fun hw ↦ ?_, fun hw ↦ ?_⟩⟩⟩
+  · obtain rfl : c = v :=
+      (Digraph.mem_localSubtree_iff.1 ((hc c).2 .refl)).resolve_right fun h ↦
+        hF.not_reachable_of_adj h ((hc v).1 (G.self_mem_localSubtree v))
+    rcases Digraph.mem_localSubtree_iff.1 ((hc u).2 (.tail (.single hw) hu)) with rfl | h
+    · exact hF.not_reachable_of_adj hu (.single hw)
+    · obtain rfl := hF.leftUnique_adj h hu
+      exact hF.not_adj_self hw
+  · rcases Digraph.mem_localSubtree_iff.1 hw with rfl | hw
+    exacts [.refl, .single hw]
+  · rcases Relation.ReflTransGen.cases_head hw with rfl | ⟨x, hx, hxw⟩
+    · exact G.self_mem_localSubtree _
+    · rcases Relation.ReflTransGen.cases_head hxw with rfl | ⟨y, hy, -⟩
+      exacts [Digraph.mem_localSubtree_of_adj hx, absurd hy (h hx)]
+
+/-! ### Catenae in a forest -/
 
 theorem Digraph.IsCatena.reachable_of_forall_not_adj {G : Digraph (Fin n)} [DecidableRel G.Adj]
     {s : Finset (Fin n)}

@@ -120,6 +120,13 @@ private theorem shortBeforeLong_isBranching : shortBeforeLong.IsBranching := by 
 
 private theorem shortBeforeLong_isProjective : shortBeforeLong.IsProjective := by decide +kernel
 
+-- The local subtree of the head of (7a), the head with B, C and E, is not a constituent, since C
+-- and E have dependents. The local subtree of E, whose dependents F and G have none, is one.
+example : ¬ shortBeforeLong.IsConstituent (shortBeforeLong.localSubtree 0) :=
+  shortBeforeLong_isBranching.isConstituent_localSubtree_iff.not.2 (by decide)
+example : shortBeforeLong.IsConstituent (shortBeforeLong.localSubtree 4) :=
+  shortBeforeLong_isBranching.isConstituent_localSubtree_iff.2 (by decide)
+
 private theorem monovaryOn_shortBeforeLong :
     MonovaryOn (fun c : shortBeforeLong.localSubtree 0 ↦ #(shortBeforeLong.reachSet c).toFinset)
       (shortBeforeLong.localArrangement 0)

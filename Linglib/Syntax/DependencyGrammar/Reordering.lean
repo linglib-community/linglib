@@ -67,7 +67,7 @@ variable (σ : Equiv.Perm (G.localSubtree v))
 place, and a position inside sorts by the new rank of its block, then by its old position. -/
 def Digraph.reorderKey (x : Fin n) : Fin n ×ₗ (ℕ ×ₗ Fin n) :=
   toLex (if x ∈ G.reachSet v then v else x,
-    toLex ((G.localRank v (σ (G.blockHead v x)) : ℕ), x))
+    toLex (((G.localSubtree v).rank (σ (G.blockHead v x)) : ℕ), x))
 
 /-- The new position of `x` counts the positions whose key is smaller. -/
 def Digraph.reorderRank (x : Fin n) : Fin n :=
@@ -245,10 +245,11 @@ private theorem Digraph.reorderKey_lt_iff_of_mem {x y : Fin n} (hx : x ∈ G.rea
     G.reorderKey v σ y < G.reorderKey v σ x ↔
       (y ∉ G.reachSet v ∧ y < v) ∨
         (y ∈ G.reachSet v ∧
-          G.localRank v (σ (G.blockHead v y)) < G.localRank v (σ (G.blockHead v x))) ∨
+          (G.localSubtree v).rank (σ (G.blockHead v y)) <
+            (G.localSubtree v).rank (σ (G.blockHead v x))) ∨
         (y ∈ G.reachSet v ∧ G.blockHead v y = G.blockHead v x ∧ y < x) := by
-  have hinj : Function.Injective fun c ↦ G.localRank v (σ c) :=
-    (G.localRank_strictMono v).injective.comp σ.injective
+  have hinj : Function.Injective fun c ↦ (G.localSubtree v).rank (σ c) :=
+    (G.localSubtree v).rank_strictMono.injective.comp σ.injective
   simp only [Digraph.reorderKey, Prod.Lex.toLex_lt_toLex, ite_eq_left hx, Fin.val_fin_lt]
   by_cases hy : y ∈ G.reachSet v
   · simp only [hy, ite_true, lt_self_iff_false, true_and, false_or, not_true_eq_false, false_and,
@@ -286,7 +287,8 @@ private def baseCount (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) : �
 private def blocksBefore (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n)
     (σ : Equiv.Perm (G.localSubtree v)) (c : G.localSubtree v) :
     ℕ :=
-  #{y | y ∈ G.reachSet v ∧ G.localRank v (σ (G.blockHead v y)) < G.localRank v (σ c)}
+  #{y | y ∈ G.reachSet v ∧
+    (G.localSubtree v).rank (σ (G.blockHead v y)) < (G.localSubtree v).rank (σ c)}
 
 /-- The words of the block of `x` before `x`. -/
 private def blockOffset (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) (x : Fin n) : ℕ :=
@@ -347,7 +349,7 @@ private theorem Digraph.reorderRank_one (x : Fin n) : G.reorderRank v 1 x = x :=
   simp only [mem_filter, mem_univ, true_and, mem_Iio]
   by_cases hx : x ∈ G.reachSet v
   · rw [Digraph.reorderKey_lt_iff_of_mem 1 hx]
-    simp only [Equiv.Perm.coe_one, id, (G.localRank_strictMono v).lt_iff_lt]
+    simp only [Equiv.Perm.coe_one, id, (G.localSubtree v).rank_strictMono.lt_iff_lt]
     by_cases hy : y ∈ G.reachSet v
     · simp only [hy, not_true_eq_false, false_and, true_and, false_or]
       by_cases hne : G.blockHead v y = G.blockHead v x
@@ -396,7 +398,7 @@ variable {G v} (hF : G.IsBranching) (hP : G.IsProjective)
 local notation "v'" => Subtype.mk v (Digraph.self_mem_localSubtree G v)
 
 /-- The new rank of a member of the local subtree. -/
-local notation "nr" c => G.localRank v (σ c)
+local notation "nr" c => Finset.rank (G.localSubtree v) (σ c)
 
 include hF
 
@@ -457,7 +459,7 @@ private theorem blocksBefore_eq_sum (c : G.localSubtree v) :
 
 omit hF in
 private theorem nr_injective : Function.Injective fun c ↦ (nr c) :=
-  (G.localRank_strictMono v).injective.comp σ.injective
+  (G.localSubtree v).rank_strictMono.injective.comp σ.injective
 
 /-- Between the head and `c`, the boundary distance counts the words of the blocks. -/
 private theorem boundaryDist_eq_blockSize (c : G.localSubtree v) :
@@ -491,7 +493,7 @@ include hσ
 omit hF in
 /-- `σ` keeps every dependent on its side of the head. -/
 private theorem nr_lt_iff (c : G.localSubtree v) :
-    (nr v') < (nr c) ↔ G.localRank v v' < G.localRank v c := by
+    (nr v') < (nr c) ↔ (G.localSubtree v).rank v' < (G.localSubtree v).rank c := by
   have := Finset.ext_iff.1 hσ c
   simp only [mem_after, Precedes, Equiv.trans_apply] at this
   exact this
@@ -505,8 +507,8 @@ private theorem blocksBefore_self_eq : blocksBefore G v σ v' = blocksBefore G v
   intro _
   have h := nr_lt_iff σ hσ (G.blockHead v y)
   have h1 : (nr (G.blockHead v y)) = (nr v') ↔
-      G.localRank v (G.blockHead v y) = G.localRank v v' := by
-    rw [(nr_injective σ).eq_iff, (G.localRank_strictMono v).injective.eq_iff]
+      (G.localSubtree v).rank (G.blockHead v y) = (G.localSubtree v).rank v' := by
+    rw [(nr_injective σ).eq_iff, (G.localSubtree v).rank_strictMono.injective.eq_iff]
   simp only [Fin.lt_def, Fin.ext_iff] at h h1 ⊢
   omega
 
@@ -575,11 +577,11 @@ private theorem Digraph.dist_reorderRank_add_boundaryDist (c : G.localSubtree v)
   have hne : (nr c) ≠ (nr v') := fun h ↦ hcv (nr_injective σ h)
   rcases lt_or_gt_of_ne hne with hlt | hgt
   · have e1 := blocksBefore_eq_of_gt (σ := σ) hF hlt
-    have hlt1 : G.localRank v c < G.localRank v v' := by
+    have hlt1 : (G.localSubtree v).rank c < (G.localSubtree v).rank v' := by
       have := nr_lt_iff σ hσ c
-      rcases lt_trichotomy (G.localRank v v') (G.localRank v c) with h | h | h
+      rcases lt_trichotomy ((G.localSubtree v).rank v') ((G.localSubtree v).rank c) with h | h | h
       · exact absurd (this.2 h) (lt_asymm hlt)
-      · exact absurd ((G.localRank_strictMono v).injective h) (Ne.symm hcv)
+      · exact absurd ((G.localSubtree v).rank_strictMono.injective h) (Ne.symm hcv)
       · exact h
     have e2 := blocksBefore_eq_of_gt (σ := 1) hF hlt1
     rw [hone] at e2
@@ -640,13 +642,13 @@ include hP
 /-- Exchanging two neighbouring dependents after their head changes the total dependency length by
 the difference of the sizes of their yields. -/
 theorem Digraph.totalLength_reorderDependents_swap_add {c d : G.localSubtree v} (hc : v < c)
-    (hcd : (G.localRank v c : ℕ) + 1 = G.localRank v d) :
+    (hcd : ((G.localSubtree v).rank c : ℕ) + 1 = (G.localSubtree v).rank d) :
     (G.reorderDependents v (Equiv.swap c d)).totalLength + #(G.reachSet c).toFinset =
       G.totalLength + #(G.reachSet d).toFinset := by
   have hc' : c ∈ (G.localArrangement v).after v' :=
     mem_after.2 (Digraph.localArrangement_precedes.2 hc)
   have hcd' : (G.localArrangement v).Precedes c d :=
-    Fin.lt_def.2 (show (G.localRank v c : ℕ) < G.localRank v d by omega)
+    Fin.lt_def.2 (show ((G.localSubtree v).rank c : ℕ) < (G.localSubtree v).rank d by omega)
   have h₁ := Digraph.totalLength_reorderDependents_add hF hP
     (after_trans (swap_apply_ne_subset_after hc' hcd'))
   have h₂ := sum_boundaryDist_swap_add (fun c : G.localSubtree v ↦ #(G.reachSet c).toFinset) hc' hcd
