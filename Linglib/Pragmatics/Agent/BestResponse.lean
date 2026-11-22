@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Argmax
 public import Linglib.Pragmatics.Agent.Basic
 public import Mathlib.Order.Filter.Extr
 
@@ -7,14 +8,14 @@ public import Mathlib.Order.Filter.Extr
 # Best responses
 
 The best responses of an agent at an observation are the actions of greatest value there,
-`Agent.bestResponses`. With finitely many actions there is one. The agent's policy soft-maximizes
+`Agent.bestResponses`. With finitely many actions there is one, and they are the `Finset.argmax`
+of the value (`Agent.coe_argmax_value`). The agent's policy soft-maximizes
 the same value, and as the rationality grows it leaves every action that is not a best response
 (`Agent.tendsto_policy_real_singleton_atTop`).
 
 ## TODO
 
 * The limit of the policy as the rationality grows is uniform on the best responses.
-* Best responses as `Finset.argmax` for finitely many actions and a decidable order.
 -/
 
 @[expose] public section
@@ -37,6 +38,12 @@ theorem bestResponses_nonempty [Finite A] [Nonempty A] (ag : Agent O S A) (o : O
     (ag.bestResponses o).Nonempty :=
   let ⟨x, hx⟩ := Finite.exists_max (ag.value o)
   ⟨x, hx⟩
+
+/-- With finitely many actions the best responses are the `Finset.argmax` of the value. -/
+theorem coe_argmax_value [Fintype A] (ag : Agent O S A) (o : O) :
+    (Finset.univ.argmax (ag.value o) : Set A) = ag.bestResponses o := by
+  ext x
+  simp [Finset.mem_argmax, bestResponses]
 
 variable [Countable O] [MeasurableSingletonClass O] [Fintype A] [MeasurableSpace A]
   [MeasurableSingletonClass A]
