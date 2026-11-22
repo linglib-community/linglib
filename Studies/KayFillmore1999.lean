@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.ConstructionGrammar.Licensing
+public import Linglib.Syntax.ConstructionGrammar.Valence
 
 /-!
 # Kay and Fillmore (1999): The What's X Doing Y? Construction

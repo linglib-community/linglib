@@ -25,7 +25,6 @@ joins, and a network is well typed when every inheritance link respects its rela
 
 * `LinkType`, `LinkType.Admits`: the relations an inheritance link records, and what each
   requires of the forms it joins
-* `Slot.Refines`: a slot specializes a slot of the construction it instantiates
 * `Constructicon`: constructions at nodes, with inheritance and horizontal links
 * `Constructicon.IsMother`, `Constructicon.partialOrder`, `Constructicon.decidableLE`: the
   inheritance order of an acyclic network
@@ -70,56 +69,9 @@ inductive LinkType where
   /-- I_I: the linked construction is a more fully specified version of the other (*drive*-crazy
   as an instance of the resultative, p. 79). -/
   | instance
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 variable {Lex : Type*}
-
-/-- A slot refines a slot of the construction it instantiates when the two are equal, or the
-latter is open and they differ at most in their fillers: an instance is a "partially lexically
-filled" version of its construction ([goldberg-1995] p. 79), so refinement only fills open
-fillers, keeping headedness, function and constraints; the category of the filling lexeme is not
-checked. -/
-def Slot.Refines (s t : Slot Lex) : Prop :=
-  s = t ∨ (t.filler.IsOpen ∧ { s with filler := t.filler } = t)
-
-instance [DecidableEq Lex] (s t : Slot Lex) : Decidable (s.Refines t) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
-theorem Slot.Refines.refl (s : Slot Lex) : s.Refines s := .inl rfl
-
-/-- Refinement fills open fillers only: a slot refining a closed slot is that slot. -/
-theorem Slot.Refines.eq_of_not_isOpen {s t : Slot Lex} (h : s.Refines t)
-    (ht : ¬ t.filler.IsOpen) : s = t :=
-  h.resolve_right fun h' ↦ ht h'.1
-
-theorem Slot.Refines.isOpen {s t : Slot Lex} (h : s.Refines t) (hs : s.filler.IsOpen) :
-    t.filler.IsOpen :=
-  h.elim (fun e ↦ e ▸ hs) (·.1)
-
-/-- A form that refines another slot for slot is at most as abstract. -/
-theorem TypedForm.specificity_le_of_forall₂_refines {c m : TypedForm Lex}
-    (h : List.Forall₂ Slot.Refines c m) : c.specificity ≤ m.specificity := by
-  have top : (∀ s ∈ c, s.filler.IsOpen) → ∀ t ∈ m, t.filler.IsOpen := by
-    induction h with
-    | nil => exact id
-    | cons hst _ ih =>
-      simp only [List.forall_mem_cons]
-      exact fun hc ↦ ⟨hst.isOpen hc.1, ih hc.2⟩
-  have bot : (∀ t ∈ m, ¬ t.filler.IsOpen) → c = m := by
-    clear top
-    induction h with
-    | nil => exact fun _ ↦ rfl
-    | cons hst _ ih =>
-      simp only [List.forall_mem_cons]
-      exact fun hm ↦ by rw [hst.eq_of_not_isOpen hm.1, ih hm.2]
-  by_cases hm : ∀ t ∈ m, ¬ t.filler.IsOpen
-  · rw [bot hm]
-  · have hm' : m.specificity ≠ .lexicallySpecified :=
-      fun e ↦ hm (TypedForm.specificity_eq_lexicallySpecified_iff.1 e).2
-    simp only [← TypedForm.specificity_eq_fullyAbstract_iff] at top
-    revert top hm'
-    generalize c.specificity = a; generalize m.specificity = b
-    cases a <;> cases b <;> decide
 
 /-- What a link type requires of the form `c` of the linked construction, given the form `m` of
 the construction it inherits from: a polysemous extension keeps the central sense's form, a
@@ -190,11 +142,11 @@ abbrev decidableLE [DecidableEq ι] (nodes : List ι) (h : ∀ c m, N.IsMother c
 
 /-- Every inheritance link respects the relation it records. -/
 def WellTyped : Prop :=
-  ∀ c, ∀ e ∈ N.mothers c, ∀ t ∈ e.2, t.Admits (N.cxn c).form (N.cxn e.1).form
+  ∀ c m t, (m, some t) ∈ N.mothers c → t.Admits (N.cxn c).form (N.cxn m).form
 
-instance [Fintype ι] : Decidable N.WellTyped :=
+instance [Fintype ι] [DecidableEq ι] : Decidable N.WellTyped :=
   inferInstanceAs <| Decidable <|
-    ∀ c, ∀ e ∈ N.mothers c, ∀ t ∈ e.2, t.Admits (N.cxn c).form (N.cxn e.1).form
+    ∀ c m t, (m, some t) ∈ N.mothers c → t.Admits (N.cxn c).form (N.cxn m).form
 
 end Constructicon
 
