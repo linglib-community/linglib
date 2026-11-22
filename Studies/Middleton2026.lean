@@ -310,6 +310,12 @@ inductive Slot where
   | object
   deriving DecidableEq, Repr
 
+/-- The position of a slot in the prefix. -/
+def Slot.index : Slot → ℕ
+  | .agent => 0
+  | .goal => 1
+  | .object => 2
+
 /-- The agreement prefix of (1) has the agent, goal and object, an absent argument having no
 features. -/
 structure Prefix where
@@ -335,31 +341,30 @@ def set (p : Prefix) : Slot → Arg → Prefix
   | .goal, a => { p with goal := a }
   | .object, a => { p with object := a }
 
-/-- The neighborhood of a slot has its argument in focus and the other two as context, in the order
-of (1). -/
-def around (p : Prefix) : Slot → Neighborhood Arg
-  | .agent => ⟨p.agent, [], [p.goal, p.object]⟩
-  | .goal => ⟨p.goal, [p.agent], [p.object]⟩
-  | .object => ⟨p.object, [p.goal, p.agent], []⟩
+/-- The arguments, in the order of (1). -/
+def toList (p : Prefix) : List Arg := [p.agent, p.goal, p.object]
 
-/-- The prefix a slot's neighborhood came from. -/
-def ofAround : Slot → Neighborhood Arg → Prefix
-  | .agent, n => ⟨n.focus, n.rightCtx.getD 0 [], n.rightCtx.getD 1 []⟩
-  | .goal, n => ⟨n.leftCtx.getD 0 [], n.focus, n.rightCtx.getD 0 []⟩
-  | .object, n => ⟨n.leftCtx.getD 1 [], n.leftCtx.getD 0 [], n.focus⟩
+/-- The prefix whose arguments are the first three of a list, absent ones empty. -/
+def ofList (l : List Arg) : Prefix := ⟨l.getD 0 [], l.getD 1 [], l.getD 2 []⟩
 
-@[simp] theorem ofAround_around (p : Prefix) (s : Slot) : ofAround s (p.around s) = p := by
+@[simp] theorem ofList_toList (p : Prefix) : ofList p.toList = p := rfl
+
+/-- The neighborhood of a slot has its argument in focus and the other two as context. -/
+def around (p : Prefix) (s : Slot) : Neighborhood Arg :=
+  Neighborhood.around p.toList s.index (p.get s)
+
+@[simp] theorem toList_around (p : Prefix) (s : Slot) : (p.around s).toList = p.toList := by
   cases s <;> rfl
 
 /-- A prefix is determined by the neighborhood of any of its slots. -/
 def aroundEmbedding (s : Slot) : Prefix ↪ Neighborhood Arg :=
-  ⟨(·.around s), Function.LeftInverse.injective fun p ↦ ofAround_around p s⟩
+  ⟨(·.around s), Function.LeftInverse.injective (g := fun n ↦ ofList n.toList) fun p ↦ by
+    simp only [toList_around, ofList_toList]⟩
 
 @[simp] theorem aroundEmbedding_apply (s : Slot) (p : Prefix) :
     aroundEmbedding s p = p.around s := rfl
 
-@[simp] theorem focus_around (p : Prefix) (s : Slot) : (p.around s).focus = p.get s := by
-  cases s <;> rfl
+@[simp] theorem focus_around (p : Prefix) (s : Slot) : (p.around s).focus = p.get s := rfl
 
 @[simp] theorem get_set_self (p : Prefix) (s : Slot) (a : Arg) : (p.set s a).get s = a := by
   cases s <;> rfl
@@ -452,7 +457,7 @@ def paradigmatic (s : Slot) (check : Arg → Prop) [DecidablePred check] (c : Ch
 
 /-- A rule conditioned by the prefix. -/
 def syntagmatic (s : Slot) (cond : Prefix → Prop) [DecidablePred cond] (c : Change) : Rule :=
-  ⟨⟨fun n ↦ cond (Prefix.ofAround s n), c⟩, s⟩
+  ⟨⟨fun n ↦ cond (.ofList n.toList), c⟩, s⟩
 
 /-- Apply the rule to the prefix. -/
 def apply (r : Rule) (p : Prefix) : Prefix :=
@@ -1112,6 +1117,8 @@ inductive Role where
   | onset
   | coda
   | full
+  /-- A portmanteau, which takes no tone rule. -/
+  | portmanteau
   deriving DecidableEq
 
 /-- An exponent and its role. -/
@@ -1128,10 +1135,9 @@ hyper-contextual rules of [moskal-smith-2016] do. -/
 
 /-- The arguments of a prefix around slot `s`, each with its slot, absent ones empty, in the order
 of (1). -/
-def Prefix.slotsAround (p : Prefix) : Slot → Neighborhood (Slot × Arg)
-  | .agent => ⟨(.agent, p.agent), [], [(.goal, p.goal), (.object, p.object)]⟩
-  | .goal => ⟨(.goal, p.goal), [(.agent, p.agent)], [(.object, p.object)]⟩
-  | .object => ⟨(.object, p.object), [(.goal, p.goal), (.agent, p.agent)], []⟩
+def Prefix.slotsAround (p : Prefix) (s : Slot) : Neighborhood (Slot × Arg) :=
+  Neighborhood.around [(.agent, p.agent), (.goal, p.goal), (.object, p.object)] s.index
+    (s, p.get s)
 
 /-- The tiers on which brackets are read. -/
 inductive Tier where
@@ -1306,23 +1312,23 @@ def exponents (p : Prefix) (t : Terminal) (read : Reading := onTiers) : List Mor
     else []
 
 /-- The exponents of a linearized prefix, the portmanteaux (6), (41) and (49) and *mây*
-first; the flag marks a portmanteau form, which takes no tone rule. Three additions the appendix
+first. Three additions the appendix
 uses without stating them: *mây* for the 2:1 prefixes without an object (its §3.4), (41) and (49)
 matching an argument's remaining bundle exactly, and portmanteaux taking no tone, without which
 (6) *ku* would come out *kú*. -/
 def exponence (p : Prefix) (ts : List Terminal) (read : Reading := onTiers) :
-    List Morph × Bool :=
+    List Morph :=
   if p.agent = second ∧ p.object = [] then
-    if p.goal = first ++ dual ∨ p.goal = first ++ inverse then ([("ku", .full)], true)
-    else if p.goal = first then ([("mây", .full)], true)
-    else (ts.flatMap (exponents p · read), false)
+    if p.goal = first ++ dual ∨ p.goal = first ++ inverse then [("ku", .portmanteau)]
+    else if p.goal = first then [("mây", .portmanteau)]
+    else ts.flatMap (exponents p · read)
   else match p.args with
   | [a] =>
-    if a = [.participant true, .author true, .atomic true] then ([("ti", .full)], true)
-    else if a = [.author true, .atomic true, .minimal true] then ([("pi", .full)], true)
-    else if a = [.author false, .atomic true, .minimal true] then ([("ki", .full)], true)
-    else (ts.flatMap (exponents p · read), false)
-  | _ => (ts.flatMap (exponents p · read), false)
+    if a = [.participant true, .author true, .atomic true] then [("ti", .portmanteau)]
+    else if a = [.author true, .atomic true, .minimal true] then [("pi", .portmanteau)]
+    else if a = [.author false, .atomic true, .minimal true] then [("ki", .portmanteau)]
+    else ts.flatMap (exponents p · read)
+  | _ => ts.flatMap (exponents p · read)
 
 /-! ### Epenthesis and tone -/
 
@@ -1435,7 +1441,8 @@ def Prefix.exponed (p : Prefix) : ℕ :=
 Linearization, metathesis, exponence, epenthesis and tone. -/
 def deriveWith (rules : List Rule) (c : Taos.Cell) (read : Reading := onTiers) : String :=
   let p := run rules (spellOut c)
-  let (morphs, fixed) := exponence p (metathesis p (linearize p)) read
+  let morphs := exponence p (metathesis p (linearize p)) read
+  let fixed := morphs.any (·.2 == .portmanteau)
   let morphs := if morphs.map (·.1) == ["w"] then [("u", .full)] else morphs
   tone c p.exponed (epenthesis none morphs) fixed
 
