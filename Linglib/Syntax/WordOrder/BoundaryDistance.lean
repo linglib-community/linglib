@@ -55,9 +55,10 @@ section Monovary
 
 variable {a : Arrangement α n} (ℓ : α → ℕ)
 
-theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
-  simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
-  exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
+theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s :=
+  ⟨fun h ↦ by simpa [Function.comp_def] using
+      h.comp_antitoneOn_right (Fin.rev_anti.antitoneOn _),
+    fun h ↦ h.comp_antitoneOn_right (Fin.rev_anti.antitoneOn _)⟩
 
 private theorem antivaryOn_rank_iff_monovaryOn {s : Set α} :
     AntivaryOn ℓ (fun d ↦ n - 1 - a d) s ↔ MonovaryOn ℓ a s := by

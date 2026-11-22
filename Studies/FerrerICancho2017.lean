@@ -30,8 +30,8 @@ $(n - 2) (n - 3) / 6$.
 
 * The paper neglects the direction of a dependency, and its results are those of
   `Linglib/Core/Combinatorics/SimpleGraph/Crossings.lean` on the undirected view of a dependency
-  graph, whose [crossings](##FerrerICancho2017.crossings_eq) are the graph's and whose
-  [relabellings](##FerrerICancho2017.toSimpleGraph_map) are its linearizations. $C_{pairs}$ is
+  graph. `Graph.crossings` is the crossings of that view, and its relabellings are the
+  linearizations of the graph (`Graph.toSimpleGraph_map`). $C_{pairs}$ is
   `SimpleGraph.disjointEdgePairs` of that view.
 * Expectations are stated as counts over all $n!$ linearizations, with the divisions cleared, and
   the second moment as the sum $∑ k^2 = n ⟨k^2⟩$.
@@ -60,37 +60,17 @@ variable {L : Type*} {n : ℕ} {g : Graph L n}
 
 /-! ### The undirected view -/
 
-theorem crossings_eq : g.crossings = g.toSimpleGraph.crossings := by
-  unfold Graph.crossings SimpleGraph.crossings
-  refine congrArg card (filter_congr fun x _ ↦ ?_)
-  simp only [Graph.toSimpleGraph_adj]
-  exact ⟨fun ⟨h1, h2, hac, hcb, hbd⟩ ↦
-      ⟨⟨(hac.trans hcb).ne, h1⟩, ⟨(hcb.trans hbd).ne, h2⟩, hac, hcb, hbd⟩,
-    fun ⟨h1, h2, h⟩ ↦ ⟨h1.2, h2.2, h⟩⟩
-
-theorem toSimpleGraph_map (σ : Perm (Fin n)) :
-    (g.map σ).toSimpleGraph = g.toSimpleGraph.comap σ.symm := by
-  ext v w
-  simp
-
-theorem crossings_map (σ : Perm (Fin n)) :
-    (g.map σ).crossings = (g.toSimpleGraph.comap σ.symm).crossings := by
-  rw [crossings_eq]
-  unfold SimpleGraph.crossings
-  refine congrArg card (filter_congr fun x _ ↦ ?_)
-  simp
-
 theorem sum_crossings_map :
     ∑ σ : Perm (Fin n), (g.map σ).crossings =
       ∑ σ : Perm (Fin n), (g.toSimpleGraph.comap σ).crossings := by
-  simp only [crossings_map]
+  simp only [Graph.crossings_map]
   exact Fintype.sum_equiv (Equiv.inv _) _ _ fun _ ↦ rfl
 
 -- relinearizing preserves the tree, and so the second moment of the degrees
 theorem sum_degree_sq_map (σ : Perm (Fin n)) :
     ∑ v, (g.map σ).toSimpleGraph.degree v ^ 2 = ∑ v, g.toSimpleGraph.degree v ^ 2 := by
   convert g.toSimpleGraph.sum_degree_sq_comap σ.symm using 4
-  exact toSimpleGraph_map σ
+  exact g.toSimpleGraph_map σ
 
 /-! ### Expected crossings and potential crossings -/
 
@@ -103,7 +83,7 @@ theorem three_mul_sum_crossings_map :
 -- no linearization has more crossings than there are pairs of links sharing no word
 theorem crossings_map_le_disjointEdgePairs (σ : Perm (Fin n)) :
     (g.map σ).crossings ≤ g.toSimpleGraph.disjointEdgePairs :=
-  (crossings_map σ).trans_le (SimpleGraph.crossings_comap_le_disjointEdgePairs _)
+  (g.crossings_map σ).trans_le (SimpleGraph.crossings_comap_le_disjointEdgePairs _)
 
 /-- When every link meets one word, as in a star tree, no linearization has a crossing
 ([ferrer-i-cancho-2017], after eq. 14). -/

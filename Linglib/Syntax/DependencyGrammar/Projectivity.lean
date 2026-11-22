@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.DependencyGrammar.Tree
+public import Linglib.Core.Combinatorics.SimpleGraph.Crossings
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.List.Sort
@@ -30,7 +31,8 @@ study files.
 * `Graph.Interleave` and `Graph.IsWellNested`: subtrees that interleave, and the ban on
   interleaving subtrees neither of whose roots dominates the other.
 * `Graph.gapDegree`: the greatest number of discontinuities in the yield of a position.
-* `Graph.crossings`: the number of crossing pairs of links.
+* `Graph.crossings`: the number of crossing pairs of links, `SimpleGraph.crossings` of the
+  undirected view.
 
 ## Main statements
 
@@ -60,10 +62,6 @@ variable {L : Type*} {n : ℕ} (g : Graph L n)
 /-- A dependency graph is projective if the positions dominated by any one position are
 order-convex ([kuhlmann-nivre-2006], Definition 3). -/
 def Graph.IsProjective : Prop := ∀ v, (g.yield v).OrdConnected
-
-/-- Positions `a b c d` alternate if `a < c < b < d`, so that the pairs
-`{a, b}` and `{c, d}` strictly interleave. -/
-abbrev Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
 
 /-- A dependency graph is planar if no two links alternate, so that its arcs can be drawn above
 the sentence without crossing ([kuhlmann-nivre-2006], Definition 4). -/
@@ -134,27 +132,30 @@ def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
 
 /-! ### Crossings -/
 
-/-- The number of crossing link pairs, counted as quadruples `a < c < b < d`
-carrying links `{a, b}` and `{c, d}`. Each crossing pair contributes once,
-since of the two ways to order the pairs only one alternates. -/
-def Graph.crossings : Nat :=
-  (Finset.univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
-    g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
-      Alternate x.1 x.2.1 x.2.2.1 x.2.2.2)).card
+/-- The number of crossing pairs of links, the crossings of the undirected view. -/
+abbrev Graph.crossings : ℕ := g.toSimpleGraph.crossings
 
 variable {g}
 
-/-! ### Projectivity as gap degree zero -/
+/-! ### The constraints as least values of the counts -/
 
 /-- Planarity is having no crossings — the binary constraint as the least
 value of the count. -/
 theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 := by
-  rw [Graph.crossings, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  rw [Graph.crossings, SimpleGraph.crossings, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   constructor
   · rintro h ⟨a, b, c, d⟩ - ⟨h1, h2, h3⟩
-    exact h h1 h2 h3
-  · exact fun h a b c d h1 h2 h3 ↦ h (Finset.mem_univ (a, b, c, d)) ⟨h1, h2, h3⟩
+    exact h h1.2 h2.2 h3
+  · exact fun h a b c d h1 h2 h3 ↦ h (Finset.mem_univ (a, b, c, d))
+      ⟨⟨(h3.1.trans h3.2.1).ne, h1⟩, ⟨(h3.2.1.trans h3.2.2).ne, h2⟩, h3⟩
 
+
+/-- The crossings of a transported graph are those of its undirected view relabelled. -/
+theorem Graph.crossings_map (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).crossings = (g.toSimpleGraph.comap σ.symm).crossings := by
+  unfold Graph.crossings SimpleGraph.crossings
+  refine congrArg Finset.card (Finset.filter_congr fun x _ ↦ ?_)
+  simp
 
 theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
     g.gapDegreeAt v = 0 ↔ (g.yield v).OrdConnected := by

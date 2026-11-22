@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.DependencyGrammar.Basic
 public import Mathlib.Algebra.Group.Action.Defs
 public import Mathlib.Algebra.Group.End
+public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.RelIso.Basic
@@ -74,6 +75,13 @@ def Graph.mapRelIso (g : Graph L n) (σ : Equiv.Perm (Fin n)) : g.Adj ≃r (g.ma
 theorem Graph.map_adj_apply (g : Graph L n) (σ : Equiv.Perm (Fin n)) (v w : Fin n) :
     (g.map σ).Adj (σ v) (σ w) ↔ g.Adj v w :=
   (g.mapRelIso σ).map_rel_iff
+
+/-- The undirected view of a transported graph is the undirected view pulled back along the
+inverse permutation. -/
+theorem Graph.toSimpleGraph_map (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).toSimpleGraph = g.toSimpleGraph.comap σ.symm := by
+  ext v w
+  simp
 
 /-- The mirror image, transported along position reversal. -/
 def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm

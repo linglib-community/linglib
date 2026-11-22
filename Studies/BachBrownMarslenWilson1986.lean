@@ -40,7 +40,7 @@ cluster, the time clauses are held and the time they join the matrix
 * The noun phrases are the subjects of the verbs, in the order of their verbs, which is what the
   question task asks about; the object of the last verb is left out. In the string of subjects and
   cluster, subject `i` is at `i` and verb `i` at `n + σ i`, so two dependencies cross when they
-  `DependencyGrammar.Alternate`.
+  `Alternate`.
 * The dependency tree `graph` adds to Figure 1's arcs between verbs and their subjects the arcs
   from each verb to the verb it embeds, so that the matrix verb roots a tree; those arcs join
   neighbours in either order and cross nothing. Its words are a parameter, since no theorem reads
@@ -247,7 +247,7 @@ theorem isPlanar_graph_iff : (graph σ).IsPlanar ↔ σ = Fin.revPerm := by
   refine ⟨fun h ↦ forall_not_alternate_iff.1 fun i j ↦
     h (.inr (graph_adj.2 (.inl ⟨i, rfl, rfl⟩))) (.inr (graph_adj.2 (.inl ⟨j, rfl, rfl⟩))), ?_⟩
   rintro rfl a b c d hab hcd
-  simp only [Graph.Linked, graph_adj] at hab hcd
+  simp only [Graph.Linked, Relation.SymmGen, graph_adj] at hab hcd
   rcases hab with (⟨⟨i, hi⟩, rfl, rfl⟩ | ⟨⟨i, hi⟩, ⟨i', hi'⟩, hii, rfl, rfl⟩) |
       (⟨⟨i, hi⟩, rfl, rfl⟩ | ⟨⟨i, hi⟩, ⟨i', hi'⟩, hii, rfl, rfl⟩) <;>
     rcases hcd with (⟨⟨j, hj⟩, rfl, rfl⟩ | ⟨⟨j, hj⟩, ⟨j', hj'⟩, hjj, rfl, rfl⟩) |

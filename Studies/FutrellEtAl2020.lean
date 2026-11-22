@@ -349,4 +349,11 @@ def grammaticalOrder : Graph Unit 6 := attested.linearize [3, 4, 5, 2, 0, 1] (by
 example : attested.totalLength = 6 ∧ randomOrderB.totalLength = 9 ∧
     randomOrderC.totalLength = 11 ∧ grammaticalOrder.totalLength = 9 := by decide
 
+/-! ### The figures are trees -/
+
+example : extraposition.IsTree ∧ whMovement.IsTree ∧ ovid.IsTree := by decide
+example : shortBeforeLong.IsTree ∧ chain.IsTree ∧ sameSide.IsTree := by decide
+example : lightEarly.IsTree ∧ heavyEarly.IsTree ∧ attested.IsTree := by decide
+example : randomTreeA.IsTree ∧ randomTreeB.IsTree ∧ randomTreeC.IsTree := by decide
+
 end FutrellEtAl2020

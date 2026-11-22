@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Logic.Relation
 
 /-!
 # Dependency graphs
@@ -85,15 +86,11 @@ instance : DecidableRel g.Adj := fun _ _ ↦ inferInstanceAs (Decidable (_ = tru
 theorem adj_iff_exists {g : Graph L n} {v w : Fin n} :
     g.Adj v w ↔ ∃ r, g.label v w = some r := Option.isSome_iff_exists
 
-/-- Positions linked by an arc in either direction — the undirected view of
-adjacency. -/
-def Linked (a b : Fin n) : Prop := g.Adj a b ∨ g.Adj b a
+/-- Positions linked by an arc in either direction: the symmetric closure of adjacency. -/
+abbrev Linked (a b : Fin n) : Prop := Relation.SymmGen g.Adj a b
 
 instance (a b : Fin n) : Decidable (g.Linked a b) :=
   inferInstanceAs (Decidable (_ ∨ _))
-
-theorem Linked.symm {g : Graph L n} {a b : Fin n} (h : g.Linked a b) :
-    g.Linked b a := Or.symm h
 
 /-! ### The undirected view -/
 
