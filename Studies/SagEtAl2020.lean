@@ -7,34 +7,35 @@ public import Studies.Sag2010
 /-!
 # Sag et al. (2020): Lessons from the English Auxiliary System
 
-A verbal category has the features `AUX` and `INV`, each with a positive or a negative value, and
-a verb form. The listeme of a verb specifies some of these features and leaves the others open:
-a lexical verb is `[AUX −]` and `[INV −]`, auxiliary *do* is `[AUX +]`, *better* is `[INV −]`,
-deontic *shall* and first-person *aren't* are `[INV +]`, and a modal such as *can* specifies
-neither. A construction specifies the features of its head daughter in the same way. The head of
-a subject-predicate clause is finite, `[AUX −]` and `[INV −]`, the head of a predicational
-head-complement construct is `[AUX −]` and `[INV −]`, and the head of an aux-initial construct is
-`[INV +]`.
+The category of a verb has the features `AUX` and `INV`, each with a positive or a negative
+value, and a verb form. The listeme of a verb specifies some of these features and leaves the
+others open: a lexical verb is `[AUX −]` and `[INV −]`, auxiliary *do* is `[AUX +]`, *better* is
+`[INV −]`, deontic *shall* is `[INV +]`, and a modal such as *can* specifies neither. A
+construction specifies the features of its head daughter in the same way. The head of a
+subject-head construct and of a predicational head-complement construct is `[AUX −]` and
+`[INV −]`, and the head of an aux-initial construct is `[INV +]`.
 
 We define a *specification* as a sort for each of the three features, an open feature having the
 sort of all its values, and state the three constructions on the construct hierarchy of
 `Linglib/Syntax/HPSG/Construction.lean`. A specified category *can head* a construct sort when
 some well-typed model of the grammar has a construct of that sort whose head daughter satisfies
 the specification. The main result, `SagEtAl2020.canHead_iff`, says that it can exactly when, for
-each feature, the sort of the listeme and the sort of the construction have a common subsort. An
-example is acceptable exactly when a listeme of its verb can head its clause
-(`SagEtAl2020.judgments`), and a sense of *shall* is available exactly where the listeme with
-that sense can (`SagEtAl2020.shall_readings`).
+each feature, the sort of the specification and the sort of the construction have a common
+subsort. A subject-predicate clause, a polar interrogative and an inverted exclamative inherit
+the specification of their headed construction and narrow the verb form
+(`SagEtAl2020.canHead_clause_iff`). An example is acceptable exactly when a specification of its
+verb can head a clause of its type (`SagEtAl2020.judgments`), apart from two examples that turn
+on stress and on `GRAM` (`SagEtAl2020.judgments_unaccounted`), and a sense of *shall* is
+available exactly where the listeme with that sense can head the clause
+(`SagEtAl2020.shall_readings`).
 
 The mother of an aux-initial construct has the category of its head daughter and so is inverted.
 It is therefore not the head daughter of a construct whose head is uninverted, among them the
 topicalized clauses, wh-exclamatives and wh-relatives of [sag-2010]
 (`SagEtAl2020.mtr_ne_hdDtr`), and a nonsubject wh-interrogative that it heads is an independent
 clause (`SagEtAl2020.satisfies_hdDtr_ic`, with the worked construct
-`SagEtAl2020.whConstruct`). A polar interrogative and an inverted exclamative are aux-initial
-constructs and clauses of their type, and inherit the constraints on both: in a worked construct
-the mother is an independent clause that denotes a question or a fact
-(`SagEtAl2020.models_clause_iff`).
+`SagEtAl2020.whConstruct`). In a worked polar interrogative or inverted exclamative the mother
+is an independent clause that denotes a question or a fact (`SagEtAl2020.models_clause_iff`).
 
 ## Implementation notes
 
@@ -44,16 +45,26 @@ mother of an aux-initial construct is saturated. The signature has no `VAL`, no 
 distinction of words from phrases, so the verb form that an auxiliary selects and the complement
 of *do* are not constrained, and a listeme is its specification of the head features.
 
-As in the paper the hierarchy of constructs is partial, so a construct may bear the sort of the
-aux-initial construction itself, and the models that `SagEtAl2020.CanHead` ranges over are
-well-typed and not sort-resolved.
+The subject-predicate construction is factored as in the paper's summary of the grammar: the
+subject-head construction requires a head that is `[AUX −]` and `[INV −]`, and the
+subject-predicate clause a finite one. The aux-initial construction requires `[INV +]` of its
+head and nothing of `AUX`, so a lexical verb is excluded from it by its `[INV −]`. The
+predicational head-complement construction requires `[AUX −]`, so auxiliary *do* heads no
+head-complement construct here.
 
-The predicational head-complement construction has the `[AUX −]` head of its display, so
-auxiliary *do* heads no head-complement construct here.
+As in the paper the hierarchy of constructs is partial, and the models that
+`SagEtAl2020.CanHead` ranges over are well-typed and not sort-resolved. A construct may then
+bear the sort of the aux-initial construction itself, as the head daughter of a wh-interrogative
+does, and `SagEtAl2020.canHead_iff` is about those; the three clause types of
+`SagEtAl2020.canHead_clause_iff` are maximal sorts. The semantic type of a subject-predicate
+clause is that of the declarative clause of [sag-2010].
 
 ## TODO
 
-* The lexical constructions of the paper: negation, contraction, ellipsis and rebuttal.
+* The lexical constructions of the paper, negation, contraction, ellipsis and rebuttal. Rebuttal
+  and ellipsis make an `[AUX +]` verb available to the subject-predicate clause, which is what
+  licenses stressed *do*.
+* The conditional, blessing and negative imperative aux-initial clauses.
 
 ## References
 
@@ -128,7 +139,8 @@ def auxDo : Specification := .of (aux := .plus) (vf := .fin)
 /-- The modal *better* is finite and `[INV −]`. -/
 def better : Specification := .of (inv := .minus) (vf := .fin)
 
-/-- (111): *aren't* with a first person singular subject is finite and `[INV +]`. -/
+/-- (111): the word *aren't* with a first person singular subject, which a contraction
+construction licenses, is finite and `[INV +]`. -/
 def arentFirstSingular : Specification := .of (inv := .plus) (vf := .fin)
 
 /-- (45): the listeme of *shall* in each of its senses. Deontic *shall* is `[INV +]`, and
@@ -137,9 +149,10 @@ def shall : Examples.Reading → Specification
   | .deontic => .of (inv := .plus) (vf := .fin)
   | .futurate => modal
 
-/-- The listemes of the verb of an example. -/
-def Examples.Verb.listemes : Examples.Verb → List Specification
-  | .can | .will => [modal]
+/-- The specifications of the verb of an example: of each listeme of the verb, with *could* and
+*will* modals as *can* is, or of the word itself for *aren't*. -/
+def Examples.Verb.specifications : Examples.Verb → List Specification
+  | .could | .will => [modal]
   | .shall => [SagEtAl2020.shall .deontic, SagEtAl2020.shall .futurate]
   | .better => [SagEtAl2020.better]
   | .doAux => [auxDo]
@@ -148,9 +161,10 @@ def Examples.Verb.listemes : Examples.Verb → List Specification
 
 /-! ### Constructions -/
 
-/-- The headed constructions that specify the head features of their head daughter. -/
+/-- The three headed constructions, each of which specifies the head features of its head
+daughter. -/
 inductive Headed where
-  | subjPred
+  | subjHead
   | predHdComp
   | auxInitial
   deriving DecidableEq, Fintype, Repr
@@ -159,16 +173,15 @@ namespace Headed
 
 /-- The construct sort that a construction constrains. -/
 def sort : Headed → Srt
-  | .subjPred => .subjPredCl
+  | .subjHead => .subjHeadCxt
   | .predHdComp => .predHdCompCxt
   | .auxInitial => .auxInitialCxt
 
-/-- The specification of the head daughter. The head of a subject-predicate clause (23) is
-finite, `[AUX −]` and `[INV −]`, the head of a predicational head-complement construct (24) is
-`[AUX −]` and `[INV −]`, and the head of an aux-initial construct (39) is `[INV +]`. -/
+/-- The specification of the head daughter. The head of a subject-head construct and of a
+predicational head-complement construct (24) is `[AUX −]` and `[INV −]`, and the head of an
+aux-initial construct (39) is `[INV +]`. -/
 def head : Headed → Specification
-  | .subjPred => .of .minus .minus .fin
-  | .predHdComp => .of .minus .minus
+  | .subjHead | .predHdComp => .of .minus .minus
   | .auxInitial => .of (inv := .plus)
 
 /-- The construction: the head daughter of a construct of its sort satisfies the
@@ -179,6 +192,11 @@ def principle (c : Headed) : Constraint sig where
   freeVars_body := c.head.freeVars_toFormula _
 
 end Headed
+
+/-- (23): the head daughter of a subject-predicate clause is finite. -/
+def subjPredPrinciple : Constraint sig where
+  sort := .subjPredCl
+  body := .sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin
 
 /-- (40): the mother of a polar interrogative is an independent clause. -/
 def polarIntPrinciple : Constraint sig where
@@ -192,39 +210,51 @@ def auxInitialExclPrinciple : Constraint sig where
 
 /-- The constructions of the paper. -/
 def principles : List (Constraint sig) :=
-  [Headed.subjPred.principle, Headed.predHdComp.principle, Headed.auxInitial.principle,
-    polarIntPrinciple, auxInitialExclPrinciple]
+  [Headed.subjHead.principle, Headed.predHdComp.principle, Headed.auxInitial.principle,
+    subjPredPrinciple, polarIntPrinciple, auxInitialExclPrinciple]
 
 /-- The filler-gap grammar with the constructions of the paper. -/
 abbrev grammar : Grammar sig :=
   .ofList ((constraints ++ principles).map Constraint.toDescription)
 
+namespace Examples.Clause
+
 /-- The construct sort of a clause type. -/
-def Examples.Clause.sort : Examples.Clause → Srt
+def sort : Examples.Clause → Srt
   | .subjPred => .subjPredCl
   | .polarInt => .polarIntCl
   | .auxInitialExcl => .auxInitialExclCl
 
 /-- The headed construction that a clause type instantiates. -/
-def Examples.Clause.headed : Examples.Clause → Headed
-  | .subjPred => .subjPred
+def headed : Examples.Clause → Headed
+  | .subjPred => .subjHead
   | .polarInt | .auxInitialExcl => .auxInitial
 
-/-- The semantic type of the mother of a clause: a subject-predicate clause is austinean, a
-polar interrogative denotes a question and an inverted exclamative a fact. -/
-def Examples.Clause.sem : Examples.Clause → Srt
+/-- The specification that the constructions of a clause type together require of its head
+daughter: that of its headed construction, with a finite verb form in a subject-predicate clause
+and a finite or infinitival one in the other two, which are core clauses. -/
+def head : Examples.Clause → Specification
+  | .subjPred => .of .minus .minus .fin
+  | .polarInt | .auxInitialExcl => .of (inv := .plus) (vf := .core)
+
+/-- The semantic type of the mother of a clause, that of the clause type of [sag-2010] it
+belongs to: a declarative clause is austinean, an interrogative clause denotes a question and an
+exclamative clause a fact. -/
+def sem : Examples.Clause → Srt
   | .subjPred => .austinean
   | .polarInt => .question
   | .auxInitialExcl => .fact
 
--- Figure 10
+end Examples.Clause
+
+-- Figure 10 and the hierarchy of the appendix
 theorem map_sort_inherited :
     (Constraint.inherited (constraints ++ principles) .polarIntCl).map (·.sort) =
         [.headedCxt, .coreCl, .interrogativeCl, .auxInitialCxt, .polarIntCl] ∧
       (Constraint.inherited (constraints ++ principles) .auxInitialExclCl).map (·.sort) =
         [.headedCxt, .coreCl, .exclamativeCl, .auxInitialCxt, .auxInitialExclCl] ∧
       (Constraint.inherited (constraints ++ principles) .subjPredCl).map (·.sort) =
-        [.headedCxt, .coreCl, .declarativeCl, .subjPredCl] := by
+        [.headedCxt, .coreCl, .declarativeCl, .subjHeadCxt, .subjPredCl] := by
   decide +kernel
 
 variable {U : Type*} {I : Interpretation sig U} {u u' : U}
@@ -244,6 +274,25 @@ theorem satisfies_hdDtr (hI : I.Models grammar) (c : Headed) (hu : I.S u ≤ c.s
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, f.attr]) (c.head f)) :=
   Specification.satisfies_toFormula.1
     (satisfies_body hI (c := c.principle) (by cases c <;> simp [principles]) hu) f
+
+theorem satisfies_hdDtr_clause (hI : I.Models grammar) (k : Examples.Clause)
+    (hu : I.S u ≤ k.sort) (f : HeadFeature) :
+    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, f.attr]) (k.head f)) := by
+  have hcore : I.S u ≤ .coreCl := hu.trans (by cases k <;> decide)
+  have hheaded : I.S u ≤ k.headed.sort := hu.trans (by cases k <;> decide)
+  have hvf := (satisfies_hdCat_iff (models_fillerGap hI)
+    (hu.trans (by cases k <;> decide : k.sort ≤ .headedCxt)) [.VFORM] .core).1
+    (satisfies_body hI (c := corePrinciple) (by simp [constraints]) hcore)
+  cases k <;> cases f
+  · exact satisfies_hdDtr hI .subjHead hheaded .aux
+  · exact satisfies_hdDtr hI .subjHead hheaded .inv
+  · exact satisfies_body hI (c := subjPredPrinciple) (by simp [principles]) hu
+  · exact satisfies_hdDtr hI .auxInitial hheaded .aux
+  · exact satisfies_hdDtr hI .auxInitial hheaded .inv
+  · exact hvf
+  · exact satisfies_hdDtr hI .auxInitial hheaded .aux
+  · exact satisfies_hdDtr hI .auxInitial hheaded .inv
+  · exact hvf
 
 /-! ### Worked constructs -/
 
@@ -302,6 +351,17 @@ theorem isWellTyped_construct (c : Headed) :
       (construct c.sort (.of a i v) .plus .austinean).IsWellTyped := by
   cases c <;> decide +kernel
 
+theorem models_clause_construct_iff (k : Examples.Clause) :
+    ∀ a ∈ [Srt.plus, .minus], ∀ i ∈ [Srt.plus, .minus], ∀ v ∈ vforms,
+      ((construct k.sort (.of a i v) .plus k.sem).Models grammar ↔
+        a ≤ k.head .aux ∧ i ≤ k.head .inv ∧ v ≤ k.head .vform) := by
+  cases k <;> decide +kernel
+
+theorem isWellTyped_clause_construct (k : Examples.Clause) :
+    ∀ a ∈ [Srt.plus, .minus], ∀ i ∈ [Srt.plus, .minus], ∀ v ∈ vforms,
+      (construct k.sort (.of a i v) .plus k.sem).IsWellTyped := by
+  cases k <;> decide +kernel
+
 -- (40), the inverted exclamative construction and Figure 11
 theorem models_clause_iff (k : Examples.Clause) :
     ∀ ic ∈ [Srt.plus, .minus], ∀ s ∈ [Srt.austinean, .question, .fact, .modifier],
@@ -317,50 +377,80 @@ def CanHead (ℓ : Specification) (σ : Srt) : Prop :=
   ∃ (U : Type) (I : Interpretation sig U), I.Models grammar ∧ I.IsWellTyped ∧
     ∃ u, I.S u ≤ σ ∧ I.Satisfies (fun _ ↦ u) u (ℓ.toFormula [.HDDTR])
 
-private theorem exists_species_le (c : Headed) :
-    (∀ τ, τ ≤ c.head .aux → ∃ a ∈ [Srt.plus, .minus], a ≤ τ) ∧
-      (∀ τ, τ ≤ c.head .inv → ∃ i ∈ [Srt.plus, .minus], i ≤ τ) ∧
-        ∀ τ, τ ≤ c.head .vform → ∃ v ∈ vforms, v ≤ τ := by
-  cases c <;> decide +kernel
+private theorem exists_species_le :
+    (∀ τ : Srt, τ ≤ .boolean → ∃ a ∈ [Srt.plus, .minus], a ≤ τ) ∧
+      ∀ τ : Srt, τ ≤ .vform → ∃ v ∈ vforms, v ≤ τ := by
+  decide +kernel
 
-/-- A listeme can head a construction exactly when, for each head feature, the sort that the
-listeme gives it and the sort that the construction requires of its head daughter have a common
-subsort. -/
-theorem canHead_iff (ℓ : Specification) (c : Headed) :
-    CanHead ℓ c.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ c.head f := by
+-- if the grammar requires `r` of the head of a construct of sort `σ` and the worked constructs
+-- with head features below `r` are models, heading `σ` is compatibility with `r`
+private theorem canHead_iff_of {ℓ r : Specification} {σ ic sem : Srt}
+    (hr : r .aux ≤ .boolean ∧ r .inv ≤ .boolean ∧ r .vform ≤ .vform)
+    (hsat : ∀ {U : Type} {I : Interpretation sig U} {u : U}, I.Models grammar → I.S u ≤ σ →
+      ∀ f : HeadFeature,
+        I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, f.attr]) (r f)))
+    (hmod : ∀ a ∈ [Srt.plus, .minus], ∀ i ∈ [Srt.plus, .minus], ∀ v ∈ vforms,
+      a ≤ r .aux → i ≤ r .inv → v ≤ r .vform →
+        (construct σ (.of a i v) ic sem).Models grammar ∧
+          (construct σ (.of a i v) ic sem).IsWellTyped) :
+    CanHead ℓ σ ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ r f := by
   constructor
   · rintro ⟨U, I, hI, -, u, hu, hℓ⟩ f
-    exact (Specification.satisfies_toFormula.1 hℓ f).exists_le_of_sortAssign
-      (satisfies_hdDtr hI c hu f)
+    exact (Specification.satisfies_toFormula.1 hℓ f).exists_le_of_sortAssign (hsat hI hu f)
   · intro h
-    obtain ⟨τa, haℓ, hac⟩ := h .aux
-    obtain ⟨τi, hiℓ, hic⟩ := h .inv
-    obtain ⟨τv, hvℓ, hvc⟩ := h .vform
-    obtain ⟨a, ha, haτ⟩ := (exists_species_le c).1 τa hac
-    obtain ⟨i, hi, hiτ⟩ := (exists_species_le c).2.1 τi hic
-    obtain ⟨v, hv, hvτ⟩ := (exists_species_le c).2.2 τv hvc
-    refine ⟨Ent, construct c.sort (.of a i v) .plus .austinean,
-      (models_construct_iff c a ha i hi v hv).2 ⟨haτ.trans hac, hiτ.trans hic, hvτ.trans hvc⟩,
-      isWellTyped_construct c a ha i hi v hv, .cxt, le_rfl,
-      Specification.satisfies_toFormula.2 fun f ↦ ?_⟩
+    obtain ⟨τa, haℓ, har⟩ := h .aux
+    obtain ⟨τi, hiℓ, hir⟩ := h .inv
+    obtain ⟨τv, hvℓ, hvr⟩ := h .vform
+    obtain ⟨a, ha, haτ⟩ := exists_species_le.1 τa (har.trans hr.1)
+    obtain ⟨i, hi, hiτ⟩ := exists_species_le.1 τi (hir.trans hr.2.1)
+    obtain ⟨v, hv, hvτ⟩ := exists_species_le.2 τv (hvr.trans hr.2.2)
+    obtain ⟨hM, hW⟩ := hmod a ha i hi v hv (haτ.trans har) (hiτ.trans hir) (hvτ.trans hvr)
+    refine ⟨Ent, _, hM, hW, .cxt, le_rfl, Specification.satisfies_toFormula.2 fun f ↦ ?_⟩
     cases f
     exacts [⟨.aux, rfl, haτ.trans haℓ⟩, ⟨.inv, rfl, hiτ.trans hiℓ⟩, ⟨.vform, rfl, hvτ.trans hvℓ⟩]
 
-/-- Each example is acceptable exactly when some listeme of its verb can head the construction
-that its clause type instantiates. -/
-theorem judgments (x : Examples.Example) :
+/-- A specification can head a headed construction exactly when, for each head feature, the sort
+that it gives the feature and the sort that the construction requires of its head daughter have
+a common subsort. -/
+theorem canHead_iff (ℓ : Specification) (c : Headed) :
+    CanHead ℓ c.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ c.head f :=
+  canHead_iff_of (by cases c <;> decide) (fun hI hu ↦ satisfies_hdDtr hI c hu)
+    fun a ha i hi v hv h₁ h₂ h₃ ↦ ⟨(models_construct_iff c a ha i hi v hv).2 ⟨h₁, h₂, h₃⟩,
+      isWellTyped_construct c a ha i hi v hv⟩
+
+-- the head of a clause is also finite, or finite or infinitival
+theorem canHead_clause_iff (ℓ : Specification) (k : Examples.Clause) :
+    CanHead ℓ k.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ k.head f :=
+  canHead_iff_of (by cases k <;> decide) (fun hI hu ↦ satisfies_hdDtr_clause hI k hu)
+    fun a ha i hi v hv h₁ h₂ h₃ ↦ ⟨(models_clause_construct_iff k a ha i hi v hv).2 ⟨h₁, h₂, h₃⟩,
+      isWellTyped_clause_construct k a ha i hi v hv⟩
+
+/-- The examples that the constructions here do not account for. Stressed *do* heads a
+subject-predicate clause (36b), which the rebuttal construction licenses, and *do* does not
+precede a grammatical verb (12a), which `GRAM` excludes. -/
+def unaccounted : List Examples.Example := [.ex_12a_did, .ex_36b]
+
+/-- Each example other than the two unaccounted for is acceptable exactly when some
+specification of its verb can head a clause of its type. -/
+theorem judgments (x : Examples.Example) (hx : x ∉ unaccounted) :
     ∃ v k, x.verb = some v ∧ x.clause = some k ∧
-      (x.datum.judgment = .acceptable ↔ ∃ ℓ ∈ v.listemes, CanHead ℓ k.headed.sort) := by
-  simp only [canHead_iff]
+      (x.datum.judgment = .acceptable ↔ ∃ ℓ ∈ v.specifications, CanHead ℓ k.sort) := by
+  simp only [canHead_clause_iff]
   revert x
   decide +kernel
 
+theorem judgments_unaccounted :
+    ∀ x ∈ unaccounted, ∃ v k, x.verb = some v ∧ x.clause = some k ∧
+      ¬ (x.datum.judgment = .acceptable ↔ ∃ ℓ ∈ v.specifications, CanHead ℓ k.sort) := by
+  simp only [canHead_clause_iff]
+  decide +kernel
+
 /-- A sense of *shall* is available in an example exactly when the listeme with that sense can
-head the construction that the clause type of the example instantiates. -/
+head a clause of the example's type. -/
 theorem shall_readings (x : Examples.Example) (r : Examples.Reading) :
     ∀ j ∈ x.reading r, ∃ k, x.clause = some k ∧
-      (j = .acceptable ↔ CanHead (shall r) k.headed.sort) := by
-  simp only [canHead_iff]
+      (j = .acceptable ↔ CanHead (shall r) k.sort) := by
+  simp only [canHead_clause_iff]
   revert x r
   decide +kernel
 
@@ -372,16 +462,16 @@ theorem satisfies_mtr_inv (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt
     (satisfies_hdDtr hI .auxInitial hu .inv)
 
 /-- The mother of an aux-initial construct is inverted, so it is not the head daughter of a
-construct whose head is uninverted: a subject-predicate clause, a predicational head-complement
+construct whose head is uninverted: a subject-head construct, a predicational head-complement
 construct, a topicalized clause, a wh-exclamative or a wh-relative. -/
 theorem mtr_ne_hdDtr (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt)
-    (hu' : I.S u' ≤ .subjPredCl ∨ I.S u' ≤ .predHdCompCxt ∨ I.S u' ≤ .topCl ∨
+    (hu' : I.S u' ≤ .subjHeadCxt ∨ I.S u' ≤ .predHdCompCxt ∨ I.S u' ≤ .topCl ∨
       I.S u' ≤ .whExclCl ∨ I.S u' ≤ .whRelCl) {s : U} (hs : I.A .MTR u = some s) :
     I.A .HDDTR u' ≠ some s := by
   intro hs'
   have hminus : I.Satisfies (fun _ ↦ u') u' (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus) := by
     rcases hu' with h | h | h | h | h
-    · exact satisfies_hdDtr hI .subjPred h .inv
+    · exact satisfies_hdDtr hI .subjHead h .inv
     · exact satisfies_hdDtr hI .predHdComp h .inv
     · exact Sag2010.satisfies_head_uninverted (models_fillerGap hI) (c := .topicalized)
         (.inl rfl) h

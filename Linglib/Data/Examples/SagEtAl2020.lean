@@ -28,7 +28,7 @@ def ex_9a_could : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "can"), ("clause", "subjPred")] }
+    paperFeatures := [("verb", "could"), ("clause", "subjPred")] }
 
 def ex_9a_helped : Datum :=
   { id := "sagetal2020_9a_helped"
@@ -108,6 +108,19 @@ def ex_11b : Datum :=
     readings := [("deontic", .acceptable)]
     paperFeatures := [("verb", "shall"), ("clause", "polarInt")] }
 
+def ex_12a_did : Datum :=
+  { id := "sagetal2020_12a_did"
+    source := ⟨"sag-etal-2020", "(12a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Did Chris be fired?"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("verb", "do"), ("clause", "polarInt")] }
+
 def ex_14a : Datum :=
   { id := "sagetal2020_14a"
     source := ⟨"sag-etal-2020", "(14a)"⟩
@@ -147,10 +160,36 @@ def fig11 : Datum :=
     readings := []
     paperFeatures := [("verb", "do"), ("clause", "polarInt")] }
 
+def ex_36a : Datum :=
+  { id := "sagetal2020_36a"
+    source := ⟨"sag-etal-2020", "(36a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Kim dĭd leave."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("verb", "do"), ("clause", "subjPred")] }
+
+def ex_36b : Datum :=
+  { id := "sagetal2020_36b"
+    source := ⟨"sag-etal-2020", "(36b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Kim díd leave."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("verb", "do"), ("clause", "subjPred")] }
+
 def ex_42a : Datum :=
   { id := "sagetal2020_42a"
-    source := ⟨"chomsky-1981", "p. 209"⟩
-    reportedIn := some ⟨"sag-etal-2020", "(42a)"⟩
+    source := ⟨"sag-etal-2020", "(42a)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "I shall go downtown."
     glossedTokens := []
@@ -162,8 +201,8 @@ def ex_42a : Datum :=
 
 def ex_42b : Datum :=
   { id := "sagetal2020_42b"
-    source := ⟨"chomsky-1981", "p. 209"⟩
-    reportedIn := some ⟨"sag-etal-2020", "(42b)"⟩
+    source := ⟨"sag-etal-2020", "(42b)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "Shall I go downtown?"
     glossedTokens := []
@@ -251,19 +290,19 @@ def ex_113a : Datum :=
     readings := []
     paperFeatures := [("verb", "arent"), ("clause", "subjPred")] }
 
-def all : List Datum := [ex_9a_could, ex_9a_helped, ex_10a, ex_10b, p94_seems, ex_11a, ex_11b, ex_14a, ex_14b, fig11, ex_42a, ex_42b, ex_44, ex_48a, ex_48b, ex_112a, ex_112b, ex_113a]
+def all : List Datum := [ex_9a_could, ex_9a_helped, ex_10a, ex_10b, p94_seems, ex_11a, ex_11b, ex_12a_did, ex_14a, ex_14b, fig11, ex_36a, ex_36b, ex_42a, ex_42b, ex_44, ex_48a, ex_48b, ex_112a, ex_112b, ex_113a]
 
 /-- The finite verb of the example. -/
 inductive Verb where
-  /-- can: the modal *can*, in its present or its preterite -/
-  | can
+  /-- could: the modal *could* -/
+  | could
   /-- will: the modal *will* -/
   | will
   /-- shall: the modal *shall* -/
   | shall
   /-- better: the modal *better* -/
   | better
-  /-- do: unstressed auxiliary *do* -/
+  /-- do: auxiliary *do* -/
   | doAux
   /-- arent: *aren't* with a first person singular subject -/
   | arent
@@ -275,7 +314,7 @@ inductive Verb where
 
 /-- The value a row records under `verb`. -/
 def verb (e : Datum) : Option Verb :=
-  e.parse? "verb" [("can", .can), ("will", .will), ("shall", .shall), ("better", .better), ("do", .doAux),
+  e.parse? "verb" [("could", .could), ("will", .will), ("shall", .shall), ("better", .better), ("do", .doAux),
     ("arent", .arent), ("help", .help), ("seem", .seem)]
 
 /-- The clause type of the example. -/
@@ -318,9 +357,12 @@ inductive Example where
   | p94_seems
   | ex_11a
   | ex_11b
+  | ex_12a_did
   | ex_14a
   | ex_14b
   | fig11
+  | ex_36a
+  | ex_36b
   | ex_42a
   | ex_42b
   | ex_44
@@ -333,8 +375,9 @@ inductive Example where
 
 /-- Every example of the file, in its order. -/
 def Example.all : List Example :=
-  [.ex_9a_could, .ex_9a_helped, .ex_10a, .ex_10b, .p94_seems, .ex_11a, .ex_11b, .ex_14a, .ex_14b,
-    .fig11, .ex_42a, .ex_42b, .ex_44, .ex_48a, .ex_48b, .ex_112a, .ex_112b, .ex_113a]
+  [.ex_9a_could, .ex_9a_helped, .ex_10a, .ex_10b, .p94_seems, .ex_11a, .ex_11b, .ex_12a_did,
+    .ex_14a, .ex_14b, .fig11, .ex_36a, .ex_36b, .ex_42a, .ex_42b, .ex_44, .ex_48a, .ex_48b,
+    .ex_112a, .ex_112b, .ex_113a]
 
 /-- The row of an example. -/
 def Example.datum : Example → Datum
@@ -345,9 +388,12 @@ def Example.datum : Example → Datum
   | .p94_seems => _root_.SagEtAl2020.Examples.p94_seems
   | .ex_11a => _root_.SagEtAl2020.Examples.ex_11a
   | .ex_11b => _root_.SagEtAl2020.Examples.ex_11b
+  | .ex_12a_did => _root_.SagEtAl2020.Examples.ex_12a_did
   | .ex_14a => _root_.SagEtAl2020.Examples.ex_14a
   | .ex_14b => _root_.SagEtAl2020.Examples.ex_14b
   | .fig11 => _root_.SagEtAl2020.Examples.fig11
+  | .ex_36a => _root_.SagEtAl2020.Examples.ex_36a
+  | .ex_36b => _root_.SagEtAl2020.Examples.ex_36b
   | .ex_42a => _root_.SagEtAl2020.Examples.ex_42a
   | .ex_42b => _root_.SagEtAl2020.Examples.ex_42b
   | .ex_44 => _root_.SagEtAl2020.Examples.ex_44
@@ -362,16 +408,19 @@ theorem Example.map_datum_all :
 
 /-- The value the example records under `verb`. -/
 def Example.verb : Example → Option Verb
-  | .ex_9a_could => some .can
+  | .ex_9a_could => some .could
   | .ex_9a_helped => some .help
   | .ex_10a => some .doAux
   | .ex_10b => some .will
   | .p94_seems => some .seem
   | .ex_11a => some .shall
   | .ex_11b => some .shall
+  | .ex_12a_did => some .doAux
   | .ex_14a => some .better
   | .ex_14b => some .better
   | .fig11 => some .doAux
+  | .ex_36a => some .doAux
+  | .ex_36b => some .doAux
   | .ex_42a => some .shall
   | .ex_42b => some .shall
   | .ex_44 => some .shall
@@ -394,9 +443,12 @@ def Example.clause : Example → Option Clause
   | .p94_seems => some .polarInt
   | .ex_11a => some .subjPred
   | .ex_11b => some .polarInt
+  | .ex_12a_did => some .polarInt
   | .ex_14a => some .subjPred
   | .ex_14b => some .polarInt
   | .fig11 => some .polarInt
+  | .ex_36a => some .subjPred
+  | .ex_36b => some .subjPred
   | .ex_42a => some .subjPred
   | .ex_42b => some .polarInt
   | .ex_44 => some .polarInt
@@ -419,9 +471,12 @@ def Example.readings : Example → List (Reading × Judgment)
   | .p94_seems => []
   | .ex_11a => [(.futurate, .acceptable)]
   | .ex_11b => [(.deontic, .acceptable)]
+  | .ex_12a_did => []
   | .ex_14a => []
   | .ex_14b => []
   | .fig11 => []
+  | .ex_36a => []
+  | .ex_36b => []
   | .ex_42a => [(.futurate, .acceptable), (.deontic, .unacceptable)]
   | .ex_42b => [(.deontic, .acceptable)]
   | .ex_44 => [(.futurate, .acceptable)]

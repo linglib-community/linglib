@@ -140,8 +140,8 @@ instance : DecidableLE Srt :=
 
 /-- The attributes. A construct has a mother and daughters. A sign has a category, a `GAP` list,
 a semantic type and an index. A verbal category has a verb form and is independent or not, and a
-verb is inverted or not and has a value for `AUX`, positive in the constructions that only an
-auxiliary verb enters. A nonempty list has a first element and a rest. -/
+verb is inverted or not and has a positive or a negative value for `AUX`. A nonempty list has a
+first element and a rest. -/
 inductive Attr
   | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | VFORM | IC | INV | AUX | GAP | SEM | INDEX
   | FIRST | REST

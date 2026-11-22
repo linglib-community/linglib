@@ -7,9 +7,9 @@
       "doc": "The finite verb of the example.",
       "levels": [
         {
-          "name": "can",
-          "label": "can",
-          "doc": "the modal *can*, in its present or its preterite"
+          "name": "could",
+          "label": "could",
+          "doc": "the modal *could*"
         },
         {
           "name": "will",
@@ -29,7 +29,7 @@
         {
           "name": "doAux",
           "label": "do",
-          "doc": "unstressed auxiliary *do*"
+          "doc": "auxiliary *do*"
         },
         {
           "name": "arent",
@@ -107,7 +107,7 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["verb", "can"],
+        ["verb", "could"],
         ["clause", "subjPred"]
       ],
       "comment": "",
@@ -186,7 +186,7 @@
         ["verb", "seem"],
         ["clause", "polarInt"]
       ],
-      "comment": "Printed in the running text beside Is Pat ever dishonest.",
+      "comment": "Printed in the running text beside Is Pat ever dishonest, for the question and the exclamation alike; coded as the question.",
       "verified": "page-image"
     },
     {
@@ -229,6 +229,25 @@
         ["clause", "polarInt"]
       ],
       "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_12a_did",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(12a)"},
+      "language": "stan1293",
+      "primaryText": "Did Chris be fired?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "do"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "One of four alternants printed with slashes; the complement is headed by a grammatical verb.",
       "verified": "page-image"
     },
     {
@@ -289,9 +308,46 @@
       "verified": "page-image"
     },
     {
+      "id": "sagetal2020_36a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(36a)"},
+      "language": "stan1293",
+      "primaryText": "Kim dĭd leave.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "do"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "The breve marks the auxiliary as unstressed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_36b",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(36b)"},
+      "language": "stan1293",
+      "primaryText": "Kim díd leave.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "do"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "The acute marks the auxiliary as stressed.",
+      "verified": "page-image"
+    },
+    {
       "id": "sagetal2020_42a",
-      "source": {"bibkey": "chomsky-1981", "paperLabel": "p. 209"},
-      "reportedIn": {"bibkey": "sag-etal-2020", "paperLabel": "(42a)"},
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(42a)"},
       "language": "stan1293",
       "primaryText": "I shall go downtown.",
       "discourseSegments": [],
@@ -308,13 +364,12 @@
         ["verb", "shall"],
         ["clause", "subjPred"]
       ],
-      "comment": "",
+      "comment": "The paper attributes the pair to Chomsky (1981: 209).",
       "verified": "page-image"
     },
     {
       "id": "sagetal2020_42b",
-      "source": {"bibkey": "chomsky-1981", "paperLabel": "p. 209"},
-      "reportedIn": {"bibkey": "sag-etal-2020", "paperLabel": "(42b)"},
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(42b)"},
       "language": "stan1293",
       "primaryText": "Shall I go downtown?",
       "discourseSegments": [],
@@ -330,7 +385,7 @@
         ["verb", "shall"],
         ["clause", "polarInt"]
       ],
-      "comment": "",
+      "comment": "The paper attributes the pair to Chomsky (1981: 209).",
       "verified": "page-image"
     },
     {
