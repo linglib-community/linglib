@@ -28,4 +28,7 @@ def tot : DemonstrativeDeterminer := { form := "tot", deixis := Person.first.par
 /-- The demonstrative determiners, masculine singular. -/
 def allDemonstratives : List DemonstrativeDeterminer := [ètot, tot]
 
+/-- The determiner inventory holds the demonstratives, there being no articles. -/
+def inventory : Determiner.Inventory := allDemonstratives.map .demonstrative
+
 end Russian.Determiners
