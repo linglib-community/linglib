@@ -1,14 +1,14 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 
 /-!
 # Templates ascending along a scale
 
 A scale of categories is compared with a template through a partial map `cat` from positions to
 the scale: a position of no category on the scale is passed over. The suffixes ascend along
-`cat` away from the stem, `AffixTemplate.SuffixesAscend`, when no position stands inside one
-that `cat` places strictly lower, and likewise the prefixes, `AffixTemplate.PrefixesAscend`. The
+`cat` away from the stem, `Template.SuffixesAscend`, when no position stands inside one
+that `cat` places strictly lower, and likewise the prefixes, `Template.PrefixesAscend`. The
 scale may be a partial order, and positions of incomparable categories are then left free.
 
 In a template of suffixes that ascends, every admitted string ascends
@@ -21,11 +21,11 @@ In a template of suffixes that ascends, every admitted string ascends
 
 @[expose] public section
 
-namespace Morphology
+namespace Morphology.Morphotactics
 
-namespace AffixTemplate
+namespace Template
 
-variable {Slot : Type*} (t : AffixTemplate Slot)
+variable {Slot : Type*} (t : Template Slot)
 
 section Scale
 
@@ -106,6 +106,6 @@ theorem SuffixesAscend.pairwise_of_mem_language {α : Type*} [Preorder α] {cat 
     have := hR _ _ (idxOf_lt_length_of_mem ha') (idxOf_lt_length_of_mem hb') hlt
     simp only [getElem_idxOf] at this
     exact this x hx y hy
-end AffixTemplate
+end Template
 
-end Morphology
+end Morphology.Morphotactics

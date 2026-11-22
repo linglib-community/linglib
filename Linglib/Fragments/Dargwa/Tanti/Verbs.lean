@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Dargwa.Tanti.Locatives
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 
 /-!
 # Tanti Dargwa verbs
@@ -115,12 +115,12 @@ def PreverbGroup.preverbs : PreverbGroup → Finset (Gender.Marker → List Morp
 
 /-- As a rule a verb has at most two preverbs, one of the first group followed by one of the
 second. -/
-def preverbTemplate : AffixTemplate PreverbGroup where
+def preverbTemplate : Morphotactics.Template PreverbGroup where
   prefixSlots := [.localization, .direction]
 
 theorem licensed_preverbTemplate_iff {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)} :
     preverbTemplate.Licensed w ↔ (w.map Sigma.fst).Sublist [.localization, .direction] :=
-  AffixTemplate.mem_language_iff_sublist (by decide) rfl
+  Morphotactics.Template.mem_language_iff_sublist (by decide) rfl
 
 /-- A string of preverbs the template licenses has at most two. -/
 theorem length_le_two_of_licensed {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)}

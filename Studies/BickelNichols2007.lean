@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Scale
+public import Linglib.Morphology.Morphotactics.Template.Scale
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -81,7 +81,7 @@ inductive Exponent : Slot → Type where
   deriving DecidableEq
 
 /-- Table 3.14: the template of the Belhare intransitive verb. -/
-def template : AffixTemplate Slot where
+def template : Morphotactics.Template Slot where
   prefixSlots := [.pf1, .pf2]
   suffixSlots := [.sf1, .sf2, .sf3, .sf4, .sf5]
 
@@ -108,7 +108,7 @@ theorem licensed_examples :
 /-- No form has two fillers of the second prefix position. -/
 theorem not_licensed_of_count_pf2 {w : Form} (h : 1 < (w.map Sigma.fst).count .pf2) :
     ¬ template.Licensed w :=
-  fun hw ↦ h.not_ge (AffixTemplate.count_le_one_of_mem_language (by decide) hw)
+  fun hw ↦ h.not_ge (Morphotactics.Template.count_le_one_of_mem_language (by decide) hw)
 
 -- the third person nonsingular *N-* and the negative *N-* do not co-occur
 theorem not_licensed_thirdNonsingular_negative :
@@ -119,7 +119,7 @@ theorem not_licensed_thirdNonsingular_negative :
 /-- The template admits the negative prefix without the negative suffix. -/
 theorem licensed_without_negative_suffix :
     template.Licensed ([⟨_, .negativePrefix⟩, ⟨_, .past⟩] : Form) :=
-  AffixTemplate.isSublistClosed_language (w := didNotCome.map Sigma.fst)
+  Morphotactics.Template.isSublistClosed_language (w := didNotCome.map Sigma.fst)
     (by decide) (by decide)
 
 /-! ### Number inside case -/

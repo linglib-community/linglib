@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 
 /-!
 # Sesotho verb affixes
@@ -129,7 +129,7 @@ inductive Exponent : Slot → Type where
 /-- The subject, negative, tense or aspect and object positions before the stem, word-edge
 inward, and after it, stem-outward, the reversive, the stacking extensions, the perfect, the
 passive, the mood vowel and *-ng*. -/
-def template : Morphology.AffixTemplate Slot where
+def template : Morphology.Morphotactics.Template Slot where
   prefixSlots := [.subject, .negation, .tam, .object]
   suffixSlots := [.reversive, .extension, .tense, .voice, .mood, .interrogativeRelative]
   stacking := {.extension}

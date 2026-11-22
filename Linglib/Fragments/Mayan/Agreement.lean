@@ -4,7 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Data.UD.Features
 
 /-!
@@ -82,7 +82,7 @@ instance (e : ExponentTable) : Decidable e.IsThirdSgZero := inferInstanceAs (Dec
 /-! ### The verbal complex -/
 
 /-- A position class of the verbal complex, in the Mayanist categories, which keep Set A and
-Set B apart. The stem is not a slot: a slot's side of a `Morphology.AffixTemplate` is its
+Set B apart. The stem is not a slot: a slot's side of a `Morphology.Morphotactics.Template` is its
 position relative to the stem. -/
 inductive VerbSlot where
   | aspect
@@ -98,10 +98,10 @@ inductive ABSPosition where
   deriving DecidableEq, Repr, Fintype
 
 /-- A verbal template sets the absolutive high when Set B is a prefix slot. -/
-def absPosition (t : Morphology.AffixTemplate VerbSlot) : ABSPosition :=
+def absPosition (t : Morphology.Morphotactics.Template VerbSlot) : ABSPosition :=
   if .setB ∈ t.prefixSlots then .high else .low
 
-theorem absPosition_eq_high_iff (t : Morphology.AffixTemplate VerbSlot) :
+theorem absPosition_eq_high_iff (t : Morphology.Morphotactics.Template VerbSlot) :
     absPosition t = .high ↔ .setB ∈ t.prefixSlots := by
   simp [absPosition]
 

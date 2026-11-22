@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Fragments.Finnish.Declension
 public import Linglib.Fragments.Finnish.Infinitives
 public import Linglib.Fragments.Finnish.Possession
@@ -124,7 +124,7 @@ inductive Exponent : Slot → Type where
 
 /-- The endings come in the order function, number, case and possessive, each of which a word may
 lack, and are followed by any number of clitics (§3.1, §3.3). -/
-def template : Morphology.AffixTemplate Slot where
+def template : Morphology.Morphotactics.Template Slot where
   suffixSlots := [.function, .number, .case, .possession, .clitic]
   stacking := {.clitic}
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Fragments.Japanese.Negation
 public import Linglib.Fragments.Japanese.Voice
 
@@ -115,7 +115,7 @@ def Exponent.morphs : Exponent σ → List Morph
   | .te => [.suff "te"]
 
 /-- The suffix positions in their order from the stem outward. -/
-def template : Morphology.AffixTemplate Slot where
+def template : Morphology.Morphotactics.Template Slot where
   suffixSlots :=
     [.derivation, .valence, .voice, .politeness, .desiderative, .negation, .inflection]
 

@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
+public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Phonology.Subregular.Precedence
 
 /-!
 # The precedence relation of a template
 
-A template is a ranking of exponents with ties. `AffixTemplate.Precedes` is the relation "may
+A template is a ranking of exponents with ties. `Template.Precedes` is the relation "may
 stand before" that a template induces on its positions, and the admitted strings are those in
 which every position may stand before every later one (`mem_language_iff_pairwise`), the
 language `Language.pairwise` of that relation.
@@ -23,13 +23,13 @@ strict weak order on a finite set of exponents arises from a template
 
 @[expose] public section
 
-namespace Morphology
+namespace Morphology.Morphotactics
 
-namespace AffixTemplate
+namespace Template
 
 open List
 
-variable {Slot : Type*} [DecidableEq Slot] {t : AffixTemplate Slot} {v : List Slot}
+variable {Slot : Type*} [DecidableEq Slot] {t : Template Slot} {v : List Slot}
 
 variable (t) in
 /-- `a` may stand before `b` in the template: its position comes earlier, or the two are one
@@ -114,7 +114,7 @@ open Classical in
 template: its positions are the classes of mutually exclusive exponents. -/
 theorem exists_template_of_isStrictWeakOrder {F : Type*} [Finite F] (R : F → F → Prop)
     [IsStrictWeakOrder F R] :
-    ∃ (t : AffixTemplate ℕ) (slot : F → ℕ), t.stacking = ∅ ∧
+    ∃ (t : Template ℕ) (slot : F → ℕ), t.stacking = ∅ ∧
       ∀ w : List F, w.Pairwise R ↔ w.map slot ∈ t.language := by
   have := Fintype.ofFinite F
   let rank (a : F) : ℕ := (Finset.univ.filter (R · a)).card
@@ -133,6 +133,6 @@ theorem exists_template_of_isStrictWeakOrder {F : Type*} [Finite F] (R : F → F
       (rel_iff_card_lt R a b).1 hab)
   · refine (rel_iff_card_lt R a b).2 ?_
     simpa [Precedes, slots, hidx _ (hrank a), hidx _ (hrank b)] using hab
-end AffixTemplate
+end Template
 
-end Morphology
+end Morphology.Morphotactics

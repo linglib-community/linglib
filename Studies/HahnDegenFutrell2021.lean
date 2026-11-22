@@ -288,7 +288,7 @@ theorem sesotho_forms_licensed :
 
 /-- The Fragment's template with the paper's own suffix order, which places the passive before
 the perfect. -/
-def paperSesothoTemplate : AffixTemplate Sesotho.Verb.Slot :=
+def paperSesothoTemplate : Morphotactics.Template Sesotho.Verb.Slot :=
   { Sesotho.Verb.template with
     suffixSlots := [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative] }
 

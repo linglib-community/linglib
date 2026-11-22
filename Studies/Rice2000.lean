@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate.Precedence
+public import Linglib.Morphology.Morphotactics.Template.Precedence
 public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Hom.Basic
@@ -18,11 +18,11 @@ are not ordered with each other, and the qualifiers are ordered with nothing.
 The Athapaskan verb puts a position of greater scope to the right. `position` is the place of a
 position in the template, counted from the left, as a monotone map from the scope order to `ℕ`;
 since it is injective, the template is a linear extension of the scope order. In the vocabulary
-of `AffixTemplate`, the prefixes of `template` ascend away from the stem along the dual of the
-scope order (`prefixesAscend_toDual`). As languages, the strings the template admits are among
-those in which no position stands before one in its scope (`language_le_pairwise_scope`), and
-scope alone also admits the orders the template excludes among unordered positions
-(`incorporate_quantifier`).
+of `Morphotactics.Template`, the prefixes of `template` ascend away from the stem along the dual
+of the scope order (`prefixesAscend_toDual`). As languages, the strings the template admits are
+among those in which no position stands before one in its scope
+(`language_le_pairwise_scope`), and scope alone also admits the orders the template excludes
+among unordered positions (`incorporate_quantifier`).
 
 They do not ascend along [bybee-1985]'s relevance hierarchy (`not_prefixesAscend_relevance`):
 the first and second person subject stands between the aspect positions and the stem.
@@ -82,7 +82,7 @@ inductive Slot where
   deriving DecidableEq, Repr, Fintype
 
 /-- (1): the template of the Slave verb. -/
-def template : AffixTemplate Slot where
+def template : Morphotactics.Template Slot where
   prefixSlots := [.preverb, .quantifier, .incorporate, .object, .thirdSubject, .qualifier,
     .subsituation, .situation, .viewpoint, .participantSubject, .voice]
   suffixSlots := [.aspectSuffix]
@@ -156,7 +156,7 @@ theorem not_quantifier_le_incorporate :
 no position stands outside one that has it in its scope. -/
 theorem prefixesAscend_toDual :
     template.PrefixesAscend fun a ↦ some (OrderDual.toDual a) := by
-  rw [AffixTemplate.prefixesAscend_iff_pairwise]
+  rw [Morphotactics.Template.prefixesAscend_iff_pairwise]
   have h : template.prefixSlots.Pairwise fun a b ↦ position a < position b := by decide
   refine h.imp fun {a b} hab x hx y hy hlt ↦ ?_
   obtain rfl := Option.some.inj hx
@@ -167,7 +167,7 @@ theorem prefixesAscend_toDual :
 before one in its scope. -/
 theorem language_le_pairwise_scope :
     template.language ≤ Language.pairwise fun a b : Slot ↦ ¬ b < a := fun _ hv ↦
-  (AffixTemplate.mem_language_iff_pairwise.1 hv).2.imp fun hab hba ↦
+  (Morphotactics.Template.mem_language_iff_pairwise.1 hv).2.imp fun hab hba ↦
     (hab.resolve_right (by simp [template])).not_gt (position_strictMono hba)
 
 /-- Scope admits the incorporate before the quantifier, an order the template excludes. -/
