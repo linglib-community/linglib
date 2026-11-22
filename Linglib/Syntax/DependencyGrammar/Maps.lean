@@ -6,9 +6,11 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.DependencyGrammar.Basic
+public import Mathlib.Algebra.Group.Action.Defs
 public import Mathlib.Algebra.Group.End
 public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Order.Fin.Basic
+public import Mathlib.Order.RelIso.Basic
 
 /-!
 # Transport of dependency graphs
@@ -20,7 +22,9 @@ and dependency length, are not, and the files that define them say how they vary
 
 ## Main definitions
 
-* `Graph.map`: a graph transported along a permutation of its positions.
+* `Graph.map`: a graph transported along a permutation of its positions. Transport is an action
+  of the permutations on the graphs, written `σ • g`, and `Graph.mapRelIso` is the isomorphism it
+  gives between the arcs of a graph and those of its transport.
 * `Graph.mirror`: the graph read in reverse.
 * `Graph.linearize`: the graph read in a given order of its positions.
 -/
@@ -50,8 +54,39 @@ def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
 theorem Graph.map_map (g : Graph L n) (σ τ : Equiv.Perm (Fin n)) :
     (g.map σ).map τ = g.map (τ * σ) := rfl
 
+/-- The permutations of the positions act on the dependency graphs by transport. The orbit of a
+graph is the set of its linearizations. -/
+instance : MulAction (Equiv.Perm (Fin n)) (Graph L n) where
+  smul σ g := g.map σ
+  one_smul := Graph.map_one
+  mul_smul σ τ g := (g.map_map τ σ).symm
+
+theorem Graph.smul_def (σ : Equiv.Perm (Fin n)) (g : Graph L n) : σ • g = g.map σ := rfl
+
+/-- A permutation of the positions is an isomorphism from the arcs of a graph to the arcs of its
+transport. -/
+def Graph.mapRelIso (g : Graph L n) (σ : Equiv.Perm (Fin n)) : g.Adj ≃r (g.map σ).Adj :=
+  ⟨σ, by simp⟩
+
+@[simp] theorem Graph.coe_mapRelIso (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    ⇑(g.mapRelIso σ) = σ := rfl
+
+theorem Graph.map_adj_apply (g : Graph L n) (σ : Equiv.Perm (Fin n)) (v w : Fin n) :
+    (g.map σ).Adj (σ v) (σ w) ↔ g.Adj v w :=
+  (g.mapRelIso σ).map_rel_iff
+
 /-- The mirror image, transported along position reversal. -/
 def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm
+
+@[simp] theorem Graph.mirror_adj (g : Graph L n) (v w : Fin n) :
+    g.mirror.Adj v w ↔ g.Adj v.rev w.rev :=
+  Iff.rfl
+
+@[simp] theorem Graph.mirror_mirror (g : Graph L n) : g.mirror.mirror = g := by
+  ext <;> simp [Graph.mirror, Graph.map]
+
+theorem Graph.mirror_involutive : Function.Involutive (Graph.mirror (L := L) (n := n)) :=
+  Graph.mirror_mirror
 
 /-- The graph read in the order `order`, which lists every position once. The token at
 position `p` is the token of `g` at `order[p]`, arcs and root following. -/

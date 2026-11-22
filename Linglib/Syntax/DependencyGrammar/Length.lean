@@ -9,6 +9,8 @@ public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.WordOrder.BoundaryDistance
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Fin
 public import Mathlib.Order.Interval.Set.Card
@@ -32,11 +34,18 @@ predicts after a head, and its mirror image orders long before short before a fi
 
 * `Graph.totalLength`: the sum of `Nat.dist` over the arcs.
 * `Graph.yieldDist`: the distance from a position to the nearest word of a yield.
-* `Graph.siblingArrangement`: a head and its dependents in the order of their positions.
+* `Graph.siblingOrderIso` and `Graph.siblingArrangement`: a head and its dependents in the order
+  of their positions.
 
 ## Main results
 
 * `Graph.totalLength_map`: transport along an isometry preserves total dependency length.
+* `Graph.card_arcs_le_totalLength` and `Graph.totalLength_eq_card_arcs_iff`: total dependency
+  length is at least the number of dependencies, with equality exactly when every dependent stands
+  next to its head, so that such a graph is no longer than any reordering of it
+  (`Graph.totalLength_le_totalLength_map`).
+* `Graph.card_arcs_lt_totalLength`: the bound is not attained when a head has two dependents on
+  one side.
 * `Graph.yieldDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
   dependent is one more than the yield sizes of the dependents between them.
 * `Graph.sum_yieldDist_eq_sum_boundaryDist`: on a projective forest a head's yield distances are
@@ -101,6 +110,67 @@ theorem Graph.totalLength_mirror (g : Graph L n) :
 @[simp] theorem Graph.totalLength_map_mirror (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
     (g.map (WordOrder.Arrangement.mirror σ)).totalLength = (g.map σ).totalLength := by
   rw [← Graph.mirror_map, Graph.totalLength_mirror]
+
+/-! ### The lower bound -/
+
+section LowerBound
+
+open Finset
+
+theorem Graph.card_arcs (g : Graph L n) : #g.arcs = ∑ v, #(g.children v) := by
+  simp only [Graph.arcs, Graph.children, card_filter, Fintype.sum_prod_type]
+
+@[simp] theorem Graph.card_arcs_map (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    #(g.map σ).arcs = #g.arcs :=
+  card_equiv (σ.symm.prodCongr σ.symm) fun ⟨v, w⟩ ↦ by simp
+
+variable {g : Graph L n}
+
+private theorem Graph.one_le_dist_of_mem_children (h : ∀ v, ¬ g.Adj v v) (v : Fin n) :
+    ∀ w ∈ g.children v, 1 ≤ Nat.dist v w := fun w hw ↦
+  Nat.dist_pos_of_ne (Fin.val_ne_of_ne fun e ↦ h v (by simpa [← e] using hw))
+
+/-- Each dependency is at least one word long, so the total dependency length of a graph without
+loops is at least the number of its dependencies. -/
+theorem Graph.card_arcs_le_totalLength (h : ∀ v, ¬ g.Adj v v) : #g.arcs ≤ g.totalLength := by
+  rw [g.card_arcs]
+  exact sum_le_sum fun v _ ↦ card_eq_sum_ones (g.children v) ▸
+    sum_le_sum (Graph.one_le_dist_of_mem_children h v)
+
+/-- Total dependency length equals the number of dependencies exactly when every dependent stands
+next to its head. -/
+theorem Graph.totalLength_eq_card_arcs_iff (h : ∀ v, ¬ g.Adj v v) :
+    g.totalLength = #g.arcs ↔ ∀ ⦃v w⦄, g.Adj v w → Nat.dist v w = 1 := by
+  rw [g.card_arcs, eq_comm, Graph.totalLength]
+  simp only [card_eq_sum_ones]
+  rw [sum_eq_sum_iff_of_le fun v _ ↦ sum_le_sum (Graph.one_le_dist_of_mem_children h v)]
+  refine forall_congr' fun v ↦ ?_
+  rw [sum_eq_sum_iff_of_le (Graph.one_le_dist_of_mem_children h v)]
+  simp [eq_comm]
+
+/-- A graph in which every dependent stands next to its head is no longer than any reordering of
+its positions. -/
+theorem Graph.totalLength_le_totalLength_map (h : ∀ v, ¬ g.Adj v v)
+    (h₁ : ∀ ⦃v w⦄, g.Adj v w → Nat.dist v w = 1) (σ : Equiv.Perm (Fin n)) :
+    g.totalLength ≤ (g.map σ).totalLength := by
+  rw [(Graph.totalLength_eq_card_arcs_iff h).2 h₁, ← g.card_arcs_map σ]
+  exact Graph.card_arcs_le_totalLength fun v hv ↦ h _ hv
+
+/-- Two dependents on one side of their head cannot both stand next to it, so the total dependency
+length exceeds the number of dependencies. -/
+theorem Graph.card_arcs_lt_totalLength (h : ∀ v, ¬ g.Adj v v) {d : HeadDirection}
+    {v w₁ w₂ : Fin n} (h₁ : g.Adj v w₁) (h₂ : g.Adj v w₂) (hne : w₁ ≠ w₂)
+    (o₁ : d.Orders v w₁) (o₂ : d.Orders v w₂) : #g.arcs < g.totalLength := by
+  refine (Graph.card_arcs_le_totalLength h).lt_of_ne fun e ↦ hne ?_
+  have hd := (Graph.totalLength_eq_card_arcs_iff h).1 e.symm
+  have e₁ := hd h₁
+  have e₂ := hd h₂
+  cases d <;>
+    simp only [HeadDirection.headInitial_orders, HeadDirection.headFinal_orders, Fin.lt_def,
+      Nat.dist] at o₁ o₂ e₁ e₂ <;>
+    exact Fin.ext (by omega)
+
+end LowerBound
 
 /-! ### Arc length and the dependent's phrase -/
 
@@ -270,12 +340,25 @@ theorem Graph.siblingRank_strictMono : StrictMono (g.siblingRank v) := fun c d h
     (monotone_filter_right _ fun _ _ he ↦ lt_trans he hcd')).2
     ⟨c, mem_filter.2 ⟨c.2, hcd'⟩, by simp⟩)
 
-/-- A head and its dependents arranged by position. The inverse is classical, but `Precedes`
-reads only the rank, which the kernel reduces. -/
-noncomputable def Graph.siblingArrangement : Arrangement (g.siblings v) #(g.siblings v) :=
-  Equiv.ofBijective (g.siblingRank v)
+/-- The rank is an order isomorphism from a head and its dependents to an initial segment of the
+positions. The inverse is classical, but an order isomorphism is applied through
+`Graph.siblingRank`, which the kernel reduces. -/
+noncomputable def Graph.siblingOrderIso : g.siblings v ≃o Fin #(g.siblings v) where
+  toEquiv := Equiv.ofBijective (g.siblingRank v)
     ((Fintype.bijective_iff_injective_and_card _).2
       ⟨(g.siblingRank_strictMono v).injective, by simp⟩)
+  map_rel_iff' := (g.siblingRank_strictMono v).le_iff_le
+
+@[simp] theorem Graph.coe_siblingOrderIso : ⇑(g.siblingOrderIso v) = g.siblingRank v := rfl
+
+/-- The rank inverts mathlib's enumeration of a finite set in increasing order. -/
+theorem Graph.symm_siblingOrderIso :
+    (g.siblingOrderIso v).symm = (g.siblings v).orderIsoOfFin rfl :=
+  Subsingleton.elim _ _
+
+/-- A head and its dependents arranged by position. -/
+noncomputable def Graph.siblingArrangement : Arrangement (g.siblings v) #(g.siblings v) :=
+  (g.siblingOrderIso v).toEquiv
 
 @[simp] theorem Graph.self_mem_siblings : v ∈ g.siblings v := mem_insert_self _ _
 
@@ -289,7 +372,7 @@ theorem Graph.mem_siblings_of_adj {w : Fin n} (h : g.Adj v w) : w ∈ g.siblings
 
 @[simp] theorem Graph.siblingArrangement_precedes {c d : g.siblings v} :
     (g.siblingArrangement v).Precedes c d ↔ (c : Fin n) < d :=
-  (g.siblingRank_strictMono v).lt_iff_lt.trans Subtype.coe_lt_coe.symm
+  (g.siblingOrderIso v).lt_iff_lt.trans Subtype.coe_lt_coe.symm
 
 theorem Graph.yieldDist_eq_boundaryDist (hF : g.IsForest) (hP : g.IsProjective) {w : Fin n}
     (h : g.Adj v w) :

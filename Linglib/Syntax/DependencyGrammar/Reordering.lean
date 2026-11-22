@@ -15,13 +15,15 @@ public import Mathlib.Tactic.Ring
 
 This file defines `Graph.reorderDependents g v σ`, which moves the phrases of the dependents of `v`
 as whole blocks into the order that a permutation `σ` of `v` and its dependents gives them; every
-position outside the yield of `v` keeps its place. On a projective forest, a reordering that keeps
-each dependent on its side of the head changes only the head's own dependencies, [by the change in
-their boundary distances](##DependencyGrammar.Graph.totalLength_reorderDependents_add). This is
-the observation with which Gildea and Temperley begin their proof that their linearization
-algorithm minimizes dependency length. When the phrases after a head grow outward, [every
-reordering of them that does not is strictly
-longer](##DependencyGrammar.Graph.totalLength_lt_reorderDependents_iff).
+position outside the yield of `v` keeps its place. On a projective forest the blocks stand in the
+order of the dependents (`Graph.monotoneOn_blockHead`), and a reordering that keeps each dependent
+on its side of the head changes only the head's own dependencies, by the change in their boundary
+distances (`Graph.totalLength_reorderDependents_add`). This is the observation with which Gildea
+and Temperley begin their proof that their linearization algorithm minimizes dependency length.
+Exchanging two neighbouring dependents after the head changes the length by the difference of the
+sizes of their phrases (`Graph.totalLength_reorderDependents_swap_add`), and when the phrases
+after a head grow outward, every reordering of them that does not is strictly longer
+(`Graph.totalLength_lt_reorderDependents_iff`).
 
 ## Implementation notes
 
@@ -187,18 +189,9 @@ theorem Graph.lt_of_mem_yield_of_mem_yield {c d y x : Fin n} (hc : g.Adj v c) (h
   · exact Set.disjoint_left.1 hdis
       ((hP c).uIcc_subset ReflTransGen.refl hy (Set.mem_uIcc.2 (Or.inl ⟨hcx.le, not_lt.1 h⟩))) hx
 
-theorem Graph.lt_iff_blockHead_lt {x y : Fin n} (hx : x ∈ g.yield v) (hy : y ∈ g.yield v)
-    (hne : g.blockHead v y ≠ g.blockHead v x) :
-    y < x ↔ (g.blockHead v y : Fin n) < g.blockHead v x := by
-  have hne' : (g.blockHead v y : Fin n) ≠ g.blockHead v x := fun h ↦ hne (Subtype.ext h)
-  -- it suffices to show the forward direction for both orientations
-  suffices key : ∀ {x y : Fin n}, x ∈ g.yield v → y ∈ g.yield v →
-      (g.blockHead v y : Fin n) < g.blockHead v x → y < x by
-    refine ⟨fun h ↦ ?_, key hx hy⟩
-    rcases lt_or_gt_of_ne hne' with h' | h'
-    · exact h'
-    · exact absurd (key hy hx h') (lt_asymm h)
-  intro x y hx hy hlt
+theorem Graph.lt_of_blockHead_lt {x y : Fin n} (hx : x ∈ g.yield v) (hy : y ∈ g.yield v)
+    (hlt : g.blockHead v y < g.blockHead v x) : y < x := by
+  have hlt : (g.blockHead v y : Fin n) < g.blockHead v x := hlt
   by_cases hyv : y = v
   · have hxv : x ≠ v := by
       rintro rfl
@@ -216,6 +209,17 @@ theorem Graph.lt_iff_blockHead_lt {x y : Fin n} (hx : x ∈ g.yield v) (hy : y �
   obtain ⟨hc, hyc⟩ := Graph.adj_blockHead_of_ne hF hy hyv
   obtain ⟨hd, hxd⟩ := Graph.adj_blockHead_of_ne hF hx hxv
   exact Graph.lt_of_mem_yield_of_mem_yield hF hP hc hd hlt hyc hxd
+
+/-- On a projective forest the blocks of a head's dependents stand in the order of the dependents:
+the block of a position is monotone on the yield of the head. -/
+theorem Graph.monotoneOn_blockHead : MonotoneOn (g.blockHead v) (g.yield v) :=
+  fun _ hy _ hx hyx ↦ not_lt.1 fun hlt ↦ hyx.not_gt (Graph.lt_of_blockHead_lt hF hP hy hx hlt)
+
+theorem Graph.lt_iff_blockHead_lt {x y : Fin n} (hx : x ∈ g.yield v) (hy : y ∈ g.yield v)
+    (hne : g.blockHead v y ≠ g.blockHead v x) :
+    y < x ↔ g.blockHead v y < g.blockHead v x :=
+  ⟨fun h ↦ (Graph.monotoneOn_blockHead hF hP hy hx h.le).lt_of_ne hne,
+    Graph.lt_of_blockHead_lt hF hP hx hy⟩
 
 end Projective
 
@@ -329,7 +333,7 @@ private theorem Graph.reorderRank_one (x : Fin n) : g.reorderRank v 1 x = x := b
     · simp only [hy, not_true_eq_false, false_and, true_and, false_or]
       by_cases hne : g.blockHead v y = g.blockHead v x
       · simp [hne]
-      · simp [hne, Graph.lt_iff_blockHead_lt hF hP hx hy hne, Subtype.coe_lt_coe]
+      · simp [hne, Graph.lt_iff_blockHead_lt hF hP hx hy hne]
     · simp [hy, Graph.lt_iff_lt_of_notMem_yield hP hx hy]
   · rw [Graph.reorderKey_lt_iff_of_notMem 1 hx]
     by_cases hy : y ∈ g.yield v
@@ -606,11 +610,29 @@ theorem Graph.totalLength_reorderDependents_add :
 
 end SameSide
 
-/-! #### Growing constituents after the head -/
-
 variable {σ}
 
 include hP
+
+/-! #### Exchanging neighbouring dependents -/
+
+/-- Exchanging two neighbouring dependents after their head changes the total dependency length
+by the difference of the sizes of their phrases, so the exchange is shorter exactly when it puts
+the shorter phrase first. -/
+theorem Graph.totalLength_reorderDependents_swap_add {c d : g.siblings v} (hc : v < c)
+    (hcd : (g.siblingRank v c : ℕ) + 1 = g.siblingRank v d) :
+    (g.reorderDependents v (Equiv.swap c d)).totalLength + #(g.yield c).toFinset =
+      g.totalLength + #(g.yield d).toFinset := by
+  have hc' : c ∈ (g.siblingArrangement v).after v' :=
+    mem_after.2 (Graph.siblingArrangement_precedes.2 hc)
+  have hcd' : (g.siblingArrangement v).Precedes c d :=
+    Fin.lt_def.2 (show (g.siblingRank v c : ℕ) < g.siblingRank v d by omega)
+  have h₁ := Graph.totalLength_reorderDependents_add hF hP
+    (after_trans (swap_apply_ne_subset_after hc' hcd'))
+  have h₂ := sum_boundaryDist_swap_add (fun c : g.siblings v ↦ #(g.yield c).toFinset) hc' hcd
+  omega
+
+/-! #### Growing constituents after the head -/
 
 theorem Graph.totalLength_le_reorderDependents
     (hσ : σ.support ⊆ (g.siblingArrangement v).after v')
