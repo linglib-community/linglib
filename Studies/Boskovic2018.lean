@@ -37,8 +37,8 @@ passive of [collins-2005] moves only labeled elements but moves a non-phase (`ex
   phase being the head's projection under `HeadFunction.raising`, so that a phase head's
   specifiers are in its phase however they are labeled. Read off labels instead
   (`HeadFunction.label`), the unlabeled verb-second clause of (22) would be complete before its
-  specifier merged, and raising to Spec,CP would leave it: labels and phase edges are two notions
-  of projection here.
+  specifier merged, and raising to Spec,CP would leave it (`v2InSitu_label_raising`): labels and
+  phase edges are two notions of projection here.
 * Of the derivations of (17), the two that extract from the moved subject are compared. Chain
   interleaving, where *who* leaves the edge of the subject before the subject raises, is set
   aside, as in the paper.
@@ -337,16 +337,12 @@ theorem ex22 : v2Moved.ObeysFreezing ∧
   exact ⟨by decide +kernel, iff_of_false (by decide) fun h ↦
     not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.1, by decide +kernel⟩
 
-/-- The verb-second clause of (22c), the complement of *sagte*, has no head daughter by labels, and
-C′ by the raising head. -/
-example : (v2InSitu.externalize?.map fun t ↦ HeadFunction.label t ⟨[1]⟩) = some none ∧
-    (v2InSitu.externalize?.map fun t ↦ HeadFunction.raising t ⟨[1]⟩) = some (some 1) := by
-  decide +kernel
-
-/-- With phases read off labels, (22c) would violate the PIC: the verb-second clause, unlabeled,
-is no projection of C, so *Peter* raising to Spec,CP leaves C's complement after the phase is
-complete. -/
-example : ∃ t ∈ v2InSitu.externalize?, ¬ RespectsCut .label t (picCut .label IsPhaseHead t) := by
+-- (22c): the verb-second clause has no head daughter by labels and C′ by the raising head, and
+-- with phases read off labels *Peter* raising to Spec,CP would leave C's sealed complement
+theorem v2InSitu_label_raising :
+    (v2InSitu.externalize?.map fun t ↦ HeadFunction.label t ⟨[1]⟩) = some none ∧
+    (v2InSitu.externalize?.map fun t ↦ HeadFunction.raising t ⟨[1]⟩) = some (some 1) ∧
+    ∃ t ∈ v2InSitu.externalize?, ¬ RespectsCut .label t (picCut .label IsPhaseHead t) := by
   decide +kernel
 
 /-! ### Base-generated specifiers: Serbo-Croatian possessors (24)–(27) -/
