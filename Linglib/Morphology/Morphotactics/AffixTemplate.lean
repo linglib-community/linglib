@@ -163,6 +163,25 @@ theorem mem_language_iff_sublist (ht : t.slots.Nodup) (h : t.stacking = ∅) :
     (pairwise_map.1 (sortedLE_iff_pairwise.1 hs)) ▸ hw
   exact (idxOf_inj (hw.subset ha)).1 (le_antisymm hab hba)
 
+/-- In a template of suffixes that ascends along `cat`, every admitted string ascends. -/
+theorem SuffixesAscend.sortedLE_of_mem_language {α : Type*} [Preorder α] {cat : Slot → Option α}
+    (h : t.SuffixesAscend cat) (hp : t.prefixSlots = []) (hv : v ∈ t.language) :
+    (v.filterMap cat).SortedLE := by
+  have hs : t.slots = t.suffixSlots := by simp [slots, hp]
+  have hR := pairwise_iff_getElem.1 (suffixesAscend_iff_pairwise.1 h)
+  rw [sortedLE_iff_pairwise, pairwise_filterMap]
+  refine (pairwise_map.1 (sortedLE_iff_pairwise.1 hv.1)).imp_of_mem
+    fun {a b} ha hb hab x hx y hy ↦ ?_
+  have ha' := (hv.2 a ha).1
+  have hb' := (hv.2 b hb).1
+  rcases hab.eq_or_lt with heq | hlt
+  · obtain rfl := (idxOf_inj ha').1 heq
+    exact (Option.some.inj (hx.symm.trans hy)).le
+  · rw [hs] at ha' hb' hlt
+    have := hR _ _ (idxOf_lt_length_of_mem ha') (idxOf_lt_length_of_mem hb') hlt
+    simp only [getElem_idxOf] at this
+    exact this x hx y hy
+
 end AffixTemplate
 
 end Morphology
