@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Algebra.Divisibility.Basic
+public import Mathlib.Algebra.Group.Hom.Defs
 public import Mathlib.Control.Monad.Writer
 
 /-!
@@ -16,6 +17,8 @@ log never feeds a value.
 * `Writer.val`, `Writer.log`: the value and the log of a computation.
 * `WriterT.instLawfulMonadList`: the monad laws for list logs, over any lawful monad.
 * `WriterT.instLawfulMonadLift`: lifting into a writer monad with monoid logs is a monad morphism.
+* `Writer.adapt_pure`, `Writer.adapt_bind`: changing the log along a monoid homomorphism is a
+  monad morphism.
 
 ## Implementation notes
 
@@ -125,6 +128,30 @@ on list logs. -/
 theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
     m.log <+: (m >>= f).log :=
   ⟨(f m.val).log, rfl⟩
+
+section adapt
+
+variable {ω' : Type u}
+
+@[simp] theorem val_adapt (φ : ω → ω') (m : Writer ω A) :
+    val (WriterT.adapt φ m : Writer ω' A) = m.val := rfl
+
+@[simp] theorem log_adapt (φ : ω → ω') (m : Writer ω A) :
+    log (WriterT.adapt φ m : Writer ω' A) = φ m.log := rfl
+
+variable [Monoid ω] [Monoid ω'] (φ : ω →* ω')
+
+/-- Changing the log along a monoid homomorphism commutes with `pure`. -/
+theorem adapt_pure (a : A) : (WriterT.adapt φ (pure a : Writer ω A) : Writer ω' A) = pure a :=
+  Writer.ext rfl (map_one φ)
+
+/-- Changing the log along a monoid homomorphism commutes with `bind`. -/
+theorem adapt_bind (m : Writer ω A) (f : A → Writer ω B) :
+    (WriterT.adapt φ (m >>= f) : Writer ω' B) =
+      (WriterT.adapt φ m : Writer ω' A) >>= fun a ↦ WriterT.adapt φ (f a) :=
+  Writer.ext rfl (map_mul φ _ _)
+
+end adapt
 
 /-- The log of `m >>= f` is a right multiple of the log of `m`, so composition is isotone for the
 divisibility preorder of a monoid of logs. -/

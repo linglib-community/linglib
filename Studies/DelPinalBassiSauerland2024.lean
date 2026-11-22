@@ -329,7 +329,7 @@ variable (R a b) in
 and the presupposition of `pexPossOr` not at issue. A negative factive denies belief in the
 at-issue content, which it reads apart from the presupposition. -/
 def pexPossOrTwoDim : TwoDim W (W → Prop) :=
-  ⟨(· ∈ R.preimage (a ∪ b)), (pexPossOr R a b · ≠ .undefined)⟩
+  .mk (· ∈ R.preimage (a ∪ b)) (pexPossOr R a b · ≠ .undefined)
 
 theorem toTrivalent_pexPossOrTwoDim : (pexPossOrTwoDim R a b).toTrivalent = pexPossOr R a b := by
   funext w

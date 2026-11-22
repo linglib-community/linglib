@@ -92,7 +92,7 @@ theorem orFilter_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
 /-- The two-dimensional disjunction whose presupposition is the disjunction of the
 presuppositions, (7). -/
 def orPresupOr (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
-  ⟨fun w ↦ p.atIssue w ∨ q.atIssue w, fun w ↦ p.notAtIssue w ∨ q.notAtIssue w⟩
+  .mk (fun w ↦ p.atIssue w ∨ q.atIssue w) fun w ↦ p.notAtIssue w ∨ q.notAtIssue w
 
 theorem orPresupOr_toTrivalent_eq_false_iff (w : W) :
     (orPresupOr p q).toTrivalent w = .false ↔

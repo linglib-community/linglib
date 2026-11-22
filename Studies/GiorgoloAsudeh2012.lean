@@ -22,7 +22,7 @@ presupposition, although no step of the composition reads either log.
 * `comma`, `also`: the lexical entries that log, a non-restrictive relative clause and an
   additive presupposition trigger.
 * `toTwoDim`: the two-dimensional meaning of a computation, whose not-at-issue content is the meet
-  of the logged implicatures.
+  of the logged implicatures; it changes the log along `TwoDim.sInfHom`.
 
 ## Implementation notes
 
@@ -194,28 +194,30 @@ end also
 
 /-! ### Two-dimensional meanings -/
 
-/-- The two-dimensional meaning of a computation pairs its at-issue value with the meet of the
-implicatures it logs. -/
-def toTwoDim (m : M (W → Prop) A) : TwoDim W A := ⟨atIssue m, sInf (ciLog m)⟩
+/-- The two-dimensional meaning of a computation forgets its presuppositions and takes the meet
+of the implicatures it logs. -/
+def toTwoDim (m : M (W → Prop) A) : TwoDim W A := .ofSetLog (.mk (atIssue m) m.run.val.2)
 
-@[simp] theorem toTwoDim_atIssue (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := rfl
+@[simp] theorem toTwoDim_atIssue (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := by
+  simp [toTwoDim]
 
 @[simp] theorem toTwoDim_notAtIssue (m : M (W → Prop) A) :
-    (toTwoDim m).notAtIssue = sInf (ciLog m) := rfl
+    (toTwoDim m).notAtIssue = sInf (ciLog m) := by
+  simp [toTwoDim, ciLog]
 
 @[simp] theorem toTwoDim_pure (a : A) : toTwoDim (pure a : M (W → Prop) A) = pure a :=
-  TwoDim.ext rfl sInf_empty
+  TwoDim.ext (by simp) (by simp)
 
 /-- `toTwoDim` commutes with `⋆`, the union of logs becoming the meet of not-at-issue content. -/
 theorem toTwoDim_bind (m : M (W → Prop) A) (f : A → M (W → Prop) B) :
     toTwoDim (m >>= f) = toTwoDim m >>= fun a ↦ toTwoDim (f a) :=
-  TwoDim.ext rfl sInf_union
+  TwoDim.ext (by simp) (by simp [sInf_union])
 
 /-- The two-dimensional meaning of `comma` applied to an at-issue predicate is the CI application
 of [potts-2005]. -/
 theorem toTwoDim_comma_pure (j : M (W → Prop) A) (f : A → W → Prop) :
     toTwoDim (comma j (pure f)) = (toTwoDim j).ciApply f :=
-  TwoDim.ext rfl (by simp [inf_comm])
+  TwoDim.ext (by simp) (by simp [inf_comm])
 
 /-! ### "John, who likes cats, likes dogs also" -/
 

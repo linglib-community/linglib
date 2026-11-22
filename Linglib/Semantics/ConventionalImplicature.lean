@@ -1,7 +1,9 @@
 module
 
-public import Mathlib.Order.BooleanAlgebra.Basic
-public import Mathlib.Order.PropInstances
+public import Linglib.Core.Control.Monad.Writer
+public import Mathlib.Algebra.Ring.BooleanRing
+public import Mathlib.Data.Set.Semiring
+public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
 # Conventional implicature
@@ -15,6 +17,9 @@ applicatively, so that CIs project from under each of them.
 
 ## Implementation notes
 
+* Propositions under meet are the multiplicative monoid of mathlib's `AsBoolRing (W → Prop)`,
+  and `TwoDim W` is `Writer` over it; `TwoDim.mk`, `TwoDim.atIssue` and `TwoDim.notAtIssue` hide
+  the synonym.
 * Potts interprets a parsetree as its root's at-issue term with the set of CI propositions on its
   nodes. The not-at-issue dimension here is one proposition, the meet of that set, so a repeated
   CI adds nothing. That suits content whose repetition is redundant, but not the strengthening
@@ -39,29 +44,48 @@ namespace ConventionalImplicature
 universe u
 
 /-- A two-dimensional meaning pairs an at-issue value with the not-at-issue proposition it
-carries ([potts-2005]). *That bastard John is late* has at-issue content "John is late" and
-not-at-issue content "the speaker disdains John". -/
-@[ext]
-structure TwoDim (W : Type u) (α : Type u) where
-  /-- The at-issue value. -/
-  atIssue : α
-  /-- The not-at-issue content. -/
-  notAtIssue : W → Prop
+carries ([potts-2005]): a computation of the writer monad over propositions under meet, the monad
+[giorgolo-asudeh-2012] give for conventional implicature. *That bastard John is late* has
+at-issue content "John is late" and not-at-issue content "the speaker disdains John". -/
+def TwoDim (W : Type u) (α : Type u) : Type u := Writer (AsBoolRing (W → Prop)) α
 
 namespace TwoDim
 
 variable {W α β : Type u}
 
-/-! ### The monad -/
+instance : Monad (TwoDim W) := inferInstanceAs (Monad (Writer (AsBoolRing (W → Prop))))
 
-/-- Two-dimensional meanings form the writer monad over propositions under meet, the monad
-[giorgolo-asudeh-2012] give for conventional implicature. A `pure` value contributes no
-not-at-issue content, and composition meets the not-at-issue content of its parts. -/
-instance : Monad (TwoDim W) where
-  pure a := ⟨a, ⊤⟩
-  map f p := ⟨f p.atIssue, p.notAtIssue⟩
-  seq f p := ⟨f.atIssue (p ()).atIssue, f.notAtIssue ⊓ (p ()).notAtIssue⟩
-  bind p f := ⟨(f p.atIssue).atIssue, p.notAtIssue ⊓ (f p.atIssue).notAtIssue⟩
+instance : LawfulMonad (TwoDim W) :=
+  inferInstanceAs (LawfulMonad (Writer (AsBoolRing (W → Prop))))
+
+/-- The meaning with at-issue value `a` and not-at-issue content `n`. -/
+protected def mk (a : α) (n : W → Prop) : TwoDim W α := Writer.mk a (toBoolRing n)
+
+/-- The at-issue value. -/
+def atIssue (p : TwoDim W α) : α := Writer.val p
+
+/-- The not-at-issue content. -/
+def notAtIssue (p : TwoDim W α) : W → Prop := ofBoolRing (Writer.log p)
+
+@[ext]
+protected theorem ext {p q : TwoDim W α} (ha : p.atIssue = q.atIssue)
+    (hn : p.notAtIssue = q.notAtIssue) : p = q :=
+  Writer.ext ha (ofBoolRing_inj.mp hn)
+
+@[simp] theorem mk_atIssue (a : α) (n : W → Prop) : (TwoDim.mk a n).atIssue = a := rfl
+
+@[simp] theorem mk_notAtIssue (a : α) (n : W → Prop) : (TwoDim.mk a n).notAtIssue = n := rfl
+
+@[simp] theorem mk_inj {a b : α} {m n : W → Prop} :
+    TwoDim.mk a m = TwoDim.mk b n ↔ a = b ∧ m = n :=
+  ⟨fun h ↦ ⟨congrArg atIssue h, congrArg notAtIssue h⟩, fun h ↦ h.1 ▸ h.2 ▸ rfl⟩
+
+@[simp] theorem mk_eta (p : TwoDim W α) : TwoDim.mk p.atIssue p.notAtIssue = p := rfl
+
+/-! ### The monad
+
+A `pure` value contributes no not-at-issue content, and composition meets the not-at-issue
+content of its parts. -/
 
 @[simp] theorem pure_atIssue (a : α) : (pure a : TwoDim W α).atIssue = a := rfl
 
@@ -85,18 +109,38 @@ instance : Monad (TwoDim W) where
 @[simp] theorem bind_notAtIssue (p : TwoDim W α) (f : α → TwoDim W β) :
     (p >>= f).notAtIssue = p.notAtIssue ⊓ (f p.atIssue).notAtIssue := rfl
 
-instance : LawfulMonad (TwoDim W) := LawfulMonad.mk' (TwoDim W)
-  (id_map := fun _ ↦ rfl)
-  (pure_bind := fun _ _ ↦ TwoDim.ext rfl (top_inf_eq _))
-  (bind_assoc := fun _ _ _ ↦ TwoDim.ext rfl (inf_assoc ..))
-  (bind_pure_comp := fun _ _ ↦ TwoDim.ext rfl (inf_top_eq _))
-  (bind_map := fun _ _ ↦ rfl)
+/-! ### Sets of implicatures -/
+
+/-- The meet of a set of propositions, as a monoid homomorphism from sets under union. -/
+def sInfHom : Multiplicative (SetSemiring (W → Prop)) →* AsBoolRing (W → Prop) where
+  toFun s := toBoolRing (sInf s.toAdd.toSet)
+  map_one' := by simp
+  map_mul' s t := by simp [sInf_union]
+
+/-- A computation that logs a set of not-at-issue propositions denotes the two-dimensional
+meaning whose not-at-issue content is their meet. -/
+def ofSetLog (m : Writer (Multiplicative (SetSemiring (W → Prop))) α) : TwoDim W α :=
+  WriterT.adapt sInfHom m
+
+@[simp] theorem ofSetLog_atIssue (m : Writer (Multiplicative (SetSemiring (W → Prop))) α) :
+    (ofSetLog m).atIssue = m.val := rfl
+
+@[simp] theorem ofSetLog_notAtIssue (m : Writer (Multiplicative (SetSemiring (W → Prop))) α) :
+    (ofSetLog m).notAtIssue = sInf m.log.toAdd.toSet := rfl
+
+@[simp] theorem ofSetLog_pure (a : α) : ofSetLog (pure a : Writer _ α) = (pure a : TwoDim W α) :=
+  Writer.adapt_pure sInfHom a
+
+theorem ofSetLog_bind (m : Writer (Multiplicative (SetSemiring (W → Prop))) α)
+    (f : α → Writer (Multiplicative (SetSemiring (W → Prop))) β) :
+    ofSetLog (m >>= f) = ofSetLog m >>= fun a ↦ ofSetLog (f a) :=
+  Writer.adapt_bind sInfHom m f
 
 /-! ### CI application -/
 
 /-- CI application ([potts-2005]) applies a CI functor `f` to an at-issue argument, hands the
 argument on unmodified and adds the result to the not-at-issue content. -/
-def ciApply (f : α → W → Prop) (p : TwoDim W α) : TwoDim W α := p >>= fun a ↦ ⟨a, f a⟩
+def ciApply (f : α → W → Prop) (p : TwoDim W α) : TwoDim W α := p >>= fun a ↦ .mk a (f a)
 
 @[simp] theorem ciApply_atIssue (f : α → W → Prop) (p : TwoDim W α) :
     (p.ciApply f).atIssue = p.atIssue := rfl
