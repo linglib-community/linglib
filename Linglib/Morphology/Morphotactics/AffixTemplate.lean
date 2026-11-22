@@ -54,6 +54,54 @@ variable {Slot : Type*} (t : AffixTemplate Slot)
 /-- The positions in linear order, the stem left out. -/
 def slots : List Slot := t.prefixSlots ++ t.suffixSlots
 
+/-! ### Order along a scale
+
+A scale of categories is compared with a template through a partial map `cat` from positions to
+the scale: a position of no category on the scale is passed over. -/
+
+section Scale
+
+variable {α : Type*} [Preorder α] (cat : Slot → Option α)
+
+/-- The suffix positions ascend along `cat` away from the stem: those that `cat` places on the
+scale come in its order. -/
+def SuffixesAscend : Prop := (t.suffixSlots.filterMap cat).SortedLE
+
+/-- The prefix positions ascend along `cat` away from the stem. -/
+def PrefixesAscend : Prop := (t.prefixSlots.reverse.filterMap cat).SortedLE
+
+instance [DecidableLE α] : Decidable (t.SuffixesAscend cat) :=
+  inferInstanceAs (Decidable (List.SortedLE _))
+
+instance [DecidableLE α] : Decidable (t.PrefixesAscend cat) :=
+  inferInstanceAs (Decidable (List.SortedLE _))
+
+variable {t cat} {v : List Slot}
+
+theorem suffixesAscend_iff_pairwise :
+    t.SuffixesAscend cat ↔
+      t.suffixSlots.Pairwise fun a b ↦ ∀ x ∈ cat a, ∀ y ∈ cat b, x ≤ y := by
+  simp [SuffixesAscend, List.sortedLE_iff_pairwise, List.pairwise_filterMap]
+
+theorem prefixesAscend_iff_pairwise :
+    t.PrefixesAscend cat ↔
+      t.prefixSlots.Pairwise fun a b ↦ ∀ x ∈ cat a, ∀ y ∈ cat b, y ≤ x := by
+  simp only [PrefixesAscend, List.sortedLE_iff_pairwise, List.pairwise_filterMap,
+    List.pairwise_reverse, Option.mem_def]
+  exact List.Pairwise.iff fun a b ↦ ⟨fun h x hx y hy ↦ h y hy x hx, fun h y hy x hx ↦ h x hx y hy⟩
+
+/-- A string of suffixes in the template's order ascends along `cat`. -/
+theorem SuffixesAscend.sortedLE_filterMap (h : t.SuffixesAscend cat) (hv : v.Sublist t.suffixSlots) :
+    (v.filterMap cat).SortedLE :=
+  (h.pairwise.sublist (hv.filterMap cat)).sortedLE
+
+/-- A string of prefixes in the template's order descends along `cat` towards the stem. -/
+theorem PrefixesAscend.sortedLE_filterMap (h : t.PrefixesAscend cat) (hv : v.Sublist t.prefixSlots) :
+    (v.reverse.filterMap cat).SortedLE :=
+  (h.pairwise.sublist (hv.reverse.filterMap cat)).sortedLE
+
+end Scale
+
 variable [DecidableEq Slot]
 
 /-- The strings of positions the template admits: those over its positions, in their order, in

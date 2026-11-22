@@ -30,8 +30,8 @@ have regularized have the lower mean frequency, over all forms and over the Past
 ## Implementation notes
 
 `Closer` compares the two counts of a pair and does not record which order the hierarchy
-predicts, so that `closerEmbedding` is a statement about the counts. It is stated on the subtype
-of tested categories because `Category.relevance` identifies the agreement categories, of which
+predicts, so that `closerEmbedding` is a statement about the counts. It is stated on the tested
+categories, the finite set `tested`, because `Category.relevance` identifies the agreement categories, of which
 only person was tested; number markers mostly share a portmanteau with person markers.
 
 ## TODO
@@ -109,40 +109,36 @@ def Closer (a b : Category) : Prop :=
 
 instance : DecidableRel Closer := fun a b ↦ Nat.decLt (closerCount b a) (closerCount a b)
 
-/-- A category whose order with another category is counted. -/
-def Tested (c : Category) : Prop :=
-  ∃ p ∈ order, p.first = c ∨ p.second = c
+/-- The categories whose order with another category is counted. -/
+def tested : Finset Category :=
+  (order.map (·.first) ++ order.map (·.second)).toFinset
 
-instance : DecidablePred Tested := fun _ ↦ inferInstanceAs (Decidable (∃ p ∈ order, _))
+theorem tested_eq : tested = {.aspect, .tense, .mood, .person} := by decide
 
-theorem tested_iff {c : Category} :
-    Tested c ↔ c = .aspect ∨ c = .tense ∨ c = .mood ∨ c = .person := by
-  revert c; decide
-
-theorem relevance_injOn : Set.InjOn Category.relevance {c | Tested c} := by
-  have : ∀ a b, Tested a → Tested b → a.relevance = b.relevance → a = b := by decide
-  exact fun a ha b hb ↦ this a b ha hb
+theorem relevance_injOn : Set.InjOn Category.relevance tested := by
+  have : ∀ a ∈ tested, ∀ b ∈ tested, a.relevance = b.relevance → a = b := by decide
+  exact fun a ha b hb ↦ this a ha b hb
 
 /-- A tested category is the more relevant of two exactly when its marker stands closer to the
 stem in more languages. -/
-theorem relevance_lt_iff_closer {a b : Category} (ha : Tested a) (hb : Tested b) :
+theorem relevance_lt_iff_closer {a b : Category} (ha : a ∈ tested) (hb : b ∈ tested) :
     a.relevance < b.relevance ↔ Closer a b := by
   revert a b; decide
 
 /-- On the tested categories, being closer to the stem in more languages is being more relevant:
 `Category.relevance` as a relation embedding. -/
 def closerEmbedding :
-    (Subtype.val ⁻¹'o Closer : {c // Tested c} → {c // Tested c} → Prop) ↪r
+    (Subtype.val ⁻¹'o Closer : tested → tested → Prop) ↪r
       ((· < ·) : RelevanceHierarchy → RelevanceHierarchy → Prop) where
   toFun c := c.1.relevance
   inj' a b h := Subtype.ext (relevance_injOn a.2 b.2 h)
   map_rel_iff' {a b} := relevance_lt_iff_closer a.2 b.2
 
-@[simp] theorem closerEmbedding_apply (c : {c // Tested c}) :
+@[simp] theorem closerEmbedding_apply (c : tested) :
     closerEmbedding c = c.1.relevance := rfl
 
 /-- On the tested categories, the majority order of markers is a strict total order. -/
-instance : IsStrictTotalOrder {c // Tested c} (Subtype.val ⁻¹'o Closer) :=
+instance : IsStrictTotalOrder tested (Subtype.val ⁻¹'o Closer) :=
   closerEmbedding.isStrictTotalOrder
 
 -- §6: aspect is never further from the stem than tense or mood

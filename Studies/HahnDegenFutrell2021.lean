@@ -319,14 +319,6 @@ def sesothoCategory? : Sesotho.Verb.Slot → Option RelevanceHierarchy
   | .mood => some .mood
   | .interrogativeRelative => none
 
-/-- The Sesotho suffix order in Bybee's vocabulary, stem-outward. -/
-def sesothoSuffixCategories : List RelevanceHierarchy :=
-  Sesotho.Verb.template.suffixSlots.filterMap sesothoCategory?
-
-/-- The Sesotho prefix order in Bybee's vocabulary, stem-outward. -/
-def sesothoPrefixCategories : List RelevanceHierarchy :=
-  Sesotho.Verb.template.prefixSlots.reverse.filterMap sesothoCategory?
-
 /-- The hierarchy category of a Japanese suffix position, when the paper's label is one. -/
 def japaneseCategory? : Japanese.Verb.Slot → Option RelevanceHierarchy
   | .derivation => none
@@ -342,15 +334,16 @@ def japaneseCategories : List RelevanceHierarchy :=
   Japanese.Verb.template.suffixSlots.filterMap japaneseCategory?
 
 theorem paper_sesotho_suffixes_respect_relevance :
-    (paperSesothoTemplate.suffixSlots.filterMap sesothoCategory?).SortedLE := by decide
+    paperSesothoTemplate.SuffixesAscend sesothoCategory? := by decide
 
 /-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
 before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
-theorem sesotho_suffixes_violate_relevance : ¬ sesothoSuffixCategories.SortedLE := by decide
+theorem sesotho_suffixes_violate_relevance :
+    ¬ Sesotho.Verb.template.SuffixesAscend sesothoCategory? := by decide
 
 theorem sesotho_prefixes_violate_relevance :
     (∀ a ∈ sesothoCategory? .tam, ∀ b ∈ sesothoCategory? .subject, a < b) ∧
-      ¬ sesothoPrefixCategories.SortedLE := by
+      ¬ Sesotho.Verb.template.PrefixesAscend sesothoCategory? := by
   decide
 
 theorem japanese_valence_voice_inside :
@@ -362,7 +355,7 @@ ranks tense closer to the stem than mood, `Bybee1985.Closer`, and the desiderati
 mood suffix, precedes the final inflection, read as tense. The paper claims no order of mood
 and tense. -/
 theorem japanese_violates_surveyed_relevance :
-    Bybee1985.Closer .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
+    Bybee1985.Closer .tense .mood ∧ ¬ Japanese.Verb.template.SuffixesAscend japaneseCategory? := by
   decide
 
 end HahnDegenFutrell2021
