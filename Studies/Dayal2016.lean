@@ -76,7 +76,6 @@ and only an ordinary question suspend it](##coherent_iff).
 namespace Dayal2016
 
 open Question Set
-open Mereology (atom_iff_isAtom)
 open Presupposition (Hardness)
 
 /-! ### Scope marking -/
@@ -322,9 +321,9 @@ inductive Woman
 open Woman
 
 private theorem not_isAtom_pair {x y : Woman} (h : x ≠ y) : ¬ IsAtom ({x, y} : Set Woman) := by
-  rw [insert_eq, ← atom_iff_isAtom]
-  exact Mereology.not_atom_sup_of_ne (atom_iff_isAtom.2 (isAtom_singleton x))
-    (atom_iff_isAtom.2 (isAtom_singleton y)) (by simpa using h)
+  rw [insert_eq]
+  exact Mereology.not_isAtom_sup_of_ne ((isAtom_singleton x))
+    ((isAtom_singleton y)) (by simpa using h)
 
 private theorem mary_ne_sue : ({mary} : Set Woman) ≠ {sue} :=
   fun h => (by decide : mary ≠ sue) (singleton_eq_singleton_iff.1 h)

@@ -409,8 +409,8 @@ the same index binds. -/
 def freeIndices : Tree C W → Finset ℕ :=
   RoseTree.fold fun l ss ↦ match l with
     | .trace n _ => {n}
-    | .bind n _ => (ss.foldr (· ∪ ·) ∅).erase n
-    | _ => ss.foldr (· ∪ ·) ∅
+    | .bind n _ => (ss.foldr (fun s t : Finset ℕ ↦ s ∪ t) ∅).erase n
+    | _ => ss.foldr (fun s t : Finset ℕ ↦ s ∪ t) ∅
 
 @[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := by
   simp [freeIndices]

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Deletion
 public import Linglib.Fragments.Farsi.Phonology
@@ -253,7 +253,7 @@ theorem ajScore_eq (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) :
       | .epenthesis => w 0
       | .deletion => w 2 + if k = 0 then wh else 0) := by
   fin_cases k <;> cases o <;>
-    simp [harmonyScore, dotProduct, Fin.sum_univ_four, ajCon, ajW, classicalCon,
+    simp [harmonyScore_def, dotProduct, Fin.sum_univ_four, ajCon, ajW, classicalCon,
       realizeMorpheme_eq, depConstraint_eq, starHiatus_eq, maxConstraint_eq]
   simp [inputs, definite, possessive]
   ring

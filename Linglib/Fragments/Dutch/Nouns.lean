@@ -118,4 +118,13 @@ def piet : ProperName := name "Piet" .male
 /-- *Marie*. -/
 def marie : ProperName := name "Marie" .female
 
+/-- *Pieter*. -/
+def pieter : ProperName := name "Pieter" .male
+
+/-- *Hans*. -/
+def hans : ProperName := name "Hans" .male
+
+/-- *Arabisch* 'Arabic', the name of the language. -/
+def arabisch : ProperName := { form := "Arabisch", gloss := "Arabic" }
+
 end Dutch.Nouns

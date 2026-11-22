@@ -67,7 +67,7 @@ def componentRoots (h d : Fin n) : Finset (Fin n) :=
 /-- The degree of the arc from `h` to `d`: the number of components of the subgraph induced by
 its span whose root `h` does not dominate. -/
 def edgeDegreeAt (h d : Fin n) : ℕ :=
-  ((componentRoots g h d).filter fun v ↦ ¬ Dominates g h v).card
+  ((componentRoots g h d).filter fun v ↦ ¬ g.Dominates h v).card
 
 /-- The edge degree of a graph: the maximum degree of its arcs. -/
 def edgeDegree : ℕ :=
@@ -76,7 +76,7 @@ def edgeDegree : ℕ :=
 variable {g}
 
 theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
-    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, Dominates g h v := by
+    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, g.Dominates h v := by
   rw [edgeDegreeAt, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   simp only [componentRoots, Finset.mem_filter, not_not, and_imp]
   simp only [← Finset.mem_coe, Finset.coe_uIcc]
@@ -181,7 +181,7 @@ theorem figure3_edgeDegree :
 -- Figures 3a and 3b, Figure 3c
 theorem figure3_wellNested :
     fig3a.IsWellNested ∧ fig3b.IsWellNested ∧
-      (fig3c.Interleave 1 2 ∧ ¬ Dominates fig3c 1 2 ∧ ¬ Dominates fig3c 2 1) := by
+      (fig3c.Interleave 1 2 ∧ ¬ fig3c.Dominates 1 2 ∧ ¬ fig3c.Dominates 2 1) := by
   decide +kernel
 
 -- Figure 2a, Figure 3b

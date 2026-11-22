@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.WellFoundedSet
 public import Linglib.Logic.Nonmonotonic.Preferential
 public import Linglib.Logic.Modal.Defs
 
@@ -382,6 +383,17 @@ theorem mem_variablyStrictImp_iff_mem_orderingImp
   refine Filter.mem_atBotOn_of_setOf_minimalFor_subset (fun h hh ↦ ?_) hi
   obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ p | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
   exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
+
+/-- Where each preorder is well founded on the accessible worlds, the variably strict conditional
+is the conditional over the best accessible antecedent-worlds. -/
+theorem orderingImp_eq_variablyStrictImp (hlim : ∀ i, (access i).WellFoundedOn (ord i).lt) :
+    orderingImp access ord p q = variablyStrictImp access ord p q :=
+  Set.ext fun i ↦ (mem_variablyStrictImp_iff_mem_orderingImp fun _ hB ↦
+    letI := ord i; ((hlim i).subset Set.inter_subset_left).exists_minimal hB).symm
+
+theorem orderingImp_eq_variablyStrictImp_of_finite (hfin : ∀ i, (access i).Finite) :
+    orderingImp access ord p q = variablyStrictImp access ord p q :=
+  orderingImp_eq_variablyStrictImp fun i ↦ (hfin i).wellFoundedOn
 
 theorem variablyStrictImp_subset_materialImp {ord : W → Preorder W} {access : W → Set W}
     (hR : ∀ w, w ∈ access w) (hc : IsCentered ord) :

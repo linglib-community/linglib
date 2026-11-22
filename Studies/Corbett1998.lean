@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Fragments.Slavic.Russian.Agreement
 public import Linglib.Fragments.Slavic.Russian.Gender
 public import Linglib.Fragments.Somali.Gender
@@ -99,8 +99,7 @@ def origin : Dimension → Origin
 /-- Covariance is agreement when it is asymmetric, the value originating on the controller. -/
 abbrev IsAgreementFeature (d : Dimension) : Prop := origin d = .controller
 
-theorem isAgreementFeature_iff (d : Dimension) :
-    IsAgreementFeature d ↔ d = .gender ∨ d = .number ∨ d = .person := by
+theorem isAgreementFeature_iff (d : Dimension) : IsAgreementFeature d ↔ d ∈ Dimension.phi := by
   cases d <;> decide
 
 /-- The agreement features among the dimensions a target is inflected for. -/

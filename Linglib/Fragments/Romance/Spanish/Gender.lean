@@ -3,8 +3,8 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Syntax.Gender.Assignment
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Gender.Assignment
+public import Linglib.Syntax.Feature.Number.Basic
 
 /-!
 # Spanish noun gender

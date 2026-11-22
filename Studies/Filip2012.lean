@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.Aspect.Incremental
 public import Linglib.Semantics.ArgumentStructure.Affectedness
 public import Linglib.Data.Examples.Filip2012
 public import Linglib.Data.Examples.Readers
@@ -59,13 +60,13 @@ variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 /-! ### Telic and atelic predicates (23)–(24) -/
 
 /-- (23): a telic predicate is quantized. -/
-abbrev Telic (P : β → Prop) : Prop := QUA P
+abbrev Telic (s : Set β) : Prop := QUA s
 
 /-- (24): an atelic predicate is cumulative. -/
-abbrev Atelic (P : β → Prop) : Prop := CUM P
+abbrev Atelic (s : Set β) : Prop := CUM s
 
 theorem isTelic_of_telic {precedes : β → β → Prop} [IsStrictOrder β precedes]
-    (h : NoPartPrecedes precedes) {P : β → Prop} (hP : Telic P) : IsTelic precedes P :=
+    (h : NoPartPrecedes precedes) {s : Set β} (hP : Telic s) : IsTelic precedes s :=
   isTelic_of_qua h hP
 
 /-! ### The three classes of verbs (28) -/
@@ -79,30 +80,31 @@ property (19) — *run*, *watch*, *believe*. -/
 def Persistent (θ : SetRel α β) : Prop := ∀ x e, x ~[θ] e → ∀ e', e' ≤ e → x ~[θ] e'
 
 omit [SemilatticeSup α] in
-theorem telic_of_quantized {θ : SetRel α β} (h : Quantized θ) (OBJ : α → Prop) :
+theorem telic_of_quantized {θ : SetRel α β} (h : Quantized θ) (OBJ : Set α) :
     Telic (VP θ OBJ) :=
   qua_of_forall fun _ _ ⟨_, _, hθ⟩ hlt ⟨_, _, hθ'⟩ ↦ h _ _ hθ _ _ hlt hθ'
 
 omit [SemilatticeSup α] in
 /-- (26): an atelic verb forms no telic predicate whatever its object: a proper part of one of
 its eventualities is one too. -/
-theorem not_telic_of_persistent {θ : SetRel α β} (h : Persistent θ) (OBJ : α → Prop)
-    {e e' : β} (hlt : e' < e) (he : VP θ OBJ e) : ¬ Telic (VP θ OBJ) := fun hQ ↦
+theorem not_telic_of_persistent {θ : SetRel α β} (h : Persistent θ) (OBJ : Set α)
+    {e e' : β} (hlt : e' < e) (he : e ∈ VP θ OBJ) : ¬ Telic (VP θ OBJ) := fun hQ ↦
   let ⟨x, hx, hθ⟩ := he
   hQ ⟨x, hx, h x e hθ e' hlt.le⟩ he hlt.ne hlt.le
 
-theorem atelic_of_persistent {θ : SetRel α β} (hθ : SUM θ) {OBJ : α → Prop}
+theorem atelic_of_persistent {θ : SetRel α β} (hθ : SUM θ) {OBJ : Set α}
     (hObj : CUM OBJ) : Atelic (VP θ OBJ) :=
   vp_cum hθ hObj
 
 /-- An incremental verb is lexically unmarked for telicity, being telic with some quantized object
 and atelic with some cumulative one ((27), (28iii), (29ii)). -/
 theorem incremental_underspecified {θ : SetRel α β} (h : SINC θ) (hU : UP θ) (hs : SUM θ) :
-    (∃ OBJ : α → Prop, QUA OBJ ∧ Telic (VP θ OBJ) ∧ ∃ e, VP θ OBJ e) ∧
-    (∃ OBJ : α → Prop, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
+    (∃ OBJ : Set α, QUA OBJ ∧ Telic (VP θ OBJ) ∧ ∃ e, e ∈ VP θ OBJ) ∧
+    (∃ OBJ : Set α, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
   obtain ⟨x, y, e, e', hlt, hlt', hθ, hθ'⟩ := h.extended
-  refine ⟨⟨(· = x), singleton_qua x, vp_qua hU h.mso (singleton_qua x), e, x, rfl, hθ⟩,
-    ⟨fun _ ↦ True, fun _ _ _ _ ↦ trivial, vp_cum hs (fun _ _ _ _ ↦ trivial), fun hQ ↦ ?_⟩⟩
+  refine ⟨⟨{x}, Set.subsingleton_singleton.isAntichain _,
+      vp_qua hU h.mso (Set.subsingleton_singleton.isAntichain _), e, x, rfl, hθ⟩,
+    ⟨Set.univ, fun _ _ _ _ ↦ trivial, vp_cum hs (fun _ _ _ _ ↦ trivial), fun hQ ↦ ?_⟩⟩
   exact hQ ⟨y, trivial, hθ'⟩ ⟨x, trivial, hθ⟩ hlt'.ne hlt'.le
 
 /-- (29i): telicity does not require incrementality — a quantized verb is not strictly

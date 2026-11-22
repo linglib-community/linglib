@@ -9,6 +9,7 @@ public import Mathlib.Basic.Rel
 public import Mathlib.Combinatorics.Enumerative.DoubleCounting
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Logic.Relator
 public import Mathlib.Order.Hom.Set
 public import Mathlib.Order.Interval.Set.OrdConnected
@@ -272,6 +273,10 @@ theorem exists_rel_eq_graph (hmax : R.maxViol = 0) (hint : R.integrityViol = 0) 
   choose f hf using Set.eq_univ_iff_forall.1 hmax
   exact ⟨f, Set.ext fun ⟨i, j⟩ ↦ ⟨fun h ↦ hint (hf i) h, fun (h : f i = j) ↦ h ▸ hf i⟩⟩
 
+/-- A larger correspondence leaves fewer positions without a correspondent. -/
+theorem maxViol_anti {S : Correspondence ι κ} (h : R ⊆ S) : S.maxViol ≤ R.maxViol :=
+  Finset.card_le_card (Finset.sdiff_subset_sdiff subset_rfl (Finset.image_subset_image h))
+
 end Domain
 
 /-! ### DEP and UNIFORMITY
@@ -331,6 +336,9 @@ theorem uniformityViol_eq_zero_iff :
 
 variable {R} {f : ι → κ}
 
+theorem depViol_anti {T : Correspondence ι κ} (h : R ⊆ T) : T.depViol ≤ R.depViol :=
+  maxViol_anti fun ⟨_, _⟩ hji ↦ mem_inv.2 (h (mem_inv.1 hji))
+
 theorem depViol_eq_zero_of_graph (hf : R.rel = Function.graph f) (hsurj : Function.Surjective f) :
     R.depViol = 0 :=
   R.depViol_eq_zero_iff.2 <| hf ▸ Set.eq_univ_of_forall hsurj
@@ -347,6 +355,81 @@ theorem uniformityViol_eq_zero_of_graph (hf : R.rel = Function.graph f)
   R.uniformityViol_eq_zero_iff.2 <| hf ▸ fun _ _ _ h h' ↦ hinj (h.trans h'.symm)
 
 end Range
+
+/-! ### The correspondence of a relation between two families -/
+
+section OfRel
+
+variable {β γ : Type*} [Fintype ι] [Fintype κ] (R S : β → γ → Prop) [DecidableRel R]
+  [DecidableRel S] (a : ι → β) (b : κ → γ)
+
+/-- The correspondence of all pairs of positions of two families whose members bear `R`. -/
+def ofRel : Correspondence ι κ := Finset.univ.filter fun p ↦ R (a p.1) (b p.2)
+
+variable {R S a b}
+
+@[simp] theorem mem_ofRel {i : ι} {j : κ} : (i, j) ∈ ofRel R a b ↔ R (a i) (b j) := by
+  simp [ofRel]
+
+theorem inv_ofRel : (ofRel R a b).inv = ofRel (fun y x ↦ R x y) b a := by
+  ext ⟨j, i⟩; simp
+
+theorem ofRel_mono (h : ∀ i j, R (a i) (b j) → S (a i) (b j)) : ofRel R a b ⊆ ofRel S a b :=
+  fun ⟨i, j⟩ hp ↦ mem_ofRel.2 (h i j (mem_ofRel.1 hp))
+
+theorem ofRel_and [DecidableEq ι] [DecidableEq κ] :
+    ofRel (fun x y ↦ R x y ∧ S x y) a b = ofRel R a b ∩ ofRel S a b := by
+  ext ⟨i, j⟩; simp
+
+/-- MAX is satisfied on the correspondence of `R` exactly when every member of the first family
+bears `R` to some member of the second. -/
+theorem maxViol_ofRel_eq_zero_iff [DecidableEq ι] :
+    (ofRel R a b).maxViol = 0 ↔ ∀ i, ∃ j, R (a i) (b j) := by
+  rw [maxViol_eq_zero_iff, Set.eq_univ_iff_forall]
+  exact forall_congr' fun i ↦
+    ⟨fun ⟨j, h⟩ ↦ ⟨j, mem_ofRel.1 h⟩, fun ⟨j, h⟩ ↦ ⟨j, mem_ofRel.2 h⟩⟩
+
+end OfRel
+
+section OfRelGet
+
+variable {β γ : Type*} (R : β → γ → Prop) [DecidableRel R] (l : List β) (m : List γ)
+
+/-- MAX on the correspondence of `R` between the positions of two lists counts the members of the
+first bearing `R` to no member of the second. -/
+theorem maxViol_ofRel_get :
+    (ofRel R l.get m.get).maxViol = l.countP fun a ↦ ∀ b ∈ m, ¬R a b := by
+  have hset : Finset.univ \ (ofRel R l.get m.get).image Prod.fst =
+      Finset.univ.filter fun i : Fin l.length ↦ ∀ b ∈ m, ¬R (l.get i) b := by
+    ext i
+    simp only [Finset.mem_sdiff, Finset.mem_univ, true_and, Finset.mem_image, mem_ofRel,
+      Prod.exists, exists_and_right, exists_eq_right, not_exists, Finset.mem_filter]
+    exact ⟨fun h b hb ↦ by obtain ⟨j, rfl⟩ := List.mem_iff_get.1 hb; exact h j,
+      fun h j ↦ h _ (List.get_mem ..)⟩
+  have hcount : l.countP (fun a ↦ ∀ b ∈ m, ¬R a b) =
+      ((List.finRange l.length).filter fun i ↦ ∀ b ∈ m, ¬R (l.get i) b).length := by
+    calc l.countP (fun a ↦ ∀ b ∈ m, ¬R a b)
+        = ((List.finRange l.length).map l.get).countP fun a ↦ ∀ b ∈ m, ¬R a b := by
+          rw [List.map_get_finRange]
+      _ = _ := by rw [List.countP_map, List.countP_eq_length_filter]; rfl
+  rw [maxViol, hset, hcount, ← List.toFinset_card_of_nodup ((List.nodup_finRange _).filter _)]
+  congr 1
+  ext i
+  simp
+
+/-- DEP on the correspondence of `R` between the positions of two lists counts the members of the
+second to which no member of the first bears `R`. -/
+theorem depViol_ofRel_get :
+    (ofRel R l.get m.get).depViol = m.countP fun b ↦ ∀ a ∈ l, ¬R a b := by
+  rw [depViol, inv_ofRel, maxViol_ofRel_get]
+
+variable {R l m}
+
+theorem maxViol_ofRel_get_eq_zero_iff :
+    (ofRel R l.get m.get).maxViol = 0 ↔ ∀ a ∈ l, ∃ b ∈ m, R a b := by
+  simp [maxViol_ofRel_get, List.countP_eq_zero]
+
+end OfRelGet
 
 /-! ### LINEARITY -/
 

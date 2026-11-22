@@ -12,14 +12,13 @@ public import Mathlib.Data.List.ReduceOption
 /-!
 # The trajectory of an autoregressive sequence model
 
-The model is [a prediction rule](##rule) on the extended alphabet, the end of the string
-absorbing, and the Ionescu–Tulcea theorem gives [the law of its whole trajectory](##trajectory), a
+The model is a prediction rule on the extended alphabet (`rule`), the end of the string
+absorbing, and the Ionescu–Tulcea theorem gives the law of its whole trajectory (`trajectory`), a
 probability measure on infinite sequences of symbols or ends. Survival is the probability that
-[none of the first `n` symbols is the end](##trajectory_setOf_forall_lt_ne_none), a string's
-probability is that of the trajectories that [spell it and then end](##trajectory_cylinder), and
-the model is tight exactly when
-[the trajectory ends almost surely](##isTight_iff_trajectory_setOf_forall_ne_none), which is how
-[du-etal-2023] define tightness.
+none of the first `n` symbols is the end (`trajectory_setOf_forall_lt_ne_none`), a string's
+probability is that of the trajectories that spell it and then end (`trajectory_cylinder`), and
+the model is tight exactly when the trajectory ends almost surely
+(`isTight_iff_trajectory_setOf_forall_ne_none`), which is how [du-etal-2023] define tightness.
 
 ## References
 
@@ -31,13 +30,6 @@ the model is tight exactly when
 open MeasureTheory ProbabilityTheory Preorder
 
 namespace AutoregressiveSequenceModel
-
-private theorem reduceOption_map_some {α : Type*} (l : List α) :
-    (l.map some).reduceOption = l := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => rw [List.map_cons, List.reduceOption_cons_of_some, ih]
-
 
 variable {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
   (M : AutoregressiveSequenceModel α)
@@ -61,20 +53,17 @@ open Classical in
 /-- The model as a prediction rule on the extended alphabet: after a history of units it draws
 the next unit, and after the end of the string it stays at the end. -/
 noncomputable def rule (n : ℕ) : Kernel (Fin n → Option α) (Option α) :=
-  Kernel.ofFunOfCountable fun h ↦
-    if ∀ i, h i ≠ none then M.next (List.ofFn h).reduceOption else Measure.dirac none
+  Kernel.piecewise (s := {h | ∀ i, h i ≠ none}) .of_discrete
+    (M.next.comap (fun h ↦ (List.ofFn h).reduceOption) .of_discrete)
+    (Kernel.const _ (Measure.dirac none))
 
-instance (n : ℕ) : IsMarkovKernel (M.rule n) :=
-  ⟨fun h ↦ by
-    change IsProbabilityMeasure (if ∀ i, h i ≠ none then _ else _)
-    split_ifs <;> infer_instance⟩
+instance (n : ℕ) : IsMarkovKernel (M.rule n) := by
+  unfold rule; infer_instance
 
 /-- After a history of units the rule is the model's next-unit distribution. -/
 theorem rule_apply_some {n : ℕ} (f : Fin n → α) :
     M.rule n (some ∘ f) = M.next (List.ofFn f) := by
-  change (if ∀ i, (some ∘ f) i ≠ none then _ else _) = _
-  simp only [Function.comp_apply, ne_eq, Option.some_ne_none, not_false_eq_true, implies_true,
-    ite_true, ← List.map_ofFn, reduceOption_map_some]
+  simp [rule, Kernel.piecewise_apply, Kernel.comap_apply, List.reduceOption, ← List.map_ofFn]
 
 /-- The mass of a history of units is its prefix probability. -/
 theorem seqLaw_rule_singleton_some : ∀ {n : ℕ} (f : Fin n → α),

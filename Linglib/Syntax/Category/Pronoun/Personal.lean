@@ -65,12 +65,15 @@ namespace PersonalPronoun
 
 variable {p : PersonalPronoun}
 
-instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
-
 /-- The person a pronoun contributes to interpretation: the one its referential categories
 share. -/
 def referentialPerson (p : PersonalPronoun) : Option Person :=
   Person.Category.sharedPerson p.referential
+
+/-- The clusivity a pronoun contributes to interpretation: the one its referential categories
+share. -/
+def referentialClusivity (p : PersonalPronoun) : Option Clusivity :=
+  Person.Category.sharedClusivity p.referential
 
 /-- The number a pronoun contributes to interpretation: the one its referential categories
 share, `general` for a number-neutral form such as polite *Sie*. -/

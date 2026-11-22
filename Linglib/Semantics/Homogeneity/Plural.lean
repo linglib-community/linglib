@@ -9,7 +9,7 @@ public import Mathlib.Order.SupClosed
 
 A plural predication has many readings, one for each choice of the parts of the plurality that
 count as close enough to it, as Križ and Spector propose. For every upper set `U` containing the
-plurality `x`, the predicate is read as holding of some non-bottom part of `x` in `U`. The
+plurality `x`, the predicate is read as holding of some non-null part of `x` in `U`. The
 readings run from the universal one, where `U` holds only what lies above `x`, to the
 existential one, where `U` holds everything. A sentence is therefore true on all of its readings
 when the predicate holds of `x` and false on all of them when it holds of no part of `x`. The
@@ -59,34 +59,34 @@ namespace Homogeneity
 
 section Readings
 
-variable {α W : Type*} [PartialOrder α] {Q : α → Set W} {x : α}
+variable {α W : Type*} [PartialOrder α] [OrderBot α] {Q : α → Set W} {x : α}
 
 /-- The readings of predicating `Q` of `x` ([kriz-spector-2021]'s (21)) say, for each upper set
-`U` containing `x`, that some non-bottom part of `x` in `U` is `Q`. -/
+`U` containing `x`, that some non-null part of `x` in `U` is `Q`. -/
 def readings (Q : α → Set W) (x : α) : Set (Set W) :=
-  {p | ∃ U : UpperSet α, x ∈ U ∧ p = {w | ∃ z ∈ U, z ≤ x ∧ ¬ IsBot z ∧ w ∈ Q z}}
+  {p | ∃ U : UpperSet α, x ∈ U ∧ p = {w | ∃ z ∈ U, z ≤ x ∧ z ≠ ⊥ ∧ w ∈ Q z}}
 
 /-- True on every reading is true of the whole. -/
-theorem sInter_readings (hx : ¬ IsBot x) : ⋂₀ readings Q x = Q x := by
+theorem sInter_readings (hx : x ≠ ⊥) : ⋂₀ readings Q x = Q x := by
   ext w
   refine ⟨fun h ↦ ?_, fun hw _ ⟨U, hxU, hp⟩ ↦ hp ▸ ⟨x, hxU, le_rfl, hx, hw⟩⟩
   obtain ⟨z, hxz, hzx, -, hz⟩ := h _ ⟨UpperSet.Ici x, UpperSet.mem_Ici_iff.2 le_rfl, rfl⟩
   exact le_antisymm hzx hxz ▸ hz
 
-/-- True on some reading is true of some non-bottom part. -/
-theorem sUnion_readings : ⋃₀ readings Q x = {w | ∃ z ≤ x, ¬ IsBot z ∧ w ∈ Q z} := by
+/-- True on some reading is true of some non-null part. -/
+theorem sUnion_readings : ⋃₀ readings Q x = {w | ∃ z ≤ x, z ≠ ⊥ ∧ w ∈ Q z} := by
   ext w
   refine ⟨fun ⟨_, ⟨U, _, hp⟩, hw⟩ ↦ ?_, fun ⟨z, hzx, hz, hw⟩ ↦
     ⟨_, ⟨⊥, trivial, rfl⟩, z, trivial, hzx, hz, hw⟩⟩
   obtain ⟨z, -, hzx, hz, hw⟩ := hp ▸ hw
   exact ⟨z, hzx, hz, hw⟩
 
-theorem readings_of_minimal (hx : Minimal (¬ IsBot ·) x) : readings Q x = {Q x} := by
+theorem readings_of_isAtom (hx : IsAtom x) : readings Q x = {Q x} := by
   have key (U : UpperSet α) (hxU : x ∈ U) :
-      {w | ∃ z ∈ U, z ≤ x ∧ ¬ IsBot z ∧ w ∈ Q z} = Q x := by
+      {w | ∃ z ∈ U, z ≤ x ∧ z ≠ ⊥ ∧ w ∈ Q z} = Q x := by
     ext w
-    simp only [Set.mem_ofPred_eq]
-    grind [Minimal, le_antisymm]
+    exact ⟨fun ⟨z, _, hzx, hz, hw⟩ ↦ (hx.le_iff_eq hz).1 hzx ▸ hw,
+      fun hw ↦ ⟨x, hxU, le_rfl, hx.1, hw⟩⟩
   ext p
   refine ⟨fun ⟨U, hxU, hp⟩ ↦ hp ▸ key U hxU, fun hp ↦ ⟨⊥, trivial, ?_⟩⟩
   rw [hp, key ⊥ trivial]
@@ -95,21 +95,21 @@ theorem supClosed_readings : SupClosed (readings Q x) := by
   rintro _ ⟨U, hxU, rfl⟩ _ ⟨V, -, rfl⟩
   refine ⟨U ⊓ V, UpperSet.mem_inf_iff.2 (.inl hxU), ?_⟩
   ext w
-  simp only [Set.sup_eq_union, Set.mem_union, Set.mem_ofPred_eq, UpperSet.mem_inf_iff]
+  simp only [Set.mem_union, Set.mem_ofPred_eq, UpperSet.mem_inf_iff]
   grind
 
 end Readings
 
 section Cumulative
 
-variable {α W : Type*} [SemilatticeSup α] {Q : α → Set W} {x : α}
+variable {α W : Type*} [SemilatticeSup α] [OrderBot α] {Q : α → Set W} {x : α}
 
 theorem infClosed_readings (hQ : ∀ w, SupClosed {z | w ∈ Q z}) : InfClosed (readings Q x) := by
   rintro _ ⟨U, hxU, rfl⟩ _ ⟨V, hxV, rfl⟩
   refine ⟨U ⊔ V, UpperSet.mem_sup_iff.2 ⟨hxU, hxV⟩, Set.ext fun w ↦ ⟨?_, ?_⟩⟩
   · rintro ⟨⟨y, hyU, hyx, hy, hwy⟩, ⟨z, hzV, hzx, hz, hwz⟩⟩
     exact ⟨y ⊔ z, UpperSet.mem_sup_iff.2 ⟨U.upper le_sup_left hyU, V.upper le_sup_right hzV⟩,
-      sup_le hyx hzx, fun h ↦ hy fun b ↦ le_sup_left.trans (h b), hQ w hwy hwz⟩
+      sup_le hyx hzx, fun h ↦ hy (le_bot_iff.1 (le_sup_left.trans h.le)), hQ w hwy hwz⟩
   · rintro ⟨z, hzUV, hzx, hz, hwz⟩
     obtain ⟨hzU, hzV⟩ := UpperSet.mem_sup_iff.1 hzUV
     exact ⟨⟨z, hzU, hzx, hz, hwz⟩, ⟨z, hzV, hzx, hz, hwz⟩⟩
@@ -129,7 +129,7 @@ theorem readings_eq_latticeClosure (hx : x.Nonempty) :
   refine Set.Subset.antisymm ?_
     (latticeClosure_min ?_ ⟨supClosed_readings, infClosed_readings fun w y hy z hz a ha ↦ ?_⟩)
   · rintro _ ⟨U, hxU, rfl⟩
-    have key : {w | ∃ z ∈ U, z ≤ x ∧ ¬ IsBot z ∧ ∀ a ∈ z, P a w} =
+    have key : {w | ∃ z ∈ U, z ≤ x ∧ z ≠ ⊥ ∧ ∀ a ∈ z, P a w} =
         (x.powerset.filter fun z ↦ z ∈ U ∧ z.Nonempty).sup fun z ↦ z.inf fun a ↦ {w | P a w} := by
       ext w
       simp [Finset.sup_set_eq_biUnion, Finset.inf_set_eq_iInter, isBot_iff_eq_bot,
@@ -143,7 +143,7 @@ theorem readings_eq_latticeClosure (hx : x.Nonempty) :
   · rintro _ ⟨a, ha, rfl⟩
     refine ⟨UpperSet.Ici {a}, UpperSet.mem_Ici_iff.2 (Finset.singleton_subset_iff.2 ha), ?_⟩
     ext w
-    simp only [Set.mem_ofPred_eq, UpperSet.mem_Ici_iff, isBot_iff_eq_bot, Finset.bot_eq_empty]
+    simp only [Set.mem_ofPred_eq, UpperSet.mem_Ici_iff, Finset.bot_eq_empty]
     exact ⟨fun h ↦ ⟨{a}, le_rfl, Finset.singleton_subset_iff.2 ha, Finset.singleton_ne_empty a,
       by simpa using h⟩, fun ⟨z, haz, _, _, h⟩ ↦ h a (Finset.singleton_subset_iff.1 haz)⟩
   · rcases Finset.mem_union.1 ha with ha | ha
@@ -222,7 +222,7 @@ variable {P x} in
 /-- The bare plural is true where every reading of the distributive predicate is. -/
 theorem barePlural_eq_true_iff (hx : x.Nonempty) (w : W) :
     barePlural P x w = .true ↔ w ∈ ⋂₀ readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
-  rw [sInter_readings (by simpa [isBot_iff_eq_bot, Finset.nonempty_iff_ne_empty] using hx)]
+  rw [sInter_readings (Finset.nonempty_iff_ne_empty.1 hx)]
   simp [barePlural, Trivalent.supervaluation_eq_true_iff]
 
 variable {P x} in
@@ -230,7 +230,7 @@ variable {P x} in
 theorem barePlural_eq_false_iff (hx : x.Nonempty) (w : W) :
     barePlural P x w = .false ↔ w ∉ ⋃₀ readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
   simp only [sUnion_readings, barePlural, Trivalent.supervaluation_eq_false_iff, hx, true_and,
-    isBot_iff_eq_bot, Finset.bot_eq_empty, ← Finset.nonempty_iff_ne_empty, Set.mem_ofPred_eq,
+    Finset.bot_eq_empty, ← Finset.nonempty_iff_ne_empty, Set.mem_ofPred_eq,
     not_exists, not_and]
   exact ⟨fun h z hzx ⟨a, ha⟩ hz ↦ h a (hzx ha) (hz a ha), fun h a ha hPa ↦
     h {a} (Finset.singleton_subset_iff.2 ha) (Finset.singleton_nonempty a) (by simpa using hPa)⟩

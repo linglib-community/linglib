@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Sells1987` — typed example data
@@ -402,5 +404,53 @@ def ex_77 : Datum :=
     paperFeatures := [("pronoun", "sig"), ("environment", "logophoric verb")] }
 
 def all : List Datum := [ex_11a, ex_12, ex_17, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_56, ex_57, ex_58, ex_59, ex_60, ex_61, ex_71, ex_72, ex_73, ex_74, ex_75, ex_76, ex_77]
+
+/-- The discourse environments of Table 1, from the one with no role internal to the one with every role internal. -/
+inductive Environment where
+  /-- external: direct speech, in which the external speaker holds every role -/
+  | directSpeech
+  /-- 3POV: third-person point of view, in which the speaker reports from where someone in the sentence stands, as in an adverbial clause -/
+  | thirdPerson
+  /-- psych-verb: the complement of a psychological verb such as distress, through which the speaker reports the state of mind of someone in the sentence -/
+  | psychVerb
+  /-- logophoric verb: the complement of a verb of communication such as say, the fully logophoric case -/
+  | logophoricVerb
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `environment`. -/
+def environment (e : Datum) : Option Environment :=
+  e.parse? "environment" [("external", .directSpeech), ("3POV", .thirdPerson), ("psych-verb", .psychVerb),
+    ("logophoric verb", .logophoricVerb)]
+
+/-- The discourse-oriented phrases of section 4, each tested for whose side it is understood from. -/
+inductive Diagnostic where
+  /-- that fool: the speaker-evaluative phrase 'that fool' (section 4.1) -/
+  | thatFool
+  /-- mysteriously: the adverb 'mysteriously' (section 4.2) -/
+  | mysteriously
+  /-- beloved: the adjective 'beloved' (section 4.3) -/
+  | beloved
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("that fool", .thatFool), ("mysteriously", .mysteriously), ("beloved", .beloved)]
+
+/-- Whose evaluation a discourse-oriented phrase can be understood to give. -/
+inductive Reading where
+  /-- internal protagonist: the one inside the sentence whose part the speaker takes -/
+  | internalProtagonist
+  /-- external speaker: the one making the report -/
+  | externalSpeaker
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .internalProtagonist => "internal protagonist"
+  | .externalSpeaker => "external speaker"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end Sells1987.Examples

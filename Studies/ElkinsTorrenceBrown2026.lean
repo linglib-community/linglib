@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.ElkinsTorrenceBrown2026
 public import Linglib.Fragments.Mayan.Mam.Extraction
 public import Linglib.Fragments.Mayan.Kiche.Extraction
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Syntax.Minimalist.Feature.Valuation
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
@@ -13,34 +13,20 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam
 
-The movement enclitic =(y)a' of San Juan Ostuncalco Mam optionally appears on the predicate,
-and on any directional auxiliary, when an instrument, benefactive, dative, locative, reason,
-purpose or manner adjunct is extracted, but not with absolutive or ergative arguments, Aissen's
-Ergative Extraction Constraint sending the agent through an antipassive, and not with temporals.
-The enclitic may occur once per Voice⁰ and Dir⁰ of a clause and, in long-distance extraction,
-once per clause along the dependency: in the embedded clause exactly when that clause is at least
-VoiceP-sized, so on both predicates over a full CP or an aspectless VoiceP complement, on the
-matrix predicate only over a nonfinite VP complement, and on the embedded predicate only in an
-embedded question. Elkins, Torrence and Brown analyse the enclitic as the spellout of
-Ā-agreement between the extracted adjunct and the [Ā]-bearing heads Voice⁰ and Dir⁰ it passes
-through under the Relativized-Minimality successive cyclicity of Rizzi and Abels: Attract Closest
-forces the mover through the specifier of each intervening [Ā]-bearer, each Voice⁰ or Dir⁰ copies
-the [obl] Case feature the mover receives from its relational noun, and the bundle [Ā, obl] is
-realized as =(y)a' or as ∅. Mendes and Ranero's rival Chain Reduction via Substitution for the
-K'ichean fronting particle *wi*, which spells out lower copies at the base position and at each
-Spec,CP stopover and so derives the Fronting Particle Generalization, predicts a single reflex
-within a clause, none in the matrix clause over an aspectless complement, and one inside a
-nonfinite complement, all contrary to the Mam data; Keine and Zeijlstra's DP-intervention
-leapfrogging predicts at most one reflex per intervening argument, contrary to a clause with
-three; and an Agent-Focus-like analysis fails because the enclitic co-occurs with the passive and
-appears in every clause of the path while the antipassive is confined to the clause of origin.
-The two systems also differ in which adjuncts trigger the reflex: reasons, purposes and manners
-do in Mam but are high adjuncts without [appl] in K'ichean, and temporals trigger neither.
+This file formalizes [elkins-torrence-brown-2026]'s analysis of the movement enclitic =(y)a' of
+San Juan Ostuncalco Mam, which appears on the predicate and on directional auxiliaries when an
+oblique adjunct is extracted. The enclitic spells out Ā-agreement between the adjunct and the
+heads Voice and Dir that it passes through, so it may occur once per Voice and Dir of each clause
+the dependency crosses.
+
+A clause hosts the enclitic exactly when it projects Voice (`licensed_iff_mem_voice`). The rival
+accounts, the Chain Reduction via Substitution of [mendes-ranero-2021] and the leapfrogging of
+[keine-zeijlstra-2025], are predicates on the same dependencies, and the rows tell them apart.
 
 ## Implementation notes
 
-* Clause sizes are `ClauseSpine`s, the Mam finite, aspectless and nonfinite clauses of (8) and
-  §3.3–3.4, with the directional head `Head.dir`, a Mayan-specific category above VoiceP, spliced
+* Clause sizes are `Spine`s, the Mam finite, aspectless and nonfinite clauses of (8) and
+  §3.3–3.4, with the directional head `Cat.Dir`, a Mayan category above VoiceP, spliced
   in by `spine`. A dependency is the list of clauses the mover crosses, bottom-up; its `path` is
   the [Ā]-bearers of those clauses and its `sites` the Voice and Dir heads among them, so the
   reflex in a clause is decided by whether the clause projects Voice (`licensed_iff_mem_voice`).
@@ -76,46 +62,35 @@ open Minimalist DistributedMorphology ElkinsTorrenceBrown2026.Examples
 
 /-! ### The extended verbal domain (§1.3) -/
 
-/-- A head of the SJO Mam clausal spine is a head of the substrate spine or the directional
-auxiliary Dir⁰, the Mayan-specific head whose projection dominates VoiceP (8). -/
-inductive Head
-  | cat (c : Cat)
-  | dir
-  deriving DecidableEq, Repr
-
-/-- A clause as its projected heads, bottom-up. -/
-abbrev Spine := List Head
-
 /-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
 Voice, lack directionals (§3.4). -/
-def spine (s : ClauseSpine) (n : ℕ) : Spine :=
-  s.heads.flatMap fun c ↦
-    if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
+def spine (s : Spine) (n : ℕ) : Spine :=
+  ⟨s.heads.flatMap fun c ↦ if c = .Voice then .Voice :: List.replicate n .Dir else [c]⟩
 
 /-- The Mam finite clause of (8), a CP over the aspect layer, Voice, v and V. -/
-def finiteClause : ClauseSpine := ⟨[.V, .v, .Voice, .Asp, .C]⟩
+def finiteClause : Spine := ⟨[.V, .v, .Voice, .Asp, .C]⟩
 
 /-- The aspectless clause, a VoiceP-sized reduced clause without the aspect layer or C (§3.3). -/
-def aspectlessClause : ClauseSpine := ⟨[.V, .v, .Voice]⟩
+def aspectlessClause : Spine := ⟨[.V, .v, .Voice]⟩
 
 /-- The nonfinite clause, a VP-sized complement (§3.4). -/
-def nonfiniteClause : ClauseSpine := ⟨[.V]⟩
+def nonfiniteClause : Spine := ⟨[.V]⟩
 
 /-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
-def aspP : ClauseSpine := ⟨[.V, .v, .Voice, .Asp]⟩
+def aspP : Spine := ⟨[.V, .v, .Voice, .Asp]⟩
 
 /-- C⁰, Voice⁰ and Dir⁰ bear [Ā], (41) and (44). -/
-def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir
+def BearsA (h : Cat) : Prop := h = .C ∨ h = .Voice ∨ h = .Dir
 
 instance : DecidablePred BearsA := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- Voice⁰ and Dir⁰ copy the mover's [obl] and host the reflex, (45)–(46), while C⁰ attracts by
 [Ā] alone, so there is no C-domain reflex. -/
-def HostsReflex (h : Head) : Prop := h = .cat .Voice ∨ h = .dir
+def HostsReflex (h : Cat) : Prop := h = .Voice ∨ h = .Dir
 
 instance : DecidablePred HostsReflex := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-theorem HostsReflex.bearsA {h : Head} (hh : HostsReflex h) : BearsA h := Or.inr hh
+theorem HostsReflex.bearsA {h : Cat} (hh : HostsReflex h) : BearsA h := Or.inr hh
 
 /-! ### The movement path (§4.1–4.3) -/
 
@@ -125,12 +100,12 @@ abbrev Dependency := List Spine
 
 /-- The movement path of (43) is the list of [Ā]-bearing heads of the clauses crossed, bottom-up
 and tagged by clause. By Attract Closest (39) the mover stops in the specifier of each. -/
-def path (d : Dependency) : List (ℕ × Head) :=
+def path (d : Dependency) : List (ℕ × Cat) :=
   (List.range d.length).flatMap fun i ↦
-    ((d.getD i []).filter fun h ↦ decide (BearsA h)).map (i, ·)
+    ((d.getD i ⟨[]⟩).heads.filter fun h ↦ decide (BearsA h)).map (i, ·)
 
 /-- The sites of the reflex are the Agree relations with Voice⁰ or Dir⁰ along the path (§4.2). -/
-def sites (d : Dependency) : List (ℕ × Head) :=
+def sites (d : Dependency) : List (ℕ × Cat) :=
   (path d).filter fun p ↦ decide (HostsReflex p.2)
 
 /-- =(y)a' is licensed in clause `i` of the dependency when the path has a site there. -/
@@ -139,8 +114,8 @@ def Licensed (d : Dependency) (i : ℕ) : Prop := i ∈ (sites d).map Prod.fst
 instance (d : Dependency) (i : ℕ) : Decidable (Licensed d i) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-theorem mem_path {d : Dependency} {i : ℕ} {h : Head} :
-    (i, h) ∈ path d ↔ i < d.length ∧ h ∈ d.getD i [] ∧ BearsA h := by
+theorem mem_path {d : Dependency} {i : ℕ} {h : Cat} :
+    (i, h) ∈ path d ↔ i < d.length ∧ h ∈ d.getD i ⟨[]⟩ ∧ BearsA h := by
   simp only [path, List.mem_flatMap, List.mem_range, List.mem_map, List.mem_filter,
     decide_eq_true_eq, Prod.mk.injEq]
   constructor
@@ -150,7 +125,7 @@ theorem mem_path {d : Dependency} {i : ℕ} {h : Head} :
     exact ⟨i, hi, h, ⟨hmem, hb⟩, rfl, rfl⟩
 
 theorem licensed_iff {d : Dependency} {i : ℕ} :
-    Licensed d i ↔ ∃ h ∈ d.getD i [], HostsReflex h := by
+    Licensed d i ↔ ∃ h ∈ d.getD i ⟨[]⟩, HostsReflex h := by
   simp only [Licensed, sites, List.mem_map, List.mem_filter, decide_eq_true_eq]
   constructor
   · rintro ⟨⟨j, h⟩, ⟨hp, hh⟩, rfl⟩
@@ -161,9 +136,9 @@ theorem licensed_iff {d : Dependency} {i : ℕ} :
     rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hmem
     exact List.not_mem_nil hmem
 
-theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
+theorem exists_hostsReflex_spine_iff {s : Spine} (hD : .Dir ∉ s) (n : ℕ) :
     (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s := by
-  simp only [spine, List.mem_flatMap, ClauseSpine.mem_def]
+  simp only [spine, List.mem_flatMap, Spine.mem_def]
   constructor
   · rintro ⟨h, ⟨c, hc, hmem⟩, hh⟩
     split at hmem
@@ -171,22 +146,22 @@ theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
     · next hcv =>
       rw [List.mem_singleton] at hmem
       rcases hh with rfl | rfl
-      · exact absurd (Head.cat.inj hmem).symm hcv
-      · exact Head.noConfusion hmem
+      · exact absurd hmem.symm hcv
+      · exact absurd (hmem ▸ hc) hD
   · intro hv
-    exact ⟨.cat .Voice, ⟨.Voice, hv, by simp⟩, Or.inl rfl⟩
+    exact ⟨.Voice, ⟨.Voice, hv, by simp⟩, Or.inl rfl⟩
 
 /-- =(y)a' is licensed in a clause of the dependency iff that clause projects Voice (Table 3,
 §3.3–3.4, §4.3). -/
-theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n : ℕ}
-    (hd : d.getD i [] = spine s n) : Licensed d i ↔ .Voice ∈ s := by
-  rw [licensed_iff, hd, exists_hostsReflex_spine_iff]
+theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : Spine} {n : ℕ} (hD : .Dir ∉ s)
+    (hd : d.getD i ⟨[]⟩ = spine s n) : Licensed d i ↔ .Voice ∈ s := by
+  rw [licensed_iff, hd, exists_hostsReflex_spine_iff hD]
 
 /-! ### Multiple exponence (§3.1, §5.2) -/
 
 -- (45)
 theorem sites_monoclausal (n : ℕ) :
-    sites [spine finiteClause n] = (0, .cat .Voice) :: List.replicate n (0, .dir) := by
+    sites [spine finiteClause n] = (0, .Voice) :: List.replicate n (0, .Dir) := by
   simp [sites, path, spine, finiteClause, BearsA, HostsReflex, List.map_replicate]
 
 theorem sites_monoclausal_length (n : ℕ) : (sites [spine finiteClause n]).length = n + 1 := by
@@ -195,7 +170,7 @@ theorem sites_monoclausal_length (n : ℕ) : (sites [spine finiteClause n]).leng
 
 /-- In (46b) each site is independently realized as =(y)a' or as ∅, so the surface patterns of a
 dependency are the sublists of its sites. -/
-def patterns (d : Dependency) : List (List (ℕ × Head)) := (sites d).sublists
+def patterns (d : Dependency) : List (List (ℕ × Cat)) := (sites d).sublists
 
 -- (22)
 theorem patterns_length_22 : (patterns [spine finiteClause 1]).length = 4 := by decide
@@ -211,13 +186,13 @@ theorem sites_exceed_interveners : 1 < (sites [spine finiteClause 2]).length := 
 mover, the base copy in the clause of origin and the intermediate copy in each Spec,CP crossed,
 which linearizes onto the predicate of the next clause up. -/
 def CopyLicensed (d : Dependency) (i : ℕ) : Prop :=
-  i = 0 ∨ (0 < i ∧ i < d.length ∧ .cat .C ∈ d.getD (i - 1) [])
+  i = 0 ∨ (0 < i ∧ i < d.length ∧ .C ∈ d.getD (i - 1) ⟨[]⟩)
 
 instance (d : Dependency) (i : ℕ) : Decidable (CopyLicensed d i) :=
   inferInstanceAs (Decidable (_ ∨ _ ∧ _ ∧ _))
 
 -- (54)
-theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
+theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .C ∈ e := by
   simp [CopyLicensed]
 
 -- §3.1, §5.1
@@ -383,7 +358,7 @@ theorem directionalRows_sites :
   decide
 
 /-- The clause sizes as named in the rows. -/
-def sizeTable : List (String × ClauseSpine) :=
+def sizeTable : List (String × Spine) :=
   [("cP", finiteClause), ("voiceP", aspectlessClause), ("bareVP", nonfiniteClause), ("aspP", aspP)]
 
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands

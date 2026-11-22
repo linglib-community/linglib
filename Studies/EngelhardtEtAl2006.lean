@@ -6,7 +6,7 @@ public import Linglib.Data.Statistics.EngelhardtEtAl2006
 public import Linglib.Fragments.English.Adpositions
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.ReferentialSupport
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Feature.Case.Spatial
 public import Mathlib.Data.Fin.VecNotation
 
 /-!

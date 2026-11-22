@@ -188,7 +188,7 @@ theorem suf_eq_dirac_of_make (ν : Measure U) [IsProbabilityMeasure ν] {u₀ : 
   have h' := h.1.2
   rw [Function.update_idem] at h'
   have hy : (fun u ↦ M[c ← x].solve u e) = fun _ ↦ y :=
-    funext h'.solve_intervene_singleton_eq
+    funext h'.solve_intervene_eq
   rw [suf, contexts_bot, cond_univ, hy, Measure.map_const, measure_univ, one_smul]
 
 end Model
@@ -199,7 +199,7 @@ theorem suf_apply {U V : Type*} {α : V → Type*} [DecidableEq V] [Finite V] [M
     (hM : ∀ v, Measurable (Function.uncurry (M.eqn v))) (ν : Measure U) (obs : ∀ v, Part (α v))
     (c : V) (x : α c) (e : V) {t : Set (α e)} (ht : MeasurableSet t) :
     suf M ν obs c x e t = ν[(fun u ↦ M[c ← x].solve u e) ⁻¹' t | M.contexts obs] :=
-  Measure.map_apply ((measurable_pi_apply e).comp (measurable_solve_intervene hM _ _)) ht
+  Measure.map_apply ((measurable_pi_apply e).comp (measurable_solve_intervene hM _)) ht
 
 /-- A time index for a causal model (the paper's definition 1) places each parent exactly one
 timestep before its child. -/
@@ -271,7 +271,7 @@ variable [Nonempty X] [Nonempty Y] {x₀ x : X} {y₀ y : Y} {u : X → Y}
 
 @[simp] theorem solve_exchange_intervene_causee :
     (exchange x₀)[Turn.causer ← x].solve u Turn.causee = u x := by
-  rw [solve_intervene_of_notMem (by decide)]
+  rw [solve_intervene_of_eq_bot (Function.update_of_ne (by decide) ..)]
   exact congrArg u (solve_intervene_singleton_self (M := exchange x₀) .causer x)
 
 theorem contexts_exchange :
@@ -286,7 +286,9 @@ theorem suf_exchange (ν : Measure (X → Y)) [IsFiniteMeasure ν]
     (h : IndepFun (fun u ↦ u x₀) (fun u ↦ u x) ν) (hc : ν ((fun u ↦ u x₀) ⁻¹' {y₀}) ≠ 0) :
     suf (exchange x₀) ν [.causer ← x₀, .causee ← y₀] .causer x .causee = ν.map fun u ↦ u x := by
   rw [suf, contexts_exchange]
-  simp only [solve_exchange_intervene_causee]
+  have key : (fun u : X → Y ↦ (exchange x₀)[Turn.causer ← x].solve u Turn.causee) = fun u ↦ u x :=
+    funext fun _ ↦ solve_exchange_intervene_causee
+  rw [key]
   exact h.map_cond (measurable_pi_apply x₀) (measurable_pi_apply x) (measurableSet_singleton y₀) hc
 
 /-- When the causee replies to each move by an independent draw from a policy, the SUF of a move

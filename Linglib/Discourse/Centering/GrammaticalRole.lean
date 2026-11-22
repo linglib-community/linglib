@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.Basic
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Syntax.Voice.TermRole
@@ -33,7 +34,7 @@ long passive.
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 /-- The grammatical roles by which [grosz-joshi-weinstein-1995] rank forward-looking centers,
 SUBJECT > OBJECT(S) > OTHER (p. 214): the subject, an object, and every other role. -/
@@ -53,6 +54,11 @@ def rank : GrammaticalRole → ℕ
 
 instance : LinearOrder GrammaticalRole := LinearOrder.lift' rank (by decide)
 
+/-- `rank` as an order embedding. -/
+def rankOrderEmbedding : GrammaticalRole ↪o ℕ := ⟨⟨rank, by decide⟩, Iff.rfl⟩
+
+@[simp] theorem coe_rankOrderEmbedding : ⇑rankOrderEmbedding = rank := rfl
+
 theorem object_lt_subject : object < subject := by decide
 
 theorem other_lt_object : other < object := by decide
@@ -70,4 +76,4 @@ theorem isAccusative_ofTermRole_comp_ofArgumentRole :
 
 end GrammaticalRole
 
-end Discourse.Centering
+end Centering

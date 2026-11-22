@@ -65,7 +65,7 @@ open Mereology Aspect
 
 section Events
 
-variable {E S L Y : Type*} [PartialOrder E]
+variable {E S L Y : Type*} [PartialOrder E] [OrderBot E]
 
 /-- The pluractional head (66): the events of `f` with more than `θ` atomic parts. -/
 def pluract (θ : ℕ∞) (f : E → Prop) (e : E) : Prop := f e ∧ θ < (atomsBelow e).encard
@@ -84,15 +84,15 @@ def IsQuasiHomogeneous (θ : ℕ∞) (P : E → Prop) : Prop :=
 variable {θ : ℕ∞} {swarm : E → Prop} {cause : S → E → Prop} {coincident : L → Y → S → Prop}
   {landmark : L → E → Prop} {g : L} {y : Y}
 
-theorem not_nonBase_of_atom (hθ : 1 ≤ θ) {e : E} (he : Atom e) :
+theorem not_nonBase_of_atom (hθ : 1 ≤ θ) {e : E} (he : IsAtom e) :
     ¬ nonBase θ swarm cause coincident landmark g y e := by
   rintro ⟨⟨-, h⟩, -⟩
-  rw [atomsBelow_of_atom he, Set.encard_singleton] at h
+  rw [atomsBelow_of_isAtom he, Set.encard_singleton] at h
   exact (hθ.trans_lt h).false
 
 theorem isQuasiHomogeneous_nonBase [Preorder S] (hs : IsQuasiHomogeneous θ swarm)
-    (hw : DIV (coincident g y)) (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e')
-    (hl : DIV (landmark g)) :
+    (hw : DIV {s | coincident g y s}) (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e')
+    (hl : DIV {e | landmark g e}) :
     IsQuasiHomogeneous θ (nonBase θ swarm cause coincident landmark g y) := by
   rintro e e' ⟨⟨hse, -⟩, ⟨s, hws, hcs⟩, hle⟩ h h'
   obtain ⟨s', hs', hcs'⟩ := hc hcs h
@@ -102,24 +102,24 @@ theorem IsQuasiHomogeneous.not_isTelic {precedes : E → E → Prop} [IsStrictOr
     {P : E → Prop}
     (hP : IsQuasiHomogeneous θ P) {e e' e'' : E} (he : P e) (h' : e' ≤ e)
     (hθ : θ < (atomsBelow e').encard) (h'' : e'' ≤ e) (hp : precedes e' e'') :
-    ¬ IsTelic precedes P :=
+    ¬ IsTelic precedes {e | P e} :=
   fun hT ↦ (hT.isFinalPart he (hP he h' hθ) h').not_precedes h'' hp
 
 /-- (14), (21): the non-base alternant is atelic, by its quasi-homogeneity (§3.2.2). -/
 theorem not_isTelic_nonBase [Preorder S] {precedes : E → E → Prop} [IsStrictOrder E precedes]
-    (hs : IsQuasiHomogeneous θ swarm) (hw : DIV (coincident g y))
-    (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e') (hl : DIV (landmark g))
+    (hs : IsQuasiHomogeneous θ swarm) (hw : DIV {s | coincident g y s})
+    (hc : ∀ ⦃s e e'⦄, cause s e → e' ≤ e → ∃ s' ≤ s, cause s' e') (hl : DIV {e | landmark g e})
     {e e' e'' : E} (he : nonBase θ swarm cause coincident landmark g y e) (h' : e' ≤ e)
     (hθ : θ < (atomsBelow e').encard) (h'' : e'' ≤ e) (hp : precedes e' e'') :
-    ¬ IsTelic precedes (nonBase θ swarm cause coincident landmark g y) :=
+    ¬ IsTelic precedes {e | nonBase θ swarm cause coincident landmark g y e} :=
   (isQuasiHomogeneous_nonBase hs hw hc hl).not_isTelic he h' hθ h'' hp
 
 end Events
 
 theorem exists_nonBase_atom :
-    ∃ y e : Finset ℕ, Atom y ∧ nonBase 1 (fun _ ↦ True) (fun (_ : Unit) _ ↦ True)
+    ∃ y e : Finset ℕ, IsAtom y ∧ nonBase 1 (fun _ ↦ True) (fun (_ : Unit) _ ↦ True)
       (fun (_ : Unit) _ _ ↦ True) (fun _ _ ↦ True) () y e := by
-  refine ⟨{0}, {0, 1}, atom_iff_isAtom.2 (Finset.isAtom_singleton 0), ⟨trivial, ?_⟩,
+  refine ⟨{0}, {0, 1}, (Finset.isAtom_singleton 0), ⟨trivial, ?_⟩,
     ⟨(), trivial, trivial⟩, trivial⟩
   rw [atomsBelow_finset, (Finset.singleton_injective.injOn).encard_image]
   simp [Set.encard_pair]

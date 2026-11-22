@@ -6,30 +6,15 @@ public import Linglib.Phonology.OptimalityTheory.Evaluation
 /-!
 # Positional faithfulness
 
-A positional faithfulness constraint is a faithfulness constraint restricted to a prominent
-position, such as the beginning of a word or a root, whose segments it protects. Restricted to
-deletion, a candidate is the set of input positions it deletes, and the MAX constraint of a set of
-positions counts the deleted positions in it. The deletion of a single position therefore violates
-exactly the constraints that protect that position, and single deletions compete through those
-sets of constraints: one of them is optimal under some ranking exactly when the set of constraints
-protecting its position is minimal among them.
-
-## Main definitions
-
-* `OptimalityTheory.maxAt`: MAX restricted to a set of positions, on deletions.
-* `OptimalityTheory.positionalMax`: a family of such constraints, on candidates that delete
-  positions.
-
-## Main results
-
-* `OptimalityTheory.maxAt_eq_maxViolAt`, `maxAt_singleton_eq_maxViolAt`: on the deletion of a set
-  of positions, or of one, from a string, `maxAt` is MAX restricted to the positions in the sense
-  of Correspondence Theory.
-* `OptimalityTheory.exists_mem_optimal_positionalMax_iff`: among deletions of one position each,
-  one is optimal under some ranking iff the constraints protecting its position are minimal among
-  the sets protecting each.
-* `OptimalityTheory.optimal_eq_pair_positionalMax_iff`: both are optimal under a ranking iff the
-  same constraints protect the two positions.
+This file defines [MAX restricted to a set of positions](##maxAt), on candidates given by the input
+positions they delete, and [families of such constraints](##positionalMax), each protecting the
+segments of a prominent position such as the beginning of a word or a root.
+[On deletions from a string, the restriction is MAX restricted to those
+positions](##maxAt_eq_maxViolAt) in the sense of McCarthy and Prince's Correspondence Theory.
+Single deletions compete through the sets of constraints protecting their positions.
+[One is optimal under some ranking exactly when its set is minimal among
+them](##exists_mem_optimal_positionalMax_iff), and [two are both optimal under a ranking exactly
+when the same constraints protect both positions](##optimal_eq_pair_positionalMax_iff).
 
 ## References
 
@@ -42,6 +27,8 @@ protecting its position is minimal among them.
 namespace OptimalityTheory
 
 /-! ### MAX restricted to a set of positions -/
+
+namespace Constraint
 
 section MaxAt
 
@@ -79,6 +66,8 @@ theorem maxAt_eq_maxViolAt {α : Type*} {s : List α} {D : Finset ℕ} (hD : ∀
 
 end MaxAt
 
+end Constraint
+
 /-! ### Families of positional constraints -/
 
 section Positional
@@ -88,29 +77,29 @@ variable {ι C : Type*} (P : ι → ℕ → Prop) [∀ i, DecidablePred (P i)]
 
 /-- `positionalMax P del` is MAX restricted to each set of positions `P i`, on candidates that
 delete the positions `del c`. -/
-def positionalMax (c : C) : ι → ℕ := fun i ↦ maxAt (P i) (del c)
+def positionalMax (c : C) : ι → ℕ := fun i ↦ Constraint.maxAt (P i) (del c)
 
 @[simp] theorem positionalMax_apply (c : C) (i : ι) :
-    positionalMax P del c i = maxAt (P i) (del c) := rfl
+    positionalMax P del c i = Constraint.maxAt (P i) (del c) := rfl
 
 variable {P del} {c d : C} {k k' : ℕ}
 
 theorem positionalMax_lt_positionalMax_iff (hc : del c = {k}) (hd : del d = {k'}) {i : ι} :
     positionalMax P del c i < positionalMax P del d i ↔ ¬ P i k ∧ P i k' := by
-  simp only [positionalMax_apply, hc, hd, maxAt_singleton]
+  simp only [positionalMax_apply, hc, hd, Constraint.maxAt_singleton]
   split_ifs <;> simp_all
 
 theorem positionalMax_lt_iff (hc : del c = {k}) (hd : del d = {k'}) :
     positionalMax P del c < positionalMax P del d ↔ {i | P i k} ⊂ {i | P i k'} := by
   rw [Pi.lt_def, Set.ssubset_def, Set.not_subset]
   simp only [positionalMax_lt_positionalMax_iff hc hd]
-  simp only [Pi.le_def, positionalMax_apply, hc, hd, maxAt_singleton, Set.subset_def]
+  simp only [Pi.le_def, positionalMax_apply, hc, hd, Constraint.maxAt_singleton, Set.subset_def]
   refine and_congr (forall_congr' fun i ↦ ?_) (exists_congr fun _ ↦ and_comm)
   split_ifs <;> simp_all
 
 theorem positionalMax_le_iff (hc : del c = {k}) (hd : del d = {k'}) :
     positionalMax P del c ≤ positionalMax P del d ↔ {i | P i k} ⊆ {i | P i k'} := by
-  simp only [Pi.le_def, positionalMax_apply, hc, hd, maxAt_singleton, Set.subset_def]
+  simp only [Pi.le_def, positionalMax_apply, hc, hd, Constraint.maxAt_singleton, Set.subset_def]
   refine forall_congr' fun i ↦ ?_
   split_ifs <;> simp_all
 
@@ -126,8 +115,8 @@ theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c
   exact exists_congr fun _ ↦ ⟨fun ⟨⟨h, h'⟩, hr⟩ ↦ ⟨h', h, fun j hj hj' ↦ hr j ⟨hj', hj⟩⟩,
     fun ⟨h', h, hr⟩ ↦ ⟨⟨h, h'⟩, fun j ⟨hj', hj⟩ ↦ hr j hj hj'⟩⟩
 
-/-- Of two single deletions, the one whose position fewer constraints protect is the sole winner
-under every ranking. -/
+/-- Of two single deletions, the one whose position is protected by a proper subset of the
+constraints protecting the other's is the sole winner under every ranking. -/
 theorem optimal_eq_singleton_positionalMax_of_ssubset (hcand : cands = {c, d}) (hc : del c = {k})
     (hd : del d = {k'}) (h : {i | P i k} ⊂ {i | P i k'}) (r : Ranking.Enumeration ι n) :
     r.optimal (positionalMax P del) cands = {c} :=
@@ -141,7 +130,7 @@ theorem optimal_eq_pair_positionalMax_iff (hcand : cands = {c, d}) (hc : del c =
       {i | P i k} = {i | P i k'} := by
   rw [Ranking.Enumeration.optimal_eq_pair_iff hcand, funext_iff, Set.ext_iff]
   refine forall_congr' fun i ↦ ?_
-  simp only [positionalMax_apply, hc, hd, maxAt_singleton]
+  simp only [positionalMax_apply, hc, hd, Constraint.maxAt_singleton]
   split_ifs <;> simp_all
 
 variable [Fintype ι] (hn : Fintype.card ι = n)
@@ -155,7 +144,7 @@ theorem exists_mem_optimal_positionalMax_iff {pos : C → ℕ} :
         c ∈ r.optimal (positionalMax P fun d ↦ {pos d}) cands) ↔
       MinimalFor (· ∈ cands) (fun d ↦ {i | P i (pos d)}) c := by
   rw [Ranking.Enumeration.exists_mem_optimal_iff_minimalFor hn fun d _ i ↦ by
-    rw [positionalMax_apply, maxAt_singleton]; split_ifs <;> simp]
+    rw [positionalMax_apply, Constraint.maxAt_singleton]; split_ifs <;> simp]
   exact and_congr_right fun _ ↦ forall_congr' fun d ↦ imp_congr_right fun _ ↦
     imp_congr (positionalMax_le_iff rfl rfl) (positionalMax_le_iff rfl rfl)
 

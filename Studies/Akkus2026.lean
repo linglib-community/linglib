@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.LateInsertion
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Early
 public import Studies.Harley2014
 
 /-!
@@ -68,15 +68,15 @@ theorem pfPhon_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.k
     ∀ n, pfPhon (clause r n) = [] := by decide
 
 theorem pf_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.kill, Harley2014.sing],
-    ∀ n, lateSpellout.pf (SpelloutDomain.ofPlanar feats (clause r n))
+    ∀ n, lateSpellout.pf ((pfYield (clause r n)).map feats)
       = [[], (Harley2014.spellout (unaccusative n) r).toList] := by
   decide
 
 /-- *vuite* and *tenne* from one silent syntax (5a). -/
 example :
-    lateSpellout.pf (SpelloutDomain.ofPlanar feats (clause Harley2014.run .singular))
+    lateSpellout.pf ((pfYield (clause Harley2014.run .singular)).map feats)
         = [[], ["vuite"]] ∧
-      lateSpellout.pf (SpelloutDomain.ofPlanar feats (clause Harley2014.run .plural))
+      lateSpellout.pf ((pfYield (clause Harley2014.run .plural)).map feats)
         = [[], ["tenne"]] := by
   decide
 

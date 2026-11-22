@@ -40,7 +40,7 @@ out the unmarked form only when it spells out the marked one
 namespace BeaversEtAl2021
 
 open Presupposition ArgumentStructure
-open BeaversKoontzGarboden2020 (DeniesChange Passes passes_iff kinds? diagnostic? againAt)
+open BeaversKoontzGarboden2020 (DeniesChange Passes passes_iff againAt)
 open scoped SetRel ModalLogic
 
 /-! ### State predicates that entail change -/
@@ -50,22 +50,22 @@ section Model
 universe u
 
 variable {Entity : Type*} {State Event : Type u}
-  (M : EventStructure.Interpretation Entity State Event)
+  (M : EventStructure.Interpretation State Event) {θ : Entity → Event → Prop}
   {R : SetRel Event Event} {P : Entity → State → Prop} {y x : Entity} {s : State}
 
 /-- The deverbal stative of `P` holds of the states of which `P` holds and that a change gave
 rise to. -/
 def resultStative (P : Entity → State → Prop) (x : Entity) : State → Prop :=
-  P x ⊓ ◇[M.become] ⊤
+  P x ⊓ ◇[M.become.inv] ⊤
 
 theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M P) x s :=
   fun h ↦ h.2 h.1.2
 
-theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P x s :=
-  and_iff_left_of_imp (h x s)
+theorem resultStative_iff (h : M.EntailsChange (P x)) : resultStative M P x s ↔ P x s :=
+  and_iff_left_of_imp (h s)
 
 theorem diamond_become_of_againAt_achievement_ne_zero {e : Event}
-    (hp : againAt M .achievement R P y x e ≠ .undefined) : ◇[R] (◇[M.become.inv] ⊤) e :=
+    (hp : againAt M θ .achievement R P y x e ≠ .undefined) : ◇[R] (◇[M.become] ⊤) e :=
   ModalLogic.diamond_mono R (fun w ↦ ModalLogic.diamond_mono _ le_top w) e
     (again_ne_undefined_iff.1 hp)
 
@@ -108,11 +108,11 @@ theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
     stativeRealization r a = .unmarked ↔ a = .basic ∧ Root.Kind.result ∉ Root.close r := by
   cases a <;> simp [stativeRealization]
 
-theorem entailsChange_of_verbRealization_eq_unmarked {Entity State Event : Type*}
-    {M : ArgumentStructure.EventStructure.Interpretation Entity State Event}
-    {P : Entity → State → Prop} {Q : Event → Prop} (h : M.Respects P Q r)
+theorem entailsChange_of_verbRealization_eq_unmarked {State Event : Type*}
+    {M : ArgumentStructure.EventStructure.Interpretation State Event}
+    {p : State → Prop} {Q : Event → Prop} (h : M.Respects p Q r)
     (hr : verbRealization r = .unmarked) :
-    M.EntailsChange P :=
+    M.EntailsChange p :=
   h.entailsChange (by unfold verbRealization at hr; split_ifs at hr with hk; exact hk)
 
 /-- A language's spell-out of the two realizations, in which the unmarked one is overt only if
@@ -203,6 +203,19 @@ theorem oromo_long :
   decide
 
 /-! ### The judgments -/
+
+/-- The signature of a row's root, the least of its class. -/
+def kinds? (d : Datum) : Option Root :=
+  (Examples.rootClass d).map fun
+    | .propertyConcept => Root.propertyConcept
+    | .result => Root.pureResult
+
+/-- The diagnostic a row tests. -/
+def diagnostic? (d : Datum) : Option BeaversKoontzGarboden2020.Diagnostic :=
+  (Examples.diagnostic d).bind fun
+    | .changeDenial => some .changeDenial
+    | .restitutiveAgain => some .restitutive
+    | .additiveRestitutive => none
 
 /-- A row is accepted exactly when its root passes its diagnostic, except for (13), which only
 some speakers accept, and Kakataibo (26). -/

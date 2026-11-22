@@ -62,8 +62,9 @@ def exceedsStandard : Finset (Finset (Fin 4)) := ofCard (2 < ·)
 /-- A quantity above a standard is bounded, being cumulative but not divisive, though not
 quantized. -/
 theorem exceedsStandard_bounded :
-    ¬ IsUnbounded (· ∈ exceedsStandard) ∧ ¬ Mereology.QUA (· ∈ exceedsStandard) :=
-  ⟨by decide +kernel, mt isDiverse_iff_qua.2 (by decide +kernel)⟩
+    ¬ IsUnbounded (· ∈ exceedsStandard) ∧
+      ¬ Mereology.QUA (exceedsStandard : Set (Finset (Fin 4))) :=
+  ⟨by decide +kernel, mt (isDiverse_iff_qua (P := (· ∈ exceedsStandard))).2 (by decide +kernel)⟩
 
 namespace Clause
 

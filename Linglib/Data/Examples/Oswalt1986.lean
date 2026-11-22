@@ -76,7 +76,7 @@ def s7 : Datum :=
     language := "kash1280"
     primaryText := "hú·ʔ men s̓í-ya-m ṭa ʔa"
     glossedTokens := [("hú·ʔ", "Yes"), ("men", "thus"), ("s̓í-ya-m", "do-VISUAL-RESP"), ("ṭa", ""), ("ʔa", "I")]
-    glossedWords := [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], none⟩]⟩, ⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], [⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], none⟩]⟩, ⟨['s', '̓', 'í', '-', 'y', 'a', '-', 'm'], ['d', 'o', '-', 'V', 'I', 'S', 'U', 'A', 'L', '-', 'R', 'E', 'S', 'P'], [⟨['s', '̓', 'í'], ['d', 'o'], none⟩, ⟨['y', 'a'], ['V', 'I', 'S', 'U', 'A', 'L'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], []⟩, ⟨['ʔ', 'a'], ['I'], [⟨['ʔ', 'a'], ['I'], none⟩]⟩]
+    glossedWords := [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], none⟩]⟩, ⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], [⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], none⟩]⟩, ⟨['s', '̓', 'í', '-', 'y', 'a', '-', 'm'], ['d', 'o', '-', 'V', 'I', 'S', 'U', 'A', 'L', '-', 'R', 'E', 'S', 'P'], [⟨['s', '̓', 'í'], ['d', 'o'], none⟩, ⟨['y', 'a'], ['V', 'I', 'S', 'U', 'A', 'L'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], [⟨['ṭ', 'a'], [], none⟩]⟩, ⟨['ʔ', 'a'], ['I'], [⟨['ʔ', 'a'], ['I'], none⟩]⟩]
     lgrConformance := some .morphemeAligned
     context := "A response to a remark by someone else."
     judgment := .acceptable
@@ -298,7 +298,7 @@ def s29 : Datum :=
     language := "kash1280"
     primaryText := "qacúhse hqamac̓-kʰe =ʔ-do-m ṭa"
     glossedTokens := [("qacúhse", "grass game"), ("hqamac̓-kʰe", "play-FUT"), ("=ʔ-do-m", "=ASS-QUOT-RESP"), ("ṭa", "")]
-    glossedWords := [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], none⟩]⟩, ⟨['h', 'q', 'a', 'm', 'a', 'c', '̓', '-', 'k', 'ʰ', 'e'], ['p', 'l', 'a', 'y', '-', 'F', 'U', 'T'], [⟨['h', 'q', 'a', 'm', 'a', 'c', '̓'], ['p', 'l', 'a', 'y'], none⟩, ⟨['k', 'ʰ', 'e'], ['F', 'U', 'T'], some '-'⟩]⟩, ⟨['=', 'ʔ', '-', 'd', 'o', '-', 'm'], ['=', 'A', 'S', 'S', '-', 'Q', 'U', 'O', 'T', '-', 'R', 'E', 'S', 'P'], [⟨['ʔ'], ['A', 'S', 'S'], some '='⟩, ⟨['d', 'o'], ['Q', 'U', 'O', 'T'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], []⟩]
+    glossedWords := [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], none⟩]⟩, ⟨['h', 'q', 'a', 'm', 'a', 'c', '̓', '-', 'k', 'ʰ', 'e'], ['p', 'l', 'a', 'y', '-', 'F', 'U', 'T'], [⟨['h', 'q', 'a', 'm', 'a', 'c', '̓'], ['p', 'l', 'a', 'y'], none⟩, ⟨['k', 'ʰ', 'e'], ['F', 'U', 'T'], some '-'⟩]⟩, ⟨['=', 'ʔ', '-', 'd', 'o', '-', 'm'], ['=', 'A', 'S', 'S', '-', 'Q', 'U', 'O', 'T', '-', 'R', 'E', 'S', 'P'], [⟨['ʔ'], ['A', 'S', 'S'], some '='⟩, ⟨['d', 'o'], ['Q', 'U', 'O', 'T'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], [⟨['ṭ', 'a'], [], none⟩]⟩]
     lgrConformance := some .morphemeAligned
     context := "From the same conversation as S28."
     judgment := .acceptable

@@ -74,7 +74,7 @@ updated with `p` does not already entail it, the `c + p + p' ≠ c + p` of (5) a
 def Informative (c p p' : Set W) : Prop := ¬ c ∩ p ⊆ p'
 
 theorem informative_iff (c p p' : Set W) : Informative c p p' ↔ c ∩ p ∩ p' ≠ c ∩ p := by
-  simp [Informative, Set.inter_eq_left]
+  simp [Informative]
 
 /-- (5): scalar assertion. The worlds of the context where `p` holds and no alternative holds
 that would have been informative after `p`; a strengthening item is licensed where this is

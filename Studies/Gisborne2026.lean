@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.English.TemporalDeictic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.Valency
+public import Linglib.Syntax.WordOrder
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Tactic.DeriveFintype

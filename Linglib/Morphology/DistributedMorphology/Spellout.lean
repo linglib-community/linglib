@@ -39,7 +39,7 @@ the focus alone](##DistributedMorphology.Spellout.pf_rewriteBefore_eq_pf_rewrite
 ## TODO
 
 * The operations before Linearization as maps of the hierarchical object, composed before the
-  handover of `LateInsertion.lean`.
+  pronounced terminals are handed over.
 * The place of Linearization: [arregi-nevins-2012] linearize before the linear operations, which
   precede insertion, and [embick-noyer-2001] linearize at insertion, with Lowering before it and
   Local Dislocation after.

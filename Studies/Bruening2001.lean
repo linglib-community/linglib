@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
+public import Linglib.Syntax.Minimalist.Lexicon
+public import Linglib.Syntax.Minimalist.SyntacticObject.Notation
 
 /-!
 # Bruening 2001: QR obeys Superiority
@@ -57,29 +59,32 @@ instance (t : PlanarSyntacticObject) (h : SyntacticObject) (qs : List SyntacticO
 
 /-! ### The double object construction -/
 
-/-- The light verb bearing the P-feature that attracts quantifiers ([kratzer-1996]'s Voice). -/
-def v : PlanarSyntacticObject := .leaf ⟨.of .Voice [.V] "v[P]", 400⟩
-/-- The applicative head introducing the first object ([pylkkanen-2008]). -/
-def appl : PlanarSyntacticObject := .leaf ⟨.of .Appl [.D] "Appl", 402⟩
-def gave : PlanarSyntacticObject := .leaf ⟨.of .V [.Appl] "gave", 404⟩
-def ozzy : PlanarSyntacticObject := .leaf ⟨.of .D [] "Ozzy", 406⟩
-/-- The first object, the goal. -/
-def aGirl : PlanarSyntacticObject := .leaf ⟨.of .D [] "a girl", 407⟩
-/-- The second object, the theme. -/
-def everyTelescope : PlanarSyntacticObject := .leaf ⟨.of .D [] "every telescope", 408⟩
-/-- The preposition of the locative variant. -/
-def toP : PlanarSyntacticObject := .leaf ⟨.of .P [.D] "to", 409⟩
+/-- The words of the double object construction and its locative variant. -/
+lexicon tokens from 400 where
+  /-- The light verb bearing the P-feature that attracts quantifiers ([kratzer-1996]'s Voice). -/
+  v : .Voice [.V] "v[P]"
+  /-- The applicative head introducing the first object ([pylkkanen-2008]). -/
+  appl : .Appl [.D] "Appl"
+  gave : .V [.Appl] "gave"
+  ozzy : .D "Ozzy"
+  /-- The first object, the goal. -/
+  aGirl : .D "a girl"
+  /-- The second object, the theme. -/
+  everyTelescope : .D "every telescope"
+  /-- The preposition of the locative variant. -/
+  toP : .P [.D] "to"
 
-/-- `{Ozzy, {v, {gave, {a girl, {Appl, every telescope}}}}}`. The first object is the argument of
+/-- `[Ozzy [v [gave [a-girl [Appl every-telescope]]]]]`. The first object is the argument of
 the applicative head, merged above the projection containing the second, so it asymmetrically
 c-commands it. -/
-def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelescope}}}}}
+def doc : PlanarSyntacticObject := so% [ozzy [v [gave [aGirl [appl everyTelescope]]]]]
 
 /-- The quantifiers competing for attraction in the double object construction. -/
 def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 
 -- The first object asymmetrically c-commands the second ([barss-lasnik-1986]).
-example : AsymmCCommands doc aGirl (everyTelescope : SyntacticObject) := by decide
+example : CCommands doc aGirl (everyTelescope : SyntacticObject) ∧
+    ¬ CCommands doc (everyTelescope : SyntacticObject) aGirl := by decide
 
 theorem doc_frozen : firsts doc v docQuantifiers = {↑aGirl} := by decide +kernel
 
@@ -88,11 +93,11 @@ theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide +kern
 /-! ### The locative variant -/
 
 /-- The PP that pied-pipes the goal. -/
-def toAGirl : PlanarSyntacticObject := {toP, aGirl}
+def toAGirl : PlanarSyntacticObject := so% [toP aGirl]
 
-/-- `{Ozzy, {v, {gave, {every telescope, {to, a girl}}}}}`. The direct object and the PP are
+/-- `[Ozzy [v [gave [every-telescope [to a-girl]]]]]`. The direct object and the PP are
 co-arguments of the same head, hence sisters, and c-command each other. -/
-def locative : PlanarSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGirl}}}}
+def locative : PlanarSyntacticObject := so% [ozzy [v [gave [everyTelescope (toAGirl)]]]]
 
 /-- The candidates in the locative, the direct object and the PP that pied-pipes the goal. -/
 def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
@@ -116,7 +121,7 @@ theorem subject_not_attractable : firsts doc v [ozzy] = ∅ := by decide +kernel
 
 /-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
-def passive : PlanarSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
+def passive : PlanarSyntacticObject := so% [aGirl [v [gave [appl everyTelescope]]]]
 
 theorem passive_ambiguous : firsts passive v docQuantifiers = {↑everyTelescope} := by
   decide +kernel

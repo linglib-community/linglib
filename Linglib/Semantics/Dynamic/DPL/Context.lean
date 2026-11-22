@@ -422,7 +422,7 @@ theorem IsScopeBound.mem_dom_eval_iff {φ : Formula L V} (h : φ.IsScopeBound) {
     rw [eval_imp, dom_test, ← compl_compl (ψ.eval M).dom, core_compl, ← dom_comp_test,
       (φ.hasContext_eval M).dom_comp (ψ.hasContext_eval M).neg (by rwa [context_B, context_I]),
       dom_test]
-    simp [toFormula, ihφ hφ, ihψ hψ]
+    simp [toFormula, ihφ hφ, ihψ hψ, imp_iff_not_or]
   | ex x φ ih => simp [toFormula, dom_randomAssign_comp, ih h]
   | all x φ ih =>
     rw [eval_all, dom_test, mem_core_randomAssign]

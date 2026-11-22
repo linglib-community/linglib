@@ -70,7 +70,8 @@ structure Cell where
 
 /-- The gender contrast of a pair of characters: `same` exactly when their φ-features agree,
 the pairs a third-person singular pronoun cannot tell apart. -/
-def Gender.ofPair (w₁ w₂ : Word) : Gender := if HasPhi.Agree w₁ w₂ then .same else .different
+def Gender.ofPair (w₁ w₂ : Word) : Gender :=
+  if Compat w₁.agreement.index w₂.agreement.index then .same else .different
 
 /-- Lisa, of *Lisa gave the leftover pie to Brendan*. -/
 def lisa : Word :=
@@ -140,7 +141,7 @@ theorem topical_not_fits (M : Model) (hM : M.Topical) : ¬ M.Fits (rate .retelli
 /-! ### Coherence and the goal effect (Experiment 2) -/
 
 /-- The coherence codes in Kehler's classification, Background having no counterpart there. -/
-def CoherenceCode.toCoherence : CoherenceCode → Option Discourse.Coherence.Relation
+def CoherenceCode.toCoherence : CoherenceCode → Option Coherence.Relation
   | .elaboration => some .elaboration
   | .explanation => some .explanation
   | .occasion => some .occasion

@@ -122,17 +122,17 @@ constant, which conditioning absorbs. -/
 noncomputable def unif (N : ℕ) : Measure ℕ := ∑ k ∈ Finset.range (N + 1), Measure.dirac k
 
 theorem unif_apply_singleton (N k : ℕ) : unif N {k} = if k ≤ N then 1 else 0 := by
-  simp only [unif, Measure.finsetSum_apply, Measure.dirac_apply, Set.indicator_apply,
+  simp only [unif, sum_apply, Measure.dirac_apply, Set.indicator_apply,
     Set.mem_singleton_iff, Pi.one_apply, Finset.sum_ite_eq', Finset.mem_range, Nat.lt_succ_iff]
 
 theorem unif_apply_Ici (N d : ℕ) : unif N (Set.Ici d) = (N + 1 - d : ℕ) := by
-  simp only [unif, Measure.finsetSum_apply, Measure.dirac_apply, Set.indicator_apply, Set.mem_Ici,
+  simp only [unif, sum_apply, Measure.dirac_apply, Set.indicator_apply, Set.mem_Ici,
     Pi.one_apply, Finset.sum_boole]
   rw [show (Finset.range (N + 1)).filter (fun i ↦ d ≤ i) = Finset.Ico d (N + 1) from by
     ext i; simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Ico]; omega, Nat.card_Ico]
 
 theorem unif_apply_Icc {N a b : ℕ} (hb : b ≤ N) : unif N (Set.Icc a b) = (b + 1 - a : ℕ) := by
-  simp only [unif, Measure.finsetSum_apply, Measure.dirac_apply, Set.indicator_apply, Set.mem_Icc,
+  simp only [unif, sum_apply, Measure.dirac_apply, Set.indicator_apply, Set.mem_Icc,
     Pi.one_apply, Finset.sum_boole]
   rw [show (Finset.range (N + 1)).filter (fun i ↦ a ≤ i ∧ i ≤ b) = Finset.Icc a b from by
     ext i; simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Icc]; omega, Nat.card_Icc]
@@ -345,7 +345,7 @@ noncomputable def table1 : Measure (Fin 9) :=
   (100 : ℝ≥0∞)⁻¹ • ∑ x, (table1Weight x : ℝ≥0∞) • Measure.dirac x
 
 theorem table1_apply_singleton (x : Fin 9) : table1 {x} = (100 : ℝ≥0∞)⁻¹ * table1Weight x := by
-  rw [table1, Measure.smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton]
+  rw [table1, smul_apply, smul_eq_mul, Measure.finsetSum_smul_dirac_singleton]
 
 theorem table1_real_singleton (x : Fin 9) : table1.real {x} = table1Weight x / 100 := by
   rw [measureReal_def, table1_apply_singleton, ENNReal.toReal_mul, ENNReal.toReal_inv,
@@ -353,7 +353,7 @@ theorem table1_real_singleton (x : Fin 9) : table1.real {x} = table1Weight x / 1
 
 instance : IsProbabilityMeasure table1 := by
   constructor
-  rw [table1, Measure.smul_apply, smul_eq_mul, ← Finset.coe_univ,
+  rw [table1, smul_apply, smul_eq_mul, ← Finset.coe_univ,
     Measure.finsetSum_smul_dirac_apply_finset, ← Nat.cast_sum,
     show ∑ x : Fin 9, table1Weight x = 100 by decide]
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
@@ -678,7 +678,7 @@ theorem wir_ne_bir :
     rw [measureReal_def, bir_apply_singleton, lintegral_unif, Finset.sum_range_succ,
       Finset.sum_range_succ, Finset.sum_range_one, unif_apply_singleton, ite_eq_left (by norm_num),
       one_mul]
-    simp only [aroundWeight, Measure.smul_apply, smul_eq_mul, unif_apply_Ici, Nat.dist]
+    simp only [aroundWeight, smul_apply, smul_eq_mul, unif_apply_Ici, Nat.dist]
     norm_num [ENNReal.toReal_mul, ENNReal.toReal_add, ENNReal.toReal_inv, ENNReal.toReal_div]
   rw [h, hb] at hw
   norm_num at hw

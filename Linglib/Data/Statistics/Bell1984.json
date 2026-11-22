@@ -1,0 +1,394 @@
+{
+  "meta": {
+    "bibkey": "bell-1984",
+    "method": "survey",
+    "description": "The tables Bell assembles from earlier studies: the standard fricatives of one subject in Mahl's monitoring experiment, and the percentage a speaker's variables shift when an outsider is an auditor, when he is the addressee, and when the topic changes."
+  },
+  "types": [
+    {
+      "name": "Noise",
+      "doc": "Whether white noise through earphones masks the subject's own voice.",
+      "levels": [
+        {
+          "name": "quiet",
+          "label": "No noise",
+          "doc": "the subject hears himself speak"
+        },
+        {
+          "name": "noise",
+          "label": "Noise",
+          "doc": "white noise prevents the subject hearing himself"
+        }
+      ]
+    },
+    {
+      "name": "Facing",
+      "doc": "Whether the subject faces the interviewer.",
+      "levels": [
+        {
+          "name": "facing",
+          "label": "Facing interviewer",
+          "doc": "the subject sees the interviewer"
+        },
+        {
+          "name": "notFacing",
+          "label": "Not facing",
+          "doc": "the subject is turned away from the interviewer"
+        }
+      ]
+    },
+    {
+      "name": "CreoleVariable",
+      "doc": "The three variables of Table 4, on the continuum from Hawaiian creole to standard English.",
+      "levels": [
+        {
+          "name": "binWen",
+          "label": "bin/wen past marker",
+          "doc": "*bin* or *wen* as the past marker"
+        },
+        {
+          "name": "wan",
+          "label": "wan indefinite article",
+          "doc": "*wan* as the indefinite article"
+        },
+        {
+          "name": "no",
+          "label": "Negation with no",
+          "doc": "negation with *no*"
+        }
+      ]
+    },
+    {
+      "name": "IrishSpeaker",
+      "doc": "The two speakers of Table 5, recorded together with the English outsider.",
+      "levels": [
+        {
+          "name": "c",
+          "label": "Speaker C",
+          "doc": "speaker C"
+        },
+        {
+          "name": "e",
+          "label": "Speaker E",
+          "doc": "speaker E"
+        }
+      ]
+    },
+    {
+      "name": "IrishVariable",
+      "doc": "The three variables of Table 5, from Northern Irish to standard English.",
+      "levels": [
+        {
+          "name": "ng",
+          "label": "(ng)",
+          "doc": "the variable (ng)"
+        },
+        {
+          "name": "ai",
+          "label": "(ai)",
+          "doc": "the variable (ai)"
+        },
+        {
+          "name": "au",
+          "label": "(au)",
+          "doc": "the variable printed with a barred u, (aʉ)"
+        }
+      ]
+    },
+    {
+      "name": "TravelVariable",
+      "doc": "The four variables of Table 6 in the travel assistant's speech.",
+      "levels": [
+        {
+          "name": "hDropping",
+          "label": "(h) dropping",
+          "doc": "dropping of (h)"
+        },
+        {
+          "name": "rFlap",
+          "label": "(r) flap vs. continuant",
+          "doc": "flapped against continuant (r)"
+        },
+        {
+          "name": "clusterReduction",
+          "label": "Consonant cluster reduction",
+          "doc": "reduction of consonant clusters"
+        },
+        {
+          "name": "tVoicing",
+          "label": "Intervocalic (t) voicing",
+          "doc": "voicing of intervocalic (t)"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "dhStandard",
+      "structure": "DhCell",
+      "method": "experiment",
+      "doc": "the percentage of the (dh) variable the subject realizes as the standard fricative.",
+      "locator": "Table 1, p. 148",
+      "verified": "page-image",
+      "key": [
+        "noise",
+        "facing"
+      ],
+      "columns": [
+        {
+          "name": "noise",
+          "type": "Noise",
+          "doc": "The masking condition."
+        },
+        {
+          "name": "facing",
+          "type": "Facing",
+          "doc": "The facing condition."
+        },
+        {
+          "name": "percent",
+          "type": "nat",
+          "doc": "The percentage of standard fricatives."
+        }
+      ],
+      "rows": [
+        {
+          "noise": "No noise",
+          "facing": "Facing interviewer",
+          "percent": 82
+        },
+        {
+          "noise": "No noise",
+          "facing": "Not facing",
+          "percent": 78
+        },
+        {
+          "noise": "Noise",
+          "facing": "Facing interviewer",
+          "percent": 69
+        },
+        {
+          "noise": "Noise",
+          "facing": "Not facing",
+          "percent": 65
+        }
+      ]
+    },
+    {
+      "name": "thStandard",
+      "structure": "ThCell",
+      "method": "experiment",
+      "doc": "the percentage of the (th) variable the subject realizes as the standard fricative, printed in parentheses as an estimate from the published figures for (dh) and for the two variables combined.",
+      "locator": "Table 2, p. 149",
+      "verified": "page-image",
+      "key": [
+        "noise",
+        "facing"
+      ],
+      "columns": [
+        {
+          "name": "noise",
+          "type": "Noise",
+          "doc": "The masking condition."
+        },
+        {
+          "name": "facing",
+          "type": "Facing",
+          "doc": "The facing condition."
+        },
+        {
+          "name": "percent",
+          "type": "nat",
+          "doc": "The estimated percentage of standard fricatives."
+        }
+      ],
+      "rows": [
+        {
+          "noise": "No noise",
+          "facing": "Facing interviewer",
+          "percent": 96
+        },
+        {
+          "noise": "No noise",
+          "facing": "Not facing",
+          "percent": 72
+        },
+        {
+          "noise": "Noise",
+          "facing": "Facing interviewer",
+          "percent": 86
+        },
+        {
+          "noise": "Noise",
+          "facing": "Not facing",
+          "percent": 77
+        }
+      ]
+    },
+    {
+      "name": "sailorShift",
+      "structure": "SailorShift",
+      "doc": "the percentage Sailor shifts a variable toward standard English with the investigator in the audience.",
+      "locator": "Table 4, p. 173",
+      "verified": "page-image",
+      "key": [
+        "variable"
+      ],
+      "columns": [
+        {
+          "name": "variable",
+          "type": "CreoleVariable",
+          "doc": "The variable."
+        },
+        {
+          "name": "auditor",
+          "type": "nat",
+          "doc": "The shift from the peer group to the peer group with the investigator."
+        },
+        {
+          "name": "addressee",
+          "type": "nat",
+          "doc": "The shift from the dyad with a friend to the interview with the investigator."
+        }
+      ],
+      "rows": [
+        {
+          "variable": "bin/wen past marker",
+          "auditor": 27,
+          "addressee": 59
+        },
+        {
+          "variable": "wan indefinite article",
+          "auditor": 20,
+          "addressee": 65
+        },
+        {
+          "variable": "Negation with no",
+          "auditor": 39,
+          "addressee": 60
+        }
+      ]
+    },
+    {
+      "name": "outsiderShift",
+      "structure": "OutsiderShift",
+      "doc": "the percentage a speaker shifts a variable toward standard English from talk with a peer, all variables normalized to a base of 100%.",
+      "locator": "Table 5, p. 174",
+      "verified": "page-image",
+      "key": [
+        "speaker",
+        "variable"
+      ],
+      "columns": [
+        {
+          "name": "speaker",
+          "type": "IrishSpeaker",
+          "doc": "The speaker."
+        },
+        {
+          "name": "variable",
+          "type": "IrishVariable",
+          "doc": "The variable."
+        },
+        {
+          "name": "auditor",
+          "type": "nat",
+          "doc": "The shift with the English outsider as auditor."
+        },
+        {
+          "name": "addressee",
+          "type": "nat",
+          "doc": "The shift with the English outsider as addressee."
+        }
+      ],
+      "rows": [
+        {
+          "speaker": "Speaker C",
+          "variable": "(ng)",
+          "auditor": 18,
+          "addressee": 22
+        },
+        {
+          "speaker": "Speaker C",
+          "variable": "(ai)",
+          "auditor": 1,
+          "addressee": 15
+        },
+        {
+          "speaker": "Speaker C",
+          "variable": "(au)",
+          "auditor": 2,
+          "addressee": 18
+        },
+        {
+          "speaker": "Speaker E",
+          "variable": "(ng)",
+          "auditor": 37,
+          "addressee": 61
+        },
+        {
+          "speaker": "Speaker E",
+          "variable": "(ai)",
+          "auditor": 0,
+          "addressee": 26
+        },
+        {
+          "speaker": "Speaker E",
+          "variable": "(au)",
+          "auditor": 6,
+          "addressee": 32
+        }
+      ]
+    },
+    {
+      "name": "travelShift",
+      "structure": "TravelShift",
+      "doc": "the percentage the travel assistant shifts a variable.",
+      "locator": "Table 6, p. 179",
+      "verified": "page-image",
+      "key": [
+        "variable"
+      ],
+      "columns": [
+        {
+          "name": "variable",
+          "type": "TravelVariable",
+          "doc": "The variable."
+        },
+        {
+          "name": "topic",
+          "type": "nat",
+          "doc": "The shift from work to nonwork topics with the same addressees."
+        },
+        {
+          "name": "addressee",
+          "type": "nat",
+          "doc": "The shift from the highest to the lowest class of addressee."
+        }
+      ],
+      "rows": [
+        {
+          "variable": "(h) dropping",
+          "topic": 25,
+          "addressee": 32
+        },
+        {
+          "variable": "(r) flap vs. continuant",
+          "topic": 4,
+          "addressee": 28
+        },
+        {
+          "variable": "Consonant cluster reduction",
+          "topic": 25,
+          "addressee": 37
+        },
+        {
+          "variable": "Intervocalic (t) voicing",
+          "topic": 31,
+          "addressee": 55
+        }
+      ]
+    }
+  ]
+}

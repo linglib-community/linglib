@@ -1,625 +1,789 @@
-[
-  {
-    "id": "egressy2026_4",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(4)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti a saját szem-é-vel lát-t-a (az-t), hogy Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["a", "the"], ["saját", "own"], ["szem-é-vel", "eye-3SG.P-INS"],
-      ["lát-t-a", "see-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Mari", "Mari"],
-      ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti saw the following with his own eyes: “Mari is sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"},
-      {"name": "backshifted", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "nonSpeechReporting"],
-      ["directPerception", "yes"]
-    ],
-    "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event.",
-    "verified": "page-image"
+{
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "matrix",
+          "label": "matrix",
+          "doc": "the verb of the matrix clause"
+        },
+        {
+          "name": "intermediate",
+          "label": "intermediate",
+          "doc": "the verb of the intermediate clause of a double embedding"
+        },
+        {
+          "name": "correlate",
+          "label": "correlate",
+          "doc": "the expletive correlate of an embedded clause"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The verbs and the correlates the rows mark.",
+      "levels": [
+        {
+          "name": "lat",
+          "label": "lat",
+          "doc": "lát 'see'"
+        },
+        {
+          "name": "hall",
+          "label": "hall",
+          "doc": "hall 'hear'"
+        },
+        {
+          "name": "almodik",
+          "label": "almodik",
+          "doc": "álmodik 'dream'"
+        },
+        {
+          "name": "gondol",
+          "label": "gondol",
+          "doc": "gondol 'think'"
+        },
+        {
+          "name": "aggaszt",
+          "label": "aggaszt",
+          "doc": "aggaszt 'worry'"
+        },
+        {
+          "name": "mond",
+          "label": "mond",
+          "doc": "mond 'say'"
+        },
+        {
+          "name": "rikolt",
+          "label": "rikolt",
+          "doc": "rikolt 'shout'"
+        },
+        {
+          "name": "morog",
+          "label": "morog",
+          "doc": "morog 'growl'"
+        },
+        {
+          "name": "telefonal",
+          "label": "telefonal",
+          "doc": "telefonál 'be on the phone'"
+        },
+        {
+          "name": "az",
+          "label": "az",
+          "doc": "the demonstrative az 'that' in its expletive use"
+        },
+        {
+          "name": "amiatt",
+          "label": "amiatt",
+          "doc": "amiatt 'because of that'"
+        }
+      ]
+    }
   },
-  {
-    "id": "egressy2026_5",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(5)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti a saját fül-é-vel hall-ott-a (az-t), hogy Mari sír-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["a", "the"], ["saját", "own"], ["fül-é-vel", "ear-3SG.P-INS"],
-      ["hall-ott-a", "hear-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Mari", "Mari"],
-      ["sír-t", "cry-PST.3SG.INDF"]
-    ],
-    "translation": "Peti heard the following with his own ears: “Mari is crying”.",
-    "context": "Peti heard the noise of crying.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"},
-      {"name": "backshifted", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "nonSpeechReporting"],
-      ["directPerception", "yes"]
-    ],
-    "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13).",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_6",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(6)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t álmod-t-a, hogy Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["álmod-t-a", "dream-PST-3SG.DF"], ["hogy", "that"],
-      ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti saw the following in his dream: “Mari is sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"},
-      {"name": "backshifted", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "nonSpeechReporting"],
-      ["directPerception", "yes"]
-    ],
-    "comment": "Dreaming as perception in a dream.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_7",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(7)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t gondol-t-a, hogy Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["gondol-t-a", "think-PST-3SG.DF"], ["hogy", "that"],
-      ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti thought the following: “Mari is/was sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Peti az-t hit-t-e, hogy Mari szomorú vol-t.", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "nonSpeechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "Thought and belief: no direct perception, so both readings are available.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_8",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(8)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Az aggaszt-ott-a Peti-t, hogy Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Az", "it"], ["aggaszt-ott-a", "worry-PST-3SG.DF"], ["Peti-t", "Peti-ACC"],
-      ["hogy", "that"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "The following worried Peti: “Mari is/was sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "nonSpeechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "A subject clause with the nominative expletive az.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_9",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(9)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Morog-t-ál (a-miatt, hogy Mari szomorú vol-t).",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Morog-t-ál", "growl-PST-2SG.INDF"], ["(a-miatt,", "it-because"], ["hogy", "that"],
-      ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t)", "be-PST.3SG"]
-    ],
-    "translation": "You growled because of the following: “Mari is/was sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "nonSpeechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11).",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_10",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(10)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t álmod-t-a, hogy Mari a saját szem-é-vel lát-t-a (az-t), hogy Zsuzsi szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["álmod-t-a", "dream-PST-3SG.DF"], ["hogy", "that"],
-      ["Mari", "Mari"], ["a", "the"], ["saját", "own"], ["szem-é-vel", "eye-3SG.P-INS"],
-      ["lát-t-a", "see-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Zsuzsi", "Zsuzsi"],
-      ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti dreamed the following: “Mari sees the following: ‘Zsuzsi is sad’”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "intermediate simultaneous", "judgment": "acceptable"},
-      {"name": "intermediate backshifted", "judgment": "unacceptable"},
-      {"name": "deepest simultaneous", "judgment": "acceptable"},
-      {"name": "deepest backshifted", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["intermediateClauseType", "nonSpeechReporting"],
-      ["deepestClauseType", "nonSpeechReporting"],
-      ["intermediateVerb", "lát"],
-      ["intermediateDirectPerception", "yes"],
-      ["deepestDirectPerception", "yes"]
-    ],
-    "comment": "Multiple embedding of non-speech-reporting clauses: simultaneous at both levels; direct perception at both levels excludes backshifting.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_11a",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(11)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t mond-t-a, hogy (sajnos) Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["mond-t-a", "say-PST-3SG.DF"], ["hogy", "that"],
-      ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti said the following: “(Unfortunately,) Mari was/#is sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "unacceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "speechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_11b",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(11)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t rikolt-ott-a, hogy (sajnos) Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
-      ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti shouted the following: “(Unfortunately,) Mari was/#is sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "unacceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "speechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "The content of what was shouted: backshifted only.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_11c",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(11)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t morog-t-a, hogy (sajnos) Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["morog-t-a", "growl-PST-3SG.DF"], ["hogy", "that"],
-      ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti growled the following: “(Unfortunately,) Mari was/#is sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "unacceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "speechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9).",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_12",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(12)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Telefonál-t-ál (az-zal, hogy (sajnos) Mari szomorú vol-t).",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Telefonál-t-ál", "be.on.the.phone-PST-2SG.INDF"], ["(az-zal,", "it-INS"], ["hogy", "that"],
-      ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"],
-      ["vol-t)", "be-PST.3SG"]
-    ],
-    "translation": "You called (with the words: “(Unfortunately,) Mari was/#is sad”).",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "simultaneous", "judgment": "unacceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "speechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only. The paper prints the alternatives as {Telefonál-t-ál/ Oda jö-tt-él hoz-zám} and 'You {called/approached me}': hoz-zám 'to me' goes with oda jön only.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_13",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(13)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Zsuzsi Peti-től az-t hall-ott-a, hogy sajnos Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Zsuzsi", "Zsuzsi"], ["Peti-től", "Peti-ABL"], ["az-t", "it-ACC"],
-      ["hall-ott-a", "hear-PST-3SG.DF"], ["hogy", "that"], ["sajnos", "unfortunately"],
-      ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Zsuzsi heard from Peti: “Unfortunately, Mari was/#is sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", "judgment": "acceptable"},
-      {"form": "Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "simultaneous", "judgment": "unacceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "speechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_14",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(14)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti a telesír-t zsebkendő-k-ből lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["a", "the"], ["telesír-t", "cry.in-PTCP"],
-      ["zsebkendő-k-ből", "handkerchief-PL-EL"], ["lát-t-a", "see-PST-3SG.DF"],
-      ["(az-t)", "it-ACC"], ["hogy", "that"], ["(korá-bb-an)", "early-COMP-ADV"], ["Mari", "Mari"],
-      ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "From the used handkerchiefs, Peti saw: “Mari was/#is sad (earlier)”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "simultaneous", "judgment": "unacceptable"},
-      {"name": "backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseType", "speechReporting"],
-      ["directPerception", "no"]
-    ],
-    "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_15",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(15)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t rikolt-ott-a, hogy Mari az-t morog-t-a, hogy Zsuzsi szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
-      ["Mari", "Mari"], ["az-t", "it-ACC"], ["morog-t-a", "growl-PST-3SG.DF"], ["hogy", "that"],
-      ["Zsuzsi", "Zsuzsi"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti shouted, saying: “Mari growled/#growls, saying: ‘Zsuzsi was/#is sad’”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "intermediate simultaneous", "judgment": "unacceptable"},
-      {"name": "intermediate backshifted", "judgment": "acceptable"},
-      {"name": "deepest simultaneous", "judgment": "unacceptable"},
-      {"name": "deepest backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["intermediateClauseType", "speechReporting"],
-      ["deepestClauseType", "speechReporting"],
-      ["intermediateVerb", "morog"],
-      ["intermediateDirectPerception", "no"],
-      ["deepestDirectPerception", "no"]
-    ],
-    "comment": "Multiple embedding of speech-reporting clauses: backshifting at both levels.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_16",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(16)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Peti az-t rikolt-ott-a, hogy Mari a saját szem-é-vel lát-t-a (az-t), hogy Zsuzsi szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Peti", "Peti"], ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
-      ["Mari", "Mari"], ["a", "the"], ["saját", "own"], ["szem-é-vel", "eye-3SG.P-INS"],
-      ["lát-t-a", "see-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Zsuzsi", "Zsuzsi"],
-      ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Peti shouted, saying: “Mari saw the following with her own eyes: ‘Zsuzsi is sad’”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "intermediate simultaneous", "judgment": "unacceptable"},
-      {"name": "intermediate backshifted", "judgment": "acceptable"},
-      {"name": "deepest simultaneous", "judgment": "acceptable"},
-      {"name": "deepest backshifted", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["intermediateClauseType", "speechReporting"],
-      ["deepestClauseType", "nonSpeechReporting"],
-      ["intermediateVerb", "lát"],
-      ["intermediateDirectPerception", "no"],
-      ["deepestDirectPerception", "yes"]
-    ],
-    "comment": "A non-speech-reporting clause inside a speech-reporting one: the intermediate clause is backshifted, the deepest simultaneous with it; the intermediate perception verb excludes backshifting of the deepest clause.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_17",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(17)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Mari a saját fül-é-vel hall-ott-a (az-t), hogy Peti az-t rikolt-ott-a, hogy Zsuzsi szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Mari", "Mari"], ["a", "the"], ["saját", "own"], ["fül-é-vel", "ear-3SG.P-INS"],
-      ["hall-ott-a", "hear-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Peti", "Peti"],
-      ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
-      ["Zsuzsi", "Zsuzsi"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
-    ],
-    "translation": "Mari heard with her own ears: “Peti shouts the following: ‘Zsuzsi was sad’”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "intermediate simultaneous", "judgment": "acceptable"},
-      {"name": "intermediate backshifted", "judgment": "unacceptable"},
-      {"name": "deepest simultaneous", "judgment": "unacceptable"},
-      {"name": "deepest backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["intermediateClauseType", "nonSpeechReporting"],
-      ["deepestClauseType", "speechReporting"],
-      ["intermediateVerb", "rikolt"],
-      ["intermediateDirectPerception", "yes"],
-      ["deepestDirectPerception", "no"]
-    ],
-    "comment": "A speech-reporting clause inside a non-speech-reporting one: the intermediate clause is simultaneous with the matrix, the deepest backshifted; only structurally adjacent clauses interact.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_18",
-    "source": {"bibkey": "ogihara-1996", "paperLabel": "p. 105"},
-    "reportedIn": {"bibkey": "egressy-2026", "paperLabel": "(18)"},
-    "language": "stan1293",
-    "primaryText": "John said that Mary will claim that she was sick.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "deepest simultaneous", "judgment": "unacceptable"},
-      {"name": "deepest backshifted", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["intermediateTense", "future"],
-      ["deepestTense", "past"]
-    ],
-    "comment": "Past under will under past: Mary's words cannot be “I am sick”, since the next lowest tense above the deepest past is the future will, not a past.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_19",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(19)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Mary claimed that she was sick.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "simultaneous", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["clauseSize", "cP"],
-      ["directPerception", "no"]
-    ],
-    "comment": "English past under past has the simultaneous reading, Mary's words being “I am sick”; the backshifted reading is set aside.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_23",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(23)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Pál az-t mond-t-a, hogy sajnos Ili szomorú vol-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Pál", "Pál"], ["az-t", "it-ACC"], ["mond-t-a", "say-PST-3SG.DF"], ["hogy", "that"],
-      ["sajnos", "unfortunately"], ["Ili", "Ili"], ["szomorú", "sad"],
-      ["vol-t", "be-PST.3SG.INDF"]
-    ],
-    "translation": "Pál said: “Unfortunately, Ili is/#was sad”.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", "judgment": "acceptable"},
-      {"form": "Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", "judgment": "acceptable"},
-      {"form": "Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", "judgment": "unacceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "evaluativeAdverb"]
-    ],
-    "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_24",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(24)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy keresztül fut-ott-ak.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Sajnos", "unfortunately"], ["(CSAK)", "only"], ["A", "the"], ["VÁROS-ON", "city-SUP"],
-      ["hall-ott-am", "hear-PST-1SG.DF"], ["hogy", "that"], ["keresztül", "across"],
-      ["fut-ott-ak", "run-PST-3PL.INDF"]
-    ],
-    "translation": "Unfortunately, I heard that they ran across ONLY THE CITY.",
-    "context": "The focused phrase is extracted from the embedded clause to the matrix Spec,FocP.",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", "judgment": "questionable"},
-      {"form": "Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", "judgment": "questionable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "focusMovement"],
-      ["embeddedAdverb", "no"]
-    ],
-    "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_25",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(25)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Melyik város-on lát-t-ad, hogy keresztül fut-ott-ak?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Melyik", "which"], ["város-on", "city-SUP"], ["lát-t-ad", "see-PST-2SG.DF"],
-      ["hogy", "that"], ["keresztül", "across"], ["fut-ott-ak", "run-PST-3PL.INDF"]
-    ],
-    "translation": "Which city did you see that they ran across?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", "judgment": "questionable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "whMovement"]
-    ],
-    "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_27",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(27)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ed seems to be sad.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "[TP Ed seems [TP __ to be sad]]",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "raising"],
-      ["crossed", "tP"]
-    ],
-    "comment": "Raising to Spec,TP across a TP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "egressy2026_28",
-    "source": {"bibkey": "egressy-2026", "paperLabel": "(28)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ed seems is sad.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "[TP Ed seems [CP __ is sad]]",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["diagnostic", "raising"],
-      ["crossed", "cP"]
-    ],
-    "comment": "The ban on hyperraising: raising to Spec,TP cannot cross a CP, since C is above T in the functional sequence.",
-    "verified": "page-image"
-  }
-]
+  "examples": [
+    {
+      "id": "egressy2026_4",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(4)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti a saját szem-é-vel lát-t-a (az-t), hogy Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["a", "the"], ["saját", "own"], ["szem-é-vel", "eye-3SG.P-INS"],
+        ["lát-t-a", "see-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Mari", "Mari"],
+        ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti saw the following with his own eyes: “Mari is sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"},
+        {"name": "backshifted", "judgment": "unacceptable"}
+      ],
+      "spans": [
+        {"start": 4, "label": "matrix", "lexeme": "lat"},
+        {"start": 5, "label": "correlate", "lexeme": "az"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "nonSpeechReporting"],
+        ["directPerception", "yes"]
+      ],
+      "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_5",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(5)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti a saját fül-é-vel hall-ott-a (az-t), hogy Mari sír-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["a", "the"], ["saját", "own"], ["fül-é-vel", "ear-3SG.P-INS"],
+        ["hall-ott-a", "hear-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Mari", "Mari"],
+        ["sír-t", "cry-PST.3SG.INDF"]
+      ],
+      "translation": "Peti heard the following with his own ears: “Mari is crying”.",
+      "context": "Peti heard the noise of crying.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"},
+        {"name": "backshifted", "judgment": "unacceptable"}
+      ],
+      "spans": [
+        {"start": 4, "label": "matrix", "lexeme": "hall"},
+        {"start": 5, "label": "correlate", "lexeme": "az"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "nonSpeechReporting"],
+        ["directPerception", "yes"]
+      ],
+      "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13).",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_6",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(6)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t álmod-t-a, hogy Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["álmod-t-a", "dream-PST-3SG.DF"], ["hogy", "that"],
+        ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti saw the following in his dream: “Mari is sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"},
+        {"name": "backshifted", "judgment": "unacceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "almodik"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "nonSpeechReporting"],
+        ["directPerception", "yes"]
+      ],
+      "comment": "Dreaming as perception in a dream.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_7",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(7)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t gondol-t-a, hogy Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["gondol-t-a", "think-PST-3SG.DF"], ["hogy", "that"],
+        ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti thought the following: “Mari is/was sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Peti az-t hit-t-e, hogy Mari szomorú vol-t.", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "gondol"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "nonSpeechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "Thought and belief: no direct perception, so both readings are available.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_8",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(8)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Az aggaszt-ott-a Peti-t, hogy Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Az", "it"], ["aggaszt-ott-a", "worry-PST-3SG.DF"], ["Peti-t", "Peti-ACC"],
+        ["hogy", "that"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "The following worried Peti: “Mari is/was sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 0, "label": "correlate", "lexeme": "az"},
+        {"start": 1, "label": "matrix", "lexeme": "aggaszt"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "nonSpeechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "A subject clause with the nominative expletive az.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_9",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(9)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Morog-t-ál (a-miatt, hogy Mari szomorú vol-t).",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Morog-t-ál", "growl-PST-2SG.INDF"], ["(a-miatt,", "it-because"], ["hogy", "that"],
+        ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t)", "be-PST.3SG"]
+      ],
+      "translation": "You growled because of the following: “Mari is/was sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 0, "label": "matrix", "lexeme": "morog"},
+        {"start": 1, "label": "correlate", "lexeme": "amiatt"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "nonSpeechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11).",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_10",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(10)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t álmod-t-a, hogy Mari a saját szem-é-vel lát-t-a (az-t), hogy Zsuzsi szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["álmod-t-a", "dream-PST-3SG.DF"], ["hogy", "that"],
+        ["Mari", "Mari"], ["a", "the"], ["saját", "own"], ["szem-é-vel", "eye-3SG.P-INS"],
+        ["lát-t-a", "see-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Zsuzsi", "Zsuzsi"],
+        ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti dreamed the following: “Mari sees the following: ‘Zsuzsi is sad’”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "intermediate simultaneous", "judgment": "acceptable"},
+        {"name": "intermediate backshifted", "judgment": "unacceptable"},
+        {"name": "deepest simultaneous", "judgment": "acceptable"},
+        {"name": "deepest backshifted", "judgment": "unacceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "almodik"},
+        {"start": 8, "label": "intermediate", "lexeme": "lat"},
+        {"start": 9, "label": "correlate", "lexeme": "az"}
+      ],
+      "paperFeatures": [
+        ["intermediateClauseType", "nonSpeechReporting"],
+        ["deepestClauseType", "nonSpeechReporting"],
+        ["intermediateDirectPerception", "yes"],
+        ["deepestDirectPerception", "yes"]
+      ],
+      "comment": "Multiple embedding of non-speech-reporting clauses: simultaneous at both levels; direct perception at both levels excludes backshifting.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_11a",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(11)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t mond-t-a, hogy (sajnos) Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["mond-t-a", "say-PST-3SG.DF"], ["hogy", "that"],
+        ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti said the following: “(Unfortunately,) Mari was/#is sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "unacceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "mond"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "speechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_11b",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(11)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t rikolt-ott-a, hogy (sajnos) Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
+        ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti shouted the following: “(Unfortunately,) Mari was/#is sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "unacceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "rikolt"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "speechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "The content of what was shouted: backshifted only.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_11c",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(11)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t morog-t-a, hogy (sajnos) Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["morog-t-a", "growl-PST-3SG.DF"], ["hogy", "that"],
+        ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti growled the following: “(Unfortunately,) Mari was/#is sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "unacceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "morog"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "speechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9).",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_12",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(12)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Telefonál-t-ál (az-zal, hogy (sajnos) Mari szomorú vol-t).",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Telefonál-t-ál", "be.on.the.phone-PST-2SG.INDF"], ["(az-zal,", "it-INS"], ["hogy", "that"],
+        ["(sajnos)", "unfortunately"], ["Mari", "Mari"], ["szomorú", "sad"],
+        ["vol-t)", "be-PST.3SG"]
+      ],
+      "translation": "You called (with the words: “(Unfortunately,) Mari was/#is sad”).",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "simultaneous", "judgment": "unacceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 0, "label": "matrix", "lexeme": "telefonal"},
+        {"start": 1, "label": "correlate", "lexeme": "az"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "speechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only. The paper prints the alternatives as {Telefonál-t-ál/ Oda jö-tt-él hoz-zám} and 'You {called/approached me}': hoz-zám 'to me' goes with oda jön only.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_13",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(13)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Zsuzsi Peti-től az-t hall-ott-a, hogy sajnos Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Zsuzsi", "Zsuzsi"], ["Peti-től", "Peti-ABL"], ["az-t", "it-ACC"],
+        ["hall-ott-a", "hear-PST-3SG.DF"], ["hogy", "that"], ["sajnos", "unfortunately"],
+        ["Mari", "Mari"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Zsuzsi heard from Peti: “Unfortunately, Mari was/#is sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", "judgment": "acceptable"},
+        {"form": "Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "simultaneous", "judgment": "unacceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 2, "label": "correlate", "lexeme": "az"},
+        {"start": 3, "label": "matrix", "lexeme": "hall"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "speechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_14",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(14)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti a telesír-t zsebkendő-k-ből lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["a", "the"], ["telesír-t", "cry.in-PTCP"],
+        ["zsebkendő-k-ből", "handkerchief-PL-EL"], ["lát-t-a", "see-PST-3SG.DF"],
+        ["(az-t)", "it-ACC"], ["hogy", "that"], ["(korá-bb-an)", "early-COMP-ADV"], ["Mari", "Mari"],
+        ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "From the used handkerchiefs, Peti saw: “Mari was/#is sad (earlier)”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", "judgment": "acceptable"}
+      ],
+      "readings": [
+        {"name": "simultaneous", "judgment": "unacceptable"},
+        {"name": "backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 4, "label": "matrix", "lexeme": "lat"},
+        {"start": 5, "label": "correlate", "lexeme": "az"}
+      ],
+      "paperFeatures": [
+        ["clauseType", "speechReporting"],
+        ["directPerception", "no"]
+      ],
+      "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_15",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(15)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t rikolt-ott-a, hogy Mari az-t morog-t-a, hogy Zsuzsi szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
+        ["Mari", "Mari"], ["az-t", "it-ACC"], ["morog-t-a", "growl-PST-3SG.DF"], ["hogy", "that"],
+        ["Zsuzsi", "Zsuzsi"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti shouted, saying: “Mari growled/#growls, saying: ‘Zsuzsi was/#is sad’”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "intermediate simultaneous", "judgment": "unacceptable"},
+        {"name": "intermediate backshifted", "judgment": "acceptable"},
+        {"name": "deepest simultaneous", "judgment": "unacceptable"},
+        {"name": "deepest backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "rikolt"},
+        {"start": 5, "label": "correlate", "lexeme": "az"},
+        {"start": 6, "label": "intermediate", "lexeme": "morog"}
+      ],
+      "paperFeatures": [
+        ["intermediateClauseType", "speechReporting"],
+        ["deepestClauseType", "speechReporting"],
+        ["intermediateDirectPerception", "no"],
+        ["deepestDirectPerception", "no"]
+      ],
+      "comment": "Multiple embedding of speech-reporting clauses: backshifting at both levels.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_16",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(16)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Peti az-t rikolt-ott-a, hogy Mari a saját szem-é-vel lát-t-a (az-t), hogy Zsuzsi szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Peti", "Peti"], ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
+        ["Mari", "Mari"], ["a", "the"], ["saját", "own"], ["szem-é-vel", "eye-3SG.P-INS"],
+        ["lát-t-a", "see-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Zsuzsi", "Zsuzsi"],
+        ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Peti shouted, saying: “Mari saw the following with her own eyes: ‘Zsuzsi is sad’”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "intermediate simultaneous", "judgment": "unacceptable"},
+        {"name": "intermediate backshifted", "judgment": "acceptable"},
+        {"name": "deepest simultaneous", "judgment": "acceptable"},
+        {"name": "deepest backshifted", "judgment": "unacceptable"}
+      ],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "rikolt"},
+        {"start": 8, "label": "intermediate", "lexeme": "lat"},
+        {"start": 9, "label": "correlate", "lexeme": "az"}
+      ],
+      "paperFeatures": [
+        ["intermediateClauseType", "speechReporting"],
+        ["deepestClauseType", "nonSpeechReporting"],
+        ["intermediateDirectPerception", "no"],
+        ["deepestDirectPerception", "yes"]
+      ],
+      "comment": "A non-speech-reporting clause inside a speech-reporting one: the intermediate clause is backshifted, the deepest simultaneous with it; the intermediate perception verb excludes backshifting of the deepest clause.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_17",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(17)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Mari a saját fül-é-vel hall-ott-a (az-t), hogy Peti az-t rikolt-ott-a, hogy Zsuzsi szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mari", "Mari"], ["a", "the"], ["saját", "own"], ["fül-é-vel", "ear-3SG.P-INS"],
+        ["hall-ott-a", "hear-PST-3SG.DF"], ["(az-t)", "it-ACC"], ["hogy", "that"], ["Peti", "Peti"],
+        ["az-t", "it-ACC"], ["rikolt-ott-a", "shout-PST-3SG.DF"], ["hogy", "that"],
+        ["Zsuzsi", "Zsuzsi"], ["szomorú", "sad"], ["vol-t", "be-PST.3SG"]
+      ],
+      "translation": "Mari heard with her own ears: “Peti shouts the following: ‘Zsuzsi was sad’”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "intermediate simultaneous", "judgment": "acceptable"},
+        {"name": "intermediate backshifted", "judgment": "unacceptable"},
+        {"name": "deepest simultaneous", "judgment": "unacceptable"},
+        {"name": "deepest backshifted", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 4, "label": "matrix", "lexeme": "hall"},
+        {"start": 5, "label": "correlate", "lexeme": "az"},
+        {"start": 8, "label": "correlate", "lexeme": "az"},
+        {"start": 9, "label": "intermediate", "lexeme": "rikolt"}
+      ],
+      "paperFeatures": [
+        ["intermediateClauseType", "nonSpeechReporting"],
+        ["deepestClauseType", "speechReporting"],
+        ["intermediateDirectPerception", "yes"],
+        ["deepestDirectPerception", "no"]
+      ],
+      "comment": "A speech-reporting clause inside a non-speech-reporting one: the intermediate clause is simultaneous with the matrix, the deepest backshifted; only structurally adjacent clauses interact.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_18",
+      "source": {"bibkey": "ogihara-1996", "paperLabel": "p. 105"},
+      "reportedIn": {"bibkey": "egressy-2026", "paperLabel": "(18)"},
+      "language": "stan1293",
+      "primaryText": "John said that Mary will claim that she was sick.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "deepest simultaneous", "judgment": "unacceptable"},
+        {"name": "deepest backshifted", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["intermediateTense", "future"],
+        ["deepestTense", "past"]
+      ],
+      "comment": "Past under will under past: Mary's words cannot be “I am sick”, since the next lowest tense above the deepest past is the future will, not a past.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_19",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(19)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Mary claimed that she was sick.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "simultaneous", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["clauseSize", "cP"],
+        ["directPerception", "no"]
+      ],
+      "comment": "English past under past has the simultaneous reading, Mary's words being “I am sick”; the backshifted reading is set aside.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_23",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(23)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Pál az-t mond-t-a, hogy sajnos Ili szomorú vol-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Pál", "Pál"], ["az-t", "it-ACC"], ["mond-t-a", "say-PST-3SG.DF"], ["hogy", "that"],
+        ["sajnos", "unfortunately"], ["Ili", "Ili"], ["szomorú", "sad"],
+        ["vol-t", "be-PST.3SG.INDF"]
+      ],
+      "translation": "Pál said: “Unfortunately, Ili is/#was sad”.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", "judgment": "acceptable"},
+        {"form": "Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", "judgment": "acceptable"},
+        {"form": "Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", "judgment": "unacceptable"}
+      ],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "correlate", "lexeme": "az"},
+        {"start": 2, "label": "matrix", "lexeme": "mond"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "evaluativeAdverb"]
+      ],
+      "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_24",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(24)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy keresztül fut-ott-ak.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Sajnos", "unfortunately"], ["(CSAK)", "only"], ["A", "the"], ["VÁROS-ON", "city-SUP"],
+        ["hall-ott-am", "hear-PST-1SG.DF"], ["hogy", "that"], ["keresztül", "across"],
+        ["fut-ott-ak", "run-PST-3PL.INDF"]
+      ],
+      "translation": "Unfortunately, I heard that they ran across ONLY THE CITY.",
+      "context": "The focused phrase is extracted from the embedded clause to the matrix Spec,FocP.",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", "judgment": "questionable"},
+        {"form": "Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", "judgment": "questionable"}
+      ],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "matrix", "lexeme": "hall"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "focusMovement"],
+        ["embeddedAdverb", "no"]
+      ],
+      "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_25",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(25)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Melyik város-on lát-t-ad, hogy keresztül fut-ott-ak?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Melyik", "which"], ["város-on", "city-SUP"], ["lát-t-ad", "see-PST-2SG.DF"],
+        ["hogy", "that"], ["keresztül", "across"], ["fut-ott-ak", "run-PST-3PL.INDF"]
+      ],
+      "translation": "Which city did you see that they ran across?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", "judgment": "questionable"}
+      ],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "matrix", "lexeme": "lat"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "whMovement"]
+      ],
+      "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_27",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(27)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Ed seems to be sad.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "[TP Ed seems [TP __ to be sad]]",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "raising"],
+        ["crossed", "tP"]
+      ],
+      "comment": "Raising to Spec,TP across a TP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "egressy2026_28",
+      "source": {"bibkey": "egressy-2026", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Ed seems is sad.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "[TP Ed seems [CP __ is sad]]",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["diagnostic", "raising"],
+        ["crossed", "cP"]
+      ],
+      "comment": "The ban on hyperraising: raising to Spec,TP cannot cross a CP, since C is above T in the functional sequence.",
+      "verified": "page-image"
+    }
+  ]
+}

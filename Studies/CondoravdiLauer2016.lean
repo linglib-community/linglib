@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Conditionals.Restrictor
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Data.Examples.CondoravdiLauer2016
 public import Studies.VonFintelIatridou2005
 public import Mathlib.Tactic.FinCases

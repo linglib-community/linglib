@@ -210,7 +210,7 @@ theorem kratzer_refutes_E1 :
   have hinter : ({0, 2, 3} : Set (Fin 4)) ∩ {1, 2, 3} = {2, 3} := by
     ext x; fin_cases x <;> simp
   have := (h _ _ hφ hψ).1
-  simp only [Set.inf_eq_inter, hinter] at this
+  simp only [hinter] at this
   obtain ⟨a, ha, ha0⟩ := @this 0 (by simp)
   simp only [Set.mem_ofPred_eq] at ha0
   rw [hle] at ha0

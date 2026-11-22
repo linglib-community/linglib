@@ -64,15 +64,15 @@ section Covers
 
 variable {α W : Type*}
 
-private theorem not_isBot_iff {z : Finset α} : ¬ IsBot z ↔ z.Nonempty :=
-  isBot_iff_eq_bot.not.trans Finset.nonempty_iff_ne_empty.symm
+private theorem ne_bot_iff_nonempty {z : Finset α} : z ≠ ⊥ ↔ z.Nonempty :=
+  Finset.nonempty_iff_ne_empty.symm
 
 variable [DecidableEq α]
 
 /-- Plural predication relative to a cover `C`, (25) and (30), holds of a plurality that is a sum
 of pluralities in `C` that satisfy `P`. -/
 def coverStar (C : Set (Finset α)) (P : Finset α → W → Prop) (z : Finset α) : Set W :=
-  {w | AlgClosure (fun y ↦ y ∈ C ∧ P y w) z}
+  {w | z ∈ supClosure (C ∩ {y | P y w})}
 
 variable {C : Set (Finset α)} {P : Finset α → W → Prop} {x : Finset α}
 
@@ -84,41 +84,43 @@ theorem sUnion_readings_coverStar (hC : ∀ z ∈ C, z.Nonempty) :
   ext w
   constructor
   · rintro ⟨z, hzx, -, hz⟩
-    obtain ⟨a, ⟨haC, hPa⟩, haz⟩ := algClosure_has_base hz
+    obtain ⟨a, ⟨haC, hPa⟩, haz⟩ := exists_le_of_mem_supClosure hz
     exact ⟨a, haC, haz.trans hzx, hPa⟩
   · rintro ⟨z, hzC, hzx, hP⟩
-    exact ⟨z, hzx, not_isBot_iff.2 (hC z hzC), .base ⟨hzC, hP⟩⟩
+    exact ⟨z, hzx, ne_bot_iff_nonempty.2 (hC z hzC), subset_supClosure ⟨hzC, hP⟩⟩
 
 /-- A minimal cover containing the atoms of `x`, (24b-i), consists of the atoms of `x`. -/
 theorem eq_atoms_of_minimal (hx : x.Nonempty)
-    (hmin : Minimal (fun C : Set (Finset α) ↦ AlgClosure (· ∈ C) x) C) (hat : ∀ a ∈ x, {a} ∈ C) :
+    (hmin : Minimal (fun C : Set (Finset α) ↦ x ∈ supClosure C) C) (hat : ∀ a ∈ x, {a} ∈ C) :
     C = (fun a ↦ {a}) '' ↑x :=
-  (hmin.eq_of_le ((algClosure_image_singleton _ x).2 ⟨hx, subset_rfl⟩)
+  (hmin.eq_of_le ((mem_supClosure_image_singleton _ x).2 ⟨hx, subset_rfl⟩)
     (by rintro _ ⟨a, ha, rfl⟩; exact hat a ha)).symm
 
-theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ AlgClosure (· ∈ C) x) C)
+theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ x ∈ supClosure C) C)
     (hxC : x ∈ C) : C = {x} :=
-  (hmin.eq_of_le (y := {x}) (.base (Set.mem_singleton x)) (Set.singleton_subset_iff.2 hxC)).symm
+  (hmin.eq_of_le (y := {x}) (subset_supClosure (Set.mem_singleton x))
+    (Set.singleton_subset_iff.2 hxC)).symm
 
 -- (32)
 theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     (hpow : ∀ y ⊆ x, y.Nonempty → y ∈ C) (hP : ∀ w, ¬ P ∅ w) :
-    ⋂₀ readings (coverStar C P) x = {w | AlgClosure (P · w) x} ∧
+    ⋂₀ readings (coverStar C P) x = {w | x ∈ supClosure {y | P y w}} ∧
       ⋃₀ readings (coverStar C P) x = {w | ∃ z ⊆ x, z.Nonempty ∧ P z w} := by
   refine ⟨?_, ?_⟩
-  · rw [sInter_readings (not_isBot_iff.2 hx)]
+  · rw [sInter_readings (ne_bot_iff_nonempty.2 hx)]
     ext w
     simp only [coverStar, Set.mem_ofPred_eq]
-    refine ⟨fun h ↦ algClosure_mono (fun y (hy : y ∈ C ∧ P y w) ↦ hy.2) x h, fun h ↦ ?_⟩
-    suffices ∀ z, AlgClosure (P · w) z → z ⊆ x → AlgClosure (fun y ↦ y ∈ C ∧ P y w) z from
+    refine ⟨fun h ↦ supClosure_mono Set.inter_subset_right h, fun h ↦ ?_⟩
+    suffices ∀ z, z ∈ supClosure {y | P y w} → z ⊆ x → z ∈ supClosure (C ∩ {y | P y w}) from
       this x h subset_rfl
     intro z hz
-    induction hz using AlgClosure.induction with
-    | base hPa =>
-      exact fun hax ↦ .base ⟨hpow _ hax (Finset.nonempty_iff_ne_empty.2 fun h ↦ hP w (h ▸ hPa)),
-        hPa⟩
-    | sum _ _ iha ihb =>
-      exact fun hab ↦ .sum (iha (le_sup_left.trans hab)) (ihb (le_sup_right.trans hab))
+    induction hz using supClosure_induction with
+    | mem a hPa =>
+      exact fun hax ↦ subset_supClosure
+        ⟨hpow _ hax (Finset.nonempty_iff_ne_empty.2 fun h ↦ hP w (h ▸ hPa)), hPa⟩
+    | sup _ _ _ _ iha ihb =>
+      exact fun hab ↦
+        supClosed_supClosure (iha (le_sup_left.trans hab)) (ihb (le_sup_right.trans hab))
   · rw [sUnion_readings_coverStar hC]
     ext w
     exact ⟨fun ⟨z, hzC, hzx, hPz⟩ ↦ ⟨z, hzx, hC z hzC, hPz⟩,
@@ -129,11 +131,13 @@ theorem atomic_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∀ a ∈ x, P {a} w} ∧
       ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∃ a ∈ x, P {a} w} := by
   refine ⟨?_, ?_⟩
-  · rw [sInter_readings (not_isBot_iff.2 hx)]
+  · rw [sInter_readings (ne_bot_iff_nonempty.2 hx)]
     ext w
-    rw [coverStar, Set.mem_ofPred_eq, Set.mem_ofPred_eq, algClosure_iff_of_subset_range_singleton
+    simp only [coverStar, Set.mem_ofPred_eq]
+    rw [mem_supClosure_iff_of_subset_range_singleton
       (by rintro _ ⟨⟨a, -, rfl⟩, -⟩; exact ⟨a, rfl⟩)]
-    simp only [hx, true_and, Set.mem_image, Finset.mem_coe, Finset.singleton_inj, exists_eq_right]
+    simp only [hx, true_and, Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_image, Finset.mem_coe,
+      Finset.singleton_inj, exists_eq_right]
     exact forall₂_congr fun _ ha ↦ and_iff_right ha
   · rw [sUnion_readings_coverStar (by rintro _ ⟨a, -, rfl⟩; exact Finset.singleton_nonempty a)]
     ext w
@@ -144,10 +148,11 @@ theorem singleton_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar {x} P) x = {w | P x w} ∧
       ⋃₀ readings (coverStar {x} P) x = {w | P x w} := by
   refine ⟨?_, ?_⟩
-  · rw [sInter_readings (not_isBot_iff.2 hx)]
+  · rw [sInter_readings (ne_bot_iff_nonempty.2 hx)]
     ext w
     simp only [coverStar, Set.mem_ofPred_eq]
-    refine ⟨fun h ↦ ((algClosure_of_cum ?_).1 h).2, fun h ↦ .base ⟨rfl, h⟩⟩
+    refine ⟨fun h ↦ ((Set.ext_iff.1 (SupClosed.supClosure_eq ?_) x).1 h).2,
+      fun h ↦ subset_supClosure ⟨rfl, h⟩⟩
     rintro a ⟨ha, -⟩ b ⟨hb, hPb⟩
     rw [Set.mem_singleton_iff] at ha hb
     subst ha hb
@@ -193,7 +198,7 @@ theorem distributive_half_false :
       ⋃₀ readings (fun z ↦ {w | ∀ a ∈ z, lifted {a} w}) (Finset.univ : Finset Kid) := by
   rw [sUnion_readings]
   rintro ⟨z, -, hz, hP⟩
-  obtain ⟨a, ha⟩ := not_isBot_iff.1 hz
+  obtain ⟨a, ha⟩ := ne_bot_iff_nonempty.1 hz
   exact absurd (hP a ha) (by decide +revert)
 
 variable {C : Set (Finset Kid)} (hC : ∀ z ∈ C, z.Nonempty)
@@ -208,12 +213,13 @@ theorem lift_true :
   rw [(power_cover Finset.univ_nonempty hC (fun y _ hy ↦ hpow y hy) lifted_empty).1]
   simp only [List.mem_cons, List.not_mem_nil, or_false, Set.mem_ofPred_eq]
   rintro w (rfl | rfl | rfl)
-  · rw [algClosure_iff_of_subset_range_singleton (P := (lifted · .individually))
+  · rw [mem_supClosure_iff_of_subset_range_singleton (s := {y | lifted y .individually})
       fun z hz ↦ (Finset.card_eq_one.1 hz).imp fun _ h ↦ h.symm]
     simp [lifted]
-  · exact .base rfl
+  · exact subset_supClosure rfl
   · exact (by decide : ({0, 1} ⊔ {2, 3} : Finset Kid) = Finset.univ) ▸
-      .sum (.base (.inl rfl)) (.base (.inr rfl))
+      supClosed_supClosure (s := {y | lifted y .halves}) (subset_supClosure (Or.inl rfl))
+        (subset_supClosure (Or.inr rfl))
 
 /-- When half of the kids lift the table together and the rest do nothing (3), the sentence is
 neither true nor false. -/
@@ -224,10 +230,10 @@ theorem lift_half_gap :
     lifted_empty
   rw [htrue, hfalse]
   refine ⟨fun h ↦ ?_, ⟨{0, 1}, Finset.subset_univ _, by decide, rfl⟩⟩
-  have hcum : CUM (lifted · .half) := by
+  have hcum : CUM {y | lifted y .half} := by
     rintro a rfl b rfl
     exact sup_idem _
-  exact absurd ((algClosure_of_cum hcum).1 h) (by decide)
+  exact absurd ((Set.ext_iff.1 hcum.supClosure_eq _).1 h) (by decide)
 
 end Lift
 
@@ -257,8 +263,9 @@ theorem weigh_true_of_power_cover {C : Set (Finset (Fin 2))} (hC : ∀ z ∈ C, 
   rw [(power_cover Finset.univ_nonempty hC (fun y _ hy ↦ hpow y hy)
     (by intro w; cases w <;> decide)).1]
   cases w
-  · exact .base rfl
-  · exact (by decide : ({0} ⊔ {1} : Finset (Fin 2)) = Finset.univ) ▸ .sum (.base rfl) (.base rfl)
+  · exact subset_supClosure rfl
+  · exact (by decide : ({0} ⊔ {1} : Finset (Fin 2)) = Finset.univ) ▸
+      supClosed_supClosure (subset_supClosure rfl) (subset_supClosure rfl)
 
 /-- Under the minimal covers by the atoms and by the pair, (17) is true in both situations. -/
 theorem weigh_ambiguous :

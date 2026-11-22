@@ -56,7 +56,7 @@ of §6 and the VC-dimension characterization of §7 are not formalized.
 
 namespace HeinzKasprzikKotzing2012
 
-open InductiveInference Set Filter
+open InductiveInference Set Filter Subregular
 
 universe u
 

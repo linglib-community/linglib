@@ -59,8 +59,7 @@ theorem completive_chain {ms : List MedialMarker} (hne : ms ≠ []) (h : ∀ m �
       rcases h m (by simp) with rfl | rfl <;> rfl
     rw [MedialForm.chainTiming_concat, hm]
     rcases eq_or_ne ms [] with rfl | hms
-    · rw [MedialForm.chainTiming_nil]
-      decide +kernel
+    · rw [MedialForm.chainTiming_nil, mul_one]
     · rw [ih hms fun m' hm' ↦ h m' (by simp [hm']), IntervalAlgebra.precedes_mul_precedes]
 
 /-- *napa-* goes only with markers that encode a temporal relation, and leaves a completive clause

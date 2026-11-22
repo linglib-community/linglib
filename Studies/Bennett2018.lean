@@ -175,7 +175,7 @@ abbrev word (n : ℕ) : NonemptyInterval ℕ := ⟨(0, n + 1), Nat.zero_le _⟩
 /-- (13): Match (X⁰, ω), one violation for each morphological word whose segments are not all
 within one ω. -/
 def matchWord (α : List (NonemptyInterval ℕ)) : Constraint Tree :=
-  (Constraint.align (· ≤ ·)).comap fun t ↦ (α, levelSpans .om t)
+  fun t ↦ (Correspondence.ofRel (· ≤ ·) α.get (levelSpans .om t).get).maxViol
 
 /-- (30): the subcategorization frame `[ω HighPref [ω ]]`, an ω whose daughters are a syllable
 and an ω. -/
@@ -191,24 +191,25 @@ instance : DecidablePred IsFrame := fun _ ↦ decidable_of_iff' _ (isFrame_iff _
 /-- `SubCat`: one violation for each high-attaching prefix, given by its index in the frontier,
 at which no frame (30) begins. -/
 def subCat (prefs : List ℕ) : Constraint Tree :=
-  (Constraint.align fun (i : ℕ) (s : NonemptyInterval ℕ) ↦ i = s.fst).comap fun t ↦
-    (prefs, t.spans IsFrame)
+  fun t ↦ (Correspondence.ofRel (fun (i : ℕ) (s : NonemptyInterval ℕ) ↦ i = s.fst)
+    prefs.get (t.spans IsFrame).get).maxViol
 
 /-- A candidate that gives a high prefix its frame has an ω that matches no morphological word,
 whatever the word: `SubCat` and Match (ω, X⁰) conflict in every candidate. -/
 theorem prosodySyntaxMatch_pos_of_subCat {t : Tree} {i m : ℕ} (h : subCat [i] t = 0) :
     0 < prosodySyntaxMatch .om [⟨(0, m), Nat.zero_le m⟩] t := by
   obtain ⟨_, hx, rfl⟩ : ∃ x ∈ t.spans IsFrame, i = x.fst := by
-    simpa using Constraint.align_eq_zero_iff.1 h
+    simpa using Correspondence.maxViol_ofRel_get_eq_zero_iff.1 h
   obtain ⟨p, ⟨κ, cs⟩, hs, ⟨-, hcs⟩, rfl⟩ := mem_spans.1 hx
   obtain ⟨a, b, rfl, -, hb⟩ : ∃ a b, cs = [a, b] ∧ a.value.level = .syl ∧ b.value.level = .om := by
     simpa [List.map_eq_cons_iff] using hcs
+  rw [prosodySyntaxMatch, Correspondence.depViol_ofRel_get]
   refine List.countP_pos_iff.2 ⟨t.spanAt (p ++ [1]) b,
     mem_spans.2 ⟨p ++ [1], b, by simp [getElem?_append, hs], hb, rfl⟩, ?_⟩
   have := a.numLeaves_pos
   simp [NonemptyInterval.ext_iff, spanAt, leafIndex_append hs, leafIndex_cons]
   rintro _ h₁ h₂
-  have := congrArg Prod.fst (h₂.trans h₁)
+  have := congrArg Prod.fst (h₂.symm.trans h₁)
   simp at this
   omega
 
@@ -237,6 +238,8 @@ example : prosodySyntaxMatch .om [word 3] (flat 3) = 0 := by decide
 -- without being coextensive with it.
 example (α : List (NonemptyInterval ℕ)) (t : Tree) :
     matchWord α t ≤ syntaxProsodyMatch α .om t := by
+  rw [matchWord, syntaxProsodyMatch, Correspondence.maxViol_ofRel_get,
+    Correspondence.maxViol_ofRel_get]
   refine List.countP_mono_left fun m _ h ↦ ?_
   simp only [decide_eq_true_eq] at h ⊢
   exact fun w hw hmw ↦ h w hw hmw.le

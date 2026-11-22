@@ -32,10 +32,10 @@ variable {R R' : Type*} [SMul R ℝ≥0∞] [IsScalarTower R ℝ≥0∞ ℝ≥0�
 
 noncomputable instance instSMul : SMul R (Kernel α β) where
   smul c κ := ⟨c • ⇑κ, Measure.measurable_of_measurable_coe _ fun s hs ↦ by
-    simpa only [Pi.smul_apply, Measure.smul_apply, smul_one_mul] using
+    simpa only [Pi.smul_apply, smul_apply, smul_one_mul] using
       (κ.measurable_coe hs).const_mul (c • 1 : ℝ≥0∞)⟩
 
-instance : IsSMulApply R (Kernel α β) α (Measure β) where
+instance : IsSMulApply R (Kernel α β) where
   smul_apply _ _ _ := rfl
 
 instance [SMulCommClass R R' ℝ≥0∞] : SMulCommClass R R' (Kernel α β) := FunLike.smulCommClass

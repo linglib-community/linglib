@@ -10,6 +10,7 @@ public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Assignment
+public import Linglib.Core.Order.WithBot
 
 /-!
 # The denotation of a pronoun
@@ -33,6 +34,11 @@ features, so a polite pronoun that agrees as third plural presupposes its addres
 of the context of utterance (`SpeechAct.Context`), and the female and the inanimate referents
 are the gender of referents the entity domain comes equipped with (`Gendered`).
 
+The entity domain is a part structure with no null element, and `Number.dom` is stated on one
+with a least element, where the singular is defined of `IsAtom`. The φ-domain reads it on
+`WithBot E`, so a singular pronoun is defined of the minimal elements of `E`
+(`PersonalPronoun.coe_mem_dom_singular`).
+
 ## References
 
 * [buring-2012]
@@ -52,19 +58,24 @@ variable {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (
 domain of its referential person at the context of utterance, the number domain of its referential
 number and the gender domain of its gender. -/
 def phiDom : Set E :=
-  Person.dom c e.referentialPerson ∩
-    Number.dom e.referentialNumber ∩
+  Person.dom c e.referentialPerson e.referentialClusivity ∩
+    (↑) ⁻¹' Number.dom (E := WithBot E) e.referentialNumber ∩
     Gender.dom e.gender
 
 @[simp] theorem mem_phiDom (x : E) :
     x ∈ e.phiDom c ↔
-      x ∈ Person.dom c e.referentialPerson ∧ x ∈ Number.dom e.referentialNumber ∧
-        x ∈ Gender.dom e.gender := by
-  simp only [phiDom, Set.mem_inter_iff, and_assoc]
+      x ∈ Person.dom c e.referentialPerson e.referentialClusivity ∧
+        (x : WithBot E) ∈ Number.dom e.referentialNumber ∧ x ∈ Gender.dom e.gender := by
+  simp only [phiDom, Set.mem_inter_iff, Set.mem_preimage, and_assoc]
+
+/-- A singular pronoun is defined of the atoms of the entity domain, its minimal elements. -/
+theorem coe_mem_dom_singular {x : E} :
+    (x : WithBot E) ∈ Number.dom (some .singular) ↔ IsMin x :=
+  WithBot.isAtom_coe
 
 theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
-  simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
+  simp only [phiDom, referentialPerson, referentialClusivity, referentialNumber, hr, hg]
 
 /-- A pronoun denotes the value `g i` of its index where that value lies in the φ-domain, and
 nothing elsewhere. -/

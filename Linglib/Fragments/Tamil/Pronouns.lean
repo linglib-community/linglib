@@ -54,11 +54,12 @@ def naan : PersonalPronoun := { form := "naan", person := some .first, number :=
 
 /-- The first person plural inclusive *naam*. -/
 def naam : PersonalPronoun :=
-  { form := "naam", person := some .firstInclusive, number := some .plural }
+  { form := "naam", person := some .first, clusivity := some .inclusive, number := some .plural }
 
 /-- The first person plural exclusive *naan-ŋgæ*, the plural of *naan*. -/
 def naanŋgæ : PersonalPronoun :=
-  { form := "naan-ŋgæ", person := some .firstExclusive, number := some .plural }
+  { form := "naan-ŋgæ", person := some .first, clusivity := some .exclusive,
+    number := some .plural }
 
 /-- The familiar second person singular *nii*. -/
 def nii : PersonalPronoun := { form := "nii", person := some .second, number := some .singular }

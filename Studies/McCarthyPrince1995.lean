@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Akan.Phonology
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Coindexation
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Mathlib.Tactic.FinCases
@@ -50,7 +51,7 @@ those of the Akan fragment.
 
 namespace McCarthyPrince1995
 
-open Phonology OptimalityTheory
+open Phonology OptimalityTheory Subregular
 
 /-! ### Phonological constraints on a surface string -/
 
@@ -58,18 +59,31 @@ section Surface
 
 variable {σ : Type*} (IsVowel : σ → Prop) [DecidablePred IsVowel]
 
+/-- The factors that mark a coda, a consonant followed by a consonant or by the right edge. -/
+def codaFactors : Set (Augmented σ) :=
+  {f | ∃ a b, ¬ IsVowel a ∧ (∀ y ∈ b, ¬ IsVowel y) ∧ f = [some a, b]}
+
+instance : DecidablePred (· ∈ codaFactors IsVowel) := fun f ↦ match f with
+  | [some a, b] => decidable_of_iff (¬ IsVowel a ∧ ∀ y ∈ b, ¬ IsVowel y) (by simp [codaFactors])
+  | [] | [_] | [none, _] | _ :: _ :: _ :: _ => isFalse (by simp [codaFactors])
+
 /-- The number of codas of a string, a coda being a consonant that no vowel follows. -/
-def codas : List σ → ℕ
-  | [] => 0
-  | [x] => if IsVowel x then 0 else 1
-  | x :: y :: rest =>
-    (if ¬ IsVowel x ∧ ¬ IsVowel y then 1 else 0) + codas (y :: rest)
+def codas : Constraint (List σ) := Constraint.ofForbiddenFactors 2 (codaFactors IsVowel)
+
+/-- The factors in which `x` stands between two vowels. -/
+def intervocalicFactors (x : σ) : Set (Augmented σ) :=
+  {f | ∃ a c, IsVowel a ∧ IsVowel c ∧ f = [some a, some x, some c]}
+
+instance [DecidableEq σ] (x : σ) : DecidablePred (· ∈ intervocalicFactors IsVowel x) := fun f ↦
+  match f with
+  | [some a, some b, some c] =>
+    decidable_of_iff (IsVowel a ∧ IsVowel c ∧ b = x) (by simp [intervocalicFactors, eq_comm])
+  | [] | [_] | [_, _] | [none, _, _] | [some _, none, _] | [some _, some _, none]
+  | _ :: _ :: _ :: _ :: _ => isFalse (by simp [intervocalicFactors])
 
 /-- The number of occurrences of `x` between two vowels. -/
-def intervocalic [DecidableEq σ] (x : σ) : List σ → ℕ
-  | a :: b :: c :: rest =>
-    (if IsVowel a ∧ b = x ∧ IsVowel c then 1 else 0) + intervocalic x (b :: c :: rest)
-  | _ => 0
+def intervocalic [DecidableEq σ] (x : σ) : Constraint (List σ) :=
+  Constraint.ofForbiddenFactors 3 (intervocalicFactors IsVowel x)
 
 end Surface
 
@@ -361,9 +375,8 @@ instance : DecidablePred IsVelar := fun _ ↦ inferInstanceAs (Decidable (_ ∧ 
 instance : DecidablePred IsFrontVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- PAL counts the plain velars that stand before a front vowel. -/
-def pal : List Segment → ℕ
-  | c :: v :: rest => (if IsVelar c ∧ IsFrontVowel v then 1 else 0) + pal (v :: rest)
-  | _ => 0
+def pal : Constraint (List Segment) :=
+  Constraint.ofForbiddenPairs fun c v ↦ IsVelar c ∧ IsFrontVowel v
 
 /-- OCP(+cor) counts the syllables of palatal onset and front vowel that stand before a
 syllable of coronal onset and a vowel that is not front, the clash of syllabic and segmental

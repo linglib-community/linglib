@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.Clause.Relative
-public import Linglib.Syntax.Gender.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Gender.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Fragments.Arabic.ModernStandard.Case
 
 /-!

@@ -60,10 +60,11 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
 /-- The plural suffix that goes with a Set A prefix, *-tik* for the inclusive first person and
 *-ik* for the second and the third; the exclusive first person varies by dialect and is not
 recorded. -/
-def setAPlural : Person → List Morphology.Morph
-  | .first | .firstInclusive => [.suff "tik"]
-  | .second | .third => [.suff "ik"]
-  | .firstExclusive => []
+def setAPlural (p : Person) (cl : Option Clusivity := none) : List Morphology.Morph :=
+  match p, cl with
+  | .first, some .exclusive => []
+  | .first, _ => [.suff "tik"]
+  | _, _ => [.suff "ik"]
 
 /-- The Set B suffixes, with a zero third person singular and the plural *-ik* alone in the
 third person. -/

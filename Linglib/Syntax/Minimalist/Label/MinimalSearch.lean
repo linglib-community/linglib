@@ -78,13 +78,13 @@ instance (y x : SyntacticObject) : Decidable (t.InDomain y x) :=
 term at `n` that no other is closer than. -/
 def FindsHead (n q : t.toRoseTree.Positions) : Prop :=
   (Probe.relativized fun p ↦ (t.termAt p).token?.isSome).Finds
-    {p | n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)} (t.above t.branching) q
+    {p | n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)} (t.above t.toRoseTree.branching) q
 
 /-- Decided with the head test first, so that the domain is checked only for heads. -/
 instance (n : t.toRoseTree.Positions) : DecidablePred (t.FindsHead n) := fun q ↦
   decidable_of_iff ((Probe.relativized fun p ↦ (t.termAt p).token?.isSome).Finds
       {p | (t.termAt p).token?.isSome ∧ n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)}
-      (t.above t.branching) q) <| by
+      (t.above t.toRoseTree.branching) q) <| by
     unfold FindsHead Probe.Finds
     simp only [Set.mem_ofPred_eq, Probe.relativized_sat]
     exact Iff.of_eq (congrArg (MinimalFor · _ q) (funext fun _ ↦ propext (by tauto)))

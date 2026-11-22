@@ -92,7 +92,7 @@ theorem resolve_second : resolve c .second = c.elideV2 :=
 
 theorem marks_eq_maxViolAt (i : Option Prominence) (e : ElidedVowel) :
     marks c e i = (corr c e).maxViolAt (protects c i) .lhs .rhs :=
-  maxAt_singleton_eq_maxViolAt _ ⟨position c e, position_lt_length_input c e⟩
+  Constraint.maxAt_singleton_eq_maxViolAt _ ⟨position c e, position_lt_length_input c e⟩
 
 theorem marks_none (e : ElidedVowel) : marks c e none = (corr c e).maxViol .lhs .rhs :=
   (marks_eq_maxViolAt c none e).trans (Correspondence.Coindexation.maxViolAt_true _ _ _)

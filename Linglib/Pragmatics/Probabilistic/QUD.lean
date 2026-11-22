@@ -48,7 +48,8 @@ theorem map_apply_singleton_le_of_coarser {X' : Type*} [MeasurableSpace X']
     [MeasurableSingletonClass X'] [Countable W] [MeasurableSingletonClass W] (L : Kernel U W)
     {q : W → X} {q' : W → X'} {w : W} (h : ∀ w', q w' = q w → q' w' = q' w) (u : U) :
     L.map q u {q w} ≤ L.map q' u {q' w} := by
-  rw [Kernel.map_apply_singleton, Kernel.map_apply_singleton]
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _),
+    Kernel.map_apply' _ .of_discrete _ (.singleton _)]
   exact measure_mono fun w' hw' ↦ h w' hw'
 
 /-! ### The speaker -/
@@ -86,7 +87,8 @@ theorem qudSpeaker_const [Countable W] [MeasurableSingletonClass W] [IsMarkovKer
     qudSpeaker α C L (fun _ ↦ x) w {u} =
       ENNReal.ofReal (Real.exp (-(α * C u))) / ∑ u', ENNReal.ofReal (Real.exp (-(α * C u'))) := by
   have h (v : U) : L.map (fun _ ↦ x) v {x} = 1 := by
-    rw [Kernel.map_apply_singleton, Set.preimage_const_of_mem (Set.mem_singleton x), measure_univ]
+    rw [Kernel.map_apply' _ .of_discrete _ (.singleton _),
+      Set.preimage_const_of_mem (Set.mem_singleton x), measure_univ]
   simp only [qudSpeaker, speaker_dirac_apply_singleton, h, ENNReal.one_rpow, one_mul]
 
 variable {C L q} in
@@ -110,8 +112,10 @@ theorem qudSpeaker_literalListener_apply_singleton_ne_zero_iff [Fintype W]
     (sem : U → Set W) (q : W → X) (w : W) (u : U) :
     qudSpeaker α C (literalListener μ sem) q w {u} ≠ 0 ↔
       ∃ w', q w' = q w ∧ w' ∈ sem u ∧ μ {w'} ≠ 0 := by
-  simp only [qudSpeaker, speaker_dirac_apply_singleton_ne_zero_iff hα,
-    Kernel.map_apply_singleton_ne_zero_iff, literalListener_apply_singleton_ne_zero_iff]
+  simp only [qudSpeaker, speaker_dirac_apply_singleton_ne_zero_iff hα]
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), ne_eq,
+    measure_null_iff_singleton (Set.to_countable _)]
+  simp [literalListener_apply_singleton_ne_zero_iff]
 
 /-! ### The listener -/
 

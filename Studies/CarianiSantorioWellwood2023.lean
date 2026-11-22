@@ -30,7 +30,8 @@ the authors' degree-based variant, iff the measure reflects the background.
   sends each state to its holder. The presupposition that a state lies in the domain of the
   background is membership in `S`.
 * The positive form of `x` is `x ∈ holder '' T` for a threshold `T` with `IsUpperSet T`, and the
-  comparative of `a` over `b` is `MaxComparative .gt (holder · = a) (holder · = b) μ`, the
+  comparative of `a` over `b` is
+  `MaxComparative .gt (μ '' {s | holder s = b}) (μ '' {s | holder s = a})`, the
   standard degree being the greatest measure of `b`'s states. An admissible measure is
   `StrictMono μ`, Schwarzschild's monotonicity.
 * `holder` need not be injective, since the standard's maximum ranges over several states. The
@@ -66,17 +67,19 @@ their holders and `s` measures above `t` without the threshold property, the hol
 hotter than the holder of `t` without being hot. -/
 theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s ∉ T)
     (hs : ∀ u, holder u = holder s → u = s) (ht : ∀ u, holder u = holder t → u = t) :
-    MaxComparative .gt (holder · = holder s) (holder · = holder t) μ ∧ holder s ∉ holder '' T :=
-  ⟨(maxComparative_iff_of_unique (P := (holder · = holder s)) (Q := (holder · = holder t)) rfl hs
+    MaxComparative .gt (μ '' {u | holder u = holder t}) (μ '' {u | holder u = holder s}) ∧
+      holder s ∉ holder '' T :=
+  ⟨(maxComparative_image_iff_of_unique rfl hs
       rfl ht).2 hlt,
     fun ⟨u, hu, hus⟩ ↦ hsT (hs u hus ▸ hu)⟩
 
 -- (19), (18)
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
     (hμ : StrictMono μ) {a b : X} (hb : b ∈ holder '' T)
-    (h : MaxComparative .gt (holder · = a) (holder · = b) μ) : a ∈ holder '' T :=
+    (h : MaxComparative .gt (μ '' {s | holder s = b}) (μ '' {s | holder s = a})) :
+    a ∈ holder '' T :=
   let ⟨_, hs, hsb⟩ := hb
-  let ⟨y, hya, hlt⟩ := h.exists_lt hsb
+  let ⟨_, ⟨y, hya, rfl⟩, hlt⟩ := h.exists_lt ⟨_, hsb, rfl⟩
   ⟨y, hT (by_contra fun hn ↦
     (hμ (lt_of_le_not_ge ((total_of _ _ _).resolve_left hn) hn)).not_gt hlt) hs, hya⟩
 
@@ -84,22 +87,23 @@ theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet 
 -- states from `1` up: (19a) and (19b) hold, and so (19c).
 example :
     let holder : Fin 3 → Bool := fun s ↦ decide (s = 2)
-    false ∈ holder '' Ici 1 ∧ MaxComparative .gt (holder · = true) (holder · = false) id ∧
+    false ∈ holder '' Ici 1 ∧
+      MaxComparative .gt (id '' {s | holder s = false}) (id '' {s | holder s = true}) ∧
       true ∈ holder '' Ici 1 := by
   intro holder
   have hb : false ∈ holder '' Ici 1 := ⟨1, self_mem_Ici, by decide⟩
-  have hc : MaxComparative .gt (holder · = true) (holder · = false) id := by
-    refine ⟨1, ⟨⟨1, by decide, rfl⟩, ?_⟩, 2, by decide, by decide⟩
+  have hc : MaxComparative .gt (id '' {s | holder s = false}) (id '' {s | holder s = true}) := by
+    refine ⟨1, ⟨⟨1, by decide, rfl⟩, ?_⟩, 2, ⟨2, by decide, rfl⟩, by decide⟩
     rintro _ ⟨s, hs, rfl⟩
     exact (by decide : ∀ s : Fin 3, decide (s = 2) = false → s ≤ 1) s hs
-  exact ⟨hb, hc, mem_image_of_maxComparative (isUpperSet_Ici 1) strictMono_id hb hc⟩
+  exact ⟨hb, hc, mem_image_of_maxComparative (IsUpperSet.Ici 1) strictMono_id hb hc⟩
 
 -- Without admissibility (19) fails on a total background: with the measure reversed on `Bool`,
 -- `true` has the property `Ici true` and `false` measures above it.
 example :
-    (true : Bool) ∈ id '' Ici true ∧ MaxComparative .gt (· = false) (· = true) (fun b : Bool ↦ !b) ∧
+    (true : Bool) ∈ id '' Ici true ∧ MaxComparative .gt {false} {true} ∧
       false ∉ id '' Ici true := by
-  refine ⟨⟨true, self_mem_Ici, rfl⟩, (maxComparative_eq_iff _ _ _).2 (by decide), ?_⟩
+  refine ⟨⟨true, self_mem_Ici, rfl⟩, maxComparative_singleton.2 (by decide), ?_⟩
   rintro ⟨u, hu, rfl⟩
   exact absurd (mem_Ici.1 hu) (by decide)
 
@@ -107,10 +111,11 @@ example :
 -- of `t`, measured above it though `s ≤ t` fails, is hotter and not hot.
 theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < μ t)
     (hs : ∀ u, holder u = holder s → u = s) (ht : ∀ u, holder u = holder t → u = t) :
-    holder s ∈ holder '' Ici s ∧ MaxComparative .gt (holder · = holder t) (holder · = holder s) μ ∧
+    holder s ∈ holder '' Ici s ∧
+      MaxComparative .gt (μ '' {u | holder u = holder s}) (μ '' {u | holder u = holder t}) ∧
       holder t ∉ holder '' Ici s :=
   ⟨⟨s, self_mem_Ici, rfl⟩,
-    (maxComparative_iff_of_unique (P := (holder · = holder t)) (Q := (holder · = holder s)) rfl ht
+    (maxComparative_image_iff_of_unique rfl ht
       rfl hs).2 hlt,
     fun ⟨u, hu, hut⟩ ↦ hst (ht u hut ▸ hu)⟩
 
@@ -121,7 +126,8 @@ theorem total_iff_forall_mem_image_of_maxComparative {G : Type*} [AddCommGroup G
     [IsOrderedAddMonoid G] [Nontrivial G] (hinj : holder.Injective) {μ₀ : S → G}
     (hμ₀ : StrictMono μ₀) :
     (∀ s t : S, s ≤ t ∨ t ≤ s) ↔ ∀ μ : S → G, StrictMono μ → ∀ T : Set S, IsUpperSet T →
-      ∀ a b, b ∈ holder '' T → MaxComparative .gt (holder · = a) (holder · = b) μ →
+      ∀ a b, b ∈ holder '' T →
+        MaxComparative .gt (μ '' {s | holder s = b}) (μ '' {s | holder s = a}) →
         a ∈ holder '' T := by
   refine ⟨fun htot μ hμ T hT a b ↦ ?_, fun h s t ↦ by_contra fun hst ↦ ?_⟩
   · have : @Std.Total S (· ≤ ·) := ⟨htot⟩
@@ -130,19 +136,20 @@ theorem total_iff_forall_mem_image_of_maxComparative {G : Type*} [AddCommGroup G
     obtain ⟨μ, hμ, hlt⟩ := hμ₀.exists_strictMono_lt_of_not_ge hts
     obtain ⟨hs, hc, hn⟩ :=
       not_mem_image_Ici_of_not_le hst hlt (fun _ h ↦ hinj h) (fun _ h ↦ hinj h)
-    exact hn (h μ hμ _ (isUpperSet_Ici s) _ _ hs hc)
+    exact hn (h μ hμ _ (IsUpperSet.Ici s) _ _ hs hc)
 
 -- With one state per holder, (19) holds under every admissible measure on a linearly ordered
 -- additive group, a total background, and fails under some admissible measure on its componentwise
 -- plane.
 example {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G] [Nontrivial G] :
     ∀ μ : G → G, StrictMono μ → ∀ T : Set G, IsUpperSet T → ∀ a b, b ∈ id '' T →
-      MaxComparative .gt (id · = a) (id · = b) μ → a ∈ id '' T :=
+      MaxComparative .gt (μ '' {s | s = b}) (μ '' {s | s = a}) → a ∈ id '' T :=
   (total_iff_forall_mem_image_of_maxComparative Function.injective_id strictMono_id).1 le_total
 
 example {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G] {ε : G} (hε : 0 < ε) :
     ¬ ∀ μ : G × G → G, StrictMono μ → ∀ T : Set (G × G), IsUpperSet T → ∀ a b,
-      b ∈ id '' T → MaxComparative .gt (id · = a) (id · = b) μ → a ∈ id '' T := fun h ↦ by
+      b ∈ id '' T → MaxComparative .gt (μ '' {s | s = b}) (μ '' {s | s = a}) → a ∈ id '' T :=
+    fun h ↦ by
   have : Nontrivial G := ⟨0, ε, hε.ne⟩
   have hμ₀ : StrictMono fun p : G × G ↦ p.1 + p.2 := fun p q h ↦
     (Prod.lt_iff.1 h).elim (fun h ↦ add_lt_add_of_lt_of_le h.1 h.2)
@@ -157,7 +164,7 @@ holding one state each, are alike hot in every context iff their states are tied
 theorem antisymmRel_iff_forall_isUpperSet {s t : S} :
     AntisymmRel (· ≤ ·) s t ↔ ∀ T : Set S, IsUpperSet T → (s ∈ T ↔ t ∈ T) :=
   ⟨fun h _ hT ↦ ⟨hT h.1, hT h.2⟩, fun h ↦
-    ⟨(h _ (isUpperSet_Ici s)).1 self_mem_Ici, (h _ (isUpperSet_Ici t)).2 self_mem_Ici⟩⟩
+    ⟨(h _ (IsUpperSet.Ici s)).1 self_mem_Ici, (h _ (IsUpperSet.Ici t)).2 self_mem_Ici⟩⟩
 
 -- fn. 10
 theorem total_of_reflect_le {D : Type*} [LinearOrder D] {μ : S → D}
@@ -183,7 +190,7 @@ degree-based variant (28), iff the measure reflects the background. -/
 theorem forall_isUpperSet_exists_preimage_iff :
     (∀ T : Set S, IsUpperSet T → ∃ U : UpperSet D, T = μ ⁻¹' U) ↔ ∀ a b, μ a ≤ μ b → a ≤ b := by
   refine ⟨fun h a b hab ↦ ?_, fun h T hT ↦ ⟨upperClosure (μ '' T), ?_⟩⟩
-  · obtain ⟨U, hT⟩ := h (Ici a) (isUpperSet_Ici a)
+  · obtain ⟨U, hT⟩ := h (Ici a) (IsUpperSet.Ici a)
     exact (Set.ext_iff.1 hT b).2 (U.upper hab ((Set.ext_iff.1 hT a).1 self_mem_Ici))
   · refine Set.ext fun s ↦ ⟨fun hs ↦ subset_upperClosure ⟨s, hs, rfl⟩, ?_⟩
     rintro ⟨_, ⟨t, ht, rfl⟩, hts⟩
@@ -198,22 +205,24 @@ theorem isMonotoneOn_upperSets_iff :
   rw [Delineation.isMonotoneOn_ofExtension_iff]
   refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ h₁ C₂ h₂ a b ha hb hb₂ ↦ ?_⟩
   · obtain ⟨hst, hts⟩ := not_or.1 hst
-    exact hts (h (Ici s) (isUpperSet_Ici s) (Ici t) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
+    exact hts (h (Ici s) (IsUpperSet.Ici s) (Ici t) (IsUpperSet.Ici t) s t le_rfl hst le_rfl)
   · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
 
 -- §2: on a total background the comparative is the delineation comparative, some threshold
 -- holding of `a` and not of `b`.
 theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (μ '' {s | holder s = b}) δ) :
-    MaxComparative .gt (holder · = a) (holder · = b) μ ↔
+    MaxComparative .gt (μ '' {s | holder s = b}) (μ '' {s | holder s = a}) ↔
       ∃ T, IsUpperSet T ∧ a ∈ holder '' T ∧ b ∉ holder '' T := by
-  refine ⟨fun ⟨δ, hδ, s, hsa, hlt⟩ ↦ ⟨Ici s, isUpperSet_Ici s, ⟨s, self_mem_Ici, hsa⟩, ?_⟩, ?_⟩
+  refine ⟨fun ⟨δ, hδ, _, ⟨s, hsa, rfl⟩, hlt⟩ ↦
+    ⟨Ici s, IsUpperSet.Ici s, ⟨s, self_mem_Ici, hsa⟩, ?_⟩, ?_⟩
   · rintro ⟨t, hst, htb⟩
     exact ((hδ.2 ⟨t, htb, rfl⟩).trans_lt hlt).not_ge (hm hst)
   · rintro ⟨T, hT, ⟨s, hsT, hsa⟩, hbT⟩
     obtain ⟨δ, hδ⟩ := hb
     obtain ⟨t, htb, rfl⟩ := hδ.1
     have hst : ¬ s ≤ t := fun hst ↦ hbT ⟨t, hT hst hsT, htb⟩
-    exact ⟨_, hδ, s, hsa, hμ (lt_of_le_not_ge ((total_of (· ≤ ·) t s).resolve_right hst) hst)⟩
+    exact ⟨_, hδ, _, ⟨s, hsa, rfl⟩,
+      hμ (lt_of_le_not_ge ((total_of (· ≤ ·) t s).resolve_right hst) hst)⟩
 
 end CarianiSantorioWellwood2023

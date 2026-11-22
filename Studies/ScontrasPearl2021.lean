@@ -254,7 +254,7 @@ instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
 theorem map_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
     (L0 D n i).map (project n q) u {project n q w}
       = uniformOn ↑(ext D n i u) (↑(cell n q w) : Set (World n)) := by
-  rw [Kernel.map_apply_singleton, L0, literalListener_uniformOn_apply]
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), L0, literalListener_uniformOn_apply]
   congr 1
   ext w'
   simp [cell]

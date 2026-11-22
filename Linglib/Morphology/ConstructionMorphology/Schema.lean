@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Data.Fintype.Order
 public import Linglib.Core.Order.Flat
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.Compat
 public import Mathlib.Order.Lattice
 
 /-!
@@ -21,7 +21,7 @@ description at every slot.
 
 Unification is the partial join of descriptions and Structural Intersection is their meet. The
 instances of a successful unification are
-[the common instances of its arguments](##instantiates_iff_of_unify_eq_coe), and the intersection
+[the common instances of its arguments](##instantiates_iff_of_isLUB), and the intersection
 of two items [instantiates exactly the schemas that both instantiate](##instantiates_inf_iff). Among
 descriptions over the same slots it is their least general generalization in Plotkin's sense,
 which Jackendoff and Audring compare to Albright and Hayes's minimal generalization. It does not
@@ -193,19 +193,18 @@ end PartialOrder
 /-! ### Unification and Structural Intersection -/
 
 section Unify
-variable [Fintype V] [PartialOrder α] [OrderBot α] [PartialUnify α] {s t u : Schema V α}
-  {w : V → α}
+variable [PartialOrder α] [OrderBot α] {s t u : Schema V α} {w : V → α}
 
-/-- An item instantiates a schema exactly when unifying it with the description returns the
-item. -/
-theorem instantiates_iff_unify : s.Instantiates w ↔ PartialUnify.unify s.body w = ↑w :=
-  PartialUnify.unify_eq_right.symm
+/-- An item instantiates a schema exactly when it is its own unification with the
+description. -/
+theorem instantiates_iff_isLUB : s.Instantiates w ↔ IsLUB {s.body, w} w :=
+  ⟨fun h ↦ isLUB_pair_iff_forall_le.2 ⟨h, le_rfl, fun _ _ hw ↦ hw⟩,
+    fun h ↦ (isLUB_pair_iff_forall_le.1 h).1⟩
 
-/-- The instances of a successful unification of two descriptions are their common instances. -/
-theorem instantiates_iff_of_unify_eq_coe (h : PartialUnify.unify s.body t.body = ↑u.body) :
-    u.Instantiates w ↔ s.Instantiates w ∧ t.Instantiates w := by
-  rw [instantiates_iff, ← WithTop.coe_le_coe, ← h, PartialUnify.unify_le_coe_iff]
-  rfl
+/-- The instances of the unification of two descriptions are their common instances. -/
+theorem instantiates_iff_of_isLUB (h : IsLUB {s.body, t.body} u.body) :
+    u.Instantiates w ↔ s.Instantiates w ∧ t.Instantiates w :=
+  (isLUB_le_iff h).trans mem_upperBounds_pair
 
 end Unify
 

@@ -1,692 +1,706 @@
-[
-  {
-    "id": "dalrymplehaug2024_1",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(1)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Tracy and Chris thought they saw each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"},
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "1"],
-      ["antecedent", "plural pronoun"]
-    ],
-    "comment": "Narrow scope is the we-reading (Tracy and Chris each thought 'We saw each other'); wide scope the I-reading (Tracy thought 'I saw Chris' and Chris thought 'I saw Tracy'), the terms of Heim, Lasnik and May 1991.",
-    "verified": "page-image"
+{
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The readings the squib judges a sentence for.",
+    "levels": [
+      {"name": "narrow", "label": "narrow", "doc": "the reciprocal takes scope in the complement clause, the we-reading"},
+      {"name": "wide", "label": "wide", "doc": "the reciprocal takes scope in the matrix clause, the I-reading"},
+      {"name": "internal", "label": "internal", "doc": "*different* compares the members of the distributed plurality"},
+      {"name": "external", "label": "external", "doc": "*different* compares with something salient in the context"},
+      {"name": "boundLogophor", "label": "bound logophor", "doc": "the plural logophor is bound by the matrix subject"}
+    ]
   },
-  {
-    "id": "dalrymplehaug2024_10",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(10)"},
-    "reportedIn": null,
-    "language": "hung1274",
-    "primaryText": "Péter és Éva az-t gondolja, hogy szereti egymás-t.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Péter", "Péter"], ["és", "and"], ["Éva", "Éva"], ["az-t", "that-ACC"],
-      ["gondolja,", "think.3SG"], ["hogy", "that"], ["szereti", "love.3SG"],
-      ["egymás-t.", "RECIP-ACC"]
-    ],
-    "translation": "Péter thinks that he loves Éva and Éva thinks that she loves Péter.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "unacceptable"},
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "2"],
-      ["antecedent", "bound singular null pronoun"]
-    ],
-    "comment": "Data from György Rákosi (fn. 1). The coordinated matrix subject takes singular agreement, and the singular null subject of the complement must be interpreted as bound; an overt singular pronoun is not acceptable here (fn. 2).",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_11",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(11)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "John to Mary ga zibun-tati ga otagai o mi-ta to omow-ta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["to", "and"], ["Mary", "Mary"], ["ga", "NOM"], ["zibun-tati", "self-PL"],
-      ["ga", "NOM"], ["otagai", "RECIP"], ["o", "ACC"], ["mi-ta", "see-PST"], ["to", "that"],
-      ["omow-ta.", "think-PST"]
-    ],
-    "translation": "John and Mary thought that selves saw each other.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"},
-      {"name": "wide", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "2"],
-      ["antecedent", "plural reflexive"]
-    ],
-    "comment": "The plural reflexive zibun-tati resists a bound reading and strongly favours group identity (Nishigauchi 1992), so as antecedent of the reciprocal it allows narrow scope only.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_12",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(12)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The girls hoped that they would meet at the tennis court and defeat each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"},
-      {"name": "wide", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "3"],
-      ["antecedent", "collective conjunct"]
-    ],
-    "comment": "The reciprocal VP is coordinated with the collective predicate 'meet at the tennis court' (Tay, New, Dalrymple and Haug 2021; fn. 3 credits Yimei Xiang). The wide reading binds the local antecedent, which then denotes an individual and offers no plurality for the collective conjunct.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_13",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(13)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "They wanted to visit each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, partial-control verb"]
-    ],
-    "comment": "Since Higginbotham 1980 it has been generally accepted that (13) permits only the wide-scope I-reading. Section 4 concludes that the wide-only claim holds up only for exhaustive control, so a partial-control verb like 'want' makes a narrow reading available.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_14",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(14)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "They decided to keep each other's comments confidential.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"},
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, collective controller"]
-    ],
-    "comment": "Heim, Lasnik and May 1991 (pp. 98-99) attribute two readings: the matrix verb understood collectively with narrow scope, and the matrix subject understood distributively with wide scope. The squib finds the collective/distributive distinction hard to verify for many attitude verbs; Landau 2000 classes 'decide' as a partial-control verb.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_15a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(15a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I asked a girl who I liked if she wanted to get to know each other better and she said that she was already talking to someone else.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, partial control"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (Quora). Partial control: the matrix argument is singular, so a collective interpretation of the attitude verb is impossible, yet PRO is semantically plural and antecedes the reciprocal in situ.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_15b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(15b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I vow to keep reminding you McDonald's is unhealthy and to go get that mole checked, because I want to live long, happy lives by each other's side.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, partial control"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (wedding vows). Slightly incongruous, like most partial control, but attested.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_16a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(16a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I saw a girl I liked and tried to get to know each other better.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, exhaustive-control verb"]
-    ],
-    "comment": "(15a) with the exhaustive-control verb 'try' substituted: much worse, so (15) involves partial control.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_16b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(16b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I try to live long, happy lives by each other's side.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, exhaustive-control verb"]
-    ],
-    "comment": "(15b) with 'try' substituted for 'want'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_17",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(17)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Unbeknownst to each other, Tracy and Chris intended to help each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "unacceptable"},
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "4"],
-      ["antecedent", "PRO, exhaustive control, distributive controller"]
-    ],
-    "comment": "If collective intention requires awareness of each other's intentions, the adjunct forces a distributive reading of the matrix subject, and the sentence then has only the wide reading: the squib's case of exhaustive control with a controller not interpreted collectively. Landau 2000 classes 'intend' as a partial-control verb.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_18a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(18a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "They each think they are taller than each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"},
-      {"name": "wide", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "matrix distributor"]
-    ],
-    "comment": "Judgment from Heim, Lasnik and May 1991 (p. 86): unambiguous, with only the narrow-scope, contradictory reading, because distributive 'each' cannot apply to the already distributed antecedent. (26) attests wide scope for this structure.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_18b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(18b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "They each examined each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor, simple sentence"]
-    ],
-    "comment": "Judgment from Heim, Lasnik and May 1991; (19) and (20) attest such sentences.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_19a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(19a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "They each liked each other but never said a word.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor, simple sentence"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (Amazon review).",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_19b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(19b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "At the end of the ceremony, they each kissed each other as husband and wife.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor, simple sentence"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (blog).",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_20a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(20a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "If there are 12 persons in a party and each of them shakes hands with each other, how many handshakes do happen in the party?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor 'each of them', simple sentence"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (aptitude-test forum).",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_20b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(20b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Assertion: when a firefly hits a bus, each of them exerts the same force on each other.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor 'each of them', simple sentence"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (homework forum).",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_21a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(21a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The men told each girl a different story.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "internal", "judgment": "acceptable"},
-      {"name": "external", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["diagnostic", "internal reading of 'different'"]
-    ],
-    "comment": "Distributive 'each' licenses the internal reading of 'different' (a different story for each girl) as well as the external one (a story different from some other salient story): Safir 2014 (p. 98), citing unpublished work by Brasoveanu.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_21b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(21b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The men told each other a different story.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "internal", "judgment": "unacceptable"},
-      {"name": "external", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["diagnostic", "internal reading of 'different'"]
-    ],
-    "comment": "The reciprocal alone does not license the internal reading of 'different'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_22",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(22)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The men each told each other a different story.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "internal", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["diagnostic", "internal reading of 'different'"]
-    ],
-    "comment": "Constructed minimal pair to (21b): the internal reading emerges with the superfluous 'each', so the 'each' is not vacuous and one can distribute on the reciprocal's antecedent.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_23a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(23a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "We each gave each other a different perspective of life, and that provided the balance and a good marriage and parenting needs.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "internal", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["diagnostic", "internal reading of 'different'"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring internal reading (blog).",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_23b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(23b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "They parallel one another and complemented one another other because they each gave each other a different sort of intensity at least how that's how I fell into that music.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "internal", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["diagnostic", "internal reading of 'different'"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring internal reading (transcribed speech), quoted as printed.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_24a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(24a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Callie was an obvious one, as they were extremely close and both accepted that they each liked each other, but they didn't do anything about it.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor in the complement clause"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (fan wiki), narrow scope with 'each' in the subordinate clause.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_24b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(24b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I saw in some rants it says that they just flirted a little or made out and were in love but they already established the fact that they each liked each other before the [sic] kissed.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor in the complement clause"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (blog), narrow scope with 'each' in the subordinate clause.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_25",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(25)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "So many what ifs and in the end, they find out that they each liked each other before. But now, they each have their own lives to lead.",
-    "discourseSegments": [
-      "So many what ifs and in the end, they find out that they each liked each other before.",
-      "But now, they each have their own lives to lead."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "distributor in the complement clause"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (film review), wide scope with 'each' in the subordinate clause; the squib notes it looks like a crossed reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_26a",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(26a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "While watching their movies, they each realize that they miss each other, make up and go to “Monkey Cars 3D” where the whole cast of So Random! and Chad is seen watching “Monkey Cars 3D”.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "matrix distributor"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (Wikipedia), the structure of (18a) with a wide reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_26b",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(26b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "“And I'll be back,” she reassured him, even though neither of them wanted to admit that they enjoyed each other's company and, deep down, especially on her part, wanted to find out more about that wolf's past.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "5"],
-      ["antecedent", "matrix distributor 'neither of them'"],
-      ["attested", "web"]
-    ],
-    "comment": "Naturally occurring (web novel): the matrix distributor need not be 'each'.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_28",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(28)"},
-    "reportedIn": null,
-    "language": "wann1242",
-    "primaryText": "wì mù tɛ̄ŋ̄ gé mɔ̄ á ē ɔ̄ŋ̄ lɔ̄ lé",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["wì", "animal"], ["mù", "PL"], ["tɛ̄ŋ̄", "all"], ["gé", "say"], ["mɔ̄", "LOG.PL"],
-      ["á", "COP"], ["ē", "REFL"], ["ɔ̄ŋ̄", "RECIP"], ["lɔ̄", "eat"], ["lé", "PROG"]
-    ],
-    "translation": "All the animals say they-LOG will eat each other.",
-    "context": "A hare visits the animals of a forest one by one; worried about infighting, each says to the hare 'We will eat each other'. Back home the hare reports what they said.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "narrow", "judgment": "acceptable"},
-      {"name": "wide", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "6"],
-      ["antecedent", "logophor"]
-    ],
-    "comment": "Data from Tatiana Nikitina (fn. 5). The wide reading, where each animal said 'I will eat the others' and only the hare sums the statements to a reciprocal one, is unavailable: 'they' is then interpreted outside the report and cannot be a logophor.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_31",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(31)"},
-    "reportedIn": null,
-    "language": "wann1242",
-    "primaryText": "wì mù é tɛ̄ŋ̄ gé dóō mɔ̄ á wì dɛ̀ŋ̀ mù é tɛ̄ŋ̄ lɔ̄ lé",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["wì", "animal"], ["mù", "PL"], ["é", "DEF"], ["tɛ̄ŋ̄", "all"], ["gé", "say"],
-      ["dóō", "QUOT"], ["mɔ̄", "LOG.PL"], ["á", "COP"], ["wì", "animal"], ["dɛ̀ŋ̀", "rest"],
-      ["mù", "PL"], ["é", "DEF"], ["tɛ̄ŋ̄", "all"], ["lɔ̄", "eat"], ["lé", "PROG"]
-    ],
-    "translation": "All the animals say that they-LOG are going to eat all the rest of the animals.",
-    "context": "Each animal says 'I will eat the others'.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "bound logophor", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "6"],
-      ["antecedent", "logophor, no reciprocal"]
-    ],
-    "comment": "A bound reading of the plural logophor is possible and expresses the scenario of the missing wide reading of (28), as long as no reciprocal is used: it is the reciprocal that would drag its antecedent out of the report.",
-    "verified": "page-image"
-  },
-  {
-    "id": "dalrymplehaug2024_32",
-    "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(32)"},
-    "reportedIn": null,
-    "language": "wann1242",
-    "primaryText": "wì mù tɛ̄ŋ̄ tú gé à̰ ɔ̄ŋ̄ lɔ̄ lé",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["wì", "animal"], ["mù", "PL"], ["tɛ̄ŋ̄", "all"], ["tú", "completely"], ["gé", "say"],
-      ["à̰", "3PL"], ["ɔ̄ŋ̄", "RECIP"], ["lɔ̄", "eat"], ["lé", "PROG"]
-    ],
-    "translation": "They all say that they-3PL are going to eat each other.",
-    "context": "Each animal says 'I will eat the others'.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "wide", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["section", "6"],
-      ["antecedent", "ordinary plural pronoun"]
-    ],
-    "comment": "The wide reading is expressible with a reciprocal, but requires the ordinary pronoun rather than the logophor. The pronoun is printed with a subscript tilde (à̰).",
-    "verified": "page-image"
-  }
-]
+  "examples": [
+    {
+      "id": "dalrymplehaug2024_1",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(1)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Tracy and Chris thought they saw each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"},
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "1"],
+        ["antecedent", "plural pronoun"]
+      ],
+      "comment": "Narrow scope is the we-reading (Tracy and Chris each thought 'We saw each other'); wide scope the I-reading (Tracy thought 'I saw Chris' and Chris thought 'I saw Tracy'), the terms of Heim, Lasnik and May 1991.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_10",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(10)"},
+      "reportedIn": null,
+      "language": "hung1274",
+      "primaryText": "Péter és Éva az-t gondolja, hogy szereti egymás-t.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Péter", "Péter"], ["és", "and"], ["Éva", "Éva"], ["az-t", "that-ACC"],
+        ["gondolja,", "think.3SG"], ["hogy", "that"], ["szereti", "love.3SG"],
+        ["egymás-t.", "RECIP-ACC"]
+      ],
+      "translation": "Péter thinks that he loves Éva and Éva thinks that she loves Péter.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "unacceptable"},
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "2"],
+        ["antecedent", "bound singular null pronoun"]
+      ],
+      "comment": "Data from György Rákosi (fn. 1). The coordinated matrix subject takes singular agreement, and the singular null subject of the complement must be interpreted as bound; an overt singular pronoun is not acceptable here (fn. 2).",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_11",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(11)"},
+      "reportedIn": null,
+      "language": "nucl1643",
+      "primaryText": "John to Mary ga zibun-tati ga otagai o mi-ta to omow-ta.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", "John"], ["to", "and"], ["Mary", "Mary"], ["ga", "NOM"], ["zibun-tati", "self-PL"],
+        ["ga", "NOM"], ["otagai", "RECIP"], ["o", "ACC"], ["mi-ta", "see-PST"], ["to", "that"],
+        ["omow-ta.", "think-PST"]
+      ],
+      "translation": "John and Mary thought that selves saw each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"},
+        {"name": "wide", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "2"],
+        ["antecedent", "plural reflexive"]
+      ],
+      "comment": "The plural reflexive zibun-tati resists a bound reading and strongly favours group identity (Nishigauchi 1992), so as antecedent of the reciprocal it allows narrow scope only.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_12",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(12)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The girls hoped that they would meet at the tennis court and defeat each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"},
+        {"name": "wide", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "3"],
+        ["antecedent", "collective conjunct"]
+      ],
+      "comment": "The reciprocal VP is coordinated with the collective predicate 'meet at the tennis court' (Tay, New, Dalrymple and Haug 2021; fn. 3 credits Yimei Xiang). The wide reading binds the local antecedent, which then denotes an individual and offers no plurality for the collective conjunct.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_13",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(13)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "They wanted to visit each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, partial-control verb"]
+      ],
+      "comment": "Since Higginbotham 1980 it has been generally accepted that (13) permits only the wide-scope I-reading. Section 4 concludes that the wide-only claim holds up only for exhaustive control, so a partial-control verb like 'want' makes a narrow reading available.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_14",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(14)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "They decided to keep each other's comments confidential.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"},
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, collective controller"]
+      ],
+      "comment": "Heim, Lasnik and May 1991 (pp. 98-99) attribute two readings: the matrix verb understood collectively with narrow scope, and the matrix subject understood distributively with wide scope. The squib finds the collective/distributive distinction hard to verify for many attitude verbs; Landau 2000 classes 'decide' as a partial-control verb.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_15a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(15a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I asked a girl who I liked if she wanted to get to know each other better and she said that she was already talking to someone else.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, partial control"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (Quora). Partial control: the matrix argument is singular, so a collective interpretation of the attitude verb is impossible, yet PRO is semantically plural and antecedes the reciprocal in situ.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_15b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(15b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I vow to keep reminding you McDonald's is unhealthy and to go get that mole checked, because I want to live long, happy lives by each other's side.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, partial control"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (wedding vows). Slightly incongruous, like most partial control, but attested.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_16a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(16a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I saw a girl I liked and tried to get to know each other better.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, exhaustive-control verb"]
+      ],
+      "comment": "(15a) with the exhaustive-control verb 'try' substituted: much worse, so (15) involves partial control.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_16b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(16b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I try to live long, happy lives by each other's side.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, exhaustive-control verb"]
+      ],
+      "comment": "(15b) with 'try' substituted for 'want'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_17",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(17)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Unbeknownst to each other, Tracy and Chris intended to help each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "unacceptable"},
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "4"],
+        ["antecedent", "PRO, exhaustive control, distributive controller"]
+      ],
+      "comment": "If collective intention requires awareness of each other's intentions, the adjunct forces a distributive reading of the matrix subject, and the sentence then has only the wide reading: the squib's case of exhaustive control with a controller not interpreted collectively. Landau 2000 classes 'intend' as a partial-control verb.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_18a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(18a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "They each think they are taller than each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"},
+        {"name": "wide", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "matrix distributor"]
+      ],
+      "comment": "Judgment from Heim, Lasnik and May 1991 (p. 86): unambiguous, with only the narrow-scope, contradictory reading, because distributive 'each' cannot apply to the already distributed antecedent. (26) attests wide scope for this structure.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_18b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(18b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "They each examined each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor, simple sentence"]
+      ],
+      "comment": "Judgment from Heim, Lasnik and May 1991; (19) and (20) attest such sentences.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_19a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(19a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "They each liked each other but never said a word.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor, simple sentence"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (Amazon review).",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_19b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(19b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "At the end of the ceremony, they each kissed each other as husband and wife.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor, simple sentence"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (blog).",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_20a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(20a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "If there are 12 persons in a party and each of them shakes hands with each other, how many handshakes do happen in the party?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor 'each of them', simple sentence"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (aptitude-test forum).",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_20b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(20b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Assertion: when a firefly hits a bus, each of them exerts the same force on each other.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor 'each of them', simple sentence"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (homework forum).",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_21a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(21a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The men told each girl a different story.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "internal", "judgment": "acceptable"},
+        {"name": "external", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["diagnostic", "internal reading of 'different'"]
+      ],
+      "comment": "Distributive 'each' licenses the internal reading of 'different' (a different story for each girl) as well as the external one (a story different from some other salient story): Safir 2014 (p. 98), citing unpublished work by Brasoveanu.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_21b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(21b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The men told each other a different story.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "internal", "judgment": "unacceptable"},
+        {"name": "external", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["diagnostic", "internal reading of 'different'"]
+      ],
+      "comment": "The reciprocal alone does not license the internal reading of 'different'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_22",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(22)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The men each told each other a different story.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "internal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["diagnostic", "internal reading of 'different'"]
+      ],
+      "comment": "Constructed minimal pair to (21b): the internal reading emerges with the superfluous 'each', so the 'each' is not vacuous and one can distribute on the reciprocal's antecedent.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_23a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(23a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "We each gave each other a different perspective of life, and that provided the balance and a good marriage and parenting needs.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "internal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["diagnostic", "internal reading of 'different'"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring internal reading (blog).",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_23b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "They parallel one another and complemented one another other because they each gave each other a different sort of intensity at least how that's how I fell into that music.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "internal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["diagnostic", "internal reading of 'different'"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring internal reading (transcribed speech), quoted as printed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_24a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(24a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Callie was an obvious one, as they were extremely close and both accepted that they each liked each other, but they didn't do anything about it.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor in the complement clause"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (fan wiki), narrow scope with 'each' in the subordinate clause.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_24b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(24b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "I saw in some rants it says that they just flirted a little or made out and were in love but they already established the fact that they each liked each other before the [sic] kissed.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor in the complement clause"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (blog), narrow scope with 'each' in the subordinate clause.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_25",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(25)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "So many what ifs and in the end, they find out that they each liked each other before. But now, they each have their own lives to lead.",
+      "discourseSegments": [
+        "So many what ifs and in the end, they find out that they each liked each other before.",
+        "But now, they each have their own lives to lead."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "distributor in the complement clause"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (film review), wide scope with 'each' in the subordinate clause; the squib notes it looks like a crossed reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_26a",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(26a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "While watching their movies, they each realize that they miss each other, make up and go to “Monkey Cars 3D” where the whole cast of So Random! and Chad is seen watching “Monkey Cars 3D”.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "matrix distributor"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (Wikipedia), the structure of (18a) with a wide reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_26b",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(26b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "“And I'll be back,” she reassured him, even though neither of them wanted to admit that they enjoyed each other's company and, deep down, especially on her part, wanted to find out more about that wolf's past.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "5"],
+        ["antecedent", "matrix distributor 'neither of them'"]
+      ],
+      "method": "corpus",
+      "comment": "Naturally occurring (web novel): the matrix distributor need not be 'each'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_28",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "wann1242",
+      "primaryText": "wì mù tɛ̄ŋ̄ gé mɔ̄ á ē ɔ̄ŋ̄ lɔ̄ lé",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wì", "animal"], ["mù", "PL"], ["tɛ̄ŋ̄", "all"], ["gé", "say"], ["mɔ̄", "LOG.PL"],
+        ["á", "COP"], ["ē", "REFL"], ["ɔ̄ŋ̄", "RECIP"], ["lɔ̄", "eat"], ["lé", "PROG"]
+      ],
+      "translation": "All the animals say they-LOG will eat each other.",
+      "context": "A hare visits the animals of a forest one by one; worried about infighting, each says to the hare 'We will eat each other'. Back home the hare reports what they said.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "narrow", "judgment": "acceptable"},
+        {"name": "wide", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "6"],
+        ["antecedent", "logophor"]
+      ],
+      "comment": "Data from Tatiana Nikitina (fn. 5). The wide reading, where each animal said 'I will eat the others' and only the hare sums the statements to a reciprocal one, is unavailable: 'they' is then interpreted outside the report and cannot be a logophor.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_31",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(31)"},
+      "reportedIn": null,
+      "language": "wann1242",
+      "primaryText": "wì mù é tɛ̄ŋ̄ gé dóō mɔ̄ á wì dɛ̀ŋ̀ mù é tɛ̄ŋ̄ lɔ̄ lé",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wì", "animal"], ["mù", "PL"], ["é", "DEF"], ["tɛ̄ŋ̄", "all"], ["gé", "say"],
+        ["dóō", "QUOT"], ["mɔ̄", "LOG.PL"], ["á", "COP"], ["wì", "animal"], ["dɛ̀ŋ̀", "rest"],
+        ["mù", "PL"], ["é", "DEF"], ["tɛ̄ŋ̄", "all"], ["lɔ̄", "eat"], ["lé", "PROG"]
+      ],
+      "translation": "All the animals say that they-LOG are going to eat all the rest of the animals.",
+      "context": "Each animal says 'I will eat the others'.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "bound logophor", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "6"],
+        ["antecedent", "logophor, no reciprocal"]
+      ],
+      "comment": "A bound reading of the plural logophor is possible and expresses the scenario of the missing wide reading of (28), as long as no reciprocal is used: it is the reciprocal that would drag its antecedent out of the report.",
+      "verified": "page-image"
+    },
+    {
+      "id": "dalrymplehaug2024_32",
+      "source": {"bibkey": "dalrymple-haug-2024", "paperLabel": "(32)"},
+      "reportedIn": null,
+      "language": "wann1242",
+      "primaryText": "wì mù tɛ̄ŋ̄ tú gé à̰ ɔ̄ŋ̄ lɔ̄ lé",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wì", "animal"], ["mù", "PL"], ["tɛ̄ŋ̄", "all"], ["tú", "completely"], ["gé", "say"],
+        ["à̰", "3PL"], ["ɔ̄ŋ̄", "RECIP"], ["lɔ̄", "eat"], ["lé", "PROG"]
+      ],
+      "translation": "They all say that they-3PL are going to eat each other.",
+      "context": "Each animal says 'I will eat the others'.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "wide", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["section", "6"],
+        ["antecedent", "ordinary plural pronoun"]
+      ],
+      "comment": "The wide reading is expressible with a reciprocal, but requires the ordinary pronoun rather than the logophor. The pronoun is printed with a subscript tilde (à̰).",
+      "verified": "page-image"
+    }
+  ]
+}

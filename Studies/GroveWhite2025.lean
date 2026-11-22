@@ -207,7 +207,7 @@ theorem unresolvedFactivity_eq : unresolvedFactivity τ ν = ν.map fun d ↦ σ
     funext (disjunction_eq τ)]
 
 instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (resolvedFactivity τ ν) :=
-  ⟨by simp [resolvedFactivity_eq]⟩
+  ⟨by simp [resolvedFactivity_eq, ← ENNReal.coe_add]⟩
 
 instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (unresolvedFactivity τ ν) :=
   (isProbabilityMeasure_map_iff (measurable_disjunction τ).aemeasurable).mpr ‹_›

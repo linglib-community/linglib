@@ -28,6 +28,8 @@ the reader reads, so that the fit cannot go silently vacuous.
 * `Datum.wordsOf`: the words of a text, the target of a link from a row to the lexical entries it
   prints.
 * `Datum.bool?`: a truth value written `true` or `false`.
+* `Datum.Span.words`, `Datum.spansIn`: the glossed words a span of a row covers, and the spans
+  that lie within a span.
 * `Datum.judgments`, `Datum.JudgedFelicitous`: every printed mark, and felicity as the mark and
   the prose give it.
 * `Judgment.Band`, `Judgment.band`: the three bands of the severity order that a prediction
@@ -163,6 +165,15 @@ def decimal? : Option Rat :=
     match s.toList.span (· ≠ '.') with
     | (i, []) => (digits? i).map fun n ↦ (n : Rat)
     | (i, _ :: f) => do pure ((← digits? i) + (← digits? f) / 10 ^ f.length)
+
+/-- `s.words e` is the glossed words of `e` that the span `s` covers, none for a span of length
+zero. -/
+def Span.words (s : Span) (e : Datum) : List GlossedWord :=
+  (e.glossedWords.drop s.start).take s.length
+
+/-- `e.spansIn s` is the spans of `e` other than `s` that lie within `s`. -/
+def spansIn (s : Span) : List Span :=
+  e.spans.filter fun t ↦ t ≠ s ∧ s.start ≤ t.start ∧ t.start + t.length ≤ s.start + s.length
 
 /-- `e.bool? key` is the first value of `key` in `e` read as `true` or `false`. -/
 def bool? : Option Bool := e.parse? key [("true", true), ("false", false)]

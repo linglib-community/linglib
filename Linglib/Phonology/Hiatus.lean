@@ -1,28 +1,25 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.Segmental.Defs
 public import Mathlib.Data.List.Chain
 
 /-!
 # Vowel hiatus
 
-Vowel hiatus is the adjacency of two vowels in separate syllables. Many languages do not tolerate
-it, and where a vowel-final morph meets a vowel-initial one they elide one of the vowels, turn the
-first into a glide, merge the two, syllabify them as a diphthong, or insert a consonant.
-
-On strings of segments, a form is [free of hiatus](##Free) when no two adjacent segments are both
-vowels, and `Hiatus.count` is the constraint against such pairs. A `Hiatus.Juncture` is a seam at
-which two vowels meet, and
-[a form has a hiatus exactly when it has one](##not_free_iff_exists_input). Merger, elision and
-epenthesis [all leave the same count](##count_coalesce), one below the unrepaired form's, so the
-constraint cannot choose among them and the choice falls to the other constraints each violates.
+This file defines the [constraint against vowel hiatus](##count), the adjacency of two vowels in
+separate syllables, which many languages repair where a vowel-final morph meets a vowel-initial one
+by elision, glide formation, merger, diphthongization or epenthesis. A form is
+[free of hiatus](##Free) when no two adjacent segments are both vowels, and
+[has a hiatus exactly when it has a juncture](##not_free_iff_exists_input), a seam at which two
+vowels meet. Merger, elision and epenthesis [all leave the same count](##count_coalesce), one below
+the unrepaired form's, so the choice among them falls to the other constraints.
 
 ## Implementation notes
 
 Forms carry no syllable boundaries, so `Hiatus.count` also counts a vowel sequence within one
-syllable, such as a diphthong or a long vowel written as two segments. Glide formation and diphthong
-formation, which turn on the syllabification of the two vowels, are not defined.
+syllable, such as a diphthong. Glide formation and diphthong formation, which turn on
+syllabification, are not defined.
 
 ## References
 
@@ -36,8 +33,7 @@ namespace Phonology.Hiatus
 
 open OptimalityTheory
 
-/-- A form is free of hiatus when no two adjacent segments are both vowels. Like `OCP.IsClean`, it
-is a reducible alias of `List.IsChain`, so that API applies. -/
+/-- A form is free of hiatus when no two adjacent segments are both vowels. -/
 abbrev Free (fm : List Segment) : Prop :=
   fm.IsChain fun a b ↦ ¬(a.IsVowel ∧ b.IsVowel)
 
@@ -45,11 +41,11 @@ abbrev Free (fm : List Segment) : Prop :=
 constraint against hiatus. Since a form has no syllable boundaries, this is not quite NOHIATUS in
 tableau (30) of [casali-2011], which the diphthong candidate [.kua.bo.] does not violate. -/
 abbrev count : Constraint (List Segment) :=
-  Constraint.forbidPairs fun a b ↦ a.IsVowel ∧ b.IsVowel
+  Constraint.ofForbiddenPairs fun a b ↦ a.IsVowel ∧ b.IsVowel
 
 /-- The categorical ban and the violation count agree. -/
 theorem free_iff_count_eq_zero (fm : List Segment) : Free fm ↔ count fm = 0 :=
-  (Constraint.forbidPairs_eq_zero_iff _ fm).symm
+  Constraint.ofForbiddenPairs_eq_zero_iff.symm
 
 /-! ### Hiatus at a juncture -/
 
@@ -178,17 +174,18 @@ theorem epenthesize_eq_insertIdx (c : Segment) :
 
 /-- The juncture adds one hiatus to those of the two forms. -/
 theorem count_input : count j.input = count j.left + 1 + count j.right := by
-  simp [input, left, right, Constraint.forbidPairs_append_cons_cons, j.v1_isVowel, j.v2_isVowel]
+  simp [input, left, right, Constraint.ofForbiddenPairs_append_cons_cons, j.v1_isVowel,
+    j.v2_isVowel]
 
 /-- Merger into a vowel removes the hiatus at the juncture and no other. Each elision and epenthesis
-leave the same count, so the constraint against hiatus does not choose among these repairs: in
-tableau (30) of [casali-2011] each passes NOHIATUS and violates a constraint of its own. -/
+leave the same count, so the constraint against hiatus does not choose among these repairs, and in
+tableau (30) of [casali-2011] each satisfies NOHIATUS and violates a constraint of its own. -/
 theorem count_coalesce {v : Segment} (hv : v.IsVowel) :
     count (j.coalesce v) = count j.left + count j.right := by
   unfold coalesce left right count
-  rw [Constraint.forbidPairs_split,
-    Constraint.forbidPairs_congr_last _ (a := v) (b := j.v1) (by simp [hv, j.v1_isVowel]),
-    Constraint.forbidPairs_congr_head _ (a := v) (b := j.v2) (by simp [hv, j.v2_isVowel])]
+  rw [Constraint.ofForbiddenPairs_split,
+    Constraint.ofForbiddenPairs_congr_last _ (a := v) (b := j.v1) (by simp [hv, j.v1_isVowel]),
+    Constraint.ofForbiddenPairs_congr_head _ (a := v) (b := j.v2) (by simp [hv, j.v2_isVowel])]
 
 theorem count_elideV1 : count j.elideV1 = count j.left + count j.right :=
   j.coalesce_v2 ▸ j.count_coalesce j.v2_isVowel
@@ -198,7 +195,7 @@ theorem count_elideV2 : count j.elideV2 = count j.left + count j.right :=
 
 theorem count_epenthesize {c : Segment} (hc : ¬ c.IsVowel) :
     count (j.epenthesize c) = count j.left + count j.right := by
-  simp [epenthesize, left, right, Constraint.forbidPairs_append_cons_cons, hc]
+  simp [epenthesize, left, right, Constraint.ofForbiddenPairs_append_cons_cons, hc]
 
 end Juncture
 

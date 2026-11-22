@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 
 /-!
 # Complement sizes
@@ -16,14 +16,14 @@ attitudes and a modal projection for future infinitives, beside the full CP of a
 and a complement is at most as large as another when its highest head is extended by the other's.
 Two sizes with distinct heads at one level, tense and negation for instance, are then equivalent
 but not equal, so the order is a preorder, and two sizes no source relates, a nominalized clause
-and a CP, are incomparable. The size of a clause spine is its highest head. On extended
+and a CP, are incomparable. The size of a spine is its highest head. On extended
 projections the extension order of spines, inclusion of labels, refines the size order, and the
 standard sizes are those of the standard spines.
 
 ## Main definitions
 
 * `Minimalist.ComplementSize`: a clausal complement measured by its highest head.
-* `Minimalist.ClauseSpine.size`: the size of a spine, its highest head.
+* `Minimalist.Spine.size`: the size of a spine, its highest head.
 * `Minimalist.ComplementSize.vP`, `Minimalist.ComplementSize.tP`,
   `Minimalist.ComplementSize.modP`, `Minimalist.ComplementSize.finP`,
   `Minimalist.ComplementSize.cP`: the standard sizes.
@@ -31,7 +31,7 @@ standard sizes are those of the standard spines.
 ## Main results
 
 * `Minimalist.ComplementSize.le_def`: the order is the extension order of the highest heads.
-* `Minimalist.ClauseSpine.size_le_size`: on extended projections, the extension order refines the
+* `Minimalist.Spine.size_le_size`: on extended projections, the extension order refines the
   size order, so that the standard sizes ascend as their spines do
   (`Minimalist.ComplementSize.vP_le_tP`, `Minimalist.ComplementSize.tP_le_cP`).
 
@@ -75,13 +75,13 @@ end ComplementSize
 
 /-! ### The size of a spine -/
 
-namespace ClauseSpine
+namespace Spine
 
-variable {s t : ClauseSpine} {c : Cat}
+variable {s t : Spine} {c : Cat}
 
 /-- The size of a spine is its highest head; the empty spine has the size of a bare lexical head,
 the least size. -/
-def size (s : ClauseSpine) : ComplementSize := ⟨s.heads.getLastD .V⟩
+def size (s : Spine) : ComplementSize := ⟨s.heads.getLastD .V⟩
 
 private theorem extendsTo_getLastD {l : List Cat} (hp : l.Pairwise Cat.ExtendsTo) (hc : c ∈ l) :
     c.ExtendsTo (l.getLastD .V) := by
@@ -107,17 +107,17 @@ theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) (hs : s.heads �
   rw [hlc, List.concat_eq_append, List.getLastD_concat]
   exact ht.extendsTo_size (le_iff_forall_mem.1 h c (by simp [hlc]))
 
-end ClauseSpine
+end Spine
 
 /-! ### The standard sizes -/
 
 namespace ComplementSize
 
 /-- The vP-sized complement of a restructuring infinitive, the size of the vP spine. -/
-def vP : ComplementSize := ClauseSpine.vP.size
+def vP : ComplementSize := Spine.vP.size
 
 /-- The TP-sized complement of a propositional infinitive, the size of the TP spine. -/
-def tP : ComplementSize := ClauseSpine.tP.size
+def tP : ComplementSize := Spine.tP.size
 
 /-- The modal complement of a future infinitive. -/
 def modP : ComplementSize := ⟨.Mod⟩
@@ -126,14 +126,14 @@ def modP : ComplementSize := ⟨.Mod⟩
 def finP : ComplementSize := ⟨.Fin⟩
 
 /-- The CP-sized complement of a finite clause, the size of the CP spine. -/
-def cP : ComplementSize := ClauseSpine.cP.size
+def cP : ComplementSize := Spine.cP.size
 
 /-- The standard sizes ascend as their spines do. -/
 theorem vP_le_tP : vP ≤ tP :=
-  ClauseSpine.size_le_size ClauseSpine.vP_le_tP (by decide +kernel) (List.cons_ne_nil _ _)
+  Spine.size_le_size Spine.vP_le_tP (by decide +kernel) (List.cons_ne_nil _ _)
 
 theorem tP_le_cP : tP ≤ cP :=
-  ClauseSpine.size_le_size ClauseSpine.tP_le_cP ClauseSpine.cP_isExtendedProjection
+  Spine.size_le_size Spine.tP_le_cP Spine.cP_isExtendedProjection
     (List.cons_ne_nil _ _)
 
 end ComplementSize

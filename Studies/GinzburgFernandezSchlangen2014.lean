@@ -75,8 +75,7 @@ co-propositional with what the speaker means to say next (`not_copropositional_n
 
 namespace GinzburgFernandezSchlangen2014
 
-open Discourse
-open Discourse.Gameboard (Turn)
+open Gameboard
 
 /-- The two participants. -/
 inductive Agent

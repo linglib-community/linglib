@@ -457,7 +457,7 @@ private theorem not_holdsFor_additive_mem_core :
       fun P ↦ true ∈ SetRel.core (.univ : SetRel Bool Bool) P :=
   fun h ↦ by
     have := eq_iff_iff.1 ((h .additive (by decide)).1 {true} {false})
-    simp only [SetRel.mem_core, Set.sup_eq_union, Set.mem_union, Set.mem_singleton_iff,
+    simp only [SetRel.mem_core, Set.mem_union, Set.mem_singleton_iff,
       sup_Prop_eq] at this
     exact (this.1 fun b _ ↦ by cases b <;> simp).elim
       (fun h ↦ absurd (h (b := false) trivial) (by decide))

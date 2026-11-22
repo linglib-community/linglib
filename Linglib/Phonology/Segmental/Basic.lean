@@ -83,7 +83,7 @@ instance : SemilatticeInf Segment where
     split_ifs at h with he; exact he ▸ h
   le_inf r s t hs ht f v h := by
     change (if s f = t f then s f else none) = some v
-    rw [hs f v h, ht f v h, if_pos rfl]
+    rw [hs f v h, ht f v h, ite_eq_left rfl]
 
 theorem inf_apply (s t : Segment) (f : Feature) : (s ⊓ t) f = if s f = t f then s f else none :=
   rfl

@@ -77,7 +77,7 @@ Zwarts shows neither characterizes boundedness. Quantization is
 def TelicK (X : Set (Path Loc)) : Prop :=
   ∀ p ∈ X, ∀ q ∈ X, p ≤ q → p.source = q.source ∧ p.goal = q.goal
 
-theorem quantized_telicK {X : Set (Path Loc)} (h : QUA (· ∈ X)) :
+theorem quantized_telicK {X : Set (Path Loc)} (h : QUA X) :
     TelicK X := by
   intro p hp q hq hle
   rcases eq_or_ne p q with rfl | hne
@@ -217,7 +217,7 @@ theorem toPP_subset_towardsPP [Preorder α] {d : Loc → α} {R : Set Loc}
 /-- Bounded phrases are not quantized, (23)–(24), since a *to x* path has proper subpaths that are
 also *to x*, against the [krifka-1998] characterization of telicity. -/
 theorem toPP_not_quantized {x a b : Loc} (ha : a ≠ x) (hb : b ≠ x) :
-    ¬ QUA (· ∈ toPP ({x} : Set Loc)) := by
+    ¬ QUA (toPP ({x} : Set Loc)) := by
   intro h
   have hp : (⟨a, [x]⟩ : Path Loc) ∈ toPP {x} := by
     refine Path.IsTerminative.isCofinal ⟨?_, by simp⟩

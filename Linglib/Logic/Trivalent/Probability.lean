@@ -83,7 +83,7 @@ theorem prob_le_one [IsFiniteMeasure μ] : prob μ p ≤ 1 := by
 credence. -/
 theorem prob_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) : prob (c • μ) p = prob μ p := by
   unfold prob
-  rw [cond_smul hc0 hc, Measure.smul_apply, smul_eq_mul]
+  rw [cond_smul hc0 hc, smul_apply, smul_eq_mul]
   simp only [mul_eq_zero, or_iff_right hc0]
 
 /-- Against the uniform credence on a finite world space, trivalent probability counts worlds. -/

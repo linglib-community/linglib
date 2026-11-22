@@ -62,8 +62,7 @@ follow-up question, [as the rules predict](##Ginzburg2012.Ex22.rows_turn).
 
 namespace Ginzburg2012
 
-open Discourse
-open Discourse.Gameboard (Turn)
+open Gameboard
 
 /-- The syntactic categories of the examples' utterances and sub-utterances. -/
 inductive Category

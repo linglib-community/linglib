@@ -350,7 +350,7 @@ theorem coe_freeVarFinset (K : DRS L V) :
 
 theorem freeVarFinset_subset_iff {K : DRS L V} {X : Finset V} :
     K.freeVarFinset ⊆ X ↔ Condition.freeVarFinsetL K.conditions ⊆ X ∪ K.referents := by
-  rw [freeVarFinset_eq, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
+  rw [freeVarFinset_eq, sdiff_le_iff, sup_comm]
 
 end DRS
 

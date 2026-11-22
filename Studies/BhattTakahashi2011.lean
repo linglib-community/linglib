@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.BhattTakahashi2011
 public import Studies.Lechner2004
 public import Linglib.Semantics.Degree.HeimKennedy
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -50,7 +50,7 @@ namespace BhattTakahashi2011
 
 open PhraseStructure
 open PhraseStructure.Tree
-open RoseTree (cCommand CCommands)
+open RoseTree (branching CCommands)
 
 /-! ### The binding generalization (§2) -/
 
@@ -170,7 +170,7 @@ quantifier in its base position satisfies the Heim–Kennedy constraint against 
 abstraction at the root of the *than*-clause. -/
 def RAPredictsScope (e : Datum) : Prop :=
   ∀ c ∈ thanClauseOf e,
-    (IsHeimKennedy (cCommand c.tree) c.qp ⊥ c.trace ↔
+    (IsHeimKennedy C[branching c.tree] c.qp ⊥ c.trace ↔
       e.feature? "than_internal_scope" = some "available")
 
 instance (e : Datum) : Decidable (RAPredictsScope e) :=

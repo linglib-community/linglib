@@ -334,7 +334,7 @@ noncomputable def jointSpeaker : Kernel (State × (Obs × Access)) SimpleExpr :=
   Kernel.ofFunOfCountable fun x ↦ speaker lam θ P x.2
 
 instance : IsMarkovKernel (jointSpeaker lam θ P) :=
-  ⟨fun x ↦ by rw [jointSpeaker, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- The pragmatic listener of (18) inverts the speaker against the joint prior; its first
 marginal is the state listener of (19), its second the observation listener of (20). -/

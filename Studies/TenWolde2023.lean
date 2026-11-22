@@ -3,41 +3,46 @@ module
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Data.List.MinMax
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Studies.Traugott2010
+public import Linglib.Data.Examples.TenWolde2023
+public import Linglib.Data.Statistics.TenWolde2023
 
 /-!
 # ten Wolde (2023): The English Binominal Noun Phrase: A Cognitive-Functional Approach
 
-This file formalizes ten Wolde's account of the English *of*-binominal as a grammaticalization
-path from the prototypical N+PP (*the hell of his own invention*) through the head-classifier
-(*a hell of loneliness*) and the evaluative binominal noun phrase (*a hell of a hotel*) to the
-evaluative modifier (*a hell of a man*) and the binominal intensifier (*a hell of a large sum*)
-(`Stage`). The features of the book's two overview tables hold over intervals of the path, with
-one exception (`ordConnected_span_iff`): the second determiner is lost in the head-classifier and
-reappears in the evaluative binominal, which the book explains by inheritance from the N+PP, and
-which the network derives (`inherited_secondDeterminer`). A
-feature that holds over an interval is never lost once gained if it holds at the last stage
-(`isUpperSet_span_of_top_mem`), and the features together tell every two stages apart
+The English *of*-binominal follows a grammaticalization path from the prototypical N+PP (*the hell
+of his own invention*) through the head-classifier (*a hell of loneliness*) and the evaluative
+binominal noun phrase (*a hell of a hotel*) to the evaluative modifier (*a hell of a man*) and the
+binominal intensifier (*a hell of a large sum*). We order these constructions as a five-element
+chain `Stage`. A diagnostic of the book's overview tables is the set of stages at which it holds,
+`Diagnostic.span`. Every span is an interval of the path except those of the second determiner
+(`ordConnected_span_iff`): the head-classifier has none and the evaluative binominal has one again,
+which the constructional network derives by inheritance from the N+PP
+(`inherited_secondDeterminer`). The diagnostics together tell every two stages apart
 (`profile_injective`).
 
-Every first noun of the case studies and of the corpus study is attested at all stages below the
-ones it has reached (`isLowerSet_stages`). In the constructional network every later stage
-inherits from the N+PP mother node, the horizontal metaphorical links are the covering relation of
-the path (`metaphorical_iff_covBy`), and the step onto the evaluative stages is a subjectification
-in Traugott's sense.
+For nine first nouns we define `first n c`, the time at which the noun `n` is first recorded in
+the construction `c`: the year of its earliest dated example, or the first decade in which the
+corpus frequency tables count a token. Every noun is recorded at all stages below the ones it has
+reached (`isLowerSet_stages`), and `first n` is monotone along the path for all nouns but *snake*
+and *bitch* (`monotone_first_iff`). In the network every later stage inherits from the N+PP mother
+node, the horizontal metaphorical links are the covering relation of the path
+(`metaphorical_iff_covBy`), and the levels of subjectivity coded along the path follow Traugott's
+cline (`path_followsCline`).
 
 ## Implementation notes
 
-* The spans of the diagnostics are read off the feature rows of Tables 3.2 and 4.2, the path off
-  Figure 6.1, the semantic classes off Table 2.1, the attestations off Figures 5.1 and 5.2 and
-  the summary of chapter 6, and the links off the network figures of chapter 8.
-* A diagnostic is the set of stages at which it holds. The second determiner of the N+PP is an
-  open determiner slot, which is counted here as marking number.
-* A noun records the pseudo-partitive separately from its stages. Figure 6.1 draws that
-  construction as an optional detour between the head-classifier and the evaluative binominal,
-  not as a stage of the path.
+* The second determiner of the N+PP is an open determiner slot, which is counted here as marking
+  number.
+* The pseudo-partitive is a row of the frequency tables and not a `Stage`. The book draws it as an
+  optional detour between the head-classifier and the evaluative binominal.
+* `first` compares years of single examples with first years of decades. The two never meet for
+  one noun, since the frequency tables cover six nouns and the dated examples the other three.
+* The corpus begins in 1810, after all six nouns of the frequency tables had entered English, so
+  an early `first` is a lower bound on the age of a construction only within the corpus.
 
 ## References
 
@@ -152,13 +157,13 @@ theorem ordConnected_span_iff (d : Diagnostic) :
   case det₂Number => exact iff_of_false (gap (by decide) (by decide) (by decide)) (by decide)
   all_goals exact iff_of_true (by unfold Diagnostic.span; infer_instance) (by decide)
 
-theorem isUpperSet_span_of_top_mem {d : Diagnostic} (hd : d.span.OrdConnected)
-    (h : ⊤ ∈ d.span) : IsUpperSet d.span :=
-  fun _ _ hab ha ↦ hd.out ha h ⟨hab, le_top⟩
+-- A feature that holds over an interval and at the last stage is never lost once gained.
+theorem isUpperSet_of_top_mem {s : Set Stage} (hs : s.OrdConnected) (h : ⊤ ∈ s) : IsUpperSet s :=
+  fun _ _ hab ha ↦ hs.out ha h ⟨hab, le_top⟩
 
-theorem isLowerSet_span_of_bot_mem {d : Diagnostic} (hd : d.span.OrdConnected)
-    (h : ⊥ ∈ d.span) : IsLowerSet d.span :=
-  fun _ _ hba ha ↦ hd.out h ha ⟨bot_le, hba⟩
+-- A feature that holds over an interval and at the first stage is never regained once lost.
+theorem isLowerSet_of_bot_mem {s : Set Stage} (hs : s.OrdConnected) (h : ⊥ ∈ s) : IsLowerSet s :=
+  fun _ _ hba ha ↦ hs.out h ha ⟨bot_le, hba⟩
 
 theorem strictAgreement_span : Diagnostic.strictAgreement.span = {.evaluative} :=
   Set.Icc_self _
@@ -182,77 +187,84 @@ theorem profile_injective : Function.Injective Stage.profile := by decide
 
 /-! ### First nouns -/
 
-/-- The semantic classes of first nouns. -/
-inductive SemanticClass where
-  /-- Inanimate concrete nouns such as *cake*, *nub*, *breeze* and *husk*. -/
-  | inanimate
-  /-- Animate nouns such as *beast*, *snake* and *whale*. -/
-  | animate
-  /-- Abstract nouns, among them mythical beings and expletives, such as *hell* and *bitch*. -/
-  | abstract
-  deriving DecidableEq, Repr
+open Examples (Example)
 
-/-- A first noun with the constructions it is attested in. -/
-structure Noun where
-  semanticClass : SemanticClass
-  /-- The stages of the path the noun is attested at. -/
-  stages : Finset Stage
-  /-- Whether the noun has pseudo-partitive uses, as in *a hell of microwaves*. -/
-  pseudoPartitive : Bool
-  /-- The orthographically reduced form of [N₁ *of a*], if there is one. -/
-  fused : Option String := none
-  deriving DecidableEq
+/-- The row of the frequency tables that records a stage of the path. -/
+def Stage.category : Stage → Category
+  | .nPP => .nPP
+  | .headClassifier => .headClassifier
+  | .evaluative => .ebnp
+  | .evaluativeModifier => .em
+  | .binominalIntensifier => .bi
 
-namespace Noun
+/-- The nouns of the case studies among the first nouns. -/
+def Examples.Noun.toNoun : Examples.Noun → TenWolde2023.Noun
+  | .cake => .cake
+  | .beast => .beast
+  | .hell => .hell
 
-/-- The case-study noun *hell* is attested at every stage and fuses to *helluva*. -/
-def hell : Noun := ⟨.abstract, Finset.univ, true, some "helluva"⟩
+/-- The row of the frequency tables that records a construction. -/
+def Examples.Construction.category : Examples.Construction → Category
+  | .nPP => .nPP
+  | .headClassifier => .headClassifier
+  | .pseudoPartitive => .pseudoPartitive
+  | .ebnp => .ebnp
+  | .em => .em
+  | .bi => .bi
 
-/-- The case-study noun *beast* is attested at every stage and has no pseudo-partitive uses. -/
-def beast : Noun := ⟨.animate, Finset.univ, false, none⟩
+/-- The first year of the first decade in which the frequency tables record a token of the noun
+in the construction, and `⊤` if they record none. -/
+def firstDecade (n : Noun) (c : Category) : WithTop ℕ :=
+  match (periods n).start, (frequencies n c).counts with
+  | some y, some l => (l.findIdx? (0 < ·)).elim ⊤ fun i ↦ ((y + 10 * i : ℕ) : WithTop ℕ)
+  | _, _ => ⊤
 
-/-- The case-study noun *cake* is attested up to the evaluative modifier. -/
-def cake : Noun :=
-  ⟨.inanimate, {.nPP, .headClassifier, .evaluative, .evaluativeModifier}, true, none⟩
+/-- The year of the earliest dated example of the noun in the construction, and `⊤` if there is
+none. -/
+def firstExample (n : Noun) (c : Category) : WithTop ℕ :=
+  ((Example.all.filter fun x ↦
+    x.noun.map Examples.Noun.toNoun = some n ∧
+      x.construction.map Examples.Construction.category = some c).filterMap
+      (·.datum.nat? "year")).minimum
 
-/-- The noun *whale* is attested at every stage and fuses to *whaleuva*. -/
-def whale : Noun := ⟨.animate, Finset.univ, false, some "whaleuva"⟩
+/-- The time at which the noun is first recorded in the construction, by a dated example or in
+the frequency tables. -/
+def first (n : Noun) (c : Category) : WithTop ℕ := firstDecade n c ⊓ firstExample n c
 
-/-- The noun *bitch* is attested at every stage, at the intensifier by a single token. -/
-def bitch : Noun := ⟨.abstract, Finset.univ, false, none⟩
+/-- The stages of the path at which the noun is recorded. -/
+def Noun.stages (n : Noun) : Set Stage := {s | first n s.category ≠ ⊤}
 
-/-- The noun *nub* is attested up to the evaluative binominal. -/
-def nub : Noun := ⟨.inanimate, {.nPP, .headClassifier, .evaluative}, true, none⟩
+instance (n : Noun) : DecidablePred (· ∈ n.stages) := fun s ↦
+  inferInstanceAs (Decidable (first n s.category ≠ ⊤))
 
-/-- The noun *breeze* is attested up to the evaluative binominal. -/
-def breeze : Noun := ⟨.inanimate, {.nPP, .headClassifier, .evaluative}, true, none⟩
+/-- Every first noun is recorded at all stages of the path below the ones it has reached. -/
+theorem isLowerSet_stages (n : Noun) : IsLowerSet n.stages := by
+  have h : ∀ a b : Stage, b ≤ a → a ∈ n.stages → b ∈ n.stages := by cases n <;> decide +kernel
+  exact fun a b hba ha ↦ h a b hba ha
 
-/-- The noun *husk* is attested up to the evaluative binominal. -/
-def husk : Noun := ⟨.inanimate, {.nPP, .headClassifier, .evaluative}, true, none⟩
+/-- The constructions of a first noun are first recorded in the order of the path, except that
+*snake* is recorded in the head-classifier before the N+PP and *bitch* in the evaluative binominal
+before the head-classifier. -/
+theorem monotone_first_iff (n : Noun) :
+    Monotone (fun s : Stage ↦ first n s.category) ↔ n ≠ .snake ∧ n ≠ .bitch := by
+  cases n <;> decide +kernel
 
-/-- The noun *snake* is animate and yet has pseudo-partitive uses. -/
-def snake : Noun := ⟨.animate, {.nPP, .headClassifier, .evaluative}, true, none⟩
+-- The evaluative constructions are first recorded in the order of the path for every noun.
+theorem monotoneOn_first (n : Noun) :
+    MonotoneOn (fun s : Stage ↦ first n s.category) (Set.Ici .evaluative) := by
+  have h : ∀ a b : Stage, .evaluative ≤ a → a ≤ b → first n a.category ≤ first n b.category := by
+    cases n <;> decide +kernel
+  exact fun a ha b _ hab ↦ h a b ha hab
 
-/-- The nouns of the three case studies. -/
-def caseStudies : List Noun := [cake, beast, hell]
+-- The pseudo-partitive of *cake* is older than its head-classifier (section 6.4.5).
+theorem first_headClassifier_le_iff (n : Noun) :
+    first n .headClassifier ≤ first n .pseudoPartitive ↔ n ≠ .cake := by
+  cases n <;> decide +kernel
 
-/-- The nouns of the case studies and of the corpus study. -/
-def all : List Noun := caseStudies ++ [whale, bitch, nub, breeze, husk, snake]
-
-end Noun
-
-theorem isLowerSet_stages : ∀ n ∈ Noun.all, IsLowerSet (n.stages : Set Stage) := by
-  simp only [IsLowerSet, Finset.mem_coe]; decide
-
-theorem pseudoPartitive_of_inanimate :
-    ∀ n ∈ Noun.all, n.semanticClass = .inanimate → n.pseudoPartitive := by decide
-
-theorem pseudoPartitive_iff :
-    ∀ n ∈ Noun.all, n.pseudoPartitive ↔
-      n.semanticClass = .inanimate ∨ n = .snake ∨ n = .hell := by decide
-
-theorem exists_mem_chunk_of_fused :
-    ∀ n ∈ Noun.all, n.fused.isSome → ∃ s ∈ n.stages, s ∈ Diagnostic.chunk.span := by decide
+theorem first_pseudoPartitive_ne_top_iff (n : Noun) :
+    first n .pseudoPartitive ≠ ⊤ ↔
+      (nouns n).semanticClass = .inanimate ∨ n = .snake ∨ n = .hell := by
+  cases n <;> decide +kernel
 
 /-! ### The constructional network -/
 
@@ -371,8 +383,9 @@ ascribes an objective property and subjective once it expresses the speaker's ev
 def Stage.level (s : Stage) : Traugott2010.SubjectivityLevel :=
   if s ∈ Diagnostic.n₁Evaluative.span then .subjective else .nonSubjective
 
-theorem path_unidirectional :
-    Traugott2010.Unidirectional (Stage.path.map Stage.level) := by
+theorem level_monotone : Monotone Stage.level := by decide
+
+theorem path_followsCline : Traugott2010.FollowsCline (Stage.path.map Stage.level) := by
   decide
 
 end TenWolde2023

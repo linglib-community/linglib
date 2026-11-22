@@ -1,0 +1,1207 @@
+{
+ "meta": {
+  "bibkey": "ten-wolde-2023",
+  "method": "corpus",
+  "description": "The raw frequencies of six first nouns in the of-binominal constructions, by decade, in the Corpus of Historical American English and the Corpus of Contemporary American English (Tables 6.3 to 6.8), and the semantic class of each first noun the study names (Table 2.1). The tables also print normalized frequencies and percentages, and all but Table 6.3 a row of totals, which are not recorded. The book prints no frequency table for cake, beast and hell.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Noun",
+   "doc": "The first nouns of the case studies and of the corpus study.",
+   "levels": [
+    {
+     "name": "cake",
+     "label": "cake",
+     "doc": "*cake*"
+    },
+    {
+     "name": "beast",
+     "label": "beast",
+     "doc": "*beast*"
+    },
+    {
+     "name": "hell",
+     "label": "hell",
+     "doc": "*hell*"
+    },
+    {
+     "name": "nub",
+     "label": "nub",
+     "doc": "*nub*"
+    },
+    {
+     "name": "breeze",
+     "label": "breeze",
+     "doc": "*breeze*"
+    },
+    {
+     "name": "husk",
+     "label": "husk",
+     "doc": "*husk*"
+    },
+    {
+     "name": "snake",
+     "label": "snake",
+     "doc": "*snake*"
+    },
+    {
+     "name": "whale",
+     "label": "whale",
+     "doc": "*whale*"
+    },
+    {
+     "name": "bitch",
+     "label": "bitch",
+     "doc": "*bitch*"
+    }
+   ]
+  },
+  {
+   "name": "SemanticClass",
+   "doc": "The semantic classes of first nouns.",
+   "levels": [
+    {
+     "name": "abstract",
+     "label": "abstract",
+     "doc": "third-order entities, among them mythical beings and expletives"
+    },
+    {
+     "name": "animate",
+     "label": "animate",
+     "doc": "animate first-order entities"
+    },
+    {
+     "name": "inanimate",
+     "label": "inanimate",
+     "doc": "plants and lifeless objects"
+    }
+   ]
+  },
+  {
+   "name": "Category",
+   "doc": "The rows of the frequency tables.",
+   "levels": [
+    {
+     "name": "nPP",
+     "label": "N+PP",
+     "doc": "the prototypical N+PP"
+    },
+    {
+     "name": "headClassifier",
+     "label": "Head-Cl",
+     "doc": "the head-classifier, printed Head-Cl or Head-Q"
+    },
+    {
+     "name": "pseudoPartitive",
+     "label": "Pseudo-P",
+     "doc": "the pseudo-partitive"
+    },
+    {
+     "name": "ebnp",
+     "label": "EBNP",
+     "doc": "the evaluative binominal noun phrase"
+    },
+    {
+     "name": "em",
+     "label": "EM",
+     "doc": "the evaluative modifier"
+    },
+    {
+     "name": "bi",
+     "label": "BI",
+     "doc": "the binominal intensifier"
+    },
+    {
+     "name": "unclear",
+     "label": "unclear",
+     "doc": "tokens the book leaves unclassified"
+    }
+   ]
+  }
+ ],
+ "constants": [],
+ "tables": [
+  {
+   "name": "nouns",
+   "structure": "NounClass",
+   "doc": "the semantic class of a first noun.",
+   "locator": "Table 2.1",
+   "verified": "text-layer",
+   "key": [
+    "noun"
+   ],
+   "columns": [
+    {
+     "name": "noun",
+     "type": "Noun",
+     "doc": "The first noun."
+    },
+    {
+     "name": "semanticClass",
+     "type": "SemanticClass",
+     "doc": "Its class."
+    }
+   ],
+   "rows": [
+    {
+     "noun": "cake",
+     "semanticClass": "inanimate"
+    },
+    {
+     "noun": "beast",
+     "semanticClass": "animate"
+    },
+    {
+     "noun": "hell",
+     "semanticClass": "abstract"
+    },
+    {
+     "noun": "nub",
+     "semanticClass": "inanimate"
+    },
+    {
+     "noun": "breeze",
+     "semanticClass": "inanimate"
+    },
+    {
+     "noun": "husk",
+     "semanticClass": "inanimate"
+    },
+    {
+     "noun": "snake",
+     "semanticClass": "animate"
+    },
+    {
+     "noun": "whale",
+     "semanticClass": "animate"
+    },
+    {
+     "noun": "bitch",
+     "semanticClass": "abstract"
+    }
+   ]
+  },
+  {
+   "name": "periods",
+   "structure": "Period",
+   "doc": "the decade with which the frequency table of a first noun begins; every table ends with the period 2010 to 2015.",
+   "locator": "Tables 6.3 to 6.8",
+   "verified": "page-image",
+   "key": [
+    "noun"
+   ],
+   "columns": [
+    {
+     "name": "noun",
+     "type": "Noun",
+     "doc": "The first noun."
+    },
+    {
+     "name": "start",
+     "type": "option nat",
+     "doc": "The first year of the first decade, where the book prints a table for the noun."
+    }
+   ],
+   "rows": [
+    {
+     "noun": "cake",
+     "start": null
+    },
+    {
+     "noun": "beast",
+     "start": null
+    },
+    {
+     "noun": "hell",
+     "start": null
+    },
+    {
+     "noun": "nub",
+     "start": 1810
+    },
+    {
+     "noun": "breeze",
+     "start": 1810
+    },
+    {
+     "noun": "husk",
+     "start": 1810
+    },
+    {
+     "noun": "snake",
+     "start": 1810
+    },
+    {
+     "noun": "whale",
+     "start": 1810
+    },
+    {
+     "noun": "bitch",
+     "start": 1920
+    }
+   ]
+  },
+  {
+   "name": "frequencies",
+   "structure": "Frequency",
+   "doc": "the raw number of tokens of a first noun in a construction in each period, from the first decade of its table to 2010 to 2015.",
+   "locator": "Tables 6.3 to 6.8",
+   "verified": "page-image",
+   "key": [
+    "noun",
+    "category"
+   ],
+   "columns": [
+    {
+     "name": "noun",
+     "type": "Noun",
+     "doc": "The first noun."
+    },
+    {
+     "name": "category",
+     "type": "Category",
+     "doc": "The construction."
+    },
+    {
+     "name": "counts",
+     "type": "option list nat",
+     "doc": "The raw figures by period, where the table of the noun has a row for the construction."
+    }
+   ],
+   "rows": [
+    {
+     "noun": "cake",
+     "category": "N+PP",
+     "counts": null
+    },
+    {
+     "noun": "cake",
+     "category": "Head-Cl",
+     "counts": null
+    },
+    {
+     "noun": "cake",
+     "category": "Pseudo-P",
+     "counts": null
+    },
+    {
+     "noun": "cake",
+     "category": "EBNP",
+     "counts": null
+    },
+    {
+     "noun": "cake",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "cake",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "cake",
+     "category": "unclear",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "N+PP",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "Head-Cl",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "Pseudo-P",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "EBNP",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "beast",
+     "category": "unclear",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "N+PP",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "Head-Cl",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "Pseudo-P",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "EBNP",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "hell",
+     "category": "unclear",
+     "counts": null
+    },
+    {
+     "noun": "nub",
+     "category": "N+PP",
+     "counts": [
+      0,
+      0,
+      2,
+      0,
+      0,
+      2,
+      0,
+      1,
+      1,
+      0,
+      2,
+      9,
+      7,
+      15,
+      14,
+      10,
+      13,
+      9,
+      49,
+      36,
+      17
+     ]
+    },
+    {
+     "noun": "nub",
+     "category": "Head-Cl",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      0,
+      13,
+      9,
+      6
+     ]
+    },
+    {
+     "noun": "nub",
+     "category": "Pseudo-P",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      3,
+      0
+     ]
+    },
+    {
+     "noun": "nub",
+     "category": "EBNP",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      5,
+      4,
+      2
+     ]
+    },
+    {
+     "noun": "nub",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "nub",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "nub",
+     "category": "unclear",
+     "counts": null
+    },
+    {
+     "noun": "breeze",
+     "category": "N+PP",
+     "counts": [
+      2,
+      6,
+      17,
+      33,
+      23,
+      13,
+      12,
+      17,
+      16,
+      8,
+      12,
+      5,
+      8,
+      4,
+      4,
+      6,
+      3,
+      4,
+      30,
+      31,
+      13
+     ]
+    },
+    {
+     "noun": "breeze",
+     "category": "Head-Cl",
+     "counts": [
+      4,
+      8,
+      17,
+      10,
+      22,
+      9,
+      14,
+      13,
+      9,
+      7,
+      10,
+      3,
+      4,
+      3,
+      1,
+      9,
+      2,
+      3,
+      22,
+      12,
+      4
+     ]
+    },
+    {
+     "noun": "breeze",
+     "category": "Pseudo-P",
+     "counts": [
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      2,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      0,
+      2,
+      0,
+      2,
+      4,
+      5,
+      1
+     ]
+    },
+    {
+     "noun": "breeze",
+     "category": "EBNP",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0
+     ]
+    },
+    {
+     "noun": "breeze",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "breeze",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "breeze",
+     "category": "unclear",
+     "counts": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+     ]
+    },
+    {
+     "noun": "husk",
+     "category": "N+PP",
+     "counts": [
+      0,
+      1,
+      0,
+      5,
+      6,
+      2,
+      2,
+      1,
+      3,
+      3,
+      6,
+      4,
+      3,
+      1,
+      0,
+      2,
+      3,
+      6,
+      8,
+      20,
+      21
+     ]
+    },
+    {
+     "noun": "husk",
+     "category": "Head-Cl",
+     "counts": [
+      0,
+      1,
+      1,
+      2,
+      5,
+      3,
+      6,
+      6,
+      5,
+      6,
+      5,
+      4,
+      4,
+      4,
+      2,
+      1,
+      4,
+      0,
+      34,
+      23,
+      18
+     ]
+    },
+    {
+     "noun": "husk",
+     "category": "Pseudo-P",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "noun": "husk",
+     "category": "EBNP",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      1,
+      1,
+      1,
+      5,
+      9,
+      5
+     ]
+    },
+    {
+     "noun": "husk",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "husk",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "husk",
+     "category": "unclear",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "noun": "snake",
+     "category": "N+PP",
+     "counts": [
+      0,
+      2,
+      2,
+      8,
+      1,
+      2,
+      1,
+      2,
+      11,
+      3,
+      4,
+      6,
+      2,
+      8,
+      4,
+      5,
+      1,
+      2,
+      17,
+      14,
+      10
+     ]
+    },
+    {
+     "noun": "snake",
+     "category": "Head-Cl",
+     "counts": [
+      2,
+      0,
+      0,
+      1,
+      0,
+      1,
+      3,
+      3,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      4,
+      4,
+      1,
+      2,
+      7,
+      3,
+      3
+     ]
+    },
+    {
+     "noun": "snake",
+     "category": "Pseudo-P",
+     "counts": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      2,
+      1,
+      2,
+      2,
+      1,
+      0,
+      1,
+      1,
+      14,
+      11,
+      7
+     ]
+    },
+    {
+     "noun": "snake",
+     "category": "EBNP",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      1,
+      2,
+      0,
+      2,
+      2,
+      5,
+      3
+     ]
+    },
+    {
+     "noun": "snake",
+     "category": "EM",
+     "counts": null
+    },
+    {
+     "noun": "snake",
+     "category": "BI",
+     "counts": null
+    },
+    {
+     "noun": "snake",
+     "category": "unclear",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      1
+     ]
+    },
+    {
+     "noun": "whale",
+     "category": "N+PP",
+     "counts": [
+      0,
+      0,
+      1,
+      0,
+      18,
+      3,
+      0,
+      1,
+      0,
+      1,
+      2,
+      4,
+      0,
+      3,
+      0,
+      0,
+      4,
+      2,
+      6,
+      18,
+      9
+     ]
+    },
+    {
+     "noun": "whale",
+     "category": "Head-Cl",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+     ]
+    },
+    {
+     "noun": "whale",
+     "category": "Pseudo-P",
+     "counts": null
+    },
+    {
+     "noun": "whale",
+     "category": "EBNP",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      11,
+      10,
+      5,
+      2,
+      5,
+      3,
+      0,
+      9,
+      3,
+      4
+     ]
+    },
+    {
+     "noun": "whale",
+     "category": "EM",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      21,
+      6,
+      2,
+      8,
+      5,
+      2,
+      1,
+      19,
+      17,
+      10
+     ]
+    },
+    {
+     "noun": "whale",
+     "category": "BI",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      2,
+      4,
+      8,
+      4,
+      1,
+      2,
+      4,
+      5,
+      0
+     ]
+    },
+    {
+     "noun": "whale",
+     "category": "unclear",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      2,
+      0
+     ]
+    },
+    {
+     "noun": "bitch",
+     "category": "N+PP",
+     "counts": [
+      1,
+      0,
+      1,
+      4,
+      0,
+      3,
+      0,
+      6,
+      2,
+      6
+     ]
+    },
+    {
+     "noun": "bitch",
+     "category": "Head-Cl",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      1
+     ]
+    },
+    {
+     "noun": "bitch",
+     "category": "Pseudo-P",
+     "counts": null
+    },
+    {
+     "noun": "bitch",
+     "category": "EBNP",
+     "counts": [
+      0,
+      2,
+      2,
+      2,
+      1,
+      2,
+      4,
+      9,
+      9,
+      9
+     ]
+    },
+    {
+     "noun": "bitch",
+     "category": "EM",
+     "counts": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      3,
+      4,
+      3,
+      12,
+      6
+     ]
+    },
+    {
+     "noun": "bitch",
+     "category": "BI",
+     "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "noun": "bitch",
+     "category": "unclear",
+     "counts": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2
+     ]
+    }
+   ]
+  }
+ ]
+}

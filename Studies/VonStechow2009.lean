@@ -32,8 +32,8 @@ arguments about the perfective, frame adverbials and the extended now on interva
 *before* is `NonemptyInterval.Precedes`; *on* and *in* are `≤`, *at* is equality. The
 referential Past (47), which von Stechow takes from Heim, presupposes the relation
 `IntervalAlgebra.toSetRel .precedes`; the Perfective (50) and the extended-now perfect (28) are
-`Aspect.PRFV` and `Aspect.PERF`, and quantization (12) is Krifka's `Mereology.QUA`. The printed
-restricted Past (53) compares the quantified time with the speech time where its λ-bound
+`Aspect.perfective` and `Aspect.perfect`, and quantization (12) is Krifka's `Mereology.QUA`. The
+printed restricted Past (53) compares the quantified time with the speech time where its λ-bound
 argument is meant, as (57) shows; the printed EARLIEST (91) requires the earliest time to
 precede every time of the clause, itself included, and is read as `IsLeast`. Doxastic
 alternatives are relations on worlds indexed by times, or on world–time pairs. Feature
@@ -110,7 +110,7 @@ theorem achievement_rat : Achievement (fun q : ℚ ↦ 0 ≤ q) 0 :=
 
 -- (12)
 theorem qua_of_isPoint (Q : NonemptyInterval T → Prop) (h : ∀ t, Q t → t.IsPoint) :
-    Mereology.QUA Q := by
+    Mereology.QUA {t | Q t} := by
   intro a ha b hb hab hle
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   have ha' : a.fst = a.snd := h a ha
@@ -145,17 +145,17 @@ theorem future_perfect_after_speech {six : T}
 /-! ### Temporal adverbials -/
 
 -- (28)
-theorem xn_iff_perf {W : Type*} (p : W → Set (NonemptyInterval T)) (w : W) :
-    .pure s ∈ perfect p w ↔ ⟨w, s⟩ ∈ PERF p := by
-  rw [perf_eq_atPoint_perfect]; rfl
+theorem xn_pure_iff (p : NonemptyInterval T → Prop) :
+    perfect p (.pure s) ↔ ∃ pts, pts.snd = s ∧ p pts :=
+  perfect_pure_iff
 
 /-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
 interval, which ends at the speech time, so the sentence is contradictory unless the speech time
 is on yesterday. -/
-theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T))
-    (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
-    ⟨w, s⟩ ∉ PERF (Set.Iic yesterday ∩ call ·) := fun h ↦
-  let ⟨t, ⟨hle, _⟩, e⟩ := mem_perf.1 h
+theorem not_perfAdv_yesterday (call : NonemptyInterval T → Prop)
+    (yesterday : NonemptyInterval T) (hs : s ∉ yesterday) :
+    ¬ perfect ((· ≤ yesterday) ⊓ call) (.pure s) := fun h ↦
+  let ⟨t, e, hle, _⟩ := perfect_pure_iff.1 h
   let ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
 
@@ -223,7 +223,7 @@ theorem every_sunday :
 
 section Partee
 
-variable {W : Type*} (turnOff rain : W → NonemptyInterval T → Prop) (w : W)
+variable (turnOff rain : NonemptyInterval T → Prop)
   {σ t₅ today : NonemptyInterval T}
   {K : Set (NonemptyInterval T)} {Q : NonemptyInterval T → Prop}
 
@@ -235,11 +235,12 @@ def RestrictedPast (K : Set (NonemptyInterval T)) (Q : NonemptyInterval T → Pr
 
 /-- Restricted to subintervals of a time the referential Past (47) admits, the indefinite Past is
 the Perfective (50), so (52) and (54) agree. -/
-theorem restrictedPast_Iic_iff_prfv (h : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) :
-    RestrictedPast (Set.Iic t₅) (turnOff w) σ ↔ t₅ ∈ PRFV turnOff w :=
-  ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2
-    (NonemptyInterval.precedes_of_le_of_precedes ht (IntervalAlgebra.mem_toSetRel_precedes.1 h)),
-      ht, hQ⟩⟩
+theorem restrictedPast_Iic_iff_perfective (h : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) :
+    RestrictedPast (Set.Iic t₅) turnOff σ ↔ perfective turnOff t₅ :=
+  ⟨fun ⟨t, _, ht, hQ⟩ ↦ perfective_iff.2 ⟨t, ht, hQ⟩, fun hp ↦
+    let ⟨t, ht, hQ⟩ := perfective_iff.1 hp
+    ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes ht
+      (IntervalAlgebra.mem_toSetRel_precedes.1 h)), ht, hQ⟩⟩
 
 -- (46b), (54)
 theorem not_restrictedPast_of_not_past (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes] Q σ) :
@@ -256,31 +257,32 @@ theorem exists_not_restrictedPast_past :
   exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
 -- (58), (59)
-theorem not_prfv_of_not_past (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes]
-      (fun t ↦ t ≤ today ∧ rain w t) σ)
-    (h₅ : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
-  fun ⟨t, ht, hr⟩ ↦ h ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2
+theorem not_perfective_of_not_past (h : ¬ ◇[IntervalAlgebra.toSetRel .precedes]
+      (fun t ↦ t ≤ today ∧ rain t) σ)
+    (h₅ : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) (h₅' : t₅ ≤ today) : ¬ perfective rain t₅ :=
+  fun hp ↦ let ⟨t, ht, hr⟩ := perfective_iff.1 hp; h ⟨t, IntervalAlgebra.mem_toSetRel_precedes.2
     (NonemptyInterval.precedes_of_le_of_precedes ht (IntervalAlgebra.mem_toSetRel_precedes.1 h₅)),
     ht.trans h₅', hr⟩
 
 /-- The referential analysis (59) is too weak, since a short reference time leaves room for rain
 elsewhere in today. -/
-theorem exists_not_prfv_past :
-    ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : Unit → NonemptyInterval ℤ → Prop),
-      (σ ~[IntervalAlgebra.toSetRel .precedes] t₅ ∧ t₅ ≤ today ∧ t₅ ∉ PRFV rain ()) ∧
-        ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ today ∧ rain () t) σ := by
-  refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, fun _ t ↦ t = .pure 5,
-    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide, ?_⟩, .pure 5,
+theorem exists_not_perfective_past :
+    ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : NonemptyInterval ℤ → Prop),
+      (σ ~[IntervalAlgebra.toSetRel .precedes] t₅ ∧ t₅ ≤ today ∧ ¬ perfective rain t₅) ∧
+        ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ today ∧ rain t) σ := by
+  refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, (· = .pure 5),
+    ⟨IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide, fun hp ↦ ?_⟩, .pure 5,
     IntervalAlgebra.mem_toSetRel_precedes.2 (by decide), by decide, rfl⟩
-  rintro ⟨t, ht, rfl⟩
+  obtain ⟨t, ht, rfl⟩ := perfective_iff.1 hp
   exact absurd (NonemptyInterval.le_def.1 ht).2 (by decide)
 
 -- (59), (58)
-theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.Precedes σ → t ≤ t₅)
+theorem not_perfective_iff_not_past (hmax : ∀ t ≤ today, t.Precedes σ → t ≤ t₅)
     (h₅ : σ ~[IntervalAlgebra.toSetRel .precedes] t₅) (h₅' : t₅ ≤ today) :
-    t₅ ∉ PRFV rain w ↔ ¬ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ today ∧ rain w t) σ :=
-  ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (IntervalAlgebra.mem_toSetRel_precedes.1 ht), hr⟩,
-    fun h ↦ not_prfv_of_not_past rain w h h₅ h₅'⟩
+    ¬ perfective rain t₅ ↔ ¬ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ today ∧ rain t) σ :=
+  ⟨fun h ⟨t, ht, hle, hr⟩ ↦
+      h (perfective_iff.2 ⟨t, hmax t hle (IntervalAlgebra.mem_toSetRel_precedes.1 ht), hr⟩),
+    fun h ↦ not_perfective_of_not_past rain h h₅ h₅'⟩
 
 end Partee
 
@@ -386,7 +388,7 @@ section Before
 variable {W : Type*} (leave arrive : T → Prop)
 
 -- (92) [beaver-condoravdi-2003]
-theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
+theorem before_iff_earliest (alt : Index W T → Set W) (w : W)
     (h : ∀ t, alt ⟨w, t⟩ = {w}) :
     BeaverCondoravdi2003.before {i : Index W T | i.time < s ∧ leave i.time}
         {i : Index W T | i.time < s ∧ arrive i.time} alt w ↔

@@ -95,7 +95,6 @@ theorem isAntiAdditive_trivalentSuperlative_assertion (μ : α → D) (x : α) :
     IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
   fun C C' ↦ funext fun w ↦ propext <| by
     simp only [Pi.inf_apply, inf_Prop_eq, trivalentSuperlative_assertion_iff, Pi.sup_apply,
-      sup_eq_union,
       union_sdiff_distrib, image_union]
     have h := gtOverSet_isAntiAdditive μ (μ '' (C w \ {x})) (μ '' (C' w \ {x}))
     beta_reduce at h

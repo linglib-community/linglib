@@ -267,7 +267,7 @@ end
 
 private theorem dominates_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s.size)
     (h : ReflTransGen (HeadIn (s.heads 0 none)) a b) :
-    ∃ hb : b < s.size, Dominates s.toGraph ⟨a, ha⟩ ⟨b, hb⟩ := by
+    ∃ hb : b < s.size, s.toGraph.Dominates ⟨a, ha⟩ ⟨b, hb⟩ := by
   induction h with
   | refl => exact ⟨ha, .refl⟩
   | tail _ hcb ih =>

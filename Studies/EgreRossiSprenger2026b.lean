@@ -354,7 +354,7 @@ theorem update_eq_self_of_accepts (h : Accepts s φ) : update s φ = s := by
 theorem update_eq_empty_of_uniform (hu : ∀ w ∈ s, ∀ w' ∈ s, φ s w = φ s w')
     (h : ¬ Accepts s φ) : update s φ = ∅ := by
   obtain ⟨w₀, hw₀, hneg⟩ : ∃ w₀ ∈ s, ¬ .undefined ≤ φ s w₀ := by simpa [Accepts] using h
-  refine Set.subset_eq_empty (update_subset_restrict s φ) (Set.eq_empty_of_forall_notMem ?_)
+  refine Set.eq_empty_of_subset (update_subset_restrict s φ) (Set.eq_empty_of_forall_notMem ?_)
   rintro w ⟨hw, hle⟩
   exact hneg (hu w hw w₀ hw₀ ▸ hle)
 
@@ -724,7 +724,7 @@ theorem update_dia_ofSet (s p : Set W) :
     by_cases hs : s.Nonempty
     · exact update_eq_empty_of_uniform (fun _ hw _ hw' ↦ dia_apply_congr hw hw')
         fun hacc ↦ h (accepts_dia_ofSet_iff.1 hacc hs)
-    · exact Set.subset_eq_empty (update_subset s _) (Set.not_nonempty_iff_eq_empty.1 hs)
+    · exact Set.eq_empty_of_subset (update_subset s _) (Set.not_nonempty_iff_eq_empty.1 hs)
 
 /-- For conditional-free `A` and `B`, `◇A, A → ◇B ⊨ ◇(A ∧ B)` (**Fact 9**)... -/
 theorem entails_dia_conj (a b : Set W) :

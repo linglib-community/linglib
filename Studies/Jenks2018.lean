@@ -1,44 +1,63 @@
 module
 
 public import Linglib.Data.Examples.Jenks2018
+public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Data.Examples.Languages
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Genericity.NominalMappingParameter
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Fragments.Mandarin.Pinyin
 public import Linglib.Fragments.Cantonese.Determiners
 public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Lakhota.Determiners
 public import Linglib.Fragments.Akan.Determiners
-public import Linglib.Data.Examples.Readers
-public import Linglib.Data.Examples.Languages
+public import Studies.Schwarz2013
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
 
-Jenks argues that Mandarin, which has no definite article, still distinguishes Schwarz's two
-definites: a unique definite is a bare noun read by Chierchia's covert ι, and an anaphoric definite
-is a demonstrative description whose demonstrative supplies the index of ι^x (22). Three principles
-over a language's determiner inventory derive the distribution. The Blocking Principle (23) makes ι
-available exactly when no overt determiner marks uniqueness, as in Mandarin but not in Cantonese,
-whose [Clf-N] marks both presuppositions; ι^x is never a covert shift (Section 4.2); and Index!
-(50) requires the indexed form wherever an index is available, unless the description is a
-continuing topic (Section 5.3). The types of Table 2 are read off these principles: a
-presupposition is marked where the bare noun cannot express it, so [a marked uniqueness brings a
-marked familiarity](##isUpperSet_marked) and no language marks uniqueness alone.
+Mandarin has no definite article and still distinguishes Schwarz's two definites. A unique definite
+is a bare noun read by Chierchia's covert ι, and an anaphoric definite is a demonstrative
+description, an ι^x whose [domain restriction](##restricted) is an index, a name or a modifier. The
+index fixes the referent, so [a demonstrative description of a role is strict](##role_eq_of_dom)
+where the bare noun covaries with the situation. Three principles derive [the distribution of the
+forms](##licit_iff_not_rejected): the Blocking Principle leaves ι to the bare noun exactly when no
+determiner lexicalizes it, as in Mandarin and not in Cantonese; ι^x is never a covert shift; and
+Index! requires an indexed form wherever prior mention licenses an index, unless the description
+is a continuing topic. A presupposition is marked where the bare noun cannot express it, so [a
+marked uniqueness brings a marked familiarity](##isUpperSet_marked) and no language marks
+uniqueness alone.
 
 ## Implementation notes
 
-* The Blocking Principle (23) is the theory layer's, under which an article blocks ι when it marks
-  uniqueness and a demonstrative blocks nothing. No definite article selects a number, so ι is
-  blocked for a bare noun of any number exactly when it is lexicalized
-  (`Determiner.Inventory.blocks_iff_lexicalizes`).
-* The environments are the paper's six, read as `Definite.Use`s, the donkey environment
-  being an anaphoric use under quantification, and mapped to Schwarz's presupposition types by
-  `Definite.Use.strength`. The marked form is the language's form for the
-  environment's presupposition: an article marking it or, for familiarity, a demonstrative, whose
-  description is the strong article's. Cantonese's restricted demonstrative (57) is not modelled.
-* Jenks types the index of ι^x as a property (Section 4.4); `Definite.anaphoric` carries
-  an individual index, so Section 4.4 is not formalized.
+* The Blocking Principle is the theory layer's, under which an article blocks ι when it marks
+  uniqueness and a demonstrative blocks nothing.
+* The description of ι^x is taken over the restrictor narrowed by the domain restriction, as in the
+  paper's donkey paraphrases, and `Definite.anaphoric` is its value at an index shifted to a
+  property.
+* The environments are the paper's six, read as `Definite.Use`s, the donkey environment being an
+  anaphoric use under quantification.
+* A row marks its definite noun phrase and, within it, the determiner that heads it, naming the
+  determiner's lexeme. `Examples.Lexeme.entry` gives the fragment entry of each lexeme, and the
+  rows are checked against the fragments: each lexeme is [an entry of the row's
+  language](##entry_mem_inventory), each marked determiner is [printed as its entry is
+  written](##printed), and [no demonstrative of a noun phrase goes
+  unmarked](##demonstratives_marked).
+* A row's topic is the discourse status the paper assigns its noun phrase. For the subjects of the
+  narrative sequences this is the paper's reading of them.
+* Cantonese bare titles, which the paper reads as proper names, are outside the principles, and
+  `licit_iff_not_rejected` leaves their rows out.
+
+## TODO
+
+* Cantonese demonstratives are restricted to particular anaphoric environments. The principles
+  license a demonstrative wherever an index is available, so `licit_iff_not_rejected` leaves the
+  Cantonese demonstrative row out.
+* For a plural description the paper weakens the shift of an index to a property from identity to
+  inclusion, which is not formalized.
 
 ## References
 
@@ -53,204 +72,242 @@ marked familiarity](##isUpperSet_marked) and no language marks uniqueness alone.
 namespace Jenks2018
 
 open Determiner
-open scoped Denotes
+open Definite (Strength)
 
-/-! ### Environments and principles -/
+/-! ### The two definites -/
 
-/-- A description's discourse status (Section 5.3) is no topic, a continuing topic or a new one. -/
-inductive Topic
-  | none
-  | continuing
-  | new
-  deriving DecidableEq, Repr
+section Semantics
 
-/-- An index is available exactly in the environments licensed by familiarity, Section 5.1:
-prior mention of the referent or, in producer-product bridging, of its argument. -/
-def IndexAvailable (env : Definite.Use) : Prop := env.strength = .familiarity
+variable {Ctx W E ι : Type*} {R : Ctx → W → Set E} {c : Ctx} {s s' : W} {x : E}
 
-/-- An inventory has a form for a presupposition when an article marks it or, for familiarity,
-when it has a demonstrative, whose description is the strong article's
-(`DemonstrativeDeterminer.mem_denote`) and so supplies the index of ι^x. -/
-def HasForm (inv : Inventory) : Definite.Strength → Prop
-  | .uniqueness => inv.Marks .uniqueness
-  | .familiarity => inv.Marks .familiarity ∨ inv.Realizes .demonstrative
+/-- (22b): the anaphoric definite ι^x over a restrictor `R` and a domain restriction `Q`, a
+property with no situation argument, denotes the only member of the restrictor that satisfies the
+restriction. The restriction is an index or a name shifted to a property, or a modifier before the
+demonstrative. -/
+noncomputable def restricted (R : Ctx → W → Set E) (Q : Ctx → Set E) : Definite Ctx W E :=
+  Definite.unique fun c s ↦ R c s ∩ Q c
 
-instance (inv : Inventory) : DecidablePred (HasForm inv) := fun p ↦ by
-  cases p <;> unfold HasForm <;> infer_instance
+-- (26d), (36b)
+theorem restricted_index (R : (ι → E) → W → Set E) (d : ι) :
+    restricted R (fun g ↦ {g d}) = Definite.anaphoric R d :=
+  rfl
 
-/-- The bare noun is licit when the Blocking Principle (23) leaves ι available, no overt determiner
-marking uniqueness, and, by Index! (50), no indexed form competes, or when the description is a
-continuing topic (Section 5.3). -/
-def BareLicit (inv : Inventory) (env : Definite.Use) (t : Topic) : Prop :=
-  ¬ inv.Lexicalizes .iota ∧ (¬ (IndexAvailable env ∧ HasForm inv .familiarity) ∨ t = .continuing)
+-- (36), (38d)
+theorem mem_restricted_singleton {q : Ctx → E} :
+    x ∈ restricted R (fun c ↦ {q c}) c s ↔ q c ∈ R c s ∧ x = q c :=
+  (Set.Subsingleton.mem_iota (s := R c s ∩ {q c}) fun _ ha _ hb ↦ ha.2.trans hb.2.symm).trans
+    ⟨fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩, fun ⟨h, hx⟩ ↦ ⟨hx ▸ h, hx⟩⟩
 
-/-- The marked form is licit when the inventory has a form for the environment's presupposition. -/
-def MarkedLicit (inv : Inventory) (env : Definite.Use) : Prop := HasForm inv env.strength
+-- (29)
+theorem unique_role (f : W → E) : Definite.unique (fun _ s ↦ {f s}) c s = Part.some (f s) :=
+  iota_singleton _
 
-instance (env : Definite.Use) : Decidable (IndexAvailable env) := by
-  unfold IndexAvailable; infer_instance
+/-- A demonstrative description of a role is strict: where the bare noun denotes whoever holds the
+role at each situation, the description restricted to an individual is defined at two situations
+only if one individual holds the role at both. -/
+theorem role_eq_of_dom {f : W → E} {q : Ctx → E}
+    (h : (restricted (fun _ s ↦ {f s}) (fun c ↦ {q c}) c s).Dom)
+    (h' : (restricted (fun _ s ↦ {f s}) (fun c ↦ {q c}) c s').Dom) : f s = f s' := by
+  obtain ⟨x, hx⟩ := Part.dom_iff_mem.1 h
+  obtain ⟨x', hx'⟩ := Part.dom_iff_mem.1 h'
+  exact (Set.mem_singleton_iff.1 (mem_restricted_singleton.1 hx).1).symm.trans
+    (Set.mem_singleton_iff.1 (mem_restricted_singleton.1 hx').1)
 
-instance (inv : Inventory) (env : Definite.Use) (t : Topic) :
-    Decidable (BareLicit inv env t) := by
+-- (44), (45)
+theorem mem_anaphoric_update [DecidableEq ι] {R : W → Set E} (d : ι) (g : ι → E) {y : E}
+    (hy : y ∈ R s) : y ∈ Definite.anaphoric (fun _ ↦ R) d (Function.update g d y) s :=
+  Definite.mem_anaphoric.2 ⟨by simpa using hy, by simp⟩
+
+end Semantics
+
+/-! ### Competition between the forms -/
+
+/-- An inventory has an indexed form when it has an exponent of ι^x: an article that lexicalizes it
+or a demonstrative, whose meaning it is. -/
+def HasIndexedForm (inv : Inventory) : Prop :=
+  inv.Lexicalizes .iotaAnaphoric ∨ inv.Realizes .demonstrative
+
+instance (inv : Inventory) : Decidable (HasIndexedForm inv) := by
+  unfold HasIndexedForm; infer_instance
+
+/-- The bare noun is licit when the Blocking Principle (23) leaves ι available, no determiner
+lexicalizing it, and Index! (50) does not call for an indexed form: no index is available, the use
+not being licensed by prior mention, or the language has no indexed form, or the description is a
+continuing topic. -/
+def BareLicit (inv : Inventory) (u : Definite.Use) (continuing : Prop) : Prop :=
+  ¬ inv.Lexicalizes .iota ∧ (u.strength = .familiarity → HasIndexedForm inv → continuing)
+
+instance (inv : Inventory) (u : Definite.Use) (continuing : Prop) [Decidable continuing] :
+    Decidable (BareLicit inv u continuing) := by
   unfold BareLicit; infer_instance
 
-instance (inv : Inventory) (env : Definite.Use) : Decidable (MarkedLicit inv env) := by
-  unfold MarkedLicit; infer_instance
+/-- The use of a definite that an environment is, the donkey environment being an anaphoric use
+under quantification. -/
+def Examples.Environment.use : Examples.Environment → Definite.Use
+  | .largerSituation => .largerSituation
+  | .immediateSituation => .immediateSituation
+  | .partWholeBridging => .bridging .partWhole
+  | .producerBridging => .bridging .relational
+  | .anaphoric | .donkey => .anaphoric
 
-theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Definite.Use}
-    {t : Topic}
-    (h : IndexAvailable env) (hm : HasForm inv .familiarity) (ht : t ≠ .continuing) :
-    ¬ BareLicit inv env t :=
-  fun ⟨_, h'⟩ ↦ h'.elim (fun h'' ↦ h'' ⟨h, hm⟩) ht
+/-- A noun phrase is licit in a use by the determiner that heads it: a bare noun by `BareLicit`,
+a demonstrative where an index is available, and any other determiner where it marks the
+presupposition of the use. -/
+def Licit (inv : Inventory) (u : Definite.Use) (continuing : Prop) : Option Entry → Prop
+  | none => BareLicit inv u continuing
+  | some (.demonstrative _) => u.strength = .familiarity
+  | some d => d.Marks u.strength
 
-/-! ### Type-shifting under blocking -/
+instance (inv : Inventory) (u : Definite.Use) (continuing : Prop) [Decidable continuing] :
+    DecidablePred (Licit inv u continuing)
+  | none => inferInstanceAs (Decidable (BareLicit inv u continuing))
+  | some (.demonstrative _) => inferInstanceAs (Decidable (_ = _))
+  | some (.article a) => inferInstanceAs (Decidable ((Entry.article a).Marks _))
+  | some (.quantifier q) => inferInstanceAs (Decidable ((Entry.quantifier q).Marks _))
+  | some (.possessive p) => inferInstanceAs (Decidable ((Entry.possessive p).Marks _))
 
-/-- Mandarin has no overt exponent of uniqueness, so its bare nouns are unique definites by the
-covert ι. -/
-theorem not_lexicalizes_iota_mandarin : ¬ Mandarin.Determiners.inventory.Lexicalizes .iota := by
-  decide
-
-/-- Cantonese [Clf-N] marks uniqueness, so its bare nouns have no definite shift. -/
-theorem lexicalizes_iota_cantonese : Cantonese.Determiners.inventory.Lexicalizes .iota := by
+-- (23)
+theorem lexicalizes_iota_cantonese_not_mandarin :
+    Cantonese.Determiners.inventory.Lexicalizes .iota ∧
+      ¬ Mandarin.Determiners.inventory.Lexicalizes .iota := by
   decide
 
 /-! ### The data -/
 
-/-- A row records the language's inventory, the environment, the discourse status, and the
-judgments on the bare and the marked form where the paper gives them. -/
-structure Row where
-  inventory : Inventory
-  env : Definite.Use
-  topic : Topic
-  bare : Option Bool
-  marked : Option Bool
-
-def envOf : String → Option Definite.Use
-  | "largerSituation" => some .largerSituation
-  | "immediateSituation" => some .immediateSituation
-  | "partWholeBridging" => some (.bridging .partWhole)
-  | "producerBridging" => some (.bridging .relational)
-  | "anaphoric" => some .anaphoric
-  | "donkey" => some .anaphoric
-  | _ => none
-
-def topicOf : String → Option Topic
-  | "none" => some .none
-  | "continuing" => some .continuing
-  | "new" => some .new
-  | _ => none
-
-/-- A row from the paper's features. -/
-def Row.ofDatum (e : Datum) : Option Row := do
-  let inv ← e.byLanguage [(.mandarinChinese, Mandarin.Determiners.inventory),
+/-- The determiner inventory of a row's language. -/
+def inventory? (e : Datum) : Option Inventory :=
+  e.byLanguage [(.mandarinChinese, Mandarin.Determiners.inventory),
     (.cantonese, Cantonese.Determiners.inventory)]
-  let env ← (e.feature? "environment").bind envOf
-  let t ← (e.feature? "topic").bind topicOf
-  some ⟨inv, env, t, (e.feature? "bare").map (· == "ok"), (e.feature? "marked").map (· == "ok")⟩
 
-/-- The Mandarin data of Sections 3 and 5 and the Cantonese data of Section 6. -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+/-- The fragment entry that a lexeme of the data is. -/
+def Examples.Lexeme.entry : Examples.Lexeme → Entry
+  | .na => .demonstrative Mandarin.Determiners.na
+  | .zhe => .demonstrative Mandarin.Determiners.zhe
+  | .go => .demonstrative Cantonese.Determiners.go
+  | .clfN => .article Cantonese.Determiners.clfN
 
-/-- A judgment, where the paper gives one, agrees with a prediction. -/
-def Agrees (p : Prop) : Option Bool → Prop
-  | none => True
-  | some b => p ↔ b = true
+/-- How the paper writes a form of the row's language, Mandarin without tone marks. -/
+def written (e : Datum) (form : String) : List Char :=
+  if e.language = .mandarinChinese then Mandarin.toneless form else form.toList
 
-instance (p : Prop) [Decidable p] : ∀ o, Decidable (Agrees p o)
-  | none => inferInstanceAs (Decidable True)
-  | some _ => inferInstanceAs (Decidable (_ ↔ _))
+/-- The word is written as the entry, a demonstrative, is. -/
+def WritesDemonstrative (e : Datum) (w : GlossedWord) : Entry → Prop
+  | .demonstrative d => w.wordform = written e d.form
+  | _ => False
 
-/-- Row by row, the paper judges the bare noun licit exactly when `BareLicit` holds and the marked
-form exactly when `MarkedLicit` does ((10), (20), (49), (51), (56)). -/
-theorem rows_agree :
-    ∀ r ∈ rows, Agrees (BareLicit r.inventory r.env r.topic) r.bare ∧
-      Agrees (MarkedLicit r.inventory r.env) r.marked := by
+instance (e : Datum) (w : GlossedWord) : DecidablePred (WritesDemonstrative e w)
+  | .demonstrative _ => inferInstanceAs (Decidable (_ = _))
+  | .article _ | .quantifier _ | .possessive _ => inferInstanceAs (Decidable False)
+
+/-- The span is printed as its entry is written: a demonstrative as one word, its form, and the
+article exponed by a classifier phrase as no word, before a word glossed as a classifier. -/
+def Printed (e : Datum) (p : Datum.Span) : Entry → Prop
+  | .article a => a.exponent = .classifierPhrase ∧ p.length = 0 ∧
+      ∃ w ∈ e.glossedWords[p.start]?, w.gloss = "CLF".toList
+  | d => ∃ w, p.words e = [w] ∧ WritesDemonstrative e w d
+
+instance (e : Datum) (p : Datum.Span) : DecidablePred (Printed e p)
+  | .article _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+  | .demonstrative d =>
+    decidable_of_iff (∃ w ∈ (p.words e).head?, p.words e = [w] ∧
+        WritesDemonstrative e w (.demonstrative d))
+      ⟨fun ⟨w, _, h⟩ ↦ ⟨w, h⟩, fun ⟨w, h⟩ ↦ ⟨w, by simp [h.1], h⟩⟩
+  | .quantifier _ | .possessive _ => isFalse fun ⟨_, _, h⟩ ↦ h
+
+/-- The determiner heading the row's definite noun phrase, none for a bare noun: the entry of the
+determiner the row marks within the phrase. -/
+def head? (e : Datum) : Option (Option Entry) :=
+  (e.spans.find? (Examples.label? · = some .definite)).map fun np ↦
+    ((e.spansIn np).find? (Examples.label? · = some .determiner)).bind fun p ↦
+      (Examples.lexeme? p).map (·.entry)
+
+/-- The judgment on the definite reading of a row's noun phrase: the row's mark, or the judgment
+of the reading where the paper judges it apart from the sentence. -/
+def definiteJudgment (e : Datum) : Judgment := (Examples.reading e .definite).getD e.judgment
+
+-- every lexeme a row names is a determiner of the fragment of the row's language
+theorem entry_mem_inventory :
+    ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ p ∈ e.spans, ∀ l ∈ Examples.lexeme? p,
+      ∃ d ∈ inv, d = l.entry := by
   decide
 
-/-! ### Demonstratives are strict (Section 4.3) -/
+-- every span that names a lexeme is printed as its entry is written
+theorem printed :
+    ∀ e ∈ Examples.all, ∀ p ∈ e.spans, ∀ l ∈ Examples.lexeme? p, Printed e p l.entry := by
+  decide
 
--- (27), (30)
-theorem demonstrative_eq_some_iff {E W : Type} (R : (ℕ → E) → W → Set E) (d : ℕ) (g : ℕ → E)
-    (s : W) (x : E) :
-    x ∈ Definite.anaphoric R d g s ↔ g d ∈ R g s ∧ x = g d :=
-  Definite.mem_anaphoric
+-- within a definite noun phrase, a word written as a demonstrative of the language is marked
+theorem demonstratives_marked :
+    ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ np ∈ e.spans,
+      Examples.label? np = some .definite → ∀ i < np.length,
+        ∀ w ∈ e.glossedWords[np.start + i]?, (∃ d ∈ inv, WritesDemonstrative e w d) →
+          ∃ p ∈ e.spansIn np, p.start = np.start + i ∧ (Examples.lexeme? p).isSome := by
+  decide
 
-/-- A demonstrative cannot covary through the situation pronoun, its referents at any two situations
-coinciding. -/
-theorem demonstrative_rigid {E W : Type} (R : (ℕ → E) → W → Set E) (d : ℕ) (g : ℕ → E)
-    {s s' : W} {x x' : E} (h : x ∈ Definite.anaphoric R d g s)
-    (h' : x' ∈ Definite.anaphoric R d g s') : x = x' :=
-  Definite.anaphoric_rigid h h'
+-- every row is read, and nineteen of the noun phrases are headed by a determiner
+theorem rows_read :
+    (∀ e ∈ Examples.all, (inventory? e).isSome ∧ (Examples.environment e).isSome ∧
+        (head? e).isSome) ∧
+      Datum.ReadCount (fun e ↦ (head? e).join) Examples.all 19 := by
+  decide
 
-/-- The bare noun's covert ι does covary. Over the restrictor true of the situation itself, the bare
-noun denotes each situation at that situation, so distinct situations give distinct referents. -/
-theorem bare_covaries {W : Type} (g : ℕ → W) (s : W) :
-    s ∈ (Definite.unique fun _ s ↦ {s}) g s :=
-  Definite.mem_unique.2 ⟨rfl, fun _ h ↦ h⟩
+/-- In the Mandarin data of Sections 3 to 5 and the Cantonese [Clf-N] data of Section 6, a noun
+phrase is licit in its environment exactly when the paper does not reject it. -/
+theorem licit_iff_not_rejected :
+    ∀ e ∈ Examples.all, ∀ inv ∈ inventory? e, ∀ env ∈ Examples.environment e,
+      ∀ d ∈ head? e, (e.language = .cantonese → d.map Entry.kind = some .article) →
+        (Licit inv env.use (Examples.topic e = some .continuing) d ↔
+          (definiteJudgment e).band ≠ .rejected) := by
+  decide
 
 /-! ### The typology (Table 2) -/
 
-section Typology
-
-open Definite (Strength)
-
-/-- A presupposition is marked when, outside a topic, the bare noun cannot express it in the
-environments that call for it. -/
+/-- A presupposition is marked when, outside a continuing topic, the bare noun cannot express it in
+the uses that call for it. -/
 def Marked (inv : Inventory) (p : Strength) : Prop :=
-  ∀ env : Definite.Use, env.strength = p → ¬ BareLicit inv env .none
+  ∀ u : Definite.Use, u.strength = p → ¬ BareLicit inv u False
 
 theorem marked_uniqueness_iff (inv : Inventory) :
-    Marked inv .uniqueness ↔ inv.Lexicalizes .iota := by
-  refine ⟨fun h ↦ not_not.1 fun hι ↦ h .largerSituation rfl ⟨hι, .inl nofun⟩,
-    fun hι _ _ h ↦ h.1 hι⟩
+    Marked inv .uniqueness ↔ inv.Lexicalizes .iota :=
+  ⟨fun h ↦ not_not.1 fun hι ↦ h .largerSituation rfl ⟨hι, nofun⟩, fun hι _ _ h ↦ h.1 hι⟩
 
 theorem marked_familiarity_iff (inv : Inventory) :
-    Marked inv .familiarity ↔ inv.Lexicalizes .iota ∨ HasForm inv .familiarity := by
-  refine ⟨fun h ↦ ?_, fun h env he hb ↦ ?_⟩
-  · by_contra hn
-    exact h .anaphoric rfl ⟨(not_or.1 hn).1, .inl fun hx ↦ (not_or.1 hn).2 hx.2⟩
-  · rcases h with h | h
-    · exact hb.1 h
-    · exact hb.2.elim (fun hn ↦ hn ⟨he, h⟩) nofun
+    Marked inv .familiarity ↔ inv.Lexicalizes .iota ∨ HasIndexedForm inv := by
+  refine ⟨fun h ↦ ?_, fun h u hu hb ↦ h.elim hb.1 (hb.2 hu)⟩
+  by_contra hn
+  exact h .anaphoric rfl ⟨(not_or.1 hn).1, fun _ hx ↦ (not_or.1 hn).2 hx⟩
 
 instance (inv : Inventory) : DecidablePred (Marked inv)
   | .uniqueness => decidable_of_iff _ (marked_uniqueness_iff inv).symm
   | .familiarity => decidable_of_iff _ (marked_familiarity_iff inv).symm
 
 /-- Since a bare noun without ι has no definite reading, a marked uniqueness brings a marked
-familiarity: the marked presuppositions form an upper set in every language (p. 530). -/
+familiarity: the marked presuppositions form an upper set in every language. -/
 theorem isUpperSet_marked (inv : Inventory) : IsUpperSet {p | Marked inv p} :=
   Strength.isUpperSet_iff.2 fun h ↦
     (marked_familiarity_iff inv).2 (.inl ((marked_uniqueness_iff inv).1 h))
 
-variable (M : Strength → Prop) (ds : Inventory)
+/-- The types of Table 2: a language marks no presupposition or every presupposition from some
+strength up, both from uniqueness and familiarity alone from familiarity, and never uniqueness
+alone. -/
+theorem setOf_marked_eq_empty_or_Ici (inv : Inventory) :
+    {p | Marked inv p} = ∅ ∨ ∃ p, {q | Marked inv q} = Set.Ici p :=
+  (isUpperSet_marked inv).eq_empty_or_Ici
 
-/-- A generally marked inventory marks both presuppositions with one form. -/
-def IsGenerallyMarked : Prop := M .uniqueness ∧ M .familiarity ∧ ds.IsSyncretic
-
-/-- A bipartite inventory marks both presuppositions, with distinct forms. -/
-def IsBipartite : Prop := M .uniqueness ∧ M .familiarity ∧ ¬ ds.IsSyncretic
-
-/-- A marked-unique inventory marks the unique presupposition only. -/
-def IsMarkedUnique : Prop := M .uniqueness ∧ ¬ M .familiarity
-
-/-- A marked-anaphoric inventory marks the anaphoric presupposition only. -/
-def IsMarkedAnaphoric : Prop := ¬ M .uniqueness ∧ M .familiarity
-
-theorem not_isMarkedUnique (inv : Inventory) : ¬ IsMarkedUnique (Marked inv) :=
-  fun ⟨hu, hf⟩ ↦ hf (isUpperSet_marked inv (by decide : Strength.uniqueness ≤ .familiarity) hu)
-
-/-- The fragments derive Table 2's columns, German being bipartite, Mandarin and Akan marked
-anaphoric, and Cantonese and English generally marked. -/
+/-- The fragments derive Table 2's columns: German and Lakhota, on Schwarz's construal, are
+bipartite, marking both presuppositions with distinct forms; Mandarin and Akan are marked
+anaphoric; and Cantonese and English are generally marked, with one form for both. -/
 theorem table2 :
-    IsBipartite (Marked German.Determiners.inventory) German.Determiners.inventory ∧
-      IsMarkedAnaphoric (Marked Mandarin.Determiners.inventory) ∧
-      IsMarkedAnaphoric (Marked Akan.Determiners.inventory) ∧
-      IsGenerallyMarked (Marked Cantonese.Determiners.inventory) Cantonese.Determiners.inventory ∧
-      IsGenerallyMarked (Marked English.Determiners.inventory) English.Determiners.inventory := by
-  simp only [IsBipartite, IsMarkedAnaphoric, IsGenerallyMarked]
+    ((∀ p, Marked German.Determiners.inventory p) ∧
+        ¬ German.Determiners.inventory.IsSyncretic) ∧
+      ((∀ p, Marked Schwarz2013.lakhotaWeakStrongConstrual p) ∧
+        ¬ Schwarz2013.lakhotaWeakStrongConstrual.IsSyncretic) ∧
+      (∀ p, Marked Mandarin.Determiners.inventory p ↔ p = .familiarity) ∧
+      (∀ p, Marked Akan.Determiners.inventory p ↔ p = .familiarity) ∧
+      ((∀ p, Marked Cantonese.Determiners.inventory p) ∧
+        Cantonese.Determiners.inventory.IsSyncretic) ∧
+      (∀ p, Marked English.Determiners.inventory p) ∧
+        English.Determiners.inventory.IsSyncretic := by
   decide
-
-end Typology
 
 end Jenks2018

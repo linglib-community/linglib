@@ -46,35 +46,30 @@ reflexive environments that (10) sets aside do not arise in the rows.
 namespace Reinhart1976
 
 open PhraseStructure PhraseStructure.Tree
-open RoseTree (IsBranchingAt cCommand CCommands)
+open RoseTree (branching CCommands)
+open scoped SetRel
 
 variable {C W : Type*}
 
 /-! ### Command and c-command -/
 
-/-- A node commands another (1) when neither dominates the other and the S node most immediately
-dominating the first dominates the second. -/
-def Commands (t : Tree Cat W) (a b : GornAddress) : Prop :=
-  (a, b) ∈ sCommand t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
-
-/-- Precede-and-command is the domain relation of the received view (5). -/
+/-- Precede-and-command is the domain relation of the received view (5): the first node precedes
+the second, neither dominates the other, and the S node most immediately dominating the first
+dominates the second (1). -/
 def PrecedesAndCommands (t : Tree Cat W) (a b : GornAddress) : Prop :=
-  GornAddress.Precedes a b ∧ Commands t a b
-
-instance (t : Tree Cat W) : DecidableRel (Commands t) := fun _ _ ↦ by
-  unfold Commands; infer_instance
+  GornAddress.Precedes a b ∧ Commands (labeled t {.S}) a b
 
 instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := fun _ _ ↦ by
   unfold PrecedesAndCommands; infer_instance
 
 -- (49)
 theorem cCommands_commands {t : Tree Cat W} {a b : GornAddress}
-    (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
-  ⟨upperPolar_anti _ hS h.1, h.2⟩
+    (hS : labeled t {.S} ⊆ branching t) (h : CCommands t a b) : Commands (labeled t {.S}) a b :=
+  h.anti hS
 
 -- (38)
-theorem cCommand_eq_Ici {t : Tree C W} {a m : GornAddress} (hm : m < a) (hb : IsBranchingAt t m)
-    (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommand t} = Set.Ici m :=
+theorem cCommand_eq_Ici {t : Tree C W} {a m : GornAddress} (hm : m < a) (hb : m ∈ branching t)
+    (hmax : ∀ x < a, x ∈ branching t → x ≤ m) : {b | a ~[C[branching t]] b} = Set.Ici m :=
   Set.ext fun _ ↦ mem_commandRelation_iff_le ⟨⟨hb, hm⟩, fun x hx ↦ hmax x hx.2 hx.1⟩
 
 /-- In type I of (50), `a` c-commands `b` but `b` precedes `a`. -/
@@ -91,7 +86,7 @@ instance (t : Tree Cat W) : DecidableRel (TypeIII t) := fun _ _ ↦ by
 
 /-- The two domains agree except on types I and III (50). -/
 theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : GornAddress}
-    (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h₁ : ¬ TypeI t a b) (h₃ : ¬ TypeIII t a b) :
+    (hS : labeled t {.S} ⊆ branching t) (h₁ : ¬ TypeI t a b) (h₃ : ¬ TypeIII t a b) :
     CCommands t a b ↔ PrecedesAndCommands t a b := by
   refine ⟨fun h ↦ ⟨?_, cCommands_commands hS h⟩, fun h ↦ by_contra fun h' ↦ h₃ ⟨h, h'⟩⟩
   rcases GornAddress.Precedes.trichotomy a b with hp | hp | hp | hp

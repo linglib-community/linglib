@@ -7,10 +7,9 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Morphology.Word.Agree
-public import Linglib.Syntax.Agreement.HasPhi
 public import Linglib.Syntax.Binding.Basic
-public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Person.Category
+public import Linglib.Syntax.Feature.Case.Basic
+public import Linglib.Syntax.Feature.Person.Configuration
 
 /-!
 # Pronouns
@@ -32,9 +31,8 @@ denotation, pronoun type or binding class of its own; the kind supplies them, an
 * `Pronoun.ofCells`, `Pronoun.ofTable`: the pronoun of a form in a table of cells.
 * `Pronoun.categories`: the referential categories of Cysouw that the person and number
   realize.
-* `Pronoun.WellFormed`: clusivity is not borne by a singular.
 * `Pronoun.toWord`: the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind; `Pronoun.phi_toWord` says the token bears the pronoun's φ-features.
+  its kind; `Pronoun.agreement_toWord` says the token bears the pronoun's agreement bundle.
 * `Pronoun.CandidateAntecedent`: a nominal token that agrees with the pronoun, so one of the
   pronoun's number (`Pronoun.CandidateAntecedent.number_eq`).
 
@@ -101,9 +99,11 @@ end Pronoun.Strength
 structure Pronoun where
   /-- The surface form, romanized or orthographic. -/
   form : String
-  /-- The grammatical person. Clusivity is a person value: Tagalog *tayo* is
-  `firstInclusive` and *kami* `firstExclusive`, English *we* plain `first` ([cysouw-2003]). -/
+  /-- The grammatical person. -/
   person : Option Person := none
+  /-- The clusivity of a form that marks it: Tagalog *tayo* is inclusive and *kami* exclusive,
+  English *we* neither ([cysouw-2003]). -/
+  clusivity : Option Clusivity := none
   /-- The grammatical number. -/
   number : Option Number := none
   /-- The cases the form fills: one for most forms, several for a syncretic one such as English
@@ -130,25 +130,7 @@ def case : Flat Case := Flat.finsetInf p.cases (↑)
 /-- The referential categories of [cysouw-2003] that the person and number realize: none when
 either is unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
 def categories : Finset Person.Category :=
-  (Option.map₂ Person.Category.ofPersonNumber p.person p.number).getD ∅
-
-/-- A pronoun bears the bundle of its person, number, gender and case. -/
-def phi : Agreement.Bundle
-  | .person => Agreement.Dimension.Slot.ofFlat .person p.person
-  | .number => p.number
-  | .gender => p.gender
-  | .case => p.case
-  | .definiteness => ⊥
-
-instance : HasPhi Pronoun := ⟨phi⟩
-
-/-- Clusivity is not borne by a singular: the inclusive and exclusive persons split the first
-person non-singular ([cysouw-2003]). -/
-def WellFormed : Prop :=
-  ∀ per ∈ p.person, per.MarksClusivity → p.number ≠ some .singular
-
-instance : Decidable p.WellFormed :=
-  inferInstanceAs (Decidable (∀ per ∈ p.person, _ → _))
+  (Option.map₂ (Person.Category.ofPersonNumber · p.clusivity ·) p.person p.number).getD ∅
 
 /-! ### The pronouns of a table -/
 
@@ -159,7 +141,7 @@ variable {C : Type*} (person : C → Person) (number : C → Option Number)
 
 /-- The categories of the cells `s`, those each cell's person and number realize. -/
 def cellCategories (s : Finset C) : Finset Person.Category :=
-  s.biUnion fun c ↦ ((number c).map (Person.Category.ofPersonNumber (person c))).getD ∅
+  s.biUnion fun c ↦ ((number c).map (Person.Category.ofPersonNumber (person c) none)).getD ∅
 
 /-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a number, a
 gender and a case: the cases of the cells, the flat value of their person and gender, and the
@@ -185,14 +167,19 @@ for a pro-adverb. -/
 def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
     (cat : UD.UPOS := .PRON) : Morphology.Word :=
   { form := p.form, cat := cat,
-    features := .of (person := p.person) (number := p.number) (gender := p.gender)
+    features := .of (person := p.person) (clusivity := p.clusivity) (number := p.number)
+      (gender := p.gender)
       (case := p.case) (reflex := reflex) (pronType := pronType) }
 
-/-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type, reflexive
-marking and word class. -/
-@[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
-    (cat : UD.UPOS) : HasPhi.phi (p.toWord pronType reflex cat) = HasPhi.phi p := by
-  funext d; cases d <;> rfl
+/-- The agreement bundle of a pronoun, that of its token: its person and clusivity, number,
+gender and case. -/
+def agreement : Agreement.Bundle := p.toWord.agreement
+
+/-- The token of a pronoun bears the pronoun's agreement bundle, whatever its pronoun type,
+reflexive marking and word class. -/
+@[simp] theorem agreement_toWord (pronType : Option UD.PronType) (reflex : Option Unit)
+    (cat : UD.UPOS) : (p.toWord pronType reflex cat).agreement = p.agreement :=
+  rfl
 
 /-- A token marked reflexive classifies as a reflexive anaphor. -/
 @[simp]
@@ -223,10 +210,10 @@ theorem bindingClassOf_toWord_of_isOperator {t : UD.PronType} (ht : Binding.IsOp
   rcases ht with rfl | rfl | rfl | rfl | rfl <;>
     simp +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- A candidate antecedent of a pronoun is a nominal token that agrees with it: a pro-form
-takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
+/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features:
+a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
 def CandidateAntecedent (w : Morphology.Word) : Prop :=
-  Binding.IsNominal w.cat ∧ HasPhi.Agree p w
+  Binding.IsNominal w.cat ∧ Compat p.agreement.index w.agreement.index
 
 instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -235,6 +222,6 @@ variable {p} in
 /-- A candidate antecedent has the pronoun's number, where both mark one. -/
 theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
     {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
-  Flat.compat_iff.mp (h.2.apply .number) n hp m hw
+  Flat.compat_iff.mp (h.2.apply ⟨.number, by decide⟩) n hp m hw
 
 end Pronoun

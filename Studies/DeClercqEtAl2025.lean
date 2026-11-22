@@ -1,38 +1,69 @@
 module
 
-public import Linglib.Morphology.Nanosyntax.Lexicalization
+public import Linglib.Morphology.Nanosyntax.Lexicon
+public import Linglib.Data.Wordlist.DeClercqEtAl2025
 
 /-!
-# De Clercq et al. (2025): Nanosyntax: State of the art and recent developments
+# De Clercq, Caha, Starke and Vanden Wyngaerd (2025): root size and root shape
 
-De Clercq, Caha, Starke and Vanden Wyngaerd present the lexicalization algorithm through case
-studies, which this file runs. In the degrees of comparison the size of the root decides how
-many suffixes an adjective takes, and an entry matching a larger phrase overrides the exponents
-inside it. In Czech declension a root that lexicalizes the accusative by itself shrinks in the
-genitive, the derivation going back to an earlier merger. A root may also store the structure
-evacuation builds, the noun beside the remnant it left. Such a root lexicalizes the bare noun
-and the whole structure and nothing in between, which gives Kalenjin its marked singulars and
-the Friulian verb *bati* a suffix in the second person alone. A suffix may store such a
-structure too, as in the Friulian verb *finî*.
+A root of nanosyntax is the lexical entry that lexicalizes the bottom of a functional sequence.
+Its *size* is the spine it stores. A sequence that spine reaches is lexicalized without movement
+and pronounced as the root alone (`Morphology.Nanosyntax.exponents_cons_of_eq_some`), and each
+feature above it needs a suffix, an entry whose foot the evacuated root has left alone.
+
+A root may also store the object evacuation builds, the Merge `s * r` of a spine `s` and a remnant
+`r` with another foot. Such an entry matches the spines on its foot up to `s`, and the whole
+object, and no spine between the two
+(`Morphology.Nanosyntax.merge_spine_containsOrEq_spine_iff`). A lexicon none of whose entries
+stores an unlabelled node cannot give a sequence one exponent and an initial part of it two
+(`Morphology.Nanosyntax.exists_exponents_eq_singleton_of_prefix`), so a noun with a suffix in the
+singular and none in the plural, or a verb with a suffix in the second person alone, has a root
+of this shape. Matching by sets of features, the Revised Superset Principle of
+[vandenwyngaerd-2018], does not tell the shapes apart: the root of *peel* matches the singular
+(`matchesFeatures_peelEntry`), and no lexicon derives its paradigm
+(`not_derives_peel_of_featureSpellout`).
+
+The file runs the lexicalization algorithm on the lexicons of four case studies, the degrees of
+comparison of English, Czech and Armenian, two Czech declensions, number in Kalenjin and the
+present tense of Tualis Friulian, and compares its exponents with those of the lexicalization
+tables in `DeClercqEtAl2025.Wordlist`.
 
 ## Implementation notes
 
-The chapter's prefixes are built in a workspace of their own, which the engine does not model.
-The Czech superlative *nej-* is such a prefix, so `czech_degrees` shows only that the movement
-steps do not derive the superlative. For Kalenjin the chapter gives no entry for the plural
-suffix *-tiin* of roots like *kipaw* 'rhino', so that class is left out.
+* A prefix is built in a workspace of its own, which the algorithm of
+  `Morphology.Nanosyntax.lexicalize` does not model. The Czech superlative prefix *nej-* is
+  therefore outside its reach, and `exponents_inteligent_sup` records that the movement steps
+  alone do not derive the superlative.
+* The entry of English *bad* is given the size of *tall*, which the comparison with *worse*
+  presupposes.
+* The Kalenjin plural suffix *-tiin* of *kipaw* 'rhino' has no entry in the source, so that noun
+  has rows in the data and no lexicon here. The stored objects of *peel* and *pata* are the sets
+  of [blix-2022].
+* An exponent is the underlying form of the lexicalization tables: *pata* in *pat-een*, *chytr*
+  and *-ějš* in *chytř-ejš-í*.
 
 ## References
 
 * [declercq-et-al-2025]
 * [starke-2018]
+* [blix-2022]
+* [vandenwyngaerd-2018]
 -/
 
 @[expose] public section
 
 namespace DeClercqEtAl2025
 
-open Morphology.Nanosyntax Morphology RoseTree
+open Morphology.Nanosyntax Morphology
+open Minimalist (PlanarSyntacticObject SyntacticObject)
+
+variable {F : Type} [DecidableEq F]
+
+/-- Under the spellout `σ` the algorithm gives each analysed form the exponents of its row in a
+lexicalization table, for the feature sequence `seq` assigns to the form's cell. -/
+abbrev Derives (σ : SyntacticObject F → Option String) (seq : Wordlist.Cell → List F)
+    (rows : List Wordlist.Analysis) : Prop :=
+  ∀ a ∈ rows, exponents σ (seq a.form.cell) = some a.exponents
 
 /-! ### Degrees of comparison -/
 
@@ -42,54 +73,54 @@ inductive Deg where
   | a | q | cmpr | sprl
   deriving DecidableEq, Repr
 
-/-- English *tall* stores the gradable adjective, *-er* the comparative alone and *-est* the
-superlative over the comparative. -/
-def tall : RuleSet (LexicalEntry (Option Deg) String) :=
+/-- The sequence of a degree, each degree containing the one below it. -/
+def degreeSeq (c : Wordlist.Cell) : List Deg :=
+  match c.degree with
+  | .some .Pos => [.a, .q]
+  | .some .Cmp => [.a, .q, .cmpr]
+  | .some .Sup => [.a, .q, .cmpr, .sprl]
+  | _ => []
+
+/-- (20a), (21a), (22a): English *tall* stores the gradable adjective, *-er* the comparative
+alone and *-est* the superlative over the comparative. -/
+def tall : RuleSet (LexicalEntry Deg String) :=
   [⟨spine .a [.q], "tall"⟩, ⟨spine .cmpr [], "er"⟩, ⟨spine .cmpr [.sprl], "est"⟩]
 
 /-- English *bad* beside *worse*, a root storing the comparative. -/
-def bad : RuleSet (LexicalEntry (Option Deg) String) :=
+def bad : RuleSet (LexicalEntry Deg String) :=
   [⟨spine .a [.q], "bad"⟩, ⟨spine .a [.q, .cmpr], "worse"⟩, ⟨spine .cmpr [], "er"⟩]
 
-/-- Armenian *partsrahasag* 'tall' stores the superlative. -/
-def partsrahasag : RuleSet (LexicalEntry (Option Deg) String) :=
+/-- (17): Armenian *partsrahasag* 'tall' stores the superlative. -/
+def partsrahasag : RuleSet (LexicalEntry Deg String) :=
   [⟨spine .a [.q, .cmpr, .sprl], "partsrahasag"⟩]
 
-/-- Czech *inteligent-* stores the bare adjective, with the adjectivizer *-n* and the
+/-- (31): Czech *inteligent-* stores the bare adjective, with the adjectivizer *-n* and the
 comparative *-ějš* storing one feature each. -/
-def inteligent : RuleSet (LexicalEntry (Option Deg) String) :=
+def inteligent : RuleSet (LexicalEntry Deg String) :=
   [⟨spine .a [], "inteligent"⟩, ⟨spine .q [], "n"⟩, ⟨spine .cmpr [], "ějš"⟩]
 
 /-- Czech *chytr-* 'smart' stores the gradable adjective. -/
-def chytr : RuleSet (LexicalEntry (Option Deg) String) :=
+def chytr : RuleSet (LexicalEntry Deg String) :=
   [⟨spine .a [.q], "chytr"⟩, ⟨spine .cmpr [], "ějš"⟩]
 
-/-- The sequences of the positive, the comparative and the superlative. -/
-def degrees : List (List Deg) := [[.a, .q], [.a, .q, .cmpr], [.a, .q, .cmpr, .sprl]]
-
-/-- English *tall*, *tall-er*, *tall-est*: the comparative suffix follows the evacuated root
-and the superlative suffix overrides it. With *worse* in the lexicon the comparative needs no
-evacuation, so it is *worse* and not *badd-er*. -/
-theorem english_degrees :
-    degrees.map (exponents tall) = [some ["tall"], some ["tall", "er"], some ["tall", "est"]] ∧
-      exponents bad [.a, .q, .cmpr] = some ["worse"] := by
+/-- The size of the root decides the number of suffixes. *tall* takes *-er*, and *-est* overrides
+it; *worse* needs no evacuation, so the comparative is not *badd-er*; *partsrahasag* has one form
+in all degrees; *inteligent-* takes a suffix more than *chytr-*. -/
+theorem derives_degrees :
+    Derives (spellout tall) degreeSeq [Wordlist.tall.analysis, Wordlist.taller.analysis,
+        Wordlist.tallest.analysis] ∧
+      Derives (spellout bad) degreeSeq [Wordlist.bad.analysis, Wordlist.worse.analysis] ∧
+      Derives (spellout partsrahasag) degreeSeq [Wordlist.partsrahasag_pos.analysis,
+        Wordlist.partsrahasag_cmp.analysis, Wordlist.partsrahasag_sup.analysis] ∧
+      Derives (spellout inteligent) degreeSeq [Wordlist.inteligentni.analysis,
+        Wordlist.inteligentnejsi.analysis] ∧
+      Derives (spellout chytr) degreeSeq
+        [Wordlist.chytry.analysis, Wordlist.chytrejsi.analysis] := by
   decide
 
-/-- Armenian has the one form in all three degrees, each phrase a subtree of the stored
-one. -/
-theorem armenian_degrees :
-    degrees.map (exponents partsrahasag) =
-      [some ["partsrahasag"], some ["partsrahasag"], some ["partsrahasag"]] := by
-  decide
-
-/-- Czech *inteligent-n-(í)*, *inteligent-n-ějš-(í)* and *chytř-ejš-(í)*: the smaller root takes
-a suffix more. The movement steps do not derive the superlative, no entry storing the
-superlative feature with a unary foot, and the algorithm's last resort builds the prefix
-*nej-*. -/
-theorem czech_degrees :
-    degrees.map (exponents inteligent) =
-        [some ["inteligent", "n"], some ["inteligent", "n", "ějš"], none] ∧
-      exponents chytr [.a, .q, .cmpr] = some ["chytr", "ějš"] := by
+-- Section 1.4.4
+theorem exponents_inteligent_sup :
+    exponents (spellout inteligent) (degreeSeq Wordlist.nejinteligentnejsi.cell) = none := by
   decide
 
 /-! ### Czech declension -/
@@ -100,32 +131,40 @@ inductive Case where
   | n | sg | k1 | k2 | k3
   deriving DecidableEq, Repr
 
-/-- The suffix *-a* stores the genitive down to the singular. -/
-def suffixA : LexicalEntry (Option Case) String := ⟨spine .sg [.k1, .k2, .k3], "a"⟩
+/-- The sequence of a case of the singular, each case containing the one below it. -/
+def caseSeq (c : Wordlist.Cell) : List Case :=
+  match c.case with
+  | .some .Nom => [.n, .sg, .k1]
+  | .some .Acc => [.n, .sg, .k1, .k2]
+  | .some .Gen => [.n, .sg, .k1, .k2, .k3]
+  | _ => []
 
-/-- *chleb-* 'bread' stores the bare noun. -/
-def chleb : RuleSet (LexicalEntry (Option Case) String) := [⟨spine .n [], "chleb"⟩, suffixA]
+/-- (32c): The suffix *-a* stores the genitive down to the singular. -/
+def suffixA : LexicalEntry Case String := ⟨spine .sg [.k1, .k2, .k3], "a"⟩
 
-/-- *jazyk* 'tongue' stores the accusative. -/
-def jazyk : RuleSet (LexicalEntry (Option Case) String) :=
+/-- (32a): *chleb-* 'bread' stores the bare noun. -/
+def chleb : RuleSet (LexicalEntry Case String) := [⟨spine .n [], "chleb"⟩, suffixA]
+
+/-- (32b): *jazyk* 'tongue' stores the accusative. -/
+def jazyk : RuleSet (LexicalEntry Case String) :=
   [⟨spine .n [.sg, .k1, .k2], "jazyk"⟩, suffixA]
 
-/-- The sequences of the nominative, the accusative and the genitive. -/
-def cases : List (List Case) :=
-  [[.n, .sg, .k1], [.n, .sg, .k1, .k2], [.n, .sg, .k1, .k2, .k3]]
-
-/-- *chleb-a* in all three cases, and *jazyk*, *jazyk*, *jazyk-a*. -/
-theorem czech_declension :
-    cases.map (exponents chleb) =
-        [some ["chleb", "a"], some ["chleb", "a"], some ["chleb", "a"]] ∧
-      cases.map (exponents jazyk) = [some ["jazyk"], some ["jazyk"], some ["jazyk", "a"]] := by
+-- Table 1.5
+theorem derives_declension :
+    Derives (spellout chleb) caseSeq [Wordlist.chleba_nom.analysis, Wordlist.chleba_acc.analysis,
+        Wordlist.chleba_gen.analysis] ∧
+      Derives (spellout jazyk) caseSeq [Wordlist.jazyk_nom.analysis, Wordlist.jazyk_acc.analysis,
+        Wordlist.jazyka_gen.analysis] := by
   decide
 
 /-- In the genitive the root *jazyk* cannot grow, and no entry lexicalizes the genitive feature
 alone, so the derivation goes back to the merger of the singular and evacuates the noun there.
-Its structure is then that of *chleb-a*, the two classes levelled. -/
-theorem genitive_levels :
-    lexicalize jazyk [.n, .sg, .k1, .k2, .k3] = lexicalize chleb [.n, .sg, .k1, .k2, .k3] := by
+Its structure is then that of *chleb-a*, the bare noun beside the phrase *-a* stores. -/
+theorem lexicalize_jazyk_gen :
+    (lexicalize (spellout jazyk) (caseSeq Wordlist.gen)).map (·.toSyntacticObject) =
+        some (spine .n [] * suffixA.tree) ∧
+      (lexicalize (spellout chleb) (caseSeq Wordlist.gen)).map (·.toSyntacticObject) =
+        some (spine .n [] * suffixA.tree) := by
   decide
 
 /-! ### Inverse number marking -/
@@ -135,75 +174,144 @@ inductive Num where
   | n | sg | pl
   deriving DecidableEq, Repr
 
+/-- The sequence of a number, the plural containing the singular. -/
+def numSeq (c : Wordlist.Cell) : List Num :=
+  match c.number with
+  | .some .Sing => [.n, .sg]
+  | .some .Plur => [.n, .sg, .pl]
+  | _ => []
+
 /-- The Kalenjin singular suffix *-yaan* stores the singular alone and the plural suffix *-een*
 the plural over it. -/
-def numberSuffixes : RuleSet (LexicalEntry (Option Num) String) :=
+def numberSuffixes : RuleSet (LexicalEntry Num String) :=
   [⟨spine .sg [], "yaan"⟩, ⟨spine .sg [.pl], "een"⟩]
 
-/-- *peel* 'elephant' stores the noun beside the plural phrase it has evacuated from. -/
-def peel : RuleSet (LexicalEntry (Option Num) String) :=
-  ⟨adjoin (spine .n []) (spine .sg [.pl]), "peel"⟩ :: numberSuffixes
+/-- (34a): *peel* 'elephant' stores the noun beside the plural phrase it has evacuated from. -/
+def peelEntry : LexicalEntry Num String :=
+  ⟨spine .n [] * spine .sg [.pl], "peel"⟩
+
+/-- The lexicon of *peel*. -/
+def peel : RuleSet (LexicalEntry Num String) := peelEntry :: numberSuffixes
 
 /-- *pata* 'duck' stores the bare noun. -/
-def pata : RuleSet (LexicalEntry (Option Num) String) := ⟨spine .n [], "pata"⟩ :: numberSuffixes
+def pata : RuleSet (LexicalEntry Num String) := ⟨spine .n [], "pata"⟩ :: numberSuffixes
 
-/-- The sequences of the bare root, the singular and the plural. -/
-def numbers : List (List Num) := [[.n], [.n, .sg], [.n, .sg, .pl]]
+-- (35b)
+theorem matches_peelEntry_iff (gs : List Num) : peelEntry.Matches (spine .n gs) ↔ gs = [] :=
+  (merge_spine_containsOrEq_spine_iff (by decide)).trans List.prefix_nil
 
-/-- *peel*, *peel-yaan*, *peel* and *pata*, *pata-yaan*, *pat-een*. The stored structure of
-*peel* contains the bare noun and no singular phrase over a noun, so the singular needs
-*-yaan*, and the plural, once the noun has evacuated, is that structure again. -/
-theorem kalenjin_number :
-    numbers.map (exponents peel) = [some ["peel"], some ["peel", "yaan"], some ["peel"]] ∧
-      numbers.map (exponents pata) =
-        [some ["pata"], some ["pata", "yaan"], some ["pata", "een"]] := by
+/-- *peel-yaan*, *peel* and *pata-yaan*, *pat-een*. The entry of *peel* contains the bare noun and
+no singular phrase over a noun, so the singular needs *-yaan*. -/
+theorem derives_number :
+    Derives (spellout peel) numSeq [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] ∧
+      Derives (spellout pata) numSeq
+        [Wordlist.patayaan_sg.analysis, Wordlist.pateen_pl.analysis] := by
   decide
 
-/-- The plural of *peel* has the two constituents of *pat-een*, the noun and a remnant that
-*-een* lexicalizes. The root's entry matches the object they form, and being the larger
-lexicalized constituent it is what is pronounced. -/
-theorem peel_plural_overrides :
-    lexicalize peel [.n, .sg, .pl] = lexicalize pata [.n, .sg, .pl] ∧
-      (lexicalize peel [.n, .sg, .pl]).map List.length = some 2 := by
+-- (38)
+theorem lexicalize_peel_pl :
+    (lexicalize (spellout peel) (numSeq Wordlist.pl)).map (·.toSyntacticObject) =
+        some peelEntry.tree ∧
+      (lexicalize (spellout pata) (numSeq Wordlist.pl)).map (·.toSyntacticObject) =
+        some peelEntry.tree := by
   decide
+
+/-- No lexicon without a stored unlabelled node derives the paradigm of *peel*: a root that
+lexicalizes the plural by itself would lexicalize the singular by itself. -/
+theorem not_derives_peel_of_labelled {L : RuleSet (LexicalEntry Num String)}
+    (hL : ∀ e ∈ L, ¬ HasUnlabelled e.tree) :
+    ¬ Derives (spellout L) numSeq
+      [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] := fun h ↦ by
+  have hpl : exponents (spellout L) [.n, .sg, .pl] = some ["peel"] := h _ (.tail _ (.head _))
+  have hsg : exponents (spellout L) [.n, .sg] = some ["peel", "yaan"] := h _ (.head _)
+  obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix (isLowerSpellout_spellout L)
+    (fun _ ↦ not_hasUnlabelled_of_spellout_isSome hL) (gs := [.sg]) ⟨[.pl], rfl⟩ hpl
+  simp [hsg] at hy
+
+-- Section 1.7
+theorem matchesFeatures_peelEntry :
+    peelEntry.MatchesFeatures (spine .n [.sg]) ∧ ¬ peelEntry.Matches (spine .n [.sg]) := by
+  decide
+
+-- Section 1.7
+theorem not_derives_peel_of_featureSpellout (L : RuleSet (LexicalEntry Num String)) :
+    ¬ Derives (featureSpellout L) numSeq
+      [Wordlist.peelyaan_sg.analysis, Wordlist.peel_pl.analysis] := fun h ↦ by
+  have hpl : exponents (featureSpellout L) [.n, .sg, .pl] = some ["peel"] :=
+    h _ (.tail _ (.head _))
+  have hsg : exponents (featureSpellout L) [.n, .sg] = some ["peel", "yaan"] := h _ (.head _)
+  obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_subset_of_isFeatureSpellout
+    (isFeatureSpellout_featureSpellout L) (g₀ := .n) (gs := [.sg]) (by simp) hpl
+  simp [hsg] at hy
 
 /-! ### The Friulian present -/
 
-/-- The features of the verbal sequence are tense, number, person, participant and speaker. -/
+/-- (39): The features of the verbal sequence are tense, number, person, participant and speaker. -/
 inductive Phi where
   | t | num | π | part | spkr
   deriving DecidableEq, Repr
 
-/-- The second-person suffix *-s* stores the participant alone. -/
-def suffixS : LexicalEntry (Option Phi) String := ⟨spine .part [], "s"⟩
+/-- The sequence of a person of the singular: the third person has the person feature, the
+second the participant over it and the first the speaker over that. -/
+def personSeq (c : Wordlist.Cell) : List Phi :=
+  match c.person with
+  | .some .third => [.t, .num, .π]
+  | .some .second => [.t, .num, .π, .part]
+  | .some .first => [.t, .num, .π, .part, .spkr]
+  | _ => []
 
-/-- Tualis Friulian *bat-* 'hit' stores the person phrase beside the speaker phrase it has
+/-- (40b): The second-person suffix *-s* stores the participant alone. -/
+def suffixS : LexicalEntry Phi String := ⟨spine .part [], "s"⟩
+
+/-- (40a): Tualis Friulian *bat-* 'hit' stores the person phrase beside the speaker phrase it has
 evacuated from. -/
-def bat : RuleSet (LexicalEntry (Option Phi) String) :=
-  [⟨adjoin (spine .t [.num, .π]) (spine .part [.spkr]), "bat"⟩, suffixS]
+def batEntry : LexicalEntry Phi String :=
+  ⟨spine .t [.num, .π] * spine .part [.spkr], "bat"⟩
 
-/-- *fin-* 'finish' stores number over tense, and its suffix *-iʃ* the speaker over a person
-phrase stranded beside the participant. -/
-def fin : RuleSet (LexicalEntry (Option Phi) String) :=
-  [⟨spine .t [.num], "fin"⟩, ⟨merge .spkr (adjoin (spine .π []) (spine .part [])), "iʃ"⟩, suffixS]
+/-- The lexicon of *bati*. -/
+def bat : RuleSet (LexicalEntry Phi String) := [batEntry, suffixS]
 
-/-- The sequences of the third, the second and the first person. -/
-def persons : List (List Phi) :=
-  [[.t, .num, .π], [.t, .num, .π, .part], [.t, .num, .π, .part, .spkr]]
+/-- (46a): The suffix *-iʃ* stores the speaker over a person phrase stranded beside the
+participant. -/
+def suffixIS : LexicalEntry Phi String :=
+  ⟨phrase .spkr (spine .π [] * spine .part []), "iʃ"⟩
 
-/-- *bat*, *bat-s*, *bat*. The root's entry contains the third-person phrase and no participant
-phrase over it, so the second person needs *-s*, and the first person, once the person phrase
-has evacuated, is the stored structure again. -/
-theorem bati_present :
-    persons.map (exponents bat) = [some ["bat"], some ["bat", "s"], some ["bat"]] := by
+/-- (46b): *fin-* 'finish' stores number over tense. -/
+def fin : RuleSet (LexicalEntry Phi String) :=
+  [⟨spine .t [.num], "fin"⟩, suffixIS, suffixS]
+
+-- (41)
+theorem matches_batEntry_iff (gs : List Phi) :
+    batEntry.Matches (spine .t gs) ↔ gs <+: [.num, .π] :=
+  merge_spine_containsOrEq_spine_iff (by decide)
+
+/-- *bat*, *bat-s*, *bat* and *fin-iʃ*, *fin-iʃ-s*, *fin-iʃ*. The entry of *bat-* contains the
+third-person phrase and no participant phrase over it, so the second person needs *-s*. -/
+theorem derives_present :
+    Derives (spellout bat) personSeq [Wordlist.bat_1.analysis, Wordlist.bats_2.analysis,
+        Wordlist.bat_3.analysis] ∧
+      Derives (spellout fin) personSeq [Wordlist.finis_1.analysis, Wordlist.finiss_2.analysis,
+        Wordlist.finis_3.analysis] := by
   decide
 
-/-- *fin-iʃ*, *fin-iʃ-s*, *fin-iʃ*. In the first person the verb evacuates alone from under the
-speaker feature, which strands the person and the participant phrases in the shape *-iʃ*
-stores. -/
-theorem fini_present :
-    persons.map (exponents fin) =
-      [some ["fin", "iʃ"], some ["fin", "iʃ", "s"], some ["fin", "iʃ"]] := by
+-- (42b), (49c)
+theorem lexicalize_p1 :
+    (lexicalize (spellout bat) (personSeq Wordlist.p1)).map (·.toSyntacticObject) =
+        some batEntry.tree ∧
+      (lexicalize (spellout fin) (personSeq Wordlist.p1)).map (·.toSyntacticObject) =
+        some (spine .t [.num] * suffixIS.tree) := by
   decide
+
+-- Table 1.8
+theorem not_derives_bati_of_labelled {L : RuleSet (LexicalEntry Phi String)}
+    (hL : ∀ e ∈ L, ¬ HasUnlabelled e.tree) :
+    ¬ Derives (spellout L) personSeq [Wordlist.bat_1.analysis, Wordlist.bats_2.analysis,
+      Wordlist.bat_3.analysis] := fun h ↦ by
+  have h₁ : exponents (spellout L) [.t, .num, .π, .part, .spkr] = some ["bat"] := h _ (.head _)
+  have h₂ : exponents (spellout L) [.t, .num, .π, .part] = some ["bat", "s"] :=
+    h _ (.tail _ (.head _))
+  obtain ⟨y, hy⟩ := exists_exponents_eq_singleton_of_prefix (isLowerSpellout_spellout L)
+    (fun _ ↦ not_hasUnlabelled_of_spellout_isSome hL) (gs := [.num, .π, .part]) ⟨[.spkr], rfl⟩ h₁
+  simp [h₂] at hy
 
 end DeClercqEtAl2025

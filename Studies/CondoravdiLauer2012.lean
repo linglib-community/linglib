@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Discourse.Commitment.Sincerity
-public import Linglib.Semantics.Mood.Context
+public import Linglib.Discourse.SpeechAct.SententialForce
 public import Linglib.Data.Examples.CondoravdiLauer2012
 public import Linglib.Data.Examples.Readers
 
@@ -251,39 +251,39 @@ def toState (K : State (A × Force) W) (a : A) : Mood.State W :=
   .ofOrderedInformationState ⟨K.commitmentSet (a, .doxastic),
     premisePreorder (K.contents (a, .preferential))⟩
 
--- (30): the declarative convention is assertion on the speaker's mood state
-theorem toState_declarative (K : State (SpeechAct.Role × Force) W) (p : Set W) :
-    toState (insert ((.speaker, .doxastic), p) K) =
-      SpeechAct.Force.update .assertion (toState K) (· ∈ p) := by
-  funext r
-  cases r
-  · rw [SpeechAct.Force.update_assertion_speaker]
-    refine Mood.State.ext ?_ ?_ rfl
-    · exact State.commitmentSet_insert_self.trans (Set.inter_comm _ _)
-    · show premisePreorder _ = premisePreorder _
-      exact congrArg premisePreorder (State.contents_insert_of_ne (by simp))
-  · rw [SpeechAct.Force.update_assertion_addressee]
-    refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = premisePreorder _
-    exact congrArg premisePreorder (State.contents_insert_of_ne (by simp))
+private theorem toState_insert_of_ne {K : State (A × Force) W} {a b : A} (h : b ≠ a) (m : Force)
+    (p : Set W) : toState (insert ((a, m), p) K) b = toState K b :=
+  Mood.State.ext (State.commitmentSet_insert_of_ne (by simp [h]))
+    (congrArg premisePreorder (State.contents_insert_of_ne (by simp [h]))) rfl
+
+-- (30): the declarative convention is assertion on the mood state of the participant it commits
+theorem toState_declarative [DecidableEq A] (K : State (A × Force) W) (a : A) (p : Set W) :
+    toState (insert ((a, .doxastic), p) K) =
+      Function.update (toState K) a ((toState K a).assert (· ∈ p)) := by
+  funext b
+  by_cases hb : b = a
+  · subst hb
+    rw [Function.update_self]
+    exact Mood.State.ext (State.commitmentSet_insert_self.trans (Set.inter_comm _ _))
+      (congrArg premisePreorder (State.contents_insert_of_ne (by simp))) rfl
+  · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 /-- The imperative convention (47), read on the participants' mood states, promotes the content
-in the speaker's ordering, the update a promise makes. Portner's To-Do List update promotes it in
-the addressee's ordering instead, and the two coincide exactly when both orderings already
-respect the content (`SpeechAct.Force.update_promise_eq_directive_iff`). -/
-theorem toState_imperative (K : State (SpeechAct.Role × Force) W) (p : Set W) :
-    toState (insert ((.speaker, .preferential), p) K) =
-      SpeechAct.Force.update .promise (toState K) (· ∈ p) := by
-  funext r
-  cases r
-  · rw [SpeechAct.Force.update_promise_speaker]
+in the ordering of the participant it commits. For the speaker this is the update of a promise,
+`SpeechAct.Force.update_promise`, where Portner's To-Do List update promotes the content in the
+addressee's ordering, and the two coincide exactly when both orderings already respect the
+content (`SpeechAct.Force.update_promise_eq_directive_iff`). -/
+theorem toState_imperative [DecidableEq A] (K : State (A × Force) W) (a : A) (p : Set W) :
+    toState (insert ((a, .preferential), p) K) =
+      Function.update (toState K) a ((toState K a).promote (· ∈ p)) := by
+  funext b
+  by_cases hb : b = a
+  · subst hb
+    rw [Function.update_self]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
     show premisePreorder _ = premisePreorder _ ⊓ .ofCriterion (· ∈ p)
     rw [State.contents_insert_self, premisePreorder_insert]
-  · rw [SpeechAct.Force.update_promise_addressee]
-    refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = premisePreorder _
-    exact congrArg premisePreorder (State.contents_insert_of_ne (by simp))
+  · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 -- one preferential commitment of the speaker ranks the content's worlds first in the speaker's
 -- mood state and leaves the addressee's unranked
@@ -295,8 +295,7 @@ example :
       .speaker).order.le false true ∧
     (toState (insert ((.speaker, .preferential), {true}) (∅ : State (Role × Force) Bool))
       .addressee).order.le false true := by
-  rw [toState_imperative, SpeechAct.Force.update_promise_speaker,
-    SpeechAct.Force.update_promise_addressee]
+  rw [toState_imperative, Function.update_self, Function.update_of_ne (by decide)]
   have h₀ (a : Role) (v w : Bool) : (toState (∅ : State (Role × Force) Bool) a).order.le v w :=
     fun _ hq _ ↦ absurd hq (Set.notMem_empty _)
   exact ⟨⟨h₀ _ _ _, fun _ ↦ rfl⟩, fun h ↦ Bool.false_ne_true (h.2 rfl), h₀ _ _ _⟩
@@ -330,7 +329,7 @@ imperative a revision (`imperatives_revise`). -/
 theorem portner_contrary_imperatives (d : SpeechAct.Role → Mood.State W) (φ : W → Prop) :
     (d .addressee).optimal ⊆ (SpeechAct.Force.update .directive
       (SpeechAct.Force.update .directive d φ) (¬ φ ·) .addressee).optimal := by
-  simp only [SpeechAct.Force.update_directive_addressee,
+  simp only [SpeechAct.Force.update_directive, Function.update_self,
     Mood.State.promote_toOrderedInformationState, DynamicSemantics.OrderedInformationState.optimal,
     DynamicSemantics.OrderedInformationState.promote_order,
     DynamicSemantics.OrderedInformationState.promote_info]

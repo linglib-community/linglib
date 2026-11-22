@@ -175,6 +175,14 @@ theorem diamond_comp (S : SetRel W W) (p : W → Prop) : ◇[R ○ S] p = ◇[R]
   funext fun _ ↦ propext ⟨fun ⟨u, ⟨v, hv, hu⟩, hp⟩ ↦ ⟨v, hv, u, hu, hp⟩,
     fun ⟨v, hv, u, hu, hp⟩ ↦ ⟨u, ⟨v, hv, hu⟩, hp⟩⟩
 
+/-- If every `A`-predecessor of a world that `C`-accesses a second world `B`-accesses a world
+the second one `D`-accesses, then what is possibly necessary is necessarily possible. -/
+theorem diamond_box_le_box_diamond {A B C D : SetRel W W} (h : A.inv ○ C ⊆ B ○ D.inv)
+    (p : W → Prop) : ◇[A] (□[B] p) ≤ □[C] (◇[D] p) :=
+  fun i ⟨k, hik, hk⟩ j hij ↦
+    let ⟨m, hkm, hjm⟩ := h (show (k, j) ∈ A.inv ○ C from ⟨i, hik, hij⟩)
+    ⟨m, hjm, hk m hkm⟩
+
 /-! ### Frame conditions -/
 
 /-- `R` is *serial* when every world accesses some world. -/

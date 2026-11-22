@@ -51,13 +51,14 @@ that reads rows imports it beside its data module. Quick key reference:
 | `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English; must be in `languages.csv`; `""` only for a constructed string of no language (a formal-language pattern) |
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
-| `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
+| `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if the source prints no word line (e.g., English-glossed-as-English). Where it prints segmented words without glosses, as a reference grammar may, each word has the gloss `""`: CLDF's `Analyzed_Word` without `Gloss`. The generator then segments each word at its own boundaries, as `pyigt` segments a word alone, and the row has no `LGR_Conformance` |
 | `glossedWords`, `lgrConformance` | derived, not written | the generator pairs each word of `glossedTokens` with its morphemes and their glosses, and records the example's CLDF `LGR_Conformance` (`scripts/lgr.py`, shared with the CLDF export) |
 | `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical, variable` | sentence-level felicity; `variable` is the mark `%`, speakers differing |
 | `contrasts` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
+| `spans` | array of `{start, length, label, lexeme}`, optional | runs of `glossedTokens` the row marks, each naming the lexeme it is a form of where it is one (see Spans) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
 | `verified` | `"page-image"` or `"text-layer"`, optional | how the row was last checked against its source |
@@ -116,6 +117,99 @@ reading not declared, a row that judges one twice, and a level no row judges. A 
 its own reading type into the enum by a total function (`AghaJeretic2026.forceReading`). A paper
 whose readings are open-ended, paraphrases or scope orders over arbitrary operators, leaves them
 as strings.
+
+### Spans
+
+A row links its words to the lexical entries of a language by naming them, not by their spelling.
+A span marks a run of the row's `glossedTokens` by the position `start` of its first word, counted
+from zero, and its `length` (1 if omitted), under a `label`, and gives the `lexeme` the run is a
+form of where it is one. A span of length zero is an element the source's analysis posits without
+a word, such as a null article, placed before the word at `start`. The file declares the labels
+and the lexemes beside `features`:
+
+```json
+"spans": {"labels":  {"type": "SpanLabel", "doc": "...",
+                      "levels": [{"name": "definite", "label": "definite", "doc": "..."}, ...]},
+          "lexemes": {"type": "Lexeme", "doc": "...",
+                      "levels": [{"name": "na", "label": "na", "doc": "Mandarin na 'that'"}, ...]}}
+```
+
+and a row writes `"spans": [{"start": 3, "length": 3, "label": "definite"}, {"start": 3, "label":
+"determiner", "lexeme": "na"}]`. The generator rejects a span outside the gloss line, a label or
+lexeme not declared and a level no span names, and emits the two enums with the readers
+`Examples.label?` and `Examples.lexeme?` on `Datum.Span`. `Datum.Span.words` and `Datum.spansIn`
+in `Readers.lean` give the glossed words a span covers and the spans within a span. A span may
+carry no lexeme: it then marks the word under test, as a source marks it in italics or bold, and
+replaces a column that repeats the word (`Karlsson2017.json`, whose rows have words and no
+glosses).
+
+The data layer does not see the fragments, so a lexeme is the file's own identifier and the study
+gives its entry by a total function, `Examples.Lexeme.entry : Examples.Lexeme → Entry`. A lexeme
+without a case, or an entry the fragment no longer has, then fails to compile. The study states
+three checks beside its prediction, so that a wrong or forgotten span fails a theorem and does not
+pass as an unmarked word:
+
+* each lexeme a row names is an entry of the fragment of the row's language;
+* each span that names a lexeme is printed as the entry is written, under the transcription of
+  the source, which the fragment gives (`Mandarin.toneless`), or as a form the entry realizes;
+* within a marked phrase, no word written as an entry of the inventory goes unmarked.
+
+Spelling confirms a named entry and does not find one: transcriptions differ between sources and
+lose distinctions, as pinyin without tone marks writes several words alike. `Jenks2018.json`
+with `Studies/Jenks2018.lean`, and `Rakosi2020.json` with `Studies/Rakosi2020.lean`, where the
+check compares the phonemes the words write, are the examples. Most data files instead name the
+item under test in a column by its form; such a column becomes a span when its study is next
+audited.
+
+### Boundaries
+
+The generator segments a word at the separators of the Leipzig rules, `-` before an affix, `=`
+before a clitic and `~` before a reduplicant. A source with its own notation declares its
+symbols, since a row records the words as the source prints them. Karlsson's grammar writes `-`
+between a stem and an inflectional ending or a clitic, `=` between the words of a compound and
+`>` before a derivational suffix, and puts `+` before a word in the weak grade:
+
+```json
+"boundaries": {"type": "Boundary", "doc": "...",
+               "levels": [{"name": "inflection", "symbol": "-", "leipzig": "-", "doc": "..."},
+                          {"name": "compound", "symbol": "=", "leipzig": "-", "doc": "..."},
+                          {"name": "derivation", "symbol": ">", "leipzig": "-", "doc": "..."}],
+               "marks": [{"symbol": "+", "doc": "the weak grade of consonant gradation"}]}
+```
+
+The words are then segmented at the declared symbols and no others, and a mark is dropped from
+the morphemes while the word keeps it. The module emits the enum and the reader
+`Examples.boundary? : GlossedMorpheme → Option Examples.Boundary`, so a study asks for a kind of
+boundary, as `Karlsson2017` takes the morphs before the first inflectional one as the stem.
+`leipzig` gives the separator each symbol is written as in the CLDF export and in the
+conformance level, where the Leipzig rules have no symbol of their own for it. A distinction
+the source does not draw is not recovered: Karlsson's clitics are exported under `-`.
+
+### Index
+
+A study that selects, excludes or lists some of a file's rows names them. A file that declares
+`"index": {"type": "Example", "doc": "..."}` gets the finite type of its examples, one constructor
+per row under the row's own name, a `Fintype`, with `Examples.Example.datum`, the row of each, and
+`Examples.Example.all`, the list of them in the file's order. A study then quantifies over the
+type, `∀ x : Examples.Example, x ∉ modelled → … x.datum …`, and lists rows as
+`[.ex_30b, .ex_51b]`.
+
+Comparing two names costs the kernel nothing. Comparing two rows compares every string of both,
+and the kernel frees nothing within one declaration: on a file of 75 rows a statement testing
+`row ∈ rows` took 6 GiB, and `AlonsoOvalleRoyer2024`, whose theorems excluded and listed rows
+that way, went from 3.8 GiB and 24 s to 1.05 GiB and 4.5 s on the index. Do not decide the
+equality or membership of rows.
+
+The index also reads the values a file declares without parsing them. Each feature is a function
+on the examples, `Examples.Example.<lean>`, the lexemes of the spans are
+`Examples.Example.lexemes : Example → SpanLabel → List Lexeme`, and the readings
+`Examples.Example.<lean> : Example → Reading → Option Judgment`. Each is defined by cases from the
+JSON and comes with a theorem `…_datum` that it agrees with the reader of the row. A study reads
+an example through these and through `x.datum` for its judgment, contrasts and language, and
+writes no table from strings to its own types: a reader of the row parses the strings the row
+records each time a theorem evaluates it, where a reader of the index compares constructors.
+On `Sorace2000`, a theorem over the 92 examples took 1.2 to 1.5 s in the kernel through a list of
+rows parsed from the strings and 0.1 to 0.2 s through the index's readers.
 
 ## Languages
 

@@ -497,7 +497,7 @@ noncomputable def needTable5 : Measure ForceFlavor :=
 /-- The corpus need distribution sums to one. -/
 instance : IsProbabilityMeasure needTable5 := by
   constructor
-  simp only [needTable5, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+  simp only [needTable5, add_apply, smul_apply, measure_univ, smul_eq_mul,
     mul_one]
   rw [ENNReal.div_add_div_same, ENNReal.div_add_div_same, ENNReal.div_add_div_same,
     ENNReal.div_add_div_same, ENNReal.div_add_div_same,

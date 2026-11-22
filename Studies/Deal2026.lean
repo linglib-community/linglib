@@ -10,7 +10,7 @@ public import Studies.BochnakHanink2021
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Studies.Karttunen1971b
-public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Data.Examples.Readers
 
@@ -118,14 +118,14 @@ theorem cuukwe_conditional_projects :
 /-- A cell of table (79) pairs the extended spine of a notional complement, the heads projected
 from V up through any shell over C, with whether the CP contains an Ā-dependency. -/
 structure Cell where
-  spine : ClauseSpine
+  spine : Spine
   internalAbar : Bool
 
 /-- A Nez Perce cell is a bare CP whose Ā-dependency is relative embedding. -/
-def nezPerce (v : Verb) : Cell := ⟨ClauseSpine.cP, decide (RelativeEmbedding v)⟩
+def nezPerce (v : Verb) : Cell := ⟨Spine.cP, decide (RelativeEmbedding v)⟩
 
 /-- English simplex V complementation, *think*, is a bare CP without an Ā-dependency. -/
-def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
+def englishThink : Cell := ⟨Spine.cP, false⟩
 
 /-- An Adyghe predicate's complement is a relative clause when the clause-typer the predicate
 takes carries the relativizer *zV-* ([caponigro-polinsky-2011]). -/
@@ -138,7 +138,7 @@ instance (v : Adyghe.Verb) : Decidable (ZeComplement v) :=
 /-- The Adyghe relative embedding of (43) is V D N CP with an Ā-dependency, the complement of
 'think' being a relative clause. -/
 def adygheRelative : Cell :=
-  ⟨ClauseSpine.cP.append [.N, .D], decide (ZeComplement Adyghe.gwepshesa)⟩
+  ⟨Spine.cP.append [.N, .D], decide (ZeComplement Adyghe.gwepshesa)⟩
 
 /-- By Krapova's double requirement, reported at footnote 22, *deto* introduces the complement
 of a predicate that is an emotive factive, a factive preferential attitude, and takes a *za*
@@ -191,17 +191,17 @@ theorem krapova_contradiction_rows :
 
 /-- English N complementation, *the fact that S*, is V D N CP without an Ā-dependency, the DP
 shell with an N co-argument of [hankamer-mikkelsen-2021]. -/
-def englishNComplementation : Cell := ⟨ClauseSpine.cP.append [.N, .D], false⟩
+def englishNComplementation : Cell := ⟨Spine.cP.append [.N, .D], false⟩
 
 /-- The Bulgarian relative embedding of (49) is V P D CP with an Ā-dependency. Its flag comes
 from the Fragment, where *săžaljavam* 'regret' meets the double requirement and so takes the
 *deto* complement Krapova analyzes as a hidden relative. -/
 def bulgarianRelative : Cell :=
-  ⟨ClauseSpine.cP.append [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩
+  ⟨Spine.cP.append [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩
 
 /-- The Ndebele embedding of (78) is V P D CP without an Ā-dependency. The preposition *nga*
 'about' sits over the class-15 augment, which [pietraszko-2019] takes as a D over *kuthi*. -/
-def ndebeleEmbedding : Cell := ⟨ClauseSpine.cP.append [.D, .P], false⟩
+def ndebeleEmbedding : Cell := ⟨Spine.cP.append [.D, .P], false⟩
 
 /-- The Washo factive of footnote 33 is V D CP without an Ā-dependency or an N, a silent D over
 the nominalized clause ([hanink-bochnak-2017], [bochnak-hanink-2021]), whose index binds without

@@ -230,7 +230,7 @@ theorem isTrained_iff_sum_update_sub_eq_zero (hη : η ≠ 0) :
     ext k j
     simp only [update_smul_one, add_sub_cancel_left, Matrix.sum_apply, Matrix.smul_apply,
       vecMulVec_apply, Pi.sub_apply, smul_eq_mul]
-    rw [mul_apply, Finset.mul_sum]
+    rw [Matrix.mul_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [mul_diagonal, transpose_apply, Matrix.sub_apply, mul_apply_eq_vecMul]
     ring
@@ -268,7 +268,7 @@ abbrev base : cells := ⟨.base, by decide⟩
 abbrev past : cells := ⟨.past, by decide⟩
 
 /-- The letter-trigram cue inventory of the four forms; §12.9 codes forms as letter trigrams. -/
-def trigram : Fin 13 → Augmented Char :=
+def trigram : Fin 13 → Subregular.Augmented Char :=
   ![[none, some 'w', some 'a'], [some 'w', some 'a', some 'l'], [some 'a', some 'l', some 'k'],
     [some 'l', some 'k', none], [some 'l', some 'k', some 'e'], [some 'k', some 'e', some 'd'],
     [some 'e', some 'd', none], [none, some 'g', some 'o'], [some 'g', some 'o', none],

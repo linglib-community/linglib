@@ -7,8 +7,8 @@ public import Linglib.Semantics.Reference.Context.Participants
 public import Linglib.Semantics.Reference.Gender
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Gender.Decomposition
+public import Linglib.Syntax.Feature.Person.Features
+public import Linglib.Syntax.Feature.Gender.Decomposition
 
 /-!
 # The domains of φ-features
@@ -56,7 +56,7 @@ part of the addressee; otherwise the first and second person domains coincide
 Number is read at the positive values of a bundle alone, so the plural, `[−atomic, −minimal]`,
 restricts nothing, where Harbour's region operators read the same bundle as excluding atoms.
 [Strengthening recovers those regions](##Number.strengthen_plural) for the singular and the plural
-but not for the dual, whose region `Number.dualOf` is built on `[−atomic]`, a value this reading
+but not for the dual, whose region is `[+minimal]` of `[−atomic]`, a value this reading
 lacks, so the dual restricts nothing. This is Martí's undergeneration argument against
 inclusive-only plurals.
 
@@ -97,23 +97,27 @@ def Feature.dom (f : Feature) : Set E := ⋃ r ∈ f.roles, Set.Ici (c.holder r)
   simp [Feature.dom, Feature.participant, SpeechAct.Role.exists_role]
 
 /-- At a context of utterance, the first person is defined of the referents including the agent,
-the inclusive of those including the agent and the addressee, and the second of those including
-the agent or the addressee; the third person and an absent value, the impersonal, restrict
-nothing. -/
-def dom : Option Person → Set E
-  | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
-  | p => (p.map (toFeatures {.participant, .speaker})).elim Set.univ (·.inf (Feature.dom c))
+the second of those including the agent or the addressee, and the inclusive, beyond its person,
+of those including the addressee; the third person, an absent value, the impersonal, and the
+exclusive restrict nothing. -/
+def dom (p : Option Person) (cl : Option Clusivity := none) : Set E :=
+  (p.map (toFeatures {.participant, .speaker})).elim Set.univ (·.inf (Feature.dom c)) ∩
+    if cl = some .inclusive then Set.Ici c.addressee else Set.univ
 
-@[simp] theorem dom_none : dom c none = Set.univ := rfl
+@[simp] theorem dom_none : dom c none = Set.univ := by simp [dom]
 
 @[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := by
   simp [dom, or_and_right]
 
-@[simp] theorem mem_dom_firstInclusive :
-    x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := Iff.rfl
+@[simp] theorem mem_dom_first_inclusive :
+    x ∈ dom c (some .first) (some .inclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := by
+  simp only [dom, Option.map_some, Option.elim_some, ite_true, Set.mem_inter_iff, Set.mem_Ici]
+  simp only [or_and_right, toFeatures_first, Finset.inf_insert, Finset.inf_singleton,
+      Set.mem_inter_iff, Feature.mem_dom_participant, Feature.mem_dom_speaker]
+  tauto
 
-@[simp] theorem mem_dom_firstExclusive :
-    x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := by
+@[simp] theorem mem_dom_first_exclusive :
+    x ∈ dom c (some .first) (some .exclusive) ↔ c.agent ≤ x := by
   simp [dom, or_and_right]
 
 @[simp] theorem mem_dom_second :
@@ -123,9 +127,9 @@ def dom : Option Person → Set E
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
 
-theorem dom_firstInclusive_subset_dom_first :
-    dom c (some .firstInclusive) ⊆ dom c (some .first) :=
-  fun _ hx ↦ (mem_dom_first c _).2 hx.1
+/-- Clusivity only narrows the domain of a person. -/
+theorem dom_subset_dom (p : Option Person) (cl : Option Clusivity) : dom c p cl ⊆ dom c p :=
+  fun _ hx ↦ ⟨hx.1, by simp⟩
 
 end Person
 
@@ -145,36 +149,34 @@ theorem preimage_participants_lowerPolar (F : Set Feature) :
   ext x; simp [mem_lowerPolar_iff, mem_dom_feature_iff]
 
 /-- The domain of a person holds the referents whose participants bear every feature of its
-bundle of [participant] and [speaker]. The inclusive is not of this form on those two features,
-on which its bundle is the exclusive's. -/
-theorem dom_eq_preimage_lowerPolar {p : Person} (hp : p ≠ .firstInclusive) :
+bundle of [participant] and [speaker]. -/
+theorem dom_eq_preimage_lowerPolar (p : Person) :
     dom c (some p) =
       c.participants ⁻¹' lowerPolar Bears ↑(p.toFeatures {.participant, .speaker}) := by
   have h : dom c (some p) = (p.toFeatures {.participant, .speaker}).inf (Feature.dom c) := by
-    cases p <;> first | rfl | exact absurd rfl hp
+    simp [dom]
   rw [h, preimage_participants_lowerPolar]
   ext x; simp [Finset.inf_set_eq_iInter]
 
-/-- The domain of the inclusive holds the referents whose participants bear every feature of its
-bundle of all three features. -/
-theorem dom_firstInclusive_eq_preimage_lowerPolar :
-    dom c (some .firstInclusive) =
-      c.participants ⁻¹' lowerPolar Bears ↑(Person.firstInclusive.toFeatures Finset.univ) := by
-  rw [preimage_participants_lowerPolar,
-    show Person.firstInclusive.toFeatures Finset.univ = Finset.univ by decide]
+/-- The domain of the inclusive first person holds the referents whose participants bear all
+three features. -/
+theorem dom_first_inclusive_eq_preimage_lowerPolar :
+    dom c (some .first) (some .inclusive) =
+      c.participants ⁻¹' lowerPolar Bears ↑(Finset.univ : Features) := by
+  rw [preimage_participants_lowerPolar]
   ext x
-  simp only [mem_dom_firstInclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
+  simp only [mem_dom_first_inclusive, Finset.coe_univ, Set.mem_univ, Set.iInter_true,
     Set.mem_iInter]
   exact ⟨fun h f ↦ by cases f <;> simp [h.1, h.2],
     fun h ↦ ⟨(Feature.mem_dom_speaker c).1 (h .speaker),
       (Feature.mem_dom_addressee c).1 (h .addressee)⟩⟩
 
-/-- A referent is of a person of the standard tripartition exactly when the features of
-[participant] and [speaker] defined of it are that person's. -/
-theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
+/-- A referent is of a person exactly when the features of [participant] and [speaker] defined of
+it are that person's. -/
+theorem participants_mem_participantSets_iff {p : Person} :
     c.participants x ∈ p.participantSets ↔ ∀ f ∈ ({.participant, .speaker} : Features),
       (x ∈ Feature.dom c f ↔ f ∈ p.toFeatures {.participant, .speaker}) := by
-  rw [mem_participantSets_iff hp, Finset.ext_iff]
+  rw [mem_participantSets_iff, Finset.ext_iff]
   refine forall_congr' fun f ↦ ?_
   simp only [mem_bundle, mem_dom_feature_iff]
   by_cases hf : f ∈ ({.participant, .speaker} : Features)
@@ -184,10 +186,10 @@ theorem participants_mem_participantSets_iff {p : Person} (hp : p.coarsen = p) :
 /-- The first person's participant sets are those of the referents including the agent. -/
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ c.agent ≤ x := by
-  rw [participants_mem_participantSets_iff c x rfl]
+  rw [participants_mem_participantSets_iff c x]
   refine ⟨fun h ↦ (Feature.mem_dom_speaker c).1 ((h .speaker (by simp)).2 (by decide)),
     fun h f hf ↦ ?_⟩
-  cases f <;> simp [h, mem_toFeatures] at hf ⊢
+  cases f <;> simp [h] at hf ⊢
 
 end Person
 
@@ -197,12 +199,12 @@ namespace Number
 
 open Presupposition
 
-variable {E : Type*} [PartialOrder E] (x : E)
+variable {E : Type*} [PartialOrder E] [OrderBot E] (x : E)
 
 /-- `[+atomic]` is defined of the atoms, the `[+atomic]` region of the whole domain, and
 `[+minimal]`, whose dual region needs `[−atomic]`, and `[+additive]`, of everything. -/
 def Feature.dom : Feature → Set E
-  | .atomic => {x | atomsOf ⊤ x}
+  | .atomic => Feature.restrict .atomic true Set.univ
   | .minimal | .additive => Set.univ
 
 /-- A bundle is defined where its positive values are. -/
@@ -212,7 +214,8 @@ def Bundle.dom (b : Bundle) : Set E := (b.filter (·.2)).inf (Feature.dom ·.1)
 
 /-- A bundle's region lies in its domain: `dom` is the inclusive reading of what `Bundle.exact`
 reads exclusively. -/
-theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : b.exact ⊤ x) : x ∈ Bundle.dom b := by
+theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : x ∈ b.exact Set.univ) :
+    x ∈ Bundle.dom b := by
   refine Set.singleton_subset_iff.1 (Finset.le_inf fun v hv ↦ Set.singleton_subset_iff.2 ?_)
   obtain ⟨hvb, hv2⟩ := Finset.mem_filter.1 hv
   obtain ⟨f, _ | _⟩ := v
@@ -225,12 +228,12 @@ theorem Bundle.exact_subset_dom (b : Bundle) {x : E} (h : b.exact ⊤ x) : x ∈
 /-- The singular is defined of the atoms; any other value, and an absent one, restricts
 nothing. -/
 def dom : Option Number → Set E
-  | some .singular => {x | Atom x}
+  | some .singular => {x | IsAtom x}
   | _ => Set.univ
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
-@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := Iff.rfl
+@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ IsAtom x := Iff.rfl
 
 @[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := rfl
 
@@ -239,15 +242,16 @@ def dom : Option Number → Set E
 /-- Of the features only `[+atomic]` restricts, so a bundle is defined where the singular is if
 it carries `[+atomic]` and everywhere otherwise. -/
 theorem Bundle.dom_eq (b : Bundle) :
-    Bundle.dom (E := E) b = if (.atomic, true) ∈ b then Number.dom (some .singular) else Set.univ := by
+    Bundle.dom (E := E) b =
+      if (.atomic, true) ∈ b then Number.dom (some .singular) else Set.univ := by
   ext x
   simp only [Bundle.dom, Finset.inf_eq_iInf, Set.iInf_eq_iInter, Set.mem_iInter,
     Finset.mem_filter, and_imp, Prod.forall]
   split_ifs with h
   · refine ⟨fun H ↦ ?_, fun hx f v _ hv ↦ ?_⟩
-    · simpa [Feature.dom, atomsOf] using H .atomic true h rfl
+    · simpa [Feature.dom] using H .atomic true h rfl
     · subst hv
-      cases f <;> simp_all [Feature.dom, atomsOf]
+      cases f <;> simp_all [Feature.dom]
   · refine iff_of_true (fun f v hf hv ↦ ?_) trivial
     subst hv
     cases f <;> simp_all [Feature.dom]
@@ -267,17 +271,17 @@ def alts : Option Number → Set (Option Number)
 
 variable {y : E}
 
-theorem dom_singular_ssubset_dom_plural (hy : ¬ Atom y) :
+theorem dom_singular_ssubset_dom_plural (hy : ¬ IsAtom y) :
     dom (E := E) (some .singular) ⊂ dom (some .plural) := by
   rw [dom_plural]
   exact ⟨Set.subset_univ _, fun h ↦ hy ((mem_dom_singular y).1 (h (Set.mem_univ y)))⟩
 
 /-- The singular's strengthening is the `[+atomic]` region. -/
 theorem strengthen_singular :
-    strengthen alts dom (some .singular) = {x : E | atomsOf ⊤ x} := by
+    strengthen alts dom (some .singular) = Feature.restrict .atomic true (Set.univ : Set E) := by
   rw [strengthen_eq_self]
   · ext x
-    simp [atomsOf]
+    simp
   · rintro ψ hψ hss
     rcases hψ with rfl | rfl
     · exact hss.ne rfl
@@ -285,12 +289,12 @@ theorem strengthen_singular :
 
 /-- Strengthened against the singular, the plural's unrestricted domain is the `[−atomic]` region:
 the inclusive reading of the bundle recovers the exclusive one. -/
-theorem strengthen_plural (hy : ¬ Atom y) :
-    strengthen alts dom (some .plural) = {x : E | nonAtomsOf ⊤ x} := by
+theorem strengthen_plural (hy : ¬ IsAtom y) :
+    strengthen alts dom (some .plural) = Feature.restrict .atomic false (Set.univ : Set E) := by
   rw [strengthen_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
     (dom_singular_ssubset_dom_plural hy)]
   · ext x
-    simp [mem_dom_singular, nonAtomsOf]
+    simp [mem_dom_singular]
   · rintro χ (rfl | rfl) hss
     · exact le_rfl
     · exact absurd rfl hss.ne

@@ -8,8 +8,8 @@ public import Linglib.Fragments.NezPerce.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Obligatoriness
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.Finset.Erase
 public import Mathlib.Data.Finset.Image
@@ -169,7 +169,8 @@ theorem maxAcc_negative : maxAcc [some .dat] = -1 ∧ maxAcc [some .erg, some .d
 
 /-- The slots of the arguments on entering the clause, valued where the verb assigns a lexical
 Case. -/
-def entering (args : List (Option LexicalCase)) (j : Fin args.length) : FeatureSlot AbstractCase :=
+def entering (args : List (Option LexicalCase)) (j : Fin args.length) :
+    FeatureSlot (Flat AbstractCase) :=
   .offer (args[j].map .lexical)
 
 /-- Case on arguments, the highest first: an argument keeps its lexical Case, the functional heads

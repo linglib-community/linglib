@@ -20,12 +20,32 @@ MORPHEME_SEPARATORS = "-=~"
 _SPLIT = re.compile("([" + re.escape(MORPHEME_SEPARATORS) + "])")
 
 
+def boundary_symbols(decl):
+    """The separators and the marks a data file declares for its source's notation, as two
+    strings, or the Leipzig separators and no marks for a file that declares none."""
+    if not decl:
+        return MORPHEME_SEPARATORS, ""
+    return ("".join(lv["symbol"] for lv in decl["levels"]),
+            "".join(m["symbol"] for m in decl.get("marks", [])))
+
+
+def leipzig_pairs(pairs, decl):
+    """The word-gloss `pairs` in the notation of the Leipzig rules: each boundary symbol the
+    file declares written as the Leipzig separator it declares for it, and its marks dropped."""
+    if not decl:
+        return pairs
+    table = {lv["symbol"]: lv["leipzig"] for lv in decl["levels"]}
+    table.update({m["symbol"]: "" for m in decl.get("marks", [])})
+    tr = lambda s: "".join(table.get(c, c) for c in s)
+    return [(tr(w), tr(g)) for w, g in pairs]
+
+
 def lgr_conformance(pairs):
     """The `LGR_Conformance` of an example with the word-gloss `pairs`: `None` for an example
-    with no gloss, `MORPHEME_ALIGNED` when every word and its gloss have the same number of `-`
-    and of `=` boundaries (Rules 2 and 2A) and at least one word is segmented, else
-    `WORD_ALIGNED`."""
-    if not pairs:
+    with no gloss, its words unglossed or absent, `MORPHEME_ALIGNED` when every word and its gloss
+    have the same number of `-` and of `=` boundaries (Rules 2 and 2A) and at least one word is
+    segmented, else `WORD_ALIGNED`."""
+    if not any(g for _, g in pairs):
         return None
     aligned = all(w.count("-") == g.count("-") and w.count("=") == g.count("=")
                   for w, g in pairs)
@@ -33,24 +53,43 @@ def lgr_conformance(pairs):
     return "MORPHEME_ALIGNED" if aligned and segmented else "WORD_ALIGNED"
 
 
-def glossed_morphemes(word, gloss):
+def glossed_morphemes(word, gloss, decl=None):
     """The (morpheme, gloss, separator) triples of a word, as `pyigt`'s `GlossedWord` pairs
     them, or `None` when the word is not valid: its gloss has a different number of morphemes,
     or a different separator somewhere. The separator is the one before the morpheme, `None` for
-    the first, and the morpheme is given without the punctuation written around it."""
-    mm, gg = _SPLIT.split(word), _SPLIT.split(gloss)
+    the first, and the morpheme is given without the punctuation written around it. A word the
+    source segments without glossing it, its gloss empty, has its morphemes with empty glosses, as
+    `pyigt.lgrmorphemes.split_morphemes` segments a word alone. A file that declares the
+    boundary symbols of its source is segmented at those, and its marks are dropped from the
+    morphemes."""
+    seps, marks = boundary_symbols(decl)
+    split = re.compile("([" + re.escape(seps) + "])")
+    drop = PUNCT + marks
+    if not gloss:
+        out, sep = [], None
+        for m in split.split(word):
+            if m in seps and len(m) == 1:
+                sep = m
+                continue
+            form = "".join(c for c in m if c not in drop)
+            if not form:
+                return None
+            out.append((form, "", sep))
+            sep = None
+        return out or None
+    mm, gg = split.split(word), split.split(gloss)
     if len(mm) != len(gg):
         return None
     out, sep = [], None
     for m, g in zip(mm, gg):
-        if m in MORPHEME_SEPARATORS and len(m) == 1:
+        if m in seps and len(m) == 1:
             if m != g:
                 return None
             sep = m
             continue
         if not m and not g:
             continue
-        form = "".join(c for c in m if c not in PUNCT)
+        form = "".join(c for c in m if c not in drop)
         if not form or not g:
             return None
         out.append((form, g, sep))

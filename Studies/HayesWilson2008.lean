@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Likelihood
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Data.Examples.HayesWilson2008
 public import Linglib.Data.Examples.Readers
@@ -256,7 +256,7 @@ theorem isProbabilityMeasure_empirical (hD : ∑ x, D x ≠ 0) :
     IsProbabilityMeasure (empirical D) := by
   constructor
   have hN : (∑ y, (D y : ℝ≥0∞)) ≠ 0 := by exact_mod_cast hD
-  simp only [empirical, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+  simp only [empirical, FunLike.coe_sum, Finset.sum_apply, smul_apply,
     measure_univ, smul_eq_mul, mul_one, div_eq_mul_inv, ← Finset.sum_mul]
   exact ENNReal.mul_inv_cancel hN (ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.natCast_ne_top _)
 

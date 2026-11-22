@@ -37,6 +37,9 @@ forward hierarchy](##directionality).
   entails [PART], so `objectItems` gives it both. (36a) then outranks (36c) on a first person by
   size, and scansion reads the items by specificity, `objectItems_ranked`. The inclusive items,
   absent from (36), are not encoded.
+* A nominal has one of three persons. The first person of Shawi is the exclusive, the paper's
+  `1EXCL`, and since the inclusive is not encoded it is the first person here; the object
+  markers are those of the exclusive (`objectAgreement_eq_objectMarker`).
 * `objectAgreement` states v after Kinyalolo's Constraint (35) has removed the subject's features;
   the impoverishment itself is not encoded.
 * The rows of (42), (45), (46) and (49) are read with the object positions of Shawi, as note 38
@@ -112,7 +115,7 @@ variable (g : Grammar) (l : Locus) (nom : Arg → Nominal)
 
 /-- The arguments a probe of grammar `g` Agrees with, in search order. -/
 def agreed (goals : List Arg) : List Arg :=
-  (run g (fun a ↦ (nom a).1) goals).interacted
+  (run g (fun a ↦ spec (nom a).1) goals).interacted
 
 /-- Agree is bidirectional ((31)): a head holding `fs` flags its next goal with all of `fs`, beyond
 the mark of agreement that is [deal-2025a]'s goal flag, and takes on the goal's φ-features. -/
@@ -126,7 +129,7 @@ def flagged (goals : List Arg) : List (Arg × Finset Feature) :=
 
 theorem agreed_pair (a b : Arg) :
     agreed g nom [a, b] = a :: if Licit g ⟨(nom b).1, (nom a).1⟩ then [b] else [] :=
-  interacted_run_pair g _ a b
+  interacted_run_pair g _ (fun _ ↦ pi_mem_spec _) a b
 
 /-- Feature transfer under Agree is transitive ((31)): a probe flags its first goal with its
 category feature alone and, if it goes on to a second, flags that with the first goal's φ-features
@@ -422,14 +425,16 @@ theorem forms_of_licit (h : Licit strictlyDescending ⟨s.1, o.1⟩) :
 
 -- (12)
 example :
-    shawi.forms (.firstExclusive, .augmented) (.second, .augmented) .high .subject =
+    shawi.forms (.first, .augmented) (.second, .augmented) .high .subject =
       ["-ri", "-((n)ke)ma'"] := by
   decide +kernel
 
 -- (36) [clem-deal-2026]
 theorem objectAgreement_eq_objectMarker :
-    ∀ p ∈ [Person.firstExclusive, .second, .third], ∀ n ∈ [Number.minimal, .augmented],
-      objectAgreement (p, n) = (Kawapanan.Shawi.objectMarker p n).toList := by
+    ∀ p ∈ [Person.first, .second, .third], ∀ n ∈ [Number.minimal, .augmented],
+      objectAgreement (p, n) =
+        (Kawapanan.Shawi.objectMarker p (if p = .first then some .exclusive else none)
+          n).toList := by
   decide +kernel
 
 -- §2, fn. 7, §3.3
@@ -503,7 +508,7 @@ example :
 
 /-- The persons a row names. -/
 def personTable : List (String × Person) :=
-  [("1", .first), ("1excl", .firstExclusive), ("2", .second), ("3", .third)]
+  [("1", .first), ("1excl", .first), ("2", .second), ("3", .third)]
 
 /-- The numbers a row names, the Shawi glosses read as minimal and augmented by note 4. -/
 def numberTable : List (String × Number) :=
@@ -586,7 +591,7 @@ theorem rule1_overgenerates :
 
 /-- Rule (37), [barany-sheehan-2024]'s writing a hierarchy into (1): of two NPs in one domain, over
 the ranking `rank`, the one c-commanding a caseless NP no higher on `rank` takes the ergative. -/
-def rule37 (rank : Person → ℕ) (s o : Nominal) : Arg → FeatureSlot (Case × Case.Mechanism) :=
+def rule37 (rank : Person → ℕ) (s o : Nominal) : Arg → FeatureSlot (Flat (Case × Case.Mechanism)) :=
   (DependentCase.Rules.ofAlignment .ergative).dependent.pass
     (fun p q ↦ p = .subject ∧ q = .object ∧ rank (nominals s o q).1 ≤ rank (nominals s o p).1)
     {.subject, .object} (Case.lexical fun _ ↦ .unvalued)

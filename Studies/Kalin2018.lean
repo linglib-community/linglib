@@ -110,22 +110,22 @@ variable {n : ℕ}
 def phased (nps : List LicensedNP) (j : Fin nps.length) : PhasedNP := nps[j].toPhasedNP
 
 /-- The Case of each nominal before any licenser probes: valued only by a lexical head. -/
-def initial (np : Fin n → PhasedNP) (i : Fin n) : FeatureSlot CaseValue :=
+def initial (np : Fin n → PhasedNP) (i : Fin n) : FeatureSlot (Flat CaseValue) :=
   (np i).case.map .lexical
 
 /-- The Agree of licenser `l`. -/
-def Licenser.agree (l : Licenser) (np : Fin n → PhasedNP) (st : Fin n → FeatureSlot CaseValue) :
-    Fin n → FeatureSlot CaseValue :=
+def Licenser.agree (l : Licenser) (np : Fin n → PhasedNP)
+    (st : Fin n → FeatureSlot (Flat CaseValue)) : Fin n → FeatureSlot (Flat CaseValue) :=
   Minimalist.agree (· < ·) (.licenser l) (Finset.univ.filter fun i ↦ (np i).Visible l.domain) st
 
 /-- The licensers probing the domain of `c` merge, the lowest first. -/
 def cycle (ls : List Licenser) (c : Cat) (np : Fin n → PhasedNP)
-    (st : Fin n → FeatureSlot CaseValue) : Fin n → FeatureSlot CaseValue :=
+    (st : Fin n → FeatureSlot (Flat CaseValue)) : Fin n → FeatureSlot (Flat CaseValue) :=
   (ls.filter (·.domain == c)).foldl (fun st l ↦ l.agree np st) st
 
 /-- The derivation: the phase domains `ds` spell out in order, each with its licensers. -/
 def license (ds : List Cat) (ls : List Licenser) (np : Fin n → PhasedNP) :
-    Fin n → FeatureSlot CaseValue :=
+    Fin n → FeatureSlot (Flat CaseValue) :=
   ds.foldl (fun st c ↦ cycle ls c np st) (initial np)
 
 /-- A derivation converges iff every nominal that needs licensing has its Case valued. -/
@@ -152,7 +152,7 @@ variable {l : Licenser} {ds : List Cat} {ls ls' : List Licenser} {nps : List Lic
 
 theorem extends_license (ds : List Cat) (ls : List Licenser) (np : Fin n → PhasedNP) :
     FeatureSlot.Extends {v | ∀ l, v = .licenser l → l ∈ ls} (initial np) (license ds ls np) := by
-  have hstep (l : Licenser) (hl : l ∈ ls) (st : Fin n → FeatureSlot CaseValue) :
+  have hstep (l : Licenser) (hl : l ∈ ls) (st : Fin n → FeatureSlot (Flat CaseValue)) :
       FeatureSlot.Extends {v | ∀ l, v = .licenser l → l ∈ ls} st (l.agree np st) :=
     Minimalist.extends_agree.mono <| Set.singleton_subset_iff.2 <| by
       intro l' hl'
@@ -170,7 +170,7 @@ theorem mem_of_license (h : license ds ls np i = .valued (.licenser l)) : l ∈ 
 /-! ### Monotonicity -/
 
 private theorem unvalued_foldl_agree :
-    ∀ {L L' : List Licenser}, L <+ L' → ∀ {s t : Fin n → FeatureSlot CaseValue},
+    ∀ {L L' : List Licenser}, L <+ L' → ∀ {s t : Fin n → FeatureSlot (Flat CaseValue)},
       (∀ x, t x = .unvalued → s x = .unvalued) → ∀ x,
       L'.foldl (fun st l ↦ l.agree np st) t x = .unvalued →
         L.foldl (fun st l ↦ l.agree np st) s x = .unvalued
@@ -181,7 +181,7 @@ private theorem unvalued_foldl_agree :
     Minimalist.agree_eq_unvalued_of_forall h
 
 private theorem unvalued_foldl_cycle (h : ls <+ ls') (np : Fin n → PhasedNP) (ds : List Cat) :
-    ∀ {s t : Fin n → FeatureSlot CaseValue}, (∀ x, t x = .unvalued → s x = .unvalued) → ∀ x,
+    ∀ {s t : Fin n → FeatureSlot (Flat CaseValue)}, (∀ x, t x = .unvalued → s x = .unvalued) → ∀ x,
       ds.foldl (fun st c ↦ cycle ls' c np st) t x = .unvalued →
         ds.foldl (fun st c ↦ cycle ls c np st) s x = .unvalued := by
   induction ds with
@@ -294,12 +294,12 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
     (hκ : ∀ l ∈ ls, g.agreeCase l.head = some (κ l.head)) (np : Fin n → PhasedNP) (i : Fin n) :
     g.assign .univ np (· < ·) (ls.map fun l ↦ (l.head, l.domain)) ds i =
       (license ds ls np i).map (CaseValue.assigned κ) := by
-  let φ (st : Fin n → FeatureSlot CaseValue) (x : Fin n) :
-      FeatureSlot (_root_.Case × _root_.Case.Mechanism) := (st x).map (CaseValue.assigned κ)
+  let φ (st : Fin n → FeatureSlot (Flat CaseValue)) (x : Fin n) :
+      FeatureSlot (Flat (_root_.Case × _root_.Case.Mechanism)) := (st x).map (CaseValue.assigned κ)
   let dom := g.domain .univ np (fun a b : Fin n ↦ a < b) (ls.map fun l ↦ (l.head, l.domain))
   have key (c : Cat) (L : List Licenser)
       (hL : ∀ l ∈ L, l.domain = c ∧ g.agreeCase l.head = some (κ l.head))
-      (st : Fin n → FeatureSlot CaseValue) :
+      (st : Fin n → FeatureSlot (Flat CaseValue)) :
       ((L.map fun l ↦ (l.head, l.domain)).filterMap fun pr ↦
           (g.agreeCase pr.1).map fun k ↦
             ((k, _root_.Case.Mechanism.functional),
@@ -318,7 +318,7 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
           (CaseValue.assigned κ) x).symm
       rw [map_cons, filterMap_cons, hcase, Option.map_some, foldl_cons, foldl_cons, hstep,
         ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
-  have hcycle (c : Cat) (hc : c ∈ ds) (st : Fin n → FeatureSlot CaseValue) :
+  have hcycle (c : Cat) (hc : c ∈ ds) (st : Fin n → FeatureSlot (Flat CaseValue)) :
       (dom c).pass (φ st) = φ (cycle ls c np st) := by
     have hr := hg c hc
     simp only [dom, CaseAssigners.domain, CaseDomain.pass]
@@ -332,7 +332,7 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
     funext x
     simp only [_root_.Case.lexical, φ, initial]
     cases (np x).case <;> rfl
-  suffices ∀ ds' ⊆ ds, ∀ st : Fin n → FeatureSlot CaseValue, assignBy (ds'.map dom) (φ st) =
+  suffices ∀ ds' ⊆ ds, ∀ st : Fin n → FeatureSlot (Flat CaseValue), assignBy (ds'.map dom) (φ st) =
       φ (ds'.foldl (fun st c ↦ cycle ls c np st) st) by
     change assignBy (ds.map dom) _ i = _
     rw [hinit, this ds (fun _ h ↦ h) (initial np)]
@@ -437,7 +437,7 @@ def Row.suffixes (r : Row) : List (Option Suffix) :=
   some r.subjectSuffix :: (r.object.map fun _ ↦ r.objectSuffix).toList
 
 /-- The suffixes a derivation spells out, nominal by nominal. -/
-def suffixes {n : ℕ} (st : Fin n → FeatureSlot CaseValue) : List (Option Suffix) :=
+def suffixes {n : ℕ} (st : Fin n → FeatureSlot (Flat CaseValue)) : List (Option Suffix) :=
   List.ofFn fun i ↦ suffixOf (st i).value?
 
 private theorem rows_agree_aux : ∀ r ∈ rows, ∀ subject : Bool,
@@ -546,7 +546,7 @@ def underLicensers (ls : List Licenser) : CaseAssigners where
 
 /-- Case read off a clause under licensers `ls`, C the only phase head. -/
 def senayaCases (ls : List Licenser) (object : Bool) :
-    Option (List (FeatureSlot (_root_.Case × _root_.Case.Mechanism))) :=
+    Option (List (FeatureSlot (Flat (_root_.Case × _root_.Case.Mechanism)))) :=
   (clause object).externalize?.map fun t ↦
     (clauseNominals object).map
       ((underLicensers ls).assignOn .raising t complementDomain (·.item.cat = .C)
@@ -563,7 +563,7 @@ theorem senayaCases_eq_license (object : Bool) :
 
 /-- Case read off a toy clause, v and C its phase heads. -/
 def toyCases (ls : List Licenser) :
-    Option (List (FeatureSlot (_root_.Case × _root_.Case.Mechanism))) :=
+    Option (List (FeatureSlot (Flat (_root_.Case × _root_.Case.Mechanism)))) :=
   (clause true).externalize?.map fun t ↦
     (clauseNominals true).map
       ((underLicensers ls).assignOn .raising t complementDomain

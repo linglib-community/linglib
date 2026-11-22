@@ -77,7 +77,7 @@ theorem isUpperSet_condition_underspecified : IsUpperSet (Kind.underspecified.co
   U.upper
 
 theorem isLowerSet_condition_personal : IsLowerSet (Kind.personal.condition U P) :=
-  isLowerSet_Iic _
+  IsLowerSet.Iic _
 
 /-- The two kinds share no common ground unless accepting just the they/them fact counts as
 underspecified (§3, §4.1). -/

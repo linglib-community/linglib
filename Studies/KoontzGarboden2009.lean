@@ -29,9 +29,9 @@ respects the Monotonicity Hypothesis that word formation never removes operators
 
 The paper's representations take the change-of-state event as the verb's event argument and
 existentially close the causing event; `causative` follows that convention, and
-`exists_causative_iff` shows that its existential closure agrees with the library's causative
-head `vCause`, whose event argument is the causing event. Agent entailments are an explicit
-relation on the model, since `EventStructure.Interpretation` has only the underspecified `effector`.
+`exists_causative_iff` shows that its existential closure agrees with possibility along `cause`,
+whose event argument is the causing event. The underspecified effector and the agent are
+relations between individuals and events beside the `EventStructure.Interpretation`.
 A Spanish verb's causer specification is derived from the proto-role subject profile the
 fragment states for it, after Dowty: a causer that must be an agent entails volition. The
 reflexive/anticausative syncretism in Haspelmath's survey, which the paper tabulates, is a
@@ -55,7 +55,7 @@ typological argument left in prose.
 namespace KoontzGarboden2009
 
 open ArgumentStructure ArgumentStructure.EventStructure Spanish.Verbs
-open scoped SetRel
+open scoped SetRel ModalLogic
 
 /-- The reflexivization operator restricts a two-place relation to its diagonal. It is the
 denotation of the reflexive clitic *se*. -/
@@ -64,18 +64,17 @@ def reflexivize {α β : Type*} (R : α → α → β) : α → β := fun x ↦ 
 section Model
 
 variable {Entity State E : Type*}
-  (M : ArgumentStructure.EventStructure.Interpretation Entity State E)
-  (θ agent : Entity → E → Prop) (P : Entity → State → Prop)
+  (M : ArgumentStructure.EventStructure.Interpretation State E)
+  (effector θ agent : Entity → E → Prop) (P : Entity → State → Prop)
 
 /-- A causative change-of-state verb, ((10b), (17), (29)), holds of an event `e` in which `x` comes
 to be in the root's state, caused by an event whose participant `y` bears the causer relation `θ`,
-the underspecified `M.effector` for *romper* and an agent relation for *asesinar*. -/
+the underspecified `effector` for *romper* and an agent relation for *asesinar*. -/
 def causative (y x : Entity) (e : E) : Prop :=
-  ∃ w, θ y w ∧ w ~[M.cause] e ∧ M.vBecome P x e
+  ∃ w, θ y w ∧ w ~[M.cause] e ∧ ◇[M.become] (P x) e
 
 theorem exists_causative_iff (y x : Entity) :
-    (∃ e, causative M M.effector P y x e) ↔
-      ∃ w, M.effector y w ∧ M.vCause (M.vBecome P x) w :=
+    (∃ e, causative M θ P y x e) ↔ ∃ w, θ y w ∧ ◇[M.cause] (◇[M.become] (P x)) w :=
   ⟨fun ⟨e, w, hθ, hc, hi⟩ ↦ ⟨w, hθ, e, hc, hi⟩, fun ⟨w, hθ, e, hc, hi⟩ ↦ ⟨e, w, hθ, hc, hi⟩⟩
 
 /-- Anticausativization is reflexivization. The derived inchoative is the causative on its
@@ -83,7 +82,7 @@ diagonal, so the undergoer is also the participant in the causing event. -/
 def anticausative : Entity → E → Prop := reflexivize (causative M θ P)
 
 theorem anticausative_iff (x : Entity) (e : E) :
-    anticausative M θ P x e ↔ ∃ w, θ x w ∧ w ~[M.cause] e ∧ M.vBecome P x e := Iff.rfl
+    anticausative M θ P x e ↔ ∃ w, θ x w ∧ w ~[M.cause] e ∧ ◇[M.become] (P x) e := Iff.rfl
 
 /-- A reflexivized verb has the anticausative reading when it has an instance whose single
 argument is not an agent of the event causing its change, as in *el vaso se rompió* 'the cup
@@ -95,13 +94,13 @@ def AnticausativeReading (P : Entity → E → Prop) : Prop :=
 with the subject as its effector; the modifier then adds that the subject is its sole
 effector (§3.4, §4.1). -/
 def LicensesBySelf (P : Entity → E → Prop) : Prop :=
-  ∀ x e, P x e → ∃ w, w ~[M.cause] e ∧ M.effector x w
+  ∀ x e, P x e → ∃ w, w ~[M.cause] e ∧ effector x w
 
 /-- In the passive of a causative verb the causer is existentially closed rather than
 identified with the subject. -/
-def passive (x : Entity) (e : E) : Prop := ∃ y, causative M M.effector P y x e
+def passive (x : Entity) (e : E) : Prop := ∃ y, causative M effector P y x e
 
-variable {M θ agent P}
+variable {M effector θ agent P}
 
 -- §3.5
 theorem causative_self_of_anticausative {x : Entity} {e : E}
@@ -124,7 +123,8 @@ theorem not_anticausativeReading (hθ : ∀ x w, θ x w → agent x w) :
   let ⟨x, w, h₁, h₂⟩ := exists_nonagent_of_anticausativeReading h; h₂ (hθ x w h₁)
 
 /-- Derived inchoatives license *por sí solo* ((68)). -/
-theorem licensesBySelf_anticausative : LicensesBySelf M (anticausative M M.effector P) :=
+theorem licensesBySelf_anticausative :
+    LicensesBySelf M effector (anticausative M effector P) :=
   fun _ _ h ↦ let ⟨w, hθ, hc⟩ := exists_cause_of_anticausative h; ⟨w, hc, hθ⟩
 
 end Model
@@ -141,13 +141,11 @@ inductive Participant
   | vaso
   deriving DecidableEq
 
-/-- In the model where Juan breaks the glass, `eff` says who counts as an effector of the
-causing event, and every event gives rise to the glass's broken state. -/
-def breaking (eff : Participant → Prop) :
-    ArgumentStructure.EventStructure.Interpretation Participant Unit Unit where
+/-- In the model where Juan breaks the glass, the one event causes itself and gives rise to the
+glass's broken state. -/
+def breaking : ArgumentStructure.EventStructure.Interpretation Unit Unit where
   become := ⊤
   cause := ⊤
-  effector y _ := eff y
 
 /-- The broken state holds of the glass. -/
 def broken (x : Participant) (_ : Unit) : Prop := x = .vaso
@@ -155,35 +153,32 @@ def broken (x : Participant) (_ : Unit) : Prop := x = .vaso
 /-- Juan alone is an agent. -/
 def juanAgent (y : Participant) (_ : Unit) : Prop := y = .juan
 
-/-- In the first model Juan, not the glass, is the effector. -/
-def breakingByJuan : ArgumentStructure.EventStructure.Interpretation Participant Unit Unit :=
-  breaking (· = .juan)
+/-- On the first construal Juan, not the glass, is the effector. -/
+def byJuan (y : Participant) (_ : Unit) : Prop := y = .juan
 
-/-- In the second model the glass and Juan are both effectors. -/
-def breakingByBoth : ArgumentStructure.EventStructure.Interpretation Participant Unit Unit :=
-  breaking fun _ ↦ True
+/-- On the second construal the glass and Juan are both effectors. -/
+def byBoth (_ : Participant) (_ : Unit) : Prop := True
 
 /-- `e₀` is the one event of the models. -/
 def e₀ : Unit := ()
 
 theorem not_anticausative_of_causative :
-    causative breakingByJuan breakingByJuan.effector broken .juan .vaso e₀ ∧
-      ¬ anticausative breakingByJuan breakingByJuan.effector broken .vaso e₀ :=
+    causative breaking byJuan broken .juan .vaso e₀ ∧
+      ¬ anticausative breaking byJuan broken .vaso e₀ :=
   ⟨⟨e₀, rfl, trivial, (), trivial, rfl⟩, fun ⟨_, h, _⟩ ↦ Participant.noConfusion h⟩
 
 theorem anticausativeReading_romper :
-    AnticausativeReading breakingByBoth juanAgent
-      (anticausative breakingByBoth breakingByBoth.effector broken) :=
+    AnticausativeReading breaking juanAgent (anticausative breaking byBoth broken) :=
   ⟨.vaso, e₀, ⟨e₀, trivial, trivial, (), trivial, rfl⟩, fun _ _ h ↦ Participant.noConfusion h⟩
 
 theorem not_licensesBySelf_passive :
-    ¬ LicensesBySelf breakingByJuan (passive breakingByJuan broken) := fun h ↦
+    ¬ LicensesBySelf breaking byJuan (passive breaking byJuan broken) := fun h ↦
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨.juan, e₀, rfl, trivial, (), trivial, rfl⟩
   Participant.noConfusion hw
 
 -- (65), (67)
 theorem not_licensesBySelf_inchoative :
-    ¬ LicensesBySelf breakingByJuan (breakingByJuan.vBecome broken) := fun h ↦
+    ¬ LicensesBySelf breaking byJuan (fun x ↦ ◇[breaking.become] (broken x)) := fun h ↦
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨(), trivial, rfl⟩
   Participant.noConfusion hw
 
@@ -202,7 +197,7 @@ theorem not_monotonicityHypothesis_caused : ¬ MonotonicityHypothesis Template.c
 /-- Reflexivization on templates identifies the causer with the undergoer, so it applies
 exactly to templates with CAUSE and changes no operator. -/
 def reflexivizeTemplate (t : Template .event) : Option (Template .event) :=
-  if t.HasCause then some t else none
+  if .cause ∈ t.kinds then some t else none
 
 /-- Anticausativization as reflexivization satisfies the hypothesis. -/
 theorem monotonicityHypothesis_reflexivizeTemplate :

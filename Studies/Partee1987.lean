@@ -59,8 +59,7 @@ so only monotonicity tells it from *some* among the sections of `BE`. *Be most `
 
 theorem BE_exactly_one (A : Set E) : BE (exactly 1 A) = A :=
   Set.ext fun x ↦ (intersective_exactly 1).mem_BE.trans <| by
-    by_cases hx : x ∈ A <;> simp [exactly_apply, Set.inter_singleton_of_mem, hx,
-      Set.inter_singleton_eq_empty.2]
+    by_cases hx : x ∈ A <;> simp [exactly_apply, hx, Set.inter_singleton_eq_empty.2]
 
 /-- *Exactly one* is a conservative, symmetric section of `BE` other than *some*, so monotonicity
 is what singles out *some* among them ([partee-1987], §3.3). -/

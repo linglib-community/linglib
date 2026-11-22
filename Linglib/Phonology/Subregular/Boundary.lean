@@ -11,28 +11,22 @@ public import Mathlib.Data.List.Infix
 public import Mathlib.Data.List.OfFn
 
 /-!
-# Subregular Languages: Boundary Augmentation
+# Boundary augmentation
 
-Boundary augmentation pads a string with `k - 1` boundary markers on each side, so that the
-`k`-factors of the padded string, its infixes of length `k`, see the edges of the word. The strictly
-local, locally testable, and tier-based classes are built on it. A word read at integer positions
-is a two-sided family blank outside `[0, w.length)`, and its width-`k` window at `i` lists its
-entries on `[i, i + k)`. The entries of the padded word are those of the word shifted by the pad
-width, so [the `k`-factors of the augmented word are exactly its
-windows](##infix_boundary_and_length_eq_iff) starting in `[1 - k, w.length)`.
+This file defines the [boundary augmentation](##boundary) of a word, which pads it with `k - 1`
+boundary markers on each side so that its `k`-factors see the edges of the word, as the strictly
+local, locally testable and tier-based classes require. It also defines the
+[width-`k` window](##window) of a word at an integer position `i`, which lists its entries on
+`[i, i + k)`, and proves that [the `k`-factors of the padded word are exactly its windows starting
+in `[1 - k, w.length)`](##infix_boundary_and_length_eq_iff). The [list of these windows](##windows),
+from left to right, therefore [has the `k`-factors as its members](##mem_windows_iff).
 
 ## Implementation notes
 
-The standard subregular convention extends the alphabet with two edge markers
-`⋊`, `⋉` and studies the `k`-factors of `⋊ᵏ⁻¹ · w · ⋉ᵏ⁻¹`. We instead use the
-one-fresh-symbol extension `Option α` (`none` = boundary, `some a` = original
-symbol): a single marker suffices because boundary symbols only ever occur at
-fixed positions, so the two edges are never confused.
-
-Integer positions are a lawful `GetElem? (List α) ℤ α` instance, `w[i]?` being `none` at every
-negative `i` rather than counting from the end, so position arithmetic across the left edge is
-ordinary `ℤ` arithmetic rather than a case split on `ℕ` subtraction. Being lawful, the instance
-gets the generic `getElem?_pos`, `getElem?_neg` and `getElem?_eq_some_iff`.
+One fresh symbol, `none` in `Option α`, marks both edges in place of the usual `⋊` and `⋉`, since
+a marker occurs only at fixed positions and the two edges are never confused. Integer positions
+are a lawful `GetElem? (List α) ℤ α` instance that is `none` at every negative index, so
+arithmetic across the left edge is ordinary `ℤ` arithmetic.
 
 ## References
 
@@ -44,28 +38,6 @@ gets the generic `getElem?_pos`, `getElem?_neg` and `getElem?_eq_some_iff`.
 @[expose] public section
 
 variable {α : Type*}
-
-/-! ### Boundary augmentation -/
-
-/-- A boundary-augmented string has the original symbols (`some a`) and the boundary marker
-`none`. -/
-abbrev Augmented (α : Type*) := List (Option α)
-
-section Boundary
-
-variable (k : ℕ) (w : List α)
-
-/-- `w` padded with `k - 1` boundary markers (`none`) on each side. -/
-def boundary : Augmented α :=
-  List.replicate (k - 1) none ++ w.map some ++ List.replicate (k - 1) none
-
-@[simp] lemma boundary_one : boundary 1 w = w.map some := by
-  simp [boundary]
-
-lemma length_boundary : (boundary k w).length = w.length + 2 * (k - 1) := by
-  simp [boundary]; omega
-
-end Boundary
 
 /-! ### Integer indexing -/
 
@@ -99,11 +71,39 @@ theorem getElem?_int_of_neg (h : i < 0) : w[i]? = none := ite_eq_right (by omega
 
 @[simp] theorem getElem?_int_nil : ([] : List α)[i]? = none := by simp
 
+theorem getElem?_int_cons_add_one (a : α) (hi : 0 ≤ i) : (a :: w)[i + 1]? = w[i]? := by
+  rw [getElem?_int_of_nonneg (by omega), getElem?_int_of_nonneg hi,
+    show (i + 1).toNat = i.toNat + 1 by omega, getElem?_cons_succ]
+
 theorem getElem?_int_eq_none_iff : w[i]? = none ↔ i < 0 ∨ (w.length : ℤ) ≤ i := by
   rw [_root_.getElem?_eq_none_iff]
   omega
 
 end List
+
+namespace Subregular
+
+/-! ### Boundary augmentation -/
+
+/-- A boundary-augmented string has the original symbols (`some a`) and the boundary marker
+`none`. -/
+abbrev Augmented (α : Type*) := List (Option α)
+
+section Boundary
+
+variable (k : ℕ) (w : List α)
+
+/-- `w` padded with `k - 1` boundary markers (`none`) on each side. -/
+def boundary : Augmented α :=
+  List.replicate (k - 1) none ++ w.map some ++ List.replicate (k - 1) none
+
+@[simp] lemma boundary_one : boundary 1 w = w.map some := by
+  simp [boundary]
+
+lemma length_boundary : (boundary k w).length = w.length + 2 * (k - 1) := by
+  simp [boundary]; omega
+
+end Boundary
 
 /-! ### Position discrimination and windows
 
@@ -124,7 +124,36 @@ lemma getElem?_window {k j : ℕ} {w : List α} {i : ℤ} (h : j < k) :
     (window k w i)[j]? = some w[i + j]? := by
   simp [window, h]
 
-variable {k : ℕ} {w y l : List α}
+variable {k : ℕ} {w y l : List α} {i : ℤ}
+
+@[simp] lemma window_zero : window 0 w i = [] := rfl
+
+@[simp] lemma window_nil : window k ([] : List α) i = List.replicate k none := by
+  simp [window, List.ofFn_const]
+
+/-- A window lists the entry at its start, then the window one narrower at the next position. -/
+lemma window_succ : window (k + 1) w i = w[i]? :: window k w (i + 1) := by
+  simp only [window, List.ofFn_succ, Fin.val_zero, Fin.val_succ]
+  congr 1
+  · rw [show i + ((0 : ℕ) : ℤ) = i by omega]
+  · congr 1
+    funext j
+    rw [show i + ((j + 1 : ℕ) : ℤ) = i + 1 + (j : ℕ) by omega]
+
+lemma window_succ_of_neg (hi : i < 0) : window (k + 1) w i = none :: window k w (i + 1) := by
+  rw [window_succ, List.getElem?_int_of_neg hi]
+
+/-- Prefixing a symbol to a word shifts by one the windows that start within it. -/
+lemma window_cons_add_one (a : α) (hi : 0 ≤ i) : window k (a :: w) (i + 1) = window k w i := by
+  simp only [window]
+  congr 1
+  funext j
+  rw [show i + 1 + (j : ℕ) = i + (j : ℕ) + 1 by omega,
+    List.getElem?_int_cons_add_one a (by omega)]
+
+lemma window_succ_cons_zero (a : α) : window (k + 1) (a :: w) 0 = some a :: window k w 0 := by
+  rw [window_succ, window_cons_add_one a (Int.le_refl 0)]
+  rfl
 
 lemma getElem?_boundary (j : ℕ) :
     (boundary k w)[j]? =
@@ -202,6 +231,42 @@ lemma infix_boundary_and_length_eq_iff {f : List (Option α)} (hk : 1 ≤ k) :
       getElem?_boundary_eq_getElem?_int (q := j + (i + (k - 1 : ℕ)).toNat) (by omega),
       show ((j + (i + (k - 1 : ℕ)).toNat : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = i + (j : ℕ)
         by omega]
+
+/-! ### The windows of a word -/
+
+/-- The width-`k` windows of a word, one for each start position in `[1 - k, w.length)`, from
+left to right. -/
+def windows (k : ℕ) (w : List α) : List (Augmented α) :=
+  (List.range (w.length + k - 1)).map fun j : ℕ ↦ window k w ((j : ℤ) + 1 - k)
+
+@[simp] lemma length_windows : (windows k w).length = w.length + k - 1 := by
+  simp [windows]
+
+/-- The windows of a word are the `k`-factors of its padded form. -/
+lemma mem_windows_iff (hk : 1 ≤ k) {f : Augmented α} :
+    f ∈ windows k w ↔ f <:+: boundary k w ∧ f.length = k := by
+  rw [infix_boundary_and_length_eq_iff hk, windows, List.mem_map]
+  constructor
+  · rintro ⟨j, hj, rfl⟩
+    rw [List.mem_range] at hj
+    exact ⟨(j : ℤ) + 1 - k, by omega, by omega, rfl⟩
+  · rintro ⟨i, h1, h2, rfl⟩
+    refine ⟨(i + k - 1).toNat, List.mem_range.2 (by omega), ?_⟩
+    congr 1
+    omega
+
+/-- The windows of a word are the `k - 1` that start before it, then one starting at each of its
+positions. -/
+lemma windows_eq_append (hk : 1 ≤ k) :
+    windows k w = (List.range (k - 1)).map (fun j : ℕ ↦ window k w ((j : ℤ) + 1 - k)) ++
+      (List.range w.length).map fun j : ℕ ↦ window k w j := by
+  rw [windows, show w.length + k - 1 = k - 1 + w.length by omega, List.range_add, List.map_append,
+    List.map_map]
+  congr 2
+  funext j
+  simp only [Function.comp_apply]
+  congr 1
+  omega
 
 /-! ### The edges of a padded word
 
@@ -296,3 +361,5 @@ lemma eq_nil_of_replicate_none_infix_boundary (hk : 1 ≤ k)
     omega
 
 end Pinning
+
+end Subregular

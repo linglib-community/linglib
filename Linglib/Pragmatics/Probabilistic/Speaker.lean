@@ -5,7 +5,6 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
-public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Softmax
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -282,13 +281,20 @@ theorem speaker_dirac_zero_apply_singleton (α : ℝ) (L : U → Measure W) (w :
   rw [speaker_dirac_apply_singleton]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
 
-theorem speaker_dirac_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
-    [MeasurableSpace U'] [Fintype W'] [MeasurableSingletonClass W'] [Fintype U']
-    [MeasurableSingletonClass U'] (τ : U ≃ U') (α : ℝ) (C : U' → ℝ) {L : Kernel U W}
-    {L' : Kernel U' W'} {w : W} {w' : W'} (h : ∀ v, L' (τ v) {w'} = L v {w}) (u : U) :
-    speaker α C L' Measure.dirac w' {τ u} = speaker α (C ∘ τ) L Measure.dirac w {u} := by
-  rw [speaker_dirac_apply_singleton, speaker_dirac_apply_singleton, h, ← τ.sum_comp]
-  simp only [h, Function.comp_apply]
+/-- Relabelling the states by `e` and the utterances by `τ` relabels the speaker who knows the
+state: she is the speaker of the relabelled listener, at the relabelled costs. -/
+theorem speaker_dirac_relabel {W' U' : Type*} [MeasurableSpace W'] [Fintype W']
+    [MeasurableSingletonClass W'] [MeasurableSpace U'] [Fintype U'] [MeasurableSingletonClass U']
+    (e : W ≃ W') (τ : U ≃ U') (α : ℝ) (C : U → ℝ) (L : U → Measure W) :
+    ((speaker α C L Measure.dirac).comap e.symm .of_discrete).map τ =
+      speaker α (C ∘ τ.symm) (fun u' ↦ (L (τ.symm u')).map e) Measure.dirac := by
+  rw [speaker_dirac_eq_softmax, speaker_dirac_eq_softmax, Kernel.softmax_comap,
+    Kernel.softmax_map_equiv]
+  congr 1
+  funext w' u'
+  rw [Measure.map_apply .of_discrete (.singleton w'), ← Equiv.image_symm_eq_preimage,
+    Set.image_singleton]
+  rfl
 
 theorem speaker_dirac_apply_singleton_eq_zero (hα : 0 < α) (h : L u {w} = 0) :
     speaker α C L Measure.dirac w {u} = 0 := by

@@ -4,6 +4,7 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Development
+public import Linglib.Semantics.Causation.CausalModel.Guarantee
 public import Linglib.Core.Relation.ReflTransGen
 
 /-!
@@ -69,10 +70,8 @@ instance [DecidableRel M.graph.Adj] (a b : V) : Decidable (Causes M a b) :=
   inferInstanceAs (Decidable (M.graph.Adj a b))
 
 /-- A is necessary for B when, in every context and under every intervention that leaves B open
-and turns A off, B is off. -/
-def Necessary (a b : V) : Prop :=
-  ∀ u (X : Finset V) (x : ∀ v : X, Bool), b ∉ X → ∀ ha : a ∈ X, x ⟨a, ha⟩ = false →
-    (M.intervene X x).solve u b = false
+and turns A off, B is off: knowing that A is off guarantees that B is. -/
+def Necessary (a b : V) : Prop := M.Guarantees [a ← false] b false
 
 /-- *A enables B* asserts a link from A to B, an accessory variable also linked to B, and A
 necessary for B. -/
@@ -183,10 +182,11 @@ theorem causes_not_Enables : ¬ Enables causes .A .B :=
 /-- *A enables B* holds of (3), which has the link, the accessory, and the necessity of A, B
 being the conjunction of A and X. -/
 theorem enables_Enables : Enables enables .A .B := by
-  refine ⟨by decide, ⟨.X, by decide, by decide⟩, fun u X x hb ha hx ↦ ?_⟩
-  rw [solve_intervene_of_notMem hb]
-  show ((enables.intervene X x).solve u .A && (enables.intervene X x).solve u .X) = false
-  rw [solve_intervene_of_mem ha, hx, Bool.false_and]
+  refine ⟨by decide, ⟨.X, by decide, by decide⟩,
+    (guarantees_single_iff (by decide)).2 fun i _ u ha hb ↦ ?_⟩
+  rw [solve_intervene_of_eq_bot hb]
+  show ((enables.intervene i).solve u .A && (enables.intervene i).solve u .X) = false
+  rw [solve_intervene_of_eq_some ha, Bool.false_and]
 
 theorem enables_not_entails :
     ¬ enables.CausallyEntails [.A ← true] .B true := by

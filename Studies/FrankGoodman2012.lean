@@ -280,6 +280,6 @@ theorem fully_rational_picks_circle :
     have h2 : ⟦Word.blue⟧ᴹ.card = 2 := by decide
     obtain ⟨a, v⟩ := u
     cases a <;> cases v <;> first | exact absurd rfl hu | simp +decide [h1, h2]
-    all_goals norm_num
+    norm_num
 
 end FrankGoodman2012

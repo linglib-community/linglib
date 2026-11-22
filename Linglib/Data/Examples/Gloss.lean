@@ -131,8 +131,7 @@ example : containsForm (tokens "He told her.") "will tell" = false := by decide
 lower-case letter; otherwise it is a lexical gloss. -/
 def IsLabel (g : List Char) : Prop := ∀ c ∈ g, ¬ c.isLower
 
-instance (g : List Char) : Decidable (IsLabel g) :=
-  inferInstanceAs (Decidable (∀ c ∈ g, _))
+instance (g : List Char) : Decidable (IsLabel g) := List.decidableBAll _ g
 
 example : IsLabel "3SG.DF".toList := by decide
 example : ¬ IsLabel "see".toList := by decide
@@ -154,7 +153,8 @@ namespace GlossedWord
 variable (w : GlossedWord)
 
 /-- The word and its gloss are segmented alike (Rule 2), so the word has its morphemes: `pyigt`'s
-`GlossedWord.is_valid`. -/
+`GlossedWord.is_valid`. A word the source segments without glossing it has its morphemes too,
+with empty glosses. -/
 def IsValid : Prop := w.glossedMorphemes ≠ []
 
 instance : Decidable w.IsValid := inferInstanceAs (Decidable (_ ≠ _))

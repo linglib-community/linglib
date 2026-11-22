@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Max
 public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Tree.Projection
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Dependent
@@ -389,11 +390,14 @@ theorem ditransitives_licensed :
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
 a domain. -/
 def configuration (t : XTree) : Binding.Configuration GornAddress where
-  commands a b := (a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ ¬ RoseTree.CCommands t b a
+  commands a b :=
+    (a, b) ∈ PhraseStructure.commandRelation (PhraseStructure.Tree.maximalProjectionsAt t) ∧
+      ¬ RoseTree.CCommands t b a
   domain _ := Set.univ
 
 instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
-  inferInstanceAs (Decidable ((a, b) ∈ PhraseStructure.Tree.maxCommand t ∧ _))
+  inferInstanceAs (Decidable
+    ((a, b) ∈ PhraseStructure.commandRelation (PhraseStructure.Tree.maximalProjectionsAt t) ∧ _))
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
 def leafPaths (t : XTree) : List (Leaf × GornAddress) :=

@@ -52,7 +52,7 @@ instance (cg post : Measure W) [IsFiniteMeasure cg] [IsFiniteMeasure post] (lr :
 
 theorem updateCG_apply (cg post : Measure W) (lr : ℝ≥0) (s : Set W) :
     updateCG cg post lr s = ((1 - lr : ℝ≥0) : ℝ≥0∞) * cg s + (lr : ℝ≥0∞) * post s := by
-  rw [updateCG, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, ENNReal.smul_def,
+  rw [updateCG, add_apply, smul_apply, smul_apply, ENNReal.smul_def,
     ENNReal.smul_def, smul_eq_mul, smul_eq_mul]
 
 theorem updateCG_zero (cg post : Measure W) : updateCG cg post 0 = cg := by

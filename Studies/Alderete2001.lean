@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
-public import Linglib.Phonology.OptimalityTheory.Ranking
+public import Linglib.Phonology.OptimalityTheory.Ranking.Basic
 public import Linglib.Data.Wordlist.Alderete2001
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Segmental.PHOIBLE
@@ -325,6 +325,7 @@ end Luo
 
 namespace Japanese
 
+attribute [local instance 2000] List.decidableBAll in
 /-- CULMINATIVITY (15a) requires a word to bear an accent. -/
 def culmin : List Char → ℕ := Constraint.binary fun w ↦ ∀ c ∈ w, ¬ IsAccented c
 

@@ -80,14 +80,14 @@ variable [MeasurableSingletonClass β]
 /-- A finite sum of scaled Dirac measures gives a set the total weight of its points. -/
 theorem finsetSum_smul_dirac_apply (w : β → ℝ≥0∞) (s : Set β) :
     (∑ b, w b • dirac b) s = ∑ b, s.indicator w b := by
-  rw [finsetSum_apply]
+  rw [_root_.sum_apply]
   exact Finset.sum_congr rfl fun b _ ↦ by by_cases hb : b ∈ s <;> simp [hb]
 
 /-- A finite sum of scaled Dirac measures gives a point its weight. -/
 theorem finsetSum_smul_dirac_singleton {w : β → ℝ≥0∞} {a : β} :
     (∑ b, w b • dirac b) {a} = w a := by
   classical
-  simp [finsetSum_smul_dirac_apply, Set.indicator_apply]
+  simp [Set.indicator_apply]
 
 theorem finsetSum_smul_dirac_apply_finset (w : β → ℝ≥0∞) (s : Finset β) :
     (∑ b, w b • dirac b) ↑s = ∑ b ∈ s, w b := by

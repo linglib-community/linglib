@@ -865,7 +865,7 @@ theorem _root_.Quantifier.Det.Family.rel_atUniv (hC : D.Conservative) (hK : D.Co
     D.atUniv.rel = D := by
   funext α _ A B
   refine propext ((Iff.of_eq ?_).trans ((hK (Function.Embedding.subtype (· ∈ A)) A (A ∩ B)
-    (by simp) (by simp [Set.inter_subset_left])).trans (hC α A B).symm))
+    (by simp) (by simp)).trans (hC α A B).symm))
   simp only [Det.Family.atUniv, Quantifier.Family.rel, Function.Embedding.coe_subtype,
     Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter]
 

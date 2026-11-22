@@ -32,8 +32,8 @@ may or may not apply to ∩.
 * Availability is the theory layer's (`Semantics/Genericity/MeaningPreservation.lean`), and each
   ranking is written as the predicate of its upper tier, Chierchia's `(· = .down)` and Dayal's
   `(· ≠ .exists)`. Whether ∩ is defined is a hypothesis, since it fails for plural properties
-  anchored to particular entities, fn. 1; for a singular property it is `Kind.down P ∈ K`, which
-  `Kind.down_notMem_of_atom` refutes.
+  anchored to particular entities, fn. 1; for a singular property it is `Kind.down ∘ P ∈ K`, which
+  `Kind.down_comp_notMem_of_isMin` refutes.
 * Blocking applies within a determiner's domain, the clause "for any set X in its domain" of
   (39a): English *a* selects the singular, so it blocks ∃ for a bare singular and leaves ∃ to a
   bare plural or a mass noun (`Determiner.Inventory.Blocks`).
@@ -113,11 +113,11 @@ theorem exists_iff_not_down (hι : ds.Blocks num .iota) (hx : ds.Blocks num .iot
 /-- An English bare singular has no shift, (88a), since ∩ is undefined for a singular property
 once every kind has a plural instance somewhere, *the* blocks ι and ι^x, and *a* blocks ∃. -/
 theorem english_bare_singular {S E : Type*} [PartialOrder E] {K : Set (S → Part E)}
-    {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Mereology.Atom d)
-    (hP : ∀ s, ∀ x ∈ P s, Mereology.Atom x) :
-    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular (Kind.down P ∈ K))
+    {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, IsMin d)
+    (hP : ∀ s, ∀ x ∈ P s, IsMin x) :
+    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular (Kind.down ∘ P ∈ K))
       (· ≠ .exists) τ := by
-  rw [eq_false (Kind.down_notMem_of_atom hK hP)]
+  rw [eq_false (Kind.down_comp_notMem_of_isMin hK hP)]
   decide
 
 /-- An English bare plural takes ∃ exactly where ∩ is undefined, as *parts of this machine* does

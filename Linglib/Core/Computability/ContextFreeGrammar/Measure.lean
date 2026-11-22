@@ -67,7 +67,7 @@ noncomputable def offspring : Symbol T G.NT → Measure (List (Symbol T G.NT))
 theorem offspring_nonterminal_apply (A : G.NT) (s : Set (List (Symbol T G.NT))) :
     W.offspring (.nonterminal A) s =
       ∑ r ∈ G.rulesWithInput A, W.weight r * s.indicator 1 r.output := by
-  simp [offspring, Measure.finsetSum_apply, Measure.dirac_apply' _ .of_discrete]
+  simp [offspring, sum_apply, Measure.dirac_apply' _ .of_discrete]
 
 theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
     W.offspring s {syms} = s.ruleWeight W.weight syms := by

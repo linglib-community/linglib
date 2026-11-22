@@ -60,7 +60,7 @@ machine as the singleton-output, empty-flush case.
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 
 The Myhill–Nerode characterization of the Mealy-computable functions by their
-residuals is in `Core/Computability/Residual.lean`.
+residuals is in `Core/Computability/Mealy/MyhillNerode.lean`.
 
 ## TODO
 

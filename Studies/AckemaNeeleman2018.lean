@@ -271,11 +271,9 @@ theorem preimage_atom_eval (fs : List Feature) :
   rw [h, Layered.eval_map (g := ((↑) : Finset Role → Set Role)) Finset.coe_sdiff] at h₁
   simpa [participants, Function.comp_def, Layered.map] using congrArg (·.map (·.set)) h₁.symm
 
-theorem ofParticipants_participants :
-    (participants first).map Person.ofParticipants = some .firstExclusive ∧
-      (participants inclusive).map Person.ofParticipants = some .firstInclusive ∧
-      (participants second).map Person.ofParticipants = some .second ∧
-      (participants third).map Person.ofParticipants = some .third := by
+theorem participants_persons :
+    participants first = some {.speaker} ∧ participants inclusive = some {.speaker, .addressee} ∧
+      participants second = some {.addressee} ∧ participants third = some ∅ := by
   decide
 
 end Semantics

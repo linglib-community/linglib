@@ -2,9 +2,8 @@ module
 
 public import Linglib.Data.Statistics.GordonGroszGilliom1993
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
-import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Gordon, Grosz, and Gilliom (1993): Pronouns, Names, and the Centering of Attention in Discourse
@@ -42,8 +41,8 @@ Experiments 4 and 5](##not_roleFactored).
 
 namespace GordonGroszGilliom1993
 
-open Discourse.Centering Data.Statistics
-open Discourse.AccessibilityLevel (Head)
+open Centering Data.Statistics
+open AccessibilityLevel (Head)
 
 /-- The named entities of the sample passages, and the subjects new to the critical sentences of
 Experiment 2. -/
@@ -234,7 +233,7 @@ theorem rule1_nameName : ∀ fg ∈ Exp1.conditions,
 /-- The account of Grosz, Joshi, and Weinstein: the penalty falls on the backward-looking center,
 the highest-ranked forward-looking center of the previous sentence that the critical one
 realizes. -/
-def Cell.CbPenalty (c : Cell) : Prop := cb c.prev c.cur = some c.entity
+def Cell.CbPenalty (c : Cell) : Prop := cb c.prev c.cur.cf = some c.entity
 
 instance : DecidablePred Cell.CbPenalty := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.ConditionalProbability
-public import Linglib.Processing.Psychophysics.SignalDetection
+public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Mathlib.Order.BooleanAlgebra.Basic
@@ -858,7 +858,7 @@ noncomputable def ofRandomUtility (P : Measure Ω) [IsProbabilityMeasure P] (hU 
     have : Nonempty T := hT.to_subtype
     have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
     refine ⟨?_⟩
-    simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, measure_univ,
+    simp only [FunLike.coe_sum, Finset.sum_apply, smul_apply, measure_univ,
       smul_eq_mul, mul_one]
     refine sum_choiceProb _ fun j k hjk ↦ ?_
     rw [Measure.map_apply hV (measurableSet_eq_fun (measurable_pi_apply j) (measurable_pi_apply k))]
@@ -872,7 +872,7 @@ variable {P : Measure Ω} [IsProbabilityMeasure P] (hU : Measurable U)
 theorem ofRandomUtility_prob_singleton {T : Finset A} {a : A} (ha : a ∈ T) :
     (ofRandomUtility P hU hties).prob T {a} = P {ω | ∀ j ∈ T, j ≠ a → U ω j < U ω a} := by
   have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
-  simp only [ofRandomUtility, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+  simp only [ofRandomUtility, FunLike.coe_sum, Finset.sum_apply, smul_apply,
     smul_eq_mul]
   rw [Finset.sum_eq_single ⟨a, ha⟩ (fun b _ hb ↦ by simp [Subtype.coe_ne_coe.2 hb]) (by simp),
     Measure.dirac_apply_of_mem (Set.mem_singleton a), mul_one, choiceProb_map P hV]
@@ -989,7 +989,7 @@ end Thurstone
 
 section Detection
 
-open Real MeasureTheory ProbabilityTheory Set SignalDetection
+open Real MeasureTheory ProbabilityTheory Set
 
 /-! ### §2.E: Signal detectability theory (pp. 58–64)
 
@@ -1040,27 +1040,30 @@ theorem forcedChoiceProb_roc (hα : 0 < α) (hv : 0 < v) :
   rw [forcedChoiceProb_eq_yesNoProb hα]
   exact yesNoProb_roc (by positivity) (by positivity)
 
+/-- The axiom-1 Yes-No model is a logistic observer with a criterion: the observation is standard
+logistic on noise trials and shifted by `log α` on signal trials, and the subject affirms the
+signal when it exceeds `log v`. -/
 theorem yesNoProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
     yesNoProb α v b =
-      (locationExperiment logisticMeasure (log α) b).real (Ioi (log v - log α / 2)) := by
+      (Kernel.boolKernel logisticMeasure (logisticMeasure.map (· + log α)) b).real
+        (Ioi (log v)) := by
   cases b
-  · rw [← falseAlarmRate, falseAlarmRate_logisticMeasure,
-      show -(log α / 2) - (log v - log α / 2) = -log v by ring, sigmoid_neg, sigmoid_log hv,
-      yesNoProb]
+  · rw [Kernel.boolKernel_false, measureReal_Ioi_eq_cdf_neg _ (measure_singleton _),
+      cdf_logisticMeasure_eq, sigmoid_neg, sigmoid_log hv, yesNoProb]
     field_simp
     ring
-  · rw [← hitRate, hitRate_logisticMeasure,
-      show log α / 2 - (log v - log α / 2) = log (α / v) by rw [log_div hα.ne' hv.ne']; ring,
-      sigmoid_log (div_pos hα hv), yesNoProb]
+  · rw [Kernel.boolKernel_true, measureReal_map_add_const_Ioi_eq_cdf _ _ (measure_singleton _),
+      cdf_logisticMeasure_eq, ← log_div hα.ne' hv.ne', sigmoid_log (div_pos hα hv), yesNoProb]
     field_simp
 
+-- p. 62: the forced choice doubles the logistic sensitivity
 theorem forcedChoiceProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
     forcedChoiceProb α v b =
-      (locationExperiment logisticMeasure (2 * log α) b).real (Ioi (log v)) := by
+      (Kernel.boolKernel logisticMeasure (logisticMeasure.map (· + 2 * log α)) b).real
+        (Ioi (log (α * v))) := by
   rw [forcedChoiceProb_eq_yesNoProb hα, yesNoProb_eq_logistic (by positivity) (by positivity),
-    log_pow, log_mul hα.ne' hv.ne']
-  congr 3
-  ring
+    log_pow]
+  norm_num
 
 end Detection
 
@@ -2421,9 +2424,9 @@ theorem ProportionalChange.encard_le_four_or {M : Matrix (Fin 2) (Fin 2) ℝ} {a
     refine encard_le_of_isRoot (p := C (M 0 0 * M 1 0) * X ^ 4 +
       C ((M 1 0 * M 0 1 + M 0 0 * M 1 1 - 1) * K) * X ^ 2 + C (M 0 1 * M 1 1 * K ^ 2))
       (fun hp ↦ hc ?_) (by compute_degree) ?_
-    · have c4 := congrArg (coeff · 4) hp
-      have c2 := congrArg (coeff · 2) hp
-      have c0 := congrArg (coeff · 0) hp
+    · have c4 := congrArg (·.coeff 4) hp
+      have c2 := congrArg (·.coeff 2) hp
+      have c0 := congrArg (·.coeff 0) hp
       simp only [coeff_add, coeff_C_mul, coeff_X_pow, coeff_C, coeff_zero] at c4 c2 c0
       norm_num at c4 c2 c0
       exact ⟨mul_eq_zero.2 c4, by simpa [hK.ne'] using c0, by
@@ -2472,9 +2475,9 @@ theorem encard_le_two_or_gamma {β γ : Fin 2 → ℝ} {K : ℝ} (hK : 0 < K) :
     refine encard_le_of_isRoot (p := C (β 0 * γ 1) * X ^ 2 +
       C ((β 0 * β 1 - 1) * K + γ 0 * γ 1) * X + C (γ 0 * β 1 * K))
       (fun hp ↦ hc ?_) (by compute_degree) ?_
-    · have c2 := congrArg (coeff · 2) hp
-      have c1 := congrArg (coeff · 1) hp
-      have c0 := congrArg (coeff · 0) hp
+    · have c2 := congrArg (·.coeff 2) hp
+      have c1 := congrArg (·.coeff 1) hp
+      have c0 := congrArg (·.coeff 0) hp
       simp only [coeff_add, coeff_C_mul, coeff_X_pow, coeff_X, coeff_C, coeff_zero] at c2 c1 c0
       norm_num at c2 c1 c0
       exact ⟨mul_eq_zero.2 c2, c1, by simpa [hK.ne'] using c0⟩
@@ -2577,7 +2580,7 @@ theorem integral_kernel (f : ℝ → ℝ) (u : ℝ) : ∫ x, f x ∂m.kernel u =
     ENNReal.toReal_ofReal (m.w₃_nonneg u), ENNReal.toReal_ofReal (m.w₄_nonneg u)]
 
 theorem kernel_apply_univ (u : ℝ) : m.kernel u Set.univ = 1 := by
-  simp only [kernel_apply, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+  simp only [kernel_apply, add_apply, smul_apply, measure_univ, smul_eq_mul,
     mul_one]
   rw [← ENNReal.ofReal_add (m.w₁_nonneg u) (m.w₂_nonneg u),
     ← ENNReal.ofReal_add (add_nonneg (m.w₁_nonneg u) (m.w₂_nonneg u)) (m.w₃_nonneg u),

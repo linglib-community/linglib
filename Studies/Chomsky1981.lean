@@ -168,7 +168,7 @@ def CCommands12 (a b : GornAddress) : Prop := ¬ a ≤ b ∧ ∀ d < a, d ≤ b
 
 /-- The book's c-command of a noun phrase is c-command, save that it also relates the noun phrase
 to its mother ((12), p. 166). -/
-theorem cCommands12_iff {a b : GornAddress} (ha : a ≠ ⊥) (hp : t.IsBranchingAt a.parent) :
+theorem cCommands12_iff {a b : GornAddress} (ha : a ≠ ⊥) (hp : a.parent ∈ RoseTree.branching t) :
     CCommands12 a b ↔ t.CCommands a b ∨ b = a.parent := by
   have hlt : a.parent < a := by
     rw [← GornAddress.pred_eq_parent]
@@ -190,7 +190,7 @@ theorem cCommands12_iff {a b : GornAddress} (ha : a ≠ ⊥) (hp : t.IsBranching
 /-- Coindexed noun phrases agree in φ-features. -/
 def Agrees (t : Rep) : Prop :=
   ∀ a b : Nominal t, Coindexed a b → ∀ v ∈ token? a.1.2, ∀ w ∈ token? b.1.2,
-    HasPhi.Agree v.word w.word
+    Compat v.word.agreement.index w.word.agreement.index
 
 instance : Decidable (Agrees t) := inferInstanceAs (Decidable (∀ _ _, _))
 

@@ -5,7 +5,7 @@ public import Linglib.Syntax.Minimalist.Label.MinimalSearch
 public import Linglib.Syntax.Minimalist.Derivation.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Licensing
 public import Linglib.Syntax.Minimalist.Derivation.Binding
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Privizentseva2026
 public import Linglib.Data.Examples.Readers

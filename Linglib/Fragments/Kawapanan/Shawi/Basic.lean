@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
 
 /-!
 # Shawi
@@ -25,8 +25,8 @@ stay unmarked. The agreement tables are those of [clem-deal-2026], compiled from
 
 ## Implementation notes
 
-Clusivity is a person value (`Person.firstInclusive`, `Person.firstExclusive`), and the
-clusivity-neutral `Person.first` is not a cell of the paradigms. Number is `Number.minimal` and
+The first person is inclusive or exclusive, and a first person with no clusivity is not a
+cell of the paradigms. Number is `Number.minimal` and
 `Number.augmented`, so first inclusive minimal is the speaker–addressee dyad. The glottal stop is
 written `'`, and a segment in parentheses varies across the sources. A null exponent and an
 absent cell are both `none`.
@@ -44,26 +44,26 @@ absent cell are both `none`.
 namespace Kawapanan.Shawi
 
 /-- Indicative subject agreement ([clem-deal-2026] Table 1). -/
-def subjectMarker : Person → Number → Option String
-  | .firstExclusive, .minimal => some "-(a)we"
-  | .firstExclusive, .augmented => some "-ai"
-  | .firstInclusive, .minimal => some "-e'"
-  | .firstInclusive, .augmented => some "-ewa'"
-  | .second, .minimal => some "-(a)n"
-  | .second, .augmented => some "-(a)ma'"
-  | .third, .minimal => some "-in"
-  | .third, .augmented => some "-pi"
-  | _, _ => none
+def subjectMarker : Person → Option Clusivity → Number → Option String
+  | .first, some .exclusive, .minimal => some "-(a)we"
+  | .first, some .exclusive, .augmented => some "-ai"
+  | .first, some .inclusive, .minimal => some "-e'"
+  | .first, some .inclusive, .augmented => some "-ewa'"
+  | .second, none, .minimal => some "-(a)n"
+  | .second, none, .augmented => some "-(a)ma'"
+  | .third, none, .minimal => some "-in"
+  | .third, none, .augmented => some "-pi"
+  | _, _, _ => none
 
 /-- Object agreement ([clem-deal-2026] Table 2); third-person objects have no exponent. -/
-def objectMarker : Person → Number → Option String
-  | .firstExclusive, .minimal => some "-ku"
-  | .firstExclusive, .augmented => some "-kui"
-  | .firstInclusive, .minimal => some "-(n)pu'"
-  | .firstInclusive, .augmented => some "-(n)pua'"
-  | .second, .minimal => some "-(n)ken"
-  | .second, .augmented => some "-((n)ke)ma'"
-  | _, _ => none
+def objectMarker : Person → Option Clusivity → Number → Option String
+  | .first, some .exclusive, .minimal => some "-ku"
+  | .first, some .exclusive, .augmented => some "-kui"
+  | .first, some .inclusive, .minimal => some "-(n)pu'"
+  | .first, some .inclusive, .augmented => some "-(n)pua'"
+  | .second, none, .minimal => some "-(n)ken"
+  | .second, none, .augmented => some "-((n)ke)ma'"
+  | _, _, _ => none
 
 /-- The ergative suffix of some transitive subjects ([clem-deal-2026] (4)); the nominative is
     unmarked. -/

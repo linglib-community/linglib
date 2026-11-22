@@ -15,8 +15,10 @@ animals and inanimates, refer to heterogeneous groups, and give a mixed group th
 pronoun (14). Toosarvandani composes animacy features as Harbour and Kratzer compose person
 features: a feature denotes the lattice of groups of its atoms (48), (58), features combine by the
 pairwise join `⊕` (50), mathlib's `⊻`, and Lexical Complementarity (52) restricts a pronoun to
-what no more specified pronoun denotes. Because person and animacy features share one head, the
-condition on Agree behind the person-case constraint (86) compares them together.
+what no more specified pronoun denotes, so that it refers to the groups containing an atom of its
+most specific feature and none of a more specified pronoun's
+(`Toosarvandani2023.Pronoun.mem_reference_iff`). Because person and animacy features share one
+head, the condition on Agree behind the person-case constraint (86) compares them together.
 
 ## Implementation notes
 
@@ -75,28 +77,17 @@ theorem specification_eq_containing : ∀ {fs : List (Finset Ind)} {X : Finset I
   | Y :: fs, X, h => by
     have h' := List.pairwise_cons.1 h
     rw [specification_cons, specification_eq_containing h'.2,
-      Ioc_sups_containing (h'.1 Y (by simp)) (subset_univ _)]
+      Ioc_sups_containing_of_subset (h'.1 Y (by simp)) (subset_univ _)]
 
-/-- Lexical complementarity removes a group of an elder and a nonelder human from the human pronoun,
-giving marked reference (62). -/
-theorem mixed_group_marked {E H : Finset Ind} {e h : Ind} (he : e ∈ E) (hh : h ∈ H) :
-    {e, h} ∈ containing E univ ∧ {e, h} ∈ containing H univ ∧
-      {e, h} ∉ containing H univ \ containing E univ :=
-  ⟨mem_containing_iff.2 ⟨subset_univ _, e, by simp [he]⟩,
-    mem_containing_iff.2 ⟨subset_univ _, h, by simp [hh]⟩,
-    fun hm ↦ (mem_containing_sdiff_containing_iff.1 hm).2.2 ⟨e, by simp [he]⟩⟩
-
-/-- The elder pronoun refers to the groups with an elder and no conversational participant (62a). -/
-theorem mem_elder_lexComp_iff {E : Finset Ind} {i u : Ind} {s : Finset Ind} :
-    s ∈ containing E univ \ containing {i, u} univ ↔
-      (s ∩ E).Nonempty ∧ i ∉ s ∧ u ∉ s := by
-  rw [mem_containing_sdiff_containing_iff, not_nonempty_iff_eq_empty, eq_empty_iff_forall_notMem]
-  simp only [subset_univ, true_and, mem_inter, mem_insert, mem_singleton, not_and, not_or]
-  constructor
-  · rintro ⟨hE, h⟩
-    exact ⟨hE, fun hi ↦ (h i hi).1 rfl, fun hu ↦ (h u hu).2 rfl⟩
-  · rintro ⟨hE, hi, hu⟩
-    exact ⟨hE, fun x hx ↦ ⟨fun h ↦ hi (h ▸ hx), fun h ↦ hu (h ▸ hx)⟩⟩
+/-- When each pronoun denotes the groups containing an atom of its most specific feature,
+lexical complementarity leaves it the groups with none of a more specific pronoun's atoms (62). -/
+theorem mem_lexComp_containing_iff {ι : Type*} [Fintype ι] (A : ι → Finset Ind) {p : ι}
+    {s : Finset Ind} :
+    s ∈ lexComp (univ.image fun q ↦ containing (A q) univ) (containing (A p) univ) ↔
+      (s ∩ A p).Nonempty ∧ ∀ q, A q ⊂ A p → Disjoint s (A q) := by
+  simp_rw [mem_lexComp_iff, forall_mem_image, containing_ssubset_containing_iff, inter_univ,
+    mem_containing_iff, subset_univ, true_and, disjoint_iff_inter_eq_empty,
+    ← not_nonempty_iff_eq_empty, mem_univ, true_imp_iff]
 
 /-! ### Number (section 3.2) -/
 
@@ -136,9 +127,9 @@ theorem exists_plural_sups_singular {X : Finset Ind} {x y : Ind} (hx : x ∈ X) 
 `⊻` are incomparable and lexical complementarity cannot restrict either (71). -/
 theorem gender_incomparable {F M : Finset Ind} (hd : Disjoint F M) (hF : F.Nonempty)
     (hM : M.Nonempty) :
-    ¬ containing F univ ⊆ containing M univ ∧ ¬ containing M univ ⊆ containing F univ :=
-  ⟨containing_not_subset_of_disjoint hd hF (subset_univ _),
-    containing_not_subset_of_disjoint hd.symm hM (subset_univ _)⟩
+    ¬ containing F univ ⊆ containing M univ ∧ ¬ containing M univ ⊆ containing F univ := by
+  simp only [containing_subset_containing_iff, inter_univ]
+  exact ⟨fun h ↦ hF.ne_empty (hd.eq_bot_of_le h), fun h ↦ hM.ne_empty (hd.symm.eq_bot_of_le h)⟩
 
 /-! ### The person-case constraint (section 4) -/
 
@@ -225,7 +216,33 @@ so the hierarchy of featural specification is one of semantic specificity. -/
 theorem Pronoun.le_iff_denotation_subset {p q : Pronoun} :
     p ≤ q ↔ q.denotation ⊆ p.denotation := by
   rw [le_iff_top_le, Feature.le_iff_atoms_subset, denotation, denotation,
-    containing_subset_containing_iff (subset_univ _)]
+    containing_subset_containing_iff, inter_univ]
+
+theorem Pronoun.lt_iff_atoms_ssubset {p q : Pronoun} : p < q ↔ q.top.atoms ⊂ p.top.atoms := by
+  rw [lt_iff_le_not_ge, le_iff_top_le, le_iff_top_le, Feature.le_iff_atoms_subset,
+    Feature.le_iff_atoms_subset]
+  rfl
+
+/-- Lexical complementarity (52) confines a pronoun to the groups that no pronoun with a smaller
+denotation denotes. -/
+def Pronoun.reference (p : Pronoun) : Finset (Finset Atom) :=
+  lexComp (univ.image denotation) p.denotation
+
+-- (53), (62)
+theorem Pronoun.mem_reference_iff {p : Pronoun} {s : Finset Atom} :
+    s ∈ p.reference ↔ (s ∩ p.top.atoms).Nonempty ∧ ∀ q, p < q → Disjoint s q.top.atoms := by
+  rw [show p.reference = lexComp (univ.image fun q : Pronoun ↦ containing q.top.atoms univ)
+    (containing p.top.atoms univ) from rfl, mem_lexComp_containing_iff]
+  simp_rw [lt_iff_atoms_ssubset]
+
+-- (62), (ii): a group of an elder and a nonelder human is denoted by the human pronoun but
+-- referred to only by the elder one
+theorem mixed_group_marked :
+    {.e, .h} ∈ Pronoun.thirdHuman.denotation ∧ {.e, .h} ∉ Pronoun.thirdHuman.reference ∧
+      {.e, .h} ∈ Pronoun.thirdElder.reference := by
+  simp only [Pronoun.mem_reference_iff, Pronoun.denotation, mem_containing_iff, subset_univ,
+    true_and]
+  decide
 
 /-- A head Agrees with the subject and the object pronoun of a scenario, and both cliticize, iff
 the subject has all of the object's features (86). -/

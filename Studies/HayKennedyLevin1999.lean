@@ -147,7 +147,7 @@ theorem isGLB_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet
 
 theorem not_isBounded_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
     ¬ IsBounded (slightly s) :=
-  not_isBounded_of_isGLB <| isGLB_inter_someAmount (isLowerSet_Iic s) self_mem_Iic hs
+  not_isBounded_of_isGLB <| isGLB_inter_someAmount (IsLowerSet.Iic s) self_mem_Iic hs
 
 theorem not_isBounded_someAmount [DenselyOrdered δ] : ¬ IsBounded (someAmount (δ := δ)) :=
   not_isBounded_of_isGLB isGLB_Ioi

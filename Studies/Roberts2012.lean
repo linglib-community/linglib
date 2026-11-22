@@ -60,7 +60,6 @@ alternatives (`not_isSubquestionOf_wh_hilary`).
 namespace Roberts2012
 
 open Question
-open Discourse
 
 -- `decide` on `Set`-subset goals over the finite world space.
 attribute [local instance] Set.decidableSubsetOfFintype

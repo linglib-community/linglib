@@ -92,7 +92,7 @@ theorem iterate_update (n : ℕ) :
     (update α β x y)^[n] W = W + vecMulVec (α * x)
       ((y - x ᵥ* W) * β * ∑ k ∈ range n, (1 - (x ⬝ᵥ (α * x)) • β) ^ k) := by
   induction n with
-  | zero => ext; simp [vecMulVec_apply]
+  | zero => ext; simp
   | succ n ih =>
     rw [Function.iterate_succ_apply', update, sub_vecMul_iterate_update, ih, add_assoc,
       ← vecMulVec_add, sum_range_succ]

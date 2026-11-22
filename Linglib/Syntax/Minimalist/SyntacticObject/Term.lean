@@ -33,7 +33,6 @@ a well-founded strict order and decides it.
   distinct daughters of one term of `root`.
 * `SyntacticObject.CCommands`: `x` c-commands `y` in `root` when a sister of `x`
   reflexively contains `y`, after Reinhart.
-* `SyntacticObject.AsymmCCommands`: c-command in one direction only.
 * `SyntacticObject.cCommandDomain`: the c-command domain of `x` in `root`, the terms it
   c-commands.
 
@@ -445,18 +444,6 @@ def cCommandDomain [DecidableEq L] [DecidableEq ι] (root x : SyntacticObject L 
 @[simp] theorem mem_cCommandDomain [DecidableEq L] [DecidableEq ι] :
     y ∈ cCommandDomain root x ↔ CCommands root x y :=
   Multiset.mem_filter.trans (and_iff_right_of_imp CCommands.mem_terms)
-
-/-- `x` c-commands `y` in `root` and `y` does not c-command `x`. -/
-def AsymmCCommands (root x y : SyntacticObject L ι) : Prop :=
-  CCommands root x y ∧ ¬ CCommands root y x
-
-instance [DecidableEq L] [DecidableEq ι] (root x y : SyntacticObject L ι) :
-    Decidable (AsymmCCommands root x y) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-theorem Sisters.not_asymmCCommands (h : Sisters root x y) :
-    ¬ AsymmCCommands root x y :=
-  fun h' ↦ h'.2 (Sisters.cCommands h.symm)
 
 /-! ### Pronounced tokens of terms -/
 

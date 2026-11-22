@@ -339,6 +339,14 @@ def see : Verb where
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
+/-- "smoke" — of smoking tobacco, with an object that may be left out. Levin lists the verb only
+among the verbs of entity-specific modes of being, a different sense. -/
+def smoke : Verb where
+  morphs := [.root "smoke"]
+  levin := some Levin1993.Index.smoke
+  levinExcluded := {LevinClass.entitySpecificModeOfBeing}
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
+
 /-! ### Other -/
 
 /-- "devour" — transitive, no presupposition -/

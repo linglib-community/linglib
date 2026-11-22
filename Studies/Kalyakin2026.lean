@@ -66,7 +66,7 @@ open ArgumentStructure Minimalist Minimalist.Ellipsis
 
 /-- The site of a non-verbal element on the clausal spine: a root merged with the direct object
 lies inside the complement of v (13), (14), and a root adjoined to v is part of v (12), (56). -/
-def rootSite : Root.Position → ClauseSpine.Site
+def rootSite : Root.Position → Spine.Site
   | .complement => .head .V
   | .adjoined => .head .v
 
@@ -159,7 +159,7 @@ structure Clause where
 
 /-- The sites the elided clause must spare: v when its light verb differs from the antecedent's,
 and the adjunction site of a pronounced *again*. -/
-def Clause.sites (c : Clause) : List ClauseSpine.Site :=
+def Clause.sites (c : Clause) : List Spine.Site :=
   (if c.lightVerbs.1 = c.lightVerbs.2 then [] else [.head .v]) ++
     c.again.toList.map AgainReading.site
 
@@ -297,10 +297,10 @@ theorem spares_v {e e' : Ellipsis clausalSpine} (h : e.Spares (.head .v)) :
 /-- Goldberg's Verbal Identity Requirement (92) on a verb-stranding ellipsis: the stranded verb,
 the head bearing [E], must match its antecedent too, so a mismatch at a site is tolerated only
 when the site is outside the deletion domain and is not the stranded head. -/
-def ToleratesUnderVerbalIdentity (e : Ellipsis clausalSpine) (x : ClauseSpine.Site) : Prop :=
+def ToleratesUnderVerbalIdentity (e : Ellipsis clausalSpine) (x : Spine.Site) : Prop :=
   e.Spares x ∧ x ≠ .head e.ePosition
 
-instance (e : Ellipsis clausalSpine) (x : ClauseSpine.Site) :
+instance (e : Ellipsis clausalSpine) (x : Spine.Site) :
     Decidable (ToleratesUnderVerbalIdentity e x) :=
   inferInstanceAs (Decidable (_ ∧ _))
 

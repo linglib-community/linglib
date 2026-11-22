@@ -254,7 +254,7 @@ def thereSkeleton (Q : Det E) : Skeleton E fun _ : Unit ↦ Ty.et :=
 quantifier. -/
 theorem thereSkeleton_isLTautology {Q : Det E} (hc : Conservative Q) (hs : PositiveStrong Q) :
     (thereSkeleton Q).IsLTautology :=
-  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs _
+  fun _ ↦ BarwiseCooper1981.there_of_positiveStrong hc hs _
 
 -- (25)
 theorem thereSkeleton_some_not_isLAnalytic (a : E) :

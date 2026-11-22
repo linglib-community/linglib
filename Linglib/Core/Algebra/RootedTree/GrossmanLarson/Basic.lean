@@ -188,6 +188,34 @@ theorem product_one_left (x : ConnesKreimer R (UnorderedTree α)) : product 1 x 
   refine LinearMap.congr_fun (lhom_ext' (f := product 1) (g := .id) fun G ↦ ?_) x
   simp [← of'_zero]
 
+theorem product_product_of' (F G H : Forest (UnorderedTree α)) :
+    product (product (of' F) (of' G)) (of' (R := R) H) =
+      (((productMultiset F G).bind (productMultiset · H)).map of').sum := by
+  change product.flip (of' H) (product (of' F) (of' G)) = _
+  rw [product_of'_of', map_multiset_sum, Multiset.map_map, Multiset.map_bind, Multiset.sum_bind]
+  simp
+
+theorem product_of'_product (F G H : Forest (UnorderedTree α)) :
+    product (of' F) (product (of' G) (of' (R := R) H)) =
+      (((productMultiset G H).bind (productMultiset F ·)).map of').sum := by
+  rw [product_of'_of' G, map_multiset_sum, Multiset.map_map, Multiset.map_bind, Multiset.sum_bind]
+  simp
+
+/-- Multiplying by a forest and then by a tree `X` multiplies by the two together or by the
+forest with `X` grafted onto it: `(x ⋆ E) ⋆ X = x ⋆ (E X) + x ⋆ (E ∘ X)`. -/
+theorem product_product_ofTree (x : ConnesKreimer R (UnorderedTree α))
+    (E : Forest (UnorderedTree α)) (X : UnorderedTree α) :
+    product (product x (of' E)) (ofTree X) =
+      product x (of' (X ::ₘ E)) + product x (insertion (of' E) (ofTree X)) := by
+  refine LinearMap.congr_fun (lhom_ext' (f := product.flip (ofTree X) ∘ₗ product.flip (of' E))
+    (g := product.flip (of' (X ::ₘ E)) + product.flip (insertion (of' E) (ofTree X)))
+    fun F ↦ ?_) x
+  simp only [LinearMap.comp_apply, LinearMap.flip_apply, LinearMap.add_apply]
+  rw [← of'_singleton, product_product_of', productMultiset_bind_singleton, Multiset.map_add,
+    Multiset.sum_add, product_of'_of', insertion_of'_of', map_multiset_sum, Multiset.map_map,
+    Multiset.map_bind, Multiset.sum_bind]
+  simp
+
 private theorem counit_product_of'_of' (F G : Forest (UnorderedTree α)) :
     counit (product (of' F) (of' G)) = counit (of' (R := R) F) * counit (of' (R := R) G) := by
   rcases eq_or_ne F 0 with rfl | hF

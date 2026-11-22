@@ -7,7 +7,8 @@ module
 
 public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.Closeness
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Syntax.Projection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
@@ -24,7 +25,7 @@ head function (`SyntacticObject/Projection.lean`).
 ## Main definitions
 
 * `PlanarSyntacticObject.termAt`: the term at a position.
-* `PlanarSyntacticObject.branching`, `PlanarSyntacticObject.above`: the branching positions
+* `PlanarSyntacticObject.above`: the branching positions
   of a planar object, and the generators above a position, its closeness key.
 * `Minimalist.complement`: the sister of a head.
 
@@ -41,7 +42,7 @@ head function (`SyntacticObject/Projection.lean`).
 * `PlanarSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
 * `PlanarSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
-* `Minimalist.mem_cCommandDomain_iff_complement_le`: a head c-commands exactly the positions below
+* `Minimalist.cCommands_iff_complement_le`: a head c-commands exactly the positions below
   its complement.
 
 ## References
@@ -104,14 +105,8 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
   exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
 
 /-- A position that is not a leaf branches. -/
-theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
-  have h2 := length_children_subtree hp
-  have hv : ∀ i < 2, p.val * .of i ∈ t.toRoseTree.validPaths := fun i hi ↦
-    mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
-  refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨0, rfl⟩),
-    ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (GornAddress.covBy_iff.2 ⟨1, rfl⟩), fun h ↦
-        ?_⟩
-  simpa using congrArg (fun q : t.toRoseTree.Positions ↦ q.val.last?) h
+theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p :=
+  (isBranching_iff_mem_branching p).2 ⟨_, p.getElem?_eq, (length_children_subtree hp).ge⟩
 
 /-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
@@ -162,7 +157,7 @@ theorem count_terms [DecidableEq L] [DecidableEq ι] (u : SyntacticObject L ι) 
 
 variable {a : t.toRoseTree.Positions} {x : SyntacticObject L ι}
 
-theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.toRoseTree a.val.parent := by
+theorem parent_mem_branching (ha : a ≠ ⊥) : a.val.parent ∈ t.toRoseTree.branching := by
   have hc : a.subtree ∈ (Order.pred a).subtree.children :=
     Positions.mem_children_subtree.2
       ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
@@ -185,7 +180,7 @@ theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands 
   obtain ⟨q, hdq, rfl⟩ := containsOrEq_termAt.1 hzy
   have hc : c ≠ ⊥ := ne_bot_of_gt hmc.lt
   have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
-  refine ⟨c, q, (cCommands_iff_parent_lt (fun h ↦ hc (Subtype.ext h)) (isBranchingAt_parent hc)).2
+  refine ⟨c, q, (cCommands_iff_parent_lt (fun h ↦ hc (Subtype.ext h)) (parent_mem_branching hc)).2
     ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl, rfl⟩
   rw [Subtype.ext (IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hmc)
     (Positions.covBy_iff.1 hmd) hcq (Subtype.coe_le_coe.2 hdq))]
@@ -197,7 +192,7 @@ theorem cCommands_termAt_of_cCommands {p q : t.toRoseTree.Positions}
     (h : t.toRoseTree.CCommands p q) : t.toSyntacticObject.CCommands (t.termAt p) (t.termAt q) := by
   have hp : p ≠ ⊥ := fun h' ↦ h.2.1 (h' ▸ bot_le)
   obtain ⟨hpq, hnpq⟩ :=
-    (cCommands_iff_parent_lt (fun h' ↦ hp (Subtype.ext h')) (isBranchingAt_parent hp)).1 h
+    (cCommands_iff_parent_lt (fun h' ↦ hp (Subtype.ext h')) (parent_mem_branching hp)).1 h
   obtain ⟨d, hpd, hdq⟩ := exists_covBy_le_of_lt (show Order.pred p < q from hpq)
   have hdp : d ≠ p := by rintro rfl; exact hnpq hdq
   exact ⟨t.termAt d, mem_terms_iff.2 ⟨d, rfl⟩, ⟨_, mem_terms_iff.2 ⟨Order.pred p, rfl⟩,
@@ -256,14 +251,14 @@ theorem immediatelyContains_termAt_iff_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (h
 theorem cCommands_of_covBy (hc : a ⋖ c) (hq : a < q) (hcq : ¬ c ≤ q) : t.toRoseTree.CCommands c q :=
     by
   have hpar : c.val.parent = a.val := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hc]
-  exact (cCommands_iff_of_covBy (Positions.covBy_iff.1 hc)
-    (hpar ▸ isBranchingAt_parent (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
+  exact (commands_iff_lt_of_covBy (Positions.covBy_iff.1 hc)
+    (hpar ▸ parent_mem_branching (ne_bot_of_gt hc.lt))).2 ⟨hq, hcq⟩
 
 theorem not_cCommands_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (hcq : c < q)
     (hdq' : d ≤ q') : ¬ t.toRoseTree.CCommands q q' := by
   intro h
   have hq0 : q ≠ ⊥ := ne_bot_of_gt hcq
-  rw [cCommands_iff_parent_lt (fun h0 ↦ hq0 (Subtype.ext h0)) (isBranchingAt_parent hq0)] at h
+  rw [cCommands_iff_parent_lt (fun h0 ↦ hq0 (Subtype.ext h0)) (parent_mem_branching hq0)] at h
   have hcq' : c.val ≤ q'.val := (Subtype.coe_le_coe.2 (Order.le_pred_of_lt hcq)).trans
     ((Positions.pred_val q).symm ▸ h.1.le)
   exact hcd (Subtype.ext (IsForestOrder.eq_of_covBy_of_le (Positions.covBy_iff.1 hc)
@@ -325,25 +320,20 @@ theorem coe_above (P : Set GornAddress) [DecidablePred (· ∈ P)] (q : t.toRose
   ext x
   simp [above, ancestors, and_comm]
 
-/-- The branching positions of a planar object, the generators of c-command. -/
-def branching : Set GornAddress := {x | t.toRoseTree.IsBranchingAt x}
-
-instance : DecidablePred (· ∈ t.branching) :=
-  fun x ↦ inferInstanceAs (Decidable (t.toRoseTree.IsBranchingAt x))
-
 variable {t} {q g : t.toRoseTree.Positions}
 
 /-- Between positions neither of which dominates the other, closeness under the branching
 positions is asymmetric c-command. -/
-theorem above_branching_lt_iff (hqg : ¬ q ≤ g) (hgq : ¬ g ≤ q) :
-    t.above t.branching q < t.above t.branching g ↔
+theorem above_branching_lt_iff (h : IncompRel (· ≤ ·) q g) :
+    t.above t.toRoseTree.branching q < t.above t.toRoseTree.branching g ↔
       t.toRoseTree.CCommands q g ∧ ¬ t.toRoseTree.CCommands g q := by
   rw [← Finset.coe_ssubset, coe_above, coe_above]
-  exact ancestors_ssubset_ancestors_iff_cCommands hqg hgq
+  exact ancestors_ssubset_ancestors_iff_commands h
 
 theorem above_branching_lt_of_cCommands (hqg : t.toRoseTree.CCommands q g)
-    (hgq : ¬ t.toRoseTree.CCommands g q) : t.above t.branching q < t.above t.branching g :=
-  (above_branching_lt_iff hqg.2.1 hqg.2.2).2 ⟨hqg, hgq⟩
+    (hgq : ¬ t.toRoseTree.CCommands g q) :
+    t.above t.toRoseTree.branching q < t.above t.toRoseTree.branching g :=
+  (above_branching_lt_iff hqg.2).2 ⟨hqg, hgq⟩
 
 end PlanarSyntacticObject
 
@@ -387,9 +377,9 @@ theorem complement_complement {h : GornAddress} (hh : h ∈ t.toRoseTree.validPa
 variable {t} in
 /-- In a syntactic object, a head other than the root c-commands exactly the positions below its
 complement. -/
-theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
+theorem cCommands_iff_complement_le {h q : GornAddress} (hh : h ∈ t.toRoseTree.validPaths)
     (h0 : h ≠ ⊥) (hq : q ∈ t.toRoseTree.validPaths) :
-    q ∈ t.toRoseTree.cCommandDomain h ↔ complement h ≤ q := by
+    t.toRoseTree.CCommands h q ↔ complement h ≤ q := by
   set hp : t.toRoseTree.Positions := ⟨h, hh⟩
   have hp0 : hp ≠ ⊥ := fun he ↦ h0 (congrArg Subtype.val he)
   have hm : Order.pred hp ⋖ hp :=
@@ -410,8 +400,8 @@ theorem mem_cCommandDomain_iff_complement_le {h q : GornAddress} (hh : h ∈ t.t
     simp only [hp, hc, complement, GornAddress.last?_mul_of] at this
     cases hl : h.last? <;> simp [hl] at this
     omega
-  rw [RoseTree.mem_cCommandDomain, cCommands_iff_parent_lt h0
-    (PlanarSyntacticObject.isBranchingAt_parent (t := t) hp0)]
+  rw [cCommands_iff_parent_lt h0
+    (PlanarSyntacticObject.parent_mem_branching (t := t) hp0)]
   set qp : t.toRoseTree.Positions := ⟨q, hq⟩
   constructor
   · rintro ⟨hlt, hnl⟩

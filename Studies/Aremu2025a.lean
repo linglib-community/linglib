@@ -621,6 +621,8 @@ theorem not_concord_of_double {c : α} {d : β} (hc : c ≠ a) (hd : d ≠ b) :
     double a b {(a, b), (c, b), (c, d)} = .true ∧ concord a b {(a, b), (c, b), (c, d)} ≠ .true := by
   refine ⟨double_eq_true_iff.2 ?_, fun h ↦ ?_⟩
   · simp only [mem_insert_iff, mem_singleton_iff, Prod.mk.injEq]
+    refine ⟨by grind, fun x hx h ↦ ?_⟩
+    have := h.2 d hd
     grind
   · have := (eq_singleton_iff_unique_mem.1 (concord_eq_true_iff.1 h)).2 (c, b) (by simp)
     simp_all

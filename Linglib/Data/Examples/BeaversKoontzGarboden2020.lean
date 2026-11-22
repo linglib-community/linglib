@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `BeaversKoontzGarboden2020` — typed example data
@@ -185,5 +187,69 @@ def bkg2020_ch4_32b : Datum :=
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "action denial")] }
 
 def all : List Datum := [bkg2020_25a, bkg2020_25b, bkg2020_25c, bkg2020_ch2_46a, bkg2020_ch2_47a, bkg2020_ch2_47b, bkg2020_ch2_48, bkg2020_ch3_10a, bkg2020_ch3_11a, bkg2020_ch3_48a, bkg2020_ch4_25a, bkg2020_ch4_26c, bkg2020_ch4_32b]
+
+/-- The classes of root the book distinguishes. -/
+inductive RootClass where
+  /-- property concept: a root that describes a state and entails no change -/
+  | propertyConcept
+  /-- result: a root whose state arises from a change -/
+  | result
+  /-- true possession: a ditransitive root that entails caused possession, as of *give* -/
+  | truePossession
+  /-- transfer of possession by motion: a ditransitive root that entails caused possession reached by motion, as of *hand* -/
+  | transferByMotion
+  /-- release: a ditransitive root that entails that the theme leaves the causer, as of *send* -/
+  | release
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `root class`. -/
+def rootClass (e : Datum) : Option RootClass :=
+  e.parse? "root class" [("property concept", .propertyConcept), ("result", .result),
+    ("true possession", .truePossession),
+    ("transfer of possession by motion", .transferByMotion), ("release", .release)]
+
+/-- The verb classes of chapter 4. -/
+inductive VerbClass where
+  /-- manner of killing: a verb of killing that names the manner, as *drown* -/
+  | mannerOfKilling
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `verb class`. -/
+def verbClass (e : Datum) : Option VerbClass :=
+  e.parse? "verb class" [("manner of killing", .mannerOfKilling)]
+
+/-- The diagnostics the examples apply. -/
+inductive Diagnostic where
+  /-- sublexical again: *again* attached within the causative structure -/
+  | sublexicalAgain
+  /-- restitutive again: *again* with a reading on which only the state held before -/
+  | restitutiveAgain
+  /-- result denial: a continuation that denies the result -/
+  | resultDenial
+  /-- object deletion: the verb without its object -/
+  | objectDeletion
+  /-- action denial: a continuation that denies that the causer acted -/
+  | actionDenial
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("sublexical again", .sublexicalAgain), ("restitutive again", .restitutiveAgain),
+    ("result denial", .resultDenial), ("object deletion", .objectDeletion),
+    ("action denial", .actionDenial)]
+
+/-- The attachment sites of *again* (27). -/
+inductive Attachment where
+  /-- root: the root, for the restitutive reading -/
+  | root
+  /-- v_become: `vbecome`, for the repetitive reading over the change -/
+  | vBecome
+  /-- v_cause: `vcause`, for the repetitive reading over the causation -/
+  | vCause
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `attachment`. -/
+def attachment (e : Datum) : Option Attachment :=
+  e.parse? "attachment" [("root", .root), ("v_become", .vBecome), ("v_cause", .vCause)]
 
 end BeaversKoontzGarboden2020.Examples

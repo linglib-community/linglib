@@ -26,7 +26,7 @@ parts.
 ## Implementation notes
 
 The reduction of a comparative to its greatest witnesses under a monotone measure is
-`maxComparative_gt_iff_of_isGreatest`; the zero-degree amendment to the than-clause set is
+`maxComparative_gt_image_iff_of_isGreatest`; the zero-degree amendment to the than-clause set is
 the paper's own (`thanDegreesZero`); the part-whole order on eventualities is a partial order on the
 event domain. The two-dimensional state ontology that grounds the salient part-whole relation, the
 Mandarin data, and the desire predicates are not formalized.
@@ -73,7 +73,7 @@ def MentalStateVerb.holdsAtDegree (α x : Entity) (d : D) (e : E) : Prop :=
 /-- The intensity comparative *α V x more than β V y* is `MaxComparative .gt` with the two
 sides differing in experiencer and theme, measured by the intensity measure (56a). -/
 def intensityComparative (α β x y : Entity) : Prop :=
-  MaxComparative .gt (themed v frame α x) (themed v frame β y) v.μint
+  MaxComparative .gt (v.μint '' {e | themed v frame β y e}) (v.μint '' {e | themed v frame α x e})
 
 /-- `statesOf x` is the set of states of the verb with theme `x`, whatever their experiencer, the
 domain of the monotonicity presupposition. -/
@@ -87,13 +87,13 @@ variable {v frame} {α β x y : Entity}
 
 theorem intensityComparative.exists_matrix (h : intensityComparative v frame α β x y) :
     ∃ e, themed v frame α x e :=
-  let ⟨_, _, e, he, _⟩ := h; ⟨e, he⟩
+  let ⟨_, _, _, ⟨e, he, _⟩, _⟩ := h; ⟨e, he⟩
 
 theorem intensityComparative_unique {ea eb : E} (ha : themed v frame α x ea)
     (ha' : ∀ e, themed v frame α x e → e = ea) (hb : themed v frame β y eb)
     (hb' : ∀ e, themed v frame β y e → e = eb) :
     intensityComparative v frame α β x y ↔ v.μint eb < v.μint ea :=
-  maxComparative_iff_of_unique ha ha' hb hb'
+  maxComparative_image_iff_of_unique ha ha' hb hb'
 
 /-- Under the presupposition on both sides the comparative compares the maximal states, so with
 `ea` Ann's state of hating Bill and `eb` Matt's of hating Jeff the sentence holds iff `ea` is
@@ -103,7 +103,7 @@ theorem intensityComparative_of_greatest [PartialOrder E] {ea eb : E}
     (ha : IsGreatest {e | themed v frame α x e} ea)
     (hb : IsGreatest {e | themed v frame β y e} eb) :
     intensityComparative v frame α β x y ↔ v.μint eb < v.μint ea :=
-  maxComparative_gt_iff_of_isGreatest ha (hx.monotoneOn.mono fun _ he ↦ ⟨he.2.1, he.2.2⟩) hb
+  maxComparative_gt_image_iff_of_isGreatest ha (hx.monotoneOn.mono fun _ he ↦ ⟨he.2.1, he.2.2⟩) hb
     (hy.monotoneOn.mono fun _ he ↦ ⟨he.2.1, he.2.2⟩)
 
 section Zero
@@ -119,8 +119,8 @@ def thanDegreesZero (Pthan : E → Prop) : Set D :=
 /-- `intensityComparativeZero` is the intensity comparative with the zero degree added to the
 than-clause set (62). -/
 def intensityComparativeZero (α β x y : Entity) : Prop :=
-  ∃ δ, IsGreatest (thanDegreesZero v (themed v frame β y)) δ ∧
-    ∃ e, themed v frame α x e ∧ δ < v.μint e
+  MaxComparative .gt (thanDegreesZero v (themed v frame β y))
+    (v.μint '' {e | themed v frame α x e})
 
 variable {v frame}
 
@@ -130,13 +130,13 @@ theorem intensityComparativeZero_of_none {e : E} (he : themed v frame α x e)
     (hpos : 0 < v.μint e) (hβ : ∀ e', themed v frame β y e' → v.μint e' ≤ 0) :
     intensityComparativeZero v frame α β x y :=
   ⟨0, ⟨Set.mem_insert _ _, fun _ hd ↦ (Set.mem_insert_iff.1 hd).elim le_of_eq
-    fun ⟨_, ⟨e', he', he'd⟩, hle⟩ ↦ hle.trans (he'd ▸ hβ e' he')⟩, e, he, hpos⟩
+    fun ⟨_, ⟨e', he', he'd⟩, hle⟩ ↦ hle.trans (he'd ▸ hβ e' he')⟩, _, ⟨e, he, rfl⟩, hpos⟩
 
 end Zero
 
 /-- Mental state homogeneity (55) says that a predicate closed under parts holds of `e` iff it
 holds of every part of `e`. -/
-theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} (h : Mereology.DIV P) (e : α) :
+theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} (h : Mereology.DIV {x | P x}) (e : α) :
     P e ↔ ∀ e' ≤ e, P e' :=
   ⟨fun he _ hle ↦ h hle he, fun hall ↦ hall e le_rfl⟩
 

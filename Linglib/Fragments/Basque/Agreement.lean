@@ -50,7 +50,7 @@ as a plural, and the newer plural *zuek* adds a further plural marker to the for
 
 ## Implementation notes
 
-The cells are the bundles of `Syntax/Agreement/Bundle.lean`, so that a pronoun's features are
+The cells are the bundles of `Syntax/Feature/Bundle.lean`, so that a pronoun's features are
 realized by the cells they extend. The second person plural cell is that of *zu*, following the
 forms rather than the meaning, and *zuek* has no cell of its own. The two cells of *hi* with a
 gender occur only in the dative and ergative tables, and the absolutive realizes them by its
@@ -124,8 +124,8 @@ theorem hasPersonPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
-theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.personal,
-    HasPersonPrefix (HasPhi.phi p) ↔ p.person ≠ some .third := by
+theorem hasPersonPrefix_agreement_iff : ∀ p ∈ Pronouns.personal,
+    HasPersonPrefix p.agreement ↔ p.person ≠ some .third := by
   decide
 
 /-- The absolutive prefix of *hi* is that of the second person singular, whatever the gender of

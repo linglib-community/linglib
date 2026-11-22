@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.Closeness
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.Prod.Lex.Basic
@@ -195,10 +195,10 @@ open scoped SetRel
 variable {α : Type*} [PartialOrder α] {P : Set α} {p : Probe α} {s : Set α} {a b x : α}
 
 /-- Among satisfiers none of which dominates another, a probe finds those that no satisfier
-asymmetrically commands, the Minimal Link Condition. -/
+commands without being commanded, the Minimal Link Condition. -/
 theorem finds_ancestors_iff (hs : IsAntichain (· ≤ ·) {b | b ∈ s ∧ p.sat b}) :
     p.Finds s (ancestors P) a ↔ (a ∈ s ∧ p.sat a) ∧
-      ∀ ⦃b⦄, b ∈ s → p.sat b → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) := by
+      ∀ ⦃b⦄, b ∈ s → p.sat b → ¬ (Commands P b a ∧ ¬ Commands P a b) := by
   simpa only [Finds, and_imp, Set.mem_ofPred_eq] using minimalFor_ancestors_iff (P := P) hs
 
 /-- A probe does not find a goal that a satisfier dominates through a generator: the container is

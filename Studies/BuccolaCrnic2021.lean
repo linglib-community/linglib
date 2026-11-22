@@ -122,7 +122,7 @@ theorem maximal_pair_iff {p q : Set W} :
   simp [Maximal]
 
 theorem antitone_iff_forall_div [Preorder α] {VP : α → Set W} :
-    Antitone VP ↔ ∀ w, Mereology.DIV (w ∈ VP ·) :=
+    Antitone VP ↔ ∀ w, Mereology.DIV {x | w ∈ VP x} :=
   ⟨fun h _ _ _ hba ha ↦ h hba ha, fun h _ _ hab w hw ↦ h w hab hw⟩
 
 theorem not_licensingCondition_of_monotone [Preorder α] {S : α → WithAlternatives (Set W)}
@@ -227,7 +227,7 @@ theorem licensingCondition_disj_iff :
 if the predicate is not divisive at some world, unless the *or*-sentence entails the
 *and*-sentence; this is a weak form of (9) ((22), (25)). -/
 theorem not_div_of_licensingCondition (h : LicensingCondition (compl <$> conj VP g ·) n)
-    (hor : ¬orSome VP g n ⊆ andSome VP g n) : ¬∀ w, Mereology.DIV (w ∈ VP ·) := fun hVP ↦
+    (hor : ¬orSome VP g n ⊆ andSome VP g n) : ¬∀ w, Mereology.DIV {x | w ∈ VP x} := fun hVP ↦
   hor (licensingCondition_conj_iff.1 h (andSome_subset_orSome (antitone_iff_forall_div.2 hVP)))
 
 end Conjunction
@@ -261,7 +261,7 @@ theorem someN_subset (hR : ∀ y, Antitone (R · y)) (hmn : m ≤ n) : someN R n
 /-- Under negation, a numeral above *one* fails the Revised NPI Licensing Condition with a
 predicate divisive in its plural argument, unless the sentence with *one* entails the sentence:
 the alternative with *one* entails it ((32b), (33)–(34)). -/
-theorem not_licensingCondition_numeral (hR : ∀ y w, Mereology.DIV (w ∈ R · y)) (hn : 1 ≤ n)
+theorem not_licensingCondition_numeral (hR : ∀ y w, Mereology.DIV {x | w ∈ R x y}) (hn : 1 ≤ n)
     (hne : ¬someN R 1 N ⊆ someN R n N) : ¬LicensingCondition (compl <$> numeral R n ·) N :=
   fun h ↦ hne ((licensingCondition_compl_iff.1 h).2.2 ⟨1, mem_Ici.2 le_rfl, rfl⟩
     (someN_subset (fun y ↦ antitone_iff_forall_div.2 (hR y)) hn))
@@ -366,7 +366,7 @@ def sentence37a (N : Set (Fin 2)) : WithAlternatives (Set (Finset (Fin 4 × Fin 
   compl <$> every didHomework univ N
 
 theorem div_readPaper (y : Fin 2) (w : Finset (Fin 4 × Fin 2)) :
-    Mereology.DIV (w ∈ readPaper · y) :=
+    Mereology.DIV {x | w ∈ readPaper x y} :=
   fun _ _ hba ha x hx ↦ ha x (hba hx)
 
 -- (32b), (33)–(34)

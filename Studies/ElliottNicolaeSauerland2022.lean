@@ -148,7 +148,7 @@ variable [CompleteLattice E] {D : Set E} {r : Set E} {u v w : E}
 theorem isUpperSet_of_mem_latticeClosure (hr : r ∈ latticeClosure (Ici '' D)) : IsUpperSet r := by
   have ht : IsSublattice {r : Set E | IsUpperSet r} :=
     ⟨fun _ hp _ hq ↦ IsUpperSet.union hp hq, fun _ hp _ hq ↦ IsUpperSet.inter hp hq⟩
-  exact latticeClosure_min (by rintro _ ⟨x, -, rfl⟩; exact isUpperSet_Ici x) ht hr
+  exact latticeClosure_min (by rintro _ ⟨x, -, rfl⟩; exact IsUpperSet.Ici x) ht hr
 
 variable [IsAtomistic E]
 
@@ -437,8 +437,8 @@ omit [IsAtomistic E] in
 theorem atoms_ssubset_nonNull (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     {w : E | IsAtom w} ⊂ {w | w ≠ ⊥} := by
   refine ⟨fun _ hx ↦ IsAtom.ne_bot hx, fun h ↦ ?_⟩
-  exact not_atom_sup_of_ne (atom_iff_isAtom.2 ha) (atom_iff_isAtom.2 hb) hab
-    (atom_iff_isAtom.2 (h fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1))
+  exact not_isAtom_sup_of_ne (ha) (hb) hab
+    ((h fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1))
 
 omit [IsAtomistic E] in
 theorem nonNull_ssubset_univ : {w : E | w ≠ ⊥} ⊂ univ :=
@@ -616,8 +616,8 @@ theorem minimalFor_quienesE_not_usable (ha : IsAtom a) (hb : IsAtom b) (hab : a 
         Form.content (E := E) ⁻¹' Ici {a, a ⊔ b}) (Form.content (E := E)) .quienesE ∧
       ¬ Form.quienesE.Usable False ({a, a ⊔ b} : Set E) := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   refine ⟨minimalFor_preimage_Ici_iff.2 ⟨?_, ?_⟩, fun h ↦ ?_⟩
   · rw [content_quienesE]
     rintro _ (rfl | rfl)
@@ -749,8 +749,8 @@ theorem Item.usable_quienes_iff_of (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ 
 theorem Item.usable_set_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) (κ : Ctx) :
     i.Usable pl (κ.set a b) ↔ i.Predicted pl κ := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   have hbA : ¬ IsAtom (⊥ : E) := fun h ↦ h.ne_bot rfl
   have hnon : (κ.set a b).Nonempty := by cases κ <;> simp [Ctx.set]
   have hatoms : κ.set a b ⊆ {w : E | IsAtom w} ↔ κ = .exactlyOne := by
@@ -799,8 +799,8 @@ theorem Item.atom_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b
 theorem Item.sup_mem_answers_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (i : Item) :
     a ⊔ b ∈ (i.Answers : Set E) ↔ i ≠ .queSg := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   cases i <;> simp [Item.Answers, Item.parses, strengthen_queSg, strengthen_quePl ha hb hab,
     strengthen_quienE ha hb hab, strengthen_quienGQ_of_not not_false,
     strengthen_quienesE ha hb hab, strengthen_quienesGQ ha hb hab, hne, hna]
@@ -815,27 +815,28 @@ variable [SemilatticeSup E] {g g₁ g₂ x : E}
 
 /-- The nucleus `∗f` holds of `x` in a world, the extension of `f` there, when `x` is a sum from
 it. -/
-def starred (x : E) : Set (Set E) := {v | AlgClosure (· ∈ v) x}
+def starred (x : E) : Set (Set E) := {v | x ∈ supClosure v}
 
 theorem singleton_mem_starred_iff : {g} ∈ starred x ↔ x = g := by
-  refine ⟨fun h ↦ ?_, fun h ↦ .base h⟩
-  induction h using AlgClosure.induction with
-  | base h => exact h
-  | sum _ _ ih₁ ih₂ => rw [ih₁, ih₂, sup_idem]
+  refine ⟨fun h ↦ ?_, fun h ↦ subset_supClosure (Set.mem_singleton_iff.2 h)⟩
+  change x ∈ supClosure {g} at h
+  induction h using supClosure_induction with
+  | mem _ h => exact Set.mem_singleton_iff.1 h
+  | sup _ _ _ _ ih₁ ih₂ => rw [ih₁, ih₂, sup_idem]
 
 theorem starred_subset_of_pair_mem (h : {g₁, g₂} ∈ starred x) :
     starred g₁ ∩ starred g₂ ⊆ starred x := by
   rintro v ⟨h₁, h₂⟩
-  change AlgClosure _ x at h
-  induction h using AlgClosure.induction with
-  | base h => rcases h with rfl | rfl <;> assumption
-  | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
+  change x ∈ supClosure _ at h
+  induction h using supClosure_induction with
+  | mem _ h => rcases h with rfl | rfl <;> assumption
+  | sup _ _ _ _ ih₁ ih₂ => exact supClosed_supClosure ih₁ ih₂
 
 theorem starred_ne_univ : starred g ≠ univ := fun h ↦ by
-  have hemp {x : E} : ¬ AlgClosure (· ∈ (∅ : Set E)) x := fun hx ↦ by
-    induction hx using AlgClosure.induction with
-    | base h => exact h
-    | sum _ _ ih _ => exact ih
+  have hemp {x : E} : x ∉ supClosure (∅ : Set E) := fun hx ↦ by
+    induction hx using supClosure_induction with
+    | mem _ h => exact h
+    | sup _ _ _ _ ih _ => exact ih
   exact hemp (h ▸ mem_univ _ : (∅ : Set E) ∈ starred g)
 
 variable {D : Set E} {v : Set E}
@@ -857,7 +858,8 @@ theorem isStrongestTrueAnswer_upwardGQ_starred_pair (hg₁ : g₁ ∈ D) (hg₂ 
     IsStrongestTrueAnswer (upwardGQ starred D) {g₁, g₂} (starred g₁ ∩ starred g₂) := by
   refine ⟨⟨.inr (.inr (isSublattice_latticeClosure.infClosed
     (subset_latticeClosure (mem_image_of_mem _ hg₁))
-    (subset_latticeClosure (mem_image_of_mem _ hg₂)))), .base (.inl rfl), .base (.inr rfl)⟩, ?_⟩
+    (subset_latticeClosure (mem_image_of_mem _ hg₂)))), subset_supClosure (Set.mem_insert _ _),
+    subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩, ?_⟩
   rintro r ⟨rfl | rfl | hr, hw⟩
   · exact subset_univ _
   · exact hw.elim
@@ -867,7 +869,8 @@ theorem isStrongestTrueAnswer_upwardGQ_starred_pair (hg₁ : g₁ ∈ D) (hg₂ 
 -- (82): with one group the quantifiers over pluralities answer by naming it
 theorem isStrongestTrueAnswer_upwardGQ_starred_singleton (hg : g ∈ D) :
     IsStrongestTrueAnswer (upwardGQ starred D) {g} (starred g) := by
-  refine ⟨⟨.inr (.inr (subset_latticeClosure (mem_image_of_mem _ hg))), .base rfl⟩, ?_⟩
+  refine ⟨⟨.inr (.inr (subset_latticeClosure (mem_image_of_mem _ hg))),
+    singleton_mem_starred_iff.2 rfl⟩, ?_⟩
   rintro r ⟨rfl | rfl | hr, hw⟩
   · exact subset_univ _
   · exact hw.elim
@@ -960,7 +963,8 @@ theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ≠ ⊥) (hg₂ : g�
   refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_upwardGQ_starred_pair h₁ h₂⟩ (by decide),
     fun h ↦ ?_⟩
   obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
-  exact hne ((huniq g₁ ⟨h₁, .base (.inl rfl)⟩).trans (huniq g₂ ⟨h₂, .base (.inr rfl)⟩).symm)
+  exact hne ((huniq g₁ ⟨h₁, subset_supClosure (Set.mem_insert _ _)⟩).trans
+    (huniq g₂ ⟨h₂, subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩).symm)
 
 omit [IsAtomistic E] [Finite E] in
 -- (81), (82): a collective answer is not available on the singular's atomic trace but is on the

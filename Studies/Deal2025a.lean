@@ -35,12 +35,20 @@ segment it dominates, with its satisfaction feature. -/
 def toSpec (g : Grammar) : Probe.Spec Person.Segment :=
   .ofFeatures (Finset.Ici .pi) g.satisfaction.toFinset
 
+/-- A direct object bearing the segments `lo` and an indirect object bearing `hi` are licit under
+(30) when the probe, meeting the direct object first, interacts with both. -/
+def LicitAt (g : Grammar) (lo hi : Finset Person.Segment) : Prop :=
+  ((toSpec g).agree (·.1) g.dynamic [(lo, 0), (hi, 1)]).interacted.map (·.2) = [0, 1]
+
+instance (g : Grammar) (lo hi : Finset Person.Segment) : Decidable (LicitAt g lo hi) :=
+  inferInstanceAs (Decidable (_ = _))
+
 /-- A clitic combination ⟨IO, DO⟩ is licit under (30) when the probe, meeting the direct object
 first, interacts with both objects. -/
-def Licit (g : Grammar) (s : Scenario Person) : Prop :=
-  ((toSpec g).agree (spec ·.1) g.dynamic [s.low, s.high].zipIdx).interacted.map (·.2) = [0, 1]
+def Licit (g : Grammar) (s : Scenario Person) : Prop := LicitAt g (spec s.low) (spec s.high)
 
-instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦
+  inferInstanceAs (Decidable (LicitAt _ _ _))
 
 /-- Under (30) a combination is licit exactly when the direct object does not satisfy the probe and
 the indirect object bears a feature dominated by every dynamic feature of the direct object, the
@@ -71,10 +79,15 @@ theorem Licit.third {g : Grammar} {s : Scenario Person} (h : Licit g s) (p : Per
     rw [hthird, Finset.mem_singleton] at hx
     exact hx.1.le
 
-/-- The two algorithms agree on every combination exactly when the grammar has a satisfaction
-condition or does not mark both [SPKR] and [ADDR] for dynamic interaction ((30)). -/
-theorem forall_licit_iff_iff (g : Grammar) :
-    (∀ s, Licit g s ↔ Deal2024.Licit g s) ↔
+/-- The two algorithms agree on every pair of referents, each read as the segments of its
+participants, exactly when the grammar has a satisfaction condition or does not mark both [SPKR]
+and [ADDR] for dynamic interaction ((30)). -/
+theorem forall_licitAt_iff_iff (g : Grammar) :
+    (∀ s t : Finset SpeechAct.Role,
+        LicitAt g (Person.Specification.ofParticipants s).segments
+            (Person.Specification.ofParticipants t).segments ↔
+          Deal2024.LicitAt g (Person.Specification.ofParticipants s).segments
+            (Person.Specification.ofParticipants t).segments) ↔
       ¬ (g.satisfaction = none ∧ .speaker ∈ g.dynamic ∧ .addressee ∈ g.dynamic) := by
   revert g
   decide +kernel
@@ -82,8 +95,11 @@ theorem forall_licit_iff_iff (g : Grammar) :
 /-- With [SPKR] and [ADDR] both dynamic and no satisfaction condition, an inclusive direct object
 licenses an inclusive indirect object in 2024 but not under (30). -/
 theorem inclusive_divergence :
-    Deal2024.Licit ⟨none, {.speaker, .addressee}⟩ ⟨.firstInclusive, .firstInclusive⟩ ∧
-      ¬ Licit ⟨none, {.speaker, .addressee}⟩ ⟨.firstInclusive, .firstInclusive⟩ := by
+    Deal2024.LicitAt ⟨none, {.speaker, .addressee}⟩
+        Person.Specification.firstInclusive.segments
+        Person.Specification.firstInclusive.segments ∧
+      ¬ LicitAt ⟨none, {.speaker, .addressee}⟩ Person.Specification.firstInclusive.segments
+        Person.Specification.firstInclusive.segments := by
   decide +kernel
 
 /-- On the six cells of table (1) the two algorithms agree for every grammar ((53), (57), (30)). -/

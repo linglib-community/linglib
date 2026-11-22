@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype

@@ -57,12 +57,12 @@ namespace DavidsonGagne2022
 
 open Quantifier Quantifier.Det Presupposition Mereology ASL.Determiners
 
-variable {E W ι : Type*} [PartialOrder E] {C : Set E} {x y c : E}
+variable {E W ι : Type*} [PartialOrder E] [OrderBot E] {C : Set E} {x y c : E}
 
 /-! ### The features of a plural pronoun -/
 
 /-- (46a): `⟦arc⟧` is defined of the referents that are not atoms. -/
-def arc : Set E := {x | ¬ Atom x}
+def arc : Set E := {x | ¬ IsAtom x}
 
 /-- (47c): `⟦neutral⟧` is defined of the referents all of whose parts lie in the contextual
 domain `C`. -/
@@ -76,7 +76,7 @@ def domain (C : Set E) : Set E := {x | C ⊂ Set.Iic x}
 focus alternative. -/
 def contrast (alt : E → Set E) : Set E := {x | ∃ y ∈ alt x, x ≠ y}
 
-@[simp] theorem mem_arc : x ∈ arc ↔ ¬ Atom x := Iff.rfl
+@[simp] theorem mem_arc : x ∈ arc ↔ ¬ IsAtom x := Iff.rfl
 
 @[simp] theorem mem_neutral : x ∈ neutral C ↔ Set.Iic x ⊆ C := Iff.rfl
 
@@ -112,11 +112,11 @@ theorem mem_domain_of_strictMono {H : Type*} [Preorder H] {ref : H → E} (hconv
   isUpperSet_domain (hconv hkk').le hk
 
 -- [sauerland-2003]
-theorem strengthen_plural_eq_arc (hy : ¬ Atom y) :
+theorem strengthen_plural_eq_arc (hy : ¬ IsAtom y) :
     strengthen Number.alts Number.dom (some .plural) = (arc : Set E) := by
   rw [Number.strengthen_plural hy]
   ext
-  simp [Number.nonAtomsOf]
+  simp [Number.Feature.restrict]
 
 /-! ### The pronoun and the partitive -/
 

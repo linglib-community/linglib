@@ -88,7 +88,9 @@ def valueCase (c : Case) (n : Nominal) : Nominal :=
 
 @[simp] theorem valueCase_nominal (k : Case) (c : Bundle) (l : Bool) :
     valueCase k ⟨.nominal c .unvalued, l⟩ = ⟨.nominal c (.valued k), l⟩ := by
-  simp [valueCase, FeatureBundle.valueAt, FeatureBundle.update_case_nominal]
+  rw [valueCase, FeatureBundle.valueAt,
+    FeatureBundle.unifyAt_of_eq_coe_bot (FeatureBundle.nominal_case ..), WithTop.untopD_coe]
+  exact congrArg (Nominal.mk · l) (FeatureBundle.update_case_nominal (c := c) (.valued k))
 
 @[simp] theorem valueCase_caseless (k : Case) (c : Bundle) :
     valueCase k (caseless c) = ⟨.nominal c (.valued k), false⟩ :=

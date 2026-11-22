@@ -1,10 +1,11 @@
 module
 
 public import Linglib.Data.Examples.Erlewine2016
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Syntax.Minimalist.Copy.AntiLocality
+public import Linglib.Syntax.Minimalist.SyntacticObject.Extend
 public import Studies.CoonMateoPedroPreminger2014
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers
@@ -13,17 +14,15 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
 
-Kaqchikel marks the Ā-extraction of a transitive subject with Agent Focus (AF), a verb form with
-an AF suffix and no Set A agreement. Erlewine argues that the trigger is movement that is too
-short: Spec-to-Spec Anti-Locality bans a step from the specifier of a phrase that crosses no other
-maximal projection, and a subject that T's optional Set A probe has moved to Spec,TP sits one
-step below Spec,CP, while an intransitive subject stays in situ. AF is the derivation that skips
-Spec,TP at the cost of an argument left un-cross-referenced, chosen by ranked constraints over
-competing derivations of the whole clause: anti-locality outranks cross-referencing, so AF
-disappears when an adverb or another operator intervenes, and cross-referencing participants
-outranks both, so the full transitive returns when both arguments are first or second person, an
-exception the paper argues no last-resort account of AF can make. Rerankings give the typology of
-Popti', Akatek and Ch'ol.
+This file formalizes [erlewine-2016]'s account of Kaqchikel Agent Focus, the verb form that marks
+the Ā-extraction of a transitive subject. Spec-to-Spec Anti-Locality bans movement from the
+specifier of a phrase that crosses no other maximal projection, so a subject in Spec,TP cannot
+move on to Spec,CP. Agent Focus is the derivation that skips Spec,TP, chosen by ranked constraints
+over the derivations of the clause.
+
+Anti-locality outranks cross-referencing, so Agent Focus disappears when an adverb or another
+operator intervenes; cross-referencing participants outranks both, so the full transitive returns
+when both arguments are first or second person. Rerankings give Popti', Akatek and Ch'ol.
 
 ## Implementation notes
 
@@ -106,9 +105,6 @@ def Layer.cat : Layer → Cat
   | .cP => .C
   | .topP => .Top
 
-/-- The head of the `j`th layer above TP, selecting the category below it. -/
-def Layer.head (l : Layer) (j : ℕ) (below : Cat) : LexicalItem.Token := ⟨.of l.cat [below], 10 + j⟩
-
 /-- The verb, selecting the object when it is transitive. -/
 def verb (transitive : Bool) : LexicalItem.Token := ⟨.of .V (if transitive then [.D] else []), 0⟩
 
@@ -154,11 +150,9 @@ def Input.clause (i : Input) (c : Candidate) : PlanarSyntacticObject :=
     (if i.transitive then (verb true * Arg.obj.token : PlanarSyntacticObject) else verb false))
   let tP : PlanarSyntacticObject :=
     if c.aProbe then Arg.subj.token * (tense * vP) else tense * vP
-  (i.layers.zipIdx.foldl (fun (x : PlanarSyntacticObject × Cat) (l, j) ↦
-    let y := l.head j x.2 * x.1
-    (match i.extracted with
-      | some (a, k) => if k = j then a.token * y else y
-      | none => y, l.cat)) (tP, .T)).1
+  tP.extend .T 10
+    (fun j ↦ i.extracted.bind fun x ↦ if x.2 = j then some (.leaf x.1.token) else none)
+    (i.layers.map Layer.cat)
 
 /-- The step that extracts `a` is too close: the link landing at the top of its chain moves a
 specifier across no maximal projection but its own, Spec-to-Spec Anti-Locality (42). -/

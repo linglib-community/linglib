@@ -11,19 +11,12 @@ public import Mathlib.MeasureTheory.Measure.Stieltjes
 /-!
 # Regularity of a Stieltjes function and of its measure
 
-A Stieltjes function is continuous exactly where its measure has no atom, so it is continuous
-exactly when its measure has no atoms at all. On a nontrivial densely ordered domain it is strictly
-monotone exactly when its measure charges every nonempty open set. `[UPSTREAM]` candidate for
+A Stieltjes function is [continuous exactly where its measure has no
+atom](##StieltjesFunction.continuousAt_iff_measure_singleton_eq_zero), so it is [continuous exactly
+when its measure has no atoms at all](##StieltjesFunction.continuous_iff_nullSingletonClass). On a
+nontrivial densely ordered domain it is [strictly monotone exactly when its measure charges every
+nonempty open set](##StieltjesFunction.strictMono_iff_isOpenPosMeasure). `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/Measure/Stieltjes.lean`.
-
-## Main results
-
-* `StieltjesFunction.continuousAt_iff_measure_singleton_eq_zero`: `f` is continuous at `x` iff
-  `f.measure {x} = 0`.
-* `StieltjesFunction.continuous_iff_nullSingletonClass`: `f` is continuous iff `f.measure` has no
-  atoms.
-* `StieltjesFunction.strictMono_iff_isOpenPosMeasure`: `f` is strictly monotone iff `f.measure`
-  charges every nonempty open set.
 -/
 
 public section

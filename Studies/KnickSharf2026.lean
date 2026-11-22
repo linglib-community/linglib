@@ -31,9 +31,9 @@ anymore*](##form_predicts).
   time span within $t_r$, and a domain is a set of times; the paper's interval domains are
   `Set.Icc`.
 * The imperfective properly includes the reference interval in the run time of an actual
-  eventuality, `Aspect.ViewpointType.imperfective.denote`, not the modal `Aspect.IMPF`. Iatridou,
-  Anagnostopoulou and Izvorski's includes it, so an eventuality running exactly from $t_0$ to the
-  speech time [verifies their universal perfect and not this
+  eventuality, `Aspect.ViewpointType.imperfective.denote`, not the modal `Aspect.imperfective`.
+  Iatridou, Anagnostopoulou and Izvorski's includes it, so an eventuality running exactly from
+  $t_0$ to the speech time [verifies their universal perfect and not this
   one](##exists_iatridou_not_universalPerfect).
 * *Ever since* is their durative adverbial, the spans starting at $t_0$ with the aspect holding
   throughout: over the imperfective it is [the universal perfect over
@@ -79,43 +79,46 @@ variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 /-- The simple present (39a), `PRS IMPF`, holds where an eventuality of `V` runs properly through
 the speech time `t`. -/
 def simplePresent (V : W → E → Prop) (t : T) : Set W :=
-  {w | ⟨w, t⟩ ∈ atPoint (ViewpointType.imperfective.denote V)}
+  {w | ViewpointType.imperfective.denote (V w) (.pure t)}
 
 /-- The universal perfect (39b), `PRS PERF IMPF`, holds where a perfect time span ending at the
 speech time `t` and starting in the domain `D` lies properly within the run time of an
 eventuality of `V`. -/
 def universalPerfect (V : W → E → Prop) (D : Set T) (t : T) : Set W :=
-  {w | ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ ViewpointType.imperfective.denote V ·)}
+  {w | perfect ((fun pts ↦ pts.fst ∈ D) ⊓ ViewpointType.imperfective.denote (V w)) (.pure t)}
 
 /-- The experiential perfect (29), `PRS PERF PRFV`, holds where such a span contains the run time
 of an eventuality of `V`. -/
 def experientialPerfect (V : W → E → Prop) (D : Set T) (t : T) : Set W :=
-  {w | ⟨w, t⟩ ∈ PERF ((·.fst) ⁻¹' D ∩ PRFV V ·)}
+  {w | perfect ((fun pts ↦ pts.fst ∈ D) ⊓ perfective (V w)) (.pure t)}
 
 variable {V : W → E → Prop} {D D₁ D₂ : Set T} {t : T} {w : W}
 
 @[simp] theorem mem_simplePresent :
     w ∈ simplePresent V t ↔ ∃ e, NonemptyInterval.pure t < τ e ∧ V w e :=
-  Iff.rfl
+  denote_imperfective_iff
 
 @[simp] theorem mem_universalPerfect : w ∈ universalPerfect V D t ↔
     ∃ x ∈ D, ∃ h : x ≤ t, ∃ e, (⟨(x, t), h⟩ : NonemptyInterval T) < τ e ∧ V w e :=
-  mem_perf_inter_preimage_fst
+  (perfect_pure_inf_fst_iff (D := (· ∈ D))).trans <|
+    exists_congr fun _ ↦ and_congr_right fun _ ↦ exists_congr fun _ ↦ denote_imperfective_iff
 
 @[simp] theorem mem_experientialPerfect : w ∈ experientialPerfect V D t ↔
     ∃ x ∈ D, ∃ h : x ≤ t, ∃ e, τ e ≤ (⟨(x, t), h⟩ : NonemptyInterval T) ∧ V w e :=
-  mem_perf_inter_preimage_fst
+  (perfect_pure_inf_fst_iff (D := (· ∈ D))).trans <|
+    exists_congr fun _ ↦ and_congr_right fun _ ↦ exists_congr fun _ ↦ perfective_iff
 
 -- (39), (41): whatever its domain
 theorem universalPerfect_subset_simplePresent (V : W → E → Prop) (D : Set T) (t : T) :
     universalPerfect V D t ⊆ simplePresent V t := fun _ hw ↦
   let ⟨_, _, h, e, hlt, hV⟩ := mem_universalPerfect.1 hw
-  ⟨e, hlt.trans_le' (NonemptyInterval.le_def.2 ⟨h, le_rfl⟩), hV⟩
+  mem_simplePresent.2 ⟨e, hlt.trans_le' (NonemptyInterval.le_def.2 ⟨h, le_rfl⟩), hV⟩
 
 -- (41), (42)
 theorem universalPerfect_eq_simplePresent (h : t ∈ D) :
     universalPerfect V D t = simplePresent V t :=
-  (universalPerfect_subset_simplePresent V D t).antisymm fun _ ⟨e, hlt, hV⟩ ↦
+  (universalPerfect_subset_simplePresent V D t).antisymm fun _ hw ↦
+    let ⟨e, hlt, hV⟩ := mem_simplePresent.1 hw
     mem_universalPerfect.2 ⟨t, h, le_rfl, e, hlt, hV⟩
 
 -- (29), (30)
@@ -124,8 +127,9 @@ theorem not_experientialPerfect_subset_simplePresent [Nonempty W] {x : T} (hx : 
     ¬ ∀ V : W → NonemptyInterval T → Prop, experientialPerfect V D t ⊆ simplePresent V t :=
   fun h ↦ by
   obtain ⟨w⟩ := ‹Nonempty W›
-  obtain ⟨_, hlt, rfl⟩ := h (fun _ e ↦ e = .pure x) <| (mem_experientialPerfect (w := w)).2
-    ⟨x, hx, hxt.le, .pure x, NonemptyInterval.le_def.2 ⟨le_rfl, hxt.le⟩, rfl⟩
+  obtain ⟨_, hlt, rfl⟩ := mem_simplePresent.1 <| h (fun _ e ↦ e = .pure x) <|
+    (mem_experientialPerfect (w := w)).2
+      ⟨x, hx, hxt.le, .pure x, NonemptyInterval.le_def.2 ⟨le_rfl, hxt.le⟩, rfl⟩
   exact hxt.not_ge (NonemptyInterval.le_def.1 hlt.le).2
 
 /-! ### The focus alternatives -/
@@ -276,7 +280,7 @@ theorem survives_universalPerfect_iff [NoMaxOrder T] [Nontrivial W] :
     · rw [update_of_ne hw] at he
       exact he ▸ ht'
   · obtain ⟨y, hy, hyt, e, hlt, he⟩ := mem_universalPerfect.1 <|
-      hs (a := w₂) ⟨_, lt_extend le_rfl ht', by simp [update_of_ne hne.symm]⟩
+      hs (a := w₂) (mem_simplePresent.2 ⟨_, lt_extend le_rfl ht', by simp [update_of_ne hne.symm]⟩)
     rw [update_of_ne hne.symm] at he
     subst he
     exact ht (le_antisymm hyt (NonemptyInterval.le_def.1 hlt.le).1 ▸ hy)
@@ -287,8 +291,8 @@ theorem survives_experientialPerfect [Nonempty W] {x m : T} (hx : x ∈ D) (hxm 
   obtain ⟨w⟩ := ‹Nonempty W›
   refine ⟨fun _ e ↦ e = ⟨(x, m), hxm.le⟩, fun _ _ he ↦ he ▸ hxm, w, goodAnswer_perfect_iff.2
     ⟨mem_experientialPerfect.2 ⟨x, hx, (hxm.trans hmt).le, ⟨(x, m), hxm.le⟩,
-      NonemptyInterval.le_def.2 ⟨le_rfl, hmt.le⟩, rfl⟩, fun ⟨_, e, hlt, he⟩ ↦ ?_⟩⟩
-  subst he
+      NonemptyInterval.le_def.2 ⟨le_rfl, hmt.le⟩, rfl⟩, fun ⟨_, hs⟩ ↦ ?_⟩⟩
+  obtain ⟨e, hlt, rfl⟩ := mem_simplePresent.1 hs
   exact hmt.not_ge (NonemptyInterval.le_def.1 hlt.le).2
 
 /-! ### The left boundary specified -/
@@ -315,9 +319,9 @@ inductive Reading
 
 /-- The aspect beneath the perfect, the imperfective (25) for the universal reading and the
 perfective (28) for the experiential (§4.2). -/
-def Reading.aspect : Reading → (W → E → Prop) → W → Set (NonemptyInterval T)
+def Reading.aspect : Reading → (E → Prop) → NonemptyInterval T → Prop
   | .universal => ViewpointType.imperfective.denote
-  | .experiential => PRFV
+  | .experiential => perfective
 
 /-- The perfect under a reading. -/
 def Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
@@ -328,26 +332,24 @@ def Reading.perfect : Reading → (W → E → Prop) → Set T → T → Set W
 at `t₀`, the aspect holding throughout them, as [iatridou-anagnostopoulou-izvorski-2001] read
 durative adverbials. -/
 def Reading.everSince (r : Reading) (V : W → E → Prop) (t₀ t : T) : Set W :=
-  {w | ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (r.aspect V) ·)}
+  {w | Aspect.perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (r.aspect (V w))) (.pure t)}
 
 theorem everSince_universal (V : W → E → Prop) (t₀ t : T) :
     Reading.universal.everSince V t₀ t = universalPerfect V {t₀} t := by
-  have h (w : W) : durative (ViewpointType.imperfective.denote V) w =
-      ViewpointType.imperfective.denote V w :=
-    durative_eq_of_isLowerSet (isLowerSet_denote_imperfective V w)
-  simp only [Reading.everSince, Reading.aspect, h]
+  simp only [Reading.everSince, Reading.aspect,
+    durative_eq_of_antitone (antitone_denote_imperfective _)]
   rfl
 
 -- footnote 2: a bounded eventuality that takes time holds throughout no span
 theorem not_survives_everSince_experiential {t₀ : T} :
     ¬ Survives (W := W) (Reading.experiential.everSince · t₀ t) t :=
-  fun ⟨_, hV, _, hw⟩ ↦ IatridouEtAl2001.no_universal_of_prfv (fun e he ↦ hV _ e he)
-    (perf_mono (fun _ ↦ inter_subset_right) hw.mem)
+  fun ⟨_, hV, _, hw⟩ ↦ IatridouEtAl2001.no_universal_of_perfective (fun e he ↦ hV _ e he)
+    (perfect_mono inf_le_right _ hw.mem)
 
 -- the imperfective (25) is strict where Iatridou et al.'s is not (footnote 6)
 theorem exists_iatridou_not_universalPerfect [Nonempty W] {t₀ : T} (h : t₀ ≤ t) :
     ∃ (V : W → NonemptyInterval T → Prop) (w : W),
-      ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED V) ·) ∧
+      perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (unbounded (V w))) (.pure t) ∧
         w ∉ universalPerfect V {t₀} t := by
   obtain ⟨w⟩ := ‹Nonempty W›
   refine ⟨fun _ e ↦ e = ⟨(t₀, t), h⟩, w,

@@ -64,7 +64,7 @@ Agent-patient verbs take the manner-contact grid `mannerContact`.
 
 namespace SolstadBott2022
 
-open ArgumentStructure Discourse.Coherence
+open ArgumentStructure Coherence
 
 /-- The argument positions of a prompt *Name₁ verb-ed Name₂*. -/
 inductive Argument where

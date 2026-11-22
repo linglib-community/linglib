@@ -78,7 +78,7 @@ def TECM (P : V → Prop) (CONT_v : V → Option (Set W)) (CONT_e : E → Option
 /-- Parts of a believing are believings of the same holder — divisive reference
 ([cheng-1973]) for attitudinal eventualities. -/
 structure BelievingDIV (believe : V → Prop) (HOLDER : V → Option E) : Prop where
-  div : DIV believe
+  div : DIV {e | believe e}
   holder : ∀ ⦃e e' M⦄, HOLDER e = some M → e' ≤ e → HOLDER e' = some M
 
 /-- Location at a world is inherited by parts, as worlds are maximal eventualities. -/
@@ -136,7 +136,7 @@ located believing of the same holder (`BelievingDIV`) themed to a part of the ru
 which is a rumor with that content (`TECM` again). -/
 theorem believesTheRumorThat_of_ssubset (hMSI : MSI CONT_v) (hMSO : MSO THEME)
     (hTECM : TECM believe CONT_v CONT_e THEME) (hDIV : BelievingDIV believe HOLDER)
-    (hRumor : DIV rumor) (hLoc : LocatedDIV located) (hlt : p ⊂ p')
+    (hRumor : DIV {r | rumor r}) (hLoc : LocatedDIV located) (hlt : p ⊂ p')
     (h : BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p w) :
     BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p' w := by
   obtain ⟨e, r, hloc, hbel, hhol, hthm, hrum, hcont⟩ := h
@@ -148,7 +148,7 @@ theorem believesTheRumorThat_of_ssubset (hMSI : MSI CONT_v) (hMSO : MSO THEME)
 
 theorem not_believesTheRumorThat_of_ssubset (hMSI : MSI CONT_v) (hMSO : MSO THEME)
     (hTECM : TECM believe CONT_v CONT_e THEME) (hDIV : BelievingDIV believe HOLDER)
-    (hRumor : DIV rumor) (hLoc : LocatedDIV located) (hlt : p ⊂ p')
+    (hRumor : DIV {r | rumor r}) (hLoc : LocatedDIV located) (hlt : p ⊂ p')
     (h : ¬ BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p' w) :
     ¬ BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p w :=
   fun hb ↦ h (believesTheRumorThat_of_ssubset hMSI hMSO hTECM hDIV hRumor hLoc hlt hb)
@@ -177,7 +177,7 @@ theorem negated_not_sue :
       (THEME : V → Option E)
       (rumor : E → Prop) (located : V → W → Prop) (M : E) (p p' : Set W) (w : W),
       MSI CONT_v ∧ MSO THEME ∧ TECM believe CONT_v CONT_e THEME ∧
-        BelievingDIV believe HOLDER ∧ DIV rumor ∧ LocatedDIV located ∧ p ⊂ p' ∧
+        BelievingDIV believe HOLDER ∧ DIV {r | rumor r} ∧ LocatedDIV located ∧ p ⊂ p' ∧
         BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p' w ∧
         ¬ BelievesTheRumorThat believe HOLDER located THEME rumor CONT_e M p w := by
   refine ⟨Unit, NotSUE, Bool, inferInstance, inferInstance, fun _ ↦ True, fun _ ↦ some .katya,

@@ -29,7 +29,6 @@ Anscombe1964
 Anttila1997
 Aremu2025b
 Arnold2026
-ArregiPietraszko2021
 ArreguiKusumoto1998
 AsherLascarides2003
 AsherPelletier2013
@@ -62,7 +61,6 @@ BeltramaSoltBurnett2023
 Benz2025
 BenzSalzmann2025
 BerentEtAl2016
-BergerDellaPietraDellaPietra1996
 Bhadra2024
 BhattDayal2020
 BhattTakahashi2011
@@ -74,7 +72,6 @@ BonamiStump2016
 Bondarenko2022
 BonehDoron2013
 Booij2010
-Boskovic2018
 Boylan2023
 BrananErlewine2024
 BrananErlewine2026
@@ -104,7 +101,6 @@ CarianiSantorio2018
 Carstens2026
 CaviraniVandenWyngaerd2026
 ChampollionAlsopGrosu2019
-ChampollionBernard2024
 ChanShen2026
 Charlow2019
 Charlow2020
@@ -147,7 +143,6 @@ CumminsFranke2021
 DaleReiter1995
 DalrympleHaug2024
 Dayal2004
-DeClercqEtAl2025
 DeMarneffeNivre2019
 DeSwartSag2002
 DeVries2009
@@ -221,7 +216,6 @@ GroenendijkStokhof1984
 Grove2022
 GrubicRenansDuah2019
 Hacquard2006
-Hafeez2025
 Hale2001
 HalleVauxWolfe2000
 Halpert2012
@@ -236,7 +230,6 @@ HaslingerHienEtAl2025
 Haspelmath2021c
 Haspelmath2023
 HaugDalrymple2020
-HawkinsEtAl2025
 Heim1983
 Heim1994a
 HeimKratzer1998
@@ -246,7 +239,6 @@ HerbstrittFranke2019
 Herce2023
 HollidayIcard2013
 HollidayMandelkern2024
-HoulihanEtAl2023
 HuangSpelkeSnedeker2013
 IatridouEtAl2001
 IatridouZeijlstra2021
@@ -260,7 +252,6 @@ ItoMester2019
 Itzhaki2021
 Jablonska2004
 Jardine2019
-Jenks2018
 JereticEtAl2025
 Just2024
 KadmonLandman1993
@@ -329,7 +320,6 @@ Middleton2026
 Miestamo2005
 Minor2026
 MitrovicSauerland2016
-Mizuno2024
 MocnikAbramovitz2019
 Montague1973
 Morzycki2009
@@ -363,7 +353,6 @@ PrasertsomSmithCulbertson2026
 Preminger2014
 Prince1983
 Przepiorkowski2021
-PullumGazdar1982
 QingFranke2015
 QingGoodmanLassiter2016
 RappaportHovavLevin2024
@@ -398,12 +387,10 @@ Schwab2023
 Schwarz2009
 Scott2021
 Scott2023
-Sells1987
 SenturiaMarcolli2025
 Sharvit2003
 Sharvit2014
 Sharvit2025
-Shieber1986
 Short1993
 SikosEtAl2021
 Siloni2012
@@ -413,7 +400,6 @@ Smith1997
 SolstadBott2022
 SoltWaldon2019
 Song1996
-Sorace2000
 Spector2026
 SpinosoDiPianoEtAl2025
 Spohn1988
@@ -437,7 +423,6 @@ ThomasDeo2020
 TieuKrizChemla2019
 Toosarvandani2016
 Toosarvandani2023
-Traugott2010
 TurcoBraunDimroth2014
 TurkHirsch2026
 UchiharaMendozaRuiz2021

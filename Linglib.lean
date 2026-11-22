@@ -121,7 +121,6 @@ import Linglib.Core.Order.Flat
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Ortholattice
-import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.UpperLower.Closure
@@ -130,7 +129,6 @@ import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Distributions.Bernoulli
-import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
@@ -278,7 +276,6 @@ import Linglib.Data.WALS.Features.F106A
 import Linglib.Data.WALS.Features.F113A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F121A
-import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
@@ -633,7 +630,6 @@ import Linglib.Morphology.Exponence.Elsewhere
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Paradigm.Analogy
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
@@ -655,7 +651,6 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
@@ -665,7 +660,6 @@ import Linglib.Phonology.OptimalityTheory.Cophonology
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
-import Linglib.Phonology.OptimalityTheory.Ranking
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid
@@ -690,7 +684,6 @@ import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Register
@@ -702,7 +695,6 @@ import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
-import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
@@ -710,7 +702,6 @@ import Linglib.Semantics.ArgumentStructure.EnergySource
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Acquaintance
 import Linglib.Semantics.Attitudes.Anchor
@@ -759,14 +750,12 @@ import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Semantics.Modification.Basic
-import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Groups
 import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic
@@ -806,7 +795,6 @@ import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.CCG.Cat
 import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
-import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Category.Adjective.Basic
@@ -843,11 +831,7 @@ import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Valency
-import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Syntax.HPSG.Description
-import Linglib.Syntax.HPSG.Interpretation
-import Linglib.Syntax.HPSG.Signature
 import Linglib.Syntax.Mereological.AngularLocality
 import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Ellipsis

@@ -256,7 +256,7 @@ private theorem Graph.reorderKey_lt_iff_of_notMem {x y : Fin n} (hx : x ∉ g.yi
   · simp [hy, hxv.symm]
   · by_cases hyx : y = x
     · subst hyx
-      have hy' : ¬ Dominates g v y := hy
+      have hy' : ¬ g.Dominates v y := hy
       simp [hy']
     · simp [hy, hyx]
 

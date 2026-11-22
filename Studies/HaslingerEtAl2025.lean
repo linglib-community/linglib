@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Grade
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Examples.HaslingerEtAl2025
 public import Mathlib.Order.UpperLower.Closure
@@ -61,7 +62,8 @@ open Homogeneity
 
 section Tolerance
 
-variable {α W : Type*} [PartialOrder α] {r : α → α → Prop} {Q : α → Set W} {y : α} {w : W}
+variable {α W : Type*} [PartialOrder α] [OrderBot α] {r : α → α → Prop} {Q : α → Set W} {y : α}
+  {w : W}
 
 /-- A tolerance relation (14) relates a part `z` of `y` to `y` when `z` is similar enough to
 `y`. It is reflexive and contained in parthood, and whatever lies between a tolerated part and
@@ -82,10 +84,10 @@ theorem isTolerance_le : IsTolerance (α := α) (· ≤ ·) :=
 /-- A predicate relativized to a tolerance (15a) holds of `y` where it holds of a non-bottom
 part of `y` that is similar enough to `y`. -/
 def tolerant (r : α → α → Prop) (Q : α → Set W) (y : α) : Set W :=
-  {w | ∃ z, r z y ∧ ¬ IsBot z ∧ w ∈ Q z}
+  {w | ∃ z, r z y ∧ z ≠ ⊥ ∧ w ∈ Q z}
 
 -- (16a)
-theorem tolerant_eq (hy : ¬ IsBot y) : tolerant (· = ·) Q y = Q y := by
+theorem tolerant_eq (hy : y ≠ ⊥) : tolerant (· = ·) Q y = Q y := by
   ext
   simp only [tolerant]
   grind
@@ -111,7 +113,7 @@ theorem exists_isTolerance_iff_mem_readings {p : Set W} :
       exacts [⟨z, hyU, le_rfl, hzb, hw⟩, ⟨z, hz, hzy, hzb, hw⟩]
 
 /-- *all*, which quantifies over tolerances (20), forces the maximal reading. -/
-theorem all_maximal (hy : ¬ IsBot y) :
+theorem all_maximal (hy : y ≠ ⊥) :
     (∀ r, IsTolerance r → w ∈ tolerant r Q y) ↔ w ∈ Q y := by
   refine ⟨fun h ↦ ?_, fun h r hr ↦ ⟨y, hr.refl y, hy, h⟩⟩
   obtain ⟨z, rfl, -, hw⟩ := h _ isTolerance_eq
@@ -125,16 +127,12 @@ section Distributivity
 
 variable {Atom W : Type*} {r : Finset Atom → Finset Atom → Prop}
 
-private theorem minimal_singleton (a : Atom) : Minimal (¬ IsBot ·) ({a} : Finset Atom) := by
-  refine ⟨fun h ↦ Finset.singleton_ne_empty a (isBot_iff_eq_bot.1 h), fun z hz hza ↦ ?_⟩
-  grind [isBot_iff_eq_bot]
-
 /-- *each* (21c) is maximal even over a predicate relativized to a tolerance (§2.3, (21d)). -/
 theorem each_maximal (hr : IsTolerance r) (Q : Finset Atom → Set W) (x : Finset Atom) :
     {w | ∀ a ∈ x, w ∈ tolerant r Q {a}} = {w | ∀ a ∈ x, w ∈ Q {a}} := by
   have h (a : Atom) : tolerant r Q {a} = Q {a} := by
     have := (exists_isTolerance_iff_mem_readings (Q := Q) (y := {a})).1 ⟨r, hr, rfl⟩
-    rwa [readings_of_minimal (minimal_singleton a), Set.mem_singleton_iff] at this
+    rwa [readings_of_isAtom (Finset.isAtom_singleton a), Set.mem_singleton_iff] at this
   simp only [h]
 
 end Distributivity
@@ -248,11 +246,11 @@ theorem jeder_rejects_magnets : ¬ ∀ b ∈ (Finset.univ : Finset Box), hasTwoM
 determiner of (27). -/
 theorem jeweils_accepts_magnets :
     () ∈ tolerant (· ≤ ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) :=
-  ⟨{0, 1, 2, 3}, Finset.subset_univ _, isBot_iff_eq_bot.not.2 (by decide), by decide⟩
+  ⟨{0, 1, 2, 3}, Finset.subset_univ _, (by decide), by decide⟩
 
 theorem jeweils_identity_rejects_magnets :
     () ∉ tolerant (· = ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) := by
-  rw [tolerant_eq (isBot_iff_eq_bot.not.2 (by decide))]
+  rw [tolerant_eq ((by decide))]
   exact jeder_rejects_magnets
 
 end HaslingerEtAl2025

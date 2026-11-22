@@ -132,7 +132,7 @@ theorem box_eq_undefined_of_notMem_excludedMiddle (H : SetRel W W)
 
 -- (116)
 theorem isAntiAdditive_exhNot (R : SetRel W W) : IsAntiAdditive (exhNot R) := fun p q ↦ by
-  simp only [exhNot_eq, Set.sup_eq_union, Set.inf_eq_inter, dom_inter_core_compl_union]
+  simp only [exhNot_eq, dom_inter_core_compl_union]
 
 -- (124)
 theorem isGreatest_compl_core_preimage :

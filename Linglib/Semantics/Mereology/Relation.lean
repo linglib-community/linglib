@@ -13,22 +13,20 @@ part-structure properties of that set. Summativity is closure of `θ` under sums
 participants and of events are injectivity of the two projections on `θ`, and the mapping and
 uniqueness conditions relate the parts of a related object to the parts of its event. Each
 condition on the object side is the event-side condition of the converse relation `θ.inv`. A
-relation maps to events exactly when
-[the objects of a divisive set of events are divisive](##Mereology.me_iff_forall_isLowerSet), and
-under both uniqueness conditions the parts of a related object and event
-[correspond by an order isomorphism](##Mereology.UE.partOrderIso) whose graph is `θ`. Uniqueness
-of objects makes mapping to subobjects the same as
-[quantization of the events of each object](##Mereology.UO.mso_iff_forall_qua), and a summative
-relation with unique events [gives each object one event](##Mereology.UE.gue_of_sum).
+relation maps to events exactly when the objects of a divisive set of events are divisive
+(`Mereology.me_iff_forall_isLowerSet`), and under both uniqueness conditions the parts of a
+related object and event correspond by an order isomorphism whose graph is `θ`
+(`Mereology.UE.partOrderIso`). Uniqueness of objects makes mapping to subobjects the same as
+quantization of the events of each object (`Mereology.UO.mso_iff_forall_qua`), and a summative
+relation with unique events gives each object one event (`Mereology.UE.gue_of_sum`).
 
 When the relation is the converse graph of a thematic function, as in [champollion-krifka-2016],
 the conditions become properties of the function: summativity is preservation of sums, general
 uniqueness of events is injectivity, mapping to subobjects is strict monotonicity, and mapping to
 events is mathlib's `Relation.Fibration` for the part orders. A summative relation with unique
-participants is always such a converse graph, of [a partial sum
-homomorphism](##Mereology.UP.inv_graph_toSupPMap) defined on the events that have a participant,
-and it [maps to objects](##Mereology.mo_graph_supPMap_iff) exactly when that domain is closed under
-parts.
+participants is always such a converse graph, of a partial sum homomorphism defined on the
+events that have a participant (`Mereology.UP.inv_graph_toSupPMap`), and it maps to objects
+exactly when that domain is closed under parts (`Mereology.mo_graph_supPMap_iff`).
 
 ## References
 
@@ -149,7 +147,7 @@ as `Relation.fibration_iff_isLowerSet_image` characterizes a fibration. -/
 theorem me_iff_forall_isLowerSet :
     ME θ ↔ ∀ s : Set β, IsLowerSet s → IsLowerSet (θ.preimage s) :=
   ⟨fun h _ hs _ _ hle ⟨_, he, hθ⟩ ↦ let ⟨e', he', hθ'⟩ := h hθ hle; ⟨e', hs he' he, hθ'⟩,
-    fun h _ e hθ _ hle ↦ h _ (isLowerSet_Iic e) hle ⟨e, le_rfl, hθ⟩⟩
+    fun h _ e hθ _ hle ↦ h _ (IsLowerSet.Iic e) hle ⟨e, le_rfl, hθ⟩⟩
 
 /-- A relation maps to objects iff the events related to a lower set of objects form a lower
 set. -/
@@ -182,7 +180,7 @@ theorem UO.mso_of_ue (hO : UO θ) (hE : UE θ) : MSO θ := UE.mse_of_uo hO hE
 /-- Under uniqueness of objects, a relation maps to subobjects iff the events of each object form
 a quantized predicate: it takes the whole event to relate the object, not a part of it
 ([krifka-1998], after (50)). -/
-theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA (x ~[θ] ·) :=
+theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA {e | x ~[θ] e} :=
   ⟨fun hm _ ↦ qua_of_forall fun _ _ he hlt he' ↦
       let ⟨_, hy, hθ⟩ := hm he hlt
       hy.ne ((hO he hlt.le).unique ⟨hy.le, hθ⟩ ⟨le_rfl, he'⟩),
@@ -190,7 +188,7 @@ theorem UO.mso_iff_forall_qua (hO : UO θ) : MSO θ ↔ ∀ x, QUA (x ~[θ] ·) 
       let ⟨y, hy, hθ⟩ := (hO hxe hlt.le).exists
       ⟨y, lt_of_le_of_ne hy fun h ↦ hq x (h ▸ hθ : x ~[θ] e') hxe hlt.ne hlt.le, hθ⟩⟩
 
-theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (x ~[θ] ·) :=
+theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA {e | x ~[θ] e} :=
   hO.mso_iff_forall_qua.mp hm x
 
 end PartialOrder

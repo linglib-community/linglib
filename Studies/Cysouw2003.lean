@@ -2,9 +2,9 @@ module
 
 public import Linglib.Data.Examples.Cysouw2003
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Tagalog.Pronouns
 public import Linglib.Morphology.Paradigm.Morphome
@@ -308,11 +308,11 @@ def HorizontalHomophony : Prop := ∃ (a : Singular) (b : Category), b.IsGroup �
 /-- The singular `a` shares its morpheme with a group of its own person, the first person with
 the exclusive or the inclusive, the second with 2+3, the third with 3+3. -/
 def HorizontalHomophonyAt (a : Singular) : Prop :=
-  ∃ b : Category, b.IsGroup ∧ b.person.coarsen = a.1.person ∧ s a b
+  ∃ b : Category, b.IsGroup ∧ b.person = a.1.person ∧ s a b
 
 /-- A singular category shares a morpheme with a group of another person. -/
 def DiagonalHomophony : Prop :=
-  ∃ (a : Singular) (b : Category), b.IsGroup ∧ b.person.coarsen ≠ a.1.person ∧ s a b
+  ∃ (a : Singular) (b : Category), b.IsGroup ∧ b.person ≠ a.1.person ∧ s a b
 
 /-- Two groups share a morpheme, homophony inside the first person complex not counted. -/
 def VerticalHomophony : Prop :=

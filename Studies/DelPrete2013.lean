@@ -37,7 +37,7 @@ aspectual phrase, (24e). The branches of a situation are its sub-situations lyin
 single history, given by a predicate `linear`, and the forward expansion, taken from [deo-2009]
 and which the chapter does not take to be a function, is a parameter `fexp` chosen per
 utterance. Verbs are event predicates with the agent conjunct folded in, the lexical
-cumulativity hypothesis is `Mereology.AlgClosure` of the singular events, and a plural event is
+cumulativity hypothesis is mathlib's `supClosure` of the singular events, and a plural event is
 `Mereology.IsPlural`, the iteration of the same volume's [boneh-doron-2013]. The kind of a noun
 is a parameter, the sum of its individuals, and a "kind coerced" indefinite ranges over a given
 set of sub-kinds, parts of the kind. Example numbers are those of the HAL preprint hal-00920848.
@@ -73,13 +73,13 @@ open Mereology
 variable {S E I : Type*}
 
 /-- `x` is an atomic part of `y`, the chapter's `x AT y`. -/
-def AtomicPart {α : Type*} [PartialOrder α] (x y : α) : Prop := Atom x ∧ x ≤ y
+def AtomicPart {α : Type*} [PartialOrder α] [OrderBot α] (x y : α) : Prop := IsAtom x ∧ x ≤ y
 
 /-! ### Throughout and the imperfective, §4.1 -/
 
 section Aspect
 
-variable [SemilatticeSup S] [SemilatticeSup E] (linear : S → Prop) (τ : SupHom E S)
+variable [SemilatticeSup S] [SemilatticeSup E] [OrderBot E] (linear : S → Prop) (τ : SupHom E S)
 
 /-- A branch of a situation: a sub-situation lying within a single history. -/
 def Branch (b s : S) : Prop := linear b ∧ b ≤ s
@@ -98,15 +98,15 @@ def Large (V₀ : E → Prop) (s : S) : Prop := ∀ b, Branch linear b s → ∀
 variable {linear τ}
 
 -- §5
-theorem isPlural_of_large {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {s : S}
+theorem isPlural_of_large {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → IsAtom e) {s : S}
     (hL : Large linear τ V₀ s) {b : S} (hb : Branch linear b s) {e : E}
-    (he : AlgClosure V₀ e) (hbe : b ≤ τ e) : IsPlural V₀ e :=
-  (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (of_algClosure_of_atom he ha) hbe⟩
+    (he : e ∈ supClosure {e | V₀ e}) (hbe : b ≤ τ e) : IsPlural {e | V₀ e} e :=
+  (isPlural_iff_of_isAtom hV₀).2 ⟨he, λ ha => hL b hb e (mem_of_mem_supClosure_of_isAtom he ha) hbe⟩
 
 -- §5
 theorem impf_of_le {V₀ : E → Prop} {fexp : S → S} {s : S} {e : E} (he : V₀ e)
-    (hs : fexp s ≤ τ e) : IMPF linear τ fexp (AlgClosure V₀) s :=
-  λ _ hb => ⟨e, .base he, hb.2.trans hs⟩
+    (hs : fexp s ≤ τ e) : IMPF linear τ fexp (· ∈ supClosure {e | V₀ e}) s :=
+  λ _ hb => ⟨e, subset_supClosure he, hb.2.trans hs⟩
 
 end Aspect
 
@@ -114,7 +114,7 @@ end Aspect
 
 section Objects
 
-variable [SemilatticeSup E] [SemilatticeSup I] (Th : SupHom E I)
+variable [SemilatticeSup E] [OrderBot E] [SemilatticeSup I] [OrderBot I] (Th : SupHom E I)
 
 /-- (24d): a verb with a singular indefinite object, `λe. ∃x [N(x) ∧ V(e) ∧ Th(e) = x]`. -/
 def indefinite (N : I → Prop) (V : E → Prop) (e : E) : Prop := ∃ x, N x ∧ V e ∧ Th e = x
@@ -143,15 +143,15 @@ variable {Th}
 
 section SSP
 
-variable (hTh : ∀ e, Atom e → ¬ IsBot (Th e))
+variable (hTh : ∀ e, IsAtom e → (Th e) ≠ ⊥)
 include hTh
 
-theorem ssp {x : I} (hx : Atom x) {e e' : E} (h : Th e = x) (he' : AtomicPart e' e) :
+theorem ssp {x : I} (hx : IsAtom x) {e e' : E} (h : Th e = x) (he' : AtomicPart e' e) :
     Th e' = x :=
-  hx.eq (h ▸ OrderHomClass.monotone Th he'.2) (hTh e' he'.1)
+  (hx.le_iff_eq (hTh e' he'.1)).1 (h ▸ OrderHomClass.monotone Th he'.2)
 
 -- §5, (24d)
-theorem soe {N : I → Prop} (hN : ∀ ⦃x⦄, N x → Atom x) {V : E → Prop} {e : E}
+theorem soe {N : I → Prop} (hN : ∀ ⦃x⦄, N x → IsAtom x) {V : E → Prop} {e : E}
     (h : indefinite Th N V e) : ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
   let ⟨x, hx, _, h'⟩ := h; ⟨x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
 
@@ -165,10 +165,12 @@ theorem barePlural_of_kindIndefinite {K : I → Prop} {k : I} (hK : ∀ ⦃X⦄,
 
 -- (13), (9a), footnote 12
 theorem not_kindIndefinite_of_barePlural :
-    ∃ (E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
+    ∃ (E I : Type) (_ : SemilatticeSup E) (_ : OrderBot E)
+      (_ : SemilatticeSup I) (_ : OrderBot I) (Th : SupHom E I)
       (K : I → Prop) (k : I) (V : E → Prop) (e : E),
       (∀ ⦃X⦄, K X → X ≤ k) ∧ barePlural Th V k e ∧ ¬ kindIndefinite Th K V e :=
-  ⟨Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, SupHom.id _,
+  ⟨Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, inferInstance, inferInstance,
+    SupHom.id _,
     λ X => X = {0} ∨ X = {1}, {0, 1}, λ _ => True, {0, 1}, by decide,
     by unfold barePlural distributes AtomicPart; decide,
     by unfold kindIndefinite barePlural distributes AtomicPart; decide⟩
@@ -179,19 +181,23 @@ theorem sempre_of_forall_not {C : S → Prop} (hC : ∀ s, ¬ C s) (R : E → S 
 
 -- (29), §6
 theorem sempre_indefinite_no_soe :
-    ∃ (S E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
+    ∃ (S E I : Type) (_ : SemilatticeSup E) (_ : OrderBot E)
+      (_ : SemilatticeSup I) (_ : OrderBot I) (Th : SupHom E I)
       (C : S → Prop) (R : E → S → Prop) (N : I → Prop) (V : E → Prop) (e₀ : E),
       sempre C R (indefinite Th N V) e₀ ∧ ¬ ∃ x, ∀ e', AtomicPart e' e₀ → Th e' = x :=
-  ⟨Fin 2, Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, SupHom.id _,
+  ⟨Fin 2, Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, inferInstance,
+    inferInstance, SupHom.id _,
     λ _ => True, λ e s => e = {s}, λ x => x = {0} ∨ x = {1}, λ _ => True, {0, 1},
     by unfold sempre indefinite; decide, by unfold AtomicPart; decide⟩
 
 -- (30), §6
 theorem barePlural_no_soe :
-    ∃ (E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
+    ∃ (E I : Type) (_ : SemilatticeSup E) (_ : OrderBot E)
+      (_ : SemilatticeSup I) (_ : OrderBot I) (Th : SupHom E I)
       (V : E → Prop) (k : I) (e : E),
       barePlural Th V k e ∧ ¬ ∃ x, ∀ e', AtomicPart e' e → Th e' = x :=
-  ⟨Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, SupHom.id _, λ _ => True,
+  ⟨Finset (Fin 2), Finset (Fin 2), inferInstance, inferInstance, inferInstance, inferInstance,
+    SupHom.id _, λ _ => True,
     {0, 1}, {0, 1}, by unfold barePlural distributes AtomicPart; decide,
     by unfold AtomicPart; decide⟩
 
@@ -201,27 +207,28 @@ end Objects
 
 section SameObject
 
-variable [SemilatticeSup S] [SemilatticeSup E] [SemilatticeSup I] {linear : S → Prop}
-  {τ : SupHom E S} {Th : SupHom E I} (hTh : ∀ e, Atom e → ¬ IsBot (Th e))
+variable [SemilatticeSup S] [SemilatticeSup E] [OrderBot E] [SemilatticeSup I]
+  [OrderBot I] {linear : S → Prop}
+  {τ : SupHom E S} {Th : SupHom E I} (hTh : ∀ e, IsAtom e → (Th e) ≠ ⊥)
 include hTh
 
 /-- On the habitual reading (P1), every branch of the large expanded situation has a plural
 `V₀`-event with one `N`-theme per atom (§5). -/
-theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {N : I → Prop}
-    (hN : ∀ ⦃x⦄, N x → Atom x) {fexp : S → S} {s : S} (hL : Large linear τ V₀ (fexp s))
-    (h : IMPF linear τ fexp (indefinite Th N (AlgClosure V₀)) s) {b : S}
+theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → IsAtom e) {N : I → Prop}
+    (hN : ∀ ⦃x⦄, N x → IsAtom x) {fexp : S → S} {s : S} (hL : Large linear τ V₀ (fexp s))
+    (h : IMPF linear τ fexp (indefinite Th N (· ∈ supClosure {e | V₀ e})) s) {b : S}
     (hb : Branch linear b (fexp s)) :
-    ∃ e, IsPlural V₀ e ∧ b ≤ τ e ∧ ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
+    ∃ e, IsPlural {e | V₀ e} e ∧ b ≤ τ e ∧ ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
   let ⟨e, ⟨x, hx, hcl, h'⟩, hbe⟩ := h b hb
   ⟨e, isPlural_of_large hV₀ hL hb hcl hbe, hbe, x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
 
 -- (2b), §7
-theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀ e → Atom e)
-    {book : I → Prop} (hN : ∀ ⦃x⦄, book x → Atom x)
-    (hCK : ∀ e, IsPlural read₀ e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
+theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀ e → IsAtom e)
+    {book : I → Prop} (hN : ∀ ⦃x⦄, book x → IsAtom x)
+    (hCK : ∀ e, IsPlural {e | read₀ e} e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
     {fexp : S → S} {s : S} (hL : Large linear τ read₀ (fexp s)) {b : S}
     (hb : Branch linear b (fexp s)) :
-    ¬ IMPF linear τ fexp (indefinite Th book (AlgClosure read₀)) s := by
+    ¬ IMPF linear τ fexp (indefinite Th book (· ∈ supClosure {e | read₀ e})) s := by
   intro h
   obtain ⟨e, hpl, -, x, hx, hsame⟩ := hab_soe hTh hV₀ hN hL h hb
   obtain ⟨e', he', hne⟩ := hCK e hpl x hx
@@ -231,19 +238,22 @@ end SameObject
 
 -- (2a), §7
 theorem impf_indefinite_witness :
-    ∃ (S E I : Type) (_ : SemilatticeSup S) (_ : SemilatticeSup E) (_ : SemilatticeSup I)
+    ∃ (S E I : Type) (_ : SemilatticeSup S) (_ : SemilatticeSup E) (_ : OrderBot E)
+      (_ : SemilatticeSup I) (_ : OrderBot I)
       (linear : S → Prop) (τ : SupHom E S) (Th : SupHom E I) (drive₀ : E → Prop)
       (car : I → Prop) (fexp : S → S) (s : S),
-      (∀ ⦃e⦄, drive₀ e → Atom e) ∧ (∀ ⦃x⦄, car x → Atom x) ∧ (∀ e, Atom e → ¬ IsBot (Th e)) ∧
+      (∀ ⦃e⦄, drive₀ e → IsAtom e) ∧ (∀ ⦃x⦄, car x → IsAtom x) ∧ (∀ e, IsAtom e → (Th e) ≠ ⊥) ∧
         Large linear τ drive₀ (fexp s) ∧ (∃ b, Branch linear b (fexp s)) ∧
-        IMPF linear τ fexp (indefinite Th car (AlgClosure drive₀)) s :=
+        IMPF linear τ fexp (indefinite Th car (· ∈ supClosure {e | drive₀ e})) s :=
   ⟨Finset (Fin 2), Finset (Fin 2), Finset (Fin 1), inferInstance, inferInstance, inferInstance,
+    inferInstance,
+    inferInstance,
     (· = {0, 1}), SupHom.id _, SupHom.const _ {0}, λ e => e = {0} ∨ e = {1}, (· = {0}),
     λ _ => {0, 1}, {0}, by decide, by decide, by decide, by unfold Large Branch; decide,
     ⟨{0, 1}, rfl, le_rfl⟩, by
       rintro b ⟨rfl, -⟩
-      exact ⟨{0} ⊔ {1}, ⟨{0}, rfl, .sum (.base (Or.inl rfl)) (.base (Or.inr rfl)), rfl⟩,
-        by decide⟩⟩
+      exact ⟨{0} ⊔ {1}, ⟨{0}, rfl, supClosed_supClosure (subset_supClosure (Or.inl rfl))
+        (subset_supClosure (Or.inr rfl)), rfl⟩, by decide⟩⟩
 
 /-! ### Against the covert quantifier, §2
 
@@ -254,28 +264,28 @@ section Gen
 
 open Genericity
 
-variable (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
+variable (N : Normality S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
 
 /-- (10b): the negated kind indefinite of (9b) scoping over GEN, as assumption (α)1 demands:
 there is no sub-kind of tuscan cigar that Gianni smokes in every appropriate situation. -/
-def genWide : Prop := ¬ ∃ X, K X ∧ () ∈ N.gen {s | φ s} {s | P X s}
+def genWide : Prop := ¬ ∃ X, K X ∧ N.gen {s | φ s} {s | P X s}
 
 /-- (10'b): the negation below GEN: in no appropriate situation does Gianni smoke a sub-kind of
 tuscan cigar. -/
-def genNarrow : Prop := () ∈ N.gen {s | φ s} {s | ¬ ∃ X, K X ∧ P X s}
+def genNarrow : Prop := N.gen {s | φ s} {s | ¬ ∃ X, K X ∧ P X s}
 
 variable {N K φ P}
 
 /-- (10'b) is logically stronger than (10b), whatever the appropriate situations, provided there
 is one. -/
-theorem genWide_of_genNarrow (hφ : (N.normal () {s | φ s}).Nonempty) (h : genNarrow N K φ P) :
+theorem genWide_of_genNarrow (hφ : (N.normal {s | φ s}).Nonempty) (h : genNarrow N K φ P) :
     genWide N K φ P :=
   fun ⟨X, hX, hall⟩ ↦ let ⟨_, hs⟩ := hφ; h hs ⟨X, hX, hall hs⟩
 
 /-- Formula (10b) holds where (9b) and (10'b) fail, so it is too weak. -/
 theorem not_genNarrow_of_genWide :
-    ∃ (S I : Type) (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
-      (N.normal () {s | φ s}).Nonempty ∧ genWide N K φ P ∧ ¬ genNarrow N K φ P :=
+    ∃ (S I : Type) (N : Normality S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
+      (N.normal {s | φ s}).Nonempty ∧ genWide N K φ P ∧ ¬ genNarrow N K φ P :=
   ⟨Bool, Bool, ⊤, fun _ ↦ True, fun _ ↦ True, (· = ·), ⟨true, trivial⟩,
     fun ⟨X, _, hall⟩ ↦ absurd (hall (show (!X) ∈ {_s : Bool | True} from trivial))
       (by cases X <;> decide),

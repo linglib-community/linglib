@@ -17,7 +17,7 @@ edge is the escape hatch: such a link `Crosses` the phase. A token with one copy
 binding in situ [is not subject to it](##Minimalist.not_crosses_of_length_le_one), and movement,
 covert movement included, is, as Sato and Ngui find. The interior of a phase on positions is the
 c-command domain of its head, and it [carries the terms within the complement of the unordered
-phase](##Minimalist.withinComplement_iff_exists_mem_cCommandDomain).
+phase](##Minimalist.withinComplement_iff_exists_cCommands).
 
 ## Implementation notes
 
@@ -42,19 +42,18 @@ variable (hd : HeadFunction) (t : PlanarSyntacticObject) (tok : LexicalItem.Toke
 
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/
-theorem withinComplement_iff_exists_mem_cCommandDomain {t : PlanarSyntacticObject}
+theorem withinComplement_iff_exists_cCommands {t : PlanarSyntacticObject}
     {ℓ : LexicalItem.Token} {a : t.toRoseTree.Positions} {x : SyntacticObject}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
     (hph : (t : SyntacticObject).IsPhaseHead ℓ) :
     (t : SyntacticObject).WithinComplement ℓ x ↔
-      ∃ q : t.toRoseTree.Positions, ↑q ∈ t.toRoseTree.cCommandDomain a ∧ t.termAt q = x := by
+      ∃ q : t.toRoseTree.Positions, t.toRoseTree.CCommands a q ∧ t.termAt q = x := by
   have ha : t.termAt a = SyntacticObject.leaf ℓ := (hu a).2 rfl
   have hu' : ∀ q, t.termAt q = t.termAt a → q = a := fun q hq ↦ (hu q).1 (hq.trans ha)
   obtain ⟨m₀, hm₀, hℓ, hm₀ℓ⟩ := hph
   rw [← mem_phaseInterior, phaseInterior_eq_cCommandDomain fun m hm hmℓ ↦ ?_,
     SyntacticObject.mem_cCommandDomain, ← ha]
-  · simpa only [RoseTree.mem_cCommandDomain] using
-      PlanarSyntacticObject.cCommands_termAt_iff hu'
+  · exact PlanarSyntacticObject.cCommands_termAt_iff hu'
   · rw [PlanarSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm (by rwa [ha]),
       ← PlanarSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm₀ (by rwa [ha])]
     exact hℓ
@@ -63,7 +62,7 @@ theorem withinComplement_iff_exists_mem_cCommandDomain {t : PlanarSyntacticObjec
 head c-commands, the phase's interior, to a position outside the head's maximal projection; the
 Phase Impenetrability Condition forbids it, and a link to the edge does not leave. -/
 def Crosses (h : GornAddress) : Prop :=
-  ∃ x ∈ links hd t tok, x.2 ∈ t.toRoseTree.cCommandDomain h ∧ ¬ projectionAt hd t h ≤ x.1
+  ∃ x ∈ links hd t tok, t.toRoseTree.CCommands h x.2 ∧ ¬ projectionAt hd t h ≤ x.1
 
 instance (h : GornAddress) : Decidable (Crosses hd t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _,
     _))

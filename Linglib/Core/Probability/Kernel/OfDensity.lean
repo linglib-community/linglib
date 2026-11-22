@@ -68,7 +68,7 @@ theorem _root_.ProbabilityTheory.cond_withDensity_eq_cond_iff {Ω : Type*} [Meas
   refine ⟨fun h ↦ ?_, fun ⟨c, hc0, hc, hc'⟩ ↦ cond_withDensity_of_ae_eq μ hs hc0 hc hc'⟩
   have h1 : (μ.withDensity f s)⁻¹ * μ.withDensity f s = 1 := by
     have := congrArg (· s) h
-    simpa only [cond, Measure.smul_apply, Measure.restrict_apply_self, smul_eq_mul,
+    simpa only [cond, smul_apply, Measure.restrict_apply_self, smul_eq_mul,
       ENNReal.inv_mul_cancel h0 htop] using this
   have hν0 : μ.withDensity f s ≠ 0 := fun h' ↦ by simp [h'] at h1
   have hνtop : μ.withDensity f s ≠ ∞ := fun h' ↦ by simp [h'] at h1
@@ -156,15 +156,6 @@ theorem ofDensity_apply_singleton_ne_zero_iff (μ : Measure β) [IsFiniteMeasure
   rw [ofDensity_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, not_or]
   exact and_iff_left (ENNReal.sum_ne_top.mpr fun b' _ ↦
     ENNReal.mul_ne_top (hf b') (measure_ne_top _ _))
-
-theorem ofDensity_apply_singleton_of_equiv {α' β' : Type*} [MeasurableSpace α']
-    [MeasurableSpace β'] [Countable α'] [MeasurableSingletonClass α'] [Fintype β']
-    [MeasurableSingletonClass β'] (e : β ≃ β') {μ : Measure β} {μ' : Measure β'}
-    {f : α → β → ℝ≥0∞} {f' : α' → β' → ℝ≥0∞} {a : α} {a' : α'} (hμ : ∀ b, μ' {e b} = μ {b})
-    (hf : ∀ b, f' a' (e b) = f a b) (b : β) :
-    ofDensity μ' f' a' {e b} = ofDensity μ f a {b} := by
-  rw [ofDensity_apply_singleton, ofDensity_apply_singleton, hf, hμ, ← e.sum_comp]
-  simp only [hf, hμ]
 
 variable [Nonempty β]
 

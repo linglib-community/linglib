@@ -37,8 +37,7 @@ proposition.
 
 Causation is a relation between two eventualities at each world, the papers' `cause s e w`. For a
 fixed world `causedClosure` is possibility along the causal relation of that world, as the
-causative head `ArgumentStructure.EventStructure.Interpretation.vCause` is possibility along
-`cause`.
+causative head is possibility along `ArgumentStructure.EventStructure.Interpretation.cause`.
 
 ## References
 

@@ -71,10 +71,9 @@ theorem mono_right (hab : a ≤ b) (hb : r c b) : r c a := by
   rw [← sup_eq_right.2 hab] at hb
   exact (sup_right_iff.1 hb).1
 
-/-- Overlapping events do not precede each other ([krifka-1998] (35)). -/
-theorem not_of_overlap (hab : Overlap a b) : ¬ r a b := fun hr ↦
-  let ⟨z, _, hza, hzb⟩ := hab
-  irrefl_of r z (mono_right hzb (mono_left hza hr))
+/-- Events with a common part do not precede each other ([krifka-1998] (35)). -/
+theorem not_of_le_of_le (hca : c ≤ a) (hcb : c ≤ b) : ¬ r a b := fun hr ↦
+  irrefl_of r c (mono_right hcb (mono_left hca hr))
 
 end IsTemporalPrecedence
 

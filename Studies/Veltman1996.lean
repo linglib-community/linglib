@@ -782,8 +782,8 @@ theorem IsGeneral.normally_eq_absurd_iff (h : σ.IsGeneral) (hσ : σ.info.Nonem
 the optimal worlds of section 3, so that the presumptions of section 4 extend those of
 section 3. -/
 theorem IsGeneral.presumably_eq_self_iff (h : σ.IsGeneral) (hσ : σ ≠ absurd) :
-    presumably φ σ = σ ↔ σ.toOrderedInformationState.boxLe (· ∈ φ) := by
-  rw [OrderedInformationState.boxLe, ← h.optimal_eq, presumably]
+    presumably φ σ = σ ↔ ∀ w ∈ σ.toOrderedInformationState.optimal, w ∈ φ := by
+  rw [← h.optimal_eq, presumably]
   refine ⟨fun he w hw ↦ by_contra fun hφ ↦ hσ ?_, fun hb ↦ ite_eq_left fun w hw ↦ hb w hw⟩
   rw [← he, ite_eq_right fun hs ↦ hφ (hs hw)]
 

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.InformationTheory.Entropy.Tilted
 public import Linglib.Core.InformationTheory.InformationLoss
 public import Linglib.Pragmatics.Probabilistic.Recursion
 
@@ -58,29 +59,6 @@ open scoped ENNReal
 
 namespace RSA
 
-/-- Gibbs' variational identity for normalized weights. The divergence from the normalized weights
-and the entropy add up to the log of the total weight less the expected log-weight, so normalizing
-gives the distribution with the greatest entropy plus expected log-weight. -/
-private theorem toReal_klDiv_ofWeights_add_measureEntropy {S ι : Type*} [MeasurableSpace S]
-    [MeasurableSingletonClass S] {μ : Measure S} [MeasurableSpace ι] [Countable ι]
-    [MeasurableSingletonClass ι] [Fintype S] [IsProbabilityMeasure μ] {w : ι → S → ℝ≥0∞} {i : ι}
-    (hw : ∀ s, w i s ≠ ∞) (hμ : μ ≪ Kernel.ofWeights w i) :
-    (klDiv μ (Kernel.ofWeights w i)).toReal + Hm[μ] =
-      log (∑ s, (w i s).toReal) - ∑ s, μ.real {s} * log (w i s).toReal := by
-  have := Kernel.isProbabilityMeasure_ofWeights_of_absolutelyContinuous hw hμ
-  have hterm (s : S) : μ.real {s} * log ((Kernel.ofWeights w i).real {s}) =
-      μ.real {s} * log (w i s).toReal - μ.real {s} * log (∑ s, (w i s).toReal) := by
-    rcases eq_or_ne (μ.real {s}) 0 with h | h
-    · simp [h]
-    · have hp : (Kernel.ofWeights w i).real {s} ≠ 0 := fun h0 ↦
-        h ((measureReal_eq_zero_iff (measure_ne_top _ _)).2
-          (hμ ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h0)))
-      rw [Kernel.ofWeights_real_singleton w i hw] at hp ⊢
-      rw [log_div (fun h0 ↦ hp (by rw [h0, zero_div])) fun h0 ↦ hp (by rw [h0, div_zero]), mul_sub]
-  rw [toReal_klDiv_add_measureEntropy hμ, Finset.sum_congr rfl fun s _ ↦ hterm s,
-    Finset.sum_sub_distrib, ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ,
-    probReal_univ, one_mul, neg_sub]
-
 variable {W O U : Type*} [MeasurableSpace W] [MeasurableSpace O] [MeasurableSpace U]
 
 /-! ### The speaker at one observation -/
@@ -124,7 +102,7 @@ theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ spe
       ← exp_add, ENNReal.toReal_ofReal (exp_pos _).le, log_exp, integral_fintype .of_finite]
     simp only [smul_eq_mul, measureReal_def]
     ring
-  have key := toReal_klDiv_ofWeights_add_measureEntropy (μ := q) (i := o)
+  have key := toReal_klDiv_ofWeights_add_measureEntropy (q := q) (i := o)
     (w := fun o u ↦ (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (exp (-(α * C u))))
     (fun u ↦ ENNReal.mul_ne_top (hw u) ENNReal.ofReal_ne_top)
     (by rwa [speaker_eq_ofWeights] at hq)

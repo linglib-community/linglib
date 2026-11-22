@@ -74,15 +74,15 @@ variable [Fintype T]
 /-- The indexical field of a first-order index is its closure under the ideological links,
 every meaning the index is continually reconstrued as. -/
 def indexicalField : ClosureOperator (Finset T) :=
-  .mk₂ (λ S => Finset.univ.filter λ t => ∃ s ∈ S, Relation.ReflTransGen (λ a b => b ∈ I a) s t)
-    (λ _ _ h => Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h, .refl⟩)
-    (λ _ _ h _ ht => by
+  .mk₂ (fun S ↦ Finset.univ.filter fun t ↦ ∃ s ∈ S, Relation.ReflTransGen (fun a b ↦ b ∈ I a) s t)
+    (fun _ _ h ↦ Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h, .refl⟩)
+    (fun _ _ h _ ht ↦ by
       obtain ⟨s, hs, hst⟩ := (Finset.mem_filter.1 ht).2
       obtain ⟨u, hu, hus⟩ := (Finset.mem_filter.1 (h hs)).2
       exact Finset.mem_filter.2 ⟨Finset.mem_univ _, u, hu, hus.trans hst⟩)
 
 @[simp] theorem mem_indexicalField :
-    t ∈ I.indexicalField S ↔ ∃ s ∈ S, Relation.ReflTransGen (λ a b => b ∈ I a) s t := by
+    t ∈ I.indexicalField S ↔ ∃ s ∈ S, Relation.ReflTransGen (fun a b ↦ b ∈ I a) s t := by
   simp [indexicalField]
 
 theorem iterate_closeStep_subset_indexicalField (n : ℕ) (S : Finset T) :
@@ -99,7 +99,7 @@ theorem iterate_closeStep_subset_indexicalField (n : ℕ) (S : Finset T) :
 
 theorem mem_indexicalField_iff_exists_iterate :
     t ∈ I.indexicalField S ↔ ∃ n, t ∈ (closeStep I)^[n] S := by
-  refine ⟨λ h => ?_, λ ⟨n, h⟩ => I.iterate_closeStep_subset_indexicalField n S h⟩
+  refine ⟨fun h ↦ ?_, fun ⟨n, h⟩ ↦ I.iterate_closeStep_subset_indexicalField n S h⟩
   obtain ⟨s, hs, hst⟩ := I.mem_indexicalField.1 h
   clear h
   induction hst with
@@ -115,7 +115,7 @@ theorem isClosed_iff : I.indexicalField.IsClosed S ↔ closeStep I S = S := by
     refine (subset_closeStep S).antisymm' ?_
     exact (I.iterate_closeStep_subset_indexicalField 1 S).trans h.subset
   · intro h
-    refine (I.indexicalField.le_closure S).antisymm' λ t ht => ?_
+    refine (I.indexicalField.le_closure S).antisymm' fun t ht ↦ ?_
     obtain ⟨n, hn⟩ := I.mem_indexicalField_iff_exists_iterate.1 ht
     rwa [Function.iterate_fixed h] at hn
 
@@ -444,7 +444,7 @@ instance (g : Group) : DecidablePred (Leads g)
   | .newer | .negativeConcord => inferInstanceAs (Decidable (g.orientation = .burnout))
 
 theorem leads_all_iff (g : Group) : (∀ s, Leads g s) ↔ g = ⟨.girl, .burnout⟩ :=
-  ⟨λ h => by cases g; cases h .older; cases h .newer; rfl, by rintro rfl s; cases s <;> rfl⟩
+  ⟨fun h ↦ by cases g; cases h .older; cases h .newer; rfl, by rintro rfl s; cases s <;> rfl⟩
 
 theorem jockBoys_lead_none : ∀ s, ¬ Leads ⟨.boy, .jock⟩ s := by decide
 

@@ -23,7 +23,7 @@ entropy.
 ## Implementation notes
 
 * Scores take the alternative first and the target second; the paper writes the similarity with
-  the target first.
+  the target first. A similarity that depends on the context is the caller's `z` at that context.
 * Theorem 1 assumes an integrable distance and information values below one, where the paper's
   similarity-adjusted surprisal is finite; `Real.log 0 = 0` would make the infinite value zero.
 * Theorem 3 is stated over Levy's structures, each yielding one string (footnote 7), and reads
@@ -48,67 +48,64 @@ entropy.
 
 namespace MeisterGiulianelliPimentel2024
 
-open InformationTheory MeasureTheory ProbabilityTheory Surprisal Real Filter Topology
+open InformationTheory MeasureTheory ProbabilityTheory Real Filter Topology
 
-variable {C A W : Type*} [MeasurableSpace C] [MeasurableSpace A]
+variable {A W : Type*} [MeasurableSpace A]
 
 /-- Similarity-adjusted surprisal (Definition 1, eq. (6)): the negative logarithm of the expected
 similarity `z` of the alternatives to the target. -/
-noncomputable def simAdjSurprisal (L : Kernel C A) (z : A → W → C → ℝ) : C → W → ℝ :=
-  genSurprisal L (fun x ↦ -log x) z
+noncomputable def simAdjSurprisal (μ : Measure A) (z : A → W → ℝ) : W → ℝ :=
+  genSurprisal μ (fun x ↦ -log x) z
 
 /-- Similarity-adjusted entropy (eq. (4)): the expected similarity-adjusted surprisal of the
 alternatives. -/
-noncomputable def simAdjEntropy (L : Kernel C A) (z : A → A → C → ℝ) (c : C) : ℝ :=
-  ∫ a, simAdjSurprisal L z c a ∂(L c)
+noncomputable def simAdjEntropy (μ : Measure A) (z : A → A → ℝ) : ℝ :=
+  ∫ a, simAdjSurprisal μ z a ∂μ
 
 /-! ### Identity and class similarity -/
 
 section indicatorScore
 
-variable [MeasurableSpace W] [MeasurableSingletonClass W] (L : Kernel C W) (c : C)
+variable [MeasurableSpace W] [MeasurableSingletonClass W] (μ : Measure W)
 
 -- At a target of probability zero the surprisal is `∞` and both sides are `0`.
-theorem simAdjSurprisal_indicatorScore [IsMarkovKernel L] (w : W) :
-    simAdjSurprisal L indicatorScore c w = (surprisal (L c) w).toReal :=
-  genSurprisal_negLog_indicatorScore L c w
+theorem simAdjSurprisal_indicatorScore [IsZeroOrProbabilityMeasure μ] (w : W) :
+    simAdjSurprisal μ indicatorScore w = (surprisal μ w).toReal :=
+  genSurprisal_negLog_indicatorScore μ w
 
 /-- With the identity similarity, similarity-adjusted entropy is Shannon entropy (p. 16487)
 ((4)). -/
-theorem simAdjEntropy_indicatorScore [Countable W] [IsMarkovKernel L]
-    (hL : Integrable (fun w ↦ (surprisal (L c) w).toReal) (L c)) :
-    simAdjEntropy L indicatorScore c = Hm[L c] := by
+theorem simAdjEntropy_indicatorScore [Countable W] [IsZeroOrProbabilityMeasure μ]
+    (hμ : Integrable (fun w ↦ (surprisal μ w).toReal) μ) :
+    simAdjEntropy μ indicatorScore = Hm[μ] := by
   simp only [simAdjEntropy, simAdjSurprisal_indicatorScore]
-  exact (measureEntropy_eq_integral_surprisal _ hL).symm
+  exact (measureEntropy_eq_integral_surprisal _ hμ).symm
 
 omit [MeasurableSingletonClass W] in
 /-- The part-of-speech similarity (eq. (8)) is one when the tagger `f` puts the two words in
 the same class, and then similarity-adjusted surprisal is the surprisal of the target's class. -/
-theorem simAdjSurprisal_indicatorScore_comp [IsMarkovKernel L] {V : Type*} [MeasurableSpace V]
-    [MeasurableSingletonClass V] {f : C → W → V} (hf : Measurable (f c)) (w : W) :
-    simAdjSurprisal L (fun a w c ↦ indicatorScore (f c a) (f c w) c) c w =
-      (surprisal ((L c).map (f c)) (f c w)).toReal := by
-  have (a : W) : ({f c w} : Set V).indicator (1 : V → ℝ) (f c a) =
-      (f c ⁻¹' {f c w}).indicator 1 a := (Set.indicator_comp_right _).symm
-  simp only [simAdjSurprisal, genSurprisal, indicatorScore, this]
-  rw [integral_indicator_one (hf (measurableSet_singleton _)), toReal_surprisal prob_le_one,
-    map_measureReal_apply hf (measurableSet_singleton _)]
+theorem simAdjSurprisal_indicatorScore_comp [IsZeroOrProbabilityMeasure μ] {V : Type*}
+    [MeasurableSpace V] [MeasurableSingletonClass V] {f : W → V} (hf : Measurable f) (w : W) :
+    simAdjSurprisal μ (fun a w ↦ indicatorScore (f a) (f w)) w =
+      (surprisal (μ.map f) (f w)).toReal := by
+  rw [toReal_surprisal prob_le_one, map_measureReal_apply hf (measurableSet_singleton _)]
+  exact congrArg (fun x ↦ -log x)
+    (expectedScore_indicator (S := fun w ↦ f ⁻¹' {f w}) (hf (measurableSet_singleton _)))
 
 end indicatorScore
 
 /-- Raising the similarity to the power `α` (App. E.1): as `α` grows, similarity-adjusted
 surprisal tends to surprisal when the similarity is one on the diagonal and below one off it. -/
 theorem tendsto_simAdjSurprisal_rpow [MeasurableSpace W] [MeasurableSingletonClass W]
-    (L : Kernel C W) [IsMarkovKernel L] {z : W → W → C → ℝ} {c : C} {w : W}
-    (hm : Measurable fun a ↦ z a w c) (h0 : ∀ a, 0 ≤ z a w c) (hw : z w w c = 1)
-    (h1 : ∀ a ≠ w, z a w c < 1) (hL : L c {w} ≠ 0) :
-    Tendsto (fun α : ℝ ↦ simAdjSurprisal L (z ^ α) c w) atTop
-      (𝓝 (surprisal (L c) w).toReal) := by
-  have hle (a : W) : z a w c ≤ 1 := by
+    (μ : Measure W) [IsProbabilityMeasure μ] {z : W → W → ℝ} {w : W}
+    (hm : Measurable fun a ↦ z a w) (h0 : ∀ a, 0 ≤ z a w) (hw : z w w = 1)
+    (h1 : ∀ a ≠ w, z a w < 1) (hμ : μ {w} ≠ 0) :
+    Tendsto (fun α : ℝ ↦ simAdjSurprisal μ (z ^ α) w) atTop (𝓝 (surprisal μ w).toReal) := by
+  have hle (a : W) : z a w ≤ 1 := by
     rcases eq_or_ne a w with rfl | ha
     exacts [hw.le, (h1 a ha).le]
-  have hlim : Tendsto (fun α : ℝ ↦ ∫ a, z a w c ^ α ∂(L c)) atTop
-      (𝓝 (∫ a, indicatorScore a w c ∂(L c))) := by
+  have hlim : Tendsto (fun α : ℝ ↦ ∫ a, z a w ^ α ∂μ) atTop
+      (𝓝 (∫ a, indicatorScore a w ∂μ)) := by
     refine tendsto_integral_filter_of_dominated_convergence (fun _ ↦ 1)
       (.of_forall fun α ↦ (hm.pow_const α).aestronglyMeasurable) ?_ (integrable_const 1)
       (.of_forall fun a ↦ ?_)
@@ -122,28 +119,28 @@ theorem tendsto_simAdjSurprisal_rpow [MeasurableSpace W] [MeasurableSingletonCla
           tendsto_rpow_atTop_of_base_lt_one _ (neg_one_lt_zero.trans_le (h0 a)) (h1 a ha)
   simp only [indicatorScore, integral_indicator_one (measurableSet_singleton w)] at hlim
   rw [toReal_surprisal prob_le_one]
-  exact ((continuousAt_log (ENNReal.toReal_ne_zero.2 ⟨hL, measure_ne_top _ _⟩)).neg.tendsto).comp
+  exact ((continuousAt_log (ENNReal.toReal_ne_zero.2 ⟨hμ, measure_ne_top _ _⟩)).neg.tendsto).comp
     hlim
 
 /-! ### Information value -/
 
 section informationValue
 
-variable (L : Kernel C A) [IsMarkovKernel L] (d : A → W → C → ℝ)
+variable {μ μ' : Measure A} [IsProbabilityMeasure μ] [IsProbabilityMeasure μ'] {d d' : A → W → ℝ}
+  {w w' : W}
 
-theorem simAdjSurprisal_one_sub {c : C} {w : W} (hd : Integrable (fun a ↦ d a w c) (L c)) :
-    simAdjSurprisal L (1 - d) c w = -log (1 - informationValue L d c w) := by
-  simp only [simAdjSurprisal, informationValue, genSurprisal, id, Pi.sub_apply, Pi.one_apply,
-    integral_sub (integrable_const 1) hd, integral_const, probReal_univ, one_smul]
+theorem simAdjSurprisal_one_sub (hd : Integrable (fun a ↦ d a w) μ) :
+    simAdjSurprisal μ (1 - d) w = -log (1 - expectedScore μ d w) :=
+  congrArg (fun x ↦ -log x) (expectedScore_one_sub hd)
 
 /-- Theorem 1 (eqs. (11)–(12)): with the similarity one minus the distance, similarity-adjusted
-surprisal increases strictly with information value. -/
-theorem simAdjSurprisal_lt_simAdjSurprisal_iff {c c' : C} {w w' : W}
-    (hd : Integrable (fun a ↦ d a w c) (L c)) (hd' : Integrable (fun a ↦ d a w' c') (L c'))
-    (h : informationValue L d c w < 1) (h' : informationValue L d c' w' < 1) :
-    simAdjSurprisal L (1 - d) c w < simAdjSurprisal L (1 - d) c' w' ↔
-      informationValue L d c w < informationValue L d c' w' := by
-  rw [simAdjSurprisal_one_sub L d hd, simAdjSurprisal_one_sub L d hd', neg_lt_neg_iff,
+surprisal increases strictly with information value, the expected distance. -/
+theorem simAdjSurprisal_lt_simAdjSurprisal_iff (hd : Integrable (fun a ↦ d a w) μ)
+    (hd' : Integrable (fun a ↦ d' a w') μ') (h : expectedScore μ d w < 1)
+    (h' : expectedScore μ' d' w' < 1) :
+    simAdjSurprisal μ (1 - d) w < simAdjSurprisal μ' (1 - d') w' ↔
+      expectedScore μ d w < expectedScore μ' d' w' := by
+  rw [simAdjSurprisal_one_sub hd, simAdjSurprisal_one_sub hd', neg_lt_neg_iff,
     log_lt_log_iff (sub_pos.2 h') (sub_pos.2 h), sub_lt_sub_iff_left]
 
 end informationValue
@@ -155,13 +152,13 @@ section cost
 open Levy2008 AutoregressiveSequenceModel
 
 variable {T : Type*} [MeasurableSpace T] [MeasurableSpace W] (P : Measure T) (str : T → List W)
-  (z : Option W → Option W → List W → ℝ) (ws : List W) (w : W)
+  (z : Option W → Option W → ℝ) (ws : List W) (w : W)
 
 /-- The similarity-adjusted posterior (17d): the posterior after `ws`, weighted by the similarity
 of the target to the symbol each structure yields next, over the expected similarity (17a). -/
 noncomputable def simAdjPosterior : Measure T :=
-  (posterior P str ws).withDensity fun t ↦ .ofReal (z (str t)[ws.length]? (some w) ws /
-    ∫ a, z a (some w) ws ∂(ofMeasure (P.map str)).next ws)
+  (posterior P str ws).withDensity fun t ↦ .ofReal (z (str t)[ws.length]? (some w) /
+    ∫ a, z a (some w) ∂(ofMeasure (P.map str)).next ws)
 
 /-- The similarity-adjusted processing cost (20a–b): the expected log-likelihood ratio, under the
 posterior after the target, of the similarity-adjusted posterior to the posterior before it. -/
@@ -176,7 +173,7 @@ theorem simAdjPosterior_indicatorScore [MeasurableSingletonClass W]
   have hws : P (consistent str ws) ≠ 0 :=
     fun h0 ↦ h (measure_mono_null (consistent_anti str (List.prefix_append ws [w])) h0)
   have : IsProbabilityMeasure (posterior P str ws) := cond_isProbabilityMeasure hws
-  have hp : ∫ a, indicatorScore a (some w) ws ∂(ofMeasure (P.map str)).next ws =
+  have hp : ∫ a, indicatorScore a (some w) ∂(ofMeasure (P.map str)).next ws =
       (posterior P str ws).real (consistent str (ws ++ [w])) := by
     simp only [indicatorScore]
     rw [integral_indicator_one (measurableSet_singleton _), measureReal_def, measureReal_def,
@@ -185,7 +182,7 @@ theorem simAdjPosterior_indicatorScore [MeasurableSingletonClass W]
     rw [posterior, cond_apply_of_subset .of_discrete
       (consistent_anti str (List.prefix_append ws [w]))]
     exact ENNReal.div_ne_zero.2 ⟨h, measure_ne_top _ _⟩
-  have hρ : (fun t ↦ ENNReal.ofReal (indicatorScore (str t)[ws.length]? (some w) ws /
+  have hρ : (fun t ↦ ENNReal.ofReal (indicatorScore (str t)[ws.length]? (some w) /
       (posterior P str ws).real (consistent str (ws ++ [w])))) =ᵐ[posterior P str ws]
       (consistent str (ws ++ [w])).indicator fun _ ↦
         (posterior P str ws (consistent str (ws ++ [w])))⁻¹ := by
@@ -214,17 +211,17 @@ theorem simAdjPosterior_indicatorScore [MeasurableSingletonClass W]
 /-- Theorem 3 (eq. (18)): the similarity-adjusted processing cost is similarity-adjusted
 surprisal. -/
 theorem simAdjCost_eq_simAdjSurprisal (h : P (consistent str (ws ++ [w])) ≠ 0)
-    (hz : z (some w) (some w) ws = 1) (hz0 : ∀ a, 0 ≤ z a (some w) ws) :
-    simAdjCost P str z ws w = simAdjSurprisal (ofMeasure (P.map str)).next z ws (some w) := by
+    (hz : z (some w) (some w) = 1) (hz0 : ∀ a, 0 ≤ z a (some w)) :
+    simAdjCost P str z ws w = simAdjSurprisal ((ofMeasure (P.map str)).next ws) z (some w) := by
   have hws : P (consistent str ws) ≠ 0 :=
     fun h0 ↦ h (measure_mono_null (consistent_anti str (List.prefix_append ws [w])) h0)
   have : IsProbabilityMeasure (posterior P str ws) := cond_isProbabilityMeasure hws
   have : IsProbabilityMeasure (posterior P str (ws ++ [w])) := cond_isProbabilityMeasure h
   have hac : posterior P str (ws ++ [w]) ≪ posterior P str ws :=
     posterior_incremental P str ws w ▸ cond_absolutelyContinuous
-  have hp : 0 ≤ ∫ a, z a (some w) ws ∂(ofMeasure (P.map str)).next ws := integral_nonneg hz0
+  have hp : 0 ≤ ∫ a, z a (some w) ∂(ofMeasure (P.map str)).next ws := integral_nonneg hz0
   have hae : ∀ᵐ t ∂posterior P str (ws ++ [w]), llr (simAdjPosterior P str z ws w)
-      (posterior P str ws) t = -log (∫ a, z a (some w) ws ∂(ofMeasure (P.map str)).next ws) := by
+      (posterior P str ws) t = -log (∫ a, z a (some w) ∂(ofMeasure (P.map str)).next ws) := by
     filter_upwards [hac.ae_le (Measure.rnDeriv_withDensity _ .of_discrete),
       ae_cond_mem (μ := P) (MeasurableSet.of_discrete (s := consistent str (ws ++ [w])))]
       with t ht ⟨r, hr⟩

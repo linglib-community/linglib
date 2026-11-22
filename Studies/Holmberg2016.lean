@@ -93,7 +93,7 @@ question is neutral or whose negation the annotation locates (`judgment_iff_pred
 
 namespace Holmberg2016
 
-open Question Discourse
+open Question
 open scoped Denotes
 
 /-! ### The polarity head -/
@@ -235,10 +235,10 @@ theorem answer_ne_none_of_inClause (f : AnswerFeature) (hi : n.InClause) (h : ¬
 /-- The response an answer with feature `f` gives to a polar question whose negation is `n`, if
 the answer is well formed, recording the polarity of the question's primary alternative and that
 of the alternative the answer confirms. -/
-def response (f : AnswerFeature) (n : ClauseNegation) : Option Discourse.Response :=
+def response (f : AnswerFeature) (n : ClauseNegation) : Option Response :=
   (f.answer n).map (⟨.polarQuestion, n.primaryPolarity, ·⟩)
 
-theorem response_eq_some_iff {f : AnswerFeature} {x : Discourse.Response} :
+theorem response_eq_some_iff {f : AnswerFeature} {x : Response} :
     f.response n = some x ↔ x.reactsTo = .polarQuestion ∧ x.antecedent = n.primaryPolarity ∧
       f.answer n = some x.polarity := by
   obtain ⟨m, a, s⟩ := x
@@ -248,10 +248,10 @@ theorem response_value_of_not_valuesHead {p : Polarity} (h : ¬ n.ValuesHead) :
     (value p).response n = some ⟨.polarQuestion, n.primaryPolarity, p * n.primaryPolarity⟩ := by
   simp [response, answer_value_of_not_valuesHead h]
 
-theorem relative_of_response_value {p : Polarity} {x : Discourse.Response}
+theorem relative_of_response_value {p : Polarity} {x : Response}
     (hn : ¬ n.ValuesHead) (h : (value p).response n = some x) : x.relative = p := by
   rw [response_value_of_not_valuesHead hn, Option.some_inj] at h
-  rw [← h, Discourse.Response.relative_mk, mul_div_cancel_right]
+  rw [← h, Response.relative_mk, mul_div_cancel_right]
 
 theorem response_reversing_of_inClause (h : n.InClause) :
     reversing.response n = some ⟨.polarQuestion, .negative, .positive⟩ := by
@@ -261,16 +261,16 @@ theorem response_reversing_of_not_inClause (h : ¬ n.InClause) : reversing.respo
   simp [response, answer_reversing_of_not_inClause h]
 
 /-- The answers a feature gives to polar questions whose negations are among `N`. -/
-def responses (f : AnswerFeature) (N : Set ClauseNegation) : Set Discourse.Response :=
+def responses (f : AnswerFeature) (N : Set ClauseNegation) : Set Response :=
   {x | ∃ n ∈ N, f.response n = some x}
 
 variable {f : AnswerFeature} {N : Set ClauseNegation}
 
-theorem mem_responses {x : Discourse.Response} :
+theorem mem_responses {x : Response} :
     x ∈ f.responses N ↔ ∃ n ∈ N, f.response n = some x :=
   Iff.rfl
 
-theorem responses_singleton_of_response_eq_some {x : Discourse.Response}
+theorem responses_singleton_of_response_eq_some {x : Response}
     (h : f.response n = some x) : f.responses {n} = {x} := by
   ext y
   simp [responses, h, eq_comm]
@@ -315,24 +315,24 @@ theorem responses_reversing (hN : ∃ n ∈ N, n.InClause) :
     cases h
 
 theorem confirmsNegativeQuestion_responses_iff :
-    Discourse.Response.ConfirmsNegativeQuestion (f.responses N) ↔
+    Response.ConfirmsNegativeQuestion (f.responses N) ↔
       ∃ n ∈ N, n.InClause ∧ f.answer n = some .negative := by
-  simp only [Discourse.Response.ConfirmsNegativeQuestion,
-    Discourse.Response.negativeQuestionConfirmation, mem_responses, response_eq_some_iff,
+  simp only [Response.ConfirmsNegativeQuestion,
+    Response.negativeQuestionConfirmation, mem_responses, response_eq_some_iff,
     true_and]
   refine exists_congr fun n ↦ and_congr_right fun _ ↦ and_congr_left fun _ ↦ ?_
   simp only [primaryPolarity]
   split_ifs with h <;> simp [h]
 
 theorem confirmsNegativeQuestion_responses_positive_iff (h : NegationHeight) :
-    Discourse.Response.ConfirmsNegativeQuestion ((value .positive).responses {.height h}) ↔
+    Response.ConfirmsNegativeQuestion ((value .positive).responses {.height h}) ↔
       h = .low := by
   rw [confirmsNegativeQuestion_responses_iff]
   cases h <;> simp [answer, ClauseNegation.InClause, ClauseNegation.ValuesHead,
     primaryPolarity]
 
 theorem confirmsNegativeQuestion_responses_negative_iff (h : NegationHeight) :
-    Discourse.Response.ConfirmsNegativeQuestion ((value .negative).responses {.height h}) ↔
+    Response.ConfirmsNegativeQuestion ((value .negative).responses {.height h}) ↔
       h = .middle := by
   rw [confirmsNegativeQuestion_responses_iff]
   cases h <;> simp [answer, ClauseNegation.InClause, ClauseNegation.ValuesHead,

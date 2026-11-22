@@ -62,7 +62,7 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lgr import lgr_conformance  # noqa: E402
+from lgr import leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Examples"
@@ -97,6 +97,9 @@ CUSTOM_COLUMNS = [
      "dc:description": "Other forms the paper judges in the same frame, with their marks."},
     {"name": "Readings", "datatype": "json",
      "dc:description": "The readings the paper distinguishes, with their marks."},
+    {"name": "Spans", "datatype": "json",
+     "dc:description": "Spans of the analyzed words, each with the position of its first word, its "
+                       "length, its label and the lexeme it is a form of."},
     {"name": "Paper_Features", "datatype": "json",
      "dc:description": "The paper's own classifications of the example, as key-value pairs."},
     {"name": "Verified",
@@ -119,12 +122,18 @@ def contribution_methods():
 CONTRIBUTION_METHODS = contribution_methods()
 
 
+# The boundary symbols a data file declares for its source's notation, by paper.
+BOUNDARIES = {}
+
+
 def load():
     papers = {}
     for path in sorted(JSON_DIR.glob("*.json")):
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
             papers[path.stem] = data["examples"] if isinstance(data, dict) else data
+            if isinstance(data, dict) and data.get("boundaries"):
+                BOUNDARIES[path.stem] = data["boundaries"]
     return papers
 
 
@@ -147,7 +156,8 @@ def judged_id(code):
 
 
 def example_row(paper, row):
-    pairs = row.get("glossedTokens") or []
+    # The words in the notation of the Leipzig rules, where the file declares its source's own.
+    pairs = leipzig_pairs(row.get("glossedTokens") or [], BOUNDARIES.get(paper))
     refs = [source_ref(row["source"])]
     if row.get("reportedIn"):
         refs.append(source_ref(row["reportedIn"]))
@@ -158,7 +168,7 @@ def example_row(paper, row):
                         else judged_id(code) if MARK[row["judgment"]] else code),
         "Primary_Text": row.get("primaryText", ""),
         "Analyzed_Word": [w for w, _ in pairs],
-        "Gloss": [g for _, g in pairs],
+        "Gloss": [g for _, g in pairs] if any(g for _, g in pairs) else [],
         "Translated_Text": row.get("translation") or None,
         "Meta_Language_ID": META_LANGUAGE,
         "LGR_Conformance": lgr_conformance(pairs),
@@ -173,6 +183,7 @@ def example_row(paper, row):
                          for a in row.get("contrasts", [])] or None,
         "Readings": [{"name": r["name"], "mark": MARK[r["judgment"]]}
                      for r in row.get("readings", [])] or None,
+        "Spans": row.get("spans") or None,
         "Paper_Features": features(row) or None,
         "Verified": row.get("verified"),
         "Method": (None if row.get("method") == "unclassified"

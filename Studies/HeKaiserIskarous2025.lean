@@ -476,15 +476,15 @@ variable [∀ π, IsFiniteKernel (S π)]
 
 private instance (π : Measure State) : IsFiniteMeasure (s.averaged S π) :=
   ⟨by
-    rw [averaged, Measure.finsetSum_apply]
+    rw [averaged, sum_apply]
     exact ENNReal.sum_lt_top.2 fun _ _ ↦ by
-      rw [Measure.smul_apply, smul_eq_mul]
+      rw [smul_apply, smul_eq_mul]
       exact ENNReal.mul_lt_top (measure_lt_top _ _) (measure_lt_top _ _)⟩
 
 private theorem averaged_real (π : Measure State) (u : Utterance) :
     (s.averaged S π).real {u} = ∑ st, s.statePrior st * (S π st).real {u} := by
-  rw [averaged, measureReal_def, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, smul_eq_mul]
+  rw [averaged, measureReal_def, sum_apply]
+  simp only [smul_apply, smul_eq_mul]
   rw [ENNReal.toReal_sum fun _ _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
   exact Finset.sum_congr rfl fun st _ ↦ by
     rw [ENNReal.toReal_mul, ← measureReal_def, prior_real_singleton, measureReal_def]

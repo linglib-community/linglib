@@ -278,19 +278,19 @@ def Inst (B : Set (Index W T)) (w : W) : Prop := ∃ t, ⟨w, t⟩ ∈ B
 
 /-- The connective (47) holds at `w` when some main-clause time stands in `cmp` to the earliest
 temporal-clause time across the alternatives of `w` at that time. -/
-def connective (cmp : T → T → Prop) (A B : Set (Index W T)) (alt : HistoricalAlternatives W T)
+def connective (cmp : T → T → Prop) (A B : Set (Index W T)) (alt : Index W T → Set W)
     (w : W) : Prop :=
   ∃ t, ⟨w, t⟩ ∈ A ∧ ∃ e, IsLeast (instTimes (alt ⟨w, t⟩) B) e ∧ cmp t e
 
 /-- *A before B* (47). -/
-abbrev before (A B : Set (Index W T)) (alt : HistoricalAlternatives W T) (w : W) : Prop :=
+abbrev before (A B : Set (Index W T)) (alt : Index W T → Set W) (w : W) : Prop :=
   connective (· < ·) A B alt w
 
 /-- *A after B* (47). -/
-abbrev after (A B : Set (Index W T)) (alt : HistoricalAlternatives W T) (w : W) : Prop :=
+abbrev after (A B : Set (Index W T)) (alt : Index W T → Set W) (w : W) : Prop :=
   connective (· > ·) A B alt w
 
-variable {cmp : T → T → Prop} {A B : Set (Index W T)} {alt : HistoricalAlternatives W T} {w : W}
+variable {cmp : T → T → Prop} {A B : Set (Index W T)} {alt : Index W T → Set W} {w : W}
 
 -- (47), (45)
 theorem connective_iff_uniform_of_eq_singleton (h : ∀ t, alt ⟨w, t⟩ = {w}) :
@@ -317,7 +317,7 @@ historical alternatives and leave a world instantiating the clause as its own on
 alternative. -/
 structure Alternatives (F : Temporal.TWFrame W T) (B : Set (Index W T)) where
   /-- The alternatives of a world at a time. -/
-  alt : HistoricalAlternatives W T
+  alt : Index W T → Set W
   /-- The initial branch point condition. -/
   subset_alternatives : ∀ i, alt i ⊆ F.alternatives i
   /-- A world in which the temporal clause is instantiated is its own only alternative. -/
@@ -402,7 +402,7 @@ theorem veridical_inter_after (a : Alternatives F B) (hB : RespectsHistory F B) 
   fun _ hw ↦ after_veridical a hB hw.2
 
 -- (49)
-theorem alt_inst_of_mem_inter_before {alt : HistoricalAlternatives W T} {c : Set W} {w : W}
+theorem alt_inst_of_mem_inter_before {alt : Index W T → Set W} {c : Set W} {w : W}
     (hw : w ∈ c ∩ {w | before A B alt w}) :
     ∃ t, ⟨w, t⟩ ∈ A ∧ ∃ w' ∈ alt ⟨w, t⟩, Inst B w' :=
   connective_alt_inst hw.2
@@ -466,7 +466,7 @@ theorem mem_alternatives_of_le_one {t : ℕ} (ht : t ≤ 1) (w v : World) :
 /-- The alternatives of the context, a world being its own only alternative except at the times
 up to Mozart's death in `early` and `idle`, where the world in which he lives longer is
 normal. -/
-def alt : HistoricalAlternatives World ℕ
+def alt : Index World ℕ → Set World
   | ⟨.early, t⟩ => if t ≤ 1 then {.early, .later} else {.early}
   | ⟨.idle, t⟩ => if t ≤ 1 then {.idle, .idleLater} else {.idle}
   | ⟨w, _⟩ => {w}
@@ -478,7 +478,7 @@ def alternatives : Alternatives frame finishes where
     rintro ⟨w, t⟩ v hv
     by_cases ht : t ≤ 1
     · exact mem_alternatives_of_le_one ht w v
-    · cases w <;> simp [alt, ht] at hv <;> subst hv <;> exact (frame.sim t).iseqv.refl _
+    · cases w <;> simp [alt, ht] at hv <;> subst hv <;> exact (frame.sim t).refl' _
   eq_singleton_of_inst := by
     rintro w ⟨t, ht⟩ t'
     cases w <;> simp_all [finishes, World.completion, alt]

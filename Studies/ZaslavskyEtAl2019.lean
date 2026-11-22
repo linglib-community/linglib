@@ -141,19 +141,9 @@ positive mass on every color (Eq. 5). -/
 theorem capacityAchieving_iff :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔
       ∃ Z > 0, ∀ c, μ.real {c} = exp (-expectedSurprisal κ μ c) / Z := by
-  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
-  have hC : (0 : ℝ) < Fintype.card C := by exact_mod_cast Fintype.card_pos
   rw [eq_channelCapacity_iff_eq_tilted, eq_tilted_iff]
-  simp_rw [uniformOn_univ_real_singleton, ← neg_expectedSurprisal]
-  constructor
-  · rintro ⟨Z, hZ, h⟩
-    refine ⟨Z * Fintype.card C, by positivity, fun c => ?_⟩
-    rw [h]
-    field_simp
-  · rintro ⟨Z, hZ, h⟩
-    refine ⟨Z / Fintype.card C, by positivity, fun c => ?_⟩
-    rw [h]
-    field_simp
+  simp_rw [measureReal_def Measure.count, Measure.count_singleton, ENNReal.toReal_one, one_mul,
+    ← neg_expectedSurprisal]
 
 end Capacity
 
@@ -217,10 +207,10 @@ KM-CAP (Fig. 4B). -/
 noncomputable def clusterPrior (f : C → W) : Measure C :=
   (#(univ.image f) : ℝ≥0∞)⁻¹ • ∑ w ∈ univ.image f, uniformOn (f ⁻¹' {w})
 
-omit [Nonempty C] in
+omit [Nonempty C] [MeasurableSpace W] [MeasurableSingletonClass W] in
 theorem clusterPrior_apply_singleton (f : C → W) (c : C) :
     clusterPrior f {c} = (#(univ.image f) : ℝ≥0∞)⁻¹ * ((f ⁻¹' {f c}).ncard : ℝ≥0∞)⁻¹ := by
-  rw [clusterPrior, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply,
+  rw [clusterPrior, smul_apply, FunLike.coe_sum, Finset.sum_apply,
     sum_eq_single_of_mem (f c) (mem_image_of_mem f (mem_univ c)), smul_eq_mul]
   · rw [uniformOn_apply_singleton_of_mem (Set.toFinite _) (mem_preimage_self f c)]
   · exact fun w _ hw ↦ uniformOn_apply_singleton_of_notMem fun h ↦ hw h.symm
@@ -229,19 +219,20 @@ instance (f : C → W) : IsProbabilityMeasure (clusterPrior f) := by
   have hk : (#(univ.image f) : ℝ≥0∞) ≠ 0 := by
     exact_mod_cast (card_pos.mpr (univ_nonempty.image f)).ne'
   constructor
-  rw [clusterPrior, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply,
+  rw [clusterPrior, smul_apply, FunLike.coe_sum, Finset.sum_apply,
     sum_congr rfl fun w hw => ?_, sum_const, nsmul_eq_mul, mul_one, smul_eq_mul,
     ENNReal.inv_mul_cancel hk (ENNReal.natCast_ne_top _)]
   obtain ⟨c, -, rfl⟩ := mem_image.mp hw
   have := isProbabilityMeasure_uniformOn (Set.toFinite _) ⟨c, mem_preimage_self f c⟩
   exact measure_univ
 
-omit [Nonempty C] in
+omit [Nonempty C] [MeasurableSpace W] [MeasurableSingletonClass W] in
 theorem clusterPrior_real_singleton (f : C → W) (c : C) :
     (clusterPrior f).real {c} = ((#(univ.image f) : ℝ) * (f ⁻¹' {f c}).ncard)⁻¹ := by
   rw [measureReal_def, clusterPrior_apply_singleton, ENNReal.toReal_mul, ENNReal.toReal_inv,
     ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, mul_inv]
 
+omit [MeasurableSpace W] [MeasurableSingletonClass W] in
 theorem clusterPrior_real_preimage (f : C → W) (c : C) :
     (clusterPrior f).real (f ⁻¹' {f c}) = (#(univ.image f) : ℝ)⁻¹ := by
   have hF := ncard_preimage_pos f c

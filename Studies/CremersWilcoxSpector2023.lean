@@ -595,7 +595,7 @@ instance : IsFiniteKernel (wonkySpeaker s) :=
 noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountable (worldPrior s)
 
 instance : IsMarkovKernel (worldKernel s) :=
-  ⟨fun b ↦ by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- The prior of Degen and colleagues' listener: a background, then a world under it (item 4). -/
 noncomputable def wonkyJoint : Measure (World × Background) :=
@@ -647,8 +647,8 @@ theorem bayesWonkySpeaker_real_singleton (w : World) (u : Message) :
     (bayesWonkySpeaker s β w).real {u} =
       β.real {.wonky} * (bgSpeaker s .wonky w).real {u} +
         β.real {.measured} * (bgSpeaker s .measured w).real {u} := by
-  simp only [bayesWonkySpeaker, measureReal_def, sum_apply, smul_apply, Measure.finsetSum_apply,
-    Measure.smul_apply, smul_eq_mul]
+  simp only [bayesWonkySpeaker, measureReal_def, sum_apply, smul_apply, sum_apply,
+    smul_apply, smul_eq_mul]
   rw [sum_background,
     ENNReal.toReal_add (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
       (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
@@ -869,14 +869,14 @@ instance : IsFiniteKernel (luSpeaker s meaning) :=
 theorem luSpeaker_real_singleton (w : World) (u : Message) :
     (luSpeaker s meaning w).real {u} =
       (Fintype.card I : ℝ)⁻¹ * ∑ i, (s.speaker (meaning i) w).real {u} := by
-  simp only [luSpeaker, measureReal_def, sum_apply, smul_apply, Measure.finsetSum_apply,
-    Measure.smul_apply, smul_eq_mul, uniformOn_univ_apply_singleton, ← Finset.mul_sum]
+  simp only [luSpeaker, measureReal_def, sum_apply, smul_apply, sum_apply,
+    smul_apply, smul_eq_mul, uniformOn_univ_apply_singleton, ← Finset.mul_sum]
   rw [ENNReal.toReal_mul, ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _, ENNReal.toReal_inv,
     ENNReal.toReal_natCast]
 
 theorem luSpeaker_apply_singleton_ne_zero_iff {w : World} {u : Message} :
     luSpeaker s meaning w {u} ≠ 0 ↔ ∃ i, s.speaker (meaning i) w {u} ≠ 0 := by
-  simp [luSpeaker, Measure.finsetSum_apply, uniformOn_univ_singleton_ne_zero]
+  simp [luSpeaker, sum_apply, uniformOn_univ_singleton_ne_zero]
 
 variable [Nonempty I] in
 theorem comp_luSpeaker_ne_zero (u : Message) : (luSpeaker s meaning ∘ₘ s.prior) {u} ≠ 0 :=

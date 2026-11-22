@@ -9,7 +9,7 @@ public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 
 /-!
 # Accessibility marking
@@ -21,7 +21,7 @@ and each is read here off the features of a form class and compared rather than 
 
 ## Main definitions
 
-* `Discourse.AccessibilityLevel`: the scale, as a linear order.
+* `AccessibilityLevel`: the scale, as a linear order.
 * `AccessibilityLevel.informativity`: the information a form incorporates, ordered by inclusion.
 * `AccessibilityLevel.rigidity`: how unequivocally a name picks out its referent.
 * `AccessibilityLevel.attenuation`: the phonological size of a form.
@@ -42,8 +42,6 @@ demonstrative is given the size of a stressed pronoun.
 -/
 
 @[expose] public section
-
-namespace Discourse
 
 /-- An accessibility level is a class of referring expression on the Accessibility Marking
 Scale of [ariel-1990], from the least to the most accessible referent it codes. -/
@@ -245,4 +243,3 @@ def criteria (l : AccessibilityLevel) : (Finset Information)ᵒᵈ × Rigidity�
 
 end AccessibilityLevel
 
-end Discourse

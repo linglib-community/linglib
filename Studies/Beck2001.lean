@@ -28,7 +28,7 @@ asserted distinctness [is trivial or idle](##inSitu_dichotomy).
 ## Implementation notes
 
 * Pluralities are finite sets and an individual is its singleton, as in `Studies/Sternefeld1998`.
-  The singular cover is `Mereology.Atom`, on which only a relation's values at singletons matter.
+  The singular cover is `IsAtom`, on which only a relation's values at singletons matter.
 * A sentence denotes a `Trivalent`, and a definite in a predicate's scope goes
   through `Presupposition.presupOfReferent`.
 * `Reciprocal.StrongReciprocity` asserts the plurality the strong reading presupposes, and
@@ -87,15 +87,17 @@ predicate is defined and true of what divides into parts where it is true. (115)
 and `**` are undefined; the other two clauses and `***` complete it, and all three are this
 operator on individuals, on pairs and on triples. -/
 noncomputable def pluralize (f : β → Trivalent) : β → Trivalent :=
-  Trivalent.condEvent (fun x ↦ AlgClosure (f · ≠ .undefined) x) (fun x ↦ AlgClosure (f · = .true) x)
+  Trivalent.condEvent (· ∈ supClosure {y | f y ≠ .undefined}) (· ∈ supClosure {y | f y = .true})
 
 theorem pluralize_eq_undefined_iff :
-    pluralize f x = .undefined ↔ ¬ AlgClosure (f · ≠ .undefined) x := by
+    pluralize f x = .undefined ↔ x ∉ supClosure {y | f y ≠ .undefined} := by
   simp [pluralize]
 
-theorem pluralize_eq_true_iff : pluralize f x = .true ↔ AlgClosure (f · = .true) x := by
+theorem pluralize_eq_true_iff :
+    pluralize f x = .true ↔ x ∈ supClosure {y | f y = .true} := by
   simp only [pluralize, Trivalent.condEvent_eq_true_iff]
-  exact and_iff_right_of_imp (algClosure_mono (fun _ h ↦ ne_of_eq_of_ne h (by decide)) _)
+  exact and_iff_right_of_imp fun hx ↦
+    supClosure_mono (fun _ h ↦ ne_of_eq_of_ne h (by decide)) hx
 
 end Pluralize
 
@@ -113,67 +115,69 @@ variable {α : Type*} [DecidableEq α] {Cov : Finset α → Prop} {x y d A : Fin
 the cover that are parts of the range `y` and do not overlap the contrast `x`, where there is one.
 -/
 noncomputable def eachOther (Cov : Finset α → Prop) (x y : Finset α) : Part (Finset α) :=
-  iota {w | IsGreatest {z | AlgClosure (fun z ↦ ¬ Overlap z x ∧ z ≤ y ∧ Cov z) z} w}
+  iota {w | IsGreatest (supClosure {z | Disjoint z x ∧ z ≤ y ∧ Cov z}) w}
 
 theorem eachOther_dom_iff :
-    (eachOther Cov x y).Dom ↔ ∃ z, ¬ Overlap z x ∧ z ≤ y ∧ Cov z := by
+    (eachOther Cov x y).Dom ↔ ∃ z, Disjoint z x ∧ z ≤ y ∧ Cov z := by
   refine ⟨fun h ↦ ?_, fun ⟨z, hz⟩ ↦ ?_⟩
   · obtain ⟨d, hd, -⟩ := iota_isGreatest_dom.1 h
-    obtain ⟨z, hz, -⟩ := algClosure_has_base hd
+    obtain ⟨z, hz, -⟩ := exists_le_of_mem_supClosure hd
     exact ⟨z, hz⟩
-  · refine DirectedOn.iota_isGreatest_dom algClosure_cum.directedOn ?_ ⟨z, .base hz⟩
+  · refine DirectedOn.iota_isGreatest_dom supClosed_supClosure.directedOn ?_
+      ⟨z, subset_supClosure hz⟩
     exact ((Finset.finite_toSet y.powerset).subset fun _ h ↦ by simpa using h.2.1).supClosure
 
-private theorem algClosure_otherAtoms_iff :
-    AlgClosure (fun z ↦ ¬ Overlap z x ∧ z ≤ y ∧ Atom z) d ↔ d.Nonempty ∧ d ⊆ y \ x := by
-  rw [algClosure_iff_of_subset_range_singleton fun z hz ↦
-    let ⟨a, ha⟩ := atom_finset_iff.1 hz.2.2; ⟨a, ha.symm⟩]
-  simp [overlap_iff_not_disjoint, atom_singleton, Finset.subset_iff, and_comm]
+private theorem mem_supClosure_otherAtoms_iff :
+    d ∈ supClosure {z | Disjoint z x ∧ z ≤ y ∧ IsAtom z} ↔ d.Nonempty ∧ d ⊆ y \ x := by
+  rw [mem_supClosure_iff_of_subset_range_singleton
+    (s := {z | Disjoint z x ∧ z ≤ y ∧ IsAtom z}) fun z hz ↦
+    let ⟨a, ha⟩ := Finset.isAtom_iff.1 hz.2.2; ⟨a, ha.symm⟩]
+  simp [overlap_iff_not_disjoint, Finset.isAtom_singleton, Finset.subset_iff, and_comm]
 
-theorem eachOther_atom_eq_some_iff : d ∈ eachOther Atom x y ↔ d.Nonempty ∧ d = y \ x := by
+theorem eachOther_atom_eq_some_iff : d ∈ eachOther IsAtom x y ↔ d.Nonempty ∧ d = y \ x := by
   rw [eachOther, mem_iota_isGreatest]
-  simp only [IsGreatest, upperBounds, Set.mem_ofPred_eq, algClosure_otherAtoms_iff]
+  simp only [IsGreatest, upperBounds, Set.mem_ofPred_eq, mem_supClosure_otherAtoms_iff]
   refine ⟨fun ⟨⟨hd, hsub⟩, hub⟩ ↦ ⟨hd, hsub.antisymm (hub ⟨hd.mono hsub, subset_rfl⟩)⟩, ?_⟩
   rintro ⟨hd, rfl⟩
   exact ⟨⟨hd, subset_rfl⟩, fun _ hz ↦ hz.2⟩
 
-theorem eachOther_atom_dom_iff : (eachOther Atom x y).Dom ↔ (y \ x).Nonempty :=
+theorem eachOther_atom_dom_iff : (eachOther IsAtom x y).Dom ↔ (y \ x).Nonempty :=
   Part.dom_iff_mem.trans <| by
     simp only [eachOther_atom_eq_some_iff]
     exact ⟨fun ⟨_, hd, e⟩ ↦ e ▸ hd, fun h ↦ ⟨_, h, rfl⟩⟩
 
 -- (111)
-theorem eachOther_atom_singleton_of_ne (h : a ≠ b) : {b} ∈ eachOther Atom {a} {b} :=
+theorem eachOther_isAtom_singleton_of_ne (h : a ≠ b) : {b} ∈ eachOther IsAtom {a} {b} :=
   eachOther_atom_eq_some_iff.2 ⟨Finset.singleton_nonempty b, by
     rw [Finset.sdiff_singleton_eq_erase, Finset.erase_eq_of_notMem (by simpa using h)]⟩
 
 -- (111)
-theorem eachOther_atom_singleton_self : eachOther Atom {a} {a} = Part.none := by
+theorem eachOther_isAtom_singleton_self : eachOther IsAtom {a} {a} = Part.none := by
   rw [Part.eq_none_iff', eachOther_atom_dom_iff]
   simp
 
 -- (111)
-theorem eachOther_atom_singleton_eq_some_iff :
-    d ∈ eachOther Atom {a} {b} ↔ a ≠ b ∧ d = {b} := by
+theorem eachOther_isAtom_singleton_eq_some_iff :
+    d ∈ eachOther IsAtom {a} {b} ↔ a ≠ b ∧ d = {b} := by
   obtain rfl | h := eq_or_ne a b
-  · simp [eachOther_atom_singleton_self, Part.notMem_none]
+  · simp [eachOther_isAtom_singleton_self, Part.notMem_none]
   · simp only [ne_eq, h, not_false_eq_true, true_and]
-    exact ⟨fun hd ↦ Part.mem_unique hd (eachOther_atom_singleton_of_ne h),
-      fun e ↦ by rw [e]; exact eachOther_atom_singleton_of_ne h⟩
+    exact ⟨fun hd ↦ Part.mem_unique hd (eachOther_isAtom_singleton_of_ne h),
+      fun e ↦ by rw [e]; exact eachOther_isAtom_singleton_of_ne h⟩
 
 open Classical in
 -- (111), (112)
 theorem presupOfReferent_eachOther (P : Finset α → Prop) (a b : α) :
-    presupOfReferent (eachOther Atom {a}) (fun d _ ↦ P d) ({b} : Finset α) =
+    presupOfReferent (eachOther IsAtom {a}) (fun d _ ↦ P d) ({b} : Finset α) =
       if a = b then .undefined else Trivalent.ofProp (P {b}) := by
   obtain rfl | h := eq_or_ne a b
-  · simp [presupOfReferent_of_not_dom (Part.eq_none_iff'.1 eachOther_atom_singleton_self)]
-  · simp [presupOfReferent_of_mem (eachOther_atom_singleton_of_ne h), h]
+  · simp [presupOfReferent_of_not_dom (Part.eq_none_iff'.1 eachOther_isAtom_singleton_self)]
+  · simp [presupOfReferent_of_mem (eachOther_isAtom_singleton_of_ne h), h]
 
 -- (77) as printed
 theorem not_exists_isLeast_otherAtoms (h : (y \ x).Nontrivial) :
-    ¬ ∃ d, IsLeast {z | AlgClosure (fun z ↦ ¬ Overlap z x ∧ z ≤ y ∧ Atom z) z} d := by
-  simp only [IsLeast, lowerBounds, Set.mem_ofPred_eq, algClosure_otherAtoms_iff]
+    ¬ ∃ d, IsLeast (supClosure {z | Disjoint z x ∧ z ≤ y ∧ IsAtom z}) d := by
+  simp only [IsLeast, lowerBounds, Set.mem_ofPred_eq, mem_supClosure_otherAtoms_iff]
   rintro ⟨d, ⟨⟨a, ha⟩, -⟩, hlb⟩
   obtain ⟨b, hb, hne⟩ := h.exists_ne a
   exact hne (Finset.mem_singleton.1
@@ -181,7 +185,7 @@ theorem not_exists_isLeast_otherAtoms (h : (y \ x).Nontrivial) :
 
 /-- (79), after [sauerland-1998]: non-overlap excludes each member of a plural contrast, which
 non-identity would let in. -/
-example : {2} ∈ eachOther Atom {0, 1} ({0, 1, 2} : Finset (Fin 3)) :=
+example : {2} ∈ eachOther IsAtom {0, 1} ({0, 1, 2} : Finset (Fin 3)) :=
   eachOther_atom_eq_some_iff.2 ⟨by decide, by decide⟩
 
 /-! ### The collective and the strong reading -/
@@ -195,78 +199,80 @@ noncomputable def collectiveReading (Cov : Finset α → Prop) (R : Finset α �
 /-- (81a): Strong Reciprocity, the collective schema with the object slot distributed over. -/
 noncomputable def strongReading (Cov : Finset α → Prop) (R : Finset α → Finset α → Prop)
     (A : Finset α) : Trivalent :=
-  collectiveReading Cov (fun x d ↦ AlgClosure (fun y ↦ Cov y ∧ R x y) d) A
+  collectiveReading Cov (fun x d ↦ d ∈ supClosure {y | Cov y ∧ R x y}) A
 
-private theorem sdiff_nonempty_of_algClosure (hA : (A : Set α).Subsingleton)
-    {p : Finset α × Finset α} (hp : AlgClosure (fun p ↦ (p.2 \ p.1).Nonempty) p) (hle : p.2 ≤ A) :
-    (A \ p.1).Nonempty := by
-  induction hp using AlgClosure.induction with
-  | base h => exact h.mono (Finset.sdiff_subset_sdiff hle le_rfl)
-  | sum _ _ ih ih' =>
+private theorem sdiff_nonempty_of_mem_supClosure (hA : (A : Set α).Subsingleton)
+    {p : Finset α × Finset α} (hp : p ∈ supClosure {p : Finset α × Finset α | (p.2 \ p.1).Nonempty})
+    (hle : p.2 ≤ A) : (A \ p.1).Nonempty := by
+  induction hp using supClosure_induction with
+  | mem _ h => exact Finset.Nonempty.mono (Finset.sdiff_subset_sdiff hle le_rfl) h
+  | sup _ _ _ _ ih ih' =>
     obtain ⟨a, ha⟩ := ih (le_sup_left.trans hle)
     obtain ⟨b, hb⟩ := ih' (le_sup_right.trans hle)
     simp only [Finset.mem_sdiff] at ha hb
     obtain rfl := hA ha.1 hb.1
     exact ⟨a, by simp [ha.1, ha.2, hb.2]⟩
 
-private theorem nontrivial_of_algClosure_sdiff_pair
-    (h : AlgClosure (fun p : Finset α × Finset α ↦ (p.2 \ p.1).Nonempty) (A, A)) : A.Nontrivial :=
-  Set.not_subsingleton_iff.1 fun hA ↦ by simpa using sdiff_nonempty_of_algClosure hA h le_rfl
+private theorem nontrivial_of_mem_supClosure_sdiff_pair
+    (h : (A, A) ∈ supClosure {p : Finset α × Finset α | (p.2 \ p.1).Nonempty}) : A.Nontrivial :=
+  Set.not_subsingleton_iff.1 fun hA ↦ by simpa using sdiff_nonempty_of_mem_supClosure hA h le_rfl
 
-private theorem algClosure_sdiff_pair_of_self (h : AlgClosure (fun x ↦ (A \ x).Nonempty) A) :
-    AlgClosure (fun p : Finset α × Finset α ↦ (p.2 \ p.1).Nonempty) (A, A) :=
-  .map (f := fun x ↦ (x, A)) (by simp) (fun _ ↦ id) h
+private theorem mem_supClosure_sdiff_pair_of_self 
+    (h : A ∈ supClosure {x | (A \ x).Nonempty}) :
+    (A, A) ∈ supClosure {p : Finset α × Finset α | (p.2 \ p.1).Nonempty} :=
+  map_mem_supClosure (f := fun x ↦ (x, A)) (by simp) (fun _ ↦ id) h
 
-private theorem algClosure_sdiff_self_iff :
-    AlgClosure (fun x ↦ (A \ x).Nonempty) A ↔ A.Nontrivial := by
-  refine ⟨fun h ↦ nontrivial_of_algClosure_sdiff_pair (algClosure_sdiff_pair_of_self h),
-    fun hA ↦ algClosure_mono (fun z hz ↦ ?_) _
-      ((algClosure_image_singleton ↑A A).2 ⟨hA.nonempty, subset_rfl⟩)⟩
+private theorem mem_supClosure_sdiff_self_iff :
+    A ∈ supClosure {x | (A \ x).Nonempty} ↔ A.Nontrivial := by
+  refine ⟨fun h ↦ nontrivial_of_mem_supClosure_sdiff_pair (mem_supClosure_sdiff_pair_of_self h),
+    fun hA ↦ supClosure_mono (fun z hz ↦ ?_)
+      ((mem_supClosure_image_singleton ↑A A).2 ⟨hA.nonempty, subset_rfl⟩)⟩
   obtain ⟨a, -, rfl⟩ := hz
   obtain ⟨b, hb, hne⟩ := hA.exists_ne a
   exact ⟨b, by simp [hb, hne]⟩
 
-private theorem algClosure_sdiff_pair_iff :
-    AlgClosure (fun p : Finset α × Finset α ↦ (p.2 \ p.1).Nonempty) (A, A) ↔ A.Nontrivial :=
-  ⟨nontrivial_of_algClosure_sdiff_pair,
-    fun h ↦ algClosure_sdiff_pair_of_self (algClosure_sdiff_self_iff.2 h)⟩
+private theorem mem_supClosure_sdiff_pair_iff :
+    (A, A) ∈ supClosure {p : Finset α × Finset α | (p.2 \ p.1).Nonempty} ↔ A.Nontrivial :=
+  ⟨nontrivial_of_mem_supClosure_sdiff_pair,
+    fun h ↦ mem_supClosure_sdiff_pair_of_self (mem_supClosure_sdiff_self_iff.2 h)⟩
 
 theorem collectiveReading_eq_undefined_iff :
-    collectiveReading Atom R A = .undefined ↔ ¬ A.Nontrivial := by
-  rw [collectiveReading, pluralize_eq_undefined_iff, not_iff_not, ← algClosure_sdiff_self_iff]
+    collectiveReading IsAtom R A = .undefined ↔ ¬ A.Nontrivial := by
+  rw [collectiveReading, pluralize_eq_undefined_iff, not_iff_not, ← mem_supClosure_sdiff_self_iff]
   simp only [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_atom_dom_iff]
 
 theorem collectiveReading_eq_true_iff :
-    collectiveReading Atom R A = .true ↔ A.Nontrivial ∧ ∀ a ∈ A, R {a} (A.erase a) := by
-  have hP : {x | presupOfReferent (eachOther Atom · A) (fun d x ↦ Atom x ∧ R x d) x = .true} ⊆
+    collectiveReading IsAtom R A = .true ↔ A.Nontrivial ∧ ∀ a ∈ A, R {a} (A.erase a) := by
+  have hP : {x | presupOfReferent (eachOther IsAtom · A) (fun d x ↦ IsAtom x ∧ R x d) x = .true} ⊆
       Set.range ({·} : α → Finset α) := fun x hx ↦ by
     obtain ⟨_, -, hx, -⟩ := presupOfReferent_eq_true_iff.1 hx
-    obtain ⟨a, rfl⟩ := atom_finset_iff.1 hx
+    obtain ⟨a, rfl⟩ := Finset.isAtom_iff.1 hx
     exact ⟨a, rfl⟩
-  have key (a : α) : presupOfReferent (eachOther Atom · A) (fun d x ↦ Atom x ∧ R x d) {a} = .true ↔
+  have key (a : α) : presupOfReferent (eachOther IsAtom · A)
+    (fun d x ↦ IsAtom x ∧ R x d) {a} = .true ↔
       (A.erase a).Nonempty ∧ R {a} (A.erase a) := by
     simp only [presupOfReferent_eq_true_iff, eachOther_atom_eq_some_iff,
       Finset.sdiff_singleton_eq_erase]
     exact ⟨fun ⟨_, ⟨hd, e⟩, _, hR⟩ ↦ e ▸ ⟨hd, hR⟩,
-      fun ⟨hd, hR⟩ ↦ ⟨_, ⟨hd, rfl⟩, atom_singleton a, hR⟩⟩
-  rw [collectiveReading, pluralize_eq_true_iff, algClosure_iff_of_subset_range_singleton hP]
-  simp only [key]
+      fun ⟨hd, hR⟩ ↦ ⟨_, ⟨hd, rfl⟩, Finset.isAtom_singleton a, hR⟩⟩
+  rw [collectiveReading, pluralize_eq_true_iff, mem_supClosure_iff_of_subset_range_singleton hP]
+  simp only [Set.mem_ofPred_eq, key]
   refine ⟨fun ⟨⟨a, ha⟩, h⟩ ↦ ⟨(Finset.erase_nonempty ha).1 (h a ha).1, fun a ha ↦ (h a ha).2⟩,
     fun ⟨hA, h⟩ ↦ ⟨hA.nonempty, fun a ha ↦ ⟨(Finset.erase_nonempty ha).2 hA, h a ha⟩⟩⟩
 
-theorem strongReading_eq_undefined_iff : strongReading Atom R A = .undefined ↔ ¬ A.Nontrivial :=
+theorem strongReading_eq_undefined_iff : strongReading IsAtom R A = .undefined ↔ ¬ A.Nontrivial :=
   collectiveReading_eq_undefined_iff
 
 -- (81), (10)
 theorem strongReading_eq_true_iff :
-    strongReading Atom R A = .true ↔ StrongReciprocity (fun a b ↦ R {a} {b}) A := by
+    strongReading IsAtom R A = .true ↔ StrongReciprocity (fun a b ↦ R {a} {b}) A := by
   rw [strongReading, collectiveReading_eq_true_iff, strongReciprocity_iff]
   refine and_congr_right fun hA ↦ ?_
-  have key (a : α) (ha : a ∈ A) : AlgClosure (fun y ↦ Atom y ∧ R {a} y) (A.erase a) ↔
+  have key (a : α) (ha : a ∈ A) : A.erase a ∈ supClosure {y | IsAtom y ∧ R {a} y} ↔
       ∀ b ∈ A.erase a, R {a} {b} := by
-    rw [algClosure_iff_of_subset_range_singleton fun z hz ↦
-      let ⟨b, hb⟩ := atom_finset_iff.1 hz.1; ⟨b, hb.symm⟩]
-    simp [atom_singleton, Finset.erase_nonempty ha, hA]
+    rw [mem_supClosure_iff_of_subset_range_singleton (s := {y | IsAtom y ∧ R {a} y}) fun z hz ↦
+      let ⟨b, hb⟩ := Finset.isAtom_iff.1 hz.1; ⟨b, hb.symm⟩]
+    simp [Finset.isAtom_singleton, Finset.erase_nonempty ha, hA]
   refine ⟨fun h x hx y hy hxy ↦ (key x hx).1 (h x hx) y (Finset.mem_erase.2 ⟨hxy.symm, hy⟩),
     fun h a ha ↦ (key a ha).2 fun b hb ↦ ?_⟩
   obtain ⟨hne, hb⟩ := Finset.mem_erase.1 hb
@@ -289,37 +295,38 @@ noncomputable def weakReading (Cov : Finset α → Prop) (R : Finset α → Fins
 
 /-- A reciprocal sentence on the weak reading presupposes that its antecedent is a plurality, since
 a pair can be cumulated into `⟨A, A⟩` only if `A` divides into distinct parts. -/
-theorem weakReading_eq_undefined_iff : weakReading Atom R A = .undefined ↔ ¬ A.Nontrivial := by
+theorem weakReading_eq_undefined_iff : weakReading IsAtom R A = .undefined ↔ ¬ A.Nontrivial := by
   rw [weakReading, cumulatedReading, pluralize_eq_undefined_iff, not_iff_not,
-    ← algClosure_sdiff_pair_iff]
+    ← mem_supClosure_sdiff_pair_iff]
   simp only [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_atom_dom_iff]
 
 -- (110), (128)
 theorem cumulatedReading_atom_eq_true_iff {z y : Finset α} :
-    cumulatedReading Atom Atom R z y = .true ↔
+    cumulatedReading IsAtom IsAtom R z y = .true ↔
       z.Nonempty ∧ Set.LiftRel (fun a b ↦ R {a} {b} ∧ a ≠ b) ↑z ↑y := by
-  have : (fun p : Finset α × Finset α ↦ presupOfReferent (fun p ↦ eachOther Atom p.1 p.2)
-      (fun d p ↦ Atom p.1 ∧ Atom p.2 ∧ R p.1 d) p = .true) =
-      Function.uncurry (Relation.Map (fun a b ↦ R {a} {b} ∧ a ≠ b) ({·}) ({·})) := by
+  have : {p : Finset α × Finset α | presupOfReferent (fun p ↦ eachOther IsAtom p.1 p.2)
+      (fun d p ↦ IsAtom p.1 ∧ IsAtom p.2 ∧ R p.1 d) p = .true} =
+      {p | Relation.Map (fun a b ↦ R {a} {b} ∧ a ≠ b) ({·}) ({·}) p.1 p.2} := by
     ext ⟨x, y⟩
-    simp only [presupOfReferent_eq_true_iff, Function.uncurry]
+    simp only [Set.mem_ofPred_eq, presupOfReferent_eq_true_iff]
     constructor
     · rintro ⟨d, hd, hx, hy, hR⟩
-      obtain ⟨a, rfl⟩ := atom_finset_iff.1 hx
-      obtain ⟨b, rfl⟩ := atom_finset_iff.1 hy
-      obtain ⟨hne, rfl⟩ := eachOther_atom_singleton_eq_some_iff.1 hd
+      obtain ⟨a, rfl⟩ := Finset.isAtom_iff.1 hx
+      obtain ⟨b, rfl⟩ := Finset.isAtom_iff.1 hy
+      obtain ⟨hne, rfl⟩ := eachOther_isAtom_singleton_eq_some_iff.1 hd
       exact ⟨a, b, ⟨hR, hne⟩, rfl, rfl⟩
     · rintro ⟨a, b, ⟨hR, hne⟩, rfl, rfl⟩
-      exact ⟨_, eachOther_atom_singleton_of_ne hne, atom_singleton a, atom_singleton b, hR⟩
+      exact ⟨_, eachOther_isAtom_singleton_of_ne hne, Finset.isAtom_singleton a,
+        Finset.isAtom_singleton b, hR⟩
   rw [cumulatedReading, pluralize_eq_true_iff, ← cumulation_map_singleton, Cumulation, this]
 
 /-- Cumulating the relation to the definite has the truth conditions of Weak Reciprocity. -/
 theorem weakReading_eq_true_iff :
-    weakReading Atom R A = .true ↔ A.Nonempty ∧ WeakReciprocity (fun a b ↦ R {a} {b}) A := by
+    weakReading IsAtom R A = .true ↔ A.Nonempty ∧ WeakReciprocity (fun a b ↦ R {a} {b}) A := by
   rw [weakReading, cumulatedReading_atom_eq_true_iff, weakReciprocity_iff_liftRel]
 
 theorem weakReading_eq_false_iff :
-    weakReading Atom R A = .false ↔ A.Nontrivial ∧ ¬ WeakReciprocity (fun a b ↦ R {a} {b}) A := by
+    weakReading IsAtom R A = .false ↔ A.Nontrivial ∧ ¬ WeakReciprocity (fun a b ↦ R {a} {b}) A := by
   rw [eq_false_iff, ne_eq, ne_eq, weakReading_eq_undefined_iff, weakReading_eq_true_iff, not_not]
   exact and_congr_right fun hA ↦ not_congr (and_iff_right hA.nonempty)
 
@@ -327,16 +334,16 @@ theorem weakReading_eq_false_iff :
 theorem exists_cell_of_weakReading_eq_true (h : weakReading Cov R A = .true) (ha : a ∈ A) :
     ∃ z, Cov z ∧ z ≤ A ∧ a ∈ z := by
   rw [weakReading, cumulatedReading, pluralize_eq_true_iff] at h
-  suffices ∀ {p : Finset α × Finset α}, AlgClosure (fun p ↦ presupOfReferent
+  suffices ∀ {p : Finset α × Finset α}, p ∈ supClosure {p | presupOfReferent
       (fun p : Finset α × Finset α ↦ eachOther Cov p.1 p.2)
-      (fun d p ↦ Cov p.1 ∧ Cov p.2 ∧ R p.1 d) p = .true) p →
+      (fun d p ↦ Cov p.1 ∧ Cov p.2 ∧ R p.1 d) p = .true} →
         ∀ a ∈ p.1, ∃ z, Cov z ∧ z ≤ p.1 ∧ a ∈ z from this h a ha
   intro p hp
-  induction hp using AlgClosure.induction with
-  | @base p h =>
+  induction hp using supClosure_induction with
+  | mem p h =>
     obtain ⟨_, -, hc, -⟩ := presupOfReferent_eq_true_iff.1 h
     exact fun a ha ↦ ⟨p.1, hc, le_rfl, ha⟩
-  | sum _ _ ih ih' =>
+  | sup _ _ _ _ ih ih' =>
     intro a ha
     obtain ha | ha := Finset.mem_union.1 ha
     · obtain ⟨z, hc, hz, haz⟩ := ih a ha
@@ -346,7 +353,7 @@ theorem exists_cell_of_weakReading_eq_true (h : weakReading Cov R A = .true) (ha
 
 -- (100), (101a)
 theorem compl_weakReading_pair_eq_true_iff (hab : a ≠ b) :
-    (weakReading Atom R {a, b})ᶜ = .true ↔ ¬ (R {a} {b} ∧ R {b} {a}) := by
+    (weakReading IsAtom R {a, b})ᶜ = .true ↔ ¬ (R {a} {b} ∧ R {b} {a}) := by
   have hnt : ({a, b} : Finset α).Nontrivial := ⟨a, by simp, b, by simp, hab⟩
   rw [Trivalent.compl_eq_true_iff, weakReading_eq_false_iff, weakReciprocity_pair,
     and_iff_right hnt]
@@ -354,7 +361,7 @@ theorem compl_weakReading_pair_eq_true_iff (hab : a ≠ b) :
 
 -- (121d)
 theorem weakReading_not_pair_eq_true_iff (hab : a ≠ b) :
-    weakReading Atom (fun x y ↦ ¬ R x y) {a, b} = .true ↔ ¬ R {a} {b} ∧ ¬ R {b} {a} := by
+    weakReading IsAtom (fun x y ↦ ¬ R x y) {a, b} = .true ↔ ¬ R {a} {b} ∧ ¬ R {b} {a} := by
   rw [weakReading_eq_true_iff, weakReciprocity_pair]
   simp [hab]
 
@@ -363,7 +370,7 @@ def HatesOthers (x d : Finset (Fin 6)) : Prop := (x = {0} ∧ d = {1, 2}) ∨ (x
 
 -- (128)
 theorem hatesOthers_row :
-    cumulatedReading Atom (· ∈ ({{0, 1, 2}, {3, 4, 5}} : Finset (Finset (Fin 6)))) HatesOthers
+    cumulatedReading IsAtom (· ∈ ({{0, 1, 2}, {3, 4, 5}} : Finset (Finset (Fin 6)))) HatesOthers
       {0, 3} Finset.univ = .true ∧ .acceptable ∈ Examples.ex128a.readings.lookup "(128b)" := by
   refine ⟨?_, by decide⟩
   rw [cumulatedReading, pluralize_eq_true_iff]
@@ -371,17 +378,17 @@ theorem hatesOthers_row :
       (({0} : Finset (Fin 6)), ({0, 1, 2} : Finset (Fin 6))) ⊔
         (({3} : Finset (Fin 6)), ({3, 4, 5} : Finset (Fin 6))) := by decide
   rw [e]
-  exact .sum
-    (.base (presupOfReferent_eq_true_iff.2 ⟨{1, 2}, eachOther_atom_eq_some_iff.2
-      ⟨by decide, by decide⟩, atom_singleton 0, by simp, .inl ⟨rfl, rfl⟩⟩))
-    (.base (presupOfReferent_eq_true_iff.2 ⟨{4, 5}, eachOther_atom_eq_some_iff.2
-      ⟨by decide, by decide⟩, atom_singleton 3, by simp, .inr ⟨rfl, rfl⟩⟩))
+  refine supClosed_supClosure (subset_supClosure ?_) (subset_supClosure ?_)
+  · exact presupOfReferent_eq_true_iff.2 ⟨{1, 2}, eachOther_atom_eq_some_iff.2
+      ⟨by decide, by decide⟩, Finset.isAtom_singleton 0, by simp, .inl ⟨rfl, rfl⟩⟩
+  · exact presupOfReferent_eq_true_iff.2 ⟨{4, 5}, eachOther_atom_eq_some_iff.2
+      ⟨by decide, by decide⟩, Finset.isAtom_singleton 3, by simp, .inr ⟨rfl, rfl⟩⟩
 
 /-! ### Comparison with the quantificational and the cumulative analysis -/
 
 -- (75), (81)
 theorem strongReading_eq_true_iff_eachOtherLF :
-    strongReading Atom R A = .true ↔
+    strongReading IsAtom R A = .true ↔
       1 < A.card ∧ HeimLasnikMay1991.eachOtherLF A (fun a b ↦ R {a} {b}) := by
   rw [strongReading_eq_true_iff]
   refine ⟨fun h ↦ ?_, fun ⟨hc, h⟩ ↦ (HeimLasnikMay1991.eachOtherLF_iff_strongReciprocity hc _).1 h⟩
@@ -390,21 +397,21 @@ theorem strongReading_eq_true_iff_eachOtherLF :
 
 -- p. 104
 theorem strongReading_singleton (a : α) :
-    strongReading Atom R {a} = .undefined ∧
+    strongReading IsAtom R {a} = .undefined ∧
       HeimLasnikMay1991.eachOtherLF {a} (fun a b ↦ R {a} {b}) :=
   ⟨strongReading_eq_undefined_iff.2 Finset.not_nontrivial_singleton,
     HeimLasnikMay1991.eachOtherLF_singleton a _⟩
 
 -- (98), (113), (120)
 theorem weakReading_eq_true_iff_wr (R : α → α → Prop) (hA : A.Nonempty) :
-    weakReading Atom (Relation.Map R ({·}) ({·})) A = .true ↔
+    weakReading IsAtom (Relation.Map R ({·}) ({·})) A = .true ↔
       Sternefeld1998.WR (Relation.Map R ({·}) ({·})) A := by
   rw [weakReading_eq_true_iff, Sternefeld1998.wr_map_iff R hA, and_iff_right hA]
   simp only [Sternefeld1998.map_singleton_singleton]
 
 -- (117), (118), (119)
 theorem pants_row (R : α → α → Prop) (a : α) :
-    (weakReading Atom (Relation.Map R ({·}) ({·})) {a} ≠ .undefined ↔
+    (weakReading IsAtom (Relation.Map R ({·}) ({·})) {a} ≠ .undefined ↔
       Examples.ex119.judgment = .acceptable) ∧
     ¬ Sternefeld1998.WR (Relation.Map R ({·}) ({·})) {a} := by
   refine ⟨iff_of_false (not_not.2 (weakReading_eq_undefined_iff.2 Finset.not_nontrivial_singleton))
@@ -428,8 +435,8 @@ def Propped (x d : Finset (Fin 3)) : Prop := ∃ a, x = {a} ∧ d = Finset.univ.
 
 -- (83b), fn. 14
 theorem propped_row :
-    collectiveReading Atom Propped Finset.univ = .true ∧
-      strongReading Atom Propped Finset.univ ≠ .true ∧
+    collectiveReading IsAtom Propped Finset.univ = .true ∧
+      strongReading IsAtom Propped Finset.univ ≠ .true ∧
       .acceptable ∈ Examples.ex83b.readings.lookup "collective" := by
   refine ⟨collectiveReading_eq_true_iff.2 ⟨Finset.univ_nontrivial, fun a _ ↦ ⟨a, rfl, rfl⟩⟩,
     fun h ↦ ?_, by decide⟩
@@ -439,8 +446,8 @@ theorem propped_row :
 
 -- fn. 14
 theorem strongReading_ne_collectiveReading :
-    strongReading Atom (fun _ _ : Finset (Fin 3) ↦ True) Finset.univ = .true ∧
-      collectiveReading Atom (Relation.Map (fun _ _ : Fin 3 ↦ True) ({·}) ({·}))
+    strongReading IsAtom (fun _ _ : Finset (Fin 3) ↦ True) Finset.univ = .true ∧
+      collectiveReading IsAtom (Relation.Map (fun _ _ : Fin 3 ↦ True) ({·}) ({·}))
         Finset.univ ≠ .true := by
   refine ⟨strongReading_eq_true_iff.2 (by decide), fun h ↦ ?_⟩
   obtain ⟨_, b, -, -, hb⟩ := (collectiveReading_eq_true_iff.1 h).2 0 (Finset.mem_univ 0)
@@ -576,25 +583,27 @@ end DistinctSubgroups
 /-! ### Covers: subgroups and exceptions -/
 
 -- (54b), (54c), fn. 5
-theorem algClosure_iff_of_minimal_cover (hA : A.Nonempty) (C : Finset (Finset α))
+theorem mem_supClosure_iff_of_minimal_cover (hA : A.Nonempty) (C : Finset (Finset α))
     (hcov : C.sup id = A) (hmin : ∀ D ⊆ C, D.sup id = A → D = C) (φ : Finset α → Prop) :
-    AlgClosure (fun X ↦ X ∈ C ∧ φ X) A ↔ ∀ X ∈ C, φ X := by
-  rw [algClosure_iff_exists_sup']
+    A ∈ supClosure {X | X ∈ C ∧ φ X} ↔ ∀ X ∈ C, φ X := by
   refine ⟨fun ⟨t, _, hP, hsup⟩ X hX ↦ ?_, fun h ↦ ?_⟩
-  · have : t = C := hmin t (fun y hy ↦ (hP y hy).1) (by rw [← hsup, Finset.sup'_eq_sup])
-    exact (hP X (this ▸ hX)).2
+  · have : t = C := hmin t (fun y hy ↦ (hP (Finset.mem_coe.2 hy)).1)
+      (by rw [← hsup, Finset.sup'_eq_sup])
+    exact (hP (Finset.mem_coe.2 (this ▸ hX))).2
   · have hne : C.Nonempty := Finset.nonempty_iff_ne_empty.2 fun hC ↦ by
       simp [hC] at hcov
       exact hA.ne_empty hcov.symm
-    exact ⟨C, hne, fun y hy ↦ ⟨hy, h y hy⟩, by rw [Finset.sup'_eq_sup, hcov]⟩
+    exact ⟨C, hne, fun y hy ↦ ⟨Finset.mem_coe.1 hy, h y (Finset.mem_coe.1 hy)⟩,
+      by rw [Finset.sup'_eq_sup, hcov]⟩
 
 /-- Fit alone is not enough for (54b) and (54c) to agree, as footnote 5 requires minimality. -/
 example : ∃ (C : Finset (Finset (Fin 3))) (φ : Finset (Fin 3) → Prop),
-    C.sup id = Finset.univ ∧ AlgClosure (fun X ↦ X ∈ C ∧ φ X) Finset.univ ∧ ¬ ∀ X ∈ C, φ X := by
+    C.sup id = Finset.univ ∧ Finset.univ ∈ supClosure {X | X ∈ C ∧ φ X} ∧ ¬ ∀ X ∈ C, φ X := by
   refine ⟨{{0, 1}, {1, 2}, {0, 2}}, (· ≠ {0, 2}), by decide, ?_, by simp⟩
   have e : (Finset.univ : Finset (Fin 3)) = {0, 1} ⊔ {1, 2} := by decide
   rw [e]
-  exact .sum (.base ⟨by simp, by decide⟩) (.base ⟨by simp, by decide⟩)
+  refine supClosed_supClosure (subset_supClosure ?_) (subset_supClosure ?_) <;>
+    exact ⟨by simp, by decide⟩
 
 private theorem Finpartition.minimal (P : Finpartition A) (D : Finset (Finset α))
     (hD : D ⊆ P.parts) (hsup : D.sup id = A) : D = P.parts := by
@@ -605,16 +614,16 @@ private theorem Finpartition.minimal (P : Finpartition A) (D : Finset (Finset α
 
 -- (86), (87), (88)
 theorem pluralize_parts_eq_true_iff (P : Finpartition A) (hA : A.Nonempty) :
-    pluralize (fun X ↦ Trivalent.ofProp (X ∈ P.parts) ⊓ strongReading Atom R X) A = .true ↔
+    pluralize (fun X ↦ Trivalent.ofProp (X ∈ P.parts) ⊓ strongReading IsAtom R X) A = .true ↔
       ∀ X ∈ P.parts, StrongReciprocity (fun a b ↦ R {a} {b}) X := by
   simp only [pluralize_eq_true_iff, Trivalent.inf_eq_true_iff, Trivalent.ofProp_eq_true_iff,
     strongReading_eq_true_iff]
-  exact algClosure_iff_of_minimal_cover hA P.parts P.sup_parts (Finpartition.minimal P) _
+  exact mem_supClosure_iff_of_minimal_cover hA P.parts P.sup_parts (Finpartition.minimal P) _
 
 -- (12): the existential that p. 94 calls too weak, against the salient partition of (88)
 theorem partitionedStrongReciprocity_iff_exists_pluralize (hA : A.Nonempty) :
     PartitionedStrongReciprocity (fun a b ↦ R {a} {b}) A ↔ ∃ P : Finpartition A,
-      pluralize (fun X ↦ Trivalent.ofProp (X ∈ P.parts) ⊓ strongReading Atom R X) A = .true :=
+      pluralize (fun X ↦ Trivalent.ofProp (X ∈ P.parts) ⊓ strongReading IsAtom R X) A = .true :=
   exists_congr fun P ↦ (pluralize_parts_eq_true_iff P hA).symm
 
 /-- A situation of (136), (141) and (142), given by its arrows. -/
@@ -661,25 +670,27 @@ theorem subset_of_weakReciprocity_situation142 {U : Finset (Fin 6)}
 
 -- (130a), (136), (139), (140)
 theorem weakReading_situation136 :
-    weakReading (fun z ↦ Atom z ∧ z ≤ coveredPirates)
+    weakReading (fun z ↦ IsAtom z ∧ z ≤ coveredPirates)
       (Relation.Map (Stares situation136) ({·}) ({·})) Finset.univ = .false := by
   refine (eq_false_iff _).2 ⟨?_, fun h ↦ ?_⟩
   · rw [weakReading, cumulatedReading, ne_eq, pluralize_eq_undefined_iff, not_not]
     have base (x y : Finset (Fin 6)) (c : Fin 6) (hc : c ∈ coveredPirates) (hx : c ∉ x)
-        (hy : c ∈ y) : AlgClosure (fun p : Finset (Fin 6) × Finset (Fin 6) ↦
+        (hy : c ∈ y) : (x, y) ∈ supClosure {p : Finset (Fin 6) × Finset (Fin 6) |
           presupOfReferent (fun p : Finset (Fin 6) × Finset (Fin 6) ↦
-            eachOther (fun z ↦ Atom z ∧ z ≤ coveredPirates) p.1 p.2)
-          (fun d p ↦ (Atom p.1 ∧ p.1 ≤ coveredPirates) ∧ (Atom p.2 ∧ p.2 ≤ coveredPirates) ∧
-            Relation.Map (Stares situation136) ({·}) ({·}) p.1 d) p ≠ .undefined) (x, y) := by
-      refine .base ?_
-      rw [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_dom_iff]
-      exact ⟨{c}, overlap_iff_not_disjoint.not_left.2 (Finset.disjoint_singleton_left.2 hx),
-        Finset.singleton_subset_iff.2 hy, atom_singleton c, Finset.singleton_subset_iff.2 hc⟩
+            eachOther (fun z ↦ IsAtom z ∧ z ≤ coveredPirates) p.1 p.2)
+          (fun d p ↦ (IsAtom p.1 ∧ p.1 ≤ coveredPirates) ∧ (IsAtom p.2 ∧ p.2 ≤ coveredPirates) ∧
+            Relation.Map (Stares situation136) ({·}) ({·}) p.1 d) p ≠ .undefined} := by
+      refine subset_supClosure ?_
+      simp only [Set.mem_ofPred_eq, ne_eq, presupOfReferent_eq_undefined_iff, not_not,
+        eachOther_dom_iff]
+      exact ⟨{c}, Finset.disjoint_singleton_left.2 hx,
+        Finset.singleton_subset_iff.2 hy, Finset.isAtom_singleton c,
+          Finset.singleton_subset_iff.2 hc⟩
     have e : ((Finset.univ : Finset (Fin 6)), (Finset.univ : Finset (Fin 6))) =
         (({1, 2, 3, 4, 5} : Finset (Fin 6)), ({0, 5} : Finset (Fin 6))) ⊔
           (({0} : Finset (Fin 6)), ({1, 2, 3, 4} : Finset (Fin 6))) := by decide
     rw [e]
-    exact .sum (base _ _ 0 (by decide) (by decide) (by decide))
+    exact supClosed_supClosure (base _ _ 0 (by decide) (by decide) (by decide))
       (base _ _ 1 (by decide) (by decide) (by decide))
   · obtain ⟨z, ⟨-, hz⟩, -, h5⟩ := exists_cell_of_weakReading_eq_true h (Finset.mem_univ 5)
     exact absurd (hz h5) (by decide)
@@ -723,25 +734,25 @@ instance (R : α → α → τ → Prop) [∀ a b t, Decidable (R a b t)] (A : F
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 -- (176), (178)
-private theorem algClosure_triple_iff {β γ : Type*} [DecidableEq β] [DecidableEq γ]
+private theorem mem_supClosure_triple_iff {β γ : Type*} [DecidableEq β] [DecidableEq γ]
     (R : α → β → γ → Prop) (x : Finset α) (y : Finset β) (s : Finset γ) :
-    AlgClosure (fun p : Finset α × Finset β × Finset γ ↦ ∃ a b t, R a b t ∧ p = ({a}, {b}, {t}))
-        (x, y, s) ↔
+    (x, y, s) ∈ supClosure
+        {p : Finset α × Finset β × Finset γ | ∃ a b t, R a b t ∧ p = ({a}, {b}, {t})} ↔
       x.Nonempty ∧ (∀ t ∈ s, ∃ a ∈ x, ∃ b ∈ y, R a b t) ∧ (∀ a ∈ x, ∃ t ∈ s, ∃ b ∈ y, R a b t) ∧
         ∀ b ∈ y, ∃ t ∈ s, ∃ a ∈ x, R a b t := by
   constructor
   · suffices ∀ {p : Finset α × Finset β × Finset γ},
-        AlgClosure (fun p ↦ ∃ a b t, R a b t ∧ p = ({a}, {b}, {t})) p →
+        p ∈ supClosure {p | ∃ a b t, R a b t ∧ p = ({a}, {b}, {t})} →
           p.1.Nonempty ∧ (∀ t ∈ p.2.2, ∃ a ∈ p.1, ∃ b ∈ p.2.1, R a b t) ∧
             (∀ a ∈ p.1, ∃ t ∈ p.2.2, ∃ b ∈ p.2.1, R a b t) ∧
               ∀ b ∈ p.2.1, ∃ t ∈ p.2.2, ∃ a ∈ p.1, R a b t from this
     intro p hp
-    induction hp using AlgClosure.induction with
-    | base h =>
+    induction hp using supClosure_induction with
+    | mem _ h =>
       obtain ⟨a, b, t, hR, rfl⟩ := h
       simpa using hR
-    | sum _ _ ih ih' =>
-      simp only [Prod.fst_sup, Prod.snd_sup, Finset.sup_eq_union]
+    | sup _ _ _ _ ih ih' =>
+      simp only [Prod.fst_sup, Prod.snd_sup]
       exact ⟨ih.1.mono Finset.subset_union_left, by grind, by grind, by grind⟩
   · rintro ⟨⟨a, ha⟩, hs, hx, hy⟩
     classical
@@ -753,45 +764,47 @@ private theorem algClosure_triple_iff {β γ : Type*} [DecidableEq β] [Decidabl
       simp only [g, Prod.mk.injEq]
       refine ⟨?_, ?_, ?_⟩ <;> ext <;> simp [W] <;> grind
     rw [← hg]
-    refine .map (f := g) (by simp [g, Finset.image_union]) ?_
-      ((algClosure_image_singleton {q : α × β × γ | R q.1 q.2.1 q.2.2} W).2
+    refine map_mem_supClosure (f := g) (by simp [g, Finset.image_union]) ?_
+      ((mem_supClosure_image_singleton {q : α × β × γ | R q.1 q.2.1 q.2.2} W).2
         ⟨⟨(a, b, t), by simp [W, *]⟩, fun q hq ↦ (Finset.mem_filter.1 hq).2⟩)
     rintro _ ⟨q, hq, rfl⟩
     exact ⟨_, _, _, hq, by simp [g]⟩
 
 theorem situationWeakReading_eq_undefined_iff [DecidableEq τ] {CovS : Finset τ → Prop}
     {R : Finset α → Finset α → Finset τ → Prop} {s : Finset τ} :
-    situationWeakReading Atom CovS R A s = .undefined ↔ ¬ A.Nontrivial := by
-  rw [situationWeakReading, pluralize_eq_undefined_iff, not_iff_not, ← algClosure_sdiff_pair_iff]
+    situationWeakReading IsAtom CovS R A s = .undefined ↔ ¬ A.Nontrivial := by
+  rw [situationWeakReading, pluralize_eq_undefined_iff, not_iff_not,
+    ← mem_supClosure_sdiff_pair_iff]
   simp only [ne_eq, presupOfReferent_eq_undefined_iff, not_not, eachOther_atom_dom_iff]
-  exact ⟨fun h ↦ h.map (x := (A, A, s)) (f := fun q ↦ (q.1, q.2.1)) (by simp) fun _ ↦ id,
-    fun h ↦ h.map (x := (A, A)) (f := fun p ↦ (p.1, p.2, s)) (by simp) fun _ ↦ id⟩
+  exact ⟨map_mem_supClosure (x := (A, A, s)) (f := fun q ↦ (q.1, q.2.1)) (by simp) fun _ ↦ id,
+    map_mem_supClosure (x := (A, A)) (f := fun p ↦ (p.1, p.2, s)) (by simp) fun _ ↦ id⟩
 
 -- (193a), (193b)
 theorem situationWeakReading_eq_true_iff [DecidableEq τ]
     {R : Finset α → Finset α → Finset τ → Prop} {s : Finset τ} :
-    situationWeakReading Atom Atom R A s = .true ↔
+    situationWeakReading IsAtom IsAtom R A s = .true ↔
       A.Nonempty ∧ SituationWeakReciprocity (fun a b t ↦ R {a} {b} {t}) A s := by
   rw [situationWeakReading, pluralize_eq_true_iff]
   have : (fun q : Finset α × Finset α × Finset τ ↦
-      presupOfReferent (fun q : Finset α × Finset α × Finset τ ↦ eachOther Atom q.1 q.2.1)
-        (fun d q ↦ Atom q.1 ∧ Atom q.2.1 ∧ Atom q.2.2 ∧ R q.1 d q.2.2) q = .true) =
+      presupOfReferent (fun q : Finset α × Finset α × Finset τ ↦ eachOther IsAtom q.1 q.2.1)
+        (fun d q ↦ IsAtom q.1 ∧ IsAtom q.2.1 ∧ IsAtom q.2.2 ∧ R q.1 d q.2.2) q = .true) =
       fun q ↦ ∃ a b t, (a ≠ b ∧ R {a} {b} {t}) ∧ q = ({a}, {b}, {t}) := by
     ext ⟨x, y, s⟩
     simp only [presupOfReferent_eq_true_iff]
     constructor
     · rintro ⟨d, hd, hx, hy, hs, hR⟩
-      obtain ⟨a, rfl⟩ := atom_finset_iff.1 hx
-      obtain ⟨b, rfl⟩ := atom_finset_iff.1 hy
-      obtain ⟨t, rfl⟩ := atom_finset_iff.1 hs
-      obtain ⟨hne, rfl⟩ := eachOther_atom_singleton_eq_some_iff.1 hd
+      obtain ⟨a, rfl⟩ := Finset.isAtom_iff.1 hx
+      obtain ⟨b, rfl⟩ := Finset.isAtom_iff.1 hy
+      obtain ⟨t, rfl⟩ := Finset.isAtom_iff.1 hs
+      obtain ⟨hne, rfl⟩ := eachOther_isAtom_singleton_eq_some_iff.1 hd
       exact ⟨a, b, t, ⟨hne, hR⟩, rfl⟩
     · rintro ⟨a, b, t, ⟨hne, hR⟩, he⟩
       obtain ⟨rfl, rfl, rfl⟩ : x = {a} ∧ y = {b} ∧ s = {t} := by simpa using he
-      exact ⟨_, eachOther_atom_singleton_of_ne hne, atom_singleton a, atom_singleton b,
-        atom_singleton t, hR⟩
+      exact ⟨_, eachOther_isAtom_singleton_of_ne hne, Finset.isAtom_singleton a,
+        Finset.isAtom_singleton b,
+        Finset.isAtom_singleton t, hR⟩
   rw [this]
-  exact algClosure_triple_iff (fun a b t ↦ a ≠ b ∧ R {a} {b} {t}) A A s
+  exact mem_supClosure_triple_iff (fun a b t ↦ a ≠ b ∧ R {a} {b} {t}) A A s
 
 section Entailments
 
@@ -903,20 +916,19 @@ def AdjacentIn (a b : Fin 5) (s : Finset (Fin 5)) : Prop := a ∈ s ∧ b ∈ s 
 
 -- (178), (181), (193)
 theorem situationWeakReading_gap :
-    situationWeakReading Atom (· ∈ Set.range poleCell)
+    situationWeakReading IsAtom (· ∈ Set.range poleCell)
         (fun x y s ↦ ∃ a b, x = {a} ∧ y = {b} ∧ AdjacentIn a b s) Finset.univ Finset.univ = .true ∧
       ¬ SituationWeakReciprocity AdjacentIn Finset.univ (Finset.univ.image poleCell) := by
   constructor
   · rw [situationWeakReading, pluralize_eq_true_iff]
     have base {a b : Fin 5} (t : Fin 5) (hne : a ≠ b) (h : AdjacentIn a b (poleCell t)) :
-        AlgClosure (fun q : Finset (Fin 5) × Finset (Fin 5) × Finset (Fin 5) ↦
+        ({a}, {b}, poleCell t) ∈ supClosure {q : Finset (Fin 5) × Finset (Fin 5) × Finset (Fin 5) |
           presupOfReferent (fun q : Finset (Fin 5) × Finset (Fin 5) × Finset (Fin 5) ↦
-            eachOther Mereology.Atom q.1 q.2.1)
-          (fun d q ↦ Mereology.Atom q.1 ∧ Mereology.Atom q.2.1 ∧ q.2.2 ∈ Set.range poleCell ∧
-            ∃ a b, q.1 = {a} ∧ d = {b} ∧ AdjacentIn a b q.2.2) q = .true)
-          ({a}, {b}, poleCell t) :=
-      .base (presupOfReferent_eq_true_iff.2 ⟨{b}, eachOther_atom_singleton_of_ne hne,
-        atom_singleton a, atom_singleton b, ⟨t, rfl⟩, a, b, rfl, rfl, h⟩)
+            eachOther IsAtom q.1 q.2.1)
+          (fun d q ↦ IsAtom q.1 ∧ IsAtom q.2.1 ∧ q.2.2 ∈ Set.range poleCell ∧
+            ∃ a b, q.1 = {a} ∧ d = {b} ∧ AdjacentIn a b q.2.2) q = .true} :=
+      subset_supClosure (presupOfReferent_eq_true_iff.2 ⟨{b}, eachOther_isAtom_singleton_of_ne hne,
+        Finset.isAtom_singleton a, Finset.isAtom_singleton b, ⟨t, rfl⟩, a, b, rfl, rfl, h⟩)
     have e : ((Finset.univ : Finset (Fin 5)), (Finset.univ : Finset (Fin 5)),
         (Finset.univ : Finset (Fin 5))) =
         ((({0} : Finset (Fin 5)), ({1} : Finset (Fin 5)), poleCell 0) ⊔
@@ -926,7 +938,8 @@ theorem situationWeakReading_gap :
         ((({3} : Finset (Fin 5)), ({4} : Finset (Fin 5)), poleCell 3) ⊔
           (({4} : Finset (Fin 5)), ({3} : Finset (Fin 5)), poleCell 3)) := by decide
     rw [e]
-    refine .sum (.sum (.sum ?_ ?_) (.sum ?_ ?_)) (.sum ?_ ?_) <;>
+    refine supClosed_supClosure (supClosed_supClosure (supClosed_supClosure ?_ ?_)
+      (supClosed_supClosure ?_ ?_)) (supClosed_supClosure ?_ ?_) <;>
       exact base _ (by decide) (by decide)
   · rintro ⟨h, -, -⟩
     obtain ⟨a, -, b, -, -, hR⟩ := h (poleCell 4) (Finset.mem_image_of_mem _ (Finset.mem_univ 4))
@@ -957,7 +970,7 @@ variable {α : Type*} {A : Finset α}
 
 -- (197), (198), (199), (200), fn. 12; (216) prints no distinctness
 theorem weakReading_symmGen_iff [DecidableEq α] (R : α → α → Prop) (hA : A.Nonempty) :
-    weakReading Mereology.Atom (Relation.Map (Relation.SymmGen R) ({·}) ({·})) A = .true ↔
+    weakReading IsAtom (Relation.Map (Relation.SymmGen R) ({·}) ({·})) A = .true ↔
       InclusiveAlternativeOrdering R A := by
   rw [weakReading_eq_true_iff, and_iff_right hA]
   simp only [Sternefeld1998.map_singleton_singleton]

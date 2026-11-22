@@ -56,23 +56,23 @@ variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β] {R S : α → �
   {x x' : α} {y y' : β}
 
 /-- The cumulation `**R` of a relation ([krifka-1986]; [sternefeld-1998]): the closure of `R`
-under componentwise sum, `Mereology.AlgClosure` on the product semilattice. -/
+under componentwise sum, `supClosure` on the product semilattice. -/
 def Cumulation (R : α → β → Prop) (x : α) (y : β) : Prop :=
-  AlgClosure (Function.uncurry R) (x, y)
+  (x, y) ∈ supClosure {p : α × β | R p.1 p.2}
 
-theorem Cumulation.of_rel (h : R x y) : Cumulation R x y := AlgClosure.base h
+theorem Cumulation.of_rel (h : R x y) : Cumulation R x y := subset_supClosure h
 
 theorem Cumulation.sup (h : Cumulation R x y) (h' : Cumulation R x' y') :
     Cumulation R (x ⊔ x') (y ⊔ y') :=
-  AlgClosure.sum h h'
+  supClosed_supClosure h h'
 
 theorem Cumulation.mono (hRS : ∀ x y, R x y → S x y) (h : Cumulation R x y) :
     Cumulation S x y :=
-  algClosure_mono (P := Function.uncurry R) (fun p ↦ hRS p.1 p.2) _ h
+  supClosure_mono (fun p hp ↦ hRS p.1 p.2 hp) h
 
 /-- A cumulative relation is its own cumulation. -/
-theorem cumulation_iff_of_cum (hR : CUM (Function.uncurry R)) : Cumulation R x y ↔ R x y :=
-  algClosure_of_cum hR
+theorem cumulation_iff_of_cum (hR : CUM {p : α × β | R p.1 p.2}) : Cumulation R x y ↔ R x y :=
+  Set.ext_iff.1 hR.supClosure_eq (x, y)
 
 end Closure
 
@@ -91,20 +91,20 @@ theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Fins
     Cumulation (Relation.Map R ({·}) ({·})) x y ↔ x.Nonempty ∧ Set.LiftRel R ↑x ↑y := by
   constructor
   · suffices ∀ p : Finset A × Finset B,
-        AlgClosure (Function.uncurry (Relation.Map R ({·}) ({·}))) p →
+        p ∈ supClosure {p : Finset A × Finset B | Relation.Map R ({·}) ({·}) p.1 p.2} →
           p.1.Nonempty ∧ Set.LiftRel R ↑p.1 ↑p.2 from this (x, y)
     intro p h
-    induction h using AlgClosure.induction with
-    | @base p h =>
+    induction h using supClosure_induction with
+    | mem p h =>
       obtain ⟨x, y⟩ := p
       change ∃ a b, R a b ∧ ({a} : Finset A) = x ∧ ({b} : Finset B) = y at h
       obtain ⟨a, b, hab, rfl, rfl⟩ := h
       refine ⟨Finset.singleton_nonempty a, ?_⟩
       rw [Finset.coe_singleton, Finset.coe_singleton, Set.liftRel_singleton]
       exact hab
-    | sum _ _ ih ih' =>
+    | sup _ _ _ _ ih ih' =>
       refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩
-      rw [Prod.fst_sup, Prod.snd_sup, Finset.sup_eq_union, Finset.sup_eq_union,
+      rw [Prod.fst_sup, Prod.snd_sup,
         Finset.coe_union, Finset.coe_union]
       exact ih.2.union ih'.2
   · rintro ⟨hx, hl, hr⟩
@@ -123,16 +123,18 @@ theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Fins
           ⟨Finset.singleton_subset_iff.2 (hg b hb), Finset.singleton_subset_iff.2 hb⟩
       · have hle :=
           Prod.le_def.1 (Finset.le_sup' (fun a ↦ (({a} : Finset A), ({f a} : Finset B))) ha)
-        rw [Prod.fst_sup, Finset.sup_eq_union]
+        rw [Prod.fst_sup]
         exact Finset.mem_union_left _ (Finset.singleton_subset_iff.1 hle.1)
       · have hle :=
           Prod.le_def.1 (Finset.le_sup' (fun b ↦ (({g b} : Finset A), ({b} : Finset B))) hb)
-        rw [Prod.snd_sup, Finset.sup_eq_union]
+        rw [Prod.snd_sup]
         exact Finset.mem_union_right _ (Finset.singleton_subset_iff.1 hle.2)
-    show AlgClosure _ (x, y)
+    have hmem (a : A) (b : B) (h : R a b) : (({a} : Finset A), ({b} : Finset B)) ∈
+        {p : Finset A × Finset B | Relation.Map R ({·}) ({·}) p.1 p.2} := ⟨a, b, h, rfl, rfl⟩
+    show (x, y) ∈ supClosure _
     rw [← key]
-    exact AlgClosure.sum (algClosure_finsetSup' hx fun a ha ↦ .base ⟨a, f a, hRf a ha, rfl, rfl⟩)
-      (algClosure_finsetSup' hy fun b hb ↦ .base ⟨g b, b, hRg b hb, rfl, rfl⟩)
+    exact supClosed_supClosure (finsetSup'_mem_supClosure hx fun a ha ↦ hmem _ _ (hRf a ha))
+      (finsetSup'_mem_supClosure hy fun b hb ↦ hmem _ _ (hRg b hb))
 
 end Finset
 

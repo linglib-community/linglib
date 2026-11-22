@@ -13,7 +13,7 @@ referent [has at least the participants](##SpeechAct.Context.monotone_participan
 one. Forming a group from two referents is their sum, and
 [the participants of a sum are those of its summands](##SpeechAct.Context.participants_sup_iff)
 exactly when each holder is an individual, part of a sum only by being part of a summand,
-[as an atom is](##SpeechAct.Context.participants_sup_of_atom). The participants are then
+as an atom of a distributive lattice is (`IsAtom.le_sup_iff`). The participants are then
 [a map preserving sums](##SpeechAct.Context.participantsHom), which is why the person of a
 coordination is a function of its conjuncts' persons, their union as sets of roles.
 
@@ -72,11 +72,6 @@ theorem participants_sup_iff :
   · ext r
     simp only [mem_participants, Finset.mem_union]
     exact ⟨fun hr ↦ h r hr, fun hr ↦ hr.elim le_sup_of_le_left le_sup_of_le_right⟩
-
-/-- Where joins are sums, atomic holders are part of a sum only by being part of a summand. -/
-theorem participants_sup_of_atom [Mereology.SupIsSum E] (hc : ∀ r, Mereology.Atom (c.holder r))
-    (x y : E) : c.participants (x ⊔ y) = c.participants x ∪ c.participants y :=
-  c.participants_sup_iff.2 (fun r _ _ ↦ (hc r).le_sup_iff.1) x y
 
 variable (h : ∀ r ⦃x y⦄, c.holder r ≤ x ⊔ y → c.holder r ≤ x ∨ c.holder r ≤ y)
 

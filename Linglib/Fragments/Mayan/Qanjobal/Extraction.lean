@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Basic
 public import Linglib.Fragments.Mayan.Extraction
 
 /-!

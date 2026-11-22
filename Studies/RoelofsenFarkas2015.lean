@@ -30,7 +30,7 @@ and *doch* mark (`usable_iff_mem_marks`).
 
 * The most salient antecedent possibility is the one the antecedent formula highlights; the
   discourse context of the paper is not modelled.
-* The features are `Discourse.Response.Feature`, whose [same] is the paper's [agree]. A feature
+* The features are `Response.Feature`, whose [same] is the paper's [agree]. A feature
   is unmarked when its value is positive, as [agree] and [+] are (78), (80), and the prejacent
   of a relative feature `r` highlights `r • β` for the antecedent possibility `β`.
 * In the planets examples *odd* is the complement of *even*, so each proposition is recorded as
@@ -54,7 +54,6 @@ and *doch* mark (`usable_iff_mem_marks`).
 
 namespace RoelofsenFarkas2015
 
-open Discourse
 
 variable {W : Type*}
 

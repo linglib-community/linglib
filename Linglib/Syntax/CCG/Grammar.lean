@@ -6,46 +6,18 @@ public import Mathlib.Computability.Language
 /-!
 # CCG grammars and their languages
 
-A CCG grammar is a finite lexicon, a start atom and a `RuleSystem`. Each formalism of the
-literature is a choice of rule system, though a rule system may be any relation on the instances
-of the composition schema. In the classical formalism of Weir and Joshi and of Vijay-Shanker and
-Weir, VW-CCG, a grammar lists finitely many restricted rules (`RuleSystem.ofRestrictedRules`),
-each a forward or backward rule of one degree whose instances may be restricted in the target of
-the primary input and in the secondary input. Restricting every rule up to a degree bound to
-primary inputs whose target is the start atom (`Grammar.targetRestricted`) is one such grammar
-(`RuleSystem.targetRestricted_eq_ofRestrictedRules`), the restriction of Kuhlmann, Koller and
-Satta's grammar for `aⁿbⁿcⁿ`. In the multimodal formalism of Baldridge and Steedman
-(`Grammar.multimodal`) the rule system is fixed up to a degree bound, and a grammar is nothing
-but its lexicon, start atom and bound. A derivation step is an instance `X/Y Yβ ⇒ Xβ` of the
-composition schema or its mirror, so it records its argument sequence `β`, and the
-harmonic/crossed distinction follows from the slash directions. The VW-CCG rule systems are
-modality-blind, so their grammars use the unrestricted modality.
+A CCG grammar is a finite lexicon, which gives each word its categories, together with a start
+atom and a rule system. The grammar derives a string at a category when the string can be built
+from lexical entries by its rules, and its language is the set of strings it derives at the
+start atom. [A grammar derives a string exactly when some derivation tree over its lexicon
+spells it out](##CCG.Grammar.derives_iff).
 
-Kuhlmann, Koller and Satta show that VW-CCG is weakly equivalent to tree-adjoining grammar, also
-when restricted to prefix-closed grammars, that prefix-closed grammars without target restrictions
-are strictly less expressive, and that their O-CCG, the multimodal formalism with the rules of
-OpenCCG, is strictly less expressive than TAG as well. Their constructions of TAG languages
-restrict secondary inputs, so the uniform target restriction is not the class of the
-equivalence. Schiffer and Maletti upgrade the equivalence to strong equivalence for grammars
-without empty lexical entries and with rules of degree at most 2. Strings are lists over the
-token alphabet `T`, so empty lexical entries are inexpressible.
-
-## Main definitions
-
-* `CCG.Grammar`: a lexicon, a start atom, and a rule system.
-* `CCG.RestrictedRule`, `CCG.RuleSystem.ofRestrictedRules`: the restricted rules of VW-CCG and
-  the rule system they define.
-* `CCG.Grammar.targetRestricted`, `CCG.Grammar.multimodal`: the uniform target restriction and
-  the multimodal formalism.
-* `CCG.Grammar.Derives`: the derivability relation, with `Grammar.language` the language of
-  token strings derived at the start atom.
-
-## Main statements
-
-* `CCG.RuleSystem.targetRestricted_eq_ofRestrictedRules`: the uniform target restriction is a
-  VW-CCG rule system.
-* `CCG.Grammar.derives_iff`: a grammar derives `w` at `c` iff some `CCG.Derivation` in its rule
-  system over its lexicon has yield `w`.
+How much a grammar can generate depends on its rule system. Kuhlmann, Koller and Satta show
+that VW-CCG generates the languages of tree-adjoining grammar, and that grammars without target
+restrictions, and the multimodal formalism with the rules of OpenCCG, generate strictly fewer.
+Schiffer and Maletti show that for grammars with rules of degree at most 2 the equivalence with
+tree-adjoining grammar also holds of the trees. Strings are lists of tokens, so a lexical entry
+for the empty string cannot be stated.
 
 ## Implementation notes
 
@@ -72,50 +44,6 @@ namespace CCG
 variable {T α : Type*}
 
 /-! ### Grammars and their languages -/
-
-/-- A restricted rule of VW-CCG ([vijay-shanker-weir-1994], [kuhlmann-koller-satta-2015]):
-forward or backward composition of one degree, application at degree `0`, whose instances may be
-restricted in the target of the primary input and in the secondary input, in part or in its
-entirety. -/
-structure RestrictedRule (α : Type*) where
-  /-- The side the primary slash looks to, `right` for a forward and `left` for a backward
-  rule. -/
-  side : Edge
-  /-- The degree, the number of arguments the rule composes. -/
-  degree : ℕ
-  /-- The targets the primary input may have. -/
-  primaryTarget : Set α
-  /-- The secondary inputs the rule admits. -/
-  secondary : Set (Cat α)
-
-/-- The rule system of a VW-CCG whose restricted rules are `rs`: an instance of the composition
-schema fires when it is a valid instance of one of them. -/
-def RuleSystem.ofRestrictedRules (rs : List (RestrictedRule α)) : RuleSystem α := fun x a β ↦
-  ∃ r ∈ rs, r.side = a.side ∧ r.degree = β.length ∧ x.target ∈ r.primaryTarget ∧
-    a.cat.pushArgs β ∈ r.secondary
-
-/-- The uniform target restriction admits composition up to a degree bound into a primary
-input whose target is the start atom, the restriction of every rule of
-[kuhlmann-koller-satta-2015]'s grammar for `aⁿbⁿcⁿ`. -/
-def RuleSystem.targetRestricted (start : α) (degree : ℕ) : RuleSystem α :=
-  fun x _ β ↦ β.length ≤ degree ∧ x.target = start
-
-/-- The uniform target restriction is the VW-CCG rule system of forward and backward composition
-of each degree up to the bound, restricted to primary inputs whose target is the start atom and
-unrestricted in the secondary input. -/
-theorem RuleSystem.targetRestricted_eq_ofRestrictedRules (start : α) (degree : ℕ) :
-    targetRestricted start degree = ofRestrictedRules ((List.range (degree + 1)).flatMap
-      fun n ↦ [⟨.right, n, {start}, Set.univ⟩, ⟨.left, n, {start}, Set.univ⟩]) := by
-  funext x a β
-  refine propext ⟨fun ⟨hβ, hx⟩ ↦ ?_, ?_⟩
-  · refine ⟨⟨a.side, β.length, {start}, Set.univ⟩, List.mem_flatMap.2 ⟨β.length,
-      List.mem_range.2 (by omega), ?_⟩, rfl, rfl, hx, trivial⟩
-    cases a.side <;> simp
-  · rintro ⟨r, hr, -, hd, hx, -⟩
-    obtain ⟨n, hn, hr⟩ := List.mem_flatMap.1 hr
-    rw [List.mem_range] at hn
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
-    rcases hr with rfl | rfl <;> exact ⟨by have : n = β.length := hd; omega, hx⟩
 
 /-- A CCG grammar has a finite lexicon, a distinguished start atom, and a rule system. -/
 structure Grammar (T α : Type*) where
@@ -155,11 +83,11 @@ inductive Grammar.Derives (G : Grammar T α) : Cat α → List T → Prop where
   | lex {t : T} {c : Cat α} : (t, c) ∈ G.lexicon → G.Derives c [t]
   /-- Forward composition `X/Y Yβ ⇒ Xβ`, application when `β = []`. -/
   | forward {x y : Cat α} {m : Modality} (β : List (Cat.Arg α)) {u v : List T} :
-      G.Derives (.rslash x m y) u → G.Derives (y.pushArgs β) v →
+      G.Derives (.slash .right x m y) u → G.Derives (y.pushArgs β) v →
       G.rules x ⟨.right, m, y⟩ β → G.Derives (x.pushArgs β) (u ++ v)
   /-- Backward composition `Yβ X\Y ⇒ Xβ`, application when `β = []`. -/
   | backward {x y : Cat α} {m : Modality} (β : List (Cat.Arg α)) {u v : List T} :
-      G.Derives (y.pushArgs β) u → G.Derives (.lslash x m y) v →
+      G.Derives (y.pushArgs β) u → G.Derives (.slash .left x m y) v →
       G.rules x ⟨.left, m, y⟩ β → G.Derives (x.pushArgs β) (u ++ v)
 
 /-- The string language of a grammar is the set of token strings derived at the start atom. -/
@@ -180,7 +108,7 @@ tree in its rule system over its lexicon: the trees are the proof-relevant calcu
 `Derivation.interp` consumes), the relation is its string-language shadow. -/
 
 /-- Every `Derivation` tree in a grammar's rule system over its lexicon witnesses derivability. -/
-theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation T G.rules c)
+theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation (fun _ ↦ T) G.rules c)
     (h : d.LexIn G.lexicon) : G.Derives c d.yield := by
   induction d with
   | lex => exact .lex h
@@ -192,10 +120,10 @@ theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation T G.r
 /-- Derivability is the tree calculus: a grammar derives `w` at `c` iff some derivation in its
 rule system over its lexicon has yield `w`. -/
 theorem Grammar.derives_iff {G : Grammar T α} {c : Cat α} {w : List T} :
-    G.Derives c w ↔ ∃ d : Derivation T G.rules c, d.LexIn G.lexicon ∧ d.yield = w := by
+    G.Derives c w ↔ ∃ d : Derivation (fun _ ↦ T) G.rules c, d.LexIn G.lexicon ∧ d.yield = w := by
   refine ⟨fun h ↦ ?_, fun ⟨d, hl, hy⟩ ↦ hy ▸ d.derives hl⟩
   induction h with
-  | @lex t c h => exact ⟨.lex t c, h, rfl⟩
+  | @lex t c h => exact ⟨.lex c t, h, rfl⟩
   | forward β _ _ hr ih₁ ih₂ =>
     obtain ⟨d₁, h₁, rfl⟩ := ih₁
     obtain ⟨d₂, h₂, rfl⟩ := ih₂

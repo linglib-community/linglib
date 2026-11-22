@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Berent2026
 public import Linglib.Fragments.English.Phonology
 public import Linglib.Fragments.Hebrew.ConsonantalRoots
 public import Linglib.Morphology.Root.Consonantal
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Basic
 public import Linglib.Phonology.Subregular.StrictlyLocal
 public import Studies.BerentEtAl2016
 
@@ -52,7 +52,7 @@ decides it](##initialIdentity_not_factorsThrough). English speakers carry doubli
 
 namespace Berent2026
 
-open Phonology Morphology OptimalityTheory BerentEtAl2016
+open Phonology Morphology OptimalityTheory BerentEtAl2016 Subregular
 
 /-! ### Abstract: the syllable hierarchy -/
 

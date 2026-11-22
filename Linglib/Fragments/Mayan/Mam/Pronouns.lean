@@ -47,11 +47,11 @@ def qini : PersonalPronoun := { form := "qini", person := some .first, number :=
 
 /-- The independent first person plural exclusive *qoy*. -/
 def qoy : PersonalPronoun :=
-  { form := "qoy", person := some .firstExclusive, number := some .plural }
+  { form := "qoy", person := some .first, clusivity := some .exclusive, number := some .plural }
 
 /-- The first person plural inclusive *qo*. -/
 def qo : PersonalPronoun :=
-  { form := "qo", person := some .firstInclusive, number := some .plural }
+  { form := "qo", person := some .first, clusivity := some .inclusive, number := some .plural }
 
 /-- The second person plural *qi*. -/
 def qi : PersonalPronoun := { form := "qi", person := some .second, number := some .plural }

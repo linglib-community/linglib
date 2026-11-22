@@ -18,7 +18,7 @@ public import Mathlib.Data.Multiset.Bind
 
 This file defines the insertion of several guest trees into a host. For a host `T` and guests
 `gs`, `insertion T gs` is the multiset, over all assignments of the guests to vertices of `T`, of
-the trees obtained by grafting every guest at its vertex at once (`multiGraft`); `insertionForest`
+the trees obtained by grafting every guest at its vertex at once (`graft`); `insertionForest`
 does the same for a host forest. This is the Guin–Oudom extension of the grafting pre-Lie product
 to several guests, in the form Foissy gives for decorated trees.
 
@@ -91,31 +91,49 @@ private theorem bind_sections_filter {β γ δ : Type*} (P : β → Prop) [Decid
       simp only [List.filter_cons, decide_eq_true_eq, hv, not_true_eq_false, ite_true, ite_false]
       exact ih fun a b => G ((v, g) :: a) b
 
+private theorem filter_filter_of_imp {β : Type*} {P Q : β → Prop} [DecidablePred P]
+    [DecidablePred Q] (h : ∀ x, Q x → P x) (l : List β) :
+    (l.filter (P ·)).filter (Q ·) = l.filter (Q ·) := by
+  rw [List.filter_filter]
+  refine List.filter_congr fun x _ ↦ ?_
+  by_cases hx : Q x <;> simp [hx, h x]
+
+/-- Renaming the vertices of an assignment along an injection renames the address read. -/
+private theorem map_snd_filter_zip_map {β β' γ : Type*} [DecidableEq β] [DecidableEq β']
+    {f : β → β'} (hf : Function.Injective f) (l : List β) (r : List γ) (b : β) :
+    (((l.map f).zip r).filter (·.1 = f b)).map Prod.snd =
+      ((l.zip r).filter (·.1 = b)).map Prod.snd := by
+  simp [List.zip_map_left, List.filter_map, Function.comp_def, hf.eq_iff]
+
+private theorem modifyHead_succ_injective :
+    Function.Injective (List.modifyHead (· + 1) : List ℕ → List ℕ) := by
+  rintro (_ | ⟨i, p⟩) (_ | ⟨j, q⟩) h <;> simp_all
+
 /-! ## `insertion`: single-tree host -/
 
-/-- `insertion T [T₁, …, Tₙ]` is the multiset, over `(v₁, …, vₙ) ∈ V(T)ⁿ`, of
-`multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
+/-- `insertion T [T₁, …, Tₙ]` is the multiset, over `(v₁, …, vₙ) ∈ V(T)ⁿ`, of the trees obtained
+from `T` by grafting each `Tᵢ` at `vᵢ`. -/
 def insertion (T : RoseTree α) (Ts : List (RoseTree α)) : Multiset (RoseTree α) :=
   Multiset.ofList <| (List.replicate Ts.length (vertices T)).sections.map
-    fun choice => multiGraft T (choice.zip Ts)
+    fun ch ↦ graft T fun p ↦ ((ch.zip Ts).filter (·.1 = p)).map Prod.snd
 
 theorem insertion_def (T : RoseTree α) (Ts : List (RoseTree α)) :
     insertion T Ts =
       Multiset.ofList ((List.replicate Ts.length (vertices T)).sections.map
-        fun choice => multiGraft T (choice.zip Ts)) := rfl
+        fun ch ↦ graft T fun p ↦ ((ch.zip Ts).filter (·.1 = p)).map Prod.snd) := rfl
 
 /-! ## `insertionForest`: forest host -/
 
 /-- `insertionForest cs gs` is the multiset, over assignments of the guests `gs` to vertices of
-the forest `cs`, of the simultaneous grafts `multiGraftChildren`. -/
+the forest `cs`, of the forests obtained from `cs` by grafting each guest at its vertex. -/
 def insertionForest (cs gs : List (RoseTree α)) : Multiset (List (RoseTree α)) :=
   Multiset.ofList <| (List.replicate gs.length (verticesList cs)).sections.map
-    fun ch => multiGraftChildren cs (ch.zip gs)
+    fun ch ↦ graftForest cs fun p ↦ ((ch.zip gs).filter (·.1 = p)).map Prod.snd
 
 theorem insertionForest_def (cs gs : List (RoseTree α)) :
     insertionForest cs gs =
       Multiset.ofList ((List.replicate gs.length (verticesList cs)).sections.map
-        fun ch => multiGraftChildren cs (ch.zip gs)) := rfl
+        fun ch ↦ graftForest cs fun p ↦ ((ch.zip gs).filter (·.1 = p)).map Prod.snd) := rfl
 
 @[simp] theorem insertionForest_nil_nil :
     insertionForest ([] : List (RoseTree α)) [] = ({[]} : Multiset (List (RoseTree α))) := rfl
@@ -125,35 +143,19 @@ theorem insertionForest_def (cs gs : List (RoseTree α)) :
     insertionForest ([] : List (RoseTree α)) (T_g :: Ts) = 0 := by
   simp [insertionForest, List.replicate_succ]
 
-@[simp] theorem insertionForest_cons_host_nil_guests
-    (T : RoseTree α) (F : List (RoseTree α)) :
-    insertionForest (T :: F) ([] : List (RoseTree α)) =
-      ({T :: F} : Multiset (List (RoseTree α))) := by
-  show (Multiset.ofList [multiGraftChildren (T :: F) []] : Multiset _) = _
-  rw [multiGraftChildren_nil_pairs]
-  rfl
-
 theorem insertionForest_nil_guests (F : List (RoseTree α)) :
     insertionForest F [] = ({F} : Multiset (List (RoseTree α))) := by
-  cases F
-  · exact insertionForest_nil_nil
-  · exact insertionForest_cons_host_nil_guests _ _
-
-private theorem map_zip_map_left {β β' γ : Type*} {f : β → β'} {f' : β' → β}
-    (h : ∀ x, f' (f x) = x) (l : List β) (r : List γ) :
-    ((l.map f).zip r).map (Prod.map f' id) = l.zip r := by
-  rw [List.zip_map_left, List.map_map]
-  exact (List.map_congr_left fun ⟨x, y⟩ _ => by simp [h]).trans (List.map_id _)
+  simp [insertionForest]
 
 theorem value_of_mem_insertion {T T' : RoseTree α} {gs : List (RoseTree α)}
     (h : T' ∈ insertion T gs) : T'.value = T.value := by
   obtain ⟨ch, -, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.mp h)
-  exact value_multiGraft T _
+  exact value_graft T _
 
 theorem length_of_mem_insertionForest {cs gs L : List (RoseTree α)}
     (h : L ∈ insertionForest cs gs) : L.length = cs.length := by
   obtain ⟨ch, -, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.mp h)
-  exact multiGraftChildren_length cs _
+  exact length_graftForest cs _
 
 /-- In a forest host, the first tree takes a sublist of the guests and the other trees take the
 complement. -/
@@ -161,20 +163,20 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
     insertionForest (T :: F) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
         (insertion T p.1).bind fun T' => (insertionForest F p.2).map (T' :: ·) := by
-  have hne : ∀ p ∈ verticesList (T :: F), p ≠ [] := fun p hp => by
-    obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hp
-    exact List.cons_ne_nil k q
   have hG : ∀ ch ∈ ((List.replicate gs.length (verticesList (T :: F))).sections :
       Multiset (List (List ℕ))),
-      ({multiGraftChildren (T :: F) (ch.zip gs)} : Multiset (List (RoseTree α))) =
-        {multiGraft T (((ch.zip gs).filter fun p => decide (p.1.head? = some 0)).map
-            (Prod.map List.tail id)) ::
-          multiGraftChildren F (((ch.zip gs).filter fun p => decide (¬ p.1.head? = some 0)).map
-            (Prod.map (List.modifyHead (· - 1)) id))} := by
-    intro ch hch
-    rw [multiGraftChildren_cons_cs, filterMap_headChildFilter, filterMap_tailChildFilter]
-    exact fun p hp =>
-      hne _ ((List.mem_sections_replicate.mp (Multiset.mem_coe.mp hch)).2 _ (List.of_mem_zip hp).1)
+      ({graftForest (T :: F) fun p ↦ ((ch.zip gs).filter (·.1 = p)).map Prod.snd} :
+          Multiset (List (RoseTree α))) =
+        {graft T (fun q ↦ (((ch.zip gs).filter fun x ↦ decide (x.1.head? = some 0)).filter
+            (·.1 = 0 :: q)).map Prod.snd) ::
+          graftForest F fun p ↦ (((ch.zip gs).filter fun x ↦ decide (¬ x.1.head? = some 0)).filter
+            (·.1 = p.modifyHead (· + 1))).map Prod.snd} := by
+    intro ch _
+    rw [graftForest_cons]
+    refine congrArg₂ (fun g g' ↦ ({graft T g :: graftForest F g'} : Multiset _))
+      (funext fun q ↦ ?_) (funext fun p ↦ ?_)
+    · rw [filter_filter_of_imp fun x hx ↦ by simp [hx]]
+    · rw [filter_filter_of_imp fun x hx ↦ by cases p <;> simp [hx]]
   have hfilter :
       (verticesList (T :: F)).filter (fun q : List ℕ => decide (q.head? = some 0)) =
           (vertices T).map (0 :: ·) ∧
@@ -194,8 +196,9 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
   rw [insertionForest_def, ← Multiset.map_coe, ← Multiset.bind_singleton,
     Multiset.bind_congr hG,
     bind_sections_filter (fun q : List ℕ => q.head? = some 0) _ gs fun a b =>
-      {multiGraft T (a.map (Prod.map List.tail id)) ::
-        multiGraftChildren F (b.map (Prod.map (List.modifyHead (· - 1)) id))},
+      {graft T (fun q ↦ (a.filter fun x ↦ decide (x.1 = 0 :: q)).map Prod.snd) ::
+        graftForest F fun p ↦
+          (b.filter fun x ↦ decide (x.1 = p.modifyHead (· + 1))).map Prod.snd},
     hfilter.1, hfilter.2]
   symm
   refine Multiset.bind_congr fun p _ => ?_
@@ -205,8 +208,9 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
   refine Multiset.bind_congr fun u _ => ?_
   rw [Multiset.bind_map, Multiset.map_map, ← Multiset.bind_singleton]
   refine Multiset.bind_congr fun w _ => ?_
-  rw [map_zip_map_left fun _ => rfl, map_zip_map_left fun q => by cases q <;> simp]
-  rfl
+  exact congrArg₂ (fun g g' ↦ ({graft T g :: graftForest F g'} : Multiset _))
+    (funext fun q ↦ (map_snd_filter_zip_map (List.cons_injective (a := 0)) u p.1 q).symm)
+    (funext fun r ↦ (map_snd_filter_zip_map modifyHead_succ_injective w p.2 r).symm)
 
 private theorem bind_revzip_insertionForest_nil {δ : Type*} (gs : List (RoseTree α))
     (H : List (RoseTree α) → List (RoseTree α) → Multiset δ) :
@@ -306,28 +310,34 @@ theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
     insertion (RoseTree.node a cs) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
         (insertionForest cs p.2).map fun cs' => RoseTree.node a (p.1 ++ cs') := by
+  have hne : ∀ q ∈ verticesList cs, q ≠ [] := fun q hq => by
+    obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hq
+    exact List.cons_ne_nil k q
   have hG :
       ∀ ch ∈ ((List.replicate gs.length (vertices (RoseTree.node a cs))).sections :
         Multiset (List (List ℕ))),
-      ({multiGraft (RoseTree.node a cs) (ch.zip gs)} : Multiset (RoseTree α)) =
-        {RoseTree.node a (((ch.zip gs).filter fun p => decide (p.1 = [])).map Prod.snd ++
-          multiGraftChildren cs ((ch.zip gs).filter fun p => decide (¬ p.1 = [])))} := by
+      ({graft (RoseTree.node a cs) fun p ↦ ((ch.zip gs).filter (·.1 = p)).map Prod.snd} :
+          Multiset (RoseTree α)) =
+        {RoseTree.node a (((ch.zip gs).filter fun x ↦ decide (x.1 = [])).map Prod.snd ++
+          graftForest cs fun p ↦ (((ch.zip gs).filter fun x ↦ decide (¬ x.1 = [])).filter
+            (·.1 = p)).map Prod.snd)} := by
     intro ch _
-    rw [multiGraft_node, filterMap_rootPrependFilter, ← multiGraftChildren_filter_ne_nil]
+    rw [graft_node, graftForest_congr fun p hp ↦ ?_]
+    rw [filter_filter_of_imp fun x hx ↦ by simp [hx, hne p hp]]
   have hfilter :
       (vertices (RoseTree.node a cs)).filter (fun q : List ℕ => decide (q = [])) = [[]] ∧
         (vertices (RoseTree.node a cs)).filter (fun q : List ℕ => decide (¬ q = [])) =
           verticesList cs := by
-    have h : ∀ q ∈ verticesList cs, q ≠ [] := fun q hq => by
-      obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hq
-      exact List.cons_ne_nil k q
     rw [vertices_node]
     constructor
-    · rw [List.filter_cons_of_pos (by simp), List.filter_eq_nil_iff.2 fun q hq => by simp [h q hq]]
-    · rw [List.filter_cons_of_neg (by simp), List.filter_eq_self.2 fun q hq => by simp [h q hq]]
+    · rw [List.filter_cons_of_pos (by simp),
+        List.filter_eq_nil_iff.2 fun q hq => by simp [hne q hq]]
+    · rw [List.filter_cons_of_neg (by simp),
+        List.filter_eq_self.2 fun q hq => by simp [hne q hq]]
   rw [insertion_def, ← Multiset.map_coe, ← Multiset.bind_singleton, Multiset.bind_congr hG,
     bind_sections_filter (fun q : List ℕ => q = []) _ gs fun r s =>
-      {RoseTree.node a (r.map Prod.snd ++ multiGraftChildren cs s)},
+      {RoseTree.node a (r.map Prod.snd ++
+        graftForest cs fun p ↦ (s.filter fun x ↦ decide (x.1 = p)).map Prod.snd)},
     hfilter.1, hfilter.2]
   refine Multiset.bind_congr fun p _ => ?_
   rw [List.sections_replicate_singleton, Multiset.coe_singleton, Multiset.singleton_bind,
@@ -379,10 +389,7 @@ theorem insertion_node_msform (a : α) (cs gs : List (RoseTree α)) :
 
 theorem insertion_nil_guests (T : RoseTree α) :
     insertion T ([] : List (RoseTree α)) = ({T} : Multiset (RoseTree α)) := by
-  rw [insertion_def]
-  simp only [List.length_nil, List.replicate_zero, List.sections, List.zip_nil_right,
-             multiGraft_nil, List.map_cons, List.map_nil,
-             Multiset.coe_singleton]
+  simp [insertion]
 
 theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
@@ -390,11 +397,7 @@ theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     List.append_nil, List.sections_replicate_map, ← Multiset.map_coe, ← Multiset.map_coe,
     ← Multiset.map_coe, Multiset.map_map, Multiset.map_map]
   refine Multiset.map_congr rfl fun u _ => ?_
-  show multiGraftChildren [T] ((u.map (0 :: ·)).zip gs) = [multiGraft T (u.zip gs)]
-  rw [multiGraftChildren_cons_cs, multiGraftChildren_nil_cs, filterMap_headChildFilter,
-    List.filter_eq_self.2 fun p hp => ?_, map_zip_map_left fun _ => rfl]
-  obtain ⟨q, T'⟩ := p
-  obtain ⟨q', -, rfl⟩ := List.mem_map.mp (List.of_mem_zip hp).1
-  simp
+  exact congrArg (fun g ↦ [graft T g])
+    (funext fun q ↦ map_snd_filter_zip_map (List.cons_injective (a := 0)) u gs q)
 
 end RoseTree

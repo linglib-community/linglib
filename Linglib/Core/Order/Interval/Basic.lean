@@ -8,27 +8,23 @@ public import Mathlib.Order.Interval.Basic
 
 This file defines the relations between two nonempty intervals of an ordered type that mathlib's
 `NonemptyInterval` API leaves implicit, and their counterparts on `Interval`, the intervals with
-a null element. Two intervals overlap when neither lies strictly beyond the other, and `i₁`
-precedes `i₂` when it ends strictly before `i₂` starts. `During`, `FinalSubinterval` and
-`NonfinalSubinterval` refine containment, the last being the subinterval into which a longer one
-extends into the future, and `IsPoint` singles out the intervals with a single element. In a linear
-order two intervals overlap exactly when neither precedes the other, so their `position` is one of
-three.
+a null element. Two intervals [overlap](##NonemptyInterval.Overlaps) when neither lies strictly
+beyond the other, and `i₁` [precedes](##NonemptyInterval.Precedes) `i₂` when it ends strictly
+before `i₂` starts. An interval lies [during](##NonemptyInterval.During) another when it is
+strictly inside it on both sides, a [final subinterval](##NonemptyInterval.FinalSubinterval) ends
+with the interval containing it, and a [nonfinal](##NonemptyInterval.NonfinalSubinterval) one
+ends before it, so that the longer interval extends beyond it into the future. A
+[point](##NonemptyInterval.IsPoint) is an interval with a single element. In a linear order two
+intervals overlap exactly when
+[neither precedes the other](##NonemptyInterval.overlaps_iff_not_precedes), so their
+[position](##NonemptyInterval.position) is one of three.
 
 Containment, the subinterval order and point intervals are mathlib's own (`t ∈ i`, `i₁ ≤ i₂`,
-`pure t`); `lt_def` unfolds strict containment to endpoints. On `Interval α`, where `≤` is
-inclusion and `⊓` intersection, `Interval.Precedes` is precedence stated pointwise, a left
-endpoint is `IsLeast` of the coerced set, `NonemptyInterval.withTop` embeds a bounded interval
-into `WithTop α`, and `Interval.Ici a` is the ray `[a, ⊤]`.
-
-## Main definitions
-
-* `NonemptyInterval.Overlaps`, `NonemptyInterval.Precedes`: the order of two intervals, and
-  `NonemptyInterval.position` the position of one relative to the other.
-* `NonemptyInterval.During`, `NonemptyInterval.FinalSubinterval`,
-  `NonemptyInterval.NonfinalSubinterval`: refinements of containment.
-* `Interval.Precedes`, `Interval.Ici`: pointwise precedence and rays on intervals with a null
-  element.
+`pure t`), and strict containment [unfolds](##NonemptyInterval.lt_def) to the endpoints. On
+`Interval α`, where `≤` is inclusion and `⊓` intersection, [precedence](##Interval.Precedes) is
+stated pointwise, a left endpoint is `IsLeast` of the coerced set, a bounded interval
+[embeds](##NonemptyInterval.withTop) into `WithTop α`, and [`Interval.Ici a`](##Interval.Ici) is
+the ray `[a, ⊤]`.
 
 ## Implementation notes
 
@@ -110,15 +106,12 @@ before it. -/
 def NonfinalSubinterval (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₂.fst ≤ i₁.fst ∧ i₁.snd < i₂.snd
 
-instance [DecidableLE α] : Decidable (i₁.Precedes i₂) :=
-  decidable_of_iff' _ lt_iff_le_not_ge
+instance [DecidableLT α] : Decidable (i₁.Precedes i₂) := inferInstanceAs (Decidable (_ < _))
 
-instance [DecidableLE α] : Decidable (i₁.During i₂) :=
-  @instDecidableAnd _ _ (decidable_of_iff' _ lt_iff_le_not_ge)
-    (decidable_of_iff' _ lt_iff_le_not_ge)
+instance [DecidableLT α] : Decidable (i₁.During i₂) := inferInstanceAs (Decidable (_ ∧ _))
 
-instance [DecidableLE α] : Decidable (i₁.NonfinalSubinterval i₂) :=
-  @instDecidableAnd _ _ inferInstance (decidable_of_iff' _ lt_iff_le_not_ge)
+instance [DecidableLE α] [DecidableLT α] : Decidable (i₁.NonfinalSubinterval i₂) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 theorem NonfinalSubinterval.le (h : i₁.NonfinalSubinterval i₂) : i₁ ≤ i₂ :=
   le_def.2 ⟨h.1, h.2.le⟩

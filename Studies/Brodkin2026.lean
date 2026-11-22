@@ -2,9 +2,9 @@ module
 
 public import Linglib.Phonology.Prosody.Word
 public import Linglib.Phonology.OptimalityTheory.Filtration
-public import Linglib.Phonology.Prosody.Match
+public import Linglib.Phonology.Prosody.Correspondence
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Command.RoseTree
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Brodkin2026
@@ -291,15 +291,28 @@ def maxXP : Constraint Candidate := fun c ↦
 /-- SUBCAT (29b): a violation when a second-position element lies in no minimal φ together with the
 element before it. -/
 def subcat : Constraint Candidate :=
-  (Constraint.align fun (w p : NonemptyInterval ℕ) ↦ p.fst < w.fst ∧ w.snd ≤ p.snd).comap fun c ↦
+  fun c ↦
     let k := syllables c.item.exponent
-    (if x.constituency.subcat then [⟨(k, k + x.next), Nat.le_add_right ..⟩] else [],
-      (c.tree x).spans IsMinimalPhi)
+    (Correspondence.ofRel (fun (w p : NonemptyInterval ℕ) ↦ p.fst < w.fst ∧ w.snd ≤ p.snd)
+      (if x.constituency.subcat then [⟨(k, k + x.next), Nat.le_add_right ..⟩] else []).get
+      ((c.tree x).spans IsMinimalPhi).get).maxViol
 
 /-- Positional Minimality (26a), Align-R(φ, (σ́σ)): one violation for each φ whose right edge no
 disyllabic trochee shares. -/
 def positionalMinimality : Constraint Candidate :=
-  Constraint.alignRight.comap fun c ↦ (levelSpans .ph (c.tree x), (c.tree x).spans IsTrochee)
+  fun c ↦ (Correspondence.ofEdges .right .right (levelSpans .ph (c.tree x))
+    ((c.tree x).spans IsTrochee)).maxViol
+
+theorem subcat_eq (c : Candidate) : subcat x c =
+    (if x.constituency.subcat then
+        [(⟨(syllables c.item.exponent, syllables c.item.exponent + x.next), Nat.le_add_right ..⟩ :
+          NonemptyInterval ℕ)] else []).countP
+      fun w ↦ ∀ p ∈ (c.tree x).spans IsMinimalPhi, ¬(p.fst < w.fst ∧ w.snd ≤ p.snd) :=
+  Correspondence.maxViol_ofRel_get ..
+
+theorem positionalMinimality_eq (c : Candidate) : positionalMinimality x c =
+    (levelSpans .ph (c.tree x)).countP fun a ↦ ∀ b ∈ (c.tree x).spans IsTrochee, ¬a.snd = b.snd :=
+  Correspondence.maxViol_ofRel_get ..
 
 /-- PRIORITY (60a), after [mascaro-2007]: as many violations as the inserted item stands below
 the first item of `v` applicable to the head. -/
@@ -417,8 +430,8 @@ theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i)
 
 section Configurations
 
-attribute [local simp] maxXP subcat positionalMinimality Candidate.tree syntaxProsodyMax
-  Constraint.align Constraint.deficiency List.matchingNumber Input.phrases Input.parse
+attribute [local simp] maxXP subcat_eq positionalMinimality_eq Candidate.tree syntaxProsodyMax
+  Correspondence.deficiency List.matchingNumber Input.phrases Input.parse
   Input.parse.pair Input.cut Input.stress Input.next spans_penultimate_ph
   spans_penultimate_isTrochee spans_penultimate_isMinimalPhi IsTrochee IsConstituent
   Foot.childHeadFlags RoseTree.licensed_node_iff Constituent.Licenses IsMinimalPhi Corresponds

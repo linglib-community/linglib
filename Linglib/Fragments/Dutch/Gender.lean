@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Feature.Gender.Basic
 
 /-!
 # Dutch gender

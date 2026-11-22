@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Locality
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Data.Examples.Wood2015

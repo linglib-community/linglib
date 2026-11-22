@@ -5,6 +5,7 @@ public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Perspective
+public import Linglib.Semantics.Tense.Quantificational
 public import Studies.IatridouEtAl2001
 public import Linglib.Data.Examples.Readers
 
@@ -26,7 +27,7 @@ time, and *would* is Gen with a restriction and an interval from the context.
 * Iteration (14) is `Mereology.IsPlural`, its gloss: a sum of `P`-events with at least two proper
   `P`-parts. The chapter leaves "indicating a disposition" unanalyzed, so the events that do are a
   parameter.
-* The imperfective (19a) is non-strict containment, `Aspect.UNBOUNDED`. The retrospective (19b)
+* The imperfective (19a) is non-strict containment, `Aspect.unbounded`. The retrospective (19b)
   is the perspectival past of `Tense.Perspective`, a reference interval strictly preceding the
   perspective time and so disjoint from it, as (34b) says; the internal perspective is the
   perspectival present, overlap.
@@ -60,7 +61,8 @@ time, and *would* is Gen with a restriction and an interval from the context.
 namespace BonehDoron2013
 
 open Event (τ)
-open Aspect (UNBOUNDED PERF durative)
+open Aspect (unbounded perfect durative)
+open ModalLogic
 open Modality (Background simpleNecessity)
 open scoped Denotes
 
@@ -78,7 +80,7 @@ base at its run time, within an iteration of `P`-events (14). -/
 def Hab [SemilatticeSup E] (mb : NonemptyInterval T → Background W) (D P : W → E → Prop) (w : W)
     (s : E) : Prop :=
   Initiated D w s ∧
-    ∀ w' ∈ (mb (τ s)).accessibleWorlds w, ∃ e, τ s ≤ τ e ∧ Mereology.IsPlural (P w') e
+    ∀ w' ∈ (mb (τ s)).accessibleWorlds w, ∃ e, τ s ≤ τ e ∧ Mereology.IsPlural {e | P w' e} e
 
 /-- With the indefinite over Hab, (8), a predicate that no object satisfies twice, such as smoking
 a given cigarette, has no habit over a consistent modal base, (4b) and (9b). -/
@@ -87,14 +89,14 @@ theorem not_hab_of_subsingleton [SemilatticeSup E] {mb : NonemptyInterval T → 
     (hP : ∀ v a b, P v a → P v b → a = b) : ¬ Hab mb D P w s := fun ⟨_, h⟩ ↦
   let ⟨w', hw'⟩ := hmb
   let ⟨e, _, he⟩ := h w' hw'
-  Mereology.not_isPlural_of_subsingleton (hP w') e he
+  Mereology.not_isPlural_of_subsingleton (fun _ ha _ hb ↦ hP w' _ _ ha hb) e he
 
 /-- Gen, (21): every `Q`-individual whose temporal extent `ext` lies within the interval `i` is a
 `P`-individual throughout the modal base at `i`. It is GEN with every case normal and the
 modality in the matrix. -/
 def Gen {Z : Type*} (ext : Z → NonemptyInterval T) (mb : NonemptyInterval T → Background W)
     (P Q : W → Z → Prop) (i : NonemptyInterval T) (w : W) : Prop :=
-  (i, w) ∈ (⊤ : Genericity.Normality (NonemptyInterval T × W) Z).gen {z | ext z ≤ i ∧ Q w z}
+  (⊤ : Genericity.Normality Z).gen {z | ext z ≤ i ∧ Q w z}
     {z | ∀ᶠ v in simpleNecessity (mb i) w, P v z}
 
 theorem gen_iff {Z : Type*} {ext : Z → NonemptyInterval T} {mb : NonemptyInterval T → Background W}
@@ -111,56 +113,65 @@ example (mb : NonemptyInterval T → Background W) (Pc : W → E → Prop) (ic :
 
 section Retro
 
-variable {A : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {p : NonemptyInterval T}
-  {t t₀ : T}
+variable {A : NonemptyInterval T → Prop} {P : E → Prop} {p : NonemptyInterval T} {t t₀ : T}
 
 /-- The retrospective, (19b), holds at a perspective interval that a reference interval of `A`
 precedes, the perspectival past. -/
-def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ (IntervalAlgebra.toSetRel .precedes).preimage (A w)
+def retro (A : NonemptyInterval T → Prop) : NonemptyInterval T → Prop :=
+  ◇[IntervalAlgebra.toSetRel .precedes] A
 
 /-- *Used to*, (18): the retrospective over the imperfective (19a). -/
-def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  retro (UNBOUNDED P)
+def usedTo (P : E → Prop) : NonemptyInterval T → Prop :=
+  retro (unbounded P)
 
-theorem usedTo_eq_image : usedTo P w = (IntervalAlgebra.toSetRel IntervalAlgebra.precedes⁻¹).image
-    ((IntervalAlgebra.toSetRel .le).image (τ '' {e | P w e})) := by
-  rw [usedTo, retro, IntervalAlgebra.toSetRel_inv, SetRel.image_inv, Aspect.unbounded_eq_image]
+theorem usedTo_eq_diamond : usedTo P = ◇[IntervalAlgebra.toSetRel IntervalAlgebra.precedes]
+    (◇[IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹] (Event.runTimes P)) := by
+  rw [IntervalAlgebra.toSetRel_inv]
+  rfl
 
 /-- The composite of the retrospective and the imperfective: the state began before the
 perspective time, and may have ended at any time after that. -/
 theorem comp_retro_imperfective :
-    IntervalAlgebra.le * IntervalAlgebra.precedes⁻¹ = .ofPred (·.fstFst = .gt) := by
-  decide +kernel
+    IntervalAlgebra.precedes * IntervalAlgebra.le⁻¹ = .ofPred (·.fstFst = .lt) := by
+  refine IntervalAlgebra.eq_of_toSetRel_rat (Set.ext fun ⟨i, k⟩ ↦ ?_)
+  rw [IntervalAlgebra.toSetRel_mul]
+  simp only [SetRel.mem_comp, IntervalAlgebra.mem_toSetRel, IntervalAlgebra.mem_inv,
+    Allen.inv_relation, IntervalAlgebra.relation_mem_le, IntervalAlgebra.relation_mem_precedes,
+    IntervalAlgebra.mem_ofPred, Allen.toComparisons_relation, Allen.ofEndpoints, compare_lt_iff_lt]
+  exact ⟨fun ⟨j, hji, hjk⟩ ↦ (NonemptyInterval.le_def.1 hjk).1.trans_lt (j.fst_le_snd.trans_lt hji),
+    fun h ↦ ⟨.pure k.fst, h, NonemptyInterval.le_def.2 ⟨le_rfl, k.fst_le_snd⟩⟩⟩
 
 /-- *Used to* says only that a state began before the perspective time, which the state may
 outlast, so the retrospectivity of (28) is an implicature, cancelled in (30) and (31). -/
-theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fst := by
+theorem usedTo_iff : usedTo P p ↔ ∃ e, P e ∧ (τ e).fst < p.fst := by
   constructor
   · intro h
-    rw [usedTo_eq_image] at h
-    obtain ⟨_, ⟨e, hP, rfl⟩, h⟩ := IntervalAlgebra.image_toSetRel_subset_mul _ h
+    rw [usedTo_eq_diamond] at h
+    obtain ⟨e, h, hP⟩ := Event.diamond_runTimes_iff.1
+      (IntervalAlgebra.diamond_toSetRel_diamond_le _ _ _ p h)
     rw [IntervalAlgebra.mem_toSetRel, comp_retro_imperfective] at h
-    exact ⟨e, hP, compare_gt_iff_gt.1 (IntervalAlgebra.mem_ofPred.1 h)⟩
+    exact ⟨e, hP, compare_lt_iff_lt.1 (IntervalAlgebra.mem_ofPred.1 h)⟩
   · rintro ⟨e, hP, hlt⟩
-    exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩,
-      IntervalAlgebra.mem_toSetRel.2 (IntervalAlgebra.relation_mem_precedes.2 hlt)⟩
+    exact ⟨.pure (τ e).fst,
+      IntervalAlgebra.mem_toSetRel.2 (IntervalAlgebra.relation_mem_precedes.2 hlt),
+      Aspect.unbounded_iff.2 ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩⟩
 
 /-- *Since then*, (33), *now*, (35), and a simultaneous reading, (36)–(37), need reference
 intervals overlapping the perspective time, and none of these serves the retrospective. -/
-theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
-  fun ⟨i, hi, hp⟩ ↦
+theorem not_retro_of_overlaps (h : ∀ i, A i → i.Overlaps p) : ¬ retro A p :=
+  fun ⟨i, hp, hi⟩ ↦
     NonemptyInterval.Precedes.not_overlaps
       (IntervalAlgebra.relation_mem_precedes.1 (IntervalAlgebra.mem_toSetRel.1 hp)) (h i hi)
 
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which
 unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two
 form the scale of (32). -/
-theorem usedTo_of_universal (h : ⟨w, t⟩ ∈ PERF ({i | i.fst < t} ∩ durative (UNBOUNDED P) ·)) :
-    .pure t ∈ usedTo P w :=
-  let ⟨_, ⟨hlt, hd⟩, _⟩ := h
-  let ⟨e, hle, hP⟩ := hd (Set.mem_Iic.2 le_rfl)
-  mem_usedTo_iff.2 ⟨e, hP, (NonemptyInterval.le_def.1 hle).1.trans_lt hlt⟩
+theorem usedTo_of_universal
+    (h : perfect ((fun i ↦ i.fst < t) ⊓ durative (unbounded P)) (.pure t)) :
+    usedTo P (.pure t) :=
+  let ⟨_, _, hlt, hd⟩ := Aspect.perfect_pure_iff.1 h
+  let ⟨e, hle, hP⟩ := Aspect.unbounded_iff.1 (Aspect.durative_le _ _ hd)
+  usedTo_iff.2 ⟨e, hP, (NonemptyInterval.le_def.1 hle).1.trans_lt hlt⟩
 
 /-- `P` characterizes the interval `i` at `w`, the assumption of §6.3.2, when `i` is extended and
 `P` is actualized at both of its ends. -/
@@ -171,24 +182,24 @@ def Characterizes (P : W → E → Prop) (w : W) (i : NonemptyInterval T) : Prop
 and the perfect with *since then*, (33a), but not *used to* with *since then*, (33b). The simple
 past takes *now*, which needs its reference interval to overlap the perspective time, and *used
 to* does not, (35). -/
-theorem perspective_rows {e : E} (he : P w e) (h₀ : (τ e).fst < t₀) (h₁ : t₀ ≤ t)
+theorem perspective_rows {e : E} (he : P e) (h₀ : (τ e).fst < t₀) (h₁ : t₀ ≤ t)
     (h₂ : t ≤ (τ e).snd) :
-    (.pure t ∈ usedTo P w ∧ .pure t ∈ UNBOUNDED P w ↔ Examples.ex30.judgment = .acceptable) ∧
-    (⟨w, t⟩ ∈ PERF ({i | i.fst = t₀} ∩ durative (UNBOUNDED P) ·) ↔
+    (usedTo P (.pure t) ∧ unbounded P (.pure t) ↔ Examples.ex30.judgment = .acceptable) ∧
+    (perfect ((fun i ↦ i.fst = t₀) ⊓ durative (unbounded P)) (.pure t) ↔
       Examples.ex33a.judgment = .acceptable) ∧
-    (.pure t ∈ retro (fun w ↦ {i | i.fst = t₀ ∧ i.snd = t} ∩ UNBOUNDED P w) w ↔
+    (retro ((fun i ↦ i.fst = t₀ ∧ i.snd = t) ⊓ unbounded P) (.pure t) ↔
       Examples.ex33b.judgment = .acceptable) ∧
-    ((∃ i ∈ UNBOUNDED P w, i.Overlaps (.pure t)) ↔ Examples.ex35a.judgment = .acceptable) ∧
-    (.pure t ∈ retro (fun w ↦ {i | i.Overlaps (.pure t)} ∩ UNBOUNDED P w) w ↔
+    ((∃ i, unbounded P i ∧ i.Overlaps (.pure t)) ↔ Examples.ex35a.judgment = .acceptable) ∧
+    (retro ((fun i ↦ i.Overlaps (.pure t)) ⊓ unbounded P) (.pure t) ↔
       Examples.ex35b.judgment = .acceptable) := by
-  have ht : .pure t ∈ UNBOUNDED P w :=
-    ⟨e, NonemptyInterval.le_def.2 ⟨h₀.le.trans h₁, h₂⟩, he⟩
-  refine ⟨iff_of_true ⟨mem_usedTo_iff.2 ⟨e, he, h₀.trans_le h₁⟩, ht⟩ rfl,
+  have ht : unbounded P (.pure t) :=
+    Aspect.unbounded_iff.2 ⟨e, NonemptyInterval.le_def.2 ⟨h₀.le.trans h₁, h₂⟩, he⟩
+  refine ⟨iff_of_true ⟨usedTo_iff.2 ⟨e, he, h₀.trans_le h₁⟩, ht⟩ rfl,
     iff_of_true (IatridouEtAl2001.universal_of_covers he h₁ h₀.le h₂) rfl,
-    iff_of_false (not_mem_retro_of_overlaps fun i ⟨⟨_, hi⟩, _⟩ ↦
+    iff_of_false (not_retro_of_overlaps fun i ⟨⟨_, hi⟩, _⟩ ↦
       ⟨i.fst_le_snd.trans hi.le, hi.ge⟩) (by decide),
     iff_of_true ⟨_, ht, NonemptyInterval.overlaps_refl _⟩ rfl,
-    iff_of_false (not_mem_retro_of_overlaps fun _ h ↦ h.1) (by decide)⟩
+    iff_of_false (not_retro_of_overlaps fun _ h ↦ h.1) (by decide)⟩
 
 end Retro
 
@@ -233,21 +244,21 @@ private theorem hab_habit {P : Bool → NonemptyInterval ℕ → Prop} (h₁ : P
   refine ⟨⟨.pure 0, by decide, rfl⟩, fun w' hw' ↦ ⟨habit, le_rfl, ?_⟩⟩
   obtain rfl : w' = true := by simpa [gnomic] using hw'
   have h : NonemptyInterval.pure 1 ⊔ .pure 2 = habit := rfl
-  exact ⟨h ▸ .sum (.base h₁) (.base h₂), .pure 1, by decide, .pure 2, by decide, h₁, h₂,
-    by decide⟩
+  exact ⟨h ▸ supClosed_supClosure (subset_supClosure h₁) (subset_supClosure h₂), .pure 1,
+    by decide, .pure 2, by decide, h₁, h₂, by decide⟩
 
 /-- Ruti's habit of going to work by bus holds though she went once, (42a), as a habit initiated
 by a single event does, (16)–(17). -/
 theorem hab_of_single_trip :
-    Hab gnomic indicating bus false habit ∧ ¬ ∃ e, Mereology.IsPlural (bus false) e := by
+    Hab gnomic indicating bus false habit ∧ ¬ ∃ e, Mereology.IsPlural {e | bus false e} e := by
   refine ⟨hab_habit ⟨⟨1, rfl⟩, le_rfl⟩ ⟨⟨2, rfl⟩, Nat.le_succ 1⟩,
     fun ⟨e, he⟩ ↦ Mereology.not_isPlural_of_subsingleton ?_ e he⟩
-  rintro _ _ ⟨rfl, -⟩ ⟨rfl, -⟩
+  rintro _ ⟨rfl, -⟩ _ ⟨rfl, -⟩
   rfl
 
 -- (18), (19), (42), (42c)
-theorem usedTo_hab_of_single_trip : .pure 5 ∈ usedTo (Hab gnomic indicating bus) false :=
-  mem_usedTo_iff.2 ⟨habit, hab_of_single_trip.1, by decide⟩
+theorem usedTo_hab_of_single_trip : usedTo (Hab gnomic indicating bus false) (.pure 5) :=
+  usedTo_iff.2 ⟨habit, hab_of_single_trip.1, by decide⟩
 
 /-- Gen with a restrictor admits a fresh cigarette per after-dinner event, (4a) and (5a); with the
 indefinite over Hab or over *repeatedly*, smoking a cigarette and killing a rabbit have no
@@ -259,30 +270,30 @@ theorem restrictor_rows :
       Examples.ex4b.judgment = .acceptable) ∧
     ((∃ f s, Hab gnomic indicating (repeatable · · f) false s) ↔
       Examples.ex6b.judgment = .acceptable) ∧
-    ((∃ r e, Mereology.IsPlural (onceAt false · r) e) ↔
+    ((∃ r e, Mereology.IsPlural {x | onceAt false x r} e) ↔
       Examples.ex7b.judgment = .acceptable) :=
   ⟨iff_of_true (fun _ ↦ gen_iff.2 fun _ _ ⟨t, ht⟩ _ _ ↦ ⟨t, ht⟩) rfl,
     iff_of_false (fun ⟨_, _, h⟩ ↦ not_hab_of_subsingleton ⟨true, by simp [gnomic]⟩
       (fun _ _ _ ha hb ↦ ha.trans hb.symm) h) (by decide),
     iff_of_true ⟨(), habit, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩ rfl,
     iff_of_false (fun ⟨_, e, h⟩ ↦ Mereology.not_isPlural_of_subsingleton
-      (fun _ _ ha hb ↦ ha.trans hb.symm) e h) (by decide)⟩
+      (fun _ ha _ hb ↦ Eq.trans ha (Eq.symm hb)) e h) (by decide)⟩
 
 /-- In the context of (42), the habit makes the simple form true, (42a), and supplies *would*'s
 restriction, so that *would*, Gen over the trips by (22), is true, (42b); *used to* is false,
 (42c), once its reference interval must be characterized by actual trips. -/
 theorem actualization_rows :
-    (habit ∈ UNBOUNDED (Hab gnomic indicating bus) false ↔
+    (unbounded (Hab gnomic indicating bus false) habit ↔
       Examples.ex42a.verdict = some true) ∧
     ((∃ s, τ s = habit ∧ Hab gnomic indicating toWork false s) ∧
         Gen τ gnomic byBus toWork habit false ↔
       Examples.ex42b.verdict = some true) ∧
-    (.pure 5 ∈ retro (fun w ↦ {i | Characterizes bus w i} ∩ UNBOUNDED (Hab gnomic indicating bus) w)
-        false ↔ Examples.ex42c.verdict = some true) := by
-  refine ⟨iff_of_true ⟨habit, le_rfl, hab_of_single_trip.1⟩ (by decide),
+    (retro ((Characterizes bus false ·) ⊓ unbounded (Hab gnomic indicating bus false))
+        (.pure 5) ↔ Examples.ex42c.verdict = some true) := by
+  refine ⟨iff_of_true (Aspect.unbounded_iff.2 ⟨habit, le_rfl, hab_of_single_trip.1⟩) (by decide),
     iff_of_true ⟨⟨habit, rfl, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩,
       gen_iff.2 fun _ _ h ↦ .of_forall fun _ ↦ h ▸ le_rfl⟩ (by decide), iff_of_false ?_ (by decide)⟩
-  rintro ⟨i, ⟨⟨hlt, ⟨_, ⟨rfl, -⟩, h₁⟩, _, ⟨rfl, -⟩, h₂⟩, -⟩, -⟩
+  rintro ⟨i, -, ⟨hlt, ⟨_, ⟨rfl, -⟩, h₁⟩, _, ⟨rfl, -⟩, h₂⟩, -⟩
   rw [Event.τ_nonemptyInterval, NonemptyInterval.mem_pure] at h₁ h₂
   exact hlt.ne (h₁.trans h₂.symm)
 

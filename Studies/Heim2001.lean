@@ -65,19 +65,19 @@ theorem exists_collapse [Finite Entity] (girl : Set Entity) (μ : Entity → D) 
 theorem negation_high_undefined [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
     ¬ ∃ m, IsGreatest (scopeDegrees (fun S ↦ a ∉ S) (Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (Q := fun S ↦ a ∉ S) (fun _ _ h hT hS ↦ hT (h hS))
-    (fun _ ↦ isLowerSet_Iic _)
+    (fun _ ↦ IsLowerSet.Iic _)
 
 -- (18c)
 theorem atMost_high_undefined [Fintype Entity] [NoMaxOrder D] (girl : Set Entity)
     (μ : Entity → D) : ¬ ∃ m, IsGreatest (scopeDegrees (atMost 2 girl) (Iic ∘ μ)) m :=
-  not_isGreatest_scopeDegrees (antitone_atMost (α := Entity) 2 girl) (fun _ ↦ isLowerSet_Iic _)
+  not_isGreatest_scopeDegrees (antitone_atMost (α := Entity) 2 girl) (fun _ ↦ IsLowerSet.Iic _)
 
 -- (20c), (20)
 theorem exactly_high_atLeast [Fintype Entity] {girl : Set Entity} {μ : Entity → D} {m : D}
     (h : IsGreatest (scopeDegrees (exactly 2 girl) (Iic ∘ μ)) m) :
     IsGreatest (scopeDegrees (atLeast 2 girl) (Iic ∘ μ)) m := by
   rw [exactly_eq_atLeast_inf_atMost] at h
-  exact isGreatest_scopeDegrees_of_inf (antitone_atMost 2 girl) (fun _ ↦ isLowerSet_Iic _) h
+  exact isGreatest_scopeDegrees_of_inf (antitone_atMost 2 girl) (fun _ ↦ IsLowerSet.Iic _) h
 
 /-! ### Exactly-differentials and less -/
 
@@ -142,7 +142,7 @@ theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : 
     ⟨_, hw⟩
   rw [scopeDegrees_no, lowScope_maxIn]
   refine (exists_congr fun m ↦ and_congr_right fun _ ↦
-    isGLB_compl_scopeDegrees_iff (monotone_some _) (fun _ ↦ isLowerSet_Iic _) hex).trans
+    isGLB_compl_scopeDegrees_iff (monotone_some _) (fun _ ↦ IsLowerSet.Iic _) hex).trans
     ((allowed_less hDes ℓ t).trans ?_)
   exact not_exists.trans (forall_congr' fun _ ↦ not_and.trans (imp_congr_right fun _ ↦ not_le))
 
@@ -152,7 +152,7 @@ theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : 
 monotone adjective and a comparison class `C` is the max-quantified comparative of `x` against
 the other members. -/
 def est (μ : Entity → D) (C : Set Entity) (x : Entity) : Prop :=
-  MaxComparative .gt (· = x) (fun y ↦ y ∈ C ∧ y ≠ x) μ
+  MaxComparative .gt (μ '' {y | y ∈ C ∧ y ≠ x}) {μ x}
 
 /-- Over a comparison class with someone else in it, *-est* is the absolute superlative (59). -/
 theorem est_iff_absoluteSuperlative [Finite Entity] {μ : Entity → D} {C : Set Entity}
@@ -162,8 +162,8 @@ theorem est_iff_absoluteSuperlative [Finite Entity] {μ : Entity → D} {C : Set
   have hS (δ : D) : IsGreatest (scopeDegrees (Det.some {y | y ∈ C ∧ y ≠ x}) (Iic ∘ μ)) δ ↔
       IsGreatest (μ '' {y | y ∈ C ∧ y ≠ x}) δ := by
     rw [scopeDegrees_some_Iic, isGreatest_lowerClosure_iff]
-  refine (⟨fun ⟨δ, hδ, _, rfl, hlt⟩ ↦ ⟨δ, hlt, (hS δ).2 hδ⟩,
-    fun ⟨δ, hlt, hδ⟩ ↦ ⟨δ, (hS δ).1 hδ, x, rfl, hlt⟩⟩ :
+  refine ((maxComparative_gt_iff_maxIn isGreatest_singleton).trans
+    ⟨fun ⟨δ, hlt, hδ⟩ ↦ ⟨δ, hlt, (hS δ).2 hδ⟩, fun ⟨δ, hlt, hδ⟩ ↦ ⟨δ, hlt, (hS δ).1 hδ⟩⟩ :
     est μ C x ↔ HighScope (MaxIn (Iio (μ x))) (Det.some {y | y ∈ C ∧ y ≠ x}) (Iic ∘ μ)).trans
     (h.trans (Iff.trans ?_ (and_iff_right hx).symm))
   exact not_exists.trans (forall_congr' fun _ ↦ not_and.trans (and_imp.trans

@@ -34,7 +34,7 @@ language every bare nominal, and a [−arg, +pred] language none.
 ## Implementation notes
 
 Whether ∩ is defined for a nominal is a proposition `down` that the consumer supplies, as for
-`Determiner.Inventory.Available`; for Chierchia's ∩ it is `Kind.down P ∈ K`
+`Determiner.Inventory.Available`; for Chierchia's ∩ it is `Kind.down ∘ P ∈ K`
 (`Semantics/Reference/Kind.lean`). It depends on the nominal's denotation and not on its number
 and countability alone, since a plural property anchored to particular entities has no kind. The
 nominal's number is supplied too, since blocking applies only within a determiner's domain.

@@ -165,7 +165,7 @@ theorem supervaluationOn_singleton (a : α) [Decidable (P a)] :
 
 theorem nontrivial_of_supervaluationOn_eq_undefined (h : supervaluationOn s P = .undefined) :
     s.Nontrivial :=
-  let ⟨⟨a, ha, hPa⟩, b, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
+  let ⟨⟨_, ha, hPa⟩, _, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
   Set.nontrivial_of_mem_mem_ne ha hb fun e ↦ hPb (e ▸ hPa)
 
 theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :
@@ -210,6 +210,28 @@ theorem supervaluation_eq_of_between [DecidablePred P] [DecidableEq α] {s : Fin
   rw [← supervaluationOn_coe_finset, ← supervaluationOn_coe_finset, Finset.coe_insert,
     Finset.coe_singleton]
   exact supervaluationOn_eq_of_between hlo hhi hs
+
+/-- Supervaluation commutes with negation over a nonempty set. -/
+theorem supervaluationOn_not (hs : s.Nonempty) :
+    supervaluationOn s (¬ P ·) = (supervaluationOn s P)ᶜ := by
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
+  · simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff, hs]
+  · simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff, hs]
+
+/-- Supervaluation is monotone in the predicate. -/
+theorem supervaluationOn_mono (h : ∀ a ∈ s, P a → Q a) :
+    supervaluationOn s P ≤ supervaluationOn s Q := by
+  rcases trichotomy (supervaluationOn s P) with hP | hP | hP
+  · rw [hP]
+    exact bot_le
+  · rcases trichotomy (supervaluationOn s Q) with hQ | hQ | hQ
+    · obtain ⟨⟨a, ha, hPa⟩, -⟩ := supervaluationOn_eq_undefined_iff.1 hP
+      exact absurd (h a ha hPa) ((supervaluationOn_eq_false_iff.1 hQ).2 a ha)
+    · rw [hP, hQ]
+    · rw [hQ]
+      exact le_top
+  · rw [supervaluationOn_eq_true_iff.2 fun a ha ↦ h a ha (supervaluationOn_eq_true_iff.1 hP a ha)]
+    exact le_top
 
 end SupervaluationOn
 

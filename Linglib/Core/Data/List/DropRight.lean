@@ -48,6 +48,10 @@ theorem rdrop_of_length_le (h : l.length ≤ n) : l.rdrop n = [] := by
 theorem reverse_rtake : (l.rtake n).reverse = l.reverse.take n :=
   take_reverse.symm
 
+theorem rtake_one : l.rtake 1 = l.getLast?.toList := by
+  rw [rtake_eq_reverse_take_reverse, take_one, head?_reverse]
+  cases l.getLast? <;> rfl
+
 theorem rtake_reverse : l.reverse.rtake n = (l.take n).reverse := by
   rw [rtake_eq_reverse_take_reverse, reverse_reverse]
 

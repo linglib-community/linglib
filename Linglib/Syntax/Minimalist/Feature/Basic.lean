@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Feature.Slot
-public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Feature.Person.Features
 
 /-!
 # Features for Minimalist Agree
@@ -13,13 +13,16 @@ items. A dimension is an agreement dimension (`Agreement.Dimension`), one of Har
 number features (`Person.Feature`, `Number.Feature`), or one of [±wh], [±tense], [Infl], [obl] and
 the [E] of a head whose complement is elided. A dimension takes its values from the type that
 already defines them; Harbour's features take values in `Bool`, and [E] is privative, with the
-single value `()`. A feature bundle has a checking slot (`FeatureSlot`) at each dimension.
+single value `()`. A feature bundle has a checking slot (`FeatureSlot`) at each dimension, over
+the slot order of the dimension (`FeatureType.Slot`): the slot of the agreement bundle at an
+agreement dimension, and the flat slot of the dimension's values elsewhere.
 
-The agreement bundle of a checking bundle (`Agreement.Bundle`) keeps the value at each agreement
+The agreement bundle of a checking bundle (`Agreement.Bundle`) keeps the slot at each agreement
 dimension and drops the other dimensions; an agreement bundle is in turn a checking bundle that is
-absent where it is unspecified, and [has that agreement
-bundle](##Minimalist.FeatureBundle.agreement_ofAgreement). The person of a checking slot is a
-person specification (`Syntax/Person/Specification.lean`), the participant sets the features
+absent where it is unspecified. A checking bundle extends the checking bundle of an agreement
+bundle exactly when its own agreement bundle extends that one
+(`Minimalist.FeatureBundle.gc_ofAgreement_agreement`). The person slot holds a person
+specification (`Syntax/Feature/Person/Specification.lean`), the participant sets the features
 copied to the slot leave open, as a probe that has copied [participant] alone is specified for
 a speech-act participant and no further ([deal-2024]).
 
@@ -33,18 +36,12 @@ the Valuation/Interpretability Biconditional of [chomsky-2001] as a hypothesis
 ## Main definitions
 
 * `Minimalist.FeatureType`: the dimensions.
-* `Minimalist.FeatureType.Value`: the values of a dimension.
+* `Minimalist.FeatureType.Value`, `Minimalist.FeatureType.Slot`: the values of a dimension and
+  its slot order.
 * `Minimalist.FeatureVal`: a dimension with a value.
 * `Minimalist.FeatureBundle`: a checking slot at each dimension.
 * `Minimalist.FeatureBundle.agreement`: the agreement bundle of a checking bundle.
 * `Minimalist.FeatureBundle.ofAgreement`: an agreement bundle as a checking bundle.
-
-## TODO
-
-A checking slot compares two valued persons by equality, so a slot valued for the first person
-does not extend to one valued for the inclusive, and the map from agreement bundles is not
-monotone in the person dimension. Valuation of the person slot should be unification of
-specifications.
 
 ## References
 
@@ -112,11 +109,7 @@ theorem mem_all (t : FeatureType) : t ∈ all := by
 
 /-- The values of a dimension. -/
 @[reducible] def Value : FeatureType → Type
-  | agr .person => Person.Specification
-  | agr .number => Number
-  | agr .gender => UD.Gender
-  | agr .case => Case
-  | agr .definiteness => UD.Definite
+  | agr d => d.Value
   | personFeature _ | numberFeature _ => Bool
   | infl => Infl
   | wh | tense | oblique => Bool
@@ -132,113 +125,152 @@ instance (t : FeatureType) : Repr t.Value := by
   | agr d => cases d <;> exact inferInstance
   | _ => exact inferInstance
 
+/-- The slot order of a dimension: that of the agreement bundle at an agreement dimension, so a
+person specification for person, and the flat slot of the dimension's values elsewhere. -/
+abbrev Slot : FeatureType → Type
+  | agr d => d.Slot
+  | t => Flat t.Value
+
+instance (t : FeatureType) : DecidableEq t.Slot := by
+  cases t with
+  | agr d => exact inferInstanceAs (DecidableEq d.Slot)
+  | _ => exact inferInstanceAs (DecidableEq (Flat _))
+
+instance (t : FeatureType) : PartialOrder t.Slot := by
+  cases t with
+  | agr d => exact inferInstanceAs (PartialOrder d.Slot)
+  | _ => exact inferInstanceAs (PartialOrder (Flat _))
+
+instance (t : FeatureType) : OrderBot t.Slot := by
+  cases t with
+  | agr d => exact inferInstanceAs (OrderBot d.Slot)
+  | _ => exact inferInstanceAs (OrderBot (Flat _))
+
+instance (t : FeatureType) (x y : t.Slot) : Decidable (Compat x y) := by
+  cases t with
+  | agr d => exact inferInstanceAs (Decidable (Compat (α := d.Slot) x y))
+  | _ => exact inferInstanceAs (Decidable (Compat (α := Flat _) x y))
+
+/-- A value of a dimension as a slot, a person value as the specification of what it covers. -/
+def Slot.ofValue : (t : FeatureType) → t.Value → t.Slot
+  | agr d, v => Agreement.Dimension.Slot.ofFlat d (v : Flat d.Value)
+  | personFeature _, v | numberFeature _, v => (v : Flat Bool)
+  | infl, v => (v : Flat Infl)
+  | wh, v | tense, v | oblique, v => (v : Flat Bool)
+  | ellipsis, v => (v : Flat Unit)
+
+/-- The value a slot holds, if it holds one: the person a specification is that of. -/
+def Slot.value? : (t : FeatureType) → t.Slot → Option t.Value
+  | agr .person, x => Person.Specification.toPerson? x
+  | agr .number, x => x
+  | agr .gender, x => x
+  | agr .case, x => x
+  | agr .definiteness, x => x
+  | personFeature _, x | numberFeature _, x => x
+  | infl, x => x
+  | wh, x | tense, x | oblique, x => x
+  | ellipsis, x => x
+
+/-- Unification in the slot order of a dimension, `⊤` where it fails. -/
+def Slot.unify : (t : FeatureType) → t.Slot → t.Slot → WithTop t.Slot
+  | agr d => Agreement.Dimension.Slot.unify d
+  | personFeature _ | numberFeature _ => Flat.unify (α := Bool)
+  | infl => Flat.unify (α := Infl)
+  | wh | tense | oblique => Flat.unify (α := Bool)
+  | ellipsis => Flat.unify (α := Unit)
+
+theorem Slot.isLUB_unify (t : FeatureType) (a b : t.Slot) :
+    IsLUB ({↑a, ↑b} : Set (WithTop t.Slot)) (Slot.unify t a b) := by
+  cases t with
+  | agr d => exact Agreement.Dimension.Slot.isLUB_unify d a b
+  | _ => exact Flat.isLUB_unify a b
+
 end FeatureType
 
-/-- A dimension with a value, written `⟨.person, .first⟩`. -/
+/-- A dimension with a value, written `⟨.number, .singular⟩`. -/
 abbrev FeatureVal := Σ t : FeatureType, t.Value
 
 /-! ### Feature bundles -/
 
-/-- A checking slot at each dimension. -/
-abbrev FeatureBundle := (t : FeatureType) → FeatureSlot t.Value
+/-- A checking slot at each dimension, over the dimension's slot order. -/
+abbrev FeatureBundle := (t : FeatureType) → FeatureSlot t.Slot
 
 namespace FeatureBundle
 
 /-- The bundle valued `v` at `t` and absent elsewhere. -/
 def single (t : FeatureType) (v : t.Value) : FeatureBundle :=
-  Function.update (⊥ : FeatureBundle) t (.valued v)
+  Function.update (⊥ : FeatureBundle) t ↑(FeatureType.Slot.ofValue t v)
 
 @[simp] theorem single_self (t : FeatureType) (v : t.Value) :
-    single t v t = .valued v := by
+    single t v t = ↑(FeatureType.Slot.ofValue t v) := by
   simp [single]
 
 /-- The bundle with the slots in `l`, absent elsewhere. An earlier entry of `l` overrides a later
 one at the same dimension. -/
-def ofList (l : List (Σ t : FeatureType, FeatureSlot t.Value)) : FeatureBundle :=
+def ofList (l : List (Σ t : FeatureType, FeatureSlot t.Slot)) : FeatureBundle :=
   l.foldr (fun p b ↦ Function.update b p.1 p.2) ⊥
 
 @[simp] theorem ofList_nil : ofList [] = ⊥ := rfl
 
 /-- The valued features of a bundle, in the order of `FeatureType.all`. -/
 def valued (b : FeatureBundle) : List FeatureVal :=
-  FeatureType.all.filterMap fun t ↦
-    match b t with
-    | .valued v => some ⟨t, v⟩
-    | _ => none
+  FeatureType.all.filterMap fun t ↦ (FeatureType.Slot.value? t ((b t).unbotD ⊥)).map (⟨t, ·⟩)
 
 /-- The default bundle is absent everywhere. -/
 instance : Inhabited FeatureBundle := ⟨⊥⟩
 
 instance : DecidableEq FeatureBundle :=
-  inferInstanceAs (DecidableEq ((t : FeatureType) → FeatureSlot t.Value))
+  inferInstanceAs (DecidableEq ((t : FeatureType) → FeatureSlot t.Slot))
 
 /-- A bundle is printed as its slots that are not absent. Structures with a bundle field rely on
 this instance to derive `Repr`. -/
 instance : Repr FeatureBundle where
   reprPrec fb _ :=
     repr <| FeatureType.all.filterMap fun t ↦
-      if fb t = .absent then none else some (reprStr t, reprStr (fb t))
+      if fb t = ⊥ then none
+      else some (reprStr t, reprStr (FeatureType.Slot.value? t ((fb t).unbotD ⊥)))
 
 /-! ### Agreement bundles -/
 
-/-- A value of a checking slot at an agreement dimension, or `⊥`, as the agreement slot: a person
-specification is its own slot. -/
-def slotOfFlat : (d : Agreement.Dimension) → Flat (FeatureType.agr d).Value → d.Slot
-  | .person, x => x.recBotCoe ⊥ id
-  | .number, x => x
-  | .gender, x => x
-  | .case, x => x
-  | .definiteness, x => x
-
-/-- An agreement slot as a value of a checking slot or `⊥`, the unspecified person being `⊥`. -/
-def flatOfSlot : (d : Agreement.Dimension) → d.Slot → Flat (FeatureType.agr d).Value
-  | .person, x => if x = ⊥ then ⊥ else (x : Flat Person.Specification)
-  | .number, x => x
-  | .gender, x => x
-  | .case, x => x
-  | .definiteness, x => x
-
-@[simp] theorem slotOfFlat_flatOfSlot (d : Agreement.Dimension) (x : d.Slot) :
-    slotOfFlat d (flatOfSlot d x) = x := by
-  cases d
-  · by_cases h : x = ⊥ <;> simp [slotOfFlat, flatOfSlot, h]
-  all_goals rfl
-
-theorem monotone_slotOfFlat (d : Agreement.Dimension) : Monotone (slotOfFlat d) := by
-  cases d
-  · intro x y h
-    induction x using Flat.recBotCoe with
-    | bot => exact bot_le
-    | coe a => rw [Flat.coe_le_iff.1 h]
-  all_goals exact monotone_id
-
 /-- The agreement bundle of a checking bundle, `⊥` at an agreement dimension that is absent or
 unvalued. -/
-def agreement (b : FeatureBundle) : Agreement.Bundle := fun d ↦ slotOfFlat d (b (.agr d)).toFlat
+def agreement (b : FeatureBundle) : Agreement.Bundle := fun d ↦ (b (.agr d)).unbotD ⊥
 
 @[simp] theorem agreement_apply (b : FeatureBundle) (d : Agreement.Dimension) :
-    b.agreement d = slotOfFlat d (b (.agr d)).toFlat := rfl
+    b.agreement d = (b (.agr d)).unbotD ⊥ := rfl
 
 /-- An agreement bundle as a checking bundle, absent wherever it is unspecified. -/
-def ofAgreement (c : Agreement.Bundle) : FeatureBundle := fun t ↦
-  match t with
-  | .agr d => .ofFlat (flatOfSlot d (c d))
+def ofAgreement (c : Agreement.Bundle) : FeatureBundle
+  | .agr d => FeatureSlot.ofSlot (c d)
   | _ => ⊥
 
 @[simp] theorem ofAgreement_agr (c : Agreement.Bundle) (d : Agreement.Dimension) :
-    ofAgreement c (.agr d) = .ofFlat (flatOfSlot d (c d)) := rfl
+    ofAgreement c (.agr d) = FeatureSlot.ofSlot (c d) := rfl
+
+/-- A checking bundle extends that of an agreement bundle exactly when its agreement bundle
+extends the agreement bundle. -/
+theorem gc_ofAgreement_agreement : GaloisConnection ofAgreement agreement := fun c b ↦
+  ⟨fun h d ↦ FeatureSlot.gc_ofSlot_unbotD.le_u (h (.agr d)), fun h t ↦ by
+    cases t with
+    | agr d => exact FeatureSlot.gc_ofSlot_unbotD.l_le (h d)
+    | _ => exact bot_le⟩
 
 /-- A checking bundle made from an agreement bundle has that agreement bundle. -/
 @[simp] theorem agreement_ofAgreement (c : Agreement.Bundle) : (ofAgreement c).agreement = c :=
-  funext fun d ↦ by simp [agreement, FeatureSlot.toFlat_ofFlat]
+  funext fun d ↦ FeatureSlot.unbotD_ofSlot (c d)
 
-theorem monotone_agreement : Monotone agreement := fun _ _ h d ↦
-  monotone_slotOfFlat d (FeatureSlot.gc_ofFlat_toFlat.monotone_u (h (.agr d)))
+/-- `ofAgreement` and `agreement` form a Galois coinsertion. -/
+def gciOfAgreement : GaloisCoinsertion ofAgreement agreement :=
+  gc_ofAgreement_agreement.toGaloisCoinsertion fun c ↦ (agreement_ofAgreement c).le
+
+theorem monotone_agreement : Monotone agreement := gc_ofAgreement_agreement.monotone_u
+
+theorem monotone_ofAgreement : Monotone ofAgreement := gc_ofAgreement_agreement.monotone_l
 
 theorem agreement_update_agr (b : FeatureBundle) (d : Agreement.Dimension)
-    (s : FeatureSlot (FeatureType.agr d).Value) :
+    (s : FeatureSlot (FeatureType.agr d).Slot) :
     agreement (Function.update b (.agr d) s) =
-      Function.update b.agreement d (slotOfFlat d s.toFlat) := by
+      Function.update b.agreement d (s.unbotD ⊥) := by
   funext d'
   rcases eq_or_ne d' d with rfl | hd
   · simp

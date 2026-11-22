@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Data.List.OfFn
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Syntax.CCG.Interface
+public import Linglib.Syntax.CCG.Semantics
+public import Linglib.Syntax.CCG.Invariant
 public import Linglib.Data.Examples.PickeringBarry1991
 public import Linglib.Data.Examples.Readers
 
@@ -525,49 +526,7 @@ instance (x : CCG.Cat Basic) (a : CCG.Cat.Arg Basic) (β : List (CCG.Cat.Arg Bas
     Decidable (flexible x a β) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The derivation (79) of *John saw Mary*, the verb taking its object first. -/
-def der79 : CCG.Derivation String flexible sent :=
-  .bapp (.lex "John" np) (.fapp (.lex "saw" ((sent \ np) / np)) (.lex "Mary" np))
-
-/-- The derivation (81) of *John saw Mary*, the subject combining with the verb first by rule
-(80a). -/
-def der81 : CCG.Derivation String flexible sent :=
-  .fapp (.fcomp (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
-    (.lex "Mary" np)
-
-/-- The derivation (83) of *who saw Mary*, in which the subject pronoun applies to a sentence
-missing its subject. -/
-def der83 : CCG.Derivation String flexible quest :=
-  .fapp (.lex "who" (quest / (sent \ np))) (.fapp (.lex "saw" ((sent \ np) / np)) (.lex "Mary" np))
-
-/-- The derivation (84) of *whom John saw*, in which the subject combines with the verb into a
-sentence missing its object, which the object pronoun takes. -/
-def der84 : CCG.Derivation String flexible quest :=
-  .fapp (.lex "whom" (quest / (sent / np)))
-    (.fcomp (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
-
-/-- The derivation (85) of *whom John talked to*, in which *talked to* composes into a
-transitive verb, (80b), and the subject combines with it into a sentence missing the
-preposition's object. -/
-def der85 : CCG.Derivation String flexible quest :=
-  .fapp (.lex "whom" (quest / (sent / np)))
-    (.fcomp (.lex "John" (sent / (sent \ np)))
-      (.fcomp (.lex "talked" ((sent \ np) / pp)) (.lex "to" (pp / np))))
-
-/-- *Sue wonders* applied to an embedded question. -/
-def wonders (d : CCG.Derivation String flexible quest) : CCG.Derivation String flexible sent :=
-  .bapp (.lex "Sue" np) (.fapp (.lex "wonders" ((sent \ np) / quest)) d)
-
-/-- (82a). -/
-def der82a : CCG.Derivation String flexible sent := wonders der83
-
-/-- (82b). -/
-def der82b : CCG.Derivation String flexible sent := wonders der84
-
-/-- (82c). -/
-def der82c : CCG.Derivation String flexible sent := wonders der85
-
-/-! ### Logical forms -/
+/-! ### The lexicon -/
 
 open Interpreter
 open CCG (LexEntry)
@@ -595,17 +554,88 @@ inductive Const : Ty Unit → Type
   | talkedTo : Const (ind ⇒ ind ⇒ .t)
   | wonders : Const ((ind ⇒ .t) ⇒ ind ⇒ .t)
 
-/-- The lexicon of (79)–(85). A transitive verb denotes its relation object first, the paper's
-`λyλx[saw(x,y)]`. The raised *John*, through which rule (80a) combines the subject with a verb
-before its object, has the lift `λP[P(John)]`. The subject pronoun *who* takes a sentence missing
-its subject and the object pronoun *whom* one missing an object, each passing on the property
-it takes, as *to* passes on its individual. -/
-def lexicon : List (LexEntry String atomTy Const) :=
-  [⟨"Sue", np, fun I ↦ I .sue⟩, ⟨"John", np, fun I ↦ I .john⟩,
-   ⟨"John", sent / (sent \ np), fun I P ↦ P (I .john)⟩, ⟨"Mary", np, fun I ↦ I .mary⟩,
-   ⟨"saw", (sent \ np) / np, fun I ↦ I .saw⟩, ⟨"talked", (sent \ np) / pp, fun I ↦ I .talkedTo⟩,
-   ⟨"to", pp / np, fun _ x ↦ x⟩, ⟨"wonders", (sent \ np) / quest, fun I ↦ I .wonders⟩,
-   ⟨"who", quest / (sent \ np), fun _ P ↦ P⟩, ⟨"whom", quest / (sent / np), fun _ P ↦ P⟩]
+local notation "Entry" => LexEntry String atomTy Const
+
+namespace Lex
+
+def sue : Entry np := ⟨"Sue", fun I ↦ I .sue⟩
+
+def john : Entry np := ⟨"John", fun I ↦ I .john⟩
+
+/-- The raised *John*, through which rule (80a) combines the subject with a verb before its
+object, has the lift `λP[P(John)]`. -/
+def johnT : Entry (sent / (sent \ np)) := ⟨"John", fun I P ↦ P (I .john)⟩
+
+def mary : Entry np := ⟨"Mary", fun I ↦ I .mary⟩
+
+/-- A transitive verb denotes its relation object first, the paper's `λyλx[saw(x,y)]`. -/
+def saw : Entry ((sent \ np) / np) := ⟨"saw", fun I ↦ I .saw⟩
+
+def talked : Entry ((sent \ np) / pp) := ⟨"talked", fun I ↦ I .talkedTo⟩
+
+/-- *to* passes on its individual. -/
+def toP : Entry (pp / np) := ⟨"to", fun _ x ↦ x⟩
+
+def wonders : Entry ((sent \ np) / quest) := ⟨"wonders", fun I ↦ I .wonders⟩
+
+/-- The subject pronoun *who* takes a sentence missing its subject and passes on the property
+it takes. -/
+def who : Entry (quest / (sent \ np)) := ⟨"who", fun _ P ↦ P⟩
+
+/-- The object pronoun *whom* takes a sentence missing an object. -/
+def whom : Entry (quest / (sent / np)) := ⟨"whom", fun _ P ↦ P⟩
+
+end Lex
+
+/-- The lexicon of (79)–(85). -/
+def lexicon : List (Σ c, Entry c) :=
+  [⟨_, Lex.sue⟩, ⟨_, Lex.john⟩, ⟨_, Lex.johnT⟩, ⟨_, Lex.mary⟩, ⟨_, Lex.saw⟩, ⟨_, Lex.talked⟩,
+   ⟨_, Lex.toP⟩, ⟨_, Lex.wonders⟩, ⟨_, Lex.who⟩, ⟨_, Lex.whom⟩]
+
+/-! ### Derivations -/
+
+/-- The derivation (79) of *John saw Mary*, the verb taking its object first. -/
+def der79 : CCG.Derivation Entry flexible sent :=
+  .bapp (.lex np Lex.john) (.fapp (.lex ((sent \ np) / np) Lex.saw) (.lex np Lex.mary))
+
+/-- The derivation (81) of *John saw Mary*, the subject combining with the verb first by rule
+(80a). -/
+def der81 : CCG.Derivation Entry flexible sent :=
+  .fapp (.fcomp (.lex (sent / (sent \ np)) Lex.johnT) (.lex ((sent \ np) / np) Lex.saw))
+    (.lex np Lex.mary)
+
+/-- The derivation (83) of *who saw Mary*, in which the subject pronoun applies to a sentence
+missing its subject. -/
+def der83 : CCG.Derivation Entry flexible quest :=
+  .fapp (.lex (quest / (sent \ np)) Lex.who)
+    (.fapp (.lex ((sent \ np) / np) Lex.saw) (.lex np Lex.mary))
+
+/-- The derivation (84) of *whom John saw*, in which the subject combines with the verb into a
+sentence missing its object, which the object pronoun takes. -/
+def der84 : CCG.Derivation Entry flexible quest :=
+  .fapp (.lex (quest / (sent / np)) Lex.whom)
+    (.fcomp (.lex (sent / (sent \ np)) Lex.johnT) (.lex ((sent \ np) / np) Lex.saw))
+
+/-- The derivation (85) of *whom John talked to*, in which *talked to* composes into a
+transitive verb, (80b), and the subject combines with it into a sentence missing the
+preposition's object. -/
+def der85 : CCG.Derivation Entry flexible quest :=
+  .fapp (.lex (quest / (sent / np)) Lex.whom)
+    (.fcomp (.lex (sent / (sent \ np)) Lex.johnT)
+      (.fcomp (.lex ((sent \ np) / pp) Lex.talked) (.lex (pp / np) Lex.toP)))
+
+/-- *Sue wonders* applied to an embedded question. -/
+def wonders (d : CCG.Derivation Entry flexible quest) : CCG.Derivation Entry flexible sent :=
+  .bapp (.lex np Lex.sue) (.fapp (.lex ((sent \ np) / quest) Lex.wonders) d)
+
+/-- (82a). -/
+def der82a : CCG.Derivation Entry flexible sent := wonders der83
+
+/-- (82b). -/
+def der82b : CCG.Derivation Entry flexible sent := wonders der84
+
+/-- (82c). -/
+def der82c : CCG.Derivation Entry flexible sent := wonders der85
 
 /-- The words of (82d) with the wh-word `w`. -/
 def words82d (w : String) : List String := ["Sue", "wonders", w, "John", "saw", "Mary"]
@@ -618,7 +648,7 @@ theorem words82d_who : unwords (words82d "who") ++ "." = ex82d.primaryText := by
 system: no wh-word takes a whole sentence, so the pronoun must fill an argument role of the
 embedded verb. -/
 theorem no_der82d (R : CCG.RuleSystem Basic) (w : String) (hw : w = "who" ∨ w = "whom") :
-    ¬ ∃ d : CCG.Derivation String R sent,
+    ¬ ∃ d : CCG.Derivation (fun _ ↦ String) R sent,
       d.LexIn (lexicon.map LexEntry.toPair) ∧ d.yield = words82d w := by
   rintro ⟨d, hd, hy⟩
   have h := d.count_eq_sum .NP
@@ -634,25 +664,25 @@ variable {D : Unit → Type} (I : ∀ {ty : Ty Unit}, Const ty → ty.Dom D)
 -- (79), (81): in every model both derivations of *John saw Mary* mean `saw(John,Mary)`, the
 -- relation taking its object first.
 theorem der79_der81 :
-    (der79.LexIn (lexicon.map LexEntry.toPair) ∧ der81.LexIn (lexicon.map LexEntry.toPair) ∧
-      der79.yield = der81.yield) ∧
-    der79.interp lexicon I = some (I .saw (I .mary) (I .john)) ∧
-    der81.interp lexicon I = some (I .saw (I .mary) (I .john)) :=
+    (der79.words.LexIn (lexicon.map LexEntry.toPair) ∧
+      der81.words.LexIn (lexicon.map LexEntry.toPair) ∧ der79.words.yield = der81.words.yield) ∧
+    der79.interp I = I .saw (I .mary) (I .john) ∧
+    der81.interp I = I .saw (I .mary) (I .john) :=
   ⟨by decide, rfl, rfl⟩
 
 /-- In every model, each wh-word of (82a–c) fills the argument role that its embedded verb or
 preposition assigns, with no empty category: *who* abstracts over the subject of *saw*, *whom*
 over its object and over the object of *to*. -/
 theorem embedded_questions :
-    (der82a.LexIn (lexicon.map LexEntry.toPair) ∧
-      unwords der82a.yield ++ "." = ex82a.primaryText ∧
-      der82a.interp lexicon I = some (I .wonders (fun x ↦ I .saw (I .mary) x) (I .sue))) ∧
-    (der82b.LexIn (lexicon.map LexEntry.toPair) ∧
-      unwords der82b.yield ++ "." = ex82b.primaryText ∧
-      der82b.interp lexicon I = some (I .wonders (fun y ↦ I .saw y (I .john)) (I .sue))) ∧
-    (der82c.LexIn (lexicon.map LexEntry.toPair) ∧
-      unwords der82c.yield ++ "." = ex82c.primaryText ∧
-      der82c.interp lexicon I = some (I .wonders (fun y ↦ I .talkedTo y (I .john)) (I .sue))) :=
+    (der82a.words.LexIn (lexicon.map LexEntry.toPair) ∧
+      unwords der82a.words.yield ++ "." = ex82a.primaryText ∧
+      der82a.interp I = I .wonders (fun x ↦ I .saw (I .mary) x) (I .sue)) ∧
+    (der82b.words.LexIn (lexicon.map LexEntry.toPair) ∧
+      unwords der82b.words.yield ++ "." = ex82b.primaryText ∧
+      der82b.interp I = I .wonders (fun y ↦ I .saw y (I .john)) (I .sue)) ∧
+    (der82c.words.LexIn (lexicon.map LexEntry.toPair) ∧
+      unwords der82c.words.yield ++ "." = ex82c.primaryText ∧
+      der82c.interp I = I .wonders (fun y ↦ I .talkedTo y (I .john)) (I .sue)) :=
   ⟨⟨by decide, by decide +kernel, rfl⟩, ⟨by decide, by decide +kernel, rfl⟩,
     ⟨by decide, by decide +kernel, rfl⟩⟩
 

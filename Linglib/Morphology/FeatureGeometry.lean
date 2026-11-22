@@ -4,8 +4,8 @@ public import Linglib.Core.Data.Fintype.Order
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.SuccPred.Basic
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Syntax.Person.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Person.Clusivity
+public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Order.Interval.Finset.Defs
 public import Mathlib.Tactic.DeriveFintype
 
@@ -183,12 +183,12 @@ theorem fillDefaults_isLowerSet {s : Finset Node} (hs : IsLowerSet (↑s : Set N
 /-- In the person geometries first person is the bare Participant node (Speaker
 by default), exclusive Participant with Speaker, inclusive Participant with
 Speaker and Addressee, second Participant with Addressee, third nothing. -/
-def personNodes : Person → Finset Node
-  | .first => {.participant}
-  | .firstExclusive => {.participant, .speaker}
-  | .firstInclusive => {.participant, .speaker, .addressee}
-  | .second => {.participant, .addressee}
-  | .third => ∅
+def personNodes : Person → Option Clusivity → Finset Node
+  | .second, _ => {.participant, .addressee}
+  | .third, _ => ∅
+  | _, some .exclusive => {.participant, .speaker}
+  | _, some .inclusive => {.participant, .speaker, .addressee}
+  | _, none => {.participant}
 
 /-- In the number geometries, relative to an active inventory, singular is the bare
 Individuation node, with Minimal where the inventory activates it
@@ -206,46 +206,50 @@ def numberNodes (active : Finset Node) : Number → Option (Finset Node)
 
 /-- The geometry of a person–number cell is the root with the person and number
 nodes, the latter only in an inventory that activates Individuation. -/
-def cell (active : Finset Node) (p : Person) (n : Number) : Option (Finset Node) := do
+def cell (active : Finset Node) (p : Person) (cl : Option Clusivity) (n : Number) :
+    Option (Finset Node) := do
   let ns ← if Node.individuation ∈ active then numberNodes active n else pure ∅
-  pure (insert .referringExpression (personNodes p ∪ ns))
+  pure (insert .referringExpression (personNodes p cl ∪ ns))
 
 /-- An inventory licenses a cell when the cell's geometry lies within it. -/
-def Licenses (active : Finset Node) (p : Person) (n : Number) : Prop :=
-  ∃ g ∈ cell active p n, g ⊆ active
+def Licenses (active : Finset Node) (p : Person) (cl : Option Clusivity) (n : Number) : Prop :=
+  ∃ g ∈ cell active p cl n, g ⊆ active
 
-instance (active : Finset Node) (p : Person) (n : Number) : Decidable (Licenses active p n) :=
-  inferInstanceAs (Decidable (∃ g ∈ cell active p n, g ⊆ active))
+instance (active : Finset Node) (p : Person) (cl : Option Clusivity) (n : Number) :
+    Decidable (Licenses active p cl n) :=
+  inferInstanceAs (Decidable (∃ g ∈ cell active p cl n, g ⊆ active))
 
-theorem personNodes_isLowerSet (p : Person) :
-    IsLowerSet (↑(insert ⊥ (personNodes p)) : Set Node) := by
-  cases p <;> decide
+theorem personNodes_isLowerSet (p : Person) (cl : Option Clusivity) :
+    IsLowerSet (↑(insert ⊥ (personNodes p cl)) : Set Node) := by
+  cases p <;> rcases cl with _ | _ | _ <;> decide
 
 /-- A person bears the root, the nodes of its person geometry, and the default daughter of a
 bare Participant node, so that the first person bears Speaker. -/
-def personFeatures (p : Person) : Finset Node := fillDefaults (insert ⊥ (personNodes p))
+def personFeatures (p : Person) (cl : Option Clusivity := none) : Finset Node :=
+  fillDefaults (insert ⊥ (personNodes p cl))
 
-theorem bot_mem_personFeatures (p : Person) : ⊥ ∈ personFeatures p :=
+theorem bot_mem_personFeatures (p : Person) (cl : Option Clusivity) : ⊥ ∈ personFeatures p cl :=
   subset_fillDefaults _ (Finset.mem_insert_self _ _)
 
-theorem personFeatures_isLowerSet (p : Person) : IsLowerSet (↑(personFeatures p) : Set Node) :=
-  fillDefaults_isLowerSet (personNodes_isLowerSet p)
+theorem personFeatures_isLowerSet (p : Person) (cl : Option Clusivity) :
+    IsLowerSet (↑(personFeatures p cl) : Set Node) :=
+  fillDefaults_isLowerSet (personNodes_isLowerSet p cl)
 
 theorem numberNodes_isLowerSet {active : Finset Node} {n : Number} {ns : Finset Node}
     (h : numberNodes active n = some ns) : IsLowerSet (↑(insert ⊥ ns) : Set Node) := by
   cases n <;> simp [numberNodes] at h <;> (try split_ifs at h) <;> subst h <;> decide
 
 /-- Every assigned geometry is a lower set. -/
-theorem cell_isLowerSet {active : Finset Node} {p : Person} {n : Number} {g : Finset Node}
-    (h : cell active p n = some g) : IsLowerSet (↑g : Set Node) := by
+theorem cell_isLowerSet {active : Finset Node} {p : Person} {cl : Option Clusivity} {n : Number}
+    {g : Finset Node} (h : cell active p cl n = some g) : IsLowerSet (↑g : Set Node) := by
   simp only [cell, Option.bind_eq_bind, Option.pure_def] at h
   have key : ∀ ns : Finset Node, IsLowerSet (↑(insert ⊥ ns) : Set Node) →
-      IsLowerSet (↑(insert Node.referringExpression (personNodes p ∪ ns)) : Set Node) :=
+      IsLowerSet (↑(insert Node.referringExpression (personNodes p cl ∪ ns)) : Set Node) :=
     fun ns hns ↦ by
-      rw [show insert Node.referringExpression (personNodes p ∪ ns) =
-          insert ⊥ (personNodes p) ∪ insert ⊥ ns by
+      rw [show insert Node.referringExpression (personNodes p cl ∪ ns) =
+          insert ⊥ (personNodes p cl) ∪ insert ⊥ ns by
         rw [Finset.insert_union, Finset.union_insert, Finset.insert_idem]; rfl, Finset.coe_union]
-      exact (personNodes_isLowerSet p).union hns
+      exact (personNodes_isLowerSet p cl).union hns
   split_ifs at h <;> obtain ⟨ns, hns, hg⟩ := Option.bind_eq_some_iff.1 h <;> cases hg
   · exact key ns (numberNodes_isLowerSet hns)
   · cases hns; exact key ∅ (by decide)

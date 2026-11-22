@@ -20,7 +20,8 @@ formula at a position is a `Subregular.StringFormula` of the string model, readi
 window through the successor and predecessor functions. Chandlee and Jardine report that the
 quantifier-free string transductions are exactly the input strictly local functions. This file
 proves the one-sided case: over a finite alphabet, the transductions whose guards read only
-backward compute exactly the left input strictly local functions.
+backward compute exactly the functions of the input strictly local rules, which are the left
+input strictly local functions that fix `[]` and preserve prefixes.
 
 The transductions here are **order-preserving** in the sense of [dolatian-2020] (§7.4.2): the
 output is read off in the order (input position, copy), so the output successor is induced
@@ -42,13 +43,13 @@ rather than defined by formulas of its own. Transductions that define it, such a
 
 * `Transduction.LeftLocal.emitAt_congr`: a left-local transduction emits the same block at
   positions whose bounded left contexts agree.
-* `Transduction.LeftLocal.isLeftInputStrictlyLocal`: a transduction left-local with radius `r` is
-  `(r + 1)`-left input strictly local.
+* `Transduction.LeftLocal.exists_islRule_apply_eq`,
+  `Transduction.LeftLocal.isLeftInputStrictlyLocal`: a transduction left-local with radius `r` is
+  computed by an `(r + 1)`-ISL rule, so it is `(r + 1)`-left input strictly local.
 * `ISLRule.apply_toTransduction`: on words over the alphabet, the transduction of an ISL rule
   computes it.
-* `isLeftInputStrictlyLocal_iff_exists_leftLocal`: over a finite alphabet, the
-  `(r + 1)`-left input strictly local functions are those of the transductions left-local with
-  radius `r`.
+* `exists_islRule_apply_eq_iff_exists_leftLocal`: over a finite alphabet, the functions of the
+  `(r + 1)`-ISL rules are those of the transductions left-local with radius `r`.
 * `StringFormula.boundedDependence_rewrite_left`, `StringFormula.boundedDependence_rewrite_right`:
   rewriting where a bounded formula holds depends boundedly on both sides.
 * `Transduction.apply_relabel`: on words over the alphabet, the relabelling transduction computes
@@ -156,10 +157,10 @@ theorem apply_append_singleton (u : List α) (x : α) :
     List.flatMap_singleton, apply, List.flatMap_congr fun p hp ↦
       hT.emitAt_append [x] (List.mem_range.1 hp)]
 
-/-- A transduction left-local with radius `r` is `(r + 1)`-left input strictly local: the rule
-emitting, after a window of `r` symbols, the block the transduction emits at the end of the
-window followed by the symbol computes it. -/
-theorem isLeftInputStrictlyLocal : IsLeftInputStrictlyLocal (r + 1) T.apply := by
+/-- A transduction left-local with radius `r` is computed by the `(r + 1)`-ISL rule emitting,
+after a window of `r` symbols, the block the transduction emits at the end of the window
+followed by the symbol. -/
+theorem exists_islRule_apply_eq : ∃ ρ : ISLRule (r + 1) α β, ρ.apply = T.apply := by
   refine ⟨⟨fun window x ↦ T.emitAt (window ++ [x]) window.length⟩, funext fun w ↦ ?_⟩
   induction w using List.reverseRecOn with
   | nil => rfl
@@ -168,11 +169,16 @@ theorem isLeftInputStrictlyLocal : IsLeftInputStrictlyLocal (r + 1) T.apply := b
       hT.emitAt_eq_emitAt_rtake (by simp), List.take_of_length_le (by simp),
       List.rtake_concat_succ, Nat.add_sub_cancel, ← List.length_rtake]
 
+/-- A transduction left-local with radius `r` is `(r + 1)`-left input strictly local. -/
+theorem isLeftInputStrictlyLocal : IsLeftInputStrictlyLocal (r + 1) T.apply := by
+  obtain ⟨ρ, hρ⟩ := hT.exists_islRule_apply_eq
+  exact hρ ▸ ρ.isLeftInputStrictlyLocal_apply
+
 end LeftLocal
 
 end Transduction
 
-/-! ### Input strictly local functions are left-local transductions -/
+/-! ### Input strictly local rules are left-local transductions -/
 
 namespace ISLRule
 
@@ -244,13 +250,14 @@ theorem apply_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) :
 
 end ISLRule
 
-/-- Over a finite alphabet, the `(r + 1)`-left input strictly local functions are exactly the
-functions of the transductions left-local with radius `r`. -/
-theorem isLeftInputStrictlyLocal_iff_exists_leftLocal [DecidableEq α] [Fintype α] {r : ℕ}
+/-- Over a finite alphabet, the functions of the `(r + 1)`-ISL rules are exactly the functions
+of the transductions left-local with radius `r`. -/
+theorem exists_islRule_apply_eq_iff_exists_leftLocal [DecidableEq α] [Fintype α] {r : ℕ}
     {f : List α → List β} :
-    IsLeftInputStrictlyLocal (r + 1) f ↔ ∃ T : Transduction α β, T.LeftLocal r ∧ T.apply = f := by
+    (∃ ρ : ISLRule (r + 1) α β, ρ.apply = f) ↔
+      ∃ T : Transduction α β, T.LeftLocal r ∧ T.apply = f := by
   refine ⟨fun ⟨ρ, hρ⟩ ↦ ⟨ρ.toTransduction Finset.univ.toList, ρ.leftLocal_toTransduction _,
-    funext fun w ↦ ?_⟩, fun ⟨T, hT, hf⟩ ↦ hf ▸ hT.isLeftInputStrictlyLocal⟩
+    funext fun w ↦ ?_⟩, fun ⟨T, hT, hf⟩ ↦ hf ▸ hT.exists_islRule_apply_eq⟩
   rw [ρ.apply_toTransduction _ fun a _ ↦ Finset.mem_toList.2 (Finset.mem_univ a), hρ]
 
 /-! ### Rewriting where a formula holds -/

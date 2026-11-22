@@ -386,7 +386,7 @@ variable {R γ}
 theorem IsTerminative.isCofinal (h : IsTerminative R γ) : IsCofinal R γ := by
   obtain ⟨hS, hne⟩ := h
   refine ⟨?_, fun h ↦ ?_, ?_⟩
-  · rw [hS, ← Ici_top]; exact isUpperSet_Ici ⊤
+  · rw [hS, ← Ici_top]; exact .Ici ⊤
   · have : (⊥ : ι) ∈ γ ⁻¹' R := h
     rw [hS] at this
     exact hne this
@@ -395,7 +395,7 @@ theorem IsTerminative.isCofinal (h : IsTerminative R γ) : IsCofinal R γ := by
 theorem IsEgressive.isCoinitial (h : IsEgressive R γ) : IsCoinitial R γ := by
   obtain ⟨hS, hne⟩ := h
   refine ⟨?_, ?_, fun h ↦ ?_⟩
-  · rw [hS, ← Iic_bot]; exact isLowerSet_Iic ⊥
+  · rw [hS, ← Iic_bot]; exact .Iic ⊥
   · show ⊥ ∈ γ ⁻¹' R; rw [hS]; rfl
   · have : (⊤ : ι) ∈ γ ⁻¹' R := h
     rw [hS] at this
