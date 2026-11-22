@@ -41,7 +41,7 @@ def verbs : List Verb :=
    prevent, kill, break_, tear_, crack, dent, scratch, shatter,
    burn, destroy, melt, activate, affect, change, damage, eliminate,
    hurt, restore, trigger, bury, drop, lift, lock, shut,
-   spread, stretch, switch, smoke, devour, drink, read, build, write,
+   spread, stretch, switch, flood, crash, ruin, die, smoke, devour, drink, read, build, write,
    do_, sweep, sweep_instr, say, tell, claim, reveal, acknowledge, admit,
    announce, confess, inform, suggest, pretend, confirm, demonstrate, establish,
    prove, whisper, murmur, shout, cry, scream, mumble, mutter,
