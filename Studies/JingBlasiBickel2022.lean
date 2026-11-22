@@ -264,12 +264,12 @@ def IsLexical (w : Word) : Prop :=
 instance : DecidablePred IsLexical := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The dependencies of `g` between lexical words, every word kept in place. -/
-def lexical (g : Graph L n) : Graph L n :=
+def lexical (words : Fin n → Word) (g : Graph L n) : Graph L n :=
   { g with label := fun v w ↦
-      if IsLexical (g.words v) ∧ IsLexical (g.words w) then g.label v w else none }
+      if IsLexical (words v) ∧ IsLexical (words w) then g.label v w else none }
 
 /-- Figure 1: *We certainly fit into certain parts of the article*. -/
-def fig1 : Graph UD.DepRel 9 := Stemma.toGraph <|
+def fig1Stemma : Stemma UD.DepRel :=
   node (.mk' "fit" .VERB)
     [(.nsubj, leaf (.mk' "We" .PRON)), (.advmod, leaf (.mk' "certainly" .ADV))]
     [(.obl, node (.mk' "parts" .NOUN)
@@ -277,16 +277,22 @@ def fig1 : Graph UD.DepRel 9 := Stemma.toGraph <|
       [(.nmod, node (.mk' "article" .NOUN)
         [(.case, leaf (.mk' "of" .ADP)), (.det, leaf (.mk' "the" .DET))] [])])]
 
+/-- The dependency graph of Figure 1. -/
+def fig1 : Graph UD.DepRel 9 := fig1Stemma.toGraph
+
+/-- The dependencies of Figure 1 between lexical words. -/
+def fig1Lexical : Graph UD.DepRel 9 := lexical fig1Stemma.word fig1
+
 /-- Table 2: in Figure 1 the two hierarchical catenae, one of them harmonic, have three pairs of
 summed length 7, one of them head-final, and the two parallel catenae, neither harmonic, have
 four pairs of summed length 8, two of them head-final. -/
 theorem table2 :
-    (#(hierarchical (lexical fig1)), #(harmonic (Equiv.refl _) (hierarchical (lexical fig1))),
-        #(pairs (hierarchical (lexical fig1))), length (Equiv.refl _) (hierarchical (lexical fig1)),
-        #(headFinalPairs (Equiv.refl _) (hierarchical (lexical fig1)))) = (2, 1, 3, 7, 1) ∧
-      (#(parallel (lexical fig1)), #(harmonic (Equiv.refl _) (parallel (lexical fig1))),
-        #(pairs (parallel (lexical fig1))), length (Equiv.refl _) (parallel (lexical fig1)),
-        #(headFinalPairs (Equiv.refl _) (parallel (lexical fig1)))) = (2, 0, 4, 8, 2) := by
+    (#(hierarchical fig1Lexical), #(harmonic (Equiv.refl _) (hierarchical fig1Lexical)),
+        #(pairs (hierarchical fig1Lexical)), length (Equiv.refl _) (hierarchical fig1Lexical),
+        #(headFinalPairs (Equiv.refl _) (hierarchical fig1Lexical))) = (2, 1, 3, 7, 1) ∧
+      (#(parallel fig1Lexical), #(harmonic (Equiv.refl _) (parallel fig1Lexical)),
+        #(pairs (parallel fig1Lexical)), length (Equiv.refl _) (parallel fig1Lexical),
+        #(headFinalPairs (Equiv.refl _) (parallel fig1Lexical))) = (2, 0, 4, 8, 2) := by
   decide
 
 /-- Figure 2a: *We fit certainly into certain of the article parts*, a linearization of the tree
@@ -296,7 +302,7 @@ def fig2a : Arrangement (Fin 9) 9 :=
 
 -- §2.4: the baseline sample is projective and its hierarchical catenae are 12 words long
 theorem length_fig2a :
-    (fig1.map fig2a).IsProjective ∧ length fig2a (hierarchical (lexical fig1)) = 12 := by
+    (fig1.map fig2a).IsProjective ∧ length fig2a (hierarchical fig1Lexical) = 12 := by
   decide
 
 /-! ### The four orders of a chain, (6) -/

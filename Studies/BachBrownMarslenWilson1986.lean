@@ -179,14 +179,11 @@ theorem exists_one_lt_held_revPerm_iff :
 
 section Graph
 
-open Morphology (Word)
-
 variable (σ) in
-/-- The dependency tree of a cluster over the words `w`, the subjects before the verbs: each verb
+/-- The dependency tree of a cluster, the subjects before the verbs: each verb
 heads its subject and the verb it embeds, and the matrix verb is the root. The arcs are unlabelled,
 as in Figure 1, which draws the arcs between verbs and their arguments only. -/
-def graph [NeZero n] (w : Fin (n + n) → Word) : Graph Unit (n + n) where
-  words := w
+def graph [NeZero n] : Graph Unit (n + n) where
   label a b := if (∃ i, a = verb σ i ∧ b = subject i) ∨
       ∃ i j : Fin n, (j : ℕ) = i + 1 ∧ a = verb σ i ∧ b = verb σ j then some () else none
   root := verb σ 0
@@ -201,27 +198,27 @@ private theorem depth_subject (i : Fin n) : depth σ (subject i) = 2 * i + 1 := 
 private theorem depth_verb (i : Fin n) : depth σ (verb σ i) = 2 * i := by
   simp only [depth, verb, Fin.addCases_right, Equiv.symm_apply_apply]
 
-variable [NeZero n] {w : Fin (n + n) → Word}
+variable [NeZero n]
 
 @[simp] theorem graph_adj {a b : Fin (n + n)} :
-    (graph σ w).Adj a b ↔ (∃ i, a = verb σ i ∧ b = subject i) ∨
+    (graph σ).Adj a b ↔ (∃ i, a = verb σ i ∧ b = subject i) ∨
       ∃ i j : Fin n, (j : ℕ) = i + 1 ∧ a = verb σ i ∧ b = verb σ j := by
   simp only [Graph.Adj, graph]
   split_ifs with h <;> simp [h]
 
-private theorem depth_lt_of_adj {a b : Fin (n + n)} (h : (graph σ w).Adj a b) :
+private theorem depth_lt_of_adj {a b : Fin (n + n)} (h : (graph σ).Adj a b) :
     depth σ a < depth σ b := by
   rcases graph_adj.1 h with ⟨i, rfl, rfl⟩ | ⟨i, j, hij, rfl, rfl⟩ <;>
     simp only [depth_subject, depth_verb] <;> omega
 
-private theorem depth_le_of_dominates {a b : Fin (n + n)} (h : (graph σ w).Dominates a b) :
+private theorem depth_le_of_dominates {a b : Fin (n + n)} (h : (graph σ).Dominates a b) :
     depth σ a ≤ depth σ b := by
   induction h with
   | refl => exact le_rfl
   | tail _ hbc ih => exact ih.trans (depth_lt_of_adj hbc).le
 
 -- The graph is a dependency tree, a check on the construction.
-theorem isTree_graph : (graph σ w).IsTree where
+theorem isTree_graph : (graph σ).IsTree where
   not_dominates_of_adj _ _ h hd := (depth_lt_of_adj h).not_ge (depth_le_of_dominates hd)
   leftUnique_adj a b c ha hb := by
     rcases graph_adj.1 ha with ⟨i, rfl, rfl⟩ | ⟨i, j, hij, rfl, rfl⟩ <;>
@@ -232,7 +229,7 @@ theorem isTree_graph : (graph σ w).IsTree where
     · obtain rfl := verb_inj.1 h
       exact verb_inj.2 (Fin.ext (by omega))
   root_dominates p := by
-    have hv (k : ℕ) (hk : k < n) : (graph σ w).Dominates (verb σ 0) (verb σ ⟨k, hk⟩) := by
+    have hv (k : ℕ) (hk : k < n) : (graph σ).Dominates (verb σ 0) (verb σ ⟨k, hk⟩) := by
       induction k with
       | zero => exact (show (⟨0, hk⟩ : Fin n) = 0 by simp) ▸ .refl
       | succ k ih =>
@@ -246,7 +243,7 @@ theorem isTree_graph : (graph σ w).IsTree where
 
 /-- The nested, German order is the only cluster order whose dependency tree is planar, no two of
 its arcs crossing. -/
-theorem isPlanar_graph_iff : (graph σ w).IsPlanar ↔ σ = Fin.revPerm := by
+theorem isPlanar_graph_iff : (graph σ).IsPlanar ↔ σ = Fin.revPerm := by
   refine ⟨fun h ↦ forall_not_alternate_iff.1 fun i j ↦
     h (.inr (graph_adj.2 (.inl ⟨i, rfl, rfl⟩))) (.inr (graph_adj.2 (.inl ⟨j, rfl, rfl⟩))), ?_⟩
   rintro rfl a b c d hab hcd

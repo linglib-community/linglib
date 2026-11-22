@@ -20,11 +20,14 @@ one of several dependents is a catena that is not a constituent.
 ## Main definitions
 
 * `Graph.IsCatena`: the words of `s` induce a connected subgraph.
-* `Graph.IsConstituent`: `s` is the dominance cone of a word.
+* `Graph.IsConstituent`: `s` is the yield of a word.
 
 ## Main statements
 
 * `Graph.IsConstituent.isCatena`: every constituent is a catena.
+* `Graph.IsForest.isCatena_iff_existsUnique`: in a forest, a catena is a set of positions
+  exactly one of which, its root, has no head among them.
+* `Graph.IsForest.card_isConstituent`: a forest has as many constituents as positions.
 * `Graph.not_isConstituent_pair`: in a forest, a head with one of two dependents is
   not a constituent.
 * `DependencyGrammar.Graph.IsTree.isTree_toSimpleGraph`: the undirected view of a dependency tree
@@ -37,6 +40,8 @@ one of several dependents is a catena that is not a constituent.
 
 @[expose] public section
 
+open Finset
+
 namespace DependencyGrammar
 
 variable {L : Type*} {n : ℕ}
@@ -45,15 +50,20 @@ variable {L : Type*} {n : ℕ}
 def Graph.IsCatena (g : Graph L n) (s : Finset (Fin n)) : Prop :=
   (g.toSimpleGraph.induce ↑s).Connected
 
-/-- `s` is a **constituent** if it is the dominance cone of some position. -/
+/-- `s` is a **constituent** if it is the yield of some position, a principal upper set of the
+dominance order. -/
 def Graph.IsConstituent (g : Graph L n) (s : Finset (Fin n)) : Prop :=
-  ∃ v, ∀ w, w ∈ s ↔ g.Dominates v w
+  ∃ v, (↑s : Set (Fin n)) = g.yield v
+
+theorem Graph.isConstituent_iff {g : Graph L n} {s : Finset (Fin n)} :
+    g.IsConstituent s ↔ ∃ v, ∀ w, w ∈ s ↔ g.Dominates v w := by
+  simp [Graph.IsConstituent, Set.ext_iff]
 
 instance (g : Graph L n) (s : Finset (Fin n)) : Decidable (g.IsCatena s) :=
   inferInstanceAs (Decidable (SimpleGraph.Connected _))
 
 instance (g : Graph L n) (s : Finset (Fin n)) : Decidable (g.IsConstituent s) :=
-  inferInstanceAs (Decidable (∃ _, _))
+  decidable_of_iff _ Graph.isConstituent_iff.symm
 
 theorem Graph.singleton_isCatena (g : Graph L n) (v : Fin n) : g.IsCatena {v} := by
   rw [Graph.IsCatena, Finset.coe_singleton]
@@ -75,7 +85,7 @@ and cones induce connected subgraphs. -/
 theorem Graph.IsConstituent.isCatena {g : Graph L n} {s : Finset (Fin n)}
     (h : g.IsConstituent s) : g.IsCatena s := by
   obtain ⟨v, hv⟩ := h
-  rw [Graph.IsCatena, show (↑s : Set (Fin n)) = {x | g.Dominates v x} from Set.ext hv]
+  rw [Graph.IsCatena, hv]
   exact Graph.connected_induce_cone g v
 
 theorem Graph.isCatena_pair (g : Graph L n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w) :
@@ -88,6 +98,7 @@ another dependent, since the head's cone contains the other dependent and the de
 does not contain the head. -/
 theorem Graph.not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : Fin n}
     (hw : g.Adj v w) (hu : g.Adj v u) (huw : u ≠ w) : ¬ g.IsConstituent {v, w} := by
+  rw [Graph.isConstituent_iff]
   rintro ⟨c, hc⟩
   rcases Finset.mem_insert.mp ((hc c).2 Relation.ReflTransGen.refl) with rfl | hcw
   · rcases Finset.mem_insert.mp ((hc u).2 (Relation.ReflTransGen.single hu)) with rfl | hu'
@@ -96,9 +107,69 @@ theorem Graph.not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : 
   · rw [Finset.mem_singleton] at hcw; subst hcw
     exact hF.not_dominates_of_adj hw ((hc v).1 (by simp))
 
+/-- In a forest, a position of a catena with no head in the catena dominates the whole catena:
+it is the catena's root. -/
+theorem Graph.IsCatena.dominates_of_forall_not_adj {g : Graph L n} {s : Finset (Fin n)}
+    (h : g.IsCatena s) (hF : g.IsForest) {a : Fin n} (ha : a ∈ s)
+    (hroot : ∀ u ∈ s, ¬ g.Adj u a) {b : Fin n} (hb : b ∈ s) : g.Dominates a b := by
+  suffices ∀ y : (↑s : Set (Fin n)), Relation.ReflTransGen
+      (g.toSimpleGraph.induce ↑s).Adj ⟨a, ha⟩ y → g.Dominates a y from
+    this ⟨b, hb⟩ ((SimpleGraph.reachable_iff_reflTransGen _ _).1 (h.preconnected _ _))
+  intro y hy
+  induction hy with
+  | refl => exact .refl
+  | @tail x y _ hxy ih =>
+    obtain ⟨-, hxy | hyx⟩ := hxy
+    · exact ih.tail hxy
+    · rcases eq_or_ne a x with rfl | hne
+      · exact absurd hyx (hroot y y.2)
+      · exact hF.dominates_head ih hne hyx
+
+/-- In a forest a set of positions is a catena iff exactly one of them, its root, has no head
+among them. -/
+theorem Graph.IsForest.isCatena_iff_existsUnique {g : Graph L n} (hF : g.IsForest)
+    {s : Finset (Fin n)} : g.IsCatena s ↔ ∃! v, v ∈ s ∧ ∀ u ∈ s, ¬ g.Adj u v := by
+  have wf := hF.wellFounded_transGen
+  refine ⟨fun h ↦ ?_, fun ⟨r, ⟨hr, hroot⟩, huniq⟩ ↦ ?_⟩
+  · obtain ⟨⟨x, hx⟩⟩ := h.nonempty
+    obtain ⟨r, hr, hmin⟩ := wf.has_min (↑s : Set (Fin n)) ⟨x, hx⟩
+    have hroot : ∀ u ∈ s, ¬ g.Adj u r := fun u hu hur ↦ hmin u hu (.single hur)
+    exact ⟨r, ⟨hr, hroot⟩, fun r' ⟨hr', hroot'⟩ ↦ hF.dominates_antisymm
+      (h.dominates_of_forall_not_adj hF hr' hroot' hr)
+      (h.dominates_of_forall_not_adj hF hr hroot hr')⟩
+  · refine (SimpleGraph.connected_iff_exists_forall_reachable _).2 ⟨⟨r, hr⟩, ?_⟩
+    rintro ⟨x, hx⟩
+    induction x using wf.induction with
+    | _ x ih =>
+      by_cases hx' : ∀ u ∈ s, ¬ g.Adj u x
+      · obtain rfl := huniq x ⟨hx, hx'⟩
+        exact .rfl
+      · push Not at hx'
+        obtain ⟨u, hu, hux⟩ := hx'
+        exact (ih u (.single hux) hu).trans
+          (SimpleGraph.Adj.reachable ⟨hF.ne_of_adj hux, .inl hux⟩)
+
+/-- In a forest a set of positions is a catena iff it has exactly one position with no head in
+it. -/
+theorem Graph.IsForest.isCatena_iff {g : Graph L n} (hF : g.IsForest) {s : Finset (Fin n)} :
+    g.IsCatena s ↔ #{v ∈ s | ∀ u ∈ s, ¬ g.Adj u v} = 1 := by
+  simp [hF.isCatena_iff_existsUnique, Finset.card_eq_one, Finset.eq_singleton_iff_unique_mem,
+    ExistsUnique]
+
+/-- A forest has as many constituents as positions. -/
+theorem Graph.IsForest.card_isConstituent {g : Graph L n} (hF : g.IsForest) :
+    #{s : Finset (Fin n) | g.IsConstituent s} = n := by
+  have h : ({s | g.IsConstituent s} : Finset (Finset (Fin n))) =
+      Finset.univ.image fun v ↦ ({w | g.Dominates v w} : Finset (Fin n)) := by
+    ext s
+    simp [Graph.isConstituent_iff, Finset.ext_iff, eq_comm]
+  rw [h, Finset.card_image_of_injective, Finset.card_univ, Fintype.card_fin]
+  exact fun v w hvw ↦ hF.yield_injective (Set.ext fun x ↦ by simpa using Finset.ext_iff.1 hvw x)
+
 theorem Graph.isConstituent_univ {g : Graph L n} (hT : g.IsTree) :
     g.IsConstituent Finset.univ :=
-  ⟨g.root, fun w ↦ ⟨fun _ ↦ hT.root_dominates w, fun _ ↦ Finset.mem_univ w⟩⟩
+  Graph.isConstituent_iff.2
+    ⟨g.root, fun w ↦ ⟨fun _ ↦ hT.root_dominates w, fun _ ↦ Finset.mem_univ w⟩⟩
 
 theorem Graph.isCatena_univ {g : Graph L n} (hT : g.IsTree) : g.IsCatena Finset.univ :=
   (Graph.isConstituent_univ hT).isCatena

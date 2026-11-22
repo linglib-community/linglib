@@ -63,9 +63,6 @@ minimisation is about. -/
 def Graph.totalLength (g : Graph L n) : Nat :=
   ∑ v : Fin n, ∑ w ∈ g.children v, Nat.dist v w
 
-theorem Graph.totalLength_words (g : Graph L n) (words' : Fin n → Morphology.Word) :
-    Graph.totalLength { g with words := words' } = g.totalLength := rfl
-
 /-! ### Transport -/
 
 /-- Mirroring a linearization is linearizing along the mirrored arrangement. -/

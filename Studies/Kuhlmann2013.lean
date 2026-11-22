@@ -2,7 +2,6 @@ module
 
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Morphology.Word.Basic
 public import Linglib.Data.Statistics.Kuhlmann2013
 
 /-!
@@ -46,7 +45,6 @@ NP-hardness result are not formalized.
 namespace Kuhlmann2013
 
 open DependencyGrammar Relation
-open Morphology (Word)
 open Data.Statistics (Decimal)
 
 variable {L : Type*} {n : ℕ} {g : Graph L n}
@@ -88,9 +86,6 @@ crosses them and is not, at gap degree 1. -/
 /-- Dutch cross-serial: *dat Jan Piet Marie zag helpen lezen*. -/
 def dutchCrossSerial : Graph UD.DepRel 7 :=
   .ofArcs
-    [Word.mk' "dat" .SCONJ, Word.mk' "Jan" .PROPN, Word.mk' "Piet" .PROPN,
-     Word.mk' "Marie" .PROPN, Word.mk' "zag" .VERB, Word.mk' "helpen" .VERB,
-     Word.mk' "lezen" .VERB]
     0
     [(0, 4, .dep), (4, 1, .nsubj), (4, 5, .xcomp),
      (5, 2, .nsubj), (5, 6, .xcomp), (6, 3, .nsubj)]
@@ -98,9 +93,6 @@ def dutchCrossSerial : Graph UD.DepRel 7 :=
 /-- German nested: *dass Jan Piet Marie lesen helfen sah*. -/
 def germanNested : Graph UD.DepRel 7 :=
   .ofArcs
-    [Word.mk' "dass" .SCONJ, Word.mk' "Jan" .PROPN, Word.mk' "Piet" .PROPN,
-     Word.mk' "Marie" .PROPN, Word.mk' "lesen" .VERB, Word.mk' "helfen" .VERB,
-     Word.mk' "sah" .VERB]
     0
     [(0, 6, .dep), (6, 1, .nsubj), (6, 5, .xcomp),
      (5, 2, .nsubj), (5, 4, .xcomp), (4, 3, .nsubj)]
@@ -121,17 +113,14 @@ theorem dutchCrossSerial_isWellNested :
 
 /-! ### Figures 10 and 11: block-degree and well-nestedness -/
 
-/-- An unlabelled position. -/
-def dot : Word := Word.mk' "•" .X
-
 /-- Figure 10, `D₁`: the yield of node 2 falls into the blocks {2, 3} and {6}. -/
 def fig10D1 : Graph Unit 6 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+  .ofArcs 0
     [(0, 1, ()), (0, 4, ()), (4, 3, ()), (1, 2, ()), (2, 5, ())]
 
 /-- Figure 10, `D₂`: the yield of node 1 falls into the blocks {1}, {3} and {6}. -/
 def fig10D2 : Graph Unit 6 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot] 1
+  .ofArcs 1
     [(1, 0, ()), (1, 4, ()), (4, 3, ()), (0, 2, ()), (2, 5, ())]
 
 -- Example 6
@@ -140,15 +129,15 @@ theorem figure10_blockDegree : blockDegree fig10D1 = 2 ∧ blockDegree fig10D2 =
 
 /-- Figure 11, `D₁`: non-projective with no overlapping yields at all. -/
 def fig11D1 : Graph Unit 4 :=
-  .ofArcs [dot, dot, dot, dot] 1 [(1, 0, ()), (1, 2, ()), (0, 3, ())]
+  .ofArcs 1 [(1, 0, ()), (1, 2, ()), (0, 3, ())]
 
 /-- Figure 11, `D₂`: the yields of nodes 1 and 2 overlap, but node 1 dominates node 2. -/
 def fig11D2 : Graph Unit 4 :=
-  .ofArcs [dot, dot, dot, dot] 0 [(0, 2, ()), (2, 1, ()), (1, 3, ())]
+  .ofArcs 0 [(0, 2, ()), (2, 1, ()), (1, 3, ())]
 
 /-- Figure 11, `D₃`: the yields of the sibling nodes 2 and 3 overlap. -/
 def fig11D3 : Graph Unit 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 2, ()), (2, 4, ()), (0, 1, ()), (1, 3, ())]
+  .ofArcs 0 [(0, 2, ()), (2, 4, ()), (0, 1, ()), (1, 3, ())]
 
 -- Figure 11, Example 8
 theorem figure11_wellNested :
