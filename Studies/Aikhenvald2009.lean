@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Aikhenvald2008
 public import Linglib.Data.Examples.Aikhenvald2009
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Fragments.Manambu.Clause
-public import Linglib.Syntax.Clause.Linking
+public import Linglib.Semantics.ClauseLinking
 
 /-!
 # Aikhenvald (2009): The Semantics of Clause Linking in Manambu

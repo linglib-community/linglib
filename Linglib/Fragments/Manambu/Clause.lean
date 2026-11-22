@@ -106,7 +106,7 @@ def morphs : MedialMarker → List Morph
   | n => [.suff "n"]
 
 /-- The switch-reference value of a marker, `none` for *-lǝk* and *-n*. -/
-def sr : MedialMarker → Option SwitchReference
+def switchReference : MedialMarker → Option SwitchReference
   | ku | tay | taka | taykeb | gay => some .ss
   | k | keb => some .ds
   | lek | n => none
@@ -144,7 +144,7 @@ def StandsAlone (m : MedialMarker) : Prop := m = ku ∨ m = n
 instance : DecidablePred StandsAlone := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 instance : MedialForm MedialMarker where
-  sr := sr
+  switchReference := switchReference
   IndexesSubject := IndexesSubject
 
 end MedialMarker

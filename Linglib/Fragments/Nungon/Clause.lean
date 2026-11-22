@@ -31,7 +31,7 @@ bridged by recapitulative and by summary linkage.
   desinences and the perfect forms by person and number
 * `Nungon.Medial` — the three medial forms, same-subject, different-subject and perfect,
   with their morphs by person and number (`morphs`), the switch-reference value they carry
-  (`sr`) and whether they index the subject
+  (`switchReference`) and whether they index the subject
   (`IndexesSubject`), which make them an instance of `MedialForm`
 
 ## Implementation notes
@@ -102,7 +102,7 @@ def morphs : Medial → Person → Number → List Morph
   | perfect, p, n => medialSuffix :: (Nungon.perfect p n).toList
 
 /-- The switch-reference value a form carries; `none` for the perfect. -/
-def sr : Medial → Option SwitchReference
+def switchReference : Medial → Option SwitchReference
   | ss => some .ss
   | ds => some .ds
   | perfect => none
@@ -113,7 +113,7 @@ def IndexesSubject (m : Medial) : Prop := m ≠ ss
 instance : DecidablePred IndexesSubject := fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
 instance : MedialForm Medial where
-  sr := sr
+  switchReference := switchReference
   IndexesSubject := IndexesSubject
 
 end Medial

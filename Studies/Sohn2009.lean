@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Lattice.Basic
 public import Linglib.Fragments.Korean.Clause
-public import Linglib.Syntax.Clause.Linking
+public import Linglib.Semantics.ClauseLinking
 
 /-!
 # Sohn (2009): The Semantics of Clause Linking in Korean

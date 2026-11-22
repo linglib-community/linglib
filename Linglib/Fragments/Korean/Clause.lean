@@ -167,7 +167,7 @@ def verbForm (_ : Converb) : UD.VerbForm := .Conv
 
 /-- The converbs as medial forms, neutral to switch-reference and never indexing the subject. -/
 instance : MedialForm Converb where
-  sr _ := none
+  switchReference _ := none
   IndexesSubject _ := False
 
 end Converb

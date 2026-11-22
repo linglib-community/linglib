@@ -39,9 +39,10 @@ open Manambu MedialMarker
 
 /-- The inflection of a medial verb follows the switch-reference value of its marker. -/
 theorem inflection_of_sr (m : MedialMarker) :
-    (m.sr = some .ss → m.inflection = .uninflected) ∧
-      (m.sr = some .ds → m.inflection = .partiallyInflected) ∧
-      (m.sr = none → m.inflection = .uninflected ∨ m.inflection = .fullyInflected) := by
+    (m.switchReference = some .ss → m.inflection = .uninflected) ∧
+      (m.switchReference = some .ds → m.inflection = .partiallyInflected) ∧
+      (m.switchReference = none →
+        m.inflection = .uninflected ∨ m.inflection = .fullyInflected) := by
   decide +revert
 
 /-! ### The times of medial clauses -/
@@ -94,7 +95,7 @@ def timing : MedialMarker → IntervalAlgebra
 /-- The only complex marker is *-ta:y* followed by *-kǝb*, with the switch-reference value of
 *-ta:y*. -/
 theorem complex_marker {m : MedialMarker} (h : 1 < m.morphs.length) :
-    m.morphs = tay.morphs ++ keb.morphs ∧ m.sr = tay.sr := by
+    m.morphs = tay.morphs ++ keb.morphs ∧ m.switchReference = tay.switchReference := by
   decide +revert
 
 theorem complex_marker_timing {T : Type*} [LinearOrder T] {i j : NonemptyInterval T} :

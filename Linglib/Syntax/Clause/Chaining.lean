@@ -17,8 +17,9 @@ whether it indexes the subject of its clause.
 ## Main definitions
 
 * `SwitchReference`: same subject or different subject.
-* `MedialForm`: the class of a language's medial forms, with `MedialForm.HasSR` and
-  `MedialForm.SSUnmarked` for its switch-reference system.
+* `MedialForm`: the class of a language's medial forms, with
+  `MedialForm.MarksSwitchReference` and `MedialForm.IndexesSubjectIffDS` for its switch-reference
+  system.
 
 ## References
 
@@ -42,7 +43,7 @@ inductive SwitchReference where
 subject of its clause. -/
 class MedialForm (M : Type*) where
   /-- The switch-reference value a form marks, `none` for a form neutral to it. -/
-  sr : M → Option SwitchReference
+  switchReference : M → Option SwitchReference
   /-- The form carries subject cross-referencing. -/
   IndexesSubject : M → Prop
   [decidableIndexesSubject : DecidablePred IndexesSubject]
@@ -55,17 +56,19 @@ attribute [instance] decidableIndexesSubject
 variable (M : Type*) [MedialForm M]
 
 /-- Some medial form marks switch-reference. -/
-def HasSR : Prop := ∃ m : M, sr m ≠ none
+def MarksSwitchReference : Prop := ∃ m : M, switchReference m ≠ none
 
-/-- The same-subject forms leave the subject unindexed and the different-subject forms index it,
-the dominant markedness pattern of switch-reference. -/
-def SSUnmarked : Prop :=
-  (∀ m : M, sr m = some .ss → ¬ IndexesSubject m) ∧ ∀ m : M, sr m = some .ds → IndexesSubject m
+/-- A form that marks switch-reference indexes the subject exactly when it marks a different
+subject, the dominant pattern of switch-reference marking. -/
+def IndexesSubjectIffDS : Prop :=
+  ∀ m : M, ∀ s, switchReference m = some s → (IndexesSubject m ↔ s = .ds)
 
 variable [Fintype M]
 
-instance : Decidable (HasSR M) := inferInstanceAs (Decidable (∃ m : M, sr m ≠ none))
+instance : Decidable (MarksSwitchReference M) :=
+  inferInstanceAs (Decidable (∃ m : M, switchReference m ≠ none))
 
-instance : Decidable (SSUnmarked M) := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (IndexesSubjectIffDS M) :=
+  inferInstanceAs (Decidable (∀ m : M, ∀ s, switchReference m = some s → _))
 
 end MedialForm

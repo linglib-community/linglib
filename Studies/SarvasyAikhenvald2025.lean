@@ -198,15 +198,16 @@ end Language
 /-! ### The generalizations -/
 
 theorem ss_forms_lack_subject_marking :
-    MedialForm.SSUnmarked Nungon.Medial ∧ MedialForm.SSUnmarked Manambu.MedialMarker ∧
+    MedialForm.IndexesSubjectIffDS Nungon.Medial ∧
+      MedialForm.IndexesSubjectIffDS Manambu.MedialMarker ∧
       agreement Nungon.Medial = .restricted ∧ agreement Manambu.MedialMarker = .restricted := by
   decide
 
 /-- Each Manambu switch-reference marker also marks a kind of clause linking, and not always a
 temporal one. -/
 theorem linking_fused_with_sr :
-    (∀ m : Manambu.MedialMarker, m.sr ≠ none → (Aikhenvald2009.linkings m).Nonempty) ∧
-      ∃ m : Manambu.MedialMarker, m.sr ≠ none ∧
+    (∀ m : Manambu.MedialMarker, m.switchReference ≠ none → (Aikhenvald2009.linkings m).Nonempty) ∧
+      ∃ m : Manambu.MedialMarker, m.switchReference ≠ none ∧
         ∃ l ∈ Aikhenvald2009.linkings m, l.type ≠ .temporal := by
   decide
 
@@ -224,7 +225,8 @@ theorem converb_form :
       ∀ c : Turkish.Converb, c.verbForm = udVerbForm (Language.medialMorph .turkish) := by
   decide
 
-theorem sr_and_tense : ∀ L : Language, MedialForm.HasSR L.Forms → L.tense ≠ .full := by
+theorem sr_and_tense :
+    ∀ L : Language, MedialForm.MarksSwitchReference L.Forms → L.tense ≠ .full := by
   decide
 
 end SarvasyAikhenvald2025
