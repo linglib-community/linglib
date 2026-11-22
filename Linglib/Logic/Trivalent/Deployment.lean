@@ -319,7 +319,8 @@ noncomputable def ofIcc (B C : Set U) : U → Trivalent :=
   fun u ↦ if u ∈ B then .true else if u ∈ C then .undefined else .false
 
 /-- Every interval of sets is the interval of a predicate. -/
-theorem interval_ofIcc {B C : Set U} (h : B ⊆ C) : Trivalent.interval (ofIcc B C) = ⟨(B, C), h⟩ := by
+theorem interval_ofIcc {B C : Set U} (h : B ⊆ C) :
+    Trivalent.interval (ofIcc B C) = ⟨(B, C), h⟩ := by
   have e₁ : posExt (ofIcc B C) = B := by
     ext u
     by_cases hu : u ∈ B
@@ -434,7 +435,8 @@ theorem isRegular_deployQuantifier (Q : Set U → Prop) : IsRegular (deployQuant
   fun A A' h ↦ by
     rw [deployQuantifier_eq_supervaluationOn, deployQuantifier_eq_supervaluationOn]
     exact supervaluationOn_kLE_supervaluationOn
-      (NonemptyInterval.coe_subset_coe.2 (interval_le_interval.2 h)) (Trivalent.interval A').coe_nonempty
+      (NonemptyInterval.coe_subset_coe.2 (interval_le_interval.2 h))
+      (Trivalent.interval A').coe_nonempty
 
 /-- The deployment of a quantifier is its greatest regular extension: a regular extension has
 the deployed value wherever it is defined. -/
@@ -491,7 +493,8 @@ variable {R : Set U} {A A' : U → Trivalent}
 /-- A deployed quantifier is defined iff it gives one value throughout the interval of its
 argument. -/
 theorem deployQuantifier_ne_undefined_iff :
-    deployQuantifier Q A ≠ .undefined ↔ ∀ X ∈ Trivalent.interval A, ∀ Y ∈ Trivalent.interval A, (Q X ↔ Q Y) := by
+    deployQuantifier Q A ≠ .undefined ↔
+      ∀ X ∈ Trivalent.interval A, ∀ Y ∈ Trivalent.interval A, (Q X ↔ Q Y) := by
   rw [deployQuantifier_eq_supervaluationOn, supervaluationOn_ne_undefined_iff]
   rfl
 
@@ -547,7 +550,8 @@ determiner is that quantifier deployed on the nuclear scope. -/
 theorem deployDeterminer_of_forall {D : Set U → Set U → Prop} {B A : U → Trivalent}
     (h : ∀ R ∈ Trivalent.interval B, D R = Q) : deployDeterminer D B A = deployQuantifier Q A := by
   rw [deployDeterminer,
-    pkReduce_of_forall (X := (Trivalent.interval B : Set (Set U))) (Trivalent.interval B).coe_nonempty h,
+    pkReduce_of_forall (X := (Trivalent.interval B : Set (Set U)))
+      (Trivalent.interval B).coe_nonempty h,
     Part.bind_some, deployQuantifier]
 
 /-- Two repairs of the restrictor that the determiner tells apart make it undefined. -/
