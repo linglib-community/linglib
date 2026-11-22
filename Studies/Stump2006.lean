@@ -11,7 +11,7 @@ public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Languages
@@ -19,49 +19,53 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Stump (2006): Heteroclisis and paradigm linkage
 
-This file formalizes Stump's account of heteroclisis, the property of a lexeme whose paradigm
-contains forms built on stems of two or more inflection classes. A rule of paradigm linkage gives a
-content cell of a lexeme a form correspondent built on one of the lexeme's stems: the universal
-default assigns the root, and narrower language-specific rules override it by Pāṇini's principle,
-assigning a coradical, a stem that differs from the root in form or in inflection class. The paper's
-rules (5), (14), (15), (17) and (18), with the endings of the Czech declension fragment, after
-Short's tables and the rules of *Mluvnice češtiny*, realize every form of the Czech nouns in its
-Tables 1, 6 and 8, read from the forms data, once the masculine a-stems' nominative plural in -ové
-is read from their own class and FILOSOF's, which neither grammar gives, is supplied. The
-heteroclisis of Czech PRAMEN is morphosyntactically conditioned, its inflection class fixed by the
-property sets its cells express, whereas that of Sanskrit AHAN is morphologically conditioned,
-following a pattern of alternation among Strong, Middle and Weakest stems. Stump's Sanskrit rules of
-paradigm linkage (20a,b) "are independently motivated by the need to account for the pattern of stem
-alternation in nonheteroclite paradigms such as the masculine and neuter paradigms of PRATYAÑC"
-(p. 295): one list of rules gives the grades of PRATYAÑC's stems, which share a declension, and the
-stems of AHAN, which do not. The paper measures how closely a heteroclite paradigm's class boundary
-follows an inflectional category, and claims that the categories serving as absolute correlates are
-privileged: every rule of paradigm linkage sensitive to some category is sensitive to a privileged
-one.
+A lexeme is heteroclite when the cells of its paradigm are built on stems of two or more
+inflection classes. A rule of paradigm linkage gives a content cell `⟨L, σ⟩` of a lexeme a form
+correspondent `⟨s, τ⟩` built on one of the lexeme's stems: the universal default assigns the
+root, and a language-specific rule assigns to the cells of its domain a coradical, a stem that
+differs from the root in form or in inflection class. Rules compete by Pāṇini's principle, the
+rule with the narrower domain prevailing.
 
-## Main definitions
+For Czech, we define three rules as domain rules over the cells of the declension fragment. One
+gives the nouns of the PRAMEN class their hard-masculine coradical in the plural, one gives the
+animate nouns of that class the same coradical in the dative and locative singular, and one
+gives a noun its soft-masculine coradical in the locative plural, where `inferSoftMasc` infers
+that coradical from a hard-masculine stem ending in a velar. `stemFor` is the stem the rules
+select and `czLinkage` the linkage they define. With the fragment's endings they realize every
+form of the nine nouns of the forms data (`realize_matches_tables`), and exactly PRAMEN,
+PŘEDSEDA, SLUHA and FILOLOG are heteroclite (`heteroclite_iff`).
 
-* `attested`: the forms of a Czech cell, every matching row of the forms data.
-* `Decl.toClass`, `CzNoun.noun`: the paper's declensions as classes of Short's tables, and the
-  nouns as entries of the Czech noun fragment.
-* `Stem`, `Entry`, `inferSoftMasc`: stems individuated by lexeme and declension, lexical
-  entries read off the nouns, and the rule of stem inference (18).
-* `CellRule`, `rulesFor`, `stemFor`: the rules of paradigm linkage (14), (15) and (17) as
-  domain rules, resolved by the Elsewhere engine with the root of rule (5) as the fallback.
-* `classNomPl`, `nomPlOverride`, `suppliedNomPl`: the masculine a-stems' nominative plural read
-  from their class, FILOSOF's, which neither grammar gives, and the two together.
-* `czRealize`, `czLinkage`: the realization of form cells and the Czech paradigm linkage.
-* `degreeNum`, `degree`: the degree of correlation of a category with a class split.
-* `IsAbsoluteCorrelate`, `IsMaximalCorrelate`, `IsCloven`, `IsFractured`,
-  `IsIntersectiveCorrelate`: the paper's classification of heteroclite paradigms, over any
-  cells pairing a case with a number.
-* `SensitiveTo`, `Privileged`, `SatisfiesPCR`: the privileged category restriction.
-* `SktForm`, `f₁`: Sanskrit form property sets and the property mapping (10).
-* `strength`, `rule20a`, `rule20b`, `sktLinkage`: the strong and weak property sets of (19),
-  the rules (20a,b), and the linkage of PRATYAÑC and AHAN.
-* `hrdLinkage`, `matLinkage`: Sanskrit HṚD(AYA) and Russian MAT'.
+For Sanskrit, a property set is strong or weak (`strength`), and two rules give a weak cell the
+Weakest coradical where the ending that follows begins with a vowel and the Middle coradical
+otherwise. One list of rules gives the grades of PRATYAÑC's stems, which share a declension
+(`rules_match_table9`), and the stems of AHAN, which do not (`rules_match_table10`).
+
+For a paradigm with cells `C`, a value `props σ c` of each inflectional category `c` at each
+cell `σ`, and a map `cls` giving each cell's inflection class, the degree of correlation of a
+category with values $v_1, \dots, v_m$ is $\sum_i n_i / |C|$, where $n_i$ is the largest number
+of cells with value $v_i$ that inflect in one class (`degree`). A category is an absolute
+correlate when `cls` factors through it, equivalently when its degree is 1
+(`isAbsoluteCorrelate_iff_degree`), and a heteroclite paradigm is cloven when it has an absolute
+correlate and fractured when it has none. A set `S` of categories are intersective correlates
+when cells that agree in every category of `S` inflect in one class, which for `props = id` is
+`DependsOn cls S` (`isIntersectiveCorrelate_id_iff`). A category is privileged when it is the
+absolute correlate of a cloven paradigm, and a system of rules satisfies the privileged
+category restriction when each of its rules that is sensitive to some category is sensitive to
+a privileged one. The Czech and the Sanskrit rules satisfy it (`pcr`, `pcr_skt`). A language
+with one rule for the plural and another for the third person of the past does not
+(`not_satisfiesPCR_hRules`), and in it no minimal set of intersective correlates of the
+fractured paradigm contains the privileged category
+(`not_fracturedHavePrivilegedCorrelate_hClass`).
 
 ## Implementation notes
+
+The inflectional categories of a paradigm are an index type with a family of value types, not
+the pair of case and number, so that the three-category language is stated on the definitions
+used for Czech and Sanskrit. A rule is taken to be sensitive to a category when two cells that
+differ in that category alone differ in whether it applies. The claim that fractured paradigms
+have a privileged category among their minimal intersective correlates is stated for the set of
+all privileged categories, and holds of any paradigm with two categories
+(`fracturedHavePrivilegedCorrelate_of_card_eq_two`).
 
 A Czech noun's segments are the stem of its entry in the Czech noun fragment, the citation form less
 the nominative singular ending of its class, so PŘEDSEDA's root and coradical share the segments
@@ -76,12 +80,14 @@ FILOSOF's, which neither grammar gives, is an override; Stump's hard-feminine ro
 masculine a-stems rebuild Short's separate *hrdina* declension; and his soft-masculine coradical of
 velar stems gives the locative plurals in -ích that *Mluvnice češtiny*'s rule gives the
 hard-masculine stem.
+
 Sanskrit endings are read off exemplars, chosen by declension among PRATYAÑC, NĀMAN and MANAS. Rules
 compete by domain inclusion, the rendering of Pāṇini's principle, and selection falls back on the
-root, by (5) and (12). Gender is taken as lexical: PRATYAÑC's masculine and neuter are two lexemes,
-clause (ii) of `f₁` is vacuous, and the feminine, whose ī-stem *pratīcī* (n. 18) would make PRATYAÑC
-heteroclite, is left out, as are n. 21's stem indexing and n. 22's alternants. Sanskrit sandhi
-(*aho-bhis*, *pratyag-*) is unstated, so no forms are built. Rows are filtered by language.
+root. Gender is taken as lexical: PRATYAÑC's masculine and neuter are two lexemes, the clause of
+`f₁` that drops gender from oblique property sets is vacuous, and the feminine, built on the
+ī-stem *pratīcī*, is left out, as are the default rule of stem indexing and the optional Strong
+alternants of the an-stems. Sanskrit sandhi (*aho-bhis*, *pratyag-*) is unstated, so no forms
+are built.
 
 ## References
 
@@ -449,8 +455,7 @@ theorem suppliedNomPl_eq_none_iff (l : CzNoun) :
     suppliedNomPl l = none ↔ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
   cases l <;> decide
 
-/-- The fragment's endings realize every attested form except the nominative and vocative plural
--ové of PŘEDSEDA, SLUHA and FILOSOF (Tables 6 and 8). -/
+-- Tables 6 and 8
 theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
     czRealizeTable (stemFor l σ) σ = attested l σ ↔
       σ ∉ nomVocPl ∨ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
@@ -469,8 +474,7 @@ theorem coradical_no_u : ∀ l, (entry l).InPredsedaSubclass → ∀ σ ∈ datL
     czRealize ⟨l, .hardMasc⟩ σ = {(entry l).segments ++ ["o", "v", "i"]} := by
   decide
 
-/-- PŘEDSEDA's paradigm, derived by rules (14) and (15), is Short's paradigm of *hrdina* on its stem
-(Table 9.5). -/
+-- (14), (15), Table 9.5
 theorem predseda_eq_hrdina : ∀ σ, czRealize (stemFor .predseda σ) σ =
     ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset := by
   decide +kernel
@@ -481,30 +485,26 @@ theorem predseda_table_eq_hrdina_iff (σ : CzCell) : czRealizeTable (stemFor .pr
   rw [← predseda_eq_hrdina, czRealize_stemFor, czRealizeTable_stemFor_iff]
   simp
 
-/-- SLUHA's paradigm is *hrdina*'s on its stem but in the locative plural, where rules (17) and
-(18) give the palatalized *sluzích* for the table's -ech. -/
+-- (17), (18)
 theorem sluha_eq_hrdina_iff : ∀ σ, czRealize (stemFor .sluha σ) σ =
     ((Czech.sluha.cls.endings σ).map (Czech.sluha.stem ++ ·)).toFinset ↔
       σ ≠ .of .loc .plural := by
   decide +kernel
 
-/-- Rules (17) and (18) give SLUHA's locative plural *sluzích*, as does the hard-masculine velar
-rule (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300). -/
+-- (17), (18), p. 467, pp. 292
 theorem sluha_locPl : czRealize (stemFor .sluha (.of .loc .plural)) (.of .loc .plural) =
       {Czech.Declension.segments "sluzích"} ∧
     czRealize ⟨.sluha, .hardMasc⟩ (.of .loc .plural) = {Czech.Declension.segments "sluzích"} := by
   decide +kernel
 
-/-- Rules (17) and (18) give FILOLOG's locative plural *filolozích*, as does the hard-masculine
-velar rule (Short, p. 462; *Mluvnice češtiny*, p. 295). -/
+-- (17), (18), p. 462, p. 295
 theorem filolog_locPl : czRealize (stemFor .filolog (.of .loc .plural)) (.of .loc .plural) =
       {Czech.Declension.segments "filolozích"} ∧
     czRealize ⟨.filolog, .hardMasc⟩ (.of .loc .plural) =
       {Czech.Declension.segments "filolozích"} := by
   decide +kernel
 
-/-- FILOLOG's vocative singular is *filologu*, though the hard-masculine table's ending is -e
-(Short, p. 465; *Mluvnice češtiny*, p. 292). -/
+-- p. 465, p. 292
 theorem filologu_voc :
     czRealize (stemFor .filolog (.of .voc .singular)) (.of .voc .singular) =
         {Czech.Declension.segments "filologu"} ∧
@@ -523,19 +523,15 @@ theorem heteroclite_iff : ∀ l, czLinkage.IsHeteroclite Stem.decl l ↔
     l = .pramen ∨ l = .predseda ∨ l = .sluha ∨ l = .filolog := by
   decide +kernel
 
-/-- Every noun's stems share their segments, so the heteroclite nouns alternate between stems
-that differ in declension alone. -/
 theorem segments_invariant (l : CzNoun) : czLinkage.IsInvariantAlong Stem.segments l :=
   Linkage.ofFun_isInvariantAlong_iff.mpr fun σ σ' ↦
     show (stemFor l σ).segments = (stemFor l σ').segments by
       simp only [Stem.segments, stemFor_lexeme]
 
-/-- PRAMEN's paradigm "exhibits a kind of stem suppletion" (pp. 282–283), since its two stems,
-though phonologically identical, are two stems. -/
+-- pp. 282–283
 theorem pramen_suppletive : czLinkage.IsSuppletive .pramen := pramen_heteroclite.isSuppletive
 
-/-- Rule (14) assigns PRAMEN in each cell the class the fragment gives *kořen* in that number
-(Short, p. 469; *Mluvnice češtiny*, p. 310). -/
+-- (14), p. 469, p. 310
 theorem pramen_eq_koren_pattern :
     ∀ σ, (cellClass .pramen σ).toClass (entry .pramen).animate = Czech.koren.clsAt σ.number := by
   decide
@@ -547,7 +543,7 @@ section Correlation
 variable {C V K : Type*} [Fintype C] [Fintype V] [Fintype K] [DecidableEq V] [DecidableEq K]
 
 /-- `degreeNum A cls` is the numerator of the degree of `A`-correlation (p. 309), the sum over
-the values `v` of `A` of "the largest number of cells in P that carry the specification v and
+the values `v` of `A` of "the largest number of cells in P that carry the specification vᵢ and
 inflect as members of the same inflection class". -/
 def degreeNum (A : C → V) (cls : C → K) : ℕ :=
   ∑ v, univ.sup fun k ↦ #{σ | A σ = v ∧ cls σ = k}
@@ -561,8 +557,6 @@ theorem degreeNum_le_card (A : C → V) (cls : C → K) : degreeNum A cls ≤ Fi
   rw [← card_univ, card_eq_sum_card_fiberwise (f := A) (t := univ) (by simp)]
   exact sum_le_sum fun v _ ↦ sup_card_le_card_fiber A cls v
 
-/-- The count is the number of cells exactly when the class split factors through the
-category. -/
 theorem degreeNum_eq_card_iff (A : C → V) (cls : C → K) :
     degreeNum A cls = Fintype.card C ↔ cls.FactorsThrough A := by
   rw [← card_univ, card_eq_sum_card_fiberwise (f := A) (t := univ) (by simp), degreeNum,
@@ -600,106 +594,94 @@ end Correlation
 
 /-! ### Correlates of heteroclisis
 
-The paper's classification of heteroclite paradigms applies to any cells pairing a case in `A`
-with a number in `B`, and to any class map `cls` giving the inflection class of each cell. -/
+The cells of a paradigm are of any type `C`, with `props σ c` the value at the cell `σ` of the
+inflectional category `c`, and `cls` gives the inflection class of each cell. -/
 
 section Correlates
 
-variable {A B K L E : Type*}
-
-/-- The inflectional categories of a noun are number and case. -/
-inductive Category
-  | number
-  | case
-  deriving DecidableEq, Fintype, Repr
-
-/-- `c.proj σ` is the value of the category `c` at the cell `σ`. -/
-def Category.proj : Category → A × B → A ⊕ B
-  | .number, σ => .inr σ.2
-  | .case, σ => .inl σ.1
-
-/-- `c.other` is the category other than `c`. -/
-def Category.other : Category → Category
-  | .number => .case
-  | .case => .number
-
-@[simp] theorem Category.other_other (c : Category) : c.other.other = c := by cases c <;> rfl
+variable {ι C K L E : Type*} {V : ι → Type*} {props : C → ∀ c, V c} {cls : C → K} {c : ι}
 
 /-- A category is an absolute correlate of a paradigm's heteroclisis "if and only if the degree
 of A-correlation in that paradigm is 1.0" (p. 309), that is, when the paradigm's class split
 factors through the category. -/
-def IsAbsoluteCorrelate (c : Category) (cls : A × B → K) : Prop := cls.FactorsThrough c.proj
+def IsAbsoluteCorrelate (props : C → ∀ c, V c) (c : ι) (cls : C → K) : Prop :=
+  cls.FactorsThrough (props · c)
 
-/-- A paradigm is cloven when it is heteroclite, two of its cells inflecting in distinct
-classes, and has an absolute correlate (p. 309). -/
-def IsCloven (cls : A × B → K) : Prop :=
-  (∃ σ τ, cls σ ≠ cls τ) ∧ ∃ c, IsAbsoluteCorrelate c cls
+/-- A paradigm is cloven when it is heteroclite and has an absolute correlate (p. 309). -/
+@[mk_iff]
+structure IsCloven (props : C → ∀ c, V c) (cls : C → K) : Prop where
+  /-- Two cells inflect in distinct classes. -/
+  heteroclite : ∃ σ τ, cls σ ≠ cls τ
+  /-- Some category is an absolute correlate. -/
+  absolute : ∃ c, IsAbsoluteCorrelate props c cls
 
-/-- A paradigm is fractured when it is heteroclite, two of its cells inflecting in distinct
-classes, and lacks any absolute correlate (p. 309). -/
-def IsFractured (cls : A × B → K) : Prop :=
-  (∃ σ τ, cls σ ≠ cls τ) ∧ ∀ c, ¬ IsAbsoluteCorrelate c cls
-
-theorem cellClass_eq_of_isAbsoluteCorrelate {cls : A × B → K}
-    (hn : IsAbsoluteCorrelate .number cls) (hc : IsAbsoluteCorrelate .case cls) (σ τ : A × B) :
-    cls σ = cls τ :=
-  (hc (a := σ) (b := (σ.1, τ.2)) rfl).trans (hn rfl)
-
-/-- `projOn S σ` records the values at `σ` of the categories in `S`. -/
-def projOn (S : Finset Category) (σ : A × B) : Option A × Option B :=
-  (if .case ∈ S then some σ.1 else none, if .number ∈ S then some σ.2 else none)
+/-- A paradigm is fractured when it is heteroclite and lacks any absolute correlate (p. 309). -/
+@[mk_iff]
+structure IsFractured (props : C → ∀ c, V c) (cls : C → K) : Prop where
+  /-- Two cells inflect in distinct classes. -/
+  heteroclite : ∃ σ τ, cls σ ≠ cls τ
+  /-- No category is an absolute correlate. -/
+  not_absolute : ∀ c, ¬ IsAbsoluteCorrelate props c cls
 
 /-- Categories are intersective correlates of a paradigm's heteroclisis when "for each
 well-formed property set τ specified for exactly the categories A₁, . . . , A_n there is a
 single inflection class C such that every cell in P realizing τ inflects as a member of C"
-(p. 313). -/
-def IsIntersectiveCorrelate (cls : A × B → K) (S : Finset Category) : Prop :=
-  cls.FactorsThrough (projOn S)
+(p. 313): cells that agree in every category of `S` inflect in one class. -/
+def IsIntersectiveCorrelate (props : C → ∀ c, V c) (cls : C → K) (S : Finset ι) : Prop :=
+  ∀ ⦃σ τ⦄, (∀ c ∈ S, props σ c = props τ c) → cls σ = cls τ
 
-theorem projOn_eq_of_subset {S T : Finset Category} (hST : S ⊆ T) {σ τ : A × B}
-    (h : projOn T σ = projOn T τ) : projOn S σ = projOn S τ := by
-  simp only [projOn, Prod.mk.injEq] at h ⊢
-  refine ⟨?_, ?_⟩
-  · by_cases hc : Category.case ∈ S
-    · simpa [hc, hST hc] using h.1
-    · simp [hc]
-  · by_cases hn : Category.number ∈ S
-    · simpa [hn, hST hn] using h.2
-    · simp [hn]
+theorem isIntersectiveCorrelate_id_iff {cls : (∀ c, V c) → K} {S : Finset ι} :
+    IsIntersectiveCorrelate id cls S ↔ DependsOn cls S :=
+  Iff.rfl
 
-theorem IsIntersectiveCorrelate.mono {cls : A × B → K} {S T : Finset Category}
-    (h : IsIntersectiveCorrelate cls S) (hST : S ⊆ T) : IsIntersectiveCorrelate cls T :=
-  fun _ _ hστ ↦ h (projOn_eq_of_subset hST hστ)
+theorem IsIntersectiveCorrelate.mono {S T : Finset ι} (h : IsIntersectiveCorrelate props cls S)
+    (hST : S ⊆ T) : IsIntersectiveCorrelate props cls T :=
+  fun _ _ hστ ↦ h fun c hc ↦ hστ c (hST hc)
 
-theorem isIntersectiveCorrelate_singleton_iff {cls : A × B → K} {c : Category} :
-    IsIntersectiveCorrelate cls {c} ↔ IsAbsoluteCorrelate c cls := by
-  have key : ∀ σ τ : A × B, projOn {c} σ = projOn {c} τ ↔ c.proj σ = c.proj τ := by
-    intro σ τ; cases c <;> simp [projOn, Category.proj]
-  exact ⟨fun h _ _ hστ ↦ h ((key _ _).mpr hστ), fun h _ _ hστ ↦ h ((key _ _).mp hστ)⟩
+theorem isIntersectiveCorrelate_singleton_iff :
+    IsIntersectiveCorrelate props cls {c} ↔ IsAbsoluteCorrelate props c cls := by
+  simp [IsIntersectiveCorrelate, IsAbsoluteCorrelate, Function.FactorsThrough]
 
-theorem isIntersectiveCorrelate_univ (cls : A × B → K) : IsIntersectiveCorrelate cls univ :=
-  fun σ τ h ↦ by
-    simp only [projOn, mem_univ, ↓reduceIte, Prod.mk.injEq, Option.some.injEq] at h
-    rw [Prod.ext h.1 h.2]
+theorem isIntersectiveCorrelate_univ [Fintype ι] (hprops : Function.Injective props)
+    (cls : C → K) : IsIntersectiveCorrelate props cls univ :=
+  fun _ _ h ↦ congrArg cls (hprops (funext fun c ↦ h c (mem_univ c)))
 
-theorem minimal_univ_of_isFractured {cls : A × B → K} (h : IsFractured cls) :
-    Minimal (IsIntersectiveCorrelate cls) univ := by
-  refine ⟨isIntersectiveCorrelate_univ cls, fun S hS _ ↦ ?_⟩
+theorem minimal_univ_of_isFractured [Fintype ι] (hprops : Function.Injective props)
+    (hι : Fintype.card ι = 2) (h : IsFractured props cls) :
+    Minimal (IsIntersectiveCorrelate props cls) univ := by
+  refine ⟨isIntersectiveCorrelate_univ hprops cls, fun S hS _ ↦ ?_⟩
   by_contra hne
-  obtain ⟨c, -, hc⟩ := not_subset.mp hne
-  refine h.2 c.other (isIntersectiveCorrelate_singleton_iff.mp (hS.mono fun x hx ↦ ?_))
-  exact mem_singleton.mpr (by cases x <;> cases c <;> first | rfl | exact absurd hx hc)
+  have hlt : #S < 2 := by
+    rw [← hι]
+    exact (card_lt_iff_ne_univ S).mpr fun hS ↦ hne hS.ge
+  have : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
+  obtain ⟨c, hc⟩ := card_le_one_iff_subset_singleton.mp (Nat.lt_succ_iff.mp hlt)
+  exact h.not_absolute c (isIntersectiveCorrelate_singleton_iff.mp (hS.mono hc))
 
-/-- A rule is sensitive to the value of a category when its applicability does not factor
-through the other category. -/
-def SensitiveTo (r : DomainRule (A × B) E) (c : Category) : Prop :=
-  ¬ (Applies r).FactorsThrough c.other.proj
+/-- A rule is sensitive to the value of a category when two cells that differ in that category
+alone differ in whether the rule applies. -/
+def SensitiveTo [DecidableEq C] (props : C → ∀ c, V c) (r : DomainRule C E) (c : ι) : Prop :=
+  ∃ σ τ, (∀ c' ≠ c, props σ c' = props τ c') ∧ ¬ (Applies r σ ↔ Applies r τ)
 
 /-- A category is privileged for a family `cls` of class maps, one for each lexeme, when it
 serves as an absolute correlate of a cloven paradigm: "the inflectional categories serving as
 absolute correlates of heteroclisis in a given language are PRIVILEGED" (p. 315). -/
-def Privileged (cls : L → A × B → K) (c : Category) : Prop :=
-  ∃ l, IsCloven (cls l) ∧ IsAbsoluteCorrelate c (cls l)
+def Privileged (props : C → ∀ c, V c) (cls : L → C → K) (c : ι) : Prop :=
+  ∃ l, IsCloven props (cls l) ∧ IsAbsoluteCorrelate props c (cls l)
+
+/-- Claim (39) (p. 313) reads "Suppose S is a nonempty set of inflectional categories serving as
+absolute correlates in cloven paradigms of lexemes belonging to syntactic category C in language
+ℓ. In that case, every fractured paradigm of category C in ℓ has a member of S as one of its
+minimal intersective correlates." -/
+def FracturedHavePrivilegedCorrelate (props : C → ∀ c, V c) (cls : L → C → K) : Prop :=
+  (∃ c, Privileged props cls c) → ∀ l, IsFractured props (cls l) →
+    ∃ S, Minimal (IsIntersectiveCorrelate props (cls l)) S ∧ ∃ c ∈ S, Privileged props cls c
+
+-- (39), p. 313
+theorem fracturedHavePrivilegedCorrelate_of_card_eq_two [Fintype ι]
+    (hprops : Function.Injective props) (hι : Fintype.card ι = 2) (cls : L → C → K) :
+    FracturedHavePrivilegedCorrelate props cls :=
+  fun ⟨c, hc⟩ _ h ↦ ⟨univ, minimal_univ_of_isFractured hprops hι h, c, mem_univ c, hc⟩
 
 /-- A system of rules satisfies the privileged category restriction (40) (p. 316), which reads
 "If a rule of paradigm linkage applies to lexemes belonging to a privileged syntactic category C
@@ -707,158 +689,291 @@ and this rule is sensitive to the value of any inflectional category, then it is
 the value of a privileged inflectional category for members of C." The lexemes `L` are taken to
 form one privileged syntactic category, so the antecedent on the syntactic category is left
 implicit. -/
-def SatisfiesPCR (cls : L → A × B → K)
-    (rules : L → RuleSet (DomainRule (A × B) E)) : Prop :=
-  ∀ l, ∀ r ∈ rules l, (∃ c, SensitiveTo r c) → ∃ c, Privileged cls c ∧ SensitiveTo r c
+def SatisfiesPCR [DecidableEq C] (props : C → ∀ c, V c) (cls : L → C → K)
+    (rules : L → RuleSet (DomainRule C E)) : Prop :=
+  ∀ l, ∀ r ∈ rules l, (∃ c, SensitiveTo props r c) →
+    ∃ c, Privileged props cls c ∧ SensitiveTo props r c
 
-variable [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+section Decidable
 
-/-- A category is a maximal correlate when its degree "is higher than any other inflectional
-category's degree of correlation in that paradigm" (p. 309). -/
-def IsMaximalCorrelate [Fintype K] [DecidableEq K] (c : Category) (cls : A × B → K) : Prop :=
-  ∀ c' ≠ c, degreeNum c'.proj cls < degreeNum c.proj cls
+variable [Fintype C] [DecidableEq K] [∀ c, DecidableEq (V c)]
 
-theorem isAbsoluteCorrelate_iff_degree [Fintype K] [DecidableEq K] [Nonempty (A × B)]
-    {c : Category} {cls : A × B → K} : IsAbsoluteCorrelate c cls ↔ degree c.proj cls = 1 :=
-  degree_eq_one_iff.symm
+instance (c : ι) : Decidable (IsAbsoluteCorrelate props c cls) :=
+  inferInstanceAs (Decidable (∀ σ τ, props σ c = props τ c → cls σ = cls τ))
 
-theorem IsAbsoluteCorrelate.isMaximalCorrelate [Fintype K] [DecidableEq K] {c : Category}
-    {cls : A × B → K} (hl : ∃ σ τ, cls σ ≠ cls τ) (h : IsAbsoluteCorrelate c cls) :
-    IsMaximalCorrelate c cls := by
-  intro c' hc'
-  rw [(degreeNum_eq_card_iff _ _).mpr h]
-  refine (degreeNum_le_card _ _).lt_of_ne fun hEq ↦ ?_
-  have h' : IsAbsoluteCorrelate c' cls := (degreeNum_eq_card_iff _ _).mp hEq
-  obtain ⟨σ, τ, hne⟩ := hl
-  apply hne
-  cases c <;> cases c'
-  · exact absurd rfl hc'
-  · exact cellClass_eq_of_isAbsoluteCorrelate h h' σ τ
-  · exact cellClass_eq_of_isAbsoluteCorrelate h' h σ τ
-  · exact absurd rfl hc'
+instance [Fintype ι] : Decidable (IsCloven props cls) :=
+  decidable_of_iff' _ (isCloven_iff ..)
 
-variable [DecidableEq K]
+instance [Fintype ι] : Decidable (IsFractured props cls) :=
+  decidable_of_iff' _ (isFractured_iff ..)
 
-instance (c : Category) (cls : A × B → K) : Decidable (IsAbsoluteCorrelate c cls) :=
-  inferInstanceAs (Decidable (∀ σ τ, c.proj σ = c.proj τ → cls σ = cls τ))
+instance (S : Finset ι) : Decidable (IsIntersectiveCorrelate props cls S) :=
+  inferInstanceAs (Decidable (∀ σ τ, (∀ c ∈ S, props σ c = props τ c) → cls σ = cls τ))
 
-instance [Fintype K] (c : Category) (cls : A × B → K) : Decidable (IsMaximalCorrelate c cls) :=
-  inferInstanceAs (Decidable (∀ _, _ → _))
+variable [Fintype ι] [DecidableEq ι] [DecidableEq C]
 
-instance (cls : A × B → K) : Decidable (IsCloven cls) := inferInstanceAs (Decidable (_ ∧ _))
+instance (r : DomainRule C E) (c : ι) : Decidable (SensitiveTo props r c) :=
+  inferInstanceAs (Decidable (∃ _ _, _ ∧ _))
 
-instance (cls : A × B → K) : Decidable (IsFractured cls) := inferInstanceAs (Decidable (_ ∧ _))
-
-instance (r : DomainRule (A × B) E) (c : Category) : Decidable (SensitiveTo r c) :=
-  inferInstanceAs (Decidable (¬ _))
-
-instance [Fintype L] (cls : L → A × B → K) (c : Category) : Decidable (Privileged cls c) :=
+instance [Fintype L] (cls : L → C → K) (c : ι) : Decidable (Privileged props cls c) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-instance [Fintype L] (cls : L → A × B → K)
-    (rules : L → RuleSet (DomainRule (A × B) E)) :
-    Decidable (SatisfiesPCR cls rules) :=
-  have (r : DomainRule (A × B) E) :
-      Decidable ((∃ c, SensitiveTo r c) → ∃ c, Privileged cls c ∧ SensitiveTo r c) :=
+instance [Fintype L] (cls : L → C → K) (rules : L → RuleSet (DomainRule C E)) :
+    Decidable (SatisfiesPCR props cls rules) :=
+  have (r : DomainRule C E) : Decidable ((∃ c, SensitiveTo props r c) →
+      ∃ c, Privileged props cls c ∧ SensitiveTo props r c) :=
     inferInstance
   inferInstanceAs (Decidable (∀ _, _))
 
+end Decidable
+
+section Degree
+
+variable [Fintype C] [Fintype K] [DecidableEq K] [∀ c, Fintype (V c)] [∀ c, DecidableEq (V c)]
+
+/-- A category is a maximal correlate when its degree "is higher than any other inflectional
+category's degree of correlation in that paradigm" (p. 309). -/
+def IsMaximalCorrelate (props : C → ∀ c, V c) (c : ι) (cls : C → K) : Prop :=
+  ∀ c' ≠ c, degreeNum (props · c') cls < degreeNum (props · c) cls
+
+theorem isAbsoluteCorrelate_iff_degree [Nonempty C] :
+    IsAbsoluteCorrelate props c cls ↔ degree (props · c) cls = 1 :=
+  degree_eq_one_iff.symm
+
+theorem IsAbsoluteCorrelate.isMaximalCorrelate (h : IsAbsoluteCorrelate props c cls)
+    (h' : ∀ c' ≠ c, ¬ IsAbsoluteCorrelate props c' cls) : IsMaximalCorrelate props c cls := by
+  intro c' hc'
+  rw [(degreeNum_eq_card_iff _ _).mpr h]
+  exact (degreeNum_le_card _ _).lt_of_ne fun hEq ↦ h' c' hc' ((degreeNum_eq_card_iff _ _).mp hEq)
+
+instance [Fintype ι] [DecidableEq ι] (c : ι) : Decidable (IsMaximalCorrelate props c cls) :=
+  inferInstanceAs (Decidable (∀ _, _ → _))
+
+end Degree
+
 end Correlates
+
+/-! ### Case and number -/
+
+section CaseNumber
+
+universe u
+
+variable {A B : Type u} {K : Type*}
+
+/-- The inflectional categories of a nominal are number and case. -/
+inductive Category
+  | number
+  | case
+  deriving DecidableEq, Fintype, Repr
+
+/-- The values of a category are the numbers `B` or the cases `A`. -/
+@[reducible] def Category.Value (A B : Type u) : Category → Type u
+  | .number => B
+  | .case => A
+
+instance [DecidableEq A] [DecidableEq B] : ∀ c : Category, DecidableEq (c.Value A B)
+  | .number => inferInstanceAs (DecidableEq B)
+  | .case => inferInstanceAs (DecidableEq A)
+
+instance [Fintype A] [Fintype B] : ∀ c : Category, Fintype (c.Value A B)
+  | .number => inferInstanceAs (Fintype B)
+  | .case => inferInstanceAs (Fintype A)
+
+/-- `caseNumber σ c` is the value of the category `c` at a cell `σ` pairing a case with a
+number. -/
+def caseNumber (σ : A × B) : ∀ c : Category, c.Value A B
+  | .number => σ.2
+  | .case => σ.1
+
+theorem caseNumber_injective : Function.Injective (caseNumber (A := A) (B := B)) :=
+  fun _ _ h ↦ Prod.ext (congrFun h .case) (congrFun h .number)
+
+theorem eq_of_isAbsoluteCorrelate_number_of_case {cls : A × B → K}
+    (hn : IsAbsoluteCorrelate caseNumber .number cls)
+    (hc : IsAbsoluteCorrelate caseNumber .case cls) (σ τ : A × B) : cls σ = cls τ :=
+  (hc (a := σ) (b := (σ.1, τ.2)) rfl).trans (hn rfl)
+
+end CaseNumber
 
 /-! ### Correlates of Czech heteroclisis -/
 
-/-- PRAMEN's degree of number correlation is 14/14 and its degree of case correlation .50. -/
-theorem pramen_degrees : degree Category.number.proj (cellClass .pramen) = 1 ∧
-    degree Category.case.proj (cellClass .pramen) = 1 / 2 := by
+theorem pramen_degrees : degree (caseNumber · .number) (cellClass .pramen) = 1 ∧
+    degree (caseNumber · .case) (cellClass .pramen) = 1 / 2 := by
   decide +kernel
 
-/-- PŘEDSEDA's degree of number correlation is .86 (= 12/14) and its degree of case
-correlation .64. -/
-theorem predseda_degrees : degree Category.number.proj (cellClass .predseda) = 6 / 7 ∧
-    degree Category.case.proj (cellClass .predseda) = 9 / 14 := by
+theorem predseda_degrees : degree (caseNumber · .number) (cellClass .predseda) = 6 / 7 ∧
+    degree (caseNumber · .case) (cellClass .predseda) = 9 / 14 := by
   decide +kernel
 
-/-- SLUHA's degree of number correlation is .79 (= 11/14) and its degree of case correlation
-.57. -/
-theorem sluha_degrees : degree Category.number.proj (cellClass .sluha) = 11 / 14 ∧
-    degree Category.case.proj (cellClass .sluha) = 4 / 7 := by
+theorem sluha_degrees : degree (caseNumber · .number) (cellClass .sluha) = 11 / 14 ∧
+    degree (caseNumber · .case) (cellClass .sluha) = 4 / 7 := by
   decide +kernel
 
-/-- FILOLOG's degrees of number and of case correlation are both .93 (= 13/14) (p. 313). -/
-theorem filolog_degrees : degree Category.number.proj (cellClass .filolog) = 13 / 14 ∧
-    degree Category.case.proj (cellClass .filolog) = 13 / 14 := by
+-- p. 313
+theorem filolog_degrees : degree (caseNumber · .number) (cellClass .filolog) = 13 / 14 ∧
+    degree (caseNumber · .case) (cellClass .filolog) = 13 / 14 := by
   decide +kernel
 
-theorem pramen_cloven : IsCloven (cellClass .pramen) := by decide
+theorem pramen_cloven : IsCloven caseNumber (cellClass .pramen) := by decide
 
-theorem predseda_fractured : IsFractured (cellClass .predseda) := by decide
+theorem predseda_fractured : IsFractured caseNumber (cellClass .predseda) := by decide
 
-theorem sluha_fractured : IsFractured (cellClass .sluha) := by decide
+theorem sluha_fractured : IsFractured caseNumber (cellClass .sluha) := by decide
 
-theorem filolog_fractured : IsFractured (cellClass .filolog) := by decide
+theorem filolog_fractured : IsFractured caseNumber (cellClass .filolog) := by decide
 
 -- (38), p. 312
 theorem number_maximal_predseda_sluha :
-    IsMaximalCorrelate .number (cellClass .predseda) ∧
-      IsMaximalCorrelate .number (cellClass .sluha) := by
+    IsMaximalCorrelate caseNumber .number (cellClass .predseda) ∧
+      IsMaximalCorrelate caseNumber .number (cellClass .sluha) := by
   decide
 
--- (38), p. 313
-theorem filolog_no_maximal : ∀ c, ¬ IsMaximalCorrelate c (cellClass .filolog) := by decide
+-- p. 313
+theorem filolog_no_maximal : ∀ c, ¬ IsMaximalCorrelate caseNumber c (cellClass .filolog) := by
+  decide
 
 /-! ### Rules sensitive to a category -/
 
-/-- If every rule's applicability factors through `A`, so does the noun's class split ((41a), p.
-317). -/
-theorem isAbsoluteCorrelate_of_rules {V : Type*} (l : CzNoun) (A : CzCell → V)
-    (h : ∀ r ∈ czRules l, (Applies r).FactorsThrough A) :
-    (fun σ ↦ (stemFor l σ).decl).FactorsThrough A :=
-  (RuleSet.realizeMinimalD_factorsThrough (fun _ _ _ ↦ rfl) fun r hr _ _ hA ↦
-    Iff.of_eq (h r hr hA)).comp_left Stem.decl
+-- (14), p. 316
+theorem pramen_number_absolute : IsAbsoluteCorrelate caseNumber .number (cellClass .pramen) := by
+  have h : ∀ r ∈ czRules .pramen, ∀ ⦃σ τ : CzCell⦄,
+      caseNumber σ .number = caseNumber τ .number → (Applies r σ ↔ Applies r τ) := by
+    decide
+  exact (RuleSet.realizeMinimalD_factorsThrough (key := (·.dom))
+    (fallback := fun _ ↦ czRoot .pramen) (fun _ _ _ ↦ rfl) h).comp_left Stem.decl
 
-theorem isAbsoluteCorrelate_of_forall_not_sensitiveTo {c : Category} {l : CzNoun}
-    (h : ∀ r ∈ czRules l, ¬ SensitiveTo r c.other) : IsAbsoluteCorrelate c (cellClass l) :=
-  isAbsoluteCorrelate_of_rules _ _ fun r hr ↦ by simpa [SensitiveTo] using h r hr
-
--- (14), (5)
-theorem pramen_number_absolute : IsAbsoluteCorrelate .number (cellClass .pramen) :=
-  isAbsoluteCorrelate_of_forall_not_sensitiveTo (by decide)
-
-theorem number_maximal_pramen : IsMaximalCorrelate .number (cellClass .pramen) :=
-  pramen_number_absolute.isMaximalCorrelate pramen_cloven.1
+theorem number_maximal_pramen : IsMaximalCorrelate caseNumber .number (cellClass .pramen) :=
+  pramen_number_absolute.isMaximalCorrelate (by decide)
 
 /-! ### The privileged category restriction -/
 
-theorem privileged_number : Privileged cellClass .number :=
+theorem privileged_number : Privileged caseNumber cellClass .number :=
   ⟨.pramen, pramen_cloven, pramen_number_absolute⟩
 
 -- p. 316
-theorem not_privileged_case : ¬ Privileged cellClass .case := by decide +kernel
+theorem not_privileged_case : ¬ Privileged caseNumber cellClass .case := by decide +kernel
 
-/-- The Czech rules (14), (15) and (17) satisfy (40) (p. 316). -/
-theorem pcr : SatisfiesPCR cellClass czRules := by decide +kernel
+/-- The Czech rules (14), (15) and (17) satisfy the privileged category restriction (40). -/
+theorem pcr : SatisfiesPCR caseNumber cellClass czRules := by decide +kernel
 
-/-- `genitive` is the set of genitive cells. -/
-def genitive : Finset CzCell := {σ | σ.case = .gen}
+-- (39), p. 313
+theorem fracturedHavePrivilegedCorrelate : FracturedHavePrivilegedCorrelate caseNumber cellClass :=
+  fracturedHavePrivilegedCorrelate_of_card_eq_two caseNumber_injective rfl _
 
-/-- A hypothetical system adds to the Czech rules one giving the genitive cells of the
-PŘEDSEDA subclass the hard-masculine coradical, a rule sensitive to case alone. It is modelled
-on the paper's hypothetical (41) and Table 26, whose type-II rule is sensitive to tense and
-person but not number; it leaves PRAMEN, and so the privilege of number, untouched. -/
-def hypothetical (e : Entry) : List CellRule :=
-  rulesFor e ++
-    (if e.InPredsedaSubclass then (e.hardMascCoradical.map (⟨genitive, ·⟩)).toList else [])
+/-! ### The hypothetical language of (41)
 
-/-- The hypothetical system violates (40), so the restriction is not vacuous. -/
-theorem not_satisfiesPCR_hypothetical : ¬ SatisfiesPCR cellClass (hypothetical ∘ entry) := by
-  decide +kernel
+The rules (41a,b) give a type-I verb its class-B coradical in the plural and a type-II verb its
+class-B coradical in the third person of the past (Table 26). -/
 
-/-- Every fractured Czech paradigm has a privileged category among its minimal intersective
-correlates, as Claim (39) states (p. 313). -/
-theorem fractured_minimal_intersective_privileged {l : CzNoun}
-    (h : IsFractured (cellClass l)) :
-    ∃ S, Minimal (IsIntersectiveCorrelate (cellClass l)) S ∧ ∃ c ∈ S, Privileged cellClass c :=
-  ⟨univ, minimal_univ_of_isFractured h, .number, mem_univ _, privileged_number⟩
+/-- The inflectional categories of the hypothetical verbs are tense, person and number. -/
+inductive VCategory
+  | tense
+  | person
+  | number
+  deriving DecidableEq, Fintype, Repr
+
+/-- The tenses of Table 26 are the present and the past. -/
+inductive HTense
+  | present
+  | past
+  deriving DecidableEq, Fintype, Repr
+
+/-- The persons of Table 26 are the first, the second and the third. -/
+inductive HPerson
+  | first
+  | second
+  | third
+  deriving DecidableEq, Fintype, Repr
+
+/-- The numbers of Table 26 are the singular and the plural. -/
+inductive HNumber
+  | singular
+  | plural
+  deriving DecidableEq, Fintype, Repr
+
+/-- A cell of Table 26 has a tense, a person and a number. -/
+structure HCell where
+  /-- `tense` is the cell's tense. -/
+  tense : HTense
+  /-- `person` is the cell's person. -/
+  person : HPerson
+  /-- `number` is the cell's number. -/
+  number : HNumber
+  deriving DecidableEq, Fintype, Repr
+
+/-- The values of a category of the hypothetical verbs. -/
+@[reducible] def VCategory.Value : VCategory → Type
+  | .tense => HTense
+  | .person => HPerson
+  | .number => HNumber
+
+instance : ∀ c : VCategory, DecidableEq c.Value
+  | .tense => inferInstanceAs (DecidableEq HTense)
+  | .person => inferInstanceAs (DecidableEq HPerson)
+  | .number => inferInstanceAs (DecidableEq HNumber)
+
+/-- `hProps σ c` is the value of the category `c` at the cell `σ`. -/
+def hProps (σ : HCell) : ∀ c : VCategory, c.Value
+  | .tense => σ.tense
+  | .person => σ.person
+  | .number => σ.number
+
+/-- The hypothetical verbs are of type I or of type II. -/
+inductive HLexeme
+  | typeI
+  | typeII
+  deriving DecidableEq, Fintype, Repr
+
+/-- The inflection classes of Table 26 are A, that of each verb's root, and B, that of its
+coradical. -/
+inductive HClass
+  | a
+  | b
+  deriving DecidableEq, Fintype, Repr
+
+/-- The rules (41) (p. 317) read "a. If L is a type-I verbal lexeme having s as its class B
+coradical and σ = {plural X}, then ⟨L, σ⟩ has ⟨s, σ⟩ as its form-correspondent. b. If L is a
+type-II verbal lexeme having s as its class B coradical and σ = {past 3rd X}, then ⟨L, σ⟩ has
+⟨s, σ⟩ as its form-correspondent." -/
+def hRules : HLexeme → List (DomainRule HCell HClass)
+  | .typeI => [⟨{σ | σ.number = .plural}, .b⟩]
+  | .typeII => [⟨{σ | σ.tense = .past ∧ σ.person = .third}, .b⟩]
+
+/-- `hClass l σ` is the class that the cell `σ` of a verb of type `l` inflects in, class A where
+its rule does not apply. -/
+def hClass (l : HLexeme) (σ : HCell) : HClass :=
+  RuleSet.realizeMinimalD (hRules l) (·.dom) (fun _ ↦ .a) σ
+
+-- (41a), p. 317
+theorem typeI_cloven : IsCloven hProps (hClass .typeI) := by decide
+
+theorem privileged_iff_number : ∀ c, Privileged hProps hClass c ↔ c = .number := by decide
+
+-- (41b), p. 317
+theorem typeII_fractured : IsFractured hProps (hClass .typeII) := by decide
+
+-- (41b), p. 317
+theorem typeII_minimal :
+    Minimal (IsIntersectiveCorrelate hProps (hClass .typeII)) {.tense, .person} := by
+  unfold Minimal
+  decide
+
+/-- The hypothetical language violates the privileged category restriction (40), its type-II
+rule being sensitive to tense and person but not to number, the privileged category. -/
+theorem not_satisfiesPCR_hRules : ¬ SatisfiesPCR hProps hClass hRules := by decide
+
+-- (39)
+theorem not_fracturedHavePrivilegedCorrelate_hClass :
+    ¬ FracturedHavePrivilegedCorrelate hProps hClass := by
+  have key : ∀ S : Finset VCategory, .number ∈ S →
+      ¬ Minimal (IsIntersectiveCorrelate hProps (hClass .typeII)) S := by
+    unfold Minimal
+    decide
+  intro h
+  obtain ⟨S, hS, c, hc, hpriv⟩ :=
+    h ⟨.number, (privileged_iff_number _).mpr rfl⟩ .typeII typeII_fractured
+  exact key S ((privileged_iff_number c).mp hpriv ▸ hc) hS
 
 /-! ### Sanskrit cells, stems and form property sets -/
 
@@ -966,12 +1081,12 @@ def hrdClass (σ : SktCell) : SktDecl := (hrdStem σ).decl
 
 theorem hrd_heteroclite : hrdLinkage.IsHeteroclite SktStem.decl .hrdaya := by decide
 
-/-- HṚD(AYA)'s stems also differ in form, its heteroclisis being an effect of stem suppletion,
-unlike PRAMEN's (`segments_invariant`). -/
 theorem hrd_form_suppletive : hrdLinkage.IsHeteroclite SktStem.form .hrdaya := by decide
 
-/-- HṚD(AYA)'s paradigm is cloven (p. 313), with case as its absolute correlate (p. 310). -/
-theorem hrd_cloven : IsCloven hrdClass ∧ IsAbsoluteCorrelate .case hrdClass := by decide
+-- p. 313, p. 310
+theorem hrd_cloven : IsCloven caseNumber hrdClass ∧
+    IsAbsoluteCorrelate caseNumber .case hrdClass := by
+  decide
 
 /-! ### Sanskrit stem grades (§3.2)
 
@@ -984,13 +1099,6 @@ PRAMEN's is of the first sort. In Sanskrit, rules (20a,b) give each cell of an a
 nominal its Strong, Middle or Weakest stem by the strength (19) of its property set and by the
 ending that follows; they make PRATYAÑC 'westerly' alternate among stems of one declension and
 AHAN 'day' among stems of two. -/
-
-/-- The grades of an alternating Sanskrit stem are the Strong, the Middle and the Weakest. -/
-inductive Grade
-  | strong
-  | middle
-  | weakest
-  deriving DecidableEq, Fintype, Repr
 
 /-- A property set is strong or weak, as (19) defines. -/
 inductive Strength
@@ -1152,11 +1260,11 @@ def sktLinkage : Linkage SktLex SktStem SktCell SktForm where
 
 /-- The grade of a stem in an entry is weakest for its Weakest coradical, middle for its Middle
 coradical, and strong for its root. -/
-def SktEntry.gradeOf (e : SktEntry) (z : SktStem) : Grade :=
+def SktEntry.gradeOf (e : SktEntry) (z : SktStem) : Wordlist.Grade :=
   if e.weakest = some z then .weakest else if e.middle = some z then .middle else .strong
 
 /-- `grade l σ` is the grade of the stem that the rules select at the cell `σ` of `l`. -/
-def grade (l : SktLex) (σ : SktCell) : Grade := (sktEntry l).gradeOf (sktStem l σ)
+def grade (l : SktLex) (σ : SktCell) : Wordlist.Grade := (sktEntry l).gradeOf (sktStem l σ)
 
 /-- `sktClass l σ` is the declension that the cell `σ` of `l` inflects in. -/
 def sktClass (l : SktLex) (σ : SktCell) : SktDecl := (sktStem l σ).decl
@@ -1173,12 +1281,6 @@ def SktLex.paramId : SktLex → String
 def SktLex.analyses (l : SktLex) (σ : SktCell) : List Wordlist.Analysis :=
   Wordlist.analyses.filter (SktRow l.paramId (sktEntry l).gender σ ·.form)
 
-/-- `gradeOf g` reads a grade of the paper's analysis as a grade. -/
-def gradeOf : Wordlist.Grade → Grade
-  | .strong => .strong
-  | .middle => .middle
-  | .weakest => .weakest
-
 -- (20a)
 theorem sktEndings_length : ∀ l σ, ∀ z ∈ (sktEntry l).weakest,
     (sktEndings z.decl (sktEntry l).gender (f₁ (sktEntry l).gender σ)).length = 1 := by decide
@@ -1187,10 +1289,9 @@ theorem sktEndings_length : ∀ l σ, ∀ z ∈ (sktEntry l).weakest,
 theorem rule20a_lt_rule20b : ∀ l, ∀ a ∈ rule20a (sktEntry l), ∀ b ∈ rule20b (sktEntry l),
     a.dom ⊂ b.dom := by decide
 
-/-- Rules (19) and (20a,b) give each cell of PRATYAÑC's masculine and neuter paradigms the grade
-shaded in Table 9 (p. 294). -/
+-- (19), (20a,b), Table 9, p. 294
 theorem rules_match_table9 : ∀ l ∈ [SktLex.pratyancM, .pratyancN], ∀ σ,
-    (l.analyses σ).map (·.grade.map gradeOf) = [some (grade l σ)] := by decide
+    (l.analyses σ).map (·.grade) = [some (grade l σ)] := by decide
 
 /-- The rules give every cell of AHAN the stem that Table 10 (p. 296) and p. 295 build it on,
 each cell having one row. -/
@@ -1221,33 +1322,31 @@ theorem not_isHeteroclite_of_stems {l : SktLex} {d : SktDecl}
   rw [Finset.mem_singleton.mp hz, Finset.mem_singleton.mp hz'] at hne
   exact hne ((h _ (sktStem_mem_stems l σ)).trans (h _ (sktStem_mem_stems l σ')).symm)
 
-/-- Neither of PRATYAÑC's paradigms is heteroclite (p. 294; p. 318). -/
+-- p. 294, p. 318
 theorem pratyanc_not_heteroclite :
     ∀ l ∈ [SktLex.pratyancM, .pratyancN], ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro _ (rfl | rfl) <;> exact not_isHeteroclite_of_stems (d := .consStem) (by decide)
 
-/-- AHAN's paradigm, built on two an-stems and an as-stem, is heteroclite (p. 295). -/
+-- p. 295
 theorem ahan_heteroclite : sktLinkage.IsHeteroclite SktStem.decl .ahan := by decide
 
-/-- AHAN's cells have the grades of neuter PRATYAÑC's, though (20a) tests different endings for each
-(p. 295). -/
+-- (20a), p. 295
 theorem ahan_grade_eq_pratyancN : ∀ σ, grade .ahan σ = grade .pratyancN σ := by decide
 
 theorem ahan_class_counts : #{σ | sktClass .ahan σ = .anStem} = 14 ∧
     #{σ | sktClass .ahan σ = .asStem} = 10 := by decide
 
-/-- AHAN's degree of case correlation is .71 (= 17/24), as Table 21 (p. 312) prints it, and its
-degree of number correlation, which the paper does not print, is 7/12. -/
-theorem ahan_degrees : degree Category.case.proj (sktClass .ahan) = 17 / 24 ∧
-    degree Category.number.proj (sktClass .ahan) = 7 / 12 := by
+-- Table 21, p. 312
+theorem ahan_degrees : degree (caseNumber · .case) (sktClass .ahan) = 17 / 24 ∧
+    degree (caseNumber · .number) (sktClass .ahan) = 7 / 12 := by
   decide +kernel
 
-/-- AHAN's paradigm is fractured, as Table 25 (p. 317) classes it. -/
-theorem ahan_fractured : IsFractured (sktClass .ahan) := by decide
+-- Table 25, p. 317
+theorem ahan_fractured : IsFractured caseNumber (sktClass .ahan) := by decide
 
 -- Table 21, p. 312
-theorem ahan_case_maximal : IsMaximalCorrelate .case (sktClass .ahan) := by decide
+theorem ahan_case_maximal : IsMaximalCorrelate caseNumber .case (sktClass .ahan) := by decide
 
 /-! ### The property mapping `f₁` -/
 
@@ -1278,27 +1377,29 @@ def sktClasses : SktNominal → SktCell → SktDecl := Sum.elim (fun _ ↦ hrdCl
 HṚD(AYA), whose stem alternation is "simply stipulated in HṚD(AYA)'s lexical entry" (p. 282). -/
 def sktNominalRules : SktNominal → List SktRule := Sum.elim (fun _ ↦ []) sktRules
 
-/-- Case is privileged for Sanskrit nominals, "a privileged inflectional category for Sanskrit
-nouns" (p. 318), as the absolute correlate of HṚD(AYA)'s cloven paradigm. -/
-theorem privileged_case : Privileged sktClasses .case := ⟨.inl .hrdaya, hrd_cloven⟩
+-- p. 318
+theorem privileged_case : Privileged caseNumber sktClasses .case := ⟨.inl .hrdaya, hrd_cloven⟩
 
-theorem not_privileged_number : ¬ Privileged sktClasses .number := by
+theorem not_privileged_number : ¬ Privileged caseNumber sktClasses .number := by
   rintro ⟨_ | l, hcl, hn⟩
-  · obtain ⟨σ, τ, hne⟩ := hcl.1
-    exact hne (cellClass_eq_of_isAbsoluteCorrelate hn hrd_cloven.2 σ τ)
+  · obtain ⟨σ, τ, hne⟩ := hcl.heteroclite
+    exact hne (eq_of_isAbsoluteCorrelate_number_of_case hn hrd_cloven.2 σ τ)
   · cases l
-    case ahan => exact ahan_fractured.2 .number hn
-    all_goals exact pratyanc_not_heteroclite _ (by simp) (sktLinkage_isHeteroclite_iff.mpr hcl.1)
+    case ahan => exact ahan_fractured.not_absolute .number hn
+    all_goals
+      exact pratyanc_not_heteroclite _ (by simp) (sktLinkage_isHeteroclite_iff.mpr hcl.heteroclite)
 
 -- (20a,b), p. 318
-theorem sktRules_sensitiveTo_case : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .case := by decide
+theorem sktRules_sensitiveTo_case : ∀ l, ∀ r ∈ sktRules l, SensitiveTo caseNumber r .case := by
+  decide
 
 -- (20a,b)
-theorem sktRules_sensitiveTo_number : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .number := by decide
+theorem sktRules_sensitiveTo_number :
+    ∀ l, ∀ r ∈ sktRules l, SensitiveTo caseNumber r .number := by
+  decide
 
-/-- The Sanskrit rules satisfy (40), since each, though sensitive to number as well, is
-sensitive to case, which is privileged. -/
-theorem pcr_skt : SatisfiesPCR sktClasses sktNominalRules := by
+-- (40)
+theorem pcr_skt : SatisfiesPCR caseNumber sktClasses sktNominalRules := by
   rintro (_ | l) r hr -
   · simp [sktNominalRules] at hr
   · exact ⟨.case, privileged_case, sktRules_sensitiveTo_case l r hr⟩
@@ -1329,14 +1430,20 @@ def RuStem.decl : RuStem → Russian.Gender.DeclClass
   | .mat => .III
   | .mater => .III
 
-/-- `matLinkage` builds MAT' on *mat'* in the nominative and accusative singular and on
+/-- `matRule` gives the cells other than the nominative and accusative singular form
+correspondents built on the coradical *mater'*. -/
+def matRule : DomainRule RuCell RuStem :=
+  ⟨{σ | ¬ (σ.2.1 = .singular ∧ (σ.1 = .nom ∨ σ.1 = .acc))}, .mater⟩
+
+/-- `matLinkage` builds MAT' on its root *mat'* in the nominative and accusative singular and on
 *mater'* elsewhere. -/
 def matLinkage : Linkage RuNoun RuStem RuCell RuCell :=
-  Linkage.ofFun id fun _ σ ↦
-    if σ.2.1 = .singular ∧ (σ.1 = .nom ∨ σ.1 = .acc) then .mat else .mater
+  Linkage.ofRules id (·.dom) (fun _ ↦ [matRule]) fun _ ↦ .mat
 
-/-- MAT' is suppletive but not heteroclite, for "suppletion in itself does not necessitate
-heteroclisis" (p. 283). -/
+-- p. 318
+theorem matRule_sensitiveTo_number : SensitiveTo caseNumber matRule .number := by decide
+
+-- p. 283
 theorem mat_suppletive_not_heteroclite :
     matLinkage.IsSuppletive .mat ∧ ¬ matLinkage.IsHeteroclite RuStem.decl .mat := by
   decide
