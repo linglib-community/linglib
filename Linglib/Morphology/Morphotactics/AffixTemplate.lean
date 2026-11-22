@@ -176,6 +176,13 @@ theorem mem_language_iff_sublist (ht : t.slots.Nodup) (h : t.stacking = ∅) :
     (pairwise_map.1 (sortedLE_iff_pairwise.1 hs)) ▸ hw
   exact (idxOf_inj (hw.subset ha)).1 (le_antisymm hab hba)
 
+/-- Fillers of one position cannot co-occur, unless the position stacks. -/
+theorem count_le_one_of_mem_language {a : Slot} (ha : a ∉ t.stacking) (hv : v ∈ t.language) :
+    v.count a ≤ 1 := by
+  by_cases hav : a ∈ v
+  · exact ((hv.2 a hav).2).resolve_left ha
+  · simp [count_eq_zero_of_not_mem hav]
+
 /-- In a template of suffixes that ascends along `cat`, every admitted string ascends. -/
 theorem SuffixesAscend.pairwise_of_mem_language {α : Type*} [Preorder α] {cat : Slot → Option α}
     (h : t.SuffixesAscend cat) (hp : t.prefixSlots = []) (hv : v ∈ t.language) :
