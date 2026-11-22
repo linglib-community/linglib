@@ -4,6 +4,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Analysis.MeanInequalities
+public import Mathlib.Analysis.Convex.Deriv
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Data.Fintype.BigOperators
 
@@ -33,6 +34,9 @@ derivative is the softmax expectation of the derivative of the scores.
   distribution for constant scores.
 * `Real.convexOn_log_sum_exp`, `HasFDerivAt.log_sum_exp`: log-sum-exp is convex, and its
   derivative is the softmax-weighted derivative of the scores.
+* `Real.hasDerivAt_log_sum_exp_mul`, `Real.monotone_sum_softmax_smul_mul`: the mean of the scores
+  under `softmax (α • s)` is the derivative of `log (∑ i, exp (α * s i))` in `α`, and is monotone
+  in `α`.
 * `Real.tendsto_softmax_atTop`: softmax concentrates on a strict maximizer as the inverse
   temperature grows.
 * `Real.softmax_eq_sigmoid_of_univ_eq_pair`, `Real.softmax_fin_two`: two alternatives give
@@ -157,6 +161,30 @@ theorem _root_.HasFDerivAt.log_sum_exp (hf : ∀ i, HasFDerivAt (f i) (f' i) x) 
   simp only [smul_sum, smul_smul, softmax_apply, div_eq_inv_mul]
 
 end Deriv
+
+section Temperature
+
+variable [Nonempty ι] (s : ι → ℝ)
+
+/-- The derivative of `log (∑ i, exp (α * s i))` in the inverse temperature `α` is the mean of
+the scores under `softmax (α • s)`. -/
+theorem hasDerivAt_log_sum_exp_mul (α : ℝ) :
+    HasDerivAt (fun α ↦ log (∑ i, exp (α * s i))) (∑ i, softmax (α • s) i * s i) α := by
+  have h : HasDerivAt (fun α ↦ ∑ i, exp (α * s i)) (∑ i, exp (α * s i) * s i) α :=
+    .fun_sum fun i _ ↦ (hasDerivAt_mul_const (s i)).exp
+  convert h.log (sum_exp_pos _).ne' using 1
+  simp only [softmax_apply, Pi.smul_apply, smul_eq_mul, sum_div, div_mul_eq_mul_div]
+
+/-- The mean of the scores under `softmax (α • s)` is monotone in the inverse temperature `α`. -/
+theorem monotone_sum_softmax_smul_mul : Monotone fun α : ℝ ↦ ∑ i, softmax (α • s) i * s i := by
+  have hc : ConvexOn ℝ Set.univ fun α : ℝ ↦ log (∑ i, exp (α * s i)) :=
+    (convexOn_log_sum_exp (ι := ι)).comp_linearMap (LinearMap.toSpanSingleton ℝ (ι → ℝ) s)
+  have hd := hc.monotoneOn_deriv fun α _ ↦ (hasDerivAt_log_sum_exp_mul s α).differentiableAt
+  intro α β hαβ
+  simpa only [(hasDerivAt_log_sum_exp_mul s _).deriv] using
+    hd (Set.mem_univ α) (Set.mem_univ β) hαβ
+
+end Temperature
 
 section Update
 

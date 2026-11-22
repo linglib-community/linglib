@@ -6,7 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Probability.Decision.ValueOfInformation
 public import Linglib.Data.Examples.HawkinsEtAl2025
 public import Linglib.Semantics.Questions.Polar
-public import Linglib.Pragmatics.Agent.Basic
+public import Linglib.Pragmatics.Agent.InversePlanning
 public import Linglib.Pragmatics.Probabilistic.Literal
 
 /-!
@@ -19,32 +19,39 @@ the expected utility of following the policy.
 
 A response `r` is safe for the polar question `q` when every belief state that knows `r` resolves
 `q`. The base respondent `m.R0 q` answers `q` at a world uniformly among the true and safe
-responses. The questioner `m.questioner p` soft-maximizes over questions the expected value of its
-decision problem after the base respondent's answer, less the cost of the answer. The pragmatic
+responses. The questioner `m.questioner p d` is an agent that chooses a question, worth to it the
+expected value of its decision problem after the base respondent's answer, less the cost of the
+answer, and `m.questionerPlan p` gives its policy at each decision problem. The pragmatic
 respondent `m.respondent p πD πW` infers the decision problem from the question by Bayes' rule and
 soft-maximizes a weighted sum of informativity, the negative Kullback-Leibler divergence of the
 questioner's updated belief from its own belief `πW`, and action relevance, the value of the
 questioner's updated decision problem, less the cost of the response.
 
-A response is safe iff it resolves the polar question (`safe_iff_mem_polar`). The questioner's
-score for a question is its value of information under `value`, plus the value of the prior, less
-the expected cost (`Model.questionScore_eq_valueOfInformation`). When informativity has positive
-weight, the respondent never gives a response false at a world it considers possible
+A response is safe iff it resolves the polar question (`safe_iff_mem_polar`). The value of a
+question to the questioner is its value of information under `value`, plus the value of the prior,
+less the expected cost (`Model.value_questioner_eq_valueOfInformation`). When informativity has
+positive weight, the respondent never gives a response false at a world it considers possible
 (`Model.respondent_truthful`).
 
 In the credit-card model `cards ι` the worlds are the sets of accepted cards, the questioner goes
 to the restaurant or stays, and an action is worth 5 when it matches whether a card of interest is
-accepted and 0 otherwise. A response that leaves open whether going pays leaves a decision problem
-of lower value than one that settles it (`value_lt_of_notMem_polar`), so *yes* to "Do you accept
-credit cards?" leaves a questioner who holds some but not all of the cards worse off than the
-exhaustive list does (`value_generalYes_lt_value_exhaustive`).
+accepted and 0 otherwise. Of two beliefs about such a bet, the one further from even odds has the
+greater value (`value_lt_value_iff`), so a response that leaves open whether going pays leaves a
+decision problem of lower value than one that settles it (`value_lt_of_notMem_polar`), and *yes*
+to "Do you accept credit cards?" leaves a questioner who holds some but not all of the cards worse
+off than the exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 
 ## Implementation notes
 
 * A decision problem is an `Agent` that observes nothing (`problem`), and its policy is
-  `Agent.policy`. The value is at most the best expected utility `decisionValue`, the value of a
-  decision problem in [van-rooy-2003] (`value_le_decisionValue`), and it is not convex in the
-  belief, so a question can have negative value of information.
+  `Agent.policy`. The value is monotone in the rationality (`value_mono`) and at most the best
+  expected utility `decisionValue`, the value of a decision problem in [van-rooy-2003]
+  (`value_le_decisionValue`). It is not convex in the belief: `decisionValue` gives information
+  nonnegative value (`valueOfInformation_decisionValue_nonneg`), and under `value` learning the
+  world can have negative value (`valueOfInformation_value_gamble_neg`).
+* The questioner's utility for a question at a world integrates over the base respondent's answer
+  there, so its value under the prior is the expectation over the answers `m.R0 q ∘ₘ m.prior d`
+  (`Model.value_questioner`), and `m.questionerPlan p` is the `Agent.plan` of the questioners.
 * The questioner hearing a response and the respondent hearing a question are `RSA.listener`s of
   the base respondent and of the questioner, so a response no world produces leaves the zero
   measure; the questioner and the pragmatic respondent are `Kernel.softmax` kernels.
@@ -62,6 +69,9 @@ exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 
 ## TODO
 
+* The comparison of *no* about a card with *yes* to the general question, which
+  `value_lt_value_iff_abs` reduces to a comparison of the two posterior probabilities that going
+  pays.
 * The predicted rates of exhaustive answers, highest after a polar question about an unavailable
   card, then after the general question, then after a polar question about an available card,
   which depend on the fitted parameters.
@@ -80,7 +90,7 @@ exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 namespace HawkinsEtAl2025
 
 open MeasureTheory ProbabilityTheory InformationTheory Finset Question
-open scoped ENNReal
+open scoped ENNReal NNReal
 
 variable {W Q R A D : Type*}
 
@@ -269,65 +279,131 @@ theorem value_of_pair (hab : a ≠ b) (hall : ∀ c, c = a ∨ c = b) :
   simp only [problem, Agent.value_mk, Kernel.const_apply, smul_eq_mul]
   ring_nf
 
-theorem value_of_integral_eq {c : ℝ} (hab : a ≠ b) (hall : ∀ c, c = a ∨ c = b)
-    (ha : ∫ w, U w a ∂π = c) (hb : ∫ w, U w b ∂π = 0) :
-    value U αℵ π = c * Real.sigmoid (αℵ * c) := by
-  rw [value_of_pair hab hall, ha, hb]
-  ring_nf
+theorem value_mono [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
+    Monotone fun αℵ ↦ value U αℵ π := fun α β h ↦ by
+  show value U α π ≤ value U β π
+  rw [value_eq_sum, value_eq_sum]
+  exact Real.monotone_sum_softmax_smul_mul (fun a ↦ ∫ w, U w a ∂π) h
 
-theorem value_lt_of_integral_eq {c p : ℝ} (hα : 0 < αℵ) (hc : 0 < c) (hp : 0 < p) (hp' : p < 1)
+private theorem mul_sigmoid_sub_half_lt_iff {k x y : ℝ} (hk : 0 < k) :
+    x * (Real.sigmoid (k * x) - 1 / 2) < y * (Real.sigmoid (k * y) - 1 / 2) ↔ |x| < |y| := by
+  have even (t : ℝ) :
+      t * (Real.sigmoid (k * t) - 1 / 2) = |t| * (Real.sigmoid (k * |t|) - 1 / 2) := by
+    rcases abs_cases t with ⟨h, _⟩ | ⟨h, _⟩
+    · rw [h]
+    · rw [h, mul_neg, Real.sigmoid_neg]; ring
+  have mono : StrictMonoOn (fun t : ℝ ↦ t * (Real.sigmoid (k * t) - 1 / 2)) (Set.Ici 0) := by
+    intro a ha b hb hab
+    have h0 : 0 ≤ Real.sigmoid (k * a) - 1 / 2 := by
+      rw [sub_nonneg, one_div, ← Real.sigmoid_zero]
+      exact Real.sigmoid_le_iff.2 (mul_nonneg hk.le ha)
+    have hlt : Real.sigmoid (k * a) < Real.sigmoid (k * b) :=
+      Real.sigmoid_lt (mul_lt_mul_of_pos_left hab hk)
+    show a * _ < b * _
+    nlinarith [mul_pos (sub_pos.2 hab) (lt_of_le_of_lt h0 (sub_lt_sub_right hlt _)),
+      mul_nonneg ha (sub_nonneg.2 hlt.le)]
+  rw [even x, even y]
+  exact mono.lt_iff_lt (abs_nonneg x) (abs_nonneg y)
+
+theorem value_of_integral_eq {c p : ℝ} (hab : a ≠ b) (hall : ∀ c, c = a ∨ c = b)
+    (ha : ∫ w, U w a ∂π = c * p) (hb : ∫ w, U w b ∂π = c * (1 - p)) :
+    value U αℵ π =
+      c / 2 + c * ((2 * p - 1) * (Real.sigmoid (αℵ * c * (2 * p - 1)) - 1 / 2)) := by
+  rw [value_of_pair hab hall, ha, hb,
+    show αℵ * (c * p - c * (1 - p)) = αℵ * c * (2 * p - 1) by ring]
+  ring
+
+/-- Of two beliefs about a bet that pays `c` on one action with probability `p` and on the other
+with probability `1 - p`, the one further from even odds has the greater value. -/
+theorem value_lt_value_iff {π' : Measure W} {c p p' : ℝ} (hα : 0 < αℵ) (hc : 0 < c)
     (hab : a ≠ b) (hall : ∀ c, c = a ∨ c = b) (ha : ∫ w, U w a ∂π = c * p)
-    (hb : ∫ w, U w b ∂π = c * (1 - p)) : value U αℵ π < c * Real.sigmoid (αℵ * c) := by
-  have h₁ : Real.sigmoid (αℵ * (c * p - c * (1 - p))) < Real.sigmoid (αℵ * c) :=
-    Real.sigmoid_lt (by nlinarith [mul_pos hα hc])
-  have h₂ : 1 - Real.sigmoid (αℵ * (c * p - c * (1 - p))) < Real.sigmoid (αℵ * c) := by
-    rw [← Real.sigmoid_neg]
-    exact Real.sigmoid_lt (by nlinarith [mul_pos hα hc])
-  rw [value_of_pair hab hall, ha, hb]
-  nlinarith [mul_pos (mul_pos hc hp) (sub_pos.2 h₁),
-    mul_pos (mul_pos hc (sub_pos.2 hp')) (sub_pos.2 h₂)]
+    (hb : ∫ w, U w b ∂π = c * (1 - p)) (ha' : ∫ w, U w a ∂π' = c * p')
+    (hb' : ∫ w, U w b ∂π' = c * (1 - p')) :
+    value U αℵ π < value U αℵ π' ↔ |2 * p - 1| < |2 * p' - 1| := by
+  rw [value_of_integral_eq hab hall ha hb, value_of_integral_eq hab hall ha' hb',
+    add_lt_add_iff_left, mul_lt_mul_iff_right₀ hc, mul_sigmoid_sub_half_lt_iff (mul_pos hα hc)]
 
 end
+
+private theorem sigmoid_log_two_mul (n : ℕ) :
+    Real.sigmoid (Real.log 2 * n) = 2 ^ n / (2 ^ n + 1) := by
+  have h : Real.exp (-(Real.log 2 * n)) = (2 ^ n)⁻¹ := by
+    rw [Real.exp_neg, mul_comm, Real.exp_nat_mul, Real.exp_log two_pos]
+  have h2 : (2 : ℝ) ^ n ≠ 0 := by positivity
+  rw [Real.sigmoid_def, h]
+  field_simp
+
+/-- A safe action worth 1 and a risky action worth -2 at one world and -4 at the other. -/
+def gamble (w a : Fin 2) : ℝ := if a = 0 then 1 else if w = 0 then -2 else -4
+
+theorem valueOfInformation_value_gamble_neg :
+    valueOfInformation (value gamble (Real.log 2)) Kernel.id
+      ((2⁻¹ : ℝ≥0) • (Measure.dirac 0 + Measure.dirac 1)) < 0 := by
+  have hμ (f : Fin 2 → ℝ) :
+      ∫ w, f w ∂((2⁻¹ : ℝ≥0) • (Measure.dirac 0 + Measure.dirac 1)) = (f 0 + f 1) / 2 := by
+    rw [integral_smul_nnreal_measure, integral_add_measure .of_finite .of_finite,
+      integral_dirac, integral_dirac, NNReal.smul_def]
+    simp
+    ring
+  have hv (π : Measure (Fin 2)) := value_of_pair (U := gamble) (αℵ := Real.log 2) (π := π)
+    (a := 0) (b := 1) (by decide) (by decide)
+  have s3 := sigmoid_log_two_mul 3
+  have s4 := sigmoid_log_two_mul 4
+  have s5 := sigmoid_log_two_mul 5
+  rw [valueOfInformation_id, hμ, hv, hv, hv]
+  simp only [integral_dirac, hμ, gamble]
+  norm_num at s3 s4 s5 ⊢
+  rw [s3, s4, s5]
+  norm_num
 
 variable [Fintype W] [MeasurableSingletonClass W] [Finite R] [MeasurableSingletonClass R]
   (p : Params)
 
-/-- The expected value to the questioner of asking `q` under the decision problem `d` (2.3) is
-the value of `d` updated (2.4) by the base respondent's answer, less the weighted cost. -/
-noncomputable def Model.questionScore (d : D) (q : Q) : ℝ :=
-  ∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) - p.wc * m.cost r)
-    ∂(m.R0 q ∘ₘ m.prior d)
+/-- The questioner with the decision problem `d` is an agent that chooses a question (2.3). At
+the world `w`, asking `q` is worth the expected value of `d` updated (2.4) by the base
+respondent's answer at `w`, less the weighted cost of the answer. -/
+noncomputable def Model.questioner (d : D) : Agent Unit W Q where
+  belief := Kernel.const Unit (m.prior d)
+  utility w q := ∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) -
+    p.wc * m.cost r) ∂(m.R0 q w)
 
-/-- The question score is the value of information of the question under the policy value, plus
-the value of the prior, less the expected cost. -/
-theorem Model.questionScore_eq_valueOfInformation [StandardBorelSpace W] [Nonempty W] (d : D)
+theorem Model.value_questioner (d : D) [IsFiniteMeasure (m.prior d)] (q : Q) :
+    (m.questioner p d).value () q =
+      ∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) - p.wc * m.cost r)
+        ∂(m.R0 q ∘ₘ m.prior d) := by
+  rw [Measure.integral_comp .of_finite]
+  rfl
+
+/-- The value of a question to the questioner is its value of information under the policy
+value, plus the value of the prior, less the expected cost. -/
+theorem Model.value_questioner_eq_valueOfInformation [StandardBorelSpace W] [Nonempty W] (d : D)
     [IsFiniteMeasure (m.prior d)] (q : Q) :
-    m.questionScore p d q =
+    (m.questioner p d).value () q =
       valueOfInformation (value (m.utility d) p.αℵ) (m.R0 q) (m.prior d) +
         value (m.utility d) p.αℵ (m.prior d) - p.wc * ∫ r, m.cost r ∂(m.R0 q ∘ₘ m.prior d) := by
   have h : ∀ᵐ r ∂(m.R0 q ∘ₘ m.prior d),
       RSA.listener (m.prior d) (m.R0 q) r = ((m.R0 q)†(m.prior d)) r :=
     ae_iff_of_countable.2 fun r hr ↦ RSA.listener_apply_eq_posterior _ _ hr
-  rw [Model.questionScore, integral_sub .of_finite .of_finite, integral_const_mul,
+  rw [m.value_questioner, integral_sub .of_finite .of_finite, integral_const_mul,
     valueOfInformation, integral_congr_ae (h.mono fun r hr ↦ congrArg _ hr)]
   ring
 
-variable [MeasurableSpace Q] [Fintype Q] [MeasurableSingletonClass Q] [MeasurableSpace D]
-  [Countable D] [MeasurableSingletonClass D]
+variable [MeasurableSpace Q] [Fintype Q] [MeasurableSpace D] [Fintype D]
+  [MeasurableSingletonClass D]
 
-/-- The questioner (2.3) soft-maximizes the question score with rationality `αQ`. -/
-noncomputable def Model.questioner : Kernel D Q :=
-  Kernel.softmax fun d q ↦ ((p.αQ * m.questionScore p d q : ℝ) : EReal)
+/-- The questions asked under each decision problem: the policy of its questioner at rationality
+`αQ`. -/
+noncomputable def Model.questionerPlan : Kernel D Q := Agent.plan (m.questioner p) p.αQ ()
 
-instance : IsFiniteKernel (m.questioner p) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
+instance : IsFiniteKernel (m.questionerPlan p) :=
+  inferInstanceAs (IsFiniteKernel (Agent.plan _ _ _))
 
-instance [Nonempty Q] : IsMarkovKernel (m.questioner p) :=
-  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary Q, EReal.coe_ne_bot _⟩)
-    fun _ _ ↦ EReal.coe_ne_top _
+instance [Nonempty Q] : IsMarkovKernel (m.questionerPlan p) :=
+  inferInstanceAs (IsMarkovKernel (Agent.plan _ _ _))
 
-theorem Model.questioner_apply_singleton_ne_zero (d : D) (q : Q) : m.questioner p d {q} ≠ 0 :=
-  Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
+theorem Model.questionerPlan_apply_singleton_ne_zero [MeasurableSingletonClass Q] (d : D)
+    (q : Q) : m.questionerPlan p d {q} ≠ 0 :=
+  (m.questioner p d).policy_apply_singleton_ne_zero p.αQ () q
 
 end Questioner
 
@@ -342,7 +418,7 @@ variable [Fintype A] [MeasurableSpace A] [Fintype W] [MeasurableSingletonClass W
 
 /-- The respondent's belief about the decision problem after hearing `q` is that of a listener
 to the questioner at the prior `πD`, `π(D ∣ q) ∝ Q(q ∣ D) π(D)`. -/
-noncomputable def Model.goalPosterior : Kernel Q D := RSA.listener πD (m.questioner p)
+noncomputable def Model.goalPosterior : Kernel Q D := RSA.listener πD (m.questionerPlan p)
 
 instance : IsFiniteKernel (m.goalPosterior p πD) :=
   inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
@@ -350,7 +426,7 @@ instance : IsFiniteKernel (m.goalPosterior p πD) :=
 theorem Model.goalPosterior_real_lt_iff [IsFiniteMeasure πD] (q : Q) {d₁ d₂ : D}
     (hp : πD {d₁} = πD {d₂}) (hpos : πD {d₁} ≠ 0) :
     (m.goalPosterior p πD q).real {d₁} < (m.goalPosterior p πD q).real {d₂} ↔
-      (m.questioner p d₁).real {q} < (m.questioner p d₂).real {q} := by
+      (m.questionerPlan p d₁).real {q} < (m.questionerPlan p d₂).real {q} := by
   have hμ : πD.real {d₂} = πD.real {d₁} := by rw [measureReal_def, measureReal_def, hp]
   have hμpos : 0 < πD.real {d₁} := ENNReal.toReal_pos hpos (measure_ne_top _ _)
   rw [Model.goalPosterior, RSA.listener_real_singleton_lt_iff, hμ, mul_lt_mul_iff_right₀ hμpos]
@@ -394,7 +470,7 @@ theorem Model.respondent_truthful [IsFiniteMeasure πD] (hβ : p.β < 1) (hα : 
     klDiv_of_not_ac fun hac ↦ hw (hac (RSA.listener_apply_singleton_eq_zero
       (not_not.1 (mt m.R0'_apply_singleton_ne_zero_iff.1 hf))))
   have hgp : m.goalPosterior p πD q {d} ≠ 0 :=
-    RSA.listener_apply_singleton_ne_zero hd (m.questioner_apply_singleton_ne_zero p d q)
+    RSA.listener_apply_singleton_ne_zero hd (m.questionerPlan_apply_singleton_ne_zero p d q)
   have hint : ∫⁻ d', klDiv πW (RSA.listener (m.prior d') m.R0' r) ∂(m.goalPosterior p πD q) =
       ∞ := by
     rw [lintegral_countable']
@@ -548,48 +624,68 @@ private theorem integral_cardUtility_stay (π : Measure (Finset ι)) [IsProbabil
 
 private theorem act_eq (c : Act) : c = .go ∨ c = .stay := by cases c <;> simp
 
+private theorem value_cards (π : Measure (Finset ι)) [IsProbabilityMeasure π] :
+    value ((cards ι).utility d) αℵ π = 5 / 2 + 5 * ((2 * π.real d.target - 1) *
+      (Real.sigmoid (αℵ * 5 * (2 * π.real d.target - 1)) - 1 / 2)) :=
+  value_of_integral_eq (by decide) act_eq (integral_cardUtility_go π)
+    (integral_cardUtility_stay π)
+
+private theorem isProbabilityMeasure_listener_cards (hr : ((cards ι).response r).Nonempty) :
+    IsProbabilityMeasure (RSA.listener ((cards ι).prior d) (cards ι).R0' r) :=
+  let ⟨w₀, hw₀⟩ := hr
+  RSA.isProbabilityMeasure_listener_of_ne_zero ((cards ι).prior d) (cards ι).R0'
+    (cards_prior_ne_zero d w₀) ((cards ι).R0'_apply_singleton_ne_zero_iff.2 hw₀)
+
+-- §3a
+theorem value_lt_value_iff_abs (hα : 0 < αℵ) {r' : Resp ι}
+    (hr : ((cards ι).response r).Nonempty) (hr' : ((cards ι).response r').Nonempty) :
+    value ((cards ι).utility d) αℵ (RSA.listener ((cards ι).prior d) (cards ι).R0' r) <
+        value ((cards ι).utility d) αℵ (RSA.listener ((cards ι).prior d) (cards ι).R0' r') ↔
+      |2 * (RSA.listener ((cards ι).prior d) (cards ι).R0' r).real d.target - 1| <
+        |2 * (RSA.listener ((cards ι).prior d) (cards ι).R0' r').real d.target - 1| := by
+  have := isProbabilityMeasure_listener_cards (d := d) hr
+  have := isProbabilityMeasure_listener_cards (d := d) hr'
+  exact value_lt_value_iff hα (by norm_num) (by decide) act_eq (integral_cardUtility_go _)
+    (integral_cardUtility_stay _) (integral_cardUtility_go _) (integral_cardUtility_stay _)
+
 theorem value_of_mem_polar (hr : ((cards ι).response r).Nonempty)
     (h : (cards ι).response r ∈ polar d.target) (αℵ : ℝ) :
     value ((cards ι).utility d) αℵ (RSA.listener ((cards ι).prior d) (cards ι).R0' r) =
       5 * Real.sigmoid (αℵ * 5) := by
-  obtain ⟨w₀, hw₀⟩ := hr
-  have := RSA.isProbabilityMeasure_listener_of_ne_zero ((cards ι).prior d) (cards ι).R0'
-    (cards_prior_ne_zero d w₀) ((cards ι).R0'_apply_singleton_ne_zero_iff.2 hw₀)
+  have := isProbabilityMeasure_listener_cards (d := d) hr
   have hnull := (cards ι).listener_R0'_apply_compl_response (d := d) r
   have hmeas : MeasurableSet d.target := (Set.toFinite _).measurableSet
   rcases mem_polar.1 h with h | h
-  · have h1 : (RSA.listener ((cards ι).prior d) (cards ι).R0' r).real d.target = 1 := by
-      rw [measureReal_def, (prob_compl_eq_zero_iff hmeas).1
-        (measure_mono_null (Set.compl_subset_compl.2 h) hnull), ENNReal.toReal_one]
-    exact value_of_integral_eq (a := .go) (b := .stay) (by decide) act_eq
-      (by rw [integral_cardUtility_go, h1, mul_one])
-      (by rw [integral_cardUtility_stay, h1, sub_self, mul_zero])
-  · have h0 : (RSA.listener ((cards ι).prior d) (cards ι).R0' r).real d.target = 0 := by
-      rw [measureReal_def, measure_mono_null (Set.subset_compl_comm.1 h) hnull,
-        ENNReal.toReal_zero]
-    exact value_of_integral_eq (a := .stay) (b := .go) (by decide) (fun c ↦ (act_eq c).symm)
-      (by rw [integral_cardUtility_stay, h0, sub_zero, mul_one])
-      (by rw [integral_cardUtility_go, h0, mul_zero])
+  · rw [value_cards, measureReal_def, (prob_compl_eq_zero_iff hmeas).1
+      (measure_mono_null (Set.compl_subset_compl.2 h) hnull), ENNReal.toReal_one,
+      show αℵ * 5 * (2 * 1 - 1) = αℵ * 5 by ring]
+    ring
+  · rw [value_cards, measureReal_def, measure_mono_null (Set.subset_compl_comm.1 h) hnull,
+      ENNReal.toReal_zero, show αℵ * 5 * (2 * 0 - 1) = -(αℵ * 5) by ring, Real.sigmoid_neg]
+    ring
 
-/-- A response that leaves open whether going pays leaves a decision problem of lower value than
-one that settles it. -/
+-- §3a
 theorem value_lt_of_notMem_polar (hα : 0 < αℵ) (h : (cards ι).response r ∉ polar d.target) :
     value ((cards ι).utility d) αℵ (RSA.listener ((cards ι).prior d) (cards ι).R0' r) <
       5 * Real.sigmoid (αℵ * 5) := by
   rw [mem_polar, not_or, Set.not_subset, Set.not_subset] at h
   obtain ⟨⟨w₂, hw₂, hw₂G⟩, w₁, hw₁, hw₁G⟩ := h
   have hπ := cards_prior_ne_zero d
-  have := RSA.isProbabilityMeasure_listener_of_ne_zero ((cards ι).prior d) (cards ι).R0'
-    (hπ w₁) ((cards ι).R0'_apply_singleton_ne_zero_iff.2 hw₁)
+  have := isProbabilityMeasure_listener_cards (d := d) ⟨w₁, hw₁⟩
   have hmeas : MeasurableSet d.target := (Set.toFinite _).measurableSet
   have hpos {s : Set (Finset ι)} {w : Finset ι} (hw : w ∈ (cards ι).response r) (hs : w ∈ s) :
       0 < (RSA.listener ((cards ι).prior d) (cards ι).R0' r).real s :=
     ENNReal.toReal_pos (fun h0 ↦ ((cards ι).listener_R0'_apply_singleton_ne_zero_iff hπ).2 hw
       (measure_mono_null (Set.singleton_subset_iff.2 hs) h0)) (measure_ne_top _ _)
+  have hp := hpos hw₁ (Set.notMem_compl_iff.1 hw₁G)
   have hp' := hpos (s := d.targetᶜ) hw₂ hw₂G
   rw [probReal_compl_eq_one_sub hmeas] at hp'
-  exact value_lt_of_integral_eq hα (by norm_num) (hpos hw₁ (Set.notMem_compl_iff.1 hw₁G))
-    (by linarith) (by decide) act_eq (integral_cardUtility_go _) (integral_cardUtility_stay _)
+  have key := (mul_sigmoid_sub_half_lt_iff (y := 1) (mul_pos hα (by norm_num : (0 : ℝ) < 5))).2
+    (show |2 * (RSA.listener ((cards ι).prior d) (cards ι).R0' r).real d.target - 1| < |1| by
+      rw [abs_one, abs_lt]; constructor <;> linarith)
+  rw [value_cards]
+  simp only [mul_one, one_mul] at key
+  linarith
 
 theorem value_exhaustive (d : Goal ι) (w : Finset ι) (αℵ : ℝ) :
     value ((cards ι).utility d) αℵ
