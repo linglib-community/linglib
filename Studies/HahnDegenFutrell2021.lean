@@ -358,11 +358,11 @@ theorem japanese_valence_voice_inside :
   decide
 
 /-- The Japanese suffix order is nonetheless not sorted by the hierarchy: [bybee-1985]'s survey
-ranks tense closer to the stem than mood, `Bybee1985.SurveyedCloser`, and the desiderative, a
+ranks tense closer to the stem than mood, `Bybee1985.Closer`, and the desiderative, a
 mood suffix, precedes the final inflection, read as tense. The paper claims no order of mood
 and tense. -/
 theorem japanese_violates_surveyed_relevance :
-    Bybee1985.SurveyedCloser .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
+    Bybee1985.Closer .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
   decide
 
 end HahnDegenFutrell2021

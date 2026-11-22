@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Order.Basic
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Data.List.Sort
 public import Mathlib.Tactic.DeriveFintype
 
@@ -65,6 +65,13 @@ namespace RelevanceHierarchy
 predicted to sit closer to the stem. -/
 instance : LinearOrder RelevanceHierarchy :=
   LinearOrder.lift' RelevanceHierarchy.ctorIdx (by decide)
+
+/-- The position of a category on the scale, counted from the most relevant, as an order
+embedding into `ℕ`. -/
+def rank : RelevanceHierarchy ↪o ℕ :=
+  ⟨⟨RelevanceHierarchy.ctorIdx, by decide⟩, Iff.rfl⟩
+
+@[simp] theorem coe_rank : ⇑rank = RelevanceHierarchy.ctorIdx := rfl
 
 end RelevanceHierarchy
 
