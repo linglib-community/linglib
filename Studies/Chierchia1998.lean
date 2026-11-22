@@ -48,7 +48,9 @@ class of noun has in a model of two atoms (`down_extension_mem_kinds_iff`).
 An English bare plural is shifted by ∩ where ∩ is defined for it and by ∃ otherwise
 (`english_plural_shift_iff`). The first is the name of a kind and the second a quantifier, an
 `Argument`. Raised over an operator, a kind leaves a trace that is a kind, so it has the reading
-it has in place (`Argument.raise_kind`), while the quantifier has a second reading.
+it has in place (`Argument.raise_kind`), while the quantifier has a second reading. A predicate
+of objects holds of a kind iff the kind's value is in the predicate's upper closure
+(`Argument.apply_kind_iff`).
 
 Carlson's predication of a state of a kind is the existential over the instances of its concept
 (`carlson_mem_image_iff`), so a state passes from a kind to any kind whose instances include its
@@ -571,6 +573,12 @@ def raise (O : Prop → Prop) (V : Set E) : Argument E → Prop
 -- (43a-d): raising a kind over an operator gives the reading it has in place.
 theorem raise_kind (O : Prop → Prop) (V : Set E) (k : Part E) :
     (kind k).raise O V = O ((kind k).apply V) := rfl
+
+-- (31c): a predicate of objects holds of a kind iff the kind's value is in its upper closure,
+-- so it passes to any kind with more instances.
+theorem apply_kind_iff (V : Set E) (k : Part E) :
+    (kind k).apply V ↔ ∃ d ∈ k, d ∈ upperClosure V :=
+  Kind.inter_up_nonempty_iff
 
 -- (48): the argument ∃ makes of a property.
 theorem raise_quantifier_some (O : Prop → Prop) (V P : Set E) :

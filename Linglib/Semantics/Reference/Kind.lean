@@ -4,6 +4,7 @@ public import Linglib.Semantics.Mereology.Classical
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Basic.PEquiv
+public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Kinds
@@ -18,8 +19,13 @@ of `k`, empty where `k` has no value. So `Kind.down s = iota {x | IsGreatest s x
 and the operator 'up', ∪, of a kind `k : S → Part E` is `Kind.up ∘ k`.
 
 `Kind.down (Kind.up k) = k` (`Kind.down_up`), and `Kind.up (Kind.down s) = s` for a lower set
-`s` that has a largest member if it has a member (`Kind.up_down`), so the two are inverse
-bijections between partial individuals and such sets (`Kind.upEquiv`). Closure under sums gives the
+`s` that has a largest member if it has a member (`Kind.up_down`), and for no other set
+(`Kind.up_down_eq_iff`), so the two are inverse bijections between partial individuals and such
+sets (`Kind.upEquiv`). On the sets with a largest member `Kind.down` is left adjoint to `Kind.up`:
+its value is part of `e` iff the set is included in the parts of `e` (`Kind.le_iff_subset_up`).
+The largest member is the sum of the set where the set contains its sum
+(`Kind.down_dom_iff_sSup_mem`), so the adjunction is the one between `sSup` and `Set.Iic`, cut
+down to the sets on which the sum is attained. Closure under sums gives the
 largest member, not closure downward: in a classical mereology `Kind.down` is defined on a
 nonempty set that contains its sum, where its value is that sum
 (`Kind.down_dom_of_isClassical`), and on a finite nonempty set closed under binary sums
@@ -28,7 +34,8 @@ restores the atoms beneath the pluralities (`Kind.up_down_of_forall_isMin`). ∩
 property is no kind when no kind is singular wherever it has a value
 (`Kind.down_comp_notMem_of_isMin`). Derived kind predication, which applies a predicate of
 objects to a kind by quantifying existentially over its instances, is
-`Quantifier.Det.some (Kind.up (k s))`.
+`Quantifier.Det.some (Kind.up (k s))`, which holds of a predicate iff the value of the kind is
+in the predicate's upper closure (`Kind.inter_up_nonempty_iff`).
 
 In Chierchia's earlier theory ∩ takes a property to an entity, its correlate, and ∪ takes the
 correlate back, a partial equivalence between properties and entities. The Russell property, of
@@ -84,6 +91,13 @@ theorem up_of_not_dom (h : ¬ k.Dom) : up k = ∅ :=
 theorem isLowerSet_up : IsLowerSet (up k) :=
   fun _ _ hba ⟨d, hd, had⟩ ↦ ⟨d, hd, hba.trans had⟩
 
+/-- A set has a member among the instances of a kind iff the value of the kind is in its upper
+closure: derived kind predication extends a predicate of objects to its upper closure. -/
+theorem inter_up_nonempty_iff {V : Set E} :
+    (up k ∩ V).Nonempty ↔ ∃ d ∈ k, d ∈ upperClosure V :=
+  ⟨fun ⟨x, ⟨d, hd, hx⟩, hV⟩ ↦ ⟨d, hd, mem_upperClosure.2 ⟨x, hV, hx⟩⟩,
+    fun ⟨d, hd, h⟩ ↦ let ⟨x, hV, hx⟩ := mem_upperClosure.1 h; ⟨x, ⟨d, hd, hx⟩, hV⟩⟩
+
 end Preorder
 
 /-- ∩: the largest member of the extension of a property at a situation, the value there of the
@@ -121,6 +135,27 @@ theorem up_down (hs : IsLowerSet s) (hdef : s.Nonempty → (down s).Dom) : up (d
       have ⟨d, hd⟩ := Part.dom_iff_mem.1 (hdef ⟨x, hx⟩)
       ⟨d, hd, (mem_down.1 hd).2 hx⟩⟩
 
+/-- ∩ is left adjoint to ∪ on the sets with a largest member: the value of ∩ is part of `e` iff
+every member of the set is. -/
+theorem le_iff_subset_up {e : E} (hd : d ∈ down s) : d ≤ e ↔ s ⊆ up (Part.some e) := by
+  rw [up_some]
+  exact ⟨fun h _ hx ↦ ((mem_down.1 hd).2 hx).trans h, fun h ↦ h (mem_down.1 hd).1⟩
+
+/-- A set with a largest member is included in ∪∩ of it, the lower set its largest member
+generates. -/
+theorem subset_up_down (h : (down s).Dom) : s ⊆ up (down s) := fun _ hx ↦
+  let ⟨d, hd⟩ := Part.dom_iff_mem.1 h
+  ⟨d, hd, (mem_down.1 hd).2 hx⟩
+
+/-- ∪∩ fixes exactly the sets closed downward that have a largest member if they have a
+member. -/
+theorem up_down_eq_iff : up (down s) = s ↔ IsLowerSet s ∧ (s.Nonempty → (down s).Dom) :=
+  ⟨fun h ↦ ⟨h ▸ isLowerSet_up (k := down s), fun ⟨x, hx⟩ ↦ by
+      rw [← h] at hx
+      obtain ⟨d, hd, -⟩ := hx
+      exact Part.dom_iff_mem.2 ⟨d, hd⟩⟩,
+    fun h ↦ up_down h.1 h.2⟩
+
 /-- On the plural `s` of a singular property with extension `t`, true of what is not in `t` and
 has only atoms of `t`, ∪∩ adds the atoms beneath the pluralities where ∩ is defined, Chierchia's
 (17c). -/
@@ -154,6 +189,20 @@ end PartialOrder
 theorem down_dom_of_supClosed [SemilatticeSup E] (hcum : SupClosed s) (hfin : s.Finite)
     (hne : s.Nonempty) : (down s).Dom :=
   hcum.directedOn.iota_isGreatest_dom hfin hne
+
+section CompleteSemilatticeSup
+
+variable {L : Type*} [CompleteSemilatticeSup L] {s : Set L} {d : L}
+
+/-- Where every set has a sum, ∩ is defined on the sets that contain their sum. -/
+theorem down_dom_iff_sSup_mem : (down s).Dom ↔ sSup s ∈ s :=
+  down_dom.trans ⟨fun ⟨_, hd⟩ ↦ hd.isLUB.sSup_eq ▸ hd.1, fun h ↦ ⟨_, h, fun _ ↦ le_sSup⟩⟩
+
+/-- The value of ∩ is the sum of the set. -/
+theorem eq_sSup_of_mem_down (h : d ∈ down s) : d = sSup s :=
+  (mem_down.1 h).isLUB.sSup_eq.symm
+
+end CompleteSemilatticeSup
 
 section Classical
 
