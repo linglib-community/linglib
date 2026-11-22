@@ -9,7 +9,7 @@ public import Mathlib.Tactic.DeriveFintype
 
 Causative constructions vary along two scales: **morphological complexity**, from compact
 (lexical) to analytic (periphrastic), and **directness of mediation**, from a causer that brings
-about the result itself to one that acts through a causee. A causative construction is a point
+about the result itself to one whose action is removed from it by intermediate stages. A causative construction is a point
 of `CausativeComplexity × Mediation`, and [comrie-1989]'s generalization is that within a language
 the more compact construction expresses the more direct causation: a language's constructions form
 a chain of the product order, `IsChain (· ≤ ·)`. The causee of a causativized verb takes the highest
@@ -27,15 +27,15 @@ namespace Causation.Morphological
 
 /-! ### Mediation -/
 
-/-- Directness of causal mediation between causer and result.
-
-[comrie-1989]: direct causation involves no intermediary, the causer bringing about the result
-without an intervening causee decision or action; indirect causation involves a mediating causee
-who retains some autonomy over the caused event. -/
+/-- The mediacy of the relation between cause and effect ([comrie-1989]): in direct causation
+the two are so close that the situation is hard to factor into them, and in indirect causation
+the causer's action is removed from the effect by intermediate stages. The source describes a
+continuum of degree, of which these are the two poles. How much control the causee retains is a
+separate parameter. -/
 inductive Mediation where
   /-- The causer brings about the result itself. -/
   | direct
-  /-- The causer acts through an intermediary causee. -/
+  /-- The causer's action is removed from the result by intermediate stages. -/
   | indirect
   deriving DecidableEq, Repr, Fintype
 
