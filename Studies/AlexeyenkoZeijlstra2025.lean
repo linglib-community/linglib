@@ -2,6 +2,8 @@ module
 
 public import Linglib.Syntax.WordOrder
 public import Linglib.Fragments.Slavic.Russian.Agreement
+public import Linglib.Fragments.German.Adjectives
+public import Linglib.Fragments.Dutch.Adjectives
 public import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.StructureDataset.AlexeyenkoZeijlstra2025
@@ -36,8 +38,8 @@ to both the adjective and the noun leaves no room between them.
 paper analyses, and `intervention_rows` against its examples, whose strings are read off the
 spans of the rows. `licit_rows` checks well-formedness directly on the rows that show their
 attributivizer, among them those with a degree word. The agreement paradigms the analysis
-assigns are checked against the rows that show them, `marker_rows`, with the Russian long and
-short forms those of the Fragment, `russian_form_rows`.
+assigns are checked against the rows that show them, `marker_rows`. The Russian, German and Dutch
+paradigms are those of the Fragments, and `russian_form_rows` checks the long and short forms.
 
 ## Implementation notes
 
@@ -80,9 +82,9 @@ structure Form where
   features : Finset Agreement.Dimension
   deriving DecidableEq
 
-/-- An adjectival target of the Russian fragment as a form, its marker specified for the
-dimensions the target inflects for. -/
-def form {F : Type*} (t : Agreement.Target Russian.Agreement.Value F) : Form :=
+/-- An adjectival target of a fragment as a form, its marker specified for the dimensions the
+target inflects for. -/
+def form {V : Agreement.Dimension → Type*} {F : Type*} (t : Agreement.Target V F) : Form :=
   ⟨t.positions, t.inflection⟩
 
 /-! ### Strings -/
@@ -226,18 +228,19 @@ def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
 
 /-- A language's adjectival forms. Greek and Latin adjectives have one form, inflected for
 gender, number and case in both uses, and Kalaallisut's affixal number and case agreement is
-likewise shared; Russian's are the Fragment's long and short adjectives; Italian's one form
-agrees in gender and number but never case. German and Dutch predicative adjectives are
-bare, the attributive forms carrying gender, number and case or, in Dutch, a schwa sensitive
-to gender, number and definiteness; Icelandic and Serbo-Croatian attributive forms add
+likewise shared; Italian's one form agrees in gender and number but never case. Russian's are
+the long and short adjectives of its Fragment, and German's and Dutch's the attributive and the
+bare predicative adjectives of theirs; Icelandic and Serbo-Croatian attributive forms add
 definiteness to what the predicative forms carry. The rest have one uninflected form. -/
 def forms : Language → Finset Form
   | greek | latin => {⟨{.attributive, .predicate}, φκ⟩}
   | russian => {form Russian.Agreement.longAdjective, form Russian.Agreement.shortAdjective}
   | kalaallisut => {⟨{.attributive, .predicate}, {.number, .case}⟩}
   | italian => {⟨{.attributive, .predicate}, {.number, .gender}⟩}
-  | german => {⟨{.attributive}, φκ⟩, ⟨{.predicate}, ∅⟩}
-  | dutch => {⟨{.attributive}, {.number, .gender, .definiteness}⟩, ⟨{.predicate}, ∅⟩}
+  | german => {form German.Adjectives.strongAdjective, form German.Adjectives.weakAdjective,
+      form German.Adjectives.predicativeAdjective}
+  | dutch => {form Dutch.Adjectives.attributiveAdjective,
+      form Dutch.Adjectives.predicativeAdjective}
   | icelandic | serboCroatian => {⟨{.attributive}, insert .definiteness φκ⟩, ⟨{.predicate}, φκ⟩}
   | english | mandarin | tagalog | farsi | atong | basque | japanese =>
     {⟨{.attributive, .predicate}, ∅⟩}

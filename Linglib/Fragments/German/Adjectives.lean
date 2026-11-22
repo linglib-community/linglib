@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.German.Determiners
+public import Linglib.Syntax.Agreement.Target
 
 /-!
 # German adjective declension
@@ -19,6 +20,10 @@ a third declension.
 
 Adjectives agree with the grammatical gender of their noun, also where it is not the sex of the
 referent: *ein junges Mädchen* 'a young girl'.
+
+The two sets of endings and the bare predicative form are agreement targets, `strongAdjective`,
+`weakAdjective` and `predicativeAdjective`: the attributive ones inflect for gender, number and
+case, and the predicative one for nothing.
 
 ## Main definitions
 
@@ -99,5 +104,54 @@ theorem ein_junges_maedchen :
       Determiners.ein (.sg .fem) .nom = some "eine" ∧
       "jung" ++ ending .einWord (.sg .fem) .nom = "junge" := by
   decide
+
+/-! ### Agreement targets -/
+
+open Agreement Function
+
+/-- The values German adjective agreement distinguishes in each dimension: the numbers, the three
+genders and the four cases, and no person or definiteness. -/
+abbrev Value : Dimension → Type
+  | .number => Number
+  | .gender => Gender.Value
+  | .case => Case
+  | .person | .definiteness => Unit
+
+/-- The gender and number of a cell, gender being distinguished in the singular alone. -/
+def genderNumber (x : Π d, Value d) : GenderNumber :=
+  if x .number = .singular then .sg (x .gender) else .pl
+
+/-- The masculine nominative singular, the cell from which the witnesses of inflection depart. -/
+private def base : Π d, Value d
+  | .number => .singular
+  | .gender => .masc
+  | .case => .nom
+  | .person | .definiteness => ()
+
+/-- The adjective with the strong endings, used attributively, inflects for gender, number and
+case. -/
+def strongAdjective : Target Value String :=
+  .ofDependsOn {.attributive} (fun x ↦ strong (genderNumber x) (x .case)) {.gender, .number, .case}
+    (fun x y h ↦ by
+      simp only [genderNumber, h .gender (by simp), h .number (by simp), h .case (by simp)])
+    (by
+      simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+      exact ⟨⟨base, Gender.Value.fem, by decide⟩, ⟨base, Number.plural, by decide⟩,
+        ⟨base, Case.gen, by decide⟩⟩)
+
+/-- The adjective with the weak endings, used attributively, inflects for gender, number and
+case. -/
+def weakAdjective : Target Value String :=
+  .ofDependsOn {.attributive} (fun x ↦ weak (genderNumber x) (x .case)) {.gender, .number, .case}
+    (fun x y h ↦ by
+      simp only [genderNumber, h .gender (by simp), h .number (by simp), h .case (by simp)])
+    (by
+      simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+      exact ⟨⟨update base .case Case.acc, Gender.Value.fem, by decide⟩,
+        ⟨base, Number.plural, by decide⟩, ⟨base, Case.acc, by decide⟩⟩)
+
+/-- The predicative adjective has no ending and inflects for nothing. -/
+def predicativeAdjective : Target Value String :=
+  .ofDependsOn {.predicate} (fun _ ↦ "") ∅ (fun _ _ _ ↦ rfl) (by simp)
 
 end German.Adjectives
