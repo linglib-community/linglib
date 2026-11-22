@@ -1,10 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Adpositions
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Syntax.Voice.Basic
@@ -45,8 +41,8 @@ valent (`control_selects_valents`, `raising_subject_not_selected`,
 ## Implementation notes
 
 The trees of the units of structure are the book's, unlabeled and with function words as heads.
-The trees of the valency frames are Universal Dependencies trees over fragment words, with
-verbs of the fragment standing in the book's frames. A valent is the relation its dependent
+The trees of the valency frames are Universal Dependencies trees, and the frames are those of
+verbs of the fragment standing in the book's. A valent is the relation its dependent
 bears, a nominal valent being a subject, an object, an indirect object or an oblique
 (`IsValentRel`), where the book's valents are syntactic categories ranked by grammatical
 function; the UD trees make the subject of a participle its dependent, where the book marks it
@@ -77,7 +73,6 @@ namespace Osborne2019
 
 open DependencyGrammar Finset
 open Stemma (node leaf)
-open Morphology (Word)
 
 /-! ### Units of structure -/
 
@@ -180,24 +175,6 @@ example : IsString ({3, 4} : Finset (Fin surprised.size)) ∧
     ({3, 4} : Finset (Fin surprised.size)) ∉ catenae surprised.toGraph := by decide
 example : surprised.toGraph.IsConstituent {0, 1, 2, 3} := by decide
 
-/-! ### Words from the Fragment lexicon -/
-
-abbrev john := English.Nouns.john.toWord
-abbrev mary := English.Nouns.mary.toWord
-abbrev ball := English.Nouns.ball.toWordSg
-abbrev book := English.Nouns.book.toWordSg
-abbrev pizza := English.Nouns.pizza.toWordSg
-abbrev the_ := English.Determiners.the.toWord
-abbrev was_ := English.Auxiliaries.was.toWord
-abbrev by_ := English.Adpositions.by_.toWord
-abbrev sleeps := English.Verbs.sleep.toWord .thirdSg
-abbrev devours := English.Verbs.devour.toWord .thirdSg
-abbrev gives := English.Verbs.give.toWord .thirdSg
-abbrev kickedPass := English.Verbs.kick.passiveParticiple
-abbrev givenPass := English.Verbs.give.passiveParticiple
-abbrev a_ := English.Determiners.a.toWord
-abbrev opened := English.Verbs.open_.toWord .past
-
 /-! ### Valency frames from the fragment -/
 
 /-- The relation a core argument bears to its verb in the trees: S and A are the subject, P and
@@ -226,13 +203,13 @@ instance : DecidablePred IsValentRel := fun _ ↦ inferInstanceAs (Decidable (_ 
 private def citationValency (v : English.Verbs.Verb) : Valency UD.DepRel :=
   .pure ((v.valency.frames.head?.map coreRelations).getD 0)
 
-def intransTree : Graph UD.DepRel 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
+def intransTree : Graph UD.DepRel 2 := .ofArcs 1 [(1, 0, .nsubj)]
 
 def transTree : Graph UD.DepRel 3 :=
-  .ofArcs [john, devours, pizza] 1 [(1, 0, .nsubj), (1, 2, .obj)]
+  .ofArcs 1 [(1, 0, .nsubj), (1, 2, .obj)]
 
 def ditransTree : Graph UD.DepRel 4 :=
-  .ofArcs [john, gives, mary, book] 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
+  .ofArcs 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
 
 example : intransTree.Satisfies IsValentRel 1 (citationValency English.Verbs.sleep) := by decide
 example : transTree.Satisfies IsValentRel 1 (citationValency English.Verbs.devour) := by decide
@@ -240,14 +217,14 @@ example : ditransTree.Satisfies IsValentRel 1 (citationValency English.Verbs.giv
 
 /-- *John sleeps book* adds an object to the intransitive. -/
 def intransWithObj : Graph UD.DepRel 3 :=
-  .ofArcs [john, sleeps, book] 1 [(1, 0, .nsubj), (1, 2, .obj)]
+  .ofArcs 1 [(1, 0, .nsubj), (1, 2, .obj)]
 
 /-- *John devours* removes the object of the transitive. -/
-def transNoObj : Graph UD.DepRel 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
+def transNoObj : Graph UD.DepRel 2 := .ofArcs 1 [(1, 0, .nsubj)]
 
 /-- *John Mary sleeps* adds a second subject to the intransitive. -/
 def intransTwoSubj : Graph UD.DepRel 3 :=
-  .ofArcs [john, mary, sleeps] 2 [(2, 0, .nsubj), (2, 1, .nsubj)]
+  .ofArcs 2 [(2, 0, .nsubj), (2, 1, .nsubj)]
 
 example : ¬ intransWithObj.Satisfies IsValentRel 1 (citationValency English.Verbs.sleep) := by
   decide
@@ -292,10 +269,10 @@ private def passiveValency (v : English.Verbs.Verb) : Valency UD.DepRel :=
 
 /-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
 def passiveTree : Graph UD.DepRel 4 :=
-  .ofArcs [the_, ball, was_, kickedPass] 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux)]
+  .ofArcs 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux)]
 
 def longPassiveTree : Graph UD.DepRel 6 :=
-  .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
+  .ofArcs 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obl), (5, 4, .case)]
 
 example : passiveTree.Satisfies IsValentRel 3 (passiveValency English.Verbs.kick) := by decide
@@ -304,7 +281,7 @@ example : longPassiveTree.Satisfies IsValentRel 3 (passiveValency English.Verbs.
 
 /-- *The ball was kicked the pizza* adds an object to the passive. -/
 def passiveWithObj : Graph UD.DepRel 6 :=
-  .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
+  .ofArcs 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obj), (5, 4, .det)]
 
 example : ¬ passiveWithObj.Satisfies IsValentRel 3 (passiveValency English.Verbs.kick) := by
@@ -312,12 +289,12 @@ example : ¬ passiveWithObj.Satisfies IsValentRel 3 (passiveValency English.Verb
 
 /-- In *Mary was given a book* the passive of a double-object verb keeps its second object. -/
 def ditransPassiveTree : Graph UD.DepRel 5 :=
-  .ofArcs [mary, was_, givenPass, a_, book] 2
+  .ofArcs 2
     [(2, 0, .nsubj), (2, 1, .aux), (2, 4, .obj), (4, 3, .det)]
 
 /-- *Mary was given* removes the second object. -/
 def ditransPassiveNoObj : Graph UD.DepRel 3 :=
-  .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .aux)]
+  .ofArcs 2 [(2, 0, .nsubj), (2, 1, .aux)]
 
 example : ditransPassiveTree.Satisfies IsValentRel 2 (passiveValency English.Verbs.give) := by
   decide
@@ -326,11 +303,11 @@ example : ¬ ditransPassiveNoObj.Satisfies IsValentRel 2 (passiveValency English
 
 /-- *The ball opened* satisfies the valency of the ergative verb's intransitive use. -/
 def ergativeTree : Graph UD.DepRel 3 :=
-  .ofArcs [the_, ball, opened] 2 [(1, 0, .det), (2, 1, .nsubj)]
+  .ofArcs 2 [(1, 0, .det), (2, 1, .nsubj)]
 
 /-- *The ball opened by John* adds the *by*-phrase of a passive to the intransitive use. -/
 def ergativeWithBy : Graph UD.DepRel 5 :=
-  .ofArcs [the_, ball, opened, by_, john] 2
+  .ofArcs 2
     [(1, 0, .det), (2, 1, .nsubj), (2, 4, .obl), (4, 3, .case)]
 
 example : ergativeTree.Satisfies IsValentRel 2 (voiceValency Voice.anticausative) := by decide

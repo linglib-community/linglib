@@ -227,7 +227,6 @@ variable (A) (L : Fin n → Fin n → Prop) [DecidableRel L] (root : Fin n)
 /-- The unlabeled graph of a landmark relation, `L w p` saying that `p` is the landmark of `w`,
 rooted at `root`, with an arc from each word's landmark to the word. -/
 def graphOf : Graph Unit n where
-  words := A.words
   label p w := if L w p then some () else none
   root := root
 
@@ -240,7 +239,7 @@ def RespectsLandmarks : Prop :=
 /-- The landmarks order the analysis when they form a projective tree from the root and every word
 stands on its side of its landmark. -/
 def Orders : Prop :=
-  (A.graphOf L root).IsTree ∧ (A.graphOf L root).IsProjective ∧ A.RespectsLandmarks L
+  (graphOf L root).IsTree ∧ (graphOf L root).IsProjective ∧ A.RespectsLandmarks L
 
 /-- Extraction by landmark, where the head a word is extracted from is its landmark. -/
 def ExtractionBy : Prop := ∀ h w, A.Dep h w .extractee → L w h
@@ -250,7 +249,7 @@ instance : Decidable (A.Orders L root) := inferInstanceAs (Decidable (_ ∧ _))
 instance : Decidable (A.ExtractionBy L) := inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- The graph in which every parent is a landmark, as in the diagrams (52) to (55). -/
-abbrev parentGraph : Graph Unit n := A.graphOf (fun w p ↦ A.Parent p w) A.root
+abbrev parentGraph : Graph Unit n := graphOf (fun w p ↦ A.Parent p w) A.root
 
 /-- The positional head of an extracted word, by the revision's start-rule of extraction, is the
 head it is extracted from. -/
@@ -293,11 +292,11 @@ instance : Decidable A.OrderedByChosenLandmarks := inferInstanceAs (Decidable (�
 
 variable {A L root}
 
-@[simp] theorem graphOf_adj : (A.graphOf L root).Adj p w ↔ L w p := by
+@[simp] theorem graphOf_adj : (graphOf L root).Adj p w ↔ L w p := by
   simp only [Graph.Adj, graphOf]
   split_ifs <;> simp [*]
 
-theorem not_isTree_graphOf (h₁ : L w p) (h₂ : L p w) : ¬ (A.graphOf L root).IsTree := fun hT ↦
+theorem not_isTree_graphOf (h₁ : L w p) (h₂ : L p w) : ¬ (graphOf L root).IsTree := fun hT ↦
   hT.not_dominates_of_adj (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
 
 theorem not_isTree_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :

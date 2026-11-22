@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Linglib.Morphology.Word.Basic
 
 /-!
 # Dependency graphs
@@ -24,9 +23,8 @@ the dominance relation it is stated through.
 
 ## Main definitions
 
-* `Graph L n` is a dependency graph on `n` words: a token at every position,
-  an optional label on every ordered pair of positions (head to
-  dependent), and a root position.
+* `Graph L n` is a dependency graph on `n` positions: an optional label on
+  every ordered pair of positions (head to dependent), and a root position.
 * `Graph.toSimpleGraph` is the undirected view of a graph as mathlib's
   `SimpleGraph`.
 * `Graph.enhance` adds arcs to a graph, as in UD's *enhanced*
@@ -34,6 +32,10 @@ the dominance relation it is stated through.
   a position an argument relation its basic graph lacks.
 
 ## Implementation notes
+
+A graph carries no words: the words of a sentence are a function on its
+positions, held beside the graph by whatever reads them, so that the
+structure and its lemmas do not depend on the lexicon.
 
 Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial
 root, so wire-format conversion shifts indices.
@@ -57,20 +59,15 @@ representation
 
 @[expose] public section
 
-open Morphology (Word)
-
 namespace DependencyGrammar
 
 /-! ### Dependency graphs -/
 
-/-- A dependency graph on `n` words: the sentence's tokens as a labeling of
-the positions `Fin n`, the arcs as a partial labeling of ordered position
-pairs (head → dependent) by labels of `L`, and a distinguished root
-position. -/
+/-- A dependency graph on `n` positions: the arcs as a partial labeling of
+ordered position pairs (head → dependent) by labels of `L`, and a
+distinguished root position. -/
 @[ext]
 structure Graph (L : Type*) (n : ℕ) where
-  /-- The token at each position. -/
-  words : Fin n → Word
   /-- The label of the arc from head `v` to dependent `w`, if there is an arc. -/
   label : Fin n → Fin n → Option L
   /-- The root position. -/
@@ -150,19 +147,14 @@ theorem arcsLabel_isSome_iff {arcs : List (Fin n × Fin n × L)}
   · rintro ⟨r, hmem⟩
     exact ⟨(v, w, r), hmem, rfl, rfl⟩
 
-/-- Build a graph from CoNLL-U-style data: the token list (whose length
-fixes `n`), the root position, and the arcs as
+/-- Build a graph from CoNLL-U-style data: the root position and the arcs as
 (head, dependent, relation) triples. Later arcs for the same pair are
 ignored. -/
-def ofArcs (words : List Word) (root : Fin words.length)
-    (arcs : List (Fin words.length × Fin words.length × L)) :
-    Graph L words.length :=
-  { words := words.get, label := arcsLabel arcs, root }
+def ofArcs {n : ℕ} (root : Fin n) (arcs : List (Fin n × Fin n × L)) : Graph L n :=
+  { label := arcsLabel arcs, root }
 
-@[simp] theorem ofArcs_adj {words : List Word} {root : Fin words.length}
-    {arcs : List (Fin words.length × Fin words.length × L)}
-    {v w : Fin words.length} :
-    (ofArcs words root arcs).Adj v w ↔ ∃ r, (v, w, r) ∈ arcs :=
+@[simp] theorem ofArcs_adj {n : ℕ} {root : Fin n} {arcs : List (Fin n × Fin n × L)}
+    {v w : Fin n} : (ofArcs root arcs).Adj v w ↔ ∃ r, (v, w, r) ∈ arcs :=
   arcsLabel_isSome_iff
 
 /-- Add arcs to a graph (existing labels win), as in UD's *enhanced*

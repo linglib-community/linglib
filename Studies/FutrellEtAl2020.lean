@@ -1,10 +1,5 @@
 module
 
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Adpositions
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Reordering
@@ -54,17 +49,6 @@ dependency lengths of Table 2 are the rows of `Data.UD.DependencyLength.FutrellE
 namespace FutrellEtAl2020
 
 open DependencyGrammar
-open Morphology (Word)
-open English.Nouns English English.Pronouns English.Determiners English.Verbs
-  English.Adpositions
-
--- `this` is a Lean keyword, so the demonstrative needs a qualified alias.
-abbrev this_ := English.Determiners.this.toWord
-abbrev ap : Word := Word.mk' "AP" .PROPN
-
-/-- Schematic token for the paper's abstract tree diagrams (A, B, C, …). -/
-def tok (s : String) : Word := Word.mk' s .X
-
 /-! ### Examples (3)–(4): displacement and nonprojectivity
 
 Displacement produces nonprojective trees: right extraposition in (3),
@@ -75,8 +59,6 @@ degree 1. -/
 /-- Example (3): "I think a woman arrived who you know". -/
 def extraposition : Graph UD.DepRel 8 :=
   .ofArcs
-    [i.toWord, think.toWord .base, a.toWord, woman.toWordSg, arrive.toWord .past,
-     who.toWord, you.toWord, know.toWord .base]
     1
     [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (3, 2, .det),
      (3, 7, .acl), (7, 5, .obj), (7, 6, .nsubj)]
@@ -84,8 +66,6 @@ def extraposition : Graph UD.DepRel 8 :=
 /-- Example (4): "I know what he thinks you did yesterday". -/
 def whMovement : Graph UD.DepRel 8 :=
   .ofArcs
-    [i.toWord, know.toWord .base, what.toWord, he.toWord, think.toWord .thirdSg,
-     you.toWord, do_.toWord .past, Word.mk' "yesterday" .ADV]
     1
     [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (4, 6, .ccomp),
      (6, 5, .nsubj), (6, 2, .obj), (6, 7, .advmod)]
@@ -106,8 +86,7 @@ exact mirror — here literally `Graph.mirror`, so the equal-cost claim is
 
 /-- (7a) A [B] [C D] [E F G]: dependents short-to-long after the head. -/
 def shortBeforeLong : Graph Unit 7 :=
-  .ofArcs [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
-    0 [(0, 1, ()), (0, 2, ()), (2, 3, ()), (0, 4, ()), (4, 5, ()), (4, 6, ())]
+  .ofArcs 0 [(0, 1, ()), (0, 2, ()), (2, 3, ()), (0, 4, ()), (4, 5, ()), (4, 6, ())]
 
 /-- (7b), the same head with its phrases reordered long to short: A [E F G] [C D] [B]. -/
 def longBeforeShort : Graph Unit 7 :=
@@ -128,13 +107,11 @@ theorem long_before_short_head_final :
 
 /-- (9a) chain A → B → C → D linearized consistently: A B C D. -/
 def consistentChain : Graph Unit 4 :=
-  .ofArcs [tok "A", tok "B", tok "C", tok "D"]
-    0 [(0, 1, ()), (1, 2, ()), (2, 3, ())]
+  .ofArcs 0 [(0, 1, ()), (1, 2, ()), (2, 3, ())]
 
 /-- (9b) the same chain linearized with mixed head direction: A C D B. -/
 def mixedChain : Graph Unit 4 :=
-  .ofArcs [tok "A", tok "C", tok "D", tok "B"]
-    0 [(0, 3, ()), (3, 1, ()), (1, 2, ())]
+  .ofArcs 0 [(0, 3, ()), (3, 1, ()), (1, 2, ())]
 
 -- (9)
 theorem consistent_chain_shorter :
@@ -142,13 +119,11 @@ theorem consistent_chain_shorter :
 
 /-- (10a) A B C D: both dependents (B and C–D) after the head A. -/
 def dependentsSameSide : Graph Unit 4 :=
-  .ofArcs [tok "A", tok "B", tok "C", tok "D"]
-    0 [(0, 1, ()), (0, 2, ()), (2, 3, ())]
+  .ofArcs 0 [(0, 1, ()), (0, 2, ()), (2, 3, ())]
 
 /-- (10b) B A C D: the one-word dependent moved before the head. -/
 def dependentsSplit : Graph Unit 4 :=
-  .ofArcs [tok "B", tok "A", tok "C", tok "D"]
-    1 [(1, 0, ()), (1, 2, ()), (2, 3, ())]
+  .ofArcs 1 [(1, 0, ()), (1, 2, ()), (2, 3, ())]
 
 -- (10) [gildea-temperley-2010]
 theorem split_beats_consistency :
@@ -162,19 +137,15 @@ deriving the weight-sensitivity of heavy NP shift (cf. example (6)). -/
 
 /-- (11a) "John threw out the trash", total dependency length 6. -/
 def lightParticleEarly : Graph UD.DepRel 5 :=
-  .ofArcs [john.toWord, throw.toWord .past, out.toWord, the.toWord, trash.toWordSg]
-    1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)]
+  .ofArcs 1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)]
 
 /-- (11b) "John threw the trash out", total dependency length 7. -/
 def lightParticleLate : Graph UD.DepRel 5 :=
-  .ofArcs [john.toWord, throw.toWord .past, the.toWord, trash.toWordSg, out.toWord]
-    1 [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (1, 4, .compound)]
+  .ofArcs 1 [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (1, 4, .compound)]
 
 /-- (11c) "John threw out the trash sitting in the kitchen", total 11. -/
 def heavyParticleEarly : Graph UD.DepRel 9 :=
   .ofArcs
-    [john.toWord, throw.toWord .past, out.toWord, the.toWord, trash.toWordSg,
-     sit.toWord .presentParticiple, in_.toWord, the.toWord, kitchen.toWordSg]
     1
     [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det),
      (4, 5, .acl), (5, 6, .obl), (6, 8, .obl), (8, 7, .det)]
@@ -182,8 +153,6 @@ def heavyParticleEarly : Graph UD.DepRel 9 :=
 /-- (11d) "John threw the trash sitting in the kitchen out", total 16. -/
 def heavyParticleLate : Graph UD.DepRel 9 :=
   .ofArcs
-    [john.toWord, throw.toWord .past, the.toWord, trash.toWordSg,
-     sit.toWord .presentParticiple, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
     1
     [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (3, 4, .acl),
      (4, 5, .obl), (5, 7, .obl), (7, 6, .det), (1, 8, .compound)]
@@ -206,8 +175,7 @@ what the paper's random-baseline methodology asserts. -/
 
 /-- (13a) "this story comes from the AP", the attested order, total 6. -/
 def attestedOrder : Graph UD.DepRel 6 :=
-  .ofArcs [this_, story.toWordSg, come.toWord .thirdSg, from_.toWord, the.toWord, ap]
-    2 [(1, 0, .det), (2, 1, .nsubj), (2, 3, .obl), (3, 5, .obl), (5, 4, .det)]
+  .ofArcs 2 [(1, 0, .det), (2, 1, .nsubj), (2, 3, .obl), (3, 5, .obl), (5, 4, .det)]
 
 /-- The position permutation taking the attested order to the paper's
     first reordering "from AP the this story comes". -/

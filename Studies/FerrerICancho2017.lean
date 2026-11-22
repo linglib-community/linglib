@@ -54,7 +54,7 @@ $(n - 2) (n - 3) / 6$.
 
 namespace FerrerICancho2017
 
-open DependencyGrammar Morphology Finset Equiv Nat
+open DependencyGrammar Finset Equiv Nat
 
 variable {L : Type*} {n : ℕ} {g : Graph L n}
 
@@ -172,10 +172,8 @@ example {g : Graph L 4} (hT : g.IsTree) (h2 : ∀ v, g.toSimpleGraph.degree v �
 preposition heads its object and the auxiliary heads the relative clause. Relations other than
 the subject and object of *loved*, which the caption names, are `dep`. -/
 def fig1 : Tree UD.DepRel 9 :=
-  .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "loved" .VERB, Word.mk' "me" .PRON,
-      Word.mk' "for" .ADP, Word.mk' "the" .DET, Word.mk' "dangers" .NOUN, Word.mk' "I" .PRON,
-      Word.mk' "had" .AUX, Word.mk' "passed" .VERB]
-    1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .dep), (3, 5, .dep), (5, 4, .dep), (5, 7, .dep),
+  .mk' (.ofArcs 1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .dep), (3, 5, .dep), (5, 4, .dep),
+      (5, 7, .dep),
       (7, 6, .dep), (7, 8, .dep)])
 
 -- Fig. 1: the sentence in its own order has no crossing

@@ -31,11 +31,10 @@ namespace DependencyGrammar
 
 variable {L : Type*} {n : ℕ}
 
-/-- `g.map σ` transports `g` along the position permutation `σ`. Arcs, tokens and root move
+/-- `g.map σ` transports `g` along the position permutation `σ`. Arcs and root move
 together, so the labeled structure is unchanged and only the linearization varies. -/
 def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
-  { words := g.words ∘ σ.symm
-    label := fun v w ↦ g.label (σ.symm v) (σ.symm w)
+  { label := fun v w ↦ g.label (σ.symm v) (σ.symm w)
     root := σ g.root }
 
 @[simp] theorem Graph.map_adj (g : Graph L n) (σ : Equiv.Perm (Fin n))
@@ -61,11 +60,5 @@ def Graph.linearize (g : Graph L n) (order : List (Fin n)) (h : order.Perm (List
   g.map ((finCongr (h.length_eq.trans List.length_finRange).symm).trans
     ((h.nodup_iff.mpr (List.nodup_finRange n)).getEquivOfForallMemList order
       fun x ↦ h.mem_iff.mpr (List.mem_finRange x))).symm
-
-theorem Graph.linearize_words (g : Graph L n) (order : List (Fin n))
-    (h : order.Perm (List.finRange n)) (p : Fin n) :
-    (g.linearize order h).words p =
-      g.words (order.get (Fin.cast (h.length_eq.trans List.length_finRange).symm p)) :=
-  rfl
 
 end DependencyGrammar

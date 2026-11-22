@@ -88,20 +88,21 @@ instance (pred valent : Fin n) : Decidable (IsFullValent g pred valent) :=
 
 /-- The constraint is violated when the pronoun `ana`, a full valent of `pred`, is co-valued
 with a conjunct valent `ante` of the same predicate. -/
-def Violates (pred ana ante : Fin n) : Prop :=
-  (g.words ana).cat = .PRON ∧ IsFullValent g pred ana ∧ IsConjunctValent g pred ante
+def Violates (words : Fin n → Word) (pred ana ante : Fin n) : Prop :=
+  (words ana).cat = .PRON ∧ IsFullValent g pred ana ∧ IsConjunctValent g pred ante
 
-instance (pred ana ante : Fin n) : Decidable (Violates g pred ana ante) :=
+instance (words : Fin n → Word) (pred ana ante : Fin n) :
+    Decidable (Violates g words pred ana ante) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-variable {g}
+variable {g} {words : Fin n → Word}
 
-theorem Violates.not_symm {pred ana ante : Fin n} (h : Violates g pred ana ante) :
-    ¬ Violates g pred ante ana :=
+theorem Violates.not_symm {pred ana ante : Fin n} (h : Violates g words pred ana ante) :
+    ¬ Violates g words pred ante ana :=
   fun h' ↦ h'.2.1.2 h.2.2
 
 theorem not_violates_of_no_conjuncts (h : ∀ c, ¬ HasConjuncts g c) (pred ana ante : Fin n) :
-    ¬ Violates g pred ana ante :=
+    ¬ Violates g words pred ana ante :=
   fun ⟨_, _, c, _, hc, _⟩ ↦ h c hc
 
 end Valents
@@ -121,10 +122,10 @@ abbrev Stimulus.tree (s : Stimulus) : Graph UD.DepRel s.stemma.size := s.stemma.
 
 /-- The stimulus violates the constraint. -/
 def Stimulus.Violates (s : Stimulus) : Prop :=
-  OsborneLi2023.Violates s.tree s.tree.root s.ana s.ante
+  OsborneLi2023.Violates s.tree s.stemma.word s.tree.root s.ana s.ante
 
 instance : DecidablePred Stimulus.Violates :=
-  fun s ↦ inferInstanceAs (Decidable (Violates s.tree s.tree.root s.ana s.ante))
+  fun s ↦ inferInstanceAs (Decidable (Violates s.tree s.stemma.word s.tree.root s.ana s.ante))
 
 /-- The stimulus contains a coordinate structure. -/
 def Stimulus.Coordinate (s : Stimulus) : Prop := ∃ c, HasConjuncts s.tree c

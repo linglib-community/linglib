@@ -69,13 +69,10 @@ open Morphology (Word)
 
 /-! ### Dependency locality -/
 
-/-- The unshifted order of example (2), in which the object precedes the prepositional phrase. -/
+/-- The unshifted order of example (2), *Lucy ate the extremely delicious bright green broccoli
+with a fork*, in which the object precedes the prepositional phrase. -/
 def longObjectFirst : Graph UD.DepRel 11 :=
   .ofArcs
-    [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "the" .DET,
-      Word.mk' "extremely" .ADV, Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV,
-      Word.mk' "green" .ADJ, Word.mk' "broccoli" .NOUN, Word.mk' "with" .ADP,
-      Word.mk' "a" .DET, Word.mk' "fork" .NOUN]
     1 [(1, 0, .nsubj), (1, 7, .obj), (7, 2, .det), (4, 3, .advmod), (7, 4, .amod),
       (6, 5, .advmod), (7, 6, .amod), (10, 8, .case), (10, 9, .det), (1, 10, .obl)]
 
@@ -83,17 +80,12 @@ def longObjectFirst : Graph UD.DepRel 11 :=
 object. -/
 def shifted : Graph UD.DepRel 11 :=
   .ofArcs
-    [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "with" .ADP, Word.mk' "a" .DET,
-      Word.mk' "fork" .NOUN, Word.mk' "the" .DET, Word.mk' "extremely" .ADV,
-      Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV, Word.mk' "green" .ADJ,
-      Word.mk' "broccoli" .NOUN]
     1 [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case), (4, 3, .det), (1, 4, .obl)]
 
 theorem longObjectFirst_eq_reorderDependents :
     longObjectFirst = shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩) :=
-  Graph.ext (funext (by decide +kernel : ∀ x, _)) (funext₂ (by decide +kernel : ∀ x y, _))
-    (by decide +kernel)
+  Graph.ext (funext₂ (by decide +kernel : ∀ x y, _)) (by decide +kernel)
 
 /-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
 raises its distance to the object from six to nine, so the total dependency length falls: by
