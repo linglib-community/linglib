@@ -29,9 +29,12 @@ that sense can (`SagEtAl2020.shall_readings`).
 The mother of an aux-initial construct has the category of its head daughter and so is inverted.
 It is therefore not the head daughter of a construct whose head is uninverted, among them the
 topicalized clauses, wh-exclamatives and wh-relatives of [sag-2010]
-(`SagEtAl2020.mtr_ne_hdDtr`). A polar interrogative and an inverted exclamative are aux-initial
-constructs and clauses of their type, and inherit the constraints on both: the mother is an
-independent clause that denotes a question or a fact (`SagEtAl2020.models_clause_iff`).
+(`SagEtAl2020.mtr_ne_hdDtr`), and a nonsubject wh-interrogative that it heads is an independent
+clause (`SagEtAl2020.satisfies_hdDtr_ic`, with the worked construct
+`SagEtAl2020.whConstruct`). A polar interrogative and an inverted exclamative are aux-initial
+constructs and clauses of their type, and inherit the constraints on both: in a worked construct
+the mother is an independent clause that denotes a question or a fact
+(`SagEtAl2020.models_clause_iff`).
 
 ## Implementation notes
 
@@ -50,8 +53,6 @@ auxiliary *do* heads no head-complement construct here.
 
 ## TODO
 
-* An aux-initial clause as the head daughter of the nonsubject wh-interrogative of [sag-2010],
-  whose head is inverted exactly when it is independent. A worked model needs both constructs.
 * The lexical constructions of the paper: negation, contraction, ellipsis and rebuttal.
 
 ## References
@@ -301,10 +302,7 @@ theorem isWellTyped_construct (c : Headed) :
       (construct c.sort (.of a i v) .plus .austinean).IsWellTyped := by
   cases c <;> decide +kernel
 
-/-- A worked subject-predicate clause, polar interrogative or inverted exclamative with a finite
-head, uninverted in the first and inverted in the others as in Figure 11, is a model of the
-grammar exactly when its mother has the semantic type of its clause type and, if it is
-aux-initial, is independent. -/
+-- (40), the inverted exclamative construction and Figure 11
 theorem models_clause_iff (k : Examples.Clause) :
     ∀ ic ∈ [Srt.plus, .minus], ∀ s ∈ [Srt.austinean, .question, .fact, .modifier],
       ((construct k.sort (if k = .subjPred then .of .minus .minus .fin else .of .plus .plus .fin)
@@ -396,5 +394,73 @@ theorem mtr_ne_hdDtr (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt)
       (satisfies_mtr_inv hI hu)).exists_le_of_sortAssign
       ((Interpretation.satisfies_sortAssign_path_cons hs').1 hminus)
   exact (by decide +kernel : ∀ ρ : Srt, ρ ≤ .plus → ¬ ρ ≤ .minus) ρ hplus hminus
+
+/-- A nonsubject wh-interrogative whose head daughter is the mother of an aux-initial construct
+is an independent clause, since its head is inverted exactly when it is independent. -/
+theorem satisfies_hdDtr_ic (hI : I.Models grammar) (hu : I.S u ≤ .auxInitialCxt)
+    (hu' : I.S u' ≤ .nsWhIntCl) {s : U} (hs : I.A .MTR u = some s)
+    (hs' : I.A .HDDTR u' = some s) :
+    I.Satisfies (fun _ ↦ u') u' (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus) := by
+  obtain ⟨v, hv, hv'⟩ :=
+    (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu').and_right
+  have h : I.Satisfies (fun _ ↦ u') u' (.sortAssign (.path [.HDDTR, .CAT, .INV]) .plus) :=
+    (Interpretation.satisfies_sortAssign_path_cons hs').2
+      ((Interpretation.satisfies_sortAssign_path_cons (g' := fun _ ↦ s) hs).1
+        (satisfies_mtr_inv hI hu))
+  obtain ⟨w, hw, hle⟩ := h
+  exact ⟨v, hv', Option.mem_unique hw hv ▸ hle⟩
+
+/-- The entities of a worked wh-interrogative with an aux-initial head: the two constructs, the
+mother, filler daughter and semantic object of the interrogative, the filler's category and
+index, the mother and head daughter of the aux-initial construct with the verbal category that
+they share with the interrogative's mother, the one-gap list, its gap and the empty list, and
+the values of the head features. -/
+inductive WhEnt where
+  | wh | whMtr | fl | flCat | ix | whSem | cxt | mtr | hd | cat | gaps | gp | nil | plus | minus
+  | fin
+  deriving DecidableEq, Fintype, Repr
+
+/-- A nonsubject wh-interrogative such as *Who did Kim see?*, whose head daughter is the mother
+of an aux-initial construct with a finite, inverted `[AUX +]` head and one gap, which the filler
+fills. The shared category has the `IC` value `ic`. -/
+@[reducible] def whConstruct (ic : WhEnt) : Interpretation sig WhEnt where
+  S
+    | .wh => .nsWhIntCl
+    | .cxt => .auxInitialCxt
+    | .whMtr | .fl | .mtr | .hd => .overtExpr
+    | .flCat => .noun
+    | .cat => .verb
+    | .ix => .idx
+    | .whSem => .question
+    | .gaps => .nelist
+    | .gp => .gap
+    | .nil => .elist
+    | .plus => .plus
+    | .minus => .minus
+    | .fin => .fin
+  A
+    | .MTR, .wh => some .whMtr
+    | .HDDTR, .wh | .MTR, .cxt => some .mtr
+    | .FILLERDTR, .wh => some .fl
+    | .HDDTR, .cxt => some .hd
+    | .CAT, .whMtr | .CAT, .mtr | .CAT, .hd => some .cat
+    | .CAT, .fl | .CAT, .gp => some .flCat
+    | .INDEX, .fl | .INDEX, .gp => some .ix
+    | .AUX, .cat | .INV, .cat => some .plus
+    | .IC, .cat => some ic
+    | .VFORM, .cat => some .fin
+    | .GAP, .mtr => some .gaps
+    | .FIRST, .gaps => some .gp
+    | .REST, .gaps | .GAP, .whMtr | .GAP, .fl | .GAP, .gp => some .nil
+    | .SEM, .whMtr => some .whSem
+    | _, _ => none
+  R := noRel
+
+theorem models_whConstruct_iff :
+    ∀ ic ∈ [WhEnt.plus, .minus], ((whConstruct ic).Models grammar ↔ ic = .plus) := by
+  decide +kernel
+
+theorem isWellTyped_whConstruct : ∀ ic ∈ [WhEnt.plus, .minus], (whConstruct ic).IsWellTyped := by
+  decide +kernel
 
 end SagEtAl2020
