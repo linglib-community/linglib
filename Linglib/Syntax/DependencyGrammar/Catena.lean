@@ -13,9 +13,10 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 /-!
 # Catenae
 
-A catena is a word or a combination of words that is connected in the undirected view of a
-dependency graph. Every constituent, the yield of a word, is a catena, and a head with
-one of several dependents is a catena that is not a constituent.
+A *catena* is a set of words that is connected by dependencies, taken in either direction. A
+*constituent* is the yield of a word: the word together with everything it dominates. Every
+constituent is a catena, but not conversely. A head with one of its several dependents is a
+catena and not a constituent.
 
 ## Main definitions
 

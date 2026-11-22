@@ -11,9 +11,9 @@ public import Mathlib.Combinatorics.SimpleGraph.Maps
 /-!
 # Maps between digraphs
 
-This file defines the pullback `G.comap f` of a digraph along a function of vertices, in which
-`a` is adjacent to `b` when `f a` is adjacent to `f b` in `G`, as `SimpleGraph.comap` does for
-simple graphs.
+This file defines the pullback of a digraph along a function between vertex types. For a digraph
+`G` on `W` and a function `f : V → W`, the digraph `G.comap f` on `V` has an arc from `a` to `b`
+when `G` has an arc from `f a` to `f b`. It is the analogue of `SimpleGraph.comap`.
 
 ## Implementation notes
 

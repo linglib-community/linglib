@@ -11,11 +11,12 @@ public import Linglib.Syntax.WordOrder
 /-!
 # Head direction of a dependency structure
 
-A dependency structure has head direction `d` when every dependent lies in direction `d` of its
-head: after it if `d` is head-initial, before it if `d` is head-final. The mirror image of a
-structure has the opposite head direction, and a structure with a head direction keeps it when
-arcs are removed, so the arcs bearing one relation of a labelled graph may have a head direction
-that the whole graph lacks.
+A dependency is *head-initial* if the head precedes its dependent and *head-final* if the head
+follows it. A dependency structure `G` has head direction `d`, written `G.HasDirection d`, if
+every one of its dependencies has direction `d`.
+
+The mirror image of a structure with a head direction has the opposite head direction, and a
+structure with a head direction keeps it when arcs are removed.
 
 ## Main definitions
 

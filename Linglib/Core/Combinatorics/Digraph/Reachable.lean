@@ -12,8 +12,9 @@ public import Mathlib.Data.Fintype.Basic
 /-!
 # Reachability in a digraph
 
-A vertex `w` is reachable from `v` when a possibly empty chain of arcs leads from `v` to `w`. This
-file defines reachability and the set of vertices reachable from a vertex.
+A vertex `w` is *reachable* from a vertex `v` if a chain of arcs leads from `v` to `w`. The chain
+may be empty, so every vertex is reachable from itself. This file defines reachability and the
+*reach set* of a vertex, the set of vertices reachable from it.
 
 ## Main definitions
 

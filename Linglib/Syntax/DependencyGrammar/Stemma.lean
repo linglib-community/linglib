@@ -11,12 +11,14 @@ public import Linglib.Morphology.Word.Basic
 /-!
 # Stemmas
 
-A stemma is a dependency tree as it is drawn: a head with its dependents to its left and to its
-right, each dependent attached by a relation and heading a stemma of its own. Reading a stemma
-from left to right spells out its sentence, and numbering the words of that sentence turns the
-stemma into a dependency graph on positions, in which each word's head is the head it hangs from.
-That graph is an arborescence rooted at the stemma's head (`Stemma.isArborescence_toGraph`) and
-projective (`Stemma.isProjective_toGraph`): a stemma never draws crossing arcs.
+A *stemma* is a dependency tree as it is drawn: a head word with its dependents to its left and
+to its right, each attached by a relation and each the head of a stemma of its own. Reading a
+stemma from left to right gives its sentence.
+
+This file defines stemmas and the dependency graph of a stemma on the positions of its sentence,
+in which the head of each word is the word it hangs from. That graph is a tree rooted at the
+position of the stemma's head (`Stemma.isArborescence_toGraph`), and it is projective
+(`Stemma.isProjective_toGraph`).
 
 ## Main definitions
 

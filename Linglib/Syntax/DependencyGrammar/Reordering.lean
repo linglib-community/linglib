@@ -18,15 +18,18 @@ we define `G.reorderDependents v σ`, the digraph in which the yields of the dep
 moved, each as a block, into the order that `σ` gives them. Every position outside the yield of
 `v` keeps its place.
 
-On a projective forest the blocks stand in the order of the dependents
-(`Digraph.monotoneOn_blockHead`), and a reordering that keeps each dependent on its side of the
-head changes the total dependency length by the change in the boundary distances of the head
-(`Digraph.totalLength_reorderDependents_add`), the first step of the proof in
-[gildea-temperley-2007] that their linearization has least dependency length. In particular,
-exchanging two neighbouring dependents after the head changes the length by the difference of the
-sizes of their yields (`Digraph.totalLength_reorderDependents_swap_add`), and when the yields after
-a head grow outward, every reordering of them that does not is strictly longer
-(`Digraph.totalLength_lt_reorderDependents_iff`).
+On a projective forest, the blocks stand in the order of the dependents
+(`Digraph.monotoneOn_blockHead`). We prove three facts about the total dependency length of a
+reordering of a projective forest.
+
+* A reordering that keeps each dependent on its side of the head changes the length by the change
+  in the boundary distances of the head (`Digraph.totalLength_reorderDependents_add`). This is the
+  first step of the proof in [gildea-temperley-2007] that their linearization has least
+  dependency length.
+* Exchanging two neighbouring dependents after the head changes the length by the difference of
+  the sizes of their yields (`Digraph.totalLength_reorderDependents_swap_add`).
+* When the yields after a head grow outward, a reordering of them is strictly longer exactly when
+  they do not grow outward in it (`Digraph.totalLength_lt_reorderDependents_iff`).
 
 ## Implementation notes
 

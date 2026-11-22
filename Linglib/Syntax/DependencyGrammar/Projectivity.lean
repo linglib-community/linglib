@@ -17,30 +17,39 @@ public import Mathlib.Tactic.Order
 /-!
 # Projectivity and its relaxations
 
-A dependency structure is a digraph on linearly ordered vertices, the words of a sentence in
-their order. It is projective if the vertices reachable from each vertex, its yield, form an
-interval. The constraint is weakened in three directions:
-planarity forbids two arcs with alternating ends, well-nestedness forbids two reach sets that
-interleave unless one of their vertices reaches the other, and the gap degree counts the
-interruptions of a reach set. On a branching, projective digraphs are planar and planar digraphs
-are well-nested.
+In this file `G` is a digraph on linearly ordered vertices, the dependency structure of a
+sentence with its words in order. The *yield* of a vertex `v` is the set `G.reachSet v` of
+vertices reachable from `v`: the words of the phrase that `v` heads.
+
+`G` is *projective* if every yield is an interval, so that every phrase is an unbroken stretch of
+the sentence. Three weaker constraints are in use.
+
+* `G` is *planar* if no two arcs cross. An arc between `a` and `b` crosses an arc between `c` and
+  `d` when their ends alternate, `a < c < b < d`.
+* `G` is *well-nested* if two yields interleave only when one of their two vertices dominates the
+  other. Two yields interleave when two vertices of one alternate with two vertices of the other.
+* The *gap degree* of `G` is the greatest number of gaps in a yield. A gap of a yield is a maximal
+  run of vertices outside it that lie between two of its vertices.
+
+A digraph is projective exactly when its gap degree is zero. On a forest, every projective
+digraph is planar and every planar digraph is well-nested.
 
 ## Main definitions
 
-* `Digraph.IsProjective`: every reach set is order-connected. `Digraph.IsArcProjective` is its
-  arc form.
-* `Digraph.gapDegree`: the greatest number of interruptions of a reach set.
-* `Digraph.IsPlanar`: no two arcs alternate. `Digraph.crossings` counts the pairs that do.
-* `Digraph.Interleave`, `Digraph.IsWellNested`.
+* `Digraph.IsProjective`: every yield is order-connected. `Digraph.IsArcProjective` is the same
+  condition stated arc by arc.
+* `Digraph.gapDegree`: the greatest number of gaps in a yield.
+* `Digraph.IsPlanar`: no two arcs cross. `Digraph.crossings` counts the pairs that do.
+* `Digraph.Interleave`, `Digraph.IsWellNested`: interleaving yields, and the constraint on them.
 
 ## Main statements
 
 * `Digraph.isProjective_iff_gapDegree_eq_zero`, `Digraph.isPlanar_iff_crossings_eq_zero`: each
   constraint is the least value of a count.
-* `Digraph.IsProjective.isPlanar`, `Digraph.IsPlanar.isWellNested`: the inclusions on branchings.
-* `Digraph.IsPlanar.root_mem_Ioo`: in a planar arborescence, the root lies strictly inside every
-  interruption of a reach set.
-* `Digraph.IsPlanar.isProjective_of_isBot`: a planar arborescence whose root is least is
+* `Digraph.IsProjective.isPlanar`, `Digraph.IsPlanar.isWellNested`: on a forest, projective
+  digraphs are planar and planar digraphs are well-nested.
+* `Digraph.IsPlanar.root_mem_Ioo`: in a planar tree, the root lies inside every gap.
+* `Digraph.IsPlanar.isProjective_of_isBot`: a planar tree whose root is the first word is
   projective.
 * `Digraph.isProjective_comap_orderIso`, `Digraph.isProjective_comap_ofDual`: projectivity is
   invariant under order isomorphisms and under reversal of the order, and so is planarity. The

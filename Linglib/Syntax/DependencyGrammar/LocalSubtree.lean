@@ -12,12 +12,12 @@ public import Mathlib.Data.Finset.Sort
 /-!
 # Local subtrees
 
-The local subtree of a head is the head together with its dependents. Its members stand in the
-order of their positions. This file defines the local subtree, `Digraph.localSubtree`, and the
-rank of each member in it, `Digraph.localRank`, the number of members before it. The rank is an
-order isomorphism onto an initial segment of the positions (`Digraph.localOrderIso`), and as an
-arrangement (`Digraph.localArrangement`) it is the order in which the head and the phrases of its
-dependents follow one another.
+The *local subtree* of a position `v` is `v` together with its dependents. This file defines the
+local subtree `G.localSubtree v` and the rank `G.localRank v c` of a member `c`, the number of
+members that precede `c` in the sentence. The rank is an order isomorphism from the local subtree
+onto `Fin k`, where `k` is the size of the local subtree (`Digraph.localOrderIso`). Read as an
+arrangement (`Digraph.localArrangement`), it is the order in which a head and its dependents
+appear.
 
 ## Implementation notes
 

@@ -12,11 +12,13 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 /-!
 # Branchings and arborescences
 
-A digraph is a branching when no vertex is reachable from one of its out-neighbours and no vertex
-has two in-neighbours, and an arborescence with root `r` when in addition every vertex is
-reachable from `r`. In a branching, reachability is a partial order in which the vertices reaching
-a given vertex form a chain, so two vertices neither of which reaches the other have disjoint
-reach sets.
+A digraph is a *branching* if it has no directed cycle and every vertex has at most one
+in-neighbour. A branching is a forest of rooted trees, with the arcs pointing away from the roots.
+A digraph is an *arborescence* with root `r` if it is a branching in which every vertex is
+reachable from `r`, that is, a single rooted tree.
+
+In a branching, the vertices that reach a given vertex form a chain under reachability. Two
+vertices neither of which reaches the other therefore have disjoint reach sets.
 
 ## Main definitions
 

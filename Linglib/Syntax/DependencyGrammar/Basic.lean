@@ -12,13 +12,18 @@ public import Mathlib.Order.Fin.Basic
 /-!
 # Dependency graphs
 
-The dependency structure of a sentence is a digraph on its positions `Fin n`, with an arc from
-each head to each of its dependents: mathlib's `Digraph (Fin n)`, on which the order of the
-positions is the order of the words. A dependency graph `Graph L V` is such a digraph whose arcs
-carry relations of a type `L`, such as the Universal Dependencies relations `UD.DepRel`.
+In dependency grammar the structure of a sentence is a set of *dependencies* between its words.
+A dependency links a *head* to one of its *dependents*: in *dogs bark loudly*, the verb *bark* is
+the head of *dogs* and of *loudly*.
 
-This file gives the constructors of both from lists of arcs, the labelled graphs, and the
-transport of a structure to another order of its words.
+We represent such a structure as a digraph on the positions of the sentence, mathlib's
+`Digraph (Fin n)`, with an arc from each head to each of its dependents. The order of the
+positions is the order of the words. A *dependency graph* `Graph L V` is a digraph in which each
+arc also carries a relation of type `L`, such as the Universal Dependencies relations
+`UD.DepRel`.
+
+This file defines dependency graphs, builds digraphs and dependency graphs from lists of arcs,
+and defines a structure read in another order of its words.
 
 ## Main definitions
 
