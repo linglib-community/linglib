@@ -1,9 +1,13 @@
 module
 
 public import Linglib.Fragments.Mandarin.Nouns
+public import Linglib.Fragments.Romance.French.Nouns
+public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Fragments.Romance.Italian.Nouns
 public import Linglib.Fragments.Shona.Nouns
 public import Linglib.Fragments.Swahili.Nouns
 public import Linglib.Fragments.Xhosa.Nouns
+public import Studies.Corbett1991
 public import Studies.Downing1996
 public import Mathlib.Data.Finset.Image
 
@@ -14,7 +18,8 @@ The book sorts noun categorization devices into kinds by the morphosyntactic loc
 morphemes and the constituent they characterize, `Classifier.Device.ofScope`, and then gives the
 properties in which the kinds differ. This file states the properties its concluding chapter
 tabulates as functions of the kind and checks them on the systems the fragments hold, the
-numeral classifiers of Mandarin and Japanese and the noun classes of Swahili, Xhosa and Shona.
+numeral classifiers of Mandarin and Japanese, the noun classes of Swahili, Xhosa and Shona and
+the genders of French and Italian.
 
 * Assignment. A noun class may be assigned only partly on semantic grounds, though every noun
   class system has a semantic core of sex, humanness or animacy, and every noun belongs to a
@@ -48,6 +53,7 @@ are not formalized.
 ## References
 
 * [aikhenvald-2000]
+* [corbett-1991]
 * [downing-1996]
 -/
 
@@ -133,8 +139,6 @@ def Typical : Device → Parameter → Prop
 instance : ∀ d p, Decidable (Typical d p) := fun d p ↦ by
   cases d <;> unfold Typical <;> infer_instance
 
-/-- Animacy is typical of noun classes and numeral classifiers, and colour is typical of no
-kind of device. -/
 theorem typical_animacy_not_colour {d : Device}
     (hd : d = .nounClass ∨ d = .numeralClassifier) :
     Typical d .animacy ∧ ∀ d' : Device, ¬ Typical d' .colour := by
@@ -147,18 +151,49 @@ theorem admitsFree_of_agreement {d : Device} {a : AgreementRole} (h : agreement 
 /-! ### The systems of the fragments -/
 
 /-- The classifiers of Mandarin and Japanese are realizations numeral classifiers admit, free
-lexemes in Mandarin; the class prefixes of Swahili are realizations noun classes admit, and none
-is free. -/
+lexemes in Mandarin; the class prefixes of Swahili, Xhosa and Shona and the feminine suffix of
+French are realizations noun classes admit, and none is free. -/
 theorem realization_admitted :
     (∀ c ∈ Mandarin.Classifiers.classifiers,
       Admits .numeralClassifier c.realization ∧ c.kind = .free) ∧
     (∀ c ∈ Japanese.Classifiers.classifiers, Admits .numeralClassifier c.realization) ∧
-    ∀ cl m, Swahili.subjPrefix cl = some m →
-      Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free := by
+    (∀ cl m, Swahili.subjPrefix cl = some m →
+      Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free) ∧
+    (∀ cl m, Xhosa.subjPrefix cl = some m → Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free) ∧
+    (∀ cl m, Shona.subjPrefix cl = some m → Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free) ∧
+    Admits .nounClass (.morph French.Gender.feminineSuffix.kind) ∧
+      French.Gender.feminineSuffix.kind ≠ .free := by
+  decide
+
+theorem romance_agreement :
+    Function.Injective French.Gender.indefiniteArticle ∧
+      ∀ r, Function.Injective fun g ↦ Italian.Determiners.questo (r, g) := by
+  decide
+
+/-- The gender of sexed referents: the masculine for males and the feminine for females. -/
+def frenchSex : ReferentGender → French.Gender.Value
+  | .male => .masculine
+  | .female => .feminine
+
+/-- The gender of sexed referents: the masculine for males and the feminine for females. -/
+def italianSex : ReferentGender → Italian.Gender.Value
+  | .male => .masculine
+  | .female => .feminine
+
+/-- Every French or Italian noun of the fragments that fixes the sex of its referents has the
+gender of that sex, the semantic core of the two systems, and nouns that fix none are found in
+both genders. -/
+theorem romance_semantic_core :
+    (∀ n ∈ French.Nouns.nouns, n.referentGender.isSome → n.toGenderedNoun.IsNatural frenchSex) ∧
+    (∀ g, ∃ n ∈ French.Nouns.nouns, n.referentGender = none ∧ n.gender = g) ∧
+    (∀ n ∈ Italian.Nouns.nouns, n.referentGender.isSome →
+      n.toGenderedNoun.IsNatural italianSex) ∧
+    ∀ g, ∃ n ∈ Italian.Nouns.nouns, n.referentGender = none ∧ n.gender = g := by
   decide
 
 theorem semantic_core :
-    (∀ n ∈ Swahili.allNouns, n.gender = .genderA → n.animacy ≠ .inanimate) ∧
+    (∀ n ∈ Swahili.allNouns, n.gender = .genderA →
+      (Corbett1991.Swahili.system.semantic (Corbett1991.Swahili.sem n)).isSome) ∧
       ∀ n ∈ Shona.Nouns.all, n.gender = .genderA → n.animacy ≠ .inanimate := by
   decide
 
