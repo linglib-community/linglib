@@ -45,9 +45,9 @@ paradigms are those of the Fragments, and `russian_form_rows` checks the long an
 An affixal attributivizer is required to be adjacent to the noun, and a clitic is not: the
 Atong attributive clitic follows the adjective phrase on the side away from the noun.
 
-A language records only whether its attributivizer is an affix. That of Dutch is overt, and null with indefinite
-neuter singular nouns: the two agree on whether an XP may intervene, and differ only before a
-degree word, where `licit_rows` reads the attributivizer from the row.
+A language records only whether its attributivizer is an affix. That of Dutch is overt, and null
+with indefinite neuter singular nouns: the two agree on whether an XP may intervene, and differ
+only before a degree word, where `licit_rows` reads the attributivizer from the row.
 
 ## TODO
 
