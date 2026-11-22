@@ -158,13 +158,13 @@ end Derivation
 /-! ### Triggered Merge -/
 
 /-- The state of the trace of an object: its head with nothing left to select. -/
-def SelectionState.saturate : SelectionState → SelectionState
+def SelectionState.saturate : SelectionState (List Cat) → SelectionState (List Cat)
   | ⟨some (a, _)⟩ => .of a []
   | ⟨none⟩ => 0
 
 /-- Triggered Merge as a licensing: an item with its selectors, a trace the saturated head of the
 object moved. -/
-def SelectionState.licensing : Licensing SelectionState :=
+def SelectionState.licensing : Licensing (SelectionState (List Cat)) :=
   ⟨fun tok ↦ .of tok tok.item.sel, fun _ ↦ .saturate⟩
 
 end Minimalist

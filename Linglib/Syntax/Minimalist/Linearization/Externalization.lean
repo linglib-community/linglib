@@ -30,7 +30,7 @@ externalization section σ_L, which must extend it noncanonically off that domai
   and `MulZeroClass` under the Merge-local product.
 * `Minimalist.LinearizationState.sel`: the projection morphism to `SelectionState`.
 * `Minimalist.SyntacticObject.headHom`: the head function as a morphism of magmas
-  `SyntacticObject →ₙ* LinearizationState side`, refining `selCheckHom`.
+  `SyntacticObject →ₙ* LinearizationState side`, refining `selCheck`.
 * `Minimalist.SyntacticObject.linearize?`: the harmonic linearization.
 
 ## Main results
@@ -120,7 +120,7 @@ instance : CommMagma (LinearizationState side ι) where
       rcases selCombine ⟨some s₂⟩ ⟨some s₁⟩ with _ | ⟨_ | _, _, _⟩ <;> rfl
 
 /-- The projection to the selection state: forgetting the order description. -/
-def sel : LinearizationState side ι →ₙ* SelectionState where
+def sel : LinearizationState side ι →ₙ* SelectionState (List Cat) where
   toFun x := ⟨x.toOption.map (·.1)⟩
   map_mul' x y := by
     match x, y with
@@ -283,41 +283,29 @@ def headHom : SyntacticObject →ₙ* LinearizationState side :=
   FreeCommMagma.lift
     (Leaf.elim (fun tok ↦ .of tok tok.item.sel (.leaf tok)) (traceLinearizationState side))
 
-/-- The head function's value on a syntactic object, the extension of the states of the lexical
-    leaves and the silent, saturated traces. -/
-def linearizationState (s : SyntacticObject) : LinearizationState side := headHom side s
+@[simp] theorem headHom_leaf (tok : LexicalItem.Token) :
+    headHom side (SyntacticObject.leaf tok) = .of tok tok.item.sel (.leaf tok) := rfl
 
-@[simp] theorem linearizationState_leaf (tok : LexicalItem.Token) :
-    (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.sel (.leaf tok) := rfl
+@[simp] theorem headHom_trace :
+    headHom side (trace : SyntacticObject) = .of .bareTrace [] .trace := rfl
 
-@[simp] theorem linearizationState_trace :
-    trace.linearizationState side = .of .bareTrace [] .trace := rfl
-
-@[simp] theorem linearizationState_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).linearizationState side = .of tok [] (.traceOf tok) := rfl
-
-@[simp] theorem linearizationState_node (l r : SyntacticObject) :
-    (merge l r).linearizationState side =
-      l.linearizationState side * r.linearizationState side :=
-  map_mul (headHom side) l r
-
-@[simp] theorem headHom_apply (s : SyntacticObject) :
-    headHom side s = s.linearizationState side := rfl
+@[simp] theorem headHom_traceOf (tok : LexicalItem.Token) :
+    headHom side (traceOf tok) = .of tok [] (.traceOf tok) := rfl
 
 /-- Fusion: the selection component of the head function's value is the selection
     check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
-    LinearizationState.sel.comp (headHom side) = selCheckHom :=
+    LinearizationState.sel.comp (headHom side) = selCheck :=
   FreeCommMagma.hom_ext fun x ↦ by cases x <;> rfl
 
-@[simp] theorem sel_linearizationState (s : SyntacticObject) :
-    LinearizationState.sel (s.linearizationState side) = s.selCheck :=
+@[simp] theorem sel_headHom (s : SyntacticObject) :
+    LinearizationState.sel (headHom side s) = selCheck s :=
   DFunLike.congr_fun (sel_comp_headHom side) s
 
 /-- The harmonic linearization, the projecting daughter on the head side at every node
     ([marcolli-chomsky-berwick-2025] Lemma 1.13.5); `none` off `Dom(h)`. -/
 def linearize? (s : SyntacticObject) : Option PlanarSyntacticObject :=
-  (s.linearizationState side).linearized?
+  (headHom side s).linearized?
 
 variable {side}
 

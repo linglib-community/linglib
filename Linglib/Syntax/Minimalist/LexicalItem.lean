@@ -42,7 +42,7 @@ structure LexicalItem where
   /-- The category. -/
   cat : Cat
   /-- The selectional stack, consumed left to right. -/
-  sel : SelStack
+  sel : List Cat
   /-- The phonological form, empty for a silent item. -/
   phonForm : String
   /-- The feature bundle the item has in the lexicon. -/
@@ -51,7 +51,7 @@ structure LexicalItem where
 
 /-- The lexical item of a category and selectional stack, silent and without features unless the
 optional arguments say otherwise. -/
-def LexicalItem.of (cat : Cat) (sel : SelStack) (phonForm : String := "")
+def LexicalItem.of (cat : Cat) (sel : List Cat) (phonForm : String := "")
     (features : FeatureBundle := ⊥) : LexicalItem :=
   ⟨cat, sel, phonForm, features⟩
 

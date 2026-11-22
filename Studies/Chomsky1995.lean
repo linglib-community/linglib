@@ -298,7 +298,7 @@ def positionCat : ArgumentFrame.Position → Option Cat
 
 /-- The selectional stack of a verb's citation frame lists its complements and then its external
 argument, the specifier of the verb in (11). -/
-def selStack (v : English.Verbs.Verb) : SelStack :=
+def selStack (v : English.Verbs.Verb) : List Cat :=
   (v.valency.frames.head?.map fun fr ↦
     (fr.complements ++ fr.external.toList).filterMap positionCat).getD []
 
