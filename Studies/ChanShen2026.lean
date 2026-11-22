@@ -66,7 +66,7 @@ open Minimalist RoseTree
 /-! ### The lexicon -/
 
 /-- A token of the schematic questions. -/
-def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "")
+def tok (id : ℕ) (cat : Cat) (sel : List Cat := []) (phon : String := "")
     (features : FeatureBundle := ⊥) : LexicalItem.Token :=
   ⟨LexicalItem.of cat sel phon features, id⟩
 

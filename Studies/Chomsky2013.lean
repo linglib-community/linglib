@@ -50,7 +50,7 @@ open Minimalist Minimalist.PlanarSyntacticObject
 
 /-- A token of the examples. -/
 def tok (id : ℕ) (cat : Cat) (phon : String := "") (features : FeatureBundle := ⊥)
-    (sel : SelStack := []) : LexicalItem.Token :=
+    (sel : List Cat := []) : LexicalItem.Token :=
   ⟨LexicalItem.of cat sel phon features, id⟩
 
 /-- A nominal: a determiner over a nominalizer and a root. -/

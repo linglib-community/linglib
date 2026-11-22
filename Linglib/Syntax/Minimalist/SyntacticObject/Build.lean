@@ -188,7 +188,7 @@ namespace SyntacticObject
 /-! ### Lexical leaves from features -/
 
 /-- A lexical leaf with a phonological form. -/
-def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SyntacticObject :=
+def mkLeafPhon (cat : Cat) (sel : List Cat) (phon : String) (id : Nat) : SyntacticObject :=
   SyntacticObject.leaf ⟨.of cat sel (phonForm := phon), id⟩
 
 /-! ### Accessors -/
