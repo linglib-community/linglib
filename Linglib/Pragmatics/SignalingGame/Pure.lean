@@ -52,7 +52,7 @@ variable [MeasurableSpace S] (G : SignalingGame S M A)
 `true`. -/
 def utilityAt (s : S) : Bool → (∀ b, Strategies S M A b) → ℝ
   | false, a => G.senderUtility s (a false s) (a true (a false s))
-  | true, a => G.receiverUtility s (a true (a false s))
+  | true, a => G.receiverUtility s (a false s) (a true (a false s))
 
 /-- The sender's value of a pure profile. -/
 noncomputable def pureSenderValue (f : S → M) (g : M → A) : ℝ :=
@@ -60,7 +60,7 @@ noncomputable def pureSenderValue (f : S → M) (g : M → A) : ℝ :=
 
 /-- The receiver's value of a pure profile. -/
 noncomputable def pureReceiverValue (f : S → M) (g : M → A) : ℝ :=
-  ∫ s, G.receiverUtility s (g (f s)) ∂G.prior
+  ∫ s, G.receiverUtility s (f s) (g (f s)) ∂G.prior
 
 variable [MeasurableSpace M] [MeasurableSpace A] [Countable S] [MeasurableSingletonClass S]
   [Countable M] [MeasurableSingletonClass M] [MeasurableSingletonClass A]
@@ -75,7 +75,6 @@ theorem senderValue_deterministic (f : S → M) (g : M → A) :
 theorem receiverValue_deterministic (f : S → M) (g : M → A) :
     G.receiverValue (.deterministic f .of_discrete) (.deterministic g .of_discrete) =
       G.pureReceiverValue f g := by
-  simp only [receiverValue, pureReceiverValue, Kernel.comp_deterministic_eq_comap,
-    Kernel.comap_apply, Kernel.deterministic_apply, integral_dirac]
+  simp only [receiverValue, pureReceiverValue, Kernel.deterministic_apply, integral_dirac]
 
 end SignalingGame

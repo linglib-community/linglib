@@ -7,8 +7,8 @@ public import Linglib.Pragmatics.SignalingGame.Defs
 # Best responses in a signaling game
 
 The receiver's best responses to a sender are the best responses of the agent who believes the
-posterior of the prior given the signal, and the sender's best responses to a receiver those of
-the agent who knows the state and values a signal at the expected utility of the action it
+posterior of the prior given the signal he sees, and the sender's best responses to a receiver
+those of the agent who knows the state and values a signal at the expected utility of the action it
 brings. In the guessing game the receiver's best responses are the most probable states of the
 posterior (`SignalingGame.mem_receiverBestResponses_guess_iff`).
 
@@ -40,8 +40,9 @@ noncomputable def receiverBestResponses [StandardBorelSpace S] [Nonempty S]
 
 section Guess
 
-variable [StandardBorelSpace S] [Nonempty S] [MeasurableSingletonClass S] (pr : Measure S)
-  [IsFiniteMeasure pr] (σ : Kernel S M) [IsFiniteKernel σ] {m : M} {s : S}
+variable [StandardBorelSpace S] [Nonempty S] [Countable S] [MeasurableSingletonClass S]
+  [Countable M] [MeasurableSingletonClass M] (pr : Measure S) [IsFiniteMeasure pr]
+  (σ : Kernel S M) [IsFiniteKernel σ] {m : M} {s : S}
 
 /-- In the guessing game the receiver values a guess at its posterior probability. -/
 theorem guess_receiver_value (m : M) (s : S) :
@@ -52,6 +53,7 @@ theorem guess_receiver_value (m : M) (s : S) :
     · simp [h]
     · simp only [Set.indicator, Set.mem_singleton_iff, h, ite_false, ite_eq_right_iff]
       exact fun h' ↦ absurd h'.symm h
+  rw [receiver_value]
   change ∫ t, ({t} : Set S).indicator (1 : S → ℝ) s ∂(σ†pr) m = _
   rw [h, integral_indicator_one (.singleton s)]
 

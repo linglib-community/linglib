@@ -19,12 +19,14 @@ the payoff is greatest (`SignalingGame.isCoordinationEquilibrium_const_of_forall
 
 ## Implementation notes
 
-There is no structure for a game: the predicates take the family of payoffs, for any number of
+There is no structure for a game: the predicates take the family of payoffs, where
+[osborne-rubinstein-1994] take a preference relation for each player, for any number of
 agents, since the audience of a signal may have several members. The strict equilibria are the
 proper equilibria of [lewis-1969], who also introduces coordination equilibria.
 
 ## References
 
+* [osborne-rubinstein-1994]
 * [nash-1951]
 * [lewis-1969]
 -/

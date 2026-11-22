@@ -93,8 +93,11 @@ theorem guess_receiverValue [IsFiniteMeasure pr] (σ : Kernel S M)
   rw [success_eq_lintegral, receiverValue, ← integral_toReal Measurable.of_discrete.aemeasurable
     (.of_forall fun s ↦ measure_lt_top _ _)]
   refine integral_congr_ae (.of_forall fun s ↦ ?_)
-  change ∫ a, ({s} : Set S).indicator (1 : S → ℝ) a ∂(η ∘ₖ σ) s = ((η ∘ₖ σ) s {s}).toReal
-  rw [← measureReal_def, integral_indicator_one (.singleton s)]
+  change ∫ m, ∫ a, ({s} : Set S).indicator (1 : S → ℝ) a ∂η m ∂σ s = ((η ∘ₖ σ) s {s}).toReal
+  simp_rw [integral_indicator_one (MeasurableSet.singleton s)]
+  rw [Kernel.comp_apply' _ _ _ (.singleton s)]
+  exact integral_toReal (η.measurable_coe (.singleton s)).aemeasurable
+    (.of_forall fun m ↦ measure_lt_top _ _)
 
 /-- Relabelling the states by a permutation `e` that preserves the prior, and the signals by any
 permutation `π`, leaves the expected success of every sender with every receiver unchanged. -/
