@@ -60,7 +60,7 @@ open Minimalist Minimalist.PlanarSyntacticObject
 /-! ### The lexicon -/
 
 /-- `tok` builds a token from a category, its selection, its form and its feature bundle. -/
-def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "")
+def tok (id : ℕ) (cat : Cat) (sel : List Cat := []) (phon : String := "")
     (features : FeatureBundle := ⊥) : LexicalItem.Token :=
   ⟨LexicalItem.of cat sel phon features, id⟩
 

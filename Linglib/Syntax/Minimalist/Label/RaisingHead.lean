@@ -66,7 +66,7 @@ heads, which satisfies selection as that phrase and is otherwise invisible to th
 algorithm. -/
 inductive CopyState where
   /-- The selection state of a constituent the raising head sees. -/
-  | sel (x : SelectionState SelStack)
+  | sel (x : SelectionState (List Cat))
   /-- A lower copy of the phrase `tok` heads. -/
   | copy (tok : LexicalItem.Token)
   deriving DecidableEq
@@ -84,12 +84,12 @@ instance : Mul CopyState where
     | sel x, copy a => if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a [])
     | copy _, copy _ => 0
 
-@[simp] theorem sel_mul_sel (x y : SelectionState SelStack) : sel x * sel y = sel (x * y) := rfl
+@[simp] theorem sel_mul_sel (x y : SelectionState (List Cat)) : sel x * sel y = sel (x * y) := rfl
 
-theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionState SelStack) :
+theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionState (List Cat)) :
     copy a * sel y = if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y) := rfl
 
-theorem sel_mul_copy (x : SelectionState SelStack) (a : LexicalItem.Token) :
+theorem sel_mul_copy (x : SelectionState (List Cat)) (a : LexicalItem.Token) :
     sel x * copy a = if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a []) := rfl
 
 instance : CommMagma CopyState where
@@ -126,7 +126,7 @@ instance : Head CopyState where
   head_zero := rfl
   mem_head_or_mem_head_of_mem_head_mul {x y h} hxy := by
     rcases x with x | a <;> rcases y with y | b
-    · exact mem_head_or_mem_head_of_mem_head_mul (β := SelectionState SelStack) hxy
+    · exact mem_head_or_mem_head_of_mem_head_mul (β := SelectionState (List Cat)) hxy
     · rw [sel_mul_copy] at hxy
       split_ifs at hxy with h0
       · exact .inl hxy

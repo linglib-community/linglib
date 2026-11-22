@@ -340,7 +340,7 @@ theorem of_mul_of : of a ra p * of b rb q =
 @[simp] theorem of_ne_zero : of a ra p ≠ 0 := SelectionState.of_ne_zero _ _
 
 /-- The selection state of a state with nothing pending, and `0` otherwise. -/
-def toSelectionState : PendingState → SelectionState SelStack
+def toSelectionState : PendingState → SelectionState (List Cat)
   | ⟨some (a, r)⟩ => if r.pending = 0 then .of a r.stack else 0
   | ⟨none⟩ => 0
 
@@ -366,7 +366,7 @@ end
 
 /-- Triggered Merge is selection before saturation with nothing pending, as a morphism of
 magmas. -/
-def toSelectionStateHom : PendingState →ₙ* SelectionState SelStack where
+def toSelectionStateHom : PendingState →ₙ* SelectionState (List Cat) where
   toFun := toSelectionState
   map_mul' x y := by
     cases x using SelectionState.recZeroOf with
@@ -433,10 +433,9 @@ theorem licensedBy_pendingLicensing {d : Minimalist.Derivation ℕ}
 -- (12): triggered Merge has no product of the relative determiner with a noun still selecting
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : LexicalItem.Token}
     (hd : d.item.sel ≠ []) (hn : n.item.sel ≠ []) :
-    (SyntacticObject.merge (.leaf d) (.leaf n)).selCheck = 0 := by
+    SyntacticObject.selCheck (SyntacticObject.merge (.leaf d) (.leaf n)) = 0 := by
   by_contra h
-  rw [SyntacticObject.selCheck_node, SyntacticObject.selCheck_leaf,
-    SyntacticObject.selCheck_leaf] at h
+  rw [map_mul, SyntacticObject.selCheck_leaf, SyntacticObject.selCheck_leaf] at h
   have := SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero h
   simp_all [SelectionState.IsSaturated, SelectionState.residual, SelectionState.of]
 

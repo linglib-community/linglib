@@ -20,7 +20,7 @@ features exactly when they share their family.
 
 ## Main definitions
 
-* `Minimalist.Cat`, `Minimalist.SelStack`: the categories and the selectional stack.
+* `Minimalist.Cat`: the categories.
 * `Minimalist.Cat.IsCategorizer`: the categorizers n, v and a.
 * `Minimalist.CatFamily`, `Minimalist.Cat.family`: the four families.
 * `Minimalist.CatFamily.lexical`: the lexical head of a family.
@@ -143,9 +143,6 @@ def Cat.IsCategorizer : Cat → Prop
 
 instance : DecidablePred Cat.IsCategorizer := fun c ↦ by
   cases c <;> unfold Cat.IsCategorizer <;> infer_instance
-
-/-- A selectional stack, consumed left to right. -/
-abbrev SelStack := List Cat
 
 /-! ### Families -/
 

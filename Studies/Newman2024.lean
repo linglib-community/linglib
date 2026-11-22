@@ -48,8 +48,8 @@ it checks, and the order of a head's arguments follows from that closure.
   sequence of constituents a head selects in order.
 * `Matched`: the constituents each check a feature of their own.
 * `System`, `System.Run`: the operations at a head, and a sequence of them each checking a feature
-  still unchecked; `System.Licensed` and `System.Derivation` are runs without and with Weak
-  Economy, and `System.runs` is the finite set of the runs from a state.
+  still unchecked; `System.Derivation` is a run under Weak Economy, and `System.runs` is the
+  finite set of the runs from a state.
 * `selectionHead`, `configuration`: the head function of Merge as selection, and the binding
   theory, m-command without reverse c-command.
 * `IsDitransitive`, `Binds`: a vP that Merge licenses from a ditransitive's arguments, and binding
@@ -178,18 +178,17 @@ def vp : Phrase := ⟨.V, ∅⟩
 theorem checks_dp_subset_whDP : dp.checks ⊆ whDP.checks := by
   intro f; simp [dp, whDP]; tauto
 
-/-- The phrase a lexical item heads: its category, bearing `[wh]` when the item does. -/
-def ofToken (b : LexicalItem.Token) : Phrase := ⟨b.item.cat, if b.item.IsWh then {.wh} else ∅⟩
-
 end Phrase
 
-/-- The features the phrase headed by a lexical item checks. -/
-def checks (b : LexicalItem.Token) : Finset Selector := (Phrase.ofToken b).checks
+/-- The features the phrase headed by a lexical item checks, those of a phrase of its category
+bearing `[wh]` when the item does. -/
+def checks (b : LexicalItem.Token) : Finset Selector :=
+  Phrase.checks ⟨b.item.cat, if b.item.IsWh then {.wh} else ∅⟩
 
 theorem mem_checks {b : LexicalItem.Token} {f : Selector} :
     f ∈ checks b ↔
       f = .any ∨ f = .cat b.item.cat ∨ f = .weak b.item.cat ∨ f = .wh ∧ b.item.IsWh := by
-  unfold checks Phrase.ofToken
+  unfold checks
   split_ifs with h <;> simp [h]
 
 theorem any_mem_checks (b : LexicalItem.Token) : Selector.any ∈ checks b := Phrase.any_mem_checks _
@@ -243,33 +242,18 @@ theorem exists_licensing_lex_ne :
 
 /-! ### Coverage -/
 
-section Cover
-
-variable {ι F : Type*}
-
-/-- The closure a family of sets induces on its index type: `b` is in the closure of `A` when the
-sets of `A` cover the set of `b`. -/
-def coverClosure (m : ι → Set F) : ClosureOperator (Set ι) :=
-  GaloisConnection.closureOperator (l := fun A : Set ι ↦ ⋃ a ∈ A, m a)
-    (u := fun T : Set F ↦ {b | m b ⊆ T}) fun _ _ ↦ Set.iUnion₂_subset_iff
-
-theorem mem_coverClosure {m : ι → Set F} {A : Set ι} {b : ι} :
-    b ∈ coverClosure m A ↔ m b ⊆ ⋃ a ∈ A, m a := Iff.rfl
-
-end Cover
-
 section Selects
 
 variable {s : Finset Selector} {l : List LexicalItem.Token} {a b : LexicalItem.Token}
 
-/-- The Merge features of `s` that the phrase headed by `b` checks. -/
-def triggers (s : Finset Selector) (b : LexicalItem.Token) : Set Selector :=
-  {f | f ∈ s ∧ f ∈ checks b ∧ f.IsMerge}
-
 /-- The closure on lexical items that the features `s` of a head induce: `b` is in the closure of
-`A` when every Merge feature of `s` that `b` checks is checked by an item of `A`. -/
+`A` when every Merge feature of `s` that `b` checks is checked by an item of `A`. It is the
+closure of the Galois connection between sets of items and the sets of features they check. -/
 def closure (s : Finset Selector) : ClosureOperator (Set LexicalItem.Token) :=
-  coverClosure (triggers s)
+  GaloisConnection.closureOperator
+    (l := fun A : Set LexicalItem.Token ↦ ⋃ a ∈ A, {f | f ∈ s ∧ f ∈ checks a ∧ f.IsMerge})
+    (u := fun T : Set Selector ↦ {b | {f | f ∈ s ∧ f ∈ checks b ∧ f.IsMerge} ⊆ T})
+    fun _ _ ↦ Set.iUnion₂_subset_iff
 
 theorem notMem_closure_iff {A : Set LexicalItem.Token} :
     b ∉ closure s A ↔ ∃ f ∈ s, f ∈ checks b ∧ f.IsMerge ∧ ∀ x ∈ A, f ∉ checks x := by
@@ -556,11 +540,6 @@ def Run (ok : State ι → ι → Prop) (stop : State ι → Prop) : State ι �
   | σ, [] => stop σ
   | σ, e :: es => S.Possible σ e ∧ ok σ e ∧ Run ok stop (S.step σ e) es
 
-/-- `S.Licensed s es` holds when the operations `es` can apply in order at a head whose unchecked
-features are `s`. Features left over at the end are allowed. -/
-abbrev Licensed (s : Finset Selector) (es : List ι) : Prop :=
-  S.Run (fun _ _ ↦ True) (fun _ ↦ True) ⟨s, []⟩ es
-
 /-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied, Kiparsky's
 bleeding over the states of the derivation. -/
 def Bleeds (σ : State ι) (a b : ι) : Prop :=
@@ -631,23 +610,13 @@ instance : DecidablePred S.Terminal := fun _ ↦ inferInstanceAs (Decidable (∀
 
 end Decidable
 
-variable {S} {ok ok' : State ι → ι → Prop} {stop stop' : State ι → Prop} {σ : State ι}
-  {es : List ι}
+variable {S} {ok : State ι → ι → Prop} {stop : State ι → Prop} {σ : State ι} {es : List ι}
 
 @[simp] theorem run_nil : S.Run ok stop σ [] ↔ stop σ := Iff.rfl
 
 @[simp] theorem run_cons {e : ι} :
     S.Run ok stop σ (e :: es) ↔ S.Possible σ e ∧ ok σ e ∧ S.Run ok stop (S.step σ e) es :=
   Iff.rfl
-
-theorem Run.mono (hok : ∀ σ a, ok σ a → ok' σ a) (hstop : ∀ σ, stop σ → stop' σ)
-    (h : S.Run ok stop σ es) : S.Run ok' stop' σ es := by
-  induction es generalizing σ with
-  | nil => exact hstop _ h
-  | cons e es ih => exact ⟨h.1, hok _ _ h.2.1, ih h.2.2⟩
-
-theorem Run.licensed {s : Finset Selector} (h : S.Run ok stop ⟨s, []⟩ es) : S.Licensed s es :=
-  h.mono (fun _ _ _ ↦ trivial) fun _ _ ↦ trivial
 
 theorem Run.nodup (h : S.Run ok stop σ es) : es.Nodup ∧ ∀ e ∈ es, e ∉ σ.done := by
   induction es generalizing σ with
@@ -1035,24 +1004,12 @@ instance (obj : Cat) (whs : Finset Transitive) (P : Finset Selector) :
     ∀ d a, Decidable ((transitive obj whs P).Available d a) :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ → _))
 
-/-- The state of v once VP has merged as its complement. -/
-def vEdge (obj : Cat) (whs : Finset Transitive) (P : Finset Selector) : State Transitive :=
-  (transitive obj whs P).step ⟨mergeFeatures .v, []⟩ .vp
-
-/-- `TransitiveDerivation P obj whs es` says that VP merges with v as its complement and then the
-specifiers `es` merge, with the features in `P` staying active. -/
-abbrev TransitiveDerivation (P : Finset Selector) (obj : Cat) (whs : Finset Transitive)
-    (es : List Transitive) : Prop :=
-  (transitive obj whs P).Run (fun _ _ ↦ True) (fun _ ↦ True) (vEdge obj whs P) es
-
-/-- The specifier sequences of a transitive vP. -/
+/-- The specifier sequences of a transitive vP: once VP has merged with v as its complement, the
+sequences of specifiers that can merge in order, with the features in `P` staying active. -/
 def specifiers (P : Finset Selector) (obj : Cat) (whs : Finset Transitive) :
     Finset (List Transitive) :=
-  (transitive obj whs P).runs (fun _ _ ↦ True) (fun _ ↦ True) (vEdge obj whs P)
-
-@[simp] theorem mem_specifiers {P : Finset Selector} {obj : Cat} {whs : Finset Transitive}
-    {es : List Transitive} : es ∈ specifiers P obj whs ↔ TransitiveDerivation P obj whs es :=
-  System.mem_runs
+  (transitive obj whs P).runs (fun _ _ ↦ True) (fun _ ↦ True)
+    ((transitive obj whs P).step ⟨mergeFeatures .v, []⟩ .vp)
 
 -- (48), (49)
 theorem specifiers_whSubject :
@@ -1118,10 +1075,10 @@ example :
 argument Voice and T cross-reference the same argument exactly when the object checks `[·D·]`
 before the subject merges (69), (71). -/
 theorem agentFocus_iff {whs : Finset Transitive} {es : List Transitive}
-    (h : TransitiveDerivation ∅ .D whs es) (hs : .subj ∈ es) :
+    (h : es ∈ specifiers ∅ .D whs) (hs : .subj ∈ es) :
     AgentFocus es ↔ es = [.obj, .subj] :=
   (by decide : ∀ whs : Finset Transitive, ∀ es ∈ specifiers ∅ .D whs, .subj ∈ es →
-    (AgentFocus es ↔ es = [.obj, .subj])) whs es (mem_specifiers.2 h) hs
+    (AgentFocus es ↔ es = [.obj, .subj])) whs es h hs
 
 -- (93)
 theorem specifiers_whSubject_np : {es ∈ specifiers ∅ .N {.subj} | .subj ∈ es} = {[.subj]} := by
@@ -1154,17 +1111,17 @@ theorem specifiers_wh_whBoth :
 
 -- (111)
 theorem agentFocus_iff_of_wh {whs : Finset Transitive} {es : List Transitive}
-    (h : TransitiveDerivation {.wh} .D whs es) (hs : .subj ∈ es) (ho : .obj ∈ es) :
+    (h : es ∈ specifiers {.wh} .D whs) (hs : .subj ∈ es) (ho : .obj ∈ es) :
     AgentFocus es ↔ es = [.obj, .subj] :=
   (by decide : ∀ whs : Finset Transitive, ∀ es ∈ specifiers {.wh} .D whs, .subj ∈ es →
-    .obj ∈ es → (AgentFocus es ↔ es = [.obj, .subj])) whs es (mem_specifiers.2 h) hs ho
+    .obj ∈ es → (AgentFocus es ↔ es = [.obj, .subj])) whs es h hs ho
 
 /-! ### The form of the verb in Mayan -/
 
 /-- `Fronts obj whs es` holds when the specifiers `es` merge with v, with `[·wh·]` staying
 active, the subject among them and every phrase of `whs` reaching the edge of vP. -/
 def Fronts (obj : Cat) (whs : Finset Transitive) (es : List Transitive) : Prop :=
-  TransitiveDerivation {.wh} obj whs es ∧ .subj ∈ es ∧ ∀ w ∈ whs, w ∈ es
+  es ∈ specifiers {.wh} obj whs ∧ .subj ∈ es ∧ ∀ w ∈ whs, w ∈ es
 
 instance (obj : Cat) (whs : Finset Transitive) (es : List Transitive) :
     Decidable (Fronts obj whs es) :=
@@ -1211,7 +1168,7 @@ def HasVerbForm (obj : Cat) (f : Examples.Fronting) (v : Mayan.VerbForm) : Prop 
 theorem hasVerbForm_iff_exists_mem {obj : Cat} {f : Examples.Fronting} {v : Mayan.VerbForm} :
     HasVerbForm obj f v ↔ ∃ es ∈ specifiers {.wh} obj f.whs,
       Realizes obj f.whs es ∧ (∀ es' ∈ f.order?, es = es') ∧ verbForm es = v :=
-  ⟨fun ⟨es, h, r⟩ ↦ ⟨es, mem_specifiers.2 h.1.1, h, r⟩, fun ⟨es, _, h⟩ ↦ ⟨es, h⟩⟩
+  ⟨fun ⟨es, h, r⟩ ↦ ⟨es, h.1.1, h, r⟩, fun ⟨es, _, h⟩ ↦ ⟨es, h⟩⟩
 
 instance (obj : Cat) (f : Examples.Fronting) (v : Mayan.VerbForm) :
     Decidable (HasVerbForm obj f v) :=
@@ -1363,7 +1320,7 @@ theorem subject_eq_io_of_whIo {es : List Op} (h : (high .whDP .dp).Economical v�
 /-- The wh indirect object raises first; raising the direct object is licensed but not
 economical. -/
 example : (high .whDP .dp).Economical v₀ [.io, .vp] ∧
-    (high .whDP .dp).Licensed v₀ [.vp, .dobj] ∧
+    (high .whDP .dp).Run (fun _ _ ↦ True) (fun _ ↦ True) ⟨v₀, []⟩ [.vp, .dobj] ∧
     ¬ (high .whDP .dp).Economical v₀ [.vp, .dobj] := by decide
 
 theorem exists_subject_eq_io_of_whDobj :
@@ -1578,7 +1535,7 @@ theorem head?_eq_subj_of_whSubject {es : List Transitive}
 /-- The wh-subject question has the derivation with the subject as v's complement, but not the
 licensed one with VP as the complement. -/
 example : (transitive .D {.subj}).Economical (mergeFeatures .v) [.subj, .vp] ∧
-    TransitiveDerivation ∅ .D {.subj} [.subj] ∧
+    [.subj] ∈ specifiers ∅ .D {.subj} ∧
     ¬ (transitive .D {.subj}).Economical (mergeFeatures .v) [.vp, .subj] := by decide
 
 theorem exists_head?_eq_vp :

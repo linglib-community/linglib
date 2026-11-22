@@ -59,10 +59,10 @@ open DistributedMorphology (Root)
 
 /-- The selection of the [v:TV] of (57b), S:V in the Table 3 of [burukina-polinsky-2025]. The paper
 reads it as a value, where the K'iche' [D] is the same difference in selection read privatively. -/
-def vTV : SelStack := [.V]
+def vTV : List Cat := [.V]
 
 /-- The selection of the [v:ITV] of (57a), S:V,N. -/
-def vITV : SelStack := [.V, .N]
+def vITV : List Cat := [.V, .N]
 
 /-- A verbal structure. A head it lacks has the empty bundle. -/
 structure Verb where
@@ -71,7 +71,7 @@ structure Verb where
   /-- The event structure of v, where the structure records it. -/
   events : Flat (List LittleV) := ⊥
   /-- The selection of v, read as a value. -/
-  selection : Flat SelStack := ⊥
+  selection : Flat (List Cat) := ⊥
   /-- The selectional [D] of v. -/
   d : Flat Unit := ⊥
   deriving DecidableEq
@@ -163,7 +163,7 @@ abbrev Analysis := Glottocode → _root_.Voice → Verb
 /-- The feature bundle of a site, one part per kind of head: a Voice head, the features of a v, and
 the roots. -/
 abbrev Bundle :=
-  WithBot Head × (Flat (List LittleV) × Flat SelStack × Flat Unit) × Flat (List Root)
+  WithBot Head × (Flat (List LittleV) × Flat (List Cat) × Flat Unit) × Flat (List Root)
 
 instance (a b : Bundle) : Decidable (a = b) := decidable_of_iff _ Prod.ext_iff.symm
 
@@ -578,7 +578,7 @@ theorem antipassive_voice_of_predicts {C : SIC} {f : Analysis} (h : Predicts C f
 -- (51)
 theorem selection_le_of_predicts {f : Analysis} (h : Predicts nondistinct f)
     (hTV : (f .kaqchikel Kaqchikel.active).selection = ↑vTV) :
-    (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection ≤ (↑vTV : Flat SelStack) := by
+    (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection ≤ (↑vTV : Flat (List Cat)) := by
   obtain ⟨r, hr, hc, hj⟩ : ∃ r ∈ rows, r.clause = .ellipsis sluicing
       { language := .kaqchikel, voice := Kaqchikel.agentFocus .radical }
       { language := .kaqchikel, voice := Kaqchikel.active } (some .P) ∧
@@ -589,7 +589,7 @@ theorem selection_le_of_predicts {f : Analysis} (h : Predicts nondistinct f)
   have hb := (compat_prod_iff.1 (compat_prod_iff.1 (compat_prod_iff.1
     (hl.1 (x := .head .v) ⟨by decide, by decide⟩)).2).1).2
   have hs : Compat (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection
-      (↑vTV : Flat SelStack) :=
+      (↑vTV : Flat (List Cat)) :=
     hTV ▸ (compat_prod_iff.1 hb).1
   rcases eq_or_ne (f .kaqchikel (Kaqchikel.agentFocus .radical)).selection ⊥ with hb' | hb'
   · exact hb' ▸ bot_le
