@@ -1,41 +1,47 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Trivalent
-public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Semantics.Focus.Particles
+public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Algebra.Group.End
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Chow and Erlewine (2022): Restrictions on the position of exh
 
-Chow and Erlewine argue that the covert exhaustification operator *exh* of Fox's grammatical
-theory of scalar implicature is syntactically constrained: for most SI triggers *exh* must adjoin
-at the lowest position where it is not vacuous (their generalization (9)), a requirement they
-encode as a feature `[uexh*]` on the trigger in the style of Chierchia. The diagnostic is the
-additive presupposition of *also*: whether *exh* sits below or above *also* determines whether the
-additive presupposition is exhaustified, which antecedent contexts then satisfy or fail.
+A clause is a scalar item under a spine of overt operators, and the covert exhaustifier *exh* may
+adjoin at any site of the spine. Predicates of the focused individual denote trivalent
+propositions `F → W → Trivalent`. Negation is `ᶜ`, a presupposition hole. The additive `also C`
+asserts its scope of the focused individual and presupposes `Focus.additivePresup` on the
+identity scale: its scope is true of some other individual among the salient ones `C`. The spine
+denotes by `spine C : FreeMonoid ClauseOp →* Function.End (F → W → Trivalent)`, so the
+alternative to a clause is the same spine over the scale-mate of its scalar item, and *exh* at
+site `i` is Spector and Sudo's strong-negation `Exhaustification.Trivalent.exh2` of the material
+below `i` against that alternative, under the operators above `i`.
 
-Parses are operator spines interpreted compositionally into trivalent propositions. *exh* is
-Spector and Sudo's strong-negation EXH² (`Exhaustification.Trivalent.exh2`, the operator the
-paper adopts in its footnote 4), so the presupposition of a negated alternative projects: the
-parse *exh* > *also* presupposes a salient conjunctive antecedent, which is what blocks a
-disjunctive one. Adjunction sites are computed from a base clause, and generalization (9) is
-`BaseClause.lowestNonVacuousSite`: the deepest trigger-commanding site where inserting *exh*
-changes the interpretation. Section 4's ignorance implicatures are derived over belief states with
-*exh* above the covert doxastic necessity operator; the four antecedent types of Marty and Romoli
-separate the two grammatical parses, and the parse needed for the plain disjunctive antecedent
-places the necessity operator below surface-scope *also*, embedded, contra Meyer's Matrix K
-theory.
+Since `exh2` inherits the presuppositions of the alternatives it excludes, *exh* above *also*
+presupposes what *also* presupposes of the scalar item and of its scale-mate
+(`exh2_also_eq_undefined_iff`), where *also* above *exh* presupposes that the exhaustified scope
+holds of a salient individual. A site is vacuous when *exh* there leaves the clause's denotation
+unchanged, and `BaseClause.IsLowestSite` picks out the lowest site commanding the scalar item
+that is not vacuous. A scalar item with the strong feature requires its *exh* at that site, one
+with the weak feature allows any site up to the edge of its finite clause, and an unmarked one
+allows any site (`ExhFeature.Allows`).
+
+Ignorance inferences are computed over belief states by innocent exclusion above a necessity
+operator, and the three parses of *also* with two instances of *exh* are separated by the four
+kinds of antecedent of Marty and Romoli (`antecedent_pattern`).
 
 ## Implementation notes
 
-The trigger moved to subject position, (7), reconstructs semantically, with movement
-reflected only in the site calculus; the embedding verb of (28) is opaque to interpretation
-and matters only to the site calculus; and the presupposition of parse (35) is taken from the
-paper's display, since they defer its derivation to Marty and Romoli. The *again* data of their
-section 2.4 replicate the *also* pattern and are not modeled separately.
+A scalar item that has moved above an operator is interpreted in its base position, and movement
+changes only which sites command it. The embedding verb denotes the identity, and matters only to
+the edge of the finite clause. The higher *exh* of the ignorance parses takes as alternatives the
+two exhaustified disjuncts under the necessity operator. The presupposition of the parse with
+*also* between the two instances of *exh* is stated as `presupBetween`, not derived from `exh2`.
+The examples with *again* are not modelled.
 
 ## References
 
@@ -51,192 +57,142 @@ section 2.4 replicate the *also* pattern and are not modeled separately.
 
 namespace ChowErlewine2022
 
-open Exhaustification
+open Exhaustification Exhaustification.Trivalent
 
-/-! ### Individuals and worlds
+/-! ### Operators -/
 
-The running examples predicate teaching Arabic and teaching Basque of a focused individual
-(Nina) and a salient alternative (Mira). A world fixes both teaching profiles. -/
+section Operators
 
-/-- Which of the two languages an individual teaches. -/
-structure Taught where
-  arabic : Bool
-  basque : Bool
-  deriving DecidableEq, Fintype, Repr
+variable {F W : Type*} [Fintype F] [DecidableEq F] (C : Set F) [DecidablePred (· ∈ C)]
 
-namespace Taught
+instance (P : F → W → Trivalent) (x : F) :
+    DecidablePred (· ∈ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x) :=
+  fun w ↦ inferInstanceAs (Decidable (∃ j ∈ C, w ∈ Trivalent.posExt (P j) ∧ ¬ x = j))
 
-/-- Teaches Arabic or Basque. -/
-def either (t : Taught) : Bool := t.arabic || t.basque
+/-- *Also* asserts its scope of the focused individual and presupposes that the scope is true of
+another individual among the salient ones `C`. -/
+def also (P : F → W → Trivalent) (x : F) (w : W) : Trivalent :=
+  .transplication
+    (.ofProp (w ∈ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x)) (P x w)
 
-/-- Teaches Arabic and Basque. -/
-def both (t : Taught) : Bool := t.arabic && t.basque
+variable {C} {P Q : F → W → Trivalent} {x : F} {w : W}
 
-/-- Teaches exactly one of the two languages. -/
-def exactlyOne (t : Taught) : Bool := t.either && !t.both
+theorem also_eq_undefined_iff :
+    also C P x w = .undefined ↔
+      w ∉ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x ∨
+        P x w = .undefined := by
+  simp [also]
 
-/-- Teaches neither language. -/
-def neither (t : Taught) : Bool := !t.either
+theorem also_eq_true_iff :
+    also C P x w = .true ↔
+      w ∈ Focus.additivePresup (· = ·) C (fun y ↦ Trivalent.posExt (P y)) x ∧ P x w = .true := by
+  simp [also]
 
-/-- Teaches Arabic and not Basque. -/
-def onlyArabic (t : Taught) : Bool := t.arabic && !t.basque
+/-- (5): *exh* above *also* that excludes the alternative is defined only where the additive
+presuppositions of both the scalar item and its scale-mate hold. -/
+theorem exh2_also_eq_undefined_iff [Fintype W]
+    (h : Excluded (·ᶜ) (fun _ : Unit ↦ also C Q x) (also C P x) ()) :
+    exh2 (fun _ : Unit ↦ also C Q x) (also C P x) w = .undefined ↔
+      also C P x w = .undefined ∨ also C Q x w = .undefined := by
+  simp [exh2_eq_undefined_iff, h]
 
-/-- Teaches Basque and not Arabic. -/
-def onlyBasque (t : Taught) : Bool := !t.arabic && t.basque
+end Operators
 
-end Taught
+/-! ### Clauses and adjunction sites -/
 
-/-- The focused individual of the prejacent and the salient antecedent individual. -/
-inductive Individual where
-  | nina
-  | mira
-  deriving DecidableEq, Fintype, Repr
-
-/-- The salient focus alternative. -/
-def Individual.other : Individual → Individual
-  | .nina => .mira
-  | .mira => .nina
-
-/-- A world records both individuals' teaching profiles. -/
-structure TeachWorld where
-  nina : Taught
-  mira : Taught
-  deriving DecidableEq, Fintype, Repr
-
-/-- The profile of an individual at a world. -/
-def TeachWorld.taught (w : TeachWorld) : Individual → Taught
-  | .nina => w.nina
-  | .mira => w.mira
-
-/-! ### Parses and their trivalent interpretation -/
-
-/-- An LF parse is an operator spine over a scalar leaf. The leaf carries the denotation of the
-scalar item and of its Horn-scale mate, both predicated of a focus individual `F`. -/
-inductive Parse (F W : Type) where
-  | lex (den alt : F → (W → Trivalent))
-  | exh (t : Parse F W)
-  | not (t : Parse F W)
-  | also (t : Parse F W)
-
-variable {F W : Type} [Fintype W] [DecidableEq W]
-
-/-- A parse and its scale-mate are interpreted in one recursion. *exh* is EXH²
-([spector-sudo-2017], the paper's footnote 4) with the scale-mate as its alternative, negation is
-strong Kleene (a presupposition hole), and *also* presupposes that its scope holds of the salient
-focus alternative `sal x` ([chow-erlewine-2022] section 2, following Kripke and Heim). -/
-def Parse.interpWithMate (sal : F → F) :
-    Parse F W → F → (W → Trivalent) × (W → Trivalent)
-  | .lex den alt, x => (den x, alt x)
-  | .not t, x =>
-      let (p, q) := t.interpWithMate sal x
-      (fun w ↦ (p w)ᶜ, fun w ↦ (q w)ᶜ)
-  | .exh t, x =>
-      let (p, q) := t.interpWithMate sal x
-      (Trivalent.exh2 (fun _ : Unit ↦ q) p, Trivalent.exh2 (fun _ : Unit ↦ p) q)
-  | .also t, x =>
-      let pres := t.interpWithMate sal (sal x)
-      let (p, q) := t.interpWithMate sal x
-      (fun w ↦ if pres.1 w = .true then p w else .undefined,
-       fun w ↦ if pres.2 w = .true then q w else .undefined)
-
-/-- The trivalent interpretation of a parse, about the focus individual `x`. -/
-def Parse.interp (sal : F → F) (t : Parse F W) (x : F) : (W → Trivalent) :=
-  (t.interpWithMate sal x).1
-
-/-- The parse's presuppositions are met throughout a context when no context world leaves it
-undefined. Antecedent contexts are the worlds compatible with the antecedent sentence, including
-that sentence's own implicatures. -/
-def Parse.FelicitousIn (sal : F → F) (t : Parse F W) (x : F) (ctx : Finset W) : Prop :=
-  ∀ w ∈ ctx, t.interp sal x w ≠ .undefined
-
-instance (sal : F → F) (t : Parse F W) (x : F) (ctx : Finset W) :
-    Decidable (t.FelicitousIn sal x ctx) :=
-  inferInstanceAs (Decidable (∀ w ∈ ctx, t.interp sal x w ≠ .undefined))
-
-/-! ### Adjunction sites and generalization (9) -/
-
-/-- An overt operator of the base clause. The embedding verb is opaque to interpretation
-(attitude semantics is out of scope) and matters only to the site calculus. -/
+/-- An overt operator on the spine of a clause. -/
 inductive ClauseOp where
-  | alsoOp
-  | notOp
-  | embedOp
+  | also
+  | not
+  | embed
   deriving DecidableEq, Repr
 
-/-- Wrap a spine of overt operators around a parse, top-down. -/
-def wrapOps : List ClauseOp → Parse F W → Parse F W
-  | [], t => t
-  | .alsoOp :: rest, t => .also (wrapOps rest t)
-  | .notOp :: rest, t => .not (wrapOps rest t)
-  | .embedOp :: rest, t => wrapOps rest t
+section Clauses
 
-/-- A base clause carries the scalar item, the overt operators above the verb phrase (top-down),
-and the number of them taking scope over the trigger's surface position. Site `i` is the
-adjunction position with `i` operators above it; a site commands the trigger iff
-`i ≤ triggerDepth`. The trigger interprets in its base position throughout, so movement (the
-paper's (7)) shows up only in `triggerDepth`. -/
-structure BaseClause (F W : Type) where
-  den : F → (W → Trivalent)
-  alt : F → (W → Trivalent)
+variable {F W : Type*} [Fintype F] [DecidableEq F] (C : Set F) [DecidablePred (· ∈ C)]
+
+/-- The denotation of an overt operator. -/
+def ClauseOp.denote : ClauseOp → Function.End (F → W → Trivalent)
+  | .also => ChowErlewine2022.also C
+  | .not => fun P x w ↦ (P x w)ᶜ
+  | .embed => id
+
+/-- The denotation of a spine of operators, the highest first, is the composition of their
+denotations. -/
+def spine : FreeMonoid ClauseOp →* Function.End (F → W → Trivalent) :=
+  FreeMonoid.lift (ClauseOp.denote C)
+
+@[simp] theorem spine_of (o : ClauseOp) :
+    spine (W := W) C (FreeMonoid.of o) = o.denote C := rfl
+
+/-- A base clause is a scalar item and its scale-mate, predicated of the focused individual, under
+the overt operators `ops`, the highest first. Site `i` is the adjunction position with `i`
+operators above it, and it commands the scalar item when `i ≤ triggerDepth`. -/
+structure BaseClause (F W : Type*) where
+  /-- The scalar item. -/
+  item : F → W → Trivalent
+  /-- The scale-mate of the scalar item. -/
+  mate : F → W → Trivalent
+  /-- The overt operators above the predicate, the highest first. -/
   ops : List ClauseOp
+  /-- The number of overt operators above the surface position of the scalar item. -/
   triggerDepth : ℕ
 
-/-- The scalar leaf of the clause. -/
-def BaseClause.leaf (b : BaseClause F W) : Parse F W := .lex b.den b.alt
+variable [Fintype W] (b : BaseClause F W) (i : ℕ)
 
-/-- The clause with no *exh*. -/
-def BaseClause.plain (b : BaseClause F W) : Parse F W := wrapOps b.ops b.leaf
+/-- The clause without *exh*. -/
+def BaseClause.plain : F → W → Trivalent := spine C (FreeMonoid.ofList b.ops) b.item
 
 /-- The clause with *exh* adjoined at site `i`. -/
-def BaseClause.withExhAt (b : BaseClause F W) (i : ℕ) : Parse F W :=
-  wrapOps (b.ops.take i) (.exh (wrapOps (b.ops.drop i) b.leaf))
+def BaseClause.withExhAt : F → W → Trivalent :=
+  spine C (FreeMonoid.ofList (b.ops.take i)) fun x ↦
+    exh2 (fun _ : Unit ↦ spine C (FreeMonoid.ofList (b.ops.drop i)) b.mate x)
+      (spine C (FreeMonoid.ofList (b.ops.drop i)) b.item x)
 
-/-- *exh* at site `i` is vacuous when inserting it does not change the interpretation. -/
-def BaseClause.Vacuous (sal : F → F) (b : BaseClause F W) (i : ℕ) : Prop :=
-  (b.withExhAt i).interp sal = b.plain.interp sal
+/-- *Exh* at site `i` is vacuous when it leaves the denotation of the clause unchanged. -/
+def BaseClause.Vacuous : Prop := b.withExhAt C i = b.plain C
 
-instance [Fintype F] [DecidableEq F] (sal : F → F) (b : BaseClause F W) (i : ℕ) :
-    Decidable (b.Vacuous sal i) :=
-  decidable_of_iff ((b.withExhAt i).interp sal = b.plain.interp sal) Iff.rfl
+instance : Decidable (b.Vacuous C i) := inferInstanceAs (Decidable (b.withExhAt C i = b.plain C))
 
-/-- Generalization (9) of [chow-erlewine-2022] names the lowest trigger-commanding site where
-*exh* is not vacuous. A `[uexh*]` trigger's *exh* must adjoin exactly here. -/
-def BaseClause.lowestNonVacuousSite [Fintype F] [DecidableEq F]
-    (sal : F → F) (b : BaseClause F W) : Option ℕ :=
-  (List.range (b.ops.length + 1)).reverse.find?
-    (fun i ↦ decide (i ≤ b.triggerDepth ∧ ¬ b.Vacuous sal i))
+/-- (9): the lowest site commanding the scalar item at which *exh* is not vacuous. -/
+@[mk_iff]
+structure BaseClause.IsLowestSite : Prop where
+  /-- The site commands the scalar item. -/
+  le : i ≤ b.triggerDepth
+  /-- *Exh* at the site is not vacuous. -/
+  not_vacuous : ¬ b.Vacuous C i
+  /-- *Exh* at every lower site commanding the scalar item is vacuous. -/
+  vacuous_of_lt : ∀ j ≤ b.triggerDepth, i < j → b.Vacuous C j
 
-/-- The site just above the verb embedding the trigger's finite clause (`0` when mono-clausal)
-is the highest site `[uexh]`-checking may reach ([chow-erlewine-2022] section 3.3). -/
-def BaseClause.clauseEdge (b : BaseClause F W) : ℕ :=
-  (((List.range b.triggerDepth).filter (fun j ↦ b.ops.getD j .alsoOp = .embedOp)).max?).getD 0
+instance : Decidable (b.IsLowestSite C i) :=
+  decidable_of_iff' _ (BaseClause.isLowestSite_iff C b i)
 
-/-! ### The feature table (30) -/
+/-- The site just above the verb embedding the finite clause of the scalar item, or the root in a
+single clause. -/
+def BaseClause.clauseEdge : ℕ :=
+  (((List.range b.triggerDepth).filter (b.ops[·]? = some .embed)).max?).getD 0
 
-/-- The exhaustification feature an SI trigger bears ([chow-erlewine-2022] (30), after
-[chierchia-2013]). `strong` is `[uexh*]`, `weak` is `[uexh]`, and `none` is unmarked. -/
+/-- The exhaustification feature of a scalar item. -/
 inductive ExhFeature where
   | strong
   | weak
   | none
   deriving DecidableEq, Repr
 
-/-- The adjunction sites a feature makes available for the trigger's *exh* are the forced site
-of generalization (9) for `[uexh*]`, any trigger-commanding site from the clause edge down for
-`[uexh]`, and any trigger-commanding site for unmarked triggers. -/
-def ExhFeature.allowedSites [Fintype F] [DecidableEq F]
-    (f : ExhFeature) (sal : F → F) (b : BaseClause F W) : Finset ℕ :=
-  match f with
-  | .strong =>
-      match b.lowestNonVacuousSite sal with
-      | .some i => {i}
-      | .none => ∅
-  | .weak =>
-      ((List.range (b.ops.length + 1)).filter
-        (fun i ↦ b.clauseEdge ≤ i && i ≤ b.triggerDepth)).toFinset
-  | .none => ((List.range (b.ops.length + 1)).filter (fun i ↦ i ≤ b.triggerDepth)).toFinset
+/-- The sites at which a feature allows the *exh* of its scalar item: the strong feature only
+the lowest non-vacuous site, the weak feature the commanding sites up to the edge of the finite
+clause, and no feature every commanding site. -/
+def ExhFeature.Allows : ExhFeature → Prop
+  | .strong => b.IsLowestSite C i
+  | .weak => b.clauseEdge ≤ i ∧ i ≤ b.triggerDepth
+  | .none => i ≤ b.triggerDepth
 
-/-- The SI triggers the paper classifies. -/
+instance (f : ExhFeature) : Decidable (f.Allows C b i) := by
+  cases f <;> unfold ExhFeature.Allows <;> infer_instance
+
+end Clauses
+
+/-- The scalar items classified. -/
 inductive SITrigger where
   | disj
   | conj
@@ -247,130 +203,113 @@ inductive SITrigger where
   | scalarAdj
   deriving DecidableEq, Repr
 
-/-- In the feature specification (30), disjunction, conjunction, *all*, unstressed *sm* and
-bare numerals are `[uexh*]`, stressed *SOME* is `[uexh]`, and scalar adjectives are unmarked. -/
+/-- (30): disjunction, conjunction, *all*, unstressed *some* and bare numerals bear the strong
+feature, stressed *some* the weak one, and scalar adjectives none. -/
 def SITrigger.feature : SITrigger → ExhFeature
   | .stressedSome => .weak
   | .scalarAdj => .none
   | _ => .strong
 
-/-! ### Section 2: the *also* diagnostic with disjunction -/
+/-! ### The teaching model -/
 
-/-- "teaches Arabic or Basque", of the focus individual. -/
-def orLex : Individual → (TeachWorld → Trivalent) := fun x w ↦ .ofProp (w.taught x).either
+/-- The two languages. -/
+inductive Lang where
+  | arabic
+  | basque
+  deriving DecidableEq, Fintype, Repr
 
-/-- "teaches Arabic and Basque", of the focus individual. -/
-def andLex : Individual → (TeachWorld → Trivalent) := fun x w ↦ .ofProp (w.taught x).both
+/-- The focused individual and the salient antecedent. -/
+inductive Individual where
+  | nina
+  | mira
+  deriving DecidableEq, Fintype, Repr
 
-/-- The base clause of (3) is *[Nina]F also teaches Arabic or Basque*, with *also* above the
-in-situ trigger. -/
-def teachOr : BaseClause Individual TeachWorld := ⟨orLex, andLex, [.alsoOp], 1⟩
+/-- A world fixes the languages each individual teaches. -/
+abbrev TeachWorld := Individual → Finset Lang
 
-/-- The base clause of the passive (7) is *Arabic or Basque is also taught by [Nina]F*, with
-the trigger moved above *also*. -/
+/-- The salient individuals. -/
+abbrev salient : Set Individual := {.mira}
+
+/-- "teaches Arabic or Basque". -/
+def orLex : Individual → TeachWorld → Trivalent := fun x w ↦ .ofProp (w x).Nonempty
+
+/-- "teaches Arabic and Basque". -/
+def andLex : Individual → TeachWorld → Trivalent := fun x w ↦ .ofProp (w x = Finset.univ)
+
+/-- (3): *[Nina]F also teaches Arabic or Basque*. -/
+def teachOr : BaseClause Individual TeachWorld := ⟨orLex, andLex, [.also], 1⟩
+
+/-- (7): *Arabic or Basque is also taught by [Nina]F*, the disjunction above *also*. -/
 def passiveOr : BaseClause Individual TeachWorld := { teachOr with triggerDepth := 0 }
 
-/-- The worlds an antecedent sentence about Mira leaves open. -/
-def antecedent (p : Taught → Bool) : Finset TeachWorld :=
-  Finset.univ.filter (fun w ↦ p w.mira)
+/-- (16): *[Nina]F also doesn't teach Arabic and Basque*. -/
+def negConj : BaseClause Individual TeachWorld := ⟨andLex, orLex, [.also, .not], 2⟩
+
+/-- (28): matrix *also* above the verb embedding the clause of the scalar item. -/
+def embedded : BaseClause Individual TeachWorld :=
+  { teachOr with ops := [.also, .embed], triggerDepth := 2 }
+
+/-! ### The additive diagnostic -/
 
 -- (1)
-theorem exh_or_direct :
-    ∀ w, (Parse.exh teachOr.leaf).interp Individual.other .nina w = .true ↔
-      w.nina.exactlyOne := by decide
-
--- (4)
-theorem also_exh_presup :
-    ∀ w, (teachOr.withExhAt 1).interp Individual.other .nina w ≠ .undefined ↔
-      w.mira.exactlyOne := by decide
-
--- (5)
-theorem exh_over_also_presup :
-    ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w ≠ .undefined ↔
-      w.mira.both := by decide
-
--- (5)
-theorem exh_over_also_true_iff :
-    ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w = .true ↔
-      (w.mira.both ∧ w.nina.either ∧ ¬ w.nina.both) := by decide
-
--- (3)
-theorem also_exh_verdicts :
-    (teachOr.withExhAt 1).FelicitousIn Individual.other .nina (antecedent Taught.exactlyOne)
-    ∧ ¬ (teachOr.withExhAt 1).FelicitousIn Individual.other .nina (antecedent Taught.both) := by
+theorem exh2_orLex_eq_true_iff :
+    ∀ w, exh2 (fun _ : Unit ↦ andLex .nina) (orLex .nina) w = .true ↔ (w .nina).card = 1 := by
   decide
 
--- (5), (3b), (3a), (3)
-theorem exh_over_also_verdicts :
-    (teachOr.withExhAt 0).FelicitousIn Individual.other .nina (antecedent Taught.both)
-    ∧ ¬ (teachOr.withExhAt 0).FelicitousIn Individual.other .nina
-        (antecedent Taught.exactlyOne) := by
-  decide
+/-- (4): *also* above *exh* presupposes that the salient individual teaches exactly one of the
+two languages. -/
+theorem also_exh_ne_undefined_iff :
+    ∀ w, teachOr.withExhAt salient 1 .nina w ≠ .undefined ↔ (w .mira).card = 1 := by decide
 
--- (8), (9), (3), (7), (3b)
-theorem or_exh_sites :
-    SITrigger.disj.feature.allowedSites Individual.other teachOr = {1}
-    ∧ SITrigger.disj.feature.allowedSites Individual.other passiveOr = {0} := by decide
+-- (5)
+theorem exh_also_ne_undefined_iff :
+    ∀ w, teachOr.withExhAt salient 0 .nina w ≠ .undefined ↔ w .mira = Finset.univ := by decide
 
-/-! ### Section 2.3: indirect scalar implicatures under negation -/
+-- (5)
+theorem exh_also_eq_true_iff :
+    ∀ w, teachOr.withExhAt salient 0 .nina w = .true ↔
+      w .mira = Finset.univ ∧ (w .nina).card = 1 := by decide
 
-/-- The base clause of (16) is *[Nina]F also does not teach Arabic and Basque*, with *also*
-over negation over the conjunctive trigger. -/
-def negConj : BaseClause Individual TeachWorld := ⟨andLex, orLex, [.alsoOp, .notOp], 2⟩
+/-- (8): the *exh* of disjunction adjoins below *also* when the disjunction is below it, and
+above *also* when the disjunction has moved above it. -/
+theorem allows_disj :
+    (∀ i ≤ 1, SITrigger.disj.feature.Allows salient teachOr i ↔ i = 1) ∧
+      SITrigger.disj.feature.Allows salient passiveOr 0 := by decide
 
--- (19), (18c)
-theorem exh_vacuous_below_negation : negConj.Vacuous Individual.other 2 := by decide
+/-! ### Indirect scalar implicatures under negation -/
+
+-- (18c)
+theorem vacuous_negConj : negConj.Vacuous salient 2 := by decide
 
 -- (19)
-theorem negConj_site :
-    SITrigger.conj.feature.allowedSites Individual.other negConj = {1} := by decide
+theorem isLowestSite_negConj : negConj.IsLowestSite salient 1 := by decide
 
 -- (18b)
-theorem si_under_also_true_iff :
-    ∀ w, (negConj.withExhAt 1).interp Individual.other .nina w = .true ↔
-      (w.mira.exactlyOne ∧ w.nina.exactlyOne) := by decide
-
--- (16), (18b)
-theorem indirect_si_contrast :
-    (negConj.withExhAt 1).FelicitousIn Individual.other .nina (antecedent Taught.exactlyOne)
-    ∧ ¬ (negConj.withExhAt 1).FelicitousIn Individual.other .nina
-        (antecedent Taught.neither) := by
-  decide
+theorem also_exh_not_eq_true_iff :
+    ∀ w, negConj.withExhAt salient 1 .nina w = .true ↔
+      (w .mira).card = 1 ∧ (w .nina).card = 1 := by decide
 
 -- (18a)
-theorem exh_over_also_negConj_verdicts :
-    (negConj.withExhAt 0).FelicitousIn Individual.other .nina (antecedent Taught.neither)
-    ∧ ¬ (negConj.withExhAt 0).FelicitousIn Individual.other .nina
-        (antecedent Taught.exactlyOne) := by
-  decide
+theorem exh_also_not_ne_undefined_iff :
+    ∀ w, negConj.withExhAt salient 0 .nina w ≠ .undefined ↔ w .mira = ∅ := by decide
 
--- (18c), (16), (9)
-theorem vacuous_parse_licenses_both :
-    (negConj.withExhAt 2).FelicitousIn Individual.other .nina (antecedent Taught.exactlyOne)
-    ∧ (negConj.withExhAt 2).FelicitousIn Individual.other .nina (antecedent Taught.neither) := by
-  decide
+-- (18c)
+theorem also_not_exh_ne_undefined_iff :
+    ∀ w, negConj.withExhAt salient 2 .nina w ≠ .undefined ↔ w .mira ≠ Finset.univ := by decide
 
-/-! ### Section 3: variation by SI trigger
+/-! ### Variation by scalar item
 
-The scale of *sm* and *all* over a two-membered domain is the disjunction-conjunction scale, so
-the (14) and (26) clauses reuse the teaching model, with `Taught` read as which of the two
-students the focus individual met. -/
+The scale of *some* and *all* over a domain of two is that of disjunction and conjunction, so the
+clauses with *some* are those of the teaching model. -/
 
--- (14), (14a), (26a), (13)
-theorem sm_below_also_SOME_free :
-    SITrigger.unstressedSome.feature.allowedSites Individual.other teachOr = {1}
-    ∧ 0 ∈ SITrigger.stressedSome.feature.allowedSites Individual.other teachOr := by decide
-
-/-- The base clause of (28) puts matrix *also* above the verb embedding the *SOME* clause. -/
-def embeddedSome : BaseClause Individual TeachWorld :=
-  { teachOr with ops := [.alsoOp, .embedOp], triggerDepth := 2 }
+-- (14a), (26a)
+theorem allows_some :
+    ¬ SITrigger.unstressedSome.feature.Allows salient teachOr 0 ∧
+      SITrigger.stressedSome.feature.Allows salient teachOr 0 := by decide
 
 -- (28)
-theorem embedded_SOME_trapped :
-    SITrigger.stressedSome.feature.allowedSites Individual.other embeddedSome = {1, 2} := by
-  decide
-
-/-! ### Section 3.1: scalar adjectives -/
+theorem allows_stressedSome_embedded :
+    ∀ i ≤ 2, SITrigger.stressedSome.feature.Allows salient embedded i ↔ i ≠ 0 := by decide
 
 /-- The two cities of (24a). -/
 inductive City where
@@ -378,125 +317,70 @@ inductive City where
   | newYork
   deriving DecidableEq, Fintype, Repr
 
-/-- The salient focus alternative among the cities. -/
-def City.other : City → City
-  | .paris => .newYork
-  | .newYork => .paris
-
-/-- On the temperature scale of (24a), freezing entails cold. -/
+/-- The temperatures, of which freezing is also cold. -/
 inductive Temp where
   | mild
   | cold
   | freezing
   deriving DecidableEq, Fintype, Repr
 
-/-- At least cold. -/
-def Temp.atLeastCold : Temp → Bool
-  | .mild => false
-  | _ => true
-
-/-- Freezing. -/
-def Temp.isFreezing : Temp → Bool
-  | .freezing => true
-  | _ => false
-
-/-- The base clause of (24a) is *it's also cold in [Paris]F*. -/
+/-- (24a): *it's also cold in [Paris]F*. -/
 def coldClause : BaseClause City (City → Temp) :=
-  ⟨fun c w ↦ .ofProp (w c).atLeastCold, fun c w ↦ .ofProp (w c).isFreezing, [.alsoOp], 1⟩
-
-/-- Contexts where it is freezing in New York. -/
-def freezingNY : Finset (City → Temp) := Finset.univ.filter (fun w ↦ w .newYork = .freezing)
+  ⟨fun c w ↦ .ofProp (w c ≠ .mild), fun c w ↦ .ofProp (w c = .freezing), [.also], 1⟩
 
 -- (24a)
-theorem scalarAdj_high_exh_ok :
-    0 ∈ SITrigger.scalarAdj.feature.allowedSites City.other coldClause
-    ∧ (coldClause.withExhAt 0).FelicitousIn City.other .paris freezingNY := by decide
+theorem allows_scalarAdj :
+    SITrigger.scalarAdj.feature.Allows ({.newYork} : Set City) coldClause 0 ∧
+      (∀ w, w .newYork = .freezing →
+        coldClause.withExhAt ({.newYork} : Set City) 0 .paris w ≠ .undefined) ∧
+      ∃ w, w .newYork = .freezing ∧
+        coldClause.withExhAt ({.newYork} : Set City) 1 .paris w = .undefined := by decide
 
--- (24a)
-theorem low_exh_would_block :
-    ¬ (coldClause.withExhAt 1).FelicitousIn City.other .paris freezingNY := by decide
+/-! ### Ignorance implicatures
 
-/-! ### Section 4: ignorance implicatures
+A belief state about an individual is the set of teaching profiles the speaker leaves open, and
+the necessity operator holds of a property true throughout the state. -/
 
-Ignorance implicatures arise from a second *exh* above a covert doxastic necessity operator
-([chierchia-2013]; K in [meyer-2013]). The state level works with the speaker's belief state
-about one individual's teaching profile; the alternatives of the higher *exh* are the
-pre-exhaustified disjunct alternatives, so its prejacent `□ exh (A ∨ B)` uses the inner SI
-derived in `exh_or_direct`. -/
+/-- (31): *exh* above the necessity operator above *exh*, by innocent exclusion with prejacent
+"believed to teach exactly one" and alternatives "believed to teach only `l`". -/
+def ignorance : Set (Finset (Finset Lang)) :=
+  exhIE (Set.range fun l : Lang ↦ {s | ∀ t ∈ s, t = {l}}) {s | ∀ t ∈ s, t.card = 1}
 
-/-- A belief state about one individual's teaching profile. -/
-abbrev Doxa := Finset Taught
-
-/-- The covert necessity operator holds when the state supports `p` throughout. -/
-def Doxa.Must (s : Doxa) (p : Taught → Bool) : Prop := ∀ t ∈ s, p t
-
-instance (s : Doxa) (p : Taught → Bool) : Decidable (s.Must p) :=
-  inferInstanceAs (Decidable (∀ t ∈ s, p t))
-
-/-- The state leaves `p` open. -/
-def Doxa.May (s : Doxa) (p : Taught → Bool) : Prop := ∃ t ∈ s, p t
-
-instance (s : Doxa) (p : Taught → Bool) : Decidable (s.May p) :=
-  inferInstanceAs (Decidable (∃ t ∈ s, p t))
-
-/-- The meaning of *exh* > □ > *exh* over disjunction is computed by innocent exclusion over
-belief states, with prejacent `□ exh (A ∨ B)` and the pre-exhaustified disjuncts `□ (A ∧ ¬B)`
-and `□ (B ∧ ¬A)` as alternatives. -/
-def ignoranceScope : Set Doxa :=
-  exhIE (Set.range fun i ↦ {s | s.Must (![Taught.onlyArabic, Taught.onlyBasque] i)})
-    {s | s.Must Taught.exactlyOne}
-
-instance : DecidablePred (· ∈ ignoranceScope) := fun s ↦
-  show Decidable (s ∈ exhIE _ _) from inferInstance
+instance : DecidablePred (· ∈ ignorance) := fun s ↦
+  inferInstanceAs (Decidable (s ∈ exhIE _ _))
 
 -- (31)
-theorem ignorance_scope_eq :
-    ignoranceScope =
-      {s | s.Must Taught.exactlyOne ∧ s.May (!·.arabic) ∧ s.May (!·.basque)} := by
+theorem ignorance_eq :
+    ignorance = {s | (∀ t ∈ s, t.card = 1) ∧ ∀ l : Lang, ∃ t ∈ s, l ∉ t} := by
   ext s; revert s; decide
 
-/-- The additive presupposition of parse (34) = (37a), *also* over the full ignorance meaning,
-is that some salient individual's belief-state content is the whole of (31). -/
-def presup34 (salient : List Doxa) : Prop := ∃ s ∈ salient, s ∈ ignoranceScope
+/-- (34): *also* above both instances of *exh* presupposes that the speaker's state about some
+salient individual is one of ignorance. -/
+def presupAbove (ctx : List (Finset (Finset Lang))) : Prop := ∃ s ∈ ctx, s ∈ ignorance
 
-instance (salient : List Doxa) : Decidable (presup34 salient) :=
-  inferInstanceAs (Decidable (∃ s ∈ salient, s ∈ ignoranceScope))
+instance (ctx : List (Finset (Finset Lang))) : Decidable (presupAbove ctx) :=
+  inferInstanceAs (Decidable (∃ s ∈ ctx, s ∈ ignorance))
 
-/-- The additive presupposition of parse (35) = (37b), from the paper's display, demands a
-salient individual believed to teach exactly one, one believed to teach Arabic only, and one
-believed to teach Basque only. The paper defers the derivation to [marty-romoli-2021]'s (85). -/
-def presup35 (salient : List Doxa) : Prop :=
-  (∃ s ∈ salient, s.Must Taught.exactlyOne)
-  ∧ (∃ s ∈ salient, s.Must Taught.onlyArabic)
-  ∧ (∃ s ∈ salient, s.Must Taught.onlyBasque)
+/-- (35): *also* between the two instances of *exh* presupposes a salient individual believed
+to teach exactly one language and, for each language, one believed to teach only it. -/
+def presupBetween (ctx : List (Finset (Finset Lang))) : Prop :=
+  (∃ s ∈ ctx, ∀ t ∈ s, t.card = 1) ∧ ∀ l : Lang, ∃ s ∈ ctx, ∀ t ∈ s, t = {l}
 
-instance (salient : List Doxa) : Decidable (presup35 salient) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance (ctx : List (Finset (Finset Lang))) : Decidable (presupBetween ctx) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- In the disjunctive antecedent context of (33a), the speaker believes Mira teaches exactly
-one of the two languages, without knowing which. Each context lists the speaker's belief state about
-each salient individual. -/
-def disjCtx : List Doxa := [{⟨true, false⟩, ⟨false, true⟩}]
-
-/-- The conjunctive antecedent context of (33b). -/
-def conjCtx : List Doxa := [{⟨true, true⟩}]
-
-/-- In the split antecedent context of (33c), Mira teaches Arabic only and Ora Basque only. -/
-def splitCtx : List Doxa := [{⟨true, false⟩}, {⟨false, true⟩}]
-
-/-- In the simple antecedent context of (33d), Mira teaches Arabic only. -/
-def simpleCtx : List Doxa := [{⟨true, false⟩}]
-
--- (33), (34), (35), (37a), (37b)
+/-- (33): of the disjunctive, conjunctive, split and simple antecedents, given as the speaker's
+state about each salient individual, the disjunctive one satisfies only the presupposition of
+*also* above both instances of *exh*, the split one only that of *also* between them, and the
+other two neither. -/
 theorem antecedent_pattern :
-    (presup34 disjCtx ∧ ¬ presup35 disjCtx)
-    ∧ (¬ presup34 conjCtx ∧ ¬ presup35 conjCtx)
-    ∧ (¬ presup34 splitCtx ∧ presup35 splitCtx)
-    ∧ (¬ presup34 simpleCtx ∧ ¬ presup35 simpleCtx) := by decide
+    (presupAbove [{{.arabic}, {.basque}}] ∧ ¬ presupBetween [{{.arabic}, {.basque}}]) ∧
+    (¬ presupAbove [{Finset.univ}] ∧ ¬ presupBetween [{Finset.univ}]) ∧
+    (¬ presupAbove [{{.arabic}}, {{.basque}}] ∧ presupBetween [{{.arabic}}, {{.basque}}]) ∧
+    (¬ presupAbove [{{.arabic}}] ∧ ¬ presupBetween [{{.arabic}}]) := by decide
 
-/-- The covert and overt operators of the (37) parses, top-down over the disjunctive leaf, are
-*also*, the ignorance *exh*, the doxastic necessity operator, and the SI *exh* that checks
-`[uexh*]`. -/
+/-- An operator of the parses of (37): *also*, the higher *exh*, the necessity operator, and the
+*exh* of the disjunction. -/
 inductive IgnOp where
   | also
   | ignExh
@@ -504,32 +388,16 @@ inductive IgnOp where
   | siExh
   deriving DecidableEq, Repr
 
-/-- Parse (37a) is *also* > *exh* > □ > *exh*. The necessity operator sits below *also*, which
-occupies its surface vP-adjoined position, so once this parse is needed the ignorance-deriving □
-is available clause-medially, (38) against [meyer-2013]'s Matrix K theory. -/
-def parse37a : List IgnOp := [.also, .ignExh, .nec, .siExh]
+/-- The site of the *exh* of the disjunction, the number of overt operators above it. -/
+def siExhSite (p : List IgnOp) : ℕ := (p.takeWhile (· ≠ .siExh)).count .also
 
-/-- Parse (37b) is *exh* > □ > *also* > *exh*. -/
-def parse37b : List IgnOp := [.ignExh, .nec, .also, .siExh]
-
-/-- Parse (37c) is *exh* > □ > *exh* > *also*. -/
-def parse37c : List IgnOp := [.ignExh, .nec, .siExh, .also]
-
-/-- The site the SI *exh* occupies is given by the number of overt operators above it. -/
-def siExhSite (p : List IgnOp) : ℕ := (p.takeWhile (· != .siExh)).count .also
-
-/-- `[uexh*]` is checked iff the SI *exh* occupies the site generalization (9) forces on the
-base clause of (3) = (32). Once checked, the feature imposes nothing on the higher *exh* and □
-([chow-erlewine-2022] section 3.3). -/
-def ChecksUExhStar (p : List IgnOp) : Prop :=
-  some (siExhSite p) = teachOr.lowestNonVacuousSite Individual.other
-
-instance (p : List IgnOp) : Decidable (ChecksUExhStar p) :=
-  inferInstanceAs
-    (Decidable (some (siExhSite p) = teachOr.lowestNonVacuousSite Individual.other))
-
--- (37), (37a), (37b), (37c) [marty-romoli-2021] [spector-sudo-2017]
+/-- (37): a parse is grammatical exactly when the *exh* of the disjunction is at the site its
+strong feature requires, so *also* may be above both instances of *exh* or between them, and not
+below both. -/
 theorem parse37_grammaticality :
-    ChecksUExhStar parse37a ∧ ChecksUExhStar parse37b ∧ ¬ ChecksUExhStar parse37c := by decide
+    SITrigger.disj.feature.Allows salient teachOr (siExhSite [.also, .ignExh, .nec, .siExh]) ∧
+    SITrigger.disj.feature.Allows salient teachOr (siExhSite [.ignExh, .nec, .also, .siExh]) ∧
+    ¬ SITrigger.disj.feature.Allows salient teachOr (siExhSite [.ignExh, .nec, .siExh, .also]) := by
+  decide
 
 end ChowErlewine2022
