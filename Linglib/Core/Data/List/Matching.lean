@@ -23,8 +23,7 @@ subpermutation of `m`. `List.matchingNumber R l m` is the size of a largest matc
 ## Main results
 
 * `List.le_matchingNumber_iff`: `R` has a matching of size `k` iff `k ≤ matchingNumber R l m`.
-* `List.countP_le_matchingNumber`: the members of a duplicate-free list bearing a relation
-  contained in `R`, and injective, to members of `m` are pairable.
+* `List.matchingNumber_map_right_le`: a matching into the image of a list lifts to the list.
 -/
 
 @[expose] public section
@@ -85,36 +84,30 @@ theorem le_matchingNumber_iff {k : ℕ} :
           (Finset.mem_filter.2 ⟨mem_toFinset.2 hb, hab⟩)))
         exact Nat.succ_le_succ (ih.2 ⟨r, m₂, hr, by simpa using hm.erase b, hR₂, rfl⟩)
 
-/-- The members of a duplicate-free list bearing `S` to some member of `m` are pairable along `R`,
-where `S` is contained in `R` and no two members bear `S` to one member of `m`. -/
-theorem countP_le_matchingNumber {S : α → β → Prop} [DecidableRel S] (hl : l.Nodup)
-    (hSR : ∀ a ∈ l, ∀ b, S a b → R a b) (hS : ∀ a ∈ l, ∀ a' ∈ l, ∀ b, S a b → S a' b → a = a')
-    (m : List β) : l.countP (fun a ↦ ∃ b ∈ m, S a b) ≤ matchingNumber R l m := by
-  induction l generalizing m with
+/-- A matching into a subpermutation of `m` is a matching into `m`. -/
+theorem matchingNumber_le_of_subperm {m m' : List β} (h : m <+~ m') (l : List α) :
+    matchingNumber R l m ≤ matchingNumber R l m' := by
+  obtain ⟨l₁, m₁, hl, hm, hR, hk⟩ := le_matchingNumber_iff.1 (le_refl (matchingNumber R l m))
+  exact le_matchingNumber_iff.2 ⟨l₁, m₁, hl, hm.trans h, hR, hk⟩
+
+/-- A matching into the image of a list lifts to a matching into the list along the pullback of
+the relation. -/
+theorem matchingNumber_map_right_le {ι : Type*} [DecidableEq ι] (v : ι → β) (l : List α)
+    (js : List ι) :
+    matchingNumber R l (js.map v) ≤ matchingNumber (fun a j ↦ R a (v j)) l js := by
+  induction l generalizing js with
   | nil => simp
   | cons a l ih =>
-    obtain ⟨ha, hl⟩ := nodup_cons.1 hl
-    have ih := ih hl (fun a' h ↦ hSR a' (mem_cons_of_mem a h))
-      fun a' h a'' h' ↦ hS a' (mem_cons_of_mem a h) a'' (mem_cons_of_mem a h')
-    rw [matchingNumber_cons, countP_cons]
-    by_cases h : ∃ b ∈ m, S a b
-    · obtain ⟨b, hb, hab⟩ := h
-      have he : l.countP (fun a' ↦ ∃ b' ∈ m.erase b, S a' b') =
-          l.countP (fun a' ↦ ∃ b' ∈ m, S a' b') := countP_congr fun a' ha' ↦ by
-        simp only [decide_eq_true_eq]
-        refine ⟨fun ⟨b', hb', h'⟩ ↦ ⟨b', mem_of_mem_erase hb', h'⟩, fun ⟨b', hb', h'⟩ ↦
-          ⟨b', (mem_erase_of_ne ?_).2 hb', h'⟩⟩
-        rintro rfl
-        exact ha (hS a' (mem_cons_of_mem a ha') a mem_cons_self b' h' hab ▸ ha')
-      have hle := Finset.le_sup (f := fun b ↦ matchingNumber R l (m.erase b) + 1)
-        (Finset.mem_filter.2 ⟨mem_toFinset.2 hb, hSR a mem_cons_self b hab⟩)
-      rw [ite_eq_left (decide_eq_true ⟨b, hb, hab⟩)]
-      refine le_max_of_le_right (le_trans ?_ hle)
-      show _ ≤ matchingNumber R l (m.erase b) + 1
-      have := ih (m.erase b)
-      omega
-    · rw [ite_eq_right (by simpa using h)]
-      exact le_max_of_le_left (ih m)
+    rw [matchingNumber_cons, matchingNumber_cons]
+    refine max_le (le_max_of_le_left (ih js)) (Finset.sup_le fun b hb ↦ ?_)
+    rw [Finset.mem_filter, mem_toFinset, mem_map] at hb
+    obtain ⟨⟨j, hj, rfl⟩, hab⟩ := hb
+    refine le_max_of_le_right (le_trans ?_ (Finset.le_sup
+      (f := fun j ↦ matchingNumber (fun a j ↦ R a (v j)) l (js.erase j) + 1)
+      (Finset.mem_filter.2 ⟨mem_toFinset.2 hj, hab⟩)))
+    have hp : (js.map v).erase (v j) ~ (js.erase j).map v := by
+      simpa using ((perm_cons_erase hj).map v).erase (v j)
+    exact Nat.succ_le_succ ((matchingNumber_le_of_subperm hp.subperm l).trans (ih _))
 
 end MatchingNumber
 
