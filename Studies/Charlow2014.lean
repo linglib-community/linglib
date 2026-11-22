@@ -38,6 +38,10 @@ and *no* do not.
   atoms, where the thesis identifies an atom with its singleton.
 * The choice-function theorems assume that distinct values of the bound variable give distinct
   restrictors, which the thesis states for (4.37) and leaves implicit for (4.35) and (4.38).
+* Membership in an image is oriented `b = f a` in this file's simp set, as membership in a
+  singleton is, with `Set.mem_image` removed from it. Over `Set`, `m >>= fun a ↦ pure (g a)`
+  simplifies to an image by `bind_pure_comp` and to a union of singletons by `Set.bind_def`, and
+  the default orientations of the two disagree.
 
 ## TODO
 
@@ -74,6 +78,12 @@ attribute [local instance] Set.monad
 namespace Charlow2014
 
 universe u
+
+@[local simp] private theorem mem_image_iff_eq {α β : Type*} {f : α → β} {s : Set α} {b : β} :
+    b ∈ f '' s ↔ ∃ a ∈ s, b = f a := by
+  simp only [Set.mem_image, eq_comm]
+
+attribute [-simp] Set.mem_image
 
 /-! ### Monadic application and Rebracket -/
 
@@ -167,7 +177,7 @@ theorem combine_set (f : α → β → σ) (m : Set α) (n : Set β) :
 
 theorem combine_readerT_set (f : α → β → σ) (m : ReaderT σ Set α) (n : ReaderT σ Set β) :
     combine f m n = .mk fun s ↦ {c | ∃ x ∈ m.run s, ∃ y ∈ n.run s, c = f x y} := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem combine_stateT (f : α → β → σ) (m : StateT σ Id α) (n : StateT σ Id β) :
     combine f m n =
@@ -175,7 +185,7 @@ theorem combine_stateT (f : α → β → σ) (m : StateT σ Id α) (n : StateT 
 
 theorem combine_stateT_set (f : α → β → σ) (m : StateT σ Set α) (n : StateT σ Set β) :
     combine f m n = .mk fun s ↦ {c | ∃ x ∈ m.run s, ∃ y ∈ n.run x.2, c = (f x.1 y.1, y.2)} := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 end Instances
 
@@ -233,11 +243,11 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
 
 @[simp] theorem mem_indef (P : E → Prop) (s : Stack E) (q : E × Stack E) :
     q ∈ (indef P).run s ↔ P q.1 ∧ q.2 = s := by
-  obtain ⟨x, t⟩ := q; simp [indef, eq_comm]
+  obtain ⟨x, t⟩ := q; simp [indef]
 
 @[simp] theorem mem_pro (s : Stack E) (q : E × Stack E) :
     q ∈ pro.run s ↔ s.getLast? = some q.1 ∧ q.2 = s := by
-  obtain ⟨x, t⟩ := q; simp [pro, eq_comm]
+  obtain ⟨x, t⟩ := q; simp [pro]
 
 @[simp] theorem mem_dref (m : StateSet E E) (s : Stack E) (q : E × Stack E) :
     q ∈ (dref m).run s ↔ ∃ r ∈ m.run s, q = (r.1, r.2 ++ [r.1]) := by simp [dref]
@@ -277,7 +287,7 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
 
 @[simp] theorem det_pure (P : E → Prop) : det (fun x ↦ pure (P x)) = indef P := by
   ext s ⟨x, s'⟩
-  simp [eq_comm, and_comm, -eq_iff_iff]
+  simp [and_comm, -eq_iff_iff]
 
 theorem dref_bind (m : StateSet E E) (π : E → StateSet E α) :
     dref m >>= π = m >>= fun a ↦ modify (· ++ [a]) *> π a := by
@@ -290,7 +300,7 @@ theorem bind_pro (m : StateSet E E) (π : E → E → StateSet E α) :
 theorem indef_met_name (man : E → Prop) (met : E → E → Prop) (p : E) :
     combine (fun x f ↦ f x) (dref (indef man)) (combine (· ·) (pure met) (pure p)) =
       .mk fun s ↦ {q | ∃ x, man x ∧ q = (met p x, s ++ [x])} := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem indef_left_pro_tired (man left tired : E → Prop) :
     combine (fun x f ↦ f x) (combine (fun x f ↦ f x) (dref (indef man)) (pure left))
@@ -385,13 +395,13 @@ theorem name_saw_indef (j : E) (saw : E → E → Prop) (ling : E → Prop) :
     lower (combine (fun x f ↦ f x) (liftValue j : Tower E Prop E)
       (combine (· ·) (liftValue saw) (monadLift (indef ling)))) =
       indef ling >>= fun x ↦ pure (saw x j) := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem indef_saw_every (man ling : E → Prop) (saw : E → E → Prop) :
     lower (combine (fun x f ↦ f x) (monadLift (indef man) : Tower E Prop E)
       (combine (· ·) (liftValue saw) (everyDP ling))) =
       indef man >>= fun x ↦ pure (∀ y, ling y → saw y x) := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 /-! ### Bind (Facts 3.15, 3.17, 3.18, (3.25), (3.26)) -/
 
@@ -430,7 +440,7 @@ theorem name_rubbed_pro_head (j : E) (rubbed : E → E → Prop) (head : E → E
       (combine (· ·) (liftValue rubbed)
         (combine (fun x f ↦ f x) (monadLift pro) (liftValue head)))) =
       .mk fun s ↦ {(rubbed (head j) j, s ++ [j])} := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem name_mom_saw_pro (j : E) (saw : E → E → Prop) (mom : E → E) :
     lower (combine (fun x f ↦ f x)
@@ -462,7 +472,7 @@ theorem every_owl_that_saw (owl : E → Prop) (saw : E → E → Prop) (a : E)
     (k : E → StateSet E Prop) :
     every (fun x ↦ dref (pure x) >>= fun ν ↦ pro >>= fun y ↦ pure (owl ν ∧ saw y a)) k =
       .mk fun s ↦ {(∀ ν, owl ν ∧ saw ν a → holds (k ν) (s ++ [ν]), s)} := by
-  ext s : 1; simp [eq_comm, every, and_assoc]
+  ext s : 1; simp [every, and_assoc]
 
 /-! ### Scope islands and exceptional scope (Facts 4.2–4.7, (4.7)–(4.12))
 
@@ -491,7 +501,7 @@ theorem reset_indef_every (man ling : E → Prop) (met : E → E → Prop) :
       (combine (· ·) (liftValue met) (everyDP ling))) =
       (monadLift (dref (indef man) >>= fun x ↦ pure (∀ y, ling y → met y x)) :
         Tower E Prop Prop) := by
-  unfold reset; congr 1; ext s q; simp [eq_comm]
+  unfold reset; congr 1; ext s q; simp
 
 theorem reset_every_indef (man ling : E → Prop) (met : E → E → Prop) :
     (monadLift (lower₂ (combine (combine (fun x f ↦ f x))
@@ -527,7 +537,7 @@ theorem exceptional_neg (rel ling : E → Prop) (met : E → E → Prop) :
       (pure <$> reset (combine (fun x f ↦ f x) (monadLift (indef rel) : Tower E Prop E)
         (combine (· ·) (liftValue met) (everyDP ling))))) >>= monadLift) =
       indef rel >>= fun x ↦ pure (¬ ∀ y, ling y → met y x) := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
     lower ((combine (· ·)
@@ -536,7 +546,7 @@ theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
           (liftValue dies))))
       (pure <$> liftValue rich)) >>= monadLift) =
       indef rel >>= fun x ↦ pure (dies x → rich) := by
-  ext s q; simp [eq_comm, cond]
+  ext s q; simp [cond]
 
 theorem island_cond_every (rel dies : E → Prop) (rich : Prop) :
     lower ((combine (· ·)
@@ -566,7 +576,7 @@ theorem brc_derivation (cand : E → Prop) (paperBy submitted : E → E → Prop
       (combine (combine (· ·)) (pure (liftValue submitted))
         (pure <$> monadLift (pro >>= fun z ↦ indef (paperBy z))))) =
       pro >>= fun z ↦ indef (paperBy z) >>= fun y ↦ pure (¬ ∃ x, cand x ∧ submitted y x) := by
-  ext s q; simp [Function.comp_def, eq_comm]
+  ext s q; simp [Function.comp_def]
 
 /-! ### Choice functions (§4.7.1, (4.34)–(4.38))
 
@@ -647,7 +657,7 @@ theorem indef_visits_indef (law rel : E → Prop) (visits : E → E → Prop) :
     lower (combine (fun x f ↦ f x) (monadLift (indef law) : Tower E Prop E)
       (combine (· ·) (liftValue visits) (monadLift (indef rel)))) =
       indef law >>= fun x ↦ indef rel >>= fun y ↦ pure (visits y x) := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem indef_visits_indef_layered (law rel : E → Prop) (visits : E → E → Prop) :
     lower (lower <$> combine (combine (fun x f ↦ f x))
@@ -691,7 +701,7 @@ theorem indef_fronts_two_distr (guard bldgs : Set A → Prop) (fronts : Set A �
         monadLift (indef fun X ↦ bldgs X ∧ X.ncard = 2)))).run (·.run lower) =
       indef (fun X ↦ bldgs X ∧ X.ncard = 2) >>= fun Y ↦
         pure (∀ y ∈ Y, ∃ x, guard x ∧ fronts {y} x) := by
-  ext s q; simp [eq_comm, Function.comp_def]
+  ext s q; simp [Function.comp_def]
 
 end Plural
 
@@ -762,7 +772,7 @@ theorem name_dref_inverse (person : E → Prop) (thinks : Prop → E → Prop) (
       (combine (combine (· ·)) (pure (liftValue thinks))
         (pure <$> combine (fun x f ↦ f x) (bindShift (liftValue b)) (liftValue come)))) =
       dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x) := by
-  ext s q; simp [eq_comm, Function.comp_def]
+  ext s q; simp [Function.comp_def]
 
 theorem name_dref_cond (person : E → Prop) (thinks : Prop → E → Prop) (come invite : E → Prop)
     (b : E) :
@@ -795,7 +805,7 @@ theorem dynGQ_left (ling left : Set A) :
     lower (combine (fun x f ↦ f x) (dynGQ (fun _ N ↦ N.ncard = 1) ling)
       (liftValue (· ∈ left))) =
       dref (pure (ling ∩ left)) >>= fun N ↦ pure (N.ncard = 1) := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 theorem dynGQ_pro (ling left : Set A) (tired : Set A → Prop) :
     lower (combine (fun x f ↦ f x)
@@ -811,7 +821,7 @@ theorem dynGQ_neg (sen admire : Set A) :
       (pure <$> reset (combine (fun x f ↦ f x) (dynGQ (fun _ N ↦ N = ∅) sen)
         (liftValue (· ∈ admire))))) >>= monadLift) =
       dref (pure (sen ∩ admire)) >>= fun N ↦ pure (¬ N = ∅) := by
-  ext s q; simp [eq_comm]
+  ext s q; simp
 
 end DynamicGQ
 
@@ -886,7 +896,7 @@ theorem fmark_left (alt : E → Set E) (j : E) (left : E → Prop) :
       (liftValue left)) =
       ⟨left j, {p | ∃ x ∈ alt j, p = left x}⟩ := by
   rw [liftValue, lower_combine_monadLift, combine_eq_map₂]
-  exact WithAlternatives.ext rfl (by ext; simp [fmark, WithAlternatives.alternatives_pure, eq_comm])
+  exact WithAlternatives.ext rfl (by ext; simp [fmark, WithAlternatives.alternatives_pure])
 
 theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop) :
     only (lower (combine (· ·) (liftValue met :
@@ -895,7 +905,7 @@ theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop
       fun x w ↦ {Q | (∃ y ∈ alt j, Q = met y) ∧ Q x w} = {met j} := by
   funext x w
   rw [liftValue, lower_combine_monadLift, combine_eq_map₂, only_iff]
-  simp [fmark, WithAlternatives.alternatives_pure, eq_comm]
+  simp [fmark, WithAlternatives.alternatives_pure]
 
 theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     only (lower (combine (· ·)
@@ -906,7 +916,7 @@ theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E �
   funext z w
   rw [only_iff]
   simp [combine, lower, fmark, WithAlternatives.alternatives_bind,
-    WithAlternatives.alternatives_pure, eq_comm]
+    WithAlternatives.alternatives_pure]
 
 theorem only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     lower (combine (· ·)
@@ -1078,7 +1088,7 @@ theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → 
         (pure <$> monadLift (pro >>= fun u ↦ indef (bookBy u))))).run lower =
       indef man >>= fun x ↦ indef (bookBy x) >>= fun z ↦
         pure (¬ ∃ y, person y ∧ told y z x) := by
-  ext s q; simp [Function.comp_def, eq_comm, -eq_iff_iff]
+  ext s q; simp [Function.comp_def, -eq_iff_iff]
 
 theorem no_exceptional_binding (man left tired : E → Prop) :
     lower (combine (fun x f ↦ f x)
