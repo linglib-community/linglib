@@ -129,7 +129,6 @@ theorem beGoingTo_mono (h : ∀ t e, imm t e → imm' t e) :
     beGoingTo imm P x w ≤ beGoingTo imm' P x w :=
   fun _ ⟨e, ht, hi, hP⟩ ↦ ⟨e, ht, h _ _ hi, hP⟩
 
-/-- The reanalysed *be going to* is a restriction of the prospective viewpoint. -/
 theorem beGoingTo_le_prospective :
     beGoingTo imm P x w ≤ ViewpointType.prospective.denote (P x w) :=
   fun _ ⟨e, ht, _, hP⟩ ↦ denote_prospective_iff.2 ⟨e, le_of_lt ht, hP⟩
@@ -178,8 +177,6 @@ theorem not_precedes_of_le {s : NonemptyInterval T} (h : t ≤ s) : ¬ t.Precede
 
 /-! ### What the new entry no longer conveys -/
 
-/-- Movement *go* with an infinitive holds at no reference time, along any relation between the
-reference time and the run time, when no going prepares an event of the embedded predicate. -/
 theorem diamond_runTimes_goTo_eq_bot (R : SetRel (NonemptyInterval T) (NonemptyInterval T))
     (h : ∀ e e', go x w e → prepare e e' → ¬ P x w e') :
     ◇[R] (Event.runTimes (goTo go prepare P x w)) = ⊥ :=
