@@ -726,7 +726,8 @@ theorem senderPayoff_eq_pureSenderValue (c : C) (s : C → W → F) (r : C → F
 /-- The receiver in the context `c` who has updated the prior with the proposition `φ`, as an
 agent. -/
 noncomputable def receiverAt (c : C) (φ : Finset W) : Agent Unit W A :=
-  ⟨ProbabilityTheory.Kernel.const Unit (g.priorMeasure.restrict ↑φ), g.uR c⟩
+  ⟨ProbabilityTheory.Kernel.const Unit (g.priorMeasure.restrict ↑φ),
+    fun w a ↦ (g.uR c w a : EReal)⟩
 
 omit [Fintype C] [Fintype F] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
 -- Definition 1: the receiver's optimal actions are his best responses as an agent.
@@ -735,7 +736,7 @@ theorem coe_optimalActions_prior (c : C) (φ : Finset W) :
   rw [← Agent.coe_argmax_value, optimalActions]
   congr 2
   funext a
-  rw [receiverAt, Agent.value_mk, ProbabilityTheory.Kernel.const_apply,
+  rw [receiverAt, Agent.value_coe, ProbabilityTheory.Kernel.const_apply,
     setIntegral_finset _ Integrable.of_finite.integrableOn]
   exact Finset.sum_congr rfl fun w _ ↦ by rw [priorMeasure_real_singleton, smul_eq_mul]
 

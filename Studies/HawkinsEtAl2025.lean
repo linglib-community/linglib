@@ -243,7 +243,11 @@ section Questioner
 variable [Fintype A] [MeasurableSpace A]
 
 /-- The decision problem with utility `U` and belief `π` is an agent that observes nothing. -/
-def problem (U : W → A → ℝ) (π : Measure W) : Agent Unit W A := ⟨Kernel.const Unit π, U⟩
+def problem (U : W → A → ℝ) (π : Measure W) : Agent Unit W A :=
+  ⟨Kernel.const Unit π, fun w a ↦ (U w a : EReal)⟩
+
+instance (U : W → A → ℝ) (π : Measure W) : (problem U π).IsUnconstrained := by
+  unfold problem; infer_instance
 
 /-- The value `V(D)` of a decision problem is the expected utility of following its policy (2.2),
 the policy of the agent at rationality `αℵ`. -/
@@ -258,7 +262,7 @@ theorem value_eq_sum (U : W → A → ℝ) (αℵ : ℝ) (π : Measure W) :
     value U αℵ π =
       ∑ a, Real.softmax (fun a ↦ αℵ * ∫ w, U w a ∂π) a * ∫ w, U w a ∂π := by
   simp only [value, integral_fintype .of_finite, smul_eq_mul, Agent.policy_real_singleton,
-    problem, Agent.value_mk, Kernel.const_apply]
+    problem, Agent.value_coe, Kernel.const_apply]
 
 theorem value_le_decisionValue [Nonempty A] (U : W → A → ℝ) (αℵ : ℝ) (π : Measure W) :
     value U αℵ π ≤ decisionValue U π := by
@@ -276,7 +280,7 @@ theorem value_of_pair (hab : a ≠ b) (hall : ∀ c, c = a ∨ c = b) :
   rw [value, integral_fintype .of_finite, huniv, Finset.sum_pair hab,
     Agent.policy_real_of_pair hab hall,
     Agent.policy_real_of_pair hab.symm fun c ↦ (hall c).symm, ← Real.sigmoid_neg]
-  simp only [problem, Agent.value_mk, Kernel.const_apply, smul_eq_mul]
+  simp only [problem, Agent.value_coe, Kernel.const_apply, smul_eq_mul]
   ring_nf
 
 theorem value_mono [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
@@ -364,8 +368,11 @@ the world `w`, asking `q` is worth the expected value of `d` updated (2.4) by th
 respondent's answer at `w`, less the weighted cost of the answer. -/
 noncomputable def Model.questioner (d : D) : Agent Unit W Q where
   belief := Kernel.const Unit (m.prior d)
-  utility w q := ∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) -
-    p.wc * m.cost r) ∂(m.R0 q w)
+  utility w q := ((∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) -
+    p.wc * m.cost r) ∂(m.R0 q w) : ℝ) : EReal)
+
+instance (d : D) : (m.questioner p d).IsUnconstrained := by
+  unfold Model.questioner; infer_instance
 
 theorem Model.value_questioner (d : D) [IsFiniteMeasure (m.prior d)] (q : Q) :
     (m.questioner p d).value () q =

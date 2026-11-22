@@ -253,12 +253,15 @@ theorem expectedBaseUtility_cooperate_sub_defect (q : Player) :
 player's belief about it, and its utility the base utility of the outcome. -/
 def agent (q : Player) : Agent Unit Action Action :=
   ⟨Kernel.const Unit (bernoulliMeasure .cooperate .defect q.belief),
-    fun a₂ a₁ ↦ S.baseUtility q a₁ a₂⟩
+    fun a₂ a₁ ↦ ((S.baseUtility q a₁ a₂ : ℝ) : EReal)⟩
+
+instance (q : Player) : (S.agent q).IsUnconstrained := by
+  unfold agent; infer_instance
 
 -- (3.1)
 theorem value_agent (q : Player) (a₁ : Action) :
     (S.agent q).value () a₁ = S.expectedBaseUtility q a₁ := by
-  rw [agent, Agent.value_mk, Kernel.const_apply, integral_bernoulliMeasure]
+  rw [agent, Agent.value_coe, Kernel.const_apply, integral_bernoulliMeasure]
   simp [expectedBaseUtility, sum_action, Player.beliefOn]
 
 /-- The probability (3.3) that a player takes an action, the share the policy of the agent `ag`
@@ -266,7 +269,7 @@ makes of the player gives the action at rationality `lam`. -/
 def policy (ag : Player → Agent Unit Action Action) (q : Player) (a : Action) : ℝ :=
   ((ag q).policy S.lam ()).real {a}
 
-variable (ag : Player → Agent Unit Action Action) (q : Player)
+variable (ag : Player → Agent Unit Action Action) [∀ q, (ag q).IsUnconstrained] (q : Player)
 
 theorem policy_eq_sigmoid (a : Action) :
     S.policy ag q a =
@@ -296,7 +299,7 @@ theorem half_le_policy_cooperate_iff (hb : q.belief = 1) :
 /-! ### Inverse planning -/
 
 variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω] [Fintype Ω]
-  (ag : Player → Agent Unit Action Action) (p : Ω → Player)
+  (ag : Player → Agent Unit Action Action) [∀ q, (ag q).IsUnconstrained] (p : Ω → Player)
 
 /-- The forward model: the policy (3.3) of each simulated player, as the agent `ag` makes of
 it. -/
@@ -326,7 +329,8 @@ def priorExpectation {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (p : Ω
 
 namespace Setting
 
-variable (S : Setting) (ag : Player → Agent Unit Action Action) {Ω : Type*} [MeasurableSpace Ω]
+variable (S : Setting) (ag : Player → Agent Unit Action Action) [∀ q, (ag q).IsUnconstrained]
+  {Ω : Type*} [MeasurableSpace Ω]
   [MeasurableSingletonClass Ω] [Fintype Ω] [Nonempty Ω] (p : Ω → Player) (μ : Measure Ω)
   [IsProbabilityMeasure μ] {f : Player → ℝ}
 
@@ -433,12 +437,15 @@ def expectedPublicUtility (q : Player) (a₁ : Action) : ℝ :=
 utilities of the action to its base utility. -/
 def publicAgent (q : Player) : Agent Unit Action Action :=
   ⟨Kernel.const Unit (bernoulliMeasure .cooperate .defect q.belief), fun a₂ a₁ ↦
-    S.baseUtility q a₁ a₂ + ∑ d, S.reputationUtility p μ q a₁ d⟩
+    ((S.baseUtility q a₁ a₂ + ∑ d, S.reputationUtility p μ q a₁ d : ℝ) : EReal)⟩
+
+instance (q : Player) : (S.publicAgent p μ q).IsUnconstrained := by
+  unfold publicAgent; infer_instance
 
 -- (3.2)
 theorem value_publicAgent (q : Player) (a₁ : Action) :
     (S.publicAgent p μ q).value () a₁ = S.expectedPublicUtility p μ q a₁ := by
-  rw [publicAgent, Agent.value_mk, Kernel.const_apply, integral_bernoulliMeasure]
+  rw [publicAgent, Agent.value_coe, Kernel.const_apply, integral_bernoulliMeasure]
   simp only [expectedPublicUtility, expectedBaseUtility, sum_action, Player.beliefOn,
     smul_eq_mul]
   ring
@@ -535,7 +542,7 @@ theorem domainUtility_aia_defect_cooperate_nonpos :
 /-- A player who stole from a cooperator would have gained in advantageous-inequity utility by
 cooperating. -/
 theorem agentCounterfactual_aia_defect_cooperate_nonneg
-    (ag : Player → Agent Unit Action Action) :
+    (ag : Player → Agent Unit Action Action) [∀ q, (ag q).IsUnconstrained] :
     0 ≤ S.agentCounterfactual q ag .defect .cooperate .aia := by
   have hpot := S.pot_pos.le
   simp only [agentCounterfactual, Action.other_defect, domainUtility, Domain.sign,
@@ -553,7 +560,7 @@ theorem opponentCounterfactual_money_cooperate_cooperate_nonpos :
     (mul_nonneg (unitInterval.nonneg (q.base .money)) (sub_nonneg.2 this))]
 
 theorem agentCounterfactual_dia_defect_defect_nonpos
-    (ag : Player → Agent Unit Action Action) :
+    (ag : Player → Agent Unit Action Action) [∀ q, (ag q).IsUnconstrained] :
     S.agentCounterfactual q ag .defect .defect .dia ≤ 0 := by
   have hpot := S.pot_pos.le
   simp only [agentCounterfactual, Action.other_defect, domainUtility, Domain.sign,
@@ -568,6 +575,7 @@ def reputationAgentCounterfactual (ag : Player → Agent Unit Action Action) (a�
     (S.reputationUtility p μ q a₁.other d - S.reputationUtility p μ q a₁ d)
 
 theorem reputationAgentCounterfactual_aia_defect_nonneg (ag : Player → Agent Unit Action Action)
+    [∀ q, (ag q).IsUnconstrained]
     (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) (a₂ : Action) :
     0 ≤ S.reputationAgentCounterfactual p μ q ag .defect a₂ .aia := by
   simp only [reputationAgentCounterfactual, Action.other_defect, reputationUtility,

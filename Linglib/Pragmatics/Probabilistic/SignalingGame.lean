@@ -7,8 +7,13 @@ public import Linglib.Pragmatics.SignalingGame.Defs
 /-!
 # Rational speech acts in a signaling game
 
-The speakers of the Rational Speech Act model are policies of the sender of a signaling game,
-`SignalingGame.sender`, at a finite rationality.
+The speaker of the Rational Speech Act model is the policy of an agent: she believes `b`, and an
+utterance is worth to her, at a state, the logarithm of its listener's probability of the state
+less its cost, which is `⊥` where the listener rules the state out
+(`RSA.speaker_eq_policy`). She therefore gives positive probability to exactly the utterances
+that are feasible for that agent.
+
+The speakers are also policies of the sender of a signaling game, `SignalingGame.sender`.
 
 The decision-theoretic speaker answers a listener who acts. Where the sender's utility is a reward
 for the listener's action less a cost of the signal, `RSA.actionSpeaker` at the scaled cost is the
@@ -21,13 +26,14 @@ speaker who knows the state is the sender's policy (`RSA.speaker_dirac_eq_sender
 
 ## Implementation notes
 
-An agent's utility is real, and the policy of an agent gives every action positive probability.
-The speaker of `RSA.speaker` gives none to an utterance whose listener rules out her state, whose
-score is `⊥`, so the two agree only against a listener who rules out no state.
+The utilities of a signaling game are real, so its sender is unconstrained and gives every signal
+positive probability. The speaker of `RSA.speaker` gives none to an utterance whose listener rules
+out her state, so she is the sender of `RSA.logScoreGame` only against a listener who rules out no
+state.
 
 ## TODO
 
-* An agent whose utility may be `⊥`, of which `RSA.speaker` is the policy against every listener.
+* Define `RSA.speaker` as the policy of `RSA.speaker_eq_policy`.
 * The Bayesian listener as the receiver's best response in `RSA.logScoreGame` among probability
   measures, the logarithmic score being proper.
 * A speaker who observes the state through a kernel.
@@ -45,6 +51,60 @@ open scoped ENNReal
 
 namespace RSA
 
+section Agent
+
+variable {W O U : Type*} [MeasurableSpace W] [Fintype W] [MeasurableSingletonClass W]
+  [MeasurableSpace O] [Countable O] [MeasurableSingletonClass O] [MeasurableSpace U] [Fintype U]
+
+/-- The speaker is the policy of the agent who believes `b` and to whom an utterance is worth, at
+a state, the logarithm of its listener's probability of the state less its cost. -/
+theorem speaker_eq_policy (α : ℝ) (C : U → ℝ) (L : U → Measure W) [∀ u, IsFiniteMeasure (L u)]
+    (b : O → Measure W) [∀ o, IsProbabilityMeasure (b o)] :
+    speaker α C L b = (Agent.mk (Kernel.ofFunOfCountable b)
+      fun w u ↦ ENNReal.log (L u {w}) - (C u : EReal)).policy α := by
+  classical
+  have hbot (u : U) (w : W) : ENNReal.log (L u {w}) - (C u : EReal) = ⊥ ↔ L u {w} = 0 := by
+    rw [sub_eq_add_neg, EReal.add_eq_bot_iff, ENNReal.log_eq_bot_iff, ← EReal.coe_neg]
+    exact or_iff_left (EReal.coe_ne_bot _)
+  unfold speaker Agent.policy
+  congr 1
+  funext o u
+  congr 1
+  have hfeas : (Agent.mk (Kernel.ofFunOfCountable b)
+      fun w u ↦ ENNReal.log (L u {w}) - (C u : EReal)).Feasible o u ↔
+      ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0 := by
+    rw [Agent.Feasible, Kernel.ofFunOfCountable_apply,
+      measure_null_iff_singleton (Set.to_countable _)]
+    exact forall_congr' fun w ↦ by rw [Set.mem_ofPred_eq, hbot, not_imp_not]
+  rw [utility, ← Measure.log_geomMean]
+  by_cases hf : (Agent.mk (Kernel.ofFunOfCountable b)
+      fun w u ↦ ENNReal.log (L u {w}) - (C u : EReal)).Feasible o u
+  · have h0 := hfeas.1 hf
+    have hpos : 0 < Real.exp (∑ w, (b o).real {w} * Real.log (L u {w}).toReal) := Real.exp_pos _
+    simp only [hf, ↓reduceIte]
+    rw [Measure.geomMean_eq_ofReal_exp_sum_log h0 fun w _ ↦ measure_ne_top _ _,
+      ENNReal.log_pos_real (ENNReal.ofReal_pos.2 hpos).ne' ENNReal.ofReal_ne_top,
+      ENNReal.toReal_ofReal hpos.le, Real.log_exp, ← EReal.coe_sub, Agent.value_mk,
+      Kernel.ofFunOfCountable_apply, integral_fintype .of_finite]
+    congr 1
+    have hsum : ∑ w, (b o).real {w} = 1 := by
+      rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
+    have hterm (w : W) : (b o).real {w} • (ENNReal.log (L u {w}) - (C u : EReal)).toReal =
+        (b o).real {w} * Real.log (L u {w}).toReal - (b o).real {w} * C u := by
+      rcases eq_or_ne (b o {w}) 0 with hw | hw
+      · simp [measureReal_def, hw]
+      · rw [ENNReal.log_pos_real (h0 w hw) (measure_ne_top _ _), ← EReal.coe_sub,
+          EReal.toReal_coe, smul_eq_mul, mul_sub]
+    rw [Finset.sum_congr rfl fun w _ ↦ hterm w, Finset.sum_sub_distrib, ← Finset.sum_mul, hsum,
+      one_mul]
+  · obtain ⟨w, hb, hL⟩ : ∃ w, b o {w} ≠ 0 ∧ L u {w} = 0 := by
+      by_contra h
+      exact hf (hfeas.2 fun w hb hL ↦ h ⟨w, hb, hL⟩)
+    simp only [hf, ↓reduceIte]
+    rw [Measure.geomMean_eq_zero_iff.2 ⟨w, hb, hL⟩, ENNReal.log_zero, EReal.bot_sub]
+
+end Agent
+
 section Action
 
 variable {W M A : Type*} [MeasurableSpace W] [Countable W] [MeasurableSingletonClass W]
@@ -57,9 +117,10 @@ theorem actionSpeaker_eq_sender_policy (G : SignalingGame W M A) (R : A → W �
     (hR : ∀ w m, Integrable (fun a ↦ R a w) (π m)) (β : ℝ) :
     actionSpeaker β (fun m ↦ β * c m) π R = (G.sender π).policy β := by
   have h (w : W) (m : M) : (G.sender π).value w m = ∫ a, R a w ∂π m - c m := by
-    simp only [SignalingGame.sender, Agent.value_mk, Kernel.id_apply, integral_dirac, hG]
+    simp only [SignalingGame.sender, Agent.value_coe, Kernel.id_apply, integral_dirac, hG]
     rw [integral_sub (hR w m) (integrable_const _), integral_const, probReal_univ, one_smul]
-  unfold actionSpeaker Agent.policy
+  rw [Agent.policy_eq_softmax]
+  unfold actionSpeaker
   congr 1
   funext w m
   rw [h, mul_sub]
@@ -76,8 +137,8 @@ of the probability it gives the state, and the sender pays a cost for her signal
 noncomputable def logScoreGame (pr : Measure W) (C : U → ℝ) : SignalingGame W U (Measure W) :=
   ⟨pr, fun w u a ↦ Real.log (a.real {w}) - C u, fun w _ a ↦ Real.log (a.real {w})⟩
 
-/-- Against a listener who rules out no state, the speaker who knows the state is the sender's
-policy in the game of the logarithmic score. -/
+-- Against a listener who rules out no state, the speaker who knows the state is the sender's
+-- policy in the game of the logarithmic score.
 theorem speaker_dirac_eq_sender_policy [Fintype W] (pr : Measure W) (C : U → ℝ)
     (L : U → Measure W) [∀ u, IsFiniteMeasure (L u)] (hL : ∀ u w, L u {w} ≠ 0) (α : ℝ) :
     speaker α C L Measure.dirac =
@@ -87,11 +148,10 @@ theorem speaker_dirac_eq_sender_policy [Fintype W] (pr : Measure W) (C : U → �
       _).stronglyMeasurable
   have h (w : W) (u : U) : ((logScoreGame pr C).sender (Kernel.deterministic L .of_discrete)).value
       w u = Real.log ((L u).real {w}) - C u := by
-    simp only [SignalingGame.sender, Agent.value_mk, Kernel.id_apply, integral_dirac,
+    simp only [SignalingGame.sender, Agent.value_coe, Kernel.id_apply, integral_dirac,
       Kernel.deterministic_apply, logScoreGame]
     rw [integral_dirac' _ _ (hm w u)]
-  rw [speaker_dirac_eq_softmax]
-  unfold Agent.policy
+  rw [speaker_dirac_eq_softmax, Agent.policy_eq_softmax]
   congr 1
   funext w u
   rw [h, ENNReal.log_pos_real (hL u w) (measure_ne_top _ _), measureReal_def, EReal.coe_mul,
