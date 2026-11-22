@@ -32,14 +32,22 @@ signal. -/
 theorem senderValue_relabel (h : ∀ s m m' a, G.senderUtility s m a = G.senderUtility s m' a)
     (π : M ≃ M) (σ : Kernel S M) [IsFiniteKernel σ] (ρ : Kernel M A) [IsFiniteKernel ρ] :
     G.senderValue (σ.map π) (ρ.comap π.symm .of_discrete) = G.senderValue σ ρ := by
-  -- TODO: `Kernel.map_apply` and `integral_map` at each state, as in `success_relabel`.
-  sorry
+  unfold senderValue
+  refine integral_congr_ae (.of_forall fun s ↦ ?_)
+  dsimp only
+  rw [Kernel.map_apply _ .of_discrete, integral_map Measurable.of_discrete.aemeasurable
+    Measurable.of_discrete.aestronglyMeasurable]
+  refine integral_congr_ae (.of_forall fun m ↦ ?_)
+  simp only [Kernel.comap_apply, Equiv.symm_apply_apply]
+  exact integral_congr_ae (.of_forall fun a ↦ h s (π m) m a)
 
 /-- Relabelling the signals leaves the receiver's value unchanged. -/
 theorem receiverValue_relabel (π : M ≃ M) (σ : Kernel S M) [IsFiniteKernel σ] (ρ : Kernel M A)
     [IsFiniteKernel ρ] :
     G.receiverValue (σ.map π) (ρ.comap π.symm .of_discrete) = G.receiverValue σ ρ := by
-  -- TODO: the composite of the relabelled kernels is the composite of the kernels.
-  sorry
+  have hπ : (ρ.comap π.symm .of_discrete).comap π .of_discrete = ρ := by
+    ext m : 1
+    rw [Kernel.comap_apply, Kernel.comap_apply, π.symm_apply_apply]
+  rw [receiverValue, receiverValue, Kernel.comp_map _ _ .of_discrete, hπ]
 
 end SignalingGame

@@ -90,9 +90,13 @@ theorem success_deterministic [Countable M] [MeasurableSingletonClass M] (f : S 
 theorem guess_receiverValue [DecidableEq S] [IsFiniteMeasure pr] (σ : Kernel S M)
     [IsMarkovKernel σ] (η : Kernel M S) [IsMarkovKernel η] :
     (guess pr : SignalingGame S M S).receiverValue σ η = success pr σ η := by
-  -- TODO: the inner integral is `((η ∘ₖ σ) s).real {s}`; then `success_eq_lintegral` and
-  -- `integral_toReal`.
-  sorry
+  rw [success_eq_lintegral, receiverValue, ← integral_toReal Measurable.of_discrete.aemeasurable
+    (.of_forall fun s ↦ measure_lt_top _ _)]
+  refine integral_congr_ae (.of_forall fun s ↦ ?_)
+  change ∫ a, (if a = s then (1 : ℝ) else 0) ∂(η ∘ₖ σ) s = ((η ∘ₖ σ) s {s}).toReal
+  rw [← measureReal_def, ← integral_indicator_one (.singleton s)]
+  refine integral_congr_ae (.of_forall fun a ↦ ?_)
+  by_cases h : a = s <;> simp [Set.indicator, h]
 
 /-- Relabelling the states by a permutation `e` that preserves the prior, and the signals by any
 permutation `π`, leaves the expected success of every sender with every receiver unchanged. -/

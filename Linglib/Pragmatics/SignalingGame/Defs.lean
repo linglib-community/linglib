@@ -2,6 +2,7 @@ module
 
 public import Linglib.Pragmatics.Agent.Basic
 public import Mathlib.Probability.Kernel.Composition.Comp
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 public import Mathlib.Probability.Kernel.Posterior
 
 /-!
@@ -79,8 +80,10 @@ def IsCommonInterest : Prop := ∀ s m a, G.senderUtility s m a = G.receiverUtil
 theorem IsCommonInterest.senderValue_eq [Fintype M] [MeasurableSingletonClass M] [Fintype A]
     [MeasurableSingletonClass A] (h : G.IsCommonInterest) (σ : Kernel S M) [IsFiniteKernel σ]
     (ρ : Kernel M A) [IsFiniteKernel ρ] : G.senderValue σ ρ = G.receiverValue σ ρ := by
-  -- TODO: `Kernel.integral_comp` at each state.
-  sorry
+  unfold senderValue receiverValue
+  refine integral_congr_ae (.of_forall fun s ↦ ?_)
+  simp only [show ∀ m a, G.senderUtility s m a = G.receiverUtility s a from h s]
+  rw [Kernel.integral_comp .of_finite]
 
 /-- Against the receiver `ρ`, the sender is an agent who knows the state and values a signal at
 the expected utility of the action it brings. -/

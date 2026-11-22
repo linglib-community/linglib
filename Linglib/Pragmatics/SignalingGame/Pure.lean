@@ -62,14 +62,13 @@ variable [MeasurableSpace M] [MeasurableSpace A] [Countable S] [MeasurableSingle
 theorem senderValue_deterministic (f : S → M) (g : M → A) :
     G.senderValue (.deterministic f .of_discrete) (.deterministic g .of_discrete) =
       G.pureSenderValue f g := by
-  -- TODO: `integral_dirac` twice.
-  sorry
+  simp only [senderValue, pureSenderValue, Kernel.deterministic_apply, integral_dirac]
 
 /-- The receiver's value of a pure profile is his value of the kernels that follow it. -/
 theorem receiverValue_deterministic (f : S → M) (g : M → A) :
     G.receiverValue (.deterministic f .of_discrete) (.deterministic g .of_discrete) =
       G.pureReceiverValue f g := by
-  -- TODO: the composite of the two kernels follows `g ∘ f`; then `integral_dirac`.
-  sorry
+  simp only [receiverValue, pureReceiverValue, Kernel.comp_deterministic_eq_comap,
+    Kernel.comap_apply, Kernel.deterministic_apply, integral_dirac]
 
 end SignalingGame
