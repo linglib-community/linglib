@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.Digraph.Reachable
+public import Linglib.Core.Combinatorics.Digraph.Maps
 public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Order.Fin.Basic
 
@@ -27,6 +27,21 @@ transport of a structure to another order of its words.
   (head, dependent, relation) triples, and `Graph.rel r` is its digraph of arcs bearing `r`.
 * `Digraph.linearize`, `Digraph.mirror`, and `Graph.comap`, `Graph.linearize`: a structure read
   in another order of its positions.
+
+## Vocabulary
+
+The files of this directory speak of dependency structures in the words of the literature and
+state them with the general notions of `Core/Combinatorics/Digraph`:
+
+| here | in the code |
+|---|---|
+| `v` dominates `w` | `G.Reachable v w` |
+| the yield of `v` | `G.reachSet v` |
+| the dependents and the heads of `v` | `G.outNeighborFinset v`, `G.inNeighborFinset v` |
+| a forest | `G.IsBranching` |
+| a tree with root `r` | `G.IsArborescence r` |
+| the local subtree of `v` | `G.localSubtree v` |
+| two words linked by an arc | `Relation.SymmGen G.Adj v w` |
 
 ## Implementation notes
 
@@ -122,7 +137,7 @@ def ofLabel (label : V → V → Option L) : Graph L V where
 
 instance : DecidableRel g.Adj := fun _ _ ↦ decidable_of_iff _ (g.adj_iff_isSome _ _).symm
 
-theorem adj_iff_exists {g : Graph L V} {v w : V} : g.Adj v w ↔ ∃ r, g.label v w = some r :=
+theorem adj_iff_exists_label {g : Graph L V} {v w : V} : g.Adj v w ↔ ∃ r, g.label v w = some r :=
   (g.adj_iff_isSome v w).trans Option.isSome_iff_exists
 
 /-- A graph is determined by its labelling. -/
@@ -140,7 +155,7 @@ def rel (r : L) : Digraph V where
 instance [DecidableEq L] (r : L) : DecidableRel (g.rel r).Adj :=
   fun v w ↦ inferInstanceAs (Decidable (g.label v w = some r))
 
-theorem rel_le (r : L) : g.rel r ≤ g.toDigraph := fun _ _ h ↦ adj_iff_exists.2 ⟨r, h⟩
+theorem rel_le (r : L) : g.rel r ≤ g.toDigraph := fun _ _ h ↦ adj_iff_exists_label.2 ⟨r, h⟩
 
 /-- The partial labelling given by a list of (head, dependent, relation) triples, the first
 triple for a pair deciding its relation. -/

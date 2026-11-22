@@ -14,7 +14,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 # Catenae
 
 A catena is a word or a combination of words that is connected in the undirected view of a
-dependency graph. Every constituent, the dominance cone of a word, is a catena, and a head with
+dependency graph. Every constituent, the yield of a word, is a catena, and a head with
 one of several dependents is a catena that is not a constituent.
 
 ## Main definitions
@@ -45,12 +45,11 @@ open Finset
 
 variable {n : ℕ}
 
-/-- `s` is a **catena** if the subgraph induced on `s` is connected. -/
+/-- `s` is a catena if the subgraph induced on `s` is connected. -/
 def Digraph.IsCatena (G : Digraph (Fin n)) [DecidableRel G.Adj] (s : Finset (Fin n)) : Prop :=
   (G.toSimpleGraphInclusive.induce ↑s).Connected
 
-/-- `s` is a **constituent** if it is the yield of some position, a principal upper set of the
-dominance order. -/
+/-- `s` is a constituent if it is the yield of some position. -/
 def Digraph.IsConstituent (G : Digraph (Fin n)) [DecidableRel G.Adj] (s : Finset (Fin n)) : Prop :=
   ∃ v, (↑s : Set (Fin n)) = G.reachSet v
 
@@ -66,12 +65,12 @@ instance (G : Digraph (Fin n)) [DecidableRel G.Adj] (s : Finset (Fin n)) :
     Decidable (G.IsConstituent s) :=
   decidable_of_iff _ Digraph.isConstituent_iff.symm
 
-theorem Digraph.singleton_isCatena (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
+theorem Digraph.isCatena_singleton (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
     G.IsCatena {v} := by
   rw [Digraph.IsCatena, Finset.coe_singleton]
   exact .of_subsingleton
 
-theorem Digraph.connected_induce_cone (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
+theorem Digraph.connected_induce_reachSet (G : Digraph (Fin n)) [DecidableRel G.Adj] (v : Fin n) :
     (G.toSimpleGraphInclusive.induce {x | G.Reachable v x}).Connected := by
   refine (SimpleGraph.connected_iff_exists_forall_reachable _).mpr ⟨⟨v, .refl⟩, ?_⟩
   rintro ⟨w, hw⟩
@@ -82,14 +81,14 @@ theorem Digraph.connected_induce_cone (G : Digraph (Fin n)) [DecidableRel G.Adj]
     · exact ih
     · exact ih.trans (SimpleGraph.Adj.reachable ⟨hne, Or.inl hbc⟩)
 
-/-- Every constituent is a catena, since a constituent is the dominance cone of some position
-and cones induce connected subgraphs. -/
+/-- Every constituent is a catena, since a constituent is the yield of some position
+and yields induce connected subgraphs. -/
 theorem Digraph.IsConstituent.isCatena {G : Digraph (Fin n)} [DecidableRel G.Adj]
     {s : Finset (Fin n)}
     (h : G.IsConstituent s) : G.IsCatena s := by
   obtain ⟨v, hv⟩ := h
   rw [Digraph.IsCatena, hv]
-  exact Digraph.connected_induce_cone G v
+  exact Digraph.connected_induce_reachSet G v
 
 theorem Digraph.isCatena_pair (G : Digraph (Fin n)) [DecidableRel G.Adj] {v w : Fin n}
     (h : G.Adj v w) (hne : v ≠ w) :
@@ -129,7 +128,7 @@ theorem Digraph.IsCatena.reachable_of_forall_not_adj {G : Digraph (Fin n)} [Deci
     · exact ih.tail hxy
     · rcases eq_or_ne a x with rfl | hne
       · exact absurd hyx (hroot y y.2)
-      · exact hF.reachable_of_adj ih hne hyx
+      · exact hF.reachable_of_reachable_of_adj ih hne hyx
 
 /-- In a forest a set of positions is a catena iff exactly one of them, its root, has no head
 among them. -/
@@ -158,7 +157,7 @@ theorem Digraph.IsBranching.isCatena_iff_existsUnique {G : Digraph (Fin n)} [Dec
 
 /-- In a forest a set of positions is a catena iff it has exactly one position with no head in
 it. -/
-theorem Digraph.IsBranching.isCatena_iff {G : Digraph (Fin n)} [DecidableRel G.Adj]
+theorem Digraph.IsBranching.isCatena_iff_card_eq_one {G : Digraph (Fin n)} [DecidableRel G.Adj]
     (hF : G.IsBranching) {s : Finset (Fin n)} :
     G.IsCatena s ↔ #{v ∈ s | ∀ u ∈ s, ¬ G.Adj u v} = 1 := by
   simp [hF.isCatena_iff_existsUnique, Finset.card_eq_one, Finset.eq_singleton_iff_unique_mem,
@@ -175,26 +174,25 @@ theorem Digraph.IsBranching.card_isConstituent {G : Digraph (Fin n)} [DecidableR
   rw [h, Finset.card_image_of_injective, Finset.card_univ, Fintype.card_fin]
   exact fun v w hvw ↦ hF.reachSet_injective (Set.ext fun x ↦ by simpa using Finset.ext_iff.1 hvw x)
 
-theorem Digraph.isConstituent_univ {G : Digraph (Fin n)} [DecidableRel G.Adj] {r : Fin n}
-    (hT : G.IsArborescence r) :
-    G.IsConstituent Finset.univ :=
+theorem Digraph.IsArborescence.isConstituent_univ {G : Digraph (Fin n)} [DecidableRel G.Adj]
+    {r : Fin n} (hT : G.IsArborescence r) : G.IsConstituent Finset.univ :=
   Digraph.isConstituent_iff.2
     ⟨r, fun w ↦ ⟨fun _ ↦ hT.reachable w, fun _ ↦ Finset.mem_univ w⟩⟩
 
-theorem Digraph.isCatena_univ {G : Digraph (Fin n)} [DecidableRel G.Adj] {r : Fin n}
-    (hT : G.IsArborescence r) : G.IsCatena Finset.univ :=
-  (Digraph.isConstituent_univ hT).isCatena
+theorem Digraph.IsArborescence.isCatena_univ {G : Digraph (Fin n)} [DecidableRel G.Adj]
+    {r : Fin n} (hT : G.IsArborescence r) : G.IsCatena Finset.univ :=
+  hT.isConstituent_univ.isCatena
 
 /-- The undirected view of an arborescence is a tree: it is connected, the whole sentence being
 a catena, and its edges are the links from each position other than the root to its head. -/
 theorem Digraph.IsArborescence.isTree_toSimpleGraphInclusive {G : Digraph (Fin n)}
     [DecidableRel G.Adj] {r : Fin n} (hT : G.IsArborescence r) :
     G.toSimpleGraphInclusive.IsTree := by
-  choose! p hp using fun w (hw : w ≠ r) ↦ hT.exists_adj hw
+  choose! p hp using fun w (hw : w ≠ r) ↦ hT.exists_adj_of_ne_root hw
   have hpeq {u w : Fin n} (h : G.Adj u w) : p w = u :=
     hT.leftUnique_adj (hp w fun e ↦ hT.not_adj_root u (e ▸ h)) h
   refine SimpleGraph.isTree_iff_connected_and_card.2 ⟨?_, ?_⟩
-  · have h := Digraph.isCatena_univ hT
+  · have h := hT.isCatena_univ
     rw [Digraph.IsCatena, Finset.coe_univ] at h
     exact G.toSimpleGraphInclusive.induceUnivIso.connected_iff.1 h
   rw [Nat.card_eq_fintype_card, ← SimpleGraph.edgeFinset_card, Nat.card_eq_fintype_card]

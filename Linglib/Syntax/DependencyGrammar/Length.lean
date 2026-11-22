@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.Siblings
+public import Linglib.Syntax.DependencyGrammar.LocalSubtree
 public import Linglib.Syntax.WordOrder.BoundaryDistance
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -23,7 +23,7 @@ public import Mathlib.Algebra.Order.Ring.Nat
 The length of a dependency is the distance in words between head and dependent. This file defines
 the total dependency length of a graph and the distance from a head to the nearest word of a
 dependent's yield, dependency length measured to the boundary of the dependent's phrase. On a
-projective forest that distance is one more than the sizes of the yields of the sibling dependents
+projective forest that distance is one more than the sizes of the yields of the dependents
 between head and dependent: it is the block measure `WordOrder.Arrangement.boundaryDist` with yields
 as blocks. Summed over the elements after a head, the block measure weighs each element's length by
 the number of elements farther out, so by the rearrangement inequality an order whose lengths grow
@@ -33,8 +33,8 @@ predicts after a head, and its mirror image orders long before short before a fi
 ## Main definitions
 
 * `Digraph.totalLength`: the sum of `Nat.dist` over the arcs.
-* `Digraph.yieldDist`: the distance from a position to the nearest word of a yield.
-* `Digraph.siblingOrderIso` and `Digraph.siblingArrangement`: a head and its dependents in the order
+* `Digraph.reachSetDist`: the distance from a position to the nearest word of a yield.
+* `Digraph.localOrderIso` and `Digraph.localArrangement`: a head and its dependents in the order
   of their positions.
 
 ## Main results
@@ -46,10 +46,10 @@ predicts after a head, and its mirror image orders long before short before a fi
   (`Digraph.totalLength_le_totalLength_comap`).
 * `Digraph.card_arcs_lt_totalLength`: the bound is not attained when a head has two dependents on
   one side.
-* `Digraph.yieldDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
+* `Digraph.reachSetDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
   dependent is one more than the yield sizes of the dependents between them.
 * `Digraph.sum_yieldDist_eq_sum_boundaryDist`: on a projective forest a head's yield distances are
-  the boundary distances of its sibling arrangement with phrase lengths.
+  the boundary distances of its local arrangement with phrase lengths.
 
 ## References
 
@@ -73,7 +73,7 @@ variable (G : Digraph (Fin n)) [DecidableRel G.Adj]
 /-- Total dependency length sums `Nat.dist` over all arcs, the quantity dependency-length
 minimisation is about. -/
 def Digraph.totalLength : ℕ :=
-  ∑ v : Fin n, ∑ w ∈ G.children v, Nat.dist v w
+  ∑ v : Fin n, ∑ w ∈ G.outNeighborFinset v, Nat.dist v w
 
 /-! ### Transport -/
 
@@ -84,10 +84,10 @@ theorem Digraph.mirror_comap_symm (σ : Equiv.Perm (Fin n)) :
   rfl
 
 /-- The total length of a transported graph sums the transported distances of the original arcs. -/
-theorem Digraph.totalLength_comap_symm_eq (σ : Equiv.Perm (Fin n)) :
-    (G.comap σ.symm).totalLength = ∑ u, ∑ w ∈ G.children u, Nat.dist (σ u) (σ w) := by
+theorem Digraph.totalLength_comap_symm_eq_sum (σ : Equiv.Perm (Fin n)) :
+    (G.comap σ.symm).totalLength = ∑ u, ∑ w ∈ G.outNeighborFinset u, Nat.dist (σ u) (σ w) := by
   unfold Digraph.totalLength
-  simp only [Digraph.children, Finset.sum_filter]
+  simp only [Digraph.outNeighborFinset, Finset.sum_filter]
   refine Fintype.sum_equiv σ.symm _ _ fun u ↦ Fintype.sum_equiv σ.symm _ _ fun w ↦ ?_
   simp [Digraph.comap_adj]
 
@@ -95,7 +95,7 @@ theorem Digraph.totalLength_comap_symm_eq (σ : Equiv.Perm (Fin n)) :
 theorem Digraph.totalLength_comap_symm (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (G.comap σ.symm).totalLength = G.totalLength := by
-  rw [Digraph.totalLength_comap_symm_eq]
+  rw [Digraph.totalLength_comap_symm_eq_sum]
   exact Finset.sum_congr rfl fun u _ ↦ Finset.sum_congr rfl fun w _ ↦ hσ u w
 
 theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
@@ -110,10 +110,10 @@ examples (7)–(8)). -/
 theorem Digraph.totalLength_mirror : G.mirror.totalLength = G.totalLength :=
   G.totalLength_comap_symm Fin.revPerm Fin.dist_rev_rev
 
-@[simp] theorem Digraph.totalLength_comap_symm_mirror (σ : Equiv.Perm (Fin n)) :
+@[simp] theorem Digraph.totalLength_comap_mirror_symm (σ : Equiv.Perm (Fin n)) :
     (G.comap (WordOrder.Arrangement.mirror σ).symm).totalLength =
       (G.comap σ.symm).totalLength := by
-  rw [Digraph.totalLength_comap_symm_eq, Digraph.totalLength_comap_symm_eq]
+  rw [Digraph.totalLength_comap_symm_eq_sum, Digraph.totalLength_comap_symm_eq_sum]
   exact Finset.sum_congr rfl fun u _ ↦ Finset.sum_congr rfl fun w _ ↦ Fin.dist_rev_rev _ _
 
 end Transport
@@ -134,16 +134,16 @@ open Finset
 
 variable {G : Digraph (Fin n)} [DecidableRel G.Adj]
 
-private theorem Digraph.one_le_dist_of_mem_children (h : ∀ v, ¬ G.Adj v v) (v : Fin n) :
-    ∀ w ∈ G.children v, 1 ≤ Nat.dist v w := fun w hw ↦
+private theorem Digraph.one_le_dist_of_mem_outNeighborFinset (h : ∀ v, ¬ G.Adj v v) (v : Fin n) :
+    ∀ w ∈ G.outNeighborFinset v, 1 ≤ Nat.dist v w := fun w hw ↦
   Nat.dist_pos_of_ne (Fin.val_ne_of_ne fun e ↦ h v (by simpa [← e] using hw))
 
 /-- Each dependency is at least one word long, so the total dependency length of a graph without
 loops is at least the number of its dependencies. -/
 theorem Digraph.card_arcs_le_totalLength (h : ∀ v, ¬ G.Adj v v) : #G.arcs ≤ G.totalLength := by
   rw [G.card_arcs]
-  exact sum_le_sum fun v _ ↦ card_eq_sum_ones (G.children v) ▸
-    sum_le_sum (Digraph.one_le_dist_of_mem_children h v)
+  exact sum_le_sum fun v _ ↦ card_eq_sum_ones (G.outNeighborFinset v) ▸
+    sum_le_sum (Digraph.one_le_dist_of_mem_outNeighborFinset h v)
 
 /-- Total dependency length equals the number of dependencies exactly when every dependent stands
 next to its head. -/
@@ -151,9 +151,9 @@ theorem Digraph.totalLength_eq_card_arcs_iff (h : ∀ v, ¬ G.Adj v v) :
     G.totalLength = #G.arcs ↔ ∀ ⦃v w⦄, G.Adj v w → Nat.dist v w = 1 := by
   rw [G.card_arcs, eq_comm, Digraph.totalLength]
   simp only [card_eq_sum_ones]
-  rw [sum_eq_sum_iff_of_le fun v _ ↦ sum_le_sum (Digraph.one_le_dist_of_mem_children h v)]
+  rw [sum_eq_sum_iff_of_le fun v _ ↦ sum_le_sum (Digraph.one_le_dist_of_mem_outNeighborFinset h v)]
   refine forall_congr' fun v ↦ ?_
-  rw [sum_eq_sum_iff_of_le (Digraph.one_le_dist_of_mem_children h v)]
+  rw [sum_eq_sum_iff_of_le (Digraph.one_le_dist_of_mem_outNeighborFinset h v)]
   simp [eq_comm]
 
 /-- A graph in which every dependent stands next to its head is no longer than any reordering of
@@ -200,11 +200,11 @@ theorem Digraph.toFinset_reachSet_nonempty (G : Digraph (Fin n)) [DecidableRel G
 
 /-- The distance from `v` to the nearest word of the yield of `w`, dependency length measured to
 the closest boundary of the dependent's phrase. -/
-def Digraph.yieldDist (G : Digraph (Fin n)) [DecidableRel G.Adj] (v w : Fin n) : ℕ :=
+def Digraph.reachSetDist (G : Digraph (Fin n)) [DecidableRel G.Adj] (v w : Fin n) : ℕ :=
   (G.reachSet w).toFinset.inf' (G.toFinset_reachSet_nonempty w) fun x ↦ Nat.dist v x
 
-theorem Digraph.yieldDist_le_dist (G : Digraph (Fin n)) [DecidableRel G.Adj] (v w : Fin n) :
-    G.yieldDist v w ≤ Nat.dist v w :=
+theorem Digraph.reachSetDist_le_dist (G : Digraph (Fin n)) [DecidableRel G.Adj] (v w : Fin n) :
+    G.reachSetDist v w ≤ Nat.dist v w :=
   Finset.inf'_le _ (by simp [ReflTransGen.refl])
 
 variable {G : Digraph (Fin n)} [DecidableRel G.Adj] {v w : Fin n}
@@ -246,9 +246,9 @@ private theorem card_between {a b : Fin n} (hab : a ≠ b) :
 
 /-- On a projective forest the distance from a head to the nearest word of a dependent's phrase is
 one more than the phrase sizes of the dependents between them. -/
-theorem Digraph.yieldDist_eq_one_add_sum (hF : G.IsBranching) (hP : G.IsProjective) (h : G.Adj v w)
-    :
-    G.yieldDist v w = 1 + ∑ u ∈ G.children v with (v < u ∧ u < w ∨ w < u ∧ u < v),
+theorem Digraph.reachSetDist_eq_one_add_sum (hF : G.IsBranching) (hP : G.IsProjective)
+    (h : G.Adj v w) :
+    G.reachSetDist v w = 1 + ∑ u ∈ G.outNeighborFinset v with (v < u ∧ u < w ∨ w < u ∧ u < v),
       (G.reachSet u).ncard := by
   classical
   obtain ⟨m, hmY, hm⟩ := Finset.exists_mem_eq_inf' (G.toFinset_reachSet_nonempty w)
@@ -275,7 +275,7 @@ theorem Digraph.yieldDist_eq_one_add_sum (hF : G.IsBranching) (hP : G.IsProjecti
     simp only [Fin.lt_def, Fin.le_def, ne_eq, Fin.ext_iff] at hg hy' hyv hvm ⊢
     omega
   have hiff : ∀ x, (v < x ∧ x < m ∨ m < x ∧ x < v) ↔
-      ∃ u ∈ G.children v, (v < u ∧ u < w ∨ w < u ∧ u < v) ∧ x ∈ G.reachSet u := by
+      ∃ u ∈ G.outNeighborFinset v, (v < u ∧ u < w ∨ w < u ∧ u < v) ∧ x ∈ G.reachSet u := by
     intro x
     constructor
     · intro hx
@@ -310,20 +310,20 @@ theorem Digraph.yieldDist_eq_one_add_sum (hF : G.IsBranching) (hP : G.IsProjecti
         (Set.disjoint_right.1 hdis hmY)
   have hvm : v ≠ m := fun e ↦ hvY (e ▸ hmY)
   have hfilter : (Finset.univ.filter fun x ↦ v < x ∧ x < m ∨ m < x ∧ x < v) =
-      (G.children v |>.filter fun u ↦ v < u ∧ u < w ∨ w < u ∧ u < v).biUnion
+      (G.outNeighborFinset v |>.filter fun u ↦ v < u ∧ u < w ∨ w < u ∧ u < v).biUnion
         fun u ↦ Finset.univ.filter (· ∈ G.reachSet u) := by
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_biUnion, hiff]
     constructor
     · rintro ⟨u, hu, hb, hx⟩; exact ⟨u, ⟨hu, hb⟩, hx⟩
     · rintro ⟨u, ⟨hu, hb⟩, hx⟩; exact ⟨u, hu, hb, hx⟩
-  have hdisj : ((G.children v |>.filter fun u ↦ v < u ∧ u < w ∨ w < u ∧ u < v) : Set (Fin n)
-      ).PairwiseDisjoint fun u ↦ Finset.univ.filter (· ∈ G.reachSet u) := by
+  have hdisj : ((G.outNeighborFinset v |>.filter fun u ↦ v < u ∧ u < w ∨ w < u ∧ u < v) :
+      Set (Fin n)).PairwiseDisjoint fun u ↦ Finset.univ.filter (· ∈ G.reachSet u) := by
     intro u hu u' hu' hne
-    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Digraph.mem_children] at hu hu'
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Digraph.mem_outNeighborFinset] at hu hu'
     simpa [Function.onFun, Finset.disjoint_filter] using
       Set.disjoint_left.1 (hF.disjoint_reachSet_of_adj hu.1 hu'.1 hne)
-  rw [Digraph.yieldDist, hm, ← card_between hvm, hfilter, Finset.card_biUnion hdisj, add_comm]
+  rw [Digraph.reachSetDist, hm, ← card_between hvm, hfilter, Finset.card_biUnion hdisj, add_comm]
   congr 1
   refine Finset.sum_congr rfl fun u _ ↦ ?_
   rw [Set.ncard_eq_toFinset_card']
@@ -332,40 +332,41 @@ theorem Digraph.yieldDist_eq_one_add_sum (hF : G.IsBranching) (hP : G.IsProjecti
 
 /-! ### Distance to a phrase as a boundary distance -/
 
-section Siblings
+section LocalSubtree
 
 open Finset WordOrder
 
 variable {G : Digraph (Fin n)} [DecidableRel G.Adj] {v : Fin n}
 
-theorem Digraph.yieldDist_eq_boundaryDist (hF : G.IsBranching) (hP : G.IsProjective) {w : Fin n}
+theorem Digraph.reachSetDist_eq_boundaryDist (hF : G.IsBranching) (hP : G.IsProjective) {w : Fin n}
     (h : G.Adj v w) :
-    G.yieldDist v w = (G.siblingArrangement v).boundaryDist (fun c ↦ #(G.reachSet c).toFinset)
-      ⟨v, G.self_mem_siblings v⟩ ⟨w, Digraph.mem_siblings_of_adj h⟩ := by
+    G.reachSetDist v w = (G.localArrangement v).boundaryDist (fun c ↦ #(G.reachSet c).toFinset)
+      ⟨v, G.self_mem_localSubtree v⟩ ⟨w, Digraph.mem_localSubtree_of_adj h⟩ := by
   have hvw : v ≠ w := hF.ne_of_adj h
-  rw [Digraph.yieldDist_eq_one_add_sum hF hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
+  rw [Digraph.reachSetDist_eq_one_add_sum hF hP h, Arrangement.boundaryDist,
+    ite_eq_right (by simpa)]
   congr 1
-  simp only [Digraph.siblingArrangement_precedes, ← Set.ncard_eq_toFinset_card', sum_filter]
-  refine Eq.trans ?_ (sum_coe_sort (G.siblings v)
+  simp only [Digraph.localArrangement_precedes, ← Set.ncard_eq_toFinset_card', sum_filter]
+  refine Eq.trans ?_ (sum_coe_sort (G.localSubtree v)
     fun c ↦ if v < c ∧ c < w ∨ w < c ∧ c < v then (G.reachSet c).ncard else 0).symm
-  rw [Digraph.siblings, sum_insert (by simpa using hF.not_adj_self), ite_eq_right (by simp),
+  rw [Digraph.localSubtree, sum_insert (by simpa using hF.not_adj_self), ite_eq_right (by simp),
     zero_add]
 
-/-- The sum of a head's yield distances is the head's measure in the sibling arrangement. -/
+/-- The sum of a head's yield distances is the head's measure in the local arrangement. -/
 theorem Digraph.sum_yieldDist_eq_sum_boundaryDist (hF : G.IsBranching) (hP : G.IsProjective) :
-    ∑ w ∈ G.children v, G.yieldDist v w =
-      ∑ c, (G.siblingArrangement v).boundaryDist (fun c ↦ #(G.reachSet c).toFinset)
-        ⟨v, G.self_mem_siblings v⟩ c := by
+    ∑ w ∈ G.outNeighborFinset v, G.reachSetDist v w =
+      ∑ c, (G.localArrangement v).boundaryDist (fun c ↦ #(G.reachSet c).toFinset)
+        ⟨v, G.self_mem_localSubtree v⟩ c := by
   rw [← sum_erase univ (Arrangement.boundaryDist_self ..)]
-  refine sum_bij' (fun w hw ↦ ⟨w, Digraph.mem_siblings_of_adj (by simpa using hw)⟩)
+  refine sum_bij' (fun w hw ↦ ⟨w, Digraph.mem_localSubtree_of_adj (by simpa using hw)⟩)
     (fun c _ ↦ c.1) (fun w hw ↦ ?_) (fun c hc ↦ ?_) (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
-    fun w hw ↦ Digraph.yieldDist_eq_boundaryDist hF hP (by simpa using hw)
+    fun w hw ↦ Digraph.reachSetDist_eq_boundaryDist hF hP (by simpa using hw)
   · simp only [mem_erase, mem_univ, and_true, ne_eq, Subtype.mk.injEq]
     rintro rfl
     exact hF.not_adj_self (by simpa using hw)
   · obtain ⟨c, hc'⟩ := c
     simp only [mem_erase, mem_univ, and_true, ne_eq, Subtype.mk.injEq] at hc
-    simpa [Digraph.siblings, hc] using hc'
+    simpa [Digraph.localSubtree, hc] using hc'
 
-end Siblings
+end LocalSubtree
 

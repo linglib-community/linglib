@@ -63,17 +63,17 @@ instance : DecidablePred IsValentRel := fun _ ↦ inferInstanceAs (Decidable (_ 
 
 /-- The conjuncts of the coordinate structure headed at `c`, which are the head, the first
 conjunct, and its `conj` dependents. -/
-def allConjuncts (c : Fin n) : Finset (Fin n) := insert c (g.childrenBy (· = .conj) c)
+def allConjuncts (c : Fin n) : Finset (Fin n) := insert c (g.dependentsBy (· = .conj) c)
 
 /-- Position `c` heads a coordinate structure, having a `conj` dependent. -/
-def HasConjuncts (c : Fin n) : Prop := (g.childrenBy (· = .conj) c).Nonempty
+def HasConjuncts (c : Fin n) : Prop := (g.dependentsBy (· = .conj) c).Nonempty
 
 instance (c : Fin n) : Decidable (HasConjuncts g c) := Finset.decidableNonempty
 
 /-- `valent` is a conjunct valent of `pred` when it is a conjunct of a coordinate structure that
 fills a valency role of `pred`. -/
 def IsConjunctValent (pred valent : Fin n) : Prop :=
-  ∃ c ∈ g.childrenBy IsValentRel pred, HasConjuncts g c ∧ valent ∈ allConjuncts g c
+  ∃ c ∈ g.dependentsBy IsValentRel pred, HasConjuncts g c ∧ valent ∈ allConjuncts g c
 
 instance (pred valent : Fin n) : Decidable (IsConjunctValent g pred valent) :=
   Finset.decidableExistsAndFinset
@@ -81,7 +81,7 @@ instance (pred valent : Fin n) : Decidable (IsConjunctValent g pred valent) :=
 /-- `valent` is a full valent of `pred` when it is a valent of `pred` that is complete, that is,
 not a conjunct valent. -/
 def IsFullValent (pred valent : Fin n) : Prop :=
-  valent ∈ g.childrenBy IsValentRel pred ∧ ¬ IsConjunctValent g pred valent
+  valent ∈ g.dependentsBy IsValentRel pred ∧ ¬ IsConjunctValent g pred valent
 
 instance (pred valent : Fin n) : Decidable (IsFullValent g pred valent) :=
   inferInstanceAs (Decidable (_ ∧ _))

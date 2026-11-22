@@ -15,8 +15,8 @@ through, are the substrate of `Syntax/DependencyGrammar/`, whose definitions fol
 edge degree, the number of constituents an edge spans without dominating, is `edgeDegree`, and
 [degree zero is projectivity](##edgeDegree_eq_zero_iff) on it as on gap degree. The hierarchy
 projective ⊂ planar ⊂ well-nested is the substrate's, proved there for the paper's dependency
-forests, of which [Figure 1 is one with two roots](##fig1_isForest_not_isTree); the paper's
-figures supply the witnesses that keep the inclusions strict, that separate the two graded
+forests, of which [Figure 1 is one with two roots](##fig1_isBranching_not_isArborescence); the
+paper's figures supply the witnesses that keep the inclusions strict, that separate the two graded
 measures, and that show well-nestedness independent of both.
 
 Table 1 counts the structures of the Danish and the Prague Dependency Treebank at each degree
@@ -107,7 +107,7 @@ def fig1 : Graph Unit (Fin 8) :=
     [(1, 0, ()), (0, 2, ()), (0, 3, ()), (3, 6, ()), (6, 4, ()), (6, 5, ())]
 
 /-- Figure 1 is a forest whose roots are nodes 2 and 8, and so not a tree. -/
-theorem fig1_isForest_not_isTree :
+theorem fig1_isBranching_not_isArborescence :
     fig1.IsBranching ∧ ¬ fig1.IsArborescence 1 ∧ ∀ w, (∀ v, ¬ fig1.Adj v w) ↔ w = 1 ∨ w = 7 := by
   decide
 
@@ -119,7 +119,7 @@ theorem fig1_not_isProjective :
 /-! ### Figure 2: planarity
 
 Figure 2a is planar but not projective, its root inside the gap where the substrate's
-`Digraph.IsPlanar.root_mem_gap` says a planar tree's root has to be; Figure 2b is not planar,
+`Digraph.IsPlanar.root_mem_Ioo` says a planar tree's root has to be; Figure 2b is not planar,
 its two named edges crossing. -/
 
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
@@ -129,8 +129,8 @@ def fig2a : Graph Unit (Fin 3) := .ofArcs [(1, 0, ()), (0, 2, ())]
 def fig2b : Graph Unit (Fin 5) :=
   .ofArcs [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
 
-theorem fig2a_isTree : fig2a.IsArborescence 1 := by decide
-theorem fig2b_isTree : fig2b.IsArborescence 1 := by decide
+theorem fig2a_isArborescence : fig2a.IsArborescence 1 := by decide
+theorem fig2b_isArborescence : fig2b.IsArborescence 1 := by decide
 
 theorem fig2a_planar_not_projective :
     fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ fig2a.IsArborescence 1 := by
@@ -138,8 +138,8 @@ theorem fig2a_planar_not_projective :
 
 -- Figure 2b, (1, 4), (3, 5)
 theorem fig2b_crossing :
-    SymmGen fig2b.Adj 0 3 ∧ SymmGen fig2b.Adj 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧ fig2b.crossings =
-      1 := by
+    SymmGen fig2b.Adj 0 3 ∧ SymmGen fig2b.Adj 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧
+      fig2b.crossings = 1 := by
   decide +kernel
 
 /-! ### Figure 3: gap degree, edge degree, and well-nestedness -/
@@ -159,8 +159,8 @@ def fig3c : Graph Unit (Fin 6) :=
   .ofArcs
     [(0, 1, ()), (1, 3, ()), (3, 5, ()), (0, 2, ()), (2, 4, ())]
 
-theorem figure3_isTree : fig3a.IsArborescence 0 ∧ fig3b.IsArborescence 0 ∧ fig3c.IsArborescence 0 :=
-    by decide
+theorem figure3_isArborescence :
+    fig3a.IsArborescence 0 ∧ fig3b.IsArborescence 0 ∧ fig3c.IsArborescence 0 := by decide
 
 theorem figure3_gapDegree :
     (fig3a.gapDegreeAt 1 = 0 ∧ fig3a.gapDegree = 0) ∧
@@ -200,7 +200,7 @@ dominate. -/
 def fig4b : Graph Unit (Fin 5) :=
   .ofArcs [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
 
-theorem figure4_isTree : fig4a.IsArborescence 0 ∧ fig4b.IsArborescence 0 := by decide
+theorem figure4_isArborescence : fig4a.IsArborescence 0 ∧ fig4b.IsArborescence 0 := by decide
 
 -- Figure 4
 theorem figure4_degrees :
@@ -260,8 +260,8 @@ private theorem countP_replicate {α : Type*} (p : α → Prop) [DecidablePred p
 /-- Copies of the trees of Figures 2a, 3a, 3b and 3c make a treebank with the counts of Table 1,
 which is thus not vacuous. -/
 theorem exists_hasCounts (t : Treebank) :
-    ∃ T : Multiset (Σ n, Graph Unit (Fin n)), (∀ g ∈ T, (∃ r, g.2.IsArborescence r)) ∧ HasCounts T t
-      := by
+    ∃ T : Multiset (Σ n, Graph Unit (Fin n)),
+      (∀ g ∈ T, ∃ r, g.2.IsArborescence r) ∧ HasCounts T t := by
   have h3a : fig3a.IsProjective ∧ fig3a.IsPlanar ∧ fig3a.IsWellNested := by decide +kernel
   have h2a : ¬ fig2a.IsProjective ∧ fig2a.IsPlanar ∧ fig2a.IsWellNested := by decide +kernel
   have h3b : ¬ fig3b.IsProjective ∧ ¬ fig3b.IsPlanar ∧ fig3b.IsWellNested := by decide +kernel
@@ -273,8 +273,8 @@ theorem exists_hasCounts (t : Treebank) :
     .replicate ((structures t).all - (coverage .wellNested t).all) ⟨6, fig3c⟩, ?_, ?_, ?_, ?_⟩
   · simp only [Multiset.mem_add, Multiset.mem_replicate]
     rintro g (((⟨-, rfl⟩ | ⟨-, rfl⟩) | ⟨-, rfl⟩) | ⟨-, rfl⟩)
-    exacts [⟨_, figure3_isTree.1⟩, ⟨_, fig2a_isTree⟩, ⟨_, figure3_isTree.2.1⟩,
-      ⟨_, figure3_isTree.2.2⟩]
+    exacts [⟨_, figure3_isArborescence.1⟩, ⟨_, fig2a_isArborescence⟩,
+      ⟨_, figure3_isArborescence.2.1⟩, ⟨_, figure3_isArborescence.2.2⟩]
   · simp only [Multiset.card_add, Multiset.card_replicate]
     cases t <;> decide
   · simp only [Multiset.countP_add, countP_replicate, h3a, h2a, h3b, h3c, ↓reduceIte, add_zero]

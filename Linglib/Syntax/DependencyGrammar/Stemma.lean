@@ -272,7 +272,7 @@ private theorem layoutDeps : ∀ (ds : List (L × Stemma L)) (h o : ℕ),
 
 end
 
-private theorem dominates_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s.size)
+private theorem reachable_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s.size)
     (h : ReflTransGen (HeadIn (s.heads 0 none)) a b) :
     ∃ hb : b < s.size, s.toGraph.Reachable ⟨a, ha⟩ ⟨b, hb⟩ := by
   induction h with
@@ -302,7 +302,7 @@ theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.IsArborescence s.root 
     exact Fin.ext hr'.1
   · have := (layout _ s 0 none (occurs_self _)).1 v (Nat.zero_le _) (by simp)
     rw [Nat.zero_add] at this
-    exact (dominates_of_reflTransGen s.headIndex_lt_size this).2
+    exact (reachable_of_reflTransGen s.headIndex_lt_size this).2
 
 /-- The graph of a stemma is projective: a stemma never draws crossing arcs. -/
 theorem isProjective_toGraph (s : Stemma L) : s.toGraph.IsProjective := by
@@ -317,7 +317,7 @@ theorem isProjective_toGraph (s : Stemma L) : s.toGraph.IsProjective := by
   have hp' : h.val ≤ p.val ∧ p.val ≤ d.val ∨ d.val ≤ p.val ∧ p.val ≤ h.val := by
     rcases Set.mem_uIcc.1 hp with hp | hp
     exacts [.inl hp, .inr hp]
-  exact (dominates_of_reflTransGen h.isLt (hreach p hp')).2
+  exact (reachable_of_reflTransGen h.isLt (hreach p hp')).2
 
 end Layout
 

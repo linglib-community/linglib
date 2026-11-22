@@ -20,7 +20,7 @@ Wasow, Losongco and Ginstrom); their productions had shorter dependencies than t
 
 The paper measures the verb's dependency length as the summed distance in words from the verb to
 the closest boundary of each argument: on its sentences, the yield distance of dependency graphs
-(`Digraph.yieldDist`), and on arrangements of subject, object and verb, the boundary distance of
+(`Digraph.reachSetDist`), and on arrangements of subject, object and verb, the boundary distance of
 constituents of given lengths (`Arrangement.boundaryDist`), which agree on Fig. 1 as the
 substrate's bridge theorem predicts. The measure is invariant under mirroring, and with the verb
 at an edge it is two plus the length of the argument next to the verb. A learner's productions
@@ -136,27 +136,27 @@ def fig1Vso : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (b
 /-- Object first, PUNCH [HUNTER-OBJ [ON RED STOOL]] MOUNTIE. -/
 def fig1Vos : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
 
-theorem fig1_isTree_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos],
+theorem fig1_isArborescence_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos],
     (∃ r, g.IsArborescence r) ∧ g.IsProjective := by
   decide +kernel
 
 -- Fig. 1
 theorem fig1_yieldDist :
     let ℓ := Function.update (1 : Constituent → ℕ) .object 4
-    fig1Sov.yieldDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
-    fig1Sov.yieldDist 5 4 = Arrangement.sov.boundaryDist ℓ .verb .object ∧
-    fig1Osv.yieldDist 5 4 = Arrangement.osv.boundaryDist ℓ .verb .subject ∧
-    fig1Osv.yieldDist 5 3 = Arrangement.osv.boundaryDist ℓ .verb .object ∧
-    fig1Vso.yieldDist 0 1 = Arrangement.vso.boundaryDist ℓ .verb .subject ∧
-    fig1Vso.yieldDist 0 2 = Arrangement.vso.boundaryDist ℓ .verb .object ∧
-    fig1Vos.yieldDist 0 5 = Arrangement.vos.boundaryDist ℓ .verb .subject ∧
-    fig1Vos.yieldDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
+    fig1Sov.reachSetDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
+    fig1Sov.reachSetDist 5 4 = Arrangement.sov.boundaryDist ℓ .verb .object ∧
+    fig1Osv.reachSetDist 5 4 = Arrangement.osv.boundaryDist ℓ .verb .subject ∧
+    fig1Osv.reachSetDist 5 3 = Arrangement.osv.boundaryDist ℓ .verb .object ∧
+    fig1Vso.reachSetDist 0 1 = Arrangement.vso.boundaryDist ℓ .verb .subject ∧
+    fig1Vso.reachSetDist 0 2 = Arrangement.vso.boundaryDist ℓ .verb .object ∧
+    fig1Vos.reachSetDist 0 5 = Arrangement.vos.boundaryDist ℓ .verb .subject ∧
+    fig1Vos.reachSetDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
   decide +kernel
 
 theorem fig1_yieldDist_eq :
-    fig1Sov.yieldDist 5 0 = 5 ∧ fig1Sov.yieldDist 5 4 = 1 ∧ fig1Osv.yieldDist 5 4 = 1 ∧
-    fig1Osv.yieldDist 5 3 = 2 ∧ fig1Vso.yieldDist 0 1 = 1 ∧ fig1Vso.yieldDist 0 2 = 2 ∧
-    fig1Vos.yieldDist 0 5 = 5 ∧ fig1Vos.yieldDist 0 1 = 1 := by
+    fig1Sov.reachSetDist 5 0 = 5 ∧ fig1Sov.reachSetDist 5 4 = 1 ∧ fig1Osv.reachSetDist 5 4 = 1 ∧
+    fig1Osv.reachSetDist 5 3 = 2 ∧ fig1Vso.reachSetDist 0 1 = 1 ∧ fig1Vso.reachSetDist 0 2 = 2 ∧
+    fig1Vos.reachSetDist 0 5 = 5 ∧ fig1Vos.reachSetDist 0 1 = 1 := by
   decide +kernel
 
 theorem fig1_card_reachSet :

@@ -297,13 +297,13 @@ omit [DecidableRel L] in
 @[simp] theorem graphOf_adj : (graphOf L).Adj p w ↔ L w p := Iff.rfl
 
 omit [DecidableRel L] in
-theorem not_isTree_graphOf (h₁ : L w p) (h₂ : L p w) :
+theorem not_isArborescence_graphOf (h₁ : L w p) (h₂ : L p w) :
     ¬ (graphOf L).IsArborescence root := fun hT ↦
   hT.not_reachable_of_adj (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
 
-theorem not_isTree_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :
+theorem not_isArborescence_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :
     ¬ A.parentGraph.IsArborescence A.root :=
-  not_isTree_graphOf h₁ h₂
+  not_isArborescence_graphOf h₁ h₂
 
 theorem not_extractionBy_isLandmark (hex : A.Dep h w .extractee)
     (hs : A.SubordinateParent w h) : ¬ A.ExtractionBy A.IsLandmark := fun hE ↦
@@ -340,7 +340,7 @@ def theySeemedToDance : Analysis 4 where
   root := 1
 
 -- (9)
-theorem not_isTree_parentGraph_theySeemedToDance :
+theorem not_isArborescence_parentGraph_theySeemedToDance :
     ¬ theySeemedToDance.parentGraph.IsArborescence theySeemedToDance.root ∧ ¬
       theySeemedToDance.parentGraph.IsProjective := by
   decide
@@ -379,7 +379,7 @@ def whHeaded : Analysis 4 where
 
 theorem not_orderedByLandmarks_whHeaded :
     ¬ whHeaded.parentGraph.IsArborescence whHeaded.root ∧ ¬ whHeaded.OrderedByLandmarks :=
-  ⟨Analysis.not_isTree_parentGraph (p := 1) (w := 3) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
+  ⟨Analysis.not_isArborescence_parentGraph (p := 1) (w := 3) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 3) (w := 1) (q := 0) (by decide)
       ⟨.comp, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
@@ -403,7 +403,7 @@ def iAteWhatTheyAte : Analysis 5 where
 theorem not_orderedByLandmarks_iAteWhatTheyAte :
     ¬ iAteWhatTheyAte.parentGraph.IsArborescence iAteWhatTheyAte.root ∧ ¬
       iAteWhatTheyAte.OrderedByLandmarks :=
-  ⟨Analysis.not_isTree_parentGraph (p := 2) (w := 4) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
+  ⟨Analysis.not_isArborescence_parentGraph (p := 2) (w := 4) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 4) (w := 2) (q := 1) (by decide)
       ⟨.obj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
@@ -429,7 +429,7 @@ the sentence. -/
 theorem not_orderedByLandmarks_whatHeBoughtCostLots :
     ¬ whatHeBoughtCostLots.parentGraph.IsArborescence whatHeBoughtCostLots.root ∧ ¬
       whatHeBoughtCostLots.OrderedByLandmarks :=
-  ⟨Analysis.not_isTree_parentGraph (p := 0) (w := 2) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
+  ⟨Analysis.not_isArborescence_parentGraph (p := 0) (w := 2) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 2) (w := 0) (q := 3) (by decide)
       ⟨.subj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
@@ -456,9 +456,9 @@ def weSawWhatHappened : Analysis 4 where
   root := 1
 
 -- (58), (54)
-theorem not_isTree_parentGraph_weSawWhatHappened : ¬ weSawWhatHappened.parentGraph.IsArborescence
-    weSawWhatHappened.root :=
-  Analysis.not_isTree_parentGraph (p := 2) (w := 3) ⟨.comp, by decide⟩ ⟨.subj, by decide⟩
+theorem not_isArborescence_parentGraph_weSawWhatHappened :
+    ¬ weSawWhatHappened.parentGraph.IsArborescence weSawWhatHappened.root :=
+  Analysis.not_isArborescence_parentGraph (p := 2) (w := 3) ⟨.comp, by decide⟩ ⟨.subj, by decide⟩
 
 -- (58)
 theorem orderedByLandmarks_weSawWhatHappened : weSawWhatHappened.OrderedByLandmarks := by

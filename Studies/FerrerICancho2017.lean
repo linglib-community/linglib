@@ -12,18 +12,20 @@ public import Linglib.Core.Combinatorics.SimpleGraph.Crossings
 Ferrer-i-Cancho asks how many crossings a sentence would show if its word order were lost and
 replaced by a uniformly random one. Two links cross in a third of the linearizations when they
 share no word and in none otherwise, so a random linearization
-[expects a third](##FerrerICancho2017.three_mul_sum_crossings_map) of the potential crossings
+[expects a third](##FerrerICancho2017.three_mul_sum_crossings_comap) of the potential crossings
 $C_{pairs}$, the number of pairs of links sharing no word, which
-[bounds the crossings](##FerrerICancho2017.crossings_map_le_disjointEdgePairs) of every
+[bounds the crossings](##FerrerICancho2017.crossings_comap_le_disjointEdgePairs) of every
 linearization. Potential crossings are all pairs of links
 [but those meeting at a word](##SimpleGraph.disjointEdgePairs_add_sum_choose_degree), so in
 a tree the sentence length $n$ and the second moment $⟨k^2⟩$ of the degrees
-[fix them](##FerrerICancho2017.two_mul_disjointEdgePairs_add_sum_degree_sq_of_isTree), and the
-[expected number of crossings](##FerrerICancho2017.six_mul_sum_crossings_map_add_of_isTree)
+[fix them](##FerrerICancho2017.two_mul_disjointEdgePairs_add_sum_degree_sq_of_isArborescence),
+and the [expected number of
+crossings](##FerrerICancho2017.six_mul_sum_crossings_comap_add_of_isArborescence)
 is $n (n - 1 - ⟨k^2⟩) / 6$. It vanishes for a star tree, where
-[no linearization has a crossing](##FerrerICancho2017.crossings_map_eq_zero_of_forall_linked), and
-is [greatest](##FerrerICancho2017.six_mul_sum_crossings_map_le_of_isTree) for a
-[linear tree](##FerrerICancho2017.six_mul_sum_crossings_map_of_degree_le_two), at
+[no linearization has a
+crossing](##FerrerICancho2017.crossings_comap_eq_zero_of_forall_symmGen), and
+is [greatest](##FerrerICancho2017.six_mul_sum_crossings_comap_le_of_isArborescence) for a
+[linear tree](##FerrerICancho2017.six_mul_sum_crossings_comap_of_degree_le_two), at
 $(n - 2) (n - 3) / 6$.
 
 ## Implementation notes
@@ -60,16 +62,16 @@ variable {n : ℕ} {G : Digraph (Fin n)} [DecidableRel G.Adj]
 
 /-! ### The undirected view -/
 
-theorem sum_crossings_map :
+theorem sum_crossings_comap :
     ∑ σ : Perm (Fin n), (G.comap σ.symm).crossings =
       ∑ σ : Perm (Fin n), (G.toSimpleGraphInclusive.comap σ).crossings := by
   simp only [Digraph.crossings_comap (Equiv.injective _)]
   exact Fintype.sum_equiv (Equiv.inv _) _ _ fun _ ↦ rfl
 
 -- relinearizing preserves the tree, and so the second moment of the degrees
-theorem sum_degree_sq_map (σ : Perm (Fin n)) :
-    ∑ v, (G.comap σ.symm).toSimpleGraphInclusive.degree v ^ 2 = ∑ v, G.toSimpleGraphInclusive.degree
-      v ^ 2 := by
+theorem sum_degree_sq_comap (σ : Perm (Fin n)) :
+    ∑ v, (G.comap σ.symm).toSimpleGraphInclusive.degree v ^ 2 =
+      ∑ v, G.toSimpleGraphInclusive.degree v ^ 2 := by
   convert G.toSimpleGraphInclusive.sum_degree_sq_comap σ.symm using 4
   exact Digraph.toSimpleGraphInclusive_comap σ.symm.injective G
 
@@ -77,31 +79,31 @@ theorem sum_degree_sq_map (σ : Perm (Fin n)) :
 
 /-- Summed over all `n !` linearizations, three times the crossing count is `n !` times the number
 of pairs of links sharing no word ([ferrer-i-cancho-2017], eq. 13). -/
-theorem three_mul_sum_crossings_map :
+theorem three_mul_sum_crossings_comap :
     3 * ∑ σ : Perm (Fin n), (G.comap σ.symm).crossings = n ! *
       G.toSimpleGraphInclusive.disjointEdgePairs := by
-  rw [sum_crossings_map, SimpleGraph.three_mul_sum_crossings_comap, Fintype.card_fin]
+  rw [sum_crossings_comap, SimpleGraph.three_mul_sum_crossings_comap, Fintype.card_fin]
 
 -- no linearization has more crossings than there are pairs of links sharing no word
-theorem crossings_map_le_disjointEdgePairs (σ : Perm (Fin n)) :
+theorem crossings_comap_le_disjointEdgePairs (σ : Perm (Fin n)) :
     (G.comap σ.symm).crossings ≤ G.toSimpleGraphInclusive.disjointEdgePairs :=
   (Digraph.crossings_comap σ.symm.injective).trans_le
     (SimpleGraph.crossings_comap_le_disjointEdgePairs _)
 
 /-- When every link meets one word, as in a star tree, no linearization has a crossing
 ([ferrer-i-cancho-2017], after eq. 14). -/
-theorem crossings_map_eq_zero_of_forall_linked {h : Fin n}
+theorem crossings_comap_eq_zero_of_forall_symmGen {h : Fin n}
     (hh : ∀ ⦃a b⦄, SymmGen G.Adj a b → a = h ∨ b = h) (σ : Perm (Fin n)) :
     (G.comap σ.symm).crossings = 0 :=
-  Nat.eq_zero_of_le_zero <| (crossings_map_le_disjointEdgePairs σ).trans_eq <|
+  Nat.eq_zero_of_le_zero <| (crossings_comap_le_disjointEdgePairs σ).trans_eq <|
     SimpleGraph.disjointEdgePairs_eq_zero_of_forall_adj fun _ _ hab ↦ hh hab.2
 
 /-! ### Trees -/
 
 /-- A tree has `n (n - 1 - ⟨k²⟩) / 2` pairs of links sharing no word ([ferrer-i-cancho-2017],
 eq. 3, from [ferrer-i-cancho-2013]). -/
-theorem two_mul_disjointEdgePairs_add_sum_degree_sq_of_isTree {r : Fin n} (hT : G.IsArborescence r)
-    :
+theorem two_mul_disjointEdgePairs_add_sum_degree_sq_of_isArborescence {r : Fin n}
+    (hT : G.IsArborescence r) :
     2 * G.toSimpleGraphInclusive.disjointEdgePairs + ∑ v, G.toSimpleGraphInclusive.degree v ^ 2 = n
       * (n - 1) := by
   simpa only [Fintype.card_fin] using
@@ -109,48 +111,48 @@ theorem two_mul_disjointEdgePairs_add_sum_degree_sq_of_isTree {r : Fin n} (hT : 
 
 /-- A uniformly random linearization of a tree expects `n (n - 1 - ⟨k²⟩) / 6` crossings
 ([ferrer-i-cancho-2017], eq. 14). -/
-theorem six_mul_sum_crossings_map_add_of_isTree {r : Fin n} (hT : G.IsArborescence r) :
-    6 * ∑ σ : Perm (Fin n), (G.comap σ.symm).crossings + n ! * ∑ v, G.toSimpleGraphInclusive.degree
-      v ^ 2 =
+theorem six_mul_sum_crossings_comap_add_of_isArborescence {r : Fin n} (hT : G.IsArborescence r) :
+    6 * ∑ σ : Perm (Fin n), (G.comap σ.symm).crossings +
+        n ! * ∑ v, G.toSimpleGraphInclusive.degree v ^ 2 =
       n ! * (n * (n - 1)) := by
-  rw [sum_crossings_map]
+  rw [sum_crossings_comap]
   simpa only [Fintype.card_fin] using
     SimpleGraph.IsTree.six_mul_sum_crossings_comap_add hT.isTree_toSimpleGraphInclusive
 
 -- eq. 16, upper bound
-theorem sum_degree_sq_le_of_isTree {r : Fin n} (hT : G.IsArborescence r) :
+theorem sum_degree_sq_le_of_isArborescence {r : Fin n} (hT : G.IsArborescence r) :
     ∑ v, G.toSimpleGraphInclusive.degree v ^ 2 ≤ n * (n - 1) := by
   simpa only [Fintype.card_fin] using
     SimpleGraph.IsTree.sum_degree_sq_le hT.isTree_toSimpleGraphInclusive
 
 -- eq. 16, lower bound
-theorem le_sum_degree_sq_of_isTree {r : Fin n} (hT : G.IsArborescence r) :
+theorem le_sum_degree_sq_of_isArborescence {r : Fin n} (hT : G.IsArborescence r) :
     4 * n - 6 ≤ ∑ v, G.toSimpleGraphInclusive.degree v ^ 2 := by
   simpa only [Fintype.card_fin] using
     SimpleGraph.IsTree.le_sum_degree_sq hT.isTree_toSimpleGraphInclusive
 
 /-- A uniformly random linearization of a tree expects at most `(n - 2) (n - 3) / 6` crossings
 ([ferrer-i-cancho-2017], eq. 17). -/
-theorem six_mul_sum_crossings_map_le_of_isTree {r : Fin n} (hT : G.IsArborescence r) :
+theorem six_mul_sum_crossings_comap_le_of_isArborescence {r : Fin n} (hT : G.IsArborescence r) :
     6 * ∑ σ : Perm (Fin n), (G.comap σ.symm).crossings ≤ n ! * ((n - 2) * (n - 3)) := by
-  rw [sum_crossings_map]
+  rw [sum_crossings_comap]
   simpa only [Fintype.card_fin] using
     SimpleGraph.IsTree.six_mul_sum_crossings_comap_le hT.isTree_toSimpleGraphInclusive
 
 -- eq. 15
-theorem six_mul_sum_crossings_map_of_degree_le_two {r : Fin n} (hT : G.IsArborescence r)
+theorem six_mul_sum_crossings_comap_of_degree_le_two {r : Fin n} (hT : G.IsArborescence r)
     (h2 : ∀ v, G.toSimpleGraphInclusive.degree v ≤ 2) :
     6 * ∑ σ : Perm (Fin n), (G.comap σ.symm).crossings = n ! * ((n - 2) * (n - 3)) := by
-  rw [sum_crossings_map]
+  rw [sum_crossings_comap]
   simpa only [Fintype.card_fin] using
-    SimpleGraph.IsTree.six_mul_sum_crossings_comap_of_degree_le_two hT.isTree_toSimpleGraphInclusive
-      h2
+    SimpleGraph.IsTree.six_mul_sum_crossings_comap_of_degree_le_two
+      hT.isTree_toSimpleGraphInclusive h2
 
 -- the linear tree on four words: one potential crossing, a third of a crossing expected
 example {G : Digraph (Fin 4)} [DecidableRel G.Adj] {r : Fin 4} (hT : G.IsArborescence r)
     (h2 : ∀ v, G.toSimpleGraphInclusive.degree v ≤ 2) :
     3 * ∑ σ : Perm (Fin 4), (G.comap σ.symm).crossings = 4 ! := by
-  have h := six_mul_sum_crossings_map_of_degree_le_two hT h2
+  have h := six_mul_sum_crossings_comap_of_degree_le_two hT h2
   have h4 : (4 : ℕ)! = 24 := rfl
   omega
 
@@ -184,14 +186,14 @@ theorem fig1_sum_degree_sq : ∑ v, fig1.toSimpleGraphInclusive.degree v ^ 2 = 3
 
 -- Fig. 1
 theorem fig1_disjointEdgePairs : fig1.toSimpleGraphInclusive.disjointEdgePairs = 18 := by
-  have h := two_mul_disjointEdgePairs_add_sum_degree_sq_of_isTree fig1_isArborescence
+  have h := two_mul_disjointEdgePairs_add_sum_degree_sq_of_isArborescence fig1_isArborescence
   rw [fig1_sum_degree_sq] at h
   omega
 
 -- Fig. 1 expects six crossings under a random linearization, the value after eq. 14
-theorem fig1_sum_crossings_map :
+theorem fig1_sum_crossings_comap :
     ∑ σ : Perm (Fin 9), (fig1.toDigraph.comap σ.symm).crossings = 6 * 9 ! := by
-  have h := six_mul_sum_crossings_map_add_of_isTree fig1_isArborescence
+  have h := six_mul_sum_crossings_comap_add_of_isArborescence fig1_isArborescence
   rw [fig1_sum_degree_sq] at h
   omega
 

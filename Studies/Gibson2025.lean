@@ -89,8 +89,8 @@ theorem totalLength_99a : ex99a.totalLength = 18 := by decide
 
 /-- (99b), the particle after the long object, where the arc to *away* crosses the eight words of
 the object. -/
-def ex99b : Graph UD.DepRel (Fin 11) := ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2]
-    (by decide)
+def ex99b : Graph UD.DepRel (Fin 11) :=
+  ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
 theorem totalLength_99b : ex99b.totalLength = 25 ∧ ex99a.totalLength < ex99b.totalLength := by
   decide
@@ -199,8 +199,8 @@ def hfSubjFirst123 : Graph UD.DepRel (Fin 11) :=
 
 /-- The head-final order with subjects next to their verbs: *who bananas wanted monkeys to pizza
 Lana gave that Alfred said*. -/
-def hf123 : Graph UD.DepRel (Fin 11) := en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1]
-    (by decide)
+def hf123 : Graph UD.DepRel (Fin 11) :=
+  en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1] (by decide)
 
 /-- Verb-initial but subordinator-final: *that* follows the clause it heads. -/
 def voSubFinal123 : Graph UD.DepRel (Fin 11) :=

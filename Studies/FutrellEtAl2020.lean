@@ -108,8 +108,8 @@ theorem ovidProjective_lt :
 abbrev shortBeforeLong : Digraph (Fin 7) :=
   .ofArcs [(0, 1), (0, 2), (2, 3), (0, 4), (4, 5), (4, 6)]
 
-/-- The head of (7a) among its siblings. -/
-abbrev head : shortBeforeLong.siblings 0 := ⟨0, shortBeforeLong.self_mem_siblings 0⟩
+/-- The head of (7a) as a member of its local subtree. -/
+abbrev head : shortBeforeLong.localSubtree 0 := ⟨0, shortBeforeLong.self_mem_localSubtree 0⟩
 
 /-- (7b) A [E F G] [C D] [B]: the phrases of (7a) with the longest first and the shortest
 last. -/
@@ -121,19 +121,19 @@ private theorem shortBeforeLong_isBranching : shortBeforeLong.IsBranching := by 
 private theorem shortBeforeLong_isProjective : shortBeforeLong.IsProjective := by decide +kernel
 
 private theorem monovaryOn_shortBeforeLong :
-    MonovaryOn (fun c : shortBeforeLong.siblings 0 ↦ #(shortBeforeLong.reachSet c).toFinset)
-      (shortBeforeLong.siblingArrangement 0)
-      ↑((shortBeforeLong.siblingArrangement 0).after head) := by
+    MonovaryOn (fun c : shortBeforeLong.localSubtree 0 ↦ #(shortBeforeLong.reachSet c).toFinset)
+      (shortBeforeLong.localArrangement 0)
+      ↑((shortBeforeLong.localArrangement 0).after head) := by
   decide +kernel
 
 /-- (7): the phrases of (7a) grow outward from their head, and no reordering of them has shorter
 dependencies. -/
-theorem shortBeforeLong_le_reorderDependents (σ : Equiv.Perm (shortBeforeLong.siblings 0))
+theorem shortBeforeLong_le_reorderDependents (σ : Equiv.Perm (shortBeforeLong.localSubtree 0))
     (hσ : σ head = head) :
     shortBeforeLong.totalLength ≤ (shortBeforeLong.reorderDependents 0 σ).totalLength := by
   refine Digraph.totalLength_le_reorderDependents shortBeforeLong_isBranching
     shortBeforeLong_isProjective (fun c hc ↦ ?_) monovaryOn_shortBeforeLong
-  refine WordOrder.Arrangement.mem_after.2 (Digraph.siblingArrangement_precedes.2 ?_)
+  refine WordOrder.Arrangement.mem_after.2 (Digraph.localArrangement_precedes.2 ?_)
   refine Fin.pos_iff_ne_zero.2 fun e ↦ Equiv.Perm.mem_support.1 hc ?_
   rw [show c = head from Subtype.ext e, hσ]
 

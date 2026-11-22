@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Combinatorics.Digraph.Finite
 public import Linglib.Core.Combinatorics.Digraph.Reachable
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
@@ -77,13 +78,13 @@ theorem ne_of_adj (h : G.Adj v w) : v ≠ w := by
   rintro rfl
   exact hB.not_adj_self h
 
-theorem acyclic (v : V) : ¬ TransGen G.Adj v v := fun h ↦
+theorem not_transGen_self (v : V) : ¬ TransGen G.Adj v v := fun h ↦
   have ⟨_, hvw, hwv⟩ := TransGen.head'_iff.1 h
   hB.not_reachable_of_adj hvw hwv
 
 /-- In a finite branching the in-neighbours are reached in finitely many steps. -/
 theorem wellFounded_transGen [Finite V] : WellFounded (TransGen G.Adj) :=
-  haveI : Std.Irrefl (TransGen G.Adj) := ⟨hB.acyclic⟩
+  haveI : Std.Irrefl (TransGen G.Adj) := ⟨hB.not_transGen_self⟩
   Finite.wellFounded_of_trans_of_irrefl _
 
 theorem reachable_antisymm (hvw : G.Reachable v w) (hwv : G.Reachable w v) : v = w := by
@@ -92,7 +93,7 @@ theorem reachable_antisymm (hvw : G.Reachable v w) (hwv : G.Reachable w v) : v =
   · exact absurd (huw.trans hwv) (hB.not_reachable_of_adj hvu)
 
 /-- A vertex that reaches another, different one reaches its in-neighbour. -/
-theorem reachable_of_adj (hvw : G.Reachable v w) (hne : v ≠ w) (hu : G.Adj u w) :
+theorem reachable_of_reachable_of_adj (hvw : G.Reachable v w) (hne : v ≠ w) (hu : G.Adj u w) :
     G.Reachable v u := by
   obtain rfl | ⟨z, hvz, hzw⟩ := ReflTransGen.cases_tail hvw
   · exact absurd rfl hne
@@ -109,8 +110,9 @@ theorem disjoint_reachSet (hvw : ¬ G.Reachable v w) (hwv : ¬ G.Reachable w v) 
 
 theorem disjoint_reachSet_of_adj (hw : G.Adj v w) (hu : G.Adj v u) (hne : w ≠ u) :
     Disjoint (G.reachSet w) (G.reachSet u) :=
-  hB.disjoint_reachSet (fun hd ↦ hB.not_reachable_of_adj hw (hB.reachable_of_adj hd hne hu))
-    fun hd ↦ hB.not_reachable_of_adj hu (hB.reachable_of_adj hd hne.symm hw)
+  hB.disjoint_reachSet
+    (fun hd ↦ hB.not_reachable_of_adj hw (hB.reachable_of_reachable_of_adj hd hne hu))
+    fun hd ↦ hB.not_reachable_of_adj hu (hB.reachable_of_reachable_of_adj hd hne.symm hw)
 
 theorem reachSet_injective : Function.Injective G.reachSet := fun v w h ↦
   hB.reachable_antisymm (h ▸ (ReflTransGen.refl : G.Reachable w w) : w ∈ G.reachSet v)
@@ -131,7 +133,7 @@ include hA
 theorem not_adj_root (v : V) : ¬ G.Adj v r := fun h ↦
   hA.not_reachable_of_adj h (hA.reachable v)
 
-theorem exists_adj (hw : w ≠ r) : ∃ v, G.Adj v w :=
+theorem exists_adj_of_ne_root (hw : w ≠ r) : ∃ v, G.Adj v w :=
   ((ReflTransGen.cases_tail (hA.reachable w)).resolve_left hw).imp fun _ h ↦ h.2
 
 /-- An arborescence has one root. -/
@@ -157,7 +159,7 @@ theorem card_arcs_add_one [Fintype V] [DecidableEq V] [DecidableRel G.Adj] :
       ((mem_arcs (p := (v', w))).1 h')
     rw [e]
   · intro w hw
-    obtain ⟨v, hv⟩ := hA.exists_adj (Finset.ne_of_mem_erase hw)
+    obtain ⟨v, hv⟩ := hA.exists_adj_of_ne_root (Finset.ne_of_mem_erase hw)
     exact ⟨(v, w), (mem_arcs (p := (v, w))).2 hv, rfl⟩
 
 end IsArborescence
@@ -166,9 +168,9 @@ end IsArborescence
 theorem isArborescence_iff_forall_not_adj_iff [Finite V] :
     G.IsArborescence r ↔ G.IsBranching ∧ ∀ w, (∀ v, ¬ G.Adj v w) ↔ w = r := by
   refine ⟨fun hA ↦ ⟨hA.toIsBranching, fun w ↦ ⟨fun hw ↦ ?_, fun hw ↦ hw ▸ hA.not_adj_root⟩⟩,
-    fun ⟨hB, h⟩ ↦ ⟨hB, ReflTransGen.of_forall_exists hB.acyclic fun w hw ↦ ?_⟩⟩
+    fun ⟨hB, h⟩ ↦ ⟨hB, ReflTransGen.of_forall_exists hB.not_transGen_self fun w hw ↦ ?_⟩⟩
   · by_contra hne
-    exact (hA.exists_adj hne).elim hw
+    exact (hA.exists_adj_of_ne_root hne).elim hw
   · by_contra hno
     exact hw ((h w).1 fun v hv ↦ hno ⟨v, hv⟩)
 

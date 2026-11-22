@@ -7,26 +7,18 @@ module
 
 public import Linglib.Core.Combinatorics.Digraph.Maps
 public import Linglib.Core.Relation.ReflTransGen
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
-public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Reachability in a digraph
 
 A vertex `w` is reachable from `v` when a possibly empty chain of arcs leads from `v` to `w`. This
-file defines reachability, the set of vertices reachable from a vertex, and the finite sets of
-out-neighbours and in-neighbours of a vertex.
+file defines reachability and the set of vertices reachable from a vertex.
 
 ## Main definitions
 
 * `Digraph.Reachable`: the reflexive transitive closure of adjacency.
 * `Digraph.reachSet`: the vertices reachable from a vertex, the vertex included.
-* `Digraph.children`, `Digraph.parents`, `Digraph.arcs`: the out-neighbours and in-neighbours of a
-  vertex and the arcs of a digraph, as finite sets.
 
 ## Implementation notes
 
@@ -93,33 +85,5 @@ theorem reachable_comap (e : W ≃ V) {a b : W} :
 
 theorem reachSet_comap (e : W ≃ V) (a : W) : (G.comap e).reachSet a = e ⁻¹' G.reachSet (e a) :=
   Set.ext fun _ ↦ reachable_comap e
-
-/-! ### Finite neighbourhoods -/
-
-section Finite
-
-variable [Fintype V] (G) [DecidableRel G.Adj]
-
-/-- The out-neighbours of `v`. -/
-def children (v : V) : Finset V := {w | G.Adj v w}
-
-/-- The in-neighbours of `w`. -/
-def parents (w : V) : Finset V := {v | G.Adj v w}
-
-/-- The arcs of a digraph, each a pair of a vertex and one of its out-neighbours. -/
-def arcs : Finset (V × V) := {p | G.Adj p.1 p.2}
-
-variable {G}
-
-@[simp] theorem mem_children : w ∈ G.children v ↔ G.Adj v w := by simp [children]
-
-@[simp] theorem mem_parents : v ∈ G.parents w ↔ G.Adj v w := by simp [parents]
-
-@[simp] theorem mem_arcs {p : V × V} : p ∈ G.arcs ↔ G.Adj p.1 p.2 := by simp [arcs]
-
-theorem card_arcs : G.arcs.card = ∑ v, (G.children v).card := by
-  simp only [arcs, children, Finset.card_filter, Fintype.sum_prod_type]
-
-end Finite
 
 end Digraph

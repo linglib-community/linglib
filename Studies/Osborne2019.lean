@@ -106,7 +106,7 @@ variable {g} {s : Finset (Fin n)}
 /-- In a forest the set-theoretic definition of the catena picks out the sets of words
 continuous with respect to dominance. -/
 theorem mem_catenae (hF : g.IsBranching) : s ∈ catenae g ↔ g.IsCatena s := by
-  simp [catenae, hF.isCatena_iff]
+  simp [catenae, hF.isCatena_iff_card_eq_one]
 
 -- In a projective graph a constituent is a string, and so a component.
 theorem isString_of_isConstituent (hP : g.IsProjective) (h : g.IsConstituent s) : IsString s := by
@@ -218,7 +218,7 @@ instance : DecidablePred IsFinite := fun _ ↦ inferInstanceAs (Decidable (_ = _
 /-- The valents among the dependents of a word. -/
 def valents {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L (Fin n)) (v : Fin n) :
     Multiset Position :=
-  (g.children v).val.filterMap fun w ↦ category (words w)
+  (g.outNeighborFinset v).val.filterMap fun w ↦ category (words w)
 
 /-- The valents a form of a verb with the frame `fr` takes as dependents: the expressed
 positions of the frame, the subject among them only when the form is finite. -/

@@ -29,7 +29,7 @@ valency that admits whatever it admits.
 
 * `Valency L` is the type of valencies over the relations `L`, and `Valency.withOptional` is the
   valency with given obligatory and optional valents.
-* `Graph.childrenBy g p v` is the dependents of `v` by a relation satisfying `p`.
+* `Graph.dependentsBy g p v` is the dependents of `v` by a relation satisfying `p`.
 * `Graph.valents g p v` is the multiset of the relations satisfying `p` that the dependents of
   `v` bear.
 * `Graph.Satisfies g p v val` says that the valents of `v` are those of the valency `val`.
@@ -100,8 +100,8 @@ namespace Graph
 /-! ### Valents -/
 
 /-- The dependents of `v` by a relation satisfying `p`. -/
-def childrenBy (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) : Finset (Fin n)
-    :=
+def dependentsBy (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) :
+    Finset (Fin n) :=
   {w | ∃ r ∈ g.label v w, p r}
 
 /-- The relations satisfying `p` that the dependents of `v` bear, each as often as `v` has a
@@ -113,15 +113,15 @@ def valents (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n)
 variable {g : Graph L (Fin n)} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
   {val val₁ val₂ : Valency L}
 
-@[simp] theorem mem_childrenBy : w ∈ g.childrenBy p v ↔ ∃ r ∈ g.label v w, p r := by
-  simp [childrenBy]
+@[simp] theorem mem_dependentsBy : w ∈ g.dependentsBy p v ↔ ∃ r ∈ g.label v w, p r := by
+  simp [dependentsBy]
 
 @[simp] theorem mem_valents : r ∈ g.valents p v ↔ p r ∧ ∃ w, g.label v w = some r := by
   simp [valents, Option.filter_eq_some_iff, and_comm]
 
 /-- A position has as many valents as dependents by a relation of valents. -/
-theorem card_valents : (g.valents p v).card = #(g.childrenBy p v) := by
-  rw [valents, childrenBy, Finset.card_def, Finset.filter_val]
+theorem card_valents : (g.valents p v).card = #(g.dependentsBy p v) := by
+  rw [valents, dependentsBy, Finset.card_def, Finset.filter_val]
   induction (univ : Finset (Fin n)).val using Multiset.induction_on with
   | empty => simp
   | cons w s ih =>
@@ -152,16 +152,16 @@ theorem filter_valents (q : L → Prop) [DecidablePred q] :
 /-- The quantity of a relation among the valents of `v` is the number of dependents `v` has by
 it when it is a relation of valents, and zero otherwise. -/
 theorem count_valents [DecidableEq L] (r : L) :
-    (g.valents p v).count r = if p r then #(g.childrenBy (· = r) v) else 0 := by
+    (g.valents p v).count r = if p r then #(g.dependentsBy (· = r) v) else 0 := by
   rw [Multiset.count_eq_card_filter_eq, filter_valents, card_valents]
   split_ifs with hr
   · congr 1
     ext w
-    simp only [mem_childrenBy]
+    simp only [mem_dependentsBy]
     exact ⟨fun ⟨x, hx, _, h⟩ ↦ ⟨x, hx, h.symm⟩, fun ⟨x, hx, h⟩ ↦ ⟨x, hx, h ▸ hr, h.symm⟩⟩
   · rw [Finset.card_eq_zero]
     ext w
-    simp only [mem_childrenBy, notMem_empty, iff_false]
+    simp only [mem_dependentsBy, notMem_empty, iff_false]
     rintro ⟨x, -, hx, rfl⟩
     exact hr hx
 

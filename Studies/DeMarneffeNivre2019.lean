@@ -254,8 +254,8 @@ def fig9Enhanced : Graph UD.DepRel (Fin 12) :=
     (10, 9, .amod), (7, 9, .conj), (9, 8, .cc), (5, 11, .punct)]
 
 -- §4.4
-theorem fig9Enhanced_not_isTree :
-    ¬ fig9Enhanced.IsArborescence 5 ∧ (fig9Enhanced.parents 0).card = 3 ∧
+theorem fig9Enhanced_not_isArborescence :
+    ¬ fig9Enhanced.IsArborescence 5 ∧ (fig9Enhanced.inNeighborFinset 0).card = 3 ∧
       Relation.TransGen fig9Enhanced.Adj 0 0 := by
   decide
 

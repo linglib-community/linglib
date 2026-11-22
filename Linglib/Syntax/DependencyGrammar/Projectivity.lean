@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Combinatorics.Digraph.Arborescence
 public import Linglib.Syntax.DependencyGrammar.Basic
+public import Mathlib.Order.Fin.Basic
 public import Linglib.Core.Combinatorics.SimpleGraph.Crossings
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.Cover
@@ -40,7 +41,9 @@ are well-nested.
 * `Digraph.IsPlanar.isProjective_of_isBot`: a planar arborescence whose root is least is
   projective.
 * `Digraph.isProjective_comap_orderIso`, `Digraph.isProjective_comap_ofDual`: projectivity is
-  invariant under order isomorphisms and under reversal of the order.
+  invariant under order isomorphisms and under reversal of the order, and so is planarity. The
+  mirror image of a sentence is therefore projective or planar exactly when the sentence is
+  (`Digraph.isProjective_mirror`, `Digraph.isPlanar_mirror`).
 
 ## References
 
@@ -245,7 +248,7 @@ theorem IsProjective.isPlanar (hB : G.IsBranching) (hP : G.IsProjective) : G.IsP
       x ∈ Set.uIcc p t → (x = q ∨ x = u) → p ≠ x → G.Reachable p q := by
     rintro p t q u x h1 h2 hx (rfl | rfl) hne
     exacts [hP.reachable_of_mem_uIcc h1 hx,
-            hB.reachable_of_adj (hP.reachable_of_mem_uIcc h1 hx) hne h2]
+            hB.reachable_of_reachable_of_adj (hP.reachable_of_mem_uIcc h1 hx) hne h2]
   have hab : c ∈ Set.uIcc a b := Set.mem_uIcc.2 (.inl ⟨hac.le, hcb.le⟩)
   have hba : c ∈ Set.uIcc b a := Set.mem_uIcc.2 (.inr ⟨hac.le, hcb.le⟩)
   have hcd : b ∈ Set.uIcc c d := Set.mem_uIcc.2 (.inl ⟨hcb.le, hbd.le⟩)
@@ -299,9 +302,9 @@ theorem IsPlanar.isWellNested (hB : G.IsBranching) (hPl : G.IsPlanar) : G.IsWell
 
 /-- In a planar arborescence every interruption of a reach set contains the root: if `v` reaches
 `i` and `j` but not a vertex between them, the root lies strictly between `i` and `j`. -/
-theorem IsPlanar.root_mem_gap (hA : G.IsArborescence r) (hPl : G.IsPlanar) {v i j k : V}
+theorem IsPlanar.root_mem_Ioo (hA : G.IsArborescence r) (hPl : G.IsPlanar) {v i j k : V}
     (hi : G.Reachable v i) (hj : G.Reachable v j) (hik : i < k) (hkj : k < j)
-    (hk : ¬ G.Reachable v k) : i < r ∧ r < j := by
+    (hk : ¬ G.Reachable v k) : r ∈ Set.Ioo i j := by
   by_contra hcon
   -- `v` is not the root, so the root is not reachable from `v`.
   have hvr : ¬ G.Reachable v r := fun h ↦
@@ -339,7 +342,7 @@ theorem IsPlanar.isProjective_of_isBot (hA : G.IsArborescence r) (hPl : G.IsPlan
   by_contra hz
   have hxz' : x < z := lt_of_le_of_ne hxz (fun h ↦ hz (h ▸ hx))
   have hzy' : z < y := lt_of_le_of_ne hzy (fun h ↦ hz (h ▸ hy))
-  exact absurd (hPl.root_mem_gap hA hx hy hxz' hzy' hz).1 (not_lt.mpr (hr x))
+  exact absurd (hPl.root_mem_Ioo hA hx hy hxz' hzy' hz).1 (not_lt.mpr (hr x))
 
 /-- Every projective branching is well-nested, by way of planarity. -/
 theorem IsProjective.isWellNested (hB : G.IsBranching) (hP : G.IsProjective) : G.IsWellNested :=
@@ -371,5 +374,30 @@ theorem isPlanar_comap_orderIso (e : W ≃o V) : (G.comap e).IsPlanar ↔ G.IsPl
   ⟨fun h ↦ by
     have e' : (G.comap e).comap e.symm = G := Digraph.ext (by ext; simp)
     exact e' ▸ h.comap e.symm, fun h ↦ h.comap e⟩
+
+/-- Planarity is invariant under reversing the order of the vertices. -/
+theorem isPlanar_comap_ofDual :
+    (G.comap OrderDual.ofDual : Digraph Vᵒᵈ).IsPlanar ↔ G.IsPlanar :=
+  ⟨fun h a b c d h1 h2 alt ↦ h (a := .toDual d) (b := .toDual c) (c := .toDual b)
+      (d := .toDual a) h2.symm h1.symm ⟨alt.2.2, alt.2.1, alt.1⟩,
+    fun h _ _ _ _ h1 h2 alt ↦ h h2.symm h1.symm ⟨alt.2.2, alt.2.1, alt.1⟩⟩
+
+/-! ### The mirror image -/
+
+section Mirror
+
+variable {n : ℕ} {G : Digraph (Fin n)}
+
+/-- The mirror image of a structure is projective exactly when the structure is. -/
+@[simp] theorem isProjective_mirror : G.mirror.IsProjective ↔ G.IsProjective :=
+  (isProjective_comap_ofDual (G := G.mirror)).symm.trans
+    (isProjective_comap_orderIso (G := G) Fin.revOrderIso)
+
+/-- The mirror image of a structure is planar exactly when the structure is. -/
+@[simp] theorem isPlanar_mirror : G.mirror.IsPlanar ↔ G.IsPlanar :=
+  (isPlanar_comap_ofDual (G := G.mirror)).symm.trans
+    (isPlanar_comap_orderIso (G := G) Fin.revOrderIso)
+
+end Mirror
 
 end Digraph
