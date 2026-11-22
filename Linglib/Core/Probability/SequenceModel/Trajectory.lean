@@ -5,21 +5,20 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.LanguageModel.Tight
+public import Linglib.Core.Probability.SequenceModel.Tight
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
 public import Mathlib.Data.List.ReduceOption
 
 /-!
 # The trajectory of an autoregressive sequence model
 
-The model is [a prediction rule](##rule) on the extended alphabet, the end of the string
-absorbing, and the Ionescu–Tulcea theorem gives [the law of its whole trajectory](##trajectory), a
+The model is a prediction rule on the extended alphabet (`rule`), the end of the string
+absorbing, and the Ionescu–Tulcea theorem gives the law of its whole trajectory (`trajectory`), a
 probability measure on infinite sequences of symbols or ends. Survival is the probability that
-[none of the first `n` symbols is the end](##trajectory_setOf_forall_lt_ne_none), a string's
-probability is that of the trajectories that [spell it and then end](##trajectory_cylinder), and
-the model is tight exactly when
-[the trajectory ends almost surely](##isTight_iff_trajectory_setOf_forall_ne_none), which is how
-[du-etal-2023] define tightness.
+none of the first `n` symbols is the end (`trajectory_setOf_forall_lt_ne_none`), a string's
+probability is that of the trajectories that spell it and then end (`trajectory_cylinder`), and
+the model is tight exactly when the trajectory ends almost surely
+(`isTight_iff_trajectory_setOf_forall_ne_none`), which is how [du-etal-2023] define tightness.
 
 ## References
 

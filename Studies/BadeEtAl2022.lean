@@ -1,7 +1,7 @@
 module
 
 public import Studies.Fox2007
-public import Linglib.Processing.Reasoning.Erotetic
+public import Linglib.Processing.Erotetic
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Logic.Team.Inquisitive
@@ -29,7 +29,7 @@ propositions strengthens the disjunction to its strongly exhaustive reading
 classically;
 posterior-based accounts, by contrast, cannot separate the conclusions *b* and *c* without a
 prior asymmetry (`Erotetic.posterior_eq_iff`). The shared apparatus lives in
-`Processing.Reasoning.Erotetic`; this file keeps what is specific to the paper. Footnote 6's
+`Processing.Erotetic`; this file keeps what is specific to the paper. Footnote 6's
 excludability asymmetry is derived (`might_not_excludable`, `allowed_excludable`), as is the
 fact that the revised flat premise disarms it for both modals (`revised_flat_not_excludable`).
 
