@@ -88,8 +88,6 @@ theorem functional_dom (R : SetRel A E) : (functional R).Dom ↔ ∀ a, ∃! b, 
   · choose f hf hu using h
     exact ⟨f, hf, fun g hg ↦ funext fun a ↦ hu a _ (hg a)⟩
 
-/-- The description denotes `f` exactly when `R` relates each member of the restrictor to the
-value of `f` there and to nothing else. -/
 theorem mem_functional {R : SetRel A E} {f : A → E} :
     f ∈ functional R ↔ ∀ a b, a ~[R] b ↔ f a = b := by
   rw [functional, mem_iota]
@@ -190,9 +188,7 @@ def Vary (f : A → E) : Prop := (Set.range f).Nontrivial
 theorem vary_iff : Vary f ↔ ∃ y z, f y ≠ f z := by
   simp [Vary, Set.Nontrivial]
 
-/-- No fixed property of individuals holds of every value of a function exactly when the
-function varies. This is the general fact behind (12) and (13), where the paper shows that
-*varied* said of each volunteer's supervisor is variation of that supervisor over time. -/
+-- (12), (13)
 theorem not_exists_forall_vary_iff [Nontrivial A] [Nontrivial E] :
     ¬ ∃ P : E → Prop, ∀ f : A → E, Vary f ↔ ∀ x, P (f x) := by
   classical
@@ -206,9 +202,7 @@ theorem not_exists_forall_vary_iff [Nontrivial A] [Nontrivial E] :
     vary_iff.2 ⟨x, y, by simp [hxy.symm, hab]⟩
   exact ha (by simpa using (hP _).1 hv x)
 
-/-- (17) With a domain larger than the restrictor *varied* is too weak: a function may vary
-though its restriction does not, as when the volunteers share a supervisor and someone else has
-another. -/
+-- (17)
 theorem exists_vary_not_vary_comp_inclusion [Nontrivial E] {B : Set E} (h : A ⊆ B)
     (hA : A.Nonempty) (hB : ¬ B ⊆ A) :
     ∃ g : B → E, Vary g ∧ ¬ Vary (g ∘ Set.inclusion h) := by
@@ -221,11 +215,7 @@ theorem exists_vary_not_vary_comp_inclusion [Nontrivial E] {B : Set E} (h : A �
   obtain ⟨y, z, hne⟩ := vary_iff.1 hv
   simp at hne
 
-/-- (37), (38) Bound by a distributive subject, the saturated function gives the diagonal, each
-author revising their own paper, and the scoped-out universal gives the product, each author
-revising every paper. The paper shows the two differ; they are here shown to differ exactly where
-the function varies, the product entailing the diagonal always and the diagonal the product, for
-every relation, only for a function that does not vary. -/
+-- (37), (38)
 theorem forall_imp_cross_iff :
     (∀ r : E → A → Prop, (∀ y, r (f y) y) → ∀ x y, r (f x) y) ↔ ¬ Vary f := by
   rw [vary_iff]
