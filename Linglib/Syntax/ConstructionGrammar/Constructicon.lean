@@ -85,6 +85,42 @@ def Slot.Refines (s t : Slot Lex) : Prop :=
 instance [DecidableEq Lex] (s t : Slot Lex) : Decidable (s.Refines t) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
+theorem Slot.Refines.refl (s : Slot Lex) : s.Refines s := .inl rfl
+
+/-- Refinement fills open fillers only: a slot refining a closed slot is that slot. -/
+theorem Slot.Refines.eq_of_not_isOpen {s t : Slot Lex} (h : s.Refines t)
+    (ht : ¬ t.filler.IsOpen) : s = t :=
+  h.resolve_right fun h' ↦ ht h'.1
+
+theorem Slot.Refines.isOpen {s t : Slot Lex} (h : s.Refines t) (hs : s.filler.IsOpen) :
+    t.filler.IsOpen :=
+  h.elim (fun e ↦ e ▸ hs) (·.1)
+
+/-- A form that refines another slot for slot is at most as abstract. -/
+theorem TypedForm.specificity_le_of_forall₂_refines {c m : TypedForm Lex}
+    (h : List.Forall₂ Slot.Refines c m) : c.specificity ≤ m.specificity := by
+  have top : (∀ s ∈ c, s.filler.IsOpen) → ∀ t ∈ m, t.filler.IsOpen := by
+    induction h with
+    | nil => exact id
+    | cons hst _ ih =>
+      simp only [List.forall_mem_cons]
+      exact fun hc ↦ ⟨hst.isOpen hc.1, ih hc.2⟩
+  have bot : (∀ t ∈ m, ¬ t.filler.IsOpen) → c = m := by
+    clear top
+    induction h with
+    | nil => exact fun _ ↦ rfl
+    | cons hst _ ih =>
+      simp only [List.forall_mem_cons]
+      exact fun hm ↦ by rw [hst.eq_of_not_isOpen hm.1, ih hm.2]
+  by_cases hm : ∀ t ∈ m, ¬ t.filler.IsOpen
+  · rw [bot hm]
+  · have hm' : m.specificity ≠ .lexicallySpecified :=
+      fun e ↦ hm (TypedForm.specificity_eq_lexicallySpecified_iff.1 e).2
+    simp only [← TypedForm.specificity_eq_fullyAbstract_iff] at top
+    revert top hm'
+    generalize c.specificity = a; generalize m.specificity = b
+    cases a <;> cases b <;> decide
+
 /-- What a link type requires of the form `c` of the linked construction, given the form `m` of
 the construction it inherits from: a polysemous extension keeps the central sense's form, a
 metaphorical extension may change its form freely, a subpart's slots sit inside the whole's up
@@ -110,6 +146,11 @@ derived rather than listed among a network's `mothers`, which keeps the network 
 theorem LinkType.Admits.inverse_subpart {c m : TypedForm Lex}
     (h : LinkType.instance.Admits c m) : LinkType.subpart.Admits m c :=
   ⟨List.sublistForall₂_iff.2 ⟨c, h.1.flip, List.Sublist.refl c⟩, h.2.symm⟩
+
+/-- An instance is at most as abstract as the construction it instantiates. -/
+theorem LinkType.Admits.specificity_le {c m : TypedForm Lex}
+    (h : LinkType.instance.Admits c m) : c.specificity ≤ m.specificity :=
+  TypedForm.specificity_le_of_forall₂_refines h.1
 
 /-! ### The network -/
 

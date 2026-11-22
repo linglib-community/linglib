@@ -145,7 +145,7 @@ def veggieWrapForm : TypedForm String :=
 
 -- Table 8
 theorem table8_specificity :
-    derivedSpecificity veggieWrapForm = .lexicallySpecified ∧
+    veggieWrapForm.specificity = .lexicallySpecified ∧
     aSimplePALConstruction.specificity = .partiallyOpen ∧
     nnCompound.specificity = .fullyAbstract ∧
     palConstruction.specificity = .fullyAbstract := by decide
@@ -326,11 +326,6 @@ reached by accommodation or pretense, not antecedent entailment. -/
 def palMeaning (W : Type*) (situationType headNoun : W → Prop) :
     ConventionalImplicature.TwoDim W (W → Prop) :=
   ⟨headNoun, situationType⟩
-
-/-! ### Irreducibility -/
-
-theorem pal_irreducible :
-    ¬ palConstruction.IsFullyCompositional := by decide
 
 theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide

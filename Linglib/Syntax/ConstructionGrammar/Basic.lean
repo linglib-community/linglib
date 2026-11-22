@@ -11,34 +11,36 @@ public import Mathlib.Data.List.Dedup
 /-!
 # Constructions
 
-A construction is a learned pairing of a form and a meaning, for Goldberg the basic unit of
-grammatical knowledge. The form side is a `TypedForm`, a sequence of `Slot`s, each fixing a
-lexeme, opening a category, or admitting any phrase, and a construction's `Specificity` is derived
-from its slot structure rather than stipulated.
+A construction is a learned pairing of a form with a meaning, the unit of grammatical knowledge in
+construction grammar. We define the form pole as a `TypedForm`, a list of `Slot`s. The filler of a
+slot fixes a lexeme, admits the words of a category, admits the expressions meeting a semantic
+constraint, or admits any phrase, and a slot may also carry a grammatical function, a lexicality
+value and syntactic constraints. A `Construction Sem` pairs a typed form with a meaning of type
+`Sem`.
 
-## Main definitions
+A filler is open when no lexeme anchors it. The `Specificity` of a form is `fullyAbstract` when
+every slot is open, `lexicallySpecified` when the form is nonempty and no slot is open, and
+`partiallyOpen` otherwise; specificities are linearly ordered by abstraction.
 
-* `SlotFiller`, `Slot`, `TypedForm`: the typed form side
-* `RepresentationLevel`, `SlotFiller.level`: the level of a slot's content
-* `derivedSpecificity`, `HasConstraint`: measures derived from forms
-* `Requirement`, `Slot.requirement`, `Coinstantiates`: valence requirements and
-  [kay-fillmore-1999]'s coinstantiation
-* `Construction`, `Construction.specificity`, `Construction.map`: typed
-  form–meaning pairings
-* `Construction.IsFullyCompositional`, `Construction.IsFormalIdiom`: analyzability by the
-  universal combination schemata, and lexical openness
+For valence, a slot whose filler a construct gives a value determines a `Requirement`, and
+`Coinstantiates` says of a valence set that the unrealized subject of each complement is the
+intrinsic value of another member.
+
+## Implementation notes
+
+A form is a flat list of slots. Which values the slots of a construct share is not part of the
+form; it is stated of valence sets, by `Coinstantiates`. The semantic constraint of a slot is a
+label, compared only for equality.
 
 ## References
 
-* [goldberg-2006]
-* [goldberg-2003]
 * [goldberg-1995]
-* [dunn-2025]
-* [kay-fillmore-1999]
+* [goldberg-2003]
+* [goldberg-2006]
 * [fillmore-kay-oconnor-1988]
+* [kay-fillmore-1999]
+* [dunn-2025]
 * [goldberg-shirtz-2025]
-* [mueller-2013]
-* [kay-michaelis-2019]
 -/
 
 @[expose] public section
@@ -55,7 +57,10 @@ inductive Specificity where
   | partiallyOpen
   /-- Every slot is open, as in [N⁰ N⁰ N⁰] and [N′ PAL⁰ N]. -/
   | fullyAbstract
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Fintype, Repr
+
+/-- Specificities are ordered by abstraction, the lexically specified forms lowest. -/
+instance : LinearOrder Specificity := LinearOrder.lift' Specificity.ctorIdx (by decide)
 
 /-! ### Typed slots
 
@@ -85,17 +90,6 @@ inductive SlotFiller (Lex : Type*) where
   | phrasal : SlotFiller Lex
   deriving DecidableEq, Repr
 
-/-- A filler is open when no lexeme anchors it. The `open_`, `semantic` and `phrasal` fillers
-are open, while `fixed` and `headed` are not, the latter fixing its head lexeme even though the
-phrase is open. -/
-def SlotFiller.IsOpen {Lex : Type*} : SlotFiller Lex → Prop
-  | .fixed _ | .headed _ _ => False
-  | .open_ _ | .semantic _ | .phrasal => True
-
-instance {Lex : Type*} : DecidablePred (SlotFiller.IsOpen (Lex := Lex))
-  | .fixed _ | .headed _ _ => isFalse id
-  | .open_ _ | .semantic _ | .phrasal => isTrue trivial
-
 /-- A representation level is one of [dunn-2025]'s three ontologies of slot-constraints. -/
 inductive RepresentationLevel where
   /-- A lexical constraint, LEX, fixes a lexeme. -/
@@ -113,9 +107,13 @@ def SlotFiller.level {Lex : Type*} : SlotFiller Lex → RepresentationLevel
   | .open_ _ | .phrasal => .syn
   | .semantic _ => .sem
 
-theorem SlotFiller.isOpen_iff_level_ne_lex {Lex : Type*} (f : SlotFiller Lex) :
-    f.IsOpen ↔ f.level ≠ .lex := by
-  cases f <;> simp [SlotFiller.IsOpen, SlotFiller.level]
+/-- A filler is open when no lexeme anchors it, when its level is not the lexical one. A headed
+phrase is not open, since its head lexeme is fixed. -/
+def SlotFiller.IsOpen {Lex : Type*} (f : SlotFiller Lex) : Prop :=
+  f.level ≠ .lex
+
+instance {Lex : Type*} : DecidablePred (SlotFiller.IsOpen (Lex := Lex)) :=
+  fun f ↦ inferInstanceAs (Decidable (f.level ≠ .lex))
 
 /-- The grammatical function of a valence member ([kay-fillmore-1999], Figure 12) is distinct
 from its semantic role, since a subject can be an agent, a theme, or an experiencer. -/
@@ -161,9 +159,8 @@ structure Slot (Lex : Type*) where
 abbrev TypedForm (Lex : Type*) := List (Slot Lex)
 
 /-- A slot holds a phrase in a word-level position when its filler is phrasal and its position a
-word,
-the defining configuration of phrasal compounds and the PAL construction ([goldberg-shirtz-2025])
-and the cell that lexical-integrity hypotheses rule out. -/
+word, the configuration of phrasal compounds and of the PAL construction
+([goldberg-shirtz-2025]). -/
 def Slot.IsPhraseInWordSlot {Lex : Type*} (s : Slot Lex) : Prop :=
   s.filler = .phrasal ∧ s.lex = some true
 
@@ -171,36 +168,25 @@ instance {Lex : Type*} [DecidableEq Lex] (s : Slot Lex) :
     Decidable s.IsPhraseInWordSlot :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-! ### Derived specificity -/
+/-! ### Specificity -/
 
-section DerivedSpecificity
-variable {Lex : Type*}
+section Specificity
+variable {Lex : Type*} {form : TypedForm Lex}
 
-/-- The derived specificity of a form is `fullyAbstract` when every slot is open (vacuously so
-for the empty form), `lexicallySpecified` when none is, and `partiallyOpen` otherwise. -/
-def derivedSpecificity (form : TypedForm Lex) : Specificity :=
+/-- The specificity of a form is `fullyAbstract` when every slot is open (vacuously so for the
+empty form), `lexicallySpecified` when none is, and `partiallyOpen` otherwise. -/
+def TypedForm.specificity (form : TypedForm Lex) : Specificity :=
   if ∀ s ∈ form, s.filler.IsOpen then .fullyAbstract
   else if ∀ s ∈ form, ¬ s.filler.IsOpen then .lexicallySpecified
   else .partiallyOpen
 
-/-- Some slot in the form bears the constraint `c`. -/
-def HasConstraint (form : TypedForm Lex) (c : SlotConstraint) : Prop :=
-  ∃ s ∈ form, c ∈ s.constraints
+theorem TypedForm.specificity_eq_fullyAbstract_iff :
+    form.specificity = .fullyAbstract ↔ ∀ s ∈ form, s.filler.IsOpen := by
+  unfold TypedForm.specificity; split_ifs <;> simp_all
 
-instance (form : TypedForm Lex) (c : SlotConstraint) :
-    Decidable (HasConstraint form c) :=
-  inferInstanceAs (Decidable (∃ s ∈ form, c ∈ s.constraints))
-
-/-! ### Characterization lemmas -/
-
-theorem derivedSpecificity_eq_fullyAbstract_iff (form : TypedForm Lex) :
-    derivedSpecificity form = .fullyAbstract ↔ ∀ s ∈ form, s.filler.IsOpen := by
-  unfold derivedSpecificity; split_ifs <;> simp_all
-
-theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
-    derivedSpecificity form = .lexicallySpecified ↔
-      form ≠ [] ∧ ∀ s ∈ form, ¬ s.filler.IsOpen := by
-  unfold derivedSpecificity
+theorem TypedForm.specificity_eq_lexicallySpecified_iff :
+    form.specificity = .lexicallySpecified ↔ form ≠ [] ∧ ∀ s ∈ form, ¬ s.filler.IsOpen := by
+  unfold TypedForm.specificity
   split_ifs with h₁ h₂
   · simp only [false_iff, not_and]
     intro hne hall
@@ -210,7 +196,12 @@ theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
   · simp only [false_iff, not_and]
     exact fun _ ↦ h₂
 
-end DerivedSpecificity
+theorem TypedForm.specificity_eq_partiallyOpen_iff :
+    form.specificity = .partiallyOpen ↔
+      (∃ s ∈ form, s.filler.IsOpen) ∧ ∃ s ∈ form, ¬ s.filler.IsOpen := by
+  unfold TypedForm.specificity; split_ifs <;> simp_all
+
+end Specificity
 
 /-! ### Valence and coinstantiation -/
 
@@ -254,7 +245,7 @@ theorem coinstantiates_subj_comp_iff {x e s : E} :
 
 end Coinstantiation
 
-/-! ### Constructions and the network -/
+/-! ### Constructions -/
 
 /-- A construction is a learned pairing of form and meaning. The meaning pole is typed by the
 domain that owns the construction, such as a composition rule or a presupposition, with `Unit`
@@ -271,28 +262,30 @@ structure Construction (Sem : Type*) where
 
 variable {Sem : Type*}
 
-/-- A construction's specificity is derived from its slot structure. -/
+/-- The specificity of a construction is that of its form. -/
 def Construction.specificity (c : Construction Sem) : Specificity :=
-  derivedSpecificity c.form
+  c.form.specificity
 
 /-- `c.map f` reinterprets the meaning pole of `c` along `f`, keeping the form. -/
+@[simps]
 def Construction.map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
     Construction Sem' :=
   { form := c.form, meaning := f c.meaning, pragmaticPoint := c.pragmaticPoint }
 
-/-- A construction is fully compositional when the universal combination schemata alone analyze
-it, when its form is fully abstract and it carries no pragmatic point. This is a proxy for
-[mueller-2013]'s structural criterion, approximating what [kay-michaelis-2019] survey as a
-continuum. -/
-def Construction.IsFullyCompositional (c : Construction Sem) : Prop :=
-  c.specificity = .fullyAbstract ∧ c.pragmaticPoint = false
+@[simp]
+theorem Construction.map_id (c : Construction Sem) : c.map id = c := rfl
 
-instance (c : Construction Sem) : Decidable c.IsFullyCompositional :=
-  inferInstanceAs (Decidable (_ ∧ _))
+@[simp]
+theorem Construction.map_map {Sem' Sem'' : Type*} (g : Sem' → Sem'') (f : Sem → Sem')
+    (c : Construction Sem) : (c.map f).map g = c.map (g ∘ f) := rfl
+
+@[simp]
+theorem Construction.specificity_map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
+    (c.map f).specificity = c.specificity := rfl
 
 /-- A construction is a formal idiom in the sense of [fillmore-kay-oconnor-1988] §1.1.3, a
-lexically open idiom, when it is a syntactic pattern rather than a lexically filled expression.
-The distinction is a cline (fn. 3), which `Specificity` discretizes. -/
+lexically open idiom, when its form is not lexically specified. The distinction is a cline
+(fn. 3), which `Specificity` discretizes. -/
 def Construction.IsFormalIdiom (c : Construction Sem) : Prop :=
   c.specificity ≠ .lexicallySpecified
 
