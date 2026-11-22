@@ -13,11 +13,12 @@ receiver takes on the sender's signal, `SignalingGame.pureSenderValue` and
 functions (`SignalingGame.senderValue_deterministic`).
 
 The sender and the receiver are the agents `false` and `true` of a family of strategy types,
-`SignalingGame.Strategies`, on which the equilibria of the game are stated.
+`SignalingGame.Strategies`, on which the equilibria of the game are stated, with
+`SignalingGame.utilityAt` what a profile is worth to each at a state.
 
 ## TODO
 
-* Port the families of [lewis-1969] and [franke-2011] in their studies to `Strategies`.
+* The audience of [lewis-1969] has several members with partial plans and keeps its own family.
 * The receiver's value of a pure profile in the guessing game is `success_deterministic`.
 -/
 
@@ -46,6 +47,12 @@ def profile (f : S → M) (g : M → A) : ∀ b, Strategies S M A b
 @[simp] theorem profile_true (f : S → M) (g : M → A) : profile f g true = g := rfl
 
 variable [MeasurableSpace S] (G : SignalingGame S M A)
+
+/-- What a pure profile is worth at a state to the sender, `false`, and to the receiver,
+`true`. -/
+def utilityAt (s : S) : Bool → (∀ b, Strategies S M A b) → ℝ
+  | false, a => G.senderUtility s (a false s) (a true (a false s))
+  | true, a => G.receiverUtility s (a true (a false s))
 
 /-- The sender's value of a pure profile. -/
 noncomputable def pureSenderValue (f : S → M) (g : M → A) : ℝ :=

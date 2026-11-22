@@ -98,11 +98,16 @@ noncomputable def receiver [StandardBorelSpace S] [Nonempty S] [IsFiniteMeasure 
 
 /-- The guessing game at a prior: the actions are the states, and both players gain `1` when the
 action is the state. -/
-def guess [DecidableEq S] (pr : Measure S) : SignalingGame S M S :=
-  ⟨pr, fun s _ a ↦ if a = s then 1 else 0, fun s a ↦ if a = s then 1 else 0⟩
+noncomputable def guess (pr : Measure S) : SignalingGame S M S :=
+  ⟨pr, fun s _ ↦ ({s} : Set S).indicator 1, fun s ↦ ({s} : Set S).indicator 1⟩
 
 omit [MeasurableSpace M] in
-theorem isCommonInterest_guess [DecidableEq S] (pr : Measure S) :
+instance (pr : Measure S) [IsFiniteMeasure pr] :
+    IsFiniteMeasure (guess pr : SignalingGame S M S).prior :=
+  ‹_›
+
+omit [MeasurableSpace M] in
+theorem isCommonInterest_guess (pr : Measure S) :
     (guess pr : SignalingGame S M S).IsCommonInterest :=
   fun _ _ _ ↦ rfl
 
