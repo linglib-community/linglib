@@ -124,8 +124,13 @@ theorem hasPersonPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
-theorem hasPersonPrefix_agreement_iff : ∀ p ∈ Pronouns.personal,
-    HasPersonPrefix p.agreement ↔ p.person ≠ some .third := by
+/-- Every personal pronoun controls an absolutive prefix. -/
+theorem hasPersonPrefix_agreement : ∀ p ∈ Pronouns.personal, HasPersonPrefix p.agreement := by
+  decide
+
+/-- The demonstratives, which serve as the third person pronouns, control none. -/
+theorem not_hasPersonPrefix_agreement :
+    ∀ d ∈ Pronouns.demonstratives, ¬ HasPersonPrefix d.agreement := by
   decide
 
 /-- The absolutive prefix of *hi* is that of the second person singular, whatever the gender of
