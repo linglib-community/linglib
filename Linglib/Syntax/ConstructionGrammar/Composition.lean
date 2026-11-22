@@ -26,6 +26,10 @@ structure in which it is embedded.
   reconciliation operator
 * `interps`: all readings of a tree, through the forms its constituents instantiate
 
+## Main results
+
+* `Licenses.of_interps_ne_nil`: a tree with a reading is licensed
+
 ## References
 
 * [kay-michaelis-2019]
@@ -91,5 +95,46 @@ def interpsList (cxns : List (Construction (CompositionRule D))) (den : Word →
   | t :: ts => (interps cxns den t).flatMap fun d ↦ (interpsList cxns den ts).map (d :: ·)
 
 end
+
+variable {cxns : List (Construction (CompositionRule D))} {den : Word → Option D}
+
+theorem interps_node (c : Unit) (ts : List (Tree Unit Word)) :
+    interps cxns den (.node c ts) = cxns.flatMap fun c ↦
+      if FormMatches c.form ts then (interpsList cxns den ts).filterMap c.meaning else [] := by
+  rw [interps]
+
+theorem interps_ne_nil_of_interpsList_ne_nil {ts : List (Tree Unit Word)}
+    (h : interpsList cxns den ts ≠ []) : ∀ t ∈ ts, interps cxns den t ≠ [] := by
+  induction ts with
+  | nil => simp
+  | cons t ts ih =>
+    rw [interpsList] at h
+    obtain ⟨_, hmem⟩ := List.exists_mem_of_ne_nil _ h
+    obtain ⟨d, hd, hds⟩ := List.mem_flatMap.1 hmem
+    rw [List.forall_mem_cons]
+    exact ⟨List.ne_nil_of_mem hd, ih (by rintro e; simp [e] at hds)⟩
+
+/-- A tree with a reading is licensed: each of its constituents instantiates the form of the
+construction that composes it. -/
+theorem Licenses.of_interps_ne_nil {t : Tree Unit Word} (h : interps cxns den t ≠ []) :
+    Licenses cxns t := by
+  induction t using RoseTree.rec' with
+  | node l ts ih =>
+    intro s hs
+    rw [RoseTree.subtrees_node, List.mem_cons, List.mem_flatMap] at hs
+    rcases l with ⟨_, w⟩ | ⟨_, _ | _⟩ | _ | _
+    · cases ts with
+      | nil => obtain rfl | ⟨_, h', _⟩ := hs <;> [trivial; cases h']
+      | cons => simp [interps] at h
+    · simp only [interps, ne_eq, List.flatMap_eq_nil_iff, not_forall] at h
+      obtain ⟨c, hc, hne⟩ := h
+      split_ifs at hne with hm
+      · have hts : ∀ u ∈ ts, interps cxns den u ≠ [] :=
+          interps_ne_nil_of_interpsList_ne_nil fun e ↦ hne (by rw [e]; rfl)
+        obtain rfl | ⟨u, hu, hsu⟩ := hs
+        · exact ⟨c, hc, hm⟩
+        · exact ih u hu (hts u hu) s hsu
+      · exact absurd rfl hne
+    all_goals simp [interps] at h
 
 end ConstructionGrammar

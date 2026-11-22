@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
-public import Linglib.Syntax.ConstructionGrammar.Licensing
+public import Linglib.Syntax.ConstructionGrammar.Composition
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.GoldbergShirtz2025
@@ -24,8 +24,14 @@ The paper's Figure 5 network is a `Constructicon` (`figure5`): the prenominal PA
 inherits in normal mode from both the NN compound and adjectival modification, which conflict on
 whether the output is a word and on stress (`mothers_conflict`), so PAL states exactly those
 properties and inherits the rest (`inherited_palN`). The zero-level PAL and the four conventional
-subtypes are joined to it by motivation links, and removing PAL leaves a phrase in a word slot
-unlicensed (`pal_load_bearing`). The attested tokens of example (1) and Tables 2–3 and the
+subtypes are joined to it by motivation links.
+
+The construction's meaning is a composition rule (`palRule`): it modifies the head noun as
+postnominal modification by the same phrase does, and adds as not-at-issue content that the
+situation type the phrase depicts is familiar. For a sentence pair of Table 6 the PAL and its
+paraphrase get the same at-issue content and differ in that presumption (`interps_palNP`,
+`interps_paraphraseNP`), and without the PAL construction the phrase in the word slot has no
+reading (`interps_palNP_phrasal`). The attested tokens of example (1) and Tables 2–3 and the
 comparable constructions of section 7 are rows: PALs occupy every word-class slot and take that
 slot's inflection (`rows_inflection`), and the host frame of a comparable construction need not be a
 compound (`hostFrames_complete`).
@@ -36,7 +42,10 @@ Only the two thick arrows of Figure 5 are inheritance links; its thin two-headed
 motivation links, which pass no information down. The experimental statistics stay in the
 paper. The lemma-like familiarity is recorded as not-at-issue content, although the paper treats
 it as an invited construal that speakers exploit precisely for situation types that are not
-antecedently familiar.
+antecedently familiar. The constructions inside the PAL and in the paraphrase (the verb phrase,
+the infinitive, the determined noun, postnominal modification) are a minimal fragment for the one
+sentence pair, and the relation `depicts` between a head noun's referent and a situation type is
+left a parameter.
 
 ## References
 
@@ -285,47 +294,132 @@ theorem inherited_palN :
     inherited_eq_singleton_of_isLeast (m := .adjN) (by decide) rfl⟩
   rw [Set.mem_singleton_iff]; cases v <;> decide
 
-/-! ### Licensing: PAL is load-bearing
+/-! ### The meaning of the PAL construction (§4)
 
-A minimal demonstration with the licensing relation (`Licenses`): the attested "a must-do task"
-(the paper's ex. (1b), determiner elided) parses as a phrase-daughter in the modifier slot plus a
-head noun. The constructions of Figure 5 license it through the PAL construction, and without PAL
-it is rejected: the phrase-in-word-slot configuration has no other license. -/
+A lemma presumes that the comprehender is familiar with the semantic frame it evokes, and a PAL is
+treated as a lemma. The prenominal PAL construction therefore composes its two daughters as
+modification does and adds, as not-at-issue content, that the situation type the phrase depicts is
+familiar to speaker and addressee. The close paraphrase with a postnominal phrase composes the
+same daughters to the same at-issue content and adds nothing. The pair worked through below is
+from Table 6: *a 'blame the media' campaign* and *a campaign to blame the media*. -/
 
-/-- The internal syntax of the *must-do* PAL, must-V (cf. `mustVerbConstruction`, which is the
-full prenominal construction). -/
-def mustVCore : Construction Unit :=
-  { form :=
-      [ { filler := .fixed "must" }
-      , { filler := .open_ .VERB, isHead := true } ]
-  , meaning := () }
+section Meaning
 
-/-- The constructions of Figure 5 and the must-V-internal construction. -/
-def demoInventory : List (Construction Unit) :=
-  mustVCore ::
-    [.nnCompound, .adjN, .palN, .pal, .mustV, .aSimple, .dontMe, .theOld].map construction
+open ConventionalImplicature PhraseStructure Morphology
 
-/-- In "must-do task" (ex. (1b), determiner elided) the PAL phrase is a constituent daughter in
-the word-level modifier slot. -/
-def mustDoTask : PhraseStructure.Tree Unit Morphology.Word :=
-  .node () [.node () [.leaf (.mk' "must" .AUX), .leaf (.mk' "do" .VERB)], .leaf (.mk' "task" .NOUN)]
+variable {W E S : Type}
 
-theorem demo_licenses_mustDoTask : Licenses demoInventory mustDoTask := by decide
+/-- The denotations of the fragment: a situation type, a property of entities, a transitive verb,
+which maps the property of its object to a situation type, and the inert words. The first two
+carry not-at-issue content. -/
+inductive Den (W E S : Type) where
+  | sit : TwoDim W S → Den W E S
+  | pred : TwoDim W (E → W → Prop) → Den W E S
+  | verb : ((E → W → Prop) → S) → Den W E S
+  | inert : Den W E S
 
-theorem pal_load_bearing :
-    ¬ Licenses (demoInventory.erase palConstruction) mustDoTask := by decide
+variable (depicts : S → E → W → Prop) (familiar : S → W → Prop)
 
-/-- A PAL utterance has a two-part meaning. The head noun's denotation is at-issue (an instance of
-the situation type), and the lemma-like construal contributes, as not-at-issue content, that the
-situation type itself is presumed familiar ("presumes familiarity with 'PAL'", Figure 5).
+/-- The prenominal PAL construction of Figure 5, "PAL⁰ modifies N; presumes familiarity with
+'PAL'": the head noun's property restricted to what depicts the situation type `s`, with the
+familiarity of `s` as not-at-issue content. -/
+def palRule : CompositionRule (Den W E S)
+  | [.sit s, .pred n] => some <| .pred do
+      let σ ← s
+      let p ← n
+      ⟨fun x ↦ p x ⊓ depicts σ x, familiar σ⟩
+  | _ => none
 
-The paper treats the familiarity as an invited *as-if* construal rather than a hard definedness
-condition. Speakers exploit the construction precisely for situation types that are not
-antecedently familiar (observational humor, sniglets), so common-ground satisfaction is typically
-reached by accommodation or pretense, not antecedent entailment. -/
-def palMeaning (W : Type*) (situationType headNoun : W → Prop) :
-    ConventionalImplicature.TwoDim W (W → Prop) :=
-  ⟨headNoun, situationType⟩
+/-- Postnominal modification by a phrase restricts the head noun's property in the same way and
+has no not-at-issue content of its own. -/
+def postnominalRule : CompositionRule (Den W E S)
+  | [.pred n, .sit s] => some <| .pred do
+      let p ← n
+      let σ ← s
+      pure fun x ↦ p x ⊓ depicts σ x
+  | _ => none
+
+/-- A transitive verb applies to the property of its object. -/
+def verbPhraseRule : CompositionRule (Den W E S)
+  | [.verb v, .pred n] => some (.sit (v <$> n))
+  | _ => none
+
+/-- An inert word passes its sister's denotation up, as the determiner and infinitival *to* do
+here. -/
+def inertRule : CompositionRule (Den W E S)
+  | [.inert, d] => some d
+  | _ => none
+
+/-- The prenominal PAL construction with its meaning. -/
+def palN : Construction (CompositionRule (Den W E S)) :=
+  palConstruction.map fun _ ↦ palRule depicts familiar
+
+/-- The phrasal constructions of the paraphrase and of the inside of the PAL: postnominal
+modification, the transitive verb phrase, the infinitive and the determined noun. -/
+def phrasal : List (Construction (CompositionRule (Den W E S))) :=
+  [ { form := [{ filler := .open_ .NOUN, isHead := true }, { filler := .phrasal }]
+      meaning := postnominalRule depicts }
+  , { form := [{ filler := .open_ .VERB, isHead := true }, { filler := .phrasal }]
+      meaning := verbPhraseRule }
+  , { form := [{ filler := .fixed "to" }, { filler := .phrasal }], meaning := inertRule }
+  , { form := [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true }]
+      meaning := inertRule } ]
+
+variable (blame : (E → W → Prop) → S) (media campaign : E → W → Prop)
+
+/-- The words of the Table 6 pair. -/
+def lexicon (w : Word) : Option (Den W E S) :=
+  match w.form with
+  | "blame" => some (.verb blame)
+  | "media" => some (.pred (pure media))
+  | "campaign" => some (.pred (pure campaign))
+  | "the" | "to" => some .inert
+  | _ => none
+
+/-- *blame the media*. -/
+def blameTheMedia : Tree Unit Word :=
+  .node () [.leaf (.mk' "blame" .VERB),
+    .node () [.leaf (.mk' "the" .DET), .leaf (.mk' "media" .NOUN)]]
+
+/-- *'blame the media' campaign*, the phrase in the word-level modifier slot. -/
+def palNP : Tree Unit Word := .node () [blameTheMedia, .leaf (.mk' "campaign" .NOUN)]
+
+/-- *campaign to blame the media*, the paraphrase without a PAL. -/
+def paraphraseNP : Tree Unit Word :=
+  .node () [.leaf (.mk' "campaign" .NOUN), .node () [.leaf (.mk' "to" .PART), blameTheMedia]]
+
+theorem interps_blameTheMedia :
+    interps (palN depicts familiar :: phrasal depicts) (lexicon blame media campaign)
+      blameTheMedia = [.sit (blame <$> pure media)] := rfl
+
+/-- The PAL noun phrase denotes the campaigns depicting the situation type, and presumes the
+situation type familiar. -/
+theorem interps_palNP :
+    interps (palN depicts familiar :: phrasal depicts) (lexicon blame media campaign) palNP =
+      [.pred ⟨fun x ↦ campaign x ⊓ depicts (blame media) x, familiar (blame media)⟩] := by
+  rw [palNP, interps_node]
+  simp only [interpsList, interps_blameTheMedia]
+  exact congrArg (fun p ↦ [Den.pred p]) (TwoDim.ext rfl (by simp))
+
+/-- The paraphrase has the same at-issue content and no not-at-issue content. -/
+theorem interps_paraphraseNP :
+    interps (palN depicts familiar :: phrasal depicts) (lexicon blame media campaign)
+        paraphraseNP =
+      [.pred (pure fun x ↦ campaign x ⊓ depicts (blame media) x)] := by
+  rw [paraphraseNP, interps_node]
+  simp only [interpsList, interps_node, interps_blameTheMedia]
+  exact congrArg (fun p ↦ [Den.pred p]) (TwoDim.ext rfl (by simp))
+
+/-- Without the PAL construction the phrase in the word slot has no reading. -/
+theorem interps_palNP_phrasal :
+    interps (phrasal depicts) (lexicon blame media campaign) palNP = [] := rfl
+
+-- Having a reading, the PAL noun phrase is licensed.
+example : Licenses (palN depicts familiar :: phrasal depicts) palNP :=
+  .of_interps_ne_nil (den := lexicon blame media campaign) <| by
+    rw [interps_palNP]; exact List.cons_ne_nil _ _
+
+end Meaning
 
 theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
