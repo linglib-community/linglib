@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
 
 /-!
 # Sesotho verb affixes

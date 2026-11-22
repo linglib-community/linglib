@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Hyman2003
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Studies.Baker1985
 public import Mathlib.Data.List.Sections

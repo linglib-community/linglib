@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Scale
 public import Mathlib.Order.Basic
 public import Mathlib.Data.List.Sort
 public import Mathlib.Tactic.DeriveFintype

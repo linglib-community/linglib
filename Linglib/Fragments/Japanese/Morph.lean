@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
 public import Linglib.Fragments.Japanese.Negation
 public import Linglib.Fragments.Japanese.Voice
 

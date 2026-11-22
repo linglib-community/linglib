@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Dargwa.Tanti.Locatives
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
 
 /-!
 # Tanti Dargwa verbs

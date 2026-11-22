@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Precedence
 public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Hom.Basic

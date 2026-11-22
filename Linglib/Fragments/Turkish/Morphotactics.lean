@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Turkish.Case
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
 public import Linglib.Phonology.Hiatus
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Fragments.Turkish.Phonology

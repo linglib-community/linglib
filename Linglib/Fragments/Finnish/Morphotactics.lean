@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Basic
 public import Linglib.Fragments.Finnish.Declension
 public import Linglib.Fragments.Finnish.Infinitives
 public import Linglib.Fragments.Finnish.Possession

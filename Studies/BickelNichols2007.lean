@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.AffixTemplate.Scale
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
