@@ -6,7 +6,7 @@ public import Linglib.Core.Probability.Independence.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Examples.SableMeyerMascarenhas2022
 public import Linglib.Data.Statistics.SableMeyerMascarenhas2022
-public import Linglib.Processing.Reasoning.Erotetic
+public import Linglib.Processing.Erotetic
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 
 /-!

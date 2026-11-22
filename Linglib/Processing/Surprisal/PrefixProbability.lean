@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.LanguageModel.Autoregressive
+public import Linglib.Processing.LanguageModel.OfMeasure
 
 /-!
 # Prefix probabilities of a generative process
@@ -37,10 +37,9 @@ inputs of surprisal theory ([hale-2001], [levy-2008]).
 
 @[expose] public section
 
-namespace Surprisal
+namespace AutoregressiveSequenceModel
 
-open MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
-open scoped ProbabilityTheory
+open MeasureTheory ProbabilityTheory
 
 variable {T W : Type*} (str : T → List W)
 
@@ -82,4 +81,4 @@ theorem next_ofMeasure_map_apply_some (ws : List W) (w : W) :
     Measure.map_apply .of_discrete .of_discrete]
   rfl
 
-end Surprisal
+end AutoregressiveSequenceModel

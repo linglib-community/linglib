@@ -17,8 +17,10 @@ its maximal projection, and it heads a phase when it
 [heads more than its leaf](##Minimalist.SyntacticObject.isPhaseHead_iff_exists_raisingHead). Its
 complement is the sister it projects over. The phase is what lies within the terms it heads, the
 interior what lies within the complement, and the edge the rest: the head and what is merged above
-it, a phrase raised there included. The Phase Impenetrability Condition, which seals the interior,
-is stated on positions in `Phase/Transfer.lean`.
+it, a phrase raised there included. A term is `Inaccessible` when it lies in the interior of a
+phase other than the highest. The Phase Impenetrability Condition, which seals the interior, is
+stated on positions in `Phase/Transfer.lean`, and as a restriction of the coproduct in
+`Workspace/Merge/Phase.lean`.
 
 ## Implementation notes
 
@@ -33,10 +35,9 @@ is stated on positions in `Phase/Transfer.lean`.
 
 ## TODO
 
-* The book's ordering of phases by inclusion and its inaccessible terms, those in the interiors of
-  lower phases, with the stricter variant that also freezes their heads. Their agreement with
-  the positions `sealed` gives needs phases to be nested or disjoint, which holds of positions and
-  not of values.
+* The book's ordering of phases by inclusion, and the stricter variant of `Inaccessible` that also
+  freezes the heads of lower phases. The agreement of `Inaccessible` with the positions `sealed`
+  gives needs phases to be nested or disjoint, which holds of positions and not of values.
 
 ## References
 
@@ -85,6 +86,15 @@ def phaseInterior : Multiset SyntacticObject := T.terms.filter (WithinComplement
 /-- The edge of the phase of `ℓ` in `T` is the multiset of terms of the phase outside its
 interior. -/
 def phaseEdge : Multiset SyntacticObject := (T.phase ℓ).filter (· ∉ T.phaseInterior ℓ)
+
+/-- `x` is inaccessible in `T`, with `Φ` the phase heads: it lies within the complement of a
+phase head other than the head of `T`, the interior of a lower phase. -/
+def Inaccessible (T : SyntacticObject) (Φ : LexicalItem.Token → Prop) (x : SyntacticObject) :
+    Prop :=
+  ∃ m ∈ T.terms, ∃ ℓ ∈ m.raisingHead, Φ ℓ ∧ T.raisingHead ≠ some ℓ ∧ WithinComplement T ℓ x
+
+instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : Decidable (Inaccessible T Φ x) :=
+  Multiset.decidableExistsMultiset
 
 variable {T ℓ x z} {y : SyntacticObject}
 
