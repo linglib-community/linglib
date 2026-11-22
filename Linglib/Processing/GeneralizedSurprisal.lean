@@ -66,9 +66,9 @@ model is `expectedScore (L c) (g · · c)`.
 
 @[expose] public section
 
-namespace SurprisalTheory
+namespace InformationTheory
 
-open InformationTheory MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory
 
 variable {A W : Type*} [MeasurableSpace A] {μ : Measure A} {g : A → W → ℝ} {w : W}
 
@@ -146,4 +146,4 @@ theorem expectedScore_surprisal [Countable A] [MeasurableSingletonClass A] (μ :
     expectedScore μ (fun a (_ : W) ↦ (surprisal μ a).toReal) w = Hm[μ] :=
   (measureEntropy_eq_integral_surprisal _ hμ).symm
 
-end SurprisalTheory
+end InformationTheory

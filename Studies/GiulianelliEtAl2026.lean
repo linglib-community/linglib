@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Processing.LanguageModel.Autoregressive
-public import Linglib.Processing.SurprisalTheory.Generalized
+public import Linglib.Processing.GeneralizedSurprisal
 
 /-!
 # Giulianelli et al. (2026): Incremental Alternative Sampling
@@ -50,7 +50,7 @@ past the target reduces it to information value (`iiv_eq_expectedScore`).
 
 @[expose] public section
 
-open InformationTheory MeasureTheory ProbabilityTheory SurprisalTheory AutoregressiveSequenceModel
+open InformationTheory MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
 
 namespace GiulianelliEtAl2026
 

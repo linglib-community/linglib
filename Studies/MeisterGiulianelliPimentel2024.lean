@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.SurprisalTheory.Generalized
+public import Linglib.Processing.GeneralizedSurprisal
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Studies.Levy2008
@@ -48,7 +48,7 @@ entropy.
 
 namespace MeisterGiulianelliPimentel2024
 
-open InformationTheory MeasureTheory ProbabilityTheory SurprisalTheory Real Filter Topology
+open InformationTheory MeasureTheory ProbabilityTheory Real Filter Topology
 
 variable {A W : Type*} [MeasurableSpace A]
 

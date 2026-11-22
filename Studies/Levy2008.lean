@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Processing.SurprisalTheory.PrefixProbability
+public import Linglib.Processing.LanguageModel.PrefixProbability
 
 /-!
 # Levy (2008): Expectation-Based Syntactic Comprehension
@@ -42,7 +42,7 @@ not change while the word is processed.
 
 namespace Levy2008
 
-open InformationTheory MeasureTheory ProbabilityTheory SurprisalTheory AutoregressiveSequenceModel
+open InformationTheory MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
 open scoped ENNReal ProbabilityTheory
 
 variable {T W : Type*} [MeasurableSpace T]

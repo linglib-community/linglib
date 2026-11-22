@@ -5,14 +5,14 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.SurprisalTheory.Generalized
+public import Linglib.Processing.GeneralizedSurprisal
 public import Mathlib.Probability.StrongLaw
 
 /-!
 # Giulianelli, Opedal and Cotterell (2024): Generalized Measures of Anticipation and Responsivity
 
 Giulianelli, Opedal and Cotterell define generalized surprisal as a warping of the expected score
-of the continuations a language model samples (`SurprisalTheory.genSurprisal`), and estimate it by
+of the continuations a language model samples (`InformationTheory.genSurprisal`), and estimate it by
 warping the mean score of finitely many sampled continuations (`mcEstimate`). The estimator is
 consistent when the warping is continuous (`ae_tendsto_mcEstimate`): by the strong law of large
 numbers the mean score converges almost surely to the expected score. With the identity warping it
@@ -35,8 +35,7 @@ is also unbiased (`integral_mcEstimate_id`).
 
 namespace GiulianelliOpedalCotterell2024
 
-open SurprisalTheory
-open MeasureTheory ProbabilityTheory Filter Finset Topology
+open InformationTheory MeasureTheory ProbabilityTheory Filter Finset Topology
 
 variable {A W : Type*} [MeasurableSpace A]
 
