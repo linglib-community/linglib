@@ -166,28 +166,17 @@ instance (W : LexicalItem.Token → Prop) [DecidablePred W] (t : PlanarSyntactic
     (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Waiting W t Φ h s) :=
   inferInstanceAs (Decidable (Hybrid _ _ _ _ _ _))
 
-/-- No link of a chain in the object a derivation derives leaves a domain `D` of its phase heads
-transferred under the schedule `σ`. -/
-def ObeysTransfer (d : Derivation) (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
-    (σ : PlanarSyntacticObject → Schedule) : Prop :=
-  ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.toRoseTree,
-    ¬ LinkLeaves .raising t y.2 (sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t))
-
-instance (d : Derivation) (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
-    [∀ t h, DecidablePred (· ∈ D t h)] (σ : PlanarSyntacticObject → Schedule)
-    [∀ t Φ h s, Decidable (σ t Φ h s)] : Decidable (ObeysTransfer d D σ) := by
-  unfold ObeysTransfer; infer_instance
-
 -- p. 684: the approach keeps what the complement domain derives
-theorem ObeysTransfer.of_complementDomain {d : Derivation}
-    (h : ObeysTransfer d (fun _ ↦ complementDomain) (Schedule.atCompletion .raising)) :
-    ObeysTransfer d (wholePhaseDomain .raising) (Waiting IsPhaseHead) := fun t ht y hy hl ↦
-  h t ht y hy (hl.mono fun _ ↦ sealed_hybrid_subset_complementDomain)
+theorem obeysTransfer_of_complementDomain {d : Derivation}
+    (h : d.ObeysTransfer .raising IsPhaseHead (fun _ ↦ complementDomain)
+      (Schedule.atCompletion .raising)) :
+    d.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising) (Waiting IsPhaseHead) :=
+  h.anti fun _ _ ↦ sealed_hybrid_subset_complementDomain
 
 theorem obeysTransfer_iff_leaves {d : Derivation} {W : LexicalItem.Token → Prop}
     [DecidablePred W] :
-    ObeysTransfer d (wholePhaseDomain .raising) (Waiting W) ↔
-      ObeysTransfer d (wholePhaseDomain .raising) (Waiting IsPhaseHead) ∧
+    d.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising) (Waiting W) ↔
+      d.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising) (Waiting IsPhaseHead) ∧
         ∀ t ∈ d.externalize?, ∀ h ∈ occurrencesWith t IsPhaseHead,
           Leaves .raising t h → h ∈ occurrencesWith t W :=
   ⟨fun H ↦ ⟨fun t ht ↦ (forall_not_linkLeaves_hybrid_iff.1 (H t ht)).1, fun t ht h hh hl ↦
@@ -299,26 +288,28 @@ theorem book_toWhom_of_complement :
 exactly when *to whom* stops in CP₁ and in vP₂: it may skip the edge of vP₁, the phase it starts
 in (11), but not a whole phase. -/
 theorem obeysTransfer_iff (r : Finset Landing) :
-    ObeysTransfer (derivation r) (wholePhaseDomain .raising) (Waiting IsPhaseHead) ↔
+    (derivation r).ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
+        (Waiting IsPhaseHead) ↔
       .CP₁ ∈ r ∧ .vP₂ ∈ r := by
   revert r; decide +kernel
 
 -- (1), (2a): the Phase Impenetrability Condition allows only movement through every edge
 theorem complementDomain_iff (r : Finset Landing) :
-    ObeysTransfer (derivation r) (fun _ ↦ complementDomain) (Schedule.atCompletion .raising) ↔
+    (derivation r).ObeysTransfer .raising IsPhaseHead (fun _ ↦ complementDomain)
+        (Schedule.atCompletion .raising) ↔
       r = .univ := by
   revert r; decide +kernel
 
 -- (2b): transferred whole as soon as it is complete, vP₁ traps *Mary* at its edge
 theorem trapped_at_completion (r : Finset Landing) :
-    ¬ ObeysTransfer (derivation r) (wholePhaseDomain .raising)
+    ¬ (derivation r).ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
       (Schedule.atCompletion .raising) := by
   revert r; decide +kernel
 
 -- pp. 699–700: were a waiting phase transferred when the next phase head merges, vP₁ would hold
 -- *to whom* whichever way it went
 theorem trapped_at_next_merger (r : Finset Landing) :
-    ¬ ObeysTransfer (derivation r) (wholePhaseDomain .raising)
+    ¬ (derivation r).ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
       (Schedule.ofNextPhase .raising · .atMerger) := by
   revert r; decide +kernel
 
@@ -351,13 +342,15 @@ theorem leaves_ex13 : ∀ t ∈ (derivation .univ).externalize?,
 
 -- (10), p. 695
 theorem obeysTransfer_declarative :
-    ObeysTransfer declarative (wholePhaseDomain .raising) (Waiting (·.item.cat = .v)) ∧
-      ¬ ObeysTransfer declarative (wholePhaseDomain .raising) (Waiting (·.item.cat = .C)) := by
+    declarative.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
+        (Waiting (·.item.cat = .v)) ∧
+      ¬ declarative.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
+        (Waiting (·.item.cat = .C)) := by
   decide +kernel
 
 -- (15): a subject raises before the next phase head merges, so (10) survives that timing
 theorem declarative_at_next_merger :
-    ObeysTransfer declarative (wholePhaseDomain .raising)
+    declarative.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
       (Schedule.ofNextPhase .raising · .atMerger) := by
   decide +kernel
 

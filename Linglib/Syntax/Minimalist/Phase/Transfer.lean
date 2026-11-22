@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Phase.Chain
 public import Linglib.Syntax.Minimalist.Copy.AntiLocality
+public import Linglib.Syntax.Minimalist.Derivation.Replay
 
 /-!
 # Transfer and the Phase Impenetrability Condition
@@ -26,7 +27,8 @@ Sealed sets are [closed under dominance](##Minimalist.isUpperSet_sealed),
 [shrink with the domain and with a later schedule](##Minimalist.sealed_mono). Islands and the
 condition on chain links [are](##Minimalist.escapes_iff) [cuts](##Minimalist.crosses_iff). A
 position reaches its `phaseLevel` when the phase of the lowest phase head whose complement contains
-it is complete.
+it is complete. A derivation `ObeysTransfer` when no chain link of the object it derives leaves a
+sealed domain.
 
 ## Implementation notes
 
@@ -316,5 +318,35 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
     · refine .inr ⟨h, Finset.mem_singleton_self h, hph, ?_⟩
       exact hcx
     · exact .inl (hcomp.2 hph.ge)
+
+/-! ### Derivations under Transfer -/
+
+section Derivation
+
+variable {d : Derivation} {hd : HeadFunction} {Φ : LexicalItem.Token → Prop} [DecidablePred Φ]
+  {D D' : PlanarSyntacticObject → GornAddress → Set GornAddress}
+  {σ σ' : PlanarSyntacticObject → Schedule}
+
+/-- No link of a chain in the object `d` derives leaves a domain `D` of a phase head, one of the
+heads `Φ` holds of, transferred under the schedule `σ`. With the complement domain transferred at
+completion this is the Phase Impenetrability Condition of [chomsky-2000]. -/
+def Derivation.ObeysTransfer (d : Derivation) (hd : HeadFunction) (Φ : LexicalItem.Token → Prop)
+    [DecidablePred Φ] (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
+    (σ : PlanarSyntacticObject → Schedule) : Prop :=
+  ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.toRoseTree,
+    ¬ LinkLeaves hd t y.2 (sealed (occurrencesWith t Φ).toFinset (D t) (σ t))
+
+instance [∀ t h, DecidablePred (· ∈ D t h)] [∀ t Ψ h s, Decidable (σ t Ψ h s)] :
+    Decidable (d.ObeysTransfer hd Φ D σ) := by
+  unfold Derivation.ObeysTransfer; infer_instance
+
+/-- A derivation that obeys Transfer obeys any Transfer that seals less at every stage. -/
+theorem Derivation.ObeysTransfer.anti
+    (h : ∀ t s, sealed (occurrencesWith t Φ).toFinset (D' t) (σ' t) s ⊆
+      sealed (occurrencesWith t Φ).toFinset (D t) (σ t) s)
+    (hd' : d.ObeysTransfer hd Φ D σ) : d.ObeysTransfer hd Φ D' σ' :=
+  fun t ht y hy hl ↦ hd' t ht y hy (hl.mono (h t))
+
+end Derivation
 
 end Minimalist

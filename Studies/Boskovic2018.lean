@@ -9,42 +9,53 @@ public import Linglib.Syntax.Minimalist.Label.RaisingHead
 /-!
 # Bošković (2018): On movement out of moved elements, labels, and phases
 
-Movement to the edge of a phase on the way out of it creates a specifier that agrees with nothing,
-which leaves the phase unlabeled until the specifier moves on, and an unlabeled element cannot
-move, the Unlabeled Immobility Condition. Since the cycle and the PIC make an element leave a
-phase by its edge before the phase moves, the ban on movement out of moved elements follows
-(`ex17`), in a revised form: what is generated at the edge, or moves there to share a feature,
-leaves the phase labeled and free to move, and can then be extracted from it (`ex25a`, `ex42a`).
-Remnant movement is unaffected (`ex20`), a verb-second clause, whose specifier agrees with
-nothing, cannot move though nothing moves out of it (`ex22`), and Collins's smuggling passive,
-which moves a non-phase, obeys the condition while violating the traditional ban (`ex58`).
+A syntactic object is labeled, as in [chomsky-2013], by the one head minimal search finds in it
+or by a feature the heads it finds share (`IsLabeled`), so a specifier that shares no feature with
+its host leaves the host unlabeled until it moves on. A phase is an object labeled by a phase
+head (`IsPhase`). Two conditions on a derivation `d` are stated with
+`Minimalist.Derivation.MovesOnly`: `d.MovesOnly (IsPhase Φ)`, only phases move, and
+`d.MovesOnly IsLabeled`, unlabeled elements do not move. The first entails the second
+(`movesOnly_isLabeled_of_isPhase`). A derivation `Converges` when it moves only labeled elements
+and obeys the Phase Impenetrability Condition.
+
+Since the condition makes an element leave a phase by its edge before the phase moves, extraction
+from a moved subject fails either way (`ex17`): the stop at the edge leaves the subject unlabeled,
+and without the stop the extraction crosses a phase. What is generated at the edge, or moves there
+to share a feature, leaves the phase labeled and free to move, and can then be extracted from it
+(`ex25a`, `ex42a`). A verb-second clause, whose specifier agrees with nothing, cannot move though
+nothing moves out of it (`ex22`). Remnant movement is unaffected (`ex20`), and the smuggling
+passive of [collins-2005] moves only labeled elements but moves a non-phase (`ex58`).
 
 ## Implementation notes
 
-* Labeling is that of Chomsky (2013): the heads minimal search finds, roots aside, label when
-  there is one, or when they share a feature. The features shared are the paper's: the concord of
-  a Serbo-Croatian possessive adjective with its noun, and the R-feature of a Dutch r-pronoun with
-  its preposition. Successive-cyclic and verb-second specifiers share none.
-* The phases are Chomsky's CP, vP and DP, and in Serbo-Croatian, which lacks DP, the noun phrase.
-  Transfer seals the complement of a phase head once its phase is complete, the phase being the
-  head's projection under `HeadFunction.raising`, so that a phase head's specifiers are in its
-  phase however they are labeled. Read off labels instead (`HeadFunction.label`), the unlabeled
-  verb-second clause of (22) would be complete before its specifier merged, and raising to Spec,CP
-  would leave it: the paper's labels and its phase edges are two notions of projection.
+* Roots are left out of the heads that label, and the features shared are the paper's: the concord
+  of a Serbo-Croatian possessive adjective with its noun, and the R-feature of the Dutch r-pronoun
+  of (42) with its preposition. Successive-cyclic and verb-second specifiers share none.
+* The phases are those of [chomsky-2000], CP, vP and DP, and in Serbo-Croatian, which lacks DP,
+  the noun phrase. Transfer seals the complement of a phase head once its phase is complete, the
+  phase being the head's projection under `HeadFunction.raising`, so that a phase head's
+  specifiers are in its phase however they are labeled. Read off labels instead
+  (`HeadFunction.label`), the unlabeled verb-second clause of (22) would be complete before its
+  specifier merged, and raising to Spec,CP would leave it: labels and phase edges are two notions
+  of projection here.
+* Of the derivations of (17), the two that extract from the moved subject are compared. Chain
+  interleaving, where *who* leaves the edge of the subject before the subject raises, is set
+  aside, as in the paper.
 * Clauses are cut down to the heads each example needs, verbs in their base positions; the word
   orders of the German, Serbo-Croatian and Dutch examples are not modelled.
 
 ## TODO
 
-* Phase Mobility (12), only phases move, from which the paper deduces the condition and by which
-  Appendix A rules out Collins's passive, needs the phases of Bošković (2014), the highest
-  projection of each extended projection.
+* That only phases move is checked for the English examples. The moved noun phrase and possessor
+  of (25a) and the moved PP of (42a) are phases only when the highest projection of each lexical
+  category's extended projection is one, which `IsPhase` does not express.
 * Left-branch and intensifier extraction (28)–(30), quantifier float, the Adjunct Condition, and
   the Coordinate Structure Constraint of Appendix B.
 
 ## References
 
 * [boskovic-2018]
+* [chomsky-2000]
 * [chomsky-2013]
 * [collins-2005]
 -/
@@ -56,6 +67,9 @@ namespace Boskovic2018
 open Minimalist Minimalist.PlanarSyntacticObject
 open Chomsky2013 (tok nominal IsRoot)
 
+variable {Φ : LexicalItem.Token → Prop} {t : PlanarSyntacticObject}
+  {x : SyntacticObject} {d : Derivation}
+
 /-! ### Labeling, phases and the PIC -/
 
 /-- The features specifier and head share in the paper's examples. -/
@@ -63,14 +77,16 @@ inductive Feature
   | phi | r
   deriving DecidableEq, Fintype
 
-/-- The Dutch r-pronouns, which precede their preposition. -/
-def rPronouns : List String := ["er", "daar", "hier", "waar"]
+/-- The determiner of the r-pronoun *waar*. -/
+def waarD := tok 260 .D "waar" (sel := [.n])
+/-- *mee* 'with', the form of the preposition an r-pronoun precedes. -/
+def mee := tok 263 .P "mee" (sel := [.D])
 
 /-- The feature sharing the paper assumes: a possessive adjective agrees with the noun in
-φ-features and case, and an r-pronoun shares the R-feature with its preposition. -/
+φ-features and case, and the r-pronoun shares the R-feature with its preposition. -/
 def Shares : Feature → LexicalItem.Token → LexicalItem.Token → Prop
   | .phi, a, b => a.item.cat = .a ∧ b.item.cat = .n
-  | .r, a, b => a.item.cat = .D ∧ a.item.phonForm ∈ rPronouns ∧ b.item.cat = .P
+  | .r, a, b => a = waarD ∧ b = mee
 
 instance : ∀ f, DecidableRel (Shares f)
   | .phi => fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -96,6 +112,23 @@ instance (t : PlanarSyntacticObject) (x : SyntacticObject) : Decidable (IsLabele
     decidable_of_iff _ Finset.one_lt_card_iff_nontrivial
   inferInstanceAs (Decidable (_ ∨ _))
 
+/-- A phase, given the phase heads: an object one of them labels. -/
+def IsPhase (Φ : LexicalItem.Token → Prop) (t : PlanarSyntacticObject) (x : SyntacticObject) :
+    Prop :=
+  ∃ a ∈ labelers t x, Φ a ∧ labelers t x = {a}
+
+instance [DecidablePred Φ] (t : PlanarSyntacticObject) (x : SyntacticObject) :
+    Decidable (IsPhase Φ t x) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem IsPhase.isLabeled (h : IsPhase Φ t x) : IsLabeled t x :=
+  let ⟨a, ha, _, h⟩ := h
+  .inl ⟨a, ha, h⟩
+
+/-- A derivation that moves only phases moves only labeled elements: (12) entails (33). -/
+theorem movesOnly_isLabeled_of_isPhase (h : d.MovesOnly (IsPhase Φ)) : d.MovesOnly IsLabeled :=
+  h.mono fun _ _ ↦ IsPhase.isLabeled
+
 /-- The phase heads of a language with articles: C, v and D. -/
 def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat ∈ [.C, .v, .D]
 
@@ -108,22 +141,15 @@ instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (
 
 /-- The PIC on a derivation: no link of a chain in the object it derives leaves the complement of
 a phase head, transferred once its phase, the head's projection under `hd`, is complete. -/
-def ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
+abbrev ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (d : Derivation) : Prop :=
-  ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.toRoseTree,
-    ¬ LinkLeaves hd t x.2
-      (sealed (occurrencesWith t Φ).toFinset complementDomain (.atCompletion hd t))
-
-instance (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
-    Decidable (ObeysPic hd Φ d) := by
-  unfold ObeysPic; infer_instance
+  d.ObeysTransfer hd Φ (fun _ ↦ complementDomain) (Schedule.atCompletion hd)
 
 /-- A derivation converges when it obeys the PIC and moves only labeled elements. -/
 def Converges (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) : Prop :=
-  d.ObeysUIC IsLabeled ∧ ObeysPic .raising Φ d
+  d.MovesOnly IsLabeled ∧ ObeysPic .raising Φ d
 
-instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
-    Decidable (Converges Φ d) :=
+instance [DecidablePred Φ] (d : Derivation) : Decidable (Converges Φ d) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Extraction from a subject (16)–(18) -/
@@ -174,9 +200,10 @@ theorem subextraction_surfacePhon (r : Route) :
     (subextraction r).surfacePhon = ["who", "friends", "of", "hired", "Mary"] := by
   cases r <;> decide +kernel
 
-/-- In (17), no derivation converges, which deduces the ban on movement out of moved elements. -/
+/-- In (17), neither route converges: by the edge the subject moves unlabeled, and directly *who*
+crosses the subject phase. -/
 theorem ex17 :
-    ¬ (subextraction .edge).ObeysUIC IsLabeled ∧
+    ¬ (subextraction .edge).MovesOnly IsLabeled ∧
       ObeysPic .raising IsPhaseHead (subextraction .edge) ∧
       ¬ ObeysPic .raising IsPhaseHead (subextraction .direct) ∧
       (∀ r, ¬ (subextraction r).ObeysFreezing) ∧
@@ -199,10 +226,10 @@ def remnantFronting : Derivation :=
     .em .left kiss, .em .left kissV, .em .left jane, .em .left did, .im jane,
     .im (jane.toSyntacticObject.tracePlanar * (kissV * (kiss * mary)) : PlanarSyntacticObject)]⟩
 
-/-- (20): vP, its subject gone, is labeled by v and moves as a remnant of the subject; remnant
-movement obeys even the traditional ban. -/
+-- (20), (21)
 theorem ex20 : remnantFronting.surfacePhon = ["kiss", "Mary", "Jane", "did"] ∧
     remnantFronting.IsRemnantStep 7 janeD ∧ remnantFronting.ObeysFreezing ∧
+    remnantFronting.MovesOnly (IsPhase IsPhaseHead) ∧
     (Examples.ex20.judgment = .acceptable ↔ Converges IsPhaseHead remnantFronting) := by
   decide +kernel
 
@@ -268,23 +295,30 @@ def object : PlanarSyntacticObject := possessor * (slikaN * slika)
 def vidio := tok 254 .V "vidio" (sel := [.n])
 def je := tok 255 .T "je" (sel := [.V])
 
-/-- (25a), derived as (26): the object fronted, and the possessor extracted from it. -/
-def possessorExtraction : Derivation :=
-  ⟨slika, [.em .left slikaN, .em .left possessor, .em .left vidio, .em .left je, .im object,
-    .im possessor]⟩
+/-- (24): the possessor extracted from the object in its base position. -/
+def possessorInSitu : Derivation :=
+  ⟨slika, [.em .left slikaN, .em .left possessor, .em .left vidio, .em .left je, .im possessor]⟩
 
-/-- In (25a), the possessor leaves the labeled object from its edge, so the derivation converges
-despite the traditional ban. -/
-theorem ex25a : ¬ possessorExtraction.ObeysFreezing ∧
+/-- (27): the object fronted, the possessor in its specifier. -/
+def objectFronting : Derivation :=
+  ⟨slika, [.em .left slikaN, .em .left possessor, .em .left vidio, .em .left je, .im object]⟩
+
+/-- (25a), derived as (26): the object fronted, and the possessor extracted from it. -/
+def possessorExtraction : Derivation := objectFronting.append [.im possessor]
+
+/-- The possessor leaves the object from its edge in situ (24), the object, labeled by the
+concord of possessor and noun, moves (27), and the possessor then leaves the moved object (25a),
+against the traditional ban. -/
+theorem ex25a : possessorInSitu.ObeysFreezing ∧ ¬ possessorExtraction.ObeysFreezing ∧
+    (Examples.ex24.judgment = .acceptable ↔ Converges IsPhaseHeadNP possessorInSitu) ∧
+    (Examples.ex27.judgment = .acceptable ↔ Converges IsPhaseHeadNP objectFronting) ∧
     (Examples.ex25a.judgment = .acceptable ↔ Converges IsPhaseHeadNP possessorExtraction) := by
   decide +kernel
 
 /-! ### R-pronouns (37)–(42) -/
 
-def waarD := tok 260 .D "waar" (sel := [.n])
 /-- *waar*. -/
 def waar : PlanarSyntacticObject := nominal waarD (tok 261 .n (sel := [.N])) (tok 262 .N)
-def mee := tok 263 .P "mee" (sel := [.D])
 /-- *waar mee*, the r-pronoun in Spec,PP. -/
 def pp : PlanarSyntacticObject := waar * (mee * waar.toSyntacticObject.tracePlanar)
 /-- *de vis snijden*. -/
@@ -312,11 +346,10 @@ theorem ex42a : ¬ rPronounExtraction.ObeysFreezing ∧
 
 /-! ### Smuggling (Appendix A) -/
 
-/-- In [collins-2005]'s smuggling passive (58), the object raises out of moved PartP, which the
-condition allows and the traditional ban excludes. -/
-theorem ex58 : Examples.ex58.judgment = .acceptable ∧
-    (Collins2005.ex9.passive .partP false).ObeysUIC IsLabeled ∧
-    ¬ (Collins2005.ex9.passive .partP false).ObeysFreezing := by
+-- (58): the object raises out of moved PartP, which is labeled and is not a phase
+theorem ex58 : (Collins2005.ex9.passive .partP false).MovesOnly IsLabeled ∧
+    ¬ (Collins2005.ex9.passive .partP false).ObeysFreezing ∧
+    ¬ (Collins2005.ex9.fronted .partP false).MovesOnly (IsPhase IsPhaseHead) := by
   decide +kernel
 
 end Boskovic2018
