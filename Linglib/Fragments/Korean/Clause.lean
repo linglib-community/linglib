@@ -23,10 +23,10 @@ final clause. Forms are in the Revised Romanization; Sohn writes *-ko*, *-e(se)*
 
 ## Implementation notes
 
-* `follows`, with `AllowsTense` and `AllowsModal`, follows the features Sohn attaches to each conjunctor and,
-  for *-geona*, *-deunji* and *-jamaja*, which his list omits, the attachment statements of
-  the National Institute of Korean Language's dictionary; Sohn marks *-tunci* as excluding
-  the modal, which the dictionary admits in one of its senses.
+* `follows`, with `AllowsTense` and `AllowsModal`, follows the features Sohn attaches to each
+  conjunctor and, for *-geona*, *-deunji* and *-jamaja*, which his list omits, the attachment
+  statements of the National Institute of Korean Language's dictionary; Sohn marks *-tunci* as
+  excluding the modal, which the dictionary admits in one of its senses.
 * The kinds of linking follow the summary table of Sohn's chapter on Korean clause linking, whose
   ways and means, a subtype it adds for *-eoseo* 'by', is classed with real manner; the manner
   use of *-go(seo)* is the grammar's.
