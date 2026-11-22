@@ -20,11 +20,14 @@ whose deletion shrinks bundles only deletes; on a bundle of features it erases i
 * `ImpoverishmentRule.ofFocus`: the rule whose condition reads the focus alone.
 * `ImpoverishmentRule.Paradigmatic`, `ImpoverishmentRule.Syntagmatic`: the condition factors
   through the focus, or reads the context.
+* `ImpoverishmentRule.ParadigmaticFirst`, `ImpoverishmentRule.SyntagmaticFirst`: the two block
+  orders of a rule sequence.
 * `runChain`: a rule sequence threaded through the focus.
 
 ## Main results
 
-* `ImpoverishmentRule.paradigmatic_ofFocus`: a focus-only rule is paradigmatic.
+* `ImpoverishmentRule.paradigmatic_iff`: the paradigmatic rules are those whose condition is a
+  condition on the focus.
 * `ImpoverishmentRule.apply_le`, `ImpoverishmentRule.apply_erase_subset`: a rule whose deletion
   shrinks bundles leaves a bundle below the focus, so impoverishment only deletes.
 
@@ -75,17 +78,72 @@ def ofFocus (p : Bundle → Prop) [DecidablePred p] (target : Target) :
 The structural counterpart of [arregi-nevins-2012]'s distinction between rules conditioned by a
 single node and rules conditioned by its surroundings. -/
 
-/-- A rule is **paradigmatic** iff its condition factors through the focus, two neighborhoods
-with the same focus agreeing on it. -/
+/-- A rule is paradigmatic when its condition factors through the focus. -/
 def Paradigmatic (r : ImpoverishmentRule Bundle Target) : Prop :=
-  ∀ n₁ n₂ : Neighborhood Bundle, n₁.focus = n₂.focus → (r.condition n₁ ↔ r.condition n₂)
+  r.condition.FactorsThrough Neighborhood.focus
 
-/-- A rule is **syntagmatic** iff it is not paradigmatic, so that its condition reads the
-context. -/
+/-- A rule is syntagmatic when it is not paradigmatic, so that its condition reads the context. -/
 def Syntagmatic (r : ImpoverishmentRule Bundle Target) : Prop := ¬ r.Paradigmatic
 
 theorem paradigmatic_ofFocus (p : Bundle → Prop) [DecidablePred p] (target : Target) :
-    (ofFocus p target).Paradigmatic := fun _ _ h ↦ by simp [ofFocus, h]
+    (ofFocus p target).Paradigmatic := fun _ _ h ↦ congrArg p h
+
+/-- The paradigmatic rules are those whose condition is a condition on the focus. -/
+theorem paradigmatic_iff {r : ImpoverishmentRule Bundle Target} :
+    r.Paradigmatic ↔ ∃ p : Bundle → Prop, ∀ n, r.condition n ↔ p n.focus :=
+  ⟨fun h ↦ ⟨fun b ↦ r.condition ↑b, fun n ↦ (h (a := n) (b := ↑n.focus) rfl).to_iff⟩,
+    fun ⟨p, hp⟩ _ _ h ↦ propext ((hp _).trans ((congrArg p h).to_iff.trans (hp _).symm))⟩
+
+theorem Paradigmatic.condition_iff {r : ImpoverishmentRule Bundle Target} (h : r.Paradigmatic)
+    {n₁ n₂ : Neighborhood Bundle} (hf : n₁.focus = n₂.focus) : r.condition n₁ ↔ r.condition n₂ :=
+  (h hf).to_iff
+
+/-- A rule that holds at one of two neighborhoods with the same focus and fails at the other is
+syntagmatic. -/
+theorem syntagmatic_of_focus_eq {r : ImpoverishmentRule Bundle Target}
+    {n₁ n₂ : Neighborhood Bundle} (hf : n₁.focus = n₂.focus) (h₁ : r.condition n₁)
+    (h₂ : ¬ r.condition n₂) : r.Syntagmatic :=
+  fun h ↦ h₂ ((h.condition_iff hf).1 h₁)
+
+/-! ### The block architecture
+
+[arregi-nevins-2012] order the paradigmatic rules in a block before the syntagmatic ones. -/
+
+variable {r r' : ImpoverishmentRule Bundle Target} {rs : List (ImpoverishmentRule Bundle Target)}
+
+/-- A rule sequence is paradigmatic-first when no syntagmatic rule precedes a paradigmatic one. -/
+def ParadigmaticFirst (rs : List (ImpoverishmentRule Bundle Target)) : Prop :=
+  rs.Pairwise fun r r' ↦ r'.Paradigmatic → r.Paradigmatic
+
+/-- A rule sequence is syntagmatic-first when no paradigmatic rule precedes a syntagmatic one. -/
+def SyntagmaticFirst (rs : List (ImpoverishmentRule Bundle Target)) : Prop :=
+  rs.Pairwise fun r r' ↦ r'.Syntagmatic → r.Syntagmatic
+
+theorem ParadigmaticFirst.sublist {rs' : List (ImpoverishmentRule Bundle Target)}
+    (h : ParadigmaticFirst rs) (hs : rs'.Sublist rs) : ParadigmaticFirst rs' :=
+  List.Pairwise.sublist hs h
+
+theorem SyntagmaticFirst.sublist {rs' : List (ImpoverishmentRule Bundle Target)}
+    (h : SyntagmaticFirst rs) (hs : rs'.Sublist rs) : SyntagmaticFirst rs' :=
+  List.Pairwise.sublist hs h
+
+/-- A block of paradigmatic rules followed by a block of syntagmatic ones is paradigmatic-first. -/
+theorem paradigmaticFirst_append {A B : List (ImpoverishmentRule Bundle Target)}
+    (hA : ∀ r ∈ A, r.Paradigmatic) (hB : ∀ r ∈ B, r.Syntagmatic) : ParadigmaticFirst (A ++ B) :=
+  List.pairwise_append.mpr
+    ⟨List.pairwise_of_forall_mem_list fun r hr _ _ _ ↦ hA r hr,
+     List.pairwise_of_forall_mem_list fun _ _ r' hr' h ↦ absurd h (hB r' hr'),
+     fun r hr _ _ _ ↦ hA r hr⟩
+
+/-- A sequence with a syntagmatic rule before a paradigmatic one is not paradigmatic-first. -/
+theorem not_paradigmaticFirst_of_sublist (hr : r.Syntagmatic) (hr' : r'.Paradigmatic)
+    (h : [r, r'].Sublist rs) : ¬ ParadigmaticFirst rs :=
+  fun hrs ↦ hr (List.pairwise_pair.mp (hrs.sublist h) hr')
+
+/-- A sequence with a paradigmatic rule before a syntagmatic one is not syntagmatic-first. -/
+theorem not_syntagmaticFirst_of_sublist (hr : r.Paradigmatic) (hr' : r'.Syntagmatic)
+    (h : [r, r'].Sublist rs) : ¬ SyntagmaticFirst rs :=
+  fun hrs ↦ List.pairwise_pair.mp (hrs.sublist h) hr' hr
 
 /-! ### Impoverishment only deletes -/
 

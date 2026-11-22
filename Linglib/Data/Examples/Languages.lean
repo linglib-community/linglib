@@ -823,6 +823,9 @@ def niuean : Glottocode := "niue1239"
 /-- Nivkh, `nivk1234`, a family. -/
 def nivkh : Glottocode := "nivk1234"
 
+/-- Taos Northern Tiwa, `nort1550` (ISO 639-3 `twf`). -/
+def taosNorthernTiwa : Glottocode := "nort1550"
+
 /-- Northwestern Kolami, `nort2699` (ISO 639-3 `kfb`). -/
 def northwesternKolami : Glottocode := "nort2699"
 
