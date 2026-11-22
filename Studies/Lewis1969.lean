@@ -86,7 +86,8 @@ def plans (A : SignalingSystem F M) (J : Type*) : ∀ o, Plans S R M J o
 
 variable (pr : Measure S) [IsProbabilityMeasure pr]
 
-private theorem measureReal_lt_one [MeasurableSingletonClass S] {T : Set S} {s : S} (hs : s ∉ T) (hpr : pr {s} ≠ 0) :
+private theorem measureReal_lt_one [MeasurableSingletonClass S] {T : Set S} {s : S} (hs : s ∉ T)
+    (hpr : pr {s} ≠ 0) :
     pr.real T < 1 := by
   have h : pr.real T + pr.real {s} ≤ 1 := by
     rw [← measureReal_union (Set.disjoint_singleton_right.2 hs) (.singleton s)]
