@@ -20,6 +20,7 @@ allows.
 * [V. Gast and F. Haas, *On Reciprocal and Reflexive Uses of Anaphors in German and Other European
   Languages* (2008)][gast-haas-2008]
 * [T. Siloni, *Reciprocal Verbs and Symmetry* (2012)][siloni-2012]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -38,5 +39,14 @@ def sich : Marker :=
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {einander, sich}
+
+/-- The form of the reflexive *sich*. -/
+def reflexiveForms : Finset (List Morphology.Morph) := {[.free Pronouns.sich.form]}
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "ger" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end German.Reciprocals
