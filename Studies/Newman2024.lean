@@ -31,16 +31,17 @@ fitted to the examples of `Data.Examples.Newman2024`.
 
 ## Main definitions
 
-* `Licensed`: a sequence of merges with one head, each checking a feature still unchecked.
+* `System`, `System.Run`: the operations at a head, and a sequence of them each checking a feature
+  still unchecked; `System.Licensed` and `System.Derivation` are runs without and with Weak
+  Economy, and `System.runs` is the finite set of the runs from a state.
 * `mergeFeatures`, `Phrase.checks`: the features a category bears and those a phrase checks.
 * `configuration`: the binding theory, m-command without reverse c-command.
 * `IsDitransitive`, `Binds`: a vP that Merge licenses from a ditransitive's arguments, and binding
   between its objects under a word order.
-* `AgentFocus`, `verbForm`, `Predicted`: Voice and T cross-reference one argument, the form of
-  the verb that results, and the forms of a clause with given fronted arguments.
-* `System.Derivation`, `System.Economical`: a derivation in which every step respects Weak
-  Economy.
-* `high`, `low`, `Predicts`: the operations at v in a ditransitive whose indirect object is in
+* `specifiers`, `AgentFocus`, `verbForm`, `HasVerbForm`: the specifier sequences of a transitive
+  vP, Voice and T cross-referencing one argument, the form of the verb that results, and the
+  forms of a clause with given fronted arguments.
+* `high`, `low`, `HasSubject`: the operations at v in a ditransitive whose indirect object is in
   v's complement or in V's, and the subjects such a clause can have.
 
 ## Implementation notes
@@ -60,7 +61,8 @@ fitted to the examples of `Data.Examples.Newman2024`.
   prediction holds on all seven.
 * A language of the Mayan type moves the object to check v's `[·D·]` before the subject merges
   wherever that leaves the subject licensed (`Realizes`), and its `[·wh·]` stays active once
-  checked. The agent-focus form is read off a row's gloss line, as is a Greek clitic.
+  checked. An operation applies at most once. The agent-focus form is read off a row's gloss
+  line, as is a Greek clitic.
 * The last-resort model of Coon, Mateo Pedro and Preminger is the one formalized in
   `Studies/CoonMateoPedroPreminger2014.lean`, with a determinerless object as its Caseless
   object.
@@ -91,129 +93,7 @@ namespace Newman2024
 open scoped List
 open Minimalist (Cat)
 
-/-! ### Feature-driven Merge -/
-
-section Merge
-
-variable {F α : Type*} [DecidableEq F] (κ : α → Finset F) (P : Finset F)
-
-/-- `Licensed κ P s es` holds when the elements `es` can merge in order with a head whose unchecked
-Merge features are `s`, where `κ e` is the set of features `e` can check and the features in `P`
-stay active once checked. Each element checks every unchecked feature it can, and at least one;
-features left over at the end are allowed. -/
-def Licensed : Finset F → List α → Prop
-  | _, [] => True
-  | s, e :: es => (s ∩ κ e).Nonempty ∧ Licensed (s \ (κ e \ P)) es
-
-instance decLicensed : (s : Finset F) → (es : List α) → Decidable (Licensed κ P s es)
-  | _, [] => isTrue trivial
-  | s, e :: es =>
-    haveI := decLicensed (s \ (κ e \ P)) es
-    inferInstanceAs (Decidable (_ ∧ _))
-
-variable {κ P} {s : Finset F} {es : List α}
-
-@[simp] theorem licensed_nil : Licensed κ P s [] := trivial
-
-@[simp] theorem licensed_cons {e : α} :
-    Licensed κ P s (e :: es) ↔ (s ∩ κ e).Nonempty ∧ Licensed κ P (s \ (κ e \ P)) es := Iff.rfl
-
-theorem Licensed.mono {t : Finset F} (hst : s ⊆ t) (h : Licensed κ P s es) :
-    Licensed κ P t es := by
-  induction es generalizing s t with
-  | nil => trivial
-  | cons e es ih =>
-    obtain ⟨h₁, h₂⟩ := licensed_cons.1 h
-    exact licensed_cons.2 ⟨h₁.mono (Finset.inter_subset_inter hst subset_rfl),
-      ih (Finset.sdiff_subset_sdiff hst subset_rfl) h₂⟩
-
-theorem Licensed.nonempty_of_mem (h : Licensed κ P s es) {b : α} (hb : b ∈ es) :
-    (s ∩ κ b).Nonempty := by
-  induction es generalizing s with
-  | nil => simp at hb
-  | cons e es ih =>
-    obtain ⟨h₁, h₂⟩ := licensed_cons.1 h
-    rcases List.mem_cons.1 hb with rfl | hb
-    · exact h₁
-    · exact (ih h₂ hb).mono (Finset.inter_subset_inter Finset.sdiff_subset subset_rfl)
-
-/-- If `b` can check only features of the head that `a` checks and uses up, `b` cannot merge
-after `a`. -/
-theorem Licensed.not_sublist (h : Licensed κ P s es) {a b : α} (hab : s ∩ κ b ⊆ κ a \ P) :
-    ¬ [a, b] <+ es := by
-  induction es generalizing s with
-  | nil => simp
-  | cons e es ih =>
-    obtain ⟨_, h₂⟩ := licensed_cons.1 h
-    intro hs
-    rcases List.sublist_cons_iff.1 hs with hs | ⟨r, hr, hs⟩
-    · exact ih h₂ ((Finset.inter_subset_inter Finset.sdiff_subset subset_rfl).trans hab) hs
-    · obtain ⟨rfl, rfl⟩ := List.cons_eq_cons.1 hr
-      obtain ⟨x, hx⟩ := h₂.nonempty_of_mem (List.singleton_sublist.1 hs)
-      rw [Finset.mem_inter, Finset.mem_sdiff] at hx
-      exact hx.1.2 (hab (Finset.mem_inter.2 ⟨hx.1.1, hx.2⟩))
-
-theorem Licensed.head?_eq (h : Licensed κ P s es) {b : α} (hb : b ∈ es)
-    (hsub : ∀ a ∈ es, s ∩ κ b ⊆ κ a \ P) : es.head? = some b := by
-  cases es with
-  | nil => simp at hb
-  | cons e es =>
-    rcases List.mem_cons.1 hb with rfl | hb
-    · rfl
-    · exact absurd (List.cons_sublist_cons.2 (List.singleton_sublist.2 hb))
-        (h.not_sublist (hsub e List.mem_cons_self))
-
-theorem Licensed.nodup (h : Licensed κ ∅ s es) : es.Nodup :=
-  List.nodup_iff_sublist.2 fun _ ↦ h.not_sublist (by simp)
-
-theorem Licensed.length_le (h : Licensed κ ∅ s es) : es.length ≤ s.card := by
-  induction es generalizing s with
-  | nil => simp
-  | cons e es ih =>
-    obtain ⟨h₁, h₂⟩ := licensed_cons.1 h
-    rw [Finset.sdiff_empty] at h₂
-    have := Finset.card_sdiff_add_card_inter s (κ e)
-    have := h₁.card_pos
-    have := ih h₂
-    simp only [List.length_cons]
-    omega
-
-end Merge
-
-private theorem length_filter_le_one {α : Type*} {l : List α} {p : α → Bool}
-    (h : ∀ a b, p a → p b → ¬ [a, b] <+ l) : (l.filter p).length ≤ 1 := by
-  match hl : l.filter p with
-  | [] | [_] => simp
-  | a :: b :: t =>
-    have hs : [a, b] <+ l := (List.cons_sublist_cons.2 (List.cons_sublist_cons.2
-      (List.nil_sublist t))).trans (hl ▸ List.filter_sublist)
-    have ha : a ∈ l.filter p := by simp [hl]
-    have hb : b ∈ l.filter p := by simp [hl]
-    exact absurd hs (h a b (List.mem_filter.1 ha).2 (List.mem_filter.1 hb).2)
-
-/-- `arrangements l n` collects the duplicate-free lists of length at most `n` drawn from `l`. -/
-def arrangements {α : Type*} [DecidableEq α] (l : List α) : ℕ → List (List α)
-  | 0 => [[]]
-  | n + 1 => [] :: l.flatMap fun a ↦ (arrangements (l.erase a) n).map (a :: ·)
-
-theorem mem_arrangements {α : Type*} [DecidableEq α] :
-    ∀ {n : ℕ} {l es : List α}, es.Nodup → es ⊆ l → es.length ≤ n → es ∈ arrangements l n
-  | 0, _, [], _, _, _ => List.mem_singleton_self _
-  | 0, _, _ :: _, _, _, h => absurd h (by simp)
-  | _ + 1, _, [], _, _, _ => List.mem_cons_self
-  | _ + 1, _, a :: es, hnd, hsub, hlen => by
-    obtain ⟨hna, hnd⟩ := List.nodup_cons.1 hnd
-    refine List.mem_cons_of_mem _ (List.mem_flatMap.2
-      ⟨a, hsub List.mem_cons_self, List.mem_map.2 ⟨es, mem_arrangements hnd ?_ ?_, rfl⟩⟩)
-    · exact fun x hx ↦ (List.mem_erase_of_ne (by rintro rfl; exact hna hx)).2
-        (hsub (List.mem_cons_of_mem _ hx))
-    · simpa using hlen
-
-theorem mem_arrangements_length {α : Type*} [DecidableEq α] {l es : List α}
-    (hnd : es.Nodup) (hsub : es ⊆ l) : es ∈ arrangements l l.length :=
-  mem_arrangements hnd hsub (hnd.subperm hsub).length_le
-
-/-! ### The Categorial Merge Hypothesis -/
+/-! ### Features and operations -/
 
 /-- The features that drive Merge and Agree at a head are `[·D·]`, checked by a full DP,
 `[·Dweak·]`, checked by anything bearing D including a clitic, the category-unspecified `[·X·]`,
@@ -234,6 +114,315 @@ inductive Feature where
 def Feature.IsMerge (f : Feature) : Prop := f ≠ .phi
 
 instance : DecidablePred Feature.IsMerge := fun f ↦ inferInstanceAs (Decidable (f ≠ .phi))
+
+/-- A state of a derivation at a head: the head's unchecked features and the operations that
+have applied. -/
+structure State (ι : Type*) where
+  /-- The features of the head not yet checked. -/
+  unchecked : Finset Feature
+  /-- The operations that have applied, in order. -/
+  done : List ι
+
+/-- The operations `ι` at a head: the features each checks, the features that stay active once
+checked, and when an operation is available given the ones already applied. -/
+structure System (ι : Type*) where
+  /-- `checks a` is the set of features operation `a` checks. -/
+  checks : ι → Finset Feature
+  /-- The features that stay active once checked. -/
+  persistent : Finset Feature := ∅
+  /-- `Available done a` holds when `a` is available after the operations `done`. -/
+  Available : List ι → ι → Prop := fun _ _ ↦ True
+
+namespace System
+
+variable {ι : Type*} (S : System ι)
+
+/-- The state after operation `a`: it checks every feature it can, and those not persistent are
+no longer unchecked. -/
+def step (σ : State ι) (a : ι) : State ι :=
+  ⟨σ.unchecked \ (S.checks a \ S.persistent), σ.done ++ [a]⟩
+
+/-- An operation is possible when it has not applied, is available, and would check an unchecked
+Merge feature. -/
+def Possible (σ : State ι) (a : ι) : Prop :=
+  a ∉ σ.done ∧ S.Available σ.done a ∧ ∃ f ∈ σ.unchecked ∩ S.checks a, f.IsMerge
+
+/-- `S.Run ok stop σ es` holds when the operations `es` apply in order from the state `σ`, each
+possible and permitted by `ok`, and reach a state where `stop` holds. -/
+def Run (ok : State ι → ι → Prop) (stop : State ι → Prop) : State ι → List ι → Prop
+  | σ, [] => stop σ
+  | σ, e :: es => S.Possible σ e ∧ ok σ e ∧ Run ok stop (S.step σ e) es
+
+/-- `S.Licensed s es` holds when the operations `es` can apply in order at a head whose unchecked
+features are `s`. Features left over at the end are allowed. -/
+abbrev Licensed (s : Finset Feature) (es : List ι) : Prop :=
+  S.Run (fun _ _ ↦ True) (fun _ ↦ True) ⟨s, []⟩ es
+
+/-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied, Kiparsky's
+bleeding over the states of the derivation. -/
+def Bleeds (σ : State ι) (a b : ι) : Prop :=
+  Phonology.Bleeds (S.step · a) (S.Possible · b) σ
+
+/-- Weak Economy does not compare two operations when either would bleed the other. -/
+def Exempt (σ : State ι) (a b : ι) : Prop := S.Bleeds σ a b ∨ S.Bleeds σ b a
+
+/-- Two operations are also exempt from comparison when they would check a common feature. -/
+def ExemptOverlap (σ : State ι) (a b : ι) : Prop :=
+  S.Exempt σ a b ∨ (σ.unchecked ∩ S.checks a ∩ S.checks b).Nonempty
+
+/-- **Weak Economy** permits `a` unless some possible operation would check more features and
+is not exempt from comparison with it under `E`. -/
+def WeakEconomy (E : State ι → ι → ι → Prop) (σ : State ι) (a : ι) : Prop :=
+  ∀ b, S.Possible σ b →
+    (σ.unchecked ∩ S.checks a).card < (σ.unchecked ∩ S.checks b).card → E σ a b
+
+/-- No operation is possible. -/
+def Terminal (σ : State ι) : Prop := ∀ b, ¬ S.Possible σ b
+
+/-- `S.Derivation E σ es` holds when the operations `es` apply in order from `σ`, each possible
+and permitted by Weak Economy, until no operation is possible. -/
+abbrev Derivation (E : State ι → ι → ι → Prop) (σ : State ι) (es : List ι) : Prop :=
+  S.Run (S.WeakEconomy E) S.Terminal σ es
+
+/-- An economical derivation is one under Weak Economy, from scratch. -/
+abbrev Economical (s : Finset Feature) (es : List ι) : Prop := S.Derivation S.Exempt ⟨s, []⟩ es
+
+/-- An overlap-economical derivation is one under Weak Economy with operations checking a common
+feature exempt, from scratch. -/
+abbrev OverlapEconomical (s : Finset Feature) (es : List ι) : Prop :=
+  S.Derivation S.ExemptOverlap ⟨s, []⟩ es
+
+/-- The subject of a derivation is the first operation that can check v's `[·D·]`. -/
+def subject (es : List ι) : Option ι := es.find? fun a ↦ Feature.D ∈ S.checks a
+
+section Decidable
+
+variable [DecidableEq ι] [∀ d a, Decidable (S.Available d a)]
+
+instance (σ : State ι) (a : ι) : Decidable (S.Possible σ a) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+instance decRun (ok : State ι → ι → Prop) (stop : State ι → Prop) [∀ σ a, Decidable (ok σ a)]
+    [DecidablePred stop] : (σ : State ι) → (es : List ι) → Decidable (S.Run ok stop σ es)
+  | σ, [] => inferInstanceAs (Decidable (stop σ))
+  | σ, e :: es =>
+    haveI := decRun ok stop (S.step σ e) es
+    inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+instance (σ : State ι) (a b : ι) : Decidable (S.Bleeds σ a b) :=
+  inferInstanceAs (Decidable (Phonology.Bleeds _ _ σ))
+
+instance (σ : State ι) (a b : ι) : Decidable (S.Exempt σ a b) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+instance (σ : State ι) (a b : ι) : Decidable (S.ExemptOverlap σ a b) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+variable [Fintype ι]
+
+instance (E : State ι → ι → ι → Prop) [∀ σ a b, Decidable (E σ a b)] (σ : State ι) (a : ι) :
+    Decidable (S.WeakEconomy E σ a) :=
+  inferInstanceAs (Decidable (∀ _, _))
+
+instance : DecidablePred S.Terminal := fun _ ↦ inferInstanceAs (Decidable (∀ _, _))
+
+end Decidable
+
+variable {S} {ok ok' : State ι → ι → Prop} {stop stop' : State ι → Prop} {σ : State ι}
+  {es : List ι}
+
+@[simp] theorem run_nil : S.Run ok stop σ [] ↔ stop σ := Iff.rfl
+
+@[simp] theorem run_cons {e : ι} :
+    S.Run ok stop σ (e :: es) ↔ S.Possible σ e ∧ ok σ e ∧ S.Run ok stop (S.step σ e) es :=
+  Iff.rfl
+
+theorem Run.mono (hok : ∀ σ a, ok σ a → ok' σ a) (hstop : ∀ σ, stop σ → stop' σ)
+    (h : S.Run ok stop σ es) : S.Run ok' stop' σ es := by
+  induction es generalizing σ with
+  | nil => exact hstop _ h
+  | cons e es ih => exact ⟨h.1, hok _ _ h.2.1, ih h.2.2⟩
+
+theorem Run.licensed {s : Finset Feature} (h : S.Run ok stop ⟨s, []⟩ es) : S.Licensed s es :=
+  h.mono (fun _ _ _ ↦ trivial) fun _ _ ↦ trivial
+
+private theorem run_true_mono : ∀ {es : List ι} {d : List ι} {s t : Finset Feature}, s ⊆ t →
+    S.Run (fun _ _ ↦ True) (fun _ ↦ True) ⟨s, d⟩ es →
+      S.Run (fun _ _ ↦ True) (fun _ ↦ True) ⟨t, d⟩ es
+  | [], _, _, _, _, _ => trivial
+  | e :: _, d, _, _, hst, ⟨⟨hd, ha, f, hf, hm⟩, _, h⟩ =>
+    ⟨⟨hd, ha, f, Finset.inter_subset_inter hst subset_rfl hf, hm⟩, trivial,
+      run_true_mono (d := d ++ [e]) (Finset.sdiff_subset_sdiff hst subset_rfl) h⟩
+
+theorem Licensed.mono {s t : Finset Feature} (hst : s ⊆ t) (h : S.Licensed s es) :
+    S.Licensed t es :=
+  run_true_mono hst h
+
+theorem Run.nodup (h : S.Run ok stop σ es) : es.Nodup ∧ ∀ e ∈ es, e ∉ σ.done := by
+  induction es generalizing σ with
+  | nil => simp
+  | cons e es ih =>
+    obtain ⟨⟨hd, -⟩, -, h⟩ := h
+    obtain ⟨hnd, hnot⟩ := ih h
+    refine ⟨List.nodup_cons.2 ⟨fun hes ↦ hnot e hes (List.mem_append_right _ (by simp)), hnd⟩,
+      fun x hx ↦ ?_⟩
+    rcases List.mem_cons.1 hx with rfl | hx
+    · exact hd
+    · exact fun hxd ↦ hnot x hx (List.mem_append_left _ hxd)
+
+theorem Run.inter_nonempty_of_mem (h : S.Run ok stop σ es) {a : ι} (ha : a ∈ es) :
+    (σ.unchecked ∩ S.checks a).Nonempty := by
+  induction es generalizing σ with
+  | nil => simp at ha
+  | cons e es ih =>
+    obtain ⟨⟨-, -, f, hf, -⟩, -, h⟩ := h
+    rcases List.mem_cons.1 ha with rfl | hb
+    · exact ⟨f, hf⟩
+    · exact (ih h hb).mono (Finset.inter_subset_inter Finset.sdiff_subset subset_rfl)
+
+/-- If `b` can check only features of the head that `a` checks and uses up, `b` cannot apply
+after `a`. -/
+theorem Run.not_sublist (h : S.Run ok stop σ es) {a b : ι}
+    (hab : σ.unchecked ∩ S.checks b ⊆ S.checks a \ S.persistent) : ¬ [a, b] <+ es := by
+  induction es generalizing σ with
+  | nil => simp
+  | cons e es ih =>
+    obtain ⟨-, -, h₂⟩ := h
+    intro hs
+    rcases List.sublist_cons_iff.1 hs with hs | ⟨r, hr, hs⟩
+    · exact ih h₂ ((Finset.inter_subset_inter Finset.sdiff_subset subset_rfl).trans hab) hs
+    · obtain ⟨rfl, rfl⟩ := List.cons_eq_cons.1 hr
+      obtain ⟨x, hx⟩ := h₂.inter_nonempty_of_mem (List.singleton_sublist.1 hs)
+      simp only [step, Finset.mem_inter, Finset.mem_sdiff] at hx
+      exact hx.1.2 (Finset.mem_sdiff.1 (hab (Finset.mem_inter.2 ⟨hx.1.1, hx.2⟩)))
+
+theorem Run.head?_eq (h : S.Run ok stop σ es) {b : ι} (hb : b ∈ es)
+    (hsub : ∀ a ∈ es, σ.unchecked ∩ S.checks b ⊆ S.checks a \ S.persistent) :
+    es.head? = some b := by
+  cases es with
+  | nil => simp at hb
+  | cons e es =>
+    rcases List.mem_cons.1 hb with rfl | hb
+    · rfl
+    · exact absurd (List.cons_sublist_cons.2 (List.singleton_sublist.2 hb))
+        (h.not_sublist (hsub e List.mem_cons_self))
+
+theorem exists_derivation [Fintype ι] (hP : S.persistent = ∅) (E : State ι → ι → ι → Prop)
+    (σ : State ι) : ∃ es, S.Derivation E σ es := by
+  classical
+  obtain ⟨n, hn⟩ : ∃ n, σ.unchecked.card = n := ⟨_, rfl⟩
+  induction n using Nat.strong_induction_on generalizing σ with
+  | _ n ih =>
+    by_cases hpos : ∃ b, S.Possible σ b
+    · obtain ⟨b, hb, hmax⟩ := Finset.exists_max_image (Finset.univ.filter (S.Possible σ))
+        (fun b ↦ (σ.unchecked ∩ S.checks b).card)
+        (by obtain ⟨b, hp⟩ := hpos; exact ⟨b, by simp [hp]⟩)
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb hmax
+      obtain ⟨f, hf, -⟩ := hb.2.2
+      have hlt : (S.step σ b).unchecked.card < n := by
+        subst hn
+        refine Finset.card_lt_card ((Finset.ssubset_iff_of_subset Finset.sdiff_subset).2
+          ⟨f, (Finset.mem_inter.1 hf).1, fun h ↦ (Finset.mem_sdiff.1 h).2 ?_⟩)
+        rw [hP, Finset.sdiff_empty]
+        exact (Finset.mem_inter.1 hf).2
+      obtain ⟨es, hes⟩ := ih _ hlt _ rfl
+      exact ⟨b :: es, hb, fun c hcp hlt ↦ absurd (hmax c hcp) (not_le.2 hlt), hes⟩
+    · exact ⟨[], fun b hb ↦ hpos ⟨b, hb⟩⟩
+
+private theorem mem_ite_singleton [DecidableEq ι] {c : Prop} [Decidable c] {l : List ι} :
+    l ∈ (if c then {[]} else ∅ : Finset (List ι)) ↔ l = [] ∧ c := by
+  split_ifs with h <;> simp [h]
+
+private theorem mem_ite_image [DecidableEq ι] {c : Prop} [Decidable c] {s : Finset (List ι)} {a : ι}
+    {l : List ι} : l ∈ (if c then s.image (a :: ·) else ∅) ↔ c ∧ ∃ es ∈ s, a :: es = l := by
+  split_ifs with h <;> simp [h]
+
+section Runs
+
+variable [Fintype ι] [DecidableEq ι] (S) [∀ d a, Decidable (S.Available d a)]
+  (ok : State ι → ι → Prop) (stop : State ι → Prop) [∀ σ a, Decidable (ok σ a)]
+  [DecidablePred stop]
+
+/-- The runs of at most `n` operations from a state. -/
+def runsAux : ℕ → State ι → Finset (List ι)
+  | 0, σ => if stop σ then {[]} else ∅
+  | n + 1, σ => (if stop σ then {[]} else ∅) ∪ Finset.univ.biUnion fun a ↦
+      if S.Possible σ a ∧ ok σ a then (runsAux n (S.step σ a)).image (a :: ·) else ∅
+
+/-- The runs from a state, a finite set since an operation applies at most once. -/
+def runs (σ : State ι) : Finset (List ι) := S.runsAux ok stop (Fintype.card ι) σ
+
+variable {S ok stop}
+
+theorem mem_runsAux : ∀ {n : ℕ} {σ : State ι} {es : List ι},
+    es ∈ S.runsAux ok stop n σ ↔ S.Run ok stop σ es ∧ es.length ≤ n
+  | 0, σ, [] => by simp [runsAux, mem_ite_singleton]
+  | 0, σ, e :: es => by simp [runsAux, mem_ite_singleton]
+  | n + 1, σ, [] => by simp [runsAux, mem_ite_singleton, mem_ite_image]
+  | n + 1, σ, e :: es => by
+    simp only [runsAux, Finset.mem_union, mem_ite_singleton, Finset.mem_biUnion, Finset.mem_univ,
+      true_and, mem_ite_image, List.cons.injEq, mem_runsAux (n := n), run_cons,
+      List.length_cons, Nat.add_le_add_iff_right, reduceCtorEq, false_and, false_or]
+    constructor
+    · rintro ⟨a, ⟨hp, hok⟩, es', ⟨hr, hl⟩, rfl, rfl⟩
+      exact ⟨⟨hp, hok, hr⟩, hl⟩
+    · rintro ⟨⟨hp, hok, hr⟩, hl⟩
+      exact ⟨e, ⟨hp, hok⟩, es, ⟨hr, hl⟩, rfl, rfl⟩
+
+@[simp] theorem mem_runs : es ∈ S.runs ok stop σ ↔ S.Run ok stop σ es := by
+  rw [runs, mem_runsAux]
+  exact and_iff_left_of_imp fun h ↦ h.nodup.1.length_le_card
+
+theorem exists_run_iff {p : List ι → Prop} :
+    (∃ es, S.Run ok stop σ es ∧ p es) ↔ ∃ es ∈ S.runs ok stop σ, p es := by
+  simp only [mem_runs]
+
+end Runs
+
+/-- The system in which every operation is always available, with `κ a` the features `a`
+checks. -/
+def free (κ : ι → Finset Feature) : System ι where
+  checks := κ
+
+instance (κ : ι → Finset Feature) : ∀ d a, Decidable ((free κ).Available d a) :=
+  fun _ _ ↦ isTrue trivial
+
+end System
+
+private theorem length_filter_le_one {α : Type*} {l : List α} {p : α → Bool}
+    (h : ∀ a b, p a → p b → ¬ [a, b] <+ l) : (l.filter p).length ≤ 1 := by
+  match hl : l.filter p with
+  | [] | [_] => simp
+  | a :: b :: t =>
+    have hs : [a, b] <+ l := (List.cons_sublist_cons.2 (List.cons_sublist_cons.2
+      (List.nil_sublist t))).trans (hl ▸ List.filter_sublist)
+    have ha : a ∈ l.filter p := by simp [hl]
+    have hb : b ∈ l.filter p := by simp [hl]
+    exact absurd hs (h a b (List.mem_filter.1 ha).2 (List.mem_filter.1 hb).2)
+
+/-- `arrangements l n` collects the duplicate-free lists of length at most `n` drawn from `l`. -/
+private def arrangements {α : Type*} [DecidableEq α] (l : List α) : ℕ → List (List α)
+  | 0 => [[]]
+  | n + 1 => [] :: l.flatMap fun a ↦ (arrangements (l.erase a) n).map (a :: ·)
+
+private theorem mem_arrangements {α : Type*} [DecidableEq α] :
+    ∀ {n : ℕ} {l es : List α}, es.Nodup → es ⊆ l → es.length ≤ n → es ∈ arrangements l n
+  | 0, _, [], _, _, _ => List.mem_singleton_self _
+  | 0, _, _ :: _, _, _, h => absurd h (by simp)
+  | _ + 1, _, [], _, _, _ => List.mem_cons_self
+  | _ + 1, _, a :: es, hnd, hsub, hlen => by
+    obtain ⟨hna, hnd⟩ := List.nodup_cons.1 hnd
+    refine List.mem_cons_of_mem _ (List.mem_flatMap.2
+      ⟨a, hsub List.mem_cons_self, List.mem_map.2 ⟨es, mem_arrangements hnd ?_ ?_, rfl⟩⟩)
+    · exact fun x hx ↦ (List.mem_erase_of_ne (by rintro rfl; exact hna hx)).2
+        (hsub (List.mem_cons_of_mem _ hx))
+    · simpa using hlen
+
+private theorem mem_arrangements_length {α : Type*} [DecidableEq α] {l es : List α}
+    (hnd : es.Nodup) (hsub : es ⊆ l) : es ∈ arrangements l l.length :=
+  mem_arrangements hnd hsub (hnd.subperm hsub).length_le
+
+/-! ### The Categorial Merge Hypothesis -/
 
 /-- A phrase, as Merge features see it, is its category and the further features it bears, such
 as `[wh]`. -/
@@ -294,57 +483,58 @@ variable {α : Type*} {f : α → Phrase} {s : Finset Feature} {es : List α}
 
 /-- **The non-DP first theorem.** A phrase that checks nothing but `[·X·]` merges first with any
 head it merges with, so it is that head's complement (120). -/
-theorem nonDP_first (h : Licensed (Phrase.checks ∘ f) ∅ s es) {b : α} (hb : b ∈ es)
+theorem nonDP_first (h : (System.free (Phrase.checks ∘ f)).Licensed s es) {b : α} (hb : b ∈ es)
     (hD : (f b).cat ≠ .D) (hV : (f b).cat ≠ .V) (hbears : (f b).bears = ∅) :
     es.head? = some b :=
   h.head?_eq hb fun a _ ↦ Finset.inter_subset_right.trans <| by
-    simp [Function.comp_apply, Phrase.checks_eq_X hD hV hbears]
+    simp [System.free, Function.comp_apply, Phrase.checks_eq_X hD hV hbears]
 
 -- (123), (133)
-theorem vp_specifier (h : Licensed (Phrase.checks ∘ f) ∅ (mergeFeatures .v) es) {b vp : α}
-    (hb : b ∈ es)
-    (hD : (f b).cat ≠ .D) (hV : (f b).cat ≠ .V) (hbears : (f b).bears = ∅) (hne : vp ≠ b) :
-    es.head? ≠ some vp := by
+theorem head?_ne_of_nonDP (h : (System.free (Phrase.checks ∘ f)).Licensed s es) {b vp : α}
+    (hb : b ∈ es) (hD : (f b).cat ≠ .D) (hV : (f b).cat ≠ .V) (hbears : (f b).bears = ∅)
+    (hne : vp ≠ b) : es.head? ≠ some vp := by
   rw [nonDP_first h hb hD hV hbears]
   simpa using hne.symm
 
 -- (118)
-theorem not_dp_after_dp (h : Licensed (Phrase.checks ∘ f) ∅ s es) {a b : α}
+theorem not_dp_after_dp (h : (System.free (Phrase.checks ∘ f)).Licensed s es) {a b : α}
     (ha : (f a).cat = .D) (hb : (f b).cat = .D) (hbears : (f b).bears ⊆ (f a).bears) :
     ¬ [a, b] <+ es :=
   h.not_sublist <| Finset.inter_subset_right.trans fun x hx ↦ by
-    simp only [Function.comp_apply, Finset.sdiff_empty, Phrase.mem_checks, ha, hb] at hx ⊢
+    simp only [System.free, Function.comp_apply, Finset.sdiff_empty, Phrase.mem_checks, ha,
+      hb] at hx ⊢
     rcases hx with hx | hx | hx | hx
     · exact Or.inl hx
     · exact Or.inr (Or.inl hx)
     · exact Or.inr (Or.inr (Or.inl hx))
     · exact Or.inr (Or.inr (Or.inr (hbears hx)))
 
-theorem length_filter_dp_le_one (h : Licensed (Phrase.checks ∘ f) ∅ s es) :
+theorem length_filter_dp_le_one (h : (System.free (Phrase.checks ∘ f)).Licensed s es) :
     (es.filter fun a ↦ (f a).cat = .D ∧ (f a).bears = ∅).length ≤ 1 :=
   length_filter_le_one fun _ _ ha hb ↦ by
     simp only [decide_eq_true_eq] at ha hb
     exact not_dp_after_dp h ha.1 hb.1 (hb.2 ▸ Finset.empty_subset _)
 
-theorem length_filter_nonDP_le_one (h : Licensed (Phrase.checks ∘ f) ∅ s es) :
+theorem length_filter_nonDP_le_one (h : (System.free (Phrase.checks ∘ f)).Licensed s es) :
     (es.filter fun a ↦ (f a).cat ≠ .D ∧ (f a).cat ≠ .V ∧ (f a).bears = ∅).length ≤ 1 :=
   length_filter_le_one fun a _ _ hb ↦ by
     simp only [decide_eq_true_eq] at hb
     exact h.not_sublist <| Finset.inter_subset_right.trans <| by
-      simp [Function.comp_apply, Phrase.checks_eq_X hb.1 hb.2.1 hb.2.2]
+      simp [System.free, Function.comp_apply, Phrase.checks_eq_X hb.1 hb.2.1 hb.2.2]
 
-theorem Licensed.of_V {κ : α → Finset Feature} (h : Licensed κ ∅ (mergeFeatures .V) es) :
-    Licensed κ ∅ (mergeFeatures .v) es :=
+theorem licensed_v_of_licensed_V {κ : α → Finset Feature}
+    (h : (System.free κ).Licensed (mergeFeatures .V) es) :
+    (System.free κ).Licensed (mergeFeatures .v) es :=
   h.mono mergeFeatures_V_subset_v
 
 /-- V takes a non-DP complement and then a DP, but not a DP and then a non-DP. -/
-example : Licensed Phrase.checks ∅ (mergeFeatures .V) [⟨.P, ∅⟩, .dp] ∧
-    ¬ Licensed Phrase.checks ∅ (mergeFeatures .V) [.dp, ⟨.P, ∅⟩] := by decide
+example : (System.free Phrase.checks).Licensed (mergeFeatures .V) [⟨.P, ∅⟩, .dp] ∧
+    ¬ (System.free Phrase.checks).Licensed (mergeFeatures .V) [.dp, ⟨.P, ∅⟩] := by decide
 
 /-- *Bet* uses every argument feature. V takes the clause and then the wager, and v takes the
 applied dative, then VP as a specifier, then the bettor. -/
-example : Licensed Phrase.checks ∅ (mergeFeatures .V) [⟨.C, ∅⟩, .dp] ∧
-    Licensed Phrase.checks ∅ (mergeFeatures .v) [⟨.Appl, ∅⟩, .vp, .dp] := by decide
+example : (System.free Phrase.checks).Licensed (mergeFeatures .V) [⟨.C, ∅⟩, .dp] ∧
+    (System.free Phrase.checks).Licensed (mergeFeatures .v) [⟨.Appl, ∅⟩, .vp, .dp] := by decide
 
 end Distribution
 
@@ -367,34 +557,34 @@ abbrev XTree := PhraseStructure.Tree Cat Leaf
 /-- A tree counts for Merge features as a phrase of its root's category. -/
 def XTree.checks (t : XTree) : Finset Feature := Phrase.checks ⟨t.cat, ∅⟩
 
-/-- `bar c h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
-with complement `comp` and specifiers `specs`. -/
-def bar (c : Cat) (h comp : XTree) : List XTree → XTree
+/-- `bar R c h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
+with complement `comp` and specifiers `specs`, those satisfying `R` linearized on the right. -/
+def bar (R : XTree → Prop) [DecidablePred R] (c : Cat) (h comp : XTree) : List XTree → XTree
   | [] => .node c [h, comp]
-  | s :: ss => .node c [s, bar c h comp ss]
+  | s :: ss =>
+    if R s then .node c [bar R c h comp ss, s] else .node c [s, bar R c h comp ss]
 
-/-- `project c h es` is the phrase the head `h` of category `c` projects when `es` merge with it.
-The first is the complement, and each later one tucks in below the specifiers already merged, so
-the first specifier is outermost. -/
-def project (c : Cat) (h : XTree) : List XTree → XTree
+/-- `projectWith R c h es` is the phrase the head `h` of category `c` projects when `es` merge
+with it. The first is the complement, and each later one tucks in below the specifiers already
+merged, so the first specifier is outermost; specifiers satisfying `R` are linearized on the
+right. -/
+def projectWith (R : XTree → Prop) [DecidablePred R] (c : Cat) (h : XTree) : List XTree → XTree
   | [] => .node c [h]
-  | [comp] => .node c [h, comp]
-  | comp :: s :: ss => .node c [s, bar c h comp ss]
+  | comp :: ss => bar R c h comp ss
 
-/-- `barR c h comp specs` is `bar c h comp specs` with each specifier of category V linearized on
-the right. -/
-def barR (c : Cat) (h comp : XTree) : List XTree → XTree
-  | [] => .node c [h, comp]
-  | s :: ss => if s.cat = .V then .node c [barR c h comp ss, s] else .node c [s, barR c h comp ss]
+/-- `project c h es` is the projection with every specifier on the left. -/
+abbrev project : Cat → XTree → List XTree → XTree := projectWith fun _ ↦ False
 
-/-- `projectR c h es` is `project c h es` with each VP specifier linearized on the right. -/
-def projectR (c : Cat) (h : XTree) : List XTree → XTree
-  | [] => .node c [h]
-  | comp :: ss => barR c h comp ss
+/-- `projectR c h es` is the projection with each VP specifier on the right. -/
+abbrev projectR : Cat → XTree → List XTree → XTree := projectWith fun s ↦ s.cat = .V
 
-theorem project_cat (c : Cat) (h : XTree) (es : List XTree) : (project c h es).cat = c := by
-  match es with
-  | [] | [_] | _ :: _ :: _ => rfl
+theorem projectWith_cat (R : XTree → Prop) [DecidablePred R] (c : Cat) (h : XTree)
+    (es : List XTree) : (projectWith R c h es).cat = c := by
+  rcases es with _ | ⟨comp, _ | ⟨s, ss⟩⟩
+  · rfl
+  · rfl
+  · simp only [projectWith, bar]
+    split <;> rfl
 
 /-- `subjP` is the external argument, a DP. -/
 def subjP : XTree := .terminal .D .subj
@@ -419,16 +609,11 @@ linearized on the left. -/
 def highXP : XTree := project .v vHead [iobjP, subjP, project .V VHead [dobjP]]
 
 /-- `highXPRight` is `highXP` with the VP specifier linearized on the right. -/
-def highXPRight : XTree :=
-  .node .v [subjP, .node .v [.node .v [vHead, iobjP], project .V VHead [dobjP]]]
+def highXPRight : XTree := projectR .v vHead [iobjP, subjP, project .V VHead [dobjP]]
 
-theorem ditransitives_licensed :
-    Licensed XTree.checks ∅ (mergeFeatures .V) [iobjP, dobjP] ∧
-      Licensed XTree.checks ∅ (mergeFeatures .v) [project .V VHead [iobjP, dobjP], subjP] ∧
-      Licensed XTree.checks ∅ (mergeFeatures .V) [dobjP] ∧
-      Licensed XTree.checks ∅ (mergeFeatures .v) [iobjP, subjP, project .V VHead [dobjP]] ∧
-      ¬ Licensed XTree.checks ∅ (mergeFeatures .v) [project .V VHead [dobjP], iobjP, subjP] := by
-  decide
+/-- VP cannot merge with v before the phrase containing the indirect object. -/
+example : ¬ (System.free XTree.checks).Licensed (mergeFeatures .v)
+    [project .V VHead [dobjP], iobjP, subjP] := by decide
 
 /-- In the binding configuration of a tree, `a` commands `b` when every maximal projection
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
@@ -461,11 +646,6 @@ def Precedes (t : XTree) (x y : Leaf) : Prop :=
 instance (t : XTree) (x y : Leaf) : Decidable (Precedes t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
-theorem canBind_dobj_iobj :
-    CanBind lowXP .dobj .iobj ∧ ¬ CanBind lowXP .iobj .dobj ∧
-      ∀ t ∈ [highXP, highXPRight], CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj := by
-  decide
-
 theorem highXP_not_cCommands :
     ∃ a ∈ (leafPaths highXP).lookup .dobj, ∃ b ∈ (leafPaths highXP).lookup .iobj,
       ¬ RoseTree.CCommands highXP a b ∧ ¬ RoseTree.CCommands highXP b a := by
@@ -474,7 +654,8 @@ theorem highXP_not_cCommands :
 /-- `Vs` merge with V and `es` with v in a ditransitive: each sequence is licensed, the direct
 object merges with V, the subject and VP with v, and the indirect object with one of them. -/
 def DitransitiveMerge (Vs es : List XTree) : Prop :=
-  Licensed XTree.checks ∅ (mergeFeatures .V) Vs ∧ Licensed XTree.checks ∅ (mergeFeatures .v) es ∧
+  (System.free XTree.checks).Licensed (mergeFeatures .V) Vs ∧
+    (System.free XTree.checks).Licensed (mergeFeatures .v) es ∧
     dobjP ∈ Vs ∧ subjP ∈ es ∧ project .V VHead Vs ∈ es ∧
     (Vs ++ es.erase (project .V VHead Vs)).isPerm [iobjP, dobjP, subjP] = true
 
@@ -504,7 +685,7 @@ theorem isDitransitive_iff {t : XTree} : IsDitransitive t ↔ t ∈ ditransitive
     obtain ⟨-, -, hd, hs, hVP, hperm⟩ := id hm
     replace hperm := List.isPerm_iff.1 hperm
     have hcat : ∀ x ∈ [iobjP, dobjP, subjP], x ≠ project .V VHead Vs := fun x hx e ↦
-      (by decide : ∀ x ∈ [iobjP, dobjP, subjP], x.cat ≠ .V) x hx (e ▸ project_cat ..)
+      (by decide : ∀ x ∈ [iobjP, dobjP, subjP], x.cat ≠ .V) x hx (e ▸ projectWith_cat ..)
     have hnd : (Vs ++ es.erase (project .V VHead Vs)).Nodup := hperm.nodup_iff.2 (by decide)
     have hdis := List.disjoint_of_nodup_append hnd
     have hmem : ∀ x, x ∈ Vs ∨ x ∈ es.erase (project .V VHead Vs) ↔ x ∈ [iobjP, dobjP, subjP] :=
@@ -539,24 +720,17 @@ theorem isDitransitive_iff {t : XTree} : IsDitransitive t ↔ t ∈ ditransitive
     obtain ⟨m, -, h⟩ := key t ht
     exact ⟨m.1, m.2, h⟩
 
-/-- **Word order and binding.** On every ditransitive vP Merge licenses, the order with the
-indirect object first is only compatible with forward binding, and both orders occur, the order
-with the direct object first allowing both forward and backward binding (148). -/
-theorem wordOrder_binding :
-    (∀ t, IsDitransitive t → Precedes t .iobj .dobj →
-      CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj) ∧
-    (∃ t, IsDitransitive t ∧ Precedes t .iobj .dobj) ∧
-    (∃ t, IsDitransitive t ∧ Precedes t .dobj .iobj ∧
-      CanBind t .dobj .iobj ∧ ¬ CanBind t .iobj .dobj) ∧
-    (∃ t, IsDitransitive t ∧ Precedes t .dobj .iobj ∧
-      CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj) := by
-  have hall : ∀ t ∈ ditransitiveVPs, Precedes t .iobj .dobj →
-      CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj := by
-    decide
-  refine ⟨fun t ht ↦ hall t (isDitransitive_iff.1 ht),
-    ⟨highXPRight, isDitransitive_iff.2 (by decide), by decide⟩,
-    ⟨lowXP, isDitransitive_iff.2 (by decide), by decide⟩,
-    ⟨highXP, isDitransitive_iff.2 (by decide), by decide⟩⟩
+theorem nodup_leaves {t : XTree} (ht : IsDitransitive t) :
+    ((leafPaths t).map Prod.fst).Nodup :=
+  (by decide : ∀ t ∈ ditransitiveVPs, ((leafPaths t).map Prod.fst).Nodup) t
+    (isDitransitive_iff.1 ht)
+
+/-- **Word order and binding.** On a ditransitive vP that Merge licenses, an indirect object
+preceding the direct object binds into it and is not bound from it (148). -/
+theorem canBind_iobj_of_precedes {t : XTree} (ht : IsDitransitive t)
+    (hp : Precedes t .iobj .dobj) : CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj :=
+  (by decide : ∀ t ∈ ditransitiveVPs, Precedes t .iobj .dobj →
+    CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj) t (isDitransitive_iff.1 ht) hp
 
 /-- The first of the two objects under an order. -/
 def Examples.Order.first : Examples.Order → Leaf
@@ -583,17 +757,22 @@ def Examples.Binder.bindee : Examples.Binder → Leaf
 def Binds (o : Examples.Order) (b : Examples.Binder) : Prop :=
   ∃ t, IsDitransitive t ∧ Precedes t o.first o.second ∧ CanBind t b.binder b.bindee
 
-theorem binds_iff {o : Examples.Order} {b : Examples.Binder} :
+theorem binds_iff_exists_mem {o : Examples.Order} {b : Examples.Binder} :
     Binds o b ↔
       ∃ t ∈ ditransitiveVPs, Precedes t o.first o.second ∧ CanBind t b.binder b.bindee := by
   unfold Binds
   simp only [isDitransitive_iff]
 
 instance (o : Examples.Order) (b : Examples.Binder) : Decidable (Binds o b) :=
-  decidable_of_iff _ binds_iff.symm
+  decidable_of_iff _ binds_iff_exists_mem.symm
+
+-- (148)
+theorem binds_iff (o : Examples.Order) (b : Examples.Binder) :
+    Binds o b ↔ ¬ (o = .indirectFirst ∧ b = .direct) := by
+  decide +revert
 
 -- (149)–(151), (153)
-theorem binds_iff_acceptable :
+theorem acceptable_iff_binds :
     ∀ x : Examples.Example, ∀ o ∈ x.order, ∀ b ∈ x.binder,
       (x.datum.judgment = .acceptable ↔ Binds o b) := by
   decide
@@ -615,34 +794,47 @@ def Transitive.phrase (obj : Cat) (whs : Finset Transitive) : Transitive → Phr
   | .obj => ⟨obj, if .obj ∈ whs then {.wh} else ∅⟩
   | .subj => ⟨.D, if .subj ∈ whs then {.wh} else ∅⟩
 
+/-- `transitive obj whs P` has the operations at v in a transitive clause with an object of
+category `obj`, the phrases in `whs` bearing `[wh]` and the features in `P` staying active:
+merging VP, moving the object once VP has merged, and merging the external argument. -/
+def transitive (obj : Cat) (whs : Finset Transitive) (P : Finset Feature := ∅) :
+    System Transitive where
+  checks := Phrase.checks ∘ Transitive.phrase obj whs
+  persistent := P
+  Available done a := a = .obj → .vp ∈ done
+
+instance (obj : Cat) (whs : Finset Transitive) (P : Finset Feature) :
+    ∀ d a, Decidable ((transitive obj whs P).Available d a) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ → _))
+
+/-- The state of v once VP has merged as its complement. -/
+def vEdge (obj : Cat) (whs : Finset Transitive) (P : Finset Feature) : State Transitive :=
+  (transitive obj whs P).step ⟨mergeFeatures .v, []⟩ .vp
+
 /-- `TransitiveDerivation P obj whs es` says that VP merges with v as its complement and then the
 specifiers `es` merge, with the features in `P` staying active. -/
 abbrev TransitiveDerivation (P : Finset Feature) (obj : Cat) (whs : Finset Transitive)
     (es : List Transitive) : Prop :=
-  Licensed (Phrase.checks ∘ Transitive.phrase obj whs) P (mergeFeatures .v) (.vp :: es)
+  (transitive obj whs P).Run (fun _ _ ↦ True) (fun _ ↦ True) (vEdge obj whs P) es
 
-theorem Transitive.mem_arrangements {es : List Transitive} (hes : es.Nodup) :
-    es ∈ arrangements [Transitive.vp, .obj, .subj] 3 :=
-  Newman2024.mem_arrangements hes (fun x _ ↦ by cases x <;> simp)
-    (hes.subperm (l₂ := [.vp, .obj, .subj]) fun x _ ↦ by cases x <;> simp).length_le
+/-- The specifier sequences of a transitive vP. -/
+def specifiers (P : Finset Feature) (obj : Cat) (whs : Finset Transitive) :
+    Finset (List Transitive) :=
+  (transitive obj whs P).runs (fun _ _ ↦ True) (fun _ ↦ True) (vEdge obj whs P)
 
-private theorem TransitiveDerivation.nodup {obj : Cat} {whs : Finset Transitive}
-    {es : List Transitive} (h : TransitiveDerivation ∅ obj whs es) : es.Nodup :=
-  (List.nodup_cons.1 (Licensed.nodup h)).2
+@[simp] theorem mem_specifiers {P : Finset Feature} {obj : Cat} {whs : Finset Transitive}
+    {es : List Transitive} : es ∈ specifiers P obj whs ↔ TransitiveDerivation P obj whs es :=
+  System.mem_runs
 
--- (48), (49), (70)
-theorem transitive_derivations {es : List Transitive} :
-    (TransitiveDerivation ∅ .D {.subj} es ∧ .subj ∈ es ↔ es = [.subj] ∨ es = [.obj, .subj]) ∧
-      (TransitiveDerivation ∅ .D {.obj} es ∧ .subj ∈ es ∧ .obj ∈ es ↔ es = [.subj, .obj]) := by
-  refine ⟨⟨?_, by rintro (rfl | rfl) <;> decide⟩, ⟨?_, by rintro rfl; decide⟩⟩
-  · rintro ⟨h, hs⟩
-    have hm := Transitive.mem_arrangements h.nodup
-    revert h hs; revert hm; revert es
-    decide
-  · rintro ⟨h, hs, ho⟩
-    have hm := Transitive.mem_arrangements h.nodup
-    revert h hs ho; revert hm; revert es
-    decide
+-- (48), (49)
+theorem specifiers_whSubject :
+    {es ∈ specifiers ∅ .D {.subj} | .subj ∈ es} = {[.subj], [.obj, .subj]} := by
+  decide
+
+-- (70)
+theorem specifiers_whObject :
+    {es ∈ specifiers ∅ .D {.obj} | .subj ∈ es ∧ .obj ∈ es} = {[.subj, .obj]} := by
+  decide
 
 /-- `heightOrder es` lists the arguments from the highest down once the specifiers `es` have
 merged, the specifiers first with the first merged outermost, then the object in situ unless it
@@ -650,15 +842,19 @@ has moved. -/
 def heightOrder (es : List Transitive) : List Transitive :=
   es.filter (· ≠ .vp) ++ if .obj ∈ es then [] else [.obj]
 
+/-- The arguments in vP when its first specifier merges, highest first and without the moved
+object's lower copy. -/
+def caseDomain : List Transitive → List Transitive
+  | s :: _ => if s = .obj then [.obj] else [s, .obj]
+  | [] => [.obj]
+
 /-- When the first specifier merges, the dependent rules of an ergative grammar assign case to
-the arguments then in vP, highest first and without the moved object's lower copy. A specifier
-merged later is unmarked. -/
+the arguments then in vP. A specifier merged later is unmarked. -/
 def caseOf (es : List Transitive) (a : Transitive) : Option Case :=
-  let r := DependentCase.Rules.ofAlignment .ergative
-  let dom := match es with
-    | s :: _ => if s = .obj then [Transitive.obj] else [s, .obj]
-    | [] => [.obj]
-  if a ∈ dom then (r.assign (fun _ ↦ none) dom a).value?.map (·.1) else r.unmarked
+  if a ∈ caseDomain es then
+    ((DependentCase.Rules.ofAlignment .ergative).assign (fun _ ↦ none) (caseDomain es) a).value?.map
+      (·.1)
+  else (DependentCase.Rules.ofAlignment .ergative).unmarked
 
 /-- Voice's φ-probe, spelled out as Set A, agrees with the closest argument. -/
 def setA (es : List Transitive) : Option Transitive := (heightOrder es).head?
@@ -695,52 +891,56 @@ argument Voice and T cross-reference the same argument exactly when the object c
 before the subject merges (69), (71). -/
 theorem agentFocus_iff {whs : Finset Transitive} {es : List Transitive}
     (h : TransitiveDerivation ∅ .D whs es) (hs : .subj ∈ es) :
-    AgentFocus es ↔ es = [.obj, .subj] := by
-  have hm := Transitive.mem_arrangements h.nodup
-  revert h hs; revert hm; revert es; revert whs
-  decide
+    AgentFocus es ↔ es = [.obj, .subj] :=
+  (by decide : ∀ whs : Finset Transitive, ∀ es ∈ specifiers ∅ .D whs, .subj ∈ es →
+    (AgentFocus es ↔ es = [.obj, .subj])) whs es (mem_specifiers.2 h) hs
 
 -- (93)
-theorem npObject_no_agentFocus {es : List Transitive}
-    (h : TransitiveDerivation ∅ .N {.subj} es) (hs : .subj ∈ es) :
-    es = [.subj] ∧ setA es = some .subj ∧ setB es = some .obj ∧ ¬ AgentFocus es := by
-  have hm := Transitive.mem_arrangements h.nodup
-  revert h hs; revert hm; revert es
+theorem specifiers_whSubject_np : {es ∈ specifiers ∅ .N {.subj} | .subj ∈ es} = {[.subj]} := by
   decide
 
-/-- The subject question with an NP object is licensed. -/
-example : TransitiveDerivation ∅ .N {.subj} [.subj] := by decide
+/-- With the subject alone at the edge of vP, Set A cross-references the subject and Set B the
+object, as in a plain transitive clause. -/
+example : setA [.subj] = some .subj ∧ setB [.subj] = some .obj ∧ ¬ AgentFocus [.subj] := by
+  decide
 
 -- (112)
-theorem multipleFronting_blocked {es : List Transitive}
-    (h : TransitiveDerivation ∅ .D {.subj, .obj} es) : ¬ (.subj ∈ es ∧ .obj ∈ es) := by
-  have hm := Transitive.mem_arrangements h.nodup
-  revert h; revert hm; revert es
+theorem specifiers_whBoth : {es ∈ specifiers ∅ .D {.subj, .obj} | .subj ∈ es ∧ .obj ∈ es} = ∅ := by
   decide
 
--- (116), (117)
-theorem multipleFronting {es : List Transitive} (hnd : es.Nodup) (hs : .subj ∈ es)
-    (ho : .obj ∈ es) :
-    (TransitiveDerivation {.wh} .D {.subj} es ↔ es = [.obj, .subj]) ∧
-      (TransitiveDerivation {.wh} .D {.obj} es ↔ es = [.subj, .obj]) ∧
-      (TransitiveDerivation {.wh} .D {.subj, .obj} es ↔
-        es = [.subj, .obj] ∨ es = [.obj, .subj]) ∧
-      ∀ whs : Finset Transitive,
-        TransitiveDerivation {.wh} .D whs es → (AgentFocus es ↔ es = [.obj, .subj]) := by
-  have hm := Transitive.mem_arrangements hnd
-  revert hnd hs ho; revert hm; revert es
+-- (117a)
+theorem specifiers_wh_whSubject :
+    {es ∈ specifiers {.wh} .D {.subj} | .subj ∈ es ∧ .obj ∈ es} = {[.obj, .subj]} := by
   decide
+
+-- (117b)
+theorem specifiers_wh_whObject :
+    {es ∈ specifiers {.wh} .D {.obj} | .subj ∈ es ∧ .obj ∈ es} = {[.subj, .obj]} := by
+  decide
+
+-- (116), (117c)
+theorem specifiers_wh_whBoth :
+    {es ∈ specifiers {.wh} .D {.subj, .obj} | .subj ∈ es ∧ .obj ∈ es} =
+      {[.subj, .obj], [.obj, .subj]} := by
+  decide
+
+-- (111)
+theorem agentFocus_iff_of_wh {whs : Finset Transitive} {es : List Transitive}
+    (h : TransitiveDerivation {.wh} .D whs es) (hs : .subj ∈ es) (ho : .obj ∈ es) :
+    AgentFocus es ↔ es = [.obj, .subj] :=
+  (by decide : ∀ whs : Finset Transitive, ∀ es ∈ specifiers {.wh} .D whs, .subj ∈ es →
+    .obj ∈ es → (AgentFocus es ↔ es = [.obj, .subj])) whs es (mem_specifiers.2 h) hs ho
 
 /-! ### The form of the verb in Mayan -/
 
-/-- `Fronts obj whs es` holds when the specifiers `es` merge with v, each once and with `[·wh·]`
-staying active, the subject among them and every phrase of `whs` reaching the edge of vP. -/
+/-- `Fronts obj whs es` holds when the specifiers `es` merge with v, with `[·wh·]` staying
+active, the subject among them and every phrase of `whs` reaching the edge of vP. -/
 def Fronts (obj : Cat) (whs : Finset Transitive) (es : List Transitive) : Prop :=
-  TransitiveDerivation {.wh} obj whs es ∧ es.Nodup ∧ .subj ∈ es ∧ ∀ w ∈ whs, w ∈ es
+  TransitiveDerivation {.wh} obj whs es ∧ .subj ∈ es ∧ ∀ w ∈ whs, w ∈ es
 
 instance (obj : Cat) (whs : Finset Transitive) (es : List Transitive) :
     Decidable (Fronts obj whs es) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- A language of the Mayan type realizes the derivation `es` when the object checks `[·D·]`
 before the subject merges wherever it can. -/
@@ -777,16 +977,17 @@ def Examples.ObjectCategory.cat : Examples.ObjectCategory → Cat
 
 /-- A clause with an object of category `obj` and the fronting pattern `f` has the verb form `v`
 in a language of the Mayan type. -/
-def Predicted (obj : Cat) (f : Examples.Fronting) (v : Mayan.VerbForm) : Prop :=
+def HasVerbForm (obj : Cat) (f : Examples.Fronting) (v : Mayan.VerbForm) : Prop :=
   ∃ es, Realizes obj f.whs es ∧ (∀ es' ∈ f.order?, es = es') ∧ verbForm es = v
 
-theorem predicted_iff {obj : Cat} {f : Examples.Fronting} {v : Mayan.VerbForm} :
-    Predicted obj f v ↔ ∃ es ∈ arrangements [Transitive.vp, .obj, .subj] 3,
+theorem hasVerbForm_iff_exists_mem {obj : Cat} {f : Examples.Fronting} {v : Mayan.VerbForm} :
+    HasVerbForm obj f v ↔ ∃ es ∈ specifiers {.wh} obj f.whs,
       Realizes obj f.whs es ∧ (∀ es' ∈ f.order?, es = es') ∧ verbForm es = v :=
-  ⟨fun ⟨es, h, r⟩ ↦ ⟨es, Transitive.mem_arrangements h.1.2.1, h, r⟩, fun ⟨es, _, h⟩ ↦ ⟨es, h⟩⟩
+  ⟨fun ⟨es, h, r⟩ ↦ ⟨es, mem_specifiers.2 h.1.1, h, r⟩, fun ⟨es, _, h⟩ ↦ ⟨es, h⟩⟩
 
-instance (obj : Cat) (f : Examples.Fronting) (v : Mayan.VerbForm) : Decidable (Predicted obj f v) :=
-  decidable_of_iff _ predicted_iff.symm
+instance (obj : Cat) (f : Examples.Fronting) (v : Mayan.VerbForm) :
+    Decidable (HasVerbForm obj f v) :=
+  decidable_of_iff _ hasVerbForm_iff_exists_mem.symm
 
 /-- A word of the row's gloss line bears the category label `l`. -/
 def HasLabel (l : List Char) (e : Datum) : Prop := ∃ w ∈ e.glossedWords, l ∈ w.labels
@@ -799,15 +1000,15 @@ def attestedForm (e : Datum) : Mayan.VerbForm :=
   if HasLabel ['A', 'F'] e then .agentFocus else .transitive
 
 -- (50)–(53), (92), (107)
-theorem predicted_iff_acceptable :
+theorem acceptable_iff_hasVerbForm :
     ∀ x : Examples.Example, ∀ f ∈ x.fronting, ∀ o ∈ x.object,
-      (x.datum.judgment = .acceptable ↔ Predicted o.cat f (attestedForm x.datum)) := by
+      (x.datum.judgment = .acceptable ↔ HasVerbForm o.cat f (attestedForm x.datum)) := by
   decide
 
 -- (108)–(110)
-theorem predicted_iff_reading_acceptable :
+theorem reading_acceptable_iff_hasVerbForm :
     ∀ (x : Examples.Example) (r : Examples.Reading), ∀ j ∈ x.reading r, ∀ o ∈ x.object,
-      (j = .acceptable ↔ Predicted o.cat r.fronting (attestedForm x.datum)) := by
+      (j = .acceptable ↔ HasVerbForm o.cat r.fronting (attestedForm x.datum)) := by
   decide
 
 /-- The object of the last-resort model for an object of each category, a determinerless object
@@ -818,179 +1019,25 @@ def Examples.ObjectCategory.lastResort :
   | .np => .caseless
 
 -- (270)
-theorem lastResort_converges_iff_predicted (v : Mayan.VerbForm) (o : Examples.ObjectCategory) :
+theorem lastResort_converges_iff_hasVerbForm (v : Mayan.VerbForm)
+    (o : Examples.ObjectCategory) :
     CoonMateoPedroPreminger2014.Converges
         ⟨.infl, true, .transitive (CoonMateoPedroPreminger2014.voiceOf v) o.lastResort, some .A,
           false⟩ ↔
-      Predicted o.cat .subject v := by
+      HasVerbForm o.cat .subject v := by
   decide +revert
 
--- (111), (270)
-theorem lastResort_subjectObject :
-    Predicted .D .subjectObject .transitive ∧ ¬ Predicted .D .subjectObject .agentFocus ∧
-      ¬ CoonMateoPedroPreminger2014.Converges
-        ⟨.infl, true, .transitive (CoonMateoPedroPreminger2014.voiceOf .transitive) .dp, some .A,
-          false⟩ := by
+-- (111)
+theorem hasVerbForm_subjectObject_iff (v : Mayan.VerbForm) :
+    HasVerbForm .D .subjectObject v ↔ v = .transitive := by
+  decide +revert
+
+-- (270)
+theorem not_lastResort_converges_transitive :
+    ¬ CoonMateoPedroPreminger2014.Converges
+      ⟨.infl, true, .transitive (CoonMateoPedroPreminger2014.voiceOf .transitive) .dp, some .A,
+        false⟩ := by
   decide
-
-/-! ### Weak Economy -/
-
-/-- A system of operations at v fixes the features each operation checks, the operations, and
-when an operation is available given the ones already applied. -/
-structure System (ι : Type*) where
-  /-- `checks a` is the set of features operation `a` checks. -/
-  checks : ι → Finset Feature
-  /-- `ops` lists the operations. -/
-  ops : List ι
-  /-- `Available done a` holds when `a` is available after the operations `done`. -/
-  Available : List ι → ι → Prop
-  /-- Availability is decidable. -/
-  decAvailable : ∀ done a, Decidable (Available done a)
-
-attribute [instance] System.decAvailable
-
-namespace System
-
-variable {ι : Type*} [DecidableEq ι] (S : System ι)
-
-/-- An operation is possible when it has not applied, is available, and would check an unchecked
-Merge feature. -/
-def Possible (s : Finset Feature) (done : List ι) (a : ι) : Prop :=
-  a ∉ done ∧ S.Available done a ∧ ∃ f ∈ s ∩ S.checks a, f.IsMerge
-
-instance (s : Finset Feature) (done : List ι) (a : ι) : Decidable (S.Possible s done a) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-/-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied, Kiparsky's bleeding
-over the unchecked features and the operations done. -/
-def Bleeds (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
-  Phonology.Bleeds (fun st ↦ (st.1 \ S.checks a, st.2 ++ [a]))
-    (fun st ↦ S.Possible st.1 st.2 b) (s, done)
-
-instance (s : Finset Feature) (done : List ι) (a b : ι) : Decidable (S.Bleeds s done a b) :=
-  inferInstanceAs (Decidable (Phonology.Bleeds _ _ (s, done)))
-
-/-- Weak Economy does not compare two operations when either would bleed the other. -/
-def Exempt (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
-  S.Bleeds s done a b ∨ S.Bleeds s done b a
-
-instance (s : Finset Feature) (done : List ι) (a b : ι) : Decidable (S.Exempt s done a b) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
-/-- Two operations are also exempt from comparison when they would check a common feature. -/
-def ExemptOverlap (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
-  S.Exempt s done a b ∨ (s ∩ S.checks a ∩ S.checks b).Nonempty
-
-instance (s : Finset Feature) (done : List ι) (a b : ι) :
-    Decidable (S.ExemptOverlap s done a b) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
-/-- **Weak Economy** permits `a` unless some possible operation would check more features and
-is not exempt from comparison with it under `E`. -/
-def WeakEconomy (E : Finset Feature → List ι → ι → ι → Prop) (s : Finset Feature)
-    (done : List ι) (a : ι) : Prop :=
-  ∀ b ∈ S.ops, S.Possible s done b →
-    (s ∩ S.checks a).card < (s ∩ S.checks b).card → E s done a b
-
-instance (E : Finset Feature → List ι → ι → ι → Prop) [∀ s d a b, Decidable (E s d a b)]
-    (s : Finset Feature) (done : List ι) (a : ι) : Decidable (S.WeakEconomy E s done a) :=
-  inferInstanceAs (Decidable (∀ b ∈ S.ops, _))
-
-/-- `S.Derivation E s done es` holds when, after the operations `done` and with `s` unchecked,
-the operations `es` apply in order, each possible and permitted by Weak Economy, until no
-operation is possible. -/
-def Derivation (E : Finset Feature → List ι → ι → ι → Prop) :
-    Finset Feature → List ι → List ι → Prop
-  | s, done, [] => ∀ b ∈ S.ops, ¬ S.Possible s done b
-  | s, done, e :: es => e ∈ S.ops ∧ S.Possible s done e ∧ S.WeakEconomy E s done e ∧
-      Derivation E (s \ S.checks e) (done ++ [e]) es
-
-instance decDerivation (E : Finset Feature → List ι → ι → ι → Prop)
-    [∀ s d a b, Decidable (E s d a b)] :
-    (s : Finset Feature) → (done es : List ι) → Decidable (S.Derivation E s done es)
-  | _, _, [] => inferInstanceAs (Decidable (∀ b ∈ S.ops, _))
-  | s, done, e :: es =>
-    haveI := decDerivation E (s \ S.checks e) (done ++ [e]) es
-    inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
-
-/-- An economical derivation is one under Weak Economy, from scratch. -/
-abbrev Economical (s : Finset Feature) (es : List ι) : Prop := S.Derivation S.Exempt s [] es
-
-/-- An overlap-economical derivation is one under Weak Economy with operations checking a common
-feature exempt, from scratch. -/
-abbrev OverlapEconomical (s : Finset Feature) (es : List ι) : Prop :=
-  S.Derivation S.ExemptOverlap s [] es
-
-/-- The subject of a derivation is the first operation that can check v's `[·D·]`. -/
-def subject (es : List ι) : Option ι := es.find? fun a ↦ Feature.D ∈ S.checks a
-
-/-- Some economical derivation from `s` satisfies `p`. -/
-def Derives (s : Finset Feature) (p : List ι → Prop) : Prop := ∃ es, S.Economical s es ∧ p es
-
-variable {S}
-
-omit [DecidableEq ι] in
-theorem derivation_cons {E : Finset Feature → List ι → ι → ι → Prop} {s : Finset Feature}
-    {done es : List ι} {e : ι} :
-    S.Derivation E s done (e :: es) ↔ e ∈ S.ops ∧ S.Possible s done e ∧
-      S.WeakEconomy E s done e ∧ S.Derivation E (s \ S.checks e) (done ++ [e]) es :=
-  Iff.rfl
-
-omit [DecidableEq ι] in
-theorem Derivation.nodup {E : Finset Feature → List ι → ι → ι → Prop} {s : Finset Feature}
-    {done es : List ι} (h : S.Derivation E s done es) :
-    es.Nodup ∧ es ⊆ S.ops ∧ ∀ e ∈ es, e ∉ done := by
-  induction es generalizing s done with
-  | nil => simp
-  | cons e es ih =>
-    obtain ⟨he, ⟨hd, _⟩, _, h⟩ := derivation_cons.1 h
-    obtain ⟨hnd, hsub, hnot⟩ := ih h
-    refine ⟨List.nodup_cons.2 ⟨fun hes ↦ hnot e hes (by simp), hnd⟩,
-      List.cons_subset.2 ⟨he, hsub⟩, fun x hx ↦ ?_⟩
-    rcases List.mem_cons.1 hx with rfl | hx
-    · exact hd
-    · exact fun hxd ↦ hnot x hx (List.mem_append_left _ hxd)
-
-theorem exists_derivation (E : Finset Feature → List ι → ι → ι → Prop) (s : Finset Feature)
-    (done : List ι) : ∃ es, S.Derivation E s done es := by
-  induction s using Finset.strongInduction generalizing done with
-  | H s ih =>
-    by_cases hpos : ∃ b ∈ S.ops, S.Possible s done b
-    · obtain ⟨b, hb, hmax⟩ := Finset.exists_max_image
-        ((S.ops.filter fun b ↦ S.Possible s done b).toFinset) (fun b ↦ (s ∩ S.checks b).card)
-        (by obtain ⟨b, hb, hp⟩ := hpos; exact ⟨b, by simp [hb, hp]⟩)
-      simp only [List.mem_toFinset, List.mem_filter, decide_eq_true_eq] at hb hmax
-      obtain ⟨f, hf, -⟩ := hb.2.2.2
-      have hsub : s \ S.checks b ⊂ s := (Finset.ssubset_iff_of_subset Finset.sdiff_subset).2
-        ⟨f, (Finset.mem_inter.1 hf).1, fun h ↦ (Finset.mem_sdiff.1 h).2 (Finset.mem_inter.1 hf).2⟩
-      obtain ⟨es, hes⟩ := ih _ hsub (done ++ [b])
-      exact ⟨b :: es, hb.1, hb.2, fun c hc hcp hlt ↦ absurd (hmax c ⟨hc, hcp⟩) (not_le.2 hlt),
-        hes⟩
-    · push Not at hpos
-      exact ⟨[], hpos⟩
-
-omit [DecidableEq ι] in
-theorem Derivation.licensed {E : Finset Feature → List ι → ι → ι → Prop} {s : Finset Feature}
-    {done es : List ι} (h : S.Derivation E s done es) : Licensed S.checks ∅ s es := by
-  induction es generalizing s done with
-  | nil => trivial
-  | cons e es ih =>
-    obtain ⟨_, ⟨_, _, f, hf, _⟩, _, h⟩ := derivation_cons.1 h
-    exact licensed_cons.2 ⟨⟨f, hf⟩, by rw [Finset.sdiff_empty]; exact ih h⟩
-
-theorem Derivation.mem_arrangements {E : Finset Feature → List ι → ι → ι → Prop}
-    {s : Finset Feature} {es : List ι} (h : S.Derivation E s [] es) :
-    es ∈ arrangements S.ops S.ops.length :=
-  mem_arrangements_length h.nodup.1 h.nodup.2.1
-
-theorem derives_iff {s : Finset Feature} {p : List ι → Prop} :
-    S.Derives s p ↔ ∃ es ∈ arrangements S.ops S.ops.length, S.Economical s es ∧ p es :=
-  ⟨fun ⟨es, h, hp⟩ ↦ ⟨es, h.mem_arrangements, h, hp⟩, fun ⟨es, _, h⟩ ↦ ⟨es, h⟩⟩
-
-instance (s : Finset Feature) (p : List ι → Prop) [DecidablePred p] : Decidable (S.Derives s p) :=
-  decidable_of_iff _ derives_iff.symm
-
-end System
 
 /-! ### Ditransitives at v -/
 
@@ -1003,41 +1050,49 @@ inductive Op where
   | vp
   | dobj
   | subj
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Clitic doubling Agrees with the DP inside the indirect object and moves a clitic, a weak
 D-element, so it checks `[uφ]` and `[·Dweak·]`; the other operations check what their phrases
-check, given the indirect object `io` and the direct object `dobj`. -/
-def Op.checks (io dobj : Phrase) : Op → Finset Feature
+check, given the indirect object `io`, the direct object `dobj` and the external argument `ext`,
+which a passive lacks. -/
+def Op.checks (io dobj : Phrase) (ext : Option Phrase) : Op → Finset Feature
   | .clitic => {.Dweak, .phi}
   | .io => io.checks
   | .vp => Phrase.vp.checks
   | .dobj => dobj.checks
-  | .subj => Phrase.dp.checks
+  | .subj => ext.elim ∅ Phrase.checks
 
-/-- `high io dobj ops` is v with the indirect object in its complement. The indirect object is
+/-- `high io dobj ext` is v with the indirect object in its complement. The indirect object is
 accessible from the start, for clitic doubling while it is in the complement, and the direct
 object once VP has merged. -/
-def high (io dobj : Phrase) (ops : List Op) : System Op where
-  checks := Op.checks io dobj
-  ops := ops
+def high (io dobj : Phrase) (ext : Option Phrase := none) : System Op where
+  checks := Op.checks io dobj ext
   Available done a := (a = .clitic → .io ∉ done) ∧ (a = .dobj → .vp ∈ done)
-  decAvailable _ _ := inferInstanceAs (Decidable (_ ∧ _))
+
+instance (io dobj : Phrase) (ext : Option Phrase) :
+    ∀ d a, Decidable ((high io dobj ext).Available d a) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `low io dobj` is v in a passive with the indirect object in V's complement: VP is v's
 complement and the direct object c-commands the indirect object, which is accessible only once
 the direct object has moved. -/
 def low (io dobj : Phrase) : System Op where
-  checks := Op.checks io dobj
-  ops := [.vp, .dobj, .io]
-  Available done a := (a ≠ .vp → .vp ∈ done) ∧ (a = .io → .dobj ∈ done)
-  decAvailable _ _ := inferInstanceAs (Decidable (_ ∧ _))
+  checks := Op.checks io dobj none
+  Available done a := (a ≠ .vp → .vp ∈ done) ∧ (a = .io ∨ a = .clitic → .dobj ∈ done)
 
-/-- The operations of a passive, which merges no external argument. -/
-def passiveOps : List Op := [.clitic, .io, .vp, .dobj]
+instance (io dobj : Phrase) : ∀ d a, Decidable ((low io dobj).Available d a) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The operations of an active. -/
-def activeOps : List Op := [.clitic, .io, .vp, .dobj, .subj]
+/-- `flat io dobj ext` is `high io dobj ext` with the clitic accessible wherever the indirect
+object is. -/
+def flat (io dobj : Phrase) (ext : Option Phrase := none) : System Op where
+  checks := Op.checks io dobj ext
+  Available done a := a = .dobj → .vp ∈ done
+
+instance (io dobj : Phrase) (ext : Option Phrase) :
+    ∀ d a, Decidable ((flat io dobj ext).Available d a) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ → _))
 
 /-- `afterXP s` is the set of the features `s` of v left once the phrase containing the indirect
 object has checked `[·X·]`. -/
@@ -1058,48 +1113,51 @@ section Passive
 
 local notation "v₀" => afterXP (mergeFeatures Cat.v)
 
--- (180)
-theorem symmetric_passive :
-    (∃ es, (high .dp .dp passiveOps).Economical v₀ es ∧
-      (high .dp .dp passiveOps).subject es = some .io) ∧
-    ∃ es, (high .dp .dp passiveOps).Economical v₀ es ∧
-      (high .dp .dp passiveOps).subject es = some .dobj :=
-  ⟨⟨[.io, .vp], by decide⟩, ⟨[.vp, .dobj], by decide⟩⟩
+-- (180a)
+theorem exists_subject_eq_io :
+    ∃ es, (high .dp .dp).Economical v₀ es ∧ (high .dp .dp).subject es = some .io :=
+  ⟨[.io, .vp], by decide⟩
+
+-- (180b)
+theorem exists_subject_eq_dobj :
+    ∃ es, (high .dp .dp).Economical v₀ es ∧ (high .dp .dp).subject es = some .dobj :=
+  ⟨[.vp, .dobj], by decide⟩
 
 /-- **The double object movement asymmetry.** A wh indirect object checks `[·D·]` and `[·wh·]`
 at once, so Weak Economy raises it before VP merges, and it is the subject of every passive
 (181). -/
-theorem doma {es : List Op} (h : (high .whDP .dp passiveOps).Economical v₀ es) :
-    (high .whDP .dp passiveOps).subject es = some .io := by
-  have hm := System.Derivation.mem_arrangements h
-  revert h; revert hm; revert es
-  decide
+theorem subject_eq_io_of_whIo {es : List Op} (h : (high .whDP .dp).Economical v₀ es) :
+    (high .whDP .dp).subject es = some .io := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
 
 /-- The wh indirect object raises first; raising the direct object is licensed but not
 economical. -/
-example : (high .whDP .dp passiveOps).Economical v₀ [.io, .vp] ∧
-    Licensed (high .whDP .dp passiveOps).checks ∅ v₀ [.vp, .dobj] ∧
-    ¬ (high .whDP .dp passiveOps).Economical v₀ [.vp, .dobj] := by decide
+example : (high .whDP .dp).Economical v₀ [.io, .vp] ∧
+    (high .whDP .dp).Licensed v₀ [.vp, .dobj] ∧
+    ¬ (high .whDP .dp).Economical v₀ [.vp, .dobj] := by decide
 
-theorem whDobj_symmetric :
-    (∃ es, (high .dp .whDP passiveOps).Economical v₀ es ∧
-      (high .dp .whDP passiveOps).subject es = some .io) ∧
-    ∃ es, (high .dp .whDP passiveOps).Economical v₀ es ∧
-      (high .dp .whDP passiveOps).subject es = some .dobj :=
-  ⟨⟨[.io, .vp, .dobj], by decide⟩, ⟨[.vp, .dobj], by decide⟩⟩
+theorem exists_subject_eq_io_of_whDobj :
+    ∃ es, (high .dp .whDP).Economical v₀ es ∧ (high .dp .whDP).subject es = some .io :=
+  ⟨[.io, .vp, .dobj], by decide⟩
+
+theorem exists_subject_eq_dobj_of_whDobj :
+    ∃ es, (high .dp .whDP).Economical v₀ es ∧ (high .dp .whDP).subject es = some .dobj :=
+  ⟨[.vp, .dobj], by decide⟩
 
 -- fn. 6
-theorem active_whIobj :
-    ∃ es, (high .whDP .dp activeOps).Economical v₀ es ∧ es.head? = some .subj ∧ .io ∈ es :=
+theorem exists_head?_eq_subj_of_whIo :
+    ∃ es, (high .whDP .dp (some .dp)).Economical v₀ es ∧ es.head? = some .subj ∧ .io ∈ es :=
   ⟨[.subj, .io, .vp], by decide⟩
 
 -- (184)
-theorem low_subject {io : Phrase} (hio : io ∈ [Phrase.dp, .whDP]) {es : List Op}
+theorem low_subject_eq_dobj {io : Phrase} (hio : io = .dp ∨ io = .whDP) {es : List Op}
     (h : (low io .dp).Economical (mergeFeatures .v) es) :
     (low io .dp).subject es = some .dobj := by
-  have hm := System.Derivation.mem_arrangements h
-  revert h; revert hm; revert es; revert io
-  decide
+  have hm := System.mem_runs.2 h
+  clear h
+  rcases hio with rfl | rfl <;> decide +revert
 
 /-- A prepositional passive raises the direct object, and a wh indirect object then checks
 `[·wh·]`. -/
@@ -1107,8 +1165,9 @@ example : (low .dp .dp).Economical (mergeFeatures .v) [.vp, .dobj] ∧
     (low .whDP .dp).Economical (mergeFeatures .v) [.vp, .dobj, .io] := by decide
 
 -- (213)
-theorem io_kp_not_subject {bears : Finset Feature} (hD : Feature.D ∉ bears) (dobj : Phrase)
-    (ops es : List Op) : (high ⟨.K, bears⟩ dobj ops).subject es ≠ some .io := by
+theorem subject_ne_io_of_kp {bears : Finset Feature} (hD : Feature.D ∉ bears) (dobj : Phrase)
+    (ext : Option Phrase) (es : List Op) :
+    (high ⟨.K, bears⟩ dobj ext).subject es ≠ some .io := by
   intro h
   have := List.find?_some h
   simp [high, Op.checks, hD] at this
@@ -1118,20 +1177,19 @@ end Passive
 /-! ### Object marking -/
 
 -- (206)
-theorem om_io_subject {es : List Op}
-    (h : (high omDP .dp passiveOps).Economical (afterXP vOM) es) :
-    (high omDP .dp passiveOps).subject es = some .io := by
-  have hm := System.Derivation.mem_arrangements h
-  revert h; revert hm; revert es
-  decide
+theorem subject_eq_io_of_omIo {es : List Op} (h : (high omDP .dp).Economical (afterXP vOM) es) :
+    (high omDP .dp).subject es = some .io := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
 
 /-- The object-marked indirect object raises before VP merges. -/
-example : (high omDP .dp passiveOps).Economical (afterXP vOM) [.io, .vp] ∧
-    ¬ (high omDP .dp passiveOps).Economical (afterXP vOM) [.vp, .dobj] := by decide
+example : (high omDP .dp).Economical (afterXP vOM) [.io, .vp] ∧
+    ¬ (high omDP .dp).Economical (afterXP vOM) [.vp, .dobj] := by decide
 
-theorem om_dobj_recipientPassive :
-    ∃ es, (high .dp omDP passiveOps).Economical (afterXP vOM) es ∧
-      (high .dp omDP passiveOps).subject es = some .io ∧ .dobj ∈ es :=
+theorem exists_subject_eq_io_of_omDobj :
+    ∃ es, (high .dp omDP).Economical (afterXP vOM) es ∧
+      (high .dp omDP).subject es = some .io ∧ .dobj ∈ es :=
   ⟨[.io, .vp, .dobj], by decide⟩
 
 /-! ### Greek clitic doubling -/
@@ -1141,55 +1199,62 @@ section Greek
 local notation "v₀" => afterXP vGreek
 
 -- (215)
-theorem greek_passive {es : List Op} (h : (high ⟨.K, ∅⟩ .dp passiveOps).Economical v₀ es) :
-    es.head? = some .clitic ∧ (high ⟨.K, ∅⟩ .dp passiveOps).subject es = some .dobj := by
-  have hm := System.Derivation.mem_arrangements h
-  revert h; revert hm; revert es
-  decide
+theorem head?_eq_clitic_of_kp {es : List Op} (h : (high ⟨.K, ∅⟩ .dp).Economical v₀ es) :
+    es.head? = some .clitic := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
+
+-- (214)
+theorem subject_eq_dobj_of_kp {es : List Op} (h : (high ⟨.K, ∅⟩ .dp).Economical v₀ es) :
+    (high ⟨.K, ∅⟩ .dp).subject es = some .dobj := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
 
 /-- The plain passive clitic doubles, merges VP, and raises the direct object; merging VP first is
 licensed but not economical. -/
-example : (high ⟨.K, ∅⟩ .dp passiveOps).Economical v₀ [.clitic, .vp, .dobj] ∧
-    ¬ (high ⟨.K, ∅⟩ .dp passiveOps).Economical v₀ [.vp, .clitic, .dobj] := by decide
+example : (high ⟨.K, ∅⟩ .dp).Economical v₀ [.clitic, .vp, .dobj] ∧
+    ¬ (high ⟨.K, ∅⟩ .dp).Economical v₀ [.vp, .clitic, .dobj] := by decide
 
--- (218)
-theorem greek_whPassive :
-    (∀ es, (high ⟨.K, {.wh}⟩ .dp passiveOps).Economical v₀ es →
-      (high ⟨.K, {.wh}⟩ .dp passiveOps).subject es = some .dobj) ∧
-    (∃ es, (high ⟨.K, {.wh}⟩ .dp passiveOps).Economical v₀ es ∧ .clitic ∉ es) ∧
-    ∃ es, (high ⟨.K, {.wh}⟩ .dp passiveOps).Economical v₀ es ∧ .clitic ∈ es :=
-  ⟨fun es h ↦ by
-    have hm := System.Derivation.mem_arrangements h
-    revert h; revert hm; revert es
-    decide,
-    ⟨[.io, .vp, .dobj], by decide⟩, ⟨[.clitic, .io, .vp, .dobj], by decide⟩⟩
+theorem subject_eq_dobj_of_whKP {es : List Op} (h : (high ⟨.K, {.wh}⟩ .dp).Economical v₀ es) :
+    (high ⟨.K, {.wh}⟩ .dp).subject es = some .dobj := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
+
+-- (218b)
+theorem exists_clitic_notMem_of_whKP :
+    ∃ es, (high ⟨.K, {.wh}⟩ .dp).Economical v₀ es ∧ .clitic ∉ es :=
+  ⟨[.io, .vp, .dobj], by decide⟩
+
+-- (218a)
+theorem exists_clitic_mem_of_whKP :
+    ∃ es, (high ⟨.K, {.wh}⟩ .dp).Economical v₀ es ∧ .clitic ∈ es :=
+  ⟨[.clitic, .io, .vp, .dobj], by decide⟩
 
 -- (220)
-theorem greek_active :
-    (∃ es, (high ⟨.K, ∅⟩ .dp activeOps).Economical v₀ es ∧ .subj ∈ es ∧ .clitic ∈ es) ∧
-    ∃ es, (high ⟨.K, ∅⟩ .dp activeOps).Economical v₀ es ∧ .subj ∈ es ∧ .clitic ∉ es :=
-  ⟨⟨[.clitic, .subj, .vp], by decide⟩, ⟨[.subj, .vp], by decide⟩⟩
+theorem exists_clitic_mem_of_ext :
+    ∃ es, (high ⟨.K, ∅⟩ .dp (some .dp)).Economical v₀ es ∧ .subj ∈ es ∧ .clitic ∈ es :=
+  ⟨[.clitic, .subj, .vp], by decide⟩
+
+-- (220)
+theorem exists_clitic_notMem_of_ext :
+    ∃ es, (high ⟨.K, ∅⟩ .dp (some .dp)).Economical v₀ es ∧ .subj ∈ es ∧ .clitic ∉ es :=
+  ⟨[.subj, .vp], by decide⟩
 
 /-- Once the external argument has checked `[·Dweak·]`, clitic doubling is no longer possible. -/
-example : ¬ (high ⟨.K, ∅⟩ .dp activeOps).Economical v₀ [.subj, .clitic, .vp] := by
+example : ¬ (high ⟨.K, ∅⟩ .dp (some .dp)).Economical v₀ [.subj, .clitic, .vp] := by
   decide
 
-/-- `flat io dobj ops` is `high io dobj ops` with the clitic accessible wherever the indirect
-object is. -/
-def flat (io dobj : Phrase) (ops : List Op) : System Op where
-  checks := Op.checks io dobj
-  ops := ops
-  Available done a := a = .dobj → .vp ∈ done
-  decAvailable _ _ := inferInstanceAs (Decidable (_ → _))
-
-theorem flat_whPassive {es : List Op}
-    (h : (flat ⟨.K, {.wh}⟩ .dp passiveOps).Economical v₀ es) : .clitic ∈ es := by
-  have hm := System.Derivation.mem_arrangements h
-  revert h; revert hm; revert es
-  decide
+theorem flat_clitic_mem_of_whKP {es : List Op}
+    (h : (flat ⟨.K, {.wh}⟩ .dp).Economical v₀ es) : .clitic ∈ es := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
 
 /-- In that system the wh passive still has a derivation, with clitic doubling first. -/
-example : (flat ⟨.K, {.wh}⟩ .dp passiveOps).Economical v₀ [.clitic, .io, .vp, .dobj] := by
+example : (flat ⟨.K, {.wh}⟩ .dp).Economical v₀ [.clitic, .io, .vp, .dobj] := by
   decide
 
 end Greek
@@ -1244,88 +1309,79 @@ def Examples.Subject.op : Examples.Subject → Op
   | .indirect => .io
   | .direct => .dobj
 
-/-- The operations of a clause with the given subject, an active where it is the agent. -/
-def Examples.Subject.ops : Examples.Subject → List Op
-  | .agent => activeOps
-  | _ => passiveOps
+/-- The external argument of a clause with the given subject, a DP where it is the agent and
+none in a passive. -/
+def Examples.Subject.ext : Examples.Subject → Option Phrase
+  | .agent => some .dp
+  | _ => Option.none
 
 /-- Some economical derivation of the example in the language `l` makes `s` its subject, clitic
 doubles exactly when the gloss line has a clitic, and moves each object that bears a further
 feature to the edge of vP. -/
-def Predicts (l : Language) (x : Examples.Example) (s : Examples.Subject) : Prop :=
-  (high (ioPhrase l x) (doPhrase x) s.ops).Derives (afterXP l.v) fun es ↦
-    (high (ioPhrase l x) (doPhrase x) s.ops).subject es = some s.op ∧
+def HasSubject (l : Language) (x : Examples.Example) (s : Examples.Subject) : Prop :=
+  ∃ es, (high (ioPhrase l x) (doPhrase x) s.ext).Economical (afterXP l.v) es ∧
+    (high (ioPhrase l x) (doPhrase x) s.ext).subject es = some s.op ∧
       (.clitic ∈ es ↔ HasLabel ['C', 'L'] x.datum) ∧
       ((ioPhrase l x).bears.Nonempty → .io ∈ es) ∧ ((doPhrase x).bears.Nonempty → .dobj ∈ es)
 
 instance (l : Language) (x : Examples.Example) (s : Examples.Subject) :
-    Decidable (Predicts l x s) :=
-  inferInstanceAs (Decidable (System.Derives _ _ _))
+    Decidable (HasSubject l x s) :=
+  decidable_of_iff _ System.exists_run_iff.symm
 
 theorem exists_language_of_subject :
     ∀ x : Examples.Example, x.subject.isSome → ∃ l : Language, x.datum.language = l.glottocode := by
   decide
 
 -- (187), (200)–(202), (204), (207), (212), (216), (219)
-theorem predicts_iff_acceptable :
+theorem acceptable_iff_hasSubject :
     ∀ (x : Examples.Example) (l : Language), x.datum.language = l.glottocode →
-      ∀ s ∈ x.subject, (x.datum.judgment = .acceptable ↔ Predicts l x s) := by
+      ∀ s ∈ x.subject, (x.datum.judgment = .acceptable ↔ HasSubject l x s) := by
   decide +kernel
 
 /-! ### Weak Economy in subject questions -/
 
-/-- `transitiveSystem whs` has the operations at v in a transitive clause with the phrases in
-`whs` bearing `[wh]`, namely merging VP, moving the object once VP has merged, and merging the
-external argument. -/
-def transitiveSystem (whs : Finset Transitive) : System Transitive where
-  checks := Phrase.checks ∘ Transitive.phrase .D whs
-  ops := [.vp, .obj, .subj]
-  Available done a := a = .obj → .vp ∈ done
-  decAvailable _ _ := inferInstanceAs (Decidable (_ → _))
-
--- pp. 119–120
-theorem whSubject_complement {es : List Transitive}
-    (h : (transitiveSystem {.subj}).Economical (mergeFeatures .v) es) :
-    es.head? = some .subj := by
-  have hm := System.Derivation.mem_arrangements h
-  revert h; revert hm; revert es
-  decide
+-- p. 119
+theorem head?_eq_subj_of_whSubject {es : List Transitive}
+    (h : (transitive .D {.subj}).Economical (mergeFeatures .v) es) : es.head? = some .subj := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
 
 /-- The wh-subject question has the derivation with the subject as v's complement, but not the
 licensed one with VP as the complement. -/
-example : (transitiveSystem {.subj}).Economical (mergeFeatures .v) [.subj, .vp] ∧
+example : (transitive .D {.subj}).Economical (mergeFeatures .v) [.subj, .vp] ∧
     TransitiveDerivation ∅ .D {.subj} [.subj] ∧
-    ¬ (transitiveSystem {.subj}).Economical (mergeFeatures .v) [.vp, .subj] := by decide
+    ¬ (transitive .D {.subj}).Economical (mergeFeatures .v) [.vp, .subj] := by decide
 
-theorem plainSubject_either :
-    (∃ es, (transitiveSystem ∅).Economical (mergeFeatures .v) es ∧ es.head? = some .vp) ∧
-    ∃ es, (transitiveSystem ∅).Economical (mergeFeatures .v) es ∧ es.head? = some .subj :=
-  ⟨⟨[.vp, .subj], by decide⟩, ⟨[.subj, .vp], by decide⟩⟩
+theorem exists_head?_eq_vp :
+    ∃ es, (transitive .D ∅).Economical (mergeFeatures .v) es ∧ es.head? = some .vp :=
+  ⟨[.vp, .subj], by decide⟩
+
+theorem exists_head?_eq_subj :
+    ∃ es, (transitive .D ∅).Economical (mergeFeatures .v) es ∧ es.head? = some .subj :=
+  ⟨[.subj, .vp], by decide⟩
 
 -- p. 120
-theorem overlap_subjectQuestions :
-    (transitiveSystem {.subj}).OverlapEconomical (mergeFeatures .v) [.vp, .subj] ∧
-      (transitiveSystem {.subj}).OverlapEconomical (mergeFeatures .v) [.vp, .obj, .subj] ∧
-      (transitiveSystem {.obj}).OverlapEconomical (mergeFeatures .v) [.vp, .subj, .obj] := by
+theorem overlapEconomical_whSubject :
+    (transitive .D {.subj}).OverlapEconomical (mergeFeatures .v) [.vp, .subj] ∧
+      (transitive .D {.subj}).OverlapEconomical (mergeFeatures .v) [.vp, .obj, .subj] := by
   decide
 
-theorem overlap_passives :
-    (∀ es, (high .whDP .dp passiveOps).OverlapEconomical (afterXP (mergeFeatures .v)) es →
-      (high .whDP .dp passiveOps).subject es = some .io) ∧
-    (∀ es, (high ⟨.K, ∅⟩ .dp passiveOps).OverlapEconomical (afterXP vGreek) es →
-      es.head? = some .clitic) ∧
-    (∃ es, (high ⟨.K, {.wh}⟩ .dp passiveOps).OverlapEconomical (afterXP vGreek) es ∧
-      .clitic ∉ es) ∧
-    (∃ es, (high ⟨.K, ∅⟩ .dp activeOps).OverlapEconomical (afterXP vGreek) es ∧ .subj ∈ es ∧
-      .clitic ∉ es) :=
-  ⟨fun es h ↦ by
-    have hm := System.Derivation.mem_arrangements h
-    revert h; revert hm; revert es
-    decide,
-    fun es h ↦ by
-    have hm := System.Derivation.mem_arrangements h
-    revert h; revert hm; revert es
-    decide,
-    ⟨[.io, .vp, .dobj], by decide⟩, ⟨[.subj, .vp], by decide⟩⟩
+theorem overlapEconomical_whObject :
+    (transitive .D {.obj}).OverlapEconomical (mergeFeatures .v) [.vp, .subj, .obj] := by
+  decide
+
+theorem subject_eq_io_of_whIo_of_overlap {es : List Op}
+    (h : (high .whDP .dp).OverlapEconomical (afterXP (mergeFeatures .v)) es) :
+    (high .whDP .dp).subject es = some .io := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
+
+theorem head?_eq_clitic_of_kp_of_overlap {es : List Op}
+    (h : (high ⟨.K, ∅⟩ .dp).OverlapEconomical (afterXP vGreek) es) : es.head? = some .clitic := by
+  have hm := System.mem_runs.2 h
+  clear h
+  decide +revert
 
 end Newman2024
