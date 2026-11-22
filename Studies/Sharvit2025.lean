@@ -73,9 +73,8 @@ variable {W E : Type*}
 
 /-- The K+ disjunction under CON-asymmetry (16c), (17), which presupposes exactly what its left
 disjunct presupposes. -/
-def orAsym (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue := p.atIssue ⊔ q.atIssue
-  notAtIssue := p.notAtIssue
+def orAsym (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (p.atIssue ⊔ q.atIssue) p.notAtIssue
 
 /-- Swapping the disjuncts of an asymmetric disjunction changes its presupposition wherever the
 disjuncts differ in it, so the LFs (62) and (64) are not equivalent. -/
@@ -90,9 +89,9 @@ variable (EP : Set W) (sim : W → Preorder W)
 /-- The K/P conditional (100) presupposes the antecedent's presupposition, and the consequent's
 at the evaluation world if the antecedent is true there, and asserts that every antecedent-world
 of the epistemic state is a consequent-world. -/
-def ifKP (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue _ := ∀ w' ∈ EP, p.atIssue w' → q.atIssue w'
-  notAtIssue := (p.impFilter q).notAtIssue
+def ifKP (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (fun _ ↦ ∀ w' ∈ EP, p.atIssue w' → q.atIssue w')
+    ((p.impFilter q).notAtIssue)
 
 theorem ifKP_notAtIssue_of_not_atIssue {p : TwoDim W (W → Prop)} (q : TwoDim W (W → Prop))
     {w : W} (hp : p.notAtIssue w) (h : ¬ p.atIssue w) : (ifKP EP p q).notAtIssue w :=
@@ -107,16 +106,16 @@ theorem clos_subset (w : W) (Y : Set W) : clos EP sim w Y ⊆ Y :=
 
 /-- The K/P* conditional (119) presupposes the antecedent's presupposition and the consequent's
 at the closest antecedent-worlds, and asserts that those are consequent-worlds. -/
-def ifKPstar (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue w := clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.atIssue w'}
-  notAtIssue w := p.notAtIssue w ∧ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'}
+def ifKPstar (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (fun w ↦ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.atIssue w'})
+    (fun w ↦ p.notAtIssue w ∧ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'})
 
 /-- The K/P* conjunction (127) presupposes the first conjunct's presupposition, and the second's
 at the evaluation world or at the closest worlds where the first is true. -/
-def andKPstar (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue := p.atIssue ⊓ q.atIssue
-  notAtIssue w :=
-    p.notAtIssue w ∧ (q.notAtIssue w ∨ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'})
+def andKPstar (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (p.atIssue ⊓ q.atIssue)
+    (fun w ↦ p.notAtIssue w ∧
+      (q.notAtIssue w ∨ clos EP sim w {w' | p.atIssue w'} ⊆ {w' | q.notAtIssue w'}))
 
 /-- The presupposition-free proposition that `p`'s presupposition holds and its at-issue content
 is false. -/
@@ -125,11 +124,11 @@ def definedFalse (p : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
 
 /-- The K/P* disjunction (128) presupposes that one disjunct's presupposition holds and that each
 disjunct's defined negation conjoins with the other. -/
-def orKPstar (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue := p.atIssue ⊔ q.atIssue
-  notAtIssue w :=
-    (p.notAtIssue w ∨ q.notAtIssue w) ∧ (andKPstar EP sim (definedFalse p) q).notAtIssue w ∧
-      (andKPstar EP sim (definedFalse q) p).notAtIssue w
+def orKPstar (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (p.atIssue ⊔ q.atIssue)
+    (fun w ↦ (p.notAtIssue w ∨ q.notAtIssue w) ∧
+      (andKPstar EP sim (definedFalse p) q).notAtIssue w ∧
+      (andKPstar EP sim (definedFalse q) p).notAtIssue w)
 
 theorem orKPstar_notAtIssue (p q : TwoDim W (W → Prop)) (w : W) :
     (orKPstar EP sim p q).notAtIssue w ↔
@@ -160,25 +159,24 @@ abbrev Property (W E : Type*) := E → TwoDim W (W → Prop)
 /-- The type-flexible disjunction of two properties applied to `x` (142a), a partial function of
 properties `Z` defined for the two disjuncts where the propositional disjunction of the two
 applied to `x` is defined, and true of `Z` when `x` has `Z`. -/
-def orProps (α β : Property W E) (x : E) (Z : Property W E) : TwoDim W (W → Prop) where
-  atIssue w := (Z = α ∨ Z = β) ∧ (Z x).atIssue w
-  notAtIssue w := (orKPstar EP sim (α x) (β x)).notAtIssue w ∧ (Z = α ∨ Z = β)
+def orProps (α β : Property W E) (x : E) (Z : Property W E) : TwoDim W (W → Prop) :=
+  .mk (fun w ↦ (Z = α ∨ Z = β) ∧ (Z x).atIssue w)
+    (fun w ↦ (orKPstar EP sim (α x) (β x)).notAtIssue w ∧ (Z = α ∨ Z = β))
 
 /-- The type-flexible conditional over property-valued arguments (142b) requires, for every
 property the antecedent is defined for, that the consequent be defined at the closest
 antecedent-worlds and hold there. -/
-def ifProps (O₁ O₂ : Property W E → TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue w :=
-    ∀ Z, (O₁ Z).notAtIssue w →
-      clos EP sim w {w' | (O₁ Z).atIssue w'} ⊆ {w' | (O₂ Z).atIssue w'}
-  notAtIssue w := (∃ Z, (O₁ Z).notAtIssue w) ∧
-    ∀ Z, (O₁ Z).notAtIssue w →
-      clos EP sim w {w' | (O₁ Z).atIssue w'} ⊆ {w' | (O₂ Z).notAtIssue w'}
+def ifProps (O₁ O₂ : Property W E → TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (fun w ↦ ∀ Z, (O₁ Z).notAtIssue w →
+      clos EP sim w {w' | (O₁ Z).atIssue w'} ⊆ {w' | (O₂ Z).atIssue w'})
+    (fun w ↦ (∃ Z, (O₁ Z).notAtIssue w) ∧
+      ∀ Z, (O₁ Z).notAtIssue w →
+      clos EP sim w {w' | (O₁ Z).atIssue w'} ⊆ {w' | (O₂ Z).notAtIssue w'})
 
 /-- The existential closure of (144a). -/
-def exists' (O : Property W E → TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
-  atIssue w := ∃ Z, (O Z).atIssue w
-  notAtIssue w := ∃ Z, (O Z).notAtIssue w
+def exists' (O : Property W E → TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk (fun w ↦ ∃ Z, (O Z).atIssue w)
+    (fun w ↦ ∃ Z, (O Z).notAtIssue w)
 
 /-- The if-over-∃ LF (143a), in which the conditional takes the existential closures of the
 disjoined properties applied to `x` and to `y`, the ellipsis resolved to the disjunction. -/
@@ -200,7 +198,7 @@ theorem ifOverExists_atIssue (α β : Property W E) (x y : E) (w : W) :
     (ifOverExists EP sim α β x y).atIssue w ↔
       clos EP sim w {w' | (α x).atIssue w' ∨ (β x).atIssue w'} ⊆
         {w' | (α y).atIssue w' ∨ (β y).atIssue w'} := by
-  simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue]
+  simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue, TwoDim.atIssue_mk]
 
 /-- The ∀-over-if reading presupposes the disjunction of the antecedent and that `y`'s property is
 defined at the closest worlds where `x` has it (146a). -/
@@ -260,11 +258,9 @@ theorem forallOverIf_imp_ifOverExists (hstrict : ∀ w Y, clos EP sim w Y = Y �
 
 /-- The consequent of (136) with the ellipsis resolved by the world-dependent property of
 (137b), saying that `y` has whichever disjoined property `x` has. -/
-def matched (α β : Property W E) (x y : E) : TwoDim W (W → Prop) where
-  atIssue w :=
-    ((α x).atIssue w → (α y).atIssue w) ∧ ((β x).atIssue w → (β y).atIssue w)
-  notAtIssue w :=
-    ((α x).atIssue w → (α y).notAtIssue w) ∧ ((β x).atIssue w → (β y).notAtIssue w)
+def matched (α β : Property W E) (x y : E) : TwoDim W (W → Prop) :=
+  .mk (fun w ↦ ((α x).atIssue w → (α y).atIssue w) ∧ ((β x).atIssue w → (β y).atIssue w))
+    (fun w ↦ ((α x).atIssue w → (α y).notAtIssue w) ∧ ((β x).atIssue w → (β y).notAtIssue w))
 
 /-- The K/P* attempt at the ∀-over-if reading, (136) with (137b), a conditional over the
 disjunction itself. -/
@@ -294,9 +290,9 @@ variable (hasMoney proudOf : W → E → Prop)
 def penniless (x : E) : TwoDim W (W → Prop) := pure fun w ↦ ¬ hasMoney w x
 
 /-- *Proud of her money* (138b), which presupposes that `x` has money. -/
-def proudOfMoney (x : E) : TwoDim W (W → Prop) where
-  atIssue w := proudOf w x
-  notAtIssue w := hasMoney w x
+def proudOfMoney (x : E) : TwoDim W (W → Prop) :=
+  .mk (fun w ↦ proudOf w x)
+    (fun w ↦ hasMoney w x)
 
 -- (134a), (135a)
 theorem orKPstar_penniless_proud (x : E) (w : W) :

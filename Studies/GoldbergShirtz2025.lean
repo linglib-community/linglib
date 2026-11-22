@@ -321,7 +321,7 @@ def palRule : CompositionRule (Den W E S)
   | [.sit s, .pred n] => some <| .pred do
       let σ ← s
       let p ← n
-      ⟨fun x ↦ p x ⊓ depicts σ x, familiar σ⟩
+      .mk (fun x ↦ p x ⊓ depicts σ x) (familiar σ)
   | _ => none
 
 /-- Postnominal modification by a phrase restricts the head noun's property in the same way and
@@ -390,7 +390,7 @@ theorem interps_blameTheMedia :
 situation type familiar. -/
 theorem interps_palNP :
     interps (palN depicts familiar :: phrasal depicts) (lexicon blame media campaign) palNP =
-      [.pred ⟨fun x ↦ campaign x ⊓ depicts (blame media) x, familiar (blame media)⟩] := by
+      [.pred (.mk (fun x ↦ campaign x ⊓ depicts (blame media) x) (familiar (blame media)))] := by
   rw [palNP, interps_node]
   simp only [interpsList, interps_blameTheMedia]
   exact congrArg (fun p ↦ [Den.pred p]) (TwoDim.ext rfl (by simp))

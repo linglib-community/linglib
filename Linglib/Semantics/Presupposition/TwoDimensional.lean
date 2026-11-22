@@ -89,16 +89,18 @@ theorem toTrivalent_imp :
 only where the antecedent's at-issue content holds. This is the conditional presupposition by
 which [peters-1979] renders the filter of [karttunen-1973], and the one [sharvit-2025] gives for
 the connectives of [karttunen-peters-1979]. -/
-def impFilter : TwoDim W (W → Prop) := p >>= fun a ↦ ⟨a ⇨ q.atIssue, a ⇨ q.notAtIssue⟩
+def impFilter : TwoDim W (W → Prop) := p >>= fun a ↦ .mk (a ⇨ q.atIssue) (a ⇨ q.notAtIssue)
 
-@[simp] theorem impFilter_atIssue : (p.impFilter q).atIssue = p.atIssue ⇨ q.atIssue := rfl
+@[simp] theorem atIssue_impFilter : (p.impFilter q).atIssue = p.atIssue ⇨ q.atIssue := by
+  simp [impFilter]
 
-@[simp] theorem impFilter_notAtIssue :
-    (p.impFilter q).notAtIssue = p.notAtIssue ⊓ (p.atIssue ⇨ q.notAtIssue) := rfl
+@[simp] theorem notAtIssue_impFilter :
+    (p.impFilter q).notAtIssue = p.notAtIssue ⊓ (p.atIssue ⇨ q.notAtIssue) := by
+  simp [impFilter]
 
-theorem imp_notAtIssue_le_impFilter_notAtIssue :
-    (p.imp q).notAtIssue ≤ (p.impFilter q).notAtIssue :=
-  inf_le_inf_left _ le_himp
+theorem notAtIssue_imp_le_notAtIssue_impFilter :
+    (p.imp q).notAtIssue ≤ (p.impFilter q).notAtIssue := by
+  simpa using inf_le_of_right_le le_himp
 
 /-- The filtering conditional evaluates to the Middle Kleene conditional of [peters-1979]. -/
 theorem toTrivalent_impFilter :
@@ -111,7 +113,7 @@ whatever their at-issue content, so none presupposes what the filtering conditio
 theorem exists_seq_notAtIssue_ne_impFilter [Nonempty W] :
     ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
       (f <$> p <*> q).notAtIssue ≠ (p.impFilter q).notAtIssue := by
-  refine ⟨⟨⊥, ⊤⟩, ⟨⊥, ⊥⟩, fun f h ↦ ?_⟩
+  refine ⟨.mk ⊥ ⊤, .mk ⊥ ⊥, fun f h ↦ ?_⟩
   obtain ⟨w⟩ := ‹Nonempty W›
   simpa using congrFun h w
 
@@ -120,16 +122,23 @@ asserts `A(φ) ∨ A(ψ)`: each disjunct's presupposition projects unless the ot
 at-issue content holds. It is [yagi-2025]'s Definition 2 and the disjunction [sharvit-2025]
 gives for the connectives of [karttunen-peters-1979]; [kalomoiros-schwarz-2021] give experimental
 support for the symmetry. -/
-@[simps]
 def orFilter : TwoDim W (W → Prop) :=
-  ⟨p.atIssue ⊔ q.atIssue, fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)⟩
+  .mk (p.atIssue ⊔ q.atIssue)
+    fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)
+
+@[simp] theorem atIssue_orFilter : (orFilter p q).atIssue = p.atIssue ⊔ q.atIssue := by
+  simp [orFilter]
+
+@[simp] theorem notAtIssue_orFilter : (orFilter p q).notAtIssue =
+    fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w) := by
+  simp [orFilter]
 
 theorem orFilter_comm : orFilter p q = orFilter q p :=
   TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext and_comm)
 
 /-- When the disjuncts' presuppositions conflict, a defined filtering disjunction is true, so it is
 never both defined and false there ([yagi-2025] §2.2). -/
-theorem orFilter_atIssue_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIssue w))
+theorem atIssue_orFilter_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIssue w))
     (hp : (orFilter p q).notAtIssue w) : (orFilter p q).atIssue w := by
   obtain ⟨h₁, h₂⟩ := hp
   by_cases hp : p.notAtIssue w
@@ -141,8 +150,8 @@ theorem orFilter_not_trivalent (w : W) :
       ∀ p q : TwoDim W (W → Prop),
         (orFilter p q).toTrivalent w = f (p.toTrivalent w) (q.toTrivalent w) := by
   rintro ⟨f, hf⟩
-  have h₁ := hf ⟨fun _ ↦ True, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
-  have h₂ := hf ⟨fun _ ↦ False, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
+  have h₁ := hf (.mk (fun _ ↦ True) fun _ ↦ False) (.mk (fun _ ↦ True) fun _ ↦ False)
+  have h₂ := hf (.mk (fun _ ↦ False) fun _ ↦ False) (.mk (fun _ ↦ True) fun _ ↦ False)
   simp [orFilter, toTrivalent, Trivalent.condEvent_apply] at h₁ h₂
   exact absurd (h₁.trans h₂.symm) (by decide)
 
@@ -151,9 +160,16 @@ holds, its presupposition included, and asserts that `x` does not believe its at
 The complement's presupposition so projects to the evaluation world, the transparent rule of
 [van-der-sandt-1992], and not into `x`'s beliefs, the opaque rule of [heim-1992];
 [delpinal-bassi-sauerland-2024] derive free choice under *unaware* with either. -/
-@[simps]
 def negFactive (believes : (W → Prop) → W → Prop) : TwoDim W (W → Prop) :=
-  ⟨fun w ↦ ¬ believes p.atIssue w, fun w ↦ p.notAtIssue w ∧ p.atIssue w⟩
+  .mk (fun w ↦ ¬ believes p.atIssue w) fun w ↦ p.notAtIssue w ∧ p.atIssue w
+
+@[simp] theorem atIssue_negFactive (believes : (W → Prop) → W → Prop) :
+    (negFactive p believes).atIssue = fun w ↦ ¬ believes p.atIssue w := by
+  simp [negFactive]
+
+@[simp] theorem notAtIssue_negFactive (believes : (W → Prop) → W → Prop) :
+    (negFactive p believes).notAtIssue = fun w ↦ p.notAtIssue w ∧ p.atIssue w := by
+  simp [negFactive]
 
 /-- Under a complement that presupposes nothing, the negative factive is the negation of the
 factive sentence. -/

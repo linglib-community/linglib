@@ -87,12 +87,12 @@ theorem that_assigned_dom (assoc : E → Option L) (h : ∀ x y o, o ∈ assoc x
 at-issue clause `p`. -/
 def introducing (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) :
     TwoDim W (W → Prop) :=
-  ⟨p, fun w ↦ R w x o⟩
+  .mk p fun w ↦ R w x o
 
 /-- The anaphoric use `∅ IX_a DANCE`: asserts of an entity associated with `o` that it
 satisfies `P` and presupposes, use-conditionally, that exactly one entity is. -/
 def anaphoric (P : W → E → Prop) (R : W → E → L → Prop) (o : L) : TwoDim W (W → Prop) :=
-  ⟨fun w ↦ ∃ x, R w x o ∧ P w x, fun w ↦ ∃! x, R w x o⟩
+  .mk (fun w ↦ ∃ x, R w x o ∧ P w x) fun w ↦ ∃! x, R w x o
 
 theorem introducing_neg_notAtIssue (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) :
     (introducing p R x o).neg.notAtIssue = fun w ↦ R w x o :=

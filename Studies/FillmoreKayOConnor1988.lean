@@ -225,8 +225,8 @@ that the two are points of one scalar model, the clause the conjunction presents
 being the more informative. -/
 def Conjunction.meaning (c : Conjunction) (pol : Polarity) (P : D → S → Prop) (a b : D) :
     TwoDim S (S → Prop) :=
-  ⟨force pol (P a) ⊓ force pol (P b),
-    fun _ ↦ if c.StrongerFirst then Felicitous P pol a b else Felicitous P pol b a⟩
+  .mk (force pol (P a) ⊓ force pol (P b))
+    fun _ ↦ if c.StrongerFirst then Felicitous P pol a b else Felicitous P pol b a
 
 /-- The denotations of the construction's parts: a focus is a point of the argument space, the
 trigger F a polarity, the frame X _ Y a propositional function, and the full clause the three
@@ -435,7 +435,7 @@ theorem notAtIssue_21 (s : LowerSet Rank) :
     (Conjunction.letAlone.meaning .negative MadeRank .colonel .general).notAtIssue s ∧
       ¬ (Conjunction.letAlone.meaning .negative MadeRank .general .colonel).notAtIssue s := by
   simp only [Conjunction.meaning, Conjunction.StrongerFirst, ite_true,
-    felicitous_negative_iff isScalarModel_mem]
+    ConventionalImplicature.TwoDim.notAtIssue_mk, felicitous_negative_iff isScalarModel_mem]
   decide
 
 end Example21
