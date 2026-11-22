@@ -31,18 +31,19 @@ connectives from the Strong Kleene ones but not the converse.
 
 ## Main results
 
-* `Propositional.Formula.realize_neg`, `Propositional.Formula.isDual`: under any connectives negation
-  swaps the standards.
-* `Trivalent.consequence_iff_dual`: `Γ ⊨ Δ` in K3 iff `¬Δ ⊨ ¬Γ` in LP.
+* `Propositional.Formula.realize_neg`, `Propositional.Formula.isDual`:
+  under any connectives negation swaps the standards.
+* `Propositional.consequence_iff_dual`: `Γ ⊨ Δ` in K3 iff `¬Δ ⊨ ¬Γ` in LP.
 * `Propositional.Formula.eval_ofBool`: on a Boolean model the Strong Kleene tables are classical.
-* `Propositional.Formula.eval_weakKleene_eq_undefined_iff`: under the Weak Kleene tables a formula is
-  undefined exactly when one of its atoms is.
-* `Propositional.Formula.not_exists_eval_weakKleene_eq_inf`: the Weak Kleene tables do not define Strong
-  Kleene conjunction, while the Strong Kleene ones define the Weak Kleene connectives
+* `Propositional.Formula.eval_weakKleene_eq_undefined_iff`:
+  under the Weak Kleene tables a formula is undefined exactly when one of its atoms is.
+* `Propositional.Formula.not_exists_eval_weakKleene_eq_inf`:
+  the Weak Kleene tables do not define Strong Kleene conjunction, while the Strong Kleene ones
+  define the Weak Kleene connectives
   (`Propositional.Formula.exists_eval_strongKleene_eq_meetWeak`).
-* `Trivalent.k3_no_tautologies`, `Trivalent.lp_all_satisfiable`: the model sending every atom to
+* `Propositional.k3_no_tautologies`, `Propositional.lp_all_satisfiable`: the model sending every atom to
   `undefined` gives Strong Kleene K3 no tautologies and LP no unsatisfiable formula.
-* `Trivalent.lp_no_explosion`: LP is paraconsistent.
+* `Propositional.lp_no_explosion`: LP is paraconsistent.
 
 ## Implementation notes
 

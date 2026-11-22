@@ -114,7 +114,6 @@ import Linglib.Logic.Team.Closure
 import Linglib.Logic.Temporal.Basic
 import Linglib.Logic.Temporal.Defs
 import Linglib.Core.Data.UnorderedTree.Basic
-import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
