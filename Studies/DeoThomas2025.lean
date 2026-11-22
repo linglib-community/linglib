@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Questions.Partition.Inquisitive
 public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.DeoThomas2025
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic

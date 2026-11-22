@@ -6,7 +6,7 @@ public import Mathlib.Order.Monotone.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Presupposition.Strawson
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # The focus particles *only*, *even* and *too*

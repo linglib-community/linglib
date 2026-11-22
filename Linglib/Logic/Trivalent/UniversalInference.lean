@@ -26,7 +26,7 @@ it](##Quantifier.universalProjection_eq_transplication_deployQuantifier).
 ## Implementation notes
 
 The definitions take any `(α → Trivalent) → Trivalent`, so they apply to the other trivalent
-quantifiers of `Linglib.Logic.Trivalent.Pointwise` as well as to deployed ones. The domain lets one
+quantifiers of `Linglib.Logic.Trivalent.Quantifier` as well as to deployed ones. The domain lets one
 notion cover quantifiers, over the whole universe, and determiners, over the restrictor.
 
 ## References

@@ -5,7 +5,7 @@ public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Discourse.SpeechAct.Basic
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Fragments.Mayan.Chuj.Verbs
 public import Linglib.Fragments.Mayan.Chuj.Voice
 public import Linglib.Fragments.Mayan.Chuj.Extraction

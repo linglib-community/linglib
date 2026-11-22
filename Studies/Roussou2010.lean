@@ -3,7 +3,7 @@ module
 public import Linglib.Fragments.Greek.StandardModern.Complementizers
 public import Linglib.Fragments.Greek.StandardModern.Verbs
 public import Linglib.Semantics.Questions.Polar
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Data.Examples.Roussou2010

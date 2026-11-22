@@ -4,6 +4,7 @@ public import Linglib.Logic.Trivalent.Probability
 public import Studies.EgreRossiSprenger2026a
 public import Studies.Yalcin2007
 public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Logic.Trivalent.Quantifier
 
 /-!
 # Égré, Rossi and Sprenger (2026): Trivalent Conditionals, Kratzer Style

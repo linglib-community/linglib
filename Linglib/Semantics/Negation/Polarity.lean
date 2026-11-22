@@ -10,7 +10,7 @@ public import Mathlib.GroupTheory.GroupAction.Defs
 public import Mathlib.Order.BooleanAlgebra.Set
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 
 /-!
 # Polarity

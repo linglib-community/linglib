@@ -5,7 +5,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Natural.Projection
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Readings of a conditional

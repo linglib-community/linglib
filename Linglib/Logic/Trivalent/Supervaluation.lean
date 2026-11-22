@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Logic.Trivalent.Propositional
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Fintype.Pi

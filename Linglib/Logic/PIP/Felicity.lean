@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.PIP.Semantics
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 
 /-!
 # Felicity of PIP formulas

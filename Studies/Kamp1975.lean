@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modification.Intensional
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset

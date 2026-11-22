@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Modality.DomainSemantics
 public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Data.Examples.AnandHacquard2013

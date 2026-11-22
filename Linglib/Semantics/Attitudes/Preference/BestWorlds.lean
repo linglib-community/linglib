@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Presupposition.Strawson
 

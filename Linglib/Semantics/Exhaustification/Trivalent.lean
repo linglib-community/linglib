@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 
 /-!
 # Trivalent exhaustification

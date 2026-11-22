@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Data.Examples.BeaverKrahmer2001
 public import Linglib.Data.Examples.Readers

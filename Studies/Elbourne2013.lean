@@ -5,6 +5,7 @@ public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Presupposition.Basic
 public import Mathlib.Order.Minimal
 public import Linglib.Data.Examples.Readers
+public import Linglib.Logic.Trivalent.Quantifier
 
 /-!
 # Elbourne (2013): Definite Descriptions

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Consequence.Mixed
 public import Mathlib.Logic.Function.DependsOn
 

@@ -5,7 +5,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Order.BooleanSubalgebra
 public import Mathlib.Order.Hom.CompleteLattice
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Coppock2018
 public import Linglib.Data.Examples.Readers
 
@@ -42,7 +42,7 @@ conditions on the three verbs are checked.
   `Logic/Modal/Defs.lean`, and rejection the box of falsity, stronger than the paper's
   gloss "holds in none" on a trivalent proposition but the reading its analysis of (38)
   uses. *Think* and *tycka* are trivalent propositions built with the Weak Kleene
-  conjunction of `Logic/Trivalent/Basic.lean`, the paper's ∂ being the join `a ⊔ 0` with
+  conjunction of `Logic/Trivalent/Connectives.lean`, the paper's ∂ being the join `a ⊔ 0` with
   the gap, so that presupposition projection through negation is the logic's rather than a
   stipulation.
 * The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Presuppositional
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Semantics.Homogeneity.Plural
 public import Studies.BarLevFox2020

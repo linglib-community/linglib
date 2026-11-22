@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Bilattice.Involution
 public import Mathlib.Data.Finset.Lattice.Fold
 
@@ -22,8 +22,6 @@ top: Kleene's values lack the glut of Belnap's four values, of which they are th
 ## Main definitions
 
 * the `PartialOrder`, `OrderBot` and `SemilatticeInf` instances on `Know Trivalent`.
-* `Trivalent.IsExtensionOf`, `Trivalent.IsRegular`: a trivalent quantifier that agrees with a
-  classical one on classical predicates, and one that is monotone for the knowledge order.
 
 ## Main results
 
@@ -152,24 +150,5 @@ theorem supervaluation_kLE_supervaluation {α : Type*} {s t : Finset α} (P : α
     supervaluation t P ≤ₖ supervaluation s P := by
   rw [kLE_def, toKnow_supervaluation P hs, toKnow_supervaluation P (hs.mono h)]
   exact Finset.inf'_mono _ h hs
-
-/-! ### Regular extensions of a quantifier -/
-
-section Regular
-
-variable {U : Type*}
-
-open Classical in
-/-- A trivalent quantifier is an extension of `Q` when it has the value of `Q` at every classical
-predicate. -/
-def IsExtensionOf (Q : Set U → Prop) (T : (U → Trivalent) → Trivalent) : Prop :=
-  ∀ R : Set U, T (fun u ↦ ofProp (u ∈ R)) = ofProp (Q R)
-
-/-- A trivalent quantifier is regular when more information about its argument gives more
-information about its value ([kleene-1952]). -/
-def IsRegular (T : (U → Trivalent) → Trivalent) : Prop :=
-  ∀ ⦃A A' : U → Trivalent⦄, (∀ u, A u ≤ₖ A' u) → T A ≤ₖ T A'
-
-end Regular
 
 end Trivalent

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Conditionals.Counterfactual
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.BarLevFox2020

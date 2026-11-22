@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Koev (2017): Evidentiality, Learning Events and Spatiotemporal Distance

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Proposition
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update

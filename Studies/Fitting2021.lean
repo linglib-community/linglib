@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Bilattice.Representation
 public import Linglib.Logic.Trivalent.Four
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Consequence.Mixed
 
 /-!

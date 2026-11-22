@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Core.Probability.ConditionalProbability
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.Probability.UniformOn

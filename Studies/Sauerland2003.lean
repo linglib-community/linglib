@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.Atoms
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Presupposition.Strengthening
 
 /-!

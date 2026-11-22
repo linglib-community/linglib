@@ -4,7 +4,7 @@ public import Studies.BuringGunlogson2000
 public import Linglib.Syntax.Negation
 public import Linglib.Semantics.Questions.Polar
 public import Linglib.Semantics.Questions.HamblinSet
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Fragments.Slavic.Russian.QuestionParticles

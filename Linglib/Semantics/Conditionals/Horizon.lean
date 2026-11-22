@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
