@@ -75,6 +75,7 @@ namespace EgreRossiSprenger2026c
 
 open Classical
 open Trivalent hiding true false
+open Propositional
 open EgreRossiSprenger2026b (Sentence Entails NeverVoid accepts_ofSet_iff)
 open EgreRossiSprenger2026b.Sentence (ofSet ofSet_apply restrict mem_restrict conj disj box dia
   ContextFree)

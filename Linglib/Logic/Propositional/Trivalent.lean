@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Logic.Propositional.Basic
 public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Consequence.Mixed
 public import Mathlib.Logic.Function.DependsOn
@@ -23,23 +24,22 @@ connectives from the Strong Kleene ones but not the converse.
 
 ## Main definitions
 
-* `Trivalent.Formula`, `Trivalent.Formula.eval`: formulas and their values under the connectives.
-* `Trivalent.Formula.atoms`: the atoms that occur in a formula.
-* `Trivalent.Model.ofBool`: the Boolean model of a classical valuation of the atoms.
-* `Trivalent.Formula.Realize`: realization at a designation standard, written `M ⊨[C, d] φ`.
-* `Trivalent.Consequence`: mixed consequence over designation standards.
+* `Propositional.Formula.eval`: the value of a formula under the connectives.
+* `Propositional.Model.ofBool`: the Boolean model of a classical valuation of the atoms.
+* `Propositional.Formula.Realize`: realization at a designation standard, written `M ⊨[C, d] φ`.
+* `Propositional.Consequence`: mixed consequence over designation standards.
 
 ## Main results
 
-* `Trivalent.Formula.realize_neg`, `Trivalent.Formula.isDual`: under any connectives negation
+* `Propositional.Formula.realize_neg`, `Propositional.Formula.isDual`: under any connectives negation
   swaps the standards.
 * `Trivalent.consequence_iff_dual`: `Γ ⊨ Δ` in K3 iff `¬Δ ⊨ ¬Γ` in LP.
-* `Trivalent.Formula.eval_ofBool`: on a Boolean model the Strong Kleene tables are classical.
-* `Trivalent.Formula.eval_weakKleene_eq_undefined_iff`: under the Weak Kleene tables a formula is
+* `Propositional.Formula.eval_ofBool`: on a Boolean model the Strong Kleene tables are classical.
+* `Propositional.Formula.eval_weakKleene_eq_undefined_iff`: under the Weak Kleene tables a formula is
   undefined exactly when one of its atoms is.
-* `Trivalent.Formula.not_exists_eval_weakKleene_eq_inf`: the Weak Kleene tables do not define Strong
+* `Propositional.Formula.not_exists_eval_weakKleene_eq_inf`: the Weak Kleene tables do not define Strong
   Kleene conjunction, while the Strong Kleene ones define the Weak Kleene connectives
-  (`Trivalent.Formula.exists_eval_strongKleene_eq_meetWeak`).
+  (`Propositional.Formula.exists_eval_strongKleene_eq_meetWeak`).
 * `Trivalent.k3_no_tautologies`, `Trivalent.lp_all_satisfiable`: the model sending every atom to
   `undefined` gives Strong Kleene K3 no tautologies and LP no unsatisfiable formula.
 * `Trivalent.lp_no_explosion`: LP is paraconsistent.
@@ -59,19 +59,9 @@ the model sending every atom to `undefined` voids every formula under the Strong
 
 @[expose] public section
 
-namespace Trivalent
+namespace Propositional
 
 open Trivalent Consequence
-
-/-- Propositional formulas over an atom type, built by negation, conjunction, disjunction and the
-conditional. -/
-inductive Formula (Atom : Type*) where
-  | atom : Atom → Formula Atom
-  | neg : Formula Atom → Formula Atom
-  | conj : Formula Atom → Formula Atom → Formula Atom
-  | disj : Formula Atom → Formula Atom → Formula Atom
-  | cond : Formula Atom → Formula Atom → Formula Atom
-  deriving DecidableEq
 
 /-- A trivalent model assigns a value to each atom. -/
 abbrev Model (Atom : Type*) := Atom → Trivalent
@@ -113,28 +103,6 @@ variable (C : Connectives) (M : Model Atom)
 
 end Eval
 
-/-- Classical evaluation on a Boolean valuation. -/
-def evalBool (v : Atom → Bool) : Formula Atom → Bool
-  | .atom a => v a
-  | .neg φ => !evalBool v φ
-  | .conj φ ψ => evalBool v φ && evalBool v ψ
-  | .disj φ ψ => evalBool v φ || evalBool v ψ
-  | .cond φ ψ => !evalBool v φ || evalBool v ψ
-
-@[simp] theorem evalBool_atom (v : Atom → Bool) (a : Atom) : evalBool v (.atom a) = v a := rfl
-
-@[simp] theorem evalBool_neg (v : Atom → Bool) (φ : Formula Atom) :
-    evalBool v (.neg φ) = !evalBool v φ := rfl
-
-@[simp] theorem evalBool_conj (v : Atom → Bool) (φ ψ : Formula Atom) :
-    evalBool v (.conj φ ψ) = (evalBool v φ && evalBool v ψ) := rfl
-
-@[simp] theorem evalBool_disj (v : Atom → Bool) (φ ψ : Formula Atom) :
-    evalBool v (.disj φ ψ) = (evalBool v φ || evalBool v ψ) := rfl
-
-@[simp] theorem evalBool_cond (v : Atom → Bool) (φ ψ : Formula Atom) :
-    evalBool v (.cond φ ψ) = (!evalBool v φ || evalBool v ψ) := rfl
-
 private theorem strongKleene_ofProp (x y : Bool) :
     Connectives.strongKleene.conj (ofProp x) (ofProp y) = ofProp (x && y) ∧
       Connectives.strongKleene.disj (ofProp x) (ofProp y) = ofProp (x || y) ∧
@@ -152,24 +120,6 @@ theorem eval_ofBool (v : Atom → Bool) (φ : Formula Atom) :
   | cond φ ψ ihφ ihψ => rw [eval_cond, ihφ, ihψ]; exact (strongKleene_ofProp _ _).2.2
 
 /-! ### Atoms and definability -/
-
-/-- The atoms that occur in a formula. -/
-def atoms : Formula Atom → Set Atom
-  | .atom a => {a}
-  | .neg φ => atoms φ
-  | .conj φ ψ => atoms φ ∪ atoms ψ
-  | .disj φ ψ => atoms φ ∪ atoms ψ
-  | .cond φ ψ => atoms φ ∪ atoms ψ
-
-@[simp] theorem atoms_atom (a : Atom) : (atom a).atoms = {a} := rfl
-
-@[simp] theorem atoms_neg (φ : Formula Atom) : φ.neg.atoms = φ.atoms := rfl
-
-@[simp] theorem atoms_conj (φ ψ : Formula Atom) : (φ.conj ψ).atoms = φ.atoms ∪ ψ.atoms := rfl
-
-@[simp] theorem atoms_disj (φ ψ : Formula Atom) : (φ.disj ψ).atoms = φ.atoms ∪ ψ.atoms := rfl
-
-@[simp] theorem atoms_cond (φ ψ : Formula Atom) : (φ.cond ψ).atoms = φ.atoms ∪ ψ.atoms := rfl
 
 /-- The value of a formula depends only on the values of its atoms. -/
 theorem dependsOn_eval (C : Connectives) (φ : Formula Atom) :
@@ -323,4 +273,4 @@ theorem lp_no_explosion :
     (by simp [Formula.Realize, Connectives.strongKleene])
   simp [Formula.Realize] at this
 
-end Trivalent
+end Propositional

@@ -82,6 +82,7 @@ contradictions) come out at the level of acceptance and inference, not truth con
 namespace EgreRossiSprenger2026b
 
 open Trivalent hiding true false
+open Propositional
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 

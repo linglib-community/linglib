@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Prod.Lex.Basic
-public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Propositional.Trivalent
 public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Data.Examples.BeaverKrahmer2001
@@ -266,15 +266,15 @@ def eval (V : Valuation Atom) : Formula Atom → Trivalent
     eval V (assert φ) = ofProp (eval V φ = .true) := rfl
 
 /-- The substrate's formulas embed, with every connective read in one logic. -/
-def ofFormula (k : Kleene) : Trivalent.Formula Atom → Formula Atom
+def ofFormula (k : Kleene) : Propositional.Formula Atom → Formula Atom
   | .atom a => atom a
   | .neg φ => neg (ofFormula k φ)
   | .conj φ ψ => conn .conj k (ofFormula k φ) (ofFormula k ψ)
   | .disj φ ψ => conn .disj k (ofFormula k φ) (ofFormula k ψ)
   | .cond φ ψ => conn .imp k (ofFormula k φ) (ofFormula k ψ)
 
-theorem eval_ofFormula (k : Kleene) (V : Valuation Atom) (φ : Trivalent.Formula Atom) :
-    eval V (ofFormula k φ) = Trivalent.Formula.eval k.connectives (Trivalent.Model.ofBool V) φ := by
+theorem eval_ofFormula (k : Kleene) (V : Valuation Atom) (φ : Propositional.Formula Atom) :
+    eval V (ofFormula k φ) = Propositional.Formula.eval k.connectives (Propositional.Model.ofBool V) φ := by
   induction φ with
   | atom a => rfl
   | neg φ ih => simp [ofFormula, ih]
