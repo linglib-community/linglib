@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Pragmatics.Probabilistic.Decision
 public import Linglib.Pragmatics.SignalingGame.Basic
-public import Linglib.Pragmatics.SignalingGame.Replicator
+public import Linglib.Pragmatics.SignalingGame.Dynamics.Replicator
 public import Studies.KirbyDowmanGriffiths2007
 
 /-!

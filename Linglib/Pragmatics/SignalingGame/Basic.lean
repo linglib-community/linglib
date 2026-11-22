@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Pragmatics.SignalingGame.Defs
 public import Mathlib.Dynamics.Ergodic.MeasurePreserving
 public import Mathlib.Probability.Kernel.Composition.CompMap
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
@@ -84,6 +85,14 @@ theorem success_deterministic [Countable M] [MeasurableSingletonClass M] (f : S 
   rw [Kernel.comp_apply' _ _ _ (.singleton s), Kernel.deterministic_apply, lintegral_dirac,
     Kernel.deterministic_apply, Measure.dirac_apply' _ (.singleton s)]
   by_cases h : g (f s) = s <;> simp [Set.indicator, h]
+
+/-- Expected success is the value of the guessing game. -/
+theorem guess_receiverValue [DecidableEq S] [IsFiniteMeasure pr] (σ : Kernel S M)
+    [IsMarkovKernel σ] (η : Kernel M S) [IsMarkovKernel η] :
+    (guess pr : SignalingGame S M S).receiverValue σ η = success pr σ η := by
+  -- TODO: the inner integral is `((η ∘ₖ σ) s).real {s}`; then `success_eq_lintegral` and
+  -- `integral_toReal`.
+  sorry
 
 /-- Relabelling the states by a permutation `e` that preserves the prior, and the signals by any
 permutation `π`, leaves the expected success of every sender with every receiver unchanged. -/
