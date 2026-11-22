@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.BranchingProcess.GaltonWatson
-public import Linglib.Core.Probability.SequenceModel.Tight
+public import Linglib.Processing.LanguageModel.Tight
 
 /-!
 # An autoregressive sequence model as a branching process

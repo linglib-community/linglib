@@ -5,27 +5,22 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.SequenceModel.Basic
+public import Linglib.Processing.LanguageModel.Autoregressive
 
 /-!
-# The autoregressive model of a measure on strings
+# The autoregressive model of a language model
 
-After each prefix of positive probability, the first symbol of the continuation of a measure on
-strings, `none` where the continuation is empty, has a law, and these laws form a model,
-`ofMeasure`. A probability measure on strings is the string law of its model
-(`stringMeasure_ofMeasure`), and of every model that agrees with it after each prefix of positive
-probability (`stringMeasure_eq_of_next_eq`). Prefixes act on a measure by taking continuations and
-on a model by starting it after the prefix, and the passage from measures to models carries one
-action to the other (`ofMeasure_continuation`).
-
-A random string `str : T → List W` on a probability space has a law, and the model of that law
-continues a prefix with the conditional probability of the event that the string begins with the
-extended prefix (`condPrefixProb_ofMeasure_map`), the prefix probability of [stolcke-1995].
+A language model is a probability measure on strings. After each prefix of positive probability,
+the first symbol of its continuation, `none` where the continuation is empty, has a law, and
+these laws form an autoregressive model, `ofMeasure`. A language model is the string law of its
+model (`stringMeasure_ofMeasure`), and of every model that agrees with it after each prefix of
+positive probability (`stringMeasure_eq_of_next_eq`). Prefixes act on a measure by taking
+continuations and on a model by starting it after the prefix, and the passage from measures to
+models carries one action to the other (`ofMeasure_continuation`).
 
 ## Main definitions
 
 * `ofMeasure μ`: the model of a measure on strings.
-* `consistent str ws`: the event that the random string `str` begins with `ws`.
 
 ## Implementation notes
 
@@ -34,7 +29,6 @@ The results about string laws take a countable alphabet with measurable singleto
 ## References
 
 * [du-etal-2023]
-* [stolcke-1995]
 -/
 
 @[expose] public section
@@ -176,53 +170,5 @@ theorem surprisal_eq_sum_surprisal_next (x : List α) :
   rw [← surprisal_stringMeasure, stringMeasure_ofMeasure]
 
 end ofMeasure
-
-
-/-! ### The law of a random string -/
-
-section map
-
-variable {T W : Type*} (str : T → List W)
-
-/-- The sample points whose string extends the prefix `ws`: the event that the random string `str`
-begins with `ws`. -/
-def consistent (ws : List W) : Set T := str ⁻¹' ws.cylinder
-
-@[simp] theorem consistent_nil : consistent str ([] : List W) = Set.univ :=
-  Set.eq_univ_of_forall fun _ ↦ List.nil_prefix
-
-theorem consistent_anti {ws ws' : List W} (h : ws <+: ws') :
-    consistent str ws' ⊆ consistent str ws :=
-  fun _ ht ↦ h.trans ht
-
-variable [MeasurableSpace T] [DiscreteMeasurableSpace T] (P : Measure T)
-
-theorem map_apply_cylinder (ws : List W) :
-    P.map str ws.cylinder = P (consistent str ws) :=
-  Measure.map_apply .of_discrete .of_discrete
-
-variable [MeasurableSpace W] [MeasurableSingletonClass W]
-
-/-- After a prefix of positive probability, the model of the law of a random string continues with
-`xs` with the ratio of the probabilities that the string begins with the extended prefix and with
-the prefix. -/
-theorem condPrefixProb_ofMeasure_map [IsProbabilityMeasure P] {ws : List W}
-    (hws : P (consistent str ws) ≠ 0) (xs : List W) :
-    (ofMeasure (P.map str)).condPrefixProb ws xs =
-      P (consistent str (ws ++ xs)) / P (consistent str ws) := by
-  rw [condPrefixProb_ofMeasure (by rwa [map_apply_cylinder]),
-    cond_apply_of_subset .of_discrete (ws.cylinder_append_subset xs), map_apply_cylinder,
-    map_apply_cylinder]
-
-/-- The probability of the next symbol `w` after the prefix `ws` is the conditional probability,
-given that the random string begins with `ws`, that it begins with `ws ++ [w]`. -/
-theorem next_ofMeasure_map_apply_some (ws : List W) (w : W) :
-    (ofMeasure (P.map str)).next ws {some w} =
-      P[consistent str (ws ++ [w]) | consistent str ws] := by
-  rw [next_ofMeasure_apply_some, cond_map .of_discrete .of_discrete,
-    Measure.map_apply .of_discrete .of_discrete]
-  rfl
-
-end map
 
 end AutoregressiveSequenceModel
