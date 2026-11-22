@@ -297,10 +297,14 @@ def pieceOfGloss? (g : List Char) : Option Piece :=
     else none
   else none
 
-/-- The pieces of a row's auxiliary, the word with a tense morpheme. -/
-def pieces (e : Datum) : Option (List Piece) :=
-  (e.glossedWords.find? fun w ↦ decide (some Piece.tense ∈ w.glosses.map pieceOfGloss?)).map
-    (·.glosses.filterMap pieceOfGloss?)
+/-- The pieces of a row's auxiliary, the word with a tense morpheme, under a reading `read` of
+the morphemes of the gloss line. -/
+def piecesBy (read : List Char → Option Piece) (e : Datum) : Option (List Piece) :=
+  (e.glossedWords.find? fun w ↦ decide (some Piece.tense ∈ w.glosses.map read)).map
+    (·.glosses.filterMap read)
+
+/-- The pieces of a row's auxiliary, in the book's glosses. -/
+def pieces : Datum → Option (List Piece) := piecesBy pieceOfGloss?
 
 /-- The rule of Participant Dissimilation of a variety. -/
 def Examples.Variety.rule : Examples.Variety → ObliterationRule Terminal

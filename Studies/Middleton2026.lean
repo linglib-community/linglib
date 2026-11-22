@@ -8,6 +8,7 @@ public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Phonology.RuleInteraction
 public import Studies.ArregiNevins2012
+public import Linglib.Data.Examples.Middleton2026
 
 /-!
 # Middleton (2026): A Remark on the Ordering of Impoverishment Rules: Differences between Taos and Basque
@@ -67,9 +68,10 @@ Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), as it does in Ondarru
   (Table 3 prints *ónôm* and *ónôw*, but the tone rule (51h) and the appendix's Tables 8, 14,
   17 and 38 have *ónóm* and *ónów*, which the rules give).
 * The paper's (13), (16) and (18) restate Arregi and Nevins's rules with an adjacent swap and
-  an adjacent trigger; `Studies/ArregiNevins2012.lean` has the book's rules, under which the
-  rejected order leaves T at the edge of the word, the book's (17b), and not the paper's starred
-  (17b) and (19b).
+  an adjacent trigger. Under the book's rules, in `Studies/ArregiNevins2012.lean`, the paper's
+  starred (17b) is the output of Ergative Metathesis, Participant Dissimilation and then
+  L-Support (`pieces_ex17b`), and its starred (19b) the output of Ergative Metathesis alone
+  (`pieces_ex19b`).
 
 ## References
 
@@ -1536,5 +1538,112 @@ theorem impoverishment_feeds_metathesis :
         ArregiNevins2012.auxiliary16 ∧
       Feeds r24.rule.apply (fun p ↦ Fires (m23 p) (linearize p)) (spellOut cell1D3Sno) :=
   ⟨ArregiNevins2012.ondarru_feeds, r24_feeds_m23⟩
+
+/-! ### The auxiliaries of the rejected order
+
+The paper stars two auxiliaries as what Ergative Metathesis before Participant Dissimilation
+would give. Read off their gloss lines, (17b) has L-Support after Participant Dissimilation and
+(19b) has Ergative Metathesis without Participant Dissimilation. -/
+
+open ArregiNevins2012 (Piece piece piecesBy)
+
+/-- The piece a morpheme of the paper's gloss line is: `PAST` is T, `L` is L, and a case with a
+person is the clitic of that case. -/
+def pieceOfGloss? (g : List Char) : Option Piece :=
+  let els := Gloss.elements g
+  if "PAST".toList ∈ els then some .tense
+  else if els = ["L".toList] then some .l
+  else if ∃ el ∈ els, el.head?.any Char.isDigit = true then
+    if "ERG".toList ∈ els then some .ergative
+    else if "DAT".toList ∈ els then some .dative
+    else if "ABS".toList ∈ els then some .absolutive
+    else none
+  else none
+
+/-- The rule of Participant Dissimilation of a variety. -/
+def Examples.Variety.rule : Examples.Variety → ObliterationRule ArregiNevins2012.Terminal
+  | .ondarru => ArregiNevins2012.ondarru
+  | .zamudio => ArregiNevins2012.zamudio
+
+/-- The string of terminals the syntax hands over for the arguments of a row. -/
+def Examples.Arguments.auxiliary :
+    Examples.Arguments → SpelloutDomain ArregiNevins2012.Terminal
+  | .erg2sgAbs1pl => ArregiNevins2012.auxiliary16
+  | .erg1plDat2pl => ArregiNevins2012.auxiliary20
+
+-- (17b), (19b): neither is what Feature Markedness before Linear Operations gives
+theorem pieces_eq_iff_acceptable :
+    ∀ x : Examples.Example, ∀ v ∈ x.variety, ∀ a ∈ x.arguments,
+      piecesBy pieceOfGloss? x.datum =
+          some ((ArregiNevins2012.markednessThenLinear v.rule a.auxiliary).map piece) ↔
+        x.datum.judgment = .acceptable := by
+  decide
+
+-- (17b): Ergative Metathesis, Participant Dissimilation, then L-Support
+theorem pieces_ex17b :
+    piecesBy pieceOfGloss? Examples.ex_17b =
+      some ((ArregiNevins2012.lSupportRepair (ArregiNevins2012.ondarru.apply
+        (reduplicateFirst ArregiNevins2012.ergativeMetathesis
+          ArregiNevins2012.auxiliary16))).map piece) := by
+  decide
+
+-- (19b): Ergative Metathesis without Participant Dissimilation
+theorem pieces_ex19b :
+    piecesBy pieceOfGloss? Examples.ex_19b =
+      some ((reduplicateFirst ArregiNevins2012.ergativeMetathesis
+        ArregiNevins2012.auxiliary20).map piece) := by
+  decide
+
+/-! ### The sentences of (7)
+
+The prefix of a sentence is glossed with its agent and its goal, which give its cell of the
+paradigm. -/
+
+/-- The person and category of an argument label of the gloss line, such as `1S` or `2I`. -/
+def argument? : List Char → Option Taos.Argument
+  | [p, n] => do
+    let p ← match p with
+      | '1' => some Person.first
+      | '2' => some .second
+      | '3' => some .third
+      | _ => none
+    let n ← match n with
+      | 'S' => some Number.Inverse.Category.singular
+      | 'D' => some .dual
+      | 'P' => some .plural
+      | 'I' => some .inverse
+      | _ => none
+    pure (p, n)
+  | _ => none
+
+/-- The cell of a row whose first word begins with a prefix glossed for an agent and a goal. -/
+def cell? (e : Datum) : Option Taos.Cell := do
+  let g ← (← e.glossedWords.head?).glosses.head?
+  match Gloss.elements g with
+  | [a, b] => do pure ⟨some (← argument? a), some (← argument? b), none⟩
+  | _ => none
+
+/-- The first morpheme of a row's first word. -/
+def prefix? (e : Datum) : Option (List Char) := e.glossedWords.head?.bind (·.morphs.head?)
+
+-- (7a), (7b), (7c)
+theorem filterMap_cell? :
+    Examples.all.filterMap cell? =
+      [⟨some (.first, .singular), some (.second, .singular), none⟩,
+       ⟨some (.first, .singular), some (.second, .dual), none⟩,
+       ⟨some (.first, .singular), some (.second, .inverse), none⟩] := by
+  decide
+
+-- (7): the prefixes of the sentences are those of the paradigm
+theorem form_eq_prefix :
+    ∀ x : Examples.Example, ∀ c ∈ cell? x.datum, ∀ m ∈ prefix? x.datum,
+      (Taos.form c).map String.toList = some m := by
+  decide
+
+-- (7): the derivation gives the prefix of (7b) and (7c), and not of (7a), a cell left open
+theorem derive_eq_prefix_iff :
+    ∀ x : Examples.Example, ∀ c ∈ cell? x.datum, ∀ m ∈ prefix? x.datum,
+      (derive false c).toList = m ↔ c ∉ unaccounted := by
+  decide +kernel
 
 end Middleton2026
