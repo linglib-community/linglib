@@ -17,7 +17,8 @@ of `k`, empty where `k` has no value. So `Kind.down s = iota {x | IsGreatest s x
 and the operator 'up', ∪, of a kind `k : S → Part E` is `Kind.up ∘ k`.
 
 `Kind.down (Kind.up k) = k` (`Kind.down_up`), and `Kind.up (Kind.down s) = s` for a lower set
-`s` that has a largest member if it has a member (`Kind.up_down`). Closure under sums gives the
+`s` that has a largest member if it has a member (`Kind.up_down`), so the two are inverse
+bijections between partial individuals and such sets (`Kind.upEquiv`). Closure under sums gives the
 largest member, not closure downward: in a classical mereology `Kind.down` is defined on a
 nonempty set that contains its sum, where its value is that sum
 (`Kind.down_dom_of_isClassical`), and on a finite nonempty set closed under binary sums
@@ -171,6 +172,30 @@ theorem up_down_of_isClassical (h : IsClassical E) (hs : IsLowerSet s)
   up_down hs (down_dom_of_isClassical h hsum)
 
 end Classical
+
+/-! ### ∪ and ∩ as inverse bijections -/
+
+section Equiv
+
+variable [PartialOrder E]
+
+/-- ∪ and ∩ are inverse bijections between the partial individuals and the sets closed downward
+that have a largest member if they have a member, Chierchia's (17a) and (17b). -/
+noncomputable def upEquiv :
+    Part E ≃ {s : Set E // IsLowerSet s ∧ (s.Nonempty → ∃ d, IsGreatest s d)} where
+  toFun k := ⟨up k, isLowerSet_up, fun ⟨_, d, hd, _⟩ ↦
+    ⟨d, ⟨d, hd, le_rfl⟩, fun _ ⟨_, hd', h⟩ ↦ Part.mem_unique hd' hd ▸ h⟩⟩
+  invFun s := down s.1
+  left_inv := down_up
+  right_inv s := Subtype.ext (up_down s.2.1 fun h ↦ down_dom.2 (s.2.2 h))
+
+@[simp] theorem coe_upEquiv (k : Part E) : (upEquiv k : Set E) = up k := rfl
+
+@[simp] theorem upEquiv_symm_apply
+    (s : {s : Set E // IsLowerSet s ∧ (s.Nonempty → ∃ d, IsGreatest s d)}) :
+    upEquiv.symm s = down s.1 := rfl
+
+end Equiv
 
 /-! ### Kinds as correlates of properties -/
 

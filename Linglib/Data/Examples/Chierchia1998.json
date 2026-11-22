@@ -1,0 +1,519 @@
+{
+  "features": [
+    {
+      "key": "bare",
+      "lean": "bare",
+      "type": "Bare",
+      "doc": "The bare nominal argument of the example, by number.",
+      "levels": [
+        {
+          "name": "singular",
+          "label": "singular",
+          "doc": "a singular count noun"
+        },
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "a plural count noun"
+        },
+        {
+          "name": "mass",
+          "label": "mass",
+          "doc": "a mass noun, or a noun of a language whose nouns have no number"
+        }
+      ]
+    },
+    {
+      "key": "position",
+      "lean": "position",
+      "type": "Position",
+      "doc": "Where the bare nominal stands.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject"
+        },
+        {
+          "name": "governed",
+          "label": "governed",
+          "doc": "the complement of a verb or a preposition"
+        }
+      ]
+    },
+    {
+      "key": "predicate",
+      "lean": "predicate",
+      "type": "Predicate",
+      "doc": "What the predicate of the bare nominal applies to.",
+      "levels": [
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "a predicate of objects"
+        },
+        {
+          "name": "kind",
+          "label": "kind",
+          "doc": "a predicate of kinds, as *rare* or *extinct*"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the paper."
+  },
+  "examples": [
+    {
+      "id": "chierchia1998_ex21a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(21a)"},
+      "language": "mand1415",
+      "primaryText": "yí lì mǐ",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yí", "one"], ["lì", "CL"], ["mǐ", "rice"]
+      ],
+      "translation": "one (grain of) rice",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex21b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(21b)"},
+      "language": "mand1415",
+      "primaryText": "liǎng lì mǐ",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["liǎng", "two"], ["lì", "CL"], ["mǐ", "rice"]
+      ],
+      "translation": "two (grains of) rice",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex21c",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(21c)"},
+      "language": "mand1415",
+      "primaryText": "yí zhāng zhuōzi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yí", "one"], ["zhāng", "CL"], ["zhuōzi", "table"]
+      ],
+      "translation": "one (piece of) table",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex21d",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(21d)"},
+      "language": "mand1415",
+      "primaryText": "liǎng zhāng zhuōzi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["liǎng", "two"], ["zhāng", "CL"], ["zhuōzi", "table"]
+      ],
+      "translation": "two (pieces of) tables",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex21e",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(21e)"},
+      "language": "mand1415",
+      "primaryText": "wò kànjiàn xióng le",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wò", "I"], ["kànjiàn", "see"], ["xióng", "bear"], ["le", "ASP"]
+      ],
+      "translation": "I saw (some/the) bears.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "mass"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex22a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(22a)"},
+      "language": "stan1290",
+      "primaryText": "Enfants sont venus chez nous.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Kids have come by us.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex22b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(22b)"},
+      "language": "stan1290",
+      "primaryText": "J'ai mangé biscuits dans mon lait.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "I ate cookies with my milk.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex23a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(23a)"},
+      "language": "ital1282",
+      "primaryText": "Bambini sono venuti da noi.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "Kids came by us.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex23b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(23b)"},
+      "language": "ital1282",
+      "primaryText": "Ho preso biscotti con il mio latte.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "(I) had cookies with my milk.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "The source prints a star before the example and describes it in the text as acceptable, the counterpart of (22b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27a)"},
+      "language": "russ1263",
+      "primaryText": "Ja kupil khleb",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ja", "I"], ["kupil", "bought"], ["khleb", "bread"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Ja kupil khliby", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "mass"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27b)"},
+      "language": "russ1263",
+      "primaryText": "Ja kupil 3 batona khleba",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ja", "I"], ["kupil", "bought"], ["3", "3"], ["batona", "loafs"], ["khleba", "of_bread"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Ja kupil 3 khleba", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27c",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27c)"},
+      "language": "russ1263",
+      "primaryText": "Na stole bylo neskolko sortov syra",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Na", "on"], ["stole", "the_table"], ["bylo", "were"], ["neskolko", "several"],
+        ["sortov", "types_of"], ["syra", "cheese"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Na stole bylo neskolko syra", "judgment": "ungrammatical"}
+      ],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27d",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27d)"},
+      "language": "russ1263",
+      "primaryText": "V komnate byli malcik i devocka. Ja obratilsja k malciky.",
+      "discourseSegments": [
+        "V komnate byli malcik i devocka.",
+        "Ja obratilsja k malciky."
+      ],
+      "glossedTokens": [
+        ["V", "in"], ["komnate", "(the)_room"], ["byli", "were"], ["malcik", "(a)_boy"],
+        ["i", "and"], ["devocka.", "(a)_girl"], ["Ja", "I"], ["obratilsja", "turned"], ["k", "to"],
+        ["malciky.", "(the)_boy"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "singular"],
+        ["position", "governed"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27e",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27e)"},
+      "language": "russ1263",
+      "primaryText": "Dinosavry vymerli",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dinosavry", "dinosaurs"], ["vymerli", "(are)_extinct"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "kind"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27e_sg",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27e)"},
+      "language": "russ1263",
+      "primaryText": "Dynosavr vymerli",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "singular"],
+        ["position", "subject"],
+        ["predicate", "kind"]
+      ],
+      "comment": "The source prints the starred singular noun alone, beside the plural sentence.",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex27f",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(27f)"},
+      "language": "russ1263",
+      "primaryText": "sobaka obycnoe zyvotnoe",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["sobaka", "dog"], ["obycnoe", "common"], ["zyvotnoe", "animal"]
+      ],
+      "translation": "The dog is a common animal.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "singular"],
+        ["position", "subject"],
+        ["predicate", "kind"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex29a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(29a)"},
+      "language": "stan1293",
+      "primaryText": "Gold is rare",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "mass"],
+        ["position", "subject"],
+        ["predicate", "kind"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex29b",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(29b)"},
+      "language": "stan1293",
+      "primaryText": "Dogs are widespread",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "kind"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex32a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(32a)"},
+      "language": "stan1293",
+      "primaryText": "Lions are ruining my garden.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_ex38a",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "(38a)"},
+      "language": "stan1293",
+      "primaryText": "Dogs bark.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "plural"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_p356_water",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "p. 356"},
+      "language": "stan1293",
+      "primaryText": "water is dripping on the floor",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "mass"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "chierchia1998_p356_table",
+      "source": {"bibkey": "chierchia-1998", "paperLabel": "p. 356"},
+      "language": "stan1293",
+      "primaryText": "table is on the corner",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["bare", "singular"],
+        ["position", "subject"],
+        ["predicate", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}
