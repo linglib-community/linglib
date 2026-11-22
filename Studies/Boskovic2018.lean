@@ -147,20 +147,25 @@ theorem not_movesOnly_of_not_agreed {a b : LexicalItem.Token} {p : PlanarSyntact
   exact not_isLabeled_of_not_agreed ha hb hab h hl
 
 /-- The phase heads of a language with articles: C, v and D. -/
-def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat ∈ [.C, .v, .D]
+def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat ∈ ({.C, .v, .D} : Finset Cat)
 
 instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The phase heads of Serbo-Croatian, which lacks DP: C, v and the nominalizer. -/
-def IsPhaseHeadNP (a : LexicalItem.Token) : Prop := a.item.cat ∈ [.C, .v, .n]
+def IsPhaseHeadNP (a : LexicalItem.Token) : Prop := a.item.cat ∈ ({.C, .v, .n} : Finset Cat)
 
 instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
-/-- The PIC on a derivation: no link of a chain in the object it derives leaves the complement of
-a phase head, transferred once its phase, the head's projection under `hd`, is complete. -/
+/-- The cut of the PIC on an object: the complement of each phase head, sealed once its phase,
+the head's projection under `hd`, is complete. -/
+abbrev picCut (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
+    (t : PlanarSyntacticObject) : Cut :=
+  sealed (occurrencesWith t Φ).toFinset complementDomain (.atCompletion hd t)
+
+/-- The PIC on a derivation: it derives an object none of whose chain links leaves the cut. -/
 abbrev ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
     (d : Derivation) : Prop :=
-  d.ObeysTransfer hd Φ (fun _ ↦ complementDomain) (Schedule.atCompletion hd)
+  d.Respects hd (picCut hd Φ)
 
 /-- A derivation converges when it obeys the PIC and moves only labeled elements. -/
 def Converges (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) : Prop :=
@@ -231,13 +236,14 @@ theorem not_movesOnly_edge : ¬ (subextraction .edge).MovesOnly IsLabeled := by
   exact fun h ↦ not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.of_append
 
 -- (16): extracted from the moved subject, *who* crosses the phase of the subject's D
-theorem not_obeysPic_direct : ¬ ObeysPic .raising IsPhaseHead (subextraction .direct) := by
-  obtain ⟨t, ht, h, hh, y, hy, -, -, h0, hproj, hc⟩ :
+theorem not_respectsCut_direct : ∃ t ∈ (subextraction .direct).externalize?,
+    ¬ RespectsCut .raising t (picCut .raising IsPhaseHead t) := by
+  obtain ⟨t, ht, h, hh, ⟨q, tok⟩, hq, hD, -, h0, hproj, hc⟩ :
       ∃ t ∈ (subextraction .direct).externalize?, ∃ h ∈ occurrencesWith t IsPhaseHead,
-        ∃ y ∈ tokenList t.toRoseTree, (h, subjD) ∈ tokenList t.toRoseTree ∧ whoD = y.2 ∧ h ≠ ⊥ ∧
+        ∃ y ∈ tokenList t.toRoseTree, (h, subjD) ∈ tokenList t.toRoseTree ∧ y.2 = whoD ∧ h ≠ ⊥ ∧
           projectionAt .raising t h ≤ h.parent ∧ Crosses .raising t y.2 h := by
     decide +kernel
-  exact fun hpic ↦ Derivation.ObeysTransfer.not_crosses hpic ht hy hh h0 hproj hc
+  exact ⟨t, ht, fun hr ↦ hr.not_crosses hq (List.mem_toFinset.2 hh) hD h0 hproj hc⟩
 
 -- (1): along either route *who* leaves the raised subject
 theorem not_obeysFreezing_subextraction (r : Route) : ¬ (subextraction r).ObeysFreezing :=
@@ -249,13 +255,18 @@ crosses the subject phase. -/
 theorem ex17 :
     ¬ (subextraction .edge).MovesOnly IsLabeled ∧
       ObeysPic .raising IsPhaseHead (subextraction .edge) ∧
-      ¬ ObeysPic .raising IsPhaseHead (subextraction .direct) ∧
+      (∃ t ∈ (subextraction .direct).externalize?,
+        ¬ RespectsCut .raising t (picCut .raising IsPhaseHead t)) ∧
       (∀ r, ¬ (subextraction r).ObeysFreezing) ∧
       (Examples.ex17.judgment = .acceptable ↔ ∃ r, Converges IsPhaseHead (subextraction r)) :=
-  ⟨not_movesOnly_edge, by decide +kernel, not_obeysPic_direct, not_obeysFreezing_subextraction,
+  ⟨not_movesOnly_edge, by decide +kernel, not_respectsCut_direct, not_obeysFreezing_subextraction,
     iff_of_false (by decide) (by
       rintro ⟨_ | _, h⟩
-      exacts [not_movesOnly_edge h.1, not_obeysPic_direct h.2])⟩
+      · exact not_movesOnly_edge h.1
+      · obtain ⟨t, ht, hn⟩ := not_respectsCut_direct
+        obtain ⟨t', ht', hr⟩ := h.2
+        obtain rfl := Option.mem_unique ht ht'
+        exact hn hr)⟩
 
 /-! ### Remnant movement (20)–(21) -/
 
@@ -335,7 +346,8 @@ example : (v2InSitu.externalize?.map fun t ↦ HeadFunction.label t ⟨[1]⟩) =
 /-- With phases read off labels, (22c) would violate the PIC: the verb-second clause, unlabeled,
 is no projection of C, so *Peter* raising to Spec,CP leaves C's complement after the phase is
 complete. -/
-example : ¬ ObeysPic .label IsPhaseHead v2InSitu := by decide +kernel
+example : ∃ t ∈ v2InSitu.externalize?, ¬ RespectsCut .label t (picCut .label IsPhaseHead t) := by
+  decide +kernel
 
 /-! ### Base-generated specifiers: Serbo-Croatian possessors (24)–(27) -/
 

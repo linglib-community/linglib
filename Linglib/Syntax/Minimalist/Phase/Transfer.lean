@@ -27,8 +27,8 @@ Sealed sets are [closed under dominance](##Minimalist.isUpperSet_sealed),
 [shrink with the domain and with a later schedule](##Minimalist.sealed_mono). Islands and the
 condition on chain links [are](##Minimalist.escapes_iff) [cuts](##Minimalist.crosses_iff). A
 position reaches its `phaseLevel` when the phase of the lowest phase head whose complement contains
-it is complete. A derivation `ObeysTransfer` when no chain link of the object it derives leaves a
-sealed domain.
+it is complete. An object `RespectsCut` when no chain link of a pronounced token leaves the cut,
+and a derivation `Respects` a cut when the object it derives does.
 
 ## Implementation notes
 
@@ -319,54 +319,61 @@ theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : GornAddress × G
       exact hcx
     · exact .inl (hcomp.2 hph.ge)
 
-/-! ### Derivations under Transfer -/
+/-! ### Respecting a cut -/
 
-section Derivation
+section RespectsCut
 
-variable {d : Derivation} {hd : HeadFunction} {Φ : LexicalItem.Token → Prop} [DecidablePred Φ]
-  {D D' : PlanarSyntacticObject → GornAddress → Set GornAddress}
-  {σ σ' : PlanarSyntacticObject → Schedule}
+variable {hd : HeadFunction} {t : PlanarSyntacticObject} {cut cut' : Cut}
 
-/-- No link of a chain in the object `d` derives leaves a domain `D` of a phase head, one of the
-heads `Φ` holds of, transferred under the schedule `σ`. With the complement domain transferred at
-completion this is the Phase Impenetrability Condition of [chomsky-2000]. -/
-def Derivation.ObeysTransfer (d : Derivation) (hd : HeadFunction) (Φ : LexicalItem.Token → Prop)
-    [DecidablePred Φ] (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
-    (σ : PlanarSyntacticObject → Schedule) : Prop :=
-  ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.toRoseTree,
-    ¬ LinkLeaves hd t y.2 (sealed (occurrencesWith t Φ).toFinset (D t) (σ t))
+variable (hd t) in
+/-- No chain link of a pronounced token of `t` leaves the cut. With the complements of the phase
+heads sealed at completion this is the Phase Impenetrability Condition of [chomsky-2000]. -/
+def RespectsCut (cut : Cut) : Prop :=
+  ∀ q tok, (q, tok) ∈ tokenList t.toRoseTree → ¬ LinkLeaves hd t tok cut
 
-instance [∀ t h, DecidablePred (· ∈ D t h)] [∀ t Ψ h s, Decidable (σ t Ψ h s)] :
-    Decidable (d.ObeysTransfer hd Φ D σ) := by
-  unfold Derivation.ObeysTransfer; infer_instance
+theorem respectsCut_iff_forall_mem :
+    RespectsCut hd t cut ↔ ∀ y ∈ tokenList t.toRoseTree, ¬ LinkLeaves hd t y.2 cut :=
+  ⟨fun h y hy ↦ h y.1 y.2 hy, fun h q tok hq ↦ h (q, tok) hq⟩
 
-/-- A derivation that obeys Transfer obeys any Transfer that seals less at every stage. -/
-theorem Derivation.ObeysTransfer.anti
-    (h : ∀ t s, sealed (occurrencesWith t Φ).toFinset (D' t) (σ' t) s ⊆
-      sealed (occurrencesWith t Φ).toFinset (D t) (σ t) s)
-    (hd' : d.ObeysTransfer hd Φ D σ) : d.ObeysTransfer hd Φ D' σ' :=
-  fun t ht y hy hl ↦ hd' t ht y hy (hl.mono (h t))
+instance [∀ s, DecidablePred (· ∈ cut s)] : Decidable (RespectsCut hd t cut) :=
+  decidable_of_iff _ respectsCut_iff_forall_mem.symm
 
-/-- A derivation that obeys the Phase Impenetrability Condition has no chain link that crosses the
-phase of a phase head. -/
-theorem Derivation.ObeysTransfer.not_crosses {t : PlanarSyntacticObject} {h : GornAddress}
-    {y : GornAddress × LexicalItem.Token}
-    (hd' : d.ObeysTransfer hd Φ (fun _ ↦ complementDomain) (Schedule.atCompletion hd))
-    (ht : t ∈ d.externalize?) (hy : y ∈ tokenList t.toRoseTree) (hh : h ∈ occurrencesWith t Φ)
-    (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) : ¬ Crosses hd t y.2 h := by
-  intro hc
-  have hmem := hh
-  simp only [occurrencesWith, List.mem_filterMap, Option.ite_none_right_eq_some,
-    Option.some.injEq] at hh
-  obtain ⟨⟨h', a⟩, ha, -, rfl⟩ := hh
-  have hv : h' ∈ t.toRoseTree.validPaths := by
-    obtain ⟨s, hs, -⟩ := mem_positions_iff.1 ha
-    exact (getElem?_eq_some_iff.mp hs).1
-  refine hd' t ht y hy (((crosses_iff hv h0 hproj).1 hc).mono fun s q hq ↦ ?_)
-  obtain ⟨k, hk, hσ, hq⟩ := hq
+/-- An object that respects a cut respects any cut that seals less. -/
+theorem RespectsCut.anti (h : cut ≤ cut') (hr : RespectsCut hd t cut') : RespectsCut hd t cut :=
+  fun q tok hq hl ↦ hr q tok hq (hl.mono h)
+
+theorem mem_validPaths_of_mem_tokenList {q : GornAddress} {tok : LexicalItem.Token}
+    (h : (q, tok) ∈ tokenList t.toRoseTree) : q ∈ t.toRoseTree.validPaths := by
+  obtain ⟨s, hs, -⟩ := mem_positions_iff.1 h
+  exact (getElem?_eq_some_iff.mp hs).1
+
+/-- An object that respects the complements of the phase heads `Φ`, sealed at completion, has no
+chain link that crosses the phase of a head in `Φ` that projects. -/
+theorem RespectsCut.not_crosses {Φ : Finset GornAddress} {h q : GornAddress}
+    {tok a : LexicalItem.Token}
+    (hr : RespectsCut hd t (sealed Φ complementDomain (.atCompletion hd t)))
+    (hq : (q, tok) ∈ tokenList t.toRoseTree) (hΦ : h ∈ Φ) (ha : (h, a) ∈ tokenList t.toRoseTree)
+    (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) : ¬ Crosses hd t tok h := by
+  refine fun hc ↦ hr q tok hq
+    (((crosses_iff (mem_validPaths_of_mem_tokenList ha) h0 hproj).1 hc).mono fun s p hp ↦ ?_)
+  obtain ⟨k, hk, hσ, hp⟩ := hp
   obtain rfl := Finset.mem_singleton.1 hk
-  exact ⟨k, List.mem_toFinset.2 hmem, hσ, hq⟩
+  exact ⟨k, hΦ, hσ, hp⟩
 
-end Derivation
+/-- The object a derivation derives respects the cut assigned to it. -/
+def Derivation.Respects (d : Derivation) (hd : HeadFunction) (cut : PlanarSyntacticObject → Cut) :
+    Prop :=
+  ∃ t ∈ d.externalize?, RespectsCut hd t (cut t)
+
+instance {d : Derivation} {cut : PlanarSyntacticObject → Cut}
+    [∀ t s, DecidablePred (· ∈ cut t s)] : Decidable (d.Respects hd cut) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem Derivation.Respects.anti {d : Derivation} {cut cut' : PlanarSyntacticObject → Cut}
+    (h : ∀ t, cut t ≤ cut' t) (hr : d.Respects hd cut') : d.Respects hd cut :=
+  let ⟨t, ht, hr⟩ := hr
+  ⟨t, ht, hr.anti (h t)⟩
+
+end RespectsCut
 
 end Minimalist

@@ -166,24 +166,34 @@ instance (W : LexicalItem.Token → Prop) [DecidablePred W] (t : PlanarSyntactic
     (Φ : Finset GornAddress) (h s : GornAddress) : Decidable (Waiting W t Φ h s) :=
   inferInstanceAs (Decidable (Hybrid _ _ _ _ _ _))
 
+/-- The cut of an object: the domains `D` of its phase heads, transferred under `σ`. -/
+abbrev transferCut (D : PlanarSyntacticObject → GornAddress → Set GornAddress)
+    (σ : PlanarSyntacticObject → Schedule) (t : PlanarSyntacticObject) : Cut :=
+  sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t)
+
 -- p. 684: the approach keeps what the complement domain derives
-theorem obeysTransfer_of_complementDomain {d : Derivation}
-    (h : d.ObeysTransfer .raising IsPhaseHead (fun _ ↦ complementDomain)
-      (Schedule.atCompletion .raising)) :
-    d.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising) (Waiting IsPhaseHead) :=
+theorem respects_of_complementDomain {d : Derivation}
+    (h : d.Respects .raising
+      (transferCut (fun _ ↦ complementDomain) (Schedule.atCompletion .raising))) :
+    d.Respects .raising (transferCut (wholePhaseDomain .raising) (Waiting IsPhaseHead)) :=
   h.anti fun _ _ ↦ sealed_hybrid_subset_complementDomain
 
-theorem obeysTransfer_iff_leaves {d : Derivation} {W : LexicalItem.Token → Prop}
+theorem respects_iff_leaves {d : Derivation} {W : LexicalItem.Token → Prop}
     [DecidablePred W] :
-    d.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising) (Waiting W) ↔
-      d.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising) (Waiting IsPhaseHead) ∧
+    d.Respects .raising (transferCut (wholePhaseDomain .raising) (Waiting W)) ↔
+      d.Respects .raising (transferCut (wholePhaseDomain .raising) (Waiting IsPhaseHead)) ∧
         ∀ t ∈ d.externalize?, ∀ h ∈ occurrencesWith t IsPhaseHead,
-          Leaves .raising t h → h ∈ occurrencesWith t W :=
-  ⟨fun H ↦ ⟨fun t ht ↦ (forall_not_linkLeaves_hybrid_iff.1 (H t ht)).1, fun t ht h hh hl ↦
-      List.mem_toFinset.1
-        ((forall_not_linkLeaves_hybrid_iff.1 (H t ht)).2 h (List.mem_toFinset.2 hh) hl)⟩,
-    fun ⟨H, HW⟩ t ht ↦ forall_not_linkLeaves_hybrid_iff.2
-      ⟨H t ht, fun h hh hl ↦ List.mem_toFinset.2 (HW t ht h (List.mem_toFinset.1 hh) hl)⟩⟩
+          Leaves .raising t h → h ∈ occurrencesWith t W := by
+  constructor
+  · rintro ⟨t, ht, H⟩
+    have H' := forall_not_linkLeaves_hybrid_iff.1 (respectsCut_iff_forall_mem.1 H)
+    refine ⟨⟨t, ht, respectsCut_iff_forall_mem.2 H'.1⟩, fun t' ht' h hh hl ↦ ?_⟩
+    obtain rfl := Option.mem_unique ht' ht
+    exact List.mem_toFinset.1 (H'.2 h (List.mem_toFinset.2 hh) hl)
+  · rintro ⟨⟨t, ht, H⟩, HW⟩
+    exact ⟨t, ht, respectsCut_iff_forall_mem.2 (forall_not_linkLeaves_hybrid_iff.2
+      ⟨respectsCut_iff_forall_mem.1 H, fun h hh hl ↦
+        List.mem_toFinset.2 (HW t ht h (List.mem_toFinset.1 hh) hl)⟩)⟩
 
 /-! ### The derivation of (13) -/
 
@@ -284,33 +294,38 @@ theorem book_toWhom_of_complement :
 
 /-! ### The domain and timing of Transfer -/
 
+-- every route replays, so a failure below is a failure of Transfer
+theorem isSome_externalize?_derivation (r : Finset Landing) :
+    (derivation r).externalize?.isSome := by
+  revert r; decide +kernel
+
 /-- In (13), with whole phases transferred and every phase waiting for the next, Transfer is obeyed
 exactly when *to whom* stops in CP₁ and in vP₂: it may skip the edge of vP₁, the phase it starts
 in (11), but not a whole phase. -/
 theorem obeysTransfer_iff (r : Finset Landing) :
-    (derivation r).ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
-        (Waiting IsPhaseHead) ↔
+    (derivation r).Respects .raising
+        (transferCut (wholePhaseDomain .raising) (Waiting IsPhaseHead)) ↔
       .CP₁ ∈ r ∧ .vP₂ ∈ r := by
   revert r; decide +kernel
 
 -- (1), (2a): the Phase Impenetrability Condition allows only movement through every edge
 theorem complementDomain_iff (r : Finset Landing) :
-    (derivation r).ObeysTransfer .raising IsPhaseHead (fun _ ↦ complementDomain)
-        (Schedule.atCompletion .raising) ↔
+    (derivation r).Respects .raising
+        (transferCut (fun _ ↦ complementDomain) (Schedule.atCompletion .raising)) ↔
       r = .univ := by
   revert r; decide +kernel
 
 -- (2b): transferred whole as soon as it is complete, vP₁ traps *Mary* at its edge
 theorem trapped_at_completion (r : Finset Landing) :
-    ¬ (derivation r).ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
-      (Schedule.atCompletion .raising) := by
+    ¬ (derivation r).Respects .raising
+        (transferCut (wholePhaseDomain .raising) (Schedule.atCompletion .raising)) := by
   revert r; decide +kernel
 
 -- pp. 699–700: were a waiting phase transferred when the next phase head merges, vP₁ would hold
 -- *to whom* whichever way it went
 theorem trapped_at_next_merger (r : Finset Landing) :
-    ¬ (derivation r).ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
-      (Schedule.ofNextPhase .raising · .atMerger) := by
+    ¬ (derivation r).Respects .raising
+        (transferCut (wholePhaseDomain .raising) (Schedule.ofNextPhase .raising · .atMerger)) := by
   revert r; decide +kernel
 
 /-! ### Phases that need not wait -/
@@ -340,18 +355,20 @@ theorem leaves_ex13 : ∀ t ∈ (derivation .univ).externalize?,
       Leaves .raising t h ↔ h ∈ occurrencesWith t (· ≠ cQ) := by
   decide +kernel
 
+theorem isSome_externalize?_declarative : declarative.externalize?.isSome := by decide +kernel
+
 -- (10), p. 695
 theorem obeysTransfer_declarative :
-    declarative.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
-        (Waiting (·.item.cat = .v)) ∧
-      ¬ declarative.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
-        (Waiting (·.item.cat = .C)) := by
+    declarative.Respects .raising
+        (transferCut (wholePhaseDomain .raising) (Waiting (·.item.cat = .v))) ∧
+      ¬ declarative.Respects .raising
+        (transferCut (wholePhaseDomain .raising) (Waiting (·.item.cat = .C))) := by
   decide +kernel
 
 -- (15): a subject raises before the next phase head merges, so (10) survives that timing
 theorem declarative_at_next_merger :
-    declarative.ObeysTransfer .raising IsPhaseHead (wholePhaseDomain .raising)
-      (Schedule.ofNextPhase .raising · .atMerger) := by
+    declarative.Respects .raising
+        (transferCut (wholePhaseDomain .raising) (Schedule.ofNextPhase .raising · .atMerger)) := by
   decide +kernel
 
 end Ke2026
