@@ -332,13 +332,11 @@ variable {E α : Type}
 
 example : LawfulMonad (ReaderT (ℕ → E) Set) := inferInstance
 
-@[simp] theorem monadLift_apply (m : Set α) (g : ℕ → E) :
-    (monadLift m : ReaderT (ℕ → E) Set α) g = m := rfl
-
 /-- `pro n` is the pronoun `she_n` (58), the singleton of the value of index `n`. -/
-def pro (n : ℕ) : ReaderT (ℕ → E) Set E := fun g ↦ {g n}
+def pro (n : ℕ) : ReaderT (ℕ → E) Set E := ReaderT.read >>= fun g ↦ pure (g n)
 
-@[simp] theorem pro_apply (n : ℕ) (g : ℕ → E) : pro n g = {g n} := rfl
+@[simp] theorem pro_apply (n : ℕ) (g : ℕ → E) : (pro n).run g = {g n} := by
+  simp [pro]
 
 /-- `beta n f x` is the binder `βⁿ` (61), which evaluates the scope `f x` with index `n` anchored
 to `x`. -/
@@ -346,13 +344,13 @@ def beta (n : ℕ) (f : E → ReaderT (ℕ → E) Set α) (x : E) : ReaderT (ℕ
   withReader (Function.update · n x) (f x)
 
 @[simp] theorem beta_apply (n : ℕ) (f : E → ReaderT (ℕ → E) Set α) (x : E)
-    (g : ℕ → E) : beta n f x g = f x (Function.update g n x) := rfl
+    (g : ℕ → E) : (beta n f x).run g = (f x).run (Function.update g n x) := rfl
 
 /-- `det D P f` is the determiner `D` over `P` closing off its scope `f` at each assignment, as
 *everybody* (65) and the *no candidate* of Figure 14 do. -/
 def det (D : Det E) (P : Set E) (f : E → ReaderT (ℕ → E) Set Prop) :
     ReaderT (ℕ → E) Set Prop :=
-  fun g ↦ pure (D P {y | sSup (f y g)})
+  .mk fun g ↦ pure (D P {y | sSup ((f y).run g)})
 
 variable (ling : Set E) (cited : E → E → Prop)
 
@@ -360,15 +358,15 @@ variable (ling : Set E) (cited : E → E → Prop)
 theorem ling_cited_her :
     (monadLift ling : ReaderT (ℕ → E) Set E) >>=
         (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
-      fun g ↦ (fun x ↦ cited (g 0) x) '' ling := by
-  funext g; ext q; simp [eq_comm, -eq_iff_iff]
+      .mk fun g ↦ (fun x ↦ cited (g 0) x) '' ling := by
+  ext g q; simp [eq_comm, -eq_iff_iff]
 
 -- Figure 12
 theorem ling_cited_herself :
     (monadLift ling : ReaderT (ℕ → E) Set E) >>=
         beta 0 (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
-      fun _ ↦ (fun x ↦ cited x x) '' ling := by
-  funext g; ext q; simp [eq_comm, -eq_iff_iff]
+      .mk fun _ ↦ (fun x ↦ cited x x) '' ling := by
+  ext g q; simp [eq_comm, -eq_iff_iff]
 
 /-- `expertCites` is the higher-order island *a famous expert on indefinites cites her₀* of
 Figure 13, left, with the indefinite in the outer layer and the pronoun in the inner. -/
@@ -383,8 +381,8 @@ theorem expert_wide_bound (exp human : Set E) (cites : E → E → Prop)
     (lovesWhen : Prop → E → Prop) :
     expertCites exp cites >>=
         (fun m ↦ det Det.every human (beta 0 fun y ↦ m >>= fun p ↦ pure (lovesWhen p y))) =
-      fun _ ↦ (fun x ↦ ∀ y ∈ human, lovesWhen (cites y x) y) '' exp := by
-  funext g; ext q
+      .mk fun _ ↦ (fun x ↦ ∀ y ∈ human, lovesWhen (cites y x) y) '' exp := by
+  ext g q
   simp [expertCites, det, Det.every, Set.subset_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
 /-! #### The Binder Roof Constraint -/
@@ -395,13 +393,13 @@ variable (cand paper : Set E) (wrote subm : E → E → Prop)
 
 /-- `paperBy paper wrote` is *a paper he₀ had written* (66), the papers written by the value of
 index 0. -/
-def paperBy : ReaderT (ℕ → E) Set E := fun g ↦ {x | x ∈ paper ∧ wrote x (g 0)}
+def paperBy : ReaderT (ℕ → E) Set E := .mk fun g ↦ {x | x ∈ paper ∧ wrote x (g 0)}
 
 /-- Scoped over *no candidate*, the indefinite leaves its pronoun free (Figure 14). -/
 theorem paper_wide :
     paperBy paper wrote >>= (fun x ↦ det Det.no cand (beta 0 fun y ↦ pure (subm x y))) =
-      fun g ↦ (fun x ↦ ¬ ∃ y ∈ cand, subm x y) '' {x | x ∈ paper ∧ wrote x (g 0)} := by
-  funext g; ext q; simp [paperBy, det, Det.no, Set.subset_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+      .mk fun g ↦ (fun x ↦ ¬ ∃ y ∈ cand, subm x y) '' {x | x ∈ paper ∧ wrote x (g 0)} := by
+  ext g q; simp [paperBy, det, Det.no, Set.subset_def, eq_comm, -eq_iff_iff]
 
 -- Figure 14
 theorem paper_wide_beta :
@@ -410,28 +408,28 @@ theorem paper_wide_beta :
   rfl
 
 theorem dependsOn_paper_wide :
-    DependsOn (paperBy paper wrote >>= fun x ↦ det Det.no cand (beta 0 fun y ↦ pure (subm x y)))
-      {0} := by
+    DependsOn (paperBy paper wrote >>= fun x ↦
+      det Det.no cand (beta 0 fun y ↦ pure (subm x y))).run {0} := by
   intro g g' h
   rw [paper_wide]
-  simp only [h 0 rfl]
+  simp only [ReaderT.run_mk, h 0 rfl]
 
 /-- Below `β⁰` the indefinite has its pronoun bound, and the reading is the same at every
 assignment, as in `Examples.ex53`. -/
 theorem paper_narrow :
     det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)) =
-      fun _ ↦ {¬ ∃ y ∈ cand, ∃ x ∈ paper, wrote x y ∧ subm x y} := by
-  funext g; simp [paperBy, det, Det.no, Set.subset_def, sSup_Prop_eq, -eq_iff_iff]
+      .mk fun _ ↦ {¬ ∃ y ∈ cand, ∃ x ∈ paper, wrote x y ∧ subm x y} := by
+  ext g : 1; simp [paperBy, det, Det.no, Set.subset_def, sSup_Prop_eq, -eq_iff_iff]
 
 theorem dependsOn_paper_narrow :
-    DependsOn (det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)))
-      ∅ := by
+    DependsOn (det Det.no cand
+      (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))).run ∅ := by
   rw [paper_narrow]; exact dependsOn_const _
 
 /-- The wide reading does depend on the pronoun, so it is not the bound reading. -/
 theorem not_dependsOn_paper_wide :
     ¬ DependsOn (paperBy (E := Bool) Set.univ (fun _ y ↦ y = true) >>=
-      fun x ↦ det Det.no Set.univ (beta 0 fun y ↦ pure (x = y))) ∅ := by
+      fun x ↦ det Det.no Set.univ (beta 0 fun y ↦ pure (x = y))).run ∅ := by
   intro h
   have h := congrArg Set.Nonempty (h.empty (fun _ ↦ true) fun _ ↦ false)
   rw [paper_wide] at h
@@ -451,8 +449,8 @@ theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, w
 theorem cf_reading_not_imp_bound :
     ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : ℕ → Fin 3),
     (∃ f : ChoiceFunction (Fin 3), ¬ ∃ x ∈ cand, subm (f {y ∈ paper | wrote y x}) x) →
-      sSup (det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
-        g) := by
+      sSup ((det Det.no cand
+        (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))).run g) := by
   intro h
   have := h {0} {1, 2} (fun _ x ↦ x = 0) (fun y _ ↦ y = 1) (fun _ ↦ 0) <| by
     refine (cf_reading_iff {0} {1, 2} (fun _ x ↦ x = 0) (fun y _ ↦ y = 1) (by simp)
@@ -471,24 +469,24 @@ variable (paper : Set E) (wrote : E → E → Prop)
 
 /-- `a f` is the indefinite determiner (83), the set of individuals whose restrictor `f` holds. -/
 def a (f : E → ReaderT (ℕ → E) Set Prop) : ReaderT (ℕ → E) Set E :=
-  fun g ↦ {x | sSup (f x g)}
+  .mk fun g ↦ {x | sSup ((f x).run g)}
 
 /-- `that r l` is the relative pronoun (87), which conjoins two assignment-relative sets of
 propositions. -/
 def that (r l : ReaderT (ℕ → E) Set Prop) : ReaderT (ℕ → E) Set Prop :=
-  fun g ↦ Set.image2 (· ∧ ·) (l g) (r g)
+  .mk fun g ↦ Set.image2 (· ∧ ·) (l.run g) (r.run g)
 
 -- (85)
 theorem a_pure (ling : Set E) : a (fun x ↦ pure (x ∈ ling)) = monadLift ling := by
-  funext g; ext x; simp [a, sSup_Prop_eq, -eq_iff_iff]
+  ext g x; simp [a, -eq_iff_iff]
 
 /-- *A paper (that) she₀ had written*, with `β¹` binding the gap, is (66) (Figure 15, right). -/
 theorem a_paper_that_she_wrote :
     a (beta 1 fun x ↦
         that (pro 1 >>= fun z ↦ pro 0 >>= fun w ↦ pure (wrote z w)) (pure (x ∈ paper))) =
       paperBy paper wrote := by
-  funext g; ext x
-  simp [a, that, paperBy, sSup_Prop_eq, Function.update_of_ne, -eq_iff_iff]
+  ext g x
+  simp [a, that, paperBy, Function.update_of_ne, -eq_iff_iff]
 
 end Determiners
 
@@ -500,16 +498,17 @@ section AlternativeSemantics
 choice function flattens the alternatives of `m` at each value of the index. -/
 def abstractChoice (n : ℕ) (m : ReaderT (ℕ → E) Set Prop) :
     ReaderT (ℕ → E) Set (E → Prop) :=
-  fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (m (Function.update g n x))
+  .mk fun g ↦ Set.range fun f : ChoiceFunction Prop ↦ fun x ↦ f (m.run (Function.update g n x))
 
 /-- Composed point-wise with the abstraction (74), `nobody [λ₀ t₀ met a phonologist]` has a true
 alternative exactly when nobody met every phonologist (77). -/
 theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : phon.Nonempty)
     (g : ℕ → E) :
     sSup ((fun P ↦ ¬ ∃ x ∈ human, P x) ''
-        abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' phon) g) ↔
+        (abstractChoice 0 (.mk fun g ↦ (fun y ↦ met y (g 0)) '' phon)).run g) ↔
       ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by
-  simp only [abstractChoice, sSup_Prop_eq, Set.mem_image, Set.mem_range, Function.update_self]
+  simp only [abstractChoice, ReaderT.run_mk, sSup_Prop_eq, Set.mem_image, Set.mem_range,
+    Function.update_self]
   constructor
   · rintro ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, h⟩ ⟨x, hx, hall⟩
     obtain ⟨y, hy, hq⟩ := f.apply_mem (A := (fun y ↦ met y x) '' phon) (hphon.image _)
@@ -527,27 +526,28 @@ theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : ph
 
 -- (74)
 theorem abstractChoice_subset_pi (n : ℕ) (m : ReaderT (ℕ → E) Set Prop)
-    (g : ℕ → E) (hm : ∀ x, (m (Function.update g n x)).Nonempty) :
-    abstractChoice n m g ⊆ Set.univ.pi fun x ↦ m (Function.update g n x) := by
+    (g : ℕ → E) (hm : ∀ x, (m.run (Function.update g n x)).Nonempty) :
+    (abstractChoice n m).run g ⊆ Set.univ.pi fun x ↦ m.run (Function.update g n x) := by
   rintro _ ⟨f, rfl⟩
   exact Set.mem_univ_pi.2 fun x ↦ f.apply_mem (hm x)
 
 /-- When the alternatives are nonempty and distinct values of the index give distinct ones, the
 two lines of (74) agree. -/
 theorem abstractChoice_eq_pi (n : ℕ) (m : ReaderT (ℕ → E) Set Prop)
-    (g : ℕ → E) (hm : ∀ x, (m (Function.update g n x)).Nonempty)
-    (hinj : Function.Injective fun x ↦ m (Function.update g n x)) :
-    abstractChoice n m g = Set.univ.pi fun x ↦ m (Function.update g n x) := by
+    (g : ℕ → E) (hm : ∀ x, (m.run (Function.update g n x)).Nonempty)
+    (hinj : Function.Injective fun x ↦ m.run (Function.update g n x)) :
+    (abstractChoice n m).run g = Set.univ.pi fun x ↦ m.run (Function.update g n x) := by
   refine (abstractChoice_subset_pi n m g hm).antisymm fun P hP ↦ ?_
   obtain ⟨f, hf⟩ := (ChoiceFunction.exists_forall_apply_iff_of_injective
-    (R := fun x ↦ m (Function.update g n x)) hinj hm fun x ↦ (· = P x)).2 fun x ↦
+    (R := fun x ↦ m.run (Function.update g n x)) hinj hm fun x ↦ (· = P x)).2 fun x ↦
       ⟨P x, Set.mem_univ_pi.1 hP x, rfl⟩
   exact ⟨f, funext hf⟩
 
 -- (74)
 theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : ℕ → E) :
-    abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g = Set.range (Function.const E) ∧
+    (abstractChoice 0 (.mk fun g ↦ (fun y ↦ met y (g 0)) '' ling)).run g =
+        Set.range (Function.const E) ∧
       (Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling) = Set.univ := by
   have hu (x : E) : (fun y ↦ met y x) '' ling = Set.univ := Set.eq_univ_of_forall fun p ↦ by
     by_cases hp : p
@@ -557,7 +557,7 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
       exact ⟨y, hy, propext ⟨fun h' ↦ (hm h').elim, fun h' ↦ (hp h').elim⟩⟩
   refine ⟨Set.ext fun P ↦ ?_, Set.eq_univ_of_forall fun P ↦
     Set.mem_univ_pi.2 fun x ↦ by rw [hu x]; exact Set.mem_univ _⟩
-  simp only [abstractChoice, Function.update_self, hu, Set.mem_range]
+  simp only [abstractChoice, ReaderT.run_mk, hu, Set.mem_range]
   refine ⟨fun ⟨f, hf⟩ ↦ ⟨f Set.univ, hf⟩, fun ⟨p, hp⟩ ↦ ?_⟩
   obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq (A := Set.univ) (x := p) trivial
   exact ⟨f, hf ▸ hp⟩
@@ -565,7 +565,7 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
 -- (74)
 theorem abstractChoice_ne_pi [Nontrivial E] (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : ℕ → E) :
-    abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g ≠
+    (abstractChoice 0 (.mk fun g ↦ (fun y ↦ met y (g 0)) '' ling)).run g ≠
       Set.univ.pi fun x ↦ (fun y ↦ met y x) '' ling := by
   rw [(abstractChoice_met_linguist ling met h g).1, (abstractChoice_met_linguist ling met h g).2]
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
