@@ -12,31 +12,47 @@ public import Linglib.Phonology.RuleInteraction
 /-!
 # Middleton (2026): A Remark on the Ordering of Impoverishment Rules: Differences between Taos and Basque
 
-Arregi and Nevins divide the postsyntax into modules, impoverishment before metathesis and, within
-impoverishment, the paradigmatic rules, conditioned by the node they change, before the
-syntagmatic ones. Middleton tests both orders on the verbal agreement prefixes of Taos
-(Kiowa-Tanoan). Impoverishment feeds metathesis in Taos as in Basque; but in four Taos
-interactions a paradigmatic rule would bleed a syntagmatic one the attested forms need, while in a
-fifth they need the bleeding, so the two kinds of impoverishment interleave. The file transcribes
-the online appendix's analysis, its rules of impoverishment, metathesis, exponence, epenthesis
-and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
+The Taos agreement prefix has three arguments, the agent, the goal and the object (`Prefix`),
+each a list of person and number features. A rule of impoverishment (`Rule`) changes the argument
+of one slot where a condition on the prefix holds; it is paradigmatic when the condition factors
+through that slot's own argument, and syntagmatic otherwise. Applying a list of rules in order is
+`run`, and a list respects the block architecture of Arregi and Nevins (`ParaThenSyn`) when no
+syntagmatic rule precedes a paradigmatic one.
+
+A rule changing one slot leaves the condition of a paradigmatic rule of another slot as it was
+(`Rule.Paradigmatic.fires_apply_iff`), so a rule that a rule of another slot bleeds is syntagmatic
+(`Rule.syntagmatic_of_bleeds`). In four Taos interactions a paradigmatic rule bleeds a syntagmatic
+rule that the attested prefix needs, and in a fifth the attested prefix needs the bleeding; an
+order with the first and the fifth is in neither block order (`must_interleave`).
+
+After impoverishment the prefix is linearized into a string of feature terminals, to which
+metathesis, exponence, epenthesis and tone apply. `derive` composes these maps, and
+`derive_eq_form` compares its value with the paradigm of `Fragments/Taos/Agreement.lean`.
+Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), and feeds and bleeds it in Basque
+(`Basque.ondarru_feeds`, `Basque.zamudio_bleeds`).
 
 ## Implementation notes
 
+* The prefix is a structure with a field for each argument, not a function `Slot → Arg`, so that
+  a rule's condition reads `p.agent` and `p.goal`; `Prefix.get` and `Prefix.set` are its
+  evaluation and update, and `Prefix.around` presents a slot as the focus of a neighborhood, on
+  which `ImpoverishmentRule` is stated.
 * Inverse number is the one feature `Feat.inverse`, which `Arg.Has` reads as containing the
   dual's values (`dual_le_inverse`); the category labels *s*, *d*, *p*, *i* are exact tests
   on the number features (`Arg.IsSingular` and kin).
-* The paper labels its (35) and (43), the appendix's (40) and (26), paradigmatic, though as
-  printed each carries a condition on another slot: `r40` and `r26` follow the labels, `r40'`
-  and `r26'` the printed rules, and both sets derive the paradigm (`derive_eq_form_printed`).
-* Three orderings are this study's repairs of the appendix's sets, forced by cells its listing
-  would not derive: (32) after (7), (44) after (43), and (44)'s context widened (see `r32`,
-  `r44`).
+* The paper labels its (35) and (43), the appendix's (40) and (26), paradigmatic, and each is
+  printed with a bracket for another slot: `r40` and `r26` follow the labels, `r40'` and `r26'`
+  the printed rules, and both sets derive the paradigm (`derive_eq_form_printed`).
+* Five rules differ from the appendix's listing: (32) is ordered after (7) and (44) after (43),
+  (44) applies before a plural object too, (7) applies only while the agent has number, and
+  (38a) applies to an agent whose `[+minimal]` is already deleted (see `r32`, `r44`, `r7a`,
+  `r38a`). Rules (2) and (3) read "3" as `[−author]`.
 * Exponence is the appendix's rules as `ExponenceRule`s, each bracket read in the adjacent window
   of a tier (`onTiers`), the present arguments keeping an agent impoverishment has left only
   `[+author]`, as the appendix's trace reading has it; a third person object's number is null
   (`objectNumberNull`). The portmanteaux, epenthesis and tone carry the additions the appendix's
   prose uses but never states (see `exponence`).
+* Forms are strings, as in the fragment, so epenthesis and tone are stated on characters.
 
 ## TODO
 
@@ -118,7 +134,6 @@ def classIII : Bundle := {(.atomic, false), (.minimal, true)}
 /-- Class IV, with no inherent number: 'any number'. -/
 def classIV : Bundle := ∅
 
-/-- Class I agrees singular, dual, inverse for one, two, and more referents. -/
 theorem classI_category :
     category (classI ∪ natural .singular) = some .singular ∧
       category (classI ∪ natural .dual) = some .dual ∧
@@ -143,7 +158,7 @@ theorem classIV_category :
       category (classIV ∪ natural .plural) = some .plural := by
   decide
 
-/-- Every inverse bundle of Table 21 contains the dual's values. -/
+-- Table 21
 theorem dual_le_inverse :
     ∀ c ∈ [classI, classII, classIII, classIV], ∀ n ∈ [Number.singular, .dual, .plural],
     (∃ f, Bundle.CarriesBoth (c ∪ natural n) f) → natural .dual ⊆ c ∪ natural n := by
@@ -335,6 +350,23 @@ def ofAround : Slot → Neighborhood Arg → Prefix
 @[simp] theorem ofAround_around (p : Prefix) (s : Slot) : ofAround s (p.around s) = p := by
   cases s <;> rfl
 
+/-- A prefix is determined by the neighborhood of any of its slots. -/
+def aroundEmbedding (s : Slot) : Prefix ↪ Neighborhood Arg :=
+  ⟨(·.around s), Function.LeftInverse.injective fun p ↦ ofAround_around p s⟩
+
+@[simp] theorem aroundEmbedding_apply (s : Slot) (p : Prefix) :
+    aroundEmbedding s p = p.around s := rfl
+
+@[simp] theorem focus_around (p : Prefix) (s : Slot) : (p.around s).focus = p.get s := by
+  cases s <;> rfl
+
+@[simp] theorem get_set_self (p : Prefix) (s : Slot) (a : Arg) : (p.set s a).get s = a := by
+  cases s <;> rfl
+
+theorem get_set_of_ne (p : Prefix) {s t : Slot} (a : Arg) (h : t ≠ s) :
+    (p.set s a).get t = p.get t := by
+  cases s <;> cases t <;> first | rfl | exact absurd rfl h
+
 /-- The leftmost number bundle is the first slot with a number feature. -/
 def leftmostNumber (p : Prefix) : Option Slot :=
   if p.agent.number = [] then
@@ -345,18 +377,6 @@ def leftmostNumber (p : Prefix) : Option Slot :=
 
 /-- The features of the leftmost number bundle. -/
 def leftmostNumberArg (p : Prefix) : Arg := (p.leftmostNumber.map p.get).getD []
-
-/-- The leftmost person bundle is the first slot with a `[±participant]` feature. -/
-def leftmostPerson (p : Prefix) : Option Slot :=
-  if p.agent.HasParticipant then some .agent
-  else if p.goal.HasParticipant then some .goal
-  else if p.object.HasParticipant then some .object else none
-
-/-- The leftmost exponed person is second. -/
-def LeftmostSecond (p : Prefix) : Prop := ∃ s ∈ p.leftmostPerson, (p.get s).IsSecond
-
-instance : DecidablePred LeftmostSecond := fun p ↦
-  inferInstanceAs (Decidable (∃ s ∈ p.leftmostPerson, _))
 
 /-- The second argument is the goal, or the object of a prefix without a goal. -/
 def secondArg (p : Prefix) : Slot := if p.goal ≠ [] then .goal else .object
@@ -430,6 +450,26 @@ theorem paradigmatic_isParadigmatic (s : Slot) (check : Arg → Prop) [Decidable
     (c : Change) : (paradigmatic s check c).Paradigmatic :=
   ImpoverishmentRule.paradigmatic_ofFocus check c
 
+theorem get_apply_of_ne (r : Rule) (p : Prefix) {s : Slot} (h : s ≠ r.slot) :
+    (r.apply p).get s = p.get s :=
+  p.get_set_of_ne _ h
+
+variable {a b : Rule} {p : Prefix}
+
+theorem Paradigmatic.fires_apply_iff (hb : b.Paradigmatic) (h : b.slot ≠ a.slot) (p : Prefix) :
+    b.Fires (a.apply p) ↔ b.Fires p :=
+  ImpoverishmentRule.Paradigmatic.condition_iff hb <| by
+    rw [Prefix.focus_around, Prefix.focus_around, a.get_apply_of_ne p h]
+
+/-- A rule that a rule of another slot bleeds is syntagmatic. -/
+theorem syntagmatic_of_bleeds (h : b.slot ≠ a.slot) (hab : Bleeds a.apply b.Fires p) :
+    b.Syntagmatic :=
+  fun hb : b.Paradigmatic ↦ (bleeds_iff.1 hab).2 ((hb.fires_apply_iff h p).2 (bleeds_iff.1 hab).1)
+
+theorem syntagmatic_of_feeds (h : b.slot ≠ a.slot) (hab : Feeds a.apply b.Fires p) :
+    b.Syntagmatic :=
+  fun hb : b.Paradigmatic ↦ (feeds_iff.1 hab).1 ((hb.fires_apply_iff h p).1 (feeds_iff.1 hab).2)
+
 end Rule
 
 /-- Apply a sequence of rules in order. -/
@@ -439,6 +479,10 @@ def run (rs : List Rule) (p : Prefix) : Prefix := rs.foldl (fun p r ↦ r.apply 
 
 @[simp] theorem run_cons (r : Rule) (rs : List Rule) (p : Prefix) :
     run (r :: rs) p = run rs (r.apply p) := rfl
+
+theorem run_append (rs₁ rs₂ : List Rule) (p : Prefix) :
+    run (rs₁ ++ rs₂) p = run rs₂ (run rs₁ p) :=
+  List.foldl_append
 
 -- In the bleeding order the bled rule applies vacuously.
 theorem run_pair_of_bleeds {a b : Rule} {p : Prefix} (h : Bleeds a.apply b.Fires p) :
@@ -586,7 +630,7 @@ runs after (7), not in the appendix's first set, or 2:1s:3s *môm* comes out *m�
 def r32 : Rule :=
   .syntagmatic .object (fun p ↦ p.goal.IsSingular ∧ p.object.IsSingular) .deletePerson
 
-/-- By rule (15), a first person agent is obliterated before a second singular goal. -/
+/-- By rule (15), a first person agent loses its person before a second singular goal. -/
 def r15 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.Has (.author true) ∧ p.goal.IsSecond ∧ p.goal.Has (.atomic true))
@@ -749,53 +793,32 @@ def prefix1S3I : Prefix := ⟨[], first ++ singular, third ++ inverse⟩
 /-- The 1D:3S:3S ditransitive prefix is *opénôm* (Table 21). -/
 def prefix1D3S3S : Prefix := ⟨first ++ dual, third ++ singular, third ++ singular⟩
 
-theorem r34a_syntagmatic : r34a.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix3S3S.around .object)
-    ((⟨[], [], third ++ singular⟩ : Prefix).around .object) rfl).mp (by decide)) (by decide)
+theorem r45a_syntagmatic : r45a.Syntagmatic :=
+  ImpoverishmentRule.syntagmatic_of_focus_eq (n₁ := prefix3S3S.around .object)
+    (n₂ := (⟨[], [], third ++ singular⟩ : Prefix).around .object) rfl (by decide) (by decide)
 
-theorem r45b_syntagmatic : r45b.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix3Sno.around .object) ((⟨[], [], [.dummy]⟩ : Prefix).around .object)
-    rfl).mp (by decide)) (by decide)
+theorem r46_syntagmatic : r46.Syntagmatic :=
+  ImpoverishmentRule.syntagmatic_of_focus_eq (n₁ := prefix2S3S.around .agent)
+    (n₂ := prefix2S.around .agent) rfl (by decide) (by decide)
 
-theorem r45a_syntagmatic : r45a.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix3S3S.around .object)
-    ((⟨[], [], third ++ singular⟩ : Prefix).around .object) rfl).mp (by decide)) (by decide)
+theorem r40'_syntagmatic : r40'.Syntagmatic :=
+  ImpoverishmentRule.syntagmatic_of_focus_eq (n₁ := prefix3S3S.around .agent)
+    (n₂ := (⟨third ++ singular, third ++ singular, third ++ singular⟩ : Prefix).around .agent)
+    rfl (by decide) (by decide)
 
-theorem r46_syntagmatic : r46.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix2S3S.around .agent) (prefix2S.around .agent) rfl).mp (by decide))
-    (by decide)
+theorem r26'_syntagmatic : r26'.Syntagmatic :=
+  ImpoverishmentRule.syntagmatic_of_focus_eq (n₁ := prefix1S3S.around .goal)
+    (n₂ := (⟨third ++ singular, first ++ singular, third ++ singular⟩ : Prefix).around .goal)
+    rfl (by decide) (by decide)
 
-theorem r32_syntagmatic : r32.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix1S3S.around .object) (prefix3S3S.around .object) rfl).mp (by decide))
-    (by decide)
+theorem r33_syntagmatic : r33.Syntagmatic :=
+  ImpoverishmentRule.syntagmatic_of_focus_eq (n₁ := prefix1D3S3S.around .goal)
+    (n₂ := (⟨[], third ++ singular, third ++ singular⟩ : Prefix).around .goal)
+    rfl (by decide) (by decide)
 
-theorem r40'_syntagmatic : r40'.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix3S3S.around .agent)
-    ((⟨third ++ singular, third ++ singular, third ++ singular⟩ : Prefix).around .agent) rfl).mp
-    (by decide)) (by decide)
-
-theorem r26'_syntagmatic : r26'.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix1S3S.around .goal)
-    ((⟨third ++ singular, first ++ singular, third ++ singular⟩ : Prefix).around .goal) rfl).mp
-    (by decide)) (by decide)
-
-theorem r33_syntagmatic : r33.Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix1D3S3S.around .goal)
-    ((⟨[], third ++ singular, third ++ singular⟩ : Prefix).around .goal) rfl).mp (by decide))
-    (by decide)
-
-theorem r29_goal_syntagmatic : (r29 .goal).Syntagmatic := by
-  intro h
-  exact absurd ((h (prefix1S3I.around .goal) ((⟨[], first ++ singular, []⟩ : Prefix).around .goal)
-    rfl).mp (by decide)) (by decide)
+theorem r29_goal_syntagmatic : (r29 .goal).Syntagmatic :=
+  ImpoverishmentRule.syntagmatic_of_focus_eq (n₁ := prefix1S3I.around .goal)
+    (n₂ := (⟨[], first ++ singular, []⟩ : Prefix).around .goal) rfl (by decide) (by decide)
 
 /-! ### Case 1 (§4.2.1): object impoverishment precedes agent impoverishment
 
@@ -813,6 +836,9 @@ theorem case1_syn_para : run [r34a, r40] prefix3S3S = ⟨[], [], singular⟩ := 
 
 /-- (35) removes the agent that (32a) needs, so applying it first bleeds (32a). -/
 theorem r40_bleeds_r34a : Bleeds r40.apply r34a.Fires prefix3S3S := by decide
+
+theorem r34a_syntagmatic : r34a.Syntagmatic :=
+  Rule.syntagmatic_of_bleeds (by decide) r40_bleeds_r34a
 
 theorem case1_para_syn : run [r40, r34a] prefix3S3S = ⟨[], [], third ++ singular⟩ := by
   rw [run_pair_of_bleeds r40_bleeds_r34a]; decide
@@ -843,6 +869,9 @@ theorem case2_dummy_syn_para : run [r45b, r40] prefix3Sno = ⟨[], [], []⟩ := 
 
 -- (35), (36a)
 theorem r40_bleeds_r45b : Bleeds r40.apply r45b.Fires prefix3Sno := by decide
+
+theorem r45b_syntagmatic : r45b.Syntagmatic :=
+  Rule.syntagmatic_of_bleeds (by decide) r40_bleeds_r45b
 
 theorem case2_dummy_para_syn : run [r40, r45b] prefix3Sno = ⟨[], [], [.dummy]⟩ := by
   rw [run_pair_of_bleeds r40_bleeds_r45b]; decide
@@ -895,6 +924,9 @@ theorem form_1S3S :
 -- (43), (40)
 theorem r26_bleeds_r32 : Bleeds r26.apply r32.Fires prefix1S3S := by decide
 
+theorem r32_syntagmatic : r32.Syntagmatic :=
+  Rule.syntagmatic_of_bleeds (by decide) r26_bleeds_r32
+
 theorem case4_syn_para :
     run [r32, r26] prefix1S3S = ⟨[], first ++ [.minimal true], singular⟩ := by
   decide
@@ -932,8 +964,7 @@ theorem form_1S3I :
       'n' ∈ "ónôm".toList := by
   decide
 
-/-- (43) makes the goal non-singular, so applying it first bleeds (44), as the attested *n*
-needs. -/
+-- (43), (44)
 theorem r26_bleeds_r29 : Bleeds r26.apply (r29 .goal).Fires prefix1S3I := by decide
 
 theorem case5_para_syn :
@@ -1368,8 +1399,7 @@ theorem derive_eq_form_printed :
         r.2 = deriveWith (impoverishmentPrinted true) r.1 := by
   decide +kernel
 
-/-- With the leftmost brackets read on tiers *mopén* (1S:2D:∅) derives, and read on the present
-arguments it loses some or all exponents ((19), after (10)). -/
+-- (19), (10)
 theorem mopen_tiers :
     let c : Taos.Cell := ⟨some (.first, .singular), some (.second, .dual), none⟩
     let without (t : Tier) := onTiersVia fun u ↦ if u = t then .present else u
@@ -1517,8 +1547,7 @@ theorem ondarru_linear_then_markedness :
       [pastT, clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])] := by
   decide
 
-/-- In Ondarru, Participant Dissimilation feeds Ergative Metathesis (§3.1.3), T being initial only
-once the absolutive clitic is gone. -/
+-- §3.1.3
 theorem ondarru_feeds :
     Feeds ondarru.apply (Fires ergativeMetathesis) auxiliary17 := by
   decide
@@ -1534,8 +1563,7 @@ theorem zamudio_linear_then_markedness :
       [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
   decide
 
-/-- In Zamudio, Participant Dissimilation bleeds Ergative Metathesis (§3.1.4) by removing the
-ergative clitic that would front. -/
+-- §3.1.4
 theorem zamudio_bleeds :
     Bleeds zamudio.apply (Fires ergativeMetathesis) auxiliary19 := by
   decide
