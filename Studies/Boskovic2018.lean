@@ -5,6 +5,7 @@ public import Studies.Collins2005
 public import Linglib.Data.Examples.Boskovic2018
 public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Syntax.Minimalist.Label.Search
 public import Linglib.Syntax.Minimalist.Workspace.Merge.Phase
 
 /-!
@@ -12,13 +13,12 @@ public import Linglib.Syntax.Minimalist.Workspace.Merge.Phase
 
 A syntactic object is labeled, as in [chomsky-2013], by the one head minimal search finds in it
 or by a feature the heads it finds share (`IsLabeled`), so a specifier that shares no feature with
-its host leaves the host unlabeled until it moves on. A phase is an object labeled by a phase
-head (`IsPhase`). Two conditions on a derivation `d` are stated with
-`Minimalist.Derivation.MovesOnly`: `d.MovesOnly (IsPhase Φ)`, only phases move, and
-`d.MovesOnly IsLabeled`, unlabeled elements do not move. The first entails the second
-(`movesOnly_isLabeled_of_isPhase`), and an object two of whose labeling heads share no feature
-fails the second (`not_movesOnly_of_not_agreed`). A derivation `Converges` when it moves only
-labeled elements and obeys the Phase Impenetrability Condition.
+its host leaves the host unlabeled until it moves on (`not_isLabeled_of_not_agreed`). A phase is
+an object labeled by a phase head (`IsPhase`). Two conditions on the movers of a derivation `d`
+are compared: `∀ m ∈ d.movedItems, IsPhase Φ m`, only phases move, and
+`∀ m ∈ d.movedItems, IsLabeled m`, unlabeled elements do not move. The first entails the second
+(`forall_isLabeled_of_forall_isPhase`). A derivation `Converges` when it moves only labeled
+elements and obeys the Phase Impenetrability Condition.
 
 Since the condition makes an element leave a phase by its edge before the phase moves, extraction
 from a moved subject fails either way (`ex17`): the stop at the edge leaves the subject unlabeled,
@@ -31,10 +31,14 @@ passive of [collins-2005] moves only labeled elements but moves a non-phase (`ex
 The condition is also the phase coproduct of [marcolli-chomsky-berwick-2025], which extracts no
 term in the interior of a lower phase: extracted from the moved subject, *who* is such a term
 (`inaccessible_who_iff`), so the unit stage of its Internal Merge vanishes
-(`mergeOpUnit_who_eq_zero`).
+(`mergeOpUnit_who_eq_zero`). The ban on moving unlabeled elements restricts the coproduct in the
+same way (`mergeOpUnit_subject_eq_zero`).
 
 ## Implementation notes
 
+* Labels are read off the object that moves, by `SyntacticObject.searchHeads`: what has moved out
+  of it has left a trace, so the stage it moves at is not consulted. The planar search of
+  `PlanarSyntacticObject.labels` finds the same heads at each stage (`labels_eq_searchHeads`).
 * Roots are left out of the heads that label, and the features shared are the paper's: the concord
   of a Serbo-Croatian possessive adjective with its noun, and the R-feature of the Dutch r-pronoun
   of (42) with its preposition. Successive-cyclic and verb-second specifiers share none.
@@ -75,8 +79,7 @@ namespace Boskovic2018
 open Minimalist Minimalist.PlanarSyntacticObject
 open Chomsky2013 (tok nominal IsRoot)
 
-variable {Φ : LexicalItem.Token → Prop} {t : PlanarSyntacticObject}
-  {x : SyntacticObject} {d : Derivation}
+variable {Φ : LexicalItem.Token → Prop} {x : SyntacticObject} {d : Derivation}
 
 /-! ### Labeling, phases and the PIC -/
 
@@ -105,53 +108,44 @@ abbrev Agreed (f : Feature) : LexicalItem.Token → LexicalItem.Token → Prop :
   Relation.SymmGen (Shares f)
 
 /-- The heads minimal search finds that can label `x`: roots are too weak to label. -/
-def labelers (t : PlanarSyntacticObject) (x : SyntacticObject) : Finset LexicalItem.Token :=
-  (t.labels x).filter (¬ IsRoot ·)
+def labelers (x : SyntacticObject) : Finset LexicalItem.Token :=
+  x.searchHeads.filter (¬ IsRoot ·)
 
 /-- Labeling in the paper, that of [chomsky-2013]: by the one head that can label, or by a feature
 the heads that can label share, when none of them is a daughter. -/
-def IsLabeled (t : PlanarSyntacticObject) (x : SyntacticObject) : Prop :=
-  (∃ a ∈ labelers t x, labelers t x = {a}) ∨
-    ((labelers t x).Nontrivial ∧ (∀ a ∈ labelers t x, ¬ SyntacticObject.ImmediatelyContains x ↑a) ∧
-      ∃ f, (labelers t x : Set LexicalItem.Token).Pairwise (Agreed f))
+def IsLabeled (x : SyntacticObject) : Prop :=
+  (∃ a ∈ labelers x, labelers x = {a}) ∨
+    ((labelers x).Nontrivial ∧ (∀ a ∈ labelers x, ¬ SyntacticObject.ImmediatelyContains x ↑a) ∧
+      ∃ f, (labelers x : Set LexicalItem.Token).Pairwise (Agreed f))
 
-instance (t : PlanarSyntacticObject) (x : SyntacticObject) : Decidable (IsLabeled t x) :=
-  haveI : Decidable (labelers t x).Nontrivial :=
+instance (x : SyntacticObject) : Decidable (IsLabeled x) :=
+  haveI : Decidable (labelers x).Nontrivial :=
     decidable_of_iff _ Finset.one_lt_card_iff_nontrivial
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A phase, given the phase heads: an object one of them labels. -/
-def IsPhase (Φ : LexicalItem.Token → Prop) (t : PlanarSyntacticObject) (x : SyntacticObject) :
-    Prop :=
-  ∃ a ∈ labelers t x, Φ a ∧ labelers t x = {a}
+def IsPhase (Φ : LexicalItem.Token → Prop) (x : SyntacticObject) : Prop :=
+  ∃ a ∈ labelers x, Φ a ∧ labelers x = {a}
 
-instance [DecidablePred Φ] (t : PlanarSyntacticObject) (x : SyntacticObject) :
-    Decidable (IsPhase Φ t x) :=
+instance [DecidablePred Φ] (x : SyntacticObject) : Decidable (IsPhase Φ x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem IsPhase.isLabeled (h : IsPhase Φ t x) : IsLabeled t x :=
+theorem IsPhase.isLabeled (h : IsPhase Φ x) : IsLabeled x :=
   let ⟨a, ha, _, h⟩ := h
   .inl ⟨a, ha, h⟩
 
 /-- A derivation that moves only phases moves only labeled elements: (12) entails (33). -/
-theorem movesOnly_isLabeled_of_isPhase (h : d.MovesOnly (IsPhase Φ)) : d.MovesOnly IsLabeled :=
-  h.mono fun _ _ ↦ IsPhase.isLabeled
+theorem forall_isLabeled_of_forall_isPhase (h : ∀ m ∈ d.movedItems, IsPhase Φ m) :
+    ∀ m ∈ d.movedItems, IsLabeled m :=
+  fun m hm ↦ (h m hm).isLabeled
 
-theorem not_isLabeled_of_not_agreed {a b : LexicalItem.Token} (ha : a ∈ labelers t x)
-    (hb : b ∈ labelers t x) (hab : a ≠ b) (h : ∀ f, ¬ Agreed f a b) : ¬ IsLabeled t x := by
+/-- An object two of whose labeling heads share no feature is unlabeled: (32). -/
+theorem not_isLabeled_of_not_agreed {a b : LexicalItem.Token} (ha : a ∈ labelers x)
+    (hb : b ∈ labelers x) (hab : a ≠ b) (h : ∀ f, ¬ Agreed f a b) : ¬ IsLabeled x := by
   rintro (⟨c, -, hc⟩ | ⟨-, -, f, hf⟩)
   · rw [hc, Finset.mem_singleton] at ha hb
     exact hab (ha.trans hb.symm)
   · exact h f (hf ha hb hab)
-
-/-- An object two of whose labeling heads share no feature does not move: (32). -/
-theorem not_movesOnly_of_not_agreed {a b : LexicalItem.Token} {p : PlanarSyntacticObject}
-    {m : SyntacticObject} {side : Edge} (hp : p ∈ d.externalize?) (ha : a ∈ labelers p m)
-    (hb : b ∈ labelers p m) (hab : a ≠ b) (h : ∀ f, ¬ Agreed f a b) :
-    ¬ (d.append [.im m side]).MovesOnly IsLabeled := fun hm ↦ by
-  obtain ⟨q, hq, hl⟩ := (Derivation.movesOnly_append_im_iff.1 hm).2
-  obtain rfl := Option.mem_unique hq hp
-  exact not_isLabeled_of_not_agreed ha hb hab h hl
 
 /-- The phase heads of a language with articles: C, v and D. -/
 def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat ∈ ({.C, .v, .D} : Finset Cat)
@@ -176,7 +170,7 @@ abbrev ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [Decidable
 
 /-- A derivation converges when it obeys the PIC and moves only labeled elements. -/
 def Converges (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) : Prop :=
-  d.MovesOnly IsLabeled ∧ ObeysPic .raising Φ d
+  (∀ m ∈ d.movedItems, IsLabeled m) ∧ ObeysPic .raising Φ d
 
 instance [DecidablePred Φ] (d : Derivation) : Decidable (Converges Φ d) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -239,11 +233,9 @@ theorem subextraction_surfacePhon (r : Route) :
   cases r <;> decide +kernel
 
 -- (18): with *who* at its edge, the subject has the heads of *who* and of the DP to label it
-theorem not_movesOnly_edge : ¬ (subextraction .edge).MovesOnly IsLabeled := by
-  obtain ⟨p, hp, ha, hb⟩ : ∃ p ∈ (subjectInSitu .edge).externalize?,
-      whoD ∈ labelers p ↑(raisedSubject .edge) ∧ subjD ∈ labelers p ↑(raisedSubject .edge) := by
-    decide +kernel
-  exact fun h ↦ not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.of_append.of_append
+theorem not_isLabeled_raisedSubject : ¬ IsLabeled ↑(raisedSubject .edge) :=
+  not_isLabeled_of_not_agreed (a := whoD) (b := subjD) (by decide +kernel) (by decide +kernel)
+    (by decide) (by decide)
 
 -- (16): extracted from the moved subject, *who* crosses the phase of the subject's D
 theorem not_respectsCut_direct : ∃ t ∈ (subextraction .direct).externalize?,
@@ -259,6 +251,14 @@ theorem not_respectsCut_direct : ∃ t ∈ (subextraction .direct).externalize?,
 theorem not_obeysFreezing_subextraction (r : Route) : ¬ (subextraction r).ObeysFreezing :=
   fun h ↦ (Derivation.obeysFreezing_append_im_iff.1 h).2
     (by cases r <;> decide +kernel : (beforeExtraction r).Frozen ↑who)
+
+-- so the unit stage of the Internal Merge of the unlabeled subject vanishes where the coproduct
+-- extracts only labeled terms
+theorem mergeOpUnit_subject_eq_zero (cuts : _) :
+    Merge.mergeOpUnitOfCuts (R := ℤ) (Merge.restrictCutsOf (fun _ x ↦ IsLabeled x) cuts)
+      (raisedSubject .edge : SyntacticObject).toUnorderedTree
+      (ConnesKreimer.of' {(subjectInSitu .edge).final.toUnorderedTree}) = 0 :=
+  Merge.mergeOpUnitOfCuts_restrictCutsOf_eq_zero (by decide +kernel) not_isLabeled_raisedSubject
 
 -- extracted from the moved subject, *who* is in the interior of the subject phase when it would
 -- move, and from the edge it is not
@@ -277,16 +277,17 @@ theorem mergeOpUnit_who_eq_zero (cuts : _) :
 /-- In (17), neither route converges: by the edge the subject moves unlabeled, and directly *who*
 crosses the subject phase. -/
 theorem ex17 :
-    ¬ (subextraction .edge).MovesOnly IsLabeled ∧
+    ¬ IsLabeled ↑(raisedSubject .edge) ∧
       ObeysPic .raising IsPhaseHead (subextraction .edge) ∧
       (∃ t ∈ (subextraction .direct).externalize?,
         ¬ RespectsCut .raising t (picCut .raising IsPhaseHead t)) ∧
       (∀ r, ¬ (subextraction r).ObeysFreezing) ∧
       (Examples.ex17.judgment = .acceptable ↔ ∃ r, Converges IsPhaseHead (subextraction r)) :=
-  ⟨not_movesOnly_edge, by decide +kernel, not_respectsCut_direct, not_obeysFreezing_subextraction,
+  ⟨not_isLabeled_raisedSubject, by decide +kernel, not_respectsCut_direct,
+    not_obeysFreezing_subextraction,
     iff_of_false (by decide) (by
       rintro ⟨_ | _, h⟩
-      · exact not_movesOnly_edge h.1
+      · exact not_isLabeled_raisedSubject (h.1 _ (by decide +kernel))
       · obtain ⟨t, ht, hn⟩ := not_respectsCut_direct
         obtain ⟨t', ht', hr⟩ := h.2
         obtain rfl := Option.mem_unique ht ht'
@@ -311,7 +312,7 @@ def remnantFronting : Derivation :=
 -- (20), (21)
 theorem ex20 : remnantFronting.surfacePhon = ["kiss", "Mary", "Jane", "did"] ∧
     remnantFronting.IsRemnantStep 7 janeD ∧ remnantFronting.ObeysFreezing ∧
-    remnantFronting.MovesOnly (IsPhase IsPhaseHead) ∧
+    (∀ m ∈ remnantFronting.movedItems, IsPhase IsPhaseHead m) ∧
     (Examples.ex20.judgment = .acceptable ↔ Converges IsPhaseHead remnantFronting) := by
   decide +kernel
 
@@ -354,12 +355,10 @@ def v2InSitu : Derivation := ⟨tok 232 .N "Peter", v2Steps ++ [.em .left sagte]
 move, though nothing moves out of it. -/
 theorem ex22 : v2Moved.ObeysFreezing ∧
     (Examples.ex22a.judgment = .acceptable ↔ Converges IsPhaseHead v2Moved) ∧
-    (Examples.ex22c.judgment = .acceptable ↔ Converges IsPhaseHead v2InSitu) := by
-  obtain ⟨p, hp, ha, hb⟩ : ∃ p ∈ v2Embedded.externalize?,
-      peterD ∈ labelers p ↑v2Clause ∧ cV2 ∈ labelers p ↑v2Clause := by
-    decide +kernel
-  exact ⟨by decide +kernel, iff_of_false (by decide) fun h ↦
-    not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.1, by decide +kernel⟩
+    (Examples.ex22c.judgment = .acceptable ↔ Converges IsPhaseHead v2InSitu) :=
+  ⟨by decide +kernel, iff_of_false (by decide) fun h ↦
+    not_isLabeled_of_not_agreed (x := ↑v2Clause) (a := peterD) (b := cV2) (by decide +kernel)
+      (by decide +kernel) (by decide) (by decide) (h.1 _ (by decide +kernel)), by decide +kernel⟩
 
 -- (22c): the verb-second clause has no head daughter by labels and C′ by the raising head, and
 -- with phases read off labels *Peter* raising to Spec,CP would leave C's sealed complement
@@ -440,12 +439,22 @@ theorem not_inaccessible_specifier :
       ¬ ppFronting.final.Inaccessible IsPhaseHead ↑waar := by
   decide +kernel
 
+/-! ### Labels at each stage -/
+
+-- the heads the planar search finds for each mover, at the stage it moves, are those found in
+-- the mover itself
+theorem labels_eq_searchHeads : ∀ d ∈ [subextraction .edge, subextraction .direct,
+    remnantFronting, v2Moved, possessorExtraction, rPronounExtraction],
+    ∀ i < d.length, ∀ m ∈ d.mover? i, ∃ p ∈ (d.take i).externalize?,
+      p.labels m = m.searchHeads := by
+  decide +kernel
+
 /-! ### Smuggling (Appendix A) -/
 
 -- (58): the object raises out of moved PartP, which is labeled and is not a phase
-theorem ex58 : (Collins2005.ex9.passive .partP false).MovesOnly IsLabeled ∧
+theorem ex58 : (∀ m ∈ (Collins2005.ex9.passive .partP false).movedItems, IsLabeled m) ∧
     ¬ (Collins2005.ex9.passive .partP false).ObeysFreezing ∧
-    ¬ (Collins2005.ex9.fronted .partP false).MovesOnly (IsPhase IsPhaseHead) :=
+    ¬ (∀ m ∈ (Collins2005.ex9.fronted .partP false).movedItems, IsPhase IsPhaseHead m) :=
   ⟨by decide +kernel, (Collins2005.converges_iff_not_obeysFreezing _ _ _ _ _ .partP false).1
     ((Collins2005.converges_iff _ _ _ _ _ .partP false).2 rfl), by decide +kernel⟩
 

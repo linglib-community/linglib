@@ -81,33 +81,48 @@ theorem mergeOpUnitOfCuts_restrictCuts_eq_zero [DecidableEq (UnorderedTree α)] 
 
 end
 
-/-! ### The phase coproduct -/
+/-! ### Conditions on syntactic objects -/
 
 open SyntacticObject
 
-variable {P : LexicalItem.Token → Prop}
+variable {C : SyntacticObject → SyntacticObject → Prop} {P : LexicalItem.Token → Prop}
   {cuts : UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)}
 
 open Classical in
-/-- The cuts of the phase coproduct, with `P` the phase heads: those of `cuts` that extract no term
-in the interior of a lower phase. -/
-noncomputable def phaseCuts (P : LexicalItem.Token → Prop)
+/-- The cuts that extract from a syntactic object only terms satisfying `C` in it. -/
+noncomputable def restrictCutsOf (C : SyntacticObject → SyntacticObject → Prop)
     (cuts : UnorderedTree Vertex →
       Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)) :
     UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex) :=
   restrictCuts (fun T x ↦ ∀ T' x' : SyntacticObject, T'.toUnorderedTree = T →
-    x'.toUnorderedTree = x → ¬ T'.Inaccessible P x') cuts
+    x'.toUnorderedTree = x → C T' x') cuts
 
-instance [IsMergeCuts cuts] : IsMergeCuts (phaseCuts P cuts) := by
-  unfold phaseCuts; infer_instance
+instance [IsMergeCuts cuts] : IsMergeCuts (restrictCutsOf C cuts) := by
+  unfold restrictCutsOf; infer_instance
 
 open Classical in
+/-- The unit stage of Internal Merge at restricted cuts vanishes on a mover that fails the
+condition. -/
+theorem mergeOpUnitOfCuts_restrictCutsOf_eq_zero {T x : SyntacticObject} (hne : T ≠ x)
+    (h : ¬ C T x) :
+    mergeOpUnitOfCuts (R := R) (restrictCutsOf C cuts) x.toUnorderedTree
+      (of' {T.toUnorderedTree}) = 0 :=
+  mergeOpUnitOfCuts_restrictCuts_eq_zero (fun he ↦ hne (toUnorderedTree_injective he))
+    fun hC ↦ h (hC T x rfl rfl)
+
+/-- The cuts of the phase coproduct, with `P` the phase heads: those of `cuts` that extract no term
+in the interior of a lower phase. -/
+noncomputable abbrev phaseCuts (P : LexicalItem.Token → Prop)
+    (cuts : UnorderedTree Vertex →
+      Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex)) :
+    UnorderedTree Vertex → Multiset (Forest (UnorderedTree Vertex) × UnorderedTree Vertex) :=
+  restrictCutsOf (fun T x ↦ ¬ T.Inaccessible P x) cuts
+
 /-- The unit stage of Internal Merge at the phase coproduct vanishes on an inaccessible mover: a
 term in the interior of a lower phase does not move. -/
 theorem mergeOpUnitOfCuts_phaseCuts_eq_zero {T x : SyntacticObject} (hne : T ≠ x)
     (h : T.Inaccessible P x) :
     mergeOpUnitOfCuts (R := R) (phaseCuts P cuts) x.toUnorderedTree (of' {T.toUnorderedTree}) = 0 :=
-  mergeOpUnitOfCuts_restrictCuts_eq_zero (fun he ↦ hne (toUnorderedTree_injective he))
-    fun hC ↦ hC T x rfl rfl h
+  mergeOpUnitOfCuts_restrictCutsOf_eq_zero hne (not_not.2 h)
 
 end Minimalist.Merge

@@ -21,12 +21,9 @@ obeys Freezing exactly when its mover is not
 frozen](##Minimalist.Derivation.obeysFreezing_append_im_iff). Movers carry the traces of what
 evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it.
 
-Its rival lets a moved constituent be extracted from and restricts what may move instead:
-`MovesOnly L d` says that each mover of `d` satisfies `L` in the object built when it moves. With
-`L` the labeled constituents this is [boskovic-2018]'s generalization that unlabeled elements
-cannot move, as a phrase whose specifier does not agree with it cannot, and with `L` the phases,
-the condition that only phases move. A further movement obeys it exactly when its mover satisfies
-`L` (`movesOnly_append_im_iff`).
+Its rival lets a moved constituent be extracted from and restricts what may move instead, a
+condition `∀ m ∈ d.movedItems, L m` on the movers: with `L` the labeled constituents,
+[boskovic-2018]'s generalization that unlabeled elements cannot move.
 
 ## References
 
@@ -121,58 +118,5 @@ theorem obeysFreezing_map_iff (hf : Function.Injective f) :
   simp only [ObeysFreezing, movedItems_map, List.pairwise_map, contains_map_iff hf]
 
 end Map
-
-/-! ### Conditions on what moves -/
-
-variable (L : PlanarSyntacticObject → SyntacticObject → Prop) {d : Derivation} {steps : List Step}
-
-/-- Each mover of `d` satisfies `L` in the object the derivation has built when it moves: with `L`
-the labeled constituents, [boskovic-2018]'s ban on moving unlabeled elements. -/
-def MovesOnly (d : Derivation) : Prop :=
-  ∀ i < d.length, ∀ m ∈ d.mover? i, ∃ p ∈ (d.take i).externalize?, L p m
-
-instance [∀ p, DecidablePred (L p)] (d : Derivation) : Decidable (d.MovesOnly L) :=
-  inferInstanceAs (Decidable (∀ _ < _, _))
-
-variable {L}
-
-theorem MovesOnly.mono {L' : PlanarSyntacticObject → SyntacticObject → Prop}
-    (hL : ∀ p x, L p x → L' p x) (h : d.MovesOnly L) : d.MovesOnly L' :=
-  fun i hi m hm ↦ (h i hi m hm).imp fun p ⟨hp, hpm⟩ ↦ ⟨hp, hL p m hpm⟩
-
-/-- A derivation that moves only `L`-constituents did so at each earlier stage. -/
-theorem MovesOnly.of_append (h : (d.append steps).MovesOnly L) : d.MovesOnly L := fun i hi m hm ↦ by
-  have := h i (hi.trans_le (by simp [length, append])) m (by rwa [mover?_append_of_lt hi])
-  rwa [take_append_of_le hi.le] at this
-
-theorem movesOnly_append_singleton_iff {step : Step} :
-    (d.append [step]).MovesOnly L ↔ d.MovesOnly L ∧
-      ∀ m ∈ step.mover?, ∃ p ∈ d.externalize?, L p m := by
-  have hlast : (d.append [step]).mover? d.length = step.mover? := by
-    simp [mover?, append, length]
-  constructor
-  · intro h
-    refine ⟨fun i hi m hm ↦ ?_, fun m hm ↦ ?_⟩
-    · have := h i (by simp; omega) m (by rwa [mover?_append_of_lt hi])
-      rwa [take_append_of_le hi.le] at this
-    · have := h d.length (by simp) m (by rwa [hlast])
-      rwa [take_length_append] at this
-  · rintro ⟨h, hs⟩ i hi m hm
-    rcases Nat.lt_or_ge i d.length with hlt | hge
-    · rw [take_append_of_le hlt.le]
-      exact h i hlt m (by rwa [mover?_append_of_lt hlt] at hm)
-    · obtain rfl : i = d.length := by simp at hi; omega
-      rw [take_length_append]
-      exact hs m (by rwa [hlast] at hm)
-
-/-- A further movement moves only `L`-constituents exactly when its mover satisfies `L` in the
-object built so far. -/
-@[simp] theorem movesOnly_append_im_iff {m : SyntacticObject} {side : Edge} :
-    (d.append [.im m side]).MovesOnly L ↔ d.MovesOnly L ∧ ∃ p ∈ d.externalize?, L p m := by
-  simp [movesOnly_append_singleton_iff]
-
-@[simp] theorem movesOnly_append_em_iff {item : PlanarSyntacticObject} {side : Edge} :
-    (d.append [.em side item]).MovesOnly L ↔ d.MovesOnly L := by
-  simp [movesOnly_append_singleton_iff]
 
 end Minimalist.Derivation
