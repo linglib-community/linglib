@@ -5,16 +5,17 @@ public import Mathlib.Data.Finset.Max
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Morphological causation: compactness and directness
+# Causativization
 
 Causative constructions vary along two scales: **morphological complexity**, from compact
 (lexical) to analytic (periphrastic), and **directness of mediation**, from a causer that brings
-about the result itself to one whose action is removed from it by intermediate stages. A causative construction is a point
-of `CausativeComplexity × Mediation`, and [comrie-1989]'s generalization is that within a language
-the more compact construction expresses the more direct causation: a language's constructions form
-a chain of the product order, `IsChain (· ≤ ·)`. The causee of a causativized verb takes the highest
-grammatical relation not already filled by the causer and the base verb's other arguments
-(`causeeDemotion`), so the causee sinks as the base valency rises (`causeeDemotion_antitone`).
+about the result itself to one whose action is removed from it by intermediate stages. A causative
+construction is a point of `CausativeComplexity × Mediation`, and [comrie-1989]'s generalization
+is that within a language the more compact construction expresses the more direct causation: a
+language's constructions form a chain of the product order, `IsChain (· ≤ ·)`. The causee of a
+causativized verb takes the highest grammatical relation not already filled by the causer and the
+base verb's other arguments (`causeeDemotion`), so the causee sinks as the base valency rises
+(`causeeDemotion_antitone`).
 
 ## References
 
@@ -23,7 +24,7 @@ grammatical relation not already filled by the causer and the base verb's other 
 
 @[expose] public section
 
-namespace Causation.Morphological
+namespace Causativization
 
 /-! ### Mediation -/
 
@@ -106,4 +107,4 @@ theorem isGreatest_causeeDemotion (n : ℕ) :
 theorem causeeDemotion_antitone : Antitone causeeDemotion := fun _ _ h ↦
   Finset.max'_subset _ (Finset.compl_subset_compl.2 (CauseeSlot.filled_mono h))
 
-end Causation.Morphological
+end Causativization

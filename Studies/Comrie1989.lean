@@ -10,7 +10,7 @@ public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
-public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -86,7 +86,7 @@ its pivot](##bias_rows) and [need not match case marking](##dyirbal_marking_synt
 
 namespace Comrie1989
 
-open Alignment ArgumentStructure Causation.Morphological
+open Alignment ArgumentStructure Causativization
 
 /-! ### The discriminatory function of case -/
 

@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.IntervalCases
-public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Data.Examples.Song1996
 public import Linglib.Fragments.Korean.Verbs
 public import Linglib.Data.Examples.Readers
@@ -73,7 +73,7 @@ not (`clause_omitted_rows`), and the causee is nominative exactly where *ha-* co
 
 namespace Song1996
 
-open Causation.Morphological (CausativeComplexity causeeDemotion)
+open Causativization (CausativeComplexity causeeDemotion)
 
 /-! ### Forms and types (chapter 2) -/
 

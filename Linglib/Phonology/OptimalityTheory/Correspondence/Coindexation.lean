@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Indices
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Order
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 
 /-!

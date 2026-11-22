@@ -25,7 +25,6 @@ joins, and a network is well typed when every inheritance link respects its rela
 
 * `LinkType`, `LinkType.Admits`: the relations an inheritance link records, and what each
   requires of the forms it joins
-* `Slot.Refines`: a slot specializes a slot of the construction it instantiates
 * `Constructicon`: constructions at nodes, with inheritance and horizontal links
 * `Constructicon.IsMother`, `Constructicon.partialOrder`, `Constructicon.decidableLE`: the
   inheritance order of an acyclic network
@@ -70,20 +69,9 @@ inductive LinkType where
   /-- I_I: the linked construction is a more fully specified version of the other (*drive*-crazy
   as an instance of the resultative, p. 79). -/
   | instance
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 variable {Lex : Type*}
-
-/-- A slot refines a slot of the construction it instantiates when the two are equal, or the
-latter is open and they differ at most in their fillers: an instance is a "partially lexically
-filled" version of its construction ([goldberg-1995] p. 79), so refinement only fills open
-fillers, keeping headedness, function and constraints; the category of the filling lexeme is not
-checked. -/
-def Slot.Refines (s t : Slot Lex) : Prop :=
-  s = t ∨ (t.filler.IsOpen ∧ { s with filler := t.filler } = t)
-
-instance [DecidableEq Lex] (s t : Slot Lex) : Decidable (s.Refines t) :=
-  inferInstanceAs (Decidable (_ ∨ _))
 
 /-- What a link type requires of the form `c` of the linked construction, given the form `m` of
 the construction it inherits from: a polysemous extension keeps the central sense's form, a
@@ -110,6 +98,11 @@ derived rather than listed among a network's `mothers`, which keeps the network 
 theorem LinkType.Admits.inverse_subpart {c m : TypedForm Lex}
     (h : LinkType.instance.Admits c m) : LinkType.subpart.Admits m c :=
   ⟨List.sublistForall₂_iff.2 ⟨c, h.1.flip, List.Sublist.refl c⟩, h.2.symm⟩
+
+/-- An instance is at most as abstract as the construction it instantiates. -/
+theorem LinkType.Admits.specificity_le {c m : TypedForm Lex}
+    (h : LinkType.instance.Admits c m) : c.specificity ≤ m.specificity :=
+  TypedForm.specificity_le_of_forall₂_refines h.1
 
 /-! ### The network -/
 
@@ -149,11 +142,11 @@ abbrev decidableLE [DecidableEq ι] (nodes : List ι) (h : ∀ c m, N.IsMother c
 
 /-- Every inheritance link respects the relation it records. -/
 def WellTyped : Prop :=
-  ∀ c, ∀ e ∈ N.mothers c, ∀ t ∈ e.2, t.Admits (N.cxn c).form (N.cxn e.1).form
+  ∀ c m t, (m, some t) ∈ N.mothers c → t.Admits (N.cxn c).form (N.cxn m).form
 
-instance [Fintype ι] : Decidable N.WellTyped :=
+instance [Fintype ι] [DecidableEq ι] : Decidable N.WellTyped :=
   inferInstanceAs <| Decidable <|
-    ∀ c, ∀ e ∈ N.mothers c, ∀ t ∈ e.2, t.Admits (N.cxn c).form (N.cxn e.1).form
+    ∀ c m t, (m, some t) ∈ N.mothers c → t.Admits (N.cxn c).form (N.cxn m).form
 
 end Constructicon
 
