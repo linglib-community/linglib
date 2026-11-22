@@ -13,6 +13,7 @@ public import Mathlib.Tactic.Positivity
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Data.Examples.Jaeger2014
+public import Linglib.Pragmatics.SignalingGame.Pure
 public import Studies.Franke2011
 public import Linglib.Data.Examples.Readers
 
@@ -35,6 +36,11 @@ response.
 * Beliefs are points of mathlib's `Convexity.StdSimplex`; the paper's distributions over a set
   `P` of strategies, all of them or only those positive on all of `P`, are the beliefs whose
   support is contained in, respectively equal to, `P`.
+* In each context a semantic game is a `SignalingGame` from worlds through signals to actions
+  (`SemanticGame.toSignalingGame`), in which the receiver's utility does not depend on the signal
+  and the sender's ex-ante payoff is the value of a pure profile
+  (`SemanticGame.senderPayoff_eq_pureSenderValue`). The game, its best responses and its expected
+  utilities are otherwise stated on the study's own definitions.
 * The iterated cautious response sequence is an iterate of `receiverStep` and the pragmatically
   rationalizable strategies are its limit superior; `mem_prsR_iff` is the paper's definition,
   which prints `s` for `r` in its receiver half.
@@ -672,6 +678,48 @@ theorem optimalActions_eq_of_extension_eq_singleton {f : F} {w : W} (hf : g.exte
   simp only [optimalActions, hf, Finset.sum_singleton]
   exact Finset.argmax_comp_strictMono (s := Finset.univ) (f := g.uR c w)
     (strictMono_mul_left_of_pos hw)
+
+/-! ### The signaling game of a context -/
+
+section SignalingGame
+
+open MeasureTheory
+
+variable [MeasurableSpace W] [MeasurableSingletonClass W]
+
+/-- The prior over worlds as a measure. -/
+noncomputable def priorMeasure : Measure W :=
+  ∑ w, ENNReal.ofReal (g.prior.weights w) • Measure.dirac w
+
+omit [Fintype C] [Fintype F] [Fintype A] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
+theorem priorMeasure_real_singleton (w : W) : g.priorMeasure.real {w} = g.prior.weights w := by
+  rw [priorMeasure, measureReal_def, Measure.finsetSum_smul_dirac_singleton,
+    ENNReal.toReal_ofReal (g.prior.nonneg w)]
+
+instance : IsFiniteMeasure g.priorMeasure :=
+  ⟨by
+    rw [priorMeasure, Measure.finsetSum_smul_dirac_apply]
+    exact ENNReal.sum_lt_top.2 fun w _ ↦ by
+      rw [Set.indicator_of_mem (Set.mem_univ w)]
+      exact ENNReal.ofReal_lt_top⟩
+
+/-- In a context, a semantic game is a signaling game from worlds through signals to actions, in
+which the receiver's utility does not depend on the signal. -/
+noncomputable def toSignalingGame (c : C) : SignalingGame W F A :=
+  ⟨g.priorMeasure, g.uS c, fun w _ ↦ g.uR c w⟩
+
+instance (c : C) : IsFiniteMeasure (g.toSignalingGame c).prior :=
+  inferInstanceAs (IsFiniteMeasure g.priorMeasure)
+
+omit [Fintype C] [Fintype F] [Fintype A] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
+-- The ex-ante payoff is the sender's value of the pure profile in the context's signaling game.
+theorem senderPayoff_eq_pureSenderValue (c : C) (s : C → W → F) (r : C → F → A) :
+    g.senderPayoff c s r = (g.toSignalingGame c).pureSenderValue (s c) (r c) := by
+  rw [senderPayoff, SignalingGame.pureSenderValue, integral_fintype .of_finite]
+  exact Finset.sum_congr rfl fun w _ ↦ by
+    rw [toSignalingGame, priorMeasure_real_singleton, smul_eq_mul]
+
+end SignalingGame
 
 end SemanticGame
 

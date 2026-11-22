@@ -28,6 +28,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace SignalingGame
 
+section Family
+
 universe u
 
 variable {S M A : Type u}
@@ -46,13 +48,16 @@ def profile (f : S → M) (g : M → A) : ∀ b, Strategies S M A b
 
 @[simp] theorem profile_true (f : S → M) (g : M → A) : profile f g true = g := rfl
 
-variable [MeasurableSpace S] (G : SignalingGame S M A)
-
 /-- What a pure profile is worth at a state to the sender, `false`, and to the receiver,
 `true`. -/
-def utilityAt (s : S) : Bool → (∀ b, Strategies S M A b) → ℝ
+def utilityAt [MeasurableSpace S] (G : SignalingGame S M A) (s : S) :
+    Bool → (∀ b, Strategies S M A b) → ℝ
   | false, a => G.senderUtility s (a false s) (a true (a false s))
   | true, a => G.receiverUtility s (a false s) (a true (a false s))
+
+end Family
+
+variable {S M A : Type*} [MeasurableSpace S] (G : SignalingGame S M A)
 
 /-- The sender's value of a pure profile. -/
 noncomputable def pureSenderValue (f : S → M) (g : M → A) : ℝ :=
