@@ -401,7 +401,7 @@ def paperBy : ReaderT (ℕ → E) Set E := fun g ↦ {x | x ∈ paper ∧ wrote 
 theorem paper_wide :
     paperBy paper wrote >>= (fun x ↦ det Det.no cand (beta 0 fun y ↦ pure (subm x y))) =
       fun g ↦ (fun x ↦ ¬ ∃ y ∈ cand, subm x y) '' {x | x ∈ paper ∧ wrote x (g 0)} := by
-  funext g; ext q; simp [paperBy, det, Det.no, Set.subset_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+  funext g; ext q; simp [paperBy, det, Det.no, Set.subset_def, eq_comm, -eq_iff_iff]
 
 -- Figure 14
 theorem paper_wide_beta :
@@ -480,7 +480,7 @@ def that (r l : ReaderT (ℕ → E) Set Prop) : ReaderT (ℕ → E) Set Prop :=
 
 -- (85)
 theorem a_pure (ling : Set E) : a (fun x ↦ pure (x ∈ ling)) = monadLift ling := by
-  funext g; ext x; simp [a, sSup_Prop_eq, -eq_iff_iff]
+  funext g; ext x; simp [a, -eq_iff_iff]
 
 /-- *A paper (that) she₀ had written*, with `β¹` binding the gap, is (66) (Figure 15, right). -/
 theorem a_paper_that_she_wrote :

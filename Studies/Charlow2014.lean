@@ -225,8 +225,6 @@ def every (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E P
 def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop :=
   neg (det c >>= k)
 
-@[simp] theorem pure_apply (a : α) (s : Stack E) : (pure a : StateSet E α) s = {(a, s)} := rfl
-
 @[simp] theorem mem_indef (P : E → Prop) (s : Stack E) (q : E × Stack E) :
     q ∈ indef P s ↔ P q.1 ∧ q.2 = s := Iff.rfl
 
@@ -263,7 +261,7 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
 @[simp] theorem det_pure (P : E → Prop) : det (fun x ↦ pure (P x)) = indef P := by
   funext s; ext ⟨x, s'⟩
   exact ⟨fun ⟨_, hp, h⟩ ↦ by cases hp; exact ⟨h, rfl⟩,
-    fun ⟨h, hs⟩ ↦ ⟨_, by rw [Set.mem_stateT_pure, hs], h⟩⟩
+    fun ⟨h, hs⟩ ↦ ⟨_, by simpa using hs, h⟩⟩
 
 theorem dref_bind (m : StateSet E E) (π : E → StateSet E α) :
     dref m >>= π = m >>= fun a s ↦ π a (s ++ [a]) := by
@@ -549,7 +547,7 @@ theorem brc_derivation (cand : E → Prop) (paperBy submitted : E → E → Prop
       (combine (combine (· ·)) (pure (liftValue submitted))
         (pure <$> monadLift (pro >>= fun z ↦ indef (paperBy z))))) =
       pro >>= fun z ↦ indef (paperBy z) >>= fun y ↦ pure (¬ ∃ x, cand x ∧ submitted y x) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]
+  funext s; ext q; simp [combine, lower, Function.comp_def]; grind
 
 /-! ### Choice functions (§4.7.1, (4.34)–(4.38))
 
@@ -568,7 +566,8 @@ theorem cf_exceptional_cond (rel : Set E) (dies : E → Prop) (rich : Prop) (hre
     (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
       holds (indef (· ∈ rel) >>= fun x ↦ pure (dies x → rich)) s := by
   refine (ChoiceFunction.exists_apply_iff_of_nonempty hrel fun x ↦ dies x → rich).trans ?_
-  simp only [holds, indef, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
+  simp only [holds, indef, Set.mem_stateT_bind, Set.stateT_pure_apply, Set.mem_singleton_iff,
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, hx, h⟩
     exact ⟨_, ⟨(x, s), ⟨hx, rfl⟩, rfl⟩, h⟩
@@ -701,7 +700,7 @@ theorem or_names_left (c m : E) (left : E → Prop) :
     lower (combine (fun x f ↦ f x) (or (bindShift (liftValue c)) (bindShift (liftValue m)))
       (liftValue left : Tower E Prop (E → Prop))) =
       (dref (pure c) <|> dref (pure m)) >>= fun x ↦ pure (left x) := by
-  funext s; ext q; simp [combine, lower]
+  funext s; ext q; simp [combine, lower, or_comm]
 
 theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
     lower (combine (fun x f ↦ f x) (liftValue me : Tower E Prop E)

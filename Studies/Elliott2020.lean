@@ -313,13 +313,13 @@ theorem not_exists_bind_eq_positiveClosure :
       rw [mem_positiveClosure]
       refine .inr (.inl ⟨⟨?_, ⊥, rfl⟩, rfl⟩)
       ext h
-      simp [Set.mem_stateT_pure]
+      simp
     rw [h] at this
     simpa using this
   let both : StateSet D Trivalent := fun g ↦ {(.true, g), (.false, g)}
   have hf : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∉ positiveClosure both ⊥ := by
     simp [mem_positiveClosure, IsFalse, IsIndet, both, Set.eq_empty_iff_forall_notMem]
-  exact hf (hk both ▸ Set.mem_stateT_bind _ _ _ _ |>.2 ⟨(.false, ⊥), by simp [both], hk₀⟩)
+  exact hf (hk both ▸ Set.mem_stateT_bind.2 ⟨(.false, ⊥), by simp [both], hk₀⟩)
 
 /-! ### Positive extensions and DPL
 

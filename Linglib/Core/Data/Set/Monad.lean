@@ -12,23 +12,36 @@ import all Init.Control.State  -- for unfolding `StateT.orElse`
 /-!
 # The set monad under the state and reader transformers
 
-Membership in the computations of `StateT σ Set` and `ReaderT σ Set`, with `Set.monad` as the
-monad: a computation run at an input is a set of results, and `pure`, `<$>`, `>>=`, `<*>` and
-`<|>` act on it as singleton, image, indexed union, pointwise application and union. The statements are
-about the local instance `Set.monad`, so they apply wherever a file enables it.
+With `Set.monad` as the monad, a computation of `StateT σ Set α` run at an input state is a set of
+value–state pairs, and one of `ReaderT σ Set α` a set of values. This file evaluates `pure`,
+`<$>`, `>>=`, `<*>` and `<|>` of both transformers at an input, as a singleton, an image, an
+indexed union and a union, and identifies a `StateT σ Set α` computation with a family of
+relations on `σ` indexed by `α`.
 
-## Main results
+## Main definitions
 
-* `Set.mem_stateT_bind`, `Set.mem_stateT_map`, `Set.mem_stateT_pure`, `Set.mem_stateT_seq`,
-  `Set.mem_stateT_orElse`: results of `StateT σ Set` computations.
-* `Set.mk_mem_stateT_map`, `Set.mk_mem_stateT_map_seq`: the same for a value–state pair, with
-  `f <$> m <*> n` running `m` and then `n` from its output state.
-* `Set.mem_readerT_bind`, `Set.mem_readerT_map`, `Set.mem_readerT_pure`: results of
-  `ReaderT σ Set` computations.
-* `StateT.relEquiv`: a `StateT σ Set α` computation is the family of relations on `σ` it induces
-  at each value, and `StateT.rel_bind`, `StateT.rel_map_seq` compose these relations.
-* `StateT.rel_bind_subset`, `StateT.rel_map_seq_subset`: a reflexive and transitive relation
-  containing every step of the parts contains every step of the whole.
+* `StateT.rel`: the relation on states a computation induces at a value.
+* `StateT.relEquiv`: `StateT σ Set α ≃ (α → SetRel σ σ)`.
+
+## Main statements
+
+* `Set.stateT_bind_apply`: `(m >>= f) s = ⋃ q ∈ m s, f q.1 q.2`.
+* `Set.mk_mem_stateT_map_seq`: `f <$> m <*> n` runs `m` and then `n` from its output state.
+* `StateT.rel_bind`: `(m >>= f).rel b = ⋃ a, m.rel a ○ (f a).rel b`.
+* `StateT.rel_bind_subset`, `StateT.rel_map_seq_subset`: a transitive relation containing every
+  step of the parts contains every step of the whole.
+
+## Implementation notes
+
+The statements are about the local instance `Set.monad`, so they apply wherever a file enables it.
+A computation is applied to its input directly, `m s`, as the files using these lemmas define
+their computations by `fun s ↦ _`; core's `StateT.run_bind` and its siblings are stated for
+`m.run s` and do not fire on that form.
+
+`pure`, `>>=` and `<|>` are evaluated as equations of sets. `<$>` and `<*>` are evaluated by
+membership, `r ∈ (f <$> m) s ↔ ∃ q ∈ m s, r = (f q.1, q.2)`, with the equation oriented as in
+`Set.mem_singleton_iff`, so that `f <$> m` and `m >>= fun a ↦ pure (f a)` have the same `simp`
+normal form; `Set.mem_image` has the opposite orientation.
 -/
 
 @[expose] public section
@@ -45,26 +58,28 @@ section StateT
 
 variable {σ α β γ : Type u}
 
-@[simp] theorem mem_stateT_bind (m : StateT σ Set α) (f : α → StateT σ Set β) (s : σ)
-    (r : β × σ) : r ∈ (m >>= f) s ↔ ∃ q ∈ m s, r ∈ f q.1 q.2 := by
-  show r ∈ StateT.bind m f s ↔ _
+@[simp] theorem stateT_pure_apply (a : α) (s : σ) : (pure a : StateT σ Set α) s = {(a, s)} := rfl
+
+@[simp] theorem stateT_bind_apply (m : StateT σ Set α) (f : α → StateT σ Set β) (s : σ) :
+    (m >>= f) s = ⋃ q ∈ m s, f q.1 q.2 := by
+  show StateT.bind m f s = _
   simp [StateT.bind, Set.bind_def]
+
+@[simp] theorem stateT_orElse_apply (m n : StateT σ Set α) (s : σ) :
+    (m <|> n) s = m s ∪ n s := by
+  show StateT.orElse m (fun _ ↦ n) s = _
+  simp [StateT.orElse, Set.orElse_def]
+
+theorem mem_stateT_bind {m : StateT σ Set α} {f : α → StateT σ Set β} {s : σ} {r : β × σ} :
+    r ∈ (m >>= f) s ↔ ∃ q ∈ m s, r ∈ f q.1 q.2 := by simp
 
 @[simp] theorem mem_stateT_map (f : α → β) (m : StateT σ Set α) (s : σ) (r : β × σ) :
     r ∈ (f <$> m) s ↔ ∃ q ∈ m s, r = (f q.1, q.2) := by
-  simp only [← bind_pure_comp, mem_stateT_bind]; rfl
-
-@[simp] theorem mem_stateT_pure (a : α) (s : σ) (r : α × σ) :
-    r ∈ (pure a : StateT σ Set α) s ↔ r = (a, s) := Iff.rfl
+  simp [← bind_pure_comp]
 
 @[simp] theorem mem_stateT_seq (m : StateT σ Set (α → β)) (n : StateT σ Set α) (s : σ)
     (r : β × σ) : r ∈ (m <*> n) s ↔ ∃ q ∈ m s, ∃ q' ∈ n q.2, r = (q.1 q'.1, q'.2) := by
-  simp only [seq_eq_bind_map, mem_stateT_bind, mem_stateT_map]
-
-@[simp] theorem mem_stateT_orElse (m n : StateT σ Set α) (s : σ) (r : α × σ) :
-    r ∈ (m <|> n) s ↔ r ∈ m s ∨ r ∈ n s := by
-  show r ∈ StateT.orElse m (fun _ ↦ n) s ↔ _
-  simp [StateT.orElse, Set.orElse_def]
+  simp [seq_eq_bind_map]
 
 theorem mk_mem_stateT_map {f : α → β} {m : StateT σ Set α} {s s' : σ} {b : β} :
     (b, s') ∈ (f <$> m) s ↔ ∃ a, (a, s') ∈ m s ∧ b = f a := by
@@ -89,17 +104,19 @@ section ReaderT
 
 variable {σ α β : Type u}
 
-@[simp] theorem mem_readerT_bind (m : ReaderT σ Set α) (f : α → ReaderT σ Set β) (s : σ)
-    (r : β) : r ∈ (m >>= f) s ↔ ∃ x ∈ m s, r ∈ f x s := by
-  show r ∈ ReaderT.bind m f s ↔ _
+@[simp] theorem readerT_pure_apply (a : α) (s : σ) : (pure a : ReaderT σ Set α) s = {a} := rfl
+
+@[simp] theorem readerT_bind_apply (m : ReaderT σ Set α) (f : α → ReaderT σ Set β) (s : σ) :
+    (m >>= f) s = ⋃ x ∈ m s, f x s := by
+  show ReaderT.bind m f s = _
   simp [ReaderT.bind, Set.bind_def]
+
+theorem mem_readerT_bind {m : ReaderT σ Set α} {f : α → ReaderT σ Set β} {s : σ} {r : β} :
+    r ∈ (m >>= f) s ↔ ∃ x ∈ m s, r ∈ f x s := by simp
 
 @[simp] theorem mem_readerT_map (f : α → β) (m : ReaderT σ Set α) (s : σ) (r : β) :
     r ∈ (f <$> m) s ↔ ∃ x ∈ m s, r = f x := by
-  simp only [← bind_pure_comp, mem_readerT_bind]; rfl
-
-@[simp] theorem mem_readerT_pure (a : α) (s : σ) (r : α) :
-    r ∈ (pure a : ReaderT σ Set α) s ↔ r = a := Iff.rfl
+  simp [← bind_pure_comp]
 
 end ReaderT
 
@@ -126,6 +143,11 @@ def relEquiv : StateT σ Set α ≃ (α → SetRel σ σ) where
   invFun R s := {q | s ~[R q.1] q.2}
   left_inv _ := rfl
   right_inv _ := rfl
+
+@[simp] theorem coe_relEquiv : ⇑(relEquiv : StateT σ Set α ≃ (α → SetRel σ σ)) = rel := rfl
+
+@[simp] theorem mem_relEquiv_symm_apply {R : α → SetRel σ σ} {s : σ} {q : α × σ} :
+    q ∈ relEquiv.symm R s ↔ s ~[R q.1] q.2 := Iff.rfl
 
 theorem rel_pure_self (a : α) : (pure a : StateT σ Set α).rel a = SetRel.id := by
   ext ⟨s, s'⟩
