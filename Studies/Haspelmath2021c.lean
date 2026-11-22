@@ -94,7 +94,7 @@ theorem turkish_affixes :
 /-! ### Bound forms on roots of two classes (15) -/
 
 /-- The Polish preposition *w* 'in'. -/
-def w : Morph := .free "w"
+def w : Morph := .procl "w"
 /-- The Polish object form *domu* 'house'. -/
 def domu : Morph := .root "domu"
 /-- The Polish demonstrative *to* 'that'. -/
@@ -115,9 +115,9 @@ theorem polish_scie_not_affix : ¬ polish.IsAffix polish.IsContentful scie := by
   decide
 
 /-- The English indefinite article *a*. -/
-def a : Morph := .free "a"
+def a : Morph := .procl "a"
 /-- The English indefinite article *an*. -/
-def an : Morph := .free "an"
+def an : Morph := .procl "an"
 /-- The English object root *house*. -/
 def house : Morph := .root "house"
 /-- The English object root *apple*. -/

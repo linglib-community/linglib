@@ -165,19 +165,63 @@ instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls 
 
 /-! ### Question particles (§1.3) -/
 
-/-- A particle's layer is read off its embedding distribution (20): CP if it is licensed in
-subordination, otherwise PerspP if it is licensed in quasi-subordination, otherwise SAP if it is
-licensed in matrix clauses. -/
-def layerOf (p : Particle) : Option PeripheryLayer :=
-  if .subordinated ∈ p.distribution.possible.cod then some .cp
-  else if .quasiSubordinated ∈ p.distribution.possible.cod then some .perspP
-  else if .matrix ∈ p.distribution.possible.cod then some .sap
+/-- The three types of interrogative particle: a Q-particle types its clause, as Japanese *ka*
+does, a polar question particle goes with polar questions, as Hindi-Urdu *kya:* does, and a meta
+question particle asks about the question, as Japanese *kke* and English *quick* do. -/
+inductive ParticleType
+  | qParticle
+  | polarQuestionParticle
+  | metaQuestionParticle
+  deriving DecidableEq, Repr, Fintype
+
+/-- (20): The layer at which each type of particle sits. -/
+def ParticleType.layer : ParticleType → PeripheryLayer
+  | .qParticle => .cp
+  | .polarQuestionParticle => .perspP
+  | .metaQuestionParticle => .sap
+
+/-- The distribution a type of particle has: with each sentence type it goes with, it may occur in
+exactly the recorded contexts that embed at least its layer, and a Q-particle is obligatory in
+subordinated clauses. -/
+def ParticleType.Predicts (k : ParticleType) (d : Clause.Distribution) : Prop :=
+  (∀ t ∈ d.types, ∀ e, (t, e) ∈ d.recorded → ((t, e) ∈ d.possible ↔ k.layer ≤ layerOfContext e)) ∧
+    (k = .qParticle → ∀ t ∈ d.types, (t, .subordinated) ∈ d.required)
+
+instance (k : ParticleType) (d : Clause.Distribution) : Decidable (k.Predicts d) := by
+  unfold ParticleType.Predicts; infer_instance
+
+/-- The type of each particle of (15) to (19). -/
+def particleTypes : List (Clause.Marker × ParticleType) :=
+  [(ka, .qParticle), (kya, .polarQuestionParticle), (kke, .metaQuestionParticle),
+   (quick, .metaQuestionParticle)]
+
+/-- The distribution the fragments record for each particle is the one its type predicts: *ka*
+everywhere and obligatorily under subordination, *kya:* in root and quasi-subordinated clauses,
+*kke* and *quick* in root clauses and quotations. -/
+theorem predicts_distribution : ∀ x ∈ particleTypes, x.2.Predicts x.1.distribution := by
+  decide
+
+/-- No other type predicts the distribution of a particle. -/
+theorem predicts_iff :
+    ∀ x ∈ particleTypes, ∀ k : ParticleType, k.Predicts x.1.distribution ↔ k.layer = x.2.layer := by
+  decide
+
+/-- The layer read off a particle's distribution: CP if it may occur under subordination,
+otherwise PerspP if under quasi-subordination, otherwise SAP if in a root clause. -/
+def layerOf (p : Clause.Marker) : Option PeripheryLayer :=
+  if .subordinated ∈ p.distribution.contexts then some .cp
+  else if .quasiSubordinated ∈ p.distribution.contexts then some .perspP
+  else if .matrix ∈ p.distribution.contexts then some .sap
   else none
 
--- (15), (19)
-theorem layers_derived :
-    layerOf ka = some .cp ∧ layerOf kya = some .perspP ∧
-      layerOf kke = some .sap ∧ layerOf quick = some .sap := by
+theorem layerOf_eq : ∀ x ∈ particleTypes, layerOf x.1 = some x.2.layer := by
+  decide
+
+/-- The complementizers type the clauses their distributions admit: *koto* declaratives, and
+*ki* declaratives and questions of every kind. -/
+theorem types_subordinators :
+    Japanese.Particles.koto.types.types = {.declarative} ∧
+      HindiUrdu.Particles.ki.types.types = {.declarative, .polar, .alternative, .constituent} := by
   decide
 
 /-! ### Centering (25)–(26), (42)–(43) -/
@@ -313,7 +357,7 @@ theorem simplex_polar :
 
 -- (71)
 theorem ya_nahi_obligatory_iff :
-    ∀ e, ya_nahi.distribution .polar e = some .obligatory ↔ ¬ Typed hindiUrdu e := by
+    ∀ e, ya_nahi.distribution (.polar, e) = some .obligatory ↔ ¬ Typed hindiUrdu e := by
   decide
 
 /-! ### The paper's judgments -/

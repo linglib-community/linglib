@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Hindi-Urdu interrogative particles
@@ -14,8 +14,8 @@ questions and occupies a projection above CP (Bhatt and Dayal's ForceP,
 Dayal's later PerspP); it embeds only in quasi-subordination. Since
 nothing clause-types a bare embedded polar clause, subordinated polar
 questions require the overt alternative *ya: nahĩ:* "or not". This file
-provides the three particles as `Particle` values with recorded
-licensing distributions.
+provides *kya:* and *ya: nahĩ:* as `Clause.Marker` values and *ki* as a
+`Complementizer`, with recorded licensing distributions.
 
 ## Main declarations
 
@@ -36,10 +36,10 @@ namespace HindiUrdu.Particles
 
 /-- *ki* is the general subordinator, distinct from the homophonous
 disjunction `HindiUrdu.Coordination.ki` of alternative questions. -/
-def ki : Particle where
-  form := "ki"
-  position := some .clauseInitial
-  distribution := fun c e ↦ match c with
+def ki : Complementizer where
+  morphs := [.free "ki"]
+  anchor := .clause {.initial}
+  distribution := fun (c, e) ↦ match c with
     | .declarative | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .excluded
@@ -49,26 +49,26 @@ def ki : Particle where
     | _ => none
 
 /-- *kya:* is a polar question particle. -/
-def kya : Particle where
-  form := "kya:"
-  position := some .free
-  distribution := fun c e ↦ match c, e with
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .excluded
-    | .polar, .quasiSubordinated => some .optional
-    | .alternative, .matrix => some .optional
-    | .constituent, _ => some .excluded
-    | _, _ => none
+def kya : Clause.Marker where
+  morphs := [.free "kya:"]
+  anchor := .clause .univ
+  distribution
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .excluded
+    | (.polar, .quasiSubordinated) => some .optional
+    | (.alternative, .matrix) => some .optional
+    | (.constituent, _) => some .excluded
+    | _ => none
 
 /-- *ya: nahĩ:* "or not" is the overt disjunct forming a polar
 alternative question. -/
-def ya_nahi : Particle where
-  form := "ya: nahĩ:"
-  position := some .clauseFinal
-  distribution := fun c e ↦ match c, e with
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .obligatory
-    | .polar, .quasiSubordinated => some .optional
-    | _, _ => none
+def ya_nahi : Clause.Marker where
+  morphs := [.free "ya:", .free "nahĩ:"]
+  anchor := .clause {.final}
+  distribution
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .obligatory
+    | (.polar, .quasiSubordinated) => some .optional
+    | _ => none
 
 end HindiUrdu.Particles

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Turkish question particles
@@ -49,13 +49,13 @@ and the conditional copula -(y)sA has no example with *mI*.
 namespace Turkish.QuestionParticles
 
 /-- *mI*, the enclitic that forms yes/no and alternative questions. -/
-def mi : Particle where
-  form := "mI"
-  position := some .postHost
+def mi : Clause.Marker where
+  morphs := [.encl "mI"]
+  anchor := .focus .after
   distribution
-    | .polar, .matrix | .polar, .quotation | .alternative, .matrix => some .obligatory
-    | .polar, .subordinated | .alternative, .subordinated => some .optional
-    | _, _ => none
+    | (.polar, .matrix) | (.polar, .quotation) | (.alternative, .matrix) => some .obligatory
+    | (.polar, .subordinated) | (.alternative, .subordinated) => some .optional
+    | _ => none
 
 open Turkish.Phonology in
 /-- The segments of *mI*, which attach as a suffix does (§3.2). -/

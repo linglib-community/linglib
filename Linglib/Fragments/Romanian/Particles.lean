@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Morphology.Morph
 
 /-!
 # Romanian polarity particles
@@ -21,18 +21,15 @@ You are wrong, she did', in Farkas and Bruce's examples. What each particle mark
 namespace Romanian.PolarityParticles
 
 /-- *da* 'yes': *Ana a plecat.* 'Ana left.' — *Da.* -/
-def da : Particle where
-  form := "da"
+def da : Morphology.Morph := .free "da"
 
 /-- *nu* 'no': *Ana nu a plecat.* 'Ana didn't leave.' — *Nu, n-a plecat.* -/
-def nu : Particle where
-  form := "nu"
+def nu : Morphology.Morph := .free "nu"
 
 /-- *ba*, contradicting: *Ana a plecat.* — *Ba nu, n-a plecat.* 'No, she didn't.' -/
-def ba : Particle where
-  form := "ba"
+def ba : Morphology.Morph := .free "ba"
 
 /-- The polarity particles. -/
-def all : List Particle := [da, nu, ba]
+def all : List Morphology.Morph := [da, nu, ba]
 
 end Romanian.PolarityParticles

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Macedonian question particles
@@ -22,33 +22,33 @@ reported to convey surprise or a negative answer expectation, unlike Bulgarian a
 namespace Macedonian.QuestionParticles
 
 /-- дали *dali*, the clause-initial polar question particle. -/
-def dali : Particle where
-  form := "dali"
+def dali : Clause.Marker where
+  morphs := [.free "dali"]
   script := some "дали"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 /-- ли *li*, the polar question particle enclitic on the fronted verb, whose negated form conveys
 positive epistemic bias ([simik-2024] ex. 32b). -/
-def li : Particle where
-  form := "li"
+def li : Clause.Marker where
+  morphs := [.encl "li"]
   script := some "ли"
-  position := some .secondPosition
+  anchor := .clause {.secondPosition}
   distribution
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | _ => none
 
 /-- зар *zar*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def zar : Particle where
-  form := "zar"
+def zar : Clause.Marker where
+  morphs := [.free "zar"]
   script := some "зар"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 end Macedonian.QuestionParticles

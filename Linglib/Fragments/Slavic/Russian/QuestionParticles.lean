@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Russian question particles
@@ -24,37 +24,37 @@ namespace Russian.QuestionParticles
 
 /-- ли li is the neutral polar question particle (formal register), a
 second-position enclitic on the focused constituent. -/
-def li : Particle where
-  form := "li"
+def li : Clause.Marker where
+  morphs := [.encl "li"]
   script := some "ли"
-  position := some .secondPosition
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .obligatory
-    | _, _ => none
+  anchor := .clause {.secondPosition}
+  distribution
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .obligatory
+    | _ => none
 
 /-- разве razve is the mirative/dubitative question particle, signalling
 conflict between the speaker's prior epistemic state and current
 contextual evidence. -/
-def razve : Particle where
-  form := "razve"
+def razve : Clause.Marker where
+  morphs := [.free "razve"]
   script := some "разве"
-  position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .excluded
-    | .constituent, .matrix => some .excluded
-    | _, _ => none
+  anchor := .clause {.initial}
+  distribution
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .excluded
+    | (.constituent, .matrix) => some .excluded
+    | _ => none
 
 /-- неужели neuželi is the mirative question particle that, unlike *razve*,
 lexicalizes VERUM and so combines with inner negation only
 ([repp-geist-2022] as reported by [simik-2024]). -/
-def neuzeli : Particle where
-  form := "neuželi"
+def neuzeli : Clause.Marker where
+  morphs := [.free "neuželi"]
   script := some "неужели"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution := razve.distribution
 
 end Russian.QuestionParticles

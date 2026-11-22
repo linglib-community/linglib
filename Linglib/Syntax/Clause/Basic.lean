@@ -22,11 +22,13 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
 ## Main definitions
 
 * `Clause.SentenceType`, `Clause.SentenceType.IsInterrogative`: the sentence types.
-* `Clause.EmbeddingContext`, `Clause.root`, `Clause.embedded`: the embedding contexts and the
-  cells of root and subordinated clauses.
+* `Clause.EmbeddingContext`, `Clause.Cell`, `Clause.root`, `Clause.embedded`: the embedding
+  contexts, and the cells of root and subordinated clauses.
 * `Clause.Distribution`: the `Obligatoriness` recorded in each cell.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
+* `Clause.Distribution.types`, `contexts`, `selection`: the sentence types and the embedding
+  contexts in which the element may occur, and those types as a selection.
 * `Clause.LeftEdge`, `Clause.LeftEdge.Table`: whether a complementizer introduces a clause and
   whether its finite verb is fronted, and the left edges a language admits in each cell.
 * `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
@@ -96,11 +98,14 @@ inductive EmbeddingContext where
   | insubordinated
   deriving DecidableEq, Repr, Fintype
 
+/-- A cell is a sentence type in an embedding context. -/
+abbrev Cell := SentenceType × EmbeddingContext
+
 /-- The cell of a root clause of sentence type `t`. -/
-abbrev root (t : SentenceType) : SentenceType × EmbeddingContext := (t, .matrix)
+abbrev root (t : SentenceType) : Cell := (t, .matrix)
 
 /-- The cell of a subordinated clause of sentence type `t`. -/
-abbrev embedded (t : SentenceType) : SentenceType × EmbeddingContext := (t, .subordinated)
+abbrev embedded (t : SentenceType) : Cell := (t, .subordinated)
 
 /-! ### Distributions
 
@@ -112,43 +117,49 @@ required. -/
 that the source records nothing for the cell, not that it is excluded. It is a `def`, as `Set` is,
 so that it does not inherit the instances of functions into `Option`, whose `⊔` would keep a cell
 only one of two distributions records. -/
-def Distribution := SentenceType → EmbeddingContext → Option Obligatoriness
+def Distribution := Cell → Option Obligatoriness
 
 namespace Distribution
 
 instance : DecidableEq Distribution :=
-  inferInstanceAs (DecidableEq (SentenceType → EmbeddingContext → Option Obligatoriness))
+  inferInstanceAs (DecidableEq (Cell → Option Obligatoriness))
+
+/-- A distribution is shown as its recorded cells. -/
+instance : Repr Distribution :=
+  ⟨fun d _ ↦ repr <|
+    (SentenceType.enumList.flatMap fun t ↦ EmbeddingContext.enumList.map (t, ·)).filterMap
+      fun c ↦ (d c).map (c, ·)⟩
 
 variable (d : Distribution)
 
 /-- The distribution recording no cell. -/
-def empty : Distribution := fun _ _ ↦ none
+def empty : Distribution := fun _ ↦ none
 
 /-- The cells the source records. -/
-def recorded : SetRel SentenceType EmbeddingContext := {c | (d c.1 c.2).isSome}
+def recorded : SetRel SentenceType EmbeddingContext := {c | (d c).isSome}
 
 /-- The cells where the element or process is required, the zone `Obligatoriness.required` of
 `d` with an unrecorded cell read as excluded, which puts it in neither zone. -/
 def required : SetRel SentenceType EmbeddingContext :=
-  Obligatoriness.required fun c ↦ (d c.1 c.2).getD ⊥
+  Obligatoriness.required fun c ↦ (d c).getD ⊥
 
 /-- The cells where the element or process may occur, the zone `Obligatoriness.possible`. -/
 def possible : SetRel SentenceType EmbeddingContext :=
-  Obligatoriness.possible fun c ↦ (d c.1 c.2).getD ⊥
+  Obligatoriness.possible fun c ↦ (d c).getD ⊥
 
-variable {d} {c : SentenceType × EmbeddingContext}
+variable {d} {c : Cell}
 
 @[simp]
-theorem mem_recorded : c ∈ d.recorded ↔ d c.1 c.2 ≠ none := by
+theorem mem_recorded : c ∈ d.recorded ↔ d c ≠ none := by
   simp [recorded, Option.isSome_iff_ne_none]
 
 @[simp]
-theorem mem_required : c ∈ d.required ↔ d c.1 c.2 = some .obligatory := by
-  simp only [required, Obligatoriness.mem_required]; cases d c.1 c.2 <;> simp
+theorem mem_required : c ∈ d.required ↔ d c = some .obligatory := by
+  simp only [required, Obligatoriness.mem_required]; cases d c <;> simp
 
 @[simp]
-theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c.1 c.2, o ≠ .excluded := by
-  simp only [possible, Obligatoriness.mem_possible]; cases d c.1 c.2 <;> simp
+theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c, o ≠ .excluded := by
+  simp only [possible, Obligatoriness.mem_possible]; cases d c <;> simp
 
 instance : DecidablePred (· ∈ d.recorded) := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
@@ -157,6 +168,25 @@ instance : DecidablePred (· ∈ d.required) :=
 
 instance : DecidablePred (· ∈ d.possible) :=
   inferInstanceAs (DecidablePred (· ∈ Obligatoriness.possible _))
+
+/-- The sentence types in which the element may occur in some embedding context. -/
+def types (d : Distribution) : Finset SentenceType := {t | t ∈ d.possible.dom}
+
+/-- The embedding contexts in which the element may occur with some sentence type. -/
+def contexts (d : Distribution) : Finset EmbeddingContext := {e | e ∈ d.possible.cod}
+
+@[simp] theorem mem_types {t : SentenceType} : t ∈ d.types ↔ ∃ e, (t, e) ∈ d.possible := by
+  simp [types, SetRel.mem_dom]
+
+@[simp] theorem mem_contexts {e : EmbeddingContext} :
+    e ∈ d.contexts ↔ ∃ t, (t, e) ∈ d.possible := by
+  simp [contexts, SetRel.mem_cod]
+
+@[simp, norm_cast] theorem coe_types : (d.types : Set SentenceType) = d.possible.dom := by
+  ext; simp [types]
+
+@[simp, norm_cast] theorem coe_contexts : (d.contexts : Set EmbeddingContext) = d.possible.cod := by
+  ext; simp [contexts]
 
 end Distribution
 
@@ -179,7 +209,7 @@ structure LeftEdge where
 
 /-- The left edges a language admits in each cell; `none` means that the source records nothing
 for the cell. -/
-def LeftEdge.Table := SentenceType → EmbeddingContext → Option (Finset LeftEdge)
+def LeftEdge.Table := Cell → Option (Finset LeftEdge)
 
 namespace LeftEdge.Table
 
@@ -188,7 +218,7 @@ variable (T : LeftEdge.Table)
 /-- The distribution of a property of left edges: in a recorded cell, the obligatoriness allowing
 the values the property takes on the edges admitted there. -/
 def distribution (p : LeftEdge → Bool) : Distribution :=
-  fun t e ↦ (T t e).map (Obligatoriness.of · p)
+  fun c ↦ (T c).map (Obligatoriness.of · p)
 
 /-- The distribution of verb second. -/
 def verbSecond : Distribution := T.distribution LeftEdge.verbSecond
@@ -198,8 +228,8 @@ def complementizer : Distribution := T.distribution LeftEdge.complementizer
 
 /-- The left edges with a complementizer, for `b = true`, or without one; a cell admitting none of
 them is unrecorded. -/
-def restrict (b : Bool) : LeftEdge.Table := fun t e ↦
-  (T t e).bind fun s ↦ if (s.filter (·.complementizer = b)).Nonempty then
+def restrict (b : Bool) : LeftEdge.Table := fun c ↦
+  (T c).bind fun s ↦ if (s.filter (·.complementizer = b)).Nonempty then
     some (s.filter (·.complementizer = b)) else none
 
 end LeftEdge.Table
@@ -257,5 +287,20 @@ instance (sel : Selection) : Decidable sel.IsInterrogative :=
   inferInstanceAs (Decidable (∃ t ∈ sel.types, _))
 
 end Selection
+
+/-- The selection of a distribution is the sentence types in which the element may occur, `⊥`
+when it may occur in none. -/
+def Distribution.selection (d : Distribution) : Selection :=
+  if h : d.types.Nonempty then .of d.types h else ⊥
+
+@[simp] theorem Distribution.types_selection (d : Distribution) : d.selection.types = d.types := by
+  unfold Distribution.selection
+  split_ifs with h
+  · rfl
+  · simpa using (Finset.not_nonempty_iff_eq_empty.1 h).symm
+
+theorem Distribution.mem_selection {d : Distribution} {t : SentenceType} :
+    t ∈ d.selection ↔ ∃ e, (t, e) ∈ d.possible := by
+  rw [Selection.mem_iff, types_selection, mem_types]
 
 end Clause

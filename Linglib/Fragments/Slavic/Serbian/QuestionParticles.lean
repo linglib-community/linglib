@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Serbian question particles
@@ -27,36 +27,36 @@ namespace Serbian.QuestionParticles
 
 /-- *li* is the enclitic polar question marker, hosted by the finite verb in
 its full form, which it draws to the front of the clause. -/
-def li : Particle where
-  form := "li"
-  position := some .secondPosition
-  distribution := fun c e => match c, e with
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | .alternative, .matrix => some .optional
-    | _, _ => none
+def li : Clause.Marker where
+  morphs := [.encl "li"]
+  anchor := .clause {.secondPosition}
+  distribution
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | (.alternative, .matrix) => some .optional
+    | _ => none
 
 /-- *da li* is the sentence-initial polar question marker, the full form of
 *li* that leaves the order of the remaining clause free. -/
-def daLi : Particle where
-  form := "da li"
-  position := some .clauseInitial
+def daLi : Clause.Marker where
+  morphs := [.free "da", .encl "li"]
+  anchor := .clause {.initial}
   distribution := li.distribution
 
 /-- *je li* is the colloquial sentence-initial polar question marker, also
 the tag *je li?*. -/
-def jeLi : Particle where
-  form := "je li"
-  position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .polar, .matrix => some .optional
-    | _, _ => none
+def jeLi : Clause.Marker where
+  morphs := [.free "je", .encl "li"]
+  anchor := .clause {.initial}
+  distribution
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 /-- *zar* is the clause-initial mirative particle, kin of Russian *razve*,
 also the tag *zar ne?*. -/
-def zar : Particle where
-  form := "zar"
-  position := some .clauseInitial
+def zar : Clause.Marker where
+  morphs := [.free "zar"]
+  anchor := .clause {.initial}
   distribution := jeLi.distribution
 
 end Serbian.QuestionParticles

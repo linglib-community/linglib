@@ -115,7 +115,7 @@ def finalClause : Tree Node String :=
 /-- Φ holds a C-word or a fronted finite verb, never both, (76ii) and (76iii): no left edge of a
 German clause has a complementizer and a fronted verb. -/
 theorem not_complementizer_and_verbSecond :
-    ∀ t e, ∀ s ∈ German.leftEdges t e, ∀ x ∈ s, ¬ (x.complementizer ∧ x.verbSecond) := by
+    ∀ c, ∀ s ∈ German.leftEdges c, ∀ x ∈ s, ¬ (x.complementizer ∧ x.verbSecond) := by
   decide
 
 /-! ### The scope rule (60) -/

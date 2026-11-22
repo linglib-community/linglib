@@ -272,7 +272,7 @@ exception. -/
 theorem rows_consistent :
     ∀ r ∈ Examples.all, r.feature? "adverb" = none →
       ∀ d ∈ grammarOf r, ∀ c ∈ cellOf r, ∀ o ∈ orderOf r,
-        ∃ o' ∈ d c.1 c.2, o.allowed ⊆ o'.allowed := by
+        ∃ o' ∈ d c, o.allowed ⊆ o'.allowed := by
   decide +kernel
 
 /-! ### *Wh*-heads and information structure (§3.2, §3.3) -/

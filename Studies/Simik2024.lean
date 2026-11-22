@@ -18,6 +18,7 @@ public import Linglib.Fragments.Slavic.Czech.Particles
 public import Linglib.Data.Examples.Simik2024
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Data.WALS.Features.F116A
 
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech
@@ -256,7 +257,7 @@ def Language.defaultStrategy : Language → Strategy
   | .bulgarian | .russian => .verbAttachedParticle
 
 /-- The question particles of each language's fragment. -/
-def Language.particles : Language → List Particle
+def Language.particles : Language → List Clause.Marker
   | .czech | .slovak | .upperSorbian => []
   | .slovenian =>
     [Slovenian.QuestionParticles.ali, Slovenian.QuestionParticles.a,
@@ -325,8 +326,37 @@ theorem quiz_particles_in_fragment :
     ∀ e ∈ quizRows l, ∀ f ∈ e.feature? "particle", f ∈ l.particles.map (·.form) := by
   cases l <;> decide
 
+/-- The atlas's type of a strategy; a declarative clause used as a question has none. -/
+def Strategy.type : Strategy → Option Data.WALS.F116A.PolarQuestionType
+  | .verbMovement => some .interrogativeWordOrder
+  | .clauseInitialParticle | .verbAttachedParticle => some .questionParticle
+  | .intonation => some .interrogativeIntonationOnly
+  | .declarative => none
+
+/-- The atlas's code for each language. -/
+def Language.walsCode : Language → String
+  | .czech => "cze" | .slovak => "svk" | .upperSorbian => "sou" | .slovenian => "slo"
+  | .ukrainian => "ukr" | .polish => "pol" | .serbian => "scr" | .macedonian => "mcd"
+  | .bulgarian => "bul" | .russian => "rus"
+
+theorem defaultStrategy_type :
+    ∀ v ∈ Data.WALS.F116A.allData.lookup l.walsCode,
+      (l.defaultStrategy.type = some v ↔ l ≠ .slovenian) := by
+  cases l <;> decide +kernel
+
+theorem bulgarian_li_anchor :
+    Bulgarian.QuestionParticles.li.anchor = .focus .after ∧
+      Data.WALS.F92A.allData.lookup "bul" = some .secondPosition := by
+  decide +kernel
+
 theorem particles_licensed_polar :
     ∀ p ∈ l.particles, Clause.root .polar ∈ p.distribution.possible := by
+  cases l <;> decide
+
+theorem clauseInitialParticle_iff_position :
+    ∀ e ∈ quizRows l, ∀ p ∈ l.particles, e.feature? "particle" = some p.form →
+      strategy? e ≠ some .verbMovement →
+        (strategy? e = some .clauseInitialParticle ↔ .initial ∈ p.placements) := by
   cases l <;> decide
 
 /-! ### The Serbian strategies and Todorović's bias profile (§4.2.2, Table 1) -/
@@ -341,7 +371,7 @@ inductive SerbianPQForm
   deriving DecidableEq, Repr, Fintype
 
 /-- The fragment marker of each strategy. -/
-def SerbianPQForm.particle : SerbianPQForm → Particle
+def SerbianPQForm.particle : SerbianPQForm → Clause.Marker
   | .daLiPPQ => Serbian.QuestionParticles.daLi
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi
   | .hnpq => Serbian.QuestionParticles.li
@@ -452,12 +482,12 @@ def neuzeliNegations : Finset (Option Polarity) := {some .negative}
 theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by decide
 
 theorem razve_root_li_embedded :
-    .subordinated ∉ Russian.QuestionParticles.razve.distribution.possible.cod ∧
+    .subordinated ∉ Russian.QuestionParticles.razve.distribution.contexts ∧
       Clause.embedded .polar ∈ Russian.QuestionParticles.li.distribution.possible := by
   decide
 
 /-- The kin of *razve* the chapter lists across Slavic, whose semantics it leaves open. -/
-def razveKin : List Particle :=
+def razveKin : List Clause.Marker :=
   [Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
    Bulgarian.QuestionParticles.nima, Macedonian.QuestionParticles.zar,
    Serbian.QuestionParticles.zar, Czech.Particles.copak]

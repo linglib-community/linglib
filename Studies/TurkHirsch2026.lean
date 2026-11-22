@@ -224,7 +224,7 @@ theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p
   rintro q ⟨rfl | rfl, hwq⟩ <;> [exact absurd hwq hw; exact le_rfl]
 
 /-- *=mI* is obligatory in polar questions such as (4), as the fragment records. -/
-example : Turkish.QuestionParticles.mi.distribution .polar .matrix = some .obligatory := rfl
+example : Turkish.QuestionParticles.mi.distribution (.polar, .matrix) = some .obligatory := rfl
 
 open Turkish.Phonology in
 /-- In its default position in (4), *=mI* follows the markers of the predicate *uyu-du*. -/
@@ -232,5 +232,12 @@ example : ∃ t ∈ Examples.ex_4.glossedTokens,
     ofSegmented? t.1 = some (Turkish.realize [u, y, u] (Turkish.QuestionParticles.mi.insert
       [⟨_, .di⟩, ⟨_, .person .one (.personNumber .third .singular)⟩])) := by
   decide
+
+/-- *=mI* follows the focus of its question, where the atlas codes the Turkish question particle
+as final. -/
+theorem mi_anchor :
+    Turkish.QuestionParticles.mi.anchor = .focus .after ∧
+      Data.WALS.F92A.allData.lookup "tur" = some .final := by
+  decide +kernel
 
 end TurkHirsch2026

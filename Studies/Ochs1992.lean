@@ -216,11 +216,11 @@ instance : MeasurableSpace Stance := ⊤
 instance : DiscreteMeasurableSpace Stance := ⟨fun _ ↦ trivial⟩
 instance : MeasurableSpace Gender := ⊤
 instance : DiscreteMeasurableSpace Gender := ⟨fun _ ↦ trivial⟩
-instance : MeasurableSpace Particle := ⊤
-instance : DiscreteMeasurableSpace Particle := ⟨fun _ ↦ trivial⟩
+instance : MeasurableSpace Clause.Marker := ⊤
+instance : DiscreteMeasurableSpace Clause.Marker := ⟨fun _ ↦ trivial⟩
 
 /-- The rows of Figure 14.1 with their particles. -/
-def figure141 : List (Datum × Particle) := [(Examples.ze, ze), (Examples.wa, wa)]
+def figure141 : List (Datum × Clause.Marker) := [(Examples.ze, ze), (Examples.wa, wa)]
 
 /-- The direct index a row of Figure 14.1 prints. -/
 def direct (d : Datum) : Option Stance :=
@@ -233,7 +233,7 @@ def voice (d : Datum) : Option Gender :=
 
 example : ∀ x ∈ figure141, x.1.primaryText = x.2.form := by decide
 
-variable {η : Kernel Stance Particle} [IsFiniteKernel η]
+variable {η : Kernel Stance Clause.Marker} [IsFiniteKernel η]
   {κ : Kernel Gender Stance} [IsMarkovKernel κ]
 
 /-- Given the direct indexes of Figure 14.1 and one difference between men and women, in coarse
@@ -420,7 +420,7 @@ private theorem stanceRates_lt : stanceRates .female {.coarseIntensity} <
   exact ENNReal.div_lt_div_right (by simp) (by simp) (by norm_num)
 
 /-- Each stance realized by its particle. -/
-private noncomputable def particleOf : Kernel Stance Particle :=
+private noncomputable def particleOf : Kernel Stance Clause.Marker :=
   Kernel.deterministic (fun s ↦ match s with | .coarseIntensity => ze | .delicateIntensity => wa)
     .of_discrete
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Morphology.Morph
 
 /-!
 # French polarity particles
@@ -25,19 +25,16 @@ analysis: a valued polarity feature for Holmberg, features of the response for F
 namespace French.PolarityParticles
 
 /-- *oui* 'yes': *Tu es fatigué?* 'Are you tired?' — *Oui*. -/
-def oui : Particle where
-  form := "oui"
+def oui : Morphology.Morph := .free "oui"
 
 /-- *non* 'no'. -/
-def non : Particle where
-  form := "non"
+def non : Morphology.Morph := .free "non"
 
 /-- *si* 'yes.REV', contradicting a negative: *Tu n'es pas fatigué?* 'Are you not tired?' —
 *Si*, I am. -/
-def si : Particle where
-  form := "si"
+def si : Morphology.Morph := .free "si"
 
 /-- The polarity particles. -/
-def all : List Particle := [oui, non, si]
+def all : List Morphology.Morph := [oui, non, si]
 
 end French.PolarityParticles

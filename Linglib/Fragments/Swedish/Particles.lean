@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Swedish particles
@@ -33,30 +33,27 @@ namespace Swedish.Particles
 /-- *väl* — clause-medial modal particle (after the finite verb) of matrix declaratives. That a
 declarative with *väl* is a question and not an assertion is a matter of speech act, not of
 clause type, analysed in `SeeligerRepp2018`. -/
-def val : Particle where
-  form := "väl"
-  position := some .clauseMedial
-  distribution := fun c e ↦ match c, e with
-    | .declarative, .matrix => some .optional
-    | _, _ => none
+def val : Clause.Marker where
+  morphs := [.free "väl"]
+  anchor := .clause {.otherPosition}
+  distribution
+    | (.declarative, .matrix) => some .optional
+    | _ => none
 
 end Swedish.Particles
 
 namespace Swedish.PolarityParticles
 
 /-- *ja* 'yes': *Vill han ha kaffe?* 'Does he want coffee?' — *Ja*. -/
-def ja : Particle where
-  form := "ja"
+def ja : Morphology.Morph := .free "ja"
 
 /-- *nej* 'no': *Har Johan inte kommit?* 'Has Johan not arrived?' — *Nej*, he has not. -/
-def nej : Particle where
-  form := "nej"
+def nej : Morphology.Morph := .free "nej"
 
 /-- *jo* 'yes.REV', contradicting a negative: *Har Johan inte kommit?* — *Jo*, he has. -/
-def jo : Particle where
-  form := "jo"
+def jo : Morphology.Morph := .free "jo"
 
 /-- The polarity particles. -/
-def all : List Particle := [ja, nej, jo]
+def all : List Morphology.Morph := [ja, nej, jo]
 
 end Swedish.PolarityParticles

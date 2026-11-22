@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # English particles
@@ -31,15 +31,13 @@ the matza*.
 namespace English.PolarityParticles
 
 /-- *yes*. -/
-def yes : Particle where
-  form := "yes"
+def yes : Morphology.Morph := .free "yes"
 
 /-- *no*. -/
-def no : Particle where
-  form := "no"
+def no : Morphology.Morph := .free "no"
 
 /-- The polarity particles. -/
-def all : List Particle := [yes, no]
+def all : List Morphology.Morph := [yes, no]
 
 end English.PolarityParticles
 
@@ -49,10 +47,10 @@ namespace English.Particles
 
 /-- *quick* or *quickly* before a question, available in matrix questions and quotations and
 excluded from embedded questions. -/
-def quick : Particle where
-  form := "quick"
-  position := some .clauseInitial
-  distribution := fun c e ↦ match c with
+def quick : Clause.Marker where
+  morphs := [.free "quick"]
+  anchor := .clause {.initial}
+  distribution := fun (c, e) ↦ match c with
     | .polar | .alternative | .constituent =>
       match e with
       | .matrix => some .optional

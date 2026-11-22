@@ -1,57 +1,54 @@
 module
 
-public import Linglib.Syntax.Clause.Basic
-public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Particle
+# Focus particles and markers
 
-A `Particle` is the lexical core of an uninflectable function word in Zwicky's sense: its form, its
-position relative to its host, and its `Clause.Distribution` over sentence types in embedding
-contexts. The distribution records where the source finds the particle obligatory, optional or
-excluded, and nothing where the source is silent; it records distributional felicity, not the
-licensing mechanism, which is a study's matter. The cells where a particle is licensed are
-`p.distribution.possible`, and its sentence-type and embedding-context profiles are that
-relation's `dom` and `cod`.
+This file defines the lexical record of a particle that goes with a focused or associated
+constituent, as the Yorùbá focus marker *ni* and exclusive *nìkan* do: its form and its position
+relative to that constituent or in the clause. A particle that goes with a clause as a whole is a
+`Clause.Marker`.
 
 ## Main definitions
 
-* `Particle`, `Particle.Position`: the entry and its position class.
+* `Particle.Position`: the position classes, relative to the clause or to a host constituent.
+* `Particle`: the form and position of a particle.
+
+## TODO
+
+* Record an exclusive or additive particle with the focus operator it denotes, as
+  `AdditiveParticle` does, and a focus marker with the focus strategy it realizes.
 
 ## References
 
 * [zwicky-1985-clitics]
-* [sadock-zwicky-1985]
-* [bhatt-dayal-2020]
 -/
 
 @[expose] public section
 
-/-- Where a particle sits relative to its host domain, Zwicky's positional diagnostic. -/
+/-- Where a particle stands, in its clause or beside a host constituent. -/
 inductive Particle.Position where
   | clauseInitial
-  /-- Second position (Wackernagel; Russian *li*). -/
+  /-- Second position. -/
   | secondPosition
-  /-- Clause-medial / middle field (German *denn*, Swedish *väl*). -/
+  /-- Clause-medial, as Yorùbá *kàn* between the subject and the verb. -/
   | clauseMedial
   | clauseFinal
-  /-- Immediately before a host constituent (adnominal focus particles). -/
+  /-- Immediately before a host constituent. -/
   | preHost
-  /-- Immediately after a host constituent (Turkish *mI*, Bulgarian *li* on the focus). -/
+  /-- Immediately after a host constituent, as Yorùbá *ni* after the fronted focus. -/
   | postHost
-  /-- No fixed position (Hindi-Urdu *kya:*). -/
+  /-- No fixed position. -/
   | free
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- An uninflectable function word associated with a host constituent. -/
+/-- A particle associated with a host constituent. -/
 structure Particle where
   /-- Surface form (romanization or orthographic). -/
   form : String
-  /-- Native-script form, when `form` is a romanization (Mandarin 吗). -/
+  /-- Native-script form, when `form` is a romanization. -/
   script : Option String := none
   /-- Host/position class; `none` when the source records no placement. -/
   position : Option Particle.Position := none
-  /-- How far the particle is required in each cell; `none` where the source records
-      nothing. -/
-  distribution : Clause.Distribution := .empty
   deriving DecidableEq

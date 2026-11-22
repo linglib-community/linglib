@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Dutch polarity particles
@@ -25,8 +25,8 @@ namespace Dutch.Particles
 
 /-- *wel*, the affirmative polarity particle, in the middle field where the negation *niet*
 stands. -/
-def wel : Particle where
-  form := "wel"
-  position := some .clauseMedial
+def wel : Clause.Marker where
+  morphs := [.free "wel"]
+  anchor := .clause {.otherPosition}
 
 end Dutch.Particles

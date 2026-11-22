@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Clause.Marker
 
 /-!
 # Bulgarian question particles
@@ -29,36 +29,36 @@ namespace Bulgarian.QuestionParticles
 
 /-- ли *li*, the canonical polar question complementizer, an enclitic on the focus of the
 question. -/
-def li : Particle where
-  form := "li"
+def li : Clause.Marker where
+  morphs := [.encl "li"]
   script := some "ли"
-  position := some .postHost
+  anchor := .focus .after
   distribution
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | .constituent, .matrix => some .optional
-    | _, _ => none
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | (.constituent, .matrix) => some .optional
+    | _ => none
 
 /-- дали *dali*, the clause-initial polar question complementizer, which in a root question
 raises an issue without expecting the addressee to resolve it. -/
-def dali : Particle where
-  form := "dali"
+def dali : Clause.Marker where
+  morphs := [.free "dali"]
   script := some "дали"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .polar, .subordinated => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | (.polar, .subordinated) => some .optional
+    | _ => none
 
 /-- нима *nima*, the clause-initial mirative particle, kin of Russian *razve*. -/
-def nima : Particle where
-  form := "nima"
+def nima : Clause.Marker where
+  morphs := [.free "nima"]
   script := some "нима"
-  position := some .clauseInitial
+  anchor := .clause {.initial}
   distribution
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | _, _ => none
+    | (.declarative, .matrix) => some .excluded
+    | (.polar, .matrix) => some .optional
+    | _ => none
 
 end Bulgarian.QuestionParticles

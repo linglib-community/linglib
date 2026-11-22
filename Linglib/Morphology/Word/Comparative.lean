@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.List.Dedup
 public import Mathlib.Data.List.Duplicate
 public import Mathlib.Data.List.Infix
@@ -32,6 +33,7 @@ a word is a free morph, a clitic, or a root with its affixes.
 * `Comparative.OccursOn`: occurrence on a root through candidate affixes.
 * `Comparative.Inventory.AffixStep`, `Comparative.Inventory.IsAffix`: one step of the definition
   of an affix, and its greatest solution.
+* `Comparative.Inventory.hostClasses`: the classes of the roots a morph stands next to.
 * `Comparative.Inventory.IsClitic`, `Comparative.Inventory.IsRequiredAffix`,
   `Comparative.Inventory.IsWord`: clitics, required affixes and words.
 
@@ -41,6 +43,9 @@ a word is a free morph, a clitic, or a root with its affixes.
   inventory.
 * `Comparative.Inventory.setOf_isAffix_eq_gfp`: when the roots of every free form are adjacent,
   the affixes are the greatest fixed point of the step.
+* `Comparative.Inventory.IsAffix.rootClass_eq`,
+  `Comparative.Inventory.IsAffix.card_hostClasses_le_one`: the roots next to which an affix
+  stands are of one class.
 
 ## Implementation notes
 
@@ -128,6 +133,34 @@ def RootsContiguous (w : List M) : Prop :=
 
 instance [DecidablePred root] (w : List M) : Decidable (RootsContiguous root w) :=
   inferInstanceAs (Decidable (∀ i (_ : i < w.length), _))
+
+end
+
+section
+variable {root : M → Prop}
+
+theorem OccursOn.mono {A B : Set M} (h : A ⊆ B) {w : List M} {i : ℕ} {y : M}
+    (ho : OccursOn root A w i y) : OccursOn root B w i y :=
+  ⟨ho.1, ho.2.imp (Reaches.mono h) (Reaches.mono h)⟩
+
+theorem OccursOn.mem {A : Set M} {w : List M} {i : ℕ} {y : M} (ho : OccursOn root A w i y) :
+    y ∈ w :=
+  ho.2.elim (fun h ↦ List.mem_of_mem_drop h.mem)
+    fun h ↦ List.mem_of_mem_take (List.mem_reverse.1 h.mem)
+
+/-- A morph occurs on the root that directly follows it. -/
+theorem occursOn_of_getElem?_succ {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
+    (h : w[i + 1]? = some y) : OccursOn root A w i y := by
+  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
+  exact ⟨hy, .inl (by rw [List.drop_eq_getElem_cons hlt]; exact .inl rfl)⟩
+
+/-- A morph occurs on the root that directly precedes it. -/
+theorem occursOn_succ_of_getElem? {A : Set M} {w : List M} {i : ℕ} {y : M} (hy : root y)
+    (h : w[i]? = some y) : OccursOn root A w (i + 1) y := by
+  obtain ⟨hlt, rfl⟩ := List.getElem?_eq_some_iff.1 h
+  refine ⟨hy, .inr ?_⟩
+  rw [List.take_succ_eq_append_getElem hlt, List.reverse_append]
+  exact .inl rfl
 
 end
 
@@ -272,6 +305,62 @@ theorem setOf_isAffix_eq_gfp (hF : ∀ w ∈ L.forms, RootsContiguous root w) :
     rw [← (L.affixStep root hF).map_gfp] at hy
     have : L.AffixStep root (_ ∩ {z | ¬ root z}) y := hy
     rwa [key hnr] at this
+
+/-! ### Selectivity -/
+
+/-- An affix is selective: the roots next to which it stands in the free forms are of one class,
+whichever morphs are taken to be affixes. -/
+theorem IsAffix.rootClass_eq {x y₁ y₂ : M} {w₁ w₂ : List M} {i₁ i₂ : ℕ} (h : L.IsAffix root x)
+    (hw₁ : w₁ ∈ L.forms) (hw₂ : w₂ ∈ L.forms) (hx₁ : w₁[i₁]? = some x) (hx₂ : w₂[i₂]? = some x)
+    (ho₁ : OccursOn root ∅ w₁ i₁ y₁) (ho₂ : OccursOn root ∅ w₂ i₂ y₂) :
+    L.rootClass y₁ = L.rootClass y₂ := by
+  obtain ⟨A, hxA, hA⟩ := h
+  obtain ⟨-, -, -, c, hc⟩ := hA x hxA
+  have h₁ := (hc w₁ hw₁ i₁ (List.getElem?_eq_some_iff.1 hx₁).1 hx₁).2 y₁ ho₁.mem
+    (ho₁.mono (Set.empty_subset A))
+  have h₂ := (hc w₂ hw₂ i₂ (List.getElem?_eq_some_iff.1 hx₂).1 hx₂).2 y₂ ho₂.mem
+    (ho₂.mono (Set.empty_subset A))
+  rw [h₁, h₂]
+
+section HostClasses
+
+variable (L root) [DecidableEq M] [DecidablePred root]
+
+/-- The classes of the roots next to which the morph stands in the free forms. -/
+def hostClasses (x : M) : Finset RootClass :=
+  (L.forms.flatMap fun w ↦ (List.range w.length).flatMap fun i ↦
+    if w[i]? = some x then
+      (w.filter fun y ↦ decide (OccursOn root ∅ w i y)).filterMap L.rootClass
+    else []).toFinset
+
+variable {L root}
+
+theorem mem_hostClasses {x : M} {c : RootClass} :
+    c ∈ L.hostClasses root x ↔
+      ∃ w ∈ L.forms, ∃ i, w[i]? = some x ∧ ∃ y, OccursOn root ∅ w i y ∧ L.rootClass y = some c := by
+  simp only [hostClasses, List.mem_toFinset, List.mem_flatMap, List.mem_range]
+  constructor
+  · rintro ⟨w, hw, i, -, h⟩
+    split_ifs at h with hx
+    · obtain ⟨y, hy, hc⟩ := List.mem_filterMap.1 h
+      exact ⟨w, hw, i, hx, y, of_decide_eq_true (List.mem_filter.1 hy).2, hc⟩
+    · simp at h
+  · rintro ⟨w, hw, i, hx, y, ho, hc⟩
+    refine ⟨w, hw, i, (List.getElem?_eq_some_iff.1 hx).1, ?_⟩
+    rw [if_pos hx]
+    exact List.mem_filterMap.2 ⟨y, List.mem_filter.2 ⟨ho.mem, decide_eq_true ho⟩, hc⟩
+
+/-- An affix stands next to roots of at most one class. -/
+theorem IsAffix.card_hostClasses_le_one {x : M} (h : L.IsAffix root x) :
+    (L.hostClasses root x).card ≤ 1 := by
+  refine Finset.card_le_one.2 fun a ha b hb ↦ ?_
+  obtain ⟨w₁, hw₁, i₁, hx₁, y₁, ho₁, hc₁⟩ := mem_hostClasses.1 ha
+  obtain ⟨w₂, hw₂, i₂, hx₂, y₂, ho₂, hc₂⟩ := mem_hostClasses.1 hb
+  have := h.rootClass_eq hw₁ hw₂ hx₁ hx₂ ho₁ ho₂
+  rw [hc₁, hc₂] at this
+  exact Option.some.inj this
+
+end HostClasses
 
 /-! ### Clitics, required affixes and words -/
 
