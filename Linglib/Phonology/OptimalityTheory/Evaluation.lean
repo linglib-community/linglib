@@ -79,6 +79,31 @@ theorem profile_lt_iff_exists_dominates :
       ∃ i, T c i < T d i ∧ ∀ j, T d j < T c j → σ.Dominates i j :=
   profile_lt_iff_lex.trans Pi.lex_iff_exists_forall
 
+/-- The winners depend only on how a ranking orders the constraints that tell the candidates
+apart: for an injection `f` of constraints, some ranking of its domain orders it as `σ` orders its
+image, and has the winners of `σ` on any candidates that agree on every constraint outside the
+image. -/
+theorem exists_optimal_comp {κ : Type*} [Fintype κ] (σ : Ranking.Enumeration ι n)
+    (f : κ → ι) (hf : Function.Injective f) :
+    ∃ τ : Ranking κ, (∀ a b, τ.Dominates a b ↔ σ.Dominates (f a) (f b)) ∧
+      ∀ (T : Tableau C ι) (s : Finset C),
+        (∀ c ∈ s, ∀ d ∈ s, ∀ i, (∀ a, f a ≠ i) → T c i = T d i) →
+          τ.optimal (fun c a ↦ T c (f a)) s = σ.optimal T s := by
+  obtain ⟨τ, hτ⟩ := exists_dominates_iff (fun a ↦ σ.symm (f a)) (σ.symm.injective.comp hf) rfl
+  refine ⟨τ, hτ, fun T s h ↦ ?_⟩
+  ext c
+  simp only [mem_optimal_iff, ← not_lt, profile_lt_iff_exists_dominates]
+  refine and_congr_right fun hc ↦ forall₂_congr fun d hd ↦ not_congr ⟨?_, ?_⟩
+  · rintro ⟨a, h1, h2⟩
+    refine ⟨f a, h1, fun j hj ↦ ?_⟩
+    obtain ⟨b, rfl⟩ : ∃ b, f b = j := by_contra fun hj' ↦
+      hj.ne (h c hc d hd j (not_exists.1 hj'))
+    exact (hτ a b).1 (h2 b hj)
+  · rintro ⟨i, h1, h2⟩
+    obtain ⟨a, rfl⟩ : ∃ a, f a = i := by_contra fun hi ↦
+      h1.ne (h d hd c hc i (not_exists.1 hi))
+    exact ⟨a, h1, fun b hb ↦ (hτ a b).2 (h2 (f b) hb)⟩
+
 /-- A candidate that violates every constraint at most as often as another, and some constraint
 less often, beats it under every ranking. -/
 theorem profile_lt_of_lt (h : T c < T d) : σ.profile T c < σ.profile T d :=
