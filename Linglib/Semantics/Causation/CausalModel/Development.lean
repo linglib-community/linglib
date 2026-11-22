@@ -222,43 +222,23 @@ theorem CausallyEntails.solve_eq (h : M.CausallyEntails s v x) {u : U}
 
 section Intervention
 
-variable [DecidableEq V] {X : Finset V} {ξ : ∀ v : X, α v}
+variable [∀ v, Decidable (s v).Dom]
 
-/-- The Kleene development is sound for the interventional reading. What it forces from the
-situation an intervention settles holds in every context under that intervention. -/
-theorem Forced.solve_intervene_eq
-    (h : M.Forced (Function.updateFinset ⊥ X fun w ↦ Part.some (ξ w)) v x) (u : U) :
-    (M.intervene X ξ).solve u v = x := by
+/-- The Kleene development is sound for the interventional reading. What it forces from a
+situation holds in every context under the intervention that holds the situation. -/
+theorem Forced.solve_intervene_eq (h : M.Forced s v x) (u : U) :
+    (M.intervene s).solve u v = x := by
   induction v using hM.induction with
   | _ v ih =>
     rcases forced_iff.1 h with hs | ⟨hs, h⟩
-    · by_cases hv : v ∈ X
-      · simp only [Function.updateFinset, hv, dite_true, Part.some_inj] at hs
-        exact (solve_intervene_of_mem hv).trans hs
-      · simp [Function.updateFinset, hv] at hs
-    · have hv : v ∉ X := fun hv ↦ by simp [Function.updateFinset, hv] at hs
-      rw [solve_intervene_of_notMem hv]
+    · exact solve_intervene_of_eq_some hs
+    · rw [solve_intervene_of_eq_bot hs]
       exact h u _ fun w hw _ hz ↦ ih w hw hz
 
 /-- The strict development is sound for the interventional reading. -/
-theorem CausallyEntails.solve_intervene_eq
-    (h : M.CausallyEntails (Function.updateFinset ⊥ X fun w ↦ Part.some (ξ w)) v x) (u : U) :
-    (M.intervene X ξ).solve u v = x :=
+theorem CausallyEntails.solve_intervene_eq (h : M.CausallyEntails s v x) (u : U) :
+    (M.intervene s).solve u v = x :=
   (Forced.of_causallyEntails h).solve_intervene_eq u
-
-/-- For one variable the situation of the intervention is `[c ← a]`. -/
-theorem CausallyEntails.solve_intervene_singleton_eq {c : V} {a : α c}
-    (h : M.CausallyEntails [c ← a] v x) (u : U) : M[c ← a].solve u v = x := by
-  have : ([c ← a] : ∀ v, Part (α v)) =
-      Function.updateFinset ⊥ {c}
-        fun w ↦ Part.some ((uniqueElim a : ∀ w : ({c} : Finset V), α w) w) := by
-    rw [show ([c ← a] : ∀ v, Part (α v)) = Function.update ⊥ c (Part.some a) from rfl,
-      Function.update_eq_updateFinset]
-    congr 1
-    funext ⟨w, hw⟩
-    obtain rfl := Finset.mem_singleton.1 hw
-    rfl
-  exact CausallyEntails.solve_intervene_eq (this ▸ h) u
 
 end Intervention
 

@@ -1,358 +1,406 @@
-[
-  {
-    "id": "hawkinsetal2025_ex1",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(1)"
-    },
-    "language": "stan1293",
-    "primaryText": "Quinn: Do you take Visa or Mastercard? Rickie: Yes, we take Visa. Quinn: Yeah, sure I already knew that!",
-    "discourseSegments": [
-      "Quinn: Do you take Visa or Mastercard?",
-      "Rickie: Yes, we take Visa.",
-      "Quinn: Yeah, sure I already knew that!"
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2a"
-      ],
-      [
-        "response",
-        "safe"
+{
+  "features": [
+    {
+      "key": "mentioned",
+      "lean": "mentioned",
+      "type": "Card",
+      "doc": "The card a response mentions beyond its polar answer.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "visa",
+          "label": "visa",
+          "doc": "Visa"
+        },
+        {
+          "name": "mastercard",
+          "label": "mastercard",
+          "doc": "Mastercard"
+        },
+        {
+          "name": "americanExpress",
+          "label": "american express",
+          "doc": "American Express"
+        }
       ]
-    ],
-    "comment": "Knowing that Visa is taken settles the disjunctive question.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex2",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(2)"
     },
-    "language": "stan1293",
-    "primaryText": "Quinn: Do you take Visa or Mastercard? Rickie: No, but we take American Express. Quinn: Yeah, sure I already knew that!",
-    "discourseSegments": [
-      "Quinn: Do you take Visa or Mastercard?",
-      "Rickie: No, but we take American Express.",
-      "Quinn: Yeah, sure I already knew that!"
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "2a"
-      ],
-      [
-        "response",
-        "unsafe"
+    {
+      "key": "question",
+      "lean": "question",
+      "type": "Question",
+      "doc": "The questions of case study 1.",
+      "levels": [
+        {
+          "name": "specific",
+          "label": "specific",
+          "doc": "a polar question about one option"
+        },
+        {
+          "name": "general",
+          "label": "general",
+          "doc": "a polar question about the category"
+        }
       ]
-    ],
-    "comment": "Knowing about American Express leaves the question open.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex3",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(3)"
     },
-    "language": "stan1293",
-    "primaryText": "Quinn: Do you accept American Express? Rickie: Yes, we accept American Express and … [exhaustive list].",
-    "discourseSegments": [
-      "Quinn: Do you accept American Express?",
-      "Rickie: Yes, we accept American Express and … [exhaustive list]."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3a"
-      ],
-      [
-        "question",
-        "specific"
-      ],
-      [
-        "target",
-        "available"
-      ],
-      [
-        "response",
-        "exhaustive"
+    {
+      "key": "target",
+      "lean": "target",
+      "type": "Target",
+      "doc": "Whether the option asked about is available.",
+      "levels": [
+        {
+          "name": "available",
+          "label": "available",
+          "doc": "the option asked about is available"
+        },
+        {
+          "name": "unavailable",
+          "label": "unavailable",
+          "doc": "the option asked about is not available"
+        }
       ]
-    ],
-    "comment": "The least likely site of an exhaustive list: (4) ≥ (5) > (3).",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex4",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(4)"
+    }
+  ],
+  "examples": [
+    {
+      "id": "hawkinsetal2025_ex1",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(1)"
+      },
+      "language": "stan1293",
+      "primaryText": "Quinn: Do you take Visa or Mastercard? Rickie: Yes, we take Visa. Quinn: Yeah, sure I already knew that!",
+      "discourseSegments": [
+        "Quinn: Do you take Visa or Mastercard?",
+        "Rickie: Yes, we take Visa.",
+        "Quinn: Yeah, sure I already knew that!"
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "2a"
+        ],
+        [
+          "mentioned",
+          "visa"
+        ]
+      ],
+      "comment": "Knowing that Visa is taken settles the disjunctive question.",
+      "verified": "page-image",
+      "method": "unclassified"
     },
-    "language": "stan1293",
-    "primaryText": "Quinn: Do you accept American Express? Rickie: No, we accept … [exhaustive list].",
-    "discourseSegments": [
-      "Quinn: Do you accept American Express?",
-      "Rickie: No, we accept … [exhaustive list]."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3a"
+    {
+      "id": "hawkinsetal2025_ex2",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(2)"
+      },
+      "language": "stan1293",
+      "primaryText": "Quinn: Do you take Visa or Mastercard? Rickie: No, but we take American Express. Quinn: Yeah, sure I already knew that!",
+      "discourseSegments": [
+        "Quinn: Do you take Visa or Mastercard?",
+        "Rickie: No, but we take American Express.",
+        "Quinn: Yeah, sure I already knew that!"
       ],
-      [
-        "question",
-        "specific"
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "2a"
+        ],
+        [
+          "mentioned",
+          "american express"
+        ]
       ],
-      [
-        "target",
-        "unavailable"
-      ],
-      [
-        "response",
-        "exhaustive"
-      ]
-    ],
-    "comment": "Model rate of exhaustive lists 0.75.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex5",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(5)"
+      "comment": "Knowing about American Express leaves the question open.",
+      "verified": "page-image",
+      "method": "unclassified"
     },
-    "language": "stan1293",
-    "primaryText": "Quinn: Do you accept credit cards? Rickie: Yes, we accept … [exhaustive list].",
-    "discourseSegments": [
-      "Quinn: Do you accept credit cards?",
-      "Rickie: Yes, we accept … [exhaustive list]."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3a"
+    {
+      "id": "hawkinsetal2025_ex3",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(3)"
+      },
+      "language": "stan1293",
+      "primaryText": "Quinn: Do you accept American Express? Rickie: Yes, we accept American Express and … [exhaustive list].",
+      "discourseSegments": [
+        "Quinn: Do you accept American Express?",
+        "Rickie: Yes, we accept American Express and … [exhaustive list]."
       ],
-      [
-        "question",
-        "general"
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "3a"
+        ],
+        [
+          "question",
+          "specific"
+        ],
+        [
+          "target",
+          "available"
+        ]
       ],
-      [
-        "response",
-        "exhaustive"
-      ]
-    ],
-    "comment": "Model rate of exhaustive lists 0.66.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex6",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(6)"
+      "comment": "The least likely site of an exhaustive list: (4) ≥ (5) > (3).",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "You are a bartender in a hotel bar. The bar serves only soda, iced coffee and Chardonnay. A woman walks in. She says: Do you have iced tea?",
-    "discourseSegments": [
-      "You are a bartender in a hotel bar. The bar serves only soda, iced coffee and Chardonnay.",
-      "A woman walks in. She says: Do you have iced tea?"
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3b"
+    {
+      "id": "hawkinsetal2025_ex4",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(4)"
+      },
+      "language": "stan1293",
+      "primaryText": "Quinn: Do you accept American Express? Rickie: No, we accept … [exhaustive list].",
+      "discourseSegments": [
+        "Quinn: Do you accept American Express?",
+        "Rickie: No, we accept … [exhaustive list]."
       ],
-      [
-        "competitor",
-        "iced coffee"
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "3a"
+        ],
+        [
+          "question",
+          "specific"
+        ],
+        [
+          "target",
+          "unavailable"
+        ]
       ],
-      [
-        "sameCategory",
-        "soda"
-      ],
-      [
-        "otherCategory",
-        "Chardonnay"
-      ]
-    ],
-    "comment": "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex7",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(7)"
+      "comment": "Model rate of exhaustive lists 0.75.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Context 1 (sleepover): Your friend is having a sleepover with some friends on the weekend. They are preparing everything for the guests since they don't host many guests very often. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet. Your friend asks: Do you have a blanket?",
-    "discourseSegments": [
-      "Context 1 (sleepover): Your friend is having a sleepover with some friends on the weekend. They are preparing everything for the guests since they don't host many guests very often. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet.",
-      "Your friend asks: Do you have a blanket?"
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3c"
+    {
+      "id": "hawkinsetal2025_ex5",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(5)"
+      },
+      "language": "stan1293",
+      "primaryText": "Quinn: Do you accept credit cards? Rickie: Yes, we accept … [exhaustive list].",
+      "discourseSegments": [
+        "Quinn: Do you accept credit cards?",
+        "Rickie: Yes, we accept … [exhaustive list]."
       ],
-      [
-        "competitor",
-        "sleeping bag"
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "3a"
+        ],
+        [
+          "question",
+          "general"
+        ]
       ],
-      [
-        "mostSimilar",
-        "pillow"
-      ],
-      [
-        "otherCategory",
-        "carpet"
-      ]
-    ],
-    "comment": "The contextually relevant competitor is mentioned more than the most similar option.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_ex8",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "(8)"
+      "comment": "Model rate of exhaustive lists 0.66.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Context 2 (transportation): Your roommate is moving to another apartment and is packing her things. She has a large mirror that she needs to pack for transportation. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet. She asks: Do you have a blanket?",
-    "discourseSegments": [
-      "Context 2 (transportation): Your roommate is moving to another apartment and is packing her things. She has a large mirror that she needs to pack for transportation. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet.",
-      "She asks: Do you have a blanket?"
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3c"
+    {
+      "id": "hawkinsetal2025_ex6",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(6)"
+      },
+      "language": "stan1293",
+      "primaryText": "You are a bartender in a hotel bar. The bar serves only soda, iced coffee and Chardonnay. A woman walks in. She says: Do you have iced tea?",
+      "discourseSegments": [
+        "You are a bartender in a hotel bar. The bar serves only soda, iced coffee and Chardonnay.",
+        "A woman walks in. She says: Do you have iced tea?"
       ],
-      [
-        "competitor",
-        "bubble wrap"
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "3b"
+        ],
+        [
+          "competitor",
+          "iced coffee"
+        ],
+        [
+          "sameCategory",
+          "soda"
+        ],
+        [
+          "otherCategory",
+          "Chardonnay"
+        ]
       ],
-      [
-        "mostSimilar",
-        "pillow"
-      ],
-      [
-        "otherCategory",
-        "carpet"
-      ]
-    ],
-    "comment": "The same question and options as (7) with the other competitor relevant.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_icedtea",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "§1"
+      "comment": "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Customer: Do you have iced tea? Barista: No, I'm afraid we're out of iced tea but we do have iced coffee.",
-    "discourseSegments": [
-      "Customer: Do you have iced tea?",
-      "Barista: No, I'm afraid we're out of iced tea but we do have iced coffee."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "1"
+    {
+      "id": "hawkinsetal2025_ex7",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(7)"
+      },
+      "language": "stan1293",
+      "primaryText": "Context 1 (sleepover): Your friend is having a sleepover with some friends on the weekend. They are preparing everything for the guests since they don't host many guests very often. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet. Your friend asks: Do you have a blanket?",
+      "discourseSegments": [
+        "Context 1 (sleepover): Your friend is having a sleepover with some friends on the weekend. They are preparing everything for the guests since they don't host many guests very often. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet.",
+        "Your friend asks: Do you have a blanket?"
       ],
-      [
-        "response",
-        "competitor"
-      ]
-    ],
-    "comment": "The question signals a goal: something cold and caffeinated.",
-    "verified": "page-image"
-  },
-  {
-    "id": "hawkinsetal2025_bbq",
-    "source": {
-      "bibkey": "hawkins-etal-2025",
-      "paperLabel": "§4"
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "3c"
+        ],
+        [
+          "competitor",
+          "sleeping bag"
+        ],
+        [
+          "mostSimilar",
+          "pillow"
+        ],
+        [
+          "otherCategory",
+          "carpet"
+        ]
+      ],
+      "comment": "The contextually relevant competitor is mentioned more than the most similar option.",
+      "verified": "page-image"
     },
-    "language": "stan1293",
-    "primaryText": "Q: Will we have BBQ in the park? A: Chances of rain are 90%.",
-    "discourseSegments": [
-      "Q: Will we have BBQ in the park?",
-      "A: Chances of rain are 90%."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "4"
+    {
+      "id": "hawkinsetal2025_ex8",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "(8)"
+      },
+      "language": "stan1293",
+      "primaryText": "Context 2 (transportation): Your roommate is moving to another apartment and is packing her things. She has a large mirror that she needs to pack for transportation. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet. She asks: Do you have a blanket?",
+      "discourseSegments": [
+        "Context 2 (transportation): Your roommate is moving to another apartment and is packing her things. She has a large mirror that she needs to pack for transportation. You have the following items at home that you could spare for some time: some bubble wrap, a pillow, a sleeping bag and a carpet.",
+        "She asks: Do you have a blanket?"
       ],
-      [
-        "response",
-        "relevant, non-resolving"
-      ]
-    ],
-    "comment": "Relevance that shifts the likelihood of a world state without resolving the question.",
-    "verified": "page-image"
-  }
-]
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "3c"
+        ],
+        [
+          "competitor",
+          "bubble wrap"
+        ],
+        [
+          "mostSimilar",
+          "pillow"
+        ],
+        [
+          "otherCategory",
+          "carpet"
+        ]
+      ],
+      "comment": "The same question and options as (7) with the other competitor relevant.",
+      "verified": "page-image"
+    },
+    {
+      "id": "hawkinsetal2025_icedtea",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "§1"
+      },
+      "language": "stan1293",
+      "primaryText": "Customer: Do you have iced tea? Barista: No, I'm afraid we're out of iced tea but we do have iced coffee.",
+      "discourseSegments": [
+        "Customer: Do you have iced tea?",
+        "Barista: No, I'm afraid we're out of iced tea but we do have iced coffee."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "1"
+        ]
+      ],
+      "comment": "The question signals a goal: something cold and caffeinated.",
+      "verified": "page-image",
+      "method": "unclassified"
+    },
+    {
+      "id": "hawkinsetal2025_bbq",
+      "source": {
+        "bibkey": "hawkins-etal-2025",
+        "paperLabel": "§4"
+      },
+      "language": "stan1293",
+      "primaryText": "Q: Will we have BBQ in the park? A: Chances of rain are 90%.",
+      "discourseSegments": [
+        "Q: Will we have BBQ in the park?",
+        "A: Chances of rain are 90%."
+      ],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "section",
+          "4"
+        ]
+      ],
+      "comment": "Relevance that shifts the likelihood of a world state without resolving the question.",
+      "verified": "page-image",
+      "method": "unclassified"
+    }
+  ]
+}

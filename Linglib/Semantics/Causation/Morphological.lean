@@ -9,9 +9,10 @@ public import Mathlib.Tactic.DeriveFintype
 
 Causative constructions vary along two scales: **morphological complexity**, from compact
 (lexical) to analytic (periphrastic), and **directness of mediation**, from a causer that brings
-about the result itself to one that acts through a causee. [comrie-1989]'s generalization is that
-within a language the more compact construction expresses the more direct causation
-(`CausativeConstruction.ComrieMonotone`). The causee of a causativized verb takes the highest
+about the result itself to one whose action is removed from it by intermediate stages. A causative construction is a point
+of `CausativeComplexity × Mediation`, and [comrie-1989]'s generalization is that within a language
+the more compact construction expresses the more direct causation: a language's constructions form
+a chain of the product order, `IsChain (· ≤ ·)`. The causee of a causativized verb takes the highest
 grammatical relation not already filled by the causer and the base verb's other arguments
 (`causeeDemotion`), so the causee sinks as the base valency rises (`causeeDemotion_antitone`).
 
@@ -26,15 +27,15 @@ namespace Causation.Morphological
 
 /-! ### Mediation -/
 
-/-- Directness of causal mediation between causer and result.
-
-[comrie-1989]: direct causation involves no intermediary, the causer bringing about the result
-without an intervening causee decision or action; indirect causation involves a mediating causee
-who retains some autonomy over the caused event. -/
+/-- The mediacy of the relation between cause and effect ([comrie-1989]): in direct causation
+the two are so close that the situation is hard to factor into them, and in indirect causation
+the causer's action is removed from the effect by intermediate stages. The source describes a
+continuum of degree, of which these are the two poles. How much control the causee retains is a
+separate parameter. -/
 inductive Mediation where
   /-- The causer brings about the result itself. -/
   | direct
-  /-- The causer acts through an intermediary causee. -/
+  /-- The causer's action is removed from the result by intermediate stages. -/
   | indirect
   deriving DecidableEq, Repr, Fintype
 
@@ -56,24 +57,6 @@ inductive CausativeComplexity where
 
 /-- Lexical < morphological < periphrastic: the compactness scale, compact first. -/
 instance : LinearOrder CausativeComplexity := LinearOrder.lift' (·.ctorIdx) (by decide)
-
-/-! ### Causative constructions and Comrie's generalization -/
-
-/-- A causative construction, located on the two scales. -/
-structure CausativeConstruction where
-  /-- Morphological complexity (compact → analytic). -/
-  complexity : CausativeComplexity
-  /-- Direct vs. indirect mediation. -/
-  mediation : Mediation
-  deriving DecidableEq, Repr
-
-/-- **Comrie's monotonicity** ([comrie-1989]): if construction `c₁` is morphologically more
-compact than `c₂`, then `c₁` encodes at least as direct causation as `c₂`. -/
-def CausativeConstruction.ComrieMonotone (c₁ c₂ : CausativeConstruction) : Prop :=
-  c₁.complexity < c₂.complexity → c₁.mediation ≤ c₂.mediation
-
-instance (c₁ c₂ : CausativeConstruction) : Decidable (c₁.ComrieMonotone c₂) :=
-  inferInstanceAs (Decidable (_ → _))
 
 /-! ### The causee hierarchy -/
 
