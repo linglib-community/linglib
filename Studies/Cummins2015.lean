@@ -42,7 +42,7 @@ under priming. The corrections of the book's Experiment 2 are `Cummins2015.corre
   book's higher level of counting. A bare numeral admits its exact value and, when entirely
   round, its approximate value, *exactly n* and *about n* one possibility each, and a bounded
   expression every exact value in its range; these give the printed informativeness marks of
-  the approximation tableaux, a parenthesized star counting as one.
+  the approximation tableaux, `Situation.info`, a parenthesized star counting as one.
 * A bounded expression is assessed against the bound under discussion: the values the speaker's
   knowledge leaves open are closed upwards for a lower bound and downwards for an upper bound.
 * Rankings are of all six constraints. The toy and approximation tableaux print the three that
@@ -265,32 +265,40 @@ private theorem info_eq_of_topic_eq_id {c : Candidate} (hc : c.form.topic = id)
     (h : ctx.knowledge = {s}) : info ctx c = (c.admits \ {s}).ncard := by
   rw [info, hc, id, Context.values, Set.union_eq_left.2 (Set.image_preimage_subset _ _), h]
 
-theorem info_exactly (h : ctx.knowledge = {s}) (n : ℕ) :
-    info ctx (exactly n) = if .exact n = s then 0 else 1 :=
-  (info_eq_of_topic_eq_id rfl h).trans (ncard_singleton_diff _ _)
+/-- Informativeness of *n*, *exactly n* and *about n* for a speaker who means `s`: one violation
+unless the expression's own possibility is `s`, and for a bare entirely round numeral one more
+unless `s` is approximately `n`. These are the informativeness marks of Tables 3.4–3.8. -/
+def Situation.info (s : Situation) : Constraint Candidate := fun c ↦
+  match c.form with
+  | .bare => (if .exact c.numeral = s then 0 else 1) +
+      if EntirelyRound c.numeral ∧ .about c.numeral ≠ s then 1 else 0
+  | .exactly => if .exact c.numeral = s then 0 else 1
+  | .about => if .about c.numeral = s then 0 else 1
+  | _ => 0
 
-theorem info_about (h : ctx.knowledge = {s}) (n : ℕ) :
-    info ctx (about n) = if .about n = s then 0 else 1 :=
-  (info_eq_of_topic_eq_id rfl h).trans (ncard_singleton_diff _ _)
-
-theorem info_bare (h : ctx.knowledge = {s}) (n : ℕ) :
-    info ctx (bare n) = (if .exact n = s then 0 else 1) +
-      if EntirelyRound n ∧ .about n ≠ s then 1 else 0 := by
-  rw [info_eq_of_topic_eq_id rfl h]
-  by_cases hr : EntirelyRound n
-  · have hd : Disjoint (({.exact n} : Set Situation) \ {s}) ({.about n} \ {s}) :=
-      Set.disjoint_of_subset Set.sdiff_subset Set.sdiff_subset
-        (Set.disjoint_singleton.2 Situation.noConfusion)
-    rw [show (bare n).admits = {.exact n} ∪ {.about n} from
-        Set.ext fun t ↦ by simpa [Candidate.admits, bare, hr] using or_comm,
-      Set.union_sdiff_distrib, Set.ncard_union_eq hd
-        ((Set.finite_singleton _).subset Set.sdiff_subset)
-        ((Set.finite_singleton _).subset Set.sdiff_subset),
-      ncard_singleton_diff, ncard_singleton_diff]
-    simp only [hr, true_and, ne_eq, ite_not]
-  · rw [show (bare n).admits = {.exact n} from
-        Set.ext fun t ↦ by simp [Candidate.admits, bare, hr], ncard_singleton_diff]
-    simp only [hr, false_and, ite_false, add_zero]
+theorem info_eq_of_knowledge_eq_singleton (h : ctx.knowledge = {s}) {c : Candidate}
+    (hc : c.form = .bare ∨ c.form = .exactly ∨ c.form = .about) : info ctx c = s.info c := by
+  obtain ⟨f, n⟩ := c
+  obtain rfl | rfl | rfl : f = .bare ∨ f = .exactly ∨ f = .about := hc
+  · show info ctx (bare n) = (if .exact n = s then 0 else 1) +
+      if EntirelyRound n ∧ .about n ≠ s then 1 else 0
+    rw [info_eq_of_topic_eq_id rfl h]
+    by_cases hr : EntirelyRound n
+    · have hd : Disjoint (({.exact n} : Set Situation) \ {s}) ({.about n} \ {s}) :=
+        Set.disjoint_of_subset Set.sdiff_subset Set.sdiff_subset
+          (Set.disjoint_singleton.2 Situation.noConfusion)
+      rw [show (bare n).admits = {.exact n} ∪ {.about n} from
+          Set.ext fun t ↦ by simpa [Candidate.admits, bare, hr] using or_comm,
+        Set.union_sdiff_distrib, Set.ncard_union_eq hd
+          ((Set.finite_singleton _).subset Set.sdiff_subset)
+          ((Set.finite_singleton _).subset Set.sdiff_subset),
+        ncard_singleton_diff, ncard_singleton_diff]
+      simp only [hr, true_and, ne_eq, ite_not]
+    · rw [show (bare n).admits = {.exact n} from
+          Set.ext fun t ↦ by simp [Candidate.admits, bare, hr], ncard_singleton_diff]
+      simp only [hr, false_and, ite_false, add_zero]
+  · exact (info_eq_of_topic_eq_id rfl h).trans (ncard_singleton_diff _ _)
+  · exact (info_eq_of_topic_eq_id rfl h).trans (ncard_singleton_diff _ _)
 
 /-- Quantifier simplicity assigns one violation per degree of complexity (constraint 3). -/
 def qsimp : Constraint Candidate := fun c ↦ c.form.complexity
@@ -422,23 +430,6 @@ theorem primingFirst_optimal :
 
 /-! ### Approximation (§3.3.1, Tables 3.4–3.8) -/
 
-/-- Informativeness of *n*, *exactly n* and *about n* for a speaker who means `s`, in closed
-form. -/
-private def pointInfo (s : Situation) : Constraint Candidate := fun c ↦
-  match c.form with
-  | .bare => (if .exact c.numeral = s then 0 else 1) +
-      if EntirelyRound c.numeral ∧ .about c.numeral ≠ s then 1 else 0
-  | .exactly => if .exact c.numeral = s then 0 else 1
-  | .about => if .about c.numeral = s then 0 else 1
-  | _ => 0
-
-private theorem info_eq_pointInfo (h : ctx.knowledge = {s}) (c : Candidate)
-    (hc : c.form = .bare ∨ c.form = .exactly ∨ c.form = .about) :
-    info ctx c = pointInfo s c := by
-  obtain ⟨f, n⟩ := c
-  obtain rfl | rfl | rfl : f = .bare ∨ f = .exactly ∨ f = .about := hc
-  exacts [info_bare h n, info_exactly h n, info_about h n]
-
 -- Table 3.4
 theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < roundness n)
     (r : Ranking Con) {cands : Finset Candidate} (hc : bare n ∈ cands) :
@@ -449,8 +440,9 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
   · cases i with
     | info =>
       show info _ (bare n) ≤ info _ (bare m)
-      rw [info_bare rfl, info_bare rfl]
-      simp only [↓reduceIte, hne]
+      rw [info_eq_of_knowledge_eq_singleton rfl (.inl rfl),
+        info_eq_of_knowledge_eq_singleton rfl (.inl rfl)]
+      simp only [Situation.info, bare, ↓reduceIte, hne]
       split_ifs <;> omega
     | nsal => show 4 - roundness n ≤ 4 - roundness m; omega
     | gran | qsimp | npri | qpri => exact le_rfl
@@ -460,8 +452,8 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
 private theorem optimal_context {cands : Finset Candidate}
     (h : ∀ c ∈ cands, c.form = .bare ∨ c.form = .exactly ∨ c.form = .about)
     (r : Ranking Con) :
-    r.optimal (con s.context) cands = r.optimal (tableau (pointInfo s) s.context) cands :=
-  optimal_con (fun c hc ↦ info_eq_pointInfo rfl c (h c hc)) r
+    r.optimal (con s.context) cands = r.optimal (tableau s.info s.context) cands :=
+  optimal_con (fun c hc ↦ info_eq_of_knowledge_eq_singleton rfl (h c hc)) r
 
 -- Table 3.5
 theorem exact51_optimal (r : Ranking Con) :
@@ -622,26 +614,22 @@ def Prompt.ComparativeWins (r : Ranking Con) : Prompt → Prop
 instance (r : Ranking Con) (p : Prompt) : Decidable (p.ComparativeWins r) := by
   cases p <;> exact inferInstanceAs (Decidable (_ ∨ _))
 
-private theorem marks_optimal (p : Prompt) (r : Ranking Con) :
-    r.optimal (marks p.sameQuantifier p.sameNumeral) Correction.all =
+/-- Under every ranking the optimal correction of a description is the maximally informative
+comparative or superlative on its side, the comparative exactly under `Prompt.ComparativeWins`. -/
+theorem correction_optimal {n : ℕ} (hn : 1 ≤ n) (p : Prompt) (r : Ranking Con) :
+    r.optimal (corr (p.context n) n) Correction.all =
       if p.ComparativeWins r then {p.comparative} else {p.superlative} := by
   obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.qpri, .npri, .qsimp] (by decide)
   have h01 : r.Dominates .qpri .npri ↔ τ.Dominates 0 1 := (hτ 0 1).symm
   have h21 : r.Dominates .qsimp .npri ↔ τ.Dominates 2 1 := (hτ 2 1).symm
   have h10 : r.Dominates .npri .qpri ↔ τ.Dominates 1 0 := (hτ 1 0).symm
   have h20 : r.Dominates .qsimp .qpri ↔ τ.Dominates 2 0 := (hτ 2 0).symm
+  rw [corr_context hn]
   cases p <;> rw [← ho]
   any_goals decide
   all_goals
     simp only [Prompt.ComparativeWins, h01, h21, h10, h20]
     clear hτ ho h01 h21 h10 h20; revert τ; decide
-
-/-- Under every ranking the optimal correction of a description is the maximally informative
-comparative or superlative on its side, the comparative exactly under `Prompt.ComparativeWins`. -/
-theorem correction_optimal {n : ℕ} (hn : 1 ≤ n) (p : Prompt) (r : Ranking Con) :
-    r.optimal (corr (p.context n) n) Correction.all =
-      if p.ComparativeWins r then {p.comparative} else {p.superlative} := by
-  rw [corr_context hn]; exact marks_optimal p r
 
 /-- No ranking yields the superlative correction after both a comparative and a superlative
 description, since the first needs numeral priming over quantifier priming and the second the
