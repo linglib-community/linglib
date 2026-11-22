@@ -1,1784 +1,2305 @@
-[
-  {
-    "id": "az2025_1a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(1a)"},
-    "language": "stan1293",
-    "primaryText": "She is proud of her daughter.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud"],
-      ["dependent", "of"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_1b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(1b)"},
-    "language": "stan1293",
-    "primaryText": "a proud of her daughter mother",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud"],
-      ["noun", "mother"],
-      ["dependent", "of"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_2a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(2a)"},
-    "language": "mode1248",
-    "primaryText": "Ine perifanos ɣia to ɣio tu.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ine", "is"], ["perifanos", "proud.M.SG"], ["ɣia", "for"], ["to", "the"],
-      ["ɣio", "son.ACC"], ["tu", "his"]
-    ],
-    "translation": "He is proud of his son.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "perifanos"],
-      ["dependent", "ɣia"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_2b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(2b)"},
-    "language": "mode1248",
-    "primaryText": "o perifanos ɣia to ɣio tu pateras",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["o", "the"], ["perifanos", "proud.M.SG"], ["ɣia", "for"], ["to", "the"], ["ɣio", "son.ACC"],
-      ["tu", "his"], ["pateras", "father"]
-    ],
-    "translation": "the father proud of his son",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "perifanos"],
-      ["noun", "pateras"],
-      ["dependent", "ɣia"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_3a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(3a)"},
-    "language": "basq1248",
-    "primaryText": "Bere lanaz harro-a dago.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Bere", "her"], ["lanaz", "work.INS"], ["harro-a", "proud-DET"], ["dago", "is"]
-    ],
-    "translation": "She is proud of her work.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "harro-a"],
-      ["dependent", "Bere"]
-    ],
-    "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_3b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(3b)"},
-    "language": "basq1248",
-    "primaryText": "emakume bere lanaz harro-a",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["emakume", "woman"], ["bere", "her"], ["lanaz", "work.INS"], ["harro-a", "proud-DET"]
-    ],
-    "translation": "a woman proud of her work",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "harro-a"],
-      ["noun", "emakume"],
-      ["dependent", "bere"]
-    ],
-    "comment": "Repeated as (28c).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_4a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(4a)"},
-    "language": "west2369",
-    "primaryText": "Anha be farzand-an=e xod moftaxar-∅-and.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Anha", "they"], ["be", "in"], ["farzand-an=e", "child-PL=LNK"], ["xod", "own"],
-      ["moftaxar-∅-and", "proud-COP.PRS-3PL"]
-    ],
-    "translation": "They are proud of their children.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "moftaxar-∅-and"],
-      ["dependent", "be"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_4b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(4b)"},
-    "language": "west2369",
-    "primaryText": "madar-an=e be farzand-an=e xod moftaxar",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["madar-an=e", "mother-PL=LNK"], ["be", "in"], ["farzand-an=e", "child-PL=LNK"],
-      ["xod", "own"], ["moftaxar", "proud"]
-    ],
-    "translation": "mothers proud of their children",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "moftaxar"],
-      ["attributivizer", "clitic"],
-      ["noun", "madar-an=e"],
-      ["dependent", "be"]
-    ],
-    "comment": "Repeated as (33); the ezafe linker cliticizes to the noun.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_7a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(7a)"},
-    "language": "stan1293",
-    "primaryText": "a smoothly running meeting",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "running"],
-      ["noun", "meeting"],
-      ["dependent", "smoothly"]
-    ],
-    "comment": "From Sheehan (2017a:136).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_7b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(7b)"},
-    "language": "stan1293",
-    "primaryText": "a running smoothly meeting",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "running"],
-      ["noun", "meeting"],
-      ["dependent", "smoothly"]
-    ],
-    "comment": "From Sheehan (2017a:136).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_8",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(8)"},
-    "language": "stan1293",
-    "primaryText": "the proud of his children man",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud"],
-      ["noun", "man"],
-      ["dependent", "of"]
-    ],
-    "comment": "Williams (1982:160); the PP is a complement of proud.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_9a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(9a)"},
-    "language": "stan1293",
-    "primaryText": "the proud that her daughter is a student woman",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud"],
-      ["noun", "woman"],
-      ["dependent", "that"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_9b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(9b)"},
-    "language": "stan1293",
-    "primaryText": "the wearing a coat person",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "wearing"],
-      ["noun", "person"],
-      ["dependent", "a"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_10a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(10a)"},
-    "language": "stan1293",
-    "primaryText": "the to Bill letter",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "to"],
-      ["noun", "letter"],
-      ["dependent", "Bill"]
-    ],
-    "comment": "Williams (1982:160); prenominal PP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_10b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(10b)"},
-    "language": "stan1293",
-    "primaryText": "a which I published in 1991 book",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "which"],
-      ["noun", "book"],
-      ["dependent", "I"]
-    ],
-    "comment": "Escribano (2004:2); prenominal relative clause.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_15",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(15)"},
-    "language": "stan1293",
-    "primaryText": "John is a tall enough guy to play basketball.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "tall"],
-      ["attributivizer", "null"],
-      ["noun", "guy"],
-      ["degree", "enough"]
-    ],
-    "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_16",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(16)"},
-    "language": "stan1293",
-    "primaryText": "John is a tall enough to play basketball guy.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "tall"],
-      ["noun", "guy"],
-      ["dependent", "to"],
-      ["degree", "enough"]
-    ],
-    "comment": "Sheehan (2017a:125).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_17a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(17a)"},
-    "language": "nucl1302",
-    "primaryText": "es bič'-i aris damok'ideb-ul-i tavis deda-ze.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["es", "this"], ["bič'-i", "boy-NOM"], ["aris", "is"],
-      ["damok'ideb-ul-i", "depend-PTCP-NOM"], ["tavis", "his.DAT"], ["deda-ze", "mother-on"]
-    ],
-    "translation": "This boy is dependent on his mother.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "damok'ideb-ul-i"],
-      ["dependent", "tavis"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_17b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(17b)"},
-    "language": "nucl1302",
-    "primaryText": "damok'ideb-ul-i tavis deda-ze bič'-i",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["damok'ideb-ul-i", "depend-PTCP-NOM"], ["tavis", "his.DAT"], ["deda-ze", "mother-on"],
-      ["bič'-i", "boy-NOM"]
-    ],
-    "translation": "a boy (who is) dependent on his mother",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "damok'ideb-ul-i"],
-      ["noun", "bič'-i"],
-      ["dependent", "tavis"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_18a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(18a)"},
-    "language": "hung1274",
-    "primaryText": "János független a szüle-i-től.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["János", "János"], ["független", "independent"], ["a", "the"],
-      ["szüle-i-től", "parents-POSS.3SG-from"]
-    ],
-    "translation": "János is independent of his parents.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "független"],
-      ["dependent", "a"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_18b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(18b)"},
-    "language": "hung1274",
-    "primaryText": "egy független a szüle-i-től fiú",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["egy", "a"], ["független", "independent"], ["a", "the"],
-      ["szüle-i-től", "parents-POSS.3SG-from"], ["fiú", "boy"]
-    ],
-    "translation": "a boy (who is) independent of his parents",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "független"],
-      ["noun", "fiú"],
-      ["dependent", "a"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_19a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(19a)"},
-    "language": "icel1247",
-    "primaryText": "Jón er stolt-ur af syni sínum.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Jón", "Jón"], ["er", "is"], ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["af", "on"],
-      ["syni", "son.DAT"], ["sínum", "his.DAT"]
-    ],
-    "translation": "Jón is proud of his son.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["dependent", "af"]
-    ],
-    "comment": "Repeated as (40a).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_19b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(19b)"},
-    "language": "icel1247",
-    "primaryText": "stolt-ur af syni sínum faðir",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["af", "on"], ["syni", "son.DAT"],
-      ["sínum", "his.DAT"], ["faðir", "father"]
-    ],
-    "translation": "a father (who is) proud of his son",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["noun", "faðir"],
-      ["dependent", "af"]
-    ],
-    "comment": "Repeated as (41a).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_20a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(20a)"},
-    "language": "nucl1235",
-    "primaryText": "(Na) hpart ē ir tłay-ov.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["(Na)", "3SG"], ["hpart", "proud"], ["ē", "COP.3SG"], ["ir", "REFL.3SG.GEN"],
-      ["tłay-ov", "boy-INS"]
-    ],
-    "translation": "She/He is proud of her/his son.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "hpart"],
-      ["dependent", "ir"]
-    ],
-    "comment": "The subject pronoun is optional.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_20b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(20b)"},
-    "language": "nucl1235",
-    "primaryText": "hpart ir tłay-ov hayr",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["hpart", "proud"], ["ir", "REFL.3SG.GEN"], ["tłay-ov", "boy-INS"], ["hayr", "father"]
-    ],
-    "translation": "a father (who is) proud of his son",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "hpart"],
-      ["noun", "hayr"],
-      ["dependent", "ir"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_21a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(21a)"},
-    "language": "sout1528",
-    "primaryText": "On je ponosan na svog sina.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["On", "he"], ["je", "is"], ["ponosan", "proud.SHORT"], ["na", "on"], ["svog", "his"],
-      ["sina", "son"]
-    ],
-    "translation": "He is proud of his son.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "ponosan"],
-      ["dependent", "na"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_21b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(21b)"},
-    "language": "sout1528",
-    "primaryText": "ponosan na svog sina otac",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["ponosan", "proud.SHORT"], ["na", "on"], ["svog", "his"], ["sina", "son"],
-      ["otac", "father"]
-    ],
-    "translation": "a father (who is) proud of his son",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "ponosan"],
-      ["noun", "otac"],
-      ["dependent", "na"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_23b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(23b)"},
-    "language": "mode1248",
-    "primaryText": "I filikes pros tin Turkia χores apariθmunte os eksis",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["I", "the"], ["filikes", "friendly"], ["pros", "towards"], ["tin", "the"],
-      ["Turkia", "Turkey"], ["χores", "countries"], ["apariθmunte", "are.listed"], ["os", "as"],
-      ["eksis", "following"]
-    ],
-    "translation": "The countries (that are) friendly towards Turkey are listed as follows.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "filikes"],
-      ["noun", "χores"],
-      ["dependent", "pros"]
-    ],
-    "comment": "Corpus of Modern Greek.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_24c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(24c)"},
-    "language": "russ1263",
-    "primaryText": "Inogda on zažmurival ustavšyje ot plohogo osveščenija glaza",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Inogda", "sometimes"], ["on", "he"], ["zažmurival", "closed.tightly"],
-      ["ustavšyje", "tired"], ["ot", "from"], ["plohogo", "bad"], ["osveščenija", "lighting"],
-      ["glaza", "eyes"]
-    ],
-    "translation": "From time to time, he would squeeze shut his eyes that were tired from bad lighting.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "ustavšyje"],
-      ["noun", "glaza"],
-      ["dependent", "ot"]
-    ],
-    "comment": "Russian National Corpus.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_26",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(26)"},
-    "language": "mand1415",
-    "primaryText": "yí-ge dúlì yú fùmǔ de qīngshàonián",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["yí-ge", "one-CLF"], ["dúlì", "independent"], ["yú", "from"], ["fùmǔ", "parents"],
-      ["de", "LNK"], ["qīngshàonián", "teenager"]
-    ],
-    "translation": "a teenager (who is) independent of his/her parents",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "dúlì"],
-      ["attributivizer", "clitic"],
-      ["noun", "qīngshàonián"],
-      ["dependent", "yú"]
-    ],
-    "comment": "The attributivizer de cliticizes to the AP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_27",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(27)"},
-    "language": "taga1270",
-    "primaryText": "Naghahanap ako ng bagay (para) sa bata=ng damit.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Naghahanap", "AV.PROG.search"], ["ako", "1SG.NOM"], ["ng", "GEN"], ["bagay", "suitable"],
-      ["(para)", "for"], ["sa", "DAT"], ["bata=ng", "child=LNK"], ["damit", "dress"]
-    ],
-    "translation": "I am looking for a dress (that is) suitable for the child.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "bagay"],
-      ["attributivizer", "clitic"],
-      ["noun", "damit"],
-      ["dependent", "(para)"]
-    ],
-    "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_28b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(28b)"},
-    "language": "basq1248",
-    "primaryText": "emakume harro-a",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["emakume", "woman"], ["harro-a", "proud-DET"]
-    ],
-    "translation": "a proud woman",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "harro-a"],
-      ["noun", "emakume"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_28d",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(28d)"},
-    "language": "basq1248",
-    "primaryText": "bere lanaz harro-a dagoen emakume-a",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["bere", "her"], ["lanaz", "work.INS"], ["harro-a", "proud-DET"], ["dagoen", "is.COMP"],
-      ["emakume-a", "woman-DET"]
-    ],
-    "translation": "a woman who is proud of her work",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "harro-a"],
-      ["noun", "emakume-a"],
-      ["dependent", "bere"],
-      ["construction", "relative"]
-    ],
-    "comment": "Prenominal relative clause containing the complex predicative AP.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_29a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29a)"},
-    "language": "chac1251",
-    "primaryText": "naa motó tsi ʂo yói karetera ka=tí.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["naa", "DEM"], ["motó", "motorcycle"], ["tsi", "PTCL"], ["ʂo", "DECL"], ["yói", "bad"],
-      ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"]
-    ],
-    "translation": "This motorcycle is bad for driving on the highway.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "naa motó tsi ʂo karetera ka=tí yói.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "yói"],
-      ["dependent", "karetera"]
-    ],
-    "comment": "The XP-A order is the less neutral option.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_29b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29b)"},
-    "language": "chac1251",
-    "primaryText": "motó yói karetera ka=tí kopi=ki paɨ.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["motó", "motorcycle"], ["yói", "bad"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"],
-      ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
-    ],
-    "translation": "Paë buys/will buy a motorcycle (which is) bad for driving on the highway.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "motó karetera ka=tí yói kopi=ki paɨ.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "yói"],
-      ["noun", "motó"],
-      ["dependent", "karetera"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_29c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29c)"},
-    "language": "chac1251",
-    "primaryText": "motó karetera ka=tí yói=ka kopi=ki paɨ.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["motó", "motorcycle"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"],
-      ["yói=ka", "bad=REL"], ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
-    ],
-    "translation": "Paë buys/will buy a motorcycle which is bad for driving on the highway.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "yói=ka"],
-      ["noun", "motó"],
-      ["dependent", "karetera"],
-      ["construction", "relative"]
-    ],
-    "comment": "With the linker =ka(to), analyzed as a relative clause marker.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_30a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30a)"},
-    "language": "east2652",
-    "primaryText": "nam-i-ce-∅-i kun dureys-umma=tti boon-aa-ɗa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nam-i-ce-∅-i", "person-EP-SGV-NOM-EP"], ["kun", "this"],
-      ["dureys-umma=tti", "rich-NMLZ=LOC"], ["boon-aa-ɗa", "proud-M-COP"]
-    ],
-    "translation": "This man is proud of being rich.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "boon-aa-ɗa"],
-      ["dependent", "dureys-umma=tti"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_30b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30b)"},
-    "language": "east2652",
-    "primaryText": "Muussa nama boon-aa-ɗa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Muussa", "Muussa"], ["nama", "person"], ["boon-aa-ɗa", "proud-M-COP"]
-    ],
-    "translation": "Muussa is a proud person.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "boon-aa-ɗa"],
-      ["noun", "nama"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_30c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30c)"},
-    "language": "east2652",
-    "primaryText": "Muussa nama dureys-umma=tti boon-aa-ɗa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Muussa", "Muussa"], ["nama", "person"], ["dureys-umma=tti", "rich-NMLZ=LOC"],
-      ["boon-aa-ɗa", "proud-M-COP"]
-    ],
-    "translation": "Muussa is a person (who is) proud of being rich.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "boon-aa-ɗa"],
-      ["noun", "nama"],
-      ["dependent", "dureys-umma=tti"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_30d",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30d)"},
-    "language": "east2652",
-    "primaryText": "Muussa nama dureys-umma=tti boon-∅-u.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Muussa", "Muussa"], ["nama", "person"], ["dureys-umma=tti", "rich-NMLZ=LOC"],
-      ["boon-∅-u", "proud-3SG.M-DPT"]
-    ],
-    "translation": "Muussa is a person (who is) proud of being rich.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "boon-∅-u"],
-      ["noun", "nama"],
-      ["dependent", "dureys-umma=tti"],
-      ["construction", "relative"]
-    ],
-    "comment": "Relativization with the dependent clause marker.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_31",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(31)"},
-    "language": "kala1399",
-    "primaryText": "nukappiaqqa-p qimmi-mut kii-sit-tu-p uqaluttuar-aa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nukappiaqqa-p", "boy-ERG.SG"], ["qimmi-mut", "dog-ALL.SG"],
-      ["kii-sit-tu-p", "bite-CAUS-INTR.PTCP-ERG.SG"], ["uqaluttuar-aa", "tell.about-3SG>3SG.IND"]
-    ],
-    "translation": "The boy bitten by the dog told about it.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "kii-sit-tu-p"],
-      ["noun", "nukappiaqqa-p"],
-      ["dependent", "qimmi-mut"]
-    ],
-    "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_32",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(32)"},
-    "language": "aton1241",
-    "primaryText": "naŋʔ=məŋ gore jal=na rak-khal =gaba =aw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["naŋʔ=məŋ", "2SG=GEN"], ["gore", "horse"], ["jal=na", "run=DAT"],
-      ["rak-khal", "strong-CMPR/SPRL"], ["=gaba", "=ATTR"], ["=aw", "=REF"]
-    ],
-    "translation": "your horse that is strongest in running",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "rak-khal"],
-      ["attributivizer", "clitic"],
-      ["noun", "gore"],
-      ["dependent", "jal=na"]
-    ],
-    "comment": "Van Breugel (2010:518).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_35",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(35)"},
-    "language": "lati1261",
-    "primaryText": "in praestantibus in re publica gubernanda viris",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["in", "in"], ["praestantibus", "excellent.ABL.M.PL"], ["in", "in"], ["re", "thing"],
-      ["publica", "public"], ["gubernanda", "to.be.governed"], ["viris", "man.ABL.M.PL"]
-    ],
-    "translation": "in men who excel in the government of the republic",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "praestantibus"],
-      ["noun", "viris"],
-      ["dependent", "re"]
-    ],
-    "comment": "Cic. Fam. 1.9.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_36a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36a)"},
-    "language": "ital1282",
-    "primaryText": "nei bravi in matematica studenti",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["nei", "in.the.M.PL"], ["bravi", "good.M.PL"], ["in", "in"], ["matematica", "math"],
-      ["studenti", "student.M.PL"]
-    ],
-    "translation": "in the students (who are) good at math",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "bravi"],
-      ["noun", "studenti"],
-      ["dependent", "in"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_36b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36b)"},
-    "language": "ital1282",
-    "primaryText": "negli studenti bravi in matematica",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["negli", "in.the.M.PL"], ["studenti", "student.M.PL"], ["bravi", "good.M.PL"], ["in", "in"],
-      ["matematica", "math"]
-    ],
-    "translation": "in the students good at math",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "bravi"],
-      ["noun", "studenti"],
-      ["dependent", "in"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_36c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36c)"},
-    "language": "ital1282",
-    "primaryText": "nei bravi studenti",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "bravi"],
-      ["noun", "studenti"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_36d",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36d)"},
-    "language": "ital1282",
-    "primaryText": "negli studenti bravi",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "bravi"],
-      ["noun", "studenti"]
-    ],
-    "comment": "bravi belongs to the restricted prenominal class.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_37a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37a)"},
-    "language": "mode1248",
-    "primaryText": "(Aftos) ine perifan-os.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["(Aftos)", "he"], ["ine", "is"], ["perifan-os", "proud-M.SG.NOM"]
-    ],
-    "translation": "He is proud.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "(Aftos) ine perifan.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "perifan-os"],
-      ["marker", "agreement"]
-    ],
-    "comment": "The subject pronoun is optional.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_37b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37b)"},
-    "language": "mode1248",
-    "primaryText": "o perifan-os pateras",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["o", "the"], ["perifan-os", "proud-M.SG.NOM"], ["pateras", "father"]
-    ],
-    "translation": "the proud father",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "o perifan pateras",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "perifan-os"],
-      ["marker", "agreement"],
-      ["noun", "pateras"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_38a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(38a)"},
-    "language": "stan1295",
-    "primaryText": "Er ist stolz.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Er", "he"], ["ist", "is"], ["stolz", "proud"]
-    ],
-    "translation": "He is proud.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Er ist stolz-er.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolz"],
-      ["marker", "bare"]
-    ],
-    "comment": "Repeated as (60a).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_38b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(38b)"},
-    "language": "stan1295",
-    "primaryText": "stolz-er Vater",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["stolz-er", "proud-M.SG.NOM.STRONG"], ["Vater", "father"]
-    ],
-    "translation": "a proud father",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "stolz Vater",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolz-er"],
-      ["marker", "agreement"],
-      ["noun", "Vater"]
-    ],
-    "comment": "Repeated as (60b).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_39a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(39a)"},
-    "language": "russ1263",
-    "primaryText": "Ona umn-aja.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ona", "she"], ["umn-aja", "smart-LONG.F.SG.NOM"]
-    ],
-    "translation": "She is smart.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Ona umn-a.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "umn-aja"],
-      ["form", "long"]
-    ],
-    "comment": "Short form umn-a: SHORT.F.SG, no case.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_39b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(39b)"},
-    "language": "russ1263",
-    "primaryText": "umn-aja d'evočka",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["umn-aja", "smart-LONG"], ["d'evočka", "girl"]
-    ],
-    "translation": "a/the smart girl",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "umn-a d'evočka",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "umn-aja"],
-      ["form", "long"],
-      ["noun", "d'evočka"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_40b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(40b)"},
-    "language": "icel1247",
-    "primaryText": "Jón er af syni sínum stolt-ur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Jón", "Jón"], ["er", "is"], ["af", "on"], ["syni", "son.DAT"], ["sínum", "his.DAT"],
-      ["stolt-ur", "proud-M.SG.NOM.STRONG"]
-    ],
-    "translation": "Jón is proud of his son.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["dependent", "af"]
-    ],
-    "comment": "The more marked option.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_41b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(41b)"},
-    "language": "icel1247",
-    "primaryText": "af syni sínum stolt-ur faðir",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["af", "on"], ["syni", "son.DAT"], ["sínum", "his.DAT"],
-      ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["faðir", "father"]
-    ],
-    "translation": "a father proud of his son",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["noun", "faðir"],
-      ["dependent", "af"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_42a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42a)"},
-    "language": "icel1247",
-    "primaryText": "Jón er stolt-ur.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Jón", "Jón"], ["er", "is"], ["stolt-ur", "proud-M.SG.NOM.STRONG"]
-    ],
-    "translation": "Jón is proud.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Jón er stolt-i.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["form", "strong"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_42b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42b)"},
-    "language": "icel1247",
-    "primaryText": "stolt-ur faðir",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["faðir", "father"]
-    ],
-    "translation": "a proud father",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "stolt-i faðir",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["form", "strong"],
-      ["definiteness", "indefinite"],
-      ["noun", "faðir"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_42c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42c)"},
-    "language": "icel1247",
-    "primaryText": "stolt-i faðir-inn",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["stolt-i", "proud-M.SG.NOM.WEAK"], ["faðir-inn", "father-DEF.M.SG"]
-    ],
-    "translation": "the proud father",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-i"],
-      ["form", "weak"],
-      ["definiteness", "definite"],
-      ["noun", "faðir-inn"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_42d",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42d)"},
-    "language": "icel1247",
-    "primaryText": "stolt-ur faðir-inn",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["faðir-inn", "father-DEF.M.SG"]
-    ],
-    "translation": "the father, who, by the way, is proud",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolt-ur"],
-      ["form", "strong"],
-      ["definiteness", "definite"],
-      ["reading", "nonrestrictive"],
-      ["noun", "faðir-inn"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_43a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43a)"},
-    "language": "sout1528",
-    "primaryText": "Goran je lijep.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Goran", "Goran"], ["je", "is"], ["lijep", "nice.SHORT"]
-    ],
-    "translation": "Goran is nice.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {
-        "form": "Goran je lijepi.",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "lijep"],
-      ["form", "short"]
-    ],
-    "comment": "Aljović (2002:28).",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_43b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43b)"},
-    "language": "sout1528",
-    "primaryText": "lijep momak",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["lijep", "nice.SHORT"], ["momak", "young.man"]
-    ],
-    "translation": "a nice young man",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "lijep"],
-      ["form", "short"],
-      ["definiteness", "indefinite"],
-      ["noun", "momak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_43c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43c)"},
-    "language": "sout1528",
-    "primaryText": "lijepi momak",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["lijepi", "nice.LONG"], ["momak", "young.man"]
-    ],
-    "translation": "the nice young man",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "lijepi"],
-      ["form", "long"],
-      ["definiteness", "definite"],
-      ["noun", "momak"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_62",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(62)"},
-    "language": "stan1295",
-    "primaryText": "Maria ist stolz auf ihre Tochter.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Maria", "Maria"], ["ist", "is"], ["stolz", "proud"], ["auf", "on"], ["ihre", "her"],
-      ["Tochter", "daughter"]
-    ],
-    "translation": "Maria is proud of her daughter.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [
-      {"form": "Maria ist auf ihre Tochter stolz.", "judgment": "acceptable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolz"],
-      ["dependent", "auf"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_63a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(63a)"},
-    "language": "stan1295",
-    "primaryText": "die stolz auf ihre Tochter-e Mutter",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the"], ["stolz", "proud"], ["auf", "on"], ["ihre", "her"],
-      ["Tochter-e", "daughter-ATTR.F.SG.NOM"], ["Mutter", "mother"]
-    ],
-    "translation": "the mother (who is) proud of her daughter",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolz"],
-      ["attributivizer", "affix"],
-      ["noun", "Mutter"],
-      ["dependent", "auf"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_63b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(63b)"},
-    "language": "stan1295",
-    "primaryText": "die auf ihre Tochter stolz-e Mutter",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["die", "the"], ["auf", "on"], ["ihre", "her"], ["Tochter", "daughter"],
-      ["stolz-e", "proud-ATTR.F.SG.NOM"], ["Mutter", "mother"]
-    ],
-    "translation": "the mother (who is) proud of her daughter",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "stolz-e"],
-      ["attributivizer", "affix"],
-      ["noun", "Mutter"],
-      ["dependent", "auf"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_66a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(66a)"},
-    "language": "dutc1256",
-    "primaryText": "een op haar moeder trots-e vrouw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["op", "of"], ["haar", "her"], ["moeder", "mother"], ["trots-e", "proud-ATTR"],
-      ["vrouw", "woman"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "trots-e"],
-      ["attributivizer", "affix"],
-      ["noun", "vrouw"],
-      ["dependent", "op"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_66b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(66b)"},
-    "language": "dutc1256",
-    "primaryText": "een trots op haar moeder-e vrouw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["trots", "proud"], ["op", "of"], ["haar", "her"], ["moeder-e", "mother-ATTR"],
-      ["vrouw", "woman"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "trots"],
-      ["attributivizer", "affix"],
-      ["noun", "vrouw"],
-      ["dependent", "op"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_66c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(66c)"},
-    "language": "dutc1256",
-    "primaryText": "een trots-e op haar moeder vrouw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["trots-e", "proud-ATTR"], ["op", "of"], ["haar", "her"], ["moeder", "mother"],
-      ["vrouw", "woman"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "trots-e"],
-      ["attributivizer", "affix"],
-      ["noun", "vrouw"],
-      ["dependent", "op"]
-    ],
-    "comment": "The affix is adjacent to the adjective but not to the noun.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_67a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(67a)"},
-    "language": "dutc1256",
-    "primaryText": "een op haar vader trots-∅ kind",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["op", "of"], ["haar", "her"], ["vader", "father"], ["trots-∅", "proud-ATTR"],
-      ["kind", "child"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "trots-∅"],
-      ["attributivizer", "null"],
-      ["noun", "kind"],
-      ["dependent", "op"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_67b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(67b)"},
-    "language": "dutc1256",
-    "primaryText": "een trots op haar vader-∅ kind",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["trots", "proud"], ["op", "of"], ["haar", "her"], ["vader-∅", "father-ATTR"],
-      ["kind", "child"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "trots"],
-      ["attributivizer", "null"],
-      ["noun", "kind"],
-      ["dependent", "op"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_67c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(67c)"},
-    "language": "dutc1256",
-    "primaryText": "een trots-∅ op haar vader kind",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["trots-∅", "proud-ATTR"], ["op", "of"], ["haar", "her"], ["vader", "father"],
-      ["kind", "child"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "trots-∅"],
-      ["attributivizer", "null"],
-      ["noun", "kind"],
-      ["dependent", "op"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_68a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68a)"},
-    "language": "dutc1256",
-    "primaryText": "een groot genoeg-∅ kind",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["groot", "big"], ["genoeg-∅", "enough-ATTR"], ["kind", "child"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "groot"],
-      ["attributivizer", "null"],
-      ["noun", "kind"],
-      ["degree", "genoeg-∅"]
-    ],
-    "comment": "Van Riemsdijk (1998); some speaker variation is reported.",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_68b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68b)"},
-    "language": "dutc1256",
-    "primaryText": "een groot genoeg-e vrouw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["groot", "big"], ["genoeg-e", "enough-ATTR"], ["vrouw", "woman"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "groot"],
-      ["attributivizer", "affix"],
-      ["noun", "vrouw"],
-      ["degree", "genoeg-e"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_68c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68c)"},
-    "language": "dutc1256",
-    "primaryText": "een groot-e genoeg vrouw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["groot-e", "big-ATTR"], ["genoeg", "enough"], ["vrouw", "woman"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "groot-e"],
-      ["noun", "vrouw"],
-      ["degree", "genoeg"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_68d",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68d)"},
-    "language": "dutc1256",
-    "primaryText": "een groot genoeg vrouw",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["een", "a"], ["groot", "big"], ["genoeg", "enough"], ["vrouw", "woman"]
-    ],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "groot"],
-      ["noun", "vrouw"],
-      ["degree", "genoeg"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_71a",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71a)"},
-    "language": "stan1293",
-    "primaryText": "a proud-∅ child",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud-∅"],
-      ["attributivizer", "null"],
-      ["noun", "child"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_71b",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71b)"},
-    "language": "stan1293",
-    "primaryText": "a proud of his mother-∅ child",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud"],
-      ["attributivizer", "null"],
-      ["noun", "child"],
-      ["dependent", "of"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "az2025_71c",
-    "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71c)"},
-    "language": "stan1293",
-    "primaryText": "a proud enough-∅ child",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["head", "proud"],
-      ["attributivizer", "null"],
-      ["noun", "child"],
-      ["degree", "enough-∅"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "attributivizer",
+      "lean": "attributivizer",
+      "type": "Attributivizer",
+      "doc": "The attributivizer the row shows, as the paper segments or describes it.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "affix",
+          "label": "affix",
+          "doc": "an overt affix, glossed ATTR"
+        },
+        {
+          "name": "null",
+          "label": "null",
+          "doc": "a null affix, written ∅"
+        },
+        {
+          "name": "clitic",
+          "label": "clitic",
+          "doc": "a clitic linker"
+        }
+      ]
+    },
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The construction of the modifier, where it is not an attributive adjective phrase.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "relative",
+          "label": "relative",
+          "doc": "a relative clause containing the adjective phrase"
+        }
+      ]
+    },
+    {
+      "key": "marker",
+      "lean": "marker",
+      "type": "Marker",
+      "doc": "Whether the adjective of an agreement paradigm row carries its agreement marker.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "agreement",
+          "label": "agreement",
+          "doc": "the adjective carries an agreement marker"
+        },
+        {
+          "name": "bare",
+          "label": "bare",
+          "doc": "the adjective is a bare stem"
+        }
+      ]
+    },
+    {
+      "key": "form",
+      "lean": "adjectiveForm",
+      "type": "AdjectiveForm",
+      "doc": "The form of the adjective, in a language whose adjectives have two.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "long",
+          "label": "long",
+          "doc": "the long form of Russian and Serbo-Croatian"
+        },
+        {
+          "name": "short",
+          "label": "short",
+          "doc": "the short form of Russian and Serbo-Croatian"
+        },
+        {
+          "name": "strong",
+          "label": "strong",
+          "doc": "the strong form of Icelandic"
+        },
+        {
+          "name": "weak",
+          "label": "weak",
+          "doc": "the weak form of Icelandic"
+        }
+      ]
+    },
+    {
+      "key": "definiteness",
+      "lean": "definiteness",
+      "type": "Definiteness",
+      "doc": "The definiteness of the noun phrase the adjective modifies.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "definite",
+          "label": "definite",
+          "doc": "a definite noun phrase"
+        },
+        {
+          "name": "indefinite",
+          "label": "indefinite",
+          "doc": "an indefinite noun phrase"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "head",
+          "label": "head",
+          "doc": "the head of the modifier or predicate, an adjective except in the rows of other prenominal modifiers"
+        },
+        {
+          "name": "noun",
+          "label": "noun",
+          "doc": "the modified noun"
+        },
+        {
+          "name": "dependent",
+          "label": "dependent",
+          "doc": "the dependent of the head, a complement or modifier"
+        },
+        {
+          "name": "degree",
+          "label": "degree",
+          "doc": "a degree word following the adjective"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the paper."
+  },
+  "examples": [
+    {
+      "id": "az2025_1a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(1a)"},
+      "language": "stan1293",
+      "primaryText": "She is proud of her daughter.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["She", ""], ["is", ""], ["proud", ""], ["of", ""], ["her", ""], ["daughter", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"},
+        {"start": 3, "length": 3, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_1b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(1b)"},
+      "language": "stan1293",
+      "primaryText": "a proud of her daughter mother",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["proud", ""], ["of", ""], ["her", ""], ["daughter", ""], ["mother", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_2a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(2a)"},
+      "language": "mode1248",
+      "primaryText": "Ine perifanos ɣia to ɣio tu.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ine", "is"], ["perifanos", "proud.M.SG"], ["ɣia", "for"], ["to", "the"],
+        ["ɣio", "son.ACC"], ["tu", "his"]
+      ],
+      "translation": "He is proud of his son.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 4, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_2b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(2b)"},
+      "language": "mode1248",
+      "primaryText": "o perifanos ɣia to ɣio tu pateras",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["o", "the"], ["perifanos", "proud.M.SG"], ["ɣia", "for"], ["to", "the"], ["ɣio", "son.ACC"],
+        ["tu", "his"], ["pateras", "father"]
+      ],
+      "translation": "the father proud of his son",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 4, "label": "dependent"},
+        {"start": 6, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_3a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(3a)"},
+      "language": "basq1248",
+      "primaryText": "Bere lanaz harro-a dago.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Bere", "her"], ["lanaz", "work.INS"], ["harro-a", "proud-DET"], ["dago", "is"]
+      ],
+      "translation": "She is proud of her work.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "length": 2, "label": "dependent"},
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_3b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(3b)"},
+      "language": "basq1248",
+      "primaryText": "emakume bere lanaz harro-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["emakume", "woman"], ["bere", "her"], ["lanaz", "work.INS"], ["harro-a", "proud-DET"]
+      ],
+      "translation": "a woman proud of her work",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "length": 2, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "Repeated as (28c).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_4a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(4a)"},
+      "language": "west2369",
+      "primaryText": "Anha be farzand-an=e xod moftaxar-∅-and.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Anha", "they"], ["be", "in"], ["farzand-an=e", "child-PL=LNK"], ["xod", "own"],
+        ["moftaxar-∅-and", "proud-COP.PRS-3PL"]
+      ],
+      "translation": "They are proud of their children.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_4b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(4b)"},
+      "language": "west2369",
+      "primaryText": "madar-an=e be farzand-an=e xod moftaxar",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["madar-an=e", "mother-PL=LNK"], ["be", "in"], ["farzand-an=e", "child-PL=LNK"],
+        ["xod", "own"], ["moftaxar", "proud"]
+      ],
+      "translation": "mothers proud of their children",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "clitic"]
+      ],
+      "comment": "Repeated as (33); the ezafe linker cliticizes to the noun.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_7a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(7a)"},
+      "language": "stan1293",
+      "primaryText": "a smoothly running meeting",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["smoothly", ""], ["running", ""], ["meeting", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "dependent"},
+        {"start": 2, "label": "head"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "From Sheehan (2017a:136).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_7b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(7b)"},
+      "language": "stan1293",
+      "primaryText": "a running smoothly meeting",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["running", ""], ["smoothly", ""], ["meeting", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 1, "label": "dependent"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "From Sheehan (2017a:136).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_8",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(8)"},
+      "language": "stan1293",
+      "primaryText": "the proud of his children man",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["the", ""], ["proud", ""], ["of", ""], ["his", ""], ["children", ""], ["man", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Williams (1982:160); the PP is a complement of proud.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_9a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(9a)"},
+      "language": "stan1293",
+      "primaryText": "the proud that her daughter is a student woman",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["the", ""], ["proud", ""], ["that", ""], ["her", ""], ["daughter", ""], ["is", ""],
+        ["a", ""], ["student", ""], ["woman", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 6, "label": "dependent"},
+        {"start": 8, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_9b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(9b)"},
+      "language": "stan1293",
+      "primaryText": "the wearing a coat person",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["the", ""], ["wearing", ""], ["a", ""], ["coat", ""], ["person", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 2, "label": "dependent"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_10a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(10a)"},
+      "language": "stan1293",
+      "primaryText": "the to Bill letter",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["the", ""], ["to", ""], ["Bill", ""], ["letter", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 1, "label": "dependent"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Williams (1982:160); prenominal PP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_10b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(10b)"},
+      "language": "stan1293",
+      "primaryText": "a which I published in 1991 book",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["which", ""], ["I", ""], ["published", ""], ["in", ""], ["1991", ""],
+        ["book", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 4, "label": "dependent"},
+        {"start": 6, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Escribano (2004:2); prenominal relative clause.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_15",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(15)"},
+      "language": "stan1293",
+      "primaryText": "John is a tall enough guy to play basketball.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["is", ""], ["a", ""], ["tall", ""], ["enough", ""], ["guy", ""], ["to", ""],
+        ["play", ""], ["basketball", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "head"},
+        {"start": 4, "label": "degree"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_16",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(16)"},
+      "language": "stan1293",
+      "primaryText": "John is a tall enough to play basketball guy.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["is", ""], ["a", ""], ["tall", ""], ["enough", ""], ["to", ""], ["play", ""],
+        ["basketball", ""], ["guy", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "head"},
+        {"start": 4, "label": "degree"},
+        {"start": 5, "length": 3, "label": "dependent"},
+        {"start": 8, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Sheehan (2017a:125).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_17a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(17a)"},
+      "language": "nucl1302",
+      "primaryText": "es bič'-i aris damok'ideb-ul-i tavis deda-ze.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["es", "this"], ["bič'-i", "boy-NOM"], ["aris", "is"],
+        ["damok'ideb-ul-i", "depend-PTCP-NOM"], ["tavis", "his.DAT"], ["deda-ze", "mother-on"]
+      ],
+      "translation": "This boy is dependent on his mother.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "head"},
+        {"start": 4, "length": 2, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_17b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(17b)"},
+      "language": "nucl1302",
+      "primaryText": "damok'ideb-ul-i tavis deda-ze bič'-i",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["damok'ideb-ul-i", "depend-PTCP-NOM"], ["tavis", "his.DAT"], ["deda-ze", "mother-on"],
+        ["bič'-i", "boy-NOM"]
+      ],
+      "translation": "a boy (who is) dependent on his mother",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "length": 2, "label": "dependent"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_18a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(18a)"},
+      "language": "hung1274",
+      "primaryText": "János független a szüle-i-től.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["János", "János"], ["független", "independent"], ["a", "the"],
+        ["szüle-i-től", "parents-POSS.3SG-from"]
+      ],
+      "translation": "János is independent of his parents.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 2, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_18b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(18b)"},
+      "language": "hung1274",
+      "primaryText": "egy független a szüle-i-től fiú",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["egy", "a"], ["független", "independent"], ["a", "the"],
+        ["szüle-i-től", "parents-POSS.3SG-from"], ["fiú", "boy"]
+      ],
+      "translation": "a boy (who is) independent of his parents",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 2, "label": "dependent"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_19a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(19a)"},
+      "language": "icel1247",
+      "primaryText": "Jón er stolt-ur af syni sínum.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jón", "Jón"], ["er", "is"], ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["af", "on"],
+        ["syni", "son.DAT"], ["sínum", "his.DAT"]
+      ],
+      "translation": "Jón is proud of his son.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"},
+        {"start": 3, "length": 3, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "Repeated as (40a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_19b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(19b)"},
+      "language": "icel1247",
+      "primaryText": "stolt-ur af syni sínum faðir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["af", "on"], ["syni", "son.DAT"],
+        ["sínum", "his.DAT"], ["faðir", "father"]
+      ],
+      "translation": "a father (who is) proud of his son",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Repeated as (41a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_20a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(20a)"},
+      "language": "nucl1235",
+      "primaryText": "(Na) hpart ē ir tłay-ov.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Na)", "3SG"], ["hpart", "proud"], ["ē", "COP.3SG"], ["ir", "REFL.3SG.GEN"],
+        ["tłay-ov", "boy-INS"]
+      ],
+      "translation": "She/He is proud of her/his son.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 3, "length": 2, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "The subject pronoun is optional.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_20b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(20b)"},
+      "language": "nucl1235",
+      "primaryText": "hpart ir tłay-ov hayr",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["hpart", "proud"], ["ir", "REFL.3SG.GEN"], ["tłay-ov", "boy-INS"], ["hayr", "father"]
+      ],
+      "translation": "a father (who is) proud of his son",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "length": 2, "label": "dependent"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_21a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(21a)"},
+      "language": "sout1528",
+      "primaryText": "On je ponosan na svog sina.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["On", "he"], ["je", "is"], ["ponosan", "proud.SHORT"], ["na", "on"], ["svog", "his"],
+        ["sina", "son"]
+      ],
+      "translation": "He is proud of his son.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"},
+        {"start": 3, "length": 3, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_21b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(21b)"},
+      "language": "sout1528",
+      "primaryText": "ponosan na svog sina otac",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ponosan", "proud.SHORT"], ["na", "on"], ["svog", "his"], ["sina", "son"],
+        ["otac", "father"]
+      ],
+      "translation": "a father (who is) proud of his son",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_23b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(23b)"},
+      "method": "corpus",
+      "language": "mode1248",
+      "primaryText": "I filikes pros tin Turkia χores apariθmunte os eksis",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", "the"], ["filikes", "friendly"], ["pros", "towards"], ["tin", "the"],
+        ["Turkia", "Turkey"], ["χores", "countries"], ["apariθmunte", "are.listed"], ["os", "as"],
+        ["eksis", "following"]
+      ],
+      "translation": "The countries (that are) friendly towards Turkey are listed as follows.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Corpus of Modern Greek.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_24c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(24c)"},
+      "method": "corpus",
+      "language": "russ1263",
+      "primaryText": "Inogda on zažmurival ustavšyje ot plohogo osveščenija glaza",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Inogda", "sometimes"], ["on", "he"], ["zažmurival", "closed.tightly"],
+        ["ustavšyje", "tired"], ["ot", "from"], ["plohogo", "bad"], ["osveščenija", "lighting"],
+        ["glaza", "eyes"]
+      ],
+      "translation": "From time to time, he would squeeze shut his eyes that were tired from bad lighting.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "head"},
+        {"start": 4, "length": 3, "label": "dependent"},
+        {"start": 7, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Russian National Corpus.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_26",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(26)"},
+      "language": "mand1415",
+      "primaryText": "yí-ge dúlì yú fùmǔ de qīngshàonián",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yí-ge", "one-CLF"], ["dúlì", "independent"], ["yú", "from"], ["fùmǔ", "parents"],
+        ["de", "LNK"], ["qīngshàonián", "teenager"]
+      ],
+      "translation": "a teenager (who is) independent of his/her parents",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 2, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "clitic"]
+      ],
+      "comment": "The attributivizer de cliticizes to the AP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_27",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(27)"},
+      "language": "taga1270",
+      "primaryText": "Naghahanap ako ng bagay (para) sa bata=ng damit.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Naghahanap", "AV.PROG.search"], ["ako", "1SG.NOM"], ["ng", "GEN"], ["bagay", "suitable"],
+        ["(para)", "for"], ["sa", "DAT"], ["bata=ng", "child=LNK"], ["damit", "dress"]
+      ],
+      "translation": "I am looking for a dress (that is) suitable for the child.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "head"},
+        {"start": 4, "length": 3, "label": "dependent"},
+        {"start": 7, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "clitic"]
+      ],
+      "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_28b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(28b)"},
+      "language": "basq1248",
+      "primaryText": "emakume harro-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["emakume", "woman"], ["harro-a", "proud-DET"]
+      ],
+      "translation": "a proud woman",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_28d",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(28d)"},
+      "language": "basq1248",
+      "primaryText": "bere lanaz harro-a dagoen emakume-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bere", "her"], ["lanaz", "work.INS"], ["harro-a", "proud-DET"], ["dagoen", "is.COMP"],
+        ["emakume-a", "woman-DET"]
+      ],
+      "translation": "a woman who is proud of her work",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "length": 2, "label": "dependent"},
+        {"start": 2, "label": "head"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["construction", "relative"]
+      ],
+      "comment": "Prenominal relative clause containing the complex predicative AP.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_29a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29a)"},
+      "language": "chac1251",
+      "primaryText": "naa motó tsi ʂo yói karetera ka=tí.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["naa", "DEM"], ["motó", "motorcycle"], ["tsi", "PTCL"], ["ʂo", "DECL"], ["yói", "bad"],
+        ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"]
+      ],
+      "translation": "This motorcycle is bad for driving on the highway.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "head"},
+        {"start": 5, "length": 2, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "The more natural order.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_29a_xpA",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29a)"},
+      "language": "chac1251",
+      "primaryText": "naa motó tsi ʂo karetera ka=tí yói.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["naa", "DEM"], ["motó", "motorcycle"], ["tsi", "PTCL"], ["ʂo", "DECL"],
+        ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"], ["yói", "bad"]
+      ],
+      "translation": "This motorcycle is bad for driving on the highway.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "length": 2, "label": "dependent"},
+        {"start": 6, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "The less neutral order.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_29b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29b)"},
+      "language": "chac1251",
+      "primaryText": "motó yói karetera ka=tí kopi=ki paɨ.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["motó", "motorcycle"], ["yói", "bad"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"],
+        ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
+      ],
+      "translation": "Paë buys/will buy a motorcycle (which is) bad for driving on the highway.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 2, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_29b_xpA",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29b)"},
+      "language": "chac1251",
+      "primaryText": "motó karetera ka=tí yói kopi=ki paɨ.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["motó", "motorcycle"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"], ["yói", "bad"],
+        ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
+      ],
+      "translation": "Paë buys/will buy a motorcycle (which is) bad for driving on the highway.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "length": 2, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_29c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(29c)"},
+      "language": "chac1251",
+      "primaryText": "motó karetera ka=tí yói=ka kopi=ki paɨ.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["motó", "motorcycle"], ["karetera", "highway"], ["ka=tí", "go=NMLZ:PURP"],
+        ["yói=ka", "bad=REL"], ["kopi=ki", "buy=DECL.NPST"], ["paɨ", "Paë"]
+      ],
+      "translation": "Paë buys/will buy a motorcycle which is bad for driving on the highway.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "length": 2, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["construction", "relative"]
+      ],
+      "comment": "With the linker =ka(to), analyzed as a relative clause marker.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_30a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30a)"},
+      "language": "east2652",
+      "primaryText": "nam-i-ce-∅-i kun dureys-umma=tti boon-aa-ɗa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nam-i-ce-∅-i", "person-EP-SGV-NOM-EP"], ["kun", "this"],
+        ["dureys-umma=tti", "rich-NMLZ=LOC"], ["boon-aa-ɗa", "proud-M-COP"]
+      ],
+      "translation": "This man is proud of being rich.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "length": 1, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_30b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30b)"},
+      "language": "east2652",
+      "primaryText": "Muussa nama boon-aa-ɗa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Muussa", "Muussa"], ["nama", "person"], ["boon-aa-ɗa", "proud-M-COP"]
+      ],
+      "translation": "Muussa is a proud person.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "noun"},
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_30c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30c)"},
+      "language": "east2652",
+      "primaryText": "Muussa nama dureys-umma=tti boon-aa-ɗa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Muussa", "Muussa"], ["nama", "person"], ["dureys-umma=tti", "rich-NMLZ=LOC"],
+        ["boon-aa-ɗa", "proud-M-COP"]
+      ],
+      "translation": "Muussa is a person (who is) proud of being rich.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "noun"},
+        {"start": 2, "length": 1, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_30d",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(30d)"},
+      "language": "east2652",
+      "primaryText": "Muussa nama dureys-umma=tti boon-∅-u.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Muussa", "Muussa"], ["nama", "person"], ["dureys-umma=tti", "rich-NMLZ=LOC"],
+        ["boon-∅-u", "proud-3SG.M-DPT"]
+      ],
+      "translation": "Muussa is a person (who is) proud of being rich.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "noun"},
+        {"start": 2, "length": 1, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["construction", "relative"]
+      ],
+      "comment": "Relativization with the dependent clause marker.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_31",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(31)"},
+      "language": "kala1399",
+      "primaryText": "nukappiaqqa-p qimmi-mut kii-sit-tu-p uqaluttuar-aa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nukappiaqqa-p", "boy-ERG.SG"], ["qimmi-mut", "dog-ALL.SG"],
+        ["kii-sit-tu-p", "bite-CAUS-INTR.PTCP-ERG.SG"], ["uqaluttuar-aa", "tell.about-3SG>3SG.IND"]
+      ],
+      "translation": "The boy bitten by the dog told about it.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "noun"},
+        {"start": 1, "length": 1, "label": "dependent"},
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_32",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(32)"},
+      "language": "aton1241",
+      "primaryText": "naŋʔ=məŋ gore jal=na rak-khal =gaba =aw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["naŋʔ=məŋ", "2SG=GEN"], ["gore", "horse"], ["jal=na", "run=DAT"],
+        ["rak-khal", "strong-CMPR/SPRL"], ["=gaba", "=ATTR"], ["=aw", "=REF"]
+      ],
+      "translation": "your horse that is strongest in running",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "noun"},
+        {"start": 2, "length": 1, "label": "dependent"},
+        {"start": 3, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "clitic"]
+      ],
+      "comment": "Van Breugel (2010:518).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_35",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(35)"},
+      "language": "lati1261",
+      "primaryText": "in praestantibus in re publica gubernanda viris",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["in", "in"], ["praestantibus", "excellent.ABL.M.PL"], ["in", "in"], ["re", "thing"],
+        ["publica", "public"], ["gubernanda", "to.be.governed"], ["viris", "man.ABL.M.PL"]
+      ],
+      "translation": "in men who excel in the government of the republic",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 4, "label": "dependent"},
+        {"start": 6, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "Cic. Fam. 1.9.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_36a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36a)"},
+      "language": "ital1282",
+      "primaryText": "nei bravi in matematica studenti",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nei", "in.the.M.PL"], ["bravi", "good.M.PL"], ["in", "in"], ["matematica", "math"],
+        ["studenti", "student.M.PL"]
+      ],
+      "translation": "in the students (who are) good at math",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 2, "label": "dependent"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_36b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36b)"},
+      "language": "ital1282",
+      "primaryText": "negli studenti bravi in matematica",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["negli", "in.the.M.PL"], ["studenti", "student.M.PL"], ["bravi", "good.M.PL"], ["in", "in"],
+        ["matematica", "math"]
+      ],
+      "translation": "in the students good at math",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "noun"},
+        {"start": 2, "label": "head"},
+        {"start": 3, "length": 2, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_36c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36c)"},
+      "language": "ital1282",
+      "primaryText": "nei bravi studenti",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["nei", ""], ["bravi", ""], ["studenti", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_36d",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(36d)"},
+      "language": "ital1282",
+      "primaryText": "negli studenti bravi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["negli", ""], ["studenti", ""], ["bravi", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "noun"},
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "bravi belongs to the restricted prenominal class.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_37a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37a)"},
+      "language": "mode1248",
+      "primaryText": "(Aftos) ine perifan-os.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Aftos)", "he"], ["ine", "is"], ["perifan-os", "proud-M.SG.NOM"]
+      ],
+      "translation": "He is proud.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["marker", "agreement"]
+      ],
+      "comment": "The subject pronoun is optional.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_37a_bare",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37a)"},
+      "language": "mode1248",
+      "primaryText": "(Aftos) ine perifan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Aftos)", "he"], ["ine", "is"], ["perifan", "proud"]
+      ],
+      "translation": "He is proud.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["marker", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_37b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37b)"},
+      "language": "mode1248",
+      "primaryText": "o perifan-os pateras",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["o", "the"], ["perifan-os", "proud-M.SG.NOM"], ["pateras", "father"]
+      ],
+      "translation": "the proud father",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["marker", "agreement"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_37b_bare",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(37b)"},
+      "language": "mode1248",
+      "primaryText": "o perifan pateras",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["o", "the"], ["perifan", "proud"], ["pateras", "father"]
+      ],
+      "translation": "the proud father",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["marker", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_38a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(38a)"},
+      "language": "stan1295",
+      "primaryText": "Er ist stolz.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he"], ["ist", "is"], ["stolz", "proud"]
+      ],
+      "translation": "He is proud.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["marker", "bare"]
+      ],
+      "comment": "Repeated as (60a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_38a_agreeing",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(38a)"},
+      "language": "stan1295",
+      "primaryText": "Er ist stolz-er.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Er", "he"], ["ist", "is"], ["stolz-er", "proud-M.SG.NOM.STRONG"]
+      ],
+      "translation": "He is proud.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["marker", "agreement"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_38b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(38b)"},
+      "language": "stan1295",
+      "primaryText": "stolz-er Vater",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolz-er", "proud-M.SG.NOM.STRONG"], ["Vater", "father"]
+      ],
+      "translation": "a proud father",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["marker", "agreement"]
+      ],
+      "comment": "Repeated as (60b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_38b_bare",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(38b)"},
+      "language": "stan1295",
+      "primaryText": "stolz Vater",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolz", "proud"], ["Vater", "father"]
+      ],
+      "translation": "a proud father",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["marker", "bare"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_39a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(39a)"},
+      "language": "russ1263",
+      "primaryText": "Ona umn-aja.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ona", "she"], ["umn-aja", "smart-LONG.F.SG.NOM"]
+      ],
+      "translation": "She is smart.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["form", "long"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_39a_short",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(39a)"},
+      "language": "russ1263",
+      "primaryText": "Ona umn-a.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ona", "she"], ["umn-a", "smart-SHORT.F.SG"]
+      ],
+      "translation": "She is smart.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["form", "short"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_39b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(39b)"},
+      "language": "russ1263",
+      "primaryText": "umn-aja d'evočka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["umn-aja", "smart-LONG"], ["d'evočka", "girl"]
+      ],
+      "translation": "a/the smart girl",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "long"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_39b_short",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(39b)"},
+      "language": "russ1263",
+      "primaryText": "umn-a d'evočka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["umn-a", "smart-SHORT"], ["d'evočka", "girl"]
+      ],
+      "translation": "a/the smart girl",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "short"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_40b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(40b)"},
+      "language": "icel1247",
+      "primaryText": "Jón er af syni sínum stolt-ur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jón", "Jón"], ["er", "is"], ["af", "on"], ["syni", "son.DAT"], ["sínum", "his.DAT"],
+        ["stolt-ur", "proud-M.SG.NOM.STRONG"]
+      ],
+      "translation": "Jón is proud of his son.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "The more marked option.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_41b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(41b)"},
+      "language": "icel1247",
+      "primaryText": "af syni sínum stolt-ur faðir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["af", "on"], ["syni", "son.DAT"], ["sínum", "his.DAT"],
+        ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["faðir", "father"]
+      ],
+      "translation": "a father proud of his son",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "length": 3, "label": "dependent"},
+        {"start": 3, "label": "head"},
+        {"start": 4, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_42a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42a)"},
+      "language": "icel1247",
+      "primaryText": "Jón er stolt-ur.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jón", "Jón"], ["er", "is"], ["stolt-ur", "proud-M.SG.NOM.STRONG"]
+      ],
+      "translation": "Jón is proud.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["form", "strong"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_42a_weak",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42a)"},
+      "language": "icel1247",
+      "primaryText": "Jón er stolt-i.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jón", "Jón"], ["er", "is"], ["stolt-i", "proud-M.SG.NOM.WEAK"]
+      ],
+      "translation": "Jón is proud.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["form", "weak"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_42b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42b)"},
+      "language": "icel1247",
+      "primaryText": "stolt-ur faðir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["faðir", "father"]
+      ],
+      "translation": "a proud father",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "strong"],
+        ["definiteness", "indefinite"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_42b_weak",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42b)"},
+      "language": "icel1247",
+      "primaryText": "stolt-i faðir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolt-i", "proud-M.SG.NOM.WEAK"], ["faðir", "father"]
+      ],
+      "translation": "a proud father",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "weak"],
+        ["definiteness", "indefinite"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_42c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42c)"},
+      "language": "icel1247",
+      "primaryText": "stolt-i faðir-inn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolt-i", "proud-M.SG.NOM.WEAK"], ["faðir-inn", "father-DEF.M.SG"]
+      ],
+      "translation": "the proud father",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "weak"],
+        ["definiteness", "definite"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_42d",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(42d)"},
+      "language": "icel1247",
+      "primaryText": "stolt-ur faðir-inn",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["stolt-ur", "proud-M.SG.NOM.STRONG"], ["faðir-inn", "father-DEF.M.SG"]
+      ],
+      "translation": "the father, who, by the way, is proud",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "strong"],
+        ["definiteness", "definite"]
+      ],
+      "comment": "The strong form in a definite DP is read nonrestrictively.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_43a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43a)"},
+      "language": "sout1528",
+      "primaryText": "Goran je lijep.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Goran", "Goran"], ["je", "is"], ["lijep", "nice.SHORT"]
+      ],
+      "translation": "Goran is nice.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["form", "short"]
+      ],
+      "comment": "Aljović (2002:28).",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_43a_long",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43a)"},
+      "language": "sout1528",
+      "primaryText": "Goran je lijepi.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Goran", "Goran"], ["je", "is"], ["lijepi", "nice.LONG"]
+      ],
+      "translation": "Goran is nice.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"}
+      ],
+      "paperFeatures": [
+        ["form", "long"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_43b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43b)"},
+      "language": "sout1528",
+      "primaryText": "lijep momak",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["lijep", "nice.SHORT"], ["momak", "young.man"]
+      ],
+      "translation": "a nice young man",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "short"],
+        ["definiteness", "indefinite"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_43c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(43c)"},
+      "language": "sout1528",
+      "primaryText": "lijepi momak",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["lijepi", "nice.LONG"], ["momak", "young.man"]
+      ],
+      "translation": "the nice young man",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "head"},
+        {"start": 1, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["form", "long"],
+        ["definiteness", "definite"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_62",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(62)"},
+      "language": "stan1295",
+      "primaryText": "Maria ist stolz auf ihre Tochter.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Maria", "Maria"], ["ist", "is"], ["stolz", "proud"], ["auf", "on"], ["ihre", "her"],
+        ["Tochter", "daughter"]
+      ],
+      "translation": "Maria is proud of her daughter.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "head"},
+        {"start": 3, "length": 3, "label": "dependent"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_62_xpA",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(62)"},
+      "language": "stan1295",
+      "primaryText": "Maria ist auf ihre Tochter stolz.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Maria", "Maria"], ["ist", "is"], ["auf", "on"], ["ihre", "her"], ["Tochter", "daughter"],
+        ["stolz", "proud"]
+      ],
+      "translation": "Maria is proud of her daughter.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "head"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_63a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(63a)"},
+      "language": "stan1295",
+      "primaryText": "die stolz auf ihre Tochter-e Mutter",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the"], ["stolz", "proud"], ["auf", "on"], ["ihre", "her"],
+        ["Tochter-e", "daughter-ATTR.F.SG.NOM"], ["Mutter", "mother"]
+      ],
+      "translation": "the mother (who is) proud of her daughter",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_63b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(63b)"},
+      "language": "stan1295",
+      "primaryText": "die auf ihre Tochter stolz-e Mutter",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["die", "the"], ["auf", "on"], ["ihre", "her"], ["Tochter", "daughter"],
+        ["stolz-e", "proud-ATTR.F.SG.NOM"], ["Mutter", "mother"]
+      ],
+      "translation": "the mother (who is) proud of her daughter",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "head"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_66a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(66a)"},
+      "language": "dutc1256",
+      "primaryText": "een op haar moeder trots-e vrouw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["op", "of"], ["haar", "her"], ["moeder", "mother"], ["trots-e", "proud-ATTR"],
+        ["vrouw", "woman"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "head"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_66b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(66b)"},
+      "language": "dutc1256",
+      "primaryText": "een trots op haar moeder-e vrouw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["trots", "proud"], ["op", "of"], ["haar", "her"], ["moeder-e", "mother-ATTR"],
+        ["vrouw", "woman"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_66c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(66c)"},
+      "language": "dutc1256",
+      "primaryText": "een trots-e op haar moeder vrouw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["trots-e", "proud-ATTR"], ["op", "of"], ["haar", "her"], ["moeder", "mother"],
+        ["vrouw", "woman"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
+      "comment": "The affix is adjacent to the adjective but not to the noun.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_67a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(67a)"},
+      "language": "dutc1256",
+      "primaryText": "een op haar vader trots-∅ kind",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["op", "of"], ["haar", "her"], ["vader", "father"], ["trots-∅", "proud-ATTR"],
+        ["kind", "child"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "head"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_67b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(67b)"},
+      "language": "dutc1256",
+      "primaryText": "een trots op haar vader-∅ kind",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["trots", "proud"], ["op", "of"], ["haar", "her"], ["vader-∅", "father-ATTR"],
+        ["kind", "child"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_67c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(67c)"},
+      "language": "dutc1256",
+      "primaryText": "een trots-∅ op haar vader kind",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["trots-∅", "proud-ATTR"], ["op", "of"], ["haar", "her"], ["vader", "father"],
+        ["kind", "child"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_68a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68a)"},
+      "language": "dutc1256",
+      "primaryText": "een groot genoeg-∅ kind",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["groot", "big"], ["genoeg-∅", "enough-ATTR"], ["kind", "child"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "degree"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "Van Riemsdijk (1998); some speaker variation is reported.",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_68b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68b)"},
+      "language": "dutc1256",
+      "primaryText": "een groot genoeg-e vrouw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["groot", "big"], ["genoeg-e", "enough-ATTR"], ["vrouw", "woman"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "degree"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_68c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68c)"},
+      "language": "dutc1256",
+      "primaryText": "een groot-e genoeg vrouw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["groot-e", "big-ATTR"], ["genoeg", "enough"], ["vrouw", "woman"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "degree"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_68d",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(68d)"},
+      "language": "dutc1256",
+      "primaryText": "een groot genoeg vrouw",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["een", "a"], ["groot", "big"], ["genoeg", "enough"], ["vrouw", "woman"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "degree"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_71a",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71a)"},
+      "language": "stan1293",
+      "primaryText": "a proud-∅ child",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["proud-∅", ""], ["child", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_71b",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71b)"},
+      "language": "stan1293",
+      "primaryText": "a proud of his mother-∅ child",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["proud", ""], ["of", ""], ["his", ""], ["mother-∅", ""], ["child", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 5, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "az2025_71c",
+      "source": {"bibkey": "alexeyenko-zeijlstra-2025", "paperLabel": "(71c)"},
+      "language": "stan1293",
+      "primaryText": "a proud enough-∅ child",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["a", ""], ["proud", ""], ["enough-∅", ""], ["child", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "head"},
+        {"start": 2, "label": "degree"},
+        {"start": 3, "label": "noun"}
+      ],
+      "paperFeatures": [
+        ["attributivizer", "null"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

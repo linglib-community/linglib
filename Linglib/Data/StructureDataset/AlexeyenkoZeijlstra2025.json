@@ -1,0 +1,620 @@
+{
+ "bibkey": "alexeyenko-zeijlstra-2025",
+ "description": "The sample of languages investigated for the Head-Final Filter and its mirror image: the side of the noun the attributive adjective stands on and whether a phrase may separate the two.",
+ "ContributionTable": [
+  {
+   "ID": "table_3",
+   "Name": "Table 3",
+   "Lean": "table3",
+   "Source": "alexeyenko-zeijlstra-2025[Table 3, p. 17]",
+   "Description": "The sample of languages investigated for the (reverse) HFF effects.",
+   "comment": "Transcribed from the page image. The table's columns of example numbers and outside sources, and its stars on the languages whose data are new, are not recorded. Armenian is given the Glottocode of Eastern Armenian."
+  }
+ ],
+ "LanguageTable": [
+  {
+   "ID": "abkhaz",
+   "Name": "Abkhaz",
+   "Glottocode": "abkh1244",
+   "Lineage": "Abkhaz-Adyge"
+  },
+  {
+   "ID": "bulgarian",
+   "Name": "Bulgarian",
+   "Glottocode": "bulg1262",
+   "Lineage": "Slavic"
+  },
+  {
+   "ID": "polish",
+   "Name": "Polish",
+   "Glottocode": "poli1260",
+   "Lineage": "Slavic"
+  },
+  {
+   "ID": "russian",
+   "Name": "Russian",
+   "Glottocode": "russ1263",
+   "Lineage": "Slavic"
+  },
+  {
+   "ID": "latin",
+   "Name": "Latin",
+   "Glottocode": "lati1261",
+   "Lineage": "Italic"
+  },
+  {
+   "ID": "lithuanian",
+   "Name": "Lithuanian",
+   "Glottocode": "lith1251",
+   "Lineage": "Baltic"
+  },
+  {
+   "ID": "mandarin",
+   "Name": "Mandarin",
+   "Glottocode": "mand1415",
+   "Lineage": "Sino-Tibetan"
+  },
+  {
+   "ID": "modern_greek",
+   "Name": "Modern Greek",
+   "Glottocode": "mode1248",
+   "Lineage": "Hellenic"
+  },
+  {
+   "ID": "statimcets",
+   "Name": "St'át'imcets",
+   "Glottocode": "lill1248",
+   "Lineage": "Salish"
+  },
+  {
+   "ID": "tagalog",
+   "Name": "Tagalog",
+   "Glottocode": "taga1270",
+   "Lineage": "Austronesian"
+  },
+  {
+   "ID": "armenian",
+   "Name": "Armenian",
+   "Glottocode": "nucl1235",
+   "Lineage": "IE isolate"
+  },
+  {
+   "ID": "dutch",
+   "Name": "Dutch",
+   "Glottocode": "dutc1256",
+   "Lineage": "Germanic"
+  },
+  {
+   "ID": "english",
+   "Name": "English",
+   "Glottocode": "stan1293",
+   "Lineage": "Germanic"
+  },
+  {
+   "ID": "german",
+   "Name": "German",
+   "Glottocode": "stan1295",
+   "Lineage": "Germanic"
+  },
+  {
+   "ID": "icelandic",
+   "Name": "Icelandic",
+   "Glottocode": "icel1247",
+   "Lineage": "Germanic"
+  },
+  {
+   "ID": "estonian",
+   "Name": "Estonian",
+   "Glottocode": "esto1258",
+   "Lineage": "Uralic"
+  },
+  {
+   "ID": "finnish",
+   "Name": "Finnish",
+   "Glottocode": "finn1318",
+   "Lineage": "Uralic"
+  },
+  {
+   "ID": "hungarian",
+   "Name": "Hungarian",
+   "Glottocode": "hung1274",
+   "Lineage": "Uralic"
+  },
+  {
+   "ID": "french",
+   "Name": "French",
+   "Glottocode": "stan1290",
+   "Lineage": "Romance"
+  },
+  {
+   "ID": "italian",
+   "Name": "Italian",
+   "Glottocode": "ital1282",
+   "Lineage": "Romance"
+  },
+  {
+   "ID": "portuguese",
+   "Name": "Portuguese",
+   "Glottocode": "port1283",
+   "Lineage": "Romance"
+  },
+  {
+   "ID": "romanian",
+   "Name": "Romanian",
+   "Glottocode": "roma1327",
+   "Lineage": "Romance"
+  },
+  {
+   "ID": "spanish",
+   "Name": "Spanish",
+   "Glottocode": "stan1288",
+   "Lineage": "Romance"
+  },
+  {
+   "ID": "georgian",
+   "Name": "Georgian",
+   "Glottocode": "nucl1302",
+   "Lineage": "Kartvelian"
+  },
+  {
+   "ID": "serbo_croatian",
+   "Name": "Serbo-Croatian",
+   "Glottocode": "sout1528",
+   "Lineage": "Slavic"
+  },
+  {
+   "ID": "atong",
+   "Name": "Atong",
+   "Glottocode": "aton1241",
+   "Lineage": "Sino-Tibetan"
+  },
+  {
+   "ID": "farsi",
+   "Name": "Farsi",
+   "Glottocode": "west2369",
+   "Lineage": "Indo-Iranian"
+  },
+  {
+   "ID": "kalaallisut",
+   "Name": "Kalaallisut",
+   "Glottocode": "kala1399",
+   "Lineage": "Eskimo-Aleut"
+  },
+  {
+   "ID": "basque",
+   "Name": "Basque",
+   "Glottocode": "basq1248",
+   "Lineage": "language isolate"
+  },
+  {
+   "ID": "chacobo",
+   "Name": "Chácobo",
+   "Glottocode": "chac1251",
+   "Lineage": "Panoan"
+  },
+  {
+   "ID": "eastern_oromo",
+   "Name": "Eastern Oromo",
+   "Glottocode": "east2652",
+   "Lineage": "Afro-Asiatic"
+  }
+ ],
+ "ParameterTable": [
+  {
+   "ID": "adjective_order",
+   "Name": "adjective order",
+   "Lean": "AdjectiveOrder",
+   "Description": "The side of the noun on which the attributive adjective stands, the two blocks of Table 3."
+  },
+  {
+   "ID": "intervention",
+   "Name": "XP-intervention",
+   "Lean": "Intervention",
+   "Description": "Whether a dependent of the adjective may stand between the adjective and the noun, the two halves of Table 3."
+  }
+ ],
+ "CodeTable": [
+  {
+   "ID": "an",
+   "Parameter_ID": "adjective_order",
+   "Name": "A–N",
+   "Lean": "adjectiveNoun",
+   "Description": "The adjective precedes the noun."
+  },
+  {
+   "ID": "na",
+   "Parameter_ID": "adjective_order",
+   "Name": "N–A",
+   "Lean": "nounAdjective",
+   "Description": "The adjective follows the noun."
+  },
+  {
+   "ID": "possible",
+   "Parameter_ID": "intervention",
+   "Name": "XP-intervention possible",
+   "Lean": "possible",
+   "Description": "A dependent may separate the adjective from the noun."
+  },
+  {
+   "ID": "impossible",
+   "Parameter_ID": "intervention",
+   "Name": "XP-intervention impossible",
+   "Lean": "impossible",
+   "Description": "No dependent may separate the adjective from the noun."
+  }
+ ],
+ "ValueTable": [
+  {
+   "Language_ID": "abkhaz",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "abkhaz",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "bulgarian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "bulgarian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "polish",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "polish",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "russian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "russian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "latin",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "latin",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "lithuanian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "lithuanian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "mandarin",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "mandarin",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "modern_greek",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "modern_greek",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "statimcets",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "statimcets",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "tagalog",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "tagalog",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "armenian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "armenian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "dutch",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "dutch",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "english",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "german",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "german",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "icelandic",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "icelandic",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "estonian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "estonian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "finnish",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "finnish",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "hungarian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "hungarian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "french",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "french",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "italian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "italian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "portuguese",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "portuguese",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "romanian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "romanian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "spanish",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "spanish",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "georgian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "georgian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "serbo_croatian",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "an",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "serbo_croatian",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "atong",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "na",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "atong",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "farsi",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "na",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "farsi",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "kalaallisut",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "na",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "kalaallisut",
+   "Parameter_ID": "intervention",
+   "Code_ID": "possible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "basque",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "na",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "basque",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "chacobo",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "na",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "chacobo",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "eastern_oromo",
+   "Parameter_ID": "adjective_order",
+   "Code_ID": "na",
+   "Contribution_ID": "table_3"
+  },
+  {
+   "Language_ID": "eastern_oromo",
+   "Parameter_ID": "intervention",
+   "Code_ID": "impossible",
+   "Contribution_ID": "table_3"
+  }
+ ]
+}
