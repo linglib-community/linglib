@@ -824,7 +824,6 @@ import Linglib.Syntax.ConstructionGrammar.Composition
 import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Catena
-import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Valency

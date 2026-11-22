@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Maps
+public import Linglib.Syntax.DependencyGrammar.Basic
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Order.Interval.Basic
 
@@ -29,7 +29,7 @@ valency that admits whatever it admits.
 
 * `Valency L` is the type of valencies over the relations `L`, and `Valency.withOptional` is the
   valency with given obligatory and optional valents.
-* `Graph.childrenBy g p v` is the dependents of `v` by a relation satisfying `p`.
+* `Graph.dependentsBy g p v` is the dependents of `v` by a relation satisfying `p`.
 * `Graph.valents g p v` is the multiset of the relations satisfying `p` that the dependents of
   `v` bear.
 * `Graph.Satisfies g p v val` says that the valents of `v` are those of the valency `val`.
@@ -39,14 +39,14 @@ valency that admits whatever it admits.
 * `Graph.satisfies_iff_count`: a position satisfies a valency iff the quantity of each relation
   among its valents lies between the quantities at the two ends.
 * `Graph.Satisfies.mono`: satisfaction is monotone in the valency.
-* `Graph.satisfies_map`: satisfaction is invariant under a change of linearization.
+* `Graph.satisfies_comap_symm`: satisfaction is invariant under a change of linearization.
 
 ## Implementation notes
 
 The valents are a multiset because a valency may call for several valents of one relation, as
 when relations are syntactic categories and a verb takes three nominals. A valency says nothing
 of word order: the side of the head a valent stands on is a property of the relation in a
-language, not of the word's valency, and `Graph.satisfies_map` holds for every permutation of
+language, not of the word's valency, and `Graph.satisfies_comap_symm` holds for every permutation of
 the positions.
 
 ## References
@@ -84,7 +84,6 @@ def withOptional (required optional : Multiset L) : Valency L :=
 @[simp] theorem withOptional_zero (m : Multiset L) : withOptional m 0 = .pure m := by
   ext : 2 <;> simp [withOptional]
 
-/-- With one optional valent, a word has its obligatory valents alone or with that one. -/
 theorem mem_withOptional_singleton {required m : Multiset L} {a : L} :
     m ∈ withOptional required {a} ↔ m = required ∨ m = required + {a} := by
   rw [mem_withOptional]
@@ -100,27 +99,27 @@ namespace Graph
 /-! ### Valents -/
 
 /-- The dependents of `v` by a relation satisfying `p`. -/
-def childrenBy (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) : Finset (Fin n) :=
+def dependentsBy (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) :
+    Finset (Fin n) :=
   {w | ∃ r ∈ g.label v w, p r}
 
 /-- The relations satisfying `p` that the dependents of `v` bear, each as often as `v` has a
 dependent by it. With `p` the predicate of the relations of valents, these are the valents of
 `v`. -/
-def valents (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
+def valents (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
   (univ : Finset (Fin n)).val.filterMap fun w ↦ (g.label v w).filter p
 
-variable {g : Graph L n} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
+variable {g : Graph L (Fin n)} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
   {val val₁ val₂ : Valency L}
 
-@[simp] theorem mem_childrenBy : w ∈ g.childrenBy p v ↔ ∃ r ∈ g.label v w, p r := by
-  simp [childrenBy]
+@[simp] theorem mem_dependentsBy : w ∈ g.dependentsBy p v ↔ ∃ r ∈ g.label v w, p r := by
+  simp [dependentsBy]
 
 @[simp] theorem mem_valents : r ∈ g.valents p v ↔ p r ∧ ∃ w, g.label v w = some r := by
   simp [valents, Option.filter_eq_some_iff, and_comm]
 
-/-- A position has as many valents as dependents by a relation of valents. -/
-theorem card_valents : (g.valents p v).card = #(g.childrenBy p v) := by
-  rw [valents, childrenBy, Finset.card_def, Finset.filter_val]
+theorem card_valents : (g.valents p v).card = #(g.dependentsBy p v) := by
+  rw [valents, dependentsBy, Finset.card_def, Finset.filter_val]
   induction (univ : Finset (Fin n)).val using Multiset.induction_on with
   | empty => simp
   | cons w s ih =>
@@ -136,7 +135,6 @@ theorem card_valents : (g.valents p v).card = #(g.childrenBy p v) := by
         rw [Multiset.filterMap_cons_none (f := fun w ↦ (g.label v w).filter p) _ _ hw]
         simpa [h, hr] using ih
 
-/-- The valents satisfying a further predicate are the valents by the conjunction. -/
 theorem filter_valents (q : L → Prop) [DecidablePred q] :
     (g.valents p v).filter q = g.valents (fun r ↦ p r ∧ q r) v := by
   simp only [valents, Multiset.filter_filterMap]
@@ -148,24 +146,22 @@ theorem filter_valents (q : L → Prop) [DecidablePred q] :
     simp only [Option.filter]
     split_ifs <;> simp_all
 
-/-- The quantity of a relation among the valents of `v` is the number of dependents `v` has by
-it when it is a relation of valents, and zero otherwise. -/
 theorem count_valents [DecidableEq L] (r : L) :
-    (g.valents p v).count r = if p r then #(g.childrenBy (· = r) v) else 0 := by
+    (g.valents p v).count r = if p r then #(g.dependentsBy (· = r) v) else 0 := by
   rw [Multiset.count_eq_card_filter_eq, filter_valents, card_valents]
   split_ifs with hr
   · congr 1
     ext w
-    simp only [mem_childrenBy]
+    simp only [mem_dependentsBy]
     exact ⟨fun ⟨x, hx, _, h⟩ ↦ ⟨x, hx, h.symm⟩, fun ⟨x, hx, h⟩ ↦ ⟨x, hx, h ▸ hr, h.symm⟩⟩
   · rw [Finset.card_eq_zero]
     ext w
-    simp only [mem_childrenBy, notMem_empty, iff_false]
+    simp only [mem_dependentsBy, notMem_empty, iff_false]
     rintro ⟨x, -, hx, rfl⟩
     exact hr hx
 
-/-- The valents of a position are those of its preimage under a change of linearization. -/
-theorem valents_map (σ : Equiv.Perm (Fin n)) : (g.map σ).valents p v = g.valents p (σ.symm v) := by
+theorem valents_comap_symm (σ : Equiv.Perm (Fin n)) : (g.comap σ.symm).valents p v = g.valents p
+    (σ.symm v) := by
   have h : (univ : Finset (Fin n)).val.map σ.symm = univ.val :=
     congrArg Finset.val (Finset.map_univ_equiv σ.symm)
   conv_rhs => rw [valents, ← h, Multiset.filterMap_map]
@@ -175,7 +171,7 @@ theorem valents_map (σ : Equiv.Perm (Fin n)) : (g.map σ).valents p v = g.valen
 
 /-- The position `v` satisfies the valency `val` when its valents, the relations satisfying `p`
 that its dependents bear, lie between the obligatory valents of `val` and all its valents. -/
-def Satisfies (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
+def Satisfies (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
     Prop :=
   g.valents p v ∈ val
 
@@ -192,19 +188,15 @@ theorem satisfies_iff_count [DecidableEq L] :
       (g.valents p v).count r ≤ val.snd.count r := by
   simp only [satisfies_iff, Multiset.le_iff_count, forall_and]
 
-/-- A position satisfies the valency with every valent obligatory iff its valents are exactly
-those. -/
 @[simp] theorem satisfies_pure {m : Multiset L} : g.Satisfies p v (.pure m) ↔ g.valents p v = m :=
   NonemptyInterval.mem_pure
 
-/-- A position satisfying a valency satisfies every valency that includes it. -/
 theorem Satisfies.mono (h : val₁ ≤ val₂) (hs : g.Satisfies p v val₁) : g.Satisfies p v val₂ :=
   ⟨h.1.trans hs.1, hs.2.trans h.2⟩
 
-/-- Satisfaction of a valency is invariant under a change of linearization. -/
-@[simp] theorem satisfies_map (σ : Equiv.Perm (Fin n)) :
-    (g.map σ).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
-  rw [Satisfies, valents_map, Satisfies]
+@[simp] theorem satisfies_comap_symm (σ : Equiv.Perm (Fin n)) :
+    (g.comap σ.symm).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
+  rw [Satisfies, valents_comap_symm, Satisfies]
 
 end Graph
 

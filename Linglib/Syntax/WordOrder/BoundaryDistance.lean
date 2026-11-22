@@ -10,6 +10,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Mathlib.Algebra.Order.Rearrangement
 public import Mathlib.Algebra.Order.Ring.Nat
 public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Tactic.Ring
 
 /-!
 # Boundary distance in an arrangement
@@ -29,6 +30,8 @@ grow outward is shortest: short before long after `x`, and long before short bef
 
 * `WordOrder.Arrangement.sum_boundaryDist_after`: the summed distance from an element to those
   after it, by length and number of elements farther out.
+* `WordOrder.Arrangement.sum_boundaryDist_swap_add`: exchanging two neighbouring elements after
+  an element changes the summed distance by the difference of their lengths.
 * `WordOrder.Arrangement.sum_boundaryDist_after_le`: no rearrangement of the elements after an
   element is shorter than the order whose lengths grow outward.
 * `WordOrder.Arrangement.sum_boundaryDist_before_le`: the mirror image, for the elements before.
@@ -52,9 +55,10 @@ section Monovary
 
 variable {a : Arrangement α n} (ℓ : α → ℕ)
 
-theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
-  simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
-  exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
+theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s :=
+  ⟨fun h ↦ by simpa [Function.comp_def] using
+      h.comp_antitoneOn_right (Fin.rev_anti.antitoneOn _),
+    fun h ↦ h.comp_antitoneOn_right (Fin.rev_anti.antitoneOn _)⟩
 
 private theorem antivaryOn_rank_iff_monovaryOn {s : Set α} :
     AntivaryOn ℓ (fun d ↦ n - 1 - a d) s ↔ MonovaryOn ℓ a s := by
@@ -247,6 +251,54 @@ theorem sum_boundaryDist_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
   exact Iff.rfl
 
 end perm
+
+section swap
+
+variable {c d : α}
+
+theorem swap_apply_ne_subset_after (hc : c ∈ a.after x) (hcd : a.Precedes c d) :
+    {e | Equiv.swap c d e ≠ e} ⊆ ↑(a.after x) := fun e he ↦ by
+  by_cases hec : e = c
+  · exact hec ▸ hc
+  by_cases hed : e = d
+  · exact hed ▸ mem_after.2 ((mem_after.1 hc).trans hcd)
+  · exact absurd (Equiv.swap_apply_of_ne_of_ne hec hed) he
+
+/-- Exchanging two neighbouring elements after `x` changes the summed distance from `x` by the
+difference of their lengths: the element that moves outward is pushed away by the length of the
+other, which moves inward by as much as the first is long. -/
+theorem sum_boundaryDist_swap_add (hc : c ∈ a.after x) (hcd : (a c : ℕ) + 1 = a d) :
+    ∑ e, boundaryDist ((Equiv.swap c d).trans a) ℓ x e + ℓ c =
+      ∑ e, a.boundaryDist ℓ x e + ℓ d := by
+  have hσ := swap_apply_ne_subset_after hc (Fin.lt_def.2 (by omega) : a.Precedes c d)
+  have hne : d ≠ c := fun e ↦ by simp [e] at hcd
+  have hd : d ∈ (a.after x).erase c :=
+    mem_erase.2 ⟨hne, hσ (by simp [hne.symm] : Equiv.swap c d d ≠ d)⟩
+  have key : ∑ e ∈ a.after x, boundaryDist ((Equiv.swap c d).trans a) ℓ x e + ℓ c =
+      ∑ e ∈ a.after x, a.boundaryDist ℓ x e + ℓ d := by
+    have h₁ := sum_boundaryDist_after (a := (Equiv.swap c d).trans a) (x := x) ℓ
+    rw [after_trans hσ] at h₁
+    rw [h₁, sum_boundaryDist_after, ← add_sum_erase _ _ hc, ← add_sum_erase _ _ hc,
+      ← add_sum_erase _ _ hd, ← add_sum_erase _ _ hd,
+      sum_congr rfl fun e he ↦ by
+        rw [Equiv.trans_apply, Equiv.swap_apply_of_ne_of_ne
+          (ne_of_mem_erase (mem_of_mem_erase he)) (ne_of_mem_erase he)]]
+    simp only [Equiv.trans_apply, Equiv.swap_apply_left, Equiv.swap_apply_right]
+    have := (a d).isLt
+    obtain ⟨k, hk⟩ : ∃ k, n - 1 - (a d : ℕ) = k := ⟨_, rfl⟩
+    rw [hk, show n - 1 - (a c : ℕ) = k + 1 by omega]
+    ring
+  have e : ∑ e with ¬ a.Precedes x e, boundaryDist ((Equiv.swap c d).trans a) ℓ x e =
+      ∑ e with ¬ a.Precedes x e, a.boundaryDist ℓ x e :=
+    sum_congr rfl fun e he ↦
+      boundaryDist_trans_of_notMem_after ℓ hσ (by simpa using (mem_filter.1 he).2)
+  have key' : ∑ e with a.Precedes x e, boundaryDist ((Equiv.swap c d).trans a) ℓ x e + ℓ c =
+      ∑ e with a.Precedes x e, a.boundaryDist ℓ x e + ℓ d := key
+  rw [← sum_filter_add_sum_filter_not univ (a.Precedes x ·),
+    ← sum_filter_add_sum_filter_not univ (a.Precedes x ·), e]
+  omega
+
+end swap
 
 section before
 

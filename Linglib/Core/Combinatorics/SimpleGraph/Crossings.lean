@@ -55,6 +55,10 @@ sum [ranges](##SimpleGraph.IsTree.le_sum_degree_sq) between its value on a
 
 open Finset Equiv Nat
 
+/-- Four elements of an order alternate when `a < c < b < d`, so that the pairs `{a, b}` and
+`{c, d}` strictly interleave. -/
+abbrev Alternate {α : Type*} [LT α] (a b c d : α) : Prop := a < c ∧ c < b ∧ b < d
+
 namespace SimpleGraph
 
 section Order
@@ -65,7 +69,7 @@ variable {α : Type*} [Fintype α] [LinearOrder α] (G : SimpleGraph α) [Decida
 `{c, d}`. Of the two ways to order a crossing pair of edges, one alternates. -/
 def crossings : ℕ :=
   #{x : α × α × α × α | G.Adj x.1 x.2.1 ∧ G.Adj x.2.2.1 x.2.2.2 ∧
-    x.1 < x.2.2.1 ∧ x.2.2.1 < x.2.1 ∧ x.2.1 < x.2.2.2}
+    Alternate x.1 x.2.1 x.2.2.1 x.2.2.2}
 
 /-- The number of unordered pairs of edges sharing no vertex. Each pair is counted once, by the
 representative with both edges least endpoint first and the edge starting earlier first. -/
