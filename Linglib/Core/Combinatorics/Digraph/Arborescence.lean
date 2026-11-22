@@ -82,7 +82,6 @@ theorem not_transGen_self (v : V) : ¬ TransGen G.Adj v v := fun h ↦
   have ⟨_, hvw, hwv⟩ := TransGen.head'_iff.1 h
   hB.not_reachable_of_adj hvw hwv
 
-/-- In a finite branching the in-neighbours are reached in finitely many steps. -/
 theorem wellFounded_transGen [Finite V] : WellFounded (TransGen G.Adj) :=
   haveI : Std.Irrefl (TransGen G.Adj) := ⟨hB.not_transGen_self⟩
   Finite.wellFounded_of_trans_of_irrefl _
@@ -92,7 +91,6 @@ theorem reachable_antisymm (hvw : G.Reachable v w) (hwv : G.Reachable w v) : v =
   · rfl
   · exact absurd (huw.trans hwv) (hB.not_reachable_of_adj hvu)
 
-/-- A vertex that reaches another, different one reaches its in-neighbour. -/
 theorem reachable_of_reachable_of_adj (hvw : G.Reachable v w) (hne : v ≠ w) (hu : G.Adj u w) :
     G.Reachable v u := by
   obtain rfl | ⟨z, hvz, hzw⟩ := ReflTransGen.cases_tail hvw
@@ -118,7 +116,6 @@ theorem reachSet_injective : Function.Injective G.reachSet := fun v w h ↦
   hB.reachable_antisymm (h ▸ (ReflTransGen.refl : G.Reachable w w) : w ∈ G.reachSet v)
     (h.symm ▸ (ReflTransGen.refl : G.Reachable v v) : v ∈ G.reachSet w)
 
-/-- A branching pulled back along an equivalence is a branching. -/
 theorem comap (e : W ≃ V) : (G.comap e).IsBranching where
   not_reachable_of_adj _ _ h hd := hB.not_reachable_of_adj h ((reachable_comap e).1 hd)
   leftUnique_adj _ _ _ hu hv := e.injective (hB.leftUnique_adj hu hv)
@@ -136,17 +133,14 @@ theorem not_adj_root (v : V) : ¬ G.Adj v r := fun h ↦
 theorem exists_adj_of_ne_root (hw : w ≠ r) : ∃ v, G.Adj v w :=
   ((ReflTransGen.cases_tail (hA.reachable w)).resolve_left hw).imp fun _ h ↦ h.2
 
-/-- An arborescence has one root. -/
 theorem root_unique {r' : V} (hA' : G.IsArborescence r') : r = r' :=
   hA.reachable_antisymm (hA.reachable r') (hA'.reachable r)
 
-/-- An arborescence pulled back along an equivalence is an arborescence. -/
 theorem comap (e : W ≃ V) : (G.comap e).IsArborescence (e.symm r) where
   toIsBranching := hA.toIsBranching.comap e
   reachable v := (reachable_comap e).2 (by simpa using hA.reachable (e v))
 
-/-- An arborescence has one arc fewer than vertices: each vertex but the root is the head of the
-one arc from its in-neighbour. -/
+/-- An arborescence has one arc fewer than vertices. -/
 theorem card_arcs_add_one [Fintype V] [DecidableEq V] [DecidableRel G.Adj] :
     G.arcs.card + 1 = Fintype.card V := by
   rw [← Finset.card_univ, ← Finset.card_erase_add_one (Finset.mem_univ r)]
@@ -164,7 +158,6 @@ theorem card_arcs_add_one [Fintype V] [DecidableEq V] [DecidableRel G.Adj] :
 
 end IsArborescence
 
-/-- An arborescence is a branching whose only vertex without an in-neighbour is the root. -/
 theorem isArborescence_iff_forall_not_adj_iff [Finite V] :
     G.IsArborescence r ↔ G.IsBranching ∧ ∀ w, (∀ v, ¬ G.Adj v w) ↔ w = r := by
   refine ⟨fun hA ↦ ⟨hA.toIsBranching, fun w ↦ ⟨fun hw ↦ ?_, fun hw ↦ hw ▸ hA.not_adj_root⟩⟩,

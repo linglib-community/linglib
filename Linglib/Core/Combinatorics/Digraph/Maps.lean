@@ -50,8 +50,6 @@ instance [DecidableEq V] (G : Digraph V) [DecidableRel G.Adj] :
     DecidableRel G.toSimpleGraphInclusive.Adj :=
   fun a b ↦ inferInstanceAs (Decidable (a ≠ b ∧ (G.Adj a b ∨ G.Adj b a)))
 
-/-- The undirected view of a pullback along an injection is the pullback of the undirected
-view. -/
 theorem toSimpleGraphInclusive_comap {f : V → W} (hf : Function.Injective f) (G : Digraph W) :
     (G.comap f).toSimpleGraphInclusive = G.toSimpleGraphInclusive.comap f := by
   ext a b

@@ -37,7 +37,6 @@ instance [Fintype V] [DecidableLT V] (G : Digraph V) [DecidableRel G.Adj] (d : H
     Decidable (G.HasDirection d) :=
   inferInstanceAs (Decidable (∀ v w, G.Adj v w → d.Orders v w))
 
-/-- A digraph with a head direction keeps it when arcs are removed. -/
 theorem HasDirection.mono {G H : Digraph V} (h : G ≤ H) (hH : H.HasDirection d) :
     G.HasDirection d :=
   fun _ _ hvw ↦ hH (h hvw)
@@ -49,7 +48,6 @@ theorem hasDirection_mirror {G : Digraph (Fin n)} :
   refine ⟨fun h v w hvw ↦ (key v w).1 (h (by simpa using hvw)), fun h v w hvw ↦ ?_⟩
   simpa using (key v.rev w.rev).2 (h hvw)
 
-/-- The mirror image of a structure has the opposite head direction. -/
 theorem HasDirection.mirror {G : Digraph (Fin n)} (h : G.HasDirection d) :
     G.mirror.HasDirection d.swap :=
   hasDirection_mirror.2 (by simpa using h)

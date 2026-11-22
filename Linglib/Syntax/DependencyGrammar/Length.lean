@@ -20,36 +20,37 @@ public import Mathlib.Algebra.Order.Ring.Nat
 /-!
 # Dependency length
 
-The length of a dependency is the distance in words between head and dependent. This file defines
-the total dependency length of a graph and the distance from a head to the nearest word of a
-dependent's yield, dependency length measured to the boundary of the dependent's phrase. On a
-projective forest that distance is one more than the sizes of the yields of the dependents
-between head and dependent: it is the block measure `WordOrder.Arrangement.boundaryDist` with yields
-as blocks. Summed over the elements after a head, the block measure weighs each element's length by
-the number of elements farther out, so by the rearrangement inequality an order whose lengths grow
-outward is shortest. This is the short-before-long order that dependency length minimization
-predicts after a head, and its mirror image orders long before short before a final head.
+The length of a dependency is the distance in words between its head and its dependent. For a
+digraph `G` on the positions of a sentence, the total dependency length `G.totalLength` is the sum
+of `Nat.dist v w` over the arcs from `v` to `w`. A dependency is at least one word long, so the
+total dependency length is at least the number of arcs, with equality exactly when every dependent
+stands next to its head.
+
+We also define the distance `G.reachSetDist v w` from a position `v` to the nearest position of
+the yield of `w`. On a projective forest, the distance from a head to the yield of a dependent is
+one more than the sizes of the yields of the dependents between them. This is the boundary
+distance `WordOrder.Arrangement.boundaryDist` of the local arrangement, with the yields as blocks.
 
 ## Main definitions
 
 * `Digraph.totalLength`: the sum of `Nat.dist` over the arcs.
 * `Digraph.reachSetDist`: the distance from a position to the nearest word of a yield.
-* `Digraph.localOrderIso` and `Digraph.localArrangement`: a head and its dependents in the order
-  of their positions.
 
 ## Main results
 
 * `Digraph.totalLength_comap_symm`: transport along an isometry preserves total dependency length.
-* `Digraph.card_arcs_le_totalLength` and `Digraph.totalLength_eq_card_arcs_iff`: total dependency
-  length is at least the number of dependencies, with equality exactly when every dependent stands
-  next to its head, so that such a graph is no longer than any reordering of it
-  (`Digraph.totalLength_le_totalLength_comap`).
+  In particular the mirror image of a digraph has the same length (`Digraph.totalLength_mirror`).
+* `Digraph.card_arcs_le_totalLength` and `Digraph.totalLength_eq_card_arcs_iff`: the total
+  dependency length is at least the number of arcs, with equality exactly when every dependent
+  stands next to its head.
+* `Digraph.totalLength_le_totalLength_comap`: a digraph in which every dependent stands next to
+  its head is no longer than any reordering of its positions.
 * `Digraph.card_arcs_lt_totalLength`: the bound is not attained when a head has two dependents on
   one side.
-* `Digraph.reachSetDist_eq_one_add_sum`: on a projective forest, the yield distance from a head to a
-  dependent is one more than the yield sizes of the dependents between them.
-* `Digraph.sum_yieldDist_eq_sum_boundaryDist`: on a projective forest a head's yield distances are
-  the boundary distances of its local arrangement with phrase lengths.
+* `Digraph.reachSetDist_eq_one_add_sum`: on a projective forest, the distance from a head to the
+  yield of a dependent is one more than the sizes of the yields of the dependents between them.
+* `Digraph.sum_reachSetDist_eq_sum_boundaryDist`: on a projective forest, the distances from a
+  head to the yields of its dependents sum to its boundary distances in the local arrangement.
 
 ## References
 
@@ -70,20 +71,18 @@ section Transport
 
 variable (G : Digraph (Fin n)) [DecidableRel G.Adj]
 
-/-- Total dependency length sums `Nat.dist` over all arcs, the quantity dependency-length
-minimisation is about. -/
+/-- The total dependency length of a digraph on positions is the sum of `Nat.dist v w` over its arcs
+from `v` to `w`. -/
 def Digraph.totalLength : ℕ :=
   ∑ v : Fin n, ∑ w ∈ G.outNeighborFinset v, Nat.dist v w
 
 /-! ### Transport -/
 
 omit [DecidableRel G.Adj] in
-/-- Mirroring a linearization is linearizing along the mirrored arrangement. -/
 theorem Digraph.mirror_comap_symm (σ : Equiv.Perm (Fin n)) :
     (G.comap σ.symm).mirror = G.comap (WordOrder.Arrangement.mirror σ).symm :=
   rfl
 
-/-- The total length of a transported graph sums the transported distances of the original arcs. -/
 theorem Digraph.totalLength_comap_symm_eq_sum (σ : Equiv.Perm (Fin n)) :
     (G.comap σ.symm).totalLength = ∑ u, ∑ w ∈ G.outNeighborFinset u, Nat.dist (σ u) (σ w) := by
   unfold Digraph.totalLength
@@ -91,7 +90,6 @@ theorem Digraph.totalLength_comap_symm_eq_sum (σ : Equiv.Perm (Fin n)) :
   refine Fintype.sum_equiv σ.symm _ _ fun u ↦ Fintype.sum_equiv σ.symm _ _ fun w ↦ ?_
   simp [Digraph.comap_adj]
 
-/-- Transport along an isometry of the positions preserves total dependency length. -/
 theorem Digraph.totalLength_comap_symm (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (G.comap σ.symm).totalLength = G.totalLength := by
@@ -105,8 +103,6 @@ theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
   simp only [Nat.dist, Fin.val_rev]
   omega
 
-/-- The mirror image of a graph has the same total dependency length ([futrell-levy-gibson-2020],
-examples (7)–(8)). -/
 theorem Digraph.totalLength_mirror : G.mirror.totalLength = G.totalLength :=
   G.totalLength_comap_symm Fin.revPerm Fin.dist_rev_rev
 
@@ -138,15 +134,14 @@ private theorem Digraph.one_le_dist_of_mem_outNeighborFinset (h : ∀ v, ¬ G.Ad
     ∀ w ∈ G.outNeighborFinset v, 1 ≤ Nat.dist v w := fun w hw ↦
   Nat.dist_pos_of_ne (Fin.val_ne_of_ne fun e ↦ h v (by simpa [← e] using hw))
 
-/-- Each dependency is at least one word long, so the total dependency length of a graph without
-loops is at least the number of its dependencies. -/
+/-- The total dependency length of a digraph without loops is at least the number of its arcs. -/
 theorem Digraph.card_arcs_le_totalLength (h : ∀ v, ¬ G.Adj v v) : #G.arcs ≤ G.totalLength := by
   rw [G.card_arcs]
   exact sum_le_sum fun v _ ↦ card_eq_sum_ones (G.outNeighborFinset v) ▸
     sum_le_sum (Digraph.one_le_dist_of_mem_outNeighborFinset h v)
 
-/-- Total dependency length equals the number of dependencies exactly when every dependent stands
-next to its head. -/
+/-- The total dependency length equals the number of arcs exactly when every dependent stands next
+to its head. -/
 theorem Digraph.totalLength_eq_card_arcs_iff (h : ∀ v, ¬ G.Adj v v) :
     G.totalLength = #G.arcs ↔ ∀ ⦃v w⦄, G.Adj v w → Nat.dist v w = 1 := by
   rw [G.card_arcs, eq_comm, Digraph.totalLength]
@@ -156,16 +151,12 @@ theorem Digraph.totalLength_eq_card_arcs_iff (h : ∀ v, ¬ G.Adj v v) :
   rw [sum_eq_sum_iff_of_le (Digraph.one_le_dist_of_mem_outNeighborFinset h v)]
   simp [eq_comm]
 
-/-- A graph in which every dependent stands next to its head is no longer than any reordering of
-its positions. -/
 theorem Digraph.totalLength_le_totalLength_comap (h : ∀ v, ¬ G.Adj v v)
     (h₁ : ∀ ⦃v w⦄, G.Adj v w → Nat.dist v w = 1) (σ : Equiv.Perm (Fin n)) :
     G.totalLength ≤ (G.comap σ).totalLength := by
   rw [(Digraph.totalLength_eq_card_arcs_iff h).2 h₁, ← G.card_arcs_comap σ]
   exact Digraph.card_arcs_le_totalLength fun v hv ↦ h _ hv
 
-/-- Two dependents on one side of their head cannot both stand next to it, so the total dependency
-length exceeds the number of dependencies. -/
 theorem Digraph.card_arcs_lt_totalLength (h : ∀ v, ¬ G.Adj v v) {d : HeadDirection}
     {v w₁ w₂ : Fin n} (h₁ : G.Adj v w₁) (h₂ : G.Adj v w₂) (hne : w₁ ≠ w₂)
     (o₁ : d.Orders v w₁) (o₂ : d.Orders v w₂) : #G.arcs < G.totalLength := by
@@ -198,8 +189,7 @@ theorem Digraph.toFinset_reachSet_nonempty (G : Digraph (Fin n)) [DecidableRel G
     (G.reachSet w).toFinset.Nonempty :=
   ⟨w, by simp [ReflTransGen.refl]⟩
 
-/-- The distance from `v` to the nearest word of the yield of `w`, dependency length measured to
-the closest boundary of the dependent's phrase. -/
+/-- The distance from `v` to the nearest position of the yield of `w`. -/
 def Digraph.reachSetDist (G : Digraph (Fin n)) [DecidableRel G.Adj] (v w : Fin n) : ℕ :=
   (G.reachSet w).toFinset.inf' (G.toFinset_reachSet_nonempty w) fun x ↦ Nat.dist v x
 
@@ -244,8 +234,8 @@ private theorem card_between {a b : Fin n} (hab : a ≠ b) :
     simp only [Nat.dist, Fin.lt_def] at h ⊢
     omega
 
-/-- On a projective forest the distance from a head to the nearest word of a dependent's phrase is
-one more than the phrase sizes of the dependents between them. -/
+/-- On a projective forest, the distance from a head to the yield of a dependent is one more than
+the sizes of the yields of the dependents between them. -/
 theorem Digraph.reachSetDist_eq_one_add_sum (hF : G.IsBranching) (hP : G.IsProjective)
     (h : G.Adj v w) :
     G.reachSetDist v w = 1 + ∑ u ∈ G.outNeighborFinset v with (v < u ∧ u < w ∨ w < u ∧ u < v),
@@ -352,8 +342,7 @@ theorem Digraph.reachSetDist_eq_boundaryDist (hF : G.IsBranching) (hP : G.IsProj
   rw [Digraph.localSubtree, sum_insert (by simpa using hF.not_adj_self), ite_eq_right (by simp),
     zero_add]
 
-/-- The sum of a head's yield distances is the head's measure in the local arrangement. -/
-theorem Digraph.sum_yieldDist_eq_sum_boundaryDist (hF : G.IsBranching) (hP : G.IsProjective) :
+theorem Digraph.sum_reachSetDist_eq_sum_boundaryDist (hF : G.IsBranching) (hP : G.IsProjective) :
     ∑ w ∈ G.outNeighborFinset v, G.reachSetDist v w =
       ∑ c, (G.localArrangement v).boundaryDist (fun c ↦ #(G.reachSet c).toFinset)
         ⟨v, G.self_mem_localSubtree v⟩ c := by

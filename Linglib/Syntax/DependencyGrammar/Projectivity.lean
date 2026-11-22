@@ -38,6 +38,8 @@ are well-nested.
 * `Digraph.isProjective_iff_gapDegree_eq_zero`, `Digraph.isPlanar_iff_crossings_eq_zero`: each
   constraint is the least value of a count.
 * `Digraph.IsProjective.isPlanar`, `Digraph.IsPlanar.isWellNested`: the inclusions on branchings.
+* `Digraph.IsPlanar.root_mem_Ioo`: in a planar arborescence, the root lies strictly inside every
+  interruption of a reach set.
 * `Digraph.IsPlanar.isProjective_of_isBot`: a planar arborescence whose root is least is
   projective.
 * `Digraph.isProjective_comap_orderIso`, `Digraph.isProjective_comap_ofDual`: projectivity is
@@ -65,8 +67,8 @@ variable {V W : Type*} [LinearOrder V] [LinearOrder W] (G : Digraph V) {r : V}
 order-connected. -/
 def IsProjective : Prop := ∀ v, (G.reachSet v).OrdConnected
 
-/-- The arc form of projectivity: every vertex between the ends of an arc is reachable from its
-tail. -/
+/-- A digraph on a linear order is arc-projective when every vertex between the ends of an arc is
+reachable from the tail of the arc. -/
 def IsArcProjective : Prop := ∀ ⦃h d⦄, G.Adj h d → ∀ w ∈ Set.uIcc h d, G.Reachable h w
 
 theorem isProjective_iff :
@@ -115,8 +117,8 @@ private instance (a b : V) : Decidable (a ⋖ b) :=
   decidable_of_iff (a < b ∧ ∀ c, a < c → ¬ c < b) ⟨fun h ↦ ⟨h.1, fun _ hc hcb ↦ h.2 _ hc hcb⟩,
     fun h ↦ ⟨h.1, fun _ hc hcb ↦ h.2 hc hcb⟩⟩
 
-/-- The gap degree of a vertex counts the interruptions of its reach set: the vertices of the
-reach set that are covered by a vertex outside it while a later vertex lies inside. -/
+/-- The gap degree of a vertex is the number of vertices of its reach set that are covered by a
+vertex outside it while a later vertex lies inside. -/
 def gapDegreeAt (v : V) : ℕ :=
   (Finset.univ.filter fun x : V ↦ x ∈ G.reachSet v ∧
     ∃ z, x ⋖ z ∧ z ∉ G.reachSet v ∧ ∃ y, z < y ∧ y ∈ G.reachSet v).card
@@ -171,12 +173,11 @@ instance [Fintype V] [DecidableRel G.Adj] : Decidable G.IsPlanar :=
   inferInstanceAs (Decidable (∀ a b c d, SymmGen G.Adj a b → SymmGen G.Adj c d →
     ¬ Alternate a b c d))
 
-/-- The number of crossing pairs of arcs, the crossings of the undirected view. -/
+/-- The number of crossing pairs of arcs. -/
 abbrev crossings [Fintype V] [DecidableRel G.Adj] : ℕ := G.toSimpleGraphInclusive.crossings
 
 variable {G}
 
-/-- Planarity is having no crossings. -/
 theorem isPlanar_iff_crossings_eq_zero [Fintype V] [DecidableRel G.Adj] :
     G.IsPlanar ↔ G.crossings = 0 := by
   rw [crossings, SimpleGraph.crossings, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
@@ -186,15 +187,12 @@ theorem isPlanar_iff_crossings_eq_zero [Fintype V] [DecidableRel G.Adj] :
   · exact fun h a b c d h1 h2 h3 ↦ h (Finset.mem_univ (a, b, c, d))
       ⟨⟨(h3.1.trans h3.2.1).ne, h1⟩, ⟨(h3.2.1.trans h3.2.2).ne, h2⟩, h3⟩
 
-/-- The crossings of a pullback along an injection are those of the undirected view pulled
-back. -/
 theorem crossings_comap [Fintype V] [DecidableRel G.Adj] {f : V → V} (hf : Function.Injective f) :
     (G.comap f).crossings = (G.toSimpleGraphInclusive.comap f).crossings := by
   unfold crossings SimpleGraph.crossings
   refine congrArg Finset.card (Finset.filter_congr fun x _ ↦ ?_)
   simp [toSimpleGraphInclusive, hf.ne_iff]
 
-/-- An arc with an end strictly inside the span of another has its other end inside it too. -/
 theorem IsPlanar.mem_uIcc_of_symmGen (hPl : G.IsPlanar) {lo hi p q : V}
     (hL : SymmGen G.Adj lo hi) (hL' : SymmGen G.Adj p q) (hlp : lo < p) (hph : p < hi) :
     q ∈ Set.uIcc lo hi := by
@@ -225,8 +223,8 @@ alternate. -/
 def Interleave (v w : V) : Prop :=
   ∃ a ∈ G.reachSet v, ∃ b ∈ G.reachSet v, ∃ c ∈ G.reachSet w, ∃ d ∈ G.reachSet w, Alternate a b c d
 
-/-- A digraph is well-nested when two vertices whose reach sets interleave are never unrelated:
-one of them reaches the other. -/
+/-- A digraph is well-nested when, of two vertices whose reach sets interleave, one reaches the
+other. -/
 def IsWellNested : Prop := ∀ v w : V, G.Interleave v w → G.Reachable v w ∨ G.Reachable w v
 
 instance [Fintype V] [DecidableRel G.Adj] (v w : V) : Decidable (G.Interleave v w) :=
@@ -263,8 +261,6 @@ theorem IsProjective.isPlanar (hB : G.IsBranching) (hP : G.IsProjective) : G.IsP
   · exact hbd.ne (hB.reachable_antisymm
       (step h1 h2 hba (.inr rfl) hcb.ne') (step h2 h1 hdc (.inl rfl) hbd.ne'))
 
-/-- Vertices reachable from `v`, one inside the span of an arc and one outside, where neither end
-of the arc is reachable from `v`, contradict planarity. -/
 private theorem IsPlanar.false_of_mem_of_notMem (hPl : G.IsPlanar) {v p q x y : V}
     (hL : SymmGen G.Adj p q) (hp : ¬ G.Reachable v p) (hq : ¬ G.Reachable v q)
     (hx : G.Reachable v x) (hy : G.Reachable v y) (hin : x ∈ Set.uIcc p q)
@@ -273,8 +269,7 @@ private theorem IsPlanar.false_of_mem_of_notMem (hPl : G.IsPlanar) {v p q x y : 
   exact hout' (hPl.mem_uIcc_of_mem_uIcc hL hL' hin' (fun h ↦ hp (h ▸ hvp'))
     (fun h ↦ hq (h ▸ hvp')))
 
-/-- Every planar branching is well-nested: reach sets that interleave would force an arc under
-one of them to straddle an arc under the other. -/
+/-- Every planar branching is well-nested. -/
 theorem IsPlanar.isWellNested (hB : G.IsBranching) (hPl : G.IsPlanar) : G.IsWellNested := by
   rintro v w ⟨a, hva, b, hvb, c, hwc, d, hwd, hac, hcb, hbd⟩
   by_contra hcon
@@ -300,8 +295,6 @@ theorem IsPlanar.isWellNested (hB : G.IsBranching) (hPl : G.IsPlanar) : G.IsWell
       (Set.mem_uIcc.2 (.inl ⟨hpb.le, hbq.le⟩))
       (by rw [Set.mem_uIcc]; rintro (⟨h1, h2⟩ | ⟨h1, h2⟩) <;> order)
 
-/-- In a planar arborescence every interruption of a reach set contains the root: if `v` reaches
-`i` and `j` but not a vertex between them, the root lies strictly between `i` and `j`. -/
 theorem IsPlanar.root_mem_Ioo (hA : G.IsArborescence r) (hPl : G.IsPlanar) {v i j k : V}
     (hi : G.Reachable v i) (hj : G.Reachable v j) (hik : i < k) (hkj : k < j)
     (hk : ¬ G.Reachable v k) : r ∈ Set.Ioo i j := by
@@ -333,8 +326,7 @@ theorem IsPlanar.root_mem_Ioo (hA : G.IsArborescence r) (hPl : G.IsPlanar) {v i 
       (Set.mem_uIcc.2 (.inr ⟨hqj.le, hjp.le⟩))
       (by rw [Set.mem_uIcc]; rintro (⟨h1, h2⟩ | ⟨h1, h2⟩) <;> order)
 
-/-- A planar arborescence whose root is the least vertex is projective: an interruption of a reach
-set would contain the root, and nothing lies before it. -/
+/-- A planar arborescence whose root is the least vertex is projective. -/
 theorem IsPlanar.isProjective_of_isBot (hA : G.IsArborescence r) (hPl : G.IsPlanar)
     (hr : IsBot r) : G.IsProjective := by
   rw [G.isProjective_iff]
@@ -344,7 +336,6 @@ theorem IsPlanar.isProjective_of_isBot (hA : G.IsArborescence r) (hPl : G.IsPlan
   have hzy' : z < y := lt_of_le_of_ne hzy (fun h ↦ hz (h ▸ hy))
   exact absurd (hPl.root_mem_Ioo hA hx hy hxz' hzy' hz).1 (not_lt.mpr (hr x))
 
-/-- Every projective branching is well-nested, by way of planarity. -/
 theorem IsProjective.isWellNested (hB : G.IsBranching) (hP : G.IsProjective) : G.IsWellNested :=
   (hP.isPlanar hB).isWellNested hB
 
@@ -353,13 +344,11 @@ theorem IsProjective.isWellNested (hB : G.IsBranching) (hP : G.IsProjective) : G
 theorem IsProjective.comap (hP : G.IsProjective) (e : W ≃o V) : (G.comap e).IsProjective :=
   fun a ↦ (reachSet_comap e.toEquiv a ▸ (hP (e a)).preimage_mono e.monotone :)
 
-/-- Projectivity is invariant under an order isomorphism of the vertices. -/
 theorem isProjective_comap_orderIso (e : W ≃o V) : (G.comap e).IsProjective ↔ G.IsProjective :=
   ⟨fun h ↦ by
     have e' : (G.comap e).comap e.symm = G := Digraph.ext (by ext; simp)
     exact e' ▸ h.comap e.symm, fun h ↦ h.comap e⟩
 
-/-- Projectivity is invariant under reversing the order of the vertices. -/
 theorem isProjective_comap_ofDual :
     (G.comap OrderDual.ofDual : Digraph Vᵒᵈ).IsProjective ↔ G.IsProjective :=
   ⟨fun h v ↦ Set.ordConnected_dual.1
@@ -369,13 +358,11 @@ theorem isProjective_comap_ofDual :
 theorem IsPlanar.comap (hPl : G.IsPlanar) (e : W ≃o V) : (G.comap e).IsPlanar :=
   fun _ _ _ _ h1 h2 h ↦ hPl h1 h2 ⟨e.lt_iff_lt.2 h.1, e.lt_iff_lt.2 h.2.1, e.lt_iff_lt.2 h.2.2⟩
 
-/-- Planarity is invariant under an order isomorphism of the vertices. -/
 theorem isPlanar_comap_orderIso (e : W ≃o V) : (G.comap e).IsPlanar ↔ G.IsPlanar :=
   ⟨fun h ↦ by
     have e' : (G.comap e).comap e.symm = G := Digraph.ext (by ext; simp)
     exact e' ▸ h.comap e.symm, fun h ↦ h.comap e⟩
 
-/-- Planarity is invariant under reversing the order of the vertices. -/
 theorem isPlanar_comap_ofDual :
     (G.comap OrderDual.ofDual : Digraph Vᵒᵈ).IsPlanar ↔ G.IsPlanar :=
   ⟨fun h a b c d h1 h2 alt ↦ h (a := .toDual d) (b := .toDual c) (c := .toDual b)
@@ -388,12 +375,10 @@ section Mirror
 
 variable {n : ℕ} {G : Digraph (Fin n)}
 
-/-- The mirror image of a structure is projective exactly when the structure is. -/
 @[simp] theorem isProjective_mirror : G.mirror.IsProjective ↔ G.IsProjective :=
   (isProjective_comap_ofDual (G := G.mirror)).symm.trans
     (isProjective_comap_orderIso (G := G) Fin.revOrderIso)
 
-/-- The mirror image of a structure is planar exactly when the structure is. -/
 @[simp] theorem isPlanar_mirror : G.mirror.IsPlanar ↔ G.IsPlanar :=
   (isPlanar_comap_ofDual (G := G.mirror)).symm.trans
     (isPlanar_comap_orderIso (G := G) Fin.revOrderIso)

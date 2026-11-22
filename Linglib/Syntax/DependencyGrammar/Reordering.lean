@@ -11,19 +11,21 @@ public import Mathlib.Data.Fintype.Inv
 public import Mathlib.Tactic.Ring
 
 /-!
-# Reordering a head's dependents
+# Reordering the dependents of a head
 
-This file defines `Digraph.reorderDependents G v σ`, which moves the phrases of the dependents of
-`v`
-as whole blocks into the order that a permutation `σ` of `v` and its dependents gives them; every
-position outside the yield of `v` keeps its place. On a projective forest the blocks stand in the
-order of the dependents (`Digraph.monotoneOn_blockHead`), and a reordering that keeps each dependent
-on its side of the head changes only the head's own dependencies, by the change in their boundary
-distances (`Digraph.totalLength_reorderDependents_add`). This is the observation with which Gildea
-and Temperley begin their proof that their linearization algorithm minimizes dependency length.
-Exchanging two neighbouring dependents after the head changes the length by the difference of the
-sizes of their phrases (`Digraph.totalLength_reorderDependents_swap_add`), and when the phrases
-after a head grow outward, every reordering of them that does not is strictly longer
+For a digraph `G` on positions, a position `v` and a permutation `σ` of the local subtree of `v`,
+we define `G.reorderDependents v σ`, the digraph in which the yields of the dependents of `v` are
+moved, each as a block, into the order that `σ` gives them. Every position outside the yield of
+`v` keeps its place.
+
+On a projective forest the blocks stand in the order of the dependents
+(`Digraph.monotoneOn_blockHead`), and a reordering that keeps each dependent on its side of the
+head changes the total dependency length by the change in the boundary distances of the head
+(`Digraph.totalLength_reorderDependents_add`), the first step of the proof in
+[gildea-temperley-2007] that their linearization has least dependency length. In particular,
+exchanging two neighbouring dependents after the head changes the length by the difference of the
+sizes of their yields (`Digraph.totalLength_reorderDependents_swap_add`), and when the yields after
+a head grow outward, every reordering of them that does not is strictly longer
 (`Digraph.totalLength_lt_reorderDependents_iff`).
 
 ## Implementation notes
@@ -95,13 +97,13 @@ theorem Digraph.reorderRank_bijective : Function.Bijective (G.reorderRank v σ) 
 
 variable (G v σ)
 
-/-- The position permutation that moves the blocks of `v`'s dependents into the order `σ`
-gives them; its inverse is computable. -/
+/-- The permutation of the positions that moves the blocks of the dependents of `v` into the order
+`σ` gives them. -/
 def Digraph.reorderPerm : Equiv.Perm (Fin n) :=
   ⟨G.reorderRank v σ, Fintype.bijInv Digraph.reorderRank_bijective,
     Fintype.leftInverse_bijInv _, Fintype.rightInverse_bijInv _⟩
 
-/-- The graph with the dependents of `v` reordered by `σ`, each phrase moving as a block. -/
+/-- The digraph with the dependents of `v` reordered by `σ`, each yield moving as a block. -/
 def Digraph.reorderDependents : Digraph (Fin n) := G.comap (G.reorderPerm v σ).symm
 
 instance : DecidableRel (G.reorderDependents v σ).Adj :=
@@ -219,8 +221,6 @@ theorem Digraph.lt_of_blockHead_lt {x y : Fin n} (hx : x ∈ G.reachSet v) (hy :
   obtain ⟨hd, hxd⟩ := Digraph.adj_blockHead_of_ne hF hx hxv
   exact Digraph.lt_of_mem_reachSet_of_mem_reachSet hF hP hc hd hlt hyc hxd
 
-/-- On a projective forest the blocks of a head's dependents stand in the order of the dependents:
-the block of a position is monotone on the yield of the head. -/
 theorem Digraph.monotoneOn_blockHead : MonotoneOn (G.blockHead v) (G.reachSet v) :=
   fun _ hy _ hx hyx ↦ not_lt.1 fun hlt ↦ hyx.not_gt (Digraph.lt_of_blockHead_lt hF hP hy hx hlt)
 
@@ -367,7 +367,6 @@ private theorem Digraph.reorderRank_of_notMem_reachSet {x : Fin n} (hx : x ∉ G
   rw [Digraph.reorderRank_of_notMem_eq σ hx 1, Digraph.reorderRank_one hF hP]
 
 variable {σ} in
-/-- Positions outside the yield of `v` keep their place. -/
 theorem Digraph.reorderPerm_apply_of_notMem_reachSet {x : Fin n} (hx : x ∉ G.reachSet v) :
     G.reorderPerm v σ x = x :=
   Digraph.reorderRank_of_notMem_reachSet σ hF hP hx
@@ -375,7 +374,6 @@ theorem Digraph.reorderPerm_apply_of_notMem_reachSet {x : Fin n} (hx : x ∉ G.r
 theorem Digraph.reorderPerm_one : G.reorderPerm v 1 = 1 :=
   Equiv.ext (Digraph.reorderRank_one hF hP)
 
-/-- Reordering by the identity leaves the graph as it was. -/
 theorem Digraph.reorderDependents_one : G.reorderDependents v 1 = G := by
   unfold Digraph.reorderDependents
   rw [Digraph.reorderPerm_one hF hP]
@@ -594,11 +592,8 @@ private theorem Digraph.dist_reorderRank_add_boundaryDist (c : G.localSubtree v)
 
 variable {σ}
 
-/-- A reordering that keeps each dependent of `v` on its side of the head changes total dependency
-length exactly as it changes the head's boundary distances in the local arrangement. A link
-inside a moved phrase keeps its length and so does a link across the whole yield of `v`, so only
-the head's own links change. This is the observation behind the first step of
-[gildea-temperley-2007]'s proof that their linearization is optimal (p. 186). -/
+/-- A reordering that keeps each dependent of `v` on its side of the head changes the total
+dependency length by the change in the boundary distances of the head in the local arrangement. -/
 theorem Digraph.totalLength_reorderDependents_add :
     (G.reorderDependents v σ).totalLength +
         ∑ c, (G.localArrangement v).boundaryDist (fun c ↦ #(G.reachSet c).toFinset) v' c =
@@ -639,9 +634,8 @@ include hP
 
 /-! #### Exchanging neighbouring dependents -/
 
-/-- Exchanging two neighbouring dependents after their head changes the total dependency length
-by the difference of the sizes of their phrases, so the exchange is shorter exactly when it puts
-the shorter phrase first. -/
+/-- Exchanging two neighbouring dependents after their head changes the total dependency length by
+the difference of the sizes of their yields. -/
 theorem Digraph.totalLength_reorderDependents_swap_add {c d : G.localSubtree v} (hc : v < c)
     (hcd : (G.localRank v c : ℕ) + 1 = G.localRank v d) :
     (G.reorderDependents v (Equiv.swap c d)).totalLength + #(G.reachSet c).toFinset =
@@ -668,10 +662,8 @@ theorem Digraph.totalLength_le_reorderDependents
   have := sum_boundaryDist_le (fun c : G.localSubtree v ↦ #(G.reachSet c).toFinset) hσ' h
   omega
 
-/-- When the phrases after `v` grow outward, a reordering of them is strictly longer exactly when
-they do not grow outward in it: dependency length minimization predicts short-before-long order
-after a head ([futrell-levy-gibson-2020]). This is the first step of [gildea-temperley-2007]'s
-optimality proof (p. 186), on the side after the head. -/
+/-- When the yields after `v` grow outward, a reordering of them is strictly longer exactly when
+they do not grow outward in it. -/
 theorem Digraph.totalLength_lt_reorderDependents_iff
     (hσ : σ.support ⊆ (G.localArrangement v).after v')
     (h : MonovaryOn (fun c : G.localSubtree v ↦ #(G.reachSet c).toFinset) (G.localArrangement v)

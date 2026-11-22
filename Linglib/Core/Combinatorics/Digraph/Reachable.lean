@@ -37,7 +37,7 @@ variable {V W : Type*} {G : Digraph V} {u v w x y : V}
 instance {α : Type*} {r : α → α → Prop} [DecidableRel r] : DecidableRel (SymmGen r) :=
   fun a b ↦ inferInstanceAs (Decidable (r a b ∨ r b a))
 
-/-- `w` is reachable from `v` when a possibly empty chain of arcs leads from `v` to `w`. -/
+/-- `w` is *reachable* from `v` if a possibly empty chain of arcs leads from `v` to `w`. -/
 abbrev Reachable (G : Digraph V) : V → V → Prop := ReflTransGen G.Adj
 
 /-- The vertices reachable from `v`, `v` itself included. -/
@@ -53,8 +53,6 @@ theorem exists_adj_mem_reachSet (hx : x ∈ G.reachSet v) (hne : x ≠ v) :
     ∃ u, G.Adj v u ∧ x ∈ G.reachSet u :=
   (ReflTransGen.cases_head hx).resolve_left hne.symm
 
-/-- Two vertices reachable from `v`, one inside a set and one outside, are separated by an arc
-between vertices reachable from `v`. -/
 theorem exists_symmGen_adj_of_mem_of_notMem {S : Set V} (hx : G.Reachable v x)
     (hy : G.Reachable v y) (hxS : x ∈ S) (hyS : y ∉ S) :
     ∃ p q, SymmGen G.Adj p q ∧ G.Reachable v p ∧ G.Reachable v q ∧ p ∈ S ∧ q ∉ S := by
@@ -64,8 +62,6 @@ theorem exists_symmGen_adj_of_mem_of_notMem {S : Set V} (hx : G.Reachable v x)
   · obtain ⟨p, q, hpq, hpS, hqS, hvp, -⟩ := hx.exists_boundary (S := Sᶜ) hv (not_not_intro hxS)
     exact ⟨q, p, .inr hpq, hvp.tail hpq, hvp, not_not.1 hqS, hpS⟩
 
-/-- Vertices reachable from a common vertex, neither reachable from the other, lie under distinct
-out-neighbours of one vertex. -/
 theorem exists_adj_adj_of_not_reachable (hu : G.Reachable x u) (hv : G.Reachable x v)
     (huv : ¬ G.Reachable u v) (hvu : ¬ G.Reachable v u) :
     ∃ p u' v', G.Adj p u' ∧ G.Adj p v' ∧ u' ≠ v' ∧ G.Reachable u' u ∧ G.Reachable v' v := by
@@ -75,7 +71,6 @@ theorem exists_adj_adj_of_not_reachable (hu : G.Reachable x u) (hv : G.Reachable
   · exact absurd (hu'u.head hpu') hvu
   · exact ⟨p, u', v', hpu', hpv', fun h ↦ hu' (h ▸ hv'v), hu'u, hv'v⟩
 
-/-- An equivalence of vertices preserves and reflects reachability. -/
 theorem reachable_comap (e : W ≃ V) {a b : W} :
     (G.comap e).Reachable a b ↔ G.Reachable (e a) (e b) :=
   ⟨fun h ↦ ReflTransGen.lift (r := (G.comap e).Adj) (p := G.Adj) e (fun _ _ h ↦ h) _ _ h,

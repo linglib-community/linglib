@@ -45,11 +45,11 @@ open Finset
 
 variable {n : ℕ}
 
-/-- `s` is a catena if the subgraph induced on `s` is connected. -/
+/-- A set of positions is a *catena* if it induces a connected subgraph of the undirected view. -/
 def Digraph.IsCatena (G : Digraph (Fin n)) [DecidableRel G.Adj] (s : Finset (Fin n)) : Prop :=
   (G.toSimpleGraphInclusive.induce ↑s).Connected
 
-/-- `s` is a constituent if it is the yield of some position. -/
+/-- A set of positions is a *constituent* if it is the yield of a position. -/
 def Digraph.IsConstituent (G : Digraph (Fin n)) [DecidableRel G.Adj] (s : Finset (Fin n)) : Prop :=
   ∃ v, (↑s : Set (Fin n)) = G.reachSet v
 
@@ -81,8 +81,6 @@ theorem Digraph.connected_induce_reachSet (G : Digraph (Fin n)) [DecidableRel G.
     · exact ih
     · exact ih.trans (SimpleGraph.Adj.reachable ⟨hne, Or.inl hbc⟩)
 
-/-- Every constituent is a catena, since a constituent is the yield of some position
-and yields induce connected subgraphs. -/
 theorem Digraph.IsConstituent.isCatena {G : Digraph (Fin n)} [DecidableRel G.Adj]
     {s : Finset (Fin n)}
     (h : G.IsConstituent s) : G.IsCatena s := by
@@ -96,9 +94,6 @@ theorem Digraph.isCatena_pair (G : Digraph (Fin n)) [DecidableRel G.Adj] {v w : 
   rw [Digraph.IsCatena, Finset.coe_pair]
   exact SimpleGraph.induce_pair_connected_of_adj ⟨hne, .inl h⟩
 
-/-- In a forest, a head with one of its dependents is not a constituent when the head has
-another dependent, since the head's cone contains the other dependent and the dependent's cone
-does not contain the head. -/
 theorem Digraph.not_isConstituent_pair {G : Digraph (Fin n)} [DecidableRel G.Adj]
     (hF : G.IsBranching) {v w u : Fin n}
     (hw : G.Adj v w) (hu : G.Adj v u) (huw : u ≠ w) : ¬ G.IsConstituent {v, w} := by
@@ -111,8 +106,6 @@ theorem Digraph.not_isConstituent_pair {G : Digraph (Fin n)} [DecidableRel G.Adj
   · rw [Finset.mem_singleton] at hcw; subst hcw
     exact hF.not_reachable_of_adj hw ((hc v).1 (by simp))
 
-/-- In a forest, a position of a catena with no head in the catena dominates the whole catena:
-it is the catena's root. -/
 theorem Digraph.IsCatena.reachable_of_forall_not_adj {G : Digraph (Fin n)} [DecidableRel G.Adj]
     {s : Finset (Fin n)}
     (h : G.IsCatena s) (hF : G.IsBranching) {a : Fin n} (ha : a ∈ s)
@@ -155,8 +148,6 @@ theorem Digraph.IsBranching.isCatena_iff_existsUnique {G : Digraph (Fin n)} [Dec
         exact (ih u (.single hux) hu).trans
           (SimpleGraph.Adj.reachable ⟨hF.ne_of_adj hux, .inl hux⟩)
 
-/-- In a forest a set of positions is a catena iff it has exactly one position with no head in
-it. -/
 theorem Digraph.IsBranching.isCatena_iff_card_eq_one {G : Digraph (Fin n)} [DecidableRel G.Adj]
     (hF : G.IsBranching) {s : Finset (Fin n)} :
     G.IsCatena s ↔ #{v ∈ s | ∀ u ∈ s, ¬ G.Adj u v} = 1 := by
@@ -183,8 +174,7 @@ theorem Digraph.IsArborescence.isCatena_univ {G : Digraph (Fin n)} [DecidableRel
     {r : Fin n} (hT : G.IsArborescence r) : G.IsCatena Finset.univ :=
   hT.isConstituent_univ.isCatena
 
-/-- The undirected view of an arborescence is a tree: it is connected, the whole sentence being
-a catena, and its edges are the links from each position other than the root to its head. -/
+/-- The undirected view of an arborescence is a tree. -/
 theorem Digraph.IsArborescence.isTree_toSimpleGraphInclusive {G : Digraph (Fin n)}
     [DecidableRel G.Adj] {r : Fin n} (hT : G.IsArborescence r) :
     G.toSimpleGraphInclusive.IsTree := by

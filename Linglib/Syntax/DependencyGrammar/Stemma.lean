@@ -118,7 +118,7 @@ end
 theorem headIndex_lt_size (s : Stemma L) : s.headIndex < s.size := by
   cases s; simp only [headIndex, size]; omega
 
-/-- A stemma has at least its head word, so numerals denote its positions. -/
+/-- A stemma has at least one word. -/
 instance (s : Stemma L) : NeZero s.size := ⟨by cases s; simp [size]⟩
 
 /-- The word at each position of a stemma's sentence. -/
@@ -152,15 +152,12 @@ theorem length_headsDeps : ∀ (ds : List (L × Stemma L)) (h o : ℕ),
 
 end
 
-/-- The head word of a stemma records the head it hangs from. -/
 theorem getElem?_heads_headIndex (s : Stemma L) (o : ℕ) (up : Option (ℕ × L)) :
     (s.heads o up)[s.headIndex]? = some up := by
   cases s with
   | node w l r =>
     simp [heads, headIndex, length_headsDeps]
 
-/-- Two positions are linked by an arc of a stemma's graph when the first is recorded as the
-head of the second. -/
 theorem toGraph_adj {s : Stemma L} {v w : Fin s.size} :
     s.toGraph.Adj v w ↔ ∃ r, (s.heads 0 none)[w.val]? = some (some (v.val, r)) := by
   rw [Graph.adj_iff_isSome]
@@ -304,7 +301,7 @@ theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.IsArborescence s.root 
     rw [Nat.zero_add] at this
     exact (reachable_of_reflTransGen s.headIndex_lt_size this).2
 
-/-- The graph of a stemma is projective: a stemma never draws crossing arcs. -/
+/-- The graph of a stemma is projective. -/
 theorem isProjective_toGraph (s : Stemma L) : s.toGraph.IsProjective := by
   refine (Digraph.isProjective_iff_isArcProjective _).2 fun h d hhd p hp ↦ ?_
   obtain ⟨r, hr⟩ := toGraph_adj.1 hhd

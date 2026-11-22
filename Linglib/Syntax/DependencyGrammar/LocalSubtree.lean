@@ -54,9 +54,7 @@ theorem Digraph.localRank_strictMono : StrictMono (G.localRank v) := fun c d hcd
     (monotone_filter_right _ fun _ _ he ↦ lt_trans he hcd')).2
     ⟨c, mem_filter.2 ⟨c.2, hcd'⟩, by simp⟩)
 
-/-- The rank is an order isomorphism from a head and its dependents to an initial segment of the
-positions. The inverse is classical, but an order isomorphism is applied through
-`Digraph.localRank`, which the kernel reduces. -/
+/-- The rank as an order isomorphism from a local subtree to an initial segment of the positions. -/
 noncomputable def Digraph.localOrderIso : G.localSubtree v ≃o Fin #(G.localSubtree v) where
   toEquiv := Equiv.ofBijective (G.localRank v)
     ((Fintype.bijective_iff_injective_and_card _).2
@@ -65,12 +63,11 @@ noncomputable def Digraph.localOrderIso : G.localSubtree v ≃o Fin #(G.localSub
 
 @[simp] theorem Digraph.coe_localOrderIso : ⇑(G.localOrderIso v) = G.localRank v := rfl
 
-/-- The rank inverts mathlib's enumeration of a finite set in increasing order. -/
 theorem Digraph.symm_localOrderIso :
     (G.localOrderIso v).symm = (G.localSubtree v).orderIsoOfFin rfl :=
   Subsingleton.elim _ _
 
-/-- A head and its dependents arranged by position. -/
+/-- The arrangement of a local subtree in the order of its positions. -/
 noncomputable def Digraph.localArrangement : Arrangement (G.localSubtree v) #(G.localSubtree v) :=
   (G.localOrderIso v).toEquiv
 

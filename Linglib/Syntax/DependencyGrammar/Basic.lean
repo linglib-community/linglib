@@ -68,7 +68,7 @@ namespace Digraph
 
 variable {V : Type*} {n : ℕ}
 
-/-- The digraph whose arcs are the listed pairs of a tail and a head of an arrow. -/
+/-- The digraph whose arcs are the listed pairs, each of a head and one of its dependents. -/
 def ofArcs [DecidableEq V] (arcs : List (V × V)) : Digraph V where
   Adj v w := (v, w) ∈ arcs
 
@@ -78,15 +78,15 @@ def ofArcs [DecidableEq V] (arcs : List (V × V)) : Digraph V where
 instance [DecidableEq V] (arcs : List (V × V)) : DecidableRel (ofArcs arcs).Adj :=
   fun v w ↦ inferInstanceAs (Decidable ((v, w) ∈ arcs))
 
-/-- The permutation of the positions that a listing of them in a new order gives: position `p`
-of the new order holds the old position `order[p]`. -/
+/-- The permutation of the positions given by a listing of them in a new order, sending the new
+position `p` to the old position `order[p]`. -/
 def orderPerm (order : List (Fin n)) (h : order.Perm (List.finRange n)) : Equiv.Perm (Fin n) :=
   (finCongr (h.length_eq.trans List.length_finRange).symm).trans
     ((h.nodup_iff.mpr (List.nodup_finRange n)).getEquivOfForallMemList order
       fun x ↦ h.mem_iff.mpr (List.mem_finRange x))
 
-/-- The digraph read in the order `order`, which lists every position once: the word at
-position `p` is the word of `G` at `order[p]`, and the arcs follow the words. -/
+/-- The digraph read in the order `order`, which lists every position once. The word at position `p`
+is the word of `G` at `order[p]`, and the arcs follow the words. -/
 def linearize (G : Digraph (Fin n)) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
     Digraph (Fin n) :=
   G.comap (orderPerm order h)
@@ -115,8 +115,8 @@ end Digraph
 
 namespace DependencyGrammar
 
-/-- A dependency graph on the vertices `V` with relations in `L`: a digraph whose arcs each carry
-a relation. -/
+/-- A dependency graph on the vertices `V` with relations in `L` is a digraph each of whose arcs
+carries a relation. -/
 structure Graph (L V : Type*) extends Digraph V where
   /-- The relation of the arc from head `v` to dependent `w`, if there is an arc. -/
   label : V → V → Option L
@@ -140,7 +140,6 @@ instance : DecidableRel g.Adj := fun _ _ ↦ decidable_of_iff _ (g.adj_iff_isSom
 theorem adj_iff_exists_label {g : Graph L V} {v w : V} : g.Adj v w ↔ ∃ r, g.label v w = some r :=
   (g.adj_iff_isSome v w).trans Option.isSome_iff_exists
 
-/-- A graph is determined by its labelling. -/
 theorem ext_label {g h : Graph L V} (e : g.label = h.label) : g = h := by
   obtain ⟨⟨a⟩, l, hl⟩ := g
   obtain ⟨⟨a'⟩, l', hl'⟩ := h

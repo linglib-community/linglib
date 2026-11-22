@@ -141,7 +141,7 @@ theorem fig1_isArborescence_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso,
   decide +kernel
 
 -- Fig. 1
-theorem fig1_yieldDist :
+theorem fig1_reachSetDist :
     let ℓ := Function.update (1 : Constituent → ℕ) .object 4
     fig1Sov.reachSetDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
     fig1Sov.reachSetDist 5 4 = Arrangement.sov.boundaryDist ℓ .verb .object ∧
@@ -153,7 +153,7 @@ theorem fig1_yieldDist :
     fig1Vos.reachSetDist 0 1 = Arrangement.vos.boundaryDist ℓ .verb .object := by
   decide +kernel
 
-theorem fig1_yieldDist_eq :
+theorem fig1_reachSetDist_eq :
     fig1Sov.reachSetDist 5 0 = 5 ∧ fig1Sov.reachSetDist 5 4 = 1 ∧ fig1Osv.reachSetDist 5 4 = 1 ∧
     fig1Osv.reachSetDist 5 3 = 2 ∧ fig1Vso.reachSetDist 0 1 = 1 ∧ fig1Vso.reachSetDist 0 2 = 2 ∧
     fig1Vos.reachSetDist 0 5 = 5 ∧ fig1Vos.reachSetDist 0 1 = 1 := by

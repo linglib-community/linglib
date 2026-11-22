@@ -84,7 +84,6 @@ def withOptional (required optional : Multiset L) : Valency L :=
 @[simp] theorem withOptional_zero (m : Multiset L) : withOptional m 0 = .pure m := by
   ext : 2 <;> simp [withOptional]
 
-/-- With one optional valent, a word has its obligatory valents alone or with that one. -/
 theorem mem_withOptional_singleton {required m : Multiset L} {a : L} :
     m ∈ withOptional required {a} ↔ m = required ∨ m = required + {a} := by
   rw [mem_withOptional]
@@ -119,7 +118,6 @@ variable {g : Graph L (Fin n)} {p : L → Prop} [DecidablePred p] {v w : Fin n} 
 @[simp] theorem mem_valents : r ∈ g.valents p v ↔ p r ∧ ∃ w, g.label v w = some r := by
   simp [valents, Option.filter_eq_some_iff, and_comm]
 
-/-- A position has as many valents as dependents by a relation of valents. -/
 theorem card_valents : (g.valents p v).card = #(g.dependentsBy p v) := by
   rw [valents, dependentsBy, Finset.card_def, Finset.filter_val]
   induction (univ : Finset (Fin n)).val using Multiset.induction_on with
@@ -137,7 +135,6 @@ theorem card_valents : (g.valents p v).card = #(g.dependentsBy p v) := by
         rw [Multiset.filterMap_cons_none (f := fun w ↦ (g.label v w).filter p) _ _ hw]
         simpa [h, hr] using ih
 
-/-- The valents satisfying a further predicate are the valents by the conjunction. -/
 theorem filter_valents (q : L → Prop) [DecidablePred q] :
     (g.valents p v).filter q = g.valents (fun r ↦ p r ∧ q r) v := by
   simp only [valents, Multiset.filter_filterMap]
@@ -149,8 +146,6 @@ theorem filter_valents (q : L → Prop) [DecidablePred q] :
     simp only [Option.filter]
     split_ifs <;> simp_all
 
-/-- The quantity of a relation among the valents of `v` is the number of dependents `v` has by
-it when it is a relation of valents, and zero otherwise. -/
 theorem count_valents [DecidableEq L] (r : L) :
     (g.valents p v).count r = if p r then #(g.dependentsBy (· = r) v) else 0 := by
   rw [Multiset.count_eq_card_filter_eq, filter_valents, card_valents]
@@ -165,7 +160,6 @@ theorem count_valents [DecidableEq L] (r : L) :
     rintro ⟨x, -, hx, rfl⟩
     exact hr hx
 
-/-- The valents of a position are those of its preimage under a change of linearization. -/
 theorem valents_comap_symm (σ : Equiv.Perm (Fin n)) : (g.comap σ.symm).valents p v = g.valents p
     (σ.symm v) := by
   have h : (univ : Finset (Fin n)).val.map σ.symm = univ.val :=
@@ -194,16 +188,12 @@ theorem satisfies_iff_count [DecidableEq L] :
       (g.valents p v).count r ≤ val.snd.count r := by
   simp only [satisfies_iff, Multiset.le_iff_count, forall_and]
 
-/-- A position satisfies the valency with every valent obligatory iff its valents are exactly
-those. -/
 @[simp] theorem satisfies_pure {m : Multiset L} : g.Satisfies p v (.pure m) ↔ g.valents p v = m :=
   NonemptyInterval.mem_pure
 
-/-- A position satisfying a valency satisfies every valency that includes it. -/
 theorem Satisfies.mono (h : val₁ ≤ val₂) (hs : g.Satisfies p v val₁) : g.Satisfies p v val₂ :=
   ⟨h.1.trans hs.1, hs.2.trans h.2⟩
 
-/-- Satisfaction of a valency is invariant under a change of linearization. -/
 @[simp] theorem satisfies_comap_symm (σ : Equiv.Perm (Fin n)) :
     (g.comap σ.symm).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
   rw [Satisfies, valents_comap_symm, Satisfies]
