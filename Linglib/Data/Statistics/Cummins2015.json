@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "bibkey": "cummins-2015",
+    "method": "experiment",
+    "description": "The corrections of Cummins's Experiment 2: how often a false or underinformative description of boxes holding *n* or *n* + 1 items was corrected, and how many corrections took each of the two forms the constraint model predicts."
+  },
+  "types": [
+    {
+      "name": "Prompt",
+      "doc": "The false and underinformative descriptions of Experiment 2.",
+      "levels": [
+        {
+          "name": "moreThan",
+          "label": "more than n",
+          "doc": "*more than n*, false of the display"
+        },
+        {
+          "name": "fewerThan",
+          "label": "fewer than n + 1",
+          "doc": "*fewer than n + 1*, false of the display"
+        },
+        {
+          "name": "atLeast",
+          "label": "at least n - 1",
+          "doc": "*at least n − 1*, true and underinformative"
+        },
+        {
+          "name": "atMost",
+          "label": "at most n + 2",
+          "doc": "*at most n + 2*, true and underinformative"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "corrections",
+      "structure": "CorrectionCount",
+      "doc": "the corrections participants issued to a description.",
+      "locator": "§3.3.2.1, Results, p. 78",
+      "verified": "page-image",
+      "key": [
+        "prompt"
+      ],
+      "columns": [
+        {
+          "name": "prompt",
+          "type": "Prompt",
+          "doc": "The description corrected."
+        },
+        {
+          "name": "trials",
+          "type": "nat",
+          "doc": "The trials presenting the description."
+        },
+        {
+          "name": "corrected",
+          "type": "nat",
+          "doc": "The trials on which it was corrected."
+        },
+        {
+          "name": "superlative",
+          "type": "nat",
+          "doc": "The corrections with the maximally informative superlative on the same side, *at least n* or *at most n + 1*."
+        },
+        {
+          "name": "comparative",
+          "type": "nat",
+          "doc": "The corrections with the maximally informative comparative on the same side, *more than n − 1* or *fewer than n + 2*."
+        }
+      ],
+      "rows": [
+        {
+          "prompt": "more than n",
+          "trials": 84,
+          "corrected": 81,
+          "superlative": 42,
+          "comparative": 32
+        },
+        {
+          "prompt": "fewer than n + 1",
+          "trials": 84,
+          "corrected": 84,
+          "superlative": 17,
+          "comparative": 44,
+          "note": "the superlative corrections are printed as *at most n*"
+        },
+        {
+          "prompt": "at least n - 1",
+          "trials": 84,
+          "corrected": 13,
+          "superlative": 13,
+          "comparative": 0,
+          "note": "every correction is reported as *at least n*"
+        },
+        {
+          "prompt": "at most n + 2",
+          "trials": 84,
+          "corrected": 59,
+          "superlative": 49,
+          "comparative": 4
+        }
+      ]
+    }
+  ]
+}

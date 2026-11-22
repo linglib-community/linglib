@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Statistics.Cummins2015
 public import Linglib.Phonology.OptimalityTheory.Evaluation
 public import Linglib.Semantics.Quantification.Numerals.Roundness
 public import Mathlib.Data.Fin.VecNotation
@@ -23,14 +24,15 @@ same granularity level, unless *n* was primed.
 
 We derive the constraints' violations from the numeral and the context, reproduce the book's
 toy and correction tableaux from them and its approximation tableaux from their printed
-marks, and prove the bounding implicature and the exact condition for its attenuation under
-priming for arbitrary numerals.
+marks, and prove for arbitrary numerals the bounding implicature, its absence when the stronger
+numeral is less salient, and the exact condition for its attenuation under priming. The
+corrections of the book's Experiment 2 are `Cummins2015.corrections`.
 
 ## Implementation notes
 
 * Numeral salience uses the book's k-ness with a zero exponent admitted, under which 20 and
-  100 are entirely round. The book prints 50 as satisfying salience, though by its
-  definition 50 lacks 2-ness, which changes no comparison in its tableaux.
+  100 are entirely round. The tableaux print one salience mark for a numeral with no k-ness and
+  none for 50; `nsal` counts four and one, which changes no comparison in them.
 * Quantifier simplicity follows the book's simplifying assumption that a comparative incurs
   no violation and a superlative one; *exactly* and *about* incur one, as its tableaux print.
 * Informativeness reads a comparative or superlative against its own bound, the book's bound
@@ -38,6 +40,11 @@ priming for arbitrary numerals.
   approximation tableaux, which the book says do not follow from its definition, are entered
   as printed, a parenthesized star counting as one, with entire roundness as the criterion
   for the ambiguity mark that fits them.
+* The correction tableaux are derived for all four descriptions of Experiment 2; the book prints
+  those after *more than n* and *at least n − 1* and describes the other two as similar.
+* `moreThan_optimal_iff_of_primed` is exact for the derived violations: when the stronger
+  numeral is strictly more salient, as 80 is than 70, numeral priming must outrank salience as
+  well as informativeness.
 * The book assigns no numeric granularity levels to cardinals; `granularityLevel` counts
   trailing zeros, and an unset level is met by every numeral, as the book allows.
 
@@ -280,7 +287,9 @@ theorem about100_optimal (r : Ranking (Fin 3)) :
       if r.Dominates 0 2 then {about 100} else {bare 100} := by
   revert r; decide
 
--- Table 3.8
+/-- To convey exactly 99, a speaker says *99* when informativeness outranks salience, and
+otherwise *100* or *about 100* as simplicity does or does not outrank informativeness
+(Table 3.8). -/
 theorem exact99_optimal (r : Ranking (Fin 3)) :
     r.optimal (approx (.exact 99)) {bare 99, exactly 99, bare 100, about 100}
       = if r.Dominates 0 1 then {bare 99}
@@ -313,10 +322,43 @@ def Correction.candidate (n : ℕ) : Correction → Candidate
 /-- The candidates of the tableaux. -/
 def Correction.all : Finset Correction := {.moreThan, .atLeast, .atMost, .fewerThan}
 
+/-- The description a participant corrects, as a candidate: *more than n*, *fewer than n + 1*,
+*at least n − 1* or *at most n + 2*. -/
+def Prompt.candidate (n : ℕ) : Prompt → Candidate
+  | .moreThan => ⟨.moreThan, n⟩
+  | .fewerThan => ⟨.fewerThan, n + 1⟩
+  | .atLeast => ⟨.atLeast, n - 1⟩
+  | .atMost => ⟨.atMost, n + 2⟩
+
 /-- The speaker knows each box holds `n` or `n + 1` items, and the description corrected
 primed its quantifier and numeral. -/
-def correctionContext (n : ℕ) (form : Form) (numeral : ℕ) : Context :=
-  { lo := some n, hi := some (n + 1), primedNumeral := some numeral, primedForm := some form }
+def Prompt.context (n : ℕ) (p : Prompt) : Context :=
+  { lo := some n, hi := some (n + 1), primedNumeral := some (p.candidate n).numeral,
+    primedForm := some (p.candidate n).form }
+
+/-- The maximally informative comparative on the prompt's side. -/
+def Prompt.comparative : Prompt → Correction
+  | .moreThan | .atLeast => .moreThan
+  | .fewerThan | .atMost => .fewerThan
+
+/-- The maximally informative superlative on the prompt's side. -/
+def Prompt.superlative : Prompt → Correction
+  | .moreThan | .atLeast => .atLeast
+  | .fewerThan | .atMost => .atMost
+
+/-- The correction that keeps the prompt's quantifier. -/
+def Prompt.sameQuantifier : Prompt → Correction
+  | .moreThan => .moreThan
+  | .fewerThan => .fewerThan
+  | .atLeast => .atLeast
+  | .atMost => .atMost
+
+/-- The correction that keeps the prompt's numeral. -/
+def Prompt.sameNumeral : Prompt → Correction
+  | .moreThan => .atLeast
+  | .fewerThan => .atMost
+  | .atLeast => .moreThan
+  | .atMost => .fewerThan
 
 /-- The correction system ranks quantifier priming, numeral priming, quantifier simplicity and
 informativeness. -/
@@ -326,48 +368,50 @@ def corr (ctx : Context) (c : Candidate) : Fin 4 → ℕ :=
 /-- The correction system on the four corrections. -/
 def corrOn (ctx : Context) (n : ℕ) (c : Correction) : Fin 4 → ℕ := corr ctx (c.candidate n)
 
-/-- The printed marks of Table 3.9, after *more than n*, set quantifier and numeral priming
-against the corrections that change them and simplicity against the superlatives. -/
-def table3_9 (c : Correction) : Fin 4 → ℕ :=
-  ![Constraint.binary (· ≠ .moreThan) c, Constraint.binary (· ≠ .atLeast) c,
-    Constraint.binary (fun c ↦ c = .atLeast ∨ c = .atMost) c, 0]
-
-/-- The printed marks of Table 3.10, after *at least n − 1*. -/
-def table3_10 (c : Correction) : Fin 4 → ℕ :=
-  ![Constraint.binary (· ≠ .atLeast) c, Constraint.binary (· ≠ .moreThan) c,
+/-- The marks of a correction tableau set quantifier priming against every correction but `q`,
+numeral priming against every correction but `k`, and simplicity against the superlatives.
+Table 3.9, after *more than n*, is `marks .moreThan .atLeast`, and Table 3.10, after *at least
+n − 1*, is `marks .atLeast .moreThan`. -/
+def marks (q k c : Correction) : Fin 4 → ℕ :=
+  ![Constraint.binary (· ≠ q) c, Constraint.binary (· ≠ k) c,
     Constraint.binary (fun c ↦ c = .atLeast ∨ c = .atMost) c, 0]
 
 -- `Matrix.cons_val_two`/`three` are named because the `Matrix.cons_val` simproc panics on an
 -- over-applied vector at a literal index of two or more.
--- Table 3.9
-theorem corrOn_moreThan {n : ℕ} (hn : 1 ≤ n) :
-    corrOn (correctionContext n .moreThan n) n = table3_9 := by
+-- Table 3.9, Table 3.10
+theorem corrOn_context {n : ℕ} (hn : 1 ≤ n) (p : Prompt) :
+    corrOn (p.context n) n = marks p.sameQuantifier p.sameNumeral := by
   obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
   funext c i
   match i with
-  | 0 | 1 | 2 | 3 => cases c <;>
-    simp [corrOn, corr, table3_9, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
-      Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
+  | 0 | 1 | 2 | 3 => cases p <;> cases c <;>
+    simp [corrOn, corr, marks, Matrix.cons_val_two, Matrix.cons_val_three, Prompt.context,
+      Prompt.candidate, Prompt.sameQuantifier, Prompt.sameNumeral, Correction.candidate, qpri,
+      npri, qsimp, info, Form.complexity, Nat.add_assoc]
 
--- Table 3.10
-theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
-    corrOn (correctionContext n .atLeast (n - 1)) n = table3_10 := by
-  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
-  funext c i
-  match i with
-  | 0 | 1 | 2 | 3 => cases c <;>
-    simp [corrOn, corr, table3_10, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
-      Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
+/-- The rankings under which the comparative correction beats the superlative: after a
+comparative, quantifier priming or simplicity over numeral priming; after a superlative, numeral
+priming or simplicity over quantifier priming. -/
+def Prompt.ComparativeWins (r : Ranking (Fin 4)) : Prompt → Prop
+  | .moreThan | .fewerThan => r.Dominates 0 1 ∨ r.Dominates 2 1
+  | .atLeast | .atMost => r.Dominates 1 0 ∨ r.Dominates 2 0
 
-theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)) :
-    r.optimal (corrOn (correctionContext n .moreThan n) n) Correction.all =
-      if r.Dominates 0 1 ∨ r.Dominates 2 1 then {.moreThan} else {.atLeast} := by
-  rw [corrOn_moreThan hn]; revert r; decide +kernel
+instance (r : Ranking (Fin 4)) (p : Prompt) : Decidable (p.ComparativeWins r) := by
+  cases p <;> exact inferInstanceAs (Decidable (_ ∨ _))
 
-theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)) :
-    r.optimal (corrOn (correctionContext n .atLeast (n - 1)) n) Correction.all =
-      if r.Dominates 1 0 ∨ r.Dominates 2 0 then {.moreThan} else {.atLeast} := by
-  rw [corrOn_atLeast hn]; revert r; decide +kernel
+/-- Under every ranking the optimal correction of a description is the maximally informative
+comparative or superlative on its side, the comparative exactly under `Prompt.ComparativeWins`. -/
+theorem correction_optimal {n : ℕ} (hn : 1 ≤ n) (p : Prompt) (r : Ranking (Fin 4)) :
+    r.optimal (corrOn (p.context n) n) Correction.all =
+      if p.ComparativeWins r then {p.comparative} else {p.superlative} := by
+  rw [corrOn_context hn]; revert r; cases p <;> decide +kernel
+
+-- Experiment 2: most corrections of each description take one of the two forms
+-- `correction_optimal` allows.
+theorem corrected_lt_two_mul_predicted (p : Prompt) :
+    (corrections p).corrected <
+      2 * ((corrections p).superlative + (corrections p).comparative) := by
+  cases p <;> decide
 
 /-! ### The hearer, and the implicature of *more than n* (§3.4, §5.3, §5.4) -/
 
@@ -384,7 +428,9 @@ def StrongerAlternative (ctx : Context) (n m : ℕ) : Prop :=
 instance (ctx : Context) (n m : ℕ) : Decidable (StrongerAlternative ctx n m) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
--- [cummins-sauerland-solt-2012]
+/-- *more than n* is never optimal for a speaker who knows *more than m* for a stronger
+alternative `m`, unless `n` was primed, so its use implicates *not more than m*
+([cummins-sauerland-solt-2012]). -/
 theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral ≠ some n)
     (r : Ranking (Fin 6)) {cands : Finset Candidate} (hc : moreThan m ∈ cands) :
@@ -414,7 +460,54 @@ theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = so
   · show info ctx (moreThan m) < info ctx (moreThan n)
     simp only [info, moreThan, hlo]; omega
 
--- §5.4
+/-- With nothing primed and no granularity level set, *more than n* beats a true *more than m*
+with `n < m` exactly when `n` is strictly more salient and salience outranks informativeness, so
+*more than n* does not then implicate *not more than m* (§5.3). -/
+theorem moreThan_optimal_iff_of_unprimed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
+    (hnm : n < m) (hm : m < L) (hg : ctx.granularity = none) (hp : ctx.primedNumeral = none)
+    (r : Ranking (Fin 6)) :
+    r.optimal (con ctx) {moreThan n, moreThan m} = {moreThan n} ↔
+      roundness m < roundness n ∧ r.Dominates 3 0 := by
+  have h0 : con ctx (moreThan m) 0 < con ctx (moreThan n) 0 := by
+    show info ctx (moreThan m) < info ctx (moreThan n); simp only [info, moreThan, hlo]; omega
+  have h1 : con ctx (moreThan n) 1 = con ctx (moreThan m) 1 := by
+    show gran ctx (moreThan n) = gran ctx (moreThan m); simp only [gran, hg, Option.elim_none]
+  have h3 : con ctx (moreThan n) 3 < con ctx (moreThan m) 3 ↔ roundness m < roundness n := by
+    show 4 - roundness n < 4 - roundness m ↔ _; have := roundness_le_four n; omega
+  have h4 : con ctx (moreThan n) 4 = con ctx (moreThan m) 4 := by
+    show npri ctx (moreThan n) = npri ctx (moreThan m); simp only [npri, hp]
+  have hne : moreThan n ≠ moreThan m := by simp [moreThan, hnm.ne]
+  refine (Ranking.Enumeration.optimal_eq_singleton_iff_pair rfl hne).trans ?_
+  rw [Ranking.Enumeration.profile_lt_iff_exists_dominates]
+  constructor
+  · rintro ⟨i, hi, hd⟩
+    obtain rfl : i = 3 := by
+      match i with
+      | 3 => rfl
+      | 0 => exact absurd hi h0.asymm
+      | 1 => exact absurd hi h1.not_lt
+      | 4 => exact absurd hi h4.not_lt
+      | 2 | 5 => exact absurd hi (lt_irrefl _)
+    exact ⟨h3.1 hi, hd 0 h0⟩
+  · rintro ⟨hs, hd⟩
+    refine ⟨3, h3.2 hs, fun j hj ↦ ?_⟩
+    match j with
+    | 0 => exact hd
+    | 1 => exact absurd hj h1.symm.not_lt
+    | 3 => exact absurd hj (h3.2 hs).asymm
+    | 4 => exact absurd hj h4.symm.not_lt
+    | 2 | 5 => exact absurd hj (lt_irrefl _)
+
+-- (113), (116)
+example (r : Ranking (Fin 6)) :
+    r.optimal (con { lo := some 1002 }) {moreThan 1000, moreThan 1001} = {moreThan 1000} ↔
+      r.Dominates 3 0 := by
+  rw [moreThan_optimal_iff_of_unprimed rfl (by decide) (by decide) rfl rfl]
+  exact and_iff_right (by decide)
+
+/-- When `n` is primed, *more than n* beats a true stronger alternative *more than m* exactly
+when numeral priming outranks informativeness, and salience too if `m` is strictly more
+salient (§5.4). -/
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral = some n)
     (r : Ranking (Fin 6)) :
@@ -454,5 +547,12 @@ theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.
     | 3 => exact hd3 (h3.1 hj)
     | 4 => exact absurd hj h4.asymm
     | 2 | 5 => exact absurd hj (lt_irrefl _)
+
+-- (117), (118)
+example (r : Ranking (Fin 6)) :
+    r.optimal (con { lo := some 81, primedNumeral := some 70 }) {moreThan 70, moreThan 80} =
+        {moreThan 70} ↔ r.Dominates 4 0 ∧ r.Dominates 4 3 := by
+  rw [moreThan_optimal_iff_of_primed rfl (by decide) (by decide) rfl]
+  exact and_congr_right fun _ ↦ imp_iff_right (by decide)
 
 end Cummins2015
