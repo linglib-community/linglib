@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Guerrini2026
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Semantics.Reference.NominalMapping
 public import Linglib.Core.Data.Set.Functor
 
 /-!
@@ -44,7 +44,7 @@ formalized, since they need a trivalent `Gen` and a mood licensing substrate.
 
 namespace Guerrini2026
 
-open ModalLogic Genericity
+open ModalLogic
 open SetRel
 
 variable {Atom W : Type*} (R : SetRel W W) (k : W → Finset Atom) (P : Atom → W → Prop) {w : W}

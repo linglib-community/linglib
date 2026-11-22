@@ -5,7 +5,7 @@ public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Mathlib.Basic.Rel
-public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Semantics.Reference.CovertShift
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Cantonese.Determiners
@@ -78,7 +78,6 @@ cumulative but have identifiable atomic parts (`maa_cumulative_not_divisive`).
 namespace Moroney2021
 
 open Determiner Determiner.Inventory
-open Genericity
 open Mereology (CUM)
 open scoped SetRel Denotes
 

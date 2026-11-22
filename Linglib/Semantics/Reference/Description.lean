@@ -197,4 +197,17 @@ theorem anaphoric_eq_possessive (R : (ι → E) → W → Set E) (d : ι) :
 
 end Possessive
 
+/-! ### The quantifier of a definite -/
+
+/-- The quantifier of a definite holds of the sets its referent belongs to, and of none where it
+has no referent: the individual of the referent. -/
+def quantifier (nd : Definite Ctx W E) (c : Ctx) (s : W) : Quantifier E :=
+  fun V ↦ ∃ x ∈ nd c s, x ∈ V
+
+theorem quantifier_injective :
+    Function.Injective (quantifier : Definite Ctx W E → Ctx → W → Quantifier E) :=
+  fun nd nd' h ↦ funext fun c ↦ funext fun s ↦ Part.ext fun x ↦ by
+    have := congrFun (congrFun (congrFun h c) s) {x}
+    simpa [quantifier] using this
+
 end Definite

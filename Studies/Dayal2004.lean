@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Semantics.Reference.CovertShift
 public import Linglib.Semantics.Reference.Kind
 public import Linglib.Data.Examples.Dayal2004
 public import Linglib.Fragments.English.Determiners
@@ -29,7 +29,7 @@ may or may not apply to ∩.
 
 ## Implementation notes
 
-* Availability is the theory layer's (`Semantics/Genericity/MeaningPreservation.lean`), and each
+* Availability is the theory layer's (`Semantics/Reference/CovertShift.lean`), and each
   ranking is written as the predicate of its upper tier, Chierchia's `(· = .down)` and Dayal's
   `(· ≠ .exists)`. Whether ∩ is defined is a hypothesis, since it fails for plural properties
   anchored to particular entities, fn. 1; for a singular property it is `Kind.down ∘ P ∈ K`, which
@@ -65,7 +65,7 @@ may or may not apply to ∩.
 
 namespace Dayal2004
 
-open Genericity Determiner
+open Determiner
 
 /-! ### Revised Meaning Preservation (Section 2.5) -/
 

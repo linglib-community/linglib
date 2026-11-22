@@ -5,7 +5,7 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Languages
 public import Linglib.Semantics.Reference.Description
-public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Semantics.Reference.CovertShift
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Mandarin.Pinyin

@@ -24,8 +24,9 @@ and the operator 'up', ∪, of a kind `k : S → Part E` is `Kind.up ∘ k`.
 (`Kind.up_down_eq_iff`), so the two are inverse bijections between partial individuals and such
 sets (`Kind.upEquiv`). Where ∩ is defined, ∪∩ is the lower closure of the set
 (`Kind.up_down_eq_lowerClosure`), ∩ picking the element that generates it
-(`Kind.mem_down_iff_lowerClosure`). On the sets with a largest member `Kind.down` is left adjoint to `Kind.up`:
-its value is part of `e` iff the set is included in the parts of `e` (`Kind.le_iff_subset_up`).
+(`Kind.mem_down_iff_lowerClosure`). On the sets with a largest member `Kind.down` is left
+adjoint to `Kind.up`: its value is part of `e` iff the set is included in the parts of `e`
+(`Kind.le_iff_subset_up`).
 The largest member is the sum of the set where the set contains its sum
 (`Kind.down_dom_iff_sSup_mem`), so the adjunction is the one between `sSup` and `Set.Iic`, cut
 down to the sets on which the sum is attained. Closure under sums gives the

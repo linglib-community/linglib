@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Semantics.Reference.NominalMapping
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Reference.Kind
@@ -287,14 +287,13 @@ example : Kind.up (Kind.down (PL {Individual.atom true})) ≠
   rw [Kind.up_of_not_dom fun hd ↦ (Kind.down_dom.1 hd).elim fun d hd ↦ h0 d hd.1] at ht
   exact ht
 
--- (11b): one reading of *the* is the largest member of its restrictor, the value ∩ has there,
--- so the article lexicalizes the shift that ∩ is taken from.
+-- (11b): one reading of *the* refers to the largest member of its restrictor, the value ∩ has
+-- there. The article still does not lexicalize ∩ (`Determiner.Entry.not_lexicalizes_down`): a
+-- predicate of objects holds of the definite's referent and of some part of the kind's value.
 theorem the_denotes_down {E W : Type} [PartialOrder E] (R : (ℕ → E) → W → Set E) (d : ℕ)
     (g : ℕ → E) (s : W) :
     ∃ nd ∈ English.Determiners.the.denotations R d, nd g s = Kind.down (R g s) :=
-  ⟨Definite.maximal R,
-    (by decide : (Determiner.Entry.article English.Determiners.the).Lexicalizes .iota) E W R d,
-    rfl⟩
+  ⟨Definite.maximal R, ⟨.uniqueness, by decide, rfl⟩, rfl⟩
 
 end KindFormation
 
