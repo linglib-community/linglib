@@ -26,11 +26,12 @@ computation. It commutes with `⋆` (`toTwoDim_bind`) and sends `comma` to CI ap
 ## Implementation notes
 
 * The paper allows any monoid of collections and fixes sets of propositions under union, which
-  is `Writer.SetLog T`. `M T` is the transformer
-  `WriterT (SetLog T) (Writer (SetLog T))`, with `check` lifted from the presupposition monad, and
-  `ciLog` and `presupLog` return the underlying sets. The paper's condition that arrows be
-  isotone for the preorder `x ≤ y ↔ ∃ z, x · z = y`, which is `Writer.log_dvd_bind` for any
-  monoid, is then inclusion of logs.
+  is `Writer.SetLog T`. `M T` is the transformer `WriterT (SetLog T) (Writer (SetLog T))`, with
+  `check` lifted from the presupposition monad, and `ciLog` and `presupLog` return the underlying
+  sets. The paper's condition that arrows be isotone for the preorder `x ≤ y ↔ ∃ z, x · z = y`
+  is then inclusion of logs.
+* `toTwoDim` changes the log of the implicature channel `ci` along `TwoDim.sInfMonoidHom`, so
+  that it commutes with `⋆` because that map is a monoid homomorphism.
 * Glue's `⊸` elimination is the monad's `<*>`, and `⊸*` elimination is application of a function
   to monadic arguments. The introduction rules, which reason hypothetically, are not formalized.
 * `comma` and `also` take monadic arguments, so their isotonicity is not an instance of
@@ -66,11 +67,14 @@ and presuppositional conditions in the monad it transforms, so that a computatio
 `⟨⟨value, implicatures⟩, presuppositions⟩`. -/
 abbrev M (T : Type u) := WriterT (SetLog T) (Writer (SetLog T))
 
+/-- The computation of the implicature channel alone, forgetting the presuppositions. -/
+def ci (m : M T A) : Writer (SetLog T) A := m.run.val
+
 /-- The at-issue value of a computation. -/
-def atIssue (m : M T A) : A := m.run.val.1
+def atIssue (m : M T A) : A := (ci m).val
 
 /-- The conventional implicatures a computation logs. -/
-def ciLog (m : M T A) : Set T := m.run.val.2.toAdd.toSet
+def ciLog (m : M T A) : Set T := (ci m).logSet
 
 /-- The presuppositional conditions a computation logs. -/
 def presupLog (m : M T A) : Set T := m.run.logSet
@@ -81,6 +85,10 @@ def write (t : T) : M T PUnit := tell (.ofAdd (.ofSet {t}))
 /-- `check t` logs the condition `t`, to be checked once the computation has ended; it is
 `⟨⊥, {t}⟩` in the presupposition monad, lifted to the transformer. -/
 def check (t : T) : M T PUnit := monadLift (Writer.ofSet ⟨⟩ {t})
+
+@[simp] theorem ci_pure (a : A) : ci (pure a : M T A) = pure a := rfl
+
+theorem ci_bind (m : M T A) (f : A → M T B) : ci (m >>= f) = ci m >>= fun a ↦ ci (f a) := rfl
 
 @[simp] theorem atIssue_pure (a : A) : atIssue (pure a : M T A) = a := rfl
 
@@ -192,21 +200,20 @@ end also
 
 /-- The two-dimensional meaning of a computation forgets its presuppositions and takes the meet
 of the implicatures it logs. -/
-def toTwoDim (m : M (W → Prop) A) : TwoDim W A := .ofSetLog (.mk (atIssue m) m.run.val.2)
+def toTwoDim (m : M (W → Prop) A) : TwoDim W A := .ofSetLog (ci m)
 
-@[simp] theorem atIssue_toTwoDim (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := by
-  simp [toTwoDim]
+@[simp] theorem atIssue_toTwoDim (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := rfl
 
 @[simp] theorem notAtIssue_toTwoDim (m : M (W → Prop) A) :
     (toTwoDim m).notAtIssue = sInf (ciLog m) := rfl
 
 @[simp] theorem toTwoDim_pure (a : A) : toTwoDim (pure a : M (W → Prop) A) = pure a :=
-  TwoDim.ext (by simp) (by simp)
+  TwoDim.ofSetLog_pure a
 
 /-- `toTwoDim` commutes with `⋆`, the union of logs becoming the meet of not-at-issue content. -/
 theorem toTwoDim_bind (m : M (W → Prop) A) (f : A → M (W → Prop) B) :
     toTwoDim (m >>= f) = toTwoDim m >>= fun a ↦ toTwoDim (f a) :=
-  TwoDim.ext (by simp) (by simp [sInf_union])
+  TwoDim.ofSetLog_bind (ci m) fun a ↦ ci (f a)
 
 /-- The two-dimensional meaning of `comma` applied to an at-issue predicate is the CI application
 of [potts-2005]. -/

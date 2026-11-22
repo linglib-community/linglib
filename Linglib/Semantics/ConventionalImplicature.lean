@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Core.Control.Monad.Writer
+public import Mathlib.Algebra.Ring.BooleanRing
+public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
 # Conventional implicature
@@ -106,15 +108,19 @@ content of its parts. -/
 @[simp] theorem notAtIssue_bind (p : TwoDim W α) (f : α → TwoDim W β) :
     (p >>= f).notAtIssue = p.notAtIssue ⊓ (f p.atIssue).notAtIssue := rfl
 
-/-! ### Sets of implicatures
+/-! ### Sets of implicatures -/
 
-A computation that logs a set of propositions has a two-dimensional meaning by
-`Writer.SetLog.sInfMonoidHom`, the meet of what it logs. -/
+/-- The meet of a set of propositions, as a monoid homomorphism from sets under union to
+propositions under meet. -/
+def sInfMonoidHom (W : Type u) : Writer.SetLog (W → Prop) →* AsBoolRing (W → Prop) where
+  toFun s := toBoolRing (sInf s.toAdd.toSet)
+  map_one' := by simp
+  map_mul' s t := by simp [sInf_union]
 
 /-- A computation that logs a set of not-at-issue propositions denotes the two-dimensional
 meaning whose not-at-issue content is their meet. -/
 def ofSetLog (m : Writer (Writer.SetLog (W → Prop)) α) : TwoDim W α :=
-  WriterT.adapt (Writer.SetLog.sInfMonoidHom (W → Prop)) m
+  WriterT.adapt (sInfMonoidHom W) m
 
 @[simp] theorem atIssue_ofSetLog (m : Writer (Writer.SetLog (W → Prop)) α) :
     (ofSetLog m).atIssue = m.val := rfl
