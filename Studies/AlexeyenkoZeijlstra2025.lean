@@ -59,6 +59,10 @@ only before a degree word, where `licit_rows` reads the attributivizer from the 
   derives the definiteness feature of their attributive forms from the distribution of the
   strong and weak, or short and long, forms.
 * Chácobo and Eastern Oromo, whose rows and sample values are recorded, have no analysis here.
+* The paradigms of Latin, Kalaallisut, Icelandic and Serbo-Croatian, and the single uninflected
+  form of English, Mandarin, Tagalog, Atong, Basque and Japanese, are stated in `Language.forms`
+  and not read from Fragments. Tagalog adjectives may be pluralized, which the uninflected form
+  does not record.
 * A row that lacks an attributivizer its language requires, as the bare adjective with a degree
   word before a Dutch common noun does, is not covered by `licit_rows`.
 
