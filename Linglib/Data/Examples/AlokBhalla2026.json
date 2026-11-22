@@ -195,7 +195,7 @@
     "readings": [],
     "paperFeatures": [
       ["marker", "-thu"],
-      ["marker", "-thun"],
+      ["alsoMarker", "-thun"],
       ["subject", "h"],
       ["addressee", "nh"],
       ["clause", "matrix"]
@@ -242,7 +242,7 @@
     "readings": [],
     "paperFeatures": [
       ["marker", "-thi"],
-      ["marker", "-thin"],
+      ["alsoMarker", "-thin"],
       ["subject", "hh"],
       ["addressee", "hh"],
       ["clause", "matrix"]

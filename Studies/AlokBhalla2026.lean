@@ -89,7 +89,8 @@ def grades : List (String × Magahi.Grade) :=
 theorem magahi_fusion_rows :
     ∀ row ∈ Examples.all, row.language = .magahi →
       ∀ s ∈ row.parse? "subject" grades, ∀ a ∈ row.parse? "addressee" grades,
-        (row.features "marker").toFinset = (Magahi.Pronouns.allocutive s a).image toString := by
+        (row.features "marker" ++ row.features "alsoMarker").toFinset =
+          (Magahi.Pronouns.allocutive s a).image toString := by
   decide +kernel
 
 theorem magahi_allocutive_fused :
