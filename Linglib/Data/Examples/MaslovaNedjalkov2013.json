@@ -1,0 +1,287 @@
+{
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The meanings the chapter's translations give a clause.",
+    "levels": [
+      {
+        "name": "reciprocal",
+        "label": "reciprocal",
+        "doc": "the participants act on each other"
+      },
+      {
+        "name": "reflexive",
+        "label": "reflexive",
+        "doc": "the participants act on themselves"
+      },
+      {
+        "name": "collective",
+        "label": "collective",
+        "doc": "the participants act jointly"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "id": "maslovanedjalkov2013_1",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(1)"},
+      "reportedIn": null,
+      "language": "cant1236",
+      "primaryText": "Ngóh béi-min kéuih kéuih béi-min ngóh.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ngóh", "I"], ["béi-min", "give-face"], ["kéuih", "him"], ["kéuih", "he"],
+        ["béi-min", "give-face"], ["ngóh.", "me"]
+      ],
+      "translation": "He and I respect each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_2a",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(2a)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "sout2750",
+      "primaryText": "met tet-ul juo",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["met", "I"], ["tet-ul", "you-ACC"], ["juo", "see(TR.1SG)"]
+      ],
+      "translation": "I saw you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_2b",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(2b)"},
+      "reportedIn": null,
+      "method": "elicitation",
+      "language": "sout2750",
+      "primaryText": "mit n’e-juo-ji:l’i",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["mit", "we"], ["n’e-juo-ji:l’i", "RECP-see-INTR.1PL"]
+      ],
+      "translation": "We saw each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_3a",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(3a)"},
+      "reportedIn": null,
+      "language": "imba1240",
+      "primaryText": "wambra-kuna riku-ri-rka",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wambra-kuna", "child-PL"], ["riku-ri-rka", "see-REFL/RECP-PST(3)"]
+      ],
+      "translation": "The children saw each other. Or: The children saw themselves.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"},
+        {"name": "reflexive", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_3b",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(3b)"},
+      "reportedIn": null,
+      "language": "imba1240",
+      "primaryText": "ñukanchi maka-naju-nchi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ñukanchi", "we"], ["maka-naju-nchi", "hit-COLL/RECP-1PL"]
+      ],
+      "translation": "We hit jointly. Or: We hit each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "collective", "judgment": "acceptable"},
+        {"name": "reciprocal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_4",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(4)"},
+      "reportedIn": null,
+      "language": "amel1241",
+      "primaryText": "Ele ew-udo-co-b ew-udo-co-b ow-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ele", "1DU"], ["ew-udo-co-b", "despise-IO.3SG-DS-3SG"],
+        ["ew-udo-co-b", "despise-IO.3SG-DS-3SG"], ["ow-a", "1DU.SUBJ-PST"]
+      ],
+      "translation": "We (two) despise each other",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_5",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(5)"},
+      "reportedIn": null,
+      "language": "godi1239",
+      "primaryText": "wa wà-wà",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["wa", "they"], ["wà-wà", "love-love"]
+      ],
+      "translation": "They love each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_6",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(6)"},
+      "reportedIn": null,
+      "language": "kala1399",
+      "primaryText": "immi-ssin-nut tuqun-niar-pusi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["immi-ssin-nut", "REFL/RECP-2PL-ALL"], ["tuqun-niar-pusi", "kill-FUT-2PL.IND"]
+      ],
+      "translation": "You are going to kill each other/yourselves",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"},
+        {"name": "reflexive", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_7",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(7)"},
+      "reportedIn": null,
+      "language": "wang1291",
+      "primaryText": "miri gadha-la-nha",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["miri", "dog(ABS)"], ["gadha-la-nha", "bite-RECP-PRES"]
+      ],
+      "translation": "The dogs are biting each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_8",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(8)"},
+      "reportedIn": null,
+      "language": "wari1268",
+      "primaryText": "para mana’ xujuhu’",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["para", "therefore"], ["mana’", "angry"], ["xujuhu’", "REFL/RECP.2PL"]
+      ],
+      "translation": "Why are you angry with each other? Or: Why are you angry with yourselves?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"},
+        {"name": "reflexive", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_9a",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(9a)"},
+      "reportedIn": null,
+      "language": "lith1251",
+      "primaryText": "Petr-as ir On-a bučiuoja-si.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Petr-as", "Peter-NOM"], ["ir", "and"], ["On-a", "Ann-NOM"],
+        ["bučiuoja-si.", "kiss-REFL/RECP"]
+      ],
+      "translation": "Peter and Ann kiss each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reciprocal", "judgment": "acceptable"},
+        {"name": "reflexive", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "The online edition prints the verb as buèiuoja-si. The chapter says of Lithuanian that only one of the two meanings is possible for any given verb.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "maslovanedjalkov2013_9b",
+      "source": {"bibkey": "maslova-nedjalkov-2013", "paperLabel": "(9b)"},
+      "reportedIn": null,
+      "language": "lith1251",
+      "primaryText": "Ona supa-si.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ona", "Ann"], ["supa-si.", "rock-REFL/RECP"]
+      ],
+      "translation": "Ann is rocking [herself].",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "reflexive", "judgment": "acceptable"},
+        {"name": "reciprocal", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [],
+      "comment": "The chapter says of Lithuanian that only one of the two meanings is possible for any given verb.",
+      "verified": "text-layer"
+    }
+  ]
+}

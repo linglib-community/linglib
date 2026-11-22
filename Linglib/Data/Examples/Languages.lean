@@ -1288,6 +1288,9 @@ def wambayan : Glottocode := "wamb1258"
 /-- Wandala, `wand1278` (ISO 639-3 `mfi`). -/
 def wandala : Glottocode := "wand1278"
 
+/-- Ngiyambaa, `wang1291` (ISO 639-3 `wyb`). -/
+def ngiyambaa : Glottocode := "wang1291"
+
 /-- Wan, `wann1242` (ISO 639-3 `wan`). -/
 def wan : Glottocode := "wann1242"
 
@@ -1296,6 +1299,9 @@ def warao : Glottocode := "wara1303"
 
 /-- Wardaman, `ward1246` (ISO 639-3 `wrr`). -/
 def wardaman : Glottocode := "ward1246"
+
+/-- Wari', `wari1268` (ISO 639-3 `pav`). -/
+def wari : Glottocode := "wari1268"
 
 /-- Warlpiri, `warl1254` (ISO 639-3 `wbp`). -/
 def warlpiri : Glottocode := "warl1254"

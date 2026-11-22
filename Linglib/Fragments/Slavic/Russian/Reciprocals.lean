@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Fragments.Slavic.Russian.Voice
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -14,6 +15,7 @@ postfix *-sja* also forms reciprocal verbs (ex. 31) and is shared with the refle
 ## References
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -39,5 +41,15 @@ def sebja : ReflexivePronoun := { form := "sebja", script := some "себя" }
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {drugDruga, sja}
+
+/-- The forms of the reflexive voice, the postfix *-sja*, and of the reflexive pronoun *sebja*. -/
+def reflexiveForms : Finset (List Morphology.Morph) :=
+  {Russian.reflexive.marker, [.free sebja.form]}
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "rus" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end Russian.Reciprocals

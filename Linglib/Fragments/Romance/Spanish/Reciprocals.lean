@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Romance.Spanish.Clitics
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -14,6 +15,7 @@ list of the verbs is `Studies/Palmieri2024.lean`.
 
 * [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
   Beyond* (2024)][palmieri-2024]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -32,5 +34,15 @@ def bipartite : Marker :=
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {seClitic, bipartite}
+
+/-- The forms of the reflexive clitics. -/
+def reflexiveForms : Finset (List Morphology.Morph) :=
+  Spanish.Clitics.reflexive.image fun r ↦ [.free r.form]
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "spa" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end Spanish.Reciprocals

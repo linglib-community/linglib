@@ -24,6 +24,7 @@ lexicalized as part of the stem; Palmieri's appendix of these is `Studies/Palmie
 * [haspelmath-2023b]
 * [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
   Beyond* (2024)][palmieri-2024]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -41,5 +42,14 @@ def markers : Finset Marker := {anSuffix}
 
 /-- The reflexive prefix *ji-*, an argument index in the object slot. -/
 def reflexivePrefix : Morphology.Morph := .pref "ji"
+
+/-- The form of the reflexive object prefix. -/
+def reflexiveForms : Finset (List Morphology.Morph) := {[reflexivePrefix]}
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "swa" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end Swahili.Reciprocals
