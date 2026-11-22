@@ -103,8 +103,8 @@ def table : Row × Series → Finset String
 
 /-- The pronoun `f` of the row `r`, with the cases of the series it fills there. -/
 def entry (r : Row) (f : String) : PersonalPronoun :=
-  .ofCells (·.1.person) (fun _ ↦ none) (some ·.1.number) (fun _ ↦ none) (·.2.case)
-    ((Morphology.formCellsOf table f).filter (·.1 = r)) f
+  .ofTableAt (·.1.person) (fun _ ↦ none) (some ·.1.number) (fun _ ↦ none) (·.2.case) Prod.fst r
+    table f
 
 /-- The personal pronoun inventory: the entry of every form of every row. -/
 def personal : Finset PersonalPronoun :=

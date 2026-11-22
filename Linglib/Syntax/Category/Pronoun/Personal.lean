@@ -26,7 +26,8 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 * `PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber` — the person and
   number the pronoun contributes to interpretation
 * `PersonalPronoun.IsOrdinary` — the pronoun denotes what its agreement features realize
-* `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable` — the pronoun of a form in a table of
+* `PersonalPronoun.ofCells`, `PersonalPronoun.ofTable`, `PersonalPronoun.ofTableAt` — the
+  pronoun of a form in a table of
   cells, with the cases and referential categories of the cells it fills
 * `PersonalPronoun.paradigm` — the forms an inventory offers for each referential category,
   whose kernel `Setoid.ker` is the inventory's person-number syncretism
@@ -130,6 +131,14 @@ def ofCells (s : Finset C) (f : String) : PersonalPronoun :=
 /-- The personal pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : PersonalPronoun :=
   ofCells person clusivity number gender case (Morphology.formCellsOf table f) f
+
+/-- The personal pronoun `f` at the value `k` of `key` in a table, filling the cells with that
+value that the table gives it. With the row as key this is the form of one row, for a table in
+which one form serves rows that are different pronouns. -/
+def ofTableAt [Fintype C] {κ : Type*} [DecidableEq κ] (key : C → κ) (k : κ)
+    (table : C → Finset String) (f : String) : PersonalPronoun :=
+  ofCells person clusivity number gender case
+    ((Morphology.formCellsOf table f).filter (key · = k)) f
 
 end Table
 
