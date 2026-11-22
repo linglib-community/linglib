@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Processing.LanguageModel.PrefixProbability
+public import Linglib.Processing.Surprisal.PrefixProbability
 
 /-!
 # Hale (2001): A Probabilistic Earley Parser as a Psycholinguistic Model

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.GeneralizedSurprisal
+public import Linglib.Processing.Surprisal.Generalized
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Studies.Levy2008

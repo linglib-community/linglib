@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Processing.LanguageModel.Autoregressive
-public import Linglib.Processing.GeneralizedSurprisal
+public import Linglib.Processing.Surprisal.Generalized
 
 /-!
 # Giulianelli et al. (2026): Incremental Alternative Sampling

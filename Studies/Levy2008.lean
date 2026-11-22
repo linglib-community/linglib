@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Processing.LanguageModel.PrefixProbability
+public import Linglib.Processing.Surprisal.PrefixProbability
 
 /-!
 # Levy (2008): Expectation-Based Syntactic Comprehension
