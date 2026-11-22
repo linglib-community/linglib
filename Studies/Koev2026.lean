@@ -4,6 +4,7 @@ public import Studies.Kennedy2007
 public import Studies.Lassiter2017
 public import Linglib.Fragments.English.Verbs.Attitude
 public import Linglib.Logic.Modal.Basic
+public import Linglib.Core.MeasureTheory.Measure.AE
 public import Linglib.Data.Examples.Koev2026
 public import Linglib.Data.Examples.Readers
 
@@ -16,7 +17,9 @@ the credence scale and argues from its shape for a strong force. *Believe* takes
 minimizers, which [only an upper closed scale licenses](##Koev2026.fitsModifiers_iff), and on such
 a scale Interpretive Economy selects the maximum standard, so that unmodified *believe* is
 [Hintikka's universal quantification](##Koev2026.box_hintikka_iff) over the worlds the
-credence leaves open. Comparison classes and the antonym *doubt*
+credence leaves open: on a countable space those worlds generate the credence's almost-sure
+filter (`principal_hintikka`), so the belief is almost-sure truth and is consistent under a
+probability credence. Comparison classes and the antonym *doubt*
 [place its standard at an endpoint](##Koev2026.furtherEvidence_iff) as well, where *believe* and
 *doubt* are contradictories while *likely* and *unlikely*
 [leave a gap](##Koev2026.not_likely_and_not_unlikely).
@@ -242,11 +245,30 @@ theorem complementary_Ioc :
 
 section Hintikka
 open MeasureTheory ModalLogic
+open scoped SetRel
 variable {E W : Type*} [MeasurableSpace W] (Cr : E → W → Measure W)
 
 /-- Hintikka's *believe* (1) over the worlds to which a credence gives positive mass, the
 doxastic alternatives being the credence's support ([hintikka-1969]). -/
 def hintikka (x : E) : SetRel W W := {(w, v) | Cr x w {v} ≠ 0}
+
+-- The doxastic alternatives generate the almost-sure filter of the credence.
+theorem principal_hintikka [Countable W] (x : E) (w : W) :
+    Filter.principal {v | w ~[hintikka Cr x] v} = ae (Cr x w) :=
+  (ae_eq_principal_of_countable _).symm
+
+-- Hintikka's *believe* is almost-sure truth under the credence.
+theorem box_hintikka_iff_mem_ae [Countable W] (x : E) (p : Set W) (w : W) :
+    □[hintikka Cr x] (· ∈ p) w ↔ p ∈ ae (Cr x w) := by
+  rw [← principal_hintikka]; rfl
+
+-- A probability credence leaves some world open, so belief is consistent.
+instance isSerial_hintikka [Countable W] (x : E) [∀ w, IsProbabilityMeasure (Cr x w)] :
+    IsSerial (hintikka Cr x) :=
+  ⟨fun w ↦
+    have h : {v | w ~[hintikka Cr x] v}.Nonempty :=
+      Filter.principal_neBot_iff.1 (principal_hintikka Cr x w ▸ inferInstance)
+    h⟩
 
 /-- *Believe* at the standard Interpretive Economy selects on the credence scale is Hintikka's
 *believe* over the credence's support, the universal force of (1): full credence is almost-sure
@@ -258,9 +280,7 @@ theorem box_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
     □[hintikka Cr x] (· ∈ p) w ↔ p ∈ Lassiter2017.likelihood (Cr x w) ⁻¹' U := by
   rw [Boundedness.standards_defaultStandard_ofOrder] at hU
   rw [hU, UpperSet.coe_Ici, ← Lassiter2017.certain_eq_preimage,
-    Lassiter2017.mem_certain_iff_mem_ae _ .of_discrete, ← Filter.eventually_mem_set,
-    ae_iff_of_countable]
-  simp [hintikka, box_iff]
+    Lassiter2017.mem_certain_iff_mem_ae _ .of_discrete, box_hintikka_iff_mem_ae]
 
 end Hintikka
 
