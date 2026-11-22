@@ -64,9 +64,9 @@ def Suffix.timing : Suffix → IntervalAlgebra
 /-- The suffixes are medial forms that mark no switch-reference, which Northern Paiute lacks. -/
 instance : MedialForm Suffix where
   sr _ := none
-  relations
-    | .sim => {.simultaneous}
-    | .seq => {.sequential}
+  linkings
+    | .sim => {.relativeTime}
+    | .seq => {.succession}
   timing := Suffix.timing
   IndexesSubject _ := False
 

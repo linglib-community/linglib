@@ -27,12 +27,16 @@ final clause. Forms are in the Revised Romanization; Sohn writes *-ko*, *-e(se)*
   for *-geona*, *-deunji* and *-jamaja*, which his list omits, the attachment statements of
   the National Institute of Korean Language's dictionary; Sohn marks *-tunci* as excluding
   the modal, which the dictionary admits in one of its senses.
+* The kinds of linking follow the summary table of Sohn's chapter on Korean clause linking, whose
+  ways and means, a subtype it adds for *-eoseo* 'by', is classed with real manner; the manner
+  use of *-go(seo)* is the grammar's.
 * The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
 
 * [sohn-1994]
 * [sohn-1999]
+* [sohn-2009]
 * [nikl-2016]
 -/
 
@@ -131,21 +135,22 @@ def gloss : Converb → String
   | jamaja => "as soon as"
   | geona | deunji => "or"
 
-/-- The interclausal relations a converb encodes. -/
-def relations : Converb → Finset InterclauseRelation
-  | go => {.additive}
-  | goseo => {.sequential, .manner}
-  | myeonseo => {.simultaneous}
-  | eoseo => {.sequential, .causal, .manner}
+/-- The kinds of linking a converb marks. -/
+def linkings : Converb → Finset Clause.Linking
+  | go => {.succession, .unorderedAddition, .sameEventAddition}
+  | goseo => {.succession, .realManner}
+  | myeonseo => {.relativeTime, .sameEventAddition}
+  | eoseo => {.succession, .relativeTime, .cause, .result, .realManner}
   | myeon => {.conditional}
-  | jiman | na | eodo => {.concessive}
-  | dorok | ryeo | reo => {.purpose}
-  | nikka => {.causal}
-  | ni => {.causal, .sequential}
-  | neunde => {.additive, .concessive}
-  | daga => {.sequential, .simultaneous}
-  | jamaja => {.sequential}
-  | geona | deunji => ∅
+  | jiman | na => {.contrast}
+  | eodo => {.conditional, .contrast}
+  | dorok => {.relativeTime, .purpose}
+  | ryeo | reo => {.purpose}
+  | nikka | ni => {.cause}
+  | neunde => {.elaboration}
+  | daga => {.succession}
+  | jamaja => {.relativeTime}
+  | geona | deunji => {.disjunction}
 
 /-- The past or perfect may be marked on the medial verb before the converb; before
 *-myeonseo* only in its concessive reading. -/
@@ -171,11 +176,10 @@ theorem allowsModal_imp_allowsTense (c : Converb) : c.AllowsModal → c.AllowsTe
 /-- The verb form of a converb. -/
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
 
-/-- The converbs as medial forms, neutral to switch-reference, encoding their relations, and
-never indexing the subject. -/
+/-- The converbs as medial forms, neutral to switch-reference and never indexing the subject. -/
 instance : MedialForm Converb where
   sr _ := none
-  relations := relations
+  linkings := linkings
   IndexesSubject _ := False
 
 end Converb

@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.FreeMonoid.Basic
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -12,27 +13,40 @@ A clause chain is a sequence of medial clauses, dependent and morphologically re
 one final clause that supplies tense, mood and often agreement for the whole chain; Foley and Van
 Valin and Longacre take it as the prototypical cosubordinate combination of clauses, dependent but
 not embedded. A language's medial forms are an instance of `MedialForm`, which records for each
-form the switch-reference value it marks, the interclausal relations it encodes, whether it
-indexes the subject of its clause, and the cell of Allen relations in which it places the time of
-its clause relative to the time the clause is evaluated against, as a relative tense does in
+form the switch-reference value it marks, the kinds of clause linking it marks, whether it indexes
+the subject of its clause, and the cell of Allen relations in which it places the time of its
+clause relative to the time the clause is evaluated against, as a relative tense does in
 Toosarvandani's account of Northern Paiute. A language evaluates each medial clause against the
 next clause, as Manambu does, or against the final clause, as Northern Paiute does; in the first
 case the time of the first clause of a chain stands to that of the final clause in the composite
 of the cells along the chain.
 
+The kinds of linking are Dixon's: two linked clauses stand in one of sixteen semantic relations,
+the subtypes of six types. Temporal linking is succession ('and then'), relative time ('after',
+'before', 'while') or condition; consequence is cause, result or purpose; possible consequence
+('lest') stands alone; addition is unordered, of two aspects of one event, elaboration or
+contrast; alternatives are disjunction, rejection ('instead of') or suggestion ('rather than');
+and manner is real ('like') or hypothetical ('as if').
+
 ## Main definitions
 
 * `SwitchReference`: same subject or different subject.
-* `InterclauseRelation`: the relations a medial form can encode.
+* `Clause.Linking`: the sixteen kinds of clause linking, with `Clause.Linking.type` their six
+  types, `Clause.LinkingType`.
 * `MedialForm`: the class of a language's medial forms, with `MedialForm.HasSR` and
-  `MedialForm.SSUnmarked` for its switch-reference system and `MedialForm.relationsMarked`.
-* `MedialForm.chainTiming`: the cell of a chain whose clauses are each evaluated against the next.
+  `MedialForm.SSUnmarked` for its switch-reference system and `MedialForm.linkingsMarked`.
+* `MedialForm.chainTiming`: the cell of a chain whose clauses are each evaluated against the next,
+  and `MedialForm.chainTimingHom`, the same as a homomorphism from the chains under concatenation.
+
+## Implementation notes
+
+A form that leaves the kind of linking to the context, as a general medial verb does, marks none.
+Whether one clause precedes or overlaps another is not a kind of linking, 'after' and 'while'
+both being relative time; it is the `timing` of a form.
 
 ## TODO
 
-The Korean, Turkish and Nungon forms record their timing only through the relations `sequential`
-and `simultaneous`, which should give way to cells, and the relations should be Dixon's semantic
-types of clause linking.
+The Korean and Turkish forms record no timing.
 
 ## References
 
@@ -54,44 +68,78 @@ inductive SwitchReference where
   | ds
   deriving DecidableEq, Repr, Fintype
 
-/-- A semantic relation between a medial clause and the next clause that a medial form can
-encode. -/
-inductive InterclauseRelation where
-  /-- The medial event precedes the next event, in iconic order. -/
-  | sequential
-  /-- The medial event overlaps the next event. -/
-  | simultaneous
-  /-- The medial event is the reason for the next event. -/
-  | causal
-  /-- The medial event is a condition on the next event. -/
-  | conditional
-  /-- The medial event holds despite the next event. -/
-  | concessive
-  /-- The medial event specifies how the next event occurs. -/
+namespace Clause
+
+/-- The six semantic types of clause linking. -/
+inductive LinkingType where
+  | temporal
+  | consequence
+  | possibleConsequence
+  | addition
+  | alternatives
   | manner
-  /-- The events contrast. -/
-  | contrastive
-  /-- The medial event is added without temporal or causal import. -/
-  | additive
-  /-- The medial event is the purpose of the next event. -/
-  | purpose
   deriving DecidableEq, Repr, Fintype
 
-/-- The temporal relations, sequence and simultaneity. -/
-def InterclauseRelation.Temporal (r : InterclauseRelation) : Prop :=
-  r = .sequential ∨ r = .simultaneous
+/-- The kinds of clause linking, the semantic relations in which a supporting clause stands to
+its focal clause. -/
+inductive Linking where
+  /-- Temporal succession: one event and then the other. -/
+  | succession
+  /-- Relative time: the time of one event located by the other, as with 'after', 'before',
+  'when', 'since', 'until' and 'while'. -/
+  | relativeTime
+  /-- The supporting clause is a condition on the focal clause. -/
+  | conditional
+  /-- The supporting clause gives the reason for the focal clause. -/
+  | cause
+  /-- The focal clause is a natural consequence of the supporting clause. -/
+  | result
+  /-- The focal clause is done so that the event of the other will come about. -/
+  | purpose
+  /-- The supporting clause is a consequence to be guarded against, as with 'lest' and
+  'in case'. -/
+  | possibleConsequence
+  /-- Two pieces of information are added, in no order. -/
+  | unorderedAddition
+  /-- The clauses describe two aspects of one event. -/
+  | sameEventAddition
+  /-- The second clause elaborates on the first. -/
+  | elaboration
+  /-- The focal clause holds against what the supporting clause would lead one to expect, as
+  with 'but' and 'although'. -/
+  | contrast
+  /-- The clauses are alternatives, as with 'or'. -/
+  | disjunction
+  /-- One alternative is rejected for the other, as with 'instead of'. -/
+  | rejection
+  /-- One alternative is preferred to the other, as with 'rather than'. -/
+  | suggestion
+  /-- The supporting clause says how the event of the focal clause is done. -/
+  | realManner
+  /-- The supporting clause says how the event of the focal clause appears to be done, as with
+  'as if'. -/
+  | hypotheticalManner
+  deriving DecidableEq, Repr, Fintype
 
-instance : DecidablePred InterclauseRelation.Temporal :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+/-- The type of a kind of linking. -/
+def Linking.type : Linking → LinkingType
+  | .succession | .relativeTime | .conditional => .temporal
+  | .cause | .result | .purpose => .consequence
+  | .possibleConsequence => .possibleConsequence
+  | .unorderedAddition | .sameEventAddition | .elaboration | .contrast => .addition
+  | .disjunction | .rejection | .suggestion => .alternatives
+  | .realManner | .hypotheticalManner => .manner
 
-/-- A language's medial forms: the switch-reference value each marks, the interclausal relations
-it encodes, the cell in which it places the time of its clause, and whether it indexes the subject
+end Clause
+
+/-- A language's medial forms: the switch-reference value each marks, the kinds of clause linking
+it marks, the cell in which it places the time of its clause, and whether it indexes the subject
 of its clause. -/
 class MedialForm (M : Type*) where
   /-- The switch-reference value a form marks, `none` for a form neutral to it. -/
   sr : M → Option SwitchReference
-  /-- The interclausal relations a form encodes. -/
-  relations : M → Finset InterclauseRelation
+  /-- The kinds of clause linking a form marks, none for a form that leaves the kind open. -/
+  linkings : M → Finset Clause.Linking
   /-- The cell of Allen relations in which a form places the time of its clause relative to the
   time the clause is evaluated against, every relation for a form that leaves it open. -/
   timing : M → IntervalAlgebra := fun _ ↦ ⊤
@@ -124,14 +172,14 @@ instance : Decidable (HasSR M) := inferInstanceAs (Decidable (∃ m : M, sr m �
 
 instance : Decidable (SSUnmarked M) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The relations some medial form encodes. -/
-def relationsMarked : Finset InterclauseRelation := (Finset.univ : Finset M).biUnion relations
+/-- The kinds of clause linking some medial form marks. -/
+def linkingsMarked : Finset Clause.Linking := (Finset.univ : Finset M).biUnion linkings
 
 end
 
-@[simp] theorem mem_relationsMarked {M : Type*} [MedialForm M] [Fintype M]
-    {r : InterclauseRelation} : r ∈ relationsMarked M ↔ ∃ m : M, r ∈ relations m := by
-  simp [relationsMarked]
+@[simp] theorem mem_linkingsMarked {M : Type*} [MedialForm M] [Fintype M]
+    {l : Clause.Linking} : l ∈ linkingsMarked M ↔ ∃ m : M, l ∈ linkings m := by
+  simp [linkingsMarked]
 
 /-! ### Timing -/
 
@@ -145,9 +193,26 @@ def chainTiming (ms : List M) : IntervalAlgebra := (ms.reverse.map timing).prod
 
 @[simp] theorem chainTiming_nil : chainTiming ([] : List M) = 1 := rfl
 
+@[simp] theorem chainTiming_singleton (m : M) : chainTiming [m] = timing m := by
+  simp [chainTiming]
+
+theorem chainTiming_append (ms ns : List M) :
+    chainTiming (ms ++ ns) = chainTiming ns * chainTiming ms := by
+  simp [chainTiming]
+
 theorem chainTiming_concat (ms : List M) (m : M) :
     chainTiming (ms ++ [m]) = timing m * chainTiming ms := by
-  simp [chainTiming]
+  rw [chainTiming_append, chainTiming_singleton]
+
+/-- `chainTiming` as a homomorphism from the chains under concatenation, into the opposite
+monoid since a product of cells composes its second factor first. -/
+def chainTimingHom : FreeMonoid M →* IntervalAlgebraᵐᵒᵖ where
+  toFun ms := .op (chainTiming ms.toList)
+  map_one' := rfl
+  map_mul' ms ns := by rw [FreeMonoid.toList_mul, chainTiming_append, MulOpposite.op_mul]
+
+@[simp] theorem chainTimingHom_apply (ms : FreeMonoid M) :
+    chainTimingHom ms = .op (chainTiming ms.toList) := rfl
 
 end
 

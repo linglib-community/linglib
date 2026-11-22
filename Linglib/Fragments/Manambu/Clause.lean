@@ -19,22 +19,25 @@ keeps only its temporal readings.
 
 ## Main definitions
 
-* `Manambu.MedialMarker`: the nine markers, with their switch-reference values, relations and
-  timing, the inflection of the verb before them and the columns of the grammar's table of medial
-  clauses; they are a `MedialForm`.
-* `Manambu.MedialMarker.completiveRelations`: the relations of a medial clause with *napa-*.
+* `Manambu.MedialMarker`: the nine markers, with their switch-reference values, the kinds of
+  linking they mark and their timing, the inflection of the verb before them and the columns of
+  the grammar's table of medial clauses; they are a `MedialForm`.
+* `Manambu.MedialMarker.completiveLinkings`: the linking of a medial clause with *napa-*.
 
 ## Implementation notes
 
-The switch-reference values and relations follow Aikhenvald's survey of the Ndu family (Table 3),
-which gives *-ku* and *-k* one meaning and *-ta:y-kǝb* and *-kǝb* another, where the grammar pairs
-only *-ku* with *-k* (§18.1). The verb type and the predicate, negation and *napa-* columns are the
-grammar's (Table 18.1), which lets *-ta:y* and *-kǝb* head a verbless predicate besides *-n*. The
-stand-alone clauses are the survey's (§9.2), the grammar adding desubordinated *-ta:y* and *-kǝb*
-clauses (18.35, 18.47). The timing is the grammar's placement of a clause's time relative to the
-next clause's (§18.1), the adjacent clause being the one evaluated against (the 2009 chapter,
-§3.1), and *-ta:y-kǝb* takes the meet of its parts' cells. The light-root allomorphs *-tataka*
-and *-kǝkǝb* are not represented.
+The switch-reference values follow Aikhenvald's survey of the Ndu family (Table 3), which gives
+*-ku* and *-k* one meaning and *-ta:y-kǝb* and *-kǝb* another, where the grammar pairs only *-ku*
+with *-k* (§18.1). The kinds of linking are those of the 2009 chapter's summary table: temporal
+succession for *-taka* and *-kǝb*, relative time for *-ta:y*, *-n* and the completives, the last
+also a cause or a real condition, and *-n* also a real manner; *-ta:y-kǝb*, which the table omits,
+is given the linking of *-kǝb*. The verb type and the predicate, negation and *napa-* columns are
+the grammar's (Table 18.1), which lets *-ta:y* and *-kǝb* head a verbless predicate besides *-n*.
+The stand-alone clauses are the survey's (§9.2), the grammar adding desubordinated *-ta:y* and
+*-kǝb* clauses (18.35, 18.47). The timing is the grammar's placement of a clause's time relative to
+the next clause's (§18.1), the adjacent clause being the one evaluated against (the 2009 chapter,
+§3.1), and *-ta:y-kǝb* takes the meet of its parts' cells. The light-root allomorphs *-tataka* and
+*-kǝkǝb* are not represented.
 
 ## References
 
@@ -149,16 +152,15 @@ def sr : MedialMarker → Option SwitchReference
   | k | keb => some .ds
   | lek | n => none
 
-/-- The interclausal relations a marker encodes, one set for the two completives and one for the
-two 'as soon as' markers. -/
-def relations : MedialMarker → Finset InterclauseRelation
-  | ku | k => {.sequential, .causal, .conditional}
-  | tay => {.simultaneous}
-  | taka => {.sequential}
-  | keb | taykeb => {.sequential, .simultaneous}
-  | lek => {.causal}
+/-- The kinds of linking a marker marks, one set for the two completives and one for the two
+'as soon as' markers. -/
+def linkings : MedialMarker → Finset Clause.Linking
+  | ku | k => {.relativeTime, .cause, .conditional}
+  | tay => {.relativeTime}
+  | taka | keb | taykeb => {.succession}
+  | lek => {.cause}
   | gay => {.conditional}
-  | n => {.sequential, .simultaneous, .manner}
+  | n => {.relativeTime, .realManner}
 
 /-- The cell in which a marker places the time of its clause relative to the next clause's. -/
 def timing : MedialMarker → IntervalAlgebra
@@ -204,14 +206,14 @@ instance : DecidablePred StandsAlone := fun _ ↦ inferInstanceAs (Decidable (_ 
 
 instance : MedialForm MedialMarker where
   sr := sr
-  relations := relations
+  linkings := linkings
   timing := timing
   IndexesSubject := IndexesSubject
 
-/-- The relations a medial clause encodes when *napa-* carries its marker, the temporal relations
-of the marker. -/
-def completiveRelations (m : MedialMarker) : Finset InterclauseRelation :=
-  m.relations.filter InterclauseRelation.Temporal
+/-- The kinds of linking a medial clause marks when *napa-* carries its marker, the succession or
+relative time of the marker. -/
+def completiveLinkings (m : MedialMarker) : Finset Clause.Linking :=
+  m.linkings ∩ {.succession, .relativeTime}
 
 end MedialMarker
 

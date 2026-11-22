@@ -62,20 +62,20 @@ theorem completive_chain {ms : List MedialMarker} (hne : ms ≠ []) (h : ∀ m �
     · rw [MedialForm.chainTiming_nil, mul_one]
     · rw [ih hms fun m' hm' ↦ h m' (by simp [hm']), IntervalAlgebra.precedes_mul_precedes]
 
-/-- *napa-* goes only with markers that encode a temporal relation, and leaves a completive clause
-reading 'after' but not 'because'. -/
+/-- *napa-* goes only with markers of succession or relative time. -/
 theorem completive_temporal {m : MedialMarker} (h : m.WithCompletive) :
-    m.completiveRelations.Nonempty := by
+    m.completiveLinkings.Nonempty := by
   decide +revert
 
 /-- A completive clause reads 'after' or 'because', and with *napa-* only 'after'. -/
 theorem completive_readings {m : MedialMarker} (hm : m = ku ∨ m = k) :
-    (Examples.ex18_17.readings.lookup "after" = some .acceptable ↔ .sequential ∈ m.relations) ∧
-      (Examples.ex18_17.readings.lookup "because" = some .acceptable ↔ .causal ∈ m.relations) ∧
+    (Examples.ex18_17.readings.lookup "after" = some .acceptable ↔
+        .relativeTime ∈ m.linkings) ∧
+      (Examples.ex18_17.readings.lookup "because" = some .acceptable ↔ .cause ∈ m.linkings) ∧
       (Examples.ex18_53.readings.lookup "after" = some .acceptable ↔
-        .sequential ∈ m.completiveRelations) ∧
+        .relativeTime ∈ m.completiveLinkings) ∧
       (Examples.ex18_53.readings.lookup "because" = some .acceptable ↔
-        .causal ∈ m.completiveRelations) := by
+        .cause ∈ m.completiveLinkings) := by
   rcases hm with rfl | rfl <;> decide
 
 end Aikhenvald2008
