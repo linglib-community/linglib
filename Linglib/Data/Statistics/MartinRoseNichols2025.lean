@@ -25,7 +25,7 @@ namespace MartinRoseNichols2025
 open Data.Statistics
 
 /-- The verbs of the survey, in the order of Table 3. -/
-inductive Verb where
+inductive SurveyVerb where
   /-- activate: *activate* -/
   | activate
   /-- affect: *affect* -/
@@ -147,7 +147,7 @@ inductive Resultative where
   /-- Y: found with an adjectival strong resultative -/
   | yes
   /-- Y*: found with an adjectival strong resultative, and lexicalizing no state of its own -/
-  | only
+  | stateless
   deriving DecidableEq, Repr, Fintype
 
 /-- A row of Table 3: the coding of a verb of the sample. -/
@@ -165,7 +165,7 @@ structure Survey where
   deriving DecidableEq, Repr
 
 /-- The cells of Table 3, by verb; counted in a corpus; checked against the page images. -/
-def survey : Verb → Survey
+def survey : SurveyVerb → Survey
   | .activate => ⟨true, none, false, .no, true⟩
   | .affect => ⟨false, some .amuse, false, .no, true⟩
   | .change => ⟨true, some .turn, false, .no, true⟩
@@ -183,12 +183,12 @@ def survey : Verb → Survey
   | .open => ⟨true, some .otherChangeOfState, false, .no, true⟩
   | .put => ⟨false, some .put, false, .no, true⟩
   | .restore => ⟨false, some .contribute, false, .no, true⟩
-  | .set => ⟨false, some .put, false, .only, true⟩
+  | .set => ⟨false, some .put, false, .stateless, true⟩
   | .slow => ⟨true, some .otherChangeOfState, false, .no, true⟩
   | .start => ⟨true, some .aspectual, false, .no, true⟩
   | .stop => ⟨true, some .aspectual, false, .no, true⟩
-  | .trigger => ⟨false, none, false, .only, true⟩
-  | .turn => ⟨true, some .turn, false, .only, true⟩
+  | .trigger => ⟨false, none, false, .stateless, true⟩
+  | .turn => ⟨true, some .turn, false, .stateless, true⟩
   | .wakeUp => ⟨true, none, false, .no, true⟩
   | .break => ⟨true, some .break, true, .yes, false⟩
   | .bury => ⟨false, none, true, .no, false⟩

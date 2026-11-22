@@ -117,7 +117,7 @@ def melt : Verb where
 /-! ### Further change-of-state verbs
 
 The causative verbs Martin, Rose and Nichols survey or test that have no entry elsewhere in
-this file, and *die*. -/
+this file. -/
 
 /-- "activate" — sets a device or process in operation; not listed by Levin. -/
 def activate : Verb where
@@ -208,12 +208,6 @@ def ruin : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
-
-/-- "die" — Levin 48.2 verbs of disappearance; the change that *kill* causes. -/
-def die : Verb where
-  morphs := [.root "die"]
-  levin := some Levin1993.Index.die
-  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- "drop" — Levin 45.6 calibratable change-of-state verbs. -/
 def drop : Verb where

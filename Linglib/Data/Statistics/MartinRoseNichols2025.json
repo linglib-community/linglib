@@ -7,7 +7,7 @@
  },
  "types": [
   {
-   "name": "Verb",
+   "name": "SurveyVerb",
    "doc": "The verbs of the survey, in the order of Table 3.",
    "levels": [
     {
@@ -303,7 +303,7 @@
      "doc": "found with an adjectival strong resultative"
     },
     {
-     "name": "only",
+     "name": "stateless",
      "label": "Y*",
      "doc": "found with an adjectival strong resultative, and lexicalizing no state of its own"
     }
@@ -324,7 +324,7 @@
    "columns": [
     {
      "name": "verb",
-     "type": "Verb",
+     "type": "SurveyVerb",
      "doc": "The verb."
     },
     {

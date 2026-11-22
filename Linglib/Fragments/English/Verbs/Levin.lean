@@ -545,6 +545,14 @@ def appear : Verb where
   voiceType := some .nonThematic
   passivizable := false
 
+/-- *die*, an unaccusative verb of disappearance (48.2), the change that *kill* causes. -/
+def die : Verb where
+  morphs := [.root "die"]
+  levin := some Levin1993.Index.die
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
+  passivizable := false
+
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : Verb where
   morphs := [.root "fidget"]
