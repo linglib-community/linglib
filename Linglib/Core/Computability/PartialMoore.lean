@@ -76,6 +76,29 @@ def output? (s : σ) (x : List α) : Option β := (M.evalFrom s x).map M.out
 /-- Two words are read from `s` to the same state. -/
 def Nerode (s : σ) (x y : List α) : Prop := ∃ q, M.evalFrom s x = some q ∧ M.evalFrom s y = some q
 
+instance [DecidableEq σ] : Decidable (M.Nerode s x y) :=
+  decidable_of_iff (∃ q ∈ M.evalFrom s x, q ∈ M.evalFrom s y) (by simp [Nerode])
+
+namespace Nerode
+
+variable {M} {z : List α}
+
+theorem symm (h : M.Nerode s x y) : M.Nerode s y x :=
+  let ⟨q, hx, hy⟩ := h; ⟨q, hy, hx⟩
+
+theorem evalFrom_eq (h : M.Nerode s x y) : M.evalFrom s x = M.evalFrom s y :=
+  let ⟨_, hx, hy⟩ := h; hx.trans hy.symm
+
+theorem trans (h₁ : M.Nerode s x y) (h₂ : M.Nerode s y z) : M.Nerode s x z :=
+  let ⟨q, hx, hy⟩ := h₁; ⟨q, hx, h₂.evalFrom_eq ▸ hy⟩
+
+/-- Two words read to the same state stay together under any continuation. -/
+theorem evalFrom_append (h : M.Nerode s x y) (z : List α) :
+    M.evalFrom s (x ++ z) = M.evalFrom s (y ++ z) := by
+  rw [PartialMoore.evalFrom_append, PartialMoore.evalFrom_append, h.evalFrom_eq]
+
+end Nerode
+
 variable {M N} in
 private theorem evalFrom_map {h : σ → τ}
     (hA : ∀ a q q', M.Reaches s q → M.step q a = some q' → N.step (h q) a = some (h q'))

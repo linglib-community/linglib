@@ -75,6 +75,63 @@ abbrev featureStructure (u : U) :
 
 variable {I} {u v : U}
 
+@[simp] theorem toPartialMoore_step (α : Sig.Attr) : I.toPartialMoore.step u α = I.A α u := rfl
+
+/-! ### Paths -/
+
+variable (I) in
+/-- The entity that a path leads to from `u`, if every attribute along it is defined. -/
+abbrev eval (u : U) (p : Path Sig) : Option U := I.toPartialMoore.evalFrom u p
+
+theorem eval_cons (α : Sig.Attr) (p : Path Sig) :
+    I.eval u (α :: p) = (I.A α u).bind (I.eval · p) := PartialMoore.evalFrom_cons ..
+
+theorem eval_append (p q : Path Sig) : I.eval u (p ++ q) = (I.eval u p).bind (I.eval · q) :=
+  PartialMoore.evalFrom_append ..
+
+variable (I) in
+/-- The path `p` leads from `u` to an entity whose sort is at least as specific as `σ`. -/
+def SortAt (u : U) (p : Path Sig) (σ : Srt) : Prop := ∃ v ∈ I.eval u p, I.S v ≤ σ
+
+variable (I) in
+/-- The paths `p` and `q` lead from `u` to the same entity. -/
+abbrev PathEq (u : U) (p q : Path Sig) : Prop := I.toPartialMoore.Nerode u p q
+
+instance [DecidableLE Srt] (p : Path Sig) (σ : Srt) : Decidable (I.SortAt u p σ) :=
+  Option.decidableExistsMem (p := (I.S · ≤ σ)) _
+
+section SortAt
+
+variable {p q : Path Sig} {σ τ : Srt} {α : Sig.Attr}
+
+@[simp] theorem sortAt_nil : I.SortAt u [] σ ↔ I.S u ≤ σ := by simp [SortAt]
+
+theorem sortAt_cons (h : I.A α u = some v) : I.SortAt u (α :: p) σ ↔ I.SortAt v p σ := by
+  simp [SortAt, h]
+
+theorem sortAt_append : I.SortAt u (p ++ q) σ ↔ ∃ v ∈ I.eval u p, I.SortAt v q σ := by
+  rw [SortAt, eval_append]
+  cases I.eval u p <;> simp [SortAt]
+
+theorem SortAt.mono (hστ : σ ≤ τ) (h : I.SortAt u p σ) : I.SortAt u p τ :=
+  let ⟨v, hv, hσ⟩ := h; ⟨v, hv, hσ.trans hστ⟩
+
+/-- A path has values of two sorts only if the sorts have a common subsort. -/
+theorem SortAt.exists_le (hσ : I.SortAt u p σ) (hτ : I.SortAt u p τ) : ∃ ρ, ρ ≤ σ ∧ ρ ≤ τ :=
+  let ⟨v, hv, hvσ⟩ := hσ
+  let ⟨_, hw, hwτ⟩ := hτ
+  ⟨I.S v, hvσ, Option.mem_unique hv hw ▸ hwτ⟩
+
+/-- Paths that lead to the same entity have continuations with values of the same sorts. -/
+theorem PathEq.sortAt_append_iff (h : I.PathEq u p q) (r : Path Sig) :
+    I.SortAt u (p ++ r) σ ↔ I.SortAt u (q ++ r) σ := by
+  rw [SortAt, SortAt, eval, eval, h.evalFrom_append]
+
+theorem PathEq.sortAt_iff (h : I.PathEq u p q) : I.SortAt u p σ ↔ I.SortAt u q σ := by
+  simpa using h.sortAt_append_iff []
+
+end SortAt
+
 /-! ### Components -/
 
 variable (I) in
