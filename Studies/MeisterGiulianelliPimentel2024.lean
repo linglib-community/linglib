@@ -88,11 +88,9 @@ theorem simAdjSurprisal_indicatorScore_comp [IsMarkovKernel L] {V : Type*} [Meas
     [MeasurableSingletonClass V] {f : C → W → V} (hf : Measurable (f c)) (w : W) :
     simAdjSurprisal L (fun a w c ↦ indicatorScore (f c a) (f c w) c) c w =
       (surprisal ((L c).map (f c)) (f c w)).toReal := by
-  have (a : W) : ({f c w} : Set V).indicator (1 : V → ℝ) (f c a) =
-      (f c ⁻¹' {f c w}).indicator 1 a := (Set.indicator_comp_right _).symm
-  simp only [simAdjSurprisal, genSurprisal, indicatorScore, this]
-  rw [integral_indicator_one (hf (measurableSet_singleton _)), toReal_surprisal prob_le_one,
-    map_measureReal_apply hf (measurableSet_singleton _)]
+  rw [toReal_surprisal prob_le_one, map_measureReal_apply hf (measurableSet_singleton _)]
+  exact genSurprisal_indicator L _ (S := fun w c ↦ f c ⁻¹' {f c w})
+    (hf (measurableSet_singleton _))
 
 end indicatorScore
 
@@ -132,9 +130,8 @@ section informationValue
 variable (L : Kernel C A) [IsMarkovKernel L] (d : A → W → C → ℝ)
 
 theorem simAdjSurprisal_one_sub {c : C} {w : W} (hd : Integrable (fun a ↦ d a w c) (L c)) :
-    simAdjSurprisal L (1 - d) c w = -log (1 - informationValue L d c w) := by
-  simp only [simAdjSurprisal, informationValue, genSurprisal, id, Pi.sub_apply, Pi.one_apply,
-    integral_sub (integrable_const 1) hd, integral_const, probReal_univ, one_smul]
+    simAdjSurprisal L (1 - d) c w = -log (1 - informationValue L d c w) :=
+  genSurprisal_one_sub L _ hd
 
 /-- Theorem 1 (eqs. (11)–(12)): with the similarity one minus the distance, similarity-adjusted
 surprisal increases strictly with information value. -/

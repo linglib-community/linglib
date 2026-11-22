@@ -19,26 +19,32 @@ the target is the warped expected score. The score fixes what counts as an accur
 and the warping the functional relationship between prediction accuracy and the measured cost,
 the question [smith-levy-2013] ask of surprisal.
 
-Surprisal [levy-2008], through its real part, is the model with the negative logarithm and the
-indicator score, and the next-unit probability the model with the identity and the indicator: every
-warping of the indicator score is a warping of the target's probability. Information value
-[giulianelli-wallbridge-fernandez-2023], summarised by its mean, is the model with the identity and
-a distance score. A model is anticipatory when its score ignores the target and responsive
-otherwise, the distinction [pimentel-etal-2023] draw informally for reading times; an
-anticipatory model assigns every target the same value, and entropy is the anticipatory model
-that scores each alternative by its own surprisal.
+A score that is the indicator of an event of alternatives, `𝟙[a ∈ S w c]`, makes every warping
+a warping of the event's probability. Over strings the event is the set of continuations that
+begin with the target; over next units it is the target itself, and then surprisal [levy-2008],
+through its real part, is the model with the negative logarithm, and the next-unit probability
+the model with the identity. Information value [giulianelli-wallbridge-fernandez-2023], summarised
+by its mean, is the model with the identity and a distance score, and the complementary score
+`1 - g` has expected value one minus that of `g`. A model is anticipatory when its score ignores
+the target and responsive otherwise, the distinction [pimentel-etal-2023] draw informally for
+reading times; an anticipatory model assigns every target the same value, and entropy is the
+anticipatory model that scores each alternative by its own surprisal.
 
 ## Main definitions
 
 * `genSurprisal L f g c w`: the generalized surprisal of `w` in the context `c`.
 * `IsAnticipatory g`: the score `g` is constant in the target.
-* `informationValue`, `indicatorScore`.
+* `informationValue L d c w`: the expected distance `d` of the alternatives from `w`.
+* `indicatorScore`: the score that is one when the alternative is the target.
 
 ## Main results
 
+* `genSurprisal_indicator`: a warping of the indicator of an event is that warping of the
+  event's probability.
 * `genSurprisal_indicatorScore`, `genSurprisal_negLog_indicatorScore`: a warping of the
   indicator model is that warping of the target's probability; with the negative logarithm, the
   target's surprisal.
+* `genSurprisal_one_sub`: the complementary score warps one minus the expected score.
 * `IsAnticipatory.genSurprisal_eq`: an anticipatory model does not depend on the target.
 * `not_isAnticipatory_indicatorScore`: the indicator score is responsive.
 * `genSurprisal_id_surprisal`: entropy is an anticipatory generalized surprisal.
@@ -72,6 +78,20 @@ alternatives to the target, the model with the identity warping and the distance
 noncomputable def informationValue (L : Kernel C A) (d : A → W → C → ℝ) : C → W → ℝ :=
   genSurprisal L id d
 
+/-- A warping of the model whose score is the indicator of an event `S w c` of alternatives is
+that warping of the event's probability. -/
+theorem genSurprisal_indicator (L : Kernel C A) (f : ℝ → ℝ) {S : W → C → Set A} {c : C} {w : W}
+    (hS : MeasurableSet (S w c)) :
+    genSurprisal L f (fun a w c ↦ (S w c).indicator 1 a) c w = f ((L c).real (S w c)) := by
+  simp only [genSurprisal, integral_indicator_one hS]
+
+/-- The model with the complementary score `1 - g` warps one minus the expected score. -/
+theorem genSurprisal_one_sub (L : Kernel C A) (f : ℝ → ℝ) {g : A → W → C → ℝ} {c : C} {w : W}
+    [IsProbabilityMeasure (L c)] (hg : Integrable (fun a ↦ g a w c) (L c)) :
+    genSurprisal L f (1 - g) c w = f (1 - informationValue L g c w) := by
+  simp only [genSurprisal, informationValue, id, Pi.sub_apply, Pi.one_apply,
+    integral_sub (integrable_const 1) hg, integral_const, probReal_univ, one_smul]
+
 /-! ### Anticipation and responsivity -/
 
 /-- A scoring function is anticipatory when it is constant in the target, so that the model
@@ -104,8 +124,8 @@ variable [MeasurableSpace W] [MeasurableSingletonClass W] (L : Kernel C W) (c : 
 /-- A warping of the indicator model is that warping of the target's probability; with the
 identity it is the probability itself. -/
 theorem genSurprisal_indicatorScore (f : ℝ → ℝ) :
-    genSurprisal L f indicatorScore c w = f ((L c).real {w}) := by
-  simp only [genSurprisal, indicatorScore, integral_indicator_one (measurableSet_singleton w)]
+    genSurprisal L f indicatorScore c w = f ((L c).real {w}) :=
+  genSurprisal_indicator L f (S := fun w _ ↦ {w}) (measurableSet_singleton w)
 
 /-- Surprisal is the indicator model with the negative logarithm, through its real part: at a
 target of probability zero the surprisal is `∞` and both sides are `0`. -/
@@ -117,6 +137,7 @@ end indicatorScore
 
 /-! ### Entropy -/
 
+/-- The score of an alternative by the real part of its own surprisal is anticipatory. -/
 theorem isAnticipatory_surprisal (L : Kernel C A) :
     IsAnticipatory (fun a (_ : W) c ↦ (surprisal (L c) a).toReal) := fun _ _ _ _ ↦ rfl
 

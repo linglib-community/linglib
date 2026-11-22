@@ -14,9 +14,9 @@ public import Mathlib.Probability.StrongLaw
 Giulianelli, Opedal and Cotterell define generalized surprisal as a warping of the expected score
 of the continuations a language model samples (`Surprisal.genSurprisal`), and estimate it by
 warping the mean score of finitely many sampled continuations (`mcEstimate`). The estimator is
-[consistent](##ae_tendsto_mcEstimate) when the warping is continuous: by the strong law of large
+consistent when the warping is continuous (`ae_tendsto_mcEstimate`): by the strong law of large
 numbers the mean score converges almost surely to the expected score. With the identity warping it
-is also [unbiased](##integral_mcEstimate_id).
+is also unbiased (`integral_mcEstimate_id`).
 
 ## Implementation notes
 

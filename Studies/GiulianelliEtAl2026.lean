@@ -91,14 +91,13 @@ theorem genSurprisal_prefixIndicator_eq_sum (hc : μ c.cylinder ≠ 0) {w : List
 /-! ### What the indicator conflates -/
 
 theorem informationValue_one_sub_prefixIndicator (hc : μ c.cylinder ≠ 0) (w : List α) :
-    informationValue μ.continuation (fun a w c ↦ 1 - prefixIndicator a w c) c w =
+    informationValue μ.continuation (1 - prefixIndicator) c w =
       1 - ((ofMeasure μ).condPrefixProb c w).toReal := by
   have := μ.isProbabilityMeasure_continuation hc
   have hi : Integrable (fun a ↦ prefixIndicator a w c) (μ.continuation c) :=
     (integrable_const 1).indicator .of_discrete
-  rw [informationValue, genSurprisal, id, integral_sub (integrable_const _) hi, integral_const,
-    integral_prefixIndicator, condPrefixProb_ofMeasure hc]
-  simp
+  rw [condPrefixProb_ofMeasure hc, ← integral_prefixIndicator]
+  exact genSurprisal_one_sub μ.continuation id hi
 
 end LanguageModel
 
