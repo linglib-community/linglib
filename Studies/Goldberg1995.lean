@@ -414,7 +414,15 @@ each other, and the book's diagrams draw only the instance link. -/
 theorem resultative_subpart_driveCrazy :
     LinkType.subpart.Admits resultative.form driveCrazy.form :=
   LinkType.Admits.inverse_subpart <|
-    network_wellTyped .driveCrazy (.resultative, some .instance) (by decide) .instance rfl
+    network_wellTyped .driveCrazy .resultative .instance (by decide)
+
+-- *drive*-crazy, with its verb slot filled, is strictly less abstract than the resultative; the
+-- weak inequality holds of every instance link.
+example : driveCrazy.specificity < resultative.specificity :=
+  lt_of_le_of_ne
+    (LinkType.Admits.specificity_le <|
+      network_wellTyped .driveCrazy .resultative .instance (by decide))
+    (by decide)
 
 -- The links are asymmetric and proper: an open slot is not an instance of a filled one, the
 -- whole is not a subpart of its part, and no construction is a proper instance or proper

@@ -5,7 +5,8 @@ public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.Max
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.ConstructionGrammar.Basic
+public import Linglib.Syntax.ConstructionGrammar.Composition
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Data.Examples.FillmoreKayOConnor1988
 public import Linglib.Data.Examples.Readers
@@ -37,8 +38,12 @@ rows of `Data/Examples/FillmoreKayOConnor1988.json`, and `rankRows_predicted` an
 `focusRows_predicted` check them against `Felicitous` and the order in which the conjunction
 presents the stronger clause (p. 533).
 
-The construction itself is a formal idiom, a lexically open one in the sense of §1.1.3
-(`letAloneConstruction_isFormalIdiom`). Its syntax (§2.2) — a
+The construction's meaning pole is a composition rule (`Conjunction.rule`): it takes the full
+clause, as trigger, frame and focus, and the fragment's focus, asserts both propositions and
+presupposes `Felicitous`, with the conjunction fixing which clause is the stronger
+(`Conjunction.meaning`); (21) is interpreted through it (`interps_sentence21`). Each construction
+of the family is a formal idiom, a lexically open one in the sense of §1.1.3
+(`Conjunction.specificity_form`). Its syntax (§2.2) — a
 coordination that neither topicalizes nor clefts as a unit (31)–(34), admits no VP ellipsis
 because the INFL-complex belongs to the trigger F (39)–(41), and is licensed in the affective
 environments of Klima (62)–(70) yet attested under positive polarity when the fragment
@@ -64,6 +69,10 @@ Cresswell).
   without a model, as are the constituency and licensing rows of §2.2.
 * The ranks are the three the paper names; *a commissioned officer* in (106)–(107) is "made the
   lowest commissioned rank", since in a lower-set state holding some rank is holding the lowest.
+* The presupposition is a property of the scalar model, so the not-at-issue content of
+  `Conjunction.meaning` does not vary with the state of affairs. The full clause of (21) is
+  parsed flat as subject, trigger, frame and focus (`triggeredClause`), a fragment of grammar for
+  that sentence only, and the fragment's slot is constrained semantically, as a focus.
 * The (104)/(105) contrast rests on the two-dimension stipulation and on a lottery model the
   paper describes but does not build; (104) is a row without a model.
 
@@ -174,28 +183,6 @@ theorem swap_incomparable {ι : Type*} [DecidableEq ι] {δ : ι → Type*} [∀
 
 end ScalarModel
 
-/-! ### The construction (§2.1) -/
-
-/-- In the *let alone* construction F ⟨X A Y let alone B⟩ (20a) the paired foci A and B flank
-*let alone*; the shared material X and Y and the trigger F are elided from the typed form. -/
-def letAloneConstruction : Construction Unit :=
-  { form := [{ filler := .open_ .NOUN }, { filler := .fixed "let" }, { filler := .fixed "alone" },
-      { filler := .open_ .NOUN }]
-    meaning := ()
-    pragmaticPoint := true }
-
-/-- *Let alone* is a formal idiom, lexically open in form (§2.1). -/
-theorem letAloneConstruction_isFormalIdiom : letAloneConstruction.IsFormalIdiom := by decide
-
-/-- The incredulity type *Him be a doctor?* (14h), §1.1.4's formal idiom that exists "in the
-service of specific pragmatic or rhetorical purposes": a non-nominative subject with a bare-stem
-predicate. -/
-def incredulityResponse : Construction Unit :=
-  { form := [{ filler := .open_ .PRON, gf := some .subj },
-      { filler := .phrasal }]
-    meaning := ()
-    pragmaticPoint := true }
-
 /-! ### The conjunction family (p. 533) -/
 
 /-- The fragment-taking conjunctions that presuppose a scale relating their conjuncts: *let alone*,
@@ -207,7 +194,7 @@ inductive Conjunction where
   | notToMention
   | inFact
   | ifNot
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- Whether the conjunction presents the stronger clause first. -/
 def Conjunction.StrongerFirst : Conjunction → Prop
@@ -216,6 +203,85 @@ def Conjunction.StrongerFirst : Conjunction → Prop
 
 instance : DecidablePred Conjunction.StrongerFirst := fun c ↦ by
   unfold Conjunction.StrongerFirst; split <;> infer_instance
+
+/-- The words of the conjunction. -/
+def Conjunction.words : Conjunction → List String
+  | .letAlone => ["let", "alone"]
+  | .muchLess => ["much", "less"]
+  | .notToMention => ["not", "to", "mention"]
+  | .inFact => ["in", "fact"]
+  | .ifNot => ["if", "not"]
+
+/-! ### The construction (§2.1, §2.3) -/
+
+section Construction
+
+open ConventionalImplicature
+
+variable {D S : Type} [PartialOrder D]
+
+/-- (24): a sentence F ⟨X A Y *let alone* B⟩ asserts F′(X A Y) and F′(X B Y), and presupposes
+that the two are points of one scalar model, the clause the conjunction presents as the stronger
+being the more informative. -/
+def Conjunction.meaning (c : Conjunction) (pol : Polarity) (P : D → S → Prop) (a b : D) :
+    TwoDim S (S → Prop) :=
+  ⟨force pol (P a) ⊓ force pol (P b),
+    fun _ ↦ if c.StrongerFirst then Felicitous P pol a b else Felicitous P pol b a⟩
+
+/-- The denotations of the construction's parts: a focus is a point of the argument space, the
+trigger F a polarity, the frame X _ Y a propositional function, and the full clause the three
+together. -/
+inductive Den (D S : Type) where
+  | point : D → Den D S
+  | trigger : Polarity → Den D S
+  | frame : (D → S → Prop) → Den D S
+  | clause : Polarity → (D → S → Prop) → D → Den D S
+  | prop : TwoDim S (S → Prop) → Den D S
+  | inert : Den D S
+
+/-- The point of a fragment, after the words of the conjunction. -/
+def fragment? : List (Den D S) → Option D
+  | [.point b] => some b
+  | .inert :: ds => fragment? ds
+  | _ => none
+
+/-- The conjunction composes the full clause with the fragment: the fragment's focus B replaces
+the clause's focus A in the frame, under the clause's trigger. -/
+def Conjunction.rule (c : Conjunction) : CompositionRule (Den D S)
+  | .clause pol P a :: ds => (fragment? ds).map fun b ↦ .prop (c.meaning pol P a b)
+  | _ => none
+
+/-- (20a): the full clause, the conjunction, and the fragment, which is of whatever category
+the focus it contrasts with is. -/
+def Conjunction.form (c : Conjunction) : TypedForm String :=
+  { filler := .phrasal } :: c.words.map (fun w ↦ { filler := .fixed w }) ++
+    [{ filler := .semantic "focus" }]
+
+/-- The construction of each conjunction of the family, *let alone* among them. -/
+def Conjunction.construction (c : Conjunction) : Construction (CompositionRule (Den D S)) :=
+  { form := c.form, meaning := c.rule }
+
+/-- Each conjunction's construction is a formal idiom, lexically open in form (§2.1). -/
+theorem Conjunction.specificity_form (c : Conjunction) : c.form.specificity = .partiallyOpen := by
+  cases c <;> decide
+
+/-- A full clause F ⟨X A Y⟩ with an overt trigger: subject, trigger, frame and focus. -/
+def triggeredClause : Construction (CompositionRule (Den D S)) :=
+  { form := [{ filler := .open_ .PRON, gf := some .subj }, { filler := .open_ .AUX },
+      { filler := .open_ .VERB, isHead := true }, { filler := .open_ .NOUN }]
+    meaning := fun
+      | [.inert, .trigger pol, .frame P, .point a] => some (.clause pol P a)
+      | _ => none }
+
+end Construction
+
+/-- The incredulity type *Him be a doctor?* (14h), §1.1.4's formal idiom that exists "in the
+service of specific pragmatic or rhetorical purposes": a non-nominative subject with a bare-stem
+predicate. -/
+def incredulityResponse : Construction Unit :=
+  { form := [{ filler := .open_ .PRON, gf := some .subj },
+      { filler := .phrasal }]
+    meaning := () }
 
 /-! ### The paper's judgments -/
 
@@ -257,6 +323,12 @@ theorem Row.predicted_iff {P : D → S → Prop} (h : IsScalarModel P) :
     ∀ r : Row D, r.Predicted P ↔ r.FociOrdered
   | ⟨_, .negative, _, _, _⟩ => felicitous_negative_iff h
   | ⟨_, .positive, _, _, _⟩ => felicitous_positive_iff h
+
+-- The presupposition of the construction's meaning is the condition the rows are checked against.
+theorem Row.notAtIssue_meaning_iff {D S : Type} [PartialOrder D] {P : D → S → Prop} (r : Row D)
+    (s : S) : (r.conj.meaning r.pol P r.a r.b).notAtIssue s ↔ r.Predicted P := by
+  unfold Conjunction.meaning Row.Predicted Row.stronger Row.weaker
+  split_ifs <;> rfl
 
 def conjunctionTable : List (String × Conjunction) :=
   [("letAlone", .letAlone), ("muchLess", .muchLess), ("notToMention", .notToMention),
@@ -315,6 +387,58 @@ conditions of §2.3.2 with the conjunction's ordering of the stronger clause. -/
 theorem rankRows_predicted : ∀ r ∈ rankRows, (r.judgment = .acceptable ↔ r.Predicted MadeRank) := by
   simp only [Row.predicted_iff isScalarModel_mem]
   decide
+
+/-! ### (21) through the construction
+
+*He didn't make colonel, let alone general*: the full clause has the trigger *n't*, the frame
+*he made _* and the focus *colonel*; the fragment has the focus *general*. -/
+
+section Example21
+
+open PhraseStructure Morphology
+
+/-- The words of (21). -/
+def rankLexicon (w : Word) : Option (Den Rank (LowerSet Rank)) :=
+  match w.form with
+  | "he" | "let" | "alone" => some .inert
+  | "didn't" => some (.trigger .negative)
+  | "make" => some (.frame MadeRank)
+  | "colonel" => some (.point .colonel)
+  | "general" => some (.point .general)
+  | _ => none
+
+/-- *he didn't make colonel*. -/
+def clause21 : Tree Unit Word :=
+  .node () [.leaf (.mk' "he" .PRON), .leaf (.mk' "didn't" .AUX), .leaf (.mk' "make" .VERB),
+    .leaf (.mk' "colonel" .NOUN)]
+
+/-- (21): *he didn't make colonel, let alone general*. -/
+def sentence21 : Tree Unit Word :=
+  .node () [clause21, .leaf (.mk' "let" .VERB), .leaf (.mk' "alone" .ADV),
+    .leaf (.mk' "general" .NOUN)]
+
+theorem interps_clause21 :
+    interps [triggeredClause, Conjunction.letAlone.construction] rankLexicon clause21 =
+      [.clause .negative MadeRank .colonel] := rfl
+
+/-- (21) asserts that he made neither rank and presupposes that not making colonel is the more
+informative. -/
+theorem interps_sentence21 :
+    interps [triggeredClause, Conjunction.letAlone.construction] rankLexicon sentence21 =
+      [.prop (Conjunction.letAlone.meaning .negative MadeRank .colonel .general)] := by
+  rw [sentence21, interps_node]
+  simp only [interpsList, interps_clause21]
+  rfl
+
+-- The presupposition of (21) holds, and fails with the foci exchanged.
+theorem notAtIssue_21 (s : LowerSet Rank) :
+    (Conjunction.letAlone.meaning .negative MadeRank .colonel .general).notAtIssue s ∧
+      ¬ (Conjunction.letAlone.meaning .negative MadeRank .general .colonel).notAtIssue s := by
+  simp only [Conjunction.meaning, Conjunction.StrongerFirst, ite_true,
+    felicitous_negative_iff isScalarModel_mem]
+  decide
+
+end Example21
 
 /-! ### Linguists and languages: Tables 1–4, (109)–(112) -/
 
