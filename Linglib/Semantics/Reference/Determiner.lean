@@ -134,18 +134,20 @@ end Demonstrative
 /-- The `Definite`s an article can denote are the images of its admissible [schwarz-2009]
 strengths under `Definite.ofStrength`. A syncretic article such as English *the* denotes both the
 uniqueness and the anaphoric definite. -/
-noncomputable def _root_.Article.denotations (a : Article) (R : (ℕ → E) → W → Set E) (idx : ℕ) :
+noncomputable def _root_.Article.denotations [PartialOrder E] (a : Article)
+    (R : (ℕ → E) → W → Set E) (idx : ℕ) :
     Set (Definite (ℕ → E) W E) :=
   (ofStrength · R idx) '' a.strengths
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
 noncomputable instance : Denotes Article
-    (∀ (E W : Type), ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
-  ⟨fun a _ _ ↦ a.denotations⟩
+    (∀ (E W : Type) [PartialOrder E],
+      ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
+  ⟨fun a _ _ _ ↦ a.denotations⟩
 
 /-- Each denotation of an article is the definite of a strength the article marks. -/
-theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
+theorem _root_.Article.denotations_realized [PartialOrder E] (a : Article) (idx : ℕ)
     (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
     ∃ p : Strength,
       Determiner.Inventory.Realizes [.article a] p.toKind ∧ nd = ofStrength p R idx := by

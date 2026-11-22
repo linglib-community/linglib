@@ -129,24 +129,28 @@ open Genericity (CovertShift)
 open scoped Denotes
 
 /-- A determiner lexicalizes a covert shift when it denotes what the shift denotes on every
-restrictor in its domain, [dayal-2004]'s Blocking Principle. An article lexicalizes ι when one of
-its readings is the bare definite on every model, and ι^x when one is the strong article at every
-index. A demonstrative would have to equal the shift at every relation locating referents at
-participant sets, and a possessive at every possessor and possession relation, which their presuppositions
-prevent (`not_lexicalizes_demonstrative`, `not_lexicalizes_possessive`). An indefinite article is
+restrictor in its domain, [dayal-2004]'s Blocking Principle. The definite shift ι is the maximal
+definite, the largest member of the restrictor, and an article lexicalizes it when one of its
+readings is the maximal definite on every model of individuals ordered by part-of, and ι^x when
+one is the strong article at every index. A demonstrative would have to equal the shift at every
+relation locating referents at participant sets, and a possessive at every possessor and
+possession relation, which their presuppositions prevent (`not_lexicalizes_demonstrative`, `not_lexicalizes_possessive`). An indefinite article is
 ∃, and no determiner is ∩. -/
 def Lexicalizes : Entry → CovertShift → Prop
-  | .article a, .iota => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (d : ℕ),
-      Definite.unique R ∈ a.denotations R d
-  | .article a, .iotaAnaphoric => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (d : ℕ),
-      Definite.anaphoric R d ∈ a.denotations R d
+  | .article a, .iota => ∀ (E W : Type) [PartialOrder E] (R : (ℕ → E) → W → Set E) (d : ℕ),
+      Definite.maximal R ∈ a.denotations R d
+  | .article a, .iotaAnaphoric =>
+      ∀ (E W : Type) [PartialOrder E] (R : (ℕ → E) → W → Set E) (d : ℕ),
+        Definite.anaphoric R d ∈ a.denotations R d
   | .article a, .exists => ∃ d ∈ a.definiteness, d < .definite
-  | .demonstrative dem, .iota => ∀ (E W : Type) (N : SetRel (Finset SpeechAct.Role) E)
-      (R : (ℕ → E) → W → Set E) (d : ℕ), dem.denote R d N = Definite.unique R
+  | .demonstrative dem, .iota =>
+      ∀ (E W : Type) [PartialOrder E] (N : SetRel (Finset SpeechAct.Role) E)
+        (R : (ℕ → E) → W → Set E) (d : ℕ), dem.denote R d N = Definite.maximal R
   | .demonstrative dem, .iotaAnaphoric => ∀ (E W : Type) (N : SetRel (Finset SpeechAct.Role) E)
       (R : (ℕ → E) → W → Set E) (d : ℕ), dem.denote R d N = Definite.anaphoric R d
-  | .possessive p, .iota => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (possessor : (ℕ → E) → W → E)
-      (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = Definite.unique R
+  | .possessive p, .iota =>
+      ∀ (E W : Type) [PartialOrder E] (R : (ℕ → E) → W → Set E) (possessor : (ℕ → E) → W → E)
+        (rel : (ℕ → E) → W → E → E → Prop), p.denote R possessor rel = Definite.maximal R
   | .possessive p, .iotaAnaphoric => ∀ (E W : Type) (R : (ℕ → E) → W → Set E) (d : ℕ)
       (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop),
       p.denote R possessor rel = Definite.anaphoric R d
@@ -155,30 +159,29 @@ def Lexicalizes : Entry → CovertShift → Prop
 /-- The restrictor true of everything, with two satisfiers in `Bool`. -/
 private abbrev top : (ℕ → Bool) → Unit → Set Bool := fun _ _ ↦ Set.univ
 
-/-- With two satisfiers the weak article is undefined and the strong one picks the indexed
-entity. -/
-private theorem unique_ne_anaphoric : Definite.unique top ≠ Definite.anaphoric top 0 := by
+/-- With two satisfiers, one above the other, the maximal definite picks the larger and the
+anaphoric one the indexed entity. -/
+private theorem maximal_ne_anaphoric : Definite.maximal top ≠ Definite.anaphoric top 0 := by
   intro h
-  have hm : true ∈ Definite.anaphoric top 0 (fun _ ↦ true) () :=
+  have hm : false ∈ Definite.anaphoric top 0 (fun _ ↦ false) () :=
     Definite.mem_anaphoric.2 ⟨trivial, rfl⟩
-  rw [← h, Definite.unique_eq_none_of_ne (R := top) (x := true) (y := false)
-    trivial trivial (by decide)] at hm
-  exact Part.notMem_none _ hm
+  rw [← h, Definite.mem_maximal] at hm
+  exact absurd (hm.2 (Set.mem_univ true)) (by decide)
 
 theorem lexicalizes_article_iota_iff (a : Article) :
     (article a).Lexicalizes .iota ↔ .uniqueness ∈ a.strengths := by
-  refine ⟨fun h ↦ ?_, fun h _ _ R d ↦ ⟨_, h, rfl⟩⟩
+  refine ⟨fun h ↦ ?_, fun h _ _ _ R d ↦ ⟨_, h, rfl⟩⟩
   obtain ⟨p, hp, hk⟩ := h Bool Unit top 0
   cases p
   · exact hp
-  · exact absurd hk.symm unique_ne_anaphoric
+  · exact absurd hk.symm maximal_ne_anaphoric
 
 theorem lexicalizes_article_iotaAnaphoric_iff (a : Article) :
     (article a).Lexicalizes .iotaAnaphoric ↔ .familiarity ∈ a.strengths := by
-  refine ⟨fun h ↦ ?_, fun h _ _ R d ↦ ⟨_, h, rfl⟩⟩
+  refine ⟨fun h ↦ ?_, fun h _ _ _ R d ↦ ⟨_, h, rfl⟩⟩
   obtain ⟨p, hp, hk⟩ := h Bool Unit top 0
   cases p
-  · exact absurd hk unique_ne_anaphoric
+  · exact absurd hk maximal_ne_anaphoric
   · exact hp
 
 /-- A demonstrative lexicalizes no covert shift: where no referent has the indexed one in its
@@ -192,8 +195,8 @@ theorem not_lexicalizes_demonstrative (dem : DemonstrativeDeterminer) (τ : Cove
     simp at hv
   cases τ
   · exact id
-  · exact fun h ↦ key (Definite.unique fun _ _ ↦ Set.univ)
-      (Definite.unique_dom.2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
+  · exact fun h ↦ key (Definite.maximal fun _ _ ↦ Set.univ)
+      (Definite.maximal_dom.2 ⟨(), trivial, fun _ _ ↦ le_rfl⟩)
       (h Unit Unit ∅ _ 0)
   · exact fun h ↦ key (Definite.anaphoric (fun _ _ ↦ Set.univ) 0)
       (Definite.anaphoric_dom.2 trivial)
@@ -211,8 +214,8 @@ theorem not_lexicalizes_possessive (p : PossessiveDeterminer) (τ : CovertShift)
       simp at hk
   cases τ
   · exact id
-  · exact fun h ↦ key (Definite.unique fun _ _ ↦ Set.univ)
-      (Definite.unique_dom.2 ⟨(), trivial, fun _ _ ↦ rfl⟩)
+  · exact fun h ↦ key (Definite.maximal fun _ _ ↦ Set.univ)
+      (Definite.maximal_dom.2 ⟨(), trivial, fun _ _ ↦ le_rfl⟩)
       (h Unit Unit _ _ _)
   · exact fun h ↦ key (Definite.anaphoric (fun _ _ ↦ Set.univ) 0)
       (Definite.anaphoric_dom.2 trivial) (h Unit Unit _ 0 _ _)
