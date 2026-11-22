@@ -120,7 +120,7 @@ instance : CommMagma (LinearizationState side ι) where
       rcases selCombine ⟨some s₂⟩ ⟨some s₁⟩ with _ | ⟨_ | _, _, _⟩ <;> rfl
 
 /-- The projection to the selection state: forgetting the order description. -/
-def sel : LinearizationState side ι →ₙ* SelectionState where
+def sel : LinearizationState side ι →ₙ* SelectionState SelStack where
   toFun x := ⟨x.toOption.map (·.1)⟩
   map_mul' x y := by
     match x, y with

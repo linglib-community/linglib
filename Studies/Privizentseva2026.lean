@@ -34,8 +34,8 @@ which [selection before saturation licenses](##raisingRelative_licensed).
   (`pronounVariable_and_crossover_uniform`); the book concludes that they do not rest on
   c-command in syntax, and they are not modelled as structural.
 * Rows with speaker variation (`%`, the second idiom) are left out of `rows`.
-* `PendingState` is a one-field structure over `Option`, as `Minimalist.SelectionState` is. Its
-  product never discharges a pending selector: an object has nothing pending once the item
+* `PendingState` is the selection state (`Minimalist.SelectionState`) of the discipline `Pending`.
+  Its product never discharges a pending selector: an object has nothing pending once the item
   selected before it was saturated is copied out, leaving a saturated trace.
 * The derivations of section 5.2.2 number their traces by their movers
   (`Minimalist.Derivation.moverIndex`), and a licensing reads a numbered trace from the state of
@@ -298,40 +298,31 @@ section ProjectingMovement
 
 open Minimalist
 
-/-- A selection state that lets an item still selecting be selected (section 5.5): the head, its
-remaining selectors, and the selectors pending from items selected before they were saturated;
-`0` where Merge fails. -/
-structure PendingState where
-  toOption : Option (LexicalItem.Token × List Cat × Multiset Cat)
+/-- What a head has yet to select when an item still selecting may be selected (section 5.5): its
+remaining selectors, and the selectors pending from items selected before they were saturated. -/
+structure Pending where
+  /-- The head's remaining selectors. -/
+  stack : List Cat
+  /-- The selectors pending from items selected before they were saturated. -/
+  pending : Multiset Cat
   deriving DecidableEq
+
+/-- A head selects a sister of the category on top of its stack, which need not be saturated; the
+sister's remaining selectors become pending. -/
+instance : Selection Pending where
+  select r b u :=
+    if r.stack.head? = some b.item.cat then some ⟨r.stack.tail, r.pending + u.pending + u.stack⟩
+    else none
+
+/-- The selection state of selection before saturation: the head, its remaining selectors and
+the pending ones; `0` where Merge fails. -/
+abbrev PendingState : Type := SelectionState Pending
 
 namespace PendingState
 
 /-- The state with head `tok`, remaining selectors `stack` and pending selectors `pending`. -/
 def of (tok : LexicalItem.Token) (stack : List Cat) (pending : Multiset Cat) : PendingState :=
-  ⟨some (tok, stack, pending)⟩
-
-instance : Zero PendingState := ⟨⟨none⟩⟩
-
-/-- Recursor for `PendingState` using the preferred forms `0` and `of tok stack pending`. -/
-@[elab_as_elim, induction_eliminator, cases_eliminator]
-def recZeroOf {motive : PendingState → Sort*} (zero : motive 0)
-    (of : ∀ tok stack pending, motive (of tok stack pending)) : ∀ x, motive x
-  | ⟨none⟩ => zero
-  | ⟨some (tok, stack, pending)⟩ => of tok stack pending
-
-/-- One factor selects the other, which need not be saturated; the selectee's remaining selectors
-become pending. -/
-instance : MulZeroClass PendingState where
-  mul
-    | ⟨some (a, ra, p)⟩, ⟨some (b, rb, q)⟩ =>
-      if ra.head? = some b.item.cat ∧ rb.head? ≠ some a.item.cat then of a ra.tail (p + q + rb)
-      else if rb.head? = some a.item.cat ∧ ra.head? ≠ some b.item.cat then
-        of b rb.tail (p + q + ra)
-      else 0
-    | _, _ => 0
-  zero_mul _ := rfl
-  mul_zero x := by cases x <;> rfl
+  SelectionState.of tok ⟨stack, pending⟩
 
 section
 
@@ -341,19 +332,16 @@ theorem of_mul_of : of a ra p * of b rb q =
     if ra.head? = some b.item.cat ∧ rb.head? ≠ some a.item.cat then of a ra.tail (p + q + rb)
     else if rb.head? = some a.item.cat ∧ ra.head? ≠ some b.item.cat then
       of b rb.tail (p + q + ra)
-    else 0 := rfl
+    else 0 := by
+  simp only [SelectionState.mul_def, of, SelectionState.of, selCombine, Selection.select]
+  by_cases h₁ : ra.head? = some b.item.cat <;> by_cases h₂ : rb.head? = some a.item.cat <;>
+    simp [h₁, h₂, add_comm p q] <;> rfl
 
-@[simp] theorem of_ne_zero : of a ra p ≠ 0 := mt (congrArg toOption) (Option.some_ne_none _)
-
-instance : CommMagma PendingState where
-  mul_comm x y := by
-    cases x <;> cases y <;> try rfl
-    simp only [of_mul_of]
-    split_ifs <;> simp_all [add_comm]
+@[simp] theorem of_ne_zero : of a ra p ≠ 0 := SelectionState.of_ne_zero _ _
 
 /-- The selection state of a state with nothing pending, and `0` otherwise. -/
-def toSelectionState : PendingState → SelectionState
-  | ⟨some (a, ra, p)⟩ => if p = 0 then .of a ra else 0
+def toSelectionState : PendingState → SelectionState SelStack
+  | ⟨some (a, r)⟩ => if r.pending = 0 then .of a r.stack else 0
   | ⟨none⟩ => 0
 
 @[simp] theorem toSelectionState_zero : toSelectionState 0 = 0 := rfl
@@ -363,9 +351,11 @@ theorem toSelectionState_of :
 
 theorem toSelectionState_ne_zero_iff {x : PendingState} :
     x.toSelectionState ≠ 0 ↔ ∃ a ra, x = of a ra 0 := by
-  cases x with
+  cases x using SelectionState.recZeroOf with
   | zero => exact iff_of_false (fun h ↦ h rfl) fun ⟨a, ra, h⟩ ↦ of_ne_zero _ _ _ h.symm
-  | of a ra p =>
+  | of a r =>
+    obtain ⟨ra, p⟩ := r
+    change (of a ra p).toSelectionState ≠ 0 ↔ ∃ b rb, of a ra p = of b rb 0
     rw [toSelectionState_of]
     split_ifs with hp
     · subst hp
@@ -376,15 +366,19 @@ end
 
 /-- Triggered Merge is selection before saturation with nothing pending, as a morphism of
 magmas. -/
-def toSelectionStateHom : PendingState →ₙ* SelectionState where
+def toSelectionStateHom : PendingState →ₙ* SelectionState SelStack where
   toFun := toSelectionState
   map_mul' x y := by
-    cases x with
+    cases x using SelectionState.recZeroOf with
     | zero => rw [zero_mul, toSelectionState_zero, zero_mul]
-    | of a ra p =>
-      cases y with
+    | of a r =>
+      cases y using SelectionState.recZeroOf with
       | zero => rw [mul_zero, toSelectionState_zero, mul_zero]
-      | of b rb q =>
+      | of b u =>
+        obtain ⟨ra, p⟩ := r
+        obtain ⟨rb, q⟩ := u
+        change (of a ra p * of b rb q).toSelectionState =
+          (of a ra p).toSelectionState * (of b rb q).toSelectionState
         rw [of_mul_of, toSelectionState_of, toSelectionState_of]
         rcases ra with _ | ⟨c, ra⟩ <;> rcases rb with _ | ⟨c', rb⟩ <;>
           by_cases hp : p = 0 <;> by_cases hq : q = 0 <;>
@@ -397,15 +391,16 @@ def toSelectionStateHom : PendingState →ₙ* SelectionState where
 /-- The state of the trace of an object: its head with nothing left to select, and what was pending
 on the object. -/
 def saturate : PendingState → PendingState
-  | ⟨some (a, _, p)⟩ => .of a [] p
+  | ⟨some (a, r)⟩ => .of a [] r.pending
   | ⟨none⟩ => 0
 
 theorem toSelectionState_saturate (x : PendingState) :
     x.saturate.toSelectionState = x.toSelectionState.saturate := by
-  cases x with
+  cases x using SelectionState.recZeroOf with
   | zero => rfl
-  | of a ra p =>
-    show (of a [] p).toSelectionState = _
+  | of a r =>
+    obtain ⟨ra, p⟩ := r
+    change (of a [] p).toSelectionState = (of a ra p).toSelectionState.saturate
     rw [toSelectionState_of, toSelectionState_of]
     split_ifs <;> rfl
 
