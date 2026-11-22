@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.Divisibility.Basic
 public import Mathlib.Control.Monad.Writer
 
 /-!
@@ -14,6 +15,7 @@ log never feeds a value.
 
 * `Writer.val`, `Writer.log`: the value and the log of a computation.
 * `WriterT.instLawfulMonadList`: the monad laws for list logs, over any lawful monad.
+* `WriterT.instLawfulMonadLift`: lifting into a writer monad with monoid logs is a monad morphism.
 
 ## Implementation notes
 
@@ -37,6 +39,18 @@ instance instLawfulMonadList : LawfulMonad (WriterT (List P) M) := LawfulMonad.m
   (pure_bind := fun _ _ ↦ by ext; simp)
   (bind_assoc := fun _ _ _ ↦ by ext; simp)
   (bind_pure_comp := fun _ _ ↦ by ext; simp)
+
+/-- Lifting a computation into a writer monad with monoid logs commutes with `pure` and `bind`. -/
+instance instLawfulMonadLift {ω : Type u} [Monoid ω] : LawfulMonadLift M (WriterT ω M) where
+  monadLift_pure a := by
+    ext
+    change (fun a ↦ (a, (1 : ω))) <$> pure a = pure (a, 1)
+    simp
+  monadLift_bind m f := by
+    ext
+    change (fun a ↦ (a, (1 : ω))) <$> (m >>= f) = (fun a ↦ (a, 1)) <$> m >>= fun x ↦
+      (fun y ↦ (y.1, x.2 * y.2)) <$> (fun a ↦ (a, (1 : ω))) <$> f x.1
+    simp
 
 end WriterT
 
@@ -111,5 +125,10 @@ on list logs. -/
 theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
     m.log <+: (m >>= f).log :=
   ⟨(f m.val).log, rfl⟩
+
+/-- The log of `m >>= f` is a right multiple of the log of `m`, so composition is isotone for the
+divisibility preorder of a monoid of logs. -/
+theorem log_dvd_bind [Monoid ω] (m : Writer ω A) (f : A → Writer ω B) : m.log ∣ (m >>= f).log :=
+  Dvd.intro _ rfl
 
 end Writer

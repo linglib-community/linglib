@@ -1,36 +1,45 @@
 module
 
 public import Linglib.Core.Control.Monad.Writer
+public import Linglib.Data.Examples.GiorgoloAsudeh2012
+public import Linglib.Semantics.ConventionalImplicature
+public import Mathlib.Data.Set.Semiring
 
 /-!
 # Giorgolo and Asudeh (2012): ⟨M, η, ⋆⟩ Monads for Conventional Implicatures
 
-Giorgolo and Asudeh treat conventional implicature as the side effect of a Writer monad: an
-expression denotes a computation that yields its at-issue value and logs the side-issue
-propositions of its parts. Since bind passes its continuation only the value and only extends the
-log, no lexical item can read or revise the side-issue dimension, as Potts's restriction on the
-flow of information demands and as the impossible modifier *negex* of Barker, Bernardi and Shan
-would. Presupposition triggers log their conditions in a second Writer layer. In "John, who likes
-cats, likes dogs also" the implicature entails the presupposition once the computation has ended,
-which is the paper's reply to the case of AnderBois, Brasoveanu and Henderson against
-multidimensionality.
+A meaning is a computation of a writer monad: it yields an at-issue value and logs a set of
+side-issue propositions. The unit `η` logs nothing, and `m ⋆ f` has the value of `f` at the value
+of `m` and the union of the two logs, `⟨x, P⟩ ⋆ f = ⟨π₁ (f x), P ∪ π₂ (f x)⟩`. A second writer
+layer logs the conditions that presupposition triggers impose, to be checked once composition has
+ended. In "John, who likes cats, likes dogs also" the logged implicature then entails the logged
+presupposition, although no step of the composition reads either log.
 
 ## Main definitions
 
 * `M`: the two-channel monad, conventional implicatures over presuppositions.
 * `write`, `check`: logging an implicature and a presuppositional condition.
+* `comma`, `also`: the lexical entries that log, a non-restrictive relative clause and an
+  additive presupposition trigger.
+* `toTwoDim`: the two-dimensional meaning of a computation, whose not-at-issue content is the meet
+  of the logged implicatures.
 
 ## Implementation notes
 
-* The two channels are the transformer `WriterT (List CI) (Writer (List Presup))`, over the Writer
-  surface of `Core/Control/Monad/Writer.lean`, with `check` lifted from the presupposition
-  monad as fn. 4 prescribes. The paper's logs are sets under union; these are lists. It requires
-  the arrows to be isotone in the log for the preorder `x ≤ y ↔ ∃ z, x * z = y`, which is `x ∣ y`
-  in mathlib and on lists, the free monoid, the prefix order (`Writer.log_prefix_bind`).
-* Glue's `⊸` elimination is the monad's `<*>`, and `⊸*` elimination plain application to monadic
-  arguments; the introduction rules, which reason hypothetically, are not needed.
-* The extension of *like* is a parameter: the presupposition of *also* follows from the logged
-  implicature alone, given that cats are not dogs.
+* The paper allows any monoid of collections and fixes sets of propositions under union, which
+  is `Log T`, mathlib's `SetSemiring T` read multiplicatively. `M T` is the transformer
+  `WriterT (Log T) (Writer (Log T))`, with `check` lifted from the presupposition monad, and
+  `ciLog` and `presupLog` return the underlying sets. The paper's condition that arrows be
+  isotone for the preorder `x ≤ y ↔ ∃ z, x · z = y`, which is `Writer.log_dvd_bind` for any
+  monoid, is then inclusion of logs.
+* Glue's `⊸` elimination is the monad's `<*>`, and `⊸*` elimination is application of a function
+  to monadic arguments. The introduction rules, which reason hypothetically, are not formalized.
+* `comma` and `also` take monadic arguments, so their isotonicity is not an instance of
+  `ciLog_subset_bind`; it is read off `ciLog_comma` and `ciLog_also`.
+* The examples the paper discusses are the rows of `Data/Examples/GiorgoloAsudeh2012.json`. The
+  worked sentence is `Examples.ga2012_20`; the paper's account of the binding contrast
+  `Examples.ga2012_9` and `Examples.ga2012_10` and of the ellipsis and anaphora cases rests on
+  discourse-level resolution after composition, which is not formalized.
 
 ## References
 
@@ -45,82 +54,170 @@ multidimensionality.
 
 namespace GiorgoloAsudeh2012
 
+open ConventionalImplicature
+
 universe u
 
-variable {CI Presup A B : Type u}
+variable {T W A B : Type u}
 
 /-! ### The two channels -/
 
-/-- The two-channel monad logs conventional implicatures in the transformer and presuppositional
-conditions in the monad it transforms, so that a computation's result is the paper's
-⟨⟨value, implicatures⟩, presuppositions⟩. -/
-abbrev M (CI Presup : Type u) := WriterT (List CI) (Writer (List Presup))
+/-- The monoid of sets of propositions under union. -/
+abbrev Log (T : Type u) := Multiplicative (SetSemiring T)
+
+/-- The two-channel monad over propositions `T` logs conventional implicatures in the transformer
+and presuppositional conditions in the monad it transforms, so that a computation's result is
+`⟨⟨value, implicatures⟩, presuppositions⟩`. -/
+abbrev M (T : Type u) := WriterT (Log T) (Writer (Log T))
 
 /-- The at-issue value of a computation. -/
-def atIssue (m : M CI Presup A) : A := m.run.val.1
+def atIssue (m : M T A) : A := m.run.val.1
 
 /-- The conventional implicatures a computation logs. -/
-def ciLog (m : M CI Presup A) : List CI := m.run.val.2
+def ciLog (m : M T A) : Set T := m.run.val.2.toAdd.toSet
 
 /-- The presuppositional conditions a computation logs. -/
-def presupLog (m : M CI Presup A) : List Presup := m.run.log
+def presupLog (m : M T A) : Set T := m.run.log.toAdd.toSet
 
-/-- `write t` logs the conventional implicature `t`, the paper's `write(t) = ⟨⊥, {t}⟩`. -/
-def write (p : CI) : M CI Presup PUnit := tell [p]
+/-- `write t` logs the conventional implicature `t`, as `⟨⊥, {t}⟩`. -/
+def write (t : T) : M T PUnit := tell (.ofAdd (.ofSet {t}))
 
-/-- `check t` logs a condition to be checked once the computation has ended, lifted from the
-presupposition monad as the paper's fn. 4 prescribes. -/
-def check (p : Presup) : M CI Presup PUnit := monadLift (tell [p] : Writer (List Presup) PUnit)
+/-- `check t` logs the condition `t`, to be checked once the computation has ended; it is
+`⟨⊥, {t}⟩` in the presupposition monad, lifted to the transformer. -/
+def check (t : T) : M T PUnit := monadLift (tell (.ofAdd (.ofSet {t})) : Writer (Log T) PUnit)
 
-@[simp] theorem atIssue_pure (a : A) : atIssue (pure a : M CI Presup A) = a := rfl
+@[simp] theorem atIssue_pure (a : A) : atIssue (pure a : M T A) = a := rfl
 
-@[simp] theorem ciLog_pure (a : A) : ciLog (pure a : M CI Presup A) = [] := rfl
+@[simp] theorem ciLog_pure (a : A) : ciLog (pure a : M T A) = ∅ := rfl
 
-@[simp] theorem presupLog_pure (a : A) : presupLog (pure a : M CI Presup A) = [] := rfl
+@[simp] theorem presupLog_pure (a : A) : presupLog (pure a : M T A) = ∅ := rfl
 
-@[simp] theorem atIssue_bind (m : M CI Presup A) (f : A → M CI Presup B) :
+@[simp] theorem atIssue_bind (m : M T A) (f : A → M T B) :
     atIssue (m >>= f) = atIssue (f (atIssue m)) := rfl
 
-@[simp] theorem ciLog_bind (m : M CI Presup A) (f : A → M CI Presup B) :
-    ciLog (m >>= f) = ciLog m ++ ciLog (f (atIssue m)) := rfl
+@[simp] theorem ciLog_bind (m : M T A) (f : A → M T B) :
+    ciLog (m >>= f) = ciLog m ∪ ciLog (f (atIssue m)) := rfl
 
-@[simp] theorem presupLog_bind (m : M CI Presup A) (f : A → M CI Presup B) :
-    presupLog (m >>= f) = presupLog m ++ presupLog (f (atIssue m)) := rfl
+@[simp] theorem presupLog_bind (m : M T A) (f : A → M T B) :
+    presupLog (m >>= f) = presupLog m ∪ presupLog (f (atIssue m)) := rfl
 
-@[simp] theorem ciLog_write (p : CI) : ciLog (write p : M CI Presup PUnit) = [p] := rfl
+@[simp] theorem atIssue_map (g : A → B) (m : M T A) : atIssue (g <$> m) = g (atIssue m) := rfl
 
-@[simp] theorem presupLog_write (p : CI) : presupLog (write p : M CI Presup PUnit) = [] := rfl
+@[simp] theorem ciLog_map (g : A → B) (m : M T A) : ciLog (g <$> m) = ciLog m := rfl
 
-@[simp] theorem ciLog_check (p : Presup) : ciLog (check p : M CI Presup PUnit) = [] := rfl
+@[simp] theorem presupLog_map (g : A → B) (m : M T A) : presupLog (g <$> m) = presupLog m := rfl
 
-@[simp] theorem presupLog_check (p : Presup) : presupLog (check p : M CI Presup PUnit) = [p] :=
-  rfl
+@[simp] theorem ciLog_write (t : T) : ciLog (write t) = {t} := rfl
 
-theorem ciLog_prefix_bind (m : M CI Presup A) (f : A → M CI Presup B) :
-    ciLog m <+: ciLog (m >>= f) :=
-  ⟨ciLog (f (atIssue m)), rfl⟩
+@[simp] theorem presupLog_write (t : T) : presupLog (write t) = ∅ := rfl
+
+@[simp] theorem ciLog_check (t : T) : ciLog (check t) = ∅ := rfl
+
+@[simp] theorem presupLog_check (t : T) : presupLog (check t) = {t} := rfl
+
+/-- The log of `m >>= f` includes the log of `m`, so no item composed by `⋆` removes or revises
+an implicature already logged. -/
+theorem ciLog_subset_bind (m : M T A) (f : A → M T B) : ciLog m ⊆ ciLog (m >>= f) :=
+  Set.subset_union_left
+
+theorem presupLog_subset_bind (m : M T A) (f : A → M T B) :
+    presupLog m ⊆ presupLog (m >>= f) :=
+  Set.subset_union_left
 
 /-! ### Shan's application
 
-Glue's `⊸` elimination composes at-issue items by Shan's application (15),
+Glue's `⊸` elimination composes at-issue items by the application of [shan-2001],
 `A(f)(x) = f ⋆ λg. x ⋆ λy. η(g y)`, which is the monad's `<*>`; the value is the application and
 both logs are threaded. -/
 
-/-- Shan's application (15) is the monad's `<*>`. -/
-theorem seq_eq_bind_bind (f : M CI Presup (A → B)) (x : M CI Presup A) :
+theorem seq_eq_bind_bind (f : M T (A → B)) (x : M T A) :
     f <*> x = f >>= fun g ↦ x >>= fun y ↦ pure (g y) := by
   simp only [seq_eq_bind_map, map_eq_pure_bind]
 
-@[simp] theorem atIssue_seq (f : M CI Presup (A → B)) (x : M CI Presup A) :
+@[simp] theorem atIssue_seq (f : M T (A → B)) (x : M T A) :
     atIssue (f <*> x) = atIssue f (atIssue x) := rfl
 
-@[simp] theorem ciLog_seq (f : M CI Presup (A → B)) (x : M CI Presup A) :
-    ciLog (f <*> x) = ciLog f ++ ciLog x := rfl
+@[simp] theorem ciLog_seq (f : M T (A → B)) (x : M T A) :
+    ciLog (f <*> x) = ciLog f ∪ ciLog x := rfl
 
-@[simp] theorem presupLog_seq (f : M CI Presup (A → B)) (x : M CI Presup A) :
-    presupLog (f <*> x) = presupLog f ++ presupLog x := rfl
+@[simp] theorem presupLog_seq (f : M T (A → B)) (x : M T A) :
+    presupLog (f <*> x) = presupLog f ∪ presupLog x := rfl
 
-/-! ### "John, who likes cats, likes dogs also" (20) -/
+/-! ### The entries that log -/
+
+/-- The prosodic element `comma`, `λj λl. j ⋆ λx. l ⋆ λf. write(f x) ⋆ λ_. η(x)`, introduces a
+non-restrictive relative clause: it logs the clause's content about its anchor and returns the
+anchor. -/
+def comma (j : M T A) (l : M T (A → T)) : M T A :=
+  j >>= fun x ↦ l >>= fun f ↦ write (f x) >>= fun _ ↦ pure x
+
+/-- The presupposition trigger `also`,
+`λv λo λs. s ⋆ λx. v ⋆ λf. o ⋆ λy. check(∃z. f z x ∧ z ≠ y) ⋆ λ_. η(f y x)`, logs the condition
+that the subject bears the relation to something other than the object and returns the at-issue
+proposition. -/
+def also (v : M (W → Prop) (B → A → W → Prop)) (o : M (W → Prop) B) (s : M (W → Prop) A) :
+    M (W → Prop) (W → Prop) :=
+  s >>= fun x ↦ v >>= fun f ↦ o >>= fun y ↦
+    check (fun w ↦ ∃ z, f z x w ∧ z ≠ y) >>= fun _ ↦ pure (f y x)
+
+section comma
+
+variable (j : M T A) (l : M T (A → T))
+
+@[simp] theorem atIssue_comma : atIssue (comma j l) = atIssue j := rfl
+
+@[simp] theorem ciLog_comma :
+    ciLog (comma j l) = ciLog j ∪ ciLog l ∪ {atIssue l (atIssue j)} := by
+  simp [comma]
+
+@[simp] theorem presupLog_comma : presupLog (comma j l) = presupLog j ∪ presupLog l := by
+  simp [comma]
+
+end comma
+
+section also
+
+variable (v : M (W → Prop) (B → A → W → Prop)) (o : M (W → Prop) B) (s : M (W → Prop) A)
+
+@[simp] theorem atIssue_also :
+    atIssue (also v o s) = atIssue v (atIssue o) (atIssue s) := rfl
+
+@[simp] theorem ciLog_also : ciLog (also v o s) = ciLog s ∪ ciLog v ∪ ciLog o := by
+  simp [also, Set.union_assoc]
+
+@[simp] theorem presupLog_also :
+    presupLog (also v o s) = presupLog s ∪ presupLog v ∪ presupLog o ∪
+      {fun w ↦ ∃ z, atIssue v z (atIssue s) w ∧ z ≠ atIssue o} := by
+  simp [also, Set.union_assoc]
+
+end also
+
+/-! ### Two-dimensional meanings -/
+
+/-- The two-dimensional meaning of a computation pairs its at-issue value with the meet of the
+implicatures it logs. -/
+def toTwoDim (m : M (W → Prop) A) : TwoDim W A := ⟨atIssue m, sInf (ciLog m)⟩
+
+@[simp] theorem toTwoDim_atIssue (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := rfl
+
+@[simp] theorem toTwoDim_notAtIssue (m : M (W → Prop) A) :
+    (toTwoDim m).notAtIssue = sInf (ciLog m) := rfl
+
+@[simp] theorem toTwoDim_pure (a : A) : toTwoDim (pure a : M (W → Prop) A) = pure a :=
+  TwoDim.ext rfl sInf_empty
+
+/-- `toTwoDim` commutes with `⋆`, the union of logs becoming the meet of not-at-issue content. -/
+theorem toTwoDim_bind (m : M (W → Prop) A) (f : A → M (W → Prop) B) :
+    toTwoDim (m >>= f) = toTwoDim m >>= fun a ↦ toTwoDim (f a) :=
+  TwoDim.ext rfl sInf_union
+
+/-- The two-dimensional meaning of `comma` applied to an at-issue predicate is the CI application
+of [potts-2005]. -/
+theorem toTwoDim_comma_pure (j : M (W → Prop) A) (f : A → W → Prop) :
+    toTwoDim (comma j (pure f)) = (toTwoDim j).ciApply f :=
+  TwoDim.ext rfl (by simp [inf_comm])
+
+/-! ### "John, who likes cats, likes dogs also" -/
 
 namespace Ex20
 
@@ -131,61 +228,41 @@ inductive E
   | dogs
   deriving DecidableEq, Repr
 
-variable (like : E → E → Prop)
+variable {W : Type} (like : E → E → W → Prop)
 
-/-- The prosodic element `comma` of Table 1, `λj λl. j ⋆ λx. l ⋆ λf. write(f x) ⋆ λ_. η(x)`,
-introduces the non-restrictive relative clause; it logs the clause's content about its anchor and
-returns the anchor. -/
-def comma (j : M Prop Prop E) (l : M Prop Prop (E → Prop)) : M Prop Prop E :=
-  j >>= fun x ↦ l >>= fun f ↦ write (f x) >>= fun _ ↦ pure x
+/-- The at-issue items, η-lifted. -/
+def john : M (W → Prop) E := pure .john
 
-/-- The presupposition trigger `also` of Table 1,
-`λv λo λs. s ⋆ λx. v ⋆ λf. o ⋆ λy. check(∃z. f z x ∧ z ≠ y) ⋆ λ_. η(f y x)`, logs the
-presupposition that the subject bears the relation to something other than the object and returns
-the at-issue proposition. -/
-def also (v : M Prop Prop (E → E → Prop)) (o s : M Prop Prop E) : M Prop Prop Prop :=
-  s >>= fun x ↦ v >>= fun f ↦ o >>= fun y ↦ check (∃ z, f z x ∧ z ≠ y) >>= fun _ ↦ pure (f y x)
+def who : M (W → Prop) ((E → W → Prop) → E → W → Prop) := pure id
 
-/-- The at-issue items of Table 1, η-lifted. -/
-def john : M Prop Prop E := pure .john
+def likes : M (W → Prop) (E → E → W → Prop) := pure fun y x ↦ like x y
 
-def who : M Prop Prop ((E → Prop) → E → Prop) := pure id
+def cats : M (W → Prop) E := pure .cats
 
-def likes : M Prop Prop (E → E → Prop) := pure fun y x ↦ like x y
-
-def cats : M Prop Prop E := pure .cats
-
-def dogs : M Prop Prop E := pure .dogs
+def dogs : M (W → Prop) E := pure .dogs
 
 /-- "who likes cats", by `⊸` elimination. -/
-def whoLikesCats : M Prop Prop (E → Prop) := who <*> (likes like <*> cats)
+def whoLikesCats : M (W → Prop) (E → W → Prop) := who <*> (likes like <*> cats)
 
 /-- The sentence, by `⊸*` elimination. -/
-def sentence : M Prop Prop Prop := also (likes like) dogs (comma john (whoLikesCats like))
+def sentence : M (W → Prop) (W → Prop) :=
+  also (likes like) dogs (comma john (whoLikesCats like))
 
-/-- The at-issue proposition of Figure 1 is that John likes dogs. -/
 theorem atIssue_sentence : atIssue (sentence like) = like .john .dogs := rfl
 
-/-- The side-issue log of Figure 1 holds that John likes cats. -/
-theorem ciLog_sentence : ciLog (sentence like) = [like .john .cats] := rfl
+theorem ciLog_sentence : ciLog (sentence like) = {like .john .cats} := by
+  simp [sentence, whoLikesCats, john, who, likes, cats, dogs]
 
-/-- The presupposition of *also* in Figure 1 is that John likes something other than the
-dogs. -/
 theorem presupLog_sentence :
-    presupLog (sentence like) = [∃ z, like .john z ∧ z ≠ .dogs] := rfl
+    presupLog (sentence like) = {fun w ↦ ∃ z, like .john z w ∧ z ≠ .dogs} := by
+  simp [sentence, whoLikesCats, john, who, likes, cats, dogs]
 
-/-- Once both logs are exposed, the conventional implicature entails the presupposition, since
-John likes cats and cats are not dogs. -/
-theorem presupposition_of_ci (h : ∀ q ∈ ciLog (sentence like), q) :
-    ∀ p ∈ presupLog (sentence like), p := by
-  simp only [presupLog_sentence, List.mem_singleton, forall_eq]
-  exact ⟨.cats, h _ (by simp [ciLog_sentence]), by decide⟩
-
-/-- The relative clause never reaches the at-issue dimension, since whatever it says, the
-sentence's at-issue value is that John likes dogs. -/
-theorem atIssue_sentence_congr (l l' : M Prop Prop (E → Prop)) :
-    atIssue (also (likes like) dogs (comma john l)) =
-      atIssue (also (likes like) dogs (comma john l')) := rfl
+/-- Once both logs are exposed, the conventional implicatures entail the presuppositions: John
+likes cats, and cats are not dogs. -/
+theorem sInf_ciLog_le_sInf_presupLog :
+    sInf (ciLog (sentence like)) ≤ sInf (presupLog (sentence like)) := by
+  rw [ciLog_sentence, presupLog_sentence, sInf_singleton, sInf_singleton]
+  exact fun w h ↦ ⟨.cats, h, by decide⟩
 
 end Ex20
 
