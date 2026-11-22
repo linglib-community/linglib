@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `RomeroHan2004` — typed example data
@@ -91,7 +93,7 @@ def isnt_jane_coming_too : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negation", "preposed"), ("form", "pi"), ("item", "too"), ("bias", "positive")] }
+    paperFeatures := [("negation", "preposed"), ("form", "pi"), ("item", "too"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def isnt_jane_coming_either : Datum :=
   { id := "romerohan2004_isnt_jane_coming_either"
@@ -104,7 +106,7 @@ def isnt_jane_coming_either : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negation", "preposed"), ("form", "ni"), ("item", "either"), ("bias", "positive")] }
+    paperFeatures := [("negation", "preposed"), ("form", "ni"), ("item", "either"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def is_jane_really_coming_too : Datum :=
   { id := "romerohan2004_is_jane_really_coming_too"
@@ -323,6 +325,171 @@ def korean_nonpreposed_long : Datum :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def all : List Datum := [doesnt_john_drink, does_john_not_drink, does_john_drink, does_john_really_drink, isnt_jane_coming, isnt_jane_coming_too, isnt_jane_coming_either, is_jane_really_coming_too, is_jane_really_coming_either, is_jane_not_coming_too, is_jane_not_coming_either, greek_preposed, greek_nonpreposed, spanish_preposed, spanish_nonpreposed, bulgarian_preposed, bulgarian_nonpreposed, german_preposed, german_nonpreposed, korean_preposed, korean_nonpreposed_short, korean_nonpreposed_long]
+def isnt_jane_coming_either_95 : Datum :=
+  { id := "romerohan2004_isnt_jane_coming_either_95"
+    source := ⟨"romero-han-2004", "(95)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Isn't Jane coming either?"
+    glossedTokens := []
+    context := "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. S originally believes that Jane is not coming. A: Pat is not coming. But fortunately for the phonologists we still have Jane..."
+    judgment := .unacceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "ni"), ("scenario", "contradictionNotP")] }
+
+def isnt_jane_coming_too_100 : Datum :=
+  { id := "romerohan2004_isnt_jane_coming_too_100"
+    source := ⟨"romero-han-2004", "(100)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Isn't Jane coming too?"
+    glossedTokens := []
+    context := "S originally believes that Jane is not coming. A: Pat already came, but we still have to wait for Jane."
+    judgment := .unacceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "pi"), ("scenario", "contradictionNotP")] }
+
+def hasnt_frege_already_reviewed : Datum :=
+  { id := "romerohan2004_hasnt_frege_already_reviewed"
+    source := ⟨"romero-han-2004", "(105)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Hasn't Frege already reviewed for us? He'd be a good one."
+    glossedTokens := []
+    context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody who has experience with our regulations."
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "pi"), ("scenario", "suggestionP")] }
+
+def hasnt_frege_reviewed_yet : Datum :=
+  { id := "romerohan2004_hasnt_frege_reviewed_yet"
+    source := ⟨"romero-han-2004", "(106)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Hasn't Frege reviewed for us yet? He'd be a good one."
+    glossedTokens := []
+    context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody new."
+    judgment := .unacceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "ni"), ("scenario", "suggestionNotP")] }
+
+def is_jane_really_coming : Datum :=
+  { id := "romerohan2004_is_jane_really_coming"
+    source := ⟨"romero-han-2004", "(110)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Is Jane really coming?"
+    glossedTokens := []
+    context := "A: Pat already came, but we still have to wait for Jane."
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "really"), ("bias", "negative"), ("scenario", "contradictionNotP")] }
+
+def has_frege_really_reviewed : Datum :=
+  { id := "romerohan2004_has_frege_really_reviewed"
+    source := ⟨"romero-han-2004", "(116)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Has Frege really reviewed for us already? He'd be a good one."
+    glossedTokens := []
+    context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, and I'd prefer somebody who has experience with our regulations."
+    judgment := .unacceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "really"), ("scenario", "suggestionP")] }
+
+def is_jane_not_coming_117 : Datum :=
+  { id := "romerohan2004_is_jane_not_coming_117"
+    source := ⟨"romero-han-2004", "(117)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Is Jane NOT coming (either)?"
+    glossedTokens := []
+    context := "A: Pat is not coming. And we don't need to wait for Jane..."
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "notFocus"), ("bias", "positive"), ("scenario", "contradictionP")] }
+
+def has_frege_not_reviewed_yet : Datum :=
+  { id := "romerohan2004_has_frege_not_reviewed_yet"
+    source := ⟨"romero-han-2004", "(120)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Has Frege NOT reviewed for us yet? He'd be a good one."
+    glossedTokens := []
+    context := "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody new who has not yet reviewed for us."
+    judgment := .unacceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("form", "notFocus"), ("scenario", "suggestionNotP")] }
+
+def all : List Datum := [doesnt_john_drink, does_john_not_drink, does_john_drink, does_john_really_drink, isnt_jane_coming, isnt_jane_coming_too, isnt_jane_coming_either, is_jane_really_coming_too, is_jane_really_coming_either, is_jane_not_coming_too, is_jane_not_coming_either, greek_preposed, greek_nonpreposed, spanish_preposed, spanish_nonpreposed, bulgarian_preposed, bulgarian_nonpreposed, german_preposed, german_nonpreposed, korean_preposed, korean_nonpreposed_short, korean_nonpreposed_long, isnt_jane_coming_either_95, isnt_jane_coming_too_100, hasnt_frege_already_reviewed, hasnt_frege_reviewed_yet, is_jane_really_coming, has_frege_really_reviewed, is_jane_not_coming_117, has_frege_not_reviewed_yet]
+
+/-- Where the negation of a yes/no question sits. -/
+inductive NegationPlacement where
+  /-- preposed: negation preposed with the finite verb -/
+  | preposed
+  /-- nonPreposed: negation in its clause-internal position -/
+  | nonPreposed
+  /-- none: a positive question -/
+  | absent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `negation`. -/
+def negation (e : Datum) : Option NegationPlacement :=
+  e.parse? "negation" [("preposed", .preposed), ("nonPreposed", .nonPreposed), ("none", .absent)]
+
+/-- The epistemic implicature the paper reports for a question. -/
+inductive Bias where
+  /-- positive: the speaker believed or expected the proposition -/
+  | positive
+  /-- negative: the speaker believed or expected its negation -/
+  | negative
+  /-- none: no epistemic implicature is necessary -/
+  | absent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `bias`. -/
+def bias (e : Datum) : Option Bias :=
+  e.parse? "bias" [("positive", .positive), ("negative", .negative), ("none", .absent)]
+
+/-- The yes/no questions containing VERUM. -/
+inductive Form where
+  /-- pi: preposed negation on the reading that double-checks p, the PI-question -/
+  | pi
+  /-- ni: preposed negation on the reading that double-checks ¬p, the NI-question -/
+  | ni
+  /-- really: a positive question with really -/
+  | really
+  /-- notFocus: non-preposed negation with polarity focus on NOT -/
+  | notFocus
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `form`. -/
+def form (e : Datum) : Option Form :=
+  e.parse? "form" [("pi", .pi), ("ni", .ni), ("really", .really), ("notFocus", .notFocus)]
+
+/-- The context a question is asked in, relative to its proposition p. -/
+inductive Scenario where
+  /-- contradictionP: the speaker believed p and the addressee implied ¬p -/
+  | contradictionP
+  /-- contradictionNotP: the speaker believed ¬p and the addressee implied p -/
+  | contradictionNotP
+  /-- suggestionP: the addressee raised a question he cannot answer, to which p is a possible answer -/
+  | suggestionP
+  /-- suggestionNotP: the addressee raised a question he cannot answer, to which ¬p is a possible answer -/
+  | suggestionNotP
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `scenario`. -/
+def scenario (e : Datum) : Option Scenario :=
+  e.parse? "scenario" [("contradictionP", .contradictionP), ("contradictionNotP", .contradictionNotP),
+    ("suggestionP", .suggestionP), ("suggestionNotP", .suggestionNotP)]
 
 end RomeroHan2004.Examples

@@ -4,44 +4,58 @@ public import Linglib.Data.Examples.RomeroHan2004
 public import Linglib.Discourse.CommonGround
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Bias
 public import Linglib.Syntax.Negation
-public import Mathlib.Order.Interval.Set.Defs
 public import Linglib.Data.Examples.Readers
 
 /-!
 # Romero and Han (2004): On negative yes/no questions
 
-This file formalizes the paper's derivation of the epistemic bias of yes/no questions with preposed
-negation from one assumption: preposing negation contributes the conversational epistemic operator
-VERUM, FOR-SURE-CG (43), true at a world when the proposition is in the common ground at every world
-satisfying the conversational goals of an individual `x` at every world conforming to the knowledge
-of `x`, `x` being the addressee, or the addressee and the speaker together. With `epi` and `conv`
-the accessibility relations of `x`, it is the necessity `□[epi ○ conv] (p ∈ cg ·)`,
-which `ModalLogic.box_comp` unfolds into the paper's two quantifiers. A question over VERUM
-partitions on certainty about adding the proposition to the common ground rather than on the
-proposition, `denotation_eq`, a meta-conversational move licit only under a prior bias; the paper's
-positive and negative readings are the two scopes of negation relative to VERUM, distinguished by
-which polarity items they license, `Licensed`. The polarity of the implicature is fixed not by the
-partition, which the positive reading shares with a *really*-question, but by the pronounced cell:
-pronouncing certainty asks for conclusive evidence, so the speaker believes the negation, and
-pronouncing uncertainty asks for doubts, so the speaker believes the proposition,
-`speakerBelief_eq`. The paper's examples are rows: the polarity-item judgments follow licensing, and
-the bias of every question with preposed negation and of every VERUM form is the one the model
-implicates, `bias_of_form`.
+This file formalizes yes/no questions over the conversational epistemic operator VERUM. For an
+individual `x` with epistemic accessibility `epi` and conversational goals `conv`, and a common
+ground `cg w` at each world, VERUM of a proposition `q` holds at `w` when `q` is in the common
+ground at every world satisfying the goals of `x` at every world conforming to the knowledge of
+`x` at `w`, which is the necessity `□[epi ○ conv] (q ∈ cg ·) w`.
+
+A logical form `l : LF` places a polarity `l.inner` on the clause under VERUM and a polarity
+`l.outer` over VERUM. The question pronounces the cell `l.outer • VERUM (l.inner • p)` and denotes
+the polar question over it, which does not depend on `l.outer` (`LF.denotation_eq`). Preposed
+negation is one negation in either position, `LF.pi` and `LF.ni`, and a *really*-question is
+`LF.really`. When the relation is serial and every common ground is consistent, certainty of
+`pᶜ` excludes certainty of `p`, so the cell `LF.ni` pronounces lies inside the cell `LF.pi`
+pronounces (`LF.pronounced_ni_subset_pronounced_pi`).
+
+The cell that is pronounced fixes what the question asks of the addressee's evidence, a set of
+propositions `ev`. We write `Must ev q` when `ev` contains `q` and not `qᶜ`. A question
+pronouncing certainty asks whether `Must ev (l.inner • p)`, and a question pronouncing doubt asks
+whether `ev` contains `(l.inner • p)ᶜ` (`LF.Intent`). An addressee who asserted a proposition
+has `Must` of it, so some evidence answers the question after the addressee contradicted the
+speaker exactly when the speaker believed `l.implicature • p`
+(`LF.felicitous_contradiction_iff`). An addressee who raised a question without answering it has
+`Must` of none of its answers, so some evidence answers a question over one of those answers
+exactly when it pronounces doubt (`LF.felicitous_suggestion_iff`).
+
+A polarity item in the clause under VERUM is licensed by the polarity of that clause alone, the
+classical licenser of `(l.inner • ·)`, which admits positive items when the clause is positive and
+negative items when it is negative (`LF.admits_iff`).
 
 ## Implementation notes
 
 The common ground at a world is a filter of propositions, so acceptance is closed under entailment
 and conjunction where the paper speaks of a set of propositions. VERUM is not a named operator of
 its own: other analyses built on it, Repp's FALSUM among them, are necessities along the same
-relation of the common ground's acceptance of a proposition or its failure to. Speaker belief is the
-epistemic proposition of the states settling a proposition, `Set.Iic`. A question's form is the
-position of its negation, `Option Negation.Position`, what matters being its position relative to
-the rest of the clause, preposed or not; a bias is the sign of the proposition the speaker's belief
-supports. The Principle of Economy that makes VERUM questions biased is stated in the paper in prose
-and is not formalized.
+relation of the common ground's acceptance of a proposition or its failure to.
+
+The paper grades belief by the amount of evidence for and against a proposition. Only two grades
+are formalized, having evidence for a proposition and having evidence for it and none against it,
+and evidence against a proposition is evidence for its complement. Conclusive evidence, knowing
+an answer and the belief the Maxim of Quality requires of an assertion are all the second grade.
+
+A question with focused *NOT* has the logical form of the negative reading of preposed negation,
+`LF.ni`. The Principle of Economy, which makes a question over VERUM require a prior bias, and the
+polarity of the implicature in suggestion contexts are stated in the paper in prose and are not
+formalized.
 
 ## References
 
@@ -57,145 +71,257 @@ and is not formalized.
 
 namespace RomeroHan2004
 
-open scoped ModalLogic
-open Question (polar polar_compl)
-open Set (Iic)
-
-open scoped SetRel
+open scoped ModalLogic SetRel
+open NaturalLogic PolarityItem
+open Question (polar polar_smul)
 
 variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
-/-! ### The four VERUM questions -/
+/-! ### Questions over VERUM -/
 
-/-- The yes/no questions containing VERUM, namely the positive reading of preposed negation, with
-negation over VERUM (73), the negative reading, with VERUM over negation (68), the
-*really*-question (111), and focused *NOT* (118). -/
-inductive Form
-  | pi
-  | ni
-  | really
-  | notFocus
+/-- The logical form of a yes/no question over VERUM, by the polarity over VERUM and the polarity
+of the clause under it. -/
+structure LF where
+  /-- The polarity over VERUM, negative when negation takes scope over it. -/
+  outer : Polarity
+  /-- The polarity of the clause under VERUM. -/
+  inner : Polarity
   deriving DecidableEq, Fintype
 
-/-- The proposition under VERUM is the proposition for the positive reading and *really*, and its
-negation for the negative reading and focused *NOT*. -/
-def prejacent : Form → Set W
-  | .pi | .really => p
-  | .ni | .notFocus => pᶜ
+namespace LF
 
-/-- Whether the form pronounces the doubt cell, the complement of VERUM, as only the positive
-reading, where negation scopes over VERUM, does. -/
-def Form.Doubt : Form → Prop
-  | .pi => True
-  | .ni | .really | .notFocus => False
+/-- (101): the positive reading of preposed negation, with negation over VERUM. -/
+def pi : LF := ⟨.negative, .positive⟩
 
-instance : DecidablePred Form.Doubt := λ f => by cases f <;> unfold Form.Doubt <;> infer_instance
+/-- (68): the negative reading of preposed negation, with VERUM over negation. -/
+def ni : LF := ⟨.positive, .negative⟩
 
-/-- The cell a form pronounces, VERUM of the prejacent or its complement. -/
-def pronounced (f : Form) : Set W :=
-  if f.Doubt then {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w}ᶜ
-  else {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w}
+/-- (47): a positive question with *really*. -/
+def really : LF := ⟨.positive, .positive⟩
 
-/-- The question a form denotes is the polar question over the pronounced cell. -/
-def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
+variable (l : LF)
 
-/-- Every VERUM question denotes the partition on certainty about its prejacent (48), (69),
-(74), whichever cell it pronounces. -/
-theorem denotation_eq (f : Form) :
-    denotation epi conv cg p f =
-      polar {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w} := by
-  unfold denotation pronounced
-  split_ifs <;> simp
+/-- The cell a question pronounces, VERUM of the clause under it or the complement. -/
+def pronounced : Set W := l.outer • {w | □[epi ○ conv] (l.inner • p ∈ cg ·) w}
+
+/-- The question a logical form denotes is the polar question over the pronounced cell. -/
+def denotation : Question W := polar (l.pronounced epi conv cg p)
+
+/-- A question over VERUM denotes the partition on certainty about the clause under VERUM,
+whichever cell it pronounces. -/
+theorem denotation_eq :
+    l.denotation epi conv cg p = polar {w | □[epi ○ conv] (l.inner • p ∈ cg ·) w} :=
+  polar_smul _ _
 
 -- (84), (85)
-theorem denotation_pi_eq_really :
-    denotation epi conv cg p .pi = denotation epi conv cg p .really := by
-  simp [denotation_eq, prejacent]
+theorem denotation_pi_eq_denotation_really :
+    pi.denotation epi conv cg p = really.denotation epi conv cg p := by
+  rw [denotation_eq, denotation_eq]; rfl
 
-/-! ### The epistemic implicature
+-- the doubt cell holds every other degree of certainty, certainty of the negation among them
+theorem pronounced_ni_subset_pronounced_pi [ModalLogic.IsSerial (epi ○ conv)]
+    (h : ∀ w, (cg w).NeBot) : ni.pronounced epi conv cg p ⊆ pi.pronounced epi conv cg p :=
+  fun w hn hp ↦
+    have ⟨v, hv⟩ := ModalLogic.IsSerial.serial (R := epi ○ conv) w
+    have := h v
+    Filter.compl_notMem (hp v hv) (hn v hv)
 
-A question pronouncing certainty about its prejacent asks for conclusive evidence for it,
-which the addressee can only supply if the prejacent is the addressee's proposition and its
-negation the speaker's belief; a question pronouncing uncertainty asks for doubts, so the
-prejacent is the speaker's belief. -/
+end LF
 
-/-- The speaker's original belief implicated by a form is the epistemic proposition of the
-states settling the prejacent's negation, or the prejacent itself for the doubt cell. -/
-def speakerBelief (f : Form) : Set (Set W) :=
-  if f.Doubt then Iic (prejacent p f) else Iic (prejacent p f)ᶜ
+/-! ### The intent of a question -/
 
-/-- The bias each form implicates is belief in the proposition for the preposed-negation
-readings (81), (82) and focused *NOT* (117), and belief in its negation for *really* (110). -/
-def Form.implicature : Form → Polarity
-  | .pi | .ni | .notFocus => .positive
-  | .really => .negative
+/-- (91b): the evidence `ev` holds evidence for `q` and none against it. -/
+def Must (ev : Set (Set W)) (q : Set W) : Prop := q ∈ ev ∧ qᶜ ∉ ev
 
-theorem speakerBelief_eq (f : Form) : speakerBelief p f = Iic (f.implicature • p) := by
-  cases f <;> simp [speakerBelief, Form.Doubt, Form.implicature, prejacent]
+/-- The contexts in which a question over a proposition is asked. -/
+inductive Scenario where
+  /-- The speaker believed the proposition of the given polarity and the addressee asserted or
+  implied the opposite one. -/
+  | contradiction (speaker : Polarity)
+  /-- The addressee raised a question he cannot answer, to which the proposition of the given
+  polarity is a possible answer. -/
+  | suggestion (answer : Polarity)
+  deriving DecidableEq
 
-/-! ### Polarity items
+/-- What a scenario tells the speaker about the addressee's evidence: by the Maxim of Quality the
+addressee has `Must` of what he asserted, and by the Maxim of Quantity he has `Must` of no answer
+to a question he left open. -/
+def Scenario.Premise (ev : Set (Set W)) : Scenario → Prop
+  | .contradiction s => Must ev ((.negative * s) • p)
+  | .suggestion a => ¬Must ev (a • p)
 
-Positive polarity items are licensed under VERUM in a positive clause and negative ones in
-a negative clause (70), (71), (75), (76); VERUM intervenes between negation and the clause
-in the positive reading, so the clause is negated only in the negative reading and under
-focused *NOT*. -/
+namespace LF
 
-/-- Whether the clause under VERUM is negated. -/
-def Form.Negated : Form → Prop
-  | .ni | .notFocus => True
-  | .pi | .really => False
+variable (l : LF)
 
-instance : DecidablePred Form.Negated := λ f => by
-  cases f <;> unfold Form.Negated <;> infer_instance
+/-- (98), (103): what a question asks of the addressee's evidence, conclusive evidence for the
+clause under VERUM if it pronounces certainty and evidence against that clause if it pronounces
+doubt. -/
+def Intent (ev : Set (Set W)) : Prop :=
+  match l.outer with
+  | .positive => Must ev (l.inner • p)
+  | .negative => (l.inner • p)ᶜ ∈ ev
 
-/-- A polarity item is licensed in a form iff a positive item finds the clause unnegated and
-a negative one finds it negated. -/
-def Licensed (e : PolarityItem) (f : Form) : Prop :=
-  (e.IsPPI → ¬ f.Negated) ∧ (e.IsNPI → f.Negated)
+/-- A question is felicitous in a scenario when some evidence the addressee may have there meets
+its intent. -/
+def Felicitous (σ : Scenario) : Prop := ∃ ev, σ.Premise p ev ∧ l.Intent p ev
 
-instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
-  unfold Licensed; infer_instance
+/-- The polarity of the epistemic implicature, the opposite of the proposition for which the
+question asks evidence. -/
+def implicature : Polarity := .negative * l.outer * l.inner
+
+-- (99), (104), (114)
+theorem exists_must_and_intent_iff [Nonempty W] (s : Polarity) :
+    (∃ ev, Must ev (s • p) ∧ l.Intent p ev) ↔ s = l.outer * l.inner := by
+  obtain ⟨o, i⟩ := l
+  have hc : pᶜ ≠ p := compl_ne_self
+  refine ⟨fun ⟨ev, hs, hi⟩ ↦ ?_, ?_⟩
+  · cases o <;> cases s <;> cases i <;> simp_all [Intent, Must]
+  · rintro rfl
+    refine ⟨{(o * i) • p}, ⟨rfl, ?_⟩, ?_⟩ <;>
+      cases o <;> cases i <;> simp [Intent, Must, hc, hc.symm]
+
+/-- After the addressee contradicted the speaker, a question over VERUM is felicitous exactly
+when the speaker believed the proposition of the polarity it implicates. -/
+theorem felicitous_contradiction_iff [Nonempty W] (s : Polarity) :
+    l.Felicitous p (.contradiction s) ↔ s = l.implicature := by
+  refine (l.exists_must_and_intent_iff p _).trans ?_
+  rw [implicature]
+  cases s <;> cases l.outer <;> cases l.inner <;> decide
+
+/-- Where the addressee left a question open, a question over VERUM of one of its answers is
+felicitous exactly when it pronounces doubt. -/
+theorem felicitous_suggestion_iff [Nonempty W] (a : Polarity) :
+    l.Felicitous p (.suggestion a) ↔ ¬(l.outer = .positive ∧ l.inner = a) := by
+  obtain ⟨o, i⟩ := l
+  have hc : pᶜ ≠ p := compl_ne_self
+  refine ⟨?_, fun h ↦ ?_⟩
+  · rintro ⟨ev, hs, hi⟩ ⟨rfl, rfl⟩
+    exact hs hi
+  · cases o
+    · refine ⟨{i • p}, ?_, rfl, ?_⟩ <;>
+        cases i <;> cases a <;> simp_all [Scenario.Premise, Must, hc.symm]
+    · exact ⟨Set.univ, fun h ↦ h.2 trivial, trivial⟩
+
+-- (81), (82), (117): one negation, in either position, implicates the proposition
+theorem implicature_of_outer_mul_inner (h : l.outer * l.inner = .negative) :
+    l.implicature = .positive := by
+  rw [implicature, mul_assoc, h]; rfl
+
+end LF
+
+/-! ### Polarity items -/
+
+section Licensing
+
+variable (W : Type) (l : LF)
+
+/-- The licenser of a polarity item in the clause under VERUM is the polarity of that clause,
+VERUM standing between the item and whatever is over it. -/
+def LF.licenser : Licenser := .ofOperator fun q : Set W ↦ l.inner • q
+
+variable {W}
+
+/-- The clause under VERUM admits positive polarity items when it is positive and negative
+polarity items when it is negative. -/
+theorem LF.admits_iff [Nonempty W] {e : PolarityItem} (hf : ¬e.IsFCI) :
+    (l.licenser W).Admits e ↔
+      (e.IsPPI → l.inner = .positive) ∧ (e.IsNPI → l.inner = .negative) := by
+  have hne : (Set.univ : Set W) ≠ ∅ := Set.univ_nonempty.ne_empty
+  obtain ⟨o, _ | _⟩ := l
+  · have hH : ¬(LF.licenser W ⟨o, .positive⟩).Holds .anti := fun h ↦
+      hne (Set.subset_empty_iff.1
+        (ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩) (Set.empty_subset Set.univ)))
+    have hL : ¬(LF.licenser W ⟨o, .positive⟩).Licenses e := by
+      rintro (⟨r, -, hr⟩ | ⟨h, -⟩ | ⟨h, -⟩)
+      exacts [(Licenser.carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h, h, h]
+    simp [Licenser.Admits, Licenser.AntiLicenses, hL, hf,
+      Licenser.not_holds_toProjectivitySignature hH]
+  · have hH : (LF.licenser W ⟨o, .negative⟩).Holds .antiAddMult := fun _ ↦
+      ProjectivitySignature.holdsFor_antiAddMult_compl
+    have hL : e.IsNPI → (LF.licenser W ⟨o, .negative⟩).Licenses e := fun h ↦ by
+      obtain ⟨r, hr⟩ := Option.isSome_iff_exists.1 h
+      exact .inl ⟨r, hr, Licenser.carries_ofOperator_iff.2
+        ⟨ProjectivitySignature.holdsFor_antiAddMult_compl.of_le
+          (Negation.Strength.toProjectivitySignature_antitone le_top),
+        fun hm ↦ hne (Set.subset_empty_iff.1 (by simpa using hm (Set.empty_subset Set.univ)))⟩⟩
+    rw [Licenser.Admits, Licenser.antiLicenses_iff_isPPI hH]
+    simpa [hf] using fun _ ↦ hL
+
+end Licensing
 
 /-! ### The paper's examples -/
 
-/-- An example, with the position of its negation, if any, its reported bias, its VERUM
-form and its polarity item, each when the paper gives one, and its judgment. -/
-structure Row where
-  negation : Option (Option Negation.Position)
-  bias : Option SignType
-  form : Option Form
-  item : Option PolarityItem
-  judgment : Judgment
+open Examples (all form scenario bias negation)
 
-/-- A datum read into its row. -/
-def Row.ofDatum (e : Datum) : Row where
-  negation := e.parse? "negation"
-    [("preposed", some Negation.Position.preposed), ("nonPreposed", some .nonPreposed),
-      ("none", none)]
-  bias := e.parse? "bias" [("positive", (1 : SignType)), ("negative", -1), ("none", 0)]
-  form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
-    ("notFocus", .notFocus)]
-  item := e.parse? "item"
-    [("too", English.PolarityItems.too), ("either", English.PolarityItems.either)]
-  judgment := e.judgment
+/-- The logical form of each question the paper classes. -/
+def _root_.RomeroHan2004.Examples.Form.lf : Examples.Form → LF
+  | .pi => .pi
+  | .ni | .notFocus => .ni
+  | .really => .really
 
-/-- The paper's examples. -/
-def data : List Row := Examples.all.map Row.ofDatum
+/-- The scenario a row records. -/
+def _root_.RomeroHan2004.Examples.Scenario.toScenario : Examples.Scenario → Scenario
+  | .contradictionP => .contradiction .positive
+  | .contradictionNotP => .contradiction .negative
+  | .suggestionP => .suggestion .positive
+  | .suggestionNotP => .suggestion .negative
 
--- (6), (7), (77), (80)
-theorem licensed_iff_acceptable :
-    ∀ d ∈ data, ∀ e ∈ d.item.toList, ∀ f ∈ d.form.toList,
-      (Licensed e f ↔ d.judgment = .acceptable) := by
+/-- The reported implicature as the sign of the proposition the speaker believed. -/
+def _root_.RomeroHan2004.Examples.Bias.toSign : Examples.Bias → SignType
+  | .positive => 1
+  | .negative => -1
+  | .absent => 0
+
+/-- The position of a question's negation, if it has one. -/
+def _root_.RomeroHan2004.Examples.NegationPlacement.position :
+    Examples.NegationPlacement → Option Negation.Position
+  | .preposed => some .preposed
+  | .nonPreposed => some .nonPreposed
+  | .absent => none
+
+/-- The polarity item a row tests. -/
+def item (e : Datum) : Option PolarityItem :=
+  e.parse? "item" [("too", English.PolarityItems.too), ("either", English.PolarityItems.either)]
+
+/-- The questions the paper judges in a contradiction or a suggestion context are acceptable
+exactly where their logical form is felicitous. -/
+theorem felicitous_iff_acceptable :
+    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ σ ∈ (scenario e).toList, ∀ (W : Type) [Nonempty W]
+      (p : Set W), f.lf.Felicitous p σ.toScenario ↔ e.judgment = .acceptable := by
+  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ σ ∈ (scenario e).toList,
+      (∀ s, σ.toScenario = .contradiction s →
+        (s = f.lf.implicature ↔ e.judgment = .acceptable)) ∧
+      ∀ a, σ.toScenario = .suggestion a →
+        (¬(f.lf.outer = .positive ∧ f.lf.inner = a) ↔ e.judgment = .acceptable) := by decide
+  intro e he f hf σ hσ W _ p
+  obtain ⟨h₁, h₂⟩ := h e he f hf σ hσ
+  cases hτ : σ.toScenario with
+  | contradiction s => rw [← h₁ s hτ, LF.felicitous_contradiction_iff]
+  | suggestion a => rw [← h₂ a hτ, LF.felicitous_suggestion_iff]
+
+-- (6), (7), (77)–(80)
+theorem admits_iff_acceptable :
+    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ i ∈ (item e).toList, ∀ (W : Type) [Nonempty W],
+      (f.lf.licenser W).Admits i ↔ e.judgment = .acceptable := by
+  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ i ∈ (item e).toList, ¬i.IsFCI ∧
+      (((i.IsPPI → f.lf.inner = .positive) ∧ (i.IsNPI → f.lf.inner = .negative)) ↔
+        e.judgment = .acceptable) := by decide
+  intro e he f hf i hi W _
+  rw [← (h e he f hf i hi).2, LF.admits_iff _ (h e he f hf i hi).1]
+
+example : Datum.ReadCount item all 6 := by decide
+
+-- (37), (110), (117)
+theorem bias_eq_implicature :
+    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ b ∈ (bias e).toList, b.toSign = f.lf.implicature := by
   decide
 
--- (1), (5), (14), (18)
-theorem bias_of_negation :
-    ∀ d ∈ data, ∀ n ∈ d.negation.toList, ∀ b ∈ d.bias.toList,
-      (n = some .preposed → b = 1) ∧ (n = some .nonPreposed → b = 0) := by
-  decide
-
-theorem bias_of_form :
-    ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = f.implicature := by
+-- (1), (5), (14)–(18): Generalization 1 for preposed negation, under assumption (64)
+theorem bias_of_preposed :
+    ∀ e ∈ all, ∀ n ∈ (negation e).toList, n.position = some .preposed →
+      ∀ b ∈ (bias e).toList, ∀ l : LF, l.outer * l.inner = .negative →
+        b.toSign = l.implicature := by
   decide
 
 end RomeroHan2004
