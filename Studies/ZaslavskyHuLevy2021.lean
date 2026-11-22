@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Probabilistic.AlternatingMaximization
+public import Studies.Lewis1969
 
 /-!
 # Zaslavsky, Hu and Levy (2021): A Rate–Distortion View of Human Pragmatic Reasoning?
@@ -17,6 +18,13 @@ listener, and among all listeners the Bayesian listener
 [does](##ZaslavskyHuLevy2021.freeEnergy_le_freeEnergy_listener) against a fixed speaker, so the
 tradeoff never decreases along the recursion and
 [converges](##ZaslavskyHuLevy2021.exists_tendsto_freeEnergy).
+
+With as many utterances as meanings, a uniform prior and no cost, the tradeoff is at most
+$\max\{(1-\alpha)\log K, 0\}$ for $K$ meanings (`ZaslavskyHuLevy2021.freeEnergy_le_max`). The
+speaker who draws her utterance uniformly whatever the meaning attains $(1-\alpha)\log K$, and a
+speaker who names each meaning by an utterance of its own, the communicator of a signaling system
+of [lewis-1969], attains $0$ (`ZaslavskyHuLevy2021.freeEnergy_signalingSystem`). The first is
+therefore optimal for $\alpha \le 1$ and the second for $\alpha \ge 1$.
 
 ## Implementation notes
 
@@ -42,12 +50,16 @@ tradeoff never decreases along the recursion and
   and listeners of the recursion converge, and to what, is not settled here.
 * The rate–distortion variant, whose tradeoff has mutual information in place of the conditional
   entropy, with its update equations.
-* The asymptotic behaviour of the recursion and the criticality of `α = 1`.
+* The full sets of optimal speakers: for `α < 1` only the uniform speaker, for `α > 1` only the
+  signaling systems, and at `α = 1` the speakers whose utterance is uniformly distributed.
+* The first critical value of `α` when the cost is not constant, and the rate–distortion
+  counterpart of the bound.
 
 ## References
 
 * [zaslavsky-hu-levy-2021]
 * [frank-goodman-2012]
+* [lewis-1969]
 -/
 
 @[expose] public section
@@ -138,7 +150,8 @@ variable [IsProbabilityMeasure P] [Nonempty M] (hP : ∀ m, P {m} ≠ 0) (hl : �
   (hα : 0 ≤ α) (hm : ∀ m, ∃ u, l u m ≠ 0)
 include hP hl hα hm
 
-/-- Each listener update raises the tradeoff, the first inequality of (9). -/
+-- (9)
+-- Each listener update raises the tradeoff, the first inequality of (9).
 theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
     RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
         (listener P C α l t) ≤
@@ -148,7 +161,8 @@ theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
   rw [listener_succ]
   exact RSA.freeEnergy_le_freeEnergy_listener P Kernel.id C hα _ _
 
-/-- Each speaker update raises the tradeoff, the second inequality of (9). -/
+-- (9)
+-- Each speaker update raises the tradeoff, the second inequality of (9).
 theorem freeEnergy_le_freeEnergy_speaker_succ (t : ℕ) :
     RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
         (listener P C α l (t + 1)) ≤
@@ -167,5 +181,68 @@ theorem exists_tendsto_freeEnergy : ∃ g : ℝ, Tendsto (fun t ↦ RSA.freeEner
     (fun o ↦ by rw [Measure.id_comp]; exact hP o) (Kernel.ofDensity P l)
 
 end Recursion
+
+/-! ### Asymptotic behaviour and the criticality of `α = 1` -/
+
+section Criticality
+
+open InformationTheory
+
+variable [Nonempty M]
+
+/-- Proposition 3: with as many utterances as meanings, a uniform prior and no cost, the tradeoff
+of no speaker and listener exceeds `max ((1 - α) * log K) 0`. -/
+theorem freeEnergy_le_max (hcard : Fintype.card U = Fintype.card M) {α : ℝ} (hα : 0 ≤ α)
+    (S : Kernel M U) [IsMarkovKernel S] (L : Kernel U M) [∀ u, IsZeroOrProbabilityMeasure (L u)] :
+    RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α S L ≤
+      ((max ((1 - α) * log (Fintype.card M)) 0 : ℝ) : EReal) := by
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set M)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
+  have hL := RSA.freeEnergy_le_freeEnergy_listener (uniformOn Set.univ) Kernel.id (0 : U → ℝ) hα S L
+  rw [Kernel.comp_id] at hL
+  refine hL.trans ?_
+  have hI0 : 0 ≤ Im[(uniformOn Set.univ : Measure M) ⊗ₘ S] := measureMutualInfo_nonneg _
+  have hIK : Im[(uniformOn Set.univ : Measure M) ⊗ₘ S] ≤ log (Fintype.card M) := by
+    rw [← hcard]
+    exact measureMutualInfo_compProd_le_log_card S _
+  have hU : Hm[S ∘ₘ (uniformOn Set.univ : Measure M)] ≤ log (Fintype.card M) := by
+    rw [← hcard]
+    exact measureEntropy_le_log_card _
+  rw [RSA.freeEnergy_id_listener, EReal.coe_le_coe_iff,
+    (measureEntropy_eq_log_card_iff (uniformOn (Set.univ : Set M))).2 rfl]
+  simp only [Pi.zero_apply, integral_zero, mul_zero, sub_zero]
+  rcases le_total α 1 with h | h
+  · exact le_max_of_le_left (by nlinarith [mul_nonneg (sub_nonneg.2 h) hI0])
+  · exact le_max_of_le_right (by nlinarith [mul_le_mul_of_nonneg_left hIK (sub_nonneg.2 h)])
+
+-- Proposition 3
+-- Proposition 3: the uniform speaker attains `(1 - α) * log K`.
+theorem freeEnergy_const_uniformOn [Nonempty U] (hcard : Fintype.card U = Fintype.card M)
+    (α : ℝ) :
+    RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α
+        (Kernel.const M (uniformOn Set.univ))
+        (RSA.listener (uniformOn Set.univ) (Kernel.const M (uniformOn Set.univ))) =
+      (((1 - α) * log (Fintype.card M) : ℝ) : EReal) := by
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set M)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
+  have : IsProbabilityMeasure (uniformOn (Set.univ : Set U)) :=
+    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
+  rw [RSA.freeEnergy_id_listener_const,
+    (measureEntropy_eq_log_card_iff (uniformOn (Set.univ : Set M))).2 rfl,
+    (measureEntropy_eq_log_card_iff (uniformOn (Set.univ : Set U))).2 rfl, hcard]
+  congr 1
+  simp only [Pi.zero_apply, integral_zero, mul_zero, sub_zero]
+  ring
+
+/-- Proposition 3: the communicator of a signaling system of [lewis-1969], against her Bayesian
+listener, attains `0` at every prior and every `α`. -/
+theorem freeEnergy_signalingSystem {R : Type*} {F : M ≃ R} [IsProbabilityMeasure P]
+    (A : Lewis1969.SignalingSystem F U) (α : ℝ) :
+    RSA.freeEnergy P Kernel.id (0 : U → ℝ) α (Kernel.deterministic A.communicator .of_discrete)
+        (RSA.listener P (Kernel.deterministic A.communicator .of_discrete)) = 0 := by
+  rw [RSA.freeEnergy_id_listener_deterministic _ _ _ A.communicator_injective]
+  simp
+
+end Criticality
 
 end ZaslavskyHuLevy2021
