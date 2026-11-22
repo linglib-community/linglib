@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Modality.ComparativeLikelihood
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.Completeness
 public import Linglib.Logic.ComparativeProbability.Defs

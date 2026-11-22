@@ -41,8 +41,9 @@ connectives from the Strong Kleene ones but not the converse.
   the Weak Kleene tables do not define Strong Kleene conjunction, while the Strong Kleene ones
   define the Weak Kleene connectives
   (`Propositional.Formula.exists_eval_strongKleene_eq_meetWeak`).
-* `Propositional.k3_no_tautologies`, `Propositional.lp_all_satisfiable`: the model sending every atom to
-  `undefined` gives Strong Kleene K3 no tautologies and LP no unsatisfiable formula.
+* `Propositional.k3_no_tautologies`, `Propositional.lp_all_satisfiable`:
+  the model sending every atom to `undefined` gives Strong Kleene K3 no tautologies and LP no
+  unsatisfiable formula.
 * `Propositional.lp_no_explosion`: LP is paraconsistent.
 
 ## Implementation notes

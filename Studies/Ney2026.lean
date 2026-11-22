@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Discourse.CommonGround
 public import Linglib.Discourse.SpeechAct.Role
 public import Mathlib.Order.Concept
 
