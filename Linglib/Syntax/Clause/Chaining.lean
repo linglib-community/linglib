@@ -38,6 +38,12 @@ and manner is real ('like') or hypothetical ('as if').
 * `MedialForm.chainTiming`: the cell of a chain whose clauses are each evaluated against the next,
   and `MedialForm.chainTimingHom`, the same as a homomorphism from the chains under concatenation.
 
+## Main results
+
+* `MedialForm.mem_toSetRel_chainTiming_iff`: on dense time without endpoints, the cell of a chain
+  holds of exactly the times of a first and a final clause that some times for the clauses between
+  them connect, each standing to the next in the cell of its form.
+
 ## Implementation notes
 
 A form that leaves the kind of linking to the context, as a general medial verb does, marks none.
@@ -203,6 +209,28 @@ theorem chainTiming_append (ms ns : List M) :
 theorem chainTiming_concat (ms : List M) (m : M) :
     chainTiming (ms ++ [m]) = timing m * chainTiming ms := by
   rw [chainTiming_append, chainTiming_singleton]
+
+section
+
+variable {T : Type*} [LinearOrder T] {ms : List M} {s t : NonemptyInterval T}
+
+/-- When the times `ts` of the medial clauses, from the last back to the first, stand each to the
+time of the clause after it in the cell of its form, the last of them to the time `t` of the final
+clause, the time of the first clause stands to `t` in the cell of the chain. -/
+theorem mem_toSetRel_chainTiming {ts : List (NonemptyInterval T)}
+    (h : IntervalAlgebra.HoldsAlong (ms.reverse.map timing) t ts) :
+    (t, (t :: ts).getLast (List.cons_ne_nil _ _)) ∈ IntervalAlgebra.toSetRel (chainTiming ms) :=
+  h.mem_toSetRel_prod
+
+/-- On dense time without endpoints, a time stands to the time of the final clause in the cell of
+a chain exactly when it is the time of the first clause under some times for the others. -/
+theorem mem_toSetRel_chainTiming_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
+    (t, s) ∈ IntervalAlgebra.toSetRel (chainTiming ms) ↔
+      ∃ ts, IntervalAlgebra.HoldsAlong (ms.reverse.map timing) t ts ∧
+        (t :: ts).getLast (List.cons_ne_nil _ _) = s :=
+  IntervalAlgebra.mem_toSetRel_prod_iff
+
+end
 
 /-- `chainTiming` as a homomorphism from the chains under concatenation, into the opposite
 monoid since a product of cells composes its second factor first. -/

@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.Group.Idempotent
 public import Linglib.Data.Examples.Aikhenvald2008
 public import Linglib.Fragments.Manambu.Clause
 
@@ -49,18 +50,25 @@ theorem complex_marker_timing {T : Type*} [LinearOrder T] {i j : NonemptyInterva
   simp only [timing, IntervalAlgebra.mem_inf, relation_mem_cotemporaneous, relation_mem_asSoonAs]
   exact ⟨fun ⟨⟨h₁, h₂⟩, _, _, h₃⟩ ↦ ⟨h₁, h₂, h₃⟩, fun ⟨h₁, h₂, h₃⟩ ↦ ⟨⟨h₁, h₂⟩, h₁, h₂.le, h₃⟩⟩
 
-/-- In a chain of completive clauses the first event precedes the final one. -/
-theorem completive_chain {ms : List MedialMarker} (hne : ms ≠ []) (h : ∀ m ∈ ms, m = ku ∨ m = k) :
-    MedialForm.chainTiming ms = IntervalAlgebra.precedes := by
-  induction ms using List.reverseRecOn with
-  | nil => exact absurd rfl hne
-  | append_singleton ms m ih =>
-    have hm : MedialForm.timing m = IntervalAlgebra.precedes := by
-      rcases h m (by simp) with rfl | rfl <;> rfl
-    rw [MedialForm.chainTiming_concat, hm]
-    rcases eq_or_ne ms [] with rfl | hms
-    · rw [MedialForm.chainTiming_nil, mul_one]
-    · rw [ih hms fun m' hm' ↦ h m' (by simp [hm']), IntervalAlgebra.precedes_mul_precedes]
+theorem chainTiming_completive {ms : List MedialMarker} (hne : ms ≠ [])
+    (h : ∀ m ∈ ms, m = ku ∨ m = k) : MedialForm.chainTiming ms = IntervalAlgebra.precedes := by
+  have hm : ms.reverse.map MedialForm.timing =
+      List.replicate ms.length IntervalAlgebra.precedes :=
+    List.eq_replicate_iff.2 ⟨by simp, fun c hc ↦ by
+      obtain ⟨m, hm, rfl⟩ := List.mem_map.1 hc
+      rcases h m (List.mem_reverse.1 hm) with rfl | rfl <;> rfl⟩
+  rw [MedialForm.chainTiming, hm, List.prod_replicate]
+  exact IsIdempotentElem.pow_eq IntervalAlgebra.precedes_mul_precedes
+    (List.length_pos_iff.2 hne).ne'
+
+/-- In a chain of completive clauses, each ending before the next begins, the first event precedes
+the final one. -/
+theorem completive_chain {T : Type*} [LinearOrder T] {ms : List MedialMarker} (hne : ms ≠ [])
+    (h : ∀ m ∈ ms, m = ku ∨ m = k) {t : NonemptyInterval T} {ts : List (NonemptyInterval T)}
+    (hts : IntervalAlgebra.HoldsAlong (ms.reverse.map MedialForm.timing) t ts) :
+    ((t :: ts).getLast (List.cons_ne_nil _ _)).Precedes t :=
+  IntervalAlgebra.mem_toSetRel_precedes.1
+    (chainTiming_completive hne h ▸ MedialForm.mem_toSetRel_chainTiming hts)
 
 /-- *napa-* goes only with markers of succession or relative time. -/
 theorem completive_temporal {m : MedialMarker} (h : m.WithCompletive) :
