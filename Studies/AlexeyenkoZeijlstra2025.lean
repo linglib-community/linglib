@@ -2,8 +2,8 @@ module
 
 public import Linglib.Syntax.WordOrder
 public import Linglib.Fragments.Slavic.Russian.Agreement
-public import Linglib.Fragments.German.Adjectives
-public import Linglib.Fragments.Dutch.Adjectives
+public import Linglib.Fragments.German.Agreement
+public import Linglib.Fragments.Dutch.Agreement
 public import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.StructureDataset.AlexeyenkoZeijlstra2025
@@ -220,10 +220,10 @@ def forms : Language → Finset Form
   | russian => {form Russian.Agreement.longAdjective, form Russian.Agreement.shortAdjective}
   | kalaallisut => {⟨{.attributive, .predicate}, {.number, .case}⟩}
   | italian => {⟨{.attributive, .predicate}, {.number, .gender}⟩}
-  | german => {form German.Adjectives.strongAdjective, form German.Adjectives.weakAdjective,
-      form German.Adjectives.predicativeAdjective}
-  | dutch => {form Dutch.Adjectives.attributiveAdjective,
-      form Dutch.Adjectives.predicativeAdjective}
+  | german => {form German.Agreement.strongAdjective, form German.Agreement.weakAdjective,
+      form German.Agreement.predicativeAdjective}
+  | dutch => {form Dutch.Agreement.attributiveAdjective,
+      form Dutch.Agreement.predicativeAdjective}
   | icelandic | serboCroatian => {⟨{.attributive}, insert .definiteness φκ⟩, ⟨{.predicate}, φκ⟩}
   | english | mandarin | tagalog | farsi | atong | basque | japanese =>
     {⟨{.attributive, .predicate}, ∅⟩}

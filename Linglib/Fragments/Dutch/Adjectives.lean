@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Fragments.Dutch.Nouns
-public import Linglib.Syntax.Agreement.Target
 
 /-!
 # Dutch adjectives
@@ -18,10 +17,6 @@ horse', but *een oud paard*. An adjective ending in a schwa or in the long vowel
 adjective, *roodheid* 'redness'. The entries are the colour, taste and evaluative adjectives
 whose three forms McNally and de Swart compare, with the grammar's examples of the ending and
 its exceptions.
-
-The ending and the bare predicative form are agreement targets, `attributiveAdjective` and
-`predicativeAdjective`: the attributive adjective inflects for definiteness, gender and number,
-and the predicative one for nothing.
 
 ## Main definitions
 
@@ -255,51 +250,5 @@ theorem not_declines_iff :
   decide
 
 theorem heid_rood : heid rood = "roodheid" := rfl
-
-/-! ### Agreement targets -/
-
-/-- The values Dutch adjective agreement distinguishes in each dimension: the numbers, the two
-genders and definiteness, and no person or case. -/
-abbrev Value : Agreement.Dimension → Type
-  | .number => Number
-  | .gender => Gender.Value
-  | .definiteness => Definiteness
-  | .person | .case => Unit
-
-/-- The attributive ending, the schwa written *-e*, or none. -/
-inductive Ending where
-  | schwa
-  | zero
-  deriving DecidableEq, Repr, Fintype
-
-/-- The ending of an attributive adjective that declines. -/
-def ending (d : Definiteness) (g : Gender.Value) (n : Number) : Ending :=
-  if TakesEnding d g n then .schwa else .zero
-
-theorem ending_eq_schwa_iff {d : Definiteness} {g : Gender.Value} {n : Number} :
-    ending d g n = .schwa ↔ TakesEnding d g n := by
-  simp [ending]
-
-/-- The indefinite neuter singular, the one cell without the ending. -/
-private def base : Π d, Value d
-  | .number => .singular
-  | .gender => .neuter
-  | .definiteness => .nonSpecific
-  | .person | .case => ()
-
-/-- The attributive adjective inflects for definiteness, gender and number. -/
-def attributiveAdjective : Agreement.Target Value Ending :=
-  .ofDependsOn {.attributive} (fun x ↦ ending (x .definiteness) (x .gender) (x .number))
-    {.definiteness, .gender, .number}
-    (fun x y h ↦ by
-      simp only [h .definiteness (by simp), h .gender (by simp), h .number (by simp)])
-    (by
-      simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
-      exact ⟨⟨base, Definiteness.definite, by decide⟩, ⟨base, Gender.Value.common, by decide⟩,
-        ⟨base, Number.plural, by decide⟩⟩)
-
-/-- The predicative adjective has no ending and inflects for nothing. -/
-def predicativeAdjective : Agreement.Target Value Ending :=
-  .ofDependsOn {.predicate} (fun _ ↦ .zero) ∅ (fun _ _ _ ↦ rfl) (by simp)
 
 end Dutch.Adjectives
