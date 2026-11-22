@@ -130,6 +130,11 @@
           "name": "degree",
           "label": "degree",
           "doc": "a degree word following the adjective"
+        },
+        {
+          "name": "attributivizer",
+          "label": "attributivizer",
+          "doc": "the word that carries the attributivizer as a suffix or enclitic, or is it; of length zero, a null attributivizer the analysis places before the word"
         }
       ]
     }
@@ -316,6 +321,7 @@
       "readings": [],
       "spans": [
         {"start": 0, "label": "noun"},
+        {"start": 0, "label": "attributivizer"},
         {"start": 1, "length": 3, "label": "dependent"},
         {"start": 4, "label": "head"}
       ],
@@ -506,12 +512,13 @@
       "spans": [
         {"start": 3, "label": "head"},
         {"start": 4, "label": "degree"},
+        {"start": 5, "length": 0, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
         ["attributivizer", "null"]
       ],
-      "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun.",
+      "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun. The null attributivizer is placed as (71c) places it.",
       "verified": "page-image"
     },
     {
@@ -843,6 +850,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "length": 2, "label": "dependent"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -869,6 +877,7 @@
       "spans": [
         {"start": 3, "label": "head"},
         {"start": 4, "length": 3, "label": "dependent"},
+        {"start": 6, "label": "attributivizer"},
         {"start": 7, "label": "noun"}
       ],
       "paperFeatures": [
@@ -1182,7 +1191,8 @@
       "spans": [
         {"start": 1, "label": "noun"},
         {"start": 2, "length": 1, "label": "dependent"},
-        {"start": 3, "label": "head"}
+        {"start": 3, "label": "head"},
+        {"start": 4, "label": "attributivizer"}
       ],
       "paperFeatures": [
         ["attributivizer", "clitic"]
@@ -1941,6 +1951,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -1967,6 +1978,7 @@
       "spans": [
         {"start": 1, "length": 3, "label": "dependent"},
         {"start": 4, "label": "head"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -1993,6 +2005,7 @@
       "spans": [
         {"start": 1, "length": 3, "label": "dependent"},
         {"start": 4, "label": "head"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2019,6 +2032,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2044,6 +2058,7 @@
       "readings": [],
       "spans": [
         {"start": 1, "label": "head"},
+        {"start": 1, "label": "attributivizer"},
         {"start": 2, "length": 3, "label": "dependent"},
         {"start": 5, "label": "noun"}
       ],
@@ -2071,6 +2086,7 @@
       "spans": [
         {"start": 1, "length": 3, "label": "dependent"},
         {"start": 4, "label": "head"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2097,6 +2113,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2122,6 +2139,7 @@
       "readings": [],
       "spans": [
         {"start": 1, "label": "head"},
+        {"start": 1, "label": "attributivizer"},
         {"start": 2, "length": 3, "label": "dependent"},
         {"start": 5, "label": "noun"}
       ],
@@ -2148,6 +2166,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "label": "degree"},
+        {"start": 2, "label": "attributivizer"},
         {"start": 3, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2173,6 +2192,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "label": "degree"},
+        {"start": 2, "label": "attributivizer"},
         {"start": 3, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2197,10 +2217,13 @@
       "readings": [],
       "spans": [
         {"start": 1, "label": "head"},
+        {"start": 1, "label": "attributivizer"},
         {"start": 2, "label": "degree"},
         {"start": 3, "label": "noun"}
       ],
-      "paperFeatures": [],
+      "paperFeatures": [
+        ["attributivizer", "affix"]
+      ],
       "comment": "",
       "verified": "page-image"
     },
@@ -2243,6 +2266,7 @@
       "readings": [],
       "spans": [
         {"start": 1, "label": "head"},
+        {"start": 1, "label": "attributivizer"},
         {"start": 2, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2268,6 +2292,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "length": 3, "label": "dependent"},
+        {"start": 4, "label": "attributivizer"},
         {"start": 5, "label": "noun"}
       ],
       "paperFeatures": [
@@ -2293,6 +2318,7 @@
       "spans": [
         {"start": 1, "label": "head"},
         {"start": 2, "label": "degree"},
+        {"start": 2, "label": "attributivizer"},
         {"start": 3, "label": "noun"}
       ],
       "paperFeatures": [

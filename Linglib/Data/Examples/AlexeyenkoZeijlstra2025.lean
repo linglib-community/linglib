@@ -140,7 +140,7 @@ def az2025_4b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨0, 1, "noun", none⟩, ⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩]
+    spans := [⟨0, 1, "noun", none⟩, ⟨0, 1, "attributivizer", none⟩, ⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩]
     paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_7a : Datum :=
@@ -260,7 +260,7 @@ def az2025_15 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨3, 1, "head", none⟩, ⟨4, 1, "degree", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 1, "degree", none⟩, ⟨5, 0, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_16 : Datum :=
@@ -485,7 +485,7 @@ def az2025_26 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_27 : Datum :=
@@ -501,7 +501,7 @@ def az2025_27 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨3, 1, "head", none⟩, ⟨4, 3, "dependent", none⟩, ⟨7, 1, "noun", none⟩]
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 3, "dependent", none⟩, ⟨6, 1, "attributivizer", none⟩, ⟨7, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_28b : Datum :=
@@ -709,7 +709,7 @@ def az2025_32 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩]
     paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_35 : Datum :=
@@ -1219,7 +1219,7 @@ def az2025_63a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_63b : Datum :=
@@ -1235,7 +1235,7 @@ def az2025_63b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_66a : Datum :=
@@ -1251,7 +1251,7 @@ def az2025_66a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_66b : Datum :=
@@ -1267,7 +1267,7 @@ def az2025_66b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_66c : Datum :=
@@ -1283,7 +1283,7 @@ def az2025_66c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_67a : Datum :=
@@ -1299,7 +1299,7 @@ def az2025_67a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_67b : Datum :=
@@ -1315,7 +1315,7 @@ def az2025_67b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_67c : Datum :=
@@ -1331,7 +1331,7 @@ def az2025_67c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_68a : Datum :=
@@ -1347,7 +1347,7 @@ def az2025_68a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨2, 1, "attributivizer", none⟩, ⟨3, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_68b : Datum :=
@@ -1363,7 +1363,7 @@ def az2025_68b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨2, 1, "attributivizer", none⟩, ⟨3, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_68c : Datum :=
@@ -1379,8 +1379,8 @@ def az2025_68c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
-    paperFeatures := [] }
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_68d : Datum :=
   { id := "az2025_68d"
@@ -1410,7 +1410,7 @@ def az2025_71a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_71b : Datum :=
@@ -1425,7 +1425,7 @@ def az2025_71b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def az2025_71c : Datum :=
@@ -1440,7 +1440,7 @@ def az2025_71c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨2, 1, "attributivizer", none⟩, ⟨3, 1, "noun", none⟩]
     paperFeatures := [("attributivizer", "null")] }
 
 def all : List Datum := [az2025_1a, az2025_1b, az2025_2a, az2025_2b, az2025_3a, az2025_3b, az2025_4a, az2025_4b, az2025_7a, az2025_7b, az2025_8, az2025_9a, az2025_9b, az2025_10a, az2025_10b, az2025_15, az2025_16, az2025_17a, az2025_17b, az2025_18a, az2025_18b, az2025_19a, az2025_19b, az2025_20a, az2025_20b, az2025_21a, az2025_21b, az2025_23b, az2025_24c, az2025_26, az2025_27, az2025_28b, az2025_28d, az2025_29a, az2025_29a_xpA, az2025_29b, az2025_29b_xpA, az2025_29c, az2025_30a, az2025_30b, az2025_30c, az2025_30d, az2025_31, az2025_32, az2025_35, az2025_36a, az2025_36b, az2025_36c, az2025_36d, az2025_37a, az2025_37a_bare, az2025_37b, az2025_37b_bare, az2025_38a, az2025_38a_agreeing, az2025_38b, az2025_38b_bare, az2025_39a, az2025_39a_short, az2025_39b, az2025_39b_short, az2025_40b, az2025_41b, az2025_42a, az2025_42a_weak, az2025_42b, az2025_42b_weak, az2025_42c, az2025_42d, az2025_43a, az2025_43a_long, az2025_43b, az2025_43c, az2025_62, az2025_62_xpA, az2025_63a, az2025_63b, az2025_66a, az2025_66b, az2025_66c, az2025_67a, az2025_67b, az2025_67c, az2025_68a, az2025_68b, az2025_68c, az2025_68d, az2025_71a, az2025_71b, az2025_71c]
@@ -1519,11 +1519,13 @@ inductive SpanLabel where
   | dependent
   /-- degree: a degree word following the adjective -/
   | degree
+  /-- attributivizer: the word that carries the attributivizer as a suffix or enclitic, or is it; of length zero, a null attributivizer the analysis places before the word -/
+  | attributivizer
   deriving DecidableEq, Repr, Fintype
 
 /-- The label of a span, where it is a declared one. -/
 def label? (p : Datum.Span) : Option SpanLabel :=
-  List.lookup p.label [("head", .head), ("noun", .noun), ("dependent", .dependent), ("degree", .degree)]
+  List.lookup p.label [("head", .head), ("noun", .noun), ("dependent", .dependent), ("degree", .degree), ("attributivizer", .attributivizer)]
 
 /-- The examples of the paper. -/
 inductive Example where
@@ -1819,7 +1821,7 @@ def Example.attributivizer : Example → Option Attributivizer
   | .az2025_67c => some .null
   | .az2025_68a => some .null
   | .az2025_68b => some .affix
-  | .az2025_68c => none
+  | .az2025_68c => some .affix
   | .az2025_68d => none
   | .az2025_71a => some .null
   | .az2025_71b => some .null
