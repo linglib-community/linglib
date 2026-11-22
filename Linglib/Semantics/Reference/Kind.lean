@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Mereology.Classical
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.Iota
@@ -21,7 +22,9 @@ and the operator 'up', ∪, of a kind `k : S → Part E` is `Kind.up ∘ k`.
 `Kind.down (Kind.up k) = k` (`Kind.down_up`), and `Kind.up (Kind.down s) = s` for a lower set
 `s` that has a largest member if it has a member (`Kind.up_down`), and for no other set
 (`Kind.up_down_eq_iff`), so the two are inverse bijections between partial individuals and such
-sets (`Kind.upEquiv`). On the sets with a largest member `Kind.down` is left adjoint to `Kind.up`:
+sets (`Kind.upEquiv`). Where ∩ is defined, ∪∩ is the lower closure of the set
+(`Kind.up_down_eq_lowerClosure`), ∩ picking the element that generates it
+(`Kind.mem_down_iff_lowerClosure`). On the sets with a largest member `Kind.down` is left adjoint to `Kind.up`:
 its value is part of `e` iff the set is included in the parts of `e` (`Kind.le_iff_subset_up`).
 The largest member is the sum of the set where the set contains its sum
 (`Kind.down_dom_iff_sSup_mem`), so the adjunction is the one between `sSup` and `Set.Iic`, cut
@@ -139,7 +142,16 @@ theorem up_down (hs : IsLowerSet s) (hdef : s.Nonempty → (down s).Dom) : up (d
 every member of the set is. -/
 theorem le_iff_subset_up {e : E} (hd : d ∈ down s) : d ≤ e ↔ s ⊆ up (Part.some e) := by
   rw [up_some]
-  exact ⟨fun h _ hx ↦ ((mem_down.1 hd).2 hx).trans h, fun h ↦ h (mem_down.1 hd).1⟩
+  exact isLUB_le_iff (mem_down.1 hd).isLUB
+
+/-- The value of ∩ is the generator of the lower closure of the set. -/
+theorem mem_down_iff_lowerClosure : d ∈ down s ↔ lowerClosure s = LowerSet.Iic d :=
+  mem_down.trans isGreatest_iff_lowerClosure_eq_Iic
+
+/-- ∪∩ is the lower closure wherever ∩ is defined. -/
+theorem up_down_eq_lowerClosure (h : (down s).Dom) : up (down s) = lowerClosure s := by
+  obtain ⟨d, hd⟩ := Part.dom_iff_mem.1 h
+  rw [up_of_mem hd, mem_down_iff_lowerClosure.1 hd, LowerSet.coe_Iic]
 
 /-- A set with a largest member is included in ∪∩ of it, the lower set its largest member
 generates. -/
