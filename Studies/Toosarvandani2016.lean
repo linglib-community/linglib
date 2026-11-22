@@ -2,7 +2,6 @@ module
 
 public import Linglib.Data.Examples.Toosarvandani2016
 public import Linglib.Semantics.Aspect.Viewpoint
-public import Linglib.Syntax.Clause.Chaining
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -20,12 +19,12 @@ sequential marked clauses are not ordered at all (§4.3).
 
 ## Implementation notes
 
-The suffixes are a `MedialForm` whose timing is their relative tense, each marked clause evaluated
-against the unmarked clause rather than the next one. The aspects are `Aspect.Perfectivity`, the
-opposition the simultaneous suffix selects on, and the imperfective has the progressive's meaning,
-overt (35) or null (41), which the unmarked clause of (39), glossed IPFV, is taken to share. The
-contexts are configurations of run times on the natural numbers; the truth conditions compare
-endpoints, so they hold there as on any dense copy. Narrative progression (§5) is not formalized.
+Each marked clause is evaluated against the unmarked clause rather than the next one. The aspects
+are `Aspect.Perfectivity`, the opposition the simultaneous suffix selects on, and the imperfective
+has the progressive's meaning, overt (35) or null (41), which the unmarked clause of (39), glossed
+IPFV, is taken to share. The contexts are configurations of run times on the natural numbers; the
+truth conditions compare endpoints, so they hold there as on any dense copy. Narrative progression
+(§5) is not formalized.
 
 ## References
 
@@ -61,15 +60,6 @@ def Suffix.timing : Suffix → IntervalAlgebra
   | .sim => IntervalAlgebra.le⁻¹
   | .seq => IntervalAlgebra.precedes
 
-/-- The suffixes are medial forms that mark no switch-reference, which Northern Paiute lacks. -/
-instance : MedialForm Suffix where
-  sr _ := none
-  linkings
-    | .sim => {.relativeTime}
-    | .seq => {.succession}
-  timing := Suffix.timing
-  IndexesSubject _ := False
-
 /-- The simultaneous suffix selects the imperfective, the sequential suffix either aspect (40). -/
 def Suffix.Selects : Suffix → Perfectivity → Prop
   | .sim, p => p = .imperfective
@@ -94,14 +84,13 @@ variable {T : Type*} [LinearOrder T] {t₁ t s : NonemptyInterval T}
   exact NonemptyInterval.le_def
 
 @[simp] theorem mem_timing_sim :
-    (t, t₁) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.sim) ↔ t₁.fst ≤ t.fst ∧ t.snd ≤
-      t₁.snd := by
-  change (t, t₁) ∈ IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹ ↔ _
+    (t, t₁) ∈ IntervalAlgebra.toSetRel Suffix.sim.timing ↔ t₁.fst ≤ t.fst ∧ t.snd ≤ t₁.snd := by
+  rw [Suffix.timing]
   simp [NonemptyInterval.le_def]
 
 @[simp] theorem mem_timing_seq :
-    (t, t₁) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.seq) ↔ t₁.snd < t.fst := by
-  change (t, t₁) ∈ IntervalAlgebra.toSetRel .precedes ↔ _
+    (t, t₁) ∈ IntervalAlgebra.toSetRel Suffix.seq.timing ↔ t₁.snd < t.fst := by
+  rw [Suffix.timing]
   simp [NonemptyInterval.Precedes]
 
 end
@@ -133,7 +122,7 @@ stands to `t` as the clause's suffix says (56). -/
 def Holds (cs : List (Marked W E × NonemptyInterval T)) (b : Perfectivity) (Q : W → E → Prop)
     (w : W) (t : NonemptyInterval T) : Prop :=
   (∀ c ∈ cs, denote c.1.aspect (c.1.pred w) c.2 ∧
-    (t, c.2) ∈ IntervalAlgebra.toSetRel (MedialForm.timing c.1.suffix)) ∧ denote b (Q w) t
+    (t, c.2) ∈ IntervalAlgebra.toSetRel c.1.suffix.timing) ∧ denote b (Q w) t
 
 /-- The truth of a chain does not depend on the order of its marked clauses. -/
 theorem holds_perm {cs cs' : List (Marked W E × NonemptyInterval T)} (h : cs.Perm cs')
@@ -151,7 +140,7 @@ variable {T : Type*} [LinearOrder T]
 unmarked clause of aspect `b`: through the reference times of the two clauses. -/
 def eventRel (s : Suffix) (a b : Perfectivity) :
     SetRel (NonemptyInterval T) (NonemptyInterval T) :=
-  (IntervalAlgebra.toSetRel (cell a)).inv ○ (IntervalAlgebra.toSetRel (MedialForm.timing s)).inv ○
+  (IntervalAlgebra.toSetRel (cell a)).inv ○ (IntervalAlgebra.toSetRel s.timing).inv ○
     IntervalAlgebra.toSetRel (cell b)
 
 /-- The truth condition of a chain with one marked clause on the run times `i` of its marked event
@@ -281,8 +270,8 @@ end
 /-- Any two times precede a common later one. -/
 theorem sequential_unordered {T : Type*} [LinearOrder T] [NoMaxOrder T]
     (t₁ t₂ : NonemptyInterval T) :
-    ∃ t, (t, t₁) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.seq) ∧
-      (t, t₂) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.seq) := by
+    ∃ t, (t, t₁) ∈ IntervalAlgebra.toSetRel Suffix.seq.timing ∧
+      (t, t₂) ∈ IntervalAlgebra.toSetRel Suffix.seq.timing := by
   obtain ⟨b, hb⟩ := exists_gt (max t₁.snd t₂.snd)
   exact ⟨.pure b, mem_timing_seq.2 ((le_max_left _ _).trans_lt hb),
     mem_timing_seq.2 ((le_max_right _ _).trans_lt hb)⟩

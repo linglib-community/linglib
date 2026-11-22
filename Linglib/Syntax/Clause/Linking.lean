@@ -19,6 +19,8 @@ a condition or a presupposition for it.
 
 * `Clause.Linking`: the sixteen kinds of clause linking.
 * `Clause.LinkingType`: the six types, with `Clause.Linking.type` the type of a kind.
+* `Clause.Linking.Role`: focal or supporting clause, with `Clause.Linking.HasFocalClause` for the
+  kinds that tell the two apart.
 
 ## References
 
@@ -88,5 +90,22 @@ def Linking.type : Linking → LinkingType
   | .unorderedAddition | .sameEventAddition | .elaboration | .contrast => .addition
   | .disjunction | .rejection | .suggestion => .alternatives
   | .realManner | .hypotheticalManner => .manner
+
+namespace Linking
+
+/-- The part of a clause in a linking: the focal clause, of the central activity or state, or a
+supporting clause. -/
+inductive Role where
+  | supporting
+  | focal
+  deriving DecidableEq, Repr, Fintype
+
+/-- One clause of the linking is focal and the other supporting, as in every kind but unordered
+addition and disjunction. -/
+def HasFocalClause (l : Linking) : Prop := l ≠ .unorderedAddition ∧ l ≠ .disjunction
+
+instance : DecidablePred HasFocalClause := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+end Linking
 
 end Clause

@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Data.Finset.Union
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Clause.Chaining
 
@@ -19,30 +18,25 @@ keeps only its temporal readings.
 
 ## Main definitions
 
-* `Manambu.MedialMarker`: the nine markers, with their switch-reference values, the kinds of
-  linking they mark and their timing, the inflection of the verb before them and the columns of
-  the grammar's table of medial clauses; they are a `MedialForm`.
-* `Manambu.MedialMarker.completiveLinkings`: the linking of a medial clause with *napa-*.
+* `Manambu.MedialMarker`: the nine markers, with their switch-reference values, the inflection
+  of the verb before them and the columns of the grammar's table of medial clauses; they are a
+  `MedialForm`.
 
 ## Implementation notes
 
 The switch-reference values follow Aikhenvald's survey of the Ndu family (Table 3), which gives
 *-ku* and *-k* one meaning and *-ta:y-kǝb* and *-kǝb* another, where the grammar pairs only *-ku*
-with *-k* (§18.1). The kinds of linking are those of the 2009 chapter's summary table: temporal
-succession for *-taka* and *-kǝb*, relative time for *-ta:y*, *-n* and the completives, the last
-also a cause or a real condition, and *-n* also a real manner; *-ta:y-kǝb*, which the table omits,
-is given the linking of *-kǝb*. The verb type and the predicate, negation and *napa-* columns are
-the grammar's (Table 18.1), which lets *-ta:y* and *-kǝb* head a verbless predicate besides *-n*.
+with *-k* (§18.1). The verb type and the predicate, negation and *napa-* columns are the
+grammar's (Table 18.1), which lets *-ta:y* and *-kǝb* head a verbless predicate besides *-n*.
 The stand-alone clauses are the survey's (§9.2), the grammar adding desubordinated *-ta:y* and
-*-kǝb* clauses (18.35, 18.47). The timing is the grammar's placement of a clause's time relative to
-the next clause's (§18.1), the adjacent clause being the one evaluated against (the 2009 chapter,
-§3.1), and *-ta:y-kǝb* takes the meet of its parts' cells. The light-root allomorphs *-tataka* and
-*-kǝkǝb* are not represented.
+*-kǝb* clauses (18.35, 18.47). The times the markers give their clauses are in
+`Studies/Aikhenvald2008.lean` and the kinds of clause linking they mark in
+`Studies/Aikhenvald2009.lean`. The light-root allomorphs *-tataka* and *-kǝkǝb* are not
+represented.
 
 ## References
 
 * [aikhenvald-2008]
-* [aikhenvald-2009]
 * [aikhenvald-2025]
 -/
 
@@ -97,41 +91,6 @@ inductive MedialMarker where
   | n
   deriving DecidableEq, Repr, Fintype
 
-/-- The cell of a time begun before the next clause's and overlapping it. -/
-@[irreducible]
-def cotemporaneous : IntervalAlgebra :=
-  IntervalAlgebra.ofPred fun r ↦ r.fstFst = .lt ∧ r.sndFst = .gt
-
-/-- The cell of a time ending where the next clause's begins. -/
-@[irreducible]
-def immediateSequence : IntervalAlgebra := IntervalAlgebra.ofPred (·.sndFst = .eq)
-
-/-- The cell of a time begun before the next clause's and ending as it begins or within it. -/
-@[irreducible]
-def asSoonAs : IntervalAlgebra :=
-  IntervalAlgebra.ofPred fun r ↦ r.fstFst = .lt ∧ r.sndFst ≠ .lt ∧ r.sndSnd = .lt
-
-section
-
-variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
-
-@[simp] theorem relation_mem_cotemporaneous :
-    Allen.relation i j ∈ cotemporaneous ↔ i.fst < j.fst ∧ j.fst < i.snd := by
-  rw [cotemporaneous, IntervalAlgebra.mem_ofPred]
-  simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt, compare_gt_iff_gt]
-
-@[simp] theorem relation_mem_immediateSequence :
-    Allen.relation i j ∈ immediateSequence ↔ i.snd = j.fst := by
-  rw [immediateSequence, IntervalAlgebra.mem_ofPred]
-  simp [Allen.relation, Allen.ofEndpoints]
-
-@[simp] theorem relation_mem_asSoonAs :
-    Allen.relation i j ∈ asSoonAs ↔ i.fst < j.fst ∧ j.fst ≤ i.snd ∧ i.snd < j.snd := by
-  rw [asSoonAs, IntervalAlgebra.mem_ofPred]
-  simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt]
-
-end
-
 namespace MedialMarker
 
 /-- The morphs of a marker, after a heavy root. -/
@@ -151,26 +110,6 @@ def sr : MedialMarker → Option SwitchReference
   | ku | tay | taka | taykeb | gay => some .ss
   | k | keb => some .ds
   | lek | n => none
-
-/-- The kinds of linking a marker marks, one set for the two completives and one for the two
-'as soon as' markers. -/
-def linkings : MedialMarker → Finset Clause.Linking
-  | ku | k => {.relativeTime, .cause, .conditional}
-  | tay => {.relativeTime}
-  | taka | keb | taykeb => {.succession}
-  | lek => {.cause}
-  | gay => {.conditional}
-  | n => {.relativeTime, .realManner}
-
-/-- The cell in which a marker places the time of its clause relative to the next clause's. -/
-def timing : MedialMarker → IntervalAlgebra
-  | ku | k => IntervalAlgebra.precedes
-  | tay => cotemporaneous
-  | taka => immediateSequence
-  | keb => asSoonAs
-  | taykeb => cotemporaneous ⊓ asSoonAs
-  | n => IntervalAlgebra.ofPosition {.lt, .eq}
-  | lek | gay => ⊤
 
 /-- The inflection of the verb before a marker. -/
 def inflection : MedialMarker → MedialInflection
@@ -206,14 +145,7 @@ instance : DecidablePred StandsAlone := fun _ ↦ inferInstanceAs (Decidable (_ 
 
 instance : MedialForm MedialMarker where
   sr := sr
-  linkings := linkings
-  timing := timing
   IndexesSubject := IndexesSubject
-
-/-- The kinds of linking a medial clause marks when *napa-* carries its marker, the succession or
-relative time of the marker. -/
-def completiveLinkings (m : MedialMarker) : Finset Clause.Linking :=
-  m.linkings ∩ {.succession, .relativeTime}
 
 end MedialMarker
 

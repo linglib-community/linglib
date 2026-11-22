@@ -6,6 +6,7 @@ public import Linglib.Fragments.Nungon.Clause
 public import Linglib.Fragments.Manambu.Clause
 public import Linglib.Fragments.Korean.Clause
 public import Linglib.Fragments.Turkish.Clause
+public import Studies.Aikhenvald2009
 
 /-!
 # Sarvasy & Aikhenvald (2025): Clause Chaining in the Languages of the World
@@ -24,10 +25,8 @@ and its retention profile (`Language.medialMorph`), bridging constructions
 off the forms where the forms decide them and are the chapters' reports otherwise. The
 generalizations proved are that same-subject medial forms leave the subject unindexed while
 different-subject forms index it (`ss_forms_lack_subject_marking`), that Manambu's
-switch-reference markers each mark a kind of clause linking, not all of them temporal, whereas
-Nungon's mark subject continuity alone, relative time coming from a switch-reference-neutral
-construction (`linking_fused_with_sr`), that the kinds of linking a language marks include a
-temporal one (`temporal_linking_marked`), that the chain's tense comes from the final verb in
+switch-reference markers each mark a kind of clause linking, not all of them temporal
+(`linking_fused_with_sr`), that the chain's tense comes from the final verb in
 the two Papuan languages while Korean admits tense before some medial suffixes
 (`tense_from_final_verb`), that Turkish negates medial clauses individually
 (`negated_individually`), that the medial verbs of both are converbs (`converb_form`), and that in
@@ -47,7 +46,7 @@ volume and the latter's switch-reference system was misrecorded as tracking seve
 ## References
 
 * [sarvasy-aikhenvald-2025]
-* [dixon-2009]
+* [aikhenvald-2009]
 * [sarvasy-2017]
 * [aikhenvald-2025]
 * [aikhenvald-2008]
@@ -203,17 +202,13 @@ theorem ss_forms_lack_subject_marking :
       agreement Nungon.Medial = .restricted ∧ agreement Manambu.MedialMarker = .restricted := by
   decide
 
+/-- Each Manambu switch-reference marker also marks a kind of clause linking, and not always a
+temporal one. -/
 theorem linking_fused_with_sr :
-    (∀ m : Manambu.MedialMarker, m.sr ≠ none → m.linkings.Nonempty) ∧
-      (∃ l ∈ MedialForm.linkingsMarked Manambu.MedialMarker, l.type ≠ .temporal) ∧
-      (∀ m : Nungon.Medial, m.sr ≠ none → m.linkings = ∅) ∧
-      ∃ m : Nungon.Medial, m.sr = none ∧ m.linkings.Nonempty := by
+    (∀ m : Manambu.MedialMarker, m.sr ≠ none → (Aikhenvald2009.linkings m).Nonempty) ∧
+      ∃ m : Manambu.MedialMarker, m.sr ≠ none ∧
+        ∃ l ∈ Aikhenvald2009.linkings m, l.type ≠ .temporal := by
   decide
-
-/-- A language whose medial forms mark a kind of linking marks a temporal one. -/
-theorem temporal_linking_marked (L : Language) (h : (MedialForm.linkingsMarked L.Forms).Nonempty) :
-    ∃ l ∈ MedialForm.linkingsMarked L.Forms, l.type = .temporal := by
-  decide +revert
 
 theorem tense_from_final_verb :
     Language.tense .nungon = .absent ∧ Language.tense .manambu = .restricted ∧

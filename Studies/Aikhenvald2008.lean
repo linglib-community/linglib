@@ -1,8 +1,8 @@
 module
 
 public import Mathlib.Algebra.Group.Idempotent
-public import Linglib.Data.Examples.Aikhenvald2008
 public import Linglib.Fragments.Manambu.Clause
+public import Linglib.Logic.Temporal.IntervalAlgebra
 
 /-!
 # Aikhenvald (2008): The Manambu Language of East Sepik, Papua New Guinea
@@ -10,23 +10,28 @@ public import Linglib.Fragments.Manambu.Clause
 This file checks the grammar's account of medial clauses (Chapter 18) against the Manambu
 Fragment. Same-subject medial verbs are uninflected and different-subject ones partially
 inflected, while a marker neutral to switch-reference takes an uninflected or a fully inflected
-verb (§18.1). The only complex marker, *-ta:y-kǝb*, has the same subject because *-ta:y* is the
-same-subject marker, and its time begins before the next clause's and overlaps it (§18.6). A chain
-of completive clauses presents its events one after another (§18.10). The completive auxiliary
-*napa-* is used only in temporal clauses (§18.1), and a clause with it has only temporal meaning
-(§18.9): a completive clause reads 'after' or 'because' (18.17), with *napa-* only 'after' (18.53).
+verb (§18.1). A marker places the time of its clause relative to the next clause's (§18.1), and
+`timing` gives each marker the cell of Allen relations it allows: the completives before the next
+clause's time, *-ta:y* begun before it and overlapping it, *-taka* ending as it begins, and
+*-kǝb* begun before it and ending as it begins or within it. The only complex marker,
+*-ta:y-kǝb*, has the same subject because *-ta:y* is the same-subject marker, and its time begins
+before the next clause's and overlaps it (§18.6). A chain of completive clauses presents its
+events one after another (§18.10).
 
 ## Implementation notes
 
-Each of the two examples has one medial clause with each completive, and its readings are those
-of both clauses.
+*-ta:y-kǝb* takes the meet of its parts' cells, and the causal *-lǝk* and the conditional *-ga:y*
+leave the time open. The readings of the grammar's examples of completive clauses, with and
+without the completive auxiliary *napa-* (18.17, 18.53), are checked in
+`Studies/Aikhenvald2009.lean`, against the kinds of clause linking the later chapter gives the
+markers.
 
 ## References
 
 * [aikhenvald-2008]
 -/
 
-public section
+@[expose] public section
 
 namespace Aikhenvald2008
 
@@ -39,51 +44,83 @@ theorem inflection_of_sr (m : MedialMarker) :
       (m.sr = none → m.inflection = .uninflected ∨ m.inflection = .fullyInflected) := by
   decide +revert
 
+/-! ### The times of medial clauses -/
+
+/-- The cell of a time begun before the next clause's and overlapping it. -/
+@[irreducible]
+def cotemporaneous : IntervalAlgebra :=
+  IntervalAlgebra.ofPred fun r ↦ r.fstFst = .lt ∧ r.sndFst = .gt
+
+/-- The cell of a time ending where the next clause's begins. -/
+@[irreducible]
+def immediateSequence : IntervalAlgebra := IntervalAlgebra.ofPred (·.sndFst = .eq)
+
+/-- The cell of a time begun before the next clause's and ending as it begins or within it. -/
+@[irreducible]
+def asSoonAs : IntervalAlgebra :=
+  IntervalAlgebra.ofPred fun r ↦ r.fstFst = .lt ∧ r.sndFst ≠ .lt ∧ r.sndSnd = .lt
+
+section
+
+variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
+
+@[simp] theorem relation_mem_cotemporaneous :
+    Allen.relation i j ∈ cotemporaneous ↔ i.fst < j.fst ∧ j.fst < i.snd := by
+  rw [cotemporaneous, IntervalAlgebra.mem_ofPred]
+  simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt, compare_gt_iff_gt]
+
+@[simp] theorem relation_mem_immediateSequence :
+    Allen.relation i j ∈ immediateSequence ↔ i.snd = j.fst := by
+  rw [immediateSequence, IntervalAlgebra.mem_ofPred]
+  simp [Allen.relation, Allen.ofEndpoints]
+
+@[simp] theorem relation_mem_asSoonAs :
+    Allen.relation i j ∈ asSoonAs ↔ i.fst < j.fst ∧ j.fst ≤ i.snd ∧ i.snd < j.snd := by
+  rw [asSoonAs, IntervalAlgebra.mem_ofPred]
+  simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt]
+
+end
+
+/-- The cell in which a marker places the time of its clause relative to the next clause's. -/
+def timing : MedialMarker → IntervalAlgebra
+  | ku | k => IntervalAlgebra.precedes
+  | tay => cotemporaneous
+  | taka => immediateSequence
+  | keb => asSoonAs
+  | taykeb => cotemporaneous ⊓ asSoonAs
+  | n => IntervalAlgebra.ofPosition {.lt, .eq}
+  | lek | gay => ⊤
+
 /-- The only complex marker is *-ta:y* followed by *-kǝb*, with the switch-reference value of
-*-ta:y* and a time begun before the next clause's and ending within it. -/
+*-ta:y*. -/
 theorem complex_marker {m : MedialMarker} (h : 1 < m.morphs.length) :
     m.morphs = tay.morphs ++ keb.morphs ∧ m.sr = tay.sr := by
   decide +revert
 
 theorem complex_marker_timing {T : Type*} [LinearOrder T] {i j : NonemptyInterval T} :
-    Allen.relation i j ∈ taykeb.timing ↔ i.fst < j.fst ∧ j.fst < i.snd ∧ i.snd < j.snd := by
+    Allen.relation i j ∈ timing taykeb ↔ i.fst < j.fst ∧ j.fst < i.snd ∧ i.snd < j.snd := by
   simp only [timing, IntervalAlgebra.mem_inf, relation_mem_cotemporaneous, relation_mem_asSoonAs]
   exact ⟨fun ⟨⟨h₁, h₂⟩, _, _, h₃⟩ ↦ ⟨h₁, h₂, h₃⟩, fun ⟨h₁, h₂, h₃⟩ ↦ ⟨⟨h₁, h₂⟩, h₁, h₂.le, h₃⟩⟩
 
-theorem chainTiming_completive {ms : List MedialMarker} (hne : ms ≠ [])
-    (h : ∀ m ∈ ms, m = ku ∨ m = k) : MedialForm.chainTiming ms = IntervalAlgebra.precedes := by
-  have hm : ms.reverse.map MedialForm.timing =
-      List.replicate ms.length IntervalAlgebra.precedes :=
+theorem prod_timing_completive {ms : List MedialMarker} (hne : ms ≠ [])
+    (h : ∀ m ∈ ms, m = ku ∨ m = k) : (ms.map timing).prod = IntervalAlgebra.precedes := by
+  have hm : ms.map timing = List.replicate ms.length IntervalAlgebra.precedes :=
     List.eq_replicate_iff.2 ⟨by simp, fun c hc ↦ by
       obtain ⟨m, hm, rfl⟩ := List.mem_map.1 hc
-      rcases h m (List.mem_reverse.1 hm) with rfl | rfl <;> rfl⟩
-  rw [MedialForm.chainTiming, hm, List.prod_replicate]
+      rcases h m hm with rfl | rfl <;> rfl⟩
+  rw [hm, List.prod_replicate]
   exact IsIdempotentElem.pow_eq IntervalAlgebra.precedes_mul_precedes
     (List.length_pos_iff.2 hne).ne'
 
 /-- In a chain of completive clauses, each ending before the next begins, the first event precedes
-the final one. -/
+the final one: `ts` are the times of the medial clauses from the last back to the first, and `t`
+the time of the final clause. -/
 theorem completive_chain {T : Type*} [LinearOrder T] {ms : List MedialMarker} (hne : ms ≠ [])
     (h : ∀ m ∈ ms, m = ku ∨ m = k) {t : NonemptyInterval T} {ts : List (NonemptyInterval T)}
-    (hts : IntervalAlgebra.HoldsAlong (ms.reverse.map MedialForm.timing) t ts) :
+    (hts : IntervalAlgebra.HoldsAlong (ms.reverse.map timing) t ts) :
     ((t :: ts).getLast (List.cons_ne_nil _ _)).Precedes t :=
-  IntervalAlgebra.mem_toSetRel_precedes.1
-    (chainTiming_completive hne h ▸ MedialForm.mem_toSetRel_chainTiming hts)
-
-/-- *napa-* goes only with markers of succession or relative time. -/
-theorem completive_temporal {m : MedialMarker} (h : m.WithCompletive) :
-    m.completiveLinkings.Nonempty := by
-  decide +revert
-
-/-- A completive clause reads 'after' or 'because', and with *napa-* only 'after'. -/
-theorem completive_readings {m : MedialMarker} (hm : m = ku ∨ m = k) :
-    (Examples.ex18_17.readings.lookup "after" = some .acceptable ↔
-        .relativeTime ∈ m.linkings) ∧
-      (Examples.ex18_17.readings.lookup "because" = some .acceptable ↔ .cause ∈ m.linkings) ∧
-      (Examples.ex18_53.readings.lookup "after" = some .acceptable ↔
-        .relativeTime ∈ m.completiveLinkings) ∧
-      (Examples.ex18_53.readings.lookup "because" = some .acceptable ↔
-        .cause ∈ m.completiveLinkings) := by
-  rcases hm with rfl | rfl <;> decide
+  IntervalAlgebra.mem_toSetRel_precedes.1 <|
+    prod_timing_completive (ms := ms.reverse) (by simpa using hne) (by simpa using h) ▸
+      hts.mem_toSetRel_prod
 
 end Aikhenvald2008

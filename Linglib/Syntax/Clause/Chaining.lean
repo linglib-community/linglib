@@ -1,11 +1,7 @@
 module
 
-public import Mathlib.Algebra.FreeMonoid.Basic
-public import Mathlib.Data.Finset.Union
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Logic.Temporal.IntervalAlgebra
-public import Linglib.Syntax.Clause.Linking
 
 /-!
 # Clause chaining
@@ -13,45 +9,22 @@ public import Linglib.Syntax.Clause.Linking
 A clause chain is a sequence of medial clauses, dependent and morphologically reduced, closed by
 one final clause that supplies tense, mood and often agreement for the whole chain; Foley and Van
 Valin and Longacre take it as the prototypical cosubordinate combination of clauses, dependent but
-not embedded. A language's medial forms are an instance of `MedialForm`, which records for each
-form the switch-reference value it marks, the kinds of clause linking it marks, whether it indexes
-the subject of its clause, and the cell of Allen relations in which it places the time of its
-clause relative to the time the clause is evaluated against, as a relative tense does in
-Toosarvandani's account of Northern Paiute. A language evaluates each medial clause against the
-next clause, as Manambu does, or against the final clause, as Northern Paiute does; in the first
-case the time of the first clause of a chain stands to that of the final clause in the composite
-of the cells along the chain.
+not embedded. In many chaining languages a medial form marks switch-reference, whether the subject
+of its clause is that of the clause it is evaluated against. A language's medial forms are an
+instance of `MedialForm`, which records for each form the switch-reference value it marks and
+whether it indexes the subject of its clause.
 
 ## Main definitions
 
 * `SwitchReference`: same subject or different subject.
 * `MedialForm`: the class of a language's medial forms, with `MedialForm.HasSR` and
-  `MedialForm.SSUnmarked` for its switch-reference system and `MedialForm.linkingsMarked`.
-* `MedialForm.chainTiming`: the cell of a chain whose clauses are each evaluated against the next,
-  and `MedialForm.chainTimingHom`, the same as a homomorphism from the chains under concatenation.
-
-## Main results
-
-* `MedialForm.mem_toSetRel_chainTiming_iff`: on dense time without endpoints, the cell of a chain
-  holds of exactly the times of a first and a final clause that some times for the clauses between
-  them connect, each standing to the next in the cell of its form.
-
-## Implementation notes
-
-A form that leaves the kind of linking to the context, as a general medial verb does, marks none.
-Whether one clause precedes or overlaps another is not a kind of linking, 'after' and 'while'
-both being relative time; it is the `timing` of a form.
-
-## TODO
-
-The Korean and Turkish forms record no timing.
+  `MedialForm.SSUnmarked` for its switch-reference system.
 
 ## References
 
 * [sarvasy-aikhenvald-2025]
 * [foley-r-d-van-valin-1984]
 * [longacre-2007]
-* [toosarvandani-2016]
 -/
 
 @[expose] public section
@@ -65,17 +38,11 @@ inductive SwitchReference where
   | ds
   deriving DecidableEq, Repr, Fintype
 
-/-- A language's medial forms: the switch-reference value each marks, the kinds of clause linking
-it marks, the cell in which it places the time of its clause, and whether it indexes the subject
-of its clause. -/
+/-- A language's medial forms: the switch-reference value each marks and whether it indexes the
+subject of its clause. -/
 class MedialForm (M : Type*) where
   /-- The switch-reference value a form marks, `none` for a form neutral to it. -/
   sr : M → Option SwitchReference
-  /-- The kinds of clause linking a form marks, none for a form that leaves the kind open. -/
-  linkings : M → Finset Clause.Linking
-  /-- The cell of Allen relations in which a form places the time of its clause relative to the
-  time the clause is evaluated against, every relation for a form that leaves it open. -/
-  timing : M → IntervalAlgebra := fun _ ↦ ⊤
   /-- The form carries subject cross-referencing. -/
   IndexesSubject : M → Prop
   [decidableIndexesSubject : DecidablePred IndexesSubject]
@@ -84,10 +51,6 @@ namespace MedialForm
 
 attribute [instance_reducible] decidableIndexesSubject
 attribute [instance] decidableIndexesSubject
-
-/-! ### The switch-reference system -/
-
-section
 
 variable (M : Type*) [MedialForm M]
 
@@ -104,71 +67,5 @@ variable [Fintype M]
 instance : Decidable (HasSR M) := inferInstanceAs (Decidable (∃ m : M, sr m ≠ none))
 
 instance : Decidable (SSUnmarked M) := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The kinds of clause linking some medial form marks. -/
-def linkingsMarked : Finset Clause.Linking := (Finset.univ : Finset M).biUnion linkings
-
-end
-
-@[simp] theorem mem_linkingsMarked {M : Type*} [MedialForm M] [Fintype M]
-    {l : Clause.Linking} : l ∈ linkingsMarked M ↔ ∃ m : M, l ∈ linkings m := by
-  simp [linkingsMarked]
-
-/-! ### Timing -/
-
-section
-
-variable {M : Type*} [MedialForm M]
-
-/-- The cell in which the time of the first clause of a chain with the forms `ms` stands to the
-time of the final clause, when each clause is evaluated against the next. -/
-def chainTiming (ms : List M) : IntervalAlgebra := (ms.reverse.map timing).prod
-
-@[simp] theorem chainTiming_nil : chainTiming ([] : List M) = 1 := rfl
-
-@[simp] theorem chainTiming_singleton (m : M) : chainTiming [m] = timing m := by
-  simp [chainTiming]
-
-theorem chainTiming_append (ms ns : List M) :
-    chainTiming (ms ++ ns) = chainTiming ns * chainTiming ms := by
-  simp [chainTiming]
-
-theorem chainTiming_concat (ms : List M) (m : M) :
-    chainTiming (ms ++ [m]) = timing m * chainTiming ms := by
-  rw [chainTiming_append, chainTiming_singleton]
-
-section
-
-variable {T : Type*} [LinearOrder T] {ms : List M} {s t : NonemptyInterval T}
-
-/-- When the times `ts` of the medial clauses, from the last back to the first, stand each to the
-time of the clause after it in the cell of its form, the last of them to the time `t` of the final
-clause, the time of the first clause stands to `t` in the cell of the chain. -/
-theorem mem_toSetRel_chainTiming {ts : List (NonemptyInterval T)}
-    (h : IntervalAlgebra.HoldsAlong (ms.reverse.map timing) t ts) :
-    (t, (t :: ts).getLast (List.cons_ne_nil _ _)) ∈ IntervalAlgebra.toSetRel (chainTiming ms) :=
-  h.mem_toSetRel_prod
-
-/-- On dense time without endpoints, a time stands to the time of the final clause in the cell of
-a chain exactly when it is the time of the first clause under some times for the others. -/
-theorem mem_toSetRel_chainTiming_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
-    (t, s) ∈ IntervalAlgebra.toSetRel (chainTiming ms) ↔
-      ∃ ts, IntervalAlgebra.HoldsAlong (ms.reverse.map timing) t ts ∧
-        (t :: ts).getLast (List.cons_ne_nil _ _) = s :=
-  IntervalAlgebra.mem_toSetRel_prod_iff
-
-end
-
-/-- `chainTiming` as a homomorphism from the chains under concatenation, into the opposite
-monoid since a product of cells composes its second factor first. -/
-def chainTimingHom : FreeMonoid M →* IntervalAlgebraᵐᵒᵖ where
-  toFun ms := .op (chainTiming ms.toList)
-  map_one' := rfl
-  map_mul' ms ns := by rw [FreeMonoid.toList_mul, chainTiming_append, MulOpposite.op_mul]
-
-@[simp] theorem chainTimingHom_apply (ms : FreeMonoid M) :
-    chainTimingHom ms = .op (chainTiming ms.toList) := rfl
-
-end
 
 end MedialForm

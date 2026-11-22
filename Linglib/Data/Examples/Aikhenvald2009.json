@@ -1,0 +1,164 @@
+{
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The readings the chapter gives a completive medial clause.",
+    "levels": [
+      {
+        "name": "after",
+        "label": "after",
+        "doc": "relative time, the medial event over before the next"
+      },
+      {
+        "name": "because",
+        "label": "because",
+        "doc": "cause"
+      },
+      {
+        "name": "condition",
+        "label": "if",
+        "doc": "real condition"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "id": "aikhenvald2009_ex10",
+      "source": {
+        "bibkey": "aikhenvald-2009",
+        "paperLabel": "(10)"
+      },
+      "reportedIn": null,
+      "language": "mana1298",
+      "primaryText": "ata wukǝ-ku gra-dian",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "ata",
+          "then"
+        ],
+        [
+          "wukǝ-ku",
+          "worry-COMPL.SS"
+        ],
+        [
+          "gra-dian",
+          "cry-1plBAS.PAST"
+        ]
+      ],
+      "translation": "Then, after we were worried/because we were worried, we cried",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "after",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "because",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [],
+      "comment": "The source brackets the first two words as the supporting clause and the last as the focal clause; it writes schwa, here U+01DD as in the Fragment.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2009_ex11",
+      "source": {
+        "bibkey": "aikhenvald-2009",
+        "paperLabel": "(11)"
+      },
+      "reportedIn": null,
+      "language": "mana1298",
+      "primaryText": "amæywa nǝbi-ar vya-tuǝ-k kiya-k-na",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "amæywa",
+          "bow+COMIT"
+        ],
+        [
+          "nǝbi-ar",
+          "arrow-LINK+INST"
+        ],
+        [
+          "vya-tuǝ-k",
+          "hit-1sg-COMPL:DS"
+        ],
+        [
+          "kiya-k-na",
+          "die-FUT-ACT.FOC+3fem.sgBAS.NPAST"
+        ]
+      ],
+      "translation": "After/because/if I hit (her) with a bow and arrow, she will die",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "after",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "because",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "if",
+          "judgment": "acceptable"
+        }
+      ],
+      "paperFeatures": [],
+      "comment": "The focal clause is in the future, which gives the supporting clause its overtone of real condition; in the story the conditional reading was preferred. The second word is printed with a gap after its first letter.",
+      "verified": "page-image"
+    },
+    {
+      "id": "aikhenvald2009_ex12",
+      "source": {
+        "bibkey": "aikhenvald-2009",
+        "paperLabel": "(12)"
+      },
+      "reportedIn": null,
+      "language": "mana1298",
+      "primaryText": "ata wukǝ-n napa-ku gra-dian",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "ata",
+          "then"
+        ],
+        [
+          "wukǝ-n",
+          "worry-SIM"
+        ],
+        [
+          "napa-ku",
+          "COMPL.VB-COMPL.SS"
+        ],
+        [
+          "gra-dian",
+          "cry-1plBAS.PAST"
+        ]
+      ],
+      "translation": "Then, after we were worried/*because we were worried, we cried",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {
+          "name": "after",
+          "judgment": "acceptable"
+        },
+        {
+          "name": "because",
+          "judgment": "unacceptable"
+        }
+      ],
+      "paperFeatures": [],
+      "comment": "The source sets off the complex predicate of the verb in -n and the completive verb napa- with braces.",
+      "verified": "page-image"
+    }
+  ]
+}
