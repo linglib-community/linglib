@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Order.Hom.CompleteLattice
+public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Individuals
@@ -11,7 +12,11 @@ to, Montague's lift. The individuals [generate the quantifiers](##Quantifier.com
 under complete Boolean operations and are [those commuting with negation and arbitrary
 conjunction](##Quantifier.exists_eq_individual_iff), Keenan and Faltz's proper-noun denotations.
 An existential is an individual [exactly when its restrictor is a
-singleton](##Quantifier.some_eq_individual_iff). Partee's `lower` is the partial inverse of the
+singleton](##Quantifier.some_eq_individual_iff). On entities ordered by part-of, the individual of
+an entity lies between *every* and *some* of its parts,
+`every (Set.Iic d) ≤ individual d ≤ Det.some (Set.Iic d)`, with equality exactly at the minimal
+entities (`Quantifier.some_Iic_eq_individual_iff`): a predicate holds of all the parts, of the
+entity, or of some part. Partee's `lower` is the partial inverse of the
 lift, so *the king* [lowers to `iota` of its noun](##Quantifier.lower_the), and *a man* and
 *every man* do only where there is one man. Predicative content is in
 `Quantification/Predicative.lean`.
@@ -85,6 +90,48 @@ theorem some_eq_individual_iff {N : Set E} {a : E} : Det.some N = individual a �
   have hsub : N ⊆ {a} := fun x hx ↦ by_contra fun hxa ↦ ((congrFun h {a}ᶜ).mp ⟨x, hx, hxa⟩) rfl
   have hne : N.Nonempty := by simpa [Det.some] using (congrFun h Set.univ).mpr (Set.mem_univ a)
   exact hne.subset_singleton_iff.1 hsub
+
+/-! ### Entities ordered by part-of
+
+The existential closure of the singleton of an entity is its individual. With parts, the
+singleton becomes the set of parts `Set.Iic d`, and the two no longer agree: the individual of `d`
+lies between the universal and the existential over its parts. -/
+
+section Order
+
+variable [PartialOrder E] {d : E}
+
+theorem every_Iic_le_individual (d : E) : every (Set.Iic d) ≤ individual d :=
+  fun _ h ↦ h (Set.mem_Iic.2 le_rfl)
+
+theorem individual_le_some_Iic (d : E) : individual d ≤ Det.some (Set.Iic d) :=
+  fun _ h ↦ ⟨d, Set.mem_Iic.2 le_rfl, h⟩
+
+/-- The existential over the parts of an entity is its individual exactly when it has no proper
+part. -/
+theorem some_Iic_eq_individual_iff : Det.some (Set.Iic d) = individual d ↔ IsMin d := by
+  refine ⟨fun h x hx ↦ ?_, fun h ↦ ?_⟩
+  · exact ((congrFun h {x}).mp ⟨x, hx, rfl⟩ : d = x).le
+  · rw [show Set.Iic d = {d} from Set.ext fun x ↦
+      ⟨fun hx ↦ le_antisymm hx (h hx), fun hx ↦ hx ▸ le_rfl⟩, some_singleton]
+
+/-- The universal over the parts of an entity is its individual exactly when it has no proper
+part. -/
+theorem every_Iic_eq_individual_iff : every (Set.Iic d) = individual d ↔ IsMin d := by
+  refine ⟨fun h x hx ↦ ?_, fun h ↦ ?_⟩
+  · have hd : every (Set.Iic d) {y | d ≤ y} := (congrFun h {y | d ≤ y}).mpr le_rfl
+    exact hd hx
+  · rw [show Set.Iic d = {d} from Set.ext fun x ↦
+      ⟨fun hx ↦ le_antisymm hx (h hx), fun hx ↦ hx ▸ le_rfl⟩, individual_eq_every]
+
+/-- An existential over the lower closure of its restrictor is the existential over the
+restrictor at the upper closure of its scope. -/
+theorem some_lowerClosure_iff {A V : Set E} :
+    Det.some (lowerClosure A : Set E) V ↔ Det.some A (upperClosure V : Set E) :=
+  ⟨fun ⟨x, ⟨a, ha, hxa⟩, hV⟩ ↦ ⟨a, ha, x, hV, hxa⟩,
+    fun ⟨a, ha, x, hV, hxa⟩ ↦ ⟨x, ⟨a, ha, hxa⟩, hV⟩⟩
+
+end Order
 
 /-! ### Lowering
 

@@ -92,6 +92,11 @@ theorem acyclic (v : Fin n) : ¬ TransGen g.Adj v v := fun h ↦
   have ⟨_, hvw, hwv⟩ := TransGen.head'_iff.1 h
   hF.not_dominates_of_adj hvw hwv
 
+/-- The heads of a forest's positions are reached in finitely many steps. -/
+theorem wellFounded_transGen : WellFounded (TransGen g.Adj) :=
+  haveI : Std.Irrefl (TransGen g.Adj) := ⟨hF.acyclic⟩
+  Finite.wellFounded_of_trans_of_irrefl _
+
 theorem dominates_antisymm (hvw : g.Dominates v w) (hwv : g.Dominates w v) : v = w := by
   obtain rfl | ⟨u, hvu, huw⟩ := ReflTransGen.cases_head hvw
   · rfl
@@ -202,15 +207,31 @@ instance : DecidableEq (DominanceOrder g) := inferInstanceAs (DecidableEq (Fin n
 instance {i : ℕ} [OfNat (Fin n) i] : OfNat (DominanceOrder g) i :=
   inferInstanceAs (OfNat (Fin n) i)
 
+instance : Preorder (DominanceOrder g) where
+  le v w := g.Dominates v w
+  le_refl _ := .refl
+  le_trans _ _ _ := .trans
+
+/-- The yield of a position is the principal upper set it generates in the dominance order. -/
+theorem _root_.DependencyGrammar.Graph.yield_eq_Ici (v : Fin n) :
+    g.yield v = Set.Ici (α := DominanceOrder g) v := rfl
+
 section Forest
 
 variable [hF : Fact g.IsForest]
 
 instance : PartialOrder (DominanceOrder g) where
-  le v w := g.Dominates v w
-  le_refl _ := .refl
-  le_trans _ _ _ := .trans
   le_antisymm _ _ := hF.out.dominates_antisymm
+
+variable (g) in
+/-- The yield as an order embedding: a position dominates another iff its yield contains the
+other's. -/
+def yieldEmbedding : DominanceOrder g ↪o (Set (Fin n))ᵒᵈ :=
+  .ofMapLEIff (fun v ↦ .toDual (g.yield v)) fun _ _ ↦ Set.Ici_subset_Ici (α := DominanceOrder g)
+
+@[simp] theorem yieldEmbedding_apply (v : DominanceOrder g) :
+    yieldEmbedding g v = .toDual (g.yield v) := rfl
+
 
 instance : DecidableLE (DominanceOrder g) :=
   fun v w ↦ inferInstanceAs (Decidable (g.Dominates v w))
@@ -239,6 +260,10 @@ instance [hT : Fact g.IsTree] : OrderBot (DominanceOrder g) where
   bot_le := hT.out.root_dominates
 
 end DominanceOrder
+
+theorem Graph.IsForest.yield_injective (hF : g.IsForest) : Function.Injective g.yield :=
+  haveI := Fact.mk hF
+  (DominanceOrder.yieldEmbedding g).injective
 
 /-! ### Bundled trees -/
 

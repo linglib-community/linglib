@@ -78,6 +78,14 @@ namespace Interpretation
 open ModalLogic
 open scoped SetRel
 
+/-- Interpretations are ordered by inclusion of both relations. -/
+instance {State Event : Type*} : PartialOrder (Interpretation State Event) :=
+  PartialOrder.lift (fun M ↦ (M.become, M.cause)) fun _ _ h ↦
+    Interpretation.ext (congrArg Prod.fst h) (congrArg Prod.snd h)
+
+theorem le_def {State Event : Type*} {M N : Interpretation State Event} :
+    M ≤ N ↔ M.become ⊆ N.become ∧ M.cause ⊆ N.cause := Iff.rfl
+
 variable {State Event : Type*} (M : Interpretation State Event) (p : State → Prop)
   (Q : Event → Prop) {ks ks' : Finset Root.Kind}
 

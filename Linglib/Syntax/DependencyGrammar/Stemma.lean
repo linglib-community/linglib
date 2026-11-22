@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Stemmas
@@ -120,10 +121,13 @@ theorem headIndex_lt_size (s : Stemma L) : s.headIndex < s.size := by
 /-- A stemma has at least its head word, so numerals denote its positions. -/
 instance (s : Stemma L) : NeZero s.size := ⟨by cases s; simp [size]⟩
 
+/-- The word at each position of a stemma's sentence. -/
+def word (s : Stemma L) (v : Fin s.size) : Word :=
+  s.yield[v.val]'(by rw [length_yield]; exact v.isLt)
+
 /-- The dependency graph on the positions of a stemma's sentence: an arc from each word's head to
 the word, labelled with its relation, rooted at the stemma's head. -/
 def toGraph (s : Stemma L) : Graph L s.size where
-  words v := s.yield[v.val]'(by rw [length_yield]; exact v.isLt)
   label v w := ((s.heads 0 none)[w.val]?.bind id).bind fun p ↦
     if p.1 = v.val then some p.2 else none
   root := ⟨s.headIndex, s.headIndex_lt_size⟩

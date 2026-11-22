@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Data.Finset.Union
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Feature.Person.Basic
@@ -32,7 +31,7 @@ bridged by recapitulative and by summary linkage.
   desinences and the perfect forms by person and number
 * `Nungon.Medial` — the three medial forms, same-subject, different-subject and perfect,
   with their morphs by person and number (`morphs`), the switch-reference value they carry
-  (`sr`), the relations they encode (`relations`) and whether they index the subject
+  (`switchReference`) and whether they index the subject
   (`IndexesSubject`), which make them an instance of `MedialForm`
 
 ## Implementation notes
@@ -103,16 +102,10 @@ def morphs : Medial → Person → Number → List Morph
   | perfect, p, n => medialSuffix :: (Nungon.perfect p n).toList
 
 /-- The switch-reference value a form carries; `none` for the perfect. -/
-def sr : Medial → Option SwitchReference
+def switchReference : Medial → Option SwitchReference
   | ss => some .ss
   | ds => some .ds
   | perfect => none
-
-/-- The interclausal relations a form encodes, which for the perfect is completion before the
-next event and for the other two none. -/
-def relations : Medial → Finset InterclauseRelation
-  | ss | ds => ∅
-  | perfect => {.sequential}
 
 /-- The form carries a subject desinence. -/
 def IndexesSubject (m : Medial) : Prop := m ≠ ss
@@ -120,8 +113,7 @@ def IndexesSubject (m : Medial) : Prop := m ≠ ss
 instance : DecidablePred IndexesSubject := fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
 instance : MedialForm Medial where
-  sr := sr
-  relations := relations
+  switchReference := switchReference
   IndexesSubject := IndexesSubject
 
 end Medial

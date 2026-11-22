@@ -14,9 +14,11 @@ existing files in the same area.
    git clone https://github.com/linglib-community/linglib
    cd linglib
    lake exe cache get
-   lake build
+   lake build Studies.Jenks2018   # one module and what it imports
+   lake build                     # everything
    ```
-3. Build takes ~5 minutes on a warm cache. `sorry`s in the codebase
+3. While working, build the modules you touched; CI runs the full
+   build on every PR. `sorry`s in the codebase
    are intentional placeholders for in-progress proofs.
 
 ## Three entry points
@@ -34,14 +36,15 @@ A study file typically:
 - Encodes the paper's model — definitions, denotations, constraint
   ranking, whatever the paper specifies — in Lean syntax.
 - Proves the predictions the paper claims, using the encoded model.
-- Cites the paper in the module docstring with `@cite{key}` (add the
+- Cites the paper in the module docstring with a `[key]` link (add the
   BibTeX entry to `references.bib` first).
 
 Look at any existing file under `Studies/` for a template —
 `Studies/Jenks2018.lean` (definiteness) and
-`Studies/FrankGoodman2012PMF.lean` (an RSA implicature model) are
-reasonable starting points. Theory-neutral empirical data lives
-separately under `Linglib/Phenomena/{Phenomenon}/`.
+`Studies/FrankGoodman2012.lean` (an RSA implicature model) are
+reasonable starting points. `Studies/README.md` covers file naming.
+Theory-neutral empirical data lives separately under `Linglib/Data/`
+(see `Linglib/Data/README.md`).
 
 ### Add a Fragment
 
@@ -54,7 +57,8 @@ data instead of toy examples.
 If you work on a language whose typological profile is poorly
 represented (most non-Indo-European languages outside our existing
 sample), a small contribution here goes a long way. See an existing
-fragment (e.g. `Fragments/Mayan/Tseltalan.lean`) for the schema.
+fragment (e.g. the files under `Linglib/Fragments/English/`) for the
+schema.
 
 ### Report a problem
 
@@ -63,6 +67,26 @@ content, or you spot an inconsistency between two theories that
 should agree, [open an issue](https://github.com/linglib-community/linglib/issues).
 Critical readings are welcome — formalization makes mistakes visible,
 and we want them caught.
+
+## Repository layout
+
+The library is layered, from foundational to derived, and imports only
+point downstream:
+
+- `Linglib/Core/`: framework-neutral mathematics, organized like
+  mathlib.
+- `Linglib/Semantics/`, `Syntax/`, `Pragmatics/`, `Morphology/`,
+  `Phonology/`, `Processing/`, `Discourse/`, `Logic/`: reusable
+  theory, shared by several studies.
+- `Linglib/Data/`: empirical observations, with no theory imports.
+- `Linglib/Fragments/{Language}/`: lexical data for one language,
+  typed by the theory layer.
+- `Studies/`: one paper per file, named `AuthorYear.lean`. The studies
+  are the library's test suite.
+
+When a study needs something a lower layer already provides, import it
+rather than defining a local copy. That sharing is what lets a change
+to one theory show its consequences everywhere else.
 
 ## Code conventions
 
@@ -74,16 +98,24 @@ the canonical reference.
 module docstring placed *after* the `import` statements (Lean
 requires imports to come first).
 
-**Citations.** Cite papers with `@cite{key}`; never inline
-`Author (Year)`. Add the BibTeX entry to `references.bib` first
-using `lastname-lastname-year` keys, and validate with
-`python3 scripts/gen_bibliography_page.py --check`. The rendered
-bibliography is a build artifact (regenerated in CI) — don't commit it.
+**Citations.** Cite papers with a `[key]` link (`[kratzer-1991]`);
+never inline `Author (Year)`. Add the BibTeX entry to `references.bib`
+first using `lastname-lastname-year` keys, and validate with
+`python3 scripts/check_citations.py`. Check every field of a new entry
+against the publication itself, and don't cite an equation, section, or
+page number from memory: a missing DOI is better than a wrong one. The
+rendered bibliography is a build artifact (regenerated in CI) — don't
+commit it.
 
 **Proof style.** Prefer structural tactics (`exact`, `simp only`,
 `decide`, `omega`, `linarith`) over bare `simp` or `native_decide`.
 Bare `simp` is fragile under simp-set changes; `native_decide`
 bypasses kernel verification.
+
+**Derive, don't stipulate.** A definition that encodes its own
+conclusion (`def canBridge := true`, then a theorem proving it by
+`rfl`) shows nothing. Define the structural property and prove that
+the conclusion follows from it.
 
 **`sorry` over weakening.** State the full theorem and use `sorry`
 to mark it incomplete — a `sorry` warning is explicit, while a
@@ -91,7 +123,7 @@ weakened-but-proved theorem can be silently forgotten as not having
 captured the intended claim.
 
 **Lean style.** `autoImplicit` is disabled (declare type parameters
-explicitly). Use `Type*` not `Type 0`. Prefer `Prop` with
+explicitly). Write `fun x ↦ e`, not `λ`. Use `Type*` not `Type 0`. Prefer `Prop` with
 `[DecidablePred]` over `Bool` for predicate-shape data. Use
 `lowerCamelCase` for lemma names.
 

@@ -1,26 +1,30 @@
 module
 
+public import Mathlib.Algebra.Group.Hom.Defs
 public import Mathlib.Control.Monad.Writer
+public import Mathlib.Data.Set.Semiring
 
 /-!
 # Writer monads
 
-A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
-nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
-and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
-log never feeds a value.
+A computation of the writer monad `Writer ω` over a monoid `ω` yields a value, `Writer.val`, and
+logs output in `ω`, `Writer.log`: `pure` logs `1` and `m >>= f` has the value of `f` at the value
+of `m` and the product of the two logs. A value can therefore feed later logging, while a log
+never feeds a value.
 
-## Main definitions
+A monoid homomorphism `φ : ω →* ω'` changes the log of a computation by `WriterT.adapt φ`, which
+commutes with `pure` and `bind` (`WriterT.adapt_pure`, `WriterT.adapt_bind`).
 
-* `Writer.val`, `Writer.log`: the value and the log of a computation.
-* `WriterT.instLawfulMonadList`: the monad laws for list logs, over any lawful monad.
+Logs that are sets under union are `Writer.SetLog P`, with `Writer.ofSet` and `Writer.logSet`
+converting to and from `Set P`.
 
 ## Implementation notes
 
-* Mathlib's two `Monad` instances on `Writer ω`, for `[Monoid ω]` and for
-  `[EmptyCollection ω] [Append ω]`, are both `WriterT.monad empty append`; the projection lemmas
-  are stated for that monad, as mathlib states `WriterT.run_bind`, and apply under either.
-* Mathlib proves the monad laws for monoid logs only, and lists are not a monoid there.
+* `Writer.val`, `Writer.log` and the `SetLog` functions are conveniences over mathlib's
+  `WriterT.run`, which returns a pair, and over the synonym below.
+* Sets are a monoid under union through the synonym `SetSemiring`, so `Writer.SetLog P` has
+  mathlib's monad laws; an instance on `Set P` itself would also apply to relation types, which
+  are sets with composition as their monoid.
 -/
 
 @[expose] public section
@@ -29,14 +33,24 @@ universe u v
 
 namespace WriterT
 
-variable {M : Type u → Type v} {P : Type u} [Monad M] [LawfulMonad M]
+variable {M : Type u → Type v} {ω ω' α β : Type u} [Monad M]
 
-/-- A writer monad with list logs is lawful over any lawful monad. -/
-instance instLawfulMonadList : LawfulMonad (WriterT (List P) M) := LawfulMonad.mk'
-  (id_map := fun _ ↦ by ext; simp)
-  (pure_bind := fun _ _ ↦ by ext; simp)
-  (bind_assoc := fun _ _ _ ↦ by ext; simp)
-  (bind_pure_comp := fun _ _ ↦ by ext; simp)
+@[simp] theorem run_adapt (φ : ω → ω') (m : WriterT ω M α) :
+    (WriterT.adapt φ m).run = Prod.map id φ <$> m.run := rfl
+
+variable [LawfulMonad M] [Monoid ω] [Monoid ω']
+
+/-- Changing the log along a monoid homomorphism commutes with `pure`. -/
+theorem adapt_pure (φ : ω →* ω') (a : α) :
+    WriterT.adapt φ (pure a : WriterT ω M α) = pure a := by
+  ext
+  simp
+
+/-- Changing the log along a monoid homomorphism commutes with `bind`. -/
+theorem adapt_bind (φ : ω →* ω') (m : WriterT ω M α) (f : α → WriterT ω M β) :
+    WriterT.adapt φ (m >>= f) = WriterT.adapt φ m >>= fun a ↦ WriterT.adapt φ (f a) := by
+  ext
+  simp
 
 end WriterT
 
@@ -66,50 +80,68 @@ protected theorem ext {m₁ m₂ : Writer ω A} (hv : m₁.val = m₂.val) (hl :
 
 @[simp] theorem log_tell (w : ω) : (tell w : Writer ω PUnit).log = w := rfl
 
-section Monad
+section Monoid
 
-variable (empty : ω) (append : ω → ω → ω)
+variable [Monoid ω]
 
-@[simp] theorem val_pure (a : A) :
-    letI := WriterT.monad (M := Id) empty append
-    (pure a : Writer ω A).val = a := rfl
+@[simp] theorem val_pure (a : A) : (pure a : Writer ω A).val = a := rfl
 
-@[simp] theorem log_pure (a : A) :
-    letI := WriterT.monad (M := Id) empty append
-    (pure a : Writer ω A).log = empty := rfl
+@[simp] theorem log_pure (a : A) : (pure a : Writer ω A).log = 1 := rfl
 
 /-- The value of `m >>= f` is the value of `f` at the value of `m`, so the log of `m` never
 reaches it. -/
 @[simp] theorem val_bind (m : Writer ω A) (f : A → Writer ω B) :
-    letI := WriterT.monad (M := Id) empty append
     (m >>= f).val = (f m.val).val := rfl
 
 @[simp] theorem log_bind (m : Writer ω A) (f : A → Writer ω B) :
-    letI := WriterT.monad (M := Id) empty append
-    (m >>= f).log = append m.log (f m.val).log := rfl
+    (m >>= f).log = m.log * (f m.val).log := rfl
 
-@[simp] theorem val_map (f : A → B) (m : Writer ω A) :
-    letI := WriterT.monad (M := Id) empty append
-    (f <$> m).val = f m.val := rfl
+@[simp] theorem val_map (f : A → B) (m : Writer ω A) : (f <$> m).val = f m.val := rfl
 
-@[simp] theorem log_map (f : A → B) (m : Writer ω A) :
-    letI := WriterT.monad (M := Id) empty append
-    (f <$> m).log = m.log := rfl
+@[simp] theorem log_map (f : A → B) (m : Writer ω A) : (f <$> m).log = m.log := rfl
 
 @[simp] theorem val_seq (f : Writer ω (A → B)) (m : Writer ω A) :
-    letI := WriterT.monad (M := Id) empty append
     (f <*> m).val = f.val m.val := rfl
 
 @[simp] theorem log_seq (f : Writer ω (A → B)) (m : Writer ω A) :
-    letI := WriterT.monad (M := Id) empty append
-    (f <*> m).log = append f.log m.log := rfl
+    (f <*> m).log = f.log * m.log := rfl
 
-end Monad
+end Monoid
 
-/-- The log of `m >>= f` extends the log of `m`, so composition is isotone for the prefix order
-on list logs. -/
-theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
-    m.log <+: (m >>= f).log :=
-  ⟨(f m.val).log, rfl⟩
+/-! ### Set logs -/
+
+/-- Sets under union, as a monoid of logs: mathlib's `SetSemiring P` read multiplicatively. -/
+abbrev SetLog (P : Type u) := Multiplicative (SetSemiring P)
+
+section SetLog
+
+variable {P : Type u}
+
+/-- The computation with value `a` that logs the set `s`. -/
+def ofSet (a : A) (s : Set P) : Writer (SetLog P) A := .mk a (.ofAdd (.ofSet s))
+
+/-- The set a computation logs. -/
+def logSet (m : Writer (SetLog P) A) : Set P := m.log.toAdd.toSet
+
+theorem ext_logSet {m₁ m₂ : Writer (SetLog P) A} (hv : m₁.val = m₂.val)
+    (hl : m₁.logSet = m₂.logSet) : m₁ = m₂ :=
+  Writer.ext hv (congrArg (fun s : Set P ↦ (.ofAdd (.ofSet s) : SetLog P)) hl)
+
+@[simp] theorem val_ofSet (a : A) (s : Set P) : (ofSet a s).val = a := rfl
+
+@[simp] theorem logSet_ofSet (a : A) (s : Set P) : (ofSet a s).logSet = s := rfl
+
+@[simp] theorem logSet_pure (a : A) : (pure a : Writer (SetLog P) A).logSet = ∅ := rfl
+
+@[simp] theorem logSet_bind (m : Writer (SetLog P) A) (f : A → Writer (SetLog P) B) :
+    (m >>= f).logSet = m.logSet ∪ (f m.val).logSet := rfl
+
+@[simp] theorem logSet_map (f : A → B) (m : Writer (SetLog P) A) :
+    (f <$> m).logSet = m.logSet := rfl
+
+@[simp] theorem logSet_seq (f : Writer (SetLog P) (A → B)) (m : Writer (SetLog P) A) :
+    (f <*> m).logSet = f.logSet ∪ m.logSet := rfl
+
+end SetLog
 
 end Writer

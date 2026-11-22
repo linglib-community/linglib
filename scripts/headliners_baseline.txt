@@ -4,7 +4,6 @@ AghaJeretic2022
 AghaJeretic2026
 Ahn2015
 AhnKocabDavidson2026
-Aikhenvald2000
 Aikhenvald2004
 Aissen2003
 Akkus2026
@@ -12,7 +11,6 @@ AksenovaEtAl2024
 AlbrightHayes2003
 Alderete2001
 AlexandropoulouGotzner2024b
-AlexeyenkoZeijlstra2025
 Almog2014
 AlokBhalla2026
 Aloni2001
@@ -115,7 +113,6 @@ ChemlaSchlenker2012
 ChemlaSpector2011
 ChenVanDeemter2023
 Chierchia1984
-Chierchia1998
 Chierchia2013
 Chomsky1995
 Chomsky2013
@@ -202,7 +199,6 @@ Gasparri2025
 George2011
 GilesEtAl2026
 GinzburgFernandezSchlangen2014
-GiorgoloAsudeh2012
 GokselKerslake2005
 Goldberg1995
 GoldszmidtPearl1996
@@ -305,9 +301,7 @@ Major2024
 Mandelkern2022
 Marantz1991
 MarcolliChomskyBerwick2025
-MartinRoseNichols2025
 MartinezVera2026
-MaslovaNedjalkov2013
 MaticNikolaeva2018
 Matthewson2013
 McCarthy2005
@@ -329,7 +323,6 @@ Nadathur2023
 Narrog2010
 Newman2024
 Ney2026
-Nordlinger2023
 Nouwen2024
 ODonnell2015
 OgiharaSteinertThrelkeld2024
@@ -378,7 +371,6 @@ SagEtAl2020
 SagWasowBender2003
 Sagey1986
 Santorio2018
-SarvasyAikhenvald2025
 Sassoon2013
 Schlenker2004a
 Schlenker2009
@@ -410,7 +402,6 @@ Stassen1985
 Stassen2000
 Steriade1997
 Sternefeld1998
-Stump2006
 Stump2012
 Stump2020
 SuttonFilip2021

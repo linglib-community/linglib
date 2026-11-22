@@ -86,13 +86,13 @@ theorem compl_sup_ne_true (h : Conflict φ ψ) (w : W) : ((φ ⊔ ψ)ᶜ) w ≠ 
 theorem orFilter_ne_false (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
     (p.orFilter q).toTrivalent w ≠ .false := fun hn ↦ by
   rw [TwoDim.toTrivalent_eq_false_iff] at hn
-  refine hn.2 (TwoDim.orFilter_atIssue_of_conflict p q (fun ⟨hp, hq⟩ ↦ ?_) hn.1)
+  refine hn.2 (TwoDim.atIssue_orFilter_of_conflict p q (fun ⟨hp, hq⟩ ↦ ?_) hn.1)
   rcases h w with h | h <;> simp_all
 
 /-- The two-dimensional disjunction whose presupposition is the disjunction of the
 presuppositions, (7). -/
 def orPresupOr (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
-  ⟨fun w ↦ p.atIssue w ∨ q.atIssue w, fun w ↦ p.notAtIssue w ∨ q.notAtIssue w⟩
+  .mk (fun w ↦ p.atIssue w ∨ q.atIssue w) fun w ↦ p.notAtIssue w ∨ q.notAtIssue w
 
 theorem orPresupOr_toTrivalent_eq_false_iff (w : W) :
     (orPresupOr p q).toTrivalent w = .false ↔

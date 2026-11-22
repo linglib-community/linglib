@@ -53,10 +53,11 @@ namespace PrasertsomSmithCulbertson2026
 
 /-! ### The typological premise (§1) -/
 
-theorem animacy_not_colour (l : Aikhenvald2000.Language)
-    (hk : l.device = some .nounClass ∨ l.device = some .numeralClassifier) :
-    (∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex) ∧ .colour ∉ l.semantics :=
-  ⟨Aikhenvald2000.animacy_basic l hk, Aikhenvald2000.colour_never l⟩
+theorem animacy_not_colour {d : Classifier.Device}
+    (hd : d = .nounClass ∨ d = .numeralClassifier) :
+    Aikhenvald2000.Typical d .animacy ∧
+      ∀ d' : Classifier.Device, ¬ Aikhenvald2000.Typical d' .colour :=
+  Aikhenvald2000.typical_animacy_not_colour hd
 
 /-! ### The stimulus dimensions (§4.2.2, Fig. 10) -/
 

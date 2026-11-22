@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Fragments.Romance.French.Clitics
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -21,6 +22,7 @@ with *se* are formed in the syntax ([siloni-2008]), so they have no discontinuou
 * [T. Siloni, *The Syntax of Reciprocal Verbs: An Overview* (2008)][siloni-2008]
 * [E. Maslova, *Reflexive Encoding of Reciprocity: Cross-Linguistic and Language-Internal
   Variation* (2008)][maslova-2008]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -40,5 +42,14 @@ def lunLautre : Marker :=
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {se, lunLautre}
+
+/-- The form of the reflexive clitic *se*. -/
+def reflexiveForms : Finset (List Morphology.Morph) := {[.free French.Clitics.se.form]}
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "fre" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end French.Reciprocals

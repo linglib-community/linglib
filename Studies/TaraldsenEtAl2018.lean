@@ -211,10 +211,12 @@ theorem xhosa_plurals :
 
 -- (60), (61)
 theorem xhosa_prefix_sc_identity :
-    exponents (spellout xhosaPrefixes) [.cls 5] = (Xhosa.subjPrefix .cl5).map ([·]) ∧
-      exponents (spellout xhosaPrefixes) [.cls 7] = (Xhosa.subjPrefix .cl7).map ([·]) ∧
-      exponents (spellout xhosaPrefixes) [.cls 1, .num] = (Xhosa.subjPrefix .cl2).map ([·]) ∧
-      exponents (spellout xhosaPrefixes) [.cls 7, .num] = (Xhosa.subjPrefix .cl8).map ([·]) := by
+    exponents (spellout xhosaPrefixes) [.cls 5] = (Xhosa.subjPrefix .cl5).map ([·.form]) ∧
+      exponents (spellout xhosaPrefixes) [.cls 7] = (Xhosa.subjPrefix .cl7).map ([·.form]) ∧
+      exponents (spellout xhosaPrefixes) [.cls 1, .num] =
+        (Xhosa.subjPrefix .cl2).map ([·.form]) ∧
+      exponents (spellout xhosaPrefixes) [.cls 7, .num] =
+        (Xhosa.subjPrefix .cl8).map ([·.form]) := by
   decide
 
 /-! ### The Changana and Rhonga lexicon

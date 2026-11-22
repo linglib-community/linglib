@@ -805,6 +805,9 @@ def neyo : Glottocode := "neyo1238"
 /-- Nez Perce, `nezp1238` (ISO 639-3 `nez`). -/
 def nezPerce : Glottocode := "nezp1238"
 
+/-- Ngalkbun, `ngal1292` (ISO 639-3 `ngk`). -/
+def ngalkbun : Glottocode := "ngal1292"
+
 /-- Ngamo, `ngam1282` (ISO 639-3 `nbh`). -/
 def ngamo : Glottocode := "ngam1282"
 
@@ -1192,6 +1195,9 @@ def termanu : Glottocode := "term1237"
 /-- Tetum, `tetu1245` (ISO 639-3 `tet`). -/
 def tetum : Glottocode := "tetu1245"
 
+/-- Thayore, `thay1249` (ISO 639-3 `thd`). -/
+def thayore : Glottocode := "thay1249"
+
 /-- Tibetan, `tibe1272` (ISO 639-3 `bod`). -/
 def tibetan : Glottocode := "tibe1272"
 
@@ -1212,6 +1218,9 @@ def tojolabal : Glottocode := "tojo1241"
 
 /-- Tommo So Dogon, `tomm1242` (ISO 639-3 `dto`). -/
 def tommoSoDogon : Glottocode := "tomm1242"
+
+/-- Tonga (Zambia), `tong1318` (ISO 639-3 `toi`). -/
+def tongaZambia : Glottocode := "tong1318"
 
 /-- Tonkawa, `tonk1249` (ISO 639-3 `tqw`). -/
 def tonkawa : Glottocode := "tonk1249"
@@ -1273,8 +1282,14 @@ def westernFlemish : Glottocode := "vlaa1240"
 /-- Waiwai, `waiw1244` (ISO 639-3 `waw`). -/
 def waiwai : Glottocode := "waiw1244"
 
+/-- Wambayan, `wamb1258` (ISO 639-3 `wmb`). -/
+def wambayan : Glottocode := "wamb1258"
+
 /-- Wandala, `wand1278` (ISO 639-3 `mfi`). -/
 def wandala : Glottocode := "wand1278"
+
+/-- Ngiyambaa, `wang1291` (ISO 639-3 `wyb`). -/
+def ngiyambaa : Glottocode := "wang1291"
 
 /-- Wan, `wann1242` (ISO 639-3 `wan`). -/
 def wan : Glottocode := "wann1242"
@@ -1284,6 +1299,9 @@ def warao : Glottocode := "wara1303"
 
 /-- Wardaman, `ward1246` (ISO 639-3 `wrr`). -/
 def wardaman : Glottocode := "ward1246"
+
+/-- Wari', `wari1268` (ISO 639-3 `pav`). -/
+def wari : Glottocode := "wari1268"
 
 /-- Warlpiri, `warl1254` (ISO 639-3 `wbp`). -/
 def warlpiri : Glottocode := "warl1254"

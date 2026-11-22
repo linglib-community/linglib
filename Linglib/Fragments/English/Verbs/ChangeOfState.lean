@@ -116,8 +116,8 @@ def melt : Verb where
 
 /-! ### Further change-of-state verbs
 
-The causative verbs Martin, Rose and Nichols survey that have no entry elsewhere in this
-file. -/
+The causative verbs Martin, Rose and Nichols survey or test that have no entry elsewhere in
+this file. -/
 
 /-- "activate" — sets a device or process in operation; not listed by Levin. -/
 def activate : Verb where
@@ -181,6 +181,33 @@ def bury : Verb where
   levin := none
   valency := .ofFrame ArgumentFrame.np
 
+
+/-- "flood" — covering with water, in the alternating sense of Levin 45.4 other change-of-state
+verbs; Levin also lists *flood* among the fill verbs (9.8), which do not alternate. -/
+def flood : Verb where
+  morphs := [.root "flood"]
+  levin := some Levin1993.Index.flood
+  levinExcluded := {LevinClass.fill}
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.intransitive, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
+
+/-- "crash" — breaking by violent impact; Levin 45.1 break verbs, among others. -/
+def crash : Verb where
+  morphs := [.root "crash"]
+  levin := some Levin1993.Index.crash
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+
+/-- "ruin" — Levin 44 destroy verbs. -/
+def ruin : Verb where
+  morphs := [.root "ruin"]
+  levin := some Levin1993.Index.ruin
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
 
 /-- "drop" — Levin 45.6 calibratable change-of-state verbs. -/
 def drop : Verb where

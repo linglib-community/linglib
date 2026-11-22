@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Wambaya.Voice
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -20,6 +21,7 @@ never cross-references. It is a valency-reducing marker of the predicate, not an
 * [R. Nordlinger, *A grammar of Wambaya, Northern Territory (Australia)* (1998)][nordlinger-1998]
 * [N. Evans, A. Gaby and R. Nordlinger, *Valency Mismatches and the Coding of Reciprocity in
   Australian Languages* (2007)][evans-et-al-2007]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -36,5 +38,14 @@ def rr : Marker :=
 
 /-- The marker inventory. -/
 def markers : Finset Marker := {rr}
+
+/-- The form of the reflexive voice. -/
+def reflexiveForms : Finset (List Morphology.Morph) := {Wambaya.reflexive.marker}
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "wam" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end Wambaya.Reciprocals

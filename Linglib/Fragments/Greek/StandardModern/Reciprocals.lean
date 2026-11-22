@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Greek.StandardModern.Voice
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -14,6 +15,7 @@ reciprocal verbs form discontinuous reciprocals with *me* 'with', *O Giannis fil
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [A. Dimitriadis, *Irreducible Symmetry in Reciprocal Constructions* (2008)][dimitriadis-2008]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -32,5 +34,14 @@ def oEnasTonAllon : Marker :=
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {nonactive, oEnasTonAllon}
+
+/-- The form of the reflexive voice, the nonactive morphology. -/
+def reflexiveForms : Finset (List Morphology.Morph) := {Greek.StandardModern.reflexive.marker}
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "grk" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end Greek.StandardModern.Reciprocals

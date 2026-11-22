@@ -103,22 +103,26 @@ theorem german_weakAndStrong :
 
 section Divergence
 
-variable {E W : Type} {R : ((ℕ → E) → W → Set E)} {i : ℕ} {g : ℕ → E} {s : W}
+variable {E W : Type} [PartialOrder E] {R : ((ℕ → E) → W → Set E)} {i : ℕ} {g : ℕ → E} {s : W}
 
-theorem der_er_can_diverge {y : E} (hi : g i ∈ R g s) (hy : y ∈ R g s) (hne : y ≠ g i) :
+theorem der_er_can_diverge {y : E} (hR : IsAntichain (· ≤ ·) (R g s)) (hi : g i ∈ R g s)
+    (hy : y ∈ R g s) (hne : y ≠ g i) :
     Definite.ofStrength .uniqueness R i g s ≠
       Definite.ofStrength .familiarity R i g s := by
   obtain ⟨hw, hs⟩ := Schwarz2009.weak_eq_none_strong_eq_some hi hy hne
   intro h
   have hm : g i ∈ Definite.unique R g s := by
-    rw [show Definite.unique R g s = Definite.anaphoric R i g s from h]
+    rw [← Definite.maximal_eq_unique_of_isAntichain hR,
+      show Definite.maximal R g s = Definite.anaphoric R i g s from h]
     exact hs
   exact Part.notMem_none _ (hw ▸ hm)
 
 theorem der_eq_er_of_unique (hUniq : ∀ y ∈ R g s, y = g i) :
     Definite.ofStrength .familiarity R i g s =
       Definite.ofStrength .uniqueness R i g s :=
-  Definite.anaphoric_eq_unique_of_forall_eq hUniq
+  (Definite.anaphoric_eq_unique_of_forall_eq hUniq).trans
+    (Definite.maximal_eq_unique_of_isAntichain
+      ((Set.subsingleton_of_forall_eq _ hUniq).isAntichain _)).symm
 
 end Divergence
 

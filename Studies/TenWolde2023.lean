@@ -274,27 +274,27 @@ open ConstructionGrammar
 intensifier is left out. -/
 def Stage.construction : Stage → Construction Unit
   | .nPP => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
-      { filler := .fixed "of" }, { filler := .open_ .DET }, { filler := .open_ .NOUN }], (), false⟩
+      { filler := .fixed "of" }, { filler := .open_ .DET }, { filler := .open_ .NOUN }], ()⟩
   | .headClassifier => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
-      { filler := .fixed "of" }, { filler := .open_ .NOUN }], (), false⟩
+      { filler := .fixed "of" }, { filler := .open_ .NOUN }], ()⟩
   | .evaluative => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN },
       { filler := .fixed "of" }, { filler := .fixed "a" },
-      { filler := .open_ .NOUN, isHead := true }], (), false⟩
+      { filler := .open_ .NOUN, isHead := true }], ()⟩
   | .evaluativeModifier => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN },
-      { filler := .fixed "of" }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+      { filler := .fixed "of" }, { filler := .open_ .NOUN, isHead := true }], ()⟩
   | .binominalIntensifier => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN },
       { filler := .fixed "of" }, { filler := .open_ .ADJ },
-      { filler := .open_ .NOUN, isHead := true }], (), false⟩
+      { filler := .open_ .NOUN, isHead := true }], ()⟩
 
 /-- The simple noun phrase, whose classifying and evaluative premodifiers share their function
 with the binominals. -/
 def simpleNP : Construction Unit :=
-  ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true }], ()⟩
 
 /-- The adjective phrase, whose intensifiers share their function with the binominal
 intensifier. -/
 def adjectivePhrase : Construction Unit :=
-  ⟨[{ filler := .open_ .ADV }, { filler := .open_ .ADJ, isHead := true }], (), false⟩
+  ⟨[{ filler := .open_ .ADV }, { filler := .open_ .ADJ, isHead := true }], ()⟩
 
 /-- The nodes of the network: the constructions of the path, the simple noun phrase and the
 adjective phrase. -/

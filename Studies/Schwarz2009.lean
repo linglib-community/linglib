@@ -59,12 +59,12 @@ variable {E W : Type}
 
 section Forms
 
-variable (R : (ℕ → E) → W → Set E) (d : ℕ)
+variable [PartialOrder E] (R : (ℕ → E) → W → Set E) (d : ℕ)
 
 /-- The German contracted article denotes the weak article and the non-contracted one the strong
 article (Table 2.1). -/
 theorem german_denotations :
-    German.Determiners.contracted.denotations R d = {Definite.unique R} ∧
+    German.Determiners.contracted.denotations R d = {Definite.maximal R} ∧
       German.Determiners.nonContracted.denotations R d = {Definite.anaphoric R d} := by
   have h₁ : German.Determiners.contracted.strengths = {.uniqueness} := by decide
   have h₂ : German.Determiners.nonContracted.strengths = {.familiarity} := by decide
@@ -72,7 +72,7 @@ theorem german_denotations :
 
 /-- Fering's A-form denotes the weak article and its D-form the strong article (9). -/
 theorem fering_denotations :
-    Fering.Determiners.aForm.denotations R d = {Definite.unique R} ∧
+    Fering.Determiners.aForm.denotations R d = {Definite.maximal R} ∧
       Fering.Determiners.dForm.denotations R d = {Definite.anaphoric R d} := by
   have h₁ : Fering.Determiners.aForm.strengths = {.uniqueness} := by decide
   have h₂ : Fering.Determiners.dForm.strengths = {.familiarity} := by decide
@@ -81,7 +81,7 @@ theorem fering_denotations :
 /-- English *the* denotes both articles, having every use of Hawkins's classification
 (Table 2.3). -/
 theorem english_denotations :
-    English.Determiners.the.denotations R d = {Definite.unique R, Definite.anaphoric R d} := by
+    English.Determiners.the.denotations R d = {Definite.maximal R, Definite.anaphoric R d} := by
   have h : English.Determiners.the.strengths = {.uniqueness, .familiarity} := by decide
   simp [Article.denotations, h]
 

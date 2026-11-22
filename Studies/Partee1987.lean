@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Predicative
+public import Mathlib.Basic.PEquiv
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Basic
 public import Mathlib.Order.Interval.Set.Infinite
@@ -11,9 +12,10 @@ public import Mathlib.Order.Interval.Set.Infinite
 
 A noun phrase may denote an entity, a predicate or a generalized quantifier, and the shifts among
 the three types pair a total injection with its partial inverse: the lift `Quantifier.individual`
-with `Quantifier.lower`, the singleton with `iota`, and Chierchia's ∩ with ∪, which [cannot be
-total](##Kind.apply_russell_eq_none) and is [no function of
-extensions](##Kind.not_exists_apply_eq_comp). `BE` is [the only complete
+with `Quantifier.lower`, the singleton with `iota`, and Chierchia's ∩ with ∪, a partial bijection
+between properties and their entity correlates which cannot be total
+(`apply_russell_eq_none`) and is no function of extensions (`not_exists_apply_eq_comp`). `BE` is
+[the only complete
 homomorphism](##Quantifier.BE_unique) taking each lift to its singleton, `A` is [its only
 conservative, symmetric, monotone section](##Quantifier.eq_some_of_leftInverse), and [*exactly
 one* fails only by monotonicity](##exactly_one_ne_some). The predicative *the
@@ -25,14 +27,17 @@ owner of this land* is [a role that no set represents](##Quantifier.BE_the_not_m
   (fn. 2); a property here is a set of individuals at each index, `W → Set E`, and a set is the
   rigid property `Function.const W` of it.
 * The general results are stated where their objects live: the lift and `lower` in
-  `Quantification/Individual.lean`, `BE` and its sections in `Quantification/Predicative.lean`,
-  ∩ and ∪ in `Reference/Kind.lean`. This file keeps the paper's comparison of `A` with *exactly
-  one*, *most* under `BE`, and Fact 2 on an infinite domain.
+  `Quantification/Individual.lean`, `BE` and its sections in `Quantification/Predicative.lean`.
+  This file keeps the correlate of a property, the paper's comparison of `A` with *exactly one*,
+  *most* under `BE`, and Fact 2 on an infinite domain.
+* On entities ordered by part-of the singleton becomes the set of parts and `iota` the largest
+  member, `Kind.up` and `Kind.down` in `Reference/Kind.lean`, and the individual of an entity
+  lies between *every* and *some* of its parts (`Quantifier.some_Iic_eq_individual_iff`).
 
 ## TODO
 
-* Link's pair of §3.4.2, the sum of a set of atoms and `Mereology.atomsBelow` back, and the
-  analysis of the Williams puzzle in §4.
+* Link's pair of §3.4.2, the sum of a set of atoms and `Mereology.atomsBelow` back, stated on
+  `Kind.down`, and the analysis of the Williams puzzle in §4.
 * The *consider* judgments of (10) as `Data/Examples` rows, *every island* and *most islands*
   paired with their degenerate predicative readings once a degenerate predicate is defined.
 
@@ -50,6 +55,36 @@ namespace Partee1987
 open Quantifier Quantifier.Det Filter
 
 variable {E : Type*}
+
+/-! ### §3.1: properties and their entity correlates
+
+Nominalization pairs a property with an entity, its correlate, and predication takes the
+correlate back: a partial bijection between properties and entities. -/
+
+section Correlate
+
+variable {S : Type*} {P : S → Set E} {s : S} {x : E} (c : (S → Set E) ≃. E)
+
+/-- The Russell property of a pairing of properties with correlates: at each situation, being the
+correlate of a property one lacks there. -/
+def russell : S → Set E := fun s ↦ {x | ∃ P ∈ c.symm x, x ∉ P s}
+
+/-- The Russell property has no correlate, so ∩ is only almost total ([partee-1987], §3.1). -/
+theorem apply_russell_eq_none [Nonempty S] : c (russell c) = none := by
+  refine Option.eq_none_iff_forall_ne_some.2 fun r h ↦ ?_
+  have hr : c.symm r = some (russell c) := c.eq_some_iff.2 h
+  obtain ⟨s⟩ := ‹Nonempty S›
+  exact iff_not_self (a := r ∈ russell c s)
+    ⟨fun ⟨_, hP, hrP⟩ ↦ (Option.some_injective _ (hr.symm.trans hP)) ▸ hrP, fun h ↦ ⟨_, hr, h⟩⟩
+
+/-- The correlate is no function of the extension at a situation: where ∩ is defined on a property,
+a different property with the same extension there defeats any such function, which is why
+[partee-1987] calls an extensional ∩ a misrepresentation (§3.1). -/
+theorem not_exists_apply_eq_comp {P' : S → Set E} (hs : P s = P' s) (hne : P ≠ P')
+    (hx : c P = some x) : ¬ ∃ f : Set E → Option E, ∀ Q, c Q = f (Q s) := fun ⟨f, hf⟩ ↦
+  hne <| c.inj hx <| by rw [hf P', ← hs, ← hf P]; exact hx
+
+end Correlate
 
 /-! ### §3.3: *exactly one* and *most* under `BE`
 

@@ -348,6 +348,20 @@ theorem evenPresup_iff_ne (hμ : Monotone μ) (h : ∀ q ∈ alts, p ⊆ q) :
     evenPresup μ p alts ↔ ∀ q ∈ alts, μ p ≠ μ q :=
   forall₂_congr fun q hq ↦ lt_iff_le_and_ne.trans (and_iff_right (hμ (h q hq)))
 
+variable {D : Type*} {S : D → Set W} {F a : D} {A : Set D}
+
+/-- For a sentence frame `S` with focus `F` and alternatives `A`, the presupposition of *even*
+fails when the frame at some alternative entails the frame at the focus. -/
+theorem not_evenPresup_image (hμ : Monotone μ) (ha : a ∈ A) (h : S a ⊆ S F) :
+    ¬ evenPresup μ (S F) (S '' A) :=
+  not_evenPresup_of_subset hμ (Set.mem_image_of_mem S ha) h
+
+/-- When the frame at the focus entails the frame at every alternative, the presupposition of
+*even* asks only that no alternative be exactly as likely. -/
+theorem evenPresup_image_iff_ne (hμ : Monotone μ) (h : ∀ a ∈ A, S F ⊆ S a) :
+    evenPresup μ (S F) (S '' A) ↔ ∀ a ∈ A, μ (S F) ≠ μ (S a) :=
+  (evenPresup_iff_ne hμ (Set.forall_mem_image.2 h)).trans Set.forall_mem_image
+
 end Even
 
 /-! ### Strawson monotonicity -/

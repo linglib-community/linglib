@@ -431,7 +431,7 @@ theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i)
 section Configurations
 
 attribute [local simp] maxXP subcat_eq positionalMinimality_eq Candidate.tree syntaxProsodyMax
-  Correspondence.deficiency List.matchingNumber Input.phrases Input.parse
+  List.deficiency List.matchingNumber Input.phrases Input.parse
   Input.parse.pair Input.cut Input.stress Input.next spans_penultimate_ph
   spans_penultimate_isTrochee spans_penultimate_isMinimalPhi IsTrochee IsConstituent
   Foot.childHeadFlags RoseTree.licensed_node_iff Constituent.Licenses IsMinimalPhi Corresponds

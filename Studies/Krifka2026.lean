@@ -74,6 +74,10 @@ variable [SemilatticeSup E]
 noncomputable def they (s : Set E) : Part E :=
   Kind.down (supClosure s)
 
+-- *they* denotes the sum of the instances of the concept, where the plural closure contains it.
+theorem mem_they_iff {s : Set E} {d : E} : d ∈ they s ↔ IsLUB s d ∧ d ∈ supClosure s :=
+  Kind.mem_down.trans isGreatest_supClosure_iff
+
 /-- `pronoun noun` is the kind pronoun that the head noun selects (12): *they* for a count noun,
 and for a mass noun *it*, which denotes the kind of the concept, ∩ as in (13b), (17a). -/
 noncomputable def pronoun (noun : English.Nouns.Noun) : Set E → Part E :=

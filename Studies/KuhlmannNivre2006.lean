@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Morphology.Word.Basic
 public import Linglib.Data.Statistics.KuhlmannNivre2006
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Finset.Fin
@@ -53,7 +52,6 @@ the counts by `Decimal.RoundsPercent`, at the precision the text prints it.
 namespace KuhlmannNivre2006
 
 open DependencyGrammar Relation
-open Morphology (Word)
 
 variable {L : Type*} {n : ℕ} (g : Graph L n)
 
@@ -102,12 +100,9 @@ The analysis of *Není proto zapotřebí uzavírat nové nájemní smlouvy.* lea
 punctuation mark without a head, so it is a forest and not a tree, and the yield of *není* skips
 *proto*. -/
 
-/-- An unlabelled position. -/
-def dot : Word := Word.mk' "•" .X
-
 /-- Figure 1: nodes 2 and 8 have no head. -/
 def fig1 : Graph Unit 8 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot, dot, dot] 1
+  .ofArcs 1
     [(1, 0, ()), (0, 2, ()), (0, 3, ()), (3, 6, ()), (6, 4, ()), (6, 5, ())]
 
 /-- Figure 1 is a forest whose roots are nodes 2 and 8, and so not a tree. -/
@@ -127,11 +122,11 @@ Figure 2a is planar but not projective, its root inside the gap where the substr
 its two named edges crossing. -/
 
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
-def fig2a : Graph Unit 3 := .ofArcs [dot, dot, dot] 1 [(1, 0, ()), (0, 2, ())]
+def fig2a : Graph Unit 3 := .ofArcs 1 [(1, 0, ()), (0, 2, ())]
 
 /-- Figure 2b: the edges (1, 4) and (3, 5) cross. -/
 def fig2b : Graph Unit 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 1 [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
+  .ofArcs 1 [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
 
 theorem fig2a_isTree : fig2a.IsTree := by decide
 theorem fig2b_isTree : fig2b.IsTree := by decide
@@ -149,17 +144,17 @@ theorem fig2b_crossing :
 
 /-- Figure 3a: the projection of node 2 is the interval `(2, 3, 4)`. -/
 def fig3a : Graph Unit 6 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+  .ofArcs 0
     [(0, 1, ()), (1, 2, ()), (2, 3, ()), (0, 4, ()), (4, 5, ())]
 
 /-- Figure 3b: the projection of node 2 is `(2, 3, 6)`, with the gap `(3, 6)`. -/
 def fig3b : Graph Unit 6 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+  .ofArcs 0
     [(0, 1, ()), (1, 2, ()), (2, 5, ()), (0, 3, ()), (3, 4, ())]
 
 /-- Figure 3c: the projection of node 2 is `(2, 4, 6)`, with the gaps `(2, 4)` and `(4, 6)`. -/
 def fig3c : Graph Unit 6 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+  .ofArcs 0
     [(0, 1, ()), (1, 3, ()), (3, 5, ()), (0, 2, ()), (2, 4, ())]
 
 theorem figure3_isTree : fig3a.IsTree ∧ fig3b.IsTree ∧ fig3c.IsTree := by decide
@@ -194,13 +189,13 @@ theorem hierarchy_strict :
 /-- Figure 4a: the subtree at node 2 has two gaps, each of its edges spanning one component
 node 2 does not dominate. -/
 def fig4a : Graph Unit 6 :=
-  .ofArcs [dot, dot, dot, dot, dot, dot] 0
+  .ofArcs 0
     [(0, 1, ()), (0, 2, ()), (2, 4, ()), (1, 3, ()), (3, 5, ())]
 
 /-- Figure 4b: the subtree at node 2 has one gap, containing two components node 2 does not
 dominate. -/
 def fig4b : Graph Unit 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
+  .ofArcs 0 [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
 
 theorem figure4_isTree : fig4a.IsTree ∧ fig4b.IsTree := by decide
 

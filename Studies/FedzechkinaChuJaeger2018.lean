@@ -52,7 +52,7 @@ Fig. 5 to the order proportions of Fig. 4.
 
 namespace FedzechkinaChuJaeger2018
 
-open WordOrder DependencyGrammar Morphology MeasureTheory ProbabilityTheory
+open WordOrder DependencyGrammar MeasureTheory ProbabilityTheory
 open scoped symmDiff ENNReal
 
 /-! ### The paper's measure -/
@@ -125,9 +125,7 @@ theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection}
 /-- Fig. 1's verb-final sentence with subject first, MOUNTIE [[RED STOOL ON] HUNTER-OBJ] PUNCH,
 with the arcs of its bracketing. -/
 def fig1Sov : Graph UD.DepRel 6 :=
-  .ofArcs [Word.mk' "rizba" .NOUN, Word.mk' "redal" .ADJ, Word.mk' "lanferda" .NOUN,
-      Word.mk' "sool" .ADP, Word.mk' "barsadi" .NOUN, Word.mk' "kyse" .VERB]
-    5 [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
+  .ofArcs 5 [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
 
 /-- Object first, [[RED STOOL ON] HUNTER-OBJ] MOUNTIE PUNCH. -/
 def fig1Osv : Graph UD.DepRel 6 := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)

@@ -1,9 +1,11 @@
 module
 
-public import Linglib.Core.Data.Set.Monad
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Basic.Rel
+public import Mathlib.Control.Monad.Basic
 public import Mathlib.Data.PFun
+public import Mathlib.Data.Set.Functor
 public import Mathlib.Order.Minimal
 
 /-!
@@ -121,20 +123,21 @@ context in which it holds and an output assignment. -/
 abbrev Clause (W E : Type u) := StateT ((ℕ → (W →. E))) Set (Set W)
 
 /-- Any context that entails `c`, with no change of assignment. -/
-def within (c : Set W) : Clause W E := fun g ↦ {p | p.1 ⊆ c ∧ p.2 = g}
+def within (c : Set W) : Clause W E := .mk fun g ↦ {p | p.1 ⊆ c ∧ p.2 = g}
 
 /-- A common noun or intransitive verb holds in a context where its argument satisfies it
 ([hofmann-2025] App. C (15)). -/
-def commonNoun (R : E → W → Prop) (v : ℕ) : Clause W E := fun g ↦ within (sat R (g v)) g
+def commonNoun (R : E → W → Prop) (v : ℕ) : Clause W E :=
+  .mk fun g ↦ (within (sat R (g v))).run g
 
 /-- The indefinite introduces its dref with a referent at exactly the worlds of the context, in
 which its restrictor and its scope hold ([hofmann-2025] App. C (16)). -/
 def indefinite (v : ℕ) (P P' : ℕ → Clause W E) : Clause W E :=
-  fun g ↦ {p | ∃ e k, p.1 = e.Dom ∧ (p.1, k) ∈ P v g[v ↦ e] ∧ p ∈ P' v k}
+  .mk fun g ↦ {p | ∃ e k, p.1 = e.Dom ∧ (p.1, k) ∈ (P v).run g[v ↦ e] ∧ p ∈ (P' v).run k}
 
 /-- A proper name introduces a dref equal to its constant ([hofmann-2025] App. C (14)). -/
 def properName (a : E) (v : ℕ) (P : ℕ → Clause W E) : Clause W E :=
-  fun g ↦ P v g[v ↦ PFun.lift fun _ ↦ a]
+  .mk fun g ↦ (P v).run g[v ↦ PFun.lift fun _ ↦ a]
 
 /-- *There is an `R`* ([hofmann-2025] (24)) is the indefinite with a vacuous scope (fn. 8). -/
 def existential (R : E → W → Prop) (v : ℕ) : Clause W E :=
@@ -147,7 +150,7 @@ namespace Clause
 
 /-- Maximization keeps the runs whose context is maximal among the contexts of the clause. -/
 def maximal (P : Clause W E) : Clause W E :=
-  fun g ↦ {p ∈ P g | Maximal (· ∈ SetRel.dom (P g)) p.1}
+  .mk fun g ↦ {p ∈ P.run g | Maximal (· ∈ SetRel.dom (P.run g)) p.1}
 
 /-- Negation returns the complement of the prejacent's context ([hofmann-2025] App. C (18a)). -/
 def not (P : Clause W E) : Clause W E := (compl <$> P.maximal : StateT _ Set _)
@@ -167,20 +170,20 @@ abbrev ifThen (P Q : Clause W E) : Clause W E := connective (fun s t ↦ sᶜ �
 /-- An attitude verb holds where the subject's doxastic state entails its complement's context
 ([hofmann-2025] App. C (18e), fn. 14). -/
 def believed (dox : E → W → Set W) (P : Clause W E) (v : ℕ) : Clause W E :=
-  fun g ↦ {p | ∃ t, (t, p.2) ∈ P.maximal g ∧ p.1 ⊆ sat (fun a w ↦ dox a w ⊆ t) (g v)}
+  .mk fun g ↦ {p | ∃ t, (t, p.2) ∈ P.maximal.run g ∧ p.1 ⊆ sat (fun a w ↦ dox a w ⊆ t) (g v)}
 
 /-- A veridical attitude's context, moreover, entails its complement's ([hofmann-2025] §2.4). -/
 def knows (dox : E → W → Set W) (P : Clause W E) (v : ℕ) : Clause W E :=
-  fun g ↦ {p | ∃ t, (t, p.2) ∈ P.maximal g ∧ p.1 ⊆ t ∩ sat (fun a w ↦ dox a w ⊆ t) (g v)}
+  .mk fun g ↦ {p | ∃ t, (t, p.2) ∈ P.maximal.run g ∧ p.1 ⊆ t ∩ sat (fun a w ↦ dox a w ⊆ t) (g v)}
 
 /-- The declarative takes the maximal context of the clause, which the speaker's commitments `dc`
 entail ([hofmann-2025] (20a), App. C (19)). -/
 def dec (P : Clause W E) (dc : Set W) : Update ((ℕ → (W →. E))) :=
-  {p | ∃ s, (s, p.2) ∈ P.maximal p.1 ∧ dc ⊆ s}
+  {p | ∃ s, (s, p.2) ∈ P.maximal.run p.1 ∧ dc ⊆ s}
 
 /-- A clause has truth set `T` if `T` is its greatest context. -/
 def HasTruthSet (P : Clause W E) (T : (ℕ → (W →. E)) → Set W) : Prop :=
-  ∀ g, IsGreatest (SetRel.dom (P g)) (T g)
+  ∀ g, IsGreatest (SetRel.dom (P.run g)) (T g)
 
 /-- Flat update: at its truth set `A`, the clause has assigned `v` a witness of `R`, however deeply
 the indefinite is embedded. -/
@@ -189,7 +192,7 @@ structure Introduces (P : Clause W E) (R : E → W → Prop) (v : ℕ) (A : Set 
   hasTruthSet : P.HasTruthSet fun _ ↦ A
   /-- The runs at `A` are the witnesses for `v`. -/
   mem_iff {g h : ℕ → (W →. E)} :
-    (A, h) ∈ P g ↔ ∃ e, IsWitness R (witnessed R) e ∧ h = g[v ↦ e]
+    (A, h) ∈ P.run g ↔ ∃ e, IsWitness R (witnessed R) e ∧ h = g[v ↦ e]
 
 end Clause
 
@@ -197,24 +200,24 @@ end Clause
 
 variable {P Q : Clause W E} {T : (ℕ → (W →. E)) → Set W} {f : Set W → Set W → Set W}
 
-theorem mem_it : (s, h) ∈ it S v g ↔ s ⊆ sat S (g v) ∧ h = g := Iff.rfl
+theorem mem_it : (s, h) ∈ (it S v).run g ↔ s ⊆ sat S (g v) ∧ h = g := Iff.rfl
 
 theorem mem_existential :
-    (s, h) ∈ existential R v g ↔ ∃ e, IsWitness R s e ∧ h = g[v ↦ e] := by
+    (s, h) ∈ (existential R v).run g ↔ ∃ e, IsWitness R s e ∧ h = g[v ↦ e] := by
   simp [existential, indefinite, commonNoun, within, IsWitness]
   grind
 
-theorem Clause.mem_dec : g ~[P.dec dc] h ↔ ∃ s, (s, h) ∈ P.maximal g ∧ dc ⊆ s := Iff.rfl
+theorem Clause.mem_dec : g ~[P.dec dc] h ↔ ∃ s, (s, h) ∈ P.maximal.run g ∧ dc ⊆ s := Iff.rfl
 
 /-! ### Truth sets -/
 
 theorem Clause.HasTruthSet.mem_maximal (hP : P.HasTruthSet T) :
-    (s, h) ∈ P.maximal g ↔ s = T g ∧ (T g, h) ∈ P g := by
-  simp only [Clause.maximal, Set.mem_ofPred_eq, (hP g).maximal_iff]
+    (s, h) ∈ P.maximal.run g ↔ s = T g ∧ (T g, h) ∈ P.run g := by
+  simp only [Clause.maximal, StateT.run_mk, Set.mem_ofPred_eq, (hP g).maximal_iff]
   grind
 
 theorem Clause.HasTruthSet.mem_dec (hP : P.HasTruthSet T) :
-    g ~[P.dec dc] h ↔ dc ⊆ T g ∧ (T g, h) ∈ P g := by
+    g ~[P.dec dc] h ↔ dc ⊆ T g ∧ (T g, h) ∈ P.run g := by
   simp [Clause.mem_dec, hP.mem_maximal, and_comm]
 
 theorem Clause.HasTruthSet.mem_dom_dec (hP : P.HasTruthSet T) :
@@ -222,8 +225,8 @@ theorem Clause.HasTruthSet.mem_dom_dec (hP : P.HasTruthSet T) :
   simpa [SetRel.mem_dom, hP.mem_dec] using fun _ ↦ (hP g).1
 
 theorem Clause.HasTruthSet.mem_not (hP : P.HasTruthSet T) :
-    (s, h) ∈ P.not g ↔ s = (T g)ᶜ ∧ (T g, h) ∈ P g := by
-  simp [Clause.not, hP.mem_maximal, and_comm]
+    (s, h) ∈ P.not.run g ↔ s = (T g)ᶜ ∧ (T g, h) ∈ P.run g := by
+  simp [Clause.not, hP.mem_maximal, and_comm, eq_comm]
 
 theorem Clause.HasTruthSet.not (hP : P.HasTruthSet T) : P.not.HasTruthSet fun g ↦ (T g)ᶜ := fun g ↦
   let ⟨k, hk⟩ := (hP g).1
@@ -232,7 +235,7 @@ theorem Clause.HasTruthSet.not (hP : P.HasTruthSet T) : P.not.HasTruthSet fun g 
 theorem hasTruthSet_it : (it S v).HasTruthSet fun g ↦ sat S (g v) := fun g ↦
   ⟨⟨g, subset_rfl, rfl⟩, fun _ ⟨_, h, _⟩ ↦ h⟩
 
-theorem mem_maximal_it : (s, h) ∈ (it S v).maximal g ↔ s = sat S (g v) ∧ h = g := by
+theorem mem_maximal_it : (s, h) ∈ (it S v).maximal.run g ↔ s = sat S (g v) ∧ h = g := by
   simp [hasTruthSet_it.mem_maximal, mem_it]
 
 theorem mem_dec_it : g ~[(it S v).dec dc] h ↔ dc ⊆ sat S (g v) ∧ h = g := by
@@ -281,10 +284,17 @@ theorem Clause.Introduces.mem_dom_comp_it (hP : P.Introduces R v A) :
 
 /-! ### Connectives over a pronoun -/
 
+/-- A connective runs `P`, then `Q` from an output of `P`, each maximized, and applies `f` to their
+contexts. -/
+theorem Clause.mem_connective :
+    (s, h) ∈ (Clause.connective f P Q).run g ↔
+      ∃ t k, (t, k) ∈ P.maximal.run g ∧ ∃ u, (u, h) ∈ Q.maximal.run k ∧ f t u = s := by
+  simpa [Clause.connective] using exists_comm
+
 theorem Clause.Introduces.mem_connective_it (hP : P.Introduces R v A) :
-    (s, h) ∈ Clause.connective f P (it S v) g ↔
+    (s, h) ∈ (Clause.connective f P (it S v)).run g ↔
       ∃ e, IsWitness R (witnessed R) e ∧ s = f A (sat S e) ∧ h = g[v ↦ e] := by
-  simp only [Clause.connective, Set.mk_mem_stateT_map_seq, hP.1.mem_maximal, hP.2, mem_maximal_it]
+  simp only [Clause.mem_connective, hP.1.mem_maximal, hP.2, mem_maximal_it]
   constructor
   · rintro ⟨_, _, ⟨rfl, e, he, rfl⟩, _, ⟨rfl, rfl⟩, rfl⟩
     exact ⟨e, he, by simp, rfl⟩
@@ -311,7 +321,7 @@ theorem Clause.Introduces.hasTruthSet_or_it (hP : P.Introduces R v A) :
 abbrev believes (a : E) (dox : E → W → Set W) (S : E → W → Prop) (v v' : ℕ) : Clause W E :=
   properName a v' (Clause.believed dox (it S v))
 
-theorem mem_believes (hv : v ≠ v') : (s, h) ∈ believes a dox S v v' g ↔
+theorem mem_believes (hv : v ≠ v') : (s, h) ∈ (believes a dox S v v').run g ↔
     s ⊆ {w | dox a w ⊆ sat S (g v)} ∧ h = g[v' ↦ PFun.lift fun _ ↦ a] := by
   simp [properName, Clause.believed, mem_maximal_it, Function.update_of_ne hv, and_comm]
 

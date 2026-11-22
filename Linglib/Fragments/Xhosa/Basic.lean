@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Fragments.Bantu.Params
 
@@ -21,23 +22,23 @@ core each gender bears ([carstens-2026]).
 
 namespace Xhosa
 
-open Bantu
+open Bantu Morphology
 
 /-! ### Classes -/
 
 /-- The subject marker of a class on the verb; classes 11–14 and 16–18 are absent. -/
-def subjPrefix : NounClass → Option String
-  | .cl1 => some "u"    -- noun prefix um-, u-: umntu 'person'
-  | .cl2 => some "ba"   -- aba-: abantu 'people'
-  | .cl3 => some "u"    -- um-: umthi 'tree'
-  | .cl4 => some "i"    -- imi-: imithi 'trees'
-  | .cl5 => some "li"   -- i-: iqanda 'egg'
-  | .cl6 => some "a"    -- ama-: amaqanda 'eggs'
-  | .cl7 => some "si"   -- isi-: isitya 'dish'
-  | .cl8 => some "zi"   -- izi-: izitya 'dishes'
-  | .cl9 => some "i"    -- in-: inja 'dog'
-  | .cl10 => some "zi"  -- iin-: iinja 'dogs'
-  | .cl15 => some "ku"  -- uku-, the infinitive and gerund class: ukucula 'to sing'
+def subjPrefix : NounClass → Option Morph
+  | .cl1 => some (.pref "u")    -- noun prefix um-, u-: umntu 'person'
+  | .cl2 => some (.pref "ba")   -- aba-: abantu 'people'
+  | .cl3 => some (.pref "u")    -- um-: umthi 'tree'
+  | .cl4 => some (.pref "i")    -- imi-: imithi 'trees'
+  | .cl5 => some (.pref "li")   -- i-: iqanda 'egg'
+  | .cl6 => some (.pref "a")    -- ama-: amaqanda 'eggs'
+  | .cl7 => some (.pref "si")   -- isi-: isitya 'dish'
+  | .cl8 => some (.pref "zi")   -- izi-: izitya 'dishes'
+  | .cl9 => some (.pref "i")    -- in-: inja 'dog'
+  | .cl10 => some (.pref "zi")  -- iin-: iinja 'dogs'
+  | .cl15 => some (.pref "ku")  -- uku-, the infinitive and gerund class: ukucula 'to sing'
   | _ => none
 
 /-- The classes, those with a subject marker. -/
@@ -78,7 +79,7 @@ theorem Gender.isSome_subjPrefix_pluralClass (g : Gender) : (subjPrefix g.plural
 
 /-- The subject marker of a gender's plural class. -/
 def Gender.plSubjPrefix (g : Gender) : String :=
-  (subjPrefix g.pluralClass).get g.isSome_subjPrefix_pluralClass
+  ((subjPrefix g.pluralClass).get g.isSome_subjPrefix_pluralClass).form
 
 /-- Gender A bears the core [human], D [inanimate] and E [animal], while B and C bear
 none. -/

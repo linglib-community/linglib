@@ -1,0 +1,563 @@
+{
+  "features": [
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The construction a row illustrates.",
+      "levels": [
+        {
+          "name": "base",
+          "label": "base",
+          "doc": "the nonreciprocal clause a reciprocal one is compared with"
+        },
+        {
+          "name": "reciprocal",
+          "label": "reciprocal",
+          "doc": "a reciprocal construction with the reciprocants in one argument"
+        },
+        {
+          "name": "discontinuous",
+          "label": "discontinuous",
+          "doc": "a reciprocal construction with the reciprocants split across the subject and a comitative phrase"
+        }
+      ]
+    },
+    {
+      "key": "slots",
+      "lean": "slots",
+      "type": "Slots",
+      "doc": "The slots open to the free expression of the reciprocants, after Maslova.",
+      "levels": [
+        {
+          "name": "unary",
+          "label": "unary",
+          "doc": "one slot, the reciprocants in a single argument"
+        },
+        {
+          "name": "binary",
+          "label": "binary",
+          "doc": "two slots, each expressing a reciprocant independently"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "nordlinger2023_ex5a",
+      "source": {"bibkey": "hurst-2012", "paperLabel": "p. 226"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(5a)"},
+      "language": "swah1253",
+      "primaryText": "Juma a-li-m-tekeny-a Halima",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juma", "Juma"], ["a-li-m-tekeny-a", "3SG.SBJ-PST-3SG.OBJ-tickle-FV"], ["Halima", "Halima"]
+      ],
+      "translation": "Juma tickled Halima.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "base"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex9",
+      "source": {"bibkey": "nordlinger-2023", "paperLabel": "(9)"},
+      "reportedIn": null,
+      "language": "russ1263",
+      "primaryText": "Oni vide-l-i drug drug-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Oni", "3PL.NOM"], ["vide-l-i", "see-PST-PL"], ["drug", "other"], ["drug-a", "other-ACC"]
+      ],
+      "translation": "They saw each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "From Nedjalkov 1991, p. 283, cited in Evans 2008, p. 49.",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex10",
+      "source": {"bibkey": "nordlinger-2023", "paperLabel": "(10)"},
+      "reportedIn": null,
+      "language": "haus1257",
+      "primaryText": "mun tsallàkē jūnan-mù",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["mun", "1PL.AUX"], ["tsallàkē", "jumped"], ["jūnan-mù", "RECP-1PL"]
+      ],
+      "translation": "We jumped over one another.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "From Newman 2000, p. 530, cited in Evans 2008, p. 58.",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex11",
+      "source": {"bibkey": "nordlinger-1998", "paperLabel": "p. 142"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(11)"},
+      "language": "wamb1258",
+      "primaryText": "Alag-bulu wurlu-ngg-a nyurrunyurru",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Alag-bulu", "child-DU(NOM)"], ["wurlu-ngg-a", "3DU.SBJ-RR-NFUT"],
+        ["nyurrunyurru", "chase"]
+      ],
+      "translation": "The two children are chasing each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex12",
+      "source": {"bibkey": "hurst-2012", "paperLabel": "p. 249"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(12)"},
+      "language": "swah1253",
+      "primaryText": "Juma na Halima wa-li-tekeny-an-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juma", "Juma"], ["na", "and"], ["Halima", "Halima"],
+        ["wa-li-tekeny-an-a", "3PL.SBJ-PST-tickle-RECP-FV"]
+      ],
+      "translation": "Juma and Halima tickled each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "Also printed as (5b).",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex13",
+      "source": {"bibkey": "konig-kokutani-2006", "paperLabel": "p. 275"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(13)"},
+      "language": "mand1415",
+      "primaryText": "Tāmen dǎ-lái-dǎ-qù",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tāmen", "3PL"], ["dǎ-lái-dǎ-qù", "beat-come-beat-go"]
+      ],
+      "translation": "They beat each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex17a",
+      "source": {"bibkey": "hurst-nordlinger-2021", "paperLabel": "p. 105"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(17a)"},
+      "language": "icel1247",
+      "primaryText": "Stelpa-n og strákur-inn sáu hvort annað",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Stelpa-n", "girl.F.SG.NOM-DEF"], ["og", "and"], ["strákur-inn", "boy.M.SG.NOM-DEF"],
+        ["sáu", "see.3PL.PST"], ["hvort", "each.N.SG.NOM"], ["annað", "other.N.SG.ACC"]
+      ],
+      "translation": "The girl and the boy saw each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex18a",
+      "source": {"bibkey": "nordlinger-2023", "paperLabel": "(18a)"},
+      "reportedIn": null,
+      "language": "warl1254",
+      "primaryText": "Ngarrka-jarra-rlu ka-pala-jana paka-rni",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ngarrka-jarra-rlu", "man-DU-ERG"], ["ka-pala-jana", "IPFV-3DU.SBJ-3PL.OBJ"],
+        ["paka-rni", "strike-NPST"]
+      ],
+      "translation": "The (two) men are striking them (e.g., the dogs).",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "base"]
+      ],
+      "comment": "From Hale et al. 1995, p. 1437.",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex18b",
+      "source": {"bibkey": "nordlinger-2023", "paperLabel": "(18b)"},
+      "reportedIn": null,
+      "language": "warl1254",
+      "primaryText": "Ngarrka-jarra-rlu ka-pala-nyanu paka-rni",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ngarrka-jarra-rlu", "man-DU-ERG"], ["ka-pala-nyanu", "IPFV-3DU.SBJ-RR"],
+        ["paka-rni", "strike-NPST"]
+      ],
+      "translation": "The (two) men are striking themselves/each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "From Hale et al. 1995, p. 1437.",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex19",
+      "source": {"bibkey": "siloni-2008", "paperLabel": "p. 453"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(19)"},
+      "language": "hung1274",
+      "primaryText": "János és Mari csókol-óz-t-ak",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["János", "János"], ["és", "and"], ["Mari", "Mari"], ["csókol-óz-t-ak", "kiss-RECP-PST-3PL"]
+      ],
+      "translation": "Janos and Mari kissed.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "Also printed as (30).",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex20",
+      "source": {"bibkey": "dalrymple-et-al-1994", "paperLabel": "p. 146"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(20)"},
+      "language": "nyan1308",
+      "primaryText": "Mbiǐdzi zi-ku-mény-an-a",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mbiǐdzi", "10zebras"], ["zi-ku-mény-an-a", "10SBJ-PRS-hit-RECP-FV"]
+      ],
+      "translation": "The zebras are hitting each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex21",
+      "source": {"bibkey": "maslova-2008", "paperLabel": "p. 230"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(21)"},
+      "language": "tong1318",
+      "primaryText": "Joni ba-la-yand-ana amukaintu wakwe",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Joni", "John"], ["ba-la-yand-ana", "3PL-PRS-love-RECP"], ["amukaintu", "wife"],
+        ["wakwe", "his"]
+      ],
+      "translation": "John and his wife love each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "binary"]
+      ],
+      "comment": "From Collins 1962, p. 74; the literal translation is 'John mutually loves his wife.'",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex25",
+      "source": {"bibkey": "evans-et-al-2007", "paperLabel": "p. 570"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(25)"},
+      "language": "thay1249",
+      "primaryText": "Parr-an peln ii waarin-rr",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Parr-an", "kid-ERG"], ["peln", "3PL(ERG)"], ["ii", "there"],
+        ["waarin-rr", "chase-RECP.NPST"]
+      ],
+      "translation": "All the kids are chasing each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex26a",
+      "source": {"bibkey": "evans-et-al-2007", "paperLabel": "p. 575"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(26a)"},
+      "language": "ngal1292",
+      "primaryText": "Ka-h-ngarrinj-yidjnja-n",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ka-h-ngarrinj-yidjnja-n", "3/1-ASS-hand-touch/hold-PRS"]
+      ],
+      "translation": "S/he is holding my hand.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "base"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex26b",
+      "source": {"bibkey": "evans-et-al-2007", "paperLabel": "p. 576"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(26b)"},
+      "language": "ngal1292",
+      "primaryText": "Ke-h-langû-yidjnja-rr-inj",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ke-h-langû-yidjnja-rr-inj", "3DU.DISH.SBJ-ASS-hand-hold-RR-PST:PFV"]
+      ],
+      "translation": "The two of them shook each other's hands.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex27a",
+      "source": {"bibkey": "dimitriadis-2008", "paperLabel": "p. 388"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(27a)"},
+      "language": "mode1248",
+      "primaryText": "O Giannis kje i Maria filithikan",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["O", "the"], ["Giannis", "John"], ["kje", "and"], ["i", "the"], ["Maria", "Maria"],
+        ["filithikan", "kissed-RECP.PL"]
+      ],
+      "translation": "John and Maria kissed each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex28",
+      "source": {"bibkey": "nordlinger-2023", "paperLabel": "(28)"},
+      "reportedIn": null,
+      "language": "stan1290",
+      "primaryText": "Jean et Marie se sont embrassés",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jean", "John"], ["et", "and"], ["Marie", "Mary"], ["se", "RR"], ["sont", "be.3PL.PRS"],
+        ["embrassés", "kissed.3PL"]
+      ],
+      "translation": "John and Mary kissed.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex29",
+      "source": {"bibkey": "siloni-2008", "paperLabel": "p. 453"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(29)"},
+      "language": "czec1258",
+      "primaryText": "Dan a Petr se políbili",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Dan", "Dan"], ["a", "and"], ["Petr", "Petr"], ["se", "RR"], ["políbili", "kissed"]
+      ],
+      "translation": "Dan and Petr kissed.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex35a",
+      "source": {"bibkey": "siloni-2008", "paperLabel": "p. 455"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(35a)"},
+      "language": "stan1290",
+      "primaryText": "Pierre et Jean se sont vaincus à la finale",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Pierre", "Pierre"], ["et", "and"], ["Jean", "Jean"], ["se", "RR"], ["sont", "be.3PL.PRS"],
+        ["vaincus", "defeated.3PL"], ["à", "LOC"], ["la", "the.F"], ["finale", "final"]
+      ],
+      "translation": "Pierre and Jean defeated each other in the final.",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "Marked # as self-contradictory.",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex36",
+      "source": {"bibkey": "dimitriadis-2008", "paperLabel": "p. 388"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(36)"},
+      "language": "mode1248",
+      "primaryText": "O Giannis filithike me ti Maria",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["O", "the"], ["Giannis", "John"], ["filithike", "kissed-RECP.SG"], ["me", "with"],
+        ["ti", "the"], ["Maria", "Maria"]
+      ],
+      "translation": "John and Maria kissed each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
+      ],
+      "comment": "Also printed as (27b); the literal translation is 'John kissed each other with Maria.'",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex37",
+      "source": {"bibkey": "hurst-2012", "paperLabel": "p. 5"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(37)"},
+      "language": "swah1253",
+      "primaryText": "Juma a-li-tekeny-an-a na Halima",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juma", "Juma"], ["a-li-tekeny-an-a", "3SG.SBJ-PST-tickle-RECP-FV"], ["na", "COM"],
+        ["Halima", "Halima"]
+      ],
+      "translation": "Juma and Halima tickled each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex38",
+      "source": {"bibkey": "dimitriadis-2008", "paperLabel": "p. 393"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(38)"},
+      "language": "hung1274",
+      "primaryText": "János csókol-óz-ott Kati-val",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["János", "John"], ["csókol-óz-ott", "kiss-RECP-PST"], ["Kati-val", "Kate-WITH"]
+      ],
+      "translation": "John and Kate were kissing.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex39",
+      "source": {"bibkey": "siloni-2008", "paperLabel": "p. 474"},
+      "reportedIn": {"bibkey": "nordlinger-2023", "paperLabel": "(39)"},
+      "language": "stan1290",
+      "primaryText": "Jean s'-est embrassé avec Marie",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jean", "Jean"], ["s'-est", "RR-be.3SG.PRS"], ["embrassé", "kissed"], ["avec", "with"],
+        ["Marie", "Marie"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
+      ],
+      "comment": "Printed without a translation.",
+      "verified": "page-image"
+    }
+  ]
+}

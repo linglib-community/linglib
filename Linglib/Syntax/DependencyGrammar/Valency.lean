@@ -84,6 +84,15 @@ def withOptional (required optional : Multiset L) : Valency L :=
 @[simp] theorem withOptional_zero (m : Multiset L) : withOptional m 0 = .pure m := by
   ext : 2 <;> simp [withOptional]
 
+/-- With one optional valent, a word has its obligatory valents alone or with that one. -/
+theorem mem_withOptional_singleton {required m : Multiset L} {a : L} :
+    m ∈ withOptional required {a} ↔ m = required ∨ m = required + {a} := by
+  rw [mem_withOptional]
+  refine ⟨fun ⟨h₁, h₂⟩ ↦ ?_, ?_⟩
+  · obtain ⟨u, rfl⟩ := Multiset.le_iff_exists_add.1 h₁
+    rcases Multiset.le_singleton.1 (Multiset.add_le_add_iff_left.1 h₂) with rfl | rfl <;> simp
+  · rintro (rfl | rfl) <;> simp
+
 end Valency
 
 namespace Graph

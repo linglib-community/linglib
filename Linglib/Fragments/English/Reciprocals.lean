@@ -16,6 +16,7 @@ has no exponent: the verbs' Levin classes record it, not the marker inventory.
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [T. Siloni, *Reciprocal Verbs and Symmetry* (2012)][siloni-2012]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -32,5 +33,15 @@ def oneAnother : Marker := Pronouns.oneAnother.toMarker
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {eachOther, oneAnother}
+
+/-- The forms of the reflexive pronouns. -/
+def reflexiveForms : Finset (List Morphology.Morph) :=
+  English.Pronouns.reflexives.image fun r ↦ [.free r.form]
+
+/-- The value of the inventory on the map of [maslova-nedjalkov-2013] is the one the map gives
+the language. -/
+theorem lookup_wals :
+    Data.WALS.F106A.allData.lookup "eng" = some (type markers reflexiveForms) := by
+  decide +kernel
 
 end English.Reciprocals

@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.ConstructionGrammar.Composition
+public import Linglib.Syntax.ConstructionGrammar.Valence
 public import Linglib.Semantics.Aspect.AspectualClass
 
 /-!
