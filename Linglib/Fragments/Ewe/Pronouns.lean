@@ -12,11 +12,10 @@ forms, the objects of verbs and prepositions. Each series has a form for three p
 numbers, with no clusivity and no gender. *wò* is the second person singular of the independent
 and postverbal series and a third person singular subject.
 
-The logophoric pronoun *ye*, plural *yewó*, occurs in the scope of an attitude predicate such as
-'say' or 'believe' and refers to the bearer of the attitude, as Pearson describes, writing it
-*yè*. Ameka gives it for the second or third person whose speech, thought or feeling a dependent
-clause reports, never for the first. Sells, after Clements, gives it also under psychological
-predicates.
+The logophoric pronoun *yè*, plural *yewó*, occurs in the scope of an attitude predicate such as
+'say' or 'believe' and refers to the bearer of the attitude, as Pearson describes. Ameka gives it
+for the second or third person whose speech, thought or feeling a dependent clause reports, never
+for the first. Sells, after Clements, gives it also under psychological predicates.
 
 ## Main definitions
 
@@ -39,6 +38,8 @@ predicates.
 * A form the table prints with optional material in parentheses is two forms, *mí(é)* being
   *mí* and *míé*. The hyphens of the bound forms are not recorded.
 * A pronoun is a form in one person and number, so *wò* is two pronouns.
+* The singular logophoric pronoun has the low tone mark Pearson and Sells write, *yè*. The table
+  prints it without one, as it prints the plural *yewó*.
 
 ## References
 
@@ -203,15 +204,15 @@ theorem wò_sg2_ne_wò_sg3 : wò_sg2.form = wò_sg3.form ∧ wò_sg2.person ≠ 
 /-- The logophoric form of each row, none in the first person ([ameka-1991], Table 3.1). -/
 def logophoricForms : Row → Finset String
   | .sg1 | .pl1 => ∅
-  | .sg2 | .sg3 => {"ye"}
+  | .sg2 | .sg3 => {"yè"}
   | .pl2 | .pl3 => {"yewó"}
 
 /-- The logophoric pronoun `f`, with the rows it fills. -/
 def logophoricOf (f : String) : LogophoricPronoun :=
   ⟨.ofTable Row.person (some ·.number) (fun _ ↦ none) (fun _ ↦ none) logophoricForms f⟩
 
-/-- The logophoric pronoun *ye*, which [pearson-2015] writes *yè*. -/
-def ye : LogophoricPronoun := logophoricOf "ye"
+/-- The logophoric pronoun *yè*. -/
+def ye : LogophoricPronoun := logophoricOf "yè"
 
 /-- The plural logophoric pronoun *yewó*. -/
 def yewó : LogophoricPronoun := logophoricOf "yewó"
@@ -221,7 +222,7 @@ theorem logophoricForms_nonempty_iff (r : Row) :
     (logophoricForms r).Nonempty ↔ r.person ≠ .first := by
   cases r <;> decide
 
-/-- *ye* denotes the addressee or a third party. -/
+/-- *yè* denotes the addressee or a third party. -/
 theorem referential_ye : ye.referential = {.addressee, .other} := by decide +kernel
 
 /-- *yewó* denotes the addressee or a third party with others. -/

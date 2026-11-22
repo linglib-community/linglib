@@ -18,10 +18,10 @@ deferential *taek* to an adult stranger, kinship terms and titles serving a supe
 a plural: *neohui* for the plain, with the suffix *-hui* that only *neo* and the humble *jeo*
 take, and for the others the singular with the plural suffix *-deul*, which *uri*, *jeohui* and
 *neohui* may add as well. *jagi* is a recent second person of the blunt level, used between
-young couples and close friends. In the
-third person *geu* 'he' and *geunyeo* 'she', with the plural *geudeul*, are recent innovations
-of written narrative used anaphorically, while the colloquial *gyae*, contracted from *geu ai*,
-is neutral for gender and implies familiarity with the referent, as Kwon and Lee describe.
+young couples and close friends. In the third person *geu* 'he' and *geunyeo* 'she', with the
+plural *geudeul*, are recent innovations of written narrative used anaphorically, while the
+colloquial *gyae*, contracted from *geu ai*, is neutral for gender and implies familiarity with
+the referent, as Kwon and Lee describe.
 Before the nominative particle *na*, *jeo* and *neo* become *nae*, *je* and *ne*. The
 sentence-final speech-style particles *-yo* and *-(seu)mnida* occur in root clauses only. Both
 present the addressee as above the speaker, and they differ in the formality of the discourse:
