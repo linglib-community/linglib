@@ -51,8 +51,8 @@ singular and the oblique cases, as *den/dne* (p. 463), gives *den* an oblique st
 `Noun.stem` does not record, and the stem of *jehně* is written *jehň-* before the plural endings
 (p. 459). The hard forms that *Mluvnice češtiny* says enter the singular of the *-en-* stems
 (p. 310) are not recorded, the grammar naming no cell they occupy. A lexical nominative plural is
-recorded only where *Mluvnice češtiny* names the noun, Short placing none of the entries among
-the subclasses with a nominative plural in *-é* or *-ové* (p. 466).
+recorded only where *Mluvnice češtiny* names the noun or its ending, Short placing none of the
+entries among the subclasses with a nominative plural in *-é* or *-ové* (p. 466).
 
 ## References
 
@@ -138,9 +138,10 @@ def zena : Noun :=
   { form := "žena", gloss := "woman", referentGender := some .female,
     cls := .zena }
 
-/-- *hrdina* 'hero', the hard masculine a-stem model (Table 9.5, p. 468). -/
+/-- *hrdina* 'hero', the hard masculine a-stem model (Table 9.5, p. 468). Its nominative plural
+is *-ové*, the one form that *Mluvnice češtiny* gives the masculine animates in *-a* (p. 293). -/
 def hrdina : Noun :=
-  { form := "hrdina", gloss := "hero", cls := .hrdina }
+  { form := "hrdina", gloss := "hero", cls := .hrdina, nomPlural := some [["o", "v", "é"]] }
 
 /-- *duše* 'soul', the soft feminine ja-stem model (Table 9.5, p. 468). -/
 def duse : Noun := { form := "duše", gloss := "soul", cls := .duse }
@@ -203,13 +204,19 @@ def most : Noun := { form := "most", gloss := "bridge", cls := .hrad }
 
 /-- *předseda* 'chairman', a masculine a-stem declined as *hrdina*, of "the masculine
 a-declension" (Short, p. 467), and the model noun of *Mluvnice češtiny*'s third type of the
-masculine animates (p. 290). -/
+masculine animates (p. 290). Its nominative plural is *-ové*: "jen jednu podobu mají jména
+zakončená na ... *-a* (*šibal-ové*, *předsed-ové*)" 'the nouns ending in ... *-a* have only one
+form' (*Mluvnice češtiny*, p. 293). -/
 def predseda : Noun :=
-  { form := "předseda", gloss := "chairman", cls := .hrdina }
+  { form := "předseda", gloss := "chairman", cls := .hrdina,
+    nomPlural := some [["o", "v", "é"]] }
 
 /-- *sluha* 'servant', a masculine a-stem declined as *hrdina*, whose locative plural both
-grammars give as *sluzích* (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300). -/
-def sluha : Noun := { form := "sluha", gloss := "servant", cls := .hrdina }
+grammars give as *sluzích* (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300), and whose
+nominative plural is the *-ové* of the masculine animates in *-a* (*Mluvnice češtiny*,
+p. 293). -/
+def sluha : Noun :=
+  { form := "sluha", gloss := "servant", cls := .hrdina, nomPlural := some [["o", "v", "é"]] }
 
 /-- *filosof* 'philosopher', a masculine animate declined as *chlap*, the hard subtype taking
 every noun whose stem ends in *b*, *f*, *m*, *p* or *v* (*Mluvnice češtiny*, p. 294). Its

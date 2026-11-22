@@ -75,8 +75,9 @@ and the noun's lexical nominative plural, MUŽ's -i or -ové and FILOLOG's -ové
 inflected as the fragment inflects it, palatalized before the masculine locative plural -ích and the
 animate nominative plural -i. Where the paper and the grammars differ the paper's forms stand and
 the difference is stated: the nominative and vocative plurals in -ové of PŘEDSEDA and SLUHA,
-realized on the hard-masculine coradical, whose class gives -i, are read from their own class, and
-FILOSOF's, which neither grammar gives, is an override; Stump's hard-feminine roots for the
+realized on the hard-masculine coradical, whose class gives -i, are their lexical nominative
+plural in the fragment, and FILOSOF's, which neither grammar gives, is an override; Stump's
+hard-feminine roots for the
 masculine a-stems rebuild Short's separate *hrdina* declension; and his soft-masculine coradical of
 velar stems gives the locative plurals in -ích that *Mluvnice češtiny*'s rule gives the
 hard-masculine stem.
@@ -371,13 +372,6 @@ def Stem.tableEndings (z : Stem) (σ : CzCell) : Finset (List String) :=
 /-- `nomVocPl` is the set of nominative and vocative plural cells. -/
 def nomVocPl : Finset CzCell := {σ | σ.number = .plural ∧ (σ.case = .nom ∨ σ.case = .voc)}
 
-/-- The nominative and vocative plural endings of a noun of the masculine a-declension, read from
-its own class. PŘEDSEDA and SLUHA take their plural on the hard-masculine coradical, whose class
-gives *chlapi*'s -i (Short, Table 9.2), but their class gives *hrdinové* (Short, Table 9.5), and
-*Mluvnice češtiny* names the nouns in -a among those with one form, *předsed-ové* (p. 293). -/
-def classNomPl (l : CzNoun) : Option (List (List String)) :=
-  if l.noun.cls = .hrdina then some (l.noun.cls.endings (.of .nom .plural)) else none
-
 /-- The nominative and vocative plural endings of Tables 6 and 8 that neither grammar gives:
 FILOSOF's -ové. Short's tables leave out the "many formally and semantically distinctive groups
 with nominative plural in -é or -ové" without placing *filosof* in one (Short, p. 466), and
@@ -387,15 +381,10 @@ def nomPlOverride : CzNoun → Option (List (List String))
   | .filosof => some [["o", "v", "é"]]
   | _ => none
 
-/-- The nominative and vocative plural endings the study supplies beyond the fragment's endings
-of the stem: those of the noun's own class, and otherwise the override. -/
-def suppliedNomPl (l : CzNoun) : Option (List (List String)) := (classNomPl l).or (nomPlOverride l)
-
-/-- The endings of a stem at a cell are those of the fragment, save at the nominative and
-vocative plural of a noun whose endings there the study supplies, the vocative plural being the
-nominative (Short, p. 465). -/
+/-- The endings of a stem at a cell are those of the fragment, save FILOSOF's at the nominative
+and vocative plural, the vocative plural being the nominative (Short, p. 465). -/
 def Stem.endings (z : Stem) (σ : CzCell) : Finset (List String) :=
-  if σ ∈ nomVocPl then ((suppliedNomPl z.lexeme).map List.toFinset).getD (z.tableEndings σ)
+  if σ ∈ nomVocPl then ((nomPlOverride z.lexeme).map List.toFinset).getD (z.tableEndings σ)
   else z.tableEndings σ
 
 /-- A stem is inflected with an ending as the fragment inflects the noun's stem in the stem's
@@ -408,10 +397,6 @@ def Stem.inflect (z : Stem) (σ : CzCell) (e : List String) : List String :=
 /-- The form cell `⟨z, σ⟩` is realized as `z` inflected with each of its endings. -/
 def czRealize (z : Stem) (σ : CzCell) : Finset (List String) := (z.endings σ).image (z.inflect σ)
 
-/-- The realization by the fragment's endings alone, without the endings the study supplies. -/
-def czRealizeTable (z : Stem) (σ : CzCell) : Finset (List String) :=
-  (z.tableEndings σ).image (z.inflect σ)
-
 /-- The Czech paradigm linkage gives each content cell the stem its rules select, and
 preserves its property set. -/
 def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id (·.dom) czRules czRoot
@@ -419,34 +404,18 @@ def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id (·.dom)
 theorem czRealize_stemFor : ∀ l σ, czRealize (stemFor l σ) σ = attested l σ := by
   decide +kernel
 
-/-- The rules of paradigm linkage, with the endings of the fragment and those the study supplies,
-realize every form of Tables 1, 6 and 8. -/
+/-- The rules of paradigm linkage, with the endings of the fragment and FILOSOF's nominative
+plural, realize every form of Tables 1, 6 and 8. -/
 theorem realize_matches_tables (l : CzNoun) (σ : CzCell) :
     czLinkage.realized czRealize l σ = {(attested l σ, σ)} :=
   (Linkage.ofFun_realized _ _ czRealize l σ).trans <|
     congrArg (fun w ↦ {(w, σ)}) (czRealize_stemFor l σ)
 
-theorem czRealizeTable_eq_czRealize {z : Stem} {σ : CzCell}
-    (h : σ ∉ nomVocPl ∨ suppliedNomPl z.lexeme = none) : czRealizeTable z σ = czRealize z σ := by
-  rcases h with h | h <;> simp [czRealizeTable, czRealize, Stem.endings, h]
-
-theorem suppliedNomPl_eq_none_iff (l : CzNoun) :
-    suppliedNomPl l = none ↔ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
-  cases l <;> decide
-
--- Tables 6 and 8
-theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
-    czRealizeTable (stemFor l σ) σ = attested l σ ↔
-      σ ∉ nomVocPl ∨ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
-  rw [← suppliedNomPl_eq_none_iff]
-  have miss : ∀ l σ, σ ∈ nomVocPl → suppliedNomPl l ≠ none →
-      czRealizeTable (stemFor l σ) σ ≠ attested l σ := by
-    decide +kernel
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · by_contra hc
-    simp only [not_or, not_not] at hc
-    exact miss l σ hc.1 hc.2 h
-  · rw [czRealizeTable_eq_czRealize (by rwa [stemFor_lexeme]), czRealize_stemFor]
+-- Tables 6 and 8, Table 9.2
+theorem filosof_nomPl :
+    attested .filosof (.of .nom .plural) = {Czech.Declension.segments "filosofové"} ∧
+      Czech.filosof.forms (.of .nom .plural) = [Czech.Declension.segments "filosofi"] := by
+  decide +kernel
 
 -- n. 14, Table 9.5, p. 467, p. 292
 theorem coradical_no_u : ∀ l : CzNoun, l.InPredsedaSubclass → ∀ σ ∈ datLocSg,
@@ -457,12 +426,6 @@ theorem coradical_no_u : ∀ l : CzNoun, l.InPredsedaSubclass → ∀ σ ∈ dat
 theorem predseda_eq_hrdina : ∀ σ, czRealize (stemFor .predseda σ) σ =
     ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset := by
   decide +kernel
-
--- Table 9.2
-theorem predseda_table_eq_hrdina_iff (σ : CzCell) : czRealizeTable (stemFor .predseda σ) σ =
-    ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset ↔ σ ∉ nomVocPl := by
-  rw [← predseda_eq_hrdina, czRealize_stemFor, czRealizeTable_stemFor_iff]
-  simp
 
 -- (17), (18)
 theorem sluha_eq_hrdina_iff : ∀ σ, czRealize (stemFor .sluha σ) σ =
