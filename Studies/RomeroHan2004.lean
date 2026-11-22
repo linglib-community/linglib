@@ -22,7 +22,9 @@ A logical form `l : LF` places a polarity `l.inner` on the clause under VERUM an
 `l.outer` over VERUM. The question pronounces the cell `l.outer • VERUM (l.inner • p)` and denotes
 the polar question over it, which does not depend on `l.outer` (`LF.denotation_eq`). Preposed
 negation is one negation in either position, `LF.pi` and `LF.ni`, and a *really*-question is
-`LF.really`.
+`LF.really`. When the relation is serial and every common ground is consistent, certainty of
+`pᶜ` excludes certainty of `p`, so the cell `LF.ni` pronounces lies inside the cell `LF.pi`
+pronounces (`LF.pronounced_ni_subset_pronounced_pi`).
 
 The cell that is pronounced fixes what the question asks of the addressee's evidence, a set of
 propositions `ev`. We write `Must ev q` when `ev` contains `q` and not `qᶜ`. A question
@@ -115,6 +117,14 @@ theorem denotation_eq :
 theorem denotation_pi_eq_denotation_really :
     pi.denotation epi conv cg p = really.denotation epi conv cg p := by
   rw [denotation_eq, denotation_eq]; rfl
+
+-- the doubt cell holds every other degree of certainty, certainty of the negation among them
+theorem pronounced_ni_subset_pronounced_pi [ModalLogic.IsSerial (epi ○ conv)]
+    (h : ∀ w, (cg w).NeBot) : ni.pronounced epi conv cg p ⊆ pi.pronounced epi conv cg p :=
+  fun w hn hp ↦
+    have ⟨v, hv⟩ := ModalLogic.IsSerial.serial (R := epi ○ conv) w
+    have := h v
+    Filter.compl_notMem (hp v hv) (hn v hv)
 
 end LF
 
