@@ -31,8 +31,9 @@ have regularized have the lower mean frequency, over all forms and over the Past
 
 `Closer` compares the two counts of a pair and does not record which order the hierarchy
 predicts, so that `closerEmbedding` is a statement about the counts. It is stated on the tested
-categories, the finite set `tested`, because `Category.relevance` identifies the agreement categories, of which
-only person was tested; number markers mostly share a portmanteau with person markers.
+categories, the finite set `tested`, because `Category.relevance` identifies the agreement
+categories, of which only person was tested; number markers mostly share a portmanteau with
+person markers.
 
 ## TODO
 

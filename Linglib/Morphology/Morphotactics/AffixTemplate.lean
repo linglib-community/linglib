@@ -91,12 +91,14 @@ theorem prefixesAscend_iff_pairwise :
   exact List.Pairwise.iff fun a b ↦ ⟨fun h x hx y hy ↦ h y hy x hx, fun h y hy x hx ↦ h x hx y hy⟩
 
 /-- A string of suffixes in the template's order ascends along `cat`. -/
-theorem SuffixesAscend.sortedLE_filterMap (h : t.SuffixesAscend cat) (hv : v.Sublist t.suffixSlots) :
+theorem SuffixesAscend.sortedLE_filterMap (h : t.SuffixesAscend cat)
+    (hv : v.Sublist t.suffixSlots) :
     (v.filterMap cat).SortedLE :=
   (h.pairwise.sublist (hv.filterMap cat)).sortedLE
 
 /-- A string of prefixes in the template's order descends along `cat` towards the stem. -/
-theorem PrefixesAscend.sortedLE_filterMap (h : t.PrefixesAscend cat) (hv : v.Sublist t.prefixSlots) :
+theorem PrefixesAscend.sortedLE_filterMap (h : t.PrefixesAscend cat)
+    (hv : v.Sublist t.prefixSlots) :
     (v.reverse.filterMap cat).SortedLE :=
   (h.pairwise.sublist (hv.reverse.filterMap cat)).sortedLE
 
