@@ -32,8 +32,9 @@ it is singular, with *watashi-tachi* and *anata-tachi* among their examples, and
 *kimi-tachi*. Tsujimura notes that *-tachi* is not a plural marker like the English ending: it
 is confined to humans, and a noun with it names a group that includes the noun's referent,
 *Yamada-sensei-tachi* being Professor Yamada and those with him; Iwasaki glosses *boku-tachi*
-likewise as the speaker and his friends. The registers follow the list Tsujimura takes from Ide, in which *boku* is plain and *ore*
-deprecatory; both are informal here, the register type making no finer distinction.
+likewise as the speaker and his friends. The registers follow the list Tsujimura takes from
+Ide, in which *boku* is plain and *ore* deprecatory; both are informal here, the register type
+making no finer distinction.
 
 ## References
 
