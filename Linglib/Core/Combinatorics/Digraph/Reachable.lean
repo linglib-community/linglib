@@ -23,8 +23,9 @@ may be empty, so every vertex is reachable from itself. This file defines reacha
 
 ## Implementation notes
 
-`Digraph.Reachable` is an `abbrev` for `Relation.ReflTransGen G.Adj`, so mathlib's closure API
-applies to it and it is decidable on a finite vertex type by `Core/Relation/ReflTransGen.lean`.
+`Digraph.Reachable` is an `abbrev` for `Relation.ReflTransGen G.Adj`, so the lemmas about
+`Relation.ReflTransGen` apply to it, and it is decidable on a finite vertex type by
+`Core/Relation/ReflTransGen.lean`.
 -/
 
 @[expose] public section

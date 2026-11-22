@@ -38,8 +38,8 @@ vertices neither of which reaches the other therefore have disjoint reach sets.
 ## Implementation notes
 
 The root is an argument of `IsArborescence` and not data of the digraph; it is determined by the
-digraph (`Digraph.IsArborescence.root_unique`). Mathlib's `Quiver.Arborescence` is the same notion
-for a quiver, a class on the vertex type; here several digraphs on one vertex type are compared, so
+digraph (`Digraph.IsArborescence.root_unique`). `Quiver.Arborescence` is the same notion for a
+quiver, as a class on the vertex type. Here several digraphs on one vertex type are compared, so
 the notion is a predicate on a digraph.
 
 ## TODO

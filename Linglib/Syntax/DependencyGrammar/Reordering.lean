@@ -34,8 +34,8 @@ reordering of a projective forest.
 ## Implementation notes
 
 A position's new place is its rank under a key: the new rank of its block, then its old position.
-The reordering therefore reduces in the kernel. Mathlib's `Tuple.sort` would not, because it sorts
-with `List.mergeSort`.
+The reordering therefore reduces in the kernel. A definition by `Tuple.sort` would not, because
+it sorts with `List.mergeSort`.
 
 ## References
 

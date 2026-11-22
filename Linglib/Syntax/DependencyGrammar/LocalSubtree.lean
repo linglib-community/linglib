@@ -21,9 +21,9 @@ appear.
 
 ## Implementation notes
 
-The rank is defined by counting, so that the kernel evaluates it. It inverts mathlib's enumeration
-`Finset.orderIsoOfFin` of a finite set in increasing order (`Digraph.symm_localOrderIso`), which
-sorts with `List.mergeSort` and does not reduce.
+The rank is defined by counting, so that the kernel evaluates it. It is the inverse of
+`Finset.orderIsoOfFin`, the enumeration of a finite set in increasing order
+(`Digraph.symm_localOrderIso`), which sorts with `List.mergeSort` and does not reduce.
 
 ## References
 

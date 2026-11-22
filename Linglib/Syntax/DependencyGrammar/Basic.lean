@@ -16,11 +16,16 @@ In dependency grammar the structure of a sentence is a set of *dependencies* bet
 A dependency links a *head* to one of its *dependents*: in *dogs bark loudly*, the verb *bark* is
 the head of *dogs* and of *loudly*.
 
-We represent such a structure as a digraph on the positions of the sentence, mathlib's
-`Digraph (Fin n)`, with an arc from each head to each of its dependents. The order of the
-positions is the order of the words. A *dependency graph* `Graph L V` is a digraph in which each
-arc also carries a relation of type `L`, such as the Universal Dependencies relations
-`UD.DepRel`.
+We represent such a structure as a digraph on the positions of the sentence, with an arc from
+each head to each of its dependents. The positions of a sentence of `n` words are `Fin n`, in
+the order of the words. A *dependency graph* `Graph L V` is a digraph in which each arc also
+carries a relation of type `L`, such as the Universal Dependencies relations `UD.DepRel`.
+
+The terms of dependency grammar are those of digraphs. A word `v` *dominates* a word `w` if `w`
+is reachable from `v` (`G.Reachable v w`), and the *yield* of `v` is the set `G.reachSet v` of
+the words it dominates. The dependents of `v` are its out-neighbours, and its heads are its
+in-neighbours. A *forest* is a branching (`G.IsBranching`), and a *tree* with root `r` is an
+arborescence (`G.IsArborescence r`).
 
 This file defines dependency graphs, builds digraphs and dependency graphs from lists of arcs,
 and defines a structure read in another order of its words.
@@ -32,21 +37,6 @@ and defines a structure read in another order of its words.
   (head, dependent, relation) triples, and `Graph.rel r` is its digraph of arcs bearing `r`.
 * `Digraph.linearize`, `Digraph.mirror`, and `Graph.comap`, `Graph.linearize`: a structure read
   in another order of its positions.
-
-## Vocabulary
-
-The files of this directory speak of dependency structures in the words of the literature and
-state them with the general notions of `Core/Combinatorics/Digraph`:
-
-| here | in the code |
-|---|---|
-| `v` dominates `w` | `G.Reachable v w` |
-| the yield of `v` | `G.reachSet v` |
-| the dependents and the heads of `v` | `G.outNeighborFinset v`, `G.inNeighborFinset v` |
-| a forest | `G.IsBranching` |
-| a tree with root `r` | `G.IsArborescence r` |
-| the local subtree of `v` | `G.localSubtree v` |
-| two words linked by an arc | `Relation.SymmGen G.Adj v w` |
 
 ## Implementation notes
 
