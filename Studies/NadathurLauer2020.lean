@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
 # Nadathur and Lauer (2020)
@@ -25,6 +26,8 @@ action, presupposed by *make*, separates it from *let*.
 
 * the judgments on the circuit (26), fire (31), bus (33), lighthouse (35) and dancing (40)–(44)
   scenarios
+* `NadathurLauer2020.Dancing.FreeDecision`: the children might change the outcome by exercising
+  their will, the notion of the coercive implication (39)
 
 ## Implementation notes
 
@@ -449,6 +452,62 @@ theorem make_persuasion : Make persuasion ⊥ ⟨true⟩ .G true .D true := by d
 theorem volitionalActionConstraint_persuasion :
     VolitionalActionConstraint persuasion ⊥ .G .D .WD := by
   decide
+
+/-! #### The coercive implication (39)
+
+The children make a free decision to dance when they have a real option to do otherwise: Gurung's
+action being what it is, they might still change the outcome by exercising their will. -/
+
+/-- The children make a free decision at Gurung's action `g` in the dynamics `M` when two contexts
+in which Gurung acts so differ in whether the children dance. -/
+def FreeDecision {U : Type*} (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic] (g : Bool) : Prop :=
+  ∃ u u' : U, M.solve u .G = g ∧ M.solve u' .G = g ∧ M.solve u .D ≠ M.solve u' .D
+
+instance {U : Type*} [Fintype U] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic] (g : Bool) :
+    Decidable (FreeDecision M g) :=
+  inferInstanceAs (Decidable (∃ _ _ : U, _ ∧ _ ∧ ¬_))
+
+-- (40b)
+theorem freeDecision_permission : FreeDecision permission true := by decide
+
+-- (41b), (42b)
+theorem not_freeDecision_command : ¬ FreeDecision command true := by decide
+
+-- (44b)
+theorem not_freeDecision_persuasion : ¬ FreeDecision persuasion true := by decide
+
+/-- In the permission and command dynamics the constraint on volitional action is met exactly
+when the children make no free decision at Gurung's action, the coercive implication (39) of
+*make*. -/
+theorem volitionalActionConstraint_iff_not_freeDecision (b : Bool) :
+    (VolitionalActionConstraint permission [.WD ← true] .G .D .WD ↔
+        ¬ FreeDecision permission true) ∧
+      (VolitionalActionConstraint command [.WD ← b] .G .D .WD ↔ ¬ FreeDecision command true) := by
+  cases b <;> decide
+
+section Observer
+
+open MeasureTheory ProbabilityTheory
+
+variable {U : Type*} [Fintype U] [Nonempty U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
+  (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
+
+/-- Whether the children dance, as a kernel from the contexts of a dynamics. -/
+noncomputable def dance : Kernel U Bool :=
+  Kernel.deterministic (fun u ↦ M.solve u .D) .of_discrete
+
+instance : IsMarkovKernel (dance M) := inferInstanceAs (IsMarkovKernel (Kernel.deterministic _ _))
+
+/-- Where the children make no free decision at Gurung's action, whether they dance tells an
+observer who knows what Gurung did nothing more about the context, their desire included. -/
+theorem posterior_dance_of_not_freeDecision {g : Bool} (h : ¬ FreeDecision M g) (ν : Measure U)
+    [IsProbabilityMeasure ν] (hν : ∀ u, ν {u} ≠ 0 → M.solve u .G = g) {d : Bool}
+    (hd : (dance M ∘ₘ ν) {d} ≠ 0) (u : U) : (((dance M)†ν) d).real {u} = ν.real {u} :=
+  posterior_real_singleton_of_forall_eq _ ν hd (fun u u' hu hu' ↦ by
+    simp only [dance, Kernel.deterministic_apply]
+    exact congrArg _ (of_not_not fun hne ↦ h ⟨u, u', hν u hu, hν u' hu', hne⟩)) u
+
+end Observer
 
 end Dancing
 
