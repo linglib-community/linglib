@@ -17,16 +17,14 @@ take no person marker, except one before *-cAsInA* and the third-person plural b
 
 ## Main definitions
 
-* `Turkish.Converb`: the converbial suffixes on one verb, with their forms, the relations they
-  encode and `Converb.follows`, the last slot of the finite verb that may precede them; they
-  are a `MedialForm`.
+* `Turkish.Converb`: the converbial suffixes on one verb, with their forms and `Converb.follows`,
+  the last slot of the finite verb that may precede them; they are a `MedialForm`.
 * `Turkish.DoubledConverb`: the converbial subordinators on two verbs.
 
 ## Implementation notes
 
 The forms are strings of `Turkish.Suffix`, so that `Turkish.realize` gives a converb on a
-stem, and the negative of *-mAdAn* is the finite verb's. `InterclauseRelation` names neither
-the proportional and 'whenever' readings of *-DIkçA* nor the 'before' reading of *-mAdAn*.
+stem, and the negative of *-mAdAn* is the finite verb's.
 The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`, and
 the grammar's examples are checked in `Studies/GokselKerslake2005.lean`.
 
@@ -82,15 +80,6 @@ def form : Converb → List Suffix
   | casina => [⟨none, [C, A, s, I, n, A]⟩]
   | dikca => [⟨none, [D, I, k, ç, A]⟩]
 
-/-- The interclausal relations a converb encodes (§26.3, §28.2). -/
-def relations : Converb → Finset InterclauseRelation
-  | ip => {.sequential, .additive}
-  | arak => {.manner, .simultaneous, .additive}
-  | inca | ali => {.sequential}
-  | ken => {.simultaneous, .contrastive}
-  | madan | casina => {.manner}
-  | dikca => ∅
-
 /-- The last slot of the finite verb whose exponent may precede the converb. The converbs on a
 non-finite stem follow the markers of position 2 (§8.2), *-(y)ken* a position-3 marker,
 *-cAsInA* a person marker, and *-mAdAn*, whose negative fills the negation slot, the
@@ -123,8 +112,7 @@ def verbForm (_ : Converb) : UD.VerbForm := .Conv
 
 /-- The converbs as medial forms, neutral to switch-reference. -/
 instance : MedialForm Converb where
-  sr _ := none
-  relations := relations
+  switchReference _ := none
   IndexesSubject := PersonMarked
 
 end Converb
