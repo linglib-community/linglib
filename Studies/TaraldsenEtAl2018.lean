@@ -215,7 +215,8 @@ theorem xhosa_prefix_sc_identity :
       exponents (spellout xhosaPrefixes) [.cls 7] = (Xhosa.subjPrefix .cl7).map ([·.form]) ∧
       exponents (spellout xhosaPrefixes) [.cls 1, .num] =
         (Xhosa.subjPrefix .cl2).map ([·.form]) ∧
-      exponents (spellout xhosaPrefixes) [.cls 7, .num] = (Xhosa.subjPrefix .cl8).map ([·.form]) := by
+      exponents (spellout xhosaPrefixes) [.cls 7, .num] =
+        (Xhosa.subjPrefix .cl8).map ([·.form]) := by
   decide
 
 /-! ### The Changana and Rhonga lexicon
