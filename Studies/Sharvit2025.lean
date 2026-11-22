@@ -198,7 +198,7 @@ theorem ifOverExists_atIssue (α β : Property W E) (x y : E) (w : W) :
     (ifOverExists EP sim α β x y).atIssue w ↔
       clos EP sim w {w' | (α x).atIssue w' ∨ (β x).atIssue w'} ⊆
         {w' | (α y).atIssue w' ∨ (β y).atIssue w'} := by
-  simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue, TwoDim.mk_atIssue]
+  simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue, TwoDim.atIssue_mk]
 
 /-- The ∀-over-if reading presupposes the disjunction of the antecedent and that `y`'s property is
 defined at the closest worlds where `x` has it (146a). -/

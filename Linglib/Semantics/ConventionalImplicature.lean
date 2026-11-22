@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Core.Control.Monad.Writer
-public import Mathlib.Algebra.Ring.BooleanRing
-public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
 # Conventional implicature
@@ -71,9 +69,9 @@ protected theorem ext {p q : TwoDim W α} (ha : p.atIssue = q.atIssue)
     (hn : p.notAtIssue = q.notAtIssue) : p = q :=
   Writer.ext ha (ofBoolRing_inj.mp hn)
 
-@[simp] theorem mk_atIssue (a : α) (n : W → Prop) : (TwoDim.mk a n).atIssue = a := rfl
+@[simp] theorem atIssue_mk (a : α) (n : W → Prop) : (TwoDim.mk a n).atIssue = a := rfl
 
-@[simp] theorem mk_notAtIssue (a : α) (n : W → Prop) : (TwoDim.mk a n).notAtIssue = n := rfl
+@[simp] theorem notAtIssue_mk (a : α) (n : W → Prop) : (TwoDim.mk a n).notAtIssue = n := rfl
 
 @[simp] theorem mk_inj {a b : α} {m n : W → Prop} :
     TwoDim.mk a m = TwoDim.mk b n ↔ a = b ∧ m = n :=
@@ -86,54 +84,51 @@ protected theorem ext {p q : TwoDim W α} (ha : p.atIssue = q.atIssue)
 A `pure` value contributes no not-at-issue content, and composition meets the not-at-issue
 content of its parts. -/
 
-@[simp] theorem pure_atIssue (a : α) : (pure a : TwoDim W α).atIssue = a := rfl
+@[simp] theorem atIssue_pure (a : α) : (pure a : TwoDim W α).atIssue = a := rfl
 
-@[simp] theorem pure_notAtIssue (a : α) : (pure a : TwoDim W α).notAtIssue = ⊤ := rfl
+@[simp] theorem notAtIssue_pure (a : α) : (pure a : TwoDim W α).notAtIssue = ⊤ := rfl
 
-@[simp] theorem map_atIssue (f : α → β) (p : TwoDim W α) : (f <$> p).atIssue = f p.atIssue :=
+@[simp] theorem atIssue_map (f : α → β) (p : TwoDim W α) : (f <$> p).atIssue = f p.atIssue :=
   rfl
 
-@[simp] theorem map_notAtIssue (f : α → β) (p : TwoDim W α) :
+@[simp] theorem notAtIssue_map (f : α → β) (p : TwoDim W α) :
     (f <$> p).notAtIssue = p.notAtIssue := rfl
 
-@[simp] theorem seq_atIssue (f : TwoDim W (α → β)) (p : TwoDim W α) :
+@[simp] theorem atIssue_seq (f : TwoDim W (α → β)) (p : TwoDim W α) :
     (f <*> p).atIssue = f.atIssue p.atIssue := rfl
 
-@[simp] theorem seq_notAtIssue (f : TwoDim W (α → β)) (p : TwoDim W α) :
+@[simp] theorem notAtIssue_seq (f : TwoDim W (α → β)) (p : TwoDim W α) :
     (f <*> p).notAtIssue = f.notAtIssue ⊓ p.notAtIssue := rfl
 
-@[simp] theorem bind_atIssue (p : TwoDim W α) (f : α → TwoDim W β) :
+@[simp] theorem atIssue_bind (p : TwoDim W α) (f : α → TwoDim W β) :
     (p >>= f).atIssue = (f p.atIssue).atIssue := rfl
 
-@[simp] theorem bind_notAtIssue (p : TwoDim W α) (f : α → TwoDim W β) :
+@[simp] theorem notAtIssue_bind (p : TwoDim W α) (f : α → TwoDim W β) :
     (p >>= f).notAtIssue = p.notAtIssue ⊓ (f p.atIssue).notAtIssue := rfl
 
-/-! ### Sets of implicatures -/
+/-! ### Sets of implicatures
 
-/-- The meet of a set of propositions, as a monoid homomorphism from sets under union. -/
-def sInfHom : Writer.SetLog (W → Prop) →* AsBoolRing (W → Prop) where
-  toFun s := toBoolRing (sInf s.toAdd.toSet)
-  map_one' := by simp
-  map_mul' s t := by simp [sInf_union]
+A computation that logs a set of propositions has a two-dimensional meaning by
+`Writer.SetLog.sInfMonoidHom`, the meet of what it logs. -/
 
 /-- A computation that logs a set of not-at-issue propositions denotes the two-dimensional
 meaning whose not-at-issue content is their meet. -/
 def ofSetLog (m : Writer (Writer.SetLog (W → Prop)) α) : TwoDim W α :=
-  WriterT.adapt sInfHom m
+  WriterT.adapt (Writer.SetLog.sInfMonoidHom (W → Prop)) m
 
-@[simp] theorem ofSetLog_atIssue (m : Writer (Writer.SetLog (W → Prop)) α) :
+@[simp] theorem atIssue_ofSetLog (m : Writer (Writer.SetLog (W → Prop)) α) :
     (ofSetLog m).atIssue = m.val := rfl
 
-@[simp] theorem ofSetLog_notAtIssue (m : Writer (Writer.SetLog (W → Prop)) α) :
+@[simp] theorem notAtIssue_ofSetLog (m : Writer (Writer.SetLog (W → Prop)) α) :
     (ofSetLog m).notAtIssue = sInf m.logSet := rfl
 
 @[simp] theorem ofSetLog_pure (a : α) : ofSetLog (pure a : Writer _ α) = (pure a : TwoDim W α) :=
-  Writer.adapt_pure sInfHom a
+  WriterT.adapt_pure _ a
 
 theorem ofSetLog_bind (m : Writer (Writer.SetLog (W → Prop)) α)
     (f : α → Writer (Writer.SetLog (W → Prop)) β) :
     ofSetLog (m >>= f) = ofSetLog m >>= fun a ↦ ofSetLog (f a) :=
-  Writer.adapt_bind sInfHom m f
+  WriterT.adapt_bind _ m f
 
 /-! ### CI application -/
 
@@ -141,10 +136,10 @@ theorem ofSetLog_bind (m : Writer (Writer.SetLog (W → Prop)) α)
 argument on unmodified and adds the result to the not-at-issue content. -/
 def ciApply (f : α → W → Prop) (p : TwoDim W α) : TwoDim W α := p >>= fun a ↦ .mk a (f a)
 
-@[simp] theorem ciApply_atIssue (f : α → W → Prop) (p : TwoDim W α) :
+@[simp] theorem atIssue_ciApply (f : α → W → Prop) (p : TwoDim W α) :
     (p.ciApply f).atIssue = p.atIssue := rfl
 
-@[simp] theorem ciApply_notAtIssue (f : α → W → Prop) (p : TwoDim W α) :
+@[simp] theorem notAtIssue_ciApply (f : α → W → Prop) (p : TwoDim W α) :
     (p.ciApply f).notAtIssue = p.notAtIssue ⊓ f p.atIssue := rfl
 
 /-! ### Connectives -/
@@ -165,23 +160,23 @@ def or : TwoDim W (W → Prop) := (· ⊔ ·) <$> p <*> q
 /-- Implication takes the conditional of the at-issue propositions. -/
 def imp : TwoDim W (W → Prop) := (· ⇨ ·) <$> p <*> q
 
-@[simp] theorem neg_atIssue : p.neg.atIssue = p.atIssueᶜ := rfl
+@[simp] theorem atIssue_neg : p.neg.atIssue = p.atIssueᶜ := rfl
 
-@[simp] theorem neg_notAtIssue : p.neg.notAtIssue = p.notAtIssue := rfl
+@[simp] theorem notAtIssue_neg : p.neg.notAtIssue = p.notAtIssue := rfl
 
 @[simp] theorem neg_neg : p.neg.neg = p := TwoDim.ext (compl_compl _) rfl
 
-@[simp] theorem and_atIssue : (p.and q).atIssue = p.atIssue ⊓ q.atIssue := rfl
+@[simp] theorem atIssue_and : (p.and q).atIssue = p.atIssue ⊓ q.atIssue := rfl
 
-@[simp] theorem and_notAtIssue : (p.and q).notAtIssue = p.notAtIssue ⊓ q.notAtIssue := rfl
+@[simp] theorem notAtIssue_and : (p.and q).notAtIssue = p.notAtIssue ⊓ q.notAtIssue := rfl
 
-@[simp] theorem or_atIssue : (p.or q).atIssue = p.atIssue ⊔ q.atIssue := rfl
+@[simp] theorem atIssue_or : (p.or q).atIssue = p.atIssue ⊔ q.atIssue := rfl
 
-@[simp] theorem or_notAtIssue : (p.or q).notAtIssue = p.notAtIssue ⊓ q.notAtIssue := rfl
+@[simp] theorem notAtIssue_or : (p.or q).notAtIssue = p.notAtIssue ⊓ q.notAtIssue := rfl
 
-@[simp] theorem imp_atIssue : (p.imp q).atIssue = p.atIssue ⇨ q.atIssue := rfl
+@[simp] theorem atIssue_imp : (p.imp q).atIssue = p.atIssue ⇨ q.atIssue := rfl
 
-@[simp] theorem imp_notAtIssue : (p.imp q).notAtIssue = p.notAtIssue ⊓ q.notAtIssue := rfl
+@[simp] theorem notAtIssue_imp : (p.imp q).notAtIssue = p.notAtIssue ⊓ q.notAtIssue := rfl
 
 end Connectives
 

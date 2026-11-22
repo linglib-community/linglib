@@ -9,19 +9,19 @@ public import Linglib.Semantics.ConventionalImplicature
 
 A meaning is a computation of a writer monad: it yields an at-issue value and logs a set of
 side-issue propositions. The unit `η` logs nothing, and `m ⋆ f` has the value of `f` at the value
-of `m` and the union of the two logs, `⟨x, P⟩ ⋆ f = ⟨π₁ (f x), P ∪ π₂ (f x)⟩`. A second writer
-layer logs the conditions that presupposition triggers impose, to be checked once composition has
-ended. In "John, who likes cats, likes dogs also" the logged implicature then entails the logged
-presupposition, although no step of the composition reads either log.
+of `m` and the union of the two logs, `⟨x, P⟩ ⋆ f = ⟨π₁ (f x), P ∪ π₂ (f x)⟩`, so `⋆` only extends
+a log (`ciLog_subset_bind`). A second writer layer logs the conditions that presupposition
+triggers impose, to be checked once composition has ended; `M` is the monad with both channels,
+and `write` and `check` log to the first and the second.
 
-## Main definitions
+The entries that log are `comma`, which introduces a non-restrictive relative clause, and the
+additive trigger `also`. In "John, who likes cats, likes dogs also" the logged implicature
+entails the logged presupposition (`Ex20.sInf_ciLog_le_sInf_presupLog`), although no step of the
+composition reads either log.
 
-* `M`: the two-channel monad, conventional implicatures over presuppositions.
-* `write`, `check`: logging an implicature and a presuppositional condition.
-* `comma`, `also`: the lexical entries that log, a non-restrictive relative clause and an
-  additive presupposition trigger.
-* `toTwoDim`: the two-dimensional meaning of a computation, whose not-at-issue content is the meet
-  of the logged implicatures; it changes the log along `TwoDim.sInfHom`.
+Taking the meet of the logged implicatures gives the two-dimensional meaning `toTwoDim` of a
+computation. It commutes with `⋆` (`toTwoDim_bind`) and sends `comma` to CI application
+(`toTwoDim_comma_pure`).
 
 ## Implementation notes
 
@@ -194,10 +194,10 @@ end also
 of the implicatures it logs. -/
 def toTwoDim (m : M (W → Prop) A) : TwoDim W A := .ofSetLog (.mk (atIssue m) m.run.val.2)
 
-@[simp] theorem toTwoDim_atIssue (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := by
+@[simp] theorem atIssue_toTwoDim (m : M (W → Prop) A) : (toTwoDim m).atIssue = atIssue m := by
   simp [toTwoDim]
 
-@[simp] theorem toTwoDim_notAtIssue (m : M (W → Prop) A) :
+@[simp] theorem notAtIssue_toTwoDim (m : M (W → Prop) A) :
     (toTwoDim m).notAtIssue = sInf (ciLog m) := rfl
 
 @[simp] theorem toTwoDim_pure (a : A) : toTwoDim (pure a : M (W → Prop) A) = pure a :=

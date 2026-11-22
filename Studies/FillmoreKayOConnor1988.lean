@@ -435,7 +435,7 @@ theorem notAtIssue_21 (s : LowerSet Rank) :
     (Conjunction.letAlone.meaning .negative MadeRank .colonel .general).notAtIssue s ∧
       ¬ (Conjunction.letAlone.meaning .negative MadeRank .general .colonel).notAtIssue s := by
   simp only [Conjunction.meaning, Conjunction.StrongerFirst, ite_true,
-    ConventionalImplicature.TwoDim.mk_notAtIssue, felicitous_negative_iff isScalarModel_mem]
+    ConventionalImplicature.TwoDim.notAtIssue_mk, felicitous_negative_iff isScalarModel_mem]
   decide
 
 end Example21

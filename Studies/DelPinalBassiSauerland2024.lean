@@ -343,7 +343,7 @@ theorem free_choice_presupposed (hF : FreeChoiceWitnesses R a b)
     (TwoDim.negFactive (pexPossOrTwoDim R a b) believes).notAtIssue w ↔
       w ∈ R.preimage a ∧ w ∈ R.preimage b := by
   rw [← free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff,
-    TwoDim.negFactive_notAtIssue]
+    TwoDim.notAtIssue_negFactive]
 
 -- (33a), (34c)
 theorem negative_free_choice_presupposed {T B : Set W} (hF : FreeChoiceWitnesses R Tᶜ Bᶜ)
@@ -351,7 +351,7 @@ theorem negative_free_choice_presupposed {T B : Set W} (hF : FreeChoiceWitnesses
     (TwoDim.negFactive (pexPossOrTwoDim R Tᶜ Bᶜ) believes).notAtIssue w ↔
       w ∉ R.core T ∧ w ∉ R.core B := by
   rw [← negative_free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff,
-    TwoDim.negFactive_notAtIssue]
+    TwoDim.notAtIssue_negFactive]
 
 /-- A negative factive over `◇(a ∨ b)` asserts disbelief in each disjunct ((21b), (31d′); at `Tᶜ`
 and `Bᶜ`, (33b) and (34d)). -/

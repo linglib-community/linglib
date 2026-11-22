@@ -91,14 +91,14 @@ which [peters-1979] renders the filter of [karttunen-1973], and the one [sharvit
 the connectives of [karttunen-peters-1979]. -/
 def impFilter : TwoDim W (W → Prop) := p >>= fun a ↦ .mk (a ⇨ q.atIssue) (a ⇨ q.notAtIssue)
 
-@[simp] theorem impFilter_atIssue : (p.impFilter q).atIssue = p.atIssue ⇨ q.atIssue := by
+@[simp] theorem atIssue_impFilter : (p.impFilter q).atIssue = p.atIssue ⇨ q.atIssue := by
   simp [impFilter]
 
-@[simp] theorem impFilter_notAtIssue :
+@[simp] theorem notAtIssue_impFilter :
     (p.impFilter q).notAtIssue = p.notAtIssue ⊓ (p.atIssue ⇨ q.notAtIssue) := by
   simp [impFilter]
 
-theorem imp_notAtIssue_le_impFilter_notAtIssue :
+theorem notAtIssue_imp_le_notAtIssue_impFilter :
     (p.imp q).notAtIssue ≤ (p.impFilter q).notAtIssue := by
   simpa using inf_le_of_right_le le_himp
 
@@ -126,10 +126,10 @@ def orFilter : TwoDim W (W → Prop) :=
   .mk (p.atIssue ⊔ q.atIssue)
     fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)
 
-@[simp] theorem orFilter_atIssue : (orFilter p q).atIssue = p.atIssue ⊔ q.atIssue := by
+@[simp] theorem atIssue_orFilter : (orFilter p q).atIssue = p.atIssue ⊔ q.atIssue := by
   simp [orFilter]
 
-@[simp] theorem orFilter_notAtIssue : (orFilter p q).notAtIssue =
+@[simp] theorem notAtIssue_orFilter : (orFilter p q).notAtIssue =
     fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w) := by
   simp [orFilter]
 
@@ -138,7 +138,7 @@ theorem orFilter_comm : orFilter p q = orFilter q p :=
 
 /-- When the disjuncts' presuppositions conflict, a defined filtering disjunction is true, so it is
 never both defined and false there ([yagi-2025] §2.2). -/
-theorem orFilter_atIssue_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIssue w))
+theorem atIssue_orFilter_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIssue w))
     (hp : (orFilter p q).notAtIssue w) : (orFilter p q).atIssue w := by
   obtain ⟨h₁, h₂⟩ := hp
   by_cases hp : p.notAtIssue w
@@ -163,11 +163,11 @@ The complement's presupposition so projects to the evaluation world, the transpa
 def negFactive (believes : (W → Prop) → W → Prop) : TwoDim W (W → Prop) :=
   .mk (fun w ↦ ¬ believes p.atIssue w) fun w ↦ p.notAtIssue w ∧ p.atIssue w
 
-@[simp] theorem negFactive_atIssue (believes : (W → Prop) → W → Prop) :
+@[simp] theorem atIssue_negFactive (believes : (W → Prop) → W → Prop) :
     (negFactive p believes).atIssue = fun w ↦ ¬ believes p.atIssue w := by
   simp [negFactive]
 
-@[simp] theorem negFactive_notAtIssue (believes : (W → Prop) → W → Prop) :
+@[simp] theorem notAtIssue_negFactive (believes : (W → Prop) → W → Prop) :
     (negFactive p believes).notAtIssue = fun w ↦ p.notAtIssue w ∧ p.atIssue w := by
   simp [negFactive]
 

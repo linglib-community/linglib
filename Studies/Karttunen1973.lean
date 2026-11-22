@@ -98,7 +98,7 @@ variable (A : Presupposing W (Set W)) {C : Set W}
 
 /-- The worlds where the sentence is true, those where its presuppositions and its assertion
 hold. -/
-def truth : Set W := A.val ∩ {w | ∀ C ∈ A.logSet, w ∈ C}
+def truth : Set W := A.val ∩ ⋂₀ A.logSet
 
 theorem compl_map_compl : (·ᶜ) <$> (·ᶜ) <$> A = A :=
   Writer.ext (compl_compl A.val) rfl
@@ -154,7 +154,7 @@ theorem conj_false : conj (fun _ _ ↦ False) A B = (· ∩ ·) <$> A <*> B := b
 
 theorem truth_conj : (conj (· ⊆ ·) A B).truth = A.truth ∩ B.truth := by
   ext w
-  simp only [Presupposing.truth, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_logSet_conj]
+  simp only [Presupposing.truth, Set.mem_inter_iff, Set.mem_sInter, mem_logSet_conj]
   constructor
   · rintro ⟨hv, h⟩
     have hA : w ∈ A.truth := ⟨hv.1, fun C hC ↦ h C (.inl hC)⟩
