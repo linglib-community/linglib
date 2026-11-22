@@ -263,7 +263,7 @@ theorem SatisfiesOn.exists_le_of_sortAssign {t : Term Sig} {σ τ : Srt}
     (hσ : I.SatisfiesOn D g u (.sortAssign t σ)) (hτ : I.SatisfiesOn D g u (.sortAssign t τ)) :
     ∃ ρ, ρ ≤ σ ∧ ρ ≤ τ :=
   let ⟨v, hv, hvσ⟩ := hσ
-  let ⟨w, hw, hwτ⟩ := hτ
+  let ⟨_, hw, hwτ⟩ := hτ
   ⟨I.S v, hvσ, Option.mem_unique hv hw ▸ hwτ⟩
 
 /-- A sort assignment to a path that starts with an attribute holds at an entity exactly when

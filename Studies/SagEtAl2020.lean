@@ -88,14 +88,14 @@ abbrev Specification := HeadFeature → Srt
 namespace Specification
 
 /-- The specification with the given sorts, each feature open unless a sort is given. -/
-def of (aux inv : Srt := .boolean) (vform : Srt := .vform) : Specification
+def of (aux inv : Srt := .boolean) (vf : Srt := .vform) : Specification
   | .aux => aux
   | .inv => inv
-  | .vform => vform
+  | .vform => vf
 
 /-- The formula that says of the sign at the end of the path `p` that each head feature of its
 category has a value of the specified sort. -/
-def toFormula (ℓ : Specification) (p : Path sig := []) : Formula sig :=
+def toFormula (ℓ : Specification) (p : Path sig) : Formula sig :=
   .conj ([HeadFeature.aux, .inv, .vform].map fun f ↦
     .sortAssign (.path (p ++ [.CAT, f.attr])) (ℓ f))
 
@@ -119,28 +119,28 @@ end Specification
 def lexicalVerb : Specification := .of .minus .minus
 
 /-- (25): the modal *can* is finite, with `AUX` and `INV` open. -/
-def modal : Specification := .of (vform := .fin)
+def modal : Specification := .of (vf := .fin)
 
 /-- (35): auxiliary *do* is finite and `[AUX +]`. -/
-def auxDo : Specification := .of (aux := .plus) (vform := .fin)
+def auxDo : Specification := .of (aux := .plus) (vf := .fin)
 
 /-- The modal *better* is finite and `[INV −]`. -/
-def better : Specification := .of (inv := .minus) (vform := .fin)
+def better : Specification := .of (inv := .minus) (vf := .fin)
 
 /-- (111): *aren't* with a first person singular subject is finite and `[INV +]`. -/
-def arentFirstSingular : Specification := .of (inv := .plus) (vform := .fin)
+def arentFirstSingular : Specification := .of (inv := .plus) (vf := .fin)
 
 /-- (45): the listeme of *shall* in each of its senses. Deontic *shall* is `[INV +]`, and
 futurate *shall* leaves `INV` open as other modals do. -/
 def shall : Examples.Reading → Specification
-  | .deontic => .of (inv := .plus) (vform := .fin)
+  | .deontic => .of (inv := .plus) (vf := .fin)
   | .futurate => modal
 
 /-- The listemes of the verb of an example. -/
 def Examples.Verb.listemes : Examples.Verb → List Specification
   | .can | .will => [modal]
-  | .shall => [shall .deontic, shall .futurate]
-  | .better => [better]
+  | .shall => [SagEtAl2020.shall .deontic, SagEtAl2020.shall .futurate]
+  | .better => [SagEtAl2020.better]
   | .doAux => [auxDo]
   | .arent => [arentFirstSingular]
   | .help | .seem => [lexicalVerb]
@@ -313,11 +313,11 @@ theorem models_clause_iff (k : Examples.Clause) :
 
 /-! ### Heading a construction -/
 
-/-- A category with the specification `ℓ` can head a construct of sort `σ` when, in some
-well-typed model of the grammar, the head daughter of a construct of that sort satisfies `ℓ`. -/
+/-- A category with the specification `ℓ` can head a construct of sort `σ` when some well-typed
+model of the grammar has a construct of that sort whose head daughter satisfies `ℓ`. -/
 def CanHead (ℓ : Specification) (σ : Srt) : Prop :=
   ∃ (U : Type) (I : Interpretation sig U), I.Models grammar ∧ I.IsWellTyped ∧
-    ∃ u h, I.S u ≤ σ ∧ I.A .HDDTR u = some h ∧ I.Satisfies (fun _ ↦ h) h ℓ.toFormula
+    ∃ u, I.S u ≤ σ ∧ I.Satisfies (fun _ ↦ u) u (ℓ.toFormula [.HDDTR])
 
 private theorem exists_species_le (c : Headed) :
     (∀ τ, τ ≤ c.head .aux → ∃ a ∈ [Srt.plus, .minus], a ≤ τ) ∧
@@ -331,9 +331,9 @@ subsort. -/
 theorem canHead_iff (ℓ : Specification) (c : Headed) :
     CanHead ℓ c.sort ↔ ∀ f, ∃ τ, τ ≤ ℓ f ∧ τ ≤ c.head f := by
   constructor
-  · rintro ⟨U, I, hI, -, u, h, hu, hh, hℓ⟩ f
+  · rintro ⟨U, I, hI, -, u, hu, hℓ⟩ f
     exact (Specification.satisfies_toFormula.1 hℓ f).exists_le_of_sortAssign
-      ((Interpretation.satisfies_sortAssign_path_cons hh).1 (satisfies_hdDtr hI c hu f))
+      (satisfies_hdDtr hI c hu f)
   · intro h
     obtain ⟨τa, haℓ, hac⟩ := h .aux
     obtain ⟨τi, hiℓ, hic⟩ := h .inv
@@ -343,7 +343,7 @@ theorem canHead_iff (ℓ : Specification) (c : Headed) :
     obtain ⟨v, hv, hvτ⟩ := (exists_species_le c).2.2 τv hvc
     refine ⟨Ent, construct c.sort (.of a i v) .plus .austinean,
       (models_construct_iff c a ha i hi v hv).2 ⟨haτ.trans hac, hiτ.trans hic, hvτ.trans hvc⟩,
-      isWellTyped_construct c a ha i hi v hv, .cxt, .hd, le_rfl, rfl,
+      isWellTyped_construct c a ha i hi v hv, .cxt, le_rfl,
       Specification.satisfies_toFormula.2 fun f ↦ ?_⟩
     cases f
     exacts [⟨.aux, rfl, haτ.trans haℓ⟩, ⟨.inv, rfl, hiτ.trans hiℓ⟩, ⟨.vform, rfl, hvτ.trans hvℓ⟩]
