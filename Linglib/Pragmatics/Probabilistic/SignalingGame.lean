@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Pragmatics.Agent.FreeEnergy
 public import Linglib.Pragmatics.Probabilistic.Decision
 public import Linglib.Pragmatics.Probabilistic.Speaker
 public import Linglib.Pragmatics.SignalingGame.Defs
@@ -11,7 +12,9 @@ The speaker of the Rational Speech Act model is the policy of an agent: she beli
 utterance is worth to her, at a state, the logarithm of its listener's probability of the state
 less its cost, which is `⊥` where the listener rules the state out
 (`RSA.speaker_eq_policy`). She therefore gives positive probability to exactly the utterances
-that are feasible for that agent.
+that are feasible for that agent, and among the distributions over those she alone has the
+greatest entropy plus `α` times expected utility
+(`RSA.eq_speaker_iff_measureEntropy_add_integral`).
 
 The speakers are also policies of the sender of a signaling game, `SignalingGame.sender`.
 
@@ -102,6 +105,20 @@ theorem speaker_eq_policy (α : ℝ) (C : U → ℝ) (L : U → Measure W) [∀ 
       exact hf (hfeas.2 fun w hb hL ↦ h ⟨w, hb, hL⟩)
     simp only [hf, ↓reduceIte]
     rw [Measure.geomMean_eq_zero_iff.2 ⟨w, hb, hL⟩, ENNReal.log_zero, EReal.bot_sub]
+
+open InformationTheory in
+/-- Why the speaker: among the distributions over the utterances she can use, she alone has the
+greatest entropy plus `α` times expected utility. -/
+theorem eq_speaker_iff_measureEntropy_add_integral {α : ℝ} (hα : 0 < α) (C : U → ℝ)
+    (L : U → Measure W) [∀ u, IsFiniteMeasure (L u)] (b : O → Measure W)
+    [∀ o, IsProbabilityMeasure (b o)] [MeasurableSingletonClass U] {o : O} {q : Measure U}
+    [IsProbabilityMeasure q] (hq : q ≪ speaker α C L b o) :
+    q = speaker α C L b o ↔
+      Hm[q] + α * ∫ u, ∫ w, (ENNReal.log (L u {w}) - (C u : EReal)).toReal ∂b o ∂q =
+        Hm[speaker α C L b o] +
+          α * ∫ u, ∫ w, (ENNReal.log (L u {w}) - (C u : EReal)).toReal ∂b o ∂speaker α C L b o := by
+  rw [speaker_eq_policy] at hq ⊢
+  exact (Agent.measureEntropy_add_integral_value_eq_iff hα hq).symm
 
 end Agent
 
