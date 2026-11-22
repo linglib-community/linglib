@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.OfRel
 public import Linglib.Core.Computability.Edge
 public import Mathlib.Order.Interval.Basic
 
