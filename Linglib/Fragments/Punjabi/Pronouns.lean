@@ -5,14 +5,18 @@ public import Linglib.Syntax.Category.Pronoun.Personal
 /-!
 # Punjabi pronouns
 
-The second person of Punjabi has two honorific grades, *tũ* and *tusii*, the latter also the
-plural, and the demonstrative *uh* serves both third person numbers. Punjabi has allocutive
+The second person of Punjabi has two honorific grades, *tũ* and *tusii*. *Tusii* is the second
+person plural, and as Bhatia notes the honorific forms are the plural ones, so it agrees as a
+plural and denotes one addressee as well as several
+(`Punjabi.Pronouns.addressee_mem_referential`). The demonstrative *uh* serves both third person
+numbers. Punjabi has allocutive
 agreement with third person subjects only, as Kaur describes and Alok and Bhalla report; its
 marker forms are not recorded here.
 
 ## References
 
 * [alok-bhalla-2026]
+* [bhatia-1993]
 * [kaur-2020]
 -/
 
@@ -41,8 +45,11 @@ def asiiN : PersonalPronoun := { form := "asiiṃ", person := some .first, numbe
 /-- *tũ* — 2sg nonhonorific. -/
 def tuN : PersonalPronoun := { form := "tũ", person := some .second, number := some .singular }
 
-/-- *tusii* — 2sg honorific, also 2pl. -/
-def tusii : PersonalPronoun := { form := "tusii", person := some .second, number := some .singular }
+/-- *tusii*, the second person plural, also the honorific for one addressee ([bhatia-1993]
+§2.1.2.1). -/
+def tusii : PersonalPronoun :=
+  { form := "tusii", person := some .second, number := some .plural,
+    referential := {.addressee, .addresseeOthers} }
 
 /-- *uh* — 3sg, the distal demonstrative. -/
 def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := some .singular }
@@ -50,13 +57,23 @@ def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := s
 /-- *uh* — 3pl, the same form. -/
 def uhPl : PersonalPronoun := { form := "uh", person := some .third, number := some .plural }
 
-/-- The second person singular at each grade. -/
+/-- The pronoun for one addressee at each grade. -/
 def addressee : Grade → PersonalPronoun
   | .nonhonorific => tuN
   | .honorific => tusii
 
 /-- The pronoun inventory. -/
 def personal : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
+
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
+/-- *tusii* denotes one addressee, which its plural agreement does not realize. -/
+theorem addressee_mem_referential :
+    Person.Category.addressee ∈ tusii.referential ∧
+      Person.Category.addressee ∉ tusii.categories := by
+  decide +kernel
 
 end Pronouns
 
