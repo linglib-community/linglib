@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.LanguageModel.Autoregressive
+public import Linglib.Processing.LanguageModel.OfMeasure
 public import Linglib.Processing.Surprisal.Generalized
 
 /-!
@@ -20,10 +20,10 @@ rule it is the sum of the surprisals of the target's units under the language mo
 laws (`genSurprisal_prefixIndicator_eq_sum`), the paper's treatment of words spanning several
 tokens. The indicator evaluates a continuation by its prefix alone: information value with the
 complementary distance is the probability of error
-(`informationValue_one_sub_prefixIndicator`). Incremental information value (`iiv`) replaces it by
+(`expectedScore_one_sub_prefixIndicator`). Incremental information value (`iiv`) replaces it by
 a representational distance between a continuation sampled before the target and the target
 followed by a continuation sampled after it, and a distance whose forecast horizon does not reach
-past the target reduces it to information value (`iiv_eq_informationValue`).
+past the target reduces it to information value (`iiv_eq_expectedScore`).
 
 ## Implementation notes
 
@@ -50,7 +50,7 @@ past the target reduces it to information value (`iiv_eq_informationValue`).
 
 @[expose] public section
 
-open InformationTheory MeasureTheory ProbabilityTheory Surprisal AutoregressiveSequenceModel
+open InformationTheory MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
 
 namespace GiulianelliEtAl2026
 
@@ -59,15 +59,15 @@ variable {α : Type*} (μ : Measure (List α))
 /-! ### Standard surprisal -/
 
 /-- The prefix indicator (eq. (5)): one when the alternative begins with the target. -/
-noncomputable def prefixIndicator (a w _ : List α) : ℝ :=
+noncomputable def prefixIndicator (a w : List α) : ℝ :=
   w.cylinder.indicator 1 a
 
 -- (1), (2d)
-theorem integral_prefixIndicator (c w : List α) :
-    ∫ a, prefixIndicator a w c ∂μ.continuation c =
+theorem expectedScore_prefixIndicator (c w : List α) :
+    expectedScore (μ.continuation c) prefixIndicator w =
       (μ[(c ++ w).cylinder | c.cylinder]).toReal := by
-  simp only [prefixIndicator]
-  rw [integral_indicator_one .of_discrete, measureReal_def, Measure.continuation_cylinder]
+  rw [← Measure.continuation_cylinder, ← measureReal_def]
+  exact expectedScore_indicator (S := List.cylinder) .of_discrete
 
 section LanguageModel
 
@@ -76,13 +76,13 @@ variable [MeasurableSpace α] [MeasurableSingletonClass α] [IsProbabilityMeasur
 /-- Standard surprisal is generalised surprisal with the negative logarithm and the prefix indicator
 (eqs. (2a)–(2d), (4), (5)). -/
 theorem genSurprisal_prefixIndicator (hc : μ c.cylinder ≠ 0) (w : List α) :
-    genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
+    genSurprisal (μ.continuation c) (fun r ↦ -Real.log r) prefixIndicator w =
       -Real.log ((ofMeasure μ).condPrefixProb c w).toReal := by
-  rw [genSurprisal, integral_prefixIndicator, condPrefixProb_ofMeasure hc]
+  rw [genSurprisal, expectedScore_prefixIndicator, condPrefixProb_ofMeasure hc]
 
 theorem genSurprisal_prefixIndicator_eq_sum (hc : μ c.cylinder ≠ 0) {w : List α}
     (hw : μ (c ++ w).cylinder ≠ 0) :
-    genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
+    genSurprisal (μ.continuation c) (fun r ↦ -Real.log r) prefixIndicator w =
       ∑ i : Fin w.length, (surprisal ((ofMeasure μ).next (c ++ w.take i)) (some w[i])).toReal := by
   rw [genSurprisal_prefixIndicator μ hc, neg_log_condPrefixProb]
   rw [condPrefixProb_ofMeasure hc, cond_apply_of_subset .of_discrete (c.cylinder_append_subset w)]
@@ -90,15 +90,12 @@ theorem genSurprisal_prefixIndicator_eq_sum (hc : μ c.cylinder ≠ 0) {w : List
 
 /-! ### What the indicator conflates -/
 
-theorem informationValue_one_sub_prefixIndicator (hc : μ c.cylinder ≠ 0) (w : List α) :
-    informationValue μ.continuation (fun a w c ↦ 1 - prefixIndicator a w c) c w =
+theorem expectedScore_one_sub_prefixIndicator (hc : μ c.cylinder ≠ 0) (w : List α) :
+    expectedScore (μ.continuation c) (1 - prefixIndicator) w =
       1 - ((ofMeasure μ).condPrefixProb c w).toReal := by
   have := μ.isProbabilityMeasure_continuation hc
-  have hi : Integrable (fun a ↦ prefixIndicator a w c) (μ.continuation c) :=
-    (integrable_const 1).indicator .of_discrete
-  rw [informationValue, genSurprisal, id, integral_sub (integrable_const _) hi, integral_const,
-    integral_prefixIndicator, condPrefixProb_ofMeasure hc]
-  simp
+  rw [condPrefixProb_ofMeasure hc, ← expectedScore_prefixIndicator]
+  exact expectedScore_one_sub ((integrable_const 1).indicator .of_discrete)
 
 end LanguageModel
 
@@ -109,13 +106,13 @@ before the target and the target followed by a continuation sampled after it. -/
 noncomputable def iiv (d : List α → List α → ℝ) (c w : List α) : ℝ :=
   ∫ a, ∫ a', d a (w ++ a') ∂μ.continuation (c ++ w) ∂μ.continuation c
 
-theorem iiv_eq_informationValue [IsFiniteMeasure μ] {d : List α → List α → ℝ} {h : ℕ}
+theorem iiv_eq_expectedScore [IsFiniteMeasure μ] {d : List α → List α → ℝ} {h : ℕ}
     (hd : ∀ a b, d a b = d (a.take h) (b.take h)) {c w : List α} (hw : h ≤ w.length)
     (hcw : μ (c ++ w).cylinder ≠ 0) :
-    iiv μ d c w = informationValue μ.continuation (fun a w _ ↦ d a w) c w := by
+    iiv μ d c w = expectedScore (μ.continuation c) d w := by
   have := μ.isProbabilityMeasure_continuation hcw
   have hdw (a a' : List α) : d a (w ++ a') = d a w := by
     rw [hd, List.take_append_of_le_length hw, ← hd]
-  simp only [iiv, informationValue, genSurprisal, id, hdw, integral_const, probReal_univ, one_smul]
+  simp only [iiv, expectedScore, hdw, integral_const, probReal_univ, one_smul]
 
 end GiulianelliEtAl2026
