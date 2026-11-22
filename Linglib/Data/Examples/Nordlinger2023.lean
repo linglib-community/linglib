@@ -45,7 +45,22 @@ def ex9 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
+
+def ex10 : Datum :=
+  { id := "nordlinger2023_ex10"
+    source := ⟨"nordlinger-2023", "(10)"⟩
+    reportedIn := none
+    language := "haus1257"
+    primaryText := "mun tsallàkē jūnan-mù"
+    glossedTokens := [("mun", "1PL.AUX"), ("tsallàkē", "jumped"), ("jūnan-mù", "RECP-1PL")]
+    glossedWords := [⟨['m', 'u', 'n'], ['1', 'P', 'L', '.', 'A', 'U', 'X'], [⟨['m', 'u', 'n'], ['1', 'P', 'L', '.', 'A', 'U', 'X'], none⟩]⟩, ⟨['t', 's', 'a', 'l', 'l', 'à', 'k', 'ē'], ['j', 'u', 'm', 'p', 'e', 'd'], [⟨['t', 's', 'a', 'l', 'l', 'à', 'k', 'ē'], ['j', 'u', 'm', 'p', 'e', 'd'], none⟩]⟩, ⟨['j', 'ū', 'n', 'a', 'n', '-', 'm', 'ù'], ['R', 'E', 'C', 'P', '-', '1', 'P', 'L'], [⟨['j', 'ū', 'n', 'a', 'n'], ['R', 'E', 'C', 'P'], none⟩, ⟨['m', 'ù'], ['1', 'P', 'L'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex11 : Datum :=
   { id := "nordlinger2023_ex11"
@@ -60,7 +75,7 @@ def ex11 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex12 : Datum :=
   { id := "nordlinger2023_ex12"
@@ -75,7 +90,7 @@ def ex12 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex13 : Datum :=
   { id := "nordlinger2023_ex13"
@@ -90,7 +105,7 @@ def ex13 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex17a : Datum :=
   { id := "nordlinger2023_ex17a"
@@ -105,7 +120,7 @@ def ex17a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex18a : Datum :=
   { id := "nordlinger2023_ex18a"
@@ -135,7 +150,7 @@ def ex18b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex19 : Datum :=
   { id := "nordlinger2023_ex19"
@@ -150,7 +165,7 @@ def ex19 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex20 : Datum :=
   { id := "nordlinger2023_ex20"
@@ -165,7 +180,7 @@ def ex20 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex21 : Datum :=
   { id := "nordlinger2023_ex21"
@@ -180,7 +195,7 @@ def ex21 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "binary")] }
 
 def ex25 : Datum :=
   { id := "nordlinger2023_ex25"
@@ -195,7 +210,7 @@ def ex25 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex26a : Datum :=
   { id := "nordlinger2023_ex26a"
@@ -225,7 +240,7 @@ def ex26b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex27a : Datum :=
   { id := "nordlinger2023_ex27a"
@@ -240,7 +255,7 @@ def ex27a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex28 : Datum :=
   { id := "nordlinger2023_ex28"
@@ -255,7 +270,7 @@ def ex28 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex29 : Datum :=
   { id := "nordlinger2023_ex29"
@@ -270,7 +285,7 @@ def ex29 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex35a : Datum :=
   { id := "nordlinger2023_ex35a"
@@ -285,7 +300,7 @@ def ex35a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "reciprocal")] }
+    paperFeatures := [("construction", "reciprocal"), ("slots", "unary")] }
 
 def ex36 : Datum :=
   { id := "nordlinger2023_ex36"
@@ -300,7 +315,7 @@ def ex36 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "discontinuous")] }
+    paperFeatures := [("construction", "discontinuous"), ("slots", "binary")] }
 
 def ex37 : Datum :=
   { id := "nordlinger2023_ex37"
@@ -315,7 +330,7 @@ def ex37 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "discontinuous")] }
+    paperFeatures := [("construction", "discontinuous"), ("slots", "binary")] }
 
 def ex38 : Datum :=
   { id := "nordlinger2023_ex38"
@@ -330,7 +345,7 @@ def ex38 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "discontinuous")] }
+    paperFeatures := [("construction", "discontinuous"), ("slots", "binary")] }
 
 def ex39 : Datum :=
   { id := "nordlinger2023_ex39"
@@ -345,9 +360,9 @@ def ex39 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "discontinuous")] }
+    paperFeatures := [("construction", "discontinuous"), ("slots", "binary")] }
 
-def all : List Datum := [ex5a, ex9, ex11, ex12, ex13, ex17a, ex18a, ex18b, ex19, ex20, ex21, ex25, ex26a, ex26b, ex27a, ex28, ex29, ex35a, ex36, ex37, ex38, ex39]
+def all : List Datum := [ex5a, ex9, ex10, ex11, ex12, ex13, ex17a, ex18a, ex18b, ex19, ex20, ex21, ex25, ex26a, ex26b, ex27a, ex28, ex29, ex35a, ex36, ex37, ex38, ex39]
 
 /-- The construction a row illustrates. -/
 inductive Construction where
@@ -362,5 +377,17 @@ inductive Construction where
 /-- The value a row records under `construction`. -/
 def construction (e : Datum) : Option Construction :=
   e.parse? "construction" [("base", .base), ("reciprocal", .reciprocal), ("discontinuous", .discontinuous)]
+
+/-- The slots open to the free expression of the reciprocants, after Maslova. -/
+inductive Slots where
+  /-- unary: one slot, the reciprocants in a single argument -/
+  | unary
+  /-- binary: two slots, each expressing a reciprocant independently -/
+  | binary
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `slots`. -/
+def slots (e : Datum) : Option Slots :=
+  e.parse? "slots" [("unary", .unary), ("binary", .binary)]
 
 end Nordlinger2023.Examples

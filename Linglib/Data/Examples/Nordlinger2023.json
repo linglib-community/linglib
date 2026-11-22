@@ -22,6 +22,24 @@
           "doc": "a reciprocal construction with the reciprocants split across the subject and a comitative phrase"
         }
       ]
+    },
+    {
+      "key": "slots",
+      "lean": "slots",
+      "type": "Slots",
+      "doc": "The slots open to the free expression of the reciprocants, after Maslova.",
+      "levels": [
+        {
+          "name": "unary",
+          "label": "unary",
+          "doc": "one slot, the reciprocants in a single argument"
+        },
+        {
+          "name": "binary",
+          "label": "binary",
+          "doc": "two slots, each expressing a reciprocant independently"
+        }
+      ]
     }
   ],
   "examples": [
@@ -62,9 +80,32 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "From Nedjalkov 1991, p. 283, cited in Evans 2008, p. 49.",
+      "verified": "page-image"
+    },
+    {
+      "id": "nordlinger2023_ex10",
+      "source": {"bibkey": "nordlinger-2023", "paperLabel": "(10)"},
+      "reportedIn": null,
+      "language": "haus1257",
+      "primaryText": "mun tsallàkē jūnan-mù",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["mun", "1PL.AUX"], ["tsallàkē", "jumped"], ["jūnan-mù", "RECP-1PL"]
+      ],
+      "translation": "We jumped over one another.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
+      ],
+      "comment": "From Newman 2000, p. 530, cited in Evans 2008, p. 58.",
       "verified": "page-image"
     },
     {
@@ -84,7 +125,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -106,7 +148,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "Also printed as (5b).",
       "verified": "page-image"
@@ -127,7 +170,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -149,7 +193,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -193,7 +238,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "From Hale et al. 1995, p. 1437.",
       "verified": "page-image"
@@ -214,7 +260,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "Also printed as (30).",
       "verified": "page-image"
@@ -235,7 +282,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -257,7 +305,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "binary"]
       ],
       "comment": "From Collins 1962, p. 74; the literal translation is 'John mutually loves his wife.'",
       "verified": "page-image"
@@ -279,7 +328,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -321,7 +371,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -343,7 +394,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -365,7 +417,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -386,7 +439,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -408,7 +462,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "reciprocal"]
+        ["construction", "reciprocal"],
+        ["slots", "unary"]
       ],
       "comment": "Marked # as self-contradictory.",
       "verified": "page-image"
@@ -430,7 +485,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "discontinuous"]
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
       ],
       "comment": "Also printed as (27b); the literal translation is 'John kissed each other with Maria.'",
       "verified": "page-image"
@@ -452,7 +508,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "discontinuous"]
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -473,7 +530,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "discontinuous"]
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -495,7 +553,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["construction", "discontinuous"]
+        ["construction", "discontinuous"],
+        ["slots", "binary"]
       ],
       "comment": "Printed without a translation.",
       "verified": "page-image"
