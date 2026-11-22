@@ -6,8 +6,9 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Order.Closure
 public import Linglib.Syntax.Minimalist.Derivation.Licensing
 public import Linglib.Syntax.Minimalist.ExtendedProjection
+public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
+public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Command.RoseTree
-public import Linglib.Syntax.Tree.Projection
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Phonology.RuleInteraction
@@ -49,7 +50,8 @@ it checks, and the order of a head's arguments follows from that closure.
 * `System`, `System.Run`: the operations at a head, and a sequence of them each checking a feature
   still unchecked; `System.Licensed` and `System.Derivation` are runs without and with Weak
   Economy, and `System.runs` is the finite set of the runs from a state.
-* `configuration`: the binding theory, m-command without reverse c-command.
+* `selectionHead`, `configuration`: the head function of Merge as selection, and the binding
+  theory, m-command without reverse c-command.
 * `IsDitransitive`, `Binds`: a vP that Merge licenses from a ditransitive's arguments, and binding
   between its objects under a word order.
 * `specifiers`, `AgentFocus`, `verbForm`, `HasVerbForm`: the specifier sequences of a transitive
@@ -75,10 +77,13 @@ it checks, and the order of a head's arguments follows from that closure.
   require. Weak Economy does not compare two operations when either would bleed the other, as in
   the analysis of Greek wh passives, where wh-movement of the indirect object bleeds clitic
   doubling and clitic doubling checks more features.
-* `IsDitransitive` takes every vP `Licensed` admits with the direct object at V and the subject
-  at v, a VP specifier on either side. That is seven trees (`isDitransitive_iff`): the book draws
-  three, and not the four with the subject as v's complement or VP outermost. The binding
-  prediction holds on all seven.
+* The trees of the dative alternation are planar syntactic objects. The daughter that projects
+  at a node is the sister that selects the other (`selectionHead`), and the maximal projections
+  that m-command reads are those of that head function. `IsDitransitive` takes every vP whose
+  heads select their arguments with the direct object at V and the subject at v, a VP specifier
+  on either side. That is seven trees (`isDitransitive_iff`): the book draws three, and not the
+  four with the subject as v's complement or VP outermost. The binding prediction holds on all
+  seven.
 * A language of the Mayan type moves the object to check v's `[·D·]` before the subject merges
   wherever that leaves the subject licensed (`Realizes`), and its `[·wh·]` stays active once
   checked. An operation applies at most once. The agent-focus form is read off a row's gloss
@@ -93,9 +98,9 @@ The person-hierarchy effects on agent focus and the weak-crossover account of an
 the Spanish clitic-doubling diagnostic for the position of the indirect object, the position of
 by-phrases, the SiSwati object-marking examples, and the chapters on interpretation and on rival
 accounts of the double object movement asymmetry are not formalized. The examples of non-DP
-complements are not entered as rows. The operations at v and the trees of the dative alternation
-are stated on `System` and on trees of categories, not yet on the selection discipline and
-`Minimalist.SyntacticObject`.
+complements are not entered as rows. The operations at v in the sections on agent focus and on
+passives are stated on `System`, with the features each operation checks given directly, and not
+yet as steps of a `Minimalist.Derivation` under the selection discipline.
 
 ## References
 
@@ -252,6 +257,8 @@ theorem mem_coverClosure {m : ι → Set F} {A : Set ι} {b : ι} :
     b ∈ coverClosure m A ↔ m b ⊆ ⋃ a ∈ A, m a := Iff.rfl
 
 end Cover
+
+section Selects
 
 variable {s : Finset Selector} {l : List LexicalItem.Token} {a b : LexicalItem.Token}
 
@@ -507,6 +514,8 @@ example : Matched (mergeFeatures .V) [item .D 2, item .P 1] ∧
   ⟨(by decide : Selects (mergeFeatures .V) [item .P 1, item .D 2]).matched.perm
     (List.Perm.swap _ _ _), by decide⟩
 
+end Selects
+
 /-! ### Operations at a head -/
 
 /-- A state of a derivation at a head: the head's unchecked features and the operations that
@@ -724,14 +733,6 @@ theorem exists_run_iff {p : List ι → Prop} :
 
 end Runs
 
-/-- The system in which every operation is always available, with `κ a` the features `a`
-checks. -/
-def free (κ : ι → Finset Selector) : System ι where
-  checks := κ
-
-instance (κ : ι → Finset Selector) : ∀ d a, Decidable ((free κ).Available d a) :=
-  fun _ _ ↦ isTrue trivial
-
 end System
 
 /-- `arrangements l n` collects the duplicate-free lists of length at most `n` drawn from `l`. -/
@@ -757,217 +758,227 @@ private theorem mem_arrangements_length {α : Type*} [DecidableEq α] {l es : Li
   mem_arrangements hnd hsub (hnd.subperm hsub).length_le
 /-! ### The dative alternation -/
 
-/-- A leaf of a ditransitive vP is the external argument, v, V, the direct object, or the phrase
-containing the indirect object. -/
-inductive Leaf where
-  | subj
-  | v
-  | V
-  | dobj
-  | iobj
-  deriving DecidableEq, Repr
+/-- The categorial selection state of a planar syntactic object without traces. -/
+def state : PlanarSyntacticObject → SelectionState (Finset Selector)
+  | .of (.lex a) => categorial.lex a
+  | .of _ => 0
+  | .mul l r => state l * state r
 
-/-- An `XTree` is a tree whose nodes carry a category. Which nodes are heads, intermediate or
-maximal projections is read off the tree: a node's head daughter is its daughter of its category. -/
-abbrev XTree := PhraseStructure.Tree Cat Leaf
+/-- The head daughter of the subtree at an address: the sister that selects the other. -/
+def headIndex : PlanarSyntacticObject → List ℕ → Option ℕ
+  | .mul l r, [] => (selSide (state l) (state r)).map fun b ↦ bif b then 0 else 1
+  | .mul l _, 0 :: q => headIndex l q
+  | .mul _ r, 1 :: q => headIndex r q
+  | _, _ => none
 
-/-- A tree counts for Merge features as a phrase of its root's category. -/
-def XTree.checks (t : XTree) : Finset Selector := Phrase.checks ⟨t.cat, ∅⟩
+/-- The head function of Merge as selection: at each position the daughter whose head selects
+its sister projects. -/
+def selectionHead : HeadFunction := fun t q ↦ headIndex t q.toList
 
-/-- `bar R c h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
+/-- `bar R h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
 with complement `comp` and specifiers `specs`, those satisfying `R` linearized on the right. -/
-def bar (R : XTree → Prop) [DecidablePred R] (c : Cat) (h comp : XTree) : List XTree → XTree
-  | [] => .node c [h, comp]
-  | s :: ss =>
-    if R s then .node c [bar R c h comp ss, s] else .node c [s, bar R c h comp ss]
+def bar (R : PlanarSyntacticObject → Prop) [DecidablePred R] (h comp : PlanarSyntacticObject) :
+    List PlanarSyntacticObject → PlanarSyntacticObject
+  | [] => h * comp
+  | s :: ss => if R s then bar R h comp ss * s else s * bar R h comp ss
 
-/-- `projectWith R c h es` is the phrase the head `h` of category `c` projects when `es` merge
-with it. The first is the complement, and each later one tucks in below the specifiers already
-merged, so the first specifier is outermost; specifiers satisfying `R` are linearized on the
-right. -/
-def projectWith (R : XTree → Prop) [DecidablePred R] (c : Cat) (h : XTree) : List XTree → XTree
-  | [] => .node c [h]
-  | comp :: ss => bar R c h comp ss
+/-- `projectWith R h es` is the phrase the head `h` projects when `es` merge with it. The first
+is the complement, and each later one tucks in below the specifiers already merged, so the first
+specifier is outermost; specifiers satisfying `R` are linearized on the right. -/
+def projectWith (R : PlanarSyntacticObject → Prop) [DecidablePred R] (h : PlanarSyntacticObject) :
+    List PlanarSyntacticObject → PlanarSyntacticObject
+  | [] => h
+  | comp :: ss => bar R h comp ss
 
-/-- `project c h es` is the projection with every specifier on the left. -/
-abbrev project : Cat → XTree → List XTree → XTree := projectWith fun _ ↦ False
+/-- `project h es` is the projection with every specifier on the left. -/
+abbrev project : PlanarSyntacticObject → List PlanarSyntacticObject → PlanarSyntacticObject :=
+  projectWith fun _ ↦ False
 
-/-- `projectR c h es` is the projection with each VP specifier on the right. -/
-abbrev projectR : Cat → XTree → List XTree → XTree := projectWith fun s ↦ s.cat = .V
+/-- `projectR h es` is the projection with each specifier headed by V on the right. -/
+abbrev projectR : PlanarSyntacticObject → List PlanarSyntacticObject → PlanarSyntacticObject :=
+  projectWith fun s ↦ (state s).head.map (·.item.cat) = some .V
 
-theorem projectWith_cat (R : XTree → Prop) [DecidablePred R] (c : Cat) (h : XTree)
-    (es : List XTree) : (projectWith R c h es).cat = c := by
-  rcases es with _ | ⟨comp, _ | ⟨s, ss⟩⟩
-  · rfl
-  · rfl
-  · simp only [projectWith, bar]
-    split <;> rfl
+/-- The head v. -/
+def vHead : LexicalItem.Token := item .v 0
 
-/-- `subjP` is the external argument, a DP. -/
-def subjP : XTree := .terminal .D .subj
+/-- The head V. -/
+def VHead : LexicalItem.Token := item .V 1
 
-/-- `dobjP` is the direct object, a DP. -/
-def dobjP : XTree := .terminal .D .dobj
+/-- The external argument, a DP. -/
+def subj : LexicalItem.Token := item .D 2
 
-/-- `iobjP` is the phrase containing the indirect object, a PP or an applicative phrase. -/
-def iobjP : XTree := .terminal .P .iobj
+/-- The direct object, a DP. -/
+def dobj : LexicalItem.Token := item .D 3
 
-/-- `vHead` is the head v. -/
-def vHead : XTree := .terminal .v .v
+/-- The head of the phrase containing the indirect object, a preposition or an applicative
+head. -/
+def iobj : LexicalItem.Token := item .P 4
 
-/-- `VHead` is the head V. -/
-def VHead : XTree := .terminal .V .V
+/-- The VP whose head merges with the constituents headed by `Vs` in order. -/
+def vp (Vs : List LexicalItem.Token) : PlanarSyntacticObject :=
+  project (.leaf VHead) (Vs.map .leaf)
+
+/-- The constituents merging with v, given the heads `es` of each in order and the heads `Vs` of
+those merging with V: `VHead` stands for VP. -/
+def vArgs (Vs es : List LexicalItem.Token) : List PlanarSyntacticObject :=
+  es.map fun b ↦ if b = VHead then vp Vs else .leaf b
 
 /-- `lowXP` is the ditransitive with the indirect object in V's complement. -/
-def lowXP : XTree := project .v vHead [project .V VHead [iobjP, dobjP], subjP]
+def lowXP : PlanarSyntacticObject := project (.leaf vHead) (vArgs [iobj, dobj] [VHead, subj])
 
 /-- `highXP` is the ditransitive with the indirect object in v's complement and VP a specifier
 linearized on the left. -/
-def highXP : XTree := project .v vHead [iobjP, subjP, project .V VHead [dobjP]]
+def highXP : PlanarSyntacticObject := project (.leaf vHead) (vArgs [dobj] [iobj, subj, VHead])
 
 /-- `highXPRight` is `highXP` with the VP specifier linearized on the right. -/
-def highXPRight : XTree := projectR .v vHead [iobjP, subjP, project .V VHead [dobjP]]
+def highXPRight : PlanarSyntacticObject :=
+  projectR (.leaf vHead) (vArgs [dobj] [iobj, subj, VHead])
 
 /-- VP cannot merge with v before the phrase containing the indirect object. -/
-example : ¬ (System.free XTree.checks).Licensed (mergeFeatures .v)
-    [project .V VHead [dobjP], iobjP, subjP] := by decide
+example : ¬ Selects (mergeFeatures .v) [VHead, iobj, subj] := by decide
 
-/-- In the binding configuration of a tree, `a` commands `b` when every maximal projection
-properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
-a domain. -/
-def configuration (t : XTree) : Binding.Configuration GornAddress where
+/-- In the binding configuration of a planar object, `a` commands `b` when every maximal
+projection properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not
+restricted to a domain. -/
+def configuration (t : PlanarSyntacticObject) : Binding.Configuration GornAddress where
   commands a b :=
-    (a, b) ∈ PhraseStructure.commandRelation (PhraseStructure.Tree.maximalProjectionsAt t) ∧
-      ¬ RoseTree.CCommands t b a
+    (a, b) ∈ PhraseStructure.commandRelation (maximalProjections selectionHead t) ∧
+      ¬ RoseTree.CCommands t.toRoseTree b a
   domain _ := Set.univ
 
-instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
+instance (t : PlanarSyntacticObject) : DecidableRel (configuration t).commands := fun a b ↦
   inferInstanceAs (Decidable
-    ((a, b) ∈ PhraseStructure.commandRelation (PhraseStructure.Tree.maximalProjectionsAt t) ∧ _))
+    ((a, b) ∈ PhraseStructure.commandRelation (maximalProjections selectionHead t) ∧ _))
 
-/-- `leafPaths t` pairs each leaf of `t` with its position. -/
-def leafPaths (t : XTree) : List (Leaf × GornAddress) :=
-  t.positionedTerminals.map fun x ↦ (x.2.2, x.1)
+/-- `leafPaths t` pairs each lexical item of `t` with its position. -/
+def leafPaths (t : PlanarSyntacticObject) : List (LexicalItem.Token × GornAddress) :=
+  (positions (fun x ↦ match x with | .lex a => some a | _ => none) t.toRoseTree).map
+    fun x ↦ (x.2, x.1)
 
-/-- The leaf `x` can bind the leaf `y` in `t`. -/
-def CanBind (t : XTree) (x y : Leaf) : Prop :=
+/-- The item `x` can bind the item `y` in `t`. -/
+def CanBind (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Prop :=
   ∃ a ∈ (leafPaths t).lookup x, ∃ b ∈ (leafPaths t).lookup y, (configuration t).commands a b
 
-instance (t : XTree) (x y : Leaf) : Decidable (CanBind t x y) :=
+instance (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Decidable (CanBind t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
-/-- The leaf `x` precedes the leaf `y` in `t` when its position precedes `y`'s. -/
-def Precedes (t : XTree) (x y : Leaf) : Prop :=
+/-- The item `x` precedes the item `y` in `t` when its position precedes `y`'s. -/
+def Precedes (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Prop :=
   ∃ a ∈ (leafPaths t).lookup x, ∃ b ∈ (leafPaths t).lookup y, a.Precedes b
 
-instance (t : XTree) (x y : Leaf) : Decidable (Precedes t x y) :=
+instance (t : PlanarSyntacticObject) (x y : LexicalItem.Token) : Decidable (Precedes t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
 theorem highXP_not_cCommands :
-    ∃ a ∈ (leafPaths highXP).lookup .dobj, ∃ b ∈ (leafPaths highXP).lookup .iobj,
-      ¬ RoseTree.CCommands highXP a b ∧ ¬ RoseTree.CCommands highXP b a := by
-  decide
+    ∃ a ∈ (leafPaths highXP).lookup dobj, ∃ b ∈ (leafPaths highXP).lookup iobj,
+      ¬ RoseTree.CCommands highXP.toRoseTree a b ∧ ¬ RoseTree.CCommands highXP.toRoseTree b a := by
+  decide +kernel
 
-/-- `Vs` merge with V and `es` with v in a ditransitive: each sequence is licensed, the direct
-object merges with V, the subject and VP with v, and the indirect object with one of them. -/
-def DitransitiveMerge (Vs es : List XTree) : Prop :=
-  (System.free XTree.checks).Licensed (mergeFeatures .V) Vs ∧
-    (System.free XTree.checks).Licensed (mergeFeatures .v) es ∧
-    dobjP ∈ Vs ∧ subjP ∈ es ∧ project .V VHead Vs ∈ es ∧
-    (Vs ++ es.erase (project .V VHead Vs)).isPerm [iobjP, dobjP, subjP] = true
+/-- The constituents headed by `Vs` merge with V and those headed by `es` with v in a
+ditransitive: each sequence is selected, the direct object merges with V, the subject and VP
+with v, and the indirect object with one of them. -/
+def DitransitiveMerge (Vs es : List LexicalItem.Token) : Prop :=
+  Selects (mergeFeatures .V) Vs ∧ Selects (mergeFeatures .v) es ∧
+    dobj ∈ Vs ∧ subj ∈ es ∧ VHead ∈ es ∧
+    (Vs ++ es.erase VHead).isPerm [iobj, dobj, subj] = true
 
-instance (Vs es : List XTree) : Decidable (DitransitiveMerge Vs es) :=
+instance (Vs es : List LexicalItem.Token) : Decidable (DitransitiveMerge Vs es) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `t` is a vP that Merge licenses from a ditransitive's arguments, a VP specifier on either
 side. -/
-def IsDitransitive (t : XTree) : Prop :=
-  ∃ Vs es, DitransitiveMerge Vs es ∧ (t = project .v vHead es ∨ t = projectR .v vHead es)
+def IsDitransitive (t : PlanarSyntacticObject) : Prop :=
+  ∃ Vs es, DitransitiveMerge Vs es ∧
+    (t = project (.leaf vHead) (vArgs Vs es) ∨ t = projectR (.leaf vHead) (vArgs Vs es))
 
 /-- The merge sequences of the ditransitive vPs, at V and at v. -/
-def ditransitiveMerges : List (List XTree × List XTree) :=
-  [([iobjP, dobjP], [project .V VHead [iobjP, dobjP], subjP]),
-    ([iobjP, dobjP], [subjP, project .V VHead [iobjP, dobjP]]),
-    ([dobjP], [iobjP, subjP, project .V VHead [dobjP]]),
-    ([dobjP], [iobjP, project .V VHead [dobjP], subjP])]
+def ditransitiveMerges : List (List LexicalItem.Token × List LexicalItem.Token) :=
+  [([iobj, dobj], [VHead, subj]), ([iobj, dobj], [subj, VHead]),
+    ([dobj], [iobj, subj, VHead]), ([dobj], [iobj, VHead, subj])]
 
 /-- The vPs of `ditransitiveMerges`, on each linearization. -/
-def ditransitiveVPs : List XTree :=
-  ditransitiveMerges.flatMap fun m ↦ [project .v vHead m.2, projectR .v vHead m.2]
+def ditransitiveVPs : List PlanarSyntacticObject :=
+  ditransitiveMerges.flatMap fun m ↦
+    [project (.leaf vHead) (vArgs m.1 m.2), projectR (.leaf vHead) (vArgs m.1 m.2)]
 
 -- (157), (158)
-theorem isDitransitive_iff {t : XTree} : IsDitransitive t ↔ t ∈ ditransitiveVPs := by
+theorem isDitransitive_iff {t : PlanarSyntacticObject} :
+    IsDitransitive t ↔ t ∈ ditransitiveVPs := by
   constructor
   · rintro ⟨Vs, es, hm, ht⟩
-    obtain ⟨-, -, hd, hs, hVP, hperm⟩ := id hm
+    obtain ⟨hV, hv, hd, hs, hVP, hperm⟩ := id hm
     replace hperm := List.isPerm_iff.1 hperm
-    have hcat : ∀ x ∈ [iobjP, dobjP, subjP], x ≠ project .V VHead Vs := fun x hx e ↦
-      (by decide : ∀ x ∈ [iobjP, dobjP, subjP], x.cat ≠ .V) x hx (e ▸ projectWith_cat ..)
-    have hnd : (Vs ++ es.erase (project .V VHead Vs)).Nodup := hperm.nodup_iff.2 (by decide)
+    have hcat : ∀ x ∈ [iobj, dobj, subj], x ≠ VHead := by decide +kernel
+    have hnd : (Vs ++ es.erase VHead).Nodup := hperm.nodup_iff.2 (by decide +kernel)
     have hdis := List.disjoint_of_nodup_append hnd
-    have hmem : ∀ x, x ∈ Vs ∨ x ∈ es.erase (project .V VHead Vs) ↔ x ∈ [iobjP, dobjP, subjP] :=
+    have hmem : ∀ x, x ∈ Vs ∨ x ∈ es.erase VHead ↔ x ∈ [iobj, dobj, subj] :=
       fun x ↦ by rw [← List.mem_append]; exact hperm.mem_iff
-    have hsr : subjP ∈ es.erase (project .V VHead Vs) :=
-      (List.mem_erase_of_ne (hcat _ (by simp))).2 hs
-    have hVsub : Vs ⊆ [iobjP, dobjP] := fun x hx ↦ by
-      have hne : x ≠ subjP := by rintro rfl; exact hdis hx hsr
+    have hsr : subj ∈ es.erase VHead := (List.mem_erase_of_ne (hcat _ (by simp))).2 hs
+    have hVsub : Vs ⊆ [iobj, dobj] := fun x hx ↦ by
+      have hne : x ≠ subj := by rintro rfl; exact hdis hx hsr
       simpa [hne] using (hmem x).1 (Or.inl hx)
-    have hesnd : es.Nodup := (List.perm_cons_erase hVP).nodup_iff.2 <| List.nodup_cons.2
-      ⟨fun h ↦ hcat _ ((hmem _).1 (Or.inr h)) rfl, hnd.of_append_right⟩
-    have hessub : es ⊆ [project .V VHead Vs, iobjP, subjP] := fun x hx ↦ by
-      by_cases hx' : x = project .V VHead Vs
+    have hessub : es ⊆ [VHead, iobj, subj] := fun x hx ↦ by
+      by_cases hx' : x = VHead
       · simp [hx']
       · have hr := (List.mem_erase_of_ne hx').2 hx
-        have hne : x ≠ dobjP := by rintro rfl; exact hdis hd hr
+        have hne : x ≠ dobj := by rintro rfl; exact hdis hd hr
         have := (hmem x).1 (Or.inr hr)
         simp only [List.mem_cons, List.not_mem_nil, or_false] at this ⊢
         tauto
-    have key : ∀ Vs ∈ arrangements [iobjP, dobjP] 2,
-        ∀ es ∈ arrangements [project .V VHead Vs, iobjP, subjP] 3, DitransitiveMerge Vs es →
-          project .v vHead es ∈ ditransitiveVPs ∧ projectR .v vHead es ∈ ditransitiveVPs := by
-      decide
-    have hk := key Vs (mem_arrangements_length hnd.of_append_left hVsub) es
-      (mem_arrangements_length hesnd hessub) hm
+    have key : ∀ Vs ∈ arrangements [iobj, dobj] 2,
+        ∀ es ∈ arrangements [VHead, iobj, subj] 3, DitransitiveMerge Vs es →
+          project (.leaf vHead) (vArgs Vs es) ∈ ditransitiveVPs ∧
+            projectR (.leaf vHead) (vArgs Vs es) ∈ ditransitiveVPs := by
+      decide +kernel
+    have hk := key Vs (mem_arrangements_length hV.nodup hVsub) es
+      (mem_arrangements_length hv.nodup hessub) hm
     rcases ht with rfl | rfl
     exacts [hk.1, hk.2]
   · intro ht
     have key : ∀ t ∈ ditransitiveVPs, ∃ m ∈ ditransitiveMerges, DitransitiveMerge m.1 m.2 ∧
-        (t = project .v vHead m.2 ∨ t = projectR .v vHead m.2) := by
-      decide
+        (t = project (.leaf vHead) (vArgs m.1 m.2) ∨
+          t = projectR (.leaf vHead) (vArgs m.1 m.2)) := by
+      decide +kernel
     obtain ⟨m, -, h⟩ := key t ht
     exact ⟨m.1, m.2, h⟩
 
-theorem nodup_leaves {t : XTree} (ht : IsDitransitive t) :
+theorem nodup_leaves {t : PlanarSyntacticObject} (ht : IsDitransitive t) :
     ((leafPaths t).map Prod.fst).Nodup :=
-  (by decide : ∀ t ∈ ditransitiveVPs, ((leafPaths t).map Prod.fst).Nodup) t
+  (by decide +kernel : ∀ t ∈ ditransitiveVPs, ((leafPaths t).map Prod.fst).Nodup) t
+    (isDitransitive_iff.1 ht)
+
+-- (142)
+theorem head_state_eq {t : PlanarSyntacticObject} (ht : IsDitransitive t) :
+    (state t).head = some vHead :=
+  (by decide +kernel : ∀ t ∈ ditransitiveVPs, (state t).head = some vHead) t
     (isDitransitive_iff.1 ht)
 
 /-- **Word order and binding.** On a ditransitive vP that Merge licenses, an indirect object
 preceding the direct object binds into it and is not bound from it (148). -/
-theorem canBind_iobj_of_precedes {t : XTree} (ht : IsDitransitive t)
-    (hp : Precedes t .iobj .dobj) : CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj :=
-  (by decide : ∀ t ∈ ditransitiveVPs, Precedes t .iobj .dobj →
-    CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj) t (isDitransitive_iff.1 ht) hp
+theorem canBind_iobj_of_precedes {t : PlanarSyntacticObject} (ht : IsDitransitive t)
+    (hp : Precedes t iobj dobj) : CanBind t iobj dobj ∧ ¬ CanBind t dobj iobj :=
+  (by decide +kernel : ∀ t ∈ ditransitiveVPs, Precedes t iobj dobj →
+    CanBind t iobj dobj ∧ ¬ CanBind t dobj iobj) t (isDitransitive_iff.1 ht) hp
 
 /-- The first of the two objects under an order. -/
-def Examples.Order.first : Examples.Order → Leaf
-  | .directFirst => .dobj
-  | .indirectFirst => .iobj
+def Examples.Order.first : Examples.Order → LexicalItem.Token
+  | .directFirst => dobj
+  | .indirectFirst => iobj
 
 /-- The second of the two objects under an order. -/
-def Examples.Order.second : Examples.Order → Leaf
-  | .directFirst => .iobj
-  | .indirectFirst => .dobj
+def Examples.Order.second : Examples.Order → LexicalItem.Token
+  | .directFirst => iobj
+  | .indirectFirst => dobj
 
 /-- The object that binds. -/
-def Examples.Binder.binder : Examples.Binder → Leaf
-  | .direct => .dobj
-  | .indirect => .iobj
+def Examples.Binder.binder : Examples.Binder → LexicalItem.Token
+  | .direct => dobj
+  | .indirect => iobj
 
 /-- The object bound into. -/
-def Examples.Binder.bindee : Examples.Binder → Leaf
-  | .direct => .iobj
-  | .indirect => .dobj
+def Examples.Binder.bindee : Examples.Binder → LexicalItem.Token
+  | .direct => iobj
+  | .indirect => dobj
 
 /-- Some ditransitive vP that Merge licenses has the objects in the order `o` and lets the object
 `b` bind into the other. -/
@@ -986,13 +997,13 @@ instance (o : Examples.Order) (b : Examples.Binder) : Decidable (Binds o b) :=
 -- (148)
 theorem binds_iff (o : Examples.Order) (b : Examples.Binder) :
     Binds o b ↔ ¬ (o = .indirectFirst ∧ b = .direct) := by
-  decide +revert
+  decide +revert +kernel
 
 -- (149)–(151), (153)
 theorem acceptable_iff_binds :
     ∀ x : Examples.Example, ∀ o ∈ x.order, ∀ b ∈ x.binder,
       (x.datum.judgment = .acceptable ↔ Binds o b) := by
-  decide
+  decide +kernel
 
 /-! ### Subject questions and agent focus -/
 
