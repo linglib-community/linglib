@@ -166,6 +166,10 @@ def personal : Finset PersonalPronoun :=
   {na, jeo, uri, jeohui, neo, jane, dangsin, jagi, taek, neohui, janedeul, dangsindeul, taekdeul,
     geu, geunyeo, gyae, geudeul}
 
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
 /-- Every grade distinguishes one addressee from several. -/
 theorem addresseeSg_ne_addresseePl (g : Grade) : addresseeSg g ≠ addresseePl g := by
   cases g <;> decide

@@ -9,27 +9,16 @@ The personal pronouns of Ewe come in three series, as Ameka tabulates them: the 
 cliticised to the verb as its subject; the prenominal and independent forms, used before the
 focus marker, before a nominal in apposition and in a possessive construction; and the postverbal
 forms, the objects of verbs and prepositions. Each series has a form for three persons in two
-numbers, with no clusivity and no gender. *wò* is the second person singular of the independent
+numbers, with no clusivity and no gender, so that every referential category has a pronoun
+(`Ewe.Pronouns.paradigm_nonempty`) and the subject paradigm of the inventory is the preverbal
+series (`Ewe.Pronouns.paradigm_preverbal`). *wò* is the second person singular of the independent
 and postverbal series and a third person singular subject.
 
 The logophoric pronoun *yè*, plural *yewó*, occurs in the scope of an attitude predicate such as
 'say' or 'believe' and refers to the bearer of the attitude, as Pearson describes. Ameka gives it
 for the second or third person whose speech, thought or feeling a dependent clause reports, never
-for the first. Sells, after Clements, gives it also under psychological predicates.
-
-## Main definitions
-
-* `Ewe.Pronouns.table`: the forms of each person and number in each series.
-* `Ewe.Pronouns.entry`, `Ewe.Pronouns.personal`: the pronoun of a form in a person and number,
-  and the inventory.
-* `Ewe.Pronouns.ye`, `Ewe.Pronouns.yewó`: the logophoric pronouns.
-
-## Main results
-
-* `Ewe.Pronouns.paradigm_preverbal`: the subject paradigm of the inventory is the preverbal
-  series.
-* `Ewe.Pronouns.referential_ye`, `Ewe.Pronouns.referential_yewó`: a logophoric pronoun denotes
-  the addressee or a third party, alone or with others.
+for the first (`Ewe.Pronouns.referential_ye`). Sells, after Clements, gives it also under
+psychological predicates.
 
 ## Implementation notes
 
@@ -91,7 +80,7 @@ def Series.case : Series → Option Case
   | .independent => none
   | .postverbal => some .acc
 
-/-- The forms of each person and number in each series ([ameka-1991], Table 3.1). -/
+/-- Table 3.1: the forms of each person and number in each series ([ameka-1991]). -/
 def table : Row × Series → Finset String
   | (.sg1, .preverbal) => {"me"}
   | (.pl1, .preverbal) => {"mí", "míé"}
@@ -114,7 +103,7 @@ def table : Row × Series → Finset String
 
 /-- The pronoun `f` of the row `r`, with the cases of the series it fills there. -/
 def entry (r : Row) (f : String) : PersonalPronoun :=
-  .ofCells (·.1.person) (some ·.1.number) (fun _ ↦ none) (·.2.case)
+  .ofCells (·.1.person) (fun _ ↦ none) (some ·.1.number) (fun _ ↦ none) (·.2.case)
     ((Morphology.formCellsOf table f).filter (·.1 = r)) f
 
 /-- The personal pronoun inventory: the entry of every form of every row. -/
@@ -189,6 +178,10 @@ theorem referential_entry :
     ∀ r s, ∀ f ∈ table (r, s), (entry r f).referential = r.categories := by
   decide +kernel
 
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
 /-- The subject paradigm of the inventory is the preverbal series. -/
 theorem paradigm_preverbal :
     ∀ r, ∀ c ∈ r.categories,
@@ -201,7 +194,7 @@ theorem wò_sg2_ne_wò_sg3 : wò_sg2.form = wò_sg3.form ∧ wò_sg2.person ≠ 
 
 /-! ### The logophoric pronouns -/
 
-/-- The logophoric form of each row, none in the first person ([ameka-1991], Table 3.1). -/
+/-- Table 3.1: the logophoric form of each row, none in the first person ([ameka-1991]). -/
 def logophoricForms : Row → Finset String
   | .sg1 | .pl1 => ∅
   | .sg2 | .sg3 => {"yè"}
@@ -209,7 +202,8 @@ def logophoricForms : Row → Finset String
 
 /-- The logophoric pronoun `f`, with the rows it fills. -/
 def logophoricOf (f : String) : LogophoricPronoun :=
-  ⟨.ofTable Row.person (some ·.number) (fun _ ↦ none) (fun _ ↦ none) logophoricForms f⟩
+  ⟨.ofTable Row.person (fun _ ↦ none) (some ·.number) (fun _ ↦ none) (fun _ ↦ none)
+    logophoricForms f⟩
 
 /-- The logophoric pronoun *yè*. -/
 def ye : LogophoricPronoun := logophoricOf "yè"

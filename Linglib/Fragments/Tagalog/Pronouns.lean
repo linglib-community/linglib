@@ -23,13 +23,16 @@ that the *kita* Himmelmann lists beside *kata* is a portmanteau of the first-per
 
 ## Main definitions
 
-* `Tagalog.Pronouns.ang`, `Tagalog.Pronouns.ng`, `Tagalog.Pronouns.sa` — the three case series, a form for each category
-* `Tagalog.Pronouns.entry`, `Tagalog.Pronouns.personal` — the pronoun entries, with the person
-  and number of their category
+* `Tagalog.Pronouns.ang`, `Tagalog.Pronouns.ng`, `Tagalog.Pronouns.sa` — the three case series,
+  a form for each category
+* `Tagalog.Pronouns.table`, `Tagalog.Pronouns.entry`, `Tagalog.Pronouns.personal` — the forms
+  of each category in each series, and the pronoun of a form with the person, clusivity, number
+  and case of the cell it fills
 
 ## Main results
 
-* `Tagalog.Pronouns.entry_categories` — an entry denotes its category
+* `Tagalog.Pronouns.referential_entry` — a form denotes the category of its cell, which its
+  person, clusivity and number realize
 * `Tagalog.Pronouns.paradigm_nom` — the inventory's subject paradigm is the *ang* series
 * `Tagalog.Pronouns.ang_injective` — no two categories share an *ang* form
 
@@ -87,20 +90,30 @@ def sa : Category → String
   | .addresseeOthers => "inyo"
   | .others => "kanila"
 
-/-- The pronoun of a category in a case series, with the series' comparative value. -/
-def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
-  { form, person := some c.person, clusivity := c.clusivity, number := some (number c),
-    cases := {k.label} }
+/-- The form of each category in each case series. -/
+def table : Category × Case → Finset String
+  | (c, .ang) => {ang c}
+  | (c, .ng) => {ng c}
+  | (c, .sa) => {sa c}
 
-/-- The pronoun inventory: the three series over the eight categories. -/
-def personal : Finset PersonalPronoun :=
-  Finset.univ.biUnion fun c ↦ {entry c .ang (ang c), entry c .ng (ng c), entry c .sa (sa c)}
+/-- The pronoun `f`, with the person, clusivity and number of the category whose cell it fills
+and the comparative value of its series. -/
+def entry : String → PersonalPronoun :=
+  .ofTable (·.1.person) (·.1.clusivity) (fun x ↦ some (number x.1)) (fun _ ↦ none)
+    (some ·.2.label) table
 
-/-- An entry denotes exactly its category. -/
-theorem entry_categories (c : Category) (k : Case) (f : String) :
-    (entry c k f).categories = {c} := by
-  show Category.ofPersonNumber c.person c.clusivity (number c) = {c}
-  cases c <;> decide
+/-- The pronoun inventory: the entry of every form of the table. -/
+def personal : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry
+
+/-- A form denotes exactly the category of its cell, and its person, clusivity and number realize
+that category. -/
+theorem referential_entry :
+    ∀ x, ∀ f ∈ table x, (entry f).referential = {x.1} ∧ (entry f).IsOrdinary := by
+  decide +kernel
+
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
 
 /-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*
 forms. -/

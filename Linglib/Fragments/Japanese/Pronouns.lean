@@ -128,6 +128,10 @@ def addresseePl : Grade → PersonalPronoun
 def personal : Finset PersonalPronoun :=
   {watashi, boku, ore, watashitachi, kimi, anata, kimitachi, anatatachi, kare, kanojo, karera}
 
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
 /-- Every grade distinguishes one addressee from several. -/
 theorem addresseeSg_ne_addresseePl (g : Grade) : addresseeSg g ≠ addresseePl g := by
   cases g <;> decide

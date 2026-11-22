@@ -18,13 +18,8 @@ agreement with a second person subject.
 There is no distinct third person pronoun, and the demonstratives serve as one: *hau* 'this',
 close to the speaker, *hori* 'that', close to the addressee, and *hura* 'that', close to neither,
 with the plurals *hauek*, *horiek* and *haiek*. *Hura* alternates in this use with the intensive
-*bera*.
-
-## Main definitions
-
-* `Basque.Pronouns.personal`: the first and second person pronouns.
-* `Basque.Pronouns.demonstratives`: the demonstratives, which serve as third person pronouns.
-* `Basque.Pronouns.allocutive`: the Souletin allocutive suffixes.
+*bera*. The personal pronouns therefore leave the third person categories without a form
+(`Basque.Pronouns.paradigm_nonempty_iff`).
 
 ## References
 
@@ -75,6 +70,11 @@ def personal : Finset PersonalPronoun := {ni, gu, hi, zu, zuek}
 
 /-- No personal pronoun is third person. -/
 theorem person_ne_third : ∀ p ∈ personal, p.person ≠ some .third := by decide
+
+/-- A category has a personal pronoun exactly when it is not third person. -/
+theorem paradigm_nonempty_iff :
+    ∀ c, (PersonalPronoun.paradigm personal c).Nonempty ↔ c.person ≠ .third := by
+  decide +kernel
 
 /-- *hau* 'this', close to the speaker. -/
 def hau : DemonstrativePronoun :=

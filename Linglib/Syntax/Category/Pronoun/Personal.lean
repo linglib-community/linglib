@@ -118,18 +118,18 @@ end Paradigm
 
 section Table
 
-variable {C : Type*} (person : C → Person) (number : C → Option Number)
-  (gender : C → Option UD.Gender) (case : C → Option Case)
+variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity)
+  (number : C → Option Number) (gender : C → Option UD.Gender) (case : C → Option Case)
 
 /-- The personal pronoun `f` filling the cells `s` (`Pronoun.ofCells`), whose referential
 categories are the cells'. -/
 def ofCells (s : Finset C) (f : String) : PersonalPronoun :=
-  { toPronoun := .ofCells person number gender case s f,
-    referential := Pronoun.cellCategories person number s }
+  { toPronoun := .ofCells person clusivity number gender case s f,
+    referential := Pronoun.cellCategories person clusivity number s }
 
 /-- The personal pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : PersonalPronoun :=
-  ofCells person number gender case (Morphology.formCellsOf table f) f
+  ofCells person clusivity number gender case (Morphology.formCellsOf table f) f
 
 end Table
 

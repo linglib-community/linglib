@@ -189,7 +189,8 @@ def atonic : Row × Case → Finset String
 
 /-- The clitic `f` filling the cells `s`. -/
 def cliticOf (s : Finset (Row × Case)) (f : String) : PersonalPronoun :=
-  { PersonalPronoun.ofCells (·.1.person) (some ·.1.number) (·.1.gender) (some ·.2.label) s f with
+  { PersonalPronoun.ofCells (·.1.person) (fun _ ↦ none) (some ·.1.number) (·.1.gender)
+      (some ·.2.label) s f with
     strength := some .clitic }
 
 /-- The clitic `f`, filling every cell the table gives it. -/
@@ -256,7 +257,8 @@ def reflexiveForms : Row → Finset String
 
 /-- The reflexive clitic `f`, with the rows it fills. -/
 def reflexiveOf (f : String) : ReflexivePronoun :=
-  ⟨{ Pronoun.ofTable Row.person (some ·.number) Row.gender (fun _ ↦ none) reflexiveForms f with
+  ⟨{ Pronoun.ofTable Row.person (fun _ ↦ none) (some ·.number) Row.gender (fun _ ↦ none)
+        reflexiveForms f with
       strength := some .clitic }⟩
 
 /-- *mi*, first person singular reflexive. -/
