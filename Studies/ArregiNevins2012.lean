@@ -3,6 +3,8 @@ module
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Phonology.RuleInteraction
+public import Linglib.Data.Examples.ArregiNevins2012
+public import Linglib.Data.Examples.Gloss
 
 /-!
 # Arregi and Nevins (2012): Morphotactics
@@ -22,7 +24,9 @@ paradigmatic and bleeds Participant Dissimilation (`firstSingular_bleeds_ondarru
 reads a second clitic. Participant Dissimilation feeds Ergative Metathesis in Ondarru, where it
 obliterates the absolutive clitic that stood before T (`ondarru_feeds`), and bleeds it in Zamudio,
 where it obliterates the ergative clitic (`zamudio_bleeds`). With the two modules in the other
-order T is left at the edge of the word (`not_tNoninitial_linearThenMarkedness`).
+order T is left at the edge of the word (`not_tNoninitial_linearThenMarkedness`). The auxiliaries
+of the examples are acceptable exactly where their morphemes are the terminals the modules give,
+in the same order (`predicted_iff_acceptable`).
 
 ## Implementation notes
 
@@ -251,11 +255,79 @@ ergative clitic that would front. -/
 theorem zamudio_bleeds : Bleeds zamudio.apply (Fires ergativeMetathesis) auxiliary20 := by
   decide
 
-/-- With Linear Operations before Feature Markedness, T is left at the edge of both
-auxiliaries. -/
+-- (17b), and the order rejected for (20)
 theorem not_tNoninitial_linearThenMarkedness :
     ¬ TNoninitial (linearThenMarkedness ondarru auxiliary16) ∧
       ¬ TNoninitial (linearThenMarkedness zamudio auxiliary20) := by
+  decide
+
+/-! ### The examples
+
+A row's auxiliary is read off its gloss line and compared, piece by piece, with the string of
+terminals the two modules give for the row's variety and arguments. -/
+
+/-- The pieces of an auxiliary that the two modules order. -/
+inductive Piece where
+  | absolutive
+  | dative
+  | ergative
+  | tense
+  | l
+  deriving DecidableEq, Repr
+
+/-- The piece a terminal is: T, a clitic of its case, or L, the terminal without features. -/
+def piece (t : Terminal) : Piece :=
+  if IsT t then .tense
+  else if ⟨.case, .abs⟩ ∈ t then .absolutive
+  else if ⟨.case, .dat⟩ ∈ t then .dative
+  else if ⟨.case, .erg⟩ ∈ t then .ergative
+  else .l
+
+/-- The piece a morpheme of the gloss line is: `PST` is T, `L` is L, and `CL` with a person is
+the clitic of its case. The plural exponent of a clitic and the complementizer are not terminals
+of the string the modules order. -/
+def pieceOfGloss? (g : List Char) : Option Piece :=
+  let els := Gloss.elements g
+  if "PST".toList ∈ els then some .tense
+  else if els = ["L".toList] then some .l
+  else if "CL".toList ∈ els ∧ ∃ n ∈ ["1", "2", "3"], n.toList ∈ els then
+    if "A".toList ∈ els then some .absolutive
+    else if "D".toList ∈ els then some .dative
+    else if "E".toList ∈ els then some .ergative
+    else none
+  else none
+
+/-- The pieces of a row's auxiliary, the word with a tense morpheme. -/
+def pieces (e : Datum) : Option (List Piece) :=
+  (e.glossedWords.find? fun w ↦ decide (some Piece.tense ∈ w.glosses.map pieceOfGloss?)).map
+    (·.glosses.filterMap pieceOfGloss?)
+
+/-- The rule of Participant Dissimilation of a variety. -/
+def Examples.Variety.rule : Examples.Variety → ObliterationRule Terminal
+  | .ondarru => ArregiNevins2012.ondarru
+  | .zamudio => ArregiNevins2012.zamudio
+
+/-- The string of terminals the syntax hands over for the arguments of a row. -/
+def Examples.Arguments.auxiliary : Examples.Arguments → SpelloutDomain Terminal
+  | .erg2sgAbs1pl => auxiliary16
+  | .erg1plDat2pl => auxiliary20
+
+/-- A row is predicted when its auxiliary has the pieces of the string the two modules give for
+its variety and arguments, in the same order. -/
+def Predicted (x : Examples.Example) : Prop :=
+  ∃ v ∈ x.variety, ∃ a ∈ x.arguments,
+    pieces x.datum = some ((markednessThenLinear v.rule a.auxiliary).map piece)
+
+instance : DecidablePred Predicted := fun _ ↦ inferInstanceAs (Decidable (∃ v ∈ _, ∃ a ∈ _, _))
+
+/-- The auxiliaries of (16), (17) and (20) are acceptable exactly where they are predicted. -/
+theorem predicted_iff_acceptable :
+    ∀ x : Examples.Example, Predicted x ↔ x.datum.judgment = .acceptable := by
+  decide
+
+-- (17b) is the string that Linear Operations before Feature Markedness gives
+theorem pieces_ex17b :
+    pieces Examples.ex_17b = some ((linearThenMarkedness ondarru auxiliary16).map piece) := by
   decide
 
 end ArregiNevins2012
