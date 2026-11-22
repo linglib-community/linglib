@@ -1,5 +1,8 @@
 module
 
+public import Linglib.Data.Examples.Languages
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Data.Examples.Nordlinger2023
 public import Linglib.Syntax.Reciprocal
 public import Studies.Siloni2012
 public import Linglib.Semantics.Plurality.Reciprocal
@@ -26,24 +29,32 @@ substrate from the coding-frame effect of reciprocalization (`valency_follows_de
 tendency is not absolute: Tonga's verb-marked reciprocal keeps both argument NPs
 (`tonga_counterexample`), and in the Australian cases of Evans and colleagues the indicators
 disagree (`kuukThaayorre_mixed`, `dalabon_mixed`). Discontinuous reciprocals are licensed exactly
-for lexically formed reciprocal verbs on Siloni's typology, which the review's judgments confirm
-(`siloni_discontinuity_prediction`). The review's semantic typology, six configurations of a
+for lexically formed reciprocal verbs on Siloni's typology, which the review's examples confirm
+(`discontinuous_iff_lexical`). The review's semantic typology, six configurations of a
 mutual event from strong reciprocity to the ring, is stated as conditions on the relation
 (`ReciprocityType.Realizes`): only the strong and pairwise configurations are symmetric, and all
-but the melee involve every participant.
+but the melee involve every participant. The review's five children who each see and are seen by
+another, though not by every other, are weakly and not strongly reciprocal
+(`weakReciprocity_sees`).
 
 ## Implementation notes
 
 Each language's construction takes its marker from the language's fragment, or from the
 review's example where no fragment exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and
-records the valency indicators the review reports. The formation locus is Siloni's own
+records the valency indicators the review reports; the ergative and accusative glosses of its
+examples are checked against them (`ergative_iff_subjectCase_bivalent`,
+`objectSlot_bivalent_of_accusative`). The Wambaya clitic is a predicate-marking strategy, after
+Evans and colleagues, where the review lists it with the pronominal strategies. The review gives
+no discontinuous example for Czech. The formation locus is Siloni's own
 classification where it covers the language and the review's extension otherwise. Malagasy,
 bivalent at f-structure and monovalent at c-structure on Hurst's analysis, splits
 levels rather than indicators and is not represented. A marker records only whether it is also
 reflexive, the polysemy carried by the markers glossed RR (French *se*, Wambaya *-ngg-*, Warlpiri
 *-nyanu*, Dalabon *-rr*); the review's further polysemy types, Yakut *-üs* with collective and
 sociative readings (ex. 49) and East Futunan *fe-...-ʼaki* with iterative ones (ex. 50, both
-after Nedjalkov), are not.
+after Nedjalkov), are not. The six configurations are given conditions of the formalization's
+own, the review naming them by example only; the melee is taken as some interaction that leaves a
+participant out.
 
 ## References
 
@@ -159,16 +170,35 @@ def Language.formation : Language → Option Formation
   | .swahili | .greek => some .lexical
   | _ => none
 
-/-- Whether the review attests the discontinuous reciprocal construction (§3.3), as it does for
-Greek, Swahili and Hungarian with a comitative (ex. 36–38), while in French and Czech it is
-ungrammatical (ex. 39, p. 86). -/
-def Language.discontinuous : Language → Option Bool
-  | .swahili | .hungarian | .greek => some true
-  | .french | .czech => some false
-  | _ => none
+/-- The Glottocode of a language, under which the review's examples are filed. -/
+def Language.glottocode : Language → Glottocode
+  | .english => .english
+  | .russian => .russian
+  | .swahili => .swahili
+  | .hungarian => .hungarian
+  | .french => .french
+  | .greek => .modernGreek
+  | .mandarin => .mandarinChinese
+  | .wambaya => .wambayan
+  | .icelandic => .icelandic
+  | .chichewa => .nyanja
+  | .czech => .czech
+  | .warlpiri => .warlpiri
+  | .kuukThaayorre => .thayore
+  | .dalabon => .ngalkbun
+  | .tonga => .tongaZambia
+
+/-- A word of the row is glossed with the label. -/
+def Glossed (e : Datum) (label : String) : Prop :=
+  ∃ w ∈ e.glossedWords, label.toList <:+: w.gloss
+
+instance (e : Datum) (label : String) : Decidable (Glossed e label) :=
+  inferInstanceAs (Decidable (∃ w ∈ e.glossedWords, _))
 
 /-! ### Strategy and valency -/
 
+/-- Where the indicators of a language's reciprocal construction agree, and Tonga apart, they
+read the default valency of its strategy. -/
 theorem valency_follows_default :
     ∀ l : Language, ¬ l.construction.Mixed → l ≠ .tonga →
       l.construction.Unanimous l.construction.strategy.defaultValency := by
@@ -195,6 +225,7 @@ theorem kuukThaayorre_mixed : Language.kuukThaayorre.construction.Mixed := by de
 
 theorem dalabon_mixed : Language.dalabon.construction.Mixed := by decide
 
+/-- Tonga's reciprocal is marked on the verb and keeps both argument NPs. -/
 theorem tonga_counterexample :
     ¬ Language.tonga.construction.strategy.IsNominal ∧
       Language.tonga.construction.Reads .bivalent := by
@@ -202,9 +233,29 @@ theorem tonga_counterexample :
 
 /-! ### Discontinuous reciprocals -/
 
-theorem siloni_discontinuity_prediction :
-    ∀ l : Language, ∀ f ∈ l.formation, ∀ d ∈ l.discontinuous,
-      (Siloni2012.Property.discontinuous.Holds f ↔ d = true) := by
+/-- A discontinuous reciprocal of the review's examples is acceptable exactly when the
+language's reciprocal verbs are formed in the lexicon: (36), (37), (38) against (39). -/
+theorem discontinuous_iff_lexical :
+    ∀ e ∈ Examples.all, Examples.construction e = some .discontinuous →
+      ∀ l : Language, l.glottocode = e.language → ∀ f ∈ l.formation,
+        (Siloni2012.Property.discontinuous.Holds f ↔ e.judgment = .acceptable) := by
+  decide
+
+/-! ### The indicators in the examples -/
+
+/-- The subject of a reciprocal example is glossed ergative exactly in the languages whose
+subject case reads bivalent, Warlpiri (18b) and Kuuk Thaayorre (25). -/
+theorem ergative_iff_subjectCase_bivalent :
+    ∀ e ∈ Examples.all, Examples.construction e = some .reciprocal →
+      ∀ l : Language, l.glottocode = e.language →
+        (Glossed e "ERG" ↔ l.construction.valency .subjectCase = some .bivalent) := by
+  decide
+
+-- (9), (17a)
+theorem objectSlot_bivalent_of_accusative :
+    ∀ e ∈ Examples.all, Examples.construction e = some .reciprocal → Glossed e "ACC" →
+      ∀ l : Language, l.glottocode = e.language →
+        l.construction.valency .objectSlot = some .bivalent := by
   decide
 
 /-! ### Semantic reciprocity types (§4)
@@ -381,26 +432,12 @@ theorem RingConfig.oneWayWeak (h : RingConfig R X) : OneWayWeakReciprocity R X :
 
 end Configurations
 
-/-- Semantic type of reciprocal relation.
-
-    [nordlinger-2023] §4 presents the semantic typology of
-    [evans-et-al-2011b], who take as their starting point the symmetric
-    relations identified by [dalrymple-et-al-1998] and distinguish six
-    types of mutual relation ([nordlinger-2023] ex. 44,
-    [evans-et-al-2011b] p. 8):
-
-    - `strong`: every participant reciprocates with every other
-      ("The members of this family love one another.")
-    - `pairwise`: participants are paired off
-      ("The people at the dinner party were married to one another.")
-    - `chain`: sequential, each with the next
-      ("The graduating students followed one another up onto the stage.")
-    - `radial`: one central participant acts on all others
-      ("The teacher and her pupils intimidated one another.")
-    - `melee`: widespread but not exhaustive reciprocation
-      ("The drunks in the pub were punching one another.")
-    - `ring`: circular chain, last links back to first
-      ("The children chased each other round in a ring.") -/
+/-- The six configurations of a mutual event among more than two participants, each with the
+review's example: strong (*The members of this family love one another*), pairwise (*The people
+at the dinner party were married to one another*), chain (*The graduating students followed one
+another up onto the stage*), radial (*The teacher and her pupils intimidated one another*), melee
+(*The drunks in the pub were punching one another*) and ring (*The children chased each other
+round in a ring*). -/
 inductive ReciprocityType where
   | strong
   | pairwise
@@ -448,5 +485,24 @@ theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R 
   | melee => exact absurd rfl ht
 
 end Realizes
+
+/-! ### Weak reciprocity among five children -/
+
+/-- The seeing of the review's five children: the first sees the second and third, the second
+the third, fourth and fifth, the third the first and second, the fourth the fifth, and the fifth
+the third. -/
+def Sees (a b : Fin 5) : Prop :=
+  (a, b) ∈ ([(0, 1), (0, 2), (1, 2), (1, 3), (1, 4), (2, 0), (2, 1), (3, 4), (4, 2)] :
+    List (Fin 5 × Fin 5))
+
+instance : DecidableRel Sees := fun _ _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Each of the five children sees another and is seen by another, though not every child sees
+every other: weak reciprocity without strong reciprocity. -/
+theorem weakReciprocity_sees :
+    WeakReciprocity Sees Finset.univ ∧ ¬ StrongReciprocity Sees Finset.univ := by
+  refine ⟨by decide, fun h ↦ ?_⟩
+  exact absurd ((strongReciprocity_iff.1 h).2 (Finset.mem_coe.2 (Finset.mem_univ 0))
+    (Finset.mem_coe.2 (Finset.mem_univ 3)) (by decide)) (by decide)
 
 end Nordlinger2023
