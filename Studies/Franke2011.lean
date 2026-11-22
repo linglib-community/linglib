@@ -18,6 +18,9 @@ public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.Franke2011
 public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.SignalingGame.Equilibrium
+public import Linglib.Pragmatics.SignalingGame.BestResponse
+public import Linglib.Pragmatics.SignalingGame.Pure
 
 /-!
 # Franke (2011): Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation
@@ -41,12 +44,15 @@ fixed points are perfect Bayesian equilibria.
 * In the probabilistic model a player type is a set of pure strategies, and the unbiased belief
   in it is the kernel `unbiased` that is uniform over its choices. The prior is a measure, the
   expected gain is the probability that the receiver guesses the state, and the posterior after a
-  message of a pure sender, as in the Nash equilibria of §7, is the prior conditioned on the
-  states that send it. The truth filter of (117) and (122) is applied by maximising over true
-  messages and reading an unsent message literally, which agrees with the paper along every
-  chain. After a sent message the receiver keeps the states most probable for the Bayesian
-  listener of the unbiased belief in the sender type
+  message of a pure sender is the prior conditioned on the states that send it. The truth filter
+  of (117) and (122) is applied by maximising over true messages and reading an unsent message
+  literally, which agrees with the paper along every chain. After a sent message the receiver keeps
+  the states most probable for the Bayesian listener of the unbiased belief in the sender type
   (`receiverResponse_eq_argmax_listener`).
+* An interpretation game is the guessing game at its prior (`InterpGame.toSignalingGame`), and a
+  pure Nash equilibrium is `SignalingGame.IsEquilibrium` of its utilities at every state. It
+  holds exactly when the receiver's guess undoes the sender's message
+  (`InterpGame.isNashEquilibrium_iff_leftInverse`).
 * (83) refines by the prior the literal reading of a message nobody sends; the probabilistic
   model and Figure 16 leave it unrefined, as here. Condition (132) is stated with the inequality
   its proof needs; the paper prints it reversed.
@@ -110,28 +116,49 @@ theorem mem_trueMessages [Fintype M] {t : T} {m : M} :
     m ∈ G.trueMessages t ↔ G.meaning m t := by
   simp [trueMessages]
 
-/-- A pure profile is a Nash equilibrium (§7) when no message would get a state guessed that its
-own message does not, and after every message the receiver guesses a most probable state of the
-posterior, the prior conditioned on the states that send it. -/
-def IsNashEquilibrium [Fintype T] (σ : T → M) (ρ : M → T) : Prop :=
-  (∀ t m, ρ m = t → ρ (σ t) = t) ∧ ∀ m, ρ m ∈ univ.argmax fun t ↦ G.prior[|σ ⁻¹' {m}] {t}
+/-- The signaling game of an interpretation game: the guessing game at its prior. -/
+noncomputable def toSignalingGame : SignalingGame T M T := .guess G.prior
 
-theorem isNashEquilibrium_of_leftInverse [Fintype T] [MeasurableSingletonClass T]
-    [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0) {σ : T → M} {ρ : M → T}
-    (h : LeftInverse ρ σ) : G.IsNashEquilibrium σ ρ := by
-  refine ⟨fun t _ _ ↦ h t, fun m ↦ ?_⟩
-  by_cases hm : ∃ t, σ t = m
-  · obtain ⟨t, rfl⟩ := hm
-    have hpre : σ ⁻¹' {σ t} = {t} := Set.ext fun s ↦ by simp [h.injective.eq_iff]
-    have := cond_isProbabilityMeasure (μ := G.prior) (hprior t)
-    rw [hpre, h t]
-    refine mem_argmax.mpr ⟨mem_univ t, fun s _ ↦ ?_⟩
-    rw [cond_apply_self (hprior t) (measure_ne_top _ _)]
-    exact prob_le_one
-  · rw [show σ ⁻¹' {m} = ∅ from Set.eq_empty_of_forall_notMem fun s hs ↦ hm ⟨s, hs⟩, cond_empty]
-    exact mem_argmax.mpr ⟨mem_univ _, fun _ _ ↦ le_rfl⟩
+instance [IsFiniteMeasure G.prior] : IsFiniteMeasure G.toSignalingGame.prior := ‹_›
 
 end InterpGame
+
+/-! ### Nash equilibria
+
+In an interpretation game the receiver guesses the state and both players gain `1` when the guess
+is right, so the game is the guessing game at its prior. A pure strategy profile is a Nash
+equilibrium when, at every state, neither player gains by another strategy. -/
+
+section Nash
+
+universe u
+
+variable {T M : Type u} [MeasurableSpace T] (G : InterpGame T M) {σ : T → M} {ρ : M → T}
+
+/-- A pure strategy profile is a Nash equilibrium when at every state neither player gains by
+changing strategy alone. -/
+def InterpGame.IsNashEquilibrium (σ : T → M) (ρ : M → T) : Prop :=
+  ∀ t, SignalingGame.IsEquilibrium (G.toSignalingGame.utilityAt t) (SignalingGame.profile σ ρ)
+
+/-- A pure strategy profile is a Nash equilibrium exactly when the receiver's guess undoes the
+sender's message. -/
+theorem InterpGame.isNashEquilibrium_iff_leftInverse :
+    G.IsNashEquilibrium σ ρ ↔ LeftInverse ρ σ := by
+  refine ⟨fun h t ↦ ?_, fun h t b x ↦ ?_⟩
+  · have := h t true fun _ ↦ t
+    by_contra hne
+    simp [SignalingGame.utilityAt, InterpGame.toSignalingGame, SignalingGame.guess,
+      SignalingGame.profile, hne] at this
+    norm_num at this
+  · have h1 : G.toSignalingGame.utilityAt t b (SignalingGame.profile σ ρ) = 1 := by
+      cases b <;> simp [SignalingGame.utilityAt, InterpGame.toSignalingGame, SignalingGame.guess,
+        h t]
+    rw [h1]
+    cases b <;> simp only [SignalingGame.utilityAt, InterpGame.toSignalingGame,
+      SignalingGame.guess] <;> exact Set.indicator_le_self' (fun _ _ ↦ zero_le_one) _ |>.trans
+        (by simp)
+
+end Nash
 
 /-! ### Interpretation games from belief-value tables
 
@@ -443,10 +470,8 @@ select the implicature (§7). -/
 theorem isNashEquilibrium_scalar_and_reversed :
     game.IsNashEquilibrium scalarSender scalarReceiver ∧
       game.IsNashEquilibrium reversedSender reversedReceiver :=
-  ⟨game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl,
-    game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl⟩
+  ⟨game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl,
+    game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl⟩
 
 /-- Both chains reach the attested play at their first sophisticated level and stay there, so
 "some" conveys not-all. -/
@@ -529,10 +554,8 @@ def crossedReceiver : Message → State
 theorem isNashEquilibrium_freeChoice_and_crossed :
     game.IsNashEquilibrium freeChoiceSender freeChoiceReceiver ∧
       game.IsNashEquilibrium crossedSender crossedReceiver :=
-  ⟨game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl,
-    game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl⟩
+  ⟨game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl,
+    game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl⟩
 
 /-- Both chains reach the free choice play at level 4 (Figure 7), where it is a fixed point. -/
 theorem free_choice :
@@ -1158,6 +1181,23 @@ theorem receiverResponse_eq_argmax_listener [IsFiniteMeasure G.prior] {S : T →
   ext t
   simp only [mem_argmax, mem_univ, true_and]
   exact forall_congr' fun t' ↦ by rw [← not_lt, ← not_lt, RSA.listener_real_singleton_lt_iff]
+
+/-- After a message some state sends, the receiver's response is his best response, in the
+guessing game of the interpretation game, to the unbiased belief in the sender type. -/
+theorem coe_receiverResponse_eq_receiverBestResponses [Nonempty T] [IsFiniteMeasure G.prior]
+    (hprior : ∀ t, G.prior {t} ≠ 0) {S : T → Finset M} {m : M} (hm : inverse S m ≠ ∅) :
+    (receiverResponse G S m : Set T) = G.toSignalingGame.receiverBestResponses (unbiased S) m := by
+  obtain ⟨t₀, ht₀⟩ := nonempty_iff_ne_empty.mpr hm
+  have hpos : (unbiased S ∘ₘ G.prior) {m} ≠ 0 :=
+    (Measure.comp_apply_singleton_ne_zero_iff _ _).2
+      ⟨t₀, hprior t₀, fun h ↦ (unbiased_real_pos_iff.2 (mem_inverse.1 ht₀)).ne'
+        (by rw [measureReal_def, h, ENNReal.toReal_zero])⟩
+  rw [receiverResponse_eq_argmax_listener hm]
+  ext t
+  rw [mem_coe, mem_argmax, RSA.listener_apply_eq_posterior G.prior (unbiased S) hpos]
+  have key := SignalingGame.mem_receiverBestResponses_guess_iff (M := M) G.prior (unbiased S)
+    (m := m) (s := t)
+  exact ⟨fun h ↦ key.2 fun t' ↦ h.2 t' (mem_univ _), fun h ↦ ⟨mem_univ _, fun t' _ ↦ key.1 h t'⟩⟩
 
 /-! ### Theorems 1 and 2: the light system is the heavy system with flat or near-flat priors -/
 

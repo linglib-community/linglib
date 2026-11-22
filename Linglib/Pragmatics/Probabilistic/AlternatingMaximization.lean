@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.InformationTheory.Entropy.Tilted
 public import Linglib.Core.InformationTheory.InformationLoss
 public import Linglib.Pragmatics.Probabilistic.Recursion
@@ -30,6 +31,11 @@ speakers converge. Against a fixed listener, a speaker does as well as the speak
 belief [only by being her](##RSA.freeEnergy_eq_freeEnergy_speaker_iff) at every observation
 made; when that speaker is the zero measure at such an observation, no utterance being open to
 her there, every speaker's free energy is `⊥` and the comparison is empty.
+
+For a speaker who knows the state, the free energy against her Bayesian listener is
+$(\alpha - 1) I(W; U) + H(U) - \alpha H(W)$ less $\alpha$ times the expected cost
+(`RSA.freeEnergy_id_listener`), so mutual information lowers it below $\alpha = 1$ and raises it
+above.
 
 ## Implementation notes
 
@@ -588,5 +594,53 @@ theorem tendsto_sum_klDiv_speaker_iterate_recurse :
     (tsum_sum_klDiv_speaker_iterate_recurse_ne_top hb hα hκ L)
 
 end Recursion
+
+/-! ### The speaker who knows the state, against her Bayesian listener -/
+
+section BayesianListener
+
+variable [Fintype W] [Fintype U] [MeasurableSingletonClass W] [MeasurableSingletonClass U]
+  [Nonempty W] [IsProbabilityMeasure μ]
+
+/-- Against her Bayesian listener, the free energy of a speaker who knows the state is the entropy
+of her utterance, plus `α - 1` times the mutual information of state and utterance, less `α` times
+the entropy of the state and the expected cost. -/
+theorem freeEnergy_id_listener (S : Kernel W U) [IsMarkovKernel S] :
+    freeEnergy μ Kernel.id C α S (listener μ S) =
+      (((α - 1) * Im[μ ⊗ₘ S] + Hm[S ∘ₘ μ] - α * Hm[μ] - α * ∫ u, C u ∂(S ∘ₘ μ) : ℝ) : EReal) := by
+  have h0 : 0 ≤ Hm[μ] - Im[μ ⊗ₘ S] := by
+    rw [← sum_mul_measureEntropy_posterior]
+    exact Finset.sum_nonneg fun u _ ↦ mul_nonneg measureReal_nonneg (measureEntropy_nonneg _)
+  have hL : informationLoss μ S (listener μ S) = ENNReal.ofReal (Hm[μ] - Im[μ ⊗ₘ S]) := by
+    rw [informationLoss_congr (listener_ae_eq_posterior μ S), informationLoss_posterior,
+      ← sum_mul_measureEntropy_posterior, ENNReal.ofReal_sum_of_nonneg fun u _ ↦
+        mul_nonneg measureReal_nonneg (measureEntropy_nonneg _)]
+    exact Finset.sum_congr rfl fun u _ ↦ by
+      rw [ENNReal.ofReal_mul measureReal_nonneg, ofReal_measureReal]
+  rw [freeEnergy_id, expectedUtility, hL, sum_mul_measureEntropy, EReal.coe_ennreal_ofReal,
+    max_eq_left h0, ← EReal.coe_neg, ← EReal.coe_sub, ← EReal.coe_mul, ← EReal.coe_add]
+  congr 1
+  ring
+
+/-- A speaker whose utterance does not depend on the state has free energy the entropy of her
+utterance, less `α` times the entropy of the state and the expected cost. -/
+theorem freeEnergy_id_listener_const (ν : Measure U) [IsProbabilityMeasure ν] :
+    freeEnergy μ Kernel.id C α (Kernel.const W ν) (listener μ (Kernel.const W ν)) =
+      ((Hm[ν] - α * Hm[μ] - α * ∫ u, C u ∂ν : ℝ) : EReal) := by
+  rw [freeEnergy_id_listener, Measure.compProd_const, measureMutualInfo_prod, Measure.const_comp,
+    measure_univ, one_smul, mul_zero, zero_add]
+
+/-- A speaker who names each state by an utterance of its own has free energy minus `α` times the
+expected cost. -/
+theorem freeEnergy_id_listener_deterministic {f : W → U} (hf : f.Injective) :
+    freeEnergy μ Kernel.id C α (Kernel.deterministic f .of_discrete)
+        (listener μ (Kernel.deterministic f .of_discrete)) =
+      ((-(α * ∫ u, C u ∂μ.map f) : ℝ) : EReal) := by
+  rw [freeEnergy_id_listener, measureMutualInfo_compProd_deterministic,
+    Measure.deterministic_comp_eq_map, measureEntropy_map_of_injective .of_discrete hf]
+  congr 1
+  ring
+
+end BayesianListener
 
 end RSA

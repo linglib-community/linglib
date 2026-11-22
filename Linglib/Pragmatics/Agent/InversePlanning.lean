@@ -67,6 +67,8 @@ instance (ω : Ω) : IsZeroOrProbabilityMeasure (plan p β o ω) :=
 
 instance : IsFiniteKernel (plan p β o) := ⟨1, ENNReal.one_lt_top, fun _ ↦ prob_le_one⟩
 
+variable [∀ ω, (p ω).IsUnconstrained]
+
 instance [Nonempty A] : IsMarkovKernel (plan p β o) :=
   ⟨fun ω ↦ inferInstanceAs (IsProbabilityMeasure ((p ω).policy β o))⟩
 

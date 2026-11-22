@@ -169,6 +169,25 @@ theorem channelCapacity_le_log_card : channelCapacity κ ≤ log (Fintype.card W
 theorem channelCapacity_nonneg : 0 ≤ channelCapacity κ :=
   Real.iSup_nonneg fun _ ↦ measureMutualInfo_nonneg _
 
+/-- The input average of the entropies of a channel's rows is the entropy of its output less the
+mutual information. -/
+theorem sum_mul_measureEntropy :
+    ∑ c, μ.real {c} * Hm[κ c] = Hm[κ ∘ₘ μ] - Im[μ ⊗ₘ κ] := by
+  have h := mutualInfo_eq_entropy_sub_condEntropy (μ ⊗ₘ κ) measurable_snd measurable_fst
+  rw [mutualInfo_comm _ measurable_snd measurable_fst,
+    mutualInfo_eq_measureMutualInfo measurable_fst measurable_snd,
+    show (fun p : C × W ↦ (p.1, p.2)) = id from rfl, Measure.map_id,
+    condEntropy_snd_fst_compProd] at h
+  have h' : H[Prod.snd ; μ ⊗ₘ κ] = Hm[κ ∘ₘ μ] := by rw [← Measure.snd_compProd]; rfl
+  linarith
+
+/-- The output average of the entropies of a channel's posterior is the entropy of its input less
+the mutual information. -/
+theorem sum_mul_measureEntropy_posterior [Nonempty C] :
+    ∑ w, (κ ∘ₘ μ).real {w} * Hm[(κ†μ) w] = Hm[μ] - Im[μ ⊗ₘ κ] := by
+  rw [sum_mul_measureEntropy, posterior_comp_self, compProd_posterior_eq_map_swap,
+    measureMutualInfo_map_swap]
+
 theorem measureMutualInfo_compProd_le_channelCapacity : Im[μ ⊗ₘ κ] ≤ channelCapacity κ :=
   le_ciSup (f := fun μ : ProbabilityMeasure C ↦ Im[(μ : Measure C) ⊗ₘ κ])
     ⟨log (Fintype.card W), by
