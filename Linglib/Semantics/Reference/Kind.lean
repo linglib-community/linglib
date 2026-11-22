@@ -28,7 +28,10 @@ adjoint to `Kind.up`: its value is part of `e` iff the set is included in the pa
 (`Kind.le_iff_subset_up`).
 The largest member is the sum of the set where the set contains its sum
 (`Kind.down_dom_iff_sSup_mem`), so the adjunction is the one between `sSup` and `Set.Iic`, cut
-down to the sets on which the sum is attained. Closure under sums gives the
+down to the sets on which the sum is attained. Closing a set under sums or under parts keeps its
+upper bounds, so the value of `Kind.down` on either closure is the least upper bound of the set
+(`isGreatest_supClosure_iff`, `isGreatest_lowerClosure_iff`): the number of a nominal changes
+where ∩ and the definite are defined, and not what they denote. Closure under sums gives the
 largest member, not closure downward: in a classical mereology `Kind.down` is defined on a
 nonempty set that contains its sum, where its value is that sum
 (`Kind.down_dom_of_isClassical`), and on a finite nonempty set closed under binary sums

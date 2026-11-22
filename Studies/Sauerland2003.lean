@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Atoms
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Trivalent.Pointwise
@@ -62,6 +63,14 @@ variable [SemilatticeSup E] [OrderBot E] {a b : E}
 theorem coordination_plural (ha : IsAtom a) (hb : IsAtom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
   (Number.mem_dom_singular _).not.2 (not_isAtom_sup_of_ne ha hb hne)
+
+-- The singular's presupposition on the referent of a definite is uniqueness in its noun: an
+-- upper bound of a nonempty set of atoms is in the singular's domain exactly when the set has
+-- one member.
+theorem mem_dom_singular_iff_eq_singleton {s : Set E} (ha : a ∈ upperBounds s)
+    (hne : s.Nonempty) (hs : ∀ x ∈ s, IsAtom x) :
+    a ∈ Number.dom (E := E) (some .singular) ↔ s = {a} :=
+  (Number.mem_dom_singular _).trans (isAtom_iff_eq_singleton_of_mem_upperBounds ha hne hs)
 
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (· ∈ supClosure {x | R x}) m₁)
     (h₂ : Maximal (· ∈ supClosure {x | R x}) m₂) : m₁ = m₂ :=
