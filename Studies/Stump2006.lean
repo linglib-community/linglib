@@ -165,15 +165,11 @@ inductive Decl
 /-- A declension is, for animate and for inanimate stems, a declension of Short's tables, the
 soft masculine being that of *muž* or *stroj*, the hard masculine that of *chlap* or *hrad*, and
 the hard feminine that of *žena*. -/
-def Decl.toClass : Decl → Bool → Czech.Declension.Class
-  | .softMasc, true => .muz
-  | .softMasc, false => .stroj
-  | .hardMasc, true => .chlap
-  | .hardMasc, false => .hrad
-  | .hardFem, _ => .zena
-
-theorem Decl.toClass_injective (a : Bool) : Function.Injective (Decl.toClass · a) := by
-  cases a <;> decide
+def Decl.toClass (d : Decl) (animate : Prop) [Decidable animate] : Czech.Declension.Class :=
+  match d with
+  | .softMasc => if animate then .muz else .stroj
+  | .hardMasc => if animate then .chlap else .hrad
+  | .hardFem => .zena
 
 /-- `Decl.ofClass k` is the declension of the root of a noun of Short's class `k`, where the
 nouns of the tables include one: the soft masculine for *muž* and *stroj*, the hard masculine
@@ -185,14 +181,38 @@ def Decl.ofClass : Czech.Declension.Class → Option Decl
   | .zena | .hrdina => some .hardFem
   | _ => none
 
-theorem Decl.ofClass_toClass (d : Decl) (a : Bool) : Decl.ofClass (d.toClass a) = some d := by
-  cases d <;> cases a <;> rfl
+theorem Decl.ofClass_toClass (d : Decl) (p : Prop) [Decidable p] :
+    Decl.ofClass (d.toClass p) = some d := by
+  cases d <;> by_cases h : p <;> simp [Decl.toClass, Decl.ofClass, h]
 
 /-- `l.noun` is the entry of `l` in the Czech noun fragment. -/
 def CzNoun.noun : CzNoun → Czech.Noun
   | .pokoj => Czech.pokoj | .pramen => Czech.pramen | .most => Czech.most | .zena => Czech.zena
   | .predseda => Czech.predseda | .filosof => Czech.filosof | .sluha => Czech.sluha
   | .filolog => Czech.filolog | .muz => Czech.muz
+
+/-- The declension of a noun's root is that of its singular class, so that PRAMEN's root is
+soft-masculine (p. 289) and PŘEDSEDA's and SLUHA's are hard-feminine. -/
+def CzNoun.rootDecl (l : CzNoun) : Decl := (Decl.ofClass l.noun.cls).get (by cases l <;> rfl)
+
+/-- A noun inflects as animate when its gender is the masculine animate. -/
+def CzNoun.IsAnimate (l : CzNoun) : Prop := l.noun.gender.IsAnimate
+
+instance : DecidablePred CzNoun.IsAnimate :=
+  fun l ↦ inferInstanceAs (Decidable l.noun.gender.IsAnimate)
+
+/-- The PRAMEN class of rule (14), to which PRAMEN, PŘEDSEDA and SLUHA belong, is a lexical
+stipulation. -/
+def CzNoun.InPramenClass (l : CzNoun) : Prop := l = .pramen ∨ l = .predseda ∨ l = .sluha
+
+instance : DecidablePred CzNoun.InPramenClass := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- A noun belongs to the PŘEDSEDA subclass, "a subclass of masculine animate members of the
+PRAMEN class" (p. 290), when it is an animate member of the PRAMEN class. -/
+def CzNoun.InPredsedaSubclass (l : CzNoun) : Prop := l.InPramenClass ∧ l.IsAnimate
+
+instance : DecidablePred CzNoun.InPredsedaSubclass :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A stem is individuated, as in the paper, by its lexeme and its inflection class; its form
 is the lexeme's, so two stems of one lexeme are class-distinct and form-identical. -/
@@ -203,55 +223,23 @@ structure Stem where
   decl : Decl
   deriving DecidableEq, Repr
 
-/-- A lexical entry records a noun's stem segments, the declension of its root, whether it
-inflects as animate, and whether it belongs to the PRAMEN class of rule (14). -/
-structure Entry where
-  /-- `lexeme` is the noun the entry describes. -/
-  lexeme : CzNoun
-  /-- `segments` are the segments of the noun's stems. -/
-  segments : List String
-  /-- `rootDecl` is the declension of the noun's root. -/
-  rootDecl : Decl
-  /-- `animate` records whether the noun inflects as animate. -/
-  animate : Bool
-  /-- `pramenClass` records membership in the PRAMEN class, a lexical stipulation. -/
-  pramenClass : Bool
-  deriving DecidableEq, Repr
+/-- The segments of a stem are the stem of its lexeme's noun. -/
+def Stem.segments (z : Stem) : List String := z.lexeme.noun.stem
 
-/-- `entry l` is the lexical entry of `l`, read off its noun. The segments are the noun's stem,
-the root declension is that of the noun's singular class, so that PRAMEN's root is
-soft-masculine (p. 289) and PŘEDSEDA's and SLUHA's are hard-feminine, and the noun inflects as
-animate when its gender is the masculine animate. Membership in the PRAMEN class, which PRAMEN,
-PŘEDSEDA and SLUHA have, is the lexical stipulation of rule (14). -/
-def entry (l : CzNoun) : Entry where
-  lexeme := l
-  segments := l.noun.stem
-  rootDecl := (Decl.ofClass l.noun.cls).get (by cases l <;> rfl)
-  animate := decide l.noun.gender.IsAnimate
-  pramenClass := l matches .pramen | .predseda | .sluha
-
-/-- The segments of a stem are those of its lexeme's entry. -/
-def Stem.segments (z : Stem) : List String := (entry z.lexeme).segments
-
-/-- The root of a noun, its default stem (n. 8), inflects in the root declension. -/
-def Entry.root (e : Entry) : Stem := ⟨e.lexeme, e.rootDecl⟩
+/-- `czRoot l` is the root of `l`, its default stem (n. 8), which rule (5), the universal
+default rule of paradigm linkage (p. 286), gives every cell that none of the rules of `l`
+reaches. -/
+def czRoot (l : CzNoun) : Stem := ⟨l, l.rootDecl⟩
 
 /-- A stem is a root when it inflects in its lexeme's root declension. -/
-def Stem.IsRoot (z : Stem) : Prop := z.decl = (entry z.lexeme).rootDecl
+def Stem.IsRoot (z : Stem) : Prop := z.decl = z.lexeme.rootDecl
 
 instance : DecidablePred Stem.IsRoot := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The hard-masculine coradical of a noun of the PRAMEN class is its stem in the
 hard-masculine declension. -/
-def Entry.hardMascCoradical (e : Entry) : Option Stem :=
-  if e.pramenClass then some ⟨e.lexeme, .hardMasc⟩ else none
-
-/-- A noun belongs to the PŘEDSEDA subclass, "a subclass of masculine animate members of the
-PRAMEN class" (p. 290), when it is an animate member of the PRAMEN class. -/
-def Entry.InPredsedaSubclass (e : Entry) : Prop := e.pramenClass = true ∧ e.animate = true
-
-instance : DecidablePred Entry.InPredsedaSubclass :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+def CzNoun.hardMascCoradical (l : CzNoun) : Option Stem :=
+  if l.InPramenClass then some ⟨l, .hardMasc⟩ else none
 
 /-- `inferSoftMasc` is the Czech rule of stem inference (18) (p. 292), which reads "If lexeme L
 has a stem s belonging to the hard-masculine declension and s ends in a back obstruent, then L
@@ -264,33 +252,33 @@ def inferSoftMasc (z : Stem) : Option Stem :=
 
 /-- The hard-masculine stem of a noun is its root if that is hard-masculine, and otherwise its
 hard-masculine coradical. -/
-def Entry.hardMascStem (e : Entry) : Option Stem :=
-  if e.rootDecl = .hardMasc then some e.root else e.hardMascCoradical
+def CzNoun.hardMascStem (l : CzNoun) : Option Stem :=
+  if l.rootDecl = .hardMasc then some (czRoot l) else l.hardMascCoradical
 
 /-- The soft-masculine coradical of a noun is the stem that rule (18) infers from its
 hard-masculine stem. -/
-def Entry.softMascCoradical (e : Entry) : Option Stem := e.hardMascStem.bind inferSoftMasc
+def CzNoun.softMascCoradical (l : CzNoun) : Option Stem := l.hardMascStem.bind inferSoftMasc
 
 -- (18)
 theorem softMascCoradical_isSome_iff :
-    ∀ l, (entry l).softMascCoradical.isSome ↔ l = .sluha ∨ l = .filolog := by
+    ∀ l : CzNoun, l.softMascCoradical.isSome ↔ l = .sluha ∨ l = .filolog := by
   decide
 
-theorem Entry.lexeme_of_mem_hardMascCoradical {e : Entry} {z : Stem}
-    (hz : z ∈ e.hardMascCoradical) : z.lexeme = e.lexeme := by
-  unfold Entry.hardMascCoradical at hz
+theorem CzNoun.lexeme_of_mem_hardMascCoradical {l : CzNoun} {z : Stem}
+    (hz : z ∈ l.hardMascCoradical) : z.lexeme = l := by
+  unfold CzNoun.hardMascCoradical at hz
   split at hz
   · cases hz; rfl
   · cases hz
 
-theorem Entry.lexeme_of_mem_softMascCoradical {e : Entry} {z : Stem}
-    (hz : z ∈ e.softMascCoradical) : z.lexeme = e.lexeme := by
+theorem CzNoun.lexeme_of_mem_softMascCoradical {l : CzNoun} {z : Stem}
+    (hz : z ∈ l.softMascCoradical) : z.lexeme = l := by
   obtain ⟨y, hy, hz⟩ := Option.mem_bind_iff.mp hz
-  have hy : y.lexeme = e.lexeme := by
-    unfold Entry.hardMascStem at hy
+  have hy : y.lexeme = l := by
+    unfold CzNoun.hardMascStem at hy
     split at hy
     · cases hy; rfl
-    · exact e.lexeme_of_mem_hardMascCoradical hy
+    · exact l.lexeme_of_mem_hardMascCoradical hy
   unfold inferSoftMasc at hz
   split at hz
   · cases hz; exact hy
@@ -317,56 +305,47 @@ def locPl : Finset CzCell := {σ | σ.case = .loc ∧ σ.number = .plural}
 /-- Rule (14) (p. 289) reads "Where L is a nominal lexeme that belongs to the PRAMEN class and
 has s as its hard-masculine coradical, if σ = {plural X}, then the content-cell ⟨L, σ⟩ has
 ⟨s, σ⟩ as its form-correspondent." -/
-def rule14 (e : Entry) : Option CellRule := e.hardMascCoradical.map (⟨plural, ·⟩)
+def rule14 (l : CzNoun) : Option CellRule := l.hardMascCoradical.map (⟨plural, ·⟩)
 
 /-- Rule (15) (p. 290) reads "Where L is a nominal lexeme that belongs to the PŘEDSEDA subclass
 and has s as its hard-masculine coradical, if σ = {α singular X} and α = dative or locative,
 then the content-cell ⟨L, σ⟩ has ⟨s, σ⟩ as its form-correspondent." -/
-def rule15 (e : Entry) : Option CellRule :=
-  if e.InPredsedaSubclass then e.hardMascCoradical.map (⟨datLocSg, ·⟩) else none
+def rule15 (l : CzNoun) : Option CellRule :=
+  if l.InPredsedaSubclass then l.hardMascCoradical.map (⟨datLocSg, ·⟩) else none
 
 /-- Rule (17) (p. 292) reads "Where L is a nominal lexeme having s as its soft-masculine
 coradical, if σ = {locative plural X}, then the content-cell ⟨L, σ⟩ has ⟨s, σ⟩ as its
 form-correspondent." -/
-def rule17 (e : Entry) : Option CellRule := e.softMascCoradical.map (⟨locPl, ·⟩)
+def rule17 (l : CzNoun) : Option CellRule := l.softMascCoradical.map (⟨locPl, ·⟩)
 
 /-- The language-specific rules of paradigm linkage applying to a noun are those of (14), (15)
 and (17) whose coradicals and classes the noun has. The universal default (5) is not among
 them: it is the root that `Linkage.ofRules` falls back on. -/
-def rulesFor (e : Entry) : List CellRule :=
-  (rule14 e).toList ++ (rule15 e).toList ++ (rule17 e).toList
-
-/-- `czRules l` are the rules of paradigm linkage of the noun `l`. -/
-def czRules (l : CzNoun) : List CellRule := rulesFor (entry l)
-
-/-- `czRoot l` is the root of `l`, the stem that rule (5), the universal default rule of
-paradigm linkage (p. 286), gives every cell that none of the rules of `l` reaches. -/
-def czRoot (l : CzNoun) : Stem := (entry l).root
+def czRules (l : CzNoun) : List CellRule :=
+  (rule14 l).toList ++ (rule15 l).toList ++ (rule17 l).toList
 
 /-- The stem of a cell's form correspondent is the one Pāṇini's principle selects, that of an
 applicable rule no applicable rule is narrower than, or the root where no rule applies. -/
 def stemFor (l : CzNoun) (σ : CzCell) : Stem :=
   RuleSet.realizeMinimalD (czRules l) (·.dom) (fun _ ↦ czRoot l) σ
 
-@[simp] theorem entry_lexeme (l : CzNoun) : (entry l).lexeme = l := by cases l <;> rfl
-
-theorem lexeme_stem_of_mem_rulesFor {e : Entry} {r : CellRule} (hr : r ∈ rulesFor e) :
-    r.exponent.lexeme = e.lexeme := by
-  simp only [rulesFor, List.mem_append, Option.mem_toList] at hr
+theorem lexeme_stem_of_mem_czRules {l : CzNoun} {r : CellRule} (hr : r ∈ czRules l) :
+    r.exponent.lexeme = l := by
+  simp only [czRules, List.mem_append, Option.mem_toList] at hr
   rcases hr with (hr | hr) | hr
   · obtain ⟨z, hz, rfl⟩ := Option.mem_map.mp hr
-    exact e.lexeme_of_mem_hardMascCoradical hz
+    exact l.lexeme_of_mem_hardMascCoradical hz
   · unfold rule15 at hr
     split at hr
     · obtain ⟨z, hz, rfl⟩ := Option.mem_map.mp hr
-      exact e.lexeme_of_mem_hardMascCoradical hz
+      exact l.lexeme_of_mem_hardMascCoradical hz
     · cases hr
   · obtain ⟨z, hz, rfl⟩ := Option.mem_map.mp hr
-    exact e.lexeme_of_mem_softMascCoradical hz
+    exact l.lexeme_of_mem_softMascCoradical hz
 
 theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
-  RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) (entry_lexeme l)
-    fun _ hr ↦ (lexeme_stem_of_mem_rulesFor hr).trans (entry_lexeme l)
+  RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) rfl fun _ hr ↦
+    lexeme_stem_of_mem_czRules hr
 
 /-! ### Realization -/
 
@@ -376,7 +355,7 @@ hard masculines taking the vocative singular -u (Short, p. 465; *Mluvnice češt
 velar stem of the hard masculines or the masculine a-stems the locative plural -ích (*Mluvnice
 češtiny*, p. 292), with the noun's lexical nominative plural. -/
 def Stem.classEndings (z : Stem) (σ : CzCell) : List (List String) :=
-  z.lexeme.noun.endingsIn (z.decl.toClass (entry z.lexeme).animate) σ
+  z.lexeme.noun.endingsIn (z.decl.toClass z.lexeme.IsAnimate) σ
 
 /-- The endings of a stem at a cell in the fragment are its class endings, less the -u
 alternating with -ovi, which is "restricted to roots belonging to the hard-masculine
@@ -424,7 +403,7 @@ class, palatalized before the masculine locative plural -ích and the animate no
 -i (*Mluvnice češtiny*, p. 279). So the soft-masculine coradical of a velar stem palatalizes
 before -ích, as Short's *geolozích* (Short, p. 462) and *sluzích* (Short, p. 467) show. -/
 def Stem.inflect (z : Stem) (σ : CzCell) (e : List String) : List String :=
-  (z.decl.toClass (entry z.lexeme).animate).inflect z.segments σ e
+  (z.decl.toClass z.lexeme.IsAnimate).inflect z.segments σ e
 
 /-- The form cell `⟨z, σ⟩` is realized as `z` inflected with each of its endings. -/
 def czRealize (z : Stem) (σ : CzCell) : Finset (List String) := (z.endings σ).image (z.inflect σ)
@@ -470,8 +449,8 @@ theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
   · rw [czRealizeTable_eq_czRealize (by rwa [stemFor_lexeme]), czRealize_stemFor]
 
 -- n. 14, Table 9.5, p. 467, p. 292
-theorem coradical_no_u : ∀ l, (entry l).InPredsedaSubclass → ∀ σ ∈ datLocSg,
-    czRealize ⟨l, .hardMasc⟩ σ = {(entry l).segments ++ ["o", "v", "i"]} := by
+theorem coradical_no_u : ∀ l : CzNoun, l.InPredsedaSubclass → ∀ σ ∈ datLocSg,
+    czRealize ⟨l, .hardMasc⟩ σ = {l.noun.stem ++ ["o", "v", "i"]} := by
   decide
 
 -- (14), (15), Table 9.5
@@ -533,7 +512,7 @@ theorem pramen_suppletive : czLinkage.IsSuppletive .pramen := pramen_heteroclite
 
 -- (14), p. 469, p. 310
 theorem pramen_eq_koren_pattern :
-    ∀ σ, (cellClass .pramen σ).toClass (entry .pramen).animate = Czech.koren.clsAt σ.number := by
+    ∀ σ, (cellClass .pramen σ).toClass CzNoun.pramen.IsAnimate = Czech.koren.clsAt σ.number := by
   decide
 
 /-! ### The degree of correlation -/
@@ -601,11 +580,22 @@ section Correlates
 
 variable {ι C K L E : Type*} {V : ι → Type*} {props : C → ∀ c, V c} {cls : C → K} {c : ι}
 
+/-- Categories are intersective correlates of a paradigm's heteroclisis when "for each
+well-formed property set τ specified for exactly the categories A₁, . . . , A_n there is a
+single inflection class C such that every cell in P realizing τ inflects as a member of C"
+(p. 313): cells that agree in every category of `S` inflect in one class. -/
+def IsIntersectiveCorrelate (props : C → ∀ c, V c) (cls : C → K) (S : Finset ι) : Prop :=
+  ∀ ⦃σ τ⦄, (∀ c ∈ S, props σ c = props τ c) → cls σ = cls τ
+
 /-- A category is an absolute correlate of a paradigm's heteroclisis "if and only if the degree
-of A-correlation in that paradigm is 1.0" (p. 309), that is, when the paradigm's class split
-factors through the category. -/
-def IsAbsoluteCorrelate (props : C → ∀ c, V c) (c : ι) (cls : C → K) : Prop :=
-  cls.FactorsThrough (props · c)
+of A-correlation in that paradigm is 1.0" (p. 309), that is, when it is by itself an
+intersective correlate. -/
+abbrev IsAbsoluteCorrelate (props : C → ∀ c, V c) (c : ι) (cls : C → K) : Prop :=
+  IsIntersectiveCorrelate props cls {c}
+
+theorem isAbsoluteCorrelate_iff_factorsThrough :
+    IsAbsoluteCorrelate props c cls ↔ cls.FactorsThrough (props · c) := by
+  simp [IsIntersectiveCorrelate, Function.FactorsThrough]
 
 /-- A paradigm is cloven when it is heteroclite and has an absolute correlate (p. 309). -/
 @[mk_iff]
@@ -623,13 +613,6 @@ structure IsFractured (props : C → ∀ c, V c) (cls : C → K) : Prop where
   /-- No category is an absolute correlate. -/
   not_absolute : ∀ c, ¬ IsAbsoluteCorrelate props c cls
 
-/-- Categories are intersective correlates of a paradigm's heteroclisis when "for each
-well-formed property set τ specified for exactly the categories A₁, . . . , A_n there is a
-single inflection class C such that every cell in P realizing τ inflects as a member of C"
-(p. 313): cells that agree in every category of `S` inflect in one class. -/
-def IsIntersectiveCorrelate (props : C → ∀ c, V c) (cls : C → K) (S : Finset ι) : Prop :=
-  ∀ ⦃σ τ⦄, (∀ c ∈ S, props σ c = props τ c) → cls σ = cls τ
-
 theorem isIntersectiveCorrelate_id_iff {cls : (∀ c, V c) → K} {S : Finset ι} :
     IsIntersectiveCorrelate id cls S ↔ DependsOn cls S :=
   Iff.rfl
@@ -637,10 +620,6 @@ theorem isIntersectiveCorrelate_id_iff {cls : (∀ c, V c) → K} {S : Finset ι
 theorem IsIntersectiveCorrelate.mono {S T : Finset ι} (h : IsIntersectiveCorrelate props cls S)
     (hST : S ⊆ T) : IsIntersectiveCorrelate props cls T :=
   fun _ _ hστ ↦ h fun c hc ↦ hστ c (hST hc)
-
-theorem isIntersectiveCorrelate_singleton_iff :
-    IsIntersectiveCorrelate props cls {c} ↔ IsAbsoluteCorrelate props c cls := by
-  simp [IsIntersectiveCorrelate, IsAbsoluteCorrelate, Function.FactorsThrough]
 
 theorem isIntersectiveCorrelate_univ [Fintype ι] (hprops : Function.Injective props)
     (cls : C → K) : IsIntersectiveCorrelate props cls univ :=
@@ -656,12 +635,18 @@ theorem minimal_univ_of_isFractured [Fintype ι] (hprops : Function.Injective pr
     exact (card_lt_iff_ne_univ S).mpr fun hS ↦ hne hS.ge
   have : Nonempty ι := Fintype.card_pos_iff.mp (by omega)
   obtain ⟨c, hc⟩ := card_le_one_iff_subset_singleton.mp (Nat.lt_succ_iff.mp hlt)
-  exact h.not_absolute c (isIntersectiveCorrelate_singleton_iff.mp (hS.mono hc))
+  exact h.not_absolute c (hS.mono hc)
 
-/-- A rule is sensitive to the value of a category when two cells that differ in that category
-alone differ in whether the rule applies. -/
-def SensitiveTo [DecidableEq C] (props : C → ∀ c, V c) (r : DomainRule C E) (c : ι) : Prop :=
-  ∃ σ τ, (∀ c' ≠ c, props σ c' = props τ c') ∧ ¬ (Applies r σ ↔ Applies r τ)
+/-- A rule is sensitive to the value of a category when the other categories are not
+intersective correlates of its applicability. -/
+def SensitiveTo [Fintype ι] [DecidableEq ι] (props : C → ∀ c, V c) (r : DomainRule C E)
+    (c : ι) : Prop :=
+  ¬ IsIntersectiveCorrelate props (Applies r) {c}ᶜ
+
+theorem sensitiveTo_iff [Fintype ι] [DecidableEq ι] {r : DomainRule C E} :
+    SensitiveTo props r c ↔
+      ∃ σ τ, (∀ c' ≠ c, props σ c' = props τ c') ∧ ¬ (σ ∈ r.dom ↔ τ ∈ r.dom) := by
+  simp [SensitiveTo, IsIntersectiveCorrelate]
 
 /-- A category is privileged for a family `cls` of class maps, one for each lexeme, when it
 serves as an absolute correlate of a cloven paradigm: "the inflectional categories serving as
@@ -689,7 +674,7 @@ and this rule is sensitive to the value of any inflectional category, then it is
 the value of a privileged inflectional category for members of C." The lexemes `L` are taken to
 form one privileged syntactic category, so the antecedent on the syntactic category is left
 implicit. -/
-def SatisfiesPCR [DecidableEq C] (props : C → ∀ c, V c) (cls : L → C → K)
+def SatisfiesPCR [Fintype ι] [DecidableEq ι] (props : C → ∀ c, V c) (cls : L → C → K)
     (rules : L → RuleSet (DomainRule C E)) : Prop :=
   ∀ l, ∀ r ∈ rules l, (∃ c, SensitiveTo props r c) →
     ∃ c, Privileged props cls c ∧ SensitiveTo props r c
@@ -698,8 +683,8 @@ section Decidable
 
 variable [Fintype C] [DecidableEq K] [∀ c, DecidableEq (V c)]
 
-instance (c : ι) : Decidable (IsAbsoluteCorrelate props c cls) :=
-  inferInstanceAs (Decidable (∀ σ τ, props σ c = props τ c → cls σ = cls τ))
+instance (S : Finset ι) : Decidable (IsIntersectiveCorrelate props cls S) :=
+  inferInstanceAs (Decidable (∀ σ τ, (∀ c ∈ S, props σ c = props τ c) → cls σ = cls τ))
 
 instance [Fintype ι] : Decidable (IsCloven props cls) :=
   decidable_of_iff' _ (isCloven_iff ..)
@@ -707,13 +692,10 @@ instance [Fintype ι] : Decidable (IsCloven props cls) :=
 instance [Fintype ι] : Decidable (IsFractured props cls) :=
   decidable_of_iff' _ (isFractured_iff ..)
 
-instance (S : Finset ι) : Decidable (IsIntersectiveCorrelate props cls S) :=
-  inferInstanceAs (Decidable (∀ σ τ, (∀ c ∈ S, props σ c = props τ c) → cls σ = cls τ))
-
 variable [Fintype ι] [DecidableEq ι] [DecidableEq C]
 
 instance (r : DomainRule C E) (c : ι) : Decidable (SensitiveTo props r c) :=
-  inferInstanceAs (Decidable (∃ _ _, _ ∧ _))
+  decidable_of_iff' _ sensitiveTo_iff
 
 instance [Fintype L] (cls : L → C → K) (c : ι) : Decidable (Privileged props cls c) :=
   inferInstanceAs (Decidable (∃ _, _))
@@ -738,13 +720,14 @@ def IsMaximalCorrelate (props : C → ∀ c, V c) (c : ι) (cls : C → K) : Pro
 
 theorem isAbsoluteCorrelate_iff_degree [Nonempty C] :
     IsAbsoluteCorrelate props c cls ↔ degree (props · c) cls = 1 :=
-  degree_eq_one_iff.symm
+  isAbsoluteCorrelate_iff_factorsThrough.trans degree_eq_one_iff.symm
 
 theorem IsAbsoluteCorrelate.isMaximalCorrelate (h : IsAbsoluteCorrelate props c cls)
     (h' : ∀ c' ≠ c, ¬ IsAbsoluteCorrelate props c' cls) : IsMaximalCorrelate props c cls := by
   intro c' hc'
-  rw [(degreeNum_eq_card_iff _ _).mpr h]
-  exact (degreeNum_le_card _ _).lt_of_ne fun hEq ↦ h' c' hc' ((degreeNum_eq_card_iff _ _).mp hEq)
+  rw [(degreeNum_eq_card_iff _ _).mpr (isAbsoluteCorrelate_iff_factorsThrough.mp h)]
+  exact (degreeNum_le_card _ _).lt_of_ne fun hEq ↦
+    h' c' hc' (isAbsoluteCorrelate_iff_factorsThrough.mpr ((degreeNum_eq_card_iff _ _).mp hEq))
 
 instance [Fintype ι] [DecidableEq ι] (c : ι) : Decidable (IsMaximalCorrelate props c cls) :=
   inferInstanceAs (Decidable (∀ _, _ → _))
@@ -792,7 +775,8 @@ theorem caseNumber_injective : Function.Injective (caseNumber (A := A) (B := B))
 theorem eq_of_isAbsoluteCorrelate_number_of_case {cls : A × B → K}
     (hn : IsAbsoluteCorrelate caseNumber .number cls)
     (hc : IsAbsoluteCorrelate caseNumber .case cls) (σ τ : A × B) : cls σ = cls τ :=
-  (hc (a := σ) (b := (σ.1, τ.2)) rfl).trans (hn rfl)
+  ((isAbsoluteCorrelate_iff_factorsThrough.mp hc) (a := σ) (b := (σ.1, τ.2)) rfl).trans
+    ((isAbsoluteCorrelate_iff_factorsThrough.mp hn) rfl)
 
 end CaseNumber
 
@@ -840,8 +824,9 @@ theorem pramen_number_absolute : IsAbsoluteCorrelate caseNumber .number (cellCla
   have h : ∀ r ∈ czRules .pramen, ∀ ⦃σ τ : CzCell⦄,
       caseNumber σ .number = caseNumber τ .number → (Applies r σ ↔ Applies r τ) := by
     decide
-  exact (RuleSet.realizeMinimalD_factorsThrough (key := (·.dom))
-    (fallback := fun _ ↦ czRoot .pramen) (fun _ _ _ ↦ rfl) h).comp_left Stem.decl
+  exact isAbsoluteCorrelate_iff_factorsThrough.mpr <|
+    (RuleSet.realizeMinimalD_factorsThrough (key := fun r : CellRule ↦ r.dom)
+      (fallback := fun _ ↦ czRoot .pramen) (fun _ _ _ ↦ rfl) h).comp_left Stem.decl
 
 theorem number_maximal_pramen : IsMaximalCorrelate caseNumber .number (cellClass .pramen) :=
   pramen_number_absolute.isMaximalCorrelate (by decide)
