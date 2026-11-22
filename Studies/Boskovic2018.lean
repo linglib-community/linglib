@@ -5,6 +5,7 @@ public import Studies.Collins2005
 public import Linglib.Data.Examples.Boskovic2018
 public import Linglib.Syntax.Minimalist.Phase.Transfer
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Syntax.Minimalist.Workspace.Merge.Phase
 
 /-!
 # Bošković (2018): On movement out of moved elements, labels, and phases
@@ -26,6 +27,11 @@ to share a feature, leaves the phase labeled and free to move, and can then be e
 (`ex25a`, `ex42a`). A verb-second clause, whose specifier agrees with nothing, cannot move though
 nothing moves out of it (`ex22`). Remnant movement is unaffected (`ex20`), and the smuggling
 passive of [collins-2005] moves only labeled elements but moves a non-phase (`ex58`).
+
+The condition is also the phase coproduct of [marcolli-chomsky-berwick-2025], which extracts no
+term in the interior of a lower phase: extracted from the moved subject, *who* is such a term
+(`inaccessible_who_iff`), so the unit stage of its Internal Merge vanishes
+(`mergeOpUnit_who_eq_zero`).
 
 ## Implementation notes
 
@@ -59,6 +65,7 @@ passive of [collins-2005] moves only labeled elements but moves a non-phase (`ex
 * [chomsky-2000]
 * [chomsky-2013]
 * [collins-2005]
+* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
@@ -218,10 +225,13 @@ def raisedSubject : Route → PlanarSyntacticObject
   | .edge => who * subject who.toSyntacticObject.tracePlanar
   | .direct => subject who
 
-/-- The derivation of (17) along a route: the subject raised over I, and *who* raised over the
+/-- The derivation of (17) up to the extraction of *who*: the subject raised over I, under the
 interrogative C. -/
-def subextraction (r : Route) : Derivation :=
-  ((subjectInSitu r).append [.im (raisedSubject r)]).append [.em .left cQ, .im who]
+def beforeExtraction (r : Route) : Derivation :=
+  ((subjectInSitu r).append [.im (raisedSubject r)]).append [.em .left cQ]
+
+/-- The derivation of (17) along a route, *who* raised over the interrogative C. -/
+def subextraction (r : Route) : Derivation := (beforeExtraction r).append [.im who]
 
 -- (17)
 theorem subextraction_surfacePhon (r : Route) :
@@ -233,7 +243,7 @@ theorem not_movesOnly_edge : ¬ (subextraction .edge).MovesOnly IsLabeled := by
   obtain ⟨p, hp, ha, hb⟩ : ∃ p ∈ (subjectInSitu .edge).externalize?,
       whoD ∈ labelers p ↑(raisedSubject .edge) ∧ subjD ∈ labelers p ↑(raisedSubject .edge) := by
     decide +kernel
-  exact fun h ↦ not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.of_append
+  exact fun h ↦ not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.of_append.of_append
 
 -- (16): extracted from the moved subject, *who* crosses the phase of the subject's D
 theorem not_respectsCut_direct : ∃ t ∈ (subextraction .direct).externalize?,
@@ -247,8 +257,22 @@ theorem not_respectsCut_direct : ∃ t ∈ (subextraction .direct).externalize?,
 
 -- (1): along either route *who* leaves the raised subject
 theorem not_obeysFreezing_subextraction (r : Route) : ¬ (subextraction r).ObeysFreezing :=
-  fun h ↦ (Derivation.obeysFreezing_append_iff.1 h).2.2 ↑who (by simp [Step.mover?])
-    (by cases r <;> decide +kernel)
+  fun h ↦ (Derivation.obeysFreezing_append_im_iff.1 h).2
+    (by cases r <;> decide +kernel : (beforeExtraction r).Frozen ↑who)
+
+-- extracted from the moved subject, *who* is in the interior of the subject phase when it would
+-- move, and from the edge it is not
+theorem inaccessible_who_iff (r : Route) :
+    (beforeExtraction r).final.Inaccessible IsPhaseHead ↑who ↔ r = .direct := by
+  cases r <;> decide +kernel
+
+-- so the unit stage of the Internal Merge of *who* vanishes at the phase coproduct
+theorem mergeOpUnit_who_eq_zero (cuts : _) :
+    Merge.mergeOpUnitOfCuts (R := ℤ) (Merge.phaseCuts IsPhaseHead cuts)
+      (who : SyntacticObject).toUnorderedTree
+      (ConnesKreimer.of' {(beforeExtraction .direct).final.toUnorderedTree}) = 0 :=
+  Merge.mergeOpUnitOfCuts_phaseCuts_eq_zero (by decide +kernel)
+    ((inaccessible_who_iff .direct).2 rfl)
 
 /-- In (17), neither route converges: by the edge the subject moves unlabeled, and directly *who*
 crosses the subject phase. -/
@@ -409,6 +433,12 @@ theorem ex42a : ¬ rPronounExtraction.ObeysFreezing ∧
     (Examples.ex42a.judgment = .acceptable ↔ Converges IsPhaseHead rPronounExtraction) :=
   ⟨fun h ↦ (Derivation.obeysFreezing_append_im_iff.1 h).2
     (by decide +kernel : ppFronting.Frozen ↑waar), by decide +kernel⟩
+
+-- the specifiers that share a feature are accessible in the moved phrase
+theorem not_inaccessible_specifier :
+    ¬ objectFronting.final.Inaccessible IsPhaseHeadNP ↑possessor ∧
+      ¬ ppFronting.final.Inaccessible IsPhaseHead ↑waar := by
+  decide +kernel
 
 /-! ### Smuggling (Appendix A) -/
 
