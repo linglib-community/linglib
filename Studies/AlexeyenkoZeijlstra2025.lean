@@ -7,6 +7,7 @@ public import Linglib.Fragments.Dutch.Agreement
 public import Linglib.Fragments.Greek.StandardModern.Agreement
 public import Linglib.Fragments.Romance.Italian.Agreement
 public import Linglib.Fragments.Farsi.Agreement
+public import Linglib.Fragments.Tagalog.Agreement
 public import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.StructureDataset.AlexeyenkoZeijlstra2025
@@ -41,8 +42,8 @@ paper analyses, and `intervention_rows` against its examples, whose strings are 
 spans of the rows. `licit_rows` checks well-formedness directly on the rows that show their
 attributivizer, among them those with a degree word. The agreement paradigms the analysis
 assigns are checked against the rows that show them, `marker_rows`. The Greek, Italian, Persian,
-Russian, German and Dutch paradigms are those of the Fragments, and `russian_form_rows` checks
-the long and short forms.
+Tagalog, Russian, German and Dutch paradigms are those of the Fragments, and
+`russian_form_rows` checks the long and short forms.
 
 ## Implementation notes
 
@@ -60,9 +61,8 @@ only before a degree word, where `licit_rows` reads the attributivizer from the 
   strong and weak, or short and long, forms.
 * Chácobo and Eastern Oromo, whose rows and sample values are recorded, have no analysis here.
 * The paradigms of Latin, Kalaallisut, Icelandic and Serbo-Croatian, and the single uninflected
-  form of English, Mandarin, Tagalog, Atong, Basque and Japanese, are stated in `Language.forms`
-  and not read from Fragments. Tagalog adjectives may be pluralized, which the uninflected form
-  does not record.
+  form of English, Mandarin, Atong, Basque and Japanese, are stated in `Language.forms` and not
+  read from Fragments.
 * A row that lacks an attributivizer its language requires, as the bare adjective with a degree
   word before a Dutch common noun does, is not covered by `licit_rows`.
 
@@ -217,9 +217,10 @@ def apOrders : Language → Finset HeadDirection
 /-- Gender, number and case. -/
 def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
 
-/-- A language's adjectival forms. Those of Greek, Italian and Persian are the adjective of their
-Fragments, Russian's the long and short adjectives of its Fragment, and German's and Dutch's the
-attributive and the bare predicative adjectives of theirs. Latin adjectives have one form,
+/-- A language's adjectival forms. Those of Greek, Italian, Persian and Tagalog are the adjectives
+of their Fragments, Russian's the long and short adjectives of its Fragment, and German's and
+Dutch's the attributive and the bare predicative adjectives of theirs. Latin adjectives have one
+form,
 inflected for gender, number and case in both uses, and Kalaallisut's affixal number and case
 agreement is likewise shared. Icelandic and Serbo-Croatian attributive forms add definiteness to
 what the predicative forms carry. The rest have one uninflected form. -/
@@ -230,21 +231,23 @@ def forms : Language → Finset Form
   | kalaallisut => {⟨{.attributive, .predicate}, {.number, .case}⟩}
   | italian => {form Italian.Agreement.adjective}
   | farsi => {form Farsi.Agreement.adjective}
+  | tagalog => {form Tagalog.Agreement.maAdjective,
+      form Tagalog.Agreement.invariableMaAdjective}
   | german => {form German.Agreement.strongAdjective, form German.Agreement.weakAdjective,
       form German.Agreement.predicativeAdjective}
   | dutch => {form Dutch.Agreement.attributiveAdjective,
       form Dutch.Agreement.predicativeAdjective}
   | icelandic | serboCroatian => {⟨{.attributive}, insert .definiteness φκ⟩, ⟨{.predicate}, φκ⟩}
-  | english | mandarin | tagalog | atong | basque | japanese =>
+  | english | mandarin | atong | basque | japanese =>
     {⟨{.attributive, .predicate}, ∅⟩}
 
 /-- The φ-features of a language's DP. Case is not among them: the paper takes it to be
 present in every DP whether or not it is realized. -/
 def phi : Language → Finset Agreement.Dimension
   | greek | russian | latin | italian | german => {.number, .gender}
-  | kalaallisut | english => {.number}
+  | kalaallisut | english | tagalog => {.number}
   | dutch | icelandic | serboCroatian => {.number, .gender, .definiteness}
-  | mandarin | tagalog | farsi | atong | basque | japanese => ∅
+  | mandarin | farsi | atong | basque | japanese => ∅
 
 /-- The attributivizer of a language is an affix on the adjective, overt as in German or null as
 in English, and not a clitic such as Mandarin *de*, the Tagalog linker or the Farsi ezafe. It
