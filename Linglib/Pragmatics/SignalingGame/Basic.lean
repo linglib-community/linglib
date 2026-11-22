@@ -103,33 +103,31 @@ theorem success_relabel [Countable M] [MeasurableSingletonClass M] {pr : Measure
 
 variable [IsProbabilityMeasure pr]
 
-private theorem compProd_const_real_diagonal_le (ν : Measure S) [IsProbabilityMeasure ν] {b : ℝ}
-    (hb : ∀ s, pr.real {s} ≤ b) : (pr ⊗ₘ Kernel.const S ν).real (Set.diagonal S) ≤ b := by
-  have hb0 : 0 ≤ b := measureReal_nonneg.trans (hb pr.nonempty_of_neZero.some)
-  have h (t : S) : pr ((fun s ↦ (s, t)) ⁻¹' Set.diagonal S) ≤ ENNReal.ofReal b := by
-    rw [show (fun s ↦ (s, t)) ⁻¹' Set.diagonal S = {t} by ext; simp, ← ofReal_measureReal]
-    exact ENNReal.ofReal_le_ofReal (hb t)
+private theorem compProd_const_real_diagonal_le (ν : Measure S) [IsProbabilityMeasure ν] :
+    (pr ⊗ₘ Kernel.const S ν).real (Set.diagonal S) ≤ (⨆ s, pr {s}).toReal := by
+  have h (t : S) : pr ((fun s ↦ (s, t)) ⁻¹' Set.diagonal S) ≤ ⨆ s, pr {s} := by
+    rw [show (fun s ↦ (s, t)) ⁻¹' Set.diagonal S = {t} by ext; simp]
+    exact le_iSup (fun s ↦ pr {s}) t
   rw [Measure.compProd_const, measureReal_def, Measure.prod_apply_symm .of_discrete]
-  exact ENNReal.toReal_le_of_le_ofReal hb0 ((lintegral_mono h).trans (by simp))
+  exact ENNReal.toReal_mono (ne_top_of_le_ne_top ENNReal.one_ne_top (iSup_le fun _ ↦ prob_le_one))
+    ((lintegral_mono h).trans (by simp))
 
 /-- A sender whose signal does not depend on the state succeeds no more often than the likeliest
 state occurs, whatever the receiver. -/
 theorem success_const_le (μ : Measure M) [IsProbabilityMeasure μ] (η : Kernel M S)
-    [IsMarkovKernel η] {b : ℝ} (hb : ∀ s, pr.real {s} ≤ b) :
-    success pr (Kernel.const S μ) η ≤ b := by
+    [IsMarkovKernel η] : success pr (Kernel.const S μ) η ≤ (⨆ s, pr {s}).toReal := by
   have : η ∘ₖ Kernel.const S μ = Kernel.const S (η ∘ₘ μ) := by
     ext s : 1
     rw [Kernel.comp_apply, Kernel.const_apply, Kernel.const_apply]
   rw [success, this]
-  exact compProd_const_real_diagonal_le pr _ hb
+  exact compProd_const_real_diagonal_le pr _
 
 /-- A receiver whose guess does not depend on the signal succeeds no more often than the likeliest
 state occurs, whatever the sender. -/
 theorem success_le_of_const (σ : Kernel S M) [IsMarkovKernel σ] (ν : Measure S)
-    [IsProbabilityMeasure ν] {b : ℝ} (hb : ∀ s, pr.real {s} ≤ b) :
-    success pr σ (Kernel.const M ν) ≤ b := by
+    [IsProbabilityMeasure ν] : success pr σ (Kernel.const M ν) ≤ (⨆ s, pr {s}).toReal := by
   rw [success, Kernel.const_comp']
-  exact compProd_const_real_diagonal_le pr _ hb
+  exact compProd_const_real_diagonal_le pr _
 
 variable [Countable M] [MeasurableSingletonClass M]
 
@@ -144,8 +142,8 @@ theorem success_deterministic_eq_one_iff (f : S → M) (g : M → S) :
 /-- A sender whose strategy is unchanged by every relabelling of the signals succeeds no more often
 than the likeliest state occurs, whatever the receiver. -/
 theorem success_le_of_forall_map_eq [Fintype M] (σ : Kernel S M) [IsMarkovKernel σ]
-    (η : Kernel M S) [IsMarkovKernel η] (hσ : ∀ π : Equiv.Perm M, σ.map π = σ) {b : ℝ}
-    (hb : ∀ s, pr.real {s} ≤ b) : success pr σ η ≤ b := by
+    (η : Kernel M S) [IsMarkovKernel η] (hσ : ∀ π : Equiv.Perm M, σ.map π = σ) :
+    success pr σ η ≤ (⨆ s, pr {s}).toReal := by
   classical
   have h (s : S) (m : M) : σ s {m} = (Fintype.card M : ℝ≥0∞)⁻¹ := by
     have key (m' : M) : σ s {m'} = σ s {m} := by
@@ -161,13 +159,13 @@ theorem success_le_of_forall_map_eq [Fintype M] (σ : Kernel S M) [IsMarkovKerne
     ext s : 1
     exact Measure.ext_of_singleton fun m ↦ by rw [Kernel.const_apply, h, h]
   rw [this]
-  exact success_const_le pr _ η hb
+  exact success_const_le pr _ η
 
 /-- A receiver whose strategy is unchanged by every relabelling of the signals succeeds no more
 often than the likeliest state occurs, whatever the sender. -/
 theorem success_le_of_forall_comap_eq (σ : Kernel S M) [IsMarkovKernel σ] (η : Kernel M S)
-    [IsMarkovKernel η] (hη : ∀ π : Equiv.Perm M, η.comap π .of_discrete = η) {b : ℝ}
-    (hb : ∀ s, pr.real {s} ≤ b) : success pr σ η ≤ b := by
+    [IsMarkovKernel η] (hη : ∀ π : Equiv.Perm M, η.comap π .of_discrete = η) :
+    success pr σ η ≤ (⨆ s, pr {s}).toReal := by
   classical
   have m₀ := (σ pr.nonempty_of_neZero.some).nonempty_of_neZero.some
   have : η = Kernel.const M (η m₀) := by
@@ -175,6 +173,6 @@ theorem success_le_of_forall_comap_eq (σ : Kernel S M) [IsMarkovKernel σ] (η 
     conv_lhs => rw [← hη (Equiv.swap m m₀), Kernel.comap_apply, Equiv.swap_apply_left]
     rfl
   rw [this]
-  exact success_le_of_const pr σ _ hb
+  exact success_le_of_const pr σ _
 
 end SignalingGame

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Probabilistic.AlternatingMaximization
-public import Studies.Lewis1969
+public import Linglib.Pragmatics.SignalingGame.SignalingSystem
 
 /-!
 # Zaslavsky, Hu and Levy (2021): A Rate–Distortion View of Human Pragmatic Reasoning?
@@ -20,11 +20,11 @@ tradeoff never decreases along the recursion and
 [converges](##ZaslavskyHuLevy2021.exists_tendsto_freeEnergy).
 
 With as many utterances as meanings, a uniform prior and no cost, the tradeoff is at most
-$\max\{(1-\alpha)\log K, 0\}$ for $K$ meanings (`ZaslavskyHuLevy2021.freeEnergy_le_max`). The
-speaker who draws her utterance uniformly whatever the meaning attains $(1-\alpha)\log K$, and a
-speaker who names each meaning by an utterance of its own, the communicator of a signaling system
-of [lewis-1969], attains $0$ (`ZaslavskyHuLevy2021.freeEnergy_signalingSystem`). The first is
-therefore optimal for $\alpha \le 1$ and the second for $\alpha \ge 1$.
+$\max\{(1-\alpha)\log K, 0\}$ for $K$ meanings. Up to $\alpha = 1$ the speaker who draws her
+utterance uniformly, whatever the meaning, is optimal
+(`ZaslavskyHuLevy2021.isMaxOn_freeEnergy_const`), and from $\alpha = 1$ on so is every speaker who
+names each meaning by an utterance of its own, the communicator of a signaling system of
+[lewis-1969] (`ZaslavskyHuLevy2021.isMaxOn_freeEnergy_signalingSystem`).
 
 ## Implementation notes
 
@@ -190,17 +190,12 @@ open InformationTheory
 
 variable [Nonempty M]
 
-/-- Proposition 3: with as many utterances as meanings, a uniform prior and no cost, the tradeoff
-of no speaker and listener exceeds `max ((1 - α) * log K) 0`. -/
-theorem freeEnergy_le_max (hcard : Fintype.card U = Fintype.card M) {α : ℝ} (hα : 0 ≤ α)
-    (S : Kernel M U) [IsMarkovKernel S] (L : Kernel U M) [∀ u, IsZeroOrProbabilityMeasure (L u)] :
-    RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α S L ≤
+-- Proposition 3, against the Bayesian listener.
+theorem freeEnergy_listener_le_max (hcard : Fintype.card U = Fintype.card M) (α : ℝ)
+    (S : Kernel M U) [IsMarkovKernel S] :
+    RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α S
+        (RSA.listener (uniformOn Set.univ) S) ≤
       ((max ((1 - α) * log (Fintype.card M)) 0 : ℝ) : EReal) := by
-  have : IsProbabilityMeasure (uniformOn (Set.univ : Set M)) :=
-    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
-  have hL := RSA.freeEnergy_le_freeEnergy_listener (uniformOn Set.univ) Kernel.id (0 : U → ℝ) hα S L
-  rw [Kernel.comp_id] at hL
-  refine hL.trans ?_
   have hI0 : 0 ≤ Im[(uniformOn Set.univ : Measure M) ⊗ₘ S] := measureMutualInfo_nonneg _
   have hIK : Im[(uniformOn Set.univ : Measure M) ⊗ₘ S] ≤ log (Fintype.card M) := by
     rw [← hcard]
@@ -215,7 +210,15 @@ theorem freeEnergy_le_max (hcard : Fintype.card U = Fintype.card M) {α : ℝ} (
   · exact le_max_of_le_left (by nlinarith [mul_nonneg (sub_nonneg.2 h) hI0])
   · exact le_max_of_le_right (by nlinarith [mul_le_mul_of_nonneg_left hIK (sub_nonneg.2 h)])
 
--- Proposition 3
+-- Proposition 3: no speaker and listener exceed `max ((1 - α) * log K) 0`.
+theorem freeEnergy_le_max (hcard : Fintype.card U = Fintype.card M) {α : ℝ} (hα : 0 ≤ α)
+    (S : Kernel M U) [IsMarkovKernel S] (L : Kernel U M) [∀ u, IsZeroOrProbabilityMeasure (L u)] :
+    RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α S L ≤
+      ((max ((1 - α) * log (Fintype.card M)) 0 : ℝ) : EReal) := by
+  have hL := RSA.freeEnergy_le_freeEnergy_listener (uniformOn Set.univ) Kernel.id (0 : U → ℝ) hα S L
+  rw [Kernel.comp_id] at hL
+  exact hL.trans (freeEnergy_listener_le_max hcard α S)
+
 -- Proposition 3: the uniform speaker attains `(1 - α) * log K`.
 theorem freeEnergy_const_uniformOn [Nonempty U] (hcard : Fintype.card U = Fintype.card M)
     (α : ℝ) :
@@ -223,10 +226,6 @@ theorem freeEnergy_const_uniformOn [Nonempty U] (hcard : Fintype.card U = Fintyp
         (Kernel.const M (uniformOn Set.univ))
         (RSA.listener (uniformOn Set.univ) (Kernel.const M (uniformOn Set.univ))) =
       (((1 - α) * log (Fintype.card M) : ℝ) : EReal) := by
-  have : IsProbabilityMeasure (uniformOn (Set.univ : Set M)) :=
-    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
-  have : IsProbabilityMeasure (uniformOn (Set.univ : Set U)) :=
-    isProbabilityMeasure_uniformOn Set.finite_univ Set.univ_nonempty
   rw [RSA.freeEnergy_id_listener_const,
     (measureEntropy_eq_log_card_iff (uniformOn (Set.univ : Set M))).2 rfl,
     (measureEntropy_eq_log_card_iff (uniformOn (Set.univ : Set U))).2 rfl, hcard]
@@ -234,14 +233,37 @@ theorem freeEnergy_const_uniformOn [Nonempty U] (hcard : Fintype.card U = Fintyp
   simp only [Pi.zero_apply, integral_zero, mul_zero, sub_zero]
   ring
 
-/-- Proposition 3: the communicator of a signaling system of [lewis-1969], against her Bayesian
-listener, attains `0` at every prior and every `α`. -/
+-- Proposition 3: the communicator of a signaling system attains `0`, at every prior.
 theorem freeEnergy_signalingSystem {R : Type*} {F : M ≃ R} [IsProbabilityMeasure P]
-    (A : Lewis1969.SignalingSystem F U) (α : ℝ) :
+    (A : SignalingSystem F U) (α : ℝ) :
     RSA.freeEnergy P Kernel.id (0 : U → ℝ) α (Kernel.deterministic A.communicator .of_discrete)
         (RSA.listener P (Kernel.deterministic A.communicator .of_discrete)) = 0 := by
   rw [RSA.freeEnergy_id_listener_deterministic _ _ _ A.communicator_injective]
   simp
+
+/-- Proposition 3: up to `α = 1`, the speaker who draws her utterance uniformly, whatever the
+meaning, is optimal against her Bayesian listener. -/
+theorem isMaxOn_freeEnergy_const [Nonempty U] (hcard : Fintype.card U = Fintype.card M) {α : ℝ}
+    (hα : α ≤ 1) :
+    IsMaxOn (fun S : Kernel M U ↦ RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α S
+      (RSA.listener (uniformOn Set.univ) S)) {S | IsMarkovKernel S}
+      (Kernel.const M (uniformOn Set.univ)) := fun S (hS : IsMarkovKernel S) ↦ by
+  dsimp only
+  rw [freeEnergy_const_uniformOn hcard]
+  exact (freeEnergy_listener_le_max hcard α S).trans (EReal.coe_le_coe_iff.2
+    (max_le le_rfl (mul_nonneg (sub_nonneg.2 hα) (log_natCast_nonneg _))))
+
+/-- Proposition 3: from `α = 1` on, the communicator of any signaling system of [lewis-1969] is
+optimal against her Bayesian listener. -/
+theorem isMaxOn_freeEnergy_signalingSystem {R : Type*} {F : M ≃ R}
+    (hcard : Fintype.card U = Fintype.card M) {α : ℝ} (hα : 1 ≤ α) (A : SignalingSystem F U) :
+    IsMaxOn (fun S : Kernel M U ↦ RSA.freeEnergy (uniformOn Set.univ) Kernel.id (0 : U → ℝ) α S
+      (RSA.listener (uniformOn Set.univ) S)) {S | IsMarkovKernel S}
+      (Kernel.deterministic A.communicator .of_discrete) := fun S (hS : IsMarkovKernel S) ↦ by
+  dsimp only
+  rw [freeEnergy_signalingSystem]
+  exact (freeEnergy_listener_le_max hcard α S).trans (EReal.coe_le_coe_iff.2
+    (max_le (mul_nonpos_of_nonpos_of_nonneg (sub_nonpos.2 hα) (log_natCast_nonneg _)) le_rfl))
 
 end Criticality
 
