@@ -167,60 +167,6 @@ theorem traceGe_iff_pairwiseProb (hv : ∀ a, 0 < v a) :
 
 end JustNoticeableDifferences
 
-section LogisticUniqueness
-
-open Real
-
-/-! ### §2.A.3: Uniqueness of the logistic curve (pp. 41–42)
-
-If pairwise choice depends only on differences of a scale `u` that takes every real value, the ratio
-scale is exponential in `u` and pairwise choice is logistic. Luce reproduces Adams and Messick's
-proof, which reduces the claim to Cauchy's functional equation. -/
-
-private theorem exists_eq_mul_of_strictMono (h : ℝ →+ ℝ) (hh : StrictMono h) :
-    ∃ k : ℝ, 0 < k ∧ ∀ s, h s = k * s := by
-  have hcont : Continuous h :=
-    h.continuous_of_isBounded_nhds_zero (Icc_mem_nhds (by norm_num : (-1 : ℝ) < 0) one_pos)
-      ((Metric.isBounded_Icc (h (-1)) (h 1)).subset hh.monotone.image_Icc_subset)
-  refine ⟨h 1, by simpa using hh one_pos, fun s ↦ ?_⟩
-  simpa [mul_comm] using map_real_smul h hcont s 1
-
--- §2, pp. 41–42
-theorem logistic_unique {X : Type*} {v u : X → ℝ} {g F : ℝ → ℝ}
-    (hu : Function.Surjective u) (hg_pos : ∀ r, 0 < g r) (hg : StrictMono g)
-    (hv : ∀ x, v x = g (u x)) (hF : ∀ x y, v x / (v x + v y) = F (u x - u y)) :
-    ∃ k : ℝ, 0 < k ∧ (∀ x, v x = g 0 * exp (k * u x)) ∧
-      ∀ x y, v x / (v x + v y) = sigmoid (k * (u x - u y)) := by
-  have hgF (r s : ℝ) : g r / (g r + g s) = F (r - s) := by
-    obtain ⟨x, rfl⟩ := hu r
-    obtain ⟨y, rfl⟩ := hu s
-    rw [← hv, ← hv, hF]
-  have hmul (s t : ℝ) : g s * g t = g 0 * g (s + t) := by
-    have h : g (s + t) / (g (s + t) + g s) = g t / (g t + g 0) := by
-      rw [hgF, hgF, add_sub_cancel_left, sub_zero]
-    rw [div_eq_div_iff (add_pos (hg_pos _) (hg_pos _)).ne'
-      (add_pos (hg_pos _) (hg_pos _)).ne'] at h
-    linear_combination -h
-  let h : ℝ →+ ℝ :=
-    { toFun := fun s ↦ log (g s) - log (g 0)
-      map_zero' := sub_self _
-      map_add' := fun s t ↦ by
-        have := congrArg log (hmul s t)
-        rw [log_mul (hg_pos s).ne' (hg_pos t).ne', log_mul (hg_pos 0).ne' (hg_pos _).ne'] at this
-        linarith }
-  obtain ⟨k, hk, hks⟩ := exists_eq_mul_of_strictMono h
-    fun a b hab ↦ sub_lt_sub_right (log_lt_log (hg_pos a) (hg hab)) _
-  have hgexp (s : ℝ) : g s = g 0 * exp (k * s) := by
-    have hs : log (g s) - log (g 0) = k * s := hks s
-    rw [← exp_log (hg_pos s), ← exp_log (hg_pos 0), ← exp_add]
-    congr 1
-    linarith
-  refine ⟨k, hk, fun x ↦ by rw [hv, hgexp (u x)], fun x y ↦ ?_⟩
-  rw [hv, hv, hgexp (u x), hgexp (u y), ← mul_add, mul_div_mul_left _ _ (hg_pos 0).ne']
-  simpa [pairwiseProb, mul_sub] using pairwiseProb_exp (fun a ↦ k * u a) x y
-
-end LogisticUniqueness
-
 section PowerLaw
 
 open Real Set

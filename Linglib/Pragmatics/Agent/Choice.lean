@@ -20,6 +20,11 @@ is the choices of an agent (`Agent.exists_restrict_policy_eq_of_hasRatioScale`),
 constant-ratio rule and choose every alternative with positive probability are the choices of
 agents.
 
+The value enters the policy through an exponential because only differences of value are to
+matter: a rule that weighs each action by a positive strictly increasing function of its value,
+under which the odds of two actions depend only on the difference of their values, is the policy
+at some positive rationality (`Agent.exists_ofWeights_comp_value_eq_policy`).
+
 ## References
 
 * [luce-1959]
@@ -170,5 +175,38 @@ theorem exists_restrict_policy_eq_of_hasRatioScale {cf : ChoiceFn A} (h : cf.Has
     inferInstanceAs (NeZero (Measure.dirac ()))
   rw [restrict_policy_eq_cond one_pos hT, hpol, hμ T hT,
     cond_smul (ENNReal.inv_ne_zero.2 hfin) (ENNReal.inv_ne_top.2 huniv)]
+
+/-! ### Why the exponential -/
+
+section Exponential
+
+variable (a) in
+/-- Weighing each action by a positive multiple of the exponential of `k` times its value is the
+policy at rationality `k`. -/
+theorem ofWeights_mul_exp_value [a.IsUnconstrained] {c : ℝ} (hc : 0 < c) (k : ℝ) :
+    Kernel.ofWeights (fun o x ↦ ENNReal.ofReal (c * Real.exp (k * a.value o x))) = a.policy k := by
+  rw [policy_eq_softmax]
+  unfold Kernel.softmax
+  refine Kernel.ofWeights_eq_of_mul (c := fun _ ↦ ENNReal.ofReal c)
+    (fun _ ↦ (ENNReal.ofReal_pos.2 hc).ne') (fun _ ↦ ENNReal.ofReal_ne_top) fun o x ↦ ?_
+  rw [EReal.exp_coe, ← ENNReal.ofReal_mul (Real.exp_pos _).le, mul_comm]
+
+/-- A rule that weighs each action by a positive strictly increasing function of its value, and
+under which the odds of two actions depend only on the difference of their values, is the policy
+at some positive rationality. -/
+theorem exists_ofWeights_comp_value_eq_policy {g F : ℝ → ℝ} (hg_pos : ∀ r, 0 < g r)
+    (hg : StrictMono g) (hF : ∀ r s, g r / (g r + g s) = F (r - s)) :
+    ∃ k : ℝ, 0 < k ∧ ∀ (a : Agent O S A) [a.IsUnconstrained],
+      Kernel.ofWeights (fun o x ↦ ENNReal.ofReal (g (a.value o x))) = a.policy k := by
+  obtain ⟨k, hk, h⟩ := exists_eq_mul_exp_of_div_add_eq hg_pos hg hF
+  refine ⟨k, hk, fun a _ ↦ ?_⟩
+  have hw : (fun o x ↦ ENNReal.ofReal (g (a.value o x))) =
+      fun o x ↦ ENNReal.ofReal (g 0 * Real.exp (k * a.value o x)) := by
+    funext o x
+    rw [h]
+  rw [hw]
+  exact ofWeights_mul_exp_value a (hg_pos 0) k
+
+end Exponential
 
 end Agent
