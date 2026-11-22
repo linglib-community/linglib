@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.Bidirectional
-public import Linglib.Semantics.ArgumentStructure.Root.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.MartinRoseNichols2025
@@ -17,21 +17,35 @@ formalizes the account of why a thick causative, used transitively in its physic
 a subject with abstract reference (*the lack of sunscreen burned her skin*) that periphrastic
 *cause* and the thin causatives accept.
 
-A model `CauseConcepts E` has two relations of causation on a domain of relata, after Rose,
-Sievers and Nichols: production, the transfer of a conserved physical quantity from cause to
-effect, and dependence, the counterfactual dependence of the effect on the cause. Production
-entails dependence, and only a physical relatum produces. The operator CAUSE has a `Reading` for
-each relation, and the readings are ordered by specificity, `production < dependence`, so that
-`Reading.holds` is monotone. The transitive forms, lexical and periphrastic, are ordered by
-markedness, and `specialization : Form ≃o Reading` pairs the lexical causative with production and
-*cause* with dependence. Where the manner information of a thick verb in its physical sense makes
-production a salient alternative (`Promoted`), harmony is strictly monotone in both orders, and
-weak bidirectional optimality keeps exactly the graph of that isomorphism
-(`superoptimalSet_eq_graphOn_specialization`). A statement is `Felicitous` when some model makes
-it true under a reading its frame allows, with a cause that is not physical if the subject has
-abstract reference; this fails exactly for the lexical causative under promotion with an abstract
-subject (`felicitous_iff`). The anticausative with a *from* phrase is not a competitor and keeps
-both readings.
+A model `CauseConcepts State Event` is an event structure with two relations of causation
+between its eventualities, after Rose, Sievers and Nichols: production, the transfer of a
+conserved physical quantity from cause to effect, and dependence, the counterfactual dependence
+of the effect on the cause. Production entails dependence, and only a physical relatum produces.
+The operator CAUSE has a `Reading` for each relation, and the readings are ordered by
+specificity, `production < dependence`, so that `CauseConcepts.cause` is monotone and every
+event-structure decomposition is at least as true under dependence as under production
+(`CauseConcepts.denote_mono`). A thin causative is true of an eventuality that causes a change
+into a state of its root, `CauseConcepts.thin`, and the causative of a manner root adds the
+manner of the causing eventuality, `CauseConcepts.manner`.
+
+A verb is thick when its causative entails a manner of the causing eventuality. There are two
+ways. A manner root contributes the manner directly, under either reading. A state root does so
+when every productive cause of its state is of the manner, the postulate of Beavers and
+Koontz-Garboden for a manner of the cause, taken under production: then the causative entails
+the manner under production (`CauseConcepts.thin_production_le`), and need not under dependence
+(`scene_not_thin_dependence_le`). The second is the paper's account of *bury*, whose state
+reveals the process that produced it.
+
+The transitive forms, lexical and periphrastic, are ordered by markedness, and
+`specialization : Form ≃o Reading` pairs the lexical causative with production and *cause* with
+dependence. Where the manner information of a thick verb in its physical sense makes production
+a salient alternative (`Promoted`), harmony is strictly monotone in both orders, and weak
+bidirectional optimality keeps exactly the graph of that isomorphism
+(`superoptimalSet_eq_graphOn_specialization`). A statement is `Felicitous` when in some model its
+cause brings about a change under a reading its frame allows, a cause that is not physical if
+the subject has abstract reference; this fails exactly for the lexical causative under promotion
+with an abstract subject (`felicitous_iff`). The anticausative with a *from* phrase is not a
+competitor and keeps both readings.
 
 The judged causative statements of the paper are read against this. Among those with an absence,
 a fact, a gerund or a degree as subject, the felicitous ones are the accepted ones, apart from six
@@ -39,7 +53,8 @@ corpus attestations of *burn*, *lift*, *lock* and *melt* whose subject the paper
 productive cause (`rows_abstract`, `rows_reinterpreted`). Every statement that is not accepted is
 a lexical causative under promotion (`rows_not_acceptable`). The flat tire of the paper's last
 section is a physical relatum on which the axle's cracking depends without being produced by it
-(`axle_tire`).
+(`axle_tire`), in the one `scene` that also holds the absence and the producer of the sunscreen
+contrast.
 
 A corpus survey of thirty-seven frequent causative verbs records whether each alternates, is
 thick, occurs with an adjectival strong resultative, and occurs with an omission or quality
@@ -54,6 +69,13 @@ than *close* and *lower*, together with *burn*, *lift*, *lock* and *melt* (`omis
   division of pragmatic labour. It is formalized as weak bidirectional optimality over the two
   forms and the two readings, under any harmony strictly monotone in markedness and specificity,
   so no ranking of constraints is chosen.
+* The paper's representations relate the causing eventuality to the result state directly. Here
+  the causing eventuality causes a change that gives rise to the state, as the event-structure
+  templates have it, and `CauseConcepts.thin_eq_denote` and `CauseConcepts.manner_eq_denote` give
+  the two causatives as template denotations. The eventualities of a model are the causal
+  relata, facts and absences among them.
+* `Felicitous` tests the causal relation alone, the thin causative of any state; the manner of
+  a manner root is a further condition on the cause that the rows do not test.
 * Only the competition over production is modelled. Where production is not promoted, with a
   thin verb or in an abstract sense, a frame allows both readings; the weaker notions of
   directness in which the paper lets a thin causative still compete with *cause* are not
@@ -80,8 +102,11 @@ than *close* and *lower*, together with *burn*, *lift*, *lock* and *melt* (`omis
 * Wolff's definition of direct causation, of which the paper takes the production constraint to
   be the positive form, is not stated; `axle_tire` shows only that a necessary condition for the
   transference cause fails production.
-* The event-semantic representations of thick and thin verbs are not given denotations; the
-  position of the root is recorded only as `Resultative.position`.
+* The survey's thick verbs are not assigned roots: `thick_iff` reads the position of the root
+  off the resultative code, and no theorem joins a verb of the survey to `CauseConcepts.manner`
+  or to the postulate of `CauseConcepts.thin_production_le`.
+* Strong resultatives are available to a root that does not describe states in the study of Yu,
+  Ausensi and Smith; the resultative column is not derived from that.
 
 ## References
 
@@ -89,6 +114,8 @@ than *close* and *lower*, together with *burn*, *lift*, *lock* and *melt* (`omis
 * [rose-sievers-nichols-2021]
 * [embick-2009]
 * [wolff-2003]
+* [beavers-koontz-garboden-2020]
+* [yu-ausensi-smith-2023]
 * [blutner-2000]
 * [horn-1984]
 -/
@@ -97,21 +124,12 @@ than *close* and *lower*, together with *burn*, *lift*, *lock* and *melt* (`omis
 
 namespace MartinRoseNichols2025
 
-open BidirectionalOT Set
+open BidirectionalOT Set ModalLogic ArgumentStructure.EventStructure
+open scoped SetRel
 
 /-! ### Two concepts of causation -/
 
-/-- A domain of causal relata with the two concepts of causation of [rose-sievers-nichols-2021]:
-production entails dependence, and only a physical relatum produces. -/
-structure CauseConcepts (E : Type*) where
-  /-- The relatum is a physical, energy-bearing entity. -/
-  Physical : E → Prop
-  /-- The cause produces the effect: it transfers a conserved physical quantity to it. -/
-  Produces : E → E → Prop
-  /-- The effect counterfactually depends on the cause. -/
-  Depends : E → E → Prop
-  produces_le_depends : Produces ≤ Depends
-  physical_of_produces {c e : E} : Produces c e → Physical c
+universe u
 
 /-- The two readings of the operator CAUSE. -/
 inductive Reading where
@@ -126,22 +144,93 @@ def Reading.rank : Reading → ℕ
 
 instance : LinearOrder Reading := LinearOrder.lift' Reading.rank (by decide)
 
-variable {E : Type*} (C : CauseConcepts E) {s o : E}
+/-- An event structure with the two concepts of causation of [rose-sievers-nichols-2021] between
+its eventualities, the causal relata: production entails dependence, and only a physical relatum
+produces. -/
+structure CauseConcepts (State Event : Type u) where
+  /-- An eventuality and a state it gives rise to. -/
+  become : SetRel Event State
+  /-- The cause produces the effect: it transfers a conserved physical quantity to it. -/
+  produces : SetRel Event Event
+  /-- The effect counterfactually depends on the cause. -/
+  depends : SetRel Event Event
+  produces_subset_depends : produces ⊆ depends
+  /-- The relatum is a physical, energy-bearing entity. -/
+  Physical : Event → Prop
+  physical_of_produces {c e : Event} : c ~[produces] e → Physical c
 
-/-- The truth condition of a causative statement under a reading, as a relation between the
-cause and the effect. -/
-def Reading.holds : Reading → E → E → Prop
-  | .production => C.Produces
-  | .dependence => C.Depends
+namespace CauseConcepts
 
-theorem Reading.holds_mono : Monotone (Reading.holds C) := fun a b h ↦ by
+variable {Entity : Type*} {State Event : Type u} (C : CauseConcepts State Event) (r : Reading)
+  (Q : Event → Prop) (p : State → Prop) {c : Event}
+
+/-- The relation that CAUSE denotes under a reading. -/
+def cause : Reading → SetRel Event Event
+  | .production => C.produces
+  | .dependence => C.depends
+
+theorem cause_mono : Monotone C.cause := fun a b h ↦ by
   cases a <;> cases b
-  exacts [le_rfl, C.produces_le_depends, absurd h (by decide), le_rfl]
+  exacts [le_rfl, C.produces_subset_depends, absurd h (by decide), le_rfl]
 
-/-- The truth conditions of the readings, as a monotone map from the specificity order. -/
-def Reading.holdsHom : Reading →o E → E → Prop := ⟨Reading.holds C, Reading.holds_mono C⟩
+/-- The relations of the readings, as a monotone map from the specificity order. -/
+def causeHom : Reading →o SetRel Event Event := ⟨C.cause, C.cause_mono⟩
 
-@[simp] theorem Reading.coe_holdsHom : ⇑(Reading.holdsHom C) = Reading.holds C := rfl
+@[simp] theorem coe_causeHom : ⇑C.causeHom = C.cause := rfl
+
+/-- The interpretation of the event-structure primitives under a reading of CAUSE. -/
+@[simps]
+def interpretation : Interpretation State Event := ⟨C.become, C.cause r⟩
+
+-- every decomposition is at least as true under dependence as under production
+theorem denote_mono {σ : Eventuality} (t : Template σ) (θ : Entity → Event → Prop)
+    (P : Entity → State → Prop) (y x : Entity) :
+    Monotone fun r ↦ t.denote (C.interpretation r) θ P Q y x :=
+  fun a b h ↦ Template.denote_mono (M := C.interpretation a) (N := C.interpretation b)
+    subset_rfl (C.cause_mono h) t y x
+
+/-- (1b): the thin causative, true of an eventuality that causes a change into a state of
+`p`. -/
+def thin : Event → Prop := ◇[C.cause r] (◇[C.become] p)
+
+/-- (51b): the causative of a manner root, true of an eventuality of the manner `Q` that causes a
+change into a state of `p`, the state of a result phrase or any state. -/
+def manner : Event → Prop := Q ⊓ C.thin r p
+
+theorem thin_eq_denote (P : Entity → State → Prop) (x : Entity) :
+    C.thin r (P x) =
+      (Template.cause .effector .achievement).denote (C.interpretation r) ⊤ P Q x x :=
+  funext fun _ ↦ (true_and _).symm
+
+theorem manner_eq_denote (P : Entity → State → Prop) (x : Entity) :
+    C.manner r Q (P x) = Template.accomplishment.denote (C.interpretation r) ⊤ P Q x x :=
+  funext fun _ ↦ propext ⟨fun h ↦ ⟨⟨trivial, h.1⟩, h.2⟩, fun h ↦ ⟨h.1.2, h.2⟩⟩
+
+theorem thin_mono : Monotone (C.thin · p) :=
+  fun _ _ h _ ⟨e, he, hp⟩ ↦ ⟨e, C.cause_mono h he, hp⟩
+
+variable {C r p Q}
+
+theorem physical_of_thin (h : C.thin .production p c) : C.Physical c :=
+  let ⟨_, he, _⟩ := h; C.physical_of_produces he
+
+/-! ### Two ways of conveying a manner of causing
+
+A verb is thick when its causative entails a manner of the causing eventuality. A manner root
+does so under either reading, and a state root does so under production when the manner is that
+of the productive cause of its state, as with *bury*. -/
+
+theorem manner_le : C.manner r Q p ≤ Q := inf_le_left
+
+/-- (70b): a causative of a state whose productive causes are all of the manner `Q` entails the
+manner under production, where a state arises from at most one change. -/
+theorem thin_production_le
+    (h : (C.interpretation .production).EntailsMannerOfCause p Q)
+    (hC : ∀ s ⦃e⦄, e ~[C.become] s → ∀ ⦃e'⦄, e' ~[C.become] s → e = e') :
+    C.thin .production p ≤ Q :=
+  h.diamond_cause_diamond_become_le hC
+
+end CauseConcepts
 
 /-! ### The competition between covert and overt CAUSE -/
 
@@ -215,78 +304,86 @@ theorem allows_periphrastic_iff :
     Allows promoted .periphrastic r ↔ promoted → r = .dependence := by
   simp [allows_iff, Examples.Frame.form, eq_comm]
 
-/-! ### Witnesses -/
+/-! ### A scene -/
 
-/-- The relata of the sunscreen contrast are the lack of sunscreen, the sun, and the skin. -/
-inductive Sunburn where
-  | lackOfSunscreen
-  | sun
-  | skin
+/-- The eventualities of a scene: an absence, a physical condition that is necessary for the
+transference cause, the transference cause, and the change. -/
+inductive Scene where
+  | absence
+  | condition
+  | producer
+  | change
   deriving DecidableEq, Repr
 
-/-- The sun burns the skin, and the lack of sunscreen, an absence, is a dependence cause of
-the burn only. -/
-def sunburn : CauseConcepts Sunburn where
-  Physical x := x ≠ .lackOfSunscreen
-  Produces c e := c = .sun ∧ e = .skin
-  Depends c e := (c = .sun ∨ c = .lackOfSunscreen) ∧ e = .skin
-  produces_le_depends _ _ h := ⟨.inl h.1, h.2⟩
-  physical_of_produces h := by rintro rfl; cases h.1
+/-- The producer produces the change, which depends on the absence and the condition as well and
+gives rise to the one state. The lack of sunscreen and the sun are the absence and the producer
+of a burn, and the flat tire and the driving the condition and the producer of a cracked axle. -/
+def scene : CauseConcepts Unit Scene where
+  become := {x | x.1 = .change}
+  produces := {x | x.1 = .producer ∧ x.2 = .change}
+  depends := {x | x.1 ≠ .change ∧ x.2 = .change}
+  produces_subset_depends := by rintro ⟨_, _⟩ ⟨rfl, rfl⟩; exact ⟨by decide, rfl⟩
+  Physical c := c ≠ .absence
+  physical_of_produces := by rintro _ _ ⟨rfl, -⟩; decide
 
-/-- The relata of the flat-tire contrast: the tire, the driving, and the axle. -/
-inductive Axle where
-  | tire
-  | driving
-  | axle
-  deriving DecidableEq, Repr
+theorem scene_thin_production {c : Scene} : scene.thin .production ⊤ c ↔ c = .producer := by
+  refine ⟨?_, fun h ↦ ⟨.change, ⟨h, rfl⟩, (), rfl, trivial⟩⟩
+  rintro ⟨_, ⟨h, -⟩, -⟩
+  exact h
 
-/-- Driving on a flat tire cracks the axle. The driving transfers force to the axle, and the
-flat tire is a necessary condition for the driving to do so; every relatum is physical. -/
-def axle : CauseConcepts Axle where
-  Physical _ := True
-  Produces c e := c = .driving ∧ e = .axle
-  Depends c e := (c = .driving ∨ c = .tire) ∧ e = .axle
-  produces_le_depends _ _ h := ⟨.inl h.1, h.2⟩
-  physical_of_produces _ := trivial
+theorem scene_thin_dependence {c : Scene} : scene.thin .dependence ⊤ c ↔ c ≠ .change := by
+  refine ⟨?_, fun h ↦ ⟨.change, ⟨h, rfl⟩, (), rfl, trivial⟩⟩
+  rintro ⟨_, ⟨h, -⟩, -⟩
+  exact h
+
+-- the state of the scene has the producer as the manner of its productive cause, and its
+-- causative entails that manner under production and not under dependence
+theorem scene_entailsMannerOfCause :
+    (scene.interpretation .production).EntailsMannerOfCause ⊤ (· = .producer) :=
+  fun _ _ ↦ ⟨.change, rfl,
+    ⟨.producer, show (Scene.producer, Scene.change) ∈ scene.produces from ⟨rfl, rfl⟩, trivial⟩,
+    by rintro _ ⟨h, -⟩; exact h⟩
+
+theorem scene_not_thin_dependence_le : ¬scene.thin .dependence ⊤ ≤ (· = .producer) :=
+  fun h ↦ Scene.noConfusion (h .absence (scene_thin_dependence.2 (by decide)))
 
 -- (78): with a thick verb in its physical sense, the flat tire fails the lexical causative on
 -- every reading it allows and satisfies *cause*, though the tire is physical
 theorem axle_tire :
-    (∀ r, Allows True .lexical r → ¬r.holds axle .tire .axle) ∧
-      ∃ r, Allows True .periphrastic r ∧ r.holds axle .tire .axle :=
-  ⟨fun r hr ↦ by
+    scene.Physical .condition ∧ (∀ r, Allows True .lexical r → ¬scene.thin r ⊤ .condition) ∧
+      ∃ r, Allows True .periphrastic r ∧ scene.thin r ⊤ .condition :=
+  ⟨Scene.noConfusion, fun r hr ↦ by
       obtain rfl := allows_lexical_iff.1 hr trivial
-      exact fun h ↦ Axle.noConfusion h.1,
-    .dependence, allows_periphrastic_iff.2 fun _ ↦ rfl, .inr rfl, rfl⟩
-
-theorem axle_driving : ∃ r, Allows True .lexical r ∧ r.holds axle .driving .axle :=
-  ⟨.production, allows_lexical_iff.2 fun _ ↦ rfl, rfl, rfl⟩
+      exact fun h ↦ Scene.noConfusion (scene_thin_production.1 h),
+    .dependence, allows_periphrastic_iff.2 fun _ ↦ rfl, scene_thin_dependence.2 (by decide)⟩
 
 /-! ### Felicity -/
 
-/-- A causative statement in a frame is felicitous if some model makes it true under a reading
-the frame allows, with a cause that is not physical when the subject has abstract reference. -/
+/-- A causative statement in a frame is felicitous if in some model its cause brings about a
+change under a reading the frame allows, a cause that is not physical when the subject has
+abstract reference. -/
 def Felicitous (promoted : Prop) (fr : Examples.Frame) (abstract : Prop) : Prop :=
-  ∃ (E : Type) (C : CauseConcepts E) (s o : E) (r : Reading),
-    (abstract → ¬C.Physical s) ∧ Allows promoted fr r ∧ r.holds C s o
+  ∃ (State Event : Type) (C : CauseConcepts State Event) (c : Event) (r : Reading),
+    (abstract → ¬C.Physical c) ∧ Allows promoted fr r ∧ C.thin r ⊤ c
 
 /-- A causative statement is infelicitous exactly when it is a lexical causative, production is
 promoted, and its subject has abstract reference. -/
 theorem felicitous_iff :
     Felicitous promoted fr abstract ↔ ¬(promoted ∧ abstract ∧ fr = .lexical) := by
-  refine ⟨fun ⟨_, C, s, o, r, hs, ha, hr⟩ ⟨hp, habs, hfr⟩ ↦ ?_, fun h ↦ ?_⟩
+  refine ⟨fun ⟨_, _, C, c, r, hc, ha, hr⟩ ⟨hp, habs, hfr⟩ ↦ ?_, fun h ↦ ?_⟩
   · subst hfr
     obtain rfl := allows_lexical_iff.1 ha hp
-    exact hs habs (C.physical_of_produces hr)
-  · have lack {fr} (ha : Allows promoted fr .dependence) : Felicitous promoted fr abstract :=
-      ⟨_, sunburn, .lackOfSunscreen, .skin, .dependence, fun _ h ↦ h rfl, ha, .inr rfl, rfl⟩
+    exact hc habs (CauseConcepts.physical_of_thin hr)
+  · have absence {fr} (ha : Allows promoted fr .dependence) : Felicitous promoted fr abstract :=
+      ⟨_, _, scene, .absence, .dependence, fun _ h ↦ h rfl, ha,
+        scene_thin_dependence.2 (by decide)⟩
     cases fr
     · by_cases habs : abstract
-      · exact lack (allows_of_not fun hp ↦ h ⟨hp, habs, rfl⟩)
-      · exact ⟨_, sunburn, .sun, .skin, .production, fun h ↦ absurd h habs,
-          allows_lexical_iff.2 fun _ ↦ rfl, rfl, rfl⟩
-    · exact lack (allows_periphrastic_iff.2 fun _ ↦ rfl)
-    · exact lack allows_anticausative
+      · exact absence (allows_of_not fun hp ↦ h ⟨hp, habs, rfl⟩)
+      · exact ⟨_, _, scene, .producer, .production, fun h ↦ absurd h habs,
+          allows_lexical_iff.2 fun _ ↦ rfl, scene_thin_production.2 rfl⟩
+    · exact absence (allows_periphrastic_iff.2 fun _ ↦ rfl)
+    · exact absence allows_anticausative
 
 /-! ### The corpus survey -/
 
@@ -472,8 +569,8 @@ theorem rows_reinterpreted : ∀ x ∈ reinterpreted, ¬x.Felicitous ∧
   simp only [Example.felicitous_iff]
   decide
 
-/-- Every statement that is not accepted is a lexical causative of a thick verb in its physical
-sense. -/
+-- every statement that is not accepted is a lexical causative of a thick verb in its physical
+-- sense
 theorem rows_not_acceptable : ∀ x : Example, x.datum.judgment ≠ .acceptable →
     x.Promoted ∧ x.frame = some .lexical := by
   decide

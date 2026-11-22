@@ -168,6 +168,15 @@ def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Car
 
 variable {M θ P Q} {y x : Entity}
 
+/-- A template's denotation grows with the relations of the interpretation. -/
+theorem denote_mono {N : Interpretation State Event} (hb : M.become ⊆ N.become)
+    (hc : M.cause ⊆ N.cause) {σ : Eventuality} (t : Template σ) (y x : Entity) :
+    t.denote M θ P Q y x ≤ t.denote N θ P Q y x := by
+  induction t generalizing y x with
+  | state | act | effector => exact le_rfl
+  | become t ih => exact fun _ ⟨s, hs, h⟩ ↦ ⟨s, hb hs, ih y x s h⟩
+  | cause c t ihc iht => exact fun _ ⟨h, e, he, h'⟩ ↦ ⟨ihc y x _ h, e, hc he, iht x x e h'⟩
+
 /-- CAUSE with an individual causer is the `vcause` of Beavers and Koontz-Garboden, an event
 whose effector is the causer and which causes the caused subevent. -/
 theorem denote_cause_effector {t : Template .event} {v : Event} :
