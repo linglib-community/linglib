@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Fragments.Bantu.Params
 
@@ -19,26 +20,26 @@ class, and the semantic core each gender bears ([carstens-2026]).
 
 namespace Shona
 
-open Bantu
+open Bantu Morphology
 
 /-! ### Classes -/
 
 /-- The subject marker of a class on the verb; classes 15–18 are absent or unproductive. -/
-def subjPrefix : NounClass → Option String
-  | .cl1 => some "a"     -- noun prefix mu-: murume 'man'
-  | .cl2 => some "va"    -- va-: varume 'men'
-  | .cl3 => some "u"     -- mu-: muti 'tree'
-  | .cl4 => some "i"     -- mi-: miti 'trees'
-  | .cl5 => some "ri"    -- ri-, often unprefixed: zai 'egg'
-  | .cl6 => some "a"     -- ma-: mazai 'eggs'
-  | .cl7 => some "chi"   -- chi-: chingwa 'bread'
-  | .cl8 => some "zvi"   -- zvi-: zvingwa 'loaves'
-  | .cl9 => some "i"     -- n-: imbwa 'dog'
-  | .cl10 => some "dzi"  -- n-, dzi-: imbwa 'dogs'
-  | .cl11 => some "ru"   -- ru-: rukova 'stream'
-  | .cl12 => some "ka"   -- ka-, the diminutive singular: kasikana 'small girl'
-  | .cl13 => some "tu"   -- tu-, the diminutive plural: tusikana 'small girls'
-  | .cl14 => some "hu"   -- hu-, u-: huchi 'honey'
+def subjPrefix : NounClass → Option Morph
+  | .cl1 => some (.pref "a")     -- noun prefix mu-: murume 'man'
+  | .cl2 => some (.pref "va")    -- va-: varume 'men'
+  | .cl3 => some (.pref "u")     -- mu-: muti 'tree'
+  | .cl4 => some (.pref "i")     -- mi-: miti 'trees'
+  | .cl5 => some (.pref "ri")    -- ri-, often unprefixed: zai 'egg'
+  | .cl6 => some (.pref "a")     -- ma-: mazai 'eggs'
+  | .cl7 => some (.pref "chi")   -- chi-: chingwa 'bread'
+  | .cl8 => some (.pref "zvi")   -- zvi-: zvingwa 'loaves'
+  | .cl9 => some (.pref "i")     -- n-: imbwa 'dog'
+  | .cl10 => some (.pref "dzi")  -- n-, dzi-: imbwa 'dogs'
+  | .cl11 => some (.pref "ru")   -- ru-: rukova 'stream'
+  | .cl12 => some (.pref "ka")   -- ka-, the diminutive singular: kasikana 'small girl'
+  | .cl13 => some (.pref "tu")   -- tu-, the diminutive plural: tusikana 'small girls'
+  | .cl14 => some (.pref "hu")   -- hu-, u-: huchi 'honey'
   | _ => none
 
 /-- The classes, those with a subject marker. -/

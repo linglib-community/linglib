@@ -1,31 +1,59 @@
 module
 
 public import Linglib.Fragments.Mandarin.Nouns
+public import Linglib.Fragments.Romance.French.Nouns
+public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Fragments.Romance.Italian.Nouns
+public import Linglib.Fragments.Shona.Nouns
+public import Linglib.Fragments.Swahili.Nouns
+public import Linglib.Fragments.Xhosa.Nouns
+public import Studies.Corbett1991
 public import Studies.Downing1996
 public import Mathlib.Data.Finset.Image
 
 /-!
-# A typology of noun categorization devices
+# Aikhenvald (2000): Classifiers: A Typology of Noun Categorization Devices
 
-Aikhenvald's typology individuates classifier types by their morphosyntactic locus and
-scope, the definitional parameters (A)–(G) of the book's first chapter, and then reads the
-contingent parameters — interaction with other categories, preferred semantics, evolution,
-acquisition — as correlates of the types so established. The types are focal points on a
-continuum rather than discrete classes, and most generalizations are tendencies with listed
-exceptions. Here the book's parameters are functions on a sample of seven languages
-(`Language`), the French and Italian gender systems, the Xhosa, Shona and Swahili noun-class
-systems, and the Mandarin and Japanese numeral-classifier systems, coded as the book describes
-them, with the kind of each device derived from its locus and the constituent it characterizes
-rather than stored and the realizations of the classifier languages read off their fragments'
-entries; the book's summary claims are checked on that sample, and none is a universal.
-Western Armenian, whose numerals combine with bare nouns, is not classified as a classifier
-language by the book and is left to `BaleKhanjian2014`.
+The book sorts noun categorization devices into kinds by the morphosyntactic locus of their
+morphemes and the constituent they characterize, `Classifier.Device.ofScope`, and then gives the
+properties in which the kinds differ. This file states the properties its concluding chapter
+tabulates as functions of the kind and checks them on the systems the fragments hold, the
+numeral classifiers of Mandarin and Japanese, the noun classes of Swahili, Xhosa and Shona and
+the genders of French and Italian.
+
+* Assignment. A noun class may be assigned only partly on semantic grounds, though every noun
+  class system has a semantic core of sex, humanness or animacy, and every noun belongs to a
+  class; every other kind is assigned semantically and need not cover every noun
+  (`FullySemantic`, `ClassifiesEveryNoun`).
+* Realization. Noun classes and verbal classifiers are never free lexemes (`AdmitsFree`), and
+  each kind admits some of the further devices of apophony, suppletion, stress, reduplication,
+  noun incorporation and repeaters (`Admits`).
+* Agreement. Noun classes and deictic, possessor and verbal classifiers take part in agreement,
+  numeral and possessed classifiers only when bound, and relational and noun classifiers never
+  (`agreement`).
+* Markedness. A general classifier is the analogue of a functionally unmarked noun class.
+* Semantics. Each kind prefers some semantic parameters (`Typical`), and colour is the basis of
+  no kind.
+
+## Implementation notes
+
+The tables leave out possessor classifiers, about which the book makes no generalization;
+`Admits` and `Typical` place no condition on them. Physical properties are the parameters of
+`Classifier.Parameter.Class.physical`, which include the direction, arrangement and quanta the
+book's table of preferred semantics lists apart. A realization the book admits rarely or only in
+multiple classifier systems is admitted. The agreement of locative classifiers, which the
+summary of agreement does not mention, is left open.
+
+## TODO
+
+The association of numeral classifiers with the absence of obligatory plural marking, the
+interactions with other grammatical categories, and the origins and acquisition of classifiers
+are not formalized.
 
 ## References
 
 * [aikhenvald-2000]
-* [greenberg-1972]
-* [li-thompson-1981]
+* [corbett-1991]
 * [downing-1996]
 -/
 
@@ -33,169 +61,171 @@ language by the book and is left to `BaleKhanjian2014`.
 
 namespace Aikhenvald2000
 
-open Classifier
+open Classifier Morphology
 
-/-- The sample has two gender systems, three Bantu noun-class systems and two
-numeral-classifier systems. -/
-inductive Language where
-  | french | italian | xhosa | shona | swahili | mandarin | japanese
-  deriving DecidableEq, Fintype
+/-! ### Properties of the kinds of device -/
 
-namespace Language
+/-- The assignment of the device is wholly semantic, as it is for every kind but noun class. -/
+def FullySemantic (d : Device) : Prop := d ≠ .nounClass
 
-/-- The locus of coding (the book's (A)) is the head-modifier NP for the gender and noun-class
-systems and the numeral NP for the numeral classifiers. -/
-def locus : Language → Scope
-  | mandarin | japanese => .numeralNP
-  | french | italian | xhosa | shona | swahili => .headModifierNP
+/-- Every noun belongs to a class of the device, as with noun class alone. -/
+def ClassifiesEveryNoun (d : Device) : Prop := d = .nounClass
 
-/-- Every device of the sample characterizes the head noun (the book's (B)). -/
-def constituent (_ : Language) : Constituent := .headNoun
+/-- The device can be expressed with free lexemes, as noun classes and verbal classifiers
+cannot. -/
+def AdmitsFree (d : Device) : Prop := d ≠ .nounClass ∧ d ≠ .verbalClassifier
 
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-def device (l : Language) : Option Device := Device.ofScope l.locus l.constituent
+instance : DecidablePred FullySemantic := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred ClassifiesEveryNoun := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred AdmitsFree := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The scopes the device operates in (the book's (B)). Mandarin uses the same classifiers with
-numerals and with demonstratives (the book's Table 9.1), and agreement in gender and class
-reaches the predicate. -/
-def scopes : Language → Finset Scope
-  | mandarin => {.numeralNP, .attributiveNP}
-  | japanese => {.numeralNP}
-  | french | italian | xhosa | shona | swahili => {.headModifierNP, .predicateArgument}
+/-- The device admits the realization: a free lexeme where the kind can be free, a prefix or
+proclitic for every kind but locative classifiers, a suffix or enclitic for every kind, and the
+further devices each for the kinds the book's table of realizations marks. -/
+def Admits (d : Device) : Realization → Prop
+  | .morph k =>
+    d = .possessorClassifier ∨
+      (k.position? = none → AdmitsFree d) ∧ (k.position? = some .before → d ≠ .locativeClassifier)
+  | .apophony | .stress => d = .possessorClassifier ∨ d = .nounClass
+  | .suppletion =>
+    d = .possessorClassifier ∨ d = .numeralClassifier ∨ d = .verbalClassifier ∨
+      d = .locativeClassifier ∨ d = .deicticClassifier
+  | .reduplication => d = .possessorClassifier ∨ d = .numeralClassifier
+  | .nounIncorporation => d = .possessorClassifier ∨ d = .verbalClassifier
+  | .repeater =>
+    d = .possessorClassifier ∨ d = .nounClass ∨ d = .numeralClassifier ∨
+      d = .possessedClassifier ∨ d = .nounClassifier ∨ d = .deicticClassifier
 
-/-- The assignment is wholly semantic (the book's (C)), as it is for the numeral classifiers.
-Gender and noun class assignment has a semantic core, but that core is never the whole of it. -/
-def SemanticAssignment : Language → Prop
-  | mandarin | japanese => True
-  | french | italian | xhosa | shona | swahili => False
+instance : ∀ d r, Decidable (Admits d r) := fun d r ↦ by
+  cases r <;> unfold Admits <;> infer_instance
 
-/-- The surface realizations (the book's (D)) are read off the fragments' entries for the
-classifier languages, Mandarin's independent forms and Japanese's suffixes on the numeral; gender
-is inflection on the agreeing words and Bantu class a prefix. -/
-def realizations : Language → Finset Realization
-  | mandarin => Mandarin.Classifiers.classifiers.image Classifier.realization
-  | japanese => Japanese.Classifiers.classifiers.image Classifier.realization
-  | french | italian => {.morph (.bound .after .affix)}
-  | xhosa | shona | swahili => {.morph (.bound .before .affix)}
+/-- When a kind of device takes part in agreement. -/
+inductive AgreementRole where
+  | always
+  /-- Only when expressed with bound morphemes. -/
+  | whenBound
+  | never
+  deriving DecidableEq, Repr, Fintype
 
-/-- The device participates in agreement (the book's (E)). -/
-def Agreement : Language → Prop
-  | mandarin | japanese => False
-  | french | italian | xhosa | shona | swahili => True
+/-- The part of a kind of device in agreement, where the book states it. -/
+def agreement : Device → Option AgreementRole
+  | .nounClass | .deicticClassifier | .possessorClassifier | .verbalClassifier => some .always
+  | .numeralClassifier | .possessedClassifier => some .whenBound
+  | .relationalClassifier | .nounClassifier => some .never
+  | .locativeClassifier => none
 
-/-- The device is obligatory (the book's (G)). For the numeral classifiers this is read off the
-fragments, where no noun that takes a classifier is counted without one. Gender and noun class
-are obligatory as the book describes them. -/
-def Obligatory : Language → Prop
-  | mandarin => ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → ¬ n.IsBareCount
-  | japanese => ∀ n ∈ Japanese.Nouns.nouns, n.classifiers.Nonempty → ¬ n.IsBareCount
-  | french | italian | xhosa | shona | swahili => True
+/-- The parameter is animacy, humanness or sex. -/
+def IsAnimacy (p : Parameter) : Prop := p = .animacy ∨ p = .humanness ∨ p = .sex
 
-/-- The system has a functionally unmarked member or a general classifier (the book's (F)). For
-the numeral classifiers this is read off the earlier descriptions, as a Mandarin classifier every
-counted noun can take and a classifier of Downing's inventory whose category has no parameter.
-The masculine gender and a default class are the unmarked members of the other systems. -/
-def HasUnmarkedMember : Language → Prop
-  | mandarin => ∃ c ∈ Mandarin.Classifiers.classifiers,
-      ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → n.Takes c
-  | japanese => ∃ p ∈ Downing1996.coding, p.2 = []
-  | french | italian | xhosa | shona | swahili => True
+/-- The parameter is a physical property. -/
+def IsPhysical (p : Parameter) : Prop := p.toClass = some .physical
 
-/-- The preferred semantic parameters (the book's (I)). Sex and animacy for the Romance genders,
-humanness and animacy for the Bantu classes; for Mandarin, the animacy of *zhī* and the shape by
-which *tiáo* extended from 'small branch' to long things in general, shape being the preferred
-parameter of numeral classifiers; for Japanese, the parameters of the categories of Downing's
-inventory. -/
-def semantics : Language → Finset Parameter
-  | french | italian => {.sex, .animacy}
-  | xhosa | shona | swahili => {.humanness, .animacy}
-  | mandarin => {.animacy, .shape}
-  | japanese => (Downing1996.coding.flatMap (·.2)).toFinset
+instance : DecidablePred IsAnimacy := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred IsPhysical := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- The language marks number obligatorily. -/
-def ObligatoryNumber : Language → Prop
-  | mandarin | japanese => False
-  | french | italian | xhosa | shona | swahili => True
+/-- The semantic parameters typical of a kind of device. -/
+def Typical : Device → Parameter → Prop
+  | .nounClass, p => IsAnimacy p ∨ IsPhysical p ∨ p = .nature ∨ p = .function
+  | .numeralClassifier, p =>
+    IsAnimacy p ∨ p = .socialStatus ∨ p = .kinship ∨ IsPhysical p ∨ p = .nature ∨ p = .function
+  | .nounClassifier, p => p = .socialStatus ∨ p = .function ∨ p = .nature
+  | .verbalClassifier, p => IsPhysical p ∨ p = .nature ∨ p = .function ∨ IsAnimacy p
+  | .relationalClassifier, p => p = .function ∨ p = .nature
+  | .possessedClassifier, p => IsPhysical p ∨ p = .nature ∨ IsAnimacy p ∨ p = .function
+  | .locativeClassifier, p => IsPhysical p ∨ p = .nature ∨ IsAnimacy p
+  | .deicticClassifier, p => IsPhysical p ∨ p = .nature
+  | .possessorClassifier, p => p ≠ .colour
 
-instance : DecidablePred SemanticAssignment := fun l ↦ by
-  cases l <;> unfold SemanticAssignment <;> infer_instance
+instance : ∀ d p, Decidable (Typical d p) := fun d p ↦ by
+  cases d <;> unfold Typical <;> infer_instance
 
-instance : DecidablePred Agreement := fun l ↦ by cases l <;> unfold Agreement <;> infer_instance
+theorem typical_animacy_not_colour {d : Device}
+    (hd : d = .nounClass ∨ d = .numeralClassifier) :
+    Typical d .animacy ∧ ∀ d' : Device, ¬ Typical d' .colour := by
+  rcases hd with rfl | rfl <;> decide
 
-instance : DecidablePred Obligatory := fun l ↦ by
-  cases l <;> unfold Obligatory <;> infer_instance
+theorem admitsFree_of_agreement {d : Device} {a : AgreementRole} (h : agreement d = some a)
+    (ha : a ≠ .always) : AdmitsFree d := by
+  decide +revert
 
-instance : DecidablePred ObligatoryNumber := fun l ↦ by
-  cases l <;> unfold ObligatoryNumber <;> infer_instance
+/-! ### The systems of the fragments -/
 
-end Language
-
-open Aikhenvald2000.Language
-
-/-! ### Definitional properties -/
-
-/-- A noun class system is defined by agreement outside the noun and is a closed obligatory
-grammatical system. -/
-theorem nounClass_agreement_obligatory :
-    ∀ l : Language, l.device = some .nounClass → l.Agreement ∧ l.Obligatory := by
+/-- The classifiers of Mandarin and Japanese are realizations numeral classifiers admit, free
+lexemes in Mandarin; the class prefixes of Swahili, Xhosa and Shona and the feminine suffix of
+French are realizations noun classes admit, and none is free. -/
+theorem realization_admitted :
+    (∀ c ∈ Mandarin.Classifiers.classifiers,
+      Admits .numeralClassifier c.realization ∧ c.kind = .free) ∧
+    (∀ c ∈ Japanese.Classifiers.classifiers, Admits .numeralClassifier c.realization) ∧
+    (∀ cl m, Swahili.subjPrefix cl = some m →
+      Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free) ∧
+    (∀ cl m, Xhosa.subjPrefix cl = some m → Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free) ∧
+    (∀ cl m, Shona.subjPrefix cl = some m → Admits .nounClass (.morph m.kind) ∧ m.kind ≠ .free) ∧
+    Admits .nounClass (.morph French.Gender.feminineSuffix.kind) ∧
+      French.Gender.feminineSuffix.kind ≠ .free := by
   decide
 
-/-- Noun classes are realized with affixes or clitics, never with free lexemes. -/
-theorem nounClass_bound :
-    ∀ l : Language, l.device = some .nounClass → .morph .free ∉ l.realizations := by
+theorem romance_agreement :
+    Function.Injective French.Gender.indefiniteArticle ∧
+      ∀ r, Function.Injective fun g ↦ Italian.Determiners.questo (r, g) := by
   decide
 
-/-- Numeral classifiers expressed as free morphemes do not participate in agreement. -/
-theorem free_numeralClassifier_no_agreement :
-    ∀ l : Language, l.device = some .numeralClassifier → .morph .free ∈ l.realizations →
-      ¬ l.Agreement := by
+/-- The gender of sexed referents: the masculine for males and the feminine for females. -/
+def frenchSex : ReferentGender → French.Gender.Value
+  | .male => .masculine
+  | .female => .feminine
+
+/-- The gender of sexed referents: the masculine for males and the feminine for females. -/
+def italianSex : ReferentGender → Italian.Gender.Value
+  | .male => .masculine
+  | .female => .feminine
+
+/-- Every French or Italian noun of the fragments that fixes the sex of its referents has the
+gender of that sex, the semantic core of the two systems, and nouns that fix none are found in
+both genders. -/
+theorem romance_semantic_core :
+    (∀ n ∈ French.Nouns.nouns, n.referentGender.isSome → n.toGenderedNoun.IsNatural frenchSex) ∧
+    (∀ g, ∃ n ∈ French.Nouns.nouns, n.referentGender = none ∧ n.gender = g) ∧
+    (∀ n ∈ Italian.Nouns.nouns, n.referentGender.isSome →
+      n.toGenderedNoun.IsNatural italianSex) ∧
+    ∀ g, ∃ n ∈ Italian.Nouns.nouns, n.referentGender = none ∧ n.gender = g := by
   decide
 
-/-- The numeral classifiers of the sample are obligatory, since no noun of the Mandarin or
-Japanese fragment that takes a classifier is counted without one, though Mandarin *tiān* 'day',
-which takes none, is counted directly. -/
-theorem numeralClassifier_obligatory :
-    (∀ l : Language, l.device = some .numeralClassifier → l.Obligatory) ∧
-      Mandarin.Nouns.tian.IsBareCount := by
+theorem semantic_core :
+    (∀ n ∈ Swahili.allNouns, n.gender = .genderA →
+      (Corbett1991.Swahili.system.semantic (Corbett1991.Swahili.sem n)).isSome) ∧
+      ∀ n ∈ Shona.Nouns.all, n.gender = .genderA → n.animacy ≠ .inanimate := by
   decide
 
-/-- Every kind of device other than noun class is assigned on purely semantic grounds; noun
-class assignment may be only partially semantic. -/
-theorem classifier_assignment_semantic :
-    ∀ l : Language, l.device ≠ some .nounClass → l.SemanticAssignment := by
+/-- Animacy does not settle the gender of a Swahili, Xhosa or Shona noun: two nouns alike in
+animacy differ in gender, and in Xhosa the gender of classes 1 and 2 has inanimate nouns too. -/
+theorem partially_semantic :
+    (∃ n ∈ Swahili.allNouns, ∃ n' ∈ Swahili.allNouns,
+      n.animacy = n'.animacy ∧ n.gender ≠ n'.gender) ∧
+    (∃ n ∈ Xhosa.Nouns.all, ∃ n' ∈ Xhosa.Nouns.all,
+      n.animacy = n'.animacy ∧ n.gender ≠ n'.gender) ∧
+    (∃ n ∈ Shona.Nouns.all, ∃ n' ∈ Shona.Nouns.all,
+      n.animacy = n'.animacy ∧ n.gender ≠ n'.gender) ∧
+    ∃ n ∈ Xhosa.Nouns.all, n.gender = .genderA ∧ n.animacy = .inanimate := by
   decide
 
-/-- Both numeral-classifier systems have a general classifier that can replace the specific
-ones, the analogue of a functionally unmarked noun class. In Mandarin it is *gè*, which every noun
-that takes a classifier can take, and in Japanese *-tsu*. -/
-theorem numeralClassifier_general :
-    ∀ l : Language, l.device = some .numeralClassifier → l.HasUnmarkedMember
-  | .mandarin, _ =>
-    ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers],
-      fun _ _ h ↦ Mandarin.Nouns.Noun.takes_ge h⟩
-  | .japanese, _ => ⟨(Japanese.Classifiers.tsu, []), by decide, rfl⟩
+/-- Mandarin *gè* counts every noun that takes a classifier, and Japanese *-tsu* is the one
+classifier of Downing's inventory with no semantic parameter: each system has a general
+classifier. -/
+theorem general_classifier :
+    (∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → n.Takes Mandarin.Classifiers.ge) ∧
+      ∀ p ∈ Downing1996.coding, p.2 = [] ↔ p.1 = Japanese.Classifiers.tsu :=
+  ⟨fun _ _ h ↦ Mandarin.Nouns.Noun.takes_ge h, Downing1996.coding_eq_nil_iff⟩
 
-/-! ### Preferred semantics -/
-
-/-- Animacy, humanness or sex is basic to noun classes and numeral classifiers. -/
-theorem animacy_basic :
-    ∀ l : Language, l.device = some .nounClass ∨ l.device = some .numeralClassifier →
-      ∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex := by
+theorem mandarin_bare_count :
+    ¬ ClassifiesEveryNoun .numeralClassifier ∧
+      ∃ n ∈ Mandarin.Nouns.nouns, n.classifiers = ∅ ∧ n.IsBareCount := by
   decide
 
-/-- Physical properties such as shape are typical of numeral classifiers. -/
-theorem numeralClassifier_shape :
-    ∀ l : Language, l.device = some .numeralClassifier → .shape ∈ l.semantics := by
-  decide
-
-/-- Colour is never a basis for noun categorization. -/
-theorem colour_never : ∀ l : Language, .colour ∉ l.semantics := by decide
-
-/-! ### Classifiers and number -/
-
-/-- Numeral-classifier languages usually lack compulsory number marking. -/
-theorem numeralClassifier_no_obligatory_number :
-    ∀ l : Language, l.device = some .numeralClassifier → ¬ l.ObligatoryNumber := by
+/-- Every semantic parameter of Downing's inventory of Japanese classifiers is typical of numeral
+classifiers, but for the speech register of *-mei*. -/
+theorem typical_japanese :
+    ∀ p ∈ Downing1996.coding, ∀ q ∈ p.2, Typical .numeralClassifier q ∨ q = .register := by
   decide
 
 end Aikhenvald2000
