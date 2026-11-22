@@ -4,7 +4,7 @@ public import Mathlib.Logic.Function.Basic
 public import Mathlib.Order.Filter.Extr
 
 /-!
-# Equilibria of games in strategic form
+# Equilibria
 
 A game in strategic form has agents `i : ι`, each with a type `A i` of strategies, and a payoff
 `u i : (∀ i, A i) → β` for each agent on the combinations of strategies. A combination `a` is an
@@ -14,13 +14,14 @@ one agent's changing hers, and a strict equilibrium when every agent loses by ch
 
 A strict equilibrium and a coordination equilibrium are equilibria. When the agents share one
 payoff, the equilibria are the coordination equilibria
-(`isCoordinationEquilibrium_const_iff`), and they include every combination at which the payoff is
-greatest (`isCoordinationEquilibrium_const_of_forall_le`).
+(`SignalingGame.isCoordinationEquilibrium_const_iff`), and they include every combination at which
+the payoff is greatest (`SignalingGame.isCoordinationEquilibrium_const_of_forall_le`).
 
 ## Implementation notes
 
-There is no structure for a game: the predicates take the family of payoffs. The strict equilibria
-are the proper equilibria of [lewis-1969], who also introduces coordination equilibria.
+There is no structure for a game: the predicates take the family of payoffs, for any number of
+agents, since the audience of a signal may have several members. The strict equilibria are the
+proper equilibria of [lewis-1969], who also introduces coordination equilibria.
 
 ## References
 
@@ -31,6 +32,8 @@ are the proper equilibria of [lewis-1969], who also introduces coordination equi
 @[expose] public section
 
 open Function
+
+namespace SignalingGame
 
 variable {ι β : Type*} [DecidableEq ι] {A : ι → Type*} {u : ι → (∀ i, A i) → β} {v : (∀ i, A i) → β}
   {a : ∀ i, A i}
@@ -81,3 +84,5 @@ theorem IsStrictEquilibrium.isEquilibrium (h : IsStrictEquilibrium u a) : IsEqui
 theorem isEquilibrium_iff_isMaxOn :
     IsEquilibrium u a ↔ ∀ i, IsMaxOn (fun x ↦ u i (update a i x)) Set.univ (a i) := by
   simp only [IsEquilibrium, isMaxOn_iff, Set.mem_univ, true_imp_iff, update_eq_self]
+
+end SignalingGame

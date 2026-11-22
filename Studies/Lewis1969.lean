@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.GameTheory.Equilibrium
+public import Linglib.Pragmatics.SignalingGame.Equilibrium
 public import Linglib.Pragmatics.SignalingGame.SignalingSystem
 
 /-!
@@ -29,9 +29,9 @@ that ensure a wrong one are `⟨R1, C2⟩` and `⟨R2, C1⟩` (`success_sexton_r
 
 ## Implementation notes
 
-* A proper equilibrium is `IsStrictEquilibrium`. The agents are indexed by `Option J`, with `none`
-  the communicator and `J` the audience, which must have a member for the equilibrium to be
-  proper.
+* A proper equilibrium is `SignalingGame.IsStrictEquilibrium`. The agents are indexed by
+  `Option J`, with `none` the communicator and `J` the audience, which must have a member for the
+  equilibrium to be proper.
 * A member of the audience whose plan is not defined at the signal given does not make the
   preferred response. A plan that agrees with the signaling system's on the signals in use is
   that plan, since both are one-to-one onto the responses.
@@ -53,7 +53,7 @@ that ensure a wrong one are `⟨R1, C2⟩` and `⟨R2, C1⟩` (`success_sexton_r
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory SignalingGame
 
 namespace Lewis1969
 
@@ -176,18 +176,18 @@ variable (pr : Measure Redcoats) [IsProbabilityMeasure pr]
 /-- Figure 38: when each state can occur, the sexton's plan `Ri` and Paul Revere's plan `Cj`
 ensure the right warning exactly when `i = j`. -/
 theorem success_sexton_revere_eq_one_iff (hpr : ∀ s, pr {s} ≠ 0) (i j : Fin 3) :
-    SignalingGame.success pr (.deterministic (sexton i) .of_discrete)
+    success pr (.deterministic (sexton i) .of_discrete)
       (.deterministic (revere j) .of_discrete) = 1 ↔ i = j := by
   have h : (∀ s, revere j (sexton i s) = s) ↔ i = j := by decide +revert
-  rw [SignalingGame.success_deterministic_eq_one_iff, ae_iff_of_countable, ← h]
+  rw [success_deterministic_eq_one_iff, ae_iff_of_countable, ← h]
   exact ⟨fun h s ↦ h s (hpr s), fun h s _ ↦ h s⟩
 
 -- Figure 38: the combinations that ensure a wrong warning are `⟨R1, C2⟩` and `⟨R2, C1⟩`.
 theorem success_sexton_revere_eq_zero_iff (hpr : ∀ s, pr {s} ≠ 0) (i j : Fin 3) :
-    SignalingGame.success pr (.deterministic (sexton i) .of_discrete)
+    success pr (.deterministic (sexton i) .of_discrete)
       (.deterministic (revere j) .of_discrete) = 0 ↔ i = 0 ∧ j = 1 ∨ i = 1 ∧ j = 0 := by
   have h : (∀ s, revere j (sexton i s) ≠ s) ↔ i = 0 ∧ j = 1 ∨ i = 1 ∧ j = 0 := by decide +revert
-  rw [SignalingGame.success_deterministic, measureReal_eq_zero_iff,
+  rw [success_deterministic, measureReal_eq_zero_iff,
     measure_null_iff_singleton (Set.to_countable _), ← h]
   exact ⟨fun h s hs ↦ hpr s (h s hs), fun h s hs ↦ absurd hs (h s)⟩
 

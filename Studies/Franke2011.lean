@@ -18,6 +18,7 @@ public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.Franke2011
 public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.SignalingGame.Equilibrium
 
 /-!
 # Franke (2011): Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation
@@ -41,12 +42,14 @@ fixed points are perfect Bayesian equilibria.
 * In the probabilistic model a player type is a set of pure strategies, and the unbiased belief
   in it is the kernel `unbiased` that is uniform over its choices. The prior is a measure, the
   expected gain is the probability that the receiver guesses the state, and the posterior after a
-  message of a pure sender, as in the Nash equilibria of §7, is the prior conditioned on the
-  states that send it. The truth filter of (117) and (122) is applied by maximising over true
-  messages and reading an unsent message literally, which agrees with the paper along every
-  chain. After a sent message the receiver keeps the states most probable for the Bayesian
-  listener of the unbiased belief in the sender type
+  message of a pure sender is the prior conditioned on the states that send it. The truth filter
+  of (117) and (122) is applied by maximising over true messages and reading an unsent message
+  literally, which agrees with the paper along every chain. After a sent message the receiver keeps
+  the states most probable for the Bayesian listener of the unbiased belief in the sender type
   (`receiverResponse_eq_argmax_listener`).
+* A pure Nash equilibrium is `SignalingGame.IsEquilibrium` at every state, for the gain of `1`
+  that both players have when the guess is right. It holds exactly when the receiver's guess
+  undoes the sender's message (`isNashEquilibrium_iff_leftInverse`).
 * (83) refines by the prior the literal reading of a message nobody sends; the probabilistic
   model and Figure 16 leave it unrefined, as here. Condition (132) is stated with the inequality
   its proof needs; the paper prints it reversed.
@@ -110,28 +113,51 @@ theorem mem_trueMessages [Fintype M] {t : T} {m : M} :
     m ∈ G.trueMessages t ↔ G.meaning m t := by
   simp [trueMessages]
 
-/-- A pure profile is a Nash equilibrium (§7) when no message would get a state guessed that its
-own message does not, and after every message the receiver guesses a most probable state of the
-posterior, the prior conditioned on the states that send it. -/
-def IsNashEquilibrium [Fintype T] (σ : T → M) (ρ : M → T) : Prop :=
-  (∀ t m, ρ m = t → ρ (σ t) = t) ∧ ∀ m, ρ m ∈ univ.argmax fun t ↦ G.prior[|σ ⁻¹' {m}] {t}
-
-theorem isNashEquilibrium_of_leftInverse [Fintype T] [MeasurableSingletonClass T]
-    [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0) {σ : T → M} {ρ : M → T}
-    (h : LeftInverse ρ σ) : G.IsNashEquilibrium σ ρ := by
-  refine ⟨fun t _ _ ↦ h t, fun m ↦ ?_⟩
-  by_cases hm : ∃ t, σ t = m
-  · obtain ⟨t, rfl⟩ := hm
-    have hpre : σ ⁻¹' {σ t} = {t} := Set.ext fun s ↦ by simp [h.injective.eq_iff]
-    have := cond_isProbabilityMeasure (μ := G.prior) (hprior t)
-    rw [hpre, h t]
-    refine mem_argmax.mpr ⟨mem_univ t, fun s _ ↦ ?_⟩
-    rw [cond_apply_self (hprior t) (measure_ne_top _ _)]
-    exact prob_le_one
-  · rw [show σ ⁻¹' {m} = ∅ from Set.eq_empty_of_forall_notMem fun s hs ↦ hm ⟨s, hs⟩, cond_empty]
-    exact mem_argmax.mpr ⟨mem_univ _, fun _ _ ↦ le_rfl⟩
-
 end InterpGame
+
+/-! ### Nash equilibria
+
+The sender and the receiver gain `1` at a state when the receiver's guess is that state, and a
+pure strategy profile is a Nash equilibrium when, at every state, neither gains by another
+strategy. -/
+
+section Nash
+
+variable {T M : Type*}
+
+/-- The strategies of the sender, `false`, and of the receiver, `true`. -/
+abbrev Strategies (T M : Type*) : Bool → Type _
+  | false => T → M
+  | true => M → T
+
+/-- The profile in which the sender plays `σ` and the receiver `ρ`. -/
+def profile (σ : T → M) (ρ : M → T) : ∀ b, Strategies T M b
+  | false => σ
+  | true => ρ
+
+/-- What either player gains at the state `t`: `1` when the receiver guesses `t`. -/
+def gain [DecidableEq T] (t : T) (a : ∀ b, Strategies T M b) : ℕ :=
+  if a true (a false t) = t then 1 else 0
+
+/-- A pure strategy profile is a Nash equilibrium when at every state neither player gains by
+changing strategy alone. -/
+def IsNashEquilibrium [DecidableEq T] (σ : T → M) (ρ : M → T) : Prop :=
+  ∀ t, SignalingGame.IsEquilibrium (fun _ : Bool ↦ gain t) (profile σ ρ)
+
+/-- A pure strategy profile is a Nash equilibrium exactly when the receiver's guess undoes the
+sender's message. -/
+theorem isNashEquilibrium_iff_leftInverse [DecidableEq T] {σ : T → M} {ρ : M → T} :
+    IsNashEquilibrium σ ρ ↔ LeftInverse ρ σ := by
+  refine ⟨fun h t ↦ ?_, fun h t ↦ ?_⟩
+  · have := h t true fun _ ↦ t
+    by_contra hne
+    simp [gain, profile, hne] at this
+  · refine (SignalingGame.isCoordinationEquilibrium_const_of_forall_le fun b ↦ ?_).isEquilibrium
+    have h1 : gain t (profile σ ρ) = 1 := by simp [gain, profile, h t]
+    rw [h1, gain]
+    split_ifs <;> simp
+
+end Nash
 
 /-! ### Interpretation games from belief-value tables
 
@@ -441,12 +467,10 @@ def reversedReceiver : Message → State
 /-- The attested play and the reversed play are both Nash equilibria, so equilibrium does not
 select the implicature (§7). -/
 theorem isNashEquilibrium_scalar_and_reversed :
-    game.IsNashEquilibrium scalarSender scalarReceiver ∧
-      game.IsNashEquilibrium reversedSender reversedReceiver :=
-  ⟨game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl,
-    game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl⟩
+    IsNashEquilibrium scalarSender scalarReceiver ∧
+      IsNashEquilibrium reversedSender reversedReceiver :=
+  ⟨isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl,
+    isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl⟩
 
 /-- Both chains reach the attested play at their first sophisticated level and stay there, so
 "some" conveys not-all. -/
@@ -527,12 +551,10 @@ def crossedReceiver : Message → State
 
 -- §7
 theorem isNashEquilibrium_freeChoice_and_crossed :
-    game.IsNashEquilibrium freeChoiceSender freeChoiceReceiver ∧
-      game.IsNashEquilibrium crossedSender crossedReceiver :=
-  ⟨game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl,
-    game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl⟩
+    IsNashEquilibrium freeChoiceSender freeChoiceReceiver ∧
+      IsNashEquilibrium crossedSender crossedReceiver :=
+  ⟨isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl,
+    isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl⟩
 
 /-- Both chains reach the free choice play at level 4 (Figure 7), where it is a fixed point. -/
 theorem free_choice :
