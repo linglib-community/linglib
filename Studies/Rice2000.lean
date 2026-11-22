@@ -18,7 +18,10 @@ The Athapaskan verb puts a position of greater scope to the right. `position` is
 position in the template, counted from the left, as a monotone map from the scope order to `ℕ`;
 since it is injective, the template is a linear extension of the scope order. In the vocabulary
 of `AffixTemplate`, the prefixes of `template` ascend away from the stem along the dual of the
-scope order (`prefixesAscend_toDual`).
+scope order (`prefixesAscend_toDual`). As languages, the strings the template admits are among
+those in which no position stands before one in its scope (`language_le_pairwise_scope`), and
+scope alone also admits the orders the template excludes among unordered positions
+(`incorporate_quantifier`).
 
 They do not ascend along [bybee-1985]'s relevance hierarchy (`not_prefixesAscend_relevance`):
 the first and second person subject stands between the aspect positions and the stem.
@@ -143,7 +146,6 @@ theorem position_injective : Function.Injective position := by
 theorem position_strictMono : StrictMono position :=
   position.monotone.strictMono_of_injective position_injective
 
-/-- The quantifiers and the incorporates are not ordered by scope. -/
 theorem not_quantifier_le_incorporate :
     ¬ Slot.quantifier ≤ Slot.incorporate ∧ ¬ Slot.incorporate ≤ Slot.quantifier := by
   constructor <;> intro h <;> rcases Relation.ReflTransGen.cases_head h with h | ⟨c, hc, -⟩ <;>
@@ -159,6 +161,19 @@ theorem prefixesAscend_toDual :
   obtain rfl := Option.some.inj hx
   obtain rfl := Option.some.inj hy
   exact (position_strictMono (OrderDual.toDual_lt_toDual.1 hlt)).not_gt hab
+
+/-- Every string of positions the template admits is admitted by scope: no position stands
+before one in its scope. -/
+theorem language_le_pairwise_scope :
+    template.language ≤ Language.pairwise fun a b : Slot ↦ ¬ b < a := fun _ hv ↦
+  (AffixTemplate.mem_language_iff_pairwise.1 hv).2.imp fun hab hba ↦
+    (hab.resolve_right (by simp [template])).not_gt (position_strictMono hba)
+
+/-- Scope admits the incorporate before the quantifier, an order the template excludes. -/
+theorem incorporate_quantifier :
+    [Slot.incorporate, .quantifier] ∈ Language.pairwise (fun a b : Slot ↦ ¬ b < a) ∧
+      [Slot.incorporate, .quantifier] ∉ template.language :=
+  ⟨Language.pair_mem_pairwise.2 fun h ↦ not_quantifier_le_incorporate.1 h.le, by decide⟩
 
 /-! ### Relevance -/
 
