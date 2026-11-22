@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Mereology.Classical
+public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Basic.PEquiv
 
@@ -194,6 +195,11 @@ noncomputable def upEquiv :
 @[simp] theorem upEquiv_symm_apply
     (s : {s : Set E // IsLowerSet s ∧ (s.Nonempty → ∃ d, IsGreatest s d)}) :
     upEquiv.symm s = down s.1 := rfl
+
+/-- ∩ at a situation is the maximal definite: ∩ is the definite shift ι taken at each situation,
+and differs from it in being defined only where the resulting concept is a kind. -/
+theorem down_eq_maximal {Ctx W : Type*} (R : Ctx → W → Set E) (c : Ctx) (s : W) :
+    down (R c s) = Definite.maximal R c s := rfl
 
 end Equiv
 
