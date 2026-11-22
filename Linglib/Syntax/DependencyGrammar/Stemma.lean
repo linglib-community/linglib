@@ -15,15 +15,15 @@ A stemma is a dependency tree as it is drawn: a head with its dependents to its 
 right, each dependent attached by a relation and heading a stemma of its own. Reading a stemma
 from left to right spells out its sentence, and numbering the words of that sentence turns the
 stemma into a dependency graph on positions, in which each word's head is the head it hangs from.
-That graph is [a tree](##DependencyGrammar.Stemma.isTree_toGraph) and
-[projective](##DependencyGrammar.Stemma.isProjective_toGraph): a stemma never draws crossing arcs.
+That graph is an arborescence rooted at the stemma's head (`Stemma.isArborescence_toGraph`) and
+projective (`Stemma.isProjective_toGraph`): a stemma never draws crossing arcs.
 
 ## Main definitions
 
 * `DependencyGrammar.Stemma`: the stemmas with relations in `L`.
 * `Stemma.yield`: the sentence a stemma spells out.
-* `Stemma.toGraph`, `Stemma.toTree`: the dependency graph on the positions of the sentence, and
-  the same graph bundled as a tree.
+* `Stemma.toGraph`, `Stemma.root`: the dependency graph on the positions of the sentence, and
+  the position of the stemma's head.
 
 ## Implementation notes
 
@@ -125,12 +125,14 @@ instance (s : Stemma L) : NeZero s.size := ⟨by cases s; simp [size]⟩
 def word (s : Stemma L) (v : Fin s.size) : Word :=
   s.yield[v.val]'(by rw [length_yield]; exact v.isLt)
 
+/-- The position of a stemma's head in its sentence. -/
+def root (s : Stemma L) : Fin s.size := ⟨s.headIndex, s.headIndex_lt_size⟩
+
 /-- The dependency graph on the positions of a stemma's sentence: an arc from each word's head to
-the word, labelled with its relation, rooted at the stemma's head. -/
-def toGraph (s : Stemma L) : Graph L s.size where
-  label v w := ((s.heads 0 none)[w.val]?.bind id).bind fun p ↦
+the word, labelled with its relation. -/
+def toGraph (s : Stemma L) : Graph L (Fin s.size) :=
+  .ofLabel fun v w ↦ ((s.heads 0 none)[w.val]?.bind id).bind fun p ↦
     if p.1 = v.val then some p.2 else none
-  root := ⟨s.headIndex, s.headIndex_lt_size⟩
 
 mutual
 
@@ -161,7 +163,8 @@ theorem getElem?_heads_headIndex (s : Stemma L) (o : ℕ) (up : Option (ℕ × L
 head of the second. -/
 theorem toGraph_adj {s : Stemma L} {v w : Fin s.size} :
     s.toGraph.Adj v w ↔ ∃ r, (s.heads 0 none)[w.val]? = some (some (v.val, r)) := by
-  simp only [Graph.Adj, toGraph]
+  rw [Graph.adj_iff_isSome]
+  simp only [toGraph, Graph.label_ofLabel]
   rcases h : (s.heads 0 none)[w.val]? with _ | _ | ⟨u, r⟩ <;> simp
 
 /-! ### Tree-hood and projectivity -/
@@ -271,7 +274,7 @@ end
 
 private theorem dominates_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s.size)
     (h : ReflTransGen (HeadIn (s.heads 0 none)) a b) :
-    ∃ hb : b < s.size, s.toGraph.Dominates ⟨a, ha⟩ ⟨b, hb⟩ := by
+    ∃ hb : b < s.size, s.toGraph.Reachable ⟨a, ha⟩ ⟨b, hb⟩ := by
   induction h with
   | refl => exact ⟨ha, .refl⟩
   | tail _ hcb ih =>
@@ -283,14 +286,15 @@ private theorem dominates_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s
 
 private theorem occurs_self {α : Type*} (H : List α) : Occurs H 0 H := fun _ _ ↦ by simp
 
-private theorem not_adj_root {s : Stemma L} {v : Fin s.size} : ¬ s.toGraph.Adj v s.toGraph.root :=
+private theorem not_adj_root {s : Stemma L} {v : Fin s.size} : ¬ s.toGraph.Adj v s.root :=
   fun hv ↦ by
     obtain ⟨r, hr⟩ := toGraph_adj.1 hv
-    simp [toGraph, getElem?_heads_headIndex] at hr
+    simp [root, getElem?_heads_headIndex] at hr
 
-/-- The graph of a stemma is a tree. -/
-theorem isTree_toGraph (s : Stemma L) : s.toGraph.IsTree := by
-  refine Graph.isTree_iff_leftUnique_adj.2 ⟨fun u v w hu hv ↦ ?_, fun _ ↦ not_adj_root, fun v ↦ ?_⟩
+/-- The graph of a stemma is an arborescence rooted at the stemma's head. -/
+theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.IsArborescence s.root := by
+  refine Digraph.isArborescence_iff_leftUnique_adj.2
+    ⟨fun u v w hu hv ↦ ?_, fun _ ↦ not_adj_root, fun v ↦ ?_⟩
   · obtain ⟨r, hr⟩ := toGraph_adj.1 hu
     obtain ⟨r', hr'⟩ := toGraph_adj.1 hv
     rw [hr] at hr'
@@ -302,11 +306,11 @@ theorem isTree_toGraph (s : Stemma L) : s.toGraph.IsTree := by
 
 /-- The graph of a stemma is projective: a stemma never draws crossing arcs. -/
 theorem isProjective_toGraph (s : Stemma L) : s.toGraph.IsProjective := by
-  refine s.toGraph.isProjective_iff_isArcProjective.2 fun h d hhd p hp ↦ ?_
+  refine (Digraph.isProjective_iff_isArcProjective _).2 fun h d hhd p hp ↦ ?_
   obtain ⟨r, hr⟩ := toGraph_adj.1 hhd
   have hne : d.val ≠ 0 + s.headIndex := fun he ↦ not_adj_root (s := s) (v := h) <| by
     rw [Nat.zero_add] at he
-    have : d = s.toGraph.root := Fin.ext he
+    have : d = s.root := Fin.ext he
     exact this ▸ hhd
   obtain ⟨-, -, hreach⟩ :=
     (layout _ s 0 none (occurs_self _)).2 h d (Nat.zero_le _) (by simp) hne ⟨r, hr⟩
@@ -316,9 +320,6 @@ theorem isProjective_toGraph (s : Stemma L) : s.toGraph.IsProjective := by
   exact (dominates_of_reflTransGen h.isLt (hreach p hp')).2
 
 end Layout
-
-/-- The dependency tree of a stemma. -/
-def toTree (s : Stemma L) : Tree L s.size := ⟨s.toGraph, s.isTree_toGraph⟩
 
 end Stemma
 

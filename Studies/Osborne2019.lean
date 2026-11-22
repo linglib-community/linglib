@@ -88,7 +88,7 @@ open Morphology (Word)
 
 section Units
 
-variable {L : Type*} {n : ℕ} (g : Graph L n)
+variable {L : Type*} {n : ℕ} (g : Graph L (Fin n))
 
 /-- A string is a word or a combination of words continuous with respect to precedence. -/
 def IsString (s : Finset (Fin n)) : Prop := s.Nonempty ∧ (↑s : Set (Fin n)).OrdConnected
@@ -105,7 +105,7 @@ variable {g} {s : Finset (Fin n)}
 
 /-- In a forest the set-theoretic definition of the catena picks out the sets of words
 continuous with respect to dominance. -/
-theorem mem_catenae (hF : g.IsForest) : s ∈ catenae g ↔ g.IsCatena s := by
+theorem mem_catenae (hF : g.IsBranching) : s ∈ catenae g ↔ g.IsCatena s := by
   simp [catenae, hF.isCatena_iff]
 
 -- In a projective graph a constituent is a string, and so a component.
@@ -113,7 +113,7 @@ theorem isString_of_isConstituent (hP : g.IsProjective) (h : g.IsConstituent s) 
   obtain ⟨v, hv⟩ := h
   exact ⟨⟨v, Finset.mem_coe.1 (hv ▸ Relation.ReflTransGen.refl)⟩, hv ▸ hP v⟩
 
-theorem card_isConstituent (hF : g.IsForest) : #{s : Finset (Fin n) | g.IsConstituent s} = n :=
+theorem card_isConstituent (hF : g.IsBranching) : #{s : Finset (Fin n) | g.IsConstituent s} = n :=
   hF.card_isConstituent
 
 end Units
@@ -159,25 +159,26 @@ theorem card_catenae_everywhere : #(catenae everywhere.toGraph) = 6 := by decide
 theorem card_units_insurance : #(catenae insurance.toGraph) = 15 ∧
     #{s ∈ catenae insurance.toGraph | IsString s} = 11 ∧
     #{s | insurance.toGraph.IsConstituent s} = 5 :=
-  ⟨by decide, by decide, card_isConstituent insurance.isTree_toGraph.toIsForest⟩
+  ⟨by decide, by decide, card_isConstituent insurance.isArborescence_toGraph.toIsBranching⟩
 
 theorem card_units_surprised : #{s : Finset (Fin surprised.size) | IsString s} = 28 ∧
     #(catenae surprised.toGraph) = 28 ∧ #{s ∈ catenae surprised.toGraph | IsString s} = 15 ∧
     #{s | surprised.toGraph.IsConstituent s} = 6 + 1 ∧
     #{s | surprised.toGraph.IsConstituent s ∧ 1 < #s} = 4 + 1 :=
-  ⟨by decide, by decide, by decide, card_isConstituent surprised.isTree_toGraph.toIsForest,
+  ⟨by decide, by decide, by decide, card_isConstituent
+    surprised.isArborescence_toGraph.toIsBranching,
     by decide⟩
 
 -- (8) has 44 catenae, 23 components and 8 constituents among its 255 word combinations.
 theorem card_units_counting : #(catenae counting.toGraph) = 44 ∧
     #{s ∈ catenae counting.toGraph | IsString s} = 23 ∧
     #{s | counting.toGraph.IsConstituent s} = 8 :=
-  ⟨by decide, by decide, card_isConstituent counting.isTree_toGraph.toIsForest⟩
+  ⟨by decide, by decide, card_isConstituent counting.isArborescence_toGraph.toIsBranching⟩
 
 -- (9a) has 24 catenae, 14 components and 6 constituents among its 63 word combinations.
 theorem card_units_favor : #(catenae favor.toGraph) = 24 ∧
     #{s ∈ catenae favor.toGraph | IsString s} = 14 ∧ #{s | favor.toGraph.IsConstituent s} = 6 :=
-  ⟨by decide, by decide, card_isConstituent favor.isTree_toGraph.toIsForest⟩
+  ⟨by decide, by decide, card_isConstituent favor.isArborescence_toGraph.toIsBranching⟩
 
 -- In (4) the verb with its subordinator is a catena and not a string, the determiner with the
 -- verb before it a string and not a catena, and the subject clause a phrase.
@@ -215,7 +216,7 @@ def IsFinite (w : Word) : Prop := w.features .verbForm = ↑UD.VerbForm.Fin
 instance : DecidablePred IsFinite := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The valents among the dependents of a word. -/
-def valents {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L n) (v : Fin n) :
+def valents {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L (Fin n)) (v : Fin n) :
     Multiset Position :=
   (g.children v).val.filterMap fun w ↦ category (words w)
 
@@ -230,11 +231,11 @@ theorem dependents_finite (fr : ArgumentFrame) :
   simp [dependents]
 
 /-- The word at `v` has the dependents its form takes under one of the frames `frs`. -/
-def Satisfies {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L n) (v : Fin n)
+def Satisfies {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L (Fin n)) (v : Fin n)
     (frs : List ArgumentFrame) : Prop :=
   ∃ fr ∈ frs, valents words g v = dependents fr (IsFinite (words v))
 
-instance {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L n) (v : Fin n)
+instance {L : Type*} {n : ℕ} (words : Fin n → Word) (g : Graph L (Fin n)) (v : Fin n)
     (frs : List ArgumentFrame) : Decidable (Satisfies words g v frs) :=
   inferInstanceAs (Decidable (∃ fr ∈ frs, _))
 

@@ -20,7 +20,7 @@ Wasow, Losongco and Ginstrom); their productions had shorter dependencies than t
 
 The paper measures the verb's dependency length as the summed distance in words from the verb to
 the closest boundary of each argument: on its sentences, the yield distance of dependency graphs
-(`Graph.yieldDist`), and on arrangements of subject, object and verb, the boundary distance of
+(`Digraph.yieldDist`), and on arrangements of subject, object and verb, the boundary distance of
 constituents of given lengths (`Arrangement.boundaryDist`), which agree on Fig. 1 as the
 substrate's bridge theorem predicts. The measure is invariant under mirroring, and with the verb
 at an edge it is two plus the length of the argument next to the verb. A learner's productions
@@ -124,20 +124,20 @@ theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection}
 
 /-- Fig. 1's verb-final sentence with subject first, MOUNTIE [[RED STOOL ON] HUNTER-OBJ] PUNCH,
 with the arcs of its bracketing. -/
-def fig1Sov : Graph UD.DepRel 6 :=
-  .ofArcs 5 [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
+def fig1Sov : Graph UD.DepRel (Fin 6) :=
+  .ofArcs [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
 
 /-- Object first, [[RED STOOL ON] HUNTER-OBJ] MOUNTIE PUNCH. -/
-def fig1Osv : Graph UD.DepRel 6 := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)
+def fig1Osv : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)
 
 /-- The verb-initial sentence with subject first, PUNCH MOUNTIE [HUNTER-OBJ [ON RED STOOL]]. -/
-def fig1Vso : Graph UD.DepRel 6 := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (by decide)
+def fig1Vso : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (by decide)
 
 /-- Object first, PUNCH [HUNTER-OBJ [ON RED STOOL]] MOUNTIE. -/
-def fig1Vos : Graph UD.DepRel 6 := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
+def fig1Vos : Graph UD.DepRel (Fin 6) := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
 
 theorem fig1_isTree_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos],
-    g.IsTree ∧ g.IsProjective := by
+    (∃ r, g.IsArborescence r) ∧ g.IsProjective := by
   decide +kernel
 
 -- Fig. 1
@@ -159,8 +159,8 @@ theorem fig1_yieldDist_eq :
     fig1Vos.yieldDist 0 5 = 5 ∧ fig1Vos.yieldDist 0 1 = 1 := by
   decide +kernel
 
-theorem fig1_card_yield :
-    (fig1Sov.yield 4).toFinset.card = 4 ∧ (fig1Sov.yield 0).toFinset.card = 1 := by
+theorem fig1_card_reachSet :
+    (fig1Sov.reachSet 4).toFinset.card = 4 ∧ (fig1Sov.reachSet 0).toFinset.card = 1 := by
   decide +kernel
 
 /-! ### Two events and their symmetric difference -/

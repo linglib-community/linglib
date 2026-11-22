@@ -23,7 +23,8 @@ sees direction, such as [a penalty on final over initial](##cond_harmonic).
 
 ## Implementation notes
 
-* A sentence is a linearization `σ` of a tree `g`, the graph `g.map σ`: catenae and their
+* A sentence is a linearization `σ` of a tree `g`, the graph `g.toDigraph.comap σ.symm`: catenae and
+their
   head–dependent pairs are read off `g`, directions and lengths off `σ`. Only dependencies
   between verbs, nouns, adjectives and adverbs are measured, at distances counting every word;
   on catenae covering every arc the length is the total dependency length
@@ -60,23 +61,23 @@ sees direction, such as [a penalty on final over initial](##cond_harmonic).
 
 namespace JingBlasiBickel2022
 
-open DependencyGrammar WordOrder MeasureTheory ProbabilityTheory Finset Morphology
+open DependencyGrammar WordOrder MeasureTheory ProbabilityTheory Finset Morphology Relation
 open Stemma (node leaf)
 open scoped ENNReal Nat
 
 local instance {α : Type*} {k : ℕ} : MeasurableSpace (Arrangement α k) := ⊤
 
-variable {L : Type*} {n : ℕ} {g : Graph L n}
+variable {L : Type*} {n : ℕ} {g : Graph L (Fin n)}
 
 /-! ### Two-dependency catenae, §2.2 -/
 
 /-- The hierarchical two-dependency catenae of `g`: an arc and an arc out of its dependent. -/
-def hierarchical (g : Graph L n) : Finset ((Fin n × Fin n) × (Fin n × Fin n)) :=
+def hierarchical (g : Graph L (Fin n)) : Finset ((Fin n × Fin n) × (Fin n × Fin n)) :=
   {x ∈ g.arcs ×ˢ g.arcs | x.1.2 = x.2.1}
 
 /-- The parallel two-dependency catenae of `g`: two arcs out of one head, each pair counted once,
 with the first dependent at the lower position of `g`. -/
-def parallel (g : Graph L n) : Finset ((Fin n × Fin n) × (Fin n × Fin n)) :=
+def parallel (g : Graph L (Fin n)) : Finset ((Fin n × Fin n) × (Fin n × Fin n)) :=
   {x ∈ g.arcs ×ˢ g.arcs | x.1.1 = x.2.1 ∧ x.1.2 < x.2.2}
 
 section Catena
@@ -85,20 +86,21 @@ variable {a b c : Fin n}
 
 private theorem exists_linked (hcat : g.IsCatena {a, b, c}) (hab : a ≠ b) {v : Fin n}
     (hv : v ∈ ({a, b, c} : Finset (Fin n))) :
-    ∃ w ∈ ({a, b, c} : Finset (Fin n)), w ≠ v ∧ g.Linked v w := by
+    ∃ w ∈ ({a, b, c} : Finset (Fin n)), w ≠ v ∧ SymmGen g.Adj v w := by
   have : Nontrivial ↥(↑({a, b, c} : Finset (Fin n)) : Set (Fin n)) :=
     ⟨⟨⟨a, by simp⟩, ⟨b, by simp⟩, fun h ↦ hab (congrArg Subtype.val h)⟩⟩
   obtain ⟨⟨w, hw⟩, h⟩ := SimpleGraph.Preconnected.exists_adj_of_nontrivial
     (SimpleGraph.Connected.preconnected hcat) ⟨v, by simpa using hv⟩
-  rw [SimpleGraph.comap_adj, Function.Embedding.subtype_apply, Function.Embedding.subtype_apply,
-    Graph.toSimpleGraph_adj] at h
-  exact ⟨w, by simpa using hw, fun e ↦ h.1 e.symm, h.2⟩
+  rw [SimpleGraph.comap_adj, Function.Embedding.subtype_apply,
+    Function.Embedding.subtype_apply] at h
+  obtain ⟨hne, hl⟩ : v ≠ w ∧ SymmGen g.Adj v w := h
+  exact ⟨w, by simpa using hw, fun e ↦ hne e.symm, hl⟩
 
-private theorem exists_of_linked (hg : g.IsForest) {m x y : Fin n} (hx : g.Linked m x)
-    (hy : g.Linked m y) (hxy : x ≠ y) :
+private theorem exists_of_linked (hg : g.IsBranching) {m x y : Fin n} (hx : SymmGen g.Adj m x)
+    (hy : SymmGen g.Adj m y) (hxy : x ≠ y) :
     ∃ z ∈ hierarchical g ∪ parallel g,
       ({z.1.1, z.1.2, z.2.1, z.2.2} : Finset (Fin n)) = {m, x, y} := by
-  simp only [hierarchical, parallel, mem_union, mem_filter, mem_product, Graph.mem_arcs]
+  simp only [hierarchical, parallel, mem_union, mem_filter, mem_product, Digraph.mem_arcs]
   rcases hx with hx | hx <;> rcases hy with hy | hy
   · rcases lt_or_gt_of_ne hxy with h | h
     · exact ⟨((m, x), (m, y)), Or.inr ⟨⟨hx, hy⟩, rfl, h⟩, by ext; simp; tauto⟩
@@ -108,36 +110,36 @@ private theorem exists_of_linked (hg : g.IsForest) {m x y : Fin n} (hx : g.Linke
   · exact absurd (hg.leftUnique_adj hx hy) hxy
 
 private theorem linked_or (hcat : g.IsCatena {a, b, c}) (hab : a ≠ b) :
-    g.Linked a b ∨ g.Linked a c := by
+    SymmGen g.Adj a b ∨ SymmGen g.Adj a c := by
   obtain ⟨t, ht, hta, h⟩ := exists_linked hcat hab (v := a) (by simp)
   simp only [mem_insert, mem_singleton] at ht
   rcases ht with rfl | rfl | rfl
   exacts [absurd rfl hta, .inl h, .inr h]
 
 -- §2.2: the catenae of three words are the hierarchical and the parallel ones
-theorem isCatena_triple_iff (hg : g.IsForest) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+theorem isCatena_triple_iff (hg : g.IsBranching) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     g.IsCatena {a, b, c} ↔ ∃ x ∈ hierarchical g ∪ parallel g,
       ({x.1.1, x.1.2, x.2.1, x.2.2} : Finset (Fin n)) = {a, b, c} := by
   constructor
   · intro hcat
     rcases linked_or hcat hab with h₁ | h₂
-    · by_cases h₂ : g.Linked a c
+    · by_cases h₂ : SymmGen g.Adj a c
       · exact exists_of_linked hg h₁ h₂ hbc
-      · have hc : g.Linked c a ∨ g.Linked c b :=
+      · have hc : SymmGen g.Adj c a ∨ SymmGen g.Adj c b :=
           linked_or (by rwa [show ({c, a, b} : Finset (Fin n)) = {a, b, c} by ext; simp; tauto])
             hac.symm
         obtain ⟨z, hz, e⟩ :=
           exists_of_linked hg h₁.symm (hc.resolve_left fun h ↦ h₂ h.symm).symm hac
         exact ⟨z, hz, e.trans (by ext; simp; tauto)⟩
-    · by_cases h₁ : g.Linked a b
+    · by_cases h₁ : SymmGen g.Adj a b
       · exact exists_of_linked hg h₁ h₂ hbc
-      · have hb : g.Linked b a ∨ g.Linked b c := linked_or (by rwa [insert_comm]) hab.symm
+      · have hb : SymmGen g.Adj b a ∨ SymmGen g.Adj b c := linked_or (by rwa [insert_comm]) hab.symm
         obtain ⟨z, hz, e⟩ :=
           exists_of_linked hg h₂.symm (hb.resolve_left fun h ↦ h₁ h.symm).symm hab
         exact ⟨z, hz, e.trans (by ext; simp; tauto)⟩
   · rintro ⟨x, hx, e⟩
-    rw [← e, Graph.IsCatena]
-    simp only [hierarchical, parallel, mem_union, mem_filter, mem_product, Graph.mem_arcs] at hx
+    rw [← e, Digraph.IsCatena]
+    simp only [hierarchical, parallel, mem_union, mem_filter, mem_product, Digraph.mem_arcs] at hx
     rcases hx with ⟨⟨h₁, h₂⟩, h⟩ | ⟨⟨h₁, h₂⟩, h, -⟩
     all_goals
       have e : (↑({x.1.1, x.1.2, x.2.1, x.2.2} : Finset (Fin n)) : Set (Fin n)) =
@@ -145,8 +147,10 @@ theorem isCatena_triple_iff (hg : g.IsForest) (hab : a ≠ b) (hac : a ≠ c) (h
         ext; simp; tauto
       rw [e]
       exact SimpleGraph.induce_union_connected
-        (SimpleGraph.Connected.preconnected (Graph.isCatena_pair g h₁ (hg.ne_of_adj h₁)))
-        (SimpleGraph.Connected.preconnected (Graph.isCatena_pair g h₂ (hg.ne_of_adj h₂)))
+        (SimpleGraph.Connected.preconnected
+          (Digraph.isCatena_pair g.toDigraph h₁ (hg.ne_of_adj h₁)))
+        (SimpleGraph.Connected.preconnected
+          (Digraph.isCatena_pair g.toDigraph h₂ (hg.ne_of_adj h₂)))
         ⟨x.2.1, by simp [h]⟩
 
 end Catena
@@ -208,8 +212,8 @@ theorem card_headFinalPairs_add_card_headInitialPairs :
   refine congrArg card (filter_congr fun p _ ↦ ?_)
   cases σ.headDirection p.1 p.2 <;> simp
 
-private theorem ne_of_mem_arcs (hg : g.IsForest) {p : Fin n × Fin n} (hp : p ∈ g.arcs) :
-    p.1 ≠ p.2 := hg.ne_of_adj (Graph.mem_arcs.1 hp)
+private theorem ne_of_mem_arcs (hg : g.IsBranching) {p : Fin n × Fin n} (hp : p ∈ g.arcs) :
+    p.1 ≠ p.2 := hg.ne_of_adj (Digraph.mem_arcs.1 hp)
 
 private theorem mem_arcs_of_mem_pairs (hC : C ⊆ g.arcs ×ˢ g.arcs) {p : Fin n × Fin n}
     (hp : p ∈ pairs C) : p ∈ g.arcs := by
@@ -218,14 +222,14 @@ private theorem mem_arcs_of_mem_pairs (hC : C ⊆ g.arcs ×ˢ g.arcs) {p : Fin n
   exacts [(mem_product.1 (hC hx)).1, (mem_product.1 (hC hx)).2]
 
 -- mirroring keeps the harmonic catenae
-theorem harmonic_mirror (hg : g.IsForest) (hC : C ⊆ g.arcs ×ˢ g.arcs) :
+theorem harmonic_mirror (hg : g.IsBranching) (hC : C ⊆ g.arcs ×ˢ g.arcs) :
     harmonic σ.mirror C = harmonic σ C :=
   filter_congr fun _ hy ↦
     have hy := mem_product.1 (hC hy)
     isHarmonic_mirror (ne_of_mem_arcs hg hy.1) (ne_of_mem_arcs hg hy.2)
 
 -- mirroring exchanges the head-final and the head-initial pairs
-theorem headFinalPairs_mirror (hg : g.IsForest) (hC : C ⊆ g.arcs ×ˢ g.arcs) :
+theorem headFinalPairs_mirror (hg : g.IsBranching) (hC : C ⊆ g.arcs ×ˢ g.arcs) :
     headFinalPairs σ.mirror C = headInitialPairs σ C :=
   filter_congr fun p hp ↦ by
     rw [Arrangement.headDirection_mirror (ne_of_mem_arcs hg (mem_arcs_of_mem_pairs hC hp))]
@@ -248,9 +252,10 @@ theorem dlm_map_mirror (ν : Measure (Arrangement (Fin n) n)) :
   simp only [Set.mem_preimage, Set.mem_ofPred_eq, length_mirror]
 
 -- on catenae covering every arc, the length is the total dependency length
-theorem length_eq_totalLength (hC : pairs C = g.arcs) : length σ C = (g.map σ).totalLength := by
-  rw [Graph.totalLength_map_eq, length, hC]
-  simp only [Graph.arcs, Graph.children, sum_filter, Fintype.sum_prod_type]
+theorem length_eq_totalLength (hC : pairs C = g.arcs) : length σ C =
+    (g.toDigraph.comap σ.symm).totalLength := by
+  rw [Digraph.totalLength_comap_symm_eq, length, hC]
+  simp only [Digraph.arcs, Digraph.children, sum_filter, Fintype.sum_prod_type]
 
 end Measures
 
@@ -264,9 +269,8 @@ def IsLexical (w : Word) : Prop :=
 instance : DecidablePred IsLexical := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The dependencies of `g` between lexical words, every word kept in place. -/
-def lexical (words : Fin n → Word) (g : Graph L n) : Graph L n :=
-  { g with label := fun v w ↦
-      if IsLexical (words v) ∧ IsLexical (words w) then g.label v w else none }
+def lexical (words : Fin n → Word) (g : Graph L (Fin n)) : Graph L (Fin n) :=
+  .ofLabel fun v w ↦ if IsLexical (words v) ∧ IsLexical (words w) then g.label v w else none
 
 /-- Figure 1: *We certainly fit into certain parts of the article*. -/
 def fig1Stemma : Stemma UD.DepRel :=
@@ -278,10 +282,10 @@ def fig1Stemma : Stemma UD.DepRel :=
         [(.case, leaf (.mk' "of" .ADP)), (.det, leaf (.mk' "the" .DET))] [])])]
 
 /-- The dependency graph of Figure 1. -/
-def fig1 : Graph UD.DepRel 9 := fig1Stemma.toGraph
+def fig1 : Graph UD.DepRel (Fin 9) := fig1Stemma.toGraph
 
 /-- The dependencies of Figure 1 between lexical words. -/
-def fig1Lexical : Graph UD.DepRel 9 := lexical fig1Stemma.word fig1
+def fig1Lexical : Graph UD.DepRel (Fin 9) := lexical fig1Stemma.word fig1
 
 /-- Table 2: in Figure 1 the two hierarchical catenae, one of them harmonic, have three pairs of
 summed length 7, one of them head-final, and the two parallel catenae, neither harmonic, have
@@ -302,13 +306,14 @@ def fig2a : Arrangement (Fin 9) 9 :=
 
 -- §2.4: the baseline sample is projective and its hierarchical catenae are 12 words long
 theorem length_fig2a :
-    (fig1.map fig2a).IsProjective ∧ length fig2a (hierarchical fig1Lexical) = 12 := by
+    (fig1.toDigraph.comap fig2a.symm).IsProjective ∧ length fig2a (hierarchical fig1Lexical) = 12 :=
+      by
   decide
 
 /-! ### The four orders of a chain, (6) -/
 
 /-- The chain of (6): `A` heads `B`, which heads `C`. -/
-def chain : Graph Unit 3 := Stemma.toGraph <|
+def chain : Graph Unit (Fin 3) := Stemma.toGraph <|
   node (.mk' "A" .X) [] [((), node (.mk' "B" .X) [] [((), leaf (.mk' "C" .X))])]
 
 /-- (6c): the order `A C B`, initial over final; (6a) is the identity, (6b) its mirror image and
@@ -319,24 +324,26 @@ def ex6c : Arrangement (Fin 3) 3 := Equiv.swap 1 2
 the mirror image of (6c), has its length, and is final over initial where (6c) is initial over
 final. -/
 theorem ex6 :
-    (chain.map (.refl _)).totalLength = 2 ∧
-      (chain.map (Arrangement.mirror (Equiv.refl (Fin 3)))).totalLength = 2 ∧
-      (chain.map ex6c).totalLength = 3 ∧ (chain.map ex6c.mirror).totalLength = 3 ∧
+    (chain.toDigraph.comap (Equiv.refl (Fin 3)).symm).totalLength = 2 ∧
+      (chain.toDigraph.comap (Arrangement.mirror (Equiv.refl (Fin 3))).symm).totalLength = 2 ∧
+      (chain.toDigraph.comap ex6c.symm).totalLength = 3 ∧
+        (chain.toDigraph.comap ex6c.mirror.symm).totalLength = 3 ∧
       directions ex6c.mirror ((0, 1), (1, 2)) = (.headFinal, .headInitial) ∧
       directions ex6c ((0, 1), (1, 2)) = (.headInitial, .headFinal) := by
-  have h₁ : (chain.map (.refl _)).totalLength = 2 := by decide
-  have h₂ : (chain.map ex6c).totalLength = 3 := by decide
+  have h₁ : (chain.toDigraph.comap (Equiv.refl (Fin 3)).symm).totalLength = 2 := by decide
+  have h₂ : (chain.toDigraph.comap ex6c.symm).totalLength = 3 := by decide
   refine ⟨h₁, ?_, h₂, ?_, by decide, by decide⟩
-  · rw [Graph.totalLength_map_mirror, h₁]
-  · rw [Graph.totalLength_map_mirror, h₂]
+  · rw [Digraph.totalLength_comap_symm_mirror, h₁]
+  · rw [Digraph.totalLength_comap_symm_mirror, h₂]
 
 -- (6) lists the projective orders of the chain, one for each pair of directions
 theorem projective_chain :
-    {σ : Arrangement (Fin 3) 3 | (chain.map σ).IsProjective} =
+    {σ : Arrangement (Fin 3) 3 | (chain.toDigraph.comap σ.symm).IsProjective} =
         ↑({.refl _, Arrangement.mirror (Equiv.refl (Fin 3)), ex6c, ex6c.mirror} :
           Finset (Arrangement (Fin 3) 3)) ∧
-      Set.BijOn (directions · ((0, 1), (1, 2))) {σ | (chain.map σ).IsProjective} .univ := by
-  have e : {σ : Arrangement (Fin 3) 3 | (chain.map σ).IsProjective} =
+      Set.BijOn (directions · ((0, 1), (1, 2))) {σ | (chain.toDigraph.comap σ.symm).IsProjective}
+        .univ := by
+  have e : {σ : Arrangement (Fin 3) 3 | (chain.toDigraph.comap σ.symm).IsProjective} =
       ↑({.refl _, Arrangement.mirror (Equiv.refl (Fin 3)), ex6c, ex6c.mirror} :
         Finset (Arrangement (Fin 3) 3)) := by
     ext σ
@@ -364,18 +371,20 @@ variable {μ ν : Measure (Arrangement (Fin n) n)} {f : ℕ → ℝ≥0∞}
   {C : Finset ((Fin n × Fin n) × (Fin n × Fin n))} {x : (Fin n × Fin n) × (Fin n × Fin n)}
   {ε : ℝ≥0∞}
 
-theorem map_mirror_eq_self (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLength) :
+theorem map_mirror_eq_self (hμ : ∀ σ, μ {σ} = f (g.toDigraph.comap σ.symm).totalLength) :
     μ.map Arrangement.mirror = μ := by
   refine Measure.ext_iff_singleton.2 fun σ ↦ ?_
   have : Arrangement.mirror ⁻¹' {σ} = {σ.mirror} := by
     ext τ
     exact Arrangement.mirror_involutive.eq_iff
-  rw [Measure.map_apply .of_discrete .of_discrete, this, hμ, hμ, Graph.totalLength_map_mirror]
+  rw
+    [Measure.map_apply .of_discrete .of_discrete, this, hμ, hμ,
+      Digraph.totalLength_comap_symm_mirror]
 
 /-- Under a law of linearizations invariant under mirroring, the DLM score has one distribution
 at `k` head-final pairs and at `k` head-initial pairs, so no such law makes the score fall with
 head-finality. Every law weighting dependency length alone is one (`map_mirror_eq_self`). -/
-theorem measure_dlm_headFinal (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
+theorem measure_dlm_headFinal (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsBranching)
     (hC : C ⊆ g.arcs ×ˢ g.arcs) (S : Set ℝ≥0∞) (k : ℕ) :
     μ {σ | dlm σ C ν ∈ S ∧ #(headFinalPairs σ C) = k} =
       μ {σ | dlm σ C ν ∈ S ∧ #(headInitialPairs σ C) = k} := by
@@ -409,14 +418,14 @@ private theorem measure_swap_eq (hμ : μ.map Arrangement.mirror = μ) (h₁ : x
   ext σ
   exact (HeadDirection.swap_involutive.prodMap HeadDirection.swap_involutive).eq_iff.symm
 
-private theorem ne_of_mem_catena (hg : g.IsForest) (hx : x ∈ hierarchical g ∪ parallel g) :
+private theorem ne_of_mem_catena (hg : g.IsBranching) (hx : x ∈ hierarchical g ∪ parallel g) :
     x.1.1 ≠ x.1.2 ∧ x.2.1 ≠ x.2.2 := by
   have hx : x ∈ g.arcs ×ˢ g.arcs := by
     rcases mem_union.1 hx with hx | hx <;> exact (mem_filter.1 hx).1
   exact ⟨ne_of_mem_arcs hg (mem_product.1 hx).1, ne_of_mem_arcs hg (mem_product.1 hx).2⟩
 
 -- (6), Table 4: a final-over-initial catena is as likely as an initial-over-final one
-theorem measure_finalOverInitial (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
+theorem measure_finalOverInitial (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsBranching)
     (hx : x ∈ hierarchical g) :
     μ {σ | directions σ x = (.headFinal, .headInitial)} =
       μ {σ | directions σ x = (.headInitial, .headFinal)} :=
@@ -424,7 +433,7 @@ theorem measure_finalOverInitial (hμ : μ.map Arrangement.mirror = μ) (hg : g.
   measure_swap_eq hμ h.1 h.2 (.headInitial, .headFinal)
 
 -- p. 412: parallel dependents pile up before their head as often as after it
-theorem measure_pileUp (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
+theorem measure_pileUp (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsBranching)
     (hx : x ∈ parallel g) :
     μ {σ | directions σ x = (.headFinal, .headFinal)} =
       μ {σ | directions σ x = (.headInitial, .headInitial)} :=
@@ -529,12 +538,13 @@ theorem dlm_chain : dlm (Equiv.refl _) (hierarchical chain) Measure.count = 4 :=
   exact (Nat.cast_inj (R := ℝ≥0∞)).2 (by decide)
 
 -- the hierarchical catena of the chain covers its arcs, so its length is the total length
-example (σ : Arrangement (Fin 3) 3) : length σ (hierarchical chain) = (chain.map σ).totalLength :=
+example (σ : Arrangement (Fin 3) 3) : length σ (hierarchical chain) =
+    (chain.toDigraph.comap σ.symm).totalLength :=
   length_eq_totalLength (by decide)
 
 -- the uniform law on the orders of the chain, which weights dependency length alone, meets the
 -- hypotheses of `measure_dlm_headFinal` and `cond_harmonic`
-example : chain.IsForest ∧ hierarchical chain ⊆ chain.arcs ×ˢ chain.arcs ∧
+example : chain.IsBranching ∧ hierarchical chain ⊆ chain.arcs ×ˢ chain.arcs ∧
     (Measure.count : Measure (Arrangement (Fin 3) 3)).map Arrangement.mirror = Measure.count ∧
     Measure.count {σ : Arrangement (Fin 3) 3 |
       directions σ ((0, 1), (1, 2)) = (.headInitial, .headInitial)} ≠ 0 ∧

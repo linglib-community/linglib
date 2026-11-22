@@ -53,7 +53,7 @@ namespace KuhlmannNivre2006
 
 open DependencyGrammar Relation
 
-variable {L : Type*} {n : ℕ} (g : Graph L n)
+variable {L : Type*} {n : ℕ} (g : Graph L (Fin n))
 
 /-! ### Edge degree (Definition 9) -/
 
@@ -65,7 +65,7 @@ def componentRoots (h d : Fin n) : Finset (Fin n) :=
 /-- The degree of the arc from `h` to `d`: the number of components of the subgraph induced by
 its span whose root `h` does not dominate. -/
 def edgeDegreeAt (h d : Fin n) : ℕ :=
-  ((componentRoots g h d).filter fun v ↦ ¬ g.Dominates h v).card
+  ((componentRoots g h d).filter fun v ↦ ¬ g.Reachable h v).card
 
 /-- The edge degree of a graph: the maximum degree of its arcs. -/
 def edgeDegree : ℕ :=
@@ -73,25 +73,26 @@ def edgeDegree : ℕ :=
 
 variable {g}
 
-theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
-    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, g.Dominates h v := by
+theorem edgeDegreeAt_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) {h d : Fin n} :
+    edgeDegreeAt g h d = 0 ↔ ∀ v ∈ Set.uIcc h d, g.Reachable h v := by
   rw [edgeDegreeAt, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   simp only [componentRoots, Finset.mem_filter, not_not, and_imp]
   simp only [← Finset.mem_coe, Finset.coe_uIcc]
   constructor
   · intro H v hv
-    by_cases hr : g.root ∈ Set.uIcc h d
-    · exact (hT.dominates_antisymm (H hr fun u hu ↦ absurd hu (hT.not_adj_root u))
-        (hT.root_dominates h)).symm ▸ hT.root_dominates v
+    by_cases hr : r ∈ Set.uIcc h d
+    · exact (hT.reachable_antisymm (H hr fun u hu ↦ absurd hu (hT.not_adj_root u))
+        (hT.reachable h)).symm ▸ hT.reachable v
     · obtain ⟨p, q, hpq, hp, hq, -, hqv⟩ :=
-        (hT.root_dominates v).exists_boundary (S := (Set.uIcc h d)ᶜ) hr (not_not_intro hv)
+        (hT.reachable v).exists_boundary (S := (Set.uIcc h d)ᶜ) hr (not_not_intro hv)
       exact (H (not_not.mp hq) fun u hu ↦ hT.leftUnique_adj hu hpq ▸ hp).trans hqv
   · exact fun H v hv _ ↦ H v hv
 
-theorem edgeDegree_eq_zero_iff (hT : g.IsTree) : edgeDegree g = 0 ↔ g.IsProjective := by
-  rw [Graph.isProjective_iff_isArcProjective, edgeDegree, ← Nat.bot_eq_zero,
+theorem edgeDegree_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) : edgeDegree g = 0 ↔
+    g.IsProjective := by
+  rw [Digraph.isProjective_iff_isArcProjective, edgeDegree, ← Nat.bot_eq_zero,
     Finset.sup_eq_bot_iff]
-  simp only [Graph.mem_arcs, Nat.bot_eq_zero, Prod.forall, edgeDegreeAt_eq_zero_iff hT]
+  simp only [Digraph.mem_arcs, Nat.bot_eq_zero, Prod.forall, edgeDegreeAt_eq_zero_iff hT]
   exact Iff.rfl
 
 /-! ### Figure 1: a dependency forest
@@ -101,63 +102,65 @@ punctuation mark without a head, so it is a forest and not a tree, and the yield
 *proto*. -/
 
 /-- Figure 1: nodes 2 and 8 have no head. -/
-def fig1 : Graph Unit 8 :=
-  .ofArcs 1
+def fig1 : Graph Unit (Fin 8) :=
+  .ofArcs
     [(1, 0, ()), (0, 2, ()), (0, 3, ()), (3, 6, ()), (6, 4, ()), (6, 5, ())]
 
 /-- Figure 1 is a forest whose roots are nodes 2 and 8, and so not a tree. -/
 theorem fig1_isForest_not_isTree :
-    fig1.IsForest ∧ ¬ fig1.IsTree ∧ ∀ w, (∀ v, ¬ fig1.Adj v w) ↔ w = 1 ∨ w = 7 := by
+    fig1.IsBranching ∧ ¬ fig1.IsArborescence 1 ∧ ∀ w, (∀ v, ¬ fig1.Adj v w) ↔ w = 1 ∨ w = 7 := by
   decide
 
 -- Figure 1
 theorem fig1_not_isProjective :
-    (fig1.yield 0).toFinset = {0, 2, 3, 4, 5, 6} ∧ ¬ fig1.IsProjective := by
+    (fig1.reachSet 0).toFinset = {0, 2, 3, 4, 5, 6} ∧ ¬ fig1.IsProjective := by
   decide
 
 /-! ### Figure 2: planarity
 
 Figure 2a is planar but not projective, its root inside the gap where the substrate's
-`Graph.IsPlanar.root_mem_gap` says a planar tree's root has to be; Figure 2b is not planar,
+`Digraph.IsPlanar.root_mem_gap` says a planar tree's root has to be; Figure 2b is not planar,
 its two named edges crossing. -/
 
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
-def fig2a : Graph Unit 3 := .ofArcs 1 [(1, 0, ()), (0, 2, ())]
+def fig2a : Graph Unit (Fin 3) := .ofArcs [(1, 0, ()), (0, 2, ())]
 
 /-- Figure 2b: the edges (1, 4) and (3, 5) cross. -/
-def fig2b : Graph Unit 5 :=
-  .ofArcs 1 [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
+def fig2b : Graph Unit (Fin 5) :=
+  .ofArcs [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
 
-theorem fig2a_isTree : fig2a.IsTree := by decide
-theorem fig2b_isTree : fig2b.IsTree := by decide
+theorem fig2a_isTree : fig2a.IsArborescence 1 := by decide
+theorem fig2b_isTree : fig2b.IsArborescence 1 := by decide
 
 theorem fig2a_planar_not_projective :
-    fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ (0 : Fin 3) < fig2a.root ∧ fig2a.root < 2 := by
+    fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ fig2a.IsArborescence 1 := by
   decide
 
 -- Figure 2b, (1, 4), (3, 5)
 theorem fig2b_crossing :
-    fig2b.Linked 0 3 ∧ fig2b.Linked 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧ fig2b.crossings = 1 := by
+    SymmGen fig2b.Adj 0 3 ∧ SymmGen fig2b.Adj 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧ fig2b.crossings =
+      1 := by
   decide +kernel
 
 /-! ### Figure 3: gap degree, edge degree, and well-nestedness -/
 
 /-- Figure 3a: the projection of node 2 is the interval `(2, 3, 4)`. -/
-def fig3a : Graph Unit 6 :=
-  .ofArcs 0
+def fig3a : Graph Unit (Fin 6) :=
+  .ofArcs
     [(0, 1, ()), (1, 2, ()), (2, 3, ()), (0, 4, ()), (4, 5, ())]
 
 /-- Figure 3b: the projection of node 2 is `(2, 3, 6)`, with the gap `(3, 6)`. -/
-def fig3b : Graph Unit 6 :=
-  .ofArcs 0
+def fig3b : Graph Unit (Fin 6) :=
+  .ofArcs
     [(0, 1, ()), (1, 2, ()), (2, 5, ()), (0, 3, ()), (3, 4, ())]
 
 /-- Figure 3c: the projection of node 2 is `(2, 4, 6)`, with the gaps `(2, 4)` and `(4, 6)`. -/
-def fig3c : Graph Unit 6 :=
-  .ofArcs 0
+def fig3c : Graph Unit (Fin 6) :=
+  .ofArcs
     [(0, 1, ()), (1, 3, ()), (3, 5, ()), (0, 2, ()), (2, 4, ())]
 
-theorem figure3_isTree : fig3a.IsTree ∧ fig3b.IsTree ∧ fig3c.IsTree := by decide
+theorem figure3_isTree : fig3a.IsArborescence 0 ∧ fig3b.IsArborescence 0 ∧ fig3c.IsArborescence 0 :=
+    by decide
 
 theorem figure3_gapDegree :
     (fig3a.gapDegreeAt 1 = 0 ∧ fig3a.gapDegree = 0) ∧
@@ -176,7 +179,7 @@ theorem figure3_edgeDegree :
 -- Figures 3a and 3b, Figure 3c
 theorem figure3_wellNested :
     fig3a.IsWellNested ∧ fig3b.IsWellNested ∧
-      (fig3c.Interleave 1 2 ∧ ¬ fig3c.Dominates 1 2 ∧ ¬ fig3c.Dominates 2 1) := by
+      (fig3c.Interleave 1 2 ∧ ¬ fig3c.Reachable 1 2 ∧ ¬ fig3c.Reachable 2 1) := by
   decide +kernel
 
 -- Figure 2a, Figure 3b
@@ -188,16 +191,16 @@ theorem hierarchy_strict :
 
 /-- Figure 4a: the subtree at node 2 has two gaps, each of its edges spanning one component
 node 2 does not dominate. -/
-def fig4a : Graph Unit 6 :=
-  .ofArcs 0
+def fig4a : Graph Unit (Fin 6) :=
+  .ofArcs
     [(0, 1, ()), (0, 2, ()), (2, 4, ()), (1, 3, ()), (3, 5, ())]
 
 /-- Figure 4b: the subtree at node 2 has one gap, containing two components node 2 does not
 dominate. -/
-def fig4b : Graph Unit 5 :=
-  .ofArcs 0 [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
+def fig4b : Graph Unit (Fin 5) :=
+  .ofArcs [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
 
-theorem figure4_isTree : fig4a.IsTree ∧ fig4b.IsTree := by decide
+theorem figure4_isTree : fig4a.IsArborescence 0 ∧ fig4b.IsArborescence 0 := by decide
 
 -- Figure 4
 theorem figure4_degrees :
@@ -214,23 +217,23 @@ over all structures, through the degree-zero theorems and the hierarchy. -/
 open Data.Statistics (Decimal)
 
 /-- What a binary constraint says of a graph. -/
-def Constraint.Holds : Constraint → Graph L n → Prop
+def Constraint.Holds : Constraint → Graph L (Fin n) → Prop
   | .planar, g => g.IsPlanar
   | .wellNested, g => g.IsWellNested
 
-instance : ∀ (c : Constraint) (g : Graph L n), Decidable (c.Holds g)
+instance : ∀ (c : Constraint) (g : Graph L (Fin n)), Decidable (c.Holds g)
   | .planar, g => inferInstanceAs (Decidable g.IsPlanar)
   | .wellNested, g => inferInstanceAs (Decidable g.IsWellNested)
 
 /-- The degree a graded measure gives a graph. -/
-def Measure.degree : Measure → Graph L n → ℕ
+def Measure.degree : Measure → Graph L (Fin n) → ℕ
   | .gap, g => g.gapDegree
   | .edge, g => edgeDegree g
 
-theorem Measure.degree_eq_zero_iff (hT : g.IsTree) {m : Measure} :
+theorem Measure.degree_eq_zero_iff {r : Fin n} (hT : g.IsArborescence r) {m : Measure} :
     m.degree g = 0 ↔ g.IsProjective := by
   cases m
-  exacts [Graph.isProjective_iff_gapDegree_eq_zero.symm, edgeDegree_eq_zero_iff hT]
+  exacts [Digraph.isProjective_iff_gapDegree_eq_zero.symm, edgeDegree_eq_zero_iff hT]
 
 /-- The number of structures of `t` at degree `d` on `m`, zero at a dash or past the table. -/
 def count (m : Measure) (t : Treebank) (d : ℕ) : ℕ := ((degrees m t).counts.getD d none).getD 0
@@ -241,10 +244,10 @@ def atMost (m : Measure) (t : Treebank) (k : ℕ) : ℕ := ∑ d ∈ Finset.rang
 theorem atMost_mono (m : Measure) (t : Treebank) : Monotone (atMost m t) := fun _ _ h ↦
   Finset.sum_le_sum_of_subset (Finset.range_subset_range.2 (Nat.succ_le_succ h))
 
-variable {T : Multiset (Σ n, Graph L n)} {t : Treebank}
+variable {T : Multiset (Σ n, Graph L (Fin n))} {t : Treebank}
 
 /-- A treebank has the counts Table 1 prints for `t` over all of its structures. -/
-structure HasCounts (T : Multiset (Σ n, Graph L n)) (t : Treebank) : Prop where
+structure HasCounts (T : Multiset (Σ n, Graph L (Fin n))) (t : Treebank) : Prop where
   card_eq : Multiset.card T = (structures t).all
   countP_isProjective : T.countP (·.2.IsProjective) = (structures t).projective
   countP_holds (c : Constraint) : T.countP (c.Holds ·.2) = (coverage c t).all
@@ -257,7 +260,8 @@ private theorem countP_replicate {α : Type*} (p : α → Prop) [DecidablePred p
 /-- Copies of the trees of Figures 2a, 3a, 3b and 3c make a treebank with the counts of Table 1,
 which is thus not vacuous. -/
 theorem exists_hasCounts (t : Treebank) :
-    ∃ T : Multiset (Σ n, Graph Unit n), (∀ g ∈ T, g.2.IsTree) ∧ HasCounts T t := by
+    ∃ T : Multiset (Σ n, Graph Unit (Fin n)), (∀ g ∈ T, (∃ r, g.2.IsArborescence r)) ∧ HasCounts T t
+      := by
   have h3a : fig3a.IsProjective ∧ fig3a.IsPlanar ∧ fig3a.IsWellNested := by decide +kernel
   have h2a : ¬ fig2a.IsProjective ∧ fig2a.IsPlanar ∧ fig2a.IsWellNested := by decide +kernel
   have h3b : ¬ fig3b.IsProjective ∧ ¬ fig3b.IsPlanar ∧ fig3b.IsWellNested := by decide +kernel
@@ -269,7 +273,8 @@ theorem exists_hasCounts (t : Treebank) :
     .replicate ((structures t).all - (coverage .wellNested t).all) ⟨6, fig3c⟩, ?_, ?_, ?_, ?_⟩
   · simp only [Multiset.mem_add, Multiset.mem_replicate]
     rintro g (((⟨-, rfl⟩ | ⟨-, rfl⟩) | ⟨-, rfl⟩) | ⟨-, rfl⟩)
-    exacts [figure3_isTree.1, fig2a_isTree, figure3_isTree.2.1, figure3_isTree.2.2]
+    exacts [⟨_, figure3_isTree.1⟩, ⟨_, fig2a_isTree⟩, ⟨_, figure3_isTree.2.1⟩,
+      ⟨_, figure3_isTree.2.2⟩]
   · simp only [Multiset.card_add, Multiset.card_replicate]
     cases t <;> decide
   · simp only [Multiset.countP_add, countP_replicate, h3a, h2a, h3b, h3c, ↓reduceIte, add_zero]
@@ -280,9 +285,12 @@ theorem exists_hasCounts (t : Treebank) :
 
 /-- Over a treebank of trees with the counts of Table 1, the structures at degree zero on either
 measure are as many as the table prints. -/
-theorem HasCounts.countP_degree_eq_zero (h : HasCounts T t) (hT : ∀ g ∈ T, g.2.IsTree)
+theorem HasCounts.countP_degree_eq_zero (h : HasCounts T t)
+    (hT : ∀ g ∈ T, (∃ r, g.2.IsArborescence r))
     (m : Measure) : T.countP (m.degree ·.2 = 0) = count m t 0 := by
-  rw [Multiset.countP_congr rfl fun g hg ↦ propext (Measure.degree_eq_zero_iff (hT g hg)),
+  rw
+    [Multiset.countP_congr rfl fun g hg ↦ propext
+      ((hT g hg).elim fun _ h ↦ Measure.degree_eq_zero_iff h),
     h.countP_isProjective]
   clear h hT
   revert m t
@@ -290,7 +298,7 @@ theorem HasCounts.countP_degree_eq_zero (h : HasCounts T t) (hT : ∀ g ∈ T, g
 
 /-- Over a treebank of forests with the counts of Table 1, the non-projective structures, and
 those of them meeting each binary constraint, are as many as the table prints. -/
-theorem HasCounts.countP_nonProjective (h : HasCounts T t) (hF : ∀ g ∈ T, g.2.IsForest) :
+theorem HasCounts.countP_nonProjective (h : HasCounts T t) (hF : ∀ g ∈ T, g.2.IsBranching) :
     T.countP (¬ ·.2.IsProjective) = (structures t).nonProjective ∧
       ∀ c : Constraint, T.countP (fun g ↦ c.Holds g.2 ∧ ¬ g.2.IsProjective) =
         (coverage c t).nonProjective := by

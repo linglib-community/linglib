@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.DependencyGrammar.Maps
+public import Linglib.Syntax.DependencyGrammar.Basic
 public import Mathlib.Data.Multiset.Filter
 public import Mathlib.Order.Interval.Basic
 
@@ -39,14 +39,14 @@ valency that admits whatever it admits.
 * `Graph.satisfies_iff_count`: a position satisfies a valency iff the quantity of each relation
   among its valents lies between the quantities at the two ends.
 * `Graph.Satisfies.mono`: satisfaction is monotone in the valency.
-* `Graph.satisfies_map`: satisfaction is invariant under a change of linearization.
+* `Graph.satisfies_comap_symm`: satisfaction is invariant under a change of linearization.
 
 ## Implementation notes
 
 The valents are a multiset because a valency may call for several valents of one relation, as
 when relations are syntactic categories and a verb takes three nominals. A valency says nothing
 of word order: the side of the head a valent stands on is a property of the relation in a
-language, not of the word's valency, and `Graph.satisfies_map` holds for every permutation of
+language, not of the word's valency, and `Graph.satisfies_comap_symm` holds for every permutation of
 the positions.
 
 ## References
@@ -100,16 +100,17 @@ namespace Graph
 /-! ### Valents -/
 
 /-- The dependents of `v` by a relation satisfying `p`. -/
-def childrenBy (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) : Finset (Fin n) :=
+def childrenBy (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) : Finset (Fin n)
+    :=
   {w | ∃ r ∈ g.label v w, p r}
 
 /-- The relations satisfying `p` that the dependents of `v` bear, each as often as `v` has a
 dependent by it. With `p` the predicate of the relations of valents, these are the valents of
 `v`. -/
-def valents (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
+def valents (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) : Multiset L :=
   (univ : Finset (Fin n)).val.filterMap fun w ↦ (g.label v w).filter p
 
-variable {g : Graph L n} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
+variable {g : Graph L (Fin n)} {p : L → Prop} [DecidablePred p] {v w : Fin n} {r : L}
   {val val₁ val₂ : Valency L}
 
 @[simp] theorem mem_childrenBy : w ∈ g.childrenBy p v ↔ ∃ r ∈ g.label v w, p r := by
@@ -165,7 +166,8 @@ theorem count_valents [DecidableEq L] (r : L) :
     exact hr hx
 
 /-- The valents of a position are those of its preimage under a change of linearization. -/
-theorem valents_map (σ : Equiv.Perm (Fin n)) : (g.map σ).valents p v = g.valents p (σ.symm v) := by
+theorem valents_comap_symm (σ : Equiv.Perm (Fin n)) : (g.comap σ.symm).valents p v = g.valents p
+    (σ.symm v) := by
   have h : (univ : Finset (Fin n)).val.map σ.symm = univ.val :=
     congrArg Finset.val (Finset.map_univ_equiv σ.symm)
   conv_rhs => rw [valents, ← h, Multiset.filterMap_map]
@@ -175,7 +177,7 @@ theorem valents_map (σ : Equiv.Perm (Fin n)) : (g.map σ).valents p v = g.valen
 
 /-- The position `v` satisfies the valency `val` when its valents, the relations satisfying `p`
 that its dependents bear, lie between the obligatory valents of `val` and all its valents. -/
-def Satisfies (g : Graph L n) (p : L → Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
+def Satisfies (g : Graph L (Fin n)) (p : L → Prop) [DecidablePred p] (v : Fin n) (val : Valency L) :
     Prop :=
   g.valents p v ∈ val
 
@@ -202,9 +204,9 @@ theorem Satisfies.mono (h : val₁ ≤ val₂) (hs : g.Satisfies p v val₁) : g
   ⟨h.1.trans hs.1, hs.2.trans h.2⟩
 
 /-- Satisfaction of a valency is invariant under a change of linearization. -/
-@[simp] theorem satisfies_map (σ : Equiv.Perm (Fin n)) :
-    (g.map σ).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
-  rw [Satisfies, valents_map, Satisfies]
+@[simp] theorem satisfies_comap_symm (σ : Equiv.Perm (Fin n)) :
+    (g.comap σ.symm).Satisfies p v val ↔ g.Satisfies p (σ.symm v) val := by
+  rw [Satisfies, valents_comap_symm, Satisfies]
 
 end Graph
 

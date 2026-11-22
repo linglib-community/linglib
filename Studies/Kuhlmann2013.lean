@@ -30,7 +30,7 @@ more than 92% of the rules](##reduction_wellNested).
 ## Implementation notes
 
 Positions are zero-based, so node `i` of a figure is position `i - 1`. The substrate's
-`Graph.IsWellNested` is the paper's definition under the paper's own gloss: yields may overlap
+`Digraph.IsWellNested` is the paper's definition under the paper's own gloss: yields may overlap
 only when one node dominates the other. Block-degree is the gap degree plus one, as the
 paper's footnote on gap-degree observes. A restriction keeps a tree when it keeps every rule
 extracted from it, which for the well-nested restriction reads the tree's well-nestedness as
@@ -47,36 +47,36 @@ namespace Kuhlmann2013
 open DependencyGrammar Relation
 open Data.Statistics (Decimal)
 
-variable {L : Type*} {n : ℕ} {g : Graph L n}
+variable {L : Type*} {n : ℕ} {g : Graph L (Fin n)}
 
 /-! ### Block-degree (§7.1) -/
 
 /-- The block-degree of a graph: the maximal number of blocks a node's yield falls into, one
 more than the gap degree. -/
-def blockDegree (g : Graph L n) : ℕ := g.gapDegree + 1
+def blockDegree (g : Graph L (Fin n)) : ℕ := g.gapDegree + 1
 
 theorem isProjective_iff_blockDegree_eq_one :
     g.IsProjective ↔ blockDegree g = 1 := by
-  rw [Graph.isProjective_iff_gapDegree_eq_zero, blockDegree]
+  rw [Digraph.isProjective_iff_gapDegree_eq_zero, blockDegree]
   omega
 
 /-! ### Well-nestedness (§8.1) -/
 
 /-- Lemma 9: a tree is ill-nested iff two sibling nodes have interleaving yields. -/
-theorem not_isWellNested_iff_siblings (hT : g.IsTree) :
+theorem not_isWellNested_iff_siblings {r : Fin n} (hT : g.IsArborescence r) :
     ¬ g.IsWellNested ↔ ∃ p u v, g.Adj p u ∧ g.Adj p v ∧ u ≠ v ∧ g.Interleave u v := by
   constructor
   · intro h
-    simp only [Graph.IsWellNested, not_forall, not_or] at h
+    simp only [Digraph.IsWellNested, not_forall, not_or] at h
     obtain ⟨u, v, ⟨a, ha, b, hb, c, hc, d, hd, halt⟩, huv, hvu⟩ := h
     obtain ⟨p, u', v', hu', hv', hne, hu'u, hv'v⟩ :=
-      Graph.exists_adj_adj_of_not_dominates (hT.root_dominates u) (hT.root_dominates v) huv hvu
+      Digraph.exists_adj_adj_of_not_reachable (hT.reachable u) (hT.reachable v) huv hvu
     exact ⟨p, u', v', hu', hv', hne,
       a, hu'u.trans ha, b, hu'u.trans hb, c, hv'v.trans hc, d, hv'v.trans hd, halt⟩
   · rintro ⟨p, u, v, hpu, hpv, huv, hI⟩ hW
     rcases hW u v hI with h | h
-    · exact hT.not_dominates_of_adj hpu (hT.dominates_head h huv hpv)
-    · exact hT.not_dominates_of_adj hpv (hT.dominates_head h huv.symm hpu)
+    · exact hT.not_reachable_of_adj hpu (hT.reachable_of_adj h huv hpv)
+    · exact hT.not_reachable_of_adj hpv (hT.reachable_of_adj h huv.symm hpu)
 
 /-! ### Figure 1: nested against cross-serial
 
@@ -84,21 +84,19 @@ The German order nests the verb–argument dependencies and is projective; the D
 crosses them and is not, at gap degree 1. -/
 
 /-- Dutch cross-serial: *dat Jan Piet Marie zag helpen lezen*. -/
-def dutchCrossSerial : Graph UD.DepRel 7 :=
+def dutchCrossSerial : Graph UD.DepRel (Fin 7) :=
   .ofArcs
-    0
     [(0, 4, .dep), (4, 1, .nsubj), (4, 5, .xcomp),
      (5, 2, .nsubj), (5, 6, .xcomp), (6, 3, .nsubj)]
 
 /-- German nested: *dass Jan Piet Marie lesen helfen sah*. -/
-def germanNested : Graph UD.DepRel 7 :=
+def germanNested : Graph UD.DepRel (Fin 7) :=
   .ofArcs
-    0
     [(0, 6, .dep), (6, 1, .nsubj), (6, 5, .xcomp),
      (5, 2, .nsubj), (5, 4, .xcomp), (4, 3, .nsubj)]
 
-theorem dutchCrossSerial_isTree : dutchCrossSerial.IsTree := by decide
-theorem germanNested_isTree : germanNested.IsTree := by decide
+theorem dutchCrossSerial_isTree : dutchCrossSerial.IsArborescence 0 := by decide
+theorem germanNested_isTree : germanNested.IsArborescence 0 := by decide
 
 theorem figure1_projectivity : ¬ dutchCrossSerial.IsProjective ∧ germanNested.IsProjective := by
   decide
@@ -114,13 +112,13 @@ theorem dutchCrossSerial_isWellNested :
 /-! ### Figures 10 and 11: block-degree and well-nestedness -/
 
 /-- Figure 10, `D₁`: the yield of node 2 falls into the blocks {2, 3} and {6}. -/
-def fig10D1 : Graph Unit 6 :=
-  .ofArcs 0
+def fig10D1 : Graph Unit (Fin 6) :=
+  .ofArcs
     [(0, 1, ()), (0, 4, ()), (4, 3, ()), (1, 2, ()), (2, 5, ())]
 
 /-- Figure 10, `D₂`: the yield of node 1 falls into the blocks {1}, {3} and {6}. -/
-def fig10D2 : Graph Unit 6 :=
-  .ofArcs 1
+def fig10D2 : Graph Unit (Fin 6) :=
+  .ofArcs
     [(1, 0, ()), (1, 4, ()), (4, 3, ()), (0, 2, ()), (2, 5, ())]
 
 -- Example 6
@@ -128,16 +126,16 @@ theorem figure10_blockDegree : blockDegree fig10D1 = 2 ∧ blockDegree fig10D2 =
   decide
 
 /-- Figure 11, `D₁`: non-projective with no overlapping yields at all. -/
-def fig11D1 : Graph Unit 4 :=
-  .ofArcs 1 [(1, 0, ()), (1, 2, ()), (0, 3, ())]
+def fig11D1 : Graph Unit (Fin 4) :=
+  .ofArcs [(1, 0, ()), (1, 2, ()), (0, 3, ())]
 
 /-- Figure 11, `D₂`: the yields of nodes 1 and 2 overlap, but node 1 dominates node 2. -/
-def fig11D2 : Graph Unit 4 :=
-  .ofArcs 0 [(0, 2, ()), (2, 1, ()), (1, 3, ())]
+def fig11D2 : Graph Unit (Fin 4) :=
+  .ofArcs [(0, 2, ()), (2, 1, ()), (1, 3, ())]
 
 /-- Figure 11, `D₃`: the yields of the sibling nodes 2 and 3 overlap. -/
-def fig11D3 : Graph Unit 5 :=
-  .ofArcs 0 [(0, 2, ()), (2, 4, ()), (0, 1, ()), (1, 3, ())]
+def fig11D3 : Graph Unit (Fin 5) :=
+  .ofArcs [(0, 2, ()), (2, 4, ()), (0, 1, ()), (1, 3, ())]
 
 -- Figure 11, Example 8
 theorem figure11_wellNested :
@@ -145,12 +143,12 @@ theorem figure11_wellNested :
       (fig11D2.IsWellNested ∧ ¬ fig11D2.IsProjective) := by
   decide +kernel
 
-theorem fig11D2_interleave : fig11D2.Interleave 0 1 ∧ fig11D2.Dominates 0 1 := by
+theorem fig11D2_interleave : fig11D2.Interleave 0 1 ∧ fig11D2.Reachable 0 1 := by
   decide +kernel
 
 -- Lemma 9
 theorem fig11D3_not_isWellNested : ¬ fig11D3.IsWellNested :=
-  (not_isWellNested_iff_siblings (by decide)).2
+  (not_isWellNested_iff_siblings (by decide : fig11D3.IsArborescence 0)).2
     ⟨0, 1, 2, by decide, by decide, by decide, by decide +kernel⟩
 
 theorem figure11_blockDegree : blockDegree fig11D2 = 2 ∧ blockDegree fig11D3 = 2 := by
@@ -161,7 +159,7 @@ theorem figure11_blockDegree : blockDegree fig11D2 = 2 ∧ blockDegree fig11D3 =
 /-- What a restriction keeps of a tree: every rule extracted from it meets the restriction, the
 fan-out of the rule extracted at a node being the node's block-degree (§7.3) and its
 well-nestedness that of the tree (§8.3). -/
-def Restriction.Holds : Restriction → Graph L n → Prop
+def Restriction.Holds : Restriction → Graph L (Fin n) → Prop
   | .fanOutOne, g => blockDegree g = 1
   | .fanOutLeTwo, g => blockDegree g ≤ 2
   | .wellNested, g => g.IsWellNested ∧ blockDegree g ≤ 2
