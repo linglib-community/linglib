@@ -29,11 +29,12 @@ the rest of the list to the mother (`HPSG.Construction.satisfies_mtrGap_iff`). T
 As in Sag's grammars, a `GAP` list contains signs, and a word leaves a covert sign of sort `gap`
 on it for an argument that it does not realize. Daughters are attributes named by their role,
 not members of a `DTRS` list. The signature has only the features that the constructions here
-mention; `WH`, `REL`, `VAL`, `SELECT`, `AUX` and `STORE` are left out, and the semantic type of
+mention; `WH`, `REL`, `VAL`, `SELECT`, `GRAM` and `STORE` are left out, and the semantic type of
 the mother stands in for its meaning.
 
-The aux-initial construction is in `Studies/SagEtAl2020`, the coordinate construction in
-`Studies/SagWasowBender2003`, and the worked constructs in `Studies/Sag2010`.
+The subject-predicate, predicational head-complement and aux-initial constructions are in
+`Studies/SagEtAl2020`, the coordinate construction in `Studies/SagWasowBender2003`, and the
+worked constructs in `Studies/Sag2010`.
 
 ## References
 
@@ -70,15 +71,17 @@ inductive Srt
   | sign | overtExpr | covertExpr | gap
   -- constructs
   | construct | phrasalCxt | headedCxt | clause | coordCxt | fillerHeadCxt | auxInitialCxt
+  | subjHeadCxt | predHdCompCxt
   -- clause types
   | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
   -- clauses that are headed constructs
   | topCl | whExclCl | nsWhIntCl | whRelCl | finWhRelCl | infWhRelCl | theCl | polarIntCl
-  | auxInitialExclCl
+  | auxInitialExclCl | subjPredCl
   deriving DecidableEq, Fintype, Repr
 
-/-- The immediate supersorts of a sort. Each filler-gap clause other than the topicalized clause
-and each aux-initial clause has two, a headed construct and a clause type. -/
+/-- The immediate supersorts of a sort. Each filler-gap clause other than the topicalized clause,
+each aux-initial clause and the subject-predicate clause has two, a headed construct and a clause
+type. -/
 def Srt.parents : Srt → List Srt
   | .top => []
   | .cat | .vform | .boolean | .semType | .list | .idx | .sign | .construct => [.top]
@@ -95,7 +98,7 @@ def Srt.parents : Srt → List Srt
   | .gap => [.covertExpr]
   | .phrasalCxt => [.construct]
   | .headedCxt | .clause | .coordCxt => [.phrasalCxt]
-  | .fillerHeadCxt | .auxInitialCxt => [.headedCxt]
+  | .fillerHeadCxt | .auxInitialCxt | .subjHeadCxt | .predHdCompCxt => [.headedCxt]
   | .coreCl | .relativeCl => [.clause]
   | .declarativeCl | .interrogativeCl | .exclamativeCl => [.coreCl]
   | .topCl => [.fillerHeadCxt]
@@ -106,6 +109,7 @@ def Srt.parents : Srt → List Srt
   | .finWhRelCl | .infWhRelCl => [.whRelCl]
   | .polarIntCl => [.auxInitialCxt, .interrogativeCl]
   | .auxInitialExclCl => [.auxInitialCxt, .exclamativeCl]
+  | .subjPredCl => [.subjHeadCxt, .declarativeCl]
 
 /-- The length of the longest chain from a sort up to `top`. -/
 def Srt.rank : Srt → ℕ
@@ -116,10 +120,11 @@ def Srt.rank : Srt → ℕ
   | .covertExpr | .phrasalCxt => 2
   | .verb | .comp | .nominal | .adj | .adv | .fin | .inf | .gap | .headedCxt | .clause
   | .coordCxt => 3
-  | .noun | .prep | .fillerHeadCxt | .auxInitialCxt | .coreCl | .relativeCl => 4
+  | .noun | .prep | .fillerHeadCxt | .auxInitialCxt | .subjHeadCxt | .predHdCompCxt | .coreCl
+  | .relativeCl => 4
   | .declarativeCl | .interrogativeCl | .exclamativeCl | .topCl | .whRelCl => 5
   | .whExclCl | .nsWhIntCl | .finWhRelCl | .infWhRelCl | .theCl | .polarIntCl
-  | .auxInitialExclCl => 6
+  | .auxInitialExclCl | .subjPredCl => 6
 
 theorem Srt.rank_lt_of_mem_parents : ∀ σ : Srt, ∀ τ ∈ σ.parents, τ.rank < σ.rank := by
   decide +kernel
@@ -135,10 +140,11 @@ instance : DecidableLE Srt :=
 
 /-- The attributes. A construct has a mother and daughters. A sign has a category, a `GAP` list,
 a semantic type and an index. A verbal category has a verb form and is independent or not, and a
-verb is inverted or not. A nonempty list has a first element and a rest. -/
+verb is inverted or not and has a value for `AUX`, positive in the constructions that only an
+auxiliary verb enters. A nonempty list has a first element and a rest. -/
 inductive Attr
-  | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | VFORM | IC | INV | GAP | SEM | INDEX | FIRST
-  | REST
+  | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | VFORM | IC | INV | AUX | GAP | SEM | INDEX
+  | FIRST | REST
   deriving DecidableEq, Fintype, Repr
 
 /-- The sorts that introduce each attribute, with its value sort there. The mother of a phrasal
@@ -151,7 +157,7 @@ def Attr.decl : Attr → List (Srt × Srt)
   | .CAT => [(.sign, .cat)]
   | .VFORM => [(.verbal, .vform)]
   | .IC => [(.verbal, .boolean)]
-  | .INV => [(.verb, .boolean)]
+  | .INV | .AUX => [(.verb, .boolean)]
   | .GAP => [(.sign, .list)]
   | .SEM => [(.sign, .semType)]
   | .INDEX => [(.sign, .idx)]

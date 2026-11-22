@@ -1,0 +1,453 @@
+{
+  "features": [
+    {
+      "key": "verb",
+      "lean": "verb",
+      "type": "Verb",
+      "doc": "The finite verb of the example.",
+      "levels": [
+        {
+          "name": "can",
+          "label": "can",
+          "doc": "the modal *can*, in its present or its preterite"
+        },
+        {
+          "name": "will",
+          "label": "will",
+          "doc": "the modal *will*"
+        },
+        {
+          "name": "shall",
+          "label": "shall",
+          "doc": "the modal *shall*"
+        },
+        {
+          "name": "better",
+          "label": "better",
+          "doc": "the modal *better*"
+        },
+        {
+          "name": "doAux",
+          "label": "do",
+          "doc": "unstressed auxiliary *do*"
+        },
+        {
+          "name": "arent",
+          "label": "arent",
+          "doc": "*aren't* with a first person singular subject"
+        },
+        {
+          "name": "help",
+          "label": "help",
+          "doc": "the lexical verb *help*"
+        },
+        {
+          "name": "seem",
+          "label": "seem",
+          "doc": "the lexical verb *seem*"
+        }
+      ]
+    },
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The clause type of the example.",
+      "levels": [
+        {
+          "name": "subjPred",
+          "label": "subjPred",
+          "doc": "a subject-predicate clause, the subject before the finite verb"
+        },
+        {
+          "name": "polarInt",
+          "label": "polarInt",
+          "doc": "a polar interrogative, the finite verb before the subject"
+        },
+        {
+          "name": "auxInitialExcl",
+          "label": "auxInitialExcl",
+          "doc": "an inverted exclamative, the finite verb before the subject"
+        }
+      ]
+    }
+  ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The senses of *shall* that the paper judges.",
+    "levels": [
+      {
+        "name": "futurate",
+        "label": "futurate",
+        "doc": "simple futurity"
+      },
+      {
+        "name": "deontic",
+        "label": "deontic",
+        "doc": "the deontic sense"
+      }
+    ]
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples."
+  },
+  "examples": [
+    {
+      "id": "sagetal2020_9a_could",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(9a)"},
+      "language": "stan1293",
+      "primaryText": "Sandy could finish the job.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "can"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_9a_helped",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(9a)"},
+      "language": "stan1293",
+      "primaryText": "Sandy helped finish the job.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "help"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_10a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(10a)"},
+      "language": "stan1293",
+      "primaryText": "Kim dĭd leave.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "do"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "The breve marks the auxiliary as unstressed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_10b",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(10b)"},
+      "language": "stan1293",
+      "primaryText": "Kim wĭll leave.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "will"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "The breve marks the auxiliary as unstressed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_p94_seems",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "p. 94"},
+      "language": "stan1293",
+      "primaryText": "Seems Pat ever dishonest",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "seem"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "Printed in the running text beside Is Pat ever dishonest.",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_11a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(11a)"},
+      "language": "stan1293",
+      "primaryText": "We shall dance.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "futurate", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["verb", "shall"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_11b",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(11b)"},
+      "language": "stan1293",
+      "primaryText": "Shall we dance?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "deontic", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["verb", "shall"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_14a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(14a)"},
+      "language": "stan1293",
+      "primaryText": "We better be careful.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "better"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_14b",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(14b)"},
+      "language": "stan1293",
+      "primaryText": "Better we be careful?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "better"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_fig11",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "Figure 11"},
+      "language": "stan1293",
+      "primaryText": "Did Kim get the job?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "do"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_42a",
+      "source": {"bibkey": "chomsky-1981", "paperLabel": "p. 209"},
+      "reportedIn": {"bibkey": "sag-etal-2020", "paperLabel": "(42a)"},
+      "language": "stan1293",
+      "primaryText": "I shall go downtown.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "futurate", "judgment": "acceptable"},
+        {"name": "deontic", "judgment": "unacceptable"}
+      ],
+      "paperFeatures": [
+        ["verb", "shall"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_42b",
+      "source": {"bibkey": "chomsky-1981", "paperLabel": "p. 209"},
+      "reportedIn": {"bibkey": "sag-etal-2020", "paperLabel": "(42b)"},
+      "language": "stan1293",
+      "primaryText": "Shall I go downtown?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "deontic", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["verb", "shall"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_44",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(44)"},
+      "language": "stan1293",
+      "primaryText": "Shall we be home in time for tea, do you think?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "futurate", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["verb", "shall"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_48a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(48a)"},
+      "language": "stan1293",
+      "primaryText": "I better get out of here!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "better"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_48b",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(48b)"},
+      "language": "stan1293",
+      "primaryText": "Better I get out of here?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "better"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_112a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(112a)"},
+      "language": "stan1293",
+      "primaryText": "Aren’t I on the list?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "arent"],
+        ["clause", "polarInt"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_112b",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(112b)"},
+      "language": "stan1293",
+      "primaryText": "Aren’t I clever!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "arent"],
+        ["clause", "auxInitialExcl"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "sagetal2020_113a",
+      "source": {"bibkey": "sag-etal-2020", "paperLabel": "(113a)"},
+      "language": "stan1293",
+      "primaryText": "I aren’t an idiot.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["verb", "arent"],
+        ["clause", "subjPred"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

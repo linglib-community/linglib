@@ -239,6 +239,9 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Formula Sig}
 @[simp] theorem satisfies_iff :
     I.Satisfies g u (d.iff e) ↔ (I.Satisfies g u d ↔ I.Satisfies g u e) := satisfiesOn_iff
 
+@[simp] theorem satisfies_conj {ds : List (Formula Sig)} :
+    I.Satisfies g u (.conj ds) ↔ ∀ d ∈ ds, I.Satisfies g u d := satisfiesOn_conj
+
 @[simp] theorem satisfies_ex {x : ℕ} : I.Satisfies g u (.ex x d) ↔
     ∃ w, I.IsComponentOf u w ∧ I.Satisfies (Function.update g x w) u d := satisfiesOn_ex
 
@@ -254,6 +257,23 @@ theorem SatisfiesOn.and_right (h : I.SatisfiesOn D g u (d.and e)) : I.SatisfiesO
 theorem SatisfiesOn.sortAssign_mono {t : Term Sig} {σ τ : Srt} (hστ : σ ≤ τ)
     (h : I.SatisfiesOn D g u (.sortAssign t σ)) : I.SatisfiesOn D g u (.sortAssign t τ) :=
   let ⟨v, hv, hσ⟩ := h; ⟨v, hv, hσ.trans hστ⟩
+
+/-- Two sort assignments to one term hold together only for sorts with a common subsort. -/
+theorem SatisfiesOn.exists_le_of_sortAssign {t : Term Sig} {σ τ : Srt}
+    (hσ : I.SatisfiesOn D g u (.sortAssign t σ)) (hτ : I.SatisfiesOn D g u (.sortAssign t τ)) :
+    ∃ ρ, ρ ≤ σ ∧ ρ ≤ τ :=
+  let ⟨v, hv, hvσ⟩ := hσ
+  let ⟨w, hw, hwτ⟩ := hτ
+  ⟨I.S v, hvσ, Option.mem_unique hv hw ▸ hwτ⟩
+
+/-- A sort assignment to a path that starts with an attribute holds at an entity exactly when
+the assignment to the rest of the path holds at the value of the attribute. -/
+theorem satisfies_sortAssign_path_cons {α : Sig.Attr} {p : Path Sig} {σ : Srt} {v : U}
+    (h : I.A α u = some v) :
+    I.Satisfies g u (.sortAssign (.path (α :: p)) σ) ↔
+      I.Satisfies g' v (.sortAssign (.path p) σ) := by
+  rw [satisfies_sortAssign, satisfies_sortAssign, termDenot_path_cons, h, Option.bind_some,
+    termDenot_path g g']
 
 /-! ### Free variables -/
 
