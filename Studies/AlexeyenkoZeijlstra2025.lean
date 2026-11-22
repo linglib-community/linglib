@@ -21,18 +21,17 @@ An attributive adjective with its noun is a string of items: the adjective, its 
 degree word, the noun, and an attributivizer. The adjectives of a language need no attributivizer
 when they are φ/κ-complete, `Language.PhiKappaComplete`: some form is used both attributively and
 predicatively and is specified for every φ-feature of the noun phrase and for case. Otherwise
-they take one, and `AttrStatus.Licit a s` says when a string `s` is well formed for an
-attributivizer of status `a`. An affix on the adjective, overt or null, is adjacent to its host,
-as the Input Correspondence Principle of [ackema-neeleman-2004] requires, and adjacent to the
-noun; its host is the head of the phrase it selects, the degree word if there is one, which an
-overt affix cannot take. A clitic or a free word is unconstrained.
+they take one. An attributivizer that is an affix on the adjective, overt or null, is adjacent to
+its host, as the Input Correspondence Principle of [ackema-neeleman-2004] requires, and adjacent
+to the noun, `Affixed s`; its host is the head of the phrase it selects, the degree word if there
+is one. A clitic or a free word is unconstrained.
 
 We define `Language.Possible l o`, for an order `o` of adjective and noun: some string of the
 language's items in that order, with the adjective and its dependent in an order the language
-allows, has the dependent between the adjective and the noun and is well formed.
-`Language.possible_iff` shows that this is the paper's pair of decision trees, and
-`AttrStatus.Licit.not_intervenes` is the reason an affix excludes the dependent: an item adjacent
-to both the adjective and the noun leaves no room between them.
+allows, has the dependent between the adjective and the noun, and has its attributivizer affixed
+if the language's is an affix. `Language.possible_iff` shows that this is the paper's pair of
+decision trees, and `Affixed.not_intervenes` is the reason an affix excludes the dependent: an
+item adjacent to both the adjective and the noun leaves no room between them.
 
 `table3_predicted` checks `Language.Possible` against the paper's sample for each language the
 paper analyses, and `intervention_rows` against its examples, whose strings are read off the
@@ -46,9 +45,9 @@ paradigms are those of the Fragments, and `russian_form_rows` checks the long an
 An affixal attributivizer is required to be adjacent to the noun, and a clitic is not: the
 Atong attributive clitic follows the adjective phrase on the side away from the noun.
 
-The attributivizer of Dutch is recorded as an overt affix, although it is null with indefinite
-neuter singular nouns: the two statuses agree on whether an XP may intervene, and differ only
-before a degree word, where `licit_rows` reads the status from the row.
+A language records only whether its attributivizer is an affix. That of Dutch is overt, and null with indefinite
+neuter singular nouns: the two agree on whether an XP may intervene, and differ only before a
+degree word, where `licit_rows` reads the attributivizer from the row.
 
 ## TODO
 
@@ -126,48 +125,32 @@ def host (s : List Item) : Item := if .deg ∈ s then .deg else .adj
 
 /-! ### Attributivizers -/
 
-/-- Morphophonological status of the attributivizer: an overt or a null affix on the adjective,
-an adjectival clitic, a free word, or an affix or clitic on the noun. -/
-inductive AttrStatus
-  | overtAffix
-  | nullAffix
-  | clitic
-  | freeWord
-  | nominal
-  deriving DecidableEq, Fintype
+/-- The attributivizer is affixed in a string: it stands next to its host, the head of the
+phrase it selects (the Input Correspondence Principle, which the paper extends to null affixes),
+and next to the noun. -/
+def Affixed (s : List Item) : Prop := Adjacent .attr (host s) s ∧ Adjacent .attr .noun s
 
-/-- The attributivizer is an affix on the adjective, overt or null. -/
-def AttrStatus.IsAffix : AttrStatus → Prop
-  | .overtAffix | .nullAffix => True
-  | _ => False
+instance (s : List Item) : Decidable (Affixed s) := inferInstanceAs (Decidable (_ ∧ _))
 
-instance : DecidablePred AttrStatus.IsAffix := fun s ↦ by
-  cases s <;> simp [AttrStatus.IsAffix] <;> infer_instance
+/-- A string of adjective, dependent, noun and an affixed attributivizer does not have the
+dependent between the adjective and the noun. -/
+theorem Affixed.not_intervenes {s : List Item} (hs : s.Perm [.adj, .dep, .noun, .attr])
+    (h : Affixed s) : ¬ Intervenes s := by
+  have key : ∀ s ∈ [Item.adj, .dep, .noun, .attr].permutations', Affixed s → ¬ Intervenes s := by
+    decide
+  exact key s (mem_permutations'.2 hs) h
 
-/-- A string is well formed for an attributivizer. An affix takes the head of the phrase it
-selects as its host and so stands next to it (the Input Correspondence Principle, which the
-paper extends to null affixes), it stands next to the noun, and an overt affix does not take a
-degree word as its host (the Affix Continuity Constraint, a degree word not being an affix).
-Clitics, free words and markers on the noun are unconstrained. -/
-def AttrStatus.Licit (a : AttrStatus) (s : List Item) : Prop :=
-  a.IsAffix → Adjacent .attr (host s) s ∧ Adjacent .attr .noun s ∧ (a = .overtAffix → host s = .adj)
+/-- A string is well formed for the attributivizer a row shows. A clitic is unconstrained, an
+affix is affixed, and an overt affix does not take a degree word as its host (the Affix
+Continuity Constraint, a degree word not being an affix). -/
+def _root_.AlexeyenkoZeijlstra2025.Examples.Attributivizer.Licit :
+    Attributivizer → List Item → Prop
+  | .clitic, _ => True
+  | .null, s => Affixed s
+  | .affix, s => Affixed s ∧ host s = .adj
 
-instance (a : AttrStatus) (s : List Item) : Decidable (a.Licit s) :=
-  inferInstanceAs (Decidable (_ → _))
-
-/-- A string of adjective, dependent, noun and an affixal attributivizer that is well formed
-does not have the dependent between the adjective and the noun. -/
-theorem AttrStatus.Licit.not_intervenes {a : AttrStatus} {s : List Item}
-    (hs : s.Perm [.adj, .dep, .noun, .attr]) (ha : a.IsAffix) (h : a.Licit s) : ¬ Intervenes s := by
-  have key : ∀ a : AttrStatus, a.IsAffix → ∀ s ∈ [Item.adj, .dep, .noun, .attr].permutations',
-      a.Licit s → ¬ Intervenes s := by decide
-  exact key a ha s (mem_permutations'.2 hs) h
-
-/-- The status of the attributivizer a row shows. -/
-def _root_.AlexeyenkoZeijlstra2025.Examples.Attributivizer.status : Attributivizer → AttrStatus
-  | .affix => .overtAffix
-  | .null => .nullAffix
-  | .clitic => .clitic
+instance (a : Attributivizer) (s : List Item) : Decidable (a.Licit s) := by
+  cases a <;> unfold Attributivizer.Licit <;> infer_instance
 
 /-! ### The languages of the paper -/
 
@@ -253,13 +236,15 @@ def phi : Language → Finset Agreement.Dimension
   | dutch | icelandic | serboCroatian => {.number, .gender, .definiteness}
   | mandarin | tagalog | farsi | atong | basque | japanese => ∅
 
-/-- A language's adjectives take no attributivizer, a null or overt adjectival affix, or a clitic
-such as Mandarin *de*, the Tagalog linker or the Farsi ezafe. -/
-def attributivizer : Language → Option AttrStatus
-  | greek | russian | latin | kalaallisut => none
-  | italian | english | basque | japanese => some .nullAffix
-  | german | dutch | icelandic | serboCroatian => some .overtAffix
-  | mandarin | tagalog | farsi | atong => some .clitic
+/-- The attributivizer of a language is an affix on the adjective, overt as in German or null as
+in English, and not a clitic such as Mandarin *de*, the Tagalog linker or the Farsi ezafe. It
+holds of no language whose adjectives take no attributivizer. -/
+def AffixalAttributivizer : Language → Prop
+  | italian | english | basque | japanese | german | dutch | icelandic | serboCroatian => True
+  | mandarin | tagalog | farsi | atong | greek | russian | latin | kalaallisut => False
+
+instance : DecidablePred AffixalAttributivizer := fun l ↦ by
+  cases l <;> unfold AffixalAttributivizer <;> infer_instance
 
 /-- A language's adjectives are φ/κ-complete: some form is used both attributively and
 predicatively, and its overt marker is specified for every feature of the DP, case
@@ -274,21 +259,18 @@ theorem phiKappaComplete_iff (l : Language) :
     l.PhiKappaComplete ↔ l = greek ∨ l = russian ∨ l = latin ∨ l = kalaallisut := by
   cases l <;> decide
 
-theorem attributivizer_eq_none_iff (l : Language) :
-    l.attributivizer = none ↔ l.PhiKappaComplete := by
-  cases l <;> decide
-
 /-- The items of an attributive adjective with a dependent: an attributivizer is among them
-when the language has one. -/
+unless the adjectives are φ/κ-complete. -/
 def items (l : Language) : List Item :=
-  [.adj, .dep, .noun] ++ if l.attributivizer.isSome then [.attr] else []
+  [.adj, .dep, .noun] ++ if l.PhiKappaComplete then [] else [.attr]
 
 /-- An XP may separate the adjective from the noun in the given order: some string of the
 language's items in that order, with adjective and dependent in an order the language allows,
-has the dependent between adjective and noun and is well formed for the attributivizer. -/
+has the dependent between adjective and noun, and its attributivizer affixed if the language's
+is an affix. -/
 def Possible (l : Language) (o : AdjectiveOrder) : Prop :=
   ∃ s ∈ l.items.permutations', order s = some o ∧ (∃ d ∈ apOrder s, d ∈ l.apOrders) ∧
-    Intervenes s ∧ ∀ a ∈ l.attributivizer, a.Licit s
+    Intervenes s ∧ (l.AffixalAttributivizer → Affixed s)
 
 instance (l : Language) (o : AdjectiveOrder) : Decidable (l.Possible o) := by
   unfold Possible; infer_instance
@@ -298,12 +280,12 @@ and either the adjectives are φ/κ-complete or the attributivizer is not an aff
 adjective. -/
 theorem possible_iff (l : Language) (o : AdjectiveOrder) :
     l.Possible o ↔
-      o.intervening ∈ l.apOrders ∧ (l.PhiKappaComplete ∨ ∃ a ∈ l.attributivizer, ¬ a.IsAffix) := by
+      o.intervening ∈ l.apOrders ∧ (l.PhiKappaComplete ∨ ¬ l.AffixalAttributivizer) := by
   cases l <;> cases o <;> decide
 
 -- (34)
 theorem mag (l : Language) (o : AdjectiveOrder) (h : l.Possible o) :
-    l.PhiKappaComplete ∨ ∃ a ∈ l.attributivizer, ¬ a.IsAffix :=
+    l.PhiKappaComplete ∨ ¬ l.AffixalAttributivizer :=
   ((possible_iff l o).1 h).2
 
 -- (44)
@@ -380,7 +362,7 @@ theorem intervention_rows :
 formed for the attributivizer. -/
 theorem licit_rows :
     ∀ x : Example, ∀ a ∈ x.attributivizer,
-      (x.datum.judgment = .acceptable ↔ a.status.Licit (items x)) := by
+      (x.datum.judgment = .acceptable ↔ a.Licit (items x)) := by
   decide +kernel
 
 theorem order_rows :
@@ -396,7 +378,7 @@ theorem apOrder_rows :
 
 theorem attributivizer_rows :
     ∀ (x : Example) (l : Language), x.datum.language = l.glottocode →
-      ∀ s ∈ x.attributivizer, ∀ a ∈ l.attributivizer, (s.status.IsAffix ↔ a.IsAffix) := by
+      ∀ a ∈ x.attributivizer, (a ≠ .clitic ↔ l.AffixalAttributivizer) := by
   decide +kernel
 
 theorem marker_rows :
