@@ -1,5 +1,8 @@
 module
 
+public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Fragments.Korean.Phonology
+public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Personal
@@ -14,22 +17,29 @@ addressee's or referent's age and status relative to the speaker, as Sohn tabula
 first person has the neutral *na* and the humble *jeo*, with the plurals *uri* and *jeohui*;
 the second has the plain *neo* for a child or intimate, the familiar *jane*, the blunt
 *dangsin*, used to an adult equal or inferior and affectionately between spouses, and the
-deferential *taek* to an adult stranger, kinship terms and titles serving a superior; in the
-third person *geu* 'he' and *geunyeo* 'she', with the plural *geudeul*, are recent innovations
-of written narrative used anaphorically, while the colloquial *gyae*, contracted from *geu ai*,
-is neutral for gender and implies familiarity with the referent, as Kwon and Lee describe.
+deferential *taek* to an adult stranger, kinship terms and titles serving a superior. Each has
+a plural: *neohui* for the plain, with the suffix *-hui* that only *neo* and the humble *jeo*
+take, and for the others the singular with the plural suffix *-deul*, which *uri*, *jeohui* and
+*neohui* may add as well. *jagi* is a recent second person of the blunt level, used between
+young couples and close friends. In the third person *geu* 'he' and *geunyeo* 'she', with the
+plural *geudeul*, are recent innovations of written narrative used anaphorically, while the
+colloquial *gyae*, contracted from *geu ai*, is neutral for gender and implies familiarity with
+the referent, as Kwon and Lee describe.
 Before the nominative particle *na*, *jeo* and *neo* become *nae*, *je* and *ne*. The
-sentence-final speech-style particles *-yo* and *-(seu)mnida* occur in root clauses only. Both
+sentence-final speech-style particles *-yo* and *-seumnida* occur in root clauses only. Both
 present the addressee as above the speaker, and they differ in the formality of the discourse:
-*-yo* is the polite particle of informal speech and *-(seu)mnida* that of formal speech. Forms
-are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *caney*,
-*tangsin*, *tayk*, *ku*, *ku nye* and *ku-tul*.
+*-yo* is the polite particle of informal speech and *-seumnida* that of formal speech, *-mnida*
+after a vowel (`Korean.Pronouns.supnida_realize`). Forms
+are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *ne-huy*,
+*caney*, *tangsin*, *caki*, *tayk*, *ku*, *ku nye* and *ku-tul*, and *-tul* for the plural
+suffix.
 
 ## Main definitions
 
 * `Korean.Pronouns.personal` — the personal pronouns
-* `Korean.Pronouns.addressee` — the second person singular at each grade
-* `Korean.Pronouns.allocutiveParticles` — the speech-style particles
+* `Korean.Pronouns.addresseeSg`, `Korean.Pronouns.addresseePl` — the second person singular
+  and plural at each grade
+* `Korean.Pronouns.yo`, `Korean.Pronouns.supnida` — the speech-style particles
 
 ## Implementation notes
 
@@ -99,6 +109,28 @@ def dangsin : PersonalPronoun :=
 def taek : PersonalPronoun :=
   { form := "taek", script := some "댁", person := some .second, number := some .singular }
 
+/-- The second person *jagi*, of the blunt level beside *dangsin*: a recent form used between
+young couples and close friends ([sohn-1994]). -/
+def jagi : PersonalPronoun :=
+  { form := "jagi", script := some "자기", person := some .second, number := some .singular }
+
+/-- The plain second person plural *neohui*, *neo* with the suffix *-hui*. -/
+def neohui : PersonalPronoun :=
+  { form := "neohui", script := some "너희", person := some .second, number := some .plural }
+
+/-- The familiar second person plural *janedeul*. -/
+def janedeul : PersonalPronoun :=
+  { form := "janedeul", script := some "자네들", person := some .second, number := some .plural }
+
+/-- The blunt second person plural *dangsindeul*. -/
+def dangsindeul : PersonalPronoun :=
+  { form := "dangsindeul", script := some "당신들", person := some .second,
+    number := some .plural }
+
+/-- The deferential second person plural *taekdeul*. -/
+def taekdeul : PersonalPronoun :=
+  { form := "taekdeul", script := some "댁들", person := some .second, number := some .plural }
+
 /-- The written-narrative masculine third person *geu*. -/
 def geu : PersonalPronoun :=
   { form := "geu", script := some "그", person := some .third, number := some .singular,
@@ -120,24 +152,53 @@ def geudeul : PersonalPronoun :=
     register := .formal }
 
 /-- The second person singular at each grade. -/
-def addressee : Grade → PersonalPronoun
+def addresseeSg : Grade → PersonalPronoun
   | .plain => neo
   | .familiar => jane
   | .blunt => dangsin
   | .deferential => taek
 
+/-- The second person plural at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .plain => neohui
+  | .familiar => janedeul
+  | .blunt => dangsindeul
+  | .deferential => taekdeul
+
 /-- The personal pronouns. -/
 def personal : Finset PersonalPronoun :=
-  {na, jeo, uri, jeohui, neo, jane, dangsin, taek, geu, geunyeo, gyae, geudeul}
+  {na, jeo, uri, jeohui, neo, jane, dangsin, jagi, taek, neohui, janedeul, dangsindeul, taekdeul,
+    geu, geunyeo, gyae, geudeul}
+
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
+/-- Every grade distinguishes one addressee from several. -/
+theorem addresseeSg_ne_addresseePl (g : Grade) : addresseeSg g ≠ addresseePl g := by
+  cases g <;> decide
+
+/-- The pronouns of address are ordinary: each denotes what its person and number realize. -/
+theorem isOrdinary_addressee (g : Grade) :
+    (addresseeSg g).IsOrdinary ∧ (addresseePl g).IsOrdinary := by
+  cases g <;> decide
 
 /-- The polite speech-style particle *-yo*, of informal discourse. -/
 def yo : Morphology.Morph := .suff "yo"
 
-/-- The speech-style particle *-(seu)mnida*, of formal discourse. -/
-def supnida : Morphology.Morph := .suff "(seu)mnida"
+open Phonology Morphology in
+/-- The speech-style particle of formal discourse, *-mnida* after a vowel and *-seumnida* after a
+consonant ([sohn-1994]). -/
+def supnida : RuleSet (SubsetRule Segment Morph) :=
+  [⟨[+syllabic], .suff "mnida"⟩, ⟨⊥, .suff "seumnida"⟩]
 
-/-- The speech-style particles. -/
-def allocutiveParticles : List Morphology.Morph := [yo, supnida]
+open Phonology Morphology in
+/-- The formal particle is *-mnida* after a vowel and *-seumnida* after a consonant. -/
+theorem supnida_realize :
+    supnida.realizeMinimal (fun r ↦ OrderDual.toDual r.features) a = some (.suff "mnida") ∧
+      supnida.realizeMinimal (fun r ↦ OrderDual.toDual r.features) k =
+        some (.suff "seumnida") := by
+  decide
 
 /-! ### Quexistentials
 

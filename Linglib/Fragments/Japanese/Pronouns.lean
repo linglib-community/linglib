@@ -12,7 +12,9 @@ public import Linglib.Syntax.Category.Pronoun.Demonstrative
 
 The personal pronouns of Japanese are the first-person forms *watashi*, *boku* and *ore*, which
 differ in register, the second-person
-*kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. With them are the reciprocal
+*kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. A pronoun for several
+referents is the singular with *-tachi*, *watashitachi*, *kimitachi* and *anatatachi*, or with
+*-ra*, *karera*. With them are the reciprocal
 *otagai* and the reflexive *jibun*. The honorific grades rank *kimi* below *anata*, as they rank the
 plain verb below the addressee-honorific suffix *-mas-* (`Japanese.Verb.Exponent.mas`), which Alok
 and Bhalla show to be sensitive to the complementizer when embedded. The indeterminate pronouns of
@@ -22,9 +24,23 @@ Kratzer and Shimoyama, *dare* 'who', *nani* 'what', *dono* 'which', *doko* 'wher
 as is *nan-* 'how many' before a classifier. The demonstrative pronouns *kore*, *sore* and *are*
 are Tsujimura's ko-so-a series: near the speaker, near the listener, and far from both.
 
+## Implementation notes
+
+The forms in *-tachi* and *-ra* are recorded as plurals: Kaiser, Ichikawa, Kobayashi and
+Yamamoto give *-tachi* as optional on a noun and mandatory on a personal pronoun, which without
+it is singular, with *watashi-tachi* and *anata-tachi* among their examples, and Iwasaki gives
+*kimi-tachi*. Tsujimura notes that *-tachi* is not a plural marker like the English ending: it
+is confined to humans, and a noun with it names a group that includes the noun's referent,
+*Yamada-sensei-tachi* being Professor Yamada and those with him; Iwasaki glosses *boku-tachi*
+likewise as the speaker and his friends. The registers follow the list Tsujimura takes from
+Ide, in which *boku* is plain and *ore* deprecatory; both are informal here, the register type
+making no finer distinction.
+
 ## References
 
 * [alok-bhalla-2026]
+* [iwasaki-2013]
+* [kaiser-ichikawa-kobayashi-yamamoto-2013]
 * [sells-1987]
 * [kratzer-shimoyama-2002]
 * [tsujimura-2014]
@@ -56,7 +72,7 @@ def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .singular,
     register := .informal }
 
-/-- 俺 *ore* 'I', very informal. -/
+/-- 俺 *ore* 'I', informal and deprecatory. -/
 def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .singular,
     register := .informal }
@@ -74,6 +90,16 @@ def kimi : PersonalPronoun :=
 def anata : PersonalPronoun :=
   { form := "anata", script := some "あなた", person := some .second, number := some .singular }
 
+/-- 君たち *kimitachi* 'you', several addressees, of the plain grade. -/
+def kimitachi : PersonalPronoun :=
+  { form := "kimitachi", script := some "君たち", person := some .second,
+    number := some .plural }
+
+/-- あなたたち *anatatachi* 'you', several addressees, of the polite grade. -/
+def anatatachi : PersonalPronoun :=
+  { form := "anatatachi", script := some "あなたたち", person := some .second,
+    number := some .plural }
+
 /-- 彼 *kare* 'he'. -/
 def kare : PersonalPronoun :=
   { form := "kare", script := some "彼", person := some .third, number := some .singular,
@@ -89,13 +115,26 @@ def karera : PersonalPronoun :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .plural }
 
 /-- The second person singular at each grade. -/
-def addressee : Grade → PersonalPronoun
+def addresseeSg : Grade → PersonalPronoun
   | .plain => kimi
   | .polite => anata
 
+/-- The second person plural at each grade. -/
+def addresseePl : Grade → PersonalPronoun
+  | .plain => kimitachi
+  | .polite => anatatachi
+
 /-- The personal-pronoun inventory. -/
 def personal : Finset PersonalPronoun :=
-  {watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera}
+  {watashi, boku, ore, watashitachi, kimi, anata, kimitachi, anatatachi, kare, kanojo, karera}
+
+/-- Every category has a pronoun. -/
+theorem paradigm_nonempty : ∀ c, (PersonalPronoun.paradigm personal c).Nonempty := by
+  decide +kernel
+
+/-- Every grade distinguishes one addressee from several. -/
+theorem addresseeSg_ne_addresseePl (g : Grade) : addresseeSg g ≠ addresseePl g := by
+  cases g <;> decide
 
 /-- 互い *otagai* 'each other', the reciprocal, distinct from the reflexive *jibun*. -/
 def otagai : ReciprocalPronoun :=

@@ -105,8 +105,8 @@ def table : Row × Case → Finset String
 /-- The clitic `f`, with the cases and referential categories of the cells it fills and their flat
 person, number and gender. -/
 def entry (f : String) : PersonalPronoun :=
-  { PersonalPronoun.ofTable (·.1.person) (some ·.1.number) (·.1.gender) (some ·.2.label) table
-      f with
+  { PersonalPronoun.ofTable (·.1.person) (fun _ ↦ none) (some ·.1.number) (·.1.gender)
+      (some ·.2.label) table f with
     strength := some .clitic }
 
 /-- The clitics of a case. -/
@@ -167,7 +167,7 @@ def reflexiveForms : Row × Case → Finset String
 
 /-- The reflexive clitic `f`, with the cells it fills. -/
 def reflexiveOf (f : String) : ReflexivePronoun :=
-  ⟨{ Pronoun.ofTable (·.1.person) (some ·.1.number) (·.1.gender) (some ·.2.label)
+  ⟨{ Pronoun.ofTable (·.1.person) (fun _ ↦ none) (some ·.1.number) (·.1.gender) (some ·.2.label)
       reflexiveForms f with strength := some .clitic }⟩
 
 /-- *me*, first person singular reflexive. -/

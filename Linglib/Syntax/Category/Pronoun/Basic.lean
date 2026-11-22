@@ -136,26 +136,30 @@ def categories : Finset Person.Category :=
 
 section Table
 
-variable {C : Type*} (person : C → Person) (number : C → Option Number)
-  (gender : C → Option UD.Gender) (case : C → Option Case)
+variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity)
+  (number : C → Option Number) (gender : C → Option UD.Gender) (case : C → Option Case)
 
-/-- The categories of the cells `s`, those each cell's person and number realize. -/
+/-- The categories of the cells `s`, those each cell's person, clusivity and number realize. -/
 def cellCategories (s : Finset C) : Finset Person.Category :=
-  s.biUnion fun c ↦ ((number c).map (Person.Category.ofPersonNumber (person c) none)).getD ∅
+  s.biUnion fun c ↦
+    ((number c).map (Person.Category.ofPersonNumber (person c) (clusivity c))).getD ∅
 
-/-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a number, a
-gender and a case: the cases of the cells, the flat value of their person and gender, and the
-number their categories share, `general` for cells of both numbers. -/
+/-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a clusivity, a
+number, a gender and a case: the cases of the cells, the flat value of their person, clusivity
+and gender, and the number of the cells where they have one number, otherwise the number their
+categories share, `general` for cells of both numbers. -/
 def ofCells (s : Finset C) (f : String) : Pronoun :=
   { form := f,
     person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
-    number := Person.Category.sharedNumber (cellCategories person number s),
+    clusivity := Flat.finsetInf s fun c ↦ (clusivity c : Flat Clusivity),
+    number := (Flat.finsetInf s fun c ↦ (number c : Flat Number) : Option Number).or
+      (Person.Category.sharedNumber (cellCategories person clusivity number s)),
     cases := s.biUnion fun c ↦ (case c).toFinset,
     gender := Flat.finsetInf s fun c ↦ (gender c : Flat UD.Gender) }
 
 /-- The pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : Pronoun :=
-  ofCells person number gender case (Morphology.formCellsOf table f) f
+  ofCells person clusivity number gender case (Morphology.formCellsOf table f) f
 
 end Table
 

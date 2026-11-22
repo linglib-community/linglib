@@ -77,7 +77,8 @@ def table : Row × Case → Finset String
 /-- The pronoun `f`, with the cases and referential categories of the cells it fills and their
 flat person and number. -/
 def entry : String → PersonalPronoun :=
-  PersonalPronoun.ofTable (·.1.person) (·.1.number) (fun _ ↦ none) (some ·.2.label) table
+  PersonalPronoun.ofTable (·.1.person) (fun _ ↦ none) (·.1.number) (fun _ ↦ none) (some ·.2.label)
+    table
 
 /-- The personal pronoun inventory: the entry of every form of the table. -/
 def personal : Finset PersonalPronoun := (Finset.univ.biUnion table).image entry

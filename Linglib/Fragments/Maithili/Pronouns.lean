@@ -13,6 +13,11 @@ the third person two. The nonhonorific and the mid-honorific second person share
 which the verb tells apart, while the high honorific *əpne* takes the agreement of the honorific
 *əhã*. The two third-person grades share the nominative *o* and differ in the accusative.
 
+A pronoun is made plural by a following *səb* 'all', *həm səb* 'we', or for an honorific referent
+*lokəin* 'people', and the verb inflects for it as for the singular, as Yadav describes. With
+these plurals every referential category is denoted
+(`Maithili.Pronouns.exists_referential_or_plural`).
+
 ## Main results
 
 * `Maithili.Pronouns.second_nom_eq_iff`: the second-person pronouns separate every pair of grades
@@ -24,6 +29,7 @@ which the verb tells apart, while the high honorific *əpne* takes the agreement
 
 * [P. Kumari and P. Chandra, *Honorificity Feature as an Enabler: Bridging the Person Gap*
   (2026)][kumari-chandra-2026]
+* [yadav-1996]
 -/
 
 @[expose] public section
@@ -91,6 +97,17 @@ def hunka : PersonalPronoun := { form := "hunka", person := some .third, number 
 /-- The pronoun inventory. -/
 def personal : Finset PersonalPronoun :=
   {ham, hamra, toN, tora, ahaN, ahaNke, apne, o, okra, hunka}
+
+/-- The plural of a pronoun, the pronoun followed by *səb* 'all' ([yadav-1996] §4.1.2). -/
+def plural (p : PersonalPronoun) : PersonalPronoun :=
+  { toPronoun := { p.toPronoun with form := p.form ++ " səb", number := some .plural },
+    register := p.register }
+
+/-- Every category is denoted by a nominative pronoun or by its plural. -/
+theorem exists_referential_or_plural :
+    ∀ c, ∃ p ∈ ({ham, toN, ahaN, o} : Finset PersonalPronoun),
+      c ∈ p.referential ∨ c ∈ (plural p).referential := by
+  decide +kernel
 
 /-- The second person by case and grade, [kumari-chandra-2026]'s Table 3 with the nominative
 *əpne* of fn. 10, whose accusative the source does not give. -/

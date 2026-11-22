@@ -148,7 +148,7 @@ def ex_4 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("marker", "-thu(n)"), ("subject", "h"), ("addressee", "nh"), ("clause", "matrix")] }
+    paperFeatures := [("marker", "-thu"), ("alsoMarker", "-thun"), ("subject", "h"), ("addressee", "nh"), ("clause", "matrix")] }
 
 def ex_5 : Datum :=
   { id := "alokbhalla2026_5"
@@ -178,7 +178,7 @@ def ex_6 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("marker", "-thi(n)"), ("subject", "hh"), ("addressee", "hh"), ("clause", "matrix")] }
+    paperFeatures := [("marker", "-thi"), ("alsoMarker", "-thin"), ("subject", "hh"), ("addressee", "hh"), ("clause", "matrix")] }
 
 def ex_7 : Datum :=
   { id := "alokbhalla2026_7"

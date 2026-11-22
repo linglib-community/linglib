@@ -198,23 +198,25 @@ theorem isContiguous_tables (c : Case) :
 
 /-! ### Agreement -/
 
-/-- The suffix agreeing with a second person subject at each grade ([alok-2020] Table 3.1). -/
-def secondAgreement : Grade → Morph
-  | .nonhonorific => .suff "eN"
-  | .honorific => .suff "a"
-  | .highHonorific => .suff "thi(n)"
+/-- The suffixes agreeing with a second person subject at each grade ([alok-2020] Table 3.1).
+The high honorific suffix is printed *-thi(n)*: it has a form with its final nasal and one
+without. -/
+def secondAgreement : Grade → Finset Morph
+  | .nonhonorific => {.suff "eN"}
+  | .honorific => {.suff "a"}
+  | .highHonorific => {.suff "thi", .suff "thin"}
 
 /-- The verb separates the three second-person grades, among them the two *tu* serves. -/
 theorem secondAgreement_injective : Function.Injective secondAgreement := by decide
 
-/-- The suffix agreeing with a non-second-person subject and with the addressee, by the grade of
-each ([alok-2020] Table 3.2). -/
-def allocutive : Grade → Grade → Morph
-  | .nonhonorific, .nonhonorific => .suff "au"
-  | .nonhonorific, .honorific => .suff "o"
-  | .nonhonorific, .highHonorific => .suff "ain"
-  | _, .highHonorific => .suff "thi(n)"
-  | _, _ => .suff "thu(n)"
+/-- The suffixes agreeing with a non-second-person subject and with the addressee, by the grade
+of each ([alok-2020] Table 3.2), *-thi(n)* and *-thu(n)* with and without the final nasal. -/
+def allocutive : Grade → Grade → Finset Morph
+  | .nonhonorific, .nonhonorific => {.suff "au"}
+  | .nonhonorific, .honorific => {.suff "o"}
+  | .nonhonorific, .highHonorific => {.suff "ain"}
+  | _, .highHonorific => {.suff "thi", .suff "thin"}
+  | _, _ => {.suff "thu", .suff "thun"}
 
 /-- Honorific and high honorific subjects take the same suffixes, which separate only a high
 honorific addressee from the others. -/
