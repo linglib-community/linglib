@@ -247,16 +247,16 @@ def items : List Item :=
 
 /-- The SDA verdict on an item in the actual world, where the hare won. -/
 def Item.sda (it : Item) : Prop :=
-  .hare ∈ distributiveImp nonEqual {{it.first}, {it.secondPosition}} {v | v.prize = it.prize}
+  .hare ∈ distributiveImp nonEqual {{it.first}, {it.second}} {v | v.prize = it.prize}
 
 /-- The DCR verdict on an item. -/
 def Item.dcr (it : Item) : Prop :=
-  DCR nonEqual {it.first} {it.secondPosition} {v | v.prize = it.prize} .hare
+  DCR nonEqual {it.first} {it.second} {v | v.prize = it.prize} .hare
 
 /-- Lewis's verdict on an item in the non-equally realistic condition is the asymmetric
 reading. -/
 def Item.ar (it : Item) : Prop :=
-  .hare ∈ disjunctiveImp nonEqual {{it.first}, {it.secondPosition}} {v | v.prize = it.prize}
+  .hare ∈ disjunctiveImp nonEqual {{it.first}, {it.second}} {v | v.prize = it.prize}
 
 instance (it : Item) : Decidable it.sda := inferInstanceAs (Decidable (_ ∈ distributiveImp _ _ _))
 instance (it : Item) : Decidable it.dcr := inferInstanceAs (Decidable (_ ∨ _))
@@ -275,7 +275,7 @@ theorem table3_ar : items.map (fun it ↦ decide it.ar) = [true, true, false, fa
   decide
 
 theorem table3_equal :
-    items.map (fun it ↦ decide (.hare ∈ disjunctiveImp equal {{it.first}, {it.secondPosition}}
+    items.map (fun it ↦ decide (.hare ∈ disjunctiveImp equal {{it.first}, {it.second}}
       {v | v.prize = it.prize})) = [false, false, false, false] := by
   decide
 

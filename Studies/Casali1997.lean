@@ -144,12 +144,12 @@ end Violations
 
 /-- The optimal elisions under the ranking `r`. -/
 abbrev optimal (r : Ranking (Option Prominence)) : Finset ElidedVowel :=
-  r.optimal (marks c) {.first, .secondPosition}
+  r.optimal (marks c) {.first, .second}
 
 private theorem card_option_prominence : Fintype.card (Option Prominence) = 5 := rfl
 
 private theorem candidates_eq_pair {e e' : ElidedVowel} (hne : e ≠ e') :
-    ({.first, .secondPosition} : Finset ElidedVowel) = {e, e'} := by
+    ({.first, .second} : Finset ElidedVowel) = {e, e'} := by
   cases e <;> cases e' <;> first | exact absurd rfl hne | decide
 
 variable {c}
@@ -181,7 +181,7 @@ theorem optimal_eq_singleton_of_ssubset {e e' : ElidedVowel} (hne : e ≠ e')
   optimal_eq_singleton_positionalMax_of_ssubset (candidates_eq_pair hne) rfl rfl h r
 
 theorem optimal_eq_pair_iff (r : Ranking (Option Prominence)) :
-    optimal c r = {.first, .secondPosition} ↔ violations c .first = violations c .second :=
+    optimal c r = {.first, .second} ↔ violations c .first = violations c .second :=
   optimal_eq_pair_positionalMax_iff (c := .first) (d := .second) (P := protects c)
     (del := fun e ↦ {position c e}) rfl rfl rfl r
 
@@ -200,7 +200,7 @@ when the first morph is a root and the second is not. This covers the boundary b
 lexical words, between a lexical and a function word in either order, between a prefix of more
 than one segment and a root, between a root and a suffix, and between two affixes or clitics. -/
 theorem exists_mem_optimal_second_iff (h : c.leftBody ≠ []) :
-    (∃ r, .secondPosition ∈ optimal c r) ↔ c.leftKind = .root ∧ c.rightKind ≠ .root := by
+    (∃ r, .second ∈ optimal c r) ↔ c.leftKind = .root ∧ c.rightKind ≠ .root := by
   simp [exists_mem_optimal_iff, forall_elidedVowel, violations_first_subset_second_iff,
     violations_second_subset_first_iff, h]
 
@@ -266,15 +266,15 @@ theorem exists_mem_optimal_iff_of_isOfKind {k : Data.Hiatus.JunctureKind} (hc : 
 
 -- (10), (12)
 theorem schematic_second :
-    (¬ ∃ r, .secondPosition ∈ optimal (schematic .lexicalLexical) r) ∧
-      ∃ r, .secondPosition ∈ optimal (schematic .lexicalFunction) r := by
+    (¬ ∃ r, .second ∈ optimal (schematic .lexicalLexical) r) ∧
+      ∃ r, .second ∈ optimal (schematic .lexicalFunction) r := by
   simp only [exists_mem_optimal_iff_of_isOfKind (isOfKind_schematic _)]
   decide
 
 theorem lexical_on_top {r : Ranking (Option Prominence)}
     (hr : ∀ j, j ≠ some .lexical → r.Dominates (some .lexical) j) {c c' : Context}
     (hc : IsOfKind c .prefixRoot) (hc' : IsOfKind c' .rootSuffix) :
-    optimal c r = {.first} ∧ optimal c' r = {.secondPosition} :=
+    optimal c r = {.first} ∧ optimal c' r = {.second} :=
   ⟨optimal_eq_singleton_of_forall_dominates (e' := .second) (by decide)
       (by simp [hc.leftKind, kinds]) (by simp [hc.rightKind, kinds]) hr,
     optimal_eq_singleton_of_forall_dominates (e' := .first) (by decide)
@@ -284,7 +284,7 @@ theorem lexical_on_top {r : Ranking (Option Prominence)}
 theorem soleSegment_over_lexical {r : Ranking (Option Prominence)}
     (h₁ : r.Dominates (some .soleSegment) (some .lexical))
     (h₂ : r.Dominates (some .lexical) (some .morphemeInitial)) (hc : IsOfKind c .rootSuffix) :
-    optimal c r = {if c.rightBody = [] then .first else .secondPosition} := by
+    optimal c r = {if c.rightBody = [] then .first else .second} := by
   obtain ⟨hs, hl, hr⟩ := hc
   simp only [kinds] at hl hr
   split_ifs with hsuf
@@ -311,7 +311,7 @@ theorem survey_allowed :
 analysis allows one, before a function word and before a suffix. -/
 theorem survey_second_iff {k : Data.Hiatus.JunctureKind} (hc : IsOfKind c k) :
     (∃ row ∈ Data.Hiatus.Casali1997.rows, row.juncture = k ∧ row.elided = .second) ↔
-      ∃ r, .secondPosition ∈ optimal c r := by
+      ∃ r, .second ∈ optimal c r := by
   rw [exists_mem_optimal_iff_of_isOfKind hc]
   cases k <;> decide
 
