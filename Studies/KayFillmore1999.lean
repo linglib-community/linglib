@@ -23,8 +23,8 @@ uninverted order is not a row. A construct (`Construct`) records the values unif
 the intrinsic value of `X`, the scene #1, the subject requirement of the VP headed by *doing*, and
 the subject requirement #2 of `Y`. The valence sets are read off the slots (`Slot.requirement`),
 so the `[ref ∅]` of WXDY-*what* withholds whatever value the construct puts in its position. The
-paper's incongruity-judgment frame with its contextually anchored judge is not represented beyond
-the construction's pragmatic point. Its inheritance from the left-isolation, subject–auxiliary
+paper's incongruity-judgment frame with its contextually anchored judge is not represented. Its
+inheritance from the left-isolation, subject–auxiliary
 inversion and wh-interrogative constructions of the paper's unification grammar is recorded in
 prose only.
 
@@ -65,8 +65,7 @@ def ySlot : Slot String := { filler := .phrasal, gf := some .comp }
 question: WXDY-*what*, BE, `X`, the VP headed by *doing*, and `Y`. -/
 def wxdyConstruction : Construction Unit :=
   { form := [whatSlot, beSlot, xSlot, doingSlot, ySlot]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := by decide
 

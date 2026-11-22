@@ -73,8 +73,7 @@ def palConstruction : Construction Unit :=
   { form :=
       [ { filler := .phrasal, lex := some true }
       , { filler := .open_ .NOUN, isHead := true } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 /-- The semiproductive must-V subtype, frequently instantiated by
 *must-read*, *must-see*, *must-have*. Study 5 tested only rare tokens
@@ -84,8 +83,7 @@ def mustVerbConstruction : Construction Unit :=
       [ { filler := .fixed "must" }
       , { filler := .open_ .VERB }
       , { filler := .open_ .NOUN, isHead := true } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 /-- In the *a simple ⟨PAL⟩* subtype the PAL is itself the head noun, with
 *simple* marking the situation type as routine ("Could've tried a simple
@@ -96,8 +94,7 @@ def aSimplePALConstruction : Construction Unit :=
       , { filler := .fixed "simple" }
       , { filler := .phrasal, lex := some true
         , isHead := true } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 /-- In the *Don't ⟨PAL⟩ me* subtype the PAL fills a V slot, must quote the
 immediately preceding discourse, and occurs in an interdiction context
@@ -109,8 +106,7 @@ def dontPALmeConstruction : Construction Unit :=
       , { filler := .phrasal, lex := some true
         , isHead := true }
       , { filler := .fixed "me" } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 /-- The *the old ⟨PAL⟩ (N)* subtype, with optional head N and *old*
 marking the situation type as conventional ("my dad pulled the old 'I'm
@@ -123,8 +119,7 @@ def theOldPALConstruction : Construction Unit :=
       , { filler := .phrasal, lex := some true
         , isHead := true }
       , { filler := .open_ .NOUN } ]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 /-- The NN compound construction is a parent of PAL, passing down internal stress and a tight
 unit. -/
@@ -163,8 +158,7 @@ theorem table8_specificity :
 (*do-it-yourself*, *know-it-all*, *pay-as-you-go*). -/
 def zeroLevelPAL : Construction Unit :=
   { form := [{ filler := .phrasal, lex := some true }]
-  , meaning := ()
-  , pragmaticPoint := true }
+  , meaning := () }
 
 /-- The constructions of Figure 5. -/
 inductive Figure5 where

@@ -154,7 +154,8 @@ motion (§5, exx. 19–22, *Frank sneezed the tissue off the table*), *let alone
 the incredulity type (§7, ex. 14, *Him get first prize?!*). -/
 def chapterCases : List (Construction Unit × MeaningKind) :=
   [ (Goldberg1995.causedMotion.map fun _ ↦ (), .argumentStructure)
-  , (_root_.FillmoreKayOConnor1988.letAloneConstruction, .conventionalImplicature)
+  , ((_root_.FillmoreKayOConnor1988.Conjunction.letAlone.construction
+        (D := Unit) (S := Unit)).map fun _ ↦ (), .conventionalImplicature)
   , (_root_.FillmoreKayOConnor1988.incredulityResponse, .illocutionaryForce) ]
 
 end KayMichaelis2019

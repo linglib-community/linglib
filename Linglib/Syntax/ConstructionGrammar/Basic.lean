@@ -34,9 +34,6 @@ structure Construction (Sem : Type*) where
   form : TypedForm String
   /-- `meaning` is the meaning pole. -/
   meaning : Sem
-  /-- `pragmaticPoint` records whether the construction carries a conventional pragmatic point
-      ([fillmore-kay-oconnor-1988] §1.1.4). -/
-  pragmaticPoint : Bool := false
   deriving DecidableEq, Repr
 
 variable {Sem : Type*}
@@ -49,7 +46,7 @@ def Construction.specificity (c : Construction Sem) : Specificity :=
 @[simps]
 def Construction.map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
     Construction Sem' :=
-  { form := c.form, meaning := f c.meaning, pragmaticPoint := c.pragmaticPoint }
+  { form := c.form, meaning := f c.meaning }
 
 @[simp]
 theorem Construction.map_id (c : Construction Sem) : c.map id = c := rfl
