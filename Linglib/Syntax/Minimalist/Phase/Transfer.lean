@@ -347,6 +347,26 @@ theorem Derivation.ObeysTransfer.anti
     (hd' : d.ObeysTransfer hd Φ D σ) : d.ObeysTransfer hd Φ D' σ' :=
   fun t ht y hy hl ↦ hd' t ht y hy (hl.mono (h t))
 
+/-- A derivation that obeys the Phase Impenetrability Condition has no chain link that crosses the
+phase of a phase head. -/
+theorem Derivation.ObeysTransfer.not_crosses {t : PlanarSyntacticObject} {h : GornAddress}
+    {y : GornAddress × LexicalItem.Token}
+    (hd' : d.ObeysTransfer hd Φ (fun _ ↦ complementDomain) (Schedule.atCompletion hd))
+    (ht : t ∈ d.externalize?) (hy : y ∈ tokenList t.toRoseTree) (hh : h ∈ occurrencesWith t Φ)
+    (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) : ¬ Crosses hd t y.2 h := by
+  intro hc
+  have hmem := hh
+  simp only [occurrencesWith, List.mem_filterMap, Option.ite_none_right_eq_some,
+    Option.some.injEq] at hh
+  obtain ⟨⟨h', a⟩, ha, -, rfl⟩ := hh
+  have hv : h' ∈ t.toRoseTree.validPaths := by
+    obtain ⟨s, hs, -⟩ := mem_positions_iff.1 ha
+    exact (getElem?_eq_some_iff.mp hs).1
+  refine hd' t ht y hy (((crosses_iff hv h0 hproj).1 hc).mono fun s q hq ↦ ?_)
+  obtain ⟨k, hk, hσ, hq⟩ := hq
+  obtain rfl := Finset.mem_singleton.1 hk
+  exact ⟨k, List.mem_toFinset.2 hmem, hσ, hq⟩
+
 end Derivation
 
 end Minimalist

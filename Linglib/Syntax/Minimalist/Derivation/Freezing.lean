@@ -140,6 +140,11 @@ theorem MovesOnly.mono {L' : PlanarSyntacticObject → SyntacticObject → Prop}
     (hL : ∀ p x, L p x → L' p x) (h : d.MovesOnly L) : d.MovesOnly L' :=
   fun i hi m hm ↦ (h i hi m hm).imp fun p ⟨hp, hpm⟩ ↦ ⟨hp, hL p m hpm⟩
 
+/-- A derivation that moves only `L`-constituents did so at each earlier stage. -/
+theorem MovesOnly.of_append (h : (d.append steps).MovesOnly L) : d.MovesOnly L := fun i hi m hm ↦ by
+  have := h i (hi.trans_le (by simp [length, append])) m (by rwa [mover?_append_of_lt hi])
+  rwa [take_append_of_le hi.le] at this
+
 theorem movesOnly_append_singleton_iff {step : Step} :
     (d.append [step]).MovesOnly L ↔ d.MovesOnly L ∧
       ∀ m ∈ step.mover?, ∃ p ∈ d.externalize?, L p m := by

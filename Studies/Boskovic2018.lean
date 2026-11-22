@@ -15,8 +15,9 @@ its host leaves the host unlabeled until it moves on. A phase is an object label
 head (`IsPhase`). Two conditions on a derivation `d` are stated with
 `Minimalist.Derivation.MovesOnly`: `d.MovesOnly (IsPhase Φ)`, only phases move, and
 `d.MovesOnly IsLabeled`, unlabeled elements do not move. The first entails the second
-(`movesOnly_isLabeled_of_isPhase`). A derivation `Converges` when it moves only labeled elements
-and obeys the Phase Impenetrability Condition.
+(`movesOnly_isLabeled_of_isPhase`), and an object two of whose labeling heads share no feature
+fails the second (`not_movesOnly_of_not_agreed`). A derivation `Converges` when it moves only
+labeled elements and obeys the Phase Impenetrability Condition.
 
 Since the condition makes an element leave a phase by its edge before the phase moves, extraction
 from a moved subject fails either way (`ex17`): the stop at the edge leaves the subject unlabeled,
@@ -129,6 +130,22 @@ theorem IsPhase.isLabeled (h : IsPhase Φ t x) : IsLabeled t x :=
 theorem movesOnly_isLabeled_of_isPhase (h : d.MovesOnly (IsPhase Φ)) : d.MovesOnly IsLabeled :=
   h.mono fun _ _ ↦ IsPhase.isLabeled
 
+theorem not_isLabeled_of_not_agreed {a b : LexicalItem.Token} (ha : a ∈ labelers t x)
+    (hb : b ∈ labelers t x) (hab : a ≠ b) (h : ∀ f, ¬ Agreed f a b) : ¬ IsLabeled t x := by
+  rintro (⟨c, -, hc⟩ | ⟨-, -, f, hf⟩)
+  · rw [hc, Finset.mem_singleton] at ha hb
+    exact hab (ha.trans hb.symm)
+  · exact h f (hf ha hb hab)
+
+/-- An object two of whose labeling heads share no feature does not move: (32). -/
+theorem not_movesOnly_of_not_agreed {a b : LexicalItem.Token} {p : PlanarSyntacticObject}
+    {m : SyntacticObject} {side : Edge} (hp : p ∈ d.externalize?) (ha : a ∈ labelers p m)
+    (hb : b ∈ labelers p m) (hab : a ≠ b) (h : ∀ f, ¬ Agreed f a b) :
+    ¬ (d.append [.im m side]).MovesOnly IsLabeled := fun hm ↦ by
+  obtain ⟨q, hq, hl⟩ := (Derivation.movesOnly_append_im_iff.1 hm).2
+  obtain rfl := Option.mem_unique hq hp
+  exact not_isLabeled_of_not_agreed ha hb hab h hl
+
 /-- The phase heads of a language with articles: C, v and D. -/
 def IsPhaseHead (a : LexicalItem.Token) : Prop := a.item.cat ∈ [.C, .v, .D]
 
@@ -183,22 +200,49 @@ inductive Route
   | edge | direct
   deriving DecidableEq, Fintype
 
-/-- The derivation of (17) along a route: the subject built around *who*, merged with *hired
-Mary*, raised over I, and *who* raised over the interrogative C. -/
-def subextraction (r : Route) : Derivation :=
+/-- The derivation of (17) through the merger of I: the subject built around *who*, with *who*
+raised to its edge along the edge route, and merged with *hired Mary*. -/
+def subjectInSitu (r : Route) : Derivation :=
   ⟨tok 202 .N, [.em .left (tok 201 .n (sel := [.N])), .em .left whoD, .em .left ofP,
     .em .left friends, .em .left friendsN, .em .left subjD] ++
     (match r with | .edge => [.im who] | .direct => []) ++
-    [.em .right hiredMary, .em .left tI,
-      .im (match r with
-        | .edge => (who * subject who.toSyntacticObject.tracePlanar : PlanarSyntacticObject)
-        | .direct => subject who),
-      .em .left cQ, .im who]⟩
+    [.em .right hiredMary, .em .left tI]⟩
+
+/-- What raises to Spec,IP along a route: the subject with *who* at its edge, or inside it. -/
+def raisedSubject : Route → PlanarSyntacticObject
+  | .edge => who * subject who.toSyntacticObject.tracePlanar
+  | .direct => subject who
+
+/-- The derivation of (17) along a route: the subject raised over I, and *who* raised over the
+interrogative C. -/
+def subextraction (r : Route) : Derivation :=
+  ((subjectInSitu r).append [.im (raisedSubject r)]).append [.em .left cQ, .im who]
 
 -- (17)
 theorem subextraction_surfacePhon (r : Route) :
     (subextraction r).surfacePhon = ["who", "friends", "of", "hired", "Mary"] := by
   cases r <;> decide +kernel
+
+-- (18): with *who* at its edge, the subject has the heads of *who* and of the DP to label it
+theorem not_movesOnly_edge : ¬ (subextraction .edge).MovesOnly IsLabeled := by
+  obtain ⟨p, hp, ha, hb⟩ : ∃ p ∈ (subjectInSitu .edge).externalize?,
+      whoD ∈ labelers p ↑(raisedSubject .edge) ∧ subjD ∈ labelers p ↑(raisedSubject .edge) := by
+    decide +kernel
+  exact fun h ↦ not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.of_append
+
+-- (16): extracted from the moved subject, *who* crosses the phase of the subject's D
+theorem not_obeysPic_direct : ¬ ObeysPic .raising IsPhaseHead (subextraction .direct) := by
+  obtain ⟨t, ht, h, hh, y, hy, -, -, h0, hproj, hc⟩ :
+      ∃ t ∈ (subextraction .direct).externalize?, ∃ h ∈ occurrencesWith t IsPhaseHead,
+        ∃ y ∈ tokenList t.toRoseTree, (h, subjD) ∈ tokenList t.toRoseTree ∧ whoD = y.2 ∧ h ≠ ⊥ ∧
+          projectionAt .raising t h ≤ h.parent ∧ Crosses .raising t y.2 h := by
+    decide +kernel
+  exact fun hpic ↦ Derivation.ObeysTransfer.not_crosses hpic ht hy hh h0 hproj hc
+
+-- (1): along either route *who* leaves the raised subject
+theorem not_obeysFreezing_subextraction (r : Route) : ¬ (subextraction r).ObeysFreezing :=
+  fun h ↦ (Derivation.obeysFreezing_append_iff.1 h).2.2 ↑who (by simp [Step.mover?])
+    (by cases r <;> decide +kernel)
 
 /-- In (17), neither route converges: by the edge the subject moves unlabeled, and directly *who*
 crosses the subject phase. -/
@@ -207,8 +251,11 @@ theorem ex17 :
       ObeysPic .raising IsPhaseHead (subextraction .edge) ∧
       ¬ ObeysPic .raising IsPhaseHead (subextraction .direct) ∧
       (∀ r, ¬ (subextraction r).ObeysFreezing) ∧
-      (Examples.ex17.judgment = .acceptable ↔ ∃ r, Converges IsPhaseHead (subextraction r)) := by
-  decide +kernel
+      (Examples.ex17.judgment = .acceptable ↔ ∃ r, Converges IsPhaseHead (subextraction r)) :=
+  ⟨not_movesOnly_edge, by decide +kernel, not_obeysPic_direct, not_obeysFreezing_subextraction,
+    iff_of_false (by decide) (by
+      rintro ⟨_ | _, h⟩
+      exacts [not_movesOnly_edge h.1, not_obeysPic_direct h.2])⟩
 
 /-! ### Remnant movement (20)–(21) -/
 
@@ -258,9 +305,12 @@ def bekannt := tok 238 .A "bekannt" (sel := [.C])
 def ist := tok 239 .T "ist" (sel := [.A])
 def sagte := tok 240 .V "sagte" (sel := [.C])
 
+/-- The verb-second clause under *bekannt ist*. -/
+def v2Embedded : Derivation :=
+  ⟨tok 232 .N "Peter", v2Steps ++ [.em .left bekannt, .em .left ist]⟩
+
 /-- (22a): the verb-second clause raised to Spec,IP. -/
-def v2Moved : Derivation :=
-  ⟨tok 232 .N "Peter", v2Steps ++ [.em .left bekannt, .em .left ist, .im v2Clause]⟩
+def v2Moved : Derivation := v2Embedded.append [.im v2Clause]
 
 /-- (22c): the verb-second clause in situ, the complement of *sagte*. -/
 def v2InSitu : Derivation := ⟨tok 232 .N "Peter", v2Steps ++ [.em .left sagte]⟩
@@ -270,7 +320,11 @@ move, though nothing moves out of it. -/
 theorem ex22 : v2Moved.ObeysFreezing ∧
     (Examples.ex22a.judgment = .acceptable ↔ Converges IsPhaseHead v2Moved) ∧
     (Examples.ex22c.judgment = .acceptable ↔ Converges IsPhaseHead v2InSitu) := by
-  decide +kernel
+  obtain ⟨p, hp, ha, hb⟩ : ∃ p ∈ v2Embedded.externalize?,
+      peterD ∈ labelers p ↑v2Clause ∧ cV2 ∈ labelers p ↑v2Clause := by
+    decide +kernel
+  exact ⟨by decide +kernel, iff_of_false (by decide) fun h ↦
+    not_movesOnly_of_not_agreed hp ha hb (by decide) (by decide) h.1, by decide +kernel⟩
 
 /-- The verb-second clause of (22c), the complement of *sagte*, has no head daughter by labels, and
 C′ by the raising head. -/
@@ -312,8 +366,9 @@ against the traditional ban. -/
 theorem ex25a : possessorInSitu.ObeysFreezing ∧ ¬ possessorExtraction.ObeysFreezing ∧
     (Examples.ex24.judgment = .acceptable ↔ Converges IsPhaseHeadNP possessorInSitu) ∧
     (Examples.ex27.judgment = .acceptable ↔ Converges IsPhaseHeadNP objectFronting) ∧
-    (Examples.ex25a.judgment = .acceptable ↔ Converges IsPhaseHeadNP possessorExtraction) := by
-  decide +kernel
+    (Examples.ex25a.judgment = .acceptable ↔ Converges IsPhaseHeadNP possessorExtraction) :=
+  ⟨by decide +kernel, fun h ↦ (Derivation.obeysFreezing_append_im_iff.1 h).2
+    (by decide +kernel : objectFronting.Frozen ↑possessor), by decide +kernel⟩
 
 /-! ### R-pronouns (37)–(42) -/
 
@@ -331,25 +386,29 @@ def gedacht := tok 270 .V "gedacht" (sel := [.C])
 def had := tok 271 .T "had" (sel := [.V])
 def cWh := tok 272 .C (features := .single .wh true) (sel := [.T])
 
-/-- (42a): *waar* raised to Spec,PP, the PP raised out of the embedded clause through its edge,
-and *waar* extracted from it. -/
-def rPronounExtraction : Derivation :=
+/-- (42a) before *waar* is extracted: *waar* raised to Spec,PP, and the PP raised out of the
+embedded clause through its edge. -/
+def ppFronting : Derivation :=
   ⟨tok 262 .N, [.em .left (tok 261 .n (sel := [.N])), .em .left waarD, .em .left mee, .im waar,
     .em .right snijden, .em .left zou, .em .left dat, .im pp, .em .left gedacht, .im pp,
-    .em .left had, .em .left cWh, .im waar]⟩
+    .em .left had, .em .left cWh]⟩
 
-/-- (42a): *waar* moves to Spec,PP to share the R-feature, not for successive cyclicity, so the PP
-is labeled and moves, and *waar* then leaves it. -/
+/-- (42a): *waar* extracted from the moved PP. -/
+def rPronounExtraction : Derivation := ppFronting.append [.im waar]
+
+-- (42a): *waar* shares the R-feature in Spec,PP, so the PP is labeled, moves, and *waar* leaves it
 theorem ex42a : ¬ rPronounExtraction.ObeysFreezing ∧
-    (Examples.ex42a.judgment = .acceptable ↔ Converges IsPhaseHead rPronounExtraction) := by
-  decide +kernel
+    (Examples.ex42a.judgment = .acceptable ↔ Converges IsPhaseHead rPronounExtraction) :=
+  ⟨fun h ↦ (Derivation.obeysFreezing_append_im_iff.1 h).2
+    (by decide +kernel : ppFronting.Frozen ↑waar), by decide +kernel⟩
 
 /-! ### Smuggling (Appendix A) -/
 
 -- (58): the object raises out of moved PartP, which is labeled and is not a phase
 theorem ex58 : (Collins2005.ex9.passive .partP false).MovesOnly IsLabeled ∧
     ¬ (Collins2005.ex9.passive .partP false).ObeysFreezing ∧
-    ¬ (Collins2005.ex9.fronted .partP false).MovesOnly (IsPhase IsPhaseHead) := by
-  decide +kernel
+    ¬ (Collins2005.ex9.fronted .partP false).MovesOnly (IsPhase IsPhaseHead) :=
+  ⟨by decide +kernel, (Collins2005.converges_iff_not_obeysFreezing _ _ _ _ _ .partP false).1
+    ((Collins2005.converges_iff _ _ _ _ _ .partP false).2 rfl), by decide +kernel⟩
 
 end Boskovic2018
