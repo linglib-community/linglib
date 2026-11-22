@@ -1,0 +1,2916 @@
+{
+  "features": [
+    {
+      "key": "frame",
+      "lean": "frame",
+      "type": "Frame",
+      "doc": "The construction that expresses the causal relation.",
+      "levels": [
+        {
+          "name": "lexical",
+          "label": "lexical",
+          "doc": "the transitive lexical causative, with the cause as subject"
+        },
+        {
+          "name": "periphrastic",
+          "label": "periphrastic",
+          "doc": "the verb *cause* with an infinitival complement"
+        },
+        {
+          "name": "anticausative",
+          "label": "anticausative",
+          "doc": "the intransitive verb with the cause in a *from* phrase"
+        }
+      ]
+    },
+    {
+      "key": "sense",
+      "lean": "sense",
+      "type": "Sense",
+      "doc": "The sense in which the verb is used.",
+      "levels": [
+        {
+          "name": "physical",
+          "label": "physical",
+          "doc": "the concrete, physical sense"
+        },
+        {
+          "name": "abstract",
+          "label": "abstract",
+          "doc": "a figurative, psychological or otherwise abstract sense"
+        }
+      ]
+    },
+    {
+      "key": "subject",
+      "lean": "subject",
+      "type": "Subject",
+      "doc": "What the phrase naming the cause denotes.",
+      "levels": [
+        {
+          "name": "absence",
+          "label": "absence",
+          "doc": "an absence or omission, *the lack of sunscreen*"
+        },
+        {
+          "name": "fact",
+          "label": "fact",
+          "doc": "a fact, named by a *the fact that* nominal"
+        },
+        {
+          "name": "gerund",
+          "label": "gerund",
+          "doc": "a fact or other abstract object, named by a verbal gerund"
+        },
+        {
+          "name": "degree",
+          "label": "degree",
+          "doc": "a degree, named by a dimensional noun such as *quality* or *intensity*"
+        },
+        {
+          "name": "event",
+          "label": "event",
+          "doc": "an event or a force"
+        },
+        {
+          "name": "individual",
+          "label": "individual",
+          "doc": "a concrete individual"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "verb",
+          "label": "verb",
+          "doc": "the causative verb under test, or in the periphrastic frame the verb under *cause*"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The verbs under test.",
+      "levels": [
+        {
+          "name": "burn",
+          "label": "burn",
+          "doc": "the English verb *burn*"
+        },
+        {
+          "name": "melt",
+          "label": "melt",
+          "doc": "the English verb *melt*"
+        },
+        {
+          "name": "flood",
+          "label": "flood",
+          "doc": "the English verb *flood*"
+        },
+        {
+          "name": "kill",
+          "label": "kill",
+          "doc": "the English verb *kill*"
+        },
+        {
+          "name": "die",
+          "label": "die",
+          "doc": "the English verb *die*"
+        },
+        {
+          "name": "damage",
+          "label": "damage",
+          "doc": "the English verb *damage*"
+        },
+        {
+          "name": "trigger",
+          "label": "trigger",
+          "doc": "the English verb *trigger*"
+        },
+        {
+          "name": "change",
+          "label": "change",
+          "doc": "the English verb *change*"
+        },
+        {
+          "name": "activate",
+          "label": "activate",
+          "doc": "the English verb *activate*"
+        },
+        {
+          "name": "bury",
+          "label": "bury",
+          "doc": "the English verb *bury*"
+        },
+        {
+          "name": "break",
+          "label": "break",
+          "doc": "the English verb *break*"
+        },
+        {
+          "name": "crack",
+          "label": "crack",
+          "doc": "the English verb *crack*"
+        },
+        {
+          "name": "destroy",
+          "label": "destroy",
+          "doc": "the English verb *destroy*"
+        },
+        {
+          "name": "boil",
+          "label": "boil",
+          "doc": "the English verb *boil*"
+        },
+        {
+          "name": "lift",
+          "label": "lift",
+          "doc": "the English verb *lift*"
+        },
+        {
+          "name": "lock",
+          "label": "lock",
+          "doc": "the English verb *lock*"
+        },
+        {
+          "name": "crash",
+          "label": "crash",
+          "doc": "the English verb *crash*"
+        },
+        {
+          "name": "heat",
+          "label": "heat",
+          "doc": "the English verb *heat*"
+        },
+        {
+          "name": "ruin",
+          "label": "ruin",
+          "doc": "the English verb *ruin*"
+        },
+        {
+          "name": "lower",
+          "label": "lower",
+          "doc": "the English verb *lower*"
+        },
+        {
+          "name": "drop",
+          "label": "drop",
+          "doc": "the English verb *drop*"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The causative statements of the paper's sections 1 to 3, 4.3.1 and 6 and of its appendix."
+  },
+  "examples": [
+    {
+      "id": "martinrosenichols2025_5a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(5a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of sunscreen caused Jane's skin to burn.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["sunscreen", ""], ["caused", ""], ["Jane's", ""],
+        ["skin", ""], ["to", ""], ["burn", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_5b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(5b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of sunscreen burned Jane's skin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["sunscreen", ""], ["burned", ""], ["Jane's", ""],
+        ["skin", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_6a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(6a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of a heat shield caused the rubber gasket to melt.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["a", ""], ["heat", ""], ["shield", ""],
+        ["caused", ""], ["the", ""], ["rubber", ""], ["gasket", ""], ["to", ""], ["melt", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 11, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_6b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(6b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of a heat shield melted the rubber gasket.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["a", ""], ["heat", ""], ["shield", ""],
+        ["melted", ""], ["the", ""], ["rubber", ""], ["gasket", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_7a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(7a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of a basement window caused the cellar to flood.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["a", ""], ["basement", ""], ["window", ""],
+        ["caused", ""], ["the", ""], ["cellar", ""], ["to", ""], ["flood", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_7b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(7b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of a basement window flooded the cellar.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["a", ""], ["basement", ""], ["window", ""],
+        ["flooded", ""], ["the", ""], ["cellar", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_9a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(9a)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "De Rossi's complete lack of discipline burned this team.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["De", ""], ["Rossi's", ""], ["complete", ""], ["lack", ""], ["of", ""], ["discipline", ""],
+        ["burned", ""], ["this", ""], ["team", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_9b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(9b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "His utter lack of egotism melted me completely.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["His", ""], ["utter", ""], ["lack", ""], ["of", ""], ["egotism", ""], ["melted", ""],
+        ["me", ""], ["completely", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "absence"]
+      ],
+      "comment": "The paper prints an elision after the first word.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_9c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(9c)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The lack of colour flooded his thoughts.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["colour", ""], ["flooded", ""], ["his", ""],
+        ["thoughts", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_10a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(10a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of water killed my plants.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["water", ""], ["killed", ""], ["my", ""],
+        ["plants", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "kill"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_10b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(10b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Lack of oxygen damaged her brain.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lack", ""], ["of", ""], ["oxygen", ""], ["damaged", ""], ["her", ""], ["brain", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_10c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(10c)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "A lack of supplies triggered a great famine.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", ""], ["lack", ""], ["of", ""], ["supplies", ""], ["triggered", ""], ["a", ""],
+        ["great", ""], ["famine", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "trigger"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_12a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(12a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of vitamins changed Jane's skin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["vitamins", ""], ["changed", ""], ["Jane's", ""],
+        ["skin", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "change"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_12b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(12b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The lack of XBP1 activated the other protein.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["XBP1", ""], ["activated", ""], ["the", ""],
+        ["other", ""], ["protein", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "activate"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_13a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(13a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of drainage buried the road.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["drainage", ""], ["buried", ""], ["the", ""],
+        ["road", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "bury"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_13b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(13b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of drainage caused the road to be buried.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["drainage", ""], ["caused", ""], ["the", ""],
+        ["road", ""], ["to", ""], ["be", ""], ["buried", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "verb", "lexeme": "bury"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_13c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(13c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of funding buried the project.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["funding", ""], ["buried", ""], ["the", ""],
+        ["project", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "bury"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_14a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(14a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "My skin burned from the lack of sunscreen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["My", ""], ["skin", ""], ["burned", ""], ["from", ""], ["the", ""], ["lack", ""],
+        ["of", ""], ["sunscreen", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "anticausative"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_14b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(14b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of sunscreen burned my skin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["sunscreen", ""], ["burned", ""], ["my", ""],
+        ["skin", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_15a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(15a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The vase broke from a lack of proper packing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["vase", ""], ["broke", ""], ["from", ""], ["a", ""], ["lack", ""], ["of", ""],
+        ["proper", ""], ["packing", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "break"}
+      ],
+      "paperFeatures": [
+        ["frame", "anticausative"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "Printed with the alternative preposition due to.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_15b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(15b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of proper packing broke the vase.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["proper", ""], ["packing", ""], ["broke", ""],
+        ["the", ""], ["vase", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "break"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_16a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(16a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The pistons cracked from a lack of proper lubrication.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["pistons", ""], ["cracked", ""], ["from", ""], ["a", ""], ["lack", ""],
+        ["of", ""], ["proper", ""], ["lubrication", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "crack"}
+      ],
+      "paperFeatures": [
+        ["frame", "anticausative"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_16b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(16b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The lack of proper lubrication cracked the pistons.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["proper", ""], ["lubrication", ""], ["cracked", ""],
+        ["the", ""], ["pistons", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "crack"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_18a_damage",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(18a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Andy left the phone on the table caused it to be damaged.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Andy", ""], ["left", ""], ["the", ""],
+        ["phone", ""], ["on", ""], ["the", ""], ["table", ""], ["caused", ""], ["it", ""],
+        ["to", ""], ["be", ""], ["damaged", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 14, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_18a_burn",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(18a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Andy left the phone on the table caused it to burn.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Andy", ""], ["left", ""], ["the", ""],
+        ["phone", ""], ["on", ""], ["the", ""], ["table", ""], ["caused", ""], ["it", ""],
+        ["to", ""], ["burn", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 13, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_18b_damage",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(18b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Andy left the phone on the table damaged it.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Andy", ""], ["left", ""], ["the", ""],
+        ["phone", ""], ["on", ""], ["the", ""], ["table", ""], ["damaged", ""], ["it", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_18b_burn",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(18b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Andy left the phone on the table burned it.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Andy", ""], ["left", ""], ["the", ""],
+        ["phone", ""], ["on", ""], ["the", ""], ["table", ""], ["burned", ""], ["it", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_19a_destroy",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(19a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Lee heated his lunchbox with its cover in the microwave caused the plastic to be destroyed.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Lee", ""], ["heated", ""], ["his", ""],
+        ["lunchbox", ""], ["with", ""], ["its", ""], ["cover", ""], ["in", ""], ["the", ""],
+        ["microwave", ""], ["caused", ""], ["the", ""], ["plastic", ""], ["to", ""], ["be", ""],
+        ["destroyed", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 18, "label": "verb", "lexeme": "destroy"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_19a_melt",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(19a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Lee heated his lunchbox with its cover in the microwave caused the plastic to melt.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Lee", ""], ["heated", ""], ["his", ""],
+        ["lunchbox", ""], ["with", ""], ["its", ""], ["cover", ""], ["in", ""], ["the", ""],
+        ["microwave", ""], ["caused", ""], ["the", ""], ["plastic", ""], ["to", ""], ["melt", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 17, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_19b_destroy",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(19b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Lee heated his lunchbox with its cover in the microwave destroyed the plastic.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Lee", ""], ["heated", ""], ["his", ""],
+        ["lunchbox", ""], ["with", ""], ["its", ""], ["cover", ""], ["in", ""], ["the", ""],
+        ["microwave", ""], ["destroyed", ""], ["the", ""], ["plastic", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 13, "label": "verb", "lexeme": "destroy"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_19b_melt",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(19b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that Lee heated his lunchbox with its cover in the microwave melted the plastic.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["Lee", ""], ["heated", ""], ["his", ""],
+        ["lunchbox", ""], ["with", ""], ["its", ""], ["cover", ""], ["in", ""], ["the", ""],
+        ["microwave", ""], ["melted", ""], ["the", ""], ["plastic", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 13, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_21a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(21a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Andy's leaving the phone on the table caused it to burn.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Andy's", ""], ["leaving", ""], ["the", ""], ["phone", ""], ["on", ""], ["the", ""],
+        ["table", ""], ["caused", ""], ["it", ""], ["to", ""], ["burn", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_21b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(21b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Andy's leaving his phone on the table burned it.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Andy's", ""], ["leaving", ""], ["his", ""], ["phone", ""], ["on", ""], ["the", ""],
+        ["table", ""], ["burned", ""], ["it", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_22a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(22a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Lee's heating his lunchbox with its cover in the microwave caused the plastic to melt.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lee's", ""], ["heating", ""], ["his", ""], ["lunchbox", ""], ["with", ""], ["its", ""],
+        ["cover", ""], ["in", ""], ["the", ""], ["microwave", ""], ["caused", ""], ["the", ""],
+        ["plastic", ""], ["to", ""], ["melt", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 14, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_22b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(22b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Lee's heating his lunchbox with its cover in the microwave melted the plastic.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lee's", ""], ["heating", ""], ["his", ""], ["lunchbox", ""], ["with", ""], ["its", ""],
+        ["cover", ""], ["in", ""], ["the", ""], ["microwave", ""], ["melted", ""], ["the", ""],
+        ["plastic", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_23a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(23a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John's blocking the drainage system caused the basement to flood.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John's", ""], ["blocking", ""], ["the", ""], ["drainage", ""], ["system", ""],
+        ["caused", ""], ["the", ""], ["basement", ""], ["to", ""], ["flood", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_23b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(23b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "John's blocking the drainage system flooded the basement.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John's", ""], ["blocking", ""], ["the", ""], ["drainage", ""], ["system", ""],
+        ["flooded", ""], ["the", ""], ["basement", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_24a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(24a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Tom's telling that story during the interview burned his chances at that job.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tom's", ""], ["telling", ""], ["that", ""], ["story", ""], ["during", ""], ["the", ""],
+        ["interview", ""], ["burned", ""], ["his", ""], ["chances", ""], ["at", ""], ["that", ""],
+        ["job", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_24b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(24b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Iran's accepting the principle of a cease-fire melted their resistance to the idea.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Iran's", ""], ["accepting", ""], ["the", ""], ["principle", ""], ["of", ""], ["a", ""],
+        ["cease-fire", ""], ["melted", ""], ["their", ""], ["resistance", ""], ["to", ""],
+        ["the", ""], ["idea", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_24c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(24c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Callas' singing Casta Diva flooded me with emotions.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Callas'", ""], ["singing", ""], ["Casta", ""], ["Diva", ""], ["flooded", ""], ["me", ""],
+        ["with", ""], ["emotions", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_25a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(25a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Josh's plugging the socket in the wrong voltage caused it to be damaged.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Josh's", ""], ["plugging", ""], ["the", ""], ["socket", ""], ["in", ""], ["the", ""],
+        ["wrong", ""], ["voltage", ""], ["caused", ""], ["it", ""], ["to", ""], ["be", ""],
+        ["damaged", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 12, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_25b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(25b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Josh's plugging the socket in the wrong voltage damaged the computer.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Josh's", ""], ["plugging", ""], ["the", ""], ["socket", ""], ["in", ""], ["the", ""],
+        ["wrong", ""], ["voltage", ""], ["damaged", ""], ["the", ""], ["computer", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_26a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(26a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "My neighbor's not watering my plants caused them to die.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["My", ""], ["neighbor's", ""], ["not", ""], ["watering", ""], ["my", ""], ["plants", ""],
+        ["caused", ""], ["them", ""], ["to", ""], ["die", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "verb", "lexeme": "die"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_26b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(26b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "My neighbor's not watering my plants killed them.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["My", ""], ["neighbor's", ""], ["not", ""], ["watering", ""], ["my", ""], ["plants", ""],
+        ["killed", ""], ["them", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "kill"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_27a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(27a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Camacho's inspecting the package caused the detonator to be triggered.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Camacho's", ""], ["inspecting", ""], ["the", ""], ["package", ""], ["caused", ""],
+        ["the", ""], ["detonator", ""], ["to", ""], ["be", ""], ["triggered", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "verb", "lexeme": "trigger"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_27b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(27b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Camacho's inspecting the package triggered the detonator.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Camacho's", ""], ["inspecting", ""], ["the", ""], ["package", ""], ["triggered", ""],
+        ["the", ""], ["detonator", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "trigger"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "gerund"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_33a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(33a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The extreme intensity of the sun's rays caused Jane's skin to burn.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["extreme", ""], ["intensity", ""], ["of", ""], ["the", ""], ["sun's", ""],
+        ["rays", ""], ["caused", ""], ["Jane's", ""], ["skin", ""], ["to", ""], ["burn", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 11, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_33b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(33b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The extreme intensity of the sun's rays burned Jane's skin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["extreme", ""], ["intensity", ""], ["of", ""], ["the", ""], ["sun's", ""],
+        ["rays", ""], ["burned", ""], ["Jane's", ""], ["skin", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_34a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(34a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The very poor quality of the plastic caused it to melt.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["very", ""], ["poor", ""], ["quality", ""], ["of", ""], ["the", ""],
+        ["plastic", ""], ["caused", ""], ["it", ""], ["to", ""], ["melt", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_34b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(34b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The very poor quality of the plastic melted it.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["very", ""], ["poor", ""], ["quality", ""], ["of", ""], ["the", ""],
+        ["plastic", ""], ["melted", ""], ["it", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_35a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(35a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The intensity of the winds caused the car to be buried under sand and debris.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["intensity", ""], ["of", ""], ["the", ""], ["winds", ""], ["caused", ""],
+        ["the", ""], ["car", ""], ["to", ""], ["be", ""], ["buried", ""], ["under", ""],
+        ["sand", ""], ["and", ""], ["debris", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 10, "label": "verb", "lexeme": "bury"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_35b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(35b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The intensity of the winds buried the car under sand and debris.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["intensity", ""], ["of", ""], ["the", ""], ["winds", ""], ["buried", ""],
+        ["the", ""], ["car", ""], ["under", ""], ["sand", ""], ["and", ""], ["debris", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "bury"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_36a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(36a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The intensity of the storm caused the town's sewer system to flood.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["intensity", ""], ["of", ""], ["the", ""], ["storm", ""], ["caused", ""],
+        ["the", ""], ["town's", ""], ["sewer", ""], ["system", ""], ["to", ""], ["flood", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 11, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_36b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(36b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The intensity of the storm flooded the town's sewer system.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["intensity", ""], ["of", ""], ["the", ""], ["storm", ""], ["flooded", ""],
+        ["the", ""], ["town's", ""], ["sewer", ""], ["system", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_37a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(37a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Such a terrible level of betrayal burned his soul.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Such", ""], ["a", ""], ["terrible", ""], ["level", ""], ["of", ""], ["betrayal", ""],
+        ["burned", ""], ["his", ""], ["soul", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_37b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(37b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The extraordinary quality of Gould's performance melted my heart.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["extraordinary", ""], ["quality", ""], ["of", ""], ["Gould's", ""],
+        ["performance", ""], ["melted", ""], ["my", ""], ["heart", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_37c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(37c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The extreme intensity of the moment flooded me with thoughts.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["extreme", ""], ["intensity", ""], ["of", ""], ["the", ""], ["moment", ""],
+        ["flooded", ""], ["me", ""], ["with", ""], ["thoughts", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_37d",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(37d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The extreme degree of this traumatic experience buried the painful memories deep in her subconscious.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["extreme", ""], ["degree", ""], ["of", ""], ["this", ""], ["traumatic", ""],
+        ["experience", ""], ["buried", ""], ["the", ""], ["painful", ""], ["memories", ""],
+        ["deep", ""], ["in", ""], ["her", ""], ["subconscious", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "bury"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "abstract"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_38b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(38b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The appalling quality of the bread damaged the digestive tract and resulted in chronic malnutrition.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["appalling", ""], ["quality", ""], ["of", ""], ["the", ""], ["bread", ""],
+        ["damaged", ""], ["the", ""], ["digestive", ""], ["tract", ""], ["and", ""],
+        ["resulted", ""], ["in", ""], ["chronic", ""], ["malnutrition", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_39a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(39a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The high levels of the virus cause an overwhelming inflammatory response to be triggered.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["high", ""], ["levels", ""], ["of", ""], ["the", ""], ["virus", ""],
+        ["cause", ""], ["an", ""], ["overwhelming", ""], ["inflammatory", ""], ["response", ""],
+        ["to", ""], ["be", ""], ["triggered", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 13, "label": "verb", "lexeme": "trigger"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_39b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(39b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The high levels of the virus trigger an overwhelming inflammatory response.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["high", ""], ["levels", ""], ["of", ""], ["the", ""], ["virus", ""],
+        ["trigger", ""], ["an", ""], ["overwhelming", ""], ["inflammatory", ""], ["response", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "trigger"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_40a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(40a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The poor quality of the potting soil caused my plants to die.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["poor", ""], ["quality", ""], ["of", ""], ["the", ""], ["potting", ""],
+        ["soil", ""], ["caused", ""], ["my", ""], ["plants", ""], ["to", ""], ["die", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 11, "label": "verb", "lexeme": "die"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_40b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(40b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The poor quality of the potting soil killed my plants.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["poor", ""], ["quality", ""], ["of", ""], ["the", ""], ["potting", ""],
+        ["soil", ""], ["killed", ""], ["my", ""], ["plants", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "kill"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_41b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(41b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The moisture level of the wound changed the electrical signal measured by the sensor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["moisture", ""], ["level", ""], ["of", ""], ["the", ""], ["wound", ""],
+        ["changed", ""], ["the", ""], ["electrical", ""], ["signal", ""], ["measured", ""],
+        ["by", ""], ["the", ""], ["sensor", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "change"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_42a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(42a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A change in molecular structure broke the window.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", ""], ["change", ""], ["in", ""], ["molecular", ""], ["structure", ""], ["broke", ""],
+        ["the", ""], ["window", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "break"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "From Partee (1979).",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_42b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(42b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A change in molecular structure caused the window to break.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", ""], ["change", ""], ["in", ""], ["molecular", ""], ["structure", ""], ["caused", ""],
+        ["the", ""], ["window", ""], ["to", ""], ["break", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "verb", "lexeme": "break"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "From Partee (1979).",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_42c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(42c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The low air pressure boiled the water.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["low", ""], ["air", ""], ["pressure", ""], ["boiled", ""], ["the", ""],
+        ["water", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "boil"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "From Partee (1979).",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_42d",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(42d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The low air pressure caused the water to boil.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["low", ""], ["air", ""], ["pressure", ""], ["caused", ""], ["the", ""],
+        ["water", ""], ["to", ""], ["boil", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "verb", "lexeme": "boil"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "From Partee (1979).",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_43a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(43a)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The movement broke the weak clots in the claw marks on his shoulder.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["movement", ""], ["broke", ""], ["the", ""], ["weak", ""], ["clots", ""],
+        ["in", ""], ["the", ""], ["claw", ""], ["marks", ""], ["on", ""], ["his", ""],
+        ["shoulder", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "break"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_43b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(43b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Intense conflagrations burn all of the dried peat in a forest.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Intense", ""], ["conflagrations", ""], ["burn", ""], ["all", ""], ["of", ""], ["the", ""],
+        ["dried", ""], ["peat", ""], ["in", ""], ["a", ""], ["forest", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_43c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(43c)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The heatwave boiled our pipes so it was only hot water.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["heatwave", ""], ["boiled", ""], ["our", ""], ["pipes", ""], ["so", ""],
+        ["it", ""], ["was", ""], ["only", ""], ["hot", ""], ["water", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "boil"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_45a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(45a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The accident caused her skin to burn.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["accident", ""], ["caused", ""], ["her", ""], ["skin", ""], ["to", ""],
+        ["burn", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_45b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(45b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The accident burned her skin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["accident", ""], ["burned", ""], ["her", ""], ["skin", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_46a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(46a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The demolition of the wall caused the basement to flood.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["demolition", ""], ["of", ""], ["the", ""], ["wall", ""], ["caused", ""],
+        ["the", ""], ["basement", ""], ["to", ""], ["flood", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_46b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(46b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The demolition of the wall flooded the basement.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["demolition", ""], ["of", ""], ["the", ""], ["wall", ""], ["flooded", ""],
+        ["the", ""], ["basement", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "flood"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_47a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(47a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The accident destroyed her skin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["accident", ""], ["destroyed", ""], ["her", ""], ["skin", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "verb", "lexeme": "destroy"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_47b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(47b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The low air pressure changed the water.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["low", ""], ["air", ""], ["pressure", ""], ["changed", ""], ["the", ""],
+        ["water", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "change"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "event"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_62a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(62a)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Lack of humidity burned them.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lack", ""], ["of", ""], ["humidity", ""], ["burned", ""], ["them", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_62b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(62b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Lack of water will burn out the pump.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lack", ""], ["of", ""], ["water", ""], ["will", ""], ["burn", ""], ["out", ""],
+        ["the", ""], ["pump", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "burn"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_62d",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(62d)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The lack of suspension lifts the other wheels up.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["lack", ""], ["of", ""], ["suspension", ""], ["lifts", ""], ["the", ""],
+        ["other", ""], ["wheels", ""], ["up", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "verb", "lexeme": "lift"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_62e",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(62e)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Lack of holes locks the electrons into positions from which they cannot move.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lack", ""], ["of", ""], ["holes", ""], ["locks", ""], ["the", ""], ["electrons", ""],
+        ["into", ""], ["positions", ""], ["from", ""], ["which", ""], ["they", ""], ["cannot", ""],
+        ["move", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "lock"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "A relative clause in the attested sentence.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_65a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(65a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that my lips lack hydration cracks them.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["my", ""], ["lips", ""], ["lack", ""],
+        ["hydration", ""], ["cracks", ""], ["them", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "crack"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_65b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(65b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The fact that my lips lack hydration destroys them.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["fact", ""], ["that", ""], ["my", ""], ["lips", ""], ["lack", ""],
+        ["hydration", ""], ["destroys", ""], ["them", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "destroy"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "fact"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_66a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(66a)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The intensity of the heat melted the door handles and allowed the rescuers to open the car.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["intensity", ""], ["of", ""], ["the", ""], ["heat", ""], ["melted", ""],
+        ["the", ""], ["door", ""], ["handles", ""], ["and", ""], ["allowed", ""], ["the", ""],
+        ["rescuers", ""], ["to", ""], ["open", ""], ["the", ""], ["car", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "melt"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "The main clause of the attested sentence.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_66b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(66b)"},
+      "reportedIn": null,
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "The intensity of the fire lifted the radioactive contaminants higher into the atmosphere.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["intensity", ""], ["of", ""], ["the", ""], ["fire", ""], ["lifted", ""],
+        ["the", ""], ["radioactive", ""], ["contaminants", ""], ["higher", ""], ["into", ""],
+        ["the", ""], ["atmosphere", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "verb", "lexeme": "lift"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "degree"]
+      ],
+      "comment": "The main clause of the attested sentence.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_78a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(78a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The flat tire caused the axel to crack.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["flat", ""], ["tire", ""], ["caused", ""], ["the", ""], ["axel", ""],
+        ["to", ""], ["crack", ""]
+      ],
+      "translation": "",
+      "context": "John's car tire is flat and so when driving, weight is no longer evenly distributed across the axel. As a result, the axel cracked.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "crack"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_78b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(78b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The flat tire cracked the axel.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["flat", ""], ["tire", ""], ["cracked", ""], ["the", ""], ["axel", ""]
+      ],
+      "translation": "",
+      "context": "John's car tire is flat and so when driving, weight is no longer evenly distributed across the axel. As a result, the axel cracked.",
+      "judgment": "marginal",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "crack"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "Printed without a mark; the text calls it much less acceptable than (78a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_79a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(79a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The flat tire caused the axel to be damaged.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["flat", ""], ["tire", ""], ["caused", ""], ["the", ""], ["axel", ""],
+        ["to", ""], ["be", ""], ["damaged", ""]
+      ],
+      "translation": "",
+      "context": "John's car tire is flat and so when driving, weight is no longer evenly distributed across the axel. As a result, the axel is damaged.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_79b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(79b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The flat tire damaged the axel.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["flat", ""], ["tire", ""], ["damaged", ""], ["the", ""], ["axel", ""]
+      ],
+      "translation": "",
+      "context": "John's car tire is flat and so when driving, weight is no longer evenly distributed across the axel. As a result, the axel is damaged.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "damage"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_80a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(80a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The uneven road caused the car to crash.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["uneven", ""], ["road", ""], ["caused", ""], ["the", ""], ["car", ""],
+        ["to", ""], ["crash", ""]
+      ],
+      "translation": "",
+      "context": "Andy is driving through the mountains and recent storms have damaged the road, making it extremely uneven. As a result, the car crashed/is destroyed.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "crash"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_80b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(80b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The uneven road crashed the car.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["uneven", ""], ["road", ""], ["crashed", ""], ["the", ""], ["car", ""]
+      ],
+      "translation": "",
+      "context": "Andy is driving through the mountains and recent storms have damaged the road, making it extremely uneven. As a result, the car crashed/is destroyed.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "crash"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_80c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(80c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The uneven road caused the car to be destroyed.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["uneven", ""], ["road", ""], ["caused", ""], ["the", ""], ["car", ""],
+        ["to", ""], ["be", ""], ["destroyed", ""]
+      ],
+      "translation": "",
+      "context": "Andy is driving through the mountains and recent storms have damaged the road, making it extremely uneven. As a result, the car crashed/is destroyed.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "verb", "lexeme": "destroy"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_80d",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(80d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The uneven road destroyed the car.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["uneven", ""], ["road", ""], ["destroyed", ""], ["the", ""], ["car", ""]
+      ],
+      "translation": "",
+      "context": "Andy is driving through the mountains and recent storms have damaged the road, making it extremely uneven. As a result, the car crashed/is destroyed.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "destroy"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_81a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(81a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The manufacturing defect caused the phone to heat up.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["manufacturing", ""], ["defect", ""], ["caused", ""], ["the", ""],
+        ["phone", ""], ["to", ""], ["heat", ""], ["up", ""]
+      ],
+      "translation": "",
+      "context": "Suzy bought a new phone that has a manufacturing defect: when texting it heats up. After buying the phone, she texts her friend. As a result, it heated up/it is ruined.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "verb", "lexeme": "heat"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_81b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(81b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The manufacturing defect heated up the phone.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["manufacturing", ""], ["defect", ""], ["heated", ""], ["up", ""], ["the", ""],
+        ["phone", ""]
+      ],
+      "translation": "",
+      "context": "Suzy bought a new phone that has a manufacturing defect: when texting it heats up. After buying the phone, she texts her friend. As a result, it heated up/it is ruined.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "heat"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_81c",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(81c)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The manufacturing defect caused the phone to be ruined.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["manufacturing", ""], ["defect", ""], ["caused", ""], ["the", ""],
+        ["phone", ""], ["to", ""], ["be", ""], ["ruined", ""]
+      ],
+      "translation": "",
+      "context": "Suzy bought a new phone that has a manufacturing defect: when texting it heats up. After buying the phone, she texts her friend. As a result, it heated up/it is ruined.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "verb", "lexeme": "ruin"}
+      ],
+      "paperFeatures": [
+        ["frame", "periphrastic"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_81d",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(81d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The manufacturing defect ruined the phone.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["manufacturing", ""], ["defect", ""], ["ruined", ""], ["the", ""],
+        ["phone", ""]
+      ],
+      "translation": "",
+      "context": "Suzy bought a new phone that has a manufacturing defect: when texting it heats up. After buying the phone, she texts her friend. As a result, it heated up/it is ruined.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "verb", "lexeme": "ruin"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "individual"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "martinrosenichols2025_96a",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(96a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The sudden lack of air pressure lowered the balloon.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["sudden", ""], ["lack", ""], ["of", ""], ["air", ""], ["pressure", ""],
+        ["lowered", ""], ["the", ""], ["balloon", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "lower"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "martinrosenichols2025_96b",
+      "source": {"bibkey": "martin-rose-nichols-2025", "paperLabel": "(96b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The sudden lack of air pressure dropped the balloon.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["sudden", ""], ["lack", ""], ["of", ""], ["air", ""], ["pressure", ""],
+        ["dropped", ""], ["the", ""], ["balloon", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "verb", "lexeme": "drop"}
+      ],
+      "paperFeatures": [
+        ["frame", "lexical"],
+        ["sense", "physical"],
+        ["subject", "absence"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    }
+  ]
+}

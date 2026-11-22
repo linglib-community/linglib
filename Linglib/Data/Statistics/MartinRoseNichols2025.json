@@ -1,0 +1,656 @@
+{
+ "meta": {
+  "bibkey": "martin-rose-nichols-2025",
+  "method": "corpus",
+  "description": "The corpus survey of thirty-seven frequent English causative verbs in their concrete sense: for each verb, whether it enters the causative alternation, its class in Levin's catalogue as the paper gives it, whether it is thick, and whether the enTenTen21 corpus has it with an adjectival strong resultative and with an omission or quality subject.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "SurveyVerb",
+   "doc": "The verbs of the survey, in the order of Table 3.",
+   "levels": [
+    {
+     "name": "activate",
+     "label": "activate",
+     "doc": "*activate*"
+    },
+    {
+     "name": "affect",
+     "label": "affect",
+     "doc": "*affect*"
+    },
+    {
+     "name": "change",
+     "label": "change",
+     "doc": "*change*"
+    },
+    {
+     "name": "close",
+     "label": "close",
+     "doc": "*close*"
+    },
+    {
+     "name": "cool",
+     "label": "cool",
+     "doc": "*cool*"
+    },
+    {
+     "name": "damage",
+     "label": "damage",
+     "doc": "*damage*"
+    },
+    {
+     "name": "destroy",
+     "label": "destroy",
+     "doc": "*destroy*"
+    },
+    {
+     "name": "dry",
+     "label": "dry",
+     "doc": "*dry*"
+    },
+    {
+     "name": "eliminate",
+     "label": "eliminate",
+     "doc": "*eliminate*"
+    },
+    {
+     "name": "enhance",
+     "label": "enhance",
+     "doc": "*enhance*"
+    },
+    {
+     "name": "extend",
+     "label": "extend",
+     "doc": "*extend*"
+    },
+    {
+     "name": "hurt",
+     "label": "hurt",
+     "doc": "*hurt*"
+    },
+    {
+     "name": "kill",
+     "label": "kill",
+     "doc": "*kill*"
+    },
+    {
+     "name": "lower",
+     "label": "lower",
+     "doc": "*lower*"
+    },
+    {
+     "name": "open",
+     "label": "open",
+     "doc": "*open*"
+    },
+    {
+     "name": "put",
+     "label": "put",
+     "doc": "*put*"
+    },
+    {
+     "name": "restore",
+     "label": "restore",
+     "doc": "*restore*"
+    },
+    {
+     "name": "set",
+     "label": "set",
+     "doc": "*set*"
+    },
+    {
+     "name": "slow",
+     "label": "slow",
+     "doc": "*slow*"
+    },
+    {
+     "name": "start",
+     "label": "start",
+     "doc": "*start*"
+    },
+    {
+     "name": "stop",
+     "label": "stop",
+     "doc": "*stop*"
+    },
+    {
+     "name": "trigger",
+     "label": "trigger",
+     "doc": "*trigger*"
+    },
+    {
+     "name": "turn",
+     "label": "turn",
+     "doc": "*turn*"
+    },
+    {
+     "name": "wakeUp",
+     "label": "wake up",
+     "doc": "*wake up*"
+    },
+    {
+     "name": "break",
+     "label": "break",
+     "doc": "*break*"
+    },
+    {
+     "name": "bury",
+     "label": "bury",
+     "doc": "*bury*"
+    },
+    {
+     "name": "burn",
+     "label": "burn",
+     "doc": "*burn*"
+    },
+    {
+     "name": "cut",
+     "label": "cut",
+     "doc": "*cut*"
+    },
+    {
+     "name": "drop",
+     "label": "drop",
+     "doc": "*drop*"
+    },
+    {
+     "name": "lift",
+     "label": "lift",
+     "doc": "*lift*"
+    },
+    {
+     "name": "lock",
+     "label": "lock",
+     "doc": "*lock*"
+    },
+    {
+     "name": "melt",
+     "label": "melt",
+     "doc": "*melt*"
+    },
+    {
+     "name": "mix",
+     "label": "mix",
+     "doc": "*mix*"
+    },
+    {
+     "name": "shut",
+     "label": "shut",
+     "doc": "*shut*"
+    },
+    {
+     "name": "spread",
+     "label": "spread",
+     "doc": "*spread*"
+    },
+    {
+     "name": "stretch",
+     "label": "stretch",
+     "doc": "*stretch*"
+    },
+    {
+     "name": "switch",
+     "label": "switch",
+     "doc": "*switch*"
+    }
+   ]
+  },
+  {
+   "name": "LevinType",
+   "doc": "The verb types of Levin's catalogue under the names Table 3 prints.",
+   "levels": [
+    {
+     "name": "amuse",
+     "label": "amuse verbs",
+     "doc": "amuse verbs"
+    },
+    {
+     "name": "turn",
+     "label": "turn verbs",
+     "doc": "turn verbs"
+    },
+    {
+     "name": "otherChangeOfState",
+     "label": "cos verbs (others)",
+     "doc": "cos verbs (others)"
+    },
+    {
+     "name": "destroy",
+     "label": "destroy verbs",
+     "doc": "destroy verbs"
+    },
+    {
+     "name": "removing",
+     "label": "verbs of removing",
+     "doc": "verbs of removing"
+    },
+    {
+     "name": "existence",
+     "label": "verbs of existence",
+     "doc": "verbs of existence"
+    },
+    {
+     "name": "hurt",
+     "label": "hurt verbs",
+     "doc": "hurt verbs"
+    },
+    {
+     "name": "killing",
+     "label": "verbs of killing",
+     "doc": "verbs of killing"
+    },
+    {
+     "name": "putting",
+     "label": "verbs of putting",
+     "doc": "verbs of putting"
+    },
+    {
+     "name": "put",
+     "label": "put verbs",
+     "doc": "put verbs"
+    },
+    {
+     "name": "contribute",
+     "label": "contribute verbs",
+     "doc": "contribute verbs"
+    },
+    {
+     "name": "aspectual",
+     "label": "aspectual verbs",
+     "doc": "aspectual verbs"
+    },
+    {
+     "name": "break",
+     "label": "break verbs",
+     "doc": "break verbs"
+    },
+    {
+     "name": "calibratableChangeOfState",
+     "label": "verbs of calibratable cos",
+     "doc": "verbs of calibratable cos"
+    },
+    {
+     "name": "tape",
+     "label": "tape verbs",
+     "doc": "tape verbs"
+    },
+    {
+     "name": "mix",
+     "label": "mix verbs",
+     "doc": "mix verbs"
+    },
+    {
+     "name": "spatialConfiguration",
+     "label": "verbs of spatial configuration",
+     "doc": "verbs of spatial configuration"
+    }
+   ]
+  },
+  {
+   "name": "Resultative",
+   "doc": "The codes of the column for adjectival strong resultatives.",
+   "levels": [
+    {
+     "name": "no",
+     "label": "N",
+     "doc": "not found with an adjectival strong resultative"
+    },
+    {
+     "name": "yes",
+     "label": "Y",
+     "doc": "found with an adjectival strong resultative"
+    },
+    {
+     "name": "stateless",
+     "label": "Y*",
+     "doc": "found with an adjectival strong resultative, and lexicalizing no state of its own"
+    }
+   ]
+  }
+ ],
+ "constants": [],
+ "tables": [
+  {
+   "name": "survey",
+   "structure": "Survey",
+   "doc": "the coding of a verb of the sample.",
+   "locator": "Table 3",
+   "verified": "page-image",
+   "key": [
+    "verb"
+   ],
+   "columns": [
+    {
+     "name": "verb",
+     "type": "SurveyVerb",
+     "doc": "The verb."
+    },
+    {
+     "name": "alternating",
+     "type": "bool",
+     "doc": "The annotators judged the verb to enter the causative alternation."
+    },
+    {
+     "name": "levin",
+     "type": "option LevinType",
+     "doc": "The verb type in Levin's catalogue, `none` where the table prints *not listed*."
+    },
+    {
+     "name": "thick",
+     "type": "bool",
+     "doc": "The verb is thick: it was judged to specify a way of causing."
+    },
+    {
+     "name": "resultative",
+     "type": "Resultative",
+     "doc": "Whether the verb was found with an adjectival strong resultative."
+    },
+    {
+     "name": "omission",
+     "type": "bool",
+     "doc": "The verb was found with an omission or quality subject in its concrete sense."
+    }
+   ],
+   "rows": [
+    {
+     "verb": "activate",
+     "alternating": true,
+     "levin": null,
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "affect",
+     "alternating": false,
+     "levin": "amuse verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "change",
+     "alternating": true,
+     "levin": "turn verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "close",
+     "alternating": true,
+     "levin": "cos verbs (others)",
+     "thick": false,
+     "resultative": "N",
+     "omission": false
+    },
+    {
+     "verb": "cool",
+     "alternating": false,
+     "levin": "cos verbs (others)",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "damage",
+     "alternating": false,
+     "levin": null,
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "destroy",
+     "alternating": false,
+     "levin": "destroy verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "dry",
+     "alternating": true,
+     "levin": "cos verbs (others)",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "eliminate",
+     "alternating": false,
+     "levin": "verbs of removing",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "enhance",
+     "alternating": false,
+     "levin": null,
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "extend",
+     "alternating": true,
+     "levin": "verbs of existence",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "hurt",
+     "alternating": false,
+     "levin": "hurt verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "kill",
+     "alternating": false,
+     "levin": "verbs of killing",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "lower",
+     "alternating": true,
+     "levin": "verbs of putting",
+     "thick": false,
+     "resultative": "N",
+     "omission": false
+    },
+    {
+     "verb": "open",
+     "alternating": true,
+     "levin": "cos verbs (others)",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "put",
+     "alternating": false,
+     "levin": "put verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "restore",
+     "alternating": false,
+     "levin": "contribute verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "set",
+     "alternating": false,
+     "levin": "put verbs",
+     "thick": false,
+     "resultative": "Y*",
+     "omission": true
+    },
+    {
+     "verb": "slow",
+     "alternating": true,
+     "levin": "cos verbs (others)",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "start",
+     "alternating": true,
+     "levin": "aspectual verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "stop",
+     "alternating": true,
+     "levin": "aspectual verbs",
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "trigger",
+     "alternating": false,
+     "levin": null,
+     "thick": false,
+     "resultative": "Y*",
+     "omission": true
+    },
+    {
+     "verb": "turn",
+     "alternating": true,
+     "levin": "turn verbs",
+     "thick": false,
+     "resultative": "Y*",
+     "omission": true
+    },
+    {
+     "verb": "wake up",
+     "alternating": true,
+     "levin": null,
+     "thick": false,
+     "resultative": "N",
+     "omission": true
+    },
+    {
+     "verb": "break",
+     "alternating": true,
+     "levin": "break verbs",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "bury",
+     "alternating": false,
+     "levin": null,
+     "thick": true,
+     "resultative": "N",
+     "omission": false
+    },
+    {
+     "verb": "burn",
+     "alternating": true,
+     "levin": "hurt verbs",
+     "thick": true,
+     "resultative": "Y",
+     "omission": true
+    },
+    {
+     "verb": "cut",
+     "alternating": false,
+     "levin": "break verbs",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "drop",
+     "alternating": true,
+     "levin": "verbs of calibratable cos",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "lift",
+     "alternating": false,
+     "levin": "verbs of putting",
+     "thick": true,
+     "resultative": "Y",
+     "omission": true
+    },
+    {
+     "verb": "lock",
+     "alternating": true,
+     "levin": "tape verbs",
+     "thick": true,
+     "resultative": "Y",
+     "omission": true
+    },
+    {
+     "verb": "melt",
+     "alternating": true,
+     "levin": "cos verbs (others)",
+     "thick": true,
+     "resultative": "Y",
+     "omission": true
+    },
+    {
+     "verb": "mix",
+     "alternating": true,
+     "levin": "mix verbs",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "shut",
+     "alternating": true,
+     "levin": "cos verbs (others)",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "spread",
+     "alternating": true,
+     "levin": "verbs of existence",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "stretch",
+     "alternating": true,
+     "levin": "verbs of spatial configuration",
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    },
+    {
+     "verb": "switch",
+     "alternating": true,
+     "levin": null,
+     "thick": true,
+     "resultative": "Y",
+     "omission": false
+    }
+   ]
+  }
+ ]
+}
