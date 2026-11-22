@@ -71,6 +71,9 @@ instance : CommMagma SearchState where
 @[simp] theorem head_mul_phrase (a : LexicalItem.Token) (S : Finset LexicalItem.Token) :
     head a * phrase S = phrase {a} := rfl
 
+@[simp] theorem trace_mul_trace : trace * trace = phrase ∅ :=
+  congrArg phrase (Finset.empty_union ∅)
+
 @[simp] theorem trace_mul_phrase (S : Finset LexicalItem.Token) : trace * phrase S = phrase S :=
   congrArg phrase (Finset.empty_union S)
 
@@ -95,24 +98,6 @@ def searchHeads (s : SyntacticObject) : Finset LexicalItem.Token := (search s).h
 @[simp] theorem search_merge (l r : SyntacticObject) :
     search (merge l r) = search l * search r :=
   map_mul search l r
-
-/-- A lexical item merged with a phrase is found alone. -/
-theorem searchHeads_merge_leaf {tok : LexicalItem.Token} {r : SyntacticObject}
-    {S : Finset LexicalItem.Token} (hr : search r = .phrase S) :
-    (merge (leaf tok) r).searchHeads = {tok} := by
-  rw [searchHeads, search_merge, search_leaf, hr]; rfl
-
-/-- Two phrases merged offer the heads of both. -/
-theorem searchHeads_merge_phrase {l r : SyntacticObject} {S S' : Finset LexicalItem.Token}
-    (hl : search l = .phrase S) (hr : search r = .phrase S') :
-    (merge l r).searchHeads = l.searchHeads ∪ r.searchHeads := by
-  rw [searchHeads, searchHeads, searchHeads, search_merge, hl, hr]; rfl
-
-/-- A phrase whose sister has moved on, leaving a trace, offers its own heads. -/
-theorem searchHeads_merge_traceOf {tok : LexicalItem.Token} {r : SyntacticObject}
-    {S : Finset LexicalItem.Token} (hr : search r = .phrase S) :
-    (merge (traceOf tok) r).searchHeads = r.searchHeads := by
-  rw [searchHeads, searchHeads, search_merge, search_traceOf, hr, SearchState.trace_mul_phrase]
 
 end SyntacticObject
 

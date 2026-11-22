@@ -87,13 +87,13 @@ def phaseInterior : Multiset SyntacticObject := T.terms.filter (WithinComplement
 interior. -/
 def phaseEdge : Multiset SyntacticObject := (T.phase ℓ).filter (· ∉ T.phaseInterior ℓ)
 
-/-- `x` is inaccessible in `T`, with `P` the phase heads: it lies within the complement of a
+/-- `x` is inaccessible in `T`, with `Φ` the phase heads: it lies within the complement of a
 phase head other than the head of `T`, the interior of a lower phase. -/
-def Inaccessible (T : SyntacticObject) (P : LexicalItem.Token → Prop) (x : SyntacticObject) :
+def Inaccessible (T : SyntacticObject) (Φ : LexicalItem.Token → Prop) (x : SyntacticObject) :
     Prop :=
-  ∃ m ∈ T.terms, ∃ ℓ ∈ m.raisingHead, P ℓ ∧ T.raisingHead ≠ some ℓ ∧ WithinComplement T ℓ x
+  ∃ m ∈ T.terms, ∃ ℓ ∈ m.raisingHead, Φ ℓ ∧ T.raisingHead ≠ some ℓ ∧ WithinComplement T ℓ x
 
-instance (P : LexicalItem.Token → Prop) [DecidablePred P] : Decidable (Inaccessible T P x) :=
+instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : Decidable (Inaccessible T Φ x) :=
   Multiset.decidableExistsMultiset
 
 variable {T ℓ x z} {y : SyntacticObject}
