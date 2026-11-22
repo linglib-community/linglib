@@ -126,7 +126,7 @@ theorem transparentAt_scopeTruth_iff_deployQuantifier {q : NumberTree} {A : W �
   refine forall₂_congr fun w _ ↦ ?_
   rw [deployQuantifier_ne_undefined_iff]
   have key (D : Set E) : (∀ e, (w, e) ∈ (gapExt p)ᶜ → (e ∈ D ↔ (w, e) ∈ posExt p)) ↔
-      D ∈ interval fun e ↦ p (w, e) := by
+      D ∈ Trivalent.interval fun e ↦ p (w, e) := by
     change (∀ e, p (w, e) ≠ .undefined → (e ∈ D ↔ p (w, e) = .true)) ↔
       (∀ e, p (w, e) = .true → e ∈ D) ∧ ∀ e, e ∈ D → ¬ p (w, e) = .false
     refine ⟨fun h ↦ ⟨fun e he ↦ (h e (he ▸ by decide)).2 he, fun e hD hn ↦ ?_⟩,

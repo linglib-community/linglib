@@ -29,8 +29,7 @@ numeric instances. Operations that are expressions in the order get no definitio
 conjunction, disjunction and negation are `⊓`, `⊔` and `ᶜ`, Bochvar's assertion operator is
 `ofProp (a = .true)`, Beaver's presupposition operator is `a ⊔ .undefined`, designation at a
 standard `d` is `d.threshold ≤ a`, and a Boolean `b` has value `ofProp b`. The constructors
-share their names with `Bool`'s, so they are written with dot notation and the namespace is
-opened selectively.
+share their names with `Bool`'s, so they are written with dot notation.
 
 ## References
 

@@ -18,7 +18,7 @@ is `Focus.additive` on the identity scale: it asserts its scope of the focused i
 presupposes that the scope is true of some other individual among the salient ones `C`. The spine
 denotes by `spine C : FreeMonoid ClauseOp →* Function.End (F → W → Trivalent)`, so the
 alternative to a clause is the same spine over the scale-mate of its scalar item, and *exh* at
-site `i` is Spector and Sudo's strong-negation `Exhaustification.Trivalent.exh2` of the material
+site `i` is Spector and Sudo's strong-negation `Exhaustification.exh2` of the material
 below `i` against that alternative, under the operators above `i`.
 
 Since `exh2` inherits the presuppositions of the alternatives it excludes, *exh* above *also*
@@ -57,7 +57,7 @@ The examples with *again* are not modelled.
 
 namespace ChowErlewine2022
 
-open Exhaustification Exhaustification.Trivalent
+open Exhaustification
 
 /-! ### Operators -/
 
@@ -78,7 +78,7 @@ variable {C} {P Q : F → W → Trivalent} {x : F} {w : W}
 /-- (5): *exh* above *also* that excludes the alternative is defined only where the additive
 presuppositions of both the scalar item and its scale-mate hold. -/
 theorem exh2_also_eq_undefined_iff [Fintype W]
-    (h : Excluded (·ᶜ) (fun _ : Unit ↦ also C Q x) (also C P x) ()) :
+    (h : IsExcluded (·ᶜ) (fun _ : Unit ↦ also C Q x) (also C P x) ()) :
     exh2 (fun _ : Unit ↦ also C Q x) (also C P x) w = .undefined ↔
       also C P x w = .undefined ∨ also C Q x w = .undefined := by
   simp [exh2_eq_undefined_iff, h]
