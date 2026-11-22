@@ -26,15 +26,20 @@ are Tsujimura's ko-so-a series: near the speaker, near the listener, and far fro
 
 ## Implementation notes
 
-The forms in *-tachi* and *-ra* are recorded as plurals. Tsujimura notes that *-tachi* is not a
-plural marker like the English ending: it is confined to humans, and a noun with it names a group
-that includes the noun's referent, *Yamada-sensei-tachi* being Professor Yamada and those with
-him. The registers follow the list Tsujimura takes from Ide, in which *boku* is plain and *ore*
+The forms in *-tachi* and *-ra* are recorded as plurals: Kaiser, Ichikawa, Kobayashi and
+Yamamoto give *-tachi* as optional on a noun and mandatory on a personal pronoun, which without
+it is singular, with *watashi-tachi* and *anata-tachi* among their examples, and Iwasaki gives
+*kimi-tachi*. Tsujimura notes that *-tachi* is not a plural marker like the English ending: it
+is confined to humans, and a noun with it names a group that includes the noun's referent,
+*Yamada-sensei-tachi* being Professor Yamada and those with him; Iwasaki glosses *boku-tachi*
+likewise as the speaker and his friends. The registers follow the list Tsujimura takes from Ide, in which *boku* is plain and *ore*
 deprecatory; both are informal here, the register type making no finer distinction.
 
 ## References
 
 * [alok-bhalla-2026]
+* [iwasaki-2013]
+* [kaiser-ichikawa-kobayashi-yamamoto-2013]
 * [sells-1987]
 * [kratzer-shimoyama-2002]
 * [tsujimura-2014]
