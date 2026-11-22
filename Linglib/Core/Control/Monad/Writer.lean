@@ -3,19 +3,20 @@ module
 public import Mathlib.Algebra.Divisibility.Basic
 public import Mathlib.Algebra.Group.Hom.Defs
 public import Mathlib.Control.Monad.Writer
+public import Mathlib.Data.Set.Semiring
 
 /-!
 # Writer monads
 
 A computation of the writer monad `Writer ω` yields a value and logs output in `ω`: `pure` logs
 nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad morphism to `Id`,
-and [`bind` only extends the log](##log_prefix_bind), so a value can feed later logging while the
+and [`bind` only extends the log](##log_dvd_bind), so a value can feed later logging while the
 log never feeds a value.
 
 ## Main definitions
 
 * `Writer.val`, `Writer.log`: the value and the log of a computation.
-* `WriterT.instLawfulMonadList`: the monad laws for list logs, over any lawful monad.
+* `Writer.SetLog`, `Writer.ofSet`, `Writer.logSet`: logs that are sets under union.
 * `WriterT.instLawfulMonadLift`: lifting into a writer monad with monoid logs is a monad morphism.
 * `Writer.adapt_pure`, `Writer.adapt_bind`: changing the log along a monoid homomorphism is a
   monad morphism.
@@ -25,7 +26,9 @@ log never feeds a value.
 * Mathlib's two `Monad` instances on `Writer ω`, for `[Monoid ω]` and for
   `[EmptyCollection ω] [Append ω]`, are both `WriterT.monad empty append`; the projection lemmas
   are stated for that monad, as mathlib states `WriterT.run_bind`, and apply under either.
-* Mathlib proves the monad laws for monoid logs only, and lists are not a monoid there.
+* Sets are a monoid under union through the synonym `SetSemiring`, so `Writer.SetLog P` has
+  mathlib's monad laws; an instance on `Set P` itself would also apply to relation types, which
+  are sets with composition as their monoid.
 -/
 
 @[expose] public section
@@ -34,14 +37,7 @@ universe u v
 
 namespace WriterT
 
-variable {M : Type u → Type v} {P : Type u} [Monad M] [LawfulMonad M]
-
-/-- A writer monad with list logs is lawful over any lawful monad. -/
-instance instLawfulMonadList : LawfulMonad (WriterT (List P) M) := LawfulMonad.mk'
-  (id_map := fun _ ↦ by ext; simp)
-  (pure_bind := fun _ _ ↦ by ext; simp)
-  (bind_assoc := fun _ _ _ ↦ by ext; simp)
-  (bind_pure_comp := fun _ _ ↦ by ext; simp)
+variable {M : Type u → Type v} [Monad M] [LawfulMonad M]
 
 /-- Lifting a computation into a writer monad with monoid logs commutes with `pure` and `bind`. -/
 instance instLawfulMonadLift {ω : Type u} [Monoid ω] : LawfulMonadLift M (WriterT ω M) where
@@ -123,12 +119,6 @@ reaches it. -/
 
 end Monad
 
-/-- The log of `m >>= f` extends the log of `m`, so composition is isotone for the prefix order
-on list logs. -/
-theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
-    m.log <+: (m >>= f).log :=
-  ⟨(f m.val).log, rfl⟩
-
 section adapt
 
 variable {ω' : Type u}
@@ -152,6 +142,42 @@ theorem adapt_bind (m : Writer ω A) (f : A → Writer ω B) :
   Writer.ext rfl (map_mul φ _ _)
 
 end adapt
+
+/-! ### Set logs -/
+
+/-- Sets under union, as a monoid of logs: mathlib's `SetSemiring P` read multiplicatively. -/
+abbrev SetLog (P : Type u) := Multiplicative (SetSemiring P)
+
+section SetLog
+
+variable {P : Type u}
+
+/-- The computation with value `a` that logs the set `s`. -/
+def ofSet (a : A) (s : Set P) : Writer (SetLog P) A := .mk a (.ofAdd (.ofSet s))
+
+/-- The set a computation logs. -/
+def logSet (m : Writer (SetLog P) A) : Set P := m.log.toAdd.toSet
+
+theorem ext_logSet {m₁ m₂ : Writer (SetLog P) A} (hv : m₁.val = m₂.val)
+    (hl : m₁.logSet = m₂.logSet) : m₁ = m₂ :=
+  Writer.ext hv (congrArg (fun s : Set P ↦ (.ofAdd (.ofSet s) : SetLog P)) hl)
+
+@[simp] theorem val_ofSet (a : A) (s : Set P) : (ofSet a s).val = a := rfl
+
+@[simp] theorem logSet_ofSet (a : A) (s : Set P) : (ofSet a s).logSet = s := rfl
+
+@[simp] theorem logSet_pure (a : A) : (pure a : Writer (SetLog P) A).logSet = ∅ := rfl
+
+@[simp] theorem logSet_bind (m : Writer (SetLog P) A) (f : A → Writer (SetLog P) B) :
+    (m >>= f).logSet = m.logSet ∪ (f m.val).logSet := rfl
+
+@[simp] theorem logSet_map (f : A → B) (m : Writer (SetLog P) A) :
+    (f <$> m).logSet = m.logSet := rfl
+
+@[simp] theorem logSet_seq (f : Writer (SetLog P) (A → B)) (m : Writer (SetLog P) A) :
+    (f <*> m).logSet = f.logSet ∪ m.logSet := rfl
+
+end SetLog
 
 /-- The log of `m >>= f` is a right multiple of the log of `m`, so composition is isotone for the
 divisibility preorder of a monoid of logs. -/

@@ -513,10 +513,10 @@ entailment from the context incremented with the first conjunct. -/
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → Trivalent) :
     (seq (ofTrivalent p) (ofTrivalent q)).Admits c ↔
       ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofTrivalent p)
-        (.ofTrivalent q)).log, c ⊆ C := by
+        (.ofTrivalent q)).logSet, c ⊆ C := by
   rw [admits_seq_ofTrivalent_iff, admits_ofTrivalent]
-  simp only [Karttunen1973.mem_log_conj, Karttunen1973.Presupposing.ofTrivalent, Writer.log_mk,
-    List.mem_singleton]
+  simp only [Karttunen1973.mem_logSet_conj, Karttunen1973.Presupposing.ofTrivalent,
+    Writer.logSet_ofSet, Set.mem_singleton_iff]
   constructor
   · rintro ⟨hp, hq⟩ C (rfl | ⟨rfl, hf⟩)
     · exact hp
@@ -525,7 +525,7 @@ theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → Trivalent) :
     have hp : c ⊆ (Trivalent.gapExt p)ᶜ := h _ (.inl rfl)
     refine ⟨hp, fun w ⟨hw, ha⟩ ↦ ?_⟩
     by_cases hf : c ∩ (Karttunen1973.Presupposing.ofTrivalent p).truth ⊆ (Trivalent.gapExt q)ᶜ
-    · exact hf ⟨hw, ha, fun t ht ↦ List.mem_singleton.1 ht ▸ hp hw⟩
+    · exact hf ⟨hw, ha, fun t ht ↦ Set.mem_singleton_iff.1 ht ▸ hp hw⟩
     · exact h _ (.inr ⟨rfl, hf⟩) hw
 
 end Heim1983

@@ -3,7 +3,6 @@ module
 public import Linglib.Core.Control.Monad.Writer
 public import Linglib.Data.Examples.GiorgoloAsudeh2012
 public import Linglib.Semantics.ConventionalImplicature
-public import Mathlib.Data.Set.Semiring
 
 /-!
 # Giorgolo and Asudeh (2012): ⟨M, η, ⋆⟩ Monads for Conventional Implicatures
@@ -27,8 +26,8 @@ presupposition, although no step of the composition reads either log.
 ## Implementation notes
 
 * The paper allows any monoid of collections and fixes sets of propositions under union, which
-  is `Log T`, mathlib's `SetSemiring T` read multiplicatively. `M T` is the transformer
-  `WriterT (Log T) (Writer (Log T))`, with `check` lifted from the presupposition monad, and
+  is `Writer.SetLog T`. `M T` is the transformer
+  `WriterT (SetLog T) (Writer (SetLog T))`, with `check` lifted from the presupposition monad, and
   `ciLog` and `presupLog` return the underlying sets. The paper's condition that arrows be
   isotone for the preorder `x ≤ y ↔ ∃ z, x · z = y`, which is `Writer.log_dvd_bind` for any
   monoid, is then inclusion of logs.
@@ -54,7 +53,7 @@ presupposition, although no step of the composition reads either log.
 
 namespace GiorgoloAsudeh2012
 
-open ConventionalImplicature
+open ConventionalImplicature Writer
 
 universe u
 
@@ -62,13 +61,10 @@ variable {T W A B : Type u}
 
 /-! ### The two channels -/
 
-/-- The monoid of sets of propositions under union. -/
-abbrev Log (T : Type u) := Multiplicative (SetSemiring T)
-
 /-- The two-channel monad over propositions `T` logs conventional implicatures in the transformer
 and presuppositional conditions in the monad it transforms, so that a computation's result is
 `⟨⟨value, implicatures⟩, presuppositions⟩`. -/
-abbrev M (T : Type u) := WriterT (Log T) (Writer (Log T))
+abbrev M (T : Type u) := WriterT (SetLog T) (Writer (SetLog T))
 
 /-- The at-issue value of a computation. -/
 def atIssue (m : M T A) : A := m.run.val.1
@@ -77,14 +73,14 @@ def atIssue (m : M T A) : A := m.run.val.1
 def ciLog (m : M T A) : Set T := m.run.val.2.toAdd.toSet
 
 /-- The presuppositional conditions a computation logs. -/
-def presupLog (m : M T A) : Set T := m.run.log.toAdd.toSet
+def presupLog (m : M T A) : Set T := m.run.logSet
 
 /-- `write t` logs the conventional implicature `t`, as `⟨⊥, {t}⟩`. -/
 def write (t : T) : M T PUnit := tell (.ofAdd (.ofSet {t}))
 
 /-- `check t` logs the condition `t`, to be checked once the computation has ended; it is
 `⟨⊥, {t}⟩` in the presupposition monad, lifted to the transformer. -/
-def check (t : T) : M T PUnit := monadLift (tell (.ofAdd (.ofSet {t})) : Writer (Log T) PUnit)
+def check (t : T) : M T PUnit := monadLift (Writer.ofSet ⟨⟩ {t})
 
 @[simp] theorem atIssue_pure (a : A) : atIssue (pure a : M T A) = a := rfl
 
@@ -202,8 +198,7 @@ def toTwoDim (m : M (W → Prop) A) : TwoDim W A := .ofSetLog (.mk (atIssue m) m
   simp [toTwoDim]
 
 @[simp] theorem toTwoDim_notAtIssue (m : M (W → Prop) A) :
-    (toTwoDim m).notAtIssue = sInf (ciLog m) := by
-  simp [toTwoDim, ciLog]
+    (toTwoDim m).notAtIssue = sInf (ciLog m) := rfl
 
 @[simp] theorem toTwoDim_pure (a : A) : toTwoDim (pure a : M (W → Prop) A) = pure a :=
   TwoDim.ext (by simp) (by simp)

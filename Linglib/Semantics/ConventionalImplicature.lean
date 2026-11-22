@@ -2,7 +2,6 @@ module
 
 public import Linglib.Core.Control.Monad.Writer
 public import Mathlib.Algebra.Ring.BooleanRing
-public import Mathlib.Data.Set.Semiring
 public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
@@ -112,27 +111,27 @@ content of its parts. -/
 /-! ### Sets of implicatures -/
 
 /-- The meet of a set of propositions, as a monoid homomorphism from sets under union. -/
-def sInfHom : Multiplicative (SetSemiring (W → Prop)) →* AsBoolRing (W → Prop) where
+def sInfHom : Writer.SetLog (W → Prop) →* AsBoolRing (W → Prop) where
   toFun s := toBoolRing (sInf s.toAdd.toSet)
   map_one' := by simp
   map_mul' s t := by simp [sInf_union]
 
 /-- A computation that logs a set of not-at-issue propositions denotes the two-dimensional
 meaning whose not-at-issue content is their meet. -/
-def ofSetLog (m : Writer (Multiplicative (SetSemiring (W → Prop))) α) : TwoDim W α :=
+def ofSetLog (m : Writer (Writer.SetLog (W → Prop)) α) : TwoDim W α :=
   WriterT.adapt sInfHom m
 
-@[simp] theorem ofSetLog_atIssue (m : Writer (Multiplicative (SetSemiring (W → Prop))) α) :
+@[simp] theorem ofSetLog_atIssue (m : Writer (Writer.SetLog (W → Prop)) α) :
     (ofSetLog m).atIssue = m.val := rfl
 
-@[simp] theorem ofSetLog_notAtIssue (m : Writer (Multiplicative (SetSemiring (W → Prop))) α) :
-    (ofSetLog m).notAtIssue = sInf m.log.toAdd.toSet := rfl
+@[simp] theorem ofSetLog_notAtIssue (m : Writer (Writer.SetLog (W → Prop)) α) :
+    (ofSetLog m).notAtIssue = sInf m.logSet := rfl
 
 @[simp] theorem ofSetLog_pure (a : α) : ofSetLog (pure a : Writer _ α) = (pure a : TwoDim W α) :=
   Writer.adapt_pure sInfHom a
 
-theorem ofSetLog_bind (m : Writer (Multiplicative (SetSemiring (W → Prop))) α)
-    (f : α → Writer (Multiplicative (SetSemiring (W → Prop))) β) :
+theorem ofSetLog_bind (m : Writer (Writer.SetLog (W → Prop)) α)
+    (f : α → Writer (Writer.SetLog (W → Prop)) β) :
     ofSetLog (m >>= f) = ofSetLog m >>= fun a ↦ ofSetLog (f a) :=
   Writer.adapt_bind sInfHom m f
 
