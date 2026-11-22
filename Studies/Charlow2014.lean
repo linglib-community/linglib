@@ -2,12 +2,13 @@ module
 
 public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Card
-public import Linglib.Core.Data.Set.Monad
+public import Mathlib.Control.Monad.Basic
 public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Focus.Particles
 public import Mathlib.Control.Monad.Cont
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Data.Examples.Charlow2014
+import all Init.Control.State  -- `StateT.orElse` is not exposed
 
 /-!
 # Charlow (2014): On the semantics of exceptional scope
@@ -158,22 +159,23 @@ variable {σ α β : Type}
 theorem combine_id (f : α → β → σ) (m : Id α) (n : Id β) : combine f m n = f m n := rfl
 
 theorem combine_readerT (f : α → β → σ) (m : ReaderT σ Id α) (n : ReaderT σ Id β) :
-    combine f m n = fun s ↦ f (m s) (n s) := rfl
+    combine f m n = .mk fun s ↦ f (m.run s) (n.run s) := rfl
 
 theorem combine_set (f : α → β → σ) (m : Set α) (n : Set β) :
     combine f m n = {c | ∃ x ∈ m, ∃ y ∈ n, c = f x y} := by
   ext; simp [combine, Set.bind_def]
 
 theorem combine_readerT_set (f : α → β → σ) (m : ReaderT σ Set α) (n : ReaderT σ Set β) :
-    combine f m n = fun s ↦ {c | ∃ x ∈ m s, ∃ y ∈ n s, c = f x y} := by
-  funext s; ext; simp [combine]
+    combine f m n = .mk fun s ↦ {c | ∃ x ∈ m.run s, ∃ y ∈ n.run s, c = f x y} := by
+  ext s q; simp [eq_comm, combine]
 
 theorem combine_stateT (f : α → β → σ) (m : StateT σ Id α) (n : StateT σ Id β) :
-    combine f m n = fun s ↦ ((f (m s).1 (n (m s).2).1), (n (m s).2).2) := rfl
+    combine f m n =
+      .mk fun s ↦ ((f (m.run s).1 (n.run (m.run s).2).1), (n.run (m.run s).2).2) := rfl
 
 theorem combine_stateT_set (f : α → β → σ) (m : StateT σ Set α) (n : StateT σ Set β) :
-    combine f m n = fun s ↦ {c | ∃ x ∈ m s, ∃ y ∈ n x.2, c = (f x.1 y.1, y.2)} := by
-  funext s; ext; simp [combine]
+    combine f m n = .mk fun s ↦ {c | ∃ x ∈ m.run s, ∃ y ∈ n.run x.2, c = (f x.1 y.1, y.2)} := by
+  ext s q; simp [eq_comm, combine]
 
 end Instances
 
@@ -193,19 +195,23 @@ variable {E α β : Type}
 
 /-- `indef P` is an indefinite, a nondeterministic individual satisfying `P`, with the stack
 unchanged. -/
-def indef (P : E → Prop) : StateSet E E := fun s ↦ {q | P q.1 ∧ q.2 = s}
+def indef (P : E → Prop) : StateSet E E := monadLift {x | P x}
 
 /-- `pro` is a pronoun, the topical (most recent) dref, with the stack unchanged. -/
-def pro : StateSet E E := fun s ↦ {q | s.getLast? = some q.1 ∧ q.2 = s}
+def pro : StateSet E E := do
+  let s ← get
+  monadLift {x | s.getLast? = some x}
 
 /-- `dref m` introduces a dref, running `m` and pushing its value onto the stack. -/
-def dref (m : StateSet E E) : StateSet E E := m >>= fun a s ↦ {(a, s ++ [a])}
+def dref (m : StateSet E E) : StateSet E E := m >>= fun a ↦ modify (· ++ [a]) *> pure a
 
 /-- A dynamic proposition holds at `s` when some output carries a true value. -/
-def holds (m : StateSet E Prop) (s : Stack E) : Prop := ∃ q ∈ m s, q.1
+def holds (m : StateSet E Prop) (s : Stack E) : Prop := ∃ q ∈ m.run s, q.1
 
 /-- `neg m` is dynamic negation, a test on the input stack that returns it unchanged. -/
-def neg (m : StateSet E Prop) : StateSet E Prop := fun s ↦ {(¬ holds m s, s)}
+def neg (m : StateSet E Prop) : StateSet E Prop := do
+  let s ← get
+  pure (¬ holds m s)
 
 /-- The conditional, from negation via `p → q ↔ ¬(p ∧ ¬q)`. -/
 def cond (m n : StateSet E Prop) : StateSet E Prop :=
@@ -214,7 +220,7 @@ def cond (m n : StateSet E Prop) : StateSet E Prop :=
 /-- `det c` is the indefinite determiner, the individuals whose restrictor holds, with the
 restrictor's output stacks. -/
 def det (c : E → StateSet E Prop) : StateSet E E :=
-  fun s ↦ {q | ∃ p, (p, q.2) ∈ c q.1 s ∧ p}
+  .mk fun s ↦ {q | ∃ p, (p, q.2) ∈ (c q.1).run s ∧ p}
 
 /-- `every c k` is the universal, a scope-taker over dynamic properties defined by
 `∀x. P x ⇒ Q x ↔ ¬∃x. P x ∧ ¬Q x`. -/
@@ -226,88 +232,98 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
   neg (det c >>= k)
 
 @[simp] theorem mem_indef (P : E → Prop) (s : Stack E) (q : E × Stack E) :
-    q ∈ indef P s ↔ P q.1 ∧ q.2 = s := Iff.rfl
+    q ∈ (indef P).run s ↔ P q.1 ∧ q.2 = s := by
+  obtain ⟨x, t⟩ := q; simp [indef, eq_comm]
 
 @[simp] theorem mem_pro (s : Stack E) (q : E × Stack E) :
-    q ∈ pro s ↔ s.getLast? = some q.1 ∧ q.2 = s := Iff.rfl
+    q ∈ pro.run s ↔ s.getLast? = some q.1 ∧ q.2 = s := by
+  obtain ⟨x, t⟩ := q; simp [pro, eq_comm]
 
 @[simp] theorem mem_dref (m : StateSet E E) (s : Stack E) (q : E × Stack E) :
-    q ∈ dref m s ↔ ∃ r ∈ m s, q = (r.1, r.2 ++ [r.1]) := by simp [dref]
+    q ∈ (dref m).run s ↔ ∃ r ∈ m.run s, q = (r.1, r.2 ++ [r.1]) := by simp [dref]
 
 @[simp] theorem neg_apply (m : StateSet E Prop) (s : Stack E) :
-    neg m s = {(¬ holds m s, s)} := rfl
+    (neg m).run s = {(¬ holds m s, s)} := by simp [neg]
 
 @[simp] theorem mem_det (c : E → StateSet E Prop) (s : Stack E) (q : E × Stack E) :
-    q ∈ det c s ↔ ∃ p, (p, q.2) ∈ c q.1 s ∧ p := Iff.rfl
+    q ∈ (det c).run s ↔ ∃ p, (p, q.2) ∈ (c q.1).run s ∧ p := Iff.rfl
 
 @[simp] theorem holds_pure (p : Prop) (s : Stack E) : holds (pure p) s ↔ p := by simp [holds]
 
 @[simp] theorem holds_singleton (p : Prop) (f : Stack E → Stack E) (s : Stack E) :
-    holds (fun s ↦ {(p, f s)}) s ↔ p := by simp [holds]
+    holds (.mk fun s ↦ {(p, f s)}) s ↔ p := by simp [holds]
 
 @[simp] theorem holds_bind (m : StateSet E α) (k : α → StateSet E Prop) (s : Stack E) :
-    holds (m >>= k) s ↔ ∃ q ∈ m s, holds (k q.1) q.2 := by
-  simp only [holds, Set.mem_stateT_bind]
+    holds (m >>= k) s ↔ ∃ q ∈ m.run s, holds (k q.1) q.2 := by
+  simp only [holds, StateT.run_bind, Set.bind_def, Set.mem_iUnion₂]
   exact ⟨fun ⟨r, ⟨q, hq, hr⟩, h⟩ ↦ ⟨q, hq, r, hr, h⟩, fun ⟨q, hq, r, hr, h⟩ ↦ ⟨r, ⟨q, hq, hr⟩, h⟩⟩
 
 @[simp] theorem holds_map (f : α → Prop) (m : StateSet E α) (s : Stack E) :
-    holds (f <$> m) s ↔ ∃ q ∈ m s, f q.1 := by
-  simp only [holds, Set.mem_stateT_map]
+    holds (f <$> m) s ↔ ∃ q ∈ m.run s, f q.1 := by
+  simp only [holds, StateT.run_map, Set.fmap_eq_image, Set.mem_image]
   exact ⟨fun ⟨_, ⟨q, hq, rfl⟩, h⟩ ↦ ⟨q, hq, h⟩, fun ⟨q, hq, h⟩ ↦ ⟨_, ⟨q, hq, rfl⟩, h⟩⟩
 
 @[simp] theorem holds_neg (m : StateSet E Prop) (s : Stack E) : holds (neg m) s ↔ ¬ holds m s := by
   simp [holds]
 
+@[simp] theorem holds_modify_seqRight (f : Stack E → Stack E) (m : StateSet E Prop) (s : Stack E) :
+    holds (modify f *> m) s ↔ holds m (f s) := by
+  simp [holds]
+
+@[simp] theorem run_orElse (m n : StateSet E α) (s : Stack E) :
+    (m <|> n).run s = m.run s ∪ n.run s := by
+  show StateT.orElse m (fun _ ↦ n) s = _
+  simp [StateT.orElse, StateT.run, Set.orElse_def]
+
 @[simp] theorem det_pure (P : E → Prop) : det (fun x ↦ pure (P x)) = indef P := by
-  funext s; ext ⟨x, s'⟩
-  exact ⟨fun ⟨_, hp, h⟩ ↦ by cases hp; exact ⟨h, rfl⟩,
-    fun ⟨h, hs⟩ ↦ ⟨_, by simpa using hs, h⟩⟩
+  ext s ⟨x, s'⟩
+  simp [eq_comm, and_comm, -eq_iff_iff]
 
 theorem dref_bind (m : StateSet E E) (π : E → StateSet E α) :
-    dref m >>= π = m >>= fun a s ↦ π a (s ++ [a]) := by
-  funext s; ext q; simp
+    dref m >>= π = m >>= fun a ↦ modify (· ++ [a]) *> π a := by
+  ext s q; simp
 
 theorem bind_pro (m : StateSet E E) (π : E → E → StateSet E α) :
     (dref m >>= fun ν ↦ pro >>= fun u ↦ π ν u) = dref m >>= fun ν ↦ π ν ν := by
-  funext s; ext q; simp
+  ext s q; simp
 
 theorem indef_met_name (man : E → Prop) (met : E → E → Prop) (p : E) :
     combine (fun x f ↦ f x) (dref (indef man)) (combine (· ·) (pure met) (pure p)) =
-      fun s ↦ {q | ∃ x, man x ∧ q = (met p x, s ++ [x])} := by
-  funext s; ext q; simp [combine]
+      .mk fun s ↦ {q | ∃ x, man x ∧ q = (met p x, s ++ [x])} := by
+  ext s q; simp [eq_comm, combine]
 
 theorem indef_left_pro_tired (man left tired : E → Prop) :
     combine (fun x f ↦ f x) (combine (fun x f ↦ f x) (dref (indef man)) (pure left))
       (combine (· ·) (pure fun q p ↦ p ∧ q) (combine (fun x f ↦ f x) pro (pure tired))) =
       dref (indef man) >>= fun x ↦ pure (left x ∧ tired x) := by
-  funext s; ext q; simp [combine]
+  ext s q; simp [combine]
 
 /-! ### Dynamically closed operators (Facts 3.2–3.6) -/
 
 theorem neg_dref_indef (ling left : E → Prop) :
     neg (dref (indef ling) >>= fun x ↦ pure (left x)) = pure (¬ ∃ x, ling x ∧ left x) := by
-  funext s; simp
+  ext s : 1; simp
 
 theorem neg_pro (m : E → StateSet E Prop) {s : Stack E} (h : s ≠ []) :
-    neg (pro >>= m) s = (pro >>= fun x ↦ neg (m x)) s := by
+    (neg (pro >>= m)).run s = (pro >>= fun x ↦ neg (m x)).run s := by
   have := List.getLast?_eq_some_getLast h
   ext q; simp [this]
 
 theorem cond_dref_indef (P w r : E → Prop) :
     cond (dref (indef P) >>= fun x ↦ pure (w x)) (pro >>= fun y ↦ pure (r y)) =
       pure (∀ x, P x → w x → r x) := by
-  funext s; simp [cond]
+  ext s : 1; simp [cond]
 
 theorem every_dref_indef (ling hist : E → Prop) (met : E → E → Prop) :
     every (fun x ↦ pure (ling x)) (fun x ↦ dref (indef hist) >>= fun y ↦ pure (met y x)) =
       pure (∀ x, ling x → ∃ y, hist y ∧ met y x) := by
-  funext s; simp [every]
+  ext s : 1; simp [every]
 
 theorem every_dref_pro (ling : E → Prop) (rubbed : E → E → Prop) (head : E → E) :
     every (fun x ↦ pure (ling x))
         (fun x ↦ dref (pure x) >>= fun ν ↦ pro >>= fun y ↦ pure (rubbed (head y) ν)) =
       pure (∀ x, ling x → rubbed (head x) x) := by
-  funext s; simp [every]
+  ext s : 1; simp [every]
 
 /-! ### Continuations over the State.Set monad (Fact 3.7, (3.23), (3.24))
 
@@ -367,22 +383,23 @@ theorem name_saw_indef (j : E) (saw : E → E → Prop) (ling : E → Prop) :
     lower (combine (fun x f ↦ f x) (liftValue j : Tower E Prop E)
       (combine (· ·) (liftValue saw) (monadLift (indef ling)))) =
       indef ling >>= fun x ↦ pure (saw x j) := by
-  funext s; ext q; simp [combine, lower]
+  ext s q; simp [eq_comm, combine, lower]
 
 theorem indef_saw_every (man ling : E → Prop) (saw : E → E → Prop) :
     lower (combine (fun x f ↦ f x) (monadLift (indef man) : Tower E Prop E)
       (combine (· ·) (liftValue saw) (everyDP ling))) =
       indef man >>= fun x ↦ pure (∀ y, ling y → saw y x) := by
-  funext s; ext q; simp [combine, lower]
+  ext s q; simp [eq_comm, combine, lower]
 
 /-! ### Bind (Facts 3.15, 3.17, 3.18, (3.25), (3.26)) -/
 
 /-- `bindShift m` is the Bind type-shifter (Def. 3.16), which pushes the tower's value onto the
 stack before continuing. -/
-def bindShift (m : Tower E β E) : Tower E β E := fun k ↦ m.run fun a s ↦ k a (s ++ [a])
+def bindShift (m : Tower E β E) : Tower E β E :=
+  fun k ↦ m.run fun a ↦ modify (· ++ [a]) *> k a
 
 @[simp] theorem run_bindShift (m : Tower E β E) (k : E → StateSet E β) :
-    (bindShift m).run k = m.run fun a s ↦ k a (s ++ [a]) := rfl
+    (bindShift m).run k = m.run fun a ↦ modify (· ++ [a]) *> k a := rfl
 
 theorem run_bindShift_eq_dref (m : Tower E β E) (k : E → StateSet E β) :
     (bindShift m).run k = m.run fun a ↦ dref (pure a) >>= k := by
@@ -400,26 +417,26 @@ theorem run_bindShift_eq_dref (m : Tower E β E) (k : E → StateSet E β) :
 
 theorem run_bindShift_monadLift_indef (P : E → Prop) (k : E → StateSet E β) :
     (bindShift (monadLift (indef P) : Tower E β E)).run k =
-      fun s ↦ ⋃ x, ⋃ (_ : P x), k x (s ++ [x]) := by
-  funext s; ext q; simp
+      .mk fun s ↦ ⋃ x, ⋃ (_ : P x), (k x).run (s ++ [x]) := by
+  ext s q; simp
 
 theorem run_monadLift_pro (k : E → StateSet E β) :
-    (monadLift pro : Tower E β E).run k = fun s ↦ ⋃ x ∈ s.getLast?, k x s := by
-  funext s; ext q; simp
+    (monadLift pro : Tower E β E).run k = .mk fun s ↦ ⋃ x ∈ s.getLast?, (k x).run s := by
+  ext s q; simp
 
 theorem name_rubbed_pro_head (j : E) (rubbed : E → E → Prop) (head : E → E) :
     lower (combine (fun x f ↦ f x) (bindShift (liftValue j) : Tower E Prop E)
       (combine (· ·) (liftValue rubbed)
         (combine (fun x f ↦ f x) (monadLift pro) (liftValue head)))) =
-      fun s ↦ {(rubbed (head j) j, s ++ [j])} := by
-  funext s; ext q; simp [combine, lower]
+      .mk fun s ↦ {(rubbed (head j) j, s ++ [j])} := by
+  ext s q; simp [eq_comm, combine, lower]
 
 theorem name_mom_saw_pro (j : E) (saw : E → E → Prop) (mom : E → E) :
     lower (combine (fun x f ↦ f x)
       (combine (fun x f ↦ f x) (bindShift (liftValue j) : Tower E Prop E) (liftValue mom))
       (combine (· ·) (liftValue saw) (monadLift pro))) =
-      fun s ↦ {(saw j (mom j), s ++ [j])} := by
-  funext s; ext q; simp [combine, lower]
+      .mk fun s ↦ {(saw j (mom j), s ++ [j])} := by
+  ext s q; simp [combine, lower]
 
 /-! ### Inverse scope ((3.28), (3.30))
 
@@ -438,13 +455,13 @@ theorem every_over_indef (man ling : E → Prop) (saw : E → E → Prop) :
       (pure (bindShift (monadLift (indef man))) : Tower E Prop (Tower E Prop E))
       (combine (combine (· ·)) (pure (liftValue saw)) (pure <$> everyDP ling))) =
       pure (∀ y, ling y → ∃ x, man x ∧ saw y x) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]
+  ext s q; simp [combine, lower, Function.comp_def]
 
 theorem every_owl_that_saw (owl : E → Prop) (saw : E → E → Prop) (a : E)
     (k : E → StateSet E Prop) :
     every (fun x ↦ dref (pure x) >>= fun ν ↦ pro >>= fun y ↦ pure (owl ν ∧ saw y a)) k =
-      fun s ↦ {(∀ ν, owl ν ∧ saw ν a → holds (k ν) (s ++ [ν]), s)} := by
-  funext s; simp [every, and_assoc]
+      .mk fun s ↦ {(∀ ν, owl ν ∧ saw ν a → holds (k ν) (s ++ [ν]), s)} := by
+  ext s : 1; simp [eq_comm, every, and_assoc]
 
 /-! ### Scope islands and exceptional scope (Facts 4.2–4.7, (4.7)–(4.12))
 
@@ -466,14 +483,14 @@ theorem reset_indef_left (ling left : E → Prop) :
 theorem reset_every (ling left : E → Prop) :
     reset (combine (fun x f ↦ f x) (everyDP ling : Tower E Prop E) (liftValue left)) =
       (liftValue (∀ x, ling x → left x) : Tower E Prop Prop) := by
-  unfold reset liftValue; congr 1; funext s; ext q; simp [combine, lower]
+  unfold reset liftValue; congr 1; ext s q; simp [combine, lower]
 
 theorem reset_indef_every (man ling : E → Prop) (met : E → E → Prop) :
     reset (combine (fun x f ↦ f x) (bindShift (monadLift (indef man)) : Tower E Prop E)
       (combine (· ·) (liftValue met) (everyDP ling))) =
       (monadLift (dref (indef man) >>= fun x ↦ pure (∀ y, ling y → met y x)) :
         Tower E Prop Prop) := by
-  unfold reset; congr 1; funext s; ext q; simp [combine, lower]
+  unfold reset; congr 1; ext s q; simp [eq_comm, combine, lower]
 
 theorem reset_every_indef (man ling : E → Prop) (met : E → E → Prop) :
     (monadLift (lower₂ (combine (combine (fun x f ↦ f x))
@@ -485,9 +502,10 @@ theorem reset_every_indef (man ling : E → Prop) (met : E → E → Prop) :
 
 theorem reset_every_pro (ling : E → Prop) (met : E → E → Prop) (k : Prop → StateSet E α)
     {s : Stack E} (h : s ≠ []) :
-    (reset (combine (fun x f ↦ f x) (everyDP ling : Tower E Prop E)
-      (combine (· ·) (liftValue met) (monadLift pro)))).run k s =
-      (monadLift (pro >>= fun y ↦ pure (∀ x, ling x → met y x)) : Tower E α Prop).run k s := by
+    ((reset (combine (fun x f ↦ f x) (everyDP ling : Tower E Prop E)
+      (combine (· ·) (liftValue met) (monadLift pro)))).run k).run s =
+      ((monadLift (pro >>= fun y ↦ pure (∀ x, ling x → met y x)) :
+        Tower E α Prop).run k).run s := by
   have := List.getLast?_eq_some_getLast h
   ext q; simp [reset, combine, lower, this]
 
@@ -501,14 +519,14 @@ theorem exceptional_binding (man ling left : E → Prop) (met : E → E → Prop
         (reset (combine (fun x f ↦ f x) (monadLift pro : Tower E Prop E)
           (liftValue left))))) =
       dref (indef man) >>= fun x ↦ pure ((∀ y, ling y → met y x) ∧ left x) := by
-  funext s; ext q; simp [combine, lower, reset]
+  ext s q; simp [combine, lower, reset]
 
 theorem exceptional_neg (rel ling : E → Prop) (met : E → E → Prop) :
     lower ((combine (· ·) (liftValue neg : Tower E Prop (StateSet E Prop → StateSet E Prop))
       (pure <$> reset (combine (fun x f ↦ f x) (monadLift (indef rel) : Tower E Prop E)
         (combine (· ·) (liftValue met) (everyDP ling))))) >>= monadLift) =
       indef rel >>= fun x ↦ pure (¬ ∀ y, ling y → met y x) := by
-  funext s; ext q; simp [combine, lower, reset]
+  ext s q; simp [eq_comm, combine, lower, reset]
 
 theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
     lower ((combine (· ·)
@@ -517,7 +535,7 @@ theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
           (liftValue dies))))
       (pure <$> liftValue rich)) >>= monadLift) =
       indef rel >>= fun x ↦ pure (dies x → rich) := by
-  funext s; ext q; simp [combine, lower, reset, cond]
+  ext s q; simp [eq_comm, combine, lower, reset, cond]
 
 theorem island_cond_every (rel dies : E → Prop) (rich : Prop) :
     lower ((combine (· ·)
@@ -526,7 +544,7 @@ theorem island_cond_every (rel dies : E → Prop) (rich : Prop) :
           (liftValue dies))))
       (pure <$> liftValue rich)) >>= monadLift) =
       pure ((∀ x, rel x → dies x) → rich) := by
-  funext s; ext q; simp [combine, lower, reset, cond]
+  ext s q; simp [combine, lower, reset, cond]
 
 theorem exceptional_feeds_binding (rel dies steelMagnate : E → Prop) (rich : Prop) :
     lower (combine (fun x f ↦ f x)
@@ -539,7 +557,7 @@ theorem exceptional_feeds_binding (rel dies steelMagnate : E → Prop) (rich : P
         (reset (combine (fun x f ↦ f x) (monadLift pro : Tower E Prop E)
           (liftValue steelMagnate))))) =
       dref (indef rel) >>= fun x ↦ pure ((dies x → rich) ∧ steelMagnate x) := by
-  funext s; ext q; simp [combine, lower, reset, cond]
+  ext s q; simp [combine, lower, reset, cond]
 
 theorem brc_derivation (cand : E → Prop) (paperBy submitted : E → E → Prop) :
     lower₂ (combine (combine (fun x f ↦ f x))
@@ -547,7 +565,7 @@ theorem brc_derivation (cand : E → Prop) (paperBy submitted : E → E → Prop
       (combine (combine (· ·)) (pure (liftValue submitted))
         (pure <$> monadLift (pro >>= fun z ↦ indef (paperBy z))))) =
       pro >>= fun z ↦ indef (paperBy z) >>= fun y ↦ pure (¬ ∃ x, cand x ∧ submitted y x) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]; grind
+  ext s q; simp [combine, lower, Function.comp_def]; grind
 
 /-! ### Choice functions (§4.7.1, (4.34)–(4.38))
 
@@ -566,13 +584,7 @@ theorem cf_exceptional_cond (rel : Set E) (dies : E → Prop) (rich : Prop) (hre
     (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
       holds (indef (· ∈ rel) >>= fun x ↦ pure (dies x → rich)) s := by
   refine (ChoiceFunction.exists_apply_iff_of_nonempty hrel fun x ↦ dies x → rich).trans ?_
-  simp only [holds, indef, Set.mem_stateT_bind, Set.stateT_pure_apply, Set.mem_singleton_iff,
-    Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨x, hx, h⟩
-    exact ⟨_, ⟨(x, s), ⟨hx, rfl⟩, rfl⟩, h⟩
-  · rintro ⟨_, ⟨q, ⟨hq, -⟩, rfl⟩, h⟩
-    exact ⟨q.1, hq, h⟩
+  simp
 
 /-- Closing the choice function above *no candidate* gives the [schwarz-2001] reading that no
 candidate submitted every paper he wrote (4.35, `Examples.ex4_4`) ((4.35)). -/
@@ -634,14 +646,14 @@ theorem indef_visits_indef (law rel : E → Prop) (visits : E → E → Prop) :
     lower (combine (fun x f ↦ f x) (monadLift (indef law) : Tower E Prop E)
       (combine (· ·) (liftValue visits) (monadLift (indef rel)))) =
       indef law >>= fun x ↦ indef rel >>= fun y ↦ pure (visits y x) := by
-  funext s; ext q; simp [combine, lower]
+  ext s q; simp [eq_comm, combine, lower]
 
 theorem indef_visits_indef_layered (law rel : E → Prop) (visits : E → E → Prop) :
     lower (lower <$> combine (combine (fun x f ↦ f x))
       (pure (monadLift (indef law)) : Tower E (StateSet E Prop) (Tower E Prop E))
       (combine (combine (· ·)) (pure (liftValue visits)) (pure <$> monadLift (indef rel)))) =
       indef rel >>= fun y ↦ pure (indef law >>= fun x ↦ pure (visits y x)) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]
+  ext s q; simp [combine, lower, Function.comp_def]
 
 theorem monadLift_layered {M : Type u → Type u} [Monad M] [LawfulMonad M] {ρ α β : Type u}
     (m : M α) (f : α → M β) :
@@ -665,10 +677,10 @@ variable {A : Type}
 /-- `distr R X` is the distributivity operator (Def. 4.5), a tower quantifying over the atoms of
 its plural argument. -/
 def distr (R : Set A → α) (X : Set A) : Tower (Set A) Prop α :=
-  fun k s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)}
+  fun k ↦ .mk fun s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)}
 
 @[simp] theorem run_distr (R : Set A → α) (X : Set A) (k : α → StateSet (Set A) Prop) :
-    (distr R X).run k = fun s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)} := rfl
+    (distr R X).run k = .mk fun s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)} := rfl
 
 theorem indef_fronts_two_distr (guard bldgs : Set A → Prop) (fronts : Set A → Set A → Prop) :
     (combine (combine (combine (fun x f ↦ f x)))
@@ -678,7 +690,7 @@ theorem indef_fronts_two_distr (guard bldgs : Set A → Prop) (fronts : Set A �
         monadLift (indef fun X ↦ bldgs X ∧ X.ncard = 2)))).run (·.run lower) =
       indef (fun X ↦ bldgs X ∧ X.ncard = 2) >>= fun Y ↦
         pure (∀ y ∈ Y, ∃ x, guard x ∧ fronts {y} x) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]
+  ext s q; simp [eq_comm, combine, lower, Function.comp_def]
 
 end Plural
 
@@ -700,7 +712,7 @@ theorem or_names_left (c m : E) (left : E → Prop) :
     lower (combine (fun x f ↦ f x) (or (bindShift (liftValue c)) (bindShift (liftValue m)))
       (liftValue left : Tower E Prop (E → Prop))) =
       (dref (pure c) <|> dref (pure m)) >>= fun x ↦ pure (left x) := by
-  funext s; ext q; simp [combine, lower, or_comm]
+  ext s q; simp [combine, lower]
 
 theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
     lower (combine (fun x f ↦ f x) (liftValue me : Tower E Prop E)
@@ -708,7 +720,7 @@ theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
         (combine (fun x f ↦ f x) (bindShift (liftValue c)) (liftValue hear)))) =
       ((dref (pure a) >>= fun x ↦ pure (see x me)) <|>
         dref (pure c) >>= fun x ↦ pure (hear x me)) := by
-  funext s; ext q; simp [combine, lower]
+  ext s q; simp [combine, lower]
 
 theorem or_pure_pure (steak burger : E → Prop) :
     or (pure (monadLift (indef steak)) : Tower E Prop (Tower E Prop E))
@@ -722,7 +734,7 @@ theorem or_over_every (person steak burger : E → Prop) (ate : E → E → Prop
         (or (pure (monadLift (indef steak))) (pure (monadLift (indef burger)))))) =
       (pure (∀ y, person y → ∃ x, steak x ∧ ate x y) <|>
         pure (∀ y, person y → ∃ x, burger x ∧ ate x y)) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]
+  ext s q; simp [combine, lower, Function.comp_def]
 
 theorem or_map_pure_every (steak burger : E → Prop) :
     or (pure <$> everyDP steak : Tower E Prop (Tower E Prop E)) (pure <$> everyDP burger) =
@@ -734,7 +746,7 @@ theorem or_or_names (m j b : E) :
       or (pure (or (liftValue m) (liftValue j)) : Tower E (StateSet E E) (Tower E E E))
         (pure (liftValue b))) =
       (pure (pure m <|> pure j) <|> pure (pure b)) := by
-  funext s; ext q; simp [lower]
+  ext s q; simp [lower]
 
 /-! ### Drefs of proper names take exceptional scope ((5.8))
 
@@ -749,14 +761,14 @@ theorem name_dref_inverse (person : E → Prop) (thinks : Prop → E → Prop) (
       (combine (combine (· ·)) (pure (liftValue thinks))
         (pure <$> combine (fun x f ↦ f x) (bindShift (liftValue b)) (liftValue come)))) =
       dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x) := by
-  funext s; ext q; simp [combine, lower, Function.comp_def]
+  ext s q; simp [eq_comm, combine, lower, Function.comp_def]
 
 theorem name_dref_cond (person : E → Prop) (thinks : Prop → E → Prop) (come invite : E → Prop)
     (b : E) :
     cond (dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x))
       (pro >>= fun z ↦ pure (¬ invite z)) =
       pure ((∀ x, person x → thinks (come b) x) → ¬ invite b) := by
-  funext s; simp [cond]
+  ext s : 1; simp [cond]
 
 /-! ### Maximal drefs and dynamic generalized quantifiers (§5.3.2, (5.19), (5.24))
 
@@ -770,17 +782,19 @@ variable {A : Type}
 
 /-- Dynamic GQ with a maximal refset dref (Def. 5.3). -/
 def dynGQ (DET : Set A → Set A → Prop) (M : Set A) : Tower (Set A) Prop A :=
-  fun k s ↦ {(DET M {x | x ∈ M ∧ holds (k x) s}, s ++ [{x | x ∈ M ∧ holds (k x) s}])}
+  fun k ↦ .mk fun s ↦
+    {(DET M {x | x ∈ M ∧ holds (k x) s}, s ++ [{x | x ∈ M ∧ holds (k x) s}])}
 
 @[simp] theorem run_dynGQ (DET : Set A → Set A → Prop) (M : Set A) (k : A → StateSet (Set A) Prop) :
     (dynGQ DET M).run k =
-      fun s ↦ {(DET M {x | x ∈ M ∧ holds (k x) s}, s ++ [{x | x ∈ M ∧ holds (k x) s}])} := rfl
+      .mk fun s ↦
+        {(DET M {x | x ∈ M ∧ holds (k x) s}, s ++ [{x | x ∈ M ∧ holds (k x) s}])} := rfl
 
 theorem dynGQ_left (ling left : Set A) :
     lower (combine (fun x f ↦ f x) (dynGQ (fun _ N ↦ N.ncard = 1) ling)
       (liftValue (· ∈ left))) =
       dref (pure (ling ∩ left)) >>= fun N ↦ pure (N.ncard = 1) := by
-  funext s; ext q; simp [combine, lower]
+  ext s q; simp [eq_comm, combine, lower]
 
 theorem dynGQ_pro (ling left : Set A) (tired : Set A → Prop) :
     lower (combine (fun x f ↦ f x)
@@ -789,14 +803,14 @@ theorem dynGQ_pro (ling left : Set A) (tired : Set A → Prop) :
       (combine (· ·) (liftValue fun q p ↦ p ∧ q)
         (combine (fun x f ↦ f x) (monadLift pro) (liftValue tired)))) =
       dref (pure (ling ∩ left)) >>= fun N ↦ pure (N.ncard = 1 ∧ tired N) := by
-  funext s; ext q; simp [combine, lower]
+  ext s q; simp [combine, lower]
 
 theorem dynGQ_neg (sen admire : Set A) :
     lower ((combine (· ·) (liftValue (neg (E := Set A)) : Tower (Set A) Prop _)
       (pure <$> reset (combine (fun x f ↦ f x) (dynGQ (fun _ N ↦ N = ∅) sen)
         (liftValue (· ∈ admire))))) >>= monadLift) =
       dref (pure (sen ∩ admire)) >>= fun N ↦ pure (¬ N = ∅) := by
-  funext s; ext q; simp [combine, lower, reset]
+  ext s q; simp [eq_comm, combine, lower, reset]
 
 end DynamicGQ
 
@@ -963,16 +977,16 @@ namespace ReaderSet
 variable {E α β : Type}
 
 /-- `indef P` is an indefinite, a nondeterministic individual insensitive to the stack. -/
-def indef (P : E → Prop) : ReaderSet E E := fun _ ↦ {x | P x}
+def indef (P : E → Prop) : ReaderSet E E := monadLift {x | P x}
 
 /-- `pro` is a pronoun, the topical dref. -/
-def pro : ReaderSet E E := fun s ↦ {x | s.getLast? = some x}
+def pro : ReaderSet E E := ReaderT.read >>= fun s ↦ monadLift {x | s.getLast? = some x}
 
 /-- Some output is true. -/
-def holds (m : ReaderSet E Prop) (s : Stack E) : Prop := ∃ p ∈ m s, p
+def holds (m : ReaderSet E Prop) (s : Stack E) : Prop := ∃ p ∈ m.run s, p
 
 /-- Negation (Def. 5.18). -/
-def neg (m : ReaderSet E Prop) : ReaderSet E Prop := fun s ↦ {¬ holds m s}
+def neg (m : ReaderSet E Prop) : ReaderSet E Prop := ReaderT.read >>= fun s ↦ pure (¬ holds m s)
 
 /-- The universal (Def. 5.19). -/
 def everyDP (P : E → Prop) : ContT Prop (ReaderSet E) E :=
@@ -984,24 +998,27 @@ def noDP (P : E → Prop) : ContT Prop (ReaderSet E) E := fun k ↦ neg (indef P
 /-- `bindShift m` is Bind for Reader.Set towers (Def. 5.21), whose continuation reads the
 extended stack. -/
 def bindShift (m : ContT β (ReaderSet E) E) : ContT β (ReaderSet E) E :=
-  fun k ↦ m.run fun a s ↦ k a (s ++ [a])
+  fun k ↦ m.run fun a ↦ .mk fun s ↦ (k a).run (s ++ [a])
 
-@[simp] theorem mem_indef (P : E → Prop) (s : Stack E) (x : E) : x ∈ indef P s ↔ P x := Iff.rfl
+@[simp] theorem mem_indef (P : E → Prop) (s : Stack E) (x : E) : x ∈ (indef P).run s ↔ P x :=
+  Iff.rfl
 
-@[simp] theorem mem_pro (s : Stack E) (x : E) : x ∈ pro s ↔ s.getLast? = some x := Iff.rfl
+@[simp] theorem mem_pro (s : Stack E) (x : E) : x ∈ pro.run s ↔ s.getLast? = some x := by
+  simp [pro]
 
-@[simp] theorem neg_apply (m : ReaderSet E Prop) (s : Stack E) : neg m s = {¬ holds m s} := rfl
+@[simp] theorem neg_apply (m : ReaderSet E Prop) (s : Stack E) : (neg m).run s = {¬ holds m s} := by
+  simp [neg]
 
 @[simp] theorem holds_pure (p : Prop) (s : Stack E) : holds (pure p) s ↔ p := by simp [holds]
 
 @[simp] theorem holds_bind (m : ReaderSet E α) (k : α → ReaderSet E Prop) (s : Stack E) :
-    holds (m >>= k) s ↔ ∃ x ∈ m s, holds (k x) s := by
-  simp only [holds, Set.mem_readerT_bind]
+    holds (m >>= k) s ↔ ∃ x ∈ m.run s, holds (k x) s := by
+  simp only [holds, ReaderT.run_bind, Set.bind_def, Set.mem_iUnion₂, exists_prop]
   exact ⟨fun ⟨p, ⟨x, hx, hp⟩, h⟩ ↦ ⟨x, hx, p, hp, h⟩, fun ⟨x, hx, p, hp, h⟩ ↦ ⟨p, ⟨x, hx, hp⟩, h⟩⟩
 
 @[simp] theorem holds_map (f : α → Prop) (m : ReaderSet E α) (s : Stack E) :
-    holds (f <$> m) s ↔ ∃ x ∈ m s, f x := by
-  simp only [holds, Set.mem_readerT_map]
+    holds (f <$> m) s ↔ ∃ x ∈ m.run s, f x := by
+  simp only [holds, ReaderT.run_map, Set.fmap_eq_image, Set.mem_image]
   exact ⟨fun ⟨_, ⟨x, hx, rfl⟩, h⟩ ↦ ⟨x, hx, h⟩, fun ⟨x, hx, h⟩ ↦ ⟨_, ⟨x, hx, rfl⟩, h⟩⟩
 
 @[simp] theorem holds_neg (m : ReaderSet E Prop) (s : Stack E) : holds (neg m) s ↔ ¬ holds m s := by
@@ -1014,7 +1031,7 @@ def bindShift (m : ContT β (ReaderSet E) E) : ContT β (ReaderSet E) E :=
     (noDP P).run k = neg (indef P >>= k) := rfl
 
 @[simp] theorem run_bindShift (m : ContT β (ReaderSet E) E) (k : E → ReaderSet E β) :
-    (bindShift m).run k = m.run fun a s ↦ k a (s ++ [a]) := rfl
+    (bindShift m).run k = m.run fun a ↦ .mk fun s ↦ (k a).run (s ++ [a]) := rfl
 
 theorem reset_indef_left (ling left : E → Prop) :
     reset (combine (fun x f ↦ f x) (monadLift (indef ling) : ContT Prop (ReaderSet E) E)
@@ -1026,7 +1043,7 @@ theorem reset_every (ling left : E → Prop) :
     reset (combine (fun x f ↦ f x) (everyDP ling)
       (liftValue left)) =
       (liftValue (∀ x, ling x → left x) : ContT Prop (ReaderSet E) Prop) := by
-  unfold reset liftValue; congr 1; funext s; ext; simp [combine, lower]
+  unfold reset liftValue; congr 1; ext s q; simp [combine, lower]
 
 theorem indef_met_indef_layered (sem phon : E → Prop) (met : E → E → Prop) :
     lower (lower (M := ReaderSet E) <$> combine (combine (fun x f ↦ f x))
@@ -1035,10 +1052,10 @@ theorem indef_met_indef_layered (sem phon : E → Prop) (met : E → E → Prop)
       (combine (combine (· ·)) (pure (liftValue met))
         (pure <$> monadLift (indef phon)))) =
       indef phon >>= fun y ↦ pure (indef sem >>= fun x ↦ pure (met y x)) := by
-  funext s; ext; simp [combine, lower, Function.comp_def]
+  ext s q; simp [combine, lower, Function.comp_def]
 
 theorem bind_pro_append (π : E → ReaderSet E α) (s : Stack E) (a : E) :
-    (pro >>= π) (s ++ [a]) = π a (s ++ [a]) := by
+    (pro >>= π).run (s ++ [a]) = (π a).run (s ++ [a]) := by
   ext; simp
 
 theorem indef_rubbed_pro_head (ling : E → Prop) (rubbed : E → E → Prop) (head : E → E) :
@@ -1047,7 +1064,7 @@ theorem indef_rubbed_pro_head (ling : E → Prop) (rubbed : E → E → Prop) (h
       (combine (· ·) (liftValue rubbed)
         (combine (fun x f ↦ f x) (monadLift pro) (liftValue head)))) =
       indef ling >>= fun x ↦ pure (rubbed (head x) x) := by
-  funext s; ext; simp [combine, lower]
+  ext s q; simp [combine, lower]
 
 theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → Prop)
     (told : E → E → E → Prop) :
@@ -1060,7 +1077,7 @@ theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → 
         (pure <$> monadLift (pro >>= fun u ↦ indef (bookBy u))))).run lower =
       indef man >>= fun x ↦ indef (bookBy x) >>= fun z ↦
         pure (¬ ∃ y, person y ∧ told y z x) := by
-  funext s; ext; simp [combine, lower, Function.comp_def]
+  ext s q; simp [combine, lower, Function.comp_def, eq_comm, -eq_iff_iff]
 
 theorem no_exceptional_binding (man left tired : E → Prop) :
     lower (combine (fun x f ↦ f x)
@@ -1071,16 +1088,17 @@ theorem no_exceptional_binding (man left tired : E → Prop) :
         (reset (combine (fun x f ↦ f x) (monadLift pro : ContT Prop (ReaderSet E) E)
           (liftValue tired))))) =
       indef man >>= fun x ↦ pro >>= fun u ↦ pure (left x ∧ tired u) := by
-  funext s; ext; simp [combine, lower, reset]
+  ext s q; simp [combine, lower, reset]
 
 theorem run_monadLift (m : ReaderSet E α) (k : α → ReaderSet E β) :
-    (monadLift m : ContT β (ReaderSet E) α).run k = fun s ↦ ⋃ x ∈ m s, k x s := by
-  funext s; ext; simp
+    (monadLift m : ContT β (ReaderSet E) α).run k =
+      .mk fun s ↦ ⋃ x ∈ m.run s, (k x).run s := by
+  ext s q; simp
 
 end ReaderSet
 
 theorem run_monadLift (m : StateSet E α) (k : α → StateSet E β) :
-    (monadLift m : Tower E β α).run k = fun s ↦ ⋃ q ∈ m s, k q.1 q.2 := by
-  funext s; ext; simp
+    (monadLift m : Tower E β α).run k = .mk fun s ↦ ⋃ q ∈ m.run s, (k q.1).run q.2 := by
+  ext s q; simp
 
 end Charlow2014

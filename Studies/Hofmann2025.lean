@@ -148,7 +148,7 @@ theorem mem_dom_not_comp_believes (hv : v ≠ v') :
 
 -- (16), (18a), (25): the negated scope needs the referent exactly outside where it exists
 theorem eq_univ_of_mem_indefinite_not_it
-    (hj : (s, h) ∈ indefinite v (commonNoun R) (fun u ↦ (it S u).not) g) :
+    (hj : (s, h) ∈ (indefinite v (commonNoun R) (fun u ↦ (it S u).not)).run g) :
     s = Set.univ ∧ witnessed R = Set.univ := by
   obtain ⟨e, k, hd, ⟨hR, rfl⟩, hj⟩ := hj
   obtain ⟨rfl, -⟩ := hasTruthSet_it.mem_not.mp hj
