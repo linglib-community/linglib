@@ -391,14 +391,25 @@ private theorem info_atLeast22 (h : ctx.knowledge = .exact '' Set.Ici 22) :
 theorem atLeast22_optimal (r : Ranking Con) :
     r.optimal (con (.atLeast 22)) {moreThan 21, moreThan 20} =
       if r.Dominates .info .nsal then {moreThan 21} else {moreThan 20} := by
-  rw [optimal_con (info_atLeast22 rfl)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .npri] (by decide)
+  rw [optimal_con (info_atLeast22 rfl), ← ho]
+  · simp only [
+    show r.Dominates .info .nsal ↔ τ.Dominates 0 1 from (hτ 0 1).symm]
+    clear hτ ho; revert τ; decide +kernel
+  · decide
 
 -- Table 3.2, Table 3.3
 theorem atLeast22Primed_optimal (r : Ranking Con) :
     r.optimal (con atLeast22Primed) {moreThan 21, moreThan 20} =
       if r.Dominates .nsal .info ∧ r.Dominates .nsal .npri then {moreThan 20}
       else {moreThan 21} := by
-  rw [optimal_con (info_atLeast22 rfl)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .npri] (by decide)
+  rw [optimal_con (info_atLeast22 rfl), ← ho]
+  · simp only [
+    show r.Dominates .nsal .info ↔ τ.Dominates 1 0 from (hτ 1 0).symm,
+    show r.Dominates .nsal .npri ↔ τ.Dominates 1 2 from (hτ 1 2).symm]
+    clear hτ ho; revert τ; decide +kernel
+  · decide
 
 /-- A ranking with priming over salience over informativeness, the last of Table 3.3. -/
 def primingFirst : Ranking Con := .ofList [.npri, .nsal, .info, .gran, .qsimp, .qpri]
@@ -456,27 +467,48 @@ private theorem optimal_context {cands : Finset Candidate}
 theorem exact51_optimal (r : Ranking Con) :
     r.optimal (con (Situation.exact 51).context) {bare 50, bare 51} =
       if r.Dominates .info .nsal then {bare 51} else {bare 50} := by
-  rw [optimal_context (by decide)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .qsimp] (by decide)
+  rw [optimal_context (by decide), ← ho]
+  · simp only [
+    show r.Dominates .info .nsal ↔ τ.Dominates 0 1 from (hτ 0 1).symm]
+    clear hτ ho; revert τ; decide +kernel
+  · decide
 
 -- Table 3.6
 theorem exact100_optimal (r : Ranking Con) :
     r.optimal (con (Situation.exact 100).context)
         {bare 100, exactly 100, about 100, about 99} =
       if r.Dominates .info .qsimp then {exactly 100} else {bare 100} := by
-  rw [optimal_context (by decide)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .qsimp] (by decide)
+  rw [optimal_context (by decide), ← ho]
+  · simp only [
+    show r.Dominates .info .qsimp ↔ τ.Dominates 0 2 from (hτ 0 2).symm]
+    clear hτ ho; revert τ; decide +kernel
+  · decide
 
 -- Table 3.7
 theorem about100_optimal (r : Ranking Con) :
     r.optimal (con (Situation.about 100).context) {bare 100, about 100} =
       if r.Dominates .info .qsimp then {about 100} else {bare 100} := by
-  rw [optimal_context (by decide)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .qsimp] (by decide)
+  rw [optimal_context (by decide), ← ho]
+  · simp only [
+    show r.Dominates .info .qsimp ↔ τ.Dominates 0 2 from (hτ 0 2).symm]
+    clear hτ ho; revert τ; decide +kernel
+  · decide
 
 -- Table 3.8
 theorem exact99_optimal (r : Ranking Con) :
     r.optimal (con (Situation.exact 99).context) {bare 99, exactly 99, bare 100, about 100} =
       if r.Dominates .info .nsal then {bare 99}
       else if r.Dominates .qsimp .info then {bare 100} else {about 100} := by
-  rw [optimal_context (by decide)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .qsimp] (by decide)
+  rw [optimal_context (by decide), ← ho]
+  · simp only [
+    show r.Dominates .info .nsal ↔ τ.Dominates 0 1 from (hτ 0 1).symm,
+    show r.Dominates .qsimp .info ↔ τ.Dominates 2 0 from (hτ 2 0).symm]
+    clear hτ ho; revert τ; decide +kernel
+  · decide
 
 /-! ### Corrections (§3.3.2, Tables 3.9–3.10) -/
 
@@ -590,50 +622,36 @@ def Prompt.ComparativeWins (r : Ranking Con) : Prompt → Prop
 instance (r : Ranking Con) (p : Prompt) : Decidable (p.ComparativeWins r) := by
   cases p <;> exact inferInstanceAs (Decidable (_ ∨ _))
 
-private theorem marks_optimal_moreThan (r : Ranking Con) :
-    r.optimal (marks (Prompt.moreThan).sameQuantifier (Prompt.moreThan).sameNumeral)
-        Correction.all =
-      if (Prompt.moreThan).ComparativeWins r then {(Prompt.moreThan).comparative}
-      else {(Prompt.moreThan).superlative} := by
-  revert r; decide +kernel
-
-private theorem marks_optimal_fewerThan (r : Ranking Con) :
-    r.optimal (marks (Prompt.fewerThan).sameQuantifier (Prompt.fewerThan).sameNumeral)
-        Correction.all =
-      if (Prompt.fewerThan).ComparativeWins r then {(Prompt.fewerThan).comparative}
-      else {(Prompt.fewerThan).superlative} := by
-  revert r; decide +kernel
-
-private theorem marks_optimal_atLeast (r : Ranking Con) :
-    r.optimal (marks (Prompt.atLeast).sameQuantifier (Prompt.atLeast).sameNumeral)
-        Correction.all =
-      if (Prompt.atLeast).ComparativeWins r then {(Prompt.atLeast).comparative}
-      else {(Prompt.atLeast).superlative} := by
-  revert r; decide +kernel
-
-private theorem marks_optimal_atMost (r : Ranking Con) :
-    r.optimal (marks (Prompt.atMost).sameQuantifier (Prompt.atMost).sameNumeral)
-        Correction.all =
-      if (Prompt.atMost).ComparativeWins r then {(Prompt.atMost).comparative}
-      else {(Prompt.atMost).superlative} := by
-  revert r; decide +kernel
+private theorem marks_optimal (p : Prompt) (r : Ranking Con) :
+    r.optimal (marks p.sameQuantifier p.sameNumeral) Correction.all =
+      if p.ComparativeWins r then {p.comparative} else {p.superlative} := by
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.qpri, .npri, .qsimp] (by decide)
+  have h01 : r.Dominates .qpri .npri ↔ τ.Dominates 0 1 := (hτ 0 1).symm
+  have h21 : r.Dominates .qsimp .npri ↔ τ.Dominates 2 1 := (hτ 2 1).symm
+  have h10 : r.Dominates .npri .qpri ↔ τ.Dominates 1 0 := (hτ 1 0).symm
+  have h20 : r.Dominates .qsimp .qpri ↔ τ.Dominates 2 0 := (hτ 2 0).symm
+  cases p <;> rw [← ho]
+  any_goals decide
+  all_goals
+    simp only [Prompt.ComparativeWins, h01, h21, h10, h20]
+    clear hτ ho h01 h21 h10 h20; revert τ; decide
 
 /-- Under every ranking the optimal correction of a description is the maximally informative
 comparative or superlative on its side, the comparative exactly under `Prompt.ComparativeWins`. -/
 theorem correction_optimal {n : ℕ} (hn : 1 ≤ n) (p : Prompt) (r : Ranking Con) :
     r.optimal (corr (p.context n) n) Correction.all =
       if p.ComparativeWins r then {p.comparative} else {p.superlative} := by
-  rw [corr_context hn]
-  cases p
-  exacts [marks_optimal_moreThan r, marks_optimal_fewerThan r, marks_optimal_atLeast r,
-    marks_optimal_atMost r]
+  rw [corr_context hn]; exact marks_optimal p r
 
 /-- No ranking yields the superlative correction after both a comparative and a superlative
 description, since the first needs numeral priming over quantifier priming and the second the
 reverse. -/
 theorem comparativeWins_moreThan_or_atLeast (r : Ranking Con) :
     Prompt.moreThan.ComparativeWins r ∨ Prompt.atLeast.ComparativeWins r := by
-  revert r; decide +kernel
+  rcases lt_trichotomy (r.symm .qpri) (r.symm .npri) with h | h | h
+  · exact .inl (.inl h)
+  · exact absurd (r.symm.injective h) (by decide)
+  · exact .inr (.inl h)
 
 -- Experiment 2: most corrections of each description take one of the two forms
 -- `correction_optimal` allows.
@@ -646,7 +664,10 @@ theorem corrected_lt_two_mul_predicted (p : Prompt) :
 
 theorem about100_notMem_optimal_of_exact (r : Ranking Con) :
     about 100 ∉ r.optimal (con (Situation.exact 100).context) {bare 100, about 100} := by
-  rw [optimal_context (by decide)]; revert r; decide +kernel
+  obtain ⟨τ, hτ, ho⟩ := r.exists_optimal_comp ![.info, .nsal, .qsimp] (by decide)
+  rw [optimal_context (by decide), ← ho]
+  · clear hτ ho; revert τ; decide +kernel
+  · decide
 
 /-- In a context, *more than m* is a stronger alternative to *more than n* when `n < m` and `m`
 is at least as salient as `n` and at its granularity level, if the context sets one. -/
