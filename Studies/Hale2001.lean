@@ -53,7 +53,7 @@ ratio is a theorem about it; both are infinite at a word that no analysis of the
 
 namespace Hale2001
 
-open InformationTheory MeasureTheory ProbabilityTheory Surprisal AutoregressiveSequenceModel
+open InformationTheory MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
 open scoped ENNReal
 
 variable {T W : Type*} [MeasurableSpace T] (P : Measure T) (str : T → List W) (ws : List W)

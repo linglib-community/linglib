@@ -140,6 +140,11 @@ instance Pi.botPartDecidable (i : ι) : Decidable ((⊥ : ∀ i, Part (β i)) i)
 theorem Part.pi_le_iff {s t : ∀ i, Part (β i)} : s ≤ t ↔ ∀ i, (s i).Dom → s i = t i :=
   forall_congr' fun _ ↦ Part.le_iff_not_dom_or_eq.trans imp_iff_not_or.symm
 
+/-- A family that extends another has its values wherever it is defined. -/
+theorem Part.eq_some_of_pi_le {s t : ∀ i, Part (β i)} (h : s ≤ t) {i : ι} {a : β i}
+    (hs : s i = Part.some a) : t i = Part.some a :=
+  Part.some_le_iff.1 (hs ▸ h i)
+
 /-- The domain of an updated family is decided from the update and the family at the same index,
 so nested updates are decided index by index. -/
 instance Function.updatePartDecidable [DecidableEq ι] (f : ∀ i, Part (β i)) (c : ι)

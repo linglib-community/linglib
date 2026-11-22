@@ -19,11 +19,11 @@ raised can. `Frozen d x` says that `x` sits inside some mover of `d`, and `Obeys
 contains](##Minimalist.Derivation.obeysFreezing_iff_forall_mover?), so that [a further movement
 obeys Freezing exactly when its mover is not
 frozen](##Minimalist.Derivation.obeysFreezing_append_im_iff). Movers carry the traces of what
-evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it. Its rival, the
-Unlabeled Immobility Condition `ObeysUIC`, lets a moved constituent be extracted from and instead
-bars a constituent from moving when it is unlabeled in the object built so far, as a phrase whose
-specifier does not agree with it is; [a further movement obeys it exactly when its mover is
-labeled](##Minimalist.Derivation.obeysUIC_append_im_iff).
+evacuated them earlier, not the evacuees, so a remnant freezes nothing that left it.
+
+Its rival lets a moved constituent be extracted from and restricts what may move instead, a
+condition `∀ m ∈ d.movedItems, L m` on the movers: with `L` the labeled constituents,
+[boskovic-2018]'s generalization that unlabeled elements cannot move.
 
 ## References
 
@@ -118,53 +118,5 @@ theorem obeysFreezing_map_iff (hf : Function.Injective f) :
   simp only [ObeysFreezing, movedItems_map, List.pairwise_map, contains_map_iff hf]
 
 end Map
-
-/-! ### Unlabeled immobility -/
-
-variable (L : PlanarSyntacticObject → SyntacticObject → Prop) {d : Derivation} {steps : List Step}
-
-/-- [boskovic-2018]'s Unlabeled Immobility Condition: each mover of `d` is labeled, as `L` reads
-labels, in the object the derivation has built when it moves. -/
-def ObeysUIC (d : Derivation) : Prop :=
-  ∀ i < d.length, ∀ m ∈ d.mover? i, ∃ p ∈ (d.take i).externalize?, L p m
-
-instance [∀ p, DecidablePred (L p)] (d : Derivation) : Decidable (d.ObeysUIC L) :=
-  inferInstanceAs (Decidable (∀ _ < _, _))
-
-variable {L}
-
-theorem ObeysUIC.mono {L' : PlanarSyntacticObject → SyntacticObject → Prop}
-    (hL : ∀ p x, L p x → L' p x) (h : d.ObeysUIC L) : d.ObeysUIC L' :=
-  fun i hi m hm ↦ (h i hi m hm).imp fun p ⟨hp, hpm⟩ ↦ ⟨hp, hL p m hpm⟩
-
-theorem obeysUIC_append_singleton_iff {step : Step} :
-    (d.append [step]).ObeysUIC L ↔ d.ObeysUIC L ∧
-      ∀ m ∈ step.mover?, ∃ p ∈ d.externalize?, L p m := by
-  have hlast : (d.append [step]).mover? d.length = step.mover? := by
-    simp [mover?, append, length]
-  constructor
-  · intro h
-    refine ⟨fun i hi m hm ↦ ?_, fun m hm ↦ ?_⟩
-    · have := h i (by simp; omega) m (by rwa [mover?_append_of_lt hi])
-      rwa [take_append_of_le hi.le] at this
-    · have := h d.length (by simp) m (by rwa [hlast])
-      rwa [take_length_append] at this
-  · rintro ⟨h, hs⟩ i hi m hm
-    rcases Nat.lt_or_ge i d.length with hlt | hge
-    · rw [take_append_of_le hlt.le]
-      exact h i hlt m (by rwa [mover?_append_of_lt hlt] at hm)
-    · obtain rfl : i = d.length := by simp at hi; omega
-      rw [take_length_append]
-      exact hs m (by rwa [hlast] at hm)
-
-/-- A further movement obeys the Unlabeled Immobility Condition exactly when its mover is labeled
-in the object built so far. -/
-@[simp] theorem obeysUIC_append_im_iff {m : SyntacticObject} {side : Edge} :
-    (d.append [.im m side]).ObeysUIC L ↔ d.ObeysUIC L ∧ ∃ p ∈ d.externalize?, L p m := by
-  simp [obeysUIC_append_singleton_iff]
-
-@[simp] theorem obeysUIC_append_em_iff {item : PlanarSyntacticObject} {side : Edge} :
-    (d.append [.em side item]).ObeysUIC L ↔ d.ObeysUIC L := by
-  simp [obeysUIC_append_singleton_iff]
 
 end Minimalist.Derivation

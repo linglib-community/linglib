@@ -150,6 +150,12 @@ def occurrencesWith (P : LexicalItem.Token → Prop) [DecidablePred P] : List Go
 
 theorem occurrencesWith_eq : occurrencesWith t (· = tok) = occurrences t tok := rfl
 
+variable {t} in
+@[simp] theorem mem_occurrencesWith {P : LexicalItem.Token → Prop} [DecidablePred P]
+    {p : GornAddress} :
+    p ∈ occurrencesWith t P ↔ ∃ tok, (p, tok) ∈ tokenList t.toRoseTree ∧ P tok := by
+  simp [occurrencesWith]
+
 variable {t tok} in
 @[simp] theorem mem_occurrences {p : GornAddress} :
     p ∈ occurrences t tok ↔ (p, tok) ∈ tokenList t.toRoseTree := by

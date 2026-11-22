@@ -12,16 +12,13 @@ The acceptability rating study (chapter 5) and the discourse production study (c
 causal constructions, run on the 43 video clips of the Causality Across Languages project. Twelve
 raters judged a description of each clip in each of seven response types; a conditional inference
 tree per response type splits the clips by the semantic predictors, and Table 18 prints each leaf's
-share of ceiling ratings and its number of responses. The tables are recorded as printed, including
-the reversed InanCEAF signs of the ADV tree, the peaks of NCA and NCrA that Table 19 swaps, and the
-unattainable 0.08 of the LEX-INST tree; the studies that consume them state the discrepancies.
+share of ceiling ratings and its number of responses. The tables are recorded as printed.
 
 ## Raw data
 
 * <https://github.com/JuergenBohnemeyer/cal_stats>: the R analyses of the Causality Across Languages
-  project, with the project's clip coding in Non_df_input_csvs/ClipVariables.csv, which codes clips
-  11 and 21 with a human second participant and clip 22 without one, as the clip names do; the
-  rating responses are not included
+  project, with the project's clip coding in Non_df_input_csvs/ClipVariables.csv (CC0), the source
+  of the coding columns of the clip table; the rating responses are not included
 * <https://github.com/Saima-Hafeez/Agentivity-and-Causation-Hafeez-Sreeram>: the dissertation's R
   code
 * <https://causalityacrosslanguages.wordpress.com/project-summary/field-manual-and-stimuli/>: the
@@ -56,28 +53,6 @@ inductive Predictor where
   | physImpHCEAF
   /-- PsychImpHCEAF: psychologically impacted human causee or affectee -/
   | psychImpHCEAF
-  deriving DecidableEq, Repr, Fintype
-
-/-- The first letter of a clip name (Appendix L). -/
-inductive CauserCode where
-  /-- H: intentional human causer -/
-  | h
-  /-- U: unintentional causer -/
-  | u
-  /-- N: natural force causer -/
-  | n
-  deriving DecidableEq, Repr, Fintype
-
-/-- A later letter of a clip name (Appendix L). -/
-inductive ParticipantCode where
-  /-- C: controlling human causee or affectee -/
-  | c
-  /-- U: non-controlling human causee or affectee -/
-  | u
-  /-- M: physically impacted human causee or affectee, used once for an umbrella -/
-  | m
-  /-- O: inanimate affectee -/
-  | o
   deriving DecidableEq, Repr, Fintype
 
 /-- The response types of the two studies (Appendix L). -/
@@ -116,67 +91,91 @@ inductive Answer where
 (section 5.1, p. 112; checked against the PDF text layer only.) -/
 def raters : ℕ := 12
 
-/-- A row of Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L: a stimulus clip, with the letters
-of its name and the predictors Table 4 marks present. -/
+/-- A row of Tables 3 and 4 (pp. 45-47, 51-52), with the coding columns from ClipVariables.csv of
+the raw data: a stimulus clip, with the project's coding of its causal chain and the
+predictors Table 4 marks present. -/
 structure Clip where
   /-- The clip number, in the first presentation order. -/
   number : ℕ
-  /-- The first letter of the clip name. -/
-  causer : CauserCode
-  /-- The second letter of the clip name. -/
-  second : ParticipantCode
-  /-- The third letter of the clip name, when it is the O of an inanimate affectee. -/
-  third : Option ParticipantCode
+  /-- The causer is a human. (column CRHuman of ClipVariables.csv) -/
+  humanCauser : Bool
+  /-- The causer acts intentionally. (column CRIntentional of ClipVariables.csv) -/
+  intentionalCauser : Bool
+  /-- The second participant is a human. (column HumanCEorAF of ClipVariables.csv) -/
+  humanSecond : Bool
+  /-- The second participant controls its action. (column CEorAFIntentional of ClipVariables.csv) -/
+  controllingSecond : Bool
+  /-- The causer physically impacts the second participant. (column DoesCRImpactNextPart of
+  ClipVariables.csv) -/
+  impactedSecond : Bool
+  /-- A participant stands between the causer and the final affectee. (column IntPart of
+  ClipVariables.csv) -/
+  intermediate : Bool
   /-- The predictors Table 4 marks Yes. -/
   present : List Predictor
   deriving DecidableEq, Repr
 
-/-- The 43 rows of Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L, in the paper's order; from
-an experiment; checked against the page images. -/
+/-- The 43 rows of Tables 3 and 4 (pp. 45-47, 51-52), with the coding columns from
+ClipVariables.csv of the raw data, in the paper's order; from an experiment; checked against
+the page images. -/
 def clips : List Clip :=
-  [⟨1, .h, .o, none, [.ihcr, .inanCEAF, .psychImpHCEAF]⟩,  -- HO6_paper
-   ⟨2, .h, .c, none, [.ihcr, .contrHCEAF]⟩,  -- HC1_leave
-   ⟨3, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HOIproc1_swing
-   ⟨4, .h, .u, some .o, [.ihcr, .mediation, .psychImpHCEAF]⟩,  -- HUO3_paper
-   ⟨5, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HO2_egg
-   ⟨6, .n, .m, none, [.nfcr, .physImpHCEAF]⟩,  -- NM2_reporter
-   ⟨7, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HOI4_ball
-   ⟨8, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HO5_cuptower
-   ⟨9, .u, .o, none, [.ahcr, .inanCEAF]⟩,  -- UO1_egg
-   ⟨10, .u, .m, none, [.ahcr, .physImpHCEAF]⟩,  -- UM3_faint
-   ⟨11, .h, .m, some .o, [.ihcr, .inanCEAF, .mediation, .physImpHCEAF]⟩,  -- HMO4_cups
-   ⟨12, .h, .u, none, [.ihcr, .psychImpHCEAF]⟩,  -- HU2_scare
-   ⟨13, .u, .o, none, [.ahcr, .inanCEAF]⟩,  -- UO2_paper
-   ⟨14, .h, .c, some .o, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCO3_egg_new
-   ⟨15, .n, .c, none, [.nfcr, .contrHCEAF]⟩,  -- NC1_tsunami
-   ⟨16, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HOI3_plate
-   ⟨17, .u, .c, none, [.ahcr, .contrHCEAF]⟩,  -- UC1_sing
-   ⟨18, .h, .c, some .o, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCOI2_paper
-   ⟨19, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HO4_ball
-   ⟨20, .h, .m, none, [.ihcr, .physImpHCEAF]⟩,  -- HM1_fall
-   ⟨21, .u, .m, some .o, [.ahcr, .inanCEAF, .mediation, .physImpHCEAF]⟩,  -- UMO2_cups
-   ⟨22, .n, .m, none, [.nfcr, .physImpHCEAF]⟩,  -- NM4_umbrella
-   ⟨23, .h, .o, none, [.ihcr, .inanCEAF, .physImpHCEAF]⟩,  -- HOI1_paper
-   ⟨24, .h, .u, some .o, [.ihcr, .mediation, .psychImpHCEAF]⟩,  -- HUO2_cups
-   ⟨25, .u, .m, none, [.ahcr, .physImpHCEAF]⟩,  -- UM1_asleep
-   ⟨26, .n, .u, none, [.nfcr, .psychImpHCEAF]⟩,  -- NU1_thunder
-   ⟨27, .h, .m, some .o, [.ihcr, .mediation, .physImpHCEAF]⟩,  -- HMO3_paper
-   ⟨28, .h, .o, none, [.ihcr, .inanCEAF]⟩,  -- HOproc1_swing
-   ⟨29, .h, .c, some .o, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCO2_paper
-   ⟨30, .u, .m, none, [.ahcr, .physImpHCEAF]⟩,  -- UM2_overboard
-   ⟨31, .u, .o, none, [.ahcr, .inanCEAF]⟩,  -- UOproc1_swing
-   ⟨32, .h, .c, none, [.ihcr, .contrHCEAF]⟩,  -- HC2_sit
-   ⟨33, .h, .c, some .o, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCOproc1_swing
-   ⟨34, .u, .o, none, [.ahcr, .inanCEAF]⟩,  -- UOI1_cuptower
-   ⟨35, .u, .u, none, [.ahcr, .psychImpHCEAF]⟩,  -- UU2_sneeze
-   ⟨36, .h, .u, none, [.ihcr, .psychImpHCEAF]⟩,  -- HU1_laugh_new
-   ⟨37, .n, .c, some .o, [.nfcr, .contrHCEAF, .mediation]⟩,  -- NCO1_umbrella
-   ⟨38, .h, .c, some .o, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCOI3_plate
-   ⟨39, .u, .o, none, [.ahcr, .inanCEAF]⟩,  -- UO3_ball
-   ⟨40, .u, .u, some .o, [.ahcr, .mediation, .psychImpHCEAF]⟩,  -- UUO2_paper
-   ⟨41, .h, .c, some .o, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCO4_ball
-   ⟨42, .h, .m, none, [.ihcr, .physImpHCEAF]⟩,  -- HM2_strongman
-   ⟨43, .u, .u, none, [.ahcr, .psychImpHCEAF]⟩]  -- UU1_yawn
+  [⟨1, true, true, false, false, true, false, [.ihcr, .inanCEAF, .psychImpHCEAF]⟩,  -- HO6_paper
+   ⟨2, true, true, true, true, false, false, [.ihcr, .contrHCEAF]⟩,  -- HC1_leave
+   ⟨3, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HOIproc1_swing
+   ⟨4, true, true, true, false, false, true, [.ihcr, .mediation, .psychImpHCEAF]⟩,  -- HUO3_paper
+   ⟨5, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HO2_egg
+   ⟨6, false, false, true, false, true, false, [.nfcr, .physImpHCEAF]⟩,  -- NM2_reporter
+   ⟨7, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HOI4_ball
+   ⟨8, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HO5_cuptower
+   ⟨9, true, false, false, false, true, false, [.ahcr, .inanCEAF]⟩,  -- UO1_egg
+   ⟨10, true, false, true, false, true, false, [.ahcr, .physImpHCEAF]⟩,  -- UM3_faint
+   ⟨11,  -- HMO4_cups
+     true,
+     true,
+     true,
+     false,
+     true,
+     true,
+     [.ihcr, .inanCEAF, .mediation, .physImpHCEAF]⟩,
+   ⟨12, true, true, true, false, false, false, [.ihcr, .psychImpHCEAF]⟩,  -- HU2_scare
+   ⟨13, true, false, false, false, true, false, [.ahcr, .inanCEAF]⟩,  -- UO2_paper
+   ⟨14, true, true, true, true, false, true, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCO3_egg_new
+   ⟨15, false, false, true, true, false, false, [.nfcr, .contrHCEAF]⟩,  -- NC1_tsunami
+   ⟨16, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HOI3_plate
+   ⟨17, true, false, true, true, false, false, [.ahcr, .contrHCEAF]⟩,  -- UC1_sing
+   ⟨18, true, true, true, true, false, true, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCOI2_paper
+   ⟨19, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HO4_ball
+   ⟨20, true, true, true, false, true, false, [.ihcr, .physImpHCEAF]⟩,  -- HM1_fall
+   ⟨21,  -- UMO2_cups
+     true,
+     false,
+     true,
+     false,
+     true,
+     true,
+     [.ahcr, .inanCEAF, .mediation, .physImpHCEAF]⟩,
+   ⟨22, false, false, false, false, true, false, [.nfcr, .physImpHCEAF]⟩,  -- NM4_umbrella
+   ⟨23, true, true, false, false, true, false, [.ihcr, .inanCEAF, .physImpHCEAF]⟩,  -- HOI1_paper
+   ⟨24, true, true, true, false, false, true, [.ihcr, .mediation, .psychImpHCEAF]⟩,  -- HUO2_cups
+   ⟨25, true, false, true, false, true, false, [.ahcr, .physImpHCEAF]⟩,  -- UM1_asleep
+   ⟨26, false, false, true, false, false, false, [.nfcr, .psychImpHCEAF]⟩,  -- NU1_thunder
+   ⟨27, true, true, true, false, true, true, [.ihcr, .mediation, .physImpHCEAF]⟩,  -- HMO3_paper
+   ⟨28, true, true, false, false, true, false, [.ihcr, .inanCEAF]⟩,  -- HOproc1_swing
+   ⟨29, true, true, true, true, false, true, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCO2_paper
+   ⟨30, true, false, true, false, true, false, [.ahcr, .physImpHCEAF]⟩,  -- UM2_overboard
+   ⟨31, true, false, false, false, true, false, [.ahcr, .inanCEAF]⟩,  -- UOproc1_swing
+   ⟨32, true, true, true, true, false, false, [.ihcr, .contrHCEAF]⟩,  -- HC2_sit
+   ⟨33, true, true, true, true, false, true, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCOproc1_swing
+   ⟨34, true, false, false, false, true, false, [.ahcr, .inanCEAF]⟩,  -- UOI1_cuptower
+   ⟨35, true, false, true, false, false, false, [.ahcr, .psychImpHCEAF]⟩,  -- UU2_sneeze
+   ⟨36, true, true, true, false, false, false, [.ihcr, .psychImpHCEAF]⟩,  -- HU1_laugh_new
+   ⟨37, false, false, true, true, false, true, [.nfcr, .contrHCEAF, .mediation]⟩,  -- NCO1_umbrella
+   ⟨38, true, true, true, true, false, true, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCOI3_plate
+   ⟨39, true, false, false, false, true, false, [.ahcr, .inanCEAF]⟩,  -- UO3_ball
+   ⟨40, true, false, true, false, false, true, [.ahcr, .mediation, .psychImpHCEAF]⟩,  -- UUO2_paper
+   ⟨41, true, true, true, true, false, true, [.ihcr, .contrHCEAF, .mediation]⟩,  -- HCO4_ball
+   ⟨42, true, true, true, false, true, false, [.ihcr, .physImpHCEAF]⟩,  -- HM2_strongman
+   ⟨43, true, false, true, false, false, false, [.ahcr, .psychImpHCEAF]⟩]  -- UU1_yawn
 
 /-- A row of Table 18 (pp. 143-144): a leaf of a response type's conditional inference tree.
 Table 18 prints the response types LEX-ERG and MCV as LEX_ERG and MCV_U. -/

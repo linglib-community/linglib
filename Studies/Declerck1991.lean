@@ -74,8 +74,7 @@ def cell : Link → IntervalAlgebra
   | .posterior => IntervalAlgebra.isBefore⁻¹
   | .around => IntervalAlgebra.le⁻¹
 
-theorem anterior_cell : anterior.cell = Aspect.ViewpointType.perfect.cell⁻¹ := by
-  simp [cell, Aspect.ViewpointType.cell]
+theorem anterior_cell : anterior.cell = Aspect.ViewpointType.perfect.cell := rfl
 
 /-- The link an inflection contributes: the preterit's, and posteriority for an inflectional
 future such as the French one (p. 9); the present contributes none. -/

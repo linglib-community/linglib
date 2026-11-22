@@ -18,15 +18,15 @@ interval, ranked by an ordering source of propositions that the eventuality is n
 The mereological ingredient is a number parameter: the singular operator keeps the minimal events
 of the description, and the plural operator its sums of non-overlapping events, so that the
 progressive is about a single ongoing event and the habitual about an ongoing plurality. The
-operator is the modal imperfective of the event semantics, `Aspect.IMPF`, over Portner's best
-worlds, applied to the description refined for number.
+operator is the modal imperfective of the event semantics, `Aspect.imperfective`, over Portner's
+best worlds, applied to the description refined for number.
 
 So *John was crossing the street* is true when a bus stops him, but *John was crossing the
 Atlantic* is false of an ordinary swimmer, and *John plays soccer* is true of a regular player
 until an accident leaves him unable to move his legs; these scenarios [decide the paper's
 judgments](##truthValue_rows). A singular event of a description is never a plural one
 (`sg_disjoint_pl`). Statives have no minimal elements, so their imperfectives [cannot be
-progressive](##not_mem_IMP_atomize_of_nonatomic), which is why imperfective statives pattern with
+progressive](##not_IMP_atomize_of_nonatomic), which is why imperfective statives pattern with
 habituals. Over a modal base that admits only the actual world, the operator is [Kratzer's
 extensional imperfective](##IMP_eq_unbounded_of_isTotallyRealistic), the reference interval within
 the run time of an actual event.
@@ -38,8 +38,8 @@ the run time of an actual event.
 * The modal base and ordering source are `Modality.Background`s projected from the description
   and the reference interval, as in (53), and the progressive's event-relative form is
   `Aspect.InProgress`.
-* Ongoingness is inclusion, `i ⊆ τ(e)`, the relation of `Aspect.IMPF`; over the world of
-  evaluation alone it is Kratzer's extensional `Aspect.UNBOUNDED` (`Aspect.impf_singleton`).
+* Ongoingness is inclusion, `i ⊆ τ(e)`, the relation of `Aspect.imperfective`; over the world of
+  evaluation alone it is Kratzer's extensional `Aspect.unbounded` (`Aspect.imperfective_id`).
 * The run time of a sum is the convex hull of the run times of its parts, so Ferreira's inclusion
   of an interval in a plural interval (31) is inclusion in the hull, and (33) holds. The habitual
   scenario takes its events to be sets of games ordered by inclusion.
@@ -93,39 +93,32 @@ for the description `P` at the reference interval, ranked by the ordering source
 interval lies within the run time of an event of type `N (P v)`. -/
 def IMP (N : Set E → Set E)
     (circ ord : (W → E → Prop) → NonemptyInterval T → Background W) (P : W → E → Prop) :
-    W → Set (NonemptyInterval T) :=
-  Aspect.IMPF (fun w t ↦ bestWorlds (circ P t) (ord P t) w) fun v ↦ (· ∈ N {e | P v e})
+    W → NonemptyInterval T → Prop :=
+  Aspect.imperfective (fun t ↦ {p | p.2 ∈ bestWorlds (circ P t) (ord P t) p.1})
+    fun v ↦ (· ∈ N {e | P v e})
 
 variable {N : Set E → Set E} {circ ord : (W → E → Prop) → NonemptyInterval T → Background W}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
-theorem mem_IMP_iff : t ∈ IMP N circ ord P w ↔
+theorem IMP_iff : IMP N circ ord P w t ↔
     ∀ v ∈ bestWorlds (circ P t) (ord P t) w, ∃ e, t ≤ τ e ∧ e ∈ N {e | P v e} :=
-  Iff.rfl
+  Aspect.imperfective_iff
 
 /-- Over a modal base that admits only the world of evaluation, the imperfective is Kratzer's
 extensional one: the reference interval lies within the run time of an actual event. -/
 theorem IMP_eq_unbounded_of_isTotallyRealistic (h : ∀ P t, (circ P t).IsTotallyRealistic) :
-    IMP N circ ord P w = Aspect.UNBOUNDED (fun v ↦ (· ∈ N {e | P v e})) w := by
-  rw [← Aspect.impf_singleton]
+    IMP N circ ord P w = Aspect.unbounded (· ∈ N {e | P w e}) := by
   ext t
-  have hbest : bestWorlds (circ P t) (ord P t) w = {w} := by
-    refine Set.eq_singleton_iff_unique_mem.2 ⟨mem_bestWorlds.2 ⟨by rw [h P t w]; rfl,
-      fun v hv _ ↦ ?_⟩, fun v hv ↦ ?_⟩
-    · rw [h P t w, Set.mem_singleton_iff] at hv
-      exact hv ▸ (premisePreorder _).le_refl _
-    · have := (mem_bestWorlds.1 hv).1
-      rwa [h P t w, Set.mem_singleton_iff] at this
-  change (∀ v ∈ bestWorlds (circ P t) (ord P t) w, _) ↔ ∀ v ∈ ({w} : Set W), _
-  rw [hbest]
+  rw [IMP_iff, (h P t).bestWorlds_eq_singleton (ord P t) w, Aspect.unbounded_iff]
+  simp
 
 /-- A non-atomic description, every event of which has a proper part of the same description, as
 statives are (94), has no progressive imperfective wherever the modal base has a best world. -/
-theorem not_mem_IMP_atomize_of_nonatomic [PartialOrder E] (hP : ∀ v e, P v e → ∃ e' < e, P v e')
-    (hne : (bestWorlds (circ P t) (ord P t) w).Nonempty) : t ∉ IMP atomize circ ord P w := by
+theorem not_IMP_atomize_of_nonatomic [PartialOrder E] (hP : ∀ v e, P v e → ∃ e' < e, P v e')
+    (hne : (bestWorlds (circ P t) (ord P t) w).Nonempty) : ¬ IMP atomize circ ord P w t := by
   intro h
   obtain ⟨v, hv⟩ := hne
-  obtain ⟨e, -, hmin⟩ := mem_IMP_iff.1 h v hv
+  obtain ⟨e, -, hmin⟩ := IMP_iff.1 h v hv
   obtain ⟨e', hlt, he'⟩ := hP v e hmin.1
   exact hlt.not_ge (hmin.2 he' hlt.le)
 
@@ -174,8 +167,8 @@ def atlanticBase : (Crossing → NonemptyInterval ℕ → Prop) → NonemptyInte
     Background Crossing :=
   fun _ _ _ ↦ {{.crosses}ᶜ}
 
-theorem mem_IMP_street : now ∈ IMP atomize streetBase notInterrupted cross .stopped := by
-  rw [mem_IMP_iff]
+theorem IMP_street : IMP atomize streetBase notInterrupted cross .stopped now := by
+  rw [IMP_iff]
   intro v hv
   have hacc : v ∈ Background.accessibleWorlds
       (streetBase cross now ⊔ notInterrupted cross now) .stopped := by
@@ -188,8 +181,8 @@ theorem mem_IMP_street : now ∈ IMP atomize streetBase notInterrupted cross .st
     · simp [Background.accessibleWorlds_sup, streetBase, notInterrupted] at hacc
   exact ⟨crossing, now_le_crossing, atomize_cross⟩
 
-theorem not_mem_IMP_atlantic : now ∉ IMP atomize atlanticBase notInterrupted cross .stopped := by
-  rw [mem_IMP_iff]
+theorem not_IMP_atlantic : ¬ IMP atomize atlanticBase notInterrupted cross .stopped now := by
+  rw [IMP_iff]
   intro h
   have hbest : Crossing.stopped ∈ bestWorlds (atlanticBase cross now) (notInterrupted cross now)
       .stopped := by
@@ -274,8 +267,8 @@ theorem not_utterance_le_hull {e : Finset ℕ} (he : playSoccer .accident e) :
   simp only [Finset.mem_insert, Finset.mem_singleton] at hmax
   omega
 
-theorem mem_IMP_soccer : utterance ∈ IMP PL soccerBase keepsPlaying playSoccer .plays := by
-  rw [mem_IMP_iff]
+theorem IMP_soccer : IMP PL soccerBase keepsPlaying playSoccer .plays utterance := by
+  rw [IMP_iff]
   intro v hv
   have hacc : v ∈ Background.accessibleWorlds
       (soccerBase playSoccer utterance ⊔ keepsPlaying playSoccer utterance) .plays := by
@@ -288,9 +281,9 @@ theorem mem_IMP_soccer : utterance ∈ IMP PL soccerBase keepsPlaying playSoccer
     · simp [Background.accessibleWorlds_sup, soccerBase, keepsPlaying] at hacc
   exact ⟨_, utterance_le_hull, pl_playSoccer⟩
 
-theorem not_mem_IMP_accident :
-    utterance ∉ IMP PL accidentBase keepsPlaying playSoccer .plays := by
-  rw [mem_IMP_iff]
+theorem not_IMP_accident :
+    ¬ IMP PL accidentBase keepsPlaying playSoccer .plays utterance := by
+  rw [IMP_iff]
   intro h
   have hbest : Soccer.accident ∈ bestWorlds (accidentBase playSoccer utterance)
       (keepsPlaying playSoccer utterance) .plays := by
@@ -305,15 +298,15 @@ theorem not_mem_IMP_accident :
 /-- The imperfective decides the paper's judgments: the street and a regular player's habit are
 true, the Atlantic and the habit after the accident false. -/
 theorem truthValue_rows :
-    (now ∈ IMP atomize streetBase notInterrupted cross .stopped ↔
+    (IMP atomize streetBase notInterrupted cross .stopped now ↔
         Examples.ex45.verdict = some true) ∧
-      (now ∈ IMP atomize atlanticBase notInterrupted cross .stopped ↔
+      (IMP atomize atlanticBase notInterrupted cross .stopped now ↔
         Examples.ex46.verdict = some true) ∧
-      (utterance ∈ IMP PL soccerBase keepsPlaying playSoccer .plays ↔
+      (IMP PL soccerBase keepsPlaying playSoccer .plays utterance ↔
         Examples.ex54.verdict = some true) ∧
-      (utterance ∈ IMP PL accidentBase keepsPlaying playSoccer .plays ↔
+      (IMP PL accidentBase keepsPlaying playSoccer .plays utterance ↔
         Examples.ex54_accident.verdict = some true) :=
-  ⟨iff_of_true mem_IMP_street (by decide), iff_of_false not_mem_IMP_atlantic (by decide),
-    iff_of_true mem_IMP_soccer (by decide), iff_of_false not_mem_IMP_accident (by decide)⟩
+  ⟨iff_of_true IMP_street (by decide), iff_of_false not_IMP_atlantic (by decide),
+    iff_of_true IMP_soccer (by decide), iff_of_false not_IMP_accident (by decide)⟩
 
 end Ferreira2016

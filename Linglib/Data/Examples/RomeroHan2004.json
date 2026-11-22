@@ -1,867 +1,1221 @@
-[
-  {
-    "id": "romerohan2004_doesnt_john_drink",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(1)"
+{
+  "features": [
+    {
+      "key": "negation",
+      "lean": "negation",
+      "type": "NegationPlacement",
+      "doc": "Where the negation of a yes/no question sits.",
+      "levels": [
+        {
+          "name": "preposed",
+          "label": "preposed",
+          "doc": "negation preposed with the finite verb"
+        },
+        {
+          "name": "nonPreposed",
+          "label": "nonPreposed",
+          "doc": "negation in its clause-internal position"
+        },
+        {
+          "name": "absent",
+          "label": "none",
+          "doc": "a positive question"
+        }
+      ]
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Doesn't John drink?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
-      ],
-      [
-        "bias",
-        "positive"
+    {
+      "key": "bias",
+      "lean": "bias",
+      "type": "Bias",
+      "doc": "The epistemic implicature the paper reports for a question.",
+      "levels": [
+        {
+          "name": "positive",
+          "label": "positive",
+          "doc": "the speaker believed or expected the proposition"
+        },
+        {
+          "name": "negative",
+          "label": "negative",
+          "doc": "the speaker believed or expected its negation"
+        },
+        {
+          "name": "absent",
+          "label": "none",
+          "doc": "no epistemic implicature is necessary"
+        }
       ]
-    ],
-    "comment": "Positive epistemic implicature: the speaker believes or at least expects that John drinks.",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_does_john_not_drink",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(2)"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Does John not drink?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
-      ],
-      [
-        "bias",
-        "none"
+    {
+      "key": "form",
+      "lean": "form",
+      "type": "Form",
+      "doc": "The yes/no questions containing VERUM.",
+      "levels": [
+        {
+          "name": "pi",
+          "label": "pi",
+          "doc": "preposed negation on the reading that double-checks p, the PI-question"
+        },
+        {
+          "name": "ni",
+          "label": "ni",
+          "doc": "preposed negation on the reading that double-checks ¬p, the NI-question"
+        },
+        {
+          "name": "really",
+          "label": "really",
+          "doc": "a positive question with really"
+        },
+        {
+          "name": "notFocus",
+          "label": "notFocus",
+          "doc": "non-preposed negation with polarity focus on NOT"
+        }
       ]
-    ],
-    "comment": "No epistemic implicature necessary.",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_does_john_drink",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(36)"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Does John drink?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "none"
-      ],
-      [
-        "bias",
-        "none"
+    {
+      "key": "scenario",
+      "lean": "scenario",
+      "type": "Scenario",
+      "doc": "The context a question is asked in, relative to its proposition p.",
+      "levels": [
+        {
+          "name": "contradictionP",
+          "label": "contradictionP",
+          "doc": "the speaker believed p and the addressee implied ¬p"
+        },
+        {
+          "name": "contradictionNotP",
+          "label": "contradictionNotP",
+          "doc": "the speaker believed ¬p and the addressee implied p"
+        },
+        {
+          "name": "suggestionP",
+          "label": "suggestionP",
+          "doc": "the addressee raised a question he cannot answer, to which p is a possible answer"
+        },
+        {
+          "name": "suggestionNotP",
+          "label": "suggestionNotP",
+          "doc": "the addressee raised a question he cannot answer, to which ¬p is a possible answer"
+        }
       ]
-    ],
-    "comment": "No epistemic implicature necessary.",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_does_john_really_drink",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(37)"
+    }
+  ],
+  "examples": [
+    {
+      "id": "romerohan2004_doesnt_john_drink",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(1)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Doesn't John drink?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
+      ],
+      "comment": "Positive epistemic implicature: the speaker believes or at least expects that John drinks.",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Does John really drink?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "none"
+    {
+      "id": "romerohan2004_does_john_not_drink",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(2)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Does John not drink?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "form",
-        "really"
-      ],
-      [
-        "bias",
-        "negative"
-      ]
-    ],
-    "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink.",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_isnt_jane_coming",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(5)"
+      "comment": "No epistemic implicature necessary.",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Isn't Jane coming?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
+    {
+      "id": "romerohan2004_does_john_drink",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(36)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Does John drink?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "none"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "Ambiguous between the p-reading and the ¬p-reading (Ladd 1981).",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_isnt_jane_coming_too",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(6)"
+      "comment": "No epistemic implicature necessary.",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Isn't Jane coming too?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A: Ok, now that Stephan has come, we are all here. Let's go!",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
+    {
+      "id": "romerohan2004_does_john_really_drink",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(37)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Does John really drink?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "none"
+        ],
+        [
+          "form",
+          "really"
+        ],
+        [
+          "bias",
+          "negative"
+        ]
       ],
-      [
-        "form",
-        "pi"
-      ],
-      [
-        "item",
-        "too"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "PI-question: double-checks p; the speaker believed or expected that Jane is coming ((81)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_isnt_jane_coming_either",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(7)"
+      "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink.",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Isn't Jane coming either?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. A: Pat is not coming. So we don't have any phonologists in the program.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
+    {
+      "id": "romerohan2004_isnt_jane_coming",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(5)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Isn't Jane coming?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
       ],
-      [
-        "form",
-        "ni"
-      ],
-      [
-        "item",
-        "either"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "NI-question: double-checks the addressee's ¬p; the speaker still believed or expected that Jane is coming ((82)).",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_is_jane_really_coming_too",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(77)"
+      "comment": "Ambiguous between the p-reading and the ¬p-reading (Ladd 1981).",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Is Jane really coming too?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A: Pat already came, but we still have to wait for Jane.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "form",
-        "really"
+    {
+      "id": "romerohan2004_isnt_jane_coming_too",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(6)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Isn't Jane coming too?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Ok, now that Stephan has come, we are all here. Let's go!",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "form",
+          "pi"
+        ],
+        [
+          "item",
+          "too"
+        ],
+        [
+          "bias",
+          "positive"
+        ],
+        [
+          "scenario",
+          "contradictionP"
+        ]
       ],
-      [
-        "item",
-        "too"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_is_jane_really_coming_either",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(78)"
+      "comment": "PI-question: double-checks p; the speaker believed or expected that Jane is coming ((81)).",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Is Jane really coming either?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A: Pat is not coming. And we don't need to wait for Jane either.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "form",
-        "really"
+    {
+      "id": "romerohan2004_isnt_jane_coming_either",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(7)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Isn't Jane coming either?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. A: Pat is not coming. So we don't have any phonologists in the program.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "form",
+          "ni"
+        ],
+        [
+          "item",
+          "either"
+        ],
+        [
+          "bias",
+          "positive"
+        ],
+        [
+          "scenario",
+          "contradictionP"
+        ]
       ],
-      [
-        "item",
-        "either"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_is_jane_not_coming_too",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(79)"
+      "comment": "NI-question: double-checks the addressee's ¬p; the speaker still believed or expected that Jane is coming ((82)).",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Is Jane NOT coming too?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A: Pat already came, but we still have to wait for Jane.",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "form",
-        "notFocus"
+    {
+      "id": "romerohan2004_is_jane_really_coming_too",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(77)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Is Jane really coming too?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Pat already came, but we still have to wait for Jane.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "really"
+        ],
+        [
+          "item",
+          "too"
+        ]
       ],
-      [
-        "item",
-        "too"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_is_jane_not_coming_either",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(80)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Is Jane NOT coming either?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A: Pat is not coming. And we don't need to wait for Jane ...",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "form",
-        "notFocus"
+    {
+      "id": "romerohan2004_is_jane_really_coming_either",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(78)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Is Jane really coming either?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Pat is not coming. And we don't need to wait for Jane either.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "really"
+        ],
+        [
+          "item",
+          "either"
+        ]
       ],
-      [
-        "item",
-        "either"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_greek_preposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(14a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "Den ipie o Yannis kafe?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Den",
-        "NEG"
+    {
+      "id": "romerohan2004_is_jane_not_coming_too",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(79)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Is Jane NOT coming too?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Pat already came, but we still have to wait for Jane.",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "notFocus"
+        ],
+        [
+          "item",
+          "too"
+        ]
       ],
-      [
-        "ipie",
-        "drank"
-      ],
-      [
-        "o",
-        "the"
-      ],
-      [
-        "Yannis",
-        "Yannis"
-      ],
-      [
-        "kafe?",
-        "coffee"
-      ]
-    ],
-    "translation": "Didn't Yannis drink coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_greek_nonpreposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(14b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "mode1248",
-    "primaryText": "O Yannis den ipie kafe?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "O",
-        "the"
+    {
+      "id": "romerohan2004_is_jane_not_coming_either",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(80)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Is Jane NOT coming either?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Pat is not coming. And we don't need to wait for Jane ...",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "notFocus"
+        ],
+        [
+          "item",
+          "either"
+        ]
       ],
-      [
-        "Yannis",
-        "Yannis"
-      ],
-      [
-        "den",
-        "NEG"
-      ],
-      [
-        "ipie",
-        "drank"
-      ],
-      [
-        "kafe?",
-        "coffee"
-      ]
-    ],
-    "translation": "Did Yannis not drink coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
-      ],
-      [
-        "bias",
-        "none"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_spanish_preposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(15a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "¿No bebe Juan?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "¿No",
-        "NEG"
+    {
+      "id": "romerohan2004_greek_preposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(14a)"
+      },
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "Den ipie o Yannis kafe?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Den",
+          "NEG"
+        ],
+        [
+          "ipie",
+          "drank"
+        ],
+        [
+          "o",
+          "the"
+        ],
+        [
+          "Yannis",
+          "Yannis"
+        ],
+        [
+          "kafe?",
+          "coffee"
+        ]
       ],
-      [
-        "bebe",
-        "drink"
+      "translation": "Didn't Yannis drink coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
       ],
-      [
-        "Juan?",
-        "Juan"
-      ]
-    ],
-    "translation": "Doesn't Juan drink?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_spanish_nonpreposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(15b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "¿Juan no bebe?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "¿Juan",
-        "Juan"
+    {
+      "id": "romerohan2004_greek_nonpreposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(14b)"
+      },
+      "reportedIn": null,
+      "language": "mode1248",
+      "primaryText": "O Yannis den ipie kafe?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "O",
+          "the"
+        ],
+        [
+          "Yannis",
+          "Yannis"
+        ],
+        [
+          "den",
+          "NEG"
+        ],
+        [
+          "ipie",
+          "drank"
+        ],
+        [
+          "kafe?",
+          "coffee"
+        ]
       ],
-      [
-        "no",
-        "NEG"
+      "translation": "Did Yannis not drink coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "bebe?",
-        "drink"
-      ]
-    ],
-    "translation": "Does Juan not drink?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
-      ],
-      [
-        "bias",
-        "none"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_bulgarian_preposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(16a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "bulg1262",
-    "primaryText": "Ne pie li Ivan kafe?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Ne",
-        "NEG"
+    {
+      "id": "romerohan2004_spanish_preposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(15a)"
+      },
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "¿No bebe Juan?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "¿No",
+          "NEG"
+        ],
+        [
+          "bebe",
+          "drink"
+        ],
+        [
+          "Juan?",
+          "Juan"
+        ]
       ],
-      [
-        "pie",
-        "drink"
+      "translation": "Doesn't Juan drink?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
       ],
-      [
-        "li",
-        "li"
-      ],
-      [
-        "Ivan",
-        "Ivan"
-      ],
-      [
-        "kafe?",
-        "coffee"
-      ]
-    ],
-    "translation": "Isn't Ivan drinking coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_bulgarian_nonpreposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(16b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "bulg1262",
-    "primaryText": "Dali Ivan ne pie kafe?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Dali",
-        "Dali"
+    {
+      "id": "romerohan2004_spanish_nonpreposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(15b)"
+      },
+      "reportedIn": null,
+      "language": "stan1288",
+      "primaryText": "¿Juan no bebe?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "¿Juan",
+          "Juan"
+        ],
+        [
+          "no",
+          "NEG"
+        ],
+        [
+          "bebe?",
+          "drink"
+        ]
       ],
-      [
-        "Ivan",
-        "Ivan"
+      "translation": "Does Juan not drink?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "ne",
-        "NEG"
-      ],
-      [
-        "pie",
-        "drink"
-      ],
-      [
-        "kafe?",
-        "coffee"
-      ]
-    ],
-    "translation": "Is Ivan not drinking coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
-      ],
-      [
-        "bias",
-        "none"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_german_preposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(17a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Hat (nicht) Hans (nicht) Maria gesehen?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Hat",
-        "has"
+    {
+      "id": "romerohan2004_bulgarian_preposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(16a)"
+      },
+      "reportedIn": null,
+      "language": "bulg1262",
+      "primaryText": "Ne pie li Ivan kafe?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Ne",
+          "NEG"
+        ],
+        [
+          "pie",
+          "drink"
+        ],
+        [
+          "li",
+          "li"
+        ],
+        [
+          "Ivan",
+          "Ivan"
+        ],
+        [
+          "kafe?",
+          "coffee"
+        ]
       ],
-      [
-        "(nicht)",
-        "NEG"
+      "translation": "Isn't Ivan drinking coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
       ],
-      [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "(nicht)",
-        "NEG"
-      ],
-      [
-        "Maria",
-        "Maria"
-      ],
-      [
-        "gesehen?",
-        "seen"
-      ]
-    ],
-    "translation": "Didn't Hans see Maria?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_german_nonpreposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(17b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "stan1295",
-    "primaryText": "Hat Hans Maria nicht gesehen?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Hat",
-        "has"
+    {
+      "id": "romerohan2004_bulgarian_nonpreposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(16b)"
+      },
+      "reportedIn": null,
+      "language": "bulg1262",
+      "primaryText": "Dali Ivan ne pie kafe?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Dali",
+          "Dali"
+        ],
+        [
+          "Ivan",
+          "Ivan"
+        ],
+        [
+          "ne",
+          "NEG"
+        ],
+        [
+          "pie",
+          "drink"
+        ],
+        [
+          "kafe?",
+          "coffee"
+        ]
       ],
-      [
-        "Hans",
-        "Hans"
+      "translation": "Is Ivan not drinking coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "Maria",
-        "Maria"
-      ],
-      [
-        "nicht",
-        "NEG"
-      ],
-      [
-        "gesehen?",
-        "seen"
-      ]
-    ],
-    "translation": "Did Hans not see Maria?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
-      ],
-      [
-        "bias",
-        "none"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_korean_preposed",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(18a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "kore1280",
-    "primaryText": "Suni-ka coffee-lul masi-ess-ci anh-ni?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Suni-ka",
-        "Suni-NOM"
+    {
+      "id": "romerohan2004_german_preposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(17a)"
+      },
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Hat (nicht) Hans (nicht) Maria gesehen?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Hat",
+          "has"
+        ],
+        [
+          "(nicht)",
+          "NEG"
+        ],
+        [
+          "Hans",
+          "Hans"
+        ],
+        [
+          "(nicht)",
+          "NEG"
+        ],
+        [
+          "Maria",
+          "Maria"
+        ],
+        [
+          "gesehen?",
+          "seen"
+        ]
       ],
-      [
-        "coffee-lul",
-        "coffee-ACC"
+      "translation": "Didn't Hans see Maria?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
       ],
-      [
-        "masi-ess-ci",
-        "drink-PST"
-      ],
-      [
-        "anh-ni?",
-        "NEG-Q"
-      ]
-    ],
-    "translation": "Didn't Suni drink coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "preposed"
-      ],
-      [
-        "bias",
-        "positive"
-      ]
-    ],
-    "comment": "Negation following tense: preposed negation given Korean head-finality.",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_korean_nonpreposed_short",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(18b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "kore1280",
-    "primaryText": "Suni-ka coffee-lul an masi-ess-ni?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Suni-ka",
-        "Suni-NOM"
+    {
+      "id": "romerohan2004_german_nonpreposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(17b)"
+      },
+      "reportedIn": null,
+      "language": "stan1295",
+      "primaryText": "Hat Hans Maria nicht gesehen?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Hat",
+          "has"
+        ],
+        [
+          "Hans",
+          "Hans"
+        ],
+        [
+          "Maria",
+          "Maria"
+        ],
+        [
+          "nicht",
+          "NEG"
+        ],
+        [
+          "gesehen?",
+          "seen"
+        ]
       ],
-      [
-        "coffee-lul",
-        "coffee-ACC"
+      "translation": "Did Hans not see Maria?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "an",
-        "NEG"
-      ],
-      [
-        "masi-ess-ni?",
-        "drink-PST-Q"
-      ]
-    ],
-    "translation": "Did Suni not drink coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
-      ],
-      [
-        "bias",
-        "none"
-      ]
-    ],
-    "comment": "Short negation preceding tense.",
-    "verified": "page-image"
-  },
-  {
-    "id": "romerohan2004_korean_nonpreposed_long",
-    "source": {
-      "bibkey": "romero-han-2004",
-      "paperLabel": "(18c)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "reportedIn": null,
-    "language": "kore1280",
-    "primaryText": "Suni-ka coffee-lul masi-ci anh-ess-ni?",
-    "discourseSegments": [],
-    "glossedTokens": [
-      [
-        "Suni-ka",
-        "Suni-NOM"
+    {
+      "id": "romerohan2004_korean_preposed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(18a)"
+      },
+      "reportedIn": null,
+      "language": "kore1280",
+      "primaryText": "Suni-ka coffee-lul masi-ess-ci anh-ni?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Suni-ka",
+          "Suni-NOM"
+        ],
+        [
+          "coffee-lul",
+          "coffee-ACC"
+        ],
+        [
+          "masi-ess-ci",
+          "drink-PST"
+        ],
+        [
+          "anh-ni?",
+          "NEG-Q"
+        ]
       ],
-      [
-        "coffee-lul",
-        "coffee-ACC"
+      "translation": "Didn't Suni drink coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "preposed"
+        ],
+        [
+          "bias",
+          "positive"
+        ]
       ],
-      [
-        "masi-ci",
-        "drink"
+      "comment": "Negation following tense: preposed negation given Korean head-finality.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_korean_nonpreposed_short",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(18b)"
+      },
+      "reportedIn": null,
+      "language": "kore1280",
+      "primaryText": "Suni-ka coffee-lul an masi-ess-ni?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Suni-ka",
+          "Suni-NOM"
+        ],
+        [
+          "coffee-lul",
+          "coffee-ACC"
+        ],
+        [
+          "an",
+          "NEG"
+        ],
+        [
+          "masi-ess-ni?",
+          "drink-PST-Q"
+        ]
       ],
-      [
-        "anh-ess-ni?",
-        "NEG-PST-Q"
-      ]
-    ],
-    "translation": "Did Suni not drink coffee?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "negation",
-        "nonPreposed"
+      "translation": "Did Suni not drink coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
       ],
-      [
-        "bias",
-        "none"
-      ]
-    ],
-    "comment": "Long negation preceding tense.",
-    "verified": "page-image"
-  }
-]
+      "comment": "Short negation preceding tense.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_korean_nonpreposed_long",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(18c)"
+      },
+      "reportedIn": null,
+      "language": "kore1280",
+      "primaryText": "Suni-ka coffee-lul masi-ci anh-ess-ni?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        [
+          "Suni-ka",
+          "Suni-NOM"
+        ],
+        [
+          "coffee-lul",
+          "coffee-ACC"
+        ],
+        [
+          "masi-ci",
+          "drink"
+        ],
+        [
+          "anh-ess-ni?",
+          "NEG-PST-Q"
+        ]
+      ],
+      "translation": "Did Suni not drink coffee?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "negation",
+          "nonPreposed"
+        ],
+        [
+          "bias",
+          "none"
+        ]
+      ],
+      "comment": "Long negation preceding tense.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_isnt_jane_coming_either_95",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(95)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Isn't Jane coming either?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Pat and Jane are two phonologists who are supposed to be speaking in our workshop on optimality and acquisition. S originally believes that Jane is not coming. A: Pat is not coming. But fortunately for the phonologists we still have Jane...",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "ni"
+        ],
+        [
+          "scenario",
+          "contradictionNotP"
+        ]
+      ],
+      "comment": "The speaker believes ¬p and the addressee implied p.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_isnt_jane_coming_too_100",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(100)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Isn't Jane coming too?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "S originally believes that Jane is not coming. A: Pat already came, but we still have to wait for Jane.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "pi"
+        ],
+        [
+          "scenario",
+          "contradictionNotP"
+        ]
+      ],
+      "comment": "The speaker believes ¬p and the addressee implied p.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_hasnt_frege_already_reviewed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(105)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Hasn't Frege already reviewed for us? He'd be a good one.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody who has experience with our regulations.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "pi"
+        ],
+        [
+          "scenario",
+          "suggestionP"
+        ]
+      ],
+      "comment": "Suggestion context: p, that Frege has reviewed, is a possible answer to the addressee's question.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_hasnt_frege_reviewed_yet",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(106)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Hasn't Frege reviewed for us yet? He'd be a good one.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody new.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "ni"
+        ],
+        [
+          "scenario",
+          "suggestionNotP"
+        ]
+      ],
+      "comment": "Suggestion context: ¬p, that Frege has not reviewed, is a possible answer to the addressee's question.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_is_jane_really_coming",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(110)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Is Jane really coming?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Pat already came, but we still have to wait for Jane.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "really"
+        ],
+        [
+          "bias",
+          "negative"
+        ],
+        [
+          "scenario",
+          "contradictionNotP"
+        ]
+      ],
+      "comment": "Negative epistemic implicature: S believes or expects that Jane is not coming.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_has_frege_really_reviewed",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(116)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Has Frege really reviewed for us already? He'd be a good one.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, and I'd prefer somebody who has experience with our regulations.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "really"
+        ],
+        [
+          "scenario",
+          "suggestionP"
+        ]
+      ],
+      "comment": "Cannot be used to suggest Frege as a possible reviewer, unless cues other than this dialog are provided.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_is_jane_not_coming_117",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(117)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Is Jane NOT coming (either)?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A: Pat is not coming. And we don't need to wait for Jane...",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "notFocus"
+        ],
+        [
+          "bias",
+          "positive"
+        ],
+        [
+          "scenario",
+          "contradictionP"
+        ]
+      ],
+      "comment": "Positive epistemic implicature p.",
+      "verified": "page-image"
+    },
+    {
+      "id": "romerohan2004_has_frege_not_reviewed_yet",
+      "source": {
+        "bibkey": "romero-han-2004",
+        "paperLabel": "(120)"
+      },
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Has Frege NOT reviewed for us yet? He'd be a good one.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Dialog between two editors of a journal in 1900. A: I'd like to send this paper out to a senior reviewer, but I'd prefer somebody new who has not yet reviewed for us.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        [
+          "form",
+          "notFocus"
+        ],
+        [
+          "scenario",
+          "suggestionNotP"
+        ]
+      ],
+      "comment": "Cannot be used in this suggestion scenario if the focus on NOT is understood as contributing VERUM.",
+      "verified": "page-image"
+    }
+  ]
+}
