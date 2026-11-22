@@ -172,7 +172,7 @@ theorem paradigm_subject :
   decide +kernel
 
 /-- *ẹ* is one form and two pronouns, a second person plural and a second person singular. -/
-theorem ẹ_number_ne : «ẹ».form = «ẹ_sg2».form ∧ «ẹ».number ≠ «ẹ_sg2».number := by
+theorem «ẹ_number_ne» : «ẹ».form = «ẹ_sg2».form ∧ «ẹ».number ≠ «ẹ_sg2».number := by
   decide +kernel
 
 /-! ### The subject of a sentence -/
