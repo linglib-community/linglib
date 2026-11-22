@@ -23,7 +23,7 @@ final clause. Forms are in the Revised Romanization; Sohn writes *-ko*, *-e(se)*
 
 ## Implementation notes
 
-* `AllowsTense` and `AllowsModal` follow the features Sohn attaches to each conjunctor and,
+* `follows`, with `AllowsTense` and `AllowsModal`, follows the features Sohn attaches to each conjunctor and,
   for *-geona*, *-deunji* and *-jamaja*, which his list omits, the attachment statements of
   the National Institute of Korean Language's dictionary; Sohn marks *-tunci* as excluding
   the modal, which the dictionary admits in one of its senses.
@@ -152,26 +152,36 @@ def linkings : Converb → Finset Clause.Linking
   | jamaja => {.relativeTime}
   | geona | deunji => {.disjunction}
 
-/-- The past or perfect may be marked on the medial verb before the converb; before
-*-myeonseo* only in its concessive reading. -/
-def AllowsTense (c : Converb) : Prop :=
-  c = go ∨ c = myeonseo ∨ c = myeon ∨ c = jiman ∨ c = na ∨ c = eodo ∨ c = nikka ∨ c = ni ∨
-    c = neunde ∨ c = daga ∨ c = geona ∨ c = deunji
+/-- What may precede a conjunctive suffix on the nonfinite verb, in the order of the verb: the
+stem with its voice and honorific suffixes, the past or perfect *-eoss*, and the modal *-gess*. -/
+inductive Slot where
+  | stem
+  | tense
+  | modal
+  deriving DecidableEq, Repr, Fintype
 
-instance : DecidablePred AllowsTense :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
+/-- The slots in the order of the verb. -/
+instance : LinearOrder Slot := .lift' Slot.ctorIdx (by decide)
 
-/-- The modal *-gess* may be marked on the medial verb before the converb; before
-*-myeonseo* only in its concessive reading. -/
-def AllowsModal (c : Converb) : Prop :=
-  c = go ∨ c = myeonseo ∨ c = myeon ∨ c = jiman ∨ c = na ∨ c = nikka ∨ c = ni ∨ c = neunde ∨
-    c = daga ∨ c = geona ∨ c = deunji
+/-- The last slot whose exponent may precede the converb; before *-myeonseo* the past and the
+modal only in its concessive reading. -/
+def follows : Converb → Slot
+  | go | myeonseo | myeon | jiman | na | nikka | ni | neunde | daga | geona | deunji => .modal
+  | eodo => .tense
+  | goseo | eoseo | dorok | ryeo | reo | jamaja => .stem
 
-instance : DecidablePred AllowsModal :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
+/-- The past or perfect may be marked on the medial verb before the converb. -/
+def AllowsTense (c : Converb) : Prop := .tense ≤ c.follows
 
-theorem allowsModal_imp_allowsTense (c : Converb) : c.AllowsModal → c.AllowsTense := by
-  revert c; decide
+instance : DecidablePred AllowsTense := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
+
+/-- The modal *-gess* may be marked on the medial verb before the converb. -/
+def AllowsModal (c : Converb) : Prop := .modal ≤ c.follows
+
+instance : DecidablePred AllowsModal := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
+
+theorem allowsModal_imp_allowsTense (c : Converb) (h : c.AllowsModal) : c.AllowsTense :=
+  le_trans (by decide : Slot.tense ≤ .modal) h
 
 /-- The verb form of a converb. -/
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
