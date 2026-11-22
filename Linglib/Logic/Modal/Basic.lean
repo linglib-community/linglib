@@ -11,18 +11,15 @@ public import Mathlib.Order.Lattice
 [Necessity is antitone in the accessibility relation](##box_restrict), so a conversational
 background that rules out more worlds yields a stronger modal, and necessity along the transitive
 closure of a relation [is the infinite conjunction](##box_transGen_iff)
-$\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. An operator on
-propositions is *indicial* when it is necessity along some accessibility relation, after Gallin:
-Montague's necessity is the indicial operator of the universal relation, and Scott's present
-progressive is not indicial. Along a serial relation $\Box p$, $\Box \neg p$, $\Diamond p$ and
-$\neg \Box p$ [form a square of opposition](##squareRelations_modalSquare).
+$\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. Along a serial relation
+$\Box p$, $\Box \neg p$, $\Diamond p$ and $\neg \Box p$
+[form a square of opposition](##squareRelations_modalSquare).
 
 ## Main definitions
 
 * `ModalLogic.modalSquare`: the modal square of opposition along a relation.
 * `ModalLogic.IsS5Frame`, `ModalLogic.IsKD45Frame`, `ModalLogic.IsK45Frame`,
   `ModalLogic.IsKTBFrame`: the frames of the standard systems.
-* `ModalLogic.IsIndicial`: necessity along some relation.
 
 ## Implementation notes
 
@@ -33,7 +30,6 @@ On propositions as sets, necessity along the transitive closure is mathlib's
 
 * [kratzer-1981] — necessity strengthened by restricting accessibility
 * [carnielli-pizzi-2008] — the modal square of opposition
-* [gallin-1975] — indicial operators
 * [dowty-wall-peters-1981] — Montague's S5 operators
 -/
 
@@ -119,14 +115,6 @@ class IsKTBFrame : Prop extends R.IsRefl, R.IsSymm
 theorem diamond_box_iff [IsKD45Frame R] {p : W → Prop} {w : W} :
     ◇[R] (□[R] p) w ↔ □[R] p w :=
   ⟨box_of_diamond_box, diamond_box_of_box⟩
-
-/-! ### Indicial operators -/
-
-/-- An operator on propositions is *indicial* when it is necessity along some accessibility
-relation [gallin-1975]. -/
-def IsIndicial (N : (W → Prop) → W → Prop) : Prop := ∃ R : SetRel W W, N = □[R]
-
-theorem box_isIndicial : IsIndicial □[R] := ⟨R, rfl⟩
 
 /-! ### Decidability over finite worlds -/
 
