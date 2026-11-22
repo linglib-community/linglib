@@ -23,8 +23,8 @@ A *string* is a word or a combination of words continuous with respect to preced
 word together with all the words it dominates, and a *phrase* is a constituent of two or more
 words. In a tree, a catena is equally a set of words exactly one of which is not immediately
 dominated by another word of the set, which is how `catenae` counts them (`mem_catenae`). A
-tree has as many constituents as words (`card_constituents`), and when it is projective every
-constituent is a component (`constituents_subset_components`). The *catena ratio* of a tree
+tree has as many constituents as words (`card_isConstituent`), and when it is projective every
+constituent is a string, hence a component (`isString_of_isConstituent`). The *catena ratio* of a tree
 sets its catenae against the remaining $2^n - 1$ word combinations; `card_units_surprised` and
 its siblings compute the catenae, components and constituents of the book's example trees.
 The component *the number* of (8) and the 24 catenae of (9a) are counted as the definitions
@@ -86,23 +86,15 @@ section Units
 variable {L : Type*} {n : ℕ} (g : Graph L n)
 
 /-- A string is a word or a combination of words continuous with respect to precedence. -/
-def IsString (s : Finset (Fin n)) : Prop :=
-  s.Nonempty ∧ ∀ a ∈ s, ∀ b ∈ s, ∀ c, a < c → c < b → c ∈ s
+def IsString (s : Finset (Fin n)) : Prop := s.Nonempty ∧ (↑s : Set (Fin n)).OrdConnected
 
-instance : DecidablePred (IsString (n := n)) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred (IsString (n := n)) := fun s ↦
+  decidable_of_iff (s.Nonempty ∧ ∀ a ∈ s, ∀ b ∈ s, ∀ c, a ≤ c → c ≤ b → c ∈ s) <| by
+    simp [IsString, Set.ordConnected_def, Set.subset_def]
 
 /-- The sets of words exactly one of which is not immediately dominated by another word of the
 set. -/
 def catenae : Finset (Finset (Fin n)) := {s | #{v ∈ s | ∀ u ∈ s, ¬ g.Adj u v} = 1}
-
-/-- The components are the catenae that are strings. -/
-def components : Finset (Finset (Fin n)) := {s ∈ catenae g | IsString s}
-
-/-- The constituents are the complete subtrees. -/
-def constituents : Finset (Finset (Fin n)) := {s | g.IsConstituent s}
-
-/-- The phrases are the constituents of two or more words. -/
-def phrases : Finset (Finset (Fin n)) := {s ∈ constituents g | 1 < #s}
 
 variable {g} {s : Finset (Fin n)}
 
@@ -111,21 +103,14 @@ continuous with respect to dominance. -/
 theorem mem_catenae (hF : g.IsForest) : s ∈ catenae g ↔ g.IsCatena s := by
   simp [catenae, hF.isCatena_iff]
 
-theorem constituents_subset_catenae (hF : g.IsForest) : constituents g ⊆ catenae g :=
-  fun _ hs ↦ (mem_catenae hF).2 (mem_filter.1 hs).2.isCatena
-
+-- In a projective graph a constituent is a string, and so a component.
 theorem isString_of_isConstituent (hP : g.IsProjective) (h : g.IsConstituent s) : IsString s := by
   obtain ⟨v, hv⟩ := h
-  exact ⟨⟨v, (hv v).2 .refl⟩, fun a ha b hb c hac hcb ↦
-    (hv c).2 ((hP v).out ((hv a).1 ha) ((hv b).1 hb) ⟨hac.le, hcb.le⟩)⟩
-
-theorem constituents_subset_components (hF : g.IsForest) (hP : g.IsProjective) :
-    constituents g ⊆ components g := fun _ hs ↦
-  mem_filter.2
-    ⟨constituents_subset_catenae hF hs, isString_of_isConstituent hP (mem_filter.1 hs).2⟩
+  exact ⟨⟨v, Finset.mem_coe.1 (hv ▸ Relation.ReflTransGen.refl)⟩, hv ▸ hP v⟩
 
 /-- A forest has as many constituents as words. -/
-theorem card_constituents (hF : g.IsForest) : #(constituents g) = n := hF.card_isConstituent
+theorem card_isConstituent (hF : g.IsForest) : #{s : Finset (Fin n) | g.IsConstituent s} = n :=
+  hF.card_isConstituent
 
 end Units
 
@@ -168,24 +153,24 @@ theorem card_catenae_everywhere : #(catenae everywhere.toGraph) = 6 := by decide
 
 -- The catena, component and constituent ratios of (7) are 15:16, 11:20 and 5:26.
 theorem card_units_insurance : #(catenae insurance.toGraph) = 15 ∧
-    #(components insurance.toGraph) = 11 ∧ #(constituents insurance.toGraph) = 5 :=
-  ⟨by decide, by decide, card_constituents insurance.isTree_toGraph.toIsForest⟩
+    #{s ∈ catenae insurance.toGraph | IsString s} = 11 ∧ #{s | insurance.toGraph.IsConstituent s} = 5 :=
+  ⟨by decide, by decide, card_isConstituent insurance.isTree_toGraph.toIsForest⟩
 
 theorem card_units_surprised : #{s : Finset (Fin surprised.size) | IsString s} = 28 ∧
-    #(catenae surprised.toGraph) = 28 ∧ #(components surprised.toGraph) = 15 ∧
-    #(constituents surprised.toGraph) = 6 + 1 ∧ #(phrases surprised.toGraph) = 4 + 1 :=
-  ⟨by decide, by decide, by decide, card_constituents surprised.isTree_toGraph.toIsForest,
+    #(catenae surprised.toGraph) = 28 ∧ #{s ∈ catenae surprised.toGraph | IsString s} = 15 ∧
+    #{s | surprised.toGraph.IsConstituent s} = 6 + 1 ∧ #{s | surprised.toGraph.IsConstituent s ∧ 1 < #s} = 4 + 1 :=
+  ⟨by decide, by decide, by decide, card_isConstituent surprised.isTree_toGraph.toIsForest,
     by decide⟩
 
 -- (8) has 44 catenae, 23 components and 8 constituents among its 255 word combinations.
 theorem card_units_counting : #(catenae counting.toGraph) = 44 ∧
-    #(components counting.toGraph) = 23 ∧ #(constituents counting.toGraph) = 8 :=
-  ⟨by decide, by decide, card_constituents counting.isTree_toGraph.toIsForest⟩
+    #{s ∈ catenae counting.toGraph | IsString s} = 23 ∧ #{s | counting.toGraph.IsConstituent s} = 8 :=
+  ⟨by decide, by decide, card_isConstituent counting.isTree_toGraph.toIsForest⟩
 
 -- (9a) has 24 catenae, 14 components and 6 constituents among its 63 word combinations.
 theorem card_units_favor : #(catenae favor.toGraph) = 24 ∧
-    #(components favor.toGraph) = 14 ∧ #(constituents favor.toGraph) = 6 :=
-  ⟨by decide, by decide, card_constituents favor.isTree_toGraph.toIsForest⟩
+    #{s ∈ catenae favor.toGraph | IsString s} = 14 ∧ #{s | favor.toGraph.IsConstituent s} = 6 :=
+  ⟨by decide, by decide, card_isConstituent favor.isTree_toGraph.toIsForest⟩
 
 -- In (4) the verb with its subordinator is a catena and not a string, the determiner with the
 -- verb before it a string and not a catena, and the subject clause a phrase.
@@ -193,7 +178,7 @@ example : ({0, 3} : Finset (Fin surprised.size)) ∈ catenae surprised.toGraph �
     ¬ IsString ({0, 3} : Finset (Fin surprised.size)) := by decide
 example : IsString ({3, 4} : Finset (Fin surprised.size)) ∧
     ({3, 4} : Finset (Fin surprised.size)) ∉ catenae surprised.toGraph := by decide
-example : ({0, 1, 2, 3} : Finset (Fin surprised.size)) ∈ phrases surprised.toGraph := by decide
+example : surprised.toGraph.IsConstituent {0, 1, 2, 3} := by decide
 
 /-! ### Words from the Fragment lexicon -/
 
