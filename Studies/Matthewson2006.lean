@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Matthewson2006
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Tense.Pronoun
 
 /-!

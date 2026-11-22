@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Tense.RunTimes
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.AspectualClass
 
 /-!
 # Karttunen (1974): Until

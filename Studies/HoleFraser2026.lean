@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Syntax.Cartography
 public import Studies.TonhauserEtAl2013

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.Morph
 public import Linglib.Pragmatics.SocialMeaning.Register
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Viewpoint.Defs
 
 /-!
 # Aspect markers

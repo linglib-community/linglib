@@ -32,13 +32,13 @@ perspective is the point of speech (`ReichenbachFrame.root`).
 
 ## Implementation notes
 
-The times are points of a linear order, as Reichenbach's are outside his extended tenses, which
-give the event a stretch of time. Kiparsky takes them to be intervals with points as the
-degenerate case, so his default inclusions of P and E in R become equalities here, and the
-duration of an event, as of one that reaches up to the point of speech, is not represented; his
-interval account of the perfect is `Studies/Kiparsky2002.lean`, and interval aspect is
-`Semantics/Aspect/Viewpoint.lean`. A frame records times, not morphology: that a sentence's tense
-form yields a frame with a given position is a study's claim.
+The times are points of a linear order, as Reichenbach's are outside his extended tenses, which give
+the event a stretch of time. Kiparsky takes them to be intervals with points as the degenerate case,
+so his default inclusions of P and E in R become equalities here, and the duration of an event, as
+of one that reaches up to the point of speech, is not represented; his interval account of the
+perfect is `Studies/Kiparsky2002.lean`, and interval aspect is
+`Semantics/Aspect/Viewpoint/Basic.lean`. A frame records times, not morphology: that a sentence's
+tense form yields a frame with a given position is a study's claim.
 
 ## References
 

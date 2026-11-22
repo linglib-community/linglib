@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Clause.Alignment
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Viewpoint.Defs
 
 /-!
 # Hindi-Urdu case

@@ -3,7 +3,7 @@ module
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.NormNum
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Events.Lifespan
 public import Studies.Kratzer1998

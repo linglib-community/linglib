@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.AspectualClass
+public import Linglib.Semantics.Aspect.Viewpoint.Defs
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 
 /-!
 # Smith (1997): The Parameter of Aspect

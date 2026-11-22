@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Viewpoint.Defs
 public import Linglib.Semantics.Aspect.IntervalProperty
 public import Linglib.Semantics.Events.RunTimes
 

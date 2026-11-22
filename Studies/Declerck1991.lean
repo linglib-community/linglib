@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Syntax.Category.Verb.Tense
 public import Studies.Reichenbach1947
 

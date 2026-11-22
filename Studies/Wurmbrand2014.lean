@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Algebra.Order.Ring.Int
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Studies.Ogihara1996
 public import Linglib.Data.Examples.Wurmbrand2014
 public import Linglib.Data.Examples.Gloss

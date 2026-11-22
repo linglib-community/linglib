@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Condoravdi2002
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Data.Examples.Readers

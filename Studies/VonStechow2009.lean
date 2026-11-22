@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Mereology.Basic
 public import Studies.BeaverCondoravdi2003
 public import Linglib.Data.Examples.VonStechow2009

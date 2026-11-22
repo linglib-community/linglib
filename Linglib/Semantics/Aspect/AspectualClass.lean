@@ -3,15 +3,13 @@ module
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Aspect: basic definitions
+# Aspectual classes
 
-The classificatory vocabulary of aspect follows the two components of Smith's theory. An
-aspectual class, Smith's situation type, is one of Vendler's four classes or her semelfactive,
-and is determined by three features: whether the situation has a natural endpoint, whether it
-takes time and whether it involves change. Viewpoint is the presentation of a situation: Klein's
-four relations between the topic time and the situation time together with Smith's neutral
-viewpoint, and at its coarsest the opposition of perfective and imperfective. The operators that
-viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
+An aspectual class, Smith's situation type, is one of Vendler's four classes or her semelfactive.
+It is determined by three features: whether the situation has a natural endpoint, `Telicity`,
+whether it takes time, `Duration`, and whether it involves change, `Dynamicity`
+(`AspectualClass.eq_of_features`). The incrementality of a verb's theme relation is the strongest
+of Krifka's properties that the relation has.
 
 ## Implementation notes
 
@@ -24,14 +22,11 @@ viewpoints denote are in `Semantics/Aspect/Viewpoint.lean`.
 * [vendler-1957]
 * [dowty-1979]
 * [krifka-1998]
-* [klein-1994]
 -/
 
 @[expose] public section
 
 namespace Aspect
-
-/-! ### Aspectual class -/
 
 /-- Whether an eventuality has a natural endpoint. An *in*-adverbial such as *in an hour* is
 acceptable with the telic classes and with no other ([dowty-1979]). -/
@@ -96,26 +91,5 @@ inductive Incrementality
   | incremental
   | cumulative
   deriving DecidableEq, Repr
-
-/-! ### Viewpoint -/
-
-/-- The viewpoints are the four relations of [klein-1994] between the topic time and the situation
-time, and the neutral viewpoint of [smith-1997], the default in the absence of aspect
-morphology. -/
-inductive ViewpointType
-  | imperfective
-  | perfective
-  | perfect
-  | prospective
-  | neutral
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- The opposition of perfective and imperfective is viewpoint aspect at its coarsest, the right
-granularity where the fact at issue is that the perfective requires actualization and the
-imperfective does not, or where the opposition is lexically encoded, as in `Verb.perfectivity`. -/
-inductive Perfectivity
-  | perfective
-  | imperfective
-  deriving DecidableEq, Repr, Inhabited
 
 end Aspect
