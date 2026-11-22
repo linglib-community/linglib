@@ -23,7 +23,10 @@ The genders are the carrier `Gender.Value`, visible only on the nonlocal clitics
 `Gender.Value.toUD` gives the Universal Dependencies tag of the feminine and the masculine; the
 other four genders have none. A clitic with no plural counterpart has `number := some .general`, so
 it realizes both the singular and the plural third person. The strengthened forms are phrases and
-are not entries; neither is the prevocalic allomorph *=(y)à* of the neutral clitic.
+are not entries. The table prints the inclusive clitic as *=(y)é* and gives the neutral clitic a
+second form *=(y)à* beside *=ñà*, without saying what the optional *y* depends on. The inclusive
+is entered with and without it; of the neutral forms only *=ñà* is an entry, the examples having
+also *=à*, *=á* and *=yá*.
 
 ## References
 
@@ -84,12 +87,14 @@ namespace Pronouns
 def cl1sg : PersonalPronoun :=
   { form := "=ì", person := some .first, number := some .singular, strength := some .clitic }
 
-/-- *=é* is the first person plural inclusive clitic, printed *=(y)é* ((4), (61)). -/
+/-- *=é* is the first person plural inclusive clitic, printed *=(y)é* ((4), (61)) and found as
+*=é* after its host in the examples ((3d), (3e), (103)). -/
 def cl1plIncl : PersonalPronoun :=
   { form := "=é", person := some .first, clusivity := some .inclusive, number := some .plural,
     strength := some .clitic }
 
-/-- *=yé* is the first person plural inclusive clitic with its glide. -/
+/-- *=yé* is the inclusive clitic with the *y* the table prints as optional. The examples have
+*yé* only in the strengthened phrase *yé yo'o* 'we here'. -/
 def cl1plInclGlide : PersonalPronoun :=
   { form := "=yé", person := some .first, clusivity := some .inclusive, number := some .plural,
     strength := some .clitic }
