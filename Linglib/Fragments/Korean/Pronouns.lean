@@ -1,5 +1,8 @@
 module
 
+public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Fragments.Korean.Phonology
+public import Linglib.Morphology.Exponence.SubsetRule
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Personal
@@ -23,9 +26,10 @@ plural *geudeul*, are recent innovations of written narrative used anaphorically
 colloquial *gyae*, contracted from *geu ai*, is neutral for gender and implies familiarity with
 the referent, as Kwon and Lee describe.
 Before the nominative particle *na*, *jeo* and *neo* become *nae*, *je* and *ne*. The
-sentence-final speech-style particles *-yo* and *-(seu)mnida* occur in root clauses only. Both
+sentence-final speech-style particles *-yo* and *-seumnida* occur in root clauses only. Both
 present the addressee as above the speaker, and they differ in the formality of the discourse:
-*-yo* is the polite particle of informal speech and *-(seu)mnida* that of formal speech. Forms
+*-yo* is the polite particle of informal speech and *-seumnida* that of formal speech, *-mnida*
+after a vowel (`Korean.Pronouns.supnida_realize`). Forms
 are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *ne-huy*,
 *caney*, *tangsin*, *caki*, *tayk*, *ku*, *ku nye* and *ku-tul*, and *-tul* for the plural
 suffix.
@@ -35,7 +39,7 @@ suffix.
 * `Korean.Pronouns.personal` — the personal pronouns
 * `Korean.Pronouns.addresseeSg`, `Korean.Pronouns.addresseePl` — the second person singular
   and plural at each grade
-* `Korean.Pronouns.allocutiveParticles` — the speech-style particles
+* `Korean.Pronouns.yo`, `Korean.Pronouns.supnida` — the speech-style particles
 
 ## Implementation notes
 
@@ -182,11 +186,19 @@ theorem isOrdinary_addressee (g : Grade) :
 /-- The polite speech-style particle *-yo*, of informal discourse. -/
 def yo : Morphology.Morph := .suff "yo"
 
-/-- The speech-style particle *-(seu)mnida*, of formal discourse. -/
-def supnida : Morphology.Morph := .suff "(seu)mnida"
+open Phonology Morphology in
+/-- The speech-style particle of formal discourse, *-mnida* after a vowel and *-seumnida* after a
+consonant ([sohn-1994]). -/
+def supnida : RuleSet (SubsetRule Segment Morph) :=
+  [⟨[+syllabic], .suff "mnida"⟩, ⟨⊥, .suff "seumnida"⟩]
 
-/-- The speech-style particles. -/
-def allocutiveParticles : List Morphology.Morph := [yo, supnida]
+open Phonology Morphology in
+/-- The formal particle is *-mnida* after a vowel and *-seumnida* after a consonant. -/
+theorem supnida_realize :
+    supnida.realizeMinimal (fun r ↦ OrderDual.toDual r.features) a = some (.suff "mnida") ∧
+      supnida.realizeMinimal (fun r ↦ OrderDual.toDual r.features) k =
+        some (.suff "seumnida") := by
+  decide
 
 /-! ### Quexistentials
 

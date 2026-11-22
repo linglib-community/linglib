@@ -87,9 +87,9 @@ def grades : List (String × Magahi.Grade) :=
   [("nh", .nonhonorific), ("h", .honorific), ("hh", .highHonorific)]
 
 theorem magahi_fusion_rows :
-    ∀ row ∈ Examples.all, row.language = .magahi → ∀ m ∈ row.feature? "marker",
+    ∀ row ∈ Examples.all, row.language = .magahi →
       ∀ s ∈ row.parse? "subject" grades, ∀ a ∈ row.parse? "addressee" grades,
-        toString (Magahi.Pronouns.allocutive s a) = m := by
+        (row.features "marker").toFinset = (Magahi.Pronouns.allocutive s a).image toString := by
   decide +kernel
 
 theorem magahi_allocutive_fused :

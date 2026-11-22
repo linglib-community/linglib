@@ -146,12 +146,14 @@ def cellCategories (s : Finset C) : Finset Person.Category :=
 
 /-- The pronoun `f` filling the cells `s`, where a cell has a person and may have a clusivity, a
 number, a gender and a case: the cases of the cells, the flat value of their person, clusivity
-and gender, and the number their categories share, `general` for cells of both numbers. -/
+and gender, and the number of the cells where they have one number, otherwise the number their
+categories share, `general` for cells of both numbers. -/
 def ofCells (s : Finset C) (f : String) : Pronoun :=
   { form := f,
     person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
     clusivity := Flat.finsetInf s fun c ↦ (clusivity c : Flat Clusivity),
-    number := Person.Category.sharedNumber (cellCategories person clusivity number s),
+    number := (Flat.finsetInf s fun c ↦ (number c : Flat Number) : Option Number).or
+      (Person.Category.sharedNumber (cellCategories person clusivity number s)),
     cases := s.biUnion fun c ↦ (case c).toFinset,
     gender := Flat.finsetInf s fun c ↦ (gender c : Flat UD.Gender) }
 

@@ -107,7 +107,4 @@ def nye : PersonalPronoun := entry "nyɛ"
 /-- *amɛ* — third person plural, the form of all three cases. -/
 def ame : PersonalPronoun := entry "amɛ"
 
-/-- The forms of each referential category. -/
-def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm personal
-
 end Ga.Pronouns

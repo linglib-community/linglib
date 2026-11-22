@@ -84,9 +84,14 @@ namespace Pronouns
 def cl1sg : PersonalPronoun :=
   { form := "=ì", person := some .first, number := some .singular, strength := some .clitic }
 
-/-- *=(y)é* is the first person plural inclusive clitic ((4), (61)). -/
+/-- *=é* is the first person plural inclusive clitic, printed *=(y)é* ((4), (61)). -/
 def cl1plIncl : PersonalPronoun :=
-  { form := "=(y)é", person := some .first, clusivity := some .inclusive, number := some .plural,
+  { form := "=é", person := some .first, clusivity := some .inclusive, number := some .plural,
+    strength := some .clitic }
+
+/-- *=yé* is the first person plural inclusive clitic with its glide. -/
+def cl1plInclGlide : PersonalPronoun :=
+  { form := "=yé", person := some .first, clusivity := some .inclusive, number := some .plural,
     strength := some .clitic }
 
 /-- *=ndú* is the first person plural exclusive clitic ((4), (61)). -/
@@ -117,7 +122,7 @@ def cl3pl (g : Gender.Value) : Option PersonalPronoun :=
 
 /-- The clitic series. -/
 def clitics : Finset PersonalPronoun :=
-  {cl1sg, cl1plIncl, cl1plExcl, cl2sg, cl2pl} ∪
+  {cl1sg, cl1plIncl, cl1plInclGlide, cl1plExcl, cl2sg, cl2pl} ∪
     Finset.univ.biUnion fun g ↦ insert (cl3 g) (cl3pl g).toFinset
 
 /-! ### Non-clitics -/
