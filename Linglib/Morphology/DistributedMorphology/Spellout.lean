@@ -152,6 +152,18 @@ theorem length_apply_le (rule : ObliterationRule Bundle) (d : SpelloutDomain Bun
     (rule.apply d).length ≤ d.length :=
   (rule.apply_sublist d).length_le
 
+/-- The rule fires on a domain when one of the domain's neighborhoods satisfies its condition. -/
+protected def Fires (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) : Prop :=
+  ∃ n ∈ along d, rule.condition n
+
+instance (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) : Decidable (rule.Fires d) :=
+  inferInstanceAs (Decidable (∃ n ∈ along d, rule.condition n))
+
+/-- A rule that does not fire leaves the domain as it is. -/
+theorem apply_of_not_fires {rule : ObliterationRule Bundle} {d : SpelloutDomain Bundle}
+    (h : ¬ rule.Fires d) : rule.apply d = d :=
+  rewriteFirst_of_not_fires fun ⟨n, hn, hs⟩ ↦ h ⟨n, hn, by by_contra hc; simp [hc] at hs⟩
+
 end ObliterationRule
 
 /-! ### Generalized Reduplication -/

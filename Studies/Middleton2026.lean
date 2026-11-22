@@ -3,11 +3,11 @@ module
 public import Mathlib.Data.List.DropRight
 public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
-public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Fragments.Taos.Agreement
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Feature.Person.Features
 public import Linglib.Phonology.RuleInteraction
+public import Studies.ArregiNevins2012
 
 /-!
 # Middleton (2026): A Remark on the Ordering of Impoverishment Rules: Differences between Taos and Basque
@@ -31,8 +31,8 @@ The rules the paper labels paradigmatic and syntagmatic are so (`paradigmatic_of
 After impoverishment the prefix is linearized into a string of feature terminals, to which
 metathesis, exponence, epenthesis and tone apply. `derive` composes these maps, and
 `derive_eq_form` compares its value with the paradigm of `Fragments/Taos/Agreement.lean`.
-Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), and feeds and bleeds it in Basque
-(`Basque.ondarru_feeds`, `Basque.zamudio_bleeds`).
+Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), as it does in Ondarru Basque
+(`ArregiNevins2012.ondarru_feeds`).
 
 ## Implementation notes
 
@@ -66,9 +66,10 @@ Impoverishment feeds metathesis in Taos (`r24_feeds_m23`), and feeds and bleeds 
   the rules give footnote 6's corrected *ímo*), and the three 3d possessives with an object
   (Table 3 prints *ónôm* and *ónôw*, but the tone rule (51h) and the appendix's Tables 8, 14,
   17 and 38 have *ónóm* and *ónów*, which the rules give).
-* The paper's (13) is an adjacent swap; the study follows Arregi and Nevins's fronting rule,
-  which the Zamudio auxiliary of (19) needs, and its rejected-order outputs are Arregi and
-  Nevins's stranded forms rather than the paper's starred (17b) and (19b).
+* The paper's (13), (16) and (18) restate Arregi and Nevins's rules with an adjacent swap and
+  an adjacent trigger; `Studies/ArregiNevins2012.lean` has the book's rules, under which the
+  rejected order leaves T at the edge of the word, the book's (17b), and not the paper's starred
+  (17b) and (19b).
 
 ## References
 
@@ -1518,126 +1519,15 @@ theorem derive_prefix1D3no :
 
 /-! ### Impoverishment precedes metathesis in Basque (§3.1)
 
-The finite auxiliary of (10) is a string of terminals: the absolutive clitic, T, and the
-ergative and dative clitics. Participant Dissimilation, the paper's (16) and (18) after Arregi
-and Nevins's (25), obliterates a clitic in the Feature Markedness module; T-Noninitiality, the
-paper's (12), is repaired in the Linear Operations module by Ergative Metathesis (13) or
-L-Support, one module as in Arregi and Nevins's §6.2.4. T bears `[+tense]` for their `[+past]`,
-and the dative-clitic conditions of their Ergative Metathesis and the `[+motion]` restriction of
-Participant Dissimilation, which the two auxiliaries do not reach, are left out. -/
+The paper's (17) and (19) are Arregi and Nevins's two interactions of Participant Dissimilation
+with Ergative Metathesis, `ArregiNevins2012.ondarru_feeds` and `ArregiNevins2012.zamudio_bleeds`.
+In Taos as in Ondarru the impoverishment creates the string the metathesis applies to. -/
 
-namespace Basque
-
-/-- A Basque terminal is a list of Minimalist features. -/
-abbrev Terminal := List FeatureVal
-
-/-- A clitic bears its case and its person and number features. -/
-def clitic (c : Case) (φ : Terminal) : Terminal := ⟨.case, c⟩ :: φ
-
-/-- First person, in the Minimalist inventory. -/
-def firstφ : Terminal := [⟨.participant, true⟩, ⟨.author, true⟩]
-
-/-- Second person, in the Minimalist inventory. -/
-def secondφ : Terminal := [⟨.participant, true⟩, ⟨.author, false⟩]
-
-/-- T, past tense. -/
-def pastT : Terminal := [⟨.tense, true⟩]
-
-/-- The epenthetic L of L-Support, a terminal without features. -/
-def lSupport : Terminal := []
-
-/-- Under Participant Dissimilation a `[+participant +author]` clitic is obliterated when another
-clitic of the word bears `trigger`; Arregi and Nevins's `[+motion]` restriction and their First
-Singular Clitic Impoverishment, which keep first singular clitics out of it, are not modelled. -/
-def participantDissimilation (trigger : Terminal) : ObliterationRule Terminal :=
-  ⟨fun n ↦ firstφ ⊆ n.focus ∧ ∃ t ∈ n.leftCtx ++ n.rightCtx, trigger ⊆ t⟩
-
-/-- In Ondarru, the paper's (16), the trigger is an ergative participant clitic. -/
-def ondarru : ObliterationRule Terminal :=
-  participantDissimilation [⟨.case, .erg⟩, ⟨.participant, true⟩]
-
-/-- In Zamudio, the paper's (18), the trigger is any participant clitic. -/
-def zamudio : ObliterationRule Terminal := participantDissimilation [⟨.participant, true⟩]
-
-/-- Under Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105), a word-initial
-past T and what follows it up to the first ergative clitic change places with that clitic: the
-double brackets open before T and close after the clitic, and the angled brackets stand before
-the clitic. (105a)'s conditions on an intervening dative clitic are left out. -/
-def ergativeMetathesis (n : Neighborhood Terminal) : Option Reduplication :=
-  if n.leftCtx = [] ∧ ⟨.tense, true⟩ ∈ n.focus then
-    (n.rightCtx.findIdx? (·.contains ⟨.case, .erg⟩)).map fun i ↦ .metathesis (i + 1) 1
-  else none
-
-theorem reduplicateFirst_ergativeMetathesis_perm (d : SpelloutDomain Terminal) :
-    (reduplicateFirst ergativeMetathesis d).Perm d :=
-  reduplicateFirst_perm (fun n b hb ↦ by
-    unfold ergativeMetathesis at hb
-    split_ifs at hb
-    · obtain ⟨i, -, rfl⟩ := Option.map_eq_some_iff.1 hb; rfl
-    · cases hb) d
-
-/-- L-Support: an L before a word-initial T. -/
-def lSupportRepair (d : SpelloutDomain Terminal) : SpelloutDomain Terminal :=
-  if ∃ t ∈ d.head?, ⟨.tense, true⟩ ∈ t then lSupport :: d else d
-
-/-- The Linear Operations module applies the two repairs of T-Noninitiality. -/
-def linearOperations : SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  lSupportRepair ∘ reduplicateFirst ergativeMetathesis
-
-/-- Feature Markedness before Linear Operations, the order of Figure 1. -/
-def markednessThenLinear (pd : ObliterationRule Terminal) :
-    SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  linearOperations ∘ pd.apply
-
-/-- Linear Operations before Feature Markedness, the order both papers reject. -/
-def linearThenMarkedness (pd : ObliterationRule Terminal) :
-    SpelloutDomain Terminal → SpelloutDomain Terminal :=
-  pd.apply ∘ linearOperations
-
-/-- The Ondarru auxiliary of (17), *s-endu-n* 'you saw us': a first plural absolutive clitic,
-past T, and a second singular ergative clitic. -/
-def auxiliary17 : SpelloutDomain Terminal :=
-  [clitic .abs (firstφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩]), pastT,
-   clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])]
-
-/-- The Zamudio auxiliary of (19), *y-a-tzu-e-n* 'we accompanied you lot': past T, a second
-plural dative clitic, and a first plural ergative clitic. -/
-def auxiliary19 : SpelloutDomain Terminal :=
-  [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩]),
-   clitic .erg (firstφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])]
-
-theorem ondarru_markedness_then_linear :
-    markednessThenLinear ondarru auxiliary17 =
-      [clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩]), pastT] := by
-  decide
-
--- (17b)
-theorem ondarru_linear_then_markedness :
-    linearThenMarkedness ondarru auxiliary17 =
-      [pastT, clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])] := by
-  decide
-
--- §3.1.3
-theorem ondarru_feeds :
-    Feeds ondarru.apply (Fires ergativeMetathesis) auxiliary17 := by
-  decide
-
-theorem zamudio_markedness_then_linear :
-    markednessThenLinear zamudio auxiliary19 =
-      [lSupport, pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
-  decide
-
--- §6.2.4
-theorem zamudio_linear_then_markedness :
-    linearThenMarkedness zamudio auxiliary19 =
-      [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
-  decide
-
--- §3.1.4
-theorem zamudio_bleeds :
-    Bleeds zamudio.apply (Fires ergativeMetathesis) auxiliary19 := by
-  decide
-
-end Basque
+-- (17), (25)
+theorem impoverishment_feeds_metathesis :
+    Feeds ArregiNevins2012.ondarru.apply (Fires ArregiNevins2012.ergativeMetathesis)
+        ArregiNevins2012.auxiliary16 ∧
+      Feeds r24.rule.apply (fun p ↦ Fires (m23 p) (linearize p)) (spellOut cell1D3Sno) :=
+  ⟨ArregiNevins2012.ondarru_feeds, r24_feeds_m23⟩
 
 end Middleton2026
