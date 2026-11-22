@@ -25,6 +25,9 @@ one of several dependents is a catena that is not a constituent.
 ## Main statements
 
 * `Graph.IsConstituent.isCatena`: every constituent is a catena.
+* `Graph.IsForest.isCatena_iff`: in a forest, a catena is a set of positions exactly one of
+  which has no head among them.
+* `Graph.IsForest.card_isConstituent`: a forest has as many constituents as positions.
 * `Graph.not_isConstituent_pair`: in a forest, a head with one of two dependents is
   not a constituent.
 * `DependencyGrammar.Graph.IsTree.isTree_toSimpleGraph`: the undirected view of a dependency tree
@@ -36,6 +39,8 @@ one of several dependents is a catena that is not a constituent.
 -/
 
 @[expose] public section
+
+open Finset
 
 namespace DependencyGrammar
 
@@ -95,6 +100,65 @@ theorem Graph.not_isConstituent_pair {g : Graph L n} (hF : g.IsForest) {v w u : 
     · exact huw (Finset.mem_singleton.mp hu')
   · rw [Finset.mem_singleton] at hcw; subst hcw
     exact hF.not_dominates_of_adj hw ((hc v).1 (by simp))
+
+private theorem Graph.IsForest.dominates_of_isCatena {g : Graph L n} (hF : g.IsForest)
+    {s : Finset (Fin n)} (h : g.IsCatena s) {a : Fin n} (ha : a ∈ s)
+    (hroot : ∀ u ∈ s, ¬ g.Adj u a) {b : Fin n} (hb : b ∈ s) : g.Dominates a b := by
+  suffices ∀ y : (↑s : Set (Fin n)), Relation.ReflTransGen
+      (g.toSimpleGraph.induce ↑s).Adj ⟨a, ha⟩ y → g.Dominates a y from
+    this ⟨b, hb⟩ ((SimpleGraph.reachable_iff_reflTransGen _ _).1 (h.preconnected _ _))
+  intro y hy
+  induction hy with
+  | refl => exact .refl
+  | @tail x y _ hxy ih =>
+    obtain ⟨-, hxy | hyx⟩ := hxy
+    · exact ih.tail hxy
+    · rcases eq_or_ne a x with rfl | hne
+      · exact absurd hyx (hroot y y.2)
+      · exact hF.dominates_head ih hne hyx
+
+/-- In a forest a set of positions is a catena iff exactly one of them has no head among them. -/
+theorem Graph.IsForest.isCatena_iff {g : Graph L n} (hF : g.IsForest) {s : Finset (Fin n)} :
+    g.IsCatena s ↔ #{v ∈ s | ∀ u ∈ s, ¬ g.Adj u v} = 1 := by
+  have wf : WellFounded (Relation.TransGen g.Adj) :=
+    haveI : Std.Irrefl (Relation.TransGen g.Adj) := ⟨hF.acyclic⟩
+    Finite.wellFounded_of_trans_of_irrefl _
+  rw [Finset.card_eq_one]
+  refine ⟨fun h ↦ ?_, fun ⟨r, hr⟩ ↦ ?_⟩
+  · obtain ⟨⟨x, hx⟩⟩ := h.nonempty
+    obtain ⟨r, hr, hmin⟩ := wf.has_min (↑s : Set (Fin n)) ⟨x, hx⟩
+    have hroot : ∀ u ∈ s, ¬ g.Adj u r := fun u hu hur ↦ hmin u hu (.single hur)
+    refine ⟨r, Finset.eq_singleton_iff_unique_mem.2
+      ⟨Finset.mem_filter.2 ⟨hr, hroot⟩, fun r' hr' ↦ ?_⟩⟩
+    obtain ⟨hr's, hroot'⟩ := Finset.mem_filter.1 hr'
+    exact hF.dominates_antisymm (hF.dominates_of_isCatena h hr's hroot' hr)
+      (hF.dominates_of_isCatena h hr hroot hr's)
+  · have hrs : r ∈ s ∧ ∀ u ∈ s, ¬ g.Adj u r :=
+      Finset.mem_filter.1 (hr ▸ Finset.mem_singleton_self r)
+    refine (SimpleGraph.connected_iff_exists_forall_reachable _).2 ⟨⟨r, hrs.1⟩, ?_⟩
+    rintro ⟨x, hx⟩
+    induction x using wf.induction with
+    | _ x ih =>
+      by_cases hx' : ∀ u ∈ s, ¬ g.Adj u x
+      · obtain rfl : x = r := Finset.mem_singleton.1 (hr ▸ Finset.mem_filter.2 ⟨hx, hx'⟩)
+        exact .rfl
+      · push Not at hx'
+        obtain ⟨u, hu, hux⟩ := hx'
+        exact (ih u (.single hux) hu).trans
+          (SimpleGraph.Adj.reachable ⟨hF.ne_of_adj hux, .inl hux⟩)
+
+/-- A forest has as many constituents as positions. -/
+theorem Graph.IsForest.card_isConstituent {g : Graph L n} (hF : g.IsForest) :
+    #{s : Finset (Fin n) | g.IsConstituent s} = n := by
+  have h : ({s | g.IsConstituent s} : Finset (Finset (Fin n))) =
+      Finset.univ.image fun v ↦ ({w | g.Dominates v w} : Finset (Fin n)) := by
+    ext s
+    simp [Graph.IsConstituent, Finset.ext_iff, eq_comm]
+  rw [h, Finset.card_image_of_injective, Finset.card_univ, Fintype.card_fin]
+  intro v w hvw
+  have key (x : Fin n) : g.Dominates v x ↔ g.Dominates w x := by
+    simpa using Finset.ext_iff.1 hvw x
+  exact hF.dominates_antisymm ((key w).2 .refl) ((key v).1 .refl)
 
 theorem Graph.isConstituent_univ {g : Graph L n} (hT : g.IsTree) :
     g.IsConstituent Finset.univ :=
