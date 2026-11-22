@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Semantics.Genericity.MeaningPreservation
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Reference.Kind
@@ -42,7 +42,13 @@ existential shift: with its two articles English admits a bare singular exactly 
 defined (`english_licensesBare_singular_iff`), which it is not for a singular property, and
 Russian, with no article, admits every bare nominal (`russian_licensesBare`).
 `Language.AdmitsBare` puts these together, and the judgments of the paper's examples with a bare
-argument are the ones it gives (`bare_rows`).
+argument are the ones it gives (`bare_rows`), where ∩ is defined or not for the extension each
+class of noun has in a model of two atoms (`down_extension_mem_kinds_iff`).
+
+An English bare plural is shifted by ∩ where ∩ is defined for it and by ∃ otherwise
+(`english_plural_shift_iff`). The first is the name of a kind and the second a quantifier, an
+`Argument`. Raised over an operator, a kind leaves a trace that is a kind, so it has the reading
+it has in place (`Argument.raise_kind`), while the quantifier has a second reading.
 
 Carlson's predication of a state of a kind is the existential over the instances of its concept
 (`carlson_mem_image_iff`), so a state passes from a kind to any kind whose instances include its
@@ -77,7 +83,10 @@ situation with exactly one instance, where the plural has no member.
 `Language.AdmitsBare` licenses the null determiner under government alone, leaving out
 licensing by focus, and under it chooses a shift as a language with both settings does. A
 predicate of kinds needs ∩ where nouns can be predicates. A mass noun, and a noun of a language
-without number, is given `Number.general`, which no article of the fragments selects.
+without number, is given `Number.general`, which no article of the fragments selects. The
+kinds of the model in which the examples are checked are all the concepts that the condition on
+kinds allows, so there every plural and mass extension has a kind; the paper's plurals without
+one, such as *parts of that machine*, are not among the rows.
 `bare_rows` leaves out the Russian singular generic *sobaka obycnoe zyvotnoe*, which the paper
 sets with the generic definite singular. The Italian example with a bare plural object is
 entered as acceptable, as the paper's text describes it.
@@ -370,8 +379,8 @@ theorem predOnly_not_licensesBare (num : Number) (down : Prop) :
       ¬ (nominalMapping .italian).LicensesBare (determiners .italian) num down := by
   simp [NominalMapping.LicensesBare, nominalMapping]
 
-/-- English, [+arg, +pred] with *the* blocking ι and *a* blocking ∃ for singulars, admits a bare
-singular exactly where kind formation is defined for it. -/
+-- English, [+arg, +pred] with *the* blocking ι and *a* blocking ∃ for singulars, admits a bare
+-- singular exactly where kind formation is defined for it.
 theorem english_licensesBare_singular_iff (down : Prop) :
     (nominalMapping .english).LicensesBare (determiners .english) .singular down ↔ down :=
   NominalMapping.argAndPred_licensesBare_iff (by decide) (by decide)
@@ -422,17 +431,49 @@ def Examples.Bare.number : Examples.Bare → Number
   | .plural => .plural
   | .mass => .general
 
-/-- ∩ is defined for a plural and for a mass noun, and not for a singular count noun. -/
-def Examples.Bare.HasKind (b : Examples.Bare) : Prop := b ≠ .singular
+section Model
 
-instance : DecidablePred Examples.Bare.HasKind := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+open Mereology
+
+/-- The individuals of the model: two atoms and their sum. -/
+abbrev Ind := {s : Finset Bool // s.Nonempty}
+
+/-- The extension of a bare nominal at the one situation of the model: a singular count noun is
+true of the atoms, its plural is `PL` of them, and a mass noun is true of every individual. -/
+def Examples.Bare.extension : Examples.Bare → Unit → Set Ind
+  | .singular, _ => {x | IsMin x}
+  | .plural, _ => PL {x | IsMin x}
+  | .mass, _ => Set.univ
+
+/-- The kinds of the model are the concepts not singular wherever they have a value. -/
+def kinds : Set (Unit → Part Ind) := {k | ¬ ∀ s, ∀ d ∈ k s, IsMin d}
+
+-- ∩ is defined for the plural and the mass extension, and not for the singular one.
+theorem down_extension_mem_kinds_iff (b : Examples.Bare) :
+    Kind.down ∘ b.extension ∈ kinds ↔ b ≠ .singular := by
+  cases b
+  · exact iff_of_false (Kind.down_comp_notMem_of_isMin (fun _ h ↦ h) fun _ _ h ↦ h) (by simp)
+  · have h : ∃ d : Ind, IsGreatest (PL {y : Ind | IsMin y}) d ∧ ¬ IsMin d := by
+      simp only [IsGreatest, upperBounds, Set.mem_ofPred_eq, mem_PL_isMin]; decide
+    obtain ⟨d, hd, hmin⟩ := h
+    exact iff_of_true (fun h ↦ hmin (h () d (Kind.mem_down.2 hd))) (by decide)
+  · have h : ∃ d : Ind, IsGreatest (Set.univ : Set Ind) d ∧ ¬ IsMin d := by
+      simp only [IsGreatest, upperBounds, Set.mem_ofPred_eq, Set.mem_univ, true_and,
+        forall_const]; decide
+    obtain ⟨d, hd, hmin⟩ := h
+    exact iff_of_true (fun h ↦ hmin (h () d (Kind.mem_down.2 hd))) (by decide)
+
+instance (b : Examples.Bare) : Decidable (Kind.down ∘ b.extension ∈ kinds) :=
+  decidable_of_iff _ (down_extension_mem_kinds_iff b).symm
+
+end Model
 
 /-- The examples with a bare argument are acceptable exactly where the language admits the
 nominal, the Russian singular generic (27f) apart. -/
 theorem bare_rows : ∀ x : Example, x ≠ .ex27f →
     ∀ b ∈ x.bare, ∀ p ∈ x.position, ∀ k ∈ x.predicate, ∃ l : Language,
       x.datum.language = l.glottocode ∧
-        (l.AdmitsBare b.number b.HasKind (p = .governed) (k = .kind) ↔
+        (l.AdmitsBare b.number (Kind.down ∘ b.extension ∈ kinds) (p = .governed) (k = .kind) ↔
           x.datum.judgment = .acceptable) := by
   decide
 
@@ -483,5 +524,73 @@ theorem some_up_of_mem_dogsBark {N : S → Normality (E × S)} {dog : S → Set 
   ⟨x, ((N s).normal_subset _ hx).1, h hx⟩
 
 end Generic
+
+/-! ### Scope
+
+A bare nominal that ∩ shifts is the name of a kind, and one that ∃ shifts is a quantifier. A
+predicate of objects applies to a kind by derived kind predication, and an argument raised over
+an operator leaves a trace of its own sort, so raising a kind changes nothing, while a
+quantifier takes scope. -/
+
+/-- Under Chierchia's ranking an English bare plural is shifted by ∩ where ∩ is defined for it
+and by ∃ where it is not, *the* blocking ι and no article blocking ∃ for plurals. -/
+theorem english_plural_shift_iff (down : Prop) (τ : CovertShift) :
+    MaximalFor ((determiners .english).Available .plural down) (· = .down) τ ↔
+      τ = .down ∧ down ∨ τ = .exists ∧ ¬ down := by
+  have h1 : (determiners .english).Blocks .plural .iota := by decide
+  have h2 : (determiners .english).Blocks .plural .iotaAnaphoric := by decide
+  have h3 : ¬ (determiners .english).Blocks .plural .exists := by decide
+  cases τ
+  case iotaAnaphoric =>
+    simp [CovertShift.maximalFor_eq_down_iff, Determiner.Inventory.Available, h2]
+  all_goals simp [h1, h3]
+
+section Scope
+
+variable {E : Type*} [Preorder E]
+
+/-- A nominal shifted to an argument is the value of a kind or a generalized quantifier. -/
+inductive Argument (E : Type*) where
+  | kind (k : Part E)
+  | quantifier (𝒬 : Set E → Prop)
+
+namespace Argument
+
+/-- `a.apply V` combines the argument in place with a predicate of objects: a kind by derived
+kind predication (31c), a quantifier by applying it. -/
+def apply (V : Set E) : Argument E → Prop
+  | kind k => Quantifier.Det.some (Kind.up k) V
+  | quantifier 𝒬 => 𝒬 V
+
+/-- `a.raise O V` scopes the argument over the operator `O`, abstracting over a trace of the
+argument's sort: a kind for a kind (43b), an object for a quantifier. -/
+def raise (O : Prop → Prop) (V : Set E) : Argument E → Prop
+  | kind k => (fun x : Part E ↦ O ((kind x).apply V)) k
+  | quantifier 𝒬 => 𝒬 {x | O (x ∈ V)}
+
+-- (43a-d): raising a kind over an operator gives the reading it has in place.
+theorem raise_kind (O : Prop → Prop) (V : Set E) (k : Part E) :
+    (kind k).raise O V = O ((kind k).apply V) := rfl
+
+-- (48): the argument ∃ makes of a property.
+theorem raise_quantifier_some (O : Prop → Prop) (V P : Set E) :
+    (quantifier (Quantifier.Det.some P)).raise O V ↔ ∃ x ∈ P, O (x ∈ V) :=
+  Iff.rfl
+
+end Argument
+
+/-- (49d): under negation a nominal shifted by ∃ has a wide reading that its narrow reading
+lacks, here with two objects of which one is seen. -/
+example : (Argument.quantifier (Quantifier.Det.some (Set.univ : Set Bool))).raise Not {true} ∧
+    ¬ ¬ (Argument.quantifier (Quantifier.Det.some (Set.univ : Set Bool))).apply {true} :=
+  ⟨⟨false, trivial, by simp⟩, not_not.2 ⟨true, trivial, rfl⟩⟩
+
+/-- (43e): the wide reading is none of a kind's, whose raised reading is false in the same
+model though an instance is unseen. -/
+example : ¬ (Argument.kind (Part.some true)).raise Not {true} ∧
+    Quantifier.Det.some (Kind.up (Part.some true)) {x | x ∉ ({true} : Set Bool)} :=
+  ⟨not_not.2 ⟨true, by simp, rfl⟩, ⟨false, by simp, by simp⟩⟩
+
+end Scope
 
 end Chierchia1998
