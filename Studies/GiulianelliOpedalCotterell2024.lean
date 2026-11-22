@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.GeneralizedSurprisal
+public import Linglib.Processing.Surprisal.Generalized
 public import Mathlib.Probability.StrongLaw
 
 /-!
