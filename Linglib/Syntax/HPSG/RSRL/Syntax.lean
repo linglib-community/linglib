@@ -14,11 +14,21 @@ term has a sort, that two terms denote the same entity, or that some variables s
 relation, and formulae are closed under negation, implication and universal quantification. A
 *description* is a formula with no free variables, and a *grammar* is a set of descriptions.
 
+Most principles of a grammar are *constraints* `σ ⇒ A`, which require the entities of the sort
+`σ` to satisfy an attribute-value description `A`: a list of atoms, each giving a path a sort or
+equating two paths.
+
 ## Implementation notes
 
 Negation, implication and universal quantification are primitive and the other connectives are
 defined from them, as in mathlib's `FirstOrder.Language.BoundedFormula`. As in Richter's syntax,
 a relation symbol applies to variables only.
+
+A constraint holds its atoms as a list and not as one formula, so that a proof names the atom it
+uses and does not reach it by its place in a conjunction, as mathlib's `FieldAxiom` names the
+axioms of a field. The formula of a constraint has no quantifier: the conjunction of its atoms
+ends in `: ≈ :` and not in `Formula.top`, whose quantifier ranges over the components of the
+described entity and would make each check of a worked model compute them.
 
 ## References
 
@@ -207,23 +217,63 @@ def Grammar.ofList (ds : List (Description Sig)) : Grammar Sig := {d | d ∈ ds}
     Grammar.ofList (ds ++ es) = Grammar.ofList ds ∪ Grammar.ofList es :=
   Set.ext fun _ ↦ List.mem_append
 
-/-! ### Constraints on sorts -/
+/-! ### Attribute-value descriptions and constraints on sorts -/
 
-/-- A constraint `σ ⇒ φ` requires every entity whose sort is at least as specific as `σ` to
-satisfy the formula `φ`, which has no free variables. -/
+/-- An atom of an attribute-value description says that the path `p` has a value of the sort
+`σ`, or that the paths `p` and `q` have the same value. -/
+inductive PathAtom (Sig : Signature Srt) where
+  /-- The path has a value whose sort is at least as specific as `σ`. -/
+  | sort (p : Path Sig) (σ : Srt)
+  /-- The two paths have the same value. -/
+  | eq (p q : Path Sig)
+
+namespace PathAtom
+
+instance [DecidableEq Srt] [DecidableEq Sig.Attr] : DecidableEq (PathAtom Sig)
+  | sort p σ, sort q τ => decidable_of_iff (p = q ∧ σ = τ) (by simp)
+  | eq p q, eq p' q' => decidable_of_iff (p = p' ∧ q = q') (by simp)
+  | sort .., eq .. => isFalse nofun
+  | eq .., sort .. => isFalse nofun
+
+/-- The formula that states an atom. -/
+def toFormula : PathAtom Sig → Formula Sig
+  | sort p σ => .sortAssign (.path p) σ
+  | eq p q => .pathEq (.path p) (.path q)
+
+@[simp] theorem freeVars_toFormula (a : PathAtom Sig) : a.toFormula.freeVars = ∅ := by
+  cases a <;> simp [toFormula, Formula.freeVars]
+
+/-- The description that states an atom. -/
+@[simps] def toDescription (a : PathAtom Sig) : Description Sig :=
+  ⟨a.toFormula, a.freeVars_toFormula⟩
+
+end PathAtom
+
+/-- A constraint `σ ⇒ A` requires every entity whose sort is at least as specific as `σ` to
+satisfy each atom of the attribute-value description `A`. -/
 structure Constraint (Sig : Signature Srt) where
   /-- The sort that the constraint applies to. -/
   sort : Srt
-  /-- The formula that the entities of that sort satisfy. -/
-  body : Formula Sig
-  /-- The body has no free variables. -/
-  freeVars_body : body.freeVars = ∅ := by decide
+  /-- The atoms that the entities of that sort satisfy. -/
+  atoms : List (PathAtom Sig)
 
 namespace Constraint
 
-attribute [simp] freeVars_body
+instance [DecidableEq Srt] [DecidableEq Sig.Attr] : DecidableEq (Constraint Sig) := fun c c' ↦
+  decidable_of_iff (c.sort = c'.sort ∧ c.atoms = c'.atoms) (by cases c; cases c'; simp)
 
-/-- The formula `: ∼ σ → φ` that states the constraint `σ ⇒ φ`. -/
+/-- The conjunction of the atoms of a constraint, ending in the equation `: ≈ :`, which every
+entity satisfies. -/
+def body (c : Constraint Sig) : Formula Sig :=
+  c.atoms.foldr (fun a d ↦ a.toFormula.and d) (PathAtom.eq [] []).toFormula
+
+@[simp] theorem freeVars_body (c : Constraint Sig) : c.body.freeVars = ∅ := by
+  unfold body
+  induction c.atoms with
+  | nil => simp
+  | cons a as ih => simp [ih]
+
+/-- The formula `: ∼ σ → A` that states the constraint `σ ⇒ A`. -/
 def toFormula (c : Constraint Sig) : Formula Sig := (Formula.sortAssign .colon c.sort).imp c.body
 
 @[simp] theorem freeVars_toFormula (c : Constraint Sig) : c.toFormula.freeVars = ∅ := by
@@ -239,6 +289,23 @@ instance : Coe (Constraint Sig) (Description Sig) := ⟨toDescription⟩
 def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Constraint Sig) :=
   C.filter fun c ↦ σ ≤ c.sort
 
+@[simp] theorem mem_inherited [DecidableLE Srt] {C : List (Constraint Sig)} {σ : Srt}
+    {c : Constraint Sig} : c ∈ inherited C σ ↔ c ∈ C ∧ σ ≤ c.sort := by
+  simp [inherited]
+
+/-- A sort inherits every constraint that its supersorts inherit. -/
+theorem inherited_sublist_of_le [DecidableLE Srt] (C : List (Constraint Sig)) {σ τ : Srt}
+    (h : σ ≤ τ) : (inherited C τ).Sublist (inherited C σ) :=
+  C.monotone_filter_right fun _ hc ↦ by simpa using h.trans (by simpa using hc)
+
 end Constraint
+
+/-- The grammar whose principles are the constraints of a list. -/
+abbrev Grammar.ofConstraints (C : List (Constraint Sig)) : Grammar Sig :=
+  .ofList (C.map Constraint.toDescription)
+
+theorem Grammar.ofConstraints_append (C D : List (Constraint Sig)) :
+    Grammar.ofConstraints (C ++ D) = Grammar.ofConstraints C ∪ Grammar.ofConstraints D := by
+  rw [ofConstraints, List.map_append, ofList_append]
 
 end HPSG.RSRL

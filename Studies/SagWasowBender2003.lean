@@ -444,15 +444,14 @@ theorem agreement_eq_not_coindexed :
 the mother carries them. -/
 def coordinationPrinciple : Constraint sig where
   sort := .coordCxt
-  body :=
-    .and (.pathEq (.path [.CONJ1, .CAT]) (.path [.CONJ2, .CAT]))
-      (.and (.pathEq (.path [.CONJ1, .GAP]) (.path [.CONJ2, .GAP]))
-        (.and (.pathEq (.path [.MTR, .CAT]) (.path [.CONJ1, .CAT]))
-          (.pathEq (.path [.MTR, .GAP]) (.path [.CONJ1, .GAP]))))
+  atoms :=
+    [.eq [.CONJ1, .CAT] [.CONJ2, .CAT],
+      .eq [.CONJ1, .GAP] [.CONJ2, .GAP],
+      .eq [.MTR, .CAT] [.CONJ1, .CAT],
+      .eq [.MTR, .GAP] [.CONJ1, .GAP]]
 
 /-- The filler-gap grammar with the coordination construction. -/
-abbrev swbGrammar : Grammar sig :=
-  .ofList ((constraints ++ [coordinationPrinciple]).map Constraint.toDescription)
+abbrev swbGrammar : Grammar sig := .ofConstraints (constraints ++ [coordinationPrinciple])
 
 /-- The entities of a worked coordinate construct are the construct, its mother and two
 conjuncts, their category, a one-gap list with its NP gap and the gap's index, and the empty

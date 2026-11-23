@@ -16,18 +16,26 @@ sorts as outputs, and following a path is reading it in this machine. The *compo
 entity are the entities that some path reaches from it, so each entity is the root of a feature
 structure (`HPSG.RSRL.Interpretation.featureStructure`).
 
+For a path `p`, `I.SortAt u p σ` says that `p` leads from `u` to an entity of the sort `σ`, and
+`I.PathEq u p q` that `p` and `q` lead from `u` to one entity. These are what the abstract
+feature structure of `u` records, so they pass along any simulation of the machine at `u`
+(`HPSG.RSRL.Interpretation.SortAt.of_simulatedBy`).
+
 A *homomorphism* of interpretations keeps sorts, commutes with the attributes and preserves the
 relations. It maps the components of an entity onto those of its image
-(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`).
+(`HPSG.RSRL.Interpretation.HomClass.image_isComponentOf`). An *isomorphism* is a bijection that
+does so and reflects the relations, and a bijection carries an interpretation over to an
+isomorphic one (`HPSG.RSRL.Interpretation.mapEquiv`).
 
 ## Implementation notes
 
 The universe is a parameter, not a field, as the carrier of a first-order structure is in
 mathlib. The conditions that [richter-2024] builds into an interpretation are separate
 predicates (`IsSortResolved`, `IsTotallyWellTyped`, `IsFull`), since a worked example often
-interprets only part of a feature structure. Chains are not formalized. `Hom`, `Embedding` and
-`HomClass` follow their namesakes in `FirstOrder.Language`. The machine outputs the sort in the
-dual order, in which the more specific sort is the greater.
+interprets only part of a feature structure. Chains are not formalized. `Hom`, `Embedding`,
+`Equiv` and `HomClass` follow their namesakes in `FirstOrder.Language`. Being a component is
+being reached in the machine, the reflexive transitive closure of its transitions. The machine
+outputs the sort in the dual order, in which the more specific sort is the greater.
 
 ## References
 
@@ -75,40 +83,69 @@ abbrev featureStructure (u : U) :
 
 variable {I} {u v : U}
 
+@[simp] theorem toPartialMoore_step (α : Sig.Attr) : I.toPartialMoore.step u α = I.A α u := rfl
+
+/-! ### Paths -/
+
+variable (I) in
+/-- The entity that a path leads to from `u`, if every attribute along it is defined. -/
+abbrev eval (u : U) (p : Path Sig) : Option U := I.toPartialMoore.evalFrom u p
+
+theorem eval_cons (α : Sig.Attr) (p : Path Sig) :
+    I.eval u (α :: p) = (I.A α u).bind (I.eval · p) := PartialMoore.evalFrom_cons ..
+
+theorem eval_append (p q : Path Sig) : I.eval u (p ++ q) = (I.eval u p).bind (I.eval · q) :=
+  PartialMoore.evalFrom_append ..
+
+variable (I) in
+/-- The path `p` leads from `u` to an entity whose sort is at least as specific as `σ`. -/
+def SortAt (u : U) (p : Path Sig) (σ : Srt) : Prop := ∃ v ∈ I.eval u p, I.S v ≤ σ
+
+variable (I) in
+/-- The paths `p` and `q` lead from `u` to the same entity. -/
+abbrev PathEq (u : U) (p q : Path Sig) : Prop := I.toPartialMoore.Nerode u p q
+
+instance [DecidableLE Srt] (p : Path Sig) (σ : Srt) : Decidable (I.SortAt u p σ) :=
+  Option.decidableExistsMem (p := (I.S · ≤ σ)) _
+
+section SortAt
+
+variable {p q : Path Sig} {σ τ : Srt} {α : Sig.Attr}
+
+@[simp] theorem sortAt_nil : I.SortAt u [] σ ↔ I.S u ≤ σ := by simp [SortAt]
+
+theorem sortAt_cons (h : I.A α u = some v) : I.SortAt u (α :: p) σ ↔ I.SortAt v p σ := by
+  simp [SortAt, h]
+
+theorem sortAt_append : I.SortAt u (p ++ q) σ ↔ ∃ v ∈ I.eval u p, I.SortAt v q σ := by
+  rw [SortAt, eval_append]
+  cases I.eval u p <;> simp [SortAt]
+
+theorem SortAt.mono (hστ : σ ≤ τ) (h : I.SortAt u p σ) : I.SortAt u p τ :=
+  let ⟨v, hv, hσ⟩ := h; ⟨v, hv, hσ.trans hστ⟩
+
+/-- A path has values of two sorts only if the sorts have a common subsort. -/
+theorem SortAt.exists_le (hσ : I.SortAt u p σ) (hτ : I.SortAt u p τ) : ∃ ρ, ρ ≤ σ ∧ ρ ≤ τ :=
+  let ⟨v, hv, hvσ⟩ := hσ
+  let ⟨_, hw, hwτ⟩ := hτ
+  ⟨I.S v, hvσ, Option.mem_unique hv hw ▸ hwτ⟩
+
+/-- Paths that lead to the same entity have continuations with values of the same sorts. -/
+theorem PathEq.sortAt_append_iff (h : I.PathEq u p q) (r : Path Sig) :
+    I.SortAt u (p ++ r) σ ↔ I.SortAt u (q ++ r) σ := by
+  rw [SortAt, SortAt, eval, eval, h.evalFrom_append]
+
+theorem PathEq.sortAt_iff (h : I.PathEq u p q) : I.SortAt u p σ ↔ I.SortAt u q σ := by
+  simpa using h.sortAt_append_iff []
+
+end SortAt
+
 /-! ### Components -/
 
 variable (I) in
-/-- The entity `v` is the value of some attribute at `u`. -/
-def attrSucc (u v : U) : Prop := ∃ α : Sig.Attr, I.A α u = some v
-
-instance [Fintype Sig.Attr] [DecidableEq U] : DecidableRel I.attrSucc :=
-  fun _ _ ↦ by unfold attrSucc; infer_instance
-
-variable (I) in
-/-- The entity `v` is a component of `u` when a sequence of attributes leads from `u` to `v`. -/
-abbrev IsComponentOf (u v : U) : Prop := Relation.ReflTransGen I.attrSucc u v
-
-instance [Fintype U] [DecidableEq U] [Fintype Sig.Attr] (u v : U) :
-    Decidable (I.IsComponentOf u v) :=
-  Relation.ReflTransGen.decidable_of_fintype u v
-
-/-- The components of an entity are the states its machine reaches from it. -/
-theorem reaches_toPartialMoore_iff : I.toPartialMoore.Reaches u v ↔ I.IsComponentOf u v := by
-  constructor
-  · rintro ⟨p, hp⟩
-    induction p using List.reverseRecOn generalizing v with
-    | nil => obtain rfl : u = v := by simpa using hp
-             exact .refl
-    | append_singleton p α ih =>
-      rw [PartialMoore.evalFrom_append_singleton, Option.bind_eq_some_iff] at hp
-      obtain ⟨w, hw, hα⟩ := hp
-      exact (ih hw).tail ⟨α, hα⟩
-  · intro h
-    induction h with
-    | refl => exact .refl _ _
-    | tail _ hα ih =>
-      obtain ⟨α, hα⟩ := hα
-      exact ih.step hα
+/-- The entity `v` is a component of `u` when a sequence of attributes leads from `u` to `v`:
+the machine of the interpretation reaches `v` from `u`. -/
+abbrev IsComponentOf (u v : U) : Prop := I.toPartialMoore.Reaches u v
 
 /-! ### Typing -/
 
@@ -212,12 +249,9 @@ namespace HomClass
 
 variable {F : Type*} [FunLike F U V] [HomClass F I J] (f : F)
 
-theorem attrSucc (h : I.attrSucc u v) : J.attrSucc (f u) (f v) :=
-  let ⟨α, hα⟩ := h; ⟨α, by rw [map_A f, hα]; rfl⟩
-
 /-- A homomorphism maps the components of an entity to components of its image. -/
 theorem isComponentOf (h : I.IsComponentOf u v) : J.IsComponentOf (f u) (f v) :=
-  h.lift f fun _ _ ↦ attrSucc f
+  h.lift f fun a _ ⟨α, hα⟩ ↦ ⟨α, (map_A f α a).trans (congrArg (Option.map f) hα)⟩
 
 /-- Every component of the image of an entity is the image of one of its components. -/
 theorem exists_isComponentOf_of_isComponentOf {w : V} (h : J.IsComponentOf (f u) w) :
@@ -347,6 +381,104 @@ def comp (f' : Embedding J K) (f : Embedding I J) : Embedding I K where
 
 end Embedding
 
+/-! ### Isomorphisms -/
+
+/-- An isomorphism of interpretations is a bijection of entities that keeps sorts, commutes with
+the attributes, and preserves and reflects the relations. -/
+structure Equiv (I : Interpretation Sig U) (J : Interpretation Sig V) extends U ≃ V where
+  /-- An entity and its image have the same sort. -/
+  map_S' : ∀ u, J.S (toFun u) = I.S u
+  /-- An attribute is defined on the image of an entity exactly when it is defined on the
+  entity, with the image of its value as value. -/
+  map_A' : ∀ α u, J.A α (toFun u) = (I.A α u).map toFun
+  /-- A tuple is a relation tuple exactly when its image is. -/
+  map_R' : ∀ ρ (xs : Fin (Sig.arity ρ) → U), toFun ∘ xs ∈ J.R ρ ↔ xs ∈ I.R ρ
+
+namespace Equiv
+
+/-- An isomorphism regarded as an embedding. -/
+def toEmbedding (f : Equiv I J) : Embedding I J where
+  toEmbedding := f.toEquiv.toEmbedding
+  map_S' := f.map_S'
+  map_A' := f.map_A'
+  map_R' := f.map_R'
+
+instance : FunLike (Equiv I J) U V where
+  coe f := f.toFun
+  coe_injective f g h := by
+    obtain ⟨e, _, _, _⟩ := f
+    obtain ⟨e', _, _, _⟩ := g
+    obtain rfl : e = e' := _root_.Equiv.ext (congrFun h)
+    rfl
+
+instance : HomClass (Equiv I J) I J where
+  map_S f := f.map_S'
+  map_A f := f.map_A'
+  map_R f := (f.map_R' _ _).2
+
+@[simp] theorem coe_toEmbedding (f : Equiv I J) : ⇑f.toEmbedding = f := rfl
+
+@[simp] theorem coe_toEquiv (f : Equiv I J) : ⇑f.toEquiv = f := rfl
+
+variable (I) in
+/-- The identity isomorphism. -/
+protected def refl : Equiv I I where
+  toEquiv := .refl U
+  map_S' _ := rfl
+  map_A' _ _ := Option.map_id'.symm
+  map_R' _ _ := Iff.rfl
+
+/-- The inverse of an isomorphism. -/
+protected def symm (f : Equiv I J) : Equiv J I where
+  toEquiv := f.toEquiv.symm
+  map_S' v :=
+    ((congrArg J.S (f.toEquiv.apply_symm_apply v)).symm.trans (f.map_S' _)).symm
+  map_A' α v := by
+    have h := f.map_A' α (f.toEquiv.symm v)
+    rw [show f.toFun (f.toEquiv.symm v) = v from f.toEquiv.apply_symm_apply v] at h
+    have e : f.toEquiv.symm.toFun ∘ f.toFun = id := funext f.toEquiv.symm_apply_apply
+    rw [h, Option.map_map, e, Option.map_id, id]
+    rfl
+  map_R' ρ xs := by
+    have h := f.map_R' ρ (f.toEquiv.symm ∘ xs)
+    rw [show f.toFun ∘ f.toEquiv.symm ∘ xs = xs from
+      funext fun i ↦ f.toEquiv.apply_symm_apply (xs i)] at h
+    exact h.symm
+
+/-- The composition of two isomorphisms. -/
+protected def trans (f : Equiv I J) (f' : Equiv J K) : Equiv I K where
+  toEquiv := f.toEquiv.trans f'.toEquiv
+  map_S' u := (f'.map_S' (f u)).trans (f.map_S' u)
+  map_A' α u := by
+    change K.A α (f' (f u)) = _
+    rw [HomClass.map_A f', HomClass.map_A f, Option.map_map]; rfl
+  map_R' _ xs := (f'.map_R' _ (f ∘ xs)).trans (f.map_R' _ xs)
+
+@[simp] theorem symm_apply_apply (f : Equiv I J) (u : U) : f.symm (f u) = u :=
+  f.toEquiv.symm_apply_apply u
+
+@[simp] theorem apply_symm_apply (f : Equiv I J) (v : V) : f (f.symm v) = v :=
+  f.toEquiv.apply_symm_apply v
+
+end Equiv
+
+variable (I) in
+/-- The interpretation on `V` that a bijection with the universe of `I` carries over. -/
+def map (e : U ≃ V) : Interpretation Sig V where
+  S v := I.S (e.symm v)
+  A α v := (I.A α (e.symm v)).map e
+  R ρ := {xs | e.symm ∘ xs ∈ I.R ρ}
+
+variable (I) in
+/-- A bijection is an isomorphism onto the interpretation it carries over. -/
+def mapEquiv (e : U ≃ V) : Equiv I (I.map e) where
+  toEquiv := e
+  map_S' u := by simp [map]
+  map_A' α u := by simp [map]
+  map_R' ρ xs := by simp [map, ← Function.comp_assoc]
+
+@[simp] theorem coe_mapEquiv (e : U ≃ V) : ⇑(I.mapEquiv e) = e := rfl
+
 /-- A homomorphism is a simulation of the machine at an entity by the machine at its image. -/
 theorem Hom.simulatedBy (f : Hom I J) (u : U) :
     I.toPartialMoore.SimulatedBy J.toPartialMoore u (f u) :=
@@ -354,6 +486,30 @@ theorem Hom.simulatedBy (f : Hom I J) (u : U) :
     show J.A α (f q) = some (f q')
     rw [HomClass.map_A]
     exact congrArg (Option.map f) hα⟩
+
+/-! ### Subsumption
+
+The sorts of the values of paths and the paths that meet are what the abstract feature structure
+of an entity records, so both pass from an entity to any entity whose feature structure its own
+subsumes. -/
+
+section Simulation
+
+variable {v' : V} {p q : Path Sig} {σ : Srt}
+
+theorem SortAt.of_simulatedBy (h : I.toPartialMoore.SimulatedBy J.toPartialMoore u v')
+    (hσ : I.SortAt u p σ) : J.SortAt v' p σ := by
+  obtain ⟨w, hw, hle⟩ := hσ
+  obtain ⟨c, hc, hwc⟩ := (PartialMoore.simulatedBy_iff.1 h).1 p (OrderDual.toDual (I.S w))
+    (congrArg (Option.map I.toPartialMoore.out) (Option.mem_def.1 hw))
+  obtain ⟨w', hw', rfl⟩ := Option.map_eq_some_iff.1 hc
+  exact ⟨w', hw', (OrderDual.toDual_le_toDual.1 hwc).trans hle⟩
+
+theorem PathEq.of_simulatedBy (h : I.toPartialMoore.SimulatedBy J.toPartialMoore u v')
+    (hpq : I.PathEq u p q) : J.PathEq v' p q :=
+  (PartialMoore.simulatedBy_iff.1 h).2 p q hpq
+
+end Simulation
 
 end Interpretation
 

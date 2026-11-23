@@ -128,6 +128,12 @@ theorem Compat.apply {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g 
 
 theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a := .of_le bot_le le_rfl
 
+/-- In the dual of an order, two elements are compatible when they have a common lower bound. -/
+theorem compat_toDual_iff [Preorder α] {a b : α} :
+    Compat (OrderDual.toDual a) (OrderDual.toDual b) ↔ ∃ c, c ≤ a ∧ c ≤ b :=
+  ⟨fun ⟨u, hu⟩ ↦ ⟨OrderDual.ofDual u, (mem_upperBounds_pair.1 hu).1, (mem_upperBounds_pair.1 hu).2⟩,
+    fun ⟨c, ha, hb⟩ ↦ .of_le (u := OrderDual.toDual c) ha hb⟩
+
 theorem compat_bot [Preorder α] [OrderBot α] (a : α) : Compat a (⊥ : α) := .of_le le_rfl bot_le
 
 theorem not_compat_iff_of_forall_isMax [PartialOrder α] [OrderBot α]

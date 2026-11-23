@@ -263,8 +263,8 @@ private theorem elim_le_elim_of_simulatedBy {γ : Type*} [PartialOrder γ] [Orde
       ((J.A .IDX (h x)).bind (J.A β)).elim ⊥ fun v ↦ f (J.S v) := by
   rcases hi : I.A .IDX x with _ | i
   · simp
-  · have hxi : I.toPartialMoore.Reaches x i := (PartialMoore.Reaches.refl _ x).step hi
-    rw [hA .IDX x i (.refl _ x) hi, Option.bind_some, Option.bind_some]
+  · have hxi : I.toPartialMoore.Reaches x i := PartialMoore.Reaches.refl.step hi
+    rw [hA .IDX x i .refl hi, Option.bind_some, Option.bind_some]
     rcases hv : I.A β i with _ | v
     · simp
     · rw [hA β i v hxi hv]

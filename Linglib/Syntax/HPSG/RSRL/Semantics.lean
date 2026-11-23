@@ -20,7 +20,10 @@ is a model.
 
 `SatisfiesOn` takes the range of the quantifiers as an argument, which `Satisfies` sets to the
 components. `models_iff` reduces satisfaction under every assignment to one assignment, which
-makes `Models` decidable for a grammar given by a list on a finite universe.
+makes `Models` decidable for a grammar given by a list on a finite universe. For a grammar of
+constraints the decision follows the paths of the atoms and does not interpret formulae
+(`HPSG.RSRL.Interpretation.decidableModelsOfConstraints`), which a kernel check of a worked
+model does several times faster.
 
 ## References
 
@@ -104,11 +107,16 @@ theorem evalFrom_toPartialMoore (g : ℕ → U) (u : U) (p : Path Sig) :
     rw [PartialMoore.evalFrom_append_singleton, ih, Term.path_concat, termDenot_feat]
     rfl
 
+/-- The term of a path denotes the entity that the path leads to. -/
+theorem termDenot_path_eq_eval (g : ℕ → U) (u : U) (p : Path Sig) :
+    I.termDenot g (.path p) u = I.eval u p :=
+  (evalFrom_toPartialMoore g u p).symm
+
 /-- The components of `u` are the entities that some path denotes at `u`
 ([richter-2024], Definition 11). -/
 theorem isComponentOf_iff_exists_path (g : ℕ → U) :
     I.IsComponentOf u v ↔ ∃ p : Path Sig, I.termDenot g (.path p) u = some v := by
-  simp only [← reaches_toPartialMoore_iff, PartialMoore.Reaches, evalFrom_toPartialMoore g]
+  simp only [IsComponentOf, PartialMoore.reaches_iff_exists_evalFrom, evalFrom_toPartialMoore g]
 
 /-- A homomorphism commutes with term denotation. -/
 theorem HomClass.termDenot_comp {V : Type*} {J : Interpretation Sig V} {F : Type*}
@@ -239,21 +247,23 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Formula Sig}
 @[simp] theorem satisfies_iff :
     I.Satisfies g u (d.iff e) ↔ (I.Satisfies g u d ↔ I.Satisfies g u e) := satisfiesOn_iff
 
+@[simp] theorem satisfies_conj {ds : List (Formula Sig)} :
+    I.Satisfies g u (.conj ds) ↔ ∀ d ∈ ds, I.Satisfies g u d := satisfiesOn_conj
+
 @[simp] theorem satisfies_ex {x : ℕ} : I.Satisfies g u (.ex x d) ↔
     ∃ w, I.IsComponentOf u w ∧ I.Satisfies (Function.update g x w) u d := satisfiesOn_ex
 
 @[simp] theorem satisfies_all {x : ℕ} : I.Satisfies g u (.all x d) ↔
     ∀ w, I.IsComponentOf u w → I.Satisfies (Function.update g x w) u d := Iff.rfl
 
-theorem SatisfiesOn.and_left (h : I.SatisfiesOn D g u (d.and e)) : I.SatisfiesOn D g u d :=
-  (satisfiesOn_and.1 h).1
+theorem satisfies_sortAssign_path {p : Path Sig} {σ : Srt} :
+    I.Satisfies g u (.sortAssign (.path p) σ) ↔ I.SortAt u p σ := by
+  rw [satisfies_sortAssign, termDenot_path_eq_eval, SortAt]
 
-theorem SatisfiesOn.and_right (h : I.SatisfiesOn D g u (d.and e)) : I.SatisfiesOn D g u e :=
-  (satisfiesOn_and.1 h).2
-
-theorem SatisfiesOn.sortAssign_mono {t : Term Sig} {σ τ : Srt} (hστ : σ ≤ τ)
-    (h : I.SatisfiesOn D g u (.sortAssign t σ)) : I.SatisfiesOn D g u (.sortAssign t τ) :=
-  let ⟨v, hv, hσ⟩ := h; ⟨v, hv, hσ.trans hστ⟩
+theorem satisfies_pathEq_path {p q : Path Sig} :
+    I.Satisfies g u (.pathEq (.path p) (.path q)) ↔ I.PathEq u p q := by
+  rw [satisfies_pathEq, termDenot_path_eq_eval, termDenot_path_eq_eval]
+  exact ⟨fun ⟨v, hp, hq⟩ ↦ ⟨v, hp, hq⟩, fun ⟨v, hp, hq⟩ ↦ ⟨v, hp, hq⟩⟩
 
 /-! ### Free variables -/
 
@@ -324,16 +334,6 @@ def theoryDenotation (θ : Set (Description Sig)) : Set U := {u | ∀ d ∈ θ, 
 /-- An interpretation is a model of a grammar when every principle describes every entity
 ([richter-2024], Definition 18). -/
 def Models (G : Grammar Sig) : Prop := ∀ d ∈ G, ∀ (g : ℕ → U) (u : U), I.Satisfies g u d
-
-/-- A model of a grammar is exhaustive when every theory that describes some entity of some
-model of the grammar describes one of its entities ([richter-2024], Definition 19). -/
-structure IsExhaustive (G : Grammar Sig) : Prop where
-  /-- An exhaustive model is a model. -/
-  models : I.Models G
-  /-- A theory with a nonempty denotation in a model has one in an exhaustive model. -/
-  nonempty_theoryDenotation (θ : Set (Description Sig)) ⦃U' : Type v⦄
-    (I' : Interpretation Sig U') : I'.Models G → (I'.theoryDenotation θ).Nonempty →
-      (I.theoryDenotation θ).Nonempty
 
 variable {I}
 
@@ -411,49 +411,118 @@ theorem satisfies : J.Satisfies (f ∘ g) (f u) φ ↔ I.Satisfies g u φ := by
 theorem models (f : Embedding I J) (hJ : J.Models G) : I.Models G :=
   fun d hd g u ↦ f.satisfies.1 (hJ d hd (f ∘ g) (f u))
 
-/-- An interpretation onto which a model of a grammar embeds is a model of it. -/
-theorem models_of_surjective (f : Embedding I J) (hf : Function.Surjective f)
-    (hI : I.Models G) : J.Models G :=
-  models_iff.2 fun d hd v ↦ by
-    obtain ⟨u, rfl⟩ := hf v
-    exact (f.satisfies (g := fun _ ↦ u)).2 (hI d hd _ u)
-
-/-- A model of a grammar into which an exhaustive model embeds is exhaustive. -/
-theorem isExhaustive {V : Type v} {J : Interpretation Sig V} (f : Embedding I J)
-    (hI : I.IsExhaustive G) (hJ : J.Models G) : J.IsExhaustive G :=
-  ⟨hJ, fun θ _ I' hI' hθ ↦
-    let ⟨u, hu⟩ := hI.nonempty_theoryDenotation θ I' hI' hθ
-    ⟨f u, f.apply_mem_theoryDenotation.2 hu⟩⟩
-
 end Embedding
+
+/-- Isomorphic interpretations are models of the same grammars. -/
+theorem Equiv.models_iff {V : Type*} {J : Interpretation Sig V} (f : Equiv I J) :
+    I.Models G ↔ J.Models G :=
+  ⟨f.symm.toEmbedding.models, f.toEmbedding.models⟩
+
+/-- Isomorphic interpretations are well-typed together. -/
+theorem Equiv.isWellTyped_iff {V : Type*} {J : Interpretation Sig V} (f : Equiv I J) :
+    I.IsWellTyped ↔ J.IsWellTyped :=
+  ⟨HomClass.isWellTyped f.symm, HomClass.isWellTyped f⟩
+
 
 end Interpretation
 
+/-! ### Attribute-value descriptions -/
+
+/-- An atom holds of an entity when its path has a value of its sort there, or its two paths
+lead from the entity to one entity. -/
+def PathAtom.Holds (I : Interpretation Sig U) (u : U) : PathAtom Sig → Prop
+  | .sort p σ => I.SortAt u p σ
+  | .eq p q => I.PathEq u p q
+
+@[simp] theorem PathAtom.holds_sort {I : Interpretation Sig U} {u : U} {p : Path Sig} {σ : Srt} :
+    (PathAtom.sort p σ).Holds I u ↔ I.SortAt u p σ := Iff.rfl
+
+@[simp] theorem PathAtom.holds_eq {I : Interpretation Sig U} {u : U} {p q : Path Sig} :
+    (PathAtom.eq p q).Holds I u ↔ I.PathEq u p q := Iff.rfl
+
 namespace Interpretation
 
-variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {g : ℕ → U} {u : U}
+variable {I : Interpretation Sig U} {C D : List (Constraint Sig)} {c : Constraint Sig}
+  {g : ℕ → U} {u : U}
 
-@[simp] theorem satisfies_toFormula {c : Constraint Sig} :
-    I.Satisfies g u c.toFormula ↔ I.S u ≤ c.sort → I.Satisfies g u c.body := by
-  simp [Constraint.toFormula]
+theorem satisfies_toFormula_pathAtom {a : PathAtom Sig} :
+    I.Satisfies g u a.toFormula ↔ a.Holds I u := by
+  cases a
+  exacts [satisfies_sortAssign_path, satisfies_pathEq_path]
 
-/-- An entity satisfies the descriptions that state a list of constraints exactly when it
-satisfies the bodies of the constraints that its sort inherits. -/
-theorem forall_satisfies_map_toDescription_iff [DecidableLE Srt] :
-    (∀ d ∈ Grammar.ofList (C.map Constraint.toDescription), I.Satisfies g u d) ↔
-      ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies g u c.body := by
+theorem satisfies_body : I.Satisfies g u c.body ↔ ∀ a ∈ c.atoms, a.Holds I u := by
+  unfold Constraint.body
+  induction c.atoms with
+  | nil => simpa [satisfies_toFormula_pathAtom] using ⟨u, rfl, rfl⟩
+  | cons a as ih => simp [ih, satisfies_toFormula_pathAtom]
+
+@[simp] theorem satisfies_toFormula :
+    I.Satisfies g u c.toFormula ↔ I.S u ≤ c.sort → ∀ a ∈ c.atoms, a.Holds I u := by
+  simp [Constraint.toFormula, satisfies_body]
+
+/-- An entity satisfies the descriptions that state a list of constraints exactly when the atoms
+of the constraints that its sort inherits hold of it. -/
+theorem forall_satisfies_ofConstraints_iff [DecidableLE Srt] :
+    (∀ d ∈ Grammar.ofConstraints C, I.Satisfies g u d) ↔
+      ∀ c ∈ Constraint.inherited C (I.S u), ∀ a ∈ c.atoms, a.Holds I u := by
   simp [Constraint.inherited]
 
-theorem models_ofList_map_toDescription_iff [DecidableLE Srt] :
-    I.Models (.ofList (C.map Constraint.toDescription)) ↔
-      ∀ u, ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u c.body :=
-  models_iff.trans
-    ⟨fun h u ↦ forall_satisfies_map_toDescription_iff.1 fun d hd ↦ h d hd u,
-      fun h d hd u ↦ forall_satisfies_map_toDescription_iff.2 (h u) d hd⟩
+theorem models_ofConstraints_iff :
+    I.Models (.ofConstraints C) ↔
+      ∀ c ∈ C, ∀ u, I.S u ≤ c.sort → ∀ a ∈ c.atoms, a.Holds I u := by
+  simp only [models_iff, Grammar.mem_ofList, List.forall_mem_map,
+    Constraint.toDescription_toFormula, satisfies_toFormula]
 
-theorem Models.satisfies_body {G : Grammar Sig} (hI : I.Models G) {c : Constraint Sig}
-    (hc : c.toDescription ∈ G) (hu : I.S u ≤ c.sort) : I.Satisfies g u c.body :=
-  satisfies_toFormula.1 (hI _ hc g u) hu
+/-- An atom that holds of an entity holds of every entity whose feature structure the entity's
+subsumes. -/
+theorem _root_.HPSG.RSRL.PathAtom.Holds.of_simulatedBy {V : Type*} {J : Interpretation Sig V}
+    {v : V} {a : PathAtom Sig} (h : I.toPartialMoore.SimulatedBy J.toPartialMoore u v)
+    (ha : a.Holds I u) : a.Holds J v := by
+  cases a
+  exacts [SortAt.of_simulatedBy h ha, PathEq.of_simulatedBy h ha]
+
+/-- A homomorphism preserves the atoms of an attribute-value description. -/
+theorem Hom.holds {V : Type*} {J : Interpretation Sig V} (f : Hom I J) {a : PathAtom Sig}
+    (ha : a.Holds I u) : a.Holds J (f u) :=
+  ha.of_simulatedBy (f.simulatedBy u)
+
+instance _root_.HPSG.RSRL.PathAtom.decidableHolds [DecidableLE Srt] [DecidableEq U] (u : U) :
+    (a : PathAtom Sig) → Decidable (a.Holds I u)
+  | .sort p σ => inferInstanceAs (Decidable (I.SortAt u p σ))
+  | .eq p q => inferInstanceAs (Decidable (I.PathEq u p q))
+
+/-- Whether an interpretation on a finite universe is a model of a list of constraints is
+decided on the atoms, by following their paths, without interpreting the formulae that state
+them. -/
+instance (priority := high) decidableModelsOfConstraints [DecidableLE Srt] [DecidableEq U]
+    [Fintype U] : Decidable (I.Models (.ofConstraints C)) :=
+  decidable_of_iff _ models_ofConstraints_iff.symm
+
+theorem Models.of_append_left (hI : I.Models (.ofConstraints (C ++ D))) :
+    I.Models (.ofConstraints C) := by
+  rw [Grammar.ofConstraints_append, models_union] at hI
+  exact hI.1
+
+/-- In a model of a grammar, an atom of a constraint holds of each entity of the constraint's
+sort. -/
+theorem Models.holds (hI : I.Models (.ofConstraints C)) (hc : c ∈ C) (hu : I.S u ≤ c.sort)
+    {a : PathAtom Sig} (ha : a ∈ c.atoms) : a.Holds I u :=
+  models_ofConstraints_iff.1 hI c hc u hu a ha
+
+/-- In a model of a grammar, an entity of a constraint's sort has a value of the sort `σ` at the
+path `p` when the constraint says so. The constraint is found in the grammar, and the atom in
+the constraint, by `decide`. -/
+theorem Models.sortAt (hI : I.Models (.ofConstraints C)) (c : Constraint Sig)
+    (hu : I.S u ≤ c.sort) {p : Path Sig} {σ : Srt} (hc : c ∈ C := by decide)
+    (ha : .sort p σ ∈ c.atoms := by decide) : I.SortAt u p σ :=
+  hI.holds hc hu ha
+
+/-- In a model of a grammar, two paths lead from an entity of a constraint's sort to one entity
+when the constraint equates them. -/
+theorem Models.pathEq (hI : I.Models (.ofConstraints C)) (c : Constraint Sig)
+    (hu : I.S u ≤ c.sort) {p q : Path Sig} (hc : c ∈ C := by decide)
+    (ha : .eq p q ∈ c.atoms := by decide) : I.PathEq u p q :=
+  hI.holds hc hu ha
 
 end Interpretation
 
