@@ -161,22 +161,22 @@ def linkNode (w : List (F → Option β)) (a : N) (m n : ℕ) : AR (Tiers N F β
 def linkFeature (w : List (F → Option β)) (f : F) (m n : ℕ) : AR (Tiers N F β) :=
   AR.spreadTier (tiers node) (ofSpec node) w (some (.inr f)) m n
 
-variable [Fintype N] {node} {w : List (F → Option β)} {s : F → Option β} {a : N} {m n k : ℕ}
+variable {node} {w : List (F → Option β)} {s : F → Option β} {a : N} {m n k : ℕ}
   {f g : F} {b : β}
 
-omit [IsPredArchimedean N] [Fintype N] in
+omit [IsPredArchimedean N] in
 theorem word_ofSpec_node_ne_nil {c : N} :
     (ofSpec node s).word (some (.inl c)) ≠ [] ↔ c = ⊥ ∨ Bears node s c := by
   show (if c = ⊥ ∨ Bears node s c then [PUnit.unit] else []) ≠ [] ↔ _
   split_ifs with h <;> simp [h]
 
-omit [DecidableLE N] [Fintype F] [DecidableEq F] [Fintype N] in
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
 theorem parent_node {c : N} (hc : c ≠ ⊥) :
     (tiers node).parent (some (.inl c)) = some (.inl (Order.pred c)) := by
   show tierParent node (some (.inl c)) = _
   simp only [tierParent, hc, ↓reduceIte]
 
-omit [DecidableLE N] [Fintype F] [DecidableEq F] [Fintype N] in
+omit [DecidableLE N] [Fintype F] [DecidableEq F] in
 theorem parent_bot : (tiers node).parent (some (.inl (⊥ : N))) = none := by
   show tierParent node (some (.inl ⊥)) = _
   simp only [tierParent, ↓reduceIte]
@@ -225,6 +225,21 @@ theorem mem_descendants_node (s : F → Option β) : ∀ (n : ℕ) (c : N), Orde
         (AR.mem_children.2 ⟨parent_node hbot, Option.some_ne_none _, ?_⟩)
       have := (link_ofSpec_node_iff (node := node) (s := s) (a := c)).2 (.inr hb)
       rwa [parent_node hbot] at this
+
+/-- Spreading a node crosses no line exactly when no segment strictly between the two has the
+node. -/
+theorem noCrossing_linkNode_iff (hm : m < w.length) (hn : n < w.length)
+    (hma : a = ⊥ ∨ Bears node w[m] a)
+    (hna : a = ⊥ ∨ Order.pred a = ⊥ ∨ Bears node w[n] (Order.pred a)) :
+    (linkNode node w a m n).NoCrossing ↔
+      ∀ k (hk : k < w.length), k ∈ Set.uIoo m n → ¬ (a = ⊥ ∨ Bears node w[k] a) := by
+  rw [linkNode, AR.noCrossing_spreadTier_iff (tiers node) (ofSpec node) (Option.some_ne_none _)
+    (fun s ↦ length_tierWord_le_one node s _) (fun s ↦ length_tierWord_le_one node s _) hm hn
+    (word_ofSpec_node_ne_nil.2 hma) (word_ofSpec_parent_ne_nil hna) (noCrossing_ofWord node w)]
+  exact forall_congr' fun k ↦ forall_congr' fun hk ↦ imp_congr_right fun _ ↦
+    not_congr link_ofSpec_node_iff
+
+variable [Fintype N]
 
 theorem reads_ofSpec_iff :
     (ofSpec node s).Reads (tiers node) 0 (some (.inr f)) b ↔ (node f).isSome ∧ s f = some b := by
@@ -280,18 +295,5 @@ theorem reads_linkFeature_iff (hm : m < w.length) (hn : n < w.length)
         (some (.inr f)) b := by
   -- TODO: as `reads_linkNode_iff`, at the tier of the feature.
   sorry
-
-/-- Spreading a node crosses no line exactly when no segment strictly between the two has the
-node. -/
-theorem noCrossing_linkNode_iff (hm : m < w.length) (hn : n < w.length)
-    (hma : a = ⊥ ∨ Bears node w[m] a)
-    (hna : a = ⊥ ∨ Order.pred a = ⊥ ∨ Bears node w[n] (Order.pred a)) :
-    (linkNode node w a m n).NoCrossing ↔
-      ∀ k (hk : k < w.length), k ∈ Set.uIoo m n → ¬ (a = ⊥ ∨ Bears node w[k] a) := by
-  rw [linkNode, AR.noCrossing_spreadTier_iff (tiers node) (ofSpec node) (Option.some_ne_none _)
-    (fun s ↦ length_tierWord_le_one node s _) (fun s ↦ length_tierWord_le_one node s _) hm hn
-    (word_ofSpec_node_ne_nil.2 hma) (word_ofSpec_parent_ne_nil hna) (noCrossing_ofWord node w)]
-  exact forall_congr' fun k ↦ forall_congr' fun hk ↦ imp_congr_right fun _ ↦
-    not_congr link_ofSpec_node_iff
 
 end Phonology.FeatureGeometry
