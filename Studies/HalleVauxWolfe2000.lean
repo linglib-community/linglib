@@ -188,6 +188,7 @@ theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :
 prediction of a Place-node analysis of (44) that the data refute. -/
 theorem tongueBody_spread_back :
     Segment.spread node .tongueBody src tgt .back = src .back :=
-  spread_of_mem (node := node) (a := Node.tongueBody) (src := ⇑src) (tgt := ⇑tgt) (by decide)
+  spread_of_mem (src := ⇑src) (tgt := ⇑tgt)
+    (by decide : Feature.back ∈ featureClass node Node.tongueBody)
 
 end HalleVauxWolfe2000
