@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Fintype.Option
 public import Linglib.Phonology.Autosegmental.Morph
 public import Linglib.Phonology.Autosegmental.Edit
-public import Linglib.Phonology.Autosegmental.TierTree.Basic
+public import Linglib.Phonology.Autosegmental.Map
 
 /-!
 # Multiplanar representations
@@ -266,15 +266,24 @@ def mapMelody : AR (Multiplanar ι (Sponsored T' M) (Sponsored S M)) where
 
 @[simp] theorem lines_mapMelody : (X.mapMelody φ).lines = X.lines := rfl
 
+/-- The relabelling of each tier that relabels the autosegments by `φ` and keeps the slots. -/
+def melodyMap : ∀ j : Option ι, Multiplanar ι (Sponsored T M) (Sponsored S M) j →
+    Multiplanar ι (Sponsored T' M) (Sponsored S M) j
+  | none => id
+  | some _ => Sponsored.map φ
+
+/-- Relabelling the autosegments is `AR.mapRange` along `melodyMap`. -/
+theorem mapMelody_eq_mapRange : X.mapMelody φ = X.mapRange (melodyMap φ) :=
+  ext (funext fun j ↦ by cases j <;> simp [mapMelody, melodyMap]) fun _ _ _ _ ↦ .rfl
+
 /-- Relabeling commutes with concatenation. -/
 theorem mapMelody_mul (Y : AR (Multiplanar ι (Sponsored T M) (Sponsored S M))) :
-    (X * Y).mapMelody φ = X.mapMelody φ * Y.mapMelody φ :=
-  ext (funext fun j ↦ by cases j <;> simp [mapMelody]) fun i j p q ↦ by
-    rcases i with _ | i <;> rcases j with _ | j <;> simp [Link, mapMelody]
+    (X * Y).mapMelody φ = X.mapMelody φ * Y.mapMelody φ := by
+  simp only [mapMelody_eq_mapRange, mapRange_mul]
 
 theorem mapMelody_one :
-    (1 : AR (Multiplanar ι (Sponsored T M) (Sponsored S M))).mapMelody φ = 1 :=
-  ext (funext fun j ↦ by cases j <;> rfl) fun _ _ _ _ ↦ .rfl
+    (1 : AR (Multiplanar ι (Sponsored T M) (Sponsored S M))).mapMelody φ = 1 := by
+  rw [mapMelody_eq_mapRange, mapRange_one]
 
 theorem mapMelody_ofSlots (m : M) (t : List S) :
     (ofSlots m t : AR (Multiplanar ι (Sponsored T M) (Sponsored S M))).mapMelody φ =
