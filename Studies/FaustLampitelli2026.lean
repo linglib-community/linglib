@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Phonology.GovernmentPhonology.ElementTheory
+public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Autosegmental
 public import Linglib.Phonology.GovernmentPhonology.EmptyCategoryPrinciple
 public import Linglib.Phonology.RuleInteraction
 public import Linglib.Phonology.Segmental.NaturalClass
@@ -37,6 +37,12 @@ operation applies to the output of the one before it and not to the input (`feed
 (`derive_isFixedPt`). Trans-guttural harmony restores the environment of fusion and dissociation
 (`feeds_harmonized`): a derivation that read the harmonized form again would not end on /s_ħʌb/
 (`derive_harmonized_pull`) and would syncopate [sʌmaʕaku] (`realizations_harmonized_37d`).
+
+`positions` gives the positions of a form with their melodies, which
+`ElementTheory.ofForm` represents with each element on its line. The onset of a unit reads an
+element there exactly when its consonant has it (`exists_reads_positions_iff`), and sharing |A|
+between the two /a/s of /m_-barak/ crosses no line, where sharing it between two vowels across a
+guttural would (`noCrossing_fuse_39b`).
 
 ## Implementation notes
 
@@ -827,6 +833,44 @@ theorem derive_isFixedPt : ∀ x : Example, ∀ f ∈ stem x,
 theorem dissociated_drink :
     (∀ f ∈ stem .ex_8b_3msg, Dissociated f 1) ∧ Dissociated imperative36a 1 ∧
       ∀ f ∈ stem .ex_8b_1pl, (dissociation (fusion f))[1]?.map (·.v) = some (.shared .i) := by
+  decide +kernel
+
+/-! ### The elements of a form on their lines -/
+
+/-- The positions of a form, the onset and the nucleus of each unit with their melodies. -/
+def positions (f : Form) : List Position :=
+  f.flatMap fun u ↦ [⟨.C, consET u.c⟩, ⟨.V, (u.v.vowel?.map vowelET).getD ⊥⟩]
+
+theorem getElem?_positions_two_mul (f : Form) (i : ℕ) :
+    (positions f)[2 * i]? = f[i]?.map fun u ↦ ⟨.C, consET u.c⟩ := by
+  induction f generalizing i with
+  | nil => simp [positions]
+  | cons u r ih =>
+    cases i with
+    | zero => simp [positions]
+    | succ i => simpa [positions, Nat.mul_succ] using ih i
+
+-- the onset of a unit reads an element on its line exactly when its consonant has the element
+theorem exists_reads_positions_iff (e : Element) (f : Form) (i : ℕ) :
+    (∃ s, (ofForm (positions f)).Reads Autosegmental.AR.planes (2 * i) (some e) s) ↔
+      HasAt e f i := by
+  rw [exists_reads_ofForm_iff, getElem?_positions_two_mul]
+  unfold HasAt
+  cases f[i]? <;> simp [Has]
+
+/-- The type C gerund of 'bless', /m_-barak/ (39b). -/
+def gerund39b : Form :=
+  (instantiate (pattern .tigrinya .gerC).positions Tigrinya.Phonology.bless).getD []
+
+/-- The dependent perfective of 'pull', /sʌħʌb/ (37c). -/
+def depPrf37c : Form :=
+  (instantiate (pattern .tigrinya .depPrf).positions Tigrinya.Phonology.pull).getD []
+
+-- (39b): the two /a/s of /m_-barak/ fuse across a consonant without |A| and cross no line; the
+-- two vowels of /sʌħʌb/ could not fuse across the guttural
+theorem noCrossing_fuse_39b :
+    (fuse (positions gerund39b) .A 5 3).NoCrossing ∧
+      ¬ (fuse (positions depPrf37c) .A 3 1).NoCrossing := by
   decide +kernel
 
 /-! ### Trans-guttural harmony and the derivation (pp. 24–25) -/
