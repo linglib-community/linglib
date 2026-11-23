@@ -73,9 +73,9 @@ def snowedTo (d : Depth) : St := Function.update ⊥ V.snow (Part.some d)
 def skiing (b : Bool) : St := Function.update ⊥ V.ski (Part.some b)
 
 /-- The outcome of a snowfall adds the skiing it leads to: I ski after eight inches only. -/
-def outcome (_ : Unit) (t u : St) : Prop :=
-  ∃ d, t = snowedTo d ∧
-    u = Function.update (snowedTo d) V.ski (Part.some (decide (d = .eightInches)))
+def outcome (_ : Unit) : SetRel St St :=
+  {(t, u) | ∃ d, t = snowedTo d ∧
+    u = Function.update (snowedTo d) V.ski (Part.some (decide (d = .eightInches)))}
 
 /-- *It snowed*, verified by each positive snowfall. -/
 def snowed : Set St := {snowedTo .eightInches, snowedTo .hundredFeet}
@@ -88,7 +88,7 @@ theorem snowedTo_injective : Function.Injective snowedTo := fun d e h ↦ by
   simpa [snowedTo] using this
 
 /-- An outcome of the snowfall `d` contains my skiing exactly when `d` is eight inches. -/
-theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
+theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : (snowedTo d, u) ∈ outcome ()) :
     u ∈ upperClosure skis ↔ d = .eightInches := by
   obtain ⟨e, he, rfl⟩ := hu
   obtain rfl := snowedTo_injective he
@@ -102,18 +102,18 @@ theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedT
 
 -- true of the eight-inch verifier
 theorem would_eightInches : () ∈ would outcome {snowedTo .eightInches} (upperClosure skis) := by
-  rintro t rfl u hu
+  rintro u ⟨t, rfl, hu⟩
   exact (mem_upperClosure_skis_iff hu).mpr rfl
 
 -- (3b)
 theorem not_would_hundredFeet :
     () ∉ would outcome {snowedTo .hundredFeet} (upperClosure skis) := fun h ↦
-  absurd ((mem_upperClosure_skis_iff ⟨_, rfl, rfl⟩).mp (h rfl _ ⟨_, rfl, rfl⟩)) (by decide)
+  absurd ((mem_upperClosure_skis_iff ⟨_, rfl, rfl⟩).mp (h ⟨_, rfl, _, rfl, rfl⟩)) (by decide)
 
 /-- (3a) is false on the truth clause of exact semantics: the outcome of the hundred-foot
 verifier contains no skiing. -/
 theorem not_would_snowed : () ∉ would outcome snowed (upperClosure skis) := fun h ↦
-  not_would_hundredFeet fun _ ha ↦ h (Set.mem_insert_of_mem _ ha)
+  not_would_hundredFeet (exact_strengthening (Set.subset_insert _ _) h)
 
 /-! ### The dilemma for a repair by closeness -/
 

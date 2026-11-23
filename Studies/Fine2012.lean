@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Order.Concept
+public import Mathlib.Basic.Rel
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Order.BoundedComplete
 
@@ -20,11 +20,11 @@ by nothing. It is inexactly verified by the states containing an exact verifier,
 `upperClosure A`. Inexact contents are the lattice `UpperSet S`, in which conjunction is `⊔`, by
 BC (`mem_upperClosure_sup_iff`), and disjunction is `⊓`.
 
-For a transition relation `outcome w t u`, saying that `u` is a possible outcome of imposing
-the state `t` on the world `w`, the counterfactual `would outcome A C` is true at `w` when every
-outcome at `w` of every exact verifier of `A` inexactly verifies `C`. It is the upper polar of
-the verifiers of `A` along that relation. From the form of this clause alone the
-counterfactual satisfies Inclusive Disjunction (`inclusive_disjunction`), Conjunction
+For a transition relation `outcome w`, relating a state `t` to the possible outcomes `u` of
+imposing it on the world `w`, the counterfactual `would outcome A C` is true at `w` when every
+outcome at `w` of every exact verifier of `A` inexactly verifies `C`: the image of `A` under
+`outcome w` is contained in `C`. From the form of this clause alone the counterfactual
+satisfies Inclusive Disjunction (`inclusive_disjunction`), Conjunction
 (`conjunction`), Exact Strengthening, Inexact Weakening and Triviality; when outcomes contain
 the state imposed it satisfies Identity, and when a state within a world has an outcome within
 it, Modus Ponens (`modus_ponens`).
@@ -61,15 +61,18 @@ section Clause
 
 variable {S W : Type*} [PartialOrder S]
 
-/-- `A > C` is true at `w` when `u` inexactly verifies `C` whenever `t` exactly verifies `A` and
-`u` is a possible outcome of `t` at `w`. -/
-def would (outcome : W → S → S → Prop) (A : Set S) (C : UpperSet S) : Set W :=
-  upperPolar (fun t w ↦ ∀ u, outcome w t u → u ∈ C) A
+/-- `A > C` is true at `w` when the possible outcomes at `w` of the exact verifiers of `A`
+inexactly verify `C`. -/
+def would (outcome : W → SetRel S S) (A : Set S) (C : UpperSet S) : Set W :=
+  {w | (outcome w).image A ⊆ C}
 
-variable {outcome : W → S → S → Prop} {A A' B X : Set S} {C C' : UpperSet S}
+variable {outcome : W → SetRel S S} {A A' B X : Set S} {C C' : UpperSet S} {w : W}
+
+theorem mem_would : w ∈ would outcome A C ↔ (outcome w).image A ⊆ C := Iff.rfl
 
 theorem would_union : would outcome (A ∪ B) C = would outcome A C ∩ would outcome B C :=
-  upperPolar_union ..
+  Set.ext fun _ ↦ by
+    simp only [mem_would, SetRel.image_union, Set.union_subset_iff, Set.mem_inter_iff]
 
 /-- Inclusive Disjunction, with its converse, for `X` the fusions of a verifier of each
 disjunct. -/
@@ -91,42 +94,41 @@ theorem mem_upperClosure_sup_iff [IsBoundedComplete S] {B C : Set S} {u : S} :
     exact ⟨⟨b, hb, hbd.trans hdu⟩, c, hc, hcd.trans hdu⟩
 
 /-- Conjunction, with its converse. -/
-theorem conjunction :
-    would outcome A (C ⊔ C') = would outcome A C ∩ would outcome A C' :=
-  Set.ext fun _ ↦
-    ⟨fun h ↦ ⟨fun _ ht u hu ↦ (UpperSet.mem_sup_iff.mp (h ht u hu)).1,
-      fun _ ht u hu ↦ (UpperSet.mem_sup_iff.mp (h ht u hu)).2⟩,
-     fun h _ ht u hu ↦ UpperSet.mem_sup_iff.mpr ⟨h.1 ht u hu, h.2 ht u hu⟩⟩
+theorem conjunction : would outcome A (C ⊔ C') = would outcome A C ∩ would outcome A C' :=
+  Set.ext fun _ ↦ by
+    simp only [mem_would, UpperSet.coe_sup, Set.subset_inter_iff, Set.mem_inter_iff]
 
 -- Exact Strengthening
 theorem exact_strengthening (h : A' ⊆ A) : would outcome A C ⊆ would outcome A' C :=
-  upperPolar_anti _ h
+  fun _ hw ↦ (SetRel.image_subset_image h).trans hw
 
 -- Inexact Weakening
 theorem inexact_weakening (h : (C : Set S) ⊆ C') : would outcome A C ⊆ would outcome A C' :=
-  fun _ hw _ ht u hu ↦ h (hw ht u hu)
+  fun _ hw ↦ hw.trans h
 
 -- Triviality
 theorem triviality_top [OrderBot S] : would outcome A (upperClosure {⊥}) = Set.univ :=
-  Set.eq_univ_of_forall fun _ _ _ _ _ ↦ ⟨⊥, rfl, bot_le⟩
+  Set.eq_univ_of_forall fun _ _ _ ↦ ⟨⊥, rfl, bot_le⟩
 
 -- Triviality
 theorem triviality_bot : would outcome ∅ C = Set.univ :=
-  upperPolar_empty _
+  Set.eq_univ_of_forall fun _ ↦ by
+    rw [mem_would, SetRel.image_empty_right]
+    exact Set.empty_subset _
 
 -- Identity, from Inclusion
-theorem identity (h : ∀ w t u, outcome w t u → t ≤ u) :
+theorem identity (h : ∀ w t u, (t, u) ∈ outcome w → t ≤ u) :
     would outcome A (upperClosure A) = Set.univ :=
-  Set.eq_univ_of_forall fun w t ht u hu ↦ ⟨t, ht, h w t u hu⟩
+  Set.eq_univ_of_forall fun w u ⟨t, ht, htu⟩ ↦ ⟨t, ht, h w t u htu⟩
 
 /-- Modus Ponens, from Actuality: a state within a world has an outcome within it. Here the
 worlds are states. -/
-theorem modus_ponens {outcome : S → S → S → Prop}
-    (h : ∀ w t, t ≤ w → ∃ u ≤ w, outcome w t u) {w : S} (hw : w ∈ would outcome A C)
+theorem modus_ponens {outcome : S → SetRel S S}
+    (h : ∀ w t, t ≤ w → ∃ u ≤ w, (t, u) ∈ outcome w) {w : S} (hw : w ∈ would outcome A C)
     (hA : w ∈ upperClosure A) : w ∈ C := by
   obtain ⟨t, ht, htw⟩ := hA
   obtain ⟨u, huw, hu⟩ := h w t htw
-  exact C.upper huw (hw ht u hu)
+  exact C.upper huw (hw ⟨t, ht, hu⟩)
 
 end Clause
 
