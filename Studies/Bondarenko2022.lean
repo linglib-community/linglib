@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Attitudes.Anchor
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Fragments.Buryat.Complementizers
 public import Linglib.Fragments.Korean.Complementizers
@@ -58,7 +57,6 @@ inventories.
 
 namespace Bondarenko2022
 
-open Anchor (comp)
 open Buryat
 
 /-! ### Nominal sorts -/
@@ -133,29 +131,48 @@ theorem sort_predicts_cooccurrence :
     ∀ d ∈ cooccurrenceData, d.acceptable = true ↔ d.diagnostic.accepts d.sort := by
   decide
 
-/-! ### Equality, subset and existential content -/
+/-! ### Equality, subset and existential content
 
-variable {W : Type*}
+The content function is partial: it is defined for ideas, beliefs and claims and undefined for
+other individuals. -/
 
-/-- Existential content `CONT(x) ∩ p ≠ ∅` is the overlap semantics that the thesis
-rejects in favour of equality (`comp`). Subset semantics is `ContentIndividual.entails`. -/
-def ExistentialContent (xc : ContentIndividual W) (p : W → Prop) : Prop :=
-  ∃ w, xc.cont w ∧ p w
+variable {X W : Type*} {cont : X → Option (W → Prop)} {x : X} {p q : W → Prop}
 
-theorem existentialContent_of_comp {xc : ContentIndividual W} {p : W → Prop}
-    (hne : ∃ w, xc.cont w) (h : comp p xc) : ExistentialContent xc p :=
-  let ⟨w, hw⟩ := hne; ⟨w, hw, h ▸ hw⟩
+/-- (10): on the subset semantics that the thesis rejects, a clause holds of an individual whose
+content entails the clause's proposition, where the equality semantics (7) asks for
+`p ∈ cont x`. -/
+def SubsetContent (cont : X → Option (W → Prop)) (x : X) (p : W → Prop) : Prop :=
+  ∃ c ∈ cont x, c ≤ p
 
-theorem eq_of_comp_of_comp {xc : ContentIndividual W} {p q : W → Prop}
-    (hp : comp p xc) (hq : comp q xc) : p = q :=
-  hp.symm.trans hq
+/-- (15): on the existential semantics a clause holds of an individual whose content is
+compatible with the clause's proposition. -/
+def ExistentialContent (cont : X → Option (W → Prop)) (x : X) (p : W → Prop) : Prop :=
+  ∃ c ∈ cont x, ∃ w, c w ∧ p w
 
-theorem entails_not_functional :
-    ¬ ∀ (xc : ContentIndividual Bool) (p q : Bool → Prop),
-      xc.entails p → xc.entails q → p = q :=
-  fun h => Bool.noConfusion <| (iff_of_eq (congrFun
-    (h ⟨(· = true)⟩ (· = true) (fun _ => True) (fun _ hb => hb) (fun _ _ => trivial)) false)).mpr
-    trivial
+theorem SubsetContent.of_mem (h : p ∈ cont x) : SubsetContent cont x p :=
+  ⟨p, h, le_rfl⟩
+
+theorem ExistentialContent.of_mem (hne : ∃ w, p w) (h : p ∈ cont x) :
+    ExistentialContent cont x p :=
+  let ⟨w, hw⟩ := hne; ⟨p, h, w, hw, hw⟩
+
+-- (11)
+theorem subsetContent_inf :
+    SubsetContent cont x (p ⊓ q) ↔ SubsetContent cont x p ∧ SubsetContent cont x q :=
+  ⟨fun ⟨c, hc, h⟩ ↦ ⟨⟨c, hc, h.trans inf_le_left⟩, c, hc, h.trans inf_le_right⟩,
+    fun ⟨⟨c, hc, hp⟩, c', hc', hq⟩ ↦ ⟨c, hc, le_inf hp (Option.mem_unique hc hc' ▸ hq)⟩⟩
+
+/-- On the equality semantics two clauses that hold of one individual have the same proposition,
+so clauses cannot stack or conjoin under one content individual. -/
+theorem eq_of_mem_cont (hp : p ∈ cont x) (hq : q ∈ cont x) : p = q :=
+  Option.mem_unique hp hq
+
+theorem subsetContent_not_functional :
+    ¬ ∀ (cont : Unit → Option (Bool → Prop)) (p q : Bool → Prop),
+      SubsetContent cont () p → SubsetContent cont () q → p = q :=
+  fun h ↦ Bool.noConfusion <| (iff_of_eq (congrFun
+    (h (fun _ ↦ some (· = true)) (· = true) (fun _ ↦ True) (.of_mem rfl)
+      ⟨_, rfl, fun _ _ ↦ trivial⟩) false)).mpr trivial
 
 /-! ### Transparency -/
 
@@ -169,12 +186,12 @@ def ReferentiallyTransparentAt (clause : (S → Prop) → S → Prop) (s : S) : 
 theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' => p s') s :=
   fun _ _ h => h
 
-theorem comp_not_transparentAt :
-    ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
-      ReferentiallyTransparentAt (fun p _ => comp p xc) w :=
-  fun h => Bool.noConfusion <| (iff_of_eq (congrFun
-    ((h ⟨(· = false)⟩ false (· = false) (fun _ => True) ⟨fun _ => trivial, fun _ => rfl⟩).mp rfl)
-    true)).mpr trivial
+theorem mem_cont_not_transparentAt :
+    ¬ ∀ (cont : Unit → Option (Bool → Prop)) (w : Bool),
+      ReferentiallyTransparentAt (fun p _ ↦ p ∈ cont ()) w :=
+  fun h ↦ Bool.noConfusion <| (iff_of_eq (congrFun (Option.some.inj
+    ((h (fun _ ↦ some (· = false)) false (· = false) (fun _ ↦ True)
+      ⟨fun _ ↦ trivial, fun _ ↦ rfl⟩).mp rfl)) true)).mpr trivial
 
 /-- A substitution triple's conclusion, with the sort of the embedded
 clause and whether the thesis judges the inference valid. -/

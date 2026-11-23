@@ -703,7 +703,6 @@ import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Acquaintance
-import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Conditionals.Basic

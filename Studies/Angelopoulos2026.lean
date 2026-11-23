@@ -5,7 +5,6 @@ public import Studies.Roussou2010
 public import Linglib.Fragments.Greek.StandardModern.Complementizers
 public import Linglib.Fragments.Greek.StandardModern.Verbs
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-public import Linglib.Semantics.Attitudes.Anchor
 public import Linglib.Data.Examples.Angelopoulos2026
 public import Linglib.Data.Examples.Readers
 
@@ -50,7 +49,6 @@ namespace Angelopoulos2026
 open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
 open Bondarenko2022 (NominalSort CompositionPath)
 open Aspect
-open Anchor (existsClosure)
 
 /-! ### Sorts and aspectual selection -/
 
@@ -209,23 +207,19 @@ theorem oti_pu_lexically_distinct :
 
 /-! ### Factivity from situation semantics (§3.2) -/
 
-/-- A situation verb is anchored when it relates agents only to situations realized at the
-evaluation situation. -/
-def Anchored {S X : Type*} (verb : X → SituationIndividual S → S → Prop) : Prop :=
-  ∀ a xs s, verb a xs s → xs.sit s
-
--- (38b)
-theorem pu_report_factive {S X : Type*} {verb : X → SituationIndividual S → S → Prop}
-    (h : Anchored verb) (a : X) (q : S → Prop) (s : S) : existsClosure verb a q s → q s := by
-  rintro ⟨xs, hv, hq⟩
-  rw [← show xs.sit = q from hq]
-  exact h a xs s hv
+/-- A report with a situation clause entails its complement, whatever the verb: the clause holds
+of a part of the evaluation situation that verifies the complement. -/
+theorem pu_report_factive {S X : Type*} [Preorder S] (verb : X → S → S → Prop) (a : X)
+    (q : Set S) (s : S) (h : ∃ x, verb a x s ∧ Bondarenko2022.compHead q x s) :
+    s ∈ upperClosure q :=
+  let ⟨_, _, hx⟩ := h; Bondarenko2022.mem_upperClosure_of_compHead hx
 
 -- (38a)
-theorem content_report_not_factive :
-    ¬ ∀ (verb : Unit → ContentIndividual Bool → Bool → Prop) (a : Unit) (p : Bool → Prop)
-        (w : Bool), existsClosure verb a p w → p w :=
-  fun h ↦ h (fun _ _ _ ↦ True) () (fun _ ↦ False) true ⟨⟨fun _ ↦ False⟩, trivial, rfl⟩
+theorem oti_report_not_factive :
+    ¬ ∀ (cont : Unit → Option (Bool → Prop)) (verb : Unit → Unit → Bool → Prop)
+        (p : Bool → Prop) (w : Bool), (∃ x, verb () x w ∧ p ∈ cont x) → p w :=
+  fun h ↦ h (fun _ ↦ some fun _ ↦ False) (fun _ _ _ ↦ True) (fun _ ↦ False) true
+    ⟨(), trivial, rfl⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
