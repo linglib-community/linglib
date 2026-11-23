@@ -40,7 +40,10 @@ state generates, in the context `u`, and the counterfactual with a counterfactua
 consequent is the truth clause of that paper for this relation (`would_outcome`). The relation
 satisfies its conditions Inclusion (`le_of_mem_outcome`), Incorporation
 (`mem_outcome_of_isLUB`) and, in an acyclic model, Actuality (`mem_outcome_solve`), so modus
-ponens holds for a counterfactual-free consequent (`solve_mem_of_mem_would_holds`).
+ponens holds for a counterfactual-free consequent (`solve_mem_of_mem_would_holds`). In an
+acyclic model the relation is a function, the potential response of the model
+(`mem_outcome_iff`), and the acyclic models on a graph correspond to the potential responses on
+it (`CausalModel.potentialResponseEquiv`), as in the model built for the completeness proof.
 
 In the execution model the captain signals when the court orders, each executioner fires when
 the captain signals, and the prisoner dies when either fires. With a counterfactual in the
@@ -232,6 +235,14 @@ theorem mem_outcome_solve [∀ v, Nonempty (α v)] [M.IsAcyclic]
     (h : s ≤ fun v ↦ Part.some (M.solve u v)) :
     (s, fun v ↦ Part.some (M.solve u v)) ∈ outcome M u :=
   ⟨M.solve u, isFixedPt_iff_eq_solve.mpr (solve_intervene_eq_iff.mpr h).symm, rfl⟩
+
+-- the transition relation of an acyclic model is its potential response
+theorem mem_outcome_iff [∀ v, Nonempty (α v)] [M.IsAcyclic] :
+    (s, t) ∈ outcome M u ↔ t = fun v ↦ Part.some (M.potentialResponse s u v) := by
+  refine ⟨?_, fun h ↦ ⟨_, isFixedPt_solve _ u, h⟩⟩
+  rintro ⟨x, hx, rfl⟩
+  rw [eq_solve_of_isFixedPt hx]
+  rfl
 
 -- modus ponens for a counterfactual-free consequent
 theorem solve_mem_of_mem_would_holds [∀ v, Nonempty (α v)] [M.IsAcyclic]
