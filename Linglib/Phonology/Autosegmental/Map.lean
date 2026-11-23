@@ -17,13 +17,8 @@ family of alphabets.
 Given a map of alphabets `g i : τ i → τ' i` for each tier `i`, the relabelling `X.mapRange g`
 applies `g i` to each letter of tier `i` and keeps the lines. Given a map of tiers `h : κ → ι`,
 the restriction `X.comapDomain h` is the representation on the tiers `κ` whose tier `k` is tier
-`h k` of `X`, with the lines of `X` between these tiers. Both operations commute with
-concatenation, so they are monoid homomorphisms, `AR.mapRangeHom` and `AR.comapDomainHom`.
-
-Relabelling keeps the lines, so `X.mapRange g` satisfies the No-Crossing Constraint if and only
-if `X` does (`noCrossing_mapRange`), and the melody of a slot of `X.mapRange g` on tier `j` is
-its melody in `X` with `g j` applied (`melody_mapRange`). A restriction of a representation that
-satisfies the No-Crossing Constraint satisfies it too (`NoCrossing.comapDomain`).
+`h k` of `X`, with the lines of `X` between these tiers. Both are monoid homomorphisms, and both
+preserve the No-Crossing Constraint.
 
 ## Implementation notes
 

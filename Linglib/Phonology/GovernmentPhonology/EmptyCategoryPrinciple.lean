@@ -14,21 +14,17 @@ public import Mathlib.Data.Finset.Basic
 
 The Empty Category Principle says when a nucleus may stay unexpressed: when it is governed, when
 it is enclosed in a domain of infrasegmental government, or when it is final in a language whose
-final nuclei may be empty. A governed nucleus governs nothing, so of two successive unexpressed
-nuclei one is enclosed (`GovernmentPhonology.EmptyCategoryPrinciple.enclosed_or_enclosed`).
+final nuclei may be empty.
 
 A realization of a domain chooses which of its nuclei are expressed. We define two. The
-obligatory realization `GovernmentPhonology.obligatory` decides from right to left and leaves a
-nucleus unexpressed whenever the principle allows it. The left-to-right realization
-`GovernmentPhonology.leftToRight` leaves a nucleus unexpressed when the next nucleus can govern
-it, and then expresses the next nucleus. Both satisfy the principle
-(`GovernmentPhonology.emptyCategoryPrinciple_obligatory`,
-`GovernmentPhonology.emptyCategoryPrinciple_leftToRight`).
+obligatory realization `obligatory` decides from right to left and leaves a nucleus unexpressed
+whenever the principle allows it. The left-to-right realization `leftToRight` leaves a nucleus
+unexpressed when the next nucleus can govern it, and then expresses the next nucleus. Both
+satisfy the principle.
 
 In a word of alternating vowels, the obligatory realization depends on whether an expressed
 alternating vowel is strong enough to govern another. If it is, the vowels at an even distance
-from the end are expressed (`GovernmentPhonology.expressed_obligatory_iff_even`). If it is not,
-all vowels but the last are expressed (`GovernmentPhonology.expressed_obligatory_iff_succ_lt`).
+from the end are expressed. If it is not, all vowels but the last are expressed.
 
 ## Implementation notes
 

@@ -18,92 +18,46 @@ Syneresis is the merger of a glide with a preceding homorganic vowel in an open 
 Tigrinya /sʌtij-u/ is pronounced [sʌtj-u]: the /i/ before /j/ is lost. In Tigrinya and Tigre a
 low vowel before a guttural is lost in the same way: /s_mʌʕ-i/ is pronounced [sɨmʕ-i]. In
 Element Theory [i] and [j] consist of the element |I|, and the low vowels and the gutturals
-contain the element |A|. In both cases the vowel is lost before a consonant that has its
-element.
+contain the element |A|. In both cases a vowel is lost before a consonant that has its element.
 
-We define a form as a list of CV units, each a consonant and a nucleus, where a nucleus is empty
-or holds a vowel. Three operations act on forms. `fusion` applies to a vowel whose melody is a
-single element: if the consonant of its unit has the element, the two form a self-licensing
-domain, and otherwise, if the next consonant has the element, the vowel shares it with that
-consonant. `dissociation` empties a nucleus whose vowel shares its element, if the next nucleus
-governs. `epenthesis` marks the empty nuclei that are realized. `derive` applies the three in
-this order. `realizations` lists the surface forms of a form: a marked nucleus is realized as
-the weak vowel [ɨ], or as a copy of the vowel on the other side of an adjacent guttural, which
-is trans-guttural harmony.
+We define a form as a list of CV units, each a consonant and a nucleus, and three operations on
+forms. Fusion makes a vowel share its element with an adjacent consonant that has it.
+Dissociation empties the nucleus of a vowel that shares its element with what follows, if the
+next nucleus governs. Epenthesis marks the empty nuclei that are realized. The derivation
+applies the three in this order.
 
-The main theorem is `dissociation_empty_iff`. Suppose the melody of the vowel of a nucleus is
-the single element `e`. Then dissociation after fusion empties the nucleus if and only if the
-consonant of its unit lacks `e`, what follows has `e`, and the next nucleus governs.
-
-The attested forms of the paper's paradigms test the derivation. Every attested form is a
-realization of the derived form (`mem_realizations_of_not_retains`), except the Tigrinya forms
-that realize a stem-initial nucleus which the derivation empties and leaves unmarked
-(`notMem_realizations_of_retains`). These forms are derived when that nucleus is required to be
-realized (`mem_realizations_stemStart_of_retains`).
-
-The order of the operations matters. In /s_mʌʕ-i/ fusion creates the input of dissociation
-(`feeds_fusion`), and in /m_s_maʕ-u/ dissociation creates the input of epenthesis
-(`feeds_dissociation`). No operation applies again to a derived form of the examples
-(`derive_isFixedPt`). Trans-guttural harmony also creates an input of dissociation
-(`feeds_harmonized`), but it is part of the realization and not of the derivation: deriving the
-harmonized form of /sʌmʌʕ_-ku/ again gives [sʌmʕaku], which is not a realization of its derived
-form (`realizations_harmonized_37d`).
-
-`positions` gives the positions of a form with their melodies, and `ElementTheory.ofForm`
-represents them with each element on its line. In this representation the nucleus of a unit has
-a root node if and only if it holds a vowel (`mem_melody_rootNode_positions_iff`), the consonant
-of a unit has a token of an element if and only if its melody contains the element
-(`exists_mem_melody_positions_iff`), and fusion changes the elements of no position
-(`exists_mem_melody_positions_fusion_iff`).
+The main theorem, `dissociation_empty_iff`, says when a vowel is lost. Suppose its melody is the
+single element `e`. Then dissociation after fusion empties its nucleus if and only if its own
+consonant lacks `e`, what follows has `e`, and the next nucleus governs. The other theorems
+check the derivation against the attested forms of the paper's paradigms, and show that the
+order of the operations matters.
 
 ## Implementation notes
 
-* Consonants, roots and surface forms are segments of the Tigrinya and Tigre fragments. `read`
-  parses the transcription of an attested form with the PHOIBLE inventory of its language.
-* The underlying form of an example is a pattern instantiated by a root, with an ending. A
-  pattern is a prefix and a stem, and each of their positions is a radical, a radical that
-  geminates, or a fixed segment. Gutturals do not geminate, so a geminating position filled by a
-  guttural is a single unit. The prefixes tɨ- and mɨ- have empty nuclei, and the vowel of the
-  causative prefix ʔʌ- is lexical.
-* Government and licensing are those of `GovernmentPhonology`, of which the paper states a
-  simplified version. The final nucleus may be empty, does not govern, and licenses, so a final
-  guttural is licensed. [scheer-zikova-2010] take a final nucleus to govern and license together
-  or to do neither.
-* The paper gives the mid vowels as |A| with |I| or |U|. Here |I| and |U| are their heads.
-* The paper writes [a] as headed |A| and derives the lowering of a fused vowel from the span of
-  its |A|. Here `headed` makes the fused element the head of the vowel.
-* Among the consonants only the gutturals and the glides have a melody, |I| for [j] and |U| for
-  [w]. The palatals and the ejectives contain |I| and |A| and never trigger syneresis; they are
-  given no elements.
-* The /ɨ/ of a pattern is a vowel with no element, not an empty nucleus. Its nucleus governs as
-  a nucleus with any other vowel does, which the syneresis of the imperfective requires. In
-  `positions` it has a root node with no element under it, and an empty nucleus has no root
-  node. [faust-2025] distinguishes a weak vowel from an empty nucleus in this way.
+* The final nucleus may be empty, does not govern, and licenses, so a final guttural is
+  licensed. [scheer-zikova-2010] take a final nucleus to govern and license together or to do
+  neither.
+* The paper gives the mid vowels as |A| with |I| or |U|, and derives the lowering of a fused
+  vowel from the span of its |A|. Here |I| and |U| are the heads of the mid vowels, and `headed`
+  makes the fused element the head of a fused vowel.
+* Among the consonants only the gutturals and the glides have a melody. The palatals and the
+  ejectives contain |I| and |A| and never trigger syneresis; they are given no elements.
+* The /ɨ/ of a pattern is a vowel with no element, not an empty nucleus, so its nucleus governs.
+  [faust-2025] distinguishes a weak vowel from an empty nucleus in this way.
 * `fusion` also applies to two /a/s in successive nuclei, as in the derivation of [mɨ-bɨrak]
-  from /m_-barak/. Sharing |A| between these two nuclei crosses no line, and sharing it between
-  two vowels across a guttural would (`noCrossing_spread_39b`).
-* `fusion` gives a fused vowel a head. A nucleus to which `ElementTheory.spread` spreads the |A|
-  of a glottal has |A| as a dependent (`mem_melody_spread_status`).
-* `epenthesis` marks the nuclei that `GovernmentPhonology.leftToRight` expresses, so the derived
-  forms of the examples satisfy the Empty Category Principle
-  (`emptyCategoryPrinciple_surface`). The right-to-left realization
-  `GovernmentPhonology.obligatory` gives a different result exactly where the dissociated
-  nucleus is the third of three empty nuclei (`pronounced_eq_obligatory_iff`).
-* Trans-guttural harmony is optional, so `realizations` lists every option. `harmonized` reads a
-  surface form with harmony as an underlying form.
-* The 3FPL forms of the perfective paradigms are not recorded. Their suffix vowel is not among
-  the vowels the paper lists.
-* The postvocalic spirantization of b, as in [nɨβaħ], is outside the analysis. `read` takes β as
-  b.
-* `read` takes a long [iː] as [i] followed by [j]: one |I| on a nucleus and on the next
-  consonant.
+  from /m_-barak/.
+* `epenthesis` follows the left-to-right realization `GovernmentPhonology.leftToRight`. The
+  right-to-left realization gives a different result where the dissociated nucleus is the third
+  of three empty nuclei.
+* Three things are left out of the data. The 3FPL forms of the perfective paradigms are not
+  recorded. The postvocalic spirantization of b is not analysed, and `read` takes β as b. `read`
+  takes a long [iː] as [i] followed by [j].
 
 ## TODO
 
 * The ejectives lower a vowel and never cause its loss. This is not derived.
-* `derive_isFixedPt` is checked on the examples. For every form, `epenthesis_epenthesis` shows
-  that epenthesis marks nothing after it has applied once. That fusion and dissociation do not
-  apply to a derived form is not proved for every form.
+* That no operation applies again to a derived form is checked on the examples and not proved
+  for every form.
 
 ## References
 
@@ -938,8 +892,7 @@ theorem elements_nucleus_fusion (f : Form) (i : ℕ) :
       · simp only; split_ifs <;> simp [Nuc.vowel?, elements_vowelET_headed v e he]
     | _ => rfl
 
--- fusion changes the elements of no position, as spreading does
--- (`ElementTheory.exists_mem_melody_spread_iff`)
+-- fusion changes the elements of no position
 theorem exists_mem_melody_positions_fusion_iff (f : Form) (k : ℕ) (e : Element) :
     (∃ s, s ∈ (ofForm (positions (fusion f))).melody tiers k (.line e)) ↔
       ∃ s, s ∈ (ofForm (positions f)).melody tiers k (.line e) := by

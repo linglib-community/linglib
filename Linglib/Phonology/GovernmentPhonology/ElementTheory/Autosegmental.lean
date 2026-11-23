@@ -15,29 +15,15 @@ public import Mathlib.Data.Fintype.Sum
 
 In Element Theory the melody of a segment is a set of elements, and each element has a tier of
 its own, called its line. A position of the skeleton is linked to a root node, and the root node
-is linked to a token on the line of each element of the melody. The tiers form a tree: the
-skeleton, the tier of root nodes below it, and the lines below that.
+is linked to a token on the line of each element of the melody.
 
-We define a `Position` as a slot of the skeleton with the melodic expression of its root node,
-if it has a root node. Its representation `ofPosition` has the slot, the root node, and one
-token for each element of the expression, labelled head or dependent. The representation
-`ofForm w` of a list of positions `w` is the concatenation of the representations of its
-positions.
+We define the representation `ofForm w` of a list of positions `w`. Its lines do not cross, and
+each position dominates its own root node and the tokens of its own elements, and no others.
 
-The melody of a position on a tier is the list of tokens that the position dominates there. In
-`ofForm w` the melody of position `k` is the list of its own tokens (`melody_ofForm`). It
-contains a root node if and only if the position has one (`mem_melody_rootNode_ofForm_iff`), and
-a token of the element `e` if and only if the expression of the position contains `e`
-(`exists_mem_melody_line_ofForm_iff`). The lines of `ofForm w` do not cross
-(`noCrossing_ofForm`).
-
-Spreading the element `e` from position `m` to position `n` links the root node of `n` to the
-token of `e` at `m`, and delinks it from its own token of `e`. This is `spread w e m n`. Its
-lines do not cross if and only if no position strictly between `m` and `n` has `e`
-(`noCrossing_spread_iff`). The melody of each position is its melody in the form where position
-`n` has `e` with the status that `e` has at `m` (`mem_melody_spread_iff`). If positions `m` and
-`n` both have `e`, each position has tokens of the same elements as before
-(`exists_mem_melody_spread_iff`).
+We also define `spread w e m n`, in which the element `e` has spread from position `m` to
+position `n`: the root node of `n` is linked to the token of `e` at `m`. The main result,
+`noCrossing_spread_iff`, is that its lines do not cross if and only if no position strictly
+between `m` and `n` has `e`.
 
 ## Implementation notes
 
