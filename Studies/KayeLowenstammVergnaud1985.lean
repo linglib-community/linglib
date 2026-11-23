@@ -8,6 +8,7 @@ module
 public import Mathlib.Order.SuccPred.Fin
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Phonology.Autosegmental.Map
+public import Linglib.Phonology.Autosegmental.TierTree.Flatten
 public import Linglib.Phonology.FeatureGeometry.Linking
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Autosegmental
 public import Linglib.Phonology.Segmental.PHOIBLE
@@ -27,15 +28,16 @@ value of an expression on the feature of a line is marked if and only if the exp
 element of that line, whether as head or as operator. Only a feature that names no line depends
 on which element is the head.
 
-The lines are therefore feature tiers. Restricted to the skeleton, the root nodes and the lines,
-the representation of a form in Element Theory is the representation in a feature geometry of
-its marked values, when the features hang from the root node and every position has a root
-node.
+The lines are therefore feature tiers. Take the representation of a form in Element Theory, and
+the representation of its marked values in a feature geometry. Link each position to every token
+it dominates, and keep only the skeleton and the lines. The two results are the same
+representation, in any geometry that places the features of the lines.
 
 ## Implementation notes
 
 * The paper links elements to positions directly. `ElementTheory.ofForm` has a root node between
-  a position and its elements, and so has `Phonology.FeatureGeometry.ofWord`.
+  a position and its elements, and a feature geometry has a root node and class nodes.
+  `Autosegmental.AR.flatten` links a position to what it dominates through them.
 * An expression of the paper has one head. `ElementTheory.MR` allows several, and `headMatrix`
   takes the first in the order of the lines.
 * The matrices have one feature of backness. Those that the paper labels [a] and [ə] are
@@ -45,8 +47,6 @@ node.
 
 * Fused lines, on which two elements cannot combine, and the ATR element.
 * Charm, government, and the vowel system of Kpokolo.
-* With a class node between the root node and a feature, the two representations agree only
-  after the class node is contracted.
 
 ## References
 
@@ -286,47 +286,34 @@ theorem eqOn_ofChart_central :
 
 /-! ### Lines as feature tiers -/
 
-/-- The tiers that a representation of elements and a feature geometry share: the skeleton, the
-root nodes and the lines. -/
-inductive SharedTier where
+/-- The tiers of the paper: the skeleton and the lines (§1.2). -/
+inductive Tier where
   | skeleton
-  | rootNode
   | line (l : Line)
   deriving DecidableEq, Fintype
 
-/-- A shared tier as a tier of a representation of elements. -/
-def toElementTier : SharedTier → ElementTheory.Tier
+/-- A tier of the paper as a tier of a representation of elements. -/
+def toElementTier : Tier → ElementTheory.Tier
   | .skeleton => .skeleton
-  | .rootNode => .rootNode
   | .line l => .line l.element
-
-theorem toElementTier_injective : Function.Injective toElementTier := by
-  rintro (_ | _ | l) (_ | _ | l') h <;> simp_all [toElementTier]
-  exact Line.element_injective h
 
 section FeatureGeometry
 
 open Phonology.FeatureGeometry
 
-variable {N : Type} [PartialOrder N] [OrderBot N]
+variable {N : Type}
 
-/-- A shared tier as a tier of a feature geometry: the timing slots, the root node, and the
-feature of a line. -/
-def toFeatureTier : SharedTier → Option (N ⊕ Feature)
+/-- A tier of the paper as a tier of a feature geometry: the timing slots, and the feature of a
+line. -/
+def toFeatureTier : Tier → Option (N ⊕ Feature)
   | .skeleton => none
-  | .rootNode => some (.inl ⊥)
   | .line l => some (.inr l.feature)
 
-theorem toFeatureTier_injective : Function.Injective (toFeatureTier (N := N)) := by
-  rintro (_ | _ | l) (_ | _ | l') h <;> simp_all [toFeatureTier]
-  exact Line.feature_injective h
-
-/-- The relabelling of the shared tiers: a slot and a root node lose their labels, and a token of
-an element becomes the marked value of its line. -/
+/-- The relabelling of the tiers of the paper: a slot loses its label, and a token of an element
+becomes the marked value of its line. -/
 def relabel : ∀ c, ElementTheory.Tiers (toElementTier c) →
     FeatureGeometry.Tiers N Feature Bool (toFeatureTier (N := N) c)
   | .skeleton, _ => PUnit.unit
-  | .rootNode, _ => PUnit.unit
   | .line l, _ => l.markedValue
 
 /-- The marked values of a position: those of its expression, and none if it has no root
@@ -341,75 +328,102 @@ theorem spec_apply_feature (p : Position) (l : Line) {b : Bool} :
     simp only [spec, hp, Option.elim_some, marked_apply_feature]
     split_ifs with h <;> simp [h, eq_comm]
 
-variable [PredOrder N] [DecidableEq N] [DecidableLE N] (node : Feature → Option N)
-  {w : List Position} {k : ℕ} {b : Bool}
+variable [PartialOrder N] [OrderBot N] [PredOrder N] [DecidableEq N] [DecidableLE N]
+  [IsPredArchimedean N] [Fintype N] (node : Feature → Option N)
 
-private theorem mapRange_comapDomain_ofPosition (hnode : ∀ l : Line, node l.feature = some ⊥)
-    (p : Position) (hp : p.melody.isSome) :
-    ((ofPosition p).comapDomain toElementTier).mapRange relabel =
-      (ofSpec node (spec p)).comapDomain toFeatureTier := by
-  obtain ⟨m, hm⟩ := Option.isSome_iff_exists.1 hp
-  rw [ofPosition, ofSpec, AR.comapDomain_fromRel _ toElementTier_injective, AR.mapRange_fromRel,
-    AR.comapDomain_fromRel _ toFeatureTier_injective]
-  have hw : (fun c ↦ (p.word (toElementTier c)).map (relabel (N := N) c)) =
-      fun c ↦ tierWord node (spec p) (toFeatureTier c) := by
-    funext c
-    rcases c with _ | _ | l
-    · rfl
-    · simp [toElementTier, toFeatureTier, Position.word, tierWord, hm, relabel]
-    · have := spec_apply_feature p l (b := l.markedValue)
-      by_cases he : l.element ∈ m.elements
-      · have hs : spec p l.feature = some l.markedValue := this.2 ⟨rfl, m, hm, he⟩
-        simp [toElementTier, toFeatureTier, Position.word, tierWord, hm, he, hnode, hs, relabel]
-      · have hs : spec p l.feature = none := by simp [spec, hm, marked_apply_feature, he]
-        simp [toElementTier, toFeatureTier, Position.word, tierWord, hm, he, hnode, hs]
-  have hw' : ∀ c, (p.word (toElementTier c)).map (relabel (N := N) c) =
-      tierWord node (spec p) (toFeatureTier c) := fun c ↦ congrFun hw c
-  refine AR.ext hw fun c c' i j ↦ ?_
-  rw [AR.link_fromRel, AR.link_fromRel, hw' c, hw' c']
-  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ ?_
-  rcases c with _ | _ | l <;> rcases c' with _ | _ | l' <;>
-    simp [toElementTier, toFeatureTier, Tier.parent, tierParent, hnode]
-
-/-- When the features of the lines hang from the root node and every position has a root node,
-the representation of elements and the feature geometry of the marked values are the same
-representation on the shared tiers. -/
-theorem mapRange_comapDomain_ofForm (hnode : ∀ l : Line, node l.feature = some ⊥)
-    (hw : ∀ p ∈ w, p.melody.isSome) :
-    ((ElementTheory.ofForm w).comapDomain toElementTier).mapRange relabel =
-      (ofWord node (w.map spec)).comapDomain toFeatureTier := by
-  rw [ElementTheory.ofForm, ofWord, ← AR.comapDomainHom_apply, ← AR.mapRangeHom_apply,
-    ← AR.comapDomainHom_apply, map_list_prod, map_list_prod, map_list_prod, List.map_map,
-    List.map_map, List.map_map, List.map_map]
-  exact congrArg List.prod (List.map_congr_left fun p hp ↦
-    mapRange_comapDomain_ofPosition node hnode p (hw p hp))
-
-variable [IsPredArchimedean N] [Fintype N]
-
-/-- In any geometry that places the feature of a line, a slot dominates the marked value on the
-tier of that feature if and only if it dominates a token on the line in the representation of
-elements. -/
-theorem mem_melody_ofWord_feature_iff (hl : (node l.feature).isSome) :
-    b ∈ (ofWord node (w.map spec)).melody (FeatureGeometry.tiers node) k
-        (some (.inr l.feature)) ↔
-      b = l.markedValue ∧
-        ∃ s, s ∈ (ElementTheory.ofForm w).melody ElementTheory.tiers k (.line l.element) := by
-  rw [mem_melody_ofWord_iff, exists_mem_melody_line_ofForm_iff]
+private theorem dominates_ofPosition_line_iff (p : Position) (l : Line) (i j : ℕ) :
+    (ofPosition p).Dominates ElementTheory.tiers i (.line l.element) j ↔
+      i = 0 ∧ j = 0 ∧ ∃ m ∈ p.melody, l.element ∈ m.elements := by
   constructor
-  · rintro ⟨hk, -, h⟩
-    rw [List.length_map] at hk
-    rw [List.getElem_map, spec_apply_feature] at h
-    exact ⟨h.1, w[k], List.getElem?_eq_getElem hk, h.2⟩
-  · rintro ⟨rfl, p, hp, h⟩
-    obtain ⟨hk, rfl⟩ := List.getElem?_eq_some_iff.1 hp
-    exact ⟨by simpa using hk, hl, by rw [List.getElem_map, spec_apply_feature]; exact ⟨rfl, h⟩⟩
+  · intro h
+    have hi : i < 1 := h.lt_length (by simp)
+    have hj := h.lt_length_right hi
+    have h1 := p.length_word_le_one (.line l.element)
+    rw [word_ofPosition] at hj
+    exact ⟨by omega, by omega, Position.word_line_ne_nil_iff.1 (List.ne_nil_of_length_pos
+      (by omega))⟩
+  · rintro ⟨rfl, rfl, h⟩
+    exact dominates_ofPosition (Position.word_line_ne_nil_iff.2 h)
+
+private theorem dominates_ofSpec_feature_iff (hnode : ∀ l : Line, (node l.feature).isSome)
+    (p : Position) (l : Line) (i j : ℕ) :
+    (ofSpec node (spec p)).Dominates (FeatureGeometry.tiers node) i (some (.inr l.feature)) j ↔
+      i = 0 ∧ j = 0 ∧ ∃ m ∈ p.melody, l.element ∈ m.elements := by
+  have hword : (ofSpec node (spec p)).word (some (.inr l.feature)) =
+      (spec p l.feature).toList := by
+    show (if (node l.feature).isSome then (spec p l.feature).toList else []) = _
+    simp only [hnode l, ↓reduceIte]
+  constructor
+  · intro h
+    have hi : i < 1 := h.lt_length (by simp [FeatureGeometry.tiers])
+    have hj := h.lt_length_right hi
+    rw [hword] at hj
+    cases hs : spec p l.feature with
+    | none => simp [hs] at hj
+    | some b =>
+      rw [hs] at hj
+      exact ⟨by omega, by simpa using hj, ((spec_apply_feature p l).1 hs).2⟩
+  · rintro ⟨rfl, rfl, h⟩
+    have hs : spec p l.feature = some l.markedValue := (spec_apply_feature p l).2 ⟨rfl, h⟩
+    obtain ⟨q, hq, hb⟩ := AR.mem_melody_iff_exists_dominates.1
+      (mem_melody_ofSpec_iff.2 ⟨hnode l, hs⟩)
+    rw [hword, hs] at hb
+    obtain rfl : q = 0 := by
+      have := (List.getElem?_eq_some_iff.1 hb).1
+      simpa using this
+    exact hq
+
+private theorem flatten_comapDomain_ofPosition (hnode : ∀ l : Line, (node l.feature).isSome)
+    (p : Position) :
+    (((ofPosition p).flatten ElementTheory.tiers).comapDomain toElementTier).mapRange relabel =
+      ((ofSpec node (spec p)).flatten (FeatureGeometry.tiers node)).comapDomain
+        toFeatureTier := by
+  refine AR.ext (funext fun c ↦ ?_) fun c c' i j ↦ ?_
+  · rcases c with _ | l
+    · rfl
+    · show (p.word (.line l.element)).map (fun _ ↦ l.markedValue) =
+        if (node l.feature).isSome then (spec p l.feature).toList else []
+      simp only [hnode l, ↓reduceIte]
+      by_cases h : ∃ m ∈ p.melody, l.element ∈ m.elements
+      · obtain ⟨m, hm, he⟩ := h
+        rw [(spec_apply_feature p l).2 ⟨rfl, m, hm, he⟩]
+        simp [Position.word, Option.mem_def.1 hm, he]
+      · have hs : spec p l.feature = none := by
+          cases hs : spec p l.feature with
+          | none => rfl
+          | some b => exact absurd ((spec_apply_feature p l).1 hs).2 h
+        have hw : p.word (.line l.element) = [] := by
+          by_contra hw
+          exact h (Position.word_line_ne_nil_iff.1 hw)
+        simp [hs, hw]
+  · rw [AR.link_mapRange, AR.link_comapDomain, AR.link_comapDomain, AR.link_flatten_iff,
+      AR.link_flatten_iff]
+    have hroot : (FeatureGeometry.tiers node).root = none := rfl
+    rcases c with _ | l <;> rcases c' with _ | l' <;>
+      simp [toElementTier, toFeatureTier, hroot, dominates_ofPosition_line_iff,
+        dominates_ofSpec_feature_iff node hnode]
+
+/-- With each position linked to the tokens it dominates, the representation of elements and the
+feature geometry of the marked values are the same representation on the skeleton and the lines,
+in any geometry that places the features of the lines. -/
+theorem flatten_comapDomain_ofForm (hnode : ∀ l : Line, (node l.feature).isSome)
+    (w : List Position) :
+    (((ElementTheory.ofForm w).flatten ElementTheory.tiers).comapDomain toElementTier).mapRange
+        relabel =
+      ((ofWord node (w.map spec)).flatten (FeatureGeometry.tiers node)).comapDomain
+        toFeatureTier := by
+  induction w with
+  | nil => simp [ElementTheory.ofForm, ofWord]
+  | cons p w ih =>
+    have h1 : ElementTheory.ofForm (p :: w) = ofPosition p * ElementTheory.ofForm w := rfl
+    have h2 : ofWord node ((p :: w).map spec) = ofSpec node (spec p) * ofWord node (w.map spec) :=
+      rfl
+    rw [h1, h2, AR.flatten_mul, AR.flatten_mul, AR.comapDomain_mul, AR.comapDomain_mul,
+      AR.mapRange_mul, ih, flatten_comapDomain_ofPosition node hnode]
 
 end FeatureGeometry
 
-/-! ### Where the two representations differ -/
-
-/-- The geometry in which the features of the lines hang from the root node. -/
-def flat : Feature → Option (Fin 1) := fun f ↦ if f ∈ lines.map Line.feature then some 0 else none
+/-! ### The intermediate tiers -/
 
 /-- A geometry with one class node, from which the features of the lines hang. -/
 def classed : Feature → Option (Fin 2) := fun f ↦
@@ -418,22 +432,26 @@ def classed : Feature → Option (Fin 2) := fun f ↦
 /-- (7): the position of [ɛ], with I as head and A as operator. -/
 def mid : Position := ⟨.V, some (.headedSimplex .I ⊔ .simplex .A)⟩
 
--- a position with no root node has a root node in the feature geometry
-theorem comapDomain_ne_of_rootless :
-    ((ElementTheory.ofForm [mid, ⟨.V, none⟩]).comapDomain toElementTier).mapRange relabel ≠
-      (Phonology.FeatureGeometry.ofWord flat ([mid, ⟨.V, none⟩].map spec)).comapDomain
-        toFeatureTier := by
+/-- [ɛ] followed by a position with no root node, in the geometry with a class node, with each
+slot linked to what it dominates and only the tiers of the paper kept. -/
+def flattened : AR fun c ↦ FeatureGeometry.Tiers (Fin 2) Feature Bool (toFeatureTier c) :=
+  ((Phonology.FeatureGeometry.ofWord classed ([mid, ⟨.V, none⟩].map spec)).flatten
+    (Phonology.FeatureGeometry.tiers classed)).comapDomain toFeatureTier
+
+-- the first slot has a line to its marked values of [back] and [high] and none on the ROUND
+-- line, and the slot with no root node has no line
+theorem lines_flattened :
+    flattened.lines .skeleton (.line .back) = {(0, 0)} ∧
+      flattened.lines .skeleton (.line .high) = {(0, 0)} ∧
+      flattened.lines .skeleton (.line .round) = ∅ := by
   decide +kernel
 
--- under a class node the feature tiers hold the same tokens, with no line to the root node
-theorem comapDomain_ne_of_classed :
-    ((ElementTheory.ofForm [mid]).comapDomain toElementTier).mapRange relabel ≠
-        (Phonology.FeatureGeometry.ofWord classed ([mid].map spec)).comapDomain
-          toFeatureTier ∧
-      ∀ c, (((ElementTheory.ofForm [mid]).comapDomain toElementTier).mapRange
-          (relabel (N := Fin 2))).word c =
-        ((Phonology.FeatureGeometry.ofWord classed ([mid].map spec)).comapDomain
-          toFeatureTier).word c := by
+-- without the flattening, the restriction to the skeleton and the lines has no line: in both
+-- representations the lines run through a tier that the paper does not have
+theorem lines_comapDomain_eq_empty :
+    (∀ c c', ((ElementTheory.ofForm [mid]).comapDomain toElementTier).lines c c' = ∅) ∧
+      ∀ c c', ((Phonology.FeatureGeometry.ofWord classed ([mid].map spec)).comapDomain
+        (toFeatureTier (N := Fin 2))).lines c c' = ∅ := by
   decide +kernel
 
 end KayeLowenstammVergnaud1985

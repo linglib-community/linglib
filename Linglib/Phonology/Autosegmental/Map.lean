@@ -28,8 +28,8 @@ of a representation within its tiers.
 
 ## TODO
 
-* The melody of a restriction, when `h` is a map of trees of tiers.
-* The contraction of a tier, which composes the lines through it.
+* The melody of a restriction, when `h` is a map of trees of tiers. `AR.flatten` followed by a
+  restriction covers the case where the tiers dropped lie between the tiers kept.
 * The merger of two tiers into one.
 -/
 
@@ -95,13 +95,6 @@ theorem mapRangeHom_comp (g' : ∀ i, τ' i → τ'' i) :
 theorem wordHom_comp_mapRangeHom (i : ι) :
     (wordHom i).comp (mapRangeHom g) = (FreeMonoid.map (g i)).comp (wordHom i) :=
   MonoidHom.ext fun _ ↦ rfl
-
-/-- The relabelling of a representation given by words and a relation is given by the relabelled
-words and the same relation. -/
-theorem mapRange_fromRel [DecidableEq ι] (w : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop)
-    [∀ i j, DecidableRel (L i j)] :
-    (fromRel w L).mapRange g = fromRel (fun i ↦ (w i).map (g i)) L :=
-  AR.ext rfl fun i j p q ↦ by simp
 
 variable [Fintype ι] [DecidableEq ι] (T : ParentTree ι)
 
@@ -179,13 +172,6 @@ theorem wordHom_comp_comapDomainHom (k : κ) :
 /-- The restriction of a relabelling is the relabelling of the restriction. -/
 theorem comapDomain_mapRange (g : ∀ i, τ i → τ' i) :
     (X.mapRange g).comapDomain h = (X.comapDomain h).mapRange fun k ↦ g (h k) := rfl
-
-/-- The restriction along an injective map of a representation given by words and a relation is
-given by the restricted words and the relation pulled back. -/
-theorem comapDomain_fromRel [DecidableEq ι] [DecidableEq κ] (hh : Function.Injective h)
-    (w : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop) [∀ i j, DecidableRel (L i j)] :
-    (fromRel w L).comapDomain h = fromRel (fun k ↦ w (h k)) fun k k' ↦ L (h k) (h k') :=
-  AR.ext rfl fun k k' p q ↦ by simp [hh.ne_iff]
 
 end ComapDomain
 
