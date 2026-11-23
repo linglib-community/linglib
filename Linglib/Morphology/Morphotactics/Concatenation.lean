@@ -58,7 +58,9 @@ to right is.
 
 @[expose] public section
 
-namespace Morphology.Morphotactics
+namespace Morphotactics
+
+open Morphology
 
 variable {Z E F G α β σ : Type*}
 
@@ -200,9 +202,9 @@ end Realization
 
 /-- The strings of exponents a template licenses are closed under prefixes, so the cells of a
 form on them are found one exponent at a time. -/
-theorem _root_.Morphology.Morphotactics.Template.licensed_of_isPrefix {Slot : Type*}
+theorem Template.licensed_of_isPrefix {Slot : Type*}
     [DecidableEq Slot] {t : Template Slot} {X : Slot → Type*} {w w' : List (Σ s, X s)}
     (h : t.Licensed w') (hp : w <+: w') : t.Licensed w :=
   Template.isSublistClosed_language (hp.sublist.map Sigma.fst) h
 
-end Morphology.Morphotactics
+end Morphotactics

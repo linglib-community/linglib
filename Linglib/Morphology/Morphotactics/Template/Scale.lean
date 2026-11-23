@@ -21,7 +21,7 @@ In a template of suffixes that ascends, every admitted string ascends
 
 @[expose] public section
 
-namespace Morphology.Morphotactics
+namespace Morphotactics
 
 namespace Template
 
@@ -108,4 +108,4 @@ theorem SuffixesAscend.pairwise_of_mem_language {α : Type*} [Preorder α] {cat 
     exact this x hx y hy
 end Template
 
-end Morphology.Morphotactics
+end Morphotactics

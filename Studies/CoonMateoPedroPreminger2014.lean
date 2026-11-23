@@ -360,7 +360,7 @@ def glottocode : Language → Glottocode
   | .yukatek => .yucatecMaya
 
 /-- The verbal complex of a language, from its fragment. -/
-def template : Language → Morphology.Morphotactics.Template VerbSlot
+def template : Language → Morphotactics.Template VerbSlot
   | .chol => Chol.template
   | .qanjobal => Qanjobal.template
   | .kaqchikel => Kaqchikel.template

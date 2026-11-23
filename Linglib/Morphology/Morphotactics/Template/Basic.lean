@@ -35,7 +35,7 @@ morphology, a CV skeleton, is `Autosegmental.Skeleton`, matched in
 
 @[expose] public section
 
-namespace Morphology.Morphotactics
+namespace Morphotactics
 
 /-- A word's position-class template, over the positions `Slot`. Slots are tags, not exponents:
 the exponents of each position live in the citing grammar. -/
@@ -123,4 +123,4 @@ theorem count_le_one_of_mem_language {a : Slot} (ha : a ∉ t.stacking) (hv : v 
 
 end Template
 
-end Morphology.Morphotactics
+end Morphotactics

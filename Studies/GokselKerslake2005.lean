@@ -27,7 +27,7 @@ the harmonized string `w`, and the harmonized form of `w ++ [x]` is that of `w` 
 `fill` of it and `x`. The search-and-copy rules of the three harmony systems, run in turn,
 compute the same form for every word (`harmonize_eq_searchCopy`). The underlying form of a
 word attaches its suffixes one at a time, and before raising the harmonized word is stepwise and
-concatenative in the sense of `Morphology.Morphotactics`: a suffix sees only the harmonized word
+concatenative in the sense of `Morphotactics`: a suffix sees only the harmonized word
 it attaches to and leaves it in place (`isStepwise_harmonize_underlying`,
 `isConcatenative_harmonize_underlying`). Raising before -(I)yor alters the stem, so surface
 forms are not concatenative (`not_isConcatenative_realize`). The alternants that the
@@ -486,12 +486,12 @@ theorem fill_of_mem {x : Segment} (hx : x ∈ vowels ∪ consonants) (w : List S
 /-! ### Suffixes one at a time -/
 
 theorem underlying_eq_ofStep (w : List Segment) (sfxs : List Suffix) :
-    underlying w sfxs = Morphology.Morphotactics.ofStep id Suffix.attach w sfxs :=
+    underlying w sfxs = Morphotactics.ofStep id Suffix.attach w sfxs :=
   rfl
 
 /-- Before raising, a further suffix leaves the word before it in place. -/
 theorem isConcatenative_harmonize_underlying :
-    Morphology.Morphotactics.IsConcatenative fun w sfxs ↦ harmonize (underlying w sfxs) :=
+    Morphotactics.IsConcatenative fun w sfxs ↦ harmonize (underlying w sfxs) :=
   fun w sfxs s ↦ by
     change harmonize (underlying w sfxs) <+: harmonize (underlying w (sfxs ++ [s]))
     rw [underlying_append, underlying_cons, underlying_nil, Suffix.attach, List.append_assoc]
@@ -499,7 +499,7 @@ theorem isConcatenative_harmonize_underlying :
 
 /-- Raising before -(I)yor alters the stem, so surface forms are not concatenative: *anla* is
 no prefix of *anlıyor* (§8.2.3.3). -/
-theorem not_isConcatenative_realize : ¬ Morphology.Morphotactics.IsConcatenative realize :=
+theorem not_isConcatenative_realize : ¬ Morphotactics.IsConcatenative realize :=
   fun h ↦ absurd (h [a, n, l, a] [] iyor.form) (by decide)
 
 private theorem isVowel_fill (w : List Segment) (x : Segment) :
@@ -522,7 +522,7 @@ private theorem initial_harmonize (s : Suffix) (u : List Segment) :
 /-- Before raising, a suffix sees only the harmonized word it attaches to: two words that are
 harmonized alike are harmonized alike with one more suffix. -/
 theorem isStepwise_harmonize_underlying :
-    Morphology.Morphotactics.IsStepwise fun w sfxs ↦ harmonize (underlying w sfxs) :=
+    Morphotactics.IsStepwise fun w sfxs ↦ harmonize (underlying w sfxs) :=
   fun w w' sfxs sfxs' s h ↦ by
     replace h : harmonize (underlying w sfxs) = harmonize (underlying w' sfxs') := h
     simp only [underlying_append, underlying_cons, underlying_nil, Suffix.attach,

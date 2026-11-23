@@ -37,7 +37,7 @@ open Mayan (ExponentTable)
 
 /-- The position classes of the verbal complex, the aspect marker and Set A before the stem and
 Set B after it. -/
-def template : Morphology.Morphotactics.Template Mayan.VerbSlot :=
+def template : Morphotactics.Template Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setA], suffixSlots := [.setB] }
 
 /-- Tseltal is ergative in every aspect. -/

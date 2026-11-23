@@ -124,7 +124,7 @@ inductive Exponent : Slot → Type where
 
 /-- The endings come in the order function, number, case and possessive, each of which a word may
 lack, and are followed by any number of clitics (§3.1, §3.3). -/
-def template : Morphology.Morphotactics.Template Slot where
+def template : Morphotactics.Template Slot where
   suffixSlots := [.function, .number, .case, .possession, .clitic]
   stacking := {.clitic}
 
