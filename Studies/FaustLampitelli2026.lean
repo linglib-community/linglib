@@ -14,22 +14,23 @@ public import Linglib.Data.Examples.Languages
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
 
 In Tigrinya and Tigre a low vowel in an open syllable before a guttural is syncopated, as in
-[sɨmʕ-i] from /s_mʌʕ-i/, the way /i/ is before /j/. In Element Theory the gutturals and the low
-vowels share the element |A|, and the analysis runs in Strict CV with the lateral relations of
-Government Phonology.
+[sɨmʕ-i] from /s_mʌʕ-i/, the way /i/ is before /j/, as in [sʌtj-u] from /sʌtij-u/. In Element
+Theory the gutturals and the low vowels share the element |A| as the glide and the high vowel
+share |I|, and the analysis runs in Strict CV with the lateral relations of Government Phonology.
 
-We define a form as a sequence of CV units and three operations on forms. `fusion` joins the |A|
-of a low vowel with an adjacent |A| and lowers the vowel: the vowel then shares its |A| with what
-follows, or, after a guttural, is licensed by its own onset. `dissociation` empties a nucleus
-that shares its |A| with what follows when the next nucleus governs. `epenthesis` marks the
-empty nuclei that must be realized, and `realizations` realizes each as the weak vowel or as a
-copy of the vowel across a guttural. `derive` applies the three in this order.
+We define a form as a sequence of CV units and three operations on forms. `fusion` joins the
+element that is the whole melody of a vowel with the same element of an adjacent consonant: the
+vowel then shares the element with what follows, or is licensed by its own onset. `dissociation`
+empties a nucleus that shares its element with what follows when the next nucleus governs.
+`epenthesis` marks the empty nuclei that must be realized, and `realizations` realizes each as
+the weak vowel or as a copy of the vowel across a guttural. `derive` applies the three in this
+order.
 
-A nucleus is emptied exactly when it holds a low vowel, its onset has no |A|, what follows has,
-and the next nucleus governs (`dissociation_empty_iff`); in every other configuration of a low
-vowel and a guttural the vowel is lowered and stays. The attested forms are realizations of the
-derived forms (`mem_realizations_of_not_retains`), except the Tigrinya forms that keep a
-stem-initial nucleus the derivation empties (`notMem_realizations_of_retains`), which requiring
+For every element, a nucleus is emptied exactly when its onset lacks the element, what follows
+has it, and the next nucleus governs (`dissociation_empty_iff`); otherwise the fused vowel stays,
+lowered when the element is |A| and before its glide when it is |I|. The attested forms are
+realizations of the derived forms (`mem_realizations_of_not_retains`), except the Tigrinya forms
+that keep a stem-initial nucleus the derivation empties (`notMem_realizations_of_retains`), which requiring
 that nucleus to be realized derives (`mem_realizations_stemStart_of_retains`). Each operation
 applies to the output of the one before it and not to the input (`feeds_fusion`,
 `feeds_dissociation`), and no operation applies to a derived form of the rows
@@ -53,7 +54,12 @@ applies to the output of the one before it and not to the input (`feeds_fusion`,
   neither.
 * The paper gives the mid vowels as |A| with |I| or |U|; here |I| and |U| are their heads. It
   derives the lowering of a fused vowel from the span of its |A| and writes [a] as headed |A|;
-  `lowered` joins headed |A| to the vowel.
+  `headed` makes the fused element the head of the vowel.
+* A consonant has a melody when it is a guttural or a glide, |I| for [j] and |U| for [w]; the
+  palatals and the ejectives, which contain |I| and |A| and never trigger syneresis, have none.
+  A long [iː] is read as [i] before [j], one |I| on a nucleus and the next onset.
+* The 3FPL forms of the perfective paradigms, whose suffix vowel is not among the vowels the
+  paper lists, are not recorded.
 * `fusion` also joins two /a/s in successive nuclei, as in the derivation of [mɨ-bɨrak] from
   /m_-barak/.
 * `Silent` is decided from the left: an empty nucleus is realized when it is initial, when its
@@ -68,8 +74,7 @@ applies to the output of the one before it and not to the input (`feeds_fusion`,
 
 ## TODO
 
-* The syneresis of |I| before a glide and the ejectives, which lower a vowel and never
-  syncopate it, are not derived.
+* The ejectives, which lower a vowel and never syncopate it, are not derived.
 * `derive_isFixedPt` is stated of the rows. Of every form, `epenthesis_epenthesis` shows that
   epenthesis marks nothing further; that fusion and dissociation do not apply to a derived form
   is not proved.
@@ -214,36 +219,45 @@ theorem mem_elements_gutturalET : ∀ g : Guttural, .A ∈ (gutturalET g).elemen
 theorem mem_heads_gutturalET_iff : ∀ g : Guttural, .A ∈ (gutturalET g).heads ↔ g.IsPharyngeal := by
   decide
 
-/-- `IsLowA v` says that the vowel's melody is |A| alone, as for the low vowels of (21). The mid
-vowels carry |A| in a complex expression, which blocks fusion (§3.2.2). -/
-def IsLowA (v : Vowel) : Prop := (vowelET v).elements = {.A}
+/-- The element that is the whole melody of a vowel, if one is: |A| for the low vowels of (21),
+|I| and |U| for the high vowels. The mid vowels carry |A| in a complex expression, which blocks
+fusion (§3.2.2). -/
+def Vowel.element? (v : Vowel) : Option Element :=
+  [Element.A, .I, .U].find? fun e ↦ (vowelET v).elements = {e}
 
-instance : DecidablePred IsLowA := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-theorem isLowA_iff_isLow : ∀ v : Vowel, IsLowA v ↔ v.IsLow := by decide
+theorem element?_eq_some_A_iff_isLow : ∀ v : Vowel, v.element? = some .A ↔ v.IsLow := by decide
 
 /-- The vowel with a given melody, if any. -/
 def Vowel.ofMR? (m : MR) : Option Vowel :=
   [Vowel.a, .aBare, .i, .u, .e, .o, .weak].find? (vowelET · = m)
 
-/-- A fused vowel is realized with |A| as its head, so that [ʌ] lowers to [a] ((21), (27)). -/
-def lowered (v : Vowel) : Vowel := (Vowel.ofMR? (vowelET v ⊔ .headedSimplex .A)).getD v
+/-- A fused vowel is realized with the fused element as its head, so that [ʌ] lowers to [a]
+((21), (27)). -/
+def headed (e : Element) (v : Vowel) : Vowel :=
+  (Vowel.ofMR? (vowelET v ⊔ .headedSimplex e)).getD v
 
-theorem lowered_aBare : lowered .aBare = .a := by decide
+theorem headed_aBare : headed .A .aBare = .a := by decide
 
-theorem lowered_lowered : ∀ v : Vowel, lowered (lowered v) = lowered v := by decide
+theorem headed_headed : ∀ (e : Element) (v : Vowel), headed e (headed e v) = headed e v := by
+  intro e v; cases e <;> cases v <;> decide
 
 /-! ### Strict CV forms -/
 
-/-- `HasA c` says that the consonant is a guttural, whose melody contains |A| (20). Other
-consonants carry no representation here, since ejectives also lower but never trigger syneresis
-(fn. 8). -/
-def HasA (c : Phonology.Segment) : Prop :=
-  ∃ g : Guttural, g.segment = c ∧ .A ∈ (gutturalET g).elements
+/-- The melody of a consonant: that of a guttural (20), and |I| or |U| for a glide, the element of
+a high vowel in a consonantal position (3). Other consonants carry no representation here, since
+the palatals and the ejectives contain |I| and |A| but never trigger syneresis (fn. 8). -/
+def consET (c : Phonology.Segment) : MR :=
+  if c = Tigrinya.Phonology.j then .simplex .I
+  else if c = Tigrinya.Phonology.w then .simplex .U
+  else (([.glottalStop, .h, .pharyngealVoiced, .pharyngealVoiceless] : List Guttural).find?
+    (·.segment = c)).elim ⊥ gutturalET
 
-instance : DecidablePred HasA := fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
+/-- `Has e c` says that the melody of the consonant `c` contains the element `e`. -/
+def Has (e : Element) (c : Phonology.Segment) : Prop := e ∈ (consET c).elements
 
-theorem hasA_segment (g : Guttural) : HasA g.segment := ⟨g, rfl, mem_elements_gutturalET g⟩
+instance (e : Element) : DecidablePred (Has e) := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+theorem has_A_segment : ∀ g : Guttural, Has .A g.segment := by decide +kernel
 
 /-- A nucleus in the course of a derivation (29) is empty, empty but to be realized (▪), or a
 vowel. A vowel fused with an adjacent |A| either shares that |A| with what follows ((26), (27))
@@ -270,14 +284,14 @@ structure CV where
 /-- A form is a strict iteration of CV units. -/
 abbrev Form := List CV
 
-/-- The consonant at `i` contains |A|. -/
-def HasAAt (f : Form) (i : ℕ) : Prop :=
+/-- The consonant at `i` contains the element `e`. -/
+def HasAt (e : Element) (f : Form) (i : ℕ) : Prop :=
   match f[i]? with
-  | some u => HasA u.c
+  | some u => Has e u.c
   | none => False
 
-instance (f : Form) (i : ℕ) : Decidable (HasAAt f i) := by
-  unfold HasAAt; split <;> infer_instance
+instance (e : Element) (f : Form) (i : ℕ) : Decidable (HasAt e f i) := by
+  unfold HasAt; split <;> infer_instance
 
 /-- The nucleus at `i` holds an unfused vowel headed by |A|, which is /a/. -/
 def HeadedAAt (f : Form) (i : ℕ) : Prop :=
@@ -317,7 +331,7 @@ def nuclei (f : Form) : List Nucleus := f.map fun u ↦ { melody := u.v.melody }
 unit needs its government (fn. 21), and one whose onset is a guttural, which needs an expressed
 licensor (25), unless the nucleus is final. -/
 def required (f : Form) : Finset ℕ :=
-  (Finset.range f.length).filter fun i ↦ i = 0 ∨ HasAAt f i ∧ i + 1 < f.length
+  (Finset.range f.length).filter fun i ↦ i = 0 ∨ HasAt .A f i ∧ i + 1 < f.length
 
 /-- The nuclei of a form before epenthesis, those with a vowel expressed, so that only a
 contentful nucleus governs (23a). -/
@@ -330,21 +344,25 @@ def surface (f : Form) : List Nucleus :=
 
 /-! ### The operations of (30) -/
 
-/-- Fusion ((26b), (27b), (28b)) fuses a low vowel with an adjacent |A| and lowers it. After a
-guttural the vowel is licensed by its onset; otherwise it shares its |A| with the next onset, or,
-when both are /a/, with the next nucleus (39b). Fusion always applies (§3.2.2). -/
+/-- Fusion ((9), (26b), (27b), (28b)) fuses the element that is the whole melody of a vowel with
+the same element of an adjacent consonant. After such a consonant the vowel is licensed by its
+onset; otherwise it shares the element with the next onset, or, when both are /a/, with the next
+nucleus (39b). Fusion always applies (§3.2.2). -/
 def fusion (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
     | .vowel v =>
-      if IsLowA v ∧ HasA u.c then ⟨u.c, .licensed (lowered v)⟩
-      else if IsLowA v ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) then
-        ⟨u.c, .shared (lowered v)⟩
-      else u
+      match v.element? with
+      | some e =>
+        if Has e u.c then ⟨u.c, .licensed (headed e v)⟩
+        else if HasAt e f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1) then
+          ⟨u.c, .shared (headed e v)⟩
+        else u
+      | none => u
     | _ => u
 
-/-- Dissociation (26c) empties a nucleus that shares its |A| with what follows iff the next
-nucleus governs. A nucleus licensed by its own onset keeps its vowel (28). -/
+/-- Dissociation ((9), (26c)) empties a nucleus that shares its element with what follows iff the
+next nucleus governs. A nucleus licensed by its own onset keeps its vowel (28). -/
 def dissociation (f : Form) : Form :=
   f.mapIdx fun i u ↦
     match u.v with
@@ -358,7 +376,7 @@ geminate, nor in `R`. -/
 def Silent (R : Finset ℕ) (f : Form) : ℕ → Prop
   | 0 => f[0]?.map (·.v) = some .empty ∧ (1 = f.length ∨ GeminateInternal f 0)
   | i + 1 => f[i + 1]?.map (·.v) = some .empty ∧ (i + 2 = f.length ∨ GeminateInternal f (i + 1) ∨
-      ¬ (HasAAt f (i + 1) ∨ Silent R f i ∨ GeminateInternal f (i + 2) ∨ i + 1 ∈ R))
+      ¬ (HasAt .A f (i + 1) ∨ Silent R f i ∨ GeminateInternal f (i + 2) ∨ i + 1 ∈ R))
 
 instance instDecidableSilent (R : Finset ℕ) (f : Form) : ∀ i, Decidable (Silent R f i)
   | 0 => inferInstanceAs (Decidable (_ ∧ _))
@@ -380,8 +398,8 @@ def vowelAt (f : Form) (i : ℕ) : Option Vowel := f[i]?.bind (·.v.vowel?)
 /-- The vowels a nucleus to be realized at `i` may copy by trans-guttural harmony ((7), (19c)):
 the vowel across an adjacent guttural, in either direction. -/
 def harmonySources (f : Form) (i : ℕ) : List Vowel :=
-  (if 0 < i ∧ HasAAt f i then (vowelAt f (i - 1)).toList else []) ++
-    if HasAAt f (i + 1) then (vowelAt f (i + 1)).toList else []
+  (if 0 < i ∧ HasAt .A f i then (vowelAt f (i - 1)).toList else []) ++
+    if HasAt .A f (i + 1) then (vowelAt f (i + 1)).toList else []
 
 /-- A nucleus to be realized surfaces as the weak vowel or as a copy of a harmony source. -/
 def realizeMark (f : Form) (i : ℕ) : List (List Phonology.Segment) :=
@@ -412,49 +430,77 @@ def harmonized (f : Form) : Form :=
 
 /-! ### Fusion and dissociation -/
 
-theorem hasAAt_fusion (f : Form) (i : ℕ) : HasAAt (fusion f) i ↔ HasAAt f i := by
-  simp only [HasAAt, fusion, List.getElem?_mapIdx]
+theorem geminateInternal_congr {f g : Form} (h : ∀ i : ℕ, g[i]?.map (·.c) = f[i]?.map (·.c))
+    (i : ℕ) : GeminateInternal g i ↔ GeminateInternal f i := by
+  have h1 := h i
+  have h2 := h (i + 1)
+  unfold GeminateInternal
+  cases hf1 : f[i]? <;> cases hf2 : f[i + 1]? <;> cases hg1 : g[i]? <;> cases hg2 : g[i + 1]? <;>
+    simp_all
+
+theorem hasAt_congr {f g : Form} (h : ∀ i : ℕ, g[i]?.map (·.c) = f[i]?.map (·.c)) (e : Element)
+    (i : ℕ) : HasAt e g i ↔ HasAt e f i := by
+  have h1 := h i
+  unfold HasAt
+  cases hf : f[i]? <;> cases hg : g[i]? <;> simp_all
+
+theorem map_c_fusion (f : Form) (i : ℕ) : (fusion f)[i]?.map (·.c) = f[i]?.map (·.c) := by
+  simp only [fusion, List.getElem?_mapIdx]
   rcases f[i]? with _ | ⟨c, n⟩
-  · simp
-  · cases n <;> simp only [Option.map_some]; split_ifs <;> rfl
+  · rfl
+  · cases n with
+    | vowel v =>
+      simp only [Option.map_some]
+      rcases v.element? with _ | e
+      · rfl
+      · simp only; split_ifs <;> rfl
+    | _ => rfl
+
+theorem hasAt_fusion (e : Element) (f : Form) (i : ℕ) : HasAt e (fusion f) i ↔ HasAt e f i :=
+  hasAt_congr (map_c_fusion f) e i
 
 theorem lexical_fusion (f : Form) : lexical (fusion f) = lexical f := by
   refine List.ext_getElem? fun i ↦ ?_
   simp only [lexical, fusion, List.getElem?_map, List.getElem?_mapIdx]
   rcases f[i]? with _ | ⟨c, n⟩
   · rfl
-  · cases n <;> simp only [Option.map_some]; split_ifs <;> rfl
+  · cases n with
+    | vowel v =>
+      simp only [Option.map_some]
+      rcases v.element? with _ | e
+      · rfl
+      · simp only; split_ifs <;> rfl
+    | _ => rfl
 
--- (26b), (27b), (28b), §3.2.2
-theorem fusion_getElem? (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel)
-    (h : f[i]? = some ⟨c, .vowel v⟩) :
+-- (9), (26b), (27b), (28b), §3.2.2
+theorem fusion_getElem? (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel) (e : Element)
+    (h : f[i]? = some ⟨c, .vowel v⟩) (he : v.element? = some e) :
     (fusion f)[i]? = some ⟨c,
-      if IsLowA v ∧ HasA c then .licensed (lowered v)
-      else if IsLowA v ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) then
-        .shared (lowered v)
+      if Has e c then .licensed (headed e v)
+      else if HasAt e f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1) then .shared (headed e v)
       else .vowel v⟩ := by
-  simp only [fusion, List.getElem?_mapIdx, h, Option.map_some]
+  simp only [fusion, List.getElem?_mapIdx, h, Option.map_some, he]
   split_ifs <;> rfl
 
-/-- Syneresis ((26), (40)): dissociation after fusion empties a nucleus exactly when it holds a
-low vowel, its onset has no |A|, the next onset has, or the two nuclei hold /a/, and the next
-nucleus governs. -/
+/-- Syneresis ((9), (26), (40)): where an element `e` is the whole melody of a vowel, dissociation
+after fusion empties its nucleus exactly when its onset lacks `e`, the next onset has it, or the
+two nuclei hold /a/, and the next nucleus governs. -/
 theorem dissociation_empty_iff (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel)
-    (h : f[i]? = some ⟨c, .vowel v⟩) :
+    (e : Element) (h : f[i]? = some ⟨c, .vowel v⟩) (he : v.element? = some e) :
     (dissociation (fusion f))[i]? = some ⟨c, .empty⟩ ↔
-      IsLowA v ∧ ¬ HasA c ∧ (HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) ∧
+      ¬ Has e c ∧ (HasAt e f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) ∧
         IsGovernor actorship (lexical f) (i + 1) := by
-  simp only [dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v h, Option.map_some,
+  simp only [dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v e h he, Option.map_some,
     lexical_fusion]
   split_ifs <;> simp_all
 
 -- (27), (28), (40)
 theorem vowelAt_dissociation_iff (f : Form) (i : ℕ) (c : Phonology.Segment) (v : Vowel)
-    (h : f[i]? = some ⟨c, .vowel v⟩) (hv : IsLowA v)
-    (hA : HasA c ∨ HasAAt f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) :
-    vowelAt (dissociation (fusion f)) i = some (lowered v) ↔
-      HasA c ∨ ¬ IsGovernor actorship (lexical f) (i + 1) := by
-  simp only [vowelAt, dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v h,
+    (e : Element) (h : f[i]? = some ⟨c, .vowel v⟩) (he : v.element? = some e)
+    (hA : Has e c ∨ HasAt e f (i + 1) ∨ HeadedAAt f i ∧ HeadedAAt f (i + 1)) :
+    vowelAt (dissociation (fusion f)) i = some (headed e v) ↔
+      Has e c ∨ ¬ IsGovernor actorship (lexical f) (i + 1) := by
+  simp only [vowelAt, dissociation, List.getElem?_mapIdx, fusion_getElem? f i c v e h he,
     Option.map_some, lexical_fusion, Option.bind_some]
   split_ifs <;> simp_all [Nuc.vowel?]
 
@@ -498,20 +544,6 @@ theorem map_v_epenthesis_eq_empty_iff (R : Finset ℕ) (f : Form) (i : ℕ) :
       rw [ite_eq_right fun hc ↦ hc.2 h]
       exact he
 
-theorem geminateInternal_congr {f g : Form} (h : ∀ i : ℕ, g[i]?.map (·.c) = f[i]?.map (·.c))
-    (i : ℕ) : GeminateInternal g i ↔ GeminateInternal f i := by
-  have h1 := h i
-  have h2 := h (i + 1)
-  unfold GeminateInternal
-  cases hf1 : f[i]? <;> cases hf2 : f[i + 1]? <;> cases hg1 : g[i]? <;> cases hg2 : g[i + 1]? <;>
-    simp_all
-
-theorem hasAAt_congr {f g : Form} (h : ∀ i : ℕ, g[i]?.map (·.c) = f[i]?.map (·.c)) (i : ℕ) :
-    HasAAt g i ↔ HasAAt f i := by
-  have h1 := h i
-  unfold HasAAt
-  cases hf : f[i]? <;> cases hg : g[i]? <;> simp_all
-
 theorem silent_epenthesis (R : Finset ℕ) (f : Form) :
     ∀ i, Silent R (epenthesis R f) i ↔ Silent R f i
   | 0 => by
@@ -523,10 +555,10 @@ theorem silent_epenthesis (R : Finset ℕ) (f : Form) :
   | i + 1 => by
     show (epenthesis R f)[i + 1]?.map (·.v) = some .empty ∧
         (i + 2 = (epenthesis R f).length ∨ GeminateInternal (epenthesis R f) (i + 1) ∨
-          ¬ (HasAAt (epenthesis R f) (i + 1) ∨ Silent R (epenthesis R f) i ∨
+          ¬ (HasAt .A (epenthesis R f) (i + 1) ∨ Silent R (epenthesis R f) i ∨
             GeminateInternal (epenthesis R f) (i + 2) ∨ i + 1 ∈ R)) ↔ Silent R f (i + 1)
     rw [map_v_epenthesis_eq_empty_iff, geminateInternal_congr (map_c_epenthesis R f),
-      geminateInternal_congr (map_c_epenthesis R f), hasAAt_congr (map_c_epenthesis R f),
+      geminateInternal_congr (map_c_epenthesis R f), hasAt_congr (map_c_epenthesis R f),
       silent_epenthesis R f i, show (epenthesis R f).length = f.length from List.length_mapIdx]
     exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.2⟩⟩
 
@@ -609,7 +641,7 @@ def instantiate (t : List (Pos × Nuc)) (r : ConsonantalRoot Phonology.Segment) 
     match pn.1 with
     | .rad i => (r.segments[i]?).map fun c ↦ [CV.mk c pn.2]
     | .gem i => (r.segments[i]?).map fun c ↦
-        if HasA c then [CV.mk c pn.2] else [CV.mk c .empty, CV.mk c pn.2]
+        if Has .A c then [CV.mk c pn.2] else [CV.mk c .empty, CV.mk c pn.2]
     | .seg c => some [CV.mk c pn.2]).map List.flatten
 
 /-- An ending is a vowel filling the stem-final nucleus, then further CV units. -/
@@ -626,6 +658,8 @@ def ending : Examples.Suffix → Ending
   | .ej => ⟨some .e, [(Tigrinya.Phonology.j, .empty)]⟩
   | .om => ⟨some .o, [(Tigrinya.Phonology.m, .empty)]⟩
   | .ku => ⟨none, [(Tigrinya.Phonology.k, V .u)]⟩
+  | .e => ⟨some .e, []⟩
+  | .na => ⟨none, [(Tigrinya.Phonology.n, V .a)]⟩
   | .ka => ⟨none, [(Tigrinya.Phonology.k, V .a)]⟩
 
 /-- A stem with an ending. -/
@@ -639,7 +673,7 @@ def attach (f : Form) (s : Ending) : Form :=
 /-- The language of each root. -/
 def lang : Examples.Root → Lang
   | .whip | .hear | .arrest | .pull | .teach | .slaughter | .escape | .ask | .uncover | .bark
-  | .hurt | .bless | .arf => .tigrinya
+  | .hurt | .bless | .arf | .drink => .tigrinya
   | .weigh | .leave | .wash | .flee | .getUp | .whipTigre | .askTigre | .load | .uncoverTigre
   | .pullTigre => .tigre
 
@@ -658,6 +692,7 @@ def root : Examples.Root → ConsonantalRoot Phonology.Segment
   | .hurt => Tigrinya.Phonology.hurt
   | .bless => Tigrinya.Phonology.bless
   | .arf => Tigrinya.Phonology.arf
+  | .drink => Tigrinya.Phonology.drink
   | .weigh => Tigre.Phonology.weigh
   | .leave => Tigre.Phonology.leave
   | .wash => Tigre.Phonology.wash
@@ -695,18 +730,20 @@ segment: a vowel, or a consonant of the language's inventory. -/
 def letter? (l : Lang) (x : String) : Option Phonology.Segment :=
   ((Vowel.ofLetter? x).map Vowel.segment).orElse fun _ ↦ (inventory l).segment? (glyph l x)
 
-/-- The letters of a transcription, a superscript going with the letter before it. -/
+/-- The letters of a transcription, a superscript or a length mark going with the letter before
+it. -/
 def letters : List Char → List String
   | [] => []
   | [c] => [String.singleton c]
   | c :: d :: cs =>
-    if d = 'ˁ' ∨ d = 'ˀ' then String.ofList [c, d] :: letters cs
+    if d = 'ˁ' ∨ d = 'ˀ' ∨ d = 'ː' then String.ofList [c, d] :: letters cs
     else String.singleton c :: letters (d :: cs)
 
-/-- `read l s` reads a transcription of a form of language `l` as segments, hyphens removed and β
-read as b. -/
+/-- `read l s` reads a transcription of a form of language `l` as segments, hyphens removed, β
+read as b and a long [iː] as [i] before [j]. -/
 def read (l : Lang) (s : String) : Option (List Phonology.Segment) :=
-  (letters ((s.toList.filter (· ≠ '-')).map fun c ↦ if c = 'β' then 'b' else c)).mapM (letter? l)
+  ((letters ((s.toList.filter (· ≠ '-')).map fun c ↦ if c = 'β' then 'b' else c)).flatMap
+    fun x ↦ if x = "iː" then ["i", "j"] else [x]).mapM (letter? l)
 
 /-! ### The paradigms (4)–(19) and the derivations (31)–(39) -/
 
@@ -815,6 +852,13 @@ theorem derive_isFixedPt : ∀ x : Example, ∀ f ∈ stem x,
       epenthesis ∅ (derive ∅ f) = derive ∅ f := by
   decide +kernel
 
+-- (9), (11): the vowel before the glide of /sʌtij-u/ is emptied as the vowel before the guttural
+-- of /s_mʌʕ-i/ is, and before the consonant-initial suffix of /sʌtij-na/ it stays
+theorem dissociated_drink :
+    (∀ f ∈ stem .ex_8b_3msg, Dissociated f 1) ∧ Dissociated imperative36a 1 ∧
+      ∀ f ∈ stem .ex_8b_1pl, (dissociation (fusion f))[1]?.map (·.v) = some (.shared .i) := by
+  decide +kernel
+
 /-! ### Trans-guttural harmony and the derivation (pp. 24–25) -/
 
 /-- In (37d), trans-guttural harmony feeds dissociation, which does not apply to the derived
@@ -856,7 +900,7 @@ theorem isGovernor_32a (s : WithBot Melody) :
   | coe m => cases m <;> decide
 
 -- (25), (32a)
-theorem guttural_licensed : ∀ x : Example, ∀ f ∈ stem x, ∀ i < f.length, HasAAt f i →
+theorem guttural_licensed : ∀ x : Example, ∀ f ∈ stem x, ∀ i < f.length, HasAt .A f i →
     IsLicensor actorship (surface (derive ∅ f)) i := by
   decide +kernel
 

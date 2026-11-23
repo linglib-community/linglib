@@ -223,4 +223,8 @@ def bless : ConsonantalRoot Segment := ⟨[b, «ɾ», k]⟩
 [ʕarʌf-] DEP.PRF. -/
 def arf : ConsonantalRoot Segment := ⟨[«ʕ», «ɾ», f]⟩
 
+/-- √stI 'drink', a weak root whose final radical is the glide /j/, gives [sʌtj-u] PRF-3MSG and
+[sʌtiː-na] PRF-1PL. -/
+def drink : ConsonantalRoot Segment := ⟨[s, t, j]⟩
+
 end Tigrinya.Phonology

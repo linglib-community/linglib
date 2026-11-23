@@ -72,6 +72,11 @@
           "doc": "√ʕrf, which the paper does not gloss"
         },
         {
+          "name": "drink",
+          "label": "drink",
+          "doc": "√stI 'drink', a weak root whose final radical is the element |I|"
+        },
+        {
           "name": "weigh",
           "label": "weigh",
           "doc": "Tigre √mzn 'weigh'"
@@ -261,6 +266,16 @@
           "name": "ka",
           "label": "ka",
           "doc": "-ka, the 2MSG of (19c)"
+        },
+        {
+          "name": "e",
+          "label": "e",
+          "doc": "-e, the 1SG of the PRF (8)"
+        },
+        {
+          "name": "na",
+          "label": "na",
+          "doc": "-na, the 1PL of the PRF (8)"
         }
       ]
     }
@@ -803,6 +818,206 @@
       "paperFeatures": [
         ["root", "ask"],
         ["template", "imp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_1sg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1SG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "e"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_3msg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-u",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "u"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_3fsg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3FSG of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_1pl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-na",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1PL of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "na"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8a_3mpl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8a)"},
+      "language": "tigr1271",
+      "primaryText": "gʌrif-om",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MPL of 'whip'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "whip"],
+        ["template", "prf"],
+        ["suffix", "om"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_1sg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-e",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1SG of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "e"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_3msg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-u",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MSG of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "u"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_3fsg",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-a",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3FSG of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "a"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_1pl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtiː-na",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-1PL of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "na"]
+      ],
+      "comment": "Before the consonant-initial suffix the radical |I| and the vocalization /i/ give a long [iː].",
+      "verified": "page-image"
+    },
+    {
+      "id": "faustlampitelli2026_8b_3mpl",
+      "source": {"bibkey": "faust-lampitelli-2026", "paperLabel": "(8b)"},
+      "language": "tigr1271",
+      "primaryText": "sʌtj-om",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "PRF-3MPL of 'drink'",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["root", "drink"],
+        ["template", "prf"],
+        ["suffix", "om"]
       ],
       "comment": "",
       "verified": "page-image"
