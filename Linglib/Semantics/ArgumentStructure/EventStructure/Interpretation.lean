@@ -9,7 +9,9 @@ public import Linglib.Semantics.ArgumentStructure.Root.Basic
 Event-structural decomposition builds the meaning of a verb from two relations: an eventuality
 `e` *gives rise to* a state `s`, written `e ~[become] s`, and an eventuality `v` *causes* an
 eventuality `e`, written `v ~[cause] e`. An `EventStructure.Interpretation` over types of
-states and eventualities is a choice of these two relations.
+states and eventualities is a choice of these relations, with a third, `causeState`, between an
+eventuality and a state it causes without a change, for a causative head over a stative
+complement.
 
 The verbal heads are possibility along the relations. For a state predicate `p`, the
 change-of-state head yields `◇[become] p`, the eventualities that give rise to a `p`-state, and
@@ -55,9 +57,16 @@ postulate of the result it means.
 `become` runs from the eventuality to the state it gives rise to, the direction of `cause`, so
 that the two compose; [beavers-koontz-garboden-2020] write the state first.
 
+Causation of a state is a field of its own and not `cause` followed by `become`, since a state
+that is caused need not arise from a change: [yu-ausensi-smith-2023] let the causative head take
+a caused eventuality of either sort. It defaults to the empty relation, for an analysis on which
+every caused state is the result of a change. The meaning postulates concern caused changes and
+are stated of `cause`.
+
 ## References
 
 * [beavers-koontz-garboden-2020]
+* [yu-ausensi-smith-2023]
 -/
 
 @[expose] public section
@@ -72,19 +81,22 @@ structure Interpretation (State Event : Type*) where
   become : SetRel Event State
   /-- An eventuality and an eventuality it causes. -/
   cause : SetRel Event Event
+  /-- An eventuality and a state it causes without a change. -/
+  causeState : SetRel Event State := ∅
 
 namespace Interpretation
 
 open ModalLogic
 open scoped SetRel
 
-/-- Interpretations are ordered by inclusion of both relations. -/
+/-- Interpretations are ordered by inclusion of their relations. -/
 instance {State Event : Type*} : PartialOrder (Interpretation State Event) :=
-  PartialOrder.lift (fun M ↦ (M.become, M.cause)) fun _ _ h ↦
-    Interpretation.ext (congrArg Prod.fst h) (congrArg Prod.snd h)
+  PartialOrder.lift (fun M ↦ (M.become, M.cause, M.causeState)) fun _ _ h ↦
+    Interpretation.ext (congrArg Prod.fst h) (congrArg (fun p ↦ p.2.1) h)
+      (congrArg (fun p ↦ p.2.2) h)
 
 theorem le_def {State Event : Type*} {M N : Interpretation State Event} :
-    M ≤ N ↔ M.become ⊆ N.become ∧ M.cause ⊆ N.cause := Iff.rfl
+    M ≤ N ↔ M.become ⊆ N.become ∧ M.cause ⊆ N.cause ∧ M.causeState ⊆ N.causeState := Iff.rfl
 
 variable {State Event : Type*} (M : Interpretation State Event) (p : State → Prop)
   (Q : Event → Prop) {ks ks' : Finset Root.Kind}

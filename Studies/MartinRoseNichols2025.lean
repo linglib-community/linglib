@@ -168,7 +168,7 @@ def interpretation : Interpretation State Event where
     | .dependence => C.cause
 
 theorem interpretation_mono : Monotone C.interpretation := fun a b h ↦ by
-  refine ⟨subset_rfl, ?_⟩
+  refine ⟨subset_rfl, ?_, subset_rfl⟩
   cases a <;> cases b
   exacts [subset_rfl, C.produces_subset_cause, absurd h (by decide), subset_rfl]
 
@@ -197,7 +197,7 @@ theorem mannerCausative_eq_denote (P : Entity → State → Prop) (x : Entity) :
   funext fun _ ↦ propext ⟨fun h ↦ ⟨⟨trivial, h.1⟩, h.2⟩, fun h ↦ ⟨h.1.2, h.2⟩⟩
 
 theorem causative_mono : Monotone (C.causative · p) :=
-  fun _ _ h _ ⟨e, he, hp⟩ ↦ ⟨e, (C.interpretation_mono h).2 he, hp⟩
+  fun _ _ h _ ⟨e, he, hp⟩ ↦ ⟨e, (C.interpretation_mono h).2.1 he, hp⟩
 
 variable {C r p Q}
 

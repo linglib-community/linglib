@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Statistics.SolstadBott2022
 public import Linglib.Discourse.Coherence
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Mathlib.Logic.Equiv.Defs
 
@@ -27,6 +28,17 @@ their biases are mirror images under every relation (`psych_mirror`). On the One
 Account of Crinean and Garnham the I-Caus argument is whichever argument the verb entails to
 cause, `ICausOne`, which includes every slot argument (`icausOne_of_icaus`) and also the agent of
 an agent-patient verb, which carries no slot (`not_icaus_mannerContact`).
+
+The mechanisms read the event structure of the verb. A stimulus-experiencer verb is a caused
+change of state with an individual causer, `[x CAUSE [BECOME [y ⟨STATE⟩]]]`, and an
+experiencer-stimulus verb a caused state with no change, `[x CAUSE [y ⟨STATE⟩]]`. The slot is the
+causing subevent, which has no content beyond its effector (`HasSlot`): the slot argument is the
+actor of a template with a slot and the end-state argument its undergoer (`icaus_iff_actor`,
+`icons_iff_undergoer`). Giving the causing subevent a manner yields the accomplishment
+`[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`, which has no slot (`denote_accomplishment_iff`).
+Only the stimulus-experiencer template has a change, the end point a consequence continues from,
+and consequences after a full stop are more frequent for that class
+(`consequence_lt_iff_result`).
 
 The paper's four continuation experiments on German psych verbs are read from the generated
 tables. The referent of most continuations is the one `Bias` gives, after *weil* and *sodass*
@@ -56,13 +68,10 @@ specify the cause of the psychological state just when they are about the slot a
 
 ## TODO
 
-* The paper derives the higher rate of consequences after stimulus-experiencer verbs
-  (`consequence_expStim_lt_stimExp`) from their end point, experiencer-stimulus verbs being
-  stative. The two grids are mirror images and carry no aspect. The event structure template
-  `[x CAUSE [BECOME [y ⟨STATE⟩]]]` has the end point, and its contentless causing subevent
-  `Template.effector` is the slot, but an experiencer-stimulus verb needs a cause of a state
-  with no change, which `Template.cause` does not form.
 * The slot of an agent-evocator verb is not derived from its presupposition.
+* The biases are stated of the role lists and shown to agree with the templates on the two
+  classes tested; no map from a template to the profiles of its actor and undergoer derives
+  one from the other.
 
 ## References
 
@@ -73,6 +82,8 @@ specify the cause of the psychological state just when they are about the slot a
 -/
 
 @[expose] public section
+
+universe u
 
 namespace SolstadBott2022
 
@@ -213,6 +224,61 @@ def Relation.toCoherenceEmbedding : Relation ↪ Coherence.Relation :=
 @[simp] theorem Relation.coe_toCoherenceEmbedding :
     ⇑Relation.toCoherenceEmbedding = Relation.toCoherence := rfl
 
+/-! ### Event structure -/
+
+section EventStructure
+
+open EventStructure
+
+/-- The event structure of a class of psych verbs: a caused change of state with an individual
+causer, `[x CAUSE [BECOME [y ⟨STATE⟩]]]`, or a caused state with no change,
+`[x CAUSE [y ⟨STATE⟩]]`. -/
+def VerbClass.template : VerbClass → Template .event
+  | .stimExp => .cause .effector .achievement
+  | .expStim => .cause .effector .state
+
+/-- The position of the template's actor, the stimulus. -/
+def VerbClass.actor : VerbClass → Position
+  | .stimExp => .subject
+  | .expStim => .object
+
+/-- A template has a slot when its causing subevent has no content beyond its effector. -/
+def HasSlot : Template .event → Prop
+  | .cause .effector _ => True
+  | _ => False
+
+instance : DecidablePred HasSlot := fun t ↦ by
+  unfold HasSlot; split <;> infer_instance
+
+theorem hasSlot_template (v : VerbClass) : HasSlot v.template := by cases v <;> trivial
+
+theorem not_hasSlot_accomplishment : ¬ HasSlot .accomplishment := id
+
+theorem icaus_iff_actor (v : VerbClass) (a : Position) :
+    ICaus v.roles a ↔ HasSlot v.template ∧ a = v.actor := by
+  cases v <;> cases a <;> decide
+
+theorem icons_iff_undergoer (v : VerbClass) (a : Position) :
+    ICons v.roles a ↔ a = v.actor.swap := by
+  cases v <;> cases a <;> decide
+
+/-- A stimulus-experiencer verb whose causing eventuality is given a manner denotes as the
+accomplishment with that manner, which has no slot. -/
+theorem denote_accomplishment_iff {Entity : Type*} {State Event : Type u}
+    {M : Interpretation State Event} {θ : Entity → Event → Prop} {P : Entity → State → Prop}
+    {Q : Event → Prop} {y x : Entity} {v : Event} :
+    Template.accomplishment.denote M θ P Q y x v ↔
+      VerbClass.stimExp.template.denote M θ P Q y x v ∧ Q v :=
+  Template.denote_cause_act
+
+-- Section 3.3
+theorem consequence_lt_iff_result (v w : VerbClass) :
+    (relations v .consequence).percent.toRat < (relations w .consequence).percent.toRat ↔
+      .result ∉ v.template.kinds ∧ .result ∈ w.template.kinds := by
+  revert v w; decide +kernel
+
+end EventStructure
+
 /-! ### Coreference (Experiments 1 and 2) -/
 
 /-- After *weil* and after *sodass*, more continuations refer to an argument than to the other
@@ -251,11 +317,6 @@ theorem half_lt_explanation (v : VerbClass) :
     50 < (relations v .explanation).percent.toRat := by
   revert v; decide +kernel
 
--- Section 3.3
-theorem consequence_expStim_lt_stimExp :
-    (relations .expStim .consequence).percent.toRat <
-      (relations .stimExp .consequence).percent.toRat := by
-  decide +kernel
 
 /-- When a continuation must be about a given argument, explanations about the end-state argument
 outnumber consequences about the other argument, for both verb classes. -/

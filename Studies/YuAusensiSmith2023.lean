@@ -47,9 +47,10 @@ the deck* it is the deck that breaks (`Monks.sentence`).
 * The causative head vCAUSE is possibility along `cause`, restricted to events
   (`Model.causative`). It introduces no individual and quantifies over a caused eventuality of
   either sort (footnote 7).
-* In two-sorted interpretations `cause` relates events, so the causative head cannot take a stative
-  complement as in (22), Harley's structure without vBECOME (footnote 8); the readings at the verb
-  phrase are compared in one-domain models.
+* A causative head over a stative complement as in (22), Harley's structure without vBECOME
+  (footnote 8), relates an event to a state, which is `causeState` in a two-sorted interpretation
+  and `cause` in a one-domain model; the readings at the verb phrase are compared in one-domain
+  models.
 * The existential closure of the holder at the verb phrase is `Event.closure` of the flipped
   relation, and the agent of (33) is a relation of its own to the change (footnote 17).
 * Beavers and Koontz-Garboden's first objection to (55), that one state cannot carry two
