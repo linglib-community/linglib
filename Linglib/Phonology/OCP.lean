@@ -148,6 +148,10 @@ variable {xs ys zs : List α}
   unfold mergeAppend
   split_ifs with h <;> simp_all
 
+theorem prefix_mergeAppend (xs ys : List α) : xs <+: mergeAppend xs ys := by
+  unfold mergeAppend
+  split_ifs <;> exact List.prefix_append _ _
+
 @[simp] theorem mergeOffset_nil_left (ys : List α) : mergeOffset [] ys = 0 := by
   unfold mergeOffset
   split_ifs <;> rfl
@@ -298,6 +302,19 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
   have hlen := List.IsChain.length_le_length_destutter_ne hsub (isClean_collapse _)
   rw [← collapse_eq_destutter, length_collapse_take_succ hk] at hlen
   omega
+
+/-- The collapse keeps the label of each position, at its run index. -/
+theorem getElem?_collapse_runIdx {k : ℕ} (hk : k < xs.length) :
+    (collapse xs)[runIdx xs k]? = xs[k]? := by
+  have hlen := length_collapse_take_succ hk
+  obtain ⟨t, ht⟩ : collapse (xs.take (k + 1)) <+: collapse xs := by
+    conv_rhs => rw [← List.take_append_drop (k + 1) xs, collapse_append]
+    exact prefix_mergeAppend _ _
+  have h1 := getLast?_collapse (xs.take (k + 1))
+  rw [List.getLast?_eq_getElem?, List.getLast?_eq_getElem?, hlen,
+    List.length_take_of_le (by omega), Nat.add_sub_cancel, Nat.add_sub_cancel,
+    List.getElem?_take_of_lt (Nat.lt_succ_self k)] at h1
+  rw [← ht, List.getElem?_append_left (by omega), h1]
 
 @[simp] theorem runIdx_replicate (n : ℕ) (a : α) (k : ℕ) :
     runIdx (List.replicate n a) k = 0 := by
