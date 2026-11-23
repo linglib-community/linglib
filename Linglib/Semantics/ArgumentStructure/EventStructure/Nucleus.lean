@@ -5,24 +5,20 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 /-!
 # The event nucleus
 
-A nucleus is a preparatory process, the culmination it brings about and the consequent state
-that ensues ([moens-steedman-1988]). In a model of the event-structure primitives it is a path
-`v ~[cause] e ~[become] s`: `Nucleus M` bundles the three eventualities with the two steps.
+This file defines the nucleus of [moens-steedman-1988]: a preparatory process, the culmination
+it brings about, and the consequent state of the culmination. In a model `M`, a `Nucleus M` is a
+preparation `v`, a culmination `e` and a state `s` with `v ~[M.cause] e` and `e ~[M.become] s`.
 
-An eventuality is the preparation of a nucleus whose consequent state satisfies `p` exactly when
-it causes a change into a `p`-state, `◇[cause] (◇[become] p)` (`Nucleus.exists_iff`). A causative
-of a change of state therefore denotes the preparations of the nuclei whose consequent state the
-root describes, whatever its causing subevent (`Template.denote_cause_achievement_iff`), and the
-accomplishment those that are actions of the root's manner. The two subterm maps of a causative
-strip a part of the nucleus: `Template.causing` keeps the preparation and drops the culmination,
-and `Template.caused` keeps the culmination and its consequent state and drops the preparation.
+An event is the preparation of a nucleus with a `p`-state as its consequent state iff it causes a
+change into a `p`-state (`Nucleus.exists_iff`). A causative of a change of state therefore
+denotes the preparations of the nuclei whose consequent state the root describes
+(`Template.denote_cause_achievement_iff`). `Template.causing` and `Template.caused` drop the
+culmination and the preparation of the accomplishment.
 
 ## Implementation notes
 
-The source's nucleus is a piece of knowledge representation whose parts may each be compound. A
-`Nucleus` here is one path of a model, and compound parts are other eventualities of the same
-model. A state is the consequent state of no nucleus unless a change gives rise to it, so a
-template with no `BECOME` describes no culmination.
+A `Nucleus` is one path in a model. The parts of the nucleus of [moens-steedman-1988] may
+themselves be compound; here they are other eventualities of the same model.
 
 ## References
 

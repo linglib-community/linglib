@@ -6,32 +6,29 @@ public import Linglib.Semantics.ArgumentStructure.Root.Basic
 /-!
 # Meaning postulates of roots
 
-A root's predicates may carry entailments of their own, the meaning postulates of Beavers and
-Koontz-Garboden, stated in a model of the event-structure primitives. A state predicate `p`
-*entails change* when every `p`-state arises from some change, `p ≤ ◇[become.inv] ⊤`, and
-*entails a cause* when that change has a cause, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤)`. The two
-postulates that join a state predicate `p` and a manner predicate `Q` mirror each other. For a
-root that describes a state, `Q` *is the manner of the cause* of `p` when every `p`-state arises
-from a change that has a cause and whose causes are all `Q`-eventualities,
-`p ≤ ◇[become.inv] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`; then every `p`-state is brought about by a
-`Q`-eventuality (`Model.EntailsMannerOfCause.le_diamond_inv_diamond_inv`). For a root that
-describes an action, `Q` *entails the caused result* `p` when every `Q`-eventuality causes a
-change into a `p`-state, `Q ≤ ◇[cause] (◇[become] p)`.
+This file defines the entailments that the predicates of a root may carry in a model of the
+event-structure primitives, the meaning postulates of [beavers-koontz-garboden-2020]. For a
+state predicate `p` and a manner predicate `Q`:
 
-A model `Respects` a kind signature for `p` and `Q` when the postulates of the kinds in the
-signature hold of the state predicate. Each postulate entails the one before it, so a signature
-and its collocational closure have the same models (`Model.respects_close`). Where a state arises
-from at most one change, `Q` is the manner of the cause of `p` exactly when `p` entails a cause
-and the causing event of the causative is a `Q`-eventuality (`Model.entailsMannerOfCause_iff`).
+* `p` entails change when every `p`-state arises from a change, `p ≤ ◇[become.inv] ⊤`;
+* `p` entails a cause when that change has a cause, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤)`;
+* `Q` is the manner of the cause of `p` when the change has a cause and every cause of it is a
+  `Q`-event, `p ≤ ◇[become.inv] (◇[cause.inv] ⊤ ⊓ □[cause.inv] Q)`;
+* `Q` entails the caused result `p` when every `Q`-event causes a change into a `p`-state,
+  `Q ≤ ◇[cause] (◇[become] p)`.
+
+A model `Respects` a kind signature when the postulates of its kinds hold. Each postulate entails
+the one before it, so a signature and its closure have the same models (`Model.respects_close`).
+Where a state arises from at most one change, `Q` is the manner of the cause of `p` iff `p`
+entails a cause and every event that causes a change into a `p`-state is a `Q`-event
+(`Model.entailsMannerOfCause_iff`).
 
 ## Implementation notes
 
-`Respects` reads a signature as the postulates of a root in the complement of `v`. For a root
-adjoined to `v` the cause kind is `EntailsCausedResult` of a result that the signature does not
-fix, since a root may entail the result of its template or another one, so a caller states that
-postulate of the result it means.
-
-The postulates concern caused changes and are stated of `cause`, not of `causeState`.
+* `Respects` reads a signature as the postulates of a root in the complement of `v`. For a root
+  adjoined to `v` the cause kind is `EntailsCausedResult` of a result the signature does not fix,
+  so a caller states that postulate of the result it means.
+* The postulates concern caused changes and are stated of `cause`, not of `causeState`.
 
 ## References
 

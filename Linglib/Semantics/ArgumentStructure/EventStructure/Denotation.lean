@@ -6,35 +6,34 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Template
 /-!
 # Denotations of event structure templates
 
-`Template.denote` interprets a template in a model of the event-structure primitives, with a
-root in its slots: the root's state predicate at the state and its manner at `ACT`, with
-`BECOME` and `CAUSE` as possibility along the model's relations and a thematic relation `θ`
-between an actor and its eventuality. With an individual causer, `CAUSE` is an eventuality that
-has the causer as its actor and causes the caused subevent (`Template.denote_cause_effector`),
-and giving that eventuality a manner yields the template with an action in its place
-(`Template.denote_cause_act`).
+This file interprets event structure templates in a model. Fix a model `M`, a thematic relation
+`θ` between individuals and events, and the state predicate `P` and manner `Q` of a root.
+`Template.denote` is then a relation between an actor `y`, an undergoer `x` and an eventuality:
 
-Membership in a template's signature is exactly what every denotation of the template entails:
-it has a result iff every denotation involves a change (`Template.result_mem_kinds_iff`), and a
-cause iff every denotation involves a causal relation (`Template.cause_mem_kinds_iff`). A
-template's denotation entails that each of its subterms is realized
-(`Template.exists_denote_of_isSubterm`), which orders the readings of a modifier such as *again*
-attached at different subterms.
+* `state` holds of `s` when `P x s`;
+* `act` holds of `v` when `θ y v` and `Q v`, and `effector` when `θ y v`;
+* `become t` holds of `e` when `e` gives rise to a state of which `t` holds;
+* `cause c t` holds of `v` when `c` holds of `v` and `v` causes an eventuality of which `t` holds
+  with the undergoer as its actor.
+
+The denotation is monotone in the model (`Template.denote_mono`) and entails that every subterm
+is realized (`Template.exists_denote_of_isSubterm`). Giving the event of an individual causer a
+manner yields the template with an action in its place (`Template.denote_cause_act`).
+
+The kinds of a template are what all its denotations entail: it has `BECOME` iff every
+denotation in every model involves a change (`Template.result_mem_kinds_iff`), and `CAUSE` iff
+every denotation involves causation (`Template.cause_mem_kinds_iff`).
 
 ## Implementation notes
 
-A template relates two participants, the actor `y`, which is the effector of an action and of a
-causing subevent, and the undergoer `x`, of which the state holds. The caused subevent of
-`CAUSE` is predicated of the undergoer, which is its actor when the caused subevent is itself
-an action or a causation. A root has one manner, which every `ACT` of the template carries. The
-carriers of the two sorts share a universe, so that the type of a denotation can depend on the
-sort.
+* The carriers of the two sorts share a universe, so that the type of a denotation can depend on
+  the sort.
+* A root has one manner, which every `act` of the template carries.
 
 ## References
 
 * [rappaport-hovav-levin-1998]
 * [beavers-koontz-garboden-2020]
-* [yu-ausensi-smith-2023]
 -/
 
 @[expose] public section

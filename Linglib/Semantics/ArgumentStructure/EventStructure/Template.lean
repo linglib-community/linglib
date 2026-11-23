@@ -5,28 +5,28 @@ public import Linglib.Semantics.ArgumentStructure.Root.Basic
 /-!
 # Event structure templates
 
-An event structure template is a term over a small set of primitive predicates: a state, an
-action `ACT`, a change `BECOME` and causation `CAUSE`, where `BECOME` and `CAUSE` take templates
-as arguments and so build larger templates out of smaller ones (Rappaport Hovav and Levin;
-Beavers and Koontz-Garboden). A verb's meaning pairs a template, which fixes its class, with a
-root, which tells it apart from the other members of the class. The basic inventory of
-Rappaport Hovav and Levin is the state `[x ⟨STATE⟩]`, the activity `[x ACT⟨MANNER⟩]`, the
-achievement `[BECOME [x ⟨STATE⟩]]` and the two accomplishments
-`[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]` and `[x CAUSE [BECOME [y ⟨STATE⟩]]]`, the second
-with an individual causer, which is the `vcause` of Beavers and Koontz-Garboden. `CAUSE` may also
-take a state, `[x CAUSE [y ⟨STATE⟩]]`, a causative with no change.
+This file defines event structure templates, the terms that describe the internal structure of
+the eventuality a verb names. A `Template` is built from four primitives:
 
-Templates are sorted: `BECOME` turns a state template into an event template and `CAUSE` relates
-an event template to a template of either sort. The primitives are the four kinds of entailment
-of the root typology of Beavers and Koontz-Garboden, so `Template.kinds` reads a template's
-primitives as a root signature. A template whose primitives include a manner and a state has
-`CAUSE` (`Template.cause_mem_kinds_of_manner_of_state`), and a subterm's primitives are among the
-template's (`Template.IsSubterm.kinds_subset`).
+* `state`, a state, written `[x ⟨STATE⟩]`;
+* `act`, an action with a manner, `[x ACT⟨MANNER⟩]`;
+* `become t`, a change into the state `t`, `[BECOME t]`;
+* `cause c e`, a causing event `c` and what it causes, `[c CAUSE e]`.
+
+A fifth leaf, `effector`, is the causing event of an individual causer, as in
+`[x CAUSE [BECOME [y ⟨STATE⟩]]]`. Templates are sorted: `become` takes a state and gives an event,
+and `cause` takes an event and a template of either sort. The achievement is
+`[BECOME [x ⟨STATE⟩]]` and the accomplishment is `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
+
+We define `Template.kinds`, the kinds of entailment the primitives of a template contribute, and
+the subterm relation `Template.IsSubterm`. A template with a manner and a state has a cause
+(`Template.cause_mem_kinds_of_manner_of_state`), and the kinds of a subterm are among those of
+the template (`Template.IsSubterm.kinds_subset`).
 
 ## Implementation notes
 
-An individual causer is the leaf `effector`, an eventuality with no content beyond its effector,
-so that `CAUSE` always relates two subevents.
+An individual causer is the leaf `effector`, an event with no content beyond its effector, so
+that `cause` always relates two subevents.
 
 ## References
 
