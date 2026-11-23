@@ -69,6 +69,9 @@ is written with a head (`reads_fuse_status`).
   A long [iː] is read as [i] before [j], one |I| on a nucleus and the next onset.
 * The 3FPL forms of the perfective paradigms, whose suffix vowel is not among the vowels the
   paper lists, are not recorded.
+* The /ɨ/ of a pattern is a nucleus that holds a vowel with no element. It governs as a nucleus
+  with a vowel does, which the syneresis of the imperfective requires, and `positions` gives it
+  the empty expression: on the lines of the elements it reads as an empty nucleus does.
 * `fusion` also joins two /a/s in successive nuclei, as in the derivation of [mɨ-bɨrak] from
   /m_-barak/.
 * `epenthesis` marks the nuclei that `GovernmentPhonology.leftward` expresses, the realization
