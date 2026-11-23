@@ -1,6 +1,7 @@
 module
 
 public import Studies.Karttunen1977
+public import Linglib.Semantics.Questions.Partition.Answer
 
 /-!
 # Groenendijk and Stokhof (1984): Studies on the Semantics of Questions

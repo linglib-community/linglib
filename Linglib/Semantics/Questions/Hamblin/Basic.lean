@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Questions.Partition.OfProps
 
 /-!
 # Hamblin sets

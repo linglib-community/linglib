@@ -5,6 +5,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Pragmatics.Implicature.OptimalAssertion.Prior
+public import Linglib.Semantics.Questions.Partition.Answer
 
 /-!
 # Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning

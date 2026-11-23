@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Feinmann2026
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
+public import Linglib.Semantics.Questions.Partition.Answer
 
 /-!
 # Feinmann (2026): A Note on Relevance
