@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Probability.Decision.ValueOfInformation
-public import Linglib.Semantics.Questions.Hamblin.Basic
 public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 
 /-!

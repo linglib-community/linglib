@@ -15,7 +15,6 @@ public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.Closure
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Order.UpperLower.Closure
-public import Linglib.Core.Order.UpperLower.Closure
 public import Mathlib.Basic.Finite.Prod
 
 /-!

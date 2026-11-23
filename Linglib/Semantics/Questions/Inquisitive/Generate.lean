@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Inquisitive.Lattice
+import Linglib.Core.Order.UpperLower.Closure
 
 /-!
 # Generated and normal questions

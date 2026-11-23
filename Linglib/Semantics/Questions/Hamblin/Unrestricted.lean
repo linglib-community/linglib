@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Inquisitive.Generate
+import Linglib.Semantics.Questions.Inquisitive.Declarative
 /-!
 # Unrestricted inquisitive propositions
 

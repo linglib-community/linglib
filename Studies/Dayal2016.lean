@@ -8,6 +8,7 @@ public import Linglib.Data.Examples.Readers
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Semantics.Questions.Hamblin.Number
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 
 /-!
 # Dayal (2016): Questions
