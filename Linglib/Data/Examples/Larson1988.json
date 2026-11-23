@@ -1,0 +1,869 @@
+{
+  "features": [
+    {
+      "key": "frame",
+      "lean": "frame",
+      "type": "Frame",
+      "doc": "The two frames of a dative verb.",
+      "levels": [
+        {
+          "name": "oblique",
+          "label": "oblique",
+          "doc": "the oblique dative, V NP to NP"
+        },
+        {
+          "name": "doubleObject",
+          "label": "doubleObject",
+          "doc": "the double object construction, V NP NP"
+        }
+      ]
+    },
+    {
+      "key": "phenomenon",
+      "lean": "phenomenon",
+      "type": "Phenomenon",
+      "doc": "The dependencies of section 1, each of which requires c-command.",
+      "levels": [
+        {
+          "name": "anaphor",
+          "label": "anaphor",
+          "doc": "an anaphor and its antecedent"
+        },
+        {
+          "name": "quantifierBinding",
+          "label": "quantifierBinding",
+          "doc": "a pronoun bound by a quantifier"
+        },
+        {
+          "name": "weakCrossover",
+          "label": "weakCrossover",
+          "doc": "a wh-phrase moved over a noun phrase containing a coreferential pronoun"
+        },
+        {
+          "name": "superiority",
+          "label": "superiority",
+          "doc": "a wh-phrase moved over another"
+        },
+        {
+          "name": "eachOther",
+          "label": "eachOther",
+          "doc": "each and the other on the reciprocal reading"
+        },
+        {
+          "name": "negativePolarity",
+          "label": "negativePolarity",
+          "doc": "a negative polarity item and the affective element licensing it"
+        }
+      ]
+    },
+    {
+      "key": "licensor",
+      "lean": "licensor",
+      "type": "Argument",
+      "doc": "The object that must c-command the other for the dependency to hold: the antecedent, the quantifier, the wh-phrase that moves, each, or the affective element.",
+      "levels": [
+        {
+          "name": "theme",
+          "label": "theme",
+          "doc": "the direct object"
+        },
+        {
+          "name": "goal",
+          "label": "goal",
+          "doc": "the indirect object"
+        }
+      ]
+    },
+    {
+      "key": "verb",
+      "lean": "verb",
+      "type": "Verb",
+      "doc": "The dative verbs whose shifting section 5 discusses.",
+      "levels": [
+        {
+          "name": "send",
+          "label": "send",
+          "doc": "send"
+        },
+        {
+          "name": "promise",
+          "label": "promise",
+          "doc": "promise"
+        },
+        {
+          "name": "donate",
+          "label": "donate",
+          "doc": "donate"
+        },
+        {
+          "name": "distribute",
+          "label": "distribute",
+          "doc": "distribute"
+        },
+        {
+          "name": "contribute",
+          "label": "contribute",
+          "doc": "contribute"
+        },
+        {
+          "name": "giveAway",
+          "label": "give away",
+          "doc": "give away"
+        },
+        {
+          "name": "giveOut",
+          "label": "give out",
+          "doc": "give out"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "larson1988_1a",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(1a)"},
+      "language": "stan1293",
+      "primaryText": "John sent Mary a letter.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "send"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_1b",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(1b)"},
+      "language": "stan1293",
+      "primaryText": "I promised Felix a new set of golf clubs.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "promise"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3a_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3a)"},
+      "language": "stan1293",
+      "primaryText": "I showed Mary herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "anaphor"],
+        ["licensor", "goal"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3a_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3a)"},
+      "language": "stan1293",
+      "primaryText": "I showed herself Mary.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "anaphor"],
+        ["licensor", "theme"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3b_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3b)"},
+      "language": "stan1293",
+      "primaryText": "I gave every worker his paycheck.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "quantifierBinding"],
+        ["licensor", "goal"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3b_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3b)"},
+      "language": "stan1293",
+      "primaryText": "I gave its owner every paycheck.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "quantifierBinding"],
+        ["licensor", "theme"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3c_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3c)"},
+      "language": "stan1293",
+      "primaryText": "Which man did you send his paycheck?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "weakCrossover"],
+        ["licensor", "goal"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3c_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3c)"},
+      "language": "stan1293",
+      "primaryText": "Whose pay did you send his mother?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "weakCrossover"],
+        ["licensor", "theme"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3d_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3d)"},
+      "language": "stan1293",
+      "primaryText": "Who did you give which paycheck?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "superiority"],
+        ["licensor", "goal"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3d_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3d)"},
+      "language": "stan1293",
+      "primaryText": "Which paycheck did you give who?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "superiority"],
+        ["licensor", "theme"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3e_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3e)"},
+      "language": "stan1293",
+      "primaryText": "I showed each man the other's socks.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "eachOther"],
+        ["licensor", "goal"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3e_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3e)"},
+      "language": "stan1293",
+      "primaryText": "I showed the other's friend each man.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "eachOther"],
+        ["licensor", "theme"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3f_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3f)"},
+      "language": "stan1293",
+      "primaryText": "I showed no one anything.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "negativePolarity"],
+        ["licensor", "goal"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_3f_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(3f)"},
+      "language": "stan1293",
+      "primaryText": "I showed anyone nothing.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["phenomenon", "negativePolarity"],
+        ["licensor", "theme"]
+      ],
+      "comment": "The judgment is Barss and Lasnik's (fn. 1).",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5a_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5a)"},
+      "language": "stan1293",
+      "primaryText": "I showed Mary to herself.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "anaphor"],
+        ["licensor", "theme"]
+      ],
+      "comment": "Both lines print presented/showed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5a_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5a)"},
+      "language": "stan1293",
+      "primaryText": "I showed herself to Mary.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "anaphor"],
+        ["licensor", "goal"]
+      ],
+      "comment": "Both lines print presented/showed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5b_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5b)"},
+      "language": "stan1293",
+      "primaryText": "I sent every check to its owner.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "quantifierBinding"],
+        ["licensor", "theme"]
+      ],
+      "comment": "Both lines print gave/sent.",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5b_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5b)"},
+      "language": "stan1293",
+      "primaryText": "I sent his paycheck to every worker.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "quantifierBinding"],
+        ["licensor", "goal"]
+      ],
+      "comment": "Both lines print gave/sent.",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5c_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5c)"},
+      "language": "stan1293",
+      "primaryText": "Which check did you send to its owner?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "weakCrossover"],
+        ["licensor", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5c_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5c)"},
+      "language": "stan1293",
+      "primaryText": "Which worker did you send his check to?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "weakCrossover"],
+        ["licensor", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5d_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5d)"},
+      "language": "stan1293",
+      "primaryText": "Which check did you send to who?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "superiority"],
+        ["licensor", "theme"]
+      ],
+      "comment": "A third line stars the pied-piped To whom did you send which check?",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5d_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5d)"},
+      "language": "stan1293",
+      "primaryText": "Whom did you send which check to?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "superiority"],
+        ["licensor", "goal"]
+      ],
+      "comment": "A third line stars the pied-piped To whom did you send which check?",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5e_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5e)"},
+      "language": "stan1293",
+      "primaryText": "I sent each boy to the other's parents.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "eachOther"],
+        ["licensor", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5e_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5e)"},
+      "language": "stan1293",
+      "primaryText": "I sent the other's check to each boy.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "eachOther"],
+        ["licensor", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5f_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5f)"},
+      "language": "stan1293",
+      "primaryText": "I sent no presents to any of the children.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "negativePolarity"],
+        ["licensor", "theme"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_5f_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(5f)"},
+      "language": "stan1293",
+      "primaryText": "I sent any of the packages to none of the children.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["phenomenon", "negativePolarity"],
+        ["licensor", "goal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_57a_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(57a)"},
+      "language": "stan1293",
+      "primaryText": "I donated money to charity.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["verb", "donate"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_57a_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(57a)"},
+      "language": "stan1293",
+      "primaryText": "I donated charity money.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "donate"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_57b_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(57b)"},
+      "language": "stan1293",
+      "primaryText": "I distributed apples to the children.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["verb", "distribute"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_57b_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(57b)"},
+      "language": "stan1293",
+      "primaryText": "I distributed the children apples.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "distribute"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_57c_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(57c)"},
+      "language": "stan1293",
+      "primaryText": "I contributed my time to the auction.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["verb", "contribute"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_57c_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(57c)"},
+      "language": "stan1293",
+      "primaryText": "I contributed the auction my time.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "contribute"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_58a_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(58a)"},
+      "language": "stan1293",
+      "primaryText": "I gave away money to charity.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["verb", "give away"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_58a_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(58a)"},
+      "language": "stan1293",
+      "primaryText": "I gave away charity money.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "give away"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_58a_iii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(58a)"},
+      "language": "stan1293",
+      "primaryText": "I gave charity away money.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "give away"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_58b_i",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(58b)"},
+      "language": "stan1293",
+      "primaryText": "I gave out apples to the children.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "oblique"],
+        ["verb", "give out"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_58b_ii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(58b)"},
+      "language": "stan1293",
+      "primaryText": "I gave out the children apples.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "give out"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "larson1988_58b_iii",
+      "source": {"bibkey": "larson-1988", "paperLabel": "(58b)"},
+      "language": "stan1293",
+      "primaryText": "I gave the children out apples.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["frame", "doubleObject"],
+        ["verb", "give out"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}
