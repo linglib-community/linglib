@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.UpperLower.Linear
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Extents
@@ -13,6 +14,9 @@ complement and the complement of an upper set is a lower set, we define `Polarit
 as `IsLowerSet (p • s)`. An object measuring `a` has the positive extent `Set.Iic a`; its negative
 extent is `Set.Ici a` where the measure is included and `Polarity.negative • Set.Iic a`, that is
 `Set.Ioi a`, where the negative extent is the complement of the positive one.
+
+The positive degrees of a scale are the intervals that contain everything below one of their
+points, and these are the nonempty positive extents, `Polarity.exists_forall_le_mem_iff`.
 
 On a linear scale a nonempty extent included in an extent other than the whole scale has the
 polarity of that extent, `Polarity.IsExtent.polarity_eq`. A positive and a negative extent are
@@ -56,6 +60,16 @@ theorem isExtent_smul_Iic (q : Polarity) (a : D) : IsExtent q (q • Set.Iic a) 
 end Preorder
 
 variable [LinearOrder D]
+
+/-- A set that contains everything below one of its points and is convex is a nonempty lower
+set: the positive degrees of [kennedy-2001] are the nonempty positive extents. -/
+theorem exists_forall_le_mem_iff (hs : s.OrdConnected) :
+    (∃ p ∈ s, ∀ q, q ≤ p → q ∈ s) ↔ s.Nonempty ∧ IsExtent .positive s :=
+  ⟨fun ⟨p, hp, h⟩ ↦ ⟨⟨p, hp⟩, fun a b hba ha ↦ by
+      by_cases hbp : b ≤ p
+      · exact h b hbp
+      · exact hs.out hp ha ⟨le_of_not_ge hbp, hba⟩⟩,
+    fun ⟨⟨p, hp⟩, h⟩ ↦ ⟨p, hp, fun _ hq ↦ h hq hp⟩⟩
 
 /-- On a linear scale, a nonempty extent included in an extent other than the whole scale has
 the polarity of that extent. -/
