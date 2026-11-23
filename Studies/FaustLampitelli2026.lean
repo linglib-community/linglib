@@ -10,6 +10,7 @@ public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Data.Examples.Languages
+public import Studies.KayeLowenstammVergnaud1985
 
 /-!
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
@@ -40,6 +41,9 @@ order of the operations matters.
 * The paper gives the mid vowels as |A| with |I| or |U|, and derives the lowering of a fused
   vowel from the span of its |A|. Here |I| and |U| are the heads of the mid vowels, and `headed`
   makes the fused element the head of a fused vowel.
+* Read as the feature matrices of [kaye-lowenstamm-vergnaud-1985], the vowel melodies have the
+  fragment's values of [round], [front], [high], [ATR] and [low]: headed |A| is [+low] and plain
+  |A| is [−low]. The fragment's [back] is not determined by the elements.
 * Among the consonants only the gutturals and the glides have a melody. The palatals and the
   ejectives contain |I| and |A| and never trigger syneresis; they are given no elements.
 * The /ɨ/ of a pattern is a vowel with no element, not an empty nucleus, so its nucleus governs.
@@ -222,6 +226,19 @@ def headed (e : Element) (v : Vowel) : Vowel :=
   (Vowel.ofMR? (vowelET v ⊔ .headedSimplex e)).getD v
 
 theorem headed_aBare : headed .A .aBare = .a := by decide
+
+-- read as the feature matrices of [kaye-lowenstamm-vergnaud-1985], the melodies of the vowels have
+-- the fragment's values of [round], [front], [high], [ATR] and [low]
+theorem eqOn_interpret_vowelET : ∀ v : Vowel,
+    Set.EqOn (KayeLowenstammVergnaud1985.interpret (vowelET v)) v.segment
+      ↑KayeLowenstammVergnaud1985.features := by
+  decide +kernel
+
+-- the fragment's [back] is not a function of the elements: [ʌ] and [a] are both |A| alone and
+-- differ in it, and [ʌ] is [+back] with the vowels that have |U|
+theorem back_segment_iff : ∀ v : Vowel,
+    v.segment Feature.back = some true ↔ .U ∈ (vowelET v).elements ∨ v = .aBare := by
+  decide +kernel
 
 theorem headed_headed : ∀ (e : Element) (v : Vowel), headed e (headed e v) = headed e v := by
   intro e v; cases e <;> cases v <;> decide

@@ -17,8 +17,8 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 # Kaye, Lowenstamm and Vergnaud (1985): The internal structure of phonological elements
 
 An element is a fully specified feature matrix in which exactly one feature has its marked
-value. That feature is the hot feature of the element. The element I is [−back], U is [+round]
-and A is [−high]. The cold vowel is the matrix with no marked value. Each element lies on a
+value. That feature is the hot feature of the element. The element I is [−BACK], U is [+ROUND]
+and A is [−HIGH]. The cold vowel is the matrix with no marked value. Each element lies on a
 line named by its hot feature.
 
 Two matrices combine by fusion: the head takes the value of the operator's hot feature and keeps
@@ -40,8 +40,10 @@ representation, in any geometry that places the features of the lines.
   `Autosegmental.AR.flatten` links a position to what it dominates through them.
 * An expression of the paper has one head. `ElementTheory.MR` allows several, and `headMatrix`
   takes the first in the order of the lines.
-* The matrices have one feature of backness. Those that the paper labels [a] and [ə] are
-  [+back], as the chart's [ɑ] and [ʌ] are.
+* The paper's [BACK] has two classes, the front vowels and all others, so a central vowel is
+  [+BACK]. `Phonology.Feature` has [front] and [back], with a central vowel [−front, −back]. The
+  paper's [−BACK] is therefore [+front] here and its [+BACK] is [−front], and the matrices say
+  nothing about `Feature.back`.
 
 ## TODO
 
@@ -70,15 +72,17 @@ inductive Line where
 
 namespace Line
 
-/-- The feature that names a line. -/
+/-- The feature of a line. The paper's [BACK] separates the front vowels from all others, so its
+[−BACK] is [+front] here. -/
 def feature : Line → Feature
-  | .back => .back
+  | .back => .front
   | .round => .round
   | .high => .high
 
-/-- The marked value of the feature of a line: [−back], [+round] and [−high]. -/
+/-- The marked value of the feature of a line: [+front], which is the paper's [−BACK], [+round]
+and [−high]. -/
 def markedValue : Line → Bool
-  | .back => false
+  | .back => true
   | .round => true
   | .high => false
 
@@ -94,14 +98,14 @@ theorem element_injective : Function.Injective element := by decide
 
 /-- (1): The element on a line, as a feature matrix. -/
 def matrix : Line → Phonology.Segment
-  | .back => [−round, −back, +high, −atr, −low]
-  | .round => [+round, +back, +high, −atr, −low]
-  | .high => [−round, +back, −high, −atr, +low]
+  | .back => [−round, +front, +high, −atr, −low]
+  | .round => [+round, −front, +high, −atr, −low]
+  | .high => [−round, −front, −high, −atr, +low]
 
 end Line
 
 /-- (4): The cold vowel, the matrix with no marked value. -/
-def cold : Phonology.Segment := [−round, +back, +high, −atr, −low]
+def cold : Phonology.Segment := [−round, −front, +high, −atr, −low]
 
 /-- The lines in order. -/
 def lines : List Line := [.back, .round, .high]
@@ -256,32 +260,31 @@ theorem fuse_high_back_ne : fuse .high (Line.matrix .back) ≠ fuse .back (Line.
   decide +kernel
 
 /-- The features of the matrices of (1). -/
-def features : Finset Feature := {.round, .back, .high, .atr, .low}
+def features : Finset Feature := {.round, .front, .high, .atr, .low}
 
-/-- On the features of (1), the elements I, U and A are the chart's [i], [u] and [ɑ], the fusions
-of (7) and (8) are its [ɛ] and [æ], and A fused into U is its [ɔ]. -/
+/-- On the features of (1), each matrix is the chart's vowel that the paper labels it with: the
+elements I, U and A are [i], [u] and [a], the fusions of (7), (8) and (9) are [ɛ], [æ] and [ə],
+and A fused into U is [ɔ]. -/
 theorem eqOn_ofChart :
     Set.EqOn (interpret (.headedSimplex .I)) (Phonology.Segment.ofChart .«i») ↑features ∧
       Set.EqOn (interpret (.headedSimplex .U)) (Phonology.Segment.ofChart .«u») ↑features ∧
-      Set.EqOn (interpret (.headedSimplex .A)) (Phonology.Segment.ofChart .«ɑ») ↑features ∧
+      Set.EqOn (interpret (.headedSimplex .A)) (Phonology.Segment.ofChart .«a») ↑features ∧
       Set.EqOn (interpret (.headedSimplex .I ⊔ .simplex .A)) (Phonology.Segment.ofChart .«ɛ»)
         ↑features ∧
       Set.EqOn (interpret (.headedSimplex .A ⊔ .simplex .I)) (Phonology.Segment.ofChart .«æ»)
         ↑features ∧
+      Set.EqOn (interpret (.simplex .A)) (Phonology.Segment.ofChart .«ə») ↑features ∧
       Set.EqOn (interpret (.headedSimplex .U ⊔ .simplex .A)) (Phonology.Segment.ofChart .«ɔ»)
         ↑features := by
   decide +kernel
 
--- (9): the matrices labelled [a] and [ə] are the chart's [ɑ] and [ʌ]; they differ from its [a]
--- and [ə] in [back] only
-theorem eqOn_ofChart_central :
-    Set.EqOn (interpret (.simplex .A)) (Phonology.Segment.ofChart .«ʌ») ↑features ∧
-      Set.EqOn (interpret (.headedSimplex .A)) (Phonology.Segment.ofChart .«a»)
-        ↑(features.erase .back) ∧
-      Set.EqOn (interpret (.simplex .A)) (Phonology.Segment.ofChart .«ə»)
-        ↑(features.erase .back) ∧
-      interpret (.headedSimplex .A) Feature.back ≠ (Phonology.Segment.ofChart .«a») Feature.back ∧
-      interpret (.simplex .A) Feature.back ≠ (Phonology.Segment.ofChart .«ə») Feature.back := by
+-- the matrices do not separate a central vowel from a back one: A is also the chart's [ɑ], A
+-- fused into the cold vowel its [ʌ], and the cold vowel both its [ɨ] and its [ɯ]
+theorem eqOn_ofChart_back :
+    Set.EqOn (interpret (.headedSimplex .A)) (Phonology.Segment.ofChart .«ɑ») ↑features ∧
+      Set.EqOn (interpret (.simplex .A)) (Phonology.Segment.ofChart .«ʌ») ↑features ∧
+      Set.EqOn cold (Phonology.Segment.ofChart .«ɨ») ↑features ∧
+      Set.EqOn cold (Phonology.Segment.ofChart .«ɯ») ↑features := by
   decide +kernel
 
 /-! ### Lines as feature tiers -/
@@ -438,8 +441,8 @@ def flattened : AR fun c ↦ FeatureGeometry.Tiers (Fin 2) Feature Bool (toFeatu
   ((Phonology.FeatureGeometry.ofWord classed ([mid, ⟨.V, none⟩].map spec)).flatten
     (Phonology.FeatureGeometry.tiers classed)).comapDomain toFeatureTier
 
--- the first slot has a line to its marked values of [back] and [high] and none on the ROUND
--- line, and the slot with no root node has no line
+-- the first slot has a line to its token on the BACK line and on the HIGH line and none on the
+-- ROUND line, and the slot with no root node has no line
 theorem lines_flattened :
     flattened.lines .skeleton (.line .back) = {(0, 0)} ∧
       flattened.lines .skeleton (.line .high) = {(0, 0)} ∧
