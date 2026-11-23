@@ -3,7 +3,10 @@ module
 public import Mathlib.Algebra.Order.Ring.NNRat
 public import Mathlib.Data.NNRat.BigOperators
 public import Mathlib.MeasureTheory.Measure.AddContent
-public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Negation.Polarity
 

@@ -2,7 +2,10 @@ module
 
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Questions.Inquisitive.Constituent
-public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 /-!
 # Karttunen (1977): Syntax and Semantics of Questions
 

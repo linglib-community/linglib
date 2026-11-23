@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Hamblin.Closure
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Studies.Fox2007
 public import Studies.FoxHackl2006

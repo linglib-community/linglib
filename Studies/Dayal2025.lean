@@ -6,7 +6,10 @@ public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
-public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

@@ -1,7 +1,10 @@
 module
 
 public import Linglib.Discourse.QUD.Basic
-public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
 public import Linglib.Data.Examples.Readers

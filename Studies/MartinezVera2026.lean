@@ -37,8 +37,8 @@ commitments, without their addressee, and the propositions by which it addresses
 discussion, addressing being partial answerhood. Exhaustification is innocent exclusion; the paper
 glosses the alternatives it may deny as those entailing the prejacent, under which a correction
 would not entail `¬p`. Highlighting is the paper's notion, not the compositional highlighting of
-`Semantics/Questions/Highlighting.lean`. The operator name `present` is Faller's. The examples are
-evaluated in a model whose worlds are sets of events. The paper's survey of *=mi* across Quechuan,
+`Semantics/Questions/Inquisitive/Highlighting.lean`. The operator name `present` is Faller's. The
+examples are evaluated in a model whose worlds are sets of events. The paper's survey of *=mi* across Quechuan,
 after Faller, Sánchez, Tellings, Grzech and Bendezú, finds the analyses hard to compare at present
 and is not formalized.
 

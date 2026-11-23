@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Hamblin.Exhaustive
 public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.CompleteLattice.Finset

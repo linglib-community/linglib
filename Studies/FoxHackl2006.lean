@@ -2,7 +2,10 @@ module
 
 public import Linglib.Data.Examples.FoxHackl2006
 public import Mathlib.Order.Interval.Set.Monotone
-public import Linglib.Semantics.Questions.Hamblin.Answerhood
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Logic.Modal.Defs
 
