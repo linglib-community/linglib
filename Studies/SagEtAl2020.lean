@@ -20,9 +20,9 @@ We define a *specification* as a sort for each of the three features, an open fe
 sort of all its values, and state the three constructions on the construct hierarchy of
 `Linglib/Syntax/HPSG/Construction.lean`. A specified category *can head* a construct sort when
 the description of a construct of that sort whose head daughter satisfies the specification is
-satisfiable over the grammar: some well-typed model has such a construct. The main result, `SagEtAl2020.canHead_iff`, says that it can exactly when, for
-each feature, the sort of the specification and the sort of the construction have a common
-subsort. A subject-predicate clause, a polar interrogative and an inverted exclamative inherit
+satisfiable over the grammar: some well-typed model has such a construct. The main result,
+`SagEtAl2020.canHead_iff`, says that it can exactly when, for each feature, the sort of the
+specification and the sort of the construction have a common subsort. A subject-predicate clause, a polar interrogative and an inverted exclamative inherit
 the specification of their headed construction and narrow the verb form
 (`SagEtAl2020.canHead_clause_iff`). An example is acceptable exactly when a specification of its
 verb can head a clause of its type (`SagEtAl2020.judgments`), apart from two examples that turn

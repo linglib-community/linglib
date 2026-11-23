@@ -244,7 +244,8 @@ def toFormula : PathAtom Sig → Formula Sig
   cases a <;> simp [toFormula, Formula.freeVars]
 
 /-- The description that states an atom. -/
-@[simps] def toDescription (a : PathAtom Sig) : Description Sig := ⟨a.toFormula, a.freeVars_toFormula⟩
+@[simps] def toDescription (a : PathAtom Sig) : Description Sig :=
+  ⟨a.toFormula, a.freeVars_toFormula⟩
 
 end PathAtom
 

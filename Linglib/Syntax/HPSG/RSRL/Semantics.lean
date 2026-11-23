@@ -20,7 +20,10 @@ is a model.
 
 `SatisfiesOn` takes the range of the quantifiers as an argument, which `Satisfies` sets to the
 components. `models_iff` reduces satisfaction under every assignment to one assignment, which
-makes `Models` decidable for a grammar given by a list on a finite universe.
+makes `Models` decidable for a grammar given by a list on a finite universe. For a grammar of
+constraints the decision follows the paths of the atoms and does not interpret formulae
+(`HPSG.RSRL.Interpretation.decidableModelsOfConstraints`), which a kernel check of a worked
+model does several times faster.
 
 ## References
 
@@ -463,8 +466,20 @@ theorem forall_satisfies_ofConstraints_iff [DecidableLE Srt] :
 theorem models_ofConstraints_iff :
     I.Models (.ofConstraints C) ↔
       ∀ c ∈ C, ∀ u, I.S u ≤ c.sort → ∀ a ∈ c.atoms, a.Holds I u := by
-  simp only [models_iff, Grammar.mem_ofList, List.forall_mem_map, Constraint.toDescription_toFormula,
-    satisfies_toFormula]
+  simp only [models_iff, Grammar.mem_ofList, List.forall_mem_map,
+    Constraint.toDescription_toFormula, satisfies_toFormula]
+
+instance _root_.HPSG.RSRL.PathAtom.decidableHolds [DecidableLE Srt] [DecidableEq U] (u : U) :
+    (a : PathAtom Sig) → Decidable (a.Holds I u)
+  | .sort p σ => inferInstanceAs (Decidable (I.SortAt u p σ))
+  | .eq p q => inferInstanceAs (Decidable (I.PathEq u p q))
+
+/-- Whether an interpretation on a finite universe is a model of a list of constraints is
+decided on the atoms, by following their paths, without interpreting the formulae that state
+them. -/
+instance (priority := high) decidableModelsOfConstraints [DecidableLE Srt] [DecidableEq U]
+    [Fintype U] : Decidable (I.Models (.ofConstraints C)) :=
+  decidable_of_iff _ models_ofConstraints_iff.symm
 
 theorem Models.of_append_left (hI : I.Models (.ofConstraints (C ++ D))) :
     I.Models (.ofConstraints C) := by

@@ -16,8 +16,8 @@ and each add a few constraints of their own.
 A row of the paper's examples describes a construct, and the row is acceptable exactly when that
 construct is a model of the grammar (`judgments`). A clause is an *absolute island* when the
 grammar entails that every construct of its sort has a mother with an empty `GAP` list;
-topicalized clauses, wh-exclamatives and the-clauses are islands (`isIsland_iff`). No wh-form occurs in all
-three wh-constructions (`no_universal_wh_word`).
+topicalized clauses, wh-exclamatives and the-clauses are islands (`isIsland_iff`). No wh-form
+occurs in all three wh-constructions (`no_universal_wh_word`).
 
 ## Implementation notes
 
