@@ -27,12 +27,15 @@ the paper's examples realizes a sentence type of its language and each type has 
 Fragment entries say, `printed`. The J-μ type alone realizes every head,
 `isDefective_transpose_exponence_iff`.
 
-An account gives each sentence type the heads of its underlying structure, among which are the
-heads it pronounces. We define two measures of difficulty on an account `a`, the number
-`a.complexity s` of heads of the structure and the number `a.covert s` of them that the sentence
-leaves unpronounced, the measure of the Transparency Principle. Where a sentence type that
-pronounces more is no more complex, `a.covert` is strictly antitone,
-`Account.covert_strictAntiOn`, and the J-μ type leaves no head covert on any account,
+A structure for the conjunction is J over the two noun phrases or J over a μ phrase for each, and
+an account gives each sentence type a structure, among whose heads are the heads it pronounces.
+With a conjunctive J both structures denote *every* on the conjuncts,
+`Structure.denote_eq_every`, and the accounts are two, differing in the structure of J
+expressions, `Account.eq_universal_or_eq_bareJ`. We define two measures of difficulty on an
+account `a`, the number `a.complexity s` of heads of the structure and the number `a.covert s` of
+them that the sentence leaves unpronounced, the measure of the Transparency Principle. Where a
+sentence type that pronounces more is no more complex, `a.covert` is strictly antitone,
+`Account.covert_strictAntiOn`, and the J-μ type leaves no head covert on either account,
 `Account.covert_jMu`.
 
 A group replayed sentences of type `s` more than those of type `t`, `PlayedMore g s t`, when the
@@ -40,15 +43,14 @@ follow-up contrast between the two is significant at .05 in that direction. Geor
 replayed a sentence type more exactly when it pronounces more, `playedMore_child_iff`, and a
 measure orders the sentence types as their replays do exactly when J-μ exceeds J and μ and these
 two are equal, `desiderata_iff`. Children replay the sentences they find difficult, so this is the
-order of difficulty the data show. The measure `a.covert` meets the conditions for no account,
-`not_desiderata_covert`, and `a.complexity` for none that gives μ and J-μ sentences one structure,
-`not_desiderata_complexity`.
+order of difficulty the data show. Neither measure meets the conditions on either account,
+`not_desiderata_covert` and `not_desiderata_complexity`.
 
 In a trial three objects are shown and the sentence says of two of them that they are on the
 table. An end state is the set of objects on the table, so a noun phrase with quantifier `q` is
-on the table at the end states `onTable q` of which `q` holds. The subject of the test sentence,
-J over the μ phrases of the mentioned objects, is *every* on them,
-`denote_image_every_mentioned`. An end state is accurate when it satisfies the sentence
+on the table at the end states `onTable q` of which `q` holds. The subject of the test sentence
+denotes *every* on the mentioned objects on either account, `denote_mentioned`. An end state is
+accurate when it satisfies the sentence
 exhaustified against the alternatives *o is on the table*, which holds of the two mentioned
 objects alone, `accurate_iff`, and it satisfies the sentence unexhaustified without being
 accurate when every object is on the table, `subset_and_not_accurate_iff`.
@@ -57,9 +59,11 @@ accurate when every object is on the table, `subset_and_not_accurate_iff`.
 
 * The type-shifter of a conjunct is not a `Head`. No sentence type pronounces it, so counting it
   would add the same number to both measures for all sentence types with one structure.
-* `Account.bareJ` is the pair of simplified structures the paper draws for the accounts of
-  Szabolcsi and of Haslinger and colleagues, whose own analyses are not formalized. The sentence
-  types are the paper's three, which leave out expressions with one μ.
+* The structures are the two simplified ones the paper draws, and `Account.bareJ` stands for the
+  accounts of Szabolcsi and of Haslinger and colleagues, whose own analyses are not formalized.
+  In the structure without μ phrases J coordinates the lifts of the noun phrases, since a
+  coordinator denotes at the conjoinable types, and the collective reading of J is left out, as
+  in the paper. The sentence types are the paper's three, which leave out expressions with one μ.
 * A difference is a printed p-value significant at .05, `PValue.Significant`, and its direction
   the sign of the printed estimate.
 * An error is classified by the number of mentioned objects on the table, as the analysis script
@@ -216,50 +220,103 @@ theorem exists_span_iff_glossed :
       (∃ s ∈ e.spans, s.start = i) ↔ "J".toList ∈ w.glosses ∨ "MU".toList ∈ w.glosses := by
   decide
 
-/-! ### Accounts and their measures -/
+/-! ### Structures, accounts and their measures -/
 
-/-- An account assigns each sentence type the heads of its underlying structure, among which are
-the heads it pronounces. -/
-structure Account where
-  /-- The heads of the structure underlying a sentence type. -/
-  underlying : Sentence → Finset Head
+/-- A structure for the conjunction of two noun phrases, Fig. 1. -/
+inductive Structure where
+  /-- J over the two noun phrases, Fig. 1a. -/
+  | bare
+  /-- J over a μ phrase for each noun phrase, Fig. 1b and Fig. 2. -/
+  | mu
+  deriving DecidableEq, Repr, Fintype
+
+namespace Structure
+
+variable {α : Type*}
+
+/-- The heads of a structure. -/
+def heads : Structure → Finset Head
+  | .bare => {.j}
+  | .mu => Finset.univ
+
+/-- What a structure denotes on the conjuncts `S` with the junctor `j`, which coordinates the
+lifts of the conjuncts, or the μ phrases of their singletons. -/
+def denote (j : Coordinator) (S : Set α) : Structure → Quantifier α
+  | .bare => j.denote (individual '' S)
+  | .mu => j.denote ((fun a ↦ Det.every {a}) '' S)
+
+/-- With a conjunctive junctor both structures denote *every* on the conjuncts, so the sentence
+types have the same truth conditions whichever structure an account gives them. -/
+theorem denote_eq_every {j : Coordinator} (hj : j.role = .conjunctive) (S : Set α)
+    (t : Structure) : t.denote j S = Det.every S := by
+  cases t
+  · rw [denote, funext individual_eq_every]
+    exact conjunction_image_eq hj S
+  · exact conjunction_image_eq hj S
+
+end Structure
+
+/-- An account assigns each sentence type its underlying structure, among whose heads are the
+heads the sentence type pronounces. -/
+@[ext] structure Account where
+  /-- The structure underlying a sentence type. -/
+  underlying : Sentence → Structure
   /-- A sentence type pronounces only heads of its structure. -/
-  pronounced_subset : ∀ s, s.pronounced ⊆ underlying s
+  pronounced_subset : ∀ s, s.pronounced ⊆ (underlying s).heads
 
 namespace Account
 
 variable (a : Account) {s t : Sentence}
 
-/-- The account of Mitrović and Sauerland, on which every sentence type has the whole structure,
-Fig. 2. -/
+/-- The account of Mitrović and Sauerland, on which every sentence type has the structure with
+μ phrases, Fig. 2. -/
 def universal : Account where
-  underlying _ := Finset.univ
+  underlying _ := .mu
   pronounced_subset _ := Finset.subset_univ _
 
-/-- The account of the rival structures, on which J expressions have J alone and μ and J-μ
-expressions the whole structure, Fig. 1. -/
+/-- The account of the rival structures, on which J expressions have the structure without μ
+phrases and μ and J-μ expressions the one with them, Fig. 1. -/
 def bareJ : Account where
   underlying
-    | .j => {.j}
-    | .mu | .jMu => Finset.univ
+    | .j => .bare
+    | .mu | .jMu => .mu
   pronounced_subset := by decide
 
+theorem underlying_of_ne_j (hs : s ≠ .j) : a.underlying s = .mu := by
+  have h := a.pronounced_subset s
+  cases hu : a.underlying s
+  · rw [hu] at h
+    cases s <;> first | exact absurd rfl hs | exact absurd h (by decide)
+  · rfl
+
+-- Fig. 1: the accounts differ only in the structure of J expressions
+theorem eq_universal_or_eq_bareJ : a = universal ∨ a = bareJ := by
+  cases h : a.underlying .j
+  · refine .inr (Account.ext (funext fun s ↦ ?_))
+    cases s
+    · exact h
+    all_goals exact a.underlying_of_ne_j (by decide)
+  · refine .inl (Account.ext (funext fun s ↦ ?_))
+    cases s
+    · exact h
+    all_goals exact a.underlying_of_ne_j (by decide)
+
 /-- The complexity of a sentence type is the number of heads in its structure. -/
-def complexity (s : Sentence) : ℕ := (a.underlying s).card
+def complexity (s : Sentence) : ℕ := (a.underlying s).heads.card
 
 /-- The number of heads of its structure that a sentence type leaves unpronounced, the
 Transparency Principle's measure of difficulty, (3). -/
-def covert (s : Sentence) : ℕ := (a.underlying s \ s.pronounced).card
+def covert (s : Sentence) : ℕ := ((a.underlying s).heads \ s.pronounced).card
 
 theorem covert_add_card_pronounced (s : Sentence) :
     a.covert s + s.pronounced.card = a.complexity s :=
   Finset.card_sdiff_add_card_eq_card (a.pronounced_subset s)
 
-theorem underlying_jMu : a.underlying .jMu = Finset.univ :=
-  Finset.univ_subset_iff.mp (a.pronounced_subset .jMu)
+theorem complexity_mu : a.complexity .mu = a.complexity .jMu := by
+  rw [complexity, complexity, a.underlying_of_ne_j (by decide), a.underlying_of_ne_j (by decide)]
 
-@[simp] theorem covert_jMu : a.covert .jMu = 0 :=
-  Finset.card_eq_zero.mpr (Finset.sdiff_eq_empty_iff_subset.mpr (Finset.subset_univ _))
+@[simp] theorem covert_jMu : a.covert .jMu = 0 := by
+  rw [covert, a.underlying_of_ne_j (by decide)]; decide
 
 variable {a} in
 theorem covert_lt_covert_of_lt (h : a.complexity t ≤ a.complexity s) (hst : s < t) :
@@ -269,8 +326,8 @@ theorem covert_lt_covert_of_lt (h : a.complexity t ≤ a.complexity s) (hst : s 
   have := Finset.card_lt_card (Sentence.pronounced_strictMono hst)
   omega
 
-/-- Where a sentence type that pronounces more is no more complex, it leaves fewer heads
-covert. -/
+-- (3): where a sentence type that pronounces more is no more complex, it leaves fewer heads
+-- covert
 theorem covert_strictAntiOn {S : Set Sentence} (h : AntitoneOn a.complexity S) :
     StrictAntiOn a.covert S :=
   fun _ hs _ ht hst ↦ covert_lt_covert_of_lt (h hs ht hst.le) hst
@@ -386,8 +443,8 @@ theorem desiderata_iff [LinearOrder β] :
 end Desiderata
 
 -- §4
-theorem not_desiderata_complexity (a : Account) (h : a.underlying .mu = a.underlying .jMu) :
-    ¬ Desiderata a.complexity := fun hd ↦ (congrArg Finset.card h).not_lt hd.mu_lt_jMu
+theorem not_desiderata_complexity (a : Account) : ¬ Desiderata a.complexity := fun hd ↦
+  a.complexity_mu.not_lt hd.mu_lt_jMu
 
 /-- No account meets the conditions by the heads it leaves covert: the J-μ type, which should be
 the most complex, leaves none. -/
@@ -438,11 +495,10 @@ abbrev EndState := Finset Object
 /-- The objects the test sentence mentions, the first two. -/
 def mentioned : Finset Object := {0, 1}
 
--- Fig. 2
-theorem denote_image_every_mentioned (l : Language) :
-    (exponent l .j).denote ((fun o ↦ Det.every {o}) '' (mentioned : Set Object)) =
-      Det.every ↑mentioned :=
-  conjunction_image_eq (by cases l <;> rfl) _
+-- Fig. 1 and Fig. 2
+theorem denote_mentioned (a : Account) (l : Language) (s : Sentence) :
+    (a.underlying s).denote (exponent l .j) (mentioned : Set Object) = Det.every ↑mentioned :=
+  Structure.denote_eq_every (by cases l <;> rfl) _ _
 
 /-- An end state is accurate when it matches the exhaustified sentence: the mentioned objects are
 on the table, and every innocently excludable alternative naming one object is denied. -/
