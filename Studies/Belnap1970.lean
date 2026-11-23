@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Data.Examples.Belnap1970

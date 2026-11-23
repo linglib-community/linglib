@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 
 /-!
 # Delineation semantics

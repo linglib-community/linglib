@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Reference.Rigidity
 public import Linglib.Fragments.Japanese.Nouns
 public import Studies.Chierchia1998

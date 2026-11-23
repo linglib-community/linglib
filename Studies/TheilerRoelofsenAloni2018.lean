@@ -5,7 +5,7 @@ public import Linglib.Semantics.Attitudes.Distributivity
 public import Linglib.Semantics.Questions.Polar
 public import Linglib.Semantics.Questions.Constituent
 public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.TheilerRoelofsenAloni2018
 
 /-!

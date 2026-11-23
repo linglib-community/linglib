@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Repetitive *again*

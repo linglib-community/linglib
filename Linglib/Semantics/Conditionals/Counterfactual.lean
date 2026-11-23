@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.SelectionFunction
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Counterfactual conditionals: three theories

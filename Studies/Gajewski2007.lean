@@ -6,6 +6,7 @@ public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Data.Examples.Gajewski2007
 public import Linglib.Data.Examples.Readers
+public import Linglib.Logic.Trivalent.Quantifier
 
 /-!
 # Gajewski (2007): Neg-Raising and Polarity

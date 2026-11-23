@@ -26,7 +26,7 @@ it](##Quantifier.universalProjection_eq_transplication_deployQuantifier).
 ## Implementation notes
 
 The definitions take any `(α → Trivalent) → Trivalent`, so they apply to the other trivalent
-quantifiers of `Linglib.Logic.Trivalent.Pointwise` as well as to deployed ones. The domain lets one
+quantifiers of `Linglib.Logic.Trivalent.Quantifier` as well as to deployed ones. The domain lets one
 notion cover quantifiers, over the whole universe, and determiners, over the restrictor.
 
 ## References
@@ -61,7 +61,7 @@ variable {Q : Set α → Prop} {R : Set α}
 predicate only when the predicate is defined throughout `R` is one that never holds of both a set
 and the set with one more element of `R`. -/
 theorem forall_mem_interval_imp_iff (P : Set α → Prop) (R : Set α) :
-    (∀ A : α → Trivalent, (∀ X ∈ interval A, P X) → ∀ a ∈ R, A a ≠ .undefined) ↔
+    (∀ A : α → Trivalent, (∀ X ∈ Trivalent.interval A, P X) → ∀ a ∈ R, A a ≠ .undefined) ↔
       ∀ B, ∀ a ∈ R, a ∉ B → ¬ (P B ∧ P (insert a B)) := by
   constructor
   · rintro h B a haR haB ⟨hB, hC⟩

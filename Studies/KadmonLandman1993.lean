@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Semantics.Genericity.Normality
 public import Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993

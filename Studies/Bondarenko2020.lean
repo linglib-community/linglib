@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Events.Lifespan
 public import Linglib.Semantics.Attitudes.Anchor
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Data.Examples.Bondarenko2020
 

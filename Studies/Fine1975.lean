@@ -5,7 +5,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Core.Order.Flat
 public import Linglib.Logic.Trivalent.Knowledge
-public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Propositional.Trivalent
 
 /-!
 # Fine (1975): Vagueness, truth and logic
@@ -66,7 +66,7 @@ to Kamp and to Lewis.
   §5 (Herbert at 50 hairs, Yul Brynner at 0, the million-haired man), and the blob at hue 5
   with colour boundaries 3 to 7; the intuitionistic and anticipatory accounts, the infinite-
   order truth-values and the hierarchy of truth-predicates are not formalized.
-* Sentences in §3 are `Trivalent.Formula` without quantifiers, so the A-clause for `∀` is
+* Sentences in §3 are `Propositional.Formula` without quantifiers, so the A-clause for `∀` is
   absent; they are classically evaluated at a point by `Formula.evalBool` on the point's atomic
   values, which is their K3 realization on that Boolean model (`Formula.realize_ofBool`).
 
@@ -85,7 +85,7 @@ to Kamp and to Lewis.
 namespace Fine1975
 
 open Bilattice Trivalent
-open Trivalent (Formula)
+open Propositional (Formula)
 
 /-! ### The truth-value approach (§1) -/
 

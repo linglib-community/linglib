@@ -371,6 +371,14 @@ def holds {W : Type*} [Membership ι W] (i : ι) : Set W := {w | i ∈ w}
 
 @[simp] theorem mem_holds {W : Type*} [Membership ι W] {w : W} : w ∈ holds i ↔ i ∈ w := .rfl
 
+open Classical in
+/-- The additive *also* `c` over the alternatives' truth conditions, with the identity scale. -/
+noncomputable abbrev also (c : ι) : Set ι → Trivalent :=
+  additive (· = ·) univ (fun j w ↦ Trivalent.ofProp (w ∈ holds j)) c
+
+theorem also_eq_true_iff {w : Set ι} : also c w = .true ↔ c ∈ w ∧ ∃ j ∈ w, c ≠ j := by
+  simp [also, and_comm]
+
 /-- The entry ch. 5 (50), *kàn* or silent, over the alternatives `P`. -/
 noncomputable abbrev exclusive {W : Type*} (P : ι → Set W) (i : ι) : W → Trivalent :=
   only (· ⊆ ·) (range P) id (P i)
@@ -440,14 +448,14 @@ theorem exclusive_alternative_eq_true_iff :
 
 /-- *He is only `i`. He is also `c`*, of another `c`, can hold together. -/
 def Scale.Compatible (s : Scale) (i c : ι) : Prop :=
-  c ≠ i ∧ ∃ w, exclusive s.alternative i w = .true ∧ additive (· = ·) univ holds c w = .true
+  c ≠ i ∧ ∃ w, exclusive s.alternative i w = .true ∧ also c w = .true
 
 theorem compatible_iff : s.Compatible i c ↔ c ≠ i ∧ s.Allows i c := by
   refine and_congr_right fun hc ↦ ⟨?_, fun h ↦ ?_⟩
   · rintro ⟨w, h₁, h₂⟩
-    exact (exclusive_alternative_eq_true_iff.1 h₁).2 c (additive_eq_true_iff.1 h₂).2
+    exact (exclusive_alternative_eq_true_iff.1 h₁).2 c (also_eq_true_iff.1 h₂).1
   · refine ⟨{c, i}, exclusive_alternative_eq_true_iff.2 ⟨by simp, ?_⟩,
-      additive_eq_true_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
+      also_eq_true_iff.2 ⟨by simp, i, by simp, hc⟩⟩
     rintro j (rfl | rfl)
     exacts [h, s.allows_refl _]
 
@@ -467,12 +475,12 @@ instance [DecidableEq ι] [DecidableLE ι] {l : List ι} : Decidable (s.TrueOf i
 -- (158), p. 99: exhaustivity is what rules out the additive continuation of a bare answer.
 theorem exists_additive_iff (hc : c ≠ i) :
     (∃ w : Set ι, (if a.Exhaustive then exclusive holds i w = .true else i ∈ w) ∧
-      additive (· = ·) univ holds c w = .true) ↔ ¬ a.Exhaustive := by
+      also c w = .true) ↔ ¬ a.Exhaustive := by
   by_cases h : a.Exhaustive
   · simp only [h, ite_true, not_true_eq_false, iff_false]
     exact fun ⟨w, h₁, h₂⟩ ↦ hc (compatible_iff (s := .entailment) |>.1 ⟨hc, w, h₁, h₂⟩).2
   · simp only [h, ite_false, not_false_eq_true, iff_true]
-    exact ⟨{c, i}, by simp, additive_eq_true_iff.2 ⟨⟨i, mem_univ _, by simp, hc⟩, by simp⟩⟩
+    exact ⟨{c, i}, by simp, also_eq_true_iff.2 ⟨by simp, i, by simp, hc⟩⟩
 
 end Exclusive
 

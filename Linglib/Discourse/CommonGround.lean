@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Modal.Epistemic
 public import Mathlib.Order.Filter.Ker
 
 /-!
@@ -24,6 +25,10 @@ assertion is Stalnakerian when the projection semiconjugates it to `· ⊓ 𝓟 
 as it is, a proposal until it is settled (`Commitment.Table.commonGround_assert`), and Anderson's
 graded update joins the common ground with the evidence's instead of meeting it
 (`Anderson2021.ae_updateCG`).
+
+A common ground is grounded in common knowledge among a group, `Filter.GroundedIn`, when the
+worlds it leaves open are exactly those at which every proposition it accepts is common
+knowledge.
 
 ## Main statements
 
@@ -81,5 +86,24 @@ theorem foldl_inf_principal_anti {h₁ h₂ : List (Set W)} (hs : h₁ ⊆ h₂)
     h₂.foldl (· ⊓ 𝓟 ·) c ≤ h₁.foldl (· ⊓ 𝓟 ·) c := by
   simp only [foldl_inf_principal]
   exact inf_le_inf_left _ (principal_mono.2 (subset_iInter₂ fun p hp ↦ iInter₂_subset p (hs hp)))
+
+/-! ### Grounding in common knowledge -/
+
+section GroundedIn
+
+variable {W E : Type*}
+
+/-- A common ground `cg` is grounded in common knowledge among `G` when its context set
+`cg.ker` is exactly the set of worlds at which every proposition it accepts is common knowledge
+[stalnaker-2002]. -/
+def GroundedIn (cg : Filter W) (Rs : E → SetRel W W) (G : Set E) : Prop :=
+  ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.CommonKnowledge Rs G (· ∈ p) w
+
+theorem GroundedIn.commonKnowledge {cg : Filter W} {Rs : E → SetRel W W} {G : Set E}
+    (h : cg.GroundedIn Rs G) {w : W} (hw : w ∈ cg.ker) {p : Set W} (hp : p ∈ cg) :
+    ModalLogic.CommonKnowledge Rs G (· ∈ p) w :=
+  (h w).1 hw p hp
+
+end GroundedIn
 
 end Filter

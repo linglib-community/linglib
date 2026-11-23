@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Fragments.Romance.French.Verbs
 
 /-!

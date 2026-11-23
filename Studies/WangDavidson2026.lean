@@ -53,7 +53,7 @@ The experiment's ratings are not formalized; its stimuli are in `Data.Examples.W
 
 namespace WangDavidson2026
 
-open Exhaustification Exhaustification.Trivalent DynamicSemantics PartialUpdate
+open Exhaustification DynamicSemantics PartialUpdate
 open CCP.Partial
 
 /-! ### Filtering by a trivalent connective -/

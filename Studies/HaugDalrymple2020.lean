@@ -6,7 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Dynamic.PPCDRT
 public import Linglib.Semantics.Plurality.Cumulativity
 public import Linglib.Semantics.Plurality.Reciprocal
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 
 /-!
 # Haug and Dalrymple (2020): Reciprocity: Anaphora, scope, and quantification

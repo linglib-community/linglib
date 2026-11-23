@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Izvorski (1997): The Present Perfect as an Epistemic Modal

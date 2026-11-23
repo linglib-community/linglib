@@ -8,7 +8,7 @@ module
 public import Mathlib.Basic.Rel
 public import Mathlib.Control.Monad.Basic
 public import Mathlib.Data.Set.Functor
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update

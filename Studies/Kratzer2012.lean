@@ -4,7 +4,7 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Modality.ComparativeLikelihood
 
 /-!
 # Kratzer (2012): Modals and Conditionals

@@ -4,6 +4,7 @@ public import Linglib.Logic.Trivalent.Probability
 public import Studies.EgreRossiSprenger2026a
 public import Studies.Yalcin2007
 public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Logic.Trivalent.Quantifier
 
 /-!
 # Égré, Rossi and Sprenger (2026): Trivalent Conditionals, Kratzer Style
@@ -81,6 +82,7 @@ contradictions) come out at the level of acceptance and inference, not truth con
 namespace EgreRossiSprenger2026b
 
 open Trivalent hiding true false
+open Propositional
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 

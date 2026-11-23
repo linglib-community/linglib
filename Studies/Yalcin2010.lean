@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.ComparativeProbability.Patterns
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Modality.ComparativeLikelihood
 public import Linglib.Logic.ComparativeProbability.Content
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Degree.Comparison

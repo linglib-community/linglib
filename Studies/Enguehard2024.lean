@@ -5,7 +5,7 @@ public import Studies.TieuEtAl2020
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Semantics.Plurality.Cardinality
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions

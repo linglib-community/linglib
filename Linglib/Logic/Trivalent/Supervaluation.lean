@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Trivalent.Quantifier
+public import Linglib.Logic.Propositional.Trivalent
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Fintype.Pi
 
@@ -28,7 +28,7 @@ undefined.
 
 ## Main definitions
 
-* `Trivalent.Formula.bivalentVariants`: the formulas over atoms paired with standards that read
+* `Propositional.Formula.bivalentVariants`: the formulas over atoms paired with standards that read
   each occurrence of an atom at a standard.
 * `Trivalent.supervaluationOn`: the supervaluation of a predicate over a set.
 
@@ -36,7 +36,7 @@ undefined.
 
 * `Trivalent.supervaluation_product_and`, `Trivalent.supervaluation_product_or`: over a product of
   families, supervaluation takes independent conjunctions and disjunctions to `⊓` and `⊔`.
-* `Trivalent.Formula.eval_strongKleene_eq_supervaluation`: the Strong Kleene value of a formula
+* `Propositional.Formula.eval_strongKleene_eq_supervaluation`: the Strong Kleene value of a formula
   is the supervaluation of its bivalent variants.
 * `Trivalent.forallStrong_eq_supervaluation`, `Trivalent.existsStrong_eq_supervaluation`: the
   Strong Kleene quantifiers are supervaluations over the readings of their instances.
@@ -235,12 +235,6 @@ theorem supervaluationOn_mono (h : ∀ a ∈ s, P a → Q a) :
 
 end SupervaluationOn
 
-end Trivalent
-
-namespace Trivalent
-
-open Trivalent
-
 section Standards
 
 variable {ι : Type*} {Q : (ι → Prop) → Prop} (p : ι → Trivalent)
@@ -298,7 +292,11 @@ theorem existsStrong_eq_supervaluation (p : ι → Trivalent) :
   simpa using (supervaluation_piFinset_exists (S := fun _ ↦ Finset.univ)
     (fun i (d : Designation) ↦ d.threshold ≤ p i) fun _ ↦ Finset.univ_nonempty).symm
 
-namespace Formula
+end Trivalent
+
+namespace Propositional.Formula
+
+open Trivalent
 
 variable {Atom : Type*} [DecidableEq Atom]
 
@@ -347,6 +345,4 @@ theorem eval_strongKleene_eq_supervaluation (M : Model Atom) (φ : Formula Atom)
     simp only [bivalentVariants, ← Finset.image_uncurry_product, supervaluation_image]
     exact supervaluation_congr fun _ _ ↦ by simp [Function.uncurry_def]
 
-end Formula
-
-end Trivalent
+end Propositional.Formula
