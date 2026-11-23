@@ -23,6 +23,10 @@ plane, and no slot has two lines (`noCrossing_stem`).
 Gemination is one root element linked to several slots: the medial radical of the second
 binyan, after Erasure and respreading, and the final radical of a biliteral root, which the
 conventions spread rightward only, so that *sasam* is underivable (`consonantism_biliteral`).
+The Obligatory Contour Principle (11) holds of the root tier: s, m, m linked one to one to
+three slots collapses there to the biliteral's representation, with the same surface segments,
+and Metathesis, which needs two slots linked to one melodic element, applies only after the
+collapse (`collapse_smmOneToOne`).
 The quadriliterals are the second, fifth, fourteenth and eleventh binyanim with a fourth
 radical, Erasure being undone by the conventions (`consonantism_quadriliteral`), and the
 twelfth and thirteenth binyanim differ only in which tier respreads after Erasure. The
@@ -672,6 +676,24 @@ theorem metathesisSites_sammam : metathesisSites (consonantism ax .V .II ⟨[x, 
   decide
 
 end Metathesis
+
+/-- The root s, m, m linked one to one to the C-slots of the first binyan, the representation
+that the OCP (11) values less than the biliteral's (p. 396). -/
+def smmOneToOne : AR (Multiplanar Morpheme (Sponsored String Morpheme) (Sponsored Slot Morpheme)) :=
+  consonantism transcribedAffixes .V .I ⟨["s", "m", "m"]⟩
+
+-- (11), (33), pp. 396–398: on the root tier the OCP makes the two m's one element, which the
+-- conventions link to the same two slots; the surface is unchanged and Metathesis gains its site
+theorem collapse_smmOneToOne :
+    ¬ smmOneToOne.IsCleanAt (some .root) ∧
+      (smmOneToOne.collapse (some .root)).word (some .root) =
+        (consonantism transcribedAffixes .V .I ⟨["s", "m"]⟩).word (some .root) ∧
+      (smmOneToOne.collapse (some .root)).lines (some .root) none =
+        (consonantism transcribedAffixes .V .I ⟨["s", "m"]⟩).lines (some .root) none ∧
+      (smmOneToOne.collapse (some .root)).spellout = smmOneToOne.spellout ∧
+      metathesisSites smmOneToOne = [] ∧
+      metathesisSites (smmOneToOne.collapse (some .root)) = [2] :=
+  ⟨by decide, by decide, by decide, spellout_collapse (by decide) _, by decide, by decide⟩
 
 /-! ### Ablaut -/
 
