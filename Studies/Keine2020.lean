@@ -31,6 +31,12 @@ the clause sizes of one extended projection, where the clauses transparent to a 
 inside the complement of its horizon. The A-movement probes of Hindi, English and Lubukusu, all
 on T⁰, form a scale of successively higher horizons.
 
+On derivations, the horizons of the probes are a cut, and a derivation obeys them when no chain
+link of its object leaves it. Raising out of a nonfinite clause obeys the horizon of the English
+A-movement probe and raising out of a finite clause does not, whether the phrase moves in one
+step or through the edge of the clause; the Phase Impenetrability Condition allows the route
+through the edge.
+
 ## Implementation notes
 
 The probes that [keine-2019] already has are that study's definitions. The Ā-movement probe
@@ -44,8 +50,10 @@ is A-movement or Ā-movement.
 ## TODO
 
 * The English and German examples behind the two languages' probes are not rows.
-* The interaction of horizons with CP and vP phases, which restricts agreement in Tsez to the
-  edge of the clause, is not formalized.
+* The structures of a clause are computed from its label. That a clause has a structure exactly
+  when a derivation of the sentence obeys the horizons is not stated.
+* Agreement into the edge of a Tsez clause, where horizons and phases interact, is not
+  formalized.
 
 ## References
 
@@ -284,5 +292,77 @@ theorem a_movement_scale {t : Spine} (ht : t.heads <+: Spine.cP.heads) :
 theorem improper_movement {h : Cat} (hh : h ∈ Spine.cP) :
     ¬ (⟨.T, some h⟩ : HorizonSetting).TransparentTo Spine.cP := by
   simpa using hh
+
+/-! ### Derivations
+
+A matrix clause over a clause with a subject, the subject raising to the matrix Spec,TP. A
+derivation obeys the horizons when its object respects the cut of its probes. -/
+
+def obj : PlanarSyntacticObject := .leaf ⟨.of .D [], 1⟩
+def subj : PlanarSyntacticObject := .leaf ⟨.of .D [], 2⟩
+def embV : PlanarSyntacticObject := .leaf ⟨.of .V [.D], 3⟩
+def embv : PlanarSyntacticObject := .leaf ⟨.of .v [.V], 4⟩
+def embT : PlanarSyntacticObject := .leaf ⟨.of .T [.v], 5⟩
+def embCTok : LexicalItem.Token := ⟨.of .C [.T], 6⟩
+def embC : PlanarSyntacticObject := .leaf embCTok
+def matV (c : Cat) : PlanarSyntacticObject := .leaf ⟨.of .V [c], 7⟩
+def matTTok : LexicalItem.Token := ⟨.of .T [.V], 8⟩
+def matT : PlanarSyntacticObject := .leaf matTTok
+
+/-- The embedded clause up to T⁰, `[TP T [vP DP [v [VP V DP]]]]`. -/
+def embeddedTP : List Step := [.em .left embV, .em .left embv, .em .left subj, .em .left embT]
+
+/-- (244), (245): the embedded subject raises to the matrix Spec,TP out of a finite clause or
+out of a nonfinite one. -/
+def raising (finite : Bool) : Derivation :=
+  ⟨obj, embeddedTP ++
+    (if finite then [.em .left embC, .em .left (matV .C)] else [.em .left (matV .T)]) ++
+    [.em .left matT, .im subj]⟩
+
+/-- The embedded subject moves to the embedded Spec,CP and from there to the matrix Spec,TP. -/
+def improper : Derivation :=
+  ⟨obj, embeddedTP ++ [.em .left embC, .im subj, .em .left (matV .C), .em .left matT, .im subj]⟩
+
+/-- The movement probes of the lexical items: `p` on the matrix T⁰, and a probe without horizon
+on the embedded C⁰. -/
+def probes (p : HorizonSetting) (tok : LexicalItem.Token) : Option HorizonSetting :=
+  if tok = matTTok then some p else if tok = embCTok then some ⟨.C, none⟩ else none
+
+/-- The cut of the horizons, with `p` the probe on the matrix T⁰. -/
+abbrev horizons (p : HorizonSetting) (t : PlanarSyntacticObject) : Cut :=
+  horizonCut headIndex? t .raising (probes p)
+
+/-- The cut of the Phase Impenetrability Condition, the complement of the embedded C⁰ sealed
+when its phase is complete. -/
+abbrev phases (t : PlanarSyntacticObject) : Cut :=
+  sealed (occurrencesWith t (· = embCTok)).toFinset complementDomain (.atCompletion .raising t)
+
+-- (242b), (245), (300)
+theorem raising_respects :
+    ((raising false).Respects .raising (horizons Keine2019.englishAProbe) ∧
+        ¬ (raising true).Respects .raising (horizons Keine2019.englishAProbe)) ∧
+      ¬ (raising false).Respects .raising (horizons Keine2019.aProbe) ∧
+      (raising true).Respects .raising (horizons lubukusuAProbe) := by
+  decide +kernel
+
+-- (274)
+theorem not_respects_of_vacuous :
+    ¬ (raising false).Respects .raising (horizons ⟨.T, some .v⟩) := by
+  decide +kernel
+
+/-- The Ban on Improper Movement: the edge of a finite clause is behind the horizon of the
+English A-movement probe, though outside the domain its phase seals, so a phrase that has moved
+to Spec,CP does not raise on to the matrix Spec,TP. -/
+theorem improper_movement_respects :
+    ¬ improper.Respects .raising (horizons Keine2019.englishAProbe) ∧
+      improper.Respects .raising phases := by
+  decide +kernel
+
+-- Chapter 4: without a horizon, the phase leaves the route through the edge and no other
+theorem respects_phases_sup_horizons :
+    improper.Respects .raising (phases ⊔ horizons lubukusuAProbe) ∧
+      ¬ (raising true).Respects .raising (phases ⊔ horizons lubukusuAProbe) := by
+  simp only [Derivation.respects_sup]
+  decide +kernel
 
 end Keine2020

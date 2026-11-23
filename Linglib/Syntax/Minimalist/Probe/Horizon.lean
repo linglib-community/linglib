@@ -28,7 +28,10 @@ its default horizon.
 
 On a tree, a node carries the spine of its extended projection, a phrase inheriting its
 complement's categories, and the positions behind a probe's horizon are those under a node the
-probe c-commands that is not transparent to it.
+probe c-commands that is not transparent to it. A set of spines thus gives a cut, and the
+probes of the lexical items of an object give the cut that, at each stage, closes what lies
+behind the horizon of the probe on the head of that stage. An object that respects this cut has
+no chain link out of a clause that is not transparent to the probe that attracts it.
 
 ## Main definitions
 
@@ -40,6 +43,8 @@ probe c-commands that is not transparent to it.
 * `Minimalist.HorizonSetting.default`: the setting whose horizon is the category of its head.
 * `Minimalist.spineOf`: the spine of a tree, by category inheritance.
 * `Minimalist.HorizonSetting.cut`: the positions of a tree behind a probe's horizon.
+* `Minimalist.opaqueCut`: the cut of a set of spines.
+* `Minimalist.horizonCut`: the cut of the probes on the lexical items of an object.
 
 ## Main results
 
@@ -54,6 +59,10 @@ probe c-commands that is not transparent to it.
   node the probe c-commands dominates it and is not transparent to the probe.
 * `Minimalist.HorizonSetting.mem_cut_of_isVacuousIn`: a vacuous probe reaches nothing beyond its
   sister.
+* `Minimalist.HorizonSetting.cut_eq_opaqueCut`: the positions behind a horizon are the cut of
+  the clauses not transparent to the probe.
+* `Minimalist.RespectsCut.transparentTo`: in an object that respects the horizons, the lower
+  copy of a chain link lies under no node opaque to the probe that attracts it.
 
 ## Implementation notes
 
@@ -309,6 +318,61 @@ theorem HorizonSetting.mem_cut_iff :
     obtain ⟨c, hc, hm⟩ : ∃ c ∈ p.horizon, c ∈ spineAt η t x := by
       simpa [transparentTo_iff] using hnt
     exact ⟨c, hc, x, Finset.mem_Iio.2 hx, ha, hm⟩
+
+/-! ### Horizons as cuts -/
+
+variable (η t) in
+/-- The cut of a set `O` of spines: for a head at `a`, the positions under a node that `a`
+c-commands and whose spine is in `O`. -/
+def opaqueCut (O : Set Spine) : Cut :=
+  fun a ↦ {q | ∃ x < q, t.toRoseTree.CCommands a x ∧ spineAt η t x ∈ O}
+
+theorem opaqueCut_mono : Monotone (opaqueCut η t) :=
+  fun _ _ h _ _ ⟨x, hx, ha, ho⟩ ↦ ⟨x, hx, ha, h ho⟩
+
+theorem opaqueCut_union (O O' : Set Spine) :
+    opaqueCut η t (O ∪ O') = opaqueCut η t O ⊔ opaqueCut η t O' := by
+  ext a q
+  simp only [opaqueCut, Set.mem_union, Pi.sup_apply, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨x, hx, ha, ho | ho⟩
+    exacts [.inl ⟨x, hx, ha, ho⟩, .inr ⟨x, hx, ha, ho⟩]
+  · rintro (⟨x, hx, ha, ho⟩ | ⟨x, hx, ha, ho⟩)
+    exacts [⟨x, hx, ha, .inl ho⟩, ⟨x, hx, ha, .inr ho⟩]
+
+theorem isUpperSet_opaqueCut {O : Set Spine} : IsUpperSet (opaqueCut η t O a) :=
+  fun _ _ hqr ⟨x, hx, h⟩ ↦ ⟨x, hx.trans_le hqr, h⟩
+
+/-- The positions behind a probe's horizon are the cut of the clauses not transparent to it. -/
+theorem HorizonSetting.cut_eq_opaqueCut :
+    p.cut η t = opaqueCut η t {s | ¬ p.TransparentTo s} :=
+  funext fun _ ↦ Set.ext fun _ ↦ mem_cut_iff
+
+variable (η t) in
+/-- The cut of the movement probes that `probe` assigns to lexical items: at a stage, the
+positions behind the horizon of the probe on the lexical head of that stage. -/
+def horizonCut (hd : HeadFunction) (probe : LexicalItem.Token → Option HorizonSetting) : Cut :=
+  fun s ↦ {q | ∃ tok ∈ t.toRoseTree[lexicalHeadAt hd t s]?.bind rootToken?, ∃ p ∈ probe tok,
+    q ∈ p.cut η t (lexicalHeadAt hd t s)}
+
+instance (hd : HeadFunction) (probe : LexicalItem.Token → Option HorizonSetting)
+    (s : GornAddress) : DecidablePred (· ∈ horizonCut η t hd probe s) :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _))
+
+/-- Selective opacity: in an object that respects the horizons of its probes, the lower copy of
+a chain link lies under no node that the attracting head c-commands and that is not transparent
+to its probe. -/
+theorem RespectsCut.transparentTo {hd : HeadFunction}
+    {probe : LexicalItem.Token → Option HorizonSetting}
+    (hr : RespectsCut hd t (horizonCut η t hd probe)) {r l x : GornAddress}
+    {mover tok : LexicalItem.Token} (hm : (r, mover) ∈ tokenList t.toRoseTree)
+    (hl : (l, q) ∈ links hd t mover)
+    (htok : t.toRoseTree[lexicalHeadAt hd t l.parent]?.bind rootToken? = some tok)
+    (hp : probe tok = some p) (hx : x < q)
+    (hc : t.toRoseTree.CCommands (lexicalHeadAt hd t l.parent) x) :
+    p.TransparentTo (spineAt η t x) :=
+  by_contra fun hn ↦
+    hr r mover hm ⟨(l, q), hl, tok, htok, p, hp, HorizonSetting.mem_cut_iff.2 ⟨x, hx, hc, hn⟩⟩
 
 /-- A probe whose sister is not transparent to it reaches nothing beyond its sister: every
 position it c-commands below the sister is behind its horizon. -/
