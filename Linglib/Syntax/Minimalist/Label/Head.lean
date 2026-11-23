@@ -9,25 +9,26 @@ public import Mathlib.Algebra.Group.Hom.Defs
 public import Linglib.Syntax.Minimalist.LexicalItem
 
 /-!
-# Heads
+# Head functions
 
 A licensing of Merge is a morphism of magmas out of the syntactic objects into a commutative magma
 with zero, `0` being the failure of Merge, and its head function reads a head off each value.
 Marcolli, Chomsky and Berwick's head functions are partial, and the head of a Merge is the head of
-the daughter that projects; `Head` records that law on the target, so the head function of every
+the daughter that projects. A function `head` on the target is a head function when `0` has no
+head and the head of a product is the head of one of its factors, so the head function of every
 licensing is endocentric. Where `0` absorbs, the domain of a licensing is closed under daughters
 (`ne_zero_and_ne_zero_of_mul` after `map_mul`), though not under Merge, since an exocentric Merge of
-two headed objects has no head. Selection, copy states and raising are instances.
+two headed objects has no head. The heads of selection states, copy states and raising states are
+head functions.
 
 ## Main definitions
 
-* `Minimalist.Head`: an endocentric head on a magma with zero.
+* `Minimalist.IsHeadFunction`: a head function on a magma with zero.
 
 ## Main statements
 
-* `Minimalist.mem_head_or_mem_head_of_mem_head_mul`: a product's head is a factor's head.
-* `Minimalist.mem_head_or_mem_head_of_mem_head_map_mul`: so is the head of the image of a
-  product under a morphism of magmas.
+* `Minimalist.IsHeadFunction.comp`: the head of the image of a product under a morphism of magmas
+  is the head of the image of a factor.
 
 ## References
 
@@ -38,30 +39,22 @@ two headed objects has no head. Selection, copy states and raising are instances
 
 namespace Minimalist
 
-/-- An endocentric head on a magma with zero: `0`, the failure of Merge, has no head, and the head
-of a product is the head of one of its factors, the characterization of heads in
+variable {β : Type*} [Mul β] [Zero β] {head : β → Option LexicalItem.Token}
+
+/-- A head function on a magma with zero: `0`, the failure of Merge, has no head, and the head of
+a product is the head of one of its factors, the characterization of heads in
 [marcolli-chomsky-berwick-2025], Lemma 1.13.7. -/
-class Head (β : Type*) [Mul β] [Zero β] where
-  /-- The projecting head, if any. -/
-  head : β → Option LexicalItem.Token
-  protected head_zero : head 0 = none
-  protected mem_head_or_mem_head_of_mem_head_mul {x y : β} {t : LexicalItem.Token} :
+structure IsHeadFunction (head : β → Option LexicalItem.Token) : Prop where
+  /-- The failure of Merge has no head. -/
+  map_zero : head 0 = none
+  /-- The head of a product is the head of a factor. -/
+  mem_or_mem_of_mem_mul : ∀ {x y : β} {t : LexicalItem.Token},
     t ∈ head (x * y) → t ∈ head x ∨ t ∈ head y
-
-export Head (head)
-
-variable {β : Type*} [Mul β] [Zero β] [Head β]
-
-@[simp] theorem head_zero : head (0 : β) = none := Head.head_zero
-
-theorem mem_head_or_mem_head_of_mem_head_mul {x y : β} {t : LexicalItem.Token}
-    (h : t ∈ head (x * y)) : t ∈ head x ∨ t ∈ head y :=
-  Head.mem_head_or_mem_head_of_mem_head_mul h
 
 /-- The head of the image of a product is the head of a factor's image: a licensing's head
 function is endocentric ([marcolli-chomsky-berwick-2025], Lemma 1.13.7). -/
-theorem mem_head_or_mem_head_of_mem_head_map_mul {M : Type*} [Mul M] (φ : M →ₙ* β) {x y : M}
-    {t : LexicalItem.Token} (h : t ∈ head (φ (x * y))) : t ∈ head (φ x) ∨ t ∈ head (φ y) :=
-  mem_head_or_mem_head_of_mem_head_mul (map_mul φ x y ▸ h)
+theorem IsHeadFunction.comp (h : IsHeadFunction head) {M : Type*} [Mul M] (φ : M →ₙ* β) {x y : M}
+    {t : LexicalItem.Token} (ht : t ∈ head (φ (x * y))) : t ∈ head (φ x) ∨ t ∈ head (φ y) :=
+  h.mem_or_mem_of_mem_mul (map_mul φ x y ▸ ht)
 
 end Minimalist
