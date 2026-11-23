@@ -35,9 +35,8 @@ segment `k` on a tier is the number of earlier segments with a token there,
 
 ## TODO
 
-* The proofs of `reads_ofSpec_iff`, `reads_linkNode_iff`, `reads_linkFeature_iff` and
-  `noCrossing_linkNode_iff`, which are checked on small geometries; the last is
-  `Autosegmental.AR.noCrossing_spreadTier_iff` at the tier of the node.
+* The proofs of `reads_linkNode_iff` and `reads_linkFeature_iff`, which are checked on small
+  geometries.
 * Contour segments, with two tokens of one feature under one node token, and geminates, with one
   root node under two slots, as representations that no word of specifications realizes.
 
@@ -165,12 +164,91 @@ def linkFeature (w : List (F → Option β)) (f : F) (m n : ℕ) : AR (Tiers N F
 variable [Fintype N] {node} {w : List (F → Option β)} {s : F → Option β} {a : N} {m n k : ℕ}
   {f g : F} {b : β}
 
+theorem word_ofSpec_node_ne_nil {c : N} :
+    (ofSpec node s).word (some (.inl c)) ≠ [] ↔ c = ⊥ ∨ Bears node s c := by
+  show (if c = ⊥ ∨ Bears node s c then [PUnit.unit] else []) ≠ [] ↔ _
+  split_ifs with h <;> simp [h]
+
+theorem parent_node {c : N} (hc : c ≠ ⊥) :
+    (tiers node).parent (some (.inl c)) = some (.inl (Order.pred c)) := by
+  show tierParent node (some (.inl c)) = _
+  simp only [tierParent, hc, ↓reduceIte]
+
+theorem parent_bot : (tiers node).parent (some (.inl (⊥ : N))) = none := by
+  show tierParent node (some (.inl ⊥)) = _
+  simp only [tierParent, ↓reduceIte]
+
+theorem word_ofSpec_parent_ne_nil {c : N}
+    (h : c = ⊥ ∨ Order.pred c = ⊥ ∨ Bears node s (Order.pred c)) :
+    (ofSpec node s).word ((tiers node).parent (some (.inl c))) ≠ [] := by
+  by_cases hc : c = ⊥
+  · subst hc
+    rw [parent_bot]
+    exact List.cons_ne_nil _ _
+  · rw [parent_node hc]
+    exact word_ofSpec_node_ne_nil.2 (h.resolve_left hc)
+
+/-- A specification has a line from a node to the tier above exactly when it has the node. -/
+theorem link_ofSpec_node_iff :
+    (ofSpec node s).Link ((tiers node).parent (some (.inl a))) (some (.inl a)) 0 0 ↔
+      a = ⊥ ∨ Bears node s a := by
+  constructor
+  · exact fun h ↦ word_ofSpec_node_ne_nil.1 (List.ne_nil_of_length_pos h.lt_right)
+  · intro h
+    refine AR.link_fromRel.2 ⟨fun he ↦ Option.some_ne_none _
+        ((tiers node).eq_root_of_iterate_eq (n := 1) one_ne_zero he),
+      List.length_pos_iff.2 (word_ofSpec_parent_ne_nil ?_),
+      List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 h), .inl ⟨rfl, Option.some_ne_none _⟩⟩
+    exact h.imp_right fun hb ↦ .inr (hb.of_le (Order.pred_le a))
+
+theorem mem_descendants_node (s : F → Option β) : ∀ (n : ℕ) (c : N), Order.pred^[n] c = ⊥ →
+    (c = ⊥ ∨ Bears node s c) → ((some (.inl c) : Option (N ⊕ F)), 0) ∈
+      (ofSpec node s).descendants (tiers node) (n + 1) (none, 0)
+  | 0, c, h, _ => by
+    obtain rfl : c = ⊥ := h
+    refine AR.mem_descendants_succ_of_mem_children (AR.mem_descendants_self 0 _)
+      (AR.mem_children.2 ⟨parent_bot, Option.some_ne_none _, ?_⟩)
+    have := (link_ofSpec_node_iff (node := node) (s := s) (a := ⊥)).2 (.inl rfl)
+    rwa [parent_bot] at this
+  | n + 1, c, h, hc => by
+    by_cases hbot : c = ⊥
+    · subst hbot
+      exact AR.descendants_subset_succ _ _
+        (mem_descendants_node s n ⊥ (Function.iterate_fixed Order.pred_bot n) (.inl rfl))
+    · have hb : Bears node s c := hc.resolve_left hbot
+      have ih := mem_descendants_node s n (Order.pred c)
+        (by rwa [Function.iterate_succ_apply] at h) (.inr (hb.of_le (Order.pred_le c)))
+      refine AR.mem_descendants_succ_of_mem_children ih
+        (AR.mem_children.2 ⟨parent_node hbot, Option.some_ne_none _, ?_⟩)
+      have := (link_ofSpec_node_iff (node := node) (s := s) (a := c)).2 (.inr hb)
+      rwa [parent_node hbot] at this
+
 theorem reads_ofSpec_iff :
     (ofSpec node s).Reads (tiers node) 0 (some (.inr f)) b ↔ (node f).isSome ∧ s f = some b := by
-  -- TODO: a specified placed feature has a token, and so has each node from its own up to the
-  -- root, by `Bears.of_le`; the lines between them descend from the slot. Induct on the
-  -- number of steps from the node of `f` to the root.
-  sorry
+  have hword : (ofSpec node s).word (some (.inr f)) =
+      if (node f).isSome then (s f).toList else [] := rfl
+  constructor
+  · rintro ⟨q, -, -, hb⟩
+    rw [hword] at hb
+    split_ifs at hb with hf
+    · exact ⟨hf, Option.mem_toList.1 (List.mem_of_getElem? hb)⟩
+    · simp at hb
+  · rintro ⟨hf, hs⟩
+    obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1 hf
+    have hb : Bears node s c := bears_of_isSome hc (by rw [hs]; rfl) le_rfl
+    obtain ⟨n, hn, hpn⟩ :=
+      Function.exists_iterate_eq_lt_card Order.pred (bot_le (a := c)).exists_pred_iterate
+    have hchild : ((some (.inr f) : Option (N ⊕ F)), 0) ∈
+        (ofSpec node s).children (tiers node) (some (.inl c), 0) :=
+      AR.mem_children.2 ⟨by show tierParent node (some (.inr f)) = _; simp [tierParent, hc],
+        Option.some_ne_none _,
+        AR.link_fromRel.2 ⟨by simp, List.length_pos_iff.2 (word_ofSpec_node_ne_nil.2 (.inr hb)),
+          by simp [hword, hf, hs], .inl ⟨by simp [tierParent, hc], Option.some_ne_none _⟩⟩⟩
+    refine ⟨0, Finset.mem_range.2 (by simp [hword, hf, hs]), AR.descendants_mono ?_ _
+      (AR.mem_descendants_succ_of_mem_children (mem_descendants_node s n c hpn (.inr hb)) hchild),
+      by simp [hword, hf, hs]⟩
+    rw [Fintype.card_option, Fintype.card_sum]
+    omega
 
 /-- Reading a realized word back gives its segments. -/
 theorem reads_ofWord_iff :
@@ -207,8 +285,10 @@ theorem noCrossing_linkNode_iff (hm : m < w.length) (hn : n < w.length)
     (hna : a = ⊥ ∨ Order.pred a = ⊥ ∨ Bears node w[n] (Order.pred a)) :
     (linkNode node w a m n).NoCrossing ↔
       ∀ k (hk : k < w.length), k ∈ Set.uIoo m n → ¬ (a = ⊥ ∨ Bears node w[k] a) := by
-  -- TODO: `AR.noCrossing_spreadTier_iff` at the tier of `a`, whose primitives have a line to
-  -- the tier above exactly when the segment has the node.
-  sorry
+  rw [linkNode, AR.noCrossing_spreadTier_iff (tiers node) (ofSpec node) (Option.some_ne_none _)
+    (fun s ↦ length_tierWord_le_one node s _) (fun s ↦ length_tierWord_le_one node s _) hm hn
+    (word_ofSpec_node_ne_nil.2 hma) (word_ofSpec_parent_ne_nil hna) (noCrossing_ofWord node w)]
+  exact forall_congr' fun k ↦ forall_congr' fun hk ↦ imp_congr_right fun _ ↦
+    not_congr link_ofSpec_node_iff
 
 end Phonology.FeatureGeometry

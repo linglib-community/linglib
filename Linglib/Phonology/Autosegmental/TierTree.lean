@@ -32,8 +32,6 @@ is transparent.
 
 ## TODO
 
-* The proofs of `reads_prod_map` and `noCrossing_spreadTier_iff`, which are checked on small
-  trees of tiers.
 * `AR.SurfacesWith` on two tiers and `AR.hostedOn` on planes are `Reads` on trees of depth one,
   and the line edits of `Multiplanar.lean` are `addLine` and `eraseLine` on a star.
 * The graph of a tree of tiers is acyclic, so by `AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic`
@@ -110,6 +108,40 @@ theorem lt_length_of_mem_descendants {d : ℕ} {v u : ι × ℕ} (hv : v.2 < (X.
     obtain rfl | ⟨⟨j, q⟩, hc, hu⟩ := hu
     · exact hv
     · exact ih (mem_children.1 hc).2.2.lt_right hu
+
+theorem mem_descendants_self (d : ℕ) (v : ι × ℕ) : v ∈ X.descendants T d v := by
+  cases d <;> simp [descendants]
+
+theorem descendants_subset_succ (d : ℕ) (v : ι × ℕ) :
+    X.descendants T d v ⊆ X.descendants T (d + 1) v := by
+  induction d generalizing v with
+  | zero => simp [descendants]
+  | succ d ih =>
+    rw [descendants, descendants]
+    exact Finset.insert_subset_insert _ (Finset.biUnion_mono fun c _ ↦ ih c)
+
+theorem descendants_mono {d d' : ℕ} (h : d ≤ d') (v : ι × ℕ) :
+    X.descendants T d v ⊆ X.descendants T d' v := by
+  induction h with
+  | refl => exact subset_rfl
+  | step _ ih => exact ih.trans (descendants_subset_succ _ v)
+
+/-- A child of a token reached in `d` descending lines is reached in `d + 1`. -/
+theorem mem_descendants_succ_of_mem_children {d : ℕ} {v u u' : ι × ℕ}
+    (hu : u ∈ X.descendants T d v) (hu' : u' ∈ X.children T u) :
+    u' ∈ X.descendants T (d + 1) v := by
+  induction d generalizing v with
+  | zero =>
+    obtain rfl : u = v := by simpa [descendants] using hu
+    rw [descendants]
+    exact Finset.mem_insert_of_mem (Finset.mem_biUnion.2 ⟨u', hu', mem_descendants_self 0 u'⟩)
+  | succ d ih =>
+    rw [descendants, Finset.mem_insert, Finset.mem_biUnion] at hu
+    rw [descendants]
+    obtain rfl | ⟨c, hc, hu⟩ := hu
+    · exact Finset.mem_insert_of_mem
+        (Finset.mem_biUnion.2 ⟨u', hu', mem_descendants_self _ u'⟩)
+    · exact Finset.mem_insert_of_mem (Finset.mem_biUnion.2 ⟨c, hc, ih hu⟩)
 
 end Dominates
 
@@ -282,6 +314,7 @@ theorem reads_prod_map (h : ∀ s, ((g₀ s).word T.root).length = 1) {b : τ j}
       exact ⟨fun ⟨hk, hr⟩ ↦ ⟨Nat.succ_lt_succ hk, hr⟩,
         fun ⟨hk, hr⟩ ↦ ⟨Nat.lt_of_succ_lt_succ hk, hr⟩⟩
 
+omit [Fintype ι] in
 /-- Spreading a tier crosses no line exactly when no symbol strictly between the two has a line
 between that tier and the one above it. -/
 theorem noCrossing_spreadTier_iff (hj : j ≠ T.root)
