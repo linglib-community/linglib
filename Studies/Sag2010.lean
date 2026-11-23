@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.HPSG.Construction
+public import Linglib.Syntax.HPSG.RSRL.Satisfiability
 public import Linglib.Data.Examples.Sag2010
 public import Linglib.Data.Examples.Readers
 
@@ -13,9 +14,9 @@ the-clauses. The paper analyses them as constructions that share the *filler-hea
 and each add a few constraints of their own.
 
 A row of the paper's examples describes a construct, and the row is acceptable exactly when that
-construct is a model of the grammar (`judgments`). A clause is an *absolute island* when, in
-every model, every construct of its sort has a mother with an empty `GAP` list; topicalized
-clauses, wh-exclamatives and the-clauses are islands (`isIsland_iff`). No wh-form occurs in all
+construct is a model of the grammar (`judgments`). A clause is an *absolute island* when the
+grammar entails that every construct of its sort has a mother with an empty `GAP` list;
+topicalized clauses, wh-exclamatives and the-clauses are islands (`isIsland_iff`). No wh-form occurs in all
 three wh-constructions (`no_universal_wh_word`).
 
 ## Implementation notes
@@ -183,38 +184,35 @@ example : ¬ { FGClause.topicalized.construct .austinean .nil with
 
 /-! ### Islands -/
 
-/-- A clause is an absolute island when, in every model of the grammar, every construct of its
-sort has a mother with an empty `GAP` list, so that no gap inside the clause is bound outside
-it. -/
+/-- A clause is an absolute island when the grammar entails that every construct of its sort has
+a mother with an empty `GAP` list, so that no gap inside the clause is bound outside it. -/
 def FGClause.IsIsland (c : FGClause) : Prop :=
-  ∀ ⦃U : Type⦄ (I : Interpretation sig U), I.Models grammar → ∀ u, I.S u ≤ c.sort →
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) .elist)
+  grammar.Entails (⟨c.sort, [.sort [.MTR, .GAP] .elist]⟩ : Constraint sig).toDescription
 
 variable {U : Type*} {I : Interpretation sig U} {u : U}
 
-theorem satisfies_gapRest_elist (hI : I.Models grammar) {c : FGClause}
+theorem sortAt_hdDtr_gap_rest (hI : I.Models grammar) {c : FGClause}
     (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) (hu : I.S u ≤ c.sort) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist) := by
+    I.SortAt u [.HDDTR, .GAP, .REST] .elist := by
   rcases hc with rfl | rfl | rfl
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints])
-      hu).and_right.and_right.and_right.and_right.and_right.and_left
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints])
-      hu).and_right.and_right.and_right
-  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).and_right.and_right
+  exacts [hI.sortAt topPrinciple hu, hI.sortAt whExclPrinciple hu, hI.sortAt thePrinciple hu]
 
 theorem isIsland_iff (c : FGClause) :
     c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative ∨ c = .theClause := by
-  refine ⟨fun h ↦ ?_, fun hc U I hI u hu ↦ ?_⟩
+  refine ⟨fun h ↦ ?_, fun hc ↦ Grammar.entails_toDescription_iff.2 fun U I _ hI u hu a ha ↦ ?_⟩
   · by_contra hc
     have key : ∀ c : FGClause, ¬ (c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) →
-        (c.construct c.sem .g2).Models grammar ∧ ¬ (c.construct c.sem .g2).Satisfies
-          (fun _ ↦ .cxt) .cxt (.sortAssign (.path [.MTR, .GAP]) .elist) := by
+        (c.construct c.sem .g2).Models grammar ∧
+          ¬ (c.construct c.sem .g2).SortAt .cxt [.MTR, .GAP] .elist := by
       decide +kernel
-    exact (key c hc).2 (h _ (key c hc).1 .cxt
-      ((by decide +kernel : ∀ c : FGClause, c.cxtSort .fin ≤ c.sort) c))
-  · exact (satisfies_mtrGap_iff hI
+    obtain ⟨hM, hn⟩ := key c hc
+    exact hn (h.holds (isWellTyped_constructs c).2 hM (r := .cxt)
+      ((by decide +kernel : ∀ c : FGClause, c.cxtSort .fin ≤ c.sort) c)
+      (List.mem_singleton_self _))
+  · obtain rfl := List.mem_singleton.1 ha
+    exact (sortAt_mtr_gap_iff hI
       (hu.trans ((by decide +kernel : ∀ c : FGClause, c.sort ≤ .fillerHeadCxt) c)) .elist).2
-      (satisfies_gapRest_elist hI hc hu)
+      (sortAt_hdDtr_gap_rest hI hc hu)
 
 /-! ### The parameters of variation
 
@@ -227,75 +225,63 @@ private theorem le_finWhRelCl_or_le_infWhRelCl (hs : I.IsSortResolved) (hu : I.S
     σ ≤ .finWhRelCl ∨ σ ≤ .infWhRelCl) _ hu (hs u)
 
 /-- The filler daughter of each of the five clauses is nonverbal (25). -/
-theorem satisfies_filler_nonverbal (hI : I.Models grammar) (hs : I.IsSortResolved)
-    (c : FGClause) (hu : I.S u ≤ c.sort) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal) := by
+theorem sortAt_fillerDtr_cat (hI : I.Models grammar) (hs : I.IsSortResolved)
+    (c : FGClause) (hu : I.S u ≤ c.sort) : I.SortAt u [.FILLERDTR, .CAT] .nonverbal := by
   cases c
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).and_left
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).and_left
-  · exact (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).and_left
+  · exact hI.sortAt topPrinciple hu
+  · exact hI.sortAt whExclPrinciple hu
+  · exact hI.sortAt nsWhIntPrinciple hu
   · rcases le_finWhRelCl_or_le_infWhRelCl hs hu with h | h
-    · exact (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints])
-        h).and_right.sortAssign_mono (by decide)
-    · exact (satisfies_body hI (c := infWhRelPrinciple) (by simp [constraints])
-        h).and_left.sortAssign_mono (by decide)
-  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).and_left
+    · exact (hI.sortAt finWhRelPrinciple h (σ := .nominal)).mono (by decide)
+    · exact (hI.sortAt infWhRelPrinciple h (σ := .prep)).mono (by decide)
+  · exact hI.sortAt thePrinciple hu
 
 /-- The head daughter of a topicalized clause, wh-exclamative, wh-interrogative or wh-relative is a
 projection of a verb (27). -/
-theorem satisfies_head_verb (hI : I.Models grammar) (hw : I.IsWellTyped) {c : FGClause}
-    (hc : c ≠ .theClause) (hu : I.S u ≤ c.sort) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT]) .verb) := by
+theorem sortAt_hdDtr_cat (hI : I.Models grammar) (hw : I.IsWellTyped) {c : FGClause}
+    (hc : c ≠ .theClause) (hu : I.S u ≤ c.sort) : I.SortAt u [.HDDTR, .CAT] .verb := by
   cases c
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints]) hu).and_right.and_left
+  · exact hI.sortAt topPrinciple hu
+  · exact sortAt_of_sortAt_concat hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide)
+      (hI.sortAt whExclPrinciple hu (p := [.HDDTR, .CAT, .INV]) (σ := .minus))
   · obtain ⟨v, hv, -⟩ :=
-      (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).and_right.and_left
-    exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
-  · obtain ⟨v, hv, -⟩ :=
-      (satisfies_body hI (c := nsWhIntPrinciple) (by simp [constraints]) hu).and_right
-    exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
-  · obtain ⟨v, hv, -⟩ := (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
-      (satisfies_body hI (c := relativePrinciple) (by simp [constraints])
-          (hu.trans (by decide))).and_left
-    exact satisfies_le_of_mem_termDenot hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide) hv
+      hI.pathEq nsWhIntPrinciple hu (p := [.HDDTR, .CAT, .INV]) (q := [.HDDTR, .CAT, .IC])
+    exact sortAt_of_sortAt_concat hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide)
+      ⟨v, hv, le_rfl⟩
+  · exact sortAt_of_sortAt_concat hw (p := [.HDDTR, .CAT]) (α := .INV) (by decide)
+      ((sortAt_mtr_cat_iff hI (hu.trans (by decide)) [.INV] .minus).1
+        (hI.sortAt relativePrinciple (hu.trans (by decide))))
   · exact absurd rfl hc
 
 /-- The head daughter of a topicalized clause, wh-exclamative or wh-relative is uninverted (28).
 A wh-relative inherits this from the relative construction on its mother. -/
-theorem satisfies_head_uninverted (hI : I.Models grammar) {c : FGClause}
+theorem sortAt_hdDtr_inv (hI : I.Models grammar) {c : FGClause}
     (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .whRelative) (hu : I.S u ≤ c.sort) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus) := by
+    I.SortAt u [.HDDTR, .CAT, .INV] .minus := by
   rcases hc with rfl | rfl | rfl
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints])
-      hu).and_right.and_right.and_left
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).and_right.and_left
-  · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
-      (satisfies_body hI (c := relativePrinciple) (by simp [constraints])
-          (hu.trans (by decide))).and_left
+  · exact hI.sortAt topPrinciple hu
+  · exact hI.sortAt whExclPrinciple hu
+  · exact (sortAt_mtr_cat_iff hI (hu.trans (by decide)) [.INV] .minus).1
+      (hI.sortAt relativePrinciple (hu.trans (by decide)))
 
 /-- The head daughter of a topicalized clause, wh-exclamative, the-clause or finite wh-relative is
 finite (29). -/
-theorem satisfies_head_fin (hI : I.Models grammar)
+theorem sortAt_hdDtr_vform (hI : I.Models grammar)
     (hu : I.S u ≤ .topCl ∨ I.S u ≤ .whExclCl ∨ I.S u ≤ .theCl ∨ I.S u ≤ .finWhRelCl) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin) := by
+    I.SortAt u [.HDDTR, .CAT, .VFORM] .fin := by
   rcases hu with hu | hu | hu | hu
-  · exact (satisfies_body hI (c := topPrinciple) (by simp [constraints])
-      hu).and_right.and_right.and_right.and_right.and_left
-  · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints])
-      hu).and_right.and_right.and_left
-  · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).and_right.and_left
-  · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.VFORM] .fin).1
-      (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints]) hu).and_left
+  · exact hI.sortAt topPrinciple hu
+  · exact hI.sortAt whExclPrinciple hu
+  · exact hI.sortAt thePrinciple hu
+  · exact (sortAt_mtr_cat_iff hI (hu.trans (by decide)) [.VFORM] .fin).1
+      (hI.sortAt finWhRelPrinciple hu)
 
-theorem satisfies_head_ic (hI : I.Models grammar) :
-    (I.S u ≤ .topCl → I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)) ∧
-      (I.S u ≤ .whRelCl →
-        I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .minus)) :=
-  ⟨fun hu ↦ (satisfies_body hI (c := topPrinciple) (by simp [constraints])
-      hu).and_right.and_right.and_right.and_left,
-    fun hu ↦ (satisfies_hdCat_iff hI (hu.trans (by decide)) [.IC] .minus).1
-      (satisfies_body hI (c := relativePrinciple) (by simp [constraints])
-          (hu.trans (by decide))).and_right⟩
+theorem sortAt_hdDtr_ic (hI : I.Models grammar) :
+    (I.S u ≤ .topCl → I.SortAt u [.HDDTR, .CAT, .IC] .plus) ∧
+      (I.S u ≤ .whRelCl → I.SortAt u [.HDDTR, .CAT, .IC] .minus) :=
+  ⟨fun hu ↦ hI.sortAt topPrinciple hu,
+    fun hu ↦ (sortAt_mtr_cat_iff hI (hu.trans (by decide)) [.IC] .minus).1
+      (hI.sortAt relativePrinciple (hu.trans (by decide)))⟩
 
 /-! ### The distinguished element -/
 

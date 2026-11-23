@@ -26,7 +26,9 @@ a relation symbol applies to variables only.
 
 A constraint holds its atoms as a list and not as one formula, so that a proof names the atom it
 uses and does not reach it by its place in a conjunction, as mathlib's `FieldAxiom` names the
-axioms of a field.
+axioms of a field. The formula of a constraint has no quantifier: the conjunction of its atoms
+ends in `: ≈ :` and not in `Formula.top`, whose quantifier ranges over the components of the
+described entity and would make each check of a worked model compute them.
 
 ## References
 
@@ -246,15 +248,6 @@ def toFormula : PathAtom Sig → Formula Sig
 
 end PathAtom
 
-theorem Formula.freeVars_conj {ds : List (Formula Sig)} (h : ∀ d ∈ ds, d.freeVars = ∅) :
-    (Formula.conj ds).freeVars = ∅ := by
-  induction ds with
-  | nil => simp [conj, top, freeVars, Term.freeVars]
-  | cons d ds ih =>
-    rw [List.forall_mem_cons] at h
-    rw [conj, List.foldr_cons, freeVars_and, h.1, Finset.empty_union]
-    exact ih h.2
-
 /-- A constraint `σ ⇒ A` requires every entity whose sort is at least as specific as `σ` to
 satisfy each atom of the attribute-value description `A`. -/
 structure Constraint (Sig : Signature Srt) where
@@ -268,11 +261,16 @@ namespace Constraint
 instance [DecidableEq Srt] [DecidableEq Sig.Attr] : DecidableEq (Constraint Sig) := fun c c' ↦
   decidable_of_iff (c.sort = c'.sort ∧ c.atoms = c'.atoms) (by cases c; cases c'; simp)
 
-/-- The conjunction of the atoms of a constraint. -/
-def body (c : Constraint Sig) : Formula Sig := .conj (c.atoms.map PathAtom.toFormula)
+/-- The conjunction of the atoms of a constraint, ending in the equation `: ≈ :`, which every
+entity satisfies. -/
+def body (c : Constraint Sig) : Formula Sig :=
+  c.atoms.foldr (fun a d ↦ a.toFormula.and d) (PathAtom.eq [] []).toFormula
 
-@[simp] theorem freeVars_body (c : Constraint Sig) : c.body.freeVars = ∅ :=
-  Formula.freeVars_conj (by simp)
+@[simp] theorem freeVars_body (c : Constraint Sig) : c.body.freeVars = ∅ := by
+  unfold body
+  induction c.atoms with
+  | nil => simp
+  | cons a as ih => simp [ih]
 
 /-- The formula `: ∼ σ → A` that states the constraint `σ ⇒ A`. -/
 def toFormula (c : Constraint Sig) : Formula Sig := (Formula.sortAssign .colon c.sort).imp c.body

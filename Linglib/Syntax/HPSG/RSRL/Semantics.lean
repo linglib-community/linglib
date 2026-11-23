@@ -438,7 +438,10 @@ theorem satisfies_toFormula_pathAtom {a : PathAtom Sig} :
   exacts [satisfies_sortAssign_path, satisfies_pathEq_path]
 
 theorem satisfies_body : I.Satisfies g u c.body ↔ ∀ a ∈ c.atoms, a.Holds I u := by
-  simp [Constraint.body, satisfies_toFormula_pathAtom]
+  unfold Constraint.body
+  induction c.atoms with
+  | nil => simpa [satisfies_toFormula_pathAtom] using ⟨u, rfl, rfl⟩
+  | cons a as ih => simp [ih, satisfies_toFormula_pathAtom]
 
 @[simp] theorem satisfies_toFormula :
     I.Satisfies g u c.toFormula ↔ I.S u ≤ c.sort → ∀ a ∈ c.atoms, a.Holds I u := by
