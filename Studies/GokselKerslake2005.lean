@@ -38,7 +38,7 @@ template does not repeat the position.
 
 The question clitic *mI* stands before the first clitic among the markers of a predicate and
 after the other markers (§11.1.1.5), as `Turkish.QuestionParticles.mi.insert` places it, so the
-grammar's examples are its surface forms, the markers after it attached to it (§6.3 (5)).
+grammar's examples are its surface forms, the markers after it attached to it.
 
 The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs, and
 *-(y)Ip* and *-(y)ArAk* follow every slot before the position-3 marker and none after it
@@ -95,8 +95,8 @@ theorem iterated :
       [ü, z, ü, l, d, ü, n, ü, z] := by
   decide
 
-/-- The `o` of -(I)yor does not harmonize and triggers the person marker in *gör-üyor-um*, and
-the converb -(y)ken is invariable in *bak-mış-ken* (§3.4 (vi)). -/
+/-- The `o` of -(I)yor does not harmonize and triggers the person marker in *görüyorum*, and
+the converb -(y)ken is invariable in *bakmışken* (§3.4 (vi)). -/
 theorem retriggering :
     realize [g, ö, r] [iyor.form, (person .two (.personNumber .first .singular)).form] =
       [g, ö, r, ü, y, o, r, u, m] ∧
@@ -112,7 +112,7 @@ theorem palatal_l :
       [h, a, l', i, m] := by
   decide
 
--- §6.1.2
+-- §6.1
 theorem voicing_of_D :
     realize [k, a, l] [di.form] = [k, a, l, d, ı] ∧
     realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
@@ -153,7 +153,7 @@ theorem deletable_consonants :
   decide
 
 /-- A third-person possessive takes a final `n` before a case suffix but not word-finally, as in
-*tepe-si-n-de* against *tepe-si* (§6.2 (iib), §8.1.2). -/
+*tepesinde* against *tepesi* (§6.2 (iib), §8.1.2). -/
 theorem pronominal_n :
     realize [t, e, p, e]
         (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, locative⟩]) =
@@ -178,15 +178,16 @@ def arabaIm : Hiatus.Juncture := ⟨[a, r, a, b], a, I, [m], by decide, by decid
 def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
 
 /-- Bracketed vowels and consonants are the two repairs of hiatus, elision in *araba-m* and
-epenthesis in *masa-ya* (§6.1.3). -/
+epenthesis in *masa-ya* (§6.1.3, §8.1.2, §8.1.3). -/
 theorem hiatus_repairs :
     (possessive (.personNumber .first .singular)).form.attach arabaIm.left = arabaIm.elideV2 ∧
     dative.form.attach masaA.left = masaA.epenthesize y :=
   ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
     Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
 
-/-- The copular markers and the first-person markers of group 2 take the buffer `y` after a
-vowel, as in *okul-da-yım*, *ev-de-ydi-k*, *hasta-ysa-lar* and *kat-sa-ydı-lar* (§8.4). -/
+/-- The copula `y` of the copular markers stands after a vowel and is omitted after a consonant
+(§8.3.1, §8.3.2), as the buffer `y` of the first-person markers of group 2 is, as in
+*okuldayım*, *evdeydik*, *hastaysalar* and *kat-sa-ydı-lar* (§8.4). -/
 theorem predicate_buffers :
     realize [o, k, u, l] [locative.form, (person .two (.personNumber .first .singular)).form] =
       [o, k, u, l, d, a, y, ı, m] ∧
@@ -213,7 +214,7 @@ theorem imperfective_of_vowel_stems :
   decide
 
 /-- The vowel of the negative is a stem-final vowel before -(I)yor like any other, as in
-*anla-mı-yor*, *gör-mü-yor*, *sakla-mı-yor* and *söyle-mi-yor* (§8.2.2, §8.2.3.3). -/
+*anlamıyor*, *görmüyor*, *saklamıyor* and *söylemiyor* (§8.2.2, §8.2.3.3). -/
 theorem negative_raised :
     realize [a, n, l, a] [negative.form, iyor.form] =
       [a, n, l, a, m, ı, y, o, r] ∧
@@ -557,21 +558,21 @@ theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
 
-/-- A person marker precedes the copular marker when it is a group-1 marker after -DI, as in
-*git-ti-m-di*, *gel-di-niz-se* and *bak-tı-k-tı*, or the third-person plural, as in
+/-- On a verb a person marker precedes the copular marker when it is a group-1 marker after
+-DI, as in *gittimdi*, *geldinizse* and *baktıktı*, or the third-person plural, as in
 *kat-sa-lar-dı*, and the third-person plural may also follow -DIr, as in *gid-iyor-dur-lar*,
 beside the orders of the template (§8.3.2, §8.3.3, §8.4). -/
 theorem person_mobility : ∀ w ∈ ([
       ([g, i, t], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .singular)⟩, ⟨_, pastCopula⟩],
-        "git-ti-m-di"),
+        "gittimdi"),
       ([g, i, t], [⟨_, di⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .singular)⟩],
-        "git-ti-ydi-m"),
+        "gittiydim"),
       ([g, e, l], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .plural)⟩,
-        ⟨_, conditionalCopula⟩], "gel-di-niz-se"),
+        ⟨_, conditionalCopula⟩], "geldinizse"),
       ([g, e, l], [⟨_, di⟩, ⟨_, conditionalCopula⟩,
-        ⟨_, person .one (.personNumber .second .plural)⟩], "gel-di-yse-niz"),
+        ⟨_, person .one (.personNumber .second .plural)⟩], "geldiyseniz"),
       ([b, a, k], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .plural)⟩, ⟨_, pastCopula⟩],
-        "bak-tı-k-tı"),
+        "baktıktı"),
       ([k, a, t], [⟨_, sa⟩, ⟨_, person .one (.personNumber .third .plural)⟩, ⟨_, pastCopula⟩],
         "kat-sa-lar-dı"),
       ([g, i, d], [⟨_, iyor⟩, ⟨_, person .two (.personNumber .third .plural)⟩, ⟨_, dir⟩],
@@ -583,8 +584,9 @@ theorem person_mobility : ∀ w ∈ ([
       ofSegmented? w.2.2 = some (realize w.1 (Verb.forms w.2.1)) := by
   decide
 
-/-- No other person marker leaves its place, so *gid-iyor-um-du*, *gid-iyor-dur-um* and
-*git-se-m-di* are unlicensed (§8.4). -/
+/-- No other person marker leaves its place: a group-2 marker does not precede a copular
+marker or follow -DIr, and a group-1 marker after -sA does not precede a copular marker
+(§8.3.3, §8.4). -/
 theorem person_fixed :
     ¬ Verb.Licensed [⟨_, iyor⟩, ⟨_, person .two (.personNumber .first .singular)⟩,
       ⟨_, pastCopula⟩] ∧
@@ -595,11 +597,10 @@ theorem person_fixed :
 
 /-! ### The question clitic (§11.1.1.5) -/
 
-/-- *mI* precedes the copular markers, as in *Gitse miydik?*, *Başlamış mıydınız?* and *Burada
-mıymış?*, the group-2 person markers but the third-person plural, as in *Gidiyor musun?*,
-*İster miyiz?* and *Hazır mısınız?*, and -DIr, as in *Unutmuş mudurlar?*, *Evde midir?* and
-*geçmiş miyimdir?*, and the markers after it attach to it, as in *bil-iyor mu-ydu-nuz*
-(§6.3 (5)). -/
+/-- *mI* precedes the copular markers -(y)DI and -(y)mIş, as in *Gitse miydik?*, *Başlamış
+mıydınız?* and *Burada mıymış?*, the group-2 person markers but the third-person plural, as in
+*Gidiyor musun?*, *İster miyiz?* and *Hazır mısınız?*, and -DIr, as in *Unutmuş mudurlar?*,
+*Evde midir?* and *geçmiş miyimdir?*, and the markers after it attach to it. -/
 theorem mi_precedes_clitics : ∀ w ∈ ([
       ([g, i, t], [⟨_, sa⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .plural)⟩],
         ["gitse", "miydik"]),
@@ -616,16 +617,15 @@ theorem mi_precedes_clitics : ∀ w ∈ ([
         ["unutmuş", "mudurlar"]),
       ([e, v, d, e], [⟨_, dir⟩], ["evde", "midir"]),
       ([g, e, ç], [⟨_, miş⟩, ⟨_, person .two (.personNumber .first .singular)⟩, ⟨_, dir⟩],
-        ["geçmiş", "miyimdir"]),
-      ([b, i, l], [⟨_, iyor⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩],
-        ["biliyor", "muydunuz"])] :
+        ["geçmiş", "miyimdir"])] :
       List (List Segment × List (Σ σ, Verb.Exponent σ) × List String)),
     Verb.Licensed w.2.1 ∧
       (w.2.2.mapM ofString?).map List.flatten = some (realize w.1 (mi.insert w.2.1)) := by
   decide
 
 /-- *mI* follows the group-1 person markers, as in *Gördün mü?*, *Gitsek mi?* and *Yürüdünüz
-mü?*, those of group 3, as in *Kalayım mı?* and *Başlasın mı?*, the third-person plural, as in
+mü?*, those of group 3 in the first and third persons, as in *Kalayım mı?* and *Başlasın mı?*,
+the third-person plural, as in
 *Gittiler mi?*, *Uyanırlar mı?* and *Okuldalar mı?*, and a subject complement without markers,
 as in *Akıllı mı?* and *Benimki mi?*. -/
 theorem mi_follows : ∀ w ∈ ([
@@ -649,28 +649,28 @@ theorem mi_follows : ∀ w ∈ ([
 
 /-! ### Converbs (§8.5.2.2) -/
 
-/-- The converbs on the grammar's verbs: on the stem, as in *koş-up*, *kalk-ma-yınca*,
-*yık-ıl-ma-dan* and *koş-tukça*, -(y)ken on a position-3 marker or a nominal, as in
-*çalış-ır-ken* and *sokak-ta-y-ken*, and -cAsInA on -mIş and a person marker, as in
-*duy-ma-mış-çasına* and *konuş-uyor-muş-um-casına* (§8.5.1.1, §8.5.2.2, §26.2.3 (40),
+/-- The converbs on the grammar's verbs: on the stem, as in *koşup*, *kalkmayınca*,
+*yıkılmadan* and *koştukça*, -(y)ken on a position-3 marker or a nominal, as in
+*çalış-ır-ken* and *sokaktayken*, and -cAsInA on -mIş and a person marker, as in
+*duymamışçasına* and *konuşuyormuşumcasına* (§8.5.1.1, §8.5.2.2, §26.2.3 (40),
 §26.3.8 (69), (73)). -/
-theorem converbs : ∀ w ∈ [("koş-up", [k, o, ş], Converb.ip.form),
-      ("gir-ip", [g, i, r], Converb.ip.form),
-      ("yüz-ünce", [y, ü, z], Converb.inca.form),
-      ("kalk-ma-yınca", [k, a, l, k], negative.form :: Converb.inca.form),
-      ("koş-arak", [k, o, ş], Converb.arak.form),
-      ("büyü-yerek", [b, ü, y, ü], Converb.arak.form),
-      ("çalış-arak", [ç, a, l, ı, ş], Converb.arak.form),
-      ("düşün-eli", [d, ü, ş, ü, n], Converb.ali.form),
-      ("gel-eli", [g, e, l], Converb.ali.form),
-      ("yık-ıl-ma-dan", [y, ı, k], passive.form :: Converb.madan.form),
-      ("seyret-me-den", [s, e, y, r, e, t], Converb.madan.form),
-      ("koş-tukça", [k, o, ş], Converb.dikca.form),
+theorem converbs : ∀ w ∈ [("koşup", [k, o, ş], Converb.ip.form),
+      ("girip", [g, i, r], Converb.ip.form),
+      ("yüzünce", [y, ü, z], Converb.inca.form),
+      ("kalkmayınca", [k, a, l, k], negative.form :: Converb.inca.form),
+      ("koşarak", [k, o, ş], Converb.arak.form),
+      ("büyüyerek", [b, ü, y, ü], Converb.arak.form),
+      ("çalışarak", [ç, a, l, ı, ş], Converb.arak.form),
+      ("düşüneli", [d, ü, ş, ü, n], Converb.ali.form),
+      ("geleli", [g, e, l], Converb.ali.form),
+      ("yıkılmadan", [y, ı, k], passive.form :: Converb.madan.form),
+      ("seyretmeden", [s, e, y, r, e, t], Converb.madan.form),
+      ("koştukça", [k, o, ş], Converb.dikca.form),
       ("çalış-ır-ken", [ç, a, l, ı, ş], aorist.form :: Converb.ken.form),
-      ("çocuk-ken", [ç, o, c, u, k], Converb.ken.form),
-      ("sokak-ta-y-ken", [s, o, k, a, k], locative.form :: Converb.ken.form),
-      ("duy-ma-mış-çasına", [d, u, y], negative.form :: miş.form :: Converb.casina.form),
-      ("konuş-uyor-muş-um-casına", [k, o, n, u, ş], iyor.form :: evidentialCopula.form ::
+      ("çocukken", [ç, o, c, u, k], Converb.ken.form),
+      ("sokaktayken", [s, o, k, a, k], locative.form :: Converb.ken.form),
+      ("duymamışçasına", [d, u, y], negative.form :: miş.form :: Converb.casina.form),
+      ("konuşuyormuşumcasına", [k, o, n, u, ş], iyor.form :: evidentialCopula.form ::
         (person .two (.personNumber .first .singular)).form :: Converb.casina.form)],
     ofSegmented? w.1 = some (realize w.2.1 w.2.2) := by
   decide
@@ -719,8 +719,9 @@ theorem locative_existential :
       [[b, e, n, d, e], [b, i, r], [k, i, t, a, p], [v, a, r]] := by
   decide
 
-/-- The possessive suffix on *araba* in (117) is obligatory, so no person-number cell gives *Sizin
-araba var* (§14.4). -/
+/-- The possessive suffix on *araba* in (117), *Sizin arabanız var mı?*, is obligatory: the
+sentence before its question clitic is possessive, and no person-number cell gives it with the
+bare *araba* (§14.4). -/
 theorem possessive_obligatory :
     Possession.IsPossessive [[s, i, z]] [] [[a, r, a, b, a]] (.personNumber .second .plural)
         Possession.var [[s, i, z, i, n], [a, r, a, b, a, n, ı, z], [v, a, r]] ∧
