@@ -47,7 +47,6 @@ and the base world is the single point of evaluation.
 namespace Embry2014
 
 open Conditional Fine2012
-open scoped IsBoundedComplete
 
 /-! ### A determinable antecedent -/
 
@@ -79,23 +78,22 @@ def outcome (_ : Unit) (t u : St) : Prop :=
     u = Function.update (snowedTo d) V.ski (Part.some (decide (d = .eightInches)))
 
 /-- *It snowed*, verified by each positive snowfall. -/
-def snowed : Set (WithTop St) := {↑(snowedTo .eightInches), ↑(snowedTo .hundredFeet)}
+def snowed : Set St := {snowedTo .eightInches, snowedTo .hundredFeet}
 
 /-- *I went skiing*. -/
-def skis : Set (WithTop St) := {↑(skiing true)}
+def skis : Set St := {skiing true}
 
 theorem snowedTo_injective : Function.Injective snowedTo := fun d e h ↦ by
   have := congrFun h V.snow
   simpa [snowedTo] using this
 
 /-- An outcome of the snowfall `d` contains my skiing exactly when `d` is eight inches. -/
-theorem inexact_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
-    Inexact skis u ↔ d = .eightInches := by
+theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
+    u ∈ upperClosure skis ↔ d = .eightInches := by
   obtain ⟨e, he, rfl⟩ := hu
   obtain rfl := snowedTo_injective he
   constructor
-  · rintro ⟨c, hc, hcu⟩
-    obtain rfl : c = skiing true := WithTop.coe_injective hc
+  · rintro ⟨c, rfl, hcu⟩
     have := hcu V.ski true (by simp [skiing])
     simpa using this
   · rintro rfl
@@ -103,16 +101,13 @@ theorem inexact_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedTo d) u) :
     cases v <;> simp [skiing, snowedTo]
 
 -- true of the eight-inch verifier
-theorem would_eightInches :
-    () ∈ would outcome {(↑(snowedTo .eightInches) : WithTop St)} skis := by
-  rintro a rfl t ht u hu
-  obtain rfl := WithTop.coe_injective ht
-  exact (inexact_skis_iff hu).mpr rfl
+theorem would_eightInches : () ∈ would outcome {snowedTo .eightInches} skis := by
+  rintro t rfl u hu
+  exact (mem_upperClosure_skis_iff hu).mpr rfl
 
 -- (3b)
-theorem not_would_hundredFeet :
-    () ∉ would outcome {(↑(snowedTo .hundredFeet) : WithTop St)} skis := fun h ↦
-  absurd ((inexact_skis_iff ⟨_, rfl, rfl⟩).mp (h rfl _ rfl _ ⟨_, rfl, rfl⟩)) (by decide)
+theorem not_would_hundredFeet : () ∉ would outcome {snowedTo .hundredFeet} skis := fun h ↦
+  absurd ((mem_upperClosure_skis_iff ⟨_, rfl, rfl⟩).mp (h rfl _ ⟨_, rfl, rfl⟩)) (by decide)
 
 /-- (3a) is false on the truth clause of exact semantics: the outcome of the hundred-foot
 verifier contains no skiing. -/
