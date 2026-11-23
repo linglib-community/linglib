@@ -263,8 +263,8 @@ theorem negative_correlation_replicates :
   decide +kernel
 
 theorem shared_bias_distinct_projectivity :
-    (SolstadBott2022.ICaus SolstadBott2022.judgment .object ∧
-        SolstadBott2022.ICaus ArgumentStructure.psychState .object) ∧
+    (SolstadBott2022.RoleCause SolstadBott2022.judgment .object ∧
+        SolstadBott2022.RoleCause ArgumentStructure.psychState .object) ∧
       ∀ o ∈ blockTwo, ∀ e ∈ blockTwo, o.experiment = .exp2 → e.experiment = .exp2 →
         o.trigger = .occasion → e.trigger = .experiencerStimulus →
           e.projectivity.toRat < o.projectivity.toRat :=
