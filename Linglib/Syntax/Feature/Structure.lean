@@ -71,12 +71,12 @@ theorem map_val_evalFrom_reachable (q : {q // M.Reaches s q}) (x : List α) :
 /-- The feature structure of a state: the states reached from it, rooted at it. -/
 def featureStructure : FeatureStructure {q // M.Reaches s q} α β where
   toPartialMoore := M.reachable s
-  root := ⟨s, .refl M s⟩
+  root := ⟨s, .refl⟩
   rooted q := by
-    obtain ⟨x, hx⟩ := q.2
+    obtain ⟨x, hx⟩ := reaches_iff_exists_evalFrom.1 q.2
     obtain ⟨q', hq', e⟩ := Option.map_eq_some_iff.1
-      ((M.map_val_evalFrom_reachable s ⟨s, .refl M s⟩ x).trans hx)
-    exact ⟨x, hq'.trans (congrArg some (Subtype.ext e))⟩
+      ((M.map_val_evalFrom_reachable s ⟨s, .refl⟩ x).trans hx)
+    exact reaches_iff_exists_evalFrom.2 ⟨x, hq'.trans (congrArg some (Subtype.ext e))⟩
 
 end PartialMoore
 

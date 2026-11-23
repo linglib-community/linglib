@@ -116,7 +116,7 @@ theorem termDenot_path_eq_eval (g : ℕ → U) (u : U) (p : Path Sig) :
 ([richter-2024], Definition 11). -/
 theorem isComponentOf_iff_exists_path (g : ℕ → U) :
     I.IsComponentOf u v ↔ ∃ p : Path Sig, I.termDenot g (.path p) u = some v := by
-  simp only [← reaches_toPartialMoore_iff, PartialMoore.Reaches, evalFrom_toPartialMoore g]
+  simp only [IsComponentOf, PartialMoore.reaches_iff_exists_evalFrom, evalFrom_toPartialMoore g]
 
 /-- A homomorphism commutes with term denotation. -/
 theorem HomClass.termDenot_comp {V : Type*} {J : Interpretation Sig V} {F : Type*}

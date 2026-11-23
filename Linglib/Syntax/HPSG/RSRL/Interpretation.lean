@@ -135,37 +135,9 @@ end SortAt
 /-! ### Components -/
 
 variable (I) in
-/-- The entity `v` is the value of some attribute at `u`. -/
-def attrSucc (u v : U) : Prop := ∃ α : Sig.Attr, I.A α u = some v
-
-instance [Fintype Sig.Attr] [DecidableEq U] : DecidableRel I.attrSucc :=
-  fun _ _ ↦ by unfold attrSucc; infer_instance
-
-variable (I) in
-/-- The entity `v` is a component of `u` when a sequence of attributes leads from `u` to `v`. -/
-abbrev IsComponentOf (u v : U) : Prop := Relation.ReflTransGen I.attrSucc u v
-
-instance [Fintype U] [DecidableEq U] [Fintype Sig.Attr] (u v : U) :
-    Decidable (I.IsComponentOf u v) :=
-  Relation.ReflTransGen.decidable_of_fintype u v
-
-/-- The components of an entity are the states its machine reaches from it. -/
-theorem reaches_toPartialMoore_iff : I.toPartialMoore.Reaches u v ↔ I.IsComponentOf u v := by
-  constructor
-  · rintro ⟨p, hp⟩
-    induction p using List.reverseRecOn generalizing v with
-    | nil => obtain rfl : u = v := by simpa using hp
-             exact .refl
-    | append_singleton p α ih =>
-      rw [PartialMoore.evalFrom_append_singleton, Option.bind_eq_some_iff] at hp
-      obtain ⟨w, hw, hα⟩ := hp
-      exact (ih hw).tail ⟨α, hα⟩
-  · intro h
-    induction h with
-    | refl => exact .refl _ _
-    | tail _ hα ih =>
-      obtain ⟨α, hα⟩ := hα
-      exact ih.step hα
+/-- The entity `v` is a component of `u` when a sequence of attributes leads from `u` to `v`:
+the machine of the interpretation reaches `v` from `u`. -/
+abbrev IsComponentOf (u v : U) : Prop := I.toPartialMoore.Reaches u v
 
 /-! ### Typing -/
 
@@ -269,12 +241,9 @@ namespace HomClass
 
 variable {F : Type*} [FunLike F U V] [HomClass F I J] (f : F)
 
-theorem attrSucc (h : I.attrSucc u v) : J.attrSucc (f u) (f v) :=
-  let ⟨α, hα⟩ := h; ⟨α, by rw [map_A f, hα]; rfl⟩
-
 /-- A homomorphism maps the components of an entity to components of its image. -/
 theorem isComponentOf (h : I.IsComponentOf u v) : J.IsComponentOf (f u) (f v) :=
-  h.lift f fun _ _ ↦ attrSucc f
+  h.lift f fun a _ ⟨α, hα⟩ ↦ ⟨α, (map_A f α a).trans (congrArg (Option.map f) hα)⟩
 
 /-- Every component of the image of an entity is the image of one of its components. -/
 theorem exists_isComponentOf_of_isComponentOf {w : V} (h : J.IsComponentOf (f u) w) :

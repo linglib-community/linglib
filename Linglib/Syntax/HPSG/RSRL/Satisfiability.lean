@@ -81,9 +81,9 @@ by a path. -/
 instance small_isComponentOf (r : U) : Small.{u} {v // I.IsComponentOf r v} :=
   small_of_surjective (α := {p : Path Sig // (I.eval r p).isSome})
     (f := fun p ↦ ⟨(I.eval r p.1).get p.2,
-      reaches_toPartialMoore_iff.1 ⟨p.1, Option.some_get p.2 |>.symm⟩⟩)
+      PartialMoore.reaches_iff_exists_evalFrom.2 ⟨p.1, Option.some_get p.2 |>.symm⟩⟩)
     fun ⟨v, hv⟩ ↦
-      let ⟨p, hp⟩ := reaches_toPartialMoore_iff.2 hv
+      let ⟨p, hp⟩ := PartialMoore.reaches_iff_exists_evalFrom.1 hv
       ⟨⟨p, by rw [eval, hp]; rfl⟩, Subtype.ext (by simp [eval, hp])⟩
 
 variable {I} in

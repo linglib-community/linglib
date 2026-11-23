@@ -3,6 +3,7 @@ module
 public import Mathlib.Order.Basic
 public import Mathlib.Data.Option.Basic
 public import Mathlib.Data.List.Induction
+public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Partial Moore machines
@@ -60,15 +61,45 @@ theorem evalFrom_append_singleton (s : σ) (x : List α) (a : α) :
   funext q
   cases h : M.step q a <;> simp [h]
 
-/-- The state `q` is reached from `s` when some word leads from `s` to it. -/
-def Reaches (s q : σ) : Prop := ∃ x, M.evalFrom s x = some q
+/-- Some letter leads from `q` to `q'`. -/
+def Succ (q q' : σ) : Prop := ∃ a, M.step q a = some q'
 
-theorem Reaches.refl (s : σ) : M.Reaches s s := ⟨[], rfl⟩
+instance [Fintype α] [DecidableEq σ] : DecidableRel M.Succ :=
+  fun _ _ ↦ by unfold Succ; infer_instance
+
+/-- The state `q` is reached from `s` when a sequence of transitions leads from `s` to it. -/
+def Reaches (s q : σ) : Prop := Relation.ReflTransGen M.Succ s q
+
+instance [Fintype σ] [DecidableEq σ] [Fintype α] (s q : σ) : Decidable (M.Reaches s q) :=
+  Relation.ReflTransGen.decidable_of_fintype s q
+
+variable {M} in
+@[refl] theorem Reaches.refl : M.Reaches s s := Relation.ReflTransGen.refl
 
 variable {M} in
 theorem Reaches.step (h : M.Reaches s q) (ha : M.step q a = some q') : M.Reaches s q' :=
-  let ⟨x, hx⟩ := h
-  ⟨x ++ [a], by rw [evalFrom_append_singleton, hx]; exact ha⟩
+  h.tail ⟨a, ha⟩
+
+variable {M} in
+/-- The states reached from `s` are those that some word leads to. -/
+theorem reaches_iff_exists_evalFrom : M.Reaches s q ↔ ∃ x, M.evalFrom s x = some q := by
+  constructor
+  · intro h
+    induction h with
+    | refl => exact ⟨[], rfl⟩
+    | tail _ ha ih =>
+      obtain ⟨x, hx⟩ := ih
+      obtain ⟨a, ha⟩ := ha
+      exact ⟨x ++ [a], by rw [evalFrom_append_singleton, hx]; exact ha⟩
+  · rintro ⟨x, hx⟩
+    induction x using List.reverseRecOn generalizing q with
+    | nil =>
+      obtain rfl : s = q := by simpa using hx
+      exact .refl
+    | append_singleton x a ih =>
+      rw [evalFrom_append_singleton, Option.bind_eq_some_iff] at hx
+      obtain ⟨w, hw, ha⟩ := hx
+      exact (ih hw).step ha
 
 /-- The output at the end of a word read from `s`, if the word is read to the end. -/
 def output? (s : σ) (x : List α) : Option β := (M.evalFrom s x).map M.out
@@ -113,13 +144,14 @@ private theorem evalFrom_map {h : σ → τ}
     rw [evalFrom_append_singleton] at hq' ⊢
     obtain ⟨q, hq, ha⟩ := Option.bind_eq_some_iff.1 hq'
     rw [ih hq]
-    exact hA a q q' ⟨x, hq⟩ ha
+    exact hA a q q' (reaches_iff_exists_evalFrom.2 ⟨x, hq⟩) ha
 
 variable {M N} in
 private theorem reaches_map {h : σ → τ}
     (hA : ∀ a q q', M.Reaches s q → M.step q a = some q' → N.step (h q) a = some (h q'))
     (hq : M.Reaches s q) : N.Reaches (h s) (h q) :=
-  let ⟨x, hx⟩ := hq; ⟨x, evalFrom_map hA x hx⟩
+  let ⟨x, hx⟩ := reaches_iff_exists_evalFrom.1 hq
+  reaches_iff_exists_evalFrom.2 ⟨x, evalFrom_map hA x hx⟩
 
 /-! ### Simulation -/
 
@@ -155,7 +187,8 @@ theorem simulatedBy_iff : M.SimulatedBy N s t ↔
     refine ⟨fun x b hb ↦ ?_,
       fun x y ⟨q, hx, hy⟩ ↦ ⟨h q, evalFrom_map hA x hx, evalFrom_map hA y hy⟩⟩
     obtain ⟨q, hq, rfl⟩ := Option.map_eq_some_iff.1 hb
-    exact ⟨N.out (h q), by simp [output?, evalFrom_map hA x hq], hO q ⟨x, hq⟩⟩
+    exact ⟨N.out (h q), by simp [output?, evalFrom_map hA x hq],
+      hO q (reaches_iff_exists_evalFrom.2 ⟨x, hq⟩)⟩
   · rintro ⟨hout, hner⟩
     classical
     have key : ∀ x q, M.evalFrom s x = some q → ∃ q', N.evalFrom t x = some q' ∧
@@ -172,11 +205,13 @@ theorem simulatedBy_iff : M.SimulatedBy N s t ↔
       have h₃ := (key _ q hex.choose_spec).choose_spec.1
       simp only [h, hex, ↓reduceDIte]
       exact h₂.trans (h₁.symm.trans h₃)
-    refine ⟨h, Option.some.inj ((hh [] s rfl).symm.trans rfl), fun q ⟨x, hx⟩ ↦ ?_,
-      fun a q q' ⟨x, hx⟩ ha ↦ ?_⟩
-    · obtain ⟨q', hq', hle⟩ := key x q hx
+    refine ⟨h, Option.some.inj ((hh [] s rfl).symm.trans rfl), fun q hq ↦ ?_,
+      fun a q q' hq ha ↦ ?_⟩
+    · obtain ⟨x, hx⟩ := reaches_iff_exists_evalFrom.1 hq
+      obtain ⟨q', hq', hle⟩ := key x q hx
       rwa [Option.some.inj ((hh x q hx).symm.trans hq')]
-    · have h₁ := hh (x ++ [a]) q' (by rw [evalFrom_append_singleton, hx]; exact ha)
+    · obtain ⟨x, hx⟩ := reaches_iff_exists_evalFrom.1 hq
+      have h₁ := hh (x ++ [a]) q' (by rw [evalFrom_append_singleton, hx]; exact ha)
       rwa [evalFrom_append_singleton, hh x q hx] at h₁
 
 end Preorder
