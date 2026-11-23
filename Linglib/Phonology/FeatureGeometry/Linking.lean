@@ -17,8 +17,9 @@ value; each token has a line to the token of the tier its own hangs from. `ofWor
 concatenates these, as the monoid homomorphism `ofWordHom` does on the free monoid, and its
 lines do not cross (`noCrossing_ofWord`). Reading it back gives its segments
 (`reads_ofWord_iff`), and a representation in which each token has at most one line to each
-lower tier is bisimilar at a slot to a segment of a word exactly when it reads there what the
-segment's representation reads (`exists_isBisimulation_ofWord_iff`).
+lower tier is bisimilar at a slot to a segment of a word exactly when it reads there a slot,
+the nodes the segment bears and the values the segment gives the placed features
+(`exists_isBisimulation_ofWord_iff`).
 
 Spreading is a change of lines. `linkNode node w a m n` spreads the node `a` from segment `m` onto
 segment `n`, and `linkFeature node w f m n` a single feature, by `Autosegmental.AR.spreadTier`:
@@ -388,6 +389,26 @@ theorem reads_ofSpec_iff :
     rw [Fintype.card_option, Fintype.card_sum]
     omega
 
+/-- The representation of a specification reads a slot. -/
+theorem reads_ofSpec_slot : (ofSpec node s).Reads (tiers node) 0 none PUnit.unit :=
+  ⟨0, Finset.mem_range.2 Nat.one_pos, AR.mem_descendants_self _ _, rfl⟩
+
+/-- The representation of a specification reads the nodes the specification bears. -/
+theorem reads_ofSpec_node_iff :
+    (ofSpec node s).Reads (tiers node) 0 (some (.inl a)) PUnit.unit ↔ a = ⊥ ∨ Bears node s a := by
+  constructor
+  · rintro ⟨q, hq, -, -⟩
+    exact word_ofSpec_node_ne_nil.1 (List.ne_nil_of_length_pos
+      (Nat.zero_lt_of_lt (Finset.mem_range.1 hq)))
+  · intro h
+    have hword : (ofSpec node s).word (some (.inl a)) = [PUnit.unit] := ite_eq_left h
+    obtain ⟨n, hn, hpn⟩ :=
+      Function.exists_iterate_eq_lt_card Order.pred (bot_le (a := a)).exists_pred_iterate
+    refine ⟨0, Finset.mem_range.2 (by rw [hword]; exact Nat.one_pos),
+      AR.descendants_mono ?_ _ (mem_descendants_node s n a hpn h), by rw [hword]; rfl⟩
+    rw [Fintype.card_option, Fintype.card_sum]
+    omega
+
 /-- Reading a realized word back gives its segments. -/
 theorem reads_ofWord_iff :
     (ofWord node w).Reads (tiers node) k (some (.inr f)) b ↔
@@ -396,16 +417,25 @@ theorem reads_ofWord_iff :
     (exists_congr fun _ ↦ reads_ofSpec_iff)
 
 /-- A slot of a representation in which each token has at most one line to each lower tier is
-bisimilar to a segment of a word exactly when it reads what the representation of that segment
-reads. -/
+bisimilar to a segment of a word exactly when it reads a slot, the nodes the segment bears and
+the values the segment gives the placed features. -/
 theorem exists_isBisimulation_ofWord_iff {X : AR (Tiers N F β)}
     (hX : X.IsFunctional (tiers node)) {k' : ℕ} (hk' : k' < w.length) :
     (∃ r, (X.toKripkeModel (tiers node)).IsBisimulation
         ((ofWord node w).toKripkeModel (tiers node)) r ∧ r (none, k) (none, k')) ↔
-      ∀ (t : Option (N ⊕ F)) (b : Tiers N F β t),
-        X.Reads (tiers node) k t b ↔ (ofSpec node w[k']).Reads (tiers node) 0 t b :=
-  AR.exists_isBisimulation_prod_map_iff (ofSpec node) hX
-    (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl) hk'
+      X.Reads (tiers node) k none PUnit.unit ∧
+      (∀ a, X.Reads (tiers node) k (some (.inl a)) PUnit.unit ↔ a = ⊥ ∨ Bears node w[k'] a) ∧
+      ∀ f b, X.Reads (tiers node) k (some (.inr f)) b ↔ (node f).isSome ∧ w[k'] f = some b :=
+  (AR.exists_isBisimulation_prod_map_iff (ofSpec node) hX
+    (fun s t ↦ length_tierWord_le_one node s t) (fun _ ↦ rfl) hk').trans
+    ⟨fun h ↦ ⟨(h none PUnit.unit).2 reads_ofSpec_slot,
+        fun a ↦ (h (some (.inl a)) PUnit.unit).trans reads_ofSpec_node_iff,
+        fun f b ↦ (h (some (.inr f)) b).trans reads_ofSpec_iff⟩,
+      fun ⟨h₀, h₁, h₂⟩ t b ↦ by
+        rcases t with _ | a | f
+        · exact iff_of_true h₀ reads_ofSpec_slot
+        · exact (h₁ a).trans reads_ofSpec_node_iff.symm
+        · exact (h₂ f b).trans reads_ofSpec_iff.symm⟩
 
 /-- Spreading a node by a change of lines reads as spreading it by a change of values. -/
 theorem reads_linkNode_iff (hm : m < w.length) (hn : n < w.length)

@@ -25,11 +25,15 @@ the same label and each child of one is related to a child of the other
 to each lower tier, the converse holds: two slots that read alike are bisimilar
 (`exists_isBisimulation_iff_reads`), so a slot is bisimilar to the slot of a symbol in a
 realization exactly when it reads what the primitive of that symbol reads
-(`exists_isBisimulation_prod_map_iff`). In a realization by trees with at most one token on a tier,
-spreading a tier from one symbol onto another by a change of lines, `AR.spreadTier`, is
-bisimilar in this way to replacing the target symbol by one that has the source's tokens on
-that tier and below it and the target's own elsewhere (`exists_isBisimulation_spreadTier`). The
-two read alike (`reads_spreadTier_iff`): linking shares what copying duplicates.
+(`exists_isBisimulation_prod_map_iff`). The condition is needed: a slot with two tokens on the
+tier below, one of them childless, reads what a slot with one does and is not bisimilar to it
+(`exists_reads_iff_and_not_isBisimulation`).
+
+In a realization by trees with at most one token on a tier, spreading a tier from one symbol
+onto another by a change of lines, `AR.spreadTier`, is bisimilar to replacing the target symbol
+by one that has the source's tokens on that tier and below it and the target's own elsewhere
+(`exists_isBisimulation_spreadTier`). The two read alike (`reads_spreadTier_iff`): linking
+shares what copying duplicates.
 
 The OCP-merging collapse of a tier that no tier hangs from is bisimilar to the representation,
 each position related to its run index (`exists_isBisimulation_collapse`), so it changes what no
@@ -191,6 +195,46 @@ theorem exists_isBisimulation_prod_map_iff {S : Type*} (g₀ : S → AR τ) {w :
   (exists_isBisimulation_iff_reads hX (isFunctional_prod_map T h1)).trans <|
     forall_congr' fun _ ↦ forall_congr' fun _ ↦ iff_congr Iff.rfl
       ((reads_prod_map T g₀ hroot).trans ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hk', h⟩⟩)
+
+/-! ### A slot that reads alike and is not bisimilar -/
+
+private def chain : ParentTree (Fin 3) :=
+  .ofIterate (fun i ↦ if i = 2 then 1 else 0) 0 2 (by decide)
+
+/-- A slot with two tokens on the middle tier, the first of them with a token below it. -/
+private def forked : AR fun _ : Fin 3 ↦ Unit :=
+  fromRel (fun i ↦ if i = 1 then [(), ()] else [()])
+    fun i j p _ ↦ (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 2 ∧ p = 0)
+
+/-- A slot with one token on each tier below it. -/
+private def straight : AR fun _ : Fin 3 ↦ Unit :=
+  fromRel (fun _ ↦ [()]) fun i j _ _ ↦ (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 2)
+
+/-- Slots that read alike need not be bisimilar when a token has two lines to one tier: a slot
+with two tokens on the tier below, one of them childless, reads what a slot with one does. -/
+theorem exists_reads_iff_and_not_isBisimulation :
+    ∃ (T : ParentTree (Fin 3)) (X Y : AR fun _ : Fin 3 ↦ Unit), Y.IsFunctional T ∧
+      (∀ j b, X.Reads T 0 j b ↔ Y.Reads T 0 j b) ∧
+      ¬ ∃ r, (X.toKripkeModel T).IsBisimulation (Y.toKripkeModel T) r ∧
+        r (T.root, 0) (T.root, 0) := by
+  refine ⟨chain, forked, straight, fun j p q q' _ hl hl' ↦ ?_, by decide, ?_⟩
+  · have h := hl.lt_right
+    have h' := hl'.lt_right
+    have hlen : (straight.word j).length = 1 := rfl
+    omega
+  · rintro ⟨r, hB, hr⟩
+    obtain ⟨hforth, -⟩ := hB.liftRel_access hr
+    obtain ⟨v, hv, hrv⟩ := hforth (1, 1) (show (1, 1) ∈ forked.children chain (0, 0) by decide)
+    have hv' : v ∈ straight.children chain (0, 0) := hv
+    obtain rfl : v = (1, 0) := by
+      rw [show straight.children chain (0, 0) = {(1, 0)} by decide] at hv'
+      exact Finset.mem_singleton.1 hv'
+    obtain ⟨-, hback⟩ := hB.liftRel_access hrv
+    obtain ⟨u, hu, -⟩ :=
+      hback (2, 0) (show (2, 0) ∈ straight.children chain (1, 0) by decide)
+    have hu' : u ∈ forked.children chain (1, 1) := hu
+    rw [show forked.children chain (1, 1) = ∅ by decide] at hu'
+    exact absurd hu' (Finset.notMem_empty u)
 
 /-! ### Spreading -/
 
