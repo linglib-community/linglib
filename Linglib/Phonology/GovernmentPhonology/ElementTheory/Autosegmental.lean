@@ -11,41 +11,32 @@ public import Linglib.Phonology.Autosegmental.Skeleton
 public import Mathlib.Data.Fintype.Sum
 
 /-!
-# Elements on their lines
+# Autosegmental representations of elements
 
-In Element Theory each element lies on a line of its own, and a position of the skeleton is
-associated with a root node, which is associated with the elements of its melodic expression. An
-element under a vocalic position is a vowel, and the same element under a consonantal position is
-a glide. A position may have a root node with no element, which is the neutral vowel, or no root
-node at all, which is an empty position.
+In Element Theory the melody of a segment is a set of elements, and each element has a tier of
+its own, called its line. A position of the skeleton is linked to a root node, and the root node
+is linked to a token on the line of each element of the melody.
 
-We define `Position`, a slot with the melodic expression of its root node if it has one, and
-`ofPosition`, its autosegmental representation along the tree `tiers`: the slot, a root node
-under it, and under that a token, a head or a dependent, on the line of each element of the
-expression. A form is a word of positions; `ofForm` concatenates their representations, as the
-monoid homomorphism `ofFormHom` does on the free monoid, and its lines do not cross
-(`noCrossing_ofForm`). The melody of a position of a form on each tier is the tokens the
-position has there (`melody_ofForm`): it bears a root node exactly when it has one
-(`mem_melody_rootNode_ofForm_iff`) and an element exactly when its expression contains it
-(`exists_mem_melody_line_ofForm_iff`).
+We define the representation `ofForm w` of a list of positions `w`. Its lines do not cross, and
+each position dominates its own root node and the tokens of its own elements, and no others.
 
-Spreading is a change of lines. `spread w e m n` makes position `n` share the token of `e` of
-position `m`, by `Autosegmental.AR.spreadTier`: the root node of `n` is delinked from its own
-token of `e` and linked to that of `m`. It crosses no line exactly when no position strictly
-between the two has `e` (`noCrossing_spread_iff`). Each position then bears what it bears in the form in
-which position `n` has `e` in the status it has at `m` (`mem_melody_spread_iff`), so where both
-positions have `e` no position's elements change (`exists_mem_melody_spread_iff`): sharing a
-token is borne as copying it.
+We also define `spread w e m n`, in which the element `e` has spread from position `m` to
+position `n`: the root node of `n` is linked to the token of `e` at `m`. The main result,
+`noCrossing_spread_iff`, is that its lines do not cross if and only if no position strictly
+between `m` and `n` has `e`.
 
 ## Implementation notes
 
-The root node distinguishes a position associated with an expression that has no element from a
-position associated with nothing, as [harris-1994] distinguishes a stable schwa from an empty
-nucleus and [faust-2025] a weak vowel from an empty one. [harris-1994] groups the elements under
-class nodes between the root node and the lines, and [kaye-lowenstamm-vergnaud-1985] let two
-elements that cannot combine share a line; here each element has its own line directly under the
-root node. Government and licensing, which relate positions of the skeleton to one another, are
-not lines and are not represented here.
+A position with a root node and no element is distinct from a position with no root node.
+[harris-1994] distinguishes a stable schwa from an empty nucleus in this way, and [faust-2025] a
+weak vowel from an empty one.
+
+Each element has its own line directly below the root node. [harris-1994] places class nodes
+between the root node and the lines, and [kaye-lowenstamm-vergnaud-1985] let two elements that
+cannot combine share a line. Neither is represented here.
+
+Government and licensing relate positions of the skeleton to each other. They are not
+association lines and are not part of this representation.
 
 ## References
 
@@ -61,16 +52,18 @@ open Autosegmental
 
 namespace ElementTheory
 
-/-- A token of an element is the head of its expression or a dependent. -/
+/-- The status of an element in a melodic expression: head or dependent. -/
 inductive Status where
   | head
   | dependent
   deriving DecidableEq, Repr
 
-/-- The status of the element `e` in the expression `m`. -/
+/-- The status of the element `e` in the expression `m`: head if `e` is a head of `m`, and dependent
+otherwise. -/
 def MR.status (m : MR) (e : Element) : Status := if e ∈ m.heads then .head else .dependent
 
-/-- `m₂.adopt m₁ e` is the expression `m₂` with the element `e` in the status it has in `m₁`. -/
+/-- `m₂.adopt m₁ e` is the expression `m₂` with the element `e` added, as a head if `e` is a head of
+`m₁` and as a dependent otherwise. -/
 def MR.adopt (m₂ m₁ : MR) (e : Element) : MR where
   elements := insert e m₂.elements
   heads := if e ∈ m₁.heads then insert e m₂.heads else m₂.heads.erase e
@@ -95,21 +88,21 @@ theorem MR.status_adopt_of_ne (m₂ m₁ : MR) {e e' : Element} (h : e' ≠ e) :
 
 /-! ### The tiers -/
 
-/-- The tiers of a representation of elements: the skeleton, the root nodes, and the line of each
-element. -/
+/-- The tiers of a representation of elements: the skeleton, the tier of root nodes, and one line
+for each element. -/
 inductive Tier where
   | skeleton
   | rootNode
   | line (e : Element)
   deriving DecidableEq, Fintype
 
-/-- The tier a tier hangs from: a line from the root nodes, and the root nodes from the
-skeleton. -/
+/-- The tier above a tier: the tier of root nodes above each line, and the skeleton above the root
+nodes. -/
 def Tier.parent : Tier → Tier
   | .line _ => .rootNode
   | _ => .skeleton
 
-/-- The tree of tiers. -/
+/-- The tree of tiers, with the skeleton as its root. -/
 def tiers : ParentTree Tier :=
   .ofIterate Tier.parent .skeleton 2 (by rintro (_ | _ | _) <;> rfl)
 
@@ -124,7 +117,7 @@ theorem iterate_parent_ne_line {t : Tier} (ht : ∀ e, t ≠ .line e) :
     rw [Function.iterate_succ_apply]
     exact iterate_parent_ne_line (by cases t <;> simp [Tier.parent]) n e
 
-/-- Only a line itself lies at or below it in the tree of tiers. -/
+/-- A tier lies at or below the line of `e` in the tree of tiers if and only if it is that line. -/
 theorem tiers_le_line_iff {e : Element} {t : Tier} :
     tiers.toPartialOrder.le (.line e) t ↔ t = .line e := by
   refine ⟨fun ⟨n, hn⟩ ↦ ?_, fun h ↦ h ▸ ⟨0, rfl⟩⟩
@@ -134,8 +127,8 @@ theorem tiers_le_line_iff {e : Element} {t : Tier} :
     rw [tiers, ParentTree.ofIterate, Function.iterate_succ_apply] at hn
     exact absurd hn (iterate_parent_ne_line (by cases t <;> simp [Tier.parent]) n e)
 
-/-- The alphabets of a representation of elements: slots on the skeleton, root nodes, and a
-status on the line of each element. -/
+/-- The alphabet of each tier: slots on the skeleton, a single symbol on the tier of root nodes, and
+head or dependent on each line. -/
 abbrev Tiers : Tier → Type
   | .skeleton => Slot
   | .rootNode => Unit
@@ -148,15 +141,16 @@ instance : ∀ t, DecidableEq (Tiers t)
 
 /-! ### Positions and forms -/
 
-/-- A position of the skeleton, with the melodic expression of its root node if it has one. -/
+/-- A position of the skeleton: a slot, and the melodic expression of its root node if it has one.
+-/
 structure Position where
   /-- The slot, consonantal or vocalic. -/
   slot : Slot
   /-- The melodic expression of the root node of the position. -/
   melody : Option MR := none
 
-/-- The tokens of a position on each tier: its slot, its root node, and on the line of each
-element of its expression the status of the element. -/
+/-- The tokens of a position on each tier: its slot on the skeleton, its root node if it has one,
+and on the line of each element of its expression the status of that element. -/
 def Position.word (p : Position) : ∀ t, List (Tiers t)
   | .skeleton => [p.slot]
   | .rootNode => if p.melody.isSome then [()] else []
@@ -165,15 +159,16 @@ def Position.word (p : Position) : ∀ t, List (Tiers t)
     | some m => if e ∈ m.elements then [m.status e] else []
     | none => []
 
-/-- The representation of a position: its tokens, each linked to the token of the tier its own
-hangs from. -/
+/-- The representation of a position: its tokens, with a line from each token to the token on the
+tier above. -/
 def ofPosition (p : Position) : AR Tiers :=
   AR.fromRel p.word fun t' t _ _ ↦ t.parent = t' ∧ t ≠ .skeleton
 
-/-- The representation of a form, those of its positions in order. -/
+/-- The representation of a list of positions: the concatenation of the representations of its
+positions. -/
 def ofForm (w : List Position) : AR Tiers := (w.map ofPosition).prod
 
-/-- `ofForm` as a monoid homomorphism out of the free monoid on the positions. -/
+/-- `ofForm` as a monoid homomorphism from the free monoid on positions. -/
 def ofFormHom : FreeMonoid Position →* AR Tiers := FreeMonoid.lift ofPosition
 
 @[simp] theorem ofFormHom_ofList (w : List Position) :
@@ -207,13 +202,14 @@ theorem noCrossing_ofPosition (p : Position) : (ofPosition p).NoCrossing :=
     have := p.length_word_le_one t'
     omega
 
-/-- The lines of a form do not cross. -/
+/-- The lines of the representation of a form do not cross. -/
 theorem noCrossing_ofForm (w : List Position) : (ofForm w).NoCrossing :=
   AR.NoCrossing.prod fun X hX ↦ by
     obtain ⟨p, -, rfl⟩ := List.mem_map.1 hX
     exact noCrossing_ofPosition p
 
-/-- A token of a position is linked to the token of the tier its own hangs from. -/
+/-- In the representation of a position, the tokens on a tier and on the tier above are linked if
+and only if the position has a token on the lower tier. -/
 theorem link_ofPosition_parent_iff {t : Tier} (ht : t ≠ .skeleton) :
     (ofPosition p).Link t.parent t 0 0 ↔ p.word t ≠ [] := by
   rw [ofPosition, AR.link_fromRel]
@@ -241,7 +237,7 @@ theorem dominates_ofPosition {t : Tier} (h : p.word t ≠ []) :
     exact AR.descendants_mono hcard _ (AR.mem_descendants_succ_of_mem_children (hroot hr)
       (AR.mem_children.2 ⟨rfl, by simp, (link_ofPosition_parent_iff (by simp)).2 h⟩))
 
-/-- The melody of a position on a tier is the token it has there. -/
+/-- The melody of a position on a tier is the list of its tokens on that tier. -/
 theorem melody_ofPosition (p : Position) (t : Tier) :
     (ofPosition p).melody tiers 0 t = p.word t := by
   have hlen := p.length_word_le_one t
@@ -251,7 +247,8 @@ theorem melody_ofPosition (p : Position) (t : Tier) :
     simp [AR.melody, hw, hd]
   · simp [hw] at hlen
 
-/-- The melody of position `k` of a form on a tier is the token the position has there. -/
+/-- The melody of position `k` of a form on a tier is the list of tokens of that position on the
+tier. -/
 theorem melody_ofForm (hk : k < w.length) (t : Tier) :
     (ofForm w).melody tiers k t = w[k].word t :=
   (AR.melody_prod_map tiers ofPosition (fun _ ↦ rfl) hk).trans (melody_ofPosition _ _)
@@ -261,7 +258,8 @@ theorem mem_melody_ofForm_iff {t : Tier} {b : Tiers t} :
   (AR.mem_melody_prod_map tiers ofPosition fun _ ↦ rfl).trans
     (exists_congr fun _ ↦ by rw [melody_ofPosition])
 
-/-- Position `k` of a form bears a root node exactly when it has one. -/
+/-- The melody of position `k` of a form contains a root node if and only if the position has one.
+-/
 theorem mem_melody_rootNode_ofForm_iff :
     () ∈ (ofForm w).melody tiers k .rootNode ↔ ∃ p ∈ w[k]?, p.melody.isSome := by
   refine (mem_melody_ofForm_iff (t := .rootNode) (b := ())).trans ?_
@@ -272,7 +270,8 @@ theorem mem_melody_rootNode_ofForm_iff :
   · rintro ⟨_, ⟨hk, rfl⟩, h⟩
     exact ⟨hk, by simp [Position.word, h]⟩
 
-/-- Position `k` of a form bears an element exactly when its expression contains it. -/
+/-- The melody of position `k` of a form contains a token of the element `e` if and only if the
+expression of the position contains `e`. -/
 theorem exists_mem_melody_line_ofForm_iff :
     (∃ s, s ∈ (ofForm w).melody tiers k (.line e)) ↔
       ∃ p ∈ w[k]?, ∃ m ∈ p.melody, e ∈ m.elements := by
@@ -286,13 +285,14 @@ theorem exists_mem_melody_line_ofForm_iff :
 
 /-! ### Spreading -/
 
-/-- `spread w e m n` makes position `n` share the token of `e` of position `m`: the root node of
-`n` is delinked from its own token of `e` and linked to that of `m`. -/
+/-- `spread w e m n` is the representation of `w` with the element `e` spread from position `m` to
+position `n`: the root node of `n` is linked to the token of `e` at `m` and delinked from its own
+token of `e`. -/
 def spread (w : List Position) (e : Element) (m n : ℕ) : AR Tiers :=
   AR.spreadTier tiers ofPosition w (.line e) m n
 
-/-- Spreading an element from one position to another crosses no line exactly when no position
-strictly between them has the element. -/
+/-- The lines of `spread w e m n` do not cross if and only if no position strictly between `m` and
+`n` has `e`. -/
 theorem noCrossing_spread_iff (hm : m < w.length) (hn : n < w.length)
     (he : ∃ m₁ ∈ w[m].melody, e ∈ m₁.elements) (hr : w[n].melody.isSome) :
     (spread w e m n).NoCrossing ↔
@@ -309,8 +309,8 @@ theorem noCrossing_spread_iff (hm : m < w.length) (hn : n < w.length)
   obtain ⟨m', hm', he'⟩ := Position.word_line_ne_nil_iff.1 hne
   exact h m' hm' he'
 
-/-- Spreading an element gives each position what it bears when the target position has the
-element in the status it has at the source: sharing a token is borne as copying it. -/
+/-- After `e` spreads from `m` to `n`, the melody of each position is its melody in the form where
+position `n` has `e` with the status that `e` has at `m`. -/
 theorem mem_melody_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂)
     {t : Tier} {b : Tiers t} :
@@ -331,8 +331,8 @@ theorem mem_melody_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂
     · have hne : e' ≠ e := fun h ↦ ht (tiers_le_line_iff.2 (h ▸ rfl))
       simp [Position.word, h₂, MR.mem_elements_adopt, hne, MR.status_adopt_of_ne _ _ hne]
 
-/-- Where both positions have the element, spreading it changes no position's elements: the shared
-token stands for both. -/
+/-- If positions `m` and `n` both have `e`, then after `e` spreads from `m` to `n` each position has
+tokens of the same elements as before. -/
 theorem exists_mem_melody_spread_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂)
     (he' : e ∈ m₂.elements) {e' : Element} :
@@ -347,7 +347,7 @@ theorem exists_mem_melody_spread_iff (hm : m < w.length) (hn : n < w.length) {m�
     exact ⟨fun h ↦ h.elim (· ▸ he') id, .inr⟩
   · rw [List.getElem?_set_ne hk]
 
-/-- After spreading the target position bears the element in the status it has at the source. -/
+/-- After `e` spreads from `m` to `n`, position `n` has `e` with the status that `e` has at `m`. -/
 theorem mem_melody_spread_self_iff (hm : m < w.length) (hn : n < w.length) {m₁ m₂ : MR}
     (h₁ : w[m].melody = some m₁) (he : e ∈ m₁.elements) (h₂ : w[n].melody = some m₂) :
     s ∈ (spread w e m n).melody tiers n (.line e) ↔ s = m₁.status e := by

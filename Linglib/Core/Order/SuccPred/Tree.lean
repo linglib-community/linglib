@@ -69,6 +69,13 @@ def ofIterate (parent : α → α) (root : α) (k : ℕ) (h : ∀ a, parent^[k] 
     _ = root := h _
   exists_iterate_eq_root a := ⟨k, h a⟩
 
+/-- The tree in which every element other than the root is a child of the root. -/
+def star (root : α) : ParentTree α := ofIterate (fun _ ↦ root) root 1 fun _ ↦ rfl
+
+@[simp] theorem star_root (root : α) : (star root).root = root := rfl
+
+@[simp] theorem star_parent (root a : α) : (star root).parent a = root := rfl
+
 variable (t : ParentTree α) {a b : α}
 
 theorem iterate_root (n : ℕ) : t.parent^[n] t.root = t.root :=
