@@ -36,9 +36,13 @@ of the degrees that lie in the standard's extent `P v` at the worlds `Q` holds o
 `negationOutside` has LITTLE in the matrix degree phrase, outside `Q`, and `negationInside` has it
 on both adjectives, inside `Q`. The second is the first for the dual quantifier
 (`negationInside_iff_negationOutside_dual`): over the worlds `A` a necessity modal quantifies
-over, `negationOutside (every A)` puts the subject's degree below the least degree the standard has
-in `A` and `negationInside (every A)` puts it below the greatest, and for a possibility modal,
-`Quantifier.Det.some A`, they exchange.
+over, `negationOutside (every A)` puts the subject's degree below the infimum of the standard's
+degrees in `A` and `negationInside (every A)` puts it below their supremum, and for a possibility
+modal, `Quantifier.Det.some A`, they exchange. Where the than-clause interval has a greatest
+degree, `negationOutside` is `Quantifier.HighScope` of the degree quantifier *more than `c`*.
+
+Between positive extents the comparative with MUCH is the max-quantified comparative
+`MaxComparative .gt` (`maxComparative_gt_iff_ssubset`).
 
 ## Implementation notes
 
@@ -302,17 +306,32 @@ theorem negationInside_some :
   rw [negationInside_iff_negationOutside_dual, dual_some, negationOutside_every]
 
 -- (31): the minimum required width of the moat is more than the length of the drawbridge.
-theorem negationOutside_every_iff_of_isLeast {m : D} (h : IsLeast (μ '' A) m) :
+theorem negationOutside_every_iff_of_isGLB {m : D} (h : IsGLB (μ '' A) m) :
     negationOutside (every A) μ c ↔ c < m :=
   negationOutside_every.trans
-    ⟨fun ⟨_, hce, he⟩ ↦ hce.trans_le (he h.1), fun hc ↦ ⟨m, hc, h.2⟩⟩
+    ⟨fun ⟨_, hce, he⟩ ↦ hce.trans_le (h.2 he), fun hc ↦ ⟨m, hc, h.1⟩⟩
 
 -- (33): the maximum allowed width of the moat is more than the length of the drawbridge.
-theorem negationInside_every_iff_of_isGreatest {m : D} (h : IsGreatest (μ '' A) m) :
-    negationInside (every A) μ c ↔ c < m := by
-  obtain ⟨⟨u, hu, rfl⟩, hm⟩ := h
-  exact negationInside_every.trans
-    ⟨fun ⟨v, hv, hc⟩ ↦ hc.trans_le (hm ⟨v, hv, rfl⟩), fun hc ↦ ⟨u, hu, hc⟩⟩
+theorem negationInside_every_iff_of_isLUB {m : D} (h : IsLUB (μ '' A) m) :
+    negationInside (every A) μ c ↔ c < m :=
+  negationInside_every.trans <| Set.exists_mem_image.symm.trans (lt_isLUB_iff h).symm
+
+-- The greatest degree of the than-clause interval, where it has one, exceeds the subject's.
+theorem negationOutside_iff_highScope (hQ : Monotone Q)
+    (h : ∃ m, IsGreatest (scopeDegrees Q (Set.Iic ∘ μ)) m) :
+    negationOutside Q μ c ↔ HighScope (MaxIn (Set.Ioi c)) Q (Set.Iic ∘ μ) :=
+  let ⟨m, hm⟩ := h
+  (negationOutside_iff hQ).trans
+    ⟨fun ⟨_, hce, he⟩ ↦ ⟨m, hce.trans_le (hm.2 he), hm⟩, fun ⟨e, hce, he⟩ ↦ ⟨e, hce, he.1⟩⟩
+
+-- Over finitely many worlds the quantifier holds of the worlds where the standard exceeds the
+-- subject, so LITTLE inside it gives the dual quantifier of those worlds.
+theorem negationOutside_iff_of_finite [Finite W] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) :
+    negationOutside Q μ c ↔ Q {v | c < μ v} :=
+  (negationOutside_iff hQ).trans
+    ⟨fun ⟨_, hce, he⟩ ↦ hQ (fun _ hv ↦ hce.trans_le hv) he, fun h ↦
+      let ⟨m, hcm, hm⟩ := highScope_of_lowScope hQ hQ₀ (IsUpperSet.Ioi c) (lowScope_maxIn.2 h)
+      ⟨m, hcm, hm.1⟩⟩
 
 /-- Under a universal quantifier over a nonempty set, LITTLE outside the quantifier entails LITTLE
 inside it. -/

@@ -1,8 +1,8 @@
 module
 
+public import Linglib.Core.Order.UpperLower.Linear
 public import Linglib.Semantics.Negation.Polarity
 public import Mathlib.Order.Interval.Set.LinearOrder
-public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Extents
@@ -61,14 +61,11 @@ variable [LinearOrder D]
 the polarity of that extent. -/
 theorem IsExtent.polarity_eq (hs : IsExtent p s) (ht : IsExtent q t) (hne : s.Nonempty)
     (ht' : t ≠ Set.univ) (h : s ⊆ t) : p = q := by
-  by_contra hpq
-  obtain ⟨l, hl⟩ := hne
-  refine ht' (Set.eq_univ_of_forall fun z ↦ ?_)
   rcases p with _ | _ <;> rcases q with _ | _
-  · exact absurd rfl hpq
-  · exact (le_total z l).elim (fun hz ↦ h (hs hz hl)) fun hz ↦ isExtent_negative.mp ht hz (h hl)
-  · exact (le_total z l).elim (fun hz ↦ ht hz (h hl)) fun hz ↦ h (isExtent_negative.mp hs hz hl)
-  · exact absurd rfl hpq
+  · rfl
+  · exact absurd (hs.eq_univ_of_subset_isUpperSet (isExtent_negative.mp ht) hne h) ht'
+  · exact absurd ((isExtent_negative.mp hs).eq_univ_of_subset_isLowerSet ht hne h) ht'
+  · rfl
 
 theorem nonempty_smul_Iic [NoMaxOrder D] (q : Polarity) (a : D) : (q • Set.Iic a).Nonempty := by
   cases q
