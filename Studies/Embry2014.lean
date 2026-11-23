@@ -101,17 +101,18 @@ theorem mem_upperClosure_skis_iff {d : Depth} {u : St} (hu : outcome () (snowedT
     cases v <;> simp [skiing, snowedTo]
 
 -- true of the eight-inch verifier
-theorem would_eightInches : () ∈ would outcome {snowedTo .eightInches} skis := by
+theorem would_eightInches : () ∈ would outcome {snowedTo .eightInches} (upperClosure skis) := by
   rintro t rfl u hu
   exact (mem_upperClosure_skis_iff hu).mpr rfl
 
 -- (3b)
-theorem not_would_hundredFeet : () ∉ would outcome {snowedTo .hundredFeet} skis := fun h ↦
+theorem not_would_hundredFeet :
+    () ∉ would outcome {snowedTo .hundredFeet} (upperClosure skis) := fun h ↦
   absurd ((mem_upperClosure_skis_iff ⟨_, rfl, rfl⟩).mp (h rfl _ ⟨_, rfl, rfl⟩)) (by decide)
 
 /-- (3a) is false on the truth clause of exact semantics: the outcome of the hundred-foot
 verifier contains no skiing. -/
-theorem not_would_snowed : () ∉ would outcome snowed skis := fun h ↦
+theorem not_would_snowed : () ∉ would outcome snowed (upperClosure skis) := fun h ↦
   not_would_hundredFeet fun _ ha ↦ h (Set.mem_insert_of_mem _ ha)
 
 /-! ### The dilemma for a repair by closeness -/

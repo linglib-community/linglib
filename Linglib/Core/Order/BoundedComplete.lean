@@ -14,9 +14,7 @@ and an incompatible pair has none. Compatibility is `Compat`, mathlib's `BddAbov
 it is pointwise on functions and componentwise on products, and it is decidable wherever it is on
 the components. An order is `IsBoundedComplete` when every compatible pair has a join, and then
 joins of pairs reassociate (`IsLUB.pair_assoc`). An order whose joins are computed presents them
-as the join of `WithTop α`, with `⊤` the failure, through `WithTop.semilatticeSupOfIsLUB`. The
-joins of the compatible pairs from two sets are `Set.lubs`, which is associative in a
-bounded-complete order.
+as the join of `WithTop α`, with `⊤` the failure, through `WithTop.semilatticeSupOfIsLUB`.
 
 ## References
 
@@ -89,34 +87,6 @@ theorem IsLUB.pair_assoc {α : Type*} [Preorder α] [IsBoundedComplete α] {p q 
   obtain ⟨hqu, hwu, hu'⟩ := isLUB_pair_iff_forall_le.1 hu
   exact ⟨u, hu, isLUB_pair_iff_forall_le.2 ⟨hpv.trans hvr, hu' r (hqv.trans hvr) hwr,
     fun x hpx hux ↦ hr' x (hv' x hpx (hqu.trans hux)) (hwu.trans hux)⟩⟩
-
-/-! ### Joins of compatible pairs from two sets -/
-
-namespace Set
-
-variable {α : Type*} [Preorder α] {s t u : Set α} {c : α}
-
-/-- The joins of the compatible pairs with one element from each set. An incompatible pair
-contributes nothing. -/
-def lubs (s t : Set α) : Set α := {c | ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c}
-
-theorem mem_lubs : c ∈ lubs s t ↔ ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c := Iff.rfl
-
-theorem lubs_comm (s t : Set α) : lubs s t = lubs t s :=
-  Set.ext fun _ ↦ ⟨fun ⟨a, ha, b, hb, h⟩ ↦ ⟨b, hb, a, ha, Set.pair_comm a b ▸ h⟩,
-    fun ⟨b, hb, a, ha, h⟩ ↦ ⟨a, ha, b, hb, Set.pair_comm b a ▸ h⟩⟩
-
-theorem lubs_assoc [IsBoundedComplete α] (s t u : Set α) :
-    lubs (lubs s t) u = lubs s (lubs t u) :=
-  Set.ext fun _ ↦
-    ⟨fun ⟨_, ⟨a, ha, b, hb, hv⟩, c, hc, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ := hv.pair_assoc hr
-      ⟨a, ha, v', ⟨b, hb, c, hc, hv'⟩, hr'⟩,
-     fun ⟨a, ha, v, ⟨b, hb, c, hc, hv⟩, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ := (Set.pair_comm b c ▸ hv).pair_assoc (Set.pair_comm a v ▸ hr)
-      ⟨v', ⟨a, ha, b, hb, Set.pair_comm b a ▸ hv'⟩, c, hc, Set.pair_comm c v' ▸ hr'⟩⟩
-
-end Set
 
 /-! ### Compatibility -/
 
