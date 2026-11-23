@@ -50,7 +50,7 @@ and of `I` after it. -/
 def followers (v : Segment) : List Segment :=
   [A, I].map fun x ↦ (surface [v, x]).getLastD x
 
-/-- The permissible vowel sequences are those the grammar tabulates (§3.1). -/
+-- §3.1
 theorem followers_table :
     followers a = [a, ı] ∧ followers ı = [a, ı] ∧ followers o = [a, u] ∧ followers u = [a, u] ∧
     followers e = [e, i] ∧ followers i = [e, i] ∧ followers ö = [e, ü] ∧ followers ü = [e, ü] := by
@@ -183,16 +183,13 @@ def arabaIm : Hiatus.Juncture := ⟨[a, r, a, b], a, I, [m], by decide, by decid
 /-- The juncture of *masa* 'table' and the vowel of -(y)A. -/
 def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
 
-/-- Bracketed vowels and consonants are the two repairs of hiatus, elision in *araba-m* and
-epenthesis in *masa-ya* (§6.1.3, §8.1.2, §8.1.3). -/
+-- §6.1.3, §8.1.2, §8.1.3
 theorem hiatus_repairs :
     (possessive (.personNumber .first .singular)).form.attach arabaIm.left = arabaIm.elideV2 ∧
     dative.form.attach masaA.left = masaA.epenthesize y :=
   ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
     Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
 
-/-- The spelled stem of every verb of the Fragment writes the surface form of its root and
-voice suffixes, the causatives *öldür-* and *yaptır-* among them. -/
 theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) := by
   decide
 
@@ -357,19 +354,16 @@ theorem forall₂_le_harmonize (w : List Segment) : List.Forall₂ (· ≤ ·) w
       (rounding.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1.2.2 v) _ _)).trans
       (voicing.searchCopy.le_emit (fun v s h ↦ Segment.le_setFeature h.1 v) _ _)
 
-/-- Raising is the one rule of the surface form that changes a feature value. -/
 theorem forall₂_le_surface (w : List Segment) :
     List.Forall₂ (· ≤ ·) (raising.apply w) (surface w) :=
   forall₂_le_harmonize _
 
-/-- A string of phonemes is harmonized already. -/
 theorem harmonize_eq_self {w : List Segment} (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) :
     harmonize w = w := by
   rw [harmonize_eq_scan, fronting.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).1,
     rounding.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.1,
     voicing.searchCopy.scan_eq_self fun s hs ↦ (not_isTarget s (hw s hs)).2.2]
 
-/-- Adding segments to a word leaves the harmonized form of the word in place. -/
 theorem harmonize_isPrefix_append (w s : List Segment) :
     harmonize w <+: harmonize (w ++ s) := by
   induction s using List.reverseRecOn with
@@ -378,10 +372,7 @@ theorem harmonize_isPrefix_append (w s : List Segment) :
     rw [← List.append_assoc, harmonize_concat]
     exact ih.trans (List.prefix_append _ _)
 
-/-- Stems that end alike take their suffixes alike: two strings of phonemes with the same last
-segment, the same last vowel and the same last vowel or palatal lateral are followed by the same
-harmonized segments, whatever is added, so that a loan such as *otobüs* takes the suffixes of a
-native stem in `ü` (Chapter 3). -/
+-- Chapter 3
 theorem exists_harmonize_append_eq {w w' : List Segment}
     (hw : ∀ x ∈ w, x ∈ vowels ∪ consonants) (hw' : ∀ x ∈ w', x ∈ vowels ∪ consonants)
     (hl : w.getLast? = w'.getLast?)
@@ -401,8 +392,7 @@ theorem exists_harmonize_append_eq {w w' : List Segment}
 
 /-! ### The alternants of an archiphoneme (§3.2, §6.1.2) -/
 
-/-- After a string whose last segment that is syllabic or bears [back] has the value `β` for
-[back], `A` is `a` or `e` accordingly (§3.2.2). -/
+-- §3.2.2
 theorem fill_A {w : List Segment} {b : Segment} {β : Bool}
     (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? = some b)
     (hβ : b .back = some β) : fill w A = A.setFeature .back β := by
@@ -417,9 +407,7 @@ theorem fill_A {w : List Segment} {b : Segment} {β : Bool}
     rw [rounding.searchCopy.emit_of_not_isTarget (by decide),
       voicing.searchCopy.emit_of_not_isTarget (by decide)]
 
-/-- After a string whose last segment that is syllabic or bears [back] has the value `β` for
-[back] and whose last syllabic segment has the value `ρ` for [round], `I` is the high vowel
-with those values (§3.2.1). -/
+-- §3.2.1
 theorem fill_I {w : List Segment} {b v : Segment} {β ρ : Bool}
     (hb : (w.filter fun s ↦ s.IsSyllabic ∨ s .back ≠ none).getLast? = some b)
     (hβ : b .back = some β) (hv : (w.filter (·.IsSyllabic)).getLast? = some v)
@@ -440,8 +428,7 @@ theorem fill_I {w : List Segment} {b v : Segment} {β ρ : Bool}
   rw [← emit_eq_fill, hb, hv, h₁, h₂]
   cases β <;> cases ρ <;> exact voicing.searchCopy.emit_of_not_isTarget (by decide) _
 
-/-- After a string whose last segment has the value `ν` for [voice], `D` is `d` or `t`
-accordingly (§6.1.2). -/
+-- §6.1.2
 theorem fill_D {w : List Segment} {x : Segment} {ν : Bool}
     (hx : w.getLast? = some x) (hν : x .voice = some ν) :
     fill w D = D.setFeature .voice ν := by
@@ -450,8 +437,7 @@ theorem fill_D {w : List Segment} {x : Segment} {ν : Bool}
   exact voicing.emit_eq_write_of_found_eq_some (by decide) (by decide)
     ((voicing.found_some_of_participating (by simp [voicing, System.mk']) D).trans hν)
 
-/-- A phoneme stands unchanged wherever it occurs, so the vowel of a disharmonic stem or an
-invariable suffix decides for what follows it (§3.4). -/
+-- §3.4
 theorem fill_of_mem {x : Segment} (hx : x ∈ vowels ∪ consonants) (w : List Segment) :
     fill w x = x := by
   obtain ⟨h₁, h₂, h₃⟩ := not_isTarget x hx
@@ -464,7 +450,6 @@ theorem underlying_eq_ofStep (w : List Segment) (sfxs : List Suffix) :
     underlying w sfxs = Morphotactics.ofStep id Suffix.attach w sfxs :=
   rfl
 
-/-- Before raising, a further suffix leaves the word before it in place. -/
 theorem isConcatenative_harmonize_underlying :
     Morphotactics.IsConcatenative fun w sfxs ↦ harmonize (underlying w sfxs) :=
   fun w sfxs s ↦ by
@@ -512,8 +497,7 @@ theorem nominal :
       [⟨_, .plural⟩, ⟨_, .possessive (.personNumber .second .singular)⟩, ⟨_, .dative⟩] := by
   decide
 
-/-- *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur* fills every slot of the finite verb, the
-voice slot with four stacked suffixes (§8.2 (7)). -/
+-- §8.2, (7)
 theorem finite_verb :
     Verb.template.Licensed (E := Verb.Exponent)
       [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
@@ -539,16 +523,12 @@ theorem reversed_orders :
     ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
   decide
 
-/-- Markers of position 3 cannot co-occur, since the template does not repeat the position
-(§8.2.3 (i)). -/
+-- §8.2.3, (i)
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
 
-/-- On a verb a person marker precedes the copular marker when it is a group-1 marker after
--DI, as in *gittimdi*, *geldinizse* and *baktıktı*, or the third-person plural, as in
-*kat-sa-lar-dı*, and the third-person plural may also follow -DIr, as in *gid-iyor-dur-lar*,
-beside the orders of the template (§8.3.2, §8.3.3, §8.4). -/
+-- §8.3.2, §8.3.3, §8.4
 theorem person_mobility : ∀ w ∈ ([
       ([g, i, t], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .singular)⟩, ⟨_, pastCopula⟩],
         "gittimdi"),
@@ -571,9 +551,7 @@ theorem person_mobility : ∀ w ∈ ([
       ofSegmented? w.2.2 = some (realize w.1 (Verb.forms w.2.1)) := by
   decide
 
-/-- No other person marker leaves its place: a group-2 marker does not precede a copular
-marker or follow -DIr, and a group-1 marker after -sA does not precede a copular marker
-(§8.3.3, §8.4). -/
+-- §8.3.3, §8.4
 theorem person_fixed :
     ¬ Verb.Licensed [⟨_, iyor⟩, ⟨_, person .two (.personNumber .first .singular)⟩,
       ⟨_, pastCopula⟩] ∧
@@ -584,10 +562,6 @@ theorem person_fixed :
 
 /-! ### The question clitic (§11.1.1.5) -/
 
-/-- *mI* precedes the copular markers -(y)DI and -(y)mIş, as in *Gitse miydik?*, *Başlamış
-mıydınız?* and *Burada mıymış?*, the group-2 person markers but the third-person plural, as in
-*Gidiyor musun?*, *İster miyiz?* and *Hazır mısınız?*, and -DIr, as in *Unutmuş mudurlar?*,
-*Evde midir?* and *geçmiş miyimdir?*, and the markers after it attach to it. -/
 theorem mi_precedes_clitics : ∀ w ∈ ([
       ([g, i, t], [⟨_, sa⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .plural)⟩],
         ["gitse", "miydik"]),
@@ -610,11 +584,6 @@ theorem mi_precedes_clitics : ∀ w ∈ ([
       (w.2.2.mapM ofString?).map List.flatten = some (realize w.1 (mi.insert w.2.1)) := by
   decide
 
-/-- *mI* follows the group-1 person markers, as in *Gördün mü?*, *Gitsek mi?* and *Yürüdünüz
-mü?*, those of group 3 in the first and third persons, as in *Kalayım mı?* and *Başlasın mı?*,
-the third-person plural, as in
-*Gittiler mi?*, *Uyanırlar mı?* and *Okuldalar mı?*, and a subject complement without markers,
-as in *Akıllı mı?* and *Benimki mi?*. -/
 theorem mi_follows : ∀ w ∈ ([
       ([g, ö, r], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .singular)⟩], ["gördün", "mü"]),
       ([g, i, t], [⟨_, sa⟩, ⟨_, person .one (.personNumber .first .plural)⟩], ["gitsek", "mi"]),
@@ -636,11 +605,7 @@ theorem mi_follows : ∀ w ∈ ([
 
 /-! ### Converbs (§8.5.2.2) -/
 
-/-- The converbs on the grammar's verbs: on the stem, as in *koşup*, *kalkmayınca*,
-*yıkılmadan* and *koştukça*, -(y)ken on a position-3 marker or a nominal, as in
-*çalış-ır-ken* and *sokaktayken*, and -cAsInA on -mIş and a person marker, as in
-*duymamışçasına* and *konuşuyormuşumcasına* (§8.5.1.1, §8.5.2.2, §26.2.3 (40),
-§26.3.8 (69), (73)). -/
+-- §8.5.1.1, §8.5.2.2, §26.2.3, (40), §26.3.8, (69), (73)
 theorem converbs : ∀ w ∈ [("koşup", [k, o, ş], Converb.ip.form),
       ("girip", [g, i, r], Converb.ip.form),
       ("yüzünce", [y, ü, z], Converb.inca.form),
@@ -662,8 +627,7 @@ theorem converbs : ∀ w ∈ [("koşup", [k, o, ş], Converb.ip.form),
     ofSegmented? w.1 = some (realize w.2.1 w.2.2) := by
   decide
 
-/-- The converbs on two verbs, as in *baka baka*, *duy-du-m duy-alı* and *ye-r ye-mez*
-(§8.5.2.2). -/
+-- §8.5.2.2
 theorem doubled_converbs :
     ofString? "baka" = some (realize [b, a, k] DoubledConverb.aA.forms.1) ∧
     ofString? "baka" = some (realize [b, a, k] DoubledConverb.aA.forms.2) ∧
@@ -674,16 +638,14 @@ theorem doubled_converbs :
     ofString? "yemez" = some (realize [y, e] DoubledConverb.arMaz.forms.2) := by
   decide
 
-/-- -(y)Ip and -(y)ArAk stand in place of the position-3 marker and all the suffixes after it,
-so they follow exactly the slots before it (§28.2). -/
+-- §28.2
 theorem conjunctive_converbs :
     ∀ c ∈ [Converb.ip, .arak], ∀ s : Verb.Slot, s ≤ c.follows ↔ s < .tam := by
   decide
 
 /-! ### Existential sentences (§12.1.1.2) -/
 
-/-- The existentials (21), (22) and (26), such as *Murat'ın yatı var* 'Murat has a yacht', are
-possessive. -/
+-- (21), (22), (26)
 theorem possessive_existential :
     Possession.IsPossessive [[a, y, t, e, n]] [realize [i, s, t, a, n, b, u, l] [locative.form]]
         [[i, k, i], [a, r, k, a, d, a, ş]] (.personNumber .third .singular) Possession.var
@@ -700,15 +662,13 @@ theorem possessive_existential :
         Possession.var [[m, u, r, a, t, ı, n], [y, a, t, ı], [v, a, r]] := by
   decide
 
-/-- The locative existential sentence (17), *Ben-de bir kitap var* 'I have a book'. -/
+-- (17)
 theorem locative_existential :
     Possession.locative [[b, e, n]] [[b, i, r], [k, i, t, a, p]] Possession.var =
       [[b, e, n, d, e], [b, i, r], [k, i, t, a, p], [v, a, r]] := by
   decide
 
-/-- The possessive suffix on *araba* in (117), *Sizin arabanız var mı?*, is obligatory: the
-sentence before its question clitic is possessive, and no person-number cell gives it with the
-bare *araba* (§14.4). -/
+-- (117), §14.4
 theorem possessive_obligatory :
     Possession.IsPossessive [[s, i, z]] [] [[a, r, a, b, a]] (.personNumber .second .plural)
         Possession.var [[s, i, z, i, n], [a, r, a, b, a, n, ı, z], [v, a, r]] ∧

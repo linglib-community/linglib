@@ -153,7 +153,6 @@ theorem forall₂_run {R : α → β → Prop} (h : ∀ s a, R a (T.output s a))
     List.Forall₂ R xs (T.run xs) :=
   T.forall₂_runFrom T.start xs h
 
-/-- A function of the output that no state changes reads the run as it reads the word. -/
 theorem map_runFrom {γ : Type*} {g : β → γ} {g' : α → γ} (h : ∀ s a, g (T.output s a) = g' a) :
     (T.runFrom s xs).map g = xs.map g' := by
   induction xs generalizing s <;> simp [*]

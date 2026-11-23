@@ -271,7 +271,6 @@ theorem apply_isSubsequential [Fintype α] : IsSubsequential r.direction r.apply
   · exact r.apply_eq_scan h ▸ r.toMealy.isLeftSubsequential
   · exact r.apply_eq_revConj_scan h ▸ r.toMealy.isRightSubsequential
 
-/-- The segment output depends on the window only through the value the target finds in it. -/
 theorem emit_congr {w w' : Option α} {s : α} (h : r.found s w = r.found s w') :
     r.emit w s = r.emit w' s := by
   unfold emit copied; rw [h]
@@ -330,7 +329,6 @@ theorem scan_concat (hw : r.PreservesTier) (w : List α) (x : α) :
 
 /-! ### Words without targets -/
 
-/-- The run leaves a word without targets unchanged. -/
 theorem scan_eq_self {w : List α} (h : ∀ s ∈ w, ¬ r.IsTarget s) : r.scan w = w := by
   suffices ∀ (q : Option α), r.toMealy.runFrom q w = w from this none
   induction w with
@@ -340,8 +338,6 @@ theorem scan_eq_self {w : List α} (h : ∀ s ∈ w, ¬ r.IsTarget s) : r.scan w
     rw [Mealy.runFrom_cons, toMealy_output, r.emit_of_not_isTarget (h x List.mem_cons_self),
       ih fun s hs ↦ h s (List.mem_cons_of_mem x hs)]
 
-/-- After a word without targets, the closest visible segment is the last visible segment of
-the word. -/
 theorem eval_toMealy_of_forall_not_isTarget {w : List α} (h : ∀ s ∈ w, ¬ r.IsTarget s) :
     r.toMealy.eval w = (w.filter (r.tier ·)).getLast? := by
   induction w using List.reverseRecOn with
@@ -360,7 +356,6 @@ section Preorder
 
 variable [Preorder α]
 
-/-- Where a write adds to its target, the segment output is at least the segment read. -/
 theorem le_emit (h : ∀ v s, r.IsTarget s → s ≤ r.write v s) (w : Option α) (s : α) :
     s ≤ r.emit w s := by
   unfold emit

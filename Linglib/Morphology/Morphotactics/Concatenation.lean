@@ -80,8 +80,6 @@ def IsStepwise (m : Z → List E → F) : Prop :=
 theorem isStepwise_ofStep (base : Z → F) (step : F → E → F) : IsStepwise (ofStep base step) :=
   fun _ _ _ _ e h ↦ by rw [ofStep_concat, ofStep_concat, h]
 
-/-- Strings with the same form under a stepwise morphotactics have the same form with any
-further exponents. -/
 theorem IsStepwise.append {m : Z → List E → F} (h : IsStepwise m) {z z' : Z} {es es' : List E}
     (hm : m z es = m z' es') (s : List E) : m z (es ++ s) = m z' (es' ++ s) := by
   induction s using List.reverseRecOn with
@@ -118,8 +116,6 @@ the form before it in place. -/
 def IsConcatenative (m : Z → List E → List α) : Prop :=
   ∀ z es e, m z es <+: m z (es ++ [e])
 
-/-- A morphotactics is concatenative exactly when a prefix of a string has a prefix of its
-form. -/
 theorem isConcatenative_iff {m : Z → List E → List α} :
     IsConcatenative m ↔ ∀ z ⦃es es' : List E⦄, es <+: es' → m z es <+: m z es' := by
   refine ⟨fun h z es es' hp ↦ ?_, fun h z es e ↦ h z (List.prefix_append es [e])⟩
@@ -132,13 +128,11 @@ theorem isConcatenative_ofStep (base : Z → List α) {step : List α → E → 
     (h : ∀ f e, f <+: step f e) : IsConcatenative (ofStep base step) :=
   fun z es e ↦ by rw [ofStep_concat]; exact h _ e
 
-/-- A map of forms that carries prefixes to prefixes keeps a morphotactics concatenative. -/
 theorem IsConcatenative.comp {m : Z → List E → List α} (h : IsConcatenative m)
     {g : List α → List β} (hg : ∀ ⦃u v : List α⦄, u <+: v → g u <+: g v) :
     IsConcatenative fun z es ↦ g (m z es) :=
   fun z es e ↦ hg (h z es e)
 
-/-- The run of a machine that reads from left to right keeps a morphotactics concatenative. -/
 theorem IsConcatenative.run {m : Z → List E → List α} (h : IsConcatenative m)
     (T : Mealy σ α β) : IsConcatenative fun z es ↦ T.run (m z es) :=
   h.comp fun u _ ⟨t, ht⟩ ↦ ht ▸ ⟨_, (T.runFrom_append T.start u t).symm⟩
@@ -157,7 +151,6 @@ def realization : Realization Z (List E) F :=
 
 variable {m L}
 
-/-- The cells a form fills are the licensed strings with that form. -/
 theorem mem_cells_realization : es ∈ (realization m L).cells z f ↔ L es ∧ m z es = f := by
   unfold realization
   simp only [Realization.mem_cells, Realization.ofOption]
@@ -185,8 +178,6 @@ theorem concat_mem_cells_ofStep {base : Z → F} {step : F → E → F}
 
 end Realization
 
-/-- The strings of exponents a template licenses are closed under prefixes, so the cells of a
-form on them are found one exponent at a time. -/
 theorem Template.licensed_of_isPrefix {Slot : Type*}
     [DecidableEq Slot] {t : Template Slot} {X : Slot → Type*} {w w' : List (Σ s, X s)}
     (h : t.Licensed w') (hp : w <+: w') : t.Licensed w :=

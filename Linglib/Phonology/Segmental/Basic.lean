@@ -98,7 +98,6 @@ theorem inf_apply (s t : Segment) (f : Feature) : (s ⊓ t) f = if s f = t f the
     · exact ((Function.update_self ..).symm.trans hg) ▸ hf
     · exact H g w ((Function.update_of_ne hne ..).symm.trans hg)
 
-/-- Giving a segment a value for a feature it lacks adds to it. -/
 theorem le_setFeature (h : s f = none) (v : Bool) : s ≤ s.setFeature f v :=
   ((setFeature_le_iff h).1 le_rfl).2
 
@@ -107,7 +106,6 @@ itself where there is no `c` or it has no value. -/
 def copy (s : Segment) (f : Feature) (c : Option Segment) : Segment :=
   (c.bind (· f)).elim s (s.setFeature f)
 
-/-- Copying a value for a feature that a segment lacks adds to it. -/
 theorem le_copy (h : s f = none) (c : Option Segment) : s ≤ s.copy f c := by
   unfold copy
   cases c.bind (· f) with

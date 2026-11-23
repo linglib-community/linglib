@@ -187,7 +187,6 @@ def mk' (feature : Feature) (IsTarget IsTransparent : Segment → Prop) [Decidab
     rw [Segment.setFeature, ← show s.val feature = some v from h]; exact Function.update_eq_self ..
   default := default
 
-/-- A rule that writes one feature leaves every other feature of a segment as it was. -/
 theorem _root_.Phonology.SearchCopy.emit_apply_of_ne {r : SearchCopy Segment} {f : Feature}
     (hr : ∀ v s, r.write v s = s.setFeature f v) {g : Feature} (h : f ≠ g) (q : Option Segment)
     (s : Segment) : (r.emit q s) g = s g := by
