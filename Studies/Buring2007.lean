@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Buring2007
 public import Linglib.Fragments.English.Adjectives
-public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Degree.Little
 public import Linglib.Semantics.Degree.Extent
 
 /-!
@@ -31,15 +31,12 @@ does not license deletion. Among comparatives of opposite polarities those are t
 matrix adjective is the negative one and is not the antonym of the other
 (`Comparative.acceptable_iff_of_polarity_ne`).
 
-A quantifier `Q` over worlds in the than-clause gives the interval `Quantifier.scopeDegrees Q P`
-of the degrees that lie in the standard's extent `P v` at the worlds `Q` holds of.
-`negationOutside` has LITTLE in the matrix degree phrase, outside `Q`, and `negationInside` has it
-on both adjectives, inside `Q`. The second is the first for the dual quantifier
-(`negationInside_iff_negationOutside_dual`): over the worlds `A` a necessity modal quantifies
-over, `negationOutside (every A)` puts the subject's degree below the infimum of the standard's
-degrees in `A` and `negationInside (every A)` puts it below their supremum, and for a possibility
-modal, `Quantifier.Det.some A`, they exchange. Where the than-clause interval has a greatest
-degree, `negationOutside` is `Quantifier.HighScope` of the degree quantifier *more than `c`*.
+With a quantifier `Q` over worlds in the than-clause, the two placements of LITTLE are the two
+scopes of the degree negation of [heim-2006]: in the matrix degree phrase it is above `Q`,
+`Quantifier.LittleAbove` (`comparative_negative_scopeDegrees`), and on both adjectives it is below
+`Q`, `Quantifier.LittleBelow` (`comparative_positive_scopeDegrees`). The two differ under a
+necessity modal (`exists_littleBelow_every_not_littleAbove`), where the first puts the subject
+below the infimum of the standard's degrees and the second below their supremum.
 
 Between positive extents the comparative with MUCH is the max-quantified comparative
 `MaxComparative .gt` (`maxComparative_gt_iff_ssubset`).
@@ -248,112 +245,31 @@ section Scope
 
 open Quantifier Quantifier.Det
 
-variable {W D : Type*} [LinearOrder D] {Q : Quantifier W} {μ : W → D} {c : D} {A : Set W}
+variable {W D : Type*} [LinearOrder D] {Q : Quantifier W} {μ : W → D} {c : D} {w : W}
 
-/-- (30): LITTLE in the matrix degree phrase, outside the than-clause quantifier, with a subject
-measuring `c`. -/
-def negationOutside (Q : Quantifier W) (μ : W → D) (c : D) : Prop :=
-  comparative .negative (scopeDegrees Q (Set.Iic ∘ μ)) (Set.Iic c)
+/-- (30): with LITTLE in the matrix degree phrase, the comparative is the *less*-comparative with
+the degree negation above the than-clause quantifier. -/
+theorem comparative_negative_scopeDegrees :
+    comparative .negative (scopeDegrees Q (Set.Iic ∘ μ)) (Set.Iic c) ↔ LittleAbove Q μ c := .rfl
 
-/-- (32): LITTLE on both adjectives, inside the than-clause quantifier, with a subject measuring
-`c`. -/
-def negationInside (Q : Quantifier W) (μ : W → D) (c : D) : Prop :=
-  comparative .positive (scopeDegrees Q fun v ↦ Polarity.negative • Set.Iic (μ v))
-    (Polarity.negative • Set.Iic c)
+/-- (32): with LITTLE on both adjectives, the comparative is the *less*-comparative with the
+degree negation below the than-clause quantifier. -/
+theorem comparative_positive_scopeDegrees :
+    comparative .positive (scopeDegrees Q fun v ↦ Polarity.negative • Set.Iic (μ v))
+      (Polarity.negative • Set.Iic c) ↔ LittleBelow Q μ c := .rfl
 
-/-- LITTLE inside a than-clause quantifier is LITTLE outside its dual. -/
-theorem negationInside_iff_negationOutside_dual (d : Det W) :
-    negationInside (d A) μ c ↔ negationOutside (d.dual A) μ c := by
-  have h : scopeDegrees (d A) (fun v ↦ Polarity.negative • Set.Iic (μ v)) =
-      (scopeDegrees (d.dual A) (Set.Iic ∘ μ))ᶜ := by
-    ext e
-    simp [mem_scopeDegrees, dual, innerNeg, Set.compl_ofPred]
-  rw [negationInside, h]
-  rfl
-
-theorem negationOutside_iff (hQ : Monotone Q) :
-    negationOutside Q μ c ↔ ∃ e, c < e ∧ Q {v | e ≤ μ v} := by
-  refine comparative_negative.trans ⟨fun h ↦ ?_, fun ⟨e, hce, he⟩ ↦ ⟨fun e' he' ↦ ?_, fun h ↦ ?_⟩⟩
-  · obtain ⟨e, he, hec⟩ := Set.exists_of_ssubset h
-    exact ⟨e, not_le.mp hec, he⟩
-  · exact hQ (fun v hv ↦ (he'.trans hce.le).trans hv) he
-  · exact hce.not_ge (h he)
-
--- Without a quantifier the two analyses are one: both say the subject is below the standard.
-theorem negationInside_individual_iff_negationOutside {w : W} :
-    negationInside (individual w) μ c ↔ negationOutside (individual w) μ c :=
+-- Without a quantifier the two analyses are one: LITTLE moves between the degree phrase and both
+-- adjectives.
+theorem littleBelow_individual_iff_littleAbove :
+    LittleBelow (individual w) μ c ↔ LittleAbove (individual w) μ c :=
   comparative_smul .positive .negative
-
-theorem negationOutside_individual_iff {w : W} : negationOutside (individual w) μ c ↔ c < μ w :=
-  comparative_negative_Iic
-
--- (31), with `A` the worlds the modal quantifies over.
-theorem negationOutside_every :
-    negationOutside (every A) μ c ↔ ∃ e, c < e ∧ e ∈ lowerBounds (μ '' A) :=
-  (negationOutside_iff (monotone_every A)).trans <|
-    exists_congr fun _ ↦ and_congr_right fun _ ↦ (mem_lowerBounds.trans Set.forall_mem_image).symm
-
-theorem negationOutside_some : negationOutside (Det.some A) μ c ↔ ∃ v ∈ A, c < μ v :=
-  (negationOutside_iff (monotone_some A)).trans
-    ⟨fun ⟨_, hce, v, hv, he⟩ ↦ ⟨v, hv, hce.trans_le he⟩, fun ⟨v, hv, hc⟩ ↦ ⟨_, hc, v, hv, le_rfl⟩⟩
-
--- (33)
-theorem negationInside_every : negationInside (every A) μ c ↔ ∃ v ∈ A, c < μ v := by
-  rw [negationInside_iff_negationOutside_dual, dual_every, negationOutside_some]
-
-theorem negationInside_some :
-    negationInside (Det.some A) μ c ↔ ∃ e, c < e ∧ e ∈ lowerBounds (μ '' A) := by
-  rw [negationInside_iff_negationOutside_dual, dual_some, negationOutside_every]
-
--- (31): the minimum required width of the moat is more than the length of the drawbridge.
-theorem negationOutside_every_iff_of_isGLB {m : D} (h : IsGLB (μ '' A) m) :
-    negationOutside (every A) μ c ↔ c < m :=
-  negationOutside_every.trans
-    ⟨fun ⟨_, hce, he⟩ ↦ hce.trans_le (h.2 he), fun hc ↦ ⟨m, hc, h.1⟩⟩
-
--- (33): the maximum allowed width of the moat is more than the length of the drawbridge.
-theorem negationInside_every_iff_of_isLUB {m : D} (h : IsLUB (μ '' A) m) :
-    negationInside (every A) μ c ↔ c < m :=
-  negationInside_every.trans <| Set.exists_mem_image.symm.trans (lt_isLUB_iff h).symm
-
--- The greatest degree of the than-clause interval, where it has one, exceeds the subject's.
-theorem negationOutside_iff_highScope (hQ : Monotone Q)
-    (h : ∃ m, IsGreatest (scopeDegrees Q (Set.Iic ∘ μ)) m) :
-    negationOutside Q μ c ↔ HighScope (MaxIn (Set.Ioi c)) Q (Set.Iic ∘ μ) :=
-  let ⟨m, hm⟩ := h
-  (negationOutside_iff hQ).trans
-    ⟨fun ⟨_, hce, he⟩ ↦ ⟨m, hce.trans_le (hm.2 he), hm⟩, fun ⟨e, hce, he⟩ ↦ ⟨e, hce, he.1⟩⟩
-
--- Over finitely many worlds the quantifier holds of the worlds where the standard exceeds the
--- subject, so LITTLE inside it gives the dual quantifier of those worlds.
-theorem negationOutside_iff_of_finite [Finite W] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) :
-    negationOutside Q μ c ↔ Q {v | c < μ v} :=
-  (negationOutside_iff hQ).trans
-    ⟨fun ⟨_, hce, he⟩ ↦ hQ (fun _ hv ↦ hce.trans_le hv) he, fun h ↦
-      let ⟨m, hcm, hm⟩ := highScope_of_lowScope hQ hQ₀ (IsUpperSet.Ioi c) (lowScope_maxIn.2 h)
-      ⟨m, hcm, hm.1⟩⟩
-
-/-- Under a universal quantifier over a nonempty set, LITTLE outside the quantifier entails LITTLE
-inside it. -/
-theorem negationInside_every_of_negationOutside (hA : A.Nonempty)
-    (h : negationOutside (every A) μ c) : negationInside (every A) μ c :=
-  let ⟨_, hce, he⟩ := negationOutside_every.mp h
-  let ⟨v, hv⟩ := hA
-  negationInside_every.mpr ⟨v, hv, hce.trans_le (he ⟨v, hv, rfl⟩)⟩
-
-theorem negationOutside_some_of_negationInside (hA : A.Nonempty)
-    (h : negationInside (Det.some A) μ c) : negationOutside (Det.some A) μ c :=
-  let ⟨_, hce, he⟩ := negationInside_some.mp h
-  let ⟨v, hv⟩ := hA
-  negationOutside_some.mpr ⟨v, hv, hce.trans_le (he ⟨v, hv, rfl⟩)⟩
 
 -- A 35-foot drawbridge where moats of 30 and of 40 feet are permitted: shorter than a permitted
 -- moat is wide, not shorter than every one. (29) has the second reading only.
-theorem exists_negationInside_every_not_negationOutside :
-    ∃ (μ : Bool → ℕ) (c : ℕ),
-      negationInside (every .univ) μ c ∧ ¬ negationOutside (every .univ) μ c := by
-  refine ⟨fun b ↦ if b then 40 else 30, 35, negationInside_every.mpr ⟨true, trivial, by decide⟩, ?_⟩
-  rw [negationOutside_every]
+theorem exists_littleBelow_every_not_littleAbove :
+    ∃ (μ : Bool → ℕ) (c : ℕ), LittleBelow (every .univ) μ c ∧ ¬ LittleAbove (every .univ) μ c := by
+  refine ⟨fun b ↦ if b then 40 else 30, 35, littleBelow_every.mpr ⟨true, trivial, by decide⟩, ?_⟩
+  rw [littleAbove_every]
   rintro ⟨e, hce, he⟩
   exact absurd (hce.trans_le (he ⟨false, trivial, rfl⟩)) (by decide)
 

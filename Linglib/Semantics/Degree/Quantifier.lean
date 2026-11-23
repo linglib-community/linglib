@@ -89,6 +89,16 @@ theorem scopeDegrees_no (R : Set α) (P : α → Set D) :
     scopeDegrees (no R) P = (scopeDegrees (Det.some R) P)ᶜ :=
   Set.ext fun _ ↦ no_iff_not_some
 
+theorem scopeDegrees_preimage {D' : Type*} (f : D' → D) (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q (fun x ↦ f ⁻¹' P x) = f ⁻¹' scopeDegrees Q P := rfl
+
+/-- Complementing each entity's degree property under a quantifier complements the degrees of the
+dual quantifier, so a degree negation below *every* is one above *some*. -/
+theorem scopeDegrees_compl (d : Det α) (A : Set α) (P : α → Set D) :
+    scopeDegrees (d A) (fun x ↦ (P x)ᶜ) = (scopeDegrees (d.dual A) P)ᶜ := by
+  ext e
+  simp [mem_scopeDegrees, dual, innerNeg, Set.compl_ofPred]
+
 end Scope
 
 section Preorder
