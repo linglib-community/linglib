@@ -155,17 +155,22 @@ theorem mo_iff_forall_isLowerSet :
     MO θ ↔ ∀ s : Set α, IsLowerSet s → IsLowerSet (θ.image s) :=
   me_iff_forall_isLowerSet
 
+theorem ME.isLowerSet_preimage (h : ME θ) {s : Set β} (hs : IsLowerSet s) :
+    IsLowerSet (θ.preimage s) :=
+  me_iff_forall_isLowerSet.1 h s hs
+
 end Preorder
+
+theorem MSE.me [PartialOrder α] [Preorder β] {θ : SetRel α β} (h : MSE θ) : ME θ :=
+  fun _ _ hxe _ hle ↦
+    (eq_or_lt_of_le hle).elim (fun heq ↦ ⟨_, le_rfl, heq ▸ hxe⟩)
+      (fun hlt ↦ let ⟨e', hlt', hθ⟩ := h hxe hlt; ⟨e', hlt'.le, hθ⟩)
+
+theorem MSO.mo [Preorder α] [PartialOrder β] {θ : SetRel α β} (h : MSO θ) : MO θ := MSE.me h
 
 section PartialOrder
 
 variable [PartialOrder α] [PartialOrder β] {θ : SetRel α β}
-
-theorem MSE.me (h : MSE θ) : ME θ := fun _ _ hxe _ hle ↦
-  (eq_or_lt_of_le hle).elim (fun heq ↦ ⟨_, le_rfl, heq ▸ hxe⟩)
-    (fun hlt ↦ let ⟨e', hlt', hθ⟩ := h hxe hlt; ⟨e', hlt'.le, hθ⟩)
-
-theorem MSO.mo (h : MSO θ) : MO θ := MSE.me h
 
 /-- Uniqueness of events and of objects give mapping to subevents. The part of the event
 related to a proper part of the object is proper, since the whole event's unique related part

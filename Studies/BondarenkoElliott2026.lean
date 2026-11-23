@@ -10,21 +10,22 @@ On the equality semantics for clausal embedding, *`M` believes that `p`* says th
 believings of `M` has content `p`. Attitudinal eventualities and contentful individuals have
 parts, and propositions are ordered by informational parthood: `p'` is a part of `p` when `p`
 entails `p'`, so the contents are the order dual `(Set W)ᵒᵈ`. The content of an eventuality is a
-relation `cont : SetRel (Set W)ᵒᵈ V` between contents and their bearers, and the two conditions
-of the paper on how such a map treats parts are the mapping conditions of [krifka-1998] on a
-thematic relation: the content relation maps to sub-eventualities, `Mereology.MSE cont`, and the
-theme relation of *believe* maps to sub-objects, `Mereology.MSO theme`.
+relation `cont : SetRel (Set W)ᵒᵈ V` between contents and their bearers, so that for a set `B` of
+believings the contents believed are `cont.preimage B`. The two conditions of the paper on how
+such a map treats parts are the mapping conditions of [krifka-1998] on a thematic relation: the
+content relation maps to sub-eventualities, `Mereology.MSE cont`, and the theme relation of
+*believe* maps to sub-objects, `Mereology.MSO theme`.
 
-For a set `B` of believings with divisive reference, mapping to sub-eventualities closes
-`Believes B cont` under entailment (`Believes.mono`), and the content relation maps to parts
-exactly when every divisive set of eventualities has contents closed under entailment
-(`me_iff_forall_believes_mono`). *`M` believes the rumor that `p`* says that one of the
-believings has as its theme a rumor with content `p`. Where a believing has the contents of its
-theme, this report is closed under weakening of `p` (`BelievesTheRumorThat.mono`), so its
-negation is Strawson downward entailing in the clause, and `not_believesTheRumorThat_mono` gives
-a model of all the conditions in which the negation is not Strawson upward entailing. Where the
-content relation is summative and the believings cumulative, belief is closed under conjunction
-(`Believes.inter`).
+Where the believings have divisive reference, mapping to sub-eventualities makes the contents
+believed a lower set, which in the informational order is closure under entailment
+(`isLowerSet_preimage_cont`); by `Mereology.me_iff_forall_isLowerSet` a content relation maps to
+parts exactly when this holds of every divisive set of eventualities. *`M` believes the rumor
+that `p`* says that one of the believings has as its theme a rumor with content `p`. Where a
+believing has the contents of its theme, this report is closed under weakening of `p`
+(`BelievesTheRumorThat.mono`), so its negation is Strawson downward entailing in the clause, and
+`not_believesTheRumorThat_mono` gives a model of all the conditions in which the negation is not
+Strawson upward entailing. Where the content relation is summative and the believings
+cumulative, the contents believed are closed under conjunction (`supClosed_preimage_cont`).
 
 Between single alternatives, Fine's conjunctive parthood of alternative sets is entailment
 (`isConjunctivePart_singleton_iff_subset`).
@@ -57,39 +58,30 @@ open scoped SetRel
 
 variable {V E W : Type*}
 
-/-! ### Belief and closure under entailment -/
+/-! ### Belief and closure under entailment
 
-/-- (45a): *`M` believes `p`* holds when one of the believings `B` of `M` has content `p`. -/
-def Believes (B : Set V) (cont : SetRel (Set W)ᵒᵈ V) (p : Set W) : Prop :=
-  ∃ e ∈ B, toDual p ~[cont] e
+By (45a), *`M` believes `p`* holds when one of the believings `B` of `M` has content `p`, which
+is `toDual p ∈ cont.preimage B`. -/
 
 section Closure
 
 variable [PartialOrder V] {B : Set V} {cont : SetRel (Set W)ᵒᵈ V} {p p' : Set W}
 
 /-- (45): where the content relation maps to sub-eventualities and the believings have divisive
-reference, belief is closed under entailment. -/
-theorem Believes.mono (hMSI : MSE cont) (hB : DIV B) (h : Believes B cont p) (hp : p ⊆ p') :
-    Believes B cont p' :=
-  me_iff_forall_isLowerSet.1 hMSI.me B hB (show toDual p' ≤ toDual p from hp) h
+reference, the contents believed are a lower set in the informational order. -/
+theorem isLowerSet_preimage_cont (hMSI : MSE cont) (hB : DIV B) : IsLowerSet (cont.preimage B) :=
+  hMSI.me.isLowerSet_preimage hB
 
--- (46)
-theorem not_believes_of_subset (hMSI : MSE cont) (hB : DIV B) (hp : p ⊆ p')
-    (h : ¬ Believes B cont p') : ¬ Believes B cont p :=
-  fun hb ↦ h (hb.mono hMSI hB hp)
-
-/-- The content relation maps to parts exactly when every set of eventualities with divisive
-reference has contents closed under entailment. -/
-theorem me_iff_forall_believes_mono :
-    ME cont ↔ ∀ B, DIV B → ∀ ⦃p p' : Set W⦄, p ⊆ p' → Believes B cont p → Believes B cont p' :=
-  me_iff_forall_isLowerSet.trans
-    ⟨fun h B hB _ _ hp hb ↦ h B hB hp hb, fun h B hB _ _ hp hb ↦ h B hB hp hb⟩
+/-- Belief is closed under entailment, (75). -/
+example (hMSI : MSE cont) (hB : DIV B) (h : toDual p ∈ cont.preimage B) (hp : p ⊆ p') :
+    toDual p' ∈ cont.preimage B :=
+  isLowerSet_preimage_cont hMSI hB (show toDual p' ≤ toDual p from hp) h
 
 /-- Where each eventuality is its own content, the content relation maps to sub-eventualities,
 and the believings below `p` have as contents the propositions that `p` entails. -/
 example (p p' : Set W) :
     MSE (SetRel.id : SetRel (Set W)ᵒᵈ (Set W)ᵒᵈ) ∧
-      (Believes (Set.Iic (toDual p)) SetRel.id p' ↔ p ⊆ p') :=
+      (toDual p' ∈ (SetRel.id : SetRel (Set W)ᵒᵈ _).preimage (Set.Iic (toDual p)) ↔ p ⊆ p') :=
   ⟨fun _ _ h _ hy ↦ ⟨_, SetRel.mem_id.1 h ▸ hy, SetRel.mem_id.2 rfl⟩,
     fun ⟨_, he, hc⟩ ↦ ((SetRel.mem_id.1 hc).trans_le he : toDual p' ≤ toDual p),
     fun h ↦ ⟨toDual p', h, SetRel.mem_id.2 rfl⟩⟩
@@ -113,7 +105,7 @@ def BelievesTheRumorThat (B : Set V) (theme : SetRel E V) (rumor : Set E)
 theorem BelievesTheRumorThat.believes {B : Set V} {cont : SetRel (Set W)ᵒᵈ V}
     {contE : SetRel (Set W)ᵒᵈ E} {theme : SetRel E V} {rumor : Set E} {p : Set W}
     (hTECM : TECM B cont contE theme) (h : BelievesTheRumorThat B theme rumor contE p) :
-    Believes B cont p :=
+    toDual p ∈ cont.preimage B :=
   let ⟨e, he, _, _, hth, hc⟩ := h
   ⟨e, he, (hTECM he hth _).2 hc⟩
 
@@ -171,22 +163,25 @@ theorem not_believesTheRumorThat_mono :
 /-! ### Closure under conjunction -/
 
 /-- (79): where the content of a sum is the conjunction of the contents, (78), and the believings
-are closed under sum, belief is closed under conjunction. -/
-theorem Believes.inter [SemilatticeSup V] {B : Set V} {cont : SetRel (Set W)ᵒᵈ V}
-    {p q : Set W} (hSUM : SUM cont) (hB : CUM B) (hp : Believes B cont p)
-    (hq : Believes B cont q) : Believes B cont (p ∩ q) :=
-  let ⟨e, he, hc⟩ := hp
-  let ⟨e', he', hc'⟩ := hq
-  ⟨e ⊔ e', hB he he', hSUM.sup hc hc'⟩
+are closed under sum, the contents believed are closed under conjunction, the join of the
+informational order. -/
+theorem supClosed_preimage_cont [SemilatticeSup V] {B : Set V} {cont : SetRel (Set W)ᵒᵈ V}
+    (hSUM : SUM cont) (hB : CUM B) : SupClosed (cont.preimage B) :=
+  hSUM.relPreimage hB
 
-theorem not_believes_inter :
-    ∃ (B : Set Bool) (cont : SetRel (Set Bool)ᵒᵈ Bool) (p q : Set Bool),
-      Believes B cont p ∧ Believes B cont q ∧ ¬ Believes B cont (p ∩ q) := by
-  refine ⟨Set.univ, {q | q.1 = toDual {q.2}}, {true}, {false}, ⟨true, trivial, rfl⟩,
-    ⟨false, trivial, rfl⟩, ?_⟩
-  rintro ⟨e, -, hc⟩
-  have h : e ∈ ({true} : Set Bool) ∩ {false} := ofDual.injective hc ▸ Set.mem_singleton e
-  exact Bool.false_ne_true (h.2.symm.trans h.1)
+example [SemilatticeSup V] {B : Set V} {cont : SetRel (Set W)ᵒᵈ V} {p q : Set W}
+    (hSUM : SUM cont) (hB : CUM B) (hp : toDual p ∈ cont.preimage B)
+    (hq : toDual q ∈ cont.preimage B) : toDual (p ∩ q) ∈ cont.preimage B :=
+  supClosed_preimage_cont hSUM hB hp hq
+
+theorem not_supClosed_preimage_cont :
+    ∃ (B : Set Bool) (cont : SetRel (Set Bool)ᵒᵈ Bool), ¬ SupClosed (cont.preimage B) := by
+  refine ⟨Set.univ, {q | q.1 = toDual {q.2}}, fun h ↦ ?_⟩
+  obtain ⟨e, -, hc⟩ := h (a := toDual {true}) ⟨true, trivial, rfl⟩ (b := toDual {false})
+    ⟨false, trivial, rfl⟩
+  have he : e ∈ ({true} : Set Bool) ∩ {false} :=
+    (show ({true} : Set Bool) ∩ {false} = {e} from hc) ▸ Set.mem_singleton e
+  exact Bool.false_ne_true (he.2.symm.trans he.1)
 
 /-! ### Conjunctive parthood -/
 
