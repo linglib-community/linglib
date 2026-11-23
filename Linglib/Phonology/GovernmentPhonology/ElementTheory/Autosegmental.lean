@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.GovernmentPhonology.ElementTheory.Basic
+public import Linglib.Phonology.Autosegmental.KripkeModel
 public import Linglib.Phonology.Autosegmental.Multiplanar
 public import Linglib.Phonology.Autosegmental.Skeleton
 
@@ -27,7 +28,9 @@ expression contains it (`reads_ofForm_iff`).
 Fusion is a change of lines. `fuse w e m n` makes position `n` share the token of `e` of
 position `m`, by `Autosegmental.AR.spreadTier`: the slot of `n` is delinked from its own token of
 `e` and linked to that of `m`. It crosses no line exactly when no position strictly between the
-two has `e` (`noCrossing_fuse_iff`).
+two has `e` (`noCrossing_fuse_iff`). The result reads as the form in which position `n` has `e`
+in the status it has at `m` (`reads_fuse_iff`), so where both positions have `e` no position's
+elements change (`exists_reads_fuse_iff`): sharing a token reads as copying it.
 
 ## Implementation notes
 
@@ -55,6 +58,29 @@ inductive Status where
 
 /-- The status of the element `e` in the expression `m`. -/
 def MR.status (m : MR) (e : Element) : Status := if e ∈ m.heads then .head else .dependent
+
+/-- `m₂.adopt m₁ e` is the expression `m₂` with the element `e` in the status it has in `m₁`. -/
+def MR.adopt (m₂ m₁ : MR) (e : Element) : MR where
+  elements := insert e m₂.elements
+  heads := if e ∈ m₁.heads then insert e m₂.heads else m₂.heads.erase e
+  heads_subset := by
+    split_ifs
+    · exact Finset.insert_subset_insert e m₂.heads_subset
+    · exact (Finset.erase_subset e _).trans (m₂.heads_subset.trans (Finset.subset_insert e _))
+
+theorem MR.mem_elements_adopt {m₂ m₁ : MR} {e e' : Element} :
+    e' ∈ (m₂.adopt m₁ e).elements ↔ e' = e ∨ e' ∈ m₂.elements :=
+  Finset.mem_insert
+
+theorem MR.status_adopt_self (m₂ m₁ : MR) (e : Element) :
+    (m₂.adopt m₁ e).status e = m₁.status e := by
+  unfold MR.status MR.adopt
+  by_cases h : e ∈ m₁.heads <;> simp [h]
+
+theorem MR.status_adopt_of_ne (m₂ m₁ : MR) {e e' : Element} (h : e' ≠ e) :
+    (m₂.adopt m₁ e).status e' = m₂.status e' := by
+  unfold MR.status MR.adopt
+  by_cases h1 : e ∈ m₁.heads <;> simp [h1, h]
 
 /-- A position of the skeleton with its melodic expression. -/
 structure Position where
@@ -150,5 +176,48 @@ theorem noCrossing_fuse_iff (hm : m < w.length) (hn : n < w.length)
   · simp [ofPosition, he]
   · simp [ofPosition]
   · exact forall₃_congr fun _ _ _ ↦ not_congr link_ofPosition_iff
+
+/-- Fusing an element by a change of lines reads as giving the target position the element in the
+status it has at the source: sharing a token reads as copying it. -/
+theorem reads_fuse_iff (hm : m < w.length) (hn : n < w.length) (he : e ∈ w[m].melody.elements)
+    {t : Option Element} {b : Lines t} :
+    (fuse w e m n).Reads AR.planes k t b ↔
+      (ofForm (w.set n ⟨w[n].slot, w[n].melody.adopt w[m].melody e⟩)).Reads AR.planes k t b := by
+  refine AR.reads_spreadTier_iff ofPosition (Option.some_ne_none e)
+    (fun p t ↦ length_word_ofPosition_le_one p t) (fun _ ↦ rfl) ?_ hm hn ?_ ?_ ?_ ?_
+  · rintro p (_ | e') ht
+    · exact absurd rfl ht
+    · rw [link_ofPosition_iff]
+      by_cases h : e' ∈ p.melody.elements <;> simp [ofPosition, h]
+  · simp [ofPosition, he]
+  · simp [ofPosition]
+  · intro t ht
+    obtain rfl := AR.planes_le_some_iff.1 ht
+    simp [ofPosition, he, MR.mem_elements_adopt, MR.status_adopt_self]
+  · rintro (_ | e') ht
+    · rfl
+    · have hne : e' ≠ e := fun h ↦ ht (AR.planes_le_some_iff.2 (h ▸ rfl))
+      simp [ofPosition, MR.mem_elements_adopt, hne, MR.status_adopt_of_ne _ _ hne]
+
+/-- Where both positions have the element, fusing it changes no position's elements: the shared
+token stands for both. -/
+theorem exists_reads_fuse_iff (hm : m < w.length) (hn : n < w.length)
+    (he : e ∈ w[m].melody.elements) (he' : e ∈ w[n].melody.elements) {e' : Element} :
+    (∃ s, (fuse w e m n).Reads AR.planes k (some e') s) ↔
+      ∃ s, (ofForm w).Reads AR.planes k (some e') s := by
+  simp only [reads_fuse_iff hm hn he, exists_reads_ofForm_iff]
+  by_cases hk : n = k
+  · subst hk
+    simp only [List.getElem?_set_self hn, List.getElem?_eq_getElem hn, Option.mem_def,
+      Option.some.injEq, exists_eq_left', MR.mem_elements_adopt]
+    exact ⟨fun h ↦ h.elim (· ▸ he') id, .inr⟩
+  · rw [List.getElem?_set_ne hk]
+
+/-- After fusion the target position reads the element in the status it has at the source. -/
+theorem reads_fuse_self_iff (hm : m < w.length) (hn : n < w.length)
+    (he : e ∈ w[m].melody.elements) :
+    (fuse w e m n).Reads AR.planes n (some e) s ↔ s = w[m].melody.status e := by
+  rw [reads_fuse_iff hm hn he, reads_ofForm_iff]
+  simp [hn, MR.mem_elements_adopt, MR.status_adopt_self]
 
 end ElementTheory

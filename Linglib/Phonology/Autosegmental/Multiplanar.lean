@@ -144,6 +144,17 @@ def planes : ParentTree (Option ι) := .ofIterate (fun _ ↦ none) none 1 fun _ 
 @[simp] theorem planes_parent (j : Option ι) : (planes : ParentTree (Option ι)).parent j = none :=
   rfl
 
+/-- Only a plane itself lies at or below it in the tree of tiers. -/
+theorem planes_le_some_iff {i : ι} {t : Option ι} :
+    (planes : ParentTree (Option ι)).toPartialOrder.le (some i) t ↔ t = some i := by
+  refine ⟨fun ⟨n, hn⟩ ↦ ?_, fun h ↦ h ▸ ⟨0, rfl⟩⟩
+  cases n with
+  | zero => exact hn
+  | succ n =>
+    rw [Function.iterate_succ_apply, planes_parent,
+      Function.iterate_fixed (planes_parent none)] at hn
+    exact absurd hn (by simp)
+
 variable {X} [Fintype ι] [DecidableEq ι] {i : ι} {s q : ℕ} {a : α}
 
 /-- A slot dominates the autosegments linked to it. -/
